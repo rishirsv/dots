@@ -1,0 +1,23 @@
+# ---- codex:system-and-env ----
+# System files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# Env files
+.env
+.env.*
+!.env*.example
+!.env*.sample
+!.env*.template
+# ---- /codex:system-and-env ----
