@@ -1,10 +1,10 @@
 # Project Plan
 
-**Last updated:** 2026-02-02
+**Last updated:** 2026-02-05
 
 ## Goal
 
-Generate brand-compliant diligence decks from JSON that look like a real FDD report (Project North level), with a clean workflow and regression-safe QA.
+Generate brand-compliant diligence decks from JSON that look like a real FDD report (Project North level), with a clean workflow and regression-safe inspection (strict checks + baselines).
 
 ## Current architecture
 
@@ -17,7 +17,7 @@ flowchart LR
   C --> E
   D --> E
   E --> O[Output PPTX]
-  O --> Q[QA: PDF/PNGs + compares]
+  O --> Q[Inspect: strict reports]
 ```
 
 ## What “done” looks like
@@ -25,17 +25,16 @@ flowchart LR
 - Updating the template PPTX and regenerating `template.js`/`template.json` does not break deck generation
 - Deck generation does not overlap text (pagination beats autoshrink)
 - Styling defaults are centralized and reusable across templates (tokens, masters, builder conventions)
-- QA renders are one-command and written to a clean `outputs/` run folder
+- Strict inspection artifacts are written next to the PPTX in a clean run folder
 
 ## Workstreams (next)
 
 ### 1) Workflow + repo hygiene
 
 - Standardize output locations:
-  - Generated artifacts always go to `outputs/runs/<run_id>/<deck_name>/...`
-  - Optional “latest” convenience folder: `outputs/latest/<deck_name>/...`
+  - Generated artifacts always go to `templates/<template>/outputs/runs/<run_id>/<deck_name>/...`
 - Keep baselines separate:
-  - `references/baselines/pptx/`
+  - `templates/<template>/references/baselines/pptx/`
 - Add a simple cleanup command/convention:
   - prune old runs, keep last N
 
@@ -59,16 +58,14 @@ flowchart LR
 - Improve pagination heuristics so dense slides split cleanly into continuation slides
 - Ensure numbered lists and bullets match PowerPoint paragraph settings everywhere
 
-### 5) Regression QA
+### 5) Regression inspection
 
 - Maintain a small set of baseline decks per template
-- Make it easy to generate:
-  - rendered PNGs
-  - comparison images + CSV report
+- Keep strict inspection reports easy to generate and review
 
 ## Daily workflow (recommended)
 
 1) Update `templates/kpmg-diligence/...` if needed
-2) Regenerate template wrapper: `npm run template:generate`
-3) Generate deck into a run folder (see `generator/AGENTS.md`)
-4) Render PNGs + compare (see `qa/AGENTS.md`)
+2) Regenerate template wrapper: `cd templates/kpmg-diligence && npm run template:generate`
+3) Generate deck into a run folder (see `templates/kpmg-diligence/generator/AGENTS.md`)
+4) Review `outputs/.../inspect/inspection_report.md` and spot-check the PPTX

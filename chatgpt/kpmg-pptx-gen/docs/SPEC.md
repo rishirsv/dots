@@ -1,6 +1,6 @@
 # KPMG PPTX Generator — Specification
 
-**Last updated:** 2026-02-03
+**Last updated:** 2026-02-05
 
 ## What this repo does
 
@@ -8,12 +8,12 @@ This repo generates **brand-compliant PowerPoint decks** from structured JSON by
 
 1) **Extracting** a source PPTX template into a code-encoded wrapper (`template.js`) + metadata (`template.json`)
 2) **Generating** a new PPTX by filling that wrapper from a deck JSON spec
-3) **Rendering QA outputs** (PPTX → PDF → PNGs) for review and regression comparisons
+3) **Producing strict inspection artifacts** (missing required fields, overlaps, out-of-bounds) next to the generated PPTX
 
 ## Non-goals
 
 - Editing PPTX XML directly during generation (generation is PptxGenJS-driven)
-- Committing large generated artifacts (PPTX/PDF/PNGs) to git, except intentional baselines
+- Committing large generated artifacts (PPTX) to git, except intentional baselines
 
 ## Source of truth
 
@@ -21,7 +21,7 @@ This repo generates **brand-compliant PowerPoint decks** from structured JSON by
 - Generated wrapper outputs (do not hand-edit):
   - `templates/kpmg-diligence/template.js`
   - `templates/kpmg-diligence/template.json`
-- Content inputs live in: `samples/`
+- Content inputs live in: `templates/<template>/samples/`
 
 ## High-level architecture
 
@@ -34,13 +34,13 @@ flowchart LR
   C --> E
   D --> E
   E --> O[Output PPTX]
-  O --> Q[QA: PDF/PNGs + compares]
+  O --> Q[Inspect: strict-summary + overlap/bounds reports]
 ```
 
 ## Output policy
 
-- `outputs/` is a **throwaway workspace** for generated artifacts (PPTX/PDF/PNGs/compare images).
-- Baselines (if any) should be kept separate and clearly named under `references/baselines/`.
+- `templates/<template>/outputs/` is a **throwaway workspace** for generated artifacts.
+- Baselines (if any) should be kept separate and clearly named under `templates/<template>/references/baselines/`.
 
 ## Deck JSON (current expectations)
 
@@ -80,26 +80,26 @@ This repo targets a “Project North”-style diligence look:
 - Bullets: PowerPoint-standard hanging indent + spacing (see `generator/tokens.js`)
 - Charts: white chart/plot backgrounds, template palette colors
 
-The single source of truth for these defaults is `generator/tokens.js`.
+The single source of truth for these defaults is `templates/<template>/generator/tokens.js`.
 
-## QA outputs (current)
+## Strict mode (default-on)
 
-Preferred rendering pipeline:
+Strict checks run by default during generation:
 
-- PPTX → PDF: LibreOffice (`soffice`)
-- PDF → PNG: poppler (`pdftoppm`)
-
-Compare outputs are image-based (expected | actual | diff) for fast visual review.
-
-## Strict mode (optional)
-
-The generator supports a **strict mode** that runs layout overlap checks and overflow detection:
-
-- Overlap detection runs in JS against slide objects.
-- Overflow detection renders with padding and inspects margins.
+- Missing required field reporting (required slots per slide type)
+- Overlap detection (JS-only; analyzes PptxGenJS slide objects)
+- Out-of-bounds detection (JS-only; flags elements extending beyond slide dimensions)
 
 Example:
 
 ```bash
-node generator/index.js --in samples/v1-nvidia-v2.json --out outputs/strict-smoke/deck.pptx --strict
+cd templates/kpmg-diligence
+node generator/index.js --in samples/v1-nvidia-v2.json --out outputs/runs/manual/nvidia/deck.pptx
+```
+
+To disable strict checks:
+
+```bash
+cd templates/kpmg-diligence
+node generator/index.js --in samples/v1-nvidia-v2.json --out outputs/runs/manual/nvidia/deck.pptx --no-strict
 ```

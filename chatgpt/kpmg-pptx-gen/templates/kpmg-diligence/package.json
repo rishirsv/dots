@@ -1,0 +1,14 @@
+{
+  "name": "kpmg-diligence-pptx-gen",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "pptxgenjs": "4.0.1"
+  },
+  "scripts": {
+    "template:generate": "python3 ../../cli.py extract --template . --pptx \"Diligence+ Reporting Template_Widescreen v2.1.pptx\"",
+    "validate:demo": "node generator/validate.js --in samples/demo.json",
+    "gen:demo": "RUN_ID=$(date +%Y-%m-%d_%H%M%S); OUT_DIR=outputs/runs/$RUN_ID/demo; mkdir -p \"$OUT_DIR\"; node generator/index.js --in samples/demo.json --out \"$OUT_DIR/deck.pptx\""
+  }
+}
+

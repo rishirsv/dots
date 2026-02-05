@@ -1,4 +1,3 @@
 # Current extractor modules are stdlib-only.
 #
-# Optional (recommended) for faster gradient rendering and later QA tooling:
-# - See `requirements/requirements-qa.txt`
+# This repo intentionally avoids runtime QA/render dependencies.

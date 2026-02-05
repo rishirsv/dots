@@ -1,0 +1,284 @@
+{
+  "metadata": {
+    "title": "KPMG Custom GPT Portfolio",
+    "author": "KPMG Transaction Services"
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "title": "KPMG Custom GPT Portfolio",
+      "subtitle": "Transaction Services\nExecutive inventory of what we have built and the outcomes it enables"
+    },
+    {
+      "type": "divider",
+      "sectionNumber": "01",
+      "sectionTitle": "Transaction Services"
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Meeting Intelligence",
+      "strapline": "Transcript to structured notes optimized for diligence work",
+      "leftBody": [
+        "Problem:",
+        "During long management calls, associates split attention between listening and capturing details, which reduces the quality of questions and follow-ups in the moment. After the call, teams spend time cleaning notes into a shareable format, which slows the transition from call to analysis.",
+        "Even with strong effort, key numbers, commitments, and open items can be missed or inconsistently captured across team members. That variability makes it harder to align the deal team quickly and increases downstream rework when facts have to be re-confirmed.",
+        "How we solve it:",
+        "Meeting Intelligence converts transcripts into structured notes organized around diligence topics, decisions, risks, and follow-ups. It captures material detail in a consistent structure so teams can quickly locate key figures, policies, owners, and timelines.",
+        "The primary output is a shareable note pack designed to be immediately usable for downstream drafting, analysis, and follow-up planning. Teams can reuse the structured output across workstreams without reformatting or rebuilding a meeting record from scratch.",
+        "Outcome / ROI:",
+        "Associates remain focused during the call and can spend more time driving the conversation and clarifying what matters. Teams move from meeting to actionable analysis faster because the notes are already organized, review-ready, and easy to share.",
+        "This reduces post-call cleanup and improves continuity across the team because everyone works from the same structured record. It also improves reusability by making it easier to share outputs with other internal workflows and stakeholders."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/meeting-intelligence-logo.png",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show final structured meeting notes output."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "TS Engagement Assistant",
+      "strapline": "Engagement letters produced from approved templates with controlled changes",
+      "leftBody": [
+        "Problem:",
+        "Engagement letters require precision, and manual edits can introduce formatting drift, inconsistencies, or unintended changes under time pressure. Teams also lose time collecting inputs, reconciling versions, and performing repetitive checks before sending.",
+        "The risk is not just speed, but avoidable errors in a sensitive document type. When the process is manual, small inconsistencies can compound into rework and slower onboarding at the start of an engagement.",
+        "How we solve it:",
+        "TS Engagement Assistant guides users through required inputs and produces a completed engagement letter from approved templates in a consistent format. It standardizes how inputs are collected, checked, and applied across engagements so teams do not rely on ad hoc edits.",
+        "The primary output is a review-ready engagement letter that follows the approved structure so reviewers can validate quickly and consistently. This approach reduces manual touchpoints and helps teams avoid avoidable formatting drift.",
+        "Outcome / ROI:",
+        "Teams reduce turnaround time while increasing confidence that the document remains aligned to the approved template. Review becomes more efficient because stakeholders can focus on engagement specifics rather than manual inconsistencies or formatting drift.",
+        "This improves reliability at onboarding and reduces avoidable rework during time-sensitive kickoff preparation. It also increases consistency across engagements, which supports a more scalable operating model over time."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/ts-engagement-assistant-icon.png",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show the generated engagement letter excerpt with filled fields (final state)."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "KDN Tasks",
+      "strapline": "Execution-ready task packets for offshore and overnight support",
+      "leftBody": [
+        "Problem:",
+        "When instructions are informal, scattered, or incomplete, offshore execution slows down and quality becomes less predictable. Associates then spend time clarifying scope and reworking deliverables, which reduces the value of offshore support and creates avoidable cycle time.",
+        "The root issue is often ambiguity in what to do, what to check, and what \u201cdone\u201d looks like. Even strong teams lose efficiency when the handoff is unclear or expectations are not explicit.",
+        "How we solve it:",
+        "KDN Tasks converts informal instructions into structured task packets with clear inputs, steps, checks, and deliverable expectations. It makes handoffs explicit by clarifying required files, expected outputs, naming conventions, and review checks that reduce ambiguity.",
+        "The primary output is a send-ready handoff message and task packets that reduce back-and-forth so execution teams can start quickly and work confidently. Managers can also review the packet quickly to confirm expectations before work begins.",
+        "Outcome / ROI:",
+        "Handoffs become clearer and more repeatable across engagements, which improves throughput and predictability in overnight execution. Teams spend less time writing instructions and less time answering follow-up questions because expectations are explicit.",
+        "First-pass quality improves because checks and acceptance criteria are defined up front, reducing rework the next morning. Over time, this reduces coordination overhead and increases the effectiveness of offshore support."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/kdn_logo.png",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show a task packet and the send-ready handoff message."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "SPA Assistant",
+      "strapline": "Repeatable SPA review focused on economically material terms",
+      "leftBody": [
+        "Problem:",
+        "SPA review is complex, and teams spend significant time locating, summarizing, and comparing key provisions across long documents. Findings can vary by reviewer, making it harder to standardize what is raised and how it is framed for stakeholders.",
+        "Without structure, teams also lose time re-reading the same sections to support internal discussions. This slows decision-making and makes it harder to prioritize which issues require escalation and follow-up.",
+        "How we solve it:",
+        "SPA Assistant applies repeatable review playbooks that organize findings into a consistent output aligned to economically material topics. It helps teams connect observations back to the agreement so stakeholders can verify quickly and focus discussion on what is commercially important.",
+        "The primary output is a review-ready issue register that supports prioritization, internal alignment, and follow-up with legal counsel when needed. Teams can run multiple analyses in a consistent format rather than reinventing the review structure each time.",
+        "Outcome / ROI:",
+        "Teams identify key issues faster and communicate them more consistently across deals and reviewers. Stakeholders spend less time searching the document and more time discussing implications, priorities, and next steps.",
+        "This reduces cycle time and improves the effectiveness of internal deal discussions, especially when timelines are compressed. It also improves consistency of what gets raised across engagements, which supports better governance and escalation."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/spa-assistant-logo.png",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show an issue table with clause references (final state)."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "TS Copywriter",
+      "strapline": "Faster drafting and refinement of TS deliverable language",
+      "leftBody": [
+        "Problem:",
+        "Teams spend meaningful time drafting, rewriting, and aligning tone across deliverables, especially under deadlines and across multiple contributors. Review cycles often focus on clarity, structure, and consistency of language rather than the underlying analysis.",
+        "This increases cycle time and can lead to late-stage rewrites that distract from analytical work. It also creates variability in how conclusions are expressed, which can dilute executive readability.",
+        "How we solve it:",
+        "TS Copywriter turns rough notes into structured, professional language appropriate for TS deliverables and executive audiences. It applies consistent writing discipline so outputs read like a coherent voice across sections and contributors, even when multiple people contribute.",
+        "The primary output is deliverable-ready paragraphs and summaries that teams can use to draft from scratch, rewrite existing content, and align tone and structure to internal standards. This supports faster iteration without sacrificing executive clarity.",
+        "Outcome / ROI:",
+        "Teams move faster from analysis to client-ready narrative with fewer rewrites and less manager time spent on stylistic edits. Reviews become more efficient because language quality, clarity, and structure are more consistent across sections.",
+        "The result is higher-quality deliverables delivered with less drafting burden on associates and managers, especially during peak deal periods. Over time, this improves consistency of communication across engagements and strengthens executive readability."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/ts-copywriter-icon.png",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show polished deliverable-ready paragraph output."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "FDD Researcher",
+      "strapline": "Faster pre\u2013data room kickoff with a structured brief and focus areas",
+      "leftBody": [
+        "Problem:",
+        "In the first days of an engagement, teams often have limited materials and limited time to form a clear diligence view. Kickoff preparation quality can vary across teams, affecting the quality of early questions, data requests, and focus areas.",
+        "The consequence is slower ramp-up and a higher risk of missing standard early diligence angles. When early planning is inconsistent, downstream workstreams can start from different assumptions and priorities.",
+        "How we solve it:",
+        "FDD Researcher turns kickoff materials into a structured brief and highlights unknowns, early risks, and priorities for follow-up. It guides teams toward a consistent set of focus areas and questions that can be refined with managers based on deal context.",
+        "The primary output is a kickoff brief that aligns the deal team quickly and accelerates the first wave of diligence planning and data requests. This creates a repeatable starting point rather than rebuilding a kickoff brief from scratch each time.",
+        "Outcome / ROI:",
+        "Teams ramp faster and enter early meetings with sharper, more consistent questions and a clearer plan. Early diligence becomes more structured because the team starts from a common brief rather than a blank page.",
+        "This improves momentum in the kickoff phase, reduces the risk of missing key diligence angles, and supports a faster start to execution. It also improves alignment across the team by standardizing how early priorities are communicated."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/fdd-researcher-icon.png",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show the kickoff brief output (final state)."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "kpmg-pptx-gen",
+      "strapline": "KPMG-branded PowerPoint decks generated quickly and consistently",
+      "leftBody": [
+        "Problem:",
+        "Teams often build decks manually under tight timelines, and the effort is frequently spent on formatting rather than improving the message and insights. When inputs change, teams rework slides repeatedly, which slows delivery and creates review cycles focused on layout instead of content.",
+        "This is especially costly when updates are needed late in the process or across multiple versions of the same deck. The manual formatting burden also creates inconsistency across engagements, even when the underlying analysis is strong.",
+        "How we solve it:",
+        "kpmg-pptx-gen generates decks using KPMG layouts so teams can build and refresh materials in a repeatable way without manual slide-by-slide formatting. It turns structured inputs into a presentation that follows a consistent visual standard across engagements and across teams.",
+        "Associates and managers can use it to package proposals, updates, and deliverable decks with a consistent structure that is ready for review. This allows teams to iterate on the storyline and recommendations while keeping the deck structure stable and brand-compliant.",
+        "Outcome / ROI:",
+        "Teams deliver polished decks faster with fewer formatting-related review cycles, improving speed to client-ready materials. Review time shifts away from cosmetics and toward clarity of insights, storyline, and recommendations.",
+        "Over time, this becomes a reusable packaging capability that supports consistent executive communication across deals. It also reduces reliance on last-minute manual slide work, which improves predictability under deadline."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "runtime/kpmg-diligence/assets/kpmg-logo.svg",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show a generated deck slide (before/after optional) demonstrating brand compliance."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Lingo",
+      "strapline": "KPMG-branded glossary slides generated from a term list",
+      "leftBody": [
+        "Problem:",
+        "Glossary slides are time-consuming to build manually and easy to format inconsistently across teams and contributors. When definitions change, teams rebuild slides or spend time rechecking layout and pagination under deadline.",
+        "This is repetitive work that adds little analytical value but still affects professionalism. It also introduces risk of errors when definitions are copied across multiple drafts and versions.",
+        "How we solve it:",
+        "Lingo turns a list of terms and definitions into a polished, branded glossary deck that is presentation-ready. It standardizes formatting and handles long definitions in a consistent way so slides remain clean and readable across different contributors.",
+        "The primary output is a glossary slide section that can be dropped into proposals and deliverable decks and refreshed quickly when definitions change. Teams update the term list and regenerate rather than rebuilding slides manually.",
+        "Outcome / ROI:",
+        "Teams produce clean glossary materials faster and keep them current with minimal effort as terms evolve. This improves presentation quality and reduces last-minute slide work during proposal and deliverable cycles.",
+        "Time shifts away from manual formatting and toward storyline and analysis. This improves efficiency while keeping the final deck more professional and consistent across versions."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/lingo_logo.png",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show 1\u20132 glossary slides from the generated deck."
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Meta Prompt",
+      "strapline": "Standardized requests that drive more consistent AI outputs",
+      "leftBody": [
+        "Problem:",
+        "AI results vary widely when the request is unclear, incomplete, or inconsistent across users. Teams lose time iterating on the request itself, and output quality depends heavily on individual drafting skill.",
+        "This inconsistency slows adoption and makes it difficult to standardize best practices across a group. Without a consistent request format, outputs are harder to compare, review, and reuse.",
+        "How we solve it:",
+        "Meta Prompt turns an informal request into a clear, structured instruction set with explicit constraints and an output format. It helps users include the right context up front and defines what a good answer looks like, improving consistency across users.",
+        "Over time, teams can reuse these standardized requests as a repeatable playbook for common TS workflows. This reduces dependence on individual prompting skill and makes best practices easier to share across the team.",
+        "Outcome / ROI:",
+        "Teams spend less time on trial-and-error and more time working with outputs that are ready for review and reuse. Quality becomes more consistent across users because the request structure is standardized rather than ad hoc.",
+        "This accelerates adoption by making reliable AI usage repeatable across teams and engagements. It also reduces variability in outcomes, which makes governance, training, and continuous improvement more practical."
+      ],
+      "rightBody": [
+        " "
+      ],
+      "iconPlacement": "titleLeft",
+      "icon": "assets/gpt-icons/meta-prompt-icon.jpeg",
+      "style": {
+        "bodyFontSize": 11,
+        "straplineFontSize": 11,
+        "iconSize": 0.62
+      },
+      "screenshotPlaceholder": {
+        "caption": "Show the optimized prompt output ready to copy/paste."
+      }
+    },
+    {
+      "type": "backCover",
+      "disclaimer": "Internal use only",
+      "url": ""
+    }
+  ]
+}

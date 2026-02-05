@@ -1,6 +1,6 @@
 # Deck model (what to edit)
 
-The master deck spec is `samples/ts-custom-gpts-portfolio.json`.
+The master deck spec is `deck/ts-custom-gpts-portfolio.json`.
 
 ## GPT slide shape (one-pager)
 

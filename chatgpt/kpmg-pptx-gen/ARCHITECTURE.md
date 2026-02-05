@@ -1,11 +1,11 @@
 # kpmg-pptx-gen — Architecture
 
-This repo generates brand-compliant PowerPoint decks from structured JSON by extracting a source PPTX template into a code-encoded wrapper, then filling that wrapper with content and rendering QA outputs (PDF/PNGs) for review.
+This repo generates brand-compliant PowerPoint decks from structured JSON by extracting a source PPTX template into a code-encoded wrapper, then filling that wrapper with content and producing strict inspection artifacts (missing required fields, overlaps, out-of-bounds).
 
 ## System boundaries
 
-- In scope: template extraction + codegen, deck generation/builders, sample inputs, QA rendering + compare utilities, baseline references.
-- Out of scope: committing large generated artifacts (PPTX/PDF/PNGs) unless explicitly intended as baselines.
+- In scope: template extraction + codegen, per-template deck generation/builders, sample inputs, strict inspection tooling, baseline references.
+- Out of scope: committing large generated artifacts (PPTX) unless explicitly intended as baselines.
 
 ## Project overview
 
@@ -16,25 +16,22 @@ Plain-language model:
   - `template.json` (tokens + layout metadata)
   - `template.js` (a PptxGenJS wrapper that wires masters and builders together)
 - The generator reads a deck JSON file and produces a new PPTX that matches the template style.
-- QA tools render PPTX → PDF → per-slide PNGs to review and diff changes.
+- Strict inspection writes reports next to the PPTX output (JSON + a short markdown summary).
 
 Core loop:
 
 1. Update template PPTX (if needed)
 2. Regenerate wrapper (`template.js` / `template.json`)
 3. Generate a deck PPTX from a JSON spec
-4. Render PDF/PNGs and review / compare against baselines
+4. Review strict inspection artifacts and spot-check the PPTX
 
 ## Repository layout
 
 ```text
 kpmg-pptx-gen/
   extractor/                 # Python: PPTX parsing + template extraction/codegen
-  generator/                 # Node: PptxGenJS runtime + slide builders
-  qa/                        # Python: PPTX→PDF→PNG rendering + visual compare helpers
-  templates/                 # Source PPTX templates + generated wrappers
-  references/                # Baselines (optional, keep small)
-  samples/                   # Example deck JSON inputs
+  templates/                 # Per-template projects (each has generator/ + samples/ + references/)
+  dist/                      # Downstream “releases” (portable bundles)
   docs/                      # Spec + project plan
 ```
 
@@ -42,7 +39,6 @@ kpmg-pptx-gen/
 
 - Runtime/tooling: Node.js, Python 3
 - Library: PptxGenJS (deck generation)
-- External binaries (optional QA): LibreOffice (`soffice`), poppler (`pdftoppm`)
 - Tests: `python3 -m unittest`
 
 ## Key files (what to read first)
@@ -51,10 +47,9 @@ kpmg-pptx-gen/
 - `docs/PROJECT-PLAN.md` — current plan (what we’re improving next)
 - `cli.py` — entrypoint for template extraction/codegen
 - `templates/kpmg-diligence/template.js` — generated wrapper used to create decks
-- `generator/index.js` — deck generation CLI entrypoint
-- `generator/tokens.js` — typography/colors/layout defaults
-- `generator/builders/` — slide builders (content → PptxGenJS primitives)
-- `qa/render.py` — PPTX→PDF→PNG pipeline
+- `templates/kpmg-diligence/generator/index.js` — deck generation CLI entrypoint
+- `templates/kpmg-diligence/generator/tokens.js` — typography/colors/layout defaults
+- `templates/kpmg-diligence/generator/builders/` — slide builders (content → PptxGenJS primitives)
 
 ## Architecture views
 
@@ -65,32 +60,25 @@ flowchart LR
   A[templates/.../*.pptx] --> B[extractor (Python)]
   B --> C[templates/.../template.json]
   B --> D[templates/.../template.js]
-  E[samples/*.json] --> F[generator (Node/PptxGenJS)]
+  E[templates/.../samples/*.json] --> F[templates/.../generator (Node/PptxGenJS)]
   C --> F
   D --> F
-  F --> G[outputs/*.pptx]
-  G --> H[qa/render.py]
-  H --> I[outputs/*.pdf + outputs/*_pdf_png/*.png]
+  F --> G[outputs/.../*.pptx]
+  G --> H[outputs/.../inspect/*.json + inspection_report.md]
 ```
 
 ### Runtime scenarios
 
 1) Regenerate the template wrapper
-- Entry point: `npm run template:generate` (invokes `cli.py` / extractor codegen)
+- Entry point: `cd templates/kpmg-diligence && npm run template:generate` (invokes `cli.py` / extractor codegen)
 - Result: overwrites `templates/kpmg-diligence/template.js` and `templates/kpmg-diligence/template.json`
 
 2) Generate a deck from JSON
-- Entry point: `node generator/index.js --in <deck.json> --out <deck.pptx>`
+- Entry point: `cd templates/kpmg-diligence && node generator/index.js --in <deck.json> --out <deck.pptx>`
 - Steps:
   - Validate deck spec (`generator/validate.js`)
   - Build PPTX via generated wrapper + builders
-  - Write PPTX to `outputs/` (recommended)
-
-3) Render review images
-- Entry point: `qa/render.py`
-- Steps:
-  - Convert PPTX → PDF (LibreOffice)
-  - Convert PDF → PNGs (poppler)
+  - Write PPTX and strict inspection artifacts under `outputs/`
 
 ## Architecture decisions
 
@@ -104,10 +92,8 @@ flowchart LR
 ## Verification
 
 - Regenerate template wrapper:
-  - `npm run template:generate`
+  - `cd templates/kpmg-diligence && npm run template:generate`
 - Generate a deck:
-  - `RUN_ID=$(date +%Y-%m-%d_%H%M%S); OUT_DIR=outputs/runs/$RUN_ID/nvidia; mkdir -p \"$OUT_DIR\"; node generator/index.js --in samples/v1-nvidia-v2.json --out \"$OUT_DIR/deck.pptx\"`
-- Generate a deck with strict checks (overlap + overflow):
-  - `RUN_ID=$(date +%Y-%m-%d_%H%M%S); OUT_DIR=outputs/runs/$RUN_ID/nvidia; mkdir -p \"$OUT_DIR\"; node generator/index.js --in samples/v1-nvidia-v2.json --out \"$OUT_DIR/deck.pptx\" --strict`
-- Render PNGs:
-  - `python3 -c \"from pathlib import Path; from qa.render import render_pptx_to_pngs_via_pdf; render_pptx_to_pngs_via_pdf(Path('outputs/latest/nvidia/deck.pptx'), Path('outputs/latest/nvidia/deck_pdf_png'))\"`
+  - `cd templates/kpmg-diligence && RUN_ID=$(date +%Y-%m-%d_%H%M%S); OUT_DIR=outputs/runs/$RUN_ID/nvidia; mkdir -p \"$OUT_DIR\"; node generator/index.js --in samples/v1-nvidia-v2.json --out \"$OUT_DIR/deck.pptx\"`
+- Generate a deck without strict checks:
+  - `cd templates/kpmg-diligence && node generator/index.js --in samples/v1-nvidia-v2.json --out outputs/runs/manual/nvidia/deck.pptx --no-strict`

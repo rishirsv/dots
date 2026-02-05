@@ -4,16 +4,17 @@ This folder contains the source template PPTX and the generated wrapper files us
 
 ## Generated files (do not hand-edit)
 
-- `templates/kpmg-diligence/template.js`
-- `templates/kpmg-diligence/template.json`
+- `template.js`
+- `template.json`
 
 ## Regenerate wrapper
 
 ```bash
+cd templates/kpmg-diligence
 npm run template:generate
 ```
 
 ## Where changes go
 
-- If the PPTX template changes: update files in `templates/kpmg-diligence/` and re-run `npm run template:generate`
-- If generation output drifts: update builders/tokens in `generator/`
+- If the PPTX template changes: update files in this folder and re-run `npm run template:generate`
+- If generation output drifts: update builders/tokens under `generator/`

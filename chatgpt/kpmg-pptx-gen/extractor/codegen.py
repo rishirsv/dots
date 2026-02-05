@@ -269,17 +269,17 @@ import path from 'node:path';
 import {{ fileURLToPath }} from 'node:url';
 import PptxGenJS from 'pptxgenjs';
 
-import {{ addCover }} from '../../generator/builders/cover.js';
-import {{ addDivider }} from '../../generator/builders/divider.js';
-import {{ addTwoColumnTextWithStrapline }} from '../../generator/builders/two-column.js';
-import {{ addAnalysisNarrowTable }} from '../../generator/builders/table.js';
-import {{ addAnalysisWideChart2ColsText, addAnalysisWideChartTableText }} from '../../generator/builders/text-chart.js';
-import {{ addSummaryFinancials }} from '../../generator/builders/summary.js';
-import {{ addTitleStrapline4TextBoxes }} from '../../generator/builders/process.js';
-import {{ addBackCover }} from '../../generator/builders/back-cover.js';
-import {{ addOneColumnText }} from '../../generator/builders/one-column.js';
-import {{ paginateDeckSpec }} from '../../generator/runtime/paginate.js';
-import {{ svgToDataUri }} from '../../generator/helpers/svg.js';
+import {{ addCover }} from './generator/builders/cover.js';
+import {{ addDivider }} from './generator/builders/divider.js';
+import {{ addTwoColumnTextWithStrapline }} from './generator/builders/two-column.js';
+import {{ addAnalysisNarrowTable }} from './generator/builders/table.js';
+import {{ addAnalysisWideChart2ColsText, addAnalysisWideChartTableText }} from './generator/builders/text-chart.js';
+import {{ addSummaryFinancials }} from './generator/builders/summary.js';
+import {{ addTitleStrapline4TextBoxes }} from './generator/builders/process.js';
+import {{ addBackCover }} from './generator/builders/back-cover.js';
+import {{ addOneColumnText }} from './generator/builders/one-column.js';
+import {{ paginateDeckSpec }} from './generator/runtime/paginate.js';
+import {{ svgToDataUri }} from './generator/helpers/svg.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

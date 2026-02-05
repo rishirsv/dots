@@ -35,7 +35,13 @@ def cmd_extract(args: argparse.Namespace) -> int:
 def cmd_validate(args: argparse.Namespace) -> int:
     node = _which("node")
     deck = Path(args.infile)
-    p = subprocess.run([node, "generator/validate.js", "--in", str(deck)], capture_output=True, text=True)
+    template_dir = Path(args.template).resolve()
+    p = subprocess.run(
+        [node, "generator/validate.js", "--in", str(deck.resolve())],
+        cwd=str(template_dir),
+        capture_output=True,
+        text=True,
+    )
     sys.stdout.write(p.stdout)
     sys.stderr.write(p.stderr)
     return p.returncode
@@ -48,7 +54,8 @@ def cmd_generate(args: argparse.Namespace) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
 
     p = subprocess.run(
-        [node, "generator/index.js", "--in", str(deck), "--out", str(out)],
+        [node, "generator/index.js", "--in", str(deck.resolve()), "--out", str(out.resolve())],
+        cwd=str(Path(args.template).resolve()),
         capture_output=True,
         text=True,
     )
@@ -68,10 +75,20 @@ def build_parser() -> argparse.ArgumentParser:
     p_extract.set_defaults(fn=cmd_extract)
 
     p_validate = sub.add_parser("validate", help="Validate a content JSON deck spec")
+    p_validate.add_argument(
+        "--template",
+        default="templates/kpmg-diligence",
+        help="Template project directory (contains generator/ and template.js).",
+    )
     p_validate.add_argument("--in", dest="infile", required=True)
     p_validate.set_defaults(fn=cmd_validate)
 
     p_generate = sub.add_parser("generate", help="Generate a pptx from a content JSON deck spec")
+    p_generate.add_argument(
+        "--template",
+        default="templates/kpmg-diligence",
+        help="Template project directory (contains generator/ and template.js).",
+    )
     p_generate.add_argument("--in", dest="infile", required=True)
     p_generate.add_argument("--out", dest="outfile", required=True)
     p_generate.set_defaults(fn=cmd_generate)
@@ -87,4 +104,3 @@ def main(argv: list[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-

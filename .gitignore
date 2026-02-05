@@ -15,7 +15,8 @@ desktop.ini
 *~
 
 # ---- kpmg-pptx-gen ----
-chatgpt/kpmg-pptx-gen/outputs/
+chatgpt/kpmg-pptx-gen/**/outputs/
+chatgpt/kpmg-pptx-gen/**/node_modules/
 chatgpt/kpmg-pptx-gen/**/__pycache__/
 # ---- /kpmg-pptx-gen ----
 

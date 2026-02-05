@@ -1,0 +1,9 @@
+{
+  "name": "kpmg-gpt-inventory-runtime-kpmg-diligence",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "pptxgenjs": "4.0.1"
+  }
+}
+

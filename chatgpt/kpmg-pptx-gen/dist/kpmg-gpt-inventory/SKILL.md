@@ -1,6 +1,7 @@
 ---
 name: kpmg-gpt-inventory
 description: Create and maintain the KPMG Transaction Services “Custom GPT Inventory” PowerPoint deck using kpmg-pptx-gen. Use for: (1) Adding a new GPT one‑pager slide with consistent structure (Problem / How we solve it / Outcome-ROI), (2) Updating copy, icon, or screenshot placeholder captions, (3) Generating the PPTX and rendering slide PNGs for review, and (4) Running an inspection loop that flags layout issues (overlaps/warnings) and produces a review artifact for quick iteration.
+description: Create and maintain the KPMG Transaction Services “Custom GPT Inventory” PowerPoint deck using kpmg-pptx-gen. Use for: (1) Adding a new GPT one‑pager slide with consistent structure (Problem / How we solve it / Outcome-ROI), (2) Updating copy, icon, or screenshot placeholder captions, (3) Generating the PPTX for review, and (4) Running an inspection loop that flags layout issues (overlaps/bounds/warnings) and produces review artifacts for quick iteration.
 ---
 
 # KPMG GPT Inventory (TS) — Portable Skill
@@ -11,10 +12,10 @@ The **right column is always a screenshot placeholder frame** (teams add real sc
 
 ## Source of truth
 
-- Deck spec JSON: `samples/ts-custom-gpts-portfolio.json`
-- Generator entrypoint: `generator/index.js`
-- Validation: `generator/validate.js`
-- Rendering: `qa/render.py` (PPTX → PDF → PNG via poppler)
+- Deck spec JSON: `deck/ts-custom-gpts-portfolio.json`
+- Vendored runtime: `runtime/kpmg-diligence/`
+- Generator entrypoint: `runtime/kpmg-diligence/generator/index.js`
+- Validation: `runtime/kpmg-diligence/generator/validate.js`
 
 ## Quick start (happy path)
 
@@ -67,18 +68,17 @@ Run:
 This will:
 1) Validate the deck spec.
 2) Generate a PPTX into a timestamped `outputs/runs/...` folder.
-3) Render slide PNGs (PPTX → PDF → PNG).
-4) Produce a small inspection report (strict overlap summary + warnings + links/paths).
+3) Produce inspection artifacts next to the PPTX (strict summary + overlap/bounds reports + a short markdown report).
 
 ### What “inspection” means here
 
 - **Automated checks**:
   - Overlap detection (strict mode overlap report).
+  - Out-of-bounds detection (strict bounds report).
   - Missing required slot checks (strict diagnostics).
   - Warnings captured during generation.
 - **Human review**:
-  - Scan the PNGs for clipping, awkward breaks, or crowded text.
-  - If the optional overflow checker dependencies are installed, the strict overflow check will run; otherwise it will be skipped.
+  - Open the PPTX and spot-check layout, especially on long-text slides.
 
 ### Fixing issues (what to change)
 
@@ -91,13 +91,9 @@ Only if needed, adjust layout behavior in the builders (this repo), then rebuild
 
 ## Dependencies (for rendering)
 
-- External binaries:
-  - LibreOffice `soffice`
-  - poppler `pdftoppm` (used to render PDF pages to PNGs)
-- Optional Python deps for deeper strict overflow checks:
-  - `pip install -r requirements/requirements-qa.txt`
+No external rendering binaries are required for this dist bundle.
 
 ## Scripts in this skill
 
 - `scripts/add_gpt.py`: Add a GPT slide entry to the master deck JSON.
-- `scripts/build_inventory_deck.py`: Generate PPTX, render PNGs, and write an inspection report.
+- `scripts/build_inventory_deck.py`: Generate PPTX and write an inspection report.

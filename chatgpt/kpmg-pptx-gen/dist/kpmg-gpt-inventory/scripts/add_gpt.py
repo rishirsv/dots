@@ -74,8 +74,8 @@ def main() -> int:
     p = argparse.ArgumentParser(description="Add a GPT one-pager slide to the TS Custom GPT inventory deck.")
     p.add_argument(
         "--deck-spec",
-        default="samples/ts-custom-gpts-portfolio.json",
-        help="Path to deck spec JSON (relative to kpmg-pptx-gen root).",
+        default="deck/ts-custom-gpts-portfolio.json",
+        help="Path to deck spec JSON (relative to this dist bundle).",
     )
     p.add_argument("--name", required=True, help="GPT name (slide title).")
     p.add_argument("--strapline", required=True, help="1-sentence strapline (no technical terms).")
@@ -103,9 +103,8 @@ def main() -> int:
     )
     args = p.parse_args()
 
-    # Resolve project root from this script location: dist/kpmg-gpt-inventory/scripts
-    project_root = Path(__file__).resolve().parents[3]
-    deck_path = (project_root / args.deck_spec).resolve()
+    dist_root = Path(__file__).resolve().parents[1]
+    deck_path = (dist_root / args.deck_spec).resolve()
     deck = _load_json(deck_path)
 
     slides = deck.get("slides", [])
