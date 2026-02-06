@@ -1,0 +1,4 @@
+interface:
+  display_name: "KPMG Talkbook Copilot"
+  short_description: "Manual co-writing and Talkbook deck builds"
+  default_prompt: "Use this skill to co-write consulting deck content section-by-section, persist to session files, map to Talkbook layouts, and build the deck."

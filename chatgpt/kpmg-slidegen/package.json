@@ -1,0 +1,15 @@
+{
+  "name": "kpmg-slidegen",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "pptxgenjs": "4.0.1"
+  },
+  "scripts": {
+    "gen:cover": "node generator/builders/cover.js",
+    "gen:divider": "node -e \"import PptxGenJS from 'pptxgenjs'; import { addDivider } from './generator/builders/divider.js'; import { ASSETS } from './templates/kpmg-diligence/template.js'; const pptx=new PptxGenJS(); pptx.defineLayout({name:'KPMG_WIDE',width:13.333,height:7.5}); pptx.layout='KPMG_WIDE'; addDivider(pptx,{sectionNumber:'01',sectionTitle:'Executive Summary',assets:{gradientDivider:ASSETS.gradientDivider}}); await pptx.writeFile({fileName:'outputs/divider-test.pptx'});\"",
+    "gen:table": "node generator/builders/table.js",
+    "gen:deck": "node generator/index.js --in samples/demo.json --out outputs/demo.pptx",
+    "template:generate": "python3 cli.py extract --template templates/kpmg-diligence --pptx \"templates/kpmg-diligence/Diligence+ Reporting Template_Widescreen v2.1.pptx\""
+  }
+}
