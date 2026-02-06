@@ -1,0 +1,10 @@
+{
+  "run_id": "20260206-185405",
+  "run_dir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v1-finance-archetype-20260206-185405/outputs/runs/20260206-185405",
+  "accepted": true,
+  "passed_thresholds": true,
+  "require_human_approval": false,
+  "human_approved": false,
+  "rounds_executed": 1,
+  "failures": []
+}

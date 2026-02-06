@@ -1,0 +1,135 @@
+{
+  "session_id": "v2-outline-strategy",
+  "compiled_at": "2026-02-06T21:42:07+00:00",
+  "slide_count": 3,
+  "layout_usage": {
+    "table-insights-two-column": 3
+  },
+  "diagnostics": [
+    {
+      "section_id": "exec-synthesis",
+      "section_title": "Executive Synthesis",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "scored",
+        "intent": "executive-summary",
+        "shape": "table",
+        "variant": "auto",
+        "score": 112,
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": [],
+      "archetype_id": "executive-synthesis",
+      "depth_profile": "detailed",
+      "depth_evaluation": {
+        "depth_profile": "detailed",
+        "minimums": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 3
+        },
+        "actual": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 13
+        },
+        "warnings": []
+      },
+      "outline_section_id": "exec-synthesis",
+      "outline_match": true,
+      "advisory_score": 40
+    },
+    {
+      "section_id": "market-signals",
+      "section_title": "Market and Conversion Signals",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "scored",
+        "intent": "single-story-data",
+        "shape": "table",
+        "variant": "auto",
+        "score": 112,
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": [],
+      "archetype_id": "signal-scan",
+      "depth_profile": "detailed",
+      "depth_evaluation": {
+        "depth_profile": "detailed",
+        "minimums": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 3
+        },
+        "actual": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 8
+        },
+        "warnings": []
+      },
+      "outline_section_id": "market-signals",
+      "outline_match": true,
+      "advisory_score": 40
+    },
+    {
+      "section_id": "swot-assessment",
+      "section_title": "SWOT Assessment",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "scored",
+        "intent": "competitive-landscape",
+        "shape": "table",
+        "variant": "auto",
+        "score": 112,
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": [],
+      "archetype_id": "swot-assessment",
+      "depth_profile": "detailed",
+      "depth_evaluation": {
+        "depth_profile": "detailed",
+        "minimums": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 3
+        },
+        "actual": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 8
+        },
+        "warnings": []
+      },
+      "outline_section_id": "swot-assessment",
+      "outline_match": true,
+      "advisory_score": 40
+    }
+  ],
+  "deterministic_hash": "9266e6ff729250d35740496cc0217af4c072917394b4b2e67b0424a3a77e9285",
+  "workflow": {
+    "mode": "outline_confirm",
+    "stage": "compiled",
+    "outline_required": true
+  },
+  "outline_adherence": {
+    "outline_section_count": 3,
+    "draft_section_count": 3,
+    "unmatched_outline_sections": [],
+    "unmatched_draft_sections": [],
+    "unmatched_ratio": 0.0,
+    "warning": false
+  },
+  "quality_summary": {
+    "section_count": 3,
+    "average_advisory_score": 40.0,
+    "depth_warning_total": 0
+  },
+  "warnings": []
+}

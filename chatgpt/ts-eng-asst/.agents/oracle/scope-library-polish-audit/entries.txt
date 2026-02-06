@@ -1,0 +1,9 @@
+AGENTS.md::Project constraints and hygiene rules
+dist/ts-engagement-assistant.md::Scope review behavior contract
+dist/el-generate.py::Generation and scope inclusion/exclusion logic
+dist/el-placeholder-schema.json::Industry list and variable model
+dist/scope-library.json::Primary scope source under audit
+dist/scope-review-buckets.json::Bucket mapping and alias/concept mapping
+docs/issues.md::Current draft issues report to polish and verify
+docs/mining/audit-mapping.md::Mapping notes for mined-to-library translation
+docs/mining/audit-verification-results.md::Prior audit verification context

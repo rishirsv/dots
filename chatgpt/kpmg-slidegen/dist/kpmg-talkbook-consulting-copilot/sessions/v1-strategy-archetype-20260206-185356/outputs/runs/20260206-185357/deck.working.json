@@ -1,0 +1,125 @@
+{
+  "metadata": {
+    "title": "B2B SaaS Growth Strategy Refresh",
+    "topic": "B2B SaaS growth strategy refresh",
+    "audience": "Executive leadership",
+    "template": "kpmg-talkbook",
+    "compiledAt": "2026-02-06T18:53:57+00:00",
+    "sessionId": "v1-strategy-archetype-20260206-185356",
+    "citationMode": "notes_appendix"
+  },
+  "slides": [
+    {
+      "type": "layout.recommendations-white",
+      "slots": {
+        "text_title": "Executive Synthesis",
+        "text_body": [
+          "Outcome: Expansion to two adjacent segments can add $42-58M ARR over 24 months with controlled CAC paybac",
+          "Growth in core segment is slowing from 22% to 11%, requiring mix diversification.",
+          "Win-rate analysis indicates Segment B has 1.8x conversion versus Segment C at current positioning.",
+          "Main constraint is onboarding capacity, not demand generation; implementation throughput is now the criti",
+          "Recommendation: prioritize Segment B first, then phase Segment C after onboarding redesign in Q3.",
+          "Risk: dilution of enterprise focus; mitigation: dedicated enterprise pod and pricing guardrails.",
+          "Decision required this quarter: approve phased expansion and enablement investment envelope."
+        ],
+        "text_footer_source": [
+          "Internal CRM and pipeline analytics, Jan 2026"
+        ]
+      },
+      "notes": "",
+      "sectionId": "executive-synthesis",
+      "sectionTitle": "Executive Synthesis",
+      "variant": "white"
+    },
+    {
+      "type": "layout.quad-box-icon-center-text",
+      "slots": {
+        "text_title": "SWOT Assessment",
+        "text_q1": "Strength: Net retention in enterprise accounts remains 118% with low logo churn.",
+        "text_q2": "Weakness: Time-to-value averages 61 days, 2.2x peer benchmarks.",
+        "text_q3": "Opportunity: Mid-market compliance segment growing 17% annually with low incumbent depth.",
+        "text_q4": "Threat: Competitors bundling implementation services at discounted rates.",
+        "text_center_body": "Strength: Net retention in enterprise accounts remains 118% with low logo churn.",
+        "icon_1": "placeholder://icon",
+        "icon_2": "placeholder://icon",
+        "icon_3": "placeholder://icon",
+        "icon_4": "placeholder://icon",
+        "text_footer_source": [
+          "Market benchmark panel 2025",
+          "Customer onboarding ops data"
+        ]
+      },
+      "notes": "",
+      "sectionId": "swot-assessment",
+      "sectionTitle": "SWOT Assessment",
+      "variant": "white"
+    },
+    {
+      "type": "layout.two-column-comparison",
+      "slots": {
+        "text_title": "Option Tradeoff",
+        "text_left_body": [
+          "Option A (Broad expansion): fastest top-line upside, highest execution risk, weaker focus.",
+          "Option B (Phased expansion): moderate upside, stronger conversion confidence, manageable capacity risk.",
+          "Option C (Core-only optimization): lowest risk, but limited growth headroom."
+        ],
+        "text_right_body": [
+          "Criteria weighting: growth potential (35), execution risk (30), payback speed (20), strategic fit (15).",
+          "Recommendation: Option B because weighted score is highest under base and downside assumptions."
+        ],
+        "text_left_header": "Option A",
+        "text_right_header": "Option B",
+        "text_footer_source": [
+          "Growth strategy model v4"
+        ]
+      },
+      "notes": "",
+      "sectionId": "option-tradeoff",
+      "sectionTitle": "Option Tradeoff",
+      "variant": "white"
+    },
+    {
+      "type": "layout.timeline-milestones",
+      "slots": {
+        "text_title": "Implementation Roadmap And Risks",
+        "text_body": [
+          "Month 0-2: finalize segment playbook and enable dedicated GTM pod.",
+          "Month 2-4: redesign onboarding workflow and reduce handoff latency by 30%.",
+          "Month 4-6: launch Segment B with weekly conversion and cycle-time governanc",
+          "Month 6-9: readiness gate for Segment C based on capacity and payback metri",
+          "Key risk: onboarding queue overload; mitigation: capacity trigger threshold",
+          "KPI set: ARR pipeline quality, conversion, CAC payback, onboarding cycle ti"
+        ],
+        "text_footer_source": [
+          "PMO plan draft"
+        ]
+      },
+      "notes": "",
+      "sectionId": "implementation-roadmap-and-risks",
+      "sectionTitle": "Implementation Roadmap And Risks",
+      "variant": "white"
+    }
+  ],
+  "appendixSources": [
+    {
+      "label": "Internal CRM and pipeline analytics, Jan 2026",
+      "url": null
+    },
+    {
+      "label": "Market benchmark panel 2025",
+      "url": null
+    },
+    {
+      "label": "Customer onboarding ops data",
+      "url": null
+    },
+    {
+      "label": "Growth strategy model v4",
+      "url": null
+    },
+    {
+      "label": "PMO plan draft",
+      "url": null
+    }
+  ]
+}

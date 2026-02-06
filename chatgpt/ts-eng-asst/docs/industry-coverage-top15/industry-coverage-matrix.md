@@ -4,7 +4,7 @@ This project treats `INDUSTRY` as the **target operating industry** that drives 
 
 ## Current supported `INDUSTRY` keys (before Top-15 expansion)
 
-From `dist/fdd_scope_library.v2.json` (industry modules present):
+From `dist/scope-library.json` (industry modules present):
 
 - `construction`
 - `eyecare`

@@ -1,0 +1,135 @@
+{
+  "session_id": "v2-oneshot-finance",
+  "compiled_at": "2026-02-06T21:42:28+00:00",
+  "slide_count": 3,
+  "layout_usage": {
+    "table-insights-two-column": 3
+  },
+  "diagnostics": [
+    {
+      "section_id": "qoe-overview",
+      "section_title": "Quality Of Earnings Overview",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "scored",
+        "intent": "table-analysis",
+        "shape": "table",
+        "variant": "auto",
+        "score": 212,
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": [],
+      "archetype_id": "qoe-bridge",
+      "depth_profile": "detailed",
+      "depth_evaluation": {
+        "depth_profile": "detailed",
+        "minimums": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 3
+        },
+        "actual": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 8
+        },
+        "warnings": []
+      },
+      "outline_section_id": "qoe-overview",
+      "outline_match": true,
+      "advisory_score": 40
+    },
+    {
+      "section_id": "pl-walkthrough",
+      "section_title": "P&L Walkthrough",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "scored",
+        "intent": "table-analysis",
+        "shape": "table",
+        "variant": "auto",
+        "score": 212,
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": [],
+      "archetype_id": "pl-walkthrough",
+      "depth_profile": "detailed",
+      "depth_evaluation": {
+        "depth_profile": "detailed",
+        "minimums": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 3
+        },
+        "actual": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 6
+        },
+        "warnings": []
+      },
+      "outline_section_id": "pl-walkthrough",
+      "outline_match": true,
+      "advisory_score": 40
+    },
+    {
+      "section_id": "margin-bridge",
+      "section_title": "Margin Bridge",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "scored",
+        "intent": "multi-driver-analysis",
+        "shape": "table",
+        "variant": "auto",
+        "score": 112,
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": [],
+      "archetype_id": "margin-bridge",
+      "depth_profile": "detailed",
+      "depth_evaluation": {
+        "depth_profile": "detailed",
+        "minimums": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 3
+        },
+        "actual": {
+          "claims": 4,
+          "evidence_objects": 2,
+          "implications": 2,
+          "numeric_anchors": 9
+        },
+        "warnings": []
+      },
+      "outline_section_id": "margin-bridge",
+      "outline_match": true,
+      "advisory_score": 40
+    }
+  ],
+  "deterministic_hash": "5b1e6e3406b8c89d4e3bcacef5b824ddbfc05d11e7a1b8c41ba49ddbd8071553",
+  "workflow": {
+    "mode": "one_shot",
+    "stage": "compiled",
+    "outline_required": false
+  },
+  "outline_adherence": {
+    "outline_section_count": 3,
+    "draft_section_count": 3,
+    "unmatched_outline_sections": [],
+    "unmatched_draft_sections": [],
+    "unmatched_ratio": 0.0,
+    "warning": false
+  },
+  "quality_summary": {
+    "section_count": 3,
+    "average_advisory_score": 40.0,
+    "depth_warning_total": 0
+  },
+  "warnings": []
+}

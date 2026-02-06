@@ -80,7 +80,7 @@ def main() -> None:
     parser.add_argument("--industry", default="healthcare", help="Industry key (e.g., healthcare, tech)")
     parser.add_argument(
         "--scope-library",
-        default=str(PROJECT_ROOT / "dist" / "fdd_scope_library.v2.json"),
+        default=str(PROJECT_ROOT / "dist" / "scope-library.json"),
         help="Path to scope library JSON",
     )
     parser.add_argument(

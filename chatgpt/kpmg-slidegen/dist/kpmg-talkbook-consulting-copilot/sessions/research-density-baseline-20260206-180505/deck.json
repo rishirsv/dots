@@ -1,0 +1,283 @@
+{
+  "metadata": {
+    "title": "U.S. Data Center Power Demand and Grid Readiness (2026)",
+    "topic": "U.S. data center power demand and grid readiness",
+    "audience": "Executive leadership",
+    "template": "kpmg-talkbook",
+    "compiledAt": "2026-02-06T18:05:06+00:00",
+    "sessionId": "research-density-baseline-20260206-180505",
+    "citationMode": "notes_appendix"
+  },
+  "slides": [
+    {
+      "type": "layout.recommendations-white",
+      "slots": {
+        "text_title": "Executive Summary",
+        "text_body": [
+          "U.S. electricity demand growth has re-accelerated, with data centers now a core structural driver rather",
+          "DOE/LBNL estimate data center load rose from 58 TWh (2014) to 176 TWh (2023), with a 2028 range of 325-58",
+          "Data centers represented ~4.4% of U.S. electricity in 2023 and are projected at ~6.7-12% by 2028.",
+          "EIA projects U.S. electricity use growth of 1% in 2026 and 3% in 2027, the strongest 4-year run since 200",
+          "IEA estimates U.S. data center demand around 180 TWh in 2024 and ~+240 TWh by 2030 vs. 2024 levels.",
+          "Grid operators are revising long-term peaks upward; PJM now models materially higher summer and winter pe",
+          "Winning playbooks combine faster interconnection governance, flexible load design, and generation/transmi",
+          "Near-term bottlenecks are less about annual energy and more about coincident peak, queue uncertainty, and",
+          "Leadership teams need a portfolio view: demand quality, locational strategy, and pace-layered supply cont"
+        ],
+        "text_footer_source": [
+          "https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers",
+          "https://www.eia.gov/pressroom/releases/press582.php",
+          "https://www.iea.org/reports/electricity-mid-year-update-2025/demand-global-electricity-use-to-grow-strongly-in-2025-and-2026"
+        ]
+      },
+      "notes": "",
+      "sectionId": "executive-summary",
+      "sectionTitle": "Executive Summary",
+      "variant": "white"
+    },
+    {
+      "type": "layout.3-column-chart-text",
+      "slots": {
+        "text_title": "Demand Growth Curve (2014-2030)",
+        "text_left_body": [
+          "2014: 58",
+          "2023: 176",
+          "2024: 180",
+          "2028 Low: 325"
+        ],
+        "text_center_body": "2014: 58",
+        "chart_main": [
+          {
+            "label": "2014",
+            "value": 58.0
+          },
+          {
+            "label": "2023",
+            "value": 176.0
+          },
+          {
+            "label": "2024",
+            "value": 180.0
+          },
+          {
+            "label": "2028 Low",
+            "value": 325.0
+          },
+          {
+            "label": "2028 High",
+            "value": 580.0
+          },
+          {
+            "label": "2030 Increment vs 2024",
+            "value": 240.0
+          }
+        ],
+        "text_right_body": [
+          "2028 High: 580",
+          "2030 Increment vs 2024: 240",
+          "The range shape implies planning against both a base and stress case, not a single-point forecast.",
+          "Upside cases are dominated by accelerated AI server deployment and cooling intensity."
+        ],
+        "text_footer_source": [
+          "https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers",
+          "https://www.iea.org/reports/electricity-mid-year-update-2025/demand-global-electricity-use-to-grow-strongly-in-2025-and-2026"
+        ]
+      },
+      "notes": "",
+      "sectionId": "demand-growth-curve-2014-2030",
+      "sectionTitle": "Demand Growth Curve (2014-2030)",
+      "variant": "white"
+    },
+    {
+      "type": "layout.table-insights-two-column",
+      "slots": {
+        "text_title": "U.S. Power System Signals (2024-2027)",
+        "table_main": [
+          [
+            "Indicator",
+            "2024",
+            "2025",
+            "2026",
+            "2027"
+          ],
+          [
+            "U.S. electricity demand growth",
+            "2.1%",
+            "2.3%",
+            "2.2%",
+            "3.0%*"
+          ],
+          [
+            "U.S. data center electricity use (TWh)",
+            "~180",
+            "n/a",
+            "n/a",
+            "n/a"
+          ],
+          [
+            "U.S. electricity use growth (EIA STEO)",
+            "n/a",
+            "n/a",
+            "1.0%",
+            "3.0%"
+          ],
+          [
+            "Natural gas generation share (EIA)",
+            "n/a",
+            "40%",
+            "39%",
+            "39%"
+          ],
+          [
+            "Wind generation share (EIA)",
+            "n/a",
+            "11%",
+            "11%",
+            "12%"
+          ]
+        ],
+        "text_right_body": [
+          "Signal consistency across IEA and EIA supports a sustained demand-up regime."
+        ],
+        "text_footer_source": [
+          "https://www.eia.gov/pressroom/releases/press582.php",
+          "https://www.iea.org/reports/electricity-mid-year-update-2025/demand-global-electricity-use-to-grow-strongly-in-2025-and-2026"
+        ]
+      },
+      "notes": "",
+      "sectionId": "u-s-power-system-signals-2024-2027",
+      "sectionTitle": "U.S. Power System Signals (2024-2027)",
+      "variant": "white"
+    },
+    {
+      "type": "layout.risks-mitigations",
+      "slots": {
+        "text_title": "Regional Reliability Stress: PJM Case",
+        "text_left_body": [
+          "Risk: Summer peak grows to >241 GW over 15 years, outrunning historical planning assumptions.",
+          "Risk: Winter peak gap narrows, reducing seasonal flexibility in reserve planning.",
+          "Risk: Large-load timing uncertainty complicates transmission and capacity procurement.",
+          "Risk: Local congestion and deliverability constraints increase curtailment/cost risk."
+        ],
+        "text_right_body": [
+          "Mitigation: Stage data center energization gates to verified network readiness milestones.",
+          "Mitigation: Procure flexible demand operations (onsite backup/storage/demand response) for peak",
+          "Mitigation: Use dual-path supply strategy (firm + renewable + balancing) with explicit location",
+          "Mitigation: Build utility/operator planning cells that continuously re-forecast load realizatio"
+        ],
+        "text_footer_source": [
+          "https://insidelines.pjm.com/pjms-updated-20-year-forecast-continues-to-see-significant-long-term-load-growth/"
+        ]
+      },
+      "notes": "",
+      "sectionId": "regional-reliability-stress-pjm-case",
+      "sectionTitle": "Regional Reliability Stress: PJM Case",
+      "variant": "white"
+    },
+    {
+      "type": "layout.two-column-comparison",
+      "slots": {
+        "text_title": "Supply Stack Implications",
+        "text_left_body": [
+          "Renewables: fast deployment, strong corporate procurement fit, but intermittency requires balancing tools.",
+          "Natural gas: dispatchable bridge for reliability; fuel and permitting risk require portfolio hedging.",
+          "Nuclear/geothermal: strategic long-term firming options, slower commercialization cycles."
+        ],
+        "text_right_body": [
+          "Storage: critical for intraday balancing and peak shaving, less effective for prolonged deficits alone.",
+          "Left side (Speed): renewables + targeted gas + storage provide near-term capacity velocity.",
+          "Right side (Durability): transmission + firm low-carbon assets anchor long-horizon reliability economics."
+        ],
+        "text_left_header": "Option A",
+        "text_right_header": "Option B",
+        "text_footer_source": [
+          "https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai",
+          "https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers"
+        ]
+      },
+      "notes": "",
+      "sectionId": "supply-stack-implications",
+      "sectionTitle": "Supply Stack Implications",
+      "variant": "white"
+    },
+    {
+      "type": "layout.timeline-milestones",
+      "slots": {
+        "text_title": "12-Month Utility-Scale Action Plan",
+        "text_body": [
+          "Month 0-2: Build large-load registry, confidence-score pipeline projects, a",
+          "Month 2-4: Segment projects by energization criticality and locational grid",
+          "Month 4-6: Contract flexible load packages and initiate transmission-ready",
+          "Month 6-9: Lock medium-term supply portfolio and trigger phased interconnec",
+          "Month 9-12: Run reliability drills (summer/winter stress) and re-baseline q",
+          "KPI 1: % of load with validated network deliverability.",
+          "KPI 2: MW of flexible load under executable control.",
+          "KPI 3: Variance between forecast and realized energization dates."
+        ],
+        "text_footer_source": []
+      },
+      "notes": "",
+      "sectionId": "12-month-utility-scale-action-plan",
+      "sectionTitle": "12-Month Utility-Scale Action Plan",
+      "variant": "white"
+    },
+    {
+      "type": "layout.appendix-sources",
+      "slots": {
+        "text_title": "Source Appendix",
+        "text_body": [
+          "DOE press release on 2024 LBNL update (Dec 20, 2024).",
+          "LBNL 2024 U.S. Data Center Energy Usage Report (DOI metadata page).",
+          "EIA press release on Jan 2026 STEO demand update.",
+          "IEA Electricity Mid-Year Update 2025 (demand section).",
+          "IEA Electricity 2025 (demand chapter).",
+          "IEA Energy and AI (energy demand from AI chapter).",
+          "PJM updated 20-year long-term load forecast post."
+        ],
+        "text_footer_source": [
+          "https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers",
+          "https://energyanalysis.lbl.gov/publications/2024-lbnl-data-center-energy-usage-report",
+          "https://www.eia.gov/pressroom/releases/press582.php",
+          "https://www.iea.org/reports/electricity-mid-year-update-2025/demand-global-electricity-use-to-grow-strongly-in-2025-and-2026",
+          "https://www.iea.org/reports/electricity-2025/demand",
+          "https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai",
+          "https://insidelines.pjm.com/pjms-updated-20-year-forecast-continues-to-see-significant-long-term-load-growth/"
+        ]
+      },
+      "notes": "",
+      "sectionId": "source-appendix",
+      "sectionTitle": "Source Appendix",
+      "variant": "white"
+    }
+  ],
+  "appendixSources": [
+    {
+      "label": "https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers",
+      "url": "https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers"
+    },
+    {
+      "label": "https://www.eia.gov/pressroom/releases/press582.php",
+      "url": "https://www.eia.gov/pressroom/releases/press582.php"
+    },
+    {
+      "label": "https://www.iea.org/reports/electricity-mid-year-update-2025/demand-global-electricity-use-to-grow-strongly-in-2025-and-2026",
+      "url": "https://www.iea.org/reports/electricity-mid-year-update-2025/demand-global-electricity-use-to-grow-strongly-in-2025-and-2026"
+    },
+    {
+      "label": "https://insidelines.pjm.com/pjms-updated-20-year-forecast-continues-to-see-significant-long-term-load-growth/",
+      "url": "https://insidelines.pjm.com/pjms-updated-20-year-forecast-continues-to-see-significant-long-term-load-growth/"
+    },
+    {
+      "label": "https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai",
+      "url": "https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai"
+    },
+    {
+      "label": "https://energyanalysis.lbl.gov/publications/2024-lbnl-data-center-energy-usage-report",
+      "url": "https://energyanalysis.lbl.gov/publications/2024-lbnl-data-center-energy-usage-report"
+    },
+    {
+      "label": "https://www.iea.org/reports/electricity-2025/demand",
+      "url": "https://www.iea.org/reports/electricity-2025/demand"
+    }
+  ]
+}

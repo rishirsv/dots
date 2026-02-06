@@ -1,0 +1,187 @@
+{
+  "version": "1.0",
+  "session_id": "v1-finance-archetype-20260206-185405",
+  "topic": "Transaction services profitability normalization",
+  "created_at": "2026-02-06T18:54:05+00:00",
+  "updated_at": "2026-02-06T18:54:12+00:00",
+  "deck": {
+    "title": "Transaction Services Profitability Normalization",
+    "audience": "Executive leadership",
+    "target_slides": 8,
+    "template": "kpmg-talkbook",
+    "mode": "manual"
+  },
+  "settings": {
+    "citation_mode": "notes_appendix",
+    "strict_mode": true,
+    "manual_only": true
+  },
+  "sections": [
+    {
+      "id": "p-l-walkthrough",
+      "title": "P&L Walkthrough",
+      "intent": "analysis",
+      "content": "| Line item | FY22 | FY23 | TTM Jun-24 |\n| --- | --- | --- | --- |\n| Revenue | 512 | 588 | 624 |\n| Gross profit | 392 | 459 | 491 |\n| EBITDA | 118 | 147 | 161 |\n| EBITDA margin | 23.0% | 25.0% | 25.8% |\n- Revenue growth is mainly transaction volume-led with selective pricing uplift in enterprise channels.\n- Gross margin expansion reflects better pass-through recovery and processing efficiency.\n- EBITDA conversion improved despite reinvestment in support capacity.",
+      "layout_slug": "table-insights-two-column",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Internal management accounts",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T18:54:05+00:00",
+      "updated_at": "2026-02-06T18:54:05+00:00",
+      "order": 10
+    },
+    {
+      "id": "margin-bridge",
+      "title": "Margin Bridge",
+      "intent": "multi-driver-analysis",
+      "content": "- Baseline margin FY22: 23.0\n- Mix shift contribution: 1.2\n- Pricing contribution: 0.9\n- Productivity contribution: 1.1\n- Inflation and support drag: -0.4\n- Net margin TTM Jun-24: 25.8\n- Bridge indicates expansion is quality-led rather than one-off accounting effects.",
+      "layout_slug": "2-column-chart",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Finance bridge workbook",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T18:54:05+00:00",
+      "updated_at": "2026-02-06T18:54:05+00:00",
+      "order": 20
+    },
+    {
+      "id": "qofe-style-adjustments",
+      "title": "QofE-Style Adjustments",
+      "intent": "recommendations",
+      "content": "- Adj #1: remove non-recurring settlement credit (+2.1 EBITDA impact).\n- Adj #2: normalize staffing to run-rate after temporary vacancy lag (-1.3 EBITDA impact).\n- Adj #3: align support software costs to contracted run-rate (-0.7 EBITDA impact).\n- Reported EBITDA margin: 25.8%; normalized EBITDA margin: 25.1%.\n- Interpretation: earnings quality remains strong; normalization reduces upside narrative but improves comparability.",
+      "layout_slug": "recommendations-white",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "QofE adjustment memo",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T18:54:05+00:00",
+      "updated_at": "2026-02-06T18:54:05+00:00",
+      "order": 30
+    },
+    {
+      "id": "net-working-capital-walkthrough",
+      "title": "Net Working Capital Walkthrough",
+      "intent": "risk",
+      "content": "- Risk: DSO expansion in Q2 inflates reported working capital need.\n- Risk: AP timing normalization may reduce temporary cash benefit in H2.\n- Risk: settlement receivable volatility can distort month-end liquidity view.\n- Mitigation: implement weekly receivables intervention for top 20 aging accounts.\n- Mitigation: align payment scheduling policy with vendor criticality tiers.\n- Mitigation: add liquidity trigger thresholds tied to DSO and conversion rates.",
+      "layout_slug": "risks-mitigations",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Treasury and controllership review",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T18:54:05+00:00",
+      "updated_at": "2026-02-06T18:54:05+00:00",
+      "order": 40
+    }
+  ],
+  "sources": [
+    {
+      "label": "Internal management accounts",
+      "url": null
+    },
+    {
+      "label": "Finance bridge workbook",
+      "url": null
+    },
+    {
+      "label": "QofE adjustment memo",
+      "url": null
+    },
+    {
+      "label": "Treasury and controllership review",
+      "url": null
+    }
+  ],
+  "actions": [
+    {
+      "timestamp": "2026-02-06T18:54:05+00:00",
+      "action": "session_started",
+      "details": {
+        "topic": "Transaction services profitability normalization",
+        "target_slides": 8,
+        "citation_mode": "notes_appendix"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T18:54:05+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "p-l-walkthrough",
+        "intent": "analysis",
+        "layout_slug": "table-insights-two-column",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T18:54:05+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "margin-bridge",
+        "intent": "multi-driver-analysis",
+        "layout_slug": "2-column-chart",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T18:54:05+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "qofe-style-adjustments",
+        "intent": "recommendations",
+        "layout_slug": "recommendations-white",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T18:54:05+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "net-working-capital-walkthrough",
+        "intent": "risk",
+        "layout_slug": "risks-mitigations",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T18:54:05+00:00",
+      "action": "compile_deck_json",
+      "details": {
+        "out": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v1-finance-archetype-20260206-185405/deck.json",
+        "report": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v1-finance-archetype-20260206-185405/compile_report.json",
+        "slide_count": 4,
+        "missing_required_total": 0,
+        "deterministic_hash": "3fc61db150b285bb550c4c4867834686a7a64d51e80f11d6f1377373d6a8f9ab"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T18:54:12+00:00",
+      "action": "build_deck",
+      "details": {
+        "out_dir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v1-finance-archetype-20260206-185405/outputs/runs/20260206-185405",
+        "iterative": true,
+        "strict": true,
+        "status_code": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "valid": true,
+  "validationErrors": [],
+  "overlaps": {
+    "slideCount": 4,
+    "overlapCount": 2,
+    "severeCount": 0,
+    "warningCount": 2,
+    "containmentCount": 0
+  },
+  "bounds": {
+    "slideCount": 4,
+    "outOfBoundsCount": 0,
+    "dimensions": {
+      "w": 13.333,
+      "h": 7.5
+    }
+  },
+  "warnings": [],
+  "missingSlots": [],
+  "fallbacks": []
+}

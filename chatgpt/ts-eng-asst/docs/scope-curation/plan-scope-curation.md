@@ -131,7 +131,7 @@ Give users control over what scope content is inserted, with defaults that avoid
 
 Fix “sub-analysis is not visually nested” by making nesting explicit in the JSON and having the generator honor it.
 
-- [ ] 4.0 Extend `dist/fdd_scope_library.v2.json` to support nested bullets
+- [ ] 4.0 Extend `dist/scope-library.json` to support nested bullets
   - [ ] 4.1 New bullet representation (supports nesting + stable ids)
     - `ScopeBullet = {"id": "revenue_analysis.99519c05", "text": "…including:", "children": [ScopeBullet, ...]}`
     - Backward compatibility: generator supports both legacy string bullets and new objects during migration
@@ -144,7 +144,7 @@ Fix “sub-analysis is not visually nested” by making nesting explicit in the 
     - [x] 4.3.1 Produce a markdown report showing the exact parent/child structure per section and per industry
     - [ ] 4.3.2 Review the report for obvious mis-groupings; adjust rules or add small explicit overrides where needed
   - [ ] 4.4 Apply the migration to the scope library files
-    - [ ] 4.4.1 Update `dist/fdd_scope_library.v2.json` (used by the GPT + dist generator)
+    - [ ] 4.4.1 Update `dist/scope-library.json` (used by the GPT + dist generator)
     - [ ] 4.4.2 Keep `reference/fdd_scope_library.json` in sync (used by existing local test scripts)
   - [ ] 4.5 Validation: spot-check a few known-problem sequences to confirm nesting/indentation matches the intended hierarchy
 
@@ -180,7 +180,7 @@ Today, each section’s bullets are a flat list of strings. During implementatio
 - The user-facing Canvas checklist shows ids only for **top-level** bullets; children follow the parent automatically.
 
 3) Keep both scope library copies in sync
-- `dist/fdd_scope_library.v2.json` is the one referenced by the GPT/generator in dist.
+- `dist/scope-library.json` is the one referenced by the GPT/generator in dist.
 - `reference/fdd_scope_library.json` is used by existing local scripts; keep it identical to avoid drift.
 
 ### Phase 5: Update the generator to render nested bullets + apply selection
@@ -208,7 +208,7 @@ Confirm the overall experience is simpler and the generated document looks corre
 **Key files:**
 - `chatgpt/ts-sow/dist/ts-engagement-assistant.md`: current system prompt that defines the ChatGPT user flow and Canvas rules
 - `chatgpt/ts-sow/dist/el-placeholder-schema.json`: source of truth for all placeholders, required flags, and grouping metadata
-- `chatgpt/ts-sow/dist/fdd_scope_library.v2.json`: industry scope content with nesting/ids for selection + indentation
+- `chatgpt/ts-sow/dist/scope-library.json`: industry scope content with nesting/ids for selection + indentation
 - `chatgpt/ts-sow/dist/el-generate.py`: generation pipeline; scope insertion + indentation logic lives here
 - `chatgpt/ts-sow/scripts/test-scope-replacement.py`: likely place for an automated “generate and inspect” check
 

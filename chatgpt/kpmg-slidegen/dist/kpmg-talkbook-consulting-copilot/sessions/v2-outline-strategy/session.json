@@ -1,0 +1,551 @@
+{
+  "version": "2.0",
+  "session_id": "v2-outline-strategy",
+  "topic": "B2B expansion strategy with conversion constraints",
+  "created_at": "2026-02-06T21:42:06+00:00",
+  "updated_at": "2026-02-06T21:42:13+00:00",
+  "deck": {
+    "title": "B2B expansion strategy with conversion constraints",
+    "audience": "Executive leadership",
+    "target_slides": 8,
+    "template": "kpmg-talkbook",
+    "mode": "manual"
+  },
+  "settings": {
+    "citation_mode": "notes_appendix",
+    "strict_mode": true,
+    "manual_only": true,
+    "depth_profile": "detailed"
+  },
+  "workflow": {
+    "mode": "outline_confirm",
+    "stage": "compiled",
+    "outline_required": true,
+    "outline_approval": {
+      "status": "approved",
+      "timestamp": "2026-02-06T21:42:06+00:00",
+      "rationale": "Validated outline before drafting for strategy scenario.",
+      "approval_source": "user_confirmed"
+    }
+  },
+  "outline": {
+    "sections": [
+      {
+        "section_id": "exec-synthesis",
+        "title": "Executive Synthesis",
+        "intent": "executive-summary",
+        "archetype_id": "executive-synthesis",
+        "depth_profile": "detailed",
+        "evidence_plan": [
+          "kpi table",
+          "trend chart"
+        ],
+        "decision_purpose": "Confirm segment sequencing and enablement spend."
+      },
+      {
+        "section_id": "market-signals",
+        "title": "Market and Conversion Signals",
+        "intent": "single-story-data",
+        "archetype_id": "signal-scan",
+        "depth_profile": "detailed",
+        "evidence_plan": [
+          "benchmark chart",
+          "driver bullets"
+        ],
+        "decision_purpose": "Validate growth assumptions for Segment B first."
+      },
+      {
+        "section_id": "swot-assessment",
+        "title": "SWOT Assessment",
+        "intent": "competitive-landscape",
+        "archetype_id": "swot-assessment",
+        "depth_profile": "detailed",
+        "evidence_plan": [
+          "2x2 matrix",
+          "risk implication bullets"
+        ],
+        "decision_purpose": "Stress-test readiness risks before expansion approval."
+      }
+    ],
+    "assumptions": [
+      "Market benchmark panel reflects Q4 2025 conversion rates.",
+      "Sales operations data covers enterprise and mid-market cohorts."
+    ],
+    "updated_at": "2026-02-06T21:42:06+00:00"
+  },
+  "sections": [
+    {
+      "id": "exec-synthesis",
+      "title": "Executive Synthesis",
+      "intent": "executive-summary",
+      "content": "Two-phase expansion can add $42-58M ARR over 24 months if onboarding throughput is fixed before Segment C launch.\n- Core segment growth slowed from 22% in FY23 to 11% in FY25, requiring adjacent-segment mix shift.\n- Segment B win-rate is 28.0% versus Segment C at 15.6%, supporting B-first sequencing.\n- Average sales cycle is 73 days versus 54-day target, showing implementation capacity as the gating constraint.\n- Price realization remains above 96% in enterprise, limiting downside from focused expansion.\n- Strategic implication: Approve Segment B commercialization immediately and ring-fence onboarding headcount in Q2.\n- Strategic implication: Gate Segment C launch on cycle-time KPI <= 61 days for two consecutive months.\n- Decision required: Approve phased expansion and a capped enablement budget of $4.2M for onboarding redesign.",
+      "layout_slug": null,
+      "archetype_id": "executive-synthesis",
+      "outline_section_id": "exec-synthesis",
+      "depth_profile": "detailed",
+      "variant": "auto",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Internal CRM conversion extract Jan-2026",
+          "url": null
+        },
+        {
+          "label": "RevOps cycle-time dashboard Q4-2025",
+          "url": null
+        },
+        {
+          "label": "Pricing realization tracker FY24-FY25",
+          "url": null
+        }
+      ],
+      "authoring_payload": {
+        "headline_claim": "Two-phase expansion can add $42-58M ARR over 24 months if onboarding throughput is fixed before Segment C launch.",
+        "claims": [
+          "Core segment growth slowed from 22% in FY23 to 11% in FY25, requiring adjacent-segment mix shift.",
+          "Segment B win-rate is 28.0% versus Segment C at 15.6%, supporting B-first sequencing.",
+          "Average sales cycle is 73 days versus 54-day target, showing implementation capacity as the gating constraint.",
+          "Price realization remains above 96% in enterprise, limiting downside from focused expansion."
+        ],
+        "evidence_objects": [
+          {
+            "type": "table",
+            "title": "Expansion economics summary",
+            "headers": [
+              "Metric",
+              "Current",
+              "Phase 1 target",
+              "Phase 2 target"
+            ],
+            "rows": [
+              [
+                "ARR uplift ($M)",
+                "0",
+                "24",
+                "42-58"
+              ],
+              [
+                "Segment B win-rate",
+                "28.0%",
+                "29.5%",
+                "31.0%"
+              ],
+              [
+                "Sales cycle (days)",
+                "73",
+                "61",
+                "54"
+              ],
+              [
+                "CAC payback (months)",
+                "17",
+                "16",
+                "15"
+              ]
+            ]
+          },
+          {
+            "type": "chart",
+            "title": "Conversion and cycle trend",
+            "points": [
+              [
+                "Segment B conversion",
+                28.0
+              ],
+              [
+                "Segment C conversion",
+                15.6
+              ],
+              [
+                "Current sales cycle",
+                73
+              ],
+              [
+                "Post-redesign target",
+                54
+              ]
+            ]
+          }
+        ],
+        "implications": [
+          "Approve Segment B commercialization immediately and ring-fence onboarding headcount in Q2.",
+          "Gate Segment C launch on cycle-time KPI <= 61 days for two consecutive months."
+        ],
+        "decision_ask": "Approve phased expansion and a capped enablement budget of $4.2M for onboarding redesign.",
+        "source_anchors": [
+          "Internal CRM conversion extract Jan-2026",
+          "RevOps cycle-time dashboard Q4-2025",
+          "Pricing realization tracker FY24-FY25"
+        ]
+      },
+      "created_at": "2026-02-06T21:42:06+00:00",
+      "updated_at": "2026-02-06T21:42:06+00:00",
+      "order": 10
+    },
+    {
+      "id": "market-signals",
+      "title": "Market and Conversion Signals",
+      "intent": "single-story-data",
+      "content": "Demand signals support expansion, but conversion and cycle metrics require operational conditioning to monetize growth.\n- U.S. compliance spend growth is 9.4% versus 5.8% GDP growth, expanding TAM faster than baseline planning assumptions.\n- Adjacent segment annual growth is 17.0% with low incumbent penetration in top-50 target accounts.\n- Segment B conversion at 28.0% is 1.8x Segment C at 15.6%, indicating clear near-term prioritization.\n- Cycle time at 73 days implies a 19-day gap to target that suppresses quarterly bookings velocity.\n- Strategic implication: Retain growth thesis but sequence go-to-market by conversion quality, not TAM alone.\n- Strategic implication: Make onboarding cycle reduction the lead KPI in executive weekly reviews until threshold is reached.\n- Decision required: Confirm Segment B-first deployment plan and authorize cycle-time remediation workstream.",
+      "layout_slug": null,
+      "archetype_id": "signal-scan",
+      "outline_section_id": "market-signals",
+      "depth_profile": "detailed",
+      "variant": "auto",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Market benchmark panel 2025",
+          "url": null
+        },
+        {
+          "label": "Internal CRM funnel diagnostics Jan-2026",
+          "url": null
+        },
+        {
+          "label": "Operations SLA audit Q4-2025",
+          "url": null
+        }
+      ],
+      "authoring_payload": {
+        "headline_claim": "Demand signals support expansion, but conversion and cycle metrics require operational conditioning to monetize growth.",
+        "claims": [
+          "U.S. compliance spend growth is 9.4% versus 5.8% GDP growth, expanding TAM faster than baseline planning assumptions.",
+          "Adjacent segment annual growth is 17.0% with low incumbent penetration in top-50 target accounts.",
+          "Segment B conversion at 28.0% is 1.8x Segment C at 15.6%, indicating clear near-term prioritization.",
+          "Cycle time at 73 days implies a 19-day gap to target that suppresses quarterly bookings velocity."
+        ],
+        "evidence_objects": [
+          {
+            "type": "chart",
+            "title": "Market and conversion indicators",
+            "points": [
+              [
+                "Compliance spend growth",
+                9.4
+              ],
+              [
+                "Adjacent segment growth",
+                17.0
+              ],
+              [
+                "Segment B conversion",
+                28.0
+              ],
+              [
+                "Segment C conversion",
+                15.6
+              ],
+              [
+                "Current cycle (days)",
+                73
+              ],
+              [
+                "Target cycle (days)",
+                54
+              ]
+            ]
+          },
+          {
+            "type": "table",
+            "title": "Signal interpretation",
+            "headers": [
+              "Signal",
+              "Value",
+              "Interpretation"
+            ],
+            "rows": [
+              [
+                "Spend growth",
+                "9.4%",
+                "Supports expansion thesis"
+              ],
+              [
+                "Segment B conversion",
+                "28.0%",
+                "Primary near-term motion"
+              ],
+              [
+                "Cycle gap",
+                "19 days",
+                "Execution risk requiring mitigation"
+              ],
+              [
+                "Adj. growth",
+                "17.0%",
+                "Strong medium-term upside"
+              ]
+            ]
+          }
+        ],
+        "implications": [
+          "Retain growth thesis but sequence go-to-market by conversion quality, not TAM alone.",
+          "Make onboarding cycle reduction the lead KPI in executive weekly reviews until threshold is reached."
+        ],
+        "decision_ask": "Confirm Segment B-first deployment plan and authorize cycle-time remediation workstream.",
+        "source_anchors": [
+          "Market benchmark panel 2025",
+          "Internal CRM funnel diagnostics Jan-2026",
+          "Operations SLA audit Q4-2025"
+        ]
+      },
+      "created_at": "2026-02-06T21:42:06+00:00",
+      "updated_at": "2026-02-06T21:42:07+00:00",
+      "order": 20
+    },
+    {
+      "id": "swot-assessment",
+      "title": "SWOT Assessment",
+      "intent": "competitive-landscape",
+      "content": "The strategy is attractive if strengths and opportunities are paired with explicit mitigations for onboarding and competitive packaging risks.\n- Strength: enterprise retention remains 118% NRR with low logo churn, giving stable base economics.\n- Weakness: time-to-value averages 61 days, 2.2x peer benchmark, which delays activation and expansion outcomes.\n- Opportunity: mid-market compliance vertical is growing 17% annually with low incumbent depth.\n- Threat: competitor bundle pricing compresses implementation revenue by up to 180 bps in late-stage deals.\n- Strategic implication: Move forward only with explicit mitigation owners and monthly KPI governance.\n- Strategic implication: Tie phase-two expansion trigger to observed reduction in activation time and bundle-loss rate.\n- Decision required: Approve strategy with mitigation plan embedded as pre-conditions in operating cadence.",
+      "layout_slug": null,
+      "archetype_id": "swot-assessment",
+      "outline_section_id": "swot-assessment",
+      "depth_profile": "detailed",
+      "variant": "auto",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Customer onboarding ops dataset 2025",
+          "url": null
+        },
+        {
+          "label": "Win-loss analysis FY25 H2",
+          "url": null
+        },
+        {
+          "label": "Pricing committee memo Jan-2026",
+          "url": null
+        }
+      ],
+      "authoring_payload": {
+        "headline_claim": "The strategy is attractive if strengths and opportunities are paired with explicit mitigations for onboarding and competitive packaging risks.",
+        "claims": [
+          "Strength: enterprise retention remains 118% NRR with low logo churn, giving stable base economics.",
+          "Weakness: time-to-value averages 61 days, 2.2x peer benchmark, which delays activation and expansion outcomes.",
+          "Opportunity: mid-market compliance vertical is growing 17% annually with low incumbent depth.",
+          "Threat: competitor bundle pricing compresses implementation revenue by up to 180 bps in late-stage deals."
+        ],
+        "evidence_objects": [
+          {
+            "type": "matrix",
+            "title": "SWOT matrix",
+            "rows": [
+              [
+                "Strength",
+                "118% NRR, low churn in enterprise accounts"
+              ],
+              [
+                "Weakness",
+                "61-day activation, high integration handoff latency"
+              ],
+              [
+                "Opportunity",
+                "17% vertical growth with sparse incumbent coverage"
+              ],
+              [
+                "Threat",
+                "Discounted bundled services pressure margin"
+              ]
+            ]
+          },
+          {
+            "type": "table",
+            "title": "Mitigation map",
+            "headers": [
+              "Risk",
+              "Impact",
+              "Mitigation",
+              "Owner"
+            ],
+            "rows": [
+              [
+                "Activation delay",
+                "Bookings slippage",
+                "Dedicated onboarding pod",
+                "COO"
+              ],
+              [
+                "Bundle pressure",
+                "Margin compression",
+                "Pricing guardrails",
+                "CRO"
+              ],
+              [
+                "Capacity bottleneck",
+                "Missed ramp plan",
+                "Q2 hiring plan",
+                "HR + Ops"
+              ],
+              [
+                "Segment mix drift",
+                "Focus dilution",
+                "Quarterly governance gates",
+                "CEO staff"
+              ]
+            ]
+          }
+        ],
+        "implications": [
+          "Move forward only with explicit mitigation owners and monthly KPI governance.",
+          "Tie phase-two expansion trigger to observed reduction in activation time and bundle-loss rate."
+        ],
+        "decision_ask": "Approve strategy with mitigation plan embedded as pre-conditions in operating cadence.",
+        "source_anchors": [
+          "Customer onboarding ops dataset 2025",
+          "Win-loss analysis FY25 H2",
+          "Pricing committee memo Jan-2026"
+        ]
+      },
+      "created_at": "2026-02-06T21:42:06+00:00",
+      "updated_at": "2026-02-06T21:42:07+00:00",
+      "order": 30
+    }
+  ],
+  "sources": [
+    {
+      "label": "Internal CRM conversion extract Jan-2026",
+      "url": null
+    },
+    {
+      "label": "RevOps cycle-time dashboard Q4-2025",
+      "url": null
+    },
+    {
+      "label": "Pricing realization tracker FY24-FY25",
+      "url": null
+    },
+    {
+      "label": "Market benchmark panel 2025",
+      "url": null
+    },
+    {
+      "label": "Internal CRM funnel diagnostics Jan-2026",
+      "url": null
+    },
+    {
+      "label": "Operations SLA audit Q4-2025",
+      "url": null
+    },
+    {
+      "label": "Customer onboarding ops dataset 2025",
+      "url": null
+    },
+    {
+      "label": "Win-loss analysis FY25 H2",
+      "url": null
+    },
+    {
+      "label": "Pricing committee memo Jan-2026",
+      "url": null
+    }
+  ],
+  "actions": [
+    {
+      "timestamp": "2026-02-06T21:42:06+00:00",
+      "action": "session_started",
+      "details": {
+        "topic": "B2B expansion strategy with conversion constraints",
+        "target_slides": 8,
+        "citation_mode": "notes_appendix",
+        "workflow": "outline_confirm",
+        "depth_profile": "detailed"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:06+00:00",
+      "action": "outline_upsert",
+      "details": {
+        "section_count": 3,
+        "stage": "outline_review",
+        "mode": "outline_confirm"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:06+00:00",
+      "action": "outline_approved",
+      "details": {
+        "mode": "outline_confirm",
+        "approval_source": "user_confirmed",
+        "stage": "outline_approved",
+        "section_count": 3
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:06+00:00",
+      "action": "outline_materialized",
+      "details": {
+        "created_sections": 3,
+        "updated_sections": 0,
+        "mode": "outline_confirm",
+        "stage": "drafting",
+        "replace_existing": true
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:06+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "exec-synthesis",
+        "intent": "executive-summary",
+        "layout_slug": null,
+        "status": "draft",
+        "archetype_id": "executive-synthesis",
+        "outline_section_id": "exec-synthesis",
+        "depth_profile": "detailed"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:07+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "market-signals",
+        "intent": "single-story-data",
+        "layout_slug": null,
+        "status": "draft",
+        "archetype_id": "signal-scan",
+        "outline_section_id": "market-signals",
+        "depth_profile": "detailed"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:07+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "swot-assessment",
+        "intent": "competitive-landscape",
+        "layout_slug": null,
+        "status": "draft",
+        "archetype_id": "swot-assessment",
+        "outline_section_id": "swot-assessment",
+        "depth_profile": "detailed"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:07+00:00",
+      "action": "compile_deck_json",
+      "details": {
+        "out": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-outline-strategy/deck.json",
+        "report": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-outline-strategy/compile_report.json",
+        "slide_count": 3,
+        "missing_required_total": 0,
+        "deterministic_hash": "9266e6ff729250d35740496cc0217af4c072917394b4b2e67b0424a3a77e9285",
+        "quality_average_score": 40.0,
+        "warning_count": 0
+      }
+    },
+    {
+      "timestamp": "2026-02-06T21:42:13+00:00",
+      "action": "build_deck",
+      "details": {
+        "out_dir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-outline-strategy/outputs/runs/20260206-214207",
+        "iterative": false,
+        "strict": false,
+        "status_code": 0
+      }
+    }
+  ]
+}

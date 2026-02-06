@@ -19,7 +19,7 @@ from typing import Any, Iterable
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_BUNDLE = PROJECT_ROOT / "dist" / "fdd_scope_library.v2.json"
+DEFAULT_BUNDLE = PROJECT_ROOT / "dist" / "scope-library.json"
 DEFAULT_OUT_DIR = PROJECT_ROOT / "docs" / "scope-library" / "industries"
 
 
@@ -60,7 +60,7 @@ def _render_industry_markdown(*, bundle: dict[str, Any], industry: str) -> str:
     lines: list[str] = []
     lines.append(f"# FDD Scope — `{industry}`")
     lines.append("")
-    lines.append("Generated from `dist/fdd_scope_library.v2.json`.")
+    lines.append("Generated from `dist/scope-library.json`.")
     lines.append("")
 
     common = bundle.get("common_skeleton", []) or []

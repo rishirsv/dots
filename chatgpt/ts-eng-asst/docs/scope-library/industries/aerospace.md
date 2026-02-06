@@ -1,6 +1,6 @@
 # FDD Scope — `aerospace`
 
-Generated from `dist/fdd_scope_library.v2.json`.
+Generated from `dist/scope-library.json`.
 
 ## Common skeleton
 

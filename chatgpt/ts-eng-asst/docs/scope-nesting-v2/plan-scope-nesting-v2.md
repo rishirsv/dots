@@ -12,15 +12,15 @@ Introduce a new nested scope library file that preserves all text but adds expli
 ## Tasks
 - [x] 1.0 Create v2 builder + generate nested scope files
   - [x] 1.1 Add a script to build v2 nested scope JSON from the current flat file
-  - [x] 1.2 Generate `dist/fdd_scope_library.v2.json`
-  - [x] 1.3 Generate `reference/fdd_scope_library.v2.json`
+  - [x] 1.2 Generate `dist/scope-library.json`
+  - [x] 1.3 Generate `reference/scope-library.json`
   - [x] 1.4 Validate that all bullet text is unchanged in v2 outputs
 - [x] 2.0 Update generator + helper functions
   - [x] 2.1 Support nested bullet objects with `text` + `children`
   - [x] 2.2 Use top-level `id` for exclusion; keep legacy flat-list support
   - [x] 2.3 Keep sequential ids stable if present; assign only when missing
 - [x] 3.0 Update assistant prompt
-  - [x] 3.1 Point to `fdd_scope_library.v2.json`
+  - [x] 3.1 Point to `scope-library.json`
   - [x] 3.2 Canvas labels use `Section heading — Parent text`, hide ids, hide children
 - [ ] 4.0 Validation
   - [x] 4.1 Run scope replacement test using v2 file

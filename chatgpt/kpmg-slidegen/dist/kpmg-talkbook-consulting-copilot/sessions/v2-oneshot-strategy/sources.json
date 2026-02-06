@@ -1,0 +1,41 @@
+{
+  "session_id": "v2-oneshot-strategy",
+  "sources": [
+    {
+      "label": "Internal CRM conversion extract Jan-2026",
+      "url": null
+    },
+    {
+      "label": "RevOps cycle-time dashboard Q4-2025",
+      "url": null
+    },
+    {
+      "label": "Pricing realization tracker FY24-FY25",
+      "url": null
+    },
+    {
+      "label": "Market benchmark panel 2025",
+      "url": null
+    },
+    {
+      "label": "Internal CRM funnel diagnostics Jan-2026",
+      "url": null
+    },
+    {
+      "label": "Operations SLA audit Q4-2025",
+      "url": null
+    },
+    {
+      "label": "Customer onboarding ops dataset 2025",
+      "url": null
+    },
+    {
+      "label": "Win-loss analysis FY25 H2",
+      "url": null
+    },
+    {
+      "label": "Pricing committee memo Jan-2026",
+      "url": null
+    }
+  ]
+}

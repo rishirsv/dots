@@ -1,0 +1,97 @@
+{
+  "session_id": "v2-strategy-density-20260206-122920",
+  "compiled_at": "2026-02-06T19:29:56+00:00",
+  "slide_count": 8,
+  "layout_usage": {
+    "recommendations-blue": 1,
+    "2-column-chart": 1,
+    "table-insights-two-column": 2,
+    "quad-box-icon-center-text": 1,
+    "two-column-comparison": 1,
+    "timeline-milestones": 1,
+    "risks-mitigations": 1
+  },
+  "diagnostics": [
+    {
+      "section_id": "executive-synthesis",
+      "section_title": "Executive Synthesis",
+      "selected_layout": "recommendations-blue",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "recommendations-blue"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "market-and-conversion-signals",
+      "section_title": "Market And Conversion Signals",
+      "selected_layout": "2-column-chart",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "2-column-chart"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "unit-economics-and-capacity-baseline",
+      "section_title": "Unit Economics And Capacity Baseline",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "swot-assessment",
+      "section_title": "SWOT Assessment",
+      "selected_layout": "quad-box-icon-center-text",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "quad-box-icon-center-text"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "option-tradeoff",
+      "section_title": "Option Tradeoff",
+      "selected_layout": "two-column-comparison",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "two-column-comparison"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "decision-gates-and-milestones",
+      "section_title": "Decision Gates And Milestones",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "implementation-timeline",
+      "section_title": "Implementation Timeline",
+      "selected_layout": "timeline-milestones",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "timeline-milestones"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "top-risks-and-mitigations",
+      "section_title": "Top Risks And Mitigations",
+      "selected_layout": "risks-mitigations",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "risks-mitigations"
+      },
+      "missing_required_slots": []
+    }
+  ],
+  "deterministic_hash": "9b4e8bceea133f47bd9196344ae2f4299f7cafa32c47e59e609dde0715c1be0d"
+}

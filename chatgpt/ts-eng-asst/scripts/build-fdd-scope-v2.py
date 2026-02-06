@@ -9,7 +9,7 @@ Reads a flat `fdd_scope_library.json` and produces a v2 file that:
 Usage:
   python3 scripts/build-fdd-scope-v2.py \
     --in reference/fdd_scope_library.json \
-    --out dist/fdd_scope_library.v2.json
+    --out dist/scope-library.json
 """
 
 from __future__ import annotations

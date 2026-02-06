@@ -1,0 +1,319 @@
+{
+  "version": "1.0",
+  "session_id": "v2-finance-density-20260206-123127",
+  "topic": "Transaction services profitability normalization",
+  "created_at": "2026-02-06T19:31:27+00:00",
+  "updated_at": "2026-02-06T19:31:35+00:00",
+  "deck": {
+    "title": "Transaction services profitability normalization",
+    "audience": "Deal team and IC",
+    "target_slides": 12,
+    "template": "kpmg-talkbook",
+    "mode": "manual"
+  },
+  "settings": {
+    "citation_mode": "notes_appendix",
+    "strict_mode": true,
+    "manual_only": true
+  },
+  "sections": [
+    {
+      "id": "summary-financials",
+      "title": "Summary Financials",
+      "intent": "table-analysis",
+      "content": "| $000 | FY21 | FY22 | FY23 | TTM Jun-24 |\n| --- | --- | --- | --- | --- |\n| Revenue | 40498 | 50299 | 62355 | 68554 |\n| Gross profit | 32799 | 39596 | 49004 | 52961 |\n| EBITDA, reported | 11661 | 13948 | 19766 | 22269 |\n| EBITDA margin, reported | 28.8% | 27.7% | 31.7% | 32.5% |\n- Core earnings trend improved over the period, but normalized quality requires adjustment analysis.\n",
+      "layout_slug": "table-insights-two-column",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Internal financial statements",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 10
+    },
+    {
+      "id": "p-l-walkthrough",
+      "title": "P&L Walkthrough",
+      "intent": "analysis",
+      "content": "| Line item | FY22 | FY23 | TTM Jun-24 |\n| --- | --- | --- | --- |\n| Revenue | 50299 | 62355 | 68554 |\n| Variable expense | -10703 | -13351 | -15593 |\n| Gross profit | 39596 | 49004 | 52961 |\n| Compensation | -15131 | -16943 | -17132 |\n| Operating profit | 10682 | 16752 | 19218 |\n| EBITDA, reported | 13948 | 19766 | 22269 |\n- Revenue expansion reflects transaction growth and card issuance contribution.\n- Variable expense moved with volume mix and pass-through fee profile.\n- EBITDA conversion improved despite support-capacity reinvestment.\n",
+      "layout_slug": "table-insights-two-column",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Management P&L package",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 20
+    },
+    {
+      "id": "quality-of-earnings-overview",
+      "title": "Quality Of Earnings Overview",
+      "intent": "table-analysis",
+      "content": "| Adjustment bridge ($000) | FY22 | FY23 | TTM Jun-24 |\n| --- | --- | --- | --- |\n| EBITDA, reported | 13948 | 19766 | 22269 |\n| Due diligence adjustments | 1332 | -1669 | -566 |\n| Pro forma adjustments | 1661 | 1907 | -318 |\n| EBITDA, pro forma adjusted | 16641 | 20027 | 22021 |\n| EBITDA margin, pro forma | 28.7% | 30.0% | 31.2% |\n- Quality of earnings remains strong; major movements are transparent and reconcilable.\n",
+      "layout_slug": "table-insights-two-column",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "QoE adjustment summary",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 30
+    },
+    {
+      "id": "pro-forma-adjustment-drivers",
+      "title": "Pro Forma Adjustment Drivers",
+      "intent": "multi-driver-analysis",
+      "content": "- Settlement services run-rate impact: -45\n- Open positions normalization impact: -224\n- Software maintenance run-rate impact: -596\n- Data center facility costs impact: -48\n- Other one-time adjustments impact: +33\n- Net pro forma impact: -880\n- Interpretation: run-rate normalization is concentrated in staffing and software cost lines.\n",
+      "layout_slug": "2-column-chart",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Adjustment detail workbook",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 40
+    },
+    {
+      "id": "net-working-capital-overview",
+      "title": "Net Working Capital Overview",
+      "intent": "table-analysis",
+      "content": "| Net working capital ($000) | FY21 | FY22 | FY23 | TTM Jun-24 |\n| --- | --- | --- | --- | --- |\n| Net working capital, reported | 3176 | 2815 | 8705 | 5152 |\n| Due diligence adjustments | 2271 | 3018 | 783 | -180 |\n| Pro forma adjustments | 612 | 773 | -2647 | 0 |\n| Net working capital, adjusted | 6058 | 6606 | 6841 | 4971 |\n| Adjusted NWC as % of net sales | 12.3% | 11.4% | 10.2% | 7.0% |\n- Adjusted average net working capital for TTM Jun-24 is $6.1 million.\n",
+      "layout_slug": "table-insights-two-column",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "NWC working paper",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 50
+    },
+    {
+      "id": "working-capital-risks-and-mitigations",
+      "title": "Working Capital Risks And Mitigations",
+      "intent": "risk",
+      "content": "- Risk: AR timing normalization could increase quarter-end cash pressure.\n- Risk: AP run-rate assumptions may reverse temporary cash benefit.\n- Risk: Settlement receivable volatility can obscure true liquidity profile.\n- Mitigation: Weekly aging review for top 20 receivable balances.\n- Mitigation: Payment calendar governance aligned to vendor criticality.\n- Mitigation: Liquidity trigger thresholds tied to DSO and conversion trends.\n",
+      "layout_slug": "risks-mitigations",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Treasury and controllership review",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 60
+    },
+    {
+      "id": "margin-bridge",
+      "title": "Margin Bridge",
+      "intent": "multi-driver-analysis",
+      "content": "- Revenue growth contribution: 2.8\n- Pass-through recovery contribution: 1.1\n- Pricing/mix contribution: 0.9\n- Productivity contribution: 1.0\n- Inflation and support drag: -0.6\n- Net margin movement: 5.2\n- Margin expansion is operationally supported, not solely accounting normalization.\n",
+      "layout_slug": "2-column-chart",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Finance bridge workbook",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 70
+    },
+    {
+      "id": "source-appendix",
+      "title": "Source Appendix",
+      "intent": "appendix",
+      "content": "- Source pack includes: internal financial statements, management P&L package, QoE adjustment workbook.\n- Reconciliations include: reported-to-adjusted EBITDA bridge, NWC normalization bridge, margin bridge support.\n- Assumptions include: staffing run-rate normalization, software contract run-rate, payment timing normalization.\n",
+      "layout_slug": "appendix-sources",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Source appendix index",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:31:27+00:00",
+      "updated_at": "2026-02-06T19:31:27+00:00",
+      "order": 80
+    }
+  ],
+  "sources": [
+    {
+      "label": "Internal financial statements",
+      "url": null
+    },
+    {
+      "label": "Management P&L package",
+      "url": null
+    },
+    {
+      "label": "QoE adjustment summary",
+      "url": null
+    },
+    {
+      "label": "Adjustment detail workbook",
+      "url": null
+    },
+    {
+      "label": "NWC working paper",
+      "url": null
+    },
+    {
+      "label": "Treasury and controllership review",
+      "url": null
+    },
+    {
+      "label": "Finance bridge workbook",
+      "url": null
+    },
+    {
+      "label": "Source appendix index",
+      "url": null
+    }
+  ],
+  "actions": [
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "session_started",
+      "details": {
+        "topic": "Transaction services profitability normalization",
+        "target_slides": 12,
+        "citation_mode": "notes_appendix"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "summary-financials",
+        "intent": "table-analysis",
+        "layout_slug": "table-insights-two-column",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "p-l-walkthrough",
+        "intent": "analysis",
+        "layout_slug": "table-insights-two-column",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "quality-of-earnings-overview",
+        "intent": "table-analysis",
+        "layout_slug": "table-insights-two-column",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "pro-forma-adjustment-drivers",
+        "intent": "multi-driver-analysis",
+        "layout_slug": "2-column-chart",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "net-working-capital-overview",
+        "intent": "table-analysis",
+        "layout_slug": "table-insights-two-column",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "working-capital-risks-and-mitigations",
+        "intent": "risk",
+        "layout_slug": "risks-mitigations",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "margin-bridge",
+        "intent": "multi-driver-analysis",
+        "layout_slug": "2-column-chart",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:27+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "source-appendix",
+        "intent": "appendix",
+        "layout_slug": "appendix-sources",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:28+00:00",
+      "action": "compile_deck_json",
+      "details": {
+        "out": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-finance-density-20260206-123127/deck.json",
+        "report": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-finance-density-20260206-123127/compile_report.json",
+        "slide_count": 8,
+        "missing_required_total": 0,
+        "deterministic_hash": "5788c2e8ffea9bfbf147bca3f7c28f156d4e2fb2ccf18cb59160358d13836f08"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:31:35+00:00",
+      "action": "build_deck",
+      "details": {
+        "out_dir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-finance-density-20260206-123127/outputs/runs/20260206-193128",
+        "iterative": true,
+        "strict": true,
+        "status_code": 0
+      }
+    }
+  ]
+}

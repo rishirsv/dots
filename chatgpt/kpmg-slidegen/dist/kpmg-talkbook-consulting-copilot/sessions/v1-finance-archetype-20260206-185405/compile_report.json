@@ -1,0 +1,54 @@
+{
+  "session_id": "v1-finance-archetype-20260206-185405",
+  "compiled_at": "2026-02-06T18:54:05+00:00",
+  "slide_count": 4,
+  "layout_usage": {
+    "table-insights-two-column": 1,
+    "2-column-chart": 1,
+    "recommendations-white": 1,
+    "risks-mitigations": 1
+  },
+  "diagnostics": [
+    {
+      "section_id": "p-l-walkthrough",
+      "section_title": "P&L Walkthrough",
+      "selected_layout": "table-insights-two-column",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "table-insights-two-column"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "margin-bridge",
+      "section_title": "Margin Bridge",
+      "selected_layout": "2-column-chart",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "2-column-chart"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "qofe-style-adjustments",
+      "section_title": "QofE-Style Adjustments",
+      "selected_layout": "recommendations-white",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "recommendations-white"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "net-working-capital-walkthrough",
+      "section_title": "Net Working Capital Walkthrough",
+      "selected_layout": "risks-mitigations",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "risks-mitigations"
+      },
+      "missing_required_slots": []
+    }
+  ],
+  "deterministic_hash": "3fc61db150b285bb550c4c4867834686a7a64d51e80f11d6f1377373d6a8f9ab"
+}

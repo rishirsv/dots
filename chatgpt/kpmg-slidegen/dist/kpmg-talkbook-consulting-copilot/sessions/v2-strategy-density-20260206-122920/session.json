@@ -1,0 +1,340 @@
+{
+  "version": "1.0",
+  "session_id": "v2-strategy-density-20260206-122920",
+  "topic": "B2B SaaS growth strategy refresh",
+  "created_at": "2026-02-06T19:29:20+00:00",
+  "updated_at": "2026-02-06T19:30:58+00:00",
+  "deck": {
+    "title": "B2B SaaS growth strategy refresh",
+    "audience": "Executive leadership",
+    "target_slides": 12,
+    "template": "kpmg-talkbook",
+    "mode": "manual"
+  },
+  "settings": {
+    "citation_mode": "notes_appendix",
+    "strict_mode": true,
+    "manual_only": true
+  },
+  "sections": [
+    {
+      "id": "executive-synthesis",
+      "title": "Executive Synthesis",
+      "intent": "executive-summary",
+      "content": "- Outcome: Expansion into compliance mid-market and regulated SMB can add $44-61M ARR over 24 months.\n- Core segment growth decelerated from 22% to 11% YoY while CAC payback stretched from 14 to 18 months.\n- Segment B win-rate is 1.8x Segment C at current positioning and shows 31% lower onboarding failure.\n- Primary bottleneck is onboarding throughput, not demand generation; implementation queue is now the critical path.\n- Recommendation: sequence Segment B first, complete onboarding redesign in Q3, then open Segment C in Q4.\n- Decision required this quarter: approve $6.2M enablement envelope tied to milestone gates.\n",
+      "layout_slug": "recommendations-blue",
+      "variant": "blue",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Internal CRM and pipeline analytics, Jan 2026",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:20+00:00",
+      "updated_at": "2026-02-06T19:29:20+00:00",
+      "order": 10
+    },
+    {
+      "id": "market-and-conversion-signals",
+      "title": "Market And Conversion Signals",
+      "intent": "analysis",
+      "content": "- U.S. compliance spend growth: 9.4\n- Adjacent segment annual growth: 17.0\n- Segment B conversion rate: 28.0\n- Segment C conversion rate: 15.6\n- Average sales cycle (days): 74\n- Sales cycle after onboarding redesign (target): 54\n- Segment B economics indicate superior speed-to-revenue under current product-market fit.\n",
+      "layout_slug": "2-column-chart",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Market benchmark panel 2025",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:20+00:00",
+      "updated_at": "2026-02-06T19:29:20+00:00",
+      "order": 20
+    },
+    {
+      "id": "unit-economics-and-capacity-baseline",
+      "title": "Unit Economics And Capacity Baseline",
+      "intent": "table-analysis",
+      "content": "| Metric | FY23 | TTM Jun-24 | Target FY26 |\n| --- | --- | --- | --- |\n| Pipeline coverage (x) | 2.4 | 2.1 | 2.8 |\n| Net revenue retention (%) | 113 | 118 | 120 |\n| CAC payback (months) | 14 | 18 | 13 |\n| Gross margin (%) | 74.2 | 76.1 | 78.0 |\n| Onboarding cycle time (days) | 68 | 61 | 45 |\n- Economics support expansion only if onboarding cycle time is reduced below 50 days.\n- Margin headroom exists, but CAC deterioration requires sequencing discipline.\n",
+      "layout_slug": "table-insights-two-column",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Finance and operations baseline model v5",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:21+00:00",
+      "updated_at": "2026-02-06T19:29:21+00:00",
+      "order": 30
+    },
+    {
+      "id": "swot-assessment",
+      "title": "SWOT Assessment",
+      "intent": "framework",
+      "content": "- Strength: Enterprise retention remains 118% with low logo churn and stable gross margin mix.\n- Weakness: Time-to-value averages 61 days, 2.2x peer benchmark, driven by integration handoffs.\n- Opportunity: Mid-market compliance vertical is growing 17% annually with low incumbent depth.\n- Threat: Competitors bundle implementation services at discounted rates to compress sales cycles.\n- Strategic implication: win the next phase through onboarding speed and implementation certainty, not price discounting.\n",
+      "layout_slug": "quad-box-icon-center-text",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Customer onboarding ops data",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:21+00:00",
+      "updated_at": "2026-02-06T19:29:21+00:00",
+      "order": 40
+    },
+    {
+      "id": "option-tradeoff",
+      "title": "Option Tradeoff",
+      "intent": "comparison",
+      "content": "- Option A (Broad expansion): highest ARR upside but elevated execution risk and diluted focus.\n- Option B (Phased expansion): balanced ARR upside with strongest control on payback and delivery risk.\n- Option C (Core optimization): lowest risk but insufficient growth against board plan.\n- Criteria weighting: growth potential (35), execution risk (30), payback speed (20), strategic fit (15).\n- Weighted scores: Option A 72, Option B 84, Option C 63.\n",
+      "layout_slug": "two-column-comparison",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Growth strategy model v5",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:21+00:00",
+      "updated_at": "2026-02-06T19:29:21+00:00",
+      "order": 50
+    },
+    {
+      "id": "decision-gates-and-milestones",
+      "title": "Decision Gates And Milestones",
+      "intent": "roadmap",
+      "content": "| Milestone gate | Timing | KPI threshold | Owner |\n| --- | --- | --- | --- |\n| Segment B pilot readiness | Month 2 | Onboarding SLA < 55 days | COO |\n| Segment B launch gate | Month 4 | Conversion >= 24% | CRO |\n| Segment C readiness gate | Month 7 | CAC payback <= 15 months | CFO |\n| Segment C launch decision | Month 9 | NRR >= 117% and queue < 2 weeks | CEO |\n- Gate-based sequencing prevents premature expansion and protects payback profile.\n",
+      "layout_slug": "table-insights-two-column",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "PMO implementation draft",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:21+00:00",
+      "updated_at": "2026-02-06T19:29:21+00:00",
+      "order": 60
+    },
+    {
+      "id": "implementation-timeline",
+      "title": "Implementation Timeline",
+      "intent": "implementation",
+      "content": "- Month 0-2: finalize segment playbook and deploy dedicated implementation pod.\n- Month 2-4: redesign onboarding workflow and automate top 5 integration handoffs.\n- Month 4-6: launch Segment B and run weekly conversion/cycle-time governance.\n- Month 6-8: complete post-launch stabilization and uplift playbook.\n- Month 8-9: evaluate Segment C readiness against gate thresholds.\n",
+      "layout_slug": "timeline-milestones",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Transformation PMO sprint plan",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:21+00:00",
+      "updated_at": "2026-02-06T19:29:21+00:00",
+      "order": 70
+    },
+    {
+      "id": "top-risks-and-mitigations",
+      "title": "Top Risks And Mitigations",
+      "intent": "risk",
+      "content": "- Risk: onboarding queue overload could delay booked ARR realization by one quarter.\n- Risk: segment mix drift may compress gross margin if discounting discipline weakens.\n- Risk: implementation staffing gaps could increase delivery failure rate above tolerance.\n- Mitigation: enforce queue threshold triggers with contingency staffing pool.\n- Mitigation: implement pricing guardrails and executive discount approvals.\n- Mitigation: establish weekly delivery QA and integration defect triage cadence.\n",
+      "layout_slug": "risks-mitigations",
+      "variant": "white",
+      "expected_slides": 1,
+      "status": "draft",
+      "sources": [
+        {
+          "label": "Program risk register",
+          "url": null
+        }
+      ],
+      "created_at": "2026-02-06T19:29:21+00:00",
+      "updated_at": "2026-02-06T19:29:21+00:00",
+      "order": 80
+    }
+  ],
+  "sources": [
+    {
+      "label": "Internal CRM and pipeline analytics, Jan 2026",
+      "url": null
+    },
+    {
+      "label": "Market benchmark panel 2025",
+      "url": null
+    },
+    {
+      "label": "Finance and operations baseline model v5",
+      "url": null
+    },
+    {
+      "label": "Customer onboarding ops data",
+      "url": null
+    },
+    {
+      "label": "Growth strategy model v5",
+      "url": null
+    },
+    {
+      "label": "PMO implementation draft",
+      "url": null
+    },
+    {
+      "label": "Transformation PMO sprint plan",
+      "url": null
+    },
+    {
+      "label": "Program risk register",
+      "url": null
+    }
+  ],
+  "actions": [
+    {
+      "timestamp": "2026-02-06T19:29:20+00:00",
+      "action": "session_started",
+      "details": {
+        "topic": "B2B SaaS growth strategy refresh",
+        "target_slides": 12,
+        "citation_mode": "notes_appendix"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:20+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "executive-synthesis",
+        "intent": "executive-summary",
+        "layout_slug": "recommendations-blue",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:20+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "market-and-conversion-signals",
+        "intent": "analysis",
+        "layout_slug": "2-column-chart",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:21+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "unit-economics-and-capacity-baseline",
+        "intent": "table-analysis",
+        "layout_slug": "table-insights-two-column",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:21+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "swot-assessment",
+        "intent": "framework",
+        "layout_slug": "quad-box-icon-center-text",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:21+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "option-tradeoff",
+        "intent": "comparison",
+        "layout_slug": "two-column-comparison",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:21+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "decision-gates-and-milestones",
+        "intent": "roadmap",
+        "layout_slug": "table-insights-two-column",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:21+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "implementation-timeline",
+        "intent": "implementation",
+        "layout_slug": "timeline-milestones",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:21+00:00",
+      "action": "section_upsert",
+      "details": {
+        "section_id": "top-risks-and-mitigations",
+        "intent": "risk",
+        "layout_slug": "risks-mitigations",
+        "status": "draft"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:21+00:00",
+      "action": "compile_deck_json",
+      "details": {
+        "out": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-strategy-density-20260206-122920/deck.json",
+        "report": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-strategy-density-20260206-122920/compile_report.json",
+        "slide_count": 8,
+        "missing_required_total": 1,
+        "deterministic_hash": "3c007b889808ddee3a21e368c41b4cfd09a809a385a324070cd781c33ed25e7a"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:29:56+00:00",
+      "action": "compile_deck_json",
+      "details": {
+        "out": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-strategy-density-20260206-122920/deck.json",
+        "report": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-strategy-density-20260206-122920/compile_report.json",
+        "slide_count": 8,
+        "missing_required_total": 0,
+        "deterministic_hash": "9b4e8bceea133f47bd9196344ae2f4299f7cafa32c47e59e609dde0715c1be0d"
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:30:04+00:00",
+      "action": "build_deck",
+      "details": {
+        "out_dir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-strategy-density-20260206-122920/outputs/runs/20260206-192956",
+        "iterative": true,
+        "strict": true,
+        "status_code": 2
+      }
+    },
+    {
+      "timestamp": "2026-02-06T19:30:58+00:00",
+      "action": "build_deck",
+      "details": {
+        "out_dir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-strategy-density-20260206-122920/outputs/runs/20260206-193051",
+        "iterative": true,
+        "strict": true,
+        "status_code": 0
+      }
+    }
+  ]
+}

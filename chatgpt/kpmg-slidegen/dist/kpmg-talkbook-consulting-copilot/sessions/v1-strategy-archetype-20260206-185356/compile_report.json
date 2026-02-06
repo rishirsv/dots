@@ -1,0 +1,54 @@
+{
+  "session_id": "v1-strategy-archetype-20260206-185356",
+  "compiled_at": "2026-02-06T18:53:57+00:00",
+  "slide_count": 4,
+  "layout_usage": {
+    "recommendations-white": 1,
+    "quad-box-icon-center-text": 1,
+    "two-column-comparison": 1,
+    "timeline-milestones": 1
+  },
+  "diagnostics": [
+    {
+      "section_id": "executive-synthesis",
+      "section_title": "Executive Synthesis",
+      "selected_layout": "recommendations-white",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "recommendations-white"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "swot-assessment",
+      "section_title": "SWOT Assessment",
+      "selected_layout": "quad-box-icon-center-text",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "quad-box-icon-center-text"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "option-tradeoff",
+      "section_title": "Option Tradeoff",
+      "selected_layout": "two-column-comparison",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "two-column-comparison"
+      },
+      "missing_required_slots": []
+    },
+    {
+      "section_id": "implementation-roadmap-and-risks",
+      "section_title": "Implementation Roadmap And Risks",
+      "selected_layout": "timeline-milestones",
+      "decision": {
+        "strategy": "forced",
+        "layout_slug": "timeline-milestones"
+      },
+      "missing_required_slots": []
+    }
+  ],
+  "deterministic_hash": "33b2dd52b53dc6037077499f55a17f50a85f58f1b42c2f2baeee0c6957e5a49b"
+}

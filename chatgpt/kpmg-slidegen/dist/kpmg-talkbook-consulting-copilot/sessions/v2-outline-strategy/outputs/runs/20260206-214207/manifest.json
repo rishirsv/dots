@@ -1,0 +1,213 @@
+{
+  "generatedAt": "2026-02-06T21:42:07.449Z",
+  "inPath": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-outline-strategy/deck.json",
+  "outPath": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-talkbook-consulting-copilot/sessions/v2-outline-strategy/outputs/runs/20260206-214207/deck.pptx",
+  "dimensions": {
+    "w": 13.333,
+    "h": 7.5
+  },
+  "slideCount": 3,
+  "slides": [
+    {
+      "index": 0,
+      "type": "layout.table-insights-two-column",
+      "slug": "table-insights-two-column",
+      "dimensions": {
+        "w": 13.333,
+        "h": 7.5
+      },
+      "warnings": [],
+      "shapes": [
+        {
+          "id": "title",
+          "slot": "text_title",
+          "kind": "text",
+          "x": 0.6,
+          "y": 0.35,
+          "w": 12.1,
+          "h": 0.7,
+          "textLength": 19,
+          "budget": 720
+        },
+        {
+          "id": "box-text_body",
+          "slot": "text_body",
+          "kind": "text",
+          "x": 0.75,
+          "y": 1.65,
+          "w": 5.5,
+          "h": 5.2,
+          "textLength": 0,
+          "budget": 2431
+        },
+        {
+          "id": "table-table_main",
+          "slot": "table_main",
+          "kind": "table",
+          "x": 6.55,
+          "y": 1.65,
+          "w": 6,
+          "h": 4.7,
+          "textLength": 145,
+          "budget": 2397
+        },
+        {
+          "id": "box-text_footer_source",
+          "slot": "text_footer_source",
+          "kind": "text",
+          "x": 0.75,
+          "y": 6.95,
+          "w": 11.6,
+          "h": 0.28,
+          "textLength": 239,
+          "budget": 276
+        },
+        {
+          "id": "kpmg-logo",
+          "slot": "brand_logo",
+          "kind": "image",
+          "x": 12.42,
+          "y": 6.86,
+          "w": 0.86,
+          "h": 0.31,
+          "textLength": 0,
+          "budget": 45
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "type": "layout.table-insights-two-column",
+      "slug": "table-insights-two-column",
+      "dimensions": {
+        "w": 13.333,
+        "h": 7.5
+      },
+      "warnings": [],
+      "shapes": [
+        {
+          "id": "title",
+          "slot": "text_title",
+          "kind": "text",
+          "x": 0.6,
+          "y": 0.35,
+          "w": 12.1,
+          "h": 0.7,
+          "textLength": 29,
+          "budget": 720
+        },
+        {
+          "id": "box-text_body",
+          "slot": "text_body",
+          "kind": "text",
+          "x": 0.75,
+          "y": 1.65,
+          "w": 5.5,
+          "h": 5.2,
+          "textLength": 0,
+          "budget": 2431
+        },
+        {
+          "id": "table-table_main",
+          "slot": "table_main",
+          "kind": "table",
+          "x": 6.55,
+          "y": 1.65,
+          "w": 6,
+          "h": 4.7,
+          "textLength": 209,
+          "budget": 2397
+        },
+        {
+          "id": "box-text_footer_source",
+          "slot": "text_footer_source",
+          "kind": "text",
+          "x": 0.75,
+          "y": 6.95,
+          "w": 11.6,
+          "h": 0.28,
+          "textLength": 205,
+          "budget": 276
+        },
+        {
+          "id": "kpmg-logo",
+          "slot": "brand_logo",
+          "kind": "image",
+          "x": 12.42,
+          "y": 6.86,
+          "w": 0.86,
+          "h": 0.31,
+          "textLength": 0,
+          "budget": 45
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "type": "layout.table-insights-two-column",
+      "slug": "table-insights-two-column",
+      "dimensions": {
+        "w": 13.333,
+        "h": 7.5
+      },
+      "warnings": [],
+      "shapes": [
+        {
+          "id": "title",
+          "slot": "text_title",
+          "kind": "text",
+          "x": 0.6,
+          "y": 0.35,
+          "w": 12.1,
+          "h": 0.7,
+          "textLength": 15,
+          "budget": 720
+        },
+        {
+          "id": "box-text_body",
+          "slot": "text_body",
+          "kind": "text",
+          "x": 0.75,
+          "y": 1.65,
+          "w": 5.5,
+          "h": 5.2,
+          "textLength": 0,
+          "budget": 2431
+        },
+        {
+          "id": "table-table_main",
+          "slot": "table_main",
+          "kind": "table",
+          "x": 6.55,
+          "y": 1.65,
+          "w": 6,
+          "h": 4.7,
+          "textLength": 276,
+          "budget": 2397
+        },
+        {
+          "id": "box-text_footer_source",
+          "slot": "text_footer_source",
+          "kind": "text",
+          "x": 0.75,
+          "y": 6.95,
+          "w": 11.6,
+          "h": 0.28,
+          "textLength": 199,
+          "budget": 276
+        },
+        {
+          "id": "kpmg-logo",
+          "slot": "brand_logo",
+          "kind": "image",
+          "x": 12.42,
+          "y": 6.86,
+          "w": 0.86,
+          "h": 0.31,
+          "textLength": 0,
+          "budget": 45
+        }
+      ]
+    }
+  ]
+}

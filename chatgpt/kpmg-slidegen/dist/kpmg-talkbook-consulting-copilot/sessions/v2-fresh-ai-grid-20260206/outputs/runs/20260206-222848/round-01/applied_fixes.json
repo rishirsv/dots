@@ -1,0 +1,65 @@
+{
+  "round": 1,
+  "fixes": [
+    {
+      "slideIndex": 0,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 1,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 2,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 3,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 4,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 5,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 6,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 7,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 8,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    },
+    {
+      "slideIndex": 9,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 9
+    }
+  ]
+}

@@ -208,7 +208,7 @@ Notes:
 
 ### Work required to add missing industries
 - Add new `INDUSTRY` keys to `el-placeholder-schema.json` (with user-friendly labels and any aliases).
-- Add corresponding modules/sections to `fdd_scope_library.v2.json` for each new industry key (or define an approved mapping to an existing industry module where the scope is sufficiently similar).
+- Add corresponding modules/sections to `scope-library.json` for each new industry key (or define an approved mapping to an existing industry module where the scope is sufficiently similar).
 - Add “unsupported industry” handling in the interview flow so free-text industries are resolved via an explicit confirmation step (no silent mapping).
 
 ---

@@ -1,0 +1,17 @@
+{
+  "round": 1,
+  "fixes": [
+    {
+      "slideIndex": 0,
+      "slot": "text_footer_source",
+      "fix": "trim_list_items",
+      "max_chars": 110
+    },
+    {
+      "slideIndex": 6,
+      "slot": "text_footer_source",
+      "fix": "truncate_list",
+      "removed_items": 4
+    }
+  ]
+}

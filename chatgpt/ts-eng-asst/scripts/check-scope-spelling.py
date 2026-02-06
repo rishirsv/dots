@@ -15,8 +15,8 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_BUNDLE = PROJECT_ROOT / "dist" / "fdd_scope_library.v2.json"
-DEFAULT_REFERENCE = PROJECT_ROOT / "reference" / "fdd_scope_library.v2.json"
+DEFAULT_BUNDLE = PROJECT_ROOT / "dist" / "scope-library.json"
+DEFAULT_REFERENCE = PROJECT_ROOT / "reference" / "scope-library.json"
 
 
 # High-confidence spelling issues to block.
