@@ -1,0 +1,23 @@
+{
+  "autoFixPriority": [
+    "profile.styleOverrides.textScale",
+    "profile.requiredSlotOverrides",
+    "profile.masterMapping"
+  ],
+  "enabled": true,
+  "maxRounds": 8,
+  "render": {
+    "dpi": 300,
+    "pdfConverter": "soffice",
+    "pngConverter": "pdftoppm"
+  },
+  "requireHumanApproval": true,
+  "thresholds": {
+    "chromeSsim": 0.985,
+    "contentSsim": 0.96,
+    "maxSlotDriftIn": 0.1,
+    "meanSlotDriftIn": 0.04,
+    "outOfBounds": 0,
+    "severeOverlaps": 0
+  }
+}

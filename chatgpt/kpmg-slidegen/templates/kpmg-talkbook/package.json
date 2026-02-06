@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "pptxgenjs": "4.0.1"
+  },
+  "name": "kpmg-talkbook-pptx-gen",
+  "private": true,
+  "scripts": {
+    "gen:demo": "RUN_ID=$(date +%Y-%m-%d_%H%M%S); OUT_DIR=outputs/runs/$RUN_ID/demo; mkdir -p \"$OUT_DIR\"; node generator/index.js --in samples/benchmark-normal.json --out \"$OUT_DIR/deck.pptx\"",
+    "template:extract:native": "python3 ../../cli.py extract --template . --pptx \"PPT_Generic_talkbook_standard_EN.potx\" --mode native --all-layout-types",
+    "template:init": "python3 ../../cli.py init-template --template . --pptx \"PPT_Generic_talkbook_standard_EN.potx\"",
+    "template:tune": "python3 ../../cli.py tune-template --template .",
+    "validate:demo": "node generator/validate.js --in samples/benchmark-normal.json"
+  },
+  "type": "module"
+}

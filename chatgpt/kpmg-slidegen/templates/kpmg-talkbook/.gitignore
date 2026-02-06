@@ -1,0 +1,4 @@
+node_modules/
+outputs/runs/
+outputs/tuning/
+assets/_exported_media/

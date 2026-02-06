@@ -1,105 +1,170 @@
-# KPMG PPTX Generator — Specification
+# KPMG PPTX Generator - Specification
 
-**Last updated:** 2026-02-05
+Last updated: 2026-02-05
 
-## What this repo does
+## Product Goal
 
-This repo generates **brand-compliant PowerPoint decks** from structured JSON by:
+Enable fast onboarding of multiple KPMG PowerPoint templates so ChatGPT can generate slides against different template-native slide masters and layouts with minimal setup.
 
-1) **Extracting** a source PPTX template into a code-encoded wrapper (`template.js`) + metadata (`template.json`)
-2) **Generating** a new PPTX by filling that wrapper from a deck JSON spec
-3) **Producing strict inspection artifacts** (missing required fields, overlaps, out-of-bounds) next to the generated PPTX
+## Core Principles
 
-## Non-goals
+1. Keep Diligence stable.
+2. Make new template onboarding fast (`init-template` + `extract` + `tune-template`).
+3. Keep extraction deterministic and testable.
+4. Keep tuning changes template-local.
 
-- Editing PPTX XML directly during generation (generation is PptxGenJS-driven)
-- Committing large generated artifacts (PPTX) to git, except intentional baselines
+## Supported Modes
 
-## Source of truth
+## `legacy` mode
 
-- Template visuals and brand rules live in: `templates/kpmg-diligence/`
-- Generated wrapper outputs (do not hand-edit):
-  - `templates/kpmg-diligence/template.js`
-  - `templates/kpmg-diligence/template.json`
-- Content inputs live in: `templates/<template>/samples/`
+- Default mode.
+- Maintains existing Diligence output contract.
+- Uses fixed legacy slide type set.
 
-## High-level architecture
+## `native` mode
 
-```mermaid
-flowchart LR
-  A[Template PPTX] --> B[Extractor (Python)]
-  B --> C[template.json]
-  B --> D[template.js (generated wrapper)]
-  J[Content JSON] --> E[Generator (Node/PptxGenJS)]
-  C --> E
-  D --> E
-  E --> O[Output PPTX]
-  O --> Q[Inspect: strict-summary + overlap/bounds reports]
-```
+- Produces template-native layout contract.
+- Exposes all layout types as `layout.<slug>` when requested.
+- Uses slot payloads under `slides[].slots`.
+- Adds deterministic per-layout `typeAliases` so canonical + ergonomic variant names can be used safely.
 
-## Output policy
+## Public CLI Interface
 
-- `templates/<template>/outputs/` is a **throwaway workspace** for generated artifacts.
-- Baselines (if any) should be kept separate and clearly named under `templates/<template>/references/baselines/`.
-
-## Deck JSON (current expectations)
-
-The generator accepts a deck spec shaped like:
-
-- `title`, `meta` (optional)
-- `slides[]` with:
-  - `type` (maps to a builder)
-  - `title` (optional per layout)
-  - `strapline` (optional)
-  - content fields per type (bullets, table model, chart model, etc.)
-
-Validation is enforced in `generator/validate.js`.
-
-## Slide types (current)
-
-The set evolves, but today the repo supports a practical subset used by the NVIDIA sample deck:
-
-- `cover`
-- `divider`
-- `oneColumnText`
-- `twoColumnText` / `twoColumnTextWithStrapline`
-- `analysisNarrowTable` (table + right-side narrative)
-- `analysisWideChart2ColsText`
-- `analysisWideChartTableText`
-- `titleStrapline4TextBoxes`
-- `backCover`
-
-## Styling rules (current)
-
-This repo targets a “Project North”-style diligence look:
-
-- Font family: **Arial** (headings use bold weight)
-- Slide title: **40pt** (some layouts use a slightly condensed title size)
-- Section heading: **24pt**
-- Body text: **9pt**, with standard paragraph spacing
-- Bullets: PowerPoint-standard hanging indent + spacing (see `generator/tokens.js`)
-- Charts: white chart/plot backgrounds, template palette colors
-
-The single source of truth for these defaults is `templates/<template>/generator/tokens.js`.
-
-## Strict mode (default-on)
-
-Strict checks run by default during generation:
-
-- Missing required field reporting (required slots per slide type)
-- Overlap detection (JS-only; analyzes PptxGenJS slide objects)
-- Out-of-bounds detection (JS-only; flags elements extending beyond slide dimensions)
-
-Example:
+## `init-template`
 
 ```bash
-cd templates/kpmg-diligence
-node generator/index.js --in samples/v1-nvidia-v2.json --out outputs/runs/manual/nvidia/deck.pptx
+python3 cli.py init-template --template templates/<name> --pptx /path/to/template.potx
 ```
 
-To disable strict checks:
+Creates:
+- template folder scaffold
+- copied source template file
+- runtime skeleton
+- `template.profile.json`
+- `tuning.loop.json`
+
+## `extract`
 
 ```bash
-cd templates/kpmg-diligence
-node generator/index.js --in samples/v1-nvidia-v2.json --out outputs/runs/manual/nvidia/deck.pptx --no-strict
+python3 cli.py extract --template templates/<name> --pptx templates/<name>/<file>.potx --mode native --all-layout-types --refresh-assets --profile templates/<name>/template.profile.json
+```
+
+Arguments:
+- `--mode`: `legacy` or `native`
+- `--all-layout-types`: include all detected layouts (native)
+- `--refresh-assets`: regenerate asset manifests
+- `--profile`: optional profile override path
+
+Outputs:
+- `template.json`
+- `template.js`
+- auto-generated asset manifests when needed
+- synchronized `samples/benchmark-normal.json` and `samples/benchmark-stress.json` coverage for all extracted native layouts
+
+## `tune-template`
+
+```bash
+python3 cli.py tune-template --template templates/<name> [--sample ...] [--max-rounds N] [--human-approve]
+```
+
+Runs iterative visual parity loop and writes round artifacts.
+
+## Template JSON Contract
+
+## Native schema v4 additions
+
+- `templateMode`
+- `masters`
+- `layouts`
+- dynamic `slideDimensions`
+- per-layout `style` (colors/decoration)
+- per-layout `typeAliases` (optional)
+
+## Backward-compatible fields retained
+
+- `colors`
+- `fonts`
+- `detectedLayoutSlots`
+- `layoutGeometry`
+- `usedLayouts`
+- `assets`
+
+## Native Slide Spec
+
+```json
+{
+  "metadata": {},
+  "slides": [
+    {
+      "type": "layout.<slug>",
+      "slots": {},
+      "notes": "optional"
+    }
+  ]
+}
+```
+
+Supported slot kinds:
+- `text`
+- `image`
+- `table`
+- `chart`
+
+## Profile Layer (`template.profile.json`)
+
+Supported keys:
+- `requiredSlotOverrides`
+- `slotAliases`
+- `layoutDisplayNames`
+- `masterMapping`
+- `paginationGrouping`
+- `tokenOverrides`
+- `styleOverrides`
+
+Merge order:
+1. extracted defaults
+2. profile overrides
+
+## Tuning Loop Requirements
+
+Required run artifacts per round:
+- `reference_png`
+- `candidate_png`
+- `diff_png`
+- `metrics.json`
+- `applied_fixes.json`
+- `round_summary.md`
+
+Threshold defaults:
+- `chromeSsim >= 0.985`
+- `contentSsim >= 0.960`
+- `meanSlotDriftIn <= 0.04`
+- `maxSlotDriftIn <= 0.10`
+- `severeOverlaps == 0`
+- `outOfBounds == 0`
+
+Stop rule:
+- pass thresholds OR max rounds reached
+- optional mandatory human approval gate
+
+## Diligence Freeze Rules
+
+1. No direct edits under `templates/kpmg-diligence/**` without explicit approval.
+2. Diligence remains legacy mode.
+3. Shared changes must pass Diligence regressions.
+
+## Validation
+
+Run core regression suite:
+
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py'
+```
+
+Template runtime smoke test:
+
+```bash
+cd templates/<name>
+node generator/validate.js --in samples/benchmark-normal.json
+node generator/index.js --in samples/benchmark-normal.json --out outputs/runs/manual/benchmark/deck.pptx --no-strict
 ```

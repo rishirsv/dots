@@ -1,0 +1,22 @@
+{
+  "layoutDisplayNames": {},
+  "masterMapping": {},
+  "paginationGrouping": {},
+  "requiredSlotOverrides": {
+    "__autofix__": {
+      "enabled": true
+    }
+  },
+  "slotAliases": {},
+  "styleOverrides": {
+    "textScale": 0.95
+  },
+  "templateMode": "native",
+  "tokenOverrides": {
+    "colors": {
+      "semantic": {
+        "bgLight": "FFFFFF"
+      }
+    }
+  }
+}

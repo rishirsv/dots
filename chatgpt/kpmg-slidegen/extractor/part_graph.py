@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from .geometry import emu_to_inches
+
 NS = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
     "p": "http://schemas.openxmlformats.org/presentationml/2006/main",
@@ -39,11 +41,25 @@ class LayoutRef:
 
 
 @dataclass
+class MasterRef:
+    xml_path: str
+    name: str
+    theme_path: str
+    layout_paths: List[str] = field(default_factory=list)
+    media_refs: Dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
 class PartGraph:
     presentation_path: str = "ppt/presentation.xml"
     theme_path: str = "ppt/theme/theme1.xml"
     master_path: str = "ppt/slideMasters/slideMaster1.xml"
 
+    # Dynamic slide size discovered from ppt/presentation.xml (inches + raw EMU).
+    slide_dimensions: Dict[str, float] = field(default_factory=lambda: {"w": 13.333, "h": 7.5})
+    slide_size_emu: Dict[str, int] = field(default_factory=lambda: {"cx": 12192000, "cy": 6858000})
+
+    masters: Dict[str, MasterRef] = field(default_factory=dict)  # path -> MasterRef
     layouts: Dict[str, LayoutRef] = field(default_factory=dict)  # path -> LayoutRef
     slides: List[SlideRef] = field(default_factory=list)
     media: Dict[str, MediaRef] = field(default_factory=dict)  # path -> MediaRef
@@ -104,48 +120,134 @@ def _get_layout_name(zf: zipfile.ZipFile, layout_path: str) -> str:
     return layout_path.split("/")[-1].replace(".xml", "")
 
 
+def _get_master_name(zf: zipfile.ZipFile, master_path: str) -> str:
+    try:
+        master_xml = zf.read(master_path)
+        root = ET.fromstring(master_xml)
+        csld = root.find(".//p:cSld", NS)
+        if csld is not None and csld.get("name"):
+            return csld.get("name") or ""
+    except Exception:
+        pass
+    return master_path.split("/")[-1].replace(".xml", "")
+
+
+def _parse_slide_dimensions(zf: zipfile.ZipFile, presentation_path: str) -> Tuple[Dict[str, float], Dict[str, int]]:
+    defaults_in = {"w": 13.333, "h": 7.5}
+    defaults_emu = {"cx": 12192000, "cy": 6858000}
+    try:
+        root = ET.fromstring(zf.read(presentation_path))
+    except Exception:
+        return defaults_in, defaults_emu
+
+    sld_sz = root.find(".//p:sldSz", NS)
+    if sld_sz is None:
+        return defaults_in, defaults_emu
+
+    try:
+        cx = int(sld_sz.get("cx", str(defaults_emu["cx"])))
+        cy = int(sld_sz.get("cy", str(defaults_emu["cy"])))
+        return {"w": emu_to_inches(cx), "h": emu_to_inches(cy)}, {"cx": cx, "cy": cy}
+    except Exception:
+        return defaults_in, defaults_emu
+
+
+def _rid_num(rid: str) -> int:
+    try:
+        return int(rid.replace("rId", ""))
+    except Exception:
+        return 10**9
+
+
+def _sorted_rel_items(rels: Dict[str, Tuple[str, str]]) -> List[Tuple[str, Tuple[str, str]]]:
+    return sorted(rels.items(), key=lambda item: _rid_num(item[0]))
+
+
 def build_part_graph(pptx_path: Path) -> PartGraph:
     graph = PartGraph()
 
     with zipfile.ZipFile(pptx_path, "r") as zf:
+        graph.slide_dimensions, graph.slide_size_emu = _parse_slide_dimensions(zf, graph.presentation_path)
+
         pres_rels = _parse_rels(zf, "ppt/_rels/presentation.xml.rels")
 
         slide_rids: List[Tuple[str, str]] = []
-        for rid, (rel_type, target) in pres_rels.items():
+        master_rids: List[Tuple[str, str]] = []
+
+        for rid, (rel_type, target) in _sorted_rel_items(pres_rels):
+            resolved = _resolve_path(graph.presentation_path, target)
             if rel_type == "slide":
-                slide_rids.append((rid, _resolve_path(graph.presentation_path, target)))
+                slide_rids.append((rid, resolved))
             elif rel_type == "slideMaster":
-                graph.master_path = _resolve_path(graph.presentation_path, target)
+                master_rids.append((rid, resolved))
             elif rel_type == "theme":
-                graph.theme_path = _resolve_path(graph.presentation_path, target)
+                graph.theme_path = resolved
 
-        def _rid_num(rid: str) -> int:
-            try:
-                return int(rid.replace("rId", ""))
-            except Exception:
-                return 10**9
+        if master_rids:
+            graph.master_path = master_rids[0][1]
 
-        slide_rids.sort(key=lambda x: _rid_num(x[0]))
+        for _, master_path in master_rids:
+            master_rels = _parse_rels(zf, _rels_path_for_part(master_path))
+            theme_path = graph.theme_path
+            layout_paths: List[str] = []
+            master_media_refs: Dict[str, str] = {}
 
-        master_rels = _parse_rels(zf, _rels_path_for_part(graph.master_path))
-        for _, (rel_type, target) in master_rels.items():
-            if rel_type == "theme":
-                graph.theme_path = _resolve_path(graph.master_path, target)
-            elif rel_type == "slideLayout":
-                layout_path = _resolve_path(graph.master_path, target)
+            for rel_rid, (rel_type, target) in _sorted_rel_items(master_rels):
+                resolved = _resolve_path(master_path, target)
+                if rel_type == "theme":
+                    theme_path = resolved
+                elif rel_type == "slideLayout":
+                    layout_paths.append(resolved)
+                elif rel_type in ("image", "audio", "video"):
+                    master_media_refs[rel_rid] = resolved
+                    if resolved not in graph.media:
+                        graph.media[resolved] = MediaRef(rid=rel_rid, path=resolved)
+
+            graph.masters[master_path] = MasterRef(
+                xml_path=master_path,
+                name=_get_master_name(zf, master_path),
+                theme_path=theme_path,
+                layout_paths=layout_paths,
+                media_refs=master_media_refs,
+            )
+
+            if master_path == graph.master_path:
+                graph.theme_path = theme_path
+
+            for layout_path in layout_paths:
+                layout_media_refs: Dict[str, str] = {}
+                layout_rels = _parse_rels(zf, _rels_path_for_part(layout_path))
+                for rel_rid, (rel_type, target) in _sorted_rel_items(layout_rels):
+                    if rel_type not in ("image", "audio", "video"):
+                        continue
+                    resolved = _resolve_path(layout_path, target)
+                    layout_media_refs[rel_rid] = resolved
+                    if resolved not in graph.media:
+                        graph.media[resolved] = MediaRef(rid=rel_rid, path=resolved)
+
                 graph.layouts[layout_path] = LayoutRef(
                     xml_path=layout_path,
                     name=_get_layout_name(zf, layout_path),
-                    master_path=graph.master_path,
+                    master_path=master_path,
+                    media_refs=layout_media_refs,
                 )
 
-        for idx, (_, slide_path) in enumerate(slide_rids, start=1):
+        # Legacy fallback if the package omits explicit master rels.
+        if not graph.masters:
+            graph.masters[graph.master_path] = MasterRef(
+                xml_path=graph.master_path,
+                name=_get_master_name(zf, graph.master_path),
+                theme_path=graph.theme_path,
+                layout_paths=[],
+            )
+
+        for idx, (_, slide_path) in enumerate(sorted(slide_rids, key=lambda item: _rid_num(item[0])), start=1):
             slide_rels = _parse_rels(zf, _rels_path_for_part(slide_path))
 
             layout_path = ""
             media_refs: Dict[str, str] = {}
 
-            for rel_rid, (rel_type, target) in slide_rels.items():
+            for rel_rid, (rel_type, target) in _sorted_rel_items(slide_rels):
                 resolved = _resolve_path(slide_path, target)
                 if rel_type == "slideLayout":
                     layout_path = resolved
@@ -166,8 +268,15 @@ def build_part_graph(pptx_path: Path) -> PartGraph:
                 )
             )
 
-        graph._theme_xml = zf.read(graph.theme_path)
-        graph._master_xml = zf.read(graph.master_path)
+        try:
+            graph._theme_xml = zf.read(graph.theme_path)
+        except KeyError:
+            graph._theme_xml = None
+
+        try:
+            graph._master_xml = zf.read(graph.master_path)
+        except KeyError:
+            graph._master_xml = None
 
     return graph
 
@@ -177,4 +286,3 @@ def get_used_layouts(graph: PartGraph) -> Dict[str, int]:
     for slide in graph.slides:
         usage[slide.layout_name] = usage.get(slide.layout_name, 0) + 1
     return dict(sorted(usage.items(), key=lambda kv: -kv[1]))
-

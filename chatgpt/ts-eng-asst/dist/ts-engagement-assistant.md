@@ -136,6 +136,11 @@ subprocess.check_output(cmd)
 
 **Important:** Do not `import` generator modules (e.g., `from el_generate import ...`). Do not call the generator with positional args. Always run the generator as a script via `subprocess` using the flags form above. If generation fails, retry **once** with the same command and then stop and report the error.
 
+**Import guard (strict):**
+- Never run `from el_generate import ...` or `import el_generate`.
+- The generator file is named `el-generate.py` (hyphenated), so Python module import will fail with `ModuleNotFoundError`.
+- If any attempted code path raises `ModuleNotFoundError: No module named 'el_generate'`, immediately discard that approach and re-run using the subprocess pattern above only.
+
 Provide a download link to the completed `.docx`.
 
 ---

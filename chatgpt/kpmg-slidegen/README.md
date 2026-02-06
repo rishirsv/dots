@@ -1,30 +1,48 @@
 # kpmg-slidegen
 
-Core docs live in `docs/`:
+Core docs:
+- `ARCHITECTURE.md`
 - `docs/SPEC.md`
-- `docs/PROJECT-PLAN.md`
+- `docs/TEMPLATE-ONBOARDING.md`
 
-Project assets and artifacts:
-- `templates/` — per-template projects (each contains its own generator runtime)
-- `extractor/` — Python extraction utilities (foundation deliverables)
-- `dist/` — downstream “releases” (portable bundles; no repo-level QA)
+Project areas:
+- `templates/` - per-template projects
+- `extractor/` - Python extraction, codegen, and tuning pipeline
+- `tests/` - regression suite
 
-Dependencies:
-- `requirements/requirements.txt` is intentionally minimal (stdlib-only extractor foundations).
+## Quick Commands
 
 Run tests:
-- `python3 -m unittest discover -s tests -p 'test_*.py'`
 
-Generate a demo deck:
-- `cd templates/kpmg-diligence`
-- `npm install`
-- `node generator/validate.js --in samples/demo.json`
-- `node generator/index.js --in samples/demo.json --out outputs/runs/manual/demo/deck.pptx`
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py'
+```
 
-Regenerate `templates/kpmg-diligence/template.js` + `template.json`:
-- `python3 cli.py extract --template templates/kpmg-diligence --pptx "templates/kpmg-diligence/Diligence+ Reporting Template_Widescreen v2.1.pptx"`
+Initialize a new template:
 
-Strict inspection outputs:
-- `docs/SPEC.md`
-- `docs/PROJECT-PLAN.md`
-- `templates/kpmg-diligence/AGENTS.md`
+```bash
+python3 cli.py init-template --template templates/<name> --pptx /path/to/source.potx
+```
+
+Extract template contract (native mode):
+
+```bash
+python3 cli.py extract --template templates/<name> --pptx templates/<name>/<source>.potx --mode native --all-layout-types --refresh-assets
+```
+
+Run visual tuning loop:
+
+```bash
+python3 cli.py tune-template --template templates/<name>
+```
+
+Generate a deck (template runtime):
+
+```bash
+cd templates/<name>
+node generator/index.js --in samples/benchmark-normal.json --out outputs/runs/manual/demo/deck.pptx --no-strict
+```
+
+## Diligence Freeze
+
+`templates/kpmg-diligence/` is the legacy production contract and remains frozen unless explicitly approved.

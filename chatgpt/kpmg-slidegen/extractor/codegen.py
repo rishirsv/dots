@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from .asset_pipeline import ensure_asset_manifests
+from .native_codegen import build_native_template_artifacts, build_template_js_native, load_profile
 from .part_graph import build_part_graph, get_used_layouts
 from .resolvers import build_resolver
 from .slots import detect_all_layout_slots
@@ -17,6 +19,10 @@ class TemplateConfig:
     template_dir: Path
     pptx_path: Path
     schema_version: str = "3.0"
+    mode: str = "legacy"
+    all_layout_types: bool = False
+    refresh_assets: bool = False
+    profile_path: Optional[Path] = None
 
 
 def _utc_now_iso() -> str:
@@ -40,7 +46,7 @@ def _summarize_detected_layout_slots(detected_layouts: Dict[str, Any]) -> Dict[s
     return summary
 
 
-def build_template_json(cfg: TemplateConfig) -> Dict[str, Any]:
+def _build_template_json_legacy(cfg: TemplateConfig) -> Dict[str, Any]:
     graph = build_part_graph(cfg.pptx_path)
     resolver = build_resolver(cfg.pptx_path)
     detected_layouts = detect_all_layout_slots(cfg.pptx_path)
@@ -68,6 +74,13 @@ def build_template_json(cfg: TemplateConfig) -> Dict[str, Any]:
         "detectedLayoutSlots": _summarize_detected_layout_slots(detected_layouts),
         "layoutGeometry": detected_geometry,
     }
+
+
+def build_template_json(cfg: TemplateConfig) -> Dict[str, Any]:
+    """
+    Backward-compatible helper kept for existing tests and callers.
+    """
+    return _build_template_json_legacy(cfg)
 
 
 def build_template_js(
@@ -483,67 +496,106 @@ def write_template_files(cfg: TemplateConfig) -> Dict[str, Path]:
     cfg.template_dir.mkdir(parents=True, exist_ok=True)
     (cfg.template_dir / "assets").mkdir(parents=True, exist_ok=True)
 
-    template_json = build_template_json(cfg)
-
-    # Load base64 assets for embedding into JS.
-    assets_dir = cfg.template_dir / "assets"
-    assets_base64 = json.loads((assets_dir / "assets-base64.json").read_text())
-    gradients_data_uris = json.loads((assets_dir / "gradient_data_uris.json").read_text())
-
-    resolver = build_resolver(cfg.pptx_path)
-    tokens = {
-        "dimensions": {"w": 13.333, "h": 7.5},
-        "colors": {
-            "scheme": resolver.clr_scheme,
-            "clrMap": resolver.clr_map,
-            "semantic": {
-                "kpmgBlue": "00338D",
-                "kpmgPurple": "7213EA",
-                "kpmgCyan": "00B8F5",
-                "primary": "1E49E2",
-                "textDark": "000000",
-                "textLight": "FFFFFF",
-                "bgLight": "FFFFFF",
-                "bgAlt": "E5E5E5",
-            },
-        },
-        "fonts": {
-            "heading": "Arial",
-            "body": resolver.fonts.get("+mn-lt", "Arial"),
-            "fallback": "Arial",
-        },
-        "textStyles": {
-            "coverTitle": {"fontFace": "Arial", "fontSize": 66, "color": "FFFFFF", "bold": True},
-            "coverSubtitle": {"fontFace": "Arial", "fontSize": 14, "color": "FFFFFF"},
-            "sectionNumber": {"fontFace": "Arial", "fontSize": 48, "color": "FFFFFF", "bold": True},
-            "slideTitle": {"fontFace": "Arial", "fontSize": 24, "color": "00338D", "bold": True},
-            "bodyText": {"fontFace": "Arial", "fontSize": 12, "color": "000000"},
-            "tableHeader": {"fontFace": "Arial", "fontSize": 10, "color": "FFFFFF", "bold": True},
-            "tableBody": {"fontFace": "Arial", "fontSize": 10, "color": "000000"},
-        },
-    }
-
-    assets = {
-        "logoWhite": assets_base64.get("logoWhitePng"),
-        "logoWhiteSvg": assets_base64.get("logoWhiteSvg"),
-        "coverPhoto": assets_base64.get("coverPhoto"),
-        "gradientDivider": gradients_data_uris.get("divider_window"),
-        "gradientBackCover": gradients_data_uris.get("back_cover"),
-    }
-
-    missing = [k for k, v in assets.items() if not isinstance(v, str) or not v.startswith("data:")]
-    if missing:
-        raise ValueError(f"Missing/invalid embedded asset data URIs for: {missing}")
-
-    js_src = build_template_js(
-        schema_version=cfg.schema_version,
-        source_pptx_name=cfg.pptx_path.name,
-        tokens=tokens,
-        assets=assets,  # type: ignore[arg-type]
-        generated_at=template_json["generatedAt"],
-        detected_layout_slots=template_json.get("detectedLayoutSlots", {}),
-        detected_layout_geometry=template_json.get("layoutGeometry", {}),
+    manifest_paths = ensure_asset_manifests(
+        cfg.template_dir,
+        cfg.pptx_path,
+        refresh=cfg.refresh_assets,
+        mode=cfg.mode,
     )
+
+    if cfg.mode == "native":
+        graph = build_part_graph(cfg.pptx_path)
+        resolver = build_resolver(cfg.pptx_path)
+        detected_layouts = detect_all_layout_slots(cfg.pptx_path)
+        detected_geometry = extract_all_layout_geometry(cfg.pptx_path)
+        profile = load_profile(cfg.profile_path)
+
+        native = build_native_template_artifacts(
+            schema_version=cfg.schema_version,
+            generated_at=_utc_now_iso(),
+            source_pptx=cfg.pptx_path,
+            graph=graph,
+            resolver=resolver,
+            detected_layouts=detected_layouts,
+            detected_layout_geometry=detected_geometry,
+            assets_base64_path=manifest_paths["assets_base64"],
+            gradients_data_uris_path=manifest_paths["gradients_data_uris"],
+            all_layout_types=cfg.all_layout_types,
+            profile=profile,
+        )
+        template_json = native["template_json"]
+        js_src = build_template_js_native(
+            schema_version=cfg.schema_version,
+            source_pptx_name=cfg.pptx_path.name,
+            generated_at=template_json["generatedAt"],
+            tokens=native["tokens"],
+            assets=native["assets"],
+            masters=template_json.get("masters", {}),
+            layouts=template_json.get("layouts", {}),
+            detected_layout_slots=template_json.get("detectedLayoutSlots", {}),
+            detected_layout_geometry=template_json.get("layoutGeometry", {}),
+        )
+    else:
+        template_json = _build_template_json_legacy(cfg)
+
+        # Load base64 assets for embedding into JS.
+        assets_base64 = json.loads(manifest_paths["assets_base64"].read_text())
+        gradients_data_uris = json.loads(manifest_paths["gradients_data_uris"].read_text())
+
+        resolver = build_resolver(cfg.pptx_path)
+        tokens = {
+            "dimensions": {"w": 13.333, "h": 7.5},
+            "colors": {
+                "scheme": resolver.clr_scheme,
+                "clrMap": resolver.clr_map,
+                "semantic": {
+                    "kpmgBlue": "00338D",
+                    "kpmgPurple": "7213EA",
+                    "kpmgCyan": "00B8F5",
+                    "primary": "1E49E2",
+                    "textDark": "000000",
+                    "textLight": "FFFFFF",
+                    "bgLight": "FFFFFF",
+                    "bgAlt": "E5E5E5",
+                },
+            },
+            "fonts": {
+                "heading": "Arial",
+                "body": resolver.fonts.get("+mn-lt", "Arial"),
+                "fallback": "Arial",
+            },
+            "textStyles": {
+                "coverTitle": {"fontFace": "Arial", "fontSize": 66, "color": "FFFFFF", "bold": True},
+                "coverSubtitle": {"fontFace": "Arial", "fontSize": 14, "color": "FFFFFF"},
+                "sectionNumber": {"fontFace": "Arial", "fontSize": 48, "color": "FFFFFF", "bold": True},
+                "slideTitle": {"fontFace": "Arial", "fontSize": 24, "color": "00338D", "bold": True},
+                "bodyText": {"fontFace": "Arial", "fontSize": 12, "color": "000000"},
+                "tableHeader": {"fontFace": "Arial", "fontSize": 10, "color": "FFFFFF", "bold": True},
+                "tableBody": {"fontFace": "Arial", "fontSize": 10, "color": "000000"},
+            },
+        }
+
+        assets = {
+            "logoWhite": assets_base64.get("logoWhitePng"),
+            "logoWhiteSvg": assets_base64.get("logoWhiteSvg"),
+            "coverPhoto": assets_base64.get("coverPhoto"),
+            "gradientDivider": gradients_data_uris.get("divider_window"),
+            "gradientBackCover": gradients_data_uris.get("back_cover"),
+        }
+
+        missing = [k for k, v in assets.items() if not isinstance(v, str) or not v.startswith("data:")]
+        if missing:
+            raise ValueError(f"Missing/invalid embedded asset data URIs for: {missing}")
+
+        js_src = build_template_js(
+            schema_version=cfg.schema_version,
+            source_pptx_name=cfg.pptx_path.name,
+            tokens=tokens,
+            assets=assets,  # type: ignore[arg-type]
+            generated_at=template_json["generatedAt"],
+            detected_layout_slots=template_json.get("detectedLayoutSlots", {}),
+            detected_layout_geometry=template_json.get("layoutGeometry", {}),
+        )
 
     template_json_path = cfg.template_dir / "template.json"
     template_js_path = cfg.template_dir / "template.js"

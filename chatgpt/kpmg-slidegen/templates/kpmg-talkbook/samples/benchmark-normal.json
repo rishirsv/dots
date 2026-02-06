@@ -1,0 +1,479 @@
+{
+  "metadata": {
+    "title": "Native benchmark (normal)",
+    "author": "kpmg-slidegen"
+  },
+  "slides": [
+    {
+      "type": "layout.1-column-chart-text",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "chart_chart_11": {
+          "chartType": "bar",
+          "series": [
+            {
+              "name": "Series 1",
+              "labels": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ],
+              "values": [
+                8,
+                16,
+                24,
+                32,
+                40
+              ]
+            }
+          ]
+        }
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.2-column-blue-heading",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_19": "Benchmark body content",
+        "text_body_21": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.2-column-chart",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "chart_chart_14": {
+          "chartType": "bar",
+          "series": [
+            {
+              "name": "Series 1",
+              "labels": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ],
+              "values": [
+                8,
+                16,
+                24,
+                32,
+                40
+              ]
+            }
+          ]
+        },
+        "chart_chart_13": {
+          "chartType": "bar",
+          "series": [
+            {
+              "name": "Series 1",
+              "labels": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ],
+              "values": [
+                8,
+                16,
+                24,
+                32,
+                40
+              ]
+            }
+          ]
+        }
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.3-column-chart-text",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "chart_chart_12": {
+          "chartType": "bar",
+          "series": [
+            {
+              "name": "Series 1",
+              "labels": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ],
+              "values": [
+                8,
+                16,
+                24,
+                32,
+                40
+              ]
+            }
+          ]
+        },
+        "chart_chart_11": {
+          "chartType": "bar",
+          "series": [
+            {
+              "name": "Series 1",
+              "labels": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ],
+              "values": [
+                8,
+                16,
+                24,
+                32,
+                40
+              ]
+            }
+          ]
+        }
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.back-cover-dark-gradient",
+      "slots": {
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "image_2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "text_body_10": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.back-cover-light-gradient",
+      "slots": {
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "image_2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "text_body_10": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.color-palette",
+      "slots": {
+        "text_title": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.cover-letter",
+      "slots": {
+        "text_body_15": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.cover-letter-continuation",
+      "slots": {
+        "text_body_15": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.divider-1",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.divider-2",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.divider-3",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.four-quad-boxes",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_19": "Benchmark body content",
+        "text_body_21": "Benchmark body content",
+        "text_body_23": "Benchmark body content",
+        "text_body_25": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.four-quad-boxes-bg-dark-colour",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_19": "Benchmark body content",
+        "text_body_21": "Benchmark body content",
+        "text_body_23": "Benchmark body content",
+        "text_body_25": "Benchmark body content",
+        "image_10": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.one-column-text",
+      "slots": {
+        "text_title": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.one-column-text-dark-bg-color",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "image_3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.one-column-text-double-title",
+      "slots": {
+        "text_title": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.one-column-text-double-title-kpmg-blue",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "image_3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.process-4-columns",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_18": "Benchmark body content",
+        "text_body_14": "Benchmark body content",
+        "text_body_15": "Benchmark body content",
+        "text_body_16": "Benchmark body content",
+        "text_body_17": "Benchmark body content",
+        "text_body_10": "Benchmark body content",
+        "text_body_11": "Benchmark body content",
+        "text_body_12": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.process-4-columns-cobalt-blue",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_18": "Benchmark body content",
+        "text_body_14": "Benchmark body content",
+        "text_body_15": "Benchmark body content",
+        "text_body_16": "Benchmark body content",
+        "text_body_17": "Benchmark body content",
+        "text_body_10": "Benchmark body content",
+        "text_body_11": "Benchmark body content",
+        "text_body_12": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.process-4-columns-top-banner",
+      "slots": {
+        "text_title": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.process-5-columns",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_20": "Benchmark body content",
+        "text_body_14": "Benchmark body content",
+        "text_body_15": "Benchmark body content",
+        "text_body_16": "Benchmark body content",
+        "text_body_17": "Benchmark body content",
+        "text_body_18": "Benchmark body content",
+        "text_body_10": "Benchmark body content",
+        "text_body_11": "Benchmark body content",
+        "text_body_12": "Benchmark body content",
+        "text_body_13": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.process-5-columns-cobalt-blue",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_20": "Benchmark body content",
+        "text_body_14": "Benchmark body content",
+        "text_body_15": "Benchmark body content",
+        "text_body_16": "Benchmark body content",
+        "text_body_17": "Benchmark body content",
+        "text_body_18": "Benchmark body content",
+        "text_body_10": "Benchmark body content",
+        "text_body_11": "Benchmark body content",
+        "text_body_12": "Benchmark body content",
+        "text_body_13": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.process-5-columns-top-banner",
+      "slots": {
+        "text_title": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.quad-box-with-icon-and-center-text-box",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_11": "Benchmark body content",
+        "text_body_14": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.text-with-image-or-chart",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "chart_chart_13": {
+          "chartType": "bar",
+          "series": [
+            {
+              "name": "Series 1",
+              "labels": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ],
+              "values": [
+                8,
+                16,
+                24,
+                32,
+                40
+              ]
+            }
+          ]
+        }
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-only",
+      "slots": {
+        "text_title": "Benchmark slide title"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-only-dark-bg-colour",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "image_3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-left-horizontal-window-image-kpmg-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "image_pic_12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-left-horizontal-window-kpmg-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-left-vertical-window-image-kpmg-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "image_pic_12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-left-vertical-window-kpmg-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-right-horizontal-window-image-cobalt-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "image_pic_12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-right-horizontal-window-pacific-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-right-vertical-window-image-cobalt-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII=",
+        "image_pic_12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.title-slide-right-vertical-window-pacific-blue",
+      "slots": {
+        "text_ctrtitle": "Benchmark slide title",
+        "image_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.two-column-text",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_10": "Benchmark body content",
+        "text_body_11": "Benchmark body content"
+      },
+      "notes": "Auto-generated benchmark slide"
+    },
+    {
+      "type": "layout.two-column-text-dark-bg-colour",
+      "slots": {
+        "text_title": "Benchmark slide title",
+        "text_body_10": "Benchmark body content",
+        "text_body_11": "Benchmark body content",
+        "image_4": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/xcAAgMBgR0J7nQAAAAASUVORK5CYII="
+      },
+      "notes": "Auto-generated benchmark slide"
+    }
+  ]
+}
