@@ -1,4 +1,0 @@
-interface:
-  display_name: "UI Iteration Studio"
-  short_description: "Screenshot-driven UI iterations (web + Expo)"
-  default_prompt: "Use $ui-iteration-studio to run screenshot-driven UI iteration cycles (exactly 3–5 changes per pass) in Web (agent-browser) or Expo (iOS Simulator) mode."
