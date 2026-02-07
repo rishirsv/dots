@@ -1,4 +1,0 @@
-interface:
-  display_name: "KPMG Talkbook Copilot"
-  short_description: "Outline-first or one-shot consulting deck drafting with depth contracts"
-  default_prompt: "Use this skill to produce dense consulting deck content using Talkbook V2 workflow. Default to outline_confirm: capture intent, set depth profile, draft structured outline, wait for explicit outline approval, materialize sections, then draft each section with mandatory archetype selection from references/writing-archetypes.md and authoring payload contract before compile/build. If user requests one_shot, record assumptions, auto-approve outline artifact, and proceed directly to deep drafting. Always run references/writing-checklist.md before section finalization and preserve source traceability."
