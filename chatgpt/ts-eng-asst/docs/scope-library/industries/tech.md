@@ -37,7 +37,7 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -171,10 +171,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Trade and non-trade balances;
   - Allowance for uncollectible accounts and write-offs.
 
-#### Industry (`tech`)
-
-_No industry-specific bullets._
-
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
 #### Common
@@ -185,10 +181,6 @@ _No industry-specific bullets._
   - Supplier settlement terms; and
   - Other current and non-current liabilities.
 
-#### Industry (`tech`)
-
-_No industry-specific bullets._
-
 ### Capital expenditure requirements (`capital_expenditure_requirements`)
 
 #### Common
@@ -196,10 +188,6 @@ _No industry-specific bullets._
 - (scope.013) Obtain and read an analysis of existing and future capital cost requirements including:
   - Maintenance versus growth capital expenditures;
   - Other historical, deferred, and planned capital expenditures.
-
-#### Industry (`tech`)
-
-_No industry-specific bullets._
 
 ### Commitments and contingencies (`commitments_and_contingencies`)
 
@@ -214,20 +202,12 @@ _No industry-specific bullets._
   - Expected or contingent liabilities (e.g. environmental, litigation, regulatory and tax); and
   - Other off-balance sheet transactions.
 
-#### Industry (`tech`)
-
-_No industry-specific bullets._
-
 ### Net debt (`net_debt`)
 
 #### Common
 
 - (scope.015) Summarize and comment on net debt items (on and off-balance sheet) presented by Management and other potential debt-like items;
 - (scope.016) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
-
-#### Industry (`tech`)
-
-_No industry-specific bullets._
 
 ### Audit work paper (`audit_work_paper`)
 
@@ -238,7 +218,3 @@ _No industry-specific bullets._
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`tech`)
-
-_No industry-specific bullets._

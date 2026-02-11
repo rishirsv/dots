@@ -31,7 +31,7 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -145,15 +145,14 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`healthcare`)
 
-- (scope.089) Obtain and read an analysis of Target's expenses and inquire about:
-  - Behavior therapists (registered and unregistered) and board-certified behavior analysts: compensation, benefits, incentive compensation, and turnover;
-  - Non-provider salaries, wages, and benefits, including incentive compensation;
-  - Owner compensation and benefits;
-  - Treatment supplies, including key suppliers and purchasing terms;
-  - Center-level costs and sub-leasing arrangements;
-  - Insurance expense;
-  - Selling, general, and administrative/corporate expenses; and
-  - Overhead allocations.
+- (scope.089) Behavior therapists (registered and unregistered) and board-certified behavior analysts: compensation, benefits, incentive compensation, and turnover.
+- (scope.589) Non-provider salaries, wages, and benefits, including incentive compensation.
+- (scope.590) Owner compensation and benefits.
+- (scope.591) Treatment supplies, including key suppliers and purchasing terms.
+- (scope.592) Center-level costs and sub-leasing arrangements.
+- (scope.593) Insurance expense.
+- (scope.594) Selling, general, and administrative/corporate expenses.
+- (scope.595) Overhead allocations.
 
 ### Working capital (`working_capital`)
 
@@ -181,14 +180,13 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`healthcare`)
 
-- (scope.093) Obtain and read an analysis of Target's accounts receivable and inquire about:
-  - Aging analysis by center and by payor;
-  - Contractual allowances;
-  - Allowance for doubtful accounts and write-offs;
-  - Prior-period accounts receivable adjustments;
-  - Self-pay and credit balances;
-  - Collection experience; and
-  - Other reserves and adjustments.
+- (scope.093) Aging analysis by center and by payor.
+- (scope.596) Contractual allowances.
+- (scope.597) Allowance for doubtful accounts and write-offs.
+- (scope.598) Prior-period accounts receivable adjustments.
+- (scope.599) Self-pay and credit balances.
+- (scope.600) Collection experience.
+- (scope.601) Other reserves and adjustments.
 
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
@@ -218,11 +216,8 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`healthcare`)
 
-- (scope.099) Obtain and read an analysis of historical and future capital cost requirements including:
-  - Fixed-asset continuity schedules (including significant additions and disposals);
-  - Maintenance versus growth capital expenditures;
-  - Planned, committed, and deferred capital expenditures; and
-  - Under-utilized assets and impairment write-downs/issues.
+- (scope.099) Fixed-asset continuity schedules (including significant additions and disposals).
+- (scope.602) Under-utilized assets and impairment write-downs/issues.
 
 ### Commitments and contingencies (`commitments_and_contingencies`)
 
@@ -266,10 +261,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`healthcare`)
-
-_No industry-specific bullets._
 
 ### Inventory (`inventory`)
 

@@ -27,11 +27,11 @@ Rules source: `docs/scope-library/section-applicability.json`.
 - Excluded common sections: _None_
 - Replaced common sections: `audit_work_paper`, `capital_expenditure_requirements`, `net_debt`, `revenue_analysis`, `working_capital`
 - Added industry sections: _None_
-- Replaced industry sections: `quality_of_earnings`
+- Replaced industry sections: `accounts_payable_and_accrued_liabilities`, `accounts_receivable`, `aspe_to_ifrs_us_gaap_assessment`, `budget_vs_actual`, `capital_expenditure_requirements`, `commitments_and_contingencies`, `forecast_and_budget_analysis`, `inventory`, `net_debt`, `normalized_ebitda_bridges`, `operating_expenses`, `operational_cost_margin_assessment`, `prepaids`, `quality_of_earnings`, `revenue_analysis`, `vdd_report_review`, `working_capital`
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -140,18 +140,8 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`manufacturing`)
 
-- (scope.232) Revenue and margin trends by customer, program, SKU, and product category:
-  - Breakdown of costs of goods sold including: materials, scrap/waste, labour expense, manufacturing overhead, packing and outbound freight for product sales; and
-  - Ability to pass through changes in the cost of raw material and other inputs.
-- (scope.233) Obtain a comprehensive view of revenue, value add and contribution margin (pending data availability) by product line and by customer. Obtain the analysis and underlying transactional data (manufacturing orders database), if available, and gain an understanding of the major trends in revenue and margins addressing areas including:
-  - Historical revenues (gross, net, volume), value add, contribution, average selling price and average cost per lbs by:
-    - product line (e.g. by décor, technology, packaging format, resin type, category/ SKU grouping, sales channel, order size, if available); additional services (if applicable);
-    - Breakdown of cost of sales including: raw materials, labels (if applicable), scrap/waste/expired ingredients, packaging materials, freight-in, labour expense, manufacturing overhead, packing and outbound freight for product sales.
-    - Revenue and gross margin by plant;
-    - Revenue and gross margin by brand;
-    - Revenue and gross margin by product category (bread, frozen dough rolls, garlic toast, cookies, muffins etc.);
-    - Revenue and gross margin by SKU;
-    - Raw material costs including hedging programs and high level evaluation of embedded inventory gains and/or losses; and
+- (scope.232) Revenue and gross-margin trends by plant, product category/SKU, customer, and channel, including concentration and mix effects.
+- (scope.233) Price-volume-mix and input-cost pass-through dynamics, including major raw-material and freight impacts on margins.
 
 ### Operating expenses (`operating_expenses`)
 
@@ -167,34 +157,10 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`manufacturing`)
 
-- (scope.234) Obtain and read an analysis of Company's operating expenses and SG&A and inquire about and comment on:
-  - Salaries and benefits (including headcount and average compensation costs, incentive-based compensation, severance, other), and any capitalization of costs;
-  - Occupancy costs;
-  - Repairs and maintenance;
-  - General and administration costs;
-  - Key suppliers and contractual arrangements;
-  - Research and development activities and costs; and
-  - Unusual and extraordinary items.
-- (scope.235) Obtain and read an analysis of Target's operating expenses and SG&A and inquire about and comment on:
-  - Breakdown and historical trends of operating costs;
-  - Personnel costs;
-  - Advertising, sales and marketing;
-  - Professional fees;
-  - Analysis of fixed and variable costs of the business; and
-- (scope.236) Obtain and read an analysis of Target's operating expenses and inquire about:
-  - High-level overview of employee compensation and benefits including:
-    - Headcount and average compensation costs;
-    - Accrued employee obligations and other provisions;
-    - Severance / commitments, if any;
-    - Incentive based compensation;
-    - Flag any material gaps in headcount; and
-- (scope.237) Reconcile employee census to the financial statements.
-- (scope.238) Rent and logistics;
-- (scope.239) Food safety and quality costs;
-- (scope.240) Research and development costs;
-- (scope.241) Selling expenses;
-- (scope.242) Fixed vs. variable expense analysis; and
-- (scope.243) Other operating and G&A expenses.
+- (scope.234) Compensation and benefits analysis by function (including headcount, incentive compensation, and key labor-cost drivers).
+- (scope.235) Occupancy, logistics, and manufacturing support cost trends.
+- (scope.236) Research and development and product quality/safety costs, including capitalization impacts where applicable.
+- (scope.237) Selling, general, and administrative cost profile, including fixed-versus-variable cost behavior.
 
 ### Working capital (`working_capital`)
 
@@ -208,14 +174,9 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`manufacturing`)
 
-- (scope.249) Summarize and normalize historical working capital in the business, including:
-- (scope.250) Comment on the historical working capital trends;
-- (scope.251) Understand key drivers and trade ratio trends (i.e. seasonality, days sales outstanding, days inventory outstanding, accounts payable days, etc.);
-- (scope.252) Accrued liabilities and prepaid expenses;
-- (scope.253) Large or unusual non-recurring items that may have impacted normal working capital trends including potential items identified within the quality of earnings analysis noted above;
-- (scope.254) Historical impact from acquisitions and associated normalizations; and
-- (scope.255) Recommend approaches to determine a normalized net working capital target/peg.
-- (scope.256) Payroll related funding and timing of cash flows; and
+- (scope.249) Working capital trends and trade-ratio drivers (including DSO, DIO, and DPO), including seasonality effects.
+- (scope.250) Large or non-recurring items affecting working capital comparability (including acquisition-related impacts).
+- (scope.256) Payroll-related funding and cash timing impacts relevant to working capital normalization and peg setting.
 
 ### Accounts receivable (`accounts_receivable`)
 
@@ -226,17 +187,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Credit terms;
   - Trade and non-trade balances;
   - Allowance for uncollectible accounts and write-offs.
-
-#### Industry (`manufacturing`)
-
-- (scope.259) Obtain and read an analysis of accounts receivable and inquire and comment on:
-  - Trade and non-trade (due from officers, stockholder, employees, affiliates, and other) balances;
-  - Aging analysis by key customer and by customer type and turnover analysis;
-  - Credit terms and any other special terms; and
-- (scope.260) Obtain and read an analysis of Target's accounts receivable and inquire about:
-  - Aging analysis and related credit terms (including special terms and changes thereto e.g. early payment discount elimination);
-  - Allowance for uncollectible accounts and write-offs; and
-  - Reserve and adjustments.
 
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
@@ -250,14 +200,9 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`manufacturing`)
 
-- (scope.261) Obtain and read an analysis of accounts payable and accrued compensation and liabilities and inquire about:
-  - Accrued liabilities including (where possible) a basis for the adequacy of accruals for such items as bonuses, deferred compensation, severance, workers' compensation, commissions, vacation pay, litigation, customer returns, product liability, sales allowances and credits, and other;
-  - Vendor/supplier settlement terms; and
-- (scope.262) Obtain and read an analysis of Target's accounts payable and accrued liabilities and inquire about:
-  - AP aging analysis and days outstanding;
-  - Terms of trade with major vendors;
-  - Payroll related funding and timing of cash flows;
-  - Cadence and consistency of bonus and other incentive compensation; and
+- (scope.261) Accounts payable aging and vendor settlement terms for key suppliers.
+- (scope.262) Accrued liabilities profile (including payroll, bonuses/incentives, and other significant operating accruals).
+- (scope.608) Other current and non-current liability balances with potential working-capital or debt-like implications.
 
 ### Capital expenditure requirements (`capital_expenditure_requirements`)
 
@@ -269,14 +214,9 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`manufacturing`)
 
-- (scope.266) Fixed asset continuity schedule showing additions and depreciation;
-- (scope.267) Significant near-term required capex and deferred capex, if any; and
-- (scope.268) Historical capital expenditures segregated between growth and maintenance.
-- (scope.269) Significant near-term require capex and deferred capex, if any; and
-- (scope.270) Obtain and read an analysis of Target's existing capital costs and inquire about:
-  - Historical growth vs. maintenance capex;
-  - If any deferred and planned capital expenditures; and
-  - Impairment write-downs and issues.
+- (scope.266) Fixed-asset continuity and significant additions/disposals.
+- (scope.267) Near-term required capex and deferred capex backlog, where applicable.
+- (scope.270) Growth versus maintenance capex profile and related impairment/write-down considerations.
 
 ### Commitments and contingencies (`commitments_and_contingencies`)
 
@@ -293,17 +233,10 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`manufacturing`)
 
-- (scope.274) Significant purchase commitments and product financing arrangements with customers and/or suppliers;
-- (scope.275) Operating leases;
-- (scope.276) Earn-out arrangements and commitments relating to previous acquisitions;
-- (scope.277) Pending or threatened litigation or investigations.
-- (scope.278) Minimum purchase commitments under long-term supply and/or manufacturing contracts;
-- (scope.279) Incentive compensation and employee pension and post-retirement benefit obligations;
-- (scope.280) Lease obligations to related parties and 3rd parties (if applicable);
-- (scope.281) Pending or threatened litigation relating to infringement of intellectual property, regulatory, etc.; and
-- (scope.282) Pending or threatened litigations by regulatory or other authorities and by employees;
-- (scope.283) Incentive compensation and employee benefit obligations; and
-- (scope.284) Significant lease and purchase obligations.
+- (scope.274) Minimum purchase or supply commitments under long-term commercial arrangements.
+- (scope.275) Earn-out obligations and other contingent consideration from historical acquisitions, where applicable.
+- (scope.276) Lease obligations and related commitments with third parties and related parties, where applicable.
+- (scope.277) Pending or threatened litigation and regulatory matters (including intellectual-property-related exposures, where applicable).
 
 ### Net debt (`net_debt`)
 
@@ -311,12 +244,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 - (scope.015) Summarize and comment on net debt items (on and off-balance sheet) presented by Management and other potential debt-like items;
 - (scope.016) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
-
-#### Industry (`manufacturing`)
-
-- (scope.271) Summarize and comment on net debt items presented by Management and other potential debt-like items; and
-- (scope.272) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
-- (scope.273) Summarize and comment on net debt items (on and off balance sheet) presented by management and other potential debt-like items; and
 
 ### Audit work paper (`audit_work_paper`)
 
@@ -328,62 +255,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
 
-#### Industry (`manufacturing`)
-
-_No industry-specific bullets._
-
-### Vdd Report Review (`vdd_report_review`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`manufacturing`)
-
-- (scope.231) Read the VDD Report and any available updates and discuss with sell-side advisor and comment on significant areas including the following:
-  - Management proposed adjustments to reported EBITDA (i.e. market rent, non-recurring items, customer chargebacks, contracted services, director fees, bad debt expenses etc.);
-  - Completeness of the scope of work, any scope restrictions encountered, and out-of-scope areas;
-  - Transaction perimeter;
-  - Extent of access to management, quality of information available, and depth of analysis performed;
-  - Procedures performed to form views on the appropriateness of Target's inventory valuation methodologies;
-  - Views on the perceived accuracy of the monthly/annual cut-off process; and
-  - Key financial risks and uncertainties with potential impact to value.
-
-### Normalized Ebitda Bridges (`normalized_ebitda_bridges`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`manufacturing`)
-
-- (scope.244) Summarize and prepared normalized EBITDA bridges from:
-  - the Historical Period to the Historical Period;
-  - YTD23 to YTD24;
-  - YTD24 to the Historical Period forecast; and
-  - the Historical Period forecast to the Historical Period budget.
-
-### Forecast And Budget Analysis (`forecast_and_budget_analysis`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`manufacturing`)
-
-- (scope.245) Obtain and read the Historical Period forecast and the Historical Period budget and:
-- (scope.246) Summarize the assumptions used by Management which underpin the achievement of the forecasts; and
-
-### Budget Vs Actual (`budget_vs_actual`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`manufacturing`)
-
-- (scope.248) Obtain the historical, latest interim financial information available and forecast for the rest of the year. Compare actual results to budget and forecast results to prior year. Interview management about the reasons for significant fluctuations between periods and with budget. Discuss and bridge to full-year the Historical Period forecast with management. Comment on predictability of current year's performance and level of confidence in achieving the Historical Period budget.
-
 ### Inventory (`inventory`)
 
 #### Common
@@ -392,27 +263,9 @@ _Not in common skeleton._
 
 #### Industry (`manufacturing`)
 
-- (scope.263) Obtain and read an analysis of the Company's inventory and inquire and comment on:
-  - Inventory costing methodology and its consistent and appropriate application during the historical period;
-  - Inventory by category;
-  - Inventory aging profile at each period-end date and historical write-offs;
-  - Inventory turnover trends; and
-  - Slow-moving, excess, and obsolete inventory and provisioning methodology.
-- (scope.264) Obtain and read an analysis of Target's inventory and inquire and comment on:
-  - Accounting policies relating to tracking and controlling of inventory;
-  - Inventory aging profile at each period-end date;
-  - Inventory turnover trends;
-  - Key components of inventory and costs capitalized (i.e. product cost, labour, freight, other);
-  - Slow-moving, excess, and obsolete inventory; and
-  - Spoilage and reserve calculations, if any.
-- (scope.265) Obtain and read an analysis of Target's inventory and inquire about:
-  - Composition by product category;
-  - Inventory turnover by category;
-  - Aging, slow-moving, excess and obsolete inventory;
-  - Impairment and reserve calculations;
-  - Consistency of accounting practices related to inventory valuation;
-  - Purchasing procedures; and
-  - Vendor rebates and allowances.
+- (scope.263) Inventory composition and turnover by major product/category group.
+- (scope.264) Aging profile, slow-moving/excess/obsolete exposure, and reserve methodology.
+- (scope.265) Vendor allowances/rebates and purchasing practices that affect inventory valuation and margins.
 
 ### Prepaids (`prepaids`)
 
@@ -422,19 +275,8 @@ _Not in common skeleton._
 
 #### Industry (`manufacturing`)
 
-- (scope.285) Obtain and read an analysis of Target's prepaid expenses and inquire about:
-  - Composition of balances; and
-- (scope.286) Understand timing of cash flows vs. waterfall / timing of expense recognition.
-
-### Aspe To Ifrs Us Gaap Assessment (`aspe_to_ifrs_us_gaap_assessment`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`manufacturing`)
-
-- (scope.287) Review financial information and financial statements to gain an understanding of Target's key accounting policies and practices. Summarize any potential adjustments between ASPE and IFRS/US GAAP that may impact historical EBITDA or balance sheet accounts.
+- (scope.285) Composition and trend analysis of significant prepaid balances.
+- (scope.286) Timing of cash outflows versus expense recognition for material prepaid categories.
 
 ### Related Parties (`related_parties`)
 
@@ -447,24 +289,3 @@ _Not in common skeleton._
 - (scope.288) Inquire about and summarize related party transactions including:
   - Nature and extent of related party transactions; and
   - Basis of pricing for arrangements with related parties.
-
-### Operational Cost Margin Assessment (`operational_cost_margin_assessment`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`manufacturing`)
-
-- (scope.289) Review the overall appropriateness and sustainability of management's operating expenses and operating margin, especially critical factors leading to the Historical Period EBITDA margins;
-- (scope.290) Review margin contribution and operating leverage and determine whether costs are fixed, variable, or mixed;
-- (scope.291) Support assessment by performing external functional benchmarking of other players in the industry and related industries from publicly available information, prior engagements and from proprietary analytics tool Database;
-- (scope.292) Test the operational reasonability of management's cost forecast through the following:
-- (scope.293) Develop an independent bottom-up build of forecasted costs to test robustness, completeness and accuracy;
-- (scope.294) Develop a detailed headcount forecast in order to assess appropriateness of headcount to support revenue targets and identify gaps; and
-- (scope.295) Investigate the impact of operating leverage on the ability of the business to operate and sustainably support revenue growth.
-- (scope.296) Review of operational KPI trending;
-- (scope.297) If available, review profitability and contribution by product lines on a fully allocated basis, identifying performance considerations.
-- (scope.298) Review future opex savings overlays, including their sustainability and any potential cost headwinds not considered;
-- (scope.299) Review the forecast model and propose potential adjustments to how costs are scaled and adjusted based on findings; and
-- (scope.300) Provide a concise report outlining findings.

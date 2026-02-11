@@ -383,7 +383,13 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
+    "replaced_industry_sections": [
+      "audit_work_paper",
+      "business_overview",
+      "capital_expenditure_requirements",
+      "commitments_and_contingencies",
+      "revenue_analysis"
+    ],
     "added_industry_sections": []
   }
 }

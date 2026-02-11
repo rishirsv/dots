@@ -120,4 +120,5 @@ Use it to compare against the full per-industry file.
 - `operating_expenses`
 - `balance_sheet`
 - `operating_cash_flow_funds_from_operations`
-- `audit_work_paper`
+- `revenue_analysis`
+- `commitments_and_contingencies`

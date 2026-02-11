@@ -312,12 +312,12 @@ def _slice_bundle(
     ordered_module: dict[str, Any] = {}
     for key in common_keys:
         bullets = module_raw.get(key)
-        if isinstance(bullets, list):
+        if isinstance(bullets, list) and bullets:
             ordered_module[key] = bullets
     for key, bullets in module_raw.items():
         if key in ordered_module:
             continue
-        if isinstance(bullets, list):
+        if isinstance(bullets, list) and bullets:
             ordered_module[key] = bullets
 
     relevant_tracker = _tracker_entries_for_industry(tracker_entries, industry)
@@ -459,7 +459,7 @@ def _render_industry_markdown(
 
     lines.append("## Section Review (Common + Industry)")
     lines.append("")
-    lines.append("Each section below shows common skeleton bullets and then industry-specific bullets together.")
+    lines.append("Each section below shows common skeleton bullets and industry-specific bullets where applicable.")
     lines.append("")
     for key in ordered_keys:
         common_section = common_by_key.get(key)
@@ -482,14 +482,12 @@ def _render_industry_markdown(
             lines.append("_Not in common skeleton._")
         lines.append("")
 
-        lines.append(f"#### Industry (`{industry}`)")
-        lines.append("")
         industry_bullets = industry_module.get(key) if isinstance(industry_module.get(key), list) else []
         if industry_bullets:
+            lines.append(f"#### Industry (`{industry}`)")
+            lines.append("")
             lines.extend(_render_md_bullets(industry_bullets))
-        else:
-            lines.append("_No industry-specific bullets._")
-        lines.append("")
+            lines.append("")
 
     return "\n".join(lines).rstrip() + "\n"
 

@@ -27,7 +27,7 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -61,10 +61,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Differences between interim and year-end procedures; and
   - Revenue recognition policies;
 
-#### Industry (`building`)
-
-_No industry-specific bullets._
-
 ### Quality of earnings (`quality_of_earnings`)
 
 #### Common
@@ -78,10 +74,6 @@ _No industry-specific bullets._
   - The impact of related party transactions and shared services provided by other entities, if applicable;
   - The impact of any changes in accounting policies, procedures and estimates; and
   - Other potential items identified during the due diligence process.
-
-#### Industry (`building`)
-
-_No industry-specific bullets._
 
 ### Revenue analysis (`revenue_analysis`)
 
@@ -119,10 +111,6 @@ _No industry-specific bullets._
   - Repairs and maintenance expense;
   - Unusual and extraordinary items (if any).
 
-#### Industry (`building`)
-
-_No industry-specific bullets._
-
 ### Working capital (`working_capital`)
 
 #### Common
@@ -132,10 +120,6 @@ _No industry-specific bullets._
   - Monthly working capital trends, metrics, and seasonality;
   - Large, unusual, or non-operating items that may have affected normal working capital trends (such as accruals for bonuses, capital accruals, month end vs quarter end differences, etc.); and
   - Understanding the accounting impact of allowance for uncollectible amounts and other accruals requiring judgment.
-
-#### Industry (`building`)
-
-_No industry-specific bullets._
 
 ### Accounts receivable (`accounts_receivable`)
 
@@ -181,10 +165,6 @@ _No industry-specific bullets._
   - Maintenance versus growth capital expenditures;
   - Other historical, deferred, and planned capital expenditures.
 
-#### Industry (`building`)
-
-_No industry-specific bullets._
-
 ### Commitments and contingencies (`commitments_and_contingencies`)
 
 #### Common
@@ -211,10 +191,6 @@ _No industry-specific bullets._
 - (scope.015) Summarize and comment on net debt items (on and off-balance sheet) presented by Management and other potential debt-like items;
 - (scope.016) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
 
-#### Industry (`building`)
-
-_No industry-specific bullets._
-
 ### Audit work paper (`audit_work_paper`)
 
 #### Common
@@ -224,7 +200,3 @@ _No industry-specific bullets._
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`building`)
-
-_No industry-specific bullets._

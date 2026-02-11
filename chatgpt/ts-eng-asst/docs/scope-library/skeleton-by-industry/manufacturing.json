@@ -415,7 +415,25 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
+    "replaced_industry_sections": [
+      "accounts_payable_and_accrued_liabilities",
+      "accounts_receivable",
+      "aspe_to_ifrs_us_gaap_assessment",
+      "budget_vs_actual",
+      "capital_expenditure_requirements",
+      "commitments_and_contingencies",
+      "forecast_and_budget_analysis",
+      "inventory",
+      "net_debt",
+      "normalized_ebitda_bridges",
+      "operating_expenses",
+      "operational_cost_margin_assessment",
+      "prepaids",
+      "quality_of_earnings",
+      "revenue_analysis",
+      "vdd_report_review",
+      "working_capital"
+    ],
     "added_industry_sections": []
   }
 }

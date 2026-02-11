@@ -360,15 +360,11 @@
       "accounts_receivable": [
         {
           "id": "scope.064",
-          "text": "Obtain and review an analysis of Target's accounts receivable and inquire about:",
-          "children": [
-            {
-              "text": "Aging profile by payor category and major counterparty concentration;"
-            },
-            {
-              "text": "Billing-to-cash conversion, denials, adjustments/write-offs, and collection trends."
-            }
-          ]
+          "text": "Aging profile by payor category and major counterparty concentration."
+        },
+        {
+          "id": "scope.564",
+          "text": "Billing-to-cash conversion, denials, adjustments/write-offs, and collection trends."
         }
       ],
       "accounts_payable_and_accrued_liabilities": [

@@ -30,7 +30,7 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -41,10 +41,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Organization structure;
   - Historical growth by geography; and
   - Finance function, financial reporting framework and internal control environment.
-
-#### Industry (`eyecare`)
-
-_No industry-specific bullets._
 
 ### Accounting overview (`accounting_overview`)
 
@@ -61,10 +57,6 @@ _No industry-specific bullets._
   - Depreciation policies; and
   - Differences between interim and year-end procedures; and
   - Revenue recognition policies;
-
-#### Industry (`eyecare`)
-
-_No industry-specific bullets._
 
 ### Quality of earnings (`quality_of_earnings`)
 
@@ -136,9 +128,8 @@ _No industry-specific bullets._
 
 #### Industry (`eyecare`)
 
-- (scope.064) Obtain and review an analysis of Target's accounts receivable and inquire about:
-  - Aging profile by payor category and major counterparty concentration;
-  - Billing-to-cash conversion, denials, adjustments/write-offs, and collection trends.
+- (scope.064) Aging profile by payor category and major counterparty concentration.
+- (scope.564) Billing-to-cash conversion, denials, adjustments/write-offs, and collection trends.
 
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
@@ -164,10 +155,6 @@ _No industry-specific bullets._
   - Maintenance versus growth capital expenditures;
   - Other historical, deferred, and planned capital expenditures.
 
-#### Industry (`eyecare`)
-
-_No industry-specific bullets._
-
 ### Commitments and contingencies (`commitments_and_contingencies`)
 
 #### Common
@@ -180,10 +167,6 @@ _No industry-specific bullets._
   - Incentive compensation and employee benefit obligations;
   - Expected or contingent liabilities (e.g. environmental, litigation, regulatory and tax); and
   - Other off-balance sheet transactions.
-
-#### Industry (`eyecare`)
-
-_No industry-specific bullets._
 
 ### Net debt (`net_debt`)
 
@@ -205,10 +188,6 @@ _No industry-specific bullets._
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`eyecare`)
-
-_No industry-specific bullets._
 
 ### Supporting Analysis To Quality Of Earnings (`supporting_analysis_to_quality_of_earnings`)
 

@@ -383,7 +383,16 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
-    "added_industry_sections": []
+    "replaced_industry_sections": [
+      "accounting_overview",
+      "audit_work_paper",
+      "balance_sheet",
+      "operating_expenses",
+      "quality_of_earnings"
+    ],
+    "added_industry_sections": [
+      "commitments_and_contingencies",
+      "revenue_analysis"
+    ]
   }
 }

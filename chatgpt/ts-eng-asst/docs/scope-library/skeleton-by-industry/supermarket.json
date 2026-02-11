@@ -399,7 +399,19 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
-    "added_industry_sections": []
+    "replaced_industry_sections": [
+      "assistance_with_transaction_documentation",
+      "audit_work_paper",
+      "business_overview",
+      "capital_expenditure_requirements",
+      "net_debt",
+      "operating_expenses",
+      "supporting_analysis_for_quality_of_earnings",
+      "working_capital"
+    ],
+    "added_industry_sections": [
+      "quality_of_earnings",
+      "revenue_analysis"
+    ]
   }
 }

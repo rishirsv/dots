@@ -383,7 +383,11 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
-    "added_industry_sections": []
+    "replaced_industry_sections": [
+      "revenue_analysis"
+    ],
+    "added_industry_sections": [
+      "quality_of_earnings"
+    ]
   }
 }

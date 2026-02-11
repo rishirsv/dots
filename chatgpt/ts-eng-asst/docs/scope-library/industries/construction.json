@@ -301,7 +301,6 @@
   ],
   "industry_modules": {
     "construction": {
-      "accounting_overview": [],
       "working_capital": [
         {
           "id": "scope.033",

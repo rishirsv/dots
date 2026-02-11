@@ -383,7 +383,20 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
+    "replaced_industry_sections": [
+      "accounting_overview",
+      "accounts_receivable",
+      "audit_work_paper",
+      "capital_expenditure_requirements",
+      "commitments_and_contingencies",
+      "inventory",
+      "net_debt",
+      "operating_expenses",
+      "other_assets_and_liabilities",
+      "related_parties",
+      "revenue_analysis",
+      "working_capital"
+    ],
     "added_industry_sections": []
   }
 }

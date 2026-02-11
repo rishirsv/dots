@@ -22,12 +22,12 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 - Excluded common sections: _None_
 - Replaced common sections: `audit_work_paper`, `capital_expenditure_requirements`, `net_debt`, `revenue_analysis`, `working_capital`
-- Added industry sections: _None_
+- Added industry sections: `commitments_and_contingencies`, `revenue_analysis`
 - Replaced industry sections: `accounting_overview`, `audit_work_paper`, `balance_sheet`, `operating_expenses`, `quality_of_earnings`
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -38,10 +38,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Organization structure;
   - Historical growth by geography; and
   - Finance function, financial reporting framework and internal control environment.
-
-#### Industry (`real_estate`)
-
-_No industry-specific bullets._
 
 ### Accounting overview (`accounting_overview`)
 
@@ -107,7 +103,10 @@ _No industry-specific bullets._
 
 #### Industry (`real_estate`)
 
-_No industry-specific bullets._
+- (scope.701) Analyze rental revenue drivers using the rent roll and supporting detail, including:
+  - Occupancy, lease maturity schedule, and renewal/termination trends;
+  - Base rent versus recovery income (for example: CAM, taxes, insurance, and utilities) and reconciliation to billings, where available; and
+  - Concessions, abatements, and free-rent impacts on reported revenue.
 
 ### Operating expenses (`operating_expenses`)
 
@@ -138,10 +137,6 @@ _No industry-specific bullets._
   - Large, unusual, or non-operating items that may have affected normal working capital trends (such as accruals for bonuses, capital accruals, month end vs quarter end differences, etc.); and
   - Understanding the accounting impact of allowance for uncollectible amounts and other accruals requiring judgment.
 
-#### Industry (`real_estate`)
-
-_No industry-specific bullets._
-
 ### Accounts receivable (`accounts_receivable`)
 
 #### Common
@@ -151,10 +146,6 @@ _No industry-specific bullets._
   - Credit terms;
   - Trade and non-trade balances;
   - Allowance for uncollectible accounts and write-offs.
-
-#### Industry (`real_estate`)
-
-_No industry-specific bullets._
 
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
@@ -166,10 +157,6 @@ _No industry-specific bullets._
   - Supplier settlement terms; and
   - Other current and non-current liabilities.
 
-#### Industry (`real_estate`)
-
-_No industry-specific bullets._
-
 ### Capital expenditure requirements (`capital_expenditure_requirements`)
 
 #### Common
@@ -177,10 +164,6 @@ _No industry-specific bullets._
 - (scope.013) Obtain and read an analysis of existing and future capital cost requirements including:
   - Maintenance versus growth capital expenditures;
   - Other historical, deferred, and planned capital expenditures.
-
-#### Industry (`real_estate`)
-
-_No industry-specific bullets._
 
 ### Commitments and contingencies (`commitments_and_contingencies`)
 
@@ -197,7 +180,9 @@ _No industry-specific bullets._
 
 #### Industry (`real_estate`)
 
-_No industry-specific bullets._
+- (scope.702) Inquire about property-specific contingent exposures and obligations, including:
+  - Property tax reassessments, appeals, and related reserves; and
+  - Environmental compliance and remediation obligations, where applicable.
 
 ### Net debt (`net_debt`)
 
@@ -205,10 +190,6 @@ _No industry-specific bullets._
 
 - (scope.015) Summarize and comment on net debt items (on and off-balance sheet) presented by Management and other potential debt-like items;
 - (scope.016) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
-
-#### Industry (`real_estate`)
-
-_No industry-specific bullets._
 
 ### Audit work paper (`audit_work_paper`)
 
@@ -219,10 +200,6 @@ _No industry-specific bullets._
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`real_estate`)
-
-_No industry-specific bullets._
 
 ### Balance Sheet (`balance_sheet`)
 

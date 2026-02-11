@@ -383,7 +383,23 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
-    "added_industry_sections": []
+    "replaced_industry_sections": [
+      "accounts_payable_and_accrued_liabilities",
+      "accounts_receivable",
+      "assistance_with_transaction_documentation",
+      "budget",
+      "business_overview",
+      "capital_expenditure_requirements",
+      "net_debt",
+      "operating_expenses",
+      "other_current_assets_liabilities",
+      "quality_of_earnings",
+      "revenue_analysis",
+      "work_in_progress",
+      "working_capital"
+    ],
+    "added_industry_sections": [
+      "working_capital"
+    ]
   }
 }

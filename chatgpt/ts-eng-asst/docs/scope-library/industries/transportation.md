@@ -27,7 +27,7 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -38,10 +38,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Organization structure;
   - Historical growth by geography; and
   - Finance function, financial reporting framework and internal control environment.
-
-#### Industry (`transportation`)
-
-_No industry-specific bullets._
 
 ### Accounting overview (`accounting_overview`)
 
@@ -59,10 +55,6 @@ _No industry-specific bullets._
   - Differences between interim and year-end procedures; and
   - Revenue recognition policies;
 
-#### Industry (`transportation`)
-
-_No industry-specific bullets._
-
 ### Quality of earnings (`quality_of_earnings`)
 
 #### Common
@@ -76,10 +68,6 @@ _No industry-specific bullets._
   - The impact of related party transactions and shared services provided by other entities, if applicable;
   - The impact of any changes in accounting policies, procedures and estimates; and
   - Other potential items identified during the due diligence process.
-
-#### Industry (`transportation`)
-
-_No industry-specific bullets._
 
 ### Revenue analysis (`revenue_analysis`)
 
@@ -152,10 +140,6 @@ _No industry-specific bullets._
   - Trade and non-trade balances;
   - Allowance for uncollectible accounts and write-offs.
 
-#### Industry (`transportation`)
-
-_No industry-specific bullets._
-
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
 #### Common
@@ -165,10 +149,6 @@ _No industry-specific bullets._
   - Accrued liabilities;
   - Supplier settlement terms; and
   - Other current and non-current liabilities.
-
-#### Industry (`transportation`)
-
-_No industry-specific bullets._
 
 ### Capital expenditure requirements (`capital_expenditure_requirements`)
 
@@ -198,10 +178,6 @@ _No industry-specific bullets._
   - Expected or contingent liabilities (e.g. environmental, litigation, regulatory and tax); and
   - Other off-balance sheet transactions.
 
-#### Industry (`transportation`)
-
-_No industry-specific bullets._
-
 ### Net debt (`net_debt`)
 
 #### Common
@@ -222,10 +198,6 @@ _No industry-specific bullets._
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`transportation`)
-
-_No industry-specific bullets._
 
 ### Inventory (`inventory`)
 

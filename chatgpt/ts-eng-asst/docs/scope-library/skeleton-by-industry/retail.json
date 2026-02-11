@@ -383,7 +383,11 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
+    "replaced_industry_sections": [
+      "inventory",
+      "revenue_analysis",
+      "working_capital"
+    ],
     "added_industry_sections": []
   }
 }

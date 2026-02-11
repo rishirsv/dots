@@ -22,12 +22,12 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 - Excluded common sections: _None_
 - Replaced common sections: `audit_work_paper`, `capital_expenditure_requirements`, `net_debt`, `revenue_analysis`, `working_capital`
-- Added industry sections: _None_
+- Added industry sections: `working_capital`
 - Replaced industry sections: `accounts_payable_and_accrued_liabilities`, `accounts_receivable`, `assistance_with_transaction_documentation`, `budget`, `business_overview`, `capital_expenditure_requirements`, `net_debt`, `operating_expenses`, `other_current_assets_liabilities`, `quality_of_earnings`, `revenue_analysis`, `work_in_progress`, `working_capital`
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -62,10 +62,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Depreciation policies; and
   - Differences between interim and year-end procedures; and
   - Revenue recognition policies;
-
-#### Industry (`prof_services`)
-
-_No industry-specific bullets._
 
 ### Quality of earnings (`quality_of_earnings`)
 
@@ -150,6 +146,10 @@ _No industry-specific bullets._
 - (scope.305) Comment on working capital trends/seasonality for the most recent trailing-twelve-month period and prior two to three fiscal years (based on information availability).
 - (scope.306) Identify sensitivities for cash flow management and normalize for items that may impact normal working capital trends.
 - (scope.307) Consider the impact of potential non-recurring items.
+- (scope.706) Evaluate billing and collection dynamics specific to time-and-materials and fixed-fee engagements, including:
+  - Unbilled receivables and cycle time from time entry to invoicing;
+  - Retainers and client deposits recorded as deferred revenue or other liabilities; and
+  - Disputed billings and write-off trends by service line.
 
 ### Accounts receivable (`accounts_receivable`)
 
@@ -160,14 +160,6 @@ _No industry-specific bullets._
   - Credit terms;
   - Trade and non-trade balances;
   - Allowance for uncollectible accounts and write-offs.
-
-#### Industry (`prof_services`)
-
-- (scope.309) Obtain and read an analysis of Target's receivables and inquire about:
-  - Accounts receivable aging and days outstanding;
-  - Credit terms (including any special terms);
-  - Trade and non-trade balances; and
-  - Historical bad debt experience, allowance for uncollectible accounts, and write-offs.
 
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
@@ -211,10 +203,6 @@ _No industry-specific bullets._
   - Expected or contingent liabilities (e.g. environmental, litigation, regulatory and tax); and
   - Other off-balance sheet transactions.
 
-#### Industry (`prof_services`)
-
-_No industry-specific bullets._
-
 ### Net debt (`net_debt`)
 
 #### Common
@@ -242,10 +230,6 @@ _No industry-specific bullets._
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`prof_services`)
-
-_No industry-specific bullets._
 
 ### Work In Progress (`work_in_progress`)
 

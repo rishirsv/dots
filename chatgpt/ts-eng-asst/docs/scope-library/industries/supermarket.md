@@ -24,12 +24,12 @@ Rules source: `docs/scope-library/section-applicability.json`.
 
 - Excluded common sections: _None_
 - Replaced common sections: `audit_work_paper`, `capital_expenditure_requirements`, `net_debt`, `revenue_analysis`, `working_capital`
-- Added industry sections: _None_
+- Added industry sections: `quality_of_earnings`, `revenue_analysis`
 - Replaced industry sections: `assistance_with_transaction_documentation`, `audit_work_paper`, `business_overview`, `capital_expenditure_requirements`, `net_debt`, `operating_expenses`, `supporting_analysis_for_quality_of_earnings`, `working_capital`
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -40,10 +40,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
   - Organization structure;
   - Historical growth by geography; and
   - Finance function, financial reporting framework and internal control environment.
-
-#### Industry (`supermarket`)
-
-_No industry-specific bullets._
 
 ### Accounting overview (`accounting_overview`)
 
@@ -61,10 +57,6 @@ _No industry-specific bullets._
   - Differences between interim and year-end procedures; and
   - Revenue recognition policies;
 
-#### Industry (`supermarket`)
-
-_No industry-specific bullets._
-
 ### Quality of earnings (`quality_of_earnings`)
 
 #### Common
@@ -81,7 +73,10 @@ _No industry-specific bullets._
 
 #### Industry (`supermarket`)
 
-_No industry-specific bullets._
+- (scope.703) Assess supermarket-specific EBITDA quality considerations, including:
+  - Vendor allowances, rebates, and promotional funding and the timing of recognition relative to underlying purchase volume;
+  - Shrink, spoilage, and inventory write-down policies and historical trends; and
+  - Fuel, pharmacy, and other ancillary margin volatility drivers, where applicable.
 
 ### Revenue analysis (`revenue_analysis`)
 
@@ -103,7 +98,10 @@ _No industry-specific bullets._
 
 #### Industry (`supermarket`)
 
-_No industry-specific bullets._
+- (scope.704) Bridge revenue and gross margin by major category and store/channel, considering:
+  - Same-store sales drivers (traffic and basket size) versus new store openings/closures;
+  - Price versus volume mix and promotional intensity; and
+  - Private-label versus branded mix and related margin impacts.
 
 ### Operating expenses (`operating_expenses`)
 
@@ -151,10 +149,6 @@ _No industry-specific bullets._
   - Trade and non-trade balances;
   - Allowance for uncollectible accounts and write-offs.
 
-#### Industry (`supermarket`)
-
-_No industry-specific bullets._
-
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
 #### Common
@@ -164,10 +158,6 @@ _No industry-specific bullets._
   - Accrued liabilities;
   - Supplier settlement terms; and
   - Other current and non-current liabilities.
-
-#### Industry (`supermarket`)
-
-_No industry-specific bullets._
 
 ### Capital expenditure requirements (`capital_expenditure_requirements`)
 
@@ -197,20 +187,12 @@ _No industry-specific bullets._
   - Expected or contingent liabilities (e.g. environmental, litigation, regulatory and tax); and
   - Other off-balance sheet transactions.
 
-#### Industry (`supermarket`)
-
-_No industry-specific bullets._
-
 ### Net debt (`net_debt`)
 
 #### Common
 
 - (scope.015) Summarize and comment on net debt items (on and off-balance sheet) presented by Management and other potential debt-like items;
 - (scope.016) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
-
-#### Industry (`supermarket`)
-
-_No industry-specific bullets._
 
 ### Audit work paper (`audit_work_paper`)
 
@@ -221,7 +203,3 @@ _No industry-specific bullets._
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`supermarket`)
-
-_No industry-specific bullets._

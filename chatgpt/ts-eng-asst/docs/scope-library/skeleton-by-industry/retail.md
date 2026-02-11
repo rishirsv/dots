@@ -119,4 +119,3 @@ Use it to compare against the full per-industry file.
 - `revenue_analysis`
 - `operating_expenses`
 - `working_capital`
-- `inventory`

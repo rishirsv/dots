@@ -378,305 +378,74 @@
       "accounting_overview": [
         {
           "id": "scope.119",
-          "text": "Understand the Target's financial statement preparation process including:",
-          "children": [
-            {
-              "text": "Finance function, financial reporting framework, and management reporting relationships; (including process, timing, structure of financial reporting, and interaction with the information/ accounting systems);"
-            },
-            {
-              "text": "Reconciliation of management's internal financial reporting packages to the audited financial statements; and"
-            }
-          ]
-        },
-        {
-          "id": "scope.120",
-          "text": "Read the audit workpapers for the Historical Period"
+          "text": "Reconciliation of management internal reporting packages to audited financial statements, where available."
         },
         {
           "id": "scope.121",
-          "text": "Read Target's financial statements and discuss them with Target's management to gain an understanding of accounting policies and practices including:",
-          "children": [
-            {
-              "text": "Reporting methodology;"
-            },
-            {
-              "text": "Intercompany transactions and cost allocations;"
-            },
-            {
-              "text": "Revenue recognition policies and billing practices;"
-            },
-            {
-              "text": "Significant accounting estimates; and"
-            },
-            {
-              "text": "Recent or contemplated changes in accounting principles."
-            }
-          ]
+          "text": "Revenue recognition for service and project contracts (including period-end true-ups) and related billing practices."
+        },
+        {
+          "id": "scope.603",
+          "text": "Intercompany transactions and cost allocation practices specific to branch/network operations."
         }
       ],
       "quality_of_earnings": [
         {
           "id": "scope.126",
-          "text": "Comment on any potential findings that could have material impacts to enterprise / equity value."
-        },
-        {
-          "id": "scope.127",
-          "text": "Obtain details on the Company's historical financial performance and propose potential adjustments to historical earnings before interest taxes, depreciation, amortization (\"EBITDA\") for the periods noted earlier by considering:"
-        },
-        {
-          "id": "scope.128",
-          "text": "Understand the impact of and validate adjustments identified by management and its financial sponsor ownership, including adjustments made for bank covenant purposes"
-        },
-        {
-          "id": "scope.129",
-          "text": "Identify other abnormal, non-recurring and extraordinary one-time adjustments"
-        },
-        {
-          "id": "scope.130",
-          "text": "Related party transactions – Enquire into the existence and appropriateness of related party transactions and balances and their impact on reported results going forward, including those with shareholders, management and affiliated companies"
-        },
-        {
-          "id": "scope.131",
-          "text": "Consider movements in significant balance sheet accounts with a focus upon the nature, composition and basis of valuation of these accounts particularly around judgmental areas that would impact EBITDA (e.g. reserves and other accruals, inventory costing, accounts receivable, etc.)."
-        },
-        {
-          "id": "scope.132",
-          "text": "Analyze the impact of COVID-19 on the Company's EBITDA from both revenue (e.g.: increase / decrease in demand) and cost perspectives (e.g.: personal protective equipment costs, office costs, etc.)"
-        },
-        {
-          "id": "scope.133",
-          "text": "Analyze the one-time impact of elevated inflation, tight labor market and elevated absenteeism"
-        },
-        {
-          "id": "scope.134",
-          "text": "Understand impact of cost allocations (as listed in the Target's internal management reporting package)"
-        },
-        {
-          "id": "scope.135",
-          "text": "Impact of cash vs. GAAP costs for the following:",
+          "text": "Assess HVAC-specific EBITDA normalization considerations, including:",
           "children": [
             {
-              "text": "pension expense (non-cash services costs - if applicable)"
+              "text": "Pricing pass-through timing and gross-margin lag effects from labour and commodity cost changes;"
             },
             {
-              "text": "Bonuses (actually paid out vs expensed)"
+              "text": "Cash-to-accrual timing differences and period-end true-ups affecting reported results;"
             },
             {
-              "text": "Bad debt (expense vs actual write-offs)"
+              "text": "Branch openings, closures, or acquisitions and related run-rate impacts;"
             },
             {
-              "text": "Warranty expense (actual claims)"
+              "text": "Warranty, claim, and reserve movements that may affect normalized earnings; and"
             },
             {
-              "text": "Non-cash compensation (for Profits Interest Units)"
-            },
-            {
-              "text": "Normalization of vendor purchaser rebates (to the extent required)"
+              "text": "Other non-recurring operational events identified during diligence."
             }
           ]
-        },
-        {
-          "id": "scope.136",
-          "text": "Analyze the pro forma impact of:",
-          "children": [
-            {
-              "text": "Pre-acquisition results (on an adjusted basis) on acquired businesses (AB May in the Historical Period)"
-            },
-            {
-              "text": "Updated Pricing Agreements with Customers"
-            },
-            {
-              "text": "Quantifiable synergies that management has identified and believe are applicable (i.e. on prior acquisitions)"
-            },
-            {
-              "text": "Retained costs sitting within Corporate"
-            }
-          ]
-        },
-        {
-          "id": "scope.137",
-          "text": "Understand impact of Quality of Earnings adjustments on the Historical Period budget"
-        },
-        {
-          "id": "scope.139",
-          "text": "Understand application of revenue recognition policies, specifically POC, including consistency of application and period end true-ups that may skew financial results; and"
-        },
-        {
-          "id": "scope.140",
-          "text": "Understand any timing differences between revenue recognition, cash collections and accrual adjustments."
-        },
-        {
-          "id": "scope.141",
-          "text": "The impact of any changes to senior management or team structure;"
-        },
-        {
-          "id": "scope.142",
-          "text": "The impact of any changes to pricing models;"
-        },
-        {
-          "id": "scope.143",
-          "text": "The impact of any changes in labour costs;"
-        },
-        {
-          "id": "scope.144",
-          "text": "The impact of commodity prices, pricing lags and pass-through mechanisms;"
-        },
-        {
-          "id": "scope.145",
-          "text": "The impact of foreign exchange (if any);"
-        },
-        {
-          "id": "scope.146",
-          "text": "The pro forma impact of new by geography Branch;"
-        },
-        {
-          "id": "scope.147",
-          "text": "The impact of any key supplier cost arrangements;"
-        },
-        {
-          "id": "scope.148",
-          "text": "The impact of settlements related to litigation, if any; and"
-        },
-        {
-          "id": "scope.149",
-          "text": "The impact of cash to accrual accounting and other potential items discovered in the due diligence process."
         }
       ],
       "revenue_analysis": [
         {
           "id": "scope.150",
-          "text": "Leverage Data ana Analytics analyses (see below) to understand revenue and margin trends by customer, service offering, type and inform how it may impact the quality of earnings analysis as applicable."
+          "text": "Revenue and margin trends by service offering (for example: service, installation/project, and maintenance contract streams)."
         },
         {
           "id": "scope.151",
-          "text": "Revenue and margin by business segment (Services & Projects: HVAC, Compressed air, Plumbing, Chiller, Electrical, CM4, CM+, repair etc.);"
+          "text": "Revenue and margin trends by customer end-market and geography."
         },
         {
           "id": "scope.152",
-          "text": "Revenue and margin by customer end market (Industrial, commercial, retirement homes, schools, condos etc.);"
+          "text": "Backlog and committed pipeline analysis, including conversion timing and cancellation risk."
         },
         {
           "id": "scope.153",
-          "text": "Revenue and margin by geography (i.e. by geography, by geography, by geography, by geography etc.);"
-        },
-        {
-          "id": "scope.154",
-          "text": "Price vs. volume trends;"
-        },
-        {
-          "id": "scope.155",
-          "text": "Understand revenue lifecycle of significant customers;"
-        },
-        {
-          "id": "scope.156",
-          "text": "Effectiveness of cross-selling programs;"
-        },
-        {
-          "id": "scope.157",
-          "text": "Revenue seasonality;"
-        },
-        {
-          "id": "scope.158",
-          "text": "Backlog and pipeline/committed revenue; and"
-        },
-        {
-          "id": "scope.159",
-          "text": "Other KPIs as made available by Target (i.e. length of service contract, renewal / retention rates, staff utilization, volumes etc)"
-        },
-        {
-          "id": "scope.160",
-          "text": "Summarize value creation recommendations based on the above analysis."
+          "text": "Contract renewal/retention profile and effectiveness of cross-sell activity, where measurable."
         }
       ],
       "operating_expenses": [
         {
           "id": "scope.161",
-          "text": "Obtain and read an analysis of Target's cost of sales and operating expenses and inquire about:",
-          "children": [
-            {
-              "text": "Direct costs (labor, commissions, materials, equipment, warranty & other costs)"
-            },
-            {
-              "text": "Advertising and marketing"
-            },
-            {
-              "text": "Bank fees and collections"
-            },
-            {
-              "text": "Communications"
-            },
-            {
-              "text": "Employee benefits / insurance liabilities"
-            },
-            {
-              "text": "Meals and entertainment"
-            },
-            {
-              "text": "Management fees and other corporates overheads"
-            },
-            {
-              "text": "Professional services"
-            },
-            {
-              "text": "Rent and utilities"
-            },
-            {
-              "text": "Tools & equipment"
-            },
-            {
-              "text": "Training and education"
-            },
-            {
-              "text": "Vehicle expenses"
-            },
-            {
-              "text": "Wages"
-            },
-            {
-              "text": "Historical operating expense trend as a % of revenue; and"
-            },
-            {
-              "text": "Restructuring, unusual and extraordinary items."
-            }
-          ]
+          "text": "Direct cost drivers for field operations (for example: labour mix, subcontractor usage, materials, vehicles, and tools/equipment)."
         },
         {
           "id": "scope.162",
-          "text": "Obtain and read an analysis of Target's operating expenses and inquire about:",
-          "children": [
-            {
-              "text": "Employee compensation and benefits:",
-              "children": [
-                {
-                  "text": "Headcount and average compensation costs;"
-                },
-                {
-                  "text": "Turnover and average tenure of employees at key locations over time;"
-                },
-                {
-                  "text": "Accrued employee obligations and other provisions;"
-                },
-                {
-                  "text": "Severance / commitments, if any; and"
-                },
-                {
-                  "text": "Incentive based compensation."
-                },
-                {
-                  "text": "Fixed vs. variable expense analysis;"
-                },
-                {
-                  "text": "Effectiveness of sales and marketing programs;"
-                },
-                {
-                  "text": "Insurance; and"
-                },
-                {
-                  "text": "Other operating and SG&A expenses."
-                }
-              ]
-            }
-          ]
+          "text": "Branch-level occupancy, utilities, and other location operating costs."
+        },
+        {
+          "id": "scope.604",
+          "text": "Compensation structure and productivity metrics by role, including incentive compensation design."
+        },
+        {
+          "id": "scope.605",
+          "text": "Insurance and warranty-related cost trends and reserve adequacy considerations."
         }
       ],
       "working_capital": [
@@ -711,74 +480,25 @@
       "accounts_receivable": [
         {
           "id": "scope.168",
-          "text": "Obtain and read an analysis of Target's accounts receivable and inquire about:",
-          "children": [
-            {
-              "text": "Aging analysis by customer"
-            },
-            {
-              "text": "Historical write-offs"
-            },
-            {
-              "text": "Allowance for Doubtful accounts roll forward"
-            },
-            {
-              "text": "Credit balances and refund policies; and"
-            },
-            {
-              "text": "Other adjustments."
-            },
-            {
-              "text": "Aging analysis and related credit terms (including special terms);"
-            },
-            {
-              "text": "Allowance for uncollectible accounts and write-offs; and"
-            },
-            {
-              "text": "Reserve and adjustments."
-            }
-          ]
+          "text": "Aging and concentration analysis by major customer, including contract-related billing terms."
+        },
+        {
+          "id": "scope.606",
+          "text": "Reserve roll-forward, write-off trends, credit balances, and other collection adjustments."
         }
       ],
       "accounts_payable_and_accrued_liabilities": [
         {
           "id": "scope.172",
-          "text": "Obtain and read an analysis of Target's current liabilities and inquire about:",
-          "children": [
-            {
-              "text": "Accounts payable aging;"
-            },
-            {
-              "text": "Accrued liabilities including roll forward of major accounts;"
-            },
-            {
-              "text": "Accrued payroll and PTO liability;"
-            },
-            {
-              "text": "Deferred revenue."
-            }
-          ]
+          "text": "Accounts payable aging, major-vendor settlement terms, and days payable outstanding trends."
         },
         {
           "id": "scope.173",
-          "text": "Obtain and read an analysis of Target's accounts payable, accrued liabilities and other current liabilities and inquire about:",
-          "children": [
-            {
-              "text": "AP aging analysis and days outstanding;"
-            },
-            {
-              "text": "Terms of trade with major vendors;"
-            },
-            {
-              "text": "Revenue arrangements and timing of payments;"
-            },
-            {
-              "text": "Payroll related funding and timing of cash flows;"
-            },
-            {
-              "text": "Cadence and consistency of bonus/commission and other incentive compensation; and"
-            }
-          ]
+          "text": "Accrued liabilities profile (including payroll/PTO, bonus/commission cadence, and deferred revenue timing considerations)."
+        },
+        {
+          "id": "scope.607",
+          "text": "Other current liability balances and unusual movements affecting working capital comparability."
         }
       ],
       "capital_expenditure_requirements": [
@@ -825,20 +545,6 @@
           "text": "Inquire about other off-balance sheet transactions."
         }
       ],
-      "net_debt": [
-        {
-          "id": "scope.181",
-          "text": "Based on the procedures above, summarize Target's debt and debt-like items in the form of a net debt analysis as of the latest balance sheet date including the identification of items currently included in working capital which should be considered debt like in nature for purposes of valuation (for internal purposes only and will not be included in our report)."
-        },
-        {
-          "id": "scope.182",
-          "text": "Summarize and comment on net debt items (on and off balance sheet) presented by management and other potential debt-like items; and"
-        },
-        {
-          "id": "scope.183",
-          "text": "Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt."
-        }
-      ],
       "balance_sheet": [
         {
           "id": "scope.163",
@@ -876,140 +582,6 @@
         {
           "id": "scope.185",
           "text": "Understand the nature and extent of related party transactions and basis for pricing arrangements."
-        }
-      ],
-      "data_and_analytics": [
-        {
-          "id": "scope.187",
-          "text": "The purpose of this section is to perform detailed analysis on the drivers of revenue and margin growth, marketing performance, and operations to understand upside opportunities and communicate an effective story in conjunction with the Quality of Earnings. The outputs will be a PowerPoint trend report, highlighting key insights; a Power BI dashboard that / sell-side advisor can use to 'slice & dice' and extract visuals, this can also be shared with select buyers; and a consolidated Excel sales cube. Steps below are dependent on data from the brands"
-        }
-      ],
-      "revenue_and_profitability_analysis_da": [
-        {
-          "id": "scope.188",
-          "text": "Understands the health and sustainability of revenue and margin; covers last fiscal years (the Historical Period) and TTM (the most recent period)"
-        },
-        {
-          "id": "scope.189",
-          "text": "Leveraging proprietary analytics tool, use the transaction / sales database from each entity (business units), analyze revenue and profitability (cost, price, margin), key KPIs (e.g., number of jobs, average sales price, etc.) and performance trends (e.g., concentration, new-lost-existing customers, price-volume-mix, high growth services, OEM/equipment used, etc.); evaluating by product category/service offering, (e.g., Heating, Cooling, Plumbing, Electrical, etc.), sub-category/service type (e.g., AC installs, AC repairs, AC maintenance, etc.) and by channel (e.g., Google, Social Media, Direct Campaign, referral, etc.), by service type, by geography (zip code, county, etc.), by branch, by customer, by end market, etc."
-        },
-        {
-          "id": "scope.190",
-          "text": "Perform a service-level line item analysis to understand profitability (including price, volume, and mix calculations; low margin service areas; basket analysis, etc.), opportunities to optimize pricing, areas to rationalize, reflect cost increases, drive cross-sell / improve baskets, etc."
-        },
-        {
-          "id": "scope.191",
-          "text": "Extract and identify top brands / OEMs used in servicing customers and understand any opportunities to harmonize pricing across different business that might result in upside"
-        },
-        {
-          "id": "scope.192",
-          "text": "Where available, link above sales / job data to technician utilization and salary to understand performance opportunities"
-        },
-        {
-          "id": "scope.194",
-          "text": "Extract and understand any patterns and trends that might inform value creation and optimization opportunities for the next buyer"
-        }
-      ],
-      "customer_base_health_da": [
-        {
-          "id": "scope.195",
-          "text": "Building on the previous step, the phase evaluates the health of the customer base; how sustainable and recurring (or re-occurring) in nature are the customers; covers last fiscal years (the Historical Period) and TTM (the most recent period)"
-        },
-        {
-          "id": "scope.196",
-          "text": "Analyze health of the customer base across the three entities, in terms of revenue / profitability by customer, type of customer (residential, commercial, etc.) any customer contracts, etc.; overall retention, growth patterns, renewal history, cohort (vintage); new, loss, existing; customer concentration; etc. including associated services and categories these customers purchase to understand patterns and insights"
-        },
-        {
-          "id": "scope.197",
-          "text": "Analyze type of revenue and mix (one-time versus recurring), across different streams (e.g., revenues from HVAC & Electrical, from Repair Services, from Extended Warranty, and Construction), and understand any performance trending insights"
-        },
-        {
-          "id": "scope.198",
-          "text": "Extract and understand any patterns and trends that might inform value creation and optimization opportunities for the next buyer"
-        }
-      ],
-      "marketing_and_advertising_performance_da": [
-        {
-          "id": "scope.199",
-          "text": "Evaluates the performance of marketing and advertising; data is analyzed in conjunction with the revenue and customer analysis to understand any trends / insights in relation to how marketing and advertising drives performance; covers last fiscal years (the Historical Period) and TTM (the most recent period)"
-        },
-        {
-          "id": "scope.200",
-          "text": "Analyzes trends and insights related to revenue, customers, average revenue/margin per job, recurring nature of customers, high value products, etc. by lead source /channel by brand and advertising spend by lead source / channel by brand"
-        },
-        {
-          "id": "scope.201",
-          "text": "Extracts insights into drivers of profitability and opportunities for value creation / optimization by the next buyer"
-        },
-        {
-          "id": "scope.202",
-          "text": "Analyzes the sales funnel and conversion metrics by lead source / channel by brand, including leads generated, quotes, and sales conversion rates; ties this to revenue and customer analysis in the previous steps to understand insights to drive the business"
-        },
-        {
-          "id": "scope.203",
-          "text": "Analyzes revenue generating job (e.g., service visit, install, replacement, etc.) and ties back to performance"
-        }
-      ],
-      "operations_performance_da": [
-        {
-          "id": "scope.204",
-          "text": "Evaluates the performance of operations; where appropriate, ties back this analysis to the previous steps; covers last fiscal years (the Historical Period) and TTM (the most recent period)"
-        },
-        {
-          "id": "scope.205",
-          "text": "Analyze employee census by role, position, annual salary, and bonus; where appropriate (e.g., technicians, sales people) tie back to revenue / margin performance to understand returns (e.g., salary vs sales or utilization multiples) and other associated metrics (e.g., revenue per tech, utilization, margin by tech, etc.)"
-        },
-        {
-          "id": "scope.206",
-          "text": "Evaluate technician turnover metrics by brand and whether it is voluntary or involuntary; further evaluate against tenure (<90 days vs. >90 days); where appropriate tie back to sales and compensation"
-        },
-        {
-          "id": "scope.207",
-          "text": "Analyze the fleet of each brand respectively, including number of vehicles, age of vehicles, lease vs. owned, maintenance cost per vehicle, average cost of replacement, etc.; where appropriate, tie back to technician performance (e.g., revenue / margin)"
-        },
-        {
-          "id": "scope.208",
-          "text": "Analyze suppliers, including total purchases, type of material, typical markups to customers, etc.; understand rebates vs. volume discounts; where possible, tie back to job type (e.g., HVAC, electrical) and overall job performance (e.g., revenue / margin)"
-        },
-        {
-          "id": "scope.209",
-          "text": "Assess financing partners, including the number of jobs that are finance, type, average selling price, financing partners, terms, etc.; where appropriate, tie back to salesperson, lead channel, etc. to understand opportunities to optimize"
-        }
-      ],
-      "phase_2_post_bid_support": [
-        {
-          "id": "scope.210",
-          "text": "Leverage the work/analysis performed during Phase I to advise management with respect to their preparation of relevant materials to be included in the data room."
-        },
-        {
-          "id": "scope.211",
-          "text": "Update our due diligence report (and other supporting information) prepared in Phase I on a monthly or quarterly basis for subsequent reporting periods as requested by Client."
-        }
-      ],
-      "optional_fdd_procedures": [
-        {
-          "id": "scope.215",
-          "text": "Calls with R&W insurers / lenders\nConduct call with potential R&W insurers / lenders and answer any Q&A as it pertains to our engagement."
-        },
-        {
-          "id": "scope.216",
-          "text": "Obtain and read year-end review working papers for the last fiscal year and perform the following:"
-        },
-        {
-          "id": "scope.217",
-          "text": "Discuss any significant issues with the external accountants;"
-        },
-        {
-          "id": "scope.218",
-          "text": "Inquire of the engagement partner about the existence of any disagreements with management;"
-        },
-        {
-          "id": "scope.219",
-          "text": "Comment on the nature and volume of year-end accounting differences (adjustments), use of accounting estimates, any changes in accounting policies or methods and their implications; and"
-        },
-        {
-          "id": "scope.220",
-          "text": "Read management reports prepared by the external accountants and comment on control issues."
         }
       ]
     }
@@ -1105,7 +677,22 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
+    "replaced_industry_sections": [
+      "accounting_overview",
+      "accounts_payable_and_accrued_liabilities",
+      "accounts_receivable",
+      "customer_base_health_da",
+      "data_and_analytics",
+      "marketing_and_advertising_performance_da",
+      "net_debt",
+      "operating_expenses",
+      "operations_performance_da",
+      "optional_fdd_procedures",
+      "phase_2_post_bid_support",
+      "quality_of_earnings",
+      "revenue_analysis",
+      "revenue_and_profitability_analysis_da"
+    ],
     "added_industry_sections": []
   }
 }

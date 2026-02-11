@@ -117,12 +117,8 @@ Use it to compare against the full per-industry file.
 
 ## Industry section keys (for comparison)
 
-- `business_overview`
 - `quality_of_earnings`
-- `supporting_analysis_for_quality_of_earnings`
 - `operating_expenses`
 - `working_capital`
-- `net_debt`
 - `capital_expenditure_requirements`
-- `audit_work_paper`
-- `assistance_with_transaction_documentation`
+- `revenue_analysis`

@@ -355,7 +355,40 @@
   ],
   "industry_modules": {
     "supermarket": {
-      "quality_of_earnings": [],
+      "quality_of_earnings": [
+        {
+          "id": "scope.703",
+          "text": "Assess supermarket-specific EBITDA quality considerations, including:",
+          "children": [
+            {
+              "text": "Vendor allowances, rebates, and promotional funding and the timing of recognition relative to underlying purchase volume;"
+            },
+            {
+              "text": "Shrink, spoilage, and inventory write-down policies and historical trends; and"
+            },
+            {
+              "text": "Fuel, pharmacy, and other ancillary margin volatility drivers, where applicable."
+            }
+          ]
+        }
+      ],
+      "revenue_analysis": [
+        {
+          "id": "scope.704",
+          "text": "Bridge revenue and gross margin by major category and store/channel, considering:",
+          "children": [
+            {
+              "text": "Same-store sales drivers (traffic and basket size) versus new store openings/closures;"
+            },
+            {
+              "text": "Price versus volume mix and promotional intensity; and"
+            },
+            {
+              "text": "Private-label versus branded mix and related margin impacts."
+            }
+          ]
+        }
+      ],
       "operating_expenses": [
         {
           "id": "scope.376",
@@ -470,6 +503,9 @@
       "supporting_analysis_for_quality_of_earnings",
       "working_capital"
     ],
-    "added_industry_sections": []
+    "added_industry_sections": [
+      "quality_of_earnings",
+      "revenue_analysis"
+    ]
   }
 }

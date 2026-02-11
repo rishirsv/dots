@@ -119,3 +119,5 @@ Use it to compare against the full per-industry file.
 - `accounting_overview`
 - `underwriting_and_loss_reserves`
 - `claims_and_reinsurance`
+- `revenue_analysis`
+- `quality_of_earnings`

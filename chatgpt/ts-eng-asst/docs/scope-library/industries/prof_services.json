@@ -447,24 +447,19 @@
         {
           "id": "scope.307",
           "text": "Consider the impact of potential non-recurring items."
-        }
-      ],
-      "accounts_receivable": [
+        },
         {
-          "id": "scope.309",
-          "text": "Obtain and read an analysis of Target's receivables and inquire about:",
+          "id": "scope.706",
+          "text": "Evaluate billing and collection dynamics specific to time-and-materials and fixed-fee engagements, including:",
           "children": [
             {
-              "text": "Accounts receivable aging and days outstanding;"
+              "text": "Unbilled receivables and cycle time from time entry to invoicing;"
             },
             {
-              "text": "Credit terms (including any special terms);"
+              "text": "Retainers and client deposits recorded as deferred revenue or other liabilities; and"
             },
             {
-              "text": "Trade and non-trade balances; and"
-            },
-            {
-              "text": "Historical bad debt experience, allowance for uncollectible accounts, and write-offs."
+              "text": "Disputed billings and write-off trends by service line."
             }
           ]
         }
@@ -585,6 +580,8 @@
       "work_in_progress",
       "working_capital"
     ],
-    "added_industry_sections": []
+    "added_industry_sections": [
+      "working_capital"
+    ]
   }
 }

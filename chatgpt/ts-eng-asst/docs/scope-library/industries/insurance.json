@@ -383,6 +383,23 @@
           "text": "Understand fair value measurement and investment accounting policies where applicable."
         }
       ],
+      "quality_of_earnings": [
+        {
+          "id": "scope.705",
+          "text": "Review investment income and portfolio-related earnings drivers, where applicable, including:",
+          "children": [
+            {
+              "text": "Asset allocation, duration, and credit quality of invested assets;"
+            },
+            {
+              "text": "Realized and unrealized gains and losses and the basis of measurement; and"
+            },
+            {
+              "text": "Sensitivity of investment income to interest rate movements."
+            }
+          ]
+        }
+      ],
       "revenue_analysis": [
         {
           "id": "scope.544",
@@ -465,6 +482,8 @@
     "replaced_industry_sections": [
       "revenue_analysis"
     ],
-    "added_industry_sections": []
+    "added_industry_sections": [
+      "quality_of_earnings"
+    ]
   }
 }

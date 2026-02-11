@@ -439,7 +439,22 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
+    "replaced_industry_sections": [
+      "accounting_overview",
+      "accounts_payable_and_accrued_liabilities",
+      "accounts_receivable",
+      "customer_base_health_da",
+      "data_and_analytics",
+      "marketing_and_advertising_performance_da",
+      "net_debt",
+      "operating_expenses",
+      "operations_performance_da",
+      "optional_fdd_procedures",
+      "phase_2_post_bid_support",
+      "quality_of_earnings",
+      "revenue_analysis",
+      "revenue_and_profitability_analysis_da"
+    ],
     "added_industry_sections": []
   }
 }

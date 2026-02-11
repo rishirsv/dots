@@ -30,11 +30,11 @@ Rules source: `docs/scope-library/section-applicability.json`.
 - Excluded common sections: _None_
 - Replaced common sections: `audit_work_paper`, `capital_expenditure_requirements`, `net_debt`, `revenue_analysis`, `working_capital`
 - Added industry sections: _None_
-- Replaced industry sections: _None_
+- Replaced industry sections: `accounting_overview`, `accounts_payable_and_accrued_liabilities`, `accounts_receivable`, `customer_base_health_da`, `data_and_analytics`, `marketing_and_advertising_performance_da`, `net_debt`, `operating_expenses`, `operations_performance_da`, `optional_fdd_procedures`, `phase_2_post_bid_support`, `quality_of_earnings`, `revenue_analysis`, `revenue_and_profitability_analysis_da`
 
 ## Section Review (Common + Industry)
 
-Each section below shows common skeleton bullets and then industry-specific bullets together.
+Each section below shows common skeleton bullets and industry-specific bullets where applicable.
 
 ### Business overview (`business_overview`)
 
@@ -72,16 +72,9 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`hvac`)
 
-- (scope.119) Understand the Target's financial statement preparation process including:
-  - Finance function, financial reporting framework, and management reporting relationships; (including process, timing, structure of financial reporting, and interaction with the information/ accounting systems);
-  - Reconciliation of management's internal financial reporting packages to the audited financial statements; and
-- (scope.120) Read the audit workpapers for the Historical Period
-- (scope.121) Read Target's financial statements and discuss them with Target's management to gain an understanding of accounting policies and practices including:
-  - Reporting methodology;
-  - Intercompany transactions and cost allocations;
-  - Revenue recognition policies and billing practices;
-  - Significant accounting estimates; and
-  - Recent or contemplated changes in accounting principles.
+- (scope.119) Reconciliation of management internal reporting packages to audited financial statements, where available.
+- (scope.121) Revenue recognition for service and project contracts (including period-end true-ups) and related billing practices.
+- (scope.603) Intercompany transactions and cost allocation practices specific to branch/network operations.
 
 ### Quality of earnings (`quality_of_earnings`)
 
@@ -99,39 +92,12 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`hvac`)
 
-- (scope.126) Comment on any potential findings that could have material impacts to enterprise / equity value.
-- (scope.127) Obtain details on the Company's historical financial performance and propose potential adjustments to historical earnings before interest taxes, depreciation, amortization ("EBITDA") for the periods noted earlier by considering:
-- (scope.128) Understand the impact of and validate adjustments identified by management and its financial sponsor ownership, including adjustments made for bank covenant purposes
-- (scope.129) Identify other abnormal, non-recurring and extraordinary one-time adjustments
-- (scope.130) Related party transactions – Enquire into the existence and appropriateness of related party transactions and balances and their impact on reported results going forward, including those with shareholders, management and affiliated companies
-- (scope.131) Consider movements in significant balance sheet accounts with a focus upon the nature, composition and basis of valuation of these accounts particularly around judgmental areas that would impact EBITDA (e.g. reserves and other accruals, inventory costing, accounts receivable, etc.).
-- (scope.132) Analyze the impact of COVID-19 on the Company's EBITDA from both revenue (e.g.: increase / decrease in demand) and cost perspectives (e.g.: personal protective equipment costs, office costs, etc.)
-- (scope.133) Analyze the one-time impact of elevated inflation, tight labor market and elevated absenteeism
-- (scope.134) Understand impact of cost allocations (as listed in the Target's internal management reporting package)
-- (scope.135) Impact of cash vs. GAAP costs for the following:
-  - pension expense (non-cash services costs - if applicable)
-  - Bonuses (actually paid out vs expensed)
-  - Bad debt (expense vs actual write-offs)
-  - Warranty expense (actual claims)
-  - Non-cash compensation (for Profits Interest Units)
-  - Normalization of vendor purchaser rebates (to the extent required)
-- (scope.136) Analyze the pro forma impact of:
-  - Pre-acquisition results (on an adjusted basis) on acquired businesses (AB May in the Historical Period)
-  - Updated Pricing Agreements with Customers
-  - Quantifiable synergies that management has identified and believe are applicable (i.e. on prior acquisitions)
-  - Retained costs sitting within Corporate
-- (scope.137) Understand impact of Quality of Earnings adjustments on the Historical Period budget
-- (scope.139) Understand application of revenue recognition policies, specifically POC, including consistency of application and period end true-ups that may skew financial results; and
-- (scope.140) Understand any timing differences between revenue recognition, cash collections and accrual adjustments.
-- (scope.141) The impact of any changes to senior management or team structure;
-- (scope.142) The impact of any changes to pricing models;
-- (scope.143) The impact of any changes in labour costs;
-- (scope.144) The impact of commodity prices, pricing lags and pass-through mechanisms;
-- (scope.145) The impact of foreign exchange (if any);
-- (scope.146) The pro forma impact of new by geography Branch;
-- (scope.147) The impact of any key supplier cost arrangements;
-- (scope.148) The impact of settlements related to litigation, if any; and
-- (scope.149) The impact of cash to accrual accounting and other potential items discovered in the due diligence process.
+- (scope.126) Assess HVAC-specific EBITDA normalization considerations, including:
+  - Pricing pass-through timing and gross-margin lag effects from labour and commodity cost changes;
+  - Cash-to-accrual timing differences and period-end true-ups affecting reported results;
+  - Branch openings, closures, or acquisitions and related run-rate impacts;
+  - Warranty, claim, and reserve movements that may affect normalized earnings; and
+  - Other non-recurring operational events identified during diligence.
 
 ### Revenue analysis (`revenue_analysis`)
 
@@ -153,17 +119,10 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`hvac`)
 
-- (scope.150) Leverage Data ana Analytics analyses (see below) to understand revenue and margin trends by customer, service offering, type and inform how it may impact the quality of earnings analysis as applicable.
-- (scope.151) Revenue and margin by business segment (Services & Projects: HVAC, Compressed air, Plumbing, Chiller, Electrical, CM4, CM+, repair etc.);
-- (scope.152) Revenue and margin by customer end market (Industrial, commercial, retirement homes, schools, condos etc.);
-- (scope.153) Revenue and margin by geography (i.e. by geography, by geography, by geography, by geography etc.);
-- (scope.154) Price vs. volume trends;
-- (scope.155) Understand revenue lifecycle of significant customers;
-- (scope.156) Effectiveness of cross-selling programs;
-- (scope.157) Revenue seasonality;
-- (scope.158) Backlog and pipeline/committed revenue; and
-- (scope.159) Other KPIs as made available by Target (i.e. length of service contract, renewal / retention rates, staff utilization, volumes etc)
-- (scope.160) Summarize value creation recommendations based on the above analysis.
+- (scope.150) Revenue and margin trends by service offering (for example: service, installation/project, and maintenance contract streams).
+- (scope.151) Revenue and margin trends by customer end-market and geography.
+- (scope.152) Backlog and committed pipeline analysis, including conversion timing and cancellation risk.
+- (scope.153) Contract renewal/retention profile and effectiveness of cross-sell activity, where measurable.
 
 ### Operating expenses (`operating_expenses`)
 
@@ -179,33 +138,10 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`hvac`)
 
-- (scope.161) Obtain and read an analysis of Target's cost of sales and operating expenses and inquire about:
-  - Direct costs (labor, commissions, materials, equipment, warranty & other costs)
-  - Advertising and marketing
-  - Bank fees and collections
-  - Communications
-  - Employee benefits / insurance liabilities
-  - Meals and entertainment
-  - Management fees and other corporates overheads
-  - Professional services
-  - Rent and utilities
-  - Tools & equipment
-  - Training and education
-  - Vehicle expenses
-  - Wages
-  - Historical operating expense trend as a % of revenue; and
-  - Restructuring, unusual and extraordinary items.
-- (scope.162) Obtain and read an analysis of Target's operating expenses and inquire about:
-  - Employee compensation and benefits:
-    - Headcount and average compensation costs;
-    - Turnover and average tenure of employees at key locations over time;
-    - Accrued employee obligations and other provisions;
-    - Severance / commitments, if any; and
-    - Incentive based compensation.
-    - Fixed vs. variable expense analysis;
-    - Effectiveness of sales and marketing programs;
-    - Insurance; and
-    - Other operating and SG&A expenses.
+- (scope.161) Direct cost drivers for field operations (for example: labour mix, subcontractor usage, materials, vehicles, and tools/equipment).
+- (scope.162) Branch-level occupancy, utilities, and other location operating costs.
+- (scope.604) Compensation structure and productivity metrics by role, including incentive compensation design.
+- (scope.605) Insurance and warranty-related cost trends and reserve adequacy considerations.
 
 ### Working capital (`working_capital`)
 
@@ -239,15 +175,8 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`hvac`)
 
-- (scope.168) Obtain and read an analysis of Target's accounts receivable and inquire about:
-  - Aging analysis by customer
-  - Historical write-offs
-  - Allowance for Doubtful accounts roll forward
-  - Credit balances and refund policies; and
-  - Other adjustments.
-  - Aging analysis and related credit terms (including special terms);
-  - Allowance for uncollectible accounts and write-offs; and
-  - Reserve and adjustments.
+- (scope.168) Aging and concentration analysis by major customer, including contract-related billing terms.
+- (scope.606) Reserve roll-forward, write-off trends, credit balances, and other collection adjustments.
 
 ### Accounts payable and accrued liabilities (`accounts_payable_and_accrued_liabilities`)
 
@@ -261,17 +190,9 @@ Each section below shows common skeleton bullets and then industry-specific bull
 
 #### Industry (`hvac`)
 
-- (scope.172) Obtain and read an analysis of Target's current liabilities and inquire about:
-  - Accounts payable aging;
-  - Accrued liabilities including roll forward of major accounts;
-  - Accrued payroll and PTO liability;
-  - Deferred revenue.
-- (scope.173) Obtain and read an analysis of Target's accounts payable, accrued liabilities and other current liabilities and inquire about:
-  - AP aging analysis and days outstanding;
-  - Terms of trade with major vendors;
-  - Revenue arrangements and timing of payments;
-  - Payroll related funding and timing of cash flows;
-  - Cadence and consistency of bonus/commission and other incentive compensation; and
+- (scope.172) Accounts payable aging, major-vendor settlement terms, and days payable outstanding trends.
+- (scope.173) Accrued liabilities profile (including payroll/PTO, bonus/commission cadence, and deferred revenue timing considerations).
+- (scope.607) Other current liability balances and unusual movements affecting working capital comparability.
 
 ### Capital expenditure requirements (`capital_expenditure_requirements`)
 
@@ -317,12 +238,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
 - (scope.015) Summarize and comment on net debt items (on and off-balance sheet) presented by Management and other potential debt-like items;
 - (scope.016) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
 
-#### Industry (`hvac`)
-
-- (scope.181) Based on the procedures above, summarize Target's debt and debt-like items in the form of a net debt analysis as of the latest balance sheet date including the identification of items currently included in working capital which should be considered debt like in nature for purposes of valuation (for internal purposes only and will not be included in our report).
-- (scope.182) Summarize and comment on net debt items (on and off balance sheet) presented by management and other potential debt-like items; and
-- (scope.183) Consider whether elements of working capital have the nature of and may be reclassified as net debt, and if so, summarize the potential impact of these adjustments on working capital and net debt.
-
 ### Audit work paper (`audit_work_paper`)
 
 #### Common
@@ -332,10 +247,6 @@ Each section below shows common skeleton bullets and then industry-specific bull
 - (scope.116) Comment on control issues identified by the external auditors, if applicable.
 - (scope.117) Comment on any additional red flags or key risks identified in the provided audit materials.
 - (scope.118) Review audit committee reporting and presentations from the audit firm.
-
-#### Industry (`hvac`)
-
-_No industry-specific bullets._
 
 ### Balance Sheet (`balance_sheet`)
 
@@ -380,97 +291,3 @@ _Not in common skeleton._
 #### Industry (`hvac`)
 
 - (scope.185) Understand the nature and extent of related party transactions and basis for pricing arrangements.
-
-### Data And Analytics (`data_and_analytics`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`hvac`)
-
-- (scope.187) The purpose of this section is to perform detailed analysis on the drivers of revenue and margin growth, marketing performance, and operations to understand upside opportunities and communicate an effective story in conjunction with the Quality of Earnings. The outputs will be a PowerPoint trend report, highlighting key insights; a Power BI dashboard that / sell-side advisor can use to 'slice & dice' and extract visuals, this can also be shared with select buyers; and a consolidated Excel sales cube. Steps below are dependent on data from the brands
-
-### Revenue And Profitability Analysis Da (`revenue_and_profitability_analysis_da`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`hvac`)
-
-- (scope.188) Understands the health and sustainability of revenue and margin; covers last fiscal years (the Historical Period) and TTM (the most recent period)
-- (scope.189) Leveraging proprietary analytics tool, use the transaction / sales database from each entity (business units), analyze revenue and profitability (cost, price, margin), key KPIs (e.g., number of jobs, average sales price, etc.) and performance trends (e.g., concentration, new-lost-existing customers, price-volume-mix, high growth services, OEM/equipment used, etc.); evaluating by product category/service offering, (e.g., Heating, Cooling, Plumbing, Electrical, etc.), sub-category/service type (e.g., AC installs, AC repairs, AC maintenance, etc.) and by channel (e.g., Google, Social Media, Direct Campaign, referral, etc.), by service type, by geography (zip code, county, etc.), by branch, by customer, by end market, etc.
-- (scope.190) Perform a service-level line item analysis to understand profitability (including price, volume, and mix calculations; low margin service areas; basket analysis, etc.), opportunities to optimize pricing, areas to rationalize, reflect cost increases, drive cross-sell / improve baskets, etc.
-- (scope.191) Extract and identify top brands / OEMs used in servicing customers and understand any opportunities to harmonize pricing across different business that might result in upside
-- (scope.192) Where available, link above sales / job data to technician utilization and salary to understand performance opportunities
-- (scope.194) Extract and understand any patterns and trends that might inform value creation and optimization opportunities for the next buyer
-
-### Customer Base Health Da (`customer_base_health_da`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`hvac`)
-
-- (scope.195) Building on the previous step, the phase evaluates the health of the customer base; how sustainable and recurring (or re-occurring) in nature are the customers; covers last fiscal years (the Historical Period) and TTM (the most recent period)
-- (scope.196) Analyze health of the customer base across the three entities, in terms of revenue / profitability by customer, type of customer (residential, commercial, etc.) any customer contracts, etc.; overall retention, growth patterns, renewal history, cohort (vintage); new, loss, existing; customer concentration; etc. including associated services and categories these customers purchase to understand patterns and insights
-- (scope.197) Analyze type of revenue and mix (one-time versus recurring), across different streams (e.g., revenues from HVAC & Electrical, from Repair Services, from Extended Warranty, and Construction), and understand any performance trending insights
-- (scope.198) Extract and understand any patterns and trends that might inform value creation and optimization opportunities for the next buyer
-
-### Marketing And Advertising Performance Da (`marketing_and_advertising_performance_da`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`hvac`)
-
-- (scope.199) Evaluates the performance of marketing and advertising; data is analyzed in conjunction with the revenue and customer analysis to understand any trends / insights in relation to how marketing and advertising drives performance; covers last fiscal years (the Historical Period) and TTM (the most recent period)
-- (scope.200) Analyzes trends and insights related to revenue, customers, average revenue/margin per job, recurring nature of customers, high value products, etc. by lead source /channel by brand and advertising spend by lead source / channel by brand
-- (scope.201) Extracts insights into drivers of profitability and opportunities for value creation / optimization by the next buyer
-- (scope.202) Analyzes the sales funnel and conversion metrics by lead source / channel by brand, including leads generated, quotes, and sales conversion rates; ties this to revenue and customer analysis in the previous steps to understand insights to drive the business
-- (scope.203) Analyzes revenue generating job (e.g., service visit, install, replacement, etc.) and ties back to performance
-
-### Operations Performance Da (`operations_performance_da`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`hvac`)
-
-- (scope.204) Evaluates the performance of operations; where appropriate, ties back this analysis to the previous steps; covers last fiscal years (the Historical Period) and TTM (the most recent period)
-- (scope.205) Analyze employee census by role, position, annual salary, and bonus; where appropriate (e.g., technicians, sales people) tie back to revenue / margin performance to understand returns (e.g., salary vs sales or utilization multiples) and other associated metrics (e.g., revenue per tech, utilization, margin by tech, etc.)
-- (scope.206) Evaluate technician turnover metrics by brand and whether it is voluntary or involuntary; further evaluate against tenure (<90 days vs. >90 days); where appropriate tie back to sales and compensation
-- (scope.207) Analyze the fleet of each brand respectively, including number of vehicles, age of vehicles, lease vs. owned, maintenance cost per vehicle, average cost of replacement, etc.; where appropriate, tie back to technician performance (e.g., revenue / margin)
-- (scope.208) Analyze suppliers, including total purchases, type of material, typical markups to customers, etc.; understand rebates vs. volume discounts; where possible, tie back to job type (e.g., HVAC, electrical) and overall job performance (e.g., revenue / margin)
-- (scope.209) Assess financing partners, including the number of jobs that are finance, type, average selling price, financing partners, terms, etc.; where appropriate, tie back to salesperson, lead channel, etc. to understand opportunities to optimize
-
-### Phase 2 Post Bid Support (`phase_2_post_bid_support`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`hvac`)
-
-- (scope.210) Leverage the work/analysis performed during Phase I to advise management with respect to their preparation of relevant materials to be included in the data room.
-- (scope.211) Update our due diligence report (and other supporting information) prepared in Phase I on a monthly or quarterly basis for subsequent reporting periods as requested by Client.
-
-### Optional Fdd Procedures (`optional_fdd_procedures`)
-
-#### Common
-
-_Not in common skeleton._
-
-#### Industry (`hvac`)
-
-- (scope.215) Calls with R&W insurers / lenders
-Conduct call with potential R&W insurers / lenders and answer any Q&A as it pertains to our engagement.
-- (scope.216) Obtain and read year-end review working papers for the last fiscal year and perform the following:
-- (scope.217) Discuss any significant issues with the external accountants;
-- (scope.218) Inquire of the engagement partner about the existence of any disagreements with management;
-- (scope.219) Comment on the nature and volume of year-end accounting differences (adjustments), use of accounting estimates, any changes in accounting policies or methods and their implications; and
-- (scope.220) Read management reports prepared by the external accountants and comment on control issues.

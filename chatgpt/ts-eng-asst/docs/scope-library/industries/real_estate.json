@@ -389,6 +389,23 @@
           ]
         }
       ],
+      "revenue_analysis": [
+        {
+          "id": "scope.701",
+          "text": "Analyze rental revenue drivers using the rent roll and supporting detail, including:",
+          "children": [
+            {
+              "text": "Occupancy, lease maturity schedule, and renewal/termination trends;"
+            },
+            {
+              "text": "Base rent versus recovery income (for example: CAM, taxes, insurance, and utilities) and reconciliation to billings, where available; and"
+            },
+            {
+              "text": "Concessions, abatements, and free-rent impacts on reported revenue."
+            }
+          ]
+        }
+      ],
       "operating_expenses": [
         {
           "id": "scope.325",
@@ -402,6 +419,20 @@
             },
             {
               "text": "Other property-level cost drivers unique to the ownership/management model, where applicable."
+            }
+          ]
+        }
+      ],
+      "commitments_and_contingencies": [
+        {
+          "id": "scope.702",
+          "text": "Inquire about property-specific contingent exposures and obligations, including:",
+          "children": [
+            {
+              "text": "Property tax reassessments, appeals, and related reserves; and"
+            },
+            {
+              "text": "Environmental compliance and remediation obligations, where applicable."
             }
           ]
         }
@@ -476,6 +507,9 @@
       "operating_expenses",
       "quality_of_earnings"
     ],
-    "added_industry_sections": []
+    "added_industry_sections": [
+      "commitments_and_contingencies",
+      "revenue_analysis"
+    ]
   }
 }

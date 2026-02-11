@@ -463,33 +463,35 @@
       "operating_expenses": [
         {
           "id": "scope.089",
-          "text": "Obtain and read an analysis of Target's expenses and inquire about:",
-          "children": [
-            {
-              "text": "Behavior therapists (registered and unregistered) and board-certified behavior analysts: compensation, benefits, incentive compensation, and turnover;"
-            },
-            {
-              "text": "Non-provider salaries, wages, and benefits, including incentive compensation;"
-            },
-            {
-              "text": "Owner compensation and benefits;"
-            },
-            {
-              "text": "Treatment supplies, including key suppliers and purchasing terms;"
-            },
-            {
-              "text": "Center-level costs and sub-leasing arrangements;"
-            },
-            {
-              "text": "Insurance expense;"
-            },
-            {
-              "text": "Selling, general, and administrative/corporate expenses; and"
-            },
-            {
-              "text": "Overhead allocations."
-            }
-          ]
+          "text": "Behavior therapists (registered and unregistered) and board-certified behavior analysts: compensation, benefits, incentive compensation, and turnover."
+        },
+        {
+          "id": "scope.589",
+          "text": "Non-provider salaries, wages, and benefits, including incentive compensation."
+        },
+        {
+          "id": "scope.590",
+          "text": "Owner compensation and benefits."
+        },
+        {
+          "id": "scope.591",
+          "text": "Treatment supplies, including key suppliers and purchasing terms."
+        },
+        {
+          "id": "scope.592",
+          "text": "Center-level costs and sub-leasing arrangements."
+        },
+        {
+          "id": "scope.593",
+          "text": "Insurance expense."
+        },
+        {
+          "id": "scope.594",
+          "text": "Selling, general, and administrative/corporate expenses."
+        },
+        {
+          "id": "scope.595",
+          "text": "Overhead allocations."
         }
       ],
       "working_capital": [
@@ -501,30 +503,31 @@
       "accounts_receivable": [
         {
           "id": "scope.093",
-          "text": "Obtain and read an analysis of Target's accounts receivable and inquire about:",
-          "children": [
-            {
-              "text": "Aging analysis by center and by payor;"
-            },
-            {
-              "text": "Contractual allowances;"
-            },
-            {
-              "text": "Allowance for doubtful accounts and write-offs;"
-            },
-            {
-              "text": "Prior-period accounts receivable adjustments;"
-            },
-            {
-              "text": "Self-pay and credit balances;"
-            },
-            {
-              "text": "Collection experience; and"
-            },
-            {
-              "text": "Other reserves and adjustments."
-            }
-          ]
+          "text": "Aging analysis by center and by payor."
+        },
+        {
+          "id": "scope.596",
+          "text": "Contractual allowances."
+        },
+        {
+          "id": "scope.597",
+          "text": "Allowance for doubtful accounts and write-offs."
+        },
+        {
+          "id": "scope.598",
+          "text": "Prior-period accounts receivable adjustments."
+        },
+        {
+          "id": "scope.599",
+          "text": "Self-pay and credit balances."
+        },
+        {
+          "id": "scope.600",
+          "text": "Collection experience."
+        },
+        {
+          "id": "scope.601",
+          "text": "Other reserves and adjustments."
         }
       ],
       "accounts_payable_and_accrued_liabilities": [
@@ -550,21 +553,11 @@
       "capital_expenditure_requirements": [
         {
           "id": "scope.099",
-          "text": "Obtain and read an analysis of historical and future capital cost requirements including:",
-          "children": [
-            {
-              "text": "Fixed-asset continuity schedules (including significant additions and disposals);"
-            },
-            {
-              "text": "Maintenance versus growth capital expenditures;"
-            },
-            {
-              "text": "Planned, committed, and deferred capital expenditures; and"
-            },
-            {
-              "text": "Under-utilized assets and impairment write-downs/issues."
-            }
-          ]
+          "text": "Fixed-asset continuity schedules (including significant additions and disposals)."
+        },
+        {
+          "id": "scope.602",
+          "text": "Under-utilized assets and impairment write-downs/issues."
         }
       ],
       "commitments_and_contingencies": [

@@ -463,7 +463,20 @@
       "revenue_analysis",
       "working_capital"
     ],
-    "replaced_industry_sections": [],
+    "replaced_industry_sections": [
+      "accounting_overview",
+      "arr_drivers",
+      "audit_work_paper",
+      "business_overview",
+      "locked_box",
+      "net_debt",
+      "operating_expenses",
+      "phase_1_gaap_considerations",
+      "quality_of_earnings",
+      "revenue_analysis",
+      "supporting_analysis_to_quality_of_earnings",
+      "working_capital"
+    ],
     "added_industry_sections": []
   }
 }
