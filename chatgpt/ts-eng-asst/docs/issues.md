@@ -86,6 +86,45 @@ This phase addresses larger structural risk (key drift + default over-inclusion)
 
 ---
 
+## Post-Output QA + Oracle Delta (Updated: 2026-02-11)
+
+This section captures new findings from generated `.docx` review and Oracle feedback, with current repo-state verification.
+
+### Executed now
+
+- [x] **Q-004 (HVAC balance sheet integration):** Removed `hvac.balance_sheet.scope.163` from canonical dist and kept relevant balance-sheet analysis within section-aligned components (`working_capital`, `accounts_receivable`, `accounts_payable_and_accrued_liabilities`, `inventory`, `prepaids_and_other_current_assets`) rather than as a trailing standalone section.
+- [x] **Q-005 (Manufacturing deal-specific artifact):** Rewrote `manufacturing.business_overview.scope.221` child text from deal-specific geography language to reusable language:
+  - from: `Start-up costs, capital expenditures, and status of operations in Morocco;`
+  - to: `Start-up costs, capital expenditures, and status of operations in significant sites/geographies.`
+
+### Decision point (requested)
+
+- [x] **Q-006 (Manufacturing redundancy cleanup):** Executed incremental-only trimming.
+  - `working_capital`: kept only `scope.256`
+  - `accounts_payable_and_accrued_liabilities`: kept only `scope.262`
+  - `capital_expenditure_requirements`: kept only `scope.266` and `scope.267`
+  - `commitments_and_contingencies`: kept only `scope.275`
+  - Removed redundant bullets from those sections that duplicated common lead-ins or common coverage.
+
+### Remaining active issues (next pass)
+
+- [x] **Q-007 (Global ordering for industry-only sections):** Implemented resilient ordering with:
+  - bucket-aware placement using `dist/scope-review-buckets.json` mapping, and
+  - optional anchor rules (`section_ordering.anchor_rules`) with cycle-safe fallback to deterministic base order.
+  - Ordering is best-effort and robust when sections are deleted/excluded.
+- [x] **Q-008 (Runtime applicability enforcement):** Implemented runtime applicability application in `dist/el-generate.py` with companion-file loading.
+  - Runtime now loads and applies `section-applicability.json` before section assembly (best-effort).
+  - Dist companion file added: `dist/section-applicability.json`.
+  - Result: runtime `.docx` generation now matches docs-layer exclusions/replacements (validated with `banking` where generic `working_capital` is no longer injected).
+
+### Oracle feedback reconciliation (verified against current repo)
+
+- [x] `docs/scope-library/excluded-sections-review.md` now exists.
+- [x] “Excluded via applicability but still present in dist” issue is currently **resolved** (`0` section keys currently excluded-by-applicability while still populated in canonical dist).
+- [ ] Optional-pack governance remains an open enhancement: keep excluded from default dist, but maintain rewrite-ready optional modules in a separate artifact for controlled opt-in.
+
+---
+
 ## Executive Summary
 
 ### Overall assessment
@@ -489,3 +528,45 @@ This section classifies each scope area into one of the four disposition categor
 - **Optional-by-default governance:** Some teams may rely on the current “everything included” behavior. Moving content to Optional may change expectations unless the UI makes opt-in easy and defaults are clearly communicated.
 - **Ambiguous thin sections:** A few sections have very thin bullets that don’t evidence intended meaning (e.g., `other_assets`, `other_current_assets_liabilities`). Without source provenance in this zip, their intended scope may need stakeholder confirmation before final removal/merge. (Examples: `context/dist/scope-library.json:L1170-L1173`, `context/dist/scope-library.json:L3048-L3052`.)
 - **Mining provenance not included:** The zip does not include raw mined source documents, so we cannot validate whether some “odd” bullets are faithful extractions vs. artifacts; we can only assess what is present in `dist/`. (Noted in mining verification: `context/docs/mining/audit-verification-results.md:L13-L27`.)
+
+---
+
+## Execution Update — Dual Distribution Finalization (2026-02-11)
+
+Status: `Completed`
+
+Implemented:
+
+- Added shared scope core module: `scope_core.py` and runtime copy `dist/_scope_core.py`.
+- Wired runtime and export validators to shared core entrypoints for applicability/order logic parity.
+- Added internal generation entrypoint: `scripts/internal_generate.py` (subprocess wrapper).
+- Removed internal direct dist module loading from:
+  - `scripts/generate-demo-letter.py`
+  - `scripts/test-scope-replacement.py`
+- Added manifest and boundary checks:
+  - `scripts/validate-distribution-manifests.py`
+  - `scripts/validate-internal-boundary.py`
+- Added optional-scope docs exporter:
+  - `scripts/export-optional-scope-library.py`
+- Added unknown optional-key runtime fallback (synthesized ad hoc optional section bullets in house style).
+- Regenerated review surfaces:
+  - `docs/scope-library/industries/*`
+  - `docs/scope-library/skeleton-by-industry/*`
+  - `docs/scope-library/optional-scope-library.md`
+  - `docs/scope-library/optional-scope-library.json`
+
+Validation run (pass):
+
+- `python3 scripts/export-scope-library.py --with-skeleton`
+- `python3 scripts/validate-scope-exports.py`
+- `python3 scripts/validate-scope-review-buckets.py`
+- `python3 scripts/refresh-scope-metadata.py --check`
+- `python3 scripts/check-system-prompt-contract.py --prompt dist/ts-engagement-assistant.md --max-chars 8000`
+- `python3 scripts/validate-internal-boundary.py`
+- `python3 scripts/validate-distribution-manifests.py`
+
+Manual output runs (pass):
+
+- 5-industry sample generation via `scripts/generate-demo-letter.py` (both templates).
+- 3-industry smoke generation via `scripts/test-scope-replacement.py`.
+

@@ -10,7 +10,7 @@ This project contains artifacts intended to be uploaded into a ChatGPT GPT / pro
 - Only keep schema fields that are **meaningfully user-provided**; if a value is a reasonable default, bake it into the template (or derive it) and **remove the schema + intake questions**.
 - Never rewrite legal language; only change templates to (a) set defaults, (b) add deterministic markers, or (c) remove/replace placeholders.
 - Keep the system prompt under `8000` characters.
-- Keep practical headroom in the system prompt (`<= 7200` target) to reduce late-stage compression regressions.
+- Keep practical headroom in the system prompt (`<= 7800` target) to reduce late-stage compression regressions.
 
 ## `dist/` (final uploads only)
 
@@ -32,6 +32,12 @@ Do **not** add to `dist/`:
 - Local caches (`__pycache__/`, `*.pyc`)
 - OS/editor metadata (`.DS_Store`, etc.)
 
+Dual-distribution rule:
+
+- Internal scripts must not directly import/load `dist/el-generate.py`.
+- Use `scripts/internal_generate.py` for internal generation runs.
+- Runtime upload path remains `dist/el-generate.py` + `dist/_scope_core.py`.
+
 If you need demo or test materials, put them under `chatgpt/ts-sow/reference/` (or another non-`dist/` folder) instead.
 
 ## Hygiene
@@ -39,16 +45,23 @@ If you need demo or test materials, put them under `chatgpt/ts-sow/reference/` (
 - Prefer writing generated outputs to a temporary or dedicated non-`dist/` location.
 - Before finishing a change, verify `dist/` contains only final-upload artifacts.
 - For prompt changes, run:
-  - `python3 scripts/check-system-prompt-contract.py --prompt dist/ts-engagement-assistant.md --max-chars 7200`
+  - `python3 scripts/check-system-prompt-contract.py --prompt dist/ts-engagement-assistant.md --max-chars 8000`
 - Validate outputs are “clean”: no remaining `{{...}}` tokens in generated `.docx`.
 - For scope text changes, treat `dist/scope-library.json` as canonical.
 - Keep `docs/scope-library/industries/*` synced to `dist` (re-export with `python3 scripts/export-scope-library.py`).
 - `reference/legacy/*` contains historical snapshots only (not authoritative).
 - For scope text QA, run:
+  - `python3 scripts/refresh-scope-metadata.py`
   - `python3 scripts/check-scope-spelling.py`
   - `python3 scripts/validate-scope-exports.py`
   - `python3 -m json.tool dist/scope-library.json >/dev/null`
   - `python3 -m json.tool dist/scope-review-buckets.json >/dev/null`
+  - `python3 scripts/validate-distribution-manifests.py`
+  - `python3 scripts/validate-internal-boundary.py`
+
+- If merge candidates/backups are created during scope canonicalization:
+  - Move them to `reference/legacy/` after merge.
+  - Do not leave merge temp files in `dist/`.
 
 ## Scope Library Review Workflow (Docs-first)
 
@@ -155,6 +168,10 @@ c) Other fee income and commissions - trends therein and noted one-time / non-ca
   - Prefer `scope_selection.excluded_section_keys` over id-only exclusions.
   - Use `excluded_top_level_ids` only as backward-compatible fallback.
   - If user accepts full scope, pass no exclusions.
+- **Optional scope contract (intended):**
+  - Optional catalog source is `dist/scope-library-optional.json`.
+  - If user requests an optional key not in catalog, create an ad hoc optional section in matching style and pass via `ad_hoc_optional_sections`.
+  - If optional scope is not confirmed, proceed with baseline scope (non-blocking).
 - **Scope review mapping (intended):**
   - Keep `scope-review-buckets.json` aligned with `scope-library.json` section keys.
   - Maintain `section_aliases` for common user phrasing.

@@ -45,12 +45,25 @@ from datetime import date
 from dataclasses import dataclass, field
 from copy import deepcopy
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from docx import Document
 from docx.oxml.ns import qn
 from docx.shared import Emu
 from docx.text.paragraph import Paragraph
+
+try:
+    from _scope_core import (
+        apply_optional_scope_modules as _core_apply_optional_scope_modules,
+        build_industry_scope_view as _core_build_industry_scope_view,
+        ordered_active_section_keys as _core_ordered_active_section_keys,
+        parse_scope_selection as _core_parse_scope_selection,
+    )
+except Exception:
+    _core_apply_optional_scope_modules = None
+    _core_build_industry_scope_view = None
+    _core_ordered_active_section_keys = None
+    _core_parse_scope_selection = None
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -901,6 +914,588 @@ def load_scope_library(path: str) -> dict:
         return json.load(f)
 
 
+def load_scope_review_buckets(path: str) -> dict:
+    """Load scope-review-buckets JSON used for grouping/ordering (best-effort)."""
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_section_applicability(path: str) -> dict:
+    """Load section-applicability JSON used for runtime filtering/replacements."""
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_optional_scope_library(path: str) -> dict:
+    """Load optional scope library JSON used for explicit opt-in scope additions."""
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _load_scope_buckets_for_scope_library(scope_library_file: str) -> Optional[dict]:
+    """
+    Best-effort companion loader.
+
+    If `scope-review-buckets.json` is present beside the scope library file, use it.
+    Generation must remain robust when this file is absent.
+    """
+    try:
+        lib_path = Path(scope_library_file).resolve()
+        candidate = lib_path.with_name("scope-review-buckets.json")
+        if candidate.exists():
+            return load_scope_review_buckets(str(candidate))
+    except Exception:
+        return None
+    return None
+
+
+def _load_section_applicability_for_scope_library(scope_library_file: str) -> Optional[dict]:
+    """
+    Best-effort applicability loader.
+
+    Priority:
+    1) Dist companion file beside scope-library.json
+    2) Repo docs path (for local development workflows)
+    """
+    try:
+        lib_path = Path(scope_library_file).resolve()
+        candidates = [
+            lib_path.with_name("section-applicability.json"),
+            lib_path.parent.parent / "docs" / "scope-library" / "section-applicability.json",
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                return load_section_applicability(str(candidate))
+    except Exception:
+        return None
+    return None
+
+
+def _load_optional_scope_library_for_scope_library(scope_library_file: str) -> Optional[dict]:
+    """
+    Best-effort optional scope loader.
+
+    Priority:
+    1) Dist companion file beside scope-library.json
+    2) Project dist file
+    """
+    try:
+        lib_path = Path(scope_library_file).resolve()
+        candidates = [
+            lib_path.with_name("scope-library-optional.json"),
+            lib_path.parent.parent / "dist" / "scope-library-optional.json",
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                return load_optional_scope_library(str(candidate))
+    except Exception:
+        return None
+    return None
+
+
+def _coerce_scope_bullet(raw: Any) -> Optional[dict]:
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return None
+        return {"text": text}
+
+    if not isinstance(raw, dict):
+        return None
+
+    text = raw.get("text")
+    if not isinstance(text, str) or not text.strip():
+        return None
+
+    node: dict[str, Any] = {"text": text.strip()}
+    bullet_id = raw.get("id")
+    if isinstance(bullet_id, str) and bullet_id.strip():
+        node["id"] = bullet_id.strip()
+
+    children = raw.get("children")
+    if isinstance(children, list):
+        clean_children: list[dict] = []
+        for child in children:
+            clean_child = _coerce_scope_bullet(child)
+            if clean_child:
+                clean_children.append(clean_child)
+        if clean_children:
+            node["children"] = clean_children
+
+    return node
+
+
+def _coerce_scope_bullet_list(raw: Any) -> list[dict]:
+    values: list[Any]
+    if isinstance(raw, list):
+        values = raw
+    else:
+        values = [raw]
+    clean: list[dict] = []
+    for value in values:
+        node = _coerce_scope_bullet(value)
+        if node:
+            clean.append(node)
+    return clean
+
+
+def _append_unique_bullets(target: list[dict], incoming: list[dict]) -> int:
+    existing_ids = {
+        str(node.get("id")).strip()
+        for node in target
+        if isinstance(node, dict) and isinstance(node.get("id"), str) and str(node.get("id")).strip()
+    }
+    existing_text = {
+        str(node.get("text", "")).strip().lower()
+        for node in target
+        if isinstance(node, dict) and isinstance(node.get("text"), str)
+    }
+
+    added = 0
+    for node in incoming:
+        if not isinstance(node, dict):
+            continue
+        node_id = str(node.get("id")).strip() if isinstance(node.get("id"), str) else ""
+        node_text = str(node.get("text", "")).strip().lower()
+        if node_id and node_id in existing_ids:
+            continue
+        if not node_id and node_text and node_text in existing_text:
+            continue
+        target.append(deepcopy(node))
+        added += 1
+        if node_id:
+            existing_ids.add(node_id)
+        if node_text:
+            existing_text.add(node_text)
+
+    return added
+
+
+def _apply_optional_scope_modules(
+    *,
+    common_skeleton: list[dict],
+    industry_module: dict[str, Any],
+    industry: str,
+    optional_library: Optional[dict],
+    optional_section_keys: set[str],
+    ad_hoc_optional_sections: dict[str, list[dict]],
+) -> dict:
+    if _core_apply_optional_scope_modules is not None:
+        return _core_apply_optional_scope_modules(
+            common_skeleton=common_skeleton,
+            industry_module=industry_module,
+            industry=industry,
+            optional_library=optional_library,
+            optional_section_keys=optional_section_keys,
+            ad_hoc_optional_sections=ad_hoc_optional_sections,
+            enable_unknown_fallback=True,
+        )
+
+    applied_common: set[str] = set()
+    applied_industry: set[str] = set()
+    applied_ad_hoc: set[str] = set()
+    unknown_requested: set[str] = set()
+    added_bullets = 0
+
+    common_modules: dict[str, Any] = {}
+    industry_modules: dict[str, Any] = {}
+    if isinstance(optional_library, dict):
+        raw_common = optional_library.get("common_optional_modules")
+        if isinstance(raw_common, dict):
+            common_modules = raw_common
+        raw_industry_root = optional_library.get("industry_optional_modules")
+        if isinstance(raw_industry_root, dict):
+            raw_for_industry = raw_industry_root.get(industry)
+            if isinstance(raw_for_industry, dict):
+                industry_modules = raw_for_industry
+
+    common_index: dict[str, int] = {}
+    for idx, section in enumerate(common_skeleton):
+        if not isinstance(section, dict):
+            continue
+        key = _normalize_lookup_key(str(section.get("normalized_heading", "")))
+        if key:
+            common_index[key] = idx
+
+    for requested_key in sorted(optional_section_keys):
+        if requested_key in common_modules:
+            bullets = _coerce_scope_bullet_list(common_modules.get(requested_key))
+            if not bullets:
+                continue
+            existing_idx = common_index.get(requested_key)
+            if existing_idx is None:
+                common_skeleton.append(
+                    {
+                        "normalized_heading": requested_key,
+                        "heading": requested_key.replace("_", " ").title(),
+                        "default_bullets": deepcopy(bullets),
+                    }
+                )
+                common_index[requested_key] = len(common_skeleton) - 1
+                added_bullets += len(bullets)
+                applied_common.add(requested_key)
+                continue
+
+            section = common_skeleton[existing_idx]
+            existing_bullets = section.get("default_bullets")
+            if not isinstance(existing_bullets, list):
+                section["default_bullets"] = []
+                existing_bullets = section["default_bullets"]
+            added = _append_unique_bullets(existing_bullets, bullets)
+            if added > 0:
+                added_bullets += added
+                applied_common.add(requested_key)
+            continue
+
+        if requested_key in industry_modules:
+            bullets = _coerce_scope_bullet_list(industry_modules.get(requested_key))
+            if not bullets:
+                continue
+            existing = industry_module.get(requested_key)
+            if not isinstance(existing, list):
+                industry_module[requested_key] = deepcopy(bullets)
+                added_bullets += len(bullets)
+                applied_industry.add(requested_key)
+            else:
+                added = _append_unique_bullets(existing, bullets)
+                if added > 0:
+                    added_bullets += added
+                    applied_industry.add(requested_key)
+            continue
+
+        unknown_requested.add(requested_key)
+
+    for section_key, raw_bullets in (ad_hoc_optional_sections or {}).items():
+        normalized_key = _normalize_lookup_key(str(section_key or ""))
+        if not normalized_key:
+            continue
+        bullets = _coerce_scope_bullet_list(raw_bullets)
+        if not bullets:
+            continue
+        existing = industry_module.get(normalized_key)
+        if not isinstance(existing, list):
+            industry_module[normalized_key] = deepcopy(bullets)
+            added_bullets += len(bullets)
+            applied_ad_hoc.add(normalized_key)
+        else:
+            added = _append_unique_bullets(existing, bullets)
+            if added > 0:
+                added_bullets += added
+                applied_ad_hoc.add(normalized_key)
+
+    return {
+        "optional_section_keys_requested": sorted(optional_section_keys),
+        "optional_sections_applied_common": sorted(applied_common),
+        "optional_sections_applied_industry": sorted(applied_industry),
+        "optional_sections_unknown": sorted(unknown_requested),
+        "ad_hoc_sections_applied": sorted(applied_ad_hoc),
+        "optional_bullets_added": added_bullets,
+    }
+
+
+def _build_industry_scope_view(
+    *,
+    scope_library: dict,
+    industry: str,
+    applicability: Optional[dict],
+) -> dict:
+    """
+    Build runtime scope view (common + industry) with applicability rules applied.
+
+    Mirrors export behavior to keep docs review surface and runtime generation aligned.
+    """
+    if _core_build_industry_scope_view is not None:
+        return _core_build_industry_scope_view(
+            scope_library=scope_library,
+            industry=industry,
+            applicability=applicability,
+            include_summary=False,
+        )
+
+    if not isinstance(applicability, dict):
+        return {
+            "common_skeleton": scope_library.get("common_skeleton", []) or [],
+            "industry_module": deepcopy((scope_library.get("industry_modules", {}) or {}).get(industry, {})),
+        }
+
+    industry_norm = _normalize_lookup_key(industry)
+
+    section_applicability = applicability.get("section_applicability", {})
+    common_rules = {}
+    if isinstance(section_applicability, dict):
+        raw_common_rules = section_applicability.get("common_skeleton", {})
+        if isinstance(raw_common_rules, dict):
+            common_rules = raw_common_rules
+
+    common_all = scope_library.get("common_skeleton", []) or []
+    common_filtered: list[dict] = []
+    excluded_common_sections: set[str] = set()
+    for section in common_all:
+        if not isinstance(section, dict):
+            continue
+        section_key = _normalize_lookup_key(str(section.get("normalized_heading", "")))
+        include = True
+        rule = common_rules.get(section_key)
+        if isinstance(rule, dict):
+            include_for = {
+                _normalize_lookup_key(v)
+                for v in (rule.get("include_for_industries") or [])
+                if isinstance(v, str)
+            }
+            exclude_for = {
+                _normalize_lookup_key(v)
+                for v in (rule.get("exclude_for_industries") or [])
+                if isinstance(v, str)
+            }
+            if include_for and industry_norm not in include_for:
+                include = False
+            if industry_norm in exclude_for:
+                include = False
+        if include:
+            common_filtered.append(deepcopy(section))
+        elif section_key:
+            excluded_common_sections.add(section_key)
+
+    common_replacements_root = applicability.get("common_section_replacements", {})
+    if isinstance(common_replacements_root, dict):
+        common_index: dict[str, int] = {}
+        for idx, section in enumerate(common_filtered):
+            if not isinstance(section, dict):
+                continue
+            key = _normalize_lookup_key(str(section.get("normalized_heading", "")))
+            if key:
+                common_index[key] = idx
+
+        for section_key, replacement in common_replacements_root.items():
+            normalized = _normalize_lookup_key(section_key)
+            if not normalized or normalized in excluded_common_sections:
+                continue
+            if not isinstance(replacement, dict):
+                continue
+            heading = replacement.get("heading")
+            bullets = replacement.get("default_bullets")
+            if not isinstance(bullets, list):
+                continue
+            clean_bullets = [deepcopy(b) for b in bullets if isinstance(b, dict)]
+            existing_idx = common_index.get(normalized)
+
+            if not clean_bullets:
+                if existing_idx is not None:
+                    common_filtered.pop(existing_idx)
+                    common_index = {}
+                    for idx, section in enumerate(common_filtered):
+                        if not isinstance(section, dict):
+                            continue
+                        key = _normalize_lookup_key(str(section.get("normalized_heading", "")))
+                        if key:
+                            common_index[key] = idx
+                continue
+
+            new_section: dict = {
+                "normalized_heading": normalized,
+                "default_bullets": clean_bullets,
+            }
+            if isinstance(heading, str) and heading.strip():
+                new_section["heading"] = heading.strip()
+            elif existing_idx is not None:
+                prev_heading = common_filtered[existing_idx].get("heading")
+                if isinstance(prev_heading, str) and prev_heading.strip():
+                    new_section["heading"] = prev_heading.strip()
+                else:
+                    new_section["heading"] = normalized.replace("_", " ").title()
+            else:
+                new_section["heading"] = normalized.replace("_", " ").title()
+
+            if existing_idx is not None:
+                common_filtered[existing_idx] = new_section
+            else:
+                common_filtered.append(new_section)
+                common_index[normalized] = len(common_filtered) - 1
+
+    modules = scope_library.get("industry_modules", {}) or {}
+    raw_industry_module = modules.get(industry)
+    industry_module = deepcopy(raw_industry_module) if isinstance(raw_industry_module, dict) else {}
+
+    replacements_root = applicability.get("industry_section_replacements", {})
+    replacements_for_industry: dict[str, Any] = {}
+    if isinstance(replacements_root, dict):
+        raw = replacements_root.get(industry)
+        if isinstance(raw, dict):
+            replacements_for_industry = raw
+
+    additions_root = applicability.get("industry_section_additions", {})
+    additions_for_industry: dict[str, Any] = {}
+    if isinstance(additions_root, dict):
+        raw = additions_root.get(industry)
+        if isinstance(raw, dict):
+            additions_for_industry = raw
+
+    for section_key, bullets in replacements_for_industry.items():
+        if not isinstance(section_key, str) or not isinstance(bullets, list):
+            continue
+        clean_bullets = [deepcopy(b) for b in bullets if isinstance(b, dict)]
+        if clean_bullets:
+            industry_module[section_key] = clean_bullets
+        else:
+            industry_module.pop(section_key, None)
+
+    for section_key, bullets in additions_for_industry.items():
+        if not isinstance(section_key, str) or not isinstance(bullets, list):
+            continue
+        clean_bullets = [deepcopy(b) for b in bullets if isinstance(b, dict)]
+        if not clean_bullets:
+            continue
+        existing = industry_module.get(section_key)
+        if not isinstance(existing, list):
+            industry_module[section_key] = clean_bullets
+        else:
+            existing_ids = {b.get("id") for b in existing if isinstance(b, dict)}
+            for bullet in clean_bullets:
+                bullet_id = bullet.get("id")
+                if isinstance(bullet_id, str) and bullet_id in existing_ids:
+                    continue
+                existing.append(bullet)
+                if isinstance(bullet_id, str):
+                    existing_ids.add(bullet_id)
+
+    return {
+        "common_skeleton": common_filtered,
+        "industry_module": industry_module,
+    }
+
+
+def _ordered_active_section_keys(
+    *,
+    common_keys_in_order: list[str],
+    module_keys_in_order: list[str],
+    excluded_section_keys: set[str],
+    scope_buckets: Optional[dict],
+) -> list[str]:
+    """
+    Compute robust section ordering for active keys.
+
+    Strategy:
+    1) Build a deterministic base order from common + module keys.
+    2) If bucket config exists, place module-only keys near their bucket anchor
+       (instead of always appending at the tail).
+    3) Apply optional anchor rules with a stable topological sort.
+    4) On any config error/cycle, safely fall back to deterministic base order.
+    """
+    if _core_ordered_active_section_keys is not None:
+        return _core_ordered_active_section_keys(
+            common_keys_in_order=common_keys_in_order,
+            module_keys_in_order=module_keys_in_order,
+            excluded_section_keys=excluded_section_keys,
+            scope_buckets=scope_buckets,
+        )
+
+    active_common = [k for k in common_keys_in_order if _normalize_lookup_key(k) not in excluded_section_keys]
+    active_module = [k for k in module_keys_in_order if _normalize_lookup_key(k) not in excluded_section_keys]
+
+    all_keys: list[str] = []
+    for key in active_common + active_module:
+        if key and key not in all_keys:
+            all_keys.append(key)
+    if not all_keys:
+        return []
+
+    # No ordering config -> preserve existing deterministic behavior.
+    if not isinstance(scope_buckets, dict):
+        return all_keys
+
+    section_to_bucket = scope_buckets.get("section_to_bucket")
+    if not isinstance(section_to_bucket, dict):
+        section_to_bucket = {}
+
+    bucket_items = scope_buckets.get("bucket_order")
+    bucket_order_keys: list[str] = []
+    if isinstance(bucket_items, list):
+        for item in bucket_items:
+            if isinstance(item, dict):
+                key = item.get("key")
+                if isinstance(key, str) and key:
+                    bucket_order_keys.append(key)
+    bucket_index = {k: i for i, k in enumerate(bucket_order_keys)}
+
+    fallback_bucket = scope_buckets.get("fallback_bucket_key")
+    if not isinstance(fallback_bucket, str) or not fallback_bucket:
+        fallback_bucket = "industry_specific_analysis"
+
+    common_pos = {k: i for i, k in enumerate(active_common)}
+    module_pos = {k: i for i, k in enumerate(active_module)}
+
+    # Anchor each bucket at the earliest common section in that bucket.
+    common_bucket_anchor: dict[str, int] = {}
+    for key, idx in common_pos.items():
+        bucket = section_to_bucket.get(key, fallback_bucket)
+        if bucket not in common_bucket_anchor or idx < common_bucket_anchor[bucket]:
+            common_bucket_anchor[bucket] = idx
+
+    def _base_sort_tuple(key: str) -> tuple[int, int, int]:
+        if key in common_pos:
+            return (common_pos[key], 0, 0)
+        bucket = section_to_bucket.get(key, fallback_bucket)
+        bucket_idx = bucket_index.get(bucket, len(bucket_index) + 999)
+        # If the bucket exists in common, place extra sections near it;
+        # otherwise place them after common by bucket rank.
+        anchor = common_bucket_anchor.get(bucket, len(active_common) + bucket_idx * 100)
+        return (anchor, 1, module_pos.get(key, 0))
+
+    base_order = sorted(all_keys, key=_base_sort_tuple)
+
+    # Apply optional anchor rules (best-effort).
+    ordering_cfg = scope_buckets.get("section_ordering")
+    if not isinstance(ordering_cfg, dict):
+        return base_order
+    rules = ordering_cfg.get("anchor_rules")
+    if not isinstance(rules, list) or not rules:
+        return base_order
+
+    nodes = list(base_order)
+    node_set = set(nodes)
+    edges: dict[str, set[str]] = {n: set() for n in nodes}
+    indegree: dict[str, int] = {n: 0 for n in nodes}
+
+    for rule in rules:
+        if not isinstance(rule, dict):
+            continue
+        section = _normalize_lookup_key(str(rule.get("section", "")))
+        before = _normalize_lookup_key(str(rule.get("before", "")))
+        after = _normalize_lookup_key(str(rule.get("after", "")))
+        if section not in node_set:
+            continue
+
+        def _add_edge(src: str, dst: str) -> None:
+            if src == dst or dst not in node_set or src not in node_set:
+                return
+            if dst in edges[src]:
+                return
+            edges[src].add(dst)
+            indegree[dst] += 1
+
+        if before:
+            _add_edge(section, before)  # section must come before `before`
+        if after:
+            _add_edge(after, section)   # section must come after `after`
+
+    base_index = {k: i for i, k in enumerate(base_order)}
+    ready = sorted([n for n in nodes if indegree[n] == 0], key=lambda n: base_index[n])
+    ordered: list[str] = []
+    while ready:
+        current = ready.pop(0)
+        ordered.append(current)
+        for nxt in sorted(edges[current], key=lambda n: base_index[n]):
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                ready.append(nxt)
+        ready.sort(key=lambda n: base_index[n])
+
+    # Cycle/misconfig fallback.
+    if len(ordered) != len(nodes):
+        return base_order
+    return ordered
+
+
 def replace_fdd_scope_block(
     doc: Document,
     industry: str,
@@ -1016,24 +1611,26 @@ def replace_fdd_scope_block(
             continue
         p._p.getparent().remove(p._p)
 
-    # Build and insert replacement content
-    common = scope_library.get("common_skeleton", [])
-    modules = scope_library.get("industry_modules", {}).get(industry, {})
-    common_headings = {s["normalized_heading"] for s in common}
-
-    extra_sections = [
-        (heading, bullets)
-        for heading, bullets in modules.items()
-        if heading not in common_headings
-    ]
+    # Build and insert replacement content (runtime applicability-aware)
+    scope_view = _build_industry_scope_view(
+        scope_library=scope_library,
+        industry=industry,
+        applicability=scope_library.get("_section_applicability"),
+    )
+    common = scope_view.get("common_skeleton", []) or []
+    modules = scope_view.get("industry_module", {}) or {}
 
     excluded_top_level_ids: set[str] = set()
     excluded_section_keys: set[str] = set()
-
-    def _normalize_section_key(value: str) -> str:
-        return _normalize_lookup_key(str(value or ""))
-
-    if isinstance(scope_selection, dict):
+    optional_section_keys: set[str] = set()
+    ad_hoc_optional_sections: dict[str, list[dict]] = {}
+    if _core_parse_scope_selection is not None:
+        parsed_scope = _core_parse_scope_selection(scope_selection if isinstance(scope_selection, dict) else None)
+        excluded_top_level_ids = set(parsed_scope.get("excluded_top_level_ids") or [])
+        excluded_section_keys = set(parsed_scope.get("excluded_section_keys") or [])
+        optional_section_keys = set(parsed_scope.get("optional_section_keys") or [])
+        ad_hoc_optional_sections = parsed_scope.get("ad_hoc_optional_sections") or {}
+    elif isinstance(scope_selection, dict):
         excluded_top_level_ids = set(
             scope_selection.get("excluded_top_level_ids", [])
             or scope_selection.get("exclude_top_level_ids", [])
@@ -1046,9 +1643,48 @@ def replace_fdd_scope_block(
             or []
         )
         for key in raw_section_keys:
-            normalized = _normalize_section_key(str(key))
+            normalized = _normalize_lookup_key(str(key or ""))
             if normalized:
                 excluded_section_keys.add(normalized)
+        raw_optional_section_keys = (
+            scope_selection.get("optional_section_keys", [])
+            or scope_selection.get("include_optional_section_keys", [])
+            or scope_selection.get("optional_sections", [])
+            or []
+        )
+        for key in raw_optional_section_keys:
+            normalized = _normalize_lookup_key(str(key or ""))
+            if normalized:
+                optional_section_keys.add(normalized)
+
+        raw_ad_hoc = (
+            scope_selection.get("ad_hoc_optional_sections", {})
+            or scope_selection.get("ad_hoc_sections", {})
+            or {}
+        )
+        if isinstance(raw_ad_hoc, dict):
+            for section_key, raw_bullets in raw_ad_hoc.items():
+                normalized = _normalize_lookup_key(str(section_key or ""))
+                if not normalized:
+                    continue
+                coerced = _coerce_scope_bullet_list(raw_bullets)
+                if coerced:
+                    ad_hoc_optional_sections[normalized] = coerced
+
+    optional_summary = _apply_optional_scope_modules(
+        common_skeleton=common,
+        industry_module=modules,
+        industry=industry,
+        optional_library=scope_library.get("_optional_scope_library"),
+        optional_section_keys=optional_section_keys,
+        ad_hoc_optional_sections=ad_hoc_optional_sections,
+    )
+
+    common_by_key = {
+        s.get("normalized_heading"): s
+        for s in common
+        if isinstance(s, dict) and isinstance(s.get("normalized_heading"), str)
+    }
 
     cursor = paras[start_idx]
     section_count = 0
@@ -1148,46 +1784,68 @@ def replace_fdd_scope_block(
                 roman_num_id = _new_num_id(roman_abstract_id, roman_num_fallback_id)
                 _insert_children(node.children, 1, roman_num_id=roman_num_id)
 
-    # Common skeleton sections
-    for section in common:
-        heading = section["heading"]
-        norm = section["normalized_heading"]
-        if _normalize_section_key(norm) in excluded_section_keys:
+    ordered_section_keys = _ordered_active_section_keys(
+        common_keys_in_order=[
+            s.get("normalized_heading")
+            for s in common
+            if isinstance(s, dict) and isinstance(s.get("normalized_heading"), str)
+        ],
+        module_keys_in_order=[
+            k for k in modules.keys()
+            if isinstance(k, str)
+        ],
+        excluded_section_keys=excluded_section_keys,
+        scope_buckets=scope_library.get("_scope_review_buckets"),
+    )
+
+    for section_key in ordered_section_keys:
+        normalized_key = _normalize_lookup_key(section_key)
+        if normalized_key in excluded_section_keys:
             continue
-        default_bullets = section.get("default_bullets", [])
-        industry_bullets = modules.get(norm, [])
 
-        nodes_default = None
-        if _is_v2_bullet_list(default_bullets):
-            nodes_default = _scope_nodes_from_v2(bullets=default_bullets)
-        elif isinstance(common_schema, dict):
-            sec = common_schema.get(norm)
-            if isinstance(sec, dict):
-                sn = sec.get("default_bullets")
-                if isinstance(sn, list):
-                    nodes_default = _scope_nodes_from_schema(bullets=default_bullets, schema_nodes=sn)
+        common_section = common_by_key.get(section_key)
+        if isinstance(common_section, dict):
+            heading = common_section.get("heading") or section_key.replace("_", " ").title()
+            default_bullets = common_section.get("default_bullets", [])
+        else:
+            heading = section_key.replace("_", " ").title()
+            default_bullets = []
+        industry_bullets = modules.get(section_key, [])
 
-        if nodes_default is None:
-            nodes_default = _parse_scope_bullets(default_bullets)
-        next_scope_id = _assign_top_level_ids(nodes_default, next_scope_id)
+        nodes_default = []
+        if default_bullets:
+            if _is_v2_bullet_list(default_bullets):
+                nodes_default = _scope_nodes_from_v2(bullets=default_bullets)
+            elif isinstance(common_schema, dict):
+                sec = common_schema.get(section_key)
+                if isinstance(sec, dict):
+                    sn = sec.get("default_bullets")
+                    if isinstance(sn, list):
+                        nodes_default = _scope_nodes_from_schema(bullets=default_bullets, schema_nodes=sn)
+            if not nodes_default:
+                nodes_default = _parse_scope_bullets(default_bullets)
+            next_scope_id = _assign_top_level_ids(nodes_default, next_scope_id)
 
-        # Industry bullets that belong under this common section
-        nodes_industry = None
-        if _is_v2_bullet_list(industry_bullets):
-            nodes_industry = _scope_nodes_from_v2(bullets=industry_bullets)
-        elif isinstance(industry_schema, dict):
-            ind = industry_schema.get(industry)
-            if isinstance(ind, dict):
-                sn = ind.get(norm)
-                if isinstance(sn, list):
-                    nodes_industry = _scope_nodes_from_schema(bullets=industry_bullets, schema_nodes=sn)
-
-        if nodes_industry is None:
-            nodes_industry = _parse_scope_bullets(industry_bullets)
-        next_scope_id = _assign_top_level_ids(nodes_industry, next_scope_id)
+        nodes_industry = []
+        if industry_bullets:
+            if _is_v2_bullet_list(industry_bullets):
+                nodes_industry = _scope_nodes_from_v2(bullets=industry_bullets)
+            elif isinstance(industry_schema, dict):
+                ind = industry_schema.get(industry)
+                if isinstance(ind, dict):
+                    sn = ind.get(section_key)
+                    if isinstance(sn, list):
+                        nodes_industry = _scope_nodes_from_schema(
+                            bullets=industry_bullets,
+                            schema_nodes=sn,
+                        )
+            if not nodes_industry:
+                nodes_industry = _parse_scope_bullets(industry_bullets)
+            next_scope_id = _assign_top_level_ids(nodes_industry, next_scope_id)
 
         nodes = nodes_default + nodes_industry
-
+        if not nodes:
+            continue
         if not any(n.top_level_id not in excluded_top_level_ids for n in nodes):
             continue
 
@@ -1202,45 +1860,19 @@ def replace_fdd_scope_block(
         section_count += 1
         _insert_nodes(nodes, alpha_num_id=alpha_num_id)
 
-    # Extra industry-only sections
-    for heading_key, bullets in extra_sections:
-        if _normalize_section_key(heading_key) in excluded_section_keys:
-            continue
-        display_heading = heading_key.replace("_", " ").title()
-        nodes = None
-        if _is_v2_bullet_list(bullets):
-            nodes = _scope_nodes_from_v2(bullets=bullets)
-        elif isinstance(industry_schema, dict):
-            ind = industry_schema.get(industry)
-            if isinstance(ind, dict):
-                sn = ind.get(heading_key)
-                if isinstance(sn, list):
-                    nodes = _scope_nodes_from_schema(bullets=bullets, schema_nodes=sn)
-
-        if nodes is None:
-            nodes = _parse_scope_bullets(bullets)
-        next_scope_id = _assign_top_level_ids(nodes, next_scope_id)
-
-        if not any(n.top_level_id not in excluded_top_level_ids for n in nodes):
-            continue
-
-        alpha_num_id = _new_num_id(alpha_abstract_id, alpha_num_fallback_id)
-        cursor = _insert_after(
-            cursor,
-            display_heading,
-            template_para=heading_template,
-            bold=True,
-            num_id=section_num_id,
-        )
-        section_count += 1
-        _insert_nodes(nodes, alpha_num_id=alpha_num_id)
-
     return {
         "sections_inserted": section_count,
         "bullets_inserted": bullet_count,
         "industry": industry,
         "section_breaks_preserved": preserved_section_breaks,
         "excluded_section_keys_applied": sorted(excluded_section_keys),
+        "optional_section_keys_requested": optional_summary["optional_section_keys_requested"],
+        "optional_sections_applied_common": optional_summary["optional_sections_applied_common"],
+        "optional_sections_applied_industry": optional_summary["optional_sections_applied_industry"],
+        "optional_sections_unknown": optional_summary["optional_sections_unknown"],
+        "optional_sections_synthesized": optional_summary.get("optional_sections_synthesized", []),
+        "ad_hoc_sections_applied": optional_summary["ad_hoc_sections_applied"],
+        "optional_bullets_added": optional_summary["optional_bullets_added"],
     }
 
 
@@ -1308,6 +1940,18 @@ def generate_engagement_letter(
 
     # Step 3: Replace FDD scope block
     scope_library = load_scope_library(scope_library_file)
+    scope_buckets = _load_scope_buckets_for_scope_library(scope_library_file)
+    if isinstance(scope_buckets, dict):
+        scope_library["_scope_review_buckets"] = scope_buckets
+        summary["steps"].append("Loaded scope-review-buckets ordering config")
+    section_applicability = _load_section_applicability_for_scope_library(scope_library_file)
+    if isinstance(section_applicability, dict):
+        scope_library["_section_applicability"] = section_applicability
+        summary["steps"].append("Loaded section-applicability runtime config")
+    optional_scope_library = _load_optional_scope_library_for_scope_library(scope_library_file)
+    if isinstance(optional_scope_library, dict):
+        scope_library["_optional_scope_library"] = optional_scope_library
+        summary["steps"].append("Loaded optional scope runtime config")
     resolved_industry, industry_note = resolve_industry_key(industry, scope_library)
     if industry_note:
         summary["steps"].append(industry_note)
@@ -1331,6 +1975,26 @@ def generate_engagement_letter(
         if isinstance(preserved_breaks, int) and preserved_breaks > 0:
             scope_step += f"; preserved {preserved_breaks} section break marker(s)"
         summary["steps"].append(scope_step)
+        optional_common = scope_result.get("optional_sections_applied_common") or []
+        optional_industry = scope_result.get("optional_sections_applied_industry") or []
+        ad_hoc_applied = scope_result.get("ad_hoc_sections_applied") or []
+        optional_added = scope_result.get("optional_bullets_added")
+        if optional_common or optional_industry or ad_hoc_applied:
+            summary["steps"].append(
+                "Applied optional scope sections: "
+                f"common={optional_common}, industry={optional_industry}, ad_hoc={ad_hoc_applied}"
+            )
+        if isinstance(optional_added, int) and optional_added > 0:
+            summary["steps"].append(f"Added {optional_added} optional top-level bullet(s)")
+        optional_unknown = scope_result.get("optional_sections_unknown") or []
+        optional_synth = scope_result.get("optional_sections_synthesized") or []
+        if optional_synth:
+            summary["steps"].append(
+                f"Synthesized ad hoc optional section(s) for unknown key(s): {optional_synth}"
+            )
+        unresolved_unknown = [k for k in optional_unknown if k not in set(optional_synth)]
+        if unresolved_unknown:
+            summary["steps"].append(f"Ignored unknown optional section key(s): {unresolved_unknown}")
 
     # Step 4: Derive defaults + ensure template placeholder coverage (pre-gate)
     placeholder_keys = _extract_placeholders(doc)

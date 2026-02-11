@@ -28,9 +28,10 @@ This project is a prompt-driven document generation system for KPMG Transaction 
 
 - In scope:
   - Prompt contract (`dist/ts-engagement-assistant.md`)
-  - Generator runtime (`dist/el-generate.py`)
+  - Generator runtime (`dist/el-generate.py`, `dist/_scope_core.py`)
+  - Shared scope core (`scope_core.py`)
   - Template/schema/scope assets in `dist/`
-  - Prompt integrity checks in `scripts/`
+  - Prompt integrity checks + distribution checks in `scripts/`
 - Out of scope:
   - External DMS/workflow orchestration
   - Human legal approvals and downstream Word redlining
@@ -49,9 +50,13 @@ This project is a prompt-driven document generation system for KPMG Transaction 
 - `dist/ts-engagement-assistant.md` — system prompt contract and runtime behavior rules
 - `dist/assistant-playbook.md` — advisory operating guidance
 - `dist/el-generate.py` — deterministic generation pipeline
+- `dist/_scope_core.py` — runtime scope assembly core
 - `dist/el-placeholder-schema.json` — interview fields, required rules, template mapping
 - `dist/scope-library.json` — common + industry scope content and nested bullets
 - `dist/scope-review-buckets.json` — section bucketing, aliases, concept mappings
+- `dist/scope-library-optional.json` — explicit optional scope modules
+- `scope_core.py` — shared scope core for local tooling/runtime parity
+- `scripts/internal_generate.py` — internal subprocess entrypoint
 - `scripts/check-system-prompt-contract.py` — prompt budget + immutable snippet enforcement
 - `scripts/export-scope-library.py` — sync/export scope docs by industry
 
@@ -66,6 +71,15 @@ This project is a prompt-driven document generation system for KPMG Transaction 
   - Requires strict prompt discipline to avoid runtime drift.
   - JSON/schema quality directly impacts user interview quality.
   - No central service/database means state is session-bound.
+
+## 3.1 Dual-distribution model
+
+- ChatGPT upload distribution (`dist/`):
+  - minimal runtime assets only
+  - deterministic generation path for uploaded files
+- Internal testing distribution (`scripts/`, docs export/validation):
+  - richer diagnostics and QA checks
+  - must use `scripts/internal_generate.py` instead of direct dist module imports
 
 ## 4. Domain model and modules
 
@@ -88,16 +102,24 @@ ts-eng-asst/
     ts-engagement-assistant.md
     assistant-playbook.md
     el-generate.py
+    _scope_core.py
     el-placeholder-schema.json
     scope-library.json
     scope-review-buckets.json
+    scope-library-optional.json
     buyside-engagement-letter.docx
     sellside-engagement-letter.docx
+  scope_core.py
   scripts/
+    internal_generate.py
     check-system-prompt-contract.py
     export-scope-library.py
+    export-optional-scope-library.py
     check-scope-spelling.py
     validate-scope-exports.py
+    validate-scope-review-buckets.py
+    validate-distribution-manifests.py
+    validate-internal-boundary.py
   docs/
     spec-ts-sow.md
     ...
@@ -308,10 +330,14 @@ flowchart TD
 Run from `ai-tools/chatgpt/ts-eng-asst`:
 
 ```bash
-python3 scripts/check-system-prompt-contract.py --prompt dist/ts-engagement-assistant.md --max-chars 7200
+python3 scripts/check-system-prompt-contract.py --prompt dist/ts-engagement-assistant.md --max-chars 8000
 python3 scripts/check-scope-spelling.py
 python3 scripts/validate-scope-exports.py
+python3 scripts/validate-scope-review-buckets.py
+python3 scripts/validate-internal-boundary.py
+python3 scripts/validate-distribution-manifests.py
 python3 -m py_compile dist/el-generate.py
+python3 -m py_compile dist/_scope_core.py
 ```
 
 Expected:

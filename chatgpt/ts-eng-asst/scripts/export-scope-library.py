@@ -17,15 +17,24 @@ from copy import deepcopy
 import json
 import re
 from pathlib import Path
+import sys
 from typing import Any, Iterable
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from scope_core import (
+    build_industry_scope_view as core_build_industry_scope_view,
+    normalize_lookup_key as core_normalize_lookup_key,
+    ordered_active_section_keys as core_ordered_active_section_keys,
+)
 DEFAULT_BUNDLE = PROJECT_ROOT / "dist" / "scope-library.json"
 DEFAULT_OUT_DIR = PROJECT_ROOT / "docs" / "scope-library" / "industries"
 DEFAULT_SKELETON_OUT_DIR = PROJECT_ROOT / "docs" / "scope-library" / "skeleton-by-industry"
 DEFAULT_TRACKER = PROJECT_ROOT / "docs" / "Scope Review" / "deletion-optional-tracker.md"
 DEFAULT_APPLICABILITY = PROJECT_ROOT / "docs" / "scope-library" / "section-applicability.json"
+DEFAULT_SCOPE_BUCKETS = PROJECT_ROOT / "dist" / "scope-review-buckets.json"
 
 
 def _iter_v2_nodes(nodes: Iterable[dict[str, Any]], depth: int = 0) -> Iterable[tuple[int, dict[str, Any]]]:
@@ -95,10 +104,17 @@ def _parse_tracker(path: Path) -> list[dict[str, str]]:
 
 
 def _normalize_lookup_key(value: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "_", str(value or "").strip().lower()).strip("_")
+    return core_normalize_lookup_key(value)
 
 
 def _load_applicability(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return raw if isinstance(raw, dict) else {}
+
+
+def _load_scope_buckets(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     raw = json.loads(path.read_text(encoding="utf-8"))
@@ -110,6 +126,13 @@ def _build_industry_view(
     industry: str,
     applicability: dict[str, Any],
 ) -> dict[str, Any]:
+    return core_build_industry_scope_view(
+        scope_library=bundle,
+        industry=industry,
+        applicability=applicability,
+        include_summary=True,
+    )
+
     industry_norm = _normalize_lookup_key(industry)
 
     section_applicability = applicability.get("section_applicability", {})
@@ -276,6 +299,119 @@ def _build_industry_view(
     }
 
 
+def _ordered_active_section_keys(
+    *,
+    common_keys_in_order: list[str],
+    module_keys_in_order: list[str],
+    scope_buckets: dict[str, Any],
+) -> list[str]:
+    return core_ordered_active_section_keys(
+        common_keys_in_order=common_keys_in_order,
+        module_keys_in_order=module_keys_in_order,
+        excluded_section_keys=None,
+        scope_buckets=scope_buckets,
+    )
+
+    active_common = [k for k in common_keys_in_order if isinstance(k, str) and k]
+    active_module = [k for k in module_keys_in_order if isinstance(k, str) and k]
+
+    all_keys: list[str] = []
+    for key in active_common + active_module:
+        if key not in all_keys:
+            all_keys.append(key)
+    if not all_keys:
+        return []
+
+    if not isinstance(scope_buckets, dict):
+        return all_keys
+
+    section_to_bucket = scope_buckets.get("section_to_bucket")
+    if not isinstance(section_to_bucket, dict):
+        section_to_bucket = {}
+
+    bucket_items = scope_buckets.get("bucket_order")
+    bucket_order_keys: list[str] = []
+    if isinstance(bucket_items, list):
+        for item in bucket_items:
+            if isinstance(item, dict):
+                key = item.get("key")
+                if isinstance(key, str) and key:
+                    bucket_order_keys.append(key)
+    bucket_index = {k: i for i, k in enumerate(bucket_order_keys)}
+
+    fallback_bucket = scope_buckets.get("fallback_bucket_key")
+    if not isinstance(fallback_bucket, str) or not fallback_bucket:
+        fallback_bucket = "industry_specific_analysis"
+
+    common_pos = {k: i for i, k in enumerate(active_common)}
+    module_pos = {k: i for i, k in enumerate(active_module)}
+    common_bucket_anchor: dict[str, int] = {}
+    for key, idx in common_pos.items():
+        bucket = section_to_bucket.get(key, fallback_bucket)
+        if bucket not in common_bucket_anchor or idx < common_bucket_anchor[bucket]:
+            common_bucket_anchor[bucket] = idx
+
+    def _base_sort_tuple(key: str) -> tuple[int, int, int]:
+        if key in common_pos:
+            return (common_pos[key], 0, 0)
+        bucket = section_to_bucket.get(key, fallback_bucket)
+        bucket_idx = bucket_index.get(bucket, len(bucket_index) + 999)
+        anchor = common_bucket_anchor.get(bucket, len(active_common) + bucket_idx * 100)
+        return (anchor, 1, module_pos.get(key, 0))
+
+    base_order = sorted(all_keys, key=_base_sort_tuple)
+
+    ordering_cfg = scope_buckets.get("section_ordering")
+    if not isinstance(ordering_cfg, dict):
+        return base_order
+    rules = ordering_cfg.get("anchor_rules")
+    if not isinstance(rules, list) or not rules:
+        return base_order
+
+    nodes = list(base_order)
+    node_set = set(nodes)
+    edges: dict[str, set[str]] = {n: set() for n in nodes}
+    indegree: dict[str, int] = {n: 0 for n in nodes}
+
+    for rule in rules:
+        if not isinstance(rule, dict):
+            continue
+        section = _normalize_lookup_key(str(rule.get("section", "")))
+        before = _normalize_lookup_key(str(rule.get("before", "")))
+        after = _normalize_lookup_key(str(rule.get("after", "")))
+        if section not in node_set:
+            continue
+
+        def _add_edge(src: str, dst: str) -> None:
+            if src == dst or src not in node_set or dst not in node_set:
+                return
+            if dst in edges[src]:
+                return
+            edges[src].add(dst)
+            indegree[dst] += 1
+
+        if before:
+            _add_edge(section, before)
+        if after:
+            _add_edge(after, section)
+
+    base_index = {k: i for i, k in enumerate(base_order)}
+    ready = sorted([n for n in nodes if indegree[n] == 0], key=lambda n: base_index[n])
+    ordered: list[str] = []
+    while ready:
+        current = ready.pop(0)
+        ordered.append(current)
+        for nxt in sorted(edges[current], key=lambda n: base_index[n]):
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                ready.append(nxt)
+        ready.sort(key=lambda n: base_index[n])
+
+    if len(ordered) != len(nodes):
+        return base_order
+    return ordered
+
+
 def _tracker_entries_for_industry(
     tracker_entries: list[dict[str, str]],
     industry: str,
@@ -301,6 +437,7 @@ def _slice_bundle(
     industry: str,
     tracker_entries: list[dict[str, str]],
     applicability: dict[str, Any],
+    scope_buckets: dict[str, Any],
 ) -> dict[str, Any]:
     view = _build_industry_view(bundle, industry, applicability)
     common_keys = [
@@ -309,14 +446,14 @@ def _slice_bundle(
         if isinstance(section, dict) and str(section.get("normalized_heading", "")).strip()
     ]
     module_raw = view["industry_module"] if isinstance(view["industry_module"], dict) else {}
+    ordered_keys = _ordered_active_section_keys(
+        common_keys_in_order=common_keys,
+        module_keys_in_order=[k for k in module_raw.keys() if isinstance(k, str)],
+        scope_buckets=scope_buckets,
+    )
     ordered_module: dict[str, Any] = {}
-    for key in common_keys:
+    for key in ordered_keys:
         bullets = module_raw.get(key)
-        if isinstance(bullets, list) and bullets:
-            ordered_module[key] = bullets
-    for key, bullets in module_raw.items():
-        if key in ordered_module:
-            continue
         if isinstance(bullets, list) and bullets:
             ordered_module[key] = bullets
 
@@ -378,6 +515,7 @@ def _render_industry_markdown(
     industry: str,
     tracker_entries: list[dict[str, str]],
     applicability: dict[str, Any],
+    scope_buckets: dict[str, Any],
 ) -> str:
     view = _build_industry_view(bundle, industry, applicability)
 
@@ -444,7 +582,7 @@ def _render_industry_markdown(
     common = view["common_skeleton"]
     industry_module = view["industry_module"] if isinstance(view["industry_module"], dict) else {}
     common_by_key: dict[str, dict[str, Any]] = {}
-    ordered_keys: list[str] = []
+    common_keys: list[str] = []
     for section in common:
         if not isinstance(section, dict):
             continue
@@ -452,10 +590,12 @@ def _render_industry_markdown(
         if not key:
             continue
         common_by_key[key] = section
-        ordered_keys.append(key)
-    for key in industry_module.keys():
-        if key not in ordered_keys:
-            ordered_keys.append(key)
+        common_keys.append(key)
+    ordered_keys = _ordered_active_section_keys(
+        common_keys_in_order=common_keys,
+        module_keys_in_order=[k for k in industry_module.keys() if isinstance(k, str)],
+        scope_buckets=scope_buckets,
+    )
 
     lines.append("## Section Review (Common + Industry)")
     lines.append("")
@@ -563,6 +703,11 @@ def main() -> None:
         default=str(DEFAULT_APPLICABILITY),
         help="Path to docs-level section applicability / additions JSON",
     )
+    parser.add_argument(
+        "--scope-buckets",
+        default=str(DEFAULT_SCOPE_BUCKETS),
+        help="Path to scope-review-buckets.json used for robust section ordering",
+    )
     parser.add_argument("--industry", default="all", help="Industry key to export (or 'all')")
     args = parser.parse_args()
 
@@ -574,6 +719,7 @@ def main() -> None:
         skeleton_out_dir.mkdir(parents=True, exist_ok=True)
     tracker_entries = _parse_tracker(Path(args.tracker))
     applicability = _load_applicability(Path(args.applicability))
+    scope_buckets = _load_scope_buckets(Path(args.scope_buckets))
 
     bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
     available = sorted((bundle.get("industry_modules") or {}).keys())
@@ -586,7 +732,7 @@ def main() -> None:
 
     for industry in industries:
         relevant_tracker = _tracker_entries_for_industry(tracker_entries, industry)
-        slice_obj = _slice_bundle(bundle, industry, tracker_entries, applicability)
+        slice_obj = _slice_bundle(bundle, industry, tracker_entries, applicability, scope_buckets)
         (out_dir / f"{industry}.json").write_text(
             json.dumps(slice_obj, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -597,6 +743,7 @@ def main() -> None:
                 industry=industry,
                 tracker_entries=relevant_tracker,
                 applicability=applicability,
+                scope_buckets=scope_buckets,
             ),
             encoding="utf-8",
         )

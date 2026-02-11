@@ -1,88 +1,94 @@
-"""
-Test / Demo: FDD Scope Block Replacement (uses dist generator logic)
+"""Internal scope replacement smoke test.
 
-Loads an engagement letter template, replaces the sample FDD scope block with
-industry-specific content from the scope library, and saves output files for
-visual verification in Word.
-
-Usage:
-  python3 scripts/test-scope-replacement.py --industry retail
-  python3 scripts/test-scope-replacement.py --industry generic
+Generates demo engagement letters for a selected industry and confirms the
+runtime scope replacement flow works end-to-end without directly importing the
+ChatGPT dist generator module.
 """
 
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 from pathlib import Path
+from typing import Any, Dict
 
-from docx import Document
+from internal_generate import run_generation
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
-def _load_generator_module():
-    mod_path = PROJECT_ROOT / "dist" / "el-generate.py"
-    spec = importlib.util.spec_from_file_location("el_generate", mod_path)
-    if not spec or not spec.loader:
-        raise RuntimeError(f"Failed to load generator module: {mod_path}")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+def _normalize_key(key: str) -> str:
+    return key.strip("{}").strip()
 
 
-def _load_scope_library(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
+def _pick_value(var: Dict[str, Any]) -> str:
+    if "example" in var and var["example"] is not None:
+        return str(var["example"])
+    options = var.get("options") or var.get("choices")
+    if isinstance(options, list) and options:
+        return str(options[0])
+    return ""
 
 
-def run_test(*, template_name: str, industry: str, output_dir: Path, scope_library: dict) -> None:
-    template_path = PROJECT_ROOT / "dist" / template_name
-    output_path = output_dir / f"test-{template_path.stem}-{industry}.docx"
+def build_demo_variables(template_key: str) -> Dict[str, str]:
+    template = "buyside" if template_key.startswith("buyside") else "sellside"
+    schema_path = PROJECT_ROOT / "dist" / "el-placeholder-schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    variables: Dict[str, str] = {}
+    for group in schema.get("interview_groups", []):
+        if not isinstance(group, dict):
+            continue
+        for var in group.get("variables", []):
+            if not isinstance(var, dict):
+                continue
+            applies = var.get("applies_to", ["buyside", "sellside"])
+            if isinstance(applies, list) and template not in applies:
+                continue
+            key = _normalize_key(var.get("key", ""))
+            if not key:
+                continue
+            variables[key] = _pick_value(var)
+    return variables
+
+
+def run_test(*, template_short: str, industry: str, output_dir: Path, scope_library_file: str) -> None:
+    template_path = PROJECT_ROOT / "dist" / f"{template_short}-engagement-letter.docx"
+    output_path = output_dir / f"test-{template_short}-{industry}.docx"
+    template_key = f"{template_short}_engagement_letter"
+    variables = build_demo_variables(template_key)
 
     print(f"\n{'=' * 60}")
-    print(f"Template:  {template_name}")
+    print(f"Template:  {template_short}")
     print(f"Industry:  {industry}")
     print(f"Input:     {template_path}")
     print(f"Output:    {output_path}")
     print(f"{'=' * 60}")
 
-    doc = Document(str(template_path))
-    total_paras_before = len(doc.paragraphs)
-
-    gen = _load_generator_module()
-    result = gen.replace_fdd_scope_block(
-        doc,
+    result = run_generation(
+        template_file=str(template_path),
+        scope_library_file=scope_library_file,
         industry=industry,
-        scope_library=scope_library,
-        scope_heading_search="FINANCIAL DUE DILIGENCE",
-        end_boundary_search="These Terms and Conditions",
+        variables=variables,
+        output_file=str(output_path),
     )
 
-    total_paras_after = len(doc.paragraphs)
-    doc.save(str(output_path))
-
     print("\nResult summary:")
-    if "error" in result:
-        print(f"  Error: {result['error']}")
-        return
-    print(f"  Sections inserted:          {result['sections_inserted']}")
-    print(f"  Bullets inserted:           {result['bullets_inserted']}")
-    print(f"  Common skeleton sections:   {result['common_sections']}")
-    print(f"  Extra industry sections:    {result['extra_industry_sections']}")
-    print(f"  Paragraphs before:          {total_paras_before}")
-    print(f"  Paragraphs after:           {total_paras_after}")
+    print(f"  Return code: {result.get('returncode')}")
+    stdout = str(result.get("stdout", "")).strip()
+    if stdout:
+        for line in stdout.splitlines()[-6:]:
+            print(f"  {line}")
     print(f"  Saved to: {output_path}")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Test FDD scope block replacement")
-    parser.add_argument("--industry", default="healthcare", help="Industry key (e.g., healthcare, retail, generic)")
+    parser = argparse.ArgumentParser(description="Internal scope replacement smoke test")
+    parser.add_argument("--industry", default="healthcare", help="Industry key")
     parser.add_argument(
         "--scope-library",
         default="dist/scope-library.json",
-        help="Path to scope library JSON (v2 bundle recommended)",
+        help="Path to scope library JSON",
     )
     parser.add_argument(
         "--out-dir",
@@ -93,28 +99,23 @@ def main() -> None:
 
     output_dir = (PROJECT_ROOT / args.out_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+    scope_library_path = str((PROJECT_ROOT / args.scope_library).resolve())
 
-    scope_library_path = (PROJECT_ROOT / args.scope_library).resolve()
-    scope_library = _load_scope_library(scope_library_path)
-    available = sorted((scope_library.get("industry_modules") or {}).keys())
-
-    print("FDD Scope Block Replacement Test")
+    print("FDD Scope Block Replacement Smoke Test")
     print(f"Industry: {args.industry}")
-    print(f"Available industries: {available}")
 
-    for template_name in ["buyside-engagement-letter.docx", "sellside-engagement-letter.docx"]:
+    for template_short in ["buyside", "sellside"]:
         run_test(
-            template_name=template_name,
+            template_short=template_short,
             industry=args.industry,
             output_dir=output_dir,
-            scope_library=scope_library,
+            scope_library_file=scope_library_path,
         )
 
     print(f"\n{'=' * 60}")
-    print("Done! Open the output files in Word to verify formatting.")
+    print("Done! Open output files in Word to verify formatting and section order.")
     print(f"{'=' * 60}")
 
 
 if __name__ == "__main__":
     main()
-

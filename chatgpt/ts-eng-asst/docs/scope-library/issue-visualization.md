@@ -21,6 +21,23 @@ flowchart LR
   G --> G1[Pending]
 ```
 
+## 1A) New QA/Oracle Delta (2026-02-11)
+
+```mermaid
+flowchart TD
+  A[Generated DOCX Review + Oracle Feedback] --> B[Q-004 HVAC balance_sheet trailing section]
+  A --> C[Q-005 Manufacturing deal-specific geography text]
+  A --> D[Q-006 Manufacturing section-level redundancy]
+  A --> E[Q-007 Global ordering for industry-only keys]
+  A --> F[Q-008 Runtime applicability mismatch]
+
+  B --> B1[Executed: removed hvac.balance_sheet scope.163]
+  C --> C1[Executed: rewrote scope.221 geography language]
+  D --> D1[Executed: incremental-only manufacturing sections]
+  E --> E1[Executed: bucket-aware + anchor-rule ordering]
+  F --> F1[Executed: runtime applies section-applicability]
+```
+
 ## 2) Section Applicability Mechanics (How Cleanup Is Applied)
 
 ```mermaid
@@ -211,3 +228,25 @@ Top-level bullet count includes common skeleton + selected industry module.
 - I-004: section 4, section 6 (applied removals), section 7.2
 - I-005: section 6 (alias-gap set), section 7.1 alias snapshot (deferred)
 - I-006: tracked in `docs/issues.md`; text defects resolved in prior phase
+- Q-004/Q-005/Q-006/Q-007/Q-008: section 1A and `docs/issues.md` (Post-Output QA + Oracle Delta)
+
+---
+
+## DV-001 Dual Distribution Finalization (Completed)
+
+```mermaid
+flowchart LR
+  A[Shared Core scope_core.py] --> B[dist/_scope_core.py]
+  A --> C[scripts/export-scope-library.py]
+  A --> D[scripts/validate-scope-exports.py]
+  E[scripts/internal_generate.py] --> F[dist/el-generate.py]
+  G[scripts/validate-internal-boundary.py] --> H[No direct dist module loads in internal scripts]
+  I[scripts/validate-distribution-manifests.py] --> J[Upload/Internal manifest checks]
+```
+
+Key outputs:
+
+- Runtime: `dist/el-generate.py`, `dist/_scope_core.py`
+- Optional docs: `docs/scope-library/optional-scope-library.md`
+- Validation gates: internal boundary + distribution manifest + scope export parity
+

@@ -11,26 +11,16 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import sys
 from pathlib import Path
 from typing import Any, Dict
 
+from internal_generate import run_generation
+
 # Ensure project root is on the Python path for reference imports
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-
-
-def _load_el_generate_module() -> Any:
-    """Load the dist/el-generate.py module via file path."""
-    module_path = PROJECT_ROOT / "dist" / "el-generate.py"
-    spec = importlib.util.spec_from_file_location("el_generate", module_path)
-    if spec is None or spec.loader is None:
-        raise RuntimeError(f"Unable to load module from {module_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def _normalize_key(key: str) -> str:
@@ -50,20 +40,23 @@ def _pick_value(var: Dict[str, Any]) -> str:
 
 def build_demo_variables(template_key: str) -> Dict[str, str]:
     """Build a demo variables dict from schema examples for a given template."""
-    # Import schema from reference
-    from reference.el_template_schema import TEMPLATES  # type: ignore
-
-    template = TEMPLATES[template_key]
+    template = "buyside" if template_key.startswith("buyside") else "sellside"
+    schema_path = PROJECT_ROOT / "dist" / "el-placeholder-schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
     variables: Dict[str, str] = {}
-
-    # Populate all non-guidance placeholders with example values.
-    for var in template.get("variables", []):
-        if var.get("kind") == "guidance":
+    for group in schema.get("interview_groups", []):
+        if not isinstance(group, dict):
             continue
-        key = _normalize_key(var.get("key", ""))
-        if not key:
-            continue
-        variables[key] = _pick_value(var)
+        for var in group.get("variables", []):
+            if not isinstance(var, dict):
+                continue
+            applies = var.get("applies_to", ["buyside", "sellside"])
+            if isinstance(applies, list) and template not in applies:
+                continue
+            key = _normalize_key(var.get("key", ""))
+            if not key:
+                continue
+            variables[key] = _pick_value(var)
 
     return variables
 
@@ -102,7 +95,6 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    el_generate = _load_el_generate_module()
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -115,7 +107,7 @@ def main() -> None:
         variables = build_demo_variables(template_key)
 
         output_file = output_dir / f"{args.prefix}-{template_short}-{args.industry}.docx"
-        result = el_generate.generate_engagement_letter(
+        result = run_generation(
             template_file=str(PROJECT_ROOT / "dist" / f"{template_short}-engagement-letter.docx"),
             scope_library_file=str(Path(args.scope_library)),
             industry=args.industry,
@@ -129,11 +121,11 @@ def main() -> None:
             _write_json(vars_path, variables)
 
         print("\n=== Demo Generation Summary ===")
-        for step in result.get("steps", []):
-            print(f"  {step}")
+        stdout = str(result.get("stdout", "")).strip()
+        if stdout:
+            for line in stdout.splitlines():
+                print(f"  {line}")
         print(f"  Output: {output_file}")
-        if result.get("remaining_placeholders"):
-            print(f"  Remaining placeholders: {result['remaining_placeholders']}")
 
     if args.template == "both":
         run_one("buyside")
