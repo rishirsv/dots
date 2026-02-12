@@ -27,16 +27,14 @@
 - Based on loan agreements between [ENTITY 3] and [BANK X], and [ENTITY 2] and SCB, [ENTITY 3] and [ENTITY 2] appear to be non-compliant with the DSCR covenent and the shareholidng structure requirement, respectively. Management is not aware of the potential breach and has never received the waiver letter from
 - Banks.
 - Other arrangement
-- There are certain restrictions in place especially on dividend payment to shareholder ([ENTITY 3]), related party loan repayment ([ENTITY 2] and
-- [ENTITY 3]), and loan to related party ([ENTITY 2] and [ENTITY 3]).
+- There are certain restrictions in place especially on dividend payment to shareholder ([ENTITY 3]), related party loan repayment ([ENTITY 2] and [ENTITY 3]), and loan to related party ([ENTITY 2] and [ENTITY 3]).
 - [ENTITY 1] entered into a loan with BBL, which [ENTITY 1] lends to [ENTITY 2].
 - We observe that [ENTITY 2] directly paid loan principal and interest to BBL during FY[X]0-XM2X. We recommend you to consult with your legal advisor on any potential breach regarding the repayment to BBL (on behalf of [ENTITY 1]).
 - Collaterals
 - There are assets whose ownership belong to other legal entities outside the scope of this transaction which are currently being used as collateral for loan with banks.
 - [ENTITY 1]: Land and building of [SHAREHOLDER 3] and RSU
 - Bank loan under COMPANY Z
-- [ENTITY 1]’s outstanding loan of USD 3.7 million from BBL as of DD MM 20X3 relates to a loan agreement between BBL and [SHAREHOLDER 3], where [SHAREHOLDER 3] entered into a loan agreement with BBL for
-- [ENTITY 1]. A portion of this loan is used for [ENTITY 1]’s land purchase. [ENTITY 1] records the loan under its accounts, and [ENTITY 1] normally pays loan principal and interest directly to BBL. Under this loan agreement, the land and buildings of [ENTITY 1] are pledged against this loan.
+- [ENTITY 1]’s outstanding loan of USD 3.7 million from BBL as of DD MM 20X3 relates to a loan agreement between BBL and [SHAREHOLDER 3], where [SHAREHOLDER 3] entered into a loan agreement with BBL for [ENTITY 1]. A portion of this loan is used for [ENTITY 1]’s land purchase. [ENTITY 1] records the loan under its accounts, and [ENTITY 1] normally pays loan principal and interest directly to BBL. Under this loan agreement, the land and buildings of [ENTITY 1] are pledged against this loan.
 - Liquidity issue
 - [ENTITY 2] reported a retained earning deficit and negative NAV and [ENTITY 2]’s liquidity has been stretched, with D/E ratio being (2.25)-(2.94) during the analyzed periods, suggesting potential difficulty in meeting short-term obligations as well as repaying debt and funding CAPEX. In addition, the note to audited financial statement during FY[X]0-FY[X]1 mentions going concern issue due to the negative NAV. However, [ENTITY 2] relies on financial support from shareholders to support the School’s working capital and CAPEX.
 - [ENTITY 3] also appears to face a liquidity issue as the school reported a retained earning deficit during FY[X]0-FY[X]2 from the impact of COVID-19. However, [ENTITY 3] just refinanced a loan with [BANK X] (outstanding balance as at DD MM 20X3: USD 89.3
@@ -72,21 +70,17 @@
 - The majority of SG&A comprised utility cost, cleaning and security expenses and staff welfare and other benefits. These accounted for more than 52.5% of total SG&A during the analysed periods. Although there was an increase in total SG&A from FY[X]0 – FY[X]3, % to total revenue was relatively stable, reflecting the fluctuation of revenue each year.
 - Comments on key SG&A items
 - Utility cost comprises electricity, water supply, telephone and internet expenses. The slight increase from FY[X]2 to FY[X]3 was mainly due to rise in the Float time (Ft) of electricity expense.
-- Medical expenses significantly increased in FY[X]2 and FY[X]3 as
-- [ENTITY 1] provided antigen test kits, RT-PCR tests and alcohol sanitizer for the students during the COVID-19 pandemic. According to
-- Management, as the pandemic ends, the expenses related to COVID-19 medical supplies are expected to decrease.
+- Medical expenses significantly increased in FY[X]2 and FY[X]3 as [ENTITY 1] provided antigen test kits, RT-PCR tests and alcohol sanitizer for the students during the COVID-19 pandemic. According to Management, as the pandemic ends, the expenses related to COVID-19 medical supplies are expected to decrease.
 - Repair and maintenance largely increased in FY[X]1 due to repair of a toilet for kindergarten and primary students and repair of a laboratory for primary students.
 - Entertainment cost in FY[X]3 was primarily compensation to Mr./ Miss.
 - xxxx of USD 2.0 million. However, we have not yet been provided with supporting details and reason of this payment.
 - SG&A expenses mainly comprise non-teaching staff cost, depreciation and amortization, repair and maintenance expenses. These accounted for more than 67.9% of total SG&A during the analysed periods.
 - Overall, SG&A expense showed an upward trend of 24.3% from FY[X]0 to FY[X]3. When comparing FY[X]0 with FY[X]1, SG&A per month declined by 11.5% attributed to a manpower reduction during COVID-19 pandemic. An increase in average SG&A expense per month by 5.2% in FY[X]2 from FY[X]1 was caused by personal expenses for Management, and the writeoff of bad debt. After the easing of COVID-19, additional non-teaching staff were recruited, and this resulted in an increase in SG&A in FY[X]3 from FY[X]2.
 - Other income
-- Other income mainly relates to other fees, credit card fee and ICO income. A high balance in
-- FY[X]0 was mainly caused by unearned revenue adjustment of USD 5.5 million; however,
+- Other income mainly relates to other fees, credit card fee and ICO income. A high balance in FY[X]0 was mainly caused by unearned revenue adjustment of USD 5.5 million; however,
 - Management cannot provide an explanation for the reason of this adjustment as accounting team in FY[X]0 was outsourced. In addition, a drop in FY[X]3 was mainly due to unrecorded
 - Refund policy
-- [ENTITY 2] recorded refund either by reversing the amount with revenue or recording it as a discount, except for winter program refund, which was recorded as a cost in
-- FY[X]0. Please see refund policy in Appendix 4.
+- [ENTITY 2] recorded refund either by reversing the amount with revenue or recording it as a discount, except for winter program refund, which was recorded as a cost in FY[X]0. Please see refund policy in Appendix 4.
 - High % refund during FY[X]0 to FY[X]2 was mainly due to COVID-19 impact. Many students who signed up but live abroad were unable to join the classes as a result of travel restrictions. According to Management, from FY[X]3 onwards, the policy of no refund for students coming in from abroad will be implemented, which could result in lower refund in the future.
 - Revenue breakdown (cont’d)
 - Management informed us that the decline in admission fee in FY[X]1 and FY[X]2 depends on the marketing promotion held in each period.
@@ -96,8 +90,7 @@
 - Discount policy
 - Management informed us that the discount policy for [ENTITY 2] is similar to [ENTITY 1] except for sibling discount, where the second and subsequent child will receive a 10% discount on tuition fee. Please find other discount policies in Page 38. According to Management, the fluctuation of the percentage discount in each period depends on whether students meet the school criteria.
 - 50731, 50732, 59564, 61917 and buildings thereon in xxxx province.
-- Other conditions The agreement states that Mr. [DIRECTOR 1] O., Ms. [DIRECTOR 6]O., and Mr. [DIRECTOR 9] C. must own at least 75% of the outstanding shares in [ENTITY 2] until the credit facility is
-- SG&A expenses mainly comprises non-teaching staff cost, advertising expenses, and depreciation and amortization, accounting for more than 89% of total SG&A during the analysed periods.
+- Other conditions The agreement states that Mr. [DIRECTOR 1] O., Ms. [DIRECTOR 6]O., and Mr. [DIRECTOR 9] C. must own at least 75% of the outstanding shares in [ENTITY 2] until the credit facility is SG&A expenses mainly comprises non-teaching staff cost, advertising expenses, and depreciation and amortization, accounting for more than 89% of total SG&A during the analysed periods.
 - The decrease in SG&A in FY[X]1 and FY[X]2 was due to the cost saving policy, especially manpower reduction during the COVID-19 period. The increase in XM2X was due to advertising expenses for billboard advertisement at the airport for 6 months.
 - Other income
 - Other income represents staff welfare (i.e. housing allowance), sales from school shop, gain on sales of asset and deposit.
@@ -105,8 +98,7 @@
 - Interest income This represents interest income from savings, current and fixed deposits with banks.
 - Finance cost
 - Finance costs represents bank fees and interest expenses of overdraft and loan facilities
-- [ENTITY 3] generates the highest revenue from Secondary level, however, its profit margins are the lowest compared to Primary and
-- Kindergarten level. This indicates potential for profitability optimisation through volume, price/discount or cost optimisation
+- [ENTITY 3] generates the highest revenue from Secondary level, however, its profit margins are the lowest compared to Primary and Kindergarten level. This indicates potential for profitability optimisation through volume, price/discount or cost optimisation
 - Business risk
 - Raising tuition and fees for other services may lead to losing price-sensitive clients.
 - Consider further analysis using the cost breakdown by grade and/or by student for a deeper understanding of profitability
@@ -114,8 +106,7 @@
 - Discuss with Management on business risk and complexity of implementing new price and discount policy
 - Complexity
 - Complexity could arise based on striking the balance of pricing, discount, and number of students.
-- Even though Secondary level has the highest number of students which resulted in the highest revenue (after discount), it produced the lowest margins when compared to Primary and
-- Kindergarten levels due to the teaching staff costs being more expensive than others and the high discount offerings in order to compete with peers.
+- Even though Secondary level has the highest number of students which resulted in the highest revenue (after discount), it produced the lowest margins when compared to Primary and Kindergarten levels due to the teaching staff costs being more expensive than others and the high discount offerings in order to compete with peers.
 - The profit margins of Secondary level are lower than the weighted average across all three levels which indicates potential to improve the profitability through tuition fee adjustment, discount offerings, new student acquisition strategy, etc.
 - Next steps to validate the opportunity
 - Discount offering can be optimised as there are significant discounts being given with wide dispersion across Year 7 to Year 13. Whilst we understand a discount policy is in place, this could be optimised to reduce total discounts issued.
@@ -166,13 +157,11 @@
 - Median COS across the peer set is xx.x%.
 - [ENTITY 1] and [ENTITY 2]’s COS of xx.x% and xx.x%, respectively, are lower than the peer group median and are in the first and second quartile, respectively.
 - [ENTITY 3]’s COS of xx.x% is higher than the peer group median and is in the fourth quartile.
-- By reducing COS expense xx.x% to match with the peer median, there is an opportunity for [ENTITY 3] to reduce the
-- COS expense of USD xxx.x million.
+- By reducing COS expense xx.x% to match with the peer median, there is an opportunity for [ENTITY 3] to reduce the COS expense of USD xxx.x million.
 - Median SG&A across the peer set is xx.x%.
 - [ENTITY 1] and [ENTITY 3]’s SG&A of xx.x% and xx.x%, respectively, are lower than the peer group median and are in the first quartile.
 - [ENTITY 2]’s SG&A of xx.x% is higher than the peer group median and is in the third quartile.
-- By reducing SG&A expense x.x% to match with the peer median, there is an opportunity for [ENTITY 2] to reduce the
-- SG&A expense by USD x.x million.
+- By reducing SG&A expense x.x% to match with the peer median, there is an opportunity for [ENTITY 2] to reduce the SG&A expense by USD x.x million.
 - SG&A - Peer analysis
 - Comments
 - COS - Peer analysis
@@ -184,12 +173,10 @@
 - Median DSO across the peer set is xx days.
 - [ENTITY 2]’s DSO of xx days is lower than the peer group median and is in the second quartile.
 - [ENTITY 1] and [ENTITY 3]’s DSO of xx and xx days are higher than the peer group median and are in the third and fourth quartiles respectively.
-- Reducing the number of DSO by xx and xx days to match with the peer median indicates cash release opportunities for
-- [ENTITY 1] and [ENTITY 3] of USD xx.x million and USD xxx.x million, respectively.
+- Reducing the number of DSO by xx and xx days to match with the peer median indicates cash release opportunities for [ENTITY 1] and [ENTITY 3] of USD xx.x million and USD xxx.x million, respectively.
 - Median DIO across the peer set is x days.
 - [ENTITY 3]’s, [ENTITY 1]’s and [ENTITY 2]’s DIO of x, x, and xx days are higher than the peer group median and are in the third and fourth quartiles.
-- Reducing the number of DSO by x, x, and xx days to match with the peer median indicates cash release opportunities for
-- [ENTITY 3], [ENTITY 1], and [ENTITY 2] of USD x.x, x.x million and USD x.x million, respectively.
+- Reducing the number of DSO by x, x, and xx days to match with the peer median indicates cash release opportunities for [ENTITY 3], [ENTITY 1], and [ENTITY 2] of USD x.x, x.x million and USD x.x million, respectively.
 - DIO*** - Peer analysis
 - Comments
 - DSO*** - Peer analysis
@@ -220,16 +207,13 @@
 - Our report is for the benefit and information only of those parties who have accepted the terms and conditions of our Engagement
 - Letter and should not be copied, referred to or disclosed, in whole or in part, without our prior written consent, except as specifically (including those parties’ legal and other professional advisers) in respect of our work or the report.
 - Our work commenced on DD MM YYYY and our fieldwork for this report was completed on DD MM YYYY. We have not undertaken to update our report for events or circumstances arising after that date.
-- In preparing our report, our primary source has been the Targets’ internal management information and representations made to us by
-- Management of the Targets. We do not accept responsibility for such information which remains the responsibility of Management. We draw your attention to the significant limitations in the information available to us. Access to the audit files has not been granted. The
-- Management information available was restricted to specified documents in a data room. Details of our principal information sources are set out in the Basis of information and we have satisfied ourselves, so far as possible, that the information presented in our report is consistent with other information that was made available to us in the course of our work in accordance with the terms of our The procedures we performed do not constitute an audit or review made in accordance with generally accepted audit or assurance standards and consequently no assurance opinion is expressed. Our advice does not constitute recommendations as to whether or not you should proceed with any proposed transaction, or whether the procedures performed are sufficient for your purposes.
+- In preparing our report, our primary source has been the Targets’ internal management information and representations made to us by Management of the Targets. We do not accept responsibility for such information which remains the responsibility of Management. We draw your attention to the significant limitations in the information available to us. Access to the audit files has not been granted. The Management information available was restricted to specified documents in a data room. Details of our principal information sources are set out in the Basis of information and we have satisfied ourselves, so far as possible, that the information presented in our report is consistent with other information that was made available to us in the course of our work in accordance with the terms of our The procedures we performed do not constitute an audit or review made in accordance with generally accepted audit or assurance standards and consequently no assurance opinion is expressed. Our advice does not constitute recommendations as to whether or not you should proceed with any proposed transaction, or whether the procedures performed are sufficient for your purposes.
 - The contents of this report have not been reviewed by the Management of the Targets for the purpose of confirming the factual accuracy of this report.
 - activities on the underlying data to arrive at the information presented; we do not accept responsibility for the underlying data.
 - In the event that elements of our terms of reference relate to 'underlying' earnings, our work will be restricted to assisting You in the identification and documentation of items which may be 'non-recurring' or 'exceptional' or otherwise unrepresentative of the trend in earnings using criteria established by You. Because there is no authoritative literature or common standard with respect to the calculation of 'underlying' earnings, there is no basis to state whether all appropriate and comparable adjustments have been made. In addition, while the adjustments may indeed relate to items which are 'non-recurring' or 'exceptional' or otherwise unrepresentative of the trend, it is possible that the earnings for future periods may be affected by such items, which may be different from the historical items.
 - The net debt analysis has been prepared to assist in considering those items which may be ‘debt like’. There is no authoritative literature or common standard with respect to the identification of items which may form part of ‘debt’ or ‘net debt’, and the decision as to what items should be included or excluded is highly judgmental. Accordingly, there is no basis on which to state whether in the analysis of net debt, all appropriate and comparable items have been included, and that there are no items that might be judged by some to be inappropriate or that all appropriate adjustments have been made. We have set out in our report the basis on which items have been included, excluded, or adjusted in the net debt analysis. You may choose to analyze the information presented differently.
 - The financial information contained within this report is based on audited financial information and management information, which are prepared using [REGION] Financial Reporting Standards for Non-Publicly Accountable Entities (NPAEs). Our work has not considered the potential impact on the Targets’ financial information of the transition to TFRS.
-- The pro forma accounts of YTDXX presented are the indicative presentation of [ENTITY 1] and [ENTITY 2]’s results based on
-- Any tax advice herein is based on the facts provided to us and on current laws including judicial and administrative interpretation. The laws are subject to continual change, at times on a retroactive basis. Should the facts provided to us be incorrect or incomplete or should the law or its interpretation change, our advice may be inappropriate. We are not responsible for updating our advice for changes in laws or interpretation after the date hereof.
+- The pro forma accounts of YTDXX presented are the indicative presentation of [ENTITY 1] and [ENTITY 2]’s results based on Any tax advice herein is based on the facts provided to us and on current laws including judicial and administrative interpretation. The laws are subject to continual change, at times on a retroactive basis. Should the facts provided to us be incorrect or incomplete or should the law or its interpretation change, our advice may be inappropriate. We are not responsible for updating our advice for changes in laws or interpretation after the date hereof.
 - Benchmarking The benchmarking analysis is based on information obtained from comparable industries and/or activities. As with any benchmarking analysis there is a risk that the information is not fully comparable. If the benchmarked information is based on aggregated industry information, access to more detailed information could have led to the analyses being presented in another manner or to different data being presented. We accept no responsibility for such differences.
 - The benchmarking analysis presented in this report presents aggregated or company level data collected from thirdparty data sources as referenced. We accept no responsibility for the correctness of the data obtained from third-party sources.
 - Benchmarking results should be treated as indicative, as benchmarking results will vary based on the industry segmentation, geography selected, and periodicity. While scoring lower or higher than peers on a select key performance indicators (“KPIs”) may indicate underperformance or superior performance, underlying factors must be understood, including the interaction between different KPIs.
@@ -253,8 +237,7 @@
 - Overall, we have had good access to Management, who have been helpful and have put a significant amount of time and effort into this due diligence process by responding to our questions and requests in a timely manner.
 - The contents of our report have not been reviewed by the Management of Targets and the factual accuracy of this report has not been confirmed by the Management.
 - The requested information has been provided through the virtual data room and email. As of the date of this report, all available requested information has been provided in a timely manner.
-- We have had access to granular and relevant data (i.e., transactional level), which in our view has formed a good basis for analyzing the key drivers of the business. However, there are the limitation of information especially YTDXX information of [ENTITY 1] and [ENTITY 2] entities. Moreover, certain accounting adjustments are only made at the year end account for [ENTITY 1] and
-- [ENTITY 2], which we presented the pro-forma account for indicative purpose. In addition, as these YTDXX management accounts have not yet been audited, and they therefore may not represent the actual financial performance and position of the Schools. We have discussed critical limitations in terms of quality of information throughout the report.
+- We have had access to granular and relevant data (i.e., transactional level), which in our view has formed a good basis for analyzing the key drivers of the business. However, there are the limitation of information especially YTDXX information of [ENTITY 1] and [ENTITY 2] entities. Moreover, certain accounting adjustments are only made at the year end account for [ENTITY 1] and [ENTITY 2], which we presented the pro-forma account for indicative purpose. In addition, as these YTDXX management accounts have not yet been audited, and they therefore may not represent the actual financial performance and position of the Schools. We have discussed critical limitations in terms of quality of information throughout the report.
 - Quality of information
 - Low
 - High
@@ -270,13 +253,11 @@
 - Financial and organizational baseline: built a set of analyses to capture the cost structures of the business (financial and operational) and to highlight the cost items in scope of the assessment
 - Targeted analysis: Based on the performance information and data available across the 3 schools, we selected ENTITY 3
 - FULL NAME (“[ENTITY 3]”) as our focus school for the opportunity assessment. Using data provided by Management, we have developed an initial set of hypotheses to identify potential value creation opportunities. The possible initiative for EBITDA improvement includes fully costed analysis, pricing (discount and promotion management) and teacher salary optimization. We have undertaken further high-level analysis to challenge, test and validate these hypotheses
-- Comparator analysis: we have identified relevant domestic peers to provide external insight and challenge the levels of efficiency, profitability and cost in the current operating model. This has not formed a core part of our analysis and is in the
-- [ENTITY 3] has the opportunity to increase revenue by revising its tuition fee and discount offering to optimise the pricing and discount strategy and to achieve the target number of new student enrolments, with a focus on secondary level
+- Comparator analysis: we have identified relevant domestic peers to provide external insight and challenge the levels of efficiency, profitability and cost in the current operating model. This has not formed a core part of our analysis and is in the [ENTITY 3] has the opportunity to increase revenue by revising its tuition fee and discount offering to optimise the pricing and discount strategy and to achieve the target number of new student enrolments, with a focus on secondary level
 - Additional profitability optimization could be achieved through teacher salary optimization . Our initial assessment has identified five quantifiable opportunity areas with the potential EBITDA upside of USD 37.4 to 87.0 million. An additional five non-quantifiable areas have the potential to create further upside for EBITDA.
 - The value creation assessment could support valuation assumptions to determine the valuation range for [MAIN CLIENT].
 - If you proceed with the investment, our value creation assessment can be used to support
-- [MAIN CLIENT] in the development of a robust business plan to maximize your investment value. Key possible opportunity areas to
-- Based on the credit facilities with [BANK 2], collaterals required against the credit facilities are summarised below;
+- [MAIN CLIENT] in the development of a robust business plan to maximize your investment value. Key possible opportunity areas to Based on the credit facilities with [BANK 2], collaterals required against the credit facilities are summarised below;
 - [SHAREHOLDER 3]’s land deed title no. 7504 and buildings thereon in XXXX province.
 - [SHAREHOLDER 3]’s land deed title no. 4329 and 83899 and buildings thereon in XXXX province.
 - [SHAREHOLDER 1] Development’s land deed title no. 4332 and buildings thereon in XXXX province.
@@ -307,9 +288,7 @@
 - Deposits mainly represent deposits collected from students which will be returned when students decide to leave netting off with any damages made by students such as book lost. Based on the student deposits policy, the latest deposits required per student are USD 15,000 for staff relatives and USD 55,000 for other students respectively. The significant increase in balance as at DD MM 20X3 from previous period mainly due to an increase in deposit rate for normal students from USD 15,000 to USD 55,000 and an increase in average student headcount from 1,011 to 1,099 during FY[X]2 to XM2X. Students must inform [ENTITY 1] at least one term in advance to be eligible to receive a refund of deposit.
 - Accrued expenses mainly consist of unbilled invoice such as utility expenses, audit fee, uniform and etc.
 - Management informed us that accrued expenses will be adjusted on a yearly basis indicating that accrued expenses may be understated. Moreover, the balance as at DD MM 20X0 was higher than other analysed periods due to unbilled invoice of meal fee from xxx amounted to USD 1.6 million and cleaning and security expenses totaling USD 1.7 million. According to Management, the balance can be fluctuated depending on the billing process.
-- Salary payables related accounts consist of accrued salary expenses, WHT payables, SSF payables, PVD payables and teacher fund payables. The reported balance as at DD MM 20X3 was positive because [ENTITY 1] recorded staff cost as a debit to accrued salary expenses account instead of staff cost in the P&L. According to
-- Management, WHT payables, SSF payables, PVD payables and teacher fund payables will be paid within two weeks in the following months. We summarised the Pro-forma balance of salary payables related accounts based on the
-- Trade payables balance as at DD MM 20[X]0 and DD MM 20[X]1 appear to be lower than other 2 periods due to cost saving policy implemented, and the reduction in certain fixed cost as a result of online learning during the COVID-19 pandemic. Management confirmed that [ENTITY 3] normally pays to suppliers on time.
+- Salary payables related accounts consist of accrued salary expenses, WHT payables, SSF payables, PVD payables and teacher fund payables. The reported balance as at DD MM 20X3 was positive because [ENTITY 1] recorded staff cost as a debit to accrued salary expenses account instead of staff cost in the P&L. According to Management, WHT payables, SSF payables, PVD payables and teacher fund payables will be paid within two weeks in the following months. We summarised the Pro-forma balance of salary payables related accounts based on the Trade payables balance as at DD MM 20[X]0 and DD MM 20[X]1 appear to be lower than other 2 periods due to cost saving policy implemented, and the reduction in certain fixed cost as a result of online learning during the COVID-19 pandemic. Management confirmed that [ENTITY 3] normally pays to suppliers on time.
 - Comments on trade and other payables
 - According to Management, they are still in the process of investigation whether this balance is still an outstanding payable balance or not.
 - Comments on trade and other payables
@@ -360,8 +339,7 @@
 - Acquiring new students to increase class utilisation rate could be difficult due to limited demand in xxxx.
 - Next steps to validate the opportunity
 - Due to the COVID-19 pandemic, there were drops in student headcount in AY[X]0 and AY[X]1.
-- However, enrolments rebounded with the xxxx Sandbox campaign, allowing [ENTITY 3] to open while other schools remained closed. Consequently, some students from other schools moved to
-- [ENTITY 3], resulting in short-term increased student headcount.
+- However, enrolments rebounded with the xxxx Sandbox campaign, allowing [ENTITY 3] to open while other schools remained closed. Consequently, some students from other schools moved to [ENTITY 3], resulting in short-term increased student headcount.
 - Even though student numbers have surpassed pre-COVID levels, there is room for improvement in student class utilization. This can be achieved by increasing facilities for Kindergarten and Primary levels, as well as by expanding student enrolment at the Secondary level.
 - Analyze withdrawal rates to understand student attrition (leavers) compared to prior years by grade
 - Conduct a cost-benefit analysis (CBA) to determine if investing in additional facilities is necessary to accommodate capacity for additional joiners in Kindergarten and Primary school
@@ -396,8 +374,7 @@
 - According to the loans with [BANK 2], [ENTITY 1] is required to insure its building and building improvements with insurance conditions that [BANK 2] is satisfied with.
 - Based on the latest industrial all risk insurance policy made with Muang [REGION]
 - Insurance PCL. covering the period between DD MMMM YYYY and DD MMMM
-- YYYY, all the buildings including primary and secondary schools, dormitories, and
-- [ENTITY 1] community centre are covered. This insurance agreement has a total coverage of USD 400.0 million, which is higher than the net book value of buildings and building improvements as at DD MM 20X3.
+- YYYY, all the buildings including primary and secondary schools, dormitories, and [ENTITY 1] community centre are covered. This insurance agreement has a total coverage of USD 400.0 million, which is higher than the net book value of buildings and building improvements as at DD MM 20X3.
 - Appraisal value
 - Based on the latest appraisal value from the Treasury Department, the current total
 - DD MM 20X0,20X1, and 20X2
@@ -443,10 +420,8 @@
 # Summary Financials
 - Key financial drivers
 - Headlines
-- Fiscal Year (FY): FY X0 – FY X1 June – May and
-- FY X2 August - June
-- We estimated there to be no accrued salary expenses as at
-- DD MM 20X3 because the salary for MM 20X3 has already been paid. The other accounts are estimated based As at DD MM 20X3, [ENTITY 1] has commitments mainly relating to janitorial and security services. Management has indicated that they are currently engaged in 2 litigation cases, for which no provision has been made.
+- Fiscal Year (FY): FY X0 – FY X1 June – May and FY X2 August - June
+- We estimated there to be no accrued salary expenses as at DD MM 20X3 because the salary for MM 20X3 has already been paid. The other accounts are estimated based As at DD MM 20X3, [ENTITY 1] has commitments mainly relating to janitorial and security services. Management has indicated that they are currently engaged in 2 litigation cases, for which no provision has been made.
 - Deposits from students represents deposits which will be given back to the student after they have graduated
 - Other liabilities balance mainly consists of accrued interest expenses from the long-term loan with [ENTITY 1]. The balance as at 30 [MONTH] 20X3 decreased by USD 4.2 million from 31 [MONTH] 20X2 as a resut of interest payment to [BANK 2] on behalf of [ENTITY 1].
 - Comments on other liabilities
@@ -456,8 +431,7 @@
 
 # Profit and Loss Overview / Financial Performance
 - You should note that our findings do not constitute recommendations to you as to whether or not you should proceed with any proposed transaction.
-- disclosed, in whole or in part, to any other party without our prior written consent, except as
-- We would be pleased to receive your observations on our report. Please feel free to contact us to discuss.
+- disclosed, in whole or in part, to any other party without our prior written consent, except as We would be pleased to receive your observations on our report. Please feel free to contact us to discuss.
 - supporting analysis teachers on average.
 - Teacher headcount: In DD MM X3, there are 51 teachers on average.
 - Teacher headcount: In XM2X, there are 175 teachers on average.
@@ -469,8 +443,7 @@
 - Cost of sales and inventory (uniform and books)
 - Incorrect monthly revenue and unearned revenue recognition
 - [ENTITY 1] and [ENTITY 2] record revenue (i.e., tuition and non-tuition fees) when the schools issue invoices to the parents. The schools normally adjust the unearned revenue only at year end resulting in overstated monthly revenue and understated monthly unearned revenue balances.
-- Understated staff costs As accounting staff manually input salary and wages of staff to the accounting system and
-- [ENTITY 1] and [ENTITY 2] normally close the accounts only at the year end, the management accounts do not include all staff costs. Based on the trial balance as at DD
+- Understated staff costs As accounting staff manually input salary and wages of staff to the accounting system and [ENTITY 1] and [ENTITY 2] normally close the accounts only at the year end, the management accounts do not include all staff costs. Based on the trial balance as at DD
 - MM 20X3, the schools recorded staff costs (e.g., salary and wages) incurred up to DD MM
 - Discount
 - [ENTITY 1] and [ENTITY 2] record some discount transactions by off-setting with revenue resulting in lack of records to track and monitor the total discount provided under [ENTITY
@@ -478,14 +451,10 @@
 - During our fieldwork we identified a number of internal control areas of [ENTITY 1] and [ENTITY 2] which likely need to be improved post-Closing.
 - Note (*):This represents the annualized amount after the adjustments of unearned revenue, staff costs, interest income/expense and depreciation.
 - 20X3, (2) Student headcount as at DD MM 20X0, FY[X]1, FY[X]2 and DD
-- Reported EBITDA margin rose from 41.4% in
-- FY[X]0 to 49.2% in FY[X]1, 51.0% in FY[X]2 and 50.5% in FY[X]1 as [ENTITY 2] generated higher revenue. This was a result of the increase in standard fee – average at 3.5% per year, starting to collect a capital levy fee since
-- FY[X]1 onwards and a reduction in staff costs from reducing manpower. According to
-- Management, the current staff level is sufficient for current operations and [ENTITY 1] does not expect to hire more staff.
+- Reported EBITDA margin rose from 41.4% in FY[X]0 to 49.2% in FY[X]1, 51.0% in FY[X]2 and 50.5% in FY[X]1 as [ENTITY 2] generated higher revenue. This was a result of the increase in standard fee – average at 3.5% per year, starting to collect a capital levy fee since FY[X]1 onwards and a reduction in staff costs from reducing manpower. According to Management, the current staff level is sufficient for current operations and [ENTITY 1] does not expect to hire more staff.
 - The revenue level and student headcount were stable during the COVID-19 pandemic as the majority of students are of [REGION] nationality. In addition, the school offered a combination of online and onsite learning during the COVID-19 period, whereas other schools nearby decided to temporarily close.
 - For the short-term plan, Management plans to increase student headcount to maximum capacity (1,315 students) and focus on the community center business, which is located on the school’s campus.
-- Reported EBITDA margin showed a rising trend during the analyzed periods due to an improvement in revenue and a reduction in
-- % of staff costs to total revenue as a result of the cost-saving plan. [ENTITY 2] applied the same strategy as [ENTITY 1] by reducing staff. The School expected to hire 2 new positions in the future which are curriculum coordinator and university counselor.
+- Reported EBITDA margin showed a rising trend during the analyzed periods due to an improvement in revenue and a reduction in % of staff costs to total revenue as a result of the cost-saving plan. [ENTITY 2] applied the same strategy as [ENTITY 1] by reducing staff. The School expected to hire 2 new positions in the future which are curriculum coordinator and university counselor.
 - A rise in revenue from FY[X]0 to X4M2X was caused by an extra 2 months of revenue recorded. Due to the limitation of information, we were unable to adjust the period covered in FY[X]0 and FY[X]1 to be similar to FY[X]2.
 - Average revenue per month in FY[X]1 increased by 14.9% from FY[X]0, which primarily resulted from an increase in student headcount, especially in student years 5 and over, coupled with the increased tuition fee rate (avg rate at 4% per year). [ENTITY 2] was able to maintain headcount during COVID-19 period as the majority of the students was Chinese who remained in [REGION]. A revenue growth in FY[X]3 resulted from a tuition fee rate adjustment and a lower amount of refund compared to FY[X]1 and FY[X]1 (during
 - Note (*):This represents the annualised amount after the adjustments of unearned revenue, staff costs, interest income/expense and depreciation.
@@ -507,21 +476,17 @@
 
 # Quality of Earnings
 - [ENTITY 1] xxx (“[ENTITY 1] xxx”)
-- [ENTITY 1] xxxx (“[ENTITY 1] xxxx”) n/p The Targets in the
-- Potential adjustments (Cont’d) In FY[X]2, [ENTITY 1] provided ATK test kits and RT-PCR to staff and students free of charge. However, in XM2X period, [ENTITY 1] appears to charge fee to staff and students as per the table below. As we consider this medical supplies expense to be one-off in nature, we therefore proposed to remove this expense from the underlying EBITDA in
-- FY[X]2, and on a GP level in XM2X period.
+- [ENTITY 1] xxxx (“[ENTITY 1] xxxx”) n/p The Targets in the Potential adjustments (Cont’d) In FY[X]2, [ENTITY 1] provided ATK test kits and RT-PCR to staff and students free of charge. However, in XM2X period, [ENTITY 1] appears to charge fee to staff and students as per the table below. As we consider this medical supplies expense to be one-off in nature, we therefore proposed to remove this expense from the underlying EBITDA in FY[X]2, and on a GP level in XM2X period.
 - During the COVID-19 pandemic, Social Security Office (SSO) announced a reduction of the mandatory social security contribution rate as well as PVD as a temporary relief to help businesses. However, due to limitation of information, we were unable to quantify the impact of this temporary reduction.
 - During the COVID-19 pandemic, the students were provided with a discount on the meal fee during Term 2 in FY[X]1, Term 1 in FY[X]2 and FY[X]3, since the school was mostly conducting learning through online. We proposed to adjust for this temporary discount in order to remove one-time effect and present the underlying earnings.
-- According to Management, [ENTITY 1] paid remuneration of USD 2.0 million to
-- [DIRECTOR 1] (Honorary Chairman of the Board) in XM2X; however, we have not been provided with the rationale, and have therefore deemed this to be one-off in nature on the assumption that it will not recur in future.
+- According to Management, [ENTITY 1] paid remuneration of USD 2.0 million to [DIRECTOR 1] (Honorary Chairman of the Board) in XM2X; however, we have not been provided with the rationale, and have therefore deemed this to be one-off in nature on the assumption that it will not recur in future.
 - We propose to remove gain on short-term investment as this transaction does not relate to the [ENTITY 1]’s core business.
 - In XM2X, [ENTITY 1] purchased electrical appliances which did not work as expected.
 - [ENTITY 1] paid a deposit but did not pay the remaining balance. Therefore, the supplier filed a lawsuit against [ENTITY 1] for nonpayment. Subsequently, [ENTITY 1] lost the lawsuit and was charged USD 0.9 million. We have therefore proposed to remove this item as we consider it to be a one-off item.
 - During FY[X]2 - XM2X, [ENTITY 1] did not record any prepaid expenses as Management considered that prepaid expenses were insignificant. Most of the prepaid expenses are insurance and software fees that will overlap one to two months of each fiscal year.
 - Therefore, the balance is likely to be understated. Due to the limitation of information, we were unable to quantify the impact.
 - 10. In the XM2X management account, the repair and maintenance expenses were likely to be overstated, as normally, an accounting team will check whether the expense should be capitalized as an asset at the year end. We, therefore, propose to adjust for any repair and maintenance expense that should have been capitalized in the XM2X period, but due to the limitation of information, we were unable to quantify the impact.
-- 11. During FY[X]0-FY[X]2, [ENTITY 1]’s statutory accounts were audited by COMPANY XXX who will also audit the FY[X]3 account at a service fee of USD 60k, according to
-- Management. However, the audit fee for XM2X has not been recorded yet, and we have therefore proposed an adjustment to recognize this on a pro-rata basis.
+- 11. During FY[X]0-FY[X]2, [ENTITY 1]’s statutory accounts were audited by COMPANY XXX who will also audit the FY[X]3 account at a service fee of USD 60k, according to Management. However, the audit fee for XM2X has not been recorded yet, and we have therefore proposed an adjustment to recognize this on a pro-rata basis.
 - Potential adjustments (Cont’d) 12. According to Management, costs of uniform and textbooks are recorded on a yearly basis, while revenues generated from sales of these items are recorded on a cash basis. We propose to adjust these for the XM2X period by using the average %GP observed across
 - Potential adjustments (Cont’d) 13. As [ENTITY 1]’s XM2X accounts have not yet been audited and the accounting closing is usually performed at the year end, we consider that [ENTITY 1] may not completely record all accruals in the accounts as at DD MM 20X3 such as meal fee, security expenses and utilities expenses. There may be other potential understatement of liabilities which should have been considered to adjust within QOE adjustment. However, due to the limitation of information, we were unable to quantify the impact.
 - 14. According to Management, there is obsolete inventory (i.e., outdated textbooks) that still sits on the account as [ENTITY 1] normally upgrades its textbooks annually. However,
@@ -549,8 +514,7 @@
 - Pro-forma adjustment
 - Management informed us that all issued invoices during the period will be recorded as revenue regardless of the period that the revenue should be recognised. At the end of each year, the accounting team will adjust the revenue that was recorded in incorrect period to unearned revenue indicating that unearned revenue as at DD MM 20X3 was understated. We have therefore proposed to adjust for unearned revenue balance for an indicative purpose.
 - Based on the information provided by Management, we observed that there was long outstanding trade receivables aged longer than 1 year. [ENTITY 2] does not have a policy to set up an allowance for doubtful debt. Thus, this amount should be excluded from net working capital due to being a non-current item in nature.
-- According to Management, there were long outstanding payables mostly due to [ENTITY 1] for longer than 1 year. The transactions were mainly related to payments paid on behalf of
-- [ENTITY 2] via [ENTITY 1]’s corporate card. We proposed to adjust this amount from net working capital due to being a non-current item in nature.
+- According to Management, there were long outstanding payables mostly due to [ENTITY 1] for longer than 1 year. The transactions were mainly related to payments paid on behalf of [ENTITY 2] via [ENTITY 1]’s corporate card. We proposed to adjust this amount from net working capital due to being a non-current item in nature.
 - Interest income This represents interest income from savings deposits with banks.
 - The average total revenue per month of XM2X rose by 14.9% from FY[X]0 as a result of the rise in student headcount, student mix towards higher-level classes and a rise in standard tuition fee of approximately 4%. A steady increase in student numbers is the major cause of revenue growth in FY[X]2. For FY[X]3, total revenue grew by 40.5% from FY[X]2 which was due to the fee rate adjustment and a lower amount of refund.
 - Revenue breakdown
@@ -565,23 +529,18 @@
 - Staff costs primarily represents teacher salary (45.1%), management salary (23.9%) and non-teaching staff (13.4%). A large decrease in staff cost from FY[X]0 to FY[X]2 by 13.3% was mainly attributed to a decline in Staff Type 1headcount, while an increase in FY[X]3 was driven by a higher number of Staff Type 1 teachers and nonteaching staff. Based on discussion with Management, there was no staff layoff or reduction in salary during the COVID-19 pandemic.
 - Allowance mainly refers to medical, accident, health insurance, over-time, position allowance.
 - For teachers, it also includes teaching certificate and [REGION] teacher’s license For FY[X]0 there was USD 3.3 million of staff salary not recorded in payroll register as those staff were pending to receive work permit from the government. However, for FY[X]1 and FY[X]2 we have not been provided with the reconciliation between total staff cost per trial balances and supporting details. (please see further detail in appendix no.12) The fluctuation of Staff Type 1 teachers’ salaries from FY[X]0 to FY[X]3 mainly depended on a change in staff headcount. Although there was an increase of 6 new Staff Type 1 teachers from FY[X]2 to XM2X, the salaries of these new staff were not as high as the resigned staff because they were non-native speakers (e.g. [REGIONAL] teachers).
-- The decline in [REGION] teacher and non-teaching staff salaries from FY[X]0 to FY[X]2 aligned with a decrease in teacher headcount due to the reduction in manpower during the
-- COVID-19 pandemic. After COVID-19 recovery, the number of non-teaching staff increased, resulting in a higher salary cost in FY[X]3 compared to FY[X]2. An increase in
-- [REGION] teacher salaries in FY[X]3 from FY[X]2 occurred because newly joined staff received a higher salary base compared to staff who had resigned.
-- Management refers to the school headmaster, the school director, the principal and the heads of department. The significant rise in management salaries from FY[X]0 to FY[X]1 was mainly due to new heads of department being hired. For FY[X]3, an increase from
-- FY[X]2 primarily resulted from the salary rate adjustment.
+- The decline in [REGION] teacher and non-teaching staff salaries from FY[X]0 to FY[X]2 aligned with a decrease in teacher headcount due to the reduction in manpower during the COVID-19 pandemic. After COVID-19 recovery, the number of non-teaching staff increased, resulting in a higher salary cost in FY[X]3 compared to FY[X]2. An increase in [REGION] teacher salaries in FY[X]3 from FY[X]2 occurred because newly joined staff received a higher salary base compared to staff who had resigned.
+- Management refers to the school headmaster, the school director, the principal and the heads of department. The significant rise in management salaries from FY[X]0 to FY[X]1 was mainly due to new heads of department being hired. For FY[X]3, an increase from FY[X]2 primarily resulted from the salary rate adjustment.
 - Other staff benefits
 - Other major staff benefits are medical and accident insurance, SSF, PVD and teacher aid fund (only for [REGION] staff). Only Staff Type 1 staff are entitled to receive flight allowance and renewal bonus. The maximum allowance of each depends on the individual contract.
 - Salary incremental rate, bonus payment and staff contract
 - According to Management, the salary incremental rate, bonus payment and contract period are based on individual KPI, contract and school performance as follows:
-- During FY[X]0 and FY[X]1, accounting and HR services were outsourced. However, from
-- FY[X]2 onwards, some [ENTITY 1] staff helped [ENTITY 2] to perform these services freeof-charge. Moreover, [ENTITY 2] also shared the same CFO as [ENTITY 3] and [ENTITY 1] without any cost charged. According to Management, [ENTITY 1] and [ENTITY 3] have no plan to charge back the costs for performing these services to [ENTITY 2] in the future.
+- During FY[X]0 and FY[X]1, accounting and HR services were outsourced. However, from FY[X]2 onwards, some [ENTITY 1] staff helped [ENTITY 2] to perform these services freeof-charge. Moreover, [ENTITY 2] also shared the same CFO as [ENTITY 3] and [ENTITY 1] without any cost charged. According to Management, [ENTITY 1] and [ENTITY 3] have no plan to charge back the costs for performing these services to [ENTITY 2] in the future.
 - Management informed us that for future operations, [ENTITY 2] expects to hire 2 new positions, curriculum coordinator and university counselor.
 - Overview of staff costs
 - Fixed assets, short-term loans to related parties and cash represent the majority of assets as at 30 [MONTH] 20X3. [ENTITY 2] reported a retained earning deficit and negative NAV In addition, the notes to financial statements of [ENTITY 2] for FY[X]0-FY[X]2 also include the going concern issues due to the negative NAV and accumulated losses.
 - Potential adjustments (Continued)
-- According to the COVID-19 pandemic, Social Security Office (SSO) announced a reduction of the mandatory social security contribution rate, as well as PVD that was reduced by
-- [ENTITY 3]. However, due to limitation of information, we were unable to quantify the financial impact.
+- According to the COVID-19 pandemic, Social Security Office (SSO) announced a reduction of the mandatory social security contribution rate, as well as PVD that was reduced by [ENTITY 3]. However, due to limitation of information, we were unable to quantify the financial impact.
 - During the COVID-19 pandemic, the school mostly provided online learning and therefore introduced a COVID-19 discount on boarding fee, as well as a 10% refund of tuition fee, lunch meal, transportation and field trip fees. As this will not recur in the future, we propose to remove this temporary discount and refund that was provided during the pandemic.
 - Management informed us that in FYX7-FYX8, VAT from sales from the school shop (i.e.
 - food, snacks and uniform, etc.) had not been filed with the Revenue Department due to a misunderstanding of filling procedures. When this was filed retrospectively, the VAT and penalty of USD 1.2 million was charged to [ENTITY 3] in FY[X]0. We, therefore, removed this expense as this can be deemed to be a one-off expense.
@@ -597,11 +556,9 @@
 - Solution Co., Ltd., who will also audit FY[X]3 account at a service fee of USD 100k, according to Management. However, audit fee for XM2X has not been recorded yet, and we have therefore proposed to adjust an adjustment to recognize this on a pro-rata basis.
 - 10. Staff Type 1 staff and Management are entitled to receive a contibution from [ENTITY 3] of approximately 8.3% p.a. and can withdraw funds each year. However, as this expense is normally adjusted yearly, the pension fund represented in XM2X is currently overstated.
 - Other considerations
-- According to Management, the whole year payment discount, which was an incentive given to parents who pay fees early, will be discountinued after FYXX. [ENTITY 3] will also stop providing the credit system discount, which was credit points offered to new students from
-- FY15 that could be used to offset the tuition fee. The amount will gradually decline overtime. These discounts are not expected to be incurred in the future. We, therefore, proposed this as an other consideration item. (For further details of discount definition, please refer to Page 107). However, You should consider the potential impact on student enrollments if this incentive is discontinued, as part of your commercial due diligence exercise.
+- According to Management, the whole year payment discount, which was an incentive given to parents who pay fees early, will be discountinued after FYXX. [ENTITY 3] will also stop providing the credit system discount, which was credit points offered to new students from FY15 that could be used to offset the tuition fee. The amount will gradually decline overtime. These discounts are not expected to be incurred in the future. We, therefore, proposed this as an other consideration item. (For further details of discount definition, please refer to Page 107). However, You should consider the potential impact on student enrollments if this incentive is discontinued, as part of your commercial due diligence exercise.
 - The COVID-19 pandemic impacted [ENTITY 3]’s revenue and overall performance during
-- FY[X]0 – FY[X]2. Despite the improvement in [ENTITY 3]’s performance in XM2X as the
-- COVID-19 pandemic eased, further assessment should be considered when evaluating the proposed transaction regarding revenue sustainability to understand which COVID-19 pandemic impacts are temporary and which are permanent.
+- FY[X]0 – FY[X]2. Despite the improvement in [ENTITY 3]’s performance in XM2X as the COVID-19 pandemic eased, further assessment should be considered when evaluating the proposed transaction regarding revenue sustainability to understand which COVID-19 pandemic impacts are temporary and which are permanent.
 - [ENTITY 3] reports negative net working capital due to the nature of business, as the majority of tuition and other fees are invoiced in advance, resulting in a large balance of unearned revenue. The key adjustments from reported NWC to adjusted NWC as at 30 [MONTH] 20X3 are mainly due to the exclusion of accrued pension amounting to USD 23.4 million and deposits paid for PPE amounting to USD 11.3 million.
 - — Reported net working capital is prepared based on a general definition of net working capital, which is current assets less current liabilities, excluding cash and cash equivalents and debt items.
 - Debt and debt-like items
@@ -610,11 +567,9 @@
 - There is no authoritative literature or common standard with respect to the identification of items which may form part of ‘debt’ or ‘net debt’, and the decision as to what items should be included or excluded is highly judgmental. We understand that You have not finalized on the treatment of unearned analysis.
 - Others refers to laundry expense, material supplies, internet and telephone expense, Cable TV expense, postage expense, stationary expense and dormitory supplies.
 - Teaching staff costs comprise salaries and other benefits of teaching staff. The decline in FY[X]1 was primarily caused by a reduction in flight allowance for Staff Type 1 teachers and pension fund. Please refer to [ENTITY 3]’s staff cost analysis on Page 113, and potential cost-saving upside opportunity through teacher salary optimisation on Page
-- Meal fee was paid based on the number of student headcount. For [ENTITY 3], food and beverage is provided by the school (while [ENTITY 1] and [ENTITY 2] have outsourced from CPF). A decline from FY[X]0 to FY[X]1 was due to a
-- Comments on key cost items
+- Meal fee was paid based on the number of student headcount. For [ENTITY 3], food and beverage is provided by the school (while [ENTITY 1] and [ENTITY 2] have outsourced from CPF). A decline from FY[X]0 to FY[X]1 was due to a Comments on key cost items
 - Comments on administrative expenses
-- Non-teaching staff costs comprise salaries and other benefits for management, administrative staff and general workers. A decline in nonteaching staff from FY[X]0 to FY[X]2 was mainly resulted from no bonus being paid during FY[X]1 and FY[X]2. [ENTITY 3] resumed to pay bonus in XM2X, resulting in a rise in non-teaching staff costs from XM2X. Please refer to
-- [ENTITY 3]’s staff cost analysis on Page 113.
+- Non-teaching staff costs comprise salaries and other benefits for management, administrative staff and general workers. A decline in nonteaching staff from FY[X]0 to FY[X]2 was mainly resulted from no bonus being paid during FY[X]1 and FY[X]2. [ENTITY 3] resumed to pay bonus in XM2X, resulting in a rise in non-teaching staff costs from XM2X. Please refer to [ENTITY 3]’s staff cost analysis on Page 113.
 - Advertising expenses refers to advertisement on Facebook, Google and billboards. The high balance in XM2X was attributed to billboard advertisement at the airport for 6 months from November 20[X]2 to April 20[X]3. Management informed us that this advertisement expenses will not recur in the future.
 - Professional fee mainly comprises audit fee, legal advisory fee and CIS accreditation fee (to award the school which has high standards of performance in international education).
 - A relatively high balance of tax and penalty expenses in FY[X]0 was mainly due to a tax penalty, totaling USD 1.2 million, for failure to file for VAT in
@@ -622,13 +577,10 @@
 - Others mainly refer to insurance, cleaning, and telecommunication expenses.
 - According to Management, in XM2X, [ENTITY 3] provided a refund of tuition fees totaling USD 750,000 to the student who left the school after Term commencement for a special case through a mediation process.
 - During FY[X]0 to XM2X, over 76.0% of SG&A represented non-teaching staff costs, advertising expenses, depreciation and amortisation expenses. High % administrative expenses to total revenue during FY[X]1 and FY[X]2 was resulted from a significant decline in revenue, while there was only a slight decline in nonteaching staff costs. The % to revenue declined in XM2X compared to prior period with revenue improving and school recovering form the COVID-19 situation.
-- A decrease in total staff cost by 7.6% in FY[X]1 from FY[X]0 was mainly due to no bonus payment for [REGION] staff and lower flight allowance and pension fund for
-- Staff Type 1 staff. Based on the discussion with Management, there was no staff layoff nor a reduction in salaries during COVID-19 period. Management plan to hire more Staff Type 1 staff to support a significant rise of student headcount in the future.
+- A decrease in total staff cost by 7.6% in FY[X]1 from FY[X]0 was mainly due to no bonus payment for [REGION] staff and lower flight allowance and pension fund for Staff Type 1 staff. Based on the discussion with Management, there was no staff layoff nor a reduction in salaries during COVID-19 period. Management plan to hire more Staff Type 1 staff to support a significant rise of student headcount in the future.
 - A decrease in total teacher cost per student in XM2X was caused by a significant rise in average student headcount.
-- Flight allowance is given to Staff Type 1 staff and their spouse when they renew their contract. The rate is approximately USD 40,000 to USD 50,000 per person for a round trip ticket which is based on destinations and school announcements. A significant decline in
-- FY[X]1 was mainly caused by COVID-19 pandemic that restricted travelling. In FY[X]2,
-- [ENTITY 3] paid this allowance in the form of cash for USD 20,000 per person for those who did not fly abroad, while staff who took a flight would receive a maximum allowance of
-- USD 25,000. In XM2X, after the recovery from COVID-19 situation, the cash scheme was cancelled
+- Flight allowance is given to Staff Type 1 staff and their spouse when they renew their contract. The rate is approximately USD 40,000 to USD 50,000 per person for a round trip ticket which is based on destinations and school announcements. A significant decline in FY[X]1 was mainly caused by COVID-19 pandemic that restricted travelling. In FY[X]2,
+- [ENTITY 3] paid this allowance in the form of cash for USD 20,000 per person for those who did not fly abroad, while staff who took a flight would receive a maximum allowance of USD 25,000. In XM2X, after the recovery from COVID-19 situation, the cash scheme was cancelled
 - Leaving teacher allowance refers to flight and freight allowance provided to staff who has not renewed a contract. The allowance covers flight tickets for staff and their spouse. A maximum freight rate is USD 28,000 per teacher and their spouse, and USD 14,000 for their family.
 - New teacher allowance refers to flight and freight allowance provided to new staff. A maximum rate is similar to leaving teacher allowance.
 - 10. Pension fund is provided to Staff Type 1 staff and management staff level who have been working prior to August 20[X]7. The maximum contribution rate from staff is 8.3%.
@@ -640,8 +592,7 @@
 - ECA staff refers to teachers who teach extra curriculums after school hours such as music,
 - Mathematics, English, gymnastics, dramas and other special programs. The cost is charged base on the number of sessions taught. During the COVID-19 and lockdown circumstance, there were fewer to no sessions being held, resulting in a decline from FY[X]0 to FY[X]2. ECA staff cost rebounded in XM2X after the situation returned back to normal.
 - Renewal bonus for Staff Type 1 teachers is paid once contract is renewed. The payout rate is one month on base salary. We understand the initial contract is for a 2 years period, and it will be renewed annually.
-- [ENTITY 3] did not pay bonus to all [REGION] staff during FY[X]1 and FY[X]2 as a result of the
-- COVID-19 pandemic. According to Management, normal bonus payout rate is 1 month on employee’s base salary which is paid annually during December. [ENTITY 3] resumed to pay bonus in XM2X for a rate of 0.5 month on base salary.
+- [ENTITY 3] did not pay bonus to all [REGION] staff during FY[X]1 and FY[X]2 as a result of the COVID-19 pandemic. According to Management, normal bonus payout rate is 1 month on employee’s base salary which is paid annually during December. [ENTITY 3] resumed to pay bonus in XM2X for a rate of 0.5 month on base salary.
 - Staff Type 1 staff is entitled to receive monthly housing allowance of USD 30,000 if the staff is single, and USD 35,000 if they have a partner. However, if the staff select to live in school accommodation (Indy house), USD 10,000 will be deducted directly from their payroll each month.
 - Non-teaching salaries comprise salary of management, administrative staff and general workers. An increase in XM2X, compared to XM2X was mainly due to an increase in headcount for new CFO.
 - Salary incremental rate and bonus payment
@@ -661,8 +612,7 @@
 - [ENTITY 3] must have at least 666 enrolled students
 - Each time [ENTITY 3] wants to withdraw this portion of the loan they would need to provide a document related to the amount withdrawn. i.e., contracts relating to the expansion of a building, invoices for purchases of school furniture.
 - [ENTITY 3] must use [BANK 3]’s account for the cash transactions (such as receiving revenue, payroll, and cash management). Currently, [ENTITY 3]’s main bank account containing more than 90% of bank transactions with [BANK 3].
-- There are restrictions on loan repayment to related parties, lending loan to related parties, and dividend payment. From our observation, [ENTITY 3] did not repay loans to related parties, lend to
-- Employee benefit obligations (EBO) as at DD MM 20[X]3 is recorded based on Management’s estimation. This estimation is based on the amount of employees who have permanent contracts with [ENTITY 3] ([REGION] teachers and administrative employees).
+- There are restrictions on loan repayment to related parties, lending loan to related parties, and dividend payment. From our observation, [ENTITY 3] did not repay loans to related parties, lend to Employee benefit obligations (EBO) as at DD MM 20[X]3 is recorded based on Management’s estimation. This estimation is based on the amount of employees who have permanent contracts with [ENTITY 3] ([REGION] teachers and administrative employees).
 - Comments on the employee benefit obligations
 - Employee retirement benefits are required under [REGION] Labour Law. [REGION] Financial Reporting
 - Standards for Non-publicly Accountable Entities (TFRS for NPAEs’) requires [ENTITY 3] to recognise a provision for employee benefit obligations using the ‘best estimate’ method.
@@ -680,8 +630,7 @@
 - Management has also confirmed that [ENTITY 3] currently has no outstanding litigation case.
 - Comments on commitments and contingencies
 - Service agreements
-- Related balances mainly relate to long-term loans from [ENTITY 1]. The interest rates range from MLR -1.0% to MLR% p.a. Summary details of related transactions in
-- YTD[X]3 were not provided. We present YTD[X]3 related balance and transactions based on breakdown details, our assumptions, and trial balances received.
+- Related balances mainly relate to long-term loans from [ENTITY 1]. The interest rates range from MLR -1.0% to MLR% p.a. Summary details of related transactions in YTD[X]3 were not provided. We present YTD[X]3 related balance and transactions based on breakdown details, our assumptions, and trial balances received.
 - The balances shown in the table represent the proforma amount which may not be reconciled to
 - [ENTITY 2]’s accounts
 - Related party balances mainly include shares receivables from [SHAREHOLDER 3], and loans from related parties. The summary details of related transactions and balances have not been provided by Management. We present the below table based on breakdown details, our assumptions, and trial balances received.
@@ -704,13 +653,9 @@
 - Accountable Entities (TFRS for NPAEs). Their external auditors are local auditors, who have issued unqualified opinions on the statutory financial statements of these entities throughout
 - FY [X[0-FY [X]2. However, the FY [X[0-FY [X]2 auditor’s reports of [ENTITY 2] also mentioned the going concern issue due to the negative
 - NAV.
-- [ENTITY 3] generally closes its accounts on a monthly basis with the closing process taking approximately 10-15 days, while [ENTITY 1] and
-- [ENTITY 2] close their accounts on an annual basis with the closing process taking
-- We understand that some transactions of
-- [ENTITY 1] and [ENTITY 2] are recognised and adjusted only at the year-end for audited financial statements purposes (e.g., accrued expenses, deferred revenue, interest receivables and payables, and understated expense for some accounts). In addition, the schools recorded staff expenses incurred only during DD MM 20X3-DD MM 20X3 in YTDX3.
-- This resulted in the misstatement of
-- Our due diligence analysis is based on the audited accounts for FY[X]0-FY[X]2, and management accounts for YTD23 period (XM2X for
-- [ENTITY 1] and [ENTITY 3], and 9MX3 for [ENTITY 2]). As the YTDX3 management accounts for [ENTITY 1] and [ENTITY 2] may not represent the actual performance of the period (especially revenue and staff costs), we have prepared an indicative pro forma financial performance of YTDX3, which is derived from supporting documents and certain assumptions. Please see reconciliation details in Appendix
+- [ENTITY 3] generally closes its accounts on a monthly basis with the closing process taking approximately 10-15 days, while [ENTITY 1] and [ENTITY 2] close their accounts on an annual basis with the closing process taking
+- We understand that some transactions of [ENTITY 1] and [ENTITY 2] are recognised and adjusted only at the year-end for audited financial statements purposes (e.g., accrued expenses, deferred revenue, interest receivables and payables, and understated expense for some accounts). In addition, the schools recorded staff expenses incurred only during DD MM 20X3-DD MM 20X3 in YTDX3.
+- This resulted in the misstatement of Our due diligence analysis is based on the audited accounts for FY[X]0-FY[X]2, and management accounts for YTD23 period (XM2X for [ENTITY 1] and [ENTITY 3], and 9MX3 for [ENTITY 2]). As the YTDX3 management accounts for [ENTITY 1] and [ENTITY 2] may not represent the actual performance of the period (especially revenue and staff costs), we have prepared an indicative pro forma financial performance of YTDX3, which is derived from supporting documents and certain assumptions. Please see reconciliation details in Appendix
 - Revenue/ Unearned revenue
 - [ENTITY 1] and [ENTITY 2] record revenue (i.e., tuition and nontuition fees) when the schools issue invoices to the parents. The schools normally adjust the unearned revenue only at the year end resulting in the overstatement of monthly revenue, and the understatement of monthly deferred revenue balance.
 - We obtained the detail of unearned revenue as of DD MM 20X3 and general ledger for YTDX3 period to analyze and estimate the indicative revenue and unearned revenue balance.
@@ -726,24 +671,18 @@
 - After recovery from the pandemic, revenue from school service in FY[X]3 has improved as a result of the slight increase in student headcount and resume of onsite classes.
 - Management accounts of XM2X do not represent the actual performance as [ENTITY 1] normally adjusts and records certain balance only at the year end, resulting in the misstatement of various accounts (revenue, staff costs, depreciation, and interest income/expense). We have presented a Proforma financial performance of XM2X, which is derived from supporting documents and certain assumptions for comparison purposes. Please see further detail in Appendix 1.
 - Cost of school services The majority of cost of school services is staff cost, accounting for more than 65% of the total during the analysed periods.
-- Although revenue in FY[X]2 decreased from FY[X]1, %GP in FY[X]2 increased due to the decrease in meal fee caused by classes being delivered online, with students being at home during COVID-19 in FY[X]2. For FY[X]3, %GP slight decreased by 2.0 percentage point from
-- FY[X]2 was caused by a higher teacher cost, despite a decrease in teacher headcount.
+- Although revenue in FY[X]2 decreased from FY[X]1, %GP in FY[X]2 increased due to the decrease in meal fee caused by classes being delivered online, with students being at home during COVID-19 in FY[X]2. For FY[X]3, %GP slight decreased by 2.0 percentage point from FY[X]2 was caused by a higher teacher cost, despite a decrease in teacher headcount.
 - Other cost of school services includes meal fee, wages for external teacher (ECA), teaching material expenses, excursions expenses, student material expenses, depreciation and amortization, and others.
 - During the analysed periods, the standard tuition fee rate increased by approximately 3.6% on average per year.
-- An increase in tuition fee revenue from FY[X]0 to FY[X]1 of 7.5% was due mainly to an increase in the number of students and the rise in tuition fee rate of approximately 4.8%. Despite a slight decline in the number of students in
-- FY[X]2, [ENTITY 1] was able to generate higher revenue compared to
-- FY[X]1 as a result of a 2.4% increase in tuition fee rate on average. For
-- FY[X]3, annualised tuition fee revenue rose from FY[X]2 as a result of a higher number of students and a 3.5% increase in tuition fee rate.
-- During the COVID-19 pandemic, [ENTITY 1] offered a 25% refund on meal fee during Term 2 in FY[X]1 and 100% refund during Term 1 in FY[X]2, causing a significant decline in meal fee revenue for these 2 periods. For
-- Term 1 in FY[X]3, there was also a discount given to some students whose classes were held online after their classmates got infected with COVID-19.
+- An increase in tuition fee revenue from FY[X]0 to FY[X]1 of 7.5% was due mainly to an increase in the number of students and the rise in tuition fee rate of approximately 4.8%. Despite a slight decline in the number of students in FY[X]2, [ENTITY 1] was able to generate higher revenue compared to FY[X]1 as a result of a 2.4% increase in tuition fee rate on average. For FY[X]3, annualised tuition fee revenue rose from FY[X]2 as a result of a higher number of students and a 3.5% increase in tuition fee rate.
+- During the COVID-19 pandemic, [ENTITY 1] offered a 25% refund on meal fee during Term 2 in FY[X]1 and 100% refund during Term 1 in FY[X]2, causing a significant decline in meal fee revenue for these 2 periods. For Term 1 in FY[X]3, there was also a discount given to some students whose classes were held online after their classmates got infected with COVID-19.
 - Discount provided in this period was prorated according to the number of days they studied online from home.
 - Capital levy refers to development and maintenance fee. [ENTITY 1] collected it with a standard fee of USD 10,000 per year per student from
 - Discount
 - Discount policy of [ENTITY 1] is summarised below. Please see discount breakdown in
 - Revenue breakdown (cont’d)
 - SSS fee refers to special student services for additional support to students who require language and educational training support. The impact of COVID-19 mainly caused revenue from this service to decline in FY[X]1 and FY[X]2.
-- ECA refers to extracurricular activities such as tennis, golf, taekwondo and football classes, etc. Many classes were cancelled during the COVID-19 period, causing a low level of revenue in FY[X]1 and FY[X]2. More classes were opened after the end of
-- COVID-19 in FY[X]3, which resulted in an improvement in revenue during the period.
+- ECA refers to extracurricular activities such as tennis, golf, taekwondo and football classes, etc. Many classes were cancelled during the COVID-19 period, causing a low level of revenue in FY[X]1 and FY[X]2. More classes were opened after the end of COVID-19 in FY[X]3, which resulted in an improvement in revenue during the period.
 - A large drop in admission fee in FY[X]2 was due to a decrease in the number of new students and more discounts offered, which vary between periods depending on the marketing promotion.
 - Other fees mainly relates to boarding fee, textbook sales, summer school and uniform sales.
 - Pricing strategy
@@ -751,8 +690,7 @@
 - Refund policy
 - [ENTITY 1] recorded refunds either by reversing the amount with revenue or recording it as a discount. Please see refund policy in Appendix 4. The high refund during FY[X]1 and FY[X]2 was mainly from meal fee which [ENTITY 1] returned to students as a result of COVID-19 impact.
 - Tuition fee revenue represents the majority of the revenue of [ENTITY 1] from FY[X]0 to FY[X]3, accounting for over 75.0%.
-- Based on revenue bridge for FY[X]0-FY[X]2, revenue in FY[X]1 increased from FY[X]0 due to the increase in tuition fee per head. While FY[X]2 revenue decreased from FY[X]1 mainly driven by the decrease in non-tuition fee revenue from the
-- Cost of school services The majority of cost of school services is teaching staff cost, accounting for more than 51.6% of the total during the analysed periods.
+- Based on revenue bridge for FY[X]0-FY[X]2, revenue in FY[X]1 increased from FY[X]0 due to the increase in tuition fee per head. While FY[X]2 revenue decreased from FY[X]1 mainly driven by the decrease in non-tuition fee revenue from the Cost of school services The majority of cost of school services is teaching staff cost, accounting for more than 51.6% of the total during the analysed periods.
 - Although cost of school services per month decreased in FY[X]2 (USD 3.7 million) from FY[X]0 (USD 4.1 million), mainly due to manpower reduction during the COVID-19 situation, % GP increased from FY[X]0 – FY[X]2, caused by a decline in teaching staff cost - a major fixed cost.
 - An increase in %GP from FY[X]2 – FY[X]3 was mainly attributed to lower discounts given to students after COVID-19 recovery.
 - 20X1, 20X2 and 30 [MONTH] 20X3, students headcount,
@@ -771,12 +709,10 @@
 - Evaluate opportunities to optimize faculty staffing model and implement stricter (and lower) pay grades
 - Complexity
 - Salary packages must be aligned across teachers and grades and requires careful change management.
-- On average, [ENTITY 3] pays the highest salaries to teachers when compared to [ENTITY 1] and
-- [ENTITY 2] with the widest range of salaries since it is an international school and the others are bilingual schools.
+- On average, [ENTITY 3] pays the highest salaries to teachers when compared to [ENTITY 1] and [ENTITY 2] with the widest range of salaries since it is an international school and the others are bilingual schools.
 - This issue can be observed in the Secondary level Staff Type 1 teachers of [ENTITY 3] with the minimum salary at USD 20k and the maximum at USD198k.
 - Some outliers could be observed, considering the executive positions being grouped as teachers, they are removed from the graphs.
-- Since teachers are unlikely to accept the salary reduction, the best option for the implementation is
-- Next steps to validate the opportunity
+- Since teachers are unlikely to accept the salary reduction, the best option for the implementation is Next steps to validate the opportunity
 - Not provided
 - Overdraft
 - Social Security Fund
@@ -802,21 +738,16 @@
 - 14. Loan from related party solely comprises non-interest bearing loans from [SHAREHOLDER 1] for working capital purposes. We note that this loan does not bear any interest rate. There is no balance as at DD MM 20X3 as [ENTITY 1] already fully settled this loan to offset with share receivable from [SHAREHOLDER 1].
 - 15. Employee benefit obligations as at DD MM 20X3 is recorded based on Management’s estimation. This estimation is based on the amount of employees who are over 55 years old (retirement age of 65).
 - 16. Share capital increased from DD MM 20X3 compared to DD MM 20X2 due to [SHAREHOLDER 1]’s capital injection in XM2X.
-- 17. The fluctuation of retained earnings is from net profit incurred during the period and dividend payment (only in XM2X) . Dividend payment during XM2X was approved on 30 September 2022. The dividend amount is USD 4 per share (totaling USD 5.5 million). [ENTITY 1] paid a portion of the dividend in October 2022. As at DD MM 20X3, dividend payable outstanding is
-- According to Management, the negative balance of AR mainly came from the refund of tuition fee that has not been paid yet or that parents would like to use as credit for paying tuition fee in the future
+- 17. The fluctuation of retained earnings is from net profit incurred during the period and dividend payment (only in XM2X) . Dividend payment during XM2X was approved on 30 September 2022. The dividend amount is USD 4 per share (totaling USD 5.5 million). [ENTITY 1] paid a portion of the dividend in October 2022. As at DD MM 20X3, dividend payable outstanding is According to Management, the negative balance of AR mainly came from the refund of tuition fee that has not been paid yet or that parents would like to use as credit for paying tuition fee in the future
 - Trade and other receivables as at DD MM 20X3 mainly consist of interest receivable (66.9%) and trade receivables (30.7%). The interest receivables increased every year as related party has never paid interest to [ENTITY 1].
 - Comments on trade and other receivables
 - We have not been provided with the explanation.
 - For trade receivables, Management informed us that most of accounts receivable are in the range of 31-60 days as the invoices are usually sent to the parents during Feb to March. According to Management, [ENTITY 1] does not have accounting policy to record allowance for doubtful debt.
 - Trade and accounts receivable as at DD MM 20X3 increased from previous period mainly relating to an increase in student headcount and tuition fee. Trade receivable balance as at 31 May 2021 and DD MM 20X2 was lower than other periods despite higher total revenue than FY[X]020. Management informed us that the outstanding balance of trade receivables can vary depending on the timing of payments.
-- Interest receivables as at DD MM 20X3 consist of interest receivables from [ENTITY 2] with interest rates of MLR% and
-- MLR -1% p.a., [RELATED PARTY 1] with interest rate of 5.0%, and [ENTITY 1] xxxx with interest rate of 1.5% p.a.
-- Management informed us that there is no interest payment from all parties except for loan to [ENTITY 2] for the part that
-- [ENTITY 2] pays to [BANK 2] directly on behalf of [ENTITY 1]. [ENTITY 1] normally records interest receivables and interest revenue only at the year end. We’ve estimated, the interest receivable as at DD MM 20X3 is understated by
-- USD 3.5 million. Please refer to Appendix 3.
+- Interest receivables as at DD MM 20X3 consist of interest receivables from [ENTITY 2] with interest rates of MLR% and MLR -1% p.a., [RELATED PARTY 1] with interest rate of 5.0%, and [ENTITY 1] xxxx with interest rate of 1.5% p.a.
+- Management informed us that there is no interest payment from all parties except for loan to [ENTITY 2] for the part that [ENTITY 2] pays to [BANK 2] directly on behalf of [ENTITY 1]. [ENTITY 1] normally records interest receivables and interest revenue only at the year end. We’ve estimated, the interest receivable as at DD MM 20X3 is understated by USD 3.5 million. Please refer to Appendix 3.
 - Other receivables mainly represent receivable of other income that is not related to the core business such as refund from suppliers. Management informed us that there was a long outstanding balance over a year that amounted to USD 1.1 million. This has been outstanding since before June 20X9 but we have not been provided with the nature of this transaction.
-- The balances do not change as
-- [ENTITY 1] normally records interest receivables only at the year end.
+- The balances do not change as [ENTITY 1] normally records interest receivables only at the year end.
 - As at DD MM 20X3 [ENTITY 1] reported NBV of fixed assets totaling USD 277.8 million, mainly comprising: buildings and building improvements (65.6%) and land and land improvements (31.6%). All land and buildings are used as collateral in a loan with [BANK 2].
 - Comments on fixed assets
 - Overview
@@ -825,37 +756,31 @@
 - Teaching staff cost represents the majority of total cost, accounting for 51.6%% to 57.7% of total cost during FY[X]0 – FY[X]3. A decrease in % cost to total revenue by 32.0 percentage point from FY[X]0 – FY[X]3 was mainly driven by the decrease in staff cost from the manpower reduction during the COVID-19 pandemic.
 - Comments on key cost items
 - Teaching staff cost comprises salary and other benefits for Staff Type 1 and [REGION] teachers. A decline of its cost from FY[X]0 – FY[X]2 by 16.3% was primarily due to a manpower reduction during the COVID-19 pandemic, while an increase in FY[X]3 was attributed to a higher staff headcount, especially Staff Type 1 staff. Management informed us that they have no plan to recruit new staff to replace terminated staff due to cost-saving policy, and that the current staff level is sufficient for the current operation.
-- Depreciation and amortization is recorded only at the year end, resulting in no balance in
-- Meal fee refers to service fee paid to CPF, which is calculated based on number of students.
+- Depreciation and amortization is recorded only at the year end, resulting in no balance in Meal fee refers to service fee paid to CPF, which is calculated based on number of students.
 - Meal fee declined in FY[X]1 and FY[X]2 during the COVID-19 pandemic with classes held online, and increased in FY[X]3 due to students being back on site, and a rise in headcount.
 - According to Management, although the school provided online learning sessions in XM2X and FY[X]2 periods, teachers and other administrative staff were required to work at [ENTITY 2]. Utilities cost in FY[X]1 and FY[X]2 increased from FY[X]0 due to an increase in Ft rate from Provincial Electricity Authority (PEA).
 - Wages for external teacher (ECA) expenses are dependent on a number of extra curricular classes. During COVID-19 pandemic, some activities were cancelled, resulting in a decline by 83.5% from FY[X]0 to FY[X]2. However, after the COVID-19 recovery, a number of students enrolled in ECA class in FY[X]3 was not as much when compared to FY[X]0. This resulted in a low balance in FY[X]3.
 - [ENTITY 2] allocates related expenses for [ENTITY 1] CE’s students under ICO fee which mainly comprise teacher cost. The balances in FY[X]0 and FY[X]1 showed positive balances as accounting staff recorded some portion of related revenue from [ENTITY 1] CE students under cost of services.
-- Non-teaching staff cost was allocated from 30% of total staff costs based on the suggestion from the external auditor. After
-- COVID-19 recovery, staff headcount had increased resulting in higher staff cost in annualised FY[X]3.
+- Non-teaching staff cost was allocated from 30% of total staff costs based on the suggestion from the external auditor. After COVID-19 recovery, staff headcount had increased resulting in higher staff cost in annualised FY[X]3.
 - Miscellaneous expense relates to personal expense of Ms.
-- [DIRECTOR 6] . (Please refers to Key finding on Page19 and
-- Cash and cash equivalents represent petty cash and cash at bank, totaling USD 37.7 million, of which USD 852,000 is restricted cash for bank guarantee of electricity usage.
+- [DIRECTOR 6] . (Please refers to Key finding on Page19 and Cash and cash equivalents represent petty cash and cash at bank, totaling USD 37.7 million, of which USD 852,000 is restricted cash for bank guarantee of electricity usage.
 - Management informed us that the bank reconciliation is performed on a monthly basis depending on the accounting staff availability. The balance as at 30 [MONTH] 20X3 decreased from 31 [MONTH] 20X2 due to a repayment of the loan from [BANK 1] of USD 24 million.
 - Trade and other receivables as at 30 [MONTH] 20X3 show negative balance due to the credit note of tuition fee and cash paid in advance by parents during [MONTH] that has not been invoiced. Invoices for Term 1 for the next academic year will be issued in [MONTH], and the credit balance will be used to offset the invoices to be issued.
 - Inventory as at 30 [MONTH] 20X3 consists of textbooks (57.2%) and uniforms 42.8%. The inventory balance did not change from 31 [MONTH] 20X2 because [ENTITY 2] normally adjusts the inventory and cost of sales on a yearly basis. The physical count will be performed at the end of the year and the inventory purchased during the period will be recorded as expenses and will be adjusted at the end of period. Management informed us that there were outdated textbooks, as [ENTITY 2] changes textbook every year. The outdated textbooks will be sold at a discount. [ENTITY 2] does not have an accounting policy to record allowance for inventory obsolescence.
 - Short-term loans to related party represents loans to a shareholder (Ms. [DIRECTOR 6] ).
 - At the beginning of the school operation, [ENTITY 2] provided an advance to Ms.
 - [DIRECTOR 6]to pay the construction companies and suppliers. However, Ms. [DIRECTOR 6] could not provide any supporting documents (such as receipts and invoices). [ENTITY 2] therefore recorded such fixed assets cost as a loan to shareholder.
-- Other current assets as at 30 [MONTH] 20X3 mainly comprise advances (80.9%), and
-- WHT receivable (17.7%). The balance of advances as at 30 [MONTH] 20X3 increased from 31 [MONTH] 20X2 from advances paid for construction of a football pitch and a swimming pool amounting to USD 3.5 million and USD 3.7 million, respectively.
+- Other current assets as at 30 [MONTH] 20X3 mainly comprise advances (80.9%), and WHT receivable (17.7%). The balance of advances as at 30 [MONTH] 20X3 increased from 31 [MONTH] 20X2 from advances paid for construction of a football pitch and a swimming pool amounting to USD 3.5 million and USD 3.7 million, respectively.
 - Long-term investment as at 30 [MONTH] 20X3 solely relates to investment in [ENTITY 1] CE, where [ENTITY 2] holds 51% of total shares (765 shares at par value 100 USD).
 - Other shareholders of [ENTITY 1] are Chinese investors from the “[GROUP NAME]” educational group in [COUNTRY 1]). The objective of this investment is to bring students from [COUNTRY 1] to study at [ENTITY 2]. [ENTITY 1] CE pays [ENTITY 2] service and dormitory rental fees.
 - Fixed assets as at 30 [MONTH] 20X3 reported NBV totaling USD 328 million, mainly consisting of buildings and building improvements (79.6%) and land and land improvements (18.1%). [ENTITY 2] has not recorded depreciation expenses for XM2X as accounting staff normally record depreciation only at the year end.
 - Other non-current assets represent a deposit paid for the construction of dormitories.
 - The construction is already completed. However, the supplier has not yet returned such deposit to [ENTITY 2].
 - Bank overdraft as at 31 [MONTH] 20X0 relates to bank overdraft from [BANK 1] with interest rate of 12.1% p.a. The balance has already been paid, and there was no outstanding balance as at 30 [MONTH] 20X3.
-- 10. Trade and other payables as at 30 [MONTH] 20X3 mainly comprise payables to
-- [ENTITY 1]. As [ENTITY 2] does not have its own corporate credit card, [ENTITY 1] pays certain expenses on behalf of [ENTITY 2].
+- 10. Trade and other payables as at 30 [MONTH] 20X3 mainly comprise payables to [ENTITY 1]. As [ENTITY 2] does not have its own corporate credit card, [ENTITY 1] pays certain expenses on behalf of [ENTITY 2].
 - 11. Unearned revenue represents tuition fee and non-tuition fee (such as admission fee and meal fee based on invoices issued in the period that relates to the future fiscal years.
 - Management informed us that unearned revenue balance is adjusted on an annual basis at the year end. All invoices issued are recorded as revenue in the year, before the accounting staff provides adjustment at the year end, for the portion that relates to the next fiscal year and treat as unearned revenue. The balance as at 31 [MONTH] 20X0 is significantly low comparing to other analysed periods because the invoices for Term 1 were issued in [MONTH], while the invoices for other periods were issued in [MONTH].
-- 12. Loan from financial institution as at 30 [MONTH] 20X3 solely consists of loans from
-- [BANK 1] with interest rate of MLR% for the purposes of building construction.
+- 12. Loan from financial institution as at 30 [MONTH] 20X3 solely consists of loans from [BANK 1] with interest rate of MLR% for the purposes of building construction.
 - 13. Other current liabilities as at 30 [MONTH] 20X3 largely consist of accrued interest expenses (83.7%) and other accrued expenses. According to Management, the positive balance was due to incorrect journal entry made by accounting staff, where they recorded the Feb-Apr 20X3 salary expense to the accrual caption instead of salary expenses in the
 - P&L.
 - 14. Loans from related parties relate to long-term loans from [ENTITY 1] for capital
@@ -863,8 +788,7 @@
 - Working period
 - Number of entitled days
 - Less than 120 days 120 days but less than 1 year 1 year but less than 3 years 3 years but less than 6 years 6 years but less than 10 years 10 years but less than 20 years 20 years or more
-- High balance of other assets as at 31 [MONTH] 20X1 compared to other periods mainly came from prepaid cheque of USD 12.4 million. Management informed us that
-- [ENTITY 2] made a repayment of loan and interest expenses twice and received a refund from [BANK 1] during August 20X1. Thus, they recorded this amount as prepaid cheque.
+- High balance of other assets as at 31 [MONTH] 20X1 compared to other periods mainly came from prepaid cheque of USD 12.4 million. Management informed us that [ENTITY 2] made a repayment of loan and interest expenses twice and received a refund from [BANK 1] during August 20X1. Thus, they recorded this amount as prepaid cheque.
 - Comments on other assets
 - WHT receivable balance includes long outstanding balance of WHT receivable that [ENTITY 2] has not requested a refund for from the Revenue Department. According to Management, there is no plan to obtain refund request.
 - Prepaid cheque as at 31 [MONTH] 20X1 consists of a cheque received from [BANK 1] because [ENTITY 2] paid for the interest expenses and loan to [BANK 1] twice. After [ENTITY 2] informed [BANK 1], the refund was made during August 20X1.
@@ -872,31 +796,26 @@
 - Accrued interest expenses represent the accrued interest expenses from long-term loan from [ENTITY 1] with the interest rate of MLR% p.a. Management informed us that accrued interest expenses will be adjusted annually and the balance as at 30 [MONTH] 20X3 was decreased from 31 [MONTH] 20X2 from the payment of interest expenses to [BANK 2] on behalf of [ENTITY 1]. The estimated additional amount of accrued interest expenses that should be recorded is approximately USD 6.3 million.
 - Accrued expenses normally comprise expenses that have not yet been invoiced such as student meal, transportation expenses, rental expenses and internet and telephone expenses. The balance as at 30 [MONTH] 20X3 decreased significantly because the accrued expenses will only be adjusted at the end of the period.
 - Salary payables related accounts consist of accrued salary expenses, WHT payables, SSF payables, PVD payables and teacher fund payables. The balance as at 30 [MONTH] 20X3 was positive because [ENTITY 2] recorded staff cost as a debit to accrued salary expenses account instead of staff expense in the P&L. According to Management, WHT payables, SSF payables, PVD payables and teacher fund payables will be paid within two weeks in the following months. We summarised the indicative balance of salary payables related accounts based
-- Investment in subsidiary as at DD MM 20[X]3, is mainly funds invested in [SUBSIDIARY 1] (to finance land purchase), and funds invested in [SUBSIDIARY 2] (fully impaired due to bankruptcy in 20[X]1). As at DD MM 20[X]3, [ENTITY 3] holds 78.5% of the total shares of
-- [SUBSIDIARY 1]. The following table represents the current investment in subsidiaries:
+- Investment in subsidiary as at DD MM 20[X]3, is mainly funds invested in [SUBSIDIARY 1] (to finance land purchase), and funds invested in [SUBSIDIARY 2] (fully impaired due to bankruptcy in 20[X]1). As at DD MM 20[X]3, [ENTITY 3] holds 78.5% of the total shares of [SUBSIDIARY 1]. The following table represents the current investment in subsidiaries:
 - Long-term investment as at DD MM 20[X]3 relates to investment in [ENTITY 1]. [ENTITY 3] owns 5% shareholding in [ENTITY 1].
 - Property, plant, and equipment as at DD MM 20[X]3 mainly comprise; buildings and building improvements (48.51%), land and land improvements (28.93%), and furniture, fixture, and school supplies (12.94%). The year-on-year decreases are mainly a result of depreciation charges.
 - Other non-current assets represents restricted cash for letter of guarantee made for electricity expenses (composing 94.5% of the account), and deposits paid such as deposits with True Visions (composing 5.5% of the account). The guarantee for electricity expense is made with [BANK 2].
 - Cash and cash equivalents as at DD MM 20[X]3 was USD 208.0 million. The balance was significantly increased from net operating profit primarily due to a rise in average student headcount from 712 to 950 from prior period. As at DD MM 20[X]3 the majority of total assets is property, plant, and equipment representing 59.1% of total assets
 - Unearned revenue as at DD MM 20[X]3 decreased by USD 120.6 million mainly due to an amortization of term 1 and term 2 AY[X]2/[X]3. The unearned revenue is expected to increase in May 20[X]3 as [ENTITY 3] will issue the invoice to collect tuition fee during MM 20[X]3.
-- Bank overdraft and short-term loan from financial institutions as at DD MM 20[X]0 and
-- DD MM 20[X]1 consist of bank overdraft from [BANK 4] (USD 29.8 million) with interest rate of
-- MOR and short-term loan from [BANK 4] (USD 19.8 million) with interest rate of 2% p.a.
+- Bank overdraft and short-term loan from financial institutions as at DD MM 20[X]0 and DD MM 20[X]1 consist of bank overdraft from [BANK 4] (USD 29.8 million) with interest rate of MOR and short-term loan from [BANK 4] (USD 19.8 million) with interest rate of 2% p.a.
 - [ENTITY 3] already repaid all OD and short-term loans resulted in Nil balance as at DD MM 10. Trade and other payables as at DD MM 20[X]3 mainly comprise accrued pension (40.4%), advances (35.4%) and trade payables (9%). The increased balance from DD MM 20[X]1 position was due to less extra curricular activities and trip during FY[X]1; such as educational trip to Singapore, residential trip and etc., due to the COVID-19 restrictions.
 - 11. Unearned revenue represents the amount of tuition fee and non-tuition fee based on invoices issued in the period that relates to the future fiscal years. The balance as at DD MM 20[X]3 was lower than as at DD MM 20[X]2 as the invoices are normally issued in May of each year.
 - The balance as at DD MM 20[X]1 was lower than other analysed periods, resulted from a decrease in average student headcount from 829 to 741 during FY[X]0 to FY[X]1.
 - 12. Long-term loan from financial institutions as at DD MM 20[X]3 mainly represents loans from [BANK 3], which [ENTITY 3] had refinanced a loan in March 20[X]2 due to the inability to repay prior loan facility. [ENTITY 3]’s land and building thereon located in the school campus (15 title deeds), [ENTITY 3]’s land, and houses for staff (INDY II), and BIS’s land (12 title deeds) are pledged against this loan. In addition, we note that there are restrictions on repayment of related party loan, lending to related party, and dividend payment.
 - 13. Other non-current liabilities solely represent current portion of deposits collected from the students, who are in Year 13. The decrease as at DD MM 20[X]1 and 20[X]2 from DD MM 20[X]0 was due to the decrease in student headcount.
-- 14. Short-term loans from related parties as at DD MM 20[X]3 mainly consists of loan from
-- [SHAREHOLDER 1] of USD 25.0 million, and loan from [SUBSIDIARY 1] of USD 18.0 million.
+- 14. Short-term loans from related parties as at DD MM 20[X]3 mainly consists of loan from [SHAREHOLDER 1] of USD 25.0 million, and loan from [SUBSIDIARY 1] of USD 18.0 million.
 - Both loans bear interest rate of 2.5% p.a. [ENTITY 3] has never paid accrued interest expenses to [SHAREHOLDER 1] and [SUBSIDIARY 1], and does not have any plan to repay in the near future, according to Management.
 - 15. Employee benefit obligations as at DD MM 20[X]3 is recorded based on Management’s estimation. This estimation is based on the amount of permanent contract employees who are mainly [REGION] teachers and [REGION] administrative employees. The fixed-term contract employees such as Staff Type 1 teachers are not be included in the EBO calculation. The balance as at DD MM 20[X]2 does not change from DD MM 20[X]1 as there is no change to number of permanent contract employees. The decrease in EBO as at DD MM 20[X]3 was due to the actual payment to retired employees.
 - 16. Share capital can be broken down into the following:
 - Share capital mainly consists of shares purchased by [SHAREHOLDER 3] (73.81%) of USD 111 million, however USD 40 million is unpaid. This amount will be paid if [ENTITY 3] experiences liquidity problems and is unable to repay their debt obligations. The remaining share capital (USD 40.3 million) is held by [SHAREHOLDER 3].
 - Trade receivables as at DD MM 20[X]3 significantly decreased from DD MM 20[X]2 because the invoices for Term 1 AY[X]3/[X]4 will be issued in May and the tuition fees for Term 3 AY[X]2/[X]3 were due in April resulting in a decline in outstanding AR at the April period end. The balance of trade receivables as at DD MM 20[X]1 was USD 129.6 million, decreasing by USD 5.6 million from a decrease in average student headcount from 793 to 714.
 - Trade and other receivables
-- Trade receivables represent tuition and non tuition fee receivables from parents. The balances as at DD MM 20[X]0 and DD MM 20[X]1 were lower than the balance as at DD MM 20[X]2 due to the COVID-19 impact, which attracted a lower average student headcount and revenue. In addition, the combined effect of tuition fees for
-- Term 3 AY[X]2/[X]3 being due during MM’[X]3, and [ENTITY 3] issuing invoices and record as trade receivables in MM’[X]3 for the next academic year, has caused the balance as at DD MM 20[X]3 to be significantly low.
+- Trade receivables represent tuition and non tuition fee receivables from parents. The balances as at DD MM 20[X]0 and DD MM 20[X]1 were lower than the balance as at DD MM 20[X]2 due to the COVID-19 impact, which attracted a lower average student headcount and revenue. In addition, the combined effect of tuition fees for Term 3 AY[X]2/[X]3 being due during MM’[X]3, and [ENTITY 3] issuing invoices and record as trade receivables in MM’[X]3 for the next academic year, has caused the balance as at DD MM 20[X]3 to be significantly low.
 - Allowance for doubtful debt is calculated by grouping all outstanding receivables by academic year that tuition fee was due, net by payment from unidentified parents. Then, [ENTITY 3] applied a specific percentage to each group (ranging from 20% -100%). [ENTITY 3] calculates allowance for doubtful debt on an annual basis.
 - Other receivables balance as at DD MM 20[X]3 mainly represents payment made on behalf of British
 - International Samui (USD 1.95 million).
@@ -921,12 +840,10 @@
 - Lands mainly comprise land title deed no. 39143 (105 [UNITS]1 [UNITS] 84.7 [UNITS]), no. 39146 (12 [UNITS]2
 - [UNITS] 92.2 [UNITS]), and 15 land deeds comprising INDY II (1 [UNITS]3 [UNITS] 17.8 [UNITS]).
 - Buildings consists of (1) 15 houses for staff (named INDY II); and (2) building for the school’s operation.
-- Furniture, fixtures, and school supplies mainly consist of tables and chairs used in the classroom along with other items such as school textbooks. The costs for the assets have decreased greatly when comparing between the
-- Future CAPEX mainly comprises maintenance and expansion plan, with most of the plan during the COVID-19 pandemic was delayed due to liquidity issue.
+- Furniture, fixtures, and school supplies mainly consist of tables and chairs used in the classroom along with other items such as school textbooks. The costs for the assets have decreased greatly when comparing between the Future CAPEX mainly comprises maintenance and expansion plan, with most of the plan during the COVID-19 pandemic was delayed due to liquidity issue.
 - Future capital expenditure (CAPEX) The key future CAPEX of [ENTITY 3] are summarised below:
 - [ENTITY 3] is currently constructing a covered football pitch (with total budget of USD 28.0 million). Management expect that the construction will be completed in August 20[X]3.
-- The innovation centre is scheduled for construction in July 20[X]3 and will be completed by
-- August 20[X]4. Currently, only the purchase order for the construction has been issued.
+- The innovation centre is scheduled for construction in July 20[X]3 and will be completed by August 20[X]4. Currently, only the purchase order for the construction has been issued.
 - The tennis court covering project and the new medical centre building project may be postponed from AY [X]3/[X]4 to AY [X]4/[X]5, according to Management.
 - The majority of other projects will start in MM 20[X]3 and finish in MM 20[X]3, which is when the holidays are scheduled.
 - Management has confirmed that the major sources of funding for these projects are [ENTITY 3]’s cashflow. None of these items will be funded through loans or other external sources of finance.
@@ -945,15 +862,13 @@
 - We proposed to exclude fixed asset payable from working capital and treat as a debt-like item due to its debt-like nature.
 - We proposed to adjust dividend payable included in accrued other expenses out of working capital and include as a debt-like item.
 - Management informed us that the deposits collected from students will be returned when students decide to leave and inform the school at least a Term in advance. The refund amount will be deducted by any damages made by students, such as lost books. This amount represents the liability that [ENTITY 1] has towards its students if students graduate or depart. We proposed to adjust the deposits out of working capital and include as a debt-like item.
-- This represents interest receivables from loans to related parties ([ENTITY 2], Pimtara and
-- [ENTITY 1] [REGION]). This amount should be excluded from net working capital due to being a non-trade item in nature.
+- This represents interest receivables from loans to related parties ([ENTITY 2], Pimtara and [ENTITY 1] [REGION]). This amount should be excluded from net working capital due to being a non-trade item in nature.
 - As [ENTITY 1] has no allowance for doubtful debt policy, and we observe that there are long outstanding trade and other receivables balance of longer than one year. We propose to exclude long-outstanding receivables from net working capital due to being a noncurrent item in nature.
 - Based on the trial balance as at DD MM 20X3, [ENTITY 1] recorded staff costs (e.g., salary and wages) incurred up to MMMM YYYY. Management confirmed that [ENTITY 1] paid staff salary on time. The accounting staff did not record salary payment as staff expense but they recorded a debit to accrued expenses and a credit to cash as a contra accounts of accrued expenses (resulting in a positive amount of accrued expenses as at DD MM 20X3). Thus, we have estimated the Pro-forma adjustment of accrued salary expenses as follow:
 - According to Management, [ENTITY 1] has an accounting policy to record the deposit paid for PPE and assets under construction in deposits which were grouped as other current assets. The deposits for PPE should be grouped as non-current assets and is therefore excluded from net working capital.
 - 10. During 2018, [ENTITY 1] recorded a deposit paid for electricity-saving equipment amounting to USD 476,460. However, the equipment did not work as they expected.
 - [ENTITY 1] did not pay for the remaining amount and subsequently was taken to court by the vendor. The lawsuit finished during XM2X period, and [ENTITY 1] has already paid the penalty but has not adjusted the deposit paid balance. Management informed us that this amount will be written off at the end of the period so we have excluded this amount from net working capital.
-- 11. According to the [ENTITY 1]’s accounting policy, the physical count of inventory is performed annually, and the cost of sales will be recorded only at the year end, indicating that the inventory balance as at DD MM 20X3 is overstated. Please refer to QOE 12. Management informed us that [ENTITY 2] does not have a corporate card, so when
-- [ENTITY 2] needs to pay school-related expenses such as Facebook ads or to purchase goods via online shopping, [ENTITY 1] will make a payment on behalf of [ENTITY 2].
+- 11. According to the [ENTITY 1]’s accounting policy, the physical count of inventory is performed annually, and the cost of sales will be recorded only at the year end, indicating that the inventory balance as at DD MM 20X3 is overstated. Please refer to QOE 12. Management informed us that [ENTITY 2] does not have a corporate card, so when [ENTITY 2] needs to pay school-related expenses such as Facebook ads or to purchase goods via online shopping, [ENTITY 1] will make a payment on behalf of [ENTITY 2].
 - Thus, this amount should be excluded from net working capital due to this being unrelated to [ENTITY 1]’s operation. However, we were not provided with the advance balance recorded in cash advance of [ENTITY 1]’s accounts. In addition, based on the details of long outstanding receivable, there were balances related to [ENTITY 2] amounting to USD 800,492. We have therefore proposed the adjustment based on the long outstanding receivable related to [ENTITY 2] and the amount shown in [ENTITY 2]’s accounts.
 - 13. According to Management, withholding tax was mainly derived from interest income. We
 - Management did not have a plan to make a refund, and this can be considered as nontrade in nature.
@@ -962,8 +877,7 @@
 - We’ve proposed to exclude the non-current portion of unearned revenue from working capital as it relates to the service to be provided in more than 12 months. In the non-current balance, for the portion that the school has already received cash in advance for, we have treated this as a debt-like item as this represents the liability and obligation that the School has towards its students, and that while cash collected may have already been used by the school for working capital purpose, there's a risk of returning this cash, if students request for the refund in accordance with the school refund policy.
 - Please note that the adjusted net working capital does not represent a complete list of potential adjustments. Readers of this report should be aware that there are likely to be additional factors affecting reported net working capital of the business.
 - There is no authoritative literature or common standard with respect to the identification of items which may form part of ‘debt’ or ‘net debt’, and the decision as to what items should be included or excluded is highly judgmental. We understand that You have not finalized on the treatment of unearned revenue. You should discuss with the Seller on the final treatment of unearned revenue as this may have an impact to your Enterprise-Equity value bridge.
-- Management informed that during FY[X]1, interest expenses and loan repayment to
-- [BANK 1] were deducted twice. After [ENTITY 2] informed [BANK 1], the refund was made to bank accounts in MM 20X1, so [ENTITY 2] recorded this amount as prepaid cheque, which we have adjusted out of working capital.
+- Management informed that during FY[X]1, interest expenses and loan repayment to [BANK 1] were deducted twice. After [ENTITY 2] informed [BANK 1], the refund was made to bank accounts in MM 20X1, so [ENTITY 2] recorded this amount as prepaid cheque, which we have adjusted out of working capital.
 - We proposed to adjust accrued interest expenses from net working capital due to its debtlike nature.
 - Based on the information provided by Management, advances received as at DD MM 20X1 and DD MM 20X3 from [ENTITY 1] also included a loan from [ENTITY 1] amounting
 - Potential adjustments This represents construction and the purchase of fixed assets. We propose to exclude this deposit from net working capital due to its CAPEX-related nature.
@@ -971,8 +885,7 @@
 - [ENTITY 2] should have recorded a debit to staff expense and a credit to accrued expenses.
 - Thus, we have estimated the Pro-forma adjustment of accrued salary expenses as follows:
 - 10. Management informed us that there was a receivable from rental and service agreement provided to [ENTITY 1] CE that was not recorded in trade and other receivables. Please refer to QoE Adj. No.6.
-- 11. According to Management, withholding tax was mainly derived from transactions with
-- [ENTITY 1] CE. We have proposed to exclude the withholding tax assets from net working capital because Management did not have a plan to make a refund.
+- 11. According to Management, withholding tax was mainly derived from transactions with [ENTITY 1] CE. We have proposed to exclude the withholding tax assets from net working capital because Management did not have a plan to make a refund.
 - 12. According to [ENTITY 2]’s accounting policy, the physical count of inventory is performed annually. The additional purchased inventory will be recorded in the cost of sales, and the cost of sales will be adjusted for cost of goods sold only at year end. indicating that the inventory balance as at DD MM 20X3 was understated.
 - 13. Based on the information provided by Management, the prepaid expenses normally represents prepaid insurance for staff, students and buildings. The balance is usually treated as expense before being adjusted to record as prepayment asset on Balance sheet at the end of the period, indicating that the prepaid balance as at DD MM 20X3 was understated.
 - 14. As [ENTITY 2]’s XM2X accounts have not yet been audited and the accounting closing is usually performed at the year end, Management informed us that [ENTITY 2] may not completely record all accruals in the accounts as at DD MM 20X3 such as meal fee,
@@ -981,25 +894,18 @@
 - The balance of unearned revenue as at DD MM 20X2 significantly increased as the invoices for Term 2 AY[X]2/[X]3 were issued in MM and the due date was during MM 20X2
 - Adjusted net debt as at DD MM 20X3 mainly consisted of long-term loans from [BANK 1] and related parties, accrued interest expenses, and CAPEX. The adjusted net debt does not represent a complete list of potential adjustments. Readers of this report should be aware that there may be additional factors affecting reported net debt of the business.
 - General cash items This represents restriced cash against bank guarantee made with [BANK 1] of USD 852,000 for electricity usage.
-- General debt items This represents a loan from [BANK 1] for the purposes of building contruction. This loan currently bears an interest rate of
-- MLR -1.00% p.a. Based on detail of loans as at DD MM 20X3 provided by Management, loan from [BANK 1] is USD 200.5 million (USD 211.5 million per trial balance). We understand that the difference of USD 11 million was a repayment which
-- Management has recorded in Loan from related party instead.
+- General debt items This represents a loan from [BANK 1] for the purposes of building contruction. This loan currently bears an interest rate of MLR -1.00% p.a. Based on detail of loans as at DD MM 20X3 provided by Management, loan from [BANK 1] is USD 200.5 million (USD 211.5 million per trial balance). We understand that the difference of USD 11 million was a repayment which Management has recorded in Loan from related party instead.
 - Long-term loan from related party entirely consists of loans from [ENTITY 1] for the purposes of working capital and for the purposes of building construction. The portion borrowed for the purposes of working capital bears an interest rate of MLR% p.a., while the portion borrowed for the purposes of construction bears an interest rate of MLR -1.00% p.a. Based on detail of loans at DD MM 20X3 provided by Management, loan from [ENTITY 1] is USD 372.4 million (USD 362.2 million per trial balance).We have therefore proposed adjustment based on the number per the supporting details.
 - Debt and debt-like items
 - Please refer to NWC Adj. No.1. Non-current portion of unearned revenue used in our calculation is the portion of unearned revenue [ENTITY 1] has received cash for, as these represent potential service obligations in the future, the following table represents the breakdown of non-current portion of unearned revenue as follows:
 - This represents accrued interest expense from loans with related parties, which should be considerd as a debt-like item.
 - million relates to the loan that [ENTITY 1] borrowed from [BANK 1] and lent to [ENTITY 2].
 - Management informed us that [ENTITY 2] makes the repayment to the bank directly.
-- 15. Other non-current liabilities as at 30 [MONTH] 20X3 mainly represents deposits received from students (96.5%). This deposit will be repaid once the student has finished their education and graduated from Year 13. The increase from 31 [MONTH] 20X0 to 31
-- [MONTH] 20X2 is largely correlated to the headcount increase. In addition, the increase between 31 [MONTH] 20X2 and 30 [MONTH] 20X3 related to the increase in student headcount and the changes made to the deposit rate – from USD 15,000 to USD 55,000 for new students.
-- 16. Employee benefit obligations as at 30 [MONTH] 20X3 is recorded based on
-- Management’s estimation. This estimation is based on the number of employees who are over 55 years old (retirement age of 65 years). The increase from 31 [MONTH] 20X0 to 31
-- [MONTH] 20X1 was mainly caused by additional employees reaching the minimum age to be used in the estimation.
+- 15. Other non-current liabilities as at 30 [MONTH] 20X3 mainly represents deposits received from students (96.5%). This deposit will be repaid once the student has finished their education and graduated from Year 13. The increase from 31 [MONTH] 20X0 to 31 [MONTH] 20X2 is largely correlated to the headcount increase. In addition, the increase between 31 [MONTH] 20X2 and 30 [MONTH] 20X3 related to the increase in student headcount and the changes made to the deposit rate – from USD 15,000 to USD 55,000 for new students.
+- 16. Employee benefit obligations as at 30 [MONTH] 20X3 is recorded based on Management’s estimation. This estimation is based on the number of employees who are over 55 years old (retirement age of 65 years). The increase from 31 [MONTH] 20X0 to 31 [MONTH] 20X1 was mainly caused by additional employees reaching the minimum age to be used in the estimation.
 - Trade and other receivables balance as at 30 [MONTH] 20X3 shows a negative balance as it includes cash advance paid by parents and refund of tuition fee.
-- Trade receivables represent receivables of tuition fee and non-tuition fee. Management informed us that the balance as at 30 [MONTH] 20X3 showed as negative balance because of the refund of tuition fee and tuition fee received in advance from parents that were credited into this account. According to
-- Management, the outstanding refund will be used as credit for the next academic year. [ENTITY 2] does not have an accounting policy to set up allowance for doubtful debt. However,we note that in FY[X]2,
-- [ENTITY 2] wrote off accounts receivable with bad debt amounting to USD 1.5 million due to (i) a double recording revenue of summer camp of [COUNTRY 1] students recognised in FY19 totaling USD 1.0 million; and (ii) ELS income primarily recognised in FY[X]2. Management stated that ELS students refused to pay this balance as they did not take any classes due to COVID-19 pandemic or passing a standard of
-- English level requirement prior to starting such sessions.
+- Trade receivables represent receivables of tuition fee and non-tuition fee. Management informed us that the balance as at 30 [MONTH] 20X3 showed as negative balance because of the refund of tuition fee and tuition fee received in advance from parents that were credited into this account. According to Management, the outstanding refund will be used as credit for the next academic year. [ENTITY 2] does not have an accounting policy to set up allowance for doubtful debt. However,we note that in FY[X]2,
+- [ENTITY 2] wrote off accounts receivable with bad debt amounting to USD 1.5 million due to (i) a double recording revenue of summer camp of [COUNTRY 1] students recognised in FY19 totaling USD 1.0 million; and (ii) ELS income primarily recognised in FY[X]2. Management stated that ELS students refused to pay this balance as they did not take any classes due to COVID-19 pandemic or passing a standard of English level requirement prior to starting such sessions.
 - Based on the AR aging during FY[X]1, FY[X]2 and XM2X, the long outstanding AR over 1 year were USD 1.5 million, USD 222,822, and USD -212,819 respectively.
 - Trade receivables as at 31 [MONTH] 20X1 decreased from 31 [MONTH] 20X0 because most of the invoices for Term 1 AY21/22 were issued during [MONTH] 20X1, and became due during [MONTH] 20X1, causing a significant drop in the trade receivable balance. In addition the balance as at 31 [MONTH] 20X2 increased from 31 [MONTH] 20X1 by USD 1.3 million due to the recovery from COVID-19 situation leading to an increase in average student head count from 411 in FY[X]1 to 455 in FY[X]2.
 - Other receivables – related parties represents receivables from [ENTITY 1] CE, relating to service and rental fees charged by [ENTITY 2] to [ENTITY 1] CE.
@@ -1018,8 +924,7 @@
 - All 23 land deeds and buildings located thereon are pledged against the loan with [BANK 1].
 - Insurance coverage
 - According to the loan with [BANK 1], [ENTITY 2] is required to insure its building and building improvements.
-- Based on the latest industrial all risk insurance policy made with
-- [REGIONAL INSURANCE CO.] covering the period between 5 [MONTH] 20XX and 5 [MONTH] 20XX. All buildings including [ENTITY 2] schools and any land improvements such as football fields are insured under this agreement. This insurance has a total coverage of USD 400.0 million, which is higher than the net book value of land and land improvements and buildings and building improvements.
+- Based on the latest industrial all risk insurance policy made with [REGIONAL INSURANCE CO.] covering the period between 5 [MONTH] 20XX and 5 [MONTH] 20XX. All buildings including [ENTITY 2] schools and any land improvements such as football fields are insured under this agreement. This insurance has a total coverage of USD 400.0 million, which is higher than the net book value of land and land improvements and buildings and building improvements.
 - Future capital expenditure mainly comprises expansion of current facilities, such as a new STEM lab, purchases of computer equipment, and the construction of a new swimming pool. The purpose of the proposed projects is to improve the facilities of [ENTITY 2], which will lead to a competitive advantage in the future, according to
 - Management.
 - Comments on capital expenditure
@@ -1035,10 +940,8 @@
 - Currently, there are no cost overruns and every project is progressing according to schedule, according to Management.
 - Trade and other payables as at 30 [MONTH] 20X3 consist of advances from [ENTITY 1] (82.9%), other payables (14.7%) and trade payables (2.4%). The balance of advances from [ENTITY 1] as at 31 [MONTH] 20X0 was lower than other analysed periods as the balance was recorded in different accounts. The balance of advances from [ENTITY 1] as at 30 [MONTH] 20X3 did not change from 31 [MONTH] 20X2 because the balance will be recorded in other payables first before being adjusted to advances accounts at the end of the period.
 - Comments on trade and other payables
-- Trade payables normally consist of security expenses, telephone cost, office equipment and other school related expenses. [ENTITY 2] normally records expenses based on a cash basis. Management informed us that
-- [ENTITY 2] pays most of its payables by the end of each month. The balance of unpaid payables and unbilled invoices will be monitored and adjusted on a yearly basis indicating that the trade payables balance may be understated. This indicates that the balance as at 30 [MONTH] 20X3 may be understated.
-- Advances – [ENTITY 1] comprise expenses paid via [ENTITY 1]’s corporate card on behalf of [ENTITY 2] as
-- [ENTITY 2] does not have its own corporate card. Management informed us that the balance will be adjusted only at the end of the period.
+- Trade payables normally consist of security expenses, telephone cost, office equipment and other school related expenses. [ENTITY 2] normally records expenses based on a cash basis. Management informed us that [ENTITY 2] pays most of its payables by the end of each month. The balance of unpaid payables and unbilled invoices will be monitored and adjusted on a yearly basis indicating that the trade payables balance may be understated. This indicates that the balance as at 30 [MONTH] 20X3 may be understated.
+- Advances – [ENTITY 1] comprise expenses paid via [ENTITY 1]’s corporate card on behalf of [ENTITY 2] as [ENTITY 2] does not have its own corporate card. Management informed us that the balance will be adjusted only at the end of the period.
 - Advance from [ENTITY 1] incorrectly includes loan from [ENTITY 1] amounting The balance as at 31 [MONTH] 20X2 increased from 31 [MONTH] 20X1 mainly from the increase in average students headcount during FY[X]0-FY[X]1 from 344 to 411. The adjusted balance as at 30 [MONTH] 20X3 decreased from 31 [MONTH] 20X2 because of the timing of invoices, where the invoices for AYX3/X4 will be issued mostly during [MONTH].
 - Comments on unearned revenue
 - Management informed us that unearned revenue is recognised on a yearly basis. All invoices issued during the period will be recognised in revenue and subsequently adjusted by the portion that belongs to the future fiscal years at the end of the period. This indicates that the reported unearned revenue balance per the trial balance provided as at 30 [MONTH] 20X3 is understated (and revenue is overstated). We have estimated the unearned revenue based on information provided, and have proposed an additional adjustment to both quality of earning and net working capital analysis. The invoice will be issued around one month before the due date, and the due date is the end of each term as summarised in the following:
@@ -1050,23 +953,18 @@
 - According to Management, all unearned revenue was recorded as current liabilities which may also include non-current portion. Thus, we calculated indicative non-current portion
 - Please note that the adjusted net working capital does not represent a complete list of potential adjustments. Readers of this report should be aware that there are likely to be additional factors affecting reported net working capital of the business.
 - Potential adjustments (cont’d)
-- We propose to exclude accrued interest expenses of loan from [SUBSIDIARY 1] and
-- [SHAREHOLDER 1], which are recorded in other accrued expenses, from net working capital due to its debt-like nature.
+- We propose to exclude accrued interest expenses of loan from [SUBSIDIARY 1] and [SHAREHOLDER 1], which are recorded in other accrued expenses, from net working capital due to its debt-like nature.
 - Accrued pension represents the allocated budget for the contribution up to a maximum of 8.3% of gross investment made by Staff Type 1 staff. We propose to adjust accrued pension from working capital due to its debt-like nature.
 - We proposed to exclude fixed asset payable from working capital and treat it as a debt-like item.
 - However, the total amount of CAPEX payable has not been provided by Management.
 - Management informed us that the deposits collected from students will be returned when students decide to leave and inform the school at least a Term in advance. The refund amount will be less any damages, such as lost books. This amount represents the liability that [ENTITY 3] has towards its students if students graduate or depart. We proposed to adjust the deposits This represents deposits for construction and the purchase of fixed assets. We propose to exclude this deposit from net working capital due to its CAPEX-related nature.
-- According to Management, there were some expenses that [ENTITY 3] has paid for on behalf of
-- [SUBSIDIARY 1] ([SUBSIDIARY 1]), because [SUBSIDIARY 1] school has not started to operate yet. Thus, the amount was recorded as receivable to [ENTITY 3], we viewed that this should be excluded from net working capital due to it being non-trade in nature.
+- According to Management, there were some expenses that [ENTITY 3] has paid for on behalf of [SUBSIDIARY 1] ([SUBSIDIARY 1]), because [SUBSIDIARY 1] school has not started to operate yet. Thus, the amount was recorded as receivable to [ENTITY 3], we viewed that this should be excluded from net working capital due to it being non-trade in nature.
 - Please refer to QoE Adj. No.9.
-- Currently, [ENTITY 3] still have not paid for USD 3.5 million of share capital payment to
-- [ENTITY 1] (34.5% of total investment value). We consider this to be a non-working capital item in nature, and have treated as a debt-like.
-- 10. We proposed to exclude the withholding tax assets from net working capital because
-- Management did not plan to request a refund and we understand that the withholding tax outstanding prior to 20X9 has been written off in the XM2X period.
+- Currently, [ENTITY 3] still have not paid for USD 3.5 million of share capital payment to [ENTITY 1] (34.5% of total investment value). We consider this to be a non-working capital item in nature, and have treated as a debt-like.
+- 10. We proposed to exclude the withholding tax assets from net working capital because Management did not plan to request a refund and we understand that the withholding tax outstanding prior to 20X9 has been written off in the XM2X period.
 - 11. Based on the information provided by Management, there were long outstanding bonus payables due to [ENTITY 3]’s staff of Mr. NAME XXXX (current teacher) that was initially intended to net off with his children’s tuition fee payment. However, we understand that this bonus will now be settled as cash. We proposed to adjust the full bonus payable from net working capital due to being non-trade item in nature.
 - 12. [ENTITY 3] rented an advertising billboard at the xxxx airport for 6 months during [MONTH] [MONTH] 20X3. However, Management informed us that this will not recur after [MONTH] 20X3. We, therefore, proposed to remove this as it was one-off item.
-- After [ENTITY 3] received the refinancing loan from
-- [BANK X] in FY[X]2, together with an operating profit during
+- After [ENTITY 3] received the refinancing loan from [BANK X] in FY[X]2, together with an operating profit during
 - XM2X, we observe the increasing trend of cash level.
 - The liquidity has been improved which was in line with a significant increase in revenue million in FY[X]2 to
 - USD 564.7 million in
@@ -1109,9 +1007,7 @@
 - Average standard tuition fee growth rate
 - Student to teacher ratio (XM2X)
 - % Class utilization
-- Based on trial balance as at DD MM 20X3, we observe [ENTITY 1] and
-- [ENTITY 2] recorded staff costs (e.g., salary and wages) incurred up to
-- DD MM 20X3 only, with 3 months of staff cost not being recorded.
+- Based on trial balance as at DD MM 20X3, we observe [ENTITY 1] and [ENTITY 2] recorded staff costs (e.g., salary and wages) incurred up to DD MM 20X3 only, with 3 months of staff cost not being recorded.
 - Management confirmed that the Schools paid staff salary on time, On DD MM 20X3, a Chinese parent filed a lawsuit against [ENTITY 1] in relation to a claim for a school fee refund. The school was unable to request documents from the Ministry of Education used for applying for a student visa before the term started, and the student was unable to enter [REGION]. The plaintiff demanded
 - [ENTITY 1] pay for damages of USD 301,350 plus 5% annual interest from the date of filing the lawsuit.
 - On DD MM 20X3, an employee filed a lawsuit against the school for unfair dismissal. The plaintiff claimed that she performed her work according to tasks assigned and that she was being treated unfairly by Management. A warning letter regarding the plaintiff’s misconduct was issued in English but was not verbally explained. Eventually the school decided to terminate the employee’s contract and provided a severance pay of 180 days according to the [REGION] labor law. The amount of the damages sought is unquantifiable as it was not provided by
@@ -1126,12 +1022,10 @@
 - [REGION].
 - Deposit payables refer to deposits that the parents have made before the Term begins.
 - This deposit will be returned upon student graduation or when the student has left the school. However, the parents must notify the school 1 Term in advance in order to be eligible for the deposit return.
-- 10. This represents potential tax implication and exposure mainly arising from non-compliance of accounting and tax reporting and under-remitted payroll withholding tax. Please refer to
-- Due diligence report – Volume 2 Tax.
+- 10. This represents potential tax implication and exposure mainly arising from non-compliance of accounting and tax reporting and under-remitted payroll withholding tax. Please refer to Due diligence report – Volume 2 Tax.
 - [ENTITY 1] is currently experiencing 2 litigation claims as discussed in Key Finding 10 on Page 22. According to Management, [ENTITY 1]’s lawyers are confident that [ENTITY 1] will win these litigation cases, therefore [ENTITY 1] has not recorded any provisions related to the litigations.
 - Given the uncertain nature of the situation, we propose that COMPANY X should consider these legal cases when evaluating the protection clause under the SPA and purchase price.
-- Tuition fee revenue was relatively stable during the analyzed period while the non-tuition revenue (excluding capital levy) has decreased during FY[X]1 and FY[X]2 from
-- FY[X]0 due to the COVID-19 impact. The increase in net profit margin was driven by an increase in total revenue from FY[X]0 to annualized FY[X]3, which was largely caused by an increase in student headcount and tuition fee adjustments, along with a decrease in staff cost from the layoffs during the COVID-19 situation.
+- Tuition fee revenue was relatively stable during the analyzed period while the non-tuition revenue (excluding capital levy) has decreased during FY[X]1 and FY[X]2 from FY[X]0 due to the COVID-19 impact. The increase in net profit margin was driven by an increase in total revenue from FY[X]0 to annualized FY[X]3, which was largely caused by an increase in student headcount and tuition fee adjustments, along with a decrease in staff cost from the layoffs during the COVID-19 situation.
 - million
 - Others
 - Revenue bridge during FY[X]0 –FY[X]2
@@ -1153,17 +1047,14 @@
 - As at DD MM 20X3, there are 46 classrooms with a total of 1,099 students. Average utilisation rate is 83.6%. Management informed us that they plan to focus on increasing students in the early years programmes by constructing a community centre to attract more students. Management also intends to bolster secondary student enrollment, as they generate the highest profit margin among all levels.
 - Please note that we were not provided with detail of student data as at DD MM 20X3. Detail as at DD MM 20X3 is the latest information that we have received.
 - Debt and debt-like items
-- Employee benefit obligations is recorded based on Management’s estimation of the legal severance payment required under [REGION] Labour Law. [ENTITY 2] only recorded employee benefit obligations for employees who are over 55 years old (2 employees from the total 47 eligible [REGION] employees). For the rest of the employees where Management did not estimate the value of EBO, there may be potential additional EBO liability, however this amount is unquantifiable. We estimated the maximum severance payment to be USD 4.0 million if all permanent staff are terminated as at DD These represent both committed and non-committed CAPEX of [ENTITY 2]. The key CAPEX plan of
-- [ENTITY 2] as at DD MM 20X3 is the construction of swimming pool, with a total budget of USD 12.4 million and an expected completion date in MM 20X3.
+- Employee benefit obligations is recorded based on Management’s estimation of the legal severance payment required under [REGION] Labour Law. [ENTITY 2] only recorded employee benefit obligations for employees who are over 55 years old (2 employees from the total 47 eligible [REGION] employees). For the rest of the employees where Management did not estimate the value of EBO, there may be potential additional EBO liability, however this amount is unquantifiable. We estimated the maximum severance payment to be USD 4.0 million if all permanent staff are terminated as at DD These represent both committed and non-committed CAPEX of [ENTITY 2]. The key CAPEX plan of [ENTITY 2] as at DD MM 20X3 is the construction of swimming pool, with a total budget of USD 12.4 million and an expected completion date in MM 20X3.
 - Deposit payables refer to deposits that the parents have made before the Term begins. This deposit will be returned upon student graduation or when the student has left the school. However, the parents must notify the school 1 Term in advance in order to be eligible for the deposit return.
 - This represents potential tax implication and exposure mainly arising from non-compliance of accounting and tax reporting and under-remitted payroll withholding tax. Please refer to Due diligence report – Volume 2 Tax.
 - Other consideration
 - Short-term loan to related party mainly comprise funds lent to directors as explained in Key Finding 7 The increase in revenue mainly was driven by the increase in tuition fee rate (approx. 4%). The significant rise in %GP from FY[X]0 to FY[X]2 was mainly due to a manpower reduction during the COVID-19 pandemic, causing a decrease in staff cost predominantly in FY[X]1 and FY[X]2. After the easing of COVID-19 impact in XM2X,
 - %GP shows an upward trend, despite the increase in staff cost. This was attributed to an increase in admission fee and meal fee.
-- Management accounts of XM2X do not represent the actual performance, as [ENTITY 2] normally adjusts and records certain balances only at the year end, resulting in the misstatement of various accounts (revenue, staff costs, depreciation, and interest income/expense). We have presented an indicative financial performance of XM2X, which is
-- DD MM 20X0, DD MM 20X1, DD MM 20X2 and DD MM 20X2
-- FY[X]0, XM2X, FY[X]2 and XM2X
-- Since FY[X]1, [ENTITY 2] had changed an accounting period from Jun – May to Aug – Jul. Due to limitation of information, we proposed to present the periods of FY[X]0 in Jun – May, FY[X]1 in Jun
+- Management accounts of XM2X do not represent the actual performance, as [ENTITY 2] normally adjusts and records certain balances only at the year end, resulting in the misstatement of various accounts (revenue, staff costs, depreciation, and interest income/expense). We have presented an indicative financial performance of XM2X, which is DD MM 20X0, DD MM 20X1, DD MM 20X2 and DD MM 20X2
+- FY[X]0, XM2X, FY[X]2 and XM2X Since FY[X]1, [ENTITY 2] had changed an accounting period from Jun – May to Aug – Jul. Due to limitation of information, we proposed to present the periods of FY[X]0 in Jun – May, FY[X]1 in Jun
 - – Jul (14 months), FY[X]2 in Aug – Jul, and XM2X in Aug – Apr.
 - Revenue from school service
 - Revenue from school service comprises tuition fee revenue and non-tuition fee revenue.
@@ -1173,8 +1064,7 @@
 - Non-tuition fee revenue accounted for 25.8% to 41.0% of total revenue during FY[X]0 to annualised FY[X]3. Non-tuition fee largely comprises admission fee, meal fee, capital levy and and SSS fee. Although [ENTITY 1] increased the capital levy during FY[X]0, this was offset by decreases in other non-tuition fee components. For example, [ENTITY 1] offered a lower admission fee promotion to students in FY[X]1 and FY[X]2, and [ENTITY 1] also refunded some of the meal fee to students in FY[X]1 and FY[X]2. These resulted in an overall decline of non-tuition fee revenue in FY[X]1 and FY[X]2.
 - After recovery from the pandemic, total revenue from school service in annualised FY[X]3 has improved as a result of the standard tuition fee rate coupled with the lower amount of refund after COVID-19 recovery.
 - million
-- Tuition fee revenue contributed over 59.0% of total revenue during the analysed period. The overall revenue rose from
-- FY[X]0 to FY[X]3 is primarily driven by an increase in standard tuition fee rate of 4% on average.
+- Tuition fee revenue contributed over 59.0% of total revenue during the analysed period. The overall revenue rose from FY[X]0 to FY[X]3 is primarily driven by an increase in standard tuition fee rate of 4% on average.
 - Increase/(decrease) in no. of students
 - Increase/(decrease) in tuition fee per head
 - Increase/(decrease) in non-tuition fee
@@ -1209,8 +1099,7 @@
 - [ENTITY 3] normally issues invoices 2-3 months before the start of the next term, which normally is in [MONTH] (for Term 1), [MONTH] (for Term 2), and [MONTH] (for
 - Term 3) of each year.
 - Note: Monthly unearned revenue balances are prepared and provided by the Target
-- Adjusted net debt of [ENTITY 3] as at 30 [MONTH] 20X3 consists of long-term loans from [BANK X], short-term loans from related parties ([SHAREHOLDER 1] and
-- [SUBSIDIARY 1]), and debt-like items such as employee benefits obligations, CAPEX, and accrued pension. The adjusted net debt does not represent a complete list of potential adjustments. Readers of this report should be aware that there may be additional factors affecting reported net debt of the business.
+- Adjusted net debt of [ENTITY 3] as at 30 [MONTH] 20X3 consists of long-term loans from [BANK X], short-term loans from related parties ([SHAREHOLDER 1] and [SUBSIDIARY 1]), and debt-like items such as employee benefits obligations, CAPEX, and accrued pension. The adjusted net debt does not represent a complete list of potential adjustments. Readers of this report should be aware that there may be additional factors affecting reported net debt of the business.
 - General debt items
 - Long-term loan from financial institutions relates to a loan from [BANK X], bearing interest rate of MLR% p.a. The purpose of the loan is to refinance prior debt obligations with [Loan Entity].
 - Short-term loans from related parties consists of loans from ([SHAREHOLDER 1]) and [SUBSIDIARY 1]. Both of these loans bear the interest rate of 2.5% p.a.
@@ -1271,8 +1160,7 @@
 - These loan agreements stipulate that 3 individuals (Mr. [DIRECTOR 1], Ms. [DIRECTOR 6], and Mr.
 - [DIRECTOR 9] C.) must own at least 75% of the outstanding shares of [ENTITY 2].
 - Pro-forma outstanding balance of loans column as at 30 [MONTH] 20X3 is prepared based on the supporting details of outstanding loans provided by Management.
-- [ENTITY 2] appears to be non-compliant with the ownership and related party loan repayment clause in the loan agreement with [BANK 1] as at 31 [MONTH] 20X2 and 30
-- [MONTH] 20X3. However, Management was not aware of this non-compliance, with no waiver letter from [BANK 1] sighted.
+- [ENTITY 2] appears to be non-compliant with the ownership and related party loan repayment clause in the loan agreement with [BANK 1] as at 31 [MONTH] 20X2 and 30 [MONTH] 20X3. However, Management was not aware of this non-compliance, with no waiver letter from [BANK 1] sighted.
 - Comments on loan from [BANK 1] The USD 260 million credit facility made with [BANK 1] states that [ENTITY 2] cannot repay loans to related parties, shareholders, or directors.
 - However, [ENTITY 1] entered into a loan with [BANK 2], which [ENTITY 1] lent to [ENTITY 2]. We observe that [ENTITY 2] directly pays loan principal and interest to [BANK 2] during
 - FY[X]0-XM2X. We recommend you consult with your legal advisor on any potential breach regarding the repayment to [BANK 2] (on behalf of [ENTITY 1]).
@@ -1294,11 +1182,8 @@
 
 # Related Parties
 - Our work commenced on DD MM 20X3, and our fieldwork was completed on DD MM 20X3. We have not undertaken to update our report for events or circumstances arising after that date.
-- of students is 1,315 students. Utilization rate as at 30
-- DD MM X3 Is 83.6%.
-- students is 1,480 students. Utilization rate as at DD MM X3 is students is 1,212 students. Utilization rate as at DD MM X3 is
-- Interest expense and income from loans with related party were misstated as [ENTITY 1] and
-- [ENTITY 2] adjust interest income/expenses at the year end.
+- of students is 1,315 students. Utilization rate as at 30 DD MM X3 Is 83.6%.
+- students is 1,480 students. Utilization rate as at DD MM X3 is students is 1,212 students. Utilization rate as at DD MM X3 is Interest expense and income from loans with related party were misstated as [ENTITY 1] and [ENTITY 2] adjust interest income/expenses at the year end.
 - In addition, we found human error made by [ENTITY 2]’s accounting staff on incorrect recording of loan repayment with SCB and related party. Accounting staff debited the wrong loan account when they recorded their payment of the bank loan principal resulting in an overstated loan balance from SCB and understated loan from [ENTITY 1].
 - Personal expense (only [ENTITY 2])
 - [ENTITY 2] recorded personal expense of shareholder (Ms. [DIRECTOR 6]) during FY [X]1XM2X (FY[X]1: USD 0.7 million, FY[X]2: USD 1.9 million, XM2X: USD 0.6 million), which we have adjusted out of the underlying EBITDA in the QoE Adj No. 5. For further detail, please see
@@ -1313,8 +1198,7 @@
 - Land ownership ([ENTITY 1])
 - Based on discussion with Management, land XXX is used for the school operation (secondary school building), which is owned by [SHAREHOLDER 3]. Management informed us that they plan to transfer the ownership of this land to [ENTITY 1] prior to Closing. However, [ENTITY 1] already recorded such land cost in its accounts. (Management could not provide cost balance of each land plot to us).
 - Understatement of fixed assets ([ENTITY 2])
-- Based on discussion with Management, fixed assets of
-- [ENTITY 2] is potentially understated as [ENTITY 2] provided the advance to Ms. [DIRECTOR 6] to pay the construction companies and suppliers. However, Ms. [DIRECTOR 6] could not provide any supporting documents (such as receipt and invoice) to the School. [ENTITY 2] therefore recorded such fixed assets cost as a loan to shareholder.
+- Based on discussion with Management, fixed assets of [ENTITY 2] is potentially understated as [ENTITY 2] provided the advance to Ms. [DIRECTOR 6] to pay the construction companies and suppliers. However, Ms. [DIRECTOR 6] could not provide any supporting documents (such as receipt and invoice) to the School. [ENTITY 2] therefore recorded such fixed assets cost as a loan to shareholder.
 - Plans for future CAPEX as well as source of funding should be mutually agreed prior to Closing and factored into your valuation.
 - Value
 - Further analysis and understanding of pricing and discount strategy to understand all 3 schools’ positionings and to identify opportunities to increase margin and student headcount
@@ -1328,23 +1212,17 @@
 - The school normally provides adjustment for unearned revenue only at the year end resulting in the overstatement of monthly revenue and the understatement of monthly unearned revenue balance. We have therefore proposed the revenue adjustment to exclude the portion of revenue, which should have been recognized in MM 20X3, FY[X]4, FY[X]5 and FY[X]6 accounts. Please see Appendix 2 for further adjustment details.
 - In the XM2X period, the school recorded staff costs (e.g., salary and wages) incurred for 8 months up to JMM 20X3. Management confirmed that the school paid staff salary on time. We have calculated an indicative adjustment of staff expenses for the 11 months period based on a pro-rata basis.
 - 2], [X], and [ENTITY 1] [REGION]). We have considered this to be an Other consideration item due to the uncertainty on recoverability of these interest receivables.
-- This represents loan agreements entered into with related parties ([ENTITY 2], [X], and
-- [ENTITY 1] [REGION]). The following table represents the summary of the principal and
-- We have considered this to be an Other consideration item due to the uncertainty on the appliances which did not work as expected in XM2X. However, [ENTITY 1] was charged USD 0.9 million from supplier as per the Court decision.
+- This represents loan agreements entered into with related parties ([ENTITY 2], [X], and [ENTITY 1] [REGION]). The following table represents the summary of the principal and We have considered this to be an Other consideration item due to the uncertainty on the appliances which did not work as expected in XM2X. However, [ENTITY 1] was charged USD 0.9 million from supplier as per the Court decision.
 - Uniform cost in FY[X]3 has not yet been recorded in the accounting system.
 - Others mainly consisted of travel expenses for staff, taxes and others. A decline in FY[X]1 and FY[X]2 was mainly caused by a decrease in travel expenses for staff due to the COVID-19 pandemic.
 - Staff cost mainly represents teacher salary (56.3%), non-teaching salary (20.1%) and management salary (16.7%) for FY[X]3. According to Management, there was no staff layoff and no reduction in salary during the analysed period. However, certain redundant positions were not renewed after their contract expired. A drop in staff cost by 9.9% from FY[X]0 to FY[X]1 was due mainly to a decrease in Management staff headcount. An increase in FY[X]3 was principally driven by salary rate adjustment, especially for Management.
-- Allowance mainly refers to medical, accidental and health insurance, overtime, position allowance. Teacher allowance includes teaching certificate and
-- During COVID-19 circumstances, there were no staff layoffs or reduction in salaries.
+- Allowance mainly refers to medical, accidental and health insurance, overtime, position allowance. Teacher allowance includes teaching certificate and During COVID-19 circumstances, there were no staff layoffs or reduction in salaries.
 - However, Management informed us that they have no plan to recruit more staff even though there are available positions such as 2 Management positions, CFO and COO, who resigned in FY[X]1. Certain administrative staff were hired as part-time staff instead of permanent staff.
 - According to Management, [ENTITY 1]’s staff (i.e. the school head master and accounting staff) perform operational and accounting services to [ENTITY 2] free-of-charge and they have no plan to charge back in the future.
 - Overview of staff costs
 - Staff Type 1 teachers’ salaries dropped by 8.3% from FY[X]0 to FY[X]1, even though the average staff headcount increased. This occurred because newly joined staff received a lower salary base compared to the staff who resigned.
-- A decrease in [REGION] teachers’ salaries in FY[X]1 from FY[X]0 and in FY[X]3 from
-- FY[X]2 was primarily caused by a decrease in headcount, while an increase in salary in
-- FY[X]2 from FY[X]1 was mainly due to higher salary base for new staff compared to resigned staff.
-- A massive drop in FY[X]1 was mainly due to the resignation of 2 staff. Even though the
-- Management headcount in FY[X]3 is similar to FY[X]2, the salary paid per staff was significantly higher as [ENTITY 1] adjusted the salary base for Management at the beginning of FY[X]3. An explanation for an increase in Management salary from FY[X]1 to
+- A decrease in [REGION] teachers’ salaries in FY[X]1 from FY[X]0 and in FY[X]3 from FY[X]2 was primarily caused by a decrease in headcount, while an increase in salary in FY[X]2 from FY[X]1 was mainly due to higher salary base for new staff compared to resigned staff.
+- A massive drop in FY[X]1 was mainly due to the resignation of 2 staff. Even though the Management headcount in FY[X]3 is similar to FY[X]2, the salary paid per staff was significantly higher as [ENTITY 1] adjusted the salary base for Management at the beginning of FY[X]3. An explanation for an increase in Management salary from FY[X]1 to
 - FY[X]2 was not provided.
 - A drop in non-teaching staff salaries from FY[X]0 to FY[X]1 was due to the reduction in staff headcount. In FY[X]3, non-teaching staff salaries rose from FY[X]2 as salaries of incoming staff are higher than those of outgoing staff.
 - Other benefits
@@ -1357,8 +1235,7 @@
 - Other current assets as at DD MM 20X3 mainly consist of deposits (76.6%) and advances (19.9%). The balance as at DD MM 20X3 increased from DD MM 20X2 due to a deposit totaling
 - USD 7.9 million paid for the construction of a non-core centre building and outdoor play area.
 - Restricted cash refers to a letter of guarantee made with [BANK 2] (USD 1.6 million) for electricity usage.
-- Other investments as at DD MM 20X3 consist of (1) investments in [ENTITY 2] of USD 15 million (99,999 outstanding shares and 19.9% shareholding); and (2) investments in
-- [ENTITY 1] xxxx Limited valued of USD 10,000 (400 outstanding shares).
+- Other investments as at DD MM 20X3 consist of (1) investments in [ENTITY 2] of USD 15 million (99,999 outstanding shares and 19.9% shareholding); and (2) investments in [ENTITY 1] xxxx Limited valued of USD 10,000 (400 outstanding shares).
 - Long-term loans to related parties as at DD MM 20X3 consist of loans to [ENTITY 2] amounting to USD 372 million, bearing an interest rate of MLR -1.0% p.a. and MLR p.a., and a loan to [ENTITY 1] xxxx amounting to USD 110 million, bearing an interest rate of 1.5% p.a.
 - Fixed assets as at DD MM 20X3 mainly consists of land and buildings. Land XXX is used for the school operation (Secondary school building), which is owned by [SHAREHOLDER 3], a related party. Management informed us that they plan to transfer the ownership of this land to [ENTITY 1] prior to Closing.
 - 10. Trade and other payables as at DD MM 20X3 mainly comprise trade payables (77.9%) and other payables (14.6%). Trade and other payables as at DD MM 20X3 decreased from DD
@@ -1368,11 +1245,8 @@
 - 12. Loans from financial institution as at DD MM 20X3 consist entirely of loans from [BANK 2] mainly for CAPEX purposes. These loans bear varying interest rates from MLR -1.0% to
 - MLR% p.a..
 - During the analysed periods, the standard tuition fee has increased by approximately 4% on average per year.
-- Tuition fee revenue of XM2X was significantly higher due to an additional 2 months of revenue being recorded. After averaging per month, monthly tuition fee revenue rose 36.7% from FY[X]0 to
-- FY[X]1. This was mainly caused by a massive rise in student headcount, especially in student years 5 and over, combined with a rise in standard fee rate of approximately 4% per year. In FY[X]2, there was continued growth from FY[X]1 in terms of both student numbers and the fee incremental rate, which caused revenue to rise.
-- Tuition revenue gradually grew in FY[X]3 despite a slight drop in the number of students. This was mainly due to an increase in the standard rate coupled with the lower amount of refund after
-- ICO tuition fee revenue are tuition fees from [REGIONAL] students who apply through [ENTITY 1] CE. According to the agreement, the tuition fee is paid to [ENTITY 2] directly and will be transferred to
-- [ENTITY 1] CE after offsetting with service and rental fees. [ENTITY 2] adjusted this transaction once at the end of each year. Please see breakdown of ICO transaction in appendix 7.
+- Tuition fee revenue of XM2X was significantly higher due to an additional 2 months of revenue being recorded. After averaging per month, monthly tuition fee revenue rose 36.7% from FY[X]0 to FY[X]1. This was mainly caused by a massive rise in student headcount, especially in student years 5 and over, combined with a rise in standard fee rate of approximately 4% per year. In FY[X]2, there was continued growth from FY[X]1 in terms of both student numbers and the fee incremental rate, which caused revenue to rise.
+- Tuition revenue gradually grew in FY[X]3 despite a slight drop in the number of students. This was mainly due to an increase in the standard rate coupled with the lower amount of refund after ICO tuition fee revenue are tuition fees from [REGIONAL] students who apply through [ENTITY 1] CE. According to the agreement, the tuition fee is paid to [ENTITY 2] directly and will be transferred to [ENTITY 1] CE after offsetting with service and rental fees. [ENTITY 2] adjusted this transaction once at the end of each year. Please see breakdown of ICO transaction in appendix 7.
 - Ms. [DIRECTOR 6]O. (30% of outstanding shares)
 - Mr. [DIRECTOR 12] O. (30% of outstanding shares)
 - Mr. [DIRECTOR 1] O. (20% of outstanding shares)
@@ -1380,8 +1254,7 @@
 - The agreement states that any changes of shareholding ratios or directors must be approved by [BANK 1].
 - As at 30 [MONTH] 20X3, employee benefit obligations amount to USD 0.1 million, based on the salary report as at 31 [MONTH] 20X2. Management has informed us that they only update their EBO liability balance once a year.
 - Comments on employee benefit obligations
-- Employee retirement benefits are required under [REGION] Labour Law. [REGION] Financial Reporting Standards for
-- Non-publicly Accountable Entities (“TFRS for NPAEs’) requires [ENTITY 1] to recognise a provision for employee benefit obligations using the ‘best estimate’ method.
+- Employee retirement benefits are required under [REGION] Labour Law. [REGION] Financial Reporting Standards for Non-publicly Accountable Entities (“TFRS for NPAEs’) requires [ENTITY 1] to recognise a provision for employee benefit obligations using the ‘best estimate’ method.
 - Management has also stated that they have not adjusted the amount as at 30th [MONTH] 20X3 and have only recorded the payments made to the employees who have retired during the year.
 - The EBO is calculated using the ”best estimate” method based on the following assumptions:
 - Retirment age of 65 years.
@@ -1396,20 +1269,16 @@
 - The overall decrease in revenue in FY[X]1 was mainly driven by a decline in the number of students as well as a decline in non-tuition revenue, especially boarding fees, summer school and special lessons due to the COVID-19 impact. In FY[X]2, a loyalty discount was given to existing students, which resulted in a slight drop in revenue from FY[X]1. After the end of the pandemic, in XM2X student headcount rose steadily, which improved both revenue from tuition and non-tuition fees during the period.
 - Revenue breakdown
 - Tuition fee revenue in each year consisted of three terms:
-- According to Management, the standard tuition fee has increased by 4%-5% annually under normal circumstances. However, due to the
-- COVID-19 pandemic, [ENTITY 3] did not make a tuition fee rate adjustment in FY[X]1.
-- As the majority of [ENTITY 3]’s students are from overseas (82.5% as at 30 [MONTH] 20X3), the outbreak of COVID-19 pandemic had caused a significant impact on the reduction of student headcount from FY[X]0 to
-- FY[X]1, resulting in a decline in revenue during the period. An increase from XM2X to XM2X was primarily due to a rise in average student headcount from 712 to 950 with the COVID-19 situation improving and travel restrictions lifted.
+- According to Management, the standard tuition fee has increased by 4%-5% annually under normal circumstances. However, due to the COVID-19 pandemic, [ENTITY 3] did not make a tuition fee rate adjustment in FY[X]1.
+- As the majority of [ENTITY 3]’s students are from overseas (82.5% as at 30 [MONTH] 20X3), the outbreak of COVID-19 pandemic had caused a significant impact on the reduction of student headcount from FY[X]0 to FY[X]1, resulting in a decline in revenue during the period. An increase from XM2X to XM2X was primarily due to a rise in average student headcount from 712 to 950 with the COVID-19 situation improving and travel restrictions lifted.
 - The decrease in number of boarding students from FY[X]0 (104 students) to FY[X]1 (73 students) caused a decline in boarding fee revenue during the period. An improvement in FY[X]2 boarding fee revenue was due to an increase of 4% in the standard rate which is similar to tuition fee coupled with an increase in the number of students.
 - For XM2X, the rise in number of students caused an increase in boarding fee revenue from XM2X.
 - During COVID-19 pandemic, [ENTITY 3] provided discounts and refunds to students,
 - Entrance fee is a fee paid per family to confirm a student’s place in the school. According to Management, the fluctuation between each period depends on the number of families joining the school.
 - Summer school is held for one month in [MONTH]. The drop in FY[X]1 and FY[X]2 was the impact from COVID-19, which caused fewer students to sign up for the program.
 - Other fees mainly represented transportation fees, camps and extracurricular lesson fees such as music, swimming, tennis and golf classes.
-- Adventure camp has been cancelled from FY[X]1 onwards and less extracurricular lessons were held during the COVID-19 period, causing Other fees to be relatively low in
-- FY[X]1 and FY[X]2. After an improvement in the COVID-19 situation in YTD23, more activities have been held with more students signing up for these extra classes.
-- In addition, [ENTITY 3] reversed a significant deposit of USD 3.1 million as income in
-- XM2X (USD 0.7 million in XM2X) to clear long outstanding amounts which were not expected to be claimed by students who had already left the school, resulting in a higher income compared to XM2X.
+- Adventure camp has been cancelled from FY[X]1 onwards and less extracurricular lessons were held during the COVID-19 period, causing Other fees to be relatively low in FY[X]1 and FY[X]2. After an improvement in the COVID-19 situation in YTD23, more activities have been held with more students signing up for these extra classes.
+- In addition, [ENTITY 3] reversed a significant deposit of USD 3.1 million as income in XM2X (USD 0.7 million in XM2X) to clear long outstanding amounts which were not expected to be claimed by students who had already left the school, resulting in a higher income compared to XM2X.
 - Refund policy
 - Tuition and boarding fees can be refunded if a student meets the following conditions:
 - Provides withdrawal notice 1 month before beginning of each term: 100% refundable
@@ -1417,8 +1286,7 @@
 - According to Management, [ENTITY 3] recorded refunds by reversing the amount with revenue in each period.
 - Revenue breakdown (cont’d)
 - [ENTITY 3] has a policy to provide discounts and scholarships as summarised below:
-- A rise in % discount to tuition fee and boarding fee revenue from 23.5% in FY[X]0 to 27.3% in
-- FY[X]1 was due to higher scholarship provided to students which was given on a case-bycase basis. In FY[X]2, there was an improvement in percentage to 30.6% which resulted from the loyalty discount given during the COVID-19 period. A drop in percentage in YTD23 compared to XM2X was due to loyalty discount was no longer provided in XM2X. We have
+- A rise in % discount to tuition fee and boarding fee revenue from 23.5% in FY[X]0 to 27.3% in FY[X]1 was due to higher scholarship provided to students which was given on a case-bycase basis. In FY[X]2, there was an improvement in percentage to 30.6% which resulted from the loyalty discount given during the COVID-19 period. A drop in percentage in YTD23 compared to XM2X was due to loyalty discount was no longer provided in XM2X. We have
 
 # Reporting Environment
 - Increase/ (decrease) in tuition fee revenue per head
@@ -1453,30 +1321,22 @@
 - Other fees
 - Increase/(decrease) in no. of students
 - Increase/(decrease) in tuition fee (before discount) per head
-- Decrease in non-tuition fee revenue (Increase)/decrease in discount In FY[X]2, there was an increase in tuition standard fee rate of 4% from
-- FY[X]1. However, there was a slight reduction by 1% in XM2X from
-- FY[X]2. As a result, total net increase in fee rate from FY[X]1 to These were driven by a decrease in student number caused by
-- Tuition fee per head (before discount) significantly decreased from FY[X]2 to XM2X as a result of a change in student mix as well as a decline in standard tuition fee rate. During FY[X]2, the School rose the standard tuition rate by 4% from FY[X]1, whereas [ENTITY 3] decreased tuition fee rate of FY[X]3 by 1% from FY[X]2. This resulted in a decline of fee rate by 3% from FY[X]1 to FY[X]3. As at DD MM 20[X]2, secondary programmes represented the majority group of students of 48.6%, which has the highest standard tuition fee range.
+- Decrease in non-tuition fee revenue (Increase)/decrease in discount In FY[X]2, there was an increase in tuition standard fee rate of 4% from FY[X]1. However, there was a slight reduction by 1% in XM2X from FY[X]2. As a result, total net increase in fee rate from FY[X]1 to These were driven by a decrease in student number caused by Tuition fee per head (before discount) significantly decreased from FY[X]2 to XM2X as a result of a change in student mix as well as a decline in standard tuition fee rate. During FY[X]2, the School rose the standard tuition rate by 4% from FY[X]1, whereas [ENTITY 3] decreased tuition fee rate of FY[X]3 by 1% from FY[X]2. This resulted in a decline of fee rate by 3% from FY[X]1 to FY[X]3. As at DD MM 20[X]2, secondary programmes represented the majority group of students of 48.6%, which has the highest standard tuition fee range.
 - As at DD MM 20[X]3, [ENTITY 3] had a total of 53 classrooms with a total student headcount of 1,049 (Non-[REGION] represents 82.5%). Based on current capacity, total utilization rate was 86.6%. Management informed us that they plan to open 1 additional class for years 6 by renovating existing [REGION] classroom and aim to achieve close to the maximum capacity next year by constructing an administration building and moving all admin staff out of teaching buildings as well as building a new innovation centre to create more spaces and classrooms. We provided indicative potential revenue upside from increasing student enrolment to optimize capacity utilization
 - Teaching staff cost represented the majority of total cost, accounting for more than 73.6% from FY[X]0 to XM2X. An increase in % of total cost to total revenue by 7.7 percentage point from FY[X]0 to FY[X]1 was mainly due to a decline in revenue, while costs slightly declined from the drop in flight allowance and pension fund provided to Staff Type 1 staff. For XM2X, % of total cost to revenue declined which was primarily caused by an improvement in revenue and a gradual rise in costs.
 - Teaching material expenses decreased by 30.7% in FY[X]1 and 25.6% in FY[X]2 from FY[X]0 as classes were held online in some periods of the year during the COVID-19 pandemic. An increase of 31.8% from XM2X to XM2X was mainly attributable to a higher student headcount.
-- School activities expenses declined significantly from FY[X]0 to
-- FY[X]2, as [ENTITY 3] was unable to arrange sport adventure camp during COVID-19 period. Moreover, the pandemic resulted in fewer students joining for summer camps in July, and other academic activities. After the COVID-19 pandemic recovery, a number of attendances increased, resulting in a rise from XM2X to XM2X.
-- Medical expenses for staff and students rose from FY[X]1 to
-- FY[X]2 as a result of increased expenses regarding ATK and RTPCR test kits which [ENTITY 3] provided to staff and students for free-of-charge. This is considered as one-off items, and we The total balance of unearned revenue as at DD MM 20[X]1 declined by USD 15.8 million due to the impact from
-- COVID-19. The average headcounts reduced from 793 to 714 in year 20[X]1.
+- School activities expenses declined significantly from FY[X]0 to FY[X]2, as [ENTITY 3] was unable to arrange sport adventure camp during COVID-19 period. Moreover, the pandemic resulted in fewer students joining for summer camps in July, and other academic activities. After the COVID-19 pandemic recovery, a number of attendances increased, resulting in a rise from XM2X to XM2X.
+- Medical expenses for staff and students rose from FY[X]1 to FY[X]2 as a result of increased expenses regarding ATK and RTPCR test kits which [ENTITY 3] provided to staff and students for free-of-charge. This is considered as one-off items, and we The total balance of unearned revenue as at DD MM 20[X]1 declined by USD 15.8 million due to the impact from COVID-19. The average headcounts reduced from 793 to 714 in year 20[X]1.
 - We noticed [ENTITY 3] does not classify the non-current portion of unearned revenue. Thus, we estimated indicative non-current portion based on the amortisation schedule provided by Management as follows:
 - Comments on unearned revenue (cont’d)
 - External sources of funding for [ENTITY 3] as at DD MM 20[X]3 mainly come from long-term loans from [BANK 3], which [ENTITY 3] had refinanced a loan from TMB
 - [BANK 4] in FY[X]2.
-- In 20[X]2, loans from [BANK 4] were refinanced into loan from
-- [BANK 3], due to [ENTITY 3]’s inability to repay them on time.
+- In 20[X]2, loans from [BANK 4] were refinanced into loan from [BANK 3], due to [ENTITY 3]’s inability to repay them on time.
 - We understand this overdraft facility has not been drawn yet
 - We understand this [BANK 3] loan facility has not been drawn yet, and that there are certain conditions to be met for the drawdown.
 - [ENTITY 3] appears to be non-compliant with the DSCR covenant with [BANK 3] as at DD MM 20[X]2 and DD MM 20[X]3. However, Management are not aware of this potential non-compliance and we observe no waiver letter has been provided from [BANK 3].
 - Comments on loan from [BANK 3] (Cont’d)
-- [ENTITY 3] has entered into a loan agreement with [BANK 3] in order to refinance all its prior debt obligations with [BANK 4]. The purpose of the refinancing is due to
-- [ENTITY 3]’s inability to repay its prior debt obligations from as [ENTITY 3] generated net loss during the COVID-19.
+- [ENTITY 3] has entered into a loan agreement with [BANK 3] in order to refinance all its prior debt obligations with [BANK 4]. The purpose of the refinancing is due to [ENTITY 3]’s inability to repay its prior debt obligations from as [ENTITY 3] generated net loss during the COVID-19.
 - Financial covenants
 - [ENTITY 3] is required to maintain D/E ratio not more than 2.75:1 and DSCR not less than 1.10:1. [ENTITY 3] appears to be in breach of DSCR as at DD MM 20[X]2. In addition, DSCR for FY[X]3 is less than 1.1, suggesting potential noncompliance of DSCR requirement.
 - Management informed us that they are not aware of any breach in covenant and no waiver letter is provided from [BANK 3].
@@ -1484,8 +1344,7 @@
 - Based on credit facilities with [BANK 3], collaterals required against the credit facilities are summarized below;
 - [ENTITY 3]’s land title deed no. 39143 and buildings thereon in xxxxx province;
 - Province;
-- Other conditions The loan agreement with [BANK 3]states that [SHAREHOLDER 3] is required to own at least 70% of shareholding of [ENTITY 3]. As of DD MM 20[X]3, [ENTITY 3] is in compliance with this requirement. Should your investment cause the dilution of [SHAREHOLDER 3] shareholding in
-- [ENTITY 3], the school should obtain bank’s consent prior to Closing.
+- Other conditions The loan agreement with [BANK 3]states that [SHAREHOLDER 3] is required to own at least 70% of shareholding of [ENTITY 3]. As of DD MM 20[X]3, [ENTITY 3] is in compliance with this requirement. Should your investment cause the dilution of [SHAREHOLDER 3] shareholding in [ENTITY 3], the school should obtain bank’s consent prior to Closing.
 - [ENTITY 3] cannot drawdown the credit facility of USD 45 million with [BANK 3] unless the
 
 # Forecast Trading
@@ -1514,24 +1373,19 @@
 - List of Directors
 
 # Quality of Net Assets
-- Total revenue in FY[X]1 dropped by 19.5% from FY[X]0 as there was a significant decrease in average student headcount from 793 to 714. The majority of [ENTITY 3]’s students are international students (70.0% Non-[REGION] VS 30.0% [REGION] in
-- FY[X]0), and most of them travelled back to their home countries during the COVID-19 period. In FY[X]2, even though there was an increase in standard tuition fee of 4% (no fee adjustment in FY[X]1), discounts were provided to students during this period, causing a slight decline in revenue of 2.1%. Revenue for XM2X and XM2X rose steadily mainly due to the growth in average student headcount from 712 to 950, positively affected both tuition and non-tuition fees income.
+- Total revenue in FY[X]1 dropped by 19.5% from FY[X]0 as there was a significant decrease in average student headcount from 793 to 714. The majority of [ENTITY 3]’s students are international students (70.0% Non-[REGION] VS 30.0% [REGION] in FY[X]0), and most of them travelled back to their home countries during the COVID-19 period. In FY[X]2, even though there was an increase in standard tuition fee of 4% (no fee adjustment in FY[X]1), discounts were provided to students during this period, causing a slight decline in revenue of 2.1%. Revenue for XM2X and XM2X rose steadily mainly due to the growth in average student headcount from 712 to 950, positively affected both tuition and non-tuition fees income.
 - Relatively low EBITDA margins observed in FY[X]1 and FY[X]2 were primarily driven by decreased revenue, and higher % of cost and SG&A to total revenue. Management informed us that during the pandemic there was no policy to lay off employees, which caused staff costs, the major fixed expenses, to remain high during the period. For XM2X, % EBITDA rose significantly from XM2X mainly due to an increase in revenue.
-- According to Management, [ENTITY 3] experienced a liquidity issue during FY[X]1 and FY[X]2 when they generated a net loss of USD 26.9 million and USD 37.3 million, respectively. To maintain the cash flow, [ENTITY 3] withheld 20% of salary payment from MM to MM 20X1 for [REGION] staff, MM to MM 20X1 for Staff Type 1s. [ENTITY 3] subsequently paid these portions in
-- December 2021 and February 2022, respectively. Currently, Management informed us that [ENTITY 3] received a refinancing loan from [BANK X] to support operations and the school’s CAPEX plan.
+- According to Management, [ENTITY 3] experienced a liquidity issue during FY[X]1 and FY[X]2 when they generated a net loss of USD 26.9 million and USD 37.3 million, respectively. To maintain the cash flow, [ENTITY 3] withheld 20% of salary payment from MM to MM 20X1 for [REGION] staff, MM to MM 20X1 for Staff Type 1s. [ENTITY 3] subsequently paid these portions in December 2021 and February 2022, respectively. Currently, Management informed us that [ENTITY 3] received a refinancing loan from [BANK X] to support operations and the school’s CAPEX plan.
 - As at DD MM 20X3, the total utilization rate was 86.6% (1,049 students). Management plans to open 1 additional class for Year 6 by renovating existing classroom and expects to achieve the maximum capacity in the following year by constructing a new administration building for all administrative staff and a new innovation center to create more spaces and classrooms.
 - COVID-19 has had impacts on [ENTITY 3]’s financial performance due to dependency on international students (2) Student headcount as at DD MM 20X0, FY[X]1, FY[X]2 and DD MM 20X3, (3)
-- [ENTITY 2] offered a partial refund on meal fees during the COVID-19 situation (during Term 2 in FY[X]1 and
-- A relatively high % of refund in FY[X]2 observed was driven by the tuition fee refund, as many international students were unable to travel to [REGION] due to
+- [ENTITY 2] offered a partial refund on meal fees during the COVID-19 situation (during Term 2 in FY[X]1 and A relatively high % of refund in FY[X]2 observed was driven by the tuition fee refund, as many international students were unable to travel to [REGION] due to
 - COVID-19 travel restrictions .
 - Management informed us that from FY[X]3 onwards, the school does not provide a refund for students coming from abroad. Therefore, the amount of refund is expected to be lower from this period.
 - During FY[X]0 to FY[X]2, COVID-19 refund (mainly relating to tuition fee, boarding fee and meal fee) were provided to students during the period that the school arranged online learning which caused % refund to remain high.
 - Under normal situation, 100% and 50% of tuition and boarding fees can be refunded if student provides a withdrawal notice 1 month before the beginning of each term or 1 month before the middle of each term, respectively.
-- Discounts and scholarships are given to students as summarized on The high % of discount in FY[X]1 was due to a higher total scholarship amount provided to students. The relatively high percentage in FY[X]2 resulted from loyalty discounts which offers the same school fee rate as in FY[X]1 to existing students during The increase in percentage of refund during FY[X]3 and
-- FY[X]2 was mainly due to meal fees which [ENTITY 1] returned to students because the school conducted classes online as a result of the COVID-19 impact.
+- Discounts and scholarships are given to students as summarized on The high % of discount in FY[X]1 was due to a higher total scholarship amount provided to students. The relatively high percentage in FY[X]2 resulted from loyalty discounts which offers the same school fee rate as in FY[X]1 to existing students during The increase in percentage of refund during FY[X]3 and FY[X]2 was mainly due to meal fees which [ENTITY 1] returned to students because the school conducted classes online as a result of the COVID-19 impact.
 - During XM2X, Management informed us that the situation returned back to normal and classes were held on-site which caused the % refund to return back to normal rate.
-- According to Management, the amount of discount in
-- FY[X]0 may not represent the actual amount as some transactions were recorded by off-setting with the revenue line.
+- According to Management, the amount of discount in FY[X]0 may not represent the actual amount as some transactions were recorded by off-setting with the revenue line.
 - The one-time impact of additional discounts and refunds in relation to COVID-19 could be considered as potential revenue upside post-pandemic.
 - No refund policy for [ENTITY 2]’s international students can help reduce the risk from applying refunds under uncertain conditions.
 - Value
@@ -1620,14 +1474,12 @@
 - Median COS across the peer set is xx.x%.
 - [ENTITY 1] and [ENTITY 2]’s COS of xx.x% and xx.x%, respectively, are lower than the peer group median and are in the first and second quartile, respectively.
 - [ENTITY 3]’s COS of xx.x% is higher than the peer group median and is in the fourth quartile.
-- By reducing COS expense xx.x% to match with the peer median, there is an opportunity for [ENTITY 3] to reduce the
-- COS expense of USD xxx.x million.
+- By reducing COS expense xx.x% to match with the peer median, there is an opportunity for [ENTITY 3] to reduce the COS expense of USD xxx.x million.
 - Comments
 - Median SG&A across the peer set is xx.x%.
 - [ENTITY 1] and [ENTITY 3]’s SG&A of xx.x% and xx.x%, respectively, are lower than the peer group median and are in the first quartile.
 - [ENTITY 2]’s SG&A of xx.x% is higher than the peer group median and is in the third quartile.
-- By reducing SG&A expense x.x% to match with the peer median, there is an opportunity for [ENTITY 2] to reduce the
-- SG&A expense by USD x.x million.
+- By reducing SG&A expense x.x% to match with the peer median, there is an opportunity for [ENTITY 2] to reduce the SG&A expense by USD x.x million.
 - Note: (*) International schools includes [ENTITY 3] (ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL NAME), ENTITY XXXX(ENTITY FULL NAME), ENTITY XXXX(ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL
 - NAME), ENTITY XXXX (ENTITY FULL NAME), and ENTITY XXXX (ENTITY FULL NAME) (**) Bilingual schools includes [ENTITY 1] (ENTITY FULL NAME), [ENTITY 2] (ENTITY FULL NAME), and ENTITY XXXX (ENTITY FULL NAME)
 
@@ -1641,13 +1493,11 @@
 - Median DSO across the peer set is xx days.
 - [ENTITY 2]’s DSO of xx days is lower than the peer group median and is in the second quartile.
 - [ENTITY 1] and [ENTITY 3]’s DSO of xx and xx days are higher than the peer group median and are in the third and fourth quartiles respectively.
-- Reducing the number of DSO by xx and xx days to match with the peer median indicates cash release opportunities for
-- [ENTITY 1] and [ENTITY 3] of USD xx.x million and USD xxx.x million, respectively.
+- Reducing the number of DSO by xx and xx days to match with the peer median indicates cash release opportunities for [ENTITY 1] and [ENTITY 3] of USD xx.x million and USD xxx.x million, respectively.
 - Comments
 - Median DIO across the peer set is x days.
 - [ENTITY 3]’s, [ENTITY 1]’s and [ENTITY 2]’s DIO of x, x, and xx days are higher than the peer group median and are in the third and fourth quartiles.
-- Reducing the number of DSO by x, x, and xx days to match with the peer median indicates cash release opportunities for
-- [ENTITY 3], [ENTITY 1], and [ENTITY 2] of USD x.x, x.x million and USD x.x million, respectively.
+- Reducing the number of DSO by x, x, and xx days to match with the peer median indicates cash release opportunities for [ENTITY 3], [ENTITY 1], and [ENTITY 2] of USD x.x, x.x million and USD x.x million, respectively.
 - Note: (*) International schools includes [ENTITY 3] (ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL NAME), ENTITY XXXX(ENTITY FULL NAME), ENTITY XXXX(ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL NAME), ENTITY XXXX (ENTITY FULL
 - NAME), ENTITY XXXX (ENTITY FULL NAME), and ENTITY XXXX (ENTITY FULL NAME) (**) Bilingual schools includes [ENTITY 1] (ENTITY FULL NAME), [ENTITY 2] (ENTITY FULL NAME), and ENTITY XXXX (ENTITY FULL NAME) (***) Due to the unavailability of peer’s unearned revenue, unearned revenue was carved out of DSO calculation. The discrepancy of DSO – Peer analysis and other DSO analyses is expected. DSO, DIO and DPO are calculated based on the ending balance of trade receivables, inventory and trade payables.
 
@@ -1710,9 +1560,7 @@
 - Our work commenced on DD MM YYYY and our fieldwork for this report was completed on DD MM YYYY. We have not undertaken to update our report for events or circumstances arising after that date.
 - Benchmarking The benchmarking analysis is based on information obtained from comparable industries and/or activities. As with any benchmarking analysis there is a risk that the information is not fully comparable. If the benchmarked information is based on aggregated industry information, access to more detailed information could have led to the analyses being presented in another manner or to different data being presented. We accept no responsibility for such differences.
 - The benchmarking analysis presented in this report presents aggregated or company level data collected from thirdparty data sources as referenced. We accept no responsibility for the correctness of the data obtained from third-party sources.
-- In preparing our report, our primary source has been the Targets’ internal management information and representations made to us by
-- Management of the Targets. We do not accept responsibility for such information which remains the responsibility of Management. We draw your attention to the significant limitations in the information available to us. Access to the audit files has not been granted. The
-- Management information available was restricted to specified documents in a data room. Details of our principal information sources are set out in the Basis of information and we have satisfied ourselves, so far as possible, that the information presented in our report is consistent with other information that was made available to us in the course of our work in accordance with the terms of our The procedures we performed do not constitute an audit or review made in accordance with generally accepted audit or assurance standards and consequently no assurance opinion is expressed. Our advice does not constitute recommendations as to whether or not you should proceed with any proposed transaction, or whether the procedures performed are sufficient for your purposes.
+- In preparing our report, our primary source has been the Targets’ internal management information and representations made to us by Management of the Targets. We do not accept responsibility for such information which remains the responsibility of Management. We draw your attention to the significant limitations in the information available to us. Access to the audit files has not been granted. The Management information available was restricted to specified documents in a data room. Details of our principal information sources are set out in the Basis of information and we have satisfied ourselves, so far as possible, that the information presented in our report is consistent with other information that was made available to us in the course of our work in accordance with the terms of our The procedures we performed do not constitute an audit or review made in accordance with generally accepted audit or assurance standards and consequently no assurance opinion is expressed. Our advice does not constitute recommendations as to whether or not you should proceed with any proposed transaction, or whether the procedures performed are sufficient for your purposes.
 - The contents of this report have not been reviewed by the Management of the Targets for the purpose of confirming the factual accuracy of this report.
 - activities on the underlying data to arrive at the information presented; we do not accept responsibility for the underlying data.
 - In the event that elements of our terms of reference relate to 'underlying' earnings, our work will be restricted to assisting You in the identification and documentation of items which may be 'non-recurring' or 'exceptional' or otherwise unrepresentative of the trend in earnings using criteria established by You. Because there is no authoritative literature or common standard with respect to the calculation of 'underlying' earnings, there is no basis to state whether all appropriate and comparable adjustments have been made. In addition, while the adjustments may indeed relate to items which are 'non-recurring' or 'exceptional' or otherwise unrepresentative of the trend, it is possible that the earnings for future periods may be affected by such items, which may be different from the historical items.
@@ -1741,8 +1589,7 @@
 - The contents of our report have not been reviewed by the Management of Targets and the factual accuracy of this report has not been confirmed by the Management.
 - Quality of information The requested information has been provided through the virtual data room and email. As of the date of this report, all available requested information has been provided in a timely manner.
 - Low
-- We have had access to granular and relevant data (i.e., transactional level), which in our view has formed a good basis for analyzing the key drivers of the business. However, there are the limitation of information especially YTDXX information of [ENTITY 1] and [ENTITY 2] entities. Moreover, certain accounting adjustments are only made at the year end account for [ENTITY 1] and
-- [ENTITY 2], which we presented the pro-forma account for indicative purpose. In addition, as these YTDXX management accounts have not yet been audited, and they therefore may not represent the actual financial performance and position of the Schools. We have discussed critical limitations in terms of quality of information throughout the report.
+- We have had access to granular and relevant data (i.e., transactional level), which in our view has formed a good basis for analyzing the key drivers of the business. However, there are the limitation of information especially YTDXX information of [ENTITY 1] and [ENTITY 2] entities. Moreover, certain accounting adjustments are only made at the year end account for [ENTITY 1] and [ENTITY 2], which we presented the pro-forma account for indicative purpose. In addition, as these YTDXX management accounts have not yet been audited, and they therefore may not represent the actual financial performance and position of the Schools. We have discussed critical limitations in terms of quality of information throughout the report.
 - High
 - Financial due diligence
 - Unless otherwise noted, our work will focus on the stand-alone financial information of the following schools for the academic year 20XX (FYXX), academic year 20XX (FYXX), academic year 20XX (FYXX), and the latest available period in for fiscal year 20XX (YTDXX):

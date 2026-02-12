@@ -1,13 +1,10 @@
 # Report Extraction: project-emerald-simulated-report-2025
-
 ## Report Metadata
-
 - `SOURCE_FILE`: Project Emerald - Simulated Report 2025.pdf
 - `REPORT_ID`: project-emerald-simulated-report-2025
 - `SOURCE_PATH`: reports/Project Emerald - Simulated Report 2025.pdf
 - `EXTRACTION_STATUS`: manual_verbatim_body_text
 - `EXTRACTION_DATE`: 2026-02-12T21:20:53.816346+00:00
-
 # Executive Summary
 - Due diligence findings
 - July 17, 2019 (“Engagement Agreement”) and is subject in all respects to the terms and conditions of the Engagement Agreement, including restrictions on use of this report by third parties.
@@ -92,7 +89,7 @@
 - Am ount Risk assessm ent
 - ■ There could also be a Thai WHT exposure of US$1.2 million plus interest and penalty. Thai tax advice is required to confirm whether this exposure exist.
 - VPC reconciliation to consolidated trial balance 24. Organizational structure of segment sales volume:
-- FY17 FY18 P5-19 This FY17 fluctuation was driven by the Value
+- This FY17 fluctuation was driven by the Value
 - Sardines and Premium The supply for Seafood
 - Snacks has been provided exclusively by the Blacks Harbour plant, the supply for Premium
 - Sardines is provided exclusively by external vendors, and the supply for Value Sardines is provided by a mixture of In aggregate, the Sardine business experienced an increase in gross profit from FY17 to FY18, followed by a decline from FY18 to TTM P5-19.
@@ -101,7 +98,6 @@
 - Thai Union Poland and Midav Sardines.
 - Gross margin analysis (2/4) – Tuna
 - Skipjack gross margin decreased from FY18 to TTM P5-19 as a result of increased COGS per case, unfavorable FX rates, and product enhancements made as a part of the “All Natural”
-- FY17 FY18 P5-19 1,501 1,429 1,420 1,793 1,739 1,735
 - Albacore gross profit has declined from FY17 to TTM P5-19 as a result of steadily increasing COGS per case driven by higher product costs (from $68.7/EC in FY17 to $76.4/EC in TTM P5-19), unfavorable FX rates, and product enhancements made as a part of the “All Natural” advertising campaign.
 - Albacore net sales increased each period from FY17 to TTM P5-19.
 - The increase from FY17 to FY18 was driven by additional volume generated through promotional pricing. The increase from FY18 to
@@ -111,7 +107,6 @@
 - Skipjack net sales increased from FY17 to FY18 as a result of price increases which were partially offset by declining volume, and decreased from FY18 to TTM P5-19 due to slightly unfavorable pricing negotiations with certain customers.
 - These gross margins declines from FY17 to
 - TTM P5-19 were due to increased product costs, unfavorable FX rates, and as a part of the “All In aggregate, the Tuna segment experienced an increase in net sales from FY17 to TTM P5-19, along with a decrease in gross margin and gross margin per case across the same period.
-- Source: Management provided
 - Yellowfin gross profit per case decreased from FY18 to TTM P5-19 as a result of an increase in COGS per case (from $65.0/EC in FY18 to $67.3/EC in TTM P5-19), driven by higher supplier costs and unfavorable FX rates.
 - Yellowfin gross profit per case increased from FY17 to FY18 as a result of price increases, which were partially offset by an increase in
 - COGS per case in the same periods (from $58.2/EC in FY17 to
@@ -122,11 +117,9 @@
 - $76.8/EC in FY18), and increased from FY18 to TTM P5-19 as a result of price increases. Supplier costs for this product fluctuate markedly on a two-year cycle, with costs expected to continue increasing throughout the new FY19 cycle.
 - Atlantic salmon represents one of two niche products in this species segment, with the other being Keta Salmon. The results of Keta
 - Salmon, an item sold only in Quebec, are not presented due to its lower gross margin per case as compared to other product
-- Source: Management provided
 - Red salmon gross margin declined in FY18 due to an increase in
 - COGS per case (from $104.5/EC in FY17 to $114.1/EC in FY18), driven by reduced Alaskan supply. As Alaskan suppliers transition away from canning and focus on frozen salmon processing, these costs are expected to continue increasing. In order to mitigate these costs, a price increase was implemented in P2-19, which resulted in an increase in gross margin in TTM P5-19.
 - of segment sales volume:
-- 28,531 20,025 19,964 28,693 20,197 20,118
 - Red salmon’s decrease in net sales from FY17 to FY18 was driven by declining sales volume stemming from the reduction in supply.
 - Overall gross margins declined from FY17 to
 - FY18 due to increased product costs which were partially mitigated by price increases in TTM In order to mitigate future supply variability relating to fresh salmon, the
@@ -137,13 +130,12 @@
 - Oyster net sales increased from FY17 to FY18 as a result of a new listing at Costco, through which the Company offered aggressive price discounts and ultimately achieved increased sales volume.
 - Oyster gross margin decreased from FY17 to TTM P5-19 as a result of a combination of decreased net sales per case and increased
 - COGS per case. The fluctuations in COGS were attributable to increased supplier costs as well as unfavorable FX rate changes.
-- Source: Management provided
 - Surimi consists of the following product lines; Bulk Pack, Club Pack,
 - Delectables, Private Label FS, Private Label Retail, and Surimi
 - Salad. The aggregate decrease in Surimi gross margin from FY18 to
 - TTM P5-19 is primarily attributable to the Bulk Pack, Club Pack, and
 - Private Label Retail product lines, all of which experienced cost increases and unfavorable FX fluctuations.
-- FY17 FY18 P5-19 of segment sales volume:
+- of segment sales volume:
 - Overall, each of these three product lines throughout the historical period, driven by a combination of price discounts and increasing The Company’s product portfolio consists of a variety of other products outside of the three
 - Oyster, Shrimp, and
 - Surimi are among the largest other products in terms of gross margin
@@ -230,7 +222,6 @@
 - ■ FY18 CBCLSC QST Remittances/Refunds
 - ■ FY15 KCR restructuring memo
 - ■ Intercompany note agreements
-
 # Key Findings
 - and other risks to consider in your diligence and a suggested basis of analysis for the continued diligence of Target. It provides a
 - – Adjusted EBITDA;
@@ -238,7 +229,6 @@
 - of $28.5 million increased to $30.9
 - Management, sellside, buy-side,
 - ■ Significant Management adjustments to TTM P5-19
-- Pages 25 to - Restructuring related transactions (increase of
 - $7.3 million): Removes transaction costs and
 - FX/interest swap fluctuations related to refinancing and divestiture activities, one-time legal fees related to a civil lawsuit, and one-time severance costs caused by a reorganization.
 - ■ Significant sell-side adjustments to TTM P5-19 - Period adjustment for unused promotion funds (decrease of $1.9 million): Re-allocates the reversal of unused promotion accruals to the period to which they relate.
@@ -253,7 +243,6 @@
 - capital in TTM P519 was $59.5
 - $35.5 million to
 - Management, sellside, and buy-side
-- Pages 34 to
 - Net w orking capital, sell-side diligence adjusted
 - Net w orking capital, buy-side diligence adjusted
 - ■ Buy-side adjusted average net working capital increased from $85.8 million in FY17 to $95.0 million in TTM P5-19. The
@@ -264,13 +253,11 @@
 - Period of inventory build-up 135 days in FY17 to 152 days in This was primarily attributable to a and slower to sell inventory in the
 - ■ The Company had a period of excess inventory build up with an average days inventory outstanding “DIO” of 154 from
 - P10-2018 to P5-2019. Inventory build-ups can be attributed to a decline in sales driven by lower demand in certain markets and increased inventory from higher than expected yield.
-- Pages 44 to
 - – Product sales: Sardine sales declined 3% from FY18 to TTM P5-19 and Surimi sales declined 5% during the same period. Lower sales are driven by lapses in internal distributor management processes, and slow to sell Polishsourced sardines in Jamaica in H1 2018. Additionally, there has been lower Tuna demand driven by higher costs.
 - – Inventory balances: Sardine finished good balances increased by 20% from FY17 to FY18 driven by slower to sell inventory in the Jamaican market and a higher than expected fishing output in late 2018.
 - – Reserve calculation: The Company calculates a reserve by assessing slow moving inventory quarterly and determining the portion of inventory at risk based on review of existing inventory best before dates. Product categories with inventory average levels less than $1.0 million are written off when obsolete without a reserve. The
 - Company did not apply a reserve to excess Sardine or Surimi inventory; obsolete Surimi was directly written off and the higher than expected levels of Sardine were processed into inventory.
 - DIO, buy-side adjusted
-- FY17 FY18 P5-19
 - Variance from high
 - Variance from low
 - ■ Management expects a return to normalized ordering patterns after periods of excess inventory due to strong Canada
@@ -303,11 +290,9 @@
 - Buyer may also consider incremental roles to support
 - Finance, Risk Management, and required for the operate on a along with onetime costs and estimate was then
 - $6.4 million in and has estimated these costs may need to be with an additional
-- Pages 54 to - Non-IT non-FTE: Management’s estimates of bank fees, insurance, tax and audit fees appear to be overstated, within the range.
 - IT security, user support, and infrastructure management.
 - - IT non-FTE: Some IT infrastructure and application cost adjustments would be required for SAP maintenance,
 - One-time costs and synergies
-- Source: Management provided information
 - Management estimated total of $1.4 million in one-time cost for IT and non-IT functions as part of their standalone costs, legal costs, advisory costs, parallel-running costs, and other transaction-related costs as part of their analysis.
 - be able to generate from the acquisition. A buyer may consider their own deal thesis and how the Target may potentially integrate into a buyer’s organization when considering potential synergies.
 - Cash sweeps –
@@ -371,7 +356,6 @@
 - ■ The interest rate on the CLSS Loan is based on the interest rate obtained by CBCLSC on the above mentioned credit agreement with external lenders (USD 3 months LIBOR + 800 bps) plus 5 bps.
 - CBCLSC upstream loan ■ In a “back-to-back” financing arrangement the CRA would typically expect an interest rate spread higher than 5 bps to reside with the intercompany lender, i.e. CBCLSC.
 - ■ Based on an additional spread of 20 bps, we estimate the related income tax exposure for FY17-FY18 to be approximately C$150,000 including interest. This is a medium risk concern.
-
 # Business Overview
 - Condensed organization structure
 - Clover Leaf Seafood
@@ -386,7 +370,6 @@
 - Value add products
 - Shelf stable - Beef
 - Net sales, reported
-- Vendors and employees 259,938 258,954 258,413 272,881 273,156 272,668 100.0% 100.0% 100.0%
 - Tuna and Sardine have historically been the
 - Company’s largest segments, representing approximately 36% and 21% of the Company’s total sales in TTM P5-19, respectively.
 - While the Tuna, Specialty, Value-Add Product lines have increased by $4.5 million, $3.4 million, and
@@ -409,8 +392,6 @@
 - Trinidad & Tobago As a % total
 - During FY17 and FY18, the majority of the
 - Company’s revenue has been attributable to its top 5 customers, with sales generated by these customers representing 56.8% and 56.5% of total revenue, respectively. One of these customers is with the International Business, Facey, while the remainder are with the Domestic Business.
-- As a % net 70,736 28.7% 25.9% 62,731 16.6% 23.0% 133,467 45.2% 48.9%
-- Source: These market share figures are based on information presented in the CIM (p.14, 26) for the 52 week period ended Dec-18.
 - The Company’s main suppliers are co-packers of seafood products and fisheries, and its top 5 suppliers represent the majority of its total
 - Headcount by com pany
 - Clover Leaf (excl. Blacks Harbour) - salaried
@@ -429,17 +410,13 @@
 - responsibility of Seller and treated as net debt as closing.
 - Sardine Ops sales consist of sale of by-products (fishmeal, bail, fish oil) to third party customers and intercompany sales to each of the business units. There is no mark up on products produced at Blacks Harbour and transferred to these business units as these sales all flow through the CBCLSC legal entity.
 - Domestic BA, International BA, and Sardine Ops make use of shared operating expenses provided by BBF and recognized under the Corporate BA division.
-
 # Summary Financials
 - Not present in source report
-
 # Profit and Loss Overview / Financial Performance
 - Not present in source report
-
 # Quality of Earnings
 - TTM P5-19 reported
 - EBITDA of $28.5 million increases to $30.9 million subsequent to during due diligence.
-- Refer to the following pages for additional 272,022 270,631 269,453 295,119 289,670 289,459
 - Interest expense / (income)
 - Depreciation & amortization
 - ■ The nature of adjustments included in the quality of earnings analysis are as follows:
@@ -502,17 +479,14 @@
 - 12. Gain/loss on sale of assets: Represents the removal of one-time gains/losses on the sale of assets from EBITDA.
 - 13. Removal of FX impact on IC balances: Represents FX gains/losses related to intercompany balances related to BBF, KCR, CLH, and Anova, which are eliminated from EBITDA as they are non-operating in nature.
 - 14. Stand-alone costs adjustments: Represents the removal of costs which are expected to be discontinued post-acquisition and the addition of estimated stand-alone replacement costs which will be incurred instead. Refer to stand-alone cost section for further details as well as Pro-forma adjustment #19.
-- 18 Net sales from Bumble Bee 15a Reversal of divestment activity impact 15c Partial trade promotion period adjustment 16 Discontinuation of Toppers product line 272,022 270,631 269,453 15a Divestment activity impact 15b International innovation expenses 15c Partial trade promotion period adjustment 15 Reversal of sell-side adjustments 16 Discontinuation of Toppers product line 17 Fishing lease re-allocation
 - The following represents potential adjustments to EBITDA:
 - 15. Reversal of sell-side adjustments: Consists of the following items:
 - Divestment activity impact: Represents the reversal of sell-side adj. #2, on the basis that the delay in price increase implementation and negotiation in FY17, caused by an increased focus on a concurrent divestiture process, was representative of a normal business resource allocation decision. As this type of strategic dilemma is not one-time in nature, the impact of the sell-side adjustment is eliminated from EBITDA.
 - International innovation expenses: Represents the reversal of sell-side adj. #6, on the basis that research expenses related to international expansion and new product development are a normal part of business operations, as indicated by recurring R&D expenses throughout the historical period.
 - Partial trade promotion period adjustment: As part of sell-side adj. #5, an estimated trade promotion over-accrual balances was added back to EBITDA in
 - FY18. As this estimate is unsubstantiated, the portion of the FY18 over-accrual adjustment which has not yet been reversed in YTD-19, has been eliminated.
-- Partial trade prom otion period adjustm ent
 - FY18 over-accrual reversed in YTD P5-19
 - Less: FY18 over-accrual estimate per mgmt.
-- Partial trade prom otion period adjustm ent - (2,000) (1,167) - (1,500) (875)
 - Discontinuation of Toppers product line: As at Dec-17, the Company made a decision to discontinue the sale of the Toppers product line. This adjustment eliminates the EBITDA margin associated with this product from the historical period.
 - Fishing lease re-allocation: Effective January 1, 2018, the Company entered into a new leasing arrangement for additional herring quota, for which a $400k annual fee was paid in two installments midway through FY18. This adjustment distributes these lump-sum lease expense balances evenly on a monthly basis throughout FY18.
 - Net sales from Bumble Bee: Represents the reversal of the sell-side elimination of
@@ -549,10 +523,8 @@
 - Less: Sell-side confirmed over-accrual balance
 - A. Incremental FY18 over-accrual estimate
 - B. Estimated YTD P5-19 over-accrual
-- Unused prom otion accrual - 2,000 1,167 - (500) (292) - 1,700 1,846
 - G. Upcoming initiatives: The Company is currently in the planning or initial execution stages of the following initiatives. As meaningful historical results are not available for these projects, their potential impact on EBITDA has not been quantified. However, client should consider the potential implications of these initiatives on a go-forward basis.
 - Bistro bowls: Represents a ready-meal in a bowl product which contains tuna, pasta/rice, vegetables, and spices. The product launch is expected to occur in the second half of FY19.
-
 # Income Statement
 - they were not considered in the 19. Salaries, wages, and benefits 20. Plant capacity and utilization 21. Broker commissions
 - BS reconciliation to sell-side report
@@ -571,8 +543,6 @@
 - Add back / (deduct)
 - Net interest expense
 - Restructuring & other transition costs
-- KCR Elim co (232,385) (11,939) 12,261 (241,419) (11,939) 12,261
-- KCR Elim co (231,202) (11,513) 11,915 (240,353) (11,513) 11,915
 - Elim co Net CLH consol
 - Elim co Net CLH consol The P&L presented below reflects adjusted EBITDA after incorporating all Management, Sell-side, Buy-side, and Stand-alone QofE adjustments.
 - Mgm t., Sell-side, Buy-side adj.
@@ -628,7 +598,6 @@
 - Senior Manager, M&A Tax
 - Manager, Deal Advisory
 - Director, Operations M&A
-
 # Balance Sheet
 - CLH consolidated incom e statem ent
 - Cost of sales
@@ -683,7 +652,6 @@
 - Total Corporate / other reconciling items
 - Total adjustm ents
 - Gross profit per VPC, adjusted for reconciling item s above
-- Gross profit per consolidated trial balance 259,938 258,954 258,413 (196,413) (197,811) (199,459)
 - H = ∑G
 - I = F+H
 - K = I-J The adjacent schedules reconcile net sales and gross profit from the VPC database – which contains sales and margin details by product and product category – to the consolidated trial balances provided by Management.
@@ -718,7 +686,6 @@
 - Seafood Snacks net sales has increased steadily from FY17 to TTM
 - P5-19. This was driven by an increase in volume during the same period which was partially offset by a decrease in net sales per case from $105/EC in FY17 to $98/EC in TTM P5-19. Management represents that this decrease in net sales per case is the result of strategic promotional/discount deals on Seafood Snacks, which were intended to drive volume.
 - Sales volum e
-- Source: Management provided
 - Trademarks: Indefinite life trademarks for Bumble Bee,
 - Beach Cliff, Snows, Sweet Sue, Coral, Clover Leaf, and
 - Brunswick brands. Management did not note any impairment factors with brands and brand reputation.
@@ -742,7 +709,6 @@
 - Notice of assessment
 - NTT Data Corporation
 - Non-variable sales promotion
-
 # Net Working Capital
 - These balances are recorded in
 - CLH and are debt-like in nature.
@@ -751,7 +717,6 @@
 - Average TTM P5-19 reported net working capital was $59.5 million.
 - adjustments identified by
 - Management and during due diligence, average increased to $95.0
-- Refer to the following pages for additional
 - Net w orking capital, sell-side diligence adjusted
 - Net w orking capital, buy-side diligence adjusted summarizes average reported
 - ■ Accounts receivable: Includes trade receivables (net of allowance for doubtful accounts), HST and QST recoverable, deposits for cylinders and drums at Blacks Harbour, cost recoveries for bait and by-products at Blacks Harbour, and sub-lease receivables.
@@ -764,7 +729,6 @@
 - ■ Income & withholding taxes: Includes income taxes and nonresident withholding taxes.
 - ■ Other current liabilities: Includes accrued restructuring and severance costs, liability balances for forward fixed contracts and commodity contracts, and a sub-lease deposit.
 - ■ Intercompany payables: Mainly represents purchases of finished goods from BBF which are then sold to Clover Leaf third party customers. According to Management, these balances will be settled prior to close. Refer to Appendix 8 for a complete listing of all related party and intra-group balances.
-- Net working capital (3/11) – Management & sel -side adjustments 1 Prepaid income taxes 3 Bank overdrafts 4 Current portion of other payables 5 Accrued interest 6 Income taxes payable 7 Accrued restructuring & other transition 8 Financial instruments 9 Intercompany receivables 10 Intercompany payables 30,243 182,751 156,382
 - Sell-side diligence adjustm ents 11 Over-accrued trade promotions funds 12 Over-accrued FY18 audit fees 13 Over-accrued coupon liability 14 Include sardine sales to BBF 15 Remove Innovation AR & AP 16 Remove leftover interco balances 17 Remove CLH w ithholding taxes
 - NWC adjustments #1 to #10 were proposed by Management on the basis these items are debt-like in nature and should therefore be removed from
 - Sell-side diligence adjustments sell-side due diligence:
@@ -772,7 +736,6 @@
 - Note that the FY18 over-accrual was estimated to be $2.0 million based on the average over-accrual from FY15 to FY17.
 - 12. Over-accrued FY18 audit fees: Using hindsight, it was determined that the monthly accrual for the FY18 audit should have been $15k rather than $26k which was actually recorded from Jan-18 to Sep-18 (at which point the over-accrual was reversed). This adjustment 13. Over-accrued coupon liability: In Jun-18, the Company released
 - $100k in prior year liabilities related to the transition from print to digital coupons. To be consistent with QofE adjustment #9, this 14. Include sardine sales to BBF: Intercompany balances are excluded from NWC. However, the adjustment shows the pro forma receivable for the sardine sales to BBF which would be included in NWC on a standalone basis. Calculation assumes a DSO of 35 days which represents the historical average before adjustments.
-- Sell-side diligence adjustments (continued) 1 Prepaid income taxes 3 Bank overdrafts 4 Current portion of other payables 5 Accrued interest 6 Income taxes payable 7 Accrued restructuring & other transition 8 Financial instruments 9 Intercompany receivables 10 Intercompany payables 30,243 182,751 156,382
 - Sell-side diligence adjustm ents 11 Over-accrued trade promotions funds 12 Over-accrued FY18 audit fees 13 Over-accrued coupon liability 14 Include sardine sales to BBF 15 Remove Innovation AR & AP 16 Remove leftover interco balances 17 Remove CLH w ithholding taxes 15. Remove Innovation AR & AP: This adjustment removes AR and AP balances recorded in the Innovation business unit which relate to future opportunities not relevant to the historical operating results.
 - 16. Remove leftover interco balances: This adjustment represents the reversal of a Jan-18 entry which related to interest deemed paid to
 - CLH which was subsequently reclassified to an intercompany 17. Remove CLH withholding taxes: This adjustment represents the removal of a miscellaneous accrual for non-resident withholding taxes paid in regards to interest payments to Luxembourg.
@@ -783,8 +746,6 @@
 - Refer to the table below which presents the components of this
 - Revised trade prom otions 2016 Trade promotions 2017 Trade promotions 2018 Trade promotions
 - Sell-side adjustm ent 2016 Trade promotions 2017 Trade promotions 2018 Trade promotions
-- Buy-side adjustm ent 979 2,038 1,746 - 1,408 1,871 - 2,171 2,142 1,173
-- Source: Management provided trial balances; Sell-Side Financial Diligence report dated 03-May-19;
 - Buy-side diligence adjustments (continued)
 - Buy-side diligence adjustm ents 18 Revised trade promotions 20 Remove rent deposit payable 21 Revised CLH w ithholding taxes 22 Revised sardine sales to Bumble Bee 23 Include Innovation AR & AP 24 Fishing lease re-allocation 19. Include derivative balances in NWC: This adjustment reverses
 - NWC adjustment #2 proposed by Management on the basis that the derivative-related balances are part of the ongoing trade / operations of the business. Refer to the table below for a breakdown.
@@ -810,7 +771,6 @@
 - P6-18) going forward.
 - During TTM P5-19, fluctuated by $17.9
 - Minim um Maxim um
-- Source: Management provided trial balances; Sell-Side Financial
 - Average DIO increased from 135 days in FY17 to 152 days in TTM P5-19.
 - Variance from high
 - Variance from low
@@ -822,10 +782,8 @@
 - Variance from high
 - Variance from low
 - Average DSO and DPO consistent between FY17 and TTM P5-19.
-- Source: Management provided trial balances; Sell-Side 1Calculated using monthly DSO, DIO, and DPO metrics
 - Higher DSO from P2-19 to P5-19 was due to lower sardine and surimi sales driven by lapses in internal distributor management processes and slow to sell Polish-sourced sardines in Jamaica.
 - Higher DIO starting in the latter half of FY18 was due to excess inventory build ups from higher than expected fishing output.
-- Source: Management provided trial balances; Sell-Side Financial The table below presents a breakdown of sardine standard costs throughout the historical period.
 - Sardine Standard Costs
 - Cans & Packaging
 - Cans & Covers
@@ -862,7 +820,6 @@
 - Clover Leaf Holdings Company and its subsidiaries
 - Protection and Indemnity
 - Tax Adjustment Notes
-
 # Net Debt (Cash)
 - ■ Information with respect to any expected bonuses to employees; and
 - ■ Internal working paper supporting amounts reported on T106 Forms.
@@ -871,7 +828,6 @@
 - ■ Intra-group and related party note agreements;
 - of $142.7 million
 - $25.0 million to
-- Pages 47 to
 - Although these items may not be liabilities for accounting purposes, given Bolton would be assuming these future costs post-transaction, they should be
 - ■ Significant buy-side adjustments to net debt at 25-May-19 include:
 - – Remove IC receivables and payables (decrease of $11.8 million): This adjustment reverses Management adjustments #1a and 1b (thereby removing the impact of intercompany balances from net debt) on the basis that they relate to trading activity with BBF and are NWC in nature.
@@ -1117,10 +1073,8 @@
 - Target owns a number of properties that do not appear to be necessary for the core business operations. Sale of these assets would result in one-time capital gains and annual run-rate savings associated with property tax, utilities, maintenance, etc.
 - Management estimated $60,000 of annual incremental office expenses to accommodate four incremental QA employees. According to average commercial lease rates in Bangkok, this estimate may be in the range of $2,000-3,000 annually instead.
 - Moderate Limited Minimum 18. Operating expenses
-
 # Cash Flows
 - Not present in source report
-
 # Related Parties
 - Clover Leaf Seafood S.a.r.l.
 - Bumble Bee Foods S.a.r.l.
@@ -1156,24 +1110,17 @@
 - Total related party notes
 - Reconciliation to consolidated BS
 - Sum of A - (12,586) 105,336 - (10,281) 105,336
-
 # Reporting Environment
 - Not present in source report
-
 # Forecast Trading
 - Not present in source report
-
 # Industry Analysis
 - Not present in source report
-
 # Quality of Net Assets
 - Not present in source report
-
 # Gross Margin by LOB
 - Not present in source report
-
 # Appendices
-
 ## Appendix 1: Engagement letter procedures
 - ■ Trial balances by legal entity and division provided by Management for FY17, FY18, and YTD P5-19;
 - ■ Access to component external audit working
@@ -1187,19 +1134,14 @@
 - ■ Top customers and suppliers details;
 - are not audited but are ultimately included in its parent company’s audited consolidated
 - ■ Historical capital expenditures and capital spend financial statements; and
-
 ## Appendix 2: Consolidating P&L
 - Not present in source report
-
 ## Appendix 3: Adjusted P&L
 - Not present in source report
-
 ## Appendix 4: Consolidating BS
 - Not present in source report
-
 ## Appendix 5: P&L reconciliation to sell-side report
 - Not present in source report
-
 ## Appendix 6: BS reconciliation to sell-side report
 - Cash and cash equivalents
 - Prepaid expenses & other current assets
@@ -1214,7 +1156,6 @@
 - Capital leases and other debt
 - Pension and other long-term obligations
 - Total liabilities and equity As at 31-Dec-17 As at 31-Dec-18 Per TBs Variance databook Per TBs Variance databook The tables adjacent and below represents reconciliations from the trial balances that were provided by
-
 ## Appendix 7: VPC reconciliation to consolidated trial balance
 - Net sales reconciliation - VPC to consolidated trial balance
 - Net sales per VPC, unadjusted
@@ -1228,7 +1169,6 @@
 - Net sales per VPC, adjusted for reconciling item s above
 - Net sales per consolidated trial balance
 - C = A+B
-- E = C-D 259,938 258,954 258,413
 - Gross profit reconciliation - VPC to consolidated trial balance
 - Net sales per VPC, unadjusted
 - COGS per VPC, unadjusted
@@ -1239,13 +1179,10 @@
 - Coupon / slotting grow th
 - FX hedge gains / losses
 - Markup interco purchases
-
 ## Appendix 8: Intra-group and related party balances
 - Not present in source report
-
 ## Appendix 9: Gross margin analysis
 - Not present in source report
-
 ## Appendix 10: Capex analysis
 - The tables below outlines historical capex spending and budgeted capex spending by type, as well as capital spend commitments as at P5-2019.
 - Capital expenditures as at P5-2019
@@ -1260,7 +1197,6 @@
 - Management represents that there is no expected safety/environmental/regulatory or cost reduction capex from FY20 to FY23 because there are no planned capital spend projects.
 - Management budgeted $215k in plant automation capex in FY19B, and as a result expects lower FTE requirements in the future.
 - The increase in total capex spend in FY18 was driven by growth capex in the form of a sardine seiner (Fundy Monarch), Fishmeal dryer, and packaging line upgrade.
-
 ## Appendix 11: Top customers
 - Top 5 custom ers
 - Loblaw Companies Ltd
@@ -1276,7 +1212,6 @@
 - ■ There were no significant new or lost customers in the
 - ■ The Company regularly adjusts pricing based on changes in product supply, product cost, competitive pressures, market share objectives, and gross profit
 - ■ The Company considers historical performance as a reference, but primarily prices products based on current and expected market dynamics.
-
 ## Appendix 12: Accounts receivable
 - AR aging sum m ary
 - % of total
@@ -1304,7 +1239,6 @@
 - Allow ance for doubtful accounts
 - AFDA as a % net sales
 - FY18 TTM P5-19
-
 ## Appendix 13: Top suppliers
 - Top 5 suppliers As a % total
 - R S Cannery Co Ltd
@@ -1321,7 +1255,6 @@
 - ■ Inventory is received at CBCLSC’s six distribution center locations and is recorded in SAP. Invoices are processed once approved by the department head and are paid by BBF’s Treasury department.
 - ■ International finished goods are procured and shipped through the following methods: directly from overseas production facilities to customers (~56%), directly from
 - Blacks Harbour sardine plant to customers (~39%), from Bumble Bee US distribution center network to
-
 ## Appendix 14: Accounts payable
 - AP aging sum m ary
 - Current 1-30 days 31-60 days > 60 days
@@ -1346,7 +1279,6 @@
 - Top 10 vendors
 - Total other vendors (124) (15,734) 100.0%
 - Note: The total A/P presented in the table above excludes all intercompany balances, including those owed to Bumble Bee.
-
 ## Appendix 15: CLH EBITDA bridge – Management adjusted
 - Delays in passing rising input costs to customers led to pressure on margins in FY17 and FY18.
 - Declining domestic sales volumes from FY17 to FY18 stemmed in part to a reduction in salmon supply.
@@ -1357,11 +1289,9 @@
 - Sardine business by 22% from
 - FY17 to FY18 drove international
 - Gross margin differential between VPC and TB
-
 ## Appendix 16: Employee benefits – Pensions
 - ■ The Company operates both defined benefit and defined contribution pension plans which are managed by Sun Life Financial:
 - — Defined benefit pension plans:
-
 ## Appendix 17: Components of cost of sales
 - Cost of sales
 - Cost of goods sold As a % net sales
@@ -1374,7 +1304,6 @@
 - An increase of $400k in lease expenses in FY18 from FY17 due to a new fishing quota lease.
 - Includes warehouse fill rate penalties which were $500k higher in
 - FY18 than FY17, due to not meeting inventory holding requirements driven by supply shortages.
-
 ## Appendix 18: Operating expenses
 - The adjacent table presents a breakdown of historical operating expenses throughout the historical period.
 - % net sales
@@ -1406,7 +1335,6 @@
 - Brokerage/drayage: Includes variable broker commissions for 6 brokers;
 - monthly commission is <$25k/broker.
 - Advertising/NVSP: Composed of advertising spend to support marketing strategy. Increase in FY18 driven by national television/media campaign compared to FY17’s digital and print campaign.
-
 ## Appendix 19: Salaries, wages, and benefits
 - Salaries vs. benefits, reported
 - Total salaries and w ages
@@ -1427,7 +1355,6 @@
 - Total com pensation
 - Annual salary Bonus com pensation Headcount
 - Note: Headcount excludes hourly employee FTEs.
-
 ## Appendix 20: Plant capacity and utilization
 - ■ The Blacks Harbour facility has the following
 - Blacks Harbour capacity & utilization by line - 1 shift per shift capacity % Utilization
@@ -1436,7 +1363,6 @@
 - 41.5% control of the Bay of Fundy sardines quota.
 - Certified by the Canadian Food Inspection Agency (CFIA-ACIA) and Safe Quality Food Program (SQF).
 - Management provided information
-
 ## Appendix 21: Broker commissions
 - Dom estic and international broker com m issions - CAD only
 - Advantage Solutions On
@@ -1450,7 +1376,6 @@
 - Effective com m ission rate
 - ■ The Company makes use of 5 unique domestic brokers and 11 unique international brokers.
 - ■ Overall broker effective commission rates remained constant in the historical period.
-- Source: Management provided information
 - International broker com m issions - USD only
 - Antonio Barletta Sa
 - George F Huggins & Co
@@ -1461,7 +1386,6 @@
 - Com m issionable sales
 - Com m ission
 - Effective com m ission rate
-- Source: Management provided information
 - Total broker com m issions - in CAD
 - Com m ission
 - USD International broker commissions
@@ -1470,7 +1394,6 @@
 - Average period USD/CAD exchange rate - Bank of Canada
 - Note1: USD broker commissions are converted to CAD using the Bank of Canada historical rate for the period.
 - We noted an unreconciled difference between total broker commissions and the total broker/drayage expense.
-
 ## Appendix 22: Headcount
 - General and administrative
 - Selling and marketing
@@ -1486,10 +1409,8 @@
 - KCR fluctuates based on volume of fish caught.
 - Note: Headcount is calculated as an average of total monthly Clover
 - Leaf salaried, Blacks Harbour salaried, Blacks Harbour hourly, and KCR Fisheries hourly FTEs.
-
 ## Appendix 23: Summary of accounting function
 - Not present in source report
-
 ## Appendix 24: Organizational structure
 - Foods and President,
 - VP, Marketing & Bus, Dev.
@@ -1515,8 +1436,6 @@
 - Senior Director of Sales
 - Director of Sales – Special
 - Senior Director of Sales Calgary
-- Source: Management provided information
-
 ## Appendix 25: Interdivisional financials
 - Sardine Ops – Blacks
 - CBCLSC Domestic BA
@@ -1532,13 +1451,11 @@
 - CBCLSC Intercompany BA
 - CBCLSC Corporate, AusNZ
 - Bumble Bee Foods S.a.r.l.
-
 ## Appendix 26: Other assets
 - Prepaid Property Tax
 - Prepaid Income Taxes
 - Assets Held For Sale
 - Lt Fv Interest Sw ap & Cap - Asset
-- Total other assets 42,028 207,204 183,589 74,774 174,458 170,117
 - Note: Analysis excludes: cash, accounts receivable, inventories, PP&E and intangible assets.
 - Primarily relates to prepaid property taxes on Blacks Harbour
 - Miscellaneous prepaids includes: memberships, subscriptions, and
@@ -1546,7 +1463,6 @@
 - The international business unit conducts 80% of sales in USD, acting as a natural hedge against FX-driven cost movements.
 - Additional hedges are held on aluminum and soybean oil. As at June 30, 2019, hedges on 288 MT of aluminum had an unrealized MTM loss of $64k and hedges on 312k lbs of soybean oil had an unrealized MTM loss of $2k.
 - Refer to Appendix 8 for a breakdown of intercompany payable
-
 ## Appendix 27: Fixed assets
 - Fixed assets as at 25-May-2019
 - Data processing equipment
@@ -1557,11 +1473,9 @@
 - Includes various Blacks Harbour buildings and repairs, including the salmon plant (NBV $813k), building #10 (NBV $2.2 million)
 - Includes Blacks Harbour fish plant lot (NBV $428k), Brunswick Street warehouse land (NBV $249k), Deadman’s Harbour vacant land (NBV $351k) and additional warehouse and vacant lots.
 - Includes recent machinery and equipment, overwrap packaging line (NBV $1.3 million) purchased on January 27, 2019.
-
 ## Appendix 28: Intangible assets
 - Accum Amort - Customer Relationships
 - Total intangible assets (9,926) (11,434) (12,062) The adjacent table presents a breakdown of historical
-
 ## Appendix 29: Other liabilities
 - Gr/Ir Clearing (Unmatched A/P)
 - Accrued Trade And Consumer Marketing
@@ -1569,12 +1483,10 @@
 - Accrued Employee Benefits
 - Accrued Professional Fees
 - Other Accrued Expenses
-- Total other liabilities (30,255) (206,976) (188,409) (171,243) (184,995) (180,804) (72,263) (177,095) (179,686)
 - Accrued trade and consumer marketing balances increased in FY18, driven by increased trade promotions attributed to the “All Natural” marketing
 - Accrued bonuses in FY17 were based on normal payout levels. Management bonuses are based on: a) achievement of original budget EBITDA (50%), achievement of business unit/departmental objectives (25%), and achievement of personal objectives
 - Refer to Appendix 8 for a breakdown of intercompany
 - Note: Analysis excludes accounts payable.
-
 ## Appendix 30: Canadian tax compliance overview
 - Canadian tax compliance overview (1/2)
 - Tax compliance status
@@ -1596,7 +1508,6 @@
 - Provincial corporate income tax
 - Federal corporate income tax
 - Provincial corporate income tax
-- Source: Discussions with Management and documents provided in the dataroom
 - ■ Management represented that Target has not taken any positions that could potentially be challenged by tax authorities.
 - Note: There is no statute of limitations for withholding taxes.
 - Open year - not audited
@@ -1614,7 +1525,6 @@
 - Corporate tax compliance
 - Withholding tax compliance
 - Note:    = Involved / Internal only
-
 ## Appendix 31: Canadian transfer pricing compliance overview
 - Transfer pricing in Canada
 - ■ Transactions between related entities may invoke scrutiny by the tax authorities (e.g., the CRA) if one entity performs services, sells goods to or provides the use of property for another entity without charge or at a charge which does not reflect an “arm’s length” price. Generally, an arm's length price for a transaction is the price that would be charged between independent parties under similar facts and circumstances.
@@ -1635,7 +1545,6 @@
 - ■ The cost allocation process and time estimate is evaluated on an annual
 - ■ Costs are allocated to CBCLSC with a mark-up applied. The mark-up percentage varies depending on the type of service provided by BBF to
 - ■ Assuming none of the above services are duplicative of activities already performed by CBCLSC, the services provide a benefit to CBCLSC and the cost base identified accurately reflect the fully-loaded costs incurred by the service providers, the risk of any significant transfer pricing exposures relating to shared services appears to be low
-
 ## Appendix 32: Canadian sales tax compliance overview
 - Canadian sales tax compliance overview (1/2)
 - ■ Target’s revenues generally consist of the sale of fish and fish products, which are considered ‘basic groceries’ for GST/HST purposes and as such
@@ -1672,7 +1581,6 @@
 - ■ Accordingly, Target should not be subject to any PST compliance
 - ■ Management represented that Target’s insurance coverage is generally overseen by its broker Marsh outside Canada. Most of the policies are placed via Canadian licensed brokers, such that applicable insurance taxes would already be collected.
 - ■ However, the D&O policy was placed via Marsh outside Canada, such that a 10% federal excise tax applies. Target filed federal excise tax returns for 2017 and 2018 to remit this tax. It is not clear whether returns were also filed in earlier years, however, the amounts in question do not appear to be significant. Management represented that provincial insurance taxes in respect of the D&O policy are collected and remitted by Marsh.
-
 ## Appendix 33: Tax information read and outstanding
 - Tax information read and outstanding (1/2)
 - ■ FY16-FY18 CBCLSC NR4 Slips
@@ -1712,7 +1620,6 @@
 - ■ CLH board resolution for the FY17 issuance of 100
 - ■ Redacted CLSS board resolution for the 2017 borrowing from CBCLSC
 - ■ Sample (December 2018) redacted CLSS board minutes and resolutions for CBCLSC
-
 ## Appendix 34: Glossary
 - 6162410 Canada Limited
 - Connors Bros. Seafoods
@@ -1745,4 +1652,3 @@
 - Income Tax Act
 - Bumble Bee Foods S.a.r.l
 - Bumble Bee Holdco S.C.A
-

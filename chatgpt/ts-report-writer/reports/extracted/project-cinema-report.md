@@ -10,9 +10,7 @@
 
 # Executive Summary
 - Management represents that the Q1-24 decreased revenues of 1.7% from Q1-23 are due to inclement weather in key regions resulting in the closure of two LBE locations for short periods during the quarter. The decline in margins is also a result of a shift in the sales mix of consumers. Amusement revenues, which typically yield higher margins than food service revenues, have dropped from 65.1% to 60.7% of total revenue over the scope period. Meanwhile, food service revenues as a percentage of total revenue have risen from 33.2% to 36.6%.
-- LBE adjusted EBITDA margins were 28.7% in the FY23 period which is 17.1% higher than the Company’s total adjusted EBITDA margins. Additionally, LBEs have seen an adjusted EBITDA growth of 901.7% from FY21 to FY23, whereas the Company as a whole has seen an adjusted EBITDA growth of 193.5%
-- Management states that three new LBE builds are in the works for
-- Q4-24. The Company has gross capital commitments of $43.0 million ($35.0 million net of tenant inducements) related to the completion of the 3 new LBE builds and other premium
+- LBE adjusted EBITDA margins were 28.7% in the FY23 period which is 17.1% higher than the Company’s total adjusted EBITDA margins. Additionally, LBEs have seen an adjusted EBITDA growth of 901.7% from FY21 to FY23, whereas the Company as a whole has seen an adjusted EBITDA growth of 193.5% Management states that three new LBE builds are in the works for Q4-24. The Company has gross capital commitments of $43.0 million ($35.0 million net of tenant inducements) related to the completion of the 3 new LBE builds and other premium
 - Food service revenues
 - Media and other revenues
 - Cost of food service
@@ -26,22 +24,18 @@
 - 2.6 Revenue drivers and cost levers – value creation
 - Theatre occupancy expenses: Includes lease related expenses, percentage rent, and excludes cash rent accounted for as obligations or interest under IFRS 16, leases.
 - Other operating expenses: Consists of fixed and variable expenses, with the largest component being theatre salaries and wages.
-- General and administrative expenses: Primarily consists of costs associated with managing the
-- Company's business, including film buying, marketing and promotions, operations, theatre food service
+- General and administrative expenses: Primarily consists of costs associated with managing the Company's business, including film buying, marketing and promotions, operations, theatre food service
 - Depreciation - right-of-use assets
 - Depreciation and amortization - other assets
-- Analysis buildup and reconciliation to audit The Company’s quarterly financial statements were used to build the financial statements and
-- Quality of Earnings analysis. See Appendix for a detailed overview of the adjusted income
-- Note: The latest available audited financial statements are for the period ending December 31,
-- The nature of adjustments included in the analysis are as follows:
+- Analysis buildup and reconciliation to audit The Company’s quarterly financial statements were used to build the financial statements and Quality of Earnings analysis. See Appendix for a detailed overview of the adjusted income
+- Note: The latest available audited financial statements are for the period ending December 31, The nature of adjustments included in the analysis are as follows:
 - Toronto stock exchange
 - Trailing twelve months March 2024
 
 # Business Overview
 - Cineplex “The Company” is a Canadian brand that operates in the film entertainment and content, amusement, and media sectors. The Company offers its services to guests through its circuit of movie theatres, and location-based entertainment venues including the Rec Room and Playdium. It also operates businesses in cinema media through Cineplex Media, digital place-based media through Cineplex Digital Media, and until February 1, 2024, amusement solutions through Player One Amusement
 - Group. Furthermore, the Company is a partner in Scene+, Canada’s largest entertainment and lifestyle loyalty program.
-- As of March 31, 2024, the Company owned, leased, or had a joint venture interest in 1,631 screens in 158 theatres as well as 13 location-based entertainment venues in
-- Cineplex screens by category through 158 theatres across Canada as of Mar-24 (#)
+- As of March 31, 2024, the Company owned, leased, or had a joint venture interest in 1,631 screens in 158 theatres as well as 13 location-based entertainment venues in Cineplex screens by category through 158 theatres across Canada as of Mar-24 (#)
 - *Other screens includes 7 4DX screens, 5 Cineplex Clubhouse screens, and 17 ScreenX screens
 - Film Entertainment and Content
 - Location Based Entertainment (“LBE”)
@@ -58,12 +52,9 @@
 - Industry salary comparison
 - Sale of Player One Amusement Group
 - Litigation arising from Cineworld transaction
-- Player One Amusement Group (“P1AG”) removal (-$10.2 million): As of Dec-23, the Company sold P1AG. This
-- Diligence adjusted EBITDA increases over the historical period from FY21 to TTM Mar-24.
+- Player One Amusement Group (“P1AG”) removal (-$10.2 million): As of Dec-23, the Company sold P1AG. This Diligence adjusted EBITDA increases over the historical period from FY21 to TTM Mar-24.
 - Other costs TTM Mar-24
-- Holdings, Cinemark Holdings, and IMAX Corporation. The four companies including Cineplex had a $1.4 billion cumulative EBITDA in
-- YTD Q3-23, a 17.3% decrease from YTD Q3-19 cumulative EBITDA of
-- $1.7 billion. AMC, a US based theatrical exhibition business and IMAX, a technology platform for entertainment, saw more significant decreases with EBITDA margins decreasing by 4.3% and 6.3% respectively since the YTD Q3-19 period.
+- Holdings, Cinemark Holdings, and IMAX Corporation. The four companies including Cineplex had a $1.4 billion cumulative EBITDA in YTD Q3-23, a 17.3% decrease from YTD Q3-19 cumulative EBITDA of $1.7 billion. AMC, a US based theatrical exhibition business and IMAX, a technology platform for entertainment, saw more significant decreases with EBITDA margins decreasing by 4.3% and 6.3% respectively since the YTD Q3-19 period.
 - Similarly, cumulative revenues for the four companies have not yet reached pre-COVID levels as YTD Q3-19 saw total revenues of $10.1 billion and YTD Q3-23 saw total revenues of $10.0 billion, meaning a 1.7% increase in revenues is needed to reach pre-COVID levels.
 - The film content and entertainment industry has seen a cumulative EBITDA increase of 194.0% from FY20 to FY23, and similarly a 72.8% increase in EBITDA margins from an average of (54.6)% in FY20 to an average of 18.2% in FY23. However, the industry’s profitability still isn’t up to pre-COVID levels with EBITDA margins down by 3.95% compared to an average EBITDA margin of 22.2% in FY19.
 - included support for company utilities fees. This subsidy was retroactive from Q121 to Q1-22 within the scope period. The Company records this grant as an offset to the relevant expense.
@@ -112,9 +103,7 @@
 - Tourism and hospitality recovery program
 
 # Balance Sheet
-- the effect of litigation costs on EBITDA associated with the
-- Company’s action against Cineworld as a result of
-- Cineworld’s repudiation to acquire all of the outstanding shares of the Company.
+- the effect of litigation costs on EBITDA associated with the Company’s action against Cineworld as a result of Cineworld’s repudiation to acquire all of the outstanding shares of the Company.
 - Group revenues and expenses to discontinued operations within the FY23 period.
 - EBITDA, reported: Reflects definitional add-backs (i.e., interest, income taxes, depreciation and amortization) to net income.
 - depreciation and amortization of the Company’s joint ventures and associates.
@@ -139,19 +128,14 @@
 - EBITDA margin, pro forma adjusted
 - Foreign exchange gain (loss): This adjustment eliminates the impact of foreign exchange gains and losses resulting from foreign exchange transactions. The movement in foreign exchange was due to the change in the CAD/USD foreign exchange month end rates. Foreign exchange gains and losses result from the settlement of foreign currency transactions and from the translation at fiscal year-end exchange rates of monetary assets and liabilities denominated in other currencies.
 - Impairment of long-lived assets, goodwill, and investments: The Company generally performs its annual test for impairment of goodwill and indefinite-lived intangible assets in the fourth quarter. This adjustment reverses the effect of the change in value of these assets on EBITDA.
-- CDCP equity gain (loss): The Company’s joint ventures and associates included its 78.2% interest in the Canadian Digital Cinema Partnership (“CDCP). CDCP was a joint venture formed by the Company and Empire Theatres Limited to finance the implementation of digital projectors. The Company leased its digital projectors from
-- CDCP. On December 16, 2022 CDCP distributed its assets to its partners including the
-- Company. This adjustment removes the historical gains (losses) associated with the This adjustment is later altered, refer to commentary in adjusted #9.
+- CDCP equity gain (loss): The Company’s joint ventures and associates included its 78.2% interest in the Canadian Digital Cinema Partnership (“CDCP). CDCP was a joint venture formed by the Company and Empire Theatres Limited to finance the implementation of digital projectors. The Company leased its digital projectors from CDCP. On December 16, 2022 CDCP distributed its assets to its partners including the Company. This adjustment removes the historical gains (losses) associated with the This adjustment is later altered, refer to commentary in adjusted #9.
 - We consider this adjustment to be reasonable.
 - We consider this adjustment to be reasonable as it is not part of the Company’s normal recurring operations and was only active up until Q4-22.
 - Litigation costs: The Company commenced an action against Cineworld Group plc.
-- (“Cineworld”) as a result of Cineworld’s repudiation of the arrangement agreement pursuant to which Cineworld agreed to acquire all of the outstanding shares of the
-- Company (refer to the appendix for more information on the litigation arising out of the
-- Cineworld transaction). This adjustment removes the effect of management-stated litigation costs associated with this transaction on EBITDA as it is not part of the Company’s normal,
+- (“Cineworld”) as a result of Cineworld’s repudiation of the arrangement agreement pursuant to which Cineworld agreed to acquire all of the outstanding shares of the Company (refer to the appendix for more information on the litigation arising out of the Cineworld transaction). This adjustment removes the effect of management-stated litigation costs associated with this transaction on EBITDA as it is not part of the Company’s normal,
 - Realized foreign exchange reversal: Management adjustments reversed the entirety of the effect of foreign exchange on EBITDA. This adjustment adds back realized gain (loss) which is calculated as unrealized foreign exchange gain (loss) deducted from the total foreign exchange impact. The Company’s realized foreign exchange gains and losses are a result of the settlement of foreign currency transactions with customers and suppliers.
 - This is part of the Company’s normal, recurring operations and has a cash impact, therefore it is added back.
-- 10. Removal of Player One Amusement Group (“P1AG”) impact: The Company entered into a definitive share purchase agreement to sell 100% of the issued and outstanding shares of P1AG. The transaction closed on February 1,2024. Refer to the appendix for more information on the sale of P1AG. This adjustment removes the historical impact of
-- P1AG on the Company’s EBITDA.
+- 10. Removal of Player One Amusement Group (“P1AG”) impact: The Company entered into a definitive share purchase agreement to sell 100% of the issued and outstanding shares of P1AG. The transaction closed on February 1,2024. Refer to the appendix for more information on the sale of P1AG. This adjustment removes the historical impact of P1AG on the Company’s EBITDA.
 - P1AG foreign exchange: The adjustment for P1AG’s historical foreign exchange gain (loss) is calculated to include only realized foreign exchange gains/losses.
 - This calculation was made based on the realized gain (loss) as a percentage of total foreign exchange gain (loss) for the Company as a whole.
 - Removal of P1AG revenue
@@ -210,13 +194,10 @@
 - 10. Removal of P1AG impact: As of Dec-23, the company sold P1AG. Reclassification of assets and liabilities relating to P1AG to assets and liabilities held for sale has only been completed by management for Q4-23. This adjustment removes P1AG’s impact on NWC items for historical periods. This was calculated as a percentage of current assets and liabilities held for sale relating to P1AG as at 31-Dec-23 to total current assets and liabilities for each quarter. Refer to the appendix for more detailed information on the assumptions employed and calculations made for this adjustment.
 - 11. Litigation accrual: This adjustment removes the AP impact of the litigation costs stemming from the Cineworld transaction from QofE adjustment #8 as it is non12. Delayed interest payment due to statutory holiday: Management states that the balance of the cash and cash equivalents account, and accounts payable and accrued expenses account are higher than usual as of Mar-24 partially due to interest payments being deferred to Apr-24 due to the timing of a statutory holiday. This adjustment decreases accounts payable by the amount of interest expense deferred to Apr-24.
 - 13. One-time Scene + reorganization: In Dec-20, the Company received $60.0 million from its existing partner with respect to an agreement to reorganize the program. The balance is recognized upon the completion of specific non-financial milestones. This adjustment removes the deferred revenue associated with the reorganization as it is non-recurring in nature.
-- 14. COVID-19 related government grants: The adjustment removes the AR impact of the government grants stemming from COVID-19 from QofE diligence adjustment #11 as it 15. NWC impact of pro forma adjustments: With the opening of 3 new LBE locations in
-- Q4-24, this adjustment, following QofE adjustment # 12, adjusts pro forma trade and other receivables, inventories, prepaid expenses, accounts payables, and gift card deferred revenue into the scope period.
-- percentage of LBE revenue to total revenue in each historical quarter. The
-- Company had 13 LBE locations across the scope period and the associated
+- 14. COVID-19 related government grants: The adjustment removes the AR impact of the government grants stemming from COVID-19 from QofE diligence adjustment #11 as it 15. NWC impact of pro forma adjustments: With the opening of 3 new LBE locations in Q4-24, this adjustment, following QofE adjustment # 12, adjusts pro forma trade and other receivables, inventories, prepaid expenses, accounts payables, and gift card deferred revenue into the scope period.
+- percentage of LBE revenue to total revenue in each historical quarter. The Company had 13 LBE locations across the scope period and the associated
 - NWC for LBEs was applied evenly to the 13 locations to calculate the NWC for As % of TTM net sales The following items have been discussed by Management and should be considered for future events which may impact working capital.
-- Cadillac Fairview contracts: As part of the Company’s digital place-based media segment, a contract was penned with Cadillac Fairview to operate a network of 200 digital displays in 18
-- Cadillac Fairview shopping centres, and to sell digital and static media, and sponsorships, for its extensive network of shopping destinations across Canada. Operations have begun in Q1-24 but management has not specified any net working capital associated with this contract.
+- Cadillac Fairview contracts: As part of the Company’s digital place-based media segment, a contract was penned with Cadillac Fairview to operate a network of 200 digital displays in 18 Cadillac Fairview shopping centres, and to sell digital and static media, and sponsorships, for its extensive network of shopping destinations across Canada. Operations have begun in Q1-24 but management has not specified any net working capital associated with this contract.
 - Lost contracts within digital place-based media: Management did not specify lost contracts. Pending more detail information on any lost contracts within the scope period, an analysis
 - Accrued vacation: The current balance of accrued vacation paid to employees is non-quantifiable, however it should be considered for a working capital adjustment, as it is an obligation from previous management and post-acquisition it may be treated as debt.
 - Restricted cash: Depending on the full breakdown of restricted cash and its restrictions, some portions of restricted cash may be considered as part of working capital. This includes cash that is restricted purely for operating activities, for example, in cash registers, which may be considered similar to a prepaid expense or deposit, which can be included in working capital.
@@ -231,18 +212,10 @@
 - Kevin Watts (EVP, Exhibiton & LBE)
 - Wanda Gierhart (CMO)
 - Kevin Connor (SVP, General Counsel)
-- Total executive compensation On November 22, 2023, Cineplex Entertainment Limited Partnership (“CELP”) announced that it had entered into a definitive share purchase agreement to sell 100% of the issued and outstanding shares of Player One Amusement Group Inc. (“P1AG”) for cash proceeds of
-- $155.0 million, subject to customary post-closing adjustments (the “Sale Transaction”). The
-- Sale Transaction closed on February 1, 2024. On closing of the Sale Transaction, P1AG and
-- CELP entered into a long-term agreement under which P1AG will continue to supply and service amusement games in the Company’s theatres and location-based entertainment venues. The proceeds from the Sale Transaction were used to repay bank debt. In connection with the sale of P1AG during the first quarter, the Company recognized total net income, net of taxes, from discontinued operations of $68.1 million. That income included a material gain of
-- $67.3 million, net of income taxes.
+- Total executive compensation On November 22, 2023, Cineplex Entertainment Limited Partnership (“CELP”) announced that it had entered into a definitive share purchase agreement to sell 100% of the issued and outstanding shares of Player One Amusement Group Inc. (“P1AG”) for cash proceeds of $155.0 million, subject to customary post-closing adjustments (the “Sale Transaction”). The Sale Transaction closed on February 1, 2024. On closing of the Sale Transaction, P1AG and CELP entered into a long-term agreement under which P1AG will continue to supply and service amusement games in the Company’s theatres and location-based entertainment venues. The proceeds from the Sale Transaction were used to repay bank debt. In connection with the sale of P1AG during the first quarter, the Company recognized total net income, net of taxes, from discontinued operations of $68.1 million. That income included a material gain of $67.3 million, net of income taxes.
 - Cash rent related to lease obligation
-- P1AG adjusted EBITDA The Company commenced an action against Cineworld as a result of Cineworld’s repudiation of the Arrangement Agreement. Cineworld filed a counterclaim against the Company for an unspecified amount of costs that it incurred as a result of the Company’s alleged breaches of the Arrangement Agreement On December 14, 2021, the Court released its Decision. The Court held that the Company did not breach any of its covenants in the Arrangement Agreement, and that Cineworld had no basis for terminating the Arrangement Agreement. The Court held that Cineworld breached the Arrangement Agreement and repudiated the transaction to acquire the
-- Company, which actions precluded the Company from seeking specific performance and entitled the Company to monetary damages. The Court awarded damages for breach of contract to the Company in the amount of $1.24 billion on account of lost synergies, and $5.5 million for transaction costs, exclusive of pre-judgment interest.
-- On January 12, 2022, Cineworld filed a Notice of Appeal with the Court of Appeal for Ontario and on January 27, 2022, the Company filed its Appeal. On September 7, 2022, the
-- Cineworld Parties filed a petition, in the U.S. Bankruptcy Court, commencing bankruptcy proceedings under Chapter 11. On September 8, 2022, the U.S. Bankruptcy Court granted relief requested by the Cineworld Parties in the Chapter 11 proceedings, including an order confirming and enforcing a worldwide stay of all enforcement proceedings by Cineworld’s creditors. Cineworld took the position that the Appeal was therefore stayed. On September 9, 2022, the Company filed an emergency motion with the U.S. Bankruptcy Court, seeking to lift the stay with respect to the Appeal. The Company’s emergency motion was heard on September 28, 2022, at which time the U.S. Bankruptcy Court declined the
-- Company’s requested relief, without prejudice to the Company’s ability to seek such relief at a later date. The Company continues to evaluate and advance all options to maximize and monetize the value of the Judgment. As part of these ongoing efforts, the Company has engaged Moelis & Company, a leading global investment bank with significant expertise in these areas, as financial advisors, and Goodmans LLP, as lead counsel. The Company has also been appointed as a member of the unsecured creditors’ committee in the
-- Cineworld Parties’ Chapter 11 proceedings.
+- P1AG adjusted EBITDA The Company commenced an action against Cineworld as a result of Cineworld’s repudiation of the Arrangement Agreement. Cineworld filed a counterclaim against the Company for an unspecified amount of costs that it incurred as a result of the Company’s alleged breaches of the Arrangement Agreement On December 14, 2021, the Court released its Decision. The Court held that the Company did not breach any of its covenants in the Arrangement Agreement, and that Cineworld had no basis for terminating the Arrangement Agreement. The Court held that Cineworld breached the Arrangement Agreement and repudiated the transaction to acquire the Company, which actions precluded the Company from seeking specific performance and entitled the Company to monetary damages. The Court awarded damages for breach of contract to the Company in the amount of $1.24 billion on account of lost synergies, and $5.5 million for transaction costs, exclusive of pre-judgment interest.
+- On January 12, 2022, Cineworld filed a Notice of Appeal with the Court of Appeal for Ontario and on January 27, 2022, the Company filed its Appeal. On September 7, 2022, the Cineworld Parties filed a petition, in the U.S. Bankruptcy Court, commencing bankruptcy proceedings under Chapter 11. On September 8, 2022, the U.S. Bankruptcy Court granted relief requested by the Cineworld Parties in the Chapter 11 proceedings, including an order confirming and enforcing a worldwide stay of all enforcement proceedings by Cineworld’s creditors. Cineworld took the position that the Appeal was therefore stayed. On September 9, 2022, the Company filed an emergency motion with the U.S. Bankruptcy Court, seeking to lift the stay with respect to the Appeal. The Company’s emergency motion was heard on September 28, 2022, at which time the U.S. Bankruptcy Court declined the Company’s requested relief, without prejudice to the Company’s ability to seek such relief at a later date. The Company continues to evaluate and advance all options to maximize and monetize the value of the Judgment. As part of these ongoing efforts, the Company has engaged Moelis & Company, a leading global investment bank with significant expertise in these areas, as financial advisors, and Goodmans LLP, as lead counsel. The Company has also been appointed as a member of the unsecured creditors’ committee in the Cineworld Parties’ Chapter 11 proceedings.
 - While the judgment and next steps are a key focus for the Company and its advisors, due to uncertainties inherent in appeals and Cineworld’s insolvency proceedings, it is not possible for the Company to predict the timing or final outcome of the Appeal.
 - Film entertainment and content
 - Food service/delivery - LBE
@@ -271,16 +244,13 @@
 - Cash generating unit
 
 # Net Debt (Cash)
-- The balance of the cash and cash equivalents account as of
-- Mar-24 is significantly higher than its historical balances due to interest payments being deferred to Apr-24 due to the timing of a statutory holiday. This adjustment decreases cash by the amount of interest expense deferred to Apr-24.
+- The balance of the cash and cash equivalents account as of Mar-24 is significantly higher than its historical balances due to interest payments being deferred to Apr-24 due to the timing of a statutory holiday. This adjustment decreases cash by the amount of interest expense deferred to Apr-24.
 - Cost of Food Service
 - Theatre food service revenues
 - @ AMC CPP grow th rate
 - Gross profit increase
-- Components of reported net working capital and others are discussed below. Refer to the
-- “Net debt” section for a discussion on net debt items.
-- This balance consists of $145.0 million in gift cards, $14.7 million in SCENE loyalty program points, and $21.2 million in the advances, deposits and other account as of
-- Management estimates the value of gift cards that are not expected to be redeemed by customers, based on the terms of the gift cards and historical redemption patterns, including industry data. The estimates are reviewed annually, or when evidence indicates the existing estimate is not valid.
+- Components of reported net working capital and others are discussed below. Refer to the “Net debt” section for a discussion on net debt items.
+- This balance consists of $145.0 million in gift cards, $14.7 million in SCENE loyalty program points, and $21.2 million in the advances, deposits and other account as of Management estimates the value of gift cards that are not expected to be redeemed by customers, based on the terms of the gift cards and historical redemption patterns, including industry data. The estimates are reviewed annually, or when evidence indicates the existing estimate is not valid.
 - The SCENE loyalty program deferred revenue balance relates to SCENE point obligations issued up to December 12, 2021. New Scene+ points issued are recognized as advertising and promotion and are not reflected in deferred revenue on the balance
 - Property, plant, and equipment
 - Property, plant, and equipment consists of $9.0 million of land, $253.0 million of building and leasehold improvements, $119.6 million of equipment, and $12.7 million of construction-in-progress as of Dec-23. The detailed breakdown for the account balance as of Mar-24 is unavailable.
@@ -288,8 +258,7 @@
 - Intangible assets: Intangible assets include trademarks, trade names, leases, software and customer relationships acquired by the Company. Depreciation and amortization are calculated on a straight-line basis over the useful lives of the assets.
 - Interest in joint ventures: The Company participates in incorporated and un-incorporated joint ventures with other parties, and accounts for its interests using the equity method.
 - Current joint ventures include a 33.3% interest in Scene+ and a 50% interest in one IMAX auditorium in Ontario.
-- Goodwill: For the purpose of impairment testing, goodwill has been allocated to CGUs or groups of CGUs. The $620.3 million balance as of Dec-23 represents $413.9 million in
-- Exhibition and $206.4 million in Media.
+- Goodwill: For the purpose of impairment testing, goodwill has been allocated to CGUs or groups of CGUs. The $620.3 million balance as of Dec-23 represents $413.9 million in Exhibition and $206.4 million in Media.
 - The working capital schedule summarizes reported working capital (derived from the stratified balance sheet analysis), potential adjustments and pro forma adjustments to be considered for FY23.
 - Such proposed adjustments are not deemed to be all-inclusive. The validity of these diligence adjustments and other factors raised for your consideration may require further investigation to understand the potential impact on your valuation model.
 - Fiscal year presentation The average net working capital reported for the TTM Mar-24 is ($256.7 million). After adjustments, average net working capital increases to ($243.1 million).
@@ -298,8 +267,7 @@
 - Cash and cash equivalents: Consists of $92.3 million in cash. Management did not specify if restricted cash is included in this amount.
 - Income taxes receivable: Consists of the amount of income taxes that the Company is due to receive back.
 - Fair value of interest rate swap agreements (assets): Items related to decreasing foreign exchange rate exposure on interest expenses.
-- Right-of-use assets: Consists of leased property and equipment associated with lease obligations owed to the
-- Deferred income taxes: Based on substantively enacted corporate tax rates, expected timing of reversal and expected taxable income allocation to various tax jurisdictions.
+- Right-of-use assets: Consists of leased property and equipment associated with lease obligations owed to the Deferred income taxes: Based on substantively enacted corporate tax rates, expected timing of reversal and expected taxable income allocation to various tax jurisdictions.
 - Derivative financial instruments: Relates to financial contracts whose value is derived from notes payable.
 - Income taxes payable: Consists of income tax withholdings and accruals that have been removed from net working capital and added to net debt.
 - Lease obligations: Include current portion of lease obligations. This relates to the leases for theatres and locationbased entertainment facilities, and is considered a debt obligation to the lessor.
@@ -307,8 +275,7 @@
 - Players Limited Partnership, a defined pension plan, and the Famous Players Retirement Excess Plan. The plans have a cumulative defined benefit obligation of $6.8 million. This is added to net debt as it is an obligation from
 - Lease obligations (current portion)
 - Post employment benefit obligations 11. Capital commitments: The Company has aggregate gross capital commitments of $43.0 million ($35.0 million net of tenant inducements) related to the completion of construction of one theatre, three location-based entertainment locations and other premium experiences.
-- 12. Share-based compensation: The company offers share-based compensation in the form of an incentive plan with
-- RSU and PSU awards. We recommend that this be settle prior to close.
+- 12. Share-based compensation: The company offers share-based compensation in the form of an incentive plan with RSU and PSU awards. We recommend that this be settle prior to close.
 - 13. Cash impact of deferred interest payment: Management states that the balance of the cash and cash equivalent account, and accounts payable and accrued expenses account are higher than usual as of Mar-24 due to interest payments being deferred to Apr-24 due to the timing of a statutory holiday. This adjustment decreases cash by the amount of interest expense deferred to Apr-24.
 - Cost to serve deferred revenue: Consideration to quantify the estimated cost to deliver the deferred revenue balance.
 - This calculation was derived from the reciprocal of the gross margin as of Mar-24, multiplied by the associated deferred
@@ -325,8 +292,7 @@
 - Intern, Financial Due Diligence
 
 # Reporting Environment
-- the AP impact of litigation costs stemming from the
-- Cineworld lawsuit as it is non-recurring.
+- the AP impact of litigation costs stemming from the Cineworld lawsuit as it is non-recurring.
 - adjustments reversed the entirety of the effect of foreign exchange on EBITDA. This adjustment adds back the associated realized gain.
 - The Company’s financial statements are prepared under International Financial Reporting Standards (IFRS) and operates with a December 31 year-end. Below presents the Company’s quality of earnings, net working capital, and net debt statements on an adjusted basis.
 - the MD&A for: (i) one-time or non-recurring expenditures, (ii) expenses unrelated to typical operational performance, and (iii) current period cash rent paid or payable related to lease obligations.
@@ -339,9 +305,7 @@
 - Pro forma adjustments
 - EBITDA, pro forma adjusted
 - EBITDA margin, pro forma adjusted
-- Cash rent paid/payable related to lease obligations: Subsequent to the adoption of
-- IFRS 16 leases, the company effectively removes the charge for amounts paid or payable with respect to leased property and equipment from the calculation of
-- EBITDA. Given the majority of the Company’s locations are carried on in leased premises, the company introduced the measure of adjusted EBITDAaL, which includes a deduction for cash rent paid/payable related to lease obligations serving as a supplemental measure of the company’s profitability at an operational level.
+- Cash rent paid/payable related to lease obligations: Subsequent to the adoption of IFRS 16 leases, the company effectively removes the charge for amounts paid or payable with respect to leased property and equipment from the calculation of EBITDA. Given the majority of the Company’s locations are carried on in leased premises, the company introduced the measure of adjusted EBITDAaL, which includes a deduction for cash rent paid/payable related to lease obligations serving as a supplemental measure of the company’s profitability at an operational level.
 - Negotiated lease-related cash savings for the period: The company negotiated with landlords and achieved agreements for discounts on lease obligations as a result of COVID-19 closures. This adjustment reverses the quantified savings from these agreements as these are one time, non recurring savings.
 - Cash rent pertaining to current period: Under the new lease accounting standards (IFRS 16), lessees are required to recognize a lease liability for the present value of future lease payments. This includes both current and non-current portions, with the non-current portion representing lease payments that are due more than one year in the future. This adjustment reverses cash rent paid not pertaining to the current period as these lease payments are made in advance for future periods or in arrears for past periods and are not indicative of current lease obligations.
 - We consider this adjustment to be reasonable.
@@ -365,11 +329,9 @@
 - EBITDA by 19.9% from FY22 to FY23, and an adjusted store level EBITDA margin increase of 0.1% However, in the TTM Mar-24 period, the company experienced a decrease in adjusted store level EBITDA by 6.4%.
 - Total LBE revenue & adjusted EBITDA (FY21 – Q1-24)‘000
 - Theatre attendance levels, box office, food service, and cinema media revenues are highly dependent on the appeal of the Company’s screened content. A number of films shifted release to the second half of 2024. As a result of this shift, along with production delays related to the impact of the writers’ and actors’ strike, industry observers expect the second quarters’ box office results to be challenging.
-- However, management remains optimistic of earnings in the back-end of the year, as well as into 2025 with the release of Moana 2, Joker, Zootopia 2, and Avatar 3. Expected worldwide box office earnings for these movies are $5.1
-- Furthermore, management states that the continued focus will be on providing guests with a variety of premium viewing options, expanding their location-based entertainment offerings, and continuing to roll out its digital place-based
+- However, management remains optimistic of earnings in the back-end of the year, as well as into 2025 with the release of Moana 2, Joker, Zootopia 2, and Avatar 3. Expected worldwide box office earnings for these movies are $5.1 Furthermore, management states that the continued focus will be on providing guests with a variety of premium viewing options, expanding their location-based entertainment offerings, and continuing to roll out its digital place-based
 - Q3-24 to FY25 Outlook
-- All other forms of entertainment are substantial competitors to the movie-going experience. The
-- Company aims to deliver value to its guests through a variety of entertainment experiences and price points. Significant price increases may deter consumer spending on entertainment options to other alternatives which will negatively impact the Company’s business operations.
+- All other forms of entertainment are substantial competitors to the movie-going experience. The Company aims to deliver value to its guests through a variety of entertainment experiences and price points. Significant price increases may deter consumer spending on entertainment options to other alternatives which will negatively impact the Company’s business operations.
 - Film entertainment and content risk
 - A reduction in quality or quantity of film product, any disruption in the production or release of films, and the introduction of new delivery platforms for first run product, would have a negative effect on movie theatre attendance and adversely affect the Company’s business as attendance levels are a key value driver.
 - The Company has numerous large media and digital place-based media customers, the loss of which could impact the Company’s results. There is no guarantee that the Company could replace the revenues generated by these large customers if their business was lost.
