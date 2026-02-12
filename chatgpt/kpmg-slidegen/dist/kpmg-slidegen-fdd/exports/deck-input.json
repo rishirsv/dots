@@ -1,0 +1,42 @@
+{
+  "engagement": {
+    "name": "Project Cascade Care",
+    "client": "NorthRiver Capital Partners",
+    "report_date": "2026-02-12"
+  },
+  "global_constraints": {
+    "fact_lock": true,
+    "must_preserve_tokens": [
+      "[CHART PLACEHOLDER]",
+      "[TABLE IMAGE PLACEHOLDER]"
+    ],
+    "verbosity": "standard"
+  },
+  "slides": [
+    { "slide_id": "s01", "intent": "cover", "objective": "Set engagement context" },
+    { "slide_id": "s02", "intent": "section_divider", "objective": "Start executive summary section" },
+    { "slide_id": "s03", "intent": "business_overview", "objective": "Summarize operating model and footprint" },
+    { "slide_id": "s04", "intent": "key_findings_financial", "objective": "Present headline financial findings" },
+    { "slide_id": "s05", "intent": "summary_financials", "objective": "Provide KPI and trend snapshot" },
+    { "slide_id": "s06", "intent": "profit_loss_overview", "objective": "Show reported P&L baseline" },
+    { "slide_id": "s07", "intent": "qoe_adjustment_highlights", "objective": "Bridge reported to normalized EBITDA" },
+    { "slide_id": "s08", "intent": "working_capital_review", "objective": "Explain NWC trend and peg implications" },
+    { "slide_id": "s09", "intent": "reporting_environment", "objective": "Assess reporting process maturity" },
+    { "slide_id": "s10", "intent": "risk_framework", "objective": "Summarize transaction risk framework" },
+    { "slide_id": "s11", "intent": "section_divider", "objective": "Start historical performance section" },
+    { "slide_id": "s12", "intent": "service_line_analysis", "objective": "Analyze revenue by service line" },
+    { "slide_id": "s13", "intent": "customer_concentration", "objective": "Assess payer and referral concentration" },
+    { "slide_id": "s14", "intent": "site_performance", "objective": "Compare site-level economics" },
+    { "slide_id": "s15", "intent": "margin_analysis", "objective": "Narrate margin bridge and sensitivity" },
+    { "slide_id": "s16", "intent": "section_divider", "objective": "Start quality of earnings section" },
+    { "slide_id": "s17", "intent": "qoe_adjustment_detail", "objective": "Detail labor normalization adjustment" },
+    { "slide_id": "s18", "intent": "qoe_adjustment_detail", "objective": "Detail legal and one-time adjustments" },
+    { "slide_id": "s19", "intent": "qoe_adjustment_detail", "objective": "Detail occupancy and rent normalization" },
+    { "slide_id": "s20", "intent": "cash_conversion", "objective": "Assess EBITDA to cash bridge" },
+    { "slide_id": "s21", "intent": "section_divider", "objective": "Start appendices" },
+    { "slide_id": "s22", "intent": "payroll_appendix", "objective": "Provide payroll appendix commentary" },
+    { "slide_id": "s23", "intent": "appendix_support", "objective": "Provide NWC appendix support table" },
+    { "slide_id": "s24", "intent": "appendix_support", "objective": "Summarize accounting policy references" },
+    { "slide_id": "s25", "intent": "back_cover", "objective": "Close report with disclaimer" }
+  ]
+}

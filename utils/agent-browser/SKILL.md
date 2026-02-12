@@ -250,3 +250,77 @@ agent-browser highlight @e1              # Highlight element
 agent-browser trace start                # Start recording trace
 agent-browser trace stop trace.zip       # Stop and save trace
 ```
+
+## CDP with mirrored Chrome profile (recommended for logged-in apps)
+
+Recent Chrome builds can block CDP on your live default profile. Use a mirrored profile for remote debugging while preserving most cookies and app state.
+
+### One-time setup
+
+```bash
+mkdir -p ~/bin
+cat > ~/bin/chrome-cdp-profile <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+
+PORT="${1:-9222}"
+SRC="$HOME/Library/Application Support/Google/Chrome"
+DST="$HOME/.chrome-cdp-codex"
+
+mkdir -p "$DST"
+
+rsync -a --delete \
+  --exclude='*/Cache/*' \
+  --exclude='*/Code Cache/*' \
+  --exclude='*/GPUCache/*' \
+  --exclude='*/Service Worker/CacheStorage/*' \
+  --exclude='*/Service Worker/ScriptCache/*' \
+  --exclude='*/Session Storage/*' \
+  --exclude='*/blob_storage/*' \
+  --exclude='*/DawnCache/*' \
+  --exclude='*/GrShaderCache/*' \
+  --exclude='*/ShaderCache/*' \
+  --exclude='*/Media Cache/*' \
+  --exclude='Singleton*' \
+  "$SRC/" "$DST/"
+
+rm -f "$DST/SingletonLock" "$DST/SingletonCookie" "$DST/SingletonSocket" || true
+osascript -e 'tell application "Google Chrome" to quit' >/dev/null 2>&1 || true
+sleep 1
+
+open -na "Google Chrome" --args \
+  --remote-debugging-port="$PORT" \
+  --user-data-dir="$DST" \
+  --profile-directory=Default \
+  --no-first-run \
+  --no-default-browser-check
+
+sleep 2
+curl -fsS "http://127.0.0.1:${PORT}/json/version" >/dev/null
+curl -fsS -X PUT "http://127.0.0.1:${PORT}/json/new?https://gamma.app" >/dev/null || true
+echo "CDP ready on port ${PORT}"
+SH
+chmod +x ~/bin/chrome-cdp-profile
+```
+
+### Daily usage
+
+```bash
+chrome-cdp-profile 9222
+agent-browser --cdp 9222 snapshot -i
+```
+
+### Troubleshooting
+
+```bash
+# Verify CDP
+curl http://127.0.0.1:9222/json/version
+
+# Create a page target if tool says "No page found"
+curl -X PUT "http://127.0.0.1:9222/json/new?https://gamma.app"
+```
+
+Notes:
+- This mirrors your main profile, but you may still need to log in again for some apps.
+- Re-run `chrome-cdp-profile` to refresh mirror state from your primary profile.
+- Avoid launching CDP directly on the live default profile path; Chrome may not expose the debug port.

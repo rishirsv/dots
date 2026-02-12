@@ -1,0 +1,518 @@
+{
+  "metadata": {
+    "title": "Project Cascade Care - Financial Due Diligence",
+    "author": "KPMG Transaction Services"
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Financial Due\nDiligence",
+      "subtitle": "Project Cascade Care\nPrepared for NorthRiver Capital Partners\nFebruary 2026"
+    },
+    {
+      "type": "divider",
+      "sectionNumber": "01",
+      "sectionTitle": "Executive Summary"
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Business Overview",
+      "strapline": "Operating model, scale metrics, and concentration context through TTM Sep-25",
+      "leftBody": [
+        "Cascade Care Holdings operates 68 outpatient clinics across six US states and provides urgent care, imaging diagnostics, ambulatory procedures, and occupational health services.",
+        "Revenue increased from USD 214.6m in FY2022 to USD 312.8m in TTM Sep-25, representing an 13.3% CAGR driven by de novo clinic additions and same-clinic visit growth.",
+        "Commercial and Medicare payers represented 81% of net revenue in TTM Sep-25, while self-pay and workers compensation represented 19%.",
+        "Top five payer contracts represented 46% of net revenue; no single payer exceeded 14%, but reimbursement reset timing remains a key sensitivity.",
+        "Provider headcount increased from 412 clinicians in FY2022 to 537 clinicians in TTM Sep-25, with staffing growth concentrated in imaging and specialty procedure capacity."
+      ],
+      "rightBody": [
+        "Growth quality is supported by repeat-visit behavior and favorable service mix shift toward higher-acuity diagnostics; however, reimbursement rate changes can compress margins quickly if labor costs continue to rise.",
+        "The payer profile is diversified at an aggregate level, but concentration within a small number of managed-care contracts requires explicit downside stress testing.",
+        "De novo site additions have improved market density and referral capture, though initial ramp inefficiency at newer sites remains a drag on consolidated EBITDA margin.",
+        "Labor availability and premium contract labor usage are the most material controllable margin risks over the next 12 months.",
+        "Transaction diligence should prioritize reimbursement bridge testing, clinic-level contribution margin analysis, and physician productivity normalization assumptions."
+      ]
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "title": "Key Findings - Financial Performance",
+      "strapline": "Reported growth remains strong while labor and reimbursement dynamics drive margin sensitivity",
+      "body": [
+        "Revenue increased from USD 214.6m in FY2022 to USD 312.8m in TTM Sep-25, with same-clinic visit growth averaging 6.2% annually and average revenue per visit improving through service mix expansion.",
+        "Reported EBITDA increased from USD 31.2m to USD 47.6m over the same period, though EBITDA margin improved only modestly due to elevated clinician labor inflation and start-up costs at new clinics.",
+        "Clinical labor as a percentage of revenue increased from 36.8% in FY2022 to 38.4% in TTM Sep-25, primarily reflecting premium agency usage and retention incentives in two high-growth markets.",
+        "Reimbursement yield improved in FY2024 following negotiated rate increases, but TTM Sep-25 performance indicates partial give-back due to payer denial rates and lagged settlement activity.",
+        "Cash conversion declined from 88% of EBITDA in FY2023 to 79% in TTM Sep-25 due to accounts receivable aging expansion and delayed adjudication on selected payer cohorts.",
+        "Primary conclusion: the platform has demonstrable demand momentum and scale benefits, but earnings quality depends on labor normalization and tighter revenue-cycle performance."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Revenue (USD m)",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [214.6, 248.9, 287.4, 312.8]
+          },
+          {
+            "name": "EBITDA (USD m)",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [31.2, 38.7, 44.9, 47.6]
+          }
+        ],
+        "opts": {
+          "barDir": "col",
+          "showValue": true,
+          "valAxisTitle": "USD m"
+        },
+        "source": "Source: Management reporting package and trial balance extracts"
+      }
+    },
+    {
+      "type": "summaryFinancials",
+      "title": "Financial Snapshot",
+      "strapline": "KPI summary and quarterly trend indicate sustained demand with moderate margin pressure",
+      "kpis": [
+        { "value": "$312.8m", "label": "TTM Sep-25 Revenue", "delta": "+8.8% vs FY2024" },
+        { "value": "$47.6m", "label": "TTM Sep-25 EBITDA", "delta": "15.2% margin" },
+        { "value": "68", "label": "Clinic Footprint", "delta": "+9 sites since FY2022" },
+        { "value": "79%", "label": "Cash Conversion", "delta": "vs 88% in FY2023" }
+      ],
+      "chart": {
+        "type": "area",
+        "data": [
+          {
+            "name": "Quarterly Revenue (USD m)",
+            "labels": ["Q1-24", "Q2-24", "Q3-24", "Q4-24", "Q1-25", "Q2-25", "Q3-25"],
+            "values": [68.4, 70.2, 72.1, 76.7, 77.9, 79.8, 80.6]
+          }
+        ],
+        "opts": {
+          "showValue": true,
+          "lineSmooth": true,
+          "catAxisLabelFontSize": 6
+        },
+        "source": "Source: Monthly management accounts"
+      }
+    },
+    {
+      "type": "analysisNarrowTable",
+      "title": "Profit & Loss Overview",
+      "strapline": "Reported income statement trend used as baseline for normalization and valuation",
+      "table": {
+        "headers": ["Metric", "FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+        "rows": [
+          ["Revenue (USD m)", "214.6", "248.9", "287.4", "312.8"],
+          ["Clinical labor (USD m)", "79.0", "92.8", "106.9", "120.1"],
+          ["Supply and drugs (USD m)", "26.4", "30.2", "35.1", "38.3"],
+          ["Gross profit (USD m)", "109.2", "125.9", "145.4", "154.4"],
+          ["Gross margin (%)", "50.9%", "50.6%", "50.6%", "49.4%"],
+          ["SG&A (USD m)", "48.7", "53.6", "60.2", "65.7"],
+          ["EBITDA (USD m)", "31.2", "38.7", "44.9", "47.6"],
+          ["EBITDA margin (%)", "14.5%", "15.5%", "15.6%", "15.2%"],
+          ["Operating cash flow (USD m)", "24.8", "34.1", "37.3", "37.5"],
+          ["Cash conversion (% EBITDA)", "79%", "88%", "83%", "79%"]
+        ]
+      },
+      "notes": "Review note: final normalized EBITDA remains subject to labor-cost bridge support, payer settlement tie-out, and non-recurring legal/acquisition cost validation."
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "title": "QoE Bridge - Reported to Normalized EBITDA",
+      "strapline": "Preliminary bridge from reported EBITDA to normalized run-rate earnings",
+      "body": [
+        "TTM Sep-25 reported EBITDA of USD 47.6m adjusts to preliminary normalized EBITDA of USD 53.2m after due diligence adjustments and management support review.",
+        "Contract labor premium normalization of USD 2.1m reflects agency usage above normalized staffing model in two markets and is supported by monthly labor variance files.",
+        "Acquisition integration costs of USD 1.4m relate to one-time systems migration and duplicate leadership roles following FY2024 tuck-in acquisitions.",
+        "Legal settlement and advisory costs of USD 0.9m are non-recurring and tied to a closed payer dispute and transaction-specific advisory matters.",
+        "Owner discretionary and non-operating expenses of USD 1.2m include travel, sponsorship, and legacy consulting costs not expected under institutional ownership.",
+        "Open item: coding audit reserve adequacy may offset a portion of positive add-backs pending completion of third-party compliance review."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "USD m",
+            "labels": ["Reported", "Labor", "Integration", "Legal", "Owner", "Normalized"],
+            "values": [47.6, 2.1, 1.4, 0.9, 1.2, 53.2]
+          }
+        ],
+        "opts": {
+          "barDir": "col",
+          "showValue": true,
+          "valAxisTitle": "USD m"
+        },
+        "source": "Source: QoE adjustment tracker v5 and management support files"
+      }
+    },
+    {
+      "type": "analysisWideChartTableText",
+      "title": "Net Working Capital Overview",
+      "strapline": "NWC trend indicates a higher normalized peg than current draft SPA assumptions",
+      "body": [
+        "Average net working capital increased from USD 26.1m in FY2022 to USD 35.8m in TTM Sep-25, primarily driven by accounts receivable growth and delayed payer adjudication.",
+        "AR days increased from 44 to 57 over the same period, with the largest movement concentrated in two national payer groups transitioning to revised authorization workflows.",
+        "Deferred revenue increased from USD 5.2m to USD 8.7m and partially offsets receivables build, reflecting stronger pre-visit collections and employer prepayment programs.",
+        "Preliminary normalized peg range of USD 34m to USD 37m is above the current SPA placeholder and should be revised to reduce completion-account leakage risk.",
+        "Cut-off testing at quarter-end remains a key diligence priority, particularly around late-period claims submissions and contractual allowance estimation.",
+        "Transaction implication: peg methodology should use rolling-average mechanics with explicit treatment of denied-claim reversals and deferred revenue timing effects."
+      ],
+      "chart": {
+        "type": "line",
+        "data": [
+          {
+            "name": "Average NWC (USD m)",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [26.1, 29.8, 33.6, 35.8]
+          },
+          {
+            "name": "AR Days",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [44, 49, 54, 57]
+          }
+        ],
+        "opts": {
+          "showValue": true,
+          "valAxisTitle": "Index / USD m"
+        },
+        "source": "Source: Monthly balance sheet extracts and payer aging analytics"
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Financial Reporting Environment",
+      "strapline": "Process observations based on management walkthroughs; no controls testing or audit procedures performed",
+      "leftBody": [
+        "Month-end close is completed in approximately six business days, with core reconciliations prepared centrally but reviewed locally by regional finance teams.",
+        "Manual journals represented approximately 24% of quarter-end postings in TTM Sep-25, including material top-side adjustments for contractual allowances and labor accruals.",
+        "Three recently acquired clinic clusters operate on legacy billing workflows and do not yet follow a unified close checklist.",
+        "Revenue-cycle analytics are robust for top-line reporting, but contract-asset aging and denial reserve movement reporting remain less mature."
+      ],
+      "rightBody": [
+        "Primary reporting risk is variability in allowance estimation and late-period claim reclassifications, which may increase earnings volatility if not standardized.",
+        "Recommended remediation includes a standardized close calendar, required preparer-reviewer sign-offs for high-risk journals, and weekly denial-trend dashboards.",
+        "Capitalization governance should include documented eligibility matrices and centralized review to improve consistency across regions.",
+        "Transaction implication: current process environment is manageable but requires a focused 100-day finance integration plan to improve reporting confidence."
+      ]
+    },
+    {
+      "type": "titleStrapline4TextBoxes",
+      "title": "Top Diligence Risk Framework",
+      "strapline": "Priority risk themes, current evidence status, and mitigation focus",
+      "columns": [
+        {
+          "heading": "Reimbursement Yield",
+          "body": [
+            "Risk: Contract resets and denial trends pressure net revenue yield.",
+            "Evidence: AR days increased to 57 and denial rates rose in two national payers.",
+            "Mitigation: Complete payer-level bridge and validate contractual allowance policy."
+          ]
+        },
+        {
+          "heading": "Clinical Labor Cost",
+          "body": [
+            "Risk: Premium agency usage inflates labor ratio and suppresses margin expansion.",
+            "Evidence: Labor ratio increased from 36.8% to 38.4% of revenue.",
+            "Mitigation: Validate normalized staffing model and retention-cost assumptions."
+          ]
+        },
+        {
+          "heading": "Revenue Recognition",
+          "body": [
+            "Risk: Inconsistent cut-off and reserve assumptions across acquired regions.",
+            "Evidence: Material top-side journals and non-standard close practices observed.",
+            "Mitigation: Standardize close controls and reconcile allowance methodology."
+          ]
+        },
+        {
+          "heading": "Growth Sustainability",
+          "body": [
+            "Risk: New-site ramp performance may lag underwriting assumptions.",
+            "Evidence: EBITDA conversion at newer clusters is below mature-site average.",
+            "Mitigation: Apply site cohort sensitivity in valuation and debt sizing cases."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "sectionNumber": "02",
+      "sectionTitle": "Historical Performance"
+    },
+    {
+      "type": "analysisWideChartTableText",
+      "title": "Revenue by Service Line",
+      "strapline": "Diagnostics and ambulatory procedures continue to drive mix improvement",
+      "body": [
+        "Diagnostics revenue increased from USD 58.2m in FY2022 to USD 101.4m in TTM Sep-25, driven by modality expansion and improved referral capture.",
+        "Urgent care remains the largest service line at USD 126.7m in TTM Sep-25, but growth moderated as acuity mix shifted toward scheduled services.",
+        "Ambulatory procedures expanded from USD 34.6m to USD 59.1m over the same period and contributed disproportionately to gross profit growth.",
+        "Occupational health revenue remained stable as a percentage of total revenue, providing defensible baseline utilization in down-cycle scenarios.",
+        "Service-line mix change is generally favorable for margin sustainability, subject to reimbursement and labor assumptions in high-acuity pathways."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Urgent Care",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [102.3, 113.9, 122.4, 126.7]
+          },
+          {
+            "name": "Diagnostics",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [58.2, 72.4, 89.8, 101.4]
+          },
+          {
+            "name": "Ambulatory Procedures",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [34.6, 42.1, 52.2, 59.1]
+          }
+        ],
+        "opts": {
+          "barDir": "col",
+          "showValue": true,
+          "valAxisTitle": "USD m"
+        },
+        "source": "Source: Service-line management reports"
+      }
+    },
+    {
+      "type": "analysisNarrowTable",
+      "title": "Payer Concentration and Exposure",
+      "strapline": "Payer concentration is moderate but contract reset timing drives downside sensitivity",
+      "table": {
+        "headers": ["Payer Group", "FY2023", "FY2024", "TTM Sep-25", "Commentary"],
+        "rows": [
+          ["Payer A", "13.1%", "13.8%", "14.0%", "National commercial; reset due Q3-26"],
+          ["Payer B", "10.9%", "11.2%", "10.8%", "Regional managed care"],
+          ["Payer C", "9.4%", "9.8%", "9.6%", "Medicare Advantage mix increasing"],
+          ["Payer D", "6.3%", "6.6%", "6.9%", "Higher denial trend in FY2025"],
+          ["Payer E", "4.8%", "4.9%", "4.7%", "Stable reimbursement profile"],
+          ["Top 5 Total", "44.5%", "46.3%", "46.0%", "Moderate concentration"],
+          ["Top 10 Total", "60.8%", "62.1%", "62.7%", "Contract timing sensitivity"],
+          ["Self-Pay / Other", "17.9%", "17.4%", "16.8%", "Collections management focus" ]
+        ]
+      },
+      "notes": "Review note: final concentration sensitivity will incorporate contract-specific reimbursement step-down scenarios and denial trend assumptions."
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "title": "Site-Level Performance Variance",
+      "strapline": "Mature clinics drive margin while newly opened sites remain sub-scale",
+      "body": [
+        "Mature-site EBITDA margin averaged 19.6% in TTM Sep-25 compared with 8.3% for sites opened in the last 24 months.",
+        "New-site cohorts reached revenue breakeven by month 11 on average, but full labor productivity normalization typically lagged until months 16 to 18.",
+        "The largest margin variance driver is clinician scheduling efficiency, followed by modality utilization and local payer mix.",
+        "Three newly opened markets remain below underwriting margin by 420 basis points due to slower referral conversion and higher locum usage.",
+        "Portfolio margin improvement depends on accelerating site maturation and reducing premium labor intensity at underperforming clusters."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Revenue per Site (USD m)",
+            "labels": ["Mature", "12-24 Months", "<12 Months"],
+            "values": [5.9, 4.2, 3.3]
+          },
+          {
+            "name": "EBITDA Margin (%)",
+            "labels": ["Mature", "12-24 Months", "<12 Months"],
+            "values": [19.6, 13.1, 8.3]
+          }
+        ],
+        "opts": {
+          "barDir": "col",
+          "showValue": true,
+          "valAxisTitle": "Index"
+        },
+        "source": "Source: Clinic cohort performance pack"
+      }
+    },
+    {
+      "type": "oneColumnText",
+      "title": "Margin Bridge and Sensitivity Narrative",
+      "strapline": "Margin evolution reflects competing effects from scale benefits and labor/reimbursement pressure",
+      "body": [
+        "Consolidated EBITDA margin improved from 14.5% in FY2022 to 15.6% in FY2024 as clinic utilization improved and fixed overhead was leveraged across a larger site base.",
+        "TTM Sep-25 margin moderated to 15.2% due to increased contract labor, slower payer adjudication, and temporary duplication of regional management roles after acquisitions.",
+        "Labor normalization is the highest-impact controllable lever, with estimated upside of 120 to 170 basis points if agency usage converges to historical staffing ratios.",
+        "Reimbursement sensitivity remains material; a 100 basis point reduction in blended net yield would reduce EBITDA by approximately USD 3.1m on current revenue base.",
+        "Supply inflation has moderated relative to FY2023 peaks, but pharmaceuticals and imaging consumables still create localized margin pressure in two high-volume markets.",
+        "Base case margin expansion appears achievable with execution discipline, while downside cases should explicitly incorporate labor availability constraints and reimbursement reset risk."
+      ]
+    },
+    {
+      "type": "divider",
+      "sectionNumber": "03",
+      "sectionTitle": "Quality of Earnings"
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "title": "QoE Adjustment Detail - Labor Normalization",
+      "strapline": "Contract labor premium and retention incentives are partially transitional",
+      "body": [
+        "Contract labor premium spend increased to USD 8.6m in TTM Sep-25 versus USD 5.1m in FY2023 due to clinician vacancies in two growth markets.",
+        "Management hiring pipeline indicates vacancy rates should normalize over the next 9 to 12 months, supporting partial normalization of premium labor costs.",
+        "Preliminary add-back of USD 2.1m assumes premium labor ratio converges to weighted-average historical levels adjusted for current market pay rates.",
+        "Retention incentive expense of USD 0.7m is treated as recurring and is not added back in the normalized case.",
+        "Remaining support required includes signed offer acceptance data, vacancy trend evidence, and site-level scheduling productivity reports."
+      ],
+      "chart": {
+        "type": "line",
+        "data": [
+          {
+            "name": "Contract Labor Premium (USD m)",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [4.8, 5.1, 7.4, 8.6]
+          },
+          {
+            "name": "Vacancy Rate (%)",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [8.1, 7.4, 9.2, 9.6]
+          }
+        ],
+        "opts": {
+          "showValue": true,
+          "valAxisTitle": "Index"
+        },
+        "source": "Source: HR analytics and labor variance tracker"
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "title": "QoE Adjustment Detail - Legal and One-Time Costs",
+      "strapline": "Non-recurring dispute and integration costs require clear support boundaries",
+      "leftBody": [
+        "Legal settlement and advisory expense totaled USD 0.9m in TTM Sep-25 related to a payer dispute resolved in Q2 and transaction-specific advisory work.",
+        "Integration costs of USD 1.4m included duplicate corporate functions, systems migration, and one-time severance tied to acquired site onboarding.",
+        "Documentary support includes settlement agreements, board-approved integration plans, and invoices tagged to non-operating workstreams.",
+        "No recurring litigation reserve release has been included in adjustments; only clearly one-time costs were considered."
+      ],
+      "rightBody": [
+        "Preliminary treatment as non-recurring is supportable, provided final tie-out confirms no ongoing service contracts are embedded in the same vendor pools.",
+        "Risk of over-adjustment is moderate if integration activities extend beyond the current forecast window or if management reclassifies recurring support as one-time.",
+        "Recommended validation steps include vendor-level spend lookback, legal accrual roll-forward, and post-close run-rate contract mapping.",
+        "Transaction implication: these adjustments can support valuation uplift, but certainty weighting should reflect completion of final support testing."
+      ]
+    },
+    {
+      "type": "analysisWideChartTableText",
+      "title": "QoE Adjustment Detail - Occupancy Normalization",
+      "strapline": "Temporary overlap rent and closure costs are material but expected to unwind",
+      "body": [
+        "Occupancy expense in TTM Sep-25 includes USD 1.3m of temporary overlap rent from clinic relocations and lease transition activity.",
+        "Closure and make-good costs of USD 0.6m were incurred on two legacy sites and are treated as non-recurring in the normalized case.",
+        "Base rent escalators remain a recurring cost and are excluded from add-back treatment.",
+        "Management expects overlap rent to fully unwind by Q2-26 following completion of relocation activities.",
+        "Remaining diligence focus includes lease abstraction completeness and confirmation of no continuing dual-site obligations."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Occupancy Cost Components (USD m)",
+            "labels": ["Base Rent", "Overlap Rent", "Closure Cost", "Total"],
+            "values": [18.2, 1.3, 0.6, 20.1]
+          }
+        ],
+        "opts": {
+          "showValue": true,
+          "valAxisTitle": "USD m"
+        },
+        "source": "Source: Lease schedules and site transition tracker"
+      }
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "title": "Cash Conversion and EBITDA Quality",
+      "strapline": "Conversion remains solid but has softened as AR aging and growth investment increased",
+      "body": [
+        "Cash conversion declined from 88% of EBITDA in FY2023 to 79% in TTM Sep-25, primarily due to higher receivable days and elevated growth capex.",
+        "Operating cash flow remained positive and increased in absolute terms, but conversion efficiency weakened as revenue-cycle timing became less favorable.",
+        "Maintenance capex remained stable near 2.1% of revenue, while growth capex increased to support de novo clinic rollout and imaging capacity expansion.",
+        "Working-capital normalization is expected to improve conversion modestly if payer adjudication cycle times return toward FY2023 levels.",
+        "Transaction implication: valuation cases should incorporate a prudent cash-conversion haircut until AR and denial trends demonstrate sustained improvement."
+      ],
+      "chart": {
+        "type": "line",
+        "data": [
+          {
+            "name": "Cash Conversion (% EBITDA)",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [79, 88, 83, 79]
+          },
+          {
+            "name": "Operating Cash Flow (USD m)",
+            "labels": ["FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+            "values": [24.8, 34.1, 37.3, 37.5]
+          }
+        ],
+        "opts": {
+          "showValue": true,
+          "valAxisTitle": "Index"
+        },
+        "source": "Source: Cash flow statements and management bridge analysis"
+      }
+    },
+    {
+      "type": "divider",
+      "sectionNumber": "04",
+      "sectionTitle": "Appendices"
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Payroll Appendix Commentary",
+      "strapline": "Personnel and compensation interpretation with exhibit handoff requirements",
+      "leftBody": [
+        "[TABLE IMAGE PLACEHOLDER]",
+        "Exhibit handoff: replace with final payroll bridge tied to HRIS, payroll register, and general ledger by month.",
+        "Required support: FTE bridge by role, overtime hours, agency labor tracking, severance tagging, and compensation-grade mapping."
+      ],
+      "rightBody": [
+        "Total compensation increased from USD 96.4m in FY2022 to USD 128.3m in TTM Sep-25, while average cost per clinical FTE increased from USD 146k to USD 162k.",
+        "Base salary represented approximately 72% of total compensation in TTM Sep-25; variable and premium labor components represented the remaining 28%.",
+        "Contract labor and overtime increased materially in FY2024 and TTM Sep-25 and are partially linked to vacancy coverage in high-growth markets.",
+        "Compensation trend supports scale growth narrative but requires normalization testing for agency usage and retention incentives before final run-rate margin conclusions.",
+        "Follow-up ask: complete role-level cohort analysis and reconcile labor-cost bridge to site-level productivity metrics."
+      ]
+    },
+    {
+      "type": "analysisNarrowTable",
+      "title": "Appendix - Working Capital Support Schedule",
+      "strapline": "Detailed schedule supporting normalized peg conclusions",
+      "table": {
+        "headers": ["Metric (USD m)", "FY2022", "FY2023", "FY2024", "TTM Sep-25"],
+        "rows": [
+          ["Accounts receivable", "31.4", "38.6", "46.3", "50.9"],
+          ["Inventory and supplies", "6.8", "7.4", "8.2", "8.6"],
+          ["Contract assets", "4.9", "6.1", "7.5", "8.2"],
+          ["Accounts payable", "12.6", "14.1", "15.4", "16.0"],
+          ["Accrued liabilities", "9.4", "10.2", "11.8", "12.5"],
+          ["Deferred revenue", "5.2", "6.1", "7.8", "8.7"],
+          ["Net working capital", "26.1", "29.8", "33.6", "35.8"],
+          ["AR days", "44", "49", "54", "57"],
+          ["AP days", "28", "30", "31", "32"]
+        ]
+      },
+      "notes": "Support note: schedule excludes cash and debt-like items and reflects preliminary due diligence and pro forma adjustments."
+    },
+    {
+      "type": "oneColumnText",
+      "title": "Appendix - Definitions and Accounting Policy Notes",
+      "strapline": "Reference definitions used throughout the report",
+      "body": [
+        "Reported EBITDA: operating profit before depreciation and amortization, adjusted for management-defined non-operating classifications where documented.",
+        "Normalized EBITDA: reported EBITDA adjusted for non-recurring, non-operating, and run-rate normalization items identified in due diligence.",
+        "Net Working Capital: current operating assets less current operating liabilities, excluding cash, debt-like items, and non-operating balances.",
+        "Cash Conversion: operating cash flow divided by EBITDA for the same period, before one-time financing-related cash movements.",
+        "Contract Assets and Contract Liabilities: balances recognized under revenue recognition policies for timing differences between service delivery and billing.",
+        "All findings are based on management-provided information and discussions; no audit or controls testing procedures were performed in connection with this report."
+      ]
+    },
+    {
+      "type": "backCover",
+      "disclaimer": "The information contained herein is of a general nature and is not intended to address the circumstances of any particular individual or entity. Although we endeavor to provide accurate and timely information, there can be no guarantee that such information is accurate as of the date received or that it will continue to be accurate in the future. No one should act on such information without appropriate professional advice after a thorough examination of the particular situation.",
+      "url": "kpmg.com"
+    }
+  ]
+}

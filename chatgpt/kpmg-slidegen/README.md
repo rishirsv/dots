@@ -14,7 +14,7 @@ Primary folders:
 - `generator/` - deck generation runtime
 - `qa/` - render/compare helpers
 - `templates/` - template assets/wrappers
-- `dist/` - skill distributions (including Talkbook consulting copilot)
+- `dist/` - skill distributions
 - `tests/` - regression and guardrail tests
 
 Common commands:

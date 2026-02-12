@@ -1,6 +1,6 @@
 # Repository Guidelines (kpmg-slidegen)
 
-This repo is the unified home for KPMG slide generation: extractor + generator core and Talkbook skill distributions.
+This repo is the unified home for KPMG slide generation: extractor + generator core plus distribution workflows.
 
 ## Scope
 
@@ -19,7 +19,6 @@ This repo is the unified home for KPMG slide generation: extractor + generator c
 1. Do not modify `templates/kpmg-diligence/**` without explicit approval.
 2. Treat `templates/kpmg-diligence/template.js` and `templates/kpmg-diligence/template.json` as generated outputs.
 3. Run Diligence regression checks before/after shared extractor changes.
-4. Keep Talkbook mapping policy centralized in `dist/kpmg-talkbook-consulting-copilot/references/layout-mapping.md`.
 
 ## Quick commands
 
@@ -31,10 +30,8 @@ This repo is the unified home for KPMG slide generation: extractor + generator c
 - Run tests:
   - `python3 -m unittest discover -s tests -p 'test_*.py'`
   - `node tests/test_generator_smoke.js`
-- Talkbook skill lifecycle:
-  - `python3 dist/kpmg-talkbook-consulting-copilot/scripts/start_session.py --topic "<topic>"`
-  - `python3 dist/kpmg-talkbook-consulting-copilot/scripts/compile_deck_json.py --session-id "<id>"`
-  - `python3 dist/kpmg-talkbook-consulting-copilot/scripts/build_deck.py --session-id "<id>"`
+- Inventory distribution workflow:
+  - `python3 dist/kpmg-gpt-inventory/scripts/build_inventory_deck.py`
 
 ## Critical learnings
 

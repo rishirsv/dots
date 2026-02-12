@@ -3,7 +3,7 @@
 This repository has one unified architecture with two layers:
 
 1. Core template platform: extract PPTX templates and generate brand-compliant decks.
-2. Distribution skills: packaged workflows (including Talkbook consulting copilot) that produce native layout JSON and call generator runtimes.
+2. Distribution skills: packaged workflows that produce deck content and call generator runtimes.
 
 ## System boundaries
 
@@ -36,11 +36,6 @@ flowchart LR
 
 - `dist/`: skill bundles and helpers.
 - `dist/kpmg-gpt-inventory/`: inventory deck distribution.
-- `dist/kpmg-talkbook-consulting-copilot/`: manual-first co-writing workflow:
-  - `scripts/start_session.py`, `upsert_section.py`, `apply_action.py`
-  - `scripts/compile_deck_json.py` (deterministic `layout.<slug>` compilation)
-  - `scripts/build_deck.py` (generation + strict checks + iterative loop hooks)
-  - `references/layout-mapping.md` (single source of mapping/taste policy)
 
 ## Data contracts
 
@@ -65,14 +60,14 @@ flowchart LR
 
 1. `templates/kpmg-diligence/**` is frozen unless explicitly approved.
 2. Shared extractor changes must pass Diligence regression tests.
-3. Talkbook guidance must live in `layout-mapping.md` (no separate rubric policy layer).
+3. Mapping guidance should be centralized per distribution in `dist/<distribution>/references/`.
 4. KPMG SVG logo assets are required in distribution/runtime decks.
 
 ## Validation strategy
 
 - Unit tests for extractor, slots, geometry, and part graph.
 - Node smoke test for generator output.
-- Talkbook lifecycle + mapping coverage tests.
+- Distribution lifecycle and mapping coverage tests (where applicable).
 - Diligence freeze guard comparing current hashes to manifest.
 
 ## Repository layout
@@ -82,7 +77,7 @@ kpmg-slidegen/
   extractor/                # Python extraction + template codegen
   generator/                # Node generation runtime/builders
   qa/                       # render/compare utilities
-  templates/                # diligence, valuations, talkbook assets/templates
+  templates/                # diligence, valuations, and other template assets/wrappers
   dist/                     # skill distributions and packaged workflows
   docs/                     # architecture/spec/plans
   tests/                    # regressions + freeze guards

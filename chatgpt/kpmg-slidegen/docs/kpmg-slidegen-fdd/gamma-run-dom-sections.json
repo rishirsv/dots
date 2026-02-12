@@ -1,0 +1,65 @@
+[
+  {
+    "h1": "",
+    "html": "<section id=\"popover-content-_r_3r_\" tabindex=\"-1\" role=\"dialog\" class=\"chakra-popover__content css-18m9bm8\" style=\"transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.95) translateZ(0px);\" aria-labelledby=\"popover-header-_r_3r_\" aria-describedby=\"popover-body-_r_3r_\"><header id=\"popover-header-_r_3r_\" class=\"chakra-popover__header css-1bqs7jl\"><div class=\"chakra-stack css-1uodvt1\"><svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"far\" data-icon=\"keyboard\" class=\"svg-inline--fa fa-keyboard \" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 576 512\"><path fill=\"currentColor\" d=\"M64 112c-8.8 0-16 7.2-16 16V384c0 8.8 7.2 16 16 16H512c8.8 0 16-7.2 16-16V128c0-8.8-7.2-16-16-16H64zM0 128C0 92.7 28.7 64 64 64H512c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128zM176 320H400c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V336c0-8.8 7.2-16 16-16zm-72-72c0-8.8 7.2-16 16-16h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H120c-8.8 0-16-7.2-16-16V248zm16-96h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H120c-8.8 0-16-7.2-16-16V168c0-8.8 7.2-16 16-16zm64 96c0-8.8 7.2-16 16-16h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H200c-8.8 0-16-7.2-16-16V248zm16-96h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H200c-8.8 0-16-7.2-16-16V168c0-8.8 7.2-16 16-16zm64 96c0-8.8 7.2-16 16-16h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H280c-8.8 0-16-7.2-16-16V248zm16-96h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H280c-8.8 0-16-7.2-16-16V168c0-8.8 7.2-16 16-16zm64 96c0-8.8 7.2-16 16-16h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H360c-8.8 0-16-7.2-16-16V248zm16-96h16c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H360c-8.8 0-16-7.2-16-16V168c0-8.8 7.2-16 16-16zm64 96c0-8.8 7.2-16 16-16h16c8.8 0 16 7.2 16 16v16c0 8.8-7.",
+    "id": "popover-content-_r_3r_",
+    "idx": 1,
+    "imageLayout": null,
+    "liCount": 0,
+    "p": ""
+  },
+  {
+    "h1": "",
+    "html": "<section data-id=\"onboarding-checklist-popover-content\" id=\"popover-content-_r_3d_\" tabindex=\"-1\" role=\"dialog\" class=\"chakra-popover__content css-rka3pr\" style=\"transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.95) translateZ(0px);\" aria-labelledby=\"popover-header-_r_3d_\" aria-describedby=\"popover-body-_r_3d_\"><div class=\"css-0\"><div class=\"css-2i5x5g\"><button type=\"button\" class=\"chakra-button css-1o2eghe\" aria-label=\"Minimize\"><svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fas\" data-icon=\"dash\" class=\"svg-inline--fa fa-dash fa-fw \" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><path fill=\"currentColor\" d=\"M0 256c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32z\"></path></svg></button></div><header id=\"popover-header-_r_3d_\" class=\"chakra-popover__header css-lwc0i4\"><div class=\"chakra-stack css-2xph3x\"><div class=\"chakra-stack css-i3ahsf\"><h2 class=\"chakra-heading css-139h4ve\">Get started</h2><p class=\"chakra-text css-gfzzrb\">0/8 completed</p></div><div class=\"css-1vk7qer\"><div aria-valuemax=\"100\" aria-valuemin=\"0\" aria-valuenow=\"0\" role=\"progressbar\" class=\"css-flzx43\" style=\"width: 0%;\"></div></div></div></header><div id=\"popover-body-_r_3d_\" class=\"chakra-popover__body css-1ews2c8\"><div class=\"chakra-stack css-uv9e93\"><div class=\"chakra-stack css-50yjde\"><button type=\"button\" class=\"chakra-button css-h5efni\" id=\"checklist-item-createFirstGamma\"><div class=\"chakra-stack css-1hajt2i\"><div class=\"css-1obt7c3\"><svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"far\" data-icon=\"square\" class=\"svg-inline--fa fa-square fa-fw \" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path fill=\"currentColor\" d=\"M384 80c8.8 0 16 7.2 16 16V416c",
+    "id": "popover-content-_r_3d_",
+    "idx": 2,
+    "imageLayout": null,
+    "liCount": 0,
+    "p": ""
+  },
+  {
+    "h1": "",
+    "html": "<section id=\"popover-content-_r_6l_\" tabindex=\"-1\" role=\"dialog\" class=\"chakra-popover__content css-1m4pzbx\" aria-describedby=\"popover-body-_r_6l_\" style=\"transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.95) translateZ(0px);\"><div id=\"popover-body-_r_6l_\" class=\"chakra-popover__body css-1ews2c8\"><input class=\"gamma-FileInput-input\" multiple=\"\" accept=\"image/*,application/pdf\" type=\"file\" name=\"gamma-file-input\" style=\"width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute; z-index: -1;\"><div class=\"chakra-stack css-8g8ihq\"><div class=\"chakra-stack css-1y3f6ad\"><p class=\"chakra-text css-opeu5\">Edit all cards</p></div><form class=\"css-j7qwjs\"><div class=\"chakra-stack css-165casq\"><div class=\"chakra-stack css-1yxx52\" data-drop-text=\"Drop files here\"><div class=\"css-9zz1ev\"><div class=\"chakra-stack css-1qbs1qd\"><textarea placeholder=\"Ask me to edit, create, or style anything\" class=\"chakra-textarea css-331qt\"></textarea></div><div class=\"chakra-collapse\" style=\"overflow: hidden; display: none; opacity: 0; height: 0px;\"></div><div class=\"chakra-stack css-igsar2\"><button type=\"button\" class=\"chakra-button css-ipalu4\" aria-label=\"Upload files\"><svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"far\" data-icon=\"plus\" class=\"svg-inline--fa fa-plus \" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path fill=\"currentColor\" d=\"M248 72c0-13.3-10.7-24-24-24s-24 10.7-24 24V232H40c-13.3 0-24 10.7-24 24s10.7 24 24 24H200V440c0 13.3 10.7 24 24 24s24-10.7 24-24V280H408c13.3 0 24-10.7 24-24s-10.7-24-24-24H248V72z\"></path></svg></button><div class=\"css-17xejub\"></div><div spacing=\"2\" class=\"css-139vvde\"><div class=\"chakra-spinner css-1m2jh5h\"><span class=\"css-8b45rq\">Loading...</span></div><bu",
+    "id": "popover-content-_r_6l_",
+    "idx": 3,
+    "imageLayout": null,
+    "liCount": 7,
+    "p": ""
+  },
+  {
+    "h1": "",
+    "html": "<section id=\"popover-content-_r_b1_\" tabindex=\"-1\" role=\"dialog\" class=\"chakra-popover__content css-1lawdhy\" data-projection-id=\"6\" aria-describedby=\"popover-body-_r_b1_\" style=\"transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.95) translateZ(0px);\"><div id=\"popover-body-_r_b1_\" class=\"chakra-popover__body css-aa6t0s\"><div class=\"chakra-stack css-j7qwjs\"><div class=\"chakra-stack css-18ulgg9\"><div class=\"chakra-stack css-1i2407o\"><div class=\"chakra-stack css-rj03r8\"><svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"far\" data-icon=\"magnifying-glass\" class=\"svg-inline--fa fa-magnifying-glass fa-fw fa-sm \" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><path fill=\"currentColor\" d=\"M368 208A160 160 0 1 0 48 208a160 160 0 1 0 320 0zM337.1 371.1C301.7 399.2 256.8 416 208 416C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208c0 48.8-16.8 93.7-44.9 129.1L505 471c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L337.1 371.1z\"></path></svg><p class=\"chakra-text css-jwcg2\">Research</p></div><p class=\"chakra-text css-1nyfskl\">Search the web, and pull in citations</p></div><div class=\"chakra-stack css-8g8ihq\"><div class=\"chakra-wrap css-0\"><ul class=\"chakra-wrap__list css-1uxal9a\"><li class=\"chakra-wrap__listitem css-1yp4ln\"><button type=\"button\" class=\"chakra-button css-92bx1g\"><span class=\"chakra-button__icon css-1wh2kri\"><svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fas\" data-icon=\"sparkle\" class=\"svg-inline--fa fa-sparkle \" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path fill=\"currentColor\" d=\"M245.8 45.9C241.9 37.4 233.4 32 224 32s-17.9 5.4-21.8 13.9L142.7 174.7 13.9 234.2C5.4 238.1 0 246.6 0 256s5.4 17.9 13.9 21.8l128.8 59.5 59.5 128.8c3.9 8.5 12.4 13.9 21.8 13.9s17.9-5.4 21",
+    "id": "popover-content-_r_b1_",
+    "idx": 4,
+    "imageLayout": null,
+    "liCount": 10,
+    "p": ""
+  },
+  {
+    "h1": "",
+    "html": "<section data-card-styles-menu=\"true\" id=\"popover-content-_r_to_\" tabindex=\"-1\" role=\"dialog\" class=\"chakra-popover__content css-s76d3u\" data-projection-id=\"64\" style=\"transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.95) translateZ(0px);\"></section>",
+    "id": "popover-content-_r_to_",
+    "idx": 5,
+    "imageLayout": null,
+    "liCount": 0,
+    "p": ""
+  },
+  {
+    "h1": "",
+    "html": "<section id=\"popover-content-_r_tv_\" tabindex=\"-1\" role=\"dialog\" class=\"chakra-popover__content css-1m4pzbx\" data-projection-id=\"65\" aria-describedby=\"popover-body-_r_tv_\" style=\"transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.95) translateZ(0px);\"><div id=\"popover-body-_r_tv_\" class=\"chakra-popover__body css-1ews2c8\"><input class=\"gamma-FileInput-input\" multiple=\"\" accept=\"image/*,application/pdf\" type=\"file\" name=\"gamma-file-input\" style=\"width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute; z-index: -1;\"><div class=\"chakra-stack css-8g8ihq\"><div class=\"chakra-stack css-1y3f6ad\"><p class=\"chakra-text css-opeu5\">Edit this card</p></div><form class=\"css-j7qwjs\"><div class=\"chakra-stack css-165casq\"><div class=\"chakra-stack css-1yxx52\" data-drop-text=\"Drop files here\"><div class=\"css-9zz1ev\"><div class=\"chakra-stack css-1qbs1qd\"><textarea placeholder=\"How would you like to edit this card?\" class=\"chakra-textarea css-331qt\"></textarea></div><div class=\"chakra-collapse\" data-projection-id=\"66\" style=\"overflow: hidden; display: none; opacity: 0; height: 0px;\"></div><div class=\"chakra-stack css-igsar2\"><button type=\"button\" class=\"chakra-button css-6224hd\" aria-label=\"Upload files\"><svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"far\" data-icon=\"plus\" class=\"svg-inline--fa fa-plus \" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path fill=\"currentColor\" d=\"M248 72c0-13.3-10.7-24-24-24s-24 10.7-24 24V232H40c-13.3 0-24 10.7-24 24s10.7 24 24 24H200V440c0 13.3 10.7 24 24 24s24-10.7 24-24V280H408c13.3 0 24-10.7 24-24s-10.7-24-24-24H248V72z\"></path></svg></button><div class=\"css-17xejub\"></div><div spacing=\"2\" class=\"css-139vvde\"><div class=\"chakra-spinner css-1m2jh5h\"><span c",
+    "id": "popover-content-_r_tv_",
+    "idx": 6,
+    "imageLayout": null,
+    "liCount": 11,
+    "p": ""
+  },
+  {
+    "h1": "",
+    "html": "<section data-rating-popover=\"true\" id=\"popover-content-_r_10s_\" tabindex=\"-1\" role=\"dialog\" class=\"chakra-popover__content css-9wnpv7\" data-projection-id=\"76\" style=\"transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.95) translateZ(0px);\"></section>",
+    "id": "popover-content-_r_10s_",
+    "idx": 7,
+    "imageLayout": null,
+    "liCount": 0,
+    "p": ""
+  }
+]

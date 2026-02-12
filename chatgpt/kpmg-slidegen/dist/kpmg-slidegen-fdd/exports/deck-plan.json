@@ -1,0 +1,37 @@
+{
+  "deck_title": "Project Cascade Care - Financial Due Diligence",
+  "narrative_arc": [
+    "Executive summary",
+    "Historical performance",
+    "Quality of earnings",
+    "Working capital and cash",
+    "Appendix support"
+  ],
+  "slides": [
+    { "slide_id": "s01", "layout_slug": "layout.fdd_cover", "rationale": "Cover context and report identity" },
+    { "slide_id": "s02", "layout_slug": "layout.fdd_key_takeaways", "rationale": "Section divider for executive summary" },
+    { "slide_id": "s03", "layout_slug": "layout.fdd_two_column_bullets", "rationale": "Business profile and implications split" },
+    { "slide_id": "s04", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "Headline findings with trend visuals" },
+    { "slide_id": "s05", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "KPI snapshot using summary layout" },
+    { "slide_id": "s06", "layout_slug": "layout.fdd_table_left_content_right", "rationale": "Reported P&L table with commentary" },
+    { "slide_id": "s07", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "QoE bridge from reported to normalized" },
+    { "slide_id": "s08", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "NWC trend and peg implications" },
+    { "slide_id": "s09", "layout_slug": "layout.fdd_two_column_bullets", "rationale": "Process observations and implications" },
+    { "slide_id": "s10", "layout_slug": "layout.fdd_two_column_bullets", "rationale": "Four-box risk framework summary" },
+    { "slide_id": "s11", "layout_slug": "layout.fdd_key_takeaways", "rationale": "Section divider for historical analysis" },
+    { "slide_id": "s12", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "Service line bridge with commentary" },
+    { "slide_id": "s13", "layout_slug": "layout.fdd_table_left_content_right", "rationale": "Concentration table plus interpretation" },
+    { "slide_id": "s14", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "Site performance comparison visual" },
+    { "slide_id": "s15", "layout_slug": "layout.fdd_one_column_narrative", "rationale": "Narrative margin bridge" },
+    { "slide_id": "s16", "layout_slug": "layout.fdd_key_takeaways", "rationale": "Section divider for QoE details" },
+    { "slide_id": "s17", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "Labor normalization adjustment detail" },
+    { "slide_id": "s18", "layout_slug": "layout.fdd_two_column_bullets", "rationale": "Legal and one-time adjustment narrative" },
+    { "slide_id": "s19", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "Occupancy normalization detail" },
+    { "slide_id": "s20", "layout_slug": "layout.fdd_chart_left_content_right", "rationale": "Cash conversion trend analysis" },
+    { "slide_id": "s21", "layout_slug": "layout.fdd_key_takeaways", "rationale": "Appendix section divider" },
+    { "slide_id": "s22", "layout_slug": "layout.fdd_table_left_content_right", "rationale": "Payroll appendix placeholder plus analysis" },
+    { "slide_id": "s23", "layout_slug": "layout.fdd_table_left_content_right", "rationale": "Appendix table support" },
+    { "slide_id": "s24", "layout_slug": "layout.fdd_one_column_narrative", "rationale": "Policy and definition reference notes" },
+    { "slide_id": "s25", "layout_slug": "layout.fdd_cover", "rationale": "Back cover disclaimer" }
+  ]
+}

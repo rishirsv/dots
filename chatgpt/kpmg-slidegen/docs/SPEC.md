@@ -1,6 +1,6 @@
 # KPMG Slidegen Specification
 
-**Last updated:** 2026-02-06
+**Last updated:** 2026-02-11
 
 ## Purpose
 
@@ -8,7 +8,7 @@ Provide one unified system to:
 
 1. Extract PPTX/POTX templates into reusable code/metadata.
 2. Generate brand-compliant decks from structured JSON.
-3. Package template-aware skills (including Talkbook copilot) that co-write content and compile native layout JSON.
+3. Package template-aware skill workflows that co-write content and compile deck JSON.
 4. Enforce strict layout safety and preserve Diligence behavior.
 
 ## Non-goals
@@ -28,13 +28,10 @@ Provide one unified system to:
 - `node generator/validate.js --in <deck.json>`
 - `node generator/index.js --in <deck.json> --out <deck.pptx> [--strict]`
 
-### Talkbook skill scripts
+### Distribution scripts (example)
 
-- `python3 dist/kpmg-talkbook-consulting-copilot/scripts/start_session.py`
-- `python3 dist/kpmg-talkbook-consulting-copilot/scripts/upsert_section.py`
-- `python3 dist/kpmg-talkbook-consulting-copilot/scripts/apply_action.py`
-- `python3 dist/kpmg-talkbook-consulting-copilot/scripts/compile_deck_json.py`
-- `python3 dist/kpmg-talkbook-consulting-copilot/scripts/build_deck.py`
+- `python3 dist/kpmg-gpt-inventory/scripts/add_gpt.py`
+- `python3 dist/kpmg-gpt-inventory/scripts/build_inventory_deck.py`
 
 ## Contracts
 
@@ -62,11 +59,11 @@ Provide one unified system to:
 }
 ```
 
-### Talkbook mapping policy
+### Distribution mapping policy
 
-Canonical policy file:
+Mapping guidance should live with the distribution package:
 
-- `dist/kpmg-talkbook-consulting-copilot/references/layout-mapping.md`
+- `dist/<distribution>/references/*.md`
 
 Required row fields include:
 
@@ -92,7 +89,7 @@ Required row fields include:
 - Validation gate: schema/slot checks for deck inputs.
 - Strict gate: severe overlaps = 0 and out-of-bounds = 0.
 - Diligence freeze gate: hash comparison against `tests/diligence_freeze_manifest.json`.
-- Talkbook mapping coverage gate: expected layouts and variants must be mapped.
+- Distribution mapping coverage gate: expected layouts and variants must be mapped.
 
 ## Verification
 
