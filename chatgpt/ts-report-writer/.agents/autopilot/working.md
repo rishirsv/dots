@@ -1,7 +1,7 @@
 # Working Notes
 
-- Story: 5.0: Extract and fully clean Project Cinema Report.pdf
-- Last attempt: Ran strict single-file source-text export and isolated pipeline run, then reran provenance + fail-closed gates and manual montage/source-text reconciliation.
-- Result: Success after restoring cleaned artifacts post-rerun regression; provenance and gates pass with review-notes updated using concrete montage page evidence.
+- Story: 8.0: Extract and fully clean Project Dental_Report_25July2025_vS.pdf
+- Last attempt: Ran single-file strict pipeline extraction, generated source-text artifacts, then executed full-report cleanup with canonical section reset, synced mapping/render artifacts, and completed montage-backed review notes.
+- Result: Success. Provenance and fail-closed QA gates pass; report marked reviewed as `pass`; PRD updated with `passes=true`.
 - Next approach: Continue to the next incomplete PRD story in priority order.
-- Gotchas: A strict rerun can overwrite previously cleaned markdown with fragment-heavy output; preserve/restore QA-passing artifacts before final verification.
+- Gotchas: Raw strict PDF outputs can contain mostly fragment/table-label lines; cleanup must update markdown, selected-lines, render-trace, and section-map artifacts together to avoid trace/provenance drift.

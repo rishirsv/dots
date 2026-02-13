@@ -159,3 +159,60 @@ Run: 20260213-142610-36275 (iteration 7)
   - Keep markdown and trace artifacts in lockstep; editing markdown structure before traced bullets can break `markdown_trace_sync`.
 
 ---
+
+## [2026-02-13 15:10:47 EST] - 5.0: Extract and fully clean Project Cinema Report.pdf
+
+Run: 20260213-142610-36275 (iteration 8)
+
+- Guardrails reviewed: yes
+- Commit: 7dd34ac 5.0: finalize project-cinema-report extraction and QA pass
+- Verification: `./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-cinema-report.md --source-manifest extracted/verification/project-cinema-report/source-text/manifest.json --out-dir extracted/verification/project-cinema-report/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-cinema-report` -> PASS
+- Files changed:
+  - AGENTS.md
+  - extracted/project-cinema-report.md
+  - extracted/manifests/project-cinema-report.json
+  - extracted/verification/project-cinema-report/qa/provenance.json
+  - extracted/verification/project-cinema-report/qa/gates.json
+  - extracted/verification/project-cinema-report/review-notes.md
+  - extracted/verification/project-cinema-report/verification.json
+  - .agents/autopilot/prd.json
+  - .agents/autopilot/guardrails.md
+  - .agents/autopilot/working.md
+- What was implemented:
+  - Re-ran strict source-text extraction for `reports/Project Cinema Report.pdf` and validated single-report extraction path.
+  - Restored and finalized cleaned cinema artifacts, updated markdown metadata status to `pass`, and documented concrete montage page-level reconciliation evidence in review notes.
+  - Re-ran provenance and fail-closed gates to pass, marked story `5.0` as passed in autopilot PRD, and added reusable prevention rules in AGENTS/guardrails.
+- **Learnings:**
+  - Single-report strict reruns can overwrite previously cleaned output; preserve or restore QA-passing artifacts before final verification.
+  - Provenance+gates alone are insufficient; review notes must include explicit montage page IDs and matched phrases before pass.
+
+---
+## [2026-02-13 15:15] - 8.0: Extract and fully clean Project Dental_Report_25July2025_vS.pdf
+
+Run: 20260213-142610-36275 (iteration 9)
+
+- Guardrails reviewed: yes
+- Commit: d6865ca 8.0: extract and clean project dental report with passing QA
+- Verification: `./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-dental-report-25july2025-vs.md --source-manifest extracted/verification/project-dental-report-25july2025-vs/source-text/manifest.json --out-dir extracted/verification/project-dental-report-25july2025-vs/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-dental-report-25july2025-vs` -> PASS
+- Files changed:
+  - AGENTS.md
+  - .agents/autopilot/prd.json
+  - extracted/manifests/project-dental-report-25july2025-vs.json
+  - extracted/manifests/tracker.md
+  - extracted/manifests/tracker.json
+  - extracted/project-dental-report-25july2025-vs.md
+  - extracted/verification/project-dental-report-25july2025-vs/review-notes.md
+  - extracted/verification/project-dental-report-25july2025-vs/source-text/manifest.json
+  - extracted/verification/project-dental-report-25july2025-vs/qa/provenance.json
+  - extracted/verification/project-dental-report-25july2025-vs/qa/gates.json
+  - extracted/verification/project-dental-report-25july2025-vs/mapping/section-map.json
+  - extracted/verification/project-dental-report-25july2025-vs/mapping/section-accounting.json
+  - extracted/verification/project-dental-report-25july2025-vs/render/render-trace.json
+- What was implemented:
+  - Ran single-report extraction for `reports/Project Dental_Report_25July2025_vS.pdf` and strict source-text export.
+  - Performed full-report cleanup across canonical sections, removed fragment/legal/navigation leakage, synchronized selected-lines/render-trace/section-mapping artifacts, completed metadata + coverage map, and finalized review notes with montage page references.
+  - Reran provenance and fail-closed gates to pass, marked report review status as `pass`, and updated PRD story `8.0` to `passes=true`.
+- **Learnings:**
+  - For strict PDF runs with fragment-dominant output, provenance and cleanup pass only when markdown cleanup is accompanied by synchronized updates to selected-lines, render-trace, and section mapping artifacts.
+
+---
