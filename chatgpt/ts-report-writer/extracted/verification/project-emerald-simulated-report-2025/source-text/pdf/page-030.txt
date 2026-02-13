@@ -1,0 +1,50 @@
+Quality of earnings                                                                                                                                                                            DRAFT
+Quality of earnings (5/8) – Buy-side adjustments
+Quality of earnings                                                                              Buy-side adjustments
+TTM                The following represents potential adjustments to EBITDA:
+$'000                                                        FY17     FY18   P5-19
+CLH consol net sales, reported                             272,881 273,157 272,668
+15. Reversal of sell-side adjustments: Consists of the following items:
+Sell-side adjustments                                        (859)  (2,526) (3,215)                    A.     Divestment activity impact: Represents the reversal of sell-side adj. #2, on the
+CLH consol net sales, sell-side adj                        272,022 270,631 269,453                            basis that the delay in price increase implementation and negotiation in FY17,
+Buy-side adjustm ents
+caused by an increased focus on a concurrent divestiture process, was
+18 Net sales from Bumble Bee                                 25,714     20,539      20,881
+representative of a normal business resource allocation decision. As this type of
+15a Reversal of divestment activity impact                  (2,471)          -           -
+strategic dilemma is not one-time in nature, the impact of the sell-side adjustment
+15c Partial trade promotion period adjustment                     -     (1,500)       (875)
+16 Discontinuation of Toppers product line                    (146)          -           -
+is eliminated from EBITDA.
+Buy-side adjustments                                        23,097  19,039          20,006             B.     International innovation expenses: Represents the reversal of sell-side adj. #6,
+CLH consol net sales, buy-side adj                         295,119 289,670         289,459                    on the basis that research expenses related to international expansion and new
+CBCLSC consol net incom e, reported                          16,666     (4,754)         2,514                 product development are a normal part of business operations, as indicated by
+CBCLSC consol EBITDA, reported                               41,937     20,000      28,458                    recurring R&D expenses throughout the historical period.
+CBCLSC consol EBITDA margin, reported                        15.4%       7.3%       10.4%
+Management adjustments                                          166     13,637       7,294             C.     Partial trade promotion period adjustment: As part of sell-side adj. #5, an
+CBCLSC consol EBITDA, Managem ent adj                        42,102     33,637      35,752                    estimated trade promotion over-accrual balances was added back to EBITDA in
+CBCLSC consol EBITDA margin, Management adj                  15.4%      12.3%       13.1%                     FY18. As this estimate is unsubstantiated, the portion of the FY18 over-accrual
+CLH EBITDA, reported                                            115         (4)         (9)                   adjustment which has not yet been reversed in YTD-19, has been eliminated.
+CLH consol EBITDA, Managem ent adj                           42,217     33,633      35,743
+CLH consol EBITDA margin, Management adj                     15.5%      12.3%       13.1%                     Partial trade prom otion period adjustm ent
+Sell-side adjustments                                         3,903         91      (2,113)                                                                                            TTM
+CLH consol EBITDA, sell-side adj                             46,120     33,724      33,631                    $'000                                                     FY17   FY18 P5-19
+CLH consol EBITDA margin, sell-side adj                      17.0%      12.5%       12.5%                     FY18 over-accrual reversed in YTD P5-19                      -    500     292
+Buy-side adjustm ents                                                                                         Less: FY18 over-accrual estimate per mgmt.                   - (2,000) (1,167)
+15a Divestment activity impact                              (2,471)          -           -                    Partial trade prom otion period adjustm ent                  - (1,500) (875)
+15b International innovation expenses                             -       (249)       (257)                   Source: Management provided information, KPMG analysis
+15c Partial trade promotion period adjustment                     -     (1,500)       (875)      16.     Discontinuation of Toppers product line: As at Dec-17, the Company made a
+15 Reversal of sell-side adjustments                        (2,471)     (1,749)     (1,132)              decision to discontinue the sale of the Toppers product line. This adjustment
+16 Discontinuation of Toppers product line                     (10)          -           -
+eliminates the EBITDA margin associated with this product from the historical period.
+17 Fishing lease re-allocation                                    -         (0)        167
+Buy-side adjustments                                        (2,481)     (1,749)       (966)      17.     Fishing lease re-allocation: Effective January 1, 2018, the Company entered into a
+CLH consol EBITDA, buy-side adj                              43,638     31,974      32,665               new leasing arrangement for additional herring quota, for which a $400k annual fee
+CLH consol EBITDA margin, buy-side adj                       14.8%      11.0%       11.3%                was paid in two installments midway through FY18. This adjustment distributes these
+Pro forma adjustments                                             -     (1,757)     (1,757)              lump-sum lease expense balances evenly on a monthly basis throughout FY18.
+CLH consol EBITDA, pro form a adj                            43,638     30,218      30,908
+CLH consol EBITDA margin, pro forma adj                      14.8%      10.4%       10.7%
+18.     Net sales from Bumble Bee: Represents the reversal of the sell-side elimination of
+Source: Mgmt provided trial balances; Sell-Side report dated 03-May-19; KPMG analysis                    Bumble Bee sales, as these sales are expected to continue on a go-forward basis.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International           30
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

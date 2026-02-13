@@ -1,0 +1,40 @@
+Appendix 23                                                                                                                                                                         DRAFT
+Summary of accounting function
+Key personnel                                                                                              Significant accounting policies
+■ Gary Ware, Chief Financial Officer, Canada                                                               ■ Revenue recognition: The Company recognizes domestic and
+■ Dan Butto, Vice President Finance, Canada                                                                  international sales when the product changes title to the Customer,
+which is when the product leaves the shipping point. For goods
+■ Marci Cooper, Director, Business Planning & Analysis                                                       shipped directly from a supplier to a customer, sales are recognized
+■ Paolo Santiago, Controller, Canada                                                                         when placed on the ocean vessel.
+Financial systems                                                                                          ■ Inventory costing: All products except Sardine are costed using a
+moving average cost, calculated using purchase price plus landed
+■ SAP – ERP for processing financial transactions.
+costs. Sardines are costed using standard cost.
+■ Business Intelligence (BI) – used to prepare and format financial
+■ Allowance for doubtful accounts: The Vice President Finance,
+statements.
+Canada reviews the AR aging report with the Credit and Collections
+■ Computer Aided Selling (CAS) – add-on used in order to cash process                                        Analyst monthly to determine accounts at risk of default. After failure of
+for sales opportunity and customer management.                                                             collection attempts and sufficient approval, the full value of the
+Financial closing process                                                                                    receivable is considered a bad debt, and is written off within 90 days of
+establishing the bad debt reserve.
+■ Day 0: Sub-legers are closed in SAP by BBF accounting department.
+■ Inventory reserves: Inventory reserves are calculated by review of
+■ Day 1-4: Month end journal entries are prepared, reviewed, approved,                                       product inventory and best before dates. For product categories with
+and posted to the SAP G/L.                                                                                 average inventory values of < $1.0 million, obsolete inventory is written
+■ Day 3: Monthly revaluation is run and reviewed by the Controller for                                       off directly.
+errors and completeness. Variance analysis is performed monthly for                                      ■ Customer rebates: Customer rebates are taken by directly paying less
+profit and loss report which includes gross margin by SKU and species.                                     than the invoiced amount or requesting a reimbursement. Rebates are
+Adjusting entries are posted to the G/L if consensus on variance results                                   tied to funding allocated to product trade promotions. Requests for
+is not reached.                                                                                            additional payment are made to customers who take rebates in excess
+■ Day 5: Balance sheet reconciliation is prepared and reviewed for                                           of funded trade promotions.
+fluctuations by the Controller (monthly). The CFO reviews VPC by                                         Significant changes in accounting policies, procedures, and
+category and SG&A comparative charts.                                                                    estimates
+Reliance on parent company                                                                                 ■ Prior to June 2016, foreign exchange gains and losses were
+■ BBF monitors all cash activities for US and Canada, including daily                                        recognized immediately. After June 2016, recognition of foreign
+revolver transactions, debt, hedging instruments, and covenant                                             exchange gains and losses on USD hedge contracts coincide with
+compliance.                                                                                                three month inventory turns.
+■ BBF has sole access to open and close periods and G/L accounts in
+SAP.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International            96
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

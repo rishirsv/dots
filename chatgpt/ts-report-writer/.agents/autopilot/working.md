@@ -1,7 +1,7 @@
 # Working Notes
 
-- Story: 9.0: Extract and fully clean Project Ed_buy side_FDD (IGH - Education).pptx
-- Last attempt: Ran strict single-file pipeline extraction and strict `scripts/extract_source_text.py` export for `reports/Project Ed_buy side_FDD (IGH - Education).pptx`.
-- Result: Blocked. Source file is `CDFV2 Encrypted`; source-text extraction fails with `File is not a zip file`, preventing cleanup and fail-closed QA completion.
-- Next approach: Wait for unlocked source replacement (unencrypted `.pptx` or `.pdf`), then rerun extraction + full cleanup + QA gates.
-- Gotchas: `pipeline run` can finish while manifest marks report `blocked`; always confirm with `file <report>` and explicit `extract_source_text.py` output.
+- Story: 11.0: Extract and fully clean Project Emerald - Simulated Report 2025.pdf
+- Last attempt: Ran strict single-file extraction + strict source-text export, rebuilt output from exact source-text-backed lines, regenerated selected-lines/render-trace/section-map/section-accounting together, completed review checklist, and reran provenance + gates.
+- Result: PASS. Verification command passed and review status set to `pass` with page-level montage evidence.
+- Next approach: Move to the next remaining PRD story and repeat strict extraction -> full cleanup -> artifact sync -> provenance + gates.
+- Gotchas: If selected lines are pruned/reassigned, `section_candidate` in `selected-lines.jsonl` must match final render sections or `section_completeness` will fail.

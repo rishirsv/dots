@@ -1,0 +1,47 @@
+Overview                                                                                                                                                                               DRAFT
+Standalone cost analysis – Assumptions and limitations
+Purpose                                                                                                   Assumptions and limitations
+    The standalone cost analysis provides an overview of the estimated                                       The underlying analysis, observations, and views presented in this report are
+incremental standalone costs required to operate the target business as a                                 based on the following core assumptions about the business:
+standalone entity. KPMG also reviewed Management’s and EY’s view on
+– Fully standalone – business will operate on a fully standalone basis without
+one-time costs and potential synergies.
+any support from Seller post-TSA period;
+Approach
+– Dedicated staff – All currently dedicated direct employees will transfer with
+    The observations and views presented in this report are based on the                                       the transaction;
+following key sources of information:
+– Incremental FTEs – the compensation of all incremental FTEs is estimated
+– Documentation provided by Management via data room (e.g.,                                                 based on salary benchmarks;
+Management presentations, Management diligence HR census file, EY
+– All existing dedicated agreements will be re-assigned to Buyer or be re-
+diligence report, etc.);
+negotiated to ensure continuity of operations;
+– Meetings and calls with Management and EY to discuss preliminary
+– Intercompany transactions with other subsidiaries of the Parent are
+diligence questions;
+executed at arm’s length with prices at fair market value;
+– Industry benchmarks of key operational metrics; and
+– Only the TTM P5-19 and FY18 periods are considered in the analysis, as
+– Trailing twelve month May 2019 (TTM P5-19) and Fiscal year 2018                                           the cost base in previous years are out of scope;
+(FY18) financials.
+– Estimated incremental standalone run-rate costs may differ depending on
+    We have reviewed the information provided by Management and                                                future volumes, growth, etc.;
+performed a review of the cost allocations, management fees, rationale,
+– Corporate allocations and Management fees may not be reflective of actual
+assumptions and methodologies used by Management and EY in their
+costs required to support the carve-out business due to allocation
+build up of their estimated incremental standalone costs, as well as one-
+methodology used and therefore have been adjusted; and
+time costs and synergies.
+– Analysis is based on limited time with Management team and EY.
+    We have used available resources, including industry benchmarks and
+prior deal experience, to develop a view on the information provided by
+Management in relation to the estimated incremental standalone costs.
+    The analysis has been structured on a “low”, “high” and “base” case basis
+in order to incorporate the full potential range of annual run-rate costs. The
+low case and high case represent minimum and maximum estimated
+incremental costs, respectively. The base case represents the average of
+estimated incremental costs.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International           55
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

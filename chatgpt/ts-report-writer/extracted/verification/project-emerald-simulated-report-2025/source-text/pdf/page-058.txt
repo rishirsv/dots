@@ -1,0 +1,43 @@
+Standalone cost analysis                                                                                                                                                                                 DRAFT
+Parent support and corporate cost al ocations (3/5)
+Operational and financial dependencies on Parent (continued)                                            Target dependencies on Parent
+Support functions           People      Processes        Assets      Contracts Technology   In TSA
+■ Legal:
+Executives
+■ FTEs: Parent Legal support is part of the general management fee.
+Parent Legal estimates 0.4 FTE of support for the Target which                                             Finance                                                                                    
+includes SVP General Counsel and Chief Compliance Officer. There
+are no Legal personnel at the Target.                                                                      HR
+■ Third party: Third-party legal costs are direct billings to the Target.                                    Legal                                                                                      
+■ TSA: Management is including legal services into the $2,000/month                                          Procurement                                                                                
+corporate services TSA.
+Marketing/Sales
+■ Procurement:
+IT                                                                                         
+■ All Target’s Canadian sourcing of products has been historically done
+by the Parent. Activities include negotiating with vendors, issuing                                        QA & Tech                                                                                  
+POs, managing ocean freight, maintaining books and records,
+reviewing invoices on behalf of the Target.                                                                Sustainability                                                                             
+■ There is an agreement in place between Clover Leaf Seafoods Inc.                                           Risk & Insurance                                                                           
+(CLSI) and Bumble Bee Seafoods dated at 2001, which outlines a
+fee of 0.7% (which has since been revised to 0.9%) of the total of the                             Legend: Level of dependency on Parent       Minimal      Medium         High     n.a.
+invoice prices for products purchased on behalf of CLSI which have
+been approved for payment during the prior month.
+Corporate allocations
+■ TSA: Parent is offering to continue providing procurement services
+TTM
+for 12 months post-transaction as part of the TSA at the fee of 0.9%                                $'000                                     FY16       FY17      FY18      May-19        FY19B
+of the product cost base, exclusive of ancillary costs to land product.                             1 Intercompany management fee            2,548       2,563    2,562       2,476        2,800
+2 Procurement fees                       1,204       1,299    1,424       1,432        1,512
+■ Marketing/Sales:
+3 Insurance costs                        1,119         963      884         852          979
+■ FTEs: Target has a large sales teams covering both Canadian and                                     4 Audit fees                               320        335        206          122       185
+International operations. One Director Sales supports Anova, a                                      5 Tax fees                                   6        108         89          109        60
+Parent-owned business. There are six Marketing personnel                                            6 Legal fees                               153        121        184          187       161
+employed by the Target. Additionally, Marketing VP and Director                                     7 R&D allocation                           134         37         26           28        35
+Marketing would be involved in R&D activities.                                                      8 Quality allocation                       463        696        789          787       796
+9 Bank fees                                271         226      180         168          214
+■ IT: Parent provides access to the CRM software to specified                                         Total                                    6,218       6,348    6,343       6,160        6,741
+employees of the Target.                                                                           Source: 8.2.4_Project Emerald - Data book.xlsx
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                                58
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

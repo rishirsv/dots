@@ -357,7 +357,7 @@
       "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-emerald-simulated-report-2025.md --source-manifest extracted/verification/project-emerald-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-emerald-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-emerald-simulated-report-2025",
       "priority": 11,
       "dependsOn": [],
-      "passes": false,
+      "passes": true,
       "attempts": 0,
       "blocked": false,
       "blockedReason": "",

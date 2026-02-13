@@ -1,0 +1,54 @@
+Net working capital                                                                                                                                                                                                               DRAFT
+Net working capital (6/11) – Buy-side adjustments (continued)
+Net w orking capital
+D.   Buy-side diligence adjustments (continued)
+As at                           Average
+TTM
+19. Include derivative balances in NWC: This adjustment reverses
+$'000                                                     31-Dec-17 31-Dec-18 25-May-19           FY17      FY18     P5-19
+Current assets                                                                                                                    NWC adjustment #2 proposed by Management on the basis that the
+Accounts receivable                                        33,267       32,803      33,280    35,023    35,143    36,267        derivative-related balances are part of the ongoing trade / operations
+Inventory                                                  86,207       96,248      88,109    82,009    91,644    94,105
+Prepaid expenses                                               188       1,061       1,323       765     2,239     1,698
+of the business. Refer to the table below for a breakdown.
+Intercompany receivables                                  116,744       53,626      17,778 154,465 126,200        56,816         Include derivative balances in NWC
+Total current assets                                        236,406     183,738      140,491 272,262 255,226 188,886                                                                     As at                        Average
+Current liabilities                                                                                                                                                                                                               TTM
+Accounts payable                                          (26,393)     (33,107)    (24,160) (26,501) (30,716) (29,603)           $'000                                      31-Dec-17 31-Dec-18 25-May-19   FY17       FY18    P5-19
+Accrued expenses                                          (14,376)     (14,412)    (13,041) (12,436) (15,063) (15,331)               Fair value of sw aps & caps                    -         -         -      -         28        -
+Fair value of FX forw ard contracts            -      530       320     161        451     349
+Income & w ithholding taxes                                   (638)        (18)        (47)   (1,011)     (116)      (44)            Fair value of commodity contracts            43          -         -     16          7        -
+Other current liabilities                                     (494)       (509)       (207)     (541)   (1,343)     (337)        Derivative asset balances                        43       530       320     178        487     349
+Intercompany payables                                    (149,408)     (67,358)    (30,243) (182,751) (156,382) (84,066)             Fair value of FX forw ard contracts        (353)         -         -   (263)       (87)     (12)
+Total current liabilities                                  (191,310) (115,404)       (67,699) (223,240) (203,620) (129,381)            Fair value of commodity contracts             (0)     (96)      (88)    (16)       (77)     (69)
+Derivative liability balances                  (353)      (96)      (88)   (279)      (164)     (81)
+Net w orking capital, Managem ent reported             A     45,096       68,334      72,792    49,022    51,606    59,505
+Net derivative assets / (liabilities)          (310)      434       232    (101)       322     268
+As % of TTM reported net sales                               16.5%        25.0%       26.7%     18.0%     18.9%     21.8%
+Source: Mgmt provided TBs; Sell-Side Financial Diligence report dated 03-May-19; KPMG analysis
+Total Management adjustments                                 37,632       18,571      15,831    31,195    33,414    31,213
+Net w orking capital, Managem ent adjusted             B     82,728       86,906      88,624    80,217    85,021    90,718
+As % of TTM adjusted net sales                               30.4%        32.1%       32.9%     29.5%     31.4%     33.7%     20. Remove rent deposit payable: This adjustment removes a deposit
+Total sell-side diligence adjustments                         5,658        4,901       3,286     3,490     5,207     3,780        for last month’s rent payable to Cooke Aquaculture on the basis it is
+Net w orking capital, sell-side diligence adjusted C         88,386       91,807      91,910    83,706    90,227    94,498
+non-operating in nature and includes it in net debt.
+As % of TTM adjusted net sales                               32.5%        33.9%       34.1%     30.8%     33.3%     35.1%
+Buy-side diligence adjustm ents                                                                                               21. Revised CLH withholding taxes: This adjustment reverses NWC
+18 Revised trade promotions                                         -     (1,500)     (1,500)    1,192       104      (573)
+19 Include derivative balances in NWC                           (310)        434         232      (101)      322       268
+adjustment #17 on the basis that interco withholding tax balances
+20 Remove rent deposit payable                                    90         102          95        91        95        95        were not included in Management reported NWC. Refer to the net
+21 Revised CLH w ithholding taxes                                   -     (1,126)          -         -       (94)      (94)       debt discussion where CLH withholding taxes are considered.
+22 Revised sardine sales to Bumble Bee                           295         152       1,086       910       654       708
+23 Include Innovation AR & AP                                       -         88         100         -        (0)       41    22. Revised sardine sales to BBF: The basis of the DSO calculation in
+24 Fishing lease re-allocation                                      -        (33)          -         -        (0)       14
+NWC adjustment #14 is that the Company closes its financial records
+Total buy-side diligence adjustments                              75      (1,883)         13     2,091     1,082       460
+Net w orking capital, buy-side diligence adjusted D          88,460       89,923      91,923    85,797    91,309    94,958        at the end of each calendar month. This adjustment revises the DSO
+As % of TTM adjusted net sales                               32.5%        33.2%       34.1%     31.5%     33.7%     35.2%         calculation to reflect the Company’s actual closing process in practice
+Source: Management provided trial balances; Sell-Side Financial Diligence report dated 03-May-19; KPMG analysis                   which follows the 4-4-5 structure. Further, Management’s estimated
+DSO of 35 days used to calculate NWC adjustment #14 should be 48
+days based on the adjusted average during the historical period. We
+have therefore revised this adjustment to reflect a DSO of 48 days.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                                                   41
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

@@ -1,0 +1,58 @@
+Quality of earnings                                                                                                                                                                                  DRAFT
+Quality of earnings (3/8) – Sel -side adjustments
+Quality of earnings                                                                              Sell-side adjustments
+TTM
+$'000                                                FY17     FY18   P5-19
+The following represents sell-side adjustments to EBITDA:
+CLH consol net sales, reported                     272,881 273,157 272,668
+Sell-side adjustm ents
+2.    Divestment activity impact: As a result of the divestment activity in 2017, the
+2 Divestment activity impact                        2,471         -          -                        Company was forced to postpone planned price increases related to skipjack tuna
+4 Supply agreement w ith Australia                (4,530)    (1,826)    (1,181)                       products and temporarily halt shipping to certain customers due to delays in the price
+5 Period adjustment for unused promotion funds      1,100      (600)    (1,933)
+negotiation process. This adjustment: A) reflects the impact of Q4-17 price increases
+9 Period adjustment for unused coupon liability       100      (100)      (100)
+Sell-side adjustments                                (859)    (2,526)    (3,215)
+throughout Q2-17 and Q3-17; and B) eliminates the impact of temporary shipping halts
+CLH consol net sales, sell-side adj                272,022   270,631    269,453                        during Oct-17 and Nov-17, by adjusting volume during those months to reflect average
+Buy-side adjustments                                23,097    19,039     20,006                        volume during the same months in FY16 and FY18.
+CLH consol net sales, buy-side adj                 295,119   289,670    289,459
+CBCLSC consol net incom e, reported                 16,666    (4,754)     2,514                        Divestm ent activity im pact
+CBCLSC consol EBITDA, reported                      41,937    20,000     28,458
+CBCLSC consol EBITDA margin, reported               15.4%      7.3%      10.4%                                                                                                                TTM
+Management adjustments                                 166    13,637      7,294                        $'000                                                                FY17      FY18   P5-19
+CBCLSC consol EBITDA, Managem ent adj               42,102    33,637     35,752                          Margin loss - skipjack                                             1,139        -       -
+CBCLSC consol EBITDA margin, Management adj         15.4%     12.3%      13.1%                           Margin loss - flavored kits                                          617        -       -
+CLH EBITDA, reported                                     115       (4)       (9)                         Volume shortfall - skipjack                                          413        -       -
+CLH consol EBITDA, Managem ent adj                   42,217    33,633   35,743
+Volume shortfall - flavored kits                                     301        -       -
+CLH consol EBITDA margin, Management adj             15.5%     12.3%    13.1%
+Divestm ent activity im pact adj.                                    2,471        -       -
+Sell-side adjustm ents
+2 Divestment activity impact                          2,471        -         -                        Source: Management provided information, KPMG analysis
+3 Routine severance costs                                 -     (168)     (168)
+3.    Routine severance costs: Represents the reversal of the portion of restructuring costs
+4 Supply agreement w ith Australia                        2      (41)     (536)
+5 Period adjustment for unused promotion funds        1,100     (600)   (1,933)                       within Management adjustment #III, that is attributable to the VP of Marketing position.
+6 International innovation expenses                       -      249       257                        This reversal is based on the fact that the position was not eliminated as part of a
+7 Non-recurring consultant fees                           -       57        57                        reorganization initiative.
+8 Property tax adjustment                               192        -       (80)
+9 Period adjustment for unused coupon liability         100     (100)     (100)                 4.    Supply agreement with Australia: In 2005, Freedom Foods Group (formerly SNF)
+10 Luxembourg cost                                       477     (194)     (220)
+purchased the rights to the Brunswick brand in Australia from Clover Leaf, and entered
+11 Other income/expenses other entities                (139)      515       515
+12 (Gain)/loss on sale of assets                        (34)       (6)       (8)                       into a 10 year contract to buy finished goods sardines from Blacks Harbour at factory
+13 Removal of FX impact on IC balances                 (129)      520       427                        standard cost. The gross profit generated from this supply agreement is removed from
+14 Stand-alone cost adjustments                        (137)     (141)     (324)                       EBITDA as it is non-recurring in nature.
+Sell-side adjustments                                  3,903       91    (2,113)
+CLH consol EBITDA, sell-side adj                     46,120    33,724   33,631
+CLH consol EBITDA margin, sell-side adj              17.0%     12.5%    12.5%
+Buy-side adjustments                                (2,481)    (1,749)     (966)
+CLH consol EBITDA, buy-side adj                      43,638    31,974   32,665
+CLH consol EBITDA margin, buy-side adj               14.8%     11.0%    11.3%
+Pro forma adjustments                                      -   (1,757)   (1,757)
+CLH consol EBITDA, pro form a adj                    43,638    30,218   30,908
+CLH consol EBITDA margin, pro forma adj              14.8%     10.4%    10.7%
+Source: Mgmt provided trial balances; Sell-Side report dated 03-May-19; KPMG analysis
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                 28
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

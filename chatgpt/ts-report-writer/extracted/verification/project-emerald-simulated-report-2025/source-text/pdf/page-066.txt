@@ -1,0 +1,32 @@
+Standalone cost analysis                                                                                                                                                                                 DRAFT
+Potential operational risks and upsides (1/2)
+In addition to the standalone considerations quantified in this report, we identified potential business risks below.
+Key risks
+Topic                      Observation                                                                                                                                      Likelihood     Magnitude
+Management estimates that total non-IT one-time costs would be around $0.3 million, which represents
+hiring costs calculated as 30% of the salary of each incremental FTE required. EY adjusted this
+downward to 20% ($0.2 million) according to its hiring costs benchmarks. Based on KPMG prior
+One-time costs
+experience, this estimate is understated and misses other costs, e.g., moving, re-branding, third-party
+separation advisory, separation-related travel costs, and employee retention. New hires will need
+training, onboarding and support after the separation.
+There may be diseconomies of scale on procuring salmon products (total spend of $30 million) for
+Target as a standalone business. Target has very specific quality requirements (color, firmness,
+Product sourcing                                                                                                                                                                                n.a.
+watermarks etc.) which limits the supply available. Target also buys long in the odd years and adjusts
+their pricing strategy to the market depending on the supply outlook.
+Target works with an American brokerage company on freight and Management has indicated low
+Freight from Asia          costs and quality service from this provider. There may be diseconomies of scale on freight rates on the
+lane from Southeast Asia to North America.
+There are a number of trademarks that are owned by Bumble Bee (56 international and 4 Canadian).
+Three international and one Canadian marks are excluded from transaction and being transferred back
+to Bumble Bee (Brunswick in USA and Puerto Rico, Beach Cliff in USA and Canada). Management
+noted that trademarks owned by Bumble Bee that are part of the transaction will be licensed to a buyer
+IP
+pursuant to a short-term licensing agreement, which is to be negotiated. There may be accretive costs
+depending on the arrangement. Note, that there are a number of Target-owned trademarks expiring in
+2019 that haven’t been renewed yet. Also, two domain names will be licensed by Bumble Bee to
+Target. One of them is expiring Jul 11th, 2019.
+Maximum       High   Moderate Limited Minimum
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                           66
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

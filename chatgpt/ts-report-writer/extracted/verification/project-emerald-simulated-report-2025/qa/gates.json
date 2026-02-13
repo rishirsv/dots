@@ -1,0 +1,319 @@
+{
+  "report_id": "project-emerald-simulated-report-2025",
+  "generated_at": "2026-02-13T20:33:48.563604+00:00",
+  "status": "pass",
+  "gates": [
+    {
+      "name": "provenance_exact_match",
+      "status": "pass",
+      "detail": "Provenance QA must pass with zero unmatched and zero OCR-only lines."
+    },
+    {
+      "name": "provenance_trace_integrity",
+      "status": "pass",
+      "detail": "Every markdown trace row maps to a catalog line_id."
+    },
+    {
+      "name": "forbidden_class_leakage",
+      "status": "pass",
+      "detail": "No forbidden class lines are present in rendered output."
+    },
+    {
+      "name": "ocr_primary_policy",
+      "status": "pass",
+      "detail": "OCR-backed lines are blocked unless --allow-ocr-primary is enabled."
+    },
+    {
+      "name": "ocr_marker_absent",
+      "status": "pass",
+      "detail": "Final markdown must not include OCR marker blocks."
+    },
+    {
+      "name": "section_disposition_complete",
+      "status": "pass",
+      "detail": "All canonical sections must have a disposition in section-map."
+    },
+    {
+      "name": "manual_checklist_complete",
+      "status": "pass",
+      "detail": "Review notes checklist and placeholders must be completed."
+    },
+    {
+      "name": "markdown_trace_sync",
+      "status": "pass",
+      "detail": "Rendered trace must exactly match markdown and all content bullets must be traced."
+    },
+    {
+      "name": "section_completeness",
+      "status": "pass",
+      "detail": "Every selected line for each mapped section must be accounted for in render output."
+    },
+    {
+      "name": "executive_summary_cleanup",
+      "status": "pass",
+      "detail": "Executive Summary must not include engagement-letter/legal boilerplate text."
+    },
+    {
+      "name": "cleanup_quality",
+      "status": "pass",
+      "detail": "Final markdown must not contain fragment/noise bullets after cleanup."
+    }
+  ],
+  "issues": [],
+  "summary": {
+    "trace_lines": 58,
+    "missing_trace_references": 0,
+    "ocr_trace_lines": 0,
+    "forbidden_class_lines": 0,
+    "manual_check_issues": 0,
+    "provenance_unmatched": 0,
+    "trace_sync_issues": 0,
+    "markdown_untraced_content_lines": 0,
+    "section_expected_lines": 58,
+    "section_rendered_lines": 58,
+    "section_missing_lines": 0,
+    "section_unexpected_lines": 0,
+    "exec_summary_boilerplate_issues": 0,
+    "cleanup_quality_issues": 0
+  },
+  "allow_ocr_primary": false,
+  "section_accounting": {
+    "Executive Summary": {
+      "expected_line_ids": [
+        "pdf_text:073:0389",
+        "pdf_text:079:0127",
+        "pdf_text:079:0151",
+        "pdf_text:083:0104",
+        "pdf_text:085:0019",
+        "pdf_text:089:0038",
+        "pdf_text:090:0058",
+        "pdf_text:091:0220",
+        "pdf_text:092:0066",
+        "pdf_text:094:0279",
+        "pdf_text:008:0034",
+        "pdf_text:008:0066",
+        "pdf_text:027:0127",
+        "pdf_text:029:0030",
+        "pdf_text:029:0038",
+        "pdf_text:030:0180",
+        "pdf_text:032:0068",
+        "pdf_text:099:0144",
+        "pdf_text:033:0045",
+        "pdf_text:033:0049",
+        "pdf_text:098:0022",
+        "pdf_text:098:0030",
+        "pdf_text:038:0017",
+        "pdf_text:039:0023",
+        "pdf_text:040:0225",
+        "pdf_text:040:0231",
+        "pdf_text:041:0010",
+        "pdf_text:041:0013",
+        "pdf_text:041:0025",
+        "pdf_text:045:0170",
+        "pdf_text:045:0172",
+        "pdf_text:046:0276",
+        "pdf_text:046:0281",
+        "pdf_text:046:0284",
+        "pdf_text:046:0295",
+        "pdf_text:051:0017",
+        "pdf_text:055:0069",
+        "pdf_text:056:0087",
+        "pdf_text:077:0197",
+        "pdf_text:052:0040",
+        "pdf_text:057:0023",
+        "pdf_text:058:0030",
+        "pdf_text:059:0027",
+        "pdf_text:010:0039",
+        "pdf_text:098:0036",
+        "pdf_text:098:0039",
+        "pdf_text:106:0039",
+        "pdf_text:106:0044",
+        "pdf_text:106:0073",
+        "pdf_text:107:0014",
+        "pdf_text:107:0016",
+        "pdf_text:061:0022",
+        "pdf_text:062:0034",
+        "pdf_text:066:0035",
+        "pdf_text:067:0030",
+        "pdf_text:100:0073",
+        "pdf_text:101:0124",
+        "pdf_text:104:0013"
+      ],
+      "rendered_line_ids": [
+        "pdf_text:073:0389",
+        "pdf_text:079:0127",
+        "pdf_text:079:0151",
+        "pdf_text:083:0104",
+        "pdf_text:085:0019",
+        "pdf_text:089:0038",
+        "pdf_text:090:0058",
+        "pdf_text:091:0220",
+        "pdf_text:092:0066",
+        "pdf_text:094:0279",
+        "pdf_text:008:0034",
+        "pdf_text:008:0066",
+        "pdf_text:027:0127",
+        "pdf_text:029:0030",
+        "pdf_text:029:0038",
+        "pdf_text:030:0180",
+        "pdf_text:032:0068",
+        "pdf_text:099:0144",
+        "pdf_text:033:0045",
+        "pdf_text:033:0049",
+        "pdf_text:098:0022",
+        "pdf_text:098:0030",
+        "pdf_text:038:0017",
+        "pdf_text:039:0023",
+        "pdf_text:040:0225",
+        "pdf_text:040:0231",
+        "pdf_text:041:0010",
+        "pdf_text:041:0013",
+        "pdf_text:041:0025",
+        "pdf_text:045:0170",
+        "pdf_text:045:0172",
+        "pdf_text:046:0276",
+        "pdf_text:046:0281",
+        "pdf_text:046:0284",
+        "pdf_text:046:0295",
+        "pdf_text:051:0017",
+        "pdf_text:055:0069",
+        "pdf_text:056:0087",
+        "pdf_text:077:0197",
+        "pdf_text:052:0040",
+        "pdf_text:057:0023",
+        "pdf_text:058:0030",
+        "pdf_text:059:0027",
+        "pdf_text:010:0039",
+        "pdf_text:098:0036",
+        "pdf_text:098:0039",
+        "pdf_text:106:0039",
+        "pdf_text:106:0044",
+        "pdf_text:106:0073",
+        "pdf_text:107:0014",
+        "pdf_text:107:0016",
+        "pdf_text:061:0022",
+        "pdf_text:062:0034",
+        "pdf_text:066:0035",
+        "pdf_text:067:0030",
+        "pdf_text:100:0073",
+        "pdf_text:101:0124",
+        "pdf_text:104:0013"
+      ],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Key Findings": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Business Overview": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Summary Financials": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Profit and Loss Overview / Financial Performance": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Quality of Earnings": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Income Statement": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Balance Sheet": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Net Working Capital": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Net Debt (Cash)": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Cash Flows": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Related Parties": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Reporting Environment": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Forecast Trading": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Industry Analysis": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Quality of Net Assets": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Gross Margin by LOB": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    },
+    "Appendices": {
+      "expected_line_ids": [],
+      "rendered_line_ids": [],
+      "missing_line_ids": [],
+      "unexpected_line_ids": []
+    }
+  },
+  "artifact_paths": {
+    "render_trace": "extracted/verification/project-emerald-simulated-report-2025/render/render-trace.json",
+    "catalog": "extracted/verification/project-emerald-simulated-report-2025/catalog/line-catalog.jsonl",
+    "selected_catalog": "extracted/verification/project-emerald-simulated-report-2025/catalog/selected-lines.jsonl",
+    "section_map": "extracted/verification/project-emerald-simulated-report-2025/mapping/section-map.json",
+    "section_accounting": "extracted/verification/project-emerald-simulated-report-2025/mapping/section-accounting.json",
+    "provenance": "extracted/verification/project-emerald-simulated-report-2025/qa/provenance.json",
+    "review_notes": "extracted/verification/project-emerald-simulated-report-2025/review-notes.md",
+    "verification": "extracted/verification/project-emerald-simulated-report-2025/verification.json",
+    "markdown": "/Users/rishi/Code/ai-tools/chatgpt/ts-report-writer/extracted/project-emerald-simulated-report-2025.md"
+  }
+}

@@ -48,3 +48,15 @@ When you encounter a recurring failure:
 - **Trigger**: Re-running strict pipeline for a report that was already manually cleaned causes large fragment-heavy markdown/regressions in provenance and cleanup gates.
 - **Instruction**: Preserve or restore the last QA-passing artifact set before continuing; if rerun is required for compliance, immediately rerun provenance + gates and keep the cleaned version unless you also complete a full cleanup pass again.
 - **Added after**: Iteration 8 - cinema single-file rerun overwrote cleaned markdown and required restoration before final pass.
+
+### Sign: Template Header Changes Must Re-Align Render Trace
+
+- **Trigger**: QA gates fail `markdown_trace_sync` after inserting/rewriting markdown header sections (for example required source evidence or coverage map), even though extracted bullets are source-backed.
+- **Instruction**: Recalculate `render-trace.json` `markdown_line_number` values against the final markdown text after header/table edits, then rerun provenance + gates.
+- **Added after**: Iteration 11 - story 10.0 initially failed trace sync because template metadata insertion shifted bullet line numbers.
+
+### Sign: Selected-Line Section Candidates Must Match Render Sections
+
+- **Trigger**: `qa_gates.py` fails `section_completeness` with many `section_line_missing` and mirrored `section_line_unexpected` issues after cleanup pruning.
+- **Instruction**: When pruning/reassigning strict lines, update `selected-lines.jsonl` `section_candidate` values to match final rendered section placement and regenerate `section-accounting.json` + `section-map.json` + `render-trace.json` together.
+- **Added after**: Iteration 12 - story 11.0 initially passed provenance/cleanup but failed section completeness due stale section candidates.

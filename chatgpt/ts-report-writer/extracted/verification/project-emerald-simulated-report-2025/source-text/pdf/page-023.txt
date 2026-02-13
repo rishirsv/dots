@@ -1,0 +1,30 @@
+Executive summary                                                                                                                                                                       DRAFT
+Key findings – Taxation (6/6)
+Issue                       Summary observations                                                                                                                                 Key analysis
+Related party               ■ In FY08 CLSS entered into a “back-to-back” loan arrangement with CLH and CBCLSC. Under this arrangement                                                      Not
+transactions                  CLSS held an intercompany note from CLH with an interest rate of 10.3% and CLH held an intercompany note for,                                         applicable
+CBCLSC with the same interest rate plus 5 bps (the “intercompany notes”). A benchmarking study was performed in
+Intercompany note
+FY09 which concluded that, at the time, the interest rate was within the arm’s length range identified by publicly
+payable to CLH by
+available interest rate observations on comparable debt.
+CBCLSC
+■ The intercompany notes were amended to extend the maturity dates in 2017 and again in 2018 at the same interest
+rates of 10.3% and 10.35%. Given the downward movement of interest rates since FY09, CRA may argue that,
+given the option to prepay the principal amount, a party acting at arm’s length would have attempted to negotiate a
+lower interest rate in a more favorable interest rate environment (such as in 2017 and 2018). In Aug-17 CBCLSC
+entered into a credit agreement with external lenders, the interest rate on which is 3 months USD LIBOR + 800 bps.
+■ We have requested but not received the third party credit agreement to assess the comparability with the
+intercompany notes. Whilst there may be differences which support the difference in interest rates, to be
+conservative, we have calculated an exposure amount if the CRA were to assess the transaction and adjust the
+interest rate on the intercompany note payable by CBCLSC to be commensurate with the interest rate on the third
+party credit arrangement. We estimate the related income tax exposure for FY17-FY18 to be approximately
+C$250,000. This is a medium risk concern.
+Related party               ■ The interest rate on the CLSS Loan is based on the interest rate obtained by CBCLSC on the above mentioned                                                   Not
+transactions                  credit agreement with external lenders (USD 3 months LIBOR + 800 bps) plus 5 bps.                                                                     applicable
+CBCLSC upstream loan ■ In a “back-to-back” financing arrangement the CRA would typically expect an interest rate spread higher than 5 bps
+with CLSS              to reside with the intercompany lender, i.e. CBCLSC.
+■ Based on an additional spread of 20 bps, we estimate the related income tax exposure for FY17-FY18 to be
+approximately C$150,000 including interest. This is a medium risk concern.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International              23
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

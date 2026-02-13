@@ -1,0 +1,52 @@
+Executive summary                                                                                                                                                                                          DRAFT
+Summary financial statements
+CLH consolidated incom e statem ent                                                    CLH consolidated balance sheet
+The Company’s books
+and records are kept in             Unaudited                                                                              Unaudited    As % of net sales                           As at                          Average
+TTM
+accordance with US                  $'000                                                FY17      FY18     P5-19          $'000                                       31-Dec-17   31-Dec-18 25-May-19
+GAAP. The Company                   Net sales                                         272,881 273,157 272,668              Assets
+follows a 4-4-5 financial           Cost of sales                                    (213,651) (220,376) (219,031)           Cash & cash equivalents                          1           1          1
+Gross profit                                       59,230    52,780    53,637            Accounts receivable                         33,267      32,803     33,280
+reporting calendar                  Total operating expenses                          (22,280) (21,613) (20,470)             Inventories                                 86,207      96,248     88,109
+whereby the fiscal year is          Operating incom e                                  36,951    31,167    33,167            Prepaid expenses & other current assets        188       1,066      1,332
+forced to end on                      Net interest expense                            (11,667) (14,159) (14,987)             Intercompany receivables                   183,267      73,604     42,028
+Current assets                               302,930     203,722    164,750
+December 31st.                        Other (income) expense                           (1,947)   (4,373)   (4,213)
+Construction in progress                       1,543       2,801      1,756
+Restructuring & other transition costs             (182) (13,637)    (7,294)
+PP&E, net                                     29,290      34,125     34,533
+Reported Net sales                    Income taxes                                     (6,356)   (3,719)   (4,130)
+Intercompany notes receivable                182,411     155,627    180,790
+Net incom e / (loss)                               16,799    (4,720)    2,543
+exclude intercompany                                                                                                       Pension benefit asset                          1,506       2,642      2,831
+Add back / (deduct)
+sales to Bumble Bee in                Net interest expense                             11,667    14,159    14,987
+Goodw ill                                     13,865      13,865     13,865
+Trademarks                                    48,293      48,293     48,293
+accordance with the sell-             Income taxes                                      6,356     3,719     4,130
+Other intangible assets, net                  49,397      56,946     55,643
+side report dated 03-May-             Depreciation                                      3,339     3,368     3,462          Other long-term assets                           675       1,236        673
+Amortization                                      3,890     3,471     3,327
+19. This Bumble Bee                                                                                                        Total assets                                 629,911     519,257    503,134
+EBITDA                                             42,051    19,996    28,449          Liabilities & equity
+related revenue is                  Restructuring & other transition costs                182    13,637     7,294            Accounts payable                           (26,393)    (31,981)    (24,160)
+subsequently included               Adjusted EBITDA                                    42,233    33,633    35,743            Accrued expenses                           (14,382)    (14,412)    (13,041)
+within adjusted net sales,         Source: Management provided trial balances                                                Income & w ithholding taxes                 (1,765)     (1,144)     (1,107)
+Other current liabilities                     (494)       (509)       (207)
+as discussed in QofE Adj
+Intercompany payables                     (182,854)    (67,358)    (30,255)
+#18.                                 Basis of presentation                                                                 Current liabilities                         (225,889)   (115,404)    (68,771)
+Term notes payable, net of DD/IC            (171,243)   (184,995)   (180,804)
+■   The consolidated financial statements of Clover Leaf Holdings                     Revolving credit facility, net of DD/IC          756         607     (25,749)
+Company are not audited, but are included in the audited financial                Subordinated notes, net of DD/IC                   -           -           -
+statements of the parent company, Bumble Bee Foods.                               Capital leases & other debt                        -        (212)       (442)
+■   The Company’s reporting currency is CAD. All figures are                          Intercompany notes payable                  (133,528)   (123,040)   (126,866)
+denominated in CAD, unless otherwise noted.                                       Deferred income taxes                         (7,052)     (7,110)     (6,433)
+Other long-term liabilities                     (315)       (144)       (706)
+Total liabilities                           (537,271)   (430,298)   (409,771)
+Equity                                       (92,639)    (88,959)    (93,363)
+Total liabilities & equity                  (629,911)   (519,257)   (503,134)
+Source: Management provided trial balances
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                                 11
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

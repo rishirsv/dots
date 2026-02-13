@@ -1,0 +1,61 @@
+Appendix 12                                                                                                                                                                                       DRAFT
+Accounts receivable
+AR aging sum m ary                                                                                                                       Accounts receivable management
+$'000                Current 0-30 days 31-60 days 61-90 days Over 90 days    Total
+31-Dec-17             28,928     2,697        724         88             - 32,437
+■ Accounts receivable were primarily concentrated in the
+% of total            89.2%      8.3%       2.2%       0.3%             - 100.0%                                                           top 10 customers, driven by an increase in the current
+31-Dec-18             29,273        2,269            -           -           -    31,542                                                   receivables from customer Loblaws Inc. in the current
+% of total            92.8%         7.2%            -            -          -    100.0%                                                    period (27.1%) as compared to FY18 (19.3%).
+27-Apr-19             37,950        1,985         149             -          -    40,084
+% of total            94.7%         5.0%        0.4%             -          -    100.0%                                                  ■ There were no accounts receivable balances aged over
+Source: Management provided information, KPMG analysis
+90 days.
+AR aging by custom er
+■ Payment terms in the top 20 accounts vary by customer
+27-Apr-19
+As %
+from 2% 10, net 30 to 2% 30, net 40, for domestic
+$'000                                   Current 0-30 days 31-60 days 61-90 days Over 90 days      Total of total                           customers and vary from 30 to 60 days after arrival, for
+Loblaw s Inc                           10,856         16       -          -            -      10,872   27.1%                             international customers. In FY18, the average DSO was
+Wal-Mart Canada Corp                    4,193       -          -          -            -       4,193   10.5%
+48 days and the max DSO was 49 days.
+Facey Commodity Co. Ltd.                2,977       498        -          -            -       3,476    8.7%
+Alstons Marketing Co Ltd
+Sobeys
+3,097
+2,093
+-
+478
+-
+-
+-
+-
+-
+-
+3,097
+2,571
+7.7%
+6.4%
+■ Bad debt expense in FY18 was $42k. Receivables are
+Metro                                   1,493       -          -          -            -       1,493    3.7%                             set up as bad debt after failure of collection attempts or
+Bryden Stokes Ltd                       1,358       -          -          -            -       1,358    3.4%                             receipt of bankruptcy documents. Average allowance
+Productos Importados Americanos         1,159       -          -          -            -       1,159    2.9%
+Distribuidora 2000, Sa                    483       298        -          -            -         781    1.9%
+for bad debt has increased as a percentage of net sales
+Beepats                                   597       -          -          -            -         597    1.5%                             from 0.011% in FY17 to 0.017% in TTM P5-19.
+Top 10 Customers                         28,307     1,291        -          -            -      29,598   73.8%
+Other Customers                           9,643       694        149        -            -      10,486   26.2%                           ■ There are no significant historical or ongoing disputes.
+Total                                    37,950     1,985        149        -            -      40,084 100.0%
+Source: Management provided information, KPMG analysis
+Note: Total A/R presented in the table above excludes all intercompany balances, including those from Bumble
+Bee.
+Allow ance for doubtful accounts
+Average
+$'000                                   FY17        FY18 TTM P5-19
+Allow ance for doubtful accounts         (29)         (39)        (47)
+Net Sales                           272,881      273,157     272,668
+AFDA as a % net sales                0.011%       0.014%      0.017%
+Source: Management provided information, KPMG analysis
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International               85
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

@@ -1,0 +1,60 @@
+Net working capital                                                                                                                                                                                  DRAFT
+Stratified balance sheet
+The adjacent table                  Stratified balance sheet at 25-May-19                                                                                                       These balances are recorded in
+presents the                        Unaudited                                                                             As at 25-May-19                                       CLH and are debt-like in nature.
+consolidated net asset                                                                                                                                  Fixed &                 They are classified as “Other” in
+CBCLSC                      CLH        CLH                      intangible                   the stratified balance sheet in
+position segregated into
+$'000                                             consol          CLH     elim co     consol        NWC Net debt    assets       Other      order to reconcile to the sell-side
+its components as at 25-                                                                                                                                                        diligence report, which presents
+Assets
+May-19.                               Cash & cash equivalents                              1           -        -              1       -              1         -        -       reported NWC and net debt for
+Accounts receivable                             33,280           -        -         33,280  33,280              -         -        -         CBCLSC consolidated only.
+The consolidated net
+Inventories                                     88,109           -        -         88,109  88,109              -         -        -
+asset position as at 25-              Prepaid expenses & other current assets          1,323           8        -          1,332   1,323              -         -        8        Refer to the net debt section
+May-19 was $93.4 million              Intercompany receivables                        17,778      24,250        -         42,028  17,778              -         -   24,250         where these balances are
+mainly comprised of                 Current assets                                   140,492      24,258        -        164,750 140,491              1         -   24,258             further discussed.
+inventories, related party          Construction in progress                           1,756           -        -          1,756       -              -     1,756        -
+notes receivables, and              PP&E, net                                         34,533           -        -         34,533       -              -    34,533        -
+Intercompany notes receivable                    180,790     105,336 (105,336)       180,790       -        180,790         -        -
+intangible assets,
+Pension benefit asset                              2,831           -        -          2,831       -          2,831         -        -
+partially offset by term            Goodw ill                                         13,865           -        -         13,865       -              -         -   13,865
+debt and related party              Trademarks                                        48,293           -        -         48,293       -              -    48,293        -
+Top-side entries are layered into
+notes payables.                     Other intangible assets, net                      55,643           -        -         55,643       -              -    55,643        -
+the consolidated P&L, however,
+Other long-term assets                               673      77,039  (77,039)           673       -              -         -      673
+Basis of presentation:                                                                                                                                                          they were not considered in the
+Total assets                                     478,876     206,633 (182,375)       503,134 140,491        183,621   140,225   38,796
+The consolidated net                Liabilities
+sell-side NWC and net debt
+analyses. Refer to the net debt
+assets were stratified                Accounts payable                               (24,160)        -             -  (24,160)       (24,160)        -          -        -
+section for further consideration
+based on Management’s                 Accrued expenses                               (13,041)        -             -  (13,041)       (13,041)        -          -        -
+given to the treatment of these
+Income & w ithholding taxes                        (47)   (1,061)            -   (1,107)           (47)        -          -   (1,061)
+view of reported NWC                                                                                                                                                                      top-side entries.
+Other current liabilities                         (207)        -             -     (207)          (207)        -          -        -
+and net debt based on                 Intercompany payables                          (30,243)      (12)            -  (30,255)       (30,243)        -          -      (12)
+the sell-side financial             Current liabilities                              (67,699)   (1,073)            -  (68,771)       (67,699)        -          -   (1,073)
+diligence report dated 3-           Term notes payable, net of DD/IC                (180,804)        -             - (180,804)             - (180,804)          -        -
+May-19.                             Revolving credit facility, net of DD/IC          (25,749)        -             -  (25,749)             -   (25,749)         -        -
+Subordinated notes, net of DD/IC                       -         -             -        -              -         -          -        -
+Capital leases & other debt                         (442)        -             -     (442)             -      (442)         -        -       While the sell-side diligence
+Intercompany notes payable                      (105,336) (126,866)      105,336 (126,866)             - (126,866)          -        -         report presents the gross
+Deferred income taxes                             (4,938)   (1,495)            -   (6,433)             -         -          -   (6,433)
+CBCLSC balance for this line
+Other long-term liabilities                         (706)        -             -     (706)             -      (581)         -     (125)
+item, it is eliminated by CLH
+Total liabilities                               (385,673) (129,433)      105,336 (409,771)       (67,699) (334,442)         -   (7,630)
+Elimco upon consolidation,
+Net assets                                        93,203    77,200       (77,039)  93,363         72,792 (150,820)    140,225   31,166
+resulting in only the CLH
+Source: Management provided trial balances; Sell-Side Financial Diligence report dated 03-May-19; KPMG analysis
+balance being presented in the
+sell-side diligence report.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                             35
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

@@ -1,0 +1,49 @@
+Quality of earnings                                                                                                                                                                         DRAFT
+Quality of earnings (2/8) – Management adjustments
+Quality of earnings                                                                              Management adjustments
+TTM           The following represents Management adjustments to EBITDA:
+$'000                                                        FY17          FY18   P5-19
+CLH consol net sales, reported                             272,881      273,157 272,668
+1.    Restructuring adjustments: Consists of the following components:
+Sell-side adjustments                                        (859)       (2,526) (3,215)
+Restructuring related transactions
+CLH consol net sales, sell-side adj                        272,022      270,631 269,453
+Buy-side adjustments                                        23,097       19,039  20,006                                                                                      TTM
+$'000                                           FY17    FY18     P5-19
+CLH consol net sales, buy-side adj                         295,119      289,670 289,459
+Divestment related transaction costs            638      4       439
+CBCLSC consol net incom e, reported                          16,666      (4,754)        2,514
+FX impact on external debt                    (543) 15,725     6,705
+CBCLSC consol EBITDA, reported                               41,937     20,000      28,458                   FX impact on interco debt                         - (2,148)   (2,148)
+CBCLSC consol EBITDA margin, reported                        15.4%       7.3%       10.4%                    Gain/loss on interest rate sw ap                  -   (563)    1,634
+Managem ent adjustm ents                                                                                   Debt-related items                                 95 13,018     6,630
+1 Restructuring adjustments                                    166     13,637       7,294                 One-time legal fees                                 -     68       113
+Management adjustments                                          166     13,637       7,294                 One-time severance costs                            -    551       551
+CBCLSC consol EBITDA, Managem ent adj                        42,102     33,637      35,752                 Non-cash sales cut-off adjustment                  70      -         -
+CBCLSC consol EBITDA margin, Management adj                  15.4%      12.3%       13.1%                  Restructuring related transactions adj.           166 13,637     7,294
+CLH EBITDA, reported                                            115         (4)         (9)            Source: Management provided information, KPMG analysis
+CLH consol EBITDA, Managem ent adj                           42,217     33,633      35,743
+I.        Debt-related items: Consists of the following components:
+CLH consol EBITDA margin, Management adj                     15.5%      12.3%       13.1%
+Sell-side adjustments                                         3,903         91      (2,113)                  A.     Divestment related transaction costs: Represents expenses incurred related
+CLH consol EBITDA, sell-side adj                             46,120     33,724      33,631                          to refinancing and divestment activities that are added back to EBITDA as they
+CLH consol EBITDA margin, sell-side adj                      17.0%      12.5%       12.5%                           are non-recurring in nature.
+Buy-side adjustments                                        (2,481)     (1,749)       (966)
+CLH consol EBITDA, buy-side adj                              43,638     31,974      32,665
+B.     FX impact on external debt and intercompany debt: Represents the
+CLH consol EBITDA margin, buy-side adj                       14.8%      11.0%       11.3%                           removal of FX gains/losses related to; A) external Brookfield debt, and B)
+Pro forma adjustments                                          n.q. -   (1,757)     (1,757)                         intercompany notes and receivables from/to CLSS.
+CLH consol EBITDA, pro form a adj                            43,638     30,218      30,908                   C.     Gain/loss on interest swap: Represents fluctuations in the interest swap
+CLH consol EBITDA margin, pro forma adj                      14.8%      10.4%       10.7%                           hedge covering the interest portion of external debt, which is removed from
+Source: Mgmt provided trial balances; Sell-Side report dated 03-May-19; KPMG analysis
+EBITDA as it is non-operational in nature.
+II.       One-time legal fees: Represents legal fees incurred in connection with a
+Canadian civil anti-trust related action against the Company, which are added back
+to EBITDA as they are non-recurring in nature.
+III.      One-time severance costs: Represents one-time severance costs incurred as a
+result of corporate restructuring, relating to the Senior Vice President of Sardine
+Operations and Vice President of Marketing.
+IV.       Non-cash sales cut-off adjustment: Represents the elimination of a non-cash
+sales cut-off adjustment from EBITDA.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International         27
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

@@ -1,0 +1,50 @@
+Executive summary                                                                                                                                                                        DRAFT
+Key findings – Taxation (5/6)
+Issue                        Summary observations                                                                                                                                 Key analysis
+Withholding tax              ■ Target pays interest on an intercompany note to CLSS. Under Canadian domestic law a 25% WHT applies to these                                                 Not
+(“WHT”) on interest            interest payments. However, CLSS is claiming a reduced 10% WHT rate under the on the basis it is a resident of                                        applicable
+Luxembourg for purposes of the Treaty and has beneficial ownership of the interest. Generally, beneficial ownership
+refers to dominion and control over the interest received.
+■ Management represented that the board of CLSS is comprised predominantly of residents of Luxembourg and
+meets regularly in Luxembourg to discuss and make decisions with regards to CLSS, including but not limited to the
+subsequent use of the funds received from CLH as interest. We have been provided with sample copies of board
+resolutions with respect to these matters and further representations regarding the board activities. Based on the
+representations received and additional supporting documents provided, any related challenge of the reduced WHT
+rate on interest on the grounds of beneficial ownership appears to be a low risk concern.
+Payroll tax exposures        ■ Management represented that a number of employees travel to foreign jurisdictions to visit customers and negotiate                                           Not
+in foreign                     contracts. Generally, such employees would only visit a particular foreign country for less than two weeks in any                                     applicable
+jurisdictions                  year.
+■ Potentially, such employee travel could trigger foreign payroll tax obligations. It would be a complex and expensive
+exercise to determine if such foreign payroll obligations existed.
+■ Management also represented that none of these employees conclude contracts on behalf of Target in a foreign
+country. Accordingly, it appears low risk that such foreign travel could create permanent establishments in foreign
+countries, and as a result, significant corporate income tax exposures.
+■ We recommend that a specific indemnity be obtained with respect to this matter. In addition, we recommend that
+post-closing Client conduct a review of employee travel to determine if any changes to Target’s compliance practices
+are required.
+Related party                ■ In FY14-FY18 CBCLSC sold branded sardines to BBF of approximately C$20 million - C$34 million a year for further                                             Not
+transactions                   resale on the US market. The intercompany price of branded finished sardines is based on CBCLSC’s total                                               applicable
+production costs plus a mark-up of approximately 7%, which is benchmarked annually against comparable third
+Sales of branded
+party manufacturers. Based on the breakdown of sales to BBF, we understand that on average approximately 37%
+finished sardines for
+of the total sales of sardines to BBF represent the sale of finished sardines under the CBCLSC owned trademark,
+resale by BBF
+“Brunswick”.
+■ In an arm’s length transaction, the owner of a consumer trademark would expect to be compensated for the other
+party’s use of that trademark to generate sales. Management represented that currently CBCLSC is not directly
+compensated for BBF’s use of the Brunswick trademark.
+■ Based on a royalty rate of 2.5% applied to BBF’s estimated sales of Brunswick products, we estimate the related
+income tax exposure to be approximately C$500,000 including interest for FY14-FY18. The statute of limitation for
+transactions with non-arm’s length related parties is 7 years from the date of the NOA for the relevant taxation year,
+© 2019 KPMG LLP, a
+thusCanadian limited liability
+additional              partnership
+exposures       may and a member
+exist in firm of theof
+respect    KPMG network
+FY12-FY13.of independent
+This is amember
+medium     affiliated with
+firms risk   concern. KPMG International                22
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

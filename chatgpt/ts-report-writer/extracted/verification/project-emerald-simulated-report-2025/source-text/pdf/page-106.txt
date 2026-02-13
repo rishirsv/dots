@@ -1,0 +1,48 @@
+Appendix 32                                                                                                                                                                        DRAFT
+Canadian sales tax compliance overview (1/2)
+GST/HST                                                                                                   ■ However, even in absence of the elections, GST/HST would likely not apply
+to the Lunar asset purchases in these circumstances, as fishing vessels and
+Revenues                                                                                                    equipment generally qualify for zero-rating, and fishing licenses are covered
+by a special GST/HST rule that deems their purchase not to be subject to
+■ Target’s revenues generally consist of the sale of fish and fish products,                                GST/HST. Thus, any related tax exposure appears to be a low risk concern.
+which are considered ‘basic groceries’ for GST/HST purposes and as such
+are zero-rated. Accordingly, Target generally does not collect GST/HST on                               Pension Plans
+its revenues.                                                                                           ■ Target has two defined-benefit pension plans. Management represented that
+■ Management indicated when new products are launched, they confirm the                                     various services are acquired with respect to operating the plans, as well as
+zero-rating status with outside counsel.                                                                  a small amount of employee time is devoted to their operation. Management
+represented that the amount of HST on actual related supplies in 2018 was
+■ Target earns incidental revenues on non-food sales, including the sub-lease
+approximately C$27,000, and this would represent the vast majority of total
+of real property and stock room sales to employees, upon which GST/HST is
+pension plan-related costs.
+collected.
+Credits on Expenses                                                                                       ■ The HST rules in relation to the supplies to the defined-benefit pension plans
+may result in double taxation at first instance as the rules apply to both
+■ Target claims input tax credits on its various expenses including plant                                   actual supplies and deemed supplies unless certain steps are taken as
+operations, travel, transport, leasing and advertising. Management                                        discussed below.
+represented that all invoices for which Target claims input tax credits are in                          ■ Management represented that where Target acquires services related to the
+the name of respective Target entity.                                                                     pension plans, Target resupplies these services to the plans and collects
+Lunar Asset Purchase                                                                                        HST on the actual supplies. However, Target does not account for HST on
+deemed supplies for the services provided by the employees nor the
+■ In 2018, Target acquired the business assets of Lunar Fishing (New
+services acquired from the third parties, as is required.
+Brunswick) Inc. (“Lunar NB”) and Lunar Fishing (Nova Scotia) Inc. (“Lunar
+NS”). Target filed section 167 elections with the vendors in respect of these                           ■ As Target does not account for HST on deemed supplies and does not issue
+transactions.                                                                                             tax adjustment notes (“TANs”), there may be a liability for HST on deemed
+supplies equal to the HST on actual supplies. However, this exposure could
+■ While Lunar NB had various business assets including a fishing vessel,
+be potentially mitigated as Target may be able to issue TANs in respect of
+equipment and a fishing license, Lunar NS only held a fishing license.
+prior periods (so that any exposure is reduced to interest only) or
+■ The section 167 election is designed for single-vendor transactions and                                   retroactively file an election that would remove the requirement to collect
+issues can arise where assets are being sold by multiple vendors. In                                      HST on actual supplies, such that the HST previously collected on actual
+addition, the asset sold by Lunar NS may not constitute a business, which is                              supplies would instead cover the exposure on deemed supplies.
+one of the requirements for the election to apply.
+■ In either scenario, there would still be an exposure for HST on the value of
+■ In the event that the elections did not apply and GST/HST was collectible,                                  Target employees’ time spent on pension plan matters, however, this
+there is a risk that Target may be liable to indemnify the vendors for interest                             exposure is not expected to be significant. We recommend that Target’s
+and penalties under the purchase agreement.                                                                 HST compliance procedures in relation to pension plans are reviewed and
+amended appropriately post-close to mitigate compliance deficiencies in the
+future.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International      106
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

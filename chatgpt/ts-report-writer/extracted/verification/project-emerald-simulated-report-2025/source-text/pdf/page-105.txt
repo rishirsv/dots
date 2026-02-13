@@ -1,0 +1,40 @@
+Appendix 31                                                                                                                                                                        DRAFT
+Canadian transfer pricing compliance overview
+Transfer pricing in Canada                                                                               ■ The statute of limitation for transactions with non-arm’s length related parties
+is 7 years from the date of the Notice of assessment for the relevant taxation
+■ Transactions between related entities may invoke scrutiny by the tax                                     year, thus additional exposures may exist in respect of FY12-FY13. This is a
+authorities (e.g., the CRA) if one entity performs services, sells goods to or                           medium risk concern.
+provides the use of property for another entity without charge or at a charge
+which does not reflect an “arm’s length” price. Generally, an arm's length                             2) Purchase of inventories for resale by CBCLSC ($3 million-$7 million annually
+price for a transaction is the price that would be charged between                                     for FY14-FY18)
+independent parties under similar facts and circumstances.                                             ■ The intercompany price of BBF-branded finished canned or packaged food
+■ Generally, transfer pricing guidelines require that the “best” or “most                                  products is based on BBF’s total production costs plus a markup of
+appropriate” method be used to determine which transfer pricing                                          approximately 7%. This transaction is considered akin to the transaction
+methodology sets or tests the arm's length price of a given related party                                discussed above and is therefore tested using the same comparable third
+transaction. Transfer pricing is a significant area of focus by CRA auditors.                            party manufacturers as those identified in respect of the sale of branded
+CBCLSC’s transactions with BBF                                                                             sardines from CBCLSC to BBF, but tested against the operating results of
+BBF in respect of the sales of inventories for resale by CBCLSC to mitigate
+■ During the period under review, CBCLSC had a number of intercompany                                      the risk that CBCLSC is not paying above an arm’s length price.
+transactions with its US affiliate, BBF:                                                               3) Management fees ($3.4 million-$5.1 million annually for FY14-FY18)
+1) Sales of branded finished sardines for resale to the US market ($20 million-
+$34 million annually for FY14-FY18)                                                                      ■ BBF provides certain shared services to CBCLSC including quality control,
+procurement, IT and technology support and headquarter services (treasury,
+■ The intercompany price of branded finished sardines is based on CBCLSC’s                                 legal, finance, tax, HR and corporate strategy). Management represented
+total production costs plus a mark-up of approximately 7%. This transfer                                 the following with respect to these services:
+pricing policy (i.e. CBCLSC is earning a 7% markup on its total production                                  ■ Costs allocations to CBCLSC are based on fully-loaded labour costs
+costs) is benchmarked annually against comparable third party                                                 (salaries, bonuses and overhead) and an estimate of time spent by the
+manufacturers and based on the FY15-FY17 and draft FY18 documentation                                         employees performing the above mentioned activities.
+provided, CBCLSC’s operating results in respect of transaction 1 were within
+the arm’s length range identified.                                                                          ■ The cost allocation process and time estimate is evaluated on an annual
+basis.
+■ We understand that on average approximately 37% of the finished sardines
+sold to BBF for resale in the US market is sold under the CBCLSC owned                                      ■ Costs are allocated to CBCLSC with a mark-up applied. The mark-up
+trademark, “Brunswick” but currently CBCLSC is not directly compensated                                       percentage varies depending on the type of service provided by BBF to
+for BBF’s use of the Brunswick trademark.                                                                     CBCLSC.
+■ In an arm’s length transaction, the owner of a consumer trademark would                                ■ Assuming none of the above services are duplicative of activities already
+expect to be compensated for the other party’s use of that trademark to                                  performed by CBCLSC, the services provide a benefit to CBCLSC and the
+generate sales. Based on a royalty rate of 2.5% applied to BBF’s estimated                               cost base identified accurately reflect the fully-loaded costs incurred by the
+sales of Brunswick products, we estimate the related income tax exposure                                 service providers, the risk of any significant transfer pricing exposures
+for FY14-FY18 to be approximately C$500,000 including interest.                                          relating to shared services appears to be low
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International        105
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

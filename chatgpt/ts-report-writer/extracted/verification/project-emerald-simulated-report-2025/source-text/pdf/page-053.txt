@@ -1,0 +1,53 @@
+Net debt                                                                                                                                                                                      DRAFT
+Net debt (6/6) – Buy-side adjustments (continued)
+Net debt                                                                                                                 Buy-side adjustments (continued)
+As at 25-May-19
+CBCLSC                  CLH       CLH                 17. Include rent deposit: To be consistent with NWC adjustment #20,
+$'000                                                                consol      CLH    Elim co   consol On BS?              the deposit for last month’s rent payable to Cooke Aquaculture is
+Cash & cash equivalents                                             1         -         -        1   
+Intercompany notes receivable                                180,790 105,336 (105,336) 180,790       
+non-operating and considered a debt-like item.
+Pension benefit asset                                           2,831         -         -    2,831                18. Canadian antitrust claim: The Company was named a defendant
+Term notes payable, net of DD/IC                            (180,804)         -         - (180,804)  
+in an antitrust claim along with two other major tuna producers. The
+Revolving credit facility, net of DD/IC                       (25,749)        -         -  (25,749)  
+Capital leases & other debt                                      (442)        -         -     (442)                   plaintiff was seeking to recover from the defendants (i) damages or
+Intercompany notes payable                                  (105,336) (126,866) 105,336 (126,866)                     compensation not to exceed $250 million; and (ii) punitive,
+Other long-term liabilities                                      (581)        -         -     (581)                   exemplary, and aggravated damages in the amount of $25 million.
+Net cash / (debt), Managem ent reported                           (129,291) (21,530)          - (150,820)                    You should consider potential cash outlays – and corresponding
+Managem ent adjustm ents
+1a Intercompany receivables                                        17,778      24,250           -      42,028    
+legal costs – that may result post-transaction.
+1b Intercompany payables                                          (30,243)        (12)          -     (30,255)         19. Transaction bonuses: According to Management, it is likely that
+2 Current portion of other payables                               (3,377)          -           -      (3,377)   
+bonuses will be paid to senior leadership in the event the transaction
+3 Accrued interest                                                  (341)          -           -        (341)   
+4 Derivatives                                                        320           -           -         320              closes, however, no bonus plan has been formalized. You should
+5 Bank overdrafts                                                   (105)          -           -        (105)             consider these non-recurring bonuses to be a debt-like item.
+6 Financial instruments                                              (88)          -           -         (88)   
+7 Accrued restructuring & other transition costs                     (24)          -           -         (24)   
+20. Environmental testing & remediation: We understand that the
+Total Management adjustments                                       (16,080)     24,238           -       8,158               Company hired two consulting firms to perform environmental
+Net cash / (debt), Managem ent adjusted                           (145,371)      2,708           -    (142,663)              testing at three different sites, the results for which have not been
+Buy-side adjustm ents                                                                                                        provided to us as at the date of this report. To the extent it is
+8 Remove IC receivables and payables                              12,465     (24,238)           -    (11,773)   
+9 Remove deferred financing costs                                 (7,376)           -           -     (7,376)   
+determined that the Company is liable for future costs due to
+10 One-off future separation costs                                 (2,608)           -           -     (2,608)              environmental events and conditions that existed pre-transaction,
+11 Old Wharf removal                                               (1,500)           -           -     (1,500)              these costs be classified as net debt.
+12 Include income & w ithholding taxes                                (47)     (1,061)           -     (1,107)   
+13 Capitalize operating leases                                       (454)           -           -       (454)         21. Remainder of restructuring costs to complete initiatives: To the
+14 Remove derivative balances                                        (232)           -           -       (232)             extent the Company's restructuring initiatives are not completed by
+15 Include prepaid income taxes                                       296           8            -        304              closing, any future costs that are incurred post-transaction should be
+16 Other non-operating liabilities                                   (125)           -           -       (125)             the responsibility of the Seller. Although these future costs have not
+17 Include rent deposit                                               (95)           -           -        (95)   
+18 Canadian antitrust claim                                           n.q.        n.q.        n.q.        n.q.
+been quantified in our analysis, they should be considered in net
+19 Transaction bonuses                                                n.q.        n.q.        n.q.        n.q.              debt.
+20 Environmental testing & remediation                                n.q.        n.q.        n.q.        n.q.
+21 Remainder of restructuring costs to complete initiatives           n.q.        n.q.        n.q.        n.q.
+Total buy-side adjustments                                             324     (25,290)           -    (24,966)
+Net cash / (debt), buy-side adjusted - n.q. item s                (145,047)    (22,582)           -   (167,629)
+Source: Management provided trial balances; Sell-Side Financial Diligence report dated 03-May-19; KPMG analysis
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International           53
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

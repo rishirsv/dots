@@ -1,0 +1,64 @@
+Net working capital                                                                                                                                                                                                        DRAFT
+Net working capital (10/11) - Seasonality
+DSO, adjusted
+Average DSO and DPO                 Working capital m etrics, buy-side adjusted
+53
+remained relatively                                                                 TTM                                                          52
+consistent between FY17                                               FY17    FY18 P5-19                                                         51
+DSO                                                                                                          50
+and TTM P5-19.
+Days
+Max                                                                                                          49
+49      49      52
+48
+Average DIO increased               Average                             48      48      49
+47
+from 135 days in FY17 to            Min                                 46      46      47                                                       46
+152 days in TTM P5-19.              Variance from high                   2       2       3                                                       45
+Variance from low                   (1)     (1)     (2)                                                      44
+DIO                                                                                                          43
+P1   P2   P3   P4     P5   P6    P7    P8   P9    P10   P11    P12
+Max                                140     160    160
+FY17          FY18        YTD P5-19        Min          Max
+Average                            135     146    152
+Min                                126     136    142                                         DIO, adjusted
+Variance from high                   6      14      9                                                       180
+Variance from low                   (9)    (10)   (10)                                                      160
+DPO                                                                                                         140
+Max                                 38      38      38                                                      120
+Average                             30      32      32
+Days
+100
+Min                                 24      24      27                                                      80
+Variance from high                   8       6       6                                                      60
+Variance from low                   (6)     (8)     (5)                                                     40
+Cash conversion cycle 1                                                                                     20
+Max                                156     177    179                                                         -
+P1   P2   P3   P4     P5   P6    P7    P8   P9    P10   P11    P12
+Average                            152     162    169
+FY17          FY18        YTD P5-19        Min          Max
+Min                                148     155    158
+Variance from high                   3     15      11                                         DPO, adjusted
+Variance from low                   (4)    (7)    (10)                                                      40
+Source: Management provided trial balances; Sell-Side                                                       35
+Financial Diligence report dated 03-May-19; KPMG
+30
+analysis
+1Calculated using monthly DSO, DIO, and DPO metrics
+25
+Days          20
+15
+Higher DSO from P2-19 to P5-19 was due to lower sardine and
+10
+surimi sales driven by lapses in internal distributor management
+5
+processes and slow to sell Polish-sourced sardines in Jamaica.
+-
+P1   P2   P3   P4     P5   P6    P7    P8   P9    P10   P11    P12
+Higher DIO starting in the latter half of FY18 was due to excess
+FY17          FY18        YTD P5-19        Min          Max
+inventory build ups from higher than expected fishing output.
+Source: Management provided trial balances; Sell-Side Financial
+Diligence report dated 03-May-19; KPMG analysis
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                                                  45
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

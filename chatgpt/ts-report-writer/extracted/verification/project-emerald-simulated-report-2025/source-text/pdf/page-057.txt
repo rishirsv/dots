@@ -1,0 +1,42 @@
+Standalone cost analysis                                                                                                                                                                                DRAFT
+Parent support and corporate cost al ocations (2/5)
+Operational and financial dependencies on Parent (continued)                                           Target dependencies on Parent
+Support functions           People      Processes        Assets      Contracts Technology   In TSA
+■ Finance:
+Executives
+■ FTEs: The Parent estimates 0.2 Treasury FTE and 0.2 Tax FTE
+support the Target, and are included in the general management fee.                                       Finance                                                                                    
+The Target employs a number of Finance personnel directly, e.g.,
+Accountants, Controllers, CFO Canada, VP Finance Canada, and the                                          HR
+AP Supervisor. According to Management, the Clover Leaf Markham
+Legal                                                                                      
+office handles daily detail transactions/reconciliations, etc.
+■ Audit & Tax: The Parent pays external providers and this charge is                                        Procurement                                                                                
+passed through to the Target.
+Marketing/Sales
+■ Bank fees: The Parent manages the bank relationship centrally, but
+the actual charges are passed through to the Target.                                                      IT                                                                                         
+■ TSA: Management is including treasury, banking, cash management,                                          QA & Tech                                                                                  
+and hedge purchases into the $2,000/month corporate services TSA.
+Sustainability                                                                             
+■ HR:
+Risk & Insurance                                                                           
+■ FTEs: Parent estimates 0.1 of SVP HR support for the Target, which
+is covered by the general management fee. There are six direct HR                                 Legend: Level of dependency on Parent       Minimal      Medium         High     n.a.
+FTEs at Target.
+■ Payroll is operated locally through a service provider ADP.                                        Corporate allocations
+TTM
+$'000                                     FY16       FY17      FY18      May-19        FY19B
+1 Intercompany management fee            2,548       2,563    2,562       2,476        2,800
+2 Procurement fees                       1,204       1,299    1,424       1,432        1,512
+3 Insurance costs                        1,119         963      884         852          979
+4 Audit fees                               320        335        206          122       185
+5 Tax fees                                   6        108         89          109        60
+6 Legal fees                               153        121        184          187       161
+7 R&D allocation                           134         37         26           28        35
+8 Quality allocation                       463        696        789          787       796
+9 Bank fees                                271         226      180         168          214
+Total                                    6,218       6,348    6,343       6,160        6,741
+Source: 8.2.4_Project Emerald - Data book.xlsx
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                                57
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

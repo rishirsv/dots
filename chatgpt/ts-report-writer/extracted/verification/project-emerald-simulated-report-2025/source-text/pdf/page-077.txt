@@ -1,0 +1,71 @@
+Appendix 7                                                                                                                                                                                     DRAFT
+VPC reconciliation to consolidated trial balance
+Net sales reconciliation - VPC to consolidated trial balance
+TTM
+The adjacent schedules reconcile net sales and gross
+$'000                                                                          FY17    FY18   P5-19           profit from the VPC database – which contains sales and
+Net sales per VPC, unadjusted
+Item s not included in VPC
+A       259,938 258,954 258,413
+margin details by product and product category – to the
+Plant sales                                                                 8,331      10,799                 consolidated trial balances provided by Management.
+Australia sales (FFG)                                                       4,530       1,826
+Coupons / slotting                                                           (335)         24
+International merchandise funds not in VPC                                   (990)     (1,069)
+Domestic merchandise funds reversal                                         1,500       2,600
+Other adjustments (unsaleable adj, customer pick up)                          (93)         22
+12,943      14,202     14,255
+Plant by-product and bait sales are not included in VPC.
+Total reconciling items                                              B
+Net sales per VPC, adjusted for reconciling item s above          C = A+B   272,881     273,156    272,668
+Net sales per consolidated trial balance                             D      272,881     273,157    272,668
+Difference                                                        E = C-D        (0)         (1)         -
+Sales related to the supply agreement for Australia are
+Gross profit reconciliation - VPC to consolidated trial balance
+TTM
+not included in VPC.
+$'000                                                                           FY17      FY18     P5-19
+Net sales per VPC, unadjusted                                              259,938 258,954 258,413
+COGS per VPC, unadjusted                                                  (196,413) (197,811) (199,459)
+Gross profit per VPC, unadjusted                                     F        63,526    61,143    58,954
+Item s not included in VPC - Clover Leaf
+Distribution                                                              (4,640)    (5,333)
+Merchandise funds reversal                                                 1,500      2,600
+Coupon / slotting base                                                      (335)        24
+Coupon / slotting grow th                                                      -          -                VPC reconciling details for TTM P5-19 have not been
+QA                                                                        (1,127)      (940)                      provided as at the date of this report.
+FX hedge gains / losses                                                      242        811
+Markup interco purchases                                                    (107)      (102)
+Customer pickup                                                              (35)       (40)
+Recycling                                                                   (418)      (383)
+Balance sheet adjustments                                                    179        102
+Sardine reval                                                                188         28
+PPV / other                                                                 (102)       (12)
+Total Clover Leaf reconciling items                               G         (4,657)    (3,246)
+Item s not included in VPC - International
+Distribution                                                              (3,205)    (3,017)
+Merchandise funds international                                           (1,014)    (1,069)
+QA                                                                          (520)      (515)
+Markup interco purchases                                                    (206)      (202)
+Unsaleables                                                                   (1)       (10)
+Sardine reval                                                                  -          -
+PPV / other                                                                 (109)      (117)
+Total International reconciling items                             G         (5,055)    (4,930)
+Item s not included in VPC - Plant
+Distribution                                                               (201)       (451)
+By product sales                                                            202         451
+Manufacturing variances                                                   4,142      (1,400)
+Total Plant reconciling items                                     G         4,143      (1,400)
+Item s not included in VPC - Corporate / other
+Distribution                                                               (677)       (470)
+Aus / NZ sales                                                              238         155
+Sardine transfers to BBF                                                  1,682       1,344
+Sales adjustment / other                                                      -           3
+Total Corporate / other reconciling items                          G        1,243       1,032
+Total adjustm ents                                                H = ∑G     (4,326)     (8,544)    (5,316)
+Gross profit per VPC, adjusted for reconciling item s above       I = F+H    59,199      52,599     53,637
+Gross profit per consolidated trial balance                           J      59,230      52,780     53,637
+Difference                                                        K = I-J       (31)       (182)         -
+Sources for all tables above: Mgmt provided TBs; Sell-side databook
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International      77
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

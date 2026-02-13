@@ -1,0 +1,52 @@
+Net debt                                                                                                                                                                                             DRAFT
+Net debt (1/6) - Overview
+The Company’s reported                  Net debt                                                                                                                 Basis of presentation
+net debt as at 25-May-19                                                                                              As at 25-May-19
+— The adjacent table summarizes reported
+CBCLSC                  CLH       CLH
+was $150.8 million.                                                                                                                                                net debt and debt-like items to be
+$'000                                                                consol      CLH    Elim co   consol On BS?            considered as at 25-May-19.
+This amount increased to                      Cash & cash equivalents                                             1         -         -        1   
+Intercompany notes receivable                                180,790 105,336 (105,336) 180,790                    — Adjustments are discussed further on the
+$167.6 million after                          Pension benefit asset                                           2,831         -         -    2,831                  following    pages.     Such    proposed
+adjustments identified by                     Term notes payable, net of DD/IC                            (180,804)         -         - (180,804)                 adjustments are not deemed to be all
+Management and during                         Revolving credit facility, net of DD/IC                       (25,749)        -         -  (25,749)                 inclusive.   The    validity  of    these
+Capital leases & other debt                                      (442)        -         -     (442)                 adjustments and other factors raised for
+due diligence.
+Intercompany notes payable                                  (105,336) (126,866) 105,336 (126,866)                   your consideration may require further
+Other long-term liabilities                                      (581)        -         -     (581)                 investigation to understand the potential
+Net cash / (debt), Managem ent reported                           (129,291) (21,530)          - (150,820)                  impact on your valuation model.
+Managem ent adjustm ents
+1a Intercompany receivables                                        17,778      24,250           -      42,028    
+1b Intercompany payables                                          (30,243)        (12)          -     (30,255)   
+2 Current portion of other payables                               (3,377)          -           -      (3,377)   
+3 Accrued interest                                                  (341)          -           -        (341)   
+4 Derivatives                                                        320           -           -         320    
+5 Bank overdrafts                                                   (105)          -           -        (105)   
+6 Financial instruments                                              (88)          -           -         (88)   
+7 Accrued restructuring & other transition costs                     (24)          -           -         (24)   
+Total Management adjustments                                       (16,080)     24,238           -       8,158
+Net cash / (debt), Managem ent adjusted                           (145,371)      2,708           -    (142,663)
+Buy-side adjustm ents
+8 Remove IC receivables and payables                              12,465     (24,238)           -    (11,773)   
+9 Remove deferred financing costs                                 (7,376)           -           -     (7,376)   
+10 One-off future separation costs                                 (2,608)           -           -     (2,608)
+11 Old Wharf removal                                               (1,500)           -           -     (1,500)
+12 Include income & w ithholding taxes                                (47)     (1,061)           -     (1,107)   
+13 Capitalize operating leases                                       (454)           -           -       (454)   
+14 Remove derivative balances                                        (232)           -           -       (232)   
+15 Include prepaid income taxes                                       296           8            -        304    
+16 Other non-operating liabilities                                   (125)           -           -       (125)   
+17 Include rent deposit                                               (95)           -           -        (95)   
+Although these items may not be
+18 Canadian antitrust claim                                           n.q.        n.q.        n.q.        n.q.
+liabilities for accounting purposes, given
+19 Transaction bonuses                                                n.q.        n.q.        n.q.        n.q.
+20 Environmental testing & remediation                                n.q.        n.q.        n.q.        n.q.
+Bolton would be assuming these future
+21 Remainder of restructuring costs to complete initiatives           n.q.        n.q.        n.q.        n.q.             costs post-transaction, they should be
+Total buy-side adjustments                                             324     (25,290)           -    (24,966)                    considered net debt items.
+Net cash / (debt), buy-side adjusted - n.q. item s                (145,047)    (22,582)           -   (167,629)
+Source: Management provided trial balances; Sell-Side Financial Diligence report dated 03-May-19; KPMG analysis
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                             48
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

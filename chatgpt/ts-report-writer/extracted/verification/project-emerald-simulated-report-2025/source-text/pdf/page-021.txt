@@ -1,0 +1,34 @@
+Executive summary                                                                                                                                                                       DRAFT
+Key findings – Taxation (4/6)
+Issue                       Summary observations                                                                                                                                 Key analysis
+Foreign exchange       ■ In 2017 Target borrowed the US dollar denominated amount of US$140 million and used these funds to make a US                                                      Not
+(“FX”) implications on   dollar denominated interest-bearing loan with a principal balance of US$140 million to CLSS (the “CLSS Loan”).                                             applicable
+the future unwind of     This financing structure will need to be unwound on closing.
+the financing          ■ Management have not yet completed their analysis with respect to the exact steps that will be undertaken to unwind
+structure                the financing structure. However, they currently estimate that the settlement of the US denominated loans as part of
+the unwind of the financing structure may result in approximately C$250,000 of FX losses to Target.
+■ We requested that this information be provided once it is available and recommend that any proposal is reviewed.
+Pre-closing                 ■ Management represented that they contemplate certain pre-closing transactions, including but not limited to, the                                             Not
+reorganization and            settlement of intercompany balances. Management represented that they have engaged PWC to assist with the pre-                                        applicable
+transaction bonuses           closing tax planning and at this stage they are not ready to comment on the exact scope of such transactions. We
+requested that this information be provided once it is available and recommend that any proposal is reviewed.
+■ Management also represented that it is likely transaction bonuses will be paid to management, however, no bonus
+plan has been formalized. There is risk that discretionary bonuses paid in respect of a transaction closing could be
+considered non-deductible on the basis they are considered capital expenditures.
+Transitory acquisition      ■ In 2017, CLSS transferred its investment in Sea Value, a non-Canadian company to Target in exchange for 100                                                  Not
+of Sea Value Public           common shares of Target and then Target subsequently sold these shares to an arm’s length party for US$8                                              applicable
+Company Limited               million. Management believes the value of the investment in Sea Value was US$8 million at the time the shares
+(“Sea Value”)                 were transferred to Target.
+■ If the legal stated capital of Target was not appropriately increased by the Canadian dollar equivalent of US$8
+million, then Target could have been deemed to have paid a dividend to CLSS in this amount. The dividend would
+have been subject to a 25% WHT (reduced to 5% WHT if relief under the Treaty is available). Management provided
+a copy of the board resolution supporting the US$8 million legal stated capital increase to address this concern.
+■ In addition, Management represented that one of the reasons of the sale of Sea Value through CLH was the
+potential application of Thai WHT at the rate of 15% on the direct sale of the Sea Value by CLSS. The amount of
+Thai WHT would have been US$1.2 million. Management represented that the Thai WHT was avoided by
+interposing the transitory transfer of the shares of Sea Value to CLH.
+■ As Thai tax advice is outside of our scope, we recommend that Client considers engaging Thai tax advisor to
+determine whether there could be a risk that any Thai WHT tax liability may have transferred to or incurred by Target
+as a result of this transaction.
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International              21
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

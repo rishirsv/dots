@@ -1,0 +1,34 @@
+Appendix 3                                                                                                                                                                                                              DRAFT
+Adjusted P&L
+The P&L presented below reflects adjusted EBITDA after incorporating all Management, Sell-side, Buy-side, and Stand-alone QofE adjustments.
+Unadjusted                Mgm t., Sell-side, Buy-side adj.                Adjusted                 Stand-alone adjustm ents           Stand-alone adjusted
+Adjusted IS
+TTM                                 TTM                                  TTM                            TTM                                 TTM
+$'000                                          FY17         FY18        P5-19        FY17        FY18       P5-19        FY17         FY18       P5-19      FY17      FY18      P5-19        FY17        FY18       P5-19
+Gross trade sales                         348,427      348,591      347,836      21,038      18,714      19,700     369,465      367,305     367,535         -         -          -     369,465     367,305     367,535
+Trade allow ances                         (75,546)     (75,435)     (75,168)      1,200      (2,200)     (2,909)    (74,346)     (77,635)    (78,076)        -         -          -     (74,346)    (77,635)    (78,076)
+Net sales                                   272,881      273,157      272,668      22,238      16,513      16,791     295,119      289,670     289,459         -         -          -     295,119     289,670     289,459
+Cost of goods                            (204,928)    (211,342)    (209,879)    (17,996)    (15,679)    (16,920)   (222,924)    (227,021)   (226,799)     922       968        955     (222,001)   (226,053)   (225,844)
+Warehousing cost                           (3,987)      (4,469)      (4,693)         65          61          61      (3,922)      (4,408)     (4,632)        -         -          -      (3,922)     (4,408)     (4,632)
+Transportation                             (4,736)      (4,565)      (4,459)        240         114          43      (4,496)      (4,451)     (4,416)        -         -          -      (4,496)     (4,451)     (4,416)
+Cost of sales                              (213,651)    (220,376)    (219,031)    (17,691)    (15,504)    (16,816)   (231,342)    (235,880)   (235,847)     922       968        955     (230,420)   (234,912)   (234,892)
+Gross profit                                 59,230       52,780       53,637       4,547       1,009         (25)     63,777       53,790      53,612      922       968        955       64,699      54,758      54,567
+Operating expenses
+Selling expenses                           (6,531)      (6,463)      (6,529)          -           -           -      (6,531)      (6,463)     (6,529)        -         -          -      (6,531)     (6,463)     (6,529)
+G&A operating expenses                     (6,444)      (5,865)      (5,992)          -           -           -      (6,444)      (5,865)     (5,992)    2,863     2,813      2,730      (3,582)     (3,053)     (3,262)
+Amortization                               (3,890)      (3,471)      (3,327)      3,890       3,471       3,327           -            -           -         -         -          -           -           -           -
+NVSP                                       (1,794)      (1,857)      (1,831)          -           -           -      (1,794)      (1,857)     (1,831)        -         -          -      (1,794)     (1,857)     (1,831)
+Brokerage / drayage                        (1,851)      (1,733)      (1,677)          -           -           -      (1,851)      (1,733)     (1,677)        -         -          -      (1,851)     (1,733)     (1,677)
+Advertising                                (1,593)      (2,051)        (928)          -           -           -      (1,593)      (2,051)       (928)        -         -          -      (1,593)     (2,051)       (928)
+SG&A depreciation                            (176)        (174)        (186)        176         174         186           -            -           -         -         -          -           -           -           -
+Total Operating expenses                    (22,280)     (21,613)     (20,470)      4,066       3,645       3,513     (18,213)     (17,968)    (16,957)    2,863     2,813      2,730     (15,351)    (15,156)    (14,227)
+Operating incom e                            36,951       31,167       33,167       8,613       4,654       3,488      45,564       35,822      36,655     3,785     3,781      3,684      49,349      39,602      40,340
+Net interest expense                      (11,667)     (14,159)     (14,987)     11,667      14,159      14,987           -            -           -         -         -          -           -           -           -
+Other (income) expense                     (1,947)      (4,373)      (4,213)        174         835         715      (1,773)      (3,538)     (3,498)    2,563     2,562      2,476         790        (976)     (1,022)
+Restructuring & other transition costs       (182)     (13,637)      (7,294)        166      13,469       7,126         (16)        (168)       (168)   (6,484)   (8,241)    (8,241)     (6,501)     (8,409)     (8,409)
+Income taxes                               (6,356)      (3,719)      (4,130)      6,356       3,719       4,130           -            -           -         -         -          -           -           -           -
+Net incom e / (loss)                         16,799       (4,720)       2,543      26,976      36,836      30,446      43,775       32,116      32,989      (137)   (1,898)    (2,081)     43,638      30,218      30,908
+Source: Management provided trial balances
+Note: The table above reflects intercompany sales and costs to BBF
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                                      73
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.

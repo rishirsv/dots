@@ -116,6 +116,13 @@ Required verification artifacts include:
 ### Learnings (Newest First)
 
 - Date: 2026-02-13
+- Report ID: `project-emerald-simulated-report-2025`
+- Issue observed: initial strict PDF run produced heavy legal/cover/navigation bullets and large provenance mismatch against strict source-text artifacts.
+- Root cause: auto-selected PDF catalog lines included many fragmentary extractor rows and section assignments that did not stay aligned after cleanup pruning.
+- Fix applied: rebuilt the report from an exact source-text-backed subset, performed full-report cleanup, regenerated `selected-lines` + `render-trace` + `section-map` + `section-accounting` in lockstep, completed coverage map/review notes, and reran provenance + fail-closed gates to pass.
+- Prevention rule: when pruning strict PDF selected lines, always resync `section_candidate` with rendered section placement before `qa_gates.py`; otherwise `section_completeness` can fail even when provenance passes.
+
+- Date: 2026-02-13
 - Report ID: `project-ed-buy-side-fdd`
 - Issue observed: initial strict PPTX extraction produced fragment-heavy markdown and passed provenance but failed fail-closed cleanup quality/manual checklist completion.
 - Root cause: auto-selected PPTX XML lines retained many low-context/table-adjacent bullets; template evidence/checklist fields remained incomplete.

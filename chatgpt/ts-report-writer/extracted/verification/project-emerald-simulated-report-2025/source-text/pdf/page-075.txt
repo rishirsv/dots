@@ -1,0 +1,28 @@
+Appendix 5                                                                                                                                                                                                   DRAFT
+P&L reconciliation to sel -side report
+EBITDA reconcilliation to EY's databook (CBCLSC consolidated)                                                                                     The adjacent table presents a reconciliation between
+FY17                                         FY18                        Management adjusted EBITDA from the trial balances
+Per EY                                       Per EY           that were provided by Management to the reported and
+$'000                                                      Per TBs     Variance databook                Per TBs     Variance databook            Management adjusted EBITDA as presented in the sell-
+CBCLSC consol net incom e, reported                         16,666      (14,399)    2,267                (4,754)      (9,575)  (14,329)            side financial due diligence report dated 3-May-19.
+Add/(deduct)
+Interest expense / (income)                                11,719         9,003        20,723          14,211          6,516          20,727
+Income taxes                                                6,322         1,258         7,580           3,705            910           4,615
+Depreciation & amortization                                 7,229             -         7,229           6,839              -           6,839
+CBCLSC consol EBITDA, reported                              41,937        (4,138)       37,799           20,000        (2,149)      17,851
+Management adjustments                                         166         4,138         4,304           13,637         2,148       15,786
+CBCLSC consol EBITDA, Managem ent adj                       42,102             1        42,103           33,637            (0)      33,637
+Variance sum m ary                                                                                                                               The differences in the reported EBITDA balances as well
+Entity related                                                                           as the total management adjustments balances are
+$'000                                                    to transaction:        FY17          FY18                                                attributable to transactions incurred by other financial
+CLSS Elimination (3946) - IC Note receivable                       CLSS                -        2,148                                                      entities not relevant to the transaction.
+CLH (3001) - Sea Value sale                                     BBHSCA                16            -
+BBHSCA (3325) - refinancing costs                                  CLSS              813            -
+CLSS (3340) - business consulting services                         CLSS               22            -
+CLSS (3340) - Tax services                                         CLSS               36            -
+CLSS (3340) - Sea Value sale                                       CLSS          (3,438)            -
+BBF Sarl elimination (3990) - Menon transfer                       BBFS            6,689            -
+Total variance                                                                    4,138        2,148
+Sources for all tables above: Management provided trial balances; Sell-Side Financial Diligence report dated 03-May-19; KPMG analysis
+© 2019 KPMG LLP, a Canadian limited liability partnership and a member firm of the KPMG network of independent member firms affiliated with KPMG International                         75
+Cooperative (“KPMG International”), a Swiss entity. All rights reserved. The KPMG name and logo are registered trademarks or trademarks of KPMG International.
