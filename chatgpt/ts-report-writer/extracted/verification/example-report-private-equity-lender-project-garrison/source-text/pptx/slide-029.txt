@@ -1,0 +1,10 @@
+Finding
+Summary observations
+Reference
+Unfunded and funded commitments
+Target has significant unfunded commitments ($4.5 billion as at March 31, 2015) given the magnitude and nature of certain product offerings, specifically cash flow revolver loans and asset-backed revolver loans. Since Q1’08, utilization of revolvers has averaged at 34% of total revolver limit, with maximum and minimum utilization percentages of 28% (Q4’12) and 42% (Q1’09), respectively. Funding risk associated with these unfunded commitments should be considered in your transaction model.
+Unfunded commitments have steadily decreased from $5.8 billion as at December 31, 2012 to $4.5 billion as at March 31, 2015. Over the same period, the percentage of unfunded assets to total commitments steadily decreased from 78% to 72%. The increase in usage is due to the mix shift to SSLP and MMGP, which have higher usage rates as compared to the cash-flow and asset-backed revolver loans. From Q1’13 to Q1’15, SSLP and MMGP revolver utilizations have averaged 41% and 64%, respectively, compared to a 31% utilization rate for non-SSLP/MMGP revolvers over the same period.
+Appendix 13
+Executive summary
+Key findings: financial (18)
+Source: 4.4.14 Historical Revolver Utilization

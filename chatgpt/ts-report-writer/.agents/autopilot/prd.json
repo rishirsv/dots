@@ -1,0 +1,1674 @@
+{
+  "name": "Remaining Reports Verbatim Extraction and Full Cleanup",
+  "userStories": [
+    {
+      "id": "1.0",
+      "title": "Extract and fully clean Example report_Private Equity lender_Project Garrison.pptx",
+      "description": "Report ID: example-report-private-equity-lender-project-garrison. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Example report_Private Equity lender_Project Garrison.pptx`) and produce `extracted/example-report-private-equity-lender-project-garrison.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/example-report-private-equity-lender-project-garrison/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `example-report-private-equity-lender-project-garrison`; all required gates must pass.",
+        "Complete `extracted/verification/example-report-private-equity-lender-project-garrison/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `example-report-private-equity-lender-project-garrison` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/example-report-private-equity-lender-project-garrison.md --source-manifest extracted/verification/example-report-private-equity-lender-project-garrison/source-text/manifest.json --out-dir extracted/verification/example-report-private-equity-lender-project-garrison/qa && ./.venv/bin/python scripts/qa_gates.py --report-id example-report-private-equity-lender-project-garrison",
+      "priority": 1,
+      "dependsOn": [],
+      "passes": true,
+      "attempts": 1,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Example report_Private Equity lender_Project Garrison.pptx",
+        "extracted/example-report-private-equity-lender-project-garrison.md",
+        "extracted/verification/example-report-private-equity-lender-project-garrison/source-text/manifest.json",
+        "extracted/verification/example-report-private-equity-lender-project-garrison/qa/provenance.json",
+        "extracted/verification/example-report-private-equity-lender-project-garrison/qa/gates.json",
+        "extracted/verification/example-report-private-equity-lender-project-garrison/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "2.0",
+      "title": "Extract and fully clean FDD and Value Creation example 1 (Consumer & Retail).pptx",
+      "description": "Report ID: fdd-and-value-creation-example-1-consumer-retail. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/FDD and Value Creation example 1 (Consumer & Retail).pptx`) and produce `extracted/fdd-and-value-creation-example-1-consumer-retail.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/fdd-and-value-creation-example-1-consumer-retail/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `fdd-and-value-creation-example-1-consumer-retail`; all required gates must pass.",
+        "Complete `extracted/verification/fdd-and-value-creation-example-1-consumer-retail/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `fdd-and-value-creation-example-1-consumer-retail` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/fdd-and-value-creation-example-1-consumer-retail.md --source-manifest extracted/verification/fdd-and-value-creation-example-1-consumer-retail/source-text/manifest.json --out-dir extracted/verification/fdd-and-value-creation-example-1-consumer-retail/qa && ./.venv/bin/python scripts/qa_gates.py --report-id fdd-and-value-creation-example-1-consumer-retail",
+      "priority": 2,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/FDD and Value Creation example 1 (Consumer & Retail).pptx",
+        "extracted/fdd-and-value-creation-example-1-consumer-retail.md",
+        "extracted/verification/fdd-and-value-creation-example-1-consumer-retail/source-text/manifest.json",
+        "extracted/verification/fdd-and-value-creation-example-1-consumer-retail/qa/provenance.json",
+        "extracted/verification/fdd-and-value-creation-example-1-consumer-retail/qa/gates.json",
+        "extracted/verification/fdd-and-value-creation-example-1-consumer-retail/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "3.0",
+      "title": "Extract and fully clean Project Blue Jay - Simulated Report 2025.pdf",
+      "description": "Report ID: project-blue-jay-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Blue Jay - Simulated Report 2025.pdf`) and produce `extracted/project-blue-jay-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-blue-jay-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-blue-jay-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-blue-jay-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-blue-jay-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-blue-jay-simulated-report-2025.md --source-manifest extracted/verification/project-blue-jay-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-blue-jay-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-blue-jay-simulated-report-2025",
+      "priority": 3,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Blue Jay - Simulated Report 2025.pdf",
+        "extracted/project-blue-jay-simulated-report-2025.md",
+        "extracted/verification/project-blue-jay-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-blue-jay-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-blue-jay-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-blue-jay-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "4.0",
+      "title": "Extract and fully clean Project Cherry - Simulated Report 2025.pdf",
+      "description": "Report ID: project-cherry-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Cherry - Simulated Report 2025.pdf`) and produce `extracted/project-cherry-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-cherry-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-cherry-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-cherry-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-cherry-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-cherry-simulated-report-2025.md --source-manifest extracted/verification/project-cherry-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-cherry-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-cherry-simulated-report-2025",
+      "priority": 4,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Cherry - Simulated Report 2025.pdf",
+        "extracted/project-cherry-simulated-report-2025.md",
+        "extracted/verification/project-cherry-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-cherry-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-cherry-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-cherry-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "5.0",
+      "title": "Extract and fully clean Project Cinema Report.pdf",
+      "description": "Report ID: project-cinema-report. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Cinema Report.pdf`) and produce `extracted/project-cinema-report.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-cinema-report/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-cinema-report`; all required gates must pass.",
+        "Complete `extracted/verification/project-cinema-report/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-cinema-report` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-cinema-report.md --source-manifest extracted/verification/project-cinema-report/source-text/manifest.json --out-dir extracted/verification/project-cinema-report/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-cinema-report",
+      "priority": 5,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Cinema Report.pdf",
+        "extracted/project-cinema-report.md",
+        "extracted/verification/project-cinema-report/source-text/manifest.json",
+        "extracted/verification/project-cinema-report/qa/provenance.json",
+        "extracted/verification/project-cinema-report/qa/gates.json",
+        "extracted/verification/project-cinema-report/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "6.0",
+      "title": "Extract and fully clean Project Coffee_buy side_FDD (Consumer & Retail - F&B).pptx",
+      "description": "Report ID: project-coffee-buy-side-fdd-consumer-retail-f-b. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Coffee_buy side_FDD (Consumer & Retail - F&B).pptx`) and produce `extracted/project-coffee-buy-side-fdd-consumer-retail-f-b.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-coffee-buy-side-fdd-consumer-retail-f-b`; all required gates must pass.",
+        "Complete `extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-coffee-buy-side-fdd-consumer-retail-f-b` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-coffee-buy-side-fdd-consumer-retail-f-b.md --source-manifest extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/source-text/manifest.json --out-dir extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-coffee-buy-side-fdd-consumer-retail-f-b",
+      "priority": 6,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Coffee_buy side_FDD (Consumer & Retail - F&B).pptx",
+        "extracted/project-coffee-buy-side-fdd-consumer-retail-f-b.md",
+        "extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/source-text/manifest.json",
+        "extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/qa/provenance.json",
+        "extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/qa/gates.json",
+        "extracted/verification/project-coffee-buy-side-fdd-consumer-retail-f-b/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "7.0",
+      "title": "Extract and fully clean Project Coffee_buy side_FDD .pptx",
+      "description": "Report ID: project-coffee-buy-side-fdd. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Coffee_buy side_FDD .pptx`) and produce `extracted/project-coffee-buy-side-fdd.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-coffee-buy-side-fdd/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-coffee-buy-side-fdd`; all required gates must pass.",
+        "Complete `extracted/verification/project-coffee-buy-side-fdd/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-coffee-buy-side-fdd` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-coffee-buy-side-fdd.md --source-manifest extracted/verification/project-coffee-buy-side-fdd/source-text/manifest.json --out-dir extracted/verification/project-coffee-buy-side-fdd/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-coffee-buy-side-fdd",
+      "priority": 7,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Coffee_buy side_FDD .pptx",
+        "extracted/project-coffee-buy-side-fdd.md",
+        "extracted/verification/project-coffee-buy-side-fdd/source-text/manifest.json",
+        "extracted/verification/project-coffee-buy-side-fdd/qa/provenance.json",
+        "extracted/verification/project-coffee-buy-side-fdd/qa/gates.json",
+        "extracted/verification/project-coffee-buy-side-fdd/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "8.0",
+      "title": "Extract and fully clean Project Dental_Report_25July2025_vS.pdf",
+      "description": "Report ID: project-dental-report-25july2025-vs. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Dental_Report_25July2025_vS.pdf`) and produce `extracted/project-dental-report-25july2025-vs.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-dental-report-25july2025-vs/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-dental-report-25july2025-vs`; all required gates must pass.",
+        "Complete `extracted/verification/project-dental-report-25july2025-vs/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-dental-report-25july2025-vs` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-dental-report-25july2025-vs.md --source-manifest extracted/verification/project-dental-report-25july2025-vs/source-text/manifest.json --out-dir extracted/verification/project-dental-report-25july2025-vs/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-dental-report-25july2025-vs",
+      "priority": 8,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Dental_Report_25July2025_vS.pdf",
+        "extracted/project-dental-report-25july2025-vs.md",
+        "extracted/verification/project-dental-report-25july2025-vs/source-text/manifest.json",
+        "extracted/verification/project-dental-report-25july2025-vs/qa/provenance.json",
+        "extracted/verification/project-dental-report-25july2025-vs/qa/gates.json",
+        "extracted/verification/project-dental-report-25july2025-vs/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "9.0",
+      "title": "Extract and fully clean Project Ed_buy side_FDD (IGH - Education).pptx",
+      "description": "Report ID: project-ed-buy-side-fdd-igh-education. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Ed_buy side_FDD (IGH - Education).pptx`) and produce `extracted/project-ed-buy-side-fdd-igh-education.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-ed-buy-side-fdd-igh-education/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-ed-buy-side-fdd-igh-education`; all required gates must pass.",
+        "Complete `extracted/verification/project-ed-buy-side-fdd-igh-education/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-ed-buy-side-fdd-igh-education` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-ed-buy-side-fdd-igh-education.md --source-manifest extracted/verification/project-ed-buy-side-fdd-igh-education/source-text/manifest.json --out-dir extracted/verification/project-ed-buy-side-fdd-igh-education/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-ed-buy-side-fdd-igh-education",
+      "priority": 9,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Ed_buy side_FDD (IGH - Education).pptx",
+        "extracted/project-ed-buy-side-fdd-igh-education.md",
+        "extracted/verification/project-ed-buy-side-fdd-igh-education/source-text/manifest.json",
+        "extracted/verification/project-ed-buy-side-fdd-igh-education/qa/provenance.json",
+        "extracted/verification/project-ed-buy-side-fdd-igh-education/qa/gates.json",
+        "extracted/verification/project-ed-buy-side-fdd-igh-education/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "10.0",
+      "title": "Extract and fully clean Project Ed_buy side_FDD.pptx",
+      "description": "Report ID: project-ed-buy-side-fdd. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Ed_buy side_FDD.pptx`) and produce `extracted/project-ed-buy-side-fdd.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-ed-buy-side-fdd/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-ed-buy-side-fdd`; all required gates must pass.",
+        "Complete `extracted/verification/project-ed-buy-side-fdd/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-ed-buy-side-fdd` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-ed-buy-side-fdd.md --source-manifest extracted/verification/project-ed-buy-side-fdd/source-text/manifest.json --out-dir extracted/verification/project-ed-buy-side-fdd/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-ed-buy-side-fdd",
+      "priority": 10,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Ed_buy side_FDD.pptx",
+        "extracted/project-ed-buy-side-fdd.md",
+        "extracted/verification/project-ed-buy-side-fdd/source-text/manifest.json",
+        "extracted/verification/project-ed-buy-side-fdd/qa/provenance.json",
+        "extracted/verification/project-ed-buy-side-fdd/qa/gates.json",
+        "extracted/verification/project-ed-buy-side-fdd/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "11.0",
+      "title": "Extract and fully clean Project Emerald - Simulated Report 2025.pdf",
+      "description": "Report ID: project-emerald-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Emerald - Simulated Report 2025.pdf`) and produce `extracted/project-emerald-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-emerald-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-emerald-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-emerald-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-emerald-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-emerald-simulated-report-2025.md --source-manifest extracted/verification/project-emerald-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-emerald-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-emerald-simulated-report-2025",
+      "priority": 11,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Emerald - Simulated Report 2025.pdf",
+        "extracted/project-emerald-simulated-report-2025.md",
+        "extracted/verification/project-emerald-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-emerald-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-emerald-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-emerald-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "12.0",
+      "title": "Extract and fully clean Project Gamma - Simulated Report 2025.pdf",
+      "description": "Report ID: project-gamma-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Gamma - Simulated Report 2025.pdf`) and produce `extracted/project-gamma-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-gamma-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-gamma-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-gamma-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-gamma-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-gamma-simulated-report-2025.md --source-manifest extracted/verification/project-gamma-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-gamma-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-gamma-simulated-report-2025",
+      "priority": 12,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Gamma - Simulated Report 2025.pdf",
+        "extracted/project-gamma-simulated-report-2025.md",
+        "extracted/verification/project-gamma-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-gamma-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-gamma-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-gamma-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "13.0",
+      "title": "Extract and fully clean Project Gemstone - Simulated Report 2025.pdf",
+      "description": "Report ID: project-gemstone-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Gemstone - Simulated Report 2025.pdf`) and produce `extracted/project-gemstone-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-gemstone-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-gemstone-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-gemstone-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-gemstone-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-gemstone-simulated-report-2025.md --source-manifest extracted/verification/project-gemstone-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-gemstone-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-gemstone-simulated-report-2025",
+      "priority": 13,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Gemstone - Simulated Report 2025.pdf",
+        "extracted/project-gemstone-simulated-report-2025.md",
+        "extracted/verification/project-gemstone-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-gemstone-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-gemstone-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-gemstone-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "14.0",
+      "title": "Extract and fully clean Project Green - Draft Report_(2.28.2020)v3.pptx",
+      "description": "Report ID: project-green-draft-report-2-28-2020-v3. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Green - Draft Report_(2.28.2020)v3.pptx`) and produce `extracted/project-green-draft-report-2-28-2020-v3.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-green-draft-report-2-28-2020-v3/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-green-draft-report-2-28-2020-v3`; all required gates must pass.",
+        "Complete `extracted/verification/project-green-draft-report-2-28-2020-v3/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-green-draft-report-2-28-2020-v3` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-green-draft-report-2-28-2020-v3.md --source-manifest extracted/verification/project-green-draft-report-2-28-2020-v3/source-text/manifest.json --out-dir extracted/verification/project-green-draft-report-2-28-2020-v3/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-green-draft-report-2-28-2020-v3",
+      "priority": 14,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Green - Draft Report_(2.28.2020)v3.pptx",
+        "extracted/project-green-draft-report-2-28-2020-v3.md",
+        "extracted/verification/project-green-draft-report-2-28-2020-v3/source-text/manifest.json",
+        "extracted/verification/project-green-draft-report-2-28-2020-v3/qa/provenance.json",
+        "extracted/verification/project-green-draft-report-2-28-2020-v3/qa/gates.json",
+        "extracted/verification/project-green-draft-report-2-28-2020-v3/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "15.0",
+      "title": "Extract and fully clean Project Greyhound - Simulated Report 2025.pdf",
+      "description": "Report ID: project-greyhound-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Greyhound - Simulated Report 2025.pdf`) and produce `extracted/project-greyhound-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-greyhound-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-greyhound-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-greyhound-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-greyhound-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-greyhound-simulated-report-2025.md --source-manifest extracted/verification/project-greyhound-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-greyhound-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-greyhound-simulated-report-2025",
+      "priority": 15,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Greyhound - Simulated Report 2025.pdf",
+        "extracted/project-greyhound-simulated-report-2025.md",
+        "extracted/verification/project-greyhound-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-greyhound-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-greyhound-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-greyhound-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "16.0",
+      "title": "Extract and fully clean Project Groundworks - Simulated Report 2025.pdf",
+      "description": "Report ID: project-groundworks-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Groundworks - Simulated Report 2025.pdf`) and produce `extracted/project-groundworks-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-groundworks-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-groundworks-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-groundworks-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-groundworks-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-groundworks-simulated-report-2025.md --source-manifest extracted/verification/project-groundworks-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-groundworks-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-groundworks-simulated-report-2025",
+      "priority": 16,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Groundworks - Simulated Report 2025.pdf",
+        "extracted/project-groundworks-simulated-report-2025.md",
+        "extracted/verification/project-groundworks-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-groundworks-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-groundworks-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-groundworks-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "17.0",
+      "title": "Extract and fully clean Project Halley - Simulated Report 2025.pdf",
+      "description": "Report ID: project-halley-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Halley - Simulated Report 2025.pdf`) and produce `extracted/project-halley-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-halley-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-halley-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-halley-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-halley-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-halley-simulated-report-2025.md --source-manifest extracted/verification/project-halley-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-halley-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-halley-simulated-report-2025",
+      "priority": 17,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Halley - Simulated Report 2025.pdf",
+        "extracted/project-halley-simulated-report-2025.md",
+        "extracted/verification/project-halley-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-halley-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-halley-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-halley-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "18.0",
+      "title": "Extract and fully clean Project Hope - Simulated Report 2025.pdf",
+      "description": "Report ID: project-hope-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Hope - Simulated Report 2025.pdf`) and produce `extracted/project-hope-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-hope-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-hope-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-hope-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-hope-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-hope-simulated-report-2025.md --source-manifest extracted/verification/project-hope-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-hope-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-hope-simulated-report-2025",
+      "priority": 18,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Hope - Simulated Report 2025.pdf",
+        "extracted/project-hope-simulated-report-2025.md",
+        "extracted/verification/project-hope-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-hope-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-hope-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-hope-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "19.0",
+      "title": "Extract and fully clean Project Kids - Simulated Report 2025.pdf",
+      "description": "Report ID: project-kids-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Kids - Simulated Report 2025.pdf`) and produce `extracted/project-kids-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-kids-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-kids-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-kids-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-kids-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-kids-simulated-report-2025.md --source-manifest extracted/verification/project-kids-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-kids-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-kids-simulated-report-2025",
+      "priority": 19,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Kids - Simulated Report 2025.pdf",
+        "extracted/project-kids-simulated-report-2025.md",
+        "extracted/verification/project-kids-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-kids-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-kids-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-kids-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "20.0",
+      "title": "Extract and fully clean Project Lingonberry - Simulated Report 2025.pdf",
+      "description": "Report ID: project-lingonberry-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Lingonberry - Simulated Report 2025.pdf`) and produce `extracted/project-lingonberry-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-lingonberry-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-lingonberry-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-lingonberry-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-lingonberry-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-lingonberry-simulated-report-2025.md --source-manifest extracted/verification/project-lingonberry-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-lingonberry-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-lingonberry-simulated-report-2025",
+      "priority": 20,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Lingonberry - Simulated Report 2025.pdf",
+        "extracted/project-lingonberry-simulated-report-2025.md",
+        "extracted/verification/project-lingonberry-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-lingonberry-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-lingonberry-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-lingonberry-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "21.0",
+      "title": "Extract and fully clean Project Murphy - Simulated Report 2025.pdf",
+      "description": "Report ID: project-murphy-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Murphy - Simulated Report 2025.pdf`) and produce `extracted/project-murphy-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-murphy-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-murphy-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-murphy-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-murphy-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-murphy-simulated-report-2025.md --source-manifest extracted/verification/project-murphy-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-murphy-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-murphy-simulated-report-2025",
+      "priority": 21,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Murphy - Simulated Report 2025.pdf",
+        "extracted/project-murphy-simulated-report-2025.md",
+        "extracted/verification/project-murphy-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-murphy-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-murphy-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-murphy-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "22.0",
+      "title": "Extract and fully clean Project North - Simulated Report 2025.pdf",
+      "description": "Report ID: project-north-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project North - Simulated Report 2025.pdf`) and produce `extracted/project-north-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-north-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-north-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-north-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-north-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-north-simulated-report-2025.md --source-manifest extracted/verification/project-north-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-north-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-north-simulated-report-2025",
+      "priority": 22,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project North - Simulated Report 2025.pdf",
+        "extracted/project-north-simulated-report-2025.md",
+        "extracted/verification/project-north-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-north-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-north-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-north-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "23.0",
+      "title": "Extract and fully clean Project North_(Jun-24) RF Draft report_21-Aug-24 vS.pptx",
+      "description": "Report ID: project-north-jun-24-rf-draft-report-21-aug-24-vs. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project North_(Jun-24) RF Draft report_21-Aug-24 vS.pptx`) and produce `extracted/project-north-jun-24-rf-draft-report-21-aug-24-vs.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-north-jun-24-rf-draft-report-21-aug-24-vs`; all required gates must pass.",
+        "Complete `extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-north-jun-24-rf-draft-report-21-aug-24-vs` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-north-jun-24-rf-draft-report-21-aug-24-vs.md --source-manifest extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/source-text/manifest.json --out-dir extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-north-jun-24-rf-draft-report-21-aug-24-vs",
+      "priority": 23,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project North_(Jun-24) RF Draft report_21-Aug-24 vS.pptx",
+        "extracted/project-north-jun-24-rf-draft-report-21-aug-24-vs.md",
+        "extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/source-text/manifest.json",
+        "extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/qa/provenance.json",
+        "extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/qa/gates.json",
+        "extracted/verification/project-north-jun-24-rf-draft-report-21-aug-24-vs/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "24.0",
+      "title": "Extract and fully clean Project Ottawa - Simulated Report 2025.pdf",
+      "description": "Report ID: project-ottawa-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Ottawa - Simulated Report 2025.pdf`) and produce `extracted/project-ottawa-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-ottawa-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-ottawa-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-ottawa-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-ottawa-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-ottawa-simulated-report-2025.md --source-manifest extracted/verification/project-ottawa-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-ottawa-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-ottawa-simulated-report-2025",
+      "priority": 24,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Ottawa - Simulated Report 2025.pdf",
+        "extracted/project-ottawa-simulated-report-2025.md",
+        "extracted/verification/project-ottawa-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-ottawa-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-ottawa-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-ottawa-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "25.0",
+      "title": "Extract and fully clean Project Panacea_Draft Report (2020_10_15) v1.pptx",
+      "description": "Report ID: project-panacea-draft-report-2020-10-15-v1. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Panacea_Draft Report (2020_10_15) v1.pptx`) and produce `extracted/project-panacea-draft-report-2020-10-15-v1.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-panacea-draft-report-2020-10-15-v1/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-panacea-draft-report-2020-10-15-v1`; all required gates must pass.",
+        "Complete `extracted/verification/project-panacea-draft-report-2020-10-15-v1/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-panacea-draft-report-2020-10-15-v1` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-panacea-draft-report-2020-10-15-v1.md --source-manifest extracted/verification/project-panacea-draft-report-2020-10-15-v1/source-text/manifest.json --out-dir extracted/verification/project-panacea-draft-report-2020-10-15-v1/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-panacea-draft-report-2020-10-15-v1",
+      "priority": 25,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Panacea_Draft Report (2020_10_15) v1.pptx",
+        "extracted/project-panacea-draft-report-2020-10-15-v1.md",
+        "extracted/verification/project-panacea-draft-report-2020-10-15-v1/source-text/manifest.json",
+        "extracted/verification/project-panacea-draft-report-2020-10-15-v1/qa/provenance.json",
+        "extracted/verification/project-panacea-draft-report-2020-10-15-v1/qa/gates.json",
+        "extracted/verification/project-panacea-draft-report-2020-10-15-v1/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "26.0",
+      "title": "Extract and fully clean Project Puddles - Simulated Report 2025.pdf",
+      "description": "Report ID: project-puddles-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Puddles - Simulated Report 2025.pdf`) and produce `extracted/project-puddles-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-puddles-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-puddles-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-puddles-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-puddles-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-puddles-simulated-report-2025.md --source-manifest extracted/verification/project-puddles-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-puddles-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-puddles-simulated-report-2025",
+      "priority": 26,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Puddles - Simulated Report 2025.pdf",
+        "extracted/project-puddles-simulated-report-2025.md",
+        "extracted/verification/project-puddles-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-puddles-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-puddles-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-puddles-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "27.0",
+      "title": "Extract and fully clean Project Radcliffe Phase 2 - Simulated Report 2025.pdf",
+      "description": "Report ID: project-radcliffe-phase-2-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Radcliffe Phase 2 - Simulated Report 2025.pdf`) and produce `extracted/project-radcliffe-phase-2-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-radcliffe-phase-2-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-radcliffe-phase-2-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-radcliffe-phase-2-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-radcliffe-phase-2-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-radcliffe-phase-2-simulated-report-2025.md --source-manifest extracted/verification/project-radcliffe-phase-2-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-radcliffe-phase-2-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-radcliffe-phase-2-simulated-report-2025",
+      "priority": 27,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Radcliffe Phase 2 - Simulated Report 2025.pdf",
+        "extracted/project-radcliffe-phase-2-simulated-report-2025.md",
+        "extracted/verification/project-radcliffe-phase-2-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-radcliffe-phase-2-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-radcliffe-phase-2-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-radcliffe-phase-2-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "28.0",
+      "title": "Extract and fully clean Project Skyrocket - Simulated Report 2025.pptx",
+      "description": "Report ID: project-skyrocket-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Skyrocket - Simulated Report 2025.pptx`) and produce `extracted/project-skyrocket-simulated-report-2025.md` with verification artifacts.",
+        "For duplicate stem variants, process only `Project Skyrocket - Simulated Report 2025.pptx` and skip duplicate(s): Project Skyrocket - Simulated Report 2025.pdf.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-skyrocket-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-skyrocket-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-skyrocket-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-skyrocket-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-skyrocket-simulated-report-2025.md --source-manifest extracted/verification/project-skyrocket-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-skyrocket-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-skyrocket-simulated-report-2025",
+      "priority": 28,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Skyrocket - Simulated Report 2025.pptx",
+        "extracted/project-skyrocket-simulated-report-2025.md",
+        "extracted/verification/project-skyrocket-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-skyrocket-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-skyrocket-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-skyrocket-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "29.0",
+      "title": "Extract and fully clean Project Soccer - Simulated Report 2025.pdf",
+      "description": "Report ID: project-soccer-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Soccer - Simulated Report 2025.pdf`) and produce `extracted/project-soccer-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-soccer-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-soccer-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-soccer-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-soccer-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-soccer-simulated-report-2025.md --source-manifest extracted/verification/project-soccer-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-soccer-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-soccer-simulated-report-2025",
+      "priority": 29,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Soccer - Simulated Report 2025.pdf",
+        "extracted/project-soccer-simulated-report-2025.md",
+        "extracted/verification/project-soccer-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-soccer-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-soccer-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-soccer-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "30.0",
+      "title": "Extract and fully clean Project Tally-Ho - Simulated Report 2025.pdf",
+      "description": "Report ID: project-tally-ho-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Tally-Ho - Simulated Report 2025.pdf`) and produce `extracted/project-tally-ho-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-tally-ho-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-tally-ho-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-tally-ho-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-tally-ho-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-tally-ho-simulated-report-2025.md --source-manifest extracted/verification/project-tally-ho-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-tally-ho-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-tally-ho-simulated-report-2025",
+      "priority": 30,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Tally-Ho - Simulated Report 2025.pdf",
+        "extracted/project-tally-ho-simulated-report-2025.md",
+        "extracted/verification/project-tally-ho-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-tally-ho-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-tally-ho-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-tally-ho-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "31.0",
+      "title": "Extract and fully clean Project Thunderbird - Simulated Report 2025.pdf",
+      "description": "Report ID: project-thunderbird-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Thunderbird - Simulated Report 2025.pdf`) and produce `extracted/project-thunderbird-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-thunderbird-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-thunderbird-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-thunderbird-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-thunderbird-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-thunderbird-simulated-report-2025.md --source-manifest extracted/verification/project-thunderbird-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-thunderbird-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-thunderbird-simulated-report-2025",
+      "priority": 31,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Thunderbird - Simulated Report 2025.pdf",
+        "extracted/project-thunderbird-simulated-report-2025.md",
+        "extracted/verification/project-thunderbird-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-thunderbird-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-thunderbird-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-thunderbird-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "32.0",
+      "title": "Extract and fully clean Project Victoria - Simulated Report 2025.pdf",
+      "description": "Report ID: project-victoria-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Victoria - Simulated Report 2025.pdf`) and produce `extracted/project-victoria-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-victoria-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-victoria-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-victoria-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-victoria-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-victoria-simulated-report-2025.md --source-manifest extracted/verification/project-victoria-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-victoria-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-victoria-simulated-report-2025",
+      "priority": 32,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Victoria - Simulated Report 2025.pdf",
+        "extracted/project-victoria-simulated-report-2025.md",
+        "extracted/verification/project-victoria-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-victoria-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-victoria-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-victoria-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "33.0",
+      "title": "Extract and fully clean Project Vols - Report.pptx",
+      "description": "Report ID: project-vols-report. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Vols - Report.pptx`) and produce `extracted/project-vols-report.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-vols-report/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-vols-report`; all required gates must pass.",
+        "Complete `extracted/verification/project-vols-report/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-vols-report` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-vols-report.md --source-manifest extracted/verification/project-vols-report/source-text/manifest.json --out-dir extracted/verification/project-vols-report/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-vols-report",
+      "priority": 33,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Vols - Report.pptx",
+        "extracted/project-vols-report.md",
+        "extracted/verification/project-vols-report/source-text/manifest.json",
+        "extracted/verification/project-vols-report/qa/provenance.json",
+        "extracted/verification/project-vols-report/qa/gates.json",
+        "extracted/verification/project-vols-report/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "34.0",
+      "title": "Extract and fully clean Project Vols - Simulated Report 2025.pdf",
+      "description": "Report ID: project-vols-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Vols - Simulated Report 2025.pdf`) and produce `extracted/project-vols-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-vols-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-vols-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-vols-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-vols-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-vols-simulated-report-2025.md --source-manifest extracted/verification/project-vols-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-vols-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-vols-simulated-report-2025",
+      "priority": 34,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Vols - Simulated Report 2025.pdf",
+        "extracted/project-vols-simulated-report-2025.md",
+        "extracted/verification/project-vols-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-vols-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-vols-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-vols-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "35.0",
+      "title": "Extract and fully clean Project Vortex - Simulated Report 2025.pptx",
+      "description": "Report ID: project-vortex-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Vortex - Simulated Report 2025.pptx`) and produce `extracted/project-vortex-simulated-report-2025.md` with verification artifacts.",
+        "For duplicate stem variants, process only `Project Vortex - Simulated Report 2025.pptx` and skip duplicate(s): Project Vortex - Simulated Report 2025.pdf.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-vortex-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-vortex-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-vortex-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-vortex-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-vortex-simulated-report-2025.md --source-manifest extracted/verification/project-vortex-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-vortex-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-vortex-simulated-report-2025",
+      "priority": 35,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Vortex - Simulated Report 2025.pptx",
+        "extracted/project-vortex-simulated-report-2025.md",
+        "extracted/verification/project-vortex-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-vortex-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-vortex-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-vortex-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "36.0",
+      "title": "Extract and fully clean Project West - Report.PPTX",
+      "description": "Report ID: project-west-report. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project West - Report.PPTX`) and produce `extracted/project-west-report.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-west-report/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-west-report`; all required gates must pass.",
+        "Complete `extracted/verification/project-west-report/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-west-report` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-west-report.md --source-manifest extracted/verification/project-west-report/source-text/manifest.json --out-dir extracted/verification/project-west-report/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-west-report",
+      "priority": 36,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project West - Report.PPTX",
+        "extracted/project-west-report.md",
+        "extracted/verification/project-west-report/source-text/manifest.json",
+        "extracted/verification/project-west-report/qa/provenance.json",
+        "extracted/verification/project-west-report/qa/gates.json",
+        "extracted/verification/project-west-report/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "37.0",
+      "title": "Extract and fully clean Project West - Simulated Report 2025.pdf",
+      "description": "Report ID: project-west-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project West - Simulated Report 2025.pdf`) and produce `extracted/project-west-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-west-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-west-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-west-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-west-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-west-simulated-report-2025.md --source-manifest extracted/verification/project-west-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-west-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-west-simulated-report-2025",
+      "priority": 37,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project West - Simulated Report 2025.pdf",
+        "extracted/project-west-simulated-report-2025.md",
+        "extracted/verification/project-west-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-west-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-west-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-west-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "38.0",
+      "title": "Extract and fully clean Project X_buy side_FDD (IM - Automotive Vehicle Hire).pptx",
+      "description": "Report ID: project-x-buy-side-fdd-im-automotive-vehicle-hire. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project X_buy side_FDD (IM - Automotive Vehicle Hire).pptx`) and produce `extracted/project-x-buy-side-fdd-im-automotive-vehicle-hire.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-x-buy-side-fdd-im-automotive-vehicle-hire`; all required gates must pass.",
+        "Complete `extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-x-buy-side-fdd-im-automotive-vehicle-hire` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-x-buy-side-fdd-im-automotive-vehicle-hire.md --source-manifest extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/source-text/manifest.json --out-dir extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-x-buy-side-fdd-im-automotive-vehicle-hire",
+      "priority": 38,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project X_buy side_FDD (IM - Automotive Vehicle Hire).pptx",
+        "extracted/project-x-buy-side-fdd-im-automotive-vehicle-hire.md",
+        "extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/source-text/manifest.json",
+        "extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/qa/provenance.json",
+        "extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/qa/gates.json",
+        "extracted/verification/project-x-buy-side-fdd-im-automotive-vehicle-hire/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "39.0",
+      "title": "Extract and fully clean Project X_buy side_FDD .pptx",
+      "description": "Report ID: project-x-buy-side-fdd. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project X_buy side_FDD .pptx`) and produce `extracted/project-x-buy-side-fdd.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-x-buy-side-fdd/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-x-buy-side-fdd`; all required gates must pass.",
+        "Complete `extracted/verification/project-x-buy-side-fdd/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-x-buy-side-fdd` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-x-buy-side-fdd.md --source-manifest extracted/verification/project-x-buy-side-fdd/source-text/manifest.json --out-dir extracted/verification/project-x-buy-side-fdd/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-x-buy-side-fdd",
+      "priority": 39,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project X_buy side_FDD .pptx",
+        "extracted/project-x-buy-side-fdd.md",
+        "extracted/verification/project-x-buy-side-fdd/source-text/manifest.json",
+        "extracted/verification/project-x-buy-side-fdd/qa/provenance.json",
+        "extracted/verification/project-x-buy-side-fdd/qa/gates.json",
+        "extracted/verification/project-x-buy-side-fdd/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "40.0",
+      "title": "Extract and fully clean Project Y_sell side_VDD (Consumer&Retail).pptx",
+      "description": "Report ID: project-y-sell-side-vdd-consumer-retail. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Y_sell side_VDD (Consumer&Retail).pptx`) and produce `extracted/project-y-sell-side-vdd-consumer-retail.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-y-sell-side-vdd-consumer-retail/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-y-sell-side-vdd-consumer-retail`; all required gates must pass.",
+        "Complete `extracted/verification/project-y-sell-side-vdd-consumer-retail/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-y-sell-side-vdd-consumer-retail` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-y-sell-side-vdd-consumer-retail.md --source-manifest extracted/verification/project-y-sell-side-vdd-consumer-retail/source-text/manifest.json --out-dir extracted/verification/project-y-sell-side-vdd-consumer-retail/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-y-sell-side-vdd-consumer-retail",
+      "priority": 40,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Y_sell side_VDD (Consumer&Retail).pptx",
+        "extracted/project-y-sell-side-vdd-consumer-retail.md",
+        "extracted/verification/project-y-sell-side-vdd-consumer-retail/source-text/manifest.json",
+        "extracted/verification/project-y-sell-side-vdd-consumer-retail/qa/provenance.json",
+        "extracted/verification/project-y-sell-side-vdd-consumer-retail/qa/gates.json",
+        "extracted/verification/project-y-sell-side-vdd-consumer-retail/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "41.0",
+      "title": "Extract and fully clean Project Y_sell side_VDD .pptx",
+      "description": "Report ID: project-y-sell-side-vdd. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Y_sell side_VDD .pptx`) and produce `extracted/project-y-sell-side-vdd.md` with verification artifacts.",
+        "For duplicate stem variants, process only `Project Y_sell side_VDD .pptx` and skip duplicate(s): Project Y_sell side_VDD .pdf.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-y-sell-side-vdd/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-y-sell-side-vdd`; all required gates must pass.",
+        "Complete `extracted/verification/project-y-sell-side-vdd/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-y-sell-side-vdd` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-y-sell-side-vdd.md --source-manifest extracted/verification/project-y-sell-side-vdd/source-text/manifest.json --out-dir extracted/verification/project-y-sell-side-vdd/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-y-sell-side-vdd",
+      "priority": 41,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Y_sell side_VDD .pptx",
+        "extracted/project-y-sell-side-vdd.md",
+        "extracted/verification/project-y-sell-side-vdd/source-text/manifest.json",
+        "extracted/verification/project-y-sell-side-vdd/qa/provenance.json",
+        "extracted/verification/project-y-sell-side-vdd/qa/gates.json",
+        "extracted/verification/project-y-sell-side-vdd/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "42.0",
+      "title": "Extract and fully clean Project Yukon - Report.pptx",
+      "description": "Report ID: project-yukon-report. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Yukon - Report.pptx`) and produce `extracted/project-yukon-report.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-yukon-report/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-yukon-report`; all required gates must pass.",
+        "Complete `extracted/verification/project-yukon-report/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-yukon-report` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-yukon-report.md --source-manifest extracted/verification/project-yukon-report/source-text/manifest.json --out-dir extracted/verification/project-yukon-report/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-yukon-report",
+      "priority": 42,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Yukon - Report.pptx",
+        "extracted/project-yukon-report.md",
+        "extracted/verification/project-yukon-report/source-text/manifest.json",
+        "extracted/verification/project-yukon-report/qa/provenance.json",
+        "extracted/verification/project-yukon-report/qa/gates.json",
+        "extracted/verification/project-yukon-report/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "43.0",
+      "title": "Extract and fully clean Project Yukon - Simulated Report 2025.pptx",
+      "description": "Report ID: project-yukon-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Yukon - Simulated Report 2025.pptx`) and produce `extracted/project-yukon-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-yukon-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-yukon-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-yukon-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-yukon-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-yukon-simulated-report-2025.md --source-manifest extracted/verification/project-yukon-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-yukon-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-yukon-simulated-report-2025",
+      "priority": 43,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Yukon - Simulated Report 2025.pptx",
+        "extracted/project-yukon-simulated-report-2025.md",
+        "extracted/verification/project-yukon-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-yukon-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-yukon-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-yukon-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "44.0",
+      "title": "Extract and fully clean Project Z_sell side_fact book.pptx",
+      "description": "Report ID: project-z-sell-side-fact-book. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Z_sell side_fact book.pptx`) and produce `extracted/project-z-sell-side-fact-book.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-z-sell-side-fact-book/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-z-sell-side-fact-book`; all required gates must pass.",
+        "Complete `extracted/verification/project-z-sell-side-fact-book/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-z-sell-side-fact-book` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-z-sell-side-fact-book.md --source-manifest extracted/verification/project-z-sell-side-fact-book/source-text/manifest.json --out-dir extracted/verification/project-z-sell-side-fact-book/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-z-sell-side-fact-book",
+      "priority": 44,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Z_sell side_fact book.pptx",
+        "extracted/project-z-sell-side-fact-book.md",
+        "extracted/verification/project-z-sell-side-fact-book/source-text/manifest.json",
+        "extracted/verification/project-z-sell-side-fact-book/qa/provenance.json",
+        "extracted/verification/project-z-sell-side-fact-book/qa/gates.json",
+        "extracted/verification/project-z-sell-side-fact-book/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "45.0",
+      "title": "Extract and fully clean Project Z_sell side_factbook (IM - Automotive Industry Supplier)l.pptx",
+      "description": "Report ID: project-z-sell-side-factbook-im-automotive-industry-supplier-l. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Z_sell side_factbook (IM - Automotive Industry Supplier)l.pptx`) and produce `extracted/project-z-sell-side-factbook-im-automotive-industry-supplier-l.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-z-sell-side-factbook-im-automotive-industry-supplier-l`; all required gates must pass.",
+        "Complete `extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-z-sell-side-factbook-im-automotive-industry-supplier-l` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-z-sell-side-factbook-im-automotive-industry-supplier-l.md --source-manifest extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/source-text/manifest.json --out-dir extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-z-sell-side-factbook-im-automotive-industry-supplier-l",
+      "priority": 45,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Z_sell side_factbook (IM - Automotive Industry Supplier)l.pptx",
+        "extracted/project-z-sell-side-factbook-im-automotive-industry-supplier-l.md",
+        "extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/source-text/manifest.json",
+        "extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/qa/provenance.json",
+        "extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/qa/gates.json",
+        "extracted/verification/project-z-sell-side-factbook-im-automotive-industry-supplier-l/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "46.0",
+      "title": "Extract and fully clean Project Zeno - Simulated Report 2025 (2).pdf",
+      "description": "Report ID: project-zeno-simulated-report-2025-2. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Zeno - Simulated Report 2025 (2).pdf`) and produce `extracted/project-zeno-simulated-report-2025-2.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-zeno-simulated-report-2025-2/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-zeno-simulated-report-2025-2`; all required gates must pass.",
+        "Complete `extracted/verification/project-zeno-simulated-report-2025-2/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-zeno-simulated-report-2025-2` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-zeno-simulated-report-2025-2.md --source-manifest extracted/verification/project-zeno-simulated-report-2025-2/source-text/manifest.json --out-dir extracted/verification/project-zeno-simulated-report-2025-2/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-zeno-simulated-report-2025-2",
+      "priority": 46,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Zeno - Simulated Report 2025 (2).pdf",
+        "extracted/project-zeno-simulated-report-2025-2.md",
+        "extracted/verification/project-zeno-simulated-report-2025-2/source-text/manifest.json",
+        "extracted/verification/project-zeno-simulated-report-2025-2/qa/provenance.json",
+        "extracted/verification/project-zeno-simulated-report-2025-2/qa/gates.json",
+        "extracted/verification/project-zeno-simulated-report-2025-2/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "47.0",
+      "title": "Extract and fully clean Project Zeno - Simulated Report 2025.pdf",
+      "description": "Report ID: project-zeno-simulated-report-2025. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/Project Zeno - Simulated Report 2025.pdf`) and produce `extracted/project-zeno-simulated-report-2025.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/project-zeno-simulated-report-2025/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `project-zeno-simulated-report-2025`; all required gates must pass.",
+        "Complete `extracted/verification/project-zeno-simulated-report-2025/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `project-zeno-simulated-report-2025` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-zeno-simulated-report-2025.md --source-manifest extracted/verification/project-zeno-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-zeno-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-zeno-simulated-report-2025",
+      "priority": 47,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/Project Zeno - Simulated Report 2025.pdf",
+        "extracted/project-zeno-simulated-report-2025.md",
+        "extracted/verification/project-zeno-simulated-report-2025/source-text/manifest.json",
+        "extracted/verification/project-zeno-simulated-report-2025/qa/provenance.json",
+        "extracted/verification/project-zeno-simulated-report-2025/qa/gates.json",
+        "extracted/verification/project-zeno-simulated-report-2025/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "48.0",
+      "title": "Extract and fully clean WC Optimisation example 1 (C&R - Agribusiness).pptx",
+      "description": "Report ID: wc-optimisation-example-1-c-r-agribusiness. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/WC Optimisation example 1 (C&R - Agribusiness).pptx`) and produce `extracted/wc-optimisation-example-1-c-r-agribusiness.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/wc-optimisation-example-1-c-r-agribusiness/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `wc-optimisation-example-1-c-r-agribusiness`; all required gates must pass.",
+        "Complete `extracted/verification/wc-optimisation-example-1-c-r-agribusiness/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `wc-optimisation-example-1-c-r-agribusiness` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/wc-optimisation-example-1-c-r-agribusiness.md --source-manifest extracted/verification/wc-optimisation-example-1-c-r-agribusiness/source-text/manifest.json --out-dir extracted/verification/wc-optimisation-example-1-c-r-agribusiness/qa && ./.venv/bin/python scripts/qa_gates.py --report-id wc-optimisation-example-1-c-r-agribusiness",
+      "priority": 48,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/WC Optimisation example 1 (C&R - Agribusiness).pptx",
+        "extracted/wc-optimisation-example-1-c-r-agribusiness.md",
+        "extracted/verification/wc-optimisation-example-1-c-r-agribusiness/source-text/manifest.json",
+        "extracted/verification/wc-optimisation-example-1-c-r-agribusiness/qa/provenance.json",
+        "extracted/verification/wc-optimisation-example-1-c-r-agribusiness/qa/gates.json",
+        "extracted/verification/wc-optimisation-example-1-c-r-agribusiness/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    },
+    {
+      "id": "49.0",
+      "title": "Extract and fully clean WC Optimisation example 2 (C&R - F&B).pptx",
+      "description": "Report ID: wc-optimisation-example-2-c-r-f-b. Execute extraction, full cleanup, and fail-closed QA.",
+      "acceptanceCriteria": [
+        "Run extraction for this single source file only (`reports/WC Optimisation example 2 (C&R - F&B).pptx`) and produce `extracted/wc-optimisation-example-2-c-r-f-b.md` with verification artifacts.",
+        "Generate source-text artifacts in strict mode at `extracted/verification/wc-optimisation-example-2-c-r-f-b/source-text` using `scripts/extract_source_text.py`.",
+        "Perform full-report cleanup across every canonical section (no section-only cleanup), removing engagement-letter/legal/cover/glossary/navigation fragments.",
+        "Align output to `docs/report-mining/verbatim-report-extraction-template.md` with completed metadata and source-to-extraction coverage map.",
+        "Run provenance and fail-closed gates for `wc-optimisation-example-2-c-r-f-b`; all required gates must pass.",
+        "Complete `extracted/verification/wc-optimisation-example-2-c-r-f-b/review-notes.md` checklist and mark review as `pass` if gates pass (otherwise `needs_revision`).",
+        "Append a learning entry for `wc-optimisation-example-2-c-r-f-b` to `AGENTS.md` documenting issue(s), root cause, fix, and prevention rule."
+      ],
+      "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/wc-optimisation-example-2-c-r-f-b.md --source-manifest extracted/verification/wc-optimisation-example-2-c-r-f-b/source-text/manifest.json --out-dir extracted/verification/wc-optimisation-example-2-c-r-f-b/qa && ./.venv/bin/python scripts/qa_gates.py --report-id wc-optimisation-example-2-c-r-f-b",
+      "priority": 49,
+      "dependsOn": [],
+      "passes": false,
+      "attempts": 0,
+      "blocked": false,
+      "blockedReason": "",
+      "files": [
+        "reports/WC Optimisation example 2 (C&R - F&B).pptx",
+        "extracted/wc-optimisation-example-2-c-r-f-b.md",
+        "extracted/verification/wc-optimisation-example-2-c-r-f-b/source-text/manifest.json",
+        "extracted/verification/wc-optimisation-example-2-c-r-f-b/qa/provenance.json",
+        "extracted/verification/wc-optimisation-example-2-c-r-f-b/qa/gates.json",
+        "extracted/verification/wc-optimisation-example-2-c-r-f-b/review-notes.md",
+        "AGENTS.md"
+      ],
+      "phase": {
+        "id": "batch-extraction",
+        "title": "Remaining reports full cleanup"
+      }
+    }
+  ]
+}

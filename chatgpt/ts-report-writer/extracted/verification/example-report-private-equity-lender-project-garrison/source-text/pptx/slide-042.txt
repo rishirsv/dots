@@ -1,0 +1,24 @@
+Finding
+Summary observations
+Reference
+Equity investments
+GECC and its affiliates sometimes acquire equity investments (i.e., “Equity Tags”) in connection with loans that they originate to portfolio companies.  The Equity Tags typically represent a very small stake in the portfolio company, but as noted in the VDR, some may exceed 30% of the company’s equity.
+To the extent that any Equity Tag is in a company that is a partnership (i.e., pass-through) for US tax purposes which could give rise to US PE concerns for CII and CII 4, then such Equity Tags should be sold to Blocker, a US corporation, which will prevent attribution of the activities of the portfolio company to CII and CII 4.
+To the extent that the Equity Tags represent a 30% or greater interest in a portfolio company, appropriate structuring will be required to ensure that CPPIB complies with the 30% rule.
+Based on the foregoing, confirmatory due diligence procedures should be performed in order to determine the percentage ownership and ownership structure relevant to the acquired Equity Tags.  According to the due diligence tracker dated May 20, 2015, Target Management is currently updating the VDR for this information.
+Management has represented that Target has an equity interest in two Canadian partnerships that generate foreign source income. If following the acquisition, these partnerships are held directly or indirectly by Garrison, the US corporation, consideration should be given to whether Garrison has established a PE in Canada. In addition, if Garrison were to dispose of the foreign partnerships after the acquisition, consideration should be given to the sourcing of the gain on sale, if any.
+Appendix 10 and 18
+Pre-Signing Procedures
+As noted above, prior to signing the following steps are recommended:
+Review the equity investments of the Antares platform that are held outside the Target, including to:
+Determine the existing tax structure of the investment and the need to hold said investments via a taxable US C Corporation (to “block” effectively connected income); and
+Confirm compliance with the 30 percent rule.
+Confirmation of the quantum, if any, of T
+arget’s NOL carryovers, capital loss carryovers, or current and accumulated E&P.
+Review of the transition services agreement to ensure CPPIB will receive the necessary historical information at acquisition and sufficient post-acquisition access to historical records and resources within GE, GECC, or their affiliates.
+N/A
+Additional Data Outstanding
+A detailed schedule of equity investments including information on their tax structure. Management has indicated they will update the data tape to reflect tax classifications and potential ECI, however we have not yet received this revised schedule.
+N/A
+Executive summary
+Key findings: tax (4)

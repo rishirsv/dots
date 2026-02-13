@@ -1,0 +1,16 @@
+Appendix 3
+People matters
+Source:	6.5.2 Expense Detail.xlsx
+(1) Base includes benefits such as 401k, pension, healthcare, training & education
+(2) Other includes legal, marketing, finance and HR
+Source:
+B.6.4 Avg Annual Comp by Group and Level
+Note: The weighted average compensation by function in this table does not reconcile to the “Compensation and Benefits Breakdown” table above. Per Management,
+this is because (a) for internal purposes, certain employees were included in this calculation that were categorized under Shared Services for the purposes of the
+“Compensation and Benefits Breakdown” table, and (b) the average calculations in this table are as of May 2015 (vs. the historical calculations in the “Compensation
+and Benefits Breakdown” table). Because this view provides greater granularity by employee level and because the averages are directionally consistent between the
+two data sources, we have included this analysis for your consideration.
+Source:	6.6.1-6.6.4 Quarterly Close Packages 2014
+Note: The above headcount numbers do not reconcile to headcount numbers presented elsewhere in this
+appendix because they exclude Franchise employees and Legal/Finance employees allocated from other
+functions. The numbers are, however, directionally consistent with the headcount including such employees.

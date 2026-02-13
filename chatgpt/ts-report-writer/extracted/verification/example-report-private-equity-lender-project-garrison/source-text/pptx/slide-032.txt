@@ -1,0 +1,23 @@
+Finding
+Summary observations
+Reference
+Budgets and projections
+Target utilizes a bottom-up approach to developing its budget that combines historical trends with go-forward assumptions to arrive at pro-forma financial results. The forecasting process is lead by the Financial Planning & Analytics team in collaboration with the front and back office teams. A base case forecast is initially developed, then subjected to various levels of management review for refinement. Financial forecasts are submitted to Parent for aggregation, analysis, and reporting.
+Pre-tax income in 2014 was $118 million behind budget, due to lower-than-expected interest and fee income ($133 million and $51 million behind budget, respectively). These negative budget-to-actual variances were driven by the following:
+On-book volume additions were $1.5 billion behind plan as the Core (non-SSLP/MMGP) portfolio shrank during the year as run-offs outpaced additions and as GE adopted a conservative view of the leveraged lending guidelines.
+Lower yields due to shift in volume mix towards SSLP and MMGP programs, which generate lower yields in part due to pooled “first-loss” protection mechanism (for example, yield on SSLP loans was 3.85% in 2014, as compared to 5.40% for the entire portfolio loans). These programs grew at a faster rate than budgeted, while the higher-yielding Core portfolio shrank.
+These negative variances were partially offset by stronger-than-expected growth in the SSLP and MMGP portfolios (with associated management fees and skim fees ahead of budget) and higher-than-anticipated recoveries.
+Target management’s forecasts for 2015, 2016 and 2017, prepared on the basis that it will continue to operate under current ownership, were driven by the following key assumptions:
+Volume:
+overall increase in total volume driven by expected harmonization and higher M&A activity; volume growth primarily focused within the SSLP and MMGP programs; assumed average total commitment and funded amount per deal in line with recent trends; and 60% of total volume commitment is syndicated for Core deals consistent with 2014. Given the recent slowdown in M&A sector, we recommend that you consider whether the M&A activity pickup assumption is reasonable.
+Asset yield:
+yield compression through 2017 driven by shift in volume mix towards lower yielding SSLP and MMGP programs and LIBOR held flat based on Q1’15. As a result, interest income declines then stabilizes due to lower yield partially offset by greater assets. Yields (including discount and deferred fee amortization) in 2015 are projected at 4.94%, as compared to 5.98% and 5.36% in 2013 and 2014, respectively.
+Fee income:
+upfront fees and management fees consistent with historical rates; as a result, fee income growth driven by higher volume and AUM, respectively. Given recent experience with loss of lead left positions, we recommend that you consider whether the assumption of growth in syndicated volume is reasonable.
+Loan losses:
+conducted a deal-by-deal analysis to project losses/recoveries in 2015; assumed $50 million, or 30 bps, of losses in 2016 and 2017. Target has historically experienced loan loss rates between 45-123 bps.
+Operating expenses:
+held flat in projection periods. You should consider the potential incremental costs post-transaction to establish the back-office support functions currently provided by the Parent.
+Appendix 15
+Executive summary
+Key findings: financial (21)

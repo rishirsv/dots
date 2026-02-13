@@ -11,7 +11,7 @@
 - Preflight:
   - `./.venv/bin/python -m ts_report_writer.pipeline preflight`
 - Run extraction:
-  - `./.venv/bin/python -m ts_report_writer.pipeline run --reports-dir reports`
+  - `./.venv/bin/python -m ts_report_writer.pipeline run --reports-dir reports --verbatim-mode strict --evidence-profile full --fail-closed`
 - Mark manual review:
   - `./.venv/bin/python -m ts_report_writer.pipeline mark-reviewed --report-id <report-id> --reviewer "<reviewer>" --status pass`
 
@@ -31,6 +31,11 @@
    - If a slide contains text that is missed in XML (e.g. images, flattened text), run OCR on selected slides:
      - `./.venv/bin/python scripts/extract_source_text.py --source <path-to-report> --out-dir ... --ocr-slides 16,17,22`
      - OCR output is appended in that slide’s text artifact under `"[OCR_EXTRACTED_TEXT]"`.
+   - If a PDF page needs OCR fallback, run:
+     - `./.venv/bin/python scripts/extract_source_text.py --source <path-to-report.pdf> --out-dir ... --ocr-pages 16,17,22`
+   - OCR audit artifacts are required at `extracted/verification/<report-id>/source-text/ocr/`:
+     - `images/*.png` rendered OCR source images
+     - `ocr-run.json` with OCR run metadata and image hashes
 5. Extract only report body text:
    - Exclude table text and chart/table numeric grids.
    - Exclude footer/header noise, legal boilerplate, disclaimers, and navigation pages unless required for section context.
@@ -39,11 +44,15 @@
    - For `Net Working Capital` and `Net Debt`, capture both overview and adjustment detail explicitly where source text appears.
    - If adjustment detail exists only in tables/charts and is excluded, preserve surrounding explanatory lines and add:
      `Table- or chart-based adjustment details were excluded per extraction policy.`
-   - Immediately after extraction, review the montage images and source text artifacts, then clean the extracted markdown to correct discrepancies.
-6. Map content into canonical sections in `docs/report-mining/verbatim-report-extraction-template.md`.
+6. Perform manual section organization from source artifacts (required):
+   - Read source text artifacts slide-by-slide/page-by-page.
+   - Organize extracted text into canonical sections in `docs/report-mining/verbatim-report-extraction-template.md`.
+   - Scripts are guardrails; final section placement must be source-anchored and human-reviewed.
+   - Cleanup pass is mandatory for every report: remove engagement-letter/legal/cover/glossary/navigation fragments from content sections and keep only section-relevant report body text.
+7. Map content into canonical sections in `docs/report-mining/verbatim-report-extraction-template.md`.
    - If section names differ, place content into the closest matching canonical section.
    - If a section has no non-table body text, write `Not present in source report`.
-7. Appendices format is required:
+8. Appendices format is required:
    - `## Appendix 1: <Appendix Name>`
    - `## Appendix 2: <Appendix Name>`
    - `## Appendix 3: <Appendix Name>`
@@ -52,8 +61,20 @@
 ## Verification (Manual, Required)
 - Convert each processed report to PNG montage pages for visual QA (if not already generated during extraction).
 - Generate and review `source-text` artifacts (XML-based for PPT/PPTX, page text for PDF).
+- Run provenance QA before assigning `pass`:
+  - `./.venv/bin/python scripts/qa_provenance.py --markdown extracted/<report-id>.md --source-manifest extracted/verification/<report-id>/source-text/manifest.json --out-dir extracted/verification/<report-id>/qa`
+  - `pass` requires: no unmatched lines, no OCR marker in final markdown, and no OCR-only line matches.
+- Run fail-closed QA gates before assigning `pass`:
+  - `./.venv/bin/python scripts/qa_gates.py --report-id <report-id>`
+  - `pass` requires: gate status `pass` in `extracted/verification/<report-id>/qa/gates.json` and completed review checklist.
+  - Required fail-closed gates include:
+    - `provenance_exact_match`
+    - `markdown_trace_sync`
+    - `section_completeness`
+    - `executive_summary_cleanup`
 - Manually compare montage content and source-text artifacts to extracted markdown.
 - Confirm all captured text is verbatim and all excluded content rules were followed.
+- Confirm `Executive Summary` and `Key Findings` do not contain engagement letter boilerplate.
 - For each section and subsection, check line-level provenance against source references.
 - Any omission, summary rewrite, or paraphrase in extracted text requires `needs_revision`.
 - Record outcome in `extracted/verification/<report-id>/review-notes.md` and status in manifest.
@@ -61,7 +82,17 @@
 Verification notes should include:
 - `Source-text references reviewed` (slide/page IDs and key phrases validated).
 - `Source-text mismatch count` (number of missing/shortened/paraphrased items).
+- `OCR evidence reviewed` (if OCR used: image files + `ocr-run.json` hash records).
+- `Provenance QA result` (`pass` or `needs_revision`) with path to `extracted/verification/<report-id>/qa/provenance.json`.
+- `Gate QA result` (`pass` or `needs_revision`) with path to `extracted/verification/<report-id>/qa/gates.json`.
 - `Final decision` (`pass`, `needs_revision`, or `blocked`).
+
+Required verification artifacts include:
+- `extracted/verification/<report-id>/mapping/section-map.json`
+- `extracted/verification/<report-id>/mapping/section-accounting.json`
+- `extracted/verification/<report-id>/render/render-trace.json`
+- `extracted/verification/<report-id>/qa/provenance.json`
+- `extracted/verification/<report-id>/qa/gates.json`
 
 ## Tracking and Hygiene
 - Update `extracted/manifests/tracker.md` and per-report manifest JSON after each report.
@@ -69,3 +100,44 @@ Verification notes should include:
 - Keep folder structure clean: delete temporary extraction artifacts in `extracted/tmp/` after verification.
 - Skip benchmarking packs when requested by user.
 - If a report file is encrypted/unloadable (`CDFV2 Encrypted`), mark `blocked` and continue to next report.
+
+## Extraction Learnings Log (Required)
+- After every extraction + cleanup pass, append a short learning entry to this file.
+- Purpose: preserve recurring failure patterns so future agents avoid repeating the same mistakes.
+- Each entry must include:
+  - `Date` (YYYY-MM-DD)
+  - `Report ID`
+  - `Issue observed`
+  - `Root cause`
+  - `Fix applied`
+  - `Prevention rule` (what must happen on future reports)
+
+### Learnings (Newest First)
+
+- Date: 2026-02-13
+- Report ID: `example-report-private-equity-lender-project-garrison`
+- Issue observed: auto-mapped output pulled legal/engagement-letter and navigation fragments into canonical sections, especially `Executive Summary`.
+- Root cause: strict extraction selected dense PPTX XML lines without a mandatory report-wide cleanup pass before QA.
+- Fix applied: replaced with a full canonical cleanup pass across all sections, completed source-evidence metadata/coverage map, and reran provenance + fail-closed gates before marking `pass`.
+- Prevention rule: for PPTX reports, do a full-report cleanup across every canonical section (not incremental section edits), and do not approve until executive-summary cleanup and gate checks are all `pass`.
+
+- Date: 2026-02-13
+- Report ID: `project-autobahn-report`
+- Issue observed: partial cleanup (single-section cleanup) left significant unclean text in other sections.
+- Root cause: cleanup was applied incrementally instead of performing a full-report cleanup pass.
+- Fix applied: replaced with full end-to-end manual cleanup across all canonical sections in one pass.
+- Prevention rule: never deliver a report with section-only cleanup; always complete full-report cleanup before handoff.
+
+- Date: 2026-02-13
+- Report ID: `project-autobahn-report`
+- Issue observed: `Executive Summary` included engagement-letter/legal/cover-page boilerplate and fragmented navigation text.
+- Root cause: early slides (cover, important notice, letter pages) leaked into rendered section content before cleanup.
+- Fix applied: manual cleanup pass removed boilerplate; `Executive Summary` set to `Not present in source report`; `Key Findings` rebuilt from summary slides.
+- Prevention rule: always run mandatory cleanup before QA and verify `Executive Summary`/`Key Findings` contain only section-relevant body text.
+
+- Date: 2026-02-13
+- Report ID: `project-ascend-report`
+- Issue observed: section misclassification and fragmented bullets (for example QoE wage-expense wording split across lines) reduced coherence.
+- Root cause: heading/mapping ambiguity and wrapped-line fragmentation from source extraction.
+- Fix applied: manual source-anchored reorganization by slide, section-by-section cleanup, and restored missing Balance Sheet line items.
+- Prevention rule: map sections from source slide anchors first, then perform cleanup and completeness checks before marking pass.

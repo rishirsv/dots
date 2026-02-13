@@ -1,0 +1,47 @@
+Appendix 2
+Financial information (3)
+Tie-out of Financial
+Information
+(continued)
+2007
+to 2011
+We were able to agree aggregate balances (Total Revenue, Net Revenue and Net Income) from Target’s reported financial information to Hyperion system-generated reports. For specific line items, we were able to agree reported information to Hyperion reports except as noted below. We note that for some balances, such as Letter of Credit fees and Admin Fees, the amounts were agreed to GL accounts that were only used pre-2012 and have nil balances in 2012 and after (i.e., the equivalent balances are recorded in alternative accounts 2012 onwards). These accounts were kept within Hyperion to allow historical comparisons to be made. We read the account descriptions and noted that the descriptions were consistent with the nature of the balances being reported.
+The following adjustments were made to 2007-2011 Hyperion reports to arrive at reported financial information:
+SG&A (2008):
+Management asserts that the 2008
+SG&A amount per
+Hyperion, $
+176
+million, was
+incorrect since such a balance would imply that SG&A decreased in 2009 despite an increase in headcount. Accordingly, Management used the $137 million SG&A amount per quarterly management close packages from
+2008. An
+offset equal to the difference ($39 million) was made to “Other Income” to ensure
+reported
+net income
+was
+consistent
+with Hyperion.
+Yield Income (2010 and 2011): In 2010 and 2011, reported yield income was reduced by $40 million and $32 million, respectively, to exclude income on securitized assets that were brought on-book pursuant to a change in accounting standards. While we were able to agree these amounts to the specific GL accounts used to accumulate income on these securitized assets, we note that this adjustment is not made to correct Hyperion balances and is instead a “normalization” adjustment made by Management to allow like-for-like comparisons with the current income profile. According to Management, assets are not regularly securitized (within the portfolio as at March 31, 2015 portfolio, only $250 million of ABL loans have been securitized
+).
+Yield Income (2007): Reported yield income for 2007 was reduced by $49 million to remove the income from a held-for-sale debt security (“
+Momentive
+Performance”). Although income was accrued on this asset, management indicated that it was never received. The security was subsequently converted into an equity security and written down. We agreed the amount to a specific GL account in Hyperion set up to accumulate income from this asset.
+Sweeps (2007 – 2011): Pre-2012, sweeps were aggregated with a number of other balances in the GL.
+For
+2007 and 2008, the separate amounts swept into income were determined using quarterly management close packages, and we were able to agree these amounts back to the close
+packages.
+In 2009-2011, these amounts were not reported in
+close packages. Management
+determined these amounts by calculating the year-over-year difference in amounts amortized to earnings. We inspected the calculation and note that while the year-over-year difference in amortized amounts is, in part, driven by differences
+in yearly additions
+to the unamortized
+balance,
+the impact of this can be expected to
+minimal; Management’s
+methodology appears
+materially reasonable.
+Upfront Fees, Management Fees and Equity Gains (2007-2011): These balances are co-mingled with a number of other balances in the GL. Accordingly, Target management used quarterly management close packages to determine these amounts for each year. We agreed the reported sub-total amounts of these
+co-mingled
+accounts to management close packages.
+Provision for Credit Losses (2008 to 2014)
+The provision for credit losses is booked to the GL via manual journal entries on an asset-by-asset basis. We obtained a document, redacted for borrower names, showing the quarterly and annual provision amounts, both by borrower and in aggregate. The total provision amount per this document agreed to the total reported provision amounts for each of 2008 through 2014. We compared this document to a Hyperion system-generated report pulled by management and verified that both the individual and total amounts per this source document agreed with the amounts per Hyperion.

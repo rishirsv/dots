@@ -1,0 +1,8 @@
+Appendix 11
+Portfolio yield (4)
+Yield not defined in source document.
+Source
+:
+5.1.1.2 Atlas Core Antares Loan Tape
+We note that these maturities in the source document are incorrect, possibly because the source document has not been updated for refinancing of these loans.
+Included within this amount are SSLP and MMGP Senior Debt + Equity and Golden Hill CLO assets. All these assets were erroneously assigned a maturity of 2024 regardless of actual maturity year, giving rise to this large balance.

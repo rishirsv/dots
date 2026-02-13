@@ -1,0 +1,4 @@
+Source: 6.6.1-6.6.6 Quarterly Close Packages.
+Note: The figures in the “On-book volume by deal type” chart above do not reconcile with dataroom document 6.5.3 Volume Breakdown because the former exclude Franchise Finance. The ratios of each type of deal to total on-book volume, although close to the ratios in 6.5.3, do not match. For the purposes of our analysis, we have utilized the above data (which is directionally consistent with 6.5.3).
+Appendix 6
+Originations (4)

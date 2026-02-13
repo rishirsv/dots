@@ -1,0 +1,17 @@
+Finding
+Summary observations
+Reference
+Other matters
+Leases:
+Target has employees located in eight offices throughout the U.S; six of which are colocations with other GE businesses and two are dedicated to them as single occupants. Leases expire between 2017 and 2027. You should consider costs associated with early lease termination for office space determined no longer necessary or potential rent increases related to expiring leases.
+Internal audit findings:
+In 2014, internal audit reviewed the process and controls around the financing receivables balances within GE Capital Americas, which includes Target and BLG. Specific focus was on strategic partner programs, loan modifications, and loan revenue recognition. Based on the audit work performed, the underlying controls were deemed to effective, with the exception of the quarterly exception reporting and the loan modification process that existed in minor breakdowns. Additionally, no significant exceptions to the business’ compliance with U.S. GAAP or business specific accounting polices were observed. A “Satisfactory” audit opinion was issued, based on the existence of effective controls.
+Off-balance sheet exposure:
+A standby letter of credit or guarantee is offered by Target to certain borrowers under normal course of business. Target had $321 million of standby letters of credit as at March 31, 2015. Borrower-level detail on standby letters of credit has not been provided as of the date of this report. At March 31, 2015, Target has $4.5 billion of unfunded commitments.
+Litigation:
+Target indicated that it has no material outstanding or threatened litigation claims, regulatory proceedings, or other governmental investigations or inquires.
+Purchasing Power:
+Target may have been able to benefit from better pricing for certain services (i.e., employee health benefits, third-party vendors, etc.) due to being a part of a large multinational corporation. You should consider the financial implications of losing that potential benefit post-transaction in your transaction model.
+N/A
+Executive summary
+Key findings: financial (24)

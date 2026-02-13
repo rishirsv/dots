@@ -1,0 +1,46 @@
+Appendix 18
+Supporting analysis of tax key findings (5)
+Acquisition Structure and Mechanics
+The
+Seller’s Proposed Acquisition
+Structure:
+Target
+Management suggested that prior to the proposed acquisition of the Target, the targeted assets would be (i) contributed from GECC to Target or (ii) sold by other subsidiaries of GECC to Target prior to the proposed acquisition of Target.  In addition, the targeted employees would be transferred to Target.
+Regarding
+the proposed transaction structure, Target Management stated:
+The
+Target holds a California lending license and certain of the targeted loans and revolvers must be held by an entity with such a license.
+The
+contribution and sale of the targeted assets to the Target should be a “taxable” transaction to the Seller, and thus, should result in Target having a tax basis in such assets equal their respective fair market values.
+We believe this should be correct.
+Proposed
+Alternative Acquisition Structure
+Target
+Management stated that the Seller is flexible and open to alternative acquisition structures that may prove beneficial to the
+parties.  The Structuring Slides provided by Debevoise
+provide significantly more detail on the alternative proposed by CPPIB.  However, it is broadly expected that:
+GECC contributes and GECC subsidiaries transfer pursuant to an intercompany sale to the Target any loans and revolvers that must be held by an entity with a California Lenders License.
+GECC also transfers employment of the Target Employees to Garrison.
+Proposed Alternative Acquisition
+Structure - continued
+GECC
+and GECC subsidiaries contribute the remaining targeted assets to one or more Transfer Vehicles, each of which is a US tax-transparent entity (e.g., a Delaware limited
+partnership or a trust).
+If CII 4 does not acquire a California lending license prior to closing:
+GECC
+sells 100% of the shares of Garrison to Bidco and Garrison continues to originate new loans for which a California License is necessary (the “Interim Loans”) until CII 4 obtains its own license,
+GECC
+and the GECC subsidiaries sell interest(s) in Transfer Vehicle(s), as well as term loans originated between signing and closing, to Holdco or the SPVs and equity in portfolio companies that are structured as LLCs or partnerships, and that are engaged in a U.S. trade or business through a permanent establishment, as well as other non-loan assets that give rise to permanent establishment concerns (“Blocker Assets”) to
+Blocker, and
+From that point forward, future loan origination activity is undertaken by CII 4.
+If CII 4 does acquire a California lending license prior to
+closing:
+GECC
+sells 100% of the shares of Garrison to CII 4,
+GECC
+and the GECC subsidiaries sell their interest(s) in the Transfer Vehicle(s) to Holdco or the SPVs and the Blocker Assets to Blocker,
+GECC
+and other GECC subsidiaries sell Interim Loans directly to CII4, Holdco or the SPV(s
+), and
+Under
+this scenario, all future loan origination activity is undertaken by CII 4.

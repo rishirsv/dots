@@ -1,0 +1,26 @@
+Appendix 18
+Supporting analysis of tax key findings (6)
+Acquisition Structure and Mechanics - continued
+Discussion
+The
+proposed alternative acquisition structure should still result in the Target, CII 4, Holdco, and/or the SPVs obtaining a step-up in the tax basis of the acquired assets equal to their respective fair market values.  This alternative, however, materially reduces the need for any post-acquisition transfers of assets from Target to CII 4, Holdco, and/or the SPVs.
+We have requested data from the Target to determine the quantum of Blocker Assets and loans/revolvers that must be held by an entity with a California lending license.  We have not received such information as of the date of this report.
+With respect to each of the acquisition structures described above, we have raised the possibility of a purchase of the Target inclusive of a section 338(h)(10) election that would eliminate built-in-gains and historical tax attributes
+. Target Management has stated that if a section 338(h)(10) election is desired, buyer can bid accordingly.
+Impact of Deconsolidation
+Generally
+, when members join in filing a consolidated return, the taxable income and losses of group members are combined to arrive at the group’s net taxable income or loss.  However, when deconsolidation occurs, the tax attributes of the group, including group losses, should be distributed back to individual group members.
+As
+Target is currently a member of the GE US tax consolidated group, a determination of tax attributes separately allocable to the Target post-acquisition will need to be made.
+Management
+has represented that Target has no
+federal NOL
+carryovers, a small state NOL balance, no capital loss carryovers, and accumulated E&P as at 12/31/14 of $
+19M.  These representations are
+subject to confirmatory due diligence.
+A
+prescribed calculation will determine the allocation of Target’s pre and post-acquisition taxable income.  Short-year tax return filings for federal and potentially state tax purposes will be made to reflect that allocation.
+State
+tax may also apply and we note that treatment of the consolidated group from a state tax perspective may vary from state to state.
+Following
+the acquisition and deconsolidation, Target will remain liable for tax liabilities which relate to tax years in which Target was a member of the GE US consolidated tax group.  See Treas. Reg. section 1.1502-6(a).  The Stock and Asset Purchase Agreement negotiation process should ensure the receipt of a suitable level of Target’s background tax information prior to closing, as well as post-acquisition access to personnel, resources and other information to appropriately support a tax audit defense.

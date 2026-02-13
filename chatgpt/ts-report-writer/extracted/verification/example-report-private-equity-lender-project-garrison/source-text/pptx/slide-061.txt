@@ -1,0 +1,15 @@
+Appendix 7
+Fee income
+Accounting for Syndication Fees
+The terms underwriting fees, arrangement fees, syndication fees, documentation fees and upfront fees are used interchangeably or to refer to separate portion of fees received in syndications. For the purposes of this commentary, all such fees are henceforth referred to as “upfront fees”, consistent with the terminology used by Target in its books of record.
+Target’s accounting for upfront fees is contingent upon whether a syndicated deal is classified as a “Loan Syndication” or a “Loan Participation”. This is an accounting distinction based on the form and legal structure of the transaction and not on its substance or commercial interpretation. For a transaction to be classified as a “Loan Syndication”,
+each
+of the following conditions must be met:
+Target must be the lead arranger or the joint lead arranger;
+Syndication partners must be committed directly to the borrower on the credit agreement; and
+Syndication partners must fund their commitments on the date of close, either directly to the borrower or to Target
+An instance where syndication partners, although committed directly to the borrower on the credit agreement, do not fund their commitments until the day after deal close would result in Target being classified as loan participant. Similarly, in an instance where syndication partners fund their commitments on deal close date, but are not committed to the borrower on the credit agreement, Target would be classified as a loan participant. In both cases, while the transaction is in substance no different from a loan syndication, the accounting treatment is different.
+Fee Recognition in a Loan Syndication
+All fees received are recognized upfront into income unless a portion of the loan is retained on Target’s books (the “hold”). If a portion is retained and the yield on this hold is higher than the average yield to other syndication participants, the fees (referred to as “above-market fees”) are recognized upfront. If the yield on the hold is lower than the average yield to other participants, Target defers a portion of the fees and amortizes these into income over the term of the loan to produce a yield on the hold that is not less than the average yield to other syndication participants.
+Fee Recognition in a Loan Participation
+All fees received are deferred and amortized into income over the term of the loan as an adjustment of yield, unless a portion of the commitment is sold to partners, in which case the deferred fees are amortized into income on a pro-rata basis for the portion of the loan sold.

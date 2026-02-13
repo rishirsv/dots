@@ -1,0 +1,27 @@
+Finding
+Summary observations
+Reference
+Historical tax exposure
+The quantum of historical tax exposures is likely to be small because the Target has been relatively dormant during the extended statute period, i.e.,
+The Target only holds $25-50 million in assets (the remaining debt and equity assets of the “Antares platform” are owned by GECC or its subsidiaries), and
+The
+Target has approx. 25 employees who assist in back office functions, including tax general compliance and financial reporting (the remaining individuals who work within the Antares platform are employed by GECC.
+Moreover, Target Management has also stated that GE and GECC do not carry any tax reserves (FIN 48 or FAS 5) on their financial statements that pertain to Target.
+We asked for
+Target’s tax provision and
+state apportionment calculations
+for purposes of confirming the statement’s of Target Management
+but have been told that separately stated calculations for Target do not exist.
+Appendix 18
+Tax attributes & deconsolidation
+Upon the acquisition of Target, Target will cease to be a member of the GE US tax consolidated group.  As a result, the tax attributes of the group, including group losses, should be distributed back to individual group members.
+A determination of tax attributes separately allocable to Target post-acquisition will need to be made.  Although Target Management has represented that Target has no federal NOL carryovers, a small state NOL balance,
+no
+capital loss carryovers, and accumulated E&P
+as at 12/31/14 of $19M,
+these representations should be confirmed prior to signing.
+Target will be required to file a short-year tax return for federal and potentially state tax purposes for the period following its deconsolidation from the GE US tax consolidated group.
+Target will remain liable for tax liabilities which relate to tax years in which Target was a member of the GE US consolidated tax group.  As discussed above, however, the quantum of historical tax exposures is likely to be small.
+Appendix 18
+Executive summary
+Key findings: tax (2)
