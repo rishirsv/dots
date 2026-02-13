@@ -1,0 +1,37 @@
+E2: TB to          E3: Gross                                                      E5: Net
+E1: TB to AFS                                                                            E5: Loan                                                      E7: Prepaid
+reporting pack     Placement              E4: Headcount                           Interest Income E6: AR Aging                               E8: AP Aging
+reconciliation                                                                           Portfolio                                                     Expenses
+rec                Revenue and                                                    - Mortgages
+Exhibits | E9: Recasted Income Statement
+Recast Income statement | CMLS Consol
+Reported                  Diligence adjustments         Diligence adjusted EBITDA         Pro-forma adjustments         Pro-forma adjusted EBITDA
+LTM                            LTM                                LTM                           LTM                               LTM
+C$000                                                FY21         FY22     Sep 23       FY21      FY22    Sep 23        FY21        FY22     Sep 23      FY21     FY22     Sep 23       FY21        FY22     Sep 23
+Administration Revenue                             45,547      59,687      83,770      (150)     (185)         -      45,397     59,502      83,770     (723)   (1,557)     (309)     44,674     57,945      83,462
+Net placement revenue                              29,801      23,508      25,927       (35)       81         54      29,766     23,590      25,981        -         -         -      29,766     23,590      25,981
+Securitization and other income                     3,018       4,147       7,737         -         -          -       3,018      4,147       7,737        -         -         -       3,018      4,147       7,737
+Softw are Services                                  3,907       4,753       5,198         -         -          -       3,907      4,753       5,198        -         -         -       3,907      4,753       5,198
+Net interest income                                 4,216       3,940       3,301         -         -          -       4,216      3,940       3,301        -         -         -       4,216      3,940       3,301
+Realized Gain (loss) on financial instruments       3,749       6,744       3,005         -         -         40       3,749      6,744       3,045        -         -         -       3,749      6,744       3,045
+Revenue                                             90,238     102,780     128,938      (185)     (104)        94      90,053    102,677     129,033     (723)   (1,557)     (309)     89,329    101,120     128,724
+Salaries and benefits                             (53,104)    (64,467)    (72,868)      217     1,669      2,739     (52,887)   (62,797)    (70,129)   2,428     3,911     1,645     (50,459)   (58,887)    (68,484)
+Other Operating                                   (20,405)    (27,794)    (37,278)     (128)     (670)    (1,006)    (20,532)   (28,463)    (38,283)     648     1,822       317     (19,884)   (26,642)    (37,967)
+Non-operating expense                                (235)       (877)     (2,813)      110       539      2,349        (125)      (338)       (463)       -         -         -        (125)      (338)       (463)
+Amortization                                       (2,219)     (1,738)     (2,043)        -         -          -      (2,219)    (1,738)     (2,043)       -         -         -      (2,219)    (1,738)     (2,043)
+Expenses                                           (75,963)    (94,876)   (115,001)      200     1,539      4,082     (75,763)   (93,337)   (110,919)   3,076     5,732     1,961     (72,687)   (87,605)   (108,957)
+Incom e before incom e tax expense                  14,275       7,904      13,937        15     1,435      4,177      14,290      9,339      18,114    2,352     4,175     1,653      16,642     13,515      19,767
+Income tax expense                                 (3,921)     (2,371)     (5,470)        -         -          -      (3,921)    (2,371)     (5,470)       -         -         -      (3,921)    (2,371)     (5,470)
+Net incom e                                         10,354       5,533       8,468        15     1,435      4,177      10,369      6,968      12,644    2,352     4,175     1,653      12,721     11,143      14,297
+Interest Expense                                    953       1,122       1,642         -         -          -         953      1,122       1,642        -         -         -         953      1,122       1,642
+Remove: Interest income on bank balances            (24)        (39)        (90)        -         -          -         (24)       (39)        (90)       -         -         -         (24)       (39)        (90)
+Net Interest Expense                                  929       1,084       1,551         -         -          -         929      1,084       1,551        -         -         -         929      1,084       1,551
+Amortization                                        3,593       3,752       4,427         -         -          -       3,593      3,752       4,427        -         -         -       3,593      3,752       4,427
+Tax                                                 3,921       2,371       5,470         -         -          -       3,921      2,371       5,470        -         -         -       3,921      2,371       5,470
+EBITDA                                              18,797      12,740      19,916        15     1,435      4,177      18,812     14,175      24,093    2,352     4,175     1,653      21,164     18,350      25,745
+As a % of revenue
+Net income                                          11.5%        5.4%        6.6%         n/a      n/a          n/a    11.5%       6.8%        9.8%       n/a       n/a         n/a    14.2%      11.0%       11.1%
+EBITDA                                              20.8%       12.4%       15.4%         n/a      n/a          n/a    20.9%      13.8%       18.7%       n/a       n/a         n/a    23.7%      18.1%       20.0%
+Source:Monthly TB by Entity
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                59                                                                                    Private and Confidential

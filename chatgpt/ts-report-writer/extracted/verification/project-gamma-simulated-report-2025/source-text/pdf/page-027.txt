@@ -1,0 +1,35 @@
+Normalized
+EBITDA
+Quality of earnings | Normalized EBITDA
+The Company’s National Advisory business unit is anticipated to reach profitability in FY24, after
+incurring losses throughout the Historical Period as it ramps up operations
+Normalized EBITDA - Consolidated
+#        Other matters to consider
+LTM
+C$000                                                    Ref.     FY21         FY22      Sep 23
+A        Department loss add-back (National Advisory): This item
+Reported EBITDA                                                  18,797       12,740     19,916
+highlights the pre-allocation losses incurred by the National
+Total diligence adjustments                                          15        1,435      4,177                        Advisory business unit during the Historical Period. The Company
+Diligence adjusted EBITDA                                        18,812       14,175     24,093                        invested heavily during the first few operating years of this
+Total Pro-forma adjustments                                       2,352        4,175      1,653                        business unit in anticipation that the unit will reach profitability in
+Pro-forma adjusted EBITDA                                        21,164       18,350     25,745                        the future. The losses continued consistently throughout the
+Other matters to consider                                                                                              Historical Period. We note that this adjustment does not account
+Department loss add-back (National Advisory)              A        844        2,736       2,495                       for company-wide expenses that are allocated across business
+SR&ED ITC Claims                                          B          -            -          11                       verticals and is not affected by any of the QoE adjustments that
+have been accounted for on the EBITDA table.
+As a % of revenue
+Reported EBITDA                                                  20.8%        12.4%       15.4%
+B        SR&ED ITC Claims: The Company capitalizes eligible SR&ED
+Diligence adjusted EBITDA                                        20.9%        13.8%       18.7%
+expenses and has received investment tax credits (ITCs) for
+Pro-forma adjusted EBITDA                                        23.7%        18.1%       20.0%
+qualified SR&ED expenditures. The Company received $85.5K in
+Source: Mangement information and Deloitte analysis
+ITCs for FY21. No claims were made for FY22, but Management
+expects to make a claim for Intellifi of about $15K. ITCs are
+recorded on a cash-basis, and this item highlights cash flow
+considerations that should be considered in the buyer's model.
+The claim amount is prorated for the nine months in YTD-23.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                27                                                                  Private and Confidential

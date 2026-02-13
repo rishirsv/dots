@@ -1,0 +1,36 @@
+E2: TB to            E3: Gross                                                     E5: Net
+E1: TB to AFS                                                                      E5: Loan                                                      E7: Prepaid
+reporting pack       Placement            E4: Headcount                            Interest Income E6: AR Aging                            E8: AP Aging
+reconciliation                                                                     Portfolio                                                     Expenses
+rec                  Revenue and                                                   - Mortgages
+Exhibits | E1: TB to AFS reconciliation
+E1a: TB to AFS reconciliation - IS
+Reconciliation | Income statement
+FY21                                          FY22
+C$000                                                                AFS              TB            Diff.           AFS             TB           Diff.
+Interest income - mortgages                                      25,147          25,144              3         19,445         19,416             30
+Interest expense - mortgages                                    (20,552)        (20,928)           376        (14,934)       (15,475)           541
+Net interest income                                                 4,595           4,216            379          4,512          3,940            571    1
+Placement fees                                                   82,443          82,443              0         76,905         76,905             (0)
+Administration fees                                              45,547          45,547             (0)        59,687         59,687              0
+Securitization and other income                                   3,018           3,018             (0)         4,147          4,147              0
+Software services                                                 3,907           3,907             (0)         4,753          4,753             (0)
+Gain on financial instruments                                     3,692           3,749            (57)         6,888          6,744            143    1
+Revenue                                                           138,607         138,664            (57)       152,380        152,236            143
+Placement costs                                                 (52,643)        (52,643)             0        (53,396)       (53,396)             0
+Salaries and benefits                                           (53,104)        (53,104)             0        (64,467)       (64,467)             0
+Other operating costs                                           (19,587)        (19,266)          (322)       (27,626)       (26,911)          (715)   1
+Amortization                                                     (3,593)         (3,593)            (0)        (3,498)        (3,498)             0
+Expenses                                                         (128,927)       (128,606)          (322)      (148,987)      (148,273)          (715)
+Income before income tax expense                                   14,275          14,275              0          7,904          7,904             (0)
+Income tax expense                                                 (3,921)         (3,921)            (0)        (2,371)        (2,371)             0
+Net income                                                         10,354          10,354              0          5,533          5,533             (0)
+Source: 2022 CFSI Consolidated Financial Statements - Signed
+Explanation of reconciliation variances:
+1    Pertains to variances in classification between the TB and the AFS regarding interest income on restricted cash, warehouse
+standby fees and ECL provision costs. The interest income on restricted cash is classified to Net interest income on the AFS but
+recorded under Gain on financial instruments on the TB. The warehouse standby fees are recorded as part of operating expenses
+on the AFS but classified under Net interest income on the TB. The remaining variances pertain to ECL provision costs, which are
+recorded as part of “Gain on financial instruments” on the TB’s.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                49                                                                      Private and Confidential

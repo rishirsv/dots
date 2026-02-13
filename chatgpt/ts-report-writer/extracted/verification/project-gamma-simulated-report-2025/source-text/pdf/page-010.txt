@@ -1,0 +1,50 @@
+Accounting and
+Transaction                              Accounting
+financial
+overview                                 Policies
+reporting
+Executive summary | Accounting Policies
+The Company earns fixed, variable and one-time fees from providing access to its residential and
+commercial software platforms
+Description                                                                      Accounting Treatment
+•   Primarily consists of fees generated from Intellifi’s software licenses,                                   •   License fees and minimum royalty
+consulting & support, implementation/setup, and SaaS revenues.                                                 guarantees are recognized upfront upon
+transfer of IP control from the Company to
+•   License & maintenance fees ($2.3M in LTM Sep-23) primarily relate to
+the licensee.
+Residential software platforms and are charged on either a fixed fee or a
+usage-basis royalty subject to an annual minimum or maximum; contract                                           The usage-based royalty in excess of
+structures are negotiated with each customer. Fees are charged under                                             the minimum royalty guarantee will be
+single-year, multi-year, or perpetual arrangements where the stand-alone                                         recognized as revenue in the month
+price of license & maintenance services are separately determinable.                                             that the customer volumes are funded.
+•   Consulting & support fees ($1.9M in LTM Sep-23) comprise revenues                                          •   Certain license fees that are recognized
+from change request work performed and billable support services that are                                      upfront are calculated using the present
+charged hourly (i.e., time and materials basis).                                                               value of monthly minimum amounts, while
+maintenance revenues are recognized over
+•   SaaS revenues ($672K in LTM Sep-23) typically relate to the Commercial
+the term of the arrangement.
+software platforms and are earned from contract agreements granting a
+Software                         renewable, non-exclusive, royalty-free license to access and use services                                  •   Consulting and support revenues are
+over a given term. Contracts comprise an annual fixed charge ($10K for                                         recognized as services are performed.
+Service                         each increment of ten authorized users) and a tiered fee based on either                                   •   For SaaS revenues, the bps fee is
+Revenues                          volumes or a set bps of the outstanding principal balance of the customer’s                                    recognized over the contract term, while
+($5.2M in                         mortgage portfolio.                                                                                            the annual fixed charge is recognized
+annually upfront.
+LTM Sep-23)                    •   Implementation/setup fees ($268K in LTM Sep-23) are generally one-
+time fees that are billed upon achieving specified milestones.                                             •   Implementation/setup fees are
+generally deferred and are billed &
+•   Residential software includes:
+recognized on a milestones-basis.
+i.     LM360 (proprietary) for mortgage underwriting and servicing; this
+software is also licensed to third-party lenders
+ii.    Crystal (proprietary) for automated adjudication; Management
+intends to replace LM 360’s underwriting module with Crystal
+iii.   CAT (proprietary) for allocating mortgages to investors based on
+individual mortgage characteristics and investor preferences
+iv.    Jade (third-party) which is a Residential business software to
+support LMS360. Jade licenses are purchased from an external
+vendor and charged to customers at a mark-up.
+•   Commercial software includes Target Asset Management and Atlas
+Underwriting, both of which are proprietary.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                10                                                                     Private and Confidential

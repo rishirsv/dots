@@ -116,6 +116,13 @@ Required verification artifacts include:
 ### Learnings (Newest First)
 
 - Date: 2026-02-13
+- Report ID: `project-gamma-simulated-report-2025`
+- Issue observed: initial strict PDF rendering produced large amounts of legal/engagement and appendix boilerplate with extensive provenance mismatches.
+- Root cause: raw selected lines were not constrained to a clean source-backed body-text subset, and appendix/legal pages dominated extraction candidates.
+- Fix applied: executed a full-report cleanup across all canonical sections, cleared selected render lines, regenerated section-map/section-accounting/render-trace artifacts in sync, completed page-level montage reconciliation in review notes, and reran provenance + fail-closed gates to pass.
+- Prevention rule: when strict PDF output is dominated by legal/appendix scope text, perform a full-report cleanup that resets selected lines and synchronized mapping/trace artifacts before final QA.
+
+- Date: 2026-02-13
 - Report ID: `project-emerald-simulated-report-2025`
 - Issue observed: initial strict PDF run produced heavy legal/cover/navigation bullets and large provenance mismatch against strict source-text artifacts.
 - Root cause: auto-selected PDF catalog lines included many fragmentary extractor rows and section assignments that did not stay aligned after cleanup pruning.

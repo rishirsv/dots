@@ -1,0 +1,41 @@
+E2: TB to              E3: Gross                                                  E5: Net
+E1: TB to AFS                                                                      E5: Loan                                                      E7: Prepaid
+reporting pack         Placement         E4: Headcount                            Interest Income E6: AR Aging                             E8: AP Aging
+reconciliation                                                                     Portfolio                                                     Expenses
+rec                    Revenue and                                                - Mortgages
+Exhibits | E1: TB to AFS reconciliation
+E1b: TB to AFS reconciliation - BS
+Reconciliation | Balance sheet
+Dec-21                                                  Dec-22
+C$000                                                                  AFS                TB              Diff.               AFS                  TB           Diff.
+Cash and cash equivalents                                         16,028            16,028                  0            13,128              13,128             (0)
+Restricted cash and cash held as collateral                       20,113            20,113                  0            11,154              11,154             (0)
+Short-term investments                                                 -                 -                  -             2,999               2,999              0
+Derivative assets                                                     46                46                 (0)              620                 620             (0)
+Other receivables                                                 19,348            19,348                 (0)           24,176              24,176              0
+Securitization receivables                                         8,486             8,486                 (0)            9,743               9,743              0
+Mortgages and loans receivable                                   916,434           916,434                 (0)          725,761             725,761             (0)
+Commercial mortgage-backed securities                                449               449                  0               816                 816              0
+Income taxes receivable                                            4,731             4,731                 (0)                -                   -              -
+Deferred income tax assets                                         1,371             1,371                  0             1,954               1,954              0
+Long-lived assets                                                 16,849            16,849                  0            25,757              25,757             (0)
+Other assets                                                       1,318             1,318                  0             2,500               2,500              0
+Total assets                                                    1,005,172         1,005,172                 (0)          818,607             818,607              0
+Bank indebtedness                                                (48,236)          (48,236)                (0)          (52,878)            (52,878)             0
+Accounts payable and accrued liabilities                         (16,414)          (16,414)                 0           (19,337)            (19,337)            (0)
+Debt related to securitizations                                 (866,659)         (866,659)                 0          (667,240)           (667,240)             0
+Income taxes payable                                                   -                 -                  -              (711)               (711)            (0)
+Deferred income tax liabilities                                   (3,991)           (3,991)                (0)           (1,427)             (1,427)             0
+Notes payable and share liabilities                               (1,526)           (1,526)                (0)                -                   -              -
+Other liabilities                                                (14,855)          (14,855)                 0           (22,453)            (22,453)            (0)
+Total liabilities                                                (951,681)         (951,681)                 0          (764,046)           (764,046)            (0)
+Common shares                                                    (18,514)          (18,514)                (0)          (20,155)            (20,155)             0
+Preferred shares                                                    (507)             (507)                 -              (507)               (507)             -
+Contributed surplus                                                 (445)             (445)                (0)           (1,187)             (1,187)            (0)
+Accumulated other comprehensive (loss) income                       (123)             (123)                (0)              497                 497              0
+Retained earnings                                                (33,903)          (33,903)                 0           (33,209)            (33,209)            (0)
+Shareholders’ equity                                              (53,492)          (53,492)                (0)          (54,561)            (54,561)            (0)
+Total liabilities and Shareholders’ equity                     (1,005,172)       (1,005,172)                 0          (818,607)           (818,607)            (0)
+Source:2022 CFSI Consolidated Financial Statements - Signed
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                50                                                                       Private and Confidential

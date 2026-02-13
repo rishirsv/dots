@@ -1,0 +1,48 @@
+Normalized
+EBITDA
+Quality of earnings | Normalized EBITDA
+An adjustment is made to include the impact of an uncorrected audit misstatement related to interest
+accretion on long term placement fee receivables
+Normalized EBITDA - Consolidated
+LTM          #        Diligence adjustments
+C$000                                                    Ref.     FY21        FY22      Sep 23
+Reported EBITDA                                                  18,797      12,740      19,916        7        CRM implementation: Removes one-time costs paid to third-party
+Diligence adjustments
+consultants for the configuration and implementation of Microsoft
+Severance                                                  1         -       1,600      2,883
+Dynamics CRM software models/features throughout the Historical
+Non-operating P&L income/expense                           2       459         896      2,754                  Period. This CRM is not related to the accounting ERP upgrade
+One-time / non-recurring professional expenses             3       471         580        556                  discussed in Adj's 3j and 22.
+Stock Based Compensation                                   4       217          69        155
+One-time/Non-recurring items - Intellifi                   5        (0)       (122)       102         8        Discontinued service offering - Insurance Premium: Prior to
+One-time bad debt expense                                  6         -           -         63                  FY22, the Company purchased bulk insurance for Bank of America on
+CRM implementation                                         7        16          14         39                  their low ratio mortgages and earned a spread from providing these
+Discontinued service offering - Insurance Premium          8       (35)         (0)        34                  insurance services. This service offering was discontinued in FY22, and
+Residential origination platform                           9         -           -         22                  this adjustment removes the revenue and the associated expenses
+Uncorrected FY22 Audit Misstatement                   10a         -          82         20                  from EBITDA (wind-up expenses were incurred in YTD-23, with no
+ECL Over-Accrual, Sep-23                              10b         -           -         40                  associated revenues, resulting in an addback in the LTM period).
+Unadjusted Items                                          10         -          82         60
+Facilities Software (COVID) Expense                       11         6          11          7         9        Residential origination platform: This adjustment removes the FY23
+One-time other income                                     12      (150)          -          -                  software costs for the program used specifically for the origination and
+Banking fees                                              13         -           -        247                  servicing of non-prime residential loans that largely pertain to the
+Removal of third-party Crystal charges                    14       532         359        (38)                 CMLS Mortgage Fund. Until Jan-23, expenses were charged to the Fund
+Executive vacancy                                         15         -           -       (123)                 Management vertical, which are already accounted for under EBITDA
+Out-of-period adjustments                                 16        43         (85)      (261)                 Adj 21. The software is expected to be discontinued in Mar-24, to be
+Net cash outflow from leases                              17    (1,543)     (1,966)    (2,325)                 replaced by the Company's in-house program, LMS 360, in Apr-24.
+Total diligence adjustments                                          15       1,435      4,177
+Diligence adjusted EBITDA                                        18,812      14,175     24,093         10a      Unadjusted items: The Company did not correct a FY22 audit
+Total Pro-forma adjustments                                       2,352       4,175      1,653                  misstatement relating to interest accretion on long-term placement fee
+Pro-forma adjusted EBITDA                                        21,164      18,350     25,745                  receivables. The present value of interest income on the placement fee
+As a % of revenue                                                                                               receivable has not been accrued for since inception as Management
+Reported EBITDA                                                  20.8%        12.4%      15.4%                  considered the amount immaterial. This adjustment adjusts for the
+Diligence adjusted EBITDA                                        20.9%        13.8%      18.7%                  impact of the correcting entry needed.
+Pro-forma adjusted EBITDA                                        23.7%        18.1%      20.0%
+Source: Mangement information and Deloitte analysis                                                    10b      ECL Over-Accrual, Sep-23: In accordance with IFRS, the Company
+maintains an ECL policy which is rules-based informed by the aging of
+receivables. While the Company experiences very little bad debt
+expense, there are instances when receivables become aged but are
+ultimately collected. At Sep-23, there was a significant aged receivable
+that resulted in an ECL expense. Subsequent to Sep-23, this receivable
+was collected and the provision was reversed in Dec-23.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                20                                                             Private and Confidential

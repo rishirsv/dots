@@ -1,0 +1,44 @@
+Normalized
+EBITDA
+Quality of earnings | Normalized EBITDA
+The Company’s pro forma adjusted EBITDA in LTM Sep-23 was $25.7M (20.0% margin)
+Normalized EBITDA - Consolidated                                                                              Basis of preparation
+LTM
+C$000                                                                FY21        FY22      Sep 23             The adjacent table presents the Company’s reported EBITDA for FY21,
+Revenue, reported                                                  90,238     102,780     128,938             FY22, and LTM Sep-23, adjustments arising from due diligence, as well
+Total diligence adjustments                                          (185)       (104)         54             as pro forma adjustments.
+Diligence adjusted revenue                                         90,053     102,677     128,993             Reported EBITDA represents the consolidated results of the Company,
+Total Pro-forma adjustments                                          (723)     (1,557)       (309)            including the accounts of CFSI, CMLS, CAML, Delta (Intellifi), ICF and
+Pro-form a adjusted revenue                                        89,329     101,120     128,684             ICR, net of any intercompany eliminations identified. Reported figures
+Net incom e                                                        10,354       5,533       8,468             have been sourced from the Company’s monthly trial balances. Refer to
+Net financing interest expense                                        929       1,084       1,551             Exhibits E1 and E2 for a reconciliation of the trial balances to the
+Amortization                                                        3,593       3,752       4,427             audited FS and internal FS. Refer to the accompanying databook for a
+Tax                                                                 3,921       2,371       5,470             more detailed build-up of the consolidated income statement. Amounts
+Reported EBITDA                                                    18,797      12,740      19,916             were agreed to the TB and supporting GL details or invoices where
+applicable.
+Total diligence adjustments                                            15       1,435       4,177
+Diligence adjusted EBITDA                                          18,812      14,175      24,093             Refer to the following pages for further details of adjustments and other
+Total Pro-forma adjustments                                         2,352       4,175       1,653             considerations identified through our analysis. Reported revenues are
+Pro-form a adjusted EBITDA                                         21,164      18,350      25,745             impacted by EBITDA Adj’s 5c, 8a, 10a, 12, 21 and 26. The recasted P&L
+can be found in Exhibit E9.
+As a % of revenue
+Reported EBITDA                                                    20.8%       12.4%        15.4%             Normalized EBITDA limitations
+Diligence adjusted EBITDA                                          20.9%       13.8%        18.7%
+Our services with respect to normalized EBITDA consisted solely of
+Pro-forma adjusted EBITDA                                          23.7%       18.1%        20.0%             assisting the Client in the identification, documentation and
+Source: Mangement information and Deloitte analysis                                                           accumulation of potential adjustments. Because there is no authoritative
+literature or common standard with respect to the calculation of
+normalized EBITDA, there is no basis to state whether all appropriate
+and comparable adjustments have been identified. In addition, while
+certain adjustments may reflect the elimination of unusual or non-
+recurring revenues or expenses, future periods may include revenues or
+expenses that would also be considered unusual or non-recurring. We
+have made the following EBITDA adjustment types:
+Normalization/diligence adjustments - Reflects the impact of
+various historical normalization items that impacted the reported
+results over the Historical Period.
+Pro forma adjustments - Reflects the run-rate impact of certain
+forward-looking recent or pending events or circumstances that could
+impact the financial results and EBITDA on a go-forward basis.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                13                                                             Private and Confidential

@@ -1,0 +1,55 @@
+Overview
+Consolidated P&L | Overview
+The Company generated higher interest income on cash balances held in trust due to higher interest
+rates during the Historical Period
+Income statement overview | Consolidated
+Revenues (Continued)
+As a % of revenue
+LTM                        LTM             •   Net placement revenue (Continued):
+C$000                                          FY21       FY22    Sep 23       FY21     FY22 Sep 23
+Administration Revenue                         45,547   59,687    83,770      50.5%   58.1%   65.0%                While overall renewal volumes declined, the Company
+Placement Revenue - New                    68,637   66,183    63,757      76.1%   64.4%   49.4%                 experienced higher application revenues during the Historical
+Placement Revenue - Application Revenue 4,494        4,717     5,403        5.0%    4.6%    4.2%                Period ($4.5M in FY21 to $5.4M in LTM Sep-23), which are
+Placement Revenue - Whole Loans             2,287     (336)    2,121        2.5%   (0.3%)   1.6%                borrower-paid fees on AVEO and Residential Near Prime (i.e.
+Placement Revenue - Renewals                4,482    4,099     4,561        5.0%    4.0%    3.5%                “CAS”) loans. These loans are alternative lending solutions.
+Placement Revenue - Extensions              1,602    1,093       975        1.8%    1.1%    0.8%                Renewal rates for these products increased as some borrowers
+Placement Revenue - Lost Deals                199      319       490        0.2%    0.3%    0.4%                were less likely to qualify with other lenders in the higher
+Placement Revenue - Other                     742      829       856        0.8%    0.8%    0.7%
+interest rate environment.
+Placement revenue                            82,443   76,905    78,162      91.4%   74.8%   60.6%
+Placement costs                             (52,643) (53,396) (52,236)     (58.3%) (52.0%) (40.5%)               Consulting revenues ($239K in LTM Sep-23), recorded within
+Net placement revenue                          29,801   23,508    25,927      33.0%   22.9%   20.1%                 “Other”, relates to work performed where a commission is
+Securitization and other income                 3,018    4,147     7,737        3.3%    4.0%    6.0%                payable, but did not result in a loan being funded. Certain
+Software Services                               3,907    4,753     5,198        4.3%    4.6%    4.0%                National Advisory revenues are also recorded here – refer to
+Net interest income                             4,216    3,940     3,301        4.7%    3.8%    2.6%
+EBITDA OC A for further details.
+Realized Gain (loss) on financial instruments   3,749    6,744     3,005        4.2%    6.6%    2.3%
+Revenue                                          90,238 102,780 128,938       100.0% 100.0% 100.0%                   Placement costs are the cost of sales incurred to earn placement
+Expenses                                        (75,963) (94,876) (115,001)   (84.2%) (92.3%) (89.2%)                 revenues, including direct compensation of originators. These
+Income before income tax expense                 14,275    7,904    13,937      15.8%     7.7%  10.8%                 costs increased as a percentage of gross placement revenues in
+Income tax expense                             (3,921)  (2,371)   (5,470)      (4.3%)  (2.3%)  (4.2%)               FY22 due to additional placement costs recorded under National
+Net income                                       10,354    5,533     8,468      11.5%     5.4%    6.6%
+Advisory that has no related revenue. Refer to EBITDA OC A for
+Net Interest Expense                              929    1,084     1,551        1.0%    1.1%    1.2%
+details. This was partially offset by a decrease in other costs due
+Amortization                                    3,593    3,752     4,427        4.0%    3.7%    3.4%
+Tax                                             3,921    2,371     5,470        4.3%    2.3%    4.2%
+to a decline in lending volumes and lower interest rate buydowns
+EBITDA                                           18,797   12,740    19,916      20.8%   12.4%   15.4%                 by residential mortgage brokers to win deals.
+As a % of revenue                                                                                              •   Securitization and other income: Primarily comprises bank and
+Net income                                     11.5%      5.4%       6.6%      11.5%     5.4%    6.6%              other interest income ($5.6M in LTM Sep-23) earned on operating
+EBITDA                                         20.8%     12.4%      15.4%      20.8%    12.4%   15.4%
+cash as well as cash held in trust. Higher interest rates and cash
+Source:Monthly TB by Entity
+balances drove the increase in the Historical Period. Interest income
+earned on operating cash balances is removed from EBITDA as a
+definitional adjustment, however, interest earned on trust balances
+is left above the line for EBITDA as it is operating in nature.
+The increase in net placement margin from FY22 to LTM Sep-23 is mainly
+attributable to the residential business, due to higher renewals (which have                                        The remainder of this revenue relates to net gains on
+lower placement expenses) and more AVEO originations (which is a higher                                              securitization ($1.7M) and residual securitization income
+margin product). The Company further negotiated higher investor-paid AVEO                                            ($345K). Gains on securitization, net of issuance costs and
+fees from Mar-23, which are contractual and are expected to remain on a go-                                          guarantee fees paid to CMHC, declined as the Company
+forward basis. Refer to Exhibit E3 for further details.                                                              securitized lower volumes of commercial multi-family loans.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                31                                                              Private and Confidential

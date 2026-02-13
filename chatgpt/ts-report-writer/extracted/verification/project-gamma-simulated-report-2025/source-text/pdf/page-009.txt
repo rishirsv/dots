@@ -1,0 +1,45 @@
+Accounting and
+Transaction                              Accounting
+financial
+overview                                 Policies
+reporting
+Executive summary | Accounting Policies
+The Company earns interest income from its pool of MBS and charges placement fees on loans that it
+funds, refinances, renews or advises on
+Description                                                                      Accounting Treatment
+•   Origination/underwriting and commitment fees earned on                              •   Dependent on the subsequent measurement category of
+the placement of both Commercial and Residential                                        related mortgages and the timing of when performance
+mortgages with institutional investors and third-party                                  obligations are satisfied
+entities.                                                                                For mortgage commitments transferred to a third party
+prior to funding: placement fees are recognized at time
+•   Fees are incurred via three main sub-streams:                                              of funding or loan’s adjudication
+ New – Direct: pertains to new and refinanced loans that                                For mortgages subsequently measured at amortized
+the Company originates and will service. Refinanced                                     cost or FVOCI: placement fees are incorporated as part
+loans are recorded as a new loan and typically result in                                an adjustment to the effective interest rate and
+Placement                             higher loan amounts than the original loan. The                                         recognized over time as part of net interest income
+Company issues a commitment letter for direct loans.                                    until mortgage expiry or derecognition
+Fee                              New – Flow Through: new loans that CMLS will not                                       For mortgages subsequently measured at FVTPL:
+Revenues                             service. No commitment letters are issued for these.                                    amounts received in excess of mortgage principal are
+($25.9M in                            The Company acts solely as an advisor/intermediary on                                   recognized as revenue at time of placement
+flow through deals.
+LTM Sep-23,                          Renewals – Direct: existing loans that have been                                  •    Placement fees are classified as either upfront or deferred
+net)                               renewed (i.e., term extended) with the Company. Fees                                  for the various loan categories, and this is typically
+earned are typically lower on a bps basis than upfront                                negotiated with investors. Deferred placement fees are
+originations because placement expenses are                                           still recorded as revenue upon deal funding, but there is a
+substantially lower. Fees are also only earned on the                                 receivable and amounts are collected over time.
+extended term, not the full term.
+•    Placement fees are recorded net of placement costs.
+•   Other revenue items recorded in this line include fees for
+lost deals that have fallen through, application revenues,                          •    Application revenues also include borrower-paid fees that
+and miscellaneous fees such as assumption fees, which                                    are also recognized on the date of renewal/funding. Refer
+occur when a mortgage is transferred between holders.                                    to the Consolidated P&L section for details.
+•   Interest revenue earned on the Company’s mortgage-                                  •   Pre-FY22, NIM was recorded quarterly. NIM is recorded on
+backed securities (MBS), asset-backed commercial paper                                  a monthly cadence from Jan-22 onwards.
+Net Interest                         (ABCP) and non-securitized, on-balance sheet mortgages.
+Income                                                                                                                 •   Interest income and expense are recognized on an accrual
+•   Revenue is recorded net of securitized interest expense,
+($3.3M in                           and interest & fees on the warehouse facility.                                          basis in the period in which they accrue.
+LTM Sep-23)                      •   Amortization of premiums/discounts on securitization and                            •   Amortization of premiums/discounts are recorded in the
+securitization gains/losses are also recorded here.                                     period incurred.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                 9                                                                 Private and Confidential

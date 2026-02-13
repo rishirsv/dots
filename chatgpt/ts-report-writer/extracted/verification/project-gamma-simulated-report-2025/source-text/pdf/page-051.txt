@@ -1,0 +1,29 @@
+E2: TB to            E3: Gross                                                       E5: Net
+E1: TB to AFS                                                                      E5: Loan                                                      E7: Prepaid
+reporting pack       Placement           E4: Headcount                               Interest Income E6: AR Aging                             E8: AP Aging
+reconciliation                                                                     Portfolio                                                     Expenses
+rec                  Revenue and                                                     - Mortgages
+Exhibits | E2: TB to reporting pack rec
+E2a: TB to Monthly reporting packages reconciliation - IS
+Consolidating income statement
+FY21                                           FY22                                    YTD Sep-23
+Monthly reporting                                Monthly reporting                             Monthly reporting
+C$000                                                             packages               TB        Diff.           packages             TB        Diff.          packages          TB       Diff.
+Interest revenue – mortgages                                            25,144     25,144           0                 19,416      19,416           -               13,158     13,158        (0)
+Interest expense – mortgages                                           (20,928)   (20,928)          -                (15,475)    (15,475)          -              (10,651)   (10,651)       (0)
+Net Interest - mortgages                                                  4,216      4,216           0                  3,940       3,940           -                2,507      2,507        (0)
+Placement - Revenue                                                     83,443     83,443           0                 76,905      79,112      (2,208)              61,528     61,528        (0)
+Placement - Expense                                                    (52,643)   (52,643)          0                (51,189)    (53,396)      2,208              (38,738)   (38,738)       (0)
+Net Placement                                                            30,800     30,800           0                 25,716      25,716           0               22,790     22,790        (0)
+Administration Revenue                                                  45,439     45,547        (108)                59,687      59,687           -               65,011     64,989        22
+Net Gain / (Loss) on Securitization                                      5,710      5,710           0                  4,720       4,720           -                5,583      5,583        (0)
+Softw are Services                                                       3,907      3,907          (0)                 4,753       4,753           -                3,806      3,806         0
+Realized Gain (loss) on financial instruments                               58         58           0                  3,963       3,963           -                  200        200         0
+Revenue                                                                  90,130     90,238        (108)               102,780     102,780           -               99,897     99,874        22
+Operating expense                                                       (74,889)   (74,889)         (0)               (93,842)    (93,842)          -              (85,721)   (85,721)        0
+Operating m argin                                                        15,241     15,349        (108)                 8,938       8,938           0               14,175     14,153        22
+Non-operating expense                                                    (4,887)    (4,995)        108                 (3,406)     (3,406)          -               (7,328)    (7,328)       (0)
+Net incom e                                                              10,354     10,354           0                  5,533       5,533           0                6,847      6,825        22
+Source:Monthly Reporting Packages and TB
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                51                                                                          Private and Confidential

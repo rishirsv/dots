@@ -1,0 +1,43 @@
+Accounting and
+Transaction                              Accounting
+financial
+overview                                 Policies
+reporting
+Executive summary | Transaction overview
+The Company’s Commercial, Residential, and Fund Management business verticals are spread across
+its various active operating subsidiaries, all of which are 100% owned by CMLS Financial Solutions
+Inc.
+Transaction perimeter                                                                                                                                                             Holding
+CMLS Financial                                                                         Operating
+Solutions Inc.
+(CFSI)                                                                               Inactive
+IC Funding                                      CMLS Financial
+CMLS Asset                  Intellifi                                       CMLS Shared                                      CMLS Financial
+CMLS Financial                                                                  Financial                                      Assets General                              CMLS Issuer
+Management                Corporation                                      Services II Inc.                                 Assets Inc. (CFA
+Ltd (CMLS)                                                                    Corporation                                      Partner Inc.                              Corp. (Issuer)
+Ltd (CAML)                (Intellifi)                                        (CSSI II)                                           LP)
+(ICF)                                          (CFA GP)
+CMLS Realty Ltd
+CFA Partnership
+(REALTY)
+CFSI: Parent / Holding company.
+CMLS: Originator, underwriter, and administrator of commercial and residential mortgages. Most of the Company’s operating activities flow through here.
+CAML: Provides discretionary lending, sub-advisory and asset management services. Registered as a Restricted Portfolio Manager and an Exempt Market
+Dealer under securities legislation in BC, AB, SK, MB, ON, QC, NS, and NB. CAML is also registered as an Investment Fund Manager in BC, ON, QC, NB.
+This entity oversees the Fund Management vertical and is subjected to minimum working capital requirements under NI 31-103.
+Intellifi (previously Delta 360 Inc.): Provides commercial and residential mortgage-related technology services, including mortgage analytics and
+mortgage software solutions. This entity manages several proprietary software platforms, which are further described in the Accounting Policies section.
+Intellifi obtained CMHC approved lender status in Oct-23 and is responsible for administering the CGHLI program on behalf of CMHC (including
+adjudicating & funding loans). Key third-party clients include direct-to-consumer lenders, credit unions, Schedule 1 banks and government entities.
+ICF and REALTY: The Company acquired ICF in 2019 primarily for the realty license; REALTY is registered as a realty broker in BC, ON and QC. While the
+Company rarely engages in realty activities, ICF and its realty license remains active. A portion of the Company’s National Advisory business flows through
+REALTY. Management intends for these entities to remain active going forward. The Company’s equity interest in Skyhawk Capital is held through ICF. The
+Company subscribed for US$600K of LP units in Skyhawk. As of Jan-24, the Company has funded US$300K based on capital calls to-date. Once the
+commitment is fully funded, the Company will have a 10% equity interest.
+CSSI II: Created for tax planning purposes to facilitate the Company’s purchases of ParentCo shares from active and retired employee shareholders.
+Inactive companies: CFA GP was intended to warehouse commercial loans for securitization. CFA GP and Issuer collaborated on a single transaction
+where CMBS certificates were issued, but due to the lack of subsequent activity, the CFA entities and Issuer were eventually designated as inactive.
+Management indicated that the CFA entities can be fully shut down if required, although Issuer remains the authorized issuer on the CMBS certificates.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                 6                                                                    Private and Confidential

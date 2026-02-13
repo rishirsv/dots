@@ -1,0 +1,47 @@
+Accounting and
+Transaction                              Accounting
+financial
+overview                                 Policies
+reporting
+Executive summary | Accounting Policies
+The Company earns administration revenues primarily from its loan servicing, underwriting,
+adjudication, and mortgage analytics offerings
+Description                                                                        Accounting Treatment
+•   Comprises various revenue streams across the Company’s subsidiaries such as                                      •    Servicing fees are recognized
+servicing fees, underwriting fees, adjudication & program revenues, asset                                             over the term for which the
+management fees, mortgage analytics revenues and Intellifi underwriting revenues.                                     Company continues to service
+the loan. These fees are invoiced
+•   Underwriting (“UW”) revenues ($35.1M in LTM Sep-23) pertain to UW activities,                                         and collected monthly, typically
+where the Company neither originated nor services the loan. Included within here is                                   by “clipping” payments from
+underwriting revenue earned under the CMHC programs, ACLP and CGHLI.                                                  borrowers before remitting the
+Underwriting fees are typically charged per application (whether declined or                                          net amount to investors.
+approved) and may be tiered based on loan size.
+•    As servicing arrangements are
+•   Servicing fees ($32.7M in LTM Sep-23) are calculated on a variable bps basis for                                      treated as executory contracts,
+both commercial and residential mortgages as follows:                                                                 the Company does not typically
+ Servicing fee – Direct are earned on mortgages originated by the Company.                                           recognize an associated servicing
+These fees are earned from investors for loan servicing, including collecting                                      asset or liability. Deferred
+principal and interest (P&I), remitting P&I to investors, collecting taxes, and                                    servicing fees are only
+Administration                           managing delinquencies/defaults. Servicing revenues earned on CGHLI loans are                                      recognized for multi-family
+also included here. CGHLI servicing fees are tier-based and based on the count of                                  securitizations.
+Revenues                              loans serviced.
+($83.8M in                           Servicing fee – Third Party are similar to the category described above, but for                               •    Program fees are collected via
+LTM Sep-23)                             mortgages that are directly funded by a third-party lender and not originated by                                   deal flow (e.g. investor pays
+CMLS. Servicing revenues earned on ACLP (formerly RCFI) loans are included                                         upfront when funds are called or
+here and are earned via the variable bps fee structure.                                                            are clipped over time from
+monthly coupons, dependent on
+•   Program fees ($8.4M in LTM Sep-23) are investor-paid origination fees as part of                                      arrangement)
+the Company’s program to administer and pool mortgages. Program fees can be
+charged either upfront or over time on a fixed or variable bps basis calculated                                  •    Any servicing income related to
+monthly on a loan’s outstanding balance.                                                                              derecognized securitized
+mortgages is recognized on the
+•   Mortgage analytics revenues ($4.2M in LTM Sep-23) are earned from                                                     P&L over the term of the
+valuations/pricing work and risk ratings services. The former is charged based on                                     mortgage.
+portfolio size, while the latter is charged based on the number of files worked.
+•    All other admin revenues are
+•   Asset management fees ($1M in LTM Sep-23) are management and sub-advisory                                             recognized into income at the
+fees that are charged on a bps basis on managed AUM & AUA. Each class of                                              point when the work has been
+unitholders is charged its own contracted bps management fee with a corresponding                                     performed and performance
+management fee rebate, if applicable.                                                                                 obligations have been fulfilled.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due • Diligence Report | February 8, 2024                               8                                                                      Private and Confidential

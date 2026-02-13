@@ -1,0 +1,51 @@
+Normalized
+EBITDA
+Quality of earnings | Normalized EBITDA
+An executive role at the Company has remained vacant since Jul-23, however, Management intends
+to fill the role in the future
+Normalized EBITDA - Consolidated
+#        Diligence adjustments
+LTM
+C$000                                                   Ref.     FY21         FY22      Sep 23
+11       Facilities Software (COVID) Expense: Following COVID-19,
+Reported EBITDA                                                 18,797       12,740      19,916
+the Company employed a facilities management software to
+Diligence adjustments                                                                                                 enable employees to return to office with safe social distancing
+Severance                                                1          -        1,600       2,883                       and contract tracing procedures. The software is no longer in use,
+Non-operating P&L income/expense                         2        459          896       2,754                       and this adjustment removes the non-recurring software costs.
+One-time / non-recurring professional expenses           3        471          580         556
+Stock Based Compensation                                 4        217           69         155              12       One-time other income: This adjustment removes a one-time
+One-time/Non-recurring items - Intellifi                 5         (0)        (122)        102                       vendor rebate received in Dec-21 and recorded as part of Other
+One-time bad debt expense                                6          -            -          63                       Income in CMLS.
+CRM implementation                                       7         16           14          39
+Discontinued service offering - Insurance Premium        8        (35)          (0)         34              13       Banking fees: This adjustment removes the non-recurring
+Residential origination platform                         9          -            -          22                       increase in bank fees charged by RBC from Jun-23 through Sep-
+Unadjusted Items                                        10          -           82          60                       23. During this period, the Company was being charged higher
+Facilities Software (COVID) Expense                     11          6           11           7                       wire fees for CGHLI transfers but has since switched from wires to
+One-time other income                                   12       (150)           -           -                       EFTs, resulting in lower go-forward costs. This adjustment is not
+Banking fees                                            13          -            -         247                       applicable to prior periods as RBC was inadvertently charging the
+Removal of third-party Crystal charges                  14        532          359         (38)                      Company EFT rates for wire transfers. Intellifi’s banking fees as a
+Executive vacancy                                       15          -            -        (123)                      percentage of CMHC underwriting revenues from Jun-22 to May-
+Out-of-period adjustments                               16         43          (85)       (261)                      23 (when the go-forward rate was in effect) were used to quantify
+Net cash outflow from leases                            17     (1,543)      (1,966)     (2,325)                      this adjustment.
+Total diligence adjustments                                         15        1,435       4,177
+Diligence adjusted EBITDA                                       18,812       14,175      24,093              14       Removal of third-party Crystal charges: In Sep-22, Intellifi
+Total Pro-forma adjustments                                      2,352        4,175       1,653                       acquired the Crystal software IP for cash and shares. Prior to the
+Pro-forma adjusted EBITDA                                       21,164       18,350      25,745                       acquisition, the Company was paying Crystal's owners for
+As a % of revenue                                                                                                     software access. Post acquisition, the only expenses related to
+Reported EBITDA                                                  20.8%       12.4%       15.4%
+Crystal are intercompany charges that are eliminated upon
+Diligence adjusted EBITDA                                        20.9%       13.8%       18.7%
+consolidation. As a result, this adjustment eliminates the charges
+Pro-forma adjusted EBITDA                                        23.7%       18.1%       20.0%
+paid to a third party prior to the IP acquisition.
+Source: Mangement information and Deloitte analysis
+15       Executive vacancy: As part of the re-organization described in
+Adj 1b, an executive (Exec #4 in supporting schedules provided)
+was terminated, with severance paid out in Jun-23. Management
+intends to replace the role, but the position has been vacant since
+the executive's departure and was still unfilled as of Jan-24. This
+adjustment adds in the monthly cost of the executive's salary
+during the vacancy period from Jul-23 to Sep-23.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                21                                                               Private and Confidential

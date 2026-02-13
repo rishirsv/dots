@@ -1,0 +1,50 @@
+Overview
+Consolidated Balance Sheet | Overview
+The Company established additional locations across Canada, leading to an increase in ROU assets
+during the Historical Period
+Balance sheet | CMLS Consolidated
+Assets (Continued)
+C$000                                                      Dec 21        Dec 22         Sep 23            •   Long-lived assets: Consists of (i) $23.2M of ROU lease assets, (ii)
+$3.6M of fixed assets (i.e., furniture & equipment, leasehold
+Cash, cash equivalents and ST investments                  16,028        16,127        23,111
+improvements, and computer hardware); and (iii) $4.5M of intangible
+Restricted Cash and cash held as collateral                20,113        11,154         8,479
+assets (primarily computer software and acquired customer
+Other receivable                                           19,348        24,176        29,677
+relationships), all net of depreciation. The increase in long-lived assets
+Mortgage and loan receivables                             916,434       725,761       593,785
+was primarily driven by the addition of office leases in Vancouver and
+Securitization receivables                                  8,486         9,743         8,801
+Montreal. ROU lease assets are accounted for under IFRS 16.
+Commercial mortgage-backed securities                         449           816           860
+Derivative assets/(liabilities)                                46           620           342            •   Other assets: Consists of (i) $2.0M of deferred tax assets, (ii) $1.6M of
+Long-lived assets                                          16,849        25,757        31,309                prepaids; and (iii) $1.7M of deposits and other assets. Refer to Exhibit
+Other assets                                                2,689         4,454         5,266                E7 for a detailed breakout of prepaid expenses. Deposits and other
+Total assets                                             1,000,441       818,607       701,631                assets consist of rent & security deposits on equipment and office
+Bank indebtedness                                         (48,236)      (52,878)      (11,357)               leases, alongside AR contract assets and the Company’s investment in
+Accounts payable and accrued liabilities                  (16,414)      (19,337)      (25,477)               Skyhawk Capital Advisors. AR contract assets are recorded in Intellifi
+Debt related to securitizations                          (866,659)     (667,240)     (579,791)               and represent the present value of the guaranteed monthly minimum
+Income taxes payable                                        4,731          (711)         (627)               amounts recognized upfront for software licensing fees, as described
+Deferred income tax liabilities                            (3,991)       (1,427)         (770)               under the Accounting policies section.
+Notes payable                                              (1,526)            0        (2,588)           Liabilities
+Other Liabilities                                         (14,855)      (22,453)      (29,152)
+Total liabilities                                         (946,949)     (764,046)     (649,761)           •   Bank indebtedness: Comprises the amount drawn on the Company’s
+Common shares                                             (18,514)      (20,155)      (21,358)               warehouse credit facility as of Sep-23. The warehouse credit facility
+Preferred shares                                             (507)         (507)         (507)               provides the Company with funds for purchasing and originating eligible
+Contributed surplus                                          (445)       (1,187)       (2,095)               mortgages, as dictated by its credit agreement. The warehouse facility
+Accumulated other comprehensive income                       (123)          497           794                has three tranches that each carry different interest rates and standby
+Retained Earnings                                         (33,903)      (33,209)      (28,704)               fee rates. In total, the three tranches allow for $135M of borrowing.
+Total equity                                               (53,492)      (54,561)      (51,870)           •   The operating line of credit is also recorded in this financial statement
+Total liabilities and equity                            (1,000,441)     (818,607)     (701,631)               line when drawn (nil at Sep-23). It has a maximum borrowing capacity
+Source:Monthly TB by Entity                                                                                   of $40M and renews on June 1. The operating facility is intended to
+provide funds for day-to-day working capital needs. Both the operating
+and warehouse facilities are issued by National Bank, with TD and
+Laurentian Bank as participating lenders.
+•   Accounts payable and accrued liabilities: Comprises trade payables,
+commission payables to commercial originators and residential external
+brokers, accrued payroll liabilities, and accrued liabilities for various
+operational expenses. The increase in this balance can be attributed to
+higher incentive payouts and Axiom fees accrued. Refer to Exhibit E8
+for AP aging and details.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                46                                                               Private and Confidential

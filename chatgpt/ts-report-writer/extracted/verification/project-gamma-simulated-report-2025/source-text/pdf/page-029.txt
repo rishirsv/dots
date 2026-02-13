@@ -1,0 +1,52 @@
+Overview
+Consolidated P&L | Overview
+Total revenues grew from $90.2M in FY21 to $128.9M in LTM Sep-23, largely due to an increase in
+administration revenues
+Income statement overview | Consolidated
+Basis of presentation
+As a % of revenue
+LTM                        LTM              Tables presented in the Consolidated P&L section contain reported
+C$000                                         FY21       FY22    Sep 23       FY21     FY22 Sep 23             consolidated P&L figures for FY21, FY22, and LTM Sep-23. Reported
+Underwriting - CMHC                          8,185   16,511    33,829       9.1%  16.1%   26.2%            amounts were sourced from the monthly TB’s. Refer to Exhibits E1
+Servicing revenues                          24,290   28,720    32,664     26.9%   27.9%   25.3%            and E2 for reconciliations to the external FS and internal financial
+Adjudication & Program                       7,089    7,085     9,677       7.9%    6.9%    7.5%
+statements. Refer to the Accounting policies section for a description
+Mortgage Analytics                           3,771    4,127     4,238       4.2%    4.0%    3.3%
+of the nature and various sub-streams that make up each of the
+Administration & Other                         940    1,386     1,392       1.0%    1.3%    1.1%
+revenue items described below. We note that P&L figures are
+Management Revenue                             511      920     1,021       0.6%    0.9%    0.8%
+Other Admin Revenues                           760      937       950       0.8%    0.9%    0.7%
+presented by BU Verticals in Exhibit E10.
+Administration Revenue                        45,547   59,687    83,770     50.5%   58.1%   65.0%
+Net placement revenue                         29,801   23,508    25,927     33.0%   22.9%   20.1%            Revenues
+Securitization and other income                3,018    4,147     7,737       3.3%    4.0%    6.0%
+Software Services                              3,907    4,753     5,198       4.3%    4.6%    4.0%           •   Administration Revenue: Increased from $45.5M in FY21 to
+Net interest income                            4,216    3,940     3,301       4.7%    3.8%    2.6%               $83.8M in LTM Sep-23, particularly due to the influx in business
+Realized Gain (loss) on financial instruments 3,749     6,744     3,005       4.2%    6.6%    2.3%               volume from the CGHLI program during LTM Sep-23. See Exhibit
+Revenue                                         90,238 102,780 128,938       100.0% 100.0% 100.0%                  E3 for a breakdown graphic of administration revenues during the
+Expenses                                       (75,963) (94,876) (115,001)   (84.2%) (92.3%) (89.2%)               Historical Period. Key drivers are further described as follows:
+Income before income tax expense                14,275    7,904    13,937     15.8%     7.7%  10.8%
+Income tax expense                            (3,921)  (2,371)   (5,470)     (4.3%)  (2.3%)  (4.2%)                The Company earned higher servicing revenues as the overall
+Net income                                      10,354    5,533     8,468     11.5%     5.4%    6.6%                  AUA balance increased, particularly for AVEO & CGHLI loans,.
+Net Interest Expense                             929    1,084     1,551       1.0%    1.1%    1.2%                  AUA Equivalents (“AUAE”) for CGHLI increased from $31.8M as
+Amortization                                   3,593    3,752     4,427       4.0%    3.7%    3.4%                  of Dec-22 to $940.5M in Sep-23; refer to the Mortgage
+Tax                                            3,921    2,371     5,470       4.3%    2.3%    4.2%                  Portfolio Analysis section for additional details.
+EBITDA                                          18,797   12,740    19,916     20.8%   12.4%   15.4%
+As a % of revenue
+ Underwriting revenues from the CMHC programs, ACLP and
+Net income                                   11.5%       5.4%       6.6%      11.5%    5.4%      6.6%                 CGHLI, increased from $8.2M in FY21 to $33.8M in LTM Sep-23,
+EBITDA                                       20.8%      12.4%      15.4%      20.8%   12.4%     15.4%                 largely due to higher adjudication volumes for the CGHLI
+Source:Monthly TB by Entity                                                                                           program. Adjudicated CGHLI applications more than doubled
+from ~2,000 applications per month to ~4,000 per month in
+Sep-23. A total of 11,610 applications were adjudicated in Q3-
+23 alone, and the Sep-23 volume is the expected monthly run-
+rate going forward. Prior to H2-FY22, CMHC underwriting
+revenues were derived from the ACLP program, where deal sizes
+were typically large, leading to lumpiness in revenues. The ACLP
+program accounted for $8.2M and $5.4M in UW revenues in
+FY22 and LTM Sep-23, respectively. The ACLP program also
+generated $2.0M and $2.7M in servicing revenues in FY22 and
+LTM Sep-23, respectively.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                29                                                            Private and Confidential

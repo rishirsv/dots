@@ -1,0 +1,41 @@
+A2: Scope            A3: Certain
+A1: Scope of
+exclusions and       terms of             A4: Glossary
+services
+limitations          engagement
+Appendices | A1: Scope of services
+Deliverables: Our deliverables will be prioritized, and we will endeavor                                     Mortgage portfolio analytics (continued):
+to communicate to you our significant issues and findings as they arise
+Loan Trend Analysis (continued):
+so that you can, as you deem appropriate, address the related business
+and deal issues as soon as possible. It will not always be possible for all                                  •   Perform analysis to understand future principal repayments for
+of our communications to be in the form of written reports; however, we                                          outstanding mortgage vs. paid off mortgage by mortgage type.
+will endeavor to provide significant observations in written form prior to
+the completion of the engagement. As agreed with you, our deliverables                                       Exception Analysis:
+will include the following:                                                                                  •   Understand key parameters like loan-to- value ratio, credit score,
+•   Interim Communications — Progress updates and summaries of                                                   debt service coverage ratio, etc. to identify non- compliant loans and
+significant findings on an interim basis will be provided either orally                                      provide insight into the Company's risk portfolio by investor type.
+or in the form of a bullet point outline. Such communications will be                                    •   Analyze other risk factors such as customers’/investors' debt capacity
+provided as often as deemed necessary by Client for the purpose of                                           in comparison to their net income level, to the extent data is
+interim communication of significant issues.                                                                 available.
+•   Issue Summary Memorandum — A written communication of our                                                Deliverable (Analytics): Our deliverables consist of:
+detailed findings and observations and supporting Excel databook will
+be provided on completion of our fieldwork. Our draft memorandum                                         •   An interactive dashboard for the Areas of Focus that can be used
+will typically contain certain outstanding matters that may require                                          dynamically by changing multiple filters to view different metrics and
+further clarification by or information from Company management. As                                          cuts of analysis (e.g. origination, yield %, customer profile,
+additional information is received, we may issue additional versions of                                      delinquency, loan risk rates etc.)
+our memorandum.                                                                                          •   Summary of observations and key trend analysis
+Mortgage portfolio analytics (provided under separate cover):
+Portfolio Snapshot Analysis:
+•   Evaluate the Company's mortgage portfolio with a deep dive into KPIs
+such as origination, yield%, delinquency, loss, mortgage type, etc.
+•   Understand key loan characteristics from macro level to individual
+loans to gain a deeper understanding of the loan portfolio acquired by
+different segment. Key analysis filters include by region, origination
+year, customer group and other major dimensions.
+Loan Trend Analysis:
+•   Assess the portfolio's historical trends through a time series analysis
+of the main KPIs including origination, current balance, interest rate,
+delinquency value, yield%, etc.
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                67                                                              Private and Confidential

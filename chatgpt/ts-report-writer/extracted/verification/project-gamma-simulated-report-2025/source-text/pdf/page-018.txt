@@ -1,0 +1,52 @@
+Normalized
+EBITDA
+Quality of earnings | Normalized EBITDA
+One-time consulting fees include $254K for a potential acquisition that did not materialize during
+Aug- and Sep-23
+Normalized EBITDA - Consolidated
+LTM
+C$000                                                    Ref.     FY21         FY22     Sep 23                #        Diligence adjustments
+Reported EBITDA                                                  18,797      12,740      19,916
+Diligence adjustments                                                                                         3g       Accounting advisory (IFRS transition): Removes non-
+Severance                                                 1          -       1,600       2,883                        recurring expenses associated with converting the Company's
+Non-operating P&L income/expense                          2        459         896       2,754                        financial reporting standards from ASPE to IFRS during FY21. This
+Legal (Intellifi spin-out)                            3a          -         404          39                        adjustment includes both accounting advisory and audit fees
+Legal (MAG/BPO re-organization)                       3b         18           -           -                        associated with auditing the historical comparatives.
+Legal (Project Alpha/Beta)                            3c          -           -          10
+Legal (Non-recurring shareholder expenses)            3d          -           3          20               3h       Audit (non-recurring): In Jul-23, the Company engaged a third
+Legal (CMHC Approved Lender status)                   3e          -          29          28                        party for a multi-year re-audit engagement of Intellifi as a
+Unused legal retainer                                 3f          -          27          23                        requirement to obtain CMHC Approved Lender status. This
+Accounting advisory (IFRS transition)                 3g        380           -           -                        adjustment removes the one-time audit fees associated with this
+Audit (non-recurring)                                 3h          -           -          50                        engagement, which were originally accrued in May-23 and Jun-23.
+Consulting (Project Alpha/Beta)                        3i         -           -         254
+Consulting (Account system conversion)                 3j         -           -         132               3i       Consulting (Project Alpha/Beta): Removes one-time
+Consulting (CBRE - Return to Office)                  3k         68          44           -                        consulting expenses associated with a potential acquisition code-
+Consulting (MAG/BPO valuation)                         3l         5          14           -                        named Project Alpha/Beta in Aug-23 and Sep-23 when they were
+Consulting (Strategic option analysis)                3m          -          54           -                        originally accrued.
+Consulting (Project Monarch)                          3n          -           6           -
+One-time / non-recurring professional expenses            3        471         580         556               3j       Consulting (Account system conversion): Removes the one-
+Stock Based Compensation                                  4        217          69         155                        time consulting expenses incurred to support the upgrade of the
+One-time/Non-recurring items - Intellifi                  5         (0)       (122)        102                        Company's ERP from Microsoft Navision ("NAV") to 365 Business
+One-time bad debt expense                                 6          -           -          63                        Central. The upgrade was completed in Nov-23. See Adj 22 for a
+CRM implementation                                        7         16          14          39                        related adjustment.
+Discontinued service offering - Insurance Premium         8        (35)         (0)         34
+Residential origination platform                          9          -           -          22               3k       Consulting (CBRE - Return to Office): Removes one-time
+Unadjusted Items                                         10          -          82          60                        consulting costs paid to CBRE during late FY21 and early FY22 for
+Facilities Software (COVID) Expense                      11          6          11           7                        an engagement to develop a return-to-office strategy.
+One-time other income                                    12       (150)          -           -
+Banking fees                                             13          -           -         247               3l       Consulting (MAG/BPO valuation): Between the end of 2021
+Removal of third-party Crystal charges                   14        532         359         (38)                       and beginning of 2022, the Company engaged a third-party
+Executive vacancy                                        15          -           -        (123)
+consultant to conduct a valuation of the Mortgage Analytics Group
+Out-of-period adjustments                                16         43         (85)       (261)
+(MAG) and Business Process Outsourcing (BPO) operations. This
+Net cash outflow from leases                             17     (1,543)     (1,966)     (2,325)
+adjustment removes the one-time costs associated with this
+Total diligence adjustments                                          15       1,435       4,177
+engagement.
+Diligence adjusted EBITDA                                        18,812      14,175      24,093
+Total Pro-forma adjustments                                       2,352       4,175       1,653
+Pro-forma adjusted EBITDA                                        21,164      18,350      25,745
+Source: Mangement information and Deloitte analysis
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                18                                                              Private and Confidential

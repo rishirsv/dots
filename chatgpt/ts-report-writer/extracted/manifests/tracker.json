@@ -1,9 +1,9 @@
 [
   {
-    "source_file": "Project Dental_Report_25July2025_vS.pdf",
-    "report_id": "project-dental-report-25july2025-vs",
+    "source_file": "Project Gamma - Simulated Report 2025.pdf",
+    "report_id": "project-gamma-simulated-report-2025",
     "status": "pass",
-    "output_file": "/Users/rishi/Code/ai-tools/chatgpt/ts-report-writer/extracted/project-dental-report-25july2025-vs.md",
-    "notes": "fitz_pdf_catalog; qa_pass"
+    "output_file": "/Users/rishi/Code/ai-tools/chatgpt/ts-report-writer/extracted/project-gamma-simulated-report-2025.md",
+    "notes": "fitz_pdf_catalog"
   }
 ]

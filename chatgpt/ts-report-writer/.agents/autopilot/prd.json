@@ -391,8 +391,8 @@
       "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-gamma-simulated-report-2025.md --source-manifest extracted/verification/project-gamma-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-gamma-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-gamma-simulated-report-2025",
       "priority": 12,
       "dependsOn": [],
-      "passes": false,
-      "attempts": 0,
+      "passes": true,
+      "attempts": 1,
       "blocked": false,
       "blockedReason": "",
       "files": [

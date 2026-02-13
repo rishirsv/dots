@@ -1,0 +1,58 @@
+Normalized
+EBITDA
+Quality of earnings | Normalized EBITDA
+Financing interest expense pertaining to the Company’s operating LoC, note payable and ROU lease
+liabilities is removed from EBITDA along with interest income earned on operating cash balances
+Normalized EBITDA - Consolidated
+LTM               #      Definitional adjustments
+C$000                                                               FY21        FY22      Sep 23
+Revenue, reported                                                 90,238      102,780    128,938                     •   Net financing interest expense: Comprises the interest
+Net income                                                        10,354        5,533      8,468                         expense and interest income amounts shown in the breakout
+Net financing interest expense                                       929        1,084      1,551                         table directly below. Financing and transaction costs relate to
+Amortization                                                       3,593        3,752      4,427                         the Company’s operating line of credit (LoC). The operating LoC
+Tax                                                                3,921        2,371      5,470                         and promissory notes payable pertain to the Company’s
+Reported EBITDA                                                   18,797       12,740     19,916                         operations only and are not associated with debt relating to
+securitizations or lending activities which is operational (not
+Total diligence adjustments                                           15        1,435       4,177
+financing) in nature. Similarly, interest income being removed
+Diligence adjusted EBITDA                                         18,812       14,175      24,093
+from EBITDA pertain to operating cash balances only.
+Total Pro-forma adjustments                                        2,352        4,175       1,653
+Pro-forma adjusted EBITDA                                         21,164       18,350      25,745                        Interest income & expenses related to securitization & lending
+activities were deemed operational in nature and have not been
+As a % of revenue
+removed from EBITDA. This includes interest income earned on
+Reported EBITDA                                                    20.8%        12.4%      15.4%
+cash held in trust for third parties, which primarily makes up the
+Diligence adjusted EBITDA                                          20.9%        13.8%      18.7%
+“Bank and Other Interest Income” line in the second breakout
+Pro-forma adjusted EBITDA                                          23.7%        18.1%      20.0%
+table on the bottom left. Cash held in trust for third parties that
+Source: Mangement information and Deloitte analysis
+pertains to on-balance sheet mortgages is classified as
+Net financing interest expense                                                                                           restricted cash on the balance sheet. Other cash or term deposit
+LTM                        balances held in trust are not recorded on the balance sheet.
+C$000                                                             FY21           FY22       Sep 23                   •   Tax: Includes current and deferred tax expenses, as reported
+Financing & transactions costs                                  323            354          311                       on the consolidated P&L.
+Right-of-use liability - interest                               506            684        1,096
+•   Depreciation & amortization: Includes amortization on
+Loan interest Expense - Note payable                            125             84          235
+equipment and leaseholds, intangible assets, goodwill, and
+Interest expense                                                  953          1,122        1,642
+right-of-use (ROU) assets, as well as post-close adjustments.
+Interest income on operating bank account balances                (24)           (39)         (90)
+The post-close adjustments ($229K in LTM Sep-23) relate to the
+Net financing interest expense                                     929          1,084        1,551
+acquisition of ICF several years ago for which the SPA included a
+Source: Mangement information and Deloitte analysis                                                                      provision for additional contingent consideration in the form of
+Net Operating Interest Expense (included in EBITDA)                                                                      additional CFSI equity. On the acquisition date, Management
+assessed the possibility of ICF meeting certain contingencies as
+LTM                         remote, so the fair value of the applicable contingent
+C$000                                                              FY21         FY22       Sep 23                        consideration (bonus shares) was measured at zero. This fair
+Bank and Other Interest Income                                     630         2,336         5,501                      value was remeasured at each reporting date, with any changes
+Interest revenue – mortgages                                    25,144        19,416        17,988                      recorded in the income statement as part of amortization costs.
+Interest expense – mortgages                                   (20,928)      (15,475)      (14,687)
+Interest Income - Restricted Cash                                    3            30            65
+Net Operating Interest Expense                                    4,849         6,306         8,866
+This written communication is solely for CMLS Financial Solutions Inc.’s benefit, and is not intended to be relied upon by any other person or entity.
+Project Gamma | DRAFT Financial Due Diligence Report | February 8, 2024                                14                                                                Private and Confidential
