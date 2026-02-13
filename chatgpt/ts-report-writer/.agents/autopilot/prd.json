@@ -188,9 +188,9 @@
       "priority": 6,
       "dependsOn": [],
       "passes": false,
-      "attempts": 0,
-      "blocked": false,
-      "blockedReason": "",
+      "attempts": 1,
+      "blocked": true,
+      "blockedReason": "Source file is CDFV2 Encrypted/unreadable; strict extraction and source-text export fail with File is not a zip file.",
       "files": [
         "reports/Project Coffee_buy side_FDD (Consumer & Retail - F&B).pptx",
         "extracted/project-coffee-buy-side-fdd-consumer-retail-f-b.md",

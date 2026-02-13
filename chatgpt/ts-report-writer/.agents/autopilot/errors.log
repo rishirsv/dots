@@ -4,3 +4,8 @@
 [2026-02-13 14:25:50] ITERATION 1 left uncommitted changes
 [2026-02-13 14:32:04] ITERATION 1 left uncommitted changes
 [2026-02-13 14:33:24] BLOCKED 2.0: Source file is CDFV2 Encrypted; strict source-text extraction failed with "File is not a zip file".
+[2026-02-13 14:34:31] ITERATION 2 left uncommitted changes
+[2026-02-13 14:40:29] ITERATION 3 left uncommitted changes
+[2026-02-13 14:47:25] ITERATION 4 left uncommitted changes
+[2026-02-13 14:55:20] ITERATION 5 left uncommitted changes
+[2026-02-13 14:57:43] BLOCKED 6.0: Source file is CDFV2 Encrypted/unreadable; strict extraction and source-text export fail with "File is not a zip file".

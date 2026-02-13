@@ -1,9 +1,9 @@
 [
   {
-    "source_file": "Project Cinema Report.pdf",
-    "report_id": "project-cinema-report",
-    "status": "done_pending_review",
-    "output_file": "/Users/rishi/Code/ai-tools/chatgpt/ts-report-writer/extracted/project-cinema-report.md",
-    "notes": "fitz_pdf_catalog"
+    "source_file": "Project Coffee_buy side_FDD (Consumer & Retail - F&B).pptx",
+    "report_id": "project-coffee-buy-side-fdd-consumer-retail-f-b",
+    "status": "blocked",
+    "output_file": "/Users/rishi/Code/ai-tools/chatgpt/ts-report-writer/extracted/project-coffee-buy-side-fdd-consumer-retail-f-b.md",
+    "notes": "File is not a zip file"
   }
 ]

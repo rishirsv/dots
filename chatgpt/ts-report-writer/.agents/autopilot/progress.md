@@ -120,3 +120,12 @@ Run: 20260213-142610-36275 (iteration 5)
   - Updating render, trace, selected-lines, and section mapping artifacts together prevents markdown/trace sync regressions during manual cleanup.
 
 ---
+## [2026-02-13 14:57:43 EST] - 6.0: Extract and fully clean Project Coffee_buy side_FDD (Consumer & Retail - F&B).pptx (BLOCKED)
+
+Run: 20260213-142610-36275 (iteration 6)
+
+- Blocked reason: Source file `reports/Project Coffee_buy side_FDD (Consumer & Retail - F&B).pptx` is encrypted/unreadable (`CDFV2 Encrypted` behavior); strict extraction and strict source-text export fail with `File is not a zip file`.
+- Attempted: Ran isolated single-report pipeline (`--start-index 12 --max-reports 1`) and direct strict source-text extraction via `scripts/extract_source_text.py`; both paths failed on the same container error. Tried LibreOffice conversion fallback and it failed to load the source.
+- Recommendation: Provide an unlocked/decryptable `.pptx` or an alternate unencrypted export (for example PDF) for this report, then rerun story 6.0.
+
+---
