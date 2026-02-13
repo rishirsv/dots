@@ -52,7 +52,7 @@
       "priority": 2,
       "dependsOn": [],
       "passes": false,
-      "attempts": 1,
+      "attempts": 2,
       "blocked": true,
       "blockedReason": "Source file is CDFV2 Encrypted; strict source-text extraction fails (File is not a zip file).",
       "files": [
@@ -85,7 +85,7 @@
       "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-blue-jay-simulated-report-2025.md --source-manifest extracted/verification/project-blue-jay-simulated-report-2025/source-text/manifest.json --out-dir extracted/verification/project-blue-jay-simulated-report-2025/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-blue-jay-simulated-report-2025",
       "priority": 3,
       "dependsOn": [],
-      "passes": false,
+      "passes": true,
       "attempts": 0,
       "blocked": false,
       "blockedReason": "",

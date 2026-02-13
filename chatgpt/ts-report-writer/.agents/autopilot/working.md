@@ -1,7 +1,7 @@
 # Working Notes
 
-- Story: 2.0: Extract and fully clean FDD and Value Creation example 1 (Consumer & Retail).pptx
-- Last attempt: Ran isolated single-report pipeline extraction in strict/fail-closed mode and attempted strict source-text export with `scripts/extract_source_text.py`.
-- Result: Blocked; source file is `CDFV2 Encrypted` and source-text export failed (`File is not a zip file`).
-- Next approach: Wait for an unlocked/decryptable source file, then rerun extraction + full cleanup + QA for this report.
-- Gotchas: `.pptx` extension does not guarantee a ZIP-based PPTX package; validate encryption/container type with `file` before spending cleanup effort.
+- Story: 3.0: Extract and fully clean Project Blue Jay - Simulated Report 2025.pdf
+- Last attempt: Ran isolated single-file pipeline extraction, generated strict PDF source-text artifacts, completed full canonical cleanup + metadata/coverage map, and ran provenance + fail-closed gates.
+- Result: Success; verification command passed and report was marked reviewed as `pass`.
+- Next approach: Move to the next remaining story in `prd.json` and repeat isolated single-file extraction with full cleanup before QA.
+- Gotchas: This PDF produced zero machine-readable text across all source-text pages, so canonical sections must remain `Not present in source report` with explicit zero-text evidence in coverage/review notes.

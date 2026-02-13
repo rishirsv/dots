@@ -115,6 +115,13 @@ Required verification artifacts include:
 ### Learnings (Newest First)
 
 - Date: 2026-02-13
+- Report ID: `project-blue-jay-simulated-report-2025`
+- Issue observed: strict PDF extraction produced empty page text artifacts (`page-001.txt` ... `page-108.txt` all zero-length), leaving no machine-readable body lines for canonical sections.
+- Root cause: source PDF pages are image-only/non-selectable text, so strict text extraction returns no non-OCR lines.
+- Fix applied: completed full-report cleanup by setting canonical sections to `Not present in source report`, filled required metadata + source-to-extraction coverage map, and verified provenance/gates with zero unmatched lines.
+- Prevention rule: when strict PDF source-text artifacts are empty across pages, do not fabricate content; document the zero-text condition in coverage/review notes and keep section output as `Not present in source report` unless an explicit OCR exception is requested.
+
+- Date: 2026-02-13
 - Report ID: `example-report-private-equity-lender-project-garrison`
 - Issue observed: auto-mapped output pulled legal/engagement-letter and navigation fragments into canonical sections, especially `Executive Summary`.
 - Root cause: strict extraction selected dense PPTX XML lines without a mandatory report-wide cleanup pass before QA.
