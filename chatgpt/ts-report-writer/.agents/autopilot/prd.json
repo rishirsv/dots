@@ -291,8 +291,8 @@
       "dependsOn": [],
       "passes": false,
       "attempts": 0,
-      "blocked": false,
-      "blockedReason": "",
+      "blocked": true,
+      "blockedReason": "Source file is CDFV2 Encrypted/unreadable; strict extraction and source-text export fail with File is not a zip file.",
       "files": [
         "reports/Project Ed_buy side_FDD (IGH - Education).pptx",
         "extracted/project-ed-buy-side-fdd-igh-education.md",

@@ -1,7 +1,7 @@
 # Working Notes
 
-- Story: 8.0: Extract and fully clean Project Dental_Report_25July2025_vS.pdf
-- Last attempt: Ran single-file strict pipeline extraction, generated source-text artifacts, then executed full-report cleanup with canonical section reset, synced mapping/render artifacts, and completed montage-backed review notes.
-- Result: Success. Provenance and fail-closed QA gates pass; report marked reviewed as `pass`; PRD updated with `passes=true`.
-- Next approach: Continue to the next incomplete PRD story in priority order.
-- Gotchas: Raw strict PDF outputs can contain mostly fragment/table-label lines; cleanup must update markdown, selected-lines, render-trace, and section-map artifacts together to avoid trace/provenance drift.
+- Story: 9.0: Extract and fully clean Project Ed_buy side_FDD (IGH - Education).pptx
+- Last attempt: Ran strict single-file pipeline extraction and strict `scripts/extract_source_text.py` export for `reports/Project Ed_buy side_FDD (IGH - Education).pptx`.
+- Result: Blocked. Source file is `CDFV2 Encrypted`; source-text extraction fails with `File is not a zip file`, preventing cleanup and fail-closed QA completion.
+- Next approach: Wait for unlocked source replacement (unencrypted `.pptx` or `.pdf`), then rerun extraction + full cleanup + QA gates.
+- Gotchas: `pipeline run` can finish while manifest marks report `blocked`; always confirm with `file <report>` and explicit `extract_source_text.py` output.

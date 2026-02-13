@@ -216,3 +216,9 @@ Run: 20260213-142610-36275 (iteration 9)
   - For strict PDF runs with fragment-dominant output, provenance and cleanup pass only when markdown cleanup is accompanied by synchronized updates to selected-lines, render-trace, and section mapping artifacts.
 
 ---
+## [2026-02-13 15:18:14 EST] - 9.0: Extract and fully clean Project Ed_buy side_FDD (IGH - Education).pptx (BLOCKED)
+
+- Blocked reason: Source report is `CDFV2 Encrypted`; strict source-text export fails with `File is not a zip file`, so extraction/cleanup/provenance gates cannot be completed.
+- Attempted: Ran single-file strict pipeline extraction for only this report and explicit strict `scripts/extract_source_text.py` export to `extracted/verification/project-ed-buy-side-fdd-igh-education/source-text`; both point to unreadable encrypted Office container.
+- Recommendation: Replace `reports/Project Ed_buy side_FDD (IGH - Education).pptx` with an unlocked `.pptx` (or export to an unencrypted `.pdf`) and rerun story 9.0.
+
