@@ -1,0 +1,17 @@
+Gross margin analysis
+Gross m argin analysis
+Total revenue                                                        Total cost                                                  Gross profit                                 Gross m argin
+TTM                                                              TTM                                                     TTM                                       TTM
+$'000                                                FY21            FY22             FY23         Mar-24               FY21           FY22           FY23          Mar-24               FY21          FY22         FY23    Mar-24      FY21        FY22         FY23 Mar-24
+Box office/Other revenues                    274,811         541,131          706,790         709,647          (285,625) (533,624) (670,750)                   (672,856)         (10,814)         7,507       36,040     36,791    (3.9%)       1.4%        5.1%        5.2%
+Food service/delivery - theatres             172,253         341,692          434,433         435,630            (37,697)       (76,607) (100,428)             (100,865)         134,556 265,085 334,005 334,765                   78.1%      77.6%       76.9%        76.8%
+Film entertainment and content                  447,064         882,823 1,141,223 1,145,277                       (323,322) (610,231) (771,178)                   (773,721)         123,742 272,592 370,045 371,556                   27.7%      30.9%       32.4%        32.4%
+Food service/delivery - LBE                    14,745          39,694          48,716           48,269             (3,986)      (11,095)       (13,559)         (13,389)          10,759        28,599        35,157     34,880    73.0%      72.0%       72.2%        72.3%
+Other revenue                                  29,248          68,636          80,300           80,043           (31,331)       (65,376)       (80,871)         (82,890)           (2,083)        3,260          (571)   (2,847)   (7.1%)       4.7%       (0.7%)      (3.6%)
+Location based entertainment                      43,993        108,330          129,016         128,312            (35,317)       (76,471)       (94,430)         (96,279)            8,676       31,859        34,586     32,033    19.7%      29.4%       26.8%        25.0%
+Media                                            65,330   111,728   118,655   118,709                              (37,266) (50,302) (51,767)                      (52,496)          28,064  61,426  66,888  66,213                   43.0%      55.0%       56.4%        55.8%
+Total                                           556,387 1,102,881 1,388,894 1,392,298                             (395,905) (737,004) (917,375)                   (922,496)         160,482 365,877 471,519 469,802                   28.8%      33.2%       33.9%        33.7%
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   44

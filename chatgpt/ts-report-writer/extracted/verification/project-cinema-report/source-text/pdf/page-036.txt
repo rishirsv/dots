@@ -1,0 +1,27 @@
+Executive summary           Key findings         Historical trading        Balance sheet           Appendices
+Net working capital (4/5) – Pro forma adjustments
+Net w orking capital                                                                                                                                         Pro forma adjustments
+Average
+TTM               15. NWC impact of pro forma adjustments: With the opening of 3 new LBE locations in
+$'000                                                              Ref              FY21              FY22              FY23            Mar-24                  Q4-24, this adjustment, following QofE adjustment # 12, adjusts pro forma trade and
+Net w orking capital, reported                                                  (338,413)         (344,350)         (265,515)         (256,667)                 other receivables, inventories, prepaid expenses, accounts payables, and gift card
+Definitional adjustments                                                          73,062            65,137            41,876            21,401                  deferred revenue into the scope period.
+Diligence adjustments                                                            (15,081)            9,188           (13,485)           (7,794)                        I.      LBE NWC associated with the 3 new locations was calculated as a
+Net w orking capital, diligence adjusted                                        (280,432)         (270,026)         (237,124)         (243,060)                                percentage of LBE revenue to total revenue in each historical quarter. The
+As % of TTM net sales                                                            (50.4%)           (27.9%)           (18.1%)           (17.9%)                                 Company had 13 LBE locations across the scope period and the associated
+Pro form a adjustm ents                                                                                                                                                        NWC for LBEs was applied evenly to the 13 locations to calculate the NWC for
+Trade and other receivables                                                    699             1,499             1,621             1,588                                 each location.
+Inventories                                                                    304               663               639               526
+II.     Refer to the appendix for more detailed information on the assumptions
+Prepaid expenses and other current assets                                      163               325               337               322
+employed and calculations made for this adjustment.
+Gift cards                                                                  (1,067)           (2,631)           (3,143)           (3,129)
+Accounts payable and accrued expenses                                       (1,579)           (3,172)           (3,231)           (3,554)
+New LBE locations                                                 15          (1,480)           (3,316)           (3,777)           (4,247)
+Pro forma adjustments                                                             (1,480)           (3,316)           (3,777)           (4,247)
+Net w orking capital, pro form a adjusted                                       (281,913)         (273,342)         (240,901)         (247,308)
+As % of TTM net sales                                                            (50.7%)           (28.3%)           (18.4%)           (18.2%)
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   35

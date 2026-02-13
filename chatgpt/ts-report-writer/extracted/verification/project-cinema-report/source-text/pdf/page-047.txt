@@ -1,0 +1,32 @@
+Executive summary           Key findings         Historical trading        Balance sheet           Appendices
+QofE – Adjustment #12
+Calculation:
+1                                                                                                                                                            1            The aside presents the various income statement accounts
+LBE sum m ary
+TTM
+Geographical sales
+associated with the Company’s 13 current location-based
+entertainment venues across the scope period.
+$'000                                                      FY21          FY22          FY23        Mar-24
+Food service revenues                                 14,945        39,694        48,716        48,269 a
+Amusement revenues                                     29,248        68,636        80,300        80,043 b
+2
+The estimated effect of the three new locations coming in Q1-24
+Media and other revenues                                  769         2,501         3,362         3,480 c                                                       is applied as if they existed historically. The effect is calculated by
+Cost of food service                                    3,986        11,095        13,559        13,389 d                                                       dividing each line item by 13 for each location, assuming each
+Operating costs                                        23,481        54,695        69,903        71,904 e                                                       location creates equal revenues and expenses. This is then
+Cash rent related to lease obligations                  7,850        10,681        10,968        10,986 f                                                       multiplied by three to give an estimation of the revenues and
+expenses associated with the three new locations. This is then
+2        LBE sum m ary                                                                                                                                                     summed together to reach the final EBITDA adjustment.
+TTM
+$'000                                                       FY21         FY22          FY23        Mar-24
+Food service revenues                                   3,449        9,160        11,242        11,139 (a/13)*3
+Amusement revenues                                      6,750       15,839        18,531        18,471 (b/13)*3
+Media and other revenues                                  177          577           776           803 (c/13)*3
+Cost of food service                                      920        2,560         3,129         3,090 (d/13)*3
+Operating costs                                         5,419       12,622        16,131        16,593 (e/13)*3
+Cash rent related to lease obligations                  1,812        2,465         2,531         2,535 (f/13)*3
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   46

@@ -153,7 +153,7 @@
       "verificationCommand": "./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-cinema-report.md --source-manifest extracted/verification/project-cinema-report/source-text/manifest.json --out-dir extracted/verification/project-cinema-report/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-cinema-report",
       "priority": 5,
       "dependsOn": [],
-      "passes": false,
+      "passes": true,
       "attempts": 0,
       "blocked": false,
       "blockedReason": "",

@@ -1,0 +1,42 @@
+Executive summary           Key findings         Historical trading        Balance sheet           Appendices
+Key findings (1/2) – Financials
+The Company’s financial statements are prepared under International Financial Reporting Standards (IFRS) and operates with a December 31 year-end. Below presents
+the Company’s quality of earnings, net working capital, and net debt statements on an adjusted basis.
+Read more                                                                                           Read more                                                                             Read more
+Quality of earnings                                                                                Net working capital                                                                                Net debt
+Quality of earnings                                                                               Net w orking capital                                                                               Net debt
+TTM                                                                                  Average
+As at
+$'000                                       FY21      FY22      FY23    Mar-24                                                                                                         TTM
+Revenue, reported                        656,669 1,268,562 1,542,739 1,496,541                    $'000                                           FY21        FY22        FY23      Mar-24
+Net w orking capital, reported              (338,413)   (344,350)   (265,515)   (256,667)          $'000                                               Ref.     31-Mar-24
+Revenue, pro form a adjusted             566,763 1,128,457 1,419,443 1,422,712
+Definitional adjustments                    73,062      65,137      41,876      21,401          Long-term debt                                       1        (731,452)
+EBITDA, reported                           93,402     324,415     355,963      289,589               Diligence adjustments                     (15,081)       9,188    (13,485)      (7,794)         Other liabilities                                               (6,250)
+Reclassification adjustments                  -           -     (34,896)     (23,986)           Net w orking capital, diligence adjusted    (280,432)   (270,026)   (237,124)   (243,060)
+Net debt / (cash), reported                                   (737,702)
+Management adjustments                 (177,697)   (242,743)   (163,704)    (115,032)           TTM adjusted net sales                        556,387     966,782   1,309,119   1,357,105
+Adjusted WC, as a % of net sales             (50.4%)     (27.9%)     (18.1%)     (17.9%)           Definitional adjustments                                        (77,018)
+Diligence adjustments                   (87,784)    (56,173)      3,498        4,761
+Pro forma adjustments                     2,226       7,929       8,757        8,195               Pro forma adjustments                      (1,480)     (3,316)     (3,777)     (4,247)          Net debt, definitional adjusted                                (814,720)
+Net w orking capital, pro form a adjusted   (281,913)   (273,342)   (240,901)   (247,308)          Diligence adjustments                                           (42,997)
+EBITDA, pro form a adjusted              (169,853)     33,428     169,618      163,527
+EBITDA margin, pro forma adjusted         (30.5%)       3.0%       12.2%        11.7%                                                                                                                Net debt, diligence adjusted                                   (857,717)
+Select adjustments to TTM Mar-24 include:                                                         Select adjustments to average TTM Mar-24 include:                                                  Select adjustments to Mar-24 include:
+Litigation costs (+$4.5 million): This adjustment removes                                         Player One Amusement Group (“P1AG”) removal (-$10.2                                                Capital commitments (-$35.0 million): The Company has
+the effect of litigation costs on EBITDA associated with the                                      million): As of Dec-23, the Company sold P1AG. This                                                aggregate gross capital commitments of $43.0 million ($35.0
+Company’s action against Cineworld as a result of                                                 adjustment removes P1AG’s impact on NWC items for                                                  million net of tenant inducements) related to the completion of
+Cineworld’s repudiation to acquire all of the outstanding                                         historical periods. The adjustment was calculated as a                                             construction of one theatre, three location-based
+shares of the Company.                                                                            percentage of current assets and liabilities held for sale                                         entertainment locations, and other premium experiences.
+relating to P1AG to total current assets and liabilities for each                                  Cash impact of delayed interest payment (-$2.6 million):
+Realized foreign gain (+$261,000): Management
+quarter.                                                                                           The balance of the cash and cash equivalents account as of
+adjustments reversed the entirety of the effect of foreign
+exchange on EBITDA. This adjustment adds back the                                                 Litigation accrual (+$1.1 million): This adjustment removes                                        Mar-24 is significantly higher than its historical balances due
+associated realized gain.                                                                         the AP impact of litigation costs stemming from the                                                to interest payments being deferred to Apr-24 due to the
+Cineworld lawsuit as it is non-recurring.                                                          timing of a statutory holiday. This adjustment decreases cash
+by the amount of interest expense deferred to Apr-24.
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential      9

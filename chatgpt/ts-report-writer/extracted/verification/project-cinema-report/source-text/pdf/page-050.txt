@@ -1,0 +1,43 @@
+Executive summary            Key findings        Historical trading        Balance sheet           Appendices
+NWC – Adjustment #15
+Calculation:
+1
+LBE revenue as a % of total revenue                                                                                                                                                                            The aside presents the Company’s
+1
+As at                                                Average                                                     total revenue, LBE revenue, and LBE
+TTM                                 revenue as a percentage of total
+$'000                                                                 31-Dec-21 31-Dec-22 31-Dec-23 31-Mar-24                       FY21         FY22         FY23       Mar-24                                revenue.
+Total revenue                                                           299,951       350,124        315,078       294,759      164,167      317,141      385,685      374,135
+LBE revenue                                                              19,601         31,626        33,993        34,497       11,241        27,708       33,095       32,948                            2   The aside presents the total net
+% of total revenue                                                         6.5%          9.0%         10.8%         11.7%          5.5%         8.7%         8.8%         9.2%     a                           working capital accounts associated
+with LBEs.
+NWC accounts                                                                                                                                                                                                   The aside presents a calculation of
+2
+As at                                                Average                                                 3   each account’s amount relating to LBE
+TTM                                 by multiplying the specific quarter’s
+$'000                                                                 31-Dec-21 31-Dec-22 31-Dec-23 31-Mar-24                       FY21         FY22         FY23       Mar-24
+LBE revenue percentage by the total
+Trade and other receivables                                              80,679       107,088         97,689        59,627       52,559        74,033       77,883       74,439 b
+amount and then multiplying by 3/13 to
+Inventories                                                              24,899         36,916        17,624        16,315       23,206        32,756       32,406       27,076 c
+reach an amount for the three new
+Prepaid expenses and other current assets                                13,365         15,659        11,481        13,832       12,656        16,058       16,973       15,861 d
+Accounts payable and accrued expenses                                  (157,950)     (195,296)      (172,482)     (177,150) (114,216) (156,864) (158,348) (165,854) e
+LBE locations coming in Q1-24. It is
+Gift cards                                                             (123,431)     (144,078)      (129,656)     (121,295)      (67,556) (130,505) (158,711) (153,958) f                                      assumed here that each LBE location
+NWC adjustm ent                                                        (162,438)     (179,711)      (175,344)     (208,671)      (93,351) (164,522) (189,797) (202,436)                                        has equal assets and liabilities.
+NWC accounts
+3
+As at                                                Average
+TTM
+$'000                                                                 31-Dec-21 31-Dec-22 31-Dec-23 31-Mar-24                       FY21         FY22         FY23       Mar-24
+Trade and other receivables                                                1,217         2,232         2,432          1,610          699        1,499        1,621        1,588 (a*b)*(3/13)
+Inventories                                                                  375           770            439           441          304          663          639          526 (a*c)*(3/13)
+Prepaid expenses and other current assets                                    202           326            286           374          163          325          337          322 (a*d)*(3/13)
+Accounts payable and accrued expenses                                     (2,382)       (4,071)       (4,294)        (4,784)      (1,579)      (3,172)      (3,231)      (3,554) (a*e)*(3/13)
+Gift cards                                                                (1,861)       (3,003)       (3,228)        (3,276)      (1,067)      (2,631)      (3,143)      (3,129) (a*f)*(3/13)
+NWC adjustm ent                                                           (2,450)       (3,746)       (4,366)        (5,636)      (1,480)      (3,316)      (3,777)      (4,247)
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   49

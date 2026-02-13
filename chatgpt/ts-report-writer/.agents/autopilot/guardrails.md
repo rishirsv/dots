@@ -24,3 +24,10 @@ When you encounter a recurring failure:
 - **Trigger**: `extract_source_text.py` on a `.pptx` fails with `File is not a zip file`, and `file <report>` returns `CDFV2 Encrypted`.
 - **Instruction**: Treat the story as blocked immediately, log blocker details, and request a decryptable/unlocked source export instead of retrying cleanup/QA steps.
 - **Added after**: Iteration 2 - story 2.0 source could not be parsed because the report is encrypted.
+
+### Sign: Cleanup Quality Gate Requires Fragment Pruning
+
+- **Trigger**: `scripts/qa_gates.py` fails `cleanup_quality` with `cleanup_quality_fragment` issues after provenance already passes.
+- **Instruction**: Perform a full-report cleanup pass to remove trailing sentence fragments/navigation bullets, regenerate render-trace + selected-lines + section mapping artifacts together, then rerun provenance and gates.
+- **Added after**: Iteration 5 - project-cinema-report passed provenance but initially failed fail-closed cleanup quality.
+

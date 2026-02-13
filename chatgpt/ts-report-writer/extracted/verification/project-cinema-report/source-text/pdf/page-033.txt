@@ -1,0 +1,50 @@
+Executive summary           Key findings         Historical trading            Balance sheet         Appendices
+Net working capital (1/5) – Adjusted net working capital
+The average diligence-adjusted NWC for FY23 is ($237.1million), marking a $32.9 million increase from FY22. This increase is primarily due to the exclusion of a one-time
+reorganization for Scene LP from deferred revenue.
+Net w orking capital
+Overview
+As at                                            Average
+TTM     Fiscal year presentation
+$'000                                     31-Dec-21       31-Dec-22 31-Dec-23 31-Mar-24      FY21                FY22        FY23      Mar-24
+Net w orking capital, reported             (414,357)       (310,289) (219,490) (261,480) (338,413)           (344,350)   (265,515)   (256,667)    The average net working capital reported for the TTM Mar-24 is ($256.7 million). After adjustments,
+Definitional adjustments                    82,144         54,129  (23,527)    (6,839)   73,062              65,137      41,876      21,401
+average net working capital increases to ($243.1 million).
+Diligence adjustments                       38,921       (14,879)       944      4,503 (15,081)               9,188    (13,485)      (7,794)
+Net w orking capital, diligence adjusted   (293,292)       (271,039) (242,073) (263,816) (280,432)           (270,026)   (237,124)   (243,060)
+Adjustments
+TTM adjusted net sales                       556,387       1,102,881 1,388,894 1,392,298   556,387             966,782   1,309,119   1,357,105
+Adjusted WC, as a % of net sales            (52.7%)         (24.6%)   (17.4%)   (18.9%)   (50.4%)             (27.9%)     (18.1%)     (17.9%)     The nature of the adjustments included in the analysis are as follows:
+Pro forma adjustments                      (2,450)        (3,746)         (4,366)     (5,636)   (1,480)     (3,316)     (3,777)     (4,247)
+Net w orking capital, pro form a adjusted (295,741)        (274,785)       (246,439)   (269,452) (281,913)   (273,342)   (240,901)   (247,308)            Definitional adjustments: Adjustments that are removed from net working capital for
+definitional purposes.
+The working capital schedule summarizes reported working capital (derived from the stratified balance                                                    Diligence adjustments: Impact of QofE adjustments, identified during diligence as non-
+sheet analysis), potential adjustments and pro forma adjustments to be considered for FY23.                                                               recurring in nature.
+Such proposed adjustments are not deemed to be all-inclusive. The validity of these diligence                                                            Pro forma adjustments: Adjustments made to normalize the impact of additional QofE
+adjustments and other factors raised for your consideration may require further investigation to
+understand the potential impact on your valuation model.                                                                                                  adjustments identified during diligence to reflect previously non-existing items.
+.
+Net working capital, diligence adjusted
+200,000                                                                                                                                                                                                       The initial decrease in NWC occurs in Mar-22,
+100,000                                                                                                                                                                                                       the quarter proceeding the reopening of
+theatres and LBE venues, is due to the
+0                                                                                                                                                                                                     collection of receivables from sales to gift card
+resellers, and voucher and media sales from
+$'000
+(100,000)                                                                                                                                                                                                      the holiday period. Additionally, the
+(200,000)                                                                                                                                                                                                      recognition of $60.0 million in deferred
+revenue played a role in the decrease.
+(300,000)
+(400,000)                                                                                                                                     The overall decline in the fourth quarter is
+typically due to the rise in accounts payable
+(500,000)                                                                                                                                     resulting from an increase in business
+31-Mar-21 30-Jun-21 30-Sep-21 31-Dec-21 31-Mar-22 30-Jun-22 30-Sep-22 31-Dec-22 31-Mar-23 30-Jun-23 30-Sep-23 31-Dec-23 31-Mar-24
+volume. However, the specific drop in Q4-23
+is also attributed to the reclassification of
+Trade and other receivables                 Inventories                                 Prepaid expenses and other current assets
+Accounts payable and accrued expenses       Deferred Revenue                            Net working capital, diligence adjusted     $10.4 million to liabilities associated with
+assets held for sale for P1AG.
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   32

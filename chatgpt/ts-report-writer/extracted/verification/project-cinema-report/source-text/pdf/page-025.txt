@@ -1,0 +1,43 @@
+Executive summary           Key findings         Historical trading        Balance sheet           Appendices
+Quality of earnings (5/8) – Diligence adjustments
+Quality of earnings                                                                                                                                            Diligence adjustments
+TTM
+8.     Litigation costs: The Company commenced an action against Cineworld Group plc.
+$'000                                                                    Ref.         FY21      FY22      FY23    Mar-24
+(“Cineworld”) as a result of Cineworld’s repudiation of the arrangement agreement
+Revenue, reported                                                                  656,669 1,268,562 1,542,739 1,496,541                                         pursuant to which Cineworld agreed to acquire all of the outstanding shares of the
+Revenue, pro form a adjusted                                                       566,763        1,128,457        1,419,443        1,422,712                    Company (refer to the appendix for more information on the litigation arising out of the
+Cineworld transaction). This adjustment removes the effect of management-stated litigation
+EBITDA, reported                                                                    93,402          324,415           355,963          289,589
+costs associated with this transaction on EBITDA as it is not part of the Company’s normal,
+Reclassification adjustments                                                          -                -           (34,896)         (23,986)                  recurring operations.
+Management adjustments                                                         (177,697)        (242,743)         (163,704)        (115,032)
+EBITDA, m anagem ent adjusted                                                      (84,295)          81,672           157,363          150,571            9.     Realized foreign exchange reversal: Management adjustments reversed the entirety of
+the effect of foreign exchange on EBITDA. This adjustment adds back realized gain (loss)
+EBITDA margin, management adjusted                                                 (15.2%)            7.4%             11.3%            10.8%
+which is calculated as unrealized foreign exchange gain (loss) deducted from the total
+Diligence adjustm ents
+foreign exchange impact. The Company’s realized foreign exchange gains and losses are
+Litigation costs                                                     8        11,400             3,600            3,500             4,500                 a result of the settlement of foreign currency transactions with customers and suppliers.
+Realized foreign exchange gain (loss)                                9             (12)          2,531                 (2)            261                 This is part of the Company’s normal, recurring operations and has a cash impact,
+Removal of P1AG revenue                                                 (100,282)        (165,681)                    -                -               therefore it is added back.
+Other costs                                                                87,579         134,155                     -                -        10. Removal of Player One Amusement Group (“P1AG”) impact: The Company entered
+Realized foreign exchange gain (loss)                                             22               66                  -                -            into a definitive share purchase agreement to sell 100% of the issued and outstanding
+Removal of P1AG impact                                              10       (12,681)         (31,460)                   -                -            shares of P1AG. The transaction closed on February 1,2024. Refer to the appendix for
+Wage subsidies                                                            (56,059)         (21,583)                   -                -            more information on the sale of P1AG. This adjustment removes the historical impact of
+P1AG on the Company’s EBITDA.
+Rent subsidies                                                            (13,643)           (3,461)                  -                -
+Utilties subsidies                                                          (4,826)          (2,069)                  -                -                  I.      P1AG foreign exchange: The adjustment for P1AG’s historical foreign exchange
+(11,963)           (3,731)                  -                -                          gain (loss) is calculated to include only realized foreign exchange gains/losses.
+Realty tax subsidies
+This calculation was made based on the realized gain (loss) as a percentage of
+Covid subsidies                                                     11       (86,491)         (30,844)                   -                -
+total foreign exchange gain (loss) for the Company as a whole.
+Diligence adjustments                                                            (87,784)          (56,173)           3,498            4,761
+Pro forma adjustments                                                              2,226             7,929            8,757            8,195
+EBITDA, pro form a adjusted                                                       (169,853)           33,428          169,618          163,527
+EBITDA margin, pro forma adjusted                                                  (30.5%)             3.0%            12.2%            11.7%
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   24

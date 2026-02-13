@@ -72,6 +72,7 @@
     - `markdown_trace_sync`
     - `section_completeness`
     - `executive_summary_cleanup`
+    - `cleanup_quality`
 - Manually compare montage content and source-text artifacts to extracted markdown.
 - Confirm all captured text is verbatim and all excluded content rules were followed.
 - Confirm `Executive Summary` and `Key Findings` do not contain engagement letter boilerplate.
@@ -113,6 +114,13 @@ Required verification artifacts include:
   - `Prevention rule` (what must happen on future reports)
 
 ### Learnings (Newest First)
+
+- Date: 2026-02-13
+- Report ID: `project-cinema-report`
+- Issue observed: initial strict PDF extraction produced many sentence fragments and navigation leftovers that passed provenance matching but failed the new `cleanup_quality` fail-closed gate.
+- Root cause: exact source-line matching alone is insufficient for final output quality; fragment/noise bullets must be removed globally before final QA.
+- Fix applied: rerendered from strict source-backed lines with a full-report cleanup filter for fragment endings/navigation noise, then regenerated mapping/render artifacts and completed review checklist before rerunning gates.
+- Prevention rule: for strict PDF reports, run provenance and `qa_gates.py` together and treat `cleanup_quality` failures as mandatory cleanup work before marking pass.
 
 - Date: 2026-02-13
 - Report ID: `project-cherry-simulated-report-2025`

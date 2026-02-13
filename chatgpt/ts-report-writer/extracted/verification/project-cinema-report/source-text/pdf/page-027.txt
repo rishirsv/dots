@@ -1,0 +1,31 @@
+Executive summary           Key findings         Historical trading        Balance sheet           Appendices
+Quality of earnings (7/8) – Pro-forma adjustments
+Quality of earnings                                                                                                                                         Pro-forma adjustments
+TTM                                   12. New LBE locations: Management states that it plans to open 3 new location based
+$'000                                                                     Ref.        FY21      FY22      FY23    Mar-24                                      entertainment venues in Vancouver, British Columbia, Montreal, Quebec, and Toronto,
+Revenue, reported                                                                  656,669 1,268,562 1,542,739 1,496,541
+Ontario in Q4-24. This adjustment adds the associated revenues and operating expenses
+to prior periods.
+Revenue, pro form a adjusted                                                       566,763 1,128,457 1,419,443 1,422,712
+I.        LBE revenues and expenses calculation:
+EBITDA, reported                                                                    93,402          324,415           355,963          289,589
+a.       LBE revenues and expenses associated with the 3 new locations were
+Reclassification adjustments                                                           -                -           (34,896)         (23,986)
+calculated as a percentage of revenues and expenses of historical periods.
+Management adjustments                                                          (177,697)        (242,743)         (163,704)        (115,032)                                   The Company had 13 LBE locations across the scope period and revenues
+Diligence adjustments                                                            (87,784)          (56,173)           3,498            4,761                                    and expenses were applied evenly to the 13 locations to calculate the
+EBITDA, diligence adjusted                                                        (172,079)           25,499          160,861          155,332                                    associated revenues and expenses for each location.
+EBITDA margin, diligence adjusted                                                  (30.9%)             2.3%            11.6%            11.2%                            b.       Refer to the appendix for more detailed information on the assumptions
+Pro form a adjustm ents                                                                                                                                                           employed and calculations made for this adjustment.
+LBE revenue                                                                    10,376           25,576           30,549            30,414
+Operating costs                                                                (5,419)         (12,622)         (16,131)          (16,593)
+Cost of food service                                                             (920)          (2,560)          (3,129)           (3,090)
+Cash rent related to lease obligations                                         (1,812)          (2,465)          (2,531)           (2,535)
+New LBE locations                                                      12          2,226            7,929            8,757             8,195
+Pro forma adjustments                                                              2,226             7,929            8,757            8,195
+EBITDA, pro form a adjusted                                                       (169,853)           33,428          169,618          163,527
+EBITDA margin, pro forma adjusted                                                  (30.5%)             3.0%            12.2%            11.7%
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   26

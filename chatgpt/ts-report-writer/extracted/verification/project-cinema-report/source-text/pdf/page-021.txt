@@ -1,0 +1,36 @@
+Executive summary           Key findings         Historical trading        Balance sheet           Appendices
+Quality of earnings (1/8) – Overview
+Quality of earnings                                                                                                                                        Overview
+TTM
+$'000                                                                                   Ref.       FY21      FY22      FY23    Mar-24                     Analysis buildup and reconciliation to audit
+Revenue, reported                                                                               656,669 1,268,562 1,542,739 1,496,541                     The Company’s quarterly financial statements were used to build the financial statements and
+Revenue, pro form a adjusted                                                                    566,763 1,128,457 1,419,443 1,422,712                     Quality of Earnings analysis. See Appendix for a detailed overview of the adjusted income
+EBITDA, reported                                                                                 93,402       324,415       355,963       289,589         statement.
+Reclassification adjustments                                                                        -             -       (34,896)      (23,986)        Note: The latest available audited financial statements are for the period ending December 31,
+Management adjustments                                                                       (177,697)     (242,743)     (163,704)     (115,032)        2023.
+Diligence adjustments                                                                         (87,784)      (56,173)        3,498         4,761
+Adjustments
+Pro forma adjustments                                                                           2,226         7,929         8,757         8,195
+EBITDA, pro form a adjusted                                                                    (169,853)       33,428       169,618       163,527         The nature of adjustments included in the analysis are as follows:
+EBITDA margin, pro forma adjusted                                                               (30.5%)         3.0%         12.2%         11.7%
+    Reclassification adjustments: Reflects reclassification of Player One Amusement
+Group revenues and expenses to discontinued operations within the FY23 period.
+    EBITDA, reported: Reflects definitional add-backs (i.e., interest, income taxes,
+The Quality of Earnings (“QofE”) analysis has been prepared based on the Company’s                                                                                depreciation and amortization) to net income.
+quarterly publicly available financials.
+    Management adjustments: Represents adjustments identified by management within
+The suitability of EBITDA adjustments as it pertains to the proposed transaction and other                                                                        the MD&A for: (i) one-time or non-recurring expenditures, (ii) expenses unrelated to
+factors for consideration may require further investigation to understand the potential                                                                           typical operational performance, and (iii) current period cash rent paid or payable related
+impact on business model. The potential adjustments identified are not deemed to be all-                                                                          to lease obligations.
+inclusive and further diligence may uncover additional or modified adjustments.                                                                                  Diligence adjustments: Represents adjustments identified during diligence for: (i) one-
+time or non-recurring expenditures, (ii) expenses unrelated to typical operational
+performance, and (iii) revisions to management adjustments.
+    Pro forma adjustments: Represents adjustments to normalize revenues and expenses
+for previously non-existing items.
+    Other considerations: Represents other items which were not included as adjustments
+due to a non-quantifiable or subjective nature. These items should be considered as part
+of the earnings analysis for sensitivity purposes.
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   20

@@ -1,0 +1,41 @@
+Executive summary           Key findings         Historical trading        Balance sheet           Appendices
+Quality of earnings (6/8) – Diligence adjustments
+Quality of earnings                                                                                                                                         Diligence adjustments (continued)
+TTM
+11. COVID subsidies: During the COVID-19 pandemic, the Company qualified for a variety of
+$'000                                                                     Ref.        FY21      FY22      FY23    Mar-24
+government subsidies including the Canada Emergency Wage Subsidy (“CEWS”), Canada
+Revenue, reported                                                                  656,669 1,268,562 1,542,739 1,496,541                                      Emergency Rent Subsidy (“CERS”) and Tourism and Hospitality Recovery Program
+Revenue, pro form a adjusted                                                       566,763        1,128,457        1,419,443         1,422,712                (“THRP”). This adjustment eliminates the effect of these government subsidies.
+EBITDA, reported                                                                    93,402          324,415           355,963          289,589                      I.      Payroll subsidies (“CEWS” and “THRP”): In response to the economic impact
+Reclassification adjustments                                                          -                -           (34,896)         (23,986)                             of COVID-19, the Government of Canada announced the CEWS program in Apr-
+Management adjustments                                                         (177,697)        (242,743)         (163,704)        (115,032)                             20. CEWS provides a wage subsidy to eligible employers based on certain criteria,
+EBITDA, m anagem ent adjusted                                                      (84,295)          81,672           157,363          150,571                              such as demonstrated revenue declines as a result of COVID-19. This subsidy
+EBITDA margin, management adjusted                                                 (15.2%)            7.4%             11.3%            10.8%
+was retroactive from Q1-21 to Q3-22 within the scope period. The Company
+records this grant as an offset to the theatre payroll expense.
+Diligence adjustm ents
+Litigation costs                                                     8        11,400             3,600            3,500             4,500                    II.     Rent subsidies (“CERS” and “THRP”): The Government of Canada also
+Realized foreign exchange gain (loss)                                9             (12)          2,531                 (2)            261                            announced the CERS program in Nov-20. CERS provides a rent and property tax
+subsidy for companies that demonstrate a decline in revenue. This subsidy was
+Removal of P1AG revenue                                                 (100,282)        (165,681)                    -                -
+retroactive from Q1-21 to Q2-22 within the scope period. The Company records
+Other costs                                                                87,579          134,155                    -                -                          this grant as an offset to the relevant expense.
+Realized foreign exchange gain (loss)                                             22               66                  -                -
+III.    Utilities subsidies (“CERS”): The Canadian Government’s CERS program
+Removal of P1AG impact                                              10       (12,681)         (31,460)                   -                -
+included support for company utilities fees. This subsidy was retroactive from Q1-
+Wage subsidies                                                            (56,059)         (21,583)                   -                -                          21 to Q1-22 within the scope period. The Company records this grant as an offset
+Rent subsidies                                                            (13,643)           (3,461)                  -                -                          to the relevant expense.
+Utilties subsidies                                                          (4,826)          (2,069)                  -                -
+IV.     Realty tax subsidies: The Canadian Government’s realty tax subsidy program
+Realty tax subsidies                                                       (11,963)           (3,731)                  -                -                          included support for company realty tax. This subsidy was retroactive from Q1-21
+Covid subsidies                                                     11       (86,491)         (30,844)                   -                -                          to Q1-22 within the scope period. The Company records this grant as an offset to
+Diligence adjustments                                                            (87,784)          (56,173)           3,498            4,761                              the relevant expense.
+Pro forma adjustments                                                              2,226             7,929            8,757            8,195
+EBITDA, pro form a adjusted                                                       (169,853)           33,428          169,618          163,527
+EBITDA margin, pro forma adjusted                                                  (30.5%)             3.0%            12.2%            11.7%
+Source: 2021-Q1 2024 Cineplex Inc. Management’s Discussion and Analysis, 2021-Q1 2024 Cineplex Inc. Financial Statements, KPMG Analysis
+© 2024 KPMG LLP, an Ontario limited liability partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private
+English company limited by guarantee. All rights reserved. The KPMG name and logo are trademarks used under license by the independent member firms of the KPMG global organization.
+Document Classification: KPMG Confidential   25

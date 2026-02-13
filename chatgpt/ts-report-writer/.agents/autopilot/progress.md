@@ -94,3 +94,29 @@ Run: 20260213-142610-36275 (iteration 4)
   - Strict provenance for this PDF required selecting only lines with exact matches in `source-text` artifacts; visually similar extractor lines still fail fail-closed exact matching.
 
 ---
+## [2026-02-13 14:53:00 EST] - 5.0: Extract and fully clean Project Cinema Report.pdf
+
+Run: 20260213-142610-36275 (iteration 5)
+
+- Guardrails reviewed: yes
+- Commit: <pending> 5.0: extract and fully clean project cinema report
+- Verification: `./.venv/bin/python scripts/qa_provenance.py --markdown extracted/project-cinema-report.md --source-manifest extracted/verification/project-cinema-report/source-text/manifest.json --out-dir extracted/verification/project-cinema-report/qa && ./.venv/bin/python scripts/qa_gates.py --report-id project-cinema-report` -> PASS
+- Files changed:
+  - AGENTS.md
+  - .agents/autopilot/prd.json
+  - .agents/autopilot/progress.md
+  - .agents/autopilot/working.md
+  - .agents/autopilot/guardrails.md
+  - extracted/project-cinema-report.md
+  - extracted/manifests/project-cinema-report.json
+  - extracted/verification/project-cinema-report/*
+- What was implemented:
+  - Ran isolated strict extraction for `reports/Project Cinema Report.pdf` and regenerated strict source-text artifacts.
+  - Performed full-report cleanup and rebuilt selected-lines/render-trace/section mapping artifacts from exact source-backed lines, then aligned markdown to canonical template metadata and completed source-to-extraction coverage map.
+  - Completed review-notes checklist and reran provenance + fail-closed gates to pass.
+  - Updated PRD story state for 5.0 to `passes=true`, `blocked=false`, `blockedReason=""`.
+- **Learnings:**
+  - Provenance exact-match can pass while `cleanup_quality` still fails; fragment cleanup must be run before final gate execution.
+  - Updating render, trace, selected-lines, and section mapping artifacts together prevents markdown/trace sync regressions during manual cleanup.
+
+---
