@@ -1,161 +1,105 @@
 ---
 name: architecture
-description: Opinionated architecture overview for docs/ARCHITECTURE.md.
+description: High-signal architecture template for ARCHITECTURE.md (bird's-eye view + codemap + invariants).
 ---
 
-# Architecture: <Project Name>
+# ARCHITECTURE.md
 
-## Description
+## Purpose
+Describe the stable, high-level architecture so contributors can quickly answer:
+- What problem does this system solve?
+- Where does each responsibility live?
+- What constraints must never be broken?
 
-<A short paragraph describing what the system is and what you should understand after reading this document.>
+Keep this document concise and durable. Prefer stable structure and invariants over volatile implementation details.
 
-## 1. System overview
+## Bird's-Eye View
 
-**Purpose**
-- <What problem this system solves.>
+- **System goal:** <one sentence>
+- **Primary inputs:** <events/requests/data>
+- **Primary outputs:** <user-visible behavior/artifacts>
+- **Success condition:** <how we know the architecture is working>
 
-**Primary goals**
-- <Goal 1>
-- <Goal 2>
+## System Boundaries
 
-**Success criteria**
-- <How you know it’s working / “done” from a user or operator perspective.>
+- **In scope:** <what this repo/system owns>
+- **Out of scope:** <external systems and non-owned concerns>
 
-**Non-goals**
-- <Explicitly out of scope.>
+Boundary list (explicitly call these out):
+- **API boundary:** <module or package boundary with separate consumers>
+- **Runtime boundary:** <process/thread/device/network boundary>
+- **Data boundary:** <database/file/queue/storage boundary>
 
-## 2. System boundaries
+## Code Map
 
-- In scope: <what the system owns>
-- Out of scope: <what it depends on / does not own>
+Use coarse-grained modules. This section should help a reader answer "where is X?" without reading the whole repo.
 
-## Stack
+### <Area A>
+- **Owns:** <responsibilities>
+- **Key files/modules:** <names, not brittle deep links>
+- **Architecture invariants:**
+  - <must always be true>
+  - <absence-based rule, if relevant>
+- **Not owned here:** <what belongs elsewhere>
+- **API boundary:** <Yes/No + why>
 
-- Runtime/tooling: <…>
-- Language: <…>
-- Framework: <…>
-- Data/storage: <…>
-- Tests: <…>
+### <Area B>
+- **Owns:** <responsibilities>
+- **Key files/modules:** <names>
+- **Architecture invariants:**
+  - <must always be true>
+- **Not owned here:** <what belongs elsewhere>
+- **API boundary:** <Yes/No + why>
 
-## Key files and entry points
+### <Area C>
+- **Owns:** <responsibilities>
+- **Key files/modules:** <names>
+- **Architecture invariants:**
+  - <must always be true>
+- **Not owned here:** <what belongs elsewhere>
+- **API boundary:** <Yes/No + why>
 
-- `<path>` — <why it matters>
-- `<path>` — <why it matters>
+## Core Flows
 
-## 3. Architectural style
+Describe only the highest-impact flows.
 
-- Style: <Clean/Hexagonal | Layered | Modular monolith | Vertical slice | Event-driven | …>
-- Why it fits: <1–3 bullets>
-- Tradeoffs: <1–3 bullets>
+### Flow: <name>
+1. <entry point>
+2. <major processing step>
+3. <result>
 
-## 4. Domain model and modules
+**Failure behavior:** <how errors/degraded behavior is handled>
 
-List the major modules and what they own.
+### Flow: <name>
+1. <entry point>
+2. <major processing step>
+3. <result>
 
-| Module / domain | Owns | Does not own | Key interfaces |
-|---|---|---|---|
-| <Module A> | <Responsibilities> | <Boundaries> | <APIs/events/files> |
-| <Module B> | <Responsibilities> | <Boundaries> | <APIs/events/files> |
+**Failure behavior:** <how errors/degraded behavior is handled>
 
-## 5. Directory layout
+## Cross-Cutting Concerns
 
-```text
-<repo>/
-  docs/                      # documentation
-  <app>/                     # main app/package
-  <shared>/                  # shared utilities (if any)
-```
+- **State and persistence:** <where state lives + lifecycle>
+- **Error handling:** <policy and escalation>
+- **Observability:** <logs/metrics/traces and where they originate>
+- **Configuration and secrets:** <where config is defined and how secrets are protected>
+- **Performance constraints:** <critical latency/memory/throughput assumptions>
 
-Rules:
-- <Where new code must go.>
-- <What must not depend on what.>
+## Design Constraints and Forbidden Couplings
 
-## 6. Data flow and boundaries
+- <anti-pattern> -> <required pattern>
+- <anti-pattern> -> <required pattern>
 
-Describe the main “request → work → result” flow(s).
+## Optional Project Add-ons
 
-**Key flow: <name>**
-- Entry point: `<route>` / `<path>`
-- Steps:
-  1. <Step>
-  2. <Step>
-  3. <Step>
-- Data touched: <tables/collections/files>
-- Failure behavior: <what happens when dependencies fail>
+Include only when useful for this repo:
+- **Stack snapshot:** runtime/language/framework/tooling
+- **Data and integrations:** datastores + external services + failure modes
+- **Deployment and environments:** dev/stage/prod differences
+- **Decision log:** major architecture decisions and tradeoffs
+- **Diagrams:** context/container/component maps
+- **Verification:** commands/checks that validate architecture assumptions
 
-## 7. Cross-cutting concerns
+## Open Questions (Optional)
 
-- Authn/authz: <approach>
-- Error handling: <approach>
-- Logging/observability: <approach>
-- Configuration and secrets: <where config lives; how secrets are handled>
-- Performance/scaling: <high-level constraints and strategy>
-
-## 8. Data and integrations
-
-**Datastores**
-- <DB/queue/object storage> — <what it stores and why>
-
-**External services**
-| Service | Purpose | Auth | Failure mode |
-|---|---|---|---|
-| <Service A> | <Why it exists> | <How we auth> | <What happens if it’s down> |
-
-## 9. Deployment and environments
-
-| Environment | Runtime/hosting | Config differences | Notes |
-|---|---|---|---|
-| Dev | <…> | <…> | <…> |
-| Prod | <…> | <…> | <…> |
-
-Release strategy:
-- <How changes ship.>
-
-## 10. Key design decisions
-
-| Decision | Rationale | Tradeoffs |
-|---|---|---|
-| <…> | <…> | <…> |
-
-## 11. Diagrams (Mermaid)
-
-### C4 L1 — System context
-
-```mermaid
-flowchart LR
-  User[User] --> System[<System>]
-  System --> Ext1[<External Service>]
-```
-
-### C4 L2 — Containers
-
-```mermaid
-flowchart LR
-  User[User] --> Web[<Web/App UI>]
-  Web --> Api[<API/Backend>]
-  Api --> Db[(<Database>)]
-  Api --> Ext1[<External Service>]
-```
-
-### Core modules (component map)
-
-```mermaid
-flowchart LR
-  A[<Module A>] --> B[<Module B>]
-  B --> C[(<Storage>)]
-```
-
-## 12. Forbidden patterns
-
-Explicit “don’t do this” rules:
-- <Anti-pattern 1> — <why it’s harmful>
-- <Anti-pattern 2> — <why it’s harmful>
-
-## 13. Open questions
-
-If there are real unknowns that can’t be resolved from the repo, list them:
-- <Question> — <why it matters>
-
-## Verification
-
-<Commands/URLs a reader should run/open to confirm this document matches reality, plus what they should see.>
+- <question> - <why it matters>

@@ -38,11 +38,11 @@ cd <path>
 
 ## Workflow (Spec → Plan → Execute → Review)
 
-- Spec: `docs/<slug>/spec-<slug>.md`
-- Research (optional): `docs/<slug>/research-<slug>.md`
-- Plan: `docs/<slug>/plan-<slug>.md`
-- Execute: implement the plan, update checkboxes, commit
-- Review: create `docs/<slug>/implementation-notes-<slug>.md` (branch walkthrough)
+- Spec: `docs/product-specs/<feature-slug>-spec.md`
+- Plan: `docs/exec-plans/active/<feature-slug>-plan.md`
+- Execute: implement the plan and update task checkboxes
+- Complete: move plan to `docs/exec-plans/completed/<feature-slug>-plan.md` when user determines done
+- Review notes (optional): `docs/exec-plans/completed/<feature-slug>-implementation-notes.md`
 
 ## Defaults
 

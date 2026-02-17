@@ -62,8 +62,14 @@ Required environment variables:
 
 ## Documentation
 
-- `docs/ARCHITECTURE.md` — start here (how the system fits together)
-- `docs/<slug>/` — feature docs (specs/plans/research/walkthroughs)
+- `AGENTS.md` — repository operating contract
+- `ARCHITECTURE.md` — system boundaries and invariants
+- `TODOS.md` — roadmap + active queue
+- `ISSUES.md` — issue intake and severity tracking
+- `docs/README.md` — docs index
+- `docs/PLANS.md` — planning lifecycle rules
+- `docs/exec-plans/active/` — active implementation plans
+- `docs/exec-plans/completed/` — completed implementation plans
 
 ## Troubleshooting (optional)
 

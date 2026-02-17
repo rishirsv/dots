@@ -8,13 +8,20 @@ description: Create or update canonical docs structure, policy docs, and referen
 ## Objective
 Create or update repository documentation using canonical structure and naming.
 
+Architecture docs must follow a high-signal pattern:
+- bird's-eye view,
+- codemap by major modules,
+- explicit architectural invariants,
+- clear boundaries and cross-cutting concerns.
+
 ## Scope
 This skill manages:
 - root docs (`AGENTS.md`, `ARCHITECTURE.md`, `TODOS.md`, `ISSUES.md`)
 - docs policy/reference docs
 - docs structure/index files
+- solution knowledge docs (optional, when explicitly requested)
 
-This skill does not own feature spec/plan lifecycle files (owned by ideate + plan mode).
+This skill does not own execution of feature code changes.
 
 ## Hard Rules
 - Edit docs only (`.md`, `.txt`) unless user says otherwise.
@@ -41,14 +48,18 @@ Root:
 - `docs/DB-SCHEMA.md`
 - `docs/design-docs/index.md`
 - `docs/design-docs/core-beliefs.md`
-- `docs/plans/tech-debt-tracker.md`
+- `docs/product-specs/*`
+- `docs/exec-plans/active/*`
+- `docs/exec-plans/completed/*`
+- `docs/exec-plans/tech-debt-tracker.md`
 - `docs/references/*`
+- `docs/research/*`
+- `docs/artifacts/*`
 
 ## Feature Lifecycle Reference (do not generate by default)
-- `docs/plans/active/<feature-slug>/<feature-slug>-spec.md`
-- `docs/plans/active/<feature-slug>/<feature-slug>-plan.md`
-- `docs/plans/completed/<feature-slug>/<feature-slug>-spec.md`
-- `docs/plans/completed/<feature-slug>/<feature-slug>-plan.md`
+- Spec: `docs/product-specs/<feature-slug>-spec.md`
+- Active plan: `docs/exec-plans/active/<feature-slug>-plan.md`
+- Completed plan: `docs/exec-plans/completed/<feature-slug>-plan.md`
 
 ## Structure Confirmation
 If repository structure choice is not explicit, ask:
@@ -59,10 +70,18 @@ If repository structure choice is not explicit, ask:
 - If user provides doc type only, use canonical path.
 - Preserve existing structure/tone unless user asks for rewrite.
 
+Solution-doc default path (optional):
+- `docs/solutions/<solution-slug>.md`
+
 ## Issues Handling
 - Use `ISSUES.md` as single issue registry.
 - Append issue blocks using `assets/issue_template.md` format.
 - Do not create per-issue files unless explicitly requested.
+
+## Solution Handling
+- Use `assets/solution_template.md` for solved-problem runbooks.
+- A solution doc records stable diagnosis/fix knowledge.
+- It does not replace issue intake (`ISSUES.md`) or execution planning lifecycle (`docs/exec-plans/*`).
 
 ## Assets
 | Document Type | Asset | Canonical Path |
@@ -81,7 +100,8 @@ If repository structure choice is not explicit, ask:
 | DB schema digest | `assets/DB-SCHEMA_template.md` | `docs/DB-SCHEMA.md` |
 | Design docs index | `assets/design-docs_index_template.md` | `docs/design-docs/index.md` |
 | Core beliefs | `assets/core-beliefs_template.md` | `docs/design-docs/core-beliefs.md` |
-| Tech debt tracker | `assets/tech-debt-tracker_template.md` | `docs/plans/tech-debt-tracker.md` |
+| Tech debt tracker | `assets/tech-debt-tracker_template.md` | `docs/exec-plans/tech-debt-tracker.md` |
+| Solution runbook (optional) | `assets/solution_template.md` | `docs/solutions/<solution-slug>.md` |
 
 ## Workflow
 1. Confirm requested docs and scope.

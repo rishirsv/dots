@@ -10,11 +10,18 @@ Implement real working code with strong visual taste and disciplined interaction
 
 0. Initialize and load repo UI context for iterative design
 
-- Use `references/repo-ui-init-and-context.md` for `.design/` context files.
-- Use `references/design-token-sync.md` for full theme token extraction.
-- Use `init design context` to create `.design/components.md`, `.design/layouts.md`, `.design/routes.md`, and `.design/theme.md`.
-- Use `update design context` to refresh all `.design/*.md` files when context is stale.
-- On iterative design tasks, always read all `.design/*.md` context files first.
+- `.design/*` is volatile working context, not canonical project docs.
+- You may always read existing `.design/*.md` files.
+- You may create or update `.design/*.md` only when the user explicitly asks in natural language.
+- Approved explicit ask examples:
+  - "Set up design context files for this repo."
+  - "Create the `.design` context docs before we iterate."
+  - "Refresh the design context files from current code."
+  - "Update the `.design` context."
+- If `.design/*` is missing or stale and no explicit ask is given, do not write files. Continue by reading source files directly.
+- Use `references/repo-ui-init-and-context.md` for `.design/` context generation rules.
+- Use `references/design-token-sync.md` for `.design/theme.md` extraction rules.
+- On iterative design tasks, read existing `.design/*.md` first when present.
 
 1. Understand intent and constraints
 

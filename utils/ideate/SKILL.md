@@ -20,10 +20,9 @@ If not provided, ask:
 
 Then derive:
 - `feature_slug = kebab-case(feature_name)`
-- `feature_dir = <project-root>/docs/plans/active/<feature-slug>/`
-- `spec_path = <feature_dir>/<feature-slug>-spec.md`
+- `spec_path = <project-root>/docs/product-specs/<feature-slug>-spec.md`
 
-Confirm these with the user before continuing. If a folder already exists for a similar name, prefer reusing it (do not create duplicates).
+Confirm these with the user before continuing. If a similar spec already exists, prefer updating it instead of creating duplicates.
 
 ### 2. Brainstorm and Ask Questions
 
@@ -88,7 +87,7 @@ If yes: write the spec.
 
 ### 4. Write Spec
 
-Create/update: `spec_path` (default: `<project-root>/docs/plans/active/<feature-slug>/<feature-slug>-spec.md`)
+Create/update: `spec_path` (default: `<project-root>/docs/product-specs/<feature-slug>-spec.md`)
 
 Use the template below. Keep it concise; add detail only where needed.
 
@@ -154,7 +153,7 @@ Optional add-ons: User Stories, How It Works, Context, Open Questions (include o
 After saving, output a **Save Summary** containing only the paths created or updated, one per line. Example:
 
 ```text
-docs/plans/active/<feature-slug>/<feature-slug>-spec.md
+docs/product-specs/<feature-slug>-spec.md
 ```
 
 Do not add any other text after the Save Summary.
