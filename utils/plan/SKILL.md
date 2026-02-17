@@ -57,10 +57,11 @@ If no, proceed to planning.
 
 Create a single plan doc designed based on your recommended approach. Consider tradeoffs and architecture decisions. Follow existing patterns where appropriate. Follow the Template section order and formatting.
 
-Save the plan doc using this deterministic fallback:
+Save the plan doc using this canonical path:
 
-1. `docs/<feature-slug>/plan-<feature-slug>.md` if `docs/` exists
-2. `docs/plans/plan-<feature-slug>.md` otherwise
+1. `docs/plans/active/<feature-slug>/<feature-slug>-plan.md`
+
+If `docs/plans/active/<feature-slug>/` does not exist, create it.
 
 If a plan already exists at the target path, update it in place:
 
@@ -72,6 +73,9 @@ Outputs:
 
 - A comprehensive implementation plan (self-contained, junior-friendly)
 - A saved plan doc at the resolved target path
+
+If a matching spec exists, it should be:
+- `docs/plans/active/<feature-slug>/<feature-slug>-spec.md`
 
 After saving the plan, present the post-save message shown later (outside the plan doc).
 

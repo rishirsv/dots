@@ -1,0 +1,88 @@
+Workbook: /Users/rishi/Code/ai-tools/chatgpt/databook-analyst/databook-template.xlsx
+Generated (UTC): 2026-02-17T14:55:15.812639+00:00
+Sheets: 78
+Very hidden sheets: 31
+External links: 1
+Broken #REF formulas: 3
+External-reference formulas: 10
+Volatile formulas: 544
+
+Top-level sheet inventory:
+- Key information [visible] A1:P216
+- Cover [visible] A1:G29
+- Table of Contents [visible] A1:C51
+- _TM_Table of Contents [veryHidden] A1:E3
+- _TM_Disclaimer1 [veryHidden] A1:E2
+- Disclaimer [visible] A1:E25
+- _TM_Glossary [veryHidden] A1:E3
+- Summary >> [visible] A1:E27
+- _TM_Dashboard_data [veryHidden] A1:E7
+- _TM_Highlights [veryHidden] A1:E5
+- Highlights [visible] A1:AA54
+- PL_monthly [visible] A1:CK155
+- _TM_IS_monthly [veryHidden] A1:E2
+- _TM_BS_monthly_STRAT [veryHidden] A1:E2
+- BS_monthly [visible] A1:BI65
+- QoE [visible] A1:AY67
+- PL adj [visible] A1:AV63
+- Current trading [visible] A1:BD47
+- _TM_EBITDA bridge [veryHidden] A1:E2
+- NWC overview [visible] A1:BA55
+- NWC adj [visible] A1:AR44
+- Net debt [visible] A1:AY44
+- _TM_QoE summary [veryHidden] A1:E2
+- _TM_QoE detail [veryHidden] A1:E2
+- _TM_QoE adj. detail [veryHidden] A1:E2
+- Rec >> [visible] A1:G27
+- PL rec [visible] A1:K27
+- BS rec [visible] A1:K51
+- Supporting analysis >> [visible] A1:G27
+- Seasonality [visible] A1:AT27
+- Top customers [visible] A1:L28
+- Cost base [visible] A1:CK40
+- Personnel [visible] A1:CK34
+- Top suppliers [visible] A1:K33
+- Op. cash flows [visible] A1:AR49
+- _TM_Headroom [veryHidden] A1:E2
+- PL templates >> [visible] A1:G27
+- _TM_Revenue by type [veryHidden] A1:E2
+- PL_FC [visible] A1:AV80
+- Net sales bridge [visible] A1:AC25
+- EBITDA bridge [visible] A1:X25
+- _TM_Net sales by type [veryHidden] A1:E2
+- Net sales by type [visible] A1:R32
+- _TM_Top customers [veryHidden] A1:E2
+- Net sales by region [visible] A1:R32
+- _TM_COGS [veryHidden] A1:E2
+- _TM_Top suppliers [veryHidden] A1:E2
+- _TM_Personnel [veryHidden] A1:E2
+- _TM_Related parties [veryHidden] A1:E2
+- _TM_NWC summary [veryHidden] A1:E2
+- _TM_NWC detailed [veryHidden] A1:E2
+- _TM_NWC adjusted [veryHidden] A1:E2
+- _TM_NWC - days analysis [veryHidden] A1:E2
+- _TM_Inventories [veryHidden] A1:E2
+- _TM_AR [veryHidden] A1:E2
+- _TM_Op. cash flows [veryHidden] A1:E2
+- Related parties [visible] A1:H32
+- _TM_PPE [veryHidden] A1:E2
+- BS templates >> [visible] A1:G27
+- BS_net assets [visible] A1:BA50
+- NWC - days analysis [visible] A1:X58
+- Inventories [visible] A1:M34
+- AR [visible] A1:M40
+- AP [visible] A1:K23
+- Fixed assets [visible] A1:N39
+- Capex [visible] A1:AR32
+- _TM_P&L rec [veryHidden] A1:E2
+- _TM_IS rec [veryHidden] A1:E2
+- _TM_BS rec [veryHidden] A1:E2
+- Calculations >> [visible] A1:G27
+- Count-back days - DSO [visible] A1:BX71
+- Count-fwd days - DIO [visible] A1:BY66
+- Count-back days - DPO [visible] A1:BX71
+- Source data >> [visible] A1:G27
+- PL [visible] A1:AQ1500
+- BS [visible] A1:AP1500
+- Accounts [visible] A1:C1226
+- _TM_Instructions [veryHidden] A1:E2

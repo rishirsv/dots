@@ -1,6 +1,0 @@
-{
-  "status": "pending",
-  "report_id": "project-emerald-simulated-report-2025",
-  "generated_at": "2026-02-13T21:42:26.745480+00:00",
-  "notes": "Run scripts/qa_gates.py to evaluate fail-closed gates."
-}

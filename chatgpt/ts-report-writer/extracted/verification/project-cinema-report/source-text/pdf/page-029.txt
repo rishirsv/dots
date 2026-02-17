@@ -1,6 +1,0 @@
-05
-Balance sheet
-5.1 Balance sheet overview   29
-5.2 Net working capital      32
-5.3 Days analysis            37
-5.4 Net debt                 38

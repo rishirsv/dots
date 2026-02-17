@@ -44,3 +44,47 @@
 ## Remaining caveats
 - Open support dependencies remain intentionally flagged where source support is still pending (for example QA03, QA09, QA11, QA12 and selected NWC items).
 - This remains a simulated diligence pack driven by provided source inputs.
+
+---
+
+# Generation Notes - Autobahn Verbatim Gold Standard Run (Feb 17, 2026)
+
+## Source input
+- `/Users/rishi/Code/ai-tools/chatgpt/ts-report-writer/extracted/autobahn-extracted.md`
+
+## Scope and assumptions
+- Used only report-body sections from `# Executive Summary` through `# Appendices`.
+- Excluded template metadata, source evidence tables, and trailing Python helper lines in the extraction file.
+- Preserved extracted wording verbatim in slide bodies (no paraphrasing), with continuation handled by slide pagination.
+
+## Artifacts regenerated
+- `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-slidegen-fdd/exports/deck-input.json`
+- `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-slidegen-fdd/exports/deck-plan.json`
+- `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-slidegen-fdd/exports/deck-spec.json`
+- `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-slidegen-fdd/exports/deck.pptx`
+- `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-slidegen-fdd/exports/deck.pdf`
+- `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-slidegen-fdd/exports/deck-gold-standard-autobahn-fdd.pptx`
+- `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/dist/kpmg-slidegen-fdd/exports/deck-gold-standard-autobahn-fdd.pdf`
+
+## Validation and render checks
+- `node generator/validate.js --in .../exports/deck-spec.json` -> `OK`
+- `node generator/index.js --in .../exports/deck-spec.json --out .../exports/deck.pptx --strict` -> `PASS`
+- Strict summary: `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/strict/2026-02-17T16-43-36-926Z/strict-summary.json`
+  - `overlapCount: 0`
+  - `severeCount: 0`
+  - `overflow.status: 0`
+
+## Run stats
+- Parsed top-level sections: `20`
+- Generated content slides: `34`
+- Total generated slides (incl. cover/TOC): `36` (expanded to `40` after pagination at render-time)
+- Verbatim lines mapped into content evidence: `229`
+
+## Final fidelity pass
+- Removed non-source strapline prose from generated content slides to tighten exact-content fidelity.
+- Re-ran validation + strict generation + PDF conversion after this fidelity cleanup.
+- Final strict summary: `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/strict/2026-02-17T16-45-16-573Z/strict-summary.json`
+  - `slideCount: 40`
+  - `overlapCount: 0`
+  - `severeCount: 0`
+  - `overflow.status: 0`

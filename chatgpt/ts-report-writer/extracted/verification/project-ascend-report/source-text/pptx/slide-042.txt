@@ -1,4 +1,0 @@
-Source: 	Management provided information
-Appendix 8
-Indicative NWC adjustment
-Note:          The monthly NWC adjustment is calculated as the total of QofE adjustments #2 to #9 multiplied by the monthly DPO multiplied by (12/365).

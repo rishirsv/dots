@@ -1,462 +1,333 @@
 {
-  "deck_title": "NorthBridge Compliance Solutions - Simulated FDD Report (45-slide deck)",
+  "deck_title": "Project Autobahn - Gold Standard FDD Report",
   "narrative_arc": [
-    "Context and conclusions",
-    "Business model and revenue quality",
-    "Reported performance walkthrough",
-    "Balance sheet and cash conversion",
-    "QoE normalization and support status",
-    "Working capital and peg mechanics",
-    "Risks, reporting environment, and close plan",
-    "Appendix support exhibits"
+    "Executive Summary` bullets                                                                            | `[x]` |",
+    "Executive Summary",
+    "Key Findings",
+    "Business Overview",
+    "Summary Financials",
+    "Profit and Loss Overview / Financial Performance",
+    "Quality of Earnings",
+    "Income Statement",
+    "Balance Sheet",
+    "Net Working Capital",
+    "Net Debt (Cash)",
+    "Cash Flows",
+    "Reporting Environment",
+    "Related Parties",
+    "Industry Analysis",
+    "Forecast Trading",
+    "Quality of Net Assets",
+    "Gross Margin by LOB",
+    "<Addition Sections as Needed>",
+    "Appendices"
   ],
   "slides": [
     {
       "slide_id": "s01",
-      "intent": "cover",
-      "layout_slug": "layout.fdd_cover",
+      "intent": "key_diligence_risks",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "title": "engagement title",
-        "subtitle": "client + report date + confidentiality footer"
+        "body": "Verbatim text lines from Executive Summary` bullets                                                                            | `[x]` |"
       },
-      "rationale": "Cover layout establishes engagement context and locks target/company/period anchors for fact fidelity."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s02",
-      "intent": "table_of_contents",
-      "layout_slug": "layout.fdd_agenda",
+      "intent": "key_diligence_risks",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "body": "section list with slide ranges"
+        "body": "Verbatim text lines from Executive Summary"
       },
-      "rationale": "Agenda layout provides clear navigation and supports deck-first workflow coherence."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s03",
-      "intent": "key_takeaways",
-      "layout_slug": "layout.fdd_key_takeaways",
+      "intent": "key_diligence_risks",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "header": "headline conclusion",
-        "bullets": "5\u20137 executive takeaways with evidence and implications"
+        "body": "Verbatim text lines from Key Findings"
       },
-      "rationale": "Key takeaways layout is suited for dense executive conclusions with explicit evidence and transaction implications."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s04",
-      "intent": "key_takeaways",
-      "layout_slug": "layout.fdd_key_takeaways",
+      "intent": "business_overview",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "header": "headline conclusion",
-        "bullets": "5\u20137 executive takeaways with evidence and implications"
+        "body": "Verbatim text lines from Business Overview"
       },
-      "rationale": "Key takeaways layout is suited for dense executive conclusions with explicit evidence and transaction implications."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s05",
-      "intent": "key_takeaways",
-      "layout_slug": "layout.fdd_key_takeaways",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "header": "headline conclusion",
-        "bullets": "5\u20137 executive takeaways with evidence and implications"
+        "body": "Verbatim text lines from Summary Financials"
       },
-      "rationale": "Key takeaways layout is suited for dense executive conclusions with explicit evidence and transaction implications."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s06",
-      "intent": "business_overview",
-      "layout_slug": "layout.fdd_two_column_bullets",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "baseline context + definitions + scale facts",
-        "right": "findings + implications + diligence asks"
+        "body": "Verbatim text lines from Profit and Loss Overview / Financial Performance / Overview"
       },
-      "rationale": "Two-column or chart-left layouts support separating baseline company facts from revenue-quality implications."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s07",
-      "intent": "business_overview",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Profit and Loss Overview / Financial Performance / Key Drivers"
       },
-      "rationale": "Two-column or chart-left layouts support separating baseline company facts from revenue-quality implications."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s08",
-      "intent": "revenue_bridge",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "qoe_adjustment_highlights",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Quality of Earnings / Overview"
       },
-      "rationale": "Chart-left layout fits a driver-based waterfall/bridge visual with right-side interpretation."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s09",
-      "intent": "customer_concentration",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "qoe_adjustment_highlights",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Quality of Earnings / Quality of earnings adjustments"
       },
-      "rationale": "Chart-left layout accommodates concentration/retention visuals with implication-led narrative."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s10",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "qoe_adjustment_highlights",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Quality of Earnings / Other considerations"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s11",
-      "intent": "business_overview",
+      "intent": "reporting_environment",
       "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "body": "ordered narrative: observation \u2192 evidence \u2192 implication \u2192 risk \u2192 next steps"
+        "body": "Verbatim text lines from Income Statement"
       },
-      "rationale": "Two-column or chart-left layouts support separating baseline company facts from revenue-quality implications."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s12",
-      "intent": "profit_and_loss_overview",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Balance Sheet"
       },
-      "rationale": "Table-left layout fits multi-period P&L tables and forces interpretation beyond restating headers."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s13",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "working_capital_review",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Net Working Capital / Overview"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s14",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "working_capital_review",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Net Working Capital / Net working capital adjustments"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s15",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Net Debt (Cash) / Overview"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s16",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Net Debt (Cash) / Net debt / cash adjustments"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s17",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_two_column_bullets",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "baseline context + definitions + scale facts",
-        "right": "findings + implications + diligence asks"
+        "body": "Verbatim text lines from Cash Flows"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s18",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Reporting Environment"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s19",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Related Parties"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s20",
-      "intent": "working_capital_review",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Industry Analysis"
       },
-      "rationale": "Chart/table-left layouts fit NWC trend and component exhibits while preserving placeholders and deal-mechanics commentary."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s21",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Forecast Trading"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s22",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Quality of Net Assets"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s23",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Gross Margin by LOB"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s24",
-      "intent": "general_fdd_analysis",
-      "layout_slug": "layout.fdd_two_column_bullets",
+      "intent": "reporting_environment",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "baseline context + definitions + scale facts",
-        "right": "findings + implications + diligence asks"
+        "body": "Verbatim text lines from <Addition Sections as Needed>"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s25",
-      "intent": "qoe_adjustment_highlights",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Appendices / Appendix 1: Engagement letter procedures"
       },
-      "rationale": "Chart/table-left layouts are designed for reported-to-normalized bridges and adjustment registers with explicit support status."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s26",
-      "intent": "qoe_adjustment_highlights",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Appendices / Appendix 2: Reconciliation to audited balance sheet"
       },
-      "rationale": "Chart/table-left layouts are designed for reported-to-normalized bridges and adjustment registers with explicit support status."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s27",
-      "intent": "qoe_adjustment_highlights",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Appendices / Appendix 3: Reconciliation to audited income statement"
       },
-      "rationale": "Chart/table-left layouts are designed for reported-to-normalized bridges and adjustment registers with explicit support status."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s28",
-      "intent": "qoe_adjustment_highlights",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Appendices / Appendix 4: Cash reconciliation"
       },
-      "rationale": "Chart/table-left layouts are designed for reported-to-normalized bridges and adjustment registers with explicit support status."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s29",
-      "intent": "qoe_adjustment_highlights",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Appendices / Appendix 5: Velicept indirect cost management estimate breakdown"
       },
-      "rationale": "Chart/table-left layouts are designed for reported-to-normalized bridges and adjustment registers with explicit support status."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s30",
-      "intent": "qoe_adjustment_highlights",
-      "layout_slug": "layout.fdd_table_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
+        "body": "Verbatim text lines from Appendices / Appendix 6: Direct Costs"
       },
-      "rationale": "Chart/table-left layouts are designed for reported-to-normalized bridges and adjustment registers with explicit support status."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s31",
-      "intent": "qoe_adjustment_highlights",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Appendices / Appendix 7: Accounts Receivable"
       },
-      "rationale": "Chart/table-left layouts are designed for reported-to-normalized bridges and adjustment registers with explicit support status."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s32",
-      "intent": "key_takeaways",
-      "layout_slug": "layout.fdd_key_takeaways",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "header": "headline conclusion",
-        "bullets": "5\u20137 executive takeaways with evidence and implications"
+        "body": "Verbatim text lines from Appendices / Appendix 8: Accounts Payable"
       },
-      "rationale": "Key takeaways layout is suited for dense executive conclusions with explicit evidence and transaction implications."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s33",
-      "intent": "working_capital_review",
-      "layout_slug": "layout.fdd_chart_left_content_right",
+      "intent": "appendix_support",
+      "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
+        "body": "Verbatim text lines from Appendices / Appendix 9: Reconciliation of SR&ED ITCs – tax returns and financial statements"
       },
-      "rationale": "Chart/table-left layouts fit NWC trend and component exhibits while preserving placeholders and deal-mechanics commentary."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     },
     {
       "slide_id": "s34",
-      "intent": "working_capital_review",
-      "layout_slug": "layout.fdd_chart_left_content_right",
-      "slot_plan": {
-        "left": "[CHART PLACEHOLDER] (analyst-owned visual)",
-        "right": "6\u20139 bullets interpreting drivers, implications, and open items"
-      },
-      "rationale": "Chart/table-left layouts fit NWC trend and component exhibits while preserving placeholders and deal-mechanics commentary."
-    },
-    {
-      "slide_id": "s35",
-      "intent": "working_capital_review",
-      "layout_slug": "layout.fdd_table_left_content_right",
-      "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
-      },
-      "rationale": "Chart/table-left layouts fit NWC trend and component exhibits while preserving placeholders and deal-mechanics commentary."
-    },
-    {
-      "slide_id": "s36",
-      "intent": "working_capital_review",
-      "layout_slug": "layout.fdd_table_left_content_right",
-      "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
-      },
-      "rationale": "Chart/table-left layouts fit NWC trend and component exhibits while preserving placeholders and deal-mechanics commentary."
-    },
-    {
-      "slide_id": "s37",
-      "intent": "working_capital_review",
-      "layout_slug": "layout.fdd_table_left_content_right",
-      "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
-      },
-      "rationale": "Chart/table-left layouts fit NWC trend and component exhibits while preserving placeholders and deal-mechanics commentary."
-    },
-    {
-      "slide_id": "s38",
-      "intent": "working_capital_review",
-      "layout_slug": "layout.fdd_two_column_bullets",
-      "slot_plan": {
-        "left": "baseline context + definitions + scale facts",
-        "right": "findings + implications + diligence asks"
-      },
-      "rationale": "Chart/table-left layouts fit NWC trend and component exhibits while preserving placeholders and deal-mechanics commentary."
-    },
-    {
-      "slide_id": "s39",
-      "intent": "key_diligence_risks",
-      "layout_slug": "layout.fdd_key_takeaways",
-      "slot_plan": {
-        "header": "headline conclusion",
-        "bullets": "5\u20137 executive takeaways with evidence and implications"
-      },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
-    },
-    {
-      "slide_id": "s40",
-      "intent": "reporting_environment",
-      "layout_slug": "layout.fdd_two_column_bullets",
-      "slot_plan": {
-        "left": "baseline context + definitions + scale facts",
-        "right": "findings + implications + diligence asks"
-      },
-      "rationale": "Two-column or narrative layouts fit process observations paired with transaction relevance and remediation actions."
-    },
-    {
-      "slide_id": "s41",
-      "intent": "general_fdd_analysis",
+      "intent": "appendix_support",
       "layout_slug": "layout.fdd_one_column_narrative",
       "slot_plan": {
-        "body": "ordered narrative: observation \u2192 evidence \u2192 implication \u2192 risk \u2192 next steps"
+        "body": "Verbatim text lines from Appendices / Appendix 10: Information read and outstanding"
       },
-      "rationale": "Layout selected based on evidence shape and intent-to-layout guidance in knowledge/layout-catalog.md."
-    },
-    {
-      "slide_id": "s42",
-      "intent": "appendix_support",
-      "layout_slug": "layout.fdd_table_left_content_right",
-      "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
-      },
-      "rationale": "Table-left layout supports analyst-owned exhibits while retaining decision-useful commentary even when visuals are placeholders."
-    },
-    {
-      "slide_id": "s43",
-      "intent": "payroll_appendix",
-      "layout_slug": "layout.fdd_table_left_content_right",
-      "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
-      },
-      "rationale": "Table-left appendix pattern preserves the placeholder token and provides exhibit handoff instructions and interpretation."
-    },
-    {
-      "slide_id": "s44",
-      "intent": "appendix_support",
-      "layout_slug": "layout.fdd_table_left_content_right",
-      "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
-      },
-      "rationale": "Table-left layout supports analyst-owned exhibits while retaining decision-useful commentary even when visuals are placeholders."
-    },
-    {
-      "slide_id": "s45",
-      "intent": "appendix_support",
-      "layout_slug": "layout.fdd_table_left_content_right",
-      "slot_plan": {
-        "left": "[TABLE IMAGE PLACEHOLDER] (analyst-owned exhibit)",
-        "right": "5\u20138 bullets interpreting signals, outliers, and deal implications"
-      },
-      "rationale": "Table-left layout supports analyst-owned exhibits while retaining decision-useful commentary even when visuals are placeholders."
+      "rationale": "Narrative-first layout preserves exact extracted wording without summarization."
     }
   ]
 }

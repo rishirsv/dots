@@ -1,0 +1,3579 @@
+{
+  "generated_utc": "2026-02-17T14:55:15.812639+00:00",
+  "workbook_path": "/Users/rishi/Code/ai-tools/chatgpt/databook-analyst/databook-template.xlsx",
+  "sheet_count": 78,
+  "sheet_names": [
+    "Key information",
+    "Cover",
+    "Table of Contents",
+    "_TM_Table of Contents",
+    "_TM_Disclaimer1",
+    "Disclaimer",
+    "_TM_Glossary",
+    "Summary >>",
+    "_TM_Dashboard_data",
+    "_TM_Highlights",
+    "Highlights",
+    "PL_monthly",
+    "_TM_IS_monthly",
+    "_TM_BS_monthly_STRAT",
+    "BS_monthly",
+    "QoE",
+    "PL adj",
+    "Current trading",
+    "_TM_EBITDA bridge",
+    "NWC overview",
+    "NWC adj",
+    "Net debt",
+    "_TM_QoE summary",
+    "_TM_QoE detail",
+    "_TM_QoE adj. detail",
+    "Rec >>",
+    "PL rec",
+    "BS rec",
+    "Supporting analysis >>",
+    "Seasonality",
+    "Top customers",
+    "Cost base",
+    "Personnel",
+    "Top suppliers",
+    "Op. cash flows",
+    "_TM_Headroom",
+    "PL templates >>",
+    "_TM_Revenue by type",
+    "PL_FC",
+    "Net sales bridge",
+    "EBITDA bridge",
+    "_TM_Net sales by type",
+    "Net sales by type",
+    "_TM_Top customers",
+    "Net sales by region",
+    "_TM_COGS",
+    "_TM_Top suppliers",
+    "_TM_Personnel",
+    "_TM_Related parties",
+    "_TM_NWC summary",
+    "_TM_NWC detailed",
+    "_TM_NWC adjusted",
+    "_TM_NWC - days analysis",
+    "_TM_Inventories",
+    "_TM_AR",
+    "_TM_Op. cash flows",
+    "Related parties",
+    "_TM_PPE",
+    "BS templates >>",
+    "BS_net assets",
+    "NWC - days analysis",
+    "Inventories",
+    "AR",
+    "AP",
+    "Fixed assets",
+    "Capex",
+    "_TM_P&L rec",
+    "_TM_IS rec",
+    "_TM_BS rec",
+    "Calculations >>",
+    "Count-back days - DSO",
+    "Count-fwd days - DIO",
+    "Count-back days - DPO",
+    "Source data >>",
+    "PL",
+    "BS",
+    "Accounts",
+    "_TM_Instructions"
+  ],
+  "summary": {
+    "external_links": 1,
+    "named_styles": 206,
+    "cell_styles": 1117,
+    "custom_number_formats": 37,
+    "defined_names_count": 0,
+    "ref_formula_cells": 3,
+    "external_reference_formula_cells": 10,
+    "volatile_formula_cells": 544,
+    "very_hidden_sheets": 31
+  },
+  "calc_settings": {
+    "calcMode": null,
+    "fullCalcOnLoad": "True",
+    "calcOnSave": null
+  },
+  "broken_ref_formulas": [
+    {
+      "sheet": "Highlights",
+      "cell": "D18",
+      "formula": "=IFERROR(D13/#REF!,0)"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "E18",
+      "formula": "=IFERROR(E13/#REF!,0)"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "F18",
+      "formula": "=IFERROR(F13/#REF!,0)"
+    }
+  ],
+  "external_reference_formulas": [
+    {
+      "sheet": "Highlights",
+      "cell": "R35",
+      "formula": "=[1]Highlights!F83"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "S35",
+      "formula": "=[1]Highlights!F84"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "T35",
+      "formula": "=[1]Highlights!F85"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "U35",
+      "formula": "=[1]Highlights!F86"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "V35",
+      "formula": "=[1]Highlights!F87"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "R37",
+      "formula": "=[1]Highlights!G83"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "S37",
+      "formula": "=[1]Highlights!G84"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "T37",
+      "formula": "=[1]Highlights!G85"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "U37",
+      "formula": "=[1]Highlights!G86"
+    },
+    {
+      "sheet": "Highlights",
+      "cell": "V37",
+      "formula": "=[1]Highlights!G87"
+    }
+  ],
+  "volatile_formula_sample": [
+    {
+      "sheet": "Cover",
+      "cell": "B21",
+      "formula": "=TODAY()"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP10",
+      "formula": "=SUM(OFFSET(AM10,0,(-12+'Key information'!$E$34)):OFFSET(AA10,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS10",
+      "formula": "=SUM(OFFSET(AA10,0,(-12+'Key information'!$E$34)):P10)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT10",
+      "formula": "=SUM(OFFSET(AM10,0,(-12+'Key information'!$E$34)):AB10)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI10",
+      "formula": "=COUNTIF(AY10:OFFSET(CH10,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ10",
+      "formula": "=COUNTIF(AY10:OFFSET(CH10,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP11",
+      "formula": "=SUM(OFFSET(AM11,0,(-12+'Key information'!$E$34)):OFFSET(AA11,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS11",
+      "formula": "=SUM(OFFSET(AA11,0,(-12+'Key information'!$E$34)):P11)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT11",
+      "formula": "=SUM(OFFSET(AM11,0,(-12+'Key information'!$E$34)):AB11)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI11",
+      "formula": "=COUNTIF(AY11:OFFSET(CH11,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ11",
+      "formula": "=COUNTIF(AY11:OFFSET(CH11,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP12",
+      "formula": "=SUM(OFFSET(AM12,0,(-12+'Key information'!$E$34)):OFFSET(AA12,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS12",
+      "formula": "=SUM(OFFSET(AA12,0,(-12+'Key information'!$E$34)):P12)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT12",
+      "formula": "=SUM(OFFSET(AM12,0,(-12+'Key information'!$E$34)):AB12)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI12",
+      "formula": "=COUNTIF(AY12:OFFSET(CH12,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ12",
+      "formula": "=COUNTIF(AY12:OFFSET(CH12,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP13",
+      "formula": "=SUM(OFFSET(AM13,0,(-12+'Key information'!$E$34)):OFFSET(AA13,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS13",
+      "formula": "=SUM(OFFSET(AA13,0,(-12+'Key information'!$E$34)):P13)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT13",
+      "formula": "=SUM(OFFSET(AM13,0,(-12+'Key information'!$E$34)):AB13)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI13",
+      "formula": "=COUNTIF(AY13:OFFSET(CH13,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ13",
+      "formula": "=COUNTIF(AY13:OFFSET(CH13,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP14",
+      "formula": "=SUM(OFFSET(AM14,0,(-12+'Key information'!$E$34)):OFFSET(AA14,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS14",
+      "formula": "=SUM(OFFSET(AA14,0,(-12+'Key information'!$E$34)):P14)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT14",
+      "formula": "=SUM(OFFSET(AM14,0,(-12+'Key information'!$E$34)):AB14)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI14",
+      "formula": "=COUNTIF(AY14:OFFSET(CH14,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ14",
+      "formula": "=COUNTIF(AY14:OFFSET(CH14,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP16",
+      "formula": "=SUM(OFFSET(AM16,0,(-12+'Key information'!$E$34)):OFFSET(AA16,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS16",
+      "formula": "=SUM(OFFSET(AA16,0,(-12+'Key information'!$E$34)):P16)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT16",
+      "formula": "=SUM(OFFSET(AM16,0,(-12+'Key information'!$E$34)):AB16)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI16",
+      "formula": "=COUNTIF(AY16:OFFSET(CH16,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ16",
+      "formula": "=COUNTIF(AY16:OFFSET(CH16,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP17",
+      "formula": "=SUM(OFFSET(AM17,0,(-12+'Key information'!$E$34)):OFFSET(AA17,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS17",
+      "formula": "=SUM(OFFSET(AA17,0,(-12+'Key information'!$E$34)):P17)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT17",
+      "formula": "=SUM(OFFSET(AM17,0,(-12+'Key information'!$E$34)):AB17)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI17",
+      "formula": "=COUNTIF(AY17:OFFSET(CH17,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ17",
+      "formula": "=COUNTIF(AY17:OFFSET(CH17,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP18",
+      "formula": "=SUM(OFFSET(AM18,0,(-12+'Key information'!$E$34)):OFFSET(AA18,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS18",
+      "formula": "=SUM(OFFSET(AA18,0,(-12+'Key information'!$E$34)):P18)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT18",
+      "formula": "=SUM(OFFSET(AM18,0,(-12+'Key information'!$E$34)):AB18)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI18",
+      "formula": "=COUNTIF(AY18:OFFSET(CH18,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ18",
+      "formula": "=COUNTIF(AY18:OFFSET(CH18,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP19",
+      "formula": "=SUM(OFFSET(AM19,0,(-12+'Key information'!$E$34)):OFFSET(AA19,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS19",
+      "formula": "=SUM(OFFSET(AA19,0,(-12+'Key information'!$E$34)):P19)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT19",
+      "formula": "=SUM(OFFSET(AM19,0,(-12+'Key information'!$E$34)):AB19)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI19",
+      "formula": "=COUNTIF(AY19:OFFSET(CH19,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ19",
+      "formula": "=COUNTIF(AY19:OFFSET(CH19,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP22",
+      "formula": "=SUM(OFFSET(AM22,0,(-12+'Key information'!$E$34)):OFFSET(AA22,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS22",
+      "formula": "=SUM(OFFSET(AA22,0,(-12+'Key information'!$E$34)):P22)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT22",
+      "formula": "=SUM(OFFSET(AM22,0,(-12+'Key information'!$E$34)):AB22)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI22",
+      "formula": "=COUNTIF(AY22:OFFSET(CH22,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ22",
+      "formula": "=COUNTIF(AY22:OFFSET(CH22,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP23",
+      "formula": "=SUM(OFFSET(AM23,0,(-12+'Key information'!$E$34)):OFFSET(AA23,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS23",
+      "formula": "=SUM(OFFSET(AA23,0,(-12+'Key information'!$E$34)):P23)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT23",
+      "formula": "=SUM(OFFSET(AM23,0,(-12+'Key information'!$E$34)):AB23)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI23",
+      "formula": "=COUNTIF(AY23:OFFSET(CH23,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ23",
+      "formula": "=COUNTIF(AY23:OFFSET(CH23,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP24",
+      "formula": "=SUM(OFFSET(AM24,0,(-12+'Key information'!$E$34)):OFFSET(AA24,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS24",
+      "formula": "=SUM(OFFSET(AA24,0,(-12+'Key information'!$E$34)):P24)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT24",
+      "formula": "=SUM(OFFSET(AM24,0,(-12+'Key information'!$E$34)):AB24)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI24",
+      "formula": "=COUNTIF(AY24:OFFSET(CH24,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ24",
+      "formula": "=COUNTIF(AY24:OFFSET(CH24,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP25",
+      "formula": "=SUM(OFFSET(AM25,0,(-12+'Key information'!$E$34)):OFFSET(AA25,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS25",
+      "formula": "=SUM(OFFSET(AA25,0,(-12+'Key information'!$E$34)):P25)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT25",
+      "formula": "=SUM(OFFSET(AM25,0,(-12+'Key information'!$E$34)):AB25)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI25",
+      "formula": "=COUNTIF(AY25:OFFSET(CH25,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ25",
+      "formula": "=COUNTIF(AY25:OFFSET(CH25,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP26",
+      "formula": "=SUM(OFFSET(AM26,0,(-12+'Key information'!$E$34)):OFFSET(AA26,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS26",
+      "formula": "=SUM(OFFSET(AA26,0,(-12+'Key information'!$E$34)):P26)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT26",
+      "formula": "=SUM(OFFSET(AM26,0,(-12+'Key information'!$E$34)):AB26)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI26",
+      "formula": "=COUNTIF(AY26:OFFSET(CH26,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ26",
+      "formula": "=COUNTIF(AY26:OFFSET(CH26,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP27",
+      "formula": "=SUM(OFFSET(AM27,0,(-12+'Key information'!$E$34)):OFFSET(AA27,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS27",
+      "formula": "=SUM(OFFSET(AA27,0,(-12+'Key information'!$E$34)):P27)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT27",
+      "formula": "=SUM(OFFSET(AM27,0,(-12+'Key information'!$E$34)):AB27)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI27",
+      "formula": "=COUNTIF(AY27:OFFSET(CH27,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ27",
+      "formula": "=COUNTIF(AY27:OFFSET(CH27,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP30",
+      "formula": "=SUM(OFFSET(AM30,0,(-12+'Key information'!$E$34)):OFFSET(AA30,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS30",
+      "formula": "=SUM(OFFSET(AA30,0,(-12+'Key information'!$E$34)):P30)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT30",
+      "formula": "=SUM(OFFSET(AM30,0,(-12+'Key information'!$E$34)):AB30)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI30",
+      "formula": "=COUNTIF(AY30:OFFSET(CH30,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ30",
+      "formula": "=COUNTIF(AY30:OFFSET(CH30,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP31",
+      "formula": "=SUM(OFFSET(AM31,0,(-12+'Key information'!$E$34)):OFFSET(AA31,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS31",
+      "formula": "=SUM(OFFSET(AA31,0,(-12+'Key information'!$E$34)):P31)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT31",
+      "formula": "=SUM(OFFSET(AM31,0,(-12+'Key information'!$E$34)):AB31)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI31",
+      "formula": "=COUNTIF(AY31:OFFSET(CH31,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ31",
+      "formula": "=COUNTIF(AY31:OFFSET(CH31,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP32",
+      "formula": "=SUM(OFFSET(AM32,0,(-12+'Key information'!$E$34)):OFFSET(AA32,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS32",
+      "formula": "=SUM(OFFSET(AA32,0,(-12+'Key information'!$E$34)):P32)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT32",
+      "formula": "=SUM(OFFSET(AM32,0,(-12+'Key information'!$E$34)):AB32)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI32",
+      "formula": "=COUNTIF(AY32:OFFSET(CH32,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ32",
+      "formula": "=COUNTIF(AY32:OFFSET(CH32,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP33",
+      "formula": "=SUM(OFFSET(AM33,0,(-12+'Key information'!$E$34)):OFFSET(AA33,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS33",
+      "formula": "=SUM(OFFSET(AA33,0,(-12+'Key information'!$E$34)):P33)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT33",
+      "formula": "=SUM(OFFSET(AM33,0,(-12+'Key information'!$E$34)):AB33)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI33",
+      "formula": "=COUNTIF(AY33:OFFSET(CH33,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ33",
+      "formula": "=COUNTIF(AY33:OFFSET(CH33,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP34",
+      "formula": "=SUM(OFFSET(AM34,0,(-12+'Key information'!$E$34)):OFFSET(AA34,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS34",
+      "formula": "=SUM(OFFSET(AA34,0,(-12+'Key information'!$E$34)):P34)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT34",
+      "formula": "=SUM(OFFSET(AM34,0,(-12+'Key information'!$E$34)):AB34)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI34",
+      "formula": "=COUNTIF(AY34:OFFSET(CH34,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ34",
+      "formula": "=COUNTIF(AY34:OFFSET(CH34,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP36",
+      "formula": "=SUM(OFFSET(AM36,0,(-12+'Key information'!$E$34)):OFFSET(AA36,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS36",
+      "formula": "=SUM(OFFSET(AA36,0,(-12+'Key information'!$E$34)):P36)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT36",
+      "formula": "=SUM(OFFSET(AM36,0,(-12+'Key information'!$E$34)):AB36)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI36",
+      "formula": "=COUNTIF(AY36:OFFSET(CH36,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ36",
+      "formula": "=COUNTIF(AY36:OFFSET(CH36,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP37",
+      "formula": "=SUM(OFFSET(AM37,0,(-12+'Key information'!$E$34)):OFFSET(AA37,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS37",
+      "formula": "=SUM(OFFSET(AA37,0,(-12+'Key information'!$E$34)):P37)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT37",
+      "formula": "=SUM(OFFSET(AM37,0,(-12+'Key information'!$E$34)):AB37)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI37",
+      "formula": "=COUNTIF(AY37:OFFSET(CH37,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ37",
+      "formula": "=COUNTIF(AY37:OFFSET(CH37,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP38",
+      "formula": "=SUM(OFFSET(AM38,0,(-12+'Key information'!$E$34)):OFFSET(AA38,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS38",
+      "formula": "=SUM(OFFSET(AA38,0,(-12+'Key information'!$E$34)):P38)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT38",
+      "formula": "=SUM(OFFSET(AM38,0,(-12+'Key information'!$E$34)):AB38)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI38",
+      "formula": "=COUNTIF(AY38:OFFSET(CH38,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ38",
+      "formula": "=COUNTIF(AY38:OFFSET(CH38,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP39",
+      "formula": "=SUM(OFFSET(AM39,0,(-12+'Key information'!$E$34)):OFFSET(AA39,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS39",
+      "formula": "=SUM(OFFSET(AA39,0,(-12+'Key information'!$E$34)):P39)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT39",
+      "formula": "=SUM(OFFSET(AM39,0,(-12+'Key information'!$E$34)):AB39)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI39",
+      "formula": "=COUNTIF(AY39:OFFSET(CH39,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ39",
+      "formula": "=COUNTIF(AY39:OFFSET(CH39,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP40",
+      "formula": "=SUM(OFFSET(AM40,0,(-12+'Key information'!$E$34)):OFFSET(AA40,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS40",
+      "formula": "=SUM(OFFSET(AA40,0,(-12+'Key information'!$E$34)):P40)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT40",
+      "formula": "=SUM(OFFSET(AM40,0,(-12+'Key information'!$E$34)):AB40)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI40",
+      "formula": "=COUNTIF(AY40:OFFSET(CH40,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ40",
+      "formula": "=COUNTIF(AY40:OFFSET(CH40,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP41",
+      "formula": "=SUM(OFFSET(AM41,0,(-12+'Key information'!$E$34)):OFFSET(AA41,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS41",
+      "formula": "=SUM(OFFSET(AA41,0,(-12+'Key information'!$E$34)):P41)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT41",
+      "formula": "=SUM(OFFSET(AM41,0,(-12+'Key information'!$E$34)):AB41)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI41",
+      "formula": "=COUNTIF(AY41:OFFSET(CH41,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ41",
+      "formula": "=COUNTIF(AY41:OFFSET(CH41,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP42",
+      "formula": "=SUM(OFFSET(AM42,0,(-12+'Key information'!$E$34)):OFFSET(AA42,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS42",
+      "formula": "=SUM(OFFSET(AA42,0,(-12+'Key information'!$E$34)):P42)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT42",
+      "formula": "=SUM(OFFSET(AM42,0,(-12+'Key information'!$E$34)):AB42)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI42",
+      "formula": "=COUNTIF(AY42:OFFSET(CH42,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ42",
+      "formula": "=COUNTIF(AY42:OFFSET(CH42,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP43",
+      "formula": "=SUM(OFFSET(AM43,0,(-12+'Key information'!$E$34)):OFFSET(AA43,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS43",
+      "formula": "=SUM(OFFSET(AA43,0,(-12+'Key information'!$E$34)):P43)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT43",
+      "formula": "=SUM(OFFSET(AM43,0,(-12+'Key information'!$E$34)):AB43)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI43",
+      "formula": "=COUNTIF(AY43:OFFSET(CH43,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ43",
+      "formula": "=COUNTIF(AY43:OFFSET(CH43,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP44",
+      "formula": "=SUM(OFFSET(AM44,0,(-12+'Key information'!$E$34)):OFFSET(AA44,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS44",
+      "formula": "=SUM(OFFSET(AA44,0,(-12+'Key information'!$E$34)):P44)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT44",
+      "formula": "=SUM(OFFSET(AM44,0,(-12+'Key information'!$E$34)):AB44)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI44",
+      "formula": "=COUNTIF(AY44:OFFSET(CH44,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ44",
+      "formula": "=COUNTIF(AY44:OFFSET(CH44,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP45",
+      "formula": "=SUM(OFFSET(AM45,0,(-12+'Key information'!$E$34)):OFFSET(AA45,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS45",
+      "formula": "=SUM(OFFSET(AA45,0,(-12+'Key information'!$E$34)):P45)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT45",
+      "formula": "=SUM(OFFSET(AM45,0,(-12+'Key information'!$E$34)):AB45)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI45",
+      "formula": "=COUNTIF(AY45:OFFSET(CH45,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ45",
+      "formula": "=COUNTIF(AY45:OFFSET(CH45,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP46",
+      "formula": "=SUM(OFFSET(AM46,0,(-12+'Key information'!$E$34)):OFFSET(AA46,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS46",
+      "formula": "=SUM(OFFSET(AA46,0,(-12+'Key information'!$E$34)):P46)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT46",
+      "formula": "=SUM(OFFSET(AM46,0,(-12+'Key information'!$E$34)):AB46)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI46",
+      "formula": "=COUNTIF(AY46:OFFSET(CH46,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ46",
+      "formula": "=COUNTIF(AY46:OFFSET(CH46,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP47",
+      "formula": "=SUM(OFFSET(AM47,0,(-12+'Key information'!$E$34)):OFFSET(AA47,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS47",
+      "formula": "=SUM(OFFSET(AA47,0,(-12+'Key information'!$E$34)):P47)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT47",
+      "formula": "=SUM(OFFSET(AM47,0,(-12+'Key information'!$E$34)):AB47)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI47",
+      "formula": "=COUNTIF(AY47:OFFSET(CH47,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ47",
+      "formula": "=COUNTIF(AY47:OFFSET(CH47,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP48",
+      "formula": "=SUM(OFFSET(AM48,0,(-12+'Key information'!$E$34)):OFFSET(AA48,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS48",
+      "formula": "=SUM(OFFSET(AA48,0,(-12+'Key information'!$E$34)):P48)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT48",
+      "formula": "=SUM(OFFSET(AM48,0,(-12+'Key information'!$E$34)):AB48)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI48",
+      "formula": "=COUNTIF(AY48:OFFSET(CH48,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ48",
+      "formula": "=COUNTIF(AY48:OFFSET(CH48,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP51",
+      "formula": "=SUM(OFFSET(AM51,0,(-12+'Key information'!$E$34)):OFFSET(AA51,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS51",
+      "formula": "=SUM(OFFSET(AA51,0,(-12+'Key information'!$E$34)):P51)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT51",
+      "formula": "=SUM(OFFSET(AM51,0,(-12+'Key information'!$E$34)):AB51)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI51",
+      "formula": "=COUNTIF(AY51:OFFSET(CH51,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ51",
+      "formula": "=COUNTIF(AY51:OFFSET(CH51,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP52",
+      "formula": "=SUM(OFFSET(AM52,0,(-12+'Key information'!$E$34)):OFFSET(AA52,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS52",
+      "formula": "=SUM(OFFSET(AA52,0,(-12+'Key information'!$E$34)):P52)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT52",
+      "formula": "=SUM(OFFSET(AM52,0,(-12+'Key information'!$E$34)):AB52)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI52",
+      "formula": "=COUNTIF(AY52:OFFSET(CH52,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ52",
+      "formula": "=COUNTIF(AY52:OFFSET(CH52,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP55",
+      "formula": "=SUM(OFFSET(AM55,0,(-12+'Key information'!$E$34)):OFFSET(AA55,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS55",
+      "formula": "=SUM(OFFSET(AA55,0,(-12+'Key information'!$E$34)):P55)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT55",
+      "formula": "=SUM(OFFSET(AM55,0,(-12+'Key information'!$E$34)):AB55)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI55",
+      "formula": "=COUNTIF(AY55:OFFSET(CH55,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ55",
+      "formula": "=COUNTIF(AY55:OFFSET(CH55,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP56",
+      "formula": "=SUM(OFFSET(AM56,0,(-12+'Key information'!$E$34)):OFFSET(AA56,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS56",
+      "formula": "=SUM(OFFSET(AA56,0,(-12+'Key information'!$E$34)):P56)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT56",
+      "formula": "=SUM(OFFSET(AM56,0,(-12+'Key information'!$E$34)):AB56)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI56",
+      "formula": "=COUNTIF(AY56:OFFSET(CH56,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ56",
+      "formula": "=COUNTIF(AY56:OFFSET(CH56,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP58",
+      "formula": "=SUM(OFFSET(AM58,0,(-12+'Key information'!$E$34)):OFFSET(AA58,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS58",
+      "formula": "=SUM(OFFSET(AA58,0,(-12+'Key information'!$E$34)):P58)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT58",
+      "formula": "=SUM(OFFSET(AM58,0,(-12+'Key information'!$E$34)):AB58)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI58",
+      "formula": "=COUNTIF(AY58:OFFSET(CH58,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ58",
+      "formula": "=COUNTIF(AY58:OFFSET(CH58,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP60",
+      "formula": "=SUM(OFFSET(AM60,0,(-12+'Key information'!$E$34)):OFFSET(AA60,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS60",
+      "formula": "=SUM(OFFSET(AA60,0,(-12+'Key information'!$E$34)):P60)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT60",
+      "formula": "=SUM(OFFSET(AM60,0,(-12+'Key information'!$E$34)):AB60)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI60",
+      "formula": "=COUNTIF(AY60:OFFSET(CH60,0,(-12+'Key information'!$E$34)),\">0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CJ60",
+      "formula": "=COUNTIF(AY60:OFFSET(CH60,0,(-12+'Key information'!$E$34)),\"<0\")"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AP61",
+      "formula": "=SUM(OFFSET(AM61,0,(-12+'Key information'!$E$34)):OFFSET(AA61,0,(-11+'Key information'!$E$34)))"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AS61",
+      "formula": "=SUM(OFFSET(AA61,0,(-12+'Key information'!$E$34)):P61)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AT61",
+      "formula": "=SUM(OFFSET(AM61,0,(-12+'Key information'!$E$34)):AB61)"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CI61",
+      "formula": "=COUNTIF(AY61:OFFSET(CH61,0,(-12+'Key information'!$E$34)),\">0\")"
+    }
+  ],
+  "question_note_flag_mentions": [
+    {
+      "sheet": "Key information",
+      "cell": "C129",
+      "value": "RED FLAG"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "AV8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "PL_monthly",
+      "cell": "CK9",
+      "value": "Number of flagged items"
+    },
+    {
+      "sheet": "BS_monthly",
+      "cell": "AZ8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "QoE",
+      "cell": "AW8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "PL adj",
+      "cell": "AV8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Current trading",
+      "cell": "BC8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "NWC overview",
+      "cell": "AV8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Net debt",
+      "cell": "AT8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Seasonality",
+      "cell": "AR8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "PL_FC",
+      "cell": "AV8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Net sales bridge",
+      "cell": "C21",
+      "value": "Note 1: Add bridge columns by inserting row and copy-pasting entire row from above"
+    },
+    {
+      "sheet": "Net sales bridge",
+      "cell": "C22",
+      "value": "Note 2: only input data in highlighted cells"
+    },
+    {
+      "sheet": "EBITDA bridge",
+      "cell": "C21",
+      "value": "Note 1: Add bridge columns by inserting row and copy-pasting entire row from above"
+    },
+    {
+      "sheet": "EBITDA bridge",
+      "cell": "C22",
+      "value": "Note 2: only input data in highlighted cells"
+    },
+    {
+      "sheet": "BS_net assets",
+      "cell": "AR8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Inventories",
+      "cell": "K8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Inventories",
+      "cell": "K22",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Capex",
+      "cell": "AR8",
+      "value": "Notes/questions"
+    },
+    {
+      "sheet": "Capex",
+      "cell": "AR25",
+      "value": "The indirect Capex is calculated based on the monthly changes in fixed asset accounts and considers depreciation. Note that this is only a proxy for the Net Capex and relevant disclaimers should be included when using this"
+    },
+    {
+      "sheet": "Accounts",
+      "cell": "B133",
+      "value": "OYJ:n (p\u00f6rssinoteerattu) omat osakkeet"
+    },
+    {
+      "sheet": "Accounts",
+      "cell": "B288",
+      "value": "OYJ:n (p\u00f6rssinoteerattu) omat osakkeet (rahoitusomaisuus)"
+    }
+  ],
+  "sheet_summaries": [
+    {
+      "sheet": "Key information",
+      "state": "visible",
+      "dimension": "A1:P216",
+      "max_row": 216,
+      "max_col": 16,
+      "nonempty_cells": 250,
+      "formula_cells": 59,
+      "merged_cells": 14,
+      "hidden_rows": 127,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [
+        {
+          "type": "list",
+          "allow_blank": true,
+          "formula1": "$E$108:$E$110",
+          "formula2": null,
+          "sqref": "E50 E52"
+        },
+        {
+          "type": "list",
+          "allow_blank": true,
+          "formula1": "$E$125:$E$126",
+          "formula2": null,
+          "sqref": "E54"
+        },
+        {
+          "type": "list",
+          "allow_blank": true,
+          "formula1": "$C$129:$C$133",
+          "formula2": null,
+          "sqref": "E23:F23"
+        },
+        {
+          "type": "list",
+          "allow_blank": true,
+          "formula1": "$C$129:$C$190",
+          "formula2": null,
+          "sqref": "E40:F40 E42:F42"
+        }
+      ],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "Cover",
+      "state": "visible",
+      "dimension": "A1:G29",
+      "max_row": 29,
+      "max_col": 7,
+      "nonempty_cells": 5,
+      "formula_cells": 4,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 1,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Table of Contents",
+      "state": "visible",
+      "dimension": "A1:C51",
+      "max_row": 51,
+      "max_col": 3,
+      "nonempty_cells": 91,
+      "formula_cells": 1,
+      "merged_cells": 7,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Table of Contents",
+      "state": "veryHidden",
+      "dimension": "A1:E3",
+      "max_row": 3,
+      "max_col": 5,
+      "nonempty_cells": 15,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Disclaimer1",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Disclaimer",
+      "state": "visible",
+      "dimension": "A1:E25",
+      "max_row": 25,
+      "max_col": 5,
+      "nonempty_cells": 12,
+      "formula_cells": 3,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Glossary",
+      "state": "veryHidden",
+      "dimension": "A1:E3",
+      "max_row": 3,
+      "max_col": 5,
+      "nonempty_cells": 15,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Summary >>",
+      "state": "visible",
+      "dimension": "A1:E27",
+      "max_row": 27,
+      "max_col": 5,
+      "nonempty_cells": 3,
+      "formula_cells": 1,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Dashboard_data",
+      "state": "veryHidden",
+      "dimension": "A1:E7",
+      "max_row": 7,
+      "max_col": 5,
+      "nonempty_cells": 35,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Highlights",
+      "state": "veryHidden",
+      "dimension": "A1:E5",
+      "max_row": 5,
+      "max_col": 5,
+      "nonempty_cells": 25,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Highlights",
+      "state": "visible",
+      "dimension": "A1:AA54",
+      "max_row": 54,
+      "max_col": 27,
+      "nonempty_cells": 155,
+      "formula_cells": 103,
+      "merged_cells": 1,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 3,
+      "external_formula_count": 10,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "PL_monthly",
+      "state": "visible",
+      "dimension": "A1:CK155",
+      "max_row": 155,
+      "max_col": 89,
+      "nonempty_cells": 7650,
+      "formula_cells": 7452,
+      "merged_cells": 0,
+      "hidden_rows": 94,
+      "hidden_cols": 0,
+      "freeze_panes": "X121",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [
+        {
+          "range": "<ConditionalFormatting AY10:CH64>",
+          "type": "cellIs",
+          "operator": "equal",
+          "formula": [
+            "0"
+          ],
+          "dxfId": "36"
+        },
+        {
+          "range": "<ConditionalFormatting AY10:CH64>",
+          "type": "cellIs",
+          "operator": "lessThan",
+          "formula": [
+            "0"
+          ],
+          "dxfId": "35"
+        },
+        {
+          "range": "<ConditionalFormatting AY10:CH64>",
+          "type": "cellIs",
+          "operator": "greaterThan",
+          "formula": [
+            "0"
+          ],
+          "dxfId": "34"
+        },
+        {
+          "range": "<ConditionalFormatting AV77>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV77)))"
+          ],
+          "dxfId": "33"
+        },
+        {
+          "range": "<ConditionalFormatting AV77>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV77)))"
+          ],
+          "dxfId": "32"
+        },
+        {
+          "range": "<ConditionalFormatting AV79>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV79)))"
+          ],
+          "dxfId": "31"
+        },
+        {
+          "range": "<ConditionalFormatting AV79>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV79)))"
+          ],
+          "dxfId": "30"
+        },
+        {
+          "range": "<ConditionalFormatting AV81>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV81)))"
+          ],
+          "dxfId": "29"
+        },
+        {
+          "range": "<ConditionalFormatting AV81>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV81)))"
+          ],
+          "dxfId": "28"
+        },
+        {
+          "range": "<ConditionalFormatting AV83>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV83)))"
+          ],
+          "dxfId": "27"
+        },
+        {
+          "range": "<ConditionalFormatting AV83>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV83)))"
+          ],
+          "dxfId": "26"
+        },
+        {
+          "range": "<ConditionalFormatting AV85>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV85)))"
+          ],
+          "dxfId": "25"
+        },
+        {
+          "range": "<ConditionalFormatting AV85>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV85)))"
+          ],
+          "dxfId": "24"
+        },
+        {
+          "range": "<ConditionalFormatting AV87>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV87)))"
+          ],
+          "dxfId": "23"
+        },
+        {
+          "range": "<ConditionalFormatting AV87>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV87)))"
+          ],
+          "dxfId": "22"
+        },
+        {
+          "range": "<ConditionalFormatting AV89>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV89)))"
+          ],
+          "dxfId": "21"
+        },
+        {
+          "range": "<ConditionalFormatting AV89>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV89)))"
+          ],
+          "dxfId": "20"
+        },
+        {
+          "range": "<ConditionalFormatting AV91>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV91)))"
+          ],
+          "dxfId": "19"
+        },
+        {
+          "range": "<ConditionalFormatting AV91>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV91)))"
+          ],
+          "dxfId": "18"
+        },
+        {
+          "range": "<ConditionalFormatting AV93>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV93)))"
+          ],
+          "dxfId": "17"
+        },
+        {
+          "range": "<ConditionalFormatting AV93>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV93)))"
+          ],
+          "dxfId": "16"
+        },
+        {
+          "range": "<ConditionalFormatting AV95>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV95)))"
+          ],
+          "dxfId": "15"
+        },
+        {
+          "range": "<ConditionalFormatting AV95>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV95)))"
+          ],
+          "dxfId": "14"
+        },
+        {
+          "range": "<ConditionalFormatting AV97>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AV97)))"
+          ],
+          "dxfId": "13"
+        },
+        {
+          "range": "<ConditionalFormatting AV97>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AV97)))"
+          ],
+          "dxfId": "12"
+        }
+      ],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 235,
+      "question_note_flag_mentions": 2
+    },
+    {
+      "sheet": "_TM_IS_monthly",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_BS_monthly_STRAT",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "BS_monthly",
+      "state": "visible",
+      "dimension": "A1:BI65",
+      "max_row": 65,
+      "max_col": 61,
+      "nonempty_cells": 2107,
+      "formula_cells": 1981,
+      "merged_cells": 3,
+      "hidden_rows": 29,
+      "hidden_cols": 3,
+      "freeze_panes": "G11",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [
+        {
+          "range": "<ConditionalFormatting AZ55>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AZ55)))"
+          ],
+          "dxfId": "11"
+        },
+        {
+          "range": "<ConditionalFormatting AZ55>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AZ55)))"
+          ],
+          "dxfId": "10"
+        },
+        {
+          "range": "<ConditionalFormatting AZ57>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AZ57)))"
+          ],
+          "dxfId": "9"
+        },
+        {
+          "range": "<ConditionalFormatting AZ57>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AZ57)))"
+          ],
+          "dxfId": "8"
+        },
+        {
+          "range": "<ConditionalFormatting AZ59>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AZ59)))"
+          ],
+          "dxfId": "7"
+        },
+        {
+          "range": "<ConditionalFormatting AZ59>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AZ59)))"
+          ],
+          "dxfId": "6"
+        },
+        {
+          "range": "<ConditionalFormatting AZ61>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AZ61)))"
+          ],
+          "dxfId": "5"
+        },
+        {
+          "range": "<ConditionalFormatting AZ61>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AZ61)))"
+          ],
+          "dxfId": "4"
+        },
+        {
+          "range": "<ConditionalFormatting AZ63:AZ64>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ERROR\",AZ63)))"
+          ],
+          "dxfId": "3"
+        },
+        {
+          "range": "<ConditionalFormatting AZ63:AZ64>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"ALL GOOD!\",AZ63)))"
+          ],
+          "dxfId": "2"
+        }
+      ],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "QoE",
+      "state": "visible",
+      "dimension": "A1:AY67",
+      "max_row": 67,
+      "max_col": 51,
+      "nonempty_cells": 771,
+      "formula_cells": 734,
+      "merged_cells": 0,
+      "hidden_rows": 5,
+      "hidden_cols": 3,
+      "freeze_panes": "E13",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 33,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "PL adj",
+      "state": "visible",
+      "dimension": "A1:AV63",
+      "max_row": 63,
+      "max_col": 48,
+      "nonempty_cells": 1978,
+      "formula_cells": 1946,
+      "merged_cells": 0,
+      "hidden_rows": 35,
+      "hidden_cols": 1,
+      "freeze_panes": "D10",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 101,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "Current trading",
+      "state": "visible",
+      "dimension": "A1:BD47",
+      "max_row": 47,
+      "max_col": 56,
+      "nonempty_cells": 926,
+      "formula_cells": 886,
+      "merged_cells": 5,
+      "hidden_rows": 4,
+      "hidden_cols": 2,
+      "freeze_panes": "D11",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 27,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "_TM_EBITDA bridge",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "NWC overview",
+      "state": "visible",
+      "dimension": "A1:BA55",
+      "max_row": 55,
+      "max_col": 53,
+      "nonempty_cells": 1118,
+      "formula_cells": 1077,
+      "merged_cells": 2,
+      "hidden_rows": 8,
+      "hidden_cols": 17,
+      "freeze_panes": "D11",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 16,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "NWC adj",
+      "state": "visible",
+      "dimension": "A1:AR44",
+      "max_row": 44,
+      "max_col": 44,
+      "nonempty_cells": 747,
+      "formula_cells": 710,
+      "merged_cells": 0,
+      "hidden_rows": 3,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 3,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Net debt",
+      "state": "visible",
+      "dimension": "A1:AY44",
+      "max_row": 44,
+      "max_col": 51,
+      "nonempty_cells": 847,
+      "formula_cells": 796,
+      "merged_cells": 0,
+      "hidden_rows": 7,
+      "hidden_cols": 33,
+      "freeze_panes": "D10",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "_TM_QoE summary",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_QoE detail",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_QoE adj. detail",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Rec >>",
+      "state": "visible",
+      "dimension": "A1:G27",
+      "max_row": 27,
+      "max_col": 7,
+      "nonempty_cells": 3,
+      "formula_cells": 1,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "PL rec",
+      "state": "visible",
+      "dimension": "A1:K27",
+      "max_row": 27,
+      "max_col": 11,
+      "nonempty_cells": 89,
+      "formula_cells": 70,
+      "merged_cells": 2,
+      "hidden_rows": 2,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "BS rec",
+      "state": "visible",
+      "dimension": "A1:K51",
+      "max_row": 51,
+      "max_col": 11,
+      "nonempty_cells": 195,
+      "formula_cells": 150,
+      "merged_cells": 2,
+      "hidden_rows": 10,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Supporting analysis >>",
+      "state": "visible",
+      "dimension": "A1:G27",
+      "max_row": 27,
+      "max_col": 7,
+      "nonempty_cells": 3,
+      "formula_cells": 1,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Seasonality",
+      "state": "visible",
+      "dimension": "A1:AT27",
+      "max_row": 27,
+      "max_col": 46,
+      "nonempty_cells": 547,
+      "formula_cells": 465,
+      "merged_cells": 0,
+      "hidden_rows": 6,
+      "hidden_cols": 0,
+      "freeze_panes": "D10",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 4,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "Top customers",
+      "state": "visible",
+      "dimension": "A1:L28",
+      "max_row": 28,
+      "max_col": 12,
+      "nonempty_cells": 83,
+      "formula_cells": 76,
+      "merged_cells": 3,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Cost base",
+      "state": "visible",
+      "dimension": "A1:CK40",
+      "max_row": 40,
+      "max_col": 89,
+      "nonempty_cells": 2090,
+      "formula_cells": 2052,
+      "merged_cells": 4,
+      "hidden_rows": 5,
+      "hidden_cols": 34,
+      "freeze_panes": "D11",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 38,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Personnel",
+      "state": "visible",
+      "dimension": "A1:CK34",
+      "max_row": 34,
+      "max_col": 89,
+      "nonempty_cells": 1197,
+      "formula_cells": 1168,
+      "merged_cells": 4,
+      "hidden_rows": 9,
+      "hidden_cols": 2,
+      "freeze_panes": "D11",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 18,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Top suppliers",
+      "state": "visible",
+      "dimension": "A1:K33",
+      "max_row": 33,
+      "max_col": 11,
+      "nonempty_cells": 72,
+      "formula_cells": 64,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Op. cash flows",
+      "state": "visible",
+      "dimension": "A1:AR49",
+      "max_row": 49,
+      "max_col": 44,
+      "nonempty_cells": 590,
+      "formula_cells": 548,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 6,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Headroom",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "PL templates >>",
+      "state": "visible",
+      "dimension": "A1:G27",
+      "max_row": 27,
+      "max_col": 7,
+      "nonempty_cells": 3,
+      "formula_cells": 1,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Revenue by type",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "PL_FC",
+      "state": "visible",
+      "dimension": "A1:AV80",
+      "max_row": 80,
+      "max_col": 48,
+      "nonempty_cells": 2499,
+      "formula_cells": 2451,
+      "merged_cells": 0,
+      "hidden_rows": 46,
+      "hidden_cols": 3,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 40,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "Net sales bridge",
+      "state": "visible",
+      "dimension": "A1:AC25",
+      "max_row": 25,
+      "max_col": 29,
+      "nonempty_cells": 167,
+      "formula_cells": 150,
+      "merged_cells": 0,
+      "hidden_rows": 3,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 2
+    },
+    {
+      "sheet": "EBITDA bridge",
+      "state": "visible",
+      "dimension": "A1:X25",
+      "max_row": 25,
+      "max_col": 24,
+      "nonempty_cells": 136,
+      "formula_cells": 112,
+      "merged_cells": 0,
+      "hidden_rows": 3,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 2
+    },
+    {
+      "sheet": "_TM_Net sales by type",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Net sales by type",
+      "state": "visible",
+      "dimension": "A1:R32",
+      "max_row": 32,
+      "max_col": 18,
+      "nonempty_cells": 121,
+      "formula_cells": 105,
+      "merged_cells": 5,
+      "hidden_rows": 2,
+      "hidden_cols": 2,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Top customers",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Net sales by region",
+      "state": "visible",
+      "dimension": "A1:R32",
+      "max_row": 32,
+      "max_col": 18,
+      "nonempty_cells": 121,
+      "formula_cells": 105,
+      "merged_cells": 5,
+      "hidden_rows": 2,
+      "hidden_cols": 3,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_COGS",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Top suppliers",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Personnel",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Related parties",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_NWC summary",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_NWC detailed",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_NWC adjusted",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_NWC - days analysis",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Inventories",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_AR",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_Op. cash flows",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Related parties",
+      "state": "visible",
+      "dimension": "A1:H32",
+      "max_row": 32,
+      "max_col": 8,
+      "nonempty_cells": 41,
+      "formula_cells": 21,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_PPE",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "BS templates >>",
+      "state": "visible",
+      "dimension": "A1:G27",
+      "max_row": 27,
+      "max_col": 7,
+      "nonempty_cells": 3,
+      "formula_cells": 1,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "BS_net assets",
+      "state": "visible",
+      "dimension": "A1:BA50",
+      "max_row": 50,
+      "max_col": 53,
+      "nonempty_cells": 1633,
+      "formula_cells": 1565,
+      "merged_cells": 0,
+      "hidden_rows": 15,
+      "hidden_cols": 1,
+      "freeze_panes": "D10",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 1
+    },
+    {
+      "sheet": "NWC - days analysis",
+      "state": "visible",
+      "dimension": "A1:X58",
+      "max_row": 58,
+      "max_col": 24,
+      "nonempty_cells": 374,
+      "formula_cells": 297,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 12,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Inventories",
+      "state": "visible",
+      "dimension": "A1:M34",
+      "max_row": 34,
+      "max_col": 13,
+      "nonempty_cells": 93,
+      "formula_cells": 78,
+      "merged_cells": 4,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 2
+    },
+    {
+      "sheet": "AR",
+      "state": "visible",
+      "dimension": "A1:M40",
+      "max_row": 40,
+      "max_col": 13,
+      "nonempty_cells": 70,
+      "formula_cells": 51,
+      "merged_cells": 4,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "AP",
+      "state": "visible",
+      "dimension": "A1:K23",
+      "max_row": 23,
+      "max_col": 11,
+      "nonempty_cells": 55,
+      "formula_cells": 43,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Fixed assets",
+      "state": "visible",
+      "dimension": "A1:N39",
+      "max_row": 39,
+      "max_col": 14,
+      "nonempty_cells": 140,
+      "formula_cells": 109,
+      "merged_cells": 3,
+      "hidden_rows": 8,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Capex",
+      "state": "visible",
+      "dimension": "A1:AR32",
+      "max_row": 32,
+      "max_col": 44,
+      "nonempty_cells": 510,
+      "formula_cells": 486,
+      "merged_cells": 1,
+      "hidden_rows": 2,
+      "hidden_cols": 6,
+      "freeze_panes": "D10",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 10,
+      "question_note_flag_mentions": 2
+    },
+    {
+      "sheet": "_TM_P&L rec",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_IS rec",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "_TM_BS rec",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Calculations >>",
+      "state": "visible",
+      "dimension": "A1:G27",
+      "max_row": 27,
+      "max_col": 7,
+      "nonempty_cells": 3,
+      "formula_cells": 1,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Count-back days - DSO",
+      "state": "visible",
+      "dimension": "A1:BX71",
+      "max_row": 71,
+      "max_col": 76,
+      "nonempty_cells": 3222,
+      "formula_cells": 3149,
+      "merged_cells": 0,
+      "hidden_rows": 47,
+      "hidden_cols": 0,
+      "freeze_panes": "D8",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Days calculator",
+        "INPUTS",
+        "CALCS",
+        "OUTPUTS",
+        ">>>>>>>INSERT COLUMNS TO THE RICHT AND COPY FROM COLUMN \"COPY COL\""
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Count-fwd days - DIO",
+      "state": "visible",
+      "dimension": "A1:BY66",
+      "max_row": 66,
+      "max_col": 77,
+      "nonempty_cells": 3107,
+      "formula_cells": 3021,
+      "merged_cells": 0,
+      "hidden_rows": 44,
+      "hidden_cols": 0,
+      "freeze_panes": "D8",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Days calculator",
+        "INPUTS",
+        "CALCS",
+        "OUTPUTS",
+        "COPY COL",
+        "<<<<< INSERT COLUMNS TO THE LEFT AND COPY FROM COLUMN \"COPY COL\""
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Count-back days - DPO",
+      "state": "visible",
+      "dimension": "A1:BX71",
+      "max_row": 71,
+      "max_col": 76,
+      "nonempty_cells": 3222,
+      "formula_cells": 3149,
+      "merged_cells": 0,
+      "hidden_rows": 47,
+      "hidden_cols": 0,
+      "freeze_panes": "D8",
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Days calculator",
+        "INPUTS",
+        "CALCS",
+        "OUTPUTS",
+        ">>>>>>>INSERT COLUMNS TO THE RICHT AND COPY FROM COLUMN \"COPY COL\""
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Source data >>",
+      "state": "visible",
+      "dimension": "A1:G27",
+      "max_row": 27,
+      "max_col": 7,
+      "nonempty_cells": 3,
+      "formula_cells": 1,
+      "merged_cells": 2,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "PL",
+      "state": "visible",
+      "dimension": "A1:AQ1500",
+      "max_row": 1500,
+      "max_col": 43,
+      "nonempty_cells": 538,
+      "formula_cells": 534,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": "F8",
+      "data_validation_rules": [
+        {
+          "type": "list",
+          "allow_blank": true,
+          "formula1": "\"Net sales,Other op.income,COGS,Personnel,Depreciation,Other OPEX,EBIT,Net fin.income,EBT,Taxes,Net profit\"",
+          "formula2": null,
+          "sqref": "C8:C500"
+        }
+      ],
+      "conditional_formatting_rules": [
+        {
+          "range": "<ConditionalFormatting B8:C8 B9:B661 C9:C500>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"MISSING\",B8)))"
+          ],
+          "dxfId": "1"
+        }
+      ],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "BS",
+      "state": "visible",
+      "dimension": "A1:AP1500",
+      "max_row": 1500,
+      "max_col": 42,
+      "nonempty_cells": 537,
+      "formula_cells": 533,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": "F8",
+      "data_validation_rules": [
+        {
+          "type": "list",
+          "allow_blank": true,
+          "formula1": "\"Fixed assets,Current assets,Total assets,Equity,Total liabilities\"",
+          "formula2": null,
+          "sqref": "C8:C500"
+        }
+      ],
+      "conditional_formatting_rules": [
+        {
+          "range": "<ConditionalFormatting B8:C500>",
+          "type": "containsText",
+          "operator": "containsText",
+          "formula": [
+            "NOT(ISERROR(SEARCH(\"MISSING\",B8)))"
+          ],
+          "dxfId": "0"
+        }
+      ],
+      "table_names": [],
+      "header_row_sample": [
+        "='Key information'!E7"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    },
+    {
+      "sheet": "Accounts",
+      "state": "visible",
+      "dimension": "A1:C1226",
+      "max_row": 1226,
+      "max_col": 3,
+      "nonempty_cells": 3238,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "The below chart of accounts is based on Procountor and Netvisor account structure"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 2
+    },
+    {
+      "sheet": "_TM_Instructions",
+      "state": "veryHidden",
+      "dimension": "A1:E2",
+      "max_row": 2,
+      "max_col": 5,
+      "nonempty_cells": 10,
+      "formula_cells": 0,
+      "merged_cells": 0,
+      "hidden_rows": 0,
+      "hidden_cols": 0,
+      "freeze_panes": null,
+      "data_validation_rules": [],
+      "conditional_formatting_rules": [],
+      "table_names": [],
+      "header_row_sample": [
+        "Left",
+        "Top",
+        "Right",
+        "Bottom",
+        "Ref"
+      ],
+      "ref_error_count": 0,
+      "external_formula_count": 0,
+      "volatile_formula_count": 0,
+      "question_note_flag_mentions": 0
+    }
+  ]
+}

@@ -69,9 +69,9 @@ Use this as the default top-level order:
 
 Use this section to prove every extracted item is verbatim-backed by source text.
 
-| Canonical Section | Source slide/page IDs | Source evidence files | Extracted reference(s) | Notes |
-|---|---|---|---|---|
-| Quality of Earnings | 16,17,18,19,20,21,22 | `slide-16.txt`, `slide-17.txt` | `## Quality of earnings adjustments` list items 1-13 | `[x]` |
+| Canonical Section   | Source slide/page IDs | Source evidence files          | Extracted reference(s)                               | Notes |
+| ------------------- | --------------------- | ------------------------------ | ---------------------------------------------------- | ----- |
+| Quality of Earnings | 16,17,18,19,20,21,22  | `slide-16.txt`, `slide-17.txt` | `## Quality of earnings adjustments` list items 1-13 | `[x]` |
 
 If any line in the extracted report is shortened, summarized, or paraphrased, set `Notes` to explain and keep status as `needs_revision` until corrected.
 
@@ -80,56 +80,72 @@ If OCR was used, source artifacts will include an `"[OCR_EXTRACTED_TEXT]"` secti
 ---
 
 # Executive Summary
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Key Findings
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Business Overview
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 - <Verbatim Bullet 3>
 
 # Summary Financials
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Profit and Loss Overview / Financial Performance
+
 ## Overview
+
 <Verbatim Text>
 
 ## Key Drivers
+
 1. <Driver Name>: <Verbatim Text>
 2. <Driver Name>: <Verbatim Text>
 
 # Quality of Earnings
+
 ## Overview
+
 <Verbatim Text>
 
 ## Quality of earnings adjustments
+
 1. <Adjustment Name>: <Verbatim Adjustment Text>
 2. <Adjustment Name>: <Verbatim Adjustment Text>
 3. <Adjustment Name>: <Verbatim Adjustment Text>
 
 ## Other considerations
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Income Statement
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Balance Sheet
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Net Working Capital
+
 ## Overview
+
 <Verbatim Text>
 
 ## Net working capital adjustments
+
 1. <Adjustment Name>: <Verbatim Adjustment Text>
 2. <Adjustment Name>: <Verbatim Adjustment Text>
 3. <Adjustment Name>: <Verbatim Adjustment Text>
@@ -138,10 +154,13 @@ If adjustment items are only presented in tables/charts and excluded by policy, 
 `Table- or chart-based adjustment details were excluded per extraction policy.`
 
 # Net Debt (Cash)
+
 ## Overview
+
 <Verbatim Text>
 
 ## Net debt / cash adjustments
+
 1. <Adjustment Name>: <Verbatim Adjustment Text>
 2. <Adjustment Name>: <Verbatim Adjustment Text>
 3. <Adjustment Name>: <Verbatim Adjustment Text>
@@ -150,65 +169,61 @@ If debt-like/working-capital adjustments are only in tables/charts, add:
 `Table- or chart-based adjustment details were excluded per extraction policy.`
 
 # Cash Flows
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Reporting Environment
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Related Parties
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Industry Analysis
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Forecast Trading
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Quality of Net Assets
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Gross Margin by LOB
+
+- <Verbatim Bullet 1>
+- <Verbatim Bullet 2>
+
+# <Addition Sections as Needed>
+
 - <Verbatim Bullet 1>
 - <Verbatim Bullet 2>
 
 # Appendices
+
 ## Appendix 1: <Appendix Name>
+
 <Verbatim Text>
 
 ## Appendix 2: <Appendix Name>
+
 <Verbatim Text>
 
 ## Appendix 3: <Appendix Name>
+
 <Verbatim Text>
 
 ## Appendix 4: <Appendix Name>
+
 <Verbatim Text>
 
 Continue numbering for all appendix sections found in source.
-
----
-
-## Extraction QA Checklist
-
-- [ ] All copied content is verbatim (no paraphrase)
-- [ ] Content organization is manually reviewed against source-text artifacts (scripts are guardrails, not substitutes)
-- [ ] Cleanup pass completed (no engagement-letter/legal/cover/glossary/navigation boilerplate in content sections)
-- [ ] All major sections attempted
-- [ ] Missing sections explicitly marked
-- [ ] Adjustment lists include exact source wording
-- [ ] Appendices are labeled as `Appendix <N>: <Appendix Name>` for all appendices present
-- [ ] Each extracted paragraph/bullet has source IDs recorded in the Coverage Map
-- [ ] `scripts/qa_provenance.py` reports `pass` with zero unmatched lines
-- [ ] `scripts/qa_gates.py` reports `pass` with all fail-closed gates green
-- [ ] `markdown_trace_sync` gate is `pass`
-- [ ] `section_completeness` gate is `pass`
-- [ ] `executive_summary_cleanup` gate is `pass`
-- [ ] `cleanup_quality` gate is `pass`
-- [ ] No final markdown line is OCR-only backed (unless explicitly approved for special OCR mode)
-- [ ] Metadata fields completed

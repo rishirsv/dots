@@ -1,0 +1,756 @@
+{
+  "anchor_style_frequency": {
+    "B1": [
+      [
+        1337,
+        41
+      ],
+      [
+        35,
+        22
+      ],
+      [
+        337,
+        19
+      ],
+      [
+        838,
+        5
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1375,
+        2
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        15,
+        1
+      ],
+      [
+        926,
+        1
+      ],
+      [
+        1072,
+        1
+      ]
+    ],
+    "B2": [
+      [
+        1339,
+        41
+      ],
+      [
+        339,
+        23
+      ],
+      [
+        39,
+        18
+      ],
+      [
+        839,
+        5
+      ],
+      [
+        1376,
+        2
+      ],
+      [
+        3144,
+        2
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        17,
+        1
+      ],
+      [
+        927,
+        1
+      ],
+      [
+        1075,
+        1
+      ]
+    ],
+    "B3": [
+      [
+        1340,
+        41
+      ],
+      [
+        41,
+        30
+      ],
+      [
+        340,
+        10
+      ],
+      [
+        962,
+        4
+      ],
+      [
+        1377,
+        2
+      ],
+      [
+        3144,
+        2
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        19,
+        1
+      ],
+      [
+        840,
+        1
+      ],
+      [
+        928,
+        1
+      ]
+    ],
+    "B4": [
+      [
+        21,
+        39
+      ],
+      [
+        341,
+        23
+      ],
+      [
+        42,
+        18
+      ],
+      [
+        841,
+        5
+      ],
+      [
+        3170,
+        3
+      ],
+      [
+        1378,
+        2
+      ],
+      [
+        3144,
+        2
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        929,
+        1
+      ],
+      [
+        1077,
+        1
+      ]
+    ],
+    "C7": [
+      [
+        346,
+        31
+      ],
+      [
+        3451,
+        9
+      ],
+      [
+        3294,
+        6
+      ],
+      [
+        1829,
+        5
+      ],
+      [
+        1809,
+        4
+      ],
+      [
+        47,
+        3
+      ],
+      [
+        2618,
+        3
+      ],
+      [
+        3277,
+        3
+      ],
+      [
+        364,
+        2
+      ],
+      [
+        670,
+        2
+      ]
+    ],
+    "C8": [
+      [
+        364,
+        27
+      ],
+      [
+        3453,
+        9
+      ],
+      [
+        3296,
+        6
+      ],
+      [
+        2570,
+        5
+      ],
+      [
+        352,
+        4
+      ],
+      [
+        2576,
+        4
+      ],
+      [
+        520,
+        3
+      ],
+      [
+        1766,
+        3
+      ],
+      [
+        1831,
+        3
+      ],
+      [
+        54,
+        2
+      ]
+    ],
+    "C9": [
+      [
+        364,
+        20
+      ],
+      [
+        3459,
+        7
+      ],
+      [
+        3301,
+        6
+      ],
+      [
+        675,
+        5
+      ],
+      [
+        485,
+        4
+      ],
+      [
+        2570,
+        4
+      ],
+      [
+        468,
+        3
+      ],
+      [
+        968,
+        2
+      ],
+      [
+        1223,
+        2
+      ],
+      [
+        1837,
+        2
+      ]
+    ],
+    "C10": [
+      [
+        496,
+        14
+      ],
+      [
+        3459,
+        7
+      ],
+      [
+        468,
+        5
+      ],
+      [
+        525,
+        5
+      ],
+      [
+        2564,
+        5
+      ],
+      [
+        485,
+        3
+      ],
+      [
+        3258,
+        3
+      ],
+      [
+        364,
+        2
+      ],
+      [
+        1798,
+        2
+      ],
+      [
+        579,
+        2
+      ]
+    ]
+  },
+  "anchor_value_samples": {
+    "B1": [
+      [
+        "Project North",
+        100
+      ],
+      [
+        "99",
+        1
+      ],
+      [
+        "54",
+        1
+      ],
+      [
+        "Base data",
+        1
+      ],
+      [
+        "354",
+        1
+      ]
+    ],
+    "B2": [
+      [
+        "Quality of earnings",
+        2
+      ],
+      [
+        "NWC adjustments",
+        2
+      ],
+      [
+        "NWC | Days",
+        2
+      ],
+      [
+        "Income statement",
+        2
+      ],
+      [
+        "Quality of earnings | Bridge",
+        1
+      ],
+      [
+        "Adjusted income statement ",
+        1
+      ],
+      [
+        "Adjusted EBITDA bridge",
+        1
+      ],
+      [
+        "Financial baseline",
+        1
+      ],
+      [
+        "Definitional adjustments",
+        1
+      ],
+      [
+        "Diligence adjustments",
+        1
+      ],
+      [
+        "Pro forma adjustments",
+        1
+      ],
+      [
+        "Gross margin by line of business",
+        1
+      ],
+      [
+        "Year-end post close adjustments",
+        1
+      ],
+      [
+        "New customer summary",
+        1
+      ],
+      [
+        "Terminated & lost customers detail",
+        1
+      ]
+    ],
+    "B3": [
+      [
+        "Source: Management provided information",
+        22
+      ],
+      [
+        "Source: Everlink Rev & COGS  IFRS15 by LoB by Month (2021); Everlink Rev & COGS  IFRS15 by LoB by Month (2022); Everlink Rev & COGS  IFRS15 by LoB by Month (2023)",
+        11
+      ],
+      [
+        "Source: GL detail for new data center",
+        9
+      ],
+      [
+        "Source:Everlink P&L IFRS1516 All Months Statements",
+        5
+      ],
+      [
+        "Source: Managament provided information",
+        4
+      ],
+      [
+        "Source:Everlink Balance Sheet 13 month trend (2021),Everlink Balance Sheet 13 month trend (2022),Everlink Balance Sheet 13 month trend (2023),Everlink Balance Sheet 13 month trend (to April 2024)",
+        3
+      ],
+      [
+        "Source: Monthly IS & BS",
+        2
+      ],
+      [
+        "Source: Everlink CIM_v1.6 (1)",
+        2
+      ],
+      [
+        "Source:14 AP Detail 2021 2024522-2032pm,14 AP Detail 2022 2024522-2019pm,14 AP Detail 2023 2024522-2111pm,14 AP Detail Jan-Apr 2024 2024522-212047",
+        2
+      ],
+      [
+        "Source: 1 - 2017 - 2024 Acxsys TSP Billing Volume Apr 2024",
+        1
+      ],
+      [
+        "Source: 25 2024 Call Centre Compensation",
+        1
+      ],
+      [
+        "Source: Chase Residual - Payment Schedules 411139 Discontinued",
+        1
+      ],
+      [
+        "Source: 2020.02.27_MDA_Notice of Fee Change_(MSA Clients), Credit union Everlink MSA (Final - Execution) May 2024 to April 2031",
+        1
+      ],
+      [
+        "Source: Interac AR monthly pdf",
+        1
+      ],
+      [
+        "Source: Billings reports",
+        1
+      ]
+    ],
+    "B4": [
+      [
+        "WORKING DRAFT",
+        100
+      ],
+      [
+        "2503.63938817",
+        1
+      ],
+      [
+        "1",
+        1
+      ]
+    ],
+    "C7": [
+      [
+        "Quality of earnings",
+        2
+      ],
+      [
+        "$'000",
+        2
+      ],
+      [
+        "Income statement",
+        2
+      ],
+      [
+        "If this Excel Workbook is received by any party other than Client, the recipient is placed on notice that this report has been prepared solely for Client\u2019s benefit and its own use. KPMG LLP (\u201cKPMG\u201d) does not authorize recipient or any other party to rely on this report and any such reliance shall be at recipient\u2019s sole risk. Therefore, KPMG shall have no liability or responsibility in respect of the advice, recommendations, or other information in this report to recipient or any other party other than Client. Further, this report and its contents may not be shared with or disclosed by the recipient to any party without the express written consent of Client and KPMG.",
+        1
+      ],
+      [
+        "Quality of earnings | Bridge",
+        1
+      ],
+      [
+        "Adjusted income statement ",
+        1
+      ],
+      [
+        "$'m",
+        1
+      ],
+      [
+        "Depreciation and amortization expense",
+        1
+      ],
+      [
+        "Mobile POS IFRS 15 ",
+        1
+      ],
+      [
+        "New customers ",
+        1
+      ],
+      [
+        "Gross margin by line of business",
+        1
+      ],
+      [
+        "Date",
+        1
+      ],
+      [
+        "New customers detail",
+        1
+      ],
+      [
+        "Terminated & lost customers detail",
+        1
+      ],
+      [
+        "Interac Token service provider volume and billing summary",
+        1
+      ]
+    ],
+    "C8": [
+      [
+        "$'000",
+        28
+      ],
+      [
+        "Days",
+        2
+      ],
+      [
+        "#",
+        2
+      ],
+      [
+        "FY21 EBITDA",
+        1
+      ],
+      [
+        "Processing services revenue",
+        1
+      ],
+      [
+        "45291",
+        1
+      ],
+      [
+        "$, #",
+        1
+      ],
+      [
+        "Ifrs 15 adj to processing, reported",
+        1
+      ],
+      [
+        "Payroll and headcount analysis",
+        1
+      ],
+      [
+        "Type",
+        1
+      ],
+      [
+        "Vendor",
+        1
+      ],
+      [
+        "AP Aging | 30-Jun-24",
+        1
+      ],
+      [
+        "21063.5199168392",
+        1
+      ],
+      [
+        "-2665.86800875936",
+        1
+      ]
+    ],
+    "C9": [
+      [
+        "$'000",
+        54
+      ],
+      [
+        "Revenue, reported",
+        2
+      ],
+      [
+        "FY21",
+        2
+      ],
+      [
+        "Salesforce platform",
+        2
+      ],
+      [
+        "KPMG approach",
+        1
+      ],
+      [
+        "Processing services revenue",
+        1
+      ],
+      [
+        "Card issuance revenue",
+        1
+      ],
+      [
+        "Depreciation - software",
+        1
+      ],
+      [
+        "IFRS 15 adj to processing, reported",
+        1
+      ],
+      [
+        "Reported ",
+        1
+      ],
+      [
+        "End-to-end (ACQ), quantity",
+        1
+      ],
+      [
+        "Team Leader",
+        1
+      ],
+      [
+        "Chase referral program",
+        1
+      ],
+      [
+        "#",
+        1
+      ],
+      [
+        "CAD'000",
+        1
+      ]
+    ],
+    "C10": [
+      [
+        "Beginning balance",
+        11
+      ],
+      [
+        "Mobile TSP Transactions POS-",
+        8
+      ],
+      [
+        "Mobile payments",
+        3
+      ],
+      [
+        "Assets",
+        3
+      ],
+      [
+        "Due diligence adjustments",
+        2
+      ],
+      [
+        "Mobile tsp transactions pos-",
+        2
+      ],
+      [
+        "Active products",
+        2
+      ],
+      [
+        "$'000",
+        2
+      ],
+      [
+        "FY22",
+        2
+      ],
+      [
+        "Opening balance",
+        2
+      ],
+      [
+        "Salesforce core",
+        2
+      ],
+      [
+        "Revenue, reported",
+        1
+      ],
+      [
+        "Card issuance revenue",
+        1
+      ],
+      [
+        "Professional services revenue",
+        1
+      ],
+      [
+        "Depreciation - system software- infrastructure",
+        1
+      ]
+    ]
+  },
+  "anchor_cells": [
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "C7",
+    "C8",
+    "C9",
+    "C10"
+  ]
+}
