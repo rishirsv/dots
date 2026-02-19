@@ -1,0 +1,137 @@
+{
+  "generated_at": "2026-02-19T11:43:25.548484",
+  "company": "Fowler Labs",
+  "industry": "saas",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 14,
+    "passed": 14,
+    "failed": 0,
+    "qoe_issues": 7
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $11,991,960"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $19,199,462"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $27,620,791"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $35,008,207, TB: $35,008,207"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $43,788,552, TB: $43,788,552"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $51,356,736, TB: $51,356,736"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $7,296,881, BS: $7,296,881"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $2,064,472, BS: $2,064,472"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 132, Actual: 132"
+    },
+    {
+      "name": "mrr_revenue_tie_2023-12",
+      "description": "MRR ties to P&L revenue for 2023-12",
+      "passed": true,
+      "details": "MRR: $3,696,879, P&L: $3,696,879"
+    },
+    {
+      "name": "mrr_revenue_tie_2024-12",
+      "description": "MRR ties to P&L revenue for 2024-12",
+      "passed": true,
+      "details": "MRR: $4,687,359, P&L: $4,687,359"
+    },
+    {
+      "name": "mrr_revenue_tie_2025-12",
+      "description": "MRR ties to P&L revenue for 2025-12",
+      "passed": true,
+      "details": "MRR: $4,998,090, P&L: $4,998,090"
+    },
+    {
+      "name": "arr_calculation",
+      "description": "ARR = MRR \u00d7 12",
+      "passed": true,
+      "details": "MRR: $4,998,090, ARR: $59,977,080"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -5484383.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "One-time implementation revenue recognized upfront",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Capitalized software costs (R&D vs. development split)",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Stock-based compensation add-back",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Non-recurring legal/IP costs",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Above-market executive compensation",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party software licensing fees",
+      "category": "qoe_addback"
+    }
+  ]
+}

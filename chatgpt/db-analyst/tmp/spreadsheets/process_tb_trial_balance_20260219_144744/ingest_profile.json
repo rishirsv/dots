@@ -1,0 +1,9 @@
+{
+  "input": "/Users/rishi/Code/ai-tools/chatgpt/databook-analyst/data-room/trial_balance.xlsx",
+  "layout": "wide",
+  "source_rows": 36,
+  "output_rows": 838,
+  "distinct_periods": 36,
+  "distinct_accounts": 24,
+  "derived_rows": 0
+}

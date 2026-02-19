@@ -1,0 +1,9 @@
+{
+  "case_id": "professional-services-realistic-36m",
+  "industry": "professional_services",
+  "size": "mid",
+  "realism_mode": "realistic",
+  "seed": 404,
+  "start_period": "2023-01",
+  "end_period": "2025-12"
+}

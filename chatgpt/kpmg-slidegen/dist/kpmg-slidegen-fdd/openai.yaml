@@ -1,4 +1,0 @@
-interface:
-  display_name: "KPMG Slidegen FDD"
-  short_description: "Generate one full FDD deck using templated slide writing, layout mapping, and manual rewrite loops."
-  default_prompt: "Create one complete KPMG FDD deck from my inputs. Plan the full deck first, map each slide to approved layouts, write using the slide playbook templates, preserve facts/placeholders, then manually review and rewrite weak slides before final output."

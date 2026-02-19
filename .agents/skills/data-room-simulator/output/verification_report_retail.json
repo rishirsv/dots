@@ -1,0 +1,181 @@
+{
+  "generated_at": "2026-02-19T11:29:07.833831",
+  "company": "Fowler Retail",
+  "industry": "retail",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 17,
+    "passed": 17,
+    "failed": 0,
+    "qoe_issues": 11
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "62 periods"
+    },
+    {
+      "name": "bs_equation_2021",
+      "description": "Balance sheet equation (A = L + E) for 2021",
+      "passed": true,
+      "details": "Assets = $10,807,948"
+    },
+    {
+      "name": "bs_equation_2022",
+      "description": "Balance sheet equation (A = L + E) for 2022",
+      "passed": true,
+      "details": "Assets = $12,956,087"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $14,096,824"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $17,698,721"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $19,346,416"
+    },
+    {
+      "name": "bs_equation_2026",
+      "description": "Balance sheet equation (A = L + E) for 2026",
+      "passed": true,
+      "details": "Assets = $11,539,058"
+    },
+    {
+      "name": "revenue_consistency_2021.0",
+      "description": "Revenue consistency between IS and TB for 2021.0",
+      "passed": true,
+      "details": "IS: $21,848,073, TB: $21,848,073"
+    },
+    {
+      "name": "revenue_consistency_2022.0",
+      "description": "Revenue consistency between IS and TB for 2022.0",
+      "passed": true,
+      "details": "IS: $24,613,895, TB: $24,613,895"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $29,000,939, TB: $29,000,939"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $37,177,151, TB: $37,177,151"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $43,211,551, TB: $43,211,551"
+    },
+    {
+      "name": "revenue_consistency_2026.0",
+      "description": "Revenue consistency between IS and TB for 2026.0",
+      "passed": true,
+      "details": "IS: $5,066,694, TB: $5,066,694"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $4,315,352, BS: $4,315,352"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $1,891,981, BS: $1,891,981"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 132, Actual: 132"
+    },
+    {
+      "name": "transaction_revenue_tie",
+      "description": "Sales transaction totals tie to P&L revenue",
+      "passed": true,
+      "details": "Transactions: $160,918,303, P&L: $160,918,303"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "one_time_event",
+      "date": "2021-11-03",
+      "description": "Insurance claim recovery",
+      "impact": 425455.0,
+      "category": "insurance"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2024-04-01",
+      "description": "Restructuring costs",
+      "impact": -521034.0,
+      "category": "restructuring"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2026-09-22",
+      "description": "Insurance claim recovery",
+      "impact": 355752.0,
+      "category": "insurance"
+    },
+    {
+      "type": "customer_churn",
+      "description": "8 customer losses identified",
+      "total_impact": -5256366.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Inventory reserve / obsolescence",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Gift card breakage timing",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Lease accounting adjustments",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Shrinkage reserve normalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner compensation normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party rent",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Personal purchases through store",
+      "category": "qoe_addback"
+    }
+  ]
+}

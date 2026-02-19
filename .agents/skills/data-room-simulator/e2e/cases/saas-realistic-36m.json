@@ -1,0 +1,9 @@
+{
+  "case_id": "saas-realistic-36m",
+  "industry": "saas",
+  "size": "mid",
+  "realism_mode": "realistic",
+  "seed": 101,
+  "start_period": "2023-01",
+  "end_period": "2025-12"
+}

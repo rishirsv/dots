@@ -1,0 +1,9 @@
+{
+  "case_id": "manufacturing-realistic-36m",
+  "industry": "manufacturing",
+  "size": "mid",
+  "realism_mode": "realistic",
+  "seed": 303,
+  "start_period": "2023-01",
+  "end_period": "2025-12"
+}

@@ -1,0 +1,9 @@
+{
+  "case_id": "retail-realistic-36m",
+  "industry": "retail",
+  "size": "mid",
+  "realism_mode": "realistic",
+  "seed": 505,
+  "start_period": "2023-01",
+  "end_period": "2025-12"
+}

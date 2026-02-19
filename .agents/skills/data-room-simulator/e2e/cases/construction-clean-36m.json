@@ -1,0 +1,9 @@
+{
+  "case_id": "construction-clean-36m",
+  "industry": "construction",
+  "size": "mid",
+  "realism_mode": "clean",
+  "seed": 202,
+  "start_period": "2023-01",
+  "end_period": "2025-12"
+}

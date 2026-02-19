@@ -1,0 +1,260 @@
+{
+  "generated_at": "2026-02-19T12:33:55.168559",
+  "run_id": "123dentist-dental-realistic-2023-2025-better",
+  "output_dir": "output/runs/123dentist-dental-realistic-2023-2025-better",
+  "company": "123Dentist Better TestCo",
+  "industry": "dental",
+  "realism_mode": "realistic",
+  "verification_status": "pass",
+  "verification_failed_checks": 0,
+  "period_start": "2023-01",
+  "period_end": "2025-12",
+  "period_count": 36,
+  "files": [
+    {
+      "file_name": "accounting_policies.md",
+      "relative_path": "accounting_policies.md",
+      "size_bytes": 2224,
+      "sha256": "3f1c85808254ab61e7ae3ea778fc6e7ba961a438fdc1296a607317fd3ba91a4d",
+      "description": "Rendered accounting policies narrative."
+    },
+    {
+      "file_name": "ap_aging.xlsx",
+      "relative_path": "ap_aging.xlsx",
+      "size_bytes": 5038,
+      "sha256": "99566fca29a114d844fab8415ba1fb563e228abcd12dd06c97833779d3b658cb",
+      "description": "Accounts payable aging schedule.",
+      "rows": 6
+    },
+    {
+      "file_name": "appointment_utilization_monthly.xlsx",
+      "relative_path": "appointment_utilization_monthly.xlsx",
+      "size_bytes": 6886,
+      "sha256": "7059839d601518512cbcbe3c2da4e40ede831ef84d249d129b4aefcdc1796122",
+      "description": "Generated artifact.",
+      "rows": 36
+    },
+    {
+      "file_name": "ar_aging.xlsx",
+      "relative_path": "ar_aging.xlsx",
+      "size_bytes": 5036,
+      "sha256": "d54abf2e1a945194c8f739c30c89af992f481036cc0493a19a9d333c544cef86",
+      "description": "Accounts receivable aging schedule.",
+      "rows": 6
+    },
+    {
+      "file_name": "balance_sheet.xlsx",
+      "relative_path": "balance_sheet.xlsx",
+      "size_bytes": 5650,
+      "sha256": "bd28d233bbe72b2fb870fb91bc927ec126ced04d04c96fee7f4392ecd7388d08",
+      "description": "Annual balance sheet snapshots with equation checks.",
+      "rows": 3
+    },
+    {
+      "file_name": "benchmark_overlay_monthly.xlsx",
+      "relative_path": "benchmark_overlay_monthly.xlsx",
+      "size_bytes": 6472,
+      "sha256": "c0e7d77ec80cf9cecf2f84bbef4a447b68fdc24904313c6628bf3f394507fec4",
+      "description": "Generated artifact.",
+      "rows": 36
+    },
+    {
+      "file_name": "cash_flow.xlsx",
+      "relative_path": "cash_flow.xlsx",
+      "size_bytes": 5399,
+      "sha256": "581ab386f7e1a5c38cc4ccf1501ee6d59dd81a873131b7617ed04bd29533fae9",
+      "description": "Annual cash flow statement using indirect method.",
+      "rows": 3
+    },
+    {
+      "file_name": "cim.md",
+      "relative_path": "cim.md",
+      "size_bytes": 4625,
+      "sha256": "eaf7b1a72fc35627951751f130a6ec9f69cb6b8fb0f5b561361285764524301b",
+      "description": "Rendered CIM narrative."
+    },
+    {
+      "file_name": "company_overview.md",
+      "relative_path": "company_overview.md",
+      "size_bytes": 2115,
+      "sha256": "32af6a6bc1cd06edfcced0256a7bdcb4361afa58c7792c304ed3cd36150eb3aa",
+      "description": "Rendered company overview narrative."
+    },
+    {
+      "file_name": "company_seed.json",
+      "relative_path": "company_seed.json",
+      "size_bytes": 11090,
+      "sha256": "34449ed8e082484805fd7eaf9340970b6da88502fb1270021a2f43c71d0aa2bf",
+      "description": "Core company profile and generation metadata."
+    },
+    {
+      "file_name": "department_summary.xlsx",
+      "relative_path": "department_summary.xlsx",
+      "size_bytes": 5339,
+      "sha256": "93f9708d6011cc68900206c4794df2bba2fbe9456f0b027e56fe28508db2085a",
+      "description": "Headcount and salary roll-up by department.",
+      "rows": 6
+    },
+    {
+      "file_name": "ebitda_bridge.md",
+      "relative_path": "ebitda_bridge.md",
+      "size_bytes": 2722,
+      "sha256": "c9479a6da516f3dfa6e78e6ab05e04aea267b68ac6339ce999ecc975ef46774d",
+      "description": "Rendered EBITDA bridge narrative."
+    },
+    {
+      "file_name": "employee_census.xlsx",
+      "relative_path": "employee_census.xlsx",
+      "size_bytes": 21214,
+      "sha256": "05796af9f46edfb33a01fec6aeb0054902538908e5114f4700df9dfd18cc57b8",
+      "description": "Employee-level census with department/title/salary.",
+      "rows": 216
+    },
+    {
+      "file_name": "event_impacts.xlsx",
+      "relative_path": "event_impacts.xlsx",
+      "size_bytes": 6092,
+      "sha256": "9bc9df570d5b314c15b20ea470dd848662d5bac306c0b35bd1db215001cb86ab",
+      "description": "Monthly event-driven revenue and opex adjustments.",
+      "rows": 36
+    },
+    {
+      "file_name": "fixed_assets.xlsx",
+      "relative_path": "fixed_assets.xlsx",
+      "size_bytes": 5151,
+      "sha256": "3073e0c34756b5d30a2a16656f930abf59d4623ed467190f915875f9295021ee",
+      "description": "Fixed asset roll-forward schedule.",
+      "rows": 3
+    },
+    {
+      "file_name": "income_statement.xlsx",
+      "relative_path": "income_statement.xlsx",
+      "size_bytes": 5259,
+      "sha256": "4546352ec2dae15a5d28d0419cf0ab6cc9e0b5af19a592245e51ed23f8db0c0b",
+      "description": "Annual income statement derived from trial balance.",
+      "rows": 3
+    },
+    {
+      "file_name": "insurance_ar_aging.xlsx",
+      "relative_path": "insurance_ar_aging.xlsx",
+      "size_bytes": 5195,
+      "sha256": "7b0b058c4ee1533e49e3d2e754f829f50fd2e6109d7ba54b291c59c00d559ffe",
+      "description": "Generated artifact.",
+      "rows": 6
+    },
+    {
+      "file_name": "Lease-001-Head-Office-Premises.pdf",
+      "relative_path": "lease_documents/Lease-001-Head-Office-Premises.pdf",
+      "size_bytes": 5154,
+      "sha256": "7acc2ca832c10e57c9553a054d82c41f1fa8c46383a33801e316d3e74509dda0",
+      "description": "Generated artifact."
+    },
+    {
+      "file_name": "Lease-002-Downtown-Clinic-Premises.pdf",
+      "relative_path": "lease_documents/Lease-002-Downtown-Clinic-Premises.pdf",
+      "size_bytes": 5108,
+      "sha256": "d122f743e95e937970e325658997acb2c67250525f74103955ff830a18f366c1",
+      "description": "Generated artifact."
+    },
+    {
+      "file_name": "Lease-003-North-York-Clinic-Premises.pdf",
+      "relative_path": "lease_documents/Lease-003-North-York-Clinic-Premises.pdf",
+      "size_bytes": 5080,
+      "sha256": "7b995d9f83c6602e5adef0d7a24b32bcc188a05c8a57e24a31b221218e3cad2b",
+      "description": "Generated artifact."
+    },
+    {
+      "file_name": "Lease-004-Mississauga-Clinic-Premises.pdf",
+      "relative_path": "lease_documents/Lease-004-Mississauga-Clinic-Premises.pdf",
+      "size_bytes": 5083,
+      "sha256": "f3840548eed9d15b9c7f910969667a9242d8cb429305abc34d863b3a9d4a9907",
+      "description": "Generated artifact."
+    },
+    {
+      "file_name": "Lease-005-Equipment-CBCT-System.pdf",
+      "relative_path": "lease_documents/Lease-005-Equipment-CBCT-System.pdf",
+      "size_bytes": 5102,
+      "sha256": "4c35fab24a6be28f26e3efc451b049479193804aaaa774567be43aabf12df55d",
+      "description": "Generated artifact."
+    },
+    {
+      "file_name": "nwc_schedule.xlsx",
+      "relative_path": "nwc_schedule.xlsx",
+      "size_bytes": 8999,
+      "sha256": "53bb84f936f480e6e16a9af200546faeda27039a6b71f565098a693aafaad924",
+      "description": "Monthly net working capital schedule.",
+      "rows": 36
+    },
+    {
+      "file_name": "patient_flow_monthly.xlsx",
+      "relative_path": "patient_flow_monthly.xlsx",
+      "size_bytes": 6279,
+      "sha256": "64d7d8e0b9595af058fd4f149f6b8c9ecd07e8769c978a55f9ba7ba1803ac4d7",
+      "description": "Generated artifact.",
+      "rows": 36
+    },
+    {
+      "file_name": "payroll_register.xlsx",
+      "relative_path": "payroll_register.xlsx",
+      "size_bytes": 338855,
+      "sha256": "3e935a1c0b95df20ddb5a1c26d6ceefe92c42bb939190d7b009554898a82f292",
+      "description": "Monthly payroll entries by employee.",
+      "rows": 5771
+    },
+    {
+      "file_name": "practice_master.xlsx",
+      "relative_path": "practice_master.xlsx",
+      "size_bytes": 6049,
+      "sha256": "2ad4d683eba43be6f676867fd95402a9fa37f3bbe3350b17f1283df09f792e34",
+      "description": "Generated artifact.",
+      "rows": 19
+    },
+    {
+      "file_name": "provider_production_monthly.xlsx",
+      "relative_path": "provider_production_monthly.xlsx",
+      "size_bytes": 7707,
+      "sha256": "5526c7158a332b050718b489ce5b757aebda54381df2cb35213830fd238c374c",
+      "description": "Generated artifact.",
+      "rows": 36
+    },
+    {
+      "file_name": "provider_roster.xlsx",
+      "relative_path": "provider_roster.xlsx",
+      "size_bytes": 6996,
+      "sha256": "958d46bba1c70832896ac010eb663ad446feaf8e2b1aff13ef63a30efacad175",
+      "description": "Generated artifact.",
+      "rows": 33
+    },
+    {
+      "file_name": "salary_bands.xlsx",
+      "relative_path": "salary_bands.xlsx",
+      "size_bytes": 5174,
+      "sha256": "b305827d5f621f1235ea38faeb4e3bada6a988dc648c38770adc61d9c4bee144",
+      "description": "Salary distribution by compensation band.",
+      "rows": 6
+    },
+    {
+      "file_name": "tenure_analysis.xlsx",
+      "relative_path": "tenure_analysis.xlsx",
+      "size_bytes": 5093,
+      "sha256": "67f5a5a152df3800cf30e8331f2a49559869e0619d3eccd8ef211d618226ae36",
+      "description": "Workforce tenure distribution.",
+      "rows": 6
+    },
+    {
+      "file_name": "trial_balance.xlsx",
+      "relative_path": "trial_balance.xlsx",
+      "size_bytes": 15983,
+      "sha256": "04ead3a5d2b49920cb33298a4e3255f5b8a983e9ef21a1b024c1fa60ae0f1826",
+      "description": "Monthly trial balance used as the primary tie-out ledger.",
+      "rows": 36
+    },
+    {
+      "file_name": "verification_report.json",
+      "relative_path": "verification_report.json",
+      "size_bytes": 7654,
+      "sha256": "6347e41aaab79c09b8d138d7edc9487bf93298d5ec4903ff88e9669def8d4f75",
+      "description": "Verification checks and QoE issues summary."
+    }
+  ]
+}

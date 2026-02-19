@@ -1,0 +1,147 @@
+{
+  "generated_at": "2026-02-19T11:45:04.807441",
+  "company": "123 Dental TestCo",
+  "industry": "dental",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 14,
+    "passed": 14,
+    "failed": 0,
+    "qoe_issues": 9
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $7,729,376"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $13,669,775"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $20,002,644"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $25,359,738, TB: $25,359,738"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $30,100,076, TB: $30,100,076"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $33,199,610, TB: $33,199,610"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $4,923,145, BS: $4,923,145"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $1,467,265, BS: $1,467,265"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 216, Actual: 216"
+    },
+    {
+      "name": "dental_collections_revenue_tie",
+      "description": "Dental total collections tie to P&L revenue",
+      "passed": true,
+      "details": "Collections: $88,659,424, P&L: $88,659,424"
+    },
+    {
+      "name": "dental_hygiene_pph_range",
+      "description": "Average hygiene production per hour is within configured range",
+      "passed": true,
+      "details": "Avg: $176.2, Expected: $130-$220"
+    },
+    {
+      "name": "dental_utilization_range",
+      "description": "Average schedule utilization is within configured range",
+      "passed": true,
+      "details": "Avg: 86.3%, Expected: 75.0% - 95.0%"
+    },
+    {
+      "name": "dental_insurance_ar_tie",
+      "description": "Insurance AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $4,923,145, BS: $4,923,145"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -3003762.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Provider compensation normalization for owner-dentists",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Lab fee and supply usage normalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "One-time clinical staffing gaps and temporary labor",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Insurance write-offs and collection timing true-up",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Non-recurring legal and licensing costs",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Personal travel and auto expenses",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party rent normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner family payroll adjustments",
+      "category": "qoe_addback"
+    }
+  ]
+}

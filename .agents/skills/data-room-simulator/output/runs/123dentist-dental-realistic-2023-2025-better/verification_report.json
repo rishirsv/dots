@@ -1,0 +1,251 @@
+{
+  "generated_at": "2026-02-19T12:33:54.704782",
+  "company": "123Dentist Better TestCo",
+  "industry": "dental",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 22,
+    "passed": 22,
+    "failed": 0,
+    "qoe_issues": 9,
+    "strict_mode": false,
+    "messy_strict_failure": false
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "trial_balance_balances",
+      "description": "Monthly accounting identity in trial balance snapshots (A = L + E)",
+      "passed": true,
+      "details": "Max absolute period imbalance: $0.01"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $7,861,677"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $14,145,855"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $21,778,556"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $26,711,144, TB: $26,711,144"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $30,106,272, TB: $30,106,272"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $36,443,290, TB: $36,443,290"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $4,983,245, BS: $4,983,245"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $2,303,660, BS: $2,303,660"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 216, Actual: 216"
+    },
+    {
+      "name": "cash_flow_ending_cash_tie",
+      "description": "Cash flow ending cash ties to balance sheet cash",
+      "passed": true,
+      "details": "2023 diff=$0.00; 2024 diff=$0.00; 2025 diff=$0.00"
+    },
+    {
+      "name": "net_income_retained_earnings_tie",
+      "description": "Income statement net income ties to change in retained earnings",
+      "passed": true,
+      "details": "2024 diff=$0.00; 2025 diff=$0.01"
+    },
+    {
+      "name": "payroll_financial_tie",
+      "description": "Payroll totals tie to payroll-linked financial accounts",
+      "passed": true,
+      "details": "Payroll: $38,125,694, Financial: $38,125,694, Diff: 0.00%"
+    },
+    {
+      "name": "narrative_tokens_cim.md",
+      "description": "cim.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_company_overview.md",
+      "description": "company_overview.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_accounting_policies.md",
+      "description": "accounting_policies.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_ebitda_bridge.md",
+      "description": "ebitda_bridge.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "dental_collections_revenue_tie",
+      "description": "Dental total collections tie to P&L revenue",
+      "passed": true,
+      "details": "Collections: $93,260,707, P&L: $93,260,707"
+    },
+    {
+      "name": "dental_hygiene_pph_range",
+      "description": "Average hygiene production per hour is within configured range",
+      "passed": true,
+      "details": "Avg: $173.5, Expected: $130-$220"
+    },
+    {
+      "name": "dental_utilization_range",
+      "description": "Average schedule utilization is within configured range",
+      "passed": true,
+      "details": "Avg: 85.3%, Expected: 75.0% - 95.0%"
+    },
+    {
+      "name": "dental_insurance_ar_tie",
+      "description": "Insurance AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $4,983,245, BS: $4,983,245"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -3003762.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Provider compensation normalization for owner-dentists",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Lab fee and supply usage normalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "One-time clinical staffing gaps and temporary labor",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Insurance write-offs and collection timing true-up",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Non-recurring legal and licensing costs",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Personal travel and auto expenses",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party rent normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner family payroll adjustments",
+      "category": "qoe_addback"
+    }
+  ],
+  "issues": [
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -3003762.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Provider compensation normalization for owner-dentists",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Lab fee and supply usage normalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "One-time clinical staffing gaps and temporary labor",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Insurance write-offs and collection timing true-up",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Non-recurring legal and licensing costs",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Personal travel and auto expenses",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party rent normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner family payroll adjustments",
+      "category": "qoe_addback"
+    }
+  ],
+  "output_dir": "output/runs/123dentist-dental-realistic-2023-2025-better",
+  "rule_coverage": {
+    "universal_checks": true,
+    "industry_specific_checks": true,
+    "qoe_checks": true
+  }
+}

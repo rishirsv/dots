@@ -1,0 +1,57 @@
+{
+  "output_workbook": "/Users/rishi/Desktop/databook-process-tb-trial-balance-20260219_144744.xlsx",
+  "run_dir": "tmp/spreadsheets/process_tb_trial_balance_20260219_144744",
+  "periods": 36,
+  "mapped_account_rows": 24,
+  "qc_result": "pass",
+  "qc_checks": [
+    {
+      "check": "tb_required_columns",
+      "status": "pass",
+      "missing": []
+    },
+    {
+      "check": "mapped_required_columns",
+      "status": "pass",
+      "missing": []
+    },
+    {
+      "check": "unmapped_rows",
+      "status": "pass",
+      "unmapped": 0,
+      "rows": 838,
+      "pct": 0.0
+    },
+    {
+      "check": "period_raw_tieout",
+      "status": "pass",
+      "periods": 36,
+      "breaks": 0,
+      "max_abs_diff": 0.0,
+      "details": []
+    },
+    {
+      "check": "statement_coverage",
+      "status": "pass",
+      "periods": 36,
+      "missing_periods": []
+    },
+    {
+      "check": "derived_rows_included",
+      "status": "pass",
+      "derived_rows": 0
+    },
+    {
+      "check": "is_trend_statement_label",
+      "status": "pass",
+      "rows": 108,
+      "bad_statement_rows": 0
+    },
+    {
+      "check": "bs_trend_statement_label",
+      "status": "pass",
+      "rows": 334,
+      "bad_statement_rows": 0
+    }
+  ]
+}

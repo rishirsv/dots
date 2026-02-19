@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-02-19T11:44:19.088261",
+  "company": "Fowler Dental Group",
+  "industry": "dental",
+  "realism_mode": "clean",
+  "status": "pass",
+  "summary": {
+    "total_checks": 14,
+    "passed": 14,
+    "failed": 0,
+    "qoe_issues": 0
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $10,438,743"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $13,874,943"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $20,051,204"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $41,271,595, TB: $41,271,595"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $46,876,715, TB: $46,876,715"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $53,973,441, TB: $53,973,441"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $7,108,154, BS: $7,108,154"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $2,834,931, BS: $2,834,931"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 132, Actual: 132"
+    },
+    {
+      "name": "dental_collections_revenue_tie",
+      "description": "Dental total collections tie to P&L revenue",
+      "passed": true,
+      "details": "Collections: $142,121,751, P&L: $142,121,751"
+    },
+    {
+      "name": "dental_hygiene_pph_range",
+      "description": "Average hygiene production per hour is within configured range",
+      "passed": true,
+      "details": "Avg: $177.3, Expected: $130-$220"
+    },
+    {
+      "name": "dental_utilization_range",
+      "description": "Average schedule utilization is within configured range",
+      "passed": true,
+      "details": "Avg: 85.2%, Expected: 75.0% - 95.0%"
+    },
+    {
+      "name": "dental_insurance_ar_tie",
+      "description": "Insurance AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $7,108,154, BS: $7,108,154"
+    }
+  ],
+  "qoe_issues": []
+}

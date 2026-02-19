@@ -1,0 +1,168 @@
+{
+  "generated_at": "2026-02-19T11:44:24.867052",
+  "company": "Fowler Dental Group",
+  "industry": "dental",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 14,
+    "passed": 14,
+    "failed": 0,
+    "qoe_issues": 12
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $11,096,344"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $14,806,287"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $23,043,607"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $39,734,662, TB: $39,734,662"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $46,198,138, TB: $46,198,138"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $63,570,226, TB: $63,570,226"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $10,137,743, BS: $10,137,743"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $4,833,133, BS: $4,833,133"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 132, Actual: 132"
+    },
+    {
+      "name": "dental_collections_revenue_tie",
+      "description": "Dental total collections tie to P&L revenue",
+      "passed": true,
+      "details": "Collections: $149,503,026, P&L: $149,503,026"
+    },
+    {
+      "name": "dental_hygiene_pph_range",
+      "description": "Average hygiene production per hour is within configured range",
+      "passed": true,
+      "details": "Avg: $171.7, Expected: $130-$220"
+    },
+    {
+      "name": "dental_utilization_range",
+      "description": "Average schedule utilization is within configured range",
+      "passed": true,
+      "details": "Avg: 86.9%, Expected: 75.0% - 95.0%"
+    },
+    {
+      "name": "dental_insurance_ar_tie",
+      "description": "Insurance AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $10,137,743, BS: $10,137,743"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "one_time_event",
+      "date": "2021-06-13",
+      "description": "New product/service launch",
+      "impact": 1058000.0,
+      "category": "product_launch"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2024-04-01",
+      "description": "Restructuring costs",
+      "impact": -551254.0,
+      "category": "restructuring"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2026-09-22",
+      "description": "Insurance claim recovery",
+      "impact": 376385.0,
+      "category": "insurance"
+    },
+    {
+      "type": "customer_churn",
+      "description": "6 customer losses identified",
+      "total_impact": -3440691.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Provider compensation normalization for owner-dentists",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Lab fee and supply usage normalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "One-time clinical staffing gaps and temporary labor",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Insurance write-offs and collection timing true-up",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Non-recurring legal and licensing costs",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Personal travel and auto expenses",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party rent normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner family payroll adjustments",
+      "category": "qoe_addback"
+    }
+  ]
+}

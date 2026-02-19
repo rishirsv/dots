@@ -1,0 +1,167 @@
+{
+  "generated_at": "2026-02-19T11:28:33.512007",
+  "company": "Fowler Construction",
+  "industry": "construction",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 17,
+    "passed": 17,
+    "failed": 0,
+    "qoe_issues": 9
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "62 periods"
+    },
+    {
+      "name": "bs_equation_2021",
+      "description": "Balance sheet equation (A = L + E) for 2021",
+      "passed": true,
+      "details": "Assets = $6,436,770"
+    },
+    {
+      "name": "bs_equation_2022",
+      "description": "Balance sheet equation (A = L + E) for 2022",
+      "passed": true,
+      "details": "Assets = $7,046,050"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $7,291,860"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $8,416,532"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $9,303,738"
+    },
+    {
+      "name": "bs_equation_2026",
+      "description": "Balance sheet equation (A = L + E) for 2026",
+      "passed": true,
+      "details": "Assets = $8,539,949"
+    },
+    {
+      "name": "revenue_consistency_2021.0",
+      "description": "Revenue consistency between IS and TB for 2021.0",
+      "passed": true,
+      "details": "IS: $25,845,510, TB: $25,845,510"
+    },
+    {
+      "name": "revenue_consistency_2022.0",
+      "description": "Revenue consistency between IS and TB for 2022.0",
+      "passed": true,
+      "details": "IS: $30,800,674, TB: $30,800,674"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $35,263,093, TB: $35,263,093"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $38,816,072, TB: $38,816,072"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $49,173,340, TB: $49,173,340"
+    },
+    {
+      "name": "revenue_consistency_2026.0",
+      "description": "Revenue consistency between IS and TB for 2026.0",
+      "passed": true,
+      "details": "IS: $6,797,479, TB: $6,797,479"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $4,916,178, BS: $4,916,178"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $3,684,831, BS: $3,684,831"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 76, Actual: 76"
+    },
+    {
+      "name": "wip_revenue_tie",
+      "description": "WIP revenue recognized ties to P&L",
+      "passed": true,
+      "details": "WIP: $186,696,169, P&L: $186,696,169"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "one_time_event",
+      "date": "2026-09-22",
+      "description": "Insurance claim recovery",
+      "impact": 355752.0,
+      "category": "insurance"
+    },
+    {
+      "type": "customer_churn",
+      "description": "6 customer losses identified",
+      "total_impact": -3971522.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Percent complete methodology changes",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Unapproved change orders in revenue",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Warranty reserve adjustments",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Project loss provisions",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner vehicles and equipment personal use",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party subcontractor markups",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner-occupied property rent normalization",
+      "category": "qoe_addback"
+    }
+  ]
+}

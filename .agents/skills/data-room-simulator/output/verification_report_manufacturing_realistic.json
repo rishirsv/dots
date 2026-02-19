@@ -1,0 +1,145 @@
+{
+  "generated_at": "2026-02-19T11:43:41.426486",
+  "company": "Fowler Manufacturing",
+  "industry": "manufacturing",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 11,
+    "passed": 11,
+    "failed": 0,
+    "qoe_issues": 11
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $15,257,350"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $17,421,855"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $18,140,651"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $38,393,078, TB: $38,393,078"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $47,511,865, TB: $47,511,865"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $54,501,470, TB: $54,501,470"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $7,255,132, BS: $7,255,132"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $4,173,998, BS: $4,173,998"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 132, Actual: 132"
+    },
+    {
+      "name": "invoice_revenue_tie",
+      "description": "Invoice totals tie to P&L revenue",
+      "passed": true,
+      "details": "Invoices: $140,406,412, P&L: $140,406,412"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "one_time_event",
+      "date": "2021-06-13",
+      "description": "New product/service launch",
+      "impact": 1000000.0,
+      "category": "product_launch"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2024-04-01",
+      "description": "Restructuring costs",
+      "impact": -521034.0,
+      "category": "restructuring"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2026-09-22",
+      "description": "Insurance claim recovery",
+      "impact": 355752.0,
+      "category": "insurance"
+    },
+    {
+      "type": "customer_churn",
+      "description": "6 customer losses identified",
+      "total_impact": -3252071.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Inventory reserve / obsolescence adjustments",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Standard cost variance capitalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Freight capitalization vs. expensing",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Warranty reserve true-up",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner compensation normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party supplier markups",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner-occupied facility rent",
+      "category": "qoe_addback"
+    }
+  ]
+}

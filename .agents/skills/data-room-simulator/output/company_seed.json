@@ -1,0 +1,401 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-19T11:44:57.030805",
+    "generator_version": "1.0.0",
+    "industry": "dental",
+    "size": "mid",
+    "realism_mode": "realistic"
+  },
+  "company": {
+    "name": "123 Dental TestCo",
+    "legal_name": "123 Dental TestCo, Inc.",
+    "industry": "dental",
+    "industry_display": "Dental Practices",
+    "vertical": "General Dentistry",
+    "founded": 2014,
+    "headquarters": {
+      "city": "Cambridge",
+      "state": "Massachusetts",
+      "country": "United States",
+      "address": "1641 Nicholas Points",
+      "zip_code": "44042"
+    },
+    "website": "www.123dentaltestco.com"
+  },
+  "brand": {
+    "primary_color": "#1D4ED8",
+    "secondary_color": "#3B82F6",
+    "accent_color": "#93C5FD",
+    "font_family": "Inter",
+    "font_family_mono": "JetBrains Mono"
+  },
+  "management": [
+    {
+      "title": "Chief Executive Officer",
+      "short_title": "CEO",
+      "name": "Anthony Taylor",
+      "years_at_company": 7,
+      "background": "Former VP at Cook, Sanchez and Smith"
+    },
+    {
+      "title": "Chief Financial Officer",
+      "short_title": "CFO",
+      "name": "Brandon Harper",
+      "years_at_company": 8,
+      "background": "Former CFO at Smith Ltd"
+    },
+    {
+      "title": "Chief Operating Officer",
+      "short_title": "COO",
+      "name": "Taylor Davis",
+      "years_at_company": 5,
+      "background": "Former GM at Martinez Inc"
+    },
+    {
+      "title": "VP of Sales",
+      "short_title": "VP Sales",
+      "name": "Jeffrey Woods",
+      "years_at_company": 3,
+      "background": "Former Sales Director at Monroe-Mack"
+    },
+    {
+      "title": "Chief Clinical Officer",
+      "short_title": "CCO",
+      "name": "Robert Clark",
+      "years_at_company": 4,
+      "background": "Former Regional Dental Director at Fowler, Cunningham and Yu"
+    }
+  ],
+  "story": {
+    "founding_narrative": "Alexander Orozco founded the company in 2014 after identifying a gap in the general dentistry market.",
+    "founder_name": "Alexander Orozco",
+    "milestones": [
+      {
+        "year": 2015,
+        "title": "First major contract",
+        "description": "Landed first enterprise customer: Carlson, Bass and Meyer"
+      },
+      {
+        "year": 2016,
+        "title": "Geographic expansion",
+        "description": "Expanded operations to Southeast"
+      },
+      {
+        "year": 2017,
+        "title": "Key hire",
+        "description": "Brought on experienced leadership team from industry"
+      },
+      {
+        "year": 2020,
+        "title": "Award",
+        "description": "Recognized as top general dentistry provider in region"
+      }
+    ],
+    "market_position": "Leading regional provider in the general dentistry space",
+    "why_selling": "Private equity sponsor pursuing exit after successful value creation",
+    "years_in_business": 12
+  },
+  "financials": {
+    "annual_revenue": 31700000,
+    "gross_margin": 0.543,
+    "headcount": 216,
+    "revenue_per_employee": 146759.0,
+    "fiscal_year_end": "December 31",
+    "years_of_history": 3
+  },
+  "events": [
+    {
+      "date": "2021-01-25",
+      "type": "customer_win",
+      "description": "New customer: Osborne, Smith and Willis",
+      "revenue_impact": 821966.0,
+      "recurring": false
+    },
+    {
+      "date": "2021-04-21",
+      "type": "customer_win",
+      "description": "New customer: Sharp Group",
+      "revenue_impact": 1358373.0,
+      "recurring": false
+    },
+    {
+      "date": "2021-05-26",
+      "type": "customer_win",
+      "description": "New customer: Green, Rogers and Spencer",
+      "revenue_impact": 752510.0,
+      "recurring": false
+    },
+    {
+      "date": "2021-09-12",
+      "type": "customer_win",
+      "description": "New customer: Patel-Cummings",
+      "revenue_impact": 1164620.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-10-16",
+      "type": "customer_win",
+      "description": "New customer: White, Wilkins and Mcintyre",
+      "revenue_impact": 921739.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-11-11",
+      "type": "customer_loss",
+      "description": "Lost customer: Cortez, Stephens and Hooper",
+      "revenue_impact": -283027.0,
+      "reason": "Customer M&A"
+    },
+    {
+      "date": "2021-11-26",
+      "type": "customer_win",
+      "description": "New customer: Cox, Kemp and Bright",
+      "revenue_impact": 999843.0,
+      "recurring": false
+    },
+    {
+      "date": "2021-11-27",
+      "type": "customer_win",
+      "description": "New customer: Fowler Group",
+      "revenue_impact": 547098.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-01-03",
+      "type": "customer_win",
+      "description": "New customer: Walton-Williams",
+      "revenue_impact": 556730.0,
+      "recurring": false
+    },
+    {
+      "date": "2022-01-08",
+      "type": "customer_win",
+      "description": "New customer: Bryant Inc",
+      "revenue_impact": 1453318.0,
+      "recurring": false
+    },
+    {
+      "date": "2022-05-25",
+      "type": "customer_loss",
+      "description": "Lost customer: Walters-Smith",
+      "revenue_impact": -630098.0,
+      "reason": "Customer budget cuts"
+    },
+    {
+      "date": "2022-09-06",
+      "type": "customer_loss",
+      "description": "Lost customer: Brown, Kelly and Davis",
+      "revenue_impact": -388552.0,
+      "reason": "Customer budget cuts"
+    },
+    {
+      "date": "2022-09-27",
+      "type": "customer_win",
+      "description": "New customer: Lindsey-Cohen",
+      "revenue_impact": 952278.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-12-19",
+      "type": "customer_win",
+      "description": "New customer: Braun Group",
+      "revenue_impact": 896181.0,
+      "recurring": false
+    },
+    {
+      "date": "2023-01-03",
+      "type": "customer_win",
+      "description": "New customer: Johnson-Hoffman",
+      "revenue_impact": 454731.0,
+      "recurring": false
+    },
+    {
+      "date": "2023-01-09",
+      "type": "customer_win",
+      "description": "New customer: Robbins Ltd",
+      "revenue_impact": 1566421.0,
+      "recurring": false
+    },
+    {
+      "date": "2023-03-01",
+      "type": "customer_win",
+      "description": "New customer: Jones-Benson",
+      "revenue_impact": 895640.0,
+      "recurring": false
+    },
+    {
+      "date": "2023-06-14",
+      "type": "customer_win",
+      "description": "New customer: Johnson-Morris",
+      "revenue_impact": 1185537.0,
+      "recurring": false
+    },
+    {
+      "date": "2023-07-02",
+      "type": "customer_win",
+      "description": "New customer: Merritt-Flynn",
+      "revenue_impact": 1270092.0,
+      "recurring": true
+    },
+    {
+      "date": "2023-09-18",
+      "type": "customer_win",
+      "description": "New customer: Henson Group",
+      "revenue_impact": 795618.0,
+      "recurring": false
+    },
+    {
+      "date": "2023-12-14",
+      "type": "customer_win",
+      "description": "New customer: Bailey-Fowler",
+      "revenue_impact": 429584.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-02-26",
+      "type": "customer_loss",
+      "description": "Lost customer: Brown-Taylor",
+      "revenue_impact": -457883.0,
+      "reason": "Price sensitivity"
+    },
+    {
+      "date": "2024-06-24",
+      "type": "customer_win",
+      "description": "New customer: Hughes, Torres and Mcintyre",
+      "revenue_impact": 1164989.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-07-18",
+      "type": "customer_win",
+      "description": "New customer: Wilson, Jackson and Lawrence",
+      "revenue_impact": 784243.0,
+      "recurring": false
+    },
+    {
+      "date": "2024-07-21",
+      "type": "customer_win",
+      "description": "New customer: Watson and Sons",
+      "revenue_impact": 758729.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-07-24",
+      "type": "customer_loss",
+      "description": "Lost customer: Smith, Cole and Rodgers",
+      "revenue_impact": -364003.0,
+      "reason": "Customer budget cuts"
+    },
+    {
+      "date": "2024-07-28",
+      "type": "customer_win",
+      "description": "New customer: Miller, Koch and Brown",
+      "revenue_impact": 398465.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-09-21",
+      "type": "customer_win",
+      "description": "New customer: Nichols LLC",
+      "revenue_impact": 705216.0,
+      "recurring": false
+    },
+    {
+      "date": "2024-11-17",
+      "type": "customer_win",
+      "description": "New customer: Parsons-Price",
+      "revenue_impact": 389478.0,
+      "recurring": false
+    },
+    {
+      "date": "2025-03-28",
+      "type": "customer_win",
+      "description": "New customer: Robertson, Taylor and Porter",
+      "revenue_impact": 978377.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-05-25",
+      "type": "customer_win",
+      "description": "New customer: Moore LLC",
+      "revenue_impact": 860983.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-06-18",
+      "type": "customer_win",
+      "description": "New customer: Barber, Walker and Hudson",
+      "revenue_impact": 951155.0,
+      "recurring": false
+    },
+    {
+      "date": "2025-06-24",
+      "type": "customer_win",
+      "description": "New customer: Hooper, Barnett and Torres",
+      "revenue_impact": 887250.0,
+      "recurring": false
+    },
+    {
+      "date": "2026-01-03",
+      "type": "customer_win",
+      "description": "New customer: Sanders-Mays",
+      "revenue_impact": 1506717.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-02-17",
+      "type": "customer_win",
+      "description": "New customer: Nelson PLC",
+      "revenue_impact": 661581.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-02-18",
+      "type": "customer_win",
+      "description": "New customer: Adams and Sons",
+      "revenue_impact": 749571.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-03-16",
+      "type": "customer_loss",
+      "description": "Lost customer: Greene Inc",
+      "revenue_impact": -532281.0,
+      "reason": "Service issues"
+    },
+    {
+      "date": "2026-04-09",
+      "type": "customer_win",
+      "description": "New customer: Harris LLC",
+      "revenue_impact": 1441075.0,
+      "recurring": false
+    },
+    {
+      "date": "2026-05-03",
+      "type": "customer_win",
+      "description": "New customer: Chang Inc",
+      "revenue_impact": 1032944.0,
+      "recurring": false
+    },
+    {
+      "date": "2026-09-01",
+      "type": "customer_win",
+      "description": "New customer: Blanchard PLC",
+      "revenue_impact": 569965.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-12-01",
+      "type": "customer_loss",
+      "description": "Lost customer: Spencer-Anderson",
+      "revenue_impact": -347918.0,
+      "reason": "Customer M&A"
+    }
+  ],
+  "profile_reference": "profiles/dental.json",
+  "operations": {
+    "practice_count": 19,
+    "provider_count": 33,
+    "patient_count": 40940
+  }
+}

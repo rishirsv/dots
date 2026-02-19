@@ -1,0 +1,839 @@
+period,entity,account_number,account_name,amount_raw,amount_signed,statement,line_key,line_name,group_key,sort_order,sign_multiplier,mapping_status,mapping_match_on,mapping_note,source_column,source_row,is_derived
+2023-01,Entity 1,4000,,-1189687.420000,1189687.420000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,2,0
+2023-01,Entity 1,4010,,-574331.860000,574331.860000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,2,0
+2023-01,Entity 1,4020,,-205118.520000,205118.520000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,2,0
+2023-01,Entity 1,4090,,-82047.410000,82047.410000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,2,0
+2023-01,Entity 1,5000,,612909.920000,-612909.920000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,2,0
+2023-01,Entity 1,5100,,162240.860000,-162240.860000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,2,0
+2023-01,Entity 1,5200,,126187.340000,-126187.340000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,2,0
+2023-01,Entity 1,5300,,36053.520000,-36053.520000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,2,0
+2023-01,Entity 1,6000,,225630.370000,-225630.370000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,2,0
+2023-01,Entity 1,6100,,164094.820000,-164094.820000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,2,0
+2023-01,Entity 1,6200,,82047.410000,-82047.410000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,2,0
+2023-01,Entity 1,6300,,184606.670000,-184606.670000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,2,0
+2023-01,Entity 1,6400,,61535.560000,-61535.560000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,2,0
+2023-01,Entity 1,1000,,41023.700000,41023.700000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,2,0
+2023-01,Entity 1,1100,,2859867.610000,2859867.610000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,2,0
+2023-01,Entity 1,,prepaid,41023.700000,41023.700000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,2,0
+2023-01,Entity 1,,fixed_assets,3545588.970000,3545588.970000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,2,0
+2023-01,Entity 1,,accum_depr,-29546.570000,-29546.570000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,2,0
+2023-01,Entity 1,2000,,-1199684.440000,-1199684.440000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,2,0
+2023-01,Entity 1,,accrued,-61535.560000,-61535.560000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,2,0
+2023-01,Entity 1,,deferred,-102559.260000,-102559.260000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,2,0
+2023-01,Entity 1,2500,,-3516436.420000,-3516436.420000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,2,0
+2023-01,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,2,0
+2023-01,Entity 1,3200,,-395878.740000,-395878.740000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,2,0
+2023-02,Entity 1,4000,,-1147154.610000,1147154.610000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,3,0
+2023-02,Entity 1,4010,,-553798.780000,553798.780000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,3,0
+2023-02,Entity 1,4020,,-197785.280000,197785.280000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,3,0
+2023-02,Entity 1,4090,,-79114.110000,79114.110000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,3,0
+2023-02,Entity 1,5000,,590997.620000,-590997.620000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,3,0
+2023-02,Entity 1,5100,,156440.550000,-156440.550000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,3,0
+2023-02,Entity 1,5200,,121675.980000,-121675.980000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,3,0
+2023-02,Entity 1,5300,,34764.570000,-34764.570000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,3,0
+2023-02,Entity 1,6000,,217563.800000,-217563.800000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,3,0
+2023-02,Entity 1,6100,,158228.220000,-158228.220000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,3,0
+2023-02,Entity 1,6200,,79114.110000,-79114.110000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,3,0
+2023-02,Entity 1,6300,,178006.750000,-178006.750000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,3,0
+2023-02,Entity 1,6400,,59335.580000,-59335.580000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,3,0
+2023-02,Entity 1,1000,,39557.060000,39557.060000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,3,0
+2023-02,Entity 1,1100,,3284302.420000,3284302.420000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,3,0
+2023-02,Entity 1,,prepaid,39557.060000,39557.060000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,3,0
+2023-02,Entity 1,,fixed_assets,3552680.140000,3552680.140000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,3,0
+2023-02,Entity 1,,accum_depr,-59211.340000,-59211.340000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,3,0
+2023-02,Entity 1,2000,,-969874.090000,-969874.090000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,3,0
+2023-02,Entity 1,,accrued,-59335.580000,-59335.580000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,3,0
+2023-02,Entity 1,,deferred,-98892.640000,-98892.640000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,3,0
+2023-02,Entity 1,2500,,-3769315.710000,-3769315.710000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,3,0
+2023-02,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,3,0
+2023-02,Entity 1,3200,,-777604.330000,-777604.330000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,3,0
+2023-03,Entity 1,4000,,-1207883.020000,1207883.020000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,4,0
+2023-03,Entity 1,4010,,-583115.940000,583115.940000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,4,0
+2023-03,Entity 1,4020,,-208255.690000,208255.690000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,4,0
+2023-03,Entity 1,4090,,-83302.280000,83302.280000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,4,0
+2023-03,Entity 1,5000,,622284.030000,-622284.030000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,4,0
+2023-03,Entity 1,5100,,164722.240000,-164722.240000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,4,0
+2023-03,Entity 1,5200,,128117.300000,-128117.300000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,4,0
+2023-03,Entity 1,5300,,36604.940000,-36604.940000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,4,0
+2023-03,Entity 1,6000,,229081.260000,-229081.260000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,4,0
+2023-03,Entity 1,6100,,166604.560000,-166604.560000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,4,0
+2023-03,Entity 1,6200,,83302.280000,-83302.280000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,4,0
+2023-03,Entity 1,6300,,187430.120000,-187430.120000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,4,0
+2023-03,Entity 1,6400,,62476.710000,-62476.710000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,4,0
+2023-03,Entity 1,1000,,41651.140000,41651.140000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,4,0
+2023-03,Entity 1,1100,,2780941.470000,2780941.470000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,4,0
+2023-03,Entity 1,,prepaid,41651.140000,41651.140000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,4,0
+2023-03,Entity 1,,fixed_assets,3559771.320000,3559771.320000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,4,0
+2023-03,Entity 1,,accum_depr,-88994.280000,-88994.280000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,4,0
+2023-03,Entity 1,2000,,-1260054.620000,-1260054.620000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,4,0
+2023-03,Entity 1,,accrued,-62476.710000,-62476.710000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,4,0
+2023-03,Entity 1,,deferred,-104127.850000,-104127.850000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,4,0
+2023-03,Entity 1,2500,,-2546960.810000,-2546960.810000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,4,0
+2023-03,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,4,0
+2023-03,Entity 1,3200,,-1179537.820000,-1179537.820000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,4,0
+2023-04,Entity 1,4000,,-1239948.890000,1239948.890000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,5,0
+2023-04,Entity 1,4010,,-598596.020000,598596.020000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,5,0
+2023-04,Entity 1,4020,,-213784.290000,213784.290000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,5,0
+2023-04,Entity 1,4090,,-85513.720000,85513.720000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,5,0
+2023-04,Entity 1,5000,,638803.910000,-638803.910000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,5,0
+2023-04,Entity 1,5100,,169095.150000,-169095.150000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,5,0
+2023-04,Entity 1,5200,,131518.450000,-131518.450000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,5,0
+2023-04,Entity 1,5300,,37576.700000,-37576.700000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,5,0
+2023-04,Entity 1,6000,,235162.720000,-235162.720000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,5,0
+2023-04,Entity 1,6100,,171027.430000,-171027.430000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,5,0
+2023-04,Entity 1,6200,,85513.720000,-85513.720000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,5,0
+2023-04,Entity 1,6300,,192405.860000,-192405.860000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,5,0
+2023-04,Entity 1,6400,,64135.290000,-64135.290000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,5,0
+2023-04,Entity 1,1000,,42756.860000,42756.860000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,5,0
+2023-04,Entity 1,1100,,2960219.090000,2960219.090000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,5,0
+2023-04,Entity 1,,prepaid,42756.860000,42756.860000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,5,0
+2023-04,Entity 1,,fixed_assets,3566862.500000,3566862.500000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,5,0
+2023-04,Entity 1,,accum_depr,-118895.420000,-118895.420000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,5,0
+2023-04,Entity 1,2000,,-1396978.150000,-1396978.150000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,5,0
+2023-04,Entity 1,,accrued,-64135.290000,-64135.290000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,5,0
+2023-04,Entity 1,,deferred,-106892.150000,-106892.150000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,5,0
+2023-04,Entity 1,2500,,-2151689.820000,-2151689.820000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,5,0
+2023-04,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,5,0
+2023-04,Entity 1,3200,,-1592141.500000,-1592141.500000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,5,0
+2023-05,Entity 1,4000,,-1183549.890000,1183549.890000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,6,0
+2023-05,Entity 1,4010,,-571368.910000,571368.910000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,6,0
+2023-05,Entity 1,4020,,-204060.330000,204060.330000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,6,0
+2023-05,Entity 1,4090,,-81624.130000,81624.130000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,6,0
+2023-05,Entity 1,5000,,609747.950000,-609747.950000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,6,0
+2023-05,Entity 1,5100,,161403.870000,-161403.870000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,6,0
+2023-05,Entity 1,5200,,125536.340000,-125536.340000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,6,0
+2023-05,Entity 1,5300,,35867.530000,-35867.530000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,6,0
+2023-05,Entity 1,6000,,224466.360000,-224466.360000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,6,0
+2023-05,Entity 1,6100,,163248.260000,-163248.260000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,6,0
+2023-05,Entity 1,6200,,81624.130000,-81624.130000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,6,0
+2023-05,Entity 1,6300,,183654.290000,-183654.290000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,6,0
+2023-05,Entity 1,6400,,61218.100000,-61218.100000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,6,0
+2023-05,Entity 1,1000,,40812.070000,40812.070000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,6,0
+2023-05,Entity 1,1100,,3381777.010000,3381777.010000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,6,0
+2023-05,Entity 1,,prepaid,40812.070000,40812.070000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,6,0
+2023-05,Entity 1,,fixed_assets,3573953.680000,3573953.680000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,6,0
+2023-05,Entity 1,,accum_depr,-148914.740000,-148914.740000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,6,0
+2023-05,Entity 1,2000,,-981917.020000,-981917.020000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,6,0
+2023-05,Entity 1,,accrued,-61218.100000,-61218.100000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,6,0
+2023-05,Entity 1,,deferred,-102030.160000,-102030.160000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,6,0
+2023-05,Entity 1,2500,,-2575433.880000,-2575433.880000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,6,0
+2023-05,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,6,0
+2023-05,Entity 1,3200,,-1985977.930000,-1985977.930000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,6,0
+2023-06,Entity 1,4000,,-1340063.040000,1340063.040000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,7,0
+2023-06,Entity 1,4010,,-646926.980000,646926.980000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,7,0
+2023-06,Entity 1,4020,,-231045.350000,231045.350000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,7,0
+2023-06,Entity 1,4090,,-92418.140000,92418.140000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,7,0
+2023-06,Entity 1,5000,,690381.280000,-690381.280000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,7,0
+2023-06,Entity 1,5100,,182747.990000,-182747.990000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,7,0
+2023-06,Entity 1,5200,,142137.320000,-142137.320000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,7,0
+2023-06,Entity 1,5300,,40610.660000,-40610.660000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,7,0
+2023-06,Entity 1,6000,,254149.890000,-254149.890000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,7,0
+2023-06,Entity 1,6100,,184836.280000,-184836.280000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,7,0
+2023-06,Entity 1,6200,,92418.140000,-92418.140000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,7,0
+2023-06,Entity 1,6300,,207940.820000,-207940.820000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,7,0
+2023-06,Entity 1,6400,,69313.610000,-69313.610000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,7,0
+2023-06,Entity 1,1000,,46209.070000,46209.070000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,7,0
+2023-06,Entity 1,1100,,3623144.160000,3623144.160000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,7,0
+2023-06,Entity 1,,prepaid,46209.070000,46209.070000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,7,0
+2023-06,Entity 1,,fixed_assets,3581044.860000,3581044.860000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,7,0
+2023-06,Entity 1,,accum_depr,-179052.240000,-179052.240000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,7,0
+2023-06,Entity 1,2000,,-1272998.630000,-1272998.630000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,7,0
+2023-06,Entity 1,,accrued,-69313.610000,-69313.610000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,7,0
+2023-06,Entity 1,,deferred,-115522.680000,-115522.680000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,7,0
+2023-06,Entity 1,2500,,-2045961.550000,-2045961.550000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,7,0
+2023-06,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,7,0
+2023-06,Entity 1,3200,,-2431895.460000,-2431895.460000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,7,0
+2023-07,Entity 1,4000,,-1280729.980000,1280729.980000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,8,0
+2023-07,Entity 1,4010,,-618283.440000,618283.440000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,8,0
+2023-07,Entity 1,4020,,-220815.510000,220815.510000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,8,0
+2023-07,Entity 1,4090,,-88326.210000,88326.210000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,8,0
+2023-07,Entity 1,5000,,659813.740000,-659813.740000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,8,0
+2023-07,Entity 1,5100,,174656.580000,-174656.580000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,8,0
+2023-07,Entity 1,5200,,135844.010000,-135844.010000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,8,0
+2023-07,Entity 1,5300,,38812.570000,-38812.570000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,8,0
+2023-07,Entity 1,6000,,242897.070000,-242897.070000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,8,0
+2023-07,Entity 1,6100,,176652.410000,-176652.410000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,8,0
+2023-07,Entity 1,6200,,88326.210000,-88326.210000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,8,0
+2023-07,Entity 1,6300,,198733.960000,-198733.960000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,8,0
+2023-07,Entity 1,6400,,66244.650000,-66244.650000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,8,0
+2023-07,Entity 1,1000,,44163.100000,44163.100000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,8,0
+2023-07,Entity 1,1100,,3167504.200000,3167504.200000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,8,0
+2023-07,Entity 1,,prepaid,44163.100000,44163.100000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,8,0
+2023-07,Entity 1,,fixed_assets,3588136.030000,3588136.030000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,8,0
+2023-07,Entity 1,,accum_depr,-209307.940000,-209307.940000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,8,0
+2023-07,Entity 1,2000,,-1393755.670000,-1393755.670000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,8,0
+2023-07,Entity 1,,accrued,-66244.650000,-66244.650000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,8,0
+2023-07,Entity 1,,deferred,-110407.760000,-110407.760000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,8,0
+2023-07,Entity 1,2500,,-1024318.040000,-1024318.040000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,8,0
+2023-07,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,8,0
+2023-07,Entity 1,3200,,-2858069.400000,-2858069.400000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,8,0
+2023-08,Entity 1,4000,,-1238872.870000,1238872.870000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,9,0
+2023-08,Entity 1,4010,,-598076.560000,598076.560000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,9,0
+2023-08,Entity 1,4020,,-213598.770000,213598.770000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,9,0
+2023-08,Entity 1,4090,,-85439.510000,85439.510000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,9,0
+2023-08,Entity 1,5000,,638249.560000,-638249.560000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,9,0
+2023-08,Entity 1,5100,,168948.410000,-168948.410000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,9,0
+2023-08,Entity 1,5200,,131404.320000,-131404.320000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,9,0
+2023-08,Entity 1,5300,,37544.090000,-37544.090000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,9,0
+2023-08,Entity 1,6000,,234958.650000,-234958.650000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,9,0
+2023-08,Entity 1,6100,,170879.020000,-170879.020000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,9,0
+2023-08,Entity 1,6200,,85439.510000,-85439.510000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,9,0
+2023-08,Entity 1,6300,,192238.890000,-192238.890000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,9,0
+2023-08,Entity 1,6400,,64079.630000,-64079.630000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,9,0
+2023-08,Entity 1,1000,,42719.750000,42719.750000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,9,0
+2023-08,Entity 1,1100,,2895578.180000,2895578.180000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,9,0
+2023-08,Entity 1,,prepaid,42719.750000,42719.750000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,9,0
+2023-08,Entity 1,,fixed_assets,3595227.210000,3595227.210000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,9,0
+2023-08,Entity 1,,accum_depr,-239681.810000,-239681.810000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,9,0
+2023-08,Entity 1,2000,,-1161444.310000,-1161444.310000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,9,0
+2023-08,Entity 1,,accrued,-64079.630000,-64079.630000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,9,0
+2023-08,Entity 1,,deferred,-106799.380000,-106799.380000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,9,0
+2023-08,Entity 1,2500,,-552061.750000,-552061.750000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,9,0
+2023-08,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,9,0
+2023-08,Entity 1,3200,,-3270315.030000,-3270315.030000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,9,0
+2023-09,Entity 1,4000,,-1317491.350000,1317491.350000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,10,0
+2023-09,Entity 1,4010,,-636030.300000,636030.300000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,10,0
+2023-09,Entity 1,4020,,-227153.680000,227153.680000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,10,0
+2023-09,Entity 1,4090,,-90861.470000,90861.470000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,10,0
+2023-09,Entity 1,5000,,678752.670000,-678752.670000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,10,0
+2023-09,Entity 1,5100,,179669.820000,-179669.820000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,10,0
+2023-09,Entity 1,5200,,139743.200000,-139743.200000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,10,0
+2023-09,Entity 1,5300,,39926.630000,-39926.630000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,10,0
+2023-09,Entity 1,6000,,249869.050000,-249869.050000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,10,0
+2023-09,Entity 1,6100,,181722.940000,-181722.940000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,10,0
+2023-09,Entity 1,6200,,90861.470000,-90861.470000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,10,0
+2023-09,Entity 1,6300,,204438.310000,-204438.310000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,10,0
+2023-09,Entity 1,6400,,68146.100000,-68146.100000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,10,0
+2023-09,Entity 1,1000,,45430.740000,45430.740000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,10,0
+2023-09,Entity 1,1100,,3777888.550000,3777888.550000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,10,0
+2023-09,Entity 1,,prepaid,45430.740000,45430.740000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,10,0
+2023-09,Entity 1,,fixed_assets,3602318.390000,3602318.390000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,10,0
+2023-09,Entity 1,,accum_depr,-270173.880000,-270173.880000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,10,0
+2023-09,Entity 1,2000,,-1447000.180000,-1447000.180000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,10,0
+2023-09,Entity 1,,accrued,-68146.100000,-68146.100000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,10,0
+2023-09,Entity 1,,deferred,-113576.840000,-113576.840000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,10,0
+2023-09,Entity 1,2500,,-681586.800000,-681586.800000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,10,0
+2023-09,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,10,0
+2023-09,Entity 1,3200,,-3708721.630000,-3708721.630000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,10,0
+2023-10,Entity 1,4000,,-1420678.520000,1420678.520000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,11,0
+2023-10,Entity 1,4010,,-685844.800000,685844.800000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,11,0
+2023-10,Entity 1,4020,,-244944.570000,244944.570000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,11,0
+2023-10,Entity 1,4090,,-97977.830000,97977.830000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,11,0
+2023-10,Entity 1,5000,,731913.230000,-731913.230000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,11,0
+2023-10,Entity 1,5100,,193741.740000,-193741.740000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,11,0
+2023-10,Entity 1,5200,,150688.020000,-150688.020000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,11,0
+2023-10,Entity 1,5300,,43053.720000,-43053.720000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,11,0
+2023-10,Entity 1,6000,,269439.030000,-269439.030000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,11,0
+2023-10,Entity 1,6100,,195955.660000,-195955.660000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,11,0
+2023-10,Entity 1,6200,,97977.830000,-97977.830000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,11,0
+2023-10,Entity 1,6300,,220450.120000,-220450.120000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,11,0
+2023-10,Entity 1,6400,,73483.370000,-73483.370000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,11,0
+2023-10,Entity 1,1000,,48988.910000,48988.910000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,11,0
+2023-10,Entity 1,1100,,3683078.530000,3683078.530000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,11,0
+2023-10,Entity 1,,prepaid,48988.910000,48988.910000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,11,0
+2023-10,Entity 1,,fixed_assets,3609409.570000,3609409.570000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,11,0
+2023-10,Entity 1,,accum_depr,-300784.130000,-300784.130000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,11,0
+2023-10,Entity 1,2000,,-1266457.030000,-1266457.030000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,11,0
+2023-10,Entity 1,,accrued,-73483.370000,-73483.370000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,11,0
+2023-10,Entity 1,,deferred,-122472.290000,-122472.290000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,11,0
+2023-10,Entity 1,2500,,-263941.470000,-263941.470000,BS,BS_DEBT,Debt,BS_Liab,230,1.000000,mapped,account_number,,acct_2500,11,0
+2023-10,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,11,0
+2023-10,Entity 1,3200,,-4181464.650000,-4181464.650000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,11,0
+2023-11,Entity 1,4000,,-1401315.830000,1401315.830000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,12,0
+2023-11,Entity 1,4010,,-676497.300000,676497.300000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,12,0
+2023-11,Entity 1,4020,,-241606.180000,241606.180000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,12,0
+2023-11,Entity 1,4090,,-96642.470000,96642.470000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,12,0
+2023-11,Entity 1,5000,,721937.840000,-721937.840000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,12,0
+2023-11,Entity 1,5100,,191101.190000,-191101.190000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,12,0
+2023-11,Entity 1,5200,,148634.260000,-148634.260000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,12,0
+2023-11,Entity 1,5300,,42466.930000,-42466.930000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,12,0
+2023-11,Entity 1,6000,,265766.800000,-265766.800000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,12,0
+2023-11,Entity 1,6100,,193284.940000,-193284.940000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,12,0
+2023-11,Entity 1,6200,,96642.470000,-96642.470000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,12,0
+2023-11,Entity 1,6300,,217445.560000,-217445.560000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,12,0
+2023-11,Entity 1,6400,,72481.850000,-72481.850000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,12,0
+2023-11,Entity 1,1000,,790023.030000,790023.030000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,12,0
+2023-11,Entity 1,1100,,3457882.890000,3457882.890000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,12,0
+2023-11,Entity 1,,prepaid,48321.240000,48321.240000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,12,0
+2023-11,Entity 1,,fixed_assets,3616500.750000,3616500.750000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,12,0
+2023-11,Entity 1,,accum_depr,-331512.570000,-331512.570000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,12,0
+2023-11,Entity 1,2000,,-1558302.820000,-1558302.820000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,12,0
+2023-11,Entity 1,,accrued,-72481.850000,-72481.850000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,12,0
+2023-11,Entity 1,,deferred,-120803.090000,-120803.090000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,12,0
+2023-11,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,12,0
+2023-11,Entity 1,3200,,-4647764.580000,-4647764.580000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,12,0
+2023-12,Entity 1,4000,,-1525088.100000,1525088.100000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,13,0
+2023-12,Entity 1,4010,,-736249.430000,736249.430000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,13,0
+2023-12,Entity 1,4020,,-262946.220000,262946.220000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,13,0
+2023-12,Entity 1,4090,,-105178.490000,105178.490000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,13,0
+2023-12,Entity 1,5000,,785703.550000,-785703.550000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,13,0
+2023-12,Entity 1,5100,,207980.350000,-207980.350000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,13,0
+2023-12,Entity 1,5200,,161762.490000,-161762.490000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,13,0
+2023-12,Entity 1,5300,,46217.860000,-46217.860000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,13,0
+2023-12,Entity 1,6000,,289240.850000,-289240.850000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,13,0
+2023-12,Entity 1,6100,,210356.980000,-210356.980000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,13,0
+2023-12,Entity 1,6200,,105178.490000,-105178.490000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,13,0
+2023-12,Entity 1,6300,,236651.600000,-236651.600000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,13,0
+2023-12,Entity 1,6400,,78883.870000,-78883.870000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,13,0
+2023-12,Entity 1,1000,,597759.400000,597759.400000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,13,0
+2023-12,Entity 1,1100,,3950095.460000,3950095.460000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,13,0
+2023-12,Entity 1,,prepaid,52589.240000,52589.240000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,13,0
+2023-12,Entity 1,,fixed_assets,3623591.920000,3623591.920000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,13,0
+2023-12,Entity 1,,accum_depr,-362359.190000,-362359.190000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,13,0
+2023-12,Entity 1,2000,,-1314206.080000,-1314206.080000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,13,0
+2023-12,Entity 1,,accrued,-78883.870000,-78883.870000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,13,0
+2023-12,Entity 1,,deferred,-131473.110000,-131473.110000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,13,0
+2023-12,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,13,0
+2023-12,Entity 1,3200,,-5155250.790000,-5155250.790000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,13,0
+2024-01,Entity 1,4000,,-1243461.580000,1243461.580000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,14,0
+2024-01,Entity 1,4010,,-600291.800000,600291.800000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,14,0
+2024-01,Entity 1,4020,,-214389.930000,214389.930000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,14,0
+2024-01,Entity 1,4090,,-85755.970000,85755.970000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,14,0
+2024-01,Entity 1,5000,,640613.600000,-640613.600000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,14,0
+2024-01,Entity 1,5100,,169574.190000,-169574.190000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,14,0
+2024-01,Entity 1,5200,,131891.030000,-131891.030000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,14,0
+2024-01,Entity 1,5300,,37683.150000,-37683.150000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,14,0
+2024-01,Entity 1,6000,,235828.920000,-235828.920000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,14,0
+2024-01,Entity 1,6100,,171511.940000,-171511.940000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,14,0
+2024-01,Entity 1,6200,,85755.970000,-85755.970000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,14,0
+2024-01,Entity 1,6300,,192950.940000,-192950.940000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,14,0
+2024-01,Entity 1,6400,,64316.980000,-64316.980000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,14,0
+2024-01,Entity 1,1000,,1776541.040000,1776541.040000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,14,0
+2024-01,Entity 1,1100,,2935322.740000,2935322.740000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,14,0
+2024-01,Entity 1,,prepaid,42877.990000,42877.990000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,14,0
+2024-01,Entity 1,,fixed_assets,3630683.100000,3630683.100000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,14,0
+2024-01,Entity 1,,accum_depr,-393324.000000,-393324.000000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,14,0
+2024-01,Entity 1,2000,,-1069702.580000,-1069702.580000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,14,0
+2024-01,Entity 1,,accrued,-64316.980000,-64316.980000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,14,0
+2024-01,Entity 1,,deferred,-107194.960000,-107194.960000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,14,0
+2024-01,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,14,0
+2024-01,Entity 1,3200,,-5569023.350000,-5569023.350000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,14,0
+2024-02,Entity 1,4000,,-1226453.690000,1226453.690000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,15,0
+2024-02,Entity 1,4010,,-592081.090000,592081.090000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,15,0
+2024-02,Entity 1,4020,,-211457.530000,211457.530000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,15,0
+2024-02,Entity 1,4090,,-84583.010000,84583.010000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,15,0
+2024-02,Entity 1,5000,,631851.380000,-631851.380000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,15,0
+2024-02,Entity 1,5100,,167254.780000,-167254.780000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,15,0
+2024-02,Entity 1,5200,,130087.050000,-130087.050000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,15,0
+2024-02,Entity 1,5300,,37167.730000,-37167.730000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,15,0
+2024-02,Entity 1,6000,,232603.290000,-232603.290000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,15,0
+2024-02,Entity 1,6100,,169166.030000,-169166.030000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,15,0
+2024-02,Entity 1,6200,,84583.010000,-84583.010000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,15,0
+2024-02,Entity 1,6300,,190311.780000,-190311.780000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,15,0
+2024-02,Entity 1,6400,,63437.260000,-63437.260000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,15,0
+2024-02,Entity 1,1000,,2119578.370000,2119578.370000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,15,0
+2024-02,Entity 1,1100,,3115596.040000,3115596.040000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,15,0
+2024-02,Entity 1,,prepaid,42291.510000,42291.510000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,15,0
+2024-02,Entity 1,,fixed_assets,3637774.280000,3637774.280000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,15,0
+2024-02,Entity 1,,accum_depr,-424407.000000,-424407.000000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,15,0
+2024-02,Entity 1,2000,,-1162667.790000,-1162667.790000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,15,0
+2024-02,Entity 1,,accrued,-63437.260000,-63437.260000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,15,0
+2024-02,Entity 1,,deferred,-105728.770000,-105728.770000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,15,0
+2024-02,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,15,0
+2024-02,Entity 1,3200,,-5977136.390000,-5977136.390000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,15,0
+2024-03,Entity 1,4000,,-1300154.620000,1300154.620000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,16,0
+2024-03,Entity 1,4010,,-627660.850000,627660.850000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,16,0
+2024-03,Entity 1,4020,,-224164.590000,224164.590000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,16,0
+2024-03,Entity 1,4090,,-89665.840000,89665.840000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,16,0
+2024-03,Entity 1,5000,,669821.040000,-669821.040000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,16,0
+2024-03,Entity 1,5100,,177305.570000,-177305.570000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,16,0
+2024-03,Entity 1,5200,,137904.330000,-137904.330000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,16,0
+2024-03,Entity 1,5300,,39401.240000,-39401.240000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,16,0
+2024-03,Entity 1,6000,,246581.050000,-246581.050000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,16,0
+2024-03,Entity 1,6100,,179331.670000,-179331.670000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,16,0
+2024-03,Entity 1,6200,,89665.840000,-89665.840000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,16,0
+2024-03,Entity 1,6300,,201748.130000,-201748.130000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,16,0
+2024-03,Entity 1,6400,,67249.380000,-67249.380000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,16,0
+2024-03,Entity 1,1000,,2783985.560000,2783985.560000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,16,0
+2024-03,Entity 1,1100,,3049858.760000,3049858.760000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,16,0
+2024-03,Entity 1,,prepaid,44832.920000,44832.920000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,16,0
+2024-03,Entity 1,,fixed_assets,3644865.460000,3644865.460000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,16,0
+2024-03,Entity 1,,accum_depr,-455608.180000,-455608.180000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,16,0
+2024-03,Entity 1,2000,,-1296965.800000,-1296965.800000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,16,0
+2024-03,Entity 1,,accrued,-67249.380000,-67249.380000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,16,0
+2024-03,Entity 1,,deferred,-112082.290000,-112082.290000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,16,0
+2024-03,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,16,0
+2024-03,Entity 1,3200,,-6409774.050000,-6409774.050000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,16,0
+2024-04,Entity 1,4000,,-1383360.240000,1383360.240000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,17,0
+2024-04,Entity 1,4010,,-667829.080000,667829.080000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,17,0
+2024-04,Entity 1,4020,,-238510.390000,238510.390000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,17,0
+2024-04,Entity 1,4090,,-95404.150000,95404.150000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,17,0
+2024-04,Entity 1,5000,,712687.380000,-712687.380000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,17,0
+2024-04,Entity 1,5100,,188652.540000,-188652.540000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,17,0
+2024-04,Entity 1,5200,,146729.760000,-146729.760000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,17,0
+2024-04,Entity 1,5300,,41922.790000,-41922.790000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,17,0
+2024-04,Entity 1,6000,,262361.430000,-262361.430000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,17,0
+2024-04,Entity 1,6100,,190808.310000,-190808.310000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,17,0
+2024-04,Entity 1,6200,,95404.150000,-95404.150000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,17,0
+2024-04,Entity 1,6300,,214659.350000,-214659.350000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,17,0
+2024-04,Entity 1,6400,,71553.120000,-71553.120000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,17,0
+2024-04,Entity 1,1000,,2889533.260000,2889533.260000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,17,0
+2024-04,Entity 1,1100,,3484456.390000,3484456.390000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,17,0
+2024-04,Entity 1,,prepaid,47702.080000,47702.080000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,17,0
+2024-04,Entity 1,,fixed_assets,3651956.630000,3651956.630000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,17,0
+2024-04,Entity 1,,accum_depr,-486927.550000,-486927.550000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,17,0
+2024-04,Entity 1,2000,,-1343950.420000,-1343950.420000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,17,0
+2024-04,Entity 1,,accrued,-71553.120000,-71553.120000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,17,0
+2024-04,Entity 1,,deferred,-119255.190000,-119255.190000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,17,0
+2024-04,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,17,0
+2024-04,Entity 1,3200,,-6870099.100000,-6870099.100000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,17,0
+2024-05,Entity 1,4000,,-1335281.490000,1335281.490000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,18,0
+2024-05,Entity 1,4010,,-644618.650000,644618.650000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,18,0
+2024-05,Entity 1,4020,,-230220.950000,230220.950000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,18,0
+2024-05,Entity 1,4090,,-92088.380000,92088.380000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,18,0
+2024-05,Entity 1,5000,,687917.900000,-687917.900000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,18,0
+2024-05,Entity 1,5100,,182095.910000,-182095.910000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,18,0
+2024-05,Entity 1,5200,,141630.160000,-141630.160000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,18,0
+2024-05,Entity 1,5300,,40465.760000,-40465.760000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,18,0
+2024-05,Entity 1,6000,,253243.040000,-253243.040000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,18,0
+2024-05,Entity 1,6100,,184176.760000,-184176.760000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,18,0
+2024-05,Entity 1,6200,,92088.380000,-92088.380000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,18,0
+2024-05,Entity 1,6300,,207198.850000,-207198.850000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,18,0
+2024-05,Entity 1,6400,,69066.280000,-69066.280000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,18,0
+2024-05,Entity 1,1000,,3539303.770000,3539303.770000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,18,0
+2024-05,Entity 1,1100,,3388050.690000,3388050.690000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,18,0
+2024-05,Entity 1,,prepaid,46044.190000,46044.190000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,18,0
+2024-05,Entity 1,,fixed_assets,3659047.810000,3659047.810000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,18,0
+2024-05,Entity 1,,accum_depr,-518365.110000,-518365.110000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,18,0
+2024-05,Entity 1,2000,,-1433616.090000,-1433616.090000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,18,0
+2024-05,Entity 1,,accrued,-69066.280000,-69066.280000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,18,0
+2024-05,Entity 1,,deferred,-115110.470000,-115110.470000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,18,0
+2024-05,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,18,0
+2024-05,Entity 1,3200,,-7314425.520000,-7314425.520000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,18,0
+2024-06,Entity 1,4000,,-1446342.460000,1446342.460000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,19,0
+2024-06,Entity 1,4010,,-698234.290000,698234.290000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,19,0
+2024-06,Entity 1,4020,,-249369.390000,249369.390000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,19,0
+2024-06,Entity 1,4090,,-99747.760000,99747.760000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,19,0
+2024-06,Entity 1,5000,,745134.920000,-745134.920000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,19,0
+2024-06,Entity 1,5100,,197241.600000,-197241.600000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,19,0
+2024-06,Entity 1,5200,,153410.130000,-153410.130000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,19,0
+2024-06,Entity 1,5300,,43831.470000,-43831.470000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,19,0
+2024-06,Entity 1,6000,,274306.330000,-274306.330000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,19,0
+2024-06,Entity 1,6100,,199495.510000,-199495.510000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,19,0
+2024-06,Entity 1,6200,,99747.760000,-99747.760000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,19,0
+2024-06,Entity 1,6300,,224432.450000,-224432.450000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,19,0
+2024-06,Entity 1,6400,,74810.820000,-74810.820000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,19,0
+2024-06,Entity 1,1000,,3655467.080000,3655467.080000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,19,0
+2024-06,Entity 1,1100,,3591192.330000,3591192.330000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,19,0
+2024-06,Entity 1,,prepaid,49873.880000,49873.880000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,19,0
+2024-06,Entity 1,,fixed_assets,3666138.990000,3666138.990000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,19,0
+2024-06,Entity 1,,accum_depr,-549920.850000,-549920.850000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,19,0
+2024-06,Entity 1,2000,,-1235684.480000,-1235684.480000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,19,0
+2024-06,Entity 1,,accrued,-74810.820000,-74810.820000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,19,0
+2024-06,Entity 1,,deferred,-124684.700000,-124684.700000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,19,0
+2024-06,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,19,0
+2024-06,Entity 1,3200,,-7795708.450000,-7795708.450000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,19,0
+2024-07,Entity 1,4000,,-1497018.820000,1497018.820000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,20,0
+2024-07,Entity 1,4010,,-722698.740000,722698.740000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,20,0
+2024-07,Entity 1,4020,,-258106.690000,258106.690000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,20,0
+2024-07,Entity 1,4090,,-103242.680000,103242.680000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,20,0
+2024-07,Entity 1,5000,,771242.650000,-771242.650000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,20,0
+2024-07,Entity 1,5100,,204152.470000,-204152.470000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,20,0
+2024-07,Entity 1,5200,,158785.250000,-158785.250000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,20,0
+2024-07,Entity 1,5300,,45367.210000,-45367.210000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,20,0
+2024-07,Entity 1,6000,,283917.360000,-283917.360000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,20,0
+2024-07,Entity 1,6100,,206485.350000,-206485.350000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,20,0
+2024-07,Entity 1,6200,,103242.680000,-103242.680000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,20,0
+2024-07,Entity 1,6300,,232296.020000,-232296.020000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,20,0
+2024-07,Entity 1,6400,,77432.010000,-77432.010000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,20,0
+2024-07,Entity 1,1000,,4442624.420000,4442624.420000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,20,0
+2024-07,Entity 1,1100,,3566598.660000,3566598.660000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,20,0
+2024-07,Entity 1,,prepaid,51621.340000,51621.340000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,20,0
+2024-07,Entity 1,,fixed_assets,3673230.170000,3673230.170000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,20,0
+2024-07,Entity 1,,accum_depr,-581594.780000,-581594.780000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,20,0
+2024-07,Entity 1,2000,,-1470277.100000,-1470277.100000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,20,0
+2024-07,Entity 1,,accrued,-77432.010000,-77432.010000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,20,0
+2024-07,Entity 1,,deferred,-129053.350000,-129053.350000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,20,0
+2024-07,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,20,0
+2024-07,Entity 1,3200,,-8293854.370000,-8293854.370000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,20,0
+2024-08,Entity 1,4000,,-1498211.080000,1498211.080000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,21,0
+2024-08,Entity 1,4010,,-723274.320000,723274.320000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,21,0
+2024-08,Entity 1,4020,,-258312.260000,258312.260000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,21,0
+2024-08,Entity 1,4090,,-103324.900000,103324.900000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,21,0
+2024-08,Entity 1,5000,,771856.890000,-771856.890000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,21,0
+2024-08,Entity 1,5100,,204315.060000,-204315.060000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,21,0
+2024-08,Entity 1,5200,,158911.710000,-158911.710000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,21,0
+2024-08,Entity 1,5300,,45403.350000,-45403.350000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,21,0
+2024-08,Entity 1,6000,,284143.480000,-284143.480000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,21,0
+2024-08,Entity 1,6100,,206649.800000,-206649.800000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,21,0
+2024-08,Entity 1,6200,,103324.900000,-103324.900000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,21,0
+2024-08,Entity 1,6300,,232481.030000,-232481.030000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,21,0
+2024-08,Entity 1,6400,,77493.680000,-77493.680000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,21,0
+2024-08,Entity 1,1000,,4272562.250000,4272562.250000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,21,0
+2024-08,Entity 1,1100,,4162721.420000,4162721.420000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,21,0
+2024-08,Entity 1,,prepaid,51662.450000,51662.450000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,21,0
+2024-08,Entity 1,,fixed_assets,3680321.350000,3680321.350000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,21,0
+2024-08,Entity 1,,accum_depr,-613386.890000,-613386.890000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,21,0
+2024-08,Entity 1,2000,,-1372970.770000,-1372970.770000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,21,0
+2024-08,Entity 1,,accrued,-77493.680000,-77493.680000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,21,0
+2024-08,Entity 1,,deferred,-129156.130000,-129156.130000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,21,0
+2024-08,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,21,0
+2024-08,Entity 1,3200,,-8792397.020000,-8792397.020000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,21,0
+2024-09,Entity 1,4000,,-1494829.980000,1494829.980000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,22,0
+2024-09,Entity 1,4010,,-721642.060000,721642.060000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,22,0
+2024-09,Entity 1,4020,,-257729.310000,257729.310000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,22,0
+2024-09,Entity 1,4090,,-103091.720000,103091.720000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,22,0
+2024-09,Entity 1,5000,,770114.990000,-770114.990000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,22,0
+2024-09,Entity 1,5100,,203853.970000,-203853.970000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,22,0
+2024-09,Entity 1,5200,,158553.090000,-158553.090000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,22,0
+2024-09,Entity 1,5300,,45300.880000,-45300.880000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,22,0
+2024-09,Entity 1,6000,,283502.240000,-283502.240000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,22,0
+2024-09,Entity 1,6100,,206183.450000,-206183.450000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,22,0
+2024-09,Entity 1,6200,,103091.720000,-103091.720000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,22,0
+2024-09,Entity 1,6300,,231956.380000,-231956.380000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,22,0
+2024-09,Entity 1,6400,,77318.790000,-77318.790000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,22,0
+2024-09,Entity 1,1000,,5042780.540000,5042780.540000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,22,0
+2024-09,Entity 1,1100,,3804972.010000,3804972.010000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,22,0
+2024-09,Entity 1,,prepaid,51545.860000,51545.860000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,22,0
+2024-09,Entity 1,,fixed_assets,3687412.520000,3687412.520000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,22,0
+2024-09,Entity 1,,accum_depr,-645297.190000,-645297.190000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,22,0
+2024-09,Entity 1,2000,,-1263552.720000,-1263552.720000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,22,0
+2024-09,Entity 1,,accrued,-77318.790000,-77318.790000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,22,0
+2024-09,Entity 1,,deferred,-128864.650000,-128864.650000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,22,0
+2024-09,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,22,0
+2024-09,Entity 1,3200,,-9289814.580000,-9289814.580000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,22,0
+2024-10,Entity 1,4000,,-1712828.270000,1712828.270000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,23,0
+2024-10,Entity 1,4010,,-826882.610000,826882.610000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,23,0
+2024-10,Entity 1,4020,,-295315.220000,295315.220000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,23,0
+2024-10,Entity 1,4090,,-118126.090000,118126.090000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,23,0
+2024-10,Entity 1,5000,,882424.590000,-882424.590000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,23,0
+2024-10,Entity 1,5100,,233582.980000,-233582.980000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,23,0
+2024-10,Entity 1,5200,,181675.650000,-181675.650000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,23,0
+2024-10,Entity 1,5300,,51907.330000,-51907.330000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,23,0
+2024-10,Entity 1,6000,,324846.740000,-324846.740000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,23,0
+2024-10,Entity 1,6100,,236252.180000,-236252.180000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,23,0
+2024-10,Entity 1,6200,,118126.090000,-118126.090000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,23,0
+2024-10,Entity 1,6300,,265783.700000,-265783.700000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,23,0
+2024-10,Entity 1,6400,,88594.570000,-88594.570000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,23,0
+2024-10,Entity 1,1000,,5840215.550000,5840215.550000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,23,0
+2024-10,Entity 1,1100,,4271642.960000,4271642.960000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,23,0
+2024-10,Entity 1,,prepaid,59063.040000,59063.040000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,23,0
+2024-10,Entity 1,,fixed_assets,3694503.700000,3694503.700000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,23,0
+2024-10,Entity 1,,accum_depr,-677325.680000,-677325.680000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,23,0
+2024-10,Entity 1,2000,,-1910211.460000,-1910211.460000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,23,0
+2024-10,Entity 1,,accrued,-88594.570000,-88594.570000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,23,0
+2024-10,Entity 1,,deferred,-147657.610000,-147657.610000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,23,0
+2024-10,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,23,0
+2024-10,Entity 1,3200,,-9859772.950000,-9859772.950000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,23,0
+2024-11,Entity 1,4000,,-1722588.690000,1722588.690000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,24,0
+2024-11,Entity 1,4010,,-831594.540000,831594.540000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,24,0
+2024-11,Entity 1,4020,,-296998.050000,296998.050000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,24,0
+2024-11,Entity 1,4090,,-118799.220000,118799.220000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,24,0
+2024-11,Entity 1,5000,,887453.020000,-887453.020000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,24,0
+2024-11,Entity 1,5100,,234914.030000,-234914.030000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,24,0
+2024-11,Entity 1,5200,,182710.920000,-182710.920000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,24,0
+2024-11,Entity 1,5300,,52203.120000,-52203.120000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,24,0
+2024-11,Entity 1,6000,,326697.850000,-326697.850000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,24,0
+2024-11,Entity 1,6100,,237598.440000,-237598.440000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,24,0
+2024-11,Entity 1,6200,,118799.220000,-118799.220000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,24,0
+2024-11,Entity 1,6300,,267298.240000,-267298.240000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,24,0
+2024-11,Entity 1,6400,,89099.410000,-89099.410000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,24,0
+2024-11,Entity 1,1000,,5841481.200000,5841481.200000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,24,0
+2024-11,Entity 1,1100,,4900906.370000,4900906.370000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,24,0
+2024-11,Entity 1,,prepaid,59399.610000,59399.610000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,24,0
+2024-11,Entity 1,,fixed_assets,3701594.880000,3701594.880000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,24,0
+2024-11,Entity 1,,accum_depr,-709472.350000,-709472.350000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,24,0
+2024-11,Entity 1,2000,,-1941469.100000,-1941469.100000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,24,0
+2024-11,Entity 1,,accrued,-89099.410000,-89099.410000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,24,0
+2024-11,Entity 1,,deferred,-148499.020000,-148499.020000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,24,0
+2024-11,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,24,0
+2024-11,Entity 1,3200,,-10432979.190000,-10432979.190000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,24,0
+2024-12,Entity 1,4000,,-1601106.990000,1601106.990000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,25,0
+2024-12,Entity 1,4010,,-772948.200000,772948.200000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,25,0
+2024-12,Entity 1,4020,,-276052.930000,276052.930000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,25,0
+2024-12,Entity 1,4090,,-110421.170000,110421.170000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,25,0
+2024-12,Entity 1,5000,,824867.390000,-824867.390000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,25,0
+2024-12,Entity 1,5100,,218347.250000,-218347.250000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,25,0
+2024-12,Entity 1,5200,,169825.640000,-169825.640000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,25,0
+2024-12,Entity 1,5300,,48521.610000,-48521.610000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,25,0
+2024-12,Entity 1,6000,,303658.220000,-303658.220000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,25,0
+2024-12,Entity 1,6100,,220842.340000,-220842.340000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,25,0
+2024-12,Entity 1,6200,,110421.170000,-110421.170000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,25,0
+2024-12,Entity 1,6300,,248447.640000,-248447.640000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,25,0
+2024-12,Entity 1,6400,,82815.880000,-82815.880000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,25,0
+2024-12,Entity 1,1000,,7373215.500000,7373215.500000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,25,0
+2024-12,Entity 1,1100,,3750479.660000,3750479.660000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,25,0
+2024-12,Entity 1,,prepaid,55210.590000,55210.590000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,25,0
+2024-12,Entity 1,,fixed_assets,3708686.060000,3708686.060000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,25,0
+2024-12,Entity 1,,accum_depr,-741737.210000,-741737.210000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,25,0
+2024-12,Entity 1,2000,,-1777387.920000,-1777387.920000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,25,0
+2024-12,Entity 1,,accrued,-82815.880000,-82815.880000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,25,0
+2024-12,Entity 1,,deferred,-138026.460000,-138026.460000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,25,0
+2024-12,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,25,0
+2024-12,Entity 1,3200,,-10965761.340000,-10965761.340000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,25,0
+2025-01,Entity 1,4000,,-1565776.010000,1565776.010000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,26,0
+2025-01,Entity 1,4010,,-755891.870000,755891.870000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,26,0
+2025-01,Entity 1,4020,,-269961.380000,269961.380000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,26,0
+2025-01,Entity 1,4090,,-107984.550000,107984.550000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,26,0
+2025-01,Entity 1,5000,,806665.370000,-806665.370000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,26,0
+2025-01,Entity 1,5100,,213529.070000,-213529.070000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,26,0
+2025-01,Entity 1,5200,,166078.170000,-166078.170000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,26,0
+2025-01,Entity 1,5300,,47450.900000,-47450.900000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,26,0
+2025-01,Entity 1,6000,,296957.520000,-296957.520000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,26,0
+2025-01,Entity 1,6100,,215969.100000,-215969.100000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,26,0
+2025-01,Entity 1,6200,,107984.550000,-107984.550000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,26,0
+2025-01,Entity 1,6300,,242965.240000,-242965.240000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,26,0
+2025-01,Entity 1,6400,,80988.410000,-80988.410000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,26,0
+2025-01,Entity 1,1000,,7460901.270000,7460901.270000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,26,0
+2025-01,Entity 1,1100,,3814697.610000,3814697.610000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,26,0
+2025-01,Entity 1,,prepaid,53992.280000,53992.280000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,26,0
+2025-01,Entity 1,,fixed_assets,3715777.240000,3715777.240000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,26,0
+2025-01,Entity 1,,accum_depr,-774120.260000,-774120.260000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,26,0
+2025-01,Entity 1,2000,,-1386629.230000,-1386629.230000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,26,0
+2025-01,Entity 1,,accrued,-80988.410000,-80988.410000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,26,0
+2025-01,Entity 1,,deferred,-134980.690000,-134980.690000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,26,0
+2025-01,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,26,0
+2025-01,Entity 1,3200,,-11486786.810000,-11486786.810000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,26,0
+2025-02,Entity 1,4000,,-1547884.100000,1547884.100000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,27,0
+2025-02,Entity 1,4010,,-747254.390000,747254.390000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,27,0
+2025-02,Entity 1,4020,,-266876.570000,266876.570000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,27,0
+2025-02,Entity 1,4090,,-106750.630000,106750.630000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,27,0
+2025-02,Entity 1,5000,,797447.720000,-797447.720000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,27,0
+2025-02,Entity 1,5100,,211089.100000,-211089.100000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,27,0
+2025-02,Entity 1,5200,,164180.410000,-164180.410000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,27,0
+2025-02,Entity 1,5300,,46908.690000,-46908.690000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,27,0
+2025-02,Entity 1,6000,,293564.230000,-293564.230000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,27,0
+2025-02,Entity 1,6100,,213501.250000,-213501.250000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,27,0
+2025-02,Entity 1,6200,,106750.630000,-106750.630000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,27,0
+2025-02,Entity 1,6300,,240188.910000,-240188.910000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,27,0
+2025-02,Entity 1,6400,,80062.970000,-80062.970000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,27,0
+2025-02,Entity 1,1000,,8124172.740000,8124172.740000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,27,0
+2025-02,Entity 1,1100,,4032361.240000,4032361.240000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,27,0
+2025-02,Entity 1,,prepaid,53375.310000,53375.310000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,27,0
+2025-02,Entity 1,,fixed_assets,3722868.410000,3722868.410000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,27,0
+2025-02,Entity 1,,accum_depr,-806621.490000,-806621.490000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,27,0
+2025-02,Entity 1,2000,,-1728933.390000,-1728933.390000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,27,0
+2025-02,Entity 1,,accrued,-80062.970000,-80062.970000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,27,0
+2025-02,Entity 1,,deferred,-133438.280000,-133438.280000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,27,0
+2025-02,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,27,0
+2025-02,Entity 1,3200,,-12001858.590000,-12001858.590000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,27,0
+2025-03,Entity 1,4000,,-1558139.270000,1558139.270000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,28,0
+2025-03,Entity 1,4010,,-752205.160000,752205.160000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,28,0
+2025-03,Entity 1,4020,,-268644.700000,268644.700000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,28,0
+2025-03,Entity 1,4090,,-107457.880000,107457.880000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,28,0
+2025-03,Entity 1,5000,,802731.030000,-802731.030000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,28,0
+2025-03,Entity 1,5100,,212487.630000,-212487.630000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,28,0
+2025-03,Entity 1,5200,,165268.150000,-165268.150000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,28,0
+2025-03,Entity 1,5300,,47219.470000,-47219.470000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,28,0
+2025-03,Entity 1,6000,,295509.170000,-295509.170000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,28,0
+2025-03,Entity 1,6100,,214915.760000,-214915.760000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,28,0
+2025-03,Entity 1,6200,,107457.880000,-107457.880000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,28,0
+2025-03,Entity 1,6300,,241780.230000,-241780.230000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,28,0
+2025-03,Entity 1,6400,,80593.410000,-80593.410000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,28,0
+2025-03,Entity 1,1000,,8483836.440000,8483836.440000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,28,0
+2025-03,Entity 1,1100,,4215050.450000,4215050.450000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,28,0
+2025-03,Entity 1,,prepaid,53728.940000,53728.940000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,28,0
+2025-03,Entity 1,,fixed_assets,3729959.590000,3729959.590000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,28,0
+2025-03,Entity 1,,accum_depr,-839240.910000,-839240.910000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,28,0
+2025-03,Entity 1,2000,,-1726212.900000,-1726212.900000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,28,0
+2025-03,Entity 1,,accrued,-80593.410000,-80593.410000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,28,0
+2025-03,Entity 1,,deferred,-134322.350000,-134322.350000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,28,0
+2025-03,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,28,0
+2025-03,Entity 1,3200,,-12520342.860000,-12520342.860000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,28,0
+2025-04,Entity 1,4000,,-1623887.340000,1623887.340000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,29,0
+2025-04,Entity 1,4010,,-783945.610000,783945.610000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,29,0
+2025-04,Entity 1,4020,,-279980.580000,279980.580000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,29,0
+2025-04,Entity 1,4090,,-111992.230000,111992.230000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,29,0
+2025-04,Entity 1,5000,,836603.500000,-836603.500000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,29,0
+2025-04,Entity 1,5100,,221453.870000,-221453.870000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,29,0
+2025-04,Entity 1,5200,,172241.900000,-172241.900000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,29,0
+2025-04,Entity 1,5300,,49211.970000,-49211.970000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,29,0
+2025-04,Entity 1,6000,,307978.630000,-307978.630000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,29,0
+2025-04,Entity 1,6100,,223984.460000,-223984.460000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,29,0
+2025-04,Entity 1,6200,,111992.230000,-111992.230000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,29,0
+2025-04,Entity 1,6300,,251982.520000,-251982.520000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,29,0
+2025-04,Entity 1,6400,,83994.170000,-83994.170000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,29,0
+2025-04,Entity 1,1000,,9180881.430000,9180881.430000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,29,0
+2025-04,Entity 1,1100,,4121441.680000,4121441.680000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,29,0
+2025-04,Entity 1,,prepaid,55996.120000,55996.120000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,29,0
+2025-04,Entity 1,,fixed_assets,3737050.770000,3737050.770000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,29,0
+2025-04,Entity 1,,accum_depr,-871978.510000,-871978.510000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,29,0
+2025-04,Entity 1,2000,,-1756838.660000,-1756838.660000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,29,0
+2025-04,Entity 1,,accrued,-83994.170000,-83994.170000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,29,0
+2025-04,Entity 1,,deferred,-139990.290000,-139990.290000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,29,0
+2025-04,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,29,0
+2025-04,Entity 1,3200,,-13060705.370000,-13060705.370000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,29,0
+2025-05,Entity 1,4000,,-1612602.550000,1612602.550000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,30,0
+2025-05,Entity 1,4010,,-778497.780000,778497.780000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,30,0
+2025-05,Entity 1,4020,,-278034.920000,278034.920000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,30,0
+2025-05,Entity 1,4090,,-111213.970000,111213.970000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,30,0
+2025-05,Entity 1,5000,,830789.740000,-830789.740000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,30,0
+2025-05,Entity 1,5100,,219914.930000,-219914.930000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,30,0
+2025-05,Entity 1,5200,,171044.950000,-171044.950000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,30,0
+2025-05,Entity 1,5300,,48869.980000,-48869.980000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,30,0
+2025-05,Entity 1,6000,,305838.410000,-305838.410000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,30,0
+2025-05,Entity 1,6100,,222427.940000,-222427.940000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,30,0
+2025-05,Entity 1,6200,,111213.970000,-111213.970000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,30,0
+2025-05,Entity 1,6300,,250231.430000,-250231.430000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,30,0
+2025-05,Entity 1,6400,,83410.480000,-83410.480000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,30,0
+2025-05,Entity 1,1000,,9134460.190000,9134460.190000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,30,0
+2025-05,Entity 1,1100,,4531517.540000,4531517.540000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,30,0
+2025-05,Entity 1,,prepaid,55606.980000,55606.980000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,30,0
+2025-05,Entity 1,,fixed_assets,3744141.950000,3744141.950000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,30,0
+2025-05,Entity 1,,accum_depr,-904834.300000,-904834.300000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,30,0
+2025-05,Entity 1,2000,,-1559288.650000,-1559288.650000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,30,0
+2025-05,Entity 1,,accrued,-83410.480000,-83410.480000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,30,0
+2025-05,Entity 1,,deferred,-139017.460000,-139017.460000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,30,0
+2025-05,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,30,0
+2025-05,Entity 1,3200,,-13597312.770000,-13597312.770000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,30,0
+2025-06,Entity 1,4000,,-1836200.400000,1836200.400000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,31,0
+2025-06,Entity 1,4010,,-886441.570000,886441.570000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,31,0
+2025-06,Entity 1,4020,,-316586.280000,316586.280000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,31,0
+2025-06,Entity 1,4090,,-126634.510000,126634.510000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,31,0
+2025-06,Entity 1,5000,,945984.150000,-945984.150000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,31,0
+2025-06,Entity 1,5100,,250407.570000,-250407.570000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,31,0
+2025-06,Entity 1,5200,,194761.440000,-194761.440000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,31,0
+2025-06,Entity 1,5300,,55646.130000,-55646.130000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,31,0
+2025-06,Entity 1,6000,,348244.900000,-348244.900000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,31,0
+2025-06,Entity 1,6100,,253269.020000,-253269.020000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,31,0
+2025-06,Entity 1,6200,,126634.510000,-126634.510000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,31,0
+2025-06,Entity 1,6300,,284927.650000,-284927.650000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,31,0
+2025-06,Entity 1,6400,,94975.880000,-94975.880000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,31,0
+2025-06,Entity 1,1000,,10236006.700000,10236006.700000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,31,0
+2025-06,Entity 1,1100,,4352517.300000,4352517.300000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,31,0
+2025-06,Entity 1,,prepaid,63317.260000,63317.260000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,31,0
+2025-06,Entity 1,,fixed_assets,3751233.130000,3751233.130000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,31,0
+2025-06,Entity 1,,accum_depr,-937808.280000,-937808.280000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,31,0
+2025-06,Entity 1,2000,,-1821809.810000,-1821809.810000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,31,0
+2025-06,Entity 1,,accrued,-94975.880000,-94975.880000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,31,0
+2025-06,Entity 1,,deferred,-158293.140000,-158293.140000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,31,0
+2025-06,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,31,0
+2025-06,Entity 1,3200,,-14208324.280000,-14208324.280000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,31,0
+2025-07,Entity 1,4000,,-1703166.400000,1703166.400000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,32,0
+2025-07,Entity 1,4010,,-822218.260000,822218.260000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,32,0
+2025-07,Entity 1,4020,,-293649.380000,293649.380000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,32,0
+2025-07,Entity 1,4090,,-117459.750000,117459.750000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,32,0
+2025-07,Entity 1,5000,,877446.930000,-877446.930000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,32,0
+2025-07,Entity 1,5100,,232265.360000,-232265.360000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,32,0
+2025-07,Entity 1,5200,,180650.840000,-180650.840000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,32,0
+2025-07,Entity 1,5300,,51614.530000,-51614.530000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,32,0
+2025-07,Entity 1,6000,,323014.320000,-323014.320000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,32,0
+2025-07,Entity 1,6100,,234919.500000,-234919.500000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,32,0
+2025-07,Entity 1,6200,,117459.750000,-117459.750000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,32,0
+2025-07,Entity 1,6300,,264284.440000,-264284.440000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,32,0
+2025-07,Entity 1,6400,,88094.810000,-88094.810000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,32,0
+2025-07,Entity 1,1000,,10739498.830000,10739498.830000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,32,0
+2025-07,Entity 1,1100,,4449577.040000,4449577.040000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,32,0
+2025-07,Entity 1,,prepaid,58729.880000,58729.880000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,32,0
+2025-07,Entity 1,,fixed_assets,3758324.300000,3758324.300000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,32,0
+2025-07,Entity 1,,accum_depr,-970900.450000,-970900.450000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,32,0
+2025-07,Entity 1,2000,,-1843379.540000,-1843379.540000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,32,0
+2025-07,Entity 1,,accrued,-88094.810000,-88094.810000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,32,0
+2025-07,Entity 1,,deferred,-146824.690000,-146824.690000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,32,0
+2025-07,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,32,0
+2025-07,Entity 1,3200,,-14775067.580000,-14775067.580000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,32,0
+2025-08,Entity 1,4000,,-1740387.830000,1740387.830000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,33,0
+2025-08,Entity 1,4010,,-840187.230000,840187.230000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,33,0
+2025-08,Entity 1,4020,,-300066.870000,300066.870000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,33,0
+2025-08,Entity 1,4090,,-120026.750000,120026.750000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,33,0
+2025-08,Entity 1,5000,,896622.880000,-896622.880000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,33,0
+2025-08,Entity 1,5100,,237341.350000,-237341.350000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,33,0
+2025-08,Entity 1,5200,,184598.830000,-184598.830000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,33,0
+2025-08,Entity 1,5300,,52742.520000,-52742.520000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,33,0
+2025-08,Entity 1,6000,,330073.550000,-330073.550000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,33,0
+2025-08,Entity 1,6100,,240053.490000,-240053.490000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,33,0
+2025-08,Entity 1,6200,,120026.750000,-120026.750000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,33,0
+2025-08,Entity 1,6300,,270060.180000,-270060.180000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,33,0
+2025-08,Entity 1,6400,,90020.060000,-90020.060000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,33,0
+2025-08,Entity 1,1000,,10865230.630000,10865230.630000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,33,0
+2025-08,Entity 1,1100,,4758999.600000,4758999.600000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,33,0
+2025-08,Entity 1,,prepaid,60013.370000,60013.370000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,33,0
+2025-08,Entity 1,,fixed_assets,3765415.480000,3765415.480000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,33,0
+2025-08,Entity 1,,accum_depr,-1004110.800000,-1004110.800000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,33,0
+2025-08,Entity 1,2000,,-1669435.170000,-1669435.170000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,33,0
+2025-08,Entity 1,,accrued,-90020.060000,-90020.060000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,33,0
+2025-08,Entity 1,,deferred,-150033.430000,-150033.430000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,33,0
+2025-08,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,33,0
+2025-08,Entity 1,3200,,-15354196.640000,-15354196.640000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,33,0
+2025-09,Entity 1,4000,,-1735200.070000,1735200.070000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,34,0
+2025-09,Entity 1,4010,,-837682.790000,837682.790000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,34,0
+2025-09,Entity 1,4020,,-299172.430000,299172.430000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,34,0
+2025-09,Entity 1,4090,,-119668.970000,119668.970000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,34,0
+2025-09,Entity 1,5000,,893950.220000,-893950.220000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,34,0
+2025-09,Entity 1,5100,,236633.880000,-236633.880000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,34,0
+2025-09,Entity 1,5200,,184048.570000,-184048.570000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,34,0
+2025-09,Entity 1,5300,,52585.310000,-52585.310000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,34,0
+2025-09,Entity 1,6000,,329089.670000,-329089.670000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,34,0
+2025-09,Entity 1,6100,,239337.940000,-239337.940000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,34,0
+2025-09,Entity 1,6200,,119668.970000,-119668.970000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,34,0
+2025-09,Entity 1,6300,,269255.180000,-269255.180000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,34,0
+2025-09,Entity 1,6400,,89751.730000,-89751.730000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,34,0
+2025-09,Entity 1,1000,,11564414.840000,11564414.840000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,34,0
+2025-09,Entity 1,1100,,4434027.780000,4434027.780000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,34,0
+2025-09,Entity 1,,prepaid,59834.490000,59834.490000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,34,0
+2025-09,Entity 1,,fixed_assets,3772506.660000,3772506.660000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,34,0
+2025-09,Entity 1,,accum_depr,-1037439.330000,-1037439.330000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,34,0
+2025-09,Entity 1,2000,,-1440544.080000,-1440544.080000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,34,0
+2025-09,Entity 1,,accrued,-89751.730000,-89751.730000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,34,0
+2025-09,Entity 1,,deferred,-149586.210000,-149586.210000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,34,0
+2025-09,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,34,0
+2025-09,Entity 1,3200,,-15931599.420000,-15931599.420000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,34,0
+2025-10,Entity 1,4000,,-2064309.800000,2064309.800000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,35,0
+2025-10,Entity 1,4010,,-996563.350000,996563.350000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,35,0
+2025-10,Entity 1,4020,,-355915.480000,355915.480000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,35,0
+2025-10,Entity 1,4090,,-142366.190000,142366.190000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,35,0
+2025-10,Entity 1,5000,,1063502.840000,-1063502.840000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,35,0
+2025-10,Entity 1,5100,,281515.460000,-281515.460000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,35,0
+2025-10,Entity 1,5200,,218956.470000,-218956.470000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,35,0
+2025-10,Entity 1,5300,,62558.990000,-62558.990000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,35,0
+2025-10,Entity 1,6000,,391507.030000,-391507.030000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,35,0
+2025-10,Entity 1,6100,,284732.390000,-284732.390000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,35,0
+2025-10,Entity 1,6200,,142366.190000,-142366.190000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,35,0
+2025-10,Entity 1,6300,,320323.930000,-320323.930000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,35,0
+2025-10,Entity 1,6400,,106774.640000,-106774.640000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,35,0
+2025-10,Entity 1,1000,,11204133.050000,11204133.050000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,35,0
+2025-10,Entity 1,1100,,5913684.730000,5913684.730000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,35,0
+2025-10,Entity 1,,prepaid,71183.100000,71183.100000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,35,0
+2025-10,Entity 1,,fixed_assets,3779597.840000,3779597.840000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,35,0
+2025-10,Entity 1,,accum_depr,-1070886.050000,-1070886.050000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,35,0
+2025-10,Entity 1,2000,,-1812600.980000,-1812600.980000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,35,0
+2025-10,Entity 1,,accrued,-106774.640000,-106774.640000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,35,0
+2025-10,Entity 1,,deferred,-177957.740000,-177957.740000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,35,0
+2025-10,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,35,0
+2025-10,Entity 1,3200,,-16618516.300000,-16618516.300000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,35,0
+2025-11,Entity 1,4000,,-2020112.090000,2020112.090000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,36,0
+2025-11,Entity 1,4010,,-975226.530000,975226.530000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,36,0
+2025-11,Entity 1,4020,,-348295.190000,348295.190000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,36,0
+2025-11,Entity 1,4090,,-139318.080000,139318.080000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,36,0
+2025-11,Entity 1,5000,,1040732.820000,-1040732.820000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,36,0
+2025-11,Entity 1,5100,,275488.100000,-275488.100000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,36,0
+2025-11,Entity 1,5200,,214268.520000,-214268.520000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,36,0
+2025-11,Entity 1,5300,,61219.580000,-61219.580000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,36,0
+2025-11,Entity 1,6000,,383124.710000,-383124.710000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,36,0
+2025-11,Entity 1,6100,,278636.150000,-278636.150000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,36,0
+2025-11,Entity 1,6200,,139318.080000,-139318.080000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,36,0
+2025-11,Entity 1,6300,,313465.670000,-313465.670000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,36,0
+2025-11,Entity 1,6400,,104488.560000,-104488.560000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,36,0
+2025-11,Entity 1,1000,,12901041.550000,12901041.550000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,36,0
+2025-11,Entity 1,1100,,5286741.500000,5286741.500000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,36,0
+2025-11,Entity 1,,prepaid,69659.040000,69659.040000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,36,0
+2025-11,Entity 1,,fixed_assets,3786689.020000,3786689.020000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,36,0
+2025-11,Entity 1,,accum_depr,-1104450.960000,-1104450.960000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,36,0
+2025-11,Entity 1,2000,,-2188454.980000,-2188454.980000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,36,0
+2025-11,Entity 1,,accrued,-104488.560000,-104488.560000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,36,0
+2025-11,Entity 1,,deferred,-174147.590000,-174147.590000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,36,0
+2025-11,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,36,0
+2025-11,Entity 1,3200,,-17290726.010000,-17290726.010000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,36,0
+2025-12,Entity 1,4000,,-2129442.560000,2129442.560000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4000,37,0
+2025-12,Entity 1,4010,,-1028006.750000,1028006.750000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4010,37,0
+2025-12,Entity 1,4020,,-367145.270000,367145.270000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4020,37,0
+2025-12,Entity 1,4090,,-146858.110000,146858.110000,IS,IS_REV,Revenue,IS_Revenue,10,-1.000000,mapped,account_number,,acct_4090,37,0
+2025-12,Entity 1,5000,,1097058.300000,-1097058.300000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5000,37,0
+2025-12,Entity 1,5100,,290397.790000,-290397.790000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5100,37,0
+2025-12,Entity 1,5200,,225864.950000,-225864.950000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5200,37,0
+2025-12,Entity 1,5300,,64532.840000,-64532.840000,IS,IS_COGS,Cost of goods sold,IS_COGS,20,-1.000000,mapped,account_number,,acct_5300,37,0
+2025-12,Entity 1,6000,,403859.800000,-403859.800000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6000,37,0
+2025-12,Entity 1,6100,,293716.210000,-293716.210000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6100,37,0
+2025-12,Entity 1,6200,,146858.110000,-146858.110000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6200,37,0
+2025-12,Entity 1,6300,,330430.740000,-330430.740000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6300,37,0
+2025-12,Entity 1,6400,,110143.580000,-110143.580000,IS,IS_OPEX,Operating expenses,IS_OPEX,30,-1.000000,mapped,account_number,,acct_6400,37,0
+2025-12,Entity 1,1000,,14066235.900000,14066235.900000,BS,BS_CASH,Cash,BS_Assets,100,1.000000,mapped,account_number,,acct_1000,37,0
+2025-12,Entity 1,1100,,4983244.900000,4983244.900000,BS,BS_AR,Accounts receivable,BS_Assets,110,1.000000,mapped,account_number,,acct_1100,37,0
+2025-12,Entity 1,,prepaid,73429.050000,73429.050000,BS,BS_OCA,Other current assets,BS_Assets,120,1.000000,mapped,account_name,,acct_prepaid,37,0
+2025-12,Entity 1,,fixed_assets,3793780.190000,3793780.190000,BS,BS_PPE,PP&E,BS_Assets,130,1.000000,mapped,account_name,,acct_fixed_assets,37,0
+2025-12,Entity 1,,accum_depr,-1138134.060000,-1138134.060000,BS,BS_OTA,Other assets,BS_Assets,140,1.000000,mapped,account_name,,acct_accum_depr,37,0
+2025-12,Entity 1,2000,,-2303660.400000,-2303660.400000,BS,BS_AP,Accounts payable,BS_Liab,200,1.000000,mapped,account_number,,acct_2000,37,0
+2025-12,Entity 1,,accrued,-110143.580000,-110143.580000,BS,BS_ACCR,Accrued liabilities,BS_Liab,210,1.000000,mapped,account_name,,acct_accrued,37,0
+2025-12,Entity 1,,deferred,-183572.630000,-183572.630000,BS,BS_OL,Other liabilities,BS_Liab,220,1.000000,mapped,account_name,,acct_deferred,37,0
+2025-12,Entity 1,3000,,-1181862.990000,-1181862.990000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3000,37,0
+2025-12,Entity 1,3200,,-17999316.380000,-17999316.380000,BS,BS_EQ,Equity,BS_Equity,300,1.000000,mapped,account_number,,acct_3200,37,0
