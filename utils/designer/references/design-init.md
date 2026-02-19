@@ -1,45 +1,48 @@
-# Design init and repo UI context files
+# Design init and repo UI context
 
 Use this when the task is iterative design on an existing repo UI.
 
-This guide aligns `.design/*` context generation with `docs/DESIGN.md` so high-level design policy and repo-grounded evidence stay in sync.
+This guide keeps all design context consolidated in `docs/DESIGN.md` so high-level policy and repo-grounded evidence stay in one file.
 
 ## Explicit trigger phrases (natural language)
 
-Generate or refresh `.design/*` only when the user explicitly asks, for example:
-- "Set up design context files for this repo."
-- "Create the `.design` context docs before we iterate."
-- "Refresh the design context files from current code."
-- "Update the `.design` context."
+Create or refresh design context only when the user explicitly asks, for example:
+- "Set up design context for this repo."
+- "Create the design md before we iterate."
+- "Refresh design context from current code."
+- "Update the design md."
 
-If the user did not explicitly ask, do not write `.design/*` files.
+If the user did not explicitly ask, do not rewrite context sections.
 Use these commands only when the user asks for context generation or refresh:
-- `init design context`: create `.design/` and generate all required context files.
-- `update design context`: refresh all `.design/*.md` files from current repo sources.
+- `init design context` or `init design md`: create `docs/DESIGN.md` if missing and populate required context sections.
+- `update design context` or `update design md`: refresh required context sections in `docs/DESIGN.md` from current repo sources.
 
 ## Output location
 
-Write context files to `.design/` in the project root.
+Write context to `docs/DESIGN.md` in the project root.
 
-Required files:
-- `.design/components.md`
-- `.design/layouts.md`
-- `.design/routes.md`
-- `.design/theme.md`
+Required context sections:
+- `Component Context`
+- `Layout Context`
+- `Route Context`
+- `Theme and Token Context`
 
-## Sync with `docs/DESIGN.md`
+## Sync contract
 
-When `docs/DESIGN.md` exists, keep these sections aligned with `.design/*` context:
+When `docs/DESIGN.md` exists, keep these sections aligned:
 - `Design System Map`
-- `Repo UI Context Map (.design/)`
+- `Component Context`
+- `Layout Context`
+- `Route Context`
+- `Theme and Token Context`
 - `Context Refresh Contract`
 - `Validation Notes`
 
-If `docs/DESIGN.md` is missing, generate `.design/*` only and do not create new docs unless explicitly requested.
+If `docs/DESIGN.md` is missing, create it only when explicitly requested.
 
 ## Hybrid context format (required)
 
-The context files should be more than an index, but not full code dumps.
+Context should be more than an index, but not full code dumps.
 
 For each entry, include:
 - path
@@ -50,13 +53,13 @@ For each entry, include:
 
 Default excerpt size:
 - 8-30 lines per snippet
-- 3-8 snippets per file entry
+- 3-8 snippets per high-value entry
 
 Use pointer-only entries for low-risk boilerplate.
 
-## What each file must contain
+## What each section must contain
 
-### `.design/components.md`
+### `Component Context`
 - Shared/reusable UI primitives and major feature components.
 - For each component:
   - purpose
@@ -65,7 +68,7 @@ Use pointer-only entries for low-risk boilerplate.
   - interaction risks
   - targeted snippets with anchors
 
-### `.design/layouts.md`
+### `Layout Context`
 - Shared layout wrappers and shells (app layout, nav, header, sidebar, footer).
 - For each layout:
   - ownership boundaries
@@ -73,12 +76,12 @@ Use pointer-only entries for low-risk boilerplate.
   - risky geometry/inset behavior
   - targeted snippets with anchors
 
-### `.design/routes.md`
+### `Route Context`
 - Route map: path, file, layout relation.
 - Navigation contracts and route ownership notes.
-- List risky transitions and cross-stack openings.
+- Risky transitions and cross-stack openings.
 
-### `.design/theme.md`
+### `Theme and Token Context`
 - Token and design-system digest (see `design-token-sync.md`).
 - Keep raw-value fidelity, but avoid full file dumps by default.
 - Include token values and focused snippets for global styles/config sources.
@@ -86,10 +89,10 @@ Use pointer-only entries for low-risk boilerplate.
 ## Read rule
 
 For iterative design tasks:
-- Read existing `.design/*.md` files relevant to the requested surface first when present.
-- If files are missing or stale, only regenerate when explicitly requested by the user.
+- Read `docs/DESIGN.md` first when it exists.
+- If context is stale or missing, regenerate only when explicitly requested by the user.
 
-## Context-file usage
+## Context usage
 
 When preparing design analysis or reproduction, include context for:
 - target page/feature file(s)

@@ -1,10 +1,22 @@
 ---
 name: designer
-description: Create distinctive, production-grade frontend interfaces with strong visual direction and research-backed usability guardrails. Use this skill when the user asks to build or redesign web components, pages, applications, dashboards, landing pages, React components, HTML/CSS layouts, or to style/beautify existing UI while preserving functionality. Also use for React Native/Expo iOS app UI creation, redesign, and native-feel polishing, including iterative design with repo UI context files in .design/.
+description: Create distinctive, production-grade frontend interfaces with strong visual direction and research-backed usability guardrails. Use this skill when the user asks to build or redesign web components, pages, applications, dashboards, landing pages, React components, HTML/CSS layouts, or to style/beautify existing UI while preserving functionality. Also use for React Native/Expo iOS app UI creation, redesign, and native-feel polishing, including iterative design with consolidated context in docs/DESIGN.md.
 ---
 
 Build distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics.
 Implement real working code with strong visual taste and disciplined interaction design.
+
+## HTML Intake Routing
+
+When the user asks for a design task based on an HTML reference, route to the React generation workflow:
+- Load `references/react-component-generation.md`.
+- Use `resources/component-template.tsx` as the base scaffold.
+- Use `resources/data-template.ts` for optional data extraction.
+- Run `scripts/validate-react-component.js` on generated components.
+- If external signed or expiring asset URLs are involved, use `scripts/fetch-signed-url.sh`.
+- Use `references/react-component-checklist.md` for final QA.
+
+This routing is for deterministic HTML -> React conversion tasks. For broader redesign or exploratory UI work, continue using the default designer workflow.
 
 ## iOS Native UI Routing
 
@@ -35,11 +47,11 @@ Always apply the `Frontend Aesthetics Guidelines` section in this file while imp
 
 0. Optional: load repo UI context for iterative design
 
-- Use `references/design-init.md` for `.design/` context files.
+- Use `references/design-init.md` for consolidated `docs/DESIGN.md` context workflows.
 - Use `references/design-token-sync.md` for theme token extraction when needed.
-- Run `init design context` only when the user explicitly asks to create design context files.
-- Run `update design context` only when the user explicitly asks to refresh design context files.
-- When `.design/` files already exist, read only the files relevant to the requested surface.
+- Run `init design context` or `init design md` only when the user explicitly asks to create design context.
+- Run `update design context` or `update design md` only when the user explicitly asks to refresh design context.
+- Use `docs/DESIGN.md` as the single context file; do not create `.design/` folders.
 
 1. Understand intent and constraints
 

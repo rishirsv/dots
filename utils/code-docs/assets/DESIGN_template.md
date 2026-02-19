@@ -26,45 +26,36 @@ Design operating contract for this repo: source of truth, system map, agent edit
 - Iconography/illustration source: <path-or-link>
 - Motion system source: <path-or-link>
 
-## Repo UI Context Map (`.design/`)
-Use this section to connect high-level design policy to repo-grounded context files.
-
-Required context files when enabled:
-- `.design/components.md`
-- `.design/layouts.md`
-- `.design/routes.md`
-- `.design/theme.md`
-
-### `.design/components.md`
+## Component Context
 Must capture:
 - shared/reusable primitives and major feature components
 - purpose, key exports/APIs, dependencies, interaction risks
 - targeted snippets with source path + line anchors
 
-### `.design/layouts.md`
+## Layout Context
 Must capture:
 - app/layout shells and ownership boundaries
 - route/surface contracts
 - risky geometry/safe-area/inset behavior
 - targeted snippets with anchors
 
-### `.design/routes.md`
+## Route Context
 Must capture:
 - route map: path, file, layout relation
 - navigation contracts and ownership notes
 - risky transitions and cross-surface openings
 
-### `.design/theme.md`
+## Theme and Token Context
 Must capture:
 - tokens and design-system digest
 - raw-value fidelity for global styles/config sources
 - focused snippets with anchors
 
 ## Context Refresh Contract
-- `init design context`: create `.design/` files.
-- `update design context`: refresh `.design/*.md` from current repo sources.
+- `init design context` or `init design md`: create/populate required context sections in `docs/DESIGN.md`.
+- `update design context` or `update design md`: refresh context sections from current repo sources.
 - Run only when explicitly requested.
-- For iterative tasks, read relevant existing `.design/*.md` first.
+- For iterative tasks, read relevant sections in `docs/DESIGN.md` first.
 
 ## Hybrid Context Format Rules
 For each context entry include:
@@ -81,7 +72,7 @@ Snippet guidance:
 
 ## Agent Editing Policy
 - Agents may update references, links, and verified constraints.
-- Agents may update `.design/*` context files when explicitly requested.
+- Agents may update context sections in `docs/DESIGN.md` when explicitly requested.
 - Agents must not redefine core visual language without approval from design owner.
 - Large visual system rewrites require explicit sign-off.
 

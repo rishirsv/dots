@@ -1,6 +1,6 @@
 # Design token sync
 
-Use this to keep `.design/theme.md` accurate before iterative UI design.
+Use this to keep the `Theme and Token Context` section in `docs/DESIGN.md` accurate before iterative UI design.
 
 ## Goal
 
@@ -25,7 +25,7 @@ Capture at minimum:
 
 ## Output rule
 
-In `.design/theme.md`:
+In `docs/DESIGN.md` under `Theme and Token Context`:
 - include source file paths per token section or subsection
 - include resolved token values and semantic mapping
 - avoid inferred values when raw values are available
@@ -42,7 +42,7 @@ Do not paste entire files unless the user explicitly asks for full dumps.
 
 ## Refresh rule
 
-Refresh `.design/theme.md` when explicitly requested and:
+Refresh the `Theme and Token Context` section in `docs/DESIGN.md` when explicitly requested and:
 - theme files changed in the area being worked on
 - a new design iteration starts on a different area
 - visual mismatches suggest token drift

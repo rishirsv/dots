@@ -24,6 +24,7 @@ This skill does not own execution of feature code changes. It can inspect source
 - Create files only when user asks, except when updating an existing scaffold where matching index links are required.
 - Use canonical names/paths by default.
 - Do not create legacy alias paths.
+- Treat `docs/DESIGN.md` as the canonical, consolidated design context file; do not create `.design/` context folders unless the user explicitly asks.
 - Ground implementation-derived content in repository evidence; avoid guessing.
 - Do not include looks-real product specifics in templates. Use placeholders unless explicitly marked as examples.
 - Respect layered instruction ecosystems:
