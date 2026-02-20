@@ -688,16 +688,62 @@ function addMasterOverlayObjects(templatePackage, variantConfig) {
   return objects;
 }
 
-function addFooterChromeObjects(templatePackage, footerChrome) {
+function hydrateFooterText(template, footerValues = {}) {
+  const source = String(template || '');
+  const tokenMap = {
+    '[year]': footerValues.year ? String(footerValues.year) : '',
+    '[legal member firm name]': footerValues.legalEntityName || '',
+    '[jurisdiction]': footerValues.jurisdiction || '',
+    '[legal structure]': footerValues.legalStructure || '',
+  };
+  let out = source;
+  for (const [token, value] of Object.entries(tokenMap)) {
+    out = out.split(token).join(value);
+  }
+  return out.replace(/\s{2,}/g, ' ').trim();
+}
+
+function buildFooterValues(deckSpec, { allowSparse = false } = {}) {
+  const metadata = deckSpec?.metadata || {};
+  const footer = metadata?.footer || {};
+  const isDemoMode = Boolean(allowSparse || metadata.allowSparse);
+
+  const values = {
+    year: footer.year ?? metadata.year ?? new Date().getFullYear(),
+    legalEntityName: footer.legalEntityName ?? metadata.company ?? '',
+    jurisdiction: footer.jurisdiction ?? metadata.jurisdiction ?? '',
+    legalStructure: footer.legalStructure ?? metadata.legalStructure ?? 'limited liability partnership',
+    documentClassification: footer.documentClassification ?? metadata.documentClassification ?? '',
+    officeContactText: footer.officeContactText ?? metadata.officeContactText ?? '',
+  };
+
+  if (!isDemoMode) {
+    const missing = [];
+    if (!String(values.year || '').trim()) missing.push('metadata.footer.year');
+    if (!String(values.legalEntityName || '').trim()) missing.push('metadata.footer.legalEntityName');
+    if (!String(values.jurisdiction || '').trim()) missing.push('metadata.footer.jurisdiction');
+    if (!String(values.legalStructure || '').trim()) missing.push('metadata.footer.legalStructure');
+    if (missing.length) {
+      throw new Error(
+        `Missing required footer metadata for non-demo render: ${missing.join(', ')}`,
+      );
+    }
+  }
+
+  return values;
+}
+
+function addFooterChromeObjects(templatePackage, footerChrome, footerValues = {}) {
   const objects = [];
   const logoPath = templatePackage.resolveAssetPath('logoSvg');
   if (logoPath && footerChrome?.logo) {
     objects.push({ image: { path: logoPath, ...footerChrome.logo } });
   }
   if (footerChrome?.legalText) {
+    const legalText = hydrateFooterText(footerChrome.legalText.text, footerValues);
     objects.push({
       text: {
-        text: footerChrome.legalText.text,
+        text: legalText,
         options: {
           x: footerChrome.legalText.x,
           y: footerChrome.legalText.y,
@@ -711,10 +757,11 @@ function addFooterChromeObjects(templatePackage, footerChrome) {
       },
     });
   }
-  if (footerChrome?.officeContactText?.text) {
+  const officeContact = String(footerValues.officeContactText || footerChrome?.officeContactText?.text || '').trim();
+  if (officeContact) {
     objects.push({
       text: {
-        text: footerChrome.officeContactText.text,
+        text: officeContact,
         options: {
           x: footerChrome.officeContactText.x,
           y: footerChrome.officeContactText.y,
@@ -730,9 +777,18 @@ function addFooterChromeObjects(templatePackage, footerChrome) {
     });
   }
   if (footerChrome?.classificationText) {
+    const classification =
+      String(footerValues.documentClassification || '').trim() ||
+      String(footerChrome.classificationText.text || '').trim();
+    const classificationText =
+      classification && classification.toLowerCase().startsWith('document classification:')
+        ? classification
+        : classification
+          ? `Document Classification: ${classification}`
+          : '';
     objects.push({
       text: {
-        text: footerChrome.classificationText.text,
+        text: classificationText,
         options: {
           x: footerChrome.classificationText.x,
           y: footerChrome.classificationText.y,
@@ -761,7 +817,7 @@ function addFooterChromeObjects(templatePackage, footerChrome) {
   return objects;
 }
 
-function defineMasters(pptx, templatePackage) {
+function defineMasters(pptx, templatePackage, footerValues = {}) {
   const masters = templatePackage.layouts?.masters || {};
   const variants = masters.variants || {};
   const footerChrome = masters.footerChrome || null;
@@ -769,7 +825,7 @@ function defineMasters(pptx, templatePackage) {
   for (const variantConfig of Object.values(variants)) {
     const objects = [
       ...addMasterOverlayObjects(templatePackage, variantConfig),
-      ...(variantConfig.includeFooter ? addFooterChromeObjects(templatePackage, footerChrome) : []),
+      ...(variantConfig.includeFooter ? addFooterChromeObjects(templatePackage, footerChrome, footerValues) : []),
     ];
 
     pptx.defineSlideMaster({
@@ -778,6 +834,67 @@ function defineMasters(pptx, templatePackage) {
       ...(objects.length ? { objects } : {}),
     });
   }
+}
+
+function normalizeSectionKey(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function setRange(map, key, page) {
+  if (!key || !Number.isFinite(page) || page <= 0) return;
+  const prev = map.get(key);
+  if (!prev) {
+    map.set(key, { start: page, end: page });
+    return;
+  }
+  map.set(key, { start: Math.min(prev.start, page), end: Math.max(prev.end, page) });
+}
+
+function formatPageRange(start, end) {
+  if (!Number.isFinite(start) || start <= 0) return '';
+  if (!Number.isFinite(end) || end <= 0 || end === start) return `(p. ${start})`;
+  return `(p. ${start}-${end})`;
+}
+
+function applyAutoContentsPageRanges(slides, templatePackage) {
+  const sectionRangesByNumber = new Map();
+  const sectionRangesByTitle = new Map();
+  let logicalPage = 0;
+  let activeSectionNumber = '';
+  let activeSectionTitle = '';
+
+  const list = Array.isArray(slides) ? slides : [];
+  for (const slide of list) {
+    const isDivider =
+      slide?.type === 'divider' || slide?.type === 'dividerDark' || slide?.type === 'dividerLight';
+    if (isDivider) {
+      activeSectionNumber = String(slide?.sectionNumber || '').trim();
+      activeSectionTitle = normalizeSectionKey(slide?.sectionTitle);
+      continue;
+    }
+
+    if (!shouldRenderLogicalPageNumber(slide, templatePackage)) continue;
+    logicalPage += 1;
+
+    if (slide?.type === 'contents') continue;
+    if (activeSectionNumber) setRange(sectionRangesByNumber, activeSectionNumber, logicalPage);
+    if (activeSectionTitle) setRange(sectionRangesByTitle, activeSectionTitle, logicalPage);
+  }
+
+  return list.map((slide) => {
+    if (slide?.type !== 'contents' || !Array.isArray(slide.sections)) return slide;
+    const sections = slide.sections.map((section) => {
+      const byNumber = sectionRangesByNumber.get(String(section?.number || '').trim());
+      const byTitle = sectionRangesByTitle.get(normalizeSectionKey(section?.title));
+      const range = byNumber || byTitle;
+      if (!range) return section;
+      return {
+        ...section,
+        pageRange: formatPageRange(range.start, range.end),
+      };
+    });
+    return { ...slide, sections };
+  });
 }
 
 function getMasterNameForSlide(slideSpec, templatePackage) {
@@ -823,7 +940,7 @@ function addLogicalPageNumber(slide, templatePackage, pageNumber) {
   });
 }
 
-function buildSlide(pptx, rawSlideSpec, templatePackage) {
+function buildSlide(pptx, rawSlideSpec, templatePackage, runtimeContext = {}) {
   const slideSpec = normalizeSlideSpec(rawSlideSpec);
   const masterName = getMasterNameForSlide(slideSpec, templatePackage);
   const layouts = templatePackage.layouts?.types || {};
@@ -862,15 +979,7 @@ function buildSlide(pptx, rawSlideSpec, templatePackage) {
     return addTwoColumnTextWithStrapline(pptx, { ...slideSpec, masterName, geometry });
   }
   if (slideSpec.type === 'oneColumnText' || slideSpec.type === 'qualityOfEarnings') {
-    const slide = addOneColumnText(pptx, { ...slideSpec, masterName, geometry });
-    if (slideSpec.type === 'qualityOfEarnings' && geometry?.scaffoldLargeTextBox) {
-      slide.addShape(pptx.ShapeType.rect, {
-        ...geometry.scaffoldLargeTextBox,
-        line: { color: '00338D', pt: 1 },
-        fill: { color: 'A5C7E5', transparency: 0 },
-      });
-    }
-    return slide;
+    return addOneColumnText(pptx, { ...slideSpec, masterName, geometry });
   }
   if (slideSpec.type === 'analysisNarrowTable') {
     return addAnalysisNarrowTable(pptx, { ...slideSpec, masterName, geometry });
@@ -899,6 +1008,8 @@ function buildSlide(pptx, rawSlideSpec, templatePackage) {
       masterName,
       geometry,
       assets: { gradientBackCover: templatePackage.resolveAssetPath('gradientBackCover') },
+      footerValues: runtimeContext.footerValues || {},
+      resolveAssetPath: templatePackage.resolveAssetPath,
     });
   }
   throw new Error(`Unknown type: ${slideSpec.type}`);
@@ -929,13 +1040,15 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
   const bodyFontFace = templatePackage.tokens?.fonts?.body || 'Arial';
   pptx.theme = { headFontFace, bodyFontFace };
 
-  defineMasters(pptx, templatePackage);
+  const footerValues = buildFooterValues(deckSpec, { allowSparse });
+  defineMasters(pptx, templatePackage, footerValues);
 
   const normalized = {
     ...deckSpec,
     slides: (deckSpec.slides || []).map(normalizeSlideSpec),
   };
   const paginated = paginateDeckSpec(normalized, templatePackage.layouts?.types || {});
+  const paginatedSlides = applyAutoContentsPageRanges(paginated?.slides || [], templatePackage);
   const paginationDecisions = paginated?.paginationDecisions || [];
   const overflowEvents = paginated?.overflowEvents || [];
   const pagination = paginationDecisions.map((event) => ({ ...event }));
@@ -952,19 +1065,15 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
     }));
   const masterApplied = [];
   let logicalPageNumber = 0;
-  for (const slideSpec of paginated?.slides || []) {
+  for (const slideSpec of paginatedSlides) {
     const v = validateSlideContent(slideSpec.type, slideSpec, templatePackage, {
       enforceDensity: false,
       allowSparse,
     });
     if (!v.valid) throw new Error(v.errors.join(', '));
 
-    if ((slideSpec.type === 'divider' || slideSpec.type === 'dividerDark' || slideSpec.type === 'dividerLight') && slideSpec.sectionTitle) {
-      pptx.addSection({ title: slideSpec.sectionTitle });
-    }
-
     const expectedMaster = getMasterNameForSlide(slideSpec, templatePackage);
-    const slide = buildSlide(pptx, slideSpec, templatePackage);
+    const slide = buildSlide(pptx, slideSpec, templatePackage, { footerValues });
     const appliedMaster = slide?._slideLayout?._name || slide?._name || expectedMaster;
     masterApplied.push({
       slideIndex: masterApplied.length,

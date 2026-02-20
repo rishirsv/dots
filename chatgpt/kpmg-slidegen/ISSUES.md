@@ -5,6 +5,30 @@
 - Visual basis: `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/runs/2026-02-20-zoominfo-premium/png-v2/slide-01.png` to `slide-20.png`
 - QA basis: `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/runs/2026-02-20-zoominfo-premium/zoominfo-premium.qa.json`
 
+## Status update (2026-02-20)
+
+### Resolved
+- Resolved backlog IDs: 2, 3, 4, 5, 10, 11, 12 (from the tables below) plus the visual-density sub-items for QoE/table cutoff/closing parity.
+- Footer placeholders hydrated with runtime metadata (firm/year/jurisdiction/legal structure + classification).
+- Contents top-right utility text removed.
+- TOC page ranges now auto-calculated from final paginated output.
+- QoE scaffold forced rectangle removed; QoE body rendering now follows normal text flow.
+- Narrow table cutoff reduced via content-aware row-height estimation and paginator row chunking.
+- Key takeaways heading on table slides is now dynamic (`insightTitle` / slot-driven).
+- Wide chart+table+text layout now renders the table slot (not chart-only).
+- Closing slide parity improved with contact/social/legal structure and extracted template assets.
+- Summary financials scaffold removed from core lorem review samples.
+
+### Resolved in this pass
+- Back-cover top-right home icon removed.
+- "Quality of Earnings and Summary Scaffold" divider removed from lorem review samples.
+- PowerPoint section splitting removed (prevents extra "Default 2" grouping).
+- Default table visual style updated to closer financial-table hierarchy (dark title bar + cobalt/blue header treatment).
+- Small top-right mini chart removed by default from key-findings scaffold/wide chart-table scaffolds.
+
+### Remaining follow-up
+- Add first-class legal-entity chart layout (Diligence Plus slide-4 style) as a reusable generator type.
+
 ## Critical issues
 
 | ID | Priority | Slide(s) | Issue | Driver | Plain english explanation | Suggested fix |
@@ -27,6 +51,16 @@
 | 11 | P1 | 2 | TOC page ranges are manually authored and can drift from actual pagination | No page-range auto-sync logic | As soon as content expands/contracts, TOC page ranges become wrong and credibility drops. | Auto-compute TOC ranges from final paginated deck or remove ranges in draft mode. |
 | 12 | P1 | 10, 18 | Table cell wrapping creates awkward line breaks and uneven readability | Table auto-fit + fixed geometry without line-break optimization | Questions/phrases break unnaturally, making important rows harder to parse. | Add table text fit heuristics: shorten labels, wider key columns, or split dense rows across continuation slide. |
 | 13 | P1 | 1-20 | No explicit recommendation slide (Go/No-Go, conditions, next steps) | Deck plan lacks investment-committee end-state template | A $200k-quality diligence deck should land on a clear decision framework, not just findings. | Add mandatory `IC recommendation` layout with thesis scorecard, gating risks, and required pre-close actions. |
+
+### Visual Density Fit Errors
+
+| Area | Slide(s) | Symptom | Likely root cause | Proposed fix |
+|---|---|---|---|---|
+| Narrow table clipping | 8, 10, 18 | Bottom rows cut off or hard to read | Two-column table width + wrapped text exceeds row-height assumptions | Add row-height estimation and overflow-aware split logic; auto-fallback to full-width table when dense. |
+| QoE placeholder block | 17 | Full-page blue box with no usable content | QoE slide injects scaffold rectangle regardless of content | Remove forced scaffold rectangle and render normal one-column body content. |
+| Wide chart+table+text mismatch | 6, 7 | Slide named for table+chart+text, but table is missing | Builder ignores `table` slot and defaults to chart-only composition | Wire table rendering into builder; map geometry to extracted table/body/chart regions. |
+| Contents page drift risk | 2 | Page ranges can become stale after pagination changes | Manual `pageRange` entry in content authoring | Auto-compute TOC ranges from final paginated slide sequence before render. |
+| Closing slide under-filled | 20 | Final slide feels sparse vs template parity | Back cover builder only renders short disclaimer + URL | Add contact block, social/icon assets, legal/footer lines, and classification to closing composition. |
 
 ## Medium-priority issues
 
@@ -53,4 +87,3 @@
 1. Fix P0 items first (scaffold leakage, footer placeholders, utility-link regression, closing parity).
 2. Then address P1 story quality (source discipline, scanability, recommendation slide, TOC auto-sync).
 3. Finish with P2/P3 polish (visual upgrades, risk matrix, scenario quantification, style system enhancements).
-

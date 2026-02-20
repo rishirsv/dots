@@ -21,9 +21,9 @@ function makeChart() {
   };
 }
 
-function makeRows(count = 3) {
+function makeRows(count = 3, cols = 2) {
   const rows = [];
-  for (let i = 0; i < count; i++) rows.push(['.', '.']);
+  for (let i = 0; i < count; i++) rows.push(Array.from({ length: cols }, () => '.'));
   return rows;
 }
 
@@ -43,35 +43,28 @@ function makeSlide(type, idx) {
         type,
         title: 'Contents',
         sections: [
-          { number: '01', title: 'Executive summary', pageRange: '(p. 3-25)', items: ['Business overview', 'Summary financials'] },
-          { number: '02', title: 'Historical trading', pageRange: '(p. 26-35)', items: ['Profit & loss overview', 'Quality of earnings'] },
-          { number: '03', title: 'Forecast trading', pageRange: '(p. 36-43)', items: ['Forecast overview'] },
-          { number: '04', title: 'Balance sheet', pageRange: '(p. 44-48)', items: ['Balance sheet overview'] },
-          { number: '05', title: 'Cash flows', pageRange: '(p. 49-50)', items: ['Operating cash flows'] },
-          { number: '06', title: 'Reporting', pageRange: '(p. 51-53)', items: ['Reporting environment'] },
-          { number: '07', title: 'Value creation', pageRange: '(p. 54-60)', items: ['Financial benchmarking'] },
-          { number: '08', title: 'Pre-Deal PPA', pageRange: '(p. 61-65)', items: ['Methodology & procedures'] },
-          { number: '09', title: 'Taxation', pageRange: '(p. 66-68)', items: ['Add title'] },
-          { number: '10', title: 'Appendices', pageRange: '(p. 69-77)', items: ['Engagement appendices'] },
+          { number: '01', title: 'Executive summary', items: ['Business overview', 'Key findings'] },
+          { number: '02', title: 'Historical trading', items: ['Profit & loss overview', 'Quality of earnings'] },
+          { number: '03', title: 'Forecast trading', items: ['Forecast overview'] },
+          { number: '04', title: 'Balance sheet', items: ['Balance sheet overview'] },
+          { number: '05', title: 'Cash flows', items: ['Operating cash flows'] },
+          { number: '06', title: 'Reporting', items: ['Reporting environment'] },
+          { number: '07', title: 'Value creation', items: ['Financial benchmarking'] },
+          { number: '08', title: 'Pre-Deal PPA', items: ['Methodology & procedures'] },
+          { number: '09', title: 'Taxation', items: ['Add title'] },
+          { number: '10', title: 'Appendices', items: ['Engagement appendices'] },
         ],
       };
-    case 'summaryFinancials':
-      return {
-        type,
-        title: '.',
-        sectionsTop: ['.', '.', '.'],
-        sectionsBottom: ['.', '.'],
-      };
-    case 'summaryFinancialsScaffold':
-      return {
-        type,
-        title: '.',
-        sectionsTop: ['.', '.', '.'],
-        sectionsBottom: ['.', '.'],
-      };
     case 'analysisWideChart2ColsText':
-    case 'analysisWideChartTableText':
       return { type, title: '.', body: ['.', '.', '.', '.'], chart: makeChart() };
+    case 'analysisWideChartTableText':
+      return {
+        type,
+        title: '.',
+        body: ['.', '.', '.', '.'],
+        chart: makeChart(),
+        table: { headers: ['Metric', 'Value A', 'Value B'], rows: makeRows(4, 3) },
+      };
     case 'analysisWideChartTableTextScaffold':
       return {
         type,
@@ -116,8 +109,6 @@ const TYPE_ORDER = [
   'dividerDark',
   'dividerLight',
   'analysisWideChartTableTextScaffold',
-  'summaryFinancials',
-  'summaryFinancialsScaffold',
   'analysisWideChart2ColsText',
   'analysisWideChartTableText',
   'analysisNarrowTable',
@@ -131,7 +122,8 @@ const TYPE_ORDER = [
 
 export function buildLayoutCatalogSpec(templateName = 'kpmg-diligence') {
   const templatePackage = loadTemplatePackage(templateName);
-  const knownTypes = Object.keys(templatePackage.layouts?.types || {});
+  const excluded = new Set(['summaryFinancials', 'summaryFinancialsScaffold']);
+  const knownTypes = Object.keys(templatePackage.layouts?.types || {}).filter((type) => !excluded.has(type));
   const ordered = TYPE_ORDER.filter((t) => knownTypes.includes(t));
   const remaining = knownTypes.filter((t) => !ordered.includes(t)).sort();
   const types = [...ordered, ...remaining];

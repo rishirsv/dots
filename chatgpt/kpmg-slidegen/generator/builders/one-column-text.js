@@ -20,15 +20,18 @@ const TOKENS = {
 export function addOneColumnText(pptx, { title, strapline, body, geometry, masterName } = {}) {
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || TOKENS.geometry;
+  let strapGeo = null;
 
   addTitle(slide, title, g.title || TOKENS.geometry.title);
   if (strapline) {
     const titleGeo = g.title || TOKENS.geometry.title;
-    const strapGeo = g.strapline || {
+    const estimatedCharsPerLine = Math.max(30, Math.floor((titleGeo.w || TOKENS.geometry.title.w) * 12));
+    const estimatedLines = Math.max(1, Math.ceil(sanitizeText(strapline).length / estimatedCharsPerLine));
+    strapGeo = g.strapline || {
       x: titleGeo.x,
       y: titleGeo.y + titleGeo.h + 0.05,
       w: titleGeo.w,
-      h: calcTextBoxHeight(TYPE_SIZES.strapline, 1),
+      h: calcTextBoxHeight(TYPE_SIZES.strapline, Math.min(10, estimatedLines)),
     };
     slide.addText(sanitizeText(strapline), {
       ...strapGeo,
@@ -39,9 +42,12 @@ export function addOneColumnText(pptx, { title, strapline, body, geometry, maste
     });
   }
 
-  const hasMeasuredStrapline = Boolean(g.strapline);
-  const shift = strapline && !hasMeasuredStrapline ? STRAPLINE_SHIFT : 0;
   const bodyBase = g.body || TOKENS.geometry.body;
+  const hasMeasuredStrapline = Boolean(g.strapline);
+  const shift =
+    strapline && !hasMeasuredStrapline
+      ? Math.max(STRAPLINE_SHIFT, Math.max(0, (strapGeo?.y || 0) + (strapGeo?.h || 0) + 0.06 - bodyBase.y))
+      : 0;
   const bodyGeo = shift ? { ...bodyBase, y: bodyBase.y + shift, h: bodyBase.h - shift } : bodyBase;
   const footerSafeTop = masterName === 'KPMG_WHITE' ? FOOTER_SAFE_TOP : null;
   const safeBodyGeo = footerSafeTop ? clampBoxToBottom(bodyGeo, footerSafeTop) : bodyGeo;

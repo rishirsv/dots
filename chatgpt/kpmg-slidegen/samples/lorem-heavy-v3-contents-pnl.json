@@ -3,7 +3,14 @@
     "title": "KPMG Lorem Ipsum Stress Test Deck (v3 contents + pnl)",
     "author": "kpmg-slidegen",
     "company": "KPMG LLP",
-    "subject": "Layout and overflow stress-test using placeholder prose"
+    "subject": "Layout and overflow stress-test using placeholder prose",
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential"
+    }
   },
   "slides": [
     {
@@ -18,17 +25,14 @@
         {
           "number": "01",
           "title": "Executive summary",
-          "pageRange": "(p. 3-25)",
           "items": [
             "Business overview",
-            "Summary financials",
             "Key findings"
           ]
         },
         {
           "number": "02",
           "title": "Historical trading",
-          "pageRange": "(p. 26-35)",
           "items": [
             "Profit & loss overview",
             "Quality of earnings"
@@ -37,7 +41,6 @@
         {
           "number": "03",
           "title": "Forecast trading",
-          "pageRange": "(p. 36-43)",
           "items": [
             "Forecast overview",
             "Forecast assumptions"
@@ -46,7 +49,6 @@
         {
           "number": "04",
           "title": "Balance sheet",
-          "pageRange": "(p. 44-48)",
           "items": [
             "Balance sheet overview",
             "Net debt"
@@ -55,7 +57,6 @@
         {
           "number": "05",
           "title": "Cash flows",
-          "pageRange": "(p. 49-50)",
           "items": [
             "Operating cash flows"
           ]
@@ -63,7 +64,6 @@
         {
           "number": "06",
           "title": "Reporting",
-          "pageRange": "(p. 51-53)",
           "items": [
             "Reporting environment"
           ]
@@ -71,7 +71,6 @@
         {
           "number": "07",
           "title": "Value creation",
-          "pageRange": "(p. 54-60)",
           "items": [
             "Financial benchmarking"
           ]
@@ -79,7 +78,6 @@
         {
           "number": "08",
           "title": "Pre-Deal PPA",
-          "pageRange": "(p. 61-65)",
           "items": [
             "Methodology & procedures"
           ]
@@ -87,7 +85,6 @@
         {
           "number": "09",
           "title": "Taxation",
-          "pageRange": "(p. 66-68)",
           "items": [
             "Add title"
           ]
@@ -95,7 +92,6 @@
         {
           "number": "10",
           "title": "Appendices",
-          "pageRange": "(p. 69-77)",
           "items": [
             "Engagement appendices"
           ]
@@ -104,13 +100,13 @@
     },
     {
       "type": "analysisWideChartTableTextScaffold",
-      "title": "Profit & loss overview",
-      "strapline": "Use this strapline to summarize the key message - Keep it concise and clear, preferably 1-2 sentences only.",
-      "heading": "Illustrative revenue bridge",
+      "title": "Key findings (1/2) - EBITDA bridge",
+      "strapline": "Illustrative bridge using synthetic values to validate layout behavior.",
+      "heading": "Adjusted EBITDA margin bridge",
       "body": [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        "FY21 to FY22 adjusted EBITDA expanded on volume and mix improvements.",
+        "FY22 to FY23 reflects processing gains offset by compensation and software costs.",
+        "FY23 to TTM remains positive; downside sensitivity centers on margin normalization."
       ],
       "chart": {
         "type": "bar",
@@ -161,25 +157,12 @@
           ]
         ]
       },
-      "noteSource": "Note: Placeholder data. Source: Synthetic sample."
+      "noteSource": "Source: Placeholder scaffold only for layout testing."
     },
     {
       "type": "divider",
       "sectionNumber": "01",
       "sectionTitle": "Long-Form Text and Layout Stress Test"
-    },
-    {
-      "type": "summaryFinancials",
-      "title": "Summary Financials — Lorem Scenario",
-      "sectionsTop": [
-        "Quality of earnings",
-        "Net working capital",
-        "Net debt"
-      ],
-      "sectionsBottom": [
-        "Cash conversion",
-        "Other value bridge"
-      ]
     },
     {
       "type": "analysisWideChart2ColsText",
@@ -246,7 +229,7 @@
     },
     {
       "type": "analysisWideChartTableText",
-      "title": "Analysis Wide Chart + Table + Text (Lorem)",
+      "title": "Key findings (2/2) - Adjusted EBITDA margin bridge",
       "strapline": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Curabitur blandit tempus porttitor. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui.",
       "body": [
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -309,7 +292,43 @@
           "valAxisTitle": "Index"
         },
         "source": "Synthetic data for layout testing only"
-      }
+      },
+      "table": {
+        "headers": [
+          "Category",
+          "Value A",
+          "Value B",
+          "Delta"
+        ],
+        "rows": [
+          [
+            "Alpha",
+            "100",
+            "114",
+            "+14"
+          ],
+          [
+            "Beta",
+            "200",
+            "215",
+            "+15"
+          ],
+          [
+            "Gamma",
+            "175",
+            "169",
+            "-6"
+          ],
+          [
+            "Delta",
+            "90",
+            "101",
+            "+11"
+          ]
+        ]
+      },
+      "heading": "Value drivers and implications",
+      "noteSource": "Synthetic data for layout testing only"
     },
     {
       "type": "analysisNarrowTable",
@@ -360,7 +379,8 @@
             "+43"
           ]
         ]
-      }
+      },
+      "insightTitle": "Underwriting implications"
     },
     {
       "type": "twoColumnText",
@@ -460,11 +480,6 @@
       ]
     },
     {
-      "type": "dividerLight",
-      "sectionNumber": "02",
-      "sectionTitle": "Quality of Earnings and Summary Scaffold"
-    },
-    {
       "type": "qualityOfEarnings",
       "title": "Quality of Earnings (Lorem)",
       "strapline": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Maecenas faucibus mollis interdum. Aenean lacinia bibendum nulla sed consectetur. Curabitur blandit tempus porttitor. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui.",
@@ -479,20 +494,6 @@
         "Curabitur blandit tempus porttitor. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui."
       ],
       "source": "Synthetic placeholder narrative for layout stress testing"
-    },
-    {
-      "type": "summaryFinancialsScaffold",
-      "title": "Summary financials (Scaffold Preview)",
-      "sectionsTop": [
-        "Quality of earnings",
-        "Net working capital",
-        "Net debt"
-      ],
-      "sectionsBottom": [
-        "Cash conversion",
-        "Other bridge"
-      ],
-      "source": "Placeholder scaffold only"
     },
     {
       "type": "backCover",

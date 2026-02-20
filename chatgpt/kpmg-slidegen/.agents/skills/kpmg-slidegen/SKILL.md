@@ -1,91 +1,165 @@
 ---
 name: kpmg-slidegen
-description: Build, validate, render, and repair deterministic KPMG Diligence+ slide decks from structured inputs (content pack, deck plan, and deck spec), including schema checks, density QA, pagination, and master chrome verification.
+version: 0.2
+description: Orchestrate deterministic KPMG Diligence+ deck generation from source materials using strict schemas, catalog-approved slide types, QA gates (missing/sparse/overflow/overlap/master), and an LLM repair loop that edits DeckSpec only.
 ---
 
 # KPMG SlideGen
 
-Use this skill for Diligence+ deck generation where fidelity, repeatability, and QA traceability matter.
+This skill turns user-provided diligence materials into a KPMG Diligence+ slide or deck, using a deterministic PPTX renderer (PPTXGenJS-based) and a strict QA + repair loop.
 
 ## What this skill owns
 
-- Orchestration UX: intake -> content pack -> deck plan -> deck spec -> render -> QA -> repair.
-- Strict contracts: schema-validated payloads and catalog-approved slide types.
-- Deterministic runtime: no AI layout choices during render.
-- QA gating: sparse/missing/master mismatch flagged and repairable by hook.
+- A predictable user experience flow: **intake → content pack → deck plan → deck spec → render → QA → repair**.
+- Contract-first generation: every intermediate artifact is **schema-valid**.
+- Catalog-first layout selection: only **approved slide types** are used.
+- Deterministic rendering: the renderer never relies on LLM “layout creativity”.
+- QA traceability: every run emits machine-readable QA so issues are repairable.
+
+## What this skill does not own
+
+- Financial modeling or “making up” numbers.
+- Manual pixel-tweaking in PowerPoint as part of the automated flow.
+- Unsupported slide types (anything not in the slide catalog).
+
+## Operating modes
+
+- **Single slide**: produce a 1-slide deck using the best-fit catalog slide type.
+- **Section pack**: produce a mini-deck for a specific section (e.g., QoE only).
+- **Full deck**: produce a complete diligence report deck.
+
+## Inputs
+
+The user may provide:
+
+- A request: slide vs section vs deck, purpose, tone, audience.
+- Attachments: PDFs, spreadsheets, Word docs, emails, notes, prior decks.
+- Constraints: no web, no external data, client-ready vs internal draft, deadline.
+
+## Outputs
+
+Always produce:
+
+- `outputs/<runId>/deck.pptx`
+- `outputs/<runId>/deckSpec.json` (the exact spec used to render)
+- `outputs/<runId>/qaReport.json` (all QA findings)
+
+Also save (for debugging and reproducibility):
+
+- `outputs/<runId>/intake.json`
+- `outputs/<runId>/contentPack.json`
+- `outputs/<runId>/deckPlan.json`
+- `outputs/<runId>/render/` (renderer diagnostics, overlap report, overflow report, etc.)
 
 ## Source of truth
 
-- Canonical template inputs:
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/pptx-templates/`
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/templates/kpmg-diligence/`
-- Runtime renderer:
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/generator/`
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/renderer/`
-- Contracts:
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/schemas/deckSpec.schema.json`
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/schemas/contentPack.schema.json`
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/schemas/qaReport.schema.json`
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/templates/diligence-plus/catalog/slideCatalog.json`
+- **Slide catalog** (approved slide types + slot contracts + density targets):
+  - `templates/diligence-plus/catalog/slideCatalog.json`
+- **Template package** (tokens + layouts + assets):
+  - `templates/diligence-plus/generated/` (data-only)
+  - `templates/diligence-plus/assets/`
+- **Schemas** (contracts enforced at each stage):
+  - `schemas/intake.schema.json` (optional but recommended)
+  - `schemas/contentPack.schema.json`
+  - `schemas/deckPlan.schema.json`
+  - `schemas/deckSpec.schema.json`
+  - `schemas/qaReport.schema.json`
+- **Renderer** (deterministic PPTX generation):
+  - `generator/index.js` (CLI entry)
+  - `renderer/*` (if present in repo)
 
-## Orchestrator workflow
+## End-to-end workflow
 
-1. Intake
-- Run prompt: `prompts/intake.md`.
-- Extract objective, audience, must-haves, exclusions, deadlines, and blockers.
+### 1) Intake
 
-2. Content pack
-- Run prompt: `prompts/content_pack.md`.
-- Convert source material into slot-ready facts and evidence pointers.
-- Validate against `schemas/contentPack.schema.json`.
+Run prompt: `prompts/intake.md`.
 
-3. Deck plan
-- Run prompt: `prompts/deck_plan.md`.
-- Choose narrative arc and slide types from `slideCatalog.json` only.
-- Validate against `schemas/deckPlan.schema.json`.
+- Decide mode (slide vs section vs deck) and required sections.
+- Capture non-negotiables, exclusions, tone, and audience.
+- Ask the user questions **only if blocked**; otherwise proceed with explicit assumptions.
 
-4. Deck spec
-- Run prompt: `prompts/deck_spec.md`.
-- Fill slot contracts and satisfy density requirements.
-- Validate against `schemas/deckSpec.schema.json`.
+Artifact: `intake.json`.
 
-5. Render + QA
-- Render with `generator/index.js`.
-- Review generated `*.qa.json` for:
-  - missing slots
-  - thin/sparse slides
-  - overflow risks + pagination
-  - master applied checks
+### 2) Content pack
 
-6. Repair loop
-- Run prompt: `prompts/repair.md`.
-- Edit `deckSpec` only using QA hooks/suggestions.
-- Re-render until issues are resolved or explicitly accepted.
+Run prompt: `prompts/content_pack.md`.
 
-## QA gate defaults
+- Extract facts and numbers from source materials.
+- Produce slot-ready building blocks (bullets, tables, chart series, captions).
+- Attach evidence pointers for key claims.
 
-- Missing required slots: fail.
-- Too sparse slides: fail (unless explicitly `allowSparse`).
-- Master mismatch: fail.
-- Overlap checks: on by default.
+Validate: `schemas/contentPack.schema.json`.
 
-## Blocking policy
+Artifact: `contentPack.json`.
 
-- Ask user targeted questions only when blocked by missing critical facts.
-- Otherwise proceed with labeled `assumptions` and `placeholders`.
+### 3) Deck plan
 
-## Visual parity loop
+Run prompt: `prompts/deck_plan.md`.
 
-Use rendered PNG comparisons as a standing quality loop:
-- Expected references:
-  - `/Users/rishi/Code/ai-tools/chatgpt/ts-report-writer/reports/`
-- Generated outputs:
-  - `/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/`
-- Compare representative slides each run (cover, contents, divider dark/light, profit and loss overview, summary financials, QoE, closing).
-- Record visual misses, patch contracts/runtime, regenerate, and repeat.
+- Choose slide sequence and narrative arc.
+- Choose slide types from the slide catalog only.
+- Define per-slide intent and what evidence it should rely on.
+
+Validate: `schemas/deckPlan.schema.json`.
+
+Artifact: `deckPlan.json`.
+
+### 4) Deck spec
+
+Run prompt: `prompts/deck_spec.md`.
+
+- Produce the renderable `deckSpec`.
+- Fill required slots with meaningful content.
+- Meet density targets (avoid sparse slides).
+
+Validate: `schemas/deckSpec.schema.json`.
+
+Artifact: `deckSpec.json`.
+
+### 5) Render + QA
+
+Render using the deterministic engine (example):
+
+- `node generator/index.js --in outputs/<runId>/deckSpec.json --out outputs/<runId>/deck.pptx --strict`
+
+Then produce `qaReport.json` by combining:
+
+- Pre-render checks (schema, catalog, density)
+- Render diagnostics (missing required slots, pagination events)
+- Post-render checks (overlap, overflow, master applied)
+
+Artifact: `qaReport.json` plus renderer diagnostics in `outputs/<runId>/render/`.
+
+### 6) Repair loop
+
+If QA has failures, run `prompts/repair.md`.
+
+- Edit **DeckSpec only**.
+- Do not “freehand redesign”.
+- Apply the smallest deterministic change that fixes the QA finding.
+
+Re-render and re-run QA until:
+
+- all failures are fixed, or
+- the user explicitly accepts remaining issues.
+
+## QA gates and severity
+
+- **Fail (must repair):**
+  - Missing required slots
+  - Sparse slides below density threshold (unless explicitly allowed)
+  - Master mismatch / master not applied
+  - Severe overlaps
+  - Hard overflow (text clipped)
+
+- **Warn (can ship if accepted):**
+  - Near-overflow risk
+  - Minor overlaps below tolerance
+  - Non-blocking style nits (e.g., long bullets)
 
 ## Guardrails
 
-- Keep generated template package data-only (`tokens.json`, `layouts.json`, `assets/manifest.json`).
+- Never invent numbers. If a required metric is missing, use a placeholder and label it as such.
+- Keep `templates/diligence-plus/generated/` data-only.
 - Keep runtime logic outside generated folders.
-- Do not introduce non-deterministic fallback layout logic.
+- Prefer switching to an appropriate slide type over cramming content into a mismatched layout.

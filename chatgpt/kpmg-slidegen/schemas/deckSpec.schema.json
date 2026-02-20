@@ -14,6 +14,29 @@
         "subject": { "$ref": "#/$defs/nonEmptyString" },
         "author": { "$ref": "#/$defs/nonEmptyString" },
         "company": { "$ref": "#/$defs/nonEmptyString" },
+        "year": {
+          "oneOf": [
+            { "type": "integer", "minimum": 1900, "maximum": 3000 },
+            { "$ref": "#/$defs/nonEmptyString" }
+          ]
+        },
+        "footer": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "year": {
+              "oneOf": [
+                { "type": "integer", "minimum": 1900, "maximum": 3000 },
+                { "$ref": "#/$defs/nonEmptyString" }
+              ]
+            },
+            "legalEntityName": { "$ref": "#/$defs/nonEmptyString" },
+            "jurisdiction": { "$ref": "#/$defs/nonEmptyString" },
+            "legalStructure": { "$ref": "#/$defs/nonEmptyString" },
+            "documentClassification": { "$ref": "#/$defs/nonEmptyString" },
+            "officeContactText": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        },
         "allowSparse": { "type": "boolean" },
         "assumptions": {
           "type": "array",
@@ -168,7 +191,7 @@
     "contentsSection": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["number", "title", "pageRange", "items"],
+      "required": ["number", "title", "items"],
       "properties": {
         "number": {
           "type": "string",
@@ -248,6 +271,7 @@
         "chart": { "$ref": "#/$defs/chart" },
         "noteSource": { "$ref": "#/$defs/nonEmptyString" },
         "source": { "$ref": "#/$defs/nonEmptyString" },
+        "insightTitle": { "$ref": "#/$defs/nonEmptyString" },
         "notes": { "$ref": "#/$defs/notesValue" },
         "disclaimer": { "$ref": "#/$defs/nonEmptyString" },
         "url": { "$ref": "#/$defs/nonEmptyString" }

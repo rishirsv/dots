@@ -1,7 +1,14 @@
 {
   "metadata": {
     "title": "KPMG Custom GPT Portfolio",
-    "author": "KPMG Transaction Services"
+    "author": "KPMG Transaction Services",
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential"
+    }
   },
   "slides": [
     {

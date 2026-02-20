@@ -124,6 +124,13 @@ function insightsForAnalysisTable(title, table) {
 // template geometry (the extracted "narrow table" width of ~4" is the template's
 // placeholder width, not the intended data table width).
 const FULL_TABLE_W = 11.1596;
+const TABLE_CHROME = {
+  titleBarFill: T.kpmgDarkBlue,
+  headerFill: '1E49E2',
+  separatorColor: T.kpmgBlue,
+  titleBarHeight: 0.24,
+  separatorHeight: 0.02,
+};
 
 function isNumericLike(s) {
   const t = String(s ?? '').trim();
@@ -250,15 +257,63 @@ function computeColAlignments(headers, rows) {
   return aligns;
 }
 
-function computeRowH({ boxH, cols, bodyRows }) {
-  // Dense financial table defaults in inches.
+function estimateCharsPerLine(colW, fontSize = 9) {
+  const width = Math.max(0.4, Number(colW || 0.4));
+  const size = Math.max(7, Number(fontSize || 9));
+  return Math.max(6, Math.floor(width * 7.5 * (10 / size)));
+}
+
+function estimateCellLines(text, charsPerLine) {
+  const raw = String(text ?? '').replace(/\r/g, '');
+  return raw
+    .split('\n')
+    .reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / Math.max(1, charsPerLine))), 0);
+}
+
+function estimateRowHeight(row, colW, fontSize = 9) {
+  const cells = Array.isArray(row) ? row : [];
+  let maxLines = 1;
+  for (let idx = 0; idx < cells.length; idx += 1) {
+    const lines = estimateCellLines(cells[idx], estimateCharsPerLine(colW[idx], fontSize));
+    if (lines > maxLines) maxLines = lines;
+  }
+  const lineHeight = (Math.max(7, fontSize) + 2) / 72;
+  return Math.max(0.19, Math.min(0.85, maxLines * lineHeight + 0.04));
+}
+
+function estimateTableHeight({ headers, rows, colW, fontSize = 9 }) {
+  const bodyRows = Array.isArray(rows) ? rows : [];
   const headerH = 0.32;
-  const n = Math.max(1, bodyRows);
-  // Use available box height but cap at “dense” max so rows don’t look airy.
-  const raw = ((boxH || 3.5) - headerH) / n;
-  const max = cols >= 6 ? 0.24 : 0.26;
-  const bodyH = Math.min(max, Math.max(0.19, raw));
-  return [headerH, ...Array.from({ length: n }, () => bodyH)];
+  const chromeH = TABLE_CHROME.titleBarHeight + TABLE_CHROME.separatorHeight;
+  if (!bodyRows.length) return chromeH + headerH;
+  const rowHeights = bodyRows.map((row) => estimateRowHeight(row, colW, fontSize));
+  return chromeH + headerH + rowHeights.reduce((sum, h) => sum + h, 0);
+}
+
+function computeRowH({ boxH, rows, colW, fontSize = 9 }) {
+  // Dense financial table defaults in inches.
+  const bodyRows = Array.isArray(rows) ? rows : [];
+  const n = Math.max(1, bodyRows.length);
+  const headerH = 0.32;
+  const chromeH = TABLE_CHROME.titleBarHeight + TABLE_CHROME.separatorHeight;
+  const estimatedHeights = bodyRows.length
+    ? bodyRows.map((row) => estimateRowHeight(row, colW, fontSize))
+    : Array.from({ length: n }, () => 0.22);
+  const estimatedTotal = chromeH + headerH + estimatedHeights.reduce((sum, h) => sum + h, 0);
+  const available = Number(boxH || 3.5);
+  if (estimatedTotal <= available) return [headerH, ...estimatedHeights];
+
+  const minBodyH = 0.16;
+  const minTotal = chromeH + headerH + n * minBodyH;
+  if (minTotal >= available) return [headerH, ...Array.from({ length: n }, () => minBodyH)];
+
+  const flexSum = estimatedHeights.reduce((sum, h) => sum + Math.max(0, h - minBodyH), 0);
+  if (flexSum <= 0) return [headerH, ...Array.from({ length: n }, () => minBodyH)];
+  const availableFlex = available - chromeH - headerH - n * minBodyH;
+  return [
+    headerH,
+    ...estimatedHeights.map((h) => minBodyH + (Math.max(0, h - minBodyH) / flexSum) * availableFlex),
+  ];
 }
 
 export function addAnalysisTable(slide, tableData, opts = {}) {
@@ -268,6 +323,13 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
     h = 2.5,
   } = opts;
   const tableTitle = String(opts.tableTitle ?? '').toLowerCase();
+  const tableHeading = String(
+    opts.tableHeading ??
+      tableData?.title ??
+      tableData?.heading ??
+      '',
+  ).trim();
+  const showTitleBar = opts.showTitleBar !== false;
   const isFinancialSummary = tableTitle.includes('financial summary') || tableTitle.includes('summary financial');
 
   // Default to full-width, but allow callers (e.g., 50/50 table+text layouts)
@@ -278,15 +340,47 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
   const tableRows = Array.isArray(tableData?.rows) ? tableData.rows : [];
   const cols = headers.length;
 
-  const colW = computeColW({ w, headers, rows: tableRows });
-  const colAlign = computeColAlignments(headers, tableRows);
-  const rowH = computeRowH({ boxH: h, cols, bodyRows: tableRows.length });
-
-  // Dense financial tables: bias smaller font and tighter padding, but keep
-  // legibility on full-width tables.
   const isNarrow = w < (FULL_TABLE_W - 0.25);
   const baseFontSize = isNarrow ? (cols >= 6 ? 7 : 8) : (cols >= 7 ? 8 : 9);
   const headerFontSize = Math.min(10, baseFontSize + (isNarrow ? 0 : 1));
+  const tableChromeH = showTitleBar ? TABLE_CHROME.titleBarHeight + TABLE_CHROME.separatorHeight : 0;
+  const tableY = y + tableChromeH;
+  const tableH = Math.max(0.8, h - tableChromeH);
+  const colW = computeColW({ w, headers, rows: tableRows });
+  const colAlign = computeColAlignments(headers, tableRows);
+  const rowH = computeRowH({ boxH: tableH, rows: tableRows, colW, fontSize: baseFontSize });
+
+  if (showTitleBar) {
+    slide.addShape('rect', {
+      x,
+      y,
+      w,
+      h: TABLE_CHROME.titleBarHeight,
+      fill: { color: TABLE_CHROME.titleBarFill },
+      line: { color: TABLE_CHROME.titleBarFill, transparency: 100, pt: 0 },
+    });
+    if (tableHeading) {
+      slide.addText(tableHeading, {
+        x: x + 0.06,
+        y: y + 0.015,
+        w: Math.max(0.5, w - 0.12),
+        h: TABLE_CHROME.titleBarHeight - 0.02,
+        fontFace: FONTS.body,
+        fontSize: 9,
+        color: COLORS.WHITE,
+        bold: true,
+        margin: 0,
+        valign: 'mid',
+      });
+    }
+    slide.addShape('line', {
+      x,
+      y: y + TABLE_CHROME.titleBarHeight,
+      w,
+      h: 0,
+      line: { color: TABLE_CHROME.separatorColor, pt: 1.2 },
+    });
+  }
 
   // Border tokens (PptxGenJS border order: [top, right, bottom, left])
   const B_NONE = { type: 'none' };
@@ -303,7 +397,7 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
     return {
       text: t,
       options: {
-        fill: COLORS.KPMG_DARK_BLUE,
+        fill: TABLE_CHROME.headerFill,
         color: COLORS.WHITE,
         bold: true,
         fontFace: FONTS.body,
@@ -312,9 +406,9 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
         align,
         margin: [2, 4, 2, 4],
         border: [
-          B_OUT,
+          B_NONE,
           right,
-          { type: 'solid', pt: 1, color: COLORS.KPMG_DARK_BLUE },
+          { type: 'solid', pt: 1, color: TABLE_CHROME.separatorColor },
           left,
         ],
       },
@@ -386,8 +480,9 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
 
   slide.addTable(allRows, {
     x,
-    y,
+    y: tableY,
     w,
+    h: tableH,
     colW,
     rowH,
     border: { type: 'none' },
@@ -593,7 +688,7 @@ export function addSlide25UpsidesSensitivitiesTable(slide) {
 
 export function addAnalysisNarrowTable(
   pptx,
-  { title, strapline, table, notes, insights: customInsights, geometry, masterName } = {},
+  { title, strapline, table, notes, insightTitle, insights: customInsights, geometry, masterName } = {},
 ) {
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || {};
@@ -623,25 +718,38 @@ export function addAnalysisNarrowTable(
       Array.isArray(customInsights) && customInsights.length
         ? customInsights
         : insightsForAnalysisTable(title, table);
+    const insightsHeading = String(insightTitle || table?.keyTakeawayTitle || 'Key takeaways').trim() || 'Key takeaways';
 
     // Default analysis layout: two columns (table + narrative). This matches how
     // these pages are typically built in diligence decks and lets us keep slides
     // visually “finished” even when the table is intentionally small.
     //
     // Fall back to full-width only for very wide tables (rare in this deck).
-    const useTwoCol = cols > 0 && cols <= 6 && rows <= 14;
+    const twoColTableBox = { ...TWO_COL.table, y: TWO_COL.table.y + yShift };
+    const twoColColW = computeColW({ w: twoColTableBox.w, headers: table.headers, rows: table.rows });
+    const estimatedTwoColHeight = estimateTableHeight({
+      headers: table.headers,
+      rows: table.rows,
+      colW: twoColColW,
+      fontSize: cols >= 6 ? 8 : 9,
+    });
+    const useTwoCol = cols > 0 && cols <= 6 && rows <= 14 && estimatedTwoColHeight <= twoColTableBox.h;
 
     const footerSafeTop = masterName === 'KPMG_WHITE' ? FOOTER_SAFE_TOP : null;
     if (useTwoCol) {
-      const tableBox = { ...TWO_COL.table, y: TWO_COL.table.y + yShift };
-      addAnalysisTable(slide, table, { ...tableBox, tableTitle: title });
+      const tableBox = twoColTableBox;
+      addAnalysisTable(slide, table, {
+        ...tableBox,
+        tableTitle: title,
+        tableHeading: table?.title || table?.heading || title,
+      });
 
       const rightTitleBase = g.rightTitle || TWO_COL.rightTitle;
       const rightBodyBase = g.rightBody || TWO_COL.rightBody;
       const rightTitleBox = footerSafeTop ? clampBoxToBottom(rightTitleBase, footerSafeTop) : rightTitleBase;
       const rightBodyBox = footerSafeTop ? clampBoxToBottom(rightBodyBase, footerSafeTop) : rightBodyBase;
 
-      slide.addText('Key takeaways', {
+      slide.addText(insightsHeading, {
         ...rightTitleBox,
         fontFace: FONTS.body,
         fontSize: TYPE_SIZES.body,
@@ -663,15 +771,20 @@ export function addAnalysisNarrowTable(
     } else {
       // Full-width table (dense), takeaways beneath to keep slide “finished”.
       const fullTableBox = { x: 1.0919, y: 1.9156 + yShift, w: 11.1596, h: 4.5079 };
-      addAnalysisTable(slide, table, { ...fullTableBox, tableTitle: title });
+      addAnalysisTable(slide, table, {
+        ...fullTableBox,
+        tableTitle: title,
+        tableHeading: table?.title || table?.heading || title,
+      });
 
-      const rowH = computeRowH({ boxH: fullTableBox.h, cols, bodyRows: rows });
+      const fullColW = computeColW({ w: fullTableBox.w, headers: table.headers, rows: table.rows });
+      const rowH = computeRowH({ boxH: fullTableBox.h, rows: table.rows, colW: fullColW, fontSize: cols >= 7 ? 8 : 9 });
       const tableH = rowH.reduce((a, b) => a + b, 0);
       const takeY = fullTableBox.y + tableH + 0.18;
       const safeTop = footerSafeTop ?? 6.7;
       const takeH = Math.max(0.8, safeTop - takeY);
 
-      slide.addText('Key takeaways', {
+      slide.addText(insightsHeading, {
         x: fullTableBox.x,
         y: takeY,
         w: fullTableBox.w,

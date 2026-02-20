@@ -184,34 +184,71 @@ function paginateTableRows(slideSpec, geometry, { footerSafe = false, fallbackBo
   const box = g.table || fallbackBox || { w: 11.0, h: 3.0, y: 1.9 };
   const safeBox = applyFooterSafe(box, footerSafe);
 
-  // Use a generous height estimate — the analysis-narrow-table.js builder always uses full-width
-  // layout now, and autoPage handles overflow within PptxGenJS. Our job here is to
-  // split content into reasonable chunks so each slide has enough content.
-  // Use ~0.30in per row for compact 8-10pt tables.
-  const rowH = 0.30;
-  let maxRows = Math.max(4, Math.floor((safeBox.h || 4.5) / rowH) - 1);
-  if (table.rows.length <= maxRows) return [slideSpec];
+  const headers = Array.isArray(table.headers) ? table.headers : [];
+  const cols = Math.max(1, headers.length || (Array.isArray(table.rows[0]) ? table.rows[0].length : 1));
+  const totalW = Number(safeBox.w || 11.0);
+  const headerH = 0.32;
+  const showTitleBar =
+    table.showTitleBar !== false &&
+    !['analysisWideChartTableText', 'analysisWideChartTableTextScaffold'].includes(slideSpec.type);
+  const titleBarH = showTitleBar ? 0.26 : 0;
+  const bodyBudget = Math.max(0.8, Number(safeBox.h || 4.5) - headerH - titleBarH);
 
-  // Avoid near-empty last page: if the remainder would have fewer than 3 rows,
-  // redistribute by increasing maxRows slightly so the last page gets more content.
-  const remainder = table.rows.length % maxRows;
-  if (remainder > 0 && remainder < 3 && maxRows > 4) {
-    // Reduce maxRows so rows distribute more evenly across pages
-    const pages = Math.ceil(table.rows.length / maxRows);
-    maxRows = Math.ceil(table.rows.length / pages);
+  const colW = [];
+  if (cols === 1) {
+    colW.push(totalW);
+  } else if (cols >= 4) {
+    const first = Math.min(3.0, Math.max(2.2, totalW * 0.28));
+    const rem = Math.max(0.5, totalW - first);
+    colW.push(first, ...Array.from({ length: cols - 1 }, () => rem / (cols - 1)));
+  } else {
+    colW.push(...Array.from({ length: cols }, () => totalW / cols));
+  }
+
+  const estimateRowHeight = (row) => {
+    const cells = Array.isArray(row) ? row : [];
+    let maxLines = 1;
+    for (let idx = 0; idx < cols; idx += 1) {
+      const text = String(cells[idx] ?? '').replace(/\r/g, '');
+      const charsPerLine = Math.max(6, Math.floor(Math.max(0.4, colW[idx] || 1) * 7.5));
+      const lines = text
+        .split('\n')
+        .reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / Math.max(1, charsPerLine))), 0);
+      if (lines > maxLines) maxLines = lines;
+    }
+    return Math.max(0.22, Math.min(0.9, maxLines * 0.14 + 0.04));
+  };
+
+  const rowHeights = table.rows.map((row) => estimateRowHeight(row));
+  const totalBodyH = rowHeights.reduce((sum, h) => sum + h, 0);
+  if (totalBodyH <= bodyBudget) return [slideSpec];
+
+  const chunks = [];
+  let cursor = 0;
+  while (cursor < table.rows.length) {
+    let used = 0;
+    let end = cursor;
+    while (end < table.rows.length) {
+      const nextH = rowHeights[end];
+      if (end > cursor && used + nextH > bodyBudget) break;
+      used += nextH;
+      end += 1;
+    }
+    if (end === cursor) end += 1;
+    chunks.push([cursor, end]);
+    cursor = end;
   }
 
   const out = [];
-  const headers = table.headers;
-  for (let i = 0; i < table.rows.length; i += maxRows) {
+  for (const [start, end] of chunks) {
     const s = clone(slideSpec);
     s.title = contTitle(slideSpec.title, out.length);
     s.table = {
       headers,
-      rows: table.rows.slice(i, i + maxRows),
+      rows: table.rows.slice(start, end),
     };
     // Keep notes only on the last page to reduce clutter.
-    if (i + maxRows < table.rows.length) delete s.notes;
+    if (end < table.rows.length) delete s.notes;
     out.push(s);
   }
   return out;

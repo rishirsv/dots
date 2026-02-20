@@ -28,5 +28,5 @@ chatgpt/kpmg-pptx-gen/**/__pycache__/
 # ---- /codex:system-and-env ----
 
 # ---- oracle ----
-oracle/
+.agents/oracle/
 # ---- oracle ----

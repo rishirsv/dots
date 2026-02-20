@@ -3,7 +3,14 @@
     "title": "KPMG Lorem Ipsum Stress Test Deck (v2 all layouts)",
     "author": "kpmg-slidegen",
     "company": "KPMG LLP",
-    "subject": "Layout and overflow stress-test using placeholder prose"
+    "subject": "Layout and overflow stress-test using placeholder prose",
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential"
+    }
   },
   "slides": [
     {
@@ -306,11 +313,6 @@
           ]
         }
       ]
-    },
-    {
-      "type": "dividerLight",
-      "sectionNumber": "02",
-      "sectionTitle": "Quality of Earnings and Summary Scaffold"
     },
     {
       "type": "qualityOfEarnings",

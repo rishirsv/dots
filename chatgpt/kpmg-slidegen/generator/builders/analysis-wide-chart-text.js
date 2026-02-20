@@ -4,6 +4,7 @@ import { addTitle } from '../helpers/title.js';
 import { pickDataLabelColor } from '../helpers/chart.js';
 import { FOOTER_SAFE_TOP } from '../helpers/footer.js';
 import { clampBoxToBottom } from '../helpers/geometry.js';
+import { addAnalysisTable } from './analysis-narrow-table.js';
 
 const TOKENS = {
   geometry: {
@@ -89,6 +90,28 @@ function addChart(pptx, slide, chart, geo) {
   }
 }
 
+function addHeadingBand(pptx, slide, heading, geo) {
+  if (!heading || !geo) return;
+  slide.addShape(pptx.ShapeType.rect, {
+    ...geo,
+    line: { color: COLORS.kpmgBlue, pt: 1 },
+    fill: { color: COLORS.kpmgBlue },
+  });
+  slide.addText(String(heading), {
+    x: geo.x + 0.08,
+    y: geo.y + 0.02,
+    w: Math.max(0.4, geo.w - 0.16),
+    h: geo.h,
+    fontFace: FONTS.body,
+    fontSize: TYPE_SIZES.body,
+    color: COLORS.white,
+    bold: true,
+    wrap: TEXT_BOX.wrap,
+    margin: TEXT_BOX.marginPt,
+    valign: 'mid',
+  });
+}
+
 export function addAnalysisWideChart2ColsText(pptx, { title, strapline, body, chart, geometry, masterName } = {}) {
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || TOKENS.geometry;
@@ -121,14 +144,18 @@ export function addAnalysisWideChart2ColsText(pptx, { title, strapline, body, ch
   return slide;
 }
 
-export function addAnalysisWideChartTableText(pptx, { title, strapline, body, chart, geometry, masterName } = {}) {
+export function addAnalysisWideChartTableText(
+  pptx,
+  { title, strapline, heading, body, chart, table, noteSource, showSummaryChart = false, showChart = false, geometry, masterName } = {},
+) {
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || TOKENS.geometry;
 
   addTitle(slide, title, g.title || TOKENS.geometry.title);
-  if (strapline && (g.strapline || TOKENS.geometry.strapline)) {
+  const straplineBox = g.strapline || g.bodyBoxes?.[0] || TOKENS.geometry.strapline;
+  if (strapline && straplineBox) {
     slide.addText(String(strapline), {
-      ...(g.strapline || TOKENS.geometry.strapline),
+      ...straplineBox,
       ...TOKENS.textStyles.strapline,
       wrap: TEXT_BOX.wrap,
       margin: TEXT_BOX.marginPt,
@@ -136,19 +163,58 @@ export function addAnalysisWideChartTableText(pptx, { title, strapline, body, ch
     });
   }
 
-  const hasMeasuredStrapline = Boolean(g.strapline);
+  const hasMeasuredStrapline = Boolean(g.strapline || g.bodyBoxes?.[0]);
   const yShift = strapline && !hasMeasuredStrapline ? STRAPLINE_SHIFT : 0;
-  const topBase = g.topText || TOKENS.geometry.topText;
-  const bottomBase = g.bottomChart || TOKENS.geometry.bottomChart;
+  const topBase = g.body || g.rightBody || g.bodyBoxes?.[2] || g.topText || TOKENS.geometry.topText;
+  const shouldRenderChart = Boolean(showChart || showSummaryChart);
+  const chartBase = shouldRenderChart ? (g.chart || g.bottomChart || g.summaryChart || null) : null;
+  const tableBase = g.table || null;
+  const headingBase = g.heading || g.bodyBoxes?.[1] || null;
   const textBox = yShift ? { ...topBase, y: topBase.y + yShift, h: topBase.h - yShift } : topBase;
-  const chartBox = yShift ? { ...bottomBase, y: bottomBase.y + yShift, h: bottomBase.h - yShift } : bottomBase;
+  const chartBox = chartBase
+    ? (yShift ? { ...chartBase, y: chartBase.y + yShift, h: chartBase.h - yShift } : chartBase)
+    : null;
+  const tableBox = tableBase
+    ? yShift
+      ? { ...tableBase, y: tableBase.y + yShift, h: tableBase.h - yShift }
+      : tableBase
+    : null;
   const footerSafeTop = masterName === 'KPMG_WHITE' ? FOOTER_SAFE_TOP : null;
   const safeTextBox = footerSafeTop ? clampBoxToBottom(textBox, footerSafeTop) : textBox;
   const sourcePad = chart?.source ? 0.3 : 0;
-  const safeChartBox = footerSafeTop ? clampBoxToBottom(chartBox, footerSafeTop - sourcePad) : chartBox;
+  const safeChartBox = chartBox
+    ? (footerSafeTop ? clampBoxToBottom(chartBox, footerSafeTop - sourcePad) : chartBox)
+    : null;
+  const safeTableBox = tableBox && footerSafeTop ? clampBoxToBottom(tableBox, footerSafeTop) : tableBox;
+
+  addHeadingBand(pptx, slide, heading, headingBase);
+
+  if (safeTableBox && table?.headers && Array.isArray(table?.rows)) {
+    addAnalysisTable(slide, table, {
+      x: safeTableBox.x,
+      y: safeTableBox.y,
+      w: safeTableBox.w,
+      h: safeTableBox.h,
+      tableTitle: title,
+      tableHeading: heading || table?.title || table?.heading || title,
+      showTitleBar: false,
+    });
+  }
 
   slide.addText(toBulletRuns(body), { ...safeTextBox, ...TOKENS.textStyles.body, wrap: TEXT_BOX.wrap, margin: TEXT_BOX.marginPt, valign: 'top' });
-  addChart(pptx, slide, chart, safeChartBox);
+  if (safeChartBox && chart?.type && Array.isArray(chart?.data) && chart.data.length > 0) {
+    addChart(pptx, slide, chart, safeChartBox);
+  }
+  if (noteSource && g.note) {
+    slide.addText(String(noteSource), {
+      ...g.note,
+      ...TOKENS.textStyles.source,
+      wrap: TEXT_BOX.wrap,
+      margin: 0,
+      valign: 'top',
+      breakLine: true,
+    });
+  }
 
   return slide;
 }

@@ -6,7 +6,6 @@ const TOKENS = {
     title: { x: 1.089, y: 0.472, w: 3.0, h: 0.62 },
     topRow: { x: 1.089, y: 1.38, w: 11.153, h: 2.35 },
     bottomRow: { x: 1.089, y: 4.04, w: 11.153, h: 2.35 },
-    topRightLinks: { x: 11.6, y: 0.52, w: 0.7, h: 0.42 },
   },
   text: {
     sectionNo: {
@@ -37,14 +36,6 @@ const TOKENS = {
       fontFace: FONTS.body,
       fontSize: TYPE_SIZES.body,
       color: COLORS.black,
-      margin: 0,
-      valign: 'top',
-    },
-    utility: {
-      fontFace: FONTS.body,
-      fontSize: 10,
-      color: COLORS.kpmgBlue,
-      align: 'right',
       margin: 0,
       valign: 'top',
     },
@@ -123,16 +114,6 @@ export function addContentsSlide(pptx, { title, sections, geometry, masterName }
   bottom.forEach((section, idx) =>
     addSectionBlock(pptx, slide, section, sectionBox(1, idx, g.bottomRow || TOKENS.geometry.bottomRow)),
   );
-
-  const links = g.topRightLinks || TOKENS.geometry.topRightLinks;
-  slide.addText('Glossary', { x: links.x, y: links.y, w: links.w, h: 0.18, ...TOKENS.text.utility });
-  slide.addText('KPMG contacts', {
-    x: links.x - 0.17,
-    y: links.y + 0.34,
-    w: links.w + 0.17,
-    h: 0.18,
-    ...TOKENS.text.utility,
-  });
 
   return slide;
 }

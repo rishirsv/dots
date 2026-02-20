@@ -1,6 +1,6 @@
 {
   "templateName": "kpmg-diligence",
-  "generatedAt": "2026-02-20T03:04:38.794Z",
+  "generatedAt": "2026-02-20T20:03:20.693Z",
   "templateDir": ".",
   "assets": {
     "logoSvg": {
@@ -11,6 +11,24 @@
     },
     "logoWhitePng": {
       "path": "assets/kpmg-logo-white.png"
+    },
+    "closingLogoWhite": {
+      "path": "assets/closing-logo-white.png"
+    },
+    "closingSocialTwitter": {
+      "path": "assets/closing-social-twitter.png"
+    },
+    "closingSocialLinkedin": {
+      "path": "assets/closing-social-linkedin.png"
+    },
+    "closingSocialFacebook": {
+      "path": "assets/closing-social-facebook.png"
+    },
+    "closingSocialInstagram": {
+      "path": "assets/closing-social-instagram.png"
+    },
+    "closingSocialYoutube": {
+      "path": "assets/closing-social-youtube.png"
     },
     "coverPhoto": {
       "path": "assets/cover-photo.jpeg"
@@ -26,6 +44,13 @@
     }
   },
   "files": [
+    "assets/closing-logo-white.png",
+    "assets/closing-nav-icons.png",
+    "assets/closing-social-facebook.png",
+    "assets/closing-social-instagram.png",
+    "assets/closing-social-linkedin.png",
+    "assets/closing-social-twitter.png",
+    "assets/closing-social-youtube.png",
     "assets/cover-photo.jpeg",
     "assets/gradient_accent_chip_300dpi.png",
     "assets/gradient_back_cover_300dpi.png",

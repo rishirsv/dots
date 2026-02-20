@@ -38,6 +38,12 @@ function buildAssetsManifest(templateDir, templateName) {
     logoSvg: { path: pick('kpmg-logo.svg') },
     logoWhiteSvg: { path: pick('kpmg-logo-white.svg') },
     logoWhitePng: { path: pick('kpmg-logo-white.png') },
+    closingLogoWhite: { path: pick('closing-logo-white.png') },
+    closingSocialTwitter: { path: pick('closing-social-twitter.png') },
+    closingSocialLinkedin: { path: pick('closing-social-linkedin.png') },
+    closingSocialFacebook: { path: pick('closing-social-facebook.png') },
+    closingSocialInstagram: { path: pick('closing-social-instagram.png') },
+    closingSocialYoutube: { path: pick('closing-social-youtube.png') },
     coverPhoto: { path: pick('cover-photo.jpeg') },
     gradientDividerWindow: { path: pick('gradient_divider_window_300dpi.png') },
     gradientBackCover: { path: pick('gradient_back_cover_300dpi.png') },
@@ -111,8 +117,16 @@ const SLOT_PATH_OVERRIDES = {
   'dividerLight.sectionNumber': { minChars: 2, maxChars: 2, allowEmpty: false, renderingHints: { mode: 'label', priority: 'high' } },
   'dividerLight.sectionTitle': { minChars: 6, maxChars: 80, allowEmpty: false, renderingHints: { mode: 'heading', priority: 'high' } },
   'analysisNarrowTable.table': { minItems: 3, allowEmpty: false, renderingHints: { priority: 'high' } },
+  'analysisNarrowTable.insightTitle': { minChars: 6, maxChars: 80, allowEmpty: true, renderingHints: { mode: 'heading', priority: 'high' } },
   'analysisWideChart2ColsText.body': { minItems: 4, minChars: 180, allowEmpty: false, renderingHints: { priority: 'high' } },
   'analysisWideChartTableText.body': { minItems: 4, minChars: 180, allowEmpty: false, renderingHints: { priority: 'high' } },
+  'analysisWideChartTableText.heading': {
+    minChars: 6,
+    maxChars: 120,
+    allowEmpty: true,
+    renderingHints: { mode: 'heading', priority: 'high', keepTogether: true },
+  },
+  'analysisWideChartTableText.table': { minItems: 3, allowEmpty: false, renderingHints: { priority: 'high' } },
   'twoColumnText.leftBody': { minItems: 2, minChars: 80, allowEmpty: false, renderingHints: { priority: 'high' } },
   'twoColumnText.rightBody': { minItems: 2, minChars: 80, allowEmpty: false, renderingHints: { priority: 'high' } },
   'analysis2ColumnsText.leftBody': { minItems: 2, minChars: 80, allowEmpty: false, renderingHints: { priority: 'high' } },
@@ -228,19 +242,53 @@ function enrichLayouts(template) {
 
   const oneColumnDetected = template.DETECTED_LAYOUT_GEOMETRY?.['One column text'] || {};
   layouts.qualityOfEarnings = {
-    description: 'Quality of earnings narrative with large default text scaffold',
+    description: 'Quality of earnings narrative layout',
     templateLayout: 'One column text',
     geometry: {
       title: layouts.oneColumnText?.geometry?.title || null,
       strapline: layouts.oneColumnText?.geometry?.strapline || null,
       body: oneColumnDetected.body || null,
-      scaffoldLargeTextBox: oneColumnDetected.body || null,
     },
     slots: {
       title: { kind: 'text', required: true },
       strapline: { kind: 'text', required: false },
       body: { kind: 'textArray', required: false },
       source: { kind: 'text', required: false },
+    },
+  };
+
+  const wideChartTableDetected =
+    template.DETECTED_LAYOUT_GEOMETRY?.['Analysis_wide chart+table+text'] || {};
+  layouts.analysisWideChartTableText = {
+    ...layouts.analysisWideChartTableText,
+    description: 'Analysis with chart, table, and commentary',
+    templateLayout: 'Analysis_wide chart+table+text',
+    geometry: {
+      title: layouts.analysisWideChartTableText?.geometry?.title || null,
+      strapline: wideChartTableDetected.bodyBoxes?.[0] || null,
+      heading: wideChartTableDetected.bodyBoxes?.[1] || null,
+      body: wideChartTableDetected.bodyBoxes?.[2] || null,
+      chart: wideChartTableDetected.chart || null,
+      table: wideChartTableDetected.table || null,
+      bodyBoxes: wideChartTableDetected.bodyBoxes || null,
+    },
+    slots: {
+      title: { kind: 'text', required: true },
+      strapline: { kind: 'text', required: false },
+      heading: { kind: 'text', required: false },
+      body: { kind: 'textArray', required: true },
+      chart: { kind: 'chart', required: true },
+      table: { kind: 'table', required: false },
+      noteSource: { kind: 'text', required: false },
+    },
+  };
+
+  const narrowTableSlots = layouts.analysisNarrowTable?.slots || {};
+  layouts.analysisNarrowTable = {
+    ...layouts.analysisNarrowTable,
+    slots: {
+      ...narrowTableSlots,
+      insightTitle: { kind: 'text', required: false },
     },
   };
 
@@ -251,7 +299,6 @@ function enrichLayouts(template) {
       title: { x: 1.089, y: 0.472, w: 3.0, h: 0.62 },
       topRow: { x: 1.089, y: 1.38, w: 11.153, h: 2.35 },
       bottomRow: { x: 1.089, y: 4.04, w: 11.153, h: 2.35 },
-      topRightLinks: { x: 11.6, y: 0.52, w: 0.7, h: 0.42 },
     },
     slots: {
       title: { kind: 'text', required: true },

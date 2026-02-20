@@ -1,6 +1,7 @@
 import { FONTS, COLORS, TYPE_SIZES, TEXT_BOX } from '../tokens.js';
 import { addTitle } from '../helpers/title.js';
 import { toBulletRuns } from '../helpers/bullets.js';
+import { addAnalysisTable } from './analysis-narrow-table.js';
 
 const TOKENS = {
   geometry: {
@@ -86,17 +87,13 @@ function addChartOrPlaceholder(pptx, slide, chart, box) {
 
 function addTableOrPlaceholder(pptx, slide, table, box) {
   if (table?.headers && Array.isArray(table?.rows) && table.rows.length > 0) {
-    slide.addTable([table.headers, ...table.rows], {
+    addAnalysisTable(slide, table, {
       x: box.x,
       y: box.y,
       w: box.w,
       h: box.h,
-      border: { pt: 0.5, color: 'D9D9D9' },
-      fontFace: FONTS.body,
-      fontSize: 8,
-      color: COLORS.black,
-      valign: 'mid',
-      autoFit: true,
+      tableHeading: table?.title || table?.heading || '',
+      showTitleBar: false,
     });
     return;
   }
@@ -105,14 +102,17 @@ function addTableOrPlaceholder(pptx, slide, table, box) {
 
 export function addProfitLossOverview(
   pptx,
-  { title, strapline, heading, body, chart, table, noteSource, geometry, masterName } = {},
+  { title, strapline, heading, body, chart, table, noteSource, showSummaryChart = false, geometry, masterName } = {},
 ) {
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || TOKENS.geometry;
 
   addTitle(slide, title || 'Profit & loss overview', g.title || TOKENS.geometry.title);
 
-  const strapBox = g.strapline || TOKENS.geometry.strapline;
+  const strapBase = g.strapline || TOKENS.geometry.strapline;
+  const strapBox = showSummaryChart
+    ? strapBase
+    : { ...strapBase, w: (g.title || TOKENS.geometry.title).w };
   addDashedBox(pptx, slide, strapBox, null);
   slide.addText(
     strapline || 'Use this strapline to summarize the key message - Keep it concise and clear, preferably 1-2 sentences only.',
@@ -124,7 +124,9 @@ export function addProfitLossOverview(
     },
   );
 
-  addChartOrPlaceholder(pptx, slide, chart, g.summaryChart || TOKENS.geometry.summaryChart);
+  if (showSummaryChart) {
+    addChartOrPlaceholder(pptx, slide, chart, g.summaryChart || TOKENS.geometry.summaryChart);
+  }
   addTableOrPlaceholder(pptx, slide, table, g.table || TOKENS.geometry.table);
 
   const headingBox = g.heading || TOKENS.geometry.heading;
