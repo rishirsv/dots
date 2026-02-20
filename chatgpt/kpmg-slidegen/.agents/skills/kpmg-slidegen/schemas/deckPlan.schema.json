@@ -1,56 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://kpmg-slidegen.local/skills/deckPlan.schema.json",
-  "title": "Deck Plan",
-  "type": "object",
-  "required": ["slides"],
-  "additionalProperties": false,
-  "properties": {
-    "metadata": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "objective": { "type": "string", "pattern": ".*\\S.*" },
-        "audience": { "type": "string", "pattern": ".*\\S.*" },
-        "tone": { "type": "string", "pattern": ".*\\S.*" }
-      }
-    },
-    "slides": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "required": ["title", "type", "intent"],
-        "additionalProperties": false,
-        "properties": {
-          "title": { "type": "string", "pattern": ".*\\S.*" },
-          "type": {
-            "type": "string",
-            "enum": [
-              "cover",
-              "contents",
-              "analysisWideChartTableTextScaffold",
-              "dividerDark",
-              "divider",
-              "dividerLight",
-              "summaryFinancials",
-              "analysisWideChart2ColsText",
-              "analysisWideChartTableText",
-              "analysisNarrowTable",
-              "twoColumnText",
-              "analysis2ColumnsText",
-              "oneColumnText",
-              "titleStrapline4TextBoxes",
-              "qualityOfEarnings",
-              "summaryFinancialsScaffold",
-              "backCover"
-            ]
-          },
-          "intent": { "type": "string", "pattern": ".*\\S.*" },
-          "notes": { "type": "string" },
-          "section": { "type": "string" }
-        }
-      }
+  "title": "Deck Plan (Skill Contract Alias)",
+  "description": "Skill-facing compatibility alias to the canonical deck plan contract.",
+  "allOf": [
+    {
+      "$ref": "../../../../schemas/deckPlan.schema.json"
     }
-  }
+  ]
 }

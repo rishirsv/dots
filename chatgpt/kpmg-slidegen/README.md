@@ -66,6 +66,7 @@ This project turns structured slide input into KPMG-style PowerPoint decks using
 ├─ schemas/
 │  ├─ deckSpec.schema.json
 │  ├─ contentPack.schema.json
+│  ├─ deckPlan.schema.json
 │  └─ qaReport.schema.json
 └─ renderer/
    ├─ validate.ts
@@ -291,11 +292,23 @@ This project turns structured slide input into KPMG-style PowerPoint decks using
 - Defines slide content payload shape and slot value expectations.
 - Helps keep ingest and composition predictable.
 
+### `schemas/deckPlan.schema.json`
+
+- Formal schema for narrative and slide-type planning output.
+- Defines required planning fields (`title`, `type`, `intent`) per slide.
+- Keeps planning contracts aligned with renderable layout types.
+
 ### `schemas/qaReport.schema.json`
 
 - Formal schema for `deck.qa.json` output.
 - Defines density findings, slot issues, repair suggestions, and QA metadata.
 - Makes QA output machine-checkable and consistent.
+
+### `generator/scripts/check-slot-contract-sync.js`
+
+- Contract sync checker that compares schema contracts with template layout contracts.
+- Fails fast on type enum drift and required-slot drift between `schemas/*` and `templates/.../layouts.json`.
+- Should be run after any layout/slot/schema edits to keep one effective source of truth.
 
 ### `renderer/validate.ts`
 

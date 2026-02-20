@@ -112,7 +112,7 @@ Hard rules:
 Primary references:
 
 - Prompt: `.agents/skills/kpmg-slidegen/prompts/deck_plan.md`
-- Schema: `.agents/skills/kpmg-slidegen/schemas/deckPlan.schema.json`
+- Schema: `schemas/deckPlan.schema.json`
 
 Responsibilities:
 
@@ -270,13 +270,9 @@ For `analysisWideChartTableText` and `analysisWideChartTableTextScaffold`, table
   - `.agents/skills/kpmg-slidegen/prompts/deck_plan.md`
   - `.agents/skills/kpmg-slidegen/prompts/deck_spec.md`
   - `.agents/skills/kpmg-slidegen/prompts/repair.md`
-- Skill-side schema aliases:
-  - `.agents/skills/kpmg-slidegen/schemas/contentPack.schema.json`
-  - `.agents/skills/kpmg-slidegen/schemas/deckPlan.schema.json`
-  - `.agents/skills/kpmg-slidegen/schemas/deckSpec.schema.json`
-  - `.agents/skills/kpmg-slidegen/schemas/qaReport.schema.json`
 - Canonical schemas:
   - `schemas/contentPack.schema.json`
+  - `schemas/deckPlan.schema.json`
   - `schemas/deckSpec.schema.json`
   - `schemas/qaReport.schema.json`
 - Template package contract source:
@@ -532,6 +528,7 @@ Use this pass when reviewing each one-layout PPT:
 Use this during refactors to keep quality high while simplifying:
 
 - Keep all slot requirement changes in one place: `generator/scripts/build-template-package.js`.
+- Run `node generator/scripts/check-slot-contract-sync.js` after slot/layout edits to verify schema contract sync.
 - Keep renderer deterministic; avoid adding LLM-only style branches.
 - Prefer layout switching over slot overloading when density rises.
 - Add regression QA fixtures for any builder geometry change.
