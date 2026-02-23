@@ -12,7 +12,7 @@ Input:
 
 Output:
 - A PowerPoint file (`.pptx`).
-- A QA report (`.json`) with validation and overlap checks.
+- A single QA report (`.json`) with validation, overlap checks, and a top-level summary.
 
 Core command:
 
@@ -40,7 +40,7 @@ flowchart LR
     H --> I["PptxGenJS slide objects"]
     I --> J["deck.pptx"]
     B --> K["strict/overlap.js"]
-    K --> L["qa.json + overlap report"]
+    K --> L["qa.json (single consolidated report)"]
 ```
 
 ### Render Sequence
@@ -140,7 +140,7 @@ sequenceDiagram
 ## Strict QA
 - `generator/strict/overlap.js`
   - Detects slide element overlap risk.
-  - Produces overlap summary/report written by `index.js`.
+  - Produces overlap diagnostics embedded into the single QA JSON.
 
 ## Builders (Slide Renderers)
 - `generator/builders/cover-slide.js`
@@ -305,7 +305,11 @@ Given:
 You will get:
 - `outputs/my-run/deck.pptx`
 - `outputs/my-run/qa.json`
-- optional overlap report path based on QA naming rules
+
+`qa.json` includes:
+- `summary` (quick pass/fail + counts + strict status)
+- `overlapSummary` (deck-level overlap totals)
+- `overlapFindings` (slide-level overlap snippets)
 
 ---
 
