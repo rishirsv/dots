@@ -1,4 +1,4 @@
-import { FONTS, COLORS, TYPE_SIZES, TEXT_BOX, STRAPLINE_SHIFT } from '../tokens.js';
+import { FONTS, COLORS, TYPE_SIZES, TEXT_BOX } from '../tokens.js';
 import { toBodyRuns } from '../helpers/bullets.js';
 import { addTitle } from '../helpers/title.js';
 import { calcTextBoxHeight, sanitizeText } from '../helpers/text.js';
@@ -8,8 +8,8 @@ import { clampBoxToBottom } from '../helpers/geometry.js';
 const TOKENS = {
   geometry: {
     title: { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 },
-    strapline: { x: 1.0919, y: 1.2, w: 11.1596, h: 0.35 },
-    body: { x: 1.0919, y: 1.6, w: 11.1596, h: 5.6 },
+    strapline: { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 },
+    body: { x: 1.0919, y: 1.2899, w: 11.1596, h: 5.9101 },
     source: { x: 1.0919, y: 6.62, w: 11.1596, h: 0.2 },
   },
   textStyles: {
@@ -52,11 +52,7 @@ export function addOneColumnText(pptx, { title, strapline, body, source, bodySty
   }
 
   const bodyBase = g.body || TOKENS.geometry.body;
-  const hasMeasuredStrapline = Boolean(g.strapline);
-  const shift =
-    strapText && !hasMeasuredStrapline
-      ? Math.max(STRAPLINE_SHIFT, Math.max(0, (strapGeo?.y || 0) + (strapGeo?.h || 0) + 0.06 - bodyBase.y))
-      : 0;
+  const shift = strapText && strapGeo ? Math.max(0, (strapGeo.y + strapGeo.h + 0.06) - bodyBase.y) : 0;
   const bodyGeo = shift ? { ...bodyBase, y: bodyBase.y + shift, h: bodyBase.h - shift } : bodyBase;
   const footerSafeTop = masterName === 'KPMG_WHITE' ? FOOTER_SAFE_TOP : null;
   const sourcePad = sourceText ? 0.26 : 0;

@@ -9,7 +9,7 @@ import { addAnalysisTable } from './analysis-narrow-table.js';
 const TOKENS = {
   geometry: {
     title: { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 },
-    strapline: { x: 1.0919, y: 1.2, w: 11.1596, h: 0.35 },
+    strapline: { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 },
     leftText: { x: 1.0919, y: 1.6, w: 5.6, h: 5.4 },
     rightChart: { x: 7.0, y: 1.6, w: 5.25, h: 5.0 },
     topText: { x: 1.0919, y: 1.6, w: 11.1596, h: 2.2 },

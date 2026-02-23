@@ -242,6 +242,8 @@ export function analyzeSlideOverlaps(slide, pptx, options = {}) {
 
         const severeTextOverlap = (() => {
           if (!comparison.intersection) return false;
+          const bothText = a.type === 'text' && b.type === 'text';
+          if (!bothText) return false;
           const exceedsThreshold = (element) =>
             element.type === 'text' &&
             comparison.intersection.w >= TEXT_OVERLAP_ERROR_THRESHOLD &&

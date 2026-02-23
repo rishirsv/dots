@@ -12,9 +12,9 @@ import { svgToDataUri } from '../helpers/svg.js';
 export const TOKENS = {
   geometry: {
     title: { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 },
-    strapline: { x: 1.0919, y: 1.2, w: 11.1596, h: 0.35 },
-    left: { x: 1.0919, y: 1.5, w: 5.7, h: 5.7 },
-    right: { x: 7.0415, y: 1.5, w: 5.2, h: 5.7 },
+    strapline: { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 },
+    left: { x: 1.0919, y: 1.2899, w: 5.7, h: 5.9101 },
+    right: { x: 7.0415, y: 1.2899, w: 5.2, h: 5.9101 },
   },
   textStyles: {
     title: {

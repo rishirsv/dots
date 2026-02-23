@@ -478,7 +478,7 @@ export function addAnalysisNarrowTable(
   addTitle(slide, title, g.title || { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 });
 
   if (strapText) {
-    straplineBox = g.strapline || { x: 1.0919, y: 1.2, w: 11.1596, h: 0.35 };
+    straplineBox = g.strapline || { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 };
     slide.addText(String(strapText), {
       ...straplineBox,
       fontFace: FONTS.body,
