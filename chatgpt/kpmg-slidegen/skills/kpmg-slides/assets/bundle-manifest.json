@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-02-24T23:08:53.010Z",
+  "generatedAt": "2026-02-24T23:20:02.646Z",
   "entries": [
     {
       "source": "generator/app/cli.js",
@@ -37,12 +37,6 @@
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/back-cover-slide.js",
       "size": 6098,
       "sha256": "3d0aba6b62e1420e27f6d03b1e535d10b9e1f1eaa198874a8282497b899b5900"
-    },
-    {
-      "source": "generator/builders/business-overview-apple.js",
-      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/business-overview-apple.js",
-      "size": 12134,
-      "sha256": "6e04dc719cb2c6ba421bfa7a665ca735015ba6316527572a9ff5cc9f20d4bcc5"
     },
     {
       "source": "generator/builders/contents-slide.js",
@@ -215,8 +209,8 @@
     {
       "source": "generator/runtime/render-deck.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/render-deck.js",
-      "size": 41617,
-      "sha256": "7f513abecec2844307a86397f23bff3a40b9d04ade4ed30a93d2731617a56941"
+      "size": 41348,
+      "sha256": "959128a3cb49e60d7d430a6675ac53448a32d59c111ac7f76643d1739d524490"
     },
     {
       "source": "generator/runtime/template-package.js",

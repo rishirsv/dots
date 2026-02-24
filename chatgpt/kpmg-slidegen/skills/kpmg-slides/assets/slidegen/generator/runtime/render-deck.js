@@ -12,7 +12,6 @@ import { addTitleStrapline4TextBoxes } from '../builders/title-strapline-4-boxes
 import { addBackCover } from '../builders/back-cover-slide.js';
 import { addOneColumnText } from '../builders/one-column-text.js';
 import { addContentsSlide } from '../builders/contents-slide.js';
-import { addBusinessOverviewApple } from '../builders/business-overview-apple.js';
 import { normalizeBodyStyle } from '../helpers/layout.js';
 import { paginateDeckSpec } from './paginate.js';
 
@@ -1023,10 +1022,6 @@ function buildSlide(pptx, rawSlideSpec, templatePackage, runtimeContext = {}) {
           ? { sectionNumber: { color: '00338D' }, sectionTitle: { color: '00338D' } }
           : null,
     });
-  }
-
-  if (slideSpec.type === 'oneColumnText' && slideSpec.customLayout === 'businessOverviewApple') {
-    return addBusinessOverviewApple(pptx, { ...slideSpec, masterName, geometry });
   }
 
   const builderByType = {
