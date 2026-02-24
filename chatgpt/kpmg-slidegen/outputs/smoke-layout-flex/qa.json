@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T15:17:52.872Z",
+  "generatedAt": "2026-02-24T16:24:09.608Z",
   "template": "kpmg-diligence",
   "valid": true,
   "errors": [],
@@ -621,6 +621,7 @@
   ],
   "paginationDecisions": [],
   "overflowEvents": [],
+  "tableWarnings": [],
   "fallbacks": [
     {
       "layout": "titleStrapline4TextBoxes",

@@ -1,0 +1,266 @@
+.grecaptcha-badge { visibility: hidden; }
+       #intercom-container > div {
+         display: none !important;
+       }
+       div.intercom-app .intercom-borderless-frame,
+       div.intercom-app .intercom-messenger-frame  {
+         transform: translateY(calc(100% + 20px)) !important;
+       }
+     BackGenerateGenerateWhat would you like to create today?PresentationWebpageDocumentSocialPrompt4 cardsClassicDefaultEnglish (US)Create a 3-card test presentation about markdown parsing heuristics for slide generation. Keep it concise with bullet points.CancelGenerate outlineGenerate outlineExample promptsPitch deck for a new social media platformThe health benefits of bananasFinance models for dummiesConducting audits or assessments to identify areas of improvement in a company's operations or processesCollaborating with other creators on a joint project or collaborationStudent learning assessmentsShuffleOutline⋮1Markdown Parsing Heuristics for Slide GenerationSlides are typically split by horizontal rules (---) or specific delimitersHeaders (#, ##, etc.) often define slide titles or section breaksConsistent indentation and line breaks affect parsing accuracy⋮2Key Parsing Rules & Best PracticesUse --- on a separate line to indicate a new slide boundaryAvoid mixing tabs and spaces to prevent parsing errorsMaintain clear header hierarchy to organize slide content logicallyInline elements (images, links) parsed as part of slide content⋮3Tools & Ecosystem HighlightsMarp: uses --- to split slides, supports themes and custom stylesreveal.js: parses markdown with data-markdown attribute, uses --- for slidesJetBrains IDEs: integrate markdown slide previews with simple syntaxBest practice: write clean, minimal markdown for reliable slide generation⋮4Add card4 cards totalType --- for card breaks183/50000Customize your gammaText contentAmount of text per cardMinimalConciseDetailedExtensiveVisualsThemeView moreUse one of our popular themes below or view moreLavenderStardustLeimoonVortexHowliteDuneImage sourceDon't add imagesAdvanced mode9 creditsYou're almost out of credits. Upgrade for longer decks, better AI, and more credits that refresh monthly.View plans4 cards totalGenerateWhat's new in GammaHelp centerContact supportShare feedbackEnglishShortcutsDoc modePresent modeOpen slash menu/Open/close cards⌘+Shift+OSplit card***Print/export PDF⌘+PEnter present mode⌘+EnterJump to⌘+KMention a person@nameLink to a card@cardTitleText & formattingMonster!!!Display!!Title!Heading 1#⌘+Option+1Heading 2##⌘+Option+2Heading 3###⌘+Option+3Heading 4####⌘+Option+4Link⌘+KEmoji 😍:heart_eyes:Bold*bold*⌘+BItalic_italic_⌘+IUnderline⌘+UStrikethrough⌘+Shift+XLeft align⌘+Shift+LCenter align⌘+Shift+ERight align⌘+Shift+RCode snippet`code`⌘+Shift+CMath equation$x^2$ $$ Highlight text⌘+Shift+HNumbered list1. ⌘+/⌘+Shift+7Bulleted list- ⌘+.⌘+Shift+8Todo list[] ⌘+,⌘+Shift+9Footnote^note^⌘+Option+FPrevious/next card←→Scroll up/down card↑↓Open/close cardEnterExit present modeEscOpen/close all cards⌘+Shift+OSpotlight on/offSRestart presentationRRight click to edit  and spotlight blocks{"props":{"pageProps":{}},"page":"/create/generate/[id]","query":{},"buildId":"_wTeq6KG0lye3gnXKTjs5","assetPrefix":"https://gamma.app","runtimeConfig":{"API_HOST":"https://api.gamma.app","AI_API_HOST":"https://ai.api.gamma.app","APPLICATION_ENVIRONMENT":"production","CHURNKEY_APP_ID":"7blc4aqmp","CHURNKEY_MODE":"live","CONTENTFUL_API_TOKEN":"kmPJCoC_3Pmp8aabqpXynV_PKJANcgQk3xW-bbhVgqs","CONTENTFUL_GRAPHQL_ENDPOINT":"https://graphql.contentful.com/content/v1/spaces/yg6st2np8vj7","DATADOG_CLIENT_TOKEN":"pubd1816668e8c2bc25ca86419d71c47f80","EMBED_PROXY_URL":"https://embed-proxy-prod.gamma-app.workers.dev/","EVENT_TRACKING_ENDPOINT":"events.api.gamma.app/v1","FRONTEND_URL":"https://gamma.app","GIT_SHA":"d5fcc730","DEPLOYMENT_TIMESTAMP":1771876248668,"GOOGLE_DRIVE_IMPORT_CLIENT_ID":"1031118683051-cccir3o5j0qjmbevr11a3tmavlt0qard.apps.googleusercontent.com","GOOGLE_PROJECT_ID":"1031118683051","GOOGLE_API_KEY":"AIzaSyDPb62HOQQ-3WI50xvv6R_nbJ1Yc4m_L0E","IMAGE_WORKER_HOST":"https://imgproxy.gamma.app","HIGHLIGHT_PROJECT_ID":"jdkowoe5","HONEYCOMB_API_KEY":"23764f306e0f53af3d1d9abeb6586a33","HONEYCOMB_DATASET":"client-prod","INTERCOM_APP_ID":"ihnzqaok","KNOCK_FEED_ID":"9ea342c4-39f2-4432-8331-2ebee95759a8","KNOCK_PUBLIC_KEY":"pk_E0IL_q64ZtJtZbuIWzRxNr4d-NTviUlDi6DW7QjsXC4","LAUNCH_DARKLY_CLIENT_SIDE_ID":"61e83cfd8ac5a016e6f0d0b6","LINKEDIN_CLIENT_ID":"86azhyybctszo6","NEXT_PUBLIC_GA_ID":"G-JTMLK9TNNV","NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE":"Merge rc-20260223-0 into prod","NEXT_PUBLIC_VERCEL_URL":"gamma-2pjmuo9ig-gamma-app.vercel.app","SENTRY_ENVIRONMENT":"production","SLACK_CLIENT_ID":"1317858430720.3036315640336","MULTIPLAYER_WS_URL":"wss://multiplayer.api.gamma.app","TRANSLOADIT_AUTH_KEY":"d54da4df3740490a96622910f79d4605","TRANSLOADIT_IMAGE_TEMPLATE_ID":"6a17f9f7a509468a98329d354a04841f","TRANSLOADIT_THEME_IMAGE_TEMPLATE_ID":"6a17f9f7a509468a98329d354a04841f","TRANSLOADIT_FILE_TEMPLATE_ID":"fc51a03dc6dd4e4d9cf5ee53fffd72ce","TRANSLOADIT_FILE_UPLOAD_WITH_EXPIRE_TEMPLATE_ID":"10bf371581784df8b19c902c38323722","TRANSLOADIT_DOC_IMPORT_TEMPLATE_ID":"0ee80b7d8cff4d99966c2943456a1b22","VERCEL_GIT_COMMIT_REF":"prod","VISITOR_ID_COOKIE_DOMAIN":".gamma.app","RECAPTCHA_SCORING_KEY":"6LdCntgoAAAAAA-MuuSZIeM7COJCac-Z8wj9Nj2p","RECAPTCHA_CHECKBOX_KEY":"6LcE4OUoAAAAAOruJAwQdjNA7puomGoVVmN0ytZe","CANNY_APP_ID":"62fec2ae4f80df44a5abffe5","VANTARA_CLIENT_KEY":"key_WON6skNDaHkBPJzF8t6GNxLRsvpDRbz1ZJ3WGP9sNrQkWWOIpwMqImTmhyUdASJg6ViXVckFwe+UkWT/0WkRwA","VANTARA_PRODUCT_ID":"prd_01JSDDT52WDGAT7VSHV4Q2900S","VANTARA_ORGANIZATION_ID":"org_2w5zwhVxN9ZQkdLIfGkH82LTXkb","BUILD_HASH":"2pjmuo9ig","TEST_ENV_VAR":"test"},"nextExport":true,"autoExport":true,"isFallback":false,"scriptLoader":[]}
+(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/ihnzqaok';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+
+!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://sdk.canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");
+
+!function(){  
+    if (!window.churnkey || !window.churnkey.created) {
+      window.churnkey = { created: true };
+      const a = document.createElement('script');
+      a.src = 'https://assets.churnkey.co/js/app.js?appId=7blc4aqmp';
+      a.async = true;
+      const b = document.getElementsByTagName('script')[0];
+      b.parentNode.insertBefore(a, b);
+    }
+  }();
+Generate | GammaCard design modeClassicFlexible cards with editable text, images, and layout blocks.Studio ProEvery card is a single image with embedded text. Edit by asking AI.Card sizeDefaultFluidTraditional16:9Tall4:3LanguageAfrikaansAfrikaansShqipAlbanianالعربيةArabicالعربية (السعودية)Arabic (Saudi Arabia)বাংলাBengaliBosanskiBosnianБългарскиBulgarianCatalàCatalanHrvatskiCroatianČeštinaCzechDanskDanishNederlandsDutchEnglish (India)English (India)English (UK)English (UK)English (US)English (US)EestiEstonianSuomiFinnishFrançaisFrenchDeutschGermanΕλληνικάGreekગુજરાતીGujaratiHausaHausaעבריתHebrewहिन्दीHindiMagyarHungarianÍslenskaIcelandicBahasa IndonesiaIndonesianItalianoItalian日本語 (だ/である体)Japanese (だ/である style)日本語 (です/ます体)Japanese (です/ます style)ಕನ್ನಡKannadaҚазақ тіліKazakh한국어KoreanLatviešuLatvianLietuviųLithuanianМакедонскиMacedonianBahasa MelayuMalayമലയാളംMalayalamमराठीMarathiNorskNorwegianفارسیPersianPolskiPolishPortuguês (Brasil)Portuguese (Brazil)Português (Portugal)Portuguese (Portugal)RomânăRomanianРусскийRussianСрпскиSerbian简体中文Simplified ChineseSlovenščinaSlovenianEspañolSpanishEspañol (Latinoamérica)Spanish (Latin America)Español (México)Spanish (Mexico)Español (España)Spanish (Spain)KiswahiliSwahiliSvenskaSwedishTagalogTagalogதமிழ்TamilతెలుగుTeluguภาษาไทยThai繁體中文Traditional ChineseTürkçeTurkishУкраїнськаUkrainianاردوUrduO'zbek tiliUzbekTiếng ViệtVietnameseCymraegWelshYorùbáYoruba
+  @keyframes intercom-lightweight-app-launcher {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes intercom-lightweight-app-gradient {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes intercom-lightweight-app-messenger {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    40% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .intercom-lightweight-app {
+    position: fixed;
+    z-index: 2147483001;
+    width: 0;
+    height: 0;
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  .intercom-lightweight-app-gradient {
+    position: fixed;
+    z-index: 2147483002;
+    width: 500px;
+    height: 500px;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at bottom right,
+      rgba(29, 39, 54, 0.16) 0%,
+      rgba(29, 39, 54, 0) 72%);
+    animation: intercom-lightweight-app-gradient 200ms ease-out;
+  }
+
+  .intercom-lightweight-app-launcher {
+    position: fixed;
+    z-index: 2147483003;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none;
+    bottom: 20px;
+    right: 20px;
+    max-width: 48px;
+    width: 48px;
+    max-height: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #0540aD;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.06), 0 2px 32px 0 rgba(0, 0, 0, 0.16);
+    transition: transform 167ms cubic-bezier(0.33, 0.00, 0.00, 1.00);
+    box-sizing: content-box;
+  }
+
+
+  .intercom-lightweight-app-launcher:hover {
+    transition: transform 250ms cubic-bezier(0.33, 0.00, 0.00, 1.00);
+    transform: scale(1.1)
+  }
+
+  .intercom-lightweight-app-launcher:active {
+    transform: scale(0.85);
+    transition: transform 134ms cubic-bezier(0.45, 0, 0.2, 1);
+  }
+
+
+  .intercom-lightweight-app-launcher:focus {
+    outline: none;
+
+    
+  }
+
+  .intercom-lightweight-app-launcher-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 48px;
+    height: 48px;
+    transition: transform 100ms linear, opacity 80ms linear;
+  }
+
+  .intercom-lightweight-app-launcher-icon-open {
+    
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-open svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .intercom-lightweight-app-launcher-icon-open svg path {
+    fill: rgb(255, 255, 255);
+  }
+
+  .intercom-lightweight-app-launcher-icon-self-serve {
+    
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-self-serve svg {
+    height: 44px;
+  }
+
+  .intercom-lightweight-app-launcher-icon-self-serve svg path {
+    fill: rgb(255, 255, 255);
+  }
+
+  .intercom-lightweight-app-launcher-custom-icon-open {
+    max-height: 24px;
+    max-width: 24px;
+
+    
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-minimize {
+    
+        opacity: 0;
+        transform: rotate(-60deg) scale(0);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-minimize svg path {
+    fill: rgb(255, 255, 255);
+  }
+
+  /* Extended launcher styles */
+  .intercom-lightweight-app-launcher.intercom-launcher-extended {
+    width: calc(180px - 30px);
+    max-width: calc(180px - 30px);
+    height: calc(45px - 26px);
+    max-height: calc(45px - 26px);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 16px 12px 12px !important;
+    gap: 6px;
+    /* Use theme background instead of hardcoded gradient */
+    background: #0540aD;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0px -2px 50px rgba(0, 0, 0, 0.1);
+    
+  }
+
+  .intercom-lightweight-app-launcher.intercom-launcher-extended .intercom-lightweight-app-launcher-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+  }
+
+  .intercom-lightweight-app-launcher-text {
+    /* Match text color with launcher icon */
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+    opacity: 1;
+    transition: opacity 80ms linear;
+  }
+
+  .intercom-lightweight-app-messenger {
+    position: fixed;
+    z-index: 2147483003;
+    overflow: hidden;
+    background-color: #ffffff;
+    animation: intercom-lightweight-app-messenger 250ms cubic-bezier(0, 1, 1, 1);
+    transform-origin: bottom right;
+
+    
+        width: 400px;
+        height: calc(100% - 40px);
+        max-height: 704px;
+        min-height: 250px;
+        right: 20px;
+        bottom: 20px;
+        box-shadow: 0 5px 40px rgba(0,0,0,0.16);
+      
+
+    border-radius: 24px;
+  }
+
+  .intercom-lightweight-app-messenger-header {
+    height: 64px;
+    border-bottom: none;
+    background: #ffffff;
+  }
+
+  .intercom-lightweight-app-messenger-footer{
+    position:absolute;
+    bottom:0;
+    width: 100%;
+    height: 80px;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 21px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  @media print {
+    .intercom-lightweight-app {
+      display: none;
+    }
+  }
+Insufficient creditsChoose the plan that’s right for youIndividualTeamYou currently have 9 credits.Save up to 28% with annual billingPay monthlyPay annually blahPlusFor extra AI power and removing Gamma branding$8/ seat / month$96 per seat, billed annuallyUpgrade to PlusEverything in Free, and:Create up to 20 cards per prompt1,000 monthly creditsRemove Gamma brandingAdvanced AI image modelsMost popularProFor premium AI models, API, and more customization$18/ seat / month$216 per seat, billed annuallyUpgrade to ProEverything in Plus, and:Create up to 60 cards per prompt4,000 monthly creditsPremium AI image modelsCustom branding & fontsDetailed analytics & advanced sharingPublish up to 10 custom domainsAPI accessWorkspace templates blahUltraFor 20× more AI usage and unlocking access to the most advanced models$90/ seat / month$1,080 per seat, billed annuallyUpgrade to UltraEverything in Pro, and:Create up to 75 cards per prompt20,000 monthly creditsAccess to the most advanced AI models (text, image, video)Publish up to 100 custom domainsEarly access to new featuresWe're a SOC 2 Type II compliant organization.Learn more at our Trust CenterLearn more about our paid plans

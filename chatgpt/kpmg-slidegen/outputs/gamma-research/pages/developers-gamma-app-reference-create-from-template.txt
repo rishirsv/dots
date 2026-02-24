@@ -1,0 +1,51 @@
+Jump to ContentOverviewAPI ReferenceChangelogv1.0Log InAPI ReferenceLog Inv1.0OverviewAPI ReferenceChangelogCreate from gamma templateSearch⌘KAllOverviewAPI ReferenceChangelogPagesStart typing to search…JUMP TO⌘/CREATE GAMMASGenerate a gammapostCreate from gamma templatepostReceive generated file URLsgetImage model accepted valuesOutput language accepted valuesLIST VALUESList ThemesgetList FoldersgetERRORS AND WARNINGSError codesWarningsPowered by Create from gamma templateAsk AIpost https://public-api.gamma.app/v1.0/generations/from-templateCreate new content based on an existing gamma template using this endpoint.Recent RequestsLog in to see full request historyTimeStatusUser Agent Make a request to see history.URL ExpiredThe URL for this request expired after 30 days.Close/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
+@layer theme, base, components, utilities;
+@layer utilities;
+We highly recommend you read Create from template API parameters explained before delving into this page.
+For parameters with a long list of accepted values, please reference:
+
+imageOptions.model accepts values listed in Image model accepted values.
+List Themes and List Folders endpoints can be used to find values for the themeId and folderIds parameters.
+
+Generated gammas appear in a separate tab in your dashboard. This tab appears only after you have successfully created at least one gamma using the API.
+
+Body ParamsgammaIdstringrequiredSpecifies which gamma template you want to use.promptstringrequiredText, image URLs, and instructions used to adapt your template to your desired output. Can be as little as a few words or pages of text. Token limits: 1-100,000. Example: Change this pitch deck on deep sea exploration to be about space exploration.themeIdstringThe theme from Gamma that will be used for your creation. You can create custom themes in Gamma. If nothing is specified, the template's theme will be used.folderIdsarray of stringsThe folder(s) where you want to store your gamma.folderIdsADD  stringexportAsstringenumAdditional file types for saving your gamma. Options: pdf, pptx.pdfpptxAllowed:pdfpptximageOptionsobjectAttributes of the images you want to generate, if any.imageOptions objectsharingOptionsobjectDetermines how your gamma is shared with others.sharingOptions objectHeadersContent-TypestringrequiredDefaults to application/jsonX-API-KEYstringrequiredEnter your API key here.Responses 200Successful responseResponse bodyjson 400Bad Request 401UnauthorizedUpdated 4 months ago Generate a gammaReceive generated file URLsDid this page help you?YesNoLanguageShellNodeRubyPHPPythoncURL RequestExamplesxxxxxxxxxx1curl --request POST \2     --url https://public-api.gamma.app/v1.0/generations/from-template \3     --header 'Content-Type: application/json' \4     --header 'accept: application/json'Try It!Response200 - SuccessExamplexxxxxxxxxx 1{2  "generationId": "xxxxxxxxxxx"3}Updated 4 months ago Generate a gammaReceive generated file URLsDid this page help you?YesNoCREATE GAMMASGenerate a gammapostCreate from gamma templatepostReceive generated file URLsgetImage model accepted valuesOutput language accepted valuesLIST VALUESList ThemesgetList FoldersgetERRORS AND WARNINGSError codesWarningsvar is_hub = true;
+var is_hub2 = true;
+var is_hub_edit = true;
+[2852,4863,1456,3766,6123,6146,8836,8577,3307,6563,4670,5026,2112,3137,8962,9459,1380,1396,6840,1402,5346,4644,3463,705,4201,5464,7791,2398,1924,8850,6825,7752,4986,7356,5798]{"namedChunks":["routes-SuperHub","Containers-EndUserContainer","Header","SuperHubSearch","routes-SuperHub-Routes","Reference","ConnectMetadata","RMDX","Footer"]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

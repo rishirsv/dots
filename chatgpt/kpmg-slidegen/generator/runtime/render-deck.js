@@ -410,6 +410,18 @@ function dedupeSlotIssueRows(items = []) {
   return out;
 }
 
+function dedupeStringList(items = []) {
+  return [...new Set((items || []).map((item) => String(item)))];
+}
+
+function formatTableWarningMessage(warning = {}) {
+  const slideIndex = Number.isFinite(warning.slideIndex) ? warning.slideIndex : '?';
+  const slideType = warning.slideType || 'unknown';
+  const code = warning.code || 'table_warning';
+  const message = warning.message || 'Table formatting warning.';
+  return `slides[${slideIndex}] (${slideType}) [${code}] ${message}`;
+}
+
 function collectRepeatedBodyLineWarnings(slides = []) {
   const lineMap = new Map();
   slides.forEach((slideSpec, slideIndex) => {
@@ -1078,6 +1090,8 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
   const paginatedSlides = applyAutoContentsPageRanges(paginated?.slides || [], templatePackage);
   const paginationDecisions = paginated?.paginationDecisions || [];
   const overflowEvents = paginated?.overflowEvents || [];
+  const tableWarnings = paginated?.tableWarnings || [];
+  const tableWarningMessages = tableWarnings.map((warning) => formatTableWarningMessage(warning));
   const pagination = paginationDecisions.map((event) => ({ ...event }));
   const overflowRisks = overflowEvents
     .filter((event) => Number(event?.splitInto || 0) > 1)
@@ -1124,12 +1138,14 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
   }
   return {
     pptx,
-    warnings: validation.warnings || [],
+    warnings: dedupeStringList([...(validation.warnings || []), ...tableWarningMessages]),
     qa: {
+      warnings: tableWarningMessages,
       pagination,
       paginationDecisions,
       overflowEvents,
       overflowRisks,
+      tableWarnings,
       masterApplied,
       densityFindings: validation?.qa?.densityFindings || [],
       thinSlides: validation?.qa?.thinSlides || [],

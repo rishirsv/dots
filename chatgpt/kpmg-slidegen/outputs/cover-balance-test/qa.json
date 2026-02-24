@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-02-24T15:45:19.518Z",
+  "template": "kpmg-diligence",
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "densityFindings": [
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.65,
+      "acceptableFloor": 0.552,
+      "shouldRepair": false
+    }
+  ],
+  "densitySummary": {
+    "ok": 1,
+    "thin": 0,
+    "sparse": 0
+  },
+  "missingSlots": [],
+  "thinSlides": [],
+  "sparseSlides": [],
+  "slotIssues": [],
+  "slotMetrics": [
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "slot": "subtitle",
+      "kind": "text",
+      "actual": 81,
+      "target": 12,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "slot": "title",
+      "kind": "text",
+      "actual": 55,
+      "target": 8,
+      "priority": "high"
+    }
+  ],
+  "repairSuggestions": [],
+  "pagination": [],
+  "overflowRisks": [],
+  "masterApplied": [
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "expectedMaster": "KPMG_COVER",
+      "appliedMaster": "KPMG_COVER",
+      "matched": true
+    }
+  ],
+  "paginationDecisions": [],
+  "overflowEvents": [],
+  "fallbacks": [],
+  "overlapSummary": {
+    "slideCount": 1,
+    "overlapCount": 0,
+    "severeCount": 0,
+    "warningCount": 0,
+    "containmentCount": 0
+  },
+  "overlapFindings": [],
+  "strictOverflow": {
+    "status": 0
+  },
+  "inputSlideCount": 1,
+  "outputSlideCount": 1,
+  "outputPptx": "outputs/cover-balance-test/deck.pptx",
+  "summary": {
+    "status": "pass",
+    "inputSlides": 1,
+    "renderedSlides": 1,
+    "blockingIssues": 0,
+    "advisoryIssues": 0,
+    "counts": {
+      "errors": 0,
+      "warnings": 0,
+      "missingSlots": 0,
+      "sparseSlides": 0,
+      "thinSlides": 0,
+      "slotIssues": 0,
+      "overflowEvents": 0,
+      "overlapSevere": 0,
+      "overlapWarnings": 0,
+      "repairSuggestions": 0
+    },
+    "strict": {
+      "requested": false,
+      "failed": false,
+      "overflowStatus": null,
+      "overflowSkipped": false
+    }
+  }
+}

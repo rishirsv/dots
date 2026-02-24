@@ -1,0 +1,68 @@
+Jump to ContentOverviewAPI ReferenceChangelogv1.0Log InOverviewLog Inv1.0OverviewAPI ReferenceChangelogAccess and PricingSearch⌘KAllOverviewAPI ReferenceChangelogPagesStart typing to search…OverviewIntroduction to Gamma's API offeringsGamma APIUnderstand the API optionsGenerate API parameters explainedCreate from Template API parameters explainedList Themes and List Folders APIs explainedGamma MCPGamma MCP Server and ConnectorsAccess and SupportAccess and PricingGet HelpPowered by Access and Pricing/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
+@layer theme, base, components, utilities;
+@layer utilities;
+Access
+
+API access is available to subscribers on Pro, Ultra, Teams, and Business plans. View pricing plans here.
+To get started, you can generate an API key through your account settings as shown below.
+
+
+Usage and pricing
+
+API billing is conducted using a credit-based system, and higher tier subscribers receive more monthly credits.
+If you run out of credits, you can upgrade to a higher subscription tier, purchase credits ad hoc, or enable auto-recharge (recommended) at https://gamma.app/settings/billing
+
+
+
+How credits work
+Credit charges are determined based on several factors and are returned in the GET response.
+FeatureAPI parameterCredits Charged*Number of cardsnumCards3-4 credits/cardAI image modelimageOptions.model
+Basic models: ~2 credits/image
+Advanced models: ~10-20 credits/image
+Premium models: ~20-40 credits/image
+Ultra models: ~40-120 credits/image
+
+*Credit charges subject to change.
+Illustrative scenarios
+
+Deck with 10 cards + 5 images generated using a basic image model = ~40-50 credits
+Doc with 20 cards + 15 images generated using a premium image model = ~360-680 credits
+Socials with 30 cards + 30 images generated using an ultra image model = ~1290-3720 credits
+
+
+To learn more about credits, you can visit our Help Center.Updated 27 days ago Read MoreGet HelpDid this page help you?YesNoAsk AITable of Contents
+Access
+Usage and pricing
+How credits work
+var is_hub = true;
+var is_hub2 = true;
+var is_hub_edit = true;
+[2852,4863,1456,3766,6123,6146,8836,8577,3307,6563,4670,5026,2112,1402,5346,5171,4644,4201,7791,8719,1924,8850,6825,7752,4986,7356,5798]{"namedChunks":["routes-SuperHub","Containers-EndUserContainer","Header","SuperHubSearch","routes-SuperHub-Routes","Doc","ConnectMetadata","RMDX","Footer"]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

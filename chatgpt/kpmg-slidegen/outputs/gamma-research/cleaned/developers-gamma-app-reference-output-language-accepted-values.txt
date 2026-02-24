@@ -1,0 +1,44 @@
+Jump to ContentOverviewAPI ReferenceChangelogv1.0Log InAPI ReferenceLog Inv1.0OverviewAPI ReferenceChangelogOutput language accepted valuesSearch⌘KAllOverviewAPI ReferenceChangelogPagesStart typing to search…JUMP TO⌘/CREATE GAMMASGenerate a gammapostCreate from gamma templatepostReceive generated file URLsgetImage model accepted valuesOutput language accepted valuesLIST VALUESList ThemesgetList FoldersgetERRORS AND WARNINGSError codesWarningsPowered by Output language accepted valuesAsk AI/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
+@layer theme, base, components, utilities;
+@layer utilities;
+You can create gammas in different languages. To specify the output language of your gamma, use the appropriate string in the textOptions.language parameter. If nothing is specified in this parameter, Gamma creates your output in en, ie English (US).
+LanguageKeyAfrikaansafAlbaniansqArabicarArabic (Saudi Arabia)ar-saBengalibnBosnianbsBulgarianbgCatalancaCroatianhrCzechcsDanishdaDutchnlEnglish (India)en-inEnglish (UK)en-gbEnglish (US)enEstonianetFinnishfiFrenchfrGermandeGreekelGujaratiguHausahaHebrewheHindihiHungarianhuIcelandicisIndonesianidItalianitJapanese (です/ます style)jaJapanese (だ/である style)ja-daKannadaknKazakhkkKoreankoLatvianlvLithuanianltMacedonianmkMalaymsMalayalammlMarathimrNorwegiannbPersianfaPolishplPortuguese (Brazil)pt-brPortuguese (Portugal)pt-ptRomanianroRussianruSerbiansrSimplified Chinesezh-cnSlovenianslSpanishesSpanish (Latin America)es-419Spanish (Mexico)es-mxSpanish (Spain)es-esSwahiliswSwedishsvTagalogtlTamiltaTeluguteThaithTraditional Chinesezh-twTurkishtrUkrainianukUrduurUzbekuzVietnameseviWelshcyYorubayoUpdated 4 months ago Image model accepted valuesList ThemesDid this page help you?YesNoUpdated 4 months ago Image model accepted valuesList ThemesDid this page help you?YesNoCREATE GAMMASGenerate a gammapostCreate from gamma templatepostReceive generated file URLsgetImage model accepted valuesOutput language accepted valuesLIST VALUESList ThemesgetList FoldersgetERRORS AND WARNINGSError codesWarningsvar is_hub = true;
+var is_hub2 = true;
+var is_hub_edit = true;
+[2852,4863,1456,3766,6123,6146,8836,8577,3307,6563,4670,5026,2112,3137,8962,9459,1380,1396,6840,1402,5346,4644,3463,705,4201,5464,7791,2398,1924,8850,6825,7752,4986,7356,5798]{"namedChunks":["routes-SuperHub","Containers-EndUserContainer","Header","SuperHubSearch","routes-SuperHub-Routes","Reference","ConnectMetadata","RMDX","Footer"]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

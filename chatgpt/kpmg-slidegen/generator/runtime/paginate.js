@@ -8,6 +8,9 @@
 
 import { FOOTER_SAFE_TOP } from '../helpers/footer.js';
 const BODY_FONT_SIZE = 10;
+const TABLE_ROW_HEIGHT_CAP = 0.9;
+const TABLE_ROW_DENSITY_LINE_THRESHOLD = 7;
+const TABLE_ROW_DENSITY_HEIGHT_THRESHOLD = 0.82;
 
 function clone(obj) {
   return obj ? JSON.parse(JSON.stringify(obj)) : obj;
@@ -182,7 +185,11 @@ function paginateOneColumnBullets(slideSpec, geometry, fieldName, { footerSafe =
   return out;
 }
 
-function paginateTableRows(slideSpec, geometry, { footerSafe = false, fallbackBox, titleMaxChars = null } = {}) {
+function paginateTableRows(
+  slideSpec,
+  geometry,
+  { footerSafe = false, fallbackBox, titleMaxChars = null, emitWarning = null } = {},
+) {
   const table = slideSpec.table;
   if (!table || !Array.isArray(table.rows) || table.rows.length <= 0) return [slideSpec];
 
@@ -211,7 +218,7 @@ function paginateTableRows(slideSpec, geometry, { footerSafe = false, fallbackBo
     colW.push(...Array.from({ length: cols }, () => totalW / cols));
   }
 
-  const estimateRowHeight = (row) => {
+  const estimateRowMetrics = (row) => {
     const cells = Array.isArray(row) ? row : [];
     let maxLines = 1;
     for (let idx = 0; idx < cols; idx += 1) {
@@ -222,10 +229,34 @@ function paginateTableRows(slideSpec, geometry, { footerSafe = false, fallbackBo
         .reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / Math.max(1, charsPerLine))), 0);
       if (lines > maxLines) maxLines = lines;
     }
-    return Math.max(0.22, Math.min(0.9, maxLines * 0.14 + 0.04));
+    const unclampedHeight = maxLines * 0.14 + 0.04;
+    return {
+      maxLines,
+      rowHeight: Math.max(0.22, Math.min(TABLE_ROW_HEIGHT_CAP, unclampedHeight)),
+      clamped: unclampedHeight > TABLE_ROW_HEIGHT_CAP,
+    };
   };
 
-  const rowHeights = table.rows.map((row) => estimateRowHeight(row));
+  const rowMetrics = table.rows.map((row, idx) => ({ index: idx, ...estimateRowMetrics(row) }));
+  const rowHeights = rowMetrics.map((row) => row.rowHeight);
+  const denseRows = rowMetrics.filter(
+    (row) =>
+      row.clamped ||
+      row.maxLines >= TABLE_ROW_DENSITY_LINE_THRESHOLD ||
+      row.rowHeight >= TABLE_ROW_DENSITY_HEIGHT_THRESHOLD,
+  );
+  if (denseRows.length > 0 && typeof emitWarning === 'function') {
+    emitWarning({
+      code: 'table_row_density_risk',
+      severity: 'warning',
+      message: 'Some table rows are dense and may appear cramped in export.',
+      details: {
+        denseRowCount: denseRows.length,
+        maxEstimatedLines: Math.max(...denseRows.map((row) => row.maxLines)),
+        sampleRows: denseRows.slice(0, 3).map((row) => row.index + 1),
+      },
+    });
+  }
   const totalBodyH = rowHeights.reduce((sum, h) => sum + h, 0);
   if (totalBodyH <= bodyBudget) return [slideSpec];
 
@@ -243,6 +274,20 @@ function paginateTableRows(slideSpec, geometry, { footerSafe = false, fallbackBo
     if (end === cursor) end += 1;
     chunks.push([cursor, end]);
     cursor = end;
+  }
+  const lastChunk = chunks[chunks.length - 1] || [0, 0];
+  const lastChunkRows = Math.max(0, lastChunk[1] - lastChunk[0]);
+  if (chunks.length > 1 && lastChunkRows === 1 && typeof emitWarning === 'function') {
+    emitWarning({
+      code: 'table_pagination_orphan',
+      severity: 'warning',
+      message: 'Auto-pagination left a single orphan row on the final continuation slide.',
+      details: {
+        splitInto: chunks.length,
+        totalRows: table.rows.length,
+        orphanRow: lastChunk[0] + 1,
+      },
+    });
   }
 
   const out = [];
@@ -268,6 +313,7 @@ export function paginateDeckSpec(deckSpec, layouts) {
     slides: [],
     paginationDecisions: [],
     overflowEvents: [],
+    tableWarnings: [],
   };
 
   function recordSplit(slideIndex, type, mode, originalCount, pages, details = {}) {
@@ -287,6 +333,18 @@ export function paginateDeckSpec(deckSpec, layouts) {
       mode,
       originalCount,
       splitInto: pages,
+    });
+  }
+
+  function recordTableWarning(slideIndex, slideType, warning) {
+    if (!warning || typeof warning !== 'object') return;
+    out.tableWarnings.push({
+      slideIndex,
+      slideType,
+      code: warning.code || 'table_warning',
+      severity: warning.severity || 'warning',
+      message: warning.message || 'Table formatting warning.',
+      details: warning.details || {},
     });
   }
 
@@ -351,6 +409,7 @@ export function paginateDeckSpec(deckSpec, layouts) {
         footerSafe: true,
         fallbackBox: { w: 11.1596, h: 4.5, y: 1.9 },
         titleMaxChars,
+        emitWarning: (warning) => recordTableWarning(slideIndex, type, warning),
       });
       const originalCount = Array.isArray(slideSpec?.table?.rows) ? slideSpec.table.rows.length : 0;
       recordSplit(slideIndex, type, 'table-rows', originalCount, paged.length);

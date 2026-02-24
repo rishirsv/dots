@@ -1,0 +1,52 @@
+Jump to ContentOverviewAPI ReferenceChangelogv1.0Log InAPI ReferenceLog Inv1.0OverviewAPI ReferenceChangelogGenerate a gammaSearch⌘KAllOverviewAPI ReferenceChangelogPagesStart typing to search…JUMP TO⌘/CREATE GAMMASGenerate a gammapostCreate from gamma templatepostReceive generated file URLsgetImage model accepted valuesOutput language accepted valuesLIST VALUESList ThemesgetList FoldersgetERRORS AND WARNINGSError codesWarningsPowered by Generate a gammaAsk AIpost https://public-api.gamma.app/v1.0/generationsCreate a new gamma using this endpoint.Recent RequestsLog in to see full request historyTimeStatusUser Agent Make a request to see history.URL ExpiredThe URL for this request expired after 30 days.Close/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
+@layer theme, base, components, utilities;
+@layer utilities;
+We highly recommend you read Generate API parameters explained before delving into this page.
+For parameters with a long list of accepted values, please reference:
+
+imageOptions.model accepts values listed in Image model accepted values.
+textOptions.language accepts values listed in Output language accepted values.
+List Themes and List Folders endpoints can be used to find values for the themeId and folderIds parameters.
+
+Generated gammas appear in a separate tab in your dashboard. This tab appears only after you have successfully created at least one gamma using the API.
+
+Body ParamsinputTextstringrequiredText and image URLs used to generate your gamma. Can be as little as a few words or pages of text. Character limits: 1-100,000 tokens. Example: Pitch deck on deep sea exploration.textModestringenumrequiredHow you want your inputText to be modified by Gamma, if at all.generatecondensepreserveAllowed:generatecondensepreserveformatstringenumDefaults to presentationThe type of artifact you want to create.presentationdocumentwebpagesocialAllowed:presentationdocumentwebpagesocialthemeIdstringThe theme from Gamma that will be used for your creation. You can create custom themes in Gamma. If nothing is specified, the default theme for your workspace is chosen.numCardsintegerDefaults to 10How many cards you want to create when cardSplit is set to auto. Options: Pro users choose any integer between 1 and 60; Ultra users choose any integer between 1 and 75.cardSplitstringenumDefaults to autoHow you want your content to be divided up.autoinputTextBreaksAllowed:autoinputTextBreaksadditionalInstructionsstringExtra specifications about the desired content and layouts. Character limits: 1-2000. Example: Make the titles catchy.folderIdsarray of stringsThe folder(s) where you want to store your gamma.folderIdsADD  stringexportAsstringenumAdditional file types for saving your gamma.pdfpptxAllowed:pdfpptxtextOptionsobjectAttributes of the text you want to generate.textOptions objectimageOptionsobjectAttributes of the images you want to generate, if any.imageOptions objectcardOptionsobjectAttributes of the cards you want to generate. Related to the format parameter.cardOptions objectsharingOptionsobjectDetermines how your gamma is shared with others.sharingOptions objectHeadersContent-TypestringrequiredDefaults to application/jsonX-API-KEYstringrequiredEnter your API key here.Responses 200Successful responseResponse bodyjson 400Bad Request 401UnauthorizedUpdated 4 months ago Create from gamma templateDid this page help you?YesNoLanguageShellNodeRubyPHPPythoncURL RequestExamplesxxxxxxxxxx1curl --request POST \2     --url https://public-api.gamma.app/v1.0/generations \3     --header 'Content-Type: application/json' \4     --header 'accept: application/json' \5     --data '6{7  "textMode": "generate"8}9'Try It!Response200 - SuccessExamplexxxxxxxxxx 1{2  "generationId": "xxxxxxxxxxx"3}Updated 4 months ago Create from gamma templateDid this page help you?YesNoCREATE GAMMASGenerate a gammapostCreate from gamma templatepostReceive generated file URLsgetImage model accepted valuesOutput language accepted valuesLIST VALUESList ThemesgetList FoldersgetERRORS AND WARNINGSError codesWarningsvar is_hub = true;
+var is_hub2 = true;
+var is_hub_edit = true;
+[2852,4863,1456,3766,6123,6146,8836,8577,3307,6563,4670,5026,2112,3137,8962,9459,1380,1396,6840,1402,5346,4644,3463,705,4201,5464,7791,2398,1924,8850,6825,7752,4986,7356,5798]{"namedChunks":["routes-SuperHub","Containers-EndUserContainer","Header","SuperHubSearch","routes-SuperHub-Routes","Reference","ConnectMetadata","RMDX","Footer"]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

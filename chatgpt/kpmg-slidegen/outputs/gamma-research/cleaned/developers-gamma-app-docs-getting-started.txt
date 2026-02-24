@@ -1,0 +1,57 @@
+Jump to ContentOverviewAPI ReferenceChangelogv1.0Log InOverviewLog Inv1.0OverviewAPI ReferenceChangelogIntroduction to Gamma's API offeringsSearch⌘KAllOverviewAPI ReferenceChangelogPagesStart typing to search…OverviewIntroduction to Gamma's API offeringsGamma APIUnderstand the API optionsGenerate API parameters explainedCreate from Template API parameters explainedList Themes and List Folders APIs explainedGamma MCPGamma MCP Server and ConnectorsAccess and SupportAccess and PricingGet HelpPowered by Introduction to Gamma's API offerings/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
+@layer theme, base, components, utilities;
+@layer utilities;
+Gamma's APIs allow you to programmatically create presentations, documents, social media posts, and websites. This API mirrors much of the AI generation functionality available through Gamma's web application.
+
+
+What is Gamma?
+Gamma is an AI-powered design partner that helps you create professional-looking presentations, documents, social posts, and websites quickly using AI-generated content and images. Our APIs extends this functionality to developers and users of automation tools, allowing them to integrate Gamma's content generation capabilities into their own applications and workflows.
+Key Features
+Versatile Content CreationCreate presentations, documents, social posts, and websites in various sizes and styles. Generate from any text -- a one-line prompt, messy notes, or polished content. Support for 60+ languages makes your content globally accessible.Intelligent DesignGet thoughtfully designed content with customizable themes and images from AI or a source of your choosing. Fine-tune your output by defining tone, audience, and detail level.Seamless WorkflowFurther refine your API generated content in the Gamma app or export directly to PDF or PPTX via API. You can also connect Gamma into your favorite automation tool to create an end to end workflow.
+
+Ways to use the API
+You can use the Gamma API in multiple ways:
+
+On automation platforms like Make, Zapier, Workato, N8N, etc, to automate your workflows
+By directly integrating it into backend code to power your apps
+
+
+Authentication
+We currently support authentication via API keys only; OAuth support is coming soon.
+/Updated 20 days ago Read MoreUnderstand the API optionsDid this page help you?YesNoAsk AITable of Contents
+What is Gamma?
+Key Features
+Ways to use the API
+Authentication
+var is_hub = true;
+var is_hub2 = true;
+var is_hub_edit = true;
+[2852,4863,1456,3766,6123,6146,8836,8577,3307,6563,4670,5026,2112,1402,5346,5171,4644,4201,7791,8719,1924,8850,6825,7752,4986,7356,5798]{"namedChunks":["routes-SuperHub","Containers-EndUserContainer","Header","SuperHubSearch","routes-SuperHub-Routes","Doc","ConnectMetadata","RMDX","Footer"]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,225 @@
+- document:
+  - button "Back" [ref=e1]
+  - heading "Generate" [ref=e2] [level=2]
+  - heading "Prompt" [ref=e3] [level=2]
+  - button "3 cards" [ref=e4]
+  - button "Classic" [ref=e5]:
+    - paragraph: Classic
+  - button "Default" [ref=e6]
+  - button "English (US)" [ref=e7]
+  - paragraph: Create a 3-card test presentation about markdown parsing heuristics for slide generation. Keep it concise with bullet points.
+  - button "Regenerate outline" [ref=e8]
+  - heading "Outline" [ref=e9] [level=2]
+  - group:
+    - group:
+      - text: ⋮ 1
+      - heading "Markdown Parsing Heuristics for Slide Generation" [ref=e10] [level=1]
+      - list:
+        - listitem: How Markdown is interpreted to create slides
+      - list:
+        - listitem: Key rules that determine slide breaks and content structure
+      - list:
+        - listitem: Practical tips for writing Markdown optimized for presentations
+    - button "Add card" [ref=e11]
+  - group:
+    - group:
+      - text: ⋮ 2
+      - 'heading "Slide Separation: The Horizontal Rule (---)" [level=1]'
+      - list:
+        - listitem: Three or more hyphens (---) act as slide dividers in most tools (e.g., Marp, Reveal.js)
+      - list:
+        - listitem: Must be on a line by itself, no extra spaces or characters
+      - list:
+        - listitem: Consistent use ensures predictable slide breaks and smooth navigation
+      - list:
+        - listitem: Some tools support vertical slides with double separators or custom regex
+    - button "Add card" [ref=e12] [nth=1]
+  - group:
+    - group:
+      - text: ⋮ 3
+      - heading "Header Levels Define Slide Titles and Structure" [ref=e13] [level=1]
+      - list:
+        - listitem: "# (H1) usually marks the title slide or main section"
+      - list:
+        - listitem: "## (H2) and deeper headers create slide titles or subsections"
+      - list:
+        - listitem: Proper header hierarchy helps parsers organize content and generate TOCs
+      - list:
+        - listitem: Avoid skipping header levels to maintain clean slide flow
+    - button "Add card" [ref=e14] [nth=2]
+  - group:
+    - group:
+      - text: ⋮ 4
+      - heading "Content Blocks and Inline Parsing" [ref=e15] [level=1]
+      - list:
+        - listitem: "Lists (-, *), code blocks (fenced with ```), images, and links are parsed as usual"
+      - list:
+        - listitem: Inline formatting (bold, italic) uses ** or * and is preserved in slides
+      - list:
+        - listitem: Code blocks maintain formatting and can be syntax-highlighted if supported
+      - list:
+        - listitem: Images use ![alt](url) syntax and can be positioned with tool-specific hints
+    - button "Add card" [ref=e16] [nth=3]
+  - group:
+    - group:
+      - text: ⋮ 5
+      - 'heading "Handling Complex Layouts: Columns and Font Scaling" [level=1]'
+      - list:
+        - listitem: Some converters (e.g., pptx2marp) use heuristics to auto-create multi-column slides based on content density
+      - list:
+        - listitem: Font size classes (small, smaller) may be applied automatically for dense slides
+      - list:
+        - listitem: Image alignment hints (left, center, right) can be inferred from Markdown or metadata
+      - list:
+        - listitem: Manual CSS or slide directives can override heuristics for precise control
+    - button "Add card" [ref=e17] [nth=4]
+  - group:
+    - group:
+      - text: ⋮ 6
+      - heading "Parsing Challenges and Best Practices" [ref=e18] [level=1]
+      - list:
+        - listitem: Avoid mixing tabs and spaces to prevent parsing errors
+      - list:
+        - listitem: Keep horizontal rules clean and consistent for reliable slide breaks
+      - list:
+        - listitem: Use blank lines to separate paragraphs and blocks clearly
+      - list:
+        - listitem: Test your Markdown in the target slide tool to catch quirks early
+    - button "Add card" [ref=e19] [nth=5]
+  - group:
+    - group:
+      - text: ⋮ 7
+      - heading "Tools Leveraging Markdown Parsing Heuristics" [ref=e20] [level=1]
+      - list:
+        - listitem: "Marp: Single Markdown file to slides, uses --- for slide breaks, supports themes and pagination"
+      - list:
+        - listitem: "Reveal.js: Supports embedded Markdown with data-markdown attribute, customizable separators"
+      - list:
+        - listitem: "JetBrains IDEs: Markdown slide preview with live rendering and code integration"
+      - list:
+        - listitem: "pptx2marp: Converts PowerPoint to Markdown slides with layout heuristics and formula parsing"
+    - button "Add card" [ref=e21] [nth=6]
+  - group:
+    - group:
+      - text: ⋮ 8
+      - heading "Visual Enhancements via Markdown Extensions" [ref=e22] [level=1]
+      - list:
+        - listitem: Mermaid diagrams embedded with fenced code blocks for flowcharts and graphs
+      - list:
+        - listitem: Speaker notes using special syntax or comments recognized by some parsers
+      - list:
+        - listitem: Background images and slide themes set via front-matter or special comments
+      - list:
+        - listitem: Custom CSS injection for advanced styling beyond Markdown defaults
+    - button "Add card" [ref=e23] [nth=7]
+  - group:
+    - group:
+      - text: ⋮ 9
+      - 'heading "Summary: Key Takeaways for Markdown Slide Generation" [level=1]'
+      - list:
+        - listitem: Use --- lines to clearly separate slides
+      - list:
+        - listitem: Structure content with headers for logical flow
+      - list:
+        - listitem: Leverage tool-specific features for layout and styling
+      - list:
+        - listitem: Validate Markdown in your chosen slide generator early and often
+    - button "Add card" [ref=e24] [nth=8]
+  - group:
+    - group:
+      - text: ⋮ 10
+      - heading "Ready to Create Your Markdown Slides?" [ref=e25] [level=1]
+      - list:
+        - listitem: "Start simple: write content with headers and --- separators"
+      - list:
+        - listitem: Experiment with images, code blocks, and lists for rich slides
+      - list:
+        - listitem: Explore tools like Marp and Reveal.js for easy conversion
+      - list:
+        - listitem: Mastering parsing heuristics unlocks fast, flexible presentations!
+  - button "Add card" [ref=e26] [nth=9]
+  - paragraph: 10 cards total
+  - paragraph: Type --- for card breaks
+  - progressbar:
+    - img
+  - paragraph: 711/50000
+  - heading "Customize your gamma" [ref=e27] [level=2]
+  - heading "Text content" [ref=e28] [level=2]
+  - group:
+    - text: Amount of text per card
+    - button "Minimal" [ref=e29]:
+      - paragraph: Minimal
+    - button "Concise" [ref=e30]:
+      - paragraph: Concise
+    - button "Detailed" [ref=e31]:
+      - paragraph: Detailed
+    - button "Extensive" [ref=e32]:
+      - paragraph: Extensive
+  - separator
+  - heading "Visuals" [ref=e33] [level=2]
+  - group:
+    - text: Theme
+    - button "View more" [ref=e34]
+    - paragraph: Use one of our popular themes below or view more
+    - group:
+      - img
+      - img
+      - paragraph: Lavender
+    - group:
+      - img
+      - paragraph: Dune
+    - group:
+      - img
+      - paragraph: Prism
+    - paragraph: Kraft
+    - paragraph: Mocha
+    - paragraph: Howlite
+  - group:
+    - text: Image source
+    - button "AI images" [ref=e35]
+  - group:
+    - text: AI image model
+    - group:
+      - button "AI image model" [ref=e36]:
+        - text: Auto-select
+        - paragraph: 2 per image
+  - group:
+    - text: Image art style
+    - img "Illustration"
+    - img
+    - paragraph: Illustration
+    - img "Photo"
+    - paragraph: Photo
+    - img "Abstract"
+    - paragraph: Abstract
+    - img "3D"
+    - paragraph: 3D
+    - img "Line Art"
+    - paragraph: Line Art
+    - img "Custom"
+    - paragraph: Custom
+  - group:
+    - checkbox "Use theme style" [ref=e37] [checked]
+    - paragraph: Use theme style
+  - group:
+    - text: Add extra keywords
+    - paragraph: Add keywords (e.g. minimalism, colorful) to maintain consistency in image style.
+    - textbox "Add extra keywords" [ref=e38]:
+      - /placeholder: Optional
+    - list: pastel-toned clean-lined minimalist soft-lavender
+  - button "Advanced mode" [ref=e39]
+  - button "49 credits" [ref=e40]
+  - paragraph:
+    - strong: You're almost out of credits.
+    - text: Upgrade for longer decks, better AI, and more credits that refresh monthly.
+  - button "View plans" [ref=e41]
+  - paragraph: 10 cards total
+  - button "Generate" [ref=e42]
+  - button "Help" [ref=e43]
+  - alert: Generate | Gamma
+  - region "Notifications-top" [ref=e44]
+  - region "Notifications-top-left" [ref=e45]
+  - region "Notifications-top-right" [ref=e46]
+  - region "Notifications-bottom-left" [ref=e47]
+  - region "Notifications-bottom" [ref=e48]
+  - region "Notifications-bottom-right" [ref=e49]
