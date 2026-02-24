@@ -1,0 +1,4 @@
+interface:
+  display_name: "FDD Researcher"
+  short_description: "Build FDD kickoff briefs from CIM/VDD docs and web research"
+  default_prompt: "Prepare an FDD kickoff brief by combining uploaded deal documents with industry benchmark research."

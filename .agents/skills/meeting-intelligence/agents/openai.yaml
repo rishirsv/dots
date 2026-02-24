@@ -1,0 +1,4 @@
+interface:
+  display_name: "Meeting Intelligence"
+  short_description: "Generate structured meeting notes from transcripts"
+  default_prompt: "Produce comprehensive structured meeting notes from a transcript, choosing FDD or general business template automatically."
