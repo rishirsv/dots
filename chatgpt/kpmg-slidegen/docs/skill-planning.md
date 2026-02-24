@@ -1,6 +1,6 @@
 ---
 owner: kpmg-slidegen maintainers
-status: draft
+status: superseded
 last-reviewed: 2026-02-23
 review-cycle-days: 14
 source-of-truth: docs/skill-planning.md
@@ -8,6 +8,8 @@ verification-state: planning-wip
 ---
 
 # SlideGen Skill Planning (WIP)
+
+Superseded by `docs/skill-rebuild/plan-skill-rebuild.md` for implementation and current direction.
 
 Purpose:
 

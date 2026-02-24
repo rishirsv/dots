@@ -1,4 +1,0 @@
-- button "Home" [ref=e1]
-- button "Try Studio mode" [ref=e2]
-- button "Load more" [ref=e3]
-- button "Help" [ref=e4]

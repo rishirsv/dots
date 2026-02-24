@@ -53,7 +53,7 @@ const previewDir = path.join(tmpDir, 'preview');
 const montagePath = path.join(tmpDir, 'montage.png');
 
 const deckSpec = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), 'decks', 'lorem-comprehensive.deckSpec.json'), 'utf8'),
+  fs.readFileSync(path.join(process.cwd(), 'decks', 'qa-golden-all-layouts.deckSpec.json'), 'utf8'),
 );
 const templatePackage = loadTemplatePackage('kpmg-diligence');
 

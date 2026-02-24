@@ -1,0 +1,277 @@
+{
+  "generatedAt": "2026-02-24T22:00:35.945Z",
+  "template": "kpmg-diligence",
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "densityFindings": [
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.65,
+      "acceptableFloor": 0.552,
+      "shouldRepair": false
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "divider",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.75,
+      "acceptableFloor": 0.637,
+      "shouldRepair": false
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "oneColumnText",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.72,
+      "acceptableFloor": 0.612,
+      "shouldRepair": false
+    },
+    {
+      "slideIndex": 3,
+      "slideType": "backCover",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0,
+      "acceptableFloor": 1,
+      "shouldRepair": false
+    }
+  ],
+  "densitySummary": {
+    "ok": 4,
+    "thin": 0,
+    "sparse": 0
+  },
+  "missingSlots": [],
+  "thinSlides": [],
+  "sparseSlides": [],
+  "slotIssues": [],
+  "slotMetrics": [
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "slot": "subtitle",
+      "kind": "text",
+      "actual": 38,
+      "target": 12,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "slot": "title",
+      "kind": "text",
+      "actual": 23,
+      "target": 8,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "divider",
+      "slot": "sectionNumber",
+      "kind": "text",
+      "actual": 2,
+      "target": 2,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "divider",
+      "slot": "sectionTitle",
+      "kind": "text",
+      "actual": 16,
+      "target": 6,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "oneColumnText",
+      "slot": "body",
+      "kind": "textArray",
+      "actual": 260,
+      "target": 180,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "oneColumnText",
+      "slot": "strapline",
+      "kind": "text",
+      "actual": 54,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "oneColumnText",
+      "slot": "source",
+      "kind": "text",
+      "actual": 27,
+      "target": 12,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "oneColumnText",
+      "slot": "title",
+      "kind": "text",
+      "actual": 16,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "oneColumnText",
+      "slot": "bodyStyle",
+      "kind": "text",
+      "actual": 7,
+      "target": 7,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 3,
+      "slideType": "backCover",
+      "slot": "disclaimer",
+      "kind": "text",
+      "actual": 0,
+      "target": 0,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 3,
+      "slideType": "backCover",
+      "slot": "url",
+      "kind": "text",
+      "actual": 0,
+      "target": 0,
+      "priority": "low"
+    }
+  ],
+  "repairSuggestions": [],
+  "pagination": [],
+  "overflowRisks": [],
+  "masterApplied": [
+    {
+      "slideIndex": 0,
+      "slideType": "cover",
+      "expectedMaster": "KPMG_COVER",
+      "appliedMaster": "KPMG_COVER",
+      "matched": true
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "divider",
+      "expectedMaster": "KPMG_SECTION_DARK",
+      "appliedMaster": "KPMG_SECTION_DARK",
+      "matched": true
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "oneColumnText",
+      "expectedMaster": "KPMG_WHITE",
+      "appliedMaster": "KPMG_WHITE",
+      "matched": true
+    },
+    {
+      "slideIndex": 3,
+      "slideType": "backCover",
+      "expectedMaster": "KPMG_CLOSING",
+      "appliedMaster": "KPMG_CLOSING",
+      "matched": true
+    }
+  ],
+  "paginationDecisions": [],
+  "overflowEvents": [],
+  "tableWarnings": [],
+  "fallbacks": [],
+  "overlapSummary": {
+    "slideCount": 4,
+    "overlapCount": 0,
+    "severeCount": 0,
+    "warningCount": 0,
+    "containmentCount": 0
+  },
+  "overlapFindings": [],
+  "strictOverflow": {
+    "status": 0
+  },
+  "inputSlideCount": 4,
+  "outputSlideCount": 4,
+  "outputPptx": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/deck.pptx",
+  "postprocess": {
+    "availability": {
+      "slidesSkill": true,
+      "reason": null,
+      "slidesDir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime",
+      "python": "python3"
+    },
+    "preview": {
+      "attempted": true,
+      "status": "ok",
+      "reason": null,
+      "stderr": null,
+      "outputDir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/preview",
+      "slideImageCount": 4,
+      "width": 1600,
+      "height": 900
+    },
+    "montage": {
+      "attempted": true,
+      "status": "ok",
+      "reason": null,
+      "stderr": null,
+      "path": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/montage.png",
+      "numCol": 5,
+      "labelMode": "number"
+    },
+    "overflowVisual": {
+      "attempted": true,
+      "status": "pass",
+      "reason": null,
+      "stderr": null,
+      "failingSlides": [],
+      "imagePaths": []
+    }
+  },
+  "summary": {
+    "status": "pass",
+    "inputSlides": 4,
+    "renderedSlides": 4,
+    "blockingIssues": 0,
+    "advisoryIssues": 0,
+    "counts": {
+      "errors": 0,
+      "warnings": 0,
+      "missingSlots": 0,
+      "sparseSlides": 0,
+      "thinSlides": 0,
+      "slotIssues": 0,
+      "overflowEvents": 0,
+      "overlapSevere": 0,
+      "overlapWarnings": 0,
+      "repairSuggestions": 0
+    },
+    "strict": {
+      "requested": false,
+      "failed": false,
+      "overflowStatus": null,
+      "overflowSkipped": false
+    },
+    "postprocess": {
+      "previewAttempted": 1,
+      "previewFailed": 0,
+      "previewStatus": "ok",
+      "montageAttempted": 1,
+      "montageFailed": 0,
+      "montageStatus": "ok",
+      "overflowVisualAttempted": 1,
+      "overflowVisualFailed": 0,
+      "overflowVisualStatus": "pass"
+    }
+  }
+}

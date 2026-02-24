@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "title": "Skill Bundle Smoke",
+    "author": "KPMG LLP",
+    "company": "KPMG LLP",
+    "subject": "Skill bundle smoke fixture",
+    "allowSparse": true,
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential"
+    }
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Skill Bundle Smoke Deck",
+      "subtitle": "Bundled generator runtime verification"
+    },
+    {
+      "type": "divider",
+      "sectionNumber": "01",
+      "sectionTitle": "Smoke Validation"
+    },
+    {
+      "type": "oneColumnText",
+      "title": "Smoke Body Slide",
+      "strapline": "Bundled runtime should render and produce QA artifacts",
+      "bodyStyle": "bullets",
+      "body": [
+        "This fixture validates that the skill uses the synced generator runtime and template package.",
+        "A passing run should emit a PPTX and QA JSON without relying on source generator paths.",
+        "Use this as a deterministic portability check before publishing skill updates."
+      ],
+      "source": "Source: skill smoke fixture"
+    },
+    {
+      "type": "backCover"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ Equivalent direct command:
 
 ```bash
 node generator/index.js \
-  --in decks/lorem-comprehensive.deckSpec.json \
+  --in decks/deckspec-starter-template.deckSpec.json \
   --out outputs/my-run/deck.pptx \
   --qa-out outputs/my-run/qa.json
 ```
@@ -28,7 +28,7 @@ node generator/index.js \
 
 ```bash
 node generator/index.js \
-  --in decks/lorem-comprehensive.deckSpec.json \
+  --in decks/deckspec-starter-template.deckSpec.json \
   --out outputs/my-run/deck.pptx \
   --qa-out outputs/my-run/qa.json \
   --strict
@@ -38,7 +38,7 @@ node generator/index.js \
 
 ```bash
 node generator/index.js \
-  --in decks/lorem-comprehensive.deckSpec.json \
+  --in decks/deckspec-starter-template.deckSpec.json \
   --out outputs/my-run/deck.pptx \
   --qa-out outputs/my-run/qa.json \
   --with-preview \
@@ -50,9 +50,9 @@ node generator/index.js \
 
 ```bash
 node generator/index.js \
-  --in decks/lorem-comprehensive.deckSpec.json \
-  --out outputs/lorem/deck.pptx \
-  --qa-out outputs/lorem/qa.json
+  --in decks/qa-golden-all-layouts.deckSpec.json \
+  --out outputs/stress/deck.pptx \
+  --qa-out outputs/stress/qa.json
 ```
 
 ## 2) What Changed in the Current Architecture
@@ -62,7 +62,7 @@ node generator/index.js \
 - Render flow supports passing a precomputed validation result to avoid duplicate full validation passes.
 - Cover and back-cover rendering now require template assets explicitly and fail with clear errors when missing.
 - Builder harness entrypoints were removed from production builder files and replaced with `scripts/dev/*`.
-- A comprehensive lorem test deck and visual validation script were added.
+- A comprehensive stress deck fixture and visual validation script were added.
 - Text-slide title limits are now hard-enforced (`maxChars`) to prevent title wrapping/shrinking.
 - Text slides support `bodyStyle` (`bullets` or `paragraphs`) and inline body subheaders via body text objects.
 - Subheader visual treatment is standardized to KPMG blue, bold Arial, size 10.
@@ -76,12 +76,21 @@ kpmg-slidegen/
 ├── TODOS.md
 ├── package.json
 ├── decks/
+│   ├── deckspec-starter-template.deckSpec.json
 │   ├── layout-flex-one-per-layout.deckSpec.json
-│   └── lorem-comprehensive.deckSpec.json
+│   ├── qa-golden-all-layouts.deckSpec.json
+│   ├── validation-failing-example.deckSpec.json
+│   └── nvidia.deckSpec.json
+├── outputs/
+│   └── qa-golden-fixture/
+│       ├── deck.pptx
+│       ├── qa.json
+│       └── golden-all-layouts.qa.json
 ├── docs/
 │   ├── DECKSPEC-SCHEMA.md
 │   ├── DECKSPEC-SLOTS-SCHEMA.json
 │   ├── DECK-AUTHORING-PLAYBOOK.md
+│   ├── QA-GOLDEN-FIXTURE.md
 │   └── refactor-implementation-plan.md
 ├── generator/
 │   ├── index.js
@@ -92,13 +101,22 @@ kpmg-slidegen/
 │   ├── builders/
 │   ├── helpers/
 │   ├── postprocess/
-│   │   └── slides-adapter.js
+│   │   ├── slides-adapter.js
+│   │   └── slides-runtime/
+│   │       ├── render_slides.py
+│   │       ├── create_montage.py
+│   │       ├── slides_test.py
+│   │       └── ensure_raster_image.py
 │   ├── runtime/
 │   └── strict/
 ├── scripts/
 │   ├── smoke-generate.mjs
+│   ├── sync-skill-bundle.mjs
+│   ├── test-qa-golden.mjs
+│   ├── test-validation-failure.mjs
 │   ├── test-postprocess-flows.mjs
 │   ├── validate-visual.mjs
+│   ├── verify-skill-bundle.mjs
 │   └── dev/
 │       ├── render-cover-sample.mjs
 │       └── render-analysis-narrow-sample.mjs
@@ -202,10 +220,30 @@ Run these only when explicitly needed:
 
 ```bash
 npm run test:contracts
+npm run test:qa:golden
+npm run test:validation:failure
 npm run smoke
 npm run test:postprocess
 npm run validate:visual
+npm run skill:sync
+npm run skill:verify
 ```
+
+Golden QA fixture refresh:
+
+```bash
+UPDATE_GOLDEN=1 npm run test:qa:golden
+```
+
+Skill bundle sync and verification:
+
+```bash
+npm run skill:sync
+npm run skill:verify
+```
+
+`skill:sync` is authoritative for managed bundle content and prunes stale files in managed target directories.
+The skill distributable keeps only the smoke fixture under `skills/kpmg-slides/assets/fixtures/`.
 
 ## Dev builder samples
 
@@ -230,11 +268,24 @@ npm run dev:analysis-narrow
 ## 9) Visual Validation Workflow
 
 `node scripts/validate-visual.mjs` performs an integration-style check:
-- Generates `decks/lorem-comprehensive.deckSpec.json` into a temp folder.
+- Generates `decks/qa-golden-all-layouts.deckSpec.json` into a temp folder.
 - Produces preview PNGs and montage via postprocess adapter.
 - Validates all preview slides exist, are non-empty, and have measurable dimensions.
 - Validates montage exists and is non-empty.
 - Validates overflow result structure and indices.
+
+## 9.1) Golden QA Contract Workflow
+
+`node scripts/test-qa-golden.mjs` verifies QA report contract shape against a checked-in golden fixture.
+- Uses dense all-layout input fixture: `decks/qa-golden-all-layouts.deckSpec.json`
+- Compares normalized runtime QA output against: `outputs/qa-golden-fixture/golden-all-layouts.qa.json`
+- Normalizes volatile fields (`generatedAt`, absolute paths, `outputPptx`, `postprocess`) to keep diffs stable.
+- Fails on unexpected QA schema or contract drift.
+
+Fixture review artifacts live in `outputs/qa-golden-fixture/`:
+- `deck.pptx` (visual review output)
+- `qa.json` (raw QA output from fixture generation)
+- `golden-all-layouts.qa.json` (normalized contract snapshot used by `test:qa:golden`)
 
 Prerequisites for visual checks:
 - Embedded slides runtime must be discoverable by adapter.
@@ -250,7 +301,8 @@ Prerequisites for visual checks:
 - Required template asset key is absent from manifest or missing on disk.
 
 `Visual validation requires an available slides runtime`
-- Set `SLIDES_SKILL_DIR` or ensure adapter fallback paths exist.
+- Bundled runtime is expected at `generator/postprocess/slides-runtime`.
+- Set `SLIDES_SKILL_DIR` only if you want to override bundled runtime discovery.
 
 `No module named 'pdf2image'`
 - Install dependency into your Python runtime used by slides scripts.

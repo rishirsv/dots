@@ -1,1 +1,0 @@
-{"operationName":"GetDocCurrentSnapshotId","variables":{"id":"5nah2m2qfjvhuj8"},"query":"query GetDocCurrentSnapshotId($id: ID!) {\n  doc(id: $id) {\n    id\n    currentSnapshotId\n    __typename\n  }\n}\n"}

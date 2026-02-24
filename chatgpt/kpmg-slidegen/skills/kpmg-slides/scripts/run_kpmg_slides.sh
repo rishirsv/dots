@@ -7,7 +7,7 @@ Usage:
   run_kpmg_slides.sh --in <deckspec.json> [--out-dir <dir>]
 
 Defaults:
-  --out-dir outputs/my-run
+  --out-dir outputs/skill-run
 
 This runner always enables visual postprocess:
   --with-preview --with-montage --with-visual-overflow
@@ -15,15 +15,19 @@ EOF
 }
 
 IN_PATH=""
-OUT_DIR="outputs/my-run"
-REPO_ROOT="$(pwd -P)"
+OUT_DIR="outputs/skill-run"
+CALLER_ROOT="$(pwd -P)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+SKILL_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+BUNDLE_ROOT="$SKILL_ROOT/assets/slidegen"
+GENERATOR_ENTRY="$BUNDLE_ROOT/generator/index.js"
 
 abspath() {
   local p="$1"
   if [[ "$p" = /* ]]; then
     echo "$p"
   else
-    echo "$REPO_ROOT/$p"
+    echo "$CALLER_ROOT/$p"
   fi
 }
 
@@ -68,13 +72,19 @@ if ! command -v node >/dev/null 2>&1; then
   exit 1
 fi
 
+if [[ ! -f "$GENERATOR_ENTRY" ]]; then
+  echo "Bundled generator not found: $GENERATOR_ENTRY" >&2
+  echo "Run: npm run skill:sync" >&2
+  exit 1
+fi
+
 mkdir -p "$OUT_DIR"
 DECK_OUT="$OUT_DIR/deck.pptx"
 QA_OUT="$OUT_DIR/qa.json"
 PREVIEW_DIR="$OUT_DIR/preview"
 MONTAGE_OUT="$OUT_DIR/montage.png"
 
-node generator/index.js \
+node "$GENERATOR_ENTRY" \
   --in "$IN_PATH" \
   --out "$DECK_OUT" \
   --qa-out "$QA_OUT" \

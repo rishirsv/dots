@@ -320,3 +320,152 @@ Recommended multipliers:
 - https://help.gamma.app/en/articles/11016396-what-are-cards-in-gamma-and-how-to-do-they-work
 - https://help.gamma.app/en/articles/7838093-how-do-i-create-a-new-presentation-document-or-webpage-in-gamma
 
+## Implementation Ideas
+This section compares the current `kpmg-slidegen` skill implementation to the Gamma findings and proposes concrete upgrades optimized for a **skill-driven workflow** (not a direct end-user GUI).
+
+### Current Implementation (Detailed Read)
+Key strengths already in place:
+- Deterministic orchestration and QA generation in `generator/index.js`.
+- Strong template contract enforcement, slot validation, and density scoring in `generator/runtime/render-deck.js`.
+- Deterministic overflow/pagination heuristics in `generator/runtime/paginate.js`.
+- Reliable run packaging and artifact reporting in `skills/kpmg-slides/scripts/run_kpmg_slides.sh`.
+- Clear authoring constraints and expected workflow in `skills/kpmg-slides/SKILL.md`.
+
+Primary gaps relative to Gamma-style flow:
+- No explicit, first-class **settings resolver** stage before content creation.
+- No automated **outline planning stage** that maps goals to slide types/slots before writing content.
+- Density/overflow feedback is mostly **post-render**, not used as a pre-generation prompt contract.
+- No native `textContentLevel -> textAmount` contract in the skill workflow.
+- No structured conflict-coercion/warning object for contradictory instructions.
+
+### Strongest Gamma Patterns to Adopt and Expand
+Highest-leverage patterns from Gamma for this repo:
+1. Explicit settings contract with control precedence.
+2. Two-stage generation (outline first, then layout-aware deck generation).
+3. Deterministic text scaling via `sm/md/lg/xl` controls.
+4. Structured warnings/coercions instead of silent fallback.
+5. Continuous loop from generation diagnostics back into next prompt cycle.
+
+### Prioritized Implementation Ideas
+| Priority | Idea | Where to Implement | Skill/UI-UX Benefit |
+|---|---|---|---|
+| P0 | Add a **Settings Resolver** stage that normalizes user intent into a strict object (`textMode`, `textAmount`, `numSlides`, split policy, audience/tone, image policy) | New helper in `skills/kpmg-slides/scripts/` plus wiring in `SKILL.md` workflow; optional generator acceptance in `generator/index.js` | Faster first-pass success in skill sessions; fewer clarifying back-and-forth turns; more predictable deck behavior from the first run |
+| P0 | Add explicit `textContentLevel` (`minimal/concise/detailed/extensive`) mapped to `sm/md/lg/xl` | Skill input contract and deckSpec metadata; enforce in validation/density checks | Author can intentionally choose “board brief” vs “appendix depth” without rewriting prompts repeatedly |
+| P0 | Introduce an **Outline Planner** that creates a slide-type/slot skeleton before content fill | New planning command (e.g., `--plan`) using `templates/kpmg-diligence/package/layouts.json` and schema refs | Reduces invalid slot combinations and layout mismatches; improves narrative flow before detailed writing starts |
+| P0 | Add deterministic **conflict resolver + warning schema** (ignored fields, coerced values, reason) | Shared normalizer invoked before render; emit in QA JSON | Builds trust and transparency in skill outputs; users understand why the tool changed behavior instead of guessing |
+| P1 | Export **prompt-ready hint bundles** from validation (`slotMetrics`, density gaps, repair suggestions) | Extend outputs from `generator/runtime/render-deck.js` and QA object in `generator/index.js` | Enables iterative “self-healing” skill loops: each run provides actionable instructions for the next run |
+| P1 | Run **preflight QA** before expensive render/postprocess steps and classify findings into blocking vs advisory | Add preflight validation path in CLI and script wrapper | Quicker iteration cycles; less waiting on full render when slide contract issues are obvious early |
+| P1 | Add markdown split grammar support (`---SLIDE---`, heading fallback) at the skill planning layer | Parser in skill script; emit canonical deckSpec sections | Lets users author naturally in markdown while keeping deterministic slide boundaries |
+| P2 | Add targeted regeneration mode for problematic slides only (from QA findings) | Skill command to rewrite only specific slide indices/types | Better editing UX in skill mode: smaller corrective loops instead of regenerating full decks |
+| P2 | Add “preserve mode” strictness profile for diligence/legal text | Settings resolver + content writer prompt policy | Reduces accidental factual drift when summarizing source material |
+
+### Detailed Recommendation Notes (With Benefit Lens)
+#### 1) Settings Resolver as a First-Class Stage (P0)
+Implementation idea:
+- Introduce a normalized settings payload before any deckSpec authoring/render:
+  - `textMode`
+  - `textAmount`
+  - `numSlidesTarget`
+  - `splitPolicy`
+  - `audience`
+  - `tone`
+  - `language`
+  - `imagePolicy`
+  - `layoutDensityPreference`
+
+Skill/UI-UX benefit:
+- In a skill-driven workflow, this replaces ambiguous natural-language intent with a compact “control panel” object.
+- Users get predictable outcomes quickly, which is the equivalent of good UI affordances in non-UI environments.
+
+#### 2) Outline-First Authoring (P0)
+Implementation idea:
+- Add a planning command that outputs a skeleton `deckSpec`:
+  - slide order
+  - slide types constrained to supported layouts
+  - expected slots per slide
+  - section transitions
+
+Skill/UI-UX benefit:
+- Reduces cognitive load: users review structure first, then fill content.
+- Mirrors Gamma’s strongest “structured draft first” experience without requiring a visual editor.
+
+#### 3) Text Scaling Contract (`sm/md/lg/xl`) (P0)
+Implementation idea:
+- Adopt Gamma-like mapping:
+  - `minimal -> sm`
+  - `concise -> md`
+  - `detailed -> lg`
+  - `extensive -> xl`
+- Tie each level to explicit per-layout budgets (words, bullets, line-length limits).
+
+Skill/UI-UX benefit:
+- Gives users reliable control over content depth, especially for “detailed vs extensive” asks.
+- Prevents repeated manual edits to force the right density.
+
+#### 4) Conflict Resolver and Transparent Warnings (P0)
+Implementation idea:
+- Normalize contradictory instructions before generation.
+- Emit structured warnings/coercions in QA:
+  - `ignored_parameter`
+  - `coerced_value`
+  - `unsupported_combo`
+
+Skill/UI-UX benefit:
+- Equivalent of inline form validation in a GUI: users understand exactly what changed and why.
+- Decreases frustration from silent behavior changes.
+
+#### 5) Preflight + Postflight QA Loop (P1)
+Implementation idea:
+- Preflight: run slot/density/contract checks before full PPTX build.
+- Postflight: keep existing overlap/overflow diagnostics and classify findings by severity.
+
+Skill/UI-UX benefit:
+- Improves perceived speed and control in skill interactions.
+- Users get “fix these first” guidance early, then polished QA after render.
+
+#### 6) Prompt-Hint Feedback Loop (P1)
+Implementation idea:
+- Convert existing diagnostic outputs into prompt-ready “next run hints.”
+- Include per-slide repair directives automatically.
+
+Skill/UI-UX benefit:
+- Makes iterative runs feel guided and intelligent.
+- Reduces manual interpretation of raw QA JSON.
+
+#### 7) Markdown-Native Planning (P1)
+Implementation idea:
+- Support explicit slide delimiters and heading-based fallback at the skill level.
+- Convert markdown sections deterministically into slide skeletons.
+
+Skill/UI-UX benefit:
+- Users can author in familiar markdown while preserving deterministic generation behavior.
+- Better portability from notes/transcripts to slide structure.
+
+#### 8) Targeted Slide Regeneration (P2)
+Implementation idea:
+- Add a mode that regenerates only flagged slides based on QA issues.
+
+Skill/UI-UX benefit:
+- Much shorter correction loops.
+- Keeps validated slides stable while fixing only what is broken.
+
+### What to De-Prioritize from Gamma (Lower Relevance to Skill Mode)
+- GUI-specific interactions (drag/drop card manipulation, visual inline controls).
+- Credit/upsell UI mechanics.
+- Broad image marketplace knobs unless directly needed by your workflows.
+
+These do not materially improve a CLI/skill experience compared with settings normalization, outline planning, and deterministic QA loops.
+
+### Suggested Execution Order
+1. Implement `P0` settings resolver + text scaling contract + conflict warnings.
+2. Implement `P0` outline planner that emits a slot-valid skeleton deckSpec.
+3. Implement `P1` preflight QA and prompt-hint exports for iterative skill loops.
+4. Implement `P2` targeted regeneration once the above telemetry and contracts are stable.
+
+### Expected Outcome
+Adopting these Gamma-inspired patterns in a skill-native way should produce:
+- Higher first-pass deck quality.
+- Fewer iterative correction turns.
+- More predictable “detailed vs extensive” content behavior.
+- Better trust through explicit constraints and transparent warnings.
+- A more guided and less error-prone authoring experience without needing a full GUI.

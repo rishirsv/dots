@@ -21,6 +21,7 @@ This repo converts `deckSpec` JSON files into `.pptx` outputs with a consolidate
 - Preserve runtime-minimal design; avoid adding unnecessary frameworks.
 - Keep docs and code consistent when changing slide types, slot rules, or QA shape.
 - Validate changes by running the generator with explicit `--in`, `--out`, and `--qa-out`.
+- Keep postprocess runtime portable: repo runs and skill runs must work without external `.agents` dependencies.
 
 ## Quick Start
 ```bash
@@ -35,4 +36,13 @@ node generator/index.js \
 - `generator/runtime/render-deck.js`: validation + rendering dispatch.
 - `generator/runtime/paginate.js`: overflow splitting.
 - `generator/strict/overlap.js`: overlap checks.
+- `generator/postprocess/slides-adapter.js`: preview/montage/overflow adapter with runtime discovery.
+- `generator/postprocess/slides-runtime/`: bundled Python postprocess runtime (`render_slides.py`, `create_montage.py`, `slides_test.py`, `ensure_raster_image.py`).
 - `templates/kpmg-diligence/package/layouts.json`: slide-type layout contract.
+
+## Skill Bundle Contract
+- Sync skill bundle with `npm run skill:sync`.
+- Verify portability with `npm run skill:verify`.
+- Skill distributable lives under `skills/kpmg-slides/` and must remain self-contained for generation + postprocess checks.
+- Keep skill references aligned to `slide-contract.md`, `writing-guide.md`, `starter-template-guide.md`, `qa-rules.md`, and `output-examples.md`.
+- QA communication in skill responses should prioritize blocking issues, then one sentence for non-blocking observations.

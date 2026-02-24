@@ -1,7 +1,0 @@
-https://developers.gamma.app/docs/introduction-to-gammas-api-offerings
-https://developers.gamma.app/docs/generate-api-parameters-explained
-https://developers.gamma.app/docs/create-from-template-parameters-explained
-https://developers.gamma.app/reference/create-gamma
-https://help.gamma.app/en/articles/11016396-what-are-cards-in-gamma-and-how-to-do-they-work
-https://help.gamma.app/en/articles/7838093-how-do-i-create-a-new-presentation-document-or-webpage-in-gamma
-https://help.gamma.app/en/articles/7708158-generate-and-rewrite-with-ai

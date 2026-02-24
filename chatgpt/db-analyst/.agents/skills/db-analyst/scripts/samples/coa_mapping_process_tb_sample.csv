@@ -1,3 +1,0 @@
-account_number,account_name,statement,Level1Key,Level1Name,Level2Key,Level2Name,Level3Key,Level3Name,LineKey,LineName,SortOrder,SignMultiplier,Notes
-4000,Revenue,IS,IS_REV,Revenue,IS_REV_CORE,Core Revenue,IS_REV_CORE,Core Revenue,IS_REV,Revenue,10,-1,Credits shown as positive in IS output
-5000,Cost of Sales,IS,IS_COGS,Cost of goods sold,IS_COGS_CORE,Direct Costs,IS_COGS_CORE,Direct Costs,IS_COGS,Cost of goods sold,20,-1,Debits shown as negative in IS output

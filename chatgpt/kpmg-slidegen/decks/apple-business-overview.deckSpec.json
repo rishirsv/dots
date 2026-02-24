@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "title": "Apple Business Overview Slide",
+    "author": "KPMG LLP",
+    "company": "KPMG LLP",
+    "subject": "Apple financial overview",
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential",
+      "officeContactText": ""
+    }
+  },
+  "slides": [
+    {
+      "type": "oneColumnText",
+      "customLayout": "businessOverviewApple",
+      "title": "Business overview",
+      "bodyStyle": "bullets",
+      "body": [
+        "Apple maintains top-line scale above $380B, with FY2025 revenue at $383.3B versus $394.3B in FY2024 and $365.8B in FY2023.",
+        "Earnings conversion remains strong, with FY2025 gross profit of $169.1B, operating income of $114.3B, and net income of $97.0B.",
+        "Operating cash flow stayed robust at $110.5B in FY2025, while capital expenditures were disciplined at $11.0B."
+      ],
+      "tabs": [
+        "Executive summary",
+        "Historical trading",
+        "Balance sheet",
+        "Reporting environment",
+        "Gross margin by LOB",
+        "Appendices"
+      ],
+      "activeTabIndex": 0,
+      "leftHeading": "Legal chart",
+      "rightHeading": "Company overview",
+      "legalChart": {
+        "top": [
+          {
+            "label": "Apple Inc. (Parent)",
+            "share": "34%"
+          },
+          {
+            "label": "Apple Operations\nInternational",
+            "share": "33%"
+          },
+          {
+            "label": "Apple Sales\nInternational",
+            "share": "33%"
+          }
+        ],
+        "middle": [
+          {
+            "label": "Apple Products Group",
+            "share": "75%"
+          },
+          {
+            "label": "Apple Services Group",
+            "share": "25%"
+          }
+        ],
+        "bottom": {
+          "label": "Apple consolidated operations\nFY2023-FY2025"
+        },
+        "notes": [
+          "Note 1: Share percentages are illustrative to mirror legal-chart formatting in this template style.",
+          "Note 2: Financial values are sourced from the FY2023-FY2025 formatted files in tests/financial-overview/formatted."
+        ],
+        "source": "Source: tests/financial-overview/formatted (income statement, balance sheet, cash flow)"
+      },
+      "companyOverview": {
+        "intro": "Apple Inc. (\"Apple\" or the \"Company\") designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and digital services globally. The operating model combines premium devices with tightly integrated software and subscription-led services, supporting scale, retention, and durable monetization across both consumer and enterprise channels.",
+        "bullets": [
+          "Product platform strength: iPhone, Mac, iPad, and Wearables continue to anchor the ecosystem, with integrated hardware-software design supporting premium pricing and customer stickiness.",
+          "Services durability: High-margin recurring offerings across digital content, cloud, payments, advertising, and subscriptions provide a stabilizing counterweight to hardware cycle volatility.",
+          "Scale profile: FY2025 revenue of $383.3B remains above FY2023 ($365.8B), while normalizing versus FY2024 ($394.3B), indicating resilience despite a tougher compare period.",
+          "Earnings quality: FY2025 gross profit of $169.1B and operating income of $114.3B reflect strong conversion from topline to operating earnings in a still investment-active year.",
+          "Liquidity and cash generation: Operating cash flow of $110.5B in FY2025, combined with substantial balance-sheet capacity, continues to support reinvestment, supply-chain flexibility, and shareholder return programs."
+        ],
+        "source": "Source: tests/financial-overview/formatted/*-aapl-fy3.csv"
+      },
+      "metricChart": {
+        "title": "Reported financial metrics by LOB ($B)",
+        "type": "bar",
+        "valAxisTitle": "$B",
+        "opts": {
+          "valAxisMaxVal": 430,
+          "valAxisMinVal": 0,
+          "valAxisMajorUnit": 50
+        },
+        "data": [
+          {
+            "name": "FY23",
+            "labels": [
+              "Revenue",
+              "Cost of\nRevenue",
+              "Gross\nProfit",
+              "Op.\nIncome",
+              "Net\nIncome",
+              "Op. Cash\nFlow",
+              "Current\nAssets"
+            ],
+            "values": [
+              365.8,
+              213.0,
+              152.8,
+              108.9,
+              94.7,
+              104.0,
+              135.4
+            ]
+          },
+          {
+            "name": "FY24",
+            "labels": [
+              "Revenue",
+              "Cost of\nRevenue",
+              "Gross\nProfit",
+              "Op.\nIncome",
+              "Net\nIncome",
+              "Op. Cash\nFlow",
+              "Current\nAssets"
+            ],
+            "values": [
+              394.3,
+              223.5,
+              170.8,
+              119.4,
+              99.8,
+              122.2,
+              143.6
+            ]
+          },
+          {
+            "name": "FY25",
+            "labels": [
+              "Revenue",
+              "Cost of\nRevenue",
+              "Gross\nProfit",
+              "Op.\nIncome",
+              "Net\nIncome",
+              "Op. Cash\nFlow",
+              "Current\nAssets"
+            ],
+            "values": [
+              383.3,
+              214.1,
+              169.1,
+              114.3,
+              97.0,
+              110.5,
+              153.0
+            ]
+          }
+        ],
+        "source": "Source: tests/financial-overview/formatted/*-aapl-fy3.csv"
+      },
+      "source": "Source: tests/financial-overview/formatted/income-statement-aapl-fy3.csv; balance-sheet-aapl-fy3.csv; cash-flow-aapl-fy3.csv"
+    }
+  ]
+}

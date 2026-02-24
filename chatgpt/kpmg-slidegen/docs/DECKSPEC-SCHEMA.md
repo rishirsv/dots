@@ -327,7 +327,7 @@ Continuation slides append `(cont.)` to title.
 
 ```bash
 node generator/index.js \
-  --in decks/lorem-comprehensive.deckSpec.json \
+  --in decks/deckspec-starter-template.deckSpec.json \
   --out outputs/my-run/deck.pptx \
   --qa-out outputs/my-run/qa.json
 ```
@@ -336,9 +336,9 @@ node generator/index.js \
 
 ```bash
 node generator/index.js \
-  --in decks/lorem-comprehensive.deckSpec.json \
-  --out outputs/lorem/deck.pptx \
-  --qa-out outputs/lorem/qa.json
+  --in decks/qa-golden-all-layouts.deckSpec.json \
+  --out outputs/stress/deck.pptx \
+  --qa-out outputs/stress/qa.json
 ```
 
 ## Visual validation run
