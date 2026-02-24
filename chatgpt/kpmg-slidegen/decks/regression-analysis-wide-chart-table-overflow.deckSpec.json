@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "title": "Regression: Analysis Wide Chart Table Overflow",
+    "allowSparse": true
+  },
+  "slides": [
+    {
+      "type": "analysisWideChartTableText",
+      "title": "Maturity Score by Function",
+      "strapline": "Function-level averages highlight where executive attention should be concentrated over the next remediation cycle. This strapline is intentionally expanded to pressure body-region capacity after heading, chart, table, and source reservations are applied.",
+      "heading": "Function-level snapshot",
+      "showSummaryChart": false,
+      "bodyStyle": "bullets",
+      "body": [
+        {
+          "text": "What the scores indicate",
+          "header": true
+        },
+        "Respond and Recover remain comparatively stronger, reflecting clearer incident and restoration process structure across assessed artifacts.",
+        "Detect and Protect remain the primary pressure points where operational execution and documented control design are not consistently aligned.",
+        {
+          "text": "Management implication",
+          "header": true
+        },
+        "Focus near-term investment on detection engineering, monitoring governance, and policy-to-practice operating controls while sustaining gains in response and recovery disciplines.",
+        "Prioritize evidence traceability for objective ownership and cadence decisions where documentation currently relies on inferred practices.",
+        "Ensure remediation sequencing is tied to measurable control outcomes and board-level reporting expectations.",
+        "Maintain clear linkage between tactical action plans and category-level maturity movement assumptions.",
+        "Add an explicit decision log for deferred remediations so future reviews can validate risk acceptance rationale."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Average Maturity Score",
+            "labels": [
+              "GOVERN",
+              "IDENTIFY",
+              "PROTECT",
+              "DETECT",
+              "RESPOND",
+              "RECOVER"
+            ],
+            "values": [
+              2.3,
+              2.3,
+              2.2,
+              2.0,
+              2.8,
+              2.5
+            ]
+          }
+        ],
+        "source": "Source: consolidatedReport.xlsx Summary tab, Maturity Score by subcategory"
+      },
+      "table": {
+        "headers": [
+          "Function",
+          "Avg Score",
+          "Maturity Band",
+          "Categories"
+        ],
+        "rows": [
+          [
+            "GOVERN",
+            "2.33",
+            "Developing",
+            "6"
+          ],
+          [
+            "IDENTIFY",
+            "2.33",
+            "Developing",
+            "3"
+          ],
+          [
+            "PROTECT",
+            "2.20",
+            "Developing",
+            "5"
+          ],
+          [
+            "DETECT",
+            "2.00",
+            "Developing",
+            "2"
+          ],
+          [
+            "RESPOND",
+            "2.75",
+            "Managed",
+            "4"
+          ],
+          [
+            "RECOVER",
+            "2.50",
+            "Managed",
+            "2"
+          ]
+        ]
+      },
+      "noteSource": "Source: consolidatedReport.xlsx Summary tab, Maturity Score by subcategory"
+    }
+  ]
+}

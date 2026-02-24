@@ -7,6 +7,13 @@
 // Goal: never overlap; prefer continuation slides vs. tiny fonts.
 
 import { FOOTER_SAFE_TOP } from '../helpers/footer.js';
+import { TYPE_SIZES } from '../tokens.js';
+import { computeOneColumnLayoutGeometry } from '../helpers/one-column-layout.js';
+import { computeTwoColumnLayoutGeometry } from '../helpers/two-column-layout.js';
+import {
+  computeAnalysisWideChart2ColsTextGeometry,
+  computeAnalysisWideChartTableTextGeometry,
+} from '../helpers/analysis-wide-layout.js';
 const BODY_FONT_SIZE = 10;
 const TABLE_ROW_HEIGHT_CAP = 0.9;
 const TABLE_ROW_DENSITY_LINE_THRESHOLD = 7;
@@ -136,12 +143,16 @@ function applyFooterSafe(box, useFooter) {
   return { ...box, h: safeH };
 }
 
-function paginateTwoColumn(slideSpec, geometry, { footerSafe = false, fallbackLeft, fallbackRight, titleMaxChars = null } = {}) {
+function paginateTwoColumn(
+  slideSpec,
+  geometry,
+  { footerSafe = false, fallbackLeft, fallbackRight, titleMaxChars = null, leftBox = null, rightBox = null } = {},
+) {
   const g = geometry || {};
-  const leftBox = g.left || g.leftBody || g.leftText || fallbackLeft || { w: 5.5, h: 5.0, y: 1.5 };
-  const rightBox = g.right || g.rightBody || g.rightText || fallbackRight || { w: 5.5, h: 5.0, y: 1.5 };
-  const safeLeft = applyFooterSafe(leftBox, footerSafe);
-  const safeRight = applyFooterSafe(rightBox, footerSafe);
+  const resolvedLeft = leftBox || g.left || g.leftBody || g.leftText || fallbackLeft || { w: 5.5, h: 5.0, y: 1.5 };
+  const resolvedRight = rightBox || g.right || g.rightBody || g.rightText || fallbackRight || { w: 5.5, h: 5.0, y: 1.5 };
+  const safeLeft = applyFooterSafe(resolvedLeft, footerSafe);
+  const safeRight = applyFooterSafe(resolvedRight, footerSafe);
 
   const fontSize = BODY_FONT_SIZE;
   const leftChunks = chunkBullets(slideSpec.leftBody, {
@@ -165,9 +176,14 @@ function paginateTwoColumn(slideSpec, geometry, { footerSafe = false, fallbackLe
   return out;
 }
 
-function paginateOneColumnBullets(slideSpec, geometry, fieldName, { footerSafe = false, fallbackBox, titleMaxChars = null } = {}) {
+function paginateOneColumnBullets(
+  slideSpec,
+  geometry,
+  fieldName,
+  { footerSafe = false, fallbackBox, titleMaxChars = null, bodyBox = null } = {},
+) {
   const g = geometry || {};
-  const box = g.body || g.topText || g.leftText || fallbackBox || { w: 11.0, h: 5.0, y: 1.6 };
+  const box = bodyBox || g.body || g.topText || g.leftText || fallbackBox || { w: 11.0, h: 5.0, y: 1.6 };
   const safeBox = applyFooterSafe(box, footerSafe);
   const fontSize = BODY_FONT_SIZE;
   const chunks = chunkBullets(slideSpec[fieldName], {
@@ -361,11 +377,20 @@ export function paginateDeckSpec(deckSpec, layouts) {
     }
 
     if (type === 'twoColumnText') {
+      const masterName = slideSpec?.masterName || layout?.masterName || 'KPMG_WHITE';
+      const twoColLayout = computeTwoColumnLayoutGeometry({
+        geometry: geom,
+        masterName,
+        strapline: slideSpec?.strapline,
+        straplineFontSize: TYPE_SIZES.strapline,
+      });
       const paged = paginateTwoColumn(slideSpec, geom, {
-        footerSafe: true,
+        footerSafe: false,
         fallbackLeft: { w: 5.7, h: 5.7, y: 1.5 },
         fallbackRight: { w: 5.2, h: 5.7, y: 1.5 },
         titleMaxChars,
+        leftBox: twoColLayout?.safeLeftGeo || null,
+        rightBox: twoColLayout?.safeRightGeo || null,
       });
       const originalCount =
         (Array.isArray(slideSpec.leftBody) ? slideSpec.leftBody.length : 0) +
@@ -376,10 +401,20 @@ export function paginateDeckSpec(deckSpec, layouts) {
     }
 
     if (type === 'oneColumnText') {
+      const masterName = slideSpec?.masterName || layout?.masterName || 'KPMG_WHITE';
+      const oneColLayout = computeOneColumnLayoutGeometry({
+        geometry: geom,
+        masterName,
+        strapline: slideSpec?.strapline,
+        source: slideSpec?.source,
+        straplineFontSize: TYPE_SIZES.strapline,
+        sourceFontSize: TYPE_SIZES.source,
+      });
       const paged = paginateOneColumnBullets(slideSpec, geom, 'body', {
-        footerSafe: true,
+        footerSafe: false,
         fallbackBox: { w: 11.1596, h: 5.6, y: 1.6 },
         titleMaxChars,
+        bodyBox: oneColLayout?.safeBodyGeo || null,
       });
       const originalCount = Array.isArray(slideSpec.body) ? slideSpec.body.length : 0;
       recordSplit(slideIndex, type, 'one-column-bullets', originalCount, paged.length);
@@ -388,15 +423,32 @@ export function paginateDeckSpec(deckSpec, layouts) {
     }
 
     if (type === 'analysisWideChart2ColsText' || type === 'analysisWideChartTableText') {
-      // Body continues; chart repeats automatically because we keep `chart` unchanged.
-      const fallbackBox =
+      const masterName = slideSpec?.masterName || layout?.masterName || 'KPMG_WHITE';
+      const wideLayout =
         type === 'analysisWideChartTableText'
-          ? { w: 11.1596, h: 2.2, y: 1.6 }
-          : { w: 5.6, h: 5.4, y: 1.6 };
+          ? computeAnalysisWideChartTableTextGeometry({
+              geometry: geom,
+              masterName,
+              strapline: slideSpec?.strapline,
+              chart: slideSpec?.chart,
+              table: slideSpec?.table,
+              noteSource: slideSpec?.noteSource,
+              showSummaryChart: slideSpec?.showSummaryChart,
+            })
+          : computeAnalysisWideChart2ColsTextGeometry({
+              geometry: geom,
+              masterName,
+              strapline: slideSpec?.strapline,
+              chart: slideSpec?.chart,
+            });
       const paged = paginateOneColumnBullets(slideSpec, geom, 'body', {
-        footerSafe: true,
-        fallbackBox,
+        footerSafe: false,
+        fallbackBox:
+          type === 'analysisWideChartTableText'
+            ? { w: 11.1596, h: 2.2, y: 1.6 }
+            : { w: 5.6, h: 5.4, y: 1.6 },
         titleMaxChars,
+        bodyBox: wideLayout?.safeTextBox || null,
       });
       const originalCount = Array.isArray(slideSpec.body) ? slideSpec.body.length : 0;
       recordSplit(slideIndex, type, 'text-with-chart', originalCount, paged.length);

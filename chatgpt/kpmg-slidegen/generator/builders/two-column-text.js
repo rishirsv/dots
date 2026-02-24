@@ -2,25 +2,19 @@ import { FONTS, COLORS, TYPE_SIZES, TEXT_BOX } from '../tokens.js';
 import { toBodyRuns } from '../helpers/bullets.js';
 import { addTitle } from '../helpers/title.js';
 import { isValidColumnGeometry } from '../helpers/geometry.js';
-import { computeDynamicStraplineBox, sanitizeText } from '../helpers/text.js';
+import { sanitizeText } from '../helpers/text.js';
 import { recordFallback } from '../runtime/diagnostics.js';
+import { normalizeBodyStyle } from '../helpers/layout.js';
 import {
-  clampToMasterFooter,
-  computeStrapShift,
-  normalizeBodyStyle,
-  shiftBox,
-} from '../helpers/layout.js';
+  computeTwoColumnLayoutGeometry,
+  TWO_COLUMN_LAYOUT_DEFAULTS,
+} from '../helpers/two-column-layout.js';
 import fs from 'node:fs';
 import { normalizeImageSource } from '../helpers/media.js';
 import { svgToDataUri } from '../helpers/svg.js';
 
 export const TOKENS = {
-  geometry: {
-    title: { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 },
-    strapline: { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 },
-    left: { x: 1.0919, y: 1.2899, w: 5.7, h: 5.9101 },
-    right: { x: 7.0415, y: 1.2899, w: 5.2, h: 5.9101 },
-  },
+  geometry: TWO_COLUMN_LAYOUT_DEFAULTS.geometry,
   textStyles: {
     body: {
       fontFace: FONTS.body,
@@ -101,20 +95,14 @@ export function addTwoColumnTextWithStrapline(
 
   let strapBox = null;
   addTitle(slide, title, adjustedTitleGeo);
-  if (strapText) {
-    const strapBase = g.strapline || TOKENS.geometry.strapline || {
-      x: titleGeo.x,
-      y: TOKENS.geometry.title.y + TOKENS.geometry.title.h + 0.05,
-      w: titleGeo.w,
-      h: TOKENS.geometry.strapline.h,
-    };
-    strapBox = computeDynamicStraplineBox({
-      strapline: strapText,
-      titleGeo,
-      strapBase,
-      defaultStrapGeo: TOKENS.geometry.strapline,
-      fontSize: style?.straplineFontSize ?? TYPE_SIZES.strapline,
-    });
+  const layoutGeo = computeTwoColumnLayoutGeometry({
+    geometry: g,
+    masterName,
+    strapline: strapText,
+    straplineFontSize: style?.straplineFontSize ?? TYPE_SIZES.strapline,
+  });
+  strapBox = layoutGeo.strapBox;
+  if (strapText && strapBox) {
     slide.addText(sanitizeText(strapText), {
       ...strapBox,
       fontFace: FONTS.body,
@@ -127,14 +115,7 @@ export function addTwoColumnTextWithStrapline(
       valign: 'top',
     });
   }
-
-  const leftBase = g.left || TOKENS.geometry.left;
-  const rightBase = g.right || TOKENS.geometry.right;
-  const shift = computeStrapShift(strapBox, Math.min(leftBase.y, rightBase.y));
-  const leftGeo = shiftBox(leftBase, shift);
-  const rightGeo = shiftBox(rightBase, shift);
-  const safeLeftGeo = clampToMasterFooter(leftGeo, masterName);
-  const safeRightGeo = clampToMasterFooter(rightGeo, masterName);
+  const { safeLeftGeo, safeRightGeo } = layoutGeo;
 
   const bodyTextStyle = { ...TOKENS.textStyles.body, fontSize: style?.bodyFontSize ?? TOKENS.textStyles.body.fontSize };
   slide.addText(toBodyRuns(leftBody, effectiveBodyStyle), {

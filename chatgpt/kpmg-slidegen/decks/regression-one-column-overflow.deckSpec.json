@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "title": "Regression: One Column Overflow",
+    "allowSparse": true
+  },
+  "slides": [
+    {
+      "type": "oneColumnText",
+      "title": "Appendix Q8 GV.RM Raw Evidence",
+      "strapline": "GOVERN | Full question-level observations and direct citation evidence for this question. This strapline is intentionally extended with additional explanatory narrative, qualifier language, and repeated context so that dynamic strapline sizing materially reduces the effective body region and creates a realistic stress condition for pagination geometry mismatches across render and split paths.",
+      "bodyStyle": "bullets",
+      "body": [
+        {
+          "text": "Question",
+          "header": true
+        },
+        "Do senior leaders agree on cybersecurity objectives and use them for measuring and managing risk and performance?",
+        {
+          "text": "Observations by source",
+          "header": true
+        },
+        "Transcripts: Bank ABC describes agreement with corporate on how cybersecurity scoring measures work, and states that it submits quarterly metrics to corporate with recurring governance discussion at executive cadence and periodic checkpoint reviews.",
+        "Transcripts: Bank ABC states it sets objectives, priorities, and timelines for recommendations and findings, and documents targets and KPI-like measures during annual planning and quarterly review cycles with cross-functional input.",
+        "Transcripts: Bank ABC states that a leader meets every week with executives and directors, and that cybersecurity topics and incident updates are discussed in recurring management forums with accountability follow-through.",
+        "Documents: There is limited corroborating documentation that explicitly confirms leader-level agreement with cybersecurity objectives and linkage to risk performance metrics and monitoring dashboards across all business units.",
+        "Documents: Additional evidence requested includes approved objective statements, governance minutes with explicit approvals, and examples of tied risk indicators used for leadership oversight, escalation, and remediation tracking.",
+        "Questionnaires: Enterprise strategy references and policy approval language indicate directional alignment, but excerpts do not explicitly confirm objective-level agreement and measurement usage by accountable leaders.",
+        "Questionnaires: Governance committee cadence is described, yet evidence excerpts remain indirect on whether specific cybersecurity objectives are adopted and tracked by senior leaders through measurable controls.",
+        "Questionnaires: Policy approval statements imply governance maturity, but do not fully establish objective ownership, endorsement traceability, or explicit metric accountability by named senior roles and reporting owners.",
+        "Analyst note: This bullet is intentionally long and dense to force wrapping and push the body region toward its effective lower bound after footer-safe source placement in the rendered slide frame.",
+        "Analyst note: This final line is added to create a near-threshold condition where raw geometry may seem to fit but post-shift effective geometry should require continuation when measured consistently.",
+        "Analyst note: Supplemental sentence added purely to increase wrapped line count while preserving realistic prose structure and maintaining appendix-style readability expectations for audit documentation.",
+        "Analyst note: Additional continuation sentence inserted to emulate evidence-heavy appendix writeups where repeated qualifications and caveats are expected in formal reporting language.",
+        "Analyst note: Another dense sentence is included so that aggregate wrapped lines exceed practical body capacity after dynamic strapline growth and source reservation have been applied.",
+        "Analyst note: Final stress sentence to push this slide into adversarial territory and expose pagination versus rendering capacity mismatches without relying on unrealistic gibberish or hard truncation patterns."
+      ],
+      "source": "Source: consolidatedReport.xlsx Observations tab, Question 8. Supplementary source context intentionally extended to consume additional source footprint and reduce available body height in footer-safe rendering mode for this stress scenario."
+    }
+  ]
+}
