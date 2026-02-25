@@ -1,0 +1,267 @@
+{
+  "generated_at": "2026-02-25T15:42:23.826767",
+  "company": "PartyThrow Tech",
+  "industry": "saas",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 21,
+    "passed": 21,
+    "failed": 0,
+    "qoe_issues": 10,
+    "strict_mode": false,
+    "messy_strict_failure": false
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "trial_balance_balances",
+      "description": "Monthly accounting identity in trial balance snapshots (A = L + E)",
+      "passed": true,
+      "details": "Max absolute period imbalance: $0.01"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $23,032,532"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $39,007,843"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $59,667,640"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $64,661,959, TB: $64,661,959"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $83,182,475, TB: $83,182,475"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $105,095,636, TB: $105,095,636"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $16,229,733, BS: $16,229,733"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $5,514,201, BS: $5,514,201"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 193, Actual: 193"
+    },
+    {
+      "name": "cash_flow_ending_cash_tie",
+      "description": "Cash flow ending cash ties to balance sheet cash",
+      "passed": true,
+      "details": "2023 diff=$0.00; 2024 diff=$0.00; 2025 diff=$0.00"
+    },
+    {
+      "name": "net_income_retained_earnings_tie",
+      "description": "Income statement net income ties to change in retained earnings",
+      "passed": true,
+      "details": "2024 diff=$0.01; 2025 diff=$0.00"
+    },
+    {
+      "name": "narrative_tokens_cim.md",
+      "description": "cim.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_company_overview.md",
+      "description": "company_overview.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_accounting_policies.md",
+      "description": "accounting_policies.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_ebitda_bridge.md",
+      "description": "ebitda_bridge.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "mrr_revenue_tie_2023-12",
+      "description": "MRR ties to P&L revenue for 2023-12",
+      "passed": true,
+      "details": "MRR: $6,706,916, P&L: $6,706,916"
+    },
+    {
+      "name": "mrr_revenue_tie_2024-12",
+      "description": "MRR ties to P&L revenue for 2024-12",
+      "passed": true,
+      "details": "MRR: $8,429,543, P&L: $8,429,543"
+    },
+    {
+      "name": "mrr_revenue_tie_2025-12",
+      "description": "MRR ties to P&L revenue for 2025-12",
+      "passed": true,
+      "details": "MRR: $11,266,390, P&L: $11,266,390"
+    },
+    {
+      "name": "arr_calculation",
+      "description": "ARR = MRR \u00d7 12",
+      "passed": true,
+      "details": "MRR: $11,266,390, ARR: $135,196,686"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "one_time_event",
+      "date": "2021-11-19",
+      "description": "Major equipment purchase",
+      "impact": -1314000.0,
+      "category": "equipment"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2023-05-21",
+      "description": "New product/service launch",
+      "impact": 1752000.0,
+      "category": "product_launch"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2025-04-02",
+      "description": "New product/service launch",
+      "impact": 1752000.0,
+      "category": "product_launch"
+    },
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -8037442.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "One-time implementation revenue recognized upfront",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Capitalized software costs (R&D vs. development split)",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Stock-based compensation add-back",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Non-recurring legal/IP costs",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Above-market executive compensation",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party software licensing fees",
+      "category": "qoe_addback"
+    }
+  ],
+  "issues": [
+    {
+      "type": "one_time_event",
+      "date": "2021-11-19",
+      "description": "Major equipment purchase",
+      "impact": -1314000.0,
+      "category": "equipment"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2023-05-21",
+      "description": "New product/service launch",
+      "impact": 1752000.0,
+      "category": "product_launch"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2025-04-02",
+      "description": "New product/service launch",
+      "impact": 1752000.0,
+      "category": "product_launch"
+    },
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -8037442.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "One-time implementation revenue recognized upfront",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Capitalized software costs (R&D vs. development split)",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Stock-based compensation add-back",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Non-recurring legal/IP costs",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Above-market executive compensation",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party software licensing fees",
+      "category": "qoe_addback"
+    }
+  ],
+  "output_dir": "testing/data/data_rooms/scenario02-saas-mid-realistic",
+  "rule_coverage": {
+    "universal_checks": true,
+    "industry_specific_checks": true,
+    "qoe_checks": true
+  }
+}

@@ -1154,7 +1154,7 @@
         "sections": {
           "kind": "contentsSections",
           "required": true,
-          "minItems": 8,
+          "minItems": 3,
           "allowEmpty": false,
           "renderingHints": {
             "mode": "contents",

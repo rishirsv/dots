@@ -1,0 +1,457 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-25T15:42:16.828756",
+    "generator_version": "1.0.0",
+    "industry": "saas",
+    "size": "mid",
+    "realism_mode": "realistic",
+    "random_seed": 101,
+    "output_dir": "testing/data/data_rooms/scenario02-saas-mid-realistic"
+  },
+  "company": {
+    "name": "PartyThrow Tech",
+    "legal_name": "PartyThrow Tech, Inc.",
+    "industry": "saas",
+    "industry_display": "Software-as-a-Service",
+    "vertical": "EdTech",
+    "founded": 2018,
+    "headquarters": {
+      "city": "Orlando",
+      "state": "Florida",
+      "country": "United States",
+      "address": "570 Carolyn Heights",
+      "zip_code": "64131"
+    },
+    "website": "www.partythrowtech.com"
+  },
+  "brand": {
+    "primary_color": "#7C3AED",
+    "secondary_color": "#8B5CF6",
+    "accent_color": "#A78BFA",
+    "font_family": "Inter",
+    "font_family_mono": "JetBrains Mono"
+  },
+  "management": [
+    {
+      "title": "Chief Executive Officer",
+      "short_title": "CEO",
+      "name": "Christy Maddox",
+      "years_at_company": 9,
+      "background": "Former VP at Scott and Sons"
+    },
+    {
+      "title": "Chief Financial Officer",
+      "short_title": "CFO",
+      "name": "Randy Richardson",
+      "years_at_company": 5,
+      "background": "Former Controller at Hartman-Allen"
+    },
+    {
+      "title": "Chief Operating Officer",
+      "short_title": "COO",
+      "name": "Jennifer Brown",
+      "years_at_company": 6,
+      "background": "Former GM at Torres-Rodriguez"
+    },
+    {
+      "title": "VP of Sales",
+      "short_title": "VP Sales",
+      "name": "Melanie Ortega",
+      "years_at_company": 4,
+      "background": "Former Sales Director at Foster-Gray"
+    },
+    {
+      "title": "VP of Engineering",
+      "short_title": "VP Eng",
+      "name": "Jared Caldwell",
+      "years_at_company": 6,
+      "background": "Former Staff Engineer at Wiggins and Sons"
+    }
+  ],
+  "story": {
+    "founding_narrative": "The company was established in 2018 when Amanda Reed left Watson LLC to pursue a vision for better edtech solutions.",
+    "founder_name": "Amanda Reed",
+    "milestones": [
+      {
+        "year": 2019,
+        "title": "Product launch",
+        "description": "Launched flagship product/service offering"
+      },
+      {
+        "year": 2021,
+        "title": "First major contract",
+        "description": "Landed first enterprise customer: Baker and Sons"
+      },
+      {
+        "year": 2022,
+        "title": "Key hire",
+        "description": "Brought on experienced leadership team from industry"
+      },
+      {
+        "year": 2023,
+        "title": "Revenue milestone",
+        "description": "Achieved $7M in annual revenue"
+      }
+    ],
+    "market_position": "Growing mid-market company specializing in edtech",
+    "why_selling": "Private equity sponsor pursuing exit after successful value creation",
+    "years_in_business": 8
+  },
+  "financials": {
+    "annual_revenue": 87600000,
+    "gross_margin": 0.732,
+    "headcount": 193,
+    "revenue_per_employee": 453886.0,
+    "fiscal_year_end": "March 31",
+    "years_of_history": 4
+  },
+  "events": [
+    {
+      "date": "2021-01-07",
+      "type": "customer_win",
+      "description": "New customer: Alvarez, Jimenez and Liu",
+      "revenue_impact": 3930888.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-01-12",
+      "type": "customer_win",
+      "description": "New customer: Vega, Smith and Miller",
+      "revenue_impact": 2175649.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-01-27",
+      "type": "customer_win",
+      "description": "New customer: Johnston PLC",
+      "revenue_impact": 1794277.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-03-14",
+      "type": "customer_win",
+      "description": "New customer: Liu, Roberson and Wilson",
+      "revenue_impact": 4329621.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-07-03",
+      "type": "customer_win",
+      "description": "New customer: Gallagher Group",
+      "revenue_impact": 1678828.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-07-14",
+      "type": "customer_win",
+      "description": "New customer: Ritter, Clayton and Mosley",
+      "revenue_impact": 3484619.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-09-26",
+      "type": "customer_win",
+      "description": "New customer: Oneill-White",
+      "revenue_impact": 1207828.0,
+      "recurring": true
+    },
+    {
+      "date": "2021-11-19",
+      "type": "equipment",
+      "description": "Major equipment purchase",
+      "financial_impact": -1314000.0,
+      "one_time": true
+    },
+    {
+      "date": "2022-01-03",
+      "type": "customer_win",
+      "description": "New customer: Miller and Sons",
+      "revenue_impact": 4217700.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-01-18",
+      "type": "customer_win",
+      "description": "New customer: Morgan-Jones",
+      "revenue_impact": 2893166.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-02-20",
+      "type": "customer_win",
+      "description": "New customer: Ramirez LLC",
+      "revenue_impact": 3244095.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-03-17",
+      "type": "customer_win",
+      "description": "New customer: Bishop, Jacobs and Murray",
+      "revenue_impact": 2622575.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-04-18",
+      "type": "customer_loss",
+      "description": "Lost customer: Owens-Coleman",
+      "revenue_impact": -1408017.0,
+      "reason": "Service issues"
+    },
+    {
+      "date": "2022-05-06",
+      "type": "customer_win",
+      "description": "New customer: Taylor, White and Sparks",
+      "revenue_impact": 3918334.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-08-05",
+      "type": "customer_loss",
+      "description": "Lost customer: Ramirez and Sons",
+      "revenue_impact": -1478996.0,
+      "reason": "Customer budget cuts"
+    },
+    {
+      "date": "2022-12-27",
+      "type": "customer_win",
+      "description": "New customer: Pierce, Lutz and Ford",
+      "revenue_impact": 3944478.0,
+      "recurring": true
+    },
+    {
+      "date": "2022-12-28",
+      "type": "customer_win",
+      "description": "New customer: Fitzpatrick, Kelley and Hester",
+      "revenue_impact": 2735137.0,
+      "recurring": true
+    },
+    {
+      "date": "2023-02-10",
+      "type": "customer_win",
+      "description": "New customer: Pollard, Santana and Flores",
+      "revenue_impact": 4229761.0,
+      "recurring": true
+    },
+    {
+      "date": "2023-03-07",
+      "type": "customer_loss",
+      "description": "Lost customer: Gonzalez, Watkins and Stewart",
+      "revenue_impact": -766524.0,
+      "reason": "Service issues"
+    },
+    {
+      "date": "2023-05-21",
+      "type": "product_launch",
+      "description": "New product/service launch",
+      "financial_impact": 1752000.0,
+      "one_time": true
+    },
+    {
+      "date": "2023-06-02",
+      "type": "customer_win",
+      "description": "New customer: Ramirez and Sons",
+      "revenue_impact": 2190063.0,
+      "recurring": true
+    },
+    {
+      "date": "2023-08-09",
+      "type": "customer_win",
+      "description": "New customer: Ellis, Hudson and Brock",
+      "revenue_impact": 1077457.0,
+      "recurring": true
+    },
+    {
+      "date": "2023-09-12",
+      "type": "customer_win",
+      "description": "New customer: Smith Group",
+      "revenue_impact": 2804370.0,
+      "recurring": true
+    },
+    {
+      "date": "2023-11-03",
+      "type": "customer_win",
+      "description": "New customer: Gibbs Group",
+      "revenue_impact": 3765054.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-01-08",
+      "type": "customer_win",
+      "description": "New customer: Little-Mcgee",
+      "revenue_impact": 3694157.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-01-10",
+      "type": "customer_loss",
+      "description": "Lost customer: Harris, Lambert and Morrow",
+      "revenue_impact": -1669184.0,
+      "reason": "Customer M&A"
+    },
+    {
+      "date": "2024-01-13",
+      "type": "customer_win",
+      "description": "New customer: Giles LLC",
+      "revenue_impact": 925562.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-05-07",
+      "type": "customer_win",
+      "description": "New customer: Jones, Hernandez and Martinez",
+      "revenue_impact": 2527281.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-09-11",
+      "type": "customer_win",
+      "description": "New customer: Martinez-Johnson",
+      "revenue_impact": 2954299.0,
+      "recurring": true
+    },
+    {
+      "date": "2024-10-19",
+      "type": "customer_win",
+      "description": "New customer: Shelton-Shannon",
+      "revenue_impact": 2483705.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-03-05",
+      "type": "customer_win",
+      "description": "New customer: Allen-Graham",
+      "revenue_impact": 3205899.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-04-02",
+      "type": "product_launch",
+      "description": "New product/service launch",
+      "financial_impact": 1752000.0,
+      "one_time": true
+    },
+    {
+      "date": "2025-04-07",
+      "type": "customer_win",
+      "description": "New customer: Hawkins, Evans and Turner",
+      "revenue_impact": 2685303.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-04-18",
+      "type": "customer_loss",
+      "description": "Lost customer: Proctor-Montgomery",
+      "revenue_impact": -605563.0,
+      "reason": "Price sensitivity"
+    },
+    {
+      "date": "2025-06-01",
+      "type": "customer_win",
+      "description": "New customer: Mccann-Potter",
+      "revenue_impact": 1301469.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-06-10",
+      "type": "customer_loss",
+      "description": "Lost customer: Smith Group",
+      "revenue_impact": -832472.0,
+      "reason": "Customer M&A"
+    },
+    {
+      "date": "2025-06-21",
+      "type": "customer_win",
+      "description": "New customer: Page, Tapia and Mejia",
+      "revenue_impact": 2674110.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-07-24",
+      "type": "customer_win",
+      "description": "New customer: Bates, Pierce and Anderson",
+      "revenue_impact": 3112821.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-08-07",
+      "type": "customer_win",
+      "description": "New customer: Williams LLC",
+      "revenue_impact": 3890084.0,
+      "recurring": true
+    },
+    {
+      "date": "2025-11-27",
+      "type": "customer_win",
+      "description": "New customer: Koch, Gonzales and Williams",
+      "revenue_impact": 3228181.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-01-15",
+      "type": "customer_win",
+      "description": "New customer: Meyer-Jones",
+      "revenue_impact": 922400.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-03-26",
+      "type": "customer_win",
+      "description": "New customer: Smith-Kelly",
+      "revenue_impact": 2583836.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-06-15",
+      "type": "customer_win",
+      "description": "New customer: Hill, Jensen and Thomas",
+      "revenue_impact": 3468721.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-08-09",
+      "type": "customer_win",
+      "description": "New customer: Trujillo, Fields and Johnson",
+      "revenue_impact": 3211993.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-08-20",
+      "type": "customer_win",
+      "description": "New customer: Davila Group",
+      "revenue_impact": 4291586.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-09-02",
+      "type": "customer_win",
+      "description": "New customer: Munoz-Martinez",
+      "revenue_impact": 3365175.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-10-23",
+      "type": "customer_loss",
+      "description": "Lost customer: Curtis and Sons",
+      "revenue_impact": -1276686.0,
+      "reason": "Competitive displacement"
+    },
+    {
+      "date": "2026-11-20",
+      "type": "customer_win",
+      "description": "New customer: Reeves-Butler",
+      "revenue_impact": 1836565.0,
+      "recurring": true
+    },
+    {
+      "date": "2026-11-23",
+      "type": "customer_win",
+      "description": "New customer: Hogan, Davis and Hall",
+      "revenue_impact": 1091782.0,
+      "recurring": true
+    }
+  ],
+  "profile_reference": "profiles/saas.json",
+  "operations": {
+    "customer_count": 1834
+  }
+}

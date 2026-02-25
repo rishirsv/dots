@@ -1,0 +1,209 @@
+{
+  "generated_at": "2026-02-25T15:42:30.638668",
+  "run_id": "scenario03-manufacturing-mid-messy",
+  "output_dir": "testing/data/data_rooms/scenario03-manufacturing-mid-messy",
+  "company": "GNO Fabrication",
+  "industry": "manufacturing",
+  "realism_mode": "messy",
+  "verification_status": "pass",
+  "verification_failed_checks": 0,
+  "period_start": "2023-01",
+  "period_end": "2025-12",
+  "period_count": 36,
+  "files": [
+    {
+      "file_name": "accounting_policies.md",
+      "relative_path": "accounting_policies.md",
+      "size_bytes": 3177,
+      "sha256": "3673cd1d26d89939febc4666c4ce3eb5a876e80adaa9e28092418753dee2835c",
+      "description": "Rendered accounting policies narrative."
+    },
+    {
+      "file_name": "ap_aging.xlsx",
+      "relative_path": "ap_aging.xlsx",
+      "size_bytes": 5036,
+      "sha256": "ecc195984b6ac300a53bd9b25c711e5d974e51c528e93969d65554291b7b89f7",
+      "description": "Accounts payable aging schedule.",
+      "rows": 6
+    },
+    {
+      "file_name": "ar_aging.xlsx",
+      "relative_path": "ar_aging.xlsx",
+      "size_bytes": 5038,
+      "sha256": "405349bb3affced6302ee3418a50a9c51b97383ce79f763c56d79e77ec644a3f",
+      "description": "Accounts receivable aging schedule.",
+      "rows": 6
+    },
+    {
+      "file_name": "balance_sheet.xlsx",
+      "relative_path": "balance_sheet.xlsx",
+      "size_bytes": 5676,
+      "sha256": "d77c0c8eb24015fbb376dd67b7547f716db7156e14aed6db7d8e83a67b18f253",
+      "description": "Annual balance sheet snapshots with equation checks.",
+      "rows": 3
+    },
+    {
+      "file_name": "bill_of_materials.xlsx",
+      "relative_path": "bill_of_materials.xlsx",
+      "size_bytes": 8427,
+      "sha256": "674ecc2194195ee1f16ec3e27a97503e178d311d3d57a6f245e7cbcaa547bb5f",
+      "description": "Generated artifact.",
+      "rows": 110
+    },
+    {
+      "file_name": "cash_flow.xlsx",
+      "relative_path": "cash_flow.xlsx",
+      "size_bytes": 5415,
+      "sha256": "eb7f1f7a26563818a499acd92f9577baa4607ecdb7f3608ce0174ba384064792",
+      "description": "Annual cash flow statement using indirect method.",
+      "rows": 3
+    },
+    {
+      "file_name": "cim.md",
+      "relative_path": "cim.md",
+      "size_bytes": 4741,
+      "sha256": "550dbc30553dc20d0699d1f34c5e12ab936e4a6c69af882bfc8f620a596f8890",
+      "description": "Rendered CIM narrative."
+    },
+    {
+      "file_name": "company_overview.md",
+      "relative_path": "company_overview.md",
+      "size_bytes": 2037,
+      "sha256": "1b5a3372fea1c67bf79cbd5f11b0f7fbaf79ae32dd9d68fc08f0b7e41ef1a9f7",
+      "description": "Rendered company overview narrative."
+    },
+    {
+      "file_name": "company_seed.json",
+      "relative_path": "company_seed.json",
+      "size_bytes": 14546,
+      "sha256": "2b314c2bcbe7ee10e6ef63f943390181e299ec185c4e86a6be21ce59dd678db8",
+      "description": "Core company profile and generation metadata."
+    },
+    {
+      "file_name": "customer_master.xlsx",
+      "relative_path": "customer_master.xlsx",
+      "size_bytes": 81034,
+      "sha256": "762bd227d875e2a62fb08ea0909747f1fdd72f0df170119b2f6799787d452af6",
+      "description": "Generated artifact.",
+      "rows": 918
+    },
+    {
+      "file_name": "department_summary.xlsx",
+      "relative_path": "department_summary.xlsx",
+      "size_bytes": 5347,
+      "sha256": "f2aad8e2f7cbd9c3adc2f54cdacd77dfdcc8c08002590ede018913408fc5737a",
+      "description": "Headcount and salary roll-up by department.",
+      "rows": 6
+    },
+    {
+      "file_name": "ebitda_bridge.md",
+      "relative_path": "ebitda_bridge.md",
+      "size_bytes": 3062,
+      "sha256": "36225f02490ca0783497a792e17a46574c3c175732b09b2809279b64655c40cd",
+      "description": "Rendered EBITDA bridge narrative."
+    },
+    {
+      "file_name": "employee_census.xlsx",
+      "relative_path": "employee_census.xlsx",
+      "size_bytes": 25975,
+      "sha256": "b34c0f0f1c339529e1f5fa7b4ab26d6ae8d9ca561bbb4b24a94ab671624c8f04",
+      "description": "Employee-level census with department/title/salary.",
+      "rows": 283
+    },
+    {
+      "file_name": "event_impacts.xlsx",
+      "relative_path": "event_impacts.xlsx",
+      "size_bytes": 6155,
+      "sha256": "cd5bc766ef9b1b776c8691ca8da81d353fc03888878e9c68936eb146f7a4bef6",
+      "description": "Monthly event-driven revenue and opex adjustments.",
+      "rows": 36
+    },
+    {
+      "file_name": "fixed_assets.xlsx",
+      "relative_path": "fixed_assets.xlsx",
+      "size_bytes": 5150,
+      "sha256": "ebf3f9218350a00514d05677632da1fc9908b747f5246920a9379e52d33f8235",
+      "description": "Fixed asset roll-forward schedule.",
+      "rows": 3
+    },
+    {
+      "file_name": "income_statement.xlsx",
+      "relative_path": "income_statement.xlsx",
+      "size_bytes": 5244,
+      "sha256": "b7054236c3951371282b636d6cf50e070b6863cd48f102aae807ddd023eed755",
+      "description": "Annual income statement derived from trial balance.",
+      "rows": 3
+    },
+    {
+      "file_name": "inventory_ledger.xlsx",
+      "relative_path": "inventory_ledger.xlsx",
+      "size_bytes": 94427,
+      "sha256": "35510c520832f1920c90c0472d3ce38ed0586d5482ed593441e5d3a0f3b22fa2",
+      "description": "Generated artifact.",
+      "rows": 2736
+    },
+    {
+      "file_name": "invoice_register.xlsx",
+      "relative_path": "invoice_register.xlsx",
+      "size_bytes": 83122,
+      "sha256": "7c62482693f3f5e30af8f471255d10309b1a3c12d98526e1802227f9447c3a13",
+      "description": "Generated artifact.",
+      "rows": 1220
+    },
+    {
+      "file_name": "nwc_schedule.xlsx",
+      "relative_path": "nwc_schedule.xlsx",
+      "size_bytes": 9086,
+      "sha256": "5ae36428158fe0616661b8bfa9777d445805f0bcde18409cd5ead2ee7f9a3df0",
+      "description": "Monthly net working capital schedule.",
+      "rows": 36
+    },
+    {
+      "file_name": "payroll_register.xlsx",
+      "relative_path": "payroll_register.xlsx",
+      "size_bytes": 463659,
+      "sha256": "dbc49585598fc68cde241098fb81c10b8905fac9781052782ed79b6c67407f65",
+      "description": "Monthly payroll entries by employee.",
+      "rows": 8052
+    },
+    {
+      "file_name": "product_master.xlsx",
+      "relative_path": "product_master.xlsx",
+      "size_bytes": 8466,
+      "sha256": "4a477b025248c658a258defd7585f8e114945d1ea66f6c9003b6ec1c24b70058",
+      "description": "Generated artifact.",
+      "rows": 76
+    },
+    {
+      "file_name": "salary_bands.xlsx",
+      "relative_path": "salary_bands.xlsx",
+      "size_bytes": 5142,
+      "sha256": "26cc45bde301a6b6e1aea54e91eedc4cf97e6a7e618621eee31a41dcfd462f50",
+      "description": "Salary distribution by compensation band.",
+      "rows": 6
+    },
+    {
+      "file_name": "tenure_analysis.xlsx",
+      "relative_path": "tenure_analysis.xlsx",
+      "size_bytes": 5094,
+      "sha256": "fd51257d17e785e834a08e2ad5b9deead443604496457d132816287b9ae4cde4",
+      "description": "Workforce tenure distribution.",
+      "rows": 6
+    },
+    {
+      "file_name": "trial_balance.xlsx",
+      "relative_path": "trial_balance.xlsx",
+      "size_bytes": 15481,
+      "sha256": "d044e9b4ecd159aeb7b70414cf6cd0503bb7f7ab0e657444c6be8e956af18a83",
+      "description": "Monthly trial balance used as the primary tie-out ledger.",
+      "rows": 36
+    },
+    {
+      "file_name": "verification_report.json",
+      "relative_path": "verification_report.json",
+      "size_bytes": 7303,
+      "sha256": "bf23c6e5f5305fc44b4d08527bcfb035791437b1ce60c65e72a2d614b1b83e7f",
+      "description": "Verification checks and QoE issues summary."
+    }
+  ]
+}

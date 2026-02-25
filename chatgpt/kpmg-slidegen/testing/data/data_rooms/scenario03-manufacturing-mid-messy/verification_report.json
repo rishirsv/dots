@@ -1,0 +1,251 @@
+{
+  "generated_at": "2026-02-25T15:42:29.994710",
+  "company": "GNO Fabrication",
+  "industry": "manufacturing",
+  "realism_mode": "messy",
+  "status": "pass",
+  "summary": {
+    "total_checks": 19,
+    "passed": 19,
+    "failed": 0,
+    "qoe_issues": 10,
+    "strict_mode": false,
+    "messy_strict_failure": false
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "trial_balance_balances",
+      "description": "Monthly accounting identity in trial balance snapshots (A = L + E)",
+      "passed": true,
+      "details": "Max absolute period imbalance: $0.01"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $14,547,995"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $15,404,292"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $17,194,865"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $37,361,613, TB: $37,361,613"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $41,148,707, TB: $41,148,707"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $50,849,187, TB: $50,849,187"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $7,020,747, BS: $7,020,747"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $3,624,983, BS: $3,624,983"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 283, Actual: 283"
+    },
+    {
+      "name": "cash_flow_ending_cash_tie",
+      "description": "Cash flow ending cash ties to balance sheet cash",
+      "passed": true,
+      "details": "2023 diff=$0.00; 2024 diff=$0.00; 2025 diff=$0.00"
+    },
+    {
+      "name": "net_income_retained_earnings_tie",
+      "description": "Income statement net income ties to change in retained earnings",
+      "passed": true,
+      "details": "2024 diff=$0.01; 2025 diff=$0.02"
+    },
+    {
+      "name": "payroll_financial_tie",
+      "description": "Payroll totals tie to payroll-linked financial accounts",
+      "passed": true,
+      "details": "Payroll: $21,224,910, Financial: $21,224,910, Diff: 0.00%"
+    },
+    {
+      "name": "narrative_tokens_cim.md",
+      "description": "cim.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_company_overview.md",
+      "description": "company_overview.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_accounting_policies.md",
+      "description": "accounting_policies.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_ebitda_bridge.md",
+      "description": "ebitda_bridge.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "invoice_revenue_tie",
+      "description": "Invoice totals tie to P&L revenue",
+      "passed": true,
+      "details": "Invoices: $129,359,507, P&L: $129,359,507"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "one_time_event",
+      "date": "2021-02-10",
+      "description": "Major equipment purchase",
+      "impact": -699000.0,
+      "category": "equipment"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2022-08-20",
+      "description": "Insurance claim recovery",
+      "impact": 384549.0,
+      "category": "insurance"
+    },
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -3529187.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Inventory reserve / obsolescence adjustments",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Standard cost variance capitalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Freight capitalization vs. expensing",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Warranty reserve true-up",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner compensation normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party supplier markups",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner-occupied facility rent",
+      "category": "qoe_addback"
+    }
+  ],
+  "issues": [
+    {
+      "type": "one_time_event",
+      "date": "2021-02-10",
+      "description": "Major equipment purchase",
+      "impact": -699000.0,
+      "category": "equipment"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2022-08-20",
+      "description": "Insurance claim recovery",
+      "impact": 384549.0,
+      "category": "insurance"
+    },
+    {
+      "type": "customer_churn",
+      "description": "7 customer losses identified",
+      "total_impact": -3529187.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Inventory reserve / obsolescence adjustments",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Standard cost variance capitalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Freight capitalization vs. expensing",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Warranty reserve true-up",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner compensation normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party supplier markups",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner-occupied facility rent",
+      "category": "qoe_addback"
+    }
+  ],
+  "output_dir": "testing/data/data_rooms/scenario03-manufacturing-mid-messy",
+  "rule_coverage": {
+    "universal_checks": true,
+    "industry_specific_checks": true,
+    "qoe_checks": true
+  }
+}

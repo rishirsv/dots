@@ -1,6 +1,6 @@
 ---
 name: kpmg-slides
-description: Write KPMG-branded PowerPoint decks end-to-end from planning to writing content to generating the .pptx to iterations. Use when the user asks to create or revise slides, a deck, presentation, pitch deck, board deck, diligence deck, or needs a KPMG-branded .pptx produced from notes, documents, spreadsheets, or web research. Supports outline-first collaboration, deckSpec editing, generation runs, and QA/overflow fixes. Not for pixel-level editing of an existing .pptx.
+description: Write KPMG-branded PowerPoint decks end-to-end from planning to writing content to generating the .pptx to iterations. Use when the user asks to create or revise slides, a deck, presentation, pitch deck, board deck, diligence deck, or needs a KPMG-branded .pptx produced from notes, documents, or spreadsheets. Supports outline-first collaboration, deckSpec editing, generation runs, and QA/overflow fixes. Not for pixel-level editing of an existing .pptx.
 ---
 
 # KPMG Slides
@@ -8,6 +8,18 @@ description: Write KPMG-branded PowerPoint decks end-to-end from planning to wri
 This skill produces KPMG-branded `.pptx` decks from a `deckSpec` JSON file and gives you a QA loop to fix what breaks.
 
 This skill is a **general-purpose, consulting-grade slide writer** that generates a KPMG-branded PPTX via `deckSpec` and a QA fix loop.
+
+## Dependencies
+
+- `npm install` - installs `pptxgenjs` and `image-size` used by the generator
+- `python3 -m pip install pdf2image Pillow` - preview and montage runtime
+- LibreOffice (`soffice`) - PPTX to PDF conversion
+- Poppler (`pdftoppm`, `pdfinfo`) - PDF to images
+
+Install location:
+
+- Run `npm install` from the repo root (`kpmg-slidegen/`).
+- `python3 -m pip install pdf2image Pillow` can be run from any directory.
 
 ## Workflow Decision Tree
 
@@ -17,18 +29,23 @@ What type of task is this?
 ┌─ Creating a new deck
 │  └─→ Follow "KPMG Slide Creation Workflow" below
 │
-├─ Editing existing populated slides?
-│  └─→ Extract current content, modify, revalidate
+├─ Revising specific slides or sections?
+│  └─→ Edit target slide content in `deckSpec`, regenerate deck, re-verify affected slides
 │
-└─ Fixing formatting issues on existing slides?
-   └─→ See "Common Failures" table, apply targeted fixes
+├─ Performing quality assurance / fixing issues?
+│  └─→ Follow `references/quality_assurance.md` (engine QA + visual QA + storyline QA)
+│
+└─ Editing an existing `.pptx` directly?
+   └─→ Not supported in this skill. Use `deckSpec` edit-and-regenerate workflow instead.
 ```
 
-- If the user provides `qa.json`, an output folder, or mentions overflow/overlap → **QA triage mode** (read `references/qa-and-fix-loop.md`).
-- Else if the user provides a `deckSpec` JSON or `*.deckSpec.json` → **deckSpec edit mode** (edit surgically, then regenerate).
+- If the user provides `qa.json`, an output folder, or mentions overflow/overlap → **QA triage mode** (read `references/quality_assurance.md`).
+- Else if the user provides a `*.deckSpec.json` file, or asks to revise specific slides → **deckSpec edit mode** (edit target slide entries, regenerate, then re-verify affected slides).
 - Else → **new deck mode** (outline-first planning, then draft deckSpec, then generate).
 
 ## KPMG Slide Creation Workflow
+
+Default behavior is outline-first. Do not draft deck content or run generation until the user explicitly approves the outline, unless the user explicitly says to skip outline.
 
 ### Step 1: Ingest Context
 
@@ -61,7 +78,9 @@ Set `metadata.allowSparse` to `false` by default. Only set `true` when the user 
 
 #### Non-negotiable validation guardrails
 
-- Never exceed title hard limits. Titles are treated as hard limits in validation and most slide types cap title `maxChars` at 50
+When in doubt, treat `references/slide-contract.md`, `references/deckspec.schema.json`, and `templates/kpmg-diligence/package/layouts.json` as source of truth.
+
+- Do not exceed title hard limits. Titles are treated as hard limits in validation and most slide types cap title `maxChars` at 50; shorten or rewrite the title instead of formatting around the limit.
 - Omit optional slots instead of emitting empty strings. If a slot exists but is empty and `allowEmpty: false`, validation can warn or error
 - Only set `bodyStyle` to exactly `bullets` or `paragraphs`
 
@@ -76,6 +95,8 @@ Set `metadata.allowSparse` to `false` by default. Only set `true` when the user 
 - `analysisNarrowTable` pagination can warn on dense rows and orphan-row splits.
 - Post-pagination slide validation disables density enforcement (`enforceDensity: false`), so avoid creating giant bullet lists that auto-split unevenly.
 - Prefer intentional split slides with explicit titles like `(1/2)` and `(2/2)` over implicit overflow splits.
+
+Override defaults when needed with this precedence: user constraints > contract validity/readability > tier defaults, and note any override reason in the response summary.
 
 #### Density budgets by tier and slide type
 
@@ -169,40 +190,134 @@ Variable expenses mainly consist of cost of goods sold (“COGS”) of $x.x mill
 
 ### Step 3: Planning
 
-Choose one planning mode before writing slides:
+**YOU MUST ALWAYS PRESENT AN OUTLINE BEFORE GENERATING THE CONTENT AND DECK**
+Use `references/layout-policy.md` during planning to map intent/evidence to slide types.
 
-Mode A: Expand
+Planning protocol:
 
-- Use when user input is high-level (topic + a few constraints) or lacks slide-by-slide structure.
-- Output a complete sectioned outline (cover -> dividers -> content slides -> appendix/back cover as needed).
+1. Grounding pass first (non-mutating): inspect user inputs, existing deckSpec/qa (if revision), and available evidence.
+2. Ask only unresolved high-impact questions; use concise either/or choices when possible.
+3. Choose planning mode:
+   - Mode A (`Expand`): use when input is high-level; produce full sectioned outline.
+   - Mode B (`Compile`): use when user already gave a slide-by-slide structure; preserve structure and add required density.
+4. Produce `## Outline` in standard shape and wait for approval unless user explicitly says to skip.
 
-Mode B: Compile
+Planning questions checklist (ask only missing items):
 
-- Use when the user provides a detailed outline (slide-by-slide instructions, explicit section headers, or `---` separators).
-- Preserve the provided structure.
-- Only add the density required by the selected tier (evidence, numbers, implication/"so what"), and ensure template minima.
+- Objective and decision ask.
+- Audience and meeting context.
+- Slide count/time constraint (or confirm tier-driven default).
+- Must-include sections/slides and must-use data sources.
+- Style intent (`diligence|strategy|generic`) and QA speed preference (`full|fast`).
 
-Create the draft outline from topic/settings and the selected mode. Keep style consistent with verbosity and deck shape. Present in concise markdown. Wait for approval unless user says "skip outline".
+#### Outline Approval Gate (Hard Stop)
+
+- Applies to new-deck workflows (Mode A/Mode B).
+- After presenting `## Outline`, stop and wait for explicit user approval.
+- Do not draft `<name>.deckSpec.json`, run generation, or output `Deck Delivered` before approval.
+- Treat only explicit approvals as proceed signals (for example: `approve`, `approved`, `proceed`, `continue`, `looks good`).
+- Bypass only when the user explicitly asks to skip outline.
 
 ## Step 4: Write content deckSpec
 
-Copy `deckspec-starter.json`.
-Read `references/slide-contract.md` and `references/layout-policy.md` entirely.
-Draft `deck-spec.json` based on the outline with a skeleton and detailed fill pass.
-Self check the content meets the outline and user request.
+Use `<name>.deckSpec.json` as the standard filename.
+During draft and self-check, validate against `references/slide-contract.md` and `references/deckspec.schema.json`.
+Apply writing voice and language controls from `references/writing-standards.md`.
+
+Create `<name>.deckSpec.json` in three passes:
+
+1. Skeleton: copy starter, set final slide `type` + claim title, replace placeholders, align slide count/sections.
+2. Fill: populate only supported slots, keep one-message-per-slide, and use chart-first layouts for numeric claims.
+3. Self-check: required slots only, no unsupported slots, valid `bodyStyle`, aligned numeric chart arrays, and full alignment to outline + verbosity contract.
 
 ## Step 5: Generate `.pptx`
 
-4. **Draft deckSpec**: Use a skeleton pass then a fill pass. Follow `references/slide-contract.md` and `references/layout-policy.md`.
-5. **Generate + QA loop**: Run `scripts/run_kpmg_slides.sh`, read `qa.json`, apply fix recipes, and rerun until blocking issues are cleared.
-6. **Deliver**: Use the standard response contract and include the LibreOffice rendering disclaimer.
+1. Run the generator on the current `<name>.deckSpec.json`.
+2. Select QA mode (`full` default, `fast` for speed, `skip_subagent_visual` only if user explicitly requests it).
+3. Run QA loop from `references/quality_assurance.md` until pass criteria or loop cap for the selected mode.
+4. Deliver using the standard output contract.
+
+## Execution Protocol (Mandatory)
+
+Follow this sequence for every run:
+
+1. Ingest context and confirm objective, audience, and constraints.
+2. Resolve verbosity/density settings into `metadata` contract fields.
+3. Produce an outline in the standard `Outline` response shape.
+4. Wait for approval unless user explicitly says to skip outline.
+5. Draft deckSpec and self-check against slide contract and layout policy.
+6. Generate deck and read QA output.
+7. Run the QA workflow from `references/quality_assurance.md` using `full`, `fast`, or `skip_subagent_visual` (skip mode only with explicit user request).
+8. Deliver artifacts in the standard `Deck Delivered` response shape.
+9. For edits/revisions, always provide the standard `Revision Diff` response shape.
+
+## Standard Output Contract (Mandatory)
+
+Use these three shapes with minimal fields.
+
+### 1) Outline
+
+```markdown
+## Outline
+
+- Objective: <decision/problem>
+- Audience: <primary audience>
+- Style intent: <diligence|strategy|generic>
+- Verbosity contract: <textAmount, densityProfile, slideCountPolicy>
+
+| #   | Type  | Title (claim) | Evidence shape | Slot plan       |
+| --- | ----- | ------------- | -------------- | --------------- |
+| 1   | cover | ...           | narrative      | title, subtitle |
+```
+
+Requirements: each line includes `type`, claim title, evidence shape, and slot plan for non-trivial slides.
+
+### 2) Deck Delivered
+
+```markdown
+## Deck Delivered
+
+- Status: <pass|pass_with_warnings|blocked>
+- DeckSpec: <path>
+- PPTX: <path>
+- QA: <path>
+- QA mode: <full|fast|skip_subagent_visual>
+- Slide counts: <input -> output>
+- Settings: <textAmount, densityProfile, slideCountPolicy, styleIntent, allowSparse>
+
+## QA Summary
+
+- Blocking: <count + key issues>
+- Non-blocking: <count + key issues>
+- Storyline QA: <short verdict>
+```
+
+### 3) Revision Diff
+
+```markdown
+## Revision Diff
+
+- Scope: <what changed>
+- Why: <driver>
+
+| Slide # | Change | Before        | After                      | Reason                    |
+| ------- | ------ | ------------- | -------------------------- | ------------------------- |
+| 9       | layout | oneColumnText | analysisWideChart2ColsText | numeric claim needs chart |
+
+- QA delta: <before -> after>
+- Artifacts: <deckspec path>, <pptx path>, <qa path>
+```
+
+Requirements: include slide-level changes, reasons tied to request/contract/QA, and QA delta when generation was run.
 
 ## Quick commands
 
+Run these from `kpmg-slides/`.
+
 - Copy starter:
-  `cp skills/kpmg-slides/assets/templates/deckspec-starter.json decks/<name>.deckSpec.json`
+  `cp assets/templates/deckspec-starter.json <name>.deckSpec.json`
 - Generate:
-  `skills/kpmg-slides/scripts/run_kpmg_slides.sh --in decks/<name>.deckSpec.json --out-dir outputs/<run-name>`
+  `scripts/run_kpmg_slides.sh --in <name>.deckSpec.json --out-dir <out-dir>`
 
 ## References
 

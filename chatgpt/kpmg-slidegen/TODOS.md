@@ -32,6 +32,7 @@ verification-state: partially-verified
 - [x] Vendor local slides postprocess runtime into repo and bundle it into skill sync output.
 - [ ] Expand `skills/kpmg-slides/SKILL.md` with explicit mode policy: compile-from-context, guided-planning, and surgical-revision.
 - [ ] Add copy-paste prompt templates for each skill mode in `skills/kpmg-slides/references/`.
+- [ ] Add a documented “new builder from scratch” workflow: define layout type in both template contracts, implement/register builder, add pagination hooks, update schema/skill references, add regression deck example, and validate with QA + visual checks.
 
 ## Next
 

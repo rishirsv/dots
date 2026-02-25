@@ -2,6 +2,15 @@
 
 This is the practical contract for writing `deckSpec` slide objects that the bundled generator will validate and render.
 
+## Table of Contents
+- Core Rule
+- Slot Shapes (Reusable)
+- Supported Slide Types and Slot Contracts
+- Layout Selection Guardrails (Prevent Bad Fits)
+- Common Mistakes (And Fixes)
+- Structural Preflight Rules (Must Pass)
+- Split Policy Rules
+
 ## Core Rule
 
 Pick the slide `type` based on the evidence shape (narrative vs comparison vs chart vs table), then fill every required slot for that `type`.
@@ -92,7 +101,7 @@ Use `dividerDark`/`dividerLight` intentionally (visual style); `divider` is a ne
 
 - Required:
   - `title` (text, min 6, max 40)
-  - `sections` (contentsSections, min 8)
+  - `sections` (contentsSections, min 3)
 
 Each section object is typically:
 - `number` (string)

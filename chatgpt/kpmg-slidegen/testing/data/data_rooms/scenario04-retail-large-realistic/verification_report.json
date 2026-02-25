@@ -1,0 +1,251 @@
+{
+  "generated_at": "2026-02-25T15:42:50.119492",
+  "company": "Johnson Stores",
+  "industry": "retail",
+  "realism_mode": "realistic",
+  "status": "pass",
+  "summary": {
+    "total_checks": 19,
+    "passed": 19,
+    "failed": 0,
+    "qoe_issues": 10,
+    "strict_mode": false,
+    "messy_strict_failure": false
+  },
+  "checks": [
+    {
+      "name": "trial_balance_exists",
+      "description": "Trial balance file exists",
+      "passed": true,
+      "details": "36 periods"
+    },
+    {
+      "name": "trial_balance_balances",
+      "description": "Monthly accounting identity in trial balance snapshots (A = L + E)",
+      "passed": true,
+      "details": "Max absolute period imbalance: $0.01"
+    },
+    {
+      "name": "bs_equation_2023",
+      "description": "Balance sheet equation (A = L + E) for 2023",
+      "passed": true,
+      "details": "Assets = $139,770,786"
+    },
+    {
+      "name": "bs_equation_2024",
+      "description": "Balance sheet equation (A = L + E) for 2024",
+      "passed": true,
+      "details": "Assets = $187,032,467"
+    },
+    {
+      "name": "bs_equation_2025",
+      "description": "Balance sheet equation (A = L + E) for 2025",
+      "passed": true,
+      "details": "Assets = $304,073,740"
+    },
+    {
+      "name": "revenue_consistency_2023.0",
+      "description": "Revenue consistency between IS and TB for 2023.0",
+      "passed": true,
+      "details": "IS: $309,859,038, TB: $309,859,038"
+    },
+    {
+      "name": "revenue_consistency_2024.0",
+      "description": "Revenue consistency between IS and TB for 2024.0",
+      "passed": true,
+      "details": "IS: $384,770,243, TB: $384,770,243"
+    },
+    {
+      "name": "revenue_consistency_2025.0",
+      "description": "Revenue consistency between IS and TB for 2025.0",
+      "passed": true,
+      "details": "IS: $518,525,212, TB: $518,525,212"
+    },
+    {
+      "name": "ar_aging_tie",
+      "description": "AR aging total ties to balance sheet AR",
+      "passed": true,
+      "details": "Aging: $129,810,429, BS: $129,810,429"
+    },
+    {
+      "name": "ap_aging_tie",
+      "description": "AP aging total ties to balance sheet AP",
+      "passed": true,
+      "details": "Aging: $51,826,923, BS: $51,826,923"
+    },
+    {
+      "name": "headcount_tie",
+      "description": "Employee headcount matches company seed",
+      "passed": true,
+      "details": "Target: 829, Actual: 829"
+    },
+    {
+      "name": "cash_flow_ending_cash_tie",
+      "description": "Cash flow ending cash ties to balance sheet cash",
+      "passed": true,
+      "details": "2023 diff=$0.00; 2024 diff=$0.00; 2025 diff=$0.00"
+    },
+    {
+      "name": "net_income_retained_earnings_tie",
+      "description": "Income statement net income ties to change in retained earnings",
+      "passed": true,
+      "details": "2024 diff=$0.00; 2025 diff=$0.02"
+    },
+    {
+      "name": "payroll_financial_tie",
+      "description": "Payroll totals tie to payroll-linked financial accounts",
+      "passed": true,
+      "details": "Payroll: $180,468,825, Financial: $180,468,825, Diff: 0.00%"
+    },
+    {
+      "name": "narrative_tokens_cim.md",
+      "description": "cim.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_company_overview.md",
+      "description": "company_overview.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_accounting_policies.md",
+      "description": "accounting_policies.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "narrative_tokens_ebitda_bridge.md",
+      "description": "ebitda_bridge.md has no unresolved template tokens",
+      "passed": true,
+      "details": "No unresolved template syntax"
+    },
+    {
+      "name": "transaction_revenue_tie",
+      "description": "Sales transaction totals tie to P&L revenue",
+      "passed": true,
+      "details": "Transactions: $1,213,154,492, P&L: $1,213,154,492"
+    }
+  ],
+  "qoe_issues": [
+    {
+      "type": "one_time_event",
+      "date": "2024-11-09",
+      "description": "Insurance claim recovery",
+      "impact": 3510147.0,
+      "category": "insurance"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2026-05-14",
+      "description": "Restructuring costs",
+      "impact": -6221975.0,
+      "category": "restructuring"
+    },
+    {
+      "type": "customer_churn",
+      "description": "4 customer losses identified",
+      "total_impact": -19571499.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Inventory reserve / obsolescence",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Gift card breakage timing",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Lease accounting adjustments",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Shrinkage reserve normalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner compensation normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party rent",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Personal purchases through store",
+      "category": "qoe_addback"
+    }
+  ],
+  "issues": [
+    {
+      "type": "one_time_event",
+      "date": "2024-11-09",
+      "description": "Insurance claim recovery",
+      "impact": 3510147.0,
+      "category": "insurance"
+    },
+    {
+      "type": "one_time_event",
+      "date": "2026-05-14",
+      "description": "Restructuring costs",
+      "impact": -6221975.0,
+      "category": "restructuring"
+    },
+    {
+      "type": "customer_churn",
+      "description": "4 customer losses identified",
+      "total_impact": -19571499.0,
+      "category": "revenue_risk"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Inventory reserve / obsolescence",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Gift card breakage timing",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Lease accounting adjustments",
+      "category": "qoe_common"
+    },
+    {
+      "type": "potential_adjustment",
+      "description": "Shrinkage reserve normalization",
+      "category": "qoe_common"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Owner compensation normalization",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Related party rent",
+      "category": "qoe_addback"
+    },
+    {
+      "type": "owner_addback",
+      "description": "Personal purchases through store",
+      "category": "qoe_addback"
+    }
+  ],
+  "output_dir": "testing/data/data_rooms/scenario04-retail-large-realistic",
+  "rule_coverage": {
+    "universal_checks": true,
+    "industry_specific_checks": true,
+    "qoe_checks": true
+  }
+}

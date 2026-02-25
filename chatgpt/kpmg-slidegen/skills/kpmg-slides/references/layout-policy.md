@@ -22,7 +22,7 @@ Does the slide require a visual (numeric pattern) to make the point?
 | Slide intent | Recommended type | Why this works | Don't do this |
 |---|---|---|---|
 | Open the deck with context | `cover` | Establish scope, audience, and date in a branded way. | Don't put key findings on the cover. |
-| Agenda for long decks | `contents` | Provides navigation; contract enforces >= 8 sections. | Don't use for 5-slide updates. |
+| Agenda for multi-section decks | `contents` | Provides navigation; contract enforces >= 3 sections. | Don't use when you only have 1-2 sections. |
 | Section break | `dividerDark` / `dividerLight` | Clears cognitive reset between sections. | Don't overuse; it bloats slide count. |
 | Single-thread argument | `oneColumnText` | Best for claim -> bullets -> implication. | Don't attach charts/tables here. |
 | Compare two options/states | `twoColumnText` | Parallel structure, easy scanning. | Don't use if one side is 3x longer. |

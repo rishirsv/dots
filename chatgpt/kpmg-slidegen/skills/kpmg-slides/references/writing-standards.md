@@ -9,8 +9,9 @@ This playbook defines consulting-grade writing standards for KPMG-style slides.
 - Use topic titles such as "Revenue overview" or "Market overview" when the user asks for them. These are usually best as divider titles.
 - Use sentence case for slide titles. Example: `Business overview`.
 - Name the unit and period in the title or strapline when the claim is quantitative. Example: `FY2023-FY2025`, `LTM`, `Q4`.
-- Avoid vague verbs like "drives," "enhances," and "improves" unless quantified.
-- Avoid assurance language.
+- Write in active voice.
+- Vary sentence length when useful to improve readability and rhythm.
+- Follow language controls in this file for prohibited terms and substitutions.
 
 ## Page-Level Narrative Structure
 
@@ -20,6 +21,7 @@ For each slide, use the same structure:
 - Strapline: the "so what" in one sentence. Optional, but strongly preferred on decision slides.
 - Body: 3-6 bullets providing evidence and interpretation.
 - Source line: compact citation for externally derived facts and non-obvious calculations.
+- For dense sections, use subheadings to structure bullets (for example `{ "text": "Heading", "subheader": true }` in `textArray`).
 
 For analysis slides with charts or tables, enforce the triad:
 
@@ -47,6 +49,7 @@ Use this standard by deck length:
 - If a claim is driven by numbers, do not bury numbers in prose. Use a chart or table layout that makes evidence legible.
 - If a claim is driven by logic (for example operating model or risk chain), use narrative layouts and keep logic MECE and stepwise.
 - If evidence is missing, label the gap explicitly and convert it into a "what we need" data request. Do not invent detail.
+- Present evidence before implication in body copy and bullets.
 
 ## Bullet Writing Standard
 
@@ -54,6 +57,40 @@ Use this standard by deck length:
 - Lead with the label, then detail.
 - Prefer quantified evidence over generic descriptors.
 - Keep bullets precise and decision-linked, not descriptive for its own sake.
+- Use subheadings to group dense bullets instead of long undifferentiated lists.
+
+## Language Controls (Mandatory)
+
+### Active voice rule
+
+- Avoid: `Differences were adjusted by the Company.`
+- Prefer: `The Company adjusted differences of $2.3M.`
+
+### Must avoid
+
+- Assurance terms: `ensure`, `accurate`, `fair`, `reasonable`, `appropriate`
+- Vague magnitude terms without figures: `significant`, `substantial`, `material`
+- Purpose statements: `in order to`, `designed to`, `for the purpose of`
+- Process descriptions: `we analyzed`, `we reviewed`, `we performed`
+- Emotional language: `drastically`, `impressively`, `disappointingly`
+- Opinion language: `we believe`, `appears to be`, `seems to`
+- Qualitative claims: `better represents`, `more accurately reflects`
+- Implication connectors: `consequently`, `therefore`, `as a result`, `enhancing`
+
+### Word substitutions
+
+| Avoid | Use instead |
+|---|---|
+| `ensure` / `ensures` | `results in`, `creates` |
+| `significant` | exact percentage or amount |
+| `drastically` | exact percentage or amount |
+| `we analyzed` | `the data shows`, `the analysis identified` |
+| `we believe` | `the data indicates`, `historical patterns suggest` |
+| `it was noted` | `[subject] showed`, `[subject] indicated` |
+| `there were` | `[subject] included`, `[subject] contained` |
+| `is considered` | `is`, `represents` |
+| `in order to` | remove purpose phrase |
+| `was performed` | `[subject] completed`, `[subject] conducted` |
 
 ## Common Writing Anti-Patterns
 

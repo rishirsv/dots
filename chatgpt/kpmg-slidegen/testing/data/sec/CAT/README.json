@@ -1,0 +1,16 @@
+{
+  "ticker": "CAT",
+  "company_name": "CATERPILLAR INC",
+  "cik": "0000018230",
+  "generated_at_utc": "2026-02-25T20:44:10Z",
+  "source_urls": {
+    "submissions": "https://data.sec.gov/submissions/CIK0000018230.json",
+    "companyfacts": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000018230.json",
+    "ticker_index": "https://www.sec.gov/files/company_tickers.json"
+  },
+  "files": [
+    "annual_metrics.csv",
+    "quarterly_metrics.csv",
+    "recent_filings.csv"
+  ]
+}
