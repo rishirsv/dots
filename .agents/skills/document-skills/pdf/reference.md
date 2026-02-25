@@ -609,4 +609,4 @@ def extract_text_with_ocr(pdf_path):
 - **poppler-utils**: GPL-2 License
 - **qpdf**: Apache License
 - **pdf-lib**: MIT License
-- **pdfjs-dist**: Apache 
+- **pdfjs-dist**: Apache License
