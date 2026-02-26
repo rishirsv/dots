@@ -1,0 +1,2814 @@
+{
+  "command": "python3 docs/report-mining/section-corpus/scripts/validate_section_corpus.py",
+  "failures_count": 0,
+  "files": [
+    {
+      "canonical_section": "Executive summary",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/executive-summary.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Business overview",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/business-overview.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Historical / financial performance",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/historical-financial-performance.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "QoE and earnings adjustments",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Working capital",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/working-capital.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Net debt and debt-like items",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Risks and red flags",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/risks-and-red-flags.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Open items & data requests",
+      "checks_total": 255,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/open-items-and-data-requests.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 11,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Summary financials",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/summary-financials.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Income Statement",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/income-statement.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Balance Sheet",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/balance-sheet.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Cash Flows",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/cash-flows.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Reporting Environment",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/reporting-environment.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Related Parties",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/related-parties.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Industry Analysis",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/industry-analysis.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Forecast Trading",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/forecast-trading.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Quality of Net Assets",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/quality-of-net-assets.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Gross Margin by LOB",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/gross-margin-by-lob.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Appendices",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/sections/appendices.md",
+      "kind": "section",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "QoE and earnings adjustments",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/adjustments/qoe-adjustments-library.md",
+      "kind": "adjustment",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "required_subheadings": [
+        "Quality of earnings adjustments"
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Working capital",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/adjustments/working-capital-adjustments-library.md",
+      "kind": "adjustment",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "required_subheadings": [
+        "Net working capital adjustments"
+      ],
+      "status": "pass"
+    },
+    {
+      "canonical_section": "Net debt and debt-like items",
+      "checks_total": 278,
+      "entries_found": 23,
+      "failures": [],
+      "failures_count": 0,
+      "file": "docs/report-mining/section-corpus/adjustments/net-debt-adjustments-library.md",
+      "kind": "adjustment",
+      "reports": [
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ascend-2018-03-27"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-autobahn-2019-04-17-draft"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-cherry-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-coffee_buy-side_fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-dental-2025-07-31"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-ed-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-everest-financial-diligence-report-draft-05-03-2025-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gamma-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-garrison"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-gemstone-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-green-draft-report-v3-2020-03-03"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-greyhound-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-groundworks-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-halley-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-north_jun-24_rf-draft-report_21-aug-24_vs"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-panacea-draft-report-2020-10-15-v1"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-skyrocket-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-vortex-simulated-report-2025"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-west-2018-12-05"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-x-buy-side-fdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-y-sell-side-vdd"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-yukon-report"
+        },
+        {
+          "checks_total": 12,
+          "failures": [],
+          "report_id": "project-z-sell-side-fact-book"
+        }
+      ],
+      "required_subheadings": [
+        "Net debt / cash adjustments"
+      ],
+      "status": "pass"
+    }
+  ],
+  "files_checked": 22,
+  "overall_status": "pass",
+  "reports_in_source": 23,
+  "top_issues": [],
+  "total_checks": 6093
+}
