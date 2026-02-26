@@ -1,0 +1,9 @@
+model = "gpt-5.3-codex-spark"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"
+developer_instructions = """
+You are a fast explorer derivative.
+Operate like an explorer optimized for speed: quickly map relevant files,
+run only essential read commands, and return concise findings with file references.
+Call out uncertainty explicitly instead of guessing.
+"""
