@@ -16,9 +16,11 @@ Start by understanding the current project's context and conventions. Ask the us
 ### 1. Get Feature Name
 
 If not provided, ask:
+
 > "What are we building?"
 
 Then derive:
+
 - `feature_slug = kebab-case(feature_name)`
 - `spec_path = <project-root>/docs/product-specs/<feature-slug>-spec.md`
 
@@ -31,6 +33,7 @@ Start by brainstorming the idea with the user by asking a small batch of questio
 Continue brainstorming as long as the user is engaged and wants to continue. When you have a good understanding, present a concise bullet outline of the idea, ask if they want to continue, and suggest 2-3 areas to explore next.
 
 **Rules:**
+
 - Ask questions in **batches of 2-4** per message.
 - Prefer **multiple-choice** questions when possible (2-4 options plus an "Other" free-text option).
 - For each multiple-choice question, mark one option as ` (recommended)` based on context or sensible defaults.
@@ -39,6 +42,7 @@ Continue brainstorming as long as the user is engaged and wants to continue. Whe
 - Stop when you can describe the solution without guessing.
 
 **Areas to explore** (as needed):
+
 - What problem does this solve?
 - Who uses it and how often?
 - What's the core user flow?
@@ -46,7 +50,7 @@ Continue brainstorming as long as the user is engaged and wants to continue. Whe
 - Any technical constraints?
 - How do we know it's working? (success criteria)
 
-#### Example 
+#### Example
 
 ```text
 User: $ideate weekly digest emails
@@ -76,6 +80,7 @@ Next, I'll ask about the sending schedule and email design.
 ### 3. Present Design Summary
 
 Before writing the spec, summarize in 2-3 short paragraphs:
+
 - What we're building
 - How it works (high level)
 - Key constraints or decisions
@@ -102,10 +107,12 @@ Optional add-ons: User Stories, How It Works, Context, Open Questions (include o
 # Feature: <feature-name>
 
 ## TL;DR
+
 - **Problem:** [one sentence]
 - **Solution:** [2-3 bullets]
 
 ## Scope
+
 - **In:** [what is included]
 - **Out:** [what is not included]
 
@@ -114,8 +121,11 @@ Optional add-ons: User Stories, How It Works, Context, Open Questions (include o
 [What the user will see or do differently. Keep it concrete.]
 
 ## User Stories (Optional)
+
 [Create user stories ordered by priority]
+
 ### User Story N: <Title>
+
 - As a <user_type>, I want <action> so that <benefit>.
 
 ## Requirements
@@ -126,7 +136,7 @@ Optional add-ons: User Stories, How It Works, Context, Open Questions (include o
 
 ## How It Works (Optional)
 
-- Describe the architecture of the solution in 2-3 concise paragraphs. 
+- Describe the architecture of the solution in 2-3 concise paragraphs.
 - Include notes on UX/UI design, data flow, and any other relevant details as applicable.
 
 ## Acceptance Criteria
@@ -163,4 +173,3 @@ Do not add any other text after the Save Summary.
 ## Final Instructions
 
 - Be ruthless about scope (YAGNI). Push non-essentials to the Roadmap.
-- Keep everything concrete enough that `$plan` can immediately turn this into executable tasks.

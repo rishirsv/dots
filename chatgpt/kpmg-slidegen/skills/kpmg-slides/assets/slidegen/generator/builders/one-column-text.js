@@ -3,6 +3,7 @@ import { toBodyRuns } from '../helpers/bullets.js';
 import { addTitle } from '../helpers/title.js';
 import { normalizeBodyStyle } from '../helpers/layout.js';
 import { sanitizeText } from '../helpers/text.js';
+import { renderCallouts } from '../helpers/callouts.js';
 import {
   computeOneColumnLayoutGeometry,
   ONE_COLUMN_LAYOUT_DEFAULTS,
@@ -17,7 +18,7 @@ const TOKENS = {
   },
 };
 
-export function addOneColumnText(pptx, { title, strapline, body, source, bodyStyle, geometry, masterName } = {}) {
+export function addOneColumnText(pptx, { title, strapline, body, source, callouts, bodyStyle, geometry, masterName } = {}) {
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const {
     geometry: g,
@@ -25,12 +26,15 @@ export function addOneColumnText(pptx, { title, strapline, body, source, bodySty
     sourceText,
     strapGeo,
     safeBodyGeo,
+    calloutBoxes,
+    callouts: resolvedCallouts,
     sourceGeo,
   } = computeOneColumnLayoutGeometry({
     geometry,
     masterName,
     strapline,
     source,
+    callouts,
     straplineFontSize: TYPE_SIZES.strapline,
     sourceFontSize: TYPE_SIZES.source,
   });
@@ -52,6 +56,12 @@ export function addOneColumnText(pptx, { title, strapline, body, source, bodySty
     wrap: TEXT_BOX.wrap,
     margin: TEXT_BOX.marginPt,
     valign: 'top',
+  });
+  renderCallouts(pptx, slide, {
+    callouts: resolvedCallouts,
+    boxes: calloutBoxes,
+    slideType: 'oneColumnText',
+    textBox: safeBodyGeo,
   });
   if (sourceText) {
     slide.addText(sourceText, {

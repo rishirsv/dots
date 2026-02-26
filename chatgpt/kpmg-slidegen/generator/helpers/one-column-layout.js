@@ -1,5 +1,6 @@
 import { TYPE_SIZES } from '../tokens.js';
 import { computeDynamicStraplineBox, sanitizeText } from './text.js';
+import { resolveCalloutLayout } from './callouts.js';
 import {
   clampToMasterFooter,
   computeStrapShift,
@@ -28,6 +29,7 @@ export function computeOneColumnLayoutGeometry({
   masterName = 'KPMG_WHITE',
   strapline,
   source,
+  callouts = [],
   straplineFontSize = TYPE_SIZES.strapline,
   sourceFontSize = TYPE_SIZES.source,
 } = {}) {
@@ -57,7 +59,21 @@ export function computeOneColumnLayoutGeometry({
         fontSize: sourceFontSize,
       })
     : 0;
-  const safeBodyGeo = clampToMasterFooter(bodyGeo, masterName, sourcePad);
+  const safeBodyGeoBase = clampToMasterFooter(bodyGeo, masterName, sourcePad);
+  const calloutLayout = resolveCalloutLayout({
+    slideType: 'oneColumnText',
+    callouts,
+    textBox: safeBodyGeoBase,
+    preferredBoxes: g.calloutBoxes,
+  });
+  let safeBodyGeo = calloutLayout.adjustedTextBox || safeBodyGeoBase;
+  if (sourceText) {
+    const effectiveSourcePad = sourceFootprintBelow(safeBodyGeo, sourceText, {
+      ...ONE_COLUMN_LAYOUT_DEFAULTS.sourceLayout,
+      fontSize: sourceFontSize,
+    });
+    safeBodyGeo = clampToMasterFooter(safeBodyGeo, masterName, effectiveSourcePad);
+  }
 
   let sourceGeo = null;
   if (sourceText) {
@@ -92,7 +108,8 @@ export function computeOneColumnLayoutGeometry({
     strapGeo,
     bodyGeo,
     safeBodyGeo,
+    callouts: calloutLayout.callouts,
+    calloutBoxes: calloutLayout.calloutBoxes,
     sourceGeo,
   };
 }
-

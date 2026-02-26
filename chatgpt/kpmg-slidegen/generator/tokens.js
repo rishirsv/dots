@@ -5,7 +5,7 @@
  */
 
 export const FONTS = {
-  heading: 'Arial',
+  heading: 'KPMG-Bold',
   body: 'Arial',
 };
 

@@ -27,6 +27,10 @@ function isTextObject(value) {
   return Boolean(value && typeof value === 'object' && value.text !== undefined);
 }
 
+function isBulletObject(value) {
+  return Boolean(value && typeof value === 'object' && !Array.isArray(value) && value.text !== undefined);
+}
+
 function safeStr(s) {
   if (isTextObject(s)) return String(s.text ?? '');
   return String(s ?? '');
@@ -67,6 +71,11 @@ function normalizeBulletPairs(items) {
   return out;
 }
 
+function bulletPrefixForDepth(depth) {
+  // Match rendering behavior: deeper level swaps to dash.
+  return depth === 2 ? '- ' : '• ';
+}
+
 function countWrappedLines(text, charsPerLine) {
   const s = safeStr(text).replace(/\r/g, '');
   const parts = s.split('\n');
@@ -101,12 +110,29 @@ function chunkBullets(lines, { maxLines, charsPerLine }) {
   let cur = [];
   let used = 0;
 
+  function estimateNodeLines(node, depth = 0) {
+    if (Array.isArray(node)) return 0;
+
+    if (isBulletObject(node)) {
+      const text = safeStr(node).trim();
+      const isHeader = Boolean(node.header || node.subheader);
+      const prefix = isHeader ? '' : bulletPrefixForDepth(depth);
+      let linesNeeded = text ? countWrappedLines(`${prefix}${text}`, charsPerLine) : 0;
+      if (!isHeader && Array.isArray(node.children)) {
+        for (const child of node.children) linesNeeded += estimateNodeLines(child, depth + 1);
+      }
+      return linesNeeded;
+    }
+
+    const text = safeStr(node).trim();
+    if (!text) return 0;
+    const prefix = depth > 0 ? bulletPrefixForDepth(depth) : (isLikelyHeading(text) ? '' : bulletPrefixForDepth(0));
+    return countWrappedLines(`${prefix}${text}`, charsPerLine);
+  }
+
   for (const item of items) {
-    const t = safeStr(item).trim();
-    if (!t) continue;
-    const isHeader = isTextObject(item) && item.header;
-    const prefix = isHeader ? '' : '• ';
-    const need = countWrappedLines(`${prefix}${t}`, charsPerLine);
+    const need = estimateNodeLines(item, 0);
+    if (need <= 0) continue;
     if (cur.length && used + need > maxLines) {
       chunks.push(cur);
       cur = [];
@@ -180,22 +206,46 @@ function paginateOneColumnBullets(
   slideSpec,
   geometry,
   fieldName,
-  { footerSafe = false, fallbackBox, titleMaxChars = null, bodyBox = null } = {},
+  { footerSafe = false, fallbackBox, titleMaxChars = null, bodyBox = null, continuationBodyBox = null } = {},
 ) {
   const g = geometry || {};
-  const box = bodyBox || g.body || g.topText || g.leftText || fallbackBox || { w: 11.0, h: 5.0, y: 1.6 };
-  const safeBox = applyFooterSafe(box, footerSafe);
+  const firstBox = bodyBox || g.body || g.topText || g.leftText || fallbackBox || { w: 11.0, h: 5.0, y: 1.6 };
+  const nextBox = continuationBodyBox || firstBox;
+  const safeFirstBox = applyFooterSafe(firstBox, footerSafe);
+  const safeContinuationBox = applyFooterSafe(nextBox, footerSafe);
   const fontSize = BODY_FONT_SIZE;
-  const chunks = chunkBullets(slideSpec[fieldName], {
-    maxLines: estimateMaxLines(safeBox.h, fontSize),
-    charsPerLine: estimateCharsPerLine(safeBox.w, fontSize),
-  });
+  const sourceItems = Array.isArray(slideSpec[fieldName]) ? [...slideSpec[fieldName]] : [];
+  const chunks = [];
+  let remaining = sourceItems;
+  let page = 0;
+
+  while (remaining.length > 0) {
+    const box = page === 0 ? safeFirstBox : safeContinuationBox;
+    const pageChunks = chunkBullets(remaining, {
+      maxLines: estimateMaxLines(box.h, fontSize),
+      charsPerLine: estimateCharsPerLine(box.w, fontSize),
+    });
+    const chunk = Array.isArray(pageChunks) && pageChunks.length > 0 ? pageChunks[0] : [];
+    if (chunk.length === 0) {
+      chunks.push([remaining[0]]);
+      remaining = remaining.slice(1);
+    } else {
+      chunks.push(chunk);
+      remaining = remaining.slice(chunk.length);
+    }
+    page += 1;
+  }
+
+  if (chunks.length === 0) chunks.push([]);
 
   const out = [];
   for (let p = 0; p < chunks.length; p++) {
     const s = clone(slideSpec);
     s.title = contTitle(slideSpec.title, p, titleMaxChars);
     s[fieldName] = chunks[p];
+    if (p > 0 && Array.isArray(s.callouts)) {
+      delete s.callouts;
+    }
     out.push(s);
   }
   return out;
@@ -407,14 +457,28 @@ export function paginateDeckSpec(deckSpec, layouts) {
         masterName,
         strapline: slideSpec?.strapline,
         source: slideSpec?.source,
+        callouts: slideSpec?.callouts,
         straplineFontSize: TYPE_SIZES.strapline,
         sourceFontSize: TYPE_SIZES.source,
       });
+      const oneColContinuationLayout =
+        Array.isArray(slideSpec?.callouts) && slideSpec.callouts.length > 0
+          ? computeOneColumnLayoutGeometry({
+              geometry: geom,
+              masterName,
+              strapline: slideSpec?.strapline,
+              source: slideSpec?.source,
+              callouts: [],
+              straplineFontSize: TYPE_SIZES.strapline,
+              sourceFontSize: TYPE_SIZES.source,
+            })
+          : null;
       const paged = paginateOneColumnBullets(slideSpec, geom, 'body', {
         footerSafe: false,
         fallbackBox: { w: 11.1596, h: 5.6, y: 1.6 },
         titleMaxChars,
         bodyBox: oneColLayout?.safeBodyGeo || null,
+        continuationBodyBox: oneColContinuationLayout?.safeBodyGeo || oneColLayout?.safeBodyGeo || null,
       });
       const originalCount = Array.isArray(slideSpec.body) ? slideSpec.body.length : 0;
       recordSplit(slideIndex, type, 'one-column-bullets', originalCount, paged.length);
@@ -434,13 +498,36 @@ export function paginateDeckSpec(deckSpec, layouts) {
               table: slideSpec?.table,
               noteSource: slideSpec?.noteSource,
               showSummaryChart: slideSpec?.showSummaryChart,
+              callouts: slideSpec?.callouts,
             })
           : computeAnalysisWideChart2ColsTextGeometry({
               geometry: geom,
               masterName,
               strapline: slideSpec?.strapline,
               chart: slideSpec?.chart,
+              callouts: slideSpec?.callouts,
             });
+      const wideLayoutContinuation =
+        Array.isArray(slideSpec?.callouts) && slideSpec.callouts.length > 0
+          ? type === 'analysisWideChartTableText'
+            ? computeAnalysisWideChartTableTextGeometry({
+                geometry: geom,
+                masterName,
+                strapline: slideSpec?.strapline,
+                chart: slideSpec?.chart,
+                table: slideSpec?.table,
+                noteSource: slideSpec?.noteSource,
+                showSummaryChart: slideSpec?.showSummaryChart,
+                callouts: [],
+              })
+            : computeAnalysisWideChart2ColsTextGeometry({
+                geometry: geom,
+                masterName,
+                strapline: slideSpec?.strapline,
+                chart: slideSpec?.chart,
+                callouts: [],
+              })
+          : null;
       const paged = paginateOneColumnBullets(slideSpec, geom, 'body', {
         footerSafe: false,
         fallbackBox:
@@ -449,6 +536,7 @@ export function paginateDeckSpec(deckSpec, layouts) {
             : { w: 5.6, h: 5.4, y: 1.6 },
         titleMaxChars,
         bodyBox: wideLayout?.safeTextBox || null,
+        continuationBodyBox: wideLayoutContinuation?.safeTextBox || wideLayout?.safeTextBox || null,
       });
       const originalCount = Array.isArray(slideSpec.body) ? slideSpec.body.length : 0;
       recordSplit(slideIndex, type, 'text-with-chart', originalCount, paged.length);

@@ -8,6 +8,8 @@ import {
 import { toBodyRuns } from "../helpers/bullets.js";
 import { addTitle } from "../helpers/title.js";
 import { pickDataLabelColor } from "../helpers/chart.js";
+import { renderCallouts } from "../helpers/callouts.js";
+import { sanitizeText } from "../helpers/text.js";
 import {
   normalizeBodyStyle,
 } from "../helpers/layout.js";
@@ -43,6 +45,121 @@ const TOKENS = {
     },
   },
 };
+
+const CHART_ANNOTATION_STYLE = Object.freeze({
+  borderColor: COLORS.kpmgBlue,
+  fillColor: COLORS.white,
+  titleColor: COLORS.kpmgBlue,
+  textColor: COLORS.black,
+  titleSize: 7.5,
+  textSize: 7.5,
+});
+
+function clamp(value, min, max) {
+  if (!Number.isFinite(value)) return min;
+  return Math.max(min, Math.min(max, value));
+}
+
+function normalizeChartAnnotations(raw) {
+  if (!Array.isArray(raw)) return [];
+  const out = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const title = sanitizeText(item.title || item.heading);
+    const text = sanitizeText(item.text || item.body);
+    if (!title && !text) continue;
+    const anchor = sanitizeText(item.anchor || "topRight");
+    if (!["topLeft", "topRight", "bottomLeft", "bottomRight"].includes(anchor)) continue;
+    out.push({ title, text, anchor });
+    if (out.length >= 4) break;
+  }
+  return out;
+}
+
+function chartAnnotationBox(chartGeo, anchor, slotIndex = 0) {
+  const boxW = clamp(chartGeo.w * 0.34, 1.6, 2.8);
+  const boxH = clamp(chartGeo.h * 0.2, 0.45, 0.72);
+  const margin = 0.07;
+  const offset = slotIndex * (boxH + 0.04);
+
+  if (anchor === "topLeft") {
+    return { x: chartGeo.x + margin, y: chartGeo.y + margin + offset, w: boxW, h: boxH };
+  }
+  if (anchor === "bottomLeft") {
+    return { x: chartGeo.x + margin, y: chartGeo.y + chartGeo.h - boxH - margin - offset, w: boxW, h: boxH };
+  }
+  if (anchor === "bottomRight") {
+    return {
+      x: chartGeo.x + chartGeo.w - boxW - margin,
+      y: chartGeo.y + chartGeo.h - boxH - margin - offset,
+      w: boxW,
+      h: boxH,
+    };
+  }
+  return {
+    x: chartGeo.x + chartGeo.w - boxW - margin,
+    y: chartGeo.y + margin + offset,
+    w: boxW,
+    h: boxH,
+  };
+}
+
+function toChartAnnotationRuns(item) {
+  const runs = [];
+  if (item.title) {
+    runs.push({
+      text: item.title,
+      options: {
+        bold: true,
+        color: CHART_ANNOTATION_STYLE.titleColor,
+        fontSize: CHART_ANNOTATION_STYLE.titleSize,
+        breakLine: Boolean(item.text),
+        paraSpaceAfter: item.text ? 1 : 0,
+      },
+    });
+  }
+  if (item.text) {
+    runs.push({
+      text: item.text,
+      options: {
+        color: CHART_ANNOTATION_STYLE.textColor,
+        fontSize: CHART_ANNOTATION_STYLE.textSize,
+        breakLine: false,
+      },
+    });
+  }
+  return runs;
+}
+
+function renderChartAnnotations(pptx, slide, chart, chartGeo) {
+  if (!pptx || !slide || !chart || !chartGeo) return;
+  const annotations = normalizeChartAnnotations(chart.annotations);
+  if (annotations.length === 0) return;
+
+  const slotsUsed = new Map();
+  for (const item of annotations) {
+    const idx = slotsUsed.get(item.anchor) || 0;
+    slotsUsed.set(item.anchor, idx + 1);
+    const box = chartAnnotationBox(chartGeo, item.anchor, idx);
+    const runs = toChartAnnotationRuns(item);
+    if (runs.length === 0) continue;
+    slide.addText(runs, {
+      x: box.x,
+      y: box.y,
+      w: box.w,
+      h: box.h,
+      fontFace: FONTS.body,
+      fontSize: CHART_ANNOTATION_STYLE.textSize,
+      color: CHART_ANNOTATION_STYLE.textColor,
+      line: { color: CHART_ANNOTATION_STYLE.borderColor, pt: 0.8 },
+      fill: { color: CHART_ANNOTATION_STYLE.fillColor },
+      margin: [2, 3, 2, 3],
+      wrap: true,
+      fit: "shrink",
+      valign: "top",
+    });
+  }
+}
 
 function addChart(pptx, slide, chart, geo) {
   if (!chart || !chart.type || !chart.data) return;
@@ -141,13 +258,15 @@ function addHeadingBand(pptx, slide, heading, geo) {
 
 export function addAnalysisWideChart2ColsText(
   pptx,
-  { title, strapline, body, bodyStyle, chart, geometry, masterName } = {},
+  { title, strapline, body, callouts, bodyStyle, chart, geometry, masterName } = {},
 ) {
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const {
     geometry: g,
     strapText,
     straplineBox,
+    callouts: resolvedCallouts,
+    calloutBoxes,
     safeTextBox,
     safeChartBox,
   } = computeAnalysisWideChart2ColsTextGeometry({
@@ -155,6 +274,7 @@ export function addAnalysisWideChart2ColsText(
     masterName,
     strapline,
     chart,
+    callouts,
   });
   const effectiveBodyStyle = normalizeBodyStyle(bodyStyle);
 
@@ -177,6 +297,14 @@ export function addAnalysisWideChart2ColsText(
     valign: "top",
   });
   addChart(pptx, slide, chart, safeChartBox);
+  renderChartAnnotations(pptx, slide, chart, safeChartBox);
+  renderCallouts(pptx, slide, {
+    callouts: resolvedCallouts,
+    boxes: calloutBoxes,
+    slideType: "analysisWideChart2ColsText",
+    textBox: safeTextBox,
+    chartBox: safeChartBox,
+  });
 
   return slide;
 }
@@ -188,6 +316,7 @@ export function addAnalysisWideChartTableText(
     strapline,
     heading,
     body,
+    callouts,
     bodyStyle,
     chart,
     table,
@@ -203,6 +332,8 @@ export function addAnalysisWideChartTableText(
     strapText,
     straplineBox,
     headingBase,
+    callouts: resolvedCallouts,
+    calloutBoxes,
     safeTextBox,
     safeChartBox,
     safeTableBox,
@@ -214,6 +345,7 @@ export function addAnalysisWideChartTableText(
     table,
     noteSource,
     showSummaryChart,
+    callouts,
   });
   const effectiveBodyStyle = normalizeBodyStyle(bodyStyle);
 
@@ -236,8 +368,9 @@ export function addAnalysisWideChartTableText(
 
   addHeadingBand(pptx, slide, heading, headingBase);
 
+  let tableMeta = null;
   if (safeTableBox && hasTableData) {
-    addAnalysisTable(slide, table, {
+    tableMeta = addAnalysisTable(slide, table, {
       x: safeTableBox.x,
       y: safeTableBox.y,
       w: safeTableBox.w,
@@ -257,6 +390,7 @@ export function addAnalysisWideChartTableText(
   });
   if (safeChartBox && hasChartData) {
     addChart(pptx, slide, chart, safeChartBox);
+    renderChartAnnotations(pptx, slide, chart, safeChartBox);
   }
   if (noteSource && g.note) {
     slide.addText(String(noteSource), {
@@ -268,6 +402,15 @@ export function addAnalysisWideChartTableText(
       breakLine: true,
     });
   }
+  renderCallouts(pptx, slide, {
+    callouts: resolvedCallouts,
+    boxes: calloutBoxes,
+    slideType: "analysisWideChartTableText",
+    textBox: safeTextBox,
+    chartBox: safeChartBox,
+    tableBox: safeTableBox,
+    tableMeta,
+  });
 
   return slide;
 }

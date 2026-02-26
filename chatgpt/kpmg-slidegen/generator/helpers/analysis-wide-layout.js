@@ -1,5 +1,6 @@
 import { FOOTER_SAFE_TOP } from './footer.js';
 import { clampToMasterFooter, computeStrapShift, footerSafeTopForMaster, shiftBox } from './layout.js';
+import { resolveCalloutLayout } from './callouts.js';
 
 export const ANALYSIS_WIDE_LAYOUT_DEFAULTS = Object.freeze({
   geometry: {
@@ -17,6 +18,7 @@ export function computeAnalysisWideChart2ColsTextGeometry({
   masterName = 'KPMG_WHITE',
   strapline,
   chart = null,
+  callouts = [],
 } = {}) {
   const g = geometry || ANALYSIS_WIDE_LAYOUT_DEFAULTS.geometry;
   const strapText = strapline;
@@ -29,7 +31,14 @@ export function computeAnalysisWideChart2ColsTextGeometry({
   const yShift = computeStrapShift(straplineBox, Math.min(leftBase.y, rightBase.y));
   const textBox = shiftBox(leftBase, yShift);
   const chartBox = shiftBox(rightBase, yShift);
-  const safeTextBox = clampToMasterFooter(textBox, masterName);
+  const safeTextBoxBase = clampToMasterFooter(textBox, masterName);
+  const calloutLayout = resolveCalloutLayout({
+    slideType: 'analysisWideChart2ColsText',
+    callouts,
+    textBox: safeTextBoxBase,
+    preferredBoxes: g.calloutBoxes,
+  });
+  const safeTextBox = calloutLayout.adjustedTextBox || safeTextBoxBase;
   const sourcePad = chart?.source ? 0.3 : 0;
   const safeChartBox = clampToMasterFooter(chartBox, masterName, sourcePad);
 
@@ -37,6 +46,8 @@ export function computeAnalysisWideChart2ColsTextGeometry({
     geometry: g,
     strapText,
     straplineBox,
+    callouts: calloutLayout.callouts,
+    calloutBoxes: calloutLayout.calloutBoxes,
     safeTextBox,
     safeChartBox,
   };
@@ -50,6 +61,7 @@ export function computeAnalysisWideChartTableTextGeometry({
   table,
   noteSource,
   showSummaryChart = false,
+  callouts = [],
 } = {}) {
   const g = geometry || ANALYSIS_WIDE_LAYOUT_DEFAULTS.geometry;
   const strapText = strapline;
@@ -108,19 +120,28 @@ export function computeAnalysisWideChartTableTextGeometry({
     tableBox = { x: leftX, y: lowerY, w: leftW, h: lowerH };
   }
 
-  const safeTextBox = clampToMasterFooter(textBox, masterName);
+  const safeTextBoxBase = clampToMasterFooter(textBox, masterName);
   const sourcePad = chart?.source ? 0.3 : 0;
   const safeChartBox = chartBox ? clampToMasterFooter(chartBox, masterName, sourcePad) : null;
   const safeTableBox = tableBox ? clampToMasterFooter(tableBox, masterName) : null;
+  const calloutLayout = resolveCalloutLayout({
+    slideType: 'analysisWideChartTableText',
+    callouts,
+    textBox: safeTextBoxBase,
+    preferredBoxes: g.calloutBoxes,
+    headingBox: headingBase,
+  });
+  const safeTextBox = calloutLayout.adjustedTextBox || safeTextBoxBase;
 
   return {
     geometry: g,
     strapText,
     straplineBox,
     headingBase,
+    callouts: calloutLayout.callouts,
+    calloutBoxes: calloutLayout.calloutBoxes,
     safeTextBox,
     safeChartBox,
     safeTableBox,
   };
 }
-

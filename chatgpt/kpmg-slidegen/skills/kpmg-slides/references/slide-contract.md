@@ -40,6 +40,19 @@ Use headings to keep dense slides scannable and split-friendly.
 - `"bullets"` or `"paragraphs"` (only; exact spelling).
 - Use `"bullets"` by default unless prose truly reads better as a paragraph.
 
+### `callouts`
+
+- Array of 1+ column-like objects:
+  - `heading` or `title` (string)
+  - `body` (`textArray`)
+- Supported on:
+  - `oneColumnText`
+  - `analysisWideChart2ColsText`
+  - `analysisWideChartTableText`
+- Rendering rule:
+  - Callouts are rendered in fixed margin rails with leader lines.
+  - Keep to 1–2 concise callouts for best visual quality.
+
 ### `table`
 
 - Object with:
@@ -70,6 +83,7 @@ Example:
 - Optional:
   - `opts`: chart rendering options
   - `source`: source text below chart
+  - `annotations`: small chart overlays with fixed corner anchors (`topLeft`, `topRight`, `bottomLeft`, `bottomRight`)
 
 Example:
 
@@ -122,6 +136,7 @@ Each section object is typically:
   - `strapline` (text, min 12, max 700)
   - `source` (text, min 12, max 700)
   - `bodyStyle`
+  - `callouts` (columns, min 1; annotation style with leaders)
 
 Use for a single-thread argument.
 
@@ -146,6 +161,7 @@ Use only when you truly have two parallel streams. Keep left/right structurally 
 - Optional:
   - `strapline` (text, min 12, max 700)
   - `bodyStyle`
+  - `callouts` (columns, min 1; annotation style with leaders)
 
 Use for "claim + visual proof + interpretation".
 
@@ -174,6 +190,7 @@ Use for KPI readouts with takeaway bullets.
   - `table` (table, min 3 rows)
   - `noteSource` (text, min 12, max 700)
   - `bodyStyle`
+  - `callouts` (columns, min 1; annotation style with leaders)
 
 Use for integrated readouts (chart + optional table + synthesis).
 

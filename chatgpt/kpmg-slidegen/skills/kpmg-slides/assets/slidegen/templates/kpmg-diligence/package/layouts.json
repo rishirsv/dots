@@ -159,7 +159,21 @@
           "w": 11.14643372703412,
           "x": 1.088540026246719,
           "y": 2.191146106736658
-        }
+        },
+        "calloutBoxes": [
+          {
+            "x": 4.82,
+            "y": 2.05,
+            "w": 1.75,
+            "h": 1.05
+          },
+          {
+            "x": 4.82,
+            "y": 3.22,
+            "w": 1.75,
+            "h": 1.05
+          }
+        ]
       },
       "slots": {
         "body": {
@@ -219,6 +233,17 @@
           "allowEmpty": false,
           "renderingHints": {
             "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "callouts": {
+          "kind": "columns",
+          "required": false,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "columns",
             "keepTogether": true,
             "priority": "low"
           }
@@ -282,6 +307,20 @@
             "w": 5.505083114610674,
             "x": 6.7362204724409445,
             "y": 4.2194116360454945
+          }
+        ],
+        "calloutBoxes": [
+          {
+            "x": 10,
+            "y": 2.25,
+            "w": 2.24,
+            "h": 0.8
+          },
+          {
+            "x": 10,
+            "y": 3.15,
+            "w": 2.24,
+            "h": 0.8
           }
         ]
       },
@@ -378,6 +417,17 @@
           "allowEmpty": false,
           "renderingHints": {
             "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "callouts": {
+          "kind": "columns",
+          "required": false,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "columns",
             "keepTogether": true,
             "priority": "low"
           }
@@ -614,7 +664,21 @@
         "body": null,
         "source": null,
         "strapline": null,
-        "title": null
+        "title": null,
+        "calloutBoxes": [
+          {
+            "x": 9.05,
+            "y": 2,
+            "w": 3.2,
+            "h": 1.15
+          },
+          {
+            "x": 9.05,
+            "y": 3.25,
+            "w": 3.2,
+            "h": 1.15
+          }
+        ]
       },
       "slots": {
         "body": {
@@ -675,6 +739,17 @@
           "allowEmpty": false,
           "renderingHints": {
             "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "callouts": {
+          "kind": "columns",
+          "required": false,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "columns",
             "keepTogether": true,
             "priority": "low"
           }

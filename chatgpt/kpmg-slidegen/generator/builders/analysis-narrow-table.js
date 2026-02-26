@@ -249,6 +249,24 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
   const colW = computeColW({ w, headers, rows: tableRows });
   const colAlign = computeColAlignments(headers, tableRows);
   const rowH = computeRowH({ boxH: tableH, rows: tableRows, colW, fontSize: baseFontSize });
+  const colBoxes = [];
+  let colX = x;
+  for (const width of colW) {
+    const wNum = Number(width || 0);
+    colBoxes.push({ x: colX, y: tableY, w: wNum, h: tableH });
+    colX += wNum;
+  }
+  const rowBoxes = [];
+  const rowCenters = [];
+  if (rowH.length > 1) {
+    let rowY = tableY + Number(rowH[0] || 0);
+    for (let idx = 1; idx < rowH.length; idx += 1) {
+      const hNum = Number(rowH[idx] || 0);
+      rowBoxes.push({ x, y: rowY, w, h: hNum });
+      rowCenters.push(rowY + hNum / 2);
+      rowY += hNum;
+    }
+  }
 
   if (showTitleBar) {
     slide.addShape('rect', {
@@ -385,6 +403,14 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
     autoPage: false,
     margin: 0,
   });
+
+  return {
+    box: { x, y: tableY, w, h: tableH },
+    headerBox: { x, y: tableY, w, h: Number(rowH[0] || 0.32) },
+    colBoxes,
+    rowBoxes,
+    rowCenters,
+  };
 }
 
 export function addAnalysisNarrowTable(

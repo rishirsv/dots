@@ -19,28 +19,9 @@ const DIRECTORY_SYNC_MAP = [
 
 const FILE_SYNC_MAP = [
   {
-    source: path.join(REPO_ROOT, 'docs', 'SKILL-SLIDE-CONTRACT.md'),
-    target: path.join(SKILL_ROOT, 'references', 'slide-contract.md'),
-  },
-  {
-    source: path.join(REPO_ROOT, 'docs', 'SKILL-WRITING-GUIDE.md'),
-    target: path.join(SKILL_ROOT, 'references', 'writing-guide.md'),
-  },
-  {
-    source: path.join(REPO_ROOT, 'docs', 'SKILL-QA-RULES.md'),
-    target: path.join(SKILL_ROOT, 'references', 'qa-rules.md'),
-  },
-  {
-    source: path.join(REPO_ROOT, 'docs', 'SKILL-DECKSPEC-STARTER-GUIDE.md'),
-    target: path.join(SKILL_ROOT, 'references', 'starter-template-guide.md'),
-  },
-  {
-    source: path.join(REPO_ROOT, 'docs', 'SKILL-OUTPUT-EXAMPLES.md'),
-    target: path.join(SKILL_ROOT, 'references', 'output-examples.md'),
-  },
-  {
     source: path.join(REPO_ROOT, 'decks', 'deckspec-starter-template.deckSpec.json'),
     target: path.join(SKILL_ROOT, 'assets', 'templates', 'deckspec-starter.json'),
+    required: false,
   },
 ];
 
@@ -72,10 +53,12 @@ function listFilesRecursively(rootDir, { includeDotfiles = false } = {}) {
       const full = path.join(current, entry.name);
       if (!includeDotfiles && entry.name === '.DS_Store') continue;
       if (entry.isDirectory()) {
+        if (entry.name === '__pycache__') continue;
         stack.push(full);
         continue;
       }
       if (!entry.isFile()) continue;
+      if (entry.name.endsWith('.pyc')) continue;
       out.push(full);
     }
   }
@@ -114,6 +97,22 @@ function syncFiles(fileMap) {
     copyFile(source, target);
     return { source, target };
   });
+}
+
+function resolveFileSyncMap(fileMap) {
+  const resolved = [];
+  for (const mapping of fileMap) {
+    const { source, required = true } = mapping;
+    if (fs.existsSync(source)) {
+      resolved.push(mapping);
+      continue;
+    }
+    if (required) {
+      throw new Error(`Missing required sync source: ${relativeToRepo(source)}`);
+    }
+    console.warn(`Skipping optional sync source (not found): ${relativeToRepo(source)}`);
+  }
+  return resolved;
 }
 
 function pruneManagedFileTargets(fileMap) {
@@ -174,9 +173,10 @@ function removeMacMetadata(rootDir) {
 }
 
 function main() {
+  const resolvedFileSyncMap = resolveFileSyncMap(FILE_SYNC_MAP);
   const dirPairs = DIRECTORY_SYNC_MAP.flatMap(({ source, target }) => syncDirectory(source, target));
-  const filePairs = syncFiles(FILE_SYNC_MAP);
-  pruneManagedFileTargets(FILE_SYNC_MAP);
+  const filePairs = syncFiles(resolvedFileSyncMap);
+  pruneManagedFileTargets(resolvedFileSyncMap);
   removeStalePaths(STALE_PATHS);
   removeMacMetadata(SKILL_ROOT);
   const entries = buildManifestEntries([...dirPairs, ...filePairs]);
