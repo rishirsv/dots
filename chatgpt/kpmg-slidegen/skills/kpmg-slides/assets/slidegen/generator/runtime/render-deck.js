@@ -14,6 +14,12 @@ import { addOneColumnText } from '../builders/one-column-text.js';
 import { addContentsSlide } from '../builders/contents-slide.js';
 import { addAnalysisBridge } from '../builders/analysis-bridge.js';
 import { validateBridgeSpec } from '../helpers/bridge.js';
+import { addBusinessOverview } from '../builders/business-overview.js';
+import {
+  countBusinessStructureCharacters,
+  countBusinessStructureItems,
+  validateBusinessStructureSpec,
+} from '../helpers/business-structure.js';
 import { normalizeBodyStyle } from '../helpers/layout.js';
 import { paginateDeckSpec } from './paginate.js';
 
@@ -101,6 +107,7 @@ function isMissingSlotValue(value, def = {}) {
   if (kind === 'table') return !isPlainObject(value) || !Array.isArray(value.rows) || value.rows.length === 0;
   if (kind === 'chart') return !isPlainObject(value) || !Array.isArray(value.data) || value.data.length === 0;
   if (kind === 'bridge') return !isPlainObject(value) || !Array.isArray(value.steps) || value.steps.length === 0;
+  if (kind === 'businessStructure') return !isPlainObject(value);
   if (Array.isArray(value)) return value.length === 0;
   if (typeof value === 'string') return value.trim().length === 0;
   return false;
@@ -141,6 +148,9 @@ function countCharacters(value, kind = 'text') {
     ];
     return parts.join(' ').trim().length;
   }
+  if (kind === 'businessStructure') {
+    return countBusinessStructureCharacters(value);
+  }
   return 0;
 }
 
@@ -156,6 +166,7 @@ function getSlotQuantity(def, value) {
   if (kind === 'table') return Array.isArray(value?.rows) ? value.rows.length : 0;
   if (kind === 'chart') return Array.isArray(value?.data) ? value.data.length : 0;
   if (kind === 'bridge') return Array.isArray(value?.steps) ? value.steps.length + 2 : 0;
+  if (kind === 'businessStructure') return countBusinessStructureItems(value);
   return isMissingSlotValue(value, def) ? 0 : 1;
 }
 
@@ -196,6 +207,12 @@ function suggestRemedy(def = {}, code) {
     return {
       hook: 'addBridgeSteps',
       suggestedRemedy: 'Provide start/end values plus ordered bridge steps that reconcile.',
+    };
+  }
+  if (kind === 'businessStructure') {
+    return {
+      hook: 'addStructureTiers',
+      suggestedRemedy: 'Provide top/mid/bottom tiers and valid connectors in structure.',
     };
   }
   if (code === 'below_min_chars') {
@@ -386,6 +403,12 @@ function validateTypedSlotValue(slotName, def, value) {
     const bridgeValidation = validateBridgeSpec(value || {});
     for (const e of bridgeValidation.errors || []) fail(e);
     for (const w of bridgeValidation.warnings || []) warn(w);
+    return { errors, warnings, quantity, charCount };
+  }
+  if (kind === 'businessStructure') {
+    const structureValidation = validateBusinessStructureSpec(value || {});
+    for (const e of structureValidation.errors || []) fail(e);
+    for (const w of structureValidation.warnings || []) warn(w);
     return { errors, warnings, quantity, charCount };
   }
 
@@ -1186,6 +1209,7 @@ function buildSlide(pptx, rawSlideSpec, templatePackage, runtimeContext = {}) {
     analysisWideChart2ColsText: addAnalysisWideChart2ColsText,
     analysisWideChartTableText: addAnalysisWideChartTableText,
     analysisBridge: addAnalysisBridge,
+    businessOverview: addBusinessOverview,
     titleStrapline4TextBoxes: addTitleStrapline4TextBoxes,
   };
   const builder = builderByType[slideSpec.type];

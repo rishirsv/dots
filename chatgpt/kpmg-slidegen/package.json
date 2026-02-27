@@ -19,6 +19,7 @@
     "test:visual:layouts": "node scripts/test-layout-visual-regressions.mjs",
     "test:visual:one-column": "node scripts/test-one-column-visual-regressions.mjs",
     "test:visual:analysis-bridge": "node scripts/test-analysis-bridge-visual-regressions.mjs",
+    "test:visual:business-overview": "node scripts/test-business-overview-visual-regressions.mjs",
     "test:visual:callouts-dense": "node scripts/test-callouts-dense-visual-regressions.mjs",
     "test:visual:bullet-nesting": "node scripts/test-bullet-nesting-visual-regressions.mjs",
     "test:validation:bullet-nesting": "node scripts/test-bullet-nesting-validation.mjs",

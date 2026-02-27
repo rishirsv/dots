@@ -385,6 +385,55 @@
       "note": "[Optional assumptions and reconciliation caveats.]"
     },
     {
+      "type": "businessOverview",
+      "title": "[Business overview headline]",
+      "leftHeading": "Legal chart",
+      "rightHeading": "Company overview",
+      "structure": {
+        "topTier": [
+          { "label": "[SHAREHOLDER 1]", "pct": "40%" },
+          { "label": "[SHAREHOLDER 2]", "pct": "35%" },
+          { "label": "[SHAREHOLDER 3]", "pct": "25%" }
+        ],
+        "midTier": [
+          { "label": "[HOLDCO]", "pct": "100%" }
+        ],
+        "bottomTier": [
+          { "label": "[ENTITY 1]", "pct": "60%" },
+          { "label": "[ENTITY 2]", "pct": "40%" }
+        ],
+        "perimeter": {
+          "enabled": true,
+          "label": "Transaction perimeter",
+          "subLabel": "Entities under FDD scope of work"
+        }
+      },
+      "overviewBody": [
+        "[One-line company profile and market focus.]",
+        "[Key business line 1 and why it matters.]",
+        "[Key business line 2 and operating model context.]",
+        "[Key diligence implication for ownership or operations.]"
+      ],
+      "bodyStyle": "bullets",
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "FY22",
+            "labels": ["Segment A", "Segment B", "Segment C"],
+            "values": [12, 9, 6]
+          },
+          {
+            "name": "FY23",
+            "labels": ["Segment A", "Segment B", "Segment C"],
+            "values": [14, 10, 7]
+          }
+        ],
+        "source": "Source: [Management reporting pack]"
+      },
+      "source": "Source: [Management information and audited financial statements.]"
+    },
+    {
       "type": "titleStrapline4TextBoxes",
       "title": "[Four-pillar summary headline]",
       "strapline": "[Use this layout for concise summary across four themes.]",

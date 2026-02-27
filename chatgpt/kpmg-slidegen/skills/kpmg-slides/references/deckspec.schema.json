@@ -517,6 +517,146 @@
         "$ref": "#/$defs/column"
       }
     },
+    "businessStructureNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "pct": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30
+            },
+            {
+              "type": "number"
+            }
+          ]
+        }
+      }
+    },
+    "businessStructureTierItem": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        {
+          "$ref": "#/$defs/businessStructureNode"
+        }
+      ]
+    },
+    "businessStructureLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fromTier",
+        "fromIndex",
+        "toTier",
+        "toIndex"
+      ],
+      "properties": {
+        "fromTier": {
+          "type": "string",
+          "enum": [
+            "top",
+            "mid",
+            "bottom"
+          ]
+        },
+        "toTier": {
+          "type": "string",
+          "enum": [
+            "top",
+            "mid",
+            "bottom"
+          ]
+        },
+        "fromIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 50
+        }
+      }
+    },
+    "businessStructurePerimeter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "subLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        }
+      }
+    },
+    "businessStructure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "topTier",
+        "bottomTier"
+      ],
+      "properties": {
+        "topTier": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "$ref": "#/$defs/businessStructureTierItem"
+          }
+        },
+        "midTier": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/businessStructureTierItem"
+          }
+        },
+        "bottomTier": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/businessStructureTierItem"
+          }
+        },
+        "links": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/businessStructureLink"
+          }
+        },
+        "perimeter": {
+          "$ref": "#/$defs/businessStructurePerimeter"
+        }
+      }
+    },
     "contentsSection": {
       "type": "object",
       "additionalProperties": false,
@@ -922,6 +1062,59 @@
         }
       }
     },
+    "slideBusinessOverview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title",
+        "structure",
+        "overviewBody"
+      ],
+      "properties": {
+        "type": {
+          "const": "businessOverview"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 12,
+          "maxLength": 50
+        },
+        "leftHeading": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 80
+        },
+        "rightHeading": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 80
+        },
+        "structure": {
+          "$ref": "#/$defs/businessStructure"
+        },
+        "overviewBody": {
+          "$ref": "#/$defs/textArrayMin2",
+          "x-kpmg-minChars": 80
+        },
+        "chart": {
+          "$ref": "#/$defs/chart"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "note": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "bodyStyle": {
+          "$ref": "#/$defs/bodyStyle"
+        }
+      }
+    },
     "slideTitleStrapline4TextBoxes": {
       "type": "object",
       "additionalProperties": false,
@@ -1008,6 +1201,9 @@
         },
         {
           "$ref": "#/$defs/slideAnalysisBridge"
+        },
+        {
+          "$ref": "#/$defs/slideBusinessOverview"
         },
         {
           "$ref": "#/$defs/slideTitleStrapline4TextBoxes"

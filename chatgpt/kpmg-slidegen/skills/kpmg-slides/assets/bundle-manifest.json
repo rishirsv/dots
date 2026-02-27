@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-02-27T18:07:26.982Z",
+  "generatedAt": "2026-02-27T19:58:08.922Z",
   "entries": [
     {
       "source": "generator/app/cli.js",
@@ -43,6 +43,12 @@
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/back-cover-slide.js",
       "size": 6098,
       "sha256": "3d0aba6b62e1420e27f6d03b1e535d10b9e1f1eaa198874a8282497b899b5900"
+    },
+    {
+      "source": "generator/builders/business-overview.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/business-overview.js",
+      "size": 10491,
+      "sha256": "8e393cc7d6566a6c53f1a36d4884433e62216a9baeecc5196f4aa2b6c17c0662"
     },
     {
       "source": "generator/builders/contents-slide.js",
@@ -103,6 +109,12 @@
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/bullets.js",
       "size": 5377,
       "sha256": "f20e35f3087c3dd1804824cfced895a17dc6e615c7a39b8bb2481903f2f1b671"
+    },
+    {
+      "source": "generator/helpers/business-structure.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/business-structure.js",
+      "size": 7365,
+      "sha256": "c24f1430c86210ebb36df78bc963627ca219229d42dab4e0bf19f998bc136150"
     },
     {
       "source": "generator/helpers/callouts.js",
@@ -215,14 +227,14 @@
     {
       "source": "generator/runtime/paginate.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/paginate.js",
-      "size": 22299,
-      "sha256": "2478432bf78b03e23a0803c7305c97c47d07d75e38e4b054d1e340b0a28aaac2"
+      "size": 23823,
+      "sha256": "4f462eea9b208f19dd248a70f339b184d74682e5a2d6907a3eb0f60735cd83be"
     },
     {
       "source": "generator/runtime/render-deck.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/render-deck.js",
-      "size": 46479,
-      "sha256": "d5808f91d080be1c9f9a28d99630e15f72d95cc1e4d5587ab346b03e93ebbef4"
+      "size": 47470,
+      "sha256": "1e4515149cfa2a81f3548ca98e94ac13f716b3c21e4c5596afa2a6ef9d9645e1"
     },
     {
       "source": "generator/runtime/template-package.js",
@@ -341,8 +353,8 @@
     {
       "source": "templates/kpmg-diligence/package/layouts.json",
       "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/package/layouts.json",
-      "size": 117870,
-      "sha256": "54aacd655e0aaaf5835e11596cc8fa9fa236d40c5c9963e0f0b072e9c3c082ef"
+      "size": 121796,
+      "sha256": "d335d5e84eb44501efba7903559143819477ff5a409b1120ae67cc5a2b5db757"
     },
     {
       "source": "templates/kpmg-diligence/package/tokens.json",

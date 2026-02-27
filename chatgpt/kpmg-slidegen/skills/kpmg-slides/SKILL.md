@@ -90,9 +90,10 @@ When in doubt, treat `references/slide-contract.md`, `references/deckspec.schema
 - Fallback text boxes used by pagination (when precise geometry is unavailable):
   - `oneColumnText` body fallback: `{ w: 11.1596, h: 5.6 }`
   - `twoColumnText` left/right fallbacks: `{ w: 5.7, h: 5.7 }` and `{ w: 5.2, h: 5.7 }`
-  - `analysisWideChart2ColsText` body fallback: `{ w: 5.6, h: 5.4 }`
-  - `analysisWideChartTableText` body fallback: `{ w: 11.1596, h: 2.2 }`
+- `analysisWideChart2ColsText` body fallback: `{ w: 5.6, h: 5.4 }`
+- `analysisWideChartTableText` body fallback: `{ w: 11.1596, h: 2.2 }`
 - `analysisBridge` supports dynamic `analysisColumns` (1-4 phases); keep per-phase copy concise to avoid pagination splits.
+- `businessOverview` paginates `overviewBody`; keep right-side bullets concise when chart is present.
 - `analysisNarrowTable` pagination can warn on dense rows and orphan-row splits.
 - Post-pagination slide validation disables density enforcement (`enforceDensity: false`), so avoid creating giant bullet lists that auto-split unevenly.
 - Prefer intentional split slides with explicit titles like `(1/2)` and `(2/2)` over implicit overflow splits.
@@ -154,6 +155,17 @@ Use these as generation targets above template minima.
   - Keep `analysisColumns` to 1-4 and match phase count to story complexity.
   - Use 4 phases only if each phase has clear, non-overlapping drivers.
 
+`businessOverview`
+
+- `sm`: 2-3 right-side bullets, compact structure labels.
+- `md`: 3-4 right-side bullets, optional compact chart.
+- `lg`: 4-6 right-side bullets, optional chart with source.
+- `xl`: 6-8 right-side bullets, expect continuation slide when chart is present.
+- Guardrails:
+  - Use for transaction-perimeter structure + company profile narrative.
+  - Keep node labels short; move long explanations into right-side bullets.
+  - Keep chart secondary; move chart-heavy analysis to chart-first layouts.
+
 `titleStrapline4TextBoxes`
 
 - Engine density is less protective for this layout. Enforce structure in writing:
@@ -207,6 +219,7 @@ Variable expenses mainly consist of cost of goods sold (“COGS”) of $x.x mill
 - Omit optional slots instead of empty strings when `allowEmpty: false`.
 - Charts: include `chart.data`; every series must have non-empty `values`.
 - Bridges: ensure `bridge` reconciles (`startValue` + steps ~= `endValue`) and `analysisColumns` is between 1 and 4.
+- Business overview: ensure `structure.topTier` and `structure.bottomTier` are populated and connector indices are valid.
 - Tables: include `headers` and `rows`; keep row width consistent.
 - Divider `sectionNumber` must be two digits.
 - Avoid accidental sparse continuation slides by intentionally splitting long sections before pagination.

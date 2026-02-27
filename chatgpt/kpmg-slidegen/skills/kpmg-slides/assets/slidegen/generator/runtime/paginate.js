@@ -258,6 +258,35 @@ function normalizeColumnBody(body) {
   return text ? [text] : [];
 }
 
+function paginateBusinessOverview(slideSpec, geometry, { titleMaxChars = null } = {}) {
+  const g = geometry || {};
+  const bodyBox = g.overviewBody || { w: 4.62, h: 4.76, y: 1.66 };
+  const chartBox = g.chart || { y: 5.08 };
+  const hasChart = Boolean(slideSpec?.chart && Array.isArray(slideSpec?.chart?.data) && slideSpec.chart.data.length > 0);
+  const firstPageBodyH = hasChart
+    ? Math.max(0.6, Math.min(Number(bodyBox.h || 4.76), Number(chartBox.y || 5.08) - Number(bodyBox.y || 1.66) - 0.08))
+    : Number(bodyBox.h || 4.76);
+  const bodyFont = BODY_FONT_SIZE;
+
+  const chunks = chunkBullets(normalizeColumnBody(slideSpec.overviewBody), {
+    maxLines: estimateMaxLines(firstPageBodyH, bodyFont),
+    charsPerLine: estimateCharsPerLine(Math.max(0.8, Number(bodyBox.w || 4.62) - 0.1), bodyFont),
+  });
+
+  const pages = Math.max(1, chunks.length);
+  const out = [];
+  for (let page = 0; page < pages; page += 1) {
+    const s = clone(slideSpec);
+    s.title = contTitle(slideSpec.title, page, titleMaxChars);
+    s.overviewBody = chunks[page] ?? [];
+    if (page > 0) {
+      delete s.chart;
+    }
+    out.push(s);
+  }
+  return out;
+}
+
 function paginateBridgeAnalysisColumns(slideSpec, geometry, { titleMaxChars = null } = {}) {
   const g = geometry || {};
   const columns = Array.isArray(slideSpec.analysisColumns) ? slideSpec.analysisColumns : [];
@@ -606,6 +635,14 @@ export function paginateDeckSpec(deckSpec, layouts) {
           )
         : 0;
       recordSplit(slideIndex, type, 'bridge-analysis-columns', originalCount, paged.length);
+      out.slides.push(...paged);
+      continue;
+    }
+
+    if (type === 'businessOverview') {
+      const paged = paginateBusinessOverview(slideSpec, geom, { titleMaxChars });
+      const originalCount = Array.isArray(slideSpec.overviewBody) ? slideSpec.overviewBody.length : 0;
+      recordSplit(slideIndex, type, 'business-overview-overview-body', originalCount, paged.length);
       out.slides.push(...paged);
       continue;
     }

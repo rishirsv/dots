@@ -15,14 +15,16 @@ Use this playbook to choose chart, table, or narrative layouts that support deci
 ## Decision Tree: Chart vs Table vs Narrative
 
 ```text
-Do you have numeric data?
-  ├─ No → Use narrative layout (oneColumnText / twoColumnText).
-  └─ Yes → Does the reader need a reconciled start-to-end driver walk?
-           ├─ Yes → analysisBridge.
-           └─ No  → What does the reader need to do?
-                    ├─ See pattern/trend quickly → Chart.
-                    ├─ Read exact values / audit numbers → Table.
-                    └─ Decide between 2 options → Two-column comparison + 1 small table if needed.
+Is this primarily a transaction-perimeter structure + company overview slide?
+  ├─ Yes → businessOverview (optional compact chart only).
+  └─ No  → Do you have numeric data?
+           ├─ No → Use narrative layout (oneColumnText / twoColumnText).
+           └─ Yes → Does the reader need a reconciled start-to-end driver walk?
+                    ├─ Yes → analysisBridge.
+                    └─ No  → What does the reader need to do?
+                             ├─ See pattern/trend quickly → Chart.
+                             ├─ Read exact values / audit numbers → Table.
+                             └─ Decide between 2 options → Two-column comparison + 1 small table if needed.
 ```
 
 ## Supported Chart Types
@@ -55,6 +57,9 @@ Use only these chart types in `chart.type`:
 - `analysisWideChart2ColsText`:
   - Default for chart + interpretation.
   - Use when pattern recognition is primary.
+- `businessOverview`:
+  - Use when structure panel is the primary visual and chart is secondary context.
+  - Keep chart compact and avoid heavy chart storytelling here.
 - `analysisBridge`:
   - Use when the core question is "how did we move from start value to end value?"
   - Use 1-4 analysis phases depending on complexity.
@@ -88,6 +93,8 @@ Use only these chart types in `chart.type`:
   - Fix: convert to bar chart with top categories + `Other`.
 - Too many series:
   - Fix: split into two slides or show top drivers only; move detail to appendix.
+- Heavy chart analysis on `businessOverview`:
+  - Fix: move to `analysisWideChart2ColsText` or `analysisWideChartTableText`.
 - Mismatched scales and units across slides:
   - Fix: standardize units early (for example, always `$M`) and run a cross-slide numbers-tie check.
 

@@ -115,6 +115,19 @@ Example:
 
 Use this for true start-to-end reconciliation, not generic trends.
 
+### `businessStructure`
+
+- Object with:
+  - `topTier`: array of top entities/owners (min 2, max 6)
+  - `bottomTier`: array of operating entities (min 1, max 5)
+- Optional:
+  - `midTier`: intermediate entities (max 4)
+  - `links`: explicit connectors (`fromTier`, `fromIndex`, `toTier`, `toIndex`, optional `label`)
+  - `perimeter`: optional perimeter metadata (`enabled`, `label`, `subLabel`)
+- Each tier item can be:
+  - a string label, or
+  - object `{ \"label\": \"...\", \"pct\": \"...\" }`
+
 ## Supported Slide Types and Slot Contracts
 
 Use only these `type` values:
@@ -230,6 +243,22 @@ Phase-count guidance:
 - Use 3 phases as the default when the story naturally groups into three windows.
 - Use 4 phases only when each phase has distinct, non-overlapping commentary.
 
+### `businessOverview`
+
+- Required:
+  - `title` (text, min 12, max 50)
+  - `structure` (`businessStructure`)
+  - `overviewBody` (textArray, min 2, minChars 80)
+- Optional:
+  - `leftHeading` (text, min 6, max 80)
+  - `rightHeading` (text, min 6, max 80)
+  - `chart` (chart, min 1 series)
+  - `source` (text, min 10, max 500)
+  - `note` (text, min 10, max 500)
+  - `bodyStyle`
+
+Use for business overview pages that pair a transaction-perimeter structure panel with right-side company narrative.
+
 ### `titleStrapline4TextBoxes`
 
 - Required:
@@ -257,6 +286,7 @@ Each column is typically:
    - Table content belongs in `analysisNarrowTable` or `analysisWideChartTableText`.
    - Chart content belongs in `analysisWideChart2ColsText` or `analysisWideChartTableText`.
    - Reconciled start/end driver walks belong in `analysisBridge`.
+   - Transaction-perimeter structure + company overview pages belong in `businessOverview`.
 4. Prefer split-over-cram:
    - If a slide starts to feel "appendix dense", split into continuation slides or a second slide with a narrower claim.
 
@@ -277,6 +307,7 @@ Before finalizing any `deckSpec`, enforce this checklist:
 4. `bodyStyle` is exactly `"bullets"` or `"paragraphs"` where used.
 5. `chart.data[].values` are numeric arrays and align with labels.
 6. Every `analysisBridge.bridge` reconciles to `endValue` within tolerance and uses 1-4 `analysisColumns`.
+7. Every `businessOverview.structure` includes valid `topTier` and `bottomTier` entries.
 
 ## Split Policy Rules
 

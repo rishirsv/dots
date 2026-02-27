@@ -183,6 +183,7 @@ Dispatch happens in `generator/runtime/render-deck.js`.
 - `analysisWideChart2ColsText` -> `addAnalysisWideChart2ColsText`
 - `analysisWideChartTableText` -> `addAnalysisWideChartTableText`
 - `analysisBridge` -> `addAnalysisBridge`
+- `businessOverview` -> `addBusinessOverview`
 - `titleStrapline4TextBoxes` -> `addTitleStrapline4TextBoxes`
 - `backCover` -> `addBackCover`
 
@@ -226,6 +227,7 @@ npm run test:validation:failure
 npm run smoke
 npm run test:postprocess
 npm run test:visual:analysis-bridge
+npm run test:visual:business-overview
 npm run validate:visual
 npm run skill:sync
 npm run skill:verify
