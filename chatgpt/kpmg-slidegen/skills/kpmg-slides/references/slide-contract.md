@@ -98,6 +98,23 @@ Example:
 }
 ```
 
+### `bridge`
+
+- Object with:
+  - `startValue`: numeric starting point
+  - `endValue`: numeric ending point
+  - `steps`: ordered array of bridge steps (min 1)
+- Recommended:
+  - `startLabel`, `endLabel`
+  - `decimals`, `unitPrefix`, `unitSuffix`, or `unit`
+  - `tolerance` for reconciliation checks
+- Step object:
+  - `label` (required)
+  - `delta` (for normal movement steps), or
+  - `kind: "subtotal"` plus `value` (for subtotal bars)
+
+Use this for true start-to-end reconciliation, not generic trends.
+
 ## Supported Slide Types and Slot Contracts
 
 Use only these `type` values:
@@ -194,6 +211,25 @@ Use for KPI readouts with takeaway bullets.
 
 Use for integrated readouts (chart + optional table + synthesis).
 
+### `analysisBridge`
+
+- Required:
+  - `title` (text, min 12, max 80)
+  - `bridge` (bridge object, min 1 step)
+  - `analysisColumns` (columns, min 1, max 4)
+- Optional:
+  - `strapline` (text, min 12, max 700)
+  - `bodyStyle`
+  - `source` (text, min 10, max 500)
+  - `note` (text, min 10, max 500)
+
+Use for reconciled bridges (for example revenue, EBITDA, or profit walk) where the audience must see both numeric movement and phase-level interpretation.
+
+Phase-count guidance:
+- Use 1-2 phases for simpler bridges.
+- Use 3 phases as the default when the story naturally groups into three windows.
+- Use 4 phases only when each phase has distinct, non-overlapping commentary.
+
 ### `titleStrapline4TextBoxes`
 
 - Required:
@@ -220,6 +256,7 @@ Each column is typically:
 3. Prefer evidence-native layouts:
    - Table content belongs in `analysisNarrowTable` or `analysisWideChartTableText`.
    - Chart content belongs in `analysisWideChart2ColsText` or `analysisWideChartTableText`.
+   - Reconciled start/end driver walks belong in `analysisBridge`.
 4. Prefer split-over-cram:
    - If a slide starts to feel "appendix dense", split into continuation slides or a second slide with a narrower claim.
 
@@ -239,6 +276,7 @@ Before finalizing any `deckSpec`, enforce this checklist:
 3. No unsupported slots are attached (for example, `chart` on `oneColumnText`).
 4. `bodyStyle` is exactly `"bullets"` or `"paragraphs"` where used.
 5. `chart.data[].values` are numeric arrays and align with labels.
+6. Every `analysisBridge.bridge` reconciles to `endValue` within tolerance and uses 1-4 `analysisColumns`.
 
 ## Split Policy Rules
 

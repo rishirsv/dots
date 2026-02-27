@@ -17,10 +17,12 @@ Use this playbook to choose chart, table, or narrative layouts that support deci
 ```text
 Do you have numeric data?
   ├─ No → Use narrative layout (oneColumnText / twoColumnText).
-  └─ Yes → What does the reader need to do?
-           ├─ See pattern/trend quickly → Chart.
-           ├─ Read exact values / audit numbers → Table.
-           └─ Decide between 2 options → Two-column comparison + 1 small table if needed.
+  └─ Yes → Does the reader need a reconciled start-to-end driver walk?
+           ├─ Yes → analysisBridge.
+           └─ No  → What does the reader need to do?
+                    ├─ See pattern/trend quickly → Chart.
+                    ├─ Read exact values / audit numbers → Table.
+                    └─ Decide between 2 options → Two-column comparison + 1 small table if needed.
 ```
 
 ## Supported Chart Types
@@ -53,6 +55,9 @@ Use only these chart types in `chart.type`:
 - `analysisWideChart2ColsText`:
   - Default for chart + interpretation.
   - Use when pattern recognition is primary.
+- `analysisBridge`:
+  - Use when the core question is "how did we move from start value to end value?"
+  - Use 1-4 analysis phases depending on complexity.
 - `analysisWideChartTableText`:
   - Use when readers need both pattern and exact supporting values.
   - Keep table compact.

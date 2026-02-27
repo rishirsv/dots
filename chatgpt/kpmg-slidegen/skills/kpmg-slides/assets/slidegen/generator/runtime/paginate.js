@@ -8,6 +8,7 @@
 
 import { FOOTER_SAFE_TOP } from '../helpers/footer.js';
 import { TYPE_SIZES } from '../tokens.js';
+import { BRIDGE_DEFAULT_ANALYSIS_BOXES, clampBridgePhaseCount, resolveBridgeAnalysisBoxes } from '../helpers/bridge-layout.js';
 import { computeOneColumnLayoutGeometry } from '../helpers/one-column-layout.js';
 import { computeTwoColumnLayoutGeometry } from '../helpers/two-column-layout.js';
 import {
@@ -246,6 +247,45 @@ function paginateOneColumnBullets(
     if (p > 0 && Array.isArray(s.callouts)) {
       delete s.callouts;
     }
+    out.push(s);
+  }
+  return out;
+}
+
+function normalizeColumnBody(body) {
+  if (Array.isArray(body)) return body;
+  const text = String(body ?? '').trim();
+  return text ? [text] : [];
+}
+
+function paginateBridgeAnalysisColumns(slideSpec, geometry, { titleMaxChars = null } = {}) {
+  const g = geometry || {};
+  const columns = Array.isArray(slideSpec.analysisColumns) ? slideSpec.analysisColumns : [];
+  const phaseCount = clampBridgePhaseCount(columns.length || g?.analysisBoxes?.length || BRIDGE_DEFAULT_ANALYSIS_BOXES.length);
+  const analysisBoxes = resolveBridgeAnalysisBoxes(g.analysisBoxes, phaseCount);
+  const effectiveColumns = analysisBoxes.map((_, idx) => columns[idx] || { heading: `Phase ${idx + 1}`, body: [] });
+  const analysisBodyFont = Math.max(
+    6,
+    Number(g?.typography?.analysisBody || Math.max(8, TYPE_SIZES.body - 1)),
+  );
+  const headingReserve = Math.max(0.24, (Number(g?.typography?.analysisHeading || TYPE_SIZES.body) * 1.6) / 72 + 0.1);
+
+  const chunksPerColumn = effectiveColumns.map((column, idx) =>
+    chunkBullets(normalizeColumnBody(column.body), {
+      maxLines: estimateMaxLines(Math.max(0.4, Number(analysisBoxes[idx]?.h || 1.5) - headingReserve), analysisBodyFont),
+      charsPerLine: estimateCharsPerLine(Math.max(0.6, Number(analysisBoxes[idx]?.w || 3.4) - 0.16), analysisBodyFont),
+    }),
+  );
+
+  const pages = Math.max(1, ...chunksPerColumn.map((chunks) => chunks.length));
+  const out = [];
+  for (let page = 0; page < pages; page += 1) {
+    const s = clone(slideSpec);
+    s.title = contTitle(slideSpec.title, page, titleMaxChars);
+    s.analysisColumns = effectiveColumns.map((column, idx) => ({
+      ...column,
+      body: chunksPerColumn[idx][page] ?? [],
+    }));
     out.push(s);
   }
   return out;
@@ -553,6 +593,19 @@ export function paginateDeckSpec(deckSpec, layouts) {
       });
       const originalCount = Array.isArray(slideSpec?.table?.rows) ? slideSpec.table.rows.length : 0;
       recordSplit(slideIndex, type, 'table-rows', originalCount, paged.length);
+      out.slides.push(...paged);
+      continue;
+    }
+
+    if (type === 'analysisBridge') {
+      const paged = paginateBridgeAnalysisColumns(slideSpec, geom, { titleMaxChars });
+      const originalCount = Array.isArray(slideSpec.analysisColumns)
+        ? slideSpec.analysisColumns.reduce(
+            (sum, col) => sum + (Array.isArray(col?.body) ? col.body.length : String(col?.body || '').trim() ? 1 : 0),
+            0,
+          )
+        : 0;
+      recordSplit(slideIndex, type, 'bridge-analysis-columns', originalCount, paged.length);
       out.slides.push(...paged);
       continue;
     }

@@ -278,6 +278,113 @@
       "noteSource": "Source: [Integrated source note]"
     },
     {
+      "type": "analysisBridge",
+      "title": "[Bridge from starting metric to ending metric]",
+      "strapline": "[Use bridge + analysis when leadership needs reconciled start-to-end movement and driver attribution.]",
+      "bodyStyle": "bullets",
+      "bridge": {
+        "startLabel": "FY21 EBITDA",
+        "startValue": 14249,
+        "endLabel": "TTM Jun-24 EBITDA",
+        "endValue": 22021,
+        "unitPrefix": "$",
+        "unitSuffix": "k",
+        "steps": [
+          {
+            "label": "Revenue",
+            "delta": 8702
+          },
+          {
+            "label": "Variable expenses",
+            "delta": -2666
+          },
+          {
+            "label": "Compensation",
+            "delta": -1664
+          },
+          {
+            "label": "Software & licenses",
+            "delta": -1184
+          },
+          {
+            "label": "Other opex",
+            "delta": -797
+          },
+          {
+            "label": "FY22 EBITDA",
+            "kind": "subtotal",
+            "value": 16641
+          },
+          {
+            "label": "Processing services",
+            "delta": 5275
+          },
+          {
+            "label": "Other revenue",
+            "delta": 3630
+          },
+          {
+            "label": "Variable expenses",
+            "delta": -1911
+          },
+          {
+            "label": "Compensation",
+            "delta": -1550
+          },
+          {
+            "label": "Equipment & software",
+            "delta": -426
+          },
+          {
+            "label": "Other opex",
+            "delta": -1631
+          },
+          {
+            "label": "FY23 EBITDA",
+            "kind": "subtotal",
+            "value": 20027
+          },
+          {
+            "label": "Revenue",
+            "delta": 3765
+          },
+          {
+            "label": "Variable expenses",
+            "delta": -875
+          },
+          {
+            "label": "Other opex",
+            "delta": -896
+          }
+        ]
+      },
+      "analysisColumns": [
+        {
+          "heading": "[Phase 1: FY21 to FY22]",
+          "body": [
+            "[Revenue recovery increased transaction volumes and lifted gross contribution.]",
+            "[Cost inflation in labor and software partially offset growth-driven gains.]"
+          ]
+        },
+        {
+          "heading": "[Phase 2: FY22 to FY23]",
+          "body": [
+            "[Service-mix shift and implementation volume supported top-line expansion.]",
+            "[Contractor and support costs increased while platform spending ramped.]"
+          ]
+        },
+        {
+          "heading": "[Phase 3: FY23 to TTM Jun-24]",
+          "body": [
+            "[Volume growth in core channels sustained margin expansion.]",
+            "[Remaining margin drag is concentrated in variable and transition costs.]"
+          ]
+        }
+      ],
+      "source": "Source: [Management information and audited financial statements.]",
+      "note": "[Optional assumptions and reconciliation caveats.]"
+    },
+    {
       "type": "titleStrapline4TextBoxes",
       "title": "[Four-pillar summary headline]",
       "strapline": "[Use this layout for concise summary across four themes.]",

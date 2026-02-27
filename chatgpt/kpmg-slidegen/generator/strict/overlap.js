@@ -3,6 +3,13 @@ import path from 'node:path';
 
 const TEXT_OVERLAP_ERROR_THRESHOLD = 0.1;
 const RECTIFY_DIRECTION_EQUALITY_TOLERANCE = 0.15;
+const BOUNDS_SIMILARITY_TOLERANCE = 0.02;
+const SMALL_INTERSECTION_WIDTH_THRESHOLD = 0.08;
+const SMALL_INTERSECTION_HEIGHT_THRESHOLD = 0.08;
+const SMALL_INTERSECTION_AREA_THRESHOLD = 0.004;
+const DECORATIVE_INTERSECTION_AREA_THRESHOLD = 0.02;
+const DECORATIVE_SMALL_ELEMENT_AREA_THRESHOLD = 0.08;
+const DECORATIVE_LARGE_ELEMENT_AREA_THRESHOLD = 1.0;
 
 /**
  * Infer a coarse element type from a PptxGenJS slide object.
@@ -193,6 +200,54 @@ export function analyzeSlideOverlaps(slide, pptx, options = {}) {
       const comparison = compareElementPosition(slide, a.index, b.index);
       if (comparison.relation === 'overlapping') {
         const EPS = 1e-6;
+        const intersection = comparison.intersection || null;
+        const intersectionArea = intersection ? intersection.w * intersection.h : 0;
+        const boundsNearlyEqual = (first, second, tolerance = BOUNDS_SIMILARITY_TOLERANCE) =>
+          Math.abs(first.x - second.x) <= tolerance &&
+          Math.abs(first.y - second.y) <= tolerance &&
+          Math.abs(first.w - second.w) <= tolerance &&
+          Math.abs(first.h - second.h) <= tolerance;
+        const areaOf = (element) => Math.max(0, Number(element.w || 0) * Number(element.h || 0));
+        const smallIntersection =
+          intersection &&
+          intersection.w <= SMALL_INTERSECTION_WIDTH_THRESHOLD &&
+          intersection.h <= SMALL_INTERSECTION_HEIGHT_THRESHOLD &&
+          intersectionArea <= SMALL_INTERSECTION_AREA_THRESHOLD;
+        const sameBoundsShapeText =
+          ((a.type === 'shape' && b.type === 'text') || (a.type === 'text' && b.type === 'shape')) &&
+          boundsNearlyEqual(a, b);
+        if (sameBoundsShapeText) continue;
+
+        const smallElementArea = Math.min(areaOf(a), areaOf(b));
+        const largeElementArea = Math.max(areaOf(a), areaOf(b));
+        const decorativeProtrusion =
+          intersection &&
+          smallElementArea <= DECORATIVE_SMALL_ELEMENT_AREA_THRESHOLD &&
+          largeElementArea >= DECORATIVE_LARGE_ELEMENT_AREA_THRESHOLD &&
+          intersectionArea <= DECORATIVE_INTERSECTION_AREA_THRESHOLD &&
+          (a.type === 'shape' || b.type === 'shape');
+        if (decorativeProtrusion) continue;
+        const tinyBarLabelIntersection = (() => {
+          if (!intersection) return false;
+          const isShapeTextPair =
+            (a.type === 'shape' && b.type === 'text') || (a.type === 'text' && b.type === 'shape');
+          if (!isShapeTextPair) return false;
+          const shape = a.type === 'shape' ? a : b;
+          const text = a.type === 'text' ? a : b;
+          return (
+            shape.w <= 0.55 &&
+            shape.h <= 0.35 &&
+            text.h <= 0.14 &&
+            intersection.h <= 0.11 &&
+            intersection.w >= Math.max(0.18, shape.w * 0.75)
+          );
+        })();
+        if (tinyBarLabelIntersection) continue;
+        if (smallIntersection) {
+          const involvesText = a.type === 'text' || b.type === 'text';
+          if (involvesText) continue;
+        }
+
         const lineRectFalsePositive = (() => {
           const oneIsLine = (a.type === 'line') ^ (b.type === 'line');
           if (!oneIsLine) return false;
@@ -252,9 +307,9 @@ export function analyzeSlideOverlaps(slide, pptx, options = {}) {
         })();
 
         let rectificationSuggestion = '';
-        if (comparison.intersection) {
-          const overlapW = comparison.intersection.w;
-          const overlapH = comparison.intersection.h;
+        if (intersection) {
+          const overlapW = intersection.w;
+          const overlapH = intersection.h;
           const maxOverlap = Math.max(overlapW, overlapH);
           if (maxOverlap > 0) {
             const diffRatio = Math.abs(overlapW - overlapH) / maxOverlap;

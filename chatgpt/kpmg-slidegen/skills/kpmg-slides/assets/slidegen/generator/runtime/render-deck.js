@@ -12,6 +12,8 @@ import { addTitleStrapline4TextBoxes } from '../builders/title-strapline-4-boxes
 import { addBackCover } from '../builders/back-cover-slide.js';
 import { addOneColumnText } from '../builders/one-column-text.js';
 import { addContentsSlide } from '../builders/contents-slide.js';
+import { addAnalysisBridge } from '../builders/analysis-bridge.js';
+import { validateBridgeSpec } from '../helpers/bridge.js';
 import { normalizeBodyStyle } from '../helpers/layout.js';
 import { paginateDeckSpec } from './paginate.js';
 
@@ -98,6 +100,7 @@ function isMissingSlotValue(value, def = {}) {
   }
   if (kind === 'table') return !isPlainObject(value) || !Array.isArray(value.rows) || value.rows.length === 0;
   if (kind === 'chart') return !isPlainObject(value) || !Array.isArray(value.data) || value.data.length === 0;
+  if (kind === 'bridge') return !isPlainObject(value) || !Array.isArray(value.steps) || value.steps.length === 0;
   if (Array.isArray(value)) return value.length === 0;
   if (typeof value === 'string') return value.trim().length === 0;
   return false;
@@ -130,6 +133,14 @@ function countCharacters(value, kind = 'text') {
       .join(' ')
       .trim().length;
   }
+  if (kind === 'bridge' && isPlainObject(value)) {
+    const parts = [
+      extractText(value.startLabel),
+      extractText(value.endLabel),
+      ...(Array.isArray(value.steps) ? value.steps.map((step) => extractText(step?.label || step?.name)) : []),
+    ];
+    return parts.join(' ').trim().length;
+  }
   return 0;
 }
 
@@ -144,6 +155,7 @@ function getSlotQuantity(def, value) {
   }
   if (kind === 'table') return Array.isArray(value?.rows) ? value.rows.length : 0;
   if (kind === 'chart') return Array.isArray(value?.data) ? value.data.length : 0;
+  if (kind === 'bridge') return Array.isArray(value?.steps) ? value.steps.length + 2 : 0;
   return isMissingSlotValue(value, def) ? 0 : 1;
 }
 
@@ -178,6 +190,12 @@ function suggestRemedy(def = {}, code) {
     return {
       hook: 'addColumns',
       suggestedRemedy: 'Add text to each column; keep each column balanced for readability.',
+    };
+  }
+  if (kind === 'bridge') {
+    return {
+      hook: 'addBridgeSteps',
+      suggestedRemedy: 'Provide start/end values plus ordered bridge steps that reconcile.',
     };
   }
   if (code === 'below_min_chars') {
@@ -364,6 +382,13 @@ function validateTypedSlotValue(slotName, def, value) {
     return { errors, warnings, quantity, charCount };
   }
 
+  if (kind === 'bridge') {
+    const bridgeValidation = validateBridgeSpec(value || {});
+    for (const e of bridgeValidation.errors || []) fail(e);
+    for (const w of bridgeValidation.warnings || []) warn(w);
+    return { errors, warnings, quantity, charCount };
+  }
+
   return { errors, warnings, quantity, charCount };
 }
 
@@ -433,6 +458,12 @@ function slotValidationResult(
     const severity = shouldWarnOnly ? 'warning' : 'error';
     (severity === 'warning' ? warnings : errors).push(message);
     addIssue('below_min_items', message, severity, { actual: quantity, target: def.minItems });
+  }
+  if (enforceMinimums && def.maxItems && quantity > def.maxItems) {
+    const message = `${slotName} supports at most ${def.maxItems} item(s)`;
+    const severity = shouldWarnOnly ? 'warning' : 'error';
+    (severity === 'warning' ? warnings : errors).push(message);
+    addIssue('above_max_items', message, severity, { actual: quantity, target: def.maxItems });
   }
 
   if (enforceMinimums && def.minChars && charCount < def.minChars) {
@@ -870,12 +901,15 @@ function buildFooterValues(deckSpec, { allowSparse = false } = {}) {
   const metadata = deckSpec?.metadata || {};
   const footer = metadata?.footer || {};
   const isDemoMode = Boolean(allowSparse || metadata.allowSparse);
+  const normalizedLegalEntityName = String(footer.legalEntityName ?? metadata.company ?? '').trim();
+  const normalizedJurisdiction = String(footer.jurisdiction ?? metadata.jurisdiction ?? '').trim();
+  const normalizedLegalStructure = String(footer.legalStructure ?? metadata.legalStructure ?? '').trim();
 
   const values = {
     year: footer.year ?? metadata.year ?? new Date().getFullYear(),
-    legalEntityName: footer.legalEntityName ?? metadata.company ?? '',
-    jurisdiction: footer.jurisdiction ?? metadata.jurisdiction ?? '',
-    legalStructure: footer.legalStructure ?? metadata.legalStructure ?? 'limited liability partnership',
+    legalEntityName: normalizedLegalEntityName || (isDemoMode ? 'KPMG LLP' : ''),
+    jurisdiction: normalizedJurisdiction || (isDemoMode ? 'Ontario' : ''),
+    legalStructure: normalizedLegalStructure || (isDemoMode ? 'limited liability partnership' : ''),
     documentClassification: footer.documentClassification ?? metadata.documentClassification ?? '',
     officeContactText: footer.officeContactText ?? metadata.officeContactText ?? '',
   };
@@ -1151,6 +1185,7 @@ function buildSlide(pptx, rawSlideSpec, templatePackage, runtimeContext = {}) {
     analysisNarrowTable: addAnalysisNarrowTable,
     analysisWideChart2ColsText: addAnalysisWideChart2ColsText,
     analysisWideChartTableText: addAnalysisWideChartTableText,
+    analysisBridge: addAnalysisBridge,
     titleStrapline4TextBoxes: addTitleStrapline4TextBoxes,
   };
   const builder = builderByType[slideSpec.type];

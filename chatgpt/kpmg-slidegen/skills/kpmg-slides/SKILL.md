@@ -92,6 +92,7 @@ When in doubt, treat `references/slide-contract.md`, `references/deckspec.schema
   - `twoColumnText` left/right fallbacks: `{ w: 5.7, h: 5.7 }` and `{ w: 5.2, h: 5.7 }`
   - `analysisWideChart2ColsText` body fallback: `{ w: 5.6, h: 5.4 }`
   - `analysisWideChartTableText` body fallback: `{ w: 11.1596, h: 2.2 }`
+- `analysisBridge` supports dynamic `analysisColumns` (1-4 phases); keep per-phase copy concise to avoid pagination splits.
 - `analysisNarrowTable` pagination can warn on dense rows and orphan-row splits.
 - Post-pagination slide validation disables density enforcement (`enforceDensity: false`), so avoid creating giant bullet lists that auto-split unevenly.
 - Prefer intentional split slides with explicit titles like `(1/2)` and `(2/2)` over implicit overflow splits.
@@ -141,6 +142,17 @@ Use these as generation targets above template minima.
 - `lg`: table 8-12 rows, 4-5 insight bullets, include `insightTitle`.
 - `xl`: table 10-16 rows (watch row density), 4-6 insight bullets, add notes if needed.
 - Guardrail: keep table cells close to one line to reduce dense-row warnings/orphan splits.
+
+`analysisBridge`
+
+- `sm`: 1-2 phases, 2 bullets per phase, 5-10 bridge steps.
+- `md`: 2-3 phases, 2-3 bullets per phase, 8-14 bridge steps.
+- `lg`: 3 phases, 2-4 bullets per phase, 10-18 bridge steps.
+- `xl`: 3-4 phases, 3-4 bullets per phase, 12-22 bridge steps.
+- Guardrails:
+  - Use only when values reconcile from start to end.
+  - Keep `analysisColumns` to 1-4 and match phase count to story complexity.
+  - Use 4 phases only if each phase has clear, non-overlapping drivers.
 
 `titleStrapline4TextBoxes`
 
@@ -194,6 +206,7 @@ Variable expenses mainly consist of cost of goods sold (“COGS”) of $x.x mill
 - Keep titles <= 50 chars for common layouts; title overflow can be a hard error.
 - Omit optional slots instead of empty strings when `allowEmpty: false`.
 - Charts: include `chart.data`; every series must have non-empty `values`.
+- Bridges: ensure `bridge` reconciles (`startValue` + steps ~= `endValue`) and `analysisColumns` is between 1 and 4.
 - Tables: include `headers` and `rows`; keep row width consistent.
 - Divider `sectionNumber` must be two digits.
 - Avoid accidental sparse continuation slides by intentionally splitting long sections before pagination.
@@ -237,7 +250,7 @@ Apply writing voice and language controls from `references/writing-standards.md`
 Create `<name>.deckSpec.json` in three passes:
 
 1. Skeleton: copy starter, set final slide `type` + claim title, replace placeholders, align slide count/sections.
-2. Fill: populate only supported slots, keep one-message-per-slide, and use chart-first layouts for numeric claims.
+2. Fill: populate only supported slots, keep one-message-per-slide, and use evidence-first layouts (chart/table/bridge) for numeric claims.
 3. Self-check: required slots only, no unsupported slots, valid `bodyStyle`, aligned numeric chart arrays, and full alignment to outline + verbosity contract.
 
 ## Step 5: Generate `.pptx`
