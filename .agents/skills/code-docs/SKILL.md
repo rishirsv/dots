@@ -91,15 +91,17 @@ When creating/updating `AGENTS.md`:
 - Canonical path: `docs/product-specs/<feature-slug>-spec.md`.
 - Default structure: `assets/product-spec_template.md`.
 - Prefer updating an existing spec for the same feature instead of creating duplicates.
+- Do not invoke explore agents/subagents for product specs; explore directly in the current session.
 - Support both modes:
   - Planning mode: document intended behavior, boundaries, and acceptance criteria.
-  - Post-implementation mode: inspect feature code and docs, document shipped behavior, and update scope/contracts.
-- For post-implementation updates, explore before writing:
-  1. Identify entry routes/screens and owner modules.
-  2. Identify user-visible behavior, constraints, and non-goals.
-  3. Map requirements and acceptance criteria to shipped behavior.
-  4. Record references to relevant code and docs paths.
-- If uncertain, put unknowns in `Open Questions` and state missing evidence.
+  - Post-implementation mode: inspect already-shipped feature code and docs, then document as-built behavior and scope/contracts.
+- For post-implementation specs, explore before writing:
+  1. Identify entry routes/screens/commands and owner modules.
+  2. Identify user-visible behavior, constraints, and non-goals from implementation.
+  3. Identify distinctive/unique feature behaviors across the application.
+  4. Map requirements and acceptance criteria to shipped behavior and note mismatches.
+  5. Record references to relevant code and docs paths.
+- If evidence is incomplete, state missing evidence explicitly in `Assumptions` or `Context`.
 - Keep specs concise and decision-oriented.
 
 ## Cross-Skill Alignment
@@ -128,7 +130,7 @@ When creating/updating `AGENTS.md`:
 | DB schema digest | `assets/DB-SCHEMA_template.md` | `docs/DB-SCHEMA.md` |
 | Design docs index | `assets/design-docs_index_template.md` | `docs/design-docs/index.md` |
 | Core beliefs | `assets/core-beliefs_template.md` | `docs/design-docs/core-beliefs.md` |
-| Product spec | `assets/product-spec_template.md` | `docs/product-specs/<feature-slug>-spec.md` |
+| Product spec (ideate-aligned, as-built capable) | `assets/product-spec_template.md` | `docs/product-specs/<feature-slug>-spec.md` |
 | Tech debt tracker | `assets/tech-debt-tracker_template.md` | `docs/exec-plans/tech-debt-tracker.md` |
 | Solution runbook (optional) | `assets/solution_template.md` | `docs/solutions/<solution-slug>.md` |
 
