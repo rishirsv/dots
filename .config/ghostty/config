@@ -9,7 +9,7 @@
 theme = "Catppuccin Mocha"
 
 # JetBrains Mono Nerd Font - optimizado para ASCII art, Unicode y ligatures
-font-family = Berkeley Mono
+font-family = CommitMono
 font-size = 16
 font-thicken = true
 font-feature = +calt,+liga
