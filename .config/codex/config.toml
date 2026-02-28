@@ -1,127 +1,102 @@
-# Codex Configuration - Permissive Setup
-# Location: ~/.codex/config.toml
-
-################################################################################
-# Approval & Sandbox (fully permissive)
-################################################################################
+###############################################################################
+# Core Configuration
+###############################################################################
 
 approval_policy = "never"
-sandbox_mode = "danger-full-access"
-model = "gpt-5.3-codex"
 plan_mode_reasoning_effort = "high"
 personality = "friendly"
+sandbox_mode = "danger-full-access"
 suppress_unstable_features_warning = true
+model_reasoning_effort = "high"
+
+###############################################################################
+# Workspace & Filesystem
+###############################################################################
 
 [sandbox_workspace_write]
-writable_roots = []
-network_access = true
-exclude_tmpdir_env_var = false
 exclude_slash_tmp = false
+exclude_tmpdir_env_var = false
+network_access = true
+writable_roots = []
 
-################################################################################
-# Web Search (live mode for real-time results)
-################################################################################
-
-web_search = "live"
-
-################################################################################
-# Feature Flags (everything enabled)
-################################################################################
+###############################################################################
+# Features
+###############################################################################
 
 [features]
-undo = true
-unified_exec = true
+apps = true
+multi_agent = true
+prevent_idle_sleep = true
 rmcp_client = true
 shell_snapshot = true
-apps = true
 steer = true
-multi_agent = true
+undo = true
+unified_exec = true
 voice_transcription = true
-prevent_idle_sleep = true
+
+###############################################################################
+# Agents
+###############################################################################
 
 [agents]
 max_threads = 8
 
-[agents.reviewer]
-description = "Review-focused subagent. For every task, invoke $review first, then deliver findings."
-config_file = "agents/reviewer.toml"
+[agents.fast_explorer]
+config_file = "agents/fast-explorer.toml"
+description = "Fast explorer subagent for quick codebase investigation and concise findings."
 
 [agents.researcher]
-description = "Research-focused subagent. For every task, invoke $research first, then summarize sources and recommendations."
 config_file = "agents/researcher.toml"
+description = "Research-focused subagent. For every task, invoke $research first, then summarize sources and recommendations."
 
-[agents.fast_explorer]
-description = "Fast explorer subagent for quick codebase investigation and concise findings."
-config_file = "agents/fast-explorer.toml"
+[agents.reviewer]
+config_file = "agents/reviewer.toml"
+description = "Review-focused subagent. For every task, invoke $review first, then deliver findings."
 
-################################################################################
-# Shell Environment Policy (inherit everything)
-################################################################################
+[agents.worker]
+config_file = "agents/worker.toml"
+description = "Implementation-focused subagent that ships scoped changes, runs simplify/tests/e2e, and reports a PR URL."
+
+###############################################################################
+# Shell Environment
+###############################################################################
 
 [shell_environment_policy]
-inherit = "all"
-ignore_default_excludes = true
 exclude = []
-set = {}
-include_only = []
 experimental_use_profile = true
+ignore_default_excludes = true
+include_only = []
+inherit = "all"
+set = {}
 
-################################################################################
-# History (save everything)
-################################################################################
+###############################################################################
+# History
+###############################################################################
 
 [history]
 persistence = "save-all"
 # max_bytes = 0
 
-################################################################################
-# UI & Notifications
-################################################################################
+###############################################################################
+# UI & Notice Settings
+###############################################################################
 
-file_opener = "vscode"
 check_for_update_on_startup = true
-
-[tui]
-notifications = true
-animations = true
-show_tooltips = true
+file_opener = "vscode"
 
 [notice]
 hide_full_access_warning = true
-hide_world_writable_warning = true
 hide_rate_limit_model_nudge = true
+hide_world_writable_warning = true
 
 [notice.model_migrations]
 "gpt-5.2" = "gpt-5.2-codex"
 
-[apps.connector_76869538009648d5b282a4bb21c3d157]
-enabled = false
-disabled_reason = "user"
+[tui]
+animations = true
+notifications = true
+show_tooltips = true
 
-[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa]
-enabled = false
-disabled_reason = "user"
-
-[apps.asdk_app_6935ba0e15b48191ae8ad5795b213c19]
-enabled = false
-disabled_reason = "user"
-
-[apps.connector_2128aebfecb84f64a069897515042a44]
-enabled = false
-disabled_reason = "user"
-
-[apps.connector_69757216c78c8191acc8035defefdcfb]
-enabled = false
-disabled_reason = "user"
-
-[apps.asdk_app_695bd06f20d88191b873f501a7dd6620]
-enabled = false
-disabled_reason = "user"
-
-[apps.connector_947e0d954944416db111db556030eea6]
-enabled = false
-disabled_reason = "user"
-
-[[skills.config]]
-path = "/Users/rishi/.codex/skills/figma-implement-design/SKILL.md"
-enabled = false
+###############################################################################
+# Skills
+###############################################################################

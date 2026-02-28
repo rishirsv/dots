@@ -1,0 +1,314 @@
+{
+  "generatedAt": "2026-02-26T21:00:34.741Z",
+  "template": "kpmg-diligence",
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "densityFindings": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.72,
+      "acceptableFloor": 0.612,
+      "shouldRepair": false
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "twoColumnText",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.72,
+      "acceptableFloor": 0.612,
+      "shouldRepair": false
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.75,
+      "acceptableFloor": 0.637,
+      "shouldRepair": false
+    }
+  ],
+  "densitySummary": {
+    "ok": 3,
+    "thin": 0,
+    "sparse": 0
+  },
+  "missingSlots": [],
+  "thinSlides": [],
+  "sparseSlides": [],
+  "slotIssues": [],
+  "slotMetrics": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "body",
+      "kind": "textArray",
+      "actual": 1003,
+      "target": 180,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "strapline",
+      "kind": "text",
+      "actual": 103,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "source",
+      "kind": "text",
+      "actual": 87,
+      "target": 12,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "title",
+      "kind": "text",
+      "actual": 31,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "bodyStyle",
+      "kind": "text",
+      "actual": 7,
+      "target": 7,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "callouts",
+      "kind": "columns",
+      "actual": 0,
+      "target": 0,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "twoColumnText",
+      "slot": "leftBody",
+      "kind": "textArray",
+      "actual": 489,
+      "target": 80,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "twoColumnText",
+      "slot": "rightBody",
+      "kind": "textArray",
+      "actual": 402,
+      "target": 80,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "twoColumnText",
+      "slot": "strapline",
+      "kind": "text",
+      "actual": 111,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "twoColumnText",
+      "slot": "title",
+      "kind": "text",
+      "actual": 30,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "twoColumnText",
+      "slot": "bodyStyle",
+      "kind": "text",
+      "actual": 7,
+      "target": 7,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "slot": "body",
+      "kind": "textArray",
+      "actual": 658,
+      "target": 180,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "slot": "chart",
+      "kind": "chart",
+      "actual": 2,
+      "target": 1,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "slot": "strapline",
+      "kind": "text",
+      "actual": 110,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "slot": "title",
+      "kind": "text",
+      "actual": 33,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "slot": "bodyStyle",
+      "kind": "text",
+      "actual": 7,
+      "target": 7,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "slot": "callouts",
+      "kind": "columns",
+      "actual": 0,
+      "target": 0,
+      "priority": "low"
+    }
+  ],
+  "repairSuggestions": [],
+  "pagination": [],
+  "overflowRisks": [],
+  "masterApplied": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "expectedMaster": "KPMG_WHITE",
+      "appliedMaster": "KPMG_WHITE",
+      "matched": true
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "twoColumnText",
+      "expectedMaster": "KPMG_WHITE",
+      "appliedMaster": "KPMG_WHITE",
+      "matched": true
+    },
+    {
+      "slideIndex": 2,
+      "slideType": "analysisWideChart2ColsText",
+      "expectedMaster": "KPMG_WHITE",
+      "appliedMaster": "KPMG_WHITE",
+      "matched": true
+    }
+  ],
+  "paginationDecisions": [],
+  "overflowEvents": [],
+  "tableWarnings": [],
+  "fallbacks": [],
+  "overlapSummary": {
+    "slideCount": 3,
+    "overlapCount": 0,
+    "severeCount": 0,
+    "warningCount": 0,
+    "containmentCount": 0
+  },
+  "overlapFindings": [],
+  "strictOverflow": {
+    "status": 0
+  },
+  "inputSlideCount": 3,
+  "outputSlideCount": 3,
+  "outputPptx": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/bullet-nesting-visual/children-nested-bullets/deck.pptx",
+  "postprocess": {
+    "availability": {
+      "slidesSkill": true,
+      "reason": null,
+      "slidesDir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/generator/postprocess/slides-runtime",
+      "python": "python3"
+    },
+    "preview": {
+      "attempted": true,
+      "status": "ok",
+      "reason": null,
+      "stderr": null,
+      "outputDir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/bullet-nesting-visual/children-nested-bullets/preview",
+      "slideImageCount": 3,
+      "width": 1600,
+      "height": 900
+    },
+    "montage": {
+      "attempted": false,
+      "status": "not_requested",
+      "reason": null,
+      "path": null,
+      "numCol": null,
+      "labelMode": null
+    },
+    "overflowVisual": {
+      "attempted": true,
+      "status": "pass",
+      "reason": null,
+      "stderr": null,
+      "failingSlides": [],
+      "imagePaths": []
+    }
+  },
+  "summary": {
+    "status": "pass",
+    "inputSlides": 3,
+    "renderedSlides": 3,
+    "blockingIssues": 0,
+    "advisoryIssues": 0,
+    "counts": {
+      "errors": 0,
+      "warnings": 0,
+      "missingSlots": 0,
+      "sparseSlides": 0,
+      "thinSlides": 0,
+      "slotIssues": 0,
+      "overflowEvents": 0,
+      "overlapSevere": 0,
+      "overlapWarnings": 0,
+      "repairSuggestions": 0
+    },
+    "strict": {
+      "requested": false,
+      "failed": false,
+      "overflowStatus": null,
+      "overflowSkipped": false
+    },
+    "postprocess": {
+      "previewAttempted": 1,
+      "previewFailed": 0,
+      "previewStatus": "ok",
+      "montageAttempted": 0,
+      "montageFailed": 0,
+      "montageStatus": "not_requested",
+      "overflowVisualAttempted": 1,
+      "overflowVisualFailed": 0,
+      "overflowVisualStatus": "pass"
+    }
+  }
+}

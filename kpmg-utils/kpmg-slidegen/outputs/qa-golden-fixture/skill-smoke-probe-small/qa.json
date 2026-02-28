@@ -1,0 +1,235 @@
+{
+  "generatedAt": "2026-02-26T20:26:18.015Z",
+  "template": "kpmg-diligence",
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "densityFindings": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "status": "OK",
+      "score": 1,
+      "minScore": 0.72,
+      "acceptableFloor": 0.612,
+      "shouldRepair": false
+    }
+  ],
+  "densitySummary": {
+    "ok": 1,
+    "thin": 0,
+    "sparse": 0
+  },
+  "missingSlots": [],
+  "thinSlides": [],
+  "sparseSlides": [],
+  "slotIssues": [],
+  "slotMetrics": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "body",
+      "kind": "textArray",
+      "actual": 2146,
+      "target": 180,
+      "priority": "high"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "strapline",
+      "kind": "text",
+      "actual": 185,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "source",
+      "kind": "text",
+      "actual": 115,
+      "target": 12,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "title",
+      "kind": "text",
+      "actual": 26,
+      "target": 12,
+      "priority": "medium"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "bodyStyle",
+      "kind": "text",
+      "actual": 7,
+      "target": 7,
+      "priority": "low"
+    },
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "slot": "callouts",
+      "kind": "columns",
+      "actual": 0,
+      "target": 0,
+      "priority": "low"
+    }
+  ],
+  "repairSuggestions": [
+    {
+      "slideType": "oneColumnText",
+      "slot": null,
+      "hook": "splitSlide",
+      "severity": "info",
+      "issueCode": "auto_split",
+      "suggestedRemedy": "Slide was auto-split into 2 pages; keep as split or tighten bullet text."
+    }
+  ],
+  "pagination": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "mode": "one-column-bullets",
+      "originalCount": 17,
+      "splitInto": 2
+    }
+  ],
+  "overflowRisks": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "mode": "one-column-bullets",
+      "splitInto": 2,
+      "severity": "info",
+      "reason": "auto_split",
+      "suggestedRemedy": "Slide was auto-split into 2 pages; keep split or tighten content."
+    }
+  ],
+  "masterApplied": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "expectedMaster": "KPMG_WHITE",
+      "appliedMaster": "KPMG_WHITE",
+      "matched": true
+    },
+    {
+      "slideIndex": 1,
+      "slideType": "oneColumnText",
+      "expectedMaster": "KPMG_WHITE",
+      "appliedMaster": "KPMG_WHITE",
+      "matched": true
+    }
+  ],
+  "paginationDecisions": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "mode": "one-column-bullets",
+      "originalCount": 17,
+      "splitInto": 2
+    }
+  ],
+  "overflowEvents": [
+    {
+      "slideIndex": 0,
+      "slideType": "oneColumnText",
+      "event": "auto_split",
+      "mode": "one-column-bullets",
+      "originalCount": 17,
+      "splitInto": 2
+    }
+  ],
+  "tableWarnings": [],
+  "fallbacks": [],
+  "overlapSummary": {
+    "slideCount": 2,
+    "overlapCount": 0,
+    "severeCount": 0,
+    "warningCount": 0,
+    "containmentCount": 0
+  },
+  "overlapFindings": [],
+  "strictOverflow": {
+    "status": 0
+  },
+  "inputSlideCount": 1,
+  "outputSlideCount": 2,
+  "outputPptx": "/Users/rishi/code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke-probe-small/deck.pptx",
+  "postprocess": {
+    "availability": {
+      "slidesSkill": true,
+      "reason": null,
+      "slidesDir": "/Users/rishi/code/ai-tools/chatgpt/kpmg-slidegen/skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime",
+      "python": "python3"
+    },
+    "preview": {
+      "attempted": true,
+      "status": "ok",
+      "reason": null,
+      "stderr": null,
+      "outputDir": "/Users/rishi/code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke-probe-small/preview",
+      "slideImageCount": 2,
+      "width": 1600,
+      "height": 900
+    },
+    "montage": {
+      "attempted": true,
+      "status": "ok",
+      "reason": null,
+      "stderr": null,
+      "path": "/Users/rishi/code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke-probe-small/montage.png",
+      "numCol": 5,
+      "labelMode": "number"
+    },
+    "overflowVisual": {
+      "attempted": true,
+      "status": "pass",
+      "reason": null,
+      "stderr": null,
+      "failingSlides": [],
+      "imagePaths": []
+    }
+  },
+  "summary": {
+    "status": "pass",
+    "inputSlides": 1,
+    "renderedSlides": 2,
+    "blockingIssues": 0,
+    "advisoryIssues": 1,
+    "counts": {
+      "errors": 0,
+      "warnings": 0,
+      "missingSlots": 0,
+      "sparseSlides": 0,
+      "thinSlides": 0,
+      "slotIssues": 0,
+      "overflowEvents": 1,
+      "overlapSevere": 0,
+      "overlapWarnings": 0,
+      "repairSuggestions": 1
+    },
+    "strict": {
+      "requested": false,
+      "failed": false,
+      "overflowStatus": null,
+      "overflowSkipped": false
+    },
+    "postprocess": {
+      "previewAttempted": 1,
+      "previewFailed": 0,
+      "previewStatus": "ok",
+      "montageAttempted": 1,
+      "montageFailed": 0,
+      "montageStatus": "ok",
+      "overflowVisualAttempted": 1,
+      "overflowVisualFailed": 0,
+      "overflowVisualStatus": "pass"
+    }
+  }
+}

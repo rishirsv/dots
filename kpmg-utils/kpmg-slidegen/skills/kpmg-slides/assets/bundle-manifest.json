@@ -1,0 +1,366 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-02-27T19:58:08.922Z",
+  "entries": [
+    {
+      "source": "generator/app/cli.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/app/cli.js",
+      "size": 2538,
+      "sha256": "2d0609043b9c675a107acfd07f3ebef91708303de1ec1aa2888145e89f34485c"
+    },
+    {
+      "source": "generator/app/postprocess.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/app/postprocess.js",
+      "size": 7105,
+      "sha256": "9a2dc59de38d9ad06d5839c8222302336f2cc2d42b510cc4f9585930650b26ac"
+    },
+    {
+      "source": "generator/app/strict-overflow.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/app/strict-overflow.js",
+      "size": 2594,
+      "sha256": "8587e94e761071b5af226dedd893f18b8f0ccc12d8d4d1d7c3f0eee175015a5e"
+    },
+    {
+      "source": "generator/builders/analysis-bridge.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/analysis-bridge.js",
+      "size": 15544,
+      "sha256": "a05b2d6512003401c01daa04ed48fb40909e15a4821d61135d3ffb21485089da"
+    },
+    {
+      "source": "generator/builders/analysis-narrow-table.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/analysis-narrow-table.js",
+      "size": 19398,
+      "sha256": "c893d8ce19019c7d9711694081f5de767b5cb4fde4354f45ec5009521daa146a"
+    },
+    {
+      "source": "generator/builders/analysis-wide-chart-text.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/analysis-wide-chart-text.js",
+      "size": 11240,
+      "sha256": "926d134fc42d79575c449dcd860a044596a27ce16f23346b9334f71c20207b4c"
+    },
+    {
+      "source": "generator/builders/back-cover-slide.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/back-cover-slide.js",
+      "size": 6098,
+      "sha256": "3d0aba6b62e1420e27f6d03b1e535d10b9e1f1eaa198874a8282497b899b5900"
+    },
+    {
+      "source": "generator/builders/business-overview.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/business-overview.js",
+      "size": 10491,
+      "sha256": "8e393cc7d6566a6c53f1a36d4884433e62216a9baeecc5196f4aa2b6c17c0662"
+    },
+    {
+      "source": "generator/builders/contents-slide.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/contents-slide.js",
+      "size": 3070,
+      "sha256": "230d7f070210f2ebf84a82d43edfb0ce9e30f080b298d75a42b6988a29854063"
+    },
+    {
+      "source": "generator/builders/cover-slide.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/cover-slide.js",
+      "size": 11496,
+      "sha256": "a9d938934add36ca6c9e26a4c2d6985ad99690ea681e848a5ff72c551ab43b02"
+    },
+    {
+      "source": "generator/builders/divider-slide.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/divider-slide.js",
+      "size": 2385,
+      "sha256": "aa150798193061af75d5cabe17f3db971a924a8bb351cbf55b6e6c0d0a155926"
+    },
+    {
+      "source": "generator/builders/one-column-text.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/one-column-text.js",
+      "size": 2346,
+      "sha256": "26bea3bcbc7a30d21c05cde6ce74877d9bcdad73241c81201a39b80ae4508200"
+    },
+    {
+      "source": "generator/builders/title-strapline-4-boxes.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/title-strapline-4-boxes.js",
+      "size": 3964,
+      "sha256": "c7a428fbf040ffd2ee1eeda0103651768ba5942fd02ddda108d11da35f9bc0dc"
+    },
+    {
+      "source": "generator/builders/two-column-text.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/two-column-text.js",
+      "size": 4853,
+      "sha256": "c50c0a974a345bf19392f33e4776aa0443283df8b2d98b9b190780b6049d1437"
+    },
+    {
+      "source": "generator/helpers/analysis-wide-layout.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/analysis-wide-layout.js",
+      "size": 5581,
+      "sha256": "52fd4cec9f955944a1294ce631883f6f6c9ea7af79d83916d8fb683f1ac4cbfd"
+    },
+    {
+      "source": "generator/helpers/bridge-layout.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/bridge-layout.js",
+      "size": 2815,
+      "sha256": "f6adc187edda5c45a267d22bdca569b7cfd63133b23afd8d7812d525e57b0f75"
+    },
+    {
+      "source": "generator/helpers/bridge.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/bridge.js",
+      "size": 6905,
+      "sha256": "92d2f8399602b3765963fa0f23d77518614f88f5d27a17ce3a97815ba861eada"
+    },
+    {
+      "source": "generator/helpers/bullets.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/bullets.js",
+      "size": 5377,
+      "sha256": "f20e35f3087c3dd1804824cfced895a17dc6e615c7a39b8bb2481903f2f1b671"
+    },
+    {
+      "source": "generator/helpers/business-structure.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/business-structure.js",
+      "size": 7365,
+      "sha256": "c24f1430c86210ebb36df78bc963627ca219229d42dab4e0bf19f998bc136150"
+    },
+    {
+      "source": "generator/helpers/callouts.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/callouts.js",
+      "size": 9077,
+      "sha256": "1808650e49ecf003f564c0967e03e781478aacba8347f8151e012e42e8d5e3fc"
+    },
+    {
+      "source": "generator/helpers/chart.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/chart.js",
+      "size": 1020,
+      "sha256": "d576fbdf34453d57e21be7f7edb70c45781ee42bbfd96ec4129aefae3c33a4d3"
+    },
+    {
+      "source": "generator/helpers/footer.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/footer.js",
+      "size": 193,
+      "sha256": "f346d9aeb5e31cd09708e94b57a2a80df39e3f59e0582110b4b58357ee5f9c2d"
+    },
+    {
+      "source": "generator/helpers/geometry.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/geometry.js",
+      "size": 1261,
+      "sha256": "9b0fccb55ea3e127b29914cf81c7881cbd9a53fe157c07d80c03e6a5b2a765a5"
+    },
+    {
+      "source": "generator/helpers/layout.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/layout.js",
+      "size": 4109,
+      "sha256": "a9acebb62cdc547057813c01f34fd6e3c7a448ed2b15634311a88c9eed1b6de4"
+    },
+    {
+      "source": "generator/helpers/media.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/media.js",
+      "size": 7755,
+      "sha256": "d1d6a164be403b2ad5b9c8f287161aa57df4086258c5e2c72718613c0357a32d"
+    },
+    {
+      "source": "generator/helpers/one-column-layout.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/one-column-layout.js",
+      "size": 3470,
+      "sha256": "4ee6202762f56bec7c1fc9b9032fc06690b216d5d0e7109a8fa52375d342f4f0"
+    },
+    {
+      "source": "generator/helpers/svg.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/svg.js",
+      "size": 1164,
+      "sha256": "719f569a9169fac50b6ca7f2f5d5e6bea9610724f3634a565d339e43d68b4067"
+    },
+    {
+      "source": "generator/helpers/text.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/text.js",
+      "size": 2360,
+      "sha256": "7ea165fa1ee614098f21f3cb4c6fbdd09fa26deeb663188b0aac0353fd768a68"
+    },
+    {
+      "source": "generator/helpers/title.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/title.js",
+      "size": 1095,
+      "sha256": "6556f9454d9b2609dd9c02efb9ae009060361bfd5f85f7fe0260ea7c5e010a35"
+    },
+    {
+      "source": "generator/helpers/two-column-layout.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/two-column-layout.js",
+      "size": 1738,
+      "sha256": "8c1a40803c6c08428598bb77f4236e24d1029d4c1d91f2a3ea8f08163bdc22ec"
+    },
+    {
+      "source": "generator/index.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/index.js",
+      "size": 13850,
+      "sha256": "ec4df591d46ce1d0c44532f614786255bc37442947a31c32aef0dbb74c20ef2a"
+    },
+    {
+      "source": "generator/postprocess/slides-adapter.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-adapter.js",
+      "size": 7498,
+      "sha256": "2a524a4ef464ea6127176c69f8ee35b18dd4d5d74ce0bf86c2b93b9e9a08b8a8"
+    },
+    {
+      "source": "generator/postprocess/slides-runtime/create_montage.py",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/create_montage.py",
+      "size": 10165,
+      "sha256": "6a071011644bba008e0ba4fee2db1a81508b809455b3aba7f8acbf6aa67d3e17"
+    },
+    {
+      "source": "generator/postprocess/slides-runtime/ensure_raster_image.py",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/ensure_raster_image.py",
+      "size": 6364,
+      "sha256": "3708b8ade8c7d6c46bb0915fbdfdbbd9880725db06aeb822ccebecc434ebe835"
+    },
+    {
+      "source": "generator/postprocess/slides-runtime/render_slides.py",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/render_slides.py",
+      "size": 8106,
+      "sha256": "139be0b9286935685a6f8151dbb40e358677020a36e739a150390e961d116d56"
+    },
+    {
+      "source": "generator/postprocess/slides-runtime/slides_test.py",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/slides_test.py",
+      "size": 6293,
+      "sha256": "42072e4f227b6b0df937e39a58e56c67a6fa302ea29552faf76b505d33ca3e25"
+    },
+    {
+      "source": "generator/runtime/diagnostics.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/diagnostics.js",
+      "size": 1526,
+      "sha256": "418b7617c0f1960ed33d91a344c99254bb7a5d187455fb78f37a47a2f373dbe1"
+    },
+    {
+      "source": "generator/runtime/paginate.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/paginate.js",
+      "size": 23823,
+      "sha256": "4f462eea9b208f19dd248a70f339b184d74682e5a2d6907a3eb0f60735cd83be"
+    },
+    {
+      "source": "generator/runtime/render-deck.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/render-deck.js",
+      "size": 47470,
+      "sha256": "1e4515149cfa2a81f3548ca98e94ac13f716b3c21e4c5596afa2a6ef9d9645e1"
+    },
+    {
+      "source": "generator/runtime/template-package.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/template-package.js",
+      "size": 1257,
+      "sha256": "ed7769b9d77a992fd8a42c7e736174aa7da2cf366f521112da416f272b8af806"
+    },
+    {
+      "source": "generator/runtime/template-roots.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/template-roots.js",
+      "size": 914,
+      "sha256": "8743e528a962e0aa329f81bd1f749866ce6ab74f0fd4e26097648a362682c5a1"
+    },
+    {
+      "source": "generator/strict/overlap.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/strict/overlap.js",
+      "size": 14756,
+      "sha256": "3b4aa5731eab6214480badb1ba215f32dc57b5b042f7f1066fd9c9280af87704"
+    },
+    {
+      "source": "generator/tokens.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/tokens.js",
+      "size": 1702,
+      "sha256": "f8eda73da34c4f66892d71ccb6fe0cefb29625e49f3e1c5591086059b0f43f74"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/closing-logo-white.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/closing-logo-white.png",
+      "size": 16237,
+      "sha256": "03388586f0931f381b791b3be26df1c3aaf46e9e51ef6a3e3b9482d87d15d548"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/closing-nav-icons.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/closing-nav-icons.png",
+      "size": 4351,
+      "sha256": "8464efb595a27d4c594c2d8a21831464b39917ae0328560a51588aa295151e22"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/closing-social-facebook.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/closing-social-facebook.png",
+      "size": 3116,
+      "sha256": "2b37a2220830d1880687bd7a477f687d34486aa5aee8f61c3d4ce582cc276b16"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/closing-social-instagram.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/closing-social-instagram.png",
+      "size": 15132,
+      "sha256": "450ac66d37e3bb165723a44113b961421d5f415b8db689c8dc3905859e219371"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/closing-social-linkedin.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/closing-social-linkedin.png",
+      "size": 4912,
+      "sha256": "86f4396b73930ccae82e128d4013b73b27f80f0742314a76f6f13085d641d252"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/closing-social-twitter.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/closing-social-twitter.png",
+      "size": 6170,
+      "sha256": "3b202c659c7fbff38ac2a51372b4433bcc7553e7e44eb0c74d35ea4c8fdf2a2d"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/closing-social-youtube.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/closing-social-youtube.png",
+      "size": 5653,
+      "sha256": "2c01bd064fdf9745c5fba27a89e1a118873e89c0a00654597f95dcb7272c3a39"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/cover-photo.jpeg",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/cover-photo.jpeg",
+      "size": 276112,
+      "sha256": "7b68094d8fcf551774067292cab4b8965eb9da970df207597396539c0a7291a3"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/gradient_accent_chip_300dpi.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/gradient_accent_chip_300dpi.png",
+      "size": 274,
+      "sha256": "cc28d8db290afdf3f1e642c39be15fddad8b4ab7317a7212a2831356f46a46a9"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/gradient_back_cover_300dpi.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/gradient_back_cover_300dpi.png",
+      "size": 31985,
+      "sha256": "2df6a9e14f372ac6ccda31466997fffbb191249ce0d1adfd70713abcc3790530"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/gradient_divider_window_300dpi.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/gradient_divider_window_300dpi.png",
+      "size": 14695,
+      "sha256": "84b60bc57fca40d55dc2eeac5ed7b79448f1f3bba9ec9a1e72545146ef739987"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/kpmg-logo-white.png",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/kpmg-logo-white.png",
+      "size": 16237,
+      "sha256": "03388586f0931f381b791b3be26df1c3aaf46e9e51ef6a3e3b9482d87d15d548"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/kpmg-logo-white.svg",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/kpmg-logo-white.svg",
+      "size": 2581,
+      "sha256": "fe8d089737d9728cad0244228b0c22b2c40d45966ef2b5250b4d74313238f964"
+    },
+    {
+      "source": "templates/kpmg-diligence/assets/kpmg-logo.svg",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/assets/kpmg-logo.svg",
+      "size": 8421,
+      "sha256": "1abbdaebc48a0ea3dc2389b2cf52923cae62ce5cce83acc309013caf828ed1d7"
+    },
+    {
+      "source": "templates/kpmg-diligence/package/assets/manifest.json",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/package/assets/manifest.json",
+      "size": 1758,
+      "sha256": "5b979a203caceb9df32355d8cd7d10d61204b85c007221920322fe70ca261754"
+    },
+    {
+      "source": "templates/kpmg-diligence/package/layouts.json",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/package/layouts.json",
+      "size": 121796,
+      "sha256": "d335d5e84eb44501efba7903559143819477ff5a409b1120ae67cc5a2b5db757"
+    },
+    {
+      "source": "templates/kpmg-diligence/package/tokens.json",
+      "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/package/tokens.json",
+      "size": 2759,
+      "sha256": "7180a2d8327578eb67eb130a7fae3053dec1204331774d77a60dbada1edae75b"
+    }
+  ]
+}
