@@ -53,6 +53,10 @@ description = "Research-focused subagent. For every task, invoke $research first
 config_file = "agents/reviewer.toml"
 description = "Review-focused subagent. For every task, invoke $review first, then deliver findings."
 
+[agents.worker]
+config_file = "agents/worker.toml"
+description = "Implementation-focused subagent that ships scoped changes, runs simplify/tests/e2e, and reports a PR URL."
+
 ###############################################################################
 # Shell Environment
 ###############################################################################
@@ -96,4 +100,3 @@ show_tooltips = true
 ###############################################################################
 # Skills
 ###############################################################################
-
