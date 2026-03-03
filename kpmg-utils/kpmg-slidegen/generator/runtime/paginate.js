@@ -11,6 +11,7 @@ import { TYPE_SIZES } from '../tokens.js';
 import { BRIDGE_DEFAULT_ANALYSIS_BOXES, clampBridgePhaseCount, resolveBridgeAnalysisBoxes } from '../helpers/bridge-layout.js';
 import { computeOneColumnLayoutGeometry } from '../helpers/one-column-layout.js';
 import { computeTwoColumnLayoutGeometry } from '../helpers/two-column-layout.js';
+import { isHeaderLine } from '../helpers/bullets.js';
 import {
   computeAnalysisWideChart2ColsTextGeometry,
   computeAnalysisWideChartTableTextGeometry,
@@ -41,6 +42,7 @@ function safeStr(s) {
 function isLikelyHeading(s) {
   const t = safeStr(s).trim();
   if (!t) return false;
+  if (isHeaderLine(t)) return true;
   // Short, no sentence punctuation is often a heading line in the migrated V1 content.
   if (t.length > 48) return false;
   if (/[.!?]$/.test(t)) return false;
@@ -113,28 +115,8 @@ function chunkBullets(lines, { maxLines, charsPerLine, alreadyNormalized = false
   let cur = [];
   let used = 0;
 
-  function estimateNodeLines(node, depth = 0) {
-    if (Array.isArray(node)) return 0;
-
-    if (isBulletObject(node)) {
-      const text = safeStr(node).trim();
-      const isHeader = Boolean(node.header || node.subheader);
-      const prefix = isHeader ? '' : bulletPrefixForDepth(depth);
-      let linesNeeded = text ? countWrappedLines(`${prefix}${text}`, charsPerLine) : 0;
-      if (!isHeader && Array.isArray(node.children)) {
-        for (const child of node.children) linesNeeded += estimateNodeLines(child, depth + 1);
-      }
-      return linesNeeded;
-    }
-
-    const text = safeStr(node).trim();
-    if (!text) return 0;
-    const prefix = depth > 0 ? bulletPrefixForDepth(depth) : (isLikelyHeading(text) ? '' : bulletPrefixForDepth(0));
-    return countWrappedLines(`${prefix}${text}`, charsPerLine);
-  }
-
   for (const item of items) {
-    const need = estimateNodeLines(item, 0);
+    const need = estimateBulletNodeLines(item, charsPerLine, 0);
     if (need <= 0) continue;
     if (cur.length && used + need > maxLines) {
       chunks.push(cur);
@@ -147,6 +129,50 @@ function chunkBullets(lines, { maxLines, charsPerLine, alreadyNormalized = false
   }
   if (cur.length) chunks.push(cur);
   return chunks.length ? chunks : [[]];
+}
+
+function estimateBulletNodeLines(node, charsPerLine, depth = 0) {
+  if (Array.isArray(node)) return 0;
+
+  if (isBulletObject(node)) {
+    const text = safeStr(node).trim();
+    const isHeader = Boolean(node.header || node.subheader);
+    const prefix = isHeader ? '' : bulletPrefixForDepth(depth);
+    let linesNeeded = text ? countWrappedLines(`${prefix}${text}`, charsPerLine) : 0;
+    if (!isHeader && Array.isArray(node.children)) {
+      for (const child of node.children) {
+        linesNeeded += estimateBulletNodeLines(child, charsPerLine, depth + 1);
+      }
+    }
+    return linesNeeded;
+  }
+
+  const text = safeStr(node).trim();
+  if (!text) return 0;
+  const prefix = depth > 0 ? bulletPrefixForDepth(depth) : (isLikelyHeading(text) ? '' : bulletPrefixForDepth(0));
+  return countWrappedLines(`${prefix}${text}`, charsPerLine);
+}
+
+function takeBulletChunk(lines, { maxLines, charsPerLine, alreadyNormalized = false }) {
+  const sourceItems = Array.isArray(lines) ? lines : (lines ? [lines] : []);
+  const items = alreadyNormalized ? sourceItems : normalizeBulletPairs(sourceItems);
+  const chunk = [];
+  let used = 0;
+  let consumedCount = 0;
+
+  for (const item of items) {
+    const need = estimateBulletNodeLines(item, charsPerLine, 0);
+    if (need <= 0) {
+      consumedCount += 1;
+      continue;
+    }
+    if (chunk.length && used + need > maxLines) break;
+    chunk.push(item);
+    used += need;
+    consumedCount += 1;
+  }
+
+  return { chunk, consumedCount };
 }
 
 function contTitle(title, pageIdx, maxChars = null) {
@@ -225,18 +251,18 @@ function paginateOneColumnBullets(
 
   while (remaining.length > 0) {
     const box = page === 0 ? safeFirstBox : safeContinuationBox;
-    const pageChunks = chunkBullets(remaining, {
+    const { chunk, consumedCount } = takeBulletChunk(remaining, {
       maxLines: estimateMaxLines(box.h, fontSize),
       charsPerLine: estimateCharsPerLine(box.w, fontSize),
       alreadyNormalized: true,
     });
-    const chunk = Array.isArray(pageChunks) && pageChunks.length > 0 ? pageChunks[0] : [];
     if (chunk.length === 0) {
       chunks.push([remaining[0]]);
       remaining = remaining.slice(1);
     } else {
       chunks.push(chunk);
-      remaining = remaining.slice(chunk.length);
+      const consumed = Math.max(chunk.length, consumedCount);
+      remaining = remaining.slice(consumed > 0 ? consumed : chunk.length);
     }
     page += 1;
   }

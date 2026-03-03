@@ -34,7 +34,7 @@ function parseBoldLabel(text) {
   return { label, rest };
 }
 
-function isHeaderLine(text) {
+export function isHeaderLine(text) {
   const t = safeText(text).trim();
   if (!t) return false;
   if (t.endsWith(':')) return true;

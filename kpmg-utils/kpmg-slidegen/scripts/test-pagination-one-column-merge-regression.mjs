@@ -153,4 +153,27 @@ function paginateOneColumnBody(body, extras = {}) {
   );
 }
 
+{
+  const token = 'TOKEN_CASE4_CONSUMED_COUNT_ONCE';
+  const long = makeLong(token, 620);
+  const paged = paginateOneColumnBody([
+    { text: '' },
+    'Heading delta',
+    long,
+    'Tail marker',
+  ]);
+
+  assert.ok(paged.slides.length > 1, 'Case 4 should paginate into continuation slides');
+  assert.equal(
+    countTokenInSlides(paged.slides, token),
+    1,
+    'Case 4: token should appear exactly once when non-renderable entries are skipped',
+  );
+  assert.deepEqual(
+    flattenTopLevelBodyText(paged.slides),
+    [`Heading delta: ${long}`, 'Tail marker'],
+    'Case 4: pagination should consume normalized entries without duplicate carryover',
+  );
+}
+
 console.log('One-column bullet pagination merge regression tests passed.');
