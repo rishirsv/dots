@@ -86,6 +86,10 @@ const overflowEvent = (qa?.overflowEvents || []).find(
   (item) => item?.slideType === 'contents' && item?.mode === 'contents-sections' && item?.event === 'auto_split',
 );
 assert.ok(overflowEvent, 'Expected contents overflow auto_split event in QA');
+assert.ok(
+  Array.isArray(qa?.recomputeFields) && qa.recomputeFields.includes('contentsPageRanges'),
+  'Expected QA recomputeFields to include contentsPageRanges',
+);
 
 console.log('Contents pagination QA regression passed.');
 console.log(`Temp output: ${tmpDir}`);

@@ -11,6 +11,10 @@ const ctx = buildRenderContext(templatePackage);
 
 assert.equal(ctx.theme.tokens, templatePackage.tokens, 'theme.tokens should reference raw template tokens');
 assert.ok(ctx.theme.colors.primary, 'theme semantic colors should be present');
+assert.equal(ctx.slideRegistry.schemaVersion, '1.0.0', 'slide registry schema version should be exposed');
+assert.equal(ctx.paginationPolicy.schemaVersion, '1.0.0', 'pagination policy schema version should be exposed');
+assert.ok(ctx.slideRegistry.get('oneColumnText'), 'slide registry should include oneColumnText');
+assert.ok(ctx.paginationPolicy.get('text.oneColumn.v1'), 'pagination policy should include one-column policy');
 assert.equal(ctx.theme.type.dividerNumber, 48, 'theme.type.dividerNumber should expose divider scale');
 assert.equal(ctx.theme.type.dividerTitle, 24, 'theme.type.dividerTitle should expose divider scale');
 assert.ok(
@@ -46,12 +50,12 @@ assert.throws(
   () =>
     resolveSlideGeometry(
       {
-        get: () => ({ boxes: { title: { x: 0, y: 0, w: 1, h: 1 } }, templateLayout: 'broken-layout' }),
+        get: () => ({ boxes: {}, templateLayout: 'broken-layout' }),
       },
       'analysisWideChart2ColsText',
     ),
-  /missing required keys/i,
-  'analysisWideChart2ColsText should fail fast when required canonical geometry is absent',
+  /missing layout contract geometry/i,
+  'resolveSlideGeometry should fail fast when canonical geometry is absent',
 );
 
 const deckSpec = {

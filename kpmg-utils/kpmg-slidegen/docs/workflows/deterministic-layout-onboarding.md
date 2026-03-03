@@ -30,6 +30,14 @@ When this workflow is complete:
 3. New/existing slide type name.
 4. A fixture deckSpec path for the candidate slide.
 
+Optional accelerator:
+
+```bash
+npm run -s new:layout -- --type <slideType>
+```
+
+This creates a builder scaffold, fixture deckSpec, visual test scaffold, and checklist.
+
 ## Phase 1: Intake + Artifact Capture
 
 1. Create a working folder:
@@ -75,8 +83,14 @@ unzip -o /abs/path/reference.pptx -d /tmp/<layout-name>-xml
 ## Phase 3: Contract + Validation First
 
 1. Add/update slide type slots in `templates/kpmg-diligence/package/layouts.json`.
-2. Enforce shape-safe validation in `generator/runtime/render-deck.js` for complex slots if needed.
-3. Keep schema/docs aligned:
+2. Add/update slide registry entry in `generator/runtime/slide-registry.js`:
+- `builderId`
+- `masterVariant`
+- `requiredGeometry`
+- `paginationPolicyKey`
+3. If paginated, add/update policy entry in `templates/kpmg-diligence/package/pagination-policy.json`.
+4. Enforce shape-safe validation in `generator/runtime/render-deck.js` for complex slots if needed.
+5. Keep schema/docs aligned:
 - `skills/kpmg-slides/references/slide-contract.md`
 - `skills/kpmg-slides/references/deckspec.schema.json` (if contract shape changes)
 
@@ -166,4 +180,3 @@ When escalating, present:
 - exact issue in plain language
 - minimal architecturally-sound fix
 - potential regressions and mitigation
-
