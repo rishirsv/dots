@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T20:30:56.603Z",
+  "generatedAt": "2026-03-03T19:57:22.248Z",
   "template": "kpmg-diligence",
   "valid": true,
   "errors": [],
@@ -257,7 +257,7 @@
       "slideType": "analysisWideChart2ColsText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 555,
+      "actual": 552,
       "target": 180,
       "priority": "high"
     },
@@ -347,7 +347,7 @@
       "slideType": "analysisNarrowTable",
       "slot": "insights",
       "kind": "textArray",
-      "actual": 260,
+      "actual": 259,
       "target": 80,
       "priority": "high"
     },
@@ -383,7 +383,7 @@
       "slideType": "oneColumnText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 807,
+      "actual": 800,
       "target": 180,
       "priority": "high"
     },
@@ -464,7 +464,7 @@
       "slideType": "analysisWideChartTableText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 570,
+      "actual": 567,
       "target": 180,
       "priority": "high"
     },
@@ -536,7 +536,7 @@
       "slideType": "analysisWideChart2ColsText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 530,
+      "actual": 527,
       "target": 180,
       "priority": "high"
     },
@@ -590,7 +590,7 @@
       "slideType": "analysisWideChart2ColsText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 549,
+      "actual": 546,
       "target": 180,
       "priority": "high"
     },
@@ -644,7 +644,7 @@
       "slideType": "analysisWideChart2ColsText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 545,
+      "actual": 542,
       "target": 180,
       "priority": "high"
     },
@@ -716,7 +716,7 @@
       "slideType": "analysisWideChart2ColsText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 541,
+      "actual": 538,
       "target": 180,
       "priority": "high"
     },
@@ -770,7 +770,7 @@
       "slideType": "analysisWideChart2ColsText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 502,
+      "actual": 499,
       "target": 180,
       "priority": "high"
     },
@@ -860,7 +860,7 @@
       "slideType": "analysisNarrowTable",
       "slot": "insights",
       "kind": "textArray",
-      "actual": 285,
+      "actual": 284,
       "target": 80,
       "priority": "high"
     },
@@ -896,7 +896,7 @@
       "slideType": "twoColumnText",
       "slot": "leftBody",
       "kind": "textArray",
-      "actual": 428,
+      "actual": 425,
       "target": 80,
       "priority": "high"
     },
@@ -905,7 +905,7 @@
       "slideType": "twoColumnText",
       "slot": "rightBody",
       "kind": "textArray",
-      "actual": 417,
+      "actual": 414,
       "target": 80,
       "priority": "high"
     },
@@ -941,7 +941,7 @@
       "slideType": "oneColumnText",
       "slot": "body",
       "kind": "textArray",
-      "actual": 865,
+      "actual": 858,
       "target": 180,
       "priority": "high"
     },
@@ -1172,7 +1172,126 @@
       }
     }
   ],
-  "fallbacks": [],
+  "recomputeFields": [
+    "contentsPageRanges"
+  ],
+  "fallbacks": [
+    {
+      "layout": "analysisWideChart2ColsText",
+      "reason": "geometry_adapter:mapped_shared_geometry",
+      "details": {
+        "templateLayout": "Analysis_wide chart + 2 cols text",
+        "from": "shared.title",
+        "to": "title"
+      }
+    },
+    {
+      "layout": "analysisWideChart2ColsText",
+      "reason": "geometry_adapter:mapped_body_boxes",
+      "details": {
+        "templateLayout": "Analysis_wide chart + 2 cols text",
+        "to": "textBox"
+      }
+    },
+    {
+      "layout": "analysisWideChart2ColsText",
+      "reason": "geometry_adapter:mapped_body_boxes",
+      "details": {
+        "templateLayout": "Analysis_wide chart + 2 cols text",
+        "to": "chartBox"
+      }
+    },
+    {
+      "layout": "analysisWideChart2ColsText",
+      "reason": "geometry_adapter:mapped_legacy_key",
+      "details": {
+        "templateLayout": "Analysis_wide chart + 2 cols text",
+        "from": "strapline/bodyBoxes[0]",
+        "to": "straplineBox"
+      }
+    },
+    {
+      "layout": "analysisWideChartTableText",
+      "reason": "geometry_adapter:mapped_shared_geometry",
+      "details": {
+        "templateLayout": "Analysis_wide chart+table+text",
+        "from": "shared.title",
+        "to": "title"
+      }
+    },
+    {
+      "layout": "analysisWideChartTableText",
+      "reason": "geometry_adapter:mapped_legacy_key",
+      "details": {
+        "templateLayout": "Analysis_wide chart+table+text",
+        "from": "body",
+        "to": "textBox"
+      }
+    },
+    {
+      "layout": "analysisWideChartTableText",
+      "reason": "geometry_adapter:mapped_legacy_key",
+      "details": {
+        "templateLayout": "Analysis_wide chart+table+text",
+        "from": "chart",
+        "to": "chartBox"
+      }
+    },
+    {
+      "layout": "analysisWideChartTableText",
+      "reason": "geometry_adapter:mapped_legacy_key",
+      "details": {
+        "templateLayout": "Analysis_wide chart+table+text",
+        "from": "table",
+        "to": "tableBox"
+      }
+    },
+    {
+      "layout": "analysisWideChartTableText",
+      "reason": "geometry_adapter:mapped_legacy_key",
+      "details": {
+        "templateLayout": "Analysis_wide chart+table+text",
+        "from": "heading/bodyBoxes[1]",
+        "to": "headingBox"
+      }
+    },
+    {
+      "layout": "analysisWideChartTableText",
+      "reason": "geometry_adapter:mapped_legacy_key",
+      "details": {
+        "templateLayout": "Analysis_wide chart+table+text",
+        "from": "strapline/bodyBoxes[0]",
+        "to": "straplineBox"
+      }
+    },
+    {
+      "layout": "oneColumnText",
+      "reason": "geometry_adapter:mapped_legacy_key",
+      "details": {
+        "templateLayout": null,
+        "from": "detectedLayoutGeometry",
+        "to": "body"
+      }
+    },
+    {
+      "layout": "oneColumnText",
+      "reason": "geometry_adapter:mapped_shared_geometry",
+      "details": {
+        "templateLayout": null,
+        "from": "shared.title",
+        "to": "title"
+      }
+    },
+    {
+      "layout": "titleStrapline4TextBoxes",
+      "reason": "geometry_adapter:mapped_shared_geometry",
+      "details": {
+        "templateLayout": "Title+strapline+4 text boxes",
+        "from": "shared.title",
+        "to": "title"
+      }
+    }
+  ],
   "overlapSummary": {
     "slideCount": 20,
     "overlapCount": 1,
@@ -1199,12 +1318,12 @@
   },
   "inputSlideCount": 20,
   "outputSlideCount": 20,
-  "outputPptx": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/deck.pptx",
+  "outputPptx": "/Users/rishi/Code/ai-tools/kpmg-utils/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/deck.pptx",
   "postprocess": {
     "availability": {
       "slidesSkill": true,
       "reason": null,
-      "slidesDir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime",
+      "slidesDir": "/Users/rishi/Code/ai-tools/kpmg-utils/kpmg-slidegen/skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime",
       "python": "python3"
     },
     "preview": {
@@ -1212,7 +1331,7 @@
       "status": "ok",
       "reason": null,
       "stderr": null,
-      "outputDir": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/preview",
+      "outputDir": "/Users/rishi/Code/ai-tools/kpmg-utils/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/preview",
       "slideImageCount": 20,
       "width": 1600,
       "height": 900
@@ -1222,7 +1341,7 @@
       "status": "ok",
       "reason": null,
       "stderr": null,
-      "path": "/Users/rishi/Code/ai-tools/chatgpt/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/montage.png",
+      "path": "/Users/rishi/Code/ai-tools/kpmg-utils/kpmg-slidegen/outputs/qa-golden-fixture/skill-smoke/montage.png",
       "numCol": 5,
       "labelMode": "number"
     },

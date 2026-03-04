@@ -12,14 +12,14 @@ This skill is a **general-purpose, consulting-grade slide writer** that generate
 ## Dependencies
 
 - `npm install` - installs `pptxgenjs` and `image-size` used by the generator
-- `python3 -m pip install pdf2image Pillow` - preview and montage runtime
+- `python3 -m pip install pdf2image Pillow numpy python-pptx` - preview, montage, and overflow runtime
 - LibreOffice (`soffice`) - PPTX to PDF conversion
 - Poppler (`pdftoppm`, `pdfinfo`) - PDF to images
 
 Install location:
 
 - Run `npm install` from the repo root (`kpmg-slidegen/`).
-- `python3 -m pip install pdf2image Pillow` can be run from any directory.
+- `python3 -m pip install pdf2image Pillow numpy python-pptx` can be run from any directory.
 
 ## Workflow Decision Tree
 
@@ -83,6 +83,10 @@ When in doubt, treat `references/slide-contract.md`, `references/deckspec.schema
 - Do not exceed title hard limits. Titles are treated as hard limits in validation and most slide types cap title `maxChars` at 50; shorten or rewrite the title instead of formatting around the limit.
 - Omit optional slots instead of emitting empty strings. If a slot exists but is empty and `allowEmpty: false`, validation can warn or error
 - Only set `bodyStyle` to exactly `bullets` or `paragraphs`
+- Treat `contents.sections[].pageRange` as runtime-managed; normally leave it unset in authored `deckSpec`.
+- Treat `metadata.splitPolicy` as advisory for planning workflow only; current runtime does not enforce split modes from this field.
+- Prefer explicit `dividerDark`/`dividerLight` when you need that visual style; reserve neutral `divider` for style-agnostic section breaks.
+- For continuation/drop/recompute behavior, follow `references/slide-contract.md` instead of inferring behavior from older examples.
 
 #### Pagination-aware guardrails (must apply while writing)
 
@@ -265,6 +269,7 @@ Create `<name>.deckSpec.json` in three passes:
 1. Skeleton: copy starter, set final slide `type` + claim title, replace placeholders, align slide count/sections.
 2. Fill: populate only supported slots, keep one-message-per-slide, and use evidence-first layouts (chart/table/bridge) for numeric claims.
 3. Self-check: required slots only, no unsupported slots, valid `bodyStyle`, aligned numeric chart arrays, and full alignment to outline + verbosity contract.
+   - Keep runtime-managed fields (`contents.sections[].pageRange`) out of authored content unless explicitly required.
 
 ## Step 5: Generate `.pptx`
 

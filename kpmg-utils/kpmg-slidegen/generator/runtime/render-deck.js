@@ -22,6 +22,12 @@ import {
 } from '../helpers/business-structure.js';
 import { normalizeBodyStyle } from '../helpers/layout.js';
 import { paginateDeckSpec } from './paginate.js';
+import { buildRenderContext } from './render-context.js';
+import {
+  defaultMasterNameForType,
+  isExcludedFromLogicalPaging,
+  resolveRegistryTypeForSlide,
+} from './slide-registry.js';
 
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -33,9 +39,23 @@ const DENSITY_STATUS = Object.freeze({
   sparse: 'too sparse, should be repaired or flagged',
 });
 const DIVIDER_TYPES = new Set(['divider', 'dividerDark', 'dividerLight']);
-const EXCLUDED_FROM_LOGICAL_PAGING = new Set(['cover', 'backCover', ...DIVIDER_TYPES]);
 const MAX_TEXT_ARRAY_LEVELS = 4;
 const MAX_TEXT_ARRAY_CHILD_DEPTH = MAX_TEXT_ARRAY_LEVELS - 1;
+
+const BUILDER_BY_ID = Object.freeze({
+  cover: addCover,
+  divider: addDivider,
+  contents: addContentsSlide,
+  twoColumnText: addTwoColumnTextWithStrapline,
+  oneColumnText: addOneColumnText,
+  analysisNarrowTable: addAnalysisNarrowTable,
+  analysisWideChart2ColsText: addAnalysisWideChart2ColsText,
+  analysisWideChartTableText: addAnalysisWideChartTableText,
+  analysisBridge: addAnalysisBridge,
+  businessOverview: addBusinessOverview,
+  titleStrapline4TextBoxes: addTitleStrapline4TextBoxes,
+  backCover: addBackCover,
+});
 
 function isPlainObject(value) {
   return Boolean(value && typeof value === 'object' && !Array.isArray(value));
@@ -104,7 +124,7 @@ function isMissingSlotValue(value, def = {}) {
   if (kind === 'textArray' || kind === 'stringArray' || kind === 'kpiArray' || kind === 'columns' || kind === 'contentsSections') {
     return !Array.isArray(value) || value.length === 0;
   }
-  if (kind === 'table') return !isPlainObject(value) || !Array.isArray(value.rows) || value.rows.length === 0;
+  if (kind === 'table') return !isPlainObject(value);
   if (kind === 'chart') return !isPlainObject(value) || !Array.isArray(value.data) || value.data.length === 0;
   if (kind === 'bridge') return !isPlainObject(value) || !Array.isArray(value.steps) || value.steps.length === 0;
   if (kind === 'businessStructure') return !isPlainObject(value);
@@ -369,12 +389,29 @@ function validateTypedSlotValue(slotName, def, value) {
       fail('must be an object');
       return { errors, warnings, quantity, charCount };
     }
-    if (!Array.isArray(value.headers)) fail('must include headers array');
-    if (!Array.isArray(value.rows)) fail('must include rows array');
-    if (Array.isArray(value.rows)) {
-      const invalidRows = value.rows.filter((row) => !Array.isArray(row)).length;
-      if (invalidRows > 0) fail(`contains ${invalidRows} non-array row(s)`);
+    if (!Array.isArray(value.headers)) {
+      fail('must include headers array');
+      return { errors, warnings, quantity, charCount };
     }
+    if (!Array.isArray(value.rows)) {
+      fail('must include rows array');
+      return { errors, warnings, quantity, charCount };
+    }
+    if (value.headers.length === 0) {
+      fail('headers must contain at least 1 item');
+    }
+    if (value.rows.length === 0) {
+      fail('rows must contain at least 1 row');
+    }
+    value.rows.forEach((row, rowIdx) => {
+      if (!Array.isArray(row)) {
+        fail(`row ${rowIdx + 1} must be an array`);
+        return;
+      }
+      if (value.headers.length > 0 && row.length !== value.headers.length) {
+        fail(`row ${rowIdx + 1} has ${row.length} cell(s); expected ${value.headers.length} to match headers`);
+      }
+    });
     return { errors, warnings, quantity, charCount };
   }
 
@@ -1037,7 +1074,7 @@ function addFooterChromeObjects(templatePackage, footerChrome, footerValues = {}
   return objects;
 }
 
-function defineMasters(pptx, templatePackage, footerValues = {}) {
+function defineMasters(pptx, templatePackage, footerValues = {}, theme = null) {
   const masters = templatePackage.layouts?.masters || {};
   const variants = masters.variants || {};
   const footerChrome = masters.footerChrome || null;
@@ -1050,7 +1087,13 @@ function defineMasters(pptx, templatePackage, footerValues = {}) {
 
     pptx.defineSlideMaster({
       title: variantConfig.masterName,
-      background: { color: variantConfig.backgroundColor || 'FFFFFF' },
+      background: {
+        color:
+          variantConfig.backgroundColor ||
+          theme?.colors?.white ||
+          templatePackage.tokens?.colors?.semantic?.bgLight ||
+          'FFFFFF',
+      },
       ...(objects.length ? { objects } : {}),
     });
   }
@@ -1116,15 +1159,34 @@ function applyAutoContentsPageRanges(slides, templatePackage) {
   });
 }
 
-function getMasterNameForSlide(slideSpec, templatePackage) {
-  const variants = templatePackage.layouts?.masters?.variants || {};
-  if (slideSpec.type === 'cover') return variants.cover?.masterName || 'KPMG_COVER';
-  if (slideSpec.type === 'backCover') return variants.closing?.masterName || 'KPMG_CLOSING';
-  if (slideSpec.type === 'dividerLight' || (slideSpec.type === 'divider' && slideSpec.variant === 'light')) {
-    return variants.sectionLight?.masterName || 'KPMG_SECTION_LIGHT';
+function collectRecomputeFieldsForSlides(slides, runtimeContext) {
+  const fields = new Set();
+  const list = Array.isArray(slides) ? slides : [];
+  const slideRegistry = runtimeContext?.slideRegistry;
+  const paginationPolicy = runtimeContext?.paginationPolicy;
+  if (!slideRegistry?.get || !paginationPolicy?.get) return fields;
+
+  for (const slide of list) {
+    const registryType = resolveRegistryTypeForSlide(slide);
+    const entry = slideRegistry.get(registryType);
+    if (!entry) {
+      throw new Error(`Missing slide-registry entry for slide type "${registryType}"`);
+    }
+    const key = String(entry.paginationPolicyKey || '').trim();
+    const policy = paginationPolicy.get(key);
+    if (!policy) {
+      throw new Error(`Missing pagination policy "${key}" for slide type "${registryType}"`);
+    }
+    for (const field of policy.recomputeFields || []) {
+      fields.add(field);
+    }
   }
-  if (slideSpec.type === 'dividerDark' || slideSpec.type === 'divider') return variants.sectionDark?.masterName || 'KPMG_SECTION_DARK';
-  return variants.white?.masterName || 'KPMG_WHITE';
+  return fields;
+}
+
+function getMasterNameForSlide(slideSpec, templatePackage) {
+  const registryType = resolveRegistryTypeForSlide(slideSpec);
+  return defaultMasterNameForType(registryType, templatePackage);
 }
 
 function getVariantByMasterName(templatePackage, masterName) {
@@ -1133,7 +1195,8 @@ function getVariantByMasterName(templatePackage, masterName) {
 }
 
 function shouldRenderLogicalPageNumber(slideSpec, templatePackage) {
-  if (EXCLUDED_FROM_LOGICAL_PAGING.has(slideSpec?.type)) return false;
+  const registryType = resolveRegistryTypeForSlide(slideSpec);
+  if (isExcludedFromLogicalPaging(registryType)) return false;
   const masterName = getMasterNameForSlide(slideSpec, templatePackage);
   const variant = getVariantByMasterName(templatePackage, masterName);
   return Boolean(variant?.includeFooter);
@@ -1156,80 +1219,56 @@ function addLogicalPageNumber(slide, templatePackage, pageNumber) {
   });
 }
 
-function requireAssetPath(assetPath, assetKey, slideType) {
-  if (assetPath) return assetPath;
-  throw new Error(`Missing required template asset "${assetKey}" for slide type "${slideType}"`);
+function assertNoReservedBuilderCtxKeys(slideSpec, runtimeContext = {}, registryType = null) {
+  const strict = Boolean(runtimeContext?.options?.strict);
+  if (!strict || !slideSpec || typeof slideSpec !== 'object') return;
+  const reservedKeys = Array.isArray(runtimeContext?.contracts?.reservedSlideKeys)
+    ? runtimeContext.contracts.reservedSlideKeys
+    : [];
+  if (reservedKeys.length === 0) return;
+  const collisions = reservedKeys.filter((key) => Object.prototype.hasOwnProperty.call(slideSpec, key));
+  if (collisions.length === 0) return;
+  runtimeContext?.diagnostics?.record?.({
+    code: 'reserved_builder_ctx_keys',
+    message: `Slide includes runtime-reserved keys: ${collisions.join(', ')}`,
+    details: {
+      slideType: registryType || slideSpec?.type || 'unknown',
+      keys: collisions,
+    },
+  });
+  throw new Error(
+    `Slide type "${registryType || slideSpec?.type || 'unknown'}" contains runtime-reserved key(s): ${collisions.join(', ')}`,
+  );
 }
 
-function buildSlide(pptx, rawSlideSpec, templatePackage, runtimeContext = {}) {
+function assertNoReservedBuilderCtxKeysForSlides(slides = [], runtimeContext = {}) {
+  if (!Array.isArray(slides) || slides.length === 0) return;
+  for (const slideSpec of slides) {
+    const registryType = resolveRegistryTypeForSlide(slideSpec);
+    assertNoReservedBuilderCtxKeys(slideSpec, runtimeContext, registryType);
+  }
+}
+
+function buildSlide(pptx, rawSlideSpec, runtimeContext = {}) {
   const slideSpec = normalizeSlideSpec(rawSlideSpec);
-  const masterName = getMasterNameForSlide(slideSpec, templatePackage);
-  const layouts = templatePackage.layouts?.types || {};
-  const layout = layouts[slideSpec.type] || null;
-  const geometry = layout?.geometry || null;
-
-  if (slideSpec.type === 'cover') {
-    const logoWhite = requireAssetPath(
-      templatePackage.resolveAssetPath('logoWhitePng') || templatePackage.resolveAssetPath('logoWhiteSvg'),
-      'logoWhitePng/logoWhiteSvg',
-      'cover',
-    );
-    const coverPhoto = requireAssetPath(
-      templatePackage.resolveAssetPath('coverPhoto'),
-      'coverPhoto',
-      'cover',
-    );
-    return addCover(pptx, {
-      title: slideSpec.title,
-      subtitle: slideSpec.subtitle,
-      masterName,
-      geometry,
-      assets: { logoWhite, coverPhoto },
-    });
+  const registryType = resolveRegistryTypeForSlide(slideSpec);
+  const registryEntry = runtimeContext?.slideRegistry?.get?.(registryType);
+  if (!registryEntry) {
+    throw new Error(`Unknown type: ${slideSpec.type}`);
   }
-  if (slideSpec.type === 'divider' || slideSpec.type === 'dividerDark' || slideSpec.type === 'dividerLight') {
-    return addDivider(pptx, {
-      sectionNumber: slideSpec.sectionNumber,
-      sectionTitle: slideSpec.sectionTitle,
-      masterName,
-      geometry,
-      assets: { gradientDivider: templatePackage.resolveAssetPath('gradientDividerWindow') },
-      textStyles:
-        slideSpec.type === 'dividerLight' || slideSpec.variant === 'light'
-          ? { sectionNumber: { color: '00338D' }, sectionTitle: { color: '00338D' } }
-          : null,
-    });
+  const builder = BUILDER_BY_ID[registryEntry.builderId];
+  if (typeof builder !== 'function') {
+    throw new Error(`No builder implementation registered for "${slideSpec.type}" (${registryEntry.builderId})`);
   }
-
-  const builderByType = {
-    contents: addContentsSlide,
-    twoColumnText: addTwoColumnTextWithStrapline,
-    oneColumnText: addOneColumnText,
-    analysisNarrowTable: addAnalysisNarrowTable,
-    analysisWideChart2ColsText: addAnalysisWideChart2ColsText,
-    analysisWideChartTableText: addAnalysisWideChartTableText,
-    analysisBridge: addAnalysisBridge,
-    businessOverview: addBusinessOverview,
-    titleStrapline4TextBoxes: addTitleStrapline4TextBoxes,
-  };
-  const builder = builderByType[slideSpec.type];
-  if (builder) return builder(pptx, { ...slideSpec, masterName, geometry });
-  if (slideSpec.type === 'backCover') {
-    const gradientBackCover = requireAssetPath(
-      templatePackage.resolveAssetPath('gradientBackCover'),
-      'gradientBackCover',
-      'backCover',
-    );
-    return addBackCover(pptx, {
-      ...slideSpec,
-      masterName,
-      geometry,
-      assets: { gradientBackCover },
-      footerValues: runtimeContext.footerValues || {},
-      resolveAssetPath: templatePackage.resolveAssetPath,
-    });
+  if (typeof runtimeContext?.buildBuilderCtx !== 'function') {
+    throw new Error('Missing render context builder ctx factory (buildBuilderCtx)');
   }
-  throw new Error(`Unknown type: ${slideSpec.type}`);
+  const ctx = runtimeContext.buildBuilderCtx({
+    slideSpec,
+    registryType,
+    options: runtimeContext.builderOptions || runtimeContext.options,
+  });
+  return builder(pptx, slideSpec, ctx);
 }
 
 export function renderDeck(deckSpec, templatePackage, options = {}) {
@@ -1243,8 +1282,17 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
     throw new Error(validation.errors.join('\n'));
   }
 
+  const renderContext = buildRenderContext({
+    templatePackage,
+    deckSpec,
+    options,
+  });
+
   const pptx = new PptxGenJS();
-  const dims = templatePackage.tokens?.dimensions || { w: 13.333, h: 7.5 };
+  const dims = renderContext.theme?.dimensions || templatePackage.tokens?.dimensions;
+  if (!Number.isFinite(dims?.w) || !Number.isFinite(dims?.h)) {
+    throw new Error('Missing required template dimensions (tokens.dimensions.w/h)');
+  }
   pptx.defineLayout({ name: 'KPMG_WIDE', width: dims.w, height: dims.h });
   pptx.layout = 'KPMG_WIDE';
 
@@ -1255,19 +1303,34 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
     if (deckSpec.metadata.subject) pptx.subject = deckSpec.metadata.subject;
   }
 
-  const headFontFace = templatePackage.tokens?.fonts?.heading || 'Arial';
-  const bodyFontFace = templatePackage.tokens?.fonts?.body || 'Arial';
+  const headFontFace = renderContext.theme?.fonts?.heading || templatePackage.tokens?.fonts?.heading;
+  const bodyFontFace = renderContext.theme?.fonts?.body || templatePackage.tokens?.fonts?.body;
+  if (!headFontFace || !bodyFontFace) {
+    throw new Error('Missing required template font mapping for pptx theme (heading/body)');
+  }
   pptx.theme = { headFontFace, bodyFontFace };
 
   const footerValues = buildFooterValues(deckSpec, { allowSparse });
-  defineMasters(pptx, templatePackage, footerValues);
+  defineMasters(pptx, templatePackage, footerValues, renderContext.theme);
+  const builderOptions = Object.freeze({
+    ...renderContext.options,
+    footerValues,
+  });
 
   const normalized = {
     ...deckSpec,
     slides: (deckSpec.slides || []).map(normalizeSlideSpec),
   };
-  const paginated = paginateDeckSpec(normalized, templatePackage.layouts?.types || {});
-  const paginatedSlides = applyAutoContentsPageRanges(paginated?.slides || [], templatePackage);
+  const paginated = paginateDeckSpec(normalized, templatePackage.layouts?.types || {}, renderContext);
+  const preRecomputeSlides = paginated?.slides || [];
+  const recomputeFields = collectRecomputeFieldsForSlides(preRecomputeSlides, renderContext);
+  const paginatedSlides = recomputeFields.has('contentsPageRanges')
+    ? applyAutoContentsPageRanges(preRecomputeSlides, templatePackage)
+    : preRecomputeSlides;
+  assertNoReservedBuilderCtxKeysForSlides(paginatedSlides, {
+    ...renderContext,
+    options: builderOptions,
+  });
   const paginationDecisions = paginated?.paginationDecisions || [];
   const overflowEvents = paginated?.overflowEvents || [];
   const tableWarnings = paginated?.tableWarnings || [];
@@ -1294,7 +1357,10 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
     if (!v.valid) throw new Error(v.errors.join(', '));
 
     const expectedMaster = getMasterNameForSlide(slideSpec, templatePackage);
-    const slide = buildSlide(pptx, slideSpec, templatePackage, { footerValues });
+    const slide = buildSlide(pptx, slideSpec, {
+      builderOptions,
+      ...renderContext,
+    });
     const appliedMaster = slide?._slideLayout?._name || slide?._name || expectedMaster;
     masterApplied.push({
       slideIndex: masterApplied.length,
@@ -1326,6 +1392,7 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
       overflowEvents,
       overflowRisks,
       tableWarnings,
+      recomputeFields: [...recomputeFields].sort(),
       masterApplied,
       densityFindings: validation?.qa?.densityFindings || [],
       thinSlides: validation?.qa?.thinSlides || [],

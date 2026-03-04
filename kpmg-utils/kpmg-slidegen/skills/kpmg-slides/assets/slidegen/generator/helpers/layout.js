@@ -1,18 +1,30 @@
-import { FOOTER_SAFE_TOP } from './footer.js';
 import { clampBoxToBottom } from './geometry.js';
+import { resolveTheme } from './theme.js';
 
-const STRAP_GAP = 0.06;
-const SOURCE_TOP_OFFSET = 0.05;
-const SOURCE_BOTTOM_GAP = 0.06;
+function requireFiniteMetric(name, value) {
+  const numeric = Number(value);
+  if (Number.isFinite(numeric)) return numeric;
+  throw new Error(`Missing required layout metric "${name}"`);
+}
+
+export function resolveLayoutMetrics(theme = null) {
+  const resolvedTheme = resolveTheme(theme);
+  return {
+    strapGap: requireFiniteMetric('spacing.strapGap', resolvedTheme?.spacing?.strapGap),
+    sourceTopOffset: requireFiniteMetric('spacing.sourceTopOffset', resolvedTheme?.spacing?.sourceTopOffset),
+    sourceBottomGap: requireFiniteMetric('spacing.sourceBottomGap', resolvedTheme?.spacing?.sourceBottomGap),
+  };
+}
 
 export function normalizeBodyStyle(bodyStyle) {
   const normalized = String(bodyStyle || '').trim().toLowerCase();
   return normalized === 'paragraph' || normalized === 'paragraphs' ? 'paragraphs' : 'bullets';
 }
 
-export function computeStrapShift(strapBox, contentTop, gap = STRAP_GAP) {
+export function computeStrapShift(strapBox, contentTop, gap) {
   if (!strapBox || !Number.isFinite(contentTop)) return 0;
-  return Math.max(0, (strapBox.y + strapBox.h + gap) - contentTop);
+  const resolvedGap = requireFiniteMetric('spacing.strapGap', gap);
+  return Math.max(0, (strapBox.y + strapBox.h + resolvedGap) - contentTop);
 }
 
 export function shiftBox(box, shift = 0) {
@@ -20,12 +32,20 @@ export function shiftBox(box, shift = 0) {
   return { ...box, y: box.y + shift, h: box.h - shift };
 }
 
-export function footerSafeTopForMaster(masterName) {
-  return masterName === 'KPMG_WHITE' ? FOOTER_SAFE_TOP : null;
+function lookupSafeTop(masterName, footerSafeTopByMaster) {
+  if (!footerSafeTopByMaster || typeof footerSafeTopByMaster !== 'object') return null;
+  if (!Object.prototype.hasOwnProperty.call(footerSafeTopByMaster, masterName)) return null;
+  const value = footerSafeTopByMaster[masterName];
+  return Number.isFinite(value) ? value : null;
 }
 
-export function clampToMasterFooter(box, masterName, pad = 0) {
-  const safeTop = footerSafeTopForMaster(masterName);
+export function footerSafeTopForMaster(masterName, footerSafeTopByMaster = null) {
+  const configured = lookupSafeTop(masterName, footerSafeTopByMaster);
+  return Number.isFinite(configured) ? configured : null;
+}
+
+export function clampToMasterFooter(box, masterName, pad = 0, footerSafeTopByMaster = null) {
+  const safeTop = footerSafeTopForMaster(masterName, footerSafeTopByMaster);
   if (!safeTop) return box;
   return clampBoxToBottom(box, safeTop - pad);
 }
@@ -61,7 +81,7 @@ export function sourceFootprintBelow(upperBox, sourceText, options = {}) {
   if (!upperBox) return 0;
   const text = normalizeSourceText(sourceText);
   if (!text) return 0;
-  const topOffset = Number.isFinite(options.topOffset) ? options.topOffset : SOURCE_TOP_OFFSET;
+  const topOffset = requireFiniteMetric('spacing.sourceTopOffset', options.topOffset);
   const sourceHeight = estimateSourceTextHeight(text, upperBox.w, options);
   return topOffset + sourceHeight;
 }
@@ -70,7 +90,7 @@ export function buildSourceBox(upperBox, sourceText, options = {}) {
   if (!upperBox) return null;
   const text = normalizeSourceText(sourceText);
   if (!text) return null;
-  const topOffset = Number.isFinite(options.topOffset) ? options.topOffset : SOURCE_TOP_OFFSET;
+  const topOffset = requireFiniteMetric('spacing.sourceTopOffset', options.topOffset);
   const sourceHeight = estimateSourceTextHeight(text, upperBox.w, options);
   return {
     x: upperBox.x,
@@ -85,7 +105,7 @@ export function reserveSourceGutterBetweenBoxes({
   lowerBox,
   sourceText,
   sourceOptions = {},
-  bottomGap = SOURCE_BOTTOM_GAP,
+  bottomGap,
   minUpperHeight = 1.05,
   minLowerHeight = 0.85,
 } = {}) {
@@ -98,7 +118,8 @@ export function reserveSourceGutterBetweenBoxes({
     return { upperBox, lowerBox, adjusted: false };
   }
 
-  const requiredTop = upperBox.y + upperBox.h + footprint + Math.max(0, Number(bottomGap || 0));
+  const safeBottomGap = requireFiniteMetric('spacing.sourceBottomGap', bottomGap);
+  const requiredTop = upperBox.y + upperBox.h + footprint + Math.max(0, safeBottomGap);
   const overlap = Math.max(0, requiredTop - lowerBox.y);
   if (overlap <= 0) {
     return { upperBox, lowerBox, adjusted: false };

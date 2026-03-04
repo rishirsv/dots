@@ -215,6 +215,7 @@ export async function generateToFile(deckSpec, outPath, options = {}) {
       paginationDecisions: [],
       overflowEvents: [],
       tableWarnings: [],
+      recomputeFields: [],
       fallbacks: diag?.fallbacks || [],
       overlapSummary: null,
       strictOverflow: null,
@@ -229,6 +230,7 @@ export async function generateToFile(deckSpec, outPath, options = {}) {
 
   const { pptx, qa: renderQa } = renderDeck(deckSpec, templatePackage, {
     allowSparse: options.allowSparse,
+    strict: options.strict,
     validationResult: validation,
   });
 
@@ -308,6 +310,7 @@ export async function generateToFile(deckSpec, outPath, options = {}) {
     paginationDecisions: renderQa?.paginationDecisions || [],
     overflowEvents: renderQa?.overflowEvents || [],
     tableWarnings: renderQa?.tableWarnings || [],
+    recomputeFields: renderQa?.recomputeFields || [],
     fallbacks: report?.fallbacks || [],
     overlapSummary: overlapReport?.summary || null,
     overlapFindings: buildOverlapFindings(overlapReport),

@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { COLORS, FONTS } from '../tokens.js';
-import { getImageDimensions, normalizeImageSource } from '../helpers/media.js';
+import { addImageSmart, getImageDimensions } from '../helpers/media.js';
 import { sanitizeText } from '../helpers/text.js';
+import { resolveTheme, resolveTokenTextStyle } from '../helpers/theme.js';
 import { resolveTemplateAssetsDir } from '../runtime/template-roots.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -9,14 +9,6 @@ import { resolveTemplateAssetsDir } from '../runtime/template-roots.js';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const TOKENS = {
-  colors: {
-    accent1: COLORS.primary,
-    white: COLORS.white,
-  },
-  fonts: {
-    title: FONTS.heading,
-    subtitle: FONTS.body,
-  },
   geometry: {
     // inches
     logo: { x: 1.0919, y: 0.406, w: 1.0, h: 0.4 },
@@ -24,27 +16,6 @@ export const TOKENS = {
     subtitle: { x: 1.0919, y: 5.4745, w: 4.044, h: 0.8858 },
     photoBox: { x: 5.3762, y: 1.592, w: 6.8715, h: 4.7743 }
   },
-  textStyles: {
-    coverTitle: {
-      fontFace: FONTS.heading,
-      fontSize: 40,
-      bold: true,
-      color: 'FFFFFF',
-      align: 'left',
-      valign: 'top',
-      margin: 0,
-      fit: 'none'
-    },
-    coverSubtitle: {
-      fontFace: FONTS.body,
-      fontSize: 14,
-      color: 'FFFFFF',
-      align: 'left',
-      valign: 'bottom',
-      margin: 0,
-      fit: 'none'
-    }
-  }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -59,6 +30,46 @@ export const ASSETS = {
   logoWhite: path.join(TEMPLATE_ASSETS_DIR, 'kpmg-logo-white.png'),
   coverPhoto: path.join(TEMPLATE_ASSETS_DIR, 'cover-photo.jpeg')
 };
+
+function resolveCoverTheme(theme = null) {
+  const resolvedTheme = resolveTheme(theme);
+  const coverComponent = resolvedTheme.components?.cover || {};
+  const coverTitleFontSize = Number(coverComponent.titleFontSize || 40);
+  const coverSubtitleFontSize = Number(coverComponent.subtitleFontSize || 14);
+  const coverTitleStyle = resolveTokenTextStyle(resolvedTheme, 'coverTitle', {
+    fontFace: resolvedTheme.fonts.heading,
+    fontSize: coverTitleFontSize,
+    bold: true,
+    color: resolvedTheme.colors.white,
+  });
+  const coverSubtitleStyle = resolveTokenTextStyle(resolvedTheme, 'coverSubtitle', {
+    fontFace: resolvedTheme.fonts.body,
+    fontSize: coverSubtitleFontSize,
+    color: resolvedTheme.colors.white,
+  });
+
+  return {
+    background: resolvedTheme.colors.primary,
+    textStyles: {
+      coverTitle: {
+        ...coverTitleStyle,
+        fontSize: Number.isFinite(coverTitleStyle.fontSize) ? coverTitleStyle.fontSize : coverTitleFontSize,
+        align: 'left',
+        valign: 'top',
+        margin: 0,
+        fit: 'none',
+      },
+      coverSubtitle: {
+        ...coverSubtitleStyle,
+        fontSize: Number.isFinite(coverSubtitleStyle.fontSize) ? coverSubtitleStyle.fontSize : coverSubtitleFontSize,
+        align: 'left',
+        valign: 'bottom',
+        margin: 0,
+        fit: 'none',
+      },
+    },
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -81,10 +92,6 @@ function calcCoverFitWH(boxW, boxH, imgWpx, imgHpx) {
 
   // Box is wider than image => scale by width, crop top/bottom
   return { w: boxW, h: boxW * imgRatio };
-}
-
-function addImageSmart(slide, asset, opts) {
-  slide.addImage({ ...normalizeImageSource(asset), ...opts });
 }
 
 function normalizeCoverTitle(value) {
@@ -250,45 +257,51 @@ function fitCoverTitle(title, box, baseFontSize, { minFontSize = COVER_TITLE_MIN
  * - string
  * - rich text array (runs), supported by PptxGenJS: [{ text, options }, ...]
  */
-export function addCover(pptx, { title, subtitle, assets, geometry, masterName } = {}) {
+export function addCover(pptx, slideSpec = {}, ctx = {}) {
+  const { title, subtitle } = slideSpec;
+  const { assets, geometry, masterName, theme } = ctx;
+  const coverTheme = resolveCoverTheme(theme);
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
 
   const logoWhite = assets?.logoWhite ?? ASSETS.logoWhite;
   const coverPhoto = assets?.coverPhoto ?? ASSETS.coverPhoto;
-  const g = geometry || TOKENS.geometry;
+  const g = geometry || {};
+  if (!g.logoBox || !g.titleBox || !g.subtitleBox || !g.photoBox) {
+    throw new Error('Missing required geometry for slide type "cover" (logoBox/titleBox/subtitleBox/photoBox)');
+  }
 
   // Solid blue background (prefer master when provided)
-  if (!masterName) slide.background = { color: TOKENS.colors.accent1 };
+  if (!masterName) slide.background = { color: coverTheme.background };
 
   // White KPMG logo (top-left)
   addImageSmart(slide, logoWhite, {
-    ...(g.logo || TOKENS.geometry.logo),
+    ...g.logoBox,
     altText: 'KPMG logo',
   });
 
   // Title text box (left)
-  const titleBox = g.title || TOKENS.geometry.title;
+  const titleBox = g.titleBox;
   const fittedTitle = fitCoverTitle(
     title ?? '',
     titleBox,
-    TOKENS.textStyles.coverTitle.fontSize,
+    coverTheme.textStyles.coverTitle.fontSize,
   );
   slide.addText(fittedTitle.text, {
     ...titleBox,
-    ...TOKENS.textStyles.coverTitle,
+    ...coverTheme.textStyles.coverTitle,
     fontSize: fittedTitle.fontSize,
     valign: 'top'
   });
 
   // Subtitle text box (below title)
   slide.addText(sanitizeText(subtitle ?? ''), {
-    ...(g.subtitle || TOKENS.geometry.subtitle),
-    ...TOKENS.textStyles.coverSubtitle,
+    ...g.subtitleBox,
+    ...coverTheme.textStyles.coverSubtitle,
     valign: 'top'
   });
 
   // Cover photo (right) — crop-to-cover
-  const box = g.photoBox || g.photo || TOKENS.geometry.photoBox;
+  const box = g.photoBox;
   const { width: imgWpx, height: imgHpx } = getImageDimensions(coverPhoto);
   const full = calcCoverFitWH(box.w, box.h, imgWpx, imgHpx);
 

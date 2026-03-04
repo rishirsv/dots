@@ -96,6 +96,7 @@
           ]
         },
         "splitPolicy": {
+          "description": "Advisory authoring hint only. Current runtime pagination does not enforce this metadata field.",
           "type": "string",
           "enum": [
             "balanced",
@@ -680,6 +681,7 @@
           }
         },
         "pageRange": {
+          "description": "Runtime-managed output metadata for contents slides. Usually omitted in authored deckSpec and recomputed during pagination.",
           "type": "string"
         }
       }

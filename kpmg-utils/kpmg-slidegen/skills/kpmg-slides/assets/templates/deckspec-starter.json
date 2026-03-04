@@ -4,7 +4,12 @@
     "author": "KPMG LLP",
     "company": "KPMG LLP",
     "subject": "[Program or Workstream Name]",
-    "documentClassification": "KPMG Confidential"
+    "documentClassification": "KPMG Confidential",
+    "allowSparse": false,
+    "textAmount": "lg",
+    "densityProfile": "denser",
+    "slideCountPolicy": "auto",
+    "styleIntent": "diligence"
   },
   "slides": [
     {

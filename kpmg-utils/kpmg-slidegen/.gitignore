@@ -14,3 +14,10 @@ outputs/**/montage.png
 
 # Dependencies
 node_modules/
+.venv/
+
+# Python cache artifacts
+__pycache__/
+*.pyc
+**/__pycache__/
+**/*.pyc

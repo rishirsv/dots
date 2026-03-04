@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { getSlideRegistry } from '../generator/runtime/slide-registry.js';
 
 function readJson(relPath) {
   const absPath = path.join(process.cwd(), relPath);
@@ -21,7 +22,19 @@ function extractTemplateTypes() {
 }
 
 function extractSchemaTypes() {
-  const schema = readJson('docs/DECKSPEC-SLOTS-SCHEMA.json');
+  const schemaPathCandidates = [
+    'docs/DECKSPEC-SLOTS-SCHEMA.json',
+    'skills/kpmg-slides/references/deckspec.schema.json',
+  ];
+  const schemaPath = schemaPathCandidates.find((candidate) =>
+    fs.existsSync(path.join(process.cwd(), candidate)),
+  );
+  if (!schemaPath) {
+    throw new Error(
+      `Unable to locate schema file. Checked: ${schemaPathCandidates.join(', ')}`,
+    );
+  }
+  const schema = readJson(schemaPath);
   const defs = schema.$defs || {};
   const types = [];
   for (const [defName, def] of Object.entries(defs)) {
@@ -35,23 +48,8 @@ function extractSchemaTypes() {
 }
 
 function extractRuntimeTypes() {
-  const source = fs.readFileSync(path.join(process.cwd(), 'generator/runtime/render-deck.js'), 'utf8');
-  const types = new Set();
-
-  const conditionalMatches = source.matchAll(/slideSpec\.type === '([^']+)'/g);
-  for (const match of conditionalMatches) {
-    if (match[1]) types.add(match[1]);
-  }
-
-  // Also capture object-map dispatch entries in buildSlide.
-  const mapMatch = source.match(/const builderByType = \{([\s\S]*?)\n\s*\};/);
-  if (mapMatch?.[1]) {
-    const keyMatches = mapMatch[1].matchAll(/^\s*([A-Za-z0-9_]+)\s*:/gm);
-    for (const match of keyMatches) {
-      if (match[1]) types.add(match[1]);
-    }
-  }
-  return sortedUnique(Array.from(types));
+  const registry = getSlideRegistry();
+  return sortedUnique(registry.list());
 }
 
 function printMismatch(header, items) {

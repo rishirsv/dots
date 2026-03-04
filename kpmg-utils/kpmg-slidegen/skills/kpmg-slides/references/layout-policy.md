@@ -37,3 +37,11 @@ Is the slide a transaction-perimeter structure + company overview page?
 | Chart + (optional) table + synthesis | `analysisWideChartTableText` | Handles evidence-heavy slides cleanly. | Don't use if table is huge; make appendix. |
 | 4-pillar summary | `titleStrapline4TextBoxes` | Great exec summary structure. | Don't try to cram 6 pillars. |
 | Close/disclaimer | `backCover` | Standard finishing behavior. | Don't hide next steps here. |
+
+## Pagination Side-Effect Notes
+
+Use these rules when layout choice is close and continuation behavior matters:
+
+1. `oneColumnText`, `analysisWideChart2ColsText`, and `analysisWideChartTableText` drop `callouts` on continuation slides. Keep must-retain points in body text, not callouts.
+2. `businessOverview` drops `chart` on continuation slides. If chart context is essential on every page, prefer splitting manually into separate slides instead of relying on auto-pagination.
+3. `contents` page ranges are recomputed at runtime; choose this layout only when section ordering is stable enough for automatic page-range regeneration.

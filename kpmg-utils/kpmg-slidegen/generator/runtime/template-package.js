@@ -20,10 +20,12 @@ export function loadTemplatePackage(templateName = 'kpmg-diligence') {
 
   const tokensPath = requireFile(path.join(packageDir, 'tokens.json'));
   const layoutsPath = requireFile(path.join(packageDir, 'layouts.json'));
+  const paginationPolicyPath = requireFile(path.join(packageDir, 'pagination-policy.json'));
   const assetsManifestPath = requireFile(path.join(packageDir, 'assets', 'manifest.json'));
 
   const tokens = readJson(tokensPath);
   const layouts = readJson(layoutsPath);
+  const paginationPolicy = readJson(paginationPolicyPath);
   const assetsManifest = readJson(assetsManifestPath);
 
   const resolveAssetPath = (assetKey) => {
@@ -38,6 +40,7 @@ export function loadTemplatePackage(templateName = 'kpmg-diligence') {
     packageDir,
     tokens,
     layouts,
+    paginationPolicy,
     assetsManifest,
     resolveAssetPath,
   };

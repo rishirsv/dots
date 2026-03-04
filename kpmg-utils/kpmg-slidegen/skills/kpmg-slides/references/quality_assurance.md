@@ -7,6 +7,7 @@ Use this as the single QA policy for kpmg-slides.
 - QA Modes (User-selectable)
 - QA Workflow (Validate -> Fix -> Repeat)
 - Phase 1: Engine QA (Generator + qa.json)
+- Pagination Policy QA Checks (Mandatory for Paginated Decks)
 - Phase 2: Deterministic Fix Recipes
 - Stopping Rules (Mandatory)
 - Storyline QA Gate (Mandatory Before Delivery)
@@ -72,6 +73,21 @@ Classify `qa.json` findings:
 - Blocking: `errors`, missing required slots, unknown types, hard validation failures.
 - High-priority non-blocking: severe overflow/overlap risk, repeated density failures, major visual risk.
 - Advisory: minor warnings that do not prevent delivery.
+
+## Pagination Policy QA Checks (Mandatory for Paginated Decks)
+
+Run these checks whenever any slide can paginate (`oneColumnText`, `analysisWide*`, `analysisBridge`, `businessOverview`, `analysisNarrowTable`, `contents`):
+
+1. Check `qa.paginationDecisions` (or `qa.pagination`) for:
+   - unexpected `splitInto` spikes
+   - incorrect `mode` for slide type
+   - missing `policyKey` metadata in decision details
+2. Check `qa.recomputeFields`:
+   - if contents slides exist and page ranges should update, `contentsPageRanges` should be present.
+3. Check continuation side-effects against expected policy behavior:
+   - `oneColumnText`, `analysisWideChart2ColsText`, `analysisWideChartTableText`: continuation slides should drop `callouts`.
+   - `businessOverview`: continuation slides should drop `chart`.
+4. If continuation drops remove essential narrative or evidence unexpectedly, treat as high-priority non-blocking and refactor content (split intentionally or move key content to retained slots).
 
 ## Phase 2: Deterministic Fix Recipes
 

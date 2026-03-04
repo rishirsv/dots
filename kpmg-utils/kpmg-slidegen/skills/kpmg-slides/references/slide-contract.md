@@ -6,10 +6,11 @@ This is the practical contract for writing `deckSpec` slide objects that the bun
 - Core Rule
 - Slot Shapes (Reusable)
 - Supported Slide Types and Slot Contracts
+- Behavioral Contract Notes
 - Layout Selection Guardrails (Prevent Bad Fits)
 - Common Mistakes (And Fixes)
 - Structural Preflight Rules (Must Pass)
-- Split Policy Rules
+- Split and Pagination Authoring Rules
 
 ## Core Rule
 
@@ -278,6 +279,15 @@ Each column is typically:
   - `disclaimer` (text, min 80, max 700)
   - `url` (text, min 5, max 60)
 
+## Behavioral Contract Notes
+
+1. Write only the supported slots for each slide type; pagination policy controls continuation behavior at runtime.
+2. Current continuation drop behavior in this template:
+   - `oneColumnText`, `analysisWideChart2ColsText`, `analysisWideChartTableText`: continuation pages drop `callouts`.
+   - `businessOverview`: continuation pages drop `chart`.
+3. `contents.sections[].pageRange` is runtime-managed metadata when pagination recomputes page ranges. Leave it unset in authored `deckSpec` unless you have a specific manual override requirement.
+4. `metadata.splitPolicy` in `deckspec.schema.json` is advisory for authoring workflow only. Current runtime does not enforce split modes from this field.
+
 ## Layout Selection Guardrails (Prevent Bad Fits)
 
 1. Count your content pieces before selecting a layout.
@@ -309,11 +319,11 @@ Before finalizing any `deckSpec`, enforce this checklist:
 6. Every `analysisBridge.bridge` reconciles to `endValue` within tolerance and uses 1-4 `analysisColumns`.
 7. Every `businessOverview.structure` includes valid `topTier` and `bottomTier` entries.
 
-## Split Policy Rules
+## Split and Pagination Authoring Rules
 
 Use these heuristics to decide when to split content into multiple slides:
 
 1. Split when a slide would exceed about 6 bullets, or when bullets consistently run beyond 2 lines.
 2. Split when one side of `twoColumnText` is more than 2x the length of the other side.
 3. Split when a table has more than 8-10 meaningful rows, or when cells become multi-line paragraphs.
-4. Split intentionally into two slides with distinct claims instead of relying on auto-pagination, unless the user explicitly requests `readability_first` behavior.
+4. Split intentionally into two slides with distinct claims instead of relying on auto-pagination as the primary design mechanism.
