@@ -1,18 +1,5 @@
-import path from 'node:path';
 import { addImageSmart } from '../helpers/media.js';
 import { THEME_COMPONENT_KEYS, resolveTheme } from '../helpers/theme.js';
-import { resolveTemplateAssetsDir } from '../runtime/template-roots.js';
-
-const TEMPLATE_ASSETS_DIR = resolveTemplateAssetsDir('kpmg-diligence');
-const DEFAULT_ASSETS = {
-  gradientBackCover: path.join(TEMPLATE_ASSETS_DIR, 'gradient_back_cover_300dpi.png'),
-  closingLogoWhite: path.join(TEMPLATE_ASSETS_DIR, 'closing-logo-white.png'),
-  closingSocialTwitter: path.join(TEMPLATE_ASSETS_DIR, 'closing-social-twitter.png'),
-  closingSocialLinkedin: path.join(TEMPLATE_ASSETS_DIR, 'closing-social-linkedin.png'),
-  closingSocialFacebook: path.join(TEMPLATE_ASSETS_DIR, 'closing-social-facebook.png'),
-  closingSocialInstagram: path.join(TEMPLATE_ASSETS_DIR, 'closing-social-instagram.png'),
-  closingSocialYoutube: path.join(TEMPLATE_ASSETS_DIR, 'closing-social-youtube.png'),
-};
 
 const DEFAULT_CONTACTS = Object.freeze([
   {
@@ -34,10 +21,6 @@ const DEFAULT_CONTACTS = Object.freeze([
     email: 'E: firstname.lastname@kpmg.ca',
   },
 ]);
-
-function resolveAsset(assets = {}, resolveAssetPath, key, fallbackKey = null) {
-  return assets?.[key] || (typeof resolveAssetPath === 'function' ? resolveAssetPath(key) : null) || DEFAULT_ASSETS[key] || (fallbackKey ? DEFAULT_ASSETS[fallbackKey] : null);
-}
 
 function buildContacts(rawContacts = []) {
   const normalized = Array.isArray(rawContacts)
@@ -81,7 +64,17 @@ function normalizeHyperlink(url) {
 
 export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
   const { disclaimer, url, contacts: customContacts } = slideSpec;
-  const { assets, geometry, masterName, footerValues, resolveAssetPath, theme } = ctx;
+  const { assets, geometry, masterName, theme, options } = ctx;
+  const footerValues = options?.footerValues || {};
+  const {
+    gradientBackCover,
+    closingLogoWhite,
+    closingSocialTwitter,
+    closingSocialLinkedin,
+    closingSocialFacebook,
+    closingSocialInstagram,
+    closingSocialYoutube,
+  } = assets || {};
   const resolvedTheme = resolveTheme(theme);
   const textColor = resolvedTheme.colors.white;
   const headingFont = resolvedTheme.fonts.heading;
@@ -90,30 +83,32 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
   const backCoverFontSizes = backCoverTokens.fontSizes || {};
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || {};
+  if (!g.logoBox || !g.headingBox || !g.disclaimerBox || !g.urlBox) {
+    throw new Error('Missing required geometry for slide type "backCover" (logoBox/headingBox/disclaimerBox/urlBox)');
+  }
 
   // Prefer masters for the back-cover full-bleed gradient.
   if (!masterName) {
-    const gradient = resolveAsset(assets, resolveAssetPath, 'gradientBackCover');
-    addImageSmart(slide, gradient, { x: 0, y: 0, w: 13.333, h: 7.5, altText: 'Decorative gradient' });
+    addImageSmart(slide, gradientBackCover, { x: 0, y: 0, w: 13.333, h: 7.5, altText: 'Decorative gradient' });
   }
 
-  const logo = resolveAsset(assets, resolveAssetPath, 'closingLogoWhite');
+  const logo = closingLogoWhite;
   const socialIcons = [
-    resolveAsset(assets, resolveAssetPath, 'closingSocialTwitter'),
-    resolveAsset(assets, resolveAssetPath, 'closingSocialLinkedin'),
-    resolveAsset(assets, resolveAssetPath, 'closingSocialFacebook'),
-    resolveAsset(assets, resolveAssetPath, 'closingSocialInstagram'),
-    resolveAsset(assets, resolveAssetPath, 'closingSocialYoutube'),
-  ].filter(Boolean);
+    closingSocialTwitter,
+    closingSocialLinkedin,
+    closingSocialFacebook,
+    closingSocialInstagram,
+    closingSocialYoutube,
+  ];
   const contacts = buildContacts(customContacts);
   const legal = legalFooterLines(footerValues);
   const normalizedUrl = normalizeHyperlink(url);
   const defaultWebsiteText = backCoverTokens.defaultWebsiteText || 'www.kpmg.com';
 
-  addImageSmart(slide, logo, { x: 1.095, y: 0.45, w: 1.33, h: 0.45, altText: 'KPMG logo' });
+  addImageSmart(slide, logo, { ...g.logoBox, altText: 'KPMG logo' });
 
   slide.addText('The contacts at KPMG in connection with this report are:', {
-    ...(g.heading || { x: 1.095, y: 1.11, w: 10.25, h: 1.05 }),
+    ...g.headingBox,
     fontFace: headingFont,
     fontSize: Number(backCoverFontSizes.heading || resolvedTheme.typeSizes.title),
     bold: true,
@@ -164,7 +159,7 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
   });
 
   slide.addText(disclaimer || legal.legal1, {
-    ...(g.disclaimer || { x: 1.09, y: 6.45, w: 10.65, h: 0.42 }),
+    ...g.disclaimerBox,
     fontFace: bodyFont,
     fontSize: Number(backCoverFontSizes.disclaimer || resolvedTheme.typeSizes.source),
     color: textColor,
@@ -200,7 +195,7 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
   });
 
   slide.addText(url || defaultWebsiteText, {
-    ...(g.url || { x: 1.09, y: 7.18, w: 2.3, h: 0.16 }),
+    ...g.urlBox,
     fontFace: bodyFont,
     fontSize: resolvedTheme.typeSizes.body,
     color: textColor,

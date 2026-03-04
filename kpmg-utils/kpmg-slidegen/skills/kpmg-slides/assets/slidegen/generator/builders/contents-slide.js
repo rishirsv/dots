@@ -7,15 +7,6 @@ import {
   resolveTheme,
 } from '../helpers/theme.js';
 
-const TOKENS = {
-  geometry: {
-    // 28.31cm x 1.57cm title box for long contents headings.
-    title: { x: 1.089, y: 0.472, w: 11.1457, h: 0.6181 },
-    topRow: { x: 1.089, y: 1.38, w: 11.153, h: 2.35 },
-    bottomRow: { x: 1.089, y: 4.04, w: 11.153, h: 2.35 },
-  },
-};
-
 function resolveTextStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
   const componentTokens = resolvedTheme.components?.[THEME_COMPONENT_KEYS.contents] || {};
@@ -138,8 +129,11 @@ export function addContentsSlide(pptx, slideSpec = {}, ctx = {}) {
   const metrics = resolveSectionMetrics(resolvedTheme);
   const sectionBlue = resolvedTheme.colors.kpmgBlue;
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
-  const g = geometry || TOKENS.geometry;
-  addTitle(slide, title || 'Contents', g.title || TOKENS.geometry.title, { theme });
+  const g = geometry || {};
+  if (!g.titleBox || !g.topRowBox || !g.bottomRowBox) {
+    throw new Error('Missing required geometry for slide type "contents" (titleBox/topRowBox/bottomRowBox)');
+  }
+  addTitle(slide, title || 'Contents', g.titleBox, { theme });
 
   const [top, bottom] = chunkFive(sections);
   top.forEach((section, idx) =>
@@ -147,7 +141,7 @@ export function addContentsSlide(pptx, slideSpec = {}, ctx = {}) {
       pptx,
       slide,
       section,
-      sectionBox(idx, g.topRow || TOKENS.geometry.topRow, { theme }),
+      sectionBox(idx, g.topRowBox, { theme }),
       { metrics, textStyles, sectionBlue, textBox },
     ),
   );
@@ -156,7 +150,7 @@ export function addContentsSlide(pptx, slideSpec = {}, ctx = {}) {
       pptx,
       slide,
       section,
-      sectionBox(idx, g.bottomRow || TOKENS.geometry.bottomRow, { theme }),
+      sectionBox(idx, g.bottomRowBox, { theme }),
       { metrics, textStyles, sectionBlue, textBox },
     ),
   );

@@ -23,7 +23,6 @@ import {
 import { normalizeBodyStyle } from '../helpers/layout.js';
 import { paginateDeckSpec } from './paginate.js';
 import { buildRenderContext } from './render-context.js';
-import { resolveSlideGeometry } from './layout-contract.js';
 import {
   defaultMasterNameForType,
   isExcludedFromLogicalPaging,
@@ -1220,91 +1219,56 @@ function addLogicalPageNumber(slide, templatePackage, pageNumber) {
   });
 }
 
-function requireAssetPath(assetPath, assetKey, slideType) {
-  if (assetPath) return assetPath;
-  throw new Error(`Missing required template asset "${assetKey}" for slide type "${slideType}"`);
+function assertNoReservedBuilderCtxKeys(slideSpec, runtimeContext = {}, registryType = null) {
+  const strict = Boolean(runtimeContext?.options?.strict);
+  if (!strict || !slideSpec || typeof slideSpec !== 'object') return;
+  const reservedKeys = Array.isArray(runtimeContext?.contracts?.reservedSlideKeys)
+    ? runtimeContext.contracts.reservedSlideKeys
+    : [];
+  if (reservedKeys.length === 0) return;
+  const collisions = reservedKeys.filter((key) => Object.prototype.hasOwnProperty.call(slideSpec, key));
+  if (collisions.length === 0) return;
+  runtimeContext?.diagnostics?.record?.({
+    code: 'reserved_builder_ctx_keys',
+    message: `Slide includes runtime-reserved keys: ${collisions.join(', ')}`,
+    details: {
+      slideType: registryType || slideSpec?.type || 'unknown',
+      keys: collisions,
+    },
+  });
+  throw new Error(
+    `Slide type "${registryType || slideSpec?.type || 'unknown'}" contains runtime-reserved key(s): ${collisions.join(', ')}`,
+  );
 }
 
-function buildSlide(pptx, rawSlideSpec, templatePackage, runtimeContext = {}) {
+function assertNoReservedBuilderCtxKeysForSlides(slides = [], runtimeContext = {}) {
+  if (!Array.isArray(slides) || slides.length === 0) return;
+  for (const slideSpec of slides) {
+    const registryType = resolveRegistryTypeForSlide(slideSpec);
+    assertNoReservedBuilderCtxKeys(slideSpec, runtimeContext, registryType);
+  }
+}
+
+function buildSlide(pptx, rawSlideSpec, runtimeContext = {}) {
   const slideSpec = normalizeSlideSpec(rawSlideSpec);
   const registryType = resolveRegistryTypeForSlide(slideSpec);
   const registryEntry = runtimeContext?.slideRegistry?.get?.(registryType);
   if (!registryEntry) {
     throw new Error(`Unknown type: ${slideSpec.type}`);
   }
-  const masterName = getMasterNameForSlide(slideSpec, templatePackage);
-  const geometry = resolveSlideGeometry(runtimeContext.layoutContract, registryType);
-  const sharedCtx = {
-    masterName,
-    geometry,
-    theme: runtimeContext.theme || null,
-    footerSafeTopByMaster: runtimeContext.footerSafeTopByMaster || null,
-  };
-
   const builder = BUILDER_BY_ID[registryEntry.builderId];
   if (typeof builder !== 'function') {
     throw new Error(`No builder implementation registered for "${slideSpec.type}" (${registryEntry.builderId})`);
   }
-
-  if (registryEntry.builderId === 'cover') {
-    const logoWhite = requireAssetPath(
-      templatePackage.resolveAssetPath('logoWhitePng') || templatePackage.resolveAssetPath('logoWhiteSvg'),
-      'logoWhitePng/logoWhiteSvg',
-      'cover',
-    );
-    const coverPhoto = requireAssetPath(
-      templatePackage.resolveAssetPath('coverPhoto'),
-      'coverPhoto',
-      'cover',
-    );
-    return addCover(
-      pptx,
-      {
-        title: slideSpec.title,
-        subtitle: slideSpec.subtitle,
-      },
-      {
-        ...sharedCtx,
-        assets: { logoWhite, coverPhoto },
-      },
-    );
+  if (typeof runtimeContext?.buildBuilderCtx !== 'function') {
+    throw new Error('Missing render context builder ctx factory (buildBuilderCtx)');
   }
-  if (registryEntry.builderId === 'divider') {
-    return builder(
-      pptx,
-      {
-        sectionNumber: slideSpec.sectionNumber,
-        sectionTitle: slideSpec.sectionTitle,
-      },
-      {
-        ...sharedCtx,
-        assets: { gradientDivider: templatePackage.resolveAssetPath('gradientDividerWindow') },
-        textStyles:
-          registryType === 'dividerLight'
-            ? { sectionNumber: { color: '00338D' }, sectionTitle: { color: '00338D' } }
-            : null,
-      },
-    );
-  }
-
-  if (registryEntry.builderId === 'backCover') {
-    const gradientBackCover = requireAssetPath(
-      templatePackage.resolveAssetPath('gradientBackCover'),
-      'gradientBackCover',
-      'backCover',
-    );
-    return builder(
-      pptx,
-      slideSpec,
-      {
-        ...sharedCtx,
-        assets: { gradientBackCover },
-        footerValues: runtimeContext.footerValues || {},
-        resolveAssetPath: templatePackage.resolveAssetPath,
-      },
-    );
-  }
-  return builder(pptx, slideSpec, sharedCtx);
+  const ctx = runtimeContext.buildBuilderCtx({
+    slideSpec,
+    registryType,
+    options: runtimeContext.builderOptions || runtimeContext.options,
+  });
+  return builder(pptx, slideSpec, ctx);
 }
 
 export function renderDeck(deckSpec, templatePackage, options = {}) {
@@ -1318,7 +1282,12 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
     throw new Error(validation.errors.join('\n'));
   }
 
-  const renderContext = buildRenderContext(templatePackage);
+  const renderContext = buildRenderContext({
+    templatePackage,
+    deckSpec,
+    options,
+  });
+
   const pptx = new PptxGenJS();
   const dims = renderContext.theme?.dimensions || templatePackage.tokens?.dimensions;
   if (!Number.isFinite(dims?.w) || !Number.isFinite(dims?.h)) {
@@ -1343,6 +1312,10 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
 
   const footerValues = buildFooterValues(deckSpec, { allowSparse });
   defineMasters(pptx, templatePackage, footerValues, renderContext.theme);
+  const builderOptions = Object.freeze({
+    ...renderContext.options,
+    footerValues,
+  });
 
   const normalized = {
     ...deckSpec,
@@ -1354,6 +1327,10 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
   const paginatedSlides = recomputeFields.has('contentsPageRanges')
     ? applyAutoContentsPageRanges(preRecomputeSlides, templatePackage)
     : preRecomputeSlides;
+  assertNoReservedBuilderCtxKeysForSlides(paginatedSlides, {
+    ...renderContext,
+    options: builderOptions,
+  });
   const paginationDecisions = paginated?.paginationDecisions || [];
   const overflowEvents = paginated?.overflowEvents || [];
   const tableWarnings = paginated?.tableWarnings || [];
@@ -1380,8 +1357,8 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
     if (!v.valid) throw new Error(v.errors.join(', '));
 
     const expectedMaster = getMasterNameForSlide(slideSpec, templatePackage);
-    const slide = buildSlide(pptx, slideSpec, templatePackage, {
-      footerValues,
+    const slide = buildSlide(pptx, slideSpec, {
+      builderOptions,
       ...renderContext,
     });
     const appliedMaster = slide?._slideLayout?._name || slide?._name || expectedMaster;

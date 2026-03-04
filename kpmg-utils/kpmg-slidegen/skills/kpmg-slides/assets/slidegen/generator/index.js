@@ -230,6 +230,7 @@ export async function generateToFile(deckSpec, outPath, options = {}) {
 
   const { pptx, qa: renderQa } = renderDeck(deckSpec, templatePackage, {
     allowSparse: options.allowSparse,
+    strict: options.strict,
     validationResult: validation,
   });
 

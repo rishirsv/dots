@@ -1,123 +1,174 @@
-const SLIDE_REGISTRY_SCHEMA_VERSION = '1.0.0';
+const SLIDE_REGISTRY_SCHEMA_VERSION = '2.0.0';
+
+function withGeometryContract(entry) {
+  const geometryContract = {
+    requiredKeys: [...(entry?.geometryContract?.requiredKeys || [])],
+    optionalKeys: [...(entry?.geometryContract?.optionalKeys || [])],
+    optionalDefaults: { ...(entry?.geometryContract?.optionalDefaults || {}) },
+  };
+  return Object.freeze({
+    ...entry,
+    geometryContract,
+    // Compatibility alias used by existing contract tests.
+    requiredGeometry: geometryContract.requiredKeys,
+  });
+}
 
 const REGISTRY = Object.freeze({
-  cover: {
+  cover: withGeometryContract({
     builderId: 'cover',
     masterVariant: 'cover',
-    requiredGeometry: ['title', 'logo', 'photo'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'subtitleBox', 'photoBox', 'logoBox'],
+    },
     paginationPolicyKey: 'none.v1',
     validationHooks: [],
     excludeFromLogicalPaging: true,
-  },
-  divider: {
+  }),
+  divider: withGeometryContract({
     builderId: 'divider',
     masterVariant: 'sectionDark',
-    requiredGeometry: ['gradient', 'number', 'title'],
+    geometryContract: {
+      requiredKeys: ['numberBox', 'titleBox'],
+      optionalKeys: ['gradientBox'],
+    },
     paginationPolicyKey: 'none.v1',
     validationHooks: [],
     excludeFromLogicalPaging: true,
-  },
-  dividerDark: {
+  }),
+  dividerDark: withGeometryContract({
     builderId: 'divider',
     masterVariant: 'sectionDark',
-    requiredGeometry: ['gradient', 'number', 'title'],
+    geometryContract: {
+      requiredKeys: ['numberBox', 'titleBox'],
+      optionalKeys: ['gradientBox'],
+    },
     paginationPolicyKey: 'none.v1',
     validationHooks: [],
     excludeFromLogicalPaging: true,
-  },
-  dividerLight: {
+  }),
+  dividerLight: withGeometryContract({
     builderId: 'divider',
     masterVariant: 'sectionLight',
-    requiredGeometry: ['number', 'title'],
+    geometryContract: {
+      requiredKeys: ['numberBox', 'titleBox'],
+      optionalKeys: ['gradientBox'],
+    },
     paginationPolicyKey: 'none.v1',
     validationHooks: [],
     excludeFromLogicalPaging: true,
-  },
-  twoColumnText: {
+  }),
+  twoColumnText: withGeometryContract({
     builderId: 'twoColumnText',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'left', 'right'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'straplineBox', 'leftBox', 'rightBox'],
+    },
     paginationPolicyKey: 'text.twoColumn.v1',
     validationHooks: [],
     excludeFromLogicalPaging: false,
-  },
-  oneColumnText: {
+  }),
+  oneColumnText: withGeometryContract({
     builderId: 'oneColumnText',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'body'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'straplineBox', 'bodyBox', 'sourceBox'],
+      optionalKeys: ['calloutBoxes'],
+    },
     paginationPolicyKey: 'text.oneColumn.v1',
     validationHooks: [],
     excludeFromLogicalPaging: false,
-  },
-  analysisNarrowTable: {
+  }),
+  analysisNarrowTable: withGeometryContract({
     builderId: 'analysisNarrowTable',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'table'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'straplineBox', 'tableBox', 'rightTitleBox', 'rightBodyBox'],
+      optionalKeys: ['noteBox'],
+    },
     paginationPolicyKey: 'table.rows.v1',
     validationHooks: ['tableShape'],
     excludeFromLogicalPaging: false,
-  },
-  analysisWideChart2ColsText: {
+  }),
+  analysisWideChart2ColsText: withGeometryContract({
     builderId: 'analysisWideChart2ColsText',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'textBox', 'chartBox'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'straplineBox', 'bodyBox', 'chartBox'],
+      optionalKeys: ['calloutBoxes'],
+    },
     paginationPolicyKey: 'text.analysisWide.2cols.v1',
     validationHooks: ['chartShape'],
     excludeFromLogicalPaging: false,
-  },
-  analysisWideChartTableText: {
+  }),
+  analysisWideChartTableText: withGeometryContract({
     builderId: 'analysisWideChartTableText',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'textBox', 'tableBox'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'straplineBox', 'headingBox', 'bodyBox', 'chartBox', 'tableBox'],
+      optionalKeys: ['calloutBoxes', 'noteBox'],
+    },
     paginationPolicyKey: 'text.analysisWide.table.v1',
     validationHooks: ['chartShape', 'tableShape'],
     excludeFromLogicalPaging: false,
-  },
-  analysisBridge: {
+  }),
+  analysisBridge: withGeometryContract({
     builderId: 'analysisBridge',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'bridgeArea', 'analysisBoxes'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'chartBox', 'analysisBoxes', 'sourceBox'],
+      optionalKeys: ['typography'],
+    },
     paginationPolicyKey: 'bridge.analysisColumns.v1',
     validationHooks: ['bridgeSpec'],
     excludeFromLogicalPaging: false,
-  },
-  businessOverview: {
+  }),
+  businessOverview: withGeometryContract({
     builderId: 'businessOverview',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'leftPanel', 'overviewBody'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'leftHeadingBox', 'leftBox', 'rightHeadingBox', 'bodyBox', 'chartBox', 'sourceBox'],
+    },
     paginationPolicyKey: 'business.overviewBody.v1',
     validationHooks: ['businessStructureSpec'],
     excludeFromLogicalPaging: false,
-  },
-  titleStrapline4TextBoxes: {
+  }),
+  titleStrapline4TextBoxes: withGeometryContract({
     builderId: 'titleStrapline4TextBoxes',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'columns'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'straplineBox', 'columnBoxes'],
+    },
     paginationPolicyKey: 'none.v1',
     validationHooks: [],
     excludeFromLogicalPaging: false,
-  },
-  contents: {
+  }),
+  contents: withGeometryContract({
     builderId: 'contents',
     masterVariant: 'white',
-    requiredGeometry: ['title', 'topRow', 'bottomRow'],
+    geometryContract: {
+      requiredKeys: ['titleBox', 'topRowBox', 'bottomRowBox'],
+    },
     paginationPolicyKey: 'contents.sections.v1',
     validationHooks: [],
     excludeFromLogicalPaging: false,
-  },
-  backCover: {
+  }),
+  backCover: withGeometryContract({
     builderId: 'backCover',
     masterVariant: 'closing',
-    requiredGeometry: ['body', 'logo'],
+    geometryContract: {
+      requiredKeys: ['logoBox', 'headingBox', 'disclaimerBox', 'urlBox'],
+    },
     paginationPolicyKey: 'none.v1',
     validationHooks: [],
     excludeFromLogicalPaging: true,
-  },
+  }),
 });
 
 export function resolveRegistryTypeForSlide(slideSpec = {}) {
-  if (slideSpec?.type === 'divider' && slideSpec?.variant === 'light') return 'dividerLight';
-  return slideSpec?.type;
+  if (!slideSpec || typeof slideSpec !== 'object') return null;
+  const type = String(slideSpec.type || '').trim();
+  return type || null;
 }
 
 export function listRegisteredSlideTypes() {
@@ -127,6 +178,11 @@ export function listRegisteredSlideTypes() {
 export function getSlideRegistryEntry(type) {
   if (!type || typeof type !== 'string') return null;
   return REGISTRY[type] || null;
+}
+
+export function getGeometryContractForType(type) {
+  const entry = getSlideRegistryEntry(type);
+  return entry?.geometryContract || null;
 }
 
 export function getSlideRegistry() {

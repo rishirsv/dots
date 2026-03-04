@@ -26,6 +26,7 @@
     "test:visual:bullet-nesting": "node scripts/test-bullet-nesting-visual-regressions.mjs",
     "test:visual:theme-missing-layouts": "node scripts/test-theme-missing-layouts-visual-regressions.mjs",
     "test:visual:reference-parity": "node scripts/test-reference-slide-parity.mjs",
+    "test:visual:all": "npm run -s validate:visual && npm run -s test:visual:layouts && npm run -s test:visual:one-column && npm run -s test:visual:analysis-bridge && npm run -s test:visual:business-overview && npm run -s test:visual:callouts-dense && npm run -s test:visual:bullet-nesting && npm run -s test:visual:theme-missing-layouts",
     "test:pagination:one-column-merge": "node scripts/test-pagination-one-column-merge-regression.mjs",
     "test:pagination:contents-sections": "node scripts/test-pagination-contents-sections-regression.mjs",
     "test:pagination:contents-qa": "node scripts/test-contents-pagination-qa-regression.mjs",

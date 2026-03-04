@@ -1,21 +1,14 @@
 import { addTitle } from '../helpers/title.js';
-import { isValidColumnGeometry } from '../helpers/geometry.js';
 import { sanitizeText } from '../helpers/text.js';
-import { recordFallback } from '../runtime/diagnostics.js';
 import { normalizeBodyStyle } from '../helpers/layout.js';
 import { resolveBodyTextStyle, resolveStraplineTextStyle, resolveTheme } from '../helpers/theme.js';
 import {
   computeTwoColumnLayoutGeometry,
-  TWO_COLUMN_LAYOUT_DEFAULTS,
 } from '../helpers/two-column-layout.js';
 import { addBodyBlock, addStraplineBlock } from '../helpers/slide-components.js';
 import fs from 'node:fs';
 import { normalizeImageSource } from '../helpers/media.js';
 import { svgToDataUri } from '../helpers/svg.js';
-
-export const TOKENS = {
-  geometry: TWO_COLUMN_LAYOUT_DEFAULTS.geometry,
-};
 
 function resolveTextStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
@@ -64,17 +57,12 @@ export function addTwoColumnTextWithStrapline(
   const { geometry, masterName, footerSafeTopByMaster, theme } = ctx;
   const textStyles = resolveTextStyles(theme);
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
-  const candidate = geometry || TOKENS.geometry;
-  const useExtracted = isValidColumnGeometry([candidate.left, candidate.right], 2);
-  const g = useExtracted ? candidate : TOKENS.geometry;
-  if (!useExtracted && geometry) {
-    recordFallback('twoColumnTextWithStrapline', 'invalid_extracted_columns', {
-      left: candidate.left,
-      right: candidate.right,
-    });
+  const g = geometry || {};
+  if (!g.titleBox || !g.straplineBox || !g.leftBox || !g.rightBox) {
+    throw new Error('Missing required geometry for slide type "twoColumnText" (titleBox/straplineBox/leftBox/rightBox)');
   }
 
-  const titleGeo = g.title || TOKENS.geometry.title;
+  const titleGeo = g.titleBox;
   const iconMode = iconPlacement || 'rightColumn';
   const iconInTitle = icon && (iconMode === 'titleLeft' || iconMode === 'titleRight');
   const strapText = strapline;

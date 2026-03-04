@@ -6,17 +6,7 @@ import {
   shiftBox,
 } from './layout.js';
 import { resolveCalloutLayout } from './callouts.js';
-
-function requireBox(box, slideType, key) {
-  const ok =
-    box &&
-    Number.isFinite(box.x) &&
-    Number.isFinite(box.y) &&
-    Number.isFinite(box.w) &&
-    Number.isFinite(box.h);
-  if (ok) return box;
-  throw new Error(`Missing required geometry "${key}" for slide type "${slideType}"`);
-}
+import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 export function computeAnalysisWideChart2ColsTextGeometry({
   geometry,
@@ -30,15 +20,16 @@ export function computeAnalysisWideChart2ColsTextGeometry({
   const g = geometry || {};
   const layoutMetrics = resolveLayoutMetrics(theme);
   const strapText = strapline;
-  const straplineBox = strapText && (g.straplineBox || g.strapline)
-    ? (g.straplineBox || g.strapline)
-    : null;
+  const straplineBox = requireGeometryBox(g.straplineBox, {
+    slideType: 'analysisWideChart2ColsText',
+    key: 'straplineBox',
+  });
 
-  const leftBase = requireBox(g.textBox || g.leftText, 'analysisWideChart2ColsText', 'textBox');
-  const rightBase = requireBox(g.chartBox || g.rightChart, 'analysisWideChart2ColsText', 'chartBox');
-  const yShift = computeStrapShift(straplineBox, Math.min(leftBase.y, rightBase.y), layoutMetrics.strapGap);
-  const textBox = shiftBox(leftBase, yShift);
-  const chartBox = shiftBox(rightBase, yShift);
+  const bodyBase = requireGeometryBox(g.bodyBox, { slideType: 'analysisWideChart2ColsText', key: 'bodyBox' });
+  const chartBase = requireGeometryBox(g.chartBox, { slideType: 'analysisWideChart2ColsText', key: 'chartBox' });
+  const yShift = computeStrapShift(strapText ? straplineBox : null, Math.min(bodyBase.y, chartBase.y), layoutMetrics.strapGap);
+  const textBox = shiftBox(bodyBase, yShift);
+  const shiftedChartBox = shiftBox(chartBase, yShift);
   const safeTextBoxBase = clampToMasterFooter(textBox, masterName, 0, footerSafeTopByMaster);
   const calloutLayout = resolveCalloutLayout({
     slideType: 'analysisWideChart2ColsText',
@@ -48,12 +39,12 @@ export function computeAnalysisWideChart2ColsTextGeometry({
   });
   const safeTextBox = calloutLayout.adjustedTextBox || safeTextBoxBase;
   const sourcePad = chart?.source ? 0.3 : 0;
-  const safeChartBox = clampToMasterFooter(chartBox, masterName, sourcePad, footerSafeTopByMaster);
+  const safeChartBox = clampToMasterFooter(shiftedChartBox, masterName, sourcePad, footerSafeTopByMaster);
 
   return {
     geometry: g,
     strapText,
-    straplineBox,
+    straplineBox: strapText ? straplineBox : null,
     callouts: calloutLayout.callouts,
     calloutBoxes: calloutLayout.calloutBoxes,
     safeTextBox,
@@ -76,40 +67,33 @@ export function computeAnalysisWideChartTableTextGeometry({
   const g = geometry || {};
   const layoutMetrics = resolveLayoutMetrics(theme);
   const strapText = strapline;
-  const straplineBox = g.straplineBox || g.strapline || g.bodyBoxes?.[0] || null;
+  const straplineBoxBase = requireGeometryBox(g.straplineBox, {
+    slideType: 'analysisWideChartTableText',
+    key: 'straplineBox',
+  });
 
-  const topBase = requireBox(g.textBox || g.body || g.rightBody || g.bodyBoxes?.[2], 'analysisWideChartTableText', 'textBox');
-  const yShift = computeStrapShift(straplineBox, topBase.y, layoutMetrics.strapGap);
+  const topBase = requireGeometryBox(g.bodyBox, { slideType: 'analysisWideChartTableText', key: 'bodyBox' });
+  const headingBase = requireGeometryBox(g.headingBox, { slideType: 'analysisWideChartTableText', key: 'headingBox' });
+  const yShift = computeStrapShift(strapText ? straplineBoxBase : null, topBase.y, layoutMetrics.strapGap);
   const hasChartData = Boolean(chart?.type && Array.isArray(chart?.data) && chart.data.length > 0);
   const hasTableData = Boolean(table?.headers && Array.isArray(table?.rows) && table.rows.length > 0);
   const shouldRenderChart = hasChartData;
   const chartBase = shouldRenderChart
-    ? hasTableData
-      ? showSummaryChart
-        ? g.summaryChartBox || g.chartBox || g.summaryChart || g.chart || null
-        : g.chartBox || g.chart || g.summaryChartBox || g.summaryChart || null
-      : g.tableBox || g.table || g.chartBox || g.chart || g.summaryChartBox || g.summaryChart || null
+    ? requireGeometryBox(g.chartBox, { slideType: 'analysisWideChartTableText', key: 'chartBox' })
     : null;
-  const tableBase = g.tableBox || g.table || null;
-  const headingBase = g.headingBox || g.heading || g.bodyBoxes?.[1] || null;
+  const tableBase = hasTableData
+    ? requireGeometryBox(g.tableBox, { slideType: 'analysisWideChartTableText', key: 'tableBox' })
+    : null;
   const footerSafeTop = footerSafeTopForMaster(masterName, footerSafeTopByMaster);
 
-  if (shouldRenderChart && !chartBase) {
-    throw new Error('Missing required geometry "chartBox" for slide type "analysisWideChartTableText"');
-  }
-  if (hasTableData && !tableBase) {
-    throw new Error('Missing required geometry "tableBox" for slide type "analysisWideChartTableText"');
-  }
-
   let textBox = shiftBox(topBase, yShift);
-  let chartBox = chartBase ? shiftBox(requireBox(chartBase, 'analysisWideChartTableText', 'chartBox'), yShift) : null;
+  let chartBox = chartBase ? shiftBox(chartBase, yShift) : null;
   let tableBox = tableBase ? shiftBox(tableBase, yShift) : null;
 
-  const headingBottom = headingBase ? headingBase.y + headingBase.h : null;
+  const headingBottom = headingBase.y + headingBase.h;
   const isLegacyBottomAnchoredLayout = Boolean(
     hasChartData &&
       hasTableData &&
-      headingBottom !== null &&
       chartBox &&
       textBox &&
       tableBox &&
@@ -121,7 +105,7 @@ export function computeAnalysisWideChartTableTextGeometry({
       throw new Error(`Missing required footer safe-top for master "${masterName}"`);
     }
     const contentTop = headingBottom + 0.06 + yShift;
-    const contentBottom = footerSafeTop - (noteSource && g.note ? 0.22 : 0);
+    const contentBottom = footerSafeTop - (noteSource && g.noteBox ? 0.22 : 0);
     const available = Math.max(2.8, contentBottom - contentTop);
     const upperH = Math.max(1.35, Math.min(2.0, available * 0.48));
     const lowerY = contentTop + upperH + 0.1;
@@ -155,7 +139,7 @@ export function computeAnalysisWideChartTableTextGeometry({
   return {
     geometry: g,
     strapText,
-    straplineBox,
+    straplineBox: strapText ? straplineBoxBase : null,
     headingBase,
     callouts: calloutLayout.callouts,
     calloutBoxes: calloutLayout.calloutBoxes,

@@ -1,5 +1,4 @@
 import { addTitle } from '../helpers/title.js';
-import { isValidColumnGeometry } from '../helpers/geometry.js';
 import { sanitizeText } from '../helpers/text.js';
 import {
   resolveBodyTextStyle,
@@ -14,21 +13,7 @@ import {
   resolveLayoutMetrics,
   normalizeBodyStyle,
 } from '../helpers/layout.js';
-import { recordFallback } from '../runtime/diagnostics.js';
 import { addBodyBlock, addStraplineBlock } from '../helpers/slide-components.js';
-
-const TOKENS = {
-  geometry: {
-    title: { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 },
-    strapline: { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 },
-    columns: [
-      { x: 1.0919, y: 1.2899, w: 2.6, h: 5.9101 },
-      { x: 3.9, y: 1.2899, w: 2.6, h: 5.9101 },
-      { x: 6.7, y: 1.2899, w: 2.6, h: 5.9101 },
-      { x: 9.5, y: 1.2899, w: 2.6, h: 5.9101 },
-    ],
-  },
-};
 
 function resolveTextStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
@@ -37,13 +22,6 @@ function resolveTextStyles(theme = null) {
     heading: resolveHeadingTextStyle(resolvedTheme),
     body: resolveBodyTextStyle(resolvedTheme),
   };
-}
-
-// Check if extracted column geometries represent a true 4-column side-by-side layout.
-// The extractor can map unrelated text boxes (title, subtitle, body, footer)
-// as "columns"; detect this by checking for distinct x positions.
-function isValid4ColumnGeometry(geomColumns) {
-  return isValidColumnGeometry(geomColumns, 3);
 }
 
 export function addTitleStrapline4TextBoxes(
@@ -59,31 +37,25 @@ export function addTitleStrapline4TextBoxes(
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const strapText = strapline;
   const effectiveBodyStyle = normalizeBodyStyle(bodyStyle);
-
-  // Validate geometry — fall back to hardcoded 4-column layout if the extracted
-  // geometry doesn't represent actual side-by-side columns.
-  const useExtracted = geometry && isValid4ColumnGeometry(geometry.columns);
-  const g = useExtracted ? geometry : TOKENS.geometry;
-  if (!useExtracted && geometry) {
-    recordFallback('titleStrapline4TextBoxes', 'invalid_extracted_columns', {
-      columns: geometry.columns,
-    });
+  const g = geometry || {};
+  if (!g.titleBox || !g.straplineBox || !Array.isArray(g.columnBoxes) || g.columnBoxes.length < 4) {
+    throw new Error('Missing required geometry for slide type "titleStrapline4TextBoxes" (titleBox/straplineBox/columnBoxes)');
   }
 
-  addTitle(slide, title, g.title || TOKENS.geometry.title, { theme });
+  addTitle(slide, title, g.titleBox, { theme });
   let straplineBox = null;
-  if (strapText && (g.strapline || TOKENS.geometry.strapline)) {
-    straplineBox = g.strapline || TOKENS.geometry.strapline;
+  if (strapText && g.straplineBox) {
+    straplineBox = g.straplineBox;
     addStraplineBlock(slide, sanitizeText(strapText), straplineBox, { theme, style: textStyles.strapline });
   }
 
   const cols = Array.isArray(columns) ? columns : [];
-  const firstColumnY = (g.columns && g.columns[0]?.y) || TOKENS.geometry.columns[0].y;
+  const firstColumnY = g.columnBoxes[0].y;
   const yShift = computeStrapShift(straplineBox, firstColumnY, layoutMetrics.strapGap);
 
   for (let i = 0; i < 4; i++) {
     const col = cols[i] || {};
-    const base = (g.columns && g.columns[i]) || TOKENS.geometry.columns[i];
+    const base = g.columnBoxes[i];
     const geo = { ...base, y: base.y + yShift, h: base.h - yShift };
     const safeGeo = clampToMasterFooter(geo, masterName, 0, footerSafeTopByMaster);
     if (col.heading) {

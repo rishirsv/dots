@@ -9,6 +9,7 @@ import {
   computeAnalysisWideChartTableTextGeometry,
 } from '../helpers/analysis-wide-layout.js';
 import { addAnalysisTable } from './analysis-narrow-table.js';
+import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 function resolveStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
@@ -69,17 +70,6 @@ function resolveStyles(theme = null) {
 function clamp(value, min, max) {
   if (!Number.isFinite(value)) return min;
   return Math.max(min, Math.min(max, value));
-}
-
-function requireGeometryBox(box, slideType, key) {
-  const ok =
-    box &&
-    Number.isFinite(box.x) &&
-    Number.isFinite(box.y) &&
-    Number.isFinite(box.w) &&
-    Number.isFinite(box.h);
-  if (ok) return box;
-  throw new Error(`Missing required geometry "${key}" for slide type "${slideType}"`);
 }
 
 function normalizeChartAnnotations(raw) {
@@ -268,7 +258,7 @@ export function addAnalysisWideChart2ColsText(
     callouts,
   });
   const effectiveBodyStyle = normalizeBodyStyle(bodyStyle);
-  const titleBox = requireGeometryBox(g.title, 'analysisWideChart2ColsText', 'title');
+  const titleBox = requireGeometryBox(g.titleBox, { slideType: 'analysisWideChart2ColsText', key: 'titleBox' });
 
   addTitle(slide, title, titleBox, { theme });
   if (strapText && !straplineBox) {
@@ -334,7 +324,7 @@ export function addAnalysisWideChartTableText(
     callouts,
   });
   const effectiveBodyStyle = normalizeBodyStyle(bodyStyle);
-  const titleBox = requireGeometryBox(g.title, 'analysisWideChartTableText', 'title');
+  const titleBox = requireGeometryBox(g.titleBox, { slideType: 'analysisWideChartTableText', key: 'titleBox' });
 
   addTitle(slide, title, titleBox, { theme });
   if (strapText && !straplineBox) {
@@ -371,9 +361,9 @@ export function addAnalysisWideChartTableText(
     addChart(pptx, slide, chart, safeChartBox, styles);
     renderChartAnnotations(pptx, slide, chart, safeChartBox, styles);
   }
-  if (noteSource && g.note) {
+  if (noteSource && g.noteBox) {
     slide.addText(String(noteSource), {
-      ...g.note,
+      ...g.noteBox,
       ...styles.textStyles.source,
       wrap: textBox.wrap,
       margin: 0,

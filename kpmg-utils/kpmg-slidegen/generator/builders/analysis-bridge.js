@@ -9,13 +9,7 @@ import {
   clampBridgePhaseCount,
   resolveBridgeAnalysisBoxes,
 } from '../helpers/bridge-layout.js';
-
-const DEFAULT_GEOMETRY = Object.freeze({
-  title: { x: 1.0919, y: 0.4722, w: 11.1496, h: 0.5833 },
-  bridgeArea: { x: 0.9325, y: 1.7348, w: 11.3089, h: 2.9287 },
-  analysisBoxes: BRIDGE_DEFAULT_ANALYSIS_BOXES,
-  source: { x: 1.1008, y: 6.4648, w: 5.7035, h: 0.2020 },
-});
+import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 function resolveBridgeStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
@@ -83,7 +77,7 @@ function resolvePhaseCount(analysisColumns, geometry) {
 }
 
 /**
- * Resolve geometry by overlaying user/template values on top of defaults.
+ * Resolve strict canonical geometry for analysis bridge.
  *
  * @param {object} [geometry]
  * @returns {{
@@ -95,28 +89,11 @@ function resolvePhaseCount(analysisColumns, geometry) {
  */
 function resolveGeometry(geometry = {}, phaseCount = BRIDGE_DEFAULT_ANALYSIS_BOXES.length) {
   const source = geometry && typeof geometry === 'object' ? geometry : {};
-  const analysisBoxes = resolveBridgeAnalysisBoxes(source.analysisBoxes, phaseCount);
-
   return {
-    title: {
-      x: toFinite(source.title?.x, DEFAULT_GEOMETRY.title.x),
-      y: toFinite(source.title?.y, DEFAULT_GEOMETRY.title.y),
-      w: toFinite(source.title?.w, DEFAULT_GEOMETRY.title.w),
-      h: toFinite(source.title?.h, DEFAULT_GEOMETRY.title.h),
-    },
-    bridgeArea: {
-      x: toFinite(source.bridgeArea?.x, DEFAULT_GEOMETRY.bridgeArea.x),
-      y: toFinite(source.bridgeArea?.y, DEFAULT_GEOMETRY.bridgeArea.y),
-      w: toFinite(source.bridgeArea?.w, DEFAULT_GEOMETRY.bridgeArea.w),
-      h: toFinite(source.bridgeArea?.h, DEFAULT_GEOMETRY.bridgeArea.h),
-    },
-    analysisBoxes,
-    source: {
-      x: toFinite(source.source?.x, DEFAULT_GEOMETRY.source.x),
-      y: toFinite(source.source?.y, DEFAULT_GEOMETRY.source.y),
-      w: toFinite(source.source?.w, DEFAULT_GEOMETRY.source.w),
-      h: toFinite(source.source?.h, DEFAULT_GEOMETRY.source.h),
-    },
+    titleBox: requireGeometryBox(source.titleBox, { slideType: 'analysisBridge', key: 'titleBox' }),
+    chartBox: requireGeometryBox(source.chartBox, { slideType: 'analysisBridge', key: 'chartBox' }),
+    analysisBoxes: resolveBridgeAnalysisBoxes(source.analysisBoxes, phaseCount),
+    sourceBox: requireGeometryBox(source.sourceBox, { slideType: 'analysisBridge', key: 'sourceBox' }),
   };
 }
 
@@ -446,21 +423,21 @@ export function addAnalysisBridge(
   const g = resolveGeometry(geometry, phaseCount);
   const textStyles = resolveTypography(typography || geometry?.typography, typographyDefaults(styles));
 
-  addTitle(slide, title, g.title, { theme });
+  addTitle(slide, title, g.titleBox, { theme });
 
   if (strapline) {
     slide.addShape('rect', {
-      x: g.bridgeArea.x,
-      y: g.bridgeArea.y - 0.23,
-      w: g.bridgeArea.w,
+      x: g.chartBox.x,
+      y: g.chartBox.y - 0.23,
+      w: g.chartBox.w,
       h: 0.18,
       fill: { color: styles.colors.blue },
       line: { color: styles.colors.blue, pt: 0.5 },
     });
     slide.addText(String(strapline), {
-      x: g.bridgeArea.x + 0.06,
-      y: g.bridgeArea.y - 0.22,
-      w: Math.max(0.2, g.bridgeArea.w - 0.12),
+      x: g.chartBox.x + 0.06,
+      y: g.chartBox.y - 0.22,
+      w: Math.max(0.2, g.chartBox.w - 0.12),
       h: 0.16,
       fontFace: styles.fonts.body,
       fontSize: textStyles.strapline,
@@ -475,9 +452,9 @@ export function addAnalysisBridge(
   if (!validated.normalized) {
     // Render explicit error text in-slide for easier QA diagnosis.
     slide.addText(`Bridge data invalid: ${validated.errors.join('; ')}`, {
-      x: g.bridgeArea.x,
-      y: g.bridgeArea.y + 0.2,
-      w: g.bridgeArea.w,
+      x: g.chartBox.x,
+      y: g.chartBox.y + 0.2,
+      w: g.chartBox.w,
       h: 0.5,
       fontFace: styles.fonts.body,
       fontSize: textStyles.error,
@@ -490,37 +467,37 @@ export function addAnalysisBridge(
   }
 
   const bars = buildBridgeBars(validated.normalized);
-  const rendered = renderBridgeBars(slide, bars, g.bridgeArea, {
+  const rendered = renderBridgeBars(slide, bars, g.chartBox, {
     decimals: validated.normalized.decimals,
     unitPrefix: validated.normalized.unitPrefix || '$',
     unitSuffix: validated.normalized.unitSuffix || '',
   }, textStyles, styles);
-  renderPhaseMarkers(pptx, slide, rendered.bars, g.analysisBoxes, g.bridgeArea, textStyles, styles);
+  renderPhaseMarkers(pptx, slide, rendered.bars, g.analysisBoxes, g.chartBox, textStyles, styles);
   renderAnalysis(slide, analysisColumns, g.analysisBoxes, bodyStyle, textStyles, styles, theme);
 
   const footnotes = [source, note].filter((v) => String(v || '').trim().length > 0).map((v) => String(v).trim());
   if (footnotes.length > 0) {
     const footnoteText = footnotes.join('\n');
     const sourceHeight = Math.max(
-      g.source.h,
-      estimateSourceTextHeight(footnoteText, g.source.w, {
+      g.sourceBox.h,
+      estimateSourceTextHeight(footnoteText, g.sourceBox.w, {
         fontSize: styles.typeSizes.source,
       }),
     );
     const safeTop = footerSafeTopForMaster(masterName, footerSafeTopByMaster);
     const highestAnalysisBottom = Math.max(...g.analysisBoxes.map((box) => box.y + box.h));
-    let sourceY = g.source.y;
+    let sourceY = g.sourceBox.y;
     let sourceH = sourceHeight;
     if (safeTop) {
       const preferredY = safeTop - sourceHeight;
       const minY = highestAnalysisBottom + 0.03;
-      sourceY = Math.max(minY, Math.min(g.source.y, preferredY));
+      sourceY = Math.max(minY, Math.min(g.sourceBox.y, preferredY));
       sourceH = Math.max(0.1, Math.min(sourceHeight, safeTop - sourceY));
     }
     slide.addText(footnotes.join('\n'), {
-      x: g.source.x,
+      x: g.sourceBox.x,
       y: sourceY,
-      w: g.source.w,
+      w: g.sourceBox.w,
       h: sourceH,
       fontFace: styles.fonts.body,
       fontSize: styles.typeSizes.source,

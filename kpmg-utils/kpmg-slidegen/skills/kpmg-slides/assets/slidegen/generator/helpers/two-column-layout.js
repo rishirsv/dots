@@ -1,13 +1,8 @@
 import { computeDynamicStraplineBox } from './text.js';
 import { clampToMasterFooter, computeStrapShift, resolveLayoutMetrics, shiftBox } from './layout.js';
+import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 export const TWO_COLUMN_LAYOUT_DEFAULTS = Object.freeze({
-  geometry: {
-    title: { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 },
-    strapline: { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 },
-    left: { x: 1.0919, y: 1.2899, w: 5.7, h: 5.9101 },
-    right: { x: 7.0415, y: 1.2899, w: 5.2, h: 5.9101 },
-  },
   typography: {
     straplineFontSize: 10,
   },
@@ -21,23 +16,23 @@ export function computeTwoColumnLayoutGeometry({
   strapline,
   straplineFontSize,
 } = {}) {
-  const g = geometry || TWO_COLUMN_LAYOUT_DEFAULTS.geometry;
+  const g = geometry || {};
   const layoutMetrics = resolveLayoutMetrics(theme);
   const resolvedStraplineSize = Number.isFinite(straplineFontSize)
     ? Number(straplineFontSize)
     : TWO_COLUMN_LAYOUT_DEFAULTS.typography.straplineFontSize;
-  const titleGeo = g.title || TWO_COLUMN_LAYOUT_DEFAULTS.geometry.title;
+  const titleGeo = requireGeometryBox(g.titleBox, { slideType: 'twoColumnText', key: 'titleBox' });
   const strapText = strapline;
-  const strapBase = g.strapline || TWO_COLUMN_LAYOUT_DEFAULTS.geometry.strapline;
-  const leftBase = g.left || TWO_COLUMN_LAYOUT_DEFAULTS.geometry.left;
-  const rightBase = g.right || TWO_COLUMN_LAYOUT_DEFAULTS.geometry.right;
+  const strapBase = requireGeometryBox(g.straplineBox, { slideType: 'twoColumnText', key: 'straplineBox' });
+  const leftBase = requireGeometryBox(g.leftBox, { slideType: 'twoColumnText', key: 'leftBox' });
+  const rightBase = requireGeometryBox(g.rightBox, { slideType: 'twoColumnText', key: 'rightBox' });
 
   const strapBox = strapText
     ? computeDynamicStraplineBox({
         strapline: strapText,
         titleGeo,
         strapBase,
-        defaultStrapGeo: TWO_COLUMN_LAYOUT_DEFAULTS.geometry.strapline,
+        defaultStrapGeo: strapBase,
         fontSize: resolvedStraplineSize,
       })
     : null;

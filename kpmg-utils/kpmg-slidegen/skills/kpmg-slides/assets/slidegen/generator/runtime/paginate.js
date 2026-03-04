@@ -10,13 +10,14 @@ import { BRIDGE_DEFAULT_ANALYSIS_BOXES, clampBridgePhaseCount, resolveBridgeAnal
 import { computeOneColumnLayoutGeometry } from '../helpers/one-column-layout.js';
 import { computeTwoColumnLayoutGeometry } from '../helpers/two-column-layout.js';
 import { isHeaderLine } from '../helpers/bullets.js';
-import { resolveSlideGeometry } from './layout-contract.js';
+import { resolveSlideGeometry } from './template-contracts.js';
 import { resolveTheme } from '../helpers/theme.js';
 import {
   computeAnalysisWideChart2ColsTextGeometry,
   computeAnalysisWideChartTableTextGeometry,
 } from '../helpers/analysis-wide-layout.js';
 import { resolveRegistryTypeForSlide } from './slide-registry.js';
+import { requireGeometryBox } from './geometry-contract.js';
 const CONTENTS_SECTIONS_PER_SLIDE = 10;
 const TABLE_ROW_DENSITY_LINE_THRESHOLD = 7;
 const TABLE_ROW_DENSITY_HEIGHT_THRESHOLD = 0.82;
@@ -256,16 +257,14 @@ function paginateTwoColumn(
     bodyFontSize,
     footerSafe = false,
     footerSafeTop = null,
-    fallbackLeft,
-    fallbackRight,
     titleMaxChars = null,
     leftBox = null,
     rightBox = null,
   } = {},
 ) {
   const g = geometry || {};
-  const resolvedLeft = leftBox || g.left || g.leftBody || g.leftText || fallbackLeft || { w: 5.5, h: 5.0, y: 1.5 };
-  const resolvedRight = rightBox || g.right || g.rightBody || g.rightText || fallbackRight || { w: 5.5, h: 5.0, y: 1.5 };
+  const resolvedLeft = requireGeometryBox(leftBox || g.leftBox, { slideType: 'twoColumnText', key: 'leftBox' });
+  const resolvedRight = requireGeometryBox(rightBox || g.rightBox, { slideType: 'twoColumnText', key: 'rightBox' });
   const safeLeft = applyFooterSafe(resolvedLeft, footerSafe, footerSafeTop);
   const safeRight = applyFooterSafe(resolvedRight, footerSafe, footerSafeTop);
 
@@ -299,15 +298,17 @@ function paginateOneColumnBullets(
     bodyFontSize,
     footerSafe = false,
     footerSafeTop = null,
-    fallbackBox,
     titleMaxChars = null,
     bodyBox = null,
     continuationBodyBox = null,
   } = {},
 ) {
   const g = geometry || {};
-  const firstBox = bodyBox || g.body || g.topText || g.leftText || fallbackBox || { w: 11.0, h: 5.0, y: 1.6 };
-  const nextBox = continuationBodyBox || firstBox;
+  const slideType = String(slideSpec?.type || 'unknown');
+  const firstBox = requireGeometryBox(bodyBox || g.bodyBox, { slideType, key: 'bodyBox' });
+  const nextBox = continuationBodyBox
+    ? requireGeometryBox(continuationBodyBox, { slideType, key: 'bodyBox' })
+    : firstBox;
   const safeFirstBox = applyFooterSafe(firstBox, footerSafe, footerSafeTop);
   const safeContinuationBox = applyFooterSafe(nextBox, footerSafe, footerSafeTop);
   const fontSize = requireFiniteMetric('typeSizes.body', bodyFontSize);
@@ -341,17 +342,17 @@ function normalizeColumnBody(body) {
 
 function paginateBusinessOverview(slideSpec, geometry, { bodyFontSize, titleMaxChars = null } = {}) {
   const g = geometry || {};
-  const bodyBox = g.overviewBody || { w: 4.62, h: 4.76, y: 1.66 };
-  const chartBox = g.chart || { y: 5.08 };
+  const bodyBox = requireGeometryBox(g.bodyBox, { slideType: 'businessOverview', key: 'bodyBox' });
+  const chartBox = requireGeometryBox(g.chartBox, { slideType: 'businessOverview', key: 'chartBox' });
   const hasChart = Boolean(slideSpec?.chart && Array.isArray(slideSpec?.chart?.data) && slideSpec.chart.data.length > 0);
   const firstPageBodyH = hasChart
-    ? Math.max(0.6, Math.min(Number(bodyBox.h || 4.76), Number(chartBox.y || 5.08) - Number(bodyBox.y || 1.66) - 0.08))
-    : Number(bodyBox.h || 4.76);
+    ? Math.max(0.6, Math.min(Number(bodyBox.h), Number(chartBox.y) - Number(bodyBox.y) - 0.08))
+    : Number(bodyBox.h);
   const bodyFont = requireFiniteMetric('typeSizes.body', bodyFontSize);
 
   const chunks = chunkBullets(normalizeColumnBody(slideSpec.overviewBody), {
     maxLines: estimateMaxLines(firstPageBodyH, bodyFont),
-    charsPerLine: estimateCharsPerLine(Math.max(0.8, Number(bodyBox.w || 4.62) - 0.1), bodyFont),
+    charsPerLine: estimateCharsPerLine(Math.max(0.8, Number(bodyBox.w) - 0.1), bodyFont),
   });
 
   const pages = Math.max(1, chunks.length);
@@ -420,7 +421,6 @@ function paginateTableRows(
     tableRowHeightCap,
     footerSafe = false,
     footerSafeTop = null,
-    fallbackBox,
     titleMaxChars = null,
     emitWarning = null,
   } = {},
@@ -429,7 +429,7 @@ function paginateTableRows(
   if (!table || !Array.isArray(table.rows) || table.rows.length <= 0) return [slideSpec];
 
   const g = geometry || {};
-  const box = g.table || fallbackBox || { w: 11.0, h: 3.0, y: 1.9 };
+  const box = requireGeometryBox(g.tableBox, { slideType: String(slideSpec?.type || 'unknown'), key: 'tableBox' });
   const safeBox = applyFooterSafe(box, footerSafe, footerSafeTop);
   const rowHeightCap = requireFiniteMetric('table.rowHeightCap', tableRowHeightCap);
 
@@ -548,11 +548,11 @@ export function paginateDeckSpec(deckSpec, layouts, runtimeContext = {}) {
     tableWarnings: [],
   };
 
-  const layoutContract = runtimeContext?.layoutContract;
+  const templateContracts = runtimeContext?.templateContracts;
   const slideRegistry = runtimeContext?.slideRegistry;
   const paginationPolicy = runtimeContext?.paginationPolicy;
   const footerSafeTopByMaster = runtimeContext?.footerSafeTopByMaster || null;
-  if (!layoutContract?.get) throw new Error('Missing required layout contract in pagination runtime context');
+  if (!templateContracts?.get) throw new Error('Missing required template contracts in pagination runtime context');
   if (!slideRegistry?.get) throw new Error('Missing required slide registry in pagination runtime context');
   if (!paginationPolicy?.get) throw new Error('Missing required pagination policy in pagination runtime context');
 
@@ -634,10 +634,14 @@ export function paginateDeckSpec(deckSpec, layouts, runtimeContext = {}) {
     if (!policy) {
       throw new Error(`Missing pagination policy "${policyKey}" for slide type "${type}"`);
     }
-    const geom = resolveSlideGeometry(layoutContract, type);
+    const geom = resolveSlideGeometry(templateContracts, type);
     const titleMaxChars = Number(layout?.slots?.title?.maxChars || 0) || null;
     const mode = policy.mode || policy.strategy;
-    const masterName = slideSpec?.masterName || layout?.masterName || 'KPMG_WHITE';
+    const contract = templateContracts.get(type);
+    if (!contract?.masterName) {
+      throw new Error(`Missing template contract masterName for slide type "${type}"`);
+    }
+    const masterName = contract.masterName;
 
     if (policy.strategy === 'none') {
       out.slides.push(slideSpec);
@@ -661,8 +665,6 @@ export function paginateDeckSpec(deckSpec, layouts, runtimeContext = {}) {
         bodyFontSize: paginationMetrics.bodyFontSize,
         footerSafe: false,
         footerSafeTop,
-        fallbackLeft: { w: 5.7, h: 5.7, y: 1.5 },
-        fallbackRight: { w: 5.2, h: 5.7, y: 1.5 },
         titleMaxChars,
         leftBox: twoColLayout?.safeLeftGeo || null,
         rightBox: twoColLayout?.safeRightGeo || null,
@@ -704,7 +706,6 @@ export function paginateDeckSpec(deckSpec, layouts, runtimeContext = {}) {
           bodyFontSize: paginationMetrics.bodyFontSize,
           footerSafe: false,
           footerSafeTop,
-          fallbackBox: { w: 11.1596, h: 5.6, y: 1.6 },
           titleMaxChars,
           bodyBox: oneColLayout?.safeBodyGeo || null,
           continuationBodyBox: oneColContinuationLayout?.safeBodyGeo || oneColLayout?.safeBodyGeo || null,
@@ -762,7 +763,6 @@ export function paginateDeckSpec(deckSpec, layouts, runtimeContext = {}) {
           bodyFontSize: paginationMetrics.bodyFontSize,
           footerSafe: false,
           footerSafeTop,
-          fallbackBox: isTableVariant ? { w: 11.1596, h: 2.2, y: 1.6 } : { w: 5.6, h: 5.4, y: 1.6 },
           titleMaxChars,
           bodyBox: wideLayout?.safeTextBox || null,
           continuationBodyBox: wideLayoutContinuation?.safeTextBox || wideLayout?.safeTextBox || null,
@@ -777,7 +777,6 @@ export function paginateDeckSpec(deckSpec, layouts, runtimeContext = {}) {
         tableRowHeightCap: paginationMetrics.tableRowHeightCap,
         footerSafe: true,
         footerSafeTop,
-        fallbackBox: { w: 11.1596, h: 4.5, y: 1.9 },
         titleMaxChars,
         emitWarning: (warning) => recordTableWarning(slideIndex, rawType, warning),
       });

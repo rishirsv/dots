@@ -265,19 +265,22 @@ export function addCover(pptx, slideSpec = {}, ctx = {}) {
 
   const logoWhite = assets?.logoWhite ?? ASSETS.logoWhite;
   const coverPhoto = assets?.coverPhoto ?? ASSETS.coverPhoto;
-  const g = geometry || TOKENS.geometry;
+  const g = geometry || {};
+  if (!g.logoBox || !g.titleBox || !g.subtitleBox || !g.photoBox) {
+    throw new Error('Missing required geometry for slide type "cover" (logoBox/titleBox/subtitleBox/photoBox)');
+  }
 
   // Solid blue background (prefer master when provided)
   if (!masterName) slide.background = { color: coverTheme.background };
 
   // White KPMG logo (top-left)
   addImageSmart(slide, logoWhite, {
-    ...(g.logo || TOKENS.geometry.logo),
+    ...g.logoBox,
     altText: 'KPMG logo',
   });
 
   // Title text box (left)
-  const titleBox = g.title || TOKENS.geometry.title;
+  const titleBox = g.titleBox;
   const fittedTitle = fitCoverTitle(
     title ?? '',
     titleBox,
@@ -292,13 +295,13 @@ export function addCover(pptx, slideSpec = {}, ctx = {}) {
 
   // Subtitle text box (below title)
   slide.addText(sanitizeText(subtitle ?? ''), {
-    ...(g.subtitle || TOKENS.geometry.subtitle),
+    ...g.subtitleBox,
     ...coverTheme.textStyles.coverSubtitle,
     valign: 'top'
   });
 
   // Cover photo (right) — crop-to-cover
-  const box = g.photoBox || g.photo || TOKENS.geometry.photoBox;
+  const box = g.photoBox;
   const { width: imgWpx, height: imgHpx } = getImageDimensions(coverPhoto);
   const full = calcCoverFitWH(box.w, box.h, imgWpx, imgHpx);
 

@@ -6,7 +6,7 @@ import { loadTemplatePackage } from '../generator/runtime/template-package.js';
 
 const templatePackage = loadTemplatePackage('kpmg-diligence');
 const layouts = templatePackage?.layouts?.types || {};
-const renderContext = buildRenderContext(templatePackage);
+const renderContext = buildRenderContext({ templatePackage });
 
 assert.ok(layouts.contents, 'Expected contents layout to be present');
 

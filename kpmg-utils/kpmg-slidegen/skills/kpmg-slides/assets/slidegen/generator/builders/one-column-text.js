@@ -10,12 +10,7 @@ import {
 import { addBodyBlock, addFootnoteBlock, addStraplineBlock } from '../helpers/slide-components.js';
 import {
   computeOneColumnLayoutGeometry,
-  ONE_COLUMN_LAYOUT_DEFAULTS,
 } from '../helpers/one-column-layout.js';
-
-const TOKENS = {
-  geometry: ONE_COLUMN_LAYOUT_DEFAULTS.geometry,
-};
 
 function resolveTextStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
@@ -54,7 +49,10 @@ export function addOneColumnText(pptx, slideSpec = {}, ctx = {}) {
   });
   const effectiveBodyStyle = normalizeBodyStyle(bodyStyle);
 
-  addTitle(slide, title, g.title || TOKENS.geometry.title, { theme });
+  if (!g?.titleBox) {
+    throw new Error('Missing required geometry "titleBox" for slide type "oneColumnText"');
+  }
+  addTitle(slide, title, g.titleBox, { theme });
   addStraplineBlock(slide, strapText, strapGeo, { theme, style: textStyles.strapline });
   addBodyBlock(slide, body, safeBodyGeo, { theme, bodyStyle: effectiveBodyStyle, style: textStyles.body });
   renderCallouts(pptx, slide, {

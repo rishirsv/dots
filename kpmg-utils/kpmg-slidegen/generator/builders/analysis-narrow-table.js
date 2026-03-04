@@ -8,6 +8,7 @@ import {
   resolveLayoutMetrics,
 } from '../helpers/layout.js';
 import { sanitizeText } from '../helpers/text.js';
+import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 const TABLE_COLUMN_KEYS = Object.freeze({
   PRIORITY: 'priority',
@@ -42,13 +43,6 @@ function resolveStyleTokens(resolvedTheme) {
     },
   };
 }
-
-// Two-column table + insights layout (derived from extracted "Analysis_50-50 table+text").
-const TWO_COL = {
-  table: { x: 1.08854, y: 1.91555, w: 5.50787, h: 4.50787 },
-  rightTitle: { x: 6.73622, y: 1.91555, w: 5.50787, h: 0.27559 },
-  rightBody: { x: 6.73622, y: 2.19115, w: 5.50787, h: 4.23228 },
-};
 
 // ----
 // Generic analysis table (matches the prompt's data schema)
@@ -475,13 +469,18 @@ export function addAnalysisNarrowTable(
   const tableTokens = resolveTableTokens(resolvedTheme, styleTokens);
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || {};
+  const titleBox = requireGeometryBox(g.titleBox, { slideType: 'analysisNarrowTable', key: 'titleBox' });
+  const straplineBoxBase = requireGeometryBox(g.straplineBox, { slideType: 'analysisNarrowTable', key: 'straplineBox' });
+  const tableBoxBase = requireGeometryBox(g.tableBox, { slideType: 'analysisNarrowTable', key: 'tableBox' });
+  const rightTitleBoxBase = requireGeometryBox(g.rightTitleBox, { slideType: 'analysisNarrowTable', key: 'rightTitleBox' });
+  const rightBodyBoxBase = requireGeometryBox(g.rightBodyBox, { slideType: 'analysisNarrowTable', key: 'rightBodyBox' });
   const strapText = sanitizeText(strapline);
   let straplineBox = null;
 
-  addTitle(slide, title, g.title || { x: 1.0919, y: 0.4722, w: 11.1596, h: 0.5833 }, { theme });
+  addTitle(slide, title, titleBox, { theme });
 
   if (strapText) {
-    straplineBox = g.strapline || { x: 1.0919, y: 1.2899, w: 11.1596, h: 0.5276 };
+    straplineBox = straplineBoxBase;
     addStraplineBlock(slide, strapText, straplineBox, {
       theme,
       style: {
@@ -495,7 +494,7 @@ export function addAnalysisNarrowTable(
   }
 
   if (table) {
-    const tableTop = (g.table || TWO_COL.table).y;
+    const tableTop = tableBoxBase.y;
     const yShift = computeStrapShift(straplineBox, tableTop, layoutMetrics.strapGap);
     const cols = Array.isArray(table.headers) ? table.headers.length : 0;
     const rows = Array.isArray(table.rows) ? table.rows.length : 0;
@@ -507,7 +506,7 @@ export function addAnalysisNarrowTable(
     // visually “finished” even when the table is intentionally small.
     //
     // Fall back to full-width only for very wide tables (rare in this deck).
-    const twoColTableBox = { ...TWO_COL.table, y: TWO_COL.table.y + yShift };
+    const twoColTableBox = { ...tableBoxBase, y: tableBoxBase.y + yShift };
     const twoColColW = computeColW({ w: twoColTableBox.w, headers: table.headers, rows: table.rows });
     const estimatedTwoColHeight = estimateTableHeight({
       rows: table.rows,
@@ -531,8 +530,8 @@ export function addAnalysisNarrowTable(
           },
         });
 
-      const rightTitleBase = g.rightTitle || TWO_COL.rightTitle;
-      const rightBodyBase = g.rightBody || TWO_COL.rightBody;
+      const rightTitleBase = { ...rightTitleBoxBase, y: rightTitleBoxBase.y + yShift };
+      const rightBodyBase = { ...rightBodyBoxBase, y: rightBodyBoxBase.y + yShift };
       const rightTitleBox = clampToMasterFooter(rightTitleBase, masterName, 0, footerSafeTopByMaster);
       const rightBodyBox = clampToMasterFooter(rightBodyBase, masterName, 0, footerSafeTopByMaster);
 
@@ -608,9 +607,9 @@ export function addAnalysisNarrowTable(
 
   if (notes) {
     const notesBox = {
-      x: TWO_COL.table.x,
-      y: TWO_COL.table.y + TWO_COL.table.h + 0.15,
-      w: TWO_COL.table.w,
+      x: tableBoxBase.x,
+      y: tableBoxBase.y + tableBoxBase.h + 0.15,
+      w: tableBoxBase.w,
       h: 0.9,
     };
     const safeNotes = clampToMasterFooter(notesBox, masterName, 0, footerSafeTopByMaster);

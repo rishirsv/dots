@@ -6,16 +6,7 @@ import { validateBusinessStructureSpec } from '../helpers/business-structure.js'
 import { buildThemedChartOptions, resolveChartType } from '../helpers/chart.js';
 import { addChartBlock, addFootnoteBlock } from '../helpers/slide-components.js';
 import { resolveTextBoxOptions, resolveTheme } from '../helpers/theme.js';
-
-const DEFAULT_GEOMETRY = Object.freeze({
-  title: { x: 1.0919, y: 0.4722, w: 11.1496, h: 0.5833 },
-  leftHeading: { x: 1.0885, y: 1.2899, w: 6.2, h: 0.34 },
-  leftPanel: { x: 1.01, y: 1.66, w: 6.35, h: 2.95 },
-  rightHeading: { x: 7.6, y: 1.2899, w: 4.62, h: 0.34 },
-  overviewBody: { x: 7.6, y: 1.66, w: 4.62, h: 4.76 },
-  chart: { x: 9.34, y: 5.08, w: 2.88, h: 1.56 },
-  source: { x: 1.1008, y: 6.4648, w: 6.0, h: 0.2 },
-});
+import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 function resolveStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
@@ -44,27 +35,16 @@ function resolveStyles(theme = null) {
   };
 }
 
-function toFinite(value, fallback) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
 function resolveGeometry(geometry = {}) {
   const source = geometry && typeof geometry === 'object' ? geometry : {};
-  const read = (name) => ({
-    x: toFinite(source?.[name]?.x, DEFAULT_GEOMETRY[name].x),
-    y: toFinite(source?.[name]?.y, DEFAULT_GEOMETRY[name].y),
-    w: toFinite(source?.[name]?.w, DEFAULT_GEOMETRY[name].w),
-    h: toFinite(source?.[name]?.h, DEFAULT_GEOMETRY[name].h),
-  });
   return {
-    title: read('title'),
-    leftHeading: read('leftHeading'),
-    leftPanel: read('leftPanel'),
-    rightHeading: read('rightHeading'),
-    overviewBody: read('overviewBody'),
-    chart: read('chart'),
-    source: read('source'),
+    titleBox: requireGeometryBox(source.titleBox, { slideType: 'businessOverview', key: 'titleBox' }),
+    leftHeadingBox: requireGeometryBox(source.leftHeadingBox, { slideType: 'businessOverview', key: 'leftHeadingBox' }),
+    leftBox: requireGeometryBox(source.leftBox, { slideType: 'businessOverview', key: 'leftBox' }),
+    rightHeadingBox: requireGeometryBox(source.rightHeadingBox, { slideType: 'businessOverview', key: 'rightHeadingBox' }),
+    bodyBox: requireGeometryBox(source.bodyBox, { slideType: 'businessOverview', key: 'bodyBox' }),
+    chartBox: requireGeometryBox(source.chartBox, { slideType: 'businessOverview', key: 'chartBox' }),
+    sourceBox: requireGeometryBox(source.sourceBox, { slideType: 'businessOverview', key: 'sourceBox' }),
   };
 }
 
@@ -276,16 +256,16 @@ export function addBusinessOverview(
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = resolveGeometry(geometry);
 
-  addTitle(slide, title, g.title, { theme });
-  addSubheading(slide, leftHeading || 'Legal chart', g.leftHeading, styles);
-  addSubheading(slide, rightHeading || 'Company overview', g.rightHeading, styles);
+  addTitle(slide, title, g.titleBox, { theme });
+  addSubheading(slide, leftHeading || 'Legal chart', g.leftHeadingBox, styles);
+  addSubheading(slide, rightHeading || 'Company overview', g.rightHeadingBox, styles);
 
   const validated = validateBusinessStructureSpec(structure || {});
   if (!validated.normalized) {
     slide.addText(`Business structure invalid: ${validated.errors.join('; ')}`, {
-      x: g.leftPanel.x,
-      y: g.leftPanel.y,
-      w: g.leftPanel.w,
+      x: g.leftBox.x,
+      y: g.leftBox.y,
+      w: g.leftBox.w,
       h: 0.4,
       fontFace: styles.fonts.body,
       fontSize: styles.typeSizes.body,
@@ -296,12 +276,12 @@ export function addBusinessOverview(
       valign: 'top',
     });
   } else {
-    renderStructurePanel(slide, validated.normalized, g.leftPanel, styles);
+    renderStructurePanel(slide, validated.normalized, g.leftBox, styles);
   }
 
-  let overviewBox = { ...g.overviewBody };
+  let overviewBox = { ...g.bodyBox };
   if (chart && Array.isArray(chart.data) && chart.data.length > 0) {
-    const maxBottom = g.chart.y - 0.08;
+    const maxBottom = g.chartBox.y - 0.08;
     const currentBottom = overviewBox.y + overviewBox.h;
     overviewBox.h = Math.max(0.6, Math.min(currentBottom, maxBottom) - overviewBox.y);
   }
@@ -322,14 +302,14 @@ export function addBusinessOverview(
     });
   }
 
-  addInlineChart(pptx, slide, chart, g.chart, styles);
+  addInlineChart(pptx, slide, chart, g.chartBox, styles);
   addFootnoteBlock(slide, {
     lines: [source, note],
-    box: g.source,
+    box: g.sourceBox,
     theme,
     masterName,
     footerSafeTopByMaster,
-    minHeight: g.source.h,
+    minHeight: g.sourceBox.h,
     style: {
       fontFace: styles.fonts.body,
       fontSize: styles.typeSizes.source,

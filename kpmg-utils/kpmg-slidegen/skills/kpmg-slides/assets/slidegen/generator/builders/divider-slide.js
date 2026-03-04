@@ -56,27 +56,39 @@ export function addDivider(
   slideSpec = {},
   ctx = {},
 ) {
-  const { sectionNumber, sectionTitle } = slideSpec;
-  const { assets, geometry, masterName, textStyles, theme } = ctx;
-  const resolvedStyles = resolveTextStyles(theme);
+  const { sectionNumber, sectionTitle, type } = slideSpec;
+  const { assets, geometry, masterName, theme } = ctx;
+  const resolvedTheme = resolveTheme(theme);
+  const resolvedStyles = resolveTextStyles(resolvedTheme);
   const textBox = resolveTextBoxOptions(theme);
+  const dividerLightTextColor = resolvedTheme.colors.primary || '00338D';
+  const variantTextStyles =
+    type === 'dividerLight'
+      ? { sectionNumber: { color: dividerLightTextColor }, sectionTitle: { color: dividerLightTextColor } }
+      : null;
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
 
   const gradientDivider = assets?.gradientDivider ?? DEFAULT_ASSETS.gradientDivider;
-  const g = geometry || TOKENS.geometry;
+  const g = geometry || {};
+  if (!g.numberBox || !g.titleBox) {
+    throw new Error('Missing required geometry for slide type "divider" (numberBox/titleBox)');
+  }
 
   // Prefer masters for the divider gradient window.
   if (!masterName) {
+    if (!g.gradientBox) {
+      throw new Error('Missing required geometry "gradientBox" for divider slide without master');
+    }
     addImageSmart(slide, gradientDivider, {
-      ...(g.gradient || TOKENS.geometry.gradient),
+      ...g.gradientBox,
       altText: 'Decorative gradient',
     });
   }
 
   slide.addText(sectionNumber ?? '', {
-    ...(g.number || TOKENS.geometry.number),
+    ...g.numberBox,
     ...resolvedStyles.sectionNumber,
-    ...(textStyles?.sectionNumber || {}),
+    ...(variantTextStyles?.sectionNumber || {}),
     ...textBox,
   });
 
@@ -84,9 +96,9 @@ export function addDivider(
   // JSON specs often include \n in titles from the migrator; let the text box reflow naturally.
   const cleanTitle = sanitizeText(sectionTitle ?? '');
   slide.addText(cleanTitle, {
-    ...(g.title || TOKENS.geometry.title),
+    ...g.titleBox,
     ...resolvedStyles.sectionTitle,
-    ...(textStyles?.sectionTitle || {}),
+    ...(variantTextStyles?.sectionTitle || {}),
     wrap: true,
     margin: textBox.margin,
   });

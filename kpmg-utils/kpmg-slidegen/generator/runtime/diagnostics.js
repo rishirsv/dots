@@ -4,6 +4,21 @@
 
 let activeDiagnostics = null;
 
+export function buildDiagnosticsRecorder() {
+  const events = [];
+  return Object.freeze({
+    events,
+    record(event) {
+      if (!event || typeof event !== 'object') return;
+      events.push({
+        code: String(event.code || 'event'),
+        message: String(event.message || ''),
+        details: event.details && typeof event.details === 'object' ? { ...event.details } : {},
+      });
+    },
+  });
+}
+
 /**
  * Start collecting diagnostics.
  * @returns {object}
