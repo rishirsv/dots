@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-04T20:21:58.349Z",
+  "generatedAt": "2026-03-04T20:30:28.228Z",
   "entries": [
     {
       "source": "generator/app/cli.js",
@@ -257,14 +257,14 @@
     {
       "source": "generator/runtime/paginate.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/paginate.js",
-      "size": 35312,
-      "sha256": "ef9d2bd2ccbd95b88b81ba21ebd77b8b855a8cda4037ddb8d83735fd1642df83"
+      "size": 37747,
+      "sha256": "7965202b4084bd8f2746839fa8b8259686571da7bc53a53d6004a6bee6a3b586"
     },
     {
       "source": "generator/runtime/pagination-policy.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/pagination-policy.js",
-      "size": 4309,
-      "sha256": "c5ac656bfedaa368a9a9de7cdcac31cf0e1f3936ac2a026d8473129d39e8f1bb"
+      "size": 4896,
+      "sha256": "ae456bdd246ff0a8a7995940d0ff6e0492fab91402020132326c97c785a3cc15"
     },
     {
       "source": "generator/runtime/render-context.js",
