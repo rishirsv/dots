@@ -2,6 +2,9 @@
 
 ## Phase Outcomes (Non-Technical)
 
+### Phase 0: First impressions are trustworthy
+Core entrypoints, docs, and repo hygiene are accurate and runnable so external reviewers immediately see a disciplined, production-minded project.
+
 ### Phase 1: Every layout has a provable contract
 Any new or modified layout is automatically checked for registry coverage, geometry contract correctness, and pagination policy integrity before merge.
 
@@ -23,6 +26,12 @@ Harness intent, ownership, and coverage are documented in concise maps that are 
 ### Phase 7: Drift is cleaned continuously
 Recurring cleanup and scoring loops keep style, reliability, and architecture from decaying as agent throughput increases.
 
+### Phase 8: Legacy noise is retired
+Outdated, duplicate, or manual-only test paths are removed or archived so the harness stays fast, legible, and credible.
+
+### Phase 9: Executive/leadership review package is presentation-ready
+The repo includes a crisp “what this is, how quality is enforced, and how to reproduce” narrative with auditable evidence artifacts.
+
 ## Testing Strategy That Scales With Layouts
 
 Use layered gates where runtime cost grows by risk level, not by raw layout count:
@@ -34,6 +43,14 @@ Use layered gates where runtime cost grows by risk level, not by raw layout coun
 5. `L4` weekly garbage collection: drift scans + auto-fix PRs for small, mechanical issues.
 
 ## Implementation Checklist
+
+- [ ] 0.0 Repo polish baseline (pre-harness cleanup)
+- [ ] 0.1 Fix broken primary entrypoints (`npm run generate`, `npm run generate:layouts`) to use existing fixtures.
+- [ ] 0.2 Replace stale README file map and command references with current repo reality.
+- [ ] 0.3 Add minimal CI skeleton (PR + nightly workflow files) so quality gates are visible and enforceable.
+- [ ] 0.4 Apply artifact hygiene rules (`outputs`, temp folders, lock files) and tighten `.gitignore`.
+- [ ] 0.5 Reduce `TODOS.md` to active, non-duplicative items only.
+- [ ] 0.6 Validation for 0.0: clean-clone quick start succeeds and docs commands are copy/paste runnable.
 
 - [ ] 1.0 Contract tests (fast, deterministic)
 - [ ] 1.1 Extend registry coverage test to enforce: every `layouts.json` type must have a registry entry or explicit `templateOnly` marker.
@@ -53,7 +70,7 @@ Use layered gates where runtime cost grows by risk level, not by raw layout coun
 - [ ] 2.7 Validation for 2.0: `test:pagination:all` passes and runs in CI PR gate.
 
 - [ ] 3.0 Visual regression baseline for layout families
-- [ ] 3.1 Add `fixtures/decks/<layout-family>.deckSpec.json` for all layout families covering current 40-layout target.
+- [ ] 3.1 Add `fixtures/decks/<layout-family>.deckSpec.json` for all registered layout families (currently 14 types) with scaling path to 40+ layouts.
 - [ ] 3.2 Add `scripts/render_fixture.sh` to render fixture decks to `artifacts/visual/<run-id>/<family>/`.
 - [ ] 3.3 Emit per-family montage + per-slide PNGs and preserve QA JSON alongside images.
 - [ ] 3.4 Add baseline management policy: controlled update flow and review note requirement.
@@ -90,12 +107,77 @@ Use layered gates where runtime cost grows by risk level, not by raw layout coun
 - [ ] 7.4 Add tech debt queue entries for non-mechanical cleanup discovered by scheduled scans.
 - [ ] 7.5 Validation for 7.0: first weekly cleanup cycle creates actionable, review-light PRs.
 
+- [ ] 8.0 Legacy test and script garbage collection
+- [ ] 8.1 Remove duplicate npm aliases (for example duplicate `skill:smoke`-equivalent entries).
+- [ ] 8.2 Decide and execute `remove | wire-in | archive` for orphan scripts (for example hardcoded-layout guard script).
+- [ ] 8.3 Deprecate superseded drift scripts once `theme` drift guard fully replaces legacy AST drift checks.
+- [ ] 8.4 Reclassify manual-signoff visual suites out of automated blocking aggregate runs unless made deterministic.
+- [ ] 8.5 Consolidate near-duplicate visual scripts and tiny per-feature baselines into family-level harness where possible.
+- [ ] 8.6 Archive or rewrite non-portable/manual-only testing scripts that depend on local machine paths or external hidden dirs.
+- [ ] 8.7 Validation for 8.0: reduced script surface, no dead npm entries, and no manual-only checks in blocking CI gates.
+
+- [ ] 9.0 Executive readiness package
+- [ ] 9.1 Add `docs/harness/executive-quality-brief.md` (quality model, test lanes, governance, risk controls).
+- [ ] 9.2 Add reproducibility appendix with exact commands and expected artifact structure.
+- [ ] 9.3 Add one “evidence bundle” sample from a full nightly run (artifacts index + pass/fail summary).
+- [ ] 9.4 Add concise architecture and quality maps for leadership readers (1-page each).
+- [ ] 9.5 Validation for 9.0: reviewer can understand system quality posture in <15 minutes from docs alone.
+
 ## CI Gate Design
 
 1. PR fast gate (blocking): contracts, pagination, smoke, strict drift.
 2. PR visual gate (blocking for layout-affecting changes): changed families render + baseline check.
 3. Nightly full gate (non-blocking, paging on regressions): full visual suite + QA golden + coverage report.
 4. Weekly maintenance gate (non-blocking): drift cleanup scans + quality score update.
+
+## E2E Procedures (Detailed)
+
+### PR E2E (blocking, fast lane)
+
+Purpose: catch regressions early with predictable runtime.
+
+1. Run fast contracts/policy/geometry gate.
+2. Run pagination deckSpec in/out gate.
+3. Run smoke + strict drift guards.
+4. Detect changed layout families from diff and run family visuals only for impacted families.
+5. Always run theme E2E visual baseline gate.
+6. Upload artifacts (`.pptx`, `qa.json`, PNGs, montage, hash report, command manifest).
+
+Target command shape:
+
+1. `npm run -s test:contracts:all`
+2. `npm run -s test:pagination:all`
+3. `npm run -s qa`
+4. `npm run -s test:visual:theme-e2e`
+5. `npm run -s test:visual:families -- --changed-only`
+
+### Nightly E2E (full confidence sweep)
+
+Purpose: comprehensive quality signal without blocking daytime PR throughput.
+
+1. Run full contract + pagination suites.
+2. Run QA golden fixture contract.
+3. Run full visual family matrix and existing visual aggregate suites.
+4. Publish coverage summary (types, families, pagination policies, baseline checks).
+5. Open/append quality scorecard with pass rate and flake trends.
+
+Target command shape:
+
+1. `npm run -s test:contracts:all`
+2. `npm run -s test:pagination:all`
+3. `npm run -s test:qa:golden`
+4. `npm run -s test:visual:families`
+5. `npm run -s test:visual:all`
+
+### Release E2E (clean-room gate)
+
+Purpose: prove release candidate from a clean environment is reproducible and stable.
+
+1. Run in a fresh clone/container with pinned Node/Python/tool versions.
+2. Execute nightly scope end-to-end.
+3. Re-run baseline verification without update flags.
+4. Produce signed artifact manifest and release quality summary.
+5. Block release on any contract/pagination/visual mismatch.
 
 ## E2E Artifact Contract
 
@@ -110,9 +192,11 @@ Each harness run must publish:
 
 ## Recommended Rollout Sequence
 
-1. Week 1: 1.0 + 2.0 + PR fast CI.
-2. Week 2: 3.0 + changed-family visual CI + baseline policy.
-3. Week 3: 4.0 + 6.0 + nightly and weekly maintenance loops.
+1. Week 0: 0.0 polish baseline (fix broken entrypoints/docs, add minimal CI skeleton).
+2. Week 1: 1.0 + 2.0 + PR fast CI.
+3. Week 2: 3.0 + changed-family visual CI + baseline policy.
+4. Week 3: 4.0 + 6.0 + nightly and weekly maintenance loops.
+5. Week 4: 8.0 + 9.0 legacy cleanup and executive package.
 
 ## Open Questions Before Implementation
 

@@ -57,6 +57,10 @@ description = "Review-focused subagent. For every task, invoke $review first, th
 config_file = "agents/worker.toml"
 description = "Implementation-focused subagent that ships scoped changes, runs simplify/tests/e2e, and reports a PR URL."
 
+[agents.docs_gardener]
+config_file = "agents/docs-gardener.toml"
+description = "Documentation-maintenance subagent that keeps docs aligned with current code behavior and repository conventions."
+
 ###############################################################################
 # Shell Environment
 ###############################################################################
