@@ -1,29 +1,29 @@
 import { sanitizeText } from './text.js';
-import { resolveTheme } from './theme.js';
+import { resolveTheme, toFiniteNumber } from './theme.js';
 
 const MAX_CALLOUTS = 4;
 const CALLOUT_GAP = 0.12;
 const CONNECTOR_GAP = 0.12;
-const DEFAULT_STYLE = Object.freeze({
-  linePt: 1,
-  headingSize: 8,
-  bodySize: 7.5,
-  connectorPt: 0.9,
-});
 
 function resolveStyle(theme = null) {
   const resolvedTheme = resolveTheme(theme);
+  const configured = resolvedTheme?.components?.callouts || {};
+  const textConfig = configured?.text || {};
   return {
     lineColor: resolvedTheme.colors.kpmgBlue,
-    linePt: DEFAULT_STYLE.linePt,
+    linePt: toFiniteNumber(configured.linePt, 1),
     fillColor: resolvedTheme.colors.white,
     headingColor: resolvedTheme.colors.black,
     bodyColor: resolvedTheme.colors.black,
     fontFace: resolvedTheme.fonts.body,
-    headingSize: DEFAULT_STYLE.headingSize,
-    bodySize: DEFAULT_STYLE.bodySize,
+    headingSize: toFiniteNumber(configured.headingSize, 8),
+    bodySize: toFiniteNumber(configured.bodySize, 7.5),
     connectorColor: resolvedTheme.colors.kpmgBlue,
-    connectorPt: DEFAULT_STYLE.connectorPt,
+    connectorPt: toFiniteNumber(configured.connectorPt, 0.9),
+    marginPt: Array.isArray(configured.marginPt) ? configured.marginPt : [3, 4, 3, 4],
+    headingParaSpaceAfter: toFiniteNumber(textConfig.headingParaSpaceAfter ?? textConfig.paraSpaceAfter, 2),
+    bodyParaSpaceAfter: toFiniteNumber(textConfig.bodyParaSpaceAfter ?? textConfig.paraSpaceAfter, 2),
+    lineSpacing: toFiniteNumber(textConfig.lineSpacing, 9),
   };
 }
 
@@ -228,7 +228,7 @@ function autoAnchor({ index, count, slideType, textBox, chartBox, tableBox, tabl
   return null;
 }
 
-function toBodyRuns(lines = []) {
+function toBodyRuns(lines = [], style = {}) {
   const runs = [];
   for (let idx = 0; idx < lines.length; idx += 1) {
     const text = sanitizeText(lines[idx]);
@@ -237,8 +237,8 @@ function toBodyRuns(lines = []) {
       text,
       options: {
         breakLine: idx < lines.length - 1,
-        paraSpaceAfter: idx < lines.length - 1 ? 2 : 0,
-        lineSpacing: 9,
+        paraSpaceAfter: idx < lines.length - 1 ? style.bodyParaSpaceAfter : 0,
+        lineSpacing: style.lineSpacing,
       },
     });
   }
@@ -248,7 +248,7 @@ function toBodyRuns(lines = []) {
 function toCalloutRuns(callout = {}, style) {
   const runs = [];
   const heading = sanitizeText(callout.heading);
-  const bodyRuns = toBodyRuns(callout.body);
+  const bodyRuns = toBodyRuns(callout.body, style);
   if (heading) {
     runs.push({
       text: heading,
@@ -257,8 +257,8 @@ function toCalloutRuns(callout = {}, style) {
         color: style.headingColor,
         fontSize: style.headingSize,
         breakLine: bodyRuns.length > 0,
-        paraSpaceAfter: 2,
-        lineSpacing: 9,
+        paraSpaceAfter: style.headingParaSpaceAfter,
+        lineSpacing: style.lineSpacing,
       },
     });
   }
@@ -313,7 +313,7 @@ export function renderCallouts(
       color: style.bodyColor,
       line: { color: style.lineColor, pt: style.linePt },
       fill: { color: style.fillColor },
-      margin: [3, 4, 3, 4],
+      margin: style.marginPt,
       wrap: true,
       fit: 'shrink',
       valign: 'top',

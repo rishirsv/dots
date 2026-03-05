@@ -37,3 +37,17 @@ npm run -s test:visual:all
 - Keep this fixture intentionally dense and adversarial; it is a pre-release break-test deck, not a content-quality sample.
 - If you add a new layout or slot contract, update this fixture in the same change.
 - `npm run -s test:visual:all` runs automated suites only; `test:visual:reference-parity` remains a targeted/manual run with explicit args.
+
+## Theme e2e baseline policy
+
+- `test:visual:theme-e2e` compares generated preview hashes against `testing/visual-baselines/theme-e2e.hashes.json`.
+- Refresh baseline hashes only when visual output is intentionally changed (for example token/theme updates, template geometry updates, or approved rendering refinements).
+- Baseline update command:
+
+```bash
+npm run -s test:visual:theme-e2e -- --update-baseline
+```
+
+- In the same change, include:
+  - updated baseline file
+  - a short note in PR/commit describing why the visual change is expected

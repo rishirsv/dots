@@ -1,7 +1,7 @@
 ---
 owner: kpmg-slidegen maintainers
 status: active
-last-reviewed: 2026-02-23
+last-reviewed: 2026-03-04
 review-cycle-days: 14
 source-of-truth: TODOS.md
 verification-state: partially-verified
@@ -21,6 +21,15 @@ verification-state: partially-verified
 - [ ] Generalize input/output directories
 
 ## Priority Now
+
+- [ ] Refactor audit follow-up (2026-03-04): remove hardcoded/fallback geometry paths so builders/pagination consume canonical `ctx.geometry` only.
+- [ ] Add `scripts/test-hardcoded-layout-values.mjs` to `package.json` and include it in `npm run qa` as a blocking check.
+- [ ] Remove fallback geometry constants and paths in hot spots: `generator/helpers/one-column-layout.js`, `generator/helpers/two-column-layout.js`, `generator/runtime/paginate.js`, `generator/builders/cover-slide.js`, `generator/builders/contents-slide.js`, `generator/builders/divider-slide.js`, `generator/builders/title-strapline-4-boxes.js`, `generator/builders/analysis-bridge.js`, `generator/builders/business-overview.js`, `generator/builders/analysis-narrow-table.js`.
+- [ ] Restore missing fixtures so regression tests run end-to-end: `decks/qa-golden-all-layouts.deckSpec.json` and `decks/validation-failing-example.deckSpec.json`.
+- [ ] Make `npm run qa` enforce full gating (at minimum: contracts, registry contracts, smoke, hardcoded geometry drift, strict AST drift, golden QA).
+- [ ] Decide and document strict drift policy: either keep `test:drift:ast:strict` as blocking and pay down findings, or scope/tune the rule set to intentional exclusions.
+- [ ] Preserve and enforce fail-fast posture for geometry/policy/slot contracts while removing silent fallback paths.
+- [ ] Keep targeted regression coverage green for pagination behaviors (one-column merge, nested bullets, contents continuation, table metadata persistence, split QA reporting).
 
 - [x] Add one golden QA fixture for regression checks on report shape.
 - [x] Add one failing example deck for validation behavior testing.

@@ -4,8 +4,7 @@
  * Returns TextProps[] for bullet lists with per-run styling.
  */
 
-import { BULLETS } from '../tokens.js';
-import { resolveTheme } from './theme.js';
+import { resolveTheme, toFiniteNumber } from './theme.js';
 
 const DASH_BULLET_DEPTH = 2;
 const MAX_BULLET_DEPTH = 3;
@@ -53,8 +52,19 @@ function clampDepth(depth = 0) {
   return Math.max(0, Math.min(MAX_BULLET_DEPTH, Math.floor(n)));
 }
 
-function buildBulletOptions(depth) {
-  const bullet = { indent: BULLETS.indentPt };
+function resolveBulletTokens(resolvedTheme) {
+  const configured = resolvedTheme?.components?.bullets || {};
+  return {
+    indentPt: toFiniteNumber(configured.indentPt, 18),
+    paraSpaceBeforePt: toFiniteNumber(configured.paraSpaceBeforePt, 0),
+    paraSpaceAfterPt: toFiniteNumber(configured.paraSpaceAfterPt, 6),
+    lineSpacingPt: toFiniteNumber(configured.lineSpacingPt, 12),
+    prdHeaderGapBeforePt: toFiniteNumber(configured.prdHeaderGapBeforePt, 14),
+  };
+}
+
+function buildBulletOptions(depth, bulletTokens) {
+  const bullet = { indent: bulletTokens.indentPt };
   if (depth === DASH_BULLET_DEPTH) {
     // Hyphen-minus for deeper nesting level to mirror KPMG reference styling.
     bullet.characterCode = '002D';
@@ -62,15 +72,15 @@ function buildBulletOptions(depth) {
   return bullet;
 }
 
-function bulletParaRuns(text, { depth = 0, baseStyle = {} } = {}) {
+function bulletParaRuns(text, { depth = 0, baseStyle = {}, bulletTokens } = {}) {
   const parsed = parseBoldLabel(text);
   const indentLevel = clampDepth(depth);
   const paraOpts = {
-    bullet: buildBulletOptions(indentLevel),
+    bullet: buildBulletOptions(indentLevel, bulletTokens),
     ...(indentLevel ? { indentLevel } : {}),
-    paraSpaceBefore: BULLETS.paraSpaceBeforePt,
-    paraSpaceAfter: BULLETS.paraSpaceAfterPt,
-    lineSpacing: BULLETS.lineSpacingPt,
+    paraSpaceBefore: bulletTokens.paraSpaceBeforePt,
+    paraSpaceAfter: bulletTokens.paraSpaceAfterPt,
+    lineSpacing: bulletTokens.lineSpacingPt,
     ...baseStyle,
   };
 
@@ -84,7 +94,7 @@ function bulletParaRuns(text, { depth = 0, baseStyle = {} } = {}) {
   return [{ text: safeText(text), options: { ...paraOpts, breakLine: true } }];
 }
 
-function headerRuns(text, { gapBefore = false, color } = {}) {
+function headerRuns(text, { gapBefore = false, color, bulletTokens } = {}) {
   const clean = safeText(text).trim();
   if (!clean) return [];
   return [
@@ -93,8 +103,8 @@ function headerRuns(text, { gapBefore = false, color } = {}) {
       options: {
         bold: true,
         color,
-        ...(gapBefore ? { paraSpaceBefore: 14 } : { paraSpaceBefore: BULLETS.paraSpaceBeforePt }),
-        paraSpaceAfter: BULLETS.paraSpaceAfterPt,
+        ...(gapBefore ? { paraSpaceBefore: bulletTokens.prdHeaderGapBeforePt } : { paraSpaceBefore: bulletTokens.paraSpaceBeforePt }),
+        paraSpaceAfter: bulletTokens.paraSpaceAfterPt,
         breakLine: true,
       },
     },
@@ -109,10 +119,12 @@ export function toBulletRuns(lines, { theme = null, headingColor = null } = {}) 
   if (!lines) return '';
   if (typeof lines === 'string') return lines;
   if (!Array.isArray(lines)) return String(lines ?? '');
+  const resolvedTheme = resolveTheme(theme);
+  const bulletTokens = resolveBulletTokens(resolvedTheme);
   const resolvedHeadingColor =
     typeof headingColor === 'string' && headingColor.trim()
       ? headingColor.trim()
-      : resolveTheme(theme).colors.kpmgBlue;
+      : resolvedTheme.colors.kpmgBlue;
 
   const runs = [];
   let prdHeaderCount = 0;
@@ -122,11 +134,11 @@ export function toBulletRuns(lines, { theme = null, headingColor = null } = {}) 
 
     if (isTextObject(item)) {
       if (item.header || item.subheader) {
-        runs.push(...headerRuns(item.text, { color: resolvedHeadingColor }));
+        runs.push(...headerRuns(item.text, { color: resolvedHeadingColor, bulletTokens }));
         return;
       }
 
-      runs.push(...bulletParaRuns(item.text, { depth, baseStyle: toInlineStyle(item) }));
+      runs.push(...bulletParaRuns(item.text, { depth, baseStyle: toInlineStyle(item), bulletTokens }));
       if (Array.isArray(item.children)) {
         item.children.forEach((child) => emit(child, { depth: depth + 1, topLevel: false }));
       }
@@ -138,11 +150,11 @@ export function toBulletRuns(lines, { theme = null, headingColor = null } = {}) 
       const isPrdHeader = ['Problem:', 'How we solve it:', 'Outcome / ROI:'].includes(clean);
       const gapBefore = isPrdHeader && prdHeaderCount > 0;
       if (isPrdHeader) prdHeaderCount += 1;
-      runs.push(...headerRuns(clean, { gapBefore, color: resolvedHeadingColor }));
+      runs.push(...headerRuns(clean, { gapBefore, color: resolvedHeadingColor, bulletTokens }));
       return;
     }
 
-    runs.push(...bulletParaRuns(item, { depth }));
+    runs.push(...bulletParaRuns(item, { depth, bulletTokens }));
   }
 
   lines.forEach((item) => emit(item, { depth: 0, topLevel: true }));
@@ -153,19 +165,21 @@ export function toParagraphRuns(lines, { theme = null, headingColor = null } = {
   if (!lines) return '';
   if (typeof lines === 'string') return lines;
   if (!Array.isArray(lines)) return String(lines ?? '');
+  const resolvedTheme = resolveTheme(theme);
+  const bulletTokens = resolveBulletTokens(resolvedTheme);
   const resolvedHeadingColor =
     typeof headingColor === 'string' && headingColor.trim()
       ? headingColor.trim()
-      : resolveTheme(theme).colors.kpmgBlue;
+      : resolvedTheme.colors.kpmgBlue;
 
   const runs = [];
   const addParagraph = (text, style = {}) => {
     runs.push({
       text: safeText(text),
       options: {
-        paraSpaceBefore: BULLETS.paraSpaceBeforePt,
-        paraSpaceAfter: BULLETS.paraSpaceAfterPt,
-        lineSpacing: BULLETS.lineSpacingPt,
+        paraSpaceBefore: bulletTokens.paraSpaceBeforePt,
+        paraSpaceAfter: bulletTokens.paraSpaceAfterPt,
+        lineSpacing: bulletTokens.lineSpacingPt,
         breakLine: true,
         ...style,
       },

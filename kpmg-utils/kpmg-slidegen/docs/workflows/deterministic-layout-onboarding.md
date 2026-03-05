@@ -19,9 +19,10 @@ When this workflow is complete:
 
 1. No ad-hoc runtime slide drawing outside the builder contract.
 2. No direct `tokens.js` imports inside builders. Use `context.theme`.
-3. No builder-local magic geometry when layout boxes can live in template geometry/layout contract.
-4. No bypassing parity: test stays red until exact PNG hash match is achieved.
-5. If significant new primitives are needed, pause and align with the user before implementing.
+3. No raw style literals in builders/helpers/runtime style paths. Add or reuse semantic/component tokens in `generator/runtime/theme.js`.
+4. No builder-local magic geometry when layout boxes can live in template geometry/layout contract.
+5. No bypassing parity: test stays red until exact PNG hash match is achieved.
+6. If significant new primitives are needed, pause and align with the user before implementing.
 
 ## Inputs Required
 
@@ -101,6 +102,7 @@ unzip -o /abs/path/reference.pptx -d /tmp/<layout-name>-xml
 - geometry from `context.layoutContract`
 - styling/tokens from `context.theme`
 - shared blocks from `generator/helpers/slide-components.js`
+- when new style constants are required, add them to runtime theme components and consume via `context.theme` instead of hardcoding.
 
 3. If repeated UI primitives are needed, extract a component helper instead of copy/paste in multiple builders.
 4. Do not spread internal runtime objects into user slide spec payloads.
@@ -118,7 +120,7 @@ npm run test:contracts
 2. Drift guard tests:
 
 ```bash
-npm run test:drift:ast:strict
+npm run test:drift:theme:strict
 npm run test:drift:grep:strict
 ```
 

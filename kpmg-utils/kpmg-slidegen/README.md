@@ -5,6 +5,11 @@ Runtime-focused generator that converts a typed `deckSpec` JSON into:
 - a consolidated QA `.json`
 - optional visual postprocess artifacts (preview PNGs, montage PNG, visual overflow diagnostics)
 
+## Naming
+
+- **KPMG SlideGen** is the engine/repo (this codebase).
+- **KPMG Slides** is the first distributable skill, located at `skills/kpmg-slides/`.
+
 This file is the operational guide. Architecture source-of-truth is `ARCHITECTURE.md`.
 
 ## 1) Quick Start
@@ -226,8 +231,12 @@ npm run test:qa:golden
 npm run test:validation:failure
 npm run smoke
 npm run test:postprocess
+npm run test:drift:theme:strict
+npm run test:drift:grep:strict
 npm run test:visual:analysis-bridge
 npm run test:visual:business-overview
+npm run test:visual:theme-e2e
+npm run test:visual:all
 npm run validate:visual
 npm run skill:sync
 npm run skill:verify
@@ -248,6 +257,12 @@ npm run skill:verify
 
 `skill:sync` is authoritative for managed bundle content and prunes stale files in managed target directories.
 The skill distributable keeps only the smoke fixture under `skills/kpmg-slides/assets/fixtures/`.
+
+Theme visual baseline refresh (only after intentional visual/theme change):
+
+```bash
+npm run test:visual:theme-e2e -- --update-baseline
+```
 
 ## Dev builder samples
 
@@ -277,6 +292,12 @@ npm run dev:analysis-narrow
 - Validates all preview slides exist, are non-empty, and have measurable dimensions.
 - Validates montage exists and is non-empty.
 - Validates overflow result structure and indices.
+
+`npm run test:visual:theme-e2e` is the theme-focused visual gate:
+- renders one representative slide for every registered type from `decks/regression-theme-e2e-all-types.deckSpec.json`
+- requires valid QA and no pagination splits in that fixture run
+- hashes each preview PNG and compares against `testing/visual-baselines/theme-e2e.hashes.json`
+- supports controlled baseline refresh via `--update-baseline`
 
 For deterministic new-layout onboarding against a reference PPTX slide, use:
 

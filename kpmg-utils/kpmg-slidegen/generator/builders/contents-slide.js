@@ -12,28 +12,31 @@ function resolveTextStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
   const componentTokens = resolvedTheme.components?.[THEME_COMPONENT_KEYS.contents] || {};
   const fontSizes = componentTokens.fontSizes || {};
+  const textTokens = resolvedTheme.components?.text || {};
+  const marginNone = Number(textTokens?.margin?.none);
+  const itemParaSpaceAfter = Number(textTokens?.paraSpaceAfter?.source);
   return {
     sectionNo: {
       ...resolveHeadingTextStyle(resolvedTheme, { colorKey: 'kpmgBlue' }),
       fontSize: Number(fontSizes.sectionNo || resolvedTheme.typeSizes.title),
-      margin: 0,
+      margin: marginNone,
       valign: 'top',
     },
     sectionTitle: {
       ...resolveHeadingTextStyle(resolvedTheme, { colorKey: 'kpmgBlue' }),
       fontSize: Number(fontSizes.sectionTitle || resolvedTheme.typeSizes.body),
-      margin: 0,
+      margin: marginNone,
       valign: 'top',
     },
     pageRange: {
       ...resolveHeadingTextStyle(resolvedTheme, { colorKey: 'kpmgBlue' }),
       fontSize: Number(fontSizes.pageRange || resolvedTheme.typeSizes.source),
-      margin: 0,
+      margin: marginNone,
       valign: 'top',
     },
     item: {
-      ...resolveBodyTextStyle(resolvedTheme, { paraSpaceAfter: 0 }),
-      margin: 0,
+      ...resolveBodyTextStyle(resolvedTheme, { paraSpaceAfter: itemParaSpaceAfter }),
+      margin: marginNone,
       valign: 'top',
     },
   };

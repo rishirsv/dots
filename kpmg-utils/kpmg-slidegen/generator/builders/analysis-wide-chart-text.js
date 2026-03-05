@@ -3,7 +3,16 @@ import { renderCallouts } from '../helpers/callouts.js';
 import { addBodyBlock, addChartBlock, addStraplineBlock, addTableBlock } from '../helpers/slide-components.js';
 import { sanitizeText } from '../helpers/text.js';
 import { normalizeBodyStyle } from '../helpers/layout.js';
-import { resolveTextBoxOptions, resolveTheme } from '../helpers/theme.js';
+import {
+  THEME_COMPONENT_KEYS,
+  resolveBodyTextStyle,
+  resolveSourceTextStyle,
+  resolveStraplineTextStyle,
+  resolveTextBoxOptions,
+  resolveTextThemePrimitives,
+  resolveTheme,
+  toFiniteNumber,
+} from '../helpers/theme.js';
 import {
   computeAnalysisWideChart2ColsTextGeometry,
   computeAnalysisWideChartTableTextGeometry,
@@ -13,56 +22,52 @@ import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 function resolveStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
+  const textTokens = resolveTextThemePrimitives(resolvedTheme);
+  const wideTokens = resolvedTheme.components?.[THEME_COMPONENT_KEYS.analysisWideChart] || {};
+  const annotation = wideTokens.annotation || {};
+  const headingBand = wideTokens.headingBand || {};
+  const chartTokens = wideTokens.chart || {};
   return {
     textStyles: {
-      strapline: {
-        fontFace: resolvedTheme.fonts.body,
-        fontSize: resolvedTheme.typeSizes.strapline,
-        color: resolvedTheme.colors.kpmgPurple,
-        italic: true,
-        bold: true,
-      },
-      body: {
-        fontFace: resolvedTheme.fonts.body,
-        fontSize: resolvedTheme.typeSizes.body,
-        color: resolvedTheme.colors.black,
-        paraSpaceAfter: 6,
-      },
-      source: {
-        fontFace: resolvedTheme.fonts.body,
-        fontSize: resolvedTheme.typeSizes.source,
-        color: resolvedTheme.colors.kpmgBlue,
-        italic: true,
-        paraSpaceAfter: 0,
-      },
+      strapline: resolveStraplineTextStyle(resolvedTheme, { colorKey: 'kpmgPurple', bold: true, italic: true }),
+      body: resolveBodyTextStyle(resolvedTheme, { paraSpaceAfter: textTokens.bodyParaSpaceAfter }),
+      source: resolveSourceTextStyle(resolvedTheme, { paraSpaceAfter: textTokens.sourceParaSpaceAfter }),
     },
     headingBand: {
       fill: resolvedTheme.colors.kpmgBlue,
       line: resolvedTheme.colors.kpmgBlue,
+      linePt: toFiniteNumber(headingBand.linePt, 1),
       textColor: resolvedTheme.colors.white,
       textFont: resolvedTheme.fonts.body,
       textSize: resolvedTheme.typeSizes.body,
     },
     chart: {
       palette: resolvedTheme.chart.palette,
-      legendFontSize: Number(resolvedTheme.chart.fontSizes.legend || 7),
-      labelFontSize: Number(resolvedTheme.chart.fontSizes.label || 8),
-      dataLabelFontSize: Number(resolvedTheme.chart.fontSizes.dataLabel || 7),
+      legendFontSize: toFiniteNumber(resolvedTheme.chart.fontSizes.legend, 7),
+      labelFontSize: toFiniteNumber(resolvedTheme.chart.fontSizes.label, 8),
+      dataLabelFontSize: toFiniteNumber(resolvedTheme.chart.fontSizes.dataLabel, 7),
       background: resolvedTheme.colors.chart.background,
       fontFace: resolvedTheme.fonts.body,
       lightLabelColor: resolvedTheme.colors.white,
       darkLabelColor: resolvedTheme.colors.black,
       seriesLabelBg: resolvedTheme.colors.kpmgBlue,
       dataBorder: resolvedTheme.colors.white,
+      dataBorderPt: toFiniteNumber(chartTokens.dataBorderPt, 0.5),
     },
     annotation: {
       borderColor: resolvedTheme.colors.kpmgBlue,
       fillColor: resolvedTheme.colors.white,
       titleColor: resolvedTheme.colors.kpmgBlue,
       textColor: resolvedTheme.colors.black,
-      titleSize: 7.5,
-      textSize: 7.5,
+      titleSize: toFiniteNumber(annotation.titleSize, 7.5),
+      textSize: toFiniteNumber(annotation.textSize, 7.5),
+      borderPt: toFiniteNumber(annotation.borderPt, 0.8),
+      marginPt: Array.isArray(annotation.marginPt) ? annotation.marginPt : [2, 3, 2, 3],
+      titleParaSpaceAfter: toFiniteNumber(annotation.titleParaSpaceAfter, 1),
       fontFace: resolvedTheme.fonts.body,
+    },
+    text: {
+      marginNone: textTokens.marginNone,
     },
   };
 }
@@ -126,7 +131,7 @@ function toChartAnnotationRuns(item, annotationStyle) {
         color: annotationStyle.titleColor,
         fontSize: annotationStyle.titleSize,
         breakLine: Boolean(item.text),
-        paraSpaceAfter: item.text ? 1 : 0,
+        paraSpaceAfter: item.text ? annotationStyle.titleParaSpaceAfter : 0,
       },
     });
   }
@@ -163,9 +168,9 @@ function renderChartAnnotations(pptx, slide, chart, chartGeo, styles) {
       fontFace: styles.annotation.fontFace,
       fontSize: styles.annotation.textSize,
       color: styles.annotation.textColor,
-      line: { color: styles.annotation.borderColor, pt: 0.8 },
+      line: { color: styles.annotation.borderColor, pt: styles.annotation.borderPt },
       fill: { color: styles.annotation.fillColor },
-      margin: [2, 3, 2, 3],
+      margin: styles.annotation.marginPt,
       wrap: true,
       fit: 'shrink',
       valign: 'top',
@@ -191,7 +196,7 @@ function addChart(pptx, slide, chart, geo, styles) {
     lightLabelColor: styles.chart.lightLabelColor,
     darkLabelColor: styles.chart.darkLabelColor,
     seriesLabelBg: styles.chart.seriesLabelBg,
-    dataBorder: { pt: 0.5, color: styles.chart.dataBorder },
+    dataBorder: { pt: styles.chart.dataBorderPt, color: styles.chart.dataBorder },
     extraOptions: {
       chartColors,
       ...(useLightLabels && chartType === 'bar' ? { dataLabelPosition: 'inEnd' } : {}),
@@ -213,7 +218,7 @@ function addHeadingBand(pptx, slide, heading, geo, styles, textBox) {
   if (!heading || !geo) return;
   slide.addShape(pptx.ShapeType.rect, {
     ...geo,
-    line: { color: styles.headingBand.line, pt: 1 },
+    line: { color: styles.headingBand.line, pt: styles.headingBand.linePt },
     fill: { color: styles.headingBand.fill },
   });
   slide.addText(String(heading), {
@@ -366,7 +371,7 @@ export function addAnalysisWideChartTableText(
       ...g.noteBox,
       ...styles.textStyles.source,
       wrap: textBox.wrap,
-      margin: 0,
+      margin: styles.text.marginNone,
       valign: 'top',
       breakLine: true,
     });

@@ -1069,9 +1069,10 @@ function defineMasters(pptx, templatePackage, footerValues = {}, theme = null) {
   }
 }
 
-function addLogicalPageNumber(slide, templatePackage, pageNumber) {
+function addLogicalPageNumber(slide, templatePackage, pageNumber, theme = null) {
   const page = templatePackage.layouts?.masters?.footerChrome?.slideNumber;
   if (!slide || !page || !Number.isFinite(pageNumber) || pageNumber <= 0) return;
+  const marginNone = Number(theme?.components?.text?.margin?.none);
   slide.addText(String(pageNumber), {
     x: page.x,
     y: page.y,
@@ -1082,7 +1083,7 @@ function addLogicalPageNumber(slide, templatePackage, pageNumber) {
     color: page.color,
     align: page.align || 'right',
     valign: 'mid',
-    margin: 0,
+    margin: marginNone,
   });
 }
 
@@ -1235,7 +1236,7 @@ export function renderDeck(deckSpec, templatePackage, options = {}) {
     });
     if (shouldRenderLogicalPageNumber(slideSpec, renderContext, expectedMaster)) {
       logicalPageNumber += 1;
-      addLogicalPageNumber(slide, templatePackage, logicalPageNumber);
+      addLogicalPageNumber(slide, templatePackage, logicalPageNumber, renderContext.theme);
     }
     if (slideSpec.notes && slide) slide.addNotes(slideSpec.notes);
   }

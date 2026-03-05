@@ -24,8 +24,8 @@ Use this when the request is iterative design or UI polish.
 ## Evidence naming
 
 Recommended evidence location:
-- `./.agents/ui-iterations/<feature>/iter-XX-web-before.png`
-- `./.agents/ui-iterations/<feature>/iter-XX-web-after.png`
-- `./.agents/ui-iterations/<feature>/iter-XX-expo-before.png`
-- `./.agents/ui-iterations/<feature>/iter-XX-expo-after.png`
-- `./.agents/ui-iterations/<feature>/iter-XX-report.md`
+- `./.agents/screenshots/<feature>/iter-XX-web-before.png`
+- `./.agents/screenshots/<feature>/iter-XX-web-after.png`
+- `./.agents/screenshots/<feature>/iter-XX-expo-before.png`
+- `./.agents/screenshots/<feature>/iter-XX-expo-after.png`
+- `./.agents/screenshots/<feature>/iter-XX-report.md`

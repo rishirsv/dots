@@ -1,5 +1,5 @@
 import { buildTemplateContracts } from './template-contracts.js';
-import { buildTheme } from '../helpers/theme.js';
+import { buildTheme } from './theme.js';
 import {
   getSlideRegistry,
   assertRegistryCoversTemplateTypes,
@@ -86,7 +86,7 @@ function resolveAssetsForType(templatePackage = {}, registryType) {
 }
 
 export function buildRenderContext({ templatePackage = {}, deckSpec = null, options = {} } = {}) {
-  const theme = buildTheme(templatePackage);
+  const theme = buildTheme(templatePackage, { deckSpec, options });
   validateRegistry();
   const slideRegistry = getSlideRegistry();
   assertRegistryCoversTemplateTypes(templatePackage?.layouts?.types || {});
