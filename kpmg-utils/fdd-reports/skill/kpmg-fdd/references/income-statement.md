@@ -1,7 +1,7 @@
 # Section contract: Income statement (incremental deep-dive)
 
 ## Table of contents
-- Core rule
+- Core Principles
 - Writing guidance
 - Layout
 - Available slot shapes
@@ -11,7 +11,7 @@
 - Split policy rules
 - Full example
 
-## Core rule
+## Core Principles
 
 Use this section as an incremental deep-dive on P&L mechanics that extends `historical-financial-performance`.
 
@@ -29,7 +29,7 @@ Global writing, placeholder, and language rules are defined in `references/globa
 6. Include a division/entity reconciliation block when management reporting differs from legal-entity reporting or consolidated presentation.
 7. State classification or accounting-policy changes that affect comparability (for example, reclassifications between cost of sales and SG&A), and describe the directional effect.
 8. Keep metrics period-labeled and unit-consistent across tables and narrative.
-9. Keep unresolved detail inside `Comparability implications` and do not create `Open items` or `Data requests` headings.
+9. Keep unresolved detail inside `Comparability implications` and do not create separate missing-information headings (for example, `Data requests`).
 10. Keep bullets complete, active, and client-ready.
 
 ## Layout
@@ -160,7 +160,7 @@ Source note: [source_note required]
 4. Mistake: ignoring classification changes that affect trend interpretation.
 - Fix: state reclassifications explicitly and explain period comparability impact.
 
-5. Mistake: adding `Open items` or `Data requests` sections.
+5. Mistake: adding separate missing-information sections (for example, `Data requests`).
 - Fix: keep unresolved points within `Classification and comparability implications`.
 
 6. Mistake: adding a comments column to the schedule.
@@ -173,7 +173,7 @@ Source note: [source_note required]
 3. Narrative follows the required P&L flow from revenue through EBITDA.
 4. `Division and entity reconciliation` includes a bridge to reported consolidated EBITDA.
 5. `Classification and comparability implications` includes at least one explicit classification or policy-comparability statement.
-6. No `Open items` or `Data requests` headings appear.
+6. No missing-information headings (for example, `Data requests`) appear.
 7. Missing information is handled with inline placeholders, not unsupported claims.
 8. Render skeleton and full example are materially different (template vs worked output).
 9. Language and tone pass global conventions.

@@ -1,5 +1,11 @@
 import { addTitle } from '../helpers/title.js';
-import { THEME_COMPONENT_KEYS, resolveTextBoxOptions, resolveTheme } from '../helpers/theme.js';
+import {
+  THEME_COMPONENT_KEYS,
+  resolveTextBoxOptions,
+  resolveTextThemePrimitives,
+  resolveTheme,
+  toFiniteNumber,
+} from '../helpers/theme.js';
 import { addBodyBlock, addStraplineBlock, addTableBlock } from '../helpers/slide-components.js';
 import {
   clampToMasterFooter,
@@ -61,15 +67,32 @@ function resolveTableTokens(resolvedTheme, styleTokens = resolveStyleTokens(reso
   const colors = styleTokens.colors;
   const component = resolvedTheme.components?.[THEME_COMPONENT_KEYS.analysisNarrowTable] || {};
   const chrome = component?.tableChrome || {};
+  const lines = component?.lines || {};
+  const margins = component?.marginPt || {};
+  const textTokens = resolveTextThemePrimitives(resolvedTheme);
   return {
-    fullTableWidth: Number(component.fullTableWidth || FULL_TABLE_W),
-    tableHeadingFontSize: Number(component?.fontSizes?.tableHeading || resolvedTheme.typeSizes.body),
+    fullTableWidth: toFiniteNumber(component.fullTableWidth, FULL_TABLE_W),
+    tableHeadingFontSize: toFiniteNumber(component?.fontSizes?.tableHeading, resolvedTheme.typeSizes.body),
+    marginNone: textTokens.marginNone,
+    sourceParaSpaceAfter: textTokens.sourceParaSpaceAfter,
+    marginPt: {
+      heading: Array.isArray(margins.heading) ? margins.heading : [2, 4, 2, 4],
+      cell: Array.isArray(margins.cell) ? margins.cell : [1, 4, 1, 4],
+    },
+    lines: {
+      titleBarPt: toFiniteNumber(lines.titleBarPt, 0),
+      separatorPt: toFiniteNumber(lines.separatorPt, 1.2),
+      borderOuterPt: toFiniteNumber(lines.borderOuterPt, 0.6),
+      borderRowPt: toFiniteNumber(lines.borderRowPt, 0.5),
+      borderColPt: toFiniteNumber(lines.borderColPt, 0.35),
+      headerSeparatorPt: toFiniteNumber(lines.headerSeparatorPt, 1),
+    },
     tableChrome: {
       titleBarFill: chrome.titleBarFill || colors.KPMG_DARK_BLUE,
       headerFill: chrome.headerFill || palette.tableHeader,
       separatorColor: chrome.separatorColor || palette.kpmgBlue,
-      titleBarHeight: Number(chrome.titleBarHeight || TABLE_CHROME.titleBarHeight),
-      separatorHeight: Number(chrome.separatorHeight || TABLE_CHROME.separatorHeight),
+      titleBarHeight: toFiniteNumber(chrome.titleBarHeight, TABLE_CHROME.titleBarHeight),
+      separatorHeight: toFiniteNumber(chrome.separatorHeight, TABLE_CHROME.separatorHeight),
       gridColor: chrome.gridColor || colors.GRID_GREY,
       gridLightColor: chrome.gridLightColor || colors.GRID_GREY_LIGHT,
     },
@@ -314,7 +337,7 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
       w,
       h: tableChrome.titleBarHeight,
       fill: { color: tableChrome.titleBarFill },
-      line: { color: tableChrome.titleBarFill, transparency: 100, pt: 0 },
+      line: { color: tableChrome.titleBarFill, transparency: 100, pt: tableTokens.lines.titleBarPt },
     });
     if (tableHeading) {
       slide.addText(tableHeading, {
@@ -326,7 +349,7 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
         fontSize: tableTokens.tableHeadingFontSize,
         color: colors.WHITE,
         bold: true,
-        margin: 0,
+        margin: tableTokens.marginNone,
         valign: 'mid',
       });
     }
@@ -335,15 +358,15 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
       y: y + tableChrome.titleBarHeight,
       w,
       h: 0,
-      line: { color: tableChrome.separatorColor, pt: 1.2 },
+      line: { color: tableChrome.separatorColor, pt: tableTokens.lines.separatorPt },
     });
   }
 
   // Border tokens (PptxGenJS border order: [top, right, bottom, left])
   const B_NONE = { type: 'none' };
-  const B_OUT = { type: 'solid', pt: 0.6, color: tableChrome.gridColor };
-  const B_ROW = { type: 'solid', pt: 0.5, color: tableChrome.gridColor };
-  const B_COL = { type: 'solid', pt: 0.35, color: tableChrome.gridLightColor };
+  const B_OUT = { type: 'solid', pt: tableTokens.lines.borderOuterPt, color: tableChrome.gridColor };
+  const B_ROW = { type: 'solid', pt: tableTokens.lines.borderRowPt, color: tableChrome.gridColor };
+  const B_COL = { type: 'solid', pt: tableTokens.lines.borderColPt, color: tableChrome.gridLightColor };
 
   // Build header row.
   const headerRow = headers.map((t, idx) => {
@@ -361,11 +384,11 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
         fontSize: headerFontSize,
         valign: 'middle',
         align,
-        margin: [2, 4, 2, 4],
+        margin: tableTokens.marginPt.heading,
         border: [
           B_NONE,
           right,
-          { type: 'solid', pt: 1, color: tableChrome.separatorColor },
+          { type: 'solid', pt: tableTokens.lines.headerSeparatorPt, color: tableChrome.separatorColor },
           left,
         ],
       },
@@ -412,7 +435,7 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
           color,
           align: colAlign[cIdx] || (isMetricCol ? 'left' : 'right'),
           valign: 'middle',
-          margin: [1, 4, 1, 4],
+          margin: tableTokens.marginPt.cell,
           border: [
             B_NONE,
             cIdx === cols - 1 ? B_OUT : B_COL,
@@ -440,7 +463,7 @@ export function addAnalysisTable(slide, tableData, opts = {}) {
     // Pagination is handled by our paginator; autoPage can create surprise
     // continuation slides (e.g., splitting a table that already fits).
     autoPage: false,
-    margin: 0,
+    margin: tableTokens.marginNone,
   });
 
   return {
@@ -619,7 +642,7 @@ export function addAnalysisNarrowTable(
       fontSize: typeSizes.source,
       color: colors.NOTE,
       italic: true,
-      paraSpaceAfter: 0,
+      paraSpaceAfter: tableTokens.sourceParaSpaceAfter,
       valign: 'top',
     });
   }

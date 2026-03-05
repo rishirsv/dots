@@ -22,17 +22,9 @@ function extractTemplateTypes() {
 }
 
 function extractSchemaTypes() {
-  const schemaPathCandidates = [
-    'docs/DECKSPEC-SLOTS-SCHEMA.json',
-    'skills/kpmg-slides/references/deckspec.schema.json',
-  ];
-  const schemaPath = schemaPathCandidates.find((candidate) =>
-    fs.existsSync(path.join(process.cwd(), candidate)),
-  );
-  if (!schemaPath) {
-    throw new Error(
-      `Unable to locate schema file. Checked: ${schemaPathCandidates.join(', ')}`,
-    );
+  const schemaPath = 'skills/kpmg-slides/references/deckspec.schema.json';
+  if (!fs.existsSync(path.join(process.cwd(), schemaPath))) {
+    throw new Error(`Unable to locate canonical schema file: ${schemaPath}`);
   }
   const schema = readJson(schemaPath);
   const defs = schema.$defs || {};

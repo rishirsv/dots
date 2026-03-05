@@ -1,7 +1,7 @@
 # Section contract: Balance sheet (incremental deep-dive)
 
 ## Table of contents
-- Core rule
+- Core Principles
 - Writing guidance
 - Layout
 - Available slot shapes
@@ -11,7 +11,7 @@
 - Split policy rules
 - Full example
 
-## Core rule
+## Core Principles
 
 Use this section as an incremental deep-dive on balance-sheet composition and account mechanics that extends `historical-financial-performance`.
 
@@ -29,7 +29,7 @@ Global writing, placeholder, and language rules are defined in `references/globa
 6. Distinguish trade, non-trade, and related-party balances where classification influences WC, net debt, or QoE interpretation.
 7. Explain accounting-policy or presentation reclassifications that affect period comparability (for example, movement between cost captions or current/non-current classification changes).
 8. Use concise source notes for sensitive or non-obvious facts and avoid repeating source statements in every bullet.
-9. Keep unresolved interpretation inside `Comparability implications for diligence analysis`; do not create `Open items` or `Data requests` headings.
+9. Keep unresolved interpretation inside `Comparability implications for diligence analysis`; do not create separate missing-information headings (for example, `Data requests`).
 10. Keep bullets complete, active, and client-ready.
 
 ## Layout
@@ -175,7 +175,7 @@ Source note: [source_note optional]
 5. Mistake: omitting reconciliation between audited, management, and trial-balance views.
 - Fix: include a reconciliation-status block and explain interpretation implications.
 
-6. Mistake: creating `Open items` or `Data requests` sections.
+6. Mistake: creating separate missing-information sections (for example, `Data requests`).
 - Fix: keep unresolved interpretation inside `Comparability implications for diligence analysis`.
 
 7. Mistake: adding a comments column to schedules.
@@ -189,7 +189,7 @@ Source note: [source_note optional]
 4. `Asset analysis` and `Liability and equity analysis` each include at least three quantified bullets.
 5. `Reconciliation to source reporting` includes at least two reconciliation areas and a stated interpretation implication.
 6. `Comparability implications for diligence analysis` includes at least two explicit implications tied to diligence interpretation.
-7. No `Open items` or `Data requests` headings appear.
+7. No missing-information headings (for example, `Data requests`) appear.
 8. Missing information is handled with inline placeholders, not unsupported claims.
 9. Render skeleton and full example are materially different (template vs worked output).
 10. Language and tone pass global conventions.

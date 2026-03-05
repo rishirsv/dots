@@ -993,8 +993,7 @@ export function paginateDeckSpec(deckSpec, runtimeContext = {}) {
     const rawType = slideSpec?.type;
     const type = resolveRegistryTypeForSlide(slideSpec);
     if (!rawType || !type) {
-      out.slides.push(slideSpec);
-      continue;
+      throw new Error(`slides[${slideIndex}] missing valid slide type for pagination`);
     }
 
     const registryEntry = slideRegistry.get(type);
@@ -1013,7 +1012,7 @@ export function paginateDeckSpec(deckSpec, runtimeContext = {}) {
       throw new Error(`Unknown layout type "${type}" in template layouts.json`);
     }
     const titleMaxChars = Number(contract?.slots?.title?.maxChars || 0) || null;
-    const mode = policy.mode || policy.strategy;
+    const mode = policy.mode;
     const masterName = resolveMasterNameForSlide(slideSpec, runtimeContext);
 
     const pagedResult = paginateWithStrategy(policy.strategy, {
@@ -1028,7 +1027,12 @@ export function paginateDeckSpec(deckSpec, runtimeContext = {}) {
       resolveMasterFooterSafeTop,
       emitTableWarning: (warning) => recordTableWarning(slideIndex, rawType, warning),
     });
-    const paged = Array.isArray(pagedResult?.slides) ? pagedResult.slides : [slideSpec];
+    if (!Array.isArray(pagedResult?.slides)) {
+      throw new Error(
+        `Pagination strategy "${policy.strategy}" returned invalid slides array for type "${rawType}"`,
+      );
+    }
+    const paged = pagedResult.slides;
     const originalCount = Number.isFinite(Number(pagedResult?.originalCount))
       ? Number(pagedResult.originalCount)
       : 0;

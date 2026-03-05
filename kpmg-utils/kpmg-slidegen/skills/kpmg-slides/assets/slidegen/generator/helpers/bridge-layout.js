@@ -11,23 +11,9 @@ export const BRIDGE_DEFAULT_ANALYSIS_BOXES = Object.freeze([
   Object.freeze({ x: 9.2549, y: 4.8637, w: 2.9860, h: 1.5817 }),
 ]);
 
-function toFinite(value, fallback) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
 export function clampBridgePhaseCount(value) {
   const numeric = Number.isFinite(Number(value)) ? Math.floor(Number(value)) : BRIDGE_DEFAULT_ANALYSIS_BOXES.length;
   return Math.max(BRIDGE_PHASE_MIN, Math.min(BRIDGE_PHASE_MAX, numeric));
-}
-
-function sanitizeBox(raw, fallback) {
-  return {
-    x: toFinite(raw?.x, fallback.x),
-    y: toFinite(raw?.y, fallback.y),
-    w: Math.max(0.4, toFinite(raw?.w, fallback.w)),
-    h: Math.max(0.4, toFinite(raw?.h, fallback.h)),
-  };
 }
 
 /**
@@ -43,27 +29,32 @@ function sanitizeBox(raw, fallback) {
  */
 export function resolveBridgeAnalysisBoxes(analysisBoxes, phaseCount) {
   const requested = clampBridgePhaseCount(phaseCount);
-  const raw = Array.isArray(analysisBoxes) ? analysisBoxes : [];
-  const fallback = BRIDGE_DEFAULT_ANALYSIS_BOXES;
-
-  const sanitized = raw
-    .map((box, idx) => sanitizeBox(box, fallback[idx] || fallback[fallback.length - 1]))
-    .filter((box) => box.w > 0 && box.h > 0);
-
-  if (sanitized.length === requested) {
-    return sanitized;
+  if (!Array.isArray(analysisBoxes) || analysisBoxes.length === 0) {
+    throw new Error('Missing required geometry.analysisBoxes for analysisBridge');
   }
 
-  if (requested === BRIDGE_DEFAULT_ANALYSIS_BOXES.length && sanitized.length === 0) {
-    return BRIDGE_DEFAULT_ANALYSIS_BOXES.map((box) => ({ ...box }));
-  }
+  const sanitized = analysisBoxes.map((box, idx) => {
+    if (!box || typeof box !== 'object') {
+      throw new Error(`Invalid analysisBoxes[${idx}] geometry for analysisBridge`);
+    }
+    const x = Number(box.x);
+    const y = Number(box.y);
+    const w = Number(box.w);
+    const h = Number(box.h);
+    if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) {
+      throw new Error(`Invalid analysisBoxes[${idx}] geometry for analysisBridge`);
+    }
+    return { x, y, w: Math.max(0.4, w), h: Math.max(0.4, h) };
+  });
 
-  const seed = sanitized.length > 0 ? sanitized : BRIDGE_DEFAULT_ANALYSIS_BOXES;
+  if (sanitized.length === requested) return sanitized;
+
+  const seed = sanitized;
   const left = Math.min(...seed.map((box) => box.x));
   const right = Math.max(...seed.map((box) => box.x + box.w));
   const span = Math.max(2.4, right - left);
-  const baseY = seed[0]?.y ?? BRIDGE_DEFAULT_ANALYSIS_BOXES[0].y;
-  const baseH = seed[0]?.h ?? BRIDGE_DEFAULT_ANALYSIS_BOXES[0].h;
+  const baseY = seed[0].y;
+  const baseH = seed[0].h;
 
   if (requested === 1) {
     return [{ x: left, y: baseY, w: span, h: baseH }];

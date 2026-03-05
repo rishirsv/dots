@@ -1,6 +1,6 @@
 Starting from `context/MANIFEST.md`, this zip is explicitly scoped to a section-focused build for “01-executive-summary”, with **style target 2B** and **quality gate 5C** locked, and it includes (i) a verbatim-validated executive summary corpus and (ii) the current executive summary template + house writing/QC standards (`context/MANIFEST.md` (L10-L23), `context/docs/report-mining/section-corpus/validation/verbatim-validation-report.md`, `context/skill/kpmg-fdd/references/section-templates/executive-summary.md`).
 
-Assumptions I will hold (and encode in the playbook/template): this “Executive summary” is for an FDD report where default scope includes **QoE + Working capital + Net debt/debt-like + key risks** unless explicitly out-of-scope (`context/skill/kpmg-fdd/references/workflow.md` (L19-L27); `context/skill/kpmg-fdd/references/section-templates/executive-summary.md` (L12-L25)). When data is missing, we do **not invent numbers** and instead use placeholders + open items (`context/skill/kpmg-fdd/SKILL.md` (L71-L72); `context/skill/kpmg-fdd/references/writing-standards.md` (L6-L13); `context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
+Assumptions I will hold (and encode in the playbook/template): this “Executive summary” is for an FDD report where default scope includes **QoE + Working capital + Net debt/debt-like + key risks** unless explicitly out-of-scope (`context/skill/kpmg-fdd/references/workflow.md` (L19-L27); `context/skill/kpmg-fdd/references/section-templates/executive-summary.md` (L12-L25)). When data is missing, we do **not invent numbers** and instead use placeholders + missing information (`context/skill/kpmg-fdd/SKILL.md` (L71-L72); `context/skill/kpmg-fdd/references/writing-standards.md` (L6-L13); `context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
 
 1. Linguistic analysis (section-specific)
 
@@ -25,7 +25,7 @@ Normalize/clean patterns (keep intent; standardize the form)
 Avoid patterns (should not survive 2B standardization)
 
 - Investment-thesis language framed as a recommendation (e.g., “We recommend investment… ~63% upside…”). This reads like a deal pitch, not a balanced diligence summary (`context/docs/report-mining/section-corpus/sections/executive-summary.md` (L97-L103); contrast with the house “factual and balanced” requirement in `context/skill/kpmg-fdd/references/writing-standards.md` (L6-L17)).
-- “Purely descriptive” summaries that only list what was reviewed (sources) without findings or open items (explicitly a do-not-deliver QC failure) (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16); examples of source-only bullets in `context/docs/report-mining/section-corpus/sections/executive-summary.md` (L41-L46)).
+- “Purely descriptive” summaries that only list what was reviewed (sources) without findings or missing information (explicitly a do-not-deliver QC failure) (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16); examples of source-only bullets in `context/docs/report-mining/section-corpus/sections/executive-summary.md` (L41-L46)).
 
 B) Hedge / certainty phrasing patterns
 Observed corpus hedges (useful, but should be disciplined)
@@ -38,12 +38,12 @@ Observed corpus hedges (useful, but should be disciplined)
 Keep as-is patterns
 
 - Use “We understand / It is our understanding” strictly for deal context or process facts not independently verified (aligns with “explicit about uncertainty”) (`context/docs/report-mining/section-corpus/sections/executive-summary.md` (L41); `context/skill/kpmg-fdd/references/writing-standards.md` (L14-L17)).
-- Use “appears / may / could / potential” when conclusions are conditional on open items or management-provided forecasts, but pair it with the “what would change the conclusion” clause.
+- Use “appears / may / could / potential” when conclusions are conditional on missing information or management-provided forecasts, but pair it with the “what would change the conclusion” clause.
 
 Normalize/clean patterns
 
 - Replace vague certainty drift (“successful”, “strong”) with either quantified support or explicit attribution (“Management forecasts…”, “Based on TB…”) (`context/skill/kpmg-fdd/references/writing-standards.md` (L14-L33)).
-- Convert passive hedges into structured uncertainty statements: “Conclusion depends on [X]; open item [P0-#]” (ties to open-items discipline) (`context/skill/kpmg-fdd/references/writing-standards.md` (L64-L78)).
+- Convert passive hedges into structured uncertainty statements: “Conclusion depends on [X]; open item [P0-#]” (ties to missing-information discipline) (`context/skill/kpmg-fdd/references/writing-standards.md` (L64-L78)).
 
 Avoid patterns
 
@@ -111,7 +111,7 @@ Normalize/clean patterns
 
 Avoid patterns
 
-- Disclaimers without findings (source-only summaries) because QC forbids an exec summary that is purely descriptive with no key findings and open items (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
+- Disclaimers without findings (source-only summaries) because QC forbids an exec summary that is purely descriptive with no key findings and missing information (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
 
 2. Structural analysis
 
@@ -124,12 +124,12 @@ Variant 1: “Company + reporting environment” bullet list (often missing “s
 Variant 2: “Sources reviewed” only (process-first, findings-light)
 
 - “Key sources… trial balances… data room… meetings…” (autobahn) (`context/docs/report-mining/section-corpus/sections/executive-summary.md` (L41-L46)).
-  Strength: basis transparency. Weakness: fails QC if it lacks findings/open items (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
+  Strength: basis transparency. Weakness: fails QC if it lacks findings/missing information (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
 
 Variant 3: “Key financial findings” (metrics + drivers + adjustments)
 
 - Reported→adjusted bridge, potential adjustments, forecast commentary, cash conversion (y-sell-side; yukon; cherry) (`context/docs/report-mining/section-corpus/sections/executive-summary.md` (L61-L65, L423-L428, L444-L449)).
-  Strength: decision-useful. Weakness: can omit explicit risks/open items.
+  Strength: decision-useful. Weakness: can omit explicit risks/missing information.
 
 Variant 4: “Risk headline list” (sometimes duplicated label/explanation bullets)
 
@@ -154,11 +154,11 @@ Default structure (mandatory blocks)
 1. Deal and scope at a glance
 2. Key conclusions by workstream (bullets) — minimum set if in-scope: QoE, Working capital, Net debt/debt-like (`context/skill/kpmg-fdd/references/section-templates/executive-summary.md` (L12-L17))
 3. Top risks and mitigants (ranked; include severity) (`context/skill/kpmg-fdd/references/section-templates/executive-summary.md` (L18-L21); `context/skill/kpmg-fdd/references/writing-standards.md` (L73-L78))
-4. Open items that could move conclusions (P0/P1) (`context/skill/kpmg-fdd/references/section-templates/executive-summary.md` (L22-L25); `context/skill/kpmg-fdd/references/qc-checklist.md` (L48))
+4. Missing information that could move conclusions (P0/P1) (`context/skill/kpmg-fdd/references/section-templates/executive-summary.md` (L22-L25); `context/skill/kpmg-fdd/references/qc-checklist.md` (L48))
 
 Allowed variants (but must preserve the 4-block spine)
 
-- Short-form / early draft: If financial quantification is missing, keep the workstream headings but convert key conclusions into (i) what we observed qualitatively, (ii) what is needed to quantify, and (iii) the open item(s) that gate the conclusion (aligns to “ask for missing inputs rather than inventing details” and open-items discipline) (`context/skill/kpmg-fdd/references/writing-standards.md` (L8-L13, L64-L78); `context/skill/kpmg-fdd/SKILL.md` (L71-L72)).
+- Short-form / early draft: If financial quantification is missing, keep the workstream headings but convert key conclusions into (i) what we observed qualitatively, (ii) what is needed to quantify, and (iii) the open item(s) that gate the conclusion (aligns to “ask for missing inputs rather than inventing details” and missing-information discipline) (`context/skill/kpmg-fdd/references/writing-standards.md` (L8-L13, L64-L78); `context/skill/kpmg-fdd/SKILL.md` (L71-L72)).
 - Sell-side / forecast-heavy context: Add an optional “Forecast / trading (management case)” sub-block under “Key conclusions” only if forecast data is in-scope; hedge it explicitly (“Management forecast”, “appears achievable… depends on…”) and link the dependency to commercial diligence (pattern already present in y-sell-side) (`context/docs/report-mining/section-corpus/sections/executive-summary.md` (L425-L426)).
 
 Required vs optional sub-blocks
@@ -167,7 +167,7 @@ Required (always)
 - Deal/scope snapshot (include currency + reporting basis; include “sources reviewed” at a high level) (patterns: autobahn + greyhound) (`context/docs/report-mining/section-corpus/sections/executive-summary.md` (L41-L46, L257-L261))
 - Key conclusions (even if qualitative placeholders)
 - Risks & mitigants (ranked)
-- Open items (prioritized P0/P1/P2; at least one item unless explicitly confirmed “none”) (`context/skill/kpmg-fdd/references/qc-checklist.md` (L48))
+- Missing information (prioritized P0/P1/P2; at least one item unless explicitly confirmed “none”) (`context/skill/kpmg-fdd/references/qc-checklist.md` (L48))
 
 Optional (include only if supported by inputs)
 
@@ -182,23 +182,23 @@ Below are the highest-frequency “generation failures” for executive summarie
 Failure mode 1: Process-only / descriptive exec summary (no findings)
 
 - What it looks like: bullets like “Key sources… data room… meetings…” with no conclusions (autobahn pattern) (`context/docs/report-mining/section-corpus/sections/executive-summary.md` (L41-L46)).
-- Why it fails: explicit “do not deliver” QC failure if exec summary is purely descriptive with no key findings and open items (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
+- Why it fails: explicit “do not deliver” QC failure if exec summary is purely descriptive with no key findings and missing information (`context/skill/kpmg-fdd/references/qc-checklist.md` (L9-L16)).
 - Detection heuristic (lintable):
   - Missing “Key conclusions” workstream bullets (QoE/WC/Net debt) OR
-  - No numeric/impact language AND no risk/open items section.
+  - No numeric/impact language AND no risk/missing information section.
 
 - Prevention controls:
   - Template constraint: require ≥2 “Key conclusions” bullets per in-scope workstream.
   - Prompt rule: “Every block must contain at least one ‘so what’ sentence.” (align to writing standards) (`context/skill/kpmg-fdd/references/writing-standards.md` (L81-L82)).
 
-Failure mode 2: Missing open items / false confidence
+Failure mode 2: Missing missing information / false confidence
 
-- Why it fails: open items must exist and be prioritized (P0/P1/P2) (`context/skill/kpmg-fdd/references/qc-checklist.md` (L48)); writing standards require a running open items list and gating items (P0) (`context/skill/kpmg-fdd/references/writing-standards.md` (L64-L72)).
+- Why it fails: missing information must exist and be prioritized (P0/P1/P2) (`context/skill/kpmg-fdd/references/qc-checklist.md` (L48)); writing standards require a running missing information list and gating items (P0) (`context/skill/kpmg-fdd/references/writing-standards.md` (L64-L72)).
 - Detection heuristic:
-  - No “Open items…” block OR block has 0 items OR no “P0/P1/P2” tokens.
+  - No “Missing information…” block OR block has 0 items OR no “P0/P1/P2” tokens.
 
 - Prevention controls:
-  - Template: open items table is mandatory with at least one row; if truly none, include a single row stating “No material open items identified” (only when supported by inputs).
+  - Template: missing information table is mandatory with at least one row; if truly none, include a single row stating “No material missing information identified” (only when supported by inputs).
 
 Failure mode 3: Salesy / investment recommendation tone
 
@@ -222,7 +222,7 @@ Failure mode 4: Invented numbers or unlabeled placeholders
 
 Failure mode 5: Quantitative claims without basis/source
 
-- Why it fails: material quantitative claims must have basis (`context/skill/kpmg-fdd/SKILL.md` (L72)); QC do-not-deliver if quantitative claims have no basis and not flagged as open items (`context/skill/kpmg-fdd/references/qc-checklist.md` (L11-L16)).
+- Why it fails: material quantitative claims must have basis (`context/skill/kpmg-fdd/SKILL.md` (L72)); QC do-not-deliver if quantitative claims have no basis and not flagged as missing information (`context/skill/kpmg-fdd/references/qc-checklist.md` (L11-L16)).
 - Detection heuristic:
   - If a bullet contains a digit or currency symbol, the same workstream block must contain “Basis:”/“Source:” line OR the bullet itself includes “Source: …”.
 
@@ -259,13 +259,13 @@ Give the decision-maker the decision-useful conclusions quickly:
 
 1. what we found (facts),
 2. what it means (implications),
-3. what could change (risks + open items).
+3. what could change (risks + missing information).
 
 Anchor requirements:
 
-- Executive summary must not be purely descriptive; it must include key findings and open items. (context/skill/kpmg-fdd/references/qc-checklist.md)
+- Executive summary must not be purely descriptive; it must include key findings and missing information. (context/skill/kpmg-fdd/references/qc-checklist.md)
 - Tone must be factual and balanced; do not minimize risks; label uncertainty. (context/skill/kpmg-fdd/references/writing-standards.md)
-- Do not invent numbers; if missing, use placeholders like $[x], [Date] and log as open items. (context/skill/kpmg-fdd/SKILL.md)
+- Do not invent numbers; if missing, use placeholders like $[x], [Date] and log as missing information. (context/skill/kpmg-fdd/SKILL.md)
 
 ## Required inputs (use what exists; do not block)
 
@@ -290,17 +290,17 @@ Findings content (by workstream)
 - Net debt: as-of net debt (or placeholder), key debt-like items, notable classification issues
 - Optional (only if in-scope): forecast/trading, capex, tax, accounting/audit environment
 
-Risk + open items
+Risk + missing information
 
 - 3–7 top risks ranked by severity with mitigants/next steps
-- Open items list prioritized (P0/P1/P2), including gating items (P0)
+- Missing information list prioritized (P0/P1/P2), including gating items (P0)
 
 ## Canonical block order (do not reorder in default mode)
 
 1. Deal and scope at a glance
 2. Key conclusions by workstream
 3. Top risks and mitigants (ranked)
-4. Open items that could move conclusions (prioritized)
+4. Missing information that could move conclusions (prioritized)
 
 ## Block-level drafting rules
 
@@ -338,7 +338,7 @@ Forecast content (optional):
 
 - Only include if forecast data is provided or clearly in-scope.
 - Label as “Management forecast” and hedge appropriately (“appears achievable… depends on…”).
-- Tie dependencies to open items (e.g., customer acquisition trends, pricing, volume).
+- Tie dependencies to missing information (e.g., customer acquisition trends, pricing, volume).
 
 ### 3) Top risks and mitigants (required)
 
@@ -351,7 +351,7 @@ Severity guidance (use consistent language):
 
 - Deal-breaker / Significant / Manageable (context/skill/kpmg-fdd/references/writing-standards.md)
 
-### 4) Open items that could move conclusions (required)
+### 4) Missing information that could move conclusions (required)
 
 Provide a prioritized table.
 Rules:
@@ -406,22 +406,22 @@ Consistency
 
 Hard fail (do not deliver)
 
-- Missing Executive summary OR it is purely descriptive with no key findings and open items. (context/skill/kpmg-fdd/references/qc-checklist.md)
+- Missing Executive summary OR it is purely descriptive with no key findings and missing information. (context/skill/kpmg-fdd/references/qc-checklist.md)
 - Any invented numbers or unlabeled placeholders. (context/skill/kpmg-fdd/SKILL.md; context/skill/kpmg-fdd/references/qc-checklist.md)
-- Material quantitative claims without basis/source and not flagged as open items. (context/skill/kpmg-fdd/references/qc-checklist.md)
-- No open items list prioritized P0/P1/P2. (context/skill/kpmg-fdd/references/qc-checklist.md)
+- Material quantitative claims without basis/source and not flagged as missing information. (context/skill/kpmg-fdd/references/qc-checklist.md)
+- No missing information list prioritized P0/P1/P2. (context/skill/kpmg-fdd/references/qc-checklist.md)
 
 Must-pass checks
 
 - Block order follows canonical order.
 - For each in-scope workstream: ≥2 conclusion bullets + a “Basis:” line.
 - Risks: 3–7 ranked items, each with mitigant/next step.
-- Open items: ≥1 item; includes all missing gating inputs.
+- Missing information: ≥1 item; includes all missing gating inputs.
 - Tone: balanced; at least one explicit risk/uncertainty statement. (context/skill/kpmg-fdd/references/writing-standards.md)
 
 ## Automatable lint checks (recommended)
 
-- Required headings present: “Deal and scope…”, “Key conclusions…”, “Top risks…”, “Open items…”
+- Required headings present: “Deal and scope…”, “Key conclusions…”, “Top risks…”, “Missing information…”
 - Keyword bans: “recommend investment”, “upside”, “scalability”
 - Placeholder hygiene: forbid raw “TBD/XX/…”; enforce $[x]/[Date]
 - Numeric basis rule: if digit present in a workstream block, ensure “Basis:” exists in that block
@@ -455,7 +455,7 @@ Must-pass checks
   - [Adjustment 1]: $[x] — [why non-recurring / run-rate] (Source: [basis]) <!-- REQUIRED if adjustments exist -->
   - [Adjustment 2]: $[x] — [why] (Source: [basis])
   - [Adjustment 3]: $[x] — [why] (Source: [basis])
-- **What could change:** [Residual risk / sensitivity / dependency tied to open items] <!-- REQUIRED -->
+- **What could change:** [Residual risk / sensitivity / dependency tied to missing information] <!-- REQUIRED -->
 - **Basis:** Source: [TB extract dated ____], [management adjustment schedule dated ____], [audited FS FY____–FY____] <!-- REQUIRED -->
 
 > If any QoE metric is missing, use $[x] placeholders and add a P0/P1 open item below.
@@ -466,7 +466,7 @@ Must-pass checks
 - **Observed NWC profile:** [negative/positive], [trend], [seasonality note] <!-- REQUIRED -->
 - **Indicative peg (if defined):** $[x] as of [Date] (Units: $[units]) <!-- OPTIONAL -->
 - **Key drivers / adjustments:** [1–3 bullets max] <!-- REQUIRED -->
-- **What could change:** [Residual risk tied to open items] <!-- REQUIRED -->
+- **What could change:** [Residual risk tied to missing information] <!-- REQUIRED -->
 - **Basis:** Source: [monthly BS/TB], [AR/AP listings], [management working capital schedule] <!-- REQUIRED -->
 
 #### Net debt and debt-like items (include only if in-scope)
@@ -475,7 +475,7 @@ Must-pass checks
 - **As-of net debt:** $[x] as of [Date] (Units: $[units]) <!-- OPTIONAL if data exists -->
 - **Key debt-like items identified:** [e.g., leases, bonuses, provisions] <!-- REQUIRED -->
 - **Notable classification items:** [e.g., item recorded as debt but should be equity] <!-- OPTIONAL -->
-- **What could change:** [Residual risk tied to open items] <!-- REQUIRED -->
+- **What could change:** [Residual risk tied to missing information] <!-- REQUIRED -->
 - **Basis:** Source: [BS/TB as of ____], [debt schedule], [supporting agreements] <!-- REQUIRED -->
 
 #### Other observations (only if in-scope / provided)
@@ -491,7 +491,7 @@ Must-pass checks
 
 > Keep 3–7 risks. Use “Deal-breaker / Significant / Manageable” language inside bullets if needed.
 
-### 4) Open items that could move conclusions (prioritized)
+### 4) Missing information that could move conclusions (prioritized)
 
 | Priority | Open item / request                                                 | Why it matters                               | Potential impact (direction / magnitude)          | Owner   | ETA    | Status |
 | -------- | ------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------- | ------- | ------ | ------ |

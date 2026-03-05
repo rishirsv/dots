@@ -103,9 +103,6 @@ def run_checks(md_path: Path, required_sections: List[str]) -> CheckResult:
         if not any(has_table_near_keyword(text, k) for k in qoe_keywords):
             notes.append("QoE section detected but no markdown table found near it (check for missing bridge exhibit).")
 
-    if "executive summary" in headings_lc and "open items that could move conclusions" not in text.lower():
-        notes.append("Executive summary detected without an 'Open items that could move conclusions' block.")
-
     # Placeholders are allowed by default in this skill workflow.
     # They become actionable notes unless strict mode is requested by caller.
     ok = (len(missing) == 0)

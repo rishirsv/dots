@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -15,18 +14,7 @@ const __dirname = path.dirname(__filename);
 function resolveSlidesDir() {
   const envDir = process.env.SLIDES_SKILL_DIR;
   const bundledRuntime = path.resolve(__dirname, 'slides-runtime');
-  const repoRelativeSkills = path.resolve(process.cwd(), '..', '..', '.agents', 'skills', 'oai-skills', 'slides');
-  const repoRelativeLegacy = path.resolve(process.cwd(), '..', '..', '.agents', 'oai-skills', 'slides');
-  const homeRelativeSkills = path.join(os.homedir(), '.agents', 'skills', 'oai-skills', 'slides');
-  const homeRelativeLegacy = path.join(os.homedir(), '.agents', 'oai-skills', 'slides');
-  const candidates = [
-    envDir,
-    bundledRuntime,
-    repoRelativeSkills,
-    repoRelativeLegacy,
-    homeRelativeSkills,
-    homeRelativeLegacy,
-  ].filter(Boolean);
+  const candidates = [envDir, bundledRuntime].filter(Boolean);
   for (const dir of candidates) {
     if (!fs.existsSync(dir)) continue;
     const required = ['render_slides.py', 'create_montage.py', 'slides_test.py'];
@@ -201,6 +189,7 @@ export function createSlidesAdapter() {
         String(numCol),
         '--label_mode',
         labelMode,
+        '--fail_on_image_error',
       ]);
       if (!run.ok) {
         return {

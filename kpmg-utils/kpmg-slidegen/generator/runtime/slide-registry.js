@@ -12,7 +12,6 @@ import { addDivider } from '../builders/divider-slide.js';
 import { addOneColumnText } from '../builders/one-column-text.js';
 import { addTitleStrapline4TextBoxes } from '../builders/title-strapline-4-boxes.js';
 import { addTwoColumnTextWithStrapline } from '../builders/two-column-text.js';
-import { wrapLegacyBuilder } from './builder-adapters.js';
 
 const SLIDE_REGISTRY_SCHEMA_VERSION = '2.0.0';
 
@@ -37,7 +36,7 @@ function withGeometryContract(entry) {
 const REGISTRY = Object.freeze({
   cover: withGeometryContract({
     builderId: 'cover',
-    builder: wrapLegacyBuilder(addCover),
+    builder: addCover,
     master: 'KPMG_COVER',
     requiredGeometry: ['titleBox', 'subtitleBox', 'photoBox', 'logoBox'],
     paginationPolicyKey: 'none.v1',
@@ -46,7 +45,7 @@ const REGISTRY = Object.freeze({
   }),
   divider: withGeometryContract({
     builderId: 'divider',
-    builder: wrapLegacyBuilder(addDivider),
+    builder: addDivider,
     master: 'KPMG_SECTION_DARK',
     requiredGeometry: ['numberBox', 'titleBox'],
     optionalGeometry: ['gradientBox'],
@@ -56,7 +55,7 @@ const REGISTRY = Object.freeze({
   }),
   dividerDark: withGeometryContract({
     builderId: 'divider',
-    builder: wrapLegacyBuilder(addDivider),
+    builder: addDivider,
     master: 'KPMG_SECTION_DARK',
     requiredGeometry: ['numberBox', 'titleBox'],
     optionalGeometry: ['gradientBox'],
@@ -66,7 +65,7 @@ const REGISTRY = Object.freeze({
   }),
   dividerLight: withGeometryContract({
     builderId: 'divider',
-    builder: wrapLegacyBuilder(addDivider),
+    builder: addDivider,
     master: 'KPMG_SECTION_LIGHT',
     requiredGeometry: ['numberBox', 'titleBox'],
     optionalGeometry: ['gradientBox'],
@@ -76,7 +75,7 @@ const REGISTRY = Object.freeze({
   }),
   twoColumnText: withGeometryContract({
     builderId: 'twoColumnText',
-    builder: wrapLegacyBuilder(addTwoColumnTextWithStrapline),
+    builder: addTwoColumnTextWithStrapline,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'straplineBox', 'leftBox', 'rightBox'],
     paginationPolicyKey: 'text.twoColumn.v1',
@@ -85,7 +84,7 @@ const REGISTRY = Object.freeze({
   }),
   oneColumnText: withGeometryContract({
     builderId: 'oneColumnText',
-    builder: wrapLegacyBuilder(addOneColumnText),
+    builder: addOneColumnText,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'straplineBox', 'bodyBox', 'sourceBox'],
     optionalGeometry: ['calloutBoxes'],
@@ -95,7 +94,7 @@ const REGISTRY = Object.freeze({
   }),
   analysisNarrowTable: withGeometryContract({
     builderId: 'analysisNarrowTable',
-    builder: wrapLegacyBuilder(addAnalysisNarrowTable),
+    builder: addAnalysisNarrowTable,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'straplineBox', 'tableBox', 'rightTitleBox', 'rightBodyBox'],
     optionalGeometry: ['noteBox'],
@@ -105,7 +104,7 @@ const REGISTRY = Object.freeze({
   }),
   analysisWideChart2ColsText: withGeometryContract({
     builderId: 'analysisWideChart2ColsText',
-    builder: wrapLegacyBuilder(addAnalysisWideChart2ColsText),
+    builder: addAnalysisWideChart2ColsText,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'straplineBox', 'bodyBox', 'chartBox'],
     optionalGeometry: ['calloutBoxes'],
@@ -115,7 +114,7 @@ const REGISTRY = Object.freeze({
   }),
   analysisWideChartTableText: withGeometryContract({
     builderId: 'analysisWideChartTableText',
-    builder: wrapLegacyBuilder(addAnalysisWideChartTableText),
+    builder: addAnalysisWideChartTableText,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'straplineBox', 'headingBox', 'bodyBox', 'chartBox', 'tableBox'],
     optionalGeometry: ['calloutBoxes', 'noteBox'],
@@ -125,7 +124,7 @@ const REGISTRY = Object.freeze({
   }),
   analysisBridge: withGeometryContract({
     builderId: 'analysisBridge',
-    builder: wrapLegacyBuilder(addAnalysisBridge),
+    builder: addAnalysisBridge,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'chartBox', 'analysisBoxes', 'sourceBox'],
     optionalGeometry: ['typography'],
@@ -135,7 +134,7 @@ const REGISTRY = Object.freeze({
   }),
   businessOverview: withGeometryContract({
     builderId: 'businessOverview',
-    builder: wrapLegacyBuilder(addBusinessOverview),
+    builder: addBusinessOverview,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'leftHeadingBox', 'leftBox', 'rightHeadingBox', 'bodyBox', 'chartBox', 'sourceBox'],
     paginationPolicyKey: 'business.overviewBody.v1',
@@ -144,7 +143,7 @@ const REGISTRY = Object.freeze({
   }),
   titleStrapline4TextBoxes: withGeometryContract({
     builderId: 'titleStrapline4TextBoxes',
-    builder: wrapLegacyBuilder(addTitleStrapline4TextBoxes),
+    builder: addTitleStrapline4TextBoxes,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'straplineBox', 'columnBoxes'],
     paginationPolicyKey: 'none.v1',
@@ -153,7 +152,7 @@ const REGISTRY = Object.freeze({
   }),
   contents: withGeometryContract({
     builderId: 'contents',
-    builder: wrapLegacyBuilder(addContentsSlide),
+    builder: addContentsSlide,
     master: 'KPMG_WHITE',
     requiredGeometry: ['titleBox', 'topRowBox', 'bottomRowBox'],
     paginationPolicyKey: 'contents.sections.v1',
@@ -162,7 +161,7 @@ const REGISTRY = Object.freeze({
   }),
   backCover: withGeometryContract({
     builderId: 'backCover',
-    builder: wrapLegacyBuilder(addBackCover),
+    builder: addBackCover,
     master: 'KPMG_CLOSING',
     requiredGeometry: ['logoBox', 'headingBox', 'disclaimerBox', 'urlBox'],
     paginationPolicyKey: 'none.v1',

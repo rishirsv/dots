@@ -3,7 +3,7 @@ Per `context/MANIFEST.md`, this repo bundle is explicitly scoped to “06-net-de
 Assumptions (stated and then applied, no questions):
 
 - “Style target 2B” and “Quality gate 5C” are referenced as locked constraints but not defined elsewhere in the zip, so I operationalize them using the house “client-ready, defensible” writing and QC rules already codified in `context/skill/kpmg-fdd/references/writing-standards.md` and `context/skill/kpmg-fdd/references/qc-checklist.md`. (context/MANIFEST.md; context/skill/kpmg-fdd/references/writing-standards.md; context/skill/kpmg-fdd/references/qc-checklist.md)
-- The corpus is verbatim-validated (and includes extraction artifacts). Therefore, corpus wording is a _language_ reference, but we must explicitly strip/avoid extraction-policy artifacts (e.g., “Not present in source report”, “Table- or chart-based…excluded…”) in client-facing output, replacing them with open items and basis-labeled placeholders per the skill constraints. (context/docs/report-mining/section-corpus/validation/verbatim-validation-report.md; context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md; context/skill/kpmg-fdd/SKILL.md)
+- The corpus is verbatim-validated (and includes extraction artifacts). Therefore, corpus wording is a _language_ reference, but we must explicitly strip/avoid extraction-policy artifacts (e.g., “Not present in source report”, “Table- or chart-based…excluded…”) in client-facing output, replacing them with missing information and basis-labeled placeholders per the skill constraints. (context/docs/report-mining/section-corpus/validation/verbatim-validation-report.md; context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md; context/skill/kpmg-fdd/SKILL.md)
 
 Deliverable 1 — Linguistic analysis (section-specific patterns)
 
@@ -44,7 +44,7 @@ Quantification phrase patterns
 Caveat / disclaimer patterns
 Keep (client-ready and defensible, but standardize):
 
-- “Not all inclusive” / “Readers…should be aware…additional factors…” appears in some entries as a completeness caveat. Keep as a short “scope caveat” when diligence is constrained, but don’t overuse; pair with a prioritized open-items list. (context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md; context/skill/kpmg-fdd/references/writing-standards.md)
+- “Not all inclusive” / “Readers…should be aware…additional factors…” appears in some entries as a completeness caveat. Keep as a short “scope caveat” when diligence is constrained, but don’t overuse; pair with a prioritized missing-information list. (context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md; context/skill/kpmg-fdd/references/writing-standards.md)
 - “Not within the scope of this report…” appears (e.g., tax liabilities outside scope). Keep, but immediately state whether it could affect purchase price and whether it’s an “other consideration” vs debt-like. (context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md)
 - “Information…outstanding from Management” is a common and appropriate caveat (e.g., payroll tax deferral quantification; environmental liabilities PV). Keep, and convert into a P0/P1 open item. (context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md; context/skill/kpmg-fdd/references/qc-checklist.md)
 
@@ -85,7 +85,7 @@ Variant E — Deal-mechanics (locked box) framing
 - Explicit reference to an “agreed Locked Box” definition and “adjusted debt consistent with … agreed by both parties,” plus (cash/debt-like) reclassifications. This signals the section sometimes must align to SPA mechanics and still call out “for your consideration.” (context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md)
 
 Recommended default structure (for the skill)
-Default structure should match the minimum content required by `context/skill/kpmg-fdd/references/report-structure.md` and the net debt exhibit guidance in `context/skill/kpmg-fdd/references/exhibits-and-tables.md`: schedule + debt-like list + cut-off + open items. (context/skill/kpmg-fdd/references/report-structure.md; context/skill/kpmg-fdd/references/exhibits-and-tables.md)
+Default structure should match the minimum content required by `context/skill/kpmg-fdd/references/report-structure.md` and the net debt exhibit guidance in `context/skill/kpmg-fdd/references/exhibits-and-tables.md`: schedule + debt-like list + cut-off + missing information. (context/skill/kpmg-fdd/references/report-structure.md; context/skill/kpmg-fdd/references/exhibits-and-tables.md)
 
 Required sub-blocks (must appear, even if data is missing)
 
@@ -94,7 +94,7 @@ Required sub-blocks (must appear, even if data is missing)
 3. Exhibit: Net debt schedule (even if placeholder rows; must include units/period/source) (context/skill/kpmg-fdd/references/exhibits-and-tables.md; context/skill/kpmg-fdd/SKILL.md)
 4. Exhibit: Debt-like items review checklist + conclusions (table with classification and rationale) (context/skill/kpmg-fdd/references/exhibits-and-tables.md; context/skill/kpmg-fdd/references/report-structure.md)
 5. Cut-off / closing mechanics notes (explicit “at closing / at completion / closing date” phrasing where relevant) (context/skill/kpmg-fdd/references/report-structure.md; context/docs/report-mining/section-corpus/sections/net-debt-and-debt-like-items.md)
-6. Open items & data requests (prioritized; replaces “not present”) (context/skill/kpmg-fdd/references/writing-standards.md; context/skill/kpmg-fdd/references/qc-checklist.md; context/skill/kpmg-fdd/SKILL.md)
+6. Missing information & data requests (prioritized; replaces “not present”) (context/skill/kpmg-fdd/references/writing-standards.md; context/skill/kpmg-fdd/references/qc-checklist.md; context/skill/kpmg-fdd/SKILL.md)
 
 Optional sub-blocks (allowed variants)
 
@@ -218,9 +218,9 @@ Minimum inputs to draft a defensible section:
 4. Exhibit: Debt-like items review (checklist + conclusions)
 5. Cut-off and closing considerations (timing and mechanics)
 6. Key risks (only if evidenced)
-7. Open items & data requests (prioritized)
+7. Missing information & data requests (prioritized)
 
-Minimum content expectation: debt schedule summary + list of debt-like items reviewed and conclusions + cut-off notes + open items.  
+Minimum content expectation: debt schedule summary + list of debt-like items reviewed and conclusions + cut-off notes + missing information.  
 (Reference: `context/skill/kpmg-fdd/references/report-structure.md`)
 
 ## Evidence and basis rules (non-negotiable)
@@ -349,8 +349,8 @@ Fail if any of the below is true:
 
 - No “as at [date]” anchor in headline and exhibit(s)
 - Net debt schedule present but missing units/period/source line
-- Debt-like items review table missing (or contains no conclusions/open items)
-- Material quantitative claims have no basis/source and are not flagged as open items
+- Debt-like items review table missing (or contains no conclusions/missing information)
+- Material quantitative claims have no basis/source and are not flagged as missing information
 - Units/periods inconsistent within the section
 
 (Reference: `context/skill/kpmg-fdd/references/qc-checklist.md`; `context/skill/kpmg-fdd/references/exhibits-and-tables.md`)
@@ -377,7 +377,7 @@ As at **[As at date]**, the Company reported **net (cash) / net debt** of **$[x]
 > Drafting notes (do not keep in final):
 >
 > - Keep this to 1–2 sentences and include the “as at” date.
-> - If numbers are not available, replace $[x] with placeholders and add open items (do not invent).
+> - If numbers are not available, replace $[x] with placeholders and add missing information (do not invent).
 > - Use “net cash” if cash exceeds debt; ensure sign conventions are consistent.
 
 ## Definition and scope (required)
@@ -449,7 +449,7 @@ Source/Basis: [For each item, state the schedule / TB account / management repre
 
 - [Risk statement] — [why it matters to purchase price / close] — [mitigant / next step]
 
-## Open items & data requests (required)
+## Missing information & data requests (required)
 
 (Use priorities P0/P1/P2; do not leave “not present” artifacts.)
 

@@ -1,7 +1,7 @@
 # Section contract: QoE and earnings adjustments
 
 ## Table of contents
-- Core rule
+- Core Principles
 - Writing guidance
 - Layout
 - Available slot shapes
@@ -11,7 +11,7 @@
 - Split policy rules
 - Full example
 
-## Core rule
+## Core Principles
 
 Present a period-anchored bridge from reported earnings to adjusted earnings, with explicit adjustment rationale, recurrence treatment, and basis support.
 
@@ -173,7 +173,7 @@ Source note: [source_note required]
 4. `Earnings adjustments and rationale` includes at least four numbered items with quantified impact and treatment logic.
 5. `Other considerations (not included in adjusted earnings)` clearly states why each item is outside the bridge.
 6. `Key sensitivities` includes at least two quantified or directionally explicit sensitivities.
-7. No `Open items` or `Data requests` headings appear.
+7. No missing-information headings (for example, `Data requests`) appear.
 8. Missing data is handled with inline placeholders, not unsupported claims.
 9. Render skeleton and full example are materially different (template vs worked output).
 10. Language and tone pass global conventions.

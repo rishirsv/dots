@@ -78,7 +78,7 @@ Apply QC across:
 - **Number consistency** (units, periods, repeated metrics).
 - **Evidence–narrative alignment** (claims supported by exhibits).
 - **Balanced tone** (risks not minimized; uncertainties labeled).
-- **Open items** clearly listed with impact.
+- Missing information is handled with inline placeholders and stated impact where relevant.
 
 Use: [references/global-writing-conventions.md](references/global-writing-conventions.md) plus the applicable section contract from [references/INDEX.md](references/INDEX.md).
 
@@ -106,7 +106,7 @@ When delivering a draft or revision, always include:
 
 - What you produced (draft / revised sections / QC findings)
 - What changed (if revision)
-- What is still missing (open items + data requests)
+- What is still missing (placeholders still present + evidence gaps)
 - The file(s) produced and where they are saved
 
 ## Key references

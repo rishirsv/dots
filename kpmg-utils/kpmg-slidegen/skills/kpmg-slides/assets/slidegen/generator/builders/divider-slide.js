@@ -61,7 +61,7 @@ export function addDivider(
   const resolvedTheme = resolveTheme(theme);
   const resolvedStyles = resolveTextStyles(resolvedTheme);
   const textBox = resolveTextBoxOptions(theme);
-  const dividerLightTextColor = resolvedTheme.colors.primary || '00338D';
+  const dividerLightTextColor = resolvedTheme.colors.primary || resolvedTheme.colors.kpmgBlue;
   const variantTextStyles =
     type === 'dividerLight'
       ? { sectionNumber: { color: dividerLightTextColor }, sectionTitle: { color: dividerLightTextColor } }

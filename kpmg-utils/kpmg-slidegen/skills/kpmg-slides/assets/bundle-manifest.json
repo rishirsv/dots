@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-04T20:30:28.228Z",
+  "generatedAt": "2026-03-05T15:57:07.168Z",
   "entries": [
     {
       "source": "generator/app/cli.js",
@@ -17,56 +17,56 @@
     {
       "source": "generator/app/strict-overflow.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/app/strict-overflow.js",
-      "size": 3023,
-      "sha256": "da0226b65de4ec3680dd858d617be0e553f0563f1b5cd067501624f527dcde4a"
+      "size": 2833,
+      "sha256": "c04a92a9c87859721159c662e2e69c21ccf499d7e79c731931e2b0e7b8238255"
     },
     {
       "source": "generator/builders/analysis-bridge.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/analysis-bridge.js",
-      "size": 16423,
-      "sha256": "f29f4382d0f387a7fd1dd349d3ff1ff7b0f807b987b8da44647c15660d812f61"
+      "size": 18697,
+      "sha256": "a9413b6af858c34d7fab052fa5569790e2eebb2147fb8cc816909b4e86d8e8c8"
     },
     {
       "source": "generator/builders/analysis-narrow-table.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/analysis-narrow-table.js",
-      "size": 23339,
-      "sha256": "a9dbae4ff12f5e0d66b5997659202e9d155c5a5db14c1863b2b4fe873625dd49"
+      "size": 24492,
+      "sha256": "16af22a3eab2a4e4a5923249d9f7185b2b3934adc20ca6b31e8524311ad03b02"
     },
     {
       "source": "generator/builders/analysis-wide-chart-text.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/analysis-wide-chart-text.js",
-      "size": 11965,
-      "sha256": "35bfbfc40d61367506aa9eac61eaa6a7b122e3d52e8f7b40e2358eba93b314f1"
+      "size": 13032,
+      "sha256": "bea22a833fb933be42014fcc797ab0e1722396792cca2309568917f3fc3f130e"
     },
     {
       "source": "generator/builders/back-cover-slide.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/back-cover-slide.js",
-      "size": 6639,
-      "sha256": "9ba2da050fc7706785b6db21511d582d32dab929e7bbcadb1beaf5d204b52470"
+      "size": 7426,
+      "sha256": "e27be6f8b7c36085b21785c52ada25d2a6be3a1a011fabd0b0bb93faab3ed21d"
     },
     {
       "source": "generator/builders/business-overview.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/business-overview.js",
-      "size": 10110,
-      "sha256": "fe42182c9b67bcfb2fee068e1897a65fcdcda228e636c65651b4cf629ee01fdc"
+      "size": 11014,
+      "sha256": "3b83ba49772969ec230842040c3b07a5066aaad8abf0d8828c7168aaf6f92a05"
     },
     {
       "source": "generator/builders/contents-slide.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/contents-slide.js",
-      "size": 5637,
-      "sha256": "d5cbd19ba14daebec90fab02339cba090b6511aa696387ca039a8dcb13ce3fcd"
+      "size": 5877,
+      "sha256": "b463ead3b385c7c07902bc1b6db6e8bf41729821fe8f0f334b9df01e5b308062"
     },
     {
       "source": "generator/builders/cover-slide.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/cover-slide.js",
-      "size": 12403,
-      "sha256": "cea2f84d111ef32ef2255f0ac760134f3c173362ba82f5f77964397fa2d615c8"
+      "size": 12497,
+      "sha256": "246882a1d01c60ffbb705a2fa8b280acfbb9d3de7f8e9d8da46b3bd847bf1e90"
     },
     {
       "source": "generator/builders/divider-slide.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/divider-slide.js",
-      "size": 3523,
-      "sha256": "d1816e2007529900fe7974357d711d1ed9eefe9289eb986c757267b950c50674"
+      "size": 3544,
+      "sha256": "4e6b30173a91572d7d2aab818a1230adf82f3892c623e7295ff3b1504c918194"
     },
     {
       "source": "generator/builders/one-column-text.js",
@@ -89,38 +89,38 @@
     {
       "source": "generator/helpers/analysis-wide-layout.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/analysis-wide-layout.js",
-      "size": 5773,
-      "sha256": "ed26208d70e299df303be708e926fbb75d2d613208fb5ff460349bc09006fea6"
+      "size": 5932,
+      "sha256": "93ef8d231a9af29c593599d8e9ddd8fdaec16ff6558ef56770be350ac0d78236"
     },
     {
       "source": "generator/helpers/bridge-layout.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/bridge-layout.js",
-      "size": 2815,
-      "sha256": "f6adc187edda5c45a267d22bdca569b7cfd63133b23afd8d7812d525e57b0f75"
+      "size": 2630,
+      "sha256": "89778fc71134b11a61875c8f633de86c9d06d05b8d39e0553ea07cbe0f39833c"
     },
     {
       "source": "generator/helpers/bridge.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/bridge.js",
-      "size": 6905,
-      "sha256": "92d2f8399602b3765963fa0f23d77518614f88f5d27a17ce3a97815ba861eada"
+      "size": 6542,
+      "sha256": "db5ec0e26d2eedb8884ed24e377060795f1796b60fec6daa23410da0636b552c"
     },
     {
       "source": "generator/helpers/bullets.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/bullets.js",
-      "size": 5924,
-      "sha256": "3baac0396a75e5efd8ea23b5c5c8488665becdd1e4d136e6cc09b9c864cd2bf0"
+      "size": 6753,
+      "sha256": "373df1e8636ff5cfc7a5fec2d20e7b3ff2ae78b140d74ca5a8f71cdba8ae7bc4"
     },
     {
       "source": "generator/helpers/business-structure.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/business-structure.js",
-      "size": 7365,
-      "sha256": "c24f1430c86210ebb36df78bc963627ca219229d42dab4e0bf19f998bc136150"
+      "size": 7191,
+      "sha256": "b2f0989bc355fbf1f34450af846a4fb186c05ace0cd4ddeeda333e242292c4e1"
     },
     {
       "source": "generator/helpers/callouts.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/callouts.js",
-      "size": 9551,
-      "sha256": "578f3f1ff66cc1c692b74d43abc01c935e0226565b98b1512e88bbcaac32105d"
+      "size": 10389,
+      "sha256": "a74876a3563305f6b08f82e1b8a0b84cbbdb409da18d8dbc7aa444ecfb272e35"
     },
     {
       "source": "generator/helpers/chart.js",
@@ -143,8 +143,8 @@
     {
       "source": "generator/helpers/media.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/media.js",
-      "size": 8828,
-      "sha256": "84092f2df6aaafadbecf115b9a94ad15762857cc4fbbf4fdba80ef1b025644ad"
+      "size": 9156,
+      "sha256": "7a55aaad694e62ee1d63d5ef40776c0633311c457b8072eda79dc36742fa0e46"
     },
     {
       "source": "generator/helpers/one-column-layout.js",
@@ -179,8 +179,8 @@
     {
       "source": "generator/helpers/theme.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/helpers/theme.js",
-      "size": 12051,
-      "sha256": "f1506dc4be5c58550c653bae4a58da87ecdcdfdbd10be6fa0c01666d664e5513"
+      "size": 7516,
+      "sha256": "3d8ad564df9c37bf0874f0726a288a3aa2e370065739dbcf19af988e72105e68"
     },
     {
       "source": "generator/helpers/title.js",
@@ -197,44 +197,38 @@
     {
       "source": "generator/index.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/index.js",
-      "size": 13959,
-      "sha256": "c0a4ff0a9a6963bfdefb549de1e711ed6ad9e401027b372e7019a17c9603b3c6"
+      "size": 13894,
+      "sha256": "8c0fbde3e3411ec904379b2031a2dd0cf3788b43038adf5e994fcb6faaa63435"
     },
     {
       "source": "generator/postprocess/slides-adapter.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-adapter.js",
-      "size": 7837,
-      "sha256": "1085aead10008cdf45864390d881148280f0cf4eff04f68c662bdb9f8d175a2b"
+      "size": 7327,
+      "sha256": "fe576869372c14125dcd9b7acef1ea8e5ab72676505eb73c36c60925b898e1dd"
     },
     {
       "source": "generator/postprocess/slides-runtime/create_montage.py",
       "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/create_montage.py",
-      "size": 10165,
-      "sha256": "6a071011644bba008e0ba4fee2db1a81508b809455b3aba7f8acbf6aa67d3e17"
+      "size": 9060,
+      "sha256": "5c55879016212d79dbbd7f6090b6ac90987ccb1fc66a99a8125626b9ca61ba04"
     },
     {
       "source": "generator/postprocess/slides-runtime/ensure_raster_image.py",
       "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/ensure_raster_image.py",
-      "size": 2106,
-      "sha256": "6f2b2de26121505857bf42e5937e36a9e346e8eff9dfa7ce9236e967792b155a"
+      "size": 1795,
+      "sha256": "caab3798b8f1a9b507cb69292e993539cd19a33b24c1793f17d904f6498a2bd6"
     },
     {
       "source": "generator/postprocess/slides-runtime/render_slides.py",
       "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/render_slides.py",
-      "size": 8106,
-      "sha256": "139be0b9286935685a6f8151dbb40e358677020a36e739a150390e961d116d56"
+      "size": 7059,
+      "sha256": "1bc549a4866db6ad0668a9862eb01e45ae37bab13c332bface21201ce6c8b891"
     },
     {
       "source": "generator/postprocess/slides-runtime/slides_test.py",
       "target": "skills/kpmg-slides/assets/slidegen/generator/postprocess/slides-runtime/slides_test.py",
       "size": 6293,
       "sha256": "42072e4f227b6b0df937e39a58e56c67a6fa302ea29552faf76b505d33ca3e25"
-    },
-    {
-      "source": "generator/runtime/builder-adapters.js",
-      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/builder-adapters.js",
-      "size": 265,
-      "sha256": "7e73237ad187e543d21487792f5b5c2fb61453e4ead494c73078d214e9185a64"
     },
     {
       "source": "generator/runtime/diagnostics.js",
@@ -249,40 +243,34 @@
       "sha256": "680057a3f1cb642dc8bf48fa59aac60e75b25677eb59fe72c3d498572670e779"
     },
     {
-      "source": "generator/runtime/layout-contract.js",
-      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/layout-contract.js",
-      "size": 18035,
-      "sha256": "ae0648f6a3cd2ce68731d0c3263804c11b47ebc545ac476be126355ba103bdd3"
-    },
-    {
       "source": "generator/runtime/paginate.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/paginate.js",
-      "size": 37747,
-      "sha256": "7965202b4084bd8f2746839fa8b8259686571da7bc53a53d6004a6bee6a3b586"
+      "size": 37904,
+      "sha256": "e989a2f0b6ba4abacb0b2630802ceb8c275deac637c6d51ec824c86145b1436a"
     },
     {
       "source": "generator/runtime/pagination-policy.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/pagination-policy.js",
-      "size": 4896,
-      "sha256": "ae456bdd246ff0a8a7995940d0ff6e0492fab91402020132326c97c785a3cc15"
+      "size": 4979,
+      "sha256": "18acd1c6371259c4cac0bec47f1421cb0744a241f2202c3a29c703e7e2c3554c"
     },
     {
       "source": "generator/runtime/render-context.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/render-context.js",
-      "size": 5648,
-      "sha256": "c611450d59040822263fc36cde963b3d96f66d0e65374dc62d32daba0367930c"
+      "size": 5662,
+      "sha256": "ce95e7ae2c3d69762a867d75519f5f866ff625a585d97c986ca92de7c827d3e1"
     },
     {
       "source": "generator/runtime/render-deck.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/render-deck.js",
-      "size": 44138,
-      "sha256": "9708543be86a37aa6da1e48898081ef0d8ecd439671cbf7a7965622ff70492f8"
+      "size": 44085,
+      "sha256": "58836583b78f2cc87fe7161955126c0a7559576772a94871ab07e5439a93e5ce"
     },
     {
       "source": "generator/runtime/slide-registry.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/slide-registry.js",
-      "size": 9572,
-      "sha256": "0e5ccea7ab60304692b671576516866e8bd3f7ea0345f538c213588cc2339fd4"
+      "size": 9247,
+      "sha256": "4dfbea66b97019c4fe5ef3b208312873caa81d8109b923864eaf6ff3e56d8019"
     },
     {
       "source": "generator/runtime/template-contracts.js",
@@ -301,6 +289,12 @@
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/template-roots.js",
       "size": 914,
       "sha256": "8743e528a962e0aa329f81bd1f749866ce6ab74f0fd4e26097648a362682c5a1"
+    },
+    {
+      "source": "generator/runtime/theme.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/theme.js",
+      "size": 16661,
+      "sha256": "428cd5efb9332d4c4ce47ef91628940bba18a24883d02450cc9a528f632fad5a"
     },
     {
       "source": "generator/strict/overlap.js",

@@ -328,7 +328,7 @@ function validateTypedSlotValue(slotName, def, value) {
         fail(`contains non-object item at index ${idx}`);
         return;
       }
-      const heading = extractText(item.heading || item.title);
+      const heading = extractText(item.heading);
       const body = Array.isArray(item.body) ? item.body : [];
       if (!heading && body.length === 0) warn(`column ${idx} has no heading and no body items`);
     });
@@ -462,7 +462,7 @@ function slotValidationResult(
   for (const w of typed.warnings) warnings.push(w);
 
   if (typeof value === 'string') {
-    const maxChars = def.maxChars || def.maxLength;
+    const maxChars = def.maxChars;
     if (maxChars && value.length > maxChars) {
       const message = `${slotName} exceeds maxChars (${maxChars})`;
       const hardLimit = slotName === 'title' || def.enforceMaxChars === true;
@@ -931,17 +931,17 @@ function buildFooterValues(deckSpec, { allowSparse = false } = {}) {
   const metadata = deckSpec?.metadata || {};
   const footer = metadata?.footer || {};
   const isDemoMode = Boolean(allowSparse || metadata.allowSparse);
-  const normalizedLegalEntityName = String(footer.legalEntityName ?? metadata.company ?? '').trim();
-  const normalizedJurisdiction = String(footer.jurisdiction ?? metadata.jurisdiction ?? '').trim();
-  const normalizedLegalStructure = String(footer.legalStructure ?? metadata.legalStructure ?? '').trim();
+  const normalizedLegalEntityName = String(footer.legalEntityName ?? '').trim();
+  const normalizedJurisdiction = String(footer.jurisdiction ?? '').trim();
+  const normalizedLegalStructure = String(footer.legalStructure ?? '').trim();
 
   const values = {
-    year: footer.year ?? metadata.year ?? new Date().getFullYear(),
+    year: footer.year ?? (isDemoMode ? new Date().getFullYear() : ''),
     legalEntityName: normalizedLegalEntityName || (isDemoMode ? 'KPMG LLP' : ''),
     jurisdiction: normalizedJurisdiction || (isDemoMode ? 'Ontario' : ''),
     legalStructure: normalizedLegalStructure || (isDemoMode ? 'limited liability partnership' : ''),
-    documentClassification: footer.documentClassification ?? metadata.documentClassification ?? '',
-    officeContactText: footer.officeContactText ?? metadata.officeContactText ?? '',
+    documentClassification: footer.documentClassification ?? '',
+    officeContactText: footer.officeContactText ?? '',
   };
 
   if (!isDemoMode) {

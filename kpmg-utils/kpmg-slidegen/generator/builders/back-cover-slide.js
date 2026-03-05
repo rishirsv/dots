@@ -1,27 +1,6 @@
 import { addImageSmart } from '../helpers/media.js';
 import { THEME_COMPONENT_KEYS, resolveTextThemePrimitives, resolveTheme, toFiniteNumber } from '../helpers/theme.js';
 
-const DEFAULT_CONTACTS = Object.freeze([
-  {
-    name: 'Firstname Lastname',
-    role: 'Job Title',
-    phone: 'T: +1 000 000 0001',
-    email: 'E: firstname.lastname@kpmg.ca',
-  },
-  {
-    name: 'Firstname Lastname',
-    role: 'Job Title',
-    phone: 'T: +1 000 000 0002',
-    email: 'E: firstname.lastname@kpmg.ca',
-  },
-  {
-    name: 'Firstname Lastname',
-    role: 'Job Title',
-    phone: 'T: +1 000 000 0003',
-    email: 'E: firstname.lastname@kpmg.ca',
-  },
-]);
-
 function buildContacts(rawContacts = []) {
   const normalized = Array.isArray(rawContacts)
     ? rawContacts
@@ -35,7 +14,7 @@ function buildContacts(rawContacts = []) {
         .filter((item) => item.name || item.role || item.phone || item.email)
         .slice(0, 3)
     : [];
-  return normalized.length > 0 ? normalized : DEFAULT_CONTACTS.map((contact) => ({ ...contact }));
+  return normalized;
 }
 
 function legalFooterLines(footerValues = {}) {
@@ -111,15 +90,17 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
 
   addImageSmart(slide, logo, { ...g.logoBox, altText: 'KPMG logo' });
 
-  slide.addText('The contacts at KPMG in connection with this report are:', {
-    ...g.headingBox,
-    fontFace: headingFont,
-    fontSize: toFiniteNumber(backCoverFontSizes.heading, resolvedTheme.typeSizes.title),
-    bold: true,
-    color: textColor,
-    valign: 'top',
-    wrap: true,
-  });
+  if (contacts.length > 0) {
+    slide.addText('The contacts at KPMG in connection with this report are:', {
+      ...g.headingBox,
+      fontFace: headingFont,
+      fontSize: toFiniteNumber(backCoverFontSizes.heading, resolvedTheme.typeSizes.title),
+      bold: true,
+      color: textColor,
+      valign: 'top',
+      wrap: true,
+    });
+  }
 
   const colW = toFiniteNumber(contactTokens.columnWidth, 2.55);
   const colY = toFiniteNumber(contactTokens.y, 3.03);

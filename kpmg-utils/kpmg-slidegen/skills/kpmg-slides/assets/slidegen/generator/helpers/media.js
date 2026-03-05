@@ -67,7 +67,8 @@ export function normalizeImagePlacement(options = {}) {
 }
 
 export function addImageSmart(slide, asset, options = {}) {
-  if (!slide || !asset) return;
+  if (!slide) throw new Error('addImageSmart requires a slide instance');
+  if (!asset) throw new Error('addImageSmart requires a non-empty asset');
   slide.addImage({
     ...normalizeImageSource(asset),
     ...normalizeImagePlacement(options),
@@ -86,16 +87,19 @@ function readInputAsBuffer(source) {
     if (source.startsWith('data:')) {
       const type = 'dataUri';
       const comma = source.indexOf(',');
-      const payload = comma !== -1 ? source.slice(comma + 1) : source;
-      try {
-        return { buffer: Buffer.from(payload, 'base64'), type };
-      } catch {
-        try {
-          return { buffer: Buffer.from(decodeURIComponent(payload), 'utf8'), type };
-        } catch {
-          return { buffer: Buffer.from(payload, 'utf8'), type };
-        }
+      if (comma === -1) {
+        throw new Error('Malformed data URI image source');
       }
+      const metadata = source.slice(0, comma);
+      const payload = source.slice(comma + 1);
+      if (/;base64$/i.test(metadata)) {
+        const compact = payload.replace(/\s+/g, '');
+        if (!/^[A-Za-z0-9+/=]*$/.test(compact)) {
+          throw new Error('Malformed base64 payload in data URI image source');
+        }
+        return { buffer: Buffer.from(compact, 'base64'), type };
+      }
+      return { buffer: Buffer.from(decodeURIComponent(payload), 'utf8'), type };
     }
     if (source.includes('<svg')) {
       return { buffer: Buffer.from(source, 'utf8'), type: 'rawSvg' };

@@ -41,7 +41,8 @@ function normalizePolicy(key, rawPolicy = {}) {
     );
   }
 
-  const mode = String(rawPolicy?.mode || strategy).trim();
+  const mode = String(rawPolicy?.mode || '').trim();
+  if (!mode) throw new Error(`Pagination policy "${key}" must define a non-empty mode`);
   const options = rawPolicy?.options && typeof rawPolicy.options === 'object' ? { ...rawPolicy.options } : {};
   if (strategy === 'oneColumnBullets') {
     const variant = String(options.layoutVariant || '').trim();

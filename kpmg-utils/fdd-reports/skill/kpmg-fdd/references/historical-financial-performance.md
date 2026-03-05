@@ -1,7 +1,7 @@
 # Section contract: Historical / financial performance
 
 ## Table of contents
-- Core rule
+- Core Principles
 - Writing guidance
 - Layout
 - Available slot shapes
@@ -11,7 +11,7 @@
 - Split policy rules
 - Full example
 
-## Core rule
+## Core Principles
 
 Present a clear, period-anchored historical P&L view from revenue through EBITDA.
 
@@ -156,7 +156,7 @@ Source note: [source_note required]
 2. The section includes explicit periods and units in `Overview` and `Summary P&L`.
 3. `Summary P&L` includes revenue components, cost-of-sales components, separate operating expense components (`Sales and marketing`, `General and administrative`, `Product development`, `R&D`), gross margin, and EBITDA margin.
 4. `P&L overview by line item` includes separate bullets for `Sales and marketing`, `General and administrative`, `Product development`, and `R&D`, each with quantified drivers.
-5. No `Data quality and limitations`, `Implications for QoE`, `Open items`, or `Data requests` headings appear.
+5. No meta or missing-information headings appear (for example, `Data quality and limitations`, `Implications for QoE`, or `Data requests`).
 6. Missing information is handled with inline placeholders, not unsupported claims.
 7. Render skeleton and full example are materially different (template vs worked output).
 8. Language and tone pass global conventions.

@@ -129,7 +129,7 @@ Normalize/clean:
 
 Avoid:
 
-- Over-broad disclaimers that undermine the section (“we don’t know anything”) without providing concrete open items; house workflow says proceed with labeled placeholders and open items rather than filling in guesses. (context/skill/kpmg-fdd/references/workflow.md:L83-L86)
+- Over-broad disclaimers that undermine the section (“we don’t know anything”) without providing concrete missing information; house workflow says proceed with labeled placeholders and missing information rather than filling in guesses. (context/skill/kpmg-fdd/references/workflow.md:L83-L86)
 
 ---
 
@@ -161,7 +161,7 @@ Within “Other considerations,” dominant variants:
 B. Recommended default structure (for the skill) and allowed variants
 
 Default structure (recommended as the skill’s “canonical” output)
-This directly implements the “minimum required elements” in the current template (bridge + rationale by type + sensitivities/open items). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L6-L34)
+This directly implements the “minimum required elements” in the current template (bridge + rationale by type + sensitivities/missing information). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L6-L34)
 
 1. Section opener (“so what”)
 
@@ -184,7 +184,7 @@ This directly implements the “minimum required elements” in the current temp
 
 - Explicitly state why excluded and what could change. (context/docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md:L2047-L2049)
 
-6. Key sensitivities and open items (required)
+6. Key sensitivities and missing information (required)
 
 - Prioritize (P0/P1/P2) and tie to potential impact on adjusted EBITDA. (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L29-L34; context/skill/kpmg-fdd/references/qc-checklist.md:L43-L48)
 
@@ -192,7 +192,7 @@ Allowed variants (explicitly permitted)
 
 - Starting metric variant: If reported metric is EBT/EBIT/Net income (as some corpus entries reference net income bridges), allow a “Net income/EBT to EBITDA” definitional bridge before the adjustment bridge. (context/docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md:L2043-L2045)
 - Multi-period bridge: FY + LTM/TTM columns; must include units/periods and tie-outs. (context/skill/kpmg-fdd/references/exhibits-and-tables.md:L33-L39; context/skill/kpmg-fdd/references/writing-standards.md:L55-L63)
-- Qualitative-only (data missing): Bridge table still required, but numeric impacts marked “TBD” and every TBD must be mirrored in Open items (no silent gaps). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L15-L20; context/skill/kpmg-fdd/SKILL.md:L69-L73)
+- Qualitative-only (data missing): Bridge table still required, but numeric impacts marked “TBD” and every TBD must be mirrored in Missing information (no silent gaps). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L15-L20; context/skill/kpmg-fdd/SKILL.md:L69-L73)
 
 C. Required vs optional sub-blocks
 
@@ -202,7 +202,7 @@ Required sub-blocks (must always appear)
 - Reported-to-adjusted bridge table (even if partial/TBD). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L8-L20; context/skill/kpmg-fdd/references/qc-checklist.md:L9-L12)
 - Per adjustment: description, impact (or TBD), recurrence assessment, basis/source. (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L15-L20)
 - Adjustment rationale by type with defensibility components (what/why/how/residual risk) for material items. (context/skill/kpmg-fdd/references/writing-standards.md:L47-L54)
-- Key sensitivities and open items list (prioritized). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L29-L34; context/skill/kpmg-fdd/references/qc-checklist.md:L43-L48)
+- Key sensitivities and missing information list (prioritized). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L29-L34; context/skill/kpmg-fdd/references/qc-checklist.md:L43-L48)
 
 Optional sub-blocks (allowed when evidence exists / deal requires)
 
@@ -295,7 +295,7 @@ Failure mode 8: Other considerations not clearly separated from adjusted EBITDA 
 
 4. Draft markdown playbook (implementable)
 
-Below is a complete, implementation-ready playbook draft you can drop into the skill references as a section-specific playbook (suggested path: `context/skill/kpmg-fdd/references/analysis-playbooks/qoe-and-earnings-adjustments-playbook.md`). It is built to satisfy: the template’s minimum required elements (bridge + rationale by type + sensitivities/open items) (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L6-L34), the writing standards’ defensibility rules (context/skill/kpmg-fdd/references/writing-standards.md:L47-L54), and the QC “do not deliver” gates (context/skill/kpmg-fdd/references/qc-checklist.md:L5-L16).
+Below is a complete, implementation-ready playbook draft you can drop into the skill references as a section-specific playbook (suggested path: `context/skill/kpmg-fdd/references/analysis-playbooks/qoe-and-earnings-adjustments-playbook.md`). It is built to satisfy: the template’s minimum required elements (bridge + rationale by type + sensitivities/missing information) (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L6-L34), the writing standards’ defensibility rules (context/skill/kpmg-fdd/references/writing-standards.md:L47-L54), and the QC “do not deliver” gates (context/skill/kpmg-fdd/references/qc-checklist.md:L5-L16).
 
 ```markdown
 # Playbook: QoE and earnings adjustments (Style 2B, Gate 5C)
@@ -336,7 +336,7 @@ This section must be:
 2. Exhibit: Reported to adjusted bridge (primary)
 3. Adjustment rationale by type (narrative; top items)
 4. Other considerations (not adjusted; qualitative/unquantified)
-5. Key sensitivities and open items (prioritized)
+5. Key sensitivities and missing information (prioritized)
 
 ## Evidence and basis rules
 
@@ -388,7 +388,7 @@ For each MATERIAL adjustment (default: top 5 by magnitude or by risk), include:
 ## Open item behavior when data is missing
 
 - Use labeled placeholders only (e.g., $[x], [Date], [Period]).
-- Every placeholder in the bridge must appear in the Open items list with:
+- Every placeholder in the bridge must appear in the Missing information list with:
   - Priority (P0/P1/P2)
   - Data request
   - Expected impact direction (if known)
@@ -414,27 +414,27 @@ For each MATERIAL adjustment (default: top 5 by magnitude or by risk), include:
 
 ### PASS criteria
 
-- Bridge is present and auditable (ties or is explicitly TBD with open items)
+- Bridge is present and auditable (ties or is explicitly TBD with missing information)
 - Each material adjustment includes what/why/how/residual risk
 - Every adjustment has recurrence status and basis (or is clearly TBD with open item)
 - Other considerations are clearly separated from the adjusted EBITDA conclusion
-- Open items list is prioritized and explicitly linked to missing quantification
+- Missing information list is prioritized and explicitly linked to missing quantification
 
 ## Lint checks (implementation-friendly)
 
-- Required headers: “## Overview”, “## Reported to adjusted … bridge”, “## Adjustment rationale …”, “## Other considerations”, “## Key sensitivities and open items”
+- Required headers: “## Overview”, “## Reported to adjusted … bridge”, “## Adjustment rationale …”, “## Other considerations”, “## Key sensitivities and missing information”
 - Forbidden phrases: “adjacent table”, “following pages”, “above schedule”, “Not present in source report”
 - Required tokens:
   - At least one “Source:” line in the section
   - In bridge table: columns include Recurring? and Basis
-  - In open items: at least one P0/P1/P2 entry when any TBD exists
+  - In missing information: at least one P0/P1/P2 entry when any TBD exists
 ```
 
 ---
 
 5. Draft markdown template (implementable)
 
-This is a copy/paste-ready template draft intended to replace/extend the current baseline `context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md` while keeping its required elements (bridge, rationale by type, sensitivities/open items). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L6-L34)
+This is a copy/paste-ready template draft intended to replace/extend the current baseline `context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md` while keeping its required elements (bridge, rationale by type, sensitivities/missing information). (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L6-L34)
 
 ```markdown
 # QoE and earnings adjustments
@@ -474,7 +474,7 @@ Reported EBITDA of $[reported_ebitda] [increases/decreases] to adjusted EBITDA o
 
 **Tie-out check (required):**  
 Reported EBITDA ($[reported_ebitda]) + Total adjustments ($[net_adjustments]) = Adjusted EBITDA ($[adjusted_ebitda]).  
-If not tied or data missing, state: “Tie-out pending; see Open items.”
+If not tied or data missing, state: “Tie-out pending; see Missing information.”
 
 ## Adjustment rationale by type (required)
 
@@ -550,7 +550,7 @@ If not tied or data missing, state: “Tie-out pending; see Open items.”
   Open item: [data/support needed]. Potential impact direction: [increase/decrease/TBD].
 - **[Item 2]:** …
 
-## Key sensitivities and open items (required)
+## Key sensitivities and missing information (required)
 
 | Priority | Open item / data request | Why it matters          | Potential impact on Adj. EBITDA | Status                           |
 | -------- | ------------------------ | ----------------------- | ------------------------------- | -------------------------------- |
@@ -565,8 +565,8 @@ I started from `context/MANIFEST.md`, which locks Style target **2B** and Qualit
 
 Assumptions I am making to proceed (no questions, per instructions):
 
-- The implementation will generate this section either as a standalone section (“section_only”) or as part of a full report, and therefore must be self-contained (objective + bridge + rationale + open items). (Source baseline expectations: `context/skill/kpmg-fdd/references/report-structure.md`, `context/skill/kpmg-fdd/SKILL.md`).
-- Inputs may be incomplete; the system must not invent numbers and must convert missing facts into explicitly labeled open items and placeholders. (Source: `context/skill/kpmg-fdd/SKILL.md`, `context/skill/kpmg-fdd/references/writing-standards.md`, `context/skill/kpmg-fdd/references/qc-checklist.md`).
+- The implementation will generate this section either as a standalone section (“section_only”) or as part of a full report, and therefore must be self-contained (objective + bridge + rationale + missing information). (Source baseline expectations: `context/skill/kpmg-fdd/references/report-structure.md`, `context/skill/kpmg-fdd/SKILL.md`).
+- Inputs may be incomplete; the system must not invent numbers and must convert missing facts into explicitly labeled missing information and placeholders. (Source: `context/skill/kpmg-fdd/SKILL.md`, `context/skill/kpmg-fdd/references/writing-standards.md`, `context/skill/kpmg-fdd/references/qc-checklist.md`).
 
 ---
 
@@ -696,7 +696,7 @@ Observed disclaimers that are “section-native”
 - “Proposed adjustments are not necessarily all-inclusive and are based on information provided by Management to date… further analysis… could uncover additional…” appears repeatedly. (Source: `context/docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md`.)
 - “Items may be subjective in nature and… have not been included in the QoE schedule” is the standard “Other considerations” disclaimer. (Same source.)
 - “We did not obtain [X]; figures therefore based on [Y]” and “unable to quantify due to limitation of information” appear as common defensibility guards. (Sources: `context/docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md`, `context/docs/report-mining/section-corpus/adjustments/qoe-adjustments-library.md`.)
-- House guidance explicitly requires open items rather than invented details when basis is missing. (Source: `context/skill/kpmg-fdd/SKILL.md` and `context/skill/kpmg-fdd/references/writing-standards.md`.)
+- House guidance explicitly requires missing information rather than invented details when basis is missing. (Source: `context/skill/kpmg-fdd/SKILL.md` and `context/skill/kpmg-fdd/references/writing-standards.md`.)
 
 Keep-as-is patterns
 
@@ -709,7 +709,7 @@ Normalize/clean patterns
 
 Avoid patterns
 
-- Disclaimers that undermine the section’s purpose (e.g., so many caveats that the reader can’t tell what the adjusted EBITDA is meant to represent). The report structure explicitly expects a decision-useful reconciliation and open items to gate what’s missing. (Source: `context/skill/kpmg-fdd/references/report-structure.md`.)
+- Disclaimers that undermine the section’s purpose (e.g., so many caveats that the reader can’t tell what the adjusted EBITDA is meant to represent). The report structure explicitly expects a decision-useful reconciliation and missing information to gate what’s missing. (Source: `context/skill/kpmg-fdd/references/report-structure.md`.)
 
 ---
 
@@ -757,8 +757,8 @@ Required blocks (must always be present)
 4. Adjustment rationale narrative (grouped by type)
    - Must state what/why/how/residual risk for material items. (Source: “Defensibility rules for adjustments” in `context/skill/kpmg-fdd/references/writing-standards.md`.)
 
-5. Sensitivities and open items (P0/P1/P2)
-   - Must list what could materially move adjusted earnings (data gaps, disputes, cut-off). (Source: `context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md` and open items rules in `context/skill/kpmg-fdd/references/writing-standards.md`.)
+5. Sensitivities and missing information (P0/P1/P2)
+   - Must list what could materially move adjusted earnings (data gaps, disputes, cut-off). (Source: `context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md` and missing information rules in `context/skill/kpmg-fdd/references/writing-standards.md`.)
 
 Optional blocks (allowed when relevant)
 A) Definitional adjustments (only when EBITDA definition is non-standard or needs explicit reconciliation)
@@ -800,7 +800,7 @@ Failure mode 2: Invented numbers or unsupported quantitative claims
   - Placeholder lint: enforce the skill placeholder convention (e.g., `$[x]`, `[Date]`) when data missing. (Source: `context/skill/kpmg-fdd/SKILL.md`.)
 
 - Prevention controls:
-  - Prompt rule: “If any number is not in inputs, use `$[x]` and add to Open items.”
+  - Prompt rule: “If any number is not in inputs, use `$[x]` and add to Missing information.”
   - Template constraint: every table includes a “Basis” column; if blank → must be “Open item – basis needed”.
   - QC gate: “Material quantitative claims have no basis/source” → fail. (Source: `context/skill/kpmg-fdd/references/qc-checklist.md`.)
 
@@ -877,7 +877,7 @@ Reconcile reported earnings (typically EBITDA) to a normalized, decision-useful 
 This section must be client-ready and QC-defensible:
 
 - Include a reported → adjustments → adjusted bridge (do-not-deliver if missing).
-- Do not invent numbers; use placeholders and open items when data is missing.
+- Do not invent numbers; use placeholders and missing information when data is missing.
 
 References (authoritative):
 
@@ -930,7 +930,7 @@ If any of the above are missing:
 3. Exhibit: Adjustments detail table (auditability table)
 4. Adjustment rationale narrative (grouped by type; focus on material items)
 5. Other considerations (not adjusted; explicitly labeled)
-6. Sensitivities and open items (prioritized)
+6. Sensitivities and missing information (prioritized)
 
 ## Evidence and basis rules (defensibility)
 
@@ -1000,7 +1000,7 @@ Hard fail (do not deliver as “final”):
 
 - No reported-to-adjusted bridge table.
 - Bridge does not tie when numbers are present.
-- Material quantitative claims without basis/source and not flagged as open items.
+- Material quantitative claims without basis/source and not flagged as missing information.
 - Invented numbers (placeholders not clearly labeled).
 - Inconsistent units/periods within the section.
 
@@ -1009,7 +1009,7 @@ Pass checks:
 - Overview includes periods covered and a headline conclusion or clearly stated gating gap.
 - Each material adjustment includes what/why/how/residual risk and a basis.
 - Other considerations are clearly separated from adjustments.
-- Open items are prioritized (P0/P1/P2) and specific.
+- Missing information are prioritized (P0/P1/P2) and specific.
 ```
 
 ---
@@ -1119,7 +1119,7 @@ The following items may be subjective in nature and/or are not fully quantified;
 
 ---
 
-## Sensitivities and open items (prioritized)
+## Sensitivities and missing information (prioritized)
 
 ### P0 (gating / could materially change adjusted EBITDA)
 

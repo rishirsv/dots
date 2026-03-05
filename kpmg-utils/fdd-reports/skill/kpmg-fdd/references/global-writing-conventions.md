@@ -1,7 +1,9 @@
 # Global writing conventions
 
 This file defines rules that apply to every FDD section contract.
-Do not duplicate these rules in each section unless a section needs an explicit override.
+Do not duplicate these rules in each section unless a section needs an explicit override.3. Anchor all statements with concrete metrics, dates, and financial figures.
+4.When information needed to finalize a conclusion is missing, state the dependency inline using placeholders rather than creating a separate tracking block. Maintain template integrity and confidentiality seamlessly.
+Objective, Fact-Based Tone: Write as a skeptical advisor. Use neutral, precise language. Strip out all adjectives, promotional positioning, and "pitchbook" language.
 
 ## Core writing standard
 
@@ -17,6 +19,7 @@ When source data is missing, use inline placeholders in square brackets.
 Do not create open-item sections or open-item bullets.
 
 Allowed placeholders:
+
 - `$[x]`
 - `[x]%`
 - `[Date]`
@@ -25,6 +28,7 @@ Allowed placeholders:
 - `[Customer name]`
 
 Placeholder examples:
+
 - `Revenue increased by $[x] in [FY20XX], primarily due to [driver].`
 - `As of [Date], the Company operated [x] sites across [regions].`
 
@@ -38,16 +42,19 @@ Placeholder examples:
 - Preferred pattern: one source note per block or exhibit, not per bullet.
 
 Source note pattern:
+
 - `Source note: Management KPI pack and FY[20XX]-FY[20XX] financials.`
 
 ## Verbosity and length policy (global)
 
 Default target by section depth:
+
 - `concise`: 160-260 words
 - `standard`: 260-420 words
 - `deep`: 420-700 words
 
 Default density rules:
+
 - 4-8 bullets per section block
 - one core idea per bullet
 - sentence length usually 12-28 words
@@ -56,6 +63,7 @@ Default density rules:
 ## Language controls (global)
 
 Avoid:
+
 - `ensure`, `accurate`, `fair`, `reasonable`, `appropriate`
 - `significant`, `substantial`, `material` without numbers
 - `we analyzed`, `we reviewed`, `we performed`
@@ -63,12 +71,14 @@ Avoid:
 - `therefore`, `as a result`, `consequently` when unsupported
 
 Prefer:
+
 - concrete subject + verb + metric/time anchor
 - claim -> evidence -> implication micro-structure in dense bullets
 
 ## Structural preflight (global)
 
 Before finalizing any section:
+
 1. Required blocks exist and are in order.
 2. No unsupported headings were added.
 3. No open-item sections appear.

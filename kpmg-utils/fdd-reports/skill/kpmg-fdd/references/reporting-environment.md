@@ -1,7 +1,7 @@
 # Section contract: Reporting environment (accounting policy)
 
 ## Table of contents
-- Core rule
+- Core Principles
 - Writing guidance
 - Layout
 - Available slot shapes
@@ -11,7 +11,7 @@
 - Split policy rules
 - Full example
 
-## Core rule
+## Core Principles
 
 Present a clear view of the accounting and reporting environment that supports, or limits, comparability of financial information used in diligence.
 
@@ -29,7 +29,7 @@ Global writing, placeholder, and language rules are defined in `references/globa
 6. Present accounting policy and estimate topics in a watchlist format, and state the potential financial statement effect for each topic.
 7. Keep standards discussion company-specific; avoid generic textbook explanations that do not translate into diligence implications.
 8. Explain any accounting policy, reporting-period, or presentation changes over the analysis horizon and their comparability effect.
-9. Keep unresolved policy judgments inside `Comparability implications for diligence analysis`; do not create `Open items` or `Data requests` headings.
+9. Keep unresolved policy judgments inside `Comparability implications for diligence analysis`; do not create separate missing-information headings (for example, `Data requests`).
 10. Keep bullets complete, active, and client-ready.
 
 ## Layout
@@ -168,7 +168,7 @@ Source note: [source_note required]
 5. Mistake: discussing policy changes without stating comparability effect.
 - Fix: state the period of change and the directional impact on interpretation.
 
-6. Mistake: adding `Open items` or `Data requests` sections.
+6. Mistake: adding separate missing-information sections (for example, `Data requests`).
 - Fix: keep unresolved points inside `Comparability implications for diligence analysis`.
 
 7. Mistake: adding a comments column to tables.
@@ -183,7 +183,7 @@ Source note: [source_note required]
 5. `Financial systems and reporting architecture` includes systems, integration approach, and manual intervention.
 6. `Accounting policy and estimate watchlist` includes at least three policy topics and a stated financial statement effect for each.
 7. `Comparability implications for diligence analysis` includes at least two explicit implications tied to diligence interpretation.
-8. No `Open items` or `Data requests` headings appear.
+8. No missing-information headings (for example, `Data requests`) appear.
 9. Missing information is handled with inline placeholders, not unsupported claims.
 10. Render skeleton and full example are materially different (template vs worked output).
 11. Language and tone pass global conventions.

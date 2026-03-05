@@ -2,9 +2,9 @@
 
 Your current five-layer framing is close, but it’s not sufficient to hit your “as close as possible” target while staying controllable and auditable. The missing piece is a first-class “evidence + provenance layer” that is structurally integrated into planning, drafting, and QC, plus a first-class “exemplar retrieval + structural skeleton layer” that explicitly selects (and then enforces) the historical structure you want to imitate.
 
-My recommendation is a constrained generation system that treats the corpus as a “style/structure reference library” (validated as verbatim) and uses your existing section templates/playbooks as the deterministic backbone. The model should not be asked to “write a section” from scratch. Instead, it should (1) generate a structured plan in a strict schema, (2) fill parameterized templates (with explicit evidence/basis per claim), (3) run automated QC and a self-critique pass against explicit writing and defensibility rules, and (4) fail safely by converting missing inputs into prioritized open items instead of inventing content.
+My recommendation is a constrained generation system that treats the corpus as a “style/structure reference library” (validated as verbatim) and uses your existing section templates/playbooks as the deterministic backbone. The model should not be asked to “write a section” from scratch. Instead, it should (1) generate a structured plan in a strict schema, (2) fill parameterized templates (with explicit evidence/basis per claim), (3) run automated QC and a self-critique pass against explicit writing and defensibility rules, and (4) fail safely by converting missing inputs into prioritized missing information instead of inventing content.
 
-The key architectural move is to separate “what to say” (facts/adjustments/risks/open items with provenance) from “how to say it” (style contract + structural skeleton + section playbook + template). This lets you push similarity high without sacrificing auditability.
+The key architectural move is to separate “what to say” (facts/adjustments/risks/missing information with provenance) from “how to say it” (style contract + structural skeleton + section playbook + template). This lets you push similarity high without sacrificing auditability.
 
 You already have the right foundations in-repo: (a) a deterministic, validated section corpus (23 reports) (context/docs/report-mining/section-corpus/README.md:L15-L41; context/docs/report-mining/section-corpus/validation/verbatim-validation-report.md:L3-L36), (b) canonical report structure + aliasing (context/skill/kpmg-fdd/references/report-structure.md:L37-L58), (c) writing defensibility standards with explicit “facts vs judgments” and “basis line” requirements (context/skill/kpmg-fdd/references/writing-standards.md:L21-L46), (d) section templates for consistent structure (e.g., context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L6-L34), (e) playbooks for the three core quantitative workstreams (QoE/WC/Net debt) (context/skill/kpmg-fdd/references/analysis-playbooks/qoe-playbook.md:L8-L36; context/skill/kpmg-fdd/references/analysis-playbooks/working-capital-playbook.md:L8-L33; context/skill/kpmg-fdd/references/analysis-playbooks/net-debt-playbook.md:L8-L33), and (f) QC checklists and deterministic scripts (context/skill/kpmg-fdd/references/qc-checklist.md:L5-L16; context/skill/kpmg-fdd/scripts/check_report_structure.py:L9-L15).
 
@@ -84,16 +84,16 @@ Flex: phrasing, length, level of detail, and industry-specific KPI/risk modules�
 2.1 Executive summary
 
 Canonical objective
-“Give the decision-maker the ‘so what’ quickly” with deal context, key conclusions, risks/mitigants, and open items (context/skill/kpmg-fdd/references/report-structure.md:L96-L104; context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L3-L25).
+“Give the decision-maker the ‘so what’ quickly” with deal context, key conclusions, risks/mitigants, and missing information (context/skill/kpmg-fdd/references/report-structure.md:L96-L104; context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L3-L25).
 
 Required substructure (system-locked)
 
 - Deal and scope at a glance
 - Key conclusions by workstream (QoE, WC, Net debt when in scope)
 - Top risks and mitigants (ranked)
-- Open items that could move conclusions (prioritized)
+- Missing information that could move conclusions (prioritized)
 
-This mirrors the template’s recommended structure (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L8-L25) and the report template’s “Key conclusions / risks / open items” layout (context/skill/kpmg-fdd/assets/report-template.md:L13-L27).
+This mirrors the template’s recommended structure (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L8-L25) and the report template’s “Key conclusions / risks / missing information” layout (context/skill/kpmg-fdd/assets/report-template.md:L13-L27).
 
 Common narrative patterns (corpus)
 
@@ -104,7 +104,7 @@ Common narrative patterns (corpus)
 Common failure modes
 
 - Purely descriptive summary with no findings (explicitly called out as a pitfall) (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L30-L32; context/skill/kpmg-fdd/references/qc-checklist.md:L9-L10).
-- Missing open items list (template pitfall; QC “do not deliver”) (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L31-L32; context/skill/kpmg-fdd/references/qc-checklist.md:L9-L16).
+- Missing missing information list (template pitfall; QC “do not deliver”) (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L31-L32; context/skill/kpmg-fdd/references/qc-checklist.md:L9-L16).
 - Overconfident tone without uncertainty labels (violates writing standards) (context/skill/kpmg-fdd/references/writing-standards.md:L13-L20).
 
 Minimum evidence requirements
@@ -214,13 +214,13 @@ Flexible: amount of narrative detail; whether to include margin bridge table (on
 2.4 QoE and earnings adjustments
 
 Canonical objective
-Reconcile reported earnings to normalized earnings with a clear bridge, evidence per adjustment, commentary on recurrence/sustainability, and open items (context/skill/kpmg-fdd/references/report-structure.md:L128-L136). This is aligned with the QoE template and playbook (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L8-L34; context/skill/kpmg-fdd/references/analysis-playbooks/qoe-playbook.md:L15-L36).
+Reconcile reported earnings to normalized earnings with a clear bridge, evidence per adjustment, commentary on recurrence/sustainability, and missing information (context/skill/kpmg-fdd/references/report-structure.md:L128-L136). This is aligned with the QoE template and playbook (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L8-L34; context/skill/kpmg-fdd/references/analysis-playbooks/qoe-playbook.md:L15-L36).
 
 Required substructure (locked)
 A. Overview (purpose + EBITDA definition + period)
 B. Reported → adjusted bridge exhibit (table)
 C. Adjustment rationale grouped by type
-D. Sensitivities/open items
+D. Sensitivities/missing information
 
 Exhibit discipline is explicitly required: bridge table is the primary exhibit; include per-adjustment basis and recurrence labeling (context/skill/kpmg-fdd/references/section-templates/qoe-adjustments.md:L8-L20; context/skill/kpmg-fdd/references/exhibits-and-tables.md:L41-L51). QC “do not deliver” includes missing bridge or bridge not summing (context/skill/kpmg-fdd/references/qc-checklist.md:L9-L12; context/skill/kpmg-fdd/references/qc-checklist.md:L20-L27).
 
@@ -247,13 +247,13 @@ Variation by industry
 Use an adjustment taxonomy with optional industry “common adjustment hints” drawn from the adjustment library (examples include owner comp/personal expenses, transaction expenses, audit fee normalization, revenue cut-off accruals) (context/docs/report-mining/section-corpus/adjustments/qoe-adjustments-library.md:L19-L43). The key is: these are hints for what to look for; the system must not assert them unless evidenced.
 
 What to lock vs keep flexible
-Lock: bridge table schema, adjustment grouping, per-adjustment rationale structure, and open items list.
+Lock: bridge table schema, adjustment grouping, per-adjustment rationale structure, and missing information list.
 Flexible: category names (but map to canonical taxonomy internally), narrative length, whether to include “other considerations” subheading.
 
 2.5 Working capital
 
 Canonical objective
-Assess normalized WC and peg implications; define WC; normalize vs actual; seasonality/volatility commentary if evidenced; open items (context/skill/kpmg-fdd/references/report-structure.md:L139-L147). This aligns to WC template and playbook (context/skill/kpmg-fdd/references/section-templates/working-capital.md:L8-L29; context/skill/kpmg-fdd/references/analysis-playbooks/working-capital-playbook.md:L15-L33).
+Assess normalized WC and peg implications; define WC; normalize vs actual; seasonality/volatility commentary if evidenced; missing information (context/skill/kpmg-fdd/references/report-structure.md:L139-L147). This aligns to WC template and playbook (context/skill/kpmg-fdd/references/section-templates/working-capital.md:L8-L29; context/skill/kpmg-fdd/references/analysis-playbooks/working-capital-playbook.md:L15-L33).
 
 Required substructure (locked)
 A. Overview (purpose + definition + period)
@@ -261,7 +261,7 @@ B. Working capital definition table (included/excluded + rationale)
 C. Historical behavior (trend/seasonality; caveats if only snapshots)
 D. Normalized vs actual (estimate/range or explicit blockers)
 E. Implications (peg sensitivity + close-date considerations)
-F. Open items
+F. Missing information
 
 The exhibits playbook explicitly recommends starting with a definition table and then normalization exhibit (context/skill/kpmg-fdd/references/exhibits-and-tables.md:L52-L60).
 
@@ -290,20 +290,20 @@ Variation by industry
 - Inventory-heavy: inventory detail becomes critical; if absent, open item and caveat.
 
 What to lock vs keep flexible
-Lock: definition table, explicit caveats, implication section, open items.
+Lock: definition table, explicit caveats, implication section, missing information.
 Flexible: whether to include separate AR/AP/inventory submodules (triggered by evidence availability and industry overlay).
 
 2.6 Net debt and debt-like items
 
 Canonical objective
-Identify net debt and debt-like items relevant to purchase price; debt schedule summary; list of debt-like reviewed items and conclusions; cut-off considerations; open items (context/skill/kpmg-fdd/references/report-structure.md:L150-L158). This aligns to net debt template and playbook (context/skill/kpmg-fdd/references/section-templates/net-debt.md:L8-L22; context/skill/kpmg-fdd/references/analysis-playbooks/net-debt-playbook.md:L15-L33).
+Identify net debt and debt-like items relevant to purchase price; debt schedule summary; list of debt-like reviewed items and conclusions; cut-off considerations; missing information (context/skill/kpmg-fdd/references/report-structure.md:L150-L158). This aligns to net debt template and playbook (context/skill/kpmg-fdd/references/section-templates/net-debt.md:L8-L22; context/skill/kpmg-fdd/references/analysis-playbooks/net-debt-playbook.md:L15-L33).
 
 Required substructure (locked)
 A. Overview (definition + scope)
 B. Debt schedule exhibit
 C. Cash considerations (restricted vs unrestricted; cut-off)
 D. Debt-like items checklist + conclusions table
-E. Key risks/open items
+E. Key risks/missing information
 
 Exhibits guidance requires a schedule and separately listing debt-like items reviewed (context/skill/kpmg-fdd/references/exhibits-and-tables.md:L61-L66).
 
@@ -330,7 +330,7 @@ Variation by industry
 - Financial services: “net debt” may not be the primary mechanic; system should still produce a debt-like review table but may need different definition—handle via overlay + explicit definition note.
 
 What to lock vs keep flexible
-Lock: schedule + debt-like checklist + cut-off notes + open items.
+Lock: schedule + debt-like checklist + cut-off notes + missing information.
 Flexible: the specific debt-like line items reviewed (should be generated from a taxonomy but only populated when evidence exists).
 
 2.7 Risks and red flags
@@ -366,24 +366,24 @@ What to lock vs keep flexible
 Lock: risk register table fields, severity labels, mitigant/next step requirement.
 Flexible: whether to include a short “key findings bullets” preface (to match corpus style) before the table.
 
-2.8 Open items & data requests
+2.8 Missing information & data requests
 
 Canonical objective
-Make missing information explicit and prioritized (context/skill/kpmg-fdd/references/report-structure.md:L186-L189). Template requires a table with priority, why it matters, needed for, owner, status (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
+Make missing information explicit and prioritized (context/skill/kpmg-fdd/references/report-structure.md:L186-L189). Template requires a table with priority, why it matters, needed for, owner, status (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
 
 Corpus reality and implication
-Most corpus entries for this section are “Not present in source report,” except at least one report that includes an appendix list of outstanding info (project-autobahn) (context/docs/report-mining/section-corpus/sections/open-items-and-data-requests.md:L15-L16; context/docs/report-mining/section-corpus/sections/open-items-and-data-requests.md:L29-L53). That means your generator cannot rely on abundant stylistic examples; it must synthesize this section from (a) missing evidence detected elsewhere, (b) section playbook “inputs to request” lists (e.g., QoE playbook inputs) (context/skill/kpmg-fdd/references/analysis-playbooks/qoe-playbook.md:L8-L14), and (c) explicit gaps flagged during drafting/QC.
+Most corpus entries for this section are “Not present in source report,” except at least one report that includes an appendix list of outstanding info (project-autobahn) (context/docs/report-mining/section-corpus/sections/missing-information-and-data-requests.md:L15-L16; context/docs/report-mining/section-corpus/sections/missing-information-and-data-requests.md:L29-L53). That means your generator cannot rely on abundant stylistic examples; it must synthesize this section from (a) missing evidence detected elsewhere, (b) section playbook “inputs to request” lists (e.g., QoE playbook inputs) (context/skill/kpmg-fdd/references/analysis-playbooks/qoe-playbook.md:L8-L14), and (c) explicit gaps flagged during drafting/QC.
 
 Required substructure (locked)
 
-- Open items table with P0/P1/P2 guidance (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
-- Seller responsiveness watch-outs (optional) (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L17-L18).
-- Next steps (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L20-L23).
+- Missing information table with P0/P1/P2 guidance (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
+- Seller responsiveness watch-outs (optional) (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L17-L18).
+- Next steps (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L20-L23).
 
 Common failure modes
 
-- List exists but no “why it matters” and no prioritization (template pitfalls) (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L24-L26).
-- Open items not integrated with conclusions/risk register (writing standards “running list” requirement) (context/skill/kpmg-fdd/references/writing-standards.md:L64-L70).
+- List exists but no “why it matters” and no prioritization (template pitfalls) (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L24-L26).
+- Missing information not integrated with conclusions/risk register (writing standards “running list” requirement) (context/skill/kpmg-fdd/references/writing-standards.md:L64-L70).
 
 Minimum evidence requirements
 This section is specifically about missing evidence; the system should generate it deterministically from a “MissingEvidence” list produced by earlier stages.
@@ -463,8 +463,8 @@ Each section gets modular blocks (enables strictness + adaptability):
 - Risks modules
   RiskRegisterTable, RedFlagEscalations (context/skill/kpmg-fdd/references/section-templates/risks-and-red-flags.md:L8-L23)
 
-- Open items modules
-  OpenItemsTable, SellerResponsiveness, NextSteps (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L23)
+- Missing information modules
+  OpenItemsTable, SellerResponsiveness, NextSteps (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L23)
 
   3.3 Adjustment-taxonomy treatment (QoE / WC / Net debt)
 
@@ -505,9 +505,9 @@ Hard rules (enforced by linter + QC, not only prompt)
 
 - Basis required for any material quantitative claim (context/skill/kpmg-fdd/references/writing-standards.md:L40-L46; context/skill/kpmg-fdd/references/qc-checklist.md:L11-L16).
 
-- If an exhibit is missing, claims that depend on it must be reframed as questions or open items (context/skill/kpmg-fdd/references/qc-checklist.md:L31-L35).
+- If an exhibit is missing, claims that depend on it must be reframed as questions or missing information (context/skill/kpmg-fdd/references/qc-checklist.md:L31-L35).
 
-- Missing inputs become Open Items with priority and “why it matters” (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
+- Missing inputs become Open Items with priority and “why it matters” (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
 
 Soft rules (style contract)
 
@@ -570,7 +570,7 @@ Key slot types to avoid generic fluff
 
 - Assumptions slots: explicitly labeled assumptions; must auto-generate open item if assumption is material.
 
-- Open items slots: prioritized items with “why it matters” (template) (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
+- Missing information slots: prioritized items with “why it matters” (template) (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
 
 - Evidence slots: basis lines for each exhibit and for material quantitative claims (context/skill/kpmg-fdd/references/writing-standards.md:L40-L46; context/skill/kpmg-fdd/references/exhibits-and-tables.md:L20-L27).
 
@@ -580,7 +580,7 @@ Hard guardrails (deterministic)
 
 - Minimum exhibit presence: if QoE section exists, must include a bridge table near it (existing check_report_structure script already has a heuristic for this) (context/skill/kpmg-fdd/scripts/check_report_structure.py:L9-L13; context/skill/kpmg-fdd/scripts/check_report_structure.py:L98-L101).
 
-- Placeholder leakage: detect <…>, TBD, $[x], [Date]. Existing script flags these (context/skill/kpmg-fdd/scripts/check_report_structure.py:L38-L45). Update policy: allow placeholders only in “draft” mode; disallow in “final” mode unless explicitly labeled and mirrored in open items.
+- Placeholder leakage: detect <…>, TBD, $[x], [Date]. Existing script flags these (context/skill/kpmg-fdd/scripts/check_report_structure.py:L38-L45). Update policy: allow placeholders only in “draft” mode; disallow in “final” mode unless explicitly labeled and mirrored in missing information.
 
 - “Driver claims” linter: if narrative claims “mix/pricing/volume drove X,” require a referenced evidence item (template explicitly prohibits unsupported driver assertions) (context/skill/kpmg-fdd/references/section-templates/pnl-overview.md:L26-L28).
 
@@ -596,11 +596,11 @@ Mechanism
 Create overlay modules that attach to playbooks/templates as optional blocks and KPI/risk checklists. Overlays should never force content; they should provide:
 
 - A list of “candidate KPIs” and their definitions (for consistency)
-- A list of “common diligence questions” that become open items if data not available
+- A list of “common diligence questions” that become missing information if data not available
 - Optional narrative patterns (e.g., how to describe deferred revenue behavior in SaaS)
 
 Consumption rule
-Overlays only populate when the Evidence Ledger contains matching data. Otherwise, they contribute open items (P1/P2).
+Overlays only populate when the Evidence Ledger contains matching data. Otherwise, they contribute missing information (P1/P2).
 
 4.5 Output-level constraints (tone, tense, quantification style, caveat style)
 
@@ -677,7 +677,7 @@ SectionPlan fields (minimum)
   - confidence: High/Med/Low (derived from evidence type)
   - if_missing_evidence: open_item_id
 
-- open_items: list (with P0/P1/P2, why it matters, needed for) (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16)
+- open_items: list (with P0/P1/P2, why it matters, needed for) (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16)
 
   5.3 Drafting prompts by section
 
@@ -692,7 +692,7 @@ All drafting prompts should be “slot-filling prompts,” not open-ended writin
 Section-specific prompt considerations
 
 - Executive summary drafting prompt must:
-  - force inclusion of open items table and risks/mitigants (template) (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L18-L25)
+  - force inclusion of missing information table and risks/mitigants (template) (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L18-L25)
   - prevent “we reviewed X” without findings (template pitfall) (context/skill/kpmg-fdd/references/section-templates/executive-summary.md:L30-L32)
 
 - Historical performance drafting prompt must:
@@ -757,7 +757,7 @@ Automated structure checks
   - Gate: must include canonical section heading (report-structure insists on canonical names) (context/skill/kpmg-fdd/references/report-structure.md:L39-L41).
 
 - Required block presence per section
-  - Executive summary must include findings + open items (QC critical) (context/skill/kpmg-fdd/references/qc-checklist.md:L9-L10).
+  - Executive summary must include findings + missing information (QC critical) (context/skill/kpmg-fdd/references/qc-checklist.md:L9-L10).
   - QoE must include bridge and tie (context/skill/kpmg-fdd/references/qc-checklist.md:L10-L12).
   - Working capital must include definition + normalization or explicit blockers (template) (context/skill/kpmg-fdd/references/section-templates/working-capital.md:L8-L22).
 
@@ -794,19 +794,19 @@ Hard checks
 Operational gates (suggested)
 
 - Executive summary
-  Pass if: includes key conclusions + risks + open items; no unlabeled placeholders; no unsupported quant.
-  Fail if: descriptive only; no open items (QC critical) (context/skill/kpmg-fdd/references/qc-checklist.md:L9-L16).
+  Pass if: includes key conclusions + risks + missing information; no unlabeled placeholders; no unsupported quant.
+  Fail if: descriptive only; no missing information (QC critical) (context/skill/kpmg-fdd/references/qc-checklist.md:L9-L16).
 
 - Historical performance
   Pass if: periods/units consistent; drivers only asserted with evidence; includes data quality notes.
   Fail if: mixed periods without labeling; unsupported driver claims (context/skill/kpmg-fdd/references/section-templates/pnl-overview.md:L26-L28).
 
 - QoE
-  Pass if: bridge present and ties; per-adjustment basis; open items list; adjustment rationale includes why/how/residual risk.
+  Pass if: bridge present and ties; per-adjustment basis; missing information list; adjustment rationale includes why/how/residual risk.
   Fail if: missing bridge or tie-out (QC critical) (context/skill/kpmg-fdd/references/qc-checklist.md:L10-L12).
 
 - Working capital / Net debt
-  Pass if: definition + schedule/checklist + cut-off notes + open items.
+  Pass if: definition + schedule/checklist + cut-off notes + missing information.
   Fail if: unclear definition; missing debt-like review; unsupported quant.
 
   6.6 Human review workflow integration
@@ -867,17 +867,17 @@ Go/no-go checkpoint
 
 Phase 2: Evidence Ledger + SectionPlan schema (Outcome: audit foundation)
 Non-technical outcome
-Every section can be planned with explicit evidence requirements and open items, before any narrative is written.
+Every section can be planned with explicit evidence requirements and missing information, before any narrative is written.
 
 Build tasks
 
 - Define EvidenceRef schema and Evidence Ledger store (JSON).
 - Define SectionPlan schema (JSON Schema) and validators.
-- Build “missing evidence detector” that populates open items.
+- Build “missing evidence detector” that populates missing information.
 
 Dependencies
 
-- Writing standards and open items template provide the rules and table fields (context/skill/kpmg-fdd/references/writing-standards.md:L38-L46; context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
+- Writing standards and missing information template provide the rules and table fields (context/skill/kpmg-fdd/references/writing-standards.md:L38-L46; context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
 
 Risks & mitigations
 
@@ -891,7 +891,7 @@ Owners
 Tests
 
 - Lint rules: reject quantitative claims without basis.
-- Open items generation tests: missing required inputs produce P0/P1 items.
+- Missing information generation tests: missing required inputs produce P0/P1 items.
 
 Go/no-go checkpoint
 
@@ -934,13 +934,13 @@ Go/no-go checkpoint
 
 Phase 4: Expand to all required sections + cross-section consistency (Outcome: end-to-end report draft)
 Non-technical outcome
-You can generate all required sections with consistent periods/units/definitions and a consolidated open items section.
+You can generate all required sections with consistent periods/units/definitions and a consolidated missing information section.
 
 Build tasks
 
-- Implement executive summary, business overview, historical performance, risks, open items sections using templates and playbooks (context/skill/kpmg-fdd/references/report-structure.md:L94-L189).
+- Implement executive summary, business overview, historical performance, risks, missing information sections using templates and playbooks (context/skill/kpmg-fdd/references/report-structure.md:L94-L189).
 - Add cross-section consistency checks (units/periods/definitions) (context/skill/kpmg-fdd/references/writing-standards.md:L55-L63).
-- Aggregate open items across sections into the final open items table.
+- Aggregate missing information across sections into the final missing information table.
 
 Dependencies
 
@@ -949,7 +949,7 @@ Dependencies
 
 Risks & mitigations
 
-- Open items section lack of corpus examples: mitigate by deterministic synthesis from missing evidence (template exists) (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
+- Missing information section lack of corpus examples: mitigate by deterministic synthesis from missing evidence (template exists) (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
 
 Owners
 
@@ -1016,7 +1016,7 @@ A. Global contracts and schemas
 - Purpose: Strict plan format required before drafting.
 - Consumer: orchestrator, QC, eval, humans.
 - Path: `context/skill/kpmg-fdd/schemas/section-plan.schema.json`
-- Acceptance: includes exhibits list and open items list, aligned to open items template fields (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
+- Acceptance: includes exhibits list and missing information list, aligned to missing information template fields (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
 
 B. Playbooks 4. Playbook Schema
 
@@ -1036,7 +1036,7 @@ B. Playbooks 4. Playbook Schema
   - `.../working-capital.yaml`
   - `.../net-debt-and-debt-like-items.yaml`
   - `.../risks-and-red-flags.yaml`
-  - `.../open-items-and-data-requests.yaml`
+  - `.../missing-information-and-data-requests.yaml`
 
 - Acceptance: each playbook encodes minimum content from report-structure (context/skill/kpmg-fdd/references/report-structure.md:L94-L189) and cites evidence requirements consistent with writing standards (context/skill/kpmg-fdd/references/writing-standards.md:L40-L46).
 
@@ -1150,7 +1150,7 @@ Why this is best for the end goal
 
 - It explicitly optimizes for high similarity in structure and sequencing by selecting and enforcing historical skeletons, rather than relying on implicit imitation.
 - It operationalizes defensibility requirements (basis lines, no invented numbers, open item conversion) as data structures and gates aligned to existing writing standards and QC checklist (context/skill/kpmg-fdd/references/writing-standards.md:L40-L46; context/skill/kpmg-fdd/references/qc-checklist.md:L5-L16).
-- It is practical for diligence teams: deterministic outputs with clear exhibits, open items, and QC logs; model usage adds narrative value without being the single point of failure.
+- It is practical for diligence teams: deterministic outputs with clear exhibits, missing information, and QC logs; model usage adds narrative value without being the single point of failure.
 
 Top 10 next actions to start immediately
 
@@ -1176,7 +1176,7 @@ Global contracts & schemas
   Acceptance: supports period/units/source/basis requirements (context/skill/kpmg-fdd/references/exhibits-and-tables.md:L20-L27).
 
 - `context/skill/kpmg-fdd/schemas/section-plan.schema.json`
-  Acceptance: includes open items fields aligned to template (context/skill/kpmg-fdd/references/section-templates/open-items-and-data-requests.md:L8-L16).
+  Acceptance: includes missing information fields aligned to template (context/skill/kpmg-fdd/references/section-templates/missing-information-and-data-requests.md:L8-L16).
 
 - `context/skill/kpmg-fdd/schemas/playbook.schema.json`
 
@@ -1193,7 +1193,7 @@ Playbooks (YAML)
 - `context/skill/kpmg-fdd/playbooks/working-capital.yaml`
 - `context/skill/kpmg-fdd/playbooks/net-debt-and-debt-like-items.yaml`
 - `context/skill/kpmg-fdd/playbooks/risks-and-red-flags.yaml`
-- `context/skill/kpmg-fdd/playbooks/open-items-and-data-requests.yaml`
+- `context/skill/kpmg-fdd/playbooks/missing-information-and-data-requests.yaml`
   Acceptance: each encodes minimum content per canonical structure (context/skill/kpmg-fdd/references/report-structure.md:L94-L189).
 
 Templates

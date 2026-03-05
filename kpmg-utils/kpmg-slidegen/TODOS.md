@@ -54,6 +54,11 @@ verification-state: partially-verified
 - [ ] Add a golden deckspec example library (one polished reference per supported slide type with rationale).
 - [ ] Add a QA interpretation guide mapping common errors/warnings to concrete fix actions.
 - [ ] Add a brief release checklist for template package changes.
+- [ ] Add direct source-to-deck compilation flows that turn SEC/data-room/markdown inputs into canonical `deckSpec` before render.
+- [ ] Add first-class skill authoring modes for `zero-context planning`, `mid-thread compile`, and `surgical revision` with explicit prompts and acceptance criteria.
+- [ ] Add a QA auto-repair loop that converts `qa.json` findings into targeted `deckSpec` edits and slide rewrite suggestions.
+- [ ] Expand the slide vocabulary with higher-value consulting layouts and safer chart grammars (timelines, KPI dashboards, appendix/reference slides, org/perimeter variants, heatmaps, approved chart presets).
+- [ ] Add source traceability features such as per-slide evidence manifests and optional evidence appendix generation from authored sources.
 
 ## Parked By Decision
 

@@ -11,9 +11,9 @@ function isPlainObject(value) {
 function normalizeTierName(value) {
   const raw = String(value || '').trim().toLowerCase();
   if (!raw) return '';
-  if (raw === 'top' || raw === 'toptier') return 'top';
-  if (raw === 'mid' || raw === 'middle' || raw === 'midtier') return 'mid';
-  if (raw === 'bottom' || raw === 'bottomtier') return 'bottom';
+  if (raw === 'top') return 'top';
+  if (raw === 'mid') return 'mid';
+  if (raw === 'bottom') return 'bottom';
   return '';
 }
 
@@ -45,13 +45,13 @@ function normalizeNode(item, tier, idx, errors) {
     return null;
   }
 
-  const label = String(item.label || item.title || item.name || item.text || '').trim();
+  const label = String(item.label ?? '').trim();
   if (!label) {
     errors.push(`${tier}Tier[${idx}] is missing label`);
     return null;
   }
 
-  const pct = normalizePct(item.pct ?? item.percent ?? item.share ?? item.ownership);
+  const pct = normalizePct(item.pct);
   return { label, pct };
 }
 

@@ -1,7 +1,7 @@
 # Section contract: Net working capital
 
 ## Table of contents
-- Core rule
+- Core Principles
 - Writing guidance
 - Layout
 - Available slot shapes
@@ -11,7 +11,7 @@
 - Split policy rules
 - Full example
 
-## Core rule
+## Core Principles
 
 Present a period-anchored, purchase-price-relevant net working capital view that moves clearly from reported balances to normalized balances.
 
@@ -29,7 +29,7 @@ Global writing, placeholder, and language rules are defined in `references/globa
 6. Quantify major operating line movements and identify component drivers within each line (for example, trade AR, contract assets, accrued payroll, deferred revenue).
 7. Use working-capital days metrics (`DSO`, `DIO`, `DPO`) when available and tie them to specific balance movements.
 8. If a target / peg definition exists, state source, basis, and resulting surplus / deficit on that basis. If no target / peg definition exists, state this explicitly and keep the section focused on normalized range and sensitivities.
-9. Keep unresolved or not fully quantifiable points in `Other considerations`; do not create `Open items` or `Data requests` headings.
+9. Keep unresolved or not fully quantifiable points in `Other considerations`; do not create separate missing-information headings (for example, `Data requests`).
 10. Keep all bullets as complete, active-voice sentences and avoid process or extraction language.
 
 ## Layout
@@ -184,7 +184,7 @@ Source note: [source_note required]
 4. The normalization bridge includes reported, definitional, diligence, pro forma (or explicit N/A), and normalized rows.
 5. `Net working capital adjustments and rationale` includes at least four numbered items with quantified impact and treatment rationale.
 6. `Target / peg assessment` either (a) states sourced target basis and comparison or (b) explicitly states that target basis/value is not available and no surplus/deficit conclusion is made.
-7. No `Open items` or `Data requests` headings appear.
+7. No missing-information headings (for example, `Data requests`) appear.
 8. Missing information is handled with inline placeholders, not unsupported claims.
 9. Render skeleton and full example are materially different (template vs worked output).
 10. Language and tone pass global conventions.

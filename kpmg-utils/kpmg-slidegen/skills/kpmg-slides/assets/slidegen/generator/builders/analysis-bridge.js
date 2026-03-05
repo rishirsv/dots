@@ -15,6 +15,10 @@ function resolveBridgeStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
   const bridgeTokens = resolvedTheme.components?.[THEME_COMPONENT_KEYS.analysisBridge] || {};
   const bridgeColors = bridgeTokens.colors || {};
+  const bridgeLines = bridgeTokens.lines || {};
+  const textTokens = resolvedTheme.components?.text || {};
+  const marginNone = toFinite(textTokens?.margin?.none, 0);
+  const marginNoneArray = [marginNone, marginNone, marginNone, marginNone];
   return {
     colors: {
       positive: resolvedTheme.colors.kpmgCyan,
@@ -35,19 +39,45 @@ function resolveBridgeStyles(theme = null) {
       body: resolvedTheme.typeSizes.body,
       source: resolvedTheme.typeSizes.source,
     },
+    lines: {
+      baselinePt: toFinite(bridgeLines.baselinePt, 0.6),
+      barEdgePt: toFinite(bridgeLines.barEdgePt, 0.2),
+      connectorPt: toFinite(bridgeLines.connectorPt, 0.5),
+      phaseBracketPt: toFinite(bridgeLines.phaseBracketPt, 1),
+      phaseBadgePt: toFinite(bridgeLines.phaseBadgePt, 0.5),
+      analysisBoxPt: toFinite(bridgeLines.analysisBoxPt, 1),
+      analysisBadgePt: toFinite(bridgeLines.analysisBadgePt, 0.5),
+      strapBandPt: toFinite(bridgeLines.strapBandPt, 0.5),
+    },
+    typography: {
+      bridgeValue: Number(bridgeTokens?.typography?.bridgeValue),
+      bridgeLabel: Number(bridgeTokens?.typography?.bridgeLabel),
+      phaseBadge: Number(bridgeTokens?.typography?.phaseBadge),
+      analysisBadge: Number(bridgeTokens?.typography?.analysisBadge),
+      analysisHeading: Number(bridgeTokens?.typography?.analysisHeading),
+      analysisBodyDelta: Number(bridgeTokens?.typography?.analysisBodyDelta),
+      error: Number(bridgeTokens?.typography?.error),
+    },
+    text: {
+      marginNone,
+      marginNoneArray,
+    },
   };
 }
 
 function typographyDefaults(styles) {
+  const defaults = styles.typography || {};
   return Object.freeze({
     strapline: styles.typeSizes.strapline,
-    bridgeValue: 6.5,
-    bridgeLabel: 6,
-    phaseBadge: 8,
-    analysisBadge: 7,
-    analysisHeading: styles.typeSizes.body,
-    analysisBody: Math.max(8, styles.typeSizes.body - 1),
-    error: 9,
+    bridgeValue: Number.isFinite(defaults.bridgeValue) ? defaults.bridgeValue : styles.typeSizes.body,
+    bridgeLabel: Number.isFinite(defaults.bridgeLabel) ? defaults.bridgeLabel : styles.typeSizes.source,
+    phaseBadge: Number.isFinite(defaults.phaseBadge) ? defaults.phaseBadge : styles.typeSizes.body,
+    analysisBadge: Number.isFinite(defaults.analysisBadge) ? defaults.analysisBadge : styles.typeSizes.source,
+    analysisHeading: Number.isFinite(defaults.analysisHeading) ? defaults.analysisHeading : styles.typeSizes.body,
+    analysisBody:
+      styles.typeSizes.body +
+      (Number.isFinite(defaults.analysisBodyDelta) ? defaults.analysisBodyDelta : 0),
+    error: Number.isFinite(defaults.error) ? defaults.error : styles.typeSizes.body,
   });
 }
 
@@ -168,7 +198,7 @@ function renderBridgeBars(slide, bars, bridgeArea, numberStyle, typography, styl
     y: zeroY,
     w: plot.w,
     h: 0,
-    line: { color: styles.colors.baseline, pt: 0.6 },
+    line: { color: styles.colors.baseline, pt: styles.lines.baselinePt },
   });
 
   const rendered = [];
@@ -193,7 +223,7 @@ function renderBridgeBars(slide, bars, bridgeArea, numberStyle, typography, styl
       w: barW,
       h,
       fill: { color: fillColor },
-      line: { color: fillColor, pt: 0.2 },
+      line: { color: fillColor, pt: styles.lines.barEdgePt },
     });
 
     if (idx > 0 && bar.type === 'delta') {
@@ -203,7 +233,7 @@ function renderBridgeBars(slide, bars, bridgeArea, numberStyle, typography, styl
       const connector = lineRectFromPoints(rendered[idx - 1].centerX, prevEndY, centerX, currStartY);
       slide.addShape('line', {
         ...connector,
-        line: { color: styles.colors.connector, pt: 0.5, dash: 'dash' },
+        line: { color: styles.colors.connector, pt: styles.lines.connectorPt, dash: 'dash' },
       });
     }
 
@@ -225,7 +255,7 @@ function renderBridgeBars(slide, bars, bridgeArea, numberStyle, typography, styl
       fontSize: typography.bridgeValue,
       bold: true,
       color: styles.colors.blue,
-      margin: 0,
+      margin: styles.text.marginNone,
       valign: 'mid',
     });
 
@@ -239,7 +269,7 @@ function renderBridgeBars(slide, bars, bridgeArea, numberStyle, typography, styl
       color: styles.colors.black,
       align: 'center',
       valign: 'top',
-      margin: 0,
+      margin: styles.text.marginNone,
       breakLine: false,
       fit: 'shrink',
       wrap: true,
@@ -280,21 +310,21 @@ function renderPhaseMarkers(pptx, slide, renderedBars, analysisBoxes, bridgeArea
       y: lineY,
       w: Math.max(0.1, x2 - x1),
       h: 0,
-      line: { color: styles.colors.blue, pt: 1 },
+      line: { color: styles.colors.blue, pt: styles.lines.phaseBracketPt },
     });
     slide.addShape(pptx.ShapeType.line, {
       x: x1,
       y: lineY,
       w: 0,
       h: 0.08,
-      line: { color: styles.colors.blue, pt: 1 },
+      line: { color: styles.colors.blue, pt: styles.lines.phaseBracketPt },
     });
     slide.addShape(pptx.ShapeType.line, {
       x: x2,
       y: lineY,
       w: 0,
       h: 0.08,
-      line: { color: styles.colors.blue, pt: 1 },
+      line: { color: styles.colors.blue, pt: styles.lines.phaseBracketPt },
     });
     slide.addShape(pptx.ShapeType.ellipse, {
       x: mid - 0.12,
@@ -302,7 +332,7 @@ function renderPhaseMarkers(pptx, slide, renderedBars, analysisBoxes, bridgeArea
       w: 0.24,
       h: 0.22,
       fill: { color: styles.colors.blue },
-      line: { color: styles.colors.blue, pt: 0.5 },
+      line: { color: styles.colors.blue, pt: styles.lines.phaseBadgePt },
     });
     slide.addText(String(i + 1), {
       x: mid - 0.12,
@@ -315,7 +345,7 @@ function renderPhaseMarkers(pptx, slide, renderedBars, analysisBoxes, bridgeArea
       color: styles.colors.white,
       align: 'center',
       valign: 'mid',
-      margin: 0,
+      margin: styles.text.marginNone,
     });
   }
 }
@@ -345,7 +375,7 @@ function renderAnalysis(slide, analysisColumns, boxes, bodyStyle, typography, st
     slide.addShape('rect', {
       ...box,
       fill: { color: styles.colors.white },
-      line: { color: styles.colors.blue, pt: 1 },
+      line: { color: styles.colors.blue, pt: styles.lines.analysisBoxPt },
     });
     slide.addShape('ellipse', {
       x: box.x - 0.07,
@@ -353,7 +383,7 @@ function renderAnalysis(slide, analysisColumns, boxes, bodyStyle, typography, st
       w: 0.22,
       h: 0.20,
       fill: { color: styles.colors.blue },
-      line: { color: styles.colors.blue, pt: 0.5 },
+      line: { color: styles.colors.blue, pt: styles.lines.analysisBadgePt },
     });
     slide.addText(String(idx + 1), {
       x: box.x - 0.07,
@@ -366,7 +396,7 @@ function renderAnalysis(slide, analysisColumns, boxes, bodyStyle, typography, st
       color: styles.colors.white,
       align: 'center',
       valign: 'mid',
-      margin: 0,
+      margin: styles.text.marginNone,
     });
 
     slide.addText(heading, {
@@ -379,7 +409,7 @@ function renderAnalysis(slide, analysisColumns, boxes, bodyStyle, typography, st
       bold: true,
       color: styles.colors.black,
       wrap: true,
-      margin: [0, 0, 0, 0],
+      margin: styles.text.marginNoneArray,
       valign: 'top',
       fit: 'shrink',
     });
@@ -432,7 +462,7 @@ export function addAnalysisBridge(
       w: g.chartBox.w,
       h: 0.18,
       fill: { color: styles.colors.blue },
-      line: { color: styles.colors.blue, pt: 0.5 },
+      line: { color: styles.colors.blue, pt: styles.lines.strapBandPt },
     });
     slide.addText(String(strapline), {
       x: g.chartBox.x + 0.06,
@@ -444,7 +474,7 @@ export function addAnalysisBridge(
       bold: true,
       color: styles.colors.white,
       valign: 'mid',
-      margin: 0,
+      margin: styles.text.marginNone,
     });
   }
 
@@ -461,7 +491,7 @@ export function addAnalysisBridge(
       color: styles.colors.orange,
       bold: true,
       wrap: true,
-      margin: 0,
+      margin: styles.text.marginNone,
     });
     return slide;
   }
@@ -469,8 +499,8 @@ export function addAnalysisBridge(
   const bars = buildBridgeBars(validated.normalized);
   const rendered = renderBridgeBars(slide, bars, g.chartBox, {
     decimals: validated.normalized.decimals,
-    unitPrefix: validated.normalized.unitPrefix || '$',
-    unitSuffix: validated.normalized.unitSuffix || '',
+    unitPrefix: validated.normalized.unitPrefix,
+    unitSuffix: validated.normalized.unitSuffix,
   }, textStyles, styles);
   renderPhaseMarkers(pptx, slide, rendered.bars, g.analysisBoxes, g.chartBox, textStyles, styles);
   renderAnalysis(slide, analysisColumns, g.analysisBoxes, bodyStyle, textStyles, styles, theme);
@@ -504,7 +534,7 @@ export function addAnalysisBridge(
       color: styles.colors.blue,
       italic: true,
       wrap: textBox.wrap,
-      margin: [0, 0, 0, 0],
+      margin: styles.text.marginNoneArray,
       valign: 'top',
     });
   }

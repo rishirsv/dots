@@ -59,23 +59,12 @@ export function validateBridgeSpec(bridge, { defaultTolerance = 0.01 } = {}) {
   let tolerance = toNumber(bridge.tolerance);
   if (tolerance === null || tolerance < 0) tolerance = defaultTolerance;
   const decimals = Math.max(0, Math.min(4, Number.isFinite(Number(bridge.decimals)) ? Math.floor(Number(bridge.decimals)) : 0));
-  let unitPrefix = String(bridge.unitPrefix || '').trim();
-  let unitSuffix = String(bridge.unitSuffix || '').trim();
-  if (!unitPrefix && !unitSuffix && String(bridge.unit || '').trim()) {
-    const rawUnit = String(bridge.unit).trim();
-    if (rawUnit.startsWith('$')) {
-      // Treat currency-like unit as a prefix by default.
-      // Example: "$" or "$m".
-      unitPrefix = '$';
-      if (rawUnit === '$') {
-        unitSuffix = '';
-      } else {
-        unitSuffix = rawUnit.slice(1).trim() ? ` ${rawUnit.slice(1).trim()}` : '';
-      }
-    } else {
-      unitSuffix = ` ${rawUnit}`;
-    }
-  }
+  const unitPrefix = String(bridge.unitPrefix ?? '').trim();
+  const unitSuffix = String(bridge.unitSuffix ?? '').trim();
+  const startLabel = String(bridge.startLabel ?? '').trim();
+  const endLabel = String(bridge.endLabel ?? '').trim();
+  if (!startLabel) errors.push('startLabel must be a non-empty string');
+  if (!endLabel) errors.push('endLabel must be a non-empty string');
 
   const normalizedSteps = [];
   if (rawSteps && startValue !== null) {
@@ -85,7 +74,7 @@ export function validateBridgeSpec(bridge, { defaultTolerance = 0.01 } = {}) {
         errors.push(`steps[${idx}] must be an object`);
         return;
       }
-      const label = String(rawStep.label || rawStep.name || '').trim();
+      const label = String(rawStep.label ?? '').trim();
       if (!label) {
         errors.push(`steps[${idx}] is missing label`);
         return;
@@ -135,8 +124,8 @@ export function validateBridgeSpec(bridge, { defaultTolerance = 0.01 } = {}) {
     errors,
     warnings,
     normalized: {
-      startLabel: String(bridge.startLabel || 'Start').trim() || 'Start',
-      endLabel: String(bridge.endLabel || 'End').trim() || 'End',
+      startLabel,
+      endLabel,
       startValue,
       endValue,
       tolerance,
@@ -166,7 +155,7 @@ export function buildBridgeBars(bridge) {
   const bars = [
     {
       type: 'total',
-      label: bridge.startLabel || 'Start',
+      label: bridge.startLabel,
       start: 0,
       end: Number(bridge.startValue || 0),
       delta: Number(bridge.startValue || 0),
@@ -200,7 +189,7 @@ export function buildBridgeBars(bridge) {
 
   bars.push({
     type: 'total',
-    label: bridge.endLabel || 'End',
+    label: bridge.endLabel,
     start: 0,
     end: Number(bridge.endValue || 0),
     delta: Number(bridge.endValue || 0) - previous,

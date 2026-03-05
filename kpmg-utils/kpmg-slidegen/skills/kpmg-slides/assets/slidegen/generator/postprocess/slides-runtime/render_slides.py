@@ -81,7 +81,6 @@ def convert_to_pdf(
     convert_tmp_dir: str,
     stem: str,
 ) -> str:
-    # Try direct PPTX -> PDF
     cmd_pdf = [
         "soffice",
         "-env:UserInstallation=file://" + user_profile,
@@ -99,43 +98,6 @@ def convert_to_pdf(
     pdf_path = join(convert_tmp_dir, f"{stem}.pdf")
     if exists(pdf_path):
         return pdf_path
-
-    # Fallback: PPTX -> ODP, then ODP -> PDF
-    # Rationale: Saving as ODP normalizes PPTX-specific constructs via the ODF serializer,
-    # which often bypasses Impress PDF export issues on problematic decks.
-    cmd_odp = [
-        "soffice",
-        "-env:UserInstallation=file://" + user_profile,
-        "--invisible",
-        "--headless",
-        "--norestore",
-        "--convert-to",
-        "odp",
-        "--outdir",
-        convert_tmp_dir,
-        pptx_path,
-    ]
-    run_cmd_no_check(cmd_odp)
-
-    odp_path = join(convert_tmp_dir, f"{stem}.odp")
-
-    if exists(odp_path):
-        # ODP -> PDF
-        cmd_odp_pdf = [
-            "soffice",
-            "-env:UserInstallation=file://" + user_profile,
-            "--invisible",
-            "--headless",
-            "--norestore",
-            "--convert-to",
-            "pdf",
-            "--outdir",
-            convert_tmp_dir,
-            odp_path,
-        ]
-        run_cmd_no_check(cmd_odp_pdf)
-        if exists(pdf_path):
-            return pdf_path
 
     return ""
 
@@ -163,7 +125,7 @@ def rasterize(
 
             if not pdf_path or not exists(pdf_path):
                 raise RuntimeError(
-                    "Failed to produce PDF for rasterization (direct and ODP fallback)."
+                    "Failed to produce PDF for rasterization via direct PPTX->PDF conversion."
                 )
 
             # Perform rasterization while the temp PDF still exists

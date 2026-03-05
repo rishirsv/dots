@@ -499,8 +499,8 @@ export function addAnalysisBridge(
   const bars = buildBridgeBars(validated.normalized);
   const rendered = renderBridgeBars(slide, bars, g.chartBox, {
     decimals: validated.normalized.decimals,
-    unitPrefix: validated.normalized.unitPrefix || '$',
-    unitSuffix: validated.normalized.unitSuffix || '',
+    unitPrefix: validated.normalized.unitPrefix,
+    unitSuffix: validated.normalized.unitSuffix,
   }, textStyles, styles);
   renderPhaseMarkers(pptx, slide, rendered.bars, g.analysisBoxes, g.chartBox, textStyles, styles);
   renderAnalysis(slide, analysisColumns, g.analysisBoxes, bodyStyle, textStyles, styles, theme);

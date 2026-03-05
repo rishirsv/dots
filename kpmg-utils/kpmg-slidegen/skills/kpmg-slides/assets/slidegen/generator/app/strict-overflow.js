@@ -1,11 +1,9 @@
 /**
  * Translate visual overflow status into strict-overflow status.
  * @param {object|null} visualOverflow
- * @param {{ failClosed?: boolean }} [options]
  * @returns {object|null}
  */
-function strictStatusFromVisualOverflow(visualOverflow, options = {}) {
-  const failClosed = options.failClosed !== false;
+function strictStatusFromVisualOverflow(visualOverflow) {
   if (!visualOverflow) return null;
   if (visualOverflow.status === 'pass') {
     return { status: 0, mode: 'visual_overflow', failingSlides: [] };
@@ -22,7 +20,7 @@ function strictStatusFromVisualOverflow(visualOverflow, options = {}) {
   }
   if (visualOverflow.status === 'skipped') {
     return {
-      status: failClosed ? 1 : 0,
+      status: 1,
       skipped: true,
       mode: 'visual_overflow',
       reason: visualOverflow.reason || 'visual_overflow_skipped',
@@ -31,7 +29,7 @@ function strictStatusFromVisualOverflow(visualOverflow, options = {}) {
   }
   if (visualOverflow.status === 'error') {
     return {
-      status: failClosed ? 1 : 0,
+      status: 1,
       skipped: true,
       mode: 'visual_overflow',
       reason: visualOverflow.reason || 'visual_overflow_error',
@@ -56,7 +54,7 @@ export function resolveStrictOverflowStatus({
   if (!strictRequested) return { strictOverflow: { status: 0 }, postprocess };
 
   // Strict mode fails closed: if visual overflow cannot be verified, strict fails.
-  let strictStatus = strictStatusFromVisualOverflow(postprocess?.overflowVisual || null, { failClosed: true });
+  let strictStatus = strictStatusFromVisualOverflow(postprocess?.overflowVisual || null);
 
   // If strict mode is enabled and visual overflow wasn't run yet, run it once here.
   if (!strictStatus && postprocess?.availability?.slidesSkill) {
@@ -74,7 +72,7 @@ export function resolveStrictOverflowStatus({
       failingSlides: strictVisual?.failingSlides || [],
       imagePaths: strictVisual?.imagePaths || [],
     };
-    strictStatus = strictStatusFromVisualOverflow(postprocess.overflowVisual, { failClosed: true });
+    strictStatus = strictStatusFromVisualOverflow(postprocess.overflowVisual);
   }
 
   if (strictStatus) return { strictOverflow: strictStatus, postprocess };

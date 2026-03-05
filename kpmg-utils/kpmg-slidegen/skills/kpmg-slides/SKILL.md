@@ -91,11 +91,7 @@ When in doubt, treat `references/slide-contract.md`, `references/deckspec.schema
 #### Pagination-aware guardrails (must apply while writing)
 
 - Pagination estimates line usage and chunks bullets to avoid overlap.
-- Fallback text boxes used by pagination (when precise geometry is unavailable):
-  - `oneColumnText` body fallback: `{ w: 11.1596, h: 5.6 }`
-  - `twoColumnText` left/right fallbacks: `{ w: 5.7, h: 5.7 }` and `{ w: 5.2, h: 5.7 }`
-- `analysisWideChart2ColsText` body fallback: `{ w: 5.6, h: 5.4 }`
-- `analysisWideChartTableText` body fallback: `{ w: 11.1596, h: 2.2 }`
+- Keep slide copy within canonical layout contracts in `templates/kpmg-diligence/package/layouts.json`; do not rely on fallback geometry assumptions.
 - `analysisBridge` supports dynamic `analysisColumns` (1-4 phases); keep per-phase copy concise to avoid pagination splits.
 - `businessOverview` paginates `overviewBody`; keep right-side bullets concise when chart is present.
 - `analysisNarrowTable` pagination can warn on dense rows and orphan-row splits.
@@ -130,7 +126,7 @@ Use these as generation targets above template minima.
 - `md`: 4-5 bullets, about 14-18 words, 1-2 series chart where comparison is needed.
 - `lg`: 5-6 bullets, about 14-20 words, include explicit "so what" bullet.
 - `xl`: 6-7 bullets, about 16-22 words, include assumptions/source.
-- Guardrail: avoid pushing beyond 7 bullets; body wraps quickly in fallback geometry.
+- Guardrail: avoid pushing beyond 7 bullets; body wraps quickly in constrained body areas.
 
 `analysisWideChartTableText`
 

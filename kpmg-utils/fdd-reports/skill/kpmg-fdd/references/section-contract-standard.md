@@ -5,7 +5,7 @@ Use this pattern for all current and future section contracts.
 ## Required headings (in this order)
 
 1. `Table of contents`
-2. `Core rule`
+2. `Core Principles`
 3. `Writing guidance`
 4. `Layout`
 5. `Available slot shapes`

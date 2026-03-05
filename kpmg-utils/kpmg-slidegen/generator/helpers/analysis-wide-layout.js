@@ -91,7 +91,7 @@ export function computeAnalysisWideChartTableTextGeometry({
   let tableBox = tableBase ? shiftBox(tableBase, yShift) : null;
 
   const headingBottom = headingBase.y + headingBase.h;
-  const isLegacyBottomAnchoredLayout = Boolean(
+  const shouldNormalizeStackedGeometry = Boolean(
     hasChartData &&
       hasTableData &&
       chartBox &&
@@ -100,7 +100,7 @@ export function computeAnalysisWideChartTableTextGeometry({
       chartBox.y + chartBox.h <= headingBottom + 0.05 &&
       textBox.y >= headingBottom + 1.3,
   );
-  if (isLegacyBottomAnchoredLayout) {
+  if (shouldNormalizeStackedGeometry) {
     if (!Number.isFinite(footerSafeTop)) {
       throw new Error(`Missing required footer safe-top for master "${masterName}"`);
     }
@@ -115,12 +115,14 @@ export function computeAnalysisWideChartTableTextGeometry({
     const rightX = textBox?.x;
     const rightW = textBox?.w;
     if (![leftX, leftW, rightX, rightW].every(Number.isFinite)) {
-      throw new Error('Missing geometry for legacy bottom-anchored analysis-wide chart/table layout');
+      throw new Error('Missing geometry for analysis-wide chart/table layout normalization');
     }
 
     chartBox = { x: leftX, y: contentTop, w: leftW, h: upperH };
     textBox = { x: rightX, y: contentTop, w: rightW, h: upperH };
     tableBox = { x: leftX, y: lowerY, w: leftW, h: lowerH };
+  } else if (hasChartData && hasTableData && !Number.isFinite(footerSafeTop)) {
+    throw new Error(`Missing required footer safe-top for master "${masterName}"`);
   }
 
   const safeTextBoxBase = clampToMasterFooter(textBox, masterName, 0, footerSafeTopByMaster);

@@ -94,11 +94,11 @@ Default block order (canonical)
 3. Historical behavior (trend/seasonality; days metrics if available)
 4. Normalization (reported → definitional → diligence → pro forma; show normalized range if possible)
 5. Peg / target and implications (only if deal definition/target exists; otherwise explicitly open-item it)
-6. Open items & data requests (P0/P1/P2)
+6. Missing information & data requests (P0/P1/P2)
 
 Allowed variants (explicit)
 
-- Data-light variant: If only one period-end snapshot is available, keep blocks 1–2, then provide a “snapshot-only limitation” caveat and move directly to open items (consistent with “period-end snapshots with caveats” guidance in the template: `context/skill/kpmg-fdd/references/section-templates/working-capital.md`).
+- Data-light variant: If only one period-end snapshot is available, keep blocks 1–2, then provide a “snapshot-only limitation” caveat and move directly to missing information (consistent with “period-end snapshots with caveats” guidance in the template: `context/skill/kpmg-fdd/references/section-templates/working-capital.md`).
 - Sell-side/buy-side variant: If sell-side diligence exists, include a short “what we relied on vs what we changed” sub-block before normalization (pattern used in project-panacea and project-skyrocket language in `context/docs/report-mining/section-corpus/sections/working-capital.md`).
 
 Required vs optional sub-blocks
@@ -107,7 +107,7 @@ Required
 - Definition table (explicitly called for in `context/skill/kpmg-fdd/references/section-templates/working-capital.md` and `context/skill/kpmg-fdd/references/exhibits-and-tables.md`)
 - Normalized vs actual (or explicit “cannot normalize because…” with data requests) (required by `context/skill/kpmg-fdd/references/report-structure.md`)
 - Implications (peg risk / cash impact, clearly labeled) (`context/skill/kpmg-fdd/references/report-structure.md`)
-- Open items list (house standard: keep a running open-items view; `context/skill/kpmg-fdd/references/writing-standards.md`)
+- Missing information list (house standard: keep a running missing-information view; `context/skill/kpmg-fdd/references/writing-standards.md`)
 
 Optional (only when supported)
 
@@ -175,11 +175,11 @@ Failure mode 9: Red flags minimized (tone drift)
 - Prevent:
   - Prompt rule: any management-only inputs must be labeled as such (tone + uncertainty guidance: `context/skill/kpmg-fdd/references/writing-standards.md`).
 
-Failure mode 10: Missing open items despite acknowledged data gaps
+Failure mode 10: Missing missing information despite acknowledged data gaps
 
-- Detect: “not available / not publicly available / insufficient detail” appears but no open items list.
+- Detect: “not available / not publicly available / insufficient detail” appears but no missing information list.
 - Prevent:
-  - Template constraint: “Open items & data requests” is mandatory, and any “not available” phrase must generate at least one P0/P1 item (open items guidance in `context/skill/kpmg-fdd/references/writing-standards.md` and QC requirement in `context/skill/kpmg-fdd/references/qc-checklist.md`).
+  - Template constraint: “Missing information & data requests” is mandatory, and any “not available” phrase must generate at least one P0/P1 item (missing information guidance in `context/skill/kpmg-fdd/references/writing-standards.md` and QC requirement in `context/skill/kpmg-fdd/references/qc-checklist.md`).
 
 4. Draft markdown playbook (implementable)
 
@@ -220,11 +220,11 @@ P2 (context)
 3. Historical behavior (trend/seasonality + key drivers)
 4. Normalized vs actual (including definitional / diligence / pro forma adjustments)
 5. Peg/target and implications (conditional on deal definition)
-6. Open items & data requests (P0/P1/P2)
+6. Missing information & data requests (P0/P1/P2)
 
 ## Evidence / basis rules (5C gate)
 
-- Do not invent numbers. If missing, use placeholders like `$[x]`, `[Period]`, `[Date]` and convert conclusions to open items.
+- Do not invent numbers. If missing, use placeholders like `$[x]`, `[Period]`, `[Date]` and convert conclusions to missing information.
   (Ref: “Do not invent numbers” in `context/skill/kpmg-fdd/SKILL.md` and sourcing rules in `context/skill/kpmg-fdd/references/writing-standards.md`.)
 - Every exhibit must include: title, period, units, and a Source/Basis line.
   (Ref: `context/skill/kpmg-fdd/references/exhibits-and-tables.md`.)
@@ -273,12 +273,12 @@ Standard phrasing options:
 
 ## Open-item behavior when data is missing
 
-- Convert missing-data impacts into explicit open items with priority:
+- Convert missing-data impacts into explicit missing information with priority:
   - P0: prevents normalization or peg conclusion
   - P1: affects sizing of specific adjustments
   - P2: presentation / readability improvements
 - Each open item must include “why it matters” and the requested artifact (e.g., “monthly TB by account”, “AR aging as of [date]”).
-  (Ref open items discipline in `context/skill/kpmg-fdd/references/writing-standards.md` and QC requirement in `context/skill/kpmg-fdd/references/qc-checklist.md`.)
+  (Ref missing information discipline in `context/skill/kpmg-fdd/references/writing-standards.md` and QC requirement in `context/skill/kpmg-fdd/references/qc-checklist.md`.)
 
 ## Style rules (2B)
 
@@ -304,7 +304,7 @@ Standard QC scan
 - Evidence–narrative alignment: opening claim is supported by Exhibit WC-1/WC-2 or reframed as open item.
 - Normalization caveat included once (not repeated).
 - Peg section: only present if target definition/value is sourced; otherwise converted to P0 open item.
-- Open items list present and prioritized (P0/P1/P2).
+- Missing information list present and prioritized (P0/P1/P2).
   (Ref QC dimensions in `context/skill/kpmg-fdd/references/qc-checklist.md`.)
 ```
 
@@ -389,7 +389,7 @@ For each material adjustment, use this structure (corpus-consistent “This adju
 - **Close-date considerations:** [seasonality / known spikes / timing items].
 - **Negotiation considerations (if applicable):** If the deal target is based on a historical averaging period, changes in the business trajectory may imply a different forward-looking target; present this as an analytical sensitivity, not a conclusion. (Corpus example: offer-letter passage and implied target step-up; `context/docs/report-mining/section-corpus/sections/working-capital.md`.)
 
-## Open items & data requests (required; prioritize)
+## Missing information & data requests (required; prioritize)
 
 ### P0 (gates conclusions)
 

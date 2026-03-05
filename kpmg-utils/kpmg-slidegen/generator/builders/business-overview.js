@@ -16,7 +16,7 @@ import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 function resolveStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
-  const component = resolvedTheme.components?.[THEME_COMPONENT_KEYS.businessOverview] || resolvedTheme.components?.businessOverview || {};
+  const component = resolvedTheme.components?.[THEME_COMPONENT_KEYS.businessOverview] || {};
   const lines = component.lines || {};
   const textTokens = resolveTextThemePrimitives(resolvedTheme);
   return {

@@ -5,18 +5,27 @@ import { normalizeBodyStyle } from '../helpers/layout.js';
 import { validateBusinessStructureSpec } from '../helpers/business-structure.js';
 import { buildThemedChartOptions, resolveChartType } from '../helpers/chart.js';
 import { addChartBlock, addFootnoteBlock } from '../helpers/slide-components.js';
-import { resolveTextBoxOptions, resolveTheme } from '../helpers/theme.js';
+import {
+  THEME_COMPONENT_KEYS,
+  resolveTextBoxOptions,
+  resolveTextThemePrimitives,
+  resolveTheme,
+  toFiniteNumber,
+} from '../helpers/theme.js';
 import { requireGeometryBox } from '../runtime/geometry-contract.js';
 
 function resolveStyles(theme = null) {
   const resolvedTheme = resolveTheme(theme);
+  const component = resolvedTheme.components?.[THEME_COMPONENT_KEYS.businessOverview] || {};
+  const lines = component.lines || {};
+  const textTokens = resolveTextThemePrimitives(resolvedTheme);
   return {
     fonts: resolvedTheme.fonts,
     colors: {
       primary: resolvedTheme.colors.primary,
       white: resolvedTheme.colors.white,
       black: resolvedTheme.colors.black,
-      pink: resolvedTheme.colors.pink,
+      pink: resolvedTheme.colors.pink,rr
       kpmgBlue: resolvedTheme.colors.kpmgBlue,
       kpmgCyan: resolvedTheme.colors.kpmgCyan,
       orange: resolvedTheme.colors.orange,
@@ -27,10 +36,19 @@ function resolveStyles(theme = null) {
     },
     chart: {
       palette: resolvedTheme.chart.palette,
-      legendFontSize: Number(resolvedTheme.chart.fontSizes.legend || 7),
-      labelFontSize: Number(resolvedTheme.chart.fontSizes.axis || resolvedTheme.chart.fontSizes.label || 7),
-      dataLabelFontSize: Number(resolvedTheme.chart.fontSizes.dataLabel || 7),
+      legendFontSize: toFiniteNumber(resolvedTheme.chart.fontSizes.legend, 7),
+      labelFontSize: toFiniteNumber(resolvedTheme.chart.fontSizes.axis ?? resolvedTheme.chart.fontSizes.label, 7),
+      dataLabelFontSize: toFiniteNumber(resolvedTheme.chart.fontSizes.dataLabel, 7),
       background: resolvedTheme.colors.chart.background,
+    },
+    lines: {
+      perimeterPt: toFiniteNumber(lines.perimeterPt, 1),
+      nodeEdgePt: toFiniteNumber(lines.nodeEdgePt, 0.6),
+      connectorPt: toFiniteNumber(lines.connectorPt, 0.8),
+    },
+    text: {
+      marginNone: textTokens.marginNone,
+      bodyParaSpaceAfter: textTokens.bodyParaSpaceAfter,
     },
   };
 }
@@ -59,7 +77,7 @@ function addSubheading(slide, text, box, styles) {
     fontSize: styles.typeSizes.body,
     color: styles.colors.primary,
     bold: true,
-    margin: 0,
+    margin: styles.text.marginNone,
     valign: 'top',
     wrap: true,
   });
@@ -83,7 +101,7 @@ function renderStructurePanel(slide, structure, panelBox, styles) {
       w: panelBox.w,
       h: panelBox.h,
       fill: { color: styles.colors.white, transparency: 100 },
-      line: { color: styles.colors.pink, pt: 1, dash: 'dash' },
+      line: { color: styles.colors.pink, pt: styles.lines.perimeterPt, dash: 'dash' },
     });
 
     if (structure.perimeter.label) {
@@ -96,7 +114,7 @@ function renderStructurePanel(slide, structure, panelBox, styles) {
         fontSize: styles.typeSizes.body,
         color: styles.colors.kpmgBlue,
         bold: true,
-        margin: 0,
+        margin: styles.text.marginNone,
         valign: 'top',
       });
     }
@@ -111,7 +129,7 @@ function renderStructurePanel(slide, structure, panelBox, styles) {
         fontSize: styles.typeSizes.body,
         color: styles.colors.kpmgBlue,
         bold: true,
-        margin: 0,
+        margin: styles.text.marginNone,
         valign: 'top',
       });
     }
@@ -134,7 +152,7 @@ function renderStructurePanel(slide, structure, panelBox, styles) {
       slide.addShape('rect', {
         ...box,
         fill: { color: fill },
-        line: { color: fill, pt: 0.6 },
+        line: { color: fill, pt: styles.lines.nodeEdgePt },
       });
 
       slide.addText(sanitizeText(node.label), {
@@ -148,7 +166,7 @@ function renderStructurePanel(slide, structure, panelBox, styles) {
         bold: true,
         align: 'center',
         valign: 'mid',
-        margin: 0,
+        margin: styles.text.marginNone,
         wrap: true,
         fit: 'shrink',
       });
@@ -165,7 +183,7 @@ function renderStructurePanel(slide, structure, panelBox, styles) {
           fontSize: styles.typeSizes.body,
           color: styles.colors.black,
           align: 'center',
-          margin: 0,
+          margin: styles.text.marginNone,
           valign: 'mid',
         });
       }
@@ -194,21 +212,21 @@ function renderStructurePanel(slide, structure, panelBox, styles) {
       y: y1,
       w: 0,
       h: Math.max(0, elbowY - y1),
-      line: { color: styles.colors.kpmgBlue, pt: 0.8 },
+      line: { color: styles.colors.kpmgBlue, pt: styles.lines.connectorPt },
     });
     slide.addShape('line', {
       x: Math.min(x1, x2),
       y: elbowY,
       w: Math.abs(x2 - x1),
       h: 0,
-      line: { color: styles.colors.kpmgBlue, pt: 0.8 },
+      line: { color: styles.colors.kpmgBlue, pt: styles.lines.connectorPt },
     });
     slide.addShape('line', {
       x: x2,
       y: Math.min(elbowY, y2),
       w: 0,
       h: Math.abs(y2 - elbowY),
-      line: { color: styles.colors.kpmgBlue, pt: 0.8 },
+      line: { color: styles.colors.kpmgBlue, pt: styles.lines.connectorPt },
     });
   }
 }
@@ -227,7 +245,7 @@ function addInlineChart(pptx, slide, chart, box, styles) {
       fontSize: styles.typeSizes.source,
       color: styles.colors.kpmgBlue,
       italic: true,
-      margin: 0,
+      margin: styles.text.marginNone,
       wrap: true,
       valign: 'top',
     });
@@ -271,7 +289,7 @@ export function addBusinessOverview(
       fontSize: styles.typeSizes.body,
       color: styles.colors.orange,
       bold: true,
-      margin: 0,
+      margin: styles.text.marginNone,
       wrap: true,
       valign: 'top',
     });
@@ -295,7 +313,7 @@ export function addBusinessOverview(
       fontFace: styles.fonts.body,
       fontSize: styles.typeSizes.body,
       color: styles.colors.black,
-      paraSpaceAfter: 6,
+      paraSpaceAfter: styles.text.bodyParaSpaceAfter,
       ...textBox,
       valign: 'top',
       fit: 'shrink',
@@ -315,7 +333,7 @@ export function addBusinessOverview(
       fontSize: styles.typeSizes.source,
       color: styles.colors.kpmgBlue,
       italic: true,
-      margin: 0,
+      margin: styles.text.marginNone,
     },
   });
 

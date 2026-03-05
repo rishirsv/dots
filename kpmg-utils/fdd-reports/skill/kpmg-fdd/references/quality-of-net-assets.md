@@ -1,7 +1,7 @@
 # Section contract: Quality of net assets
 
 ## Table of contents
-- Core rule
+- Core Principles
 - Writing guidance
 - Layout
 - Available slot shapes
@@ -11,7 +11,7 @@
 - Split policy rules
 - Full example
 
-## Core rule
+## Core Principles
 
 Present a period-anchored bridge from reported net asset value (`NAV`) to adjusted `NAV`, with clear treatment of quantifiable adjustments and clear separation of items that remain subjective or unquantified.
 
@@ -155,7 +155,7 @@ Source note: [source_note required]
 5. Mistake: adding a comments column to the bridge table.
 - Fix: keep tables numeric and place explanatory reasoning in `Net asset adjustments and rationale`.
 
-6. Mistake: adding `Open items` or `Data requests` headings.
+6. Mistake: adding separate missing-information headings (for example, `Data requests`).
 - Fix: keep unresolved points inside `Other considerations` and `Transaction and closing implications`.
 
 ## Structural preflight rules (must pass)
@@ -166,7 +166,7 @@ Source note: [source_note required]
 4. `Adjusted NAV` equals `Reported NAV` plus `Total adjustments` in the full example.
 5. `Net asset adjustments and rationale` includes at least five numbered adjustments with treatment rationale.
 6. `Other considerations` includes at least two items with directional treatment and quantification status.
-7. No `Open items` or `Data requests` headings appear.
+7. No missing-information headings (for example, `Data requests`) appear.
 8. No bridge table includes a comments column.
 9. Missing information is handled with inline placeholders, not process notes.
 10. Render skeleton and full example are materially different (template vs worked output).

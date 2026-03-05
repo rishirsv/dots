@@ -9,12 +9,7 @@ const MANIFEST_PATH = path.join(SKILL_ROOT, 'assets', 'bundle-manifest.json');
 const SKILL_MD_PATH = path.join(SKILL_ROOT, 'SKILL.md');
 const OPENAI_YAML_PATH = path.join(SKILL_ROOT, 'agents', 'openai.yaml');
 const SKILL_RUNNER_PATH = path.join(SKILL_ROOT, 'scripts', 'run_kpmg_slides.sh');
-const SMOKE_FIXTURE_CANDIDATES = [
-  path.join(REPO_ROOT, 'decks', 'scenario02-saas-mid-diligence.deckSpec.json'),
-  path.join(REPO_ROOT, 'decks', 'regression-callouts-dense-one-column-no-callouts.deckSpec.json'),
-  path.join(REPO_ROOT, 'decks', 'skill-bundle-smoke.deckSpec.json'),
-  path.join(SKILL_ROOT, 'assets', 'templates', 'deckspec-starter.json'),
-];
+const SMOKE_FIXTURE_PATH = path.join(SKILL_ROOT, 'assets', 'templates', 'deckspec-starter.json');
 const SMOKE_OUT_DIR = path.join(REPO_ROOT, 'outputs', 'qa-golden-fixture', 'skill-smoke');
 const BUNDLED_POSTPROCESS_RUNTIME = path.join(
   SKILL_ROOT,
@@ -179,26 +174,18 @@ function verifyBundledPostprocessRuntime() {
   }
 }
 
-function resolveSmokeFixturePath() {
-  for (const candidate of SMOKE_FIXTURE_CANDIDATES) {
-    if (fs.existsSync(candidate)) return candidate;
-  }
-  return null;
-}
-
 function runSmoke() {
   if (!fs.existsSync(SKILL_RUNNER_PATH)) {
     throw new Error(`Missing skill runner script: ${SKILL_RUNNER_PATH}`);
   }
-  const smokeFixturePath = resolveSmokeFixturePath();
-  if (!smokeFixturePath) {
+  if (!fs.existsSync(SMOKE_FIXTURE_PATH)) {
     throw new Error(
-      `Missing smoke fixture. Checked: ${SMOKE_FIXTURE_CANDIDATES.map((p) => path.relative(REPO_ROOT, p)).join(', ')}`,
+      `Missing canonical smoke fixture: ${path.relative(REPO_ROOT, SMOKE_FIXTURE_PATH)}`,
     );
   }
   const smoke = spawnSync(
     'bash',
-    [SKILL_RUNNER_PATH, '--in', smokeFixturePath, '--out-dir', SMOKE_OUT_DIR],
+    [SKILL_RUNNER_PATH, '--in', SMOKE_FIXTURE_PATH, '--out-dir', SMOKE_OUT_DIR],
     {
     cwd: REPO_ROOT,
     encoding: 'utf8',

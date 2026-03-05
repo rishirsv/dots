@@ -34,6 +34,7 @@ export const ASSETS = {
 function resolveCoverTheme(theme = null) {
   const resolvedTheme = resolveTheme(theme);
   const coverComponent = resolvedTheme.components?.cover || {};
+  const marginNone = Number(resolvedTheme?.components?.text?.margin?.none);
   const coverTitleFontSize = Number(coverComponent.titleFontSize || 40);
   const coverSubtitleFontSize = Number(coverComponent.subtitleFontSize || 14);
   const coverTitleStyle = resolveTokenTextStyle(resolvedTheme, 'coverTitle', {
@@ -56,7 +57,7 @@ function resolveCoverTheme(theme = null) {
         fontSize: Number.isFinite(coverTitleStyle.fontSize) ? coverTitleStyle.fontSize : coverTitleFontSize,
         align: 'left',
         valign: 'top',
-        margin: 0,
+        margin: marginNone,
         fit: 'none',
       },
       coverSubtitle: {
@@ -64,7 +65,7 @@ function resolveCoverTheme(theme = null) {
         fontSize: Number.isFinite(coverSubtitleStyle.fontSize) ? coverSubtitleStyle.fontSize : coverSubtitleFontSize,
         align: 'left',
         valign: 'bottom',
-        margin: 0,
+        margin: marginNone,
         fit: 'none',
       },
     },

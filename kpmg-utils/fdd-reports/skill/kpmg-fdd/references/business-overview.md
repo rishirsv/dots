@@ -1,190 +1,298 @@
 # Section contract: Business overview
 
 ## Table of contents
-- Core rule
-- Writing guidance
-- Layout
-- Available slot shapes
-- Render skeleton
-- Common mistakes (and fixes)
-- Structural preflight rules (must pass)
-- Split policy rules
-- Full example
 
-## Core rule
+- Section objective
+- Core principles
+- Analytical workflow
+- Section architecture
+- Available narrative components
+- Assembly patterns
+- Section-specific writing guidance
+- Verification and review checks
+- Full examples
 
-Write a clear, decision-useful summary of what the business is, how it earns revenue, how it operates, and what changed over the review period.
+## Section objective
 
-The section must read as client-ready diligence writing: factual, concise, and specific.
+The Business Overview defines the transaction perimeter and explains the business model in terms that matter for diligence. It should tell the reader what is being acquired, what the business does, how it generates revenue, and only the operating, dependency, and change context needed to interpret the model.
 
 Global writing, placeholder, and language rules are defined in `references/global-writing-conventions.md` and apply here.
 
-## Writing guidance
+## Core principles
 
-1. Start with what the business does, then how it monetizes, then what drives earnings quality.
-2. Keep every bullet operational and decision-relevant.
-3. Use concrete business mechanics before interpretation.
-4. Link recent changes to likely direction of revenue, margin, or volatility impact.
-5. Keep this section business-driver focused; avoid full financial performance narrative.
-6. Keep bullets as complete, client-ready sentences; avoid clipped fragments and generic marketing language.
+1. **Perimeter clarity comes first:** Define what is in scope and what is excluded before expanding into products, services, or geographies.
+2. **Explain economics, not positioning:** Describe what the business sells and how it gets paid. Avoid generic market-positioning or strategy language.
+3. **Use structure only when it informs understanding:** Include entities, brands, service lines, channels, and geographies only to the extent they change how the business is understood.
+4. **Add dependencies and comparability only when they matter:** Shared services, central functions, supplier or platform dependence, regulatory structures, and standalone issues belong here only when they affect interpretation of the business model.
+5. **Keep the section on the business model:** This section is not a mini historical performance or risk register section. Include only the context needed to explain how the business works.
 
-## Layout
+## Analytical workflow
 
-Scale the depth of the section based on the complexity of business model, route-to-market, and operating dependencies.
+1. **Define the perimeter:** Identify the legal entities, brands, business lines, geographies, and explicit exclusions in scope. This gives the reader a clear boundary for the rest of the section.
+2. **Identify the business building blocks:** Determine which operating entities, verticals, products, or service lines actually define the business. This prevents the section from becoming a loose fact list.
+3. **Identify how the business gets paid:** Determine the core revenue mechanics, pricing logic, contract structure, or volume drivers. This explains the business in economically meaningful terms.
+4. **Choose the scale anchors:** Select only the operating metrics that make the model concrete, such as sites, members, customers, branches, or assets. This grounds the narrative without turning it into an operating-statistics dump.
+5. **Identify dependencies that affect interpretation:** Note shared services, centralized functions, supplier reliance, platform dependence, workforce model, or regulation only when they materially shape how the business operates.
+6. **Add recent-change context selectively:** Include acquisitions, restructurings, launches, closures, or footprint changes only when they change how the current business should be read.
+7. **Add comparability or standalone context selectively:** Include historical-versus-current structure differences only when they affect how the reader should interpret historical business composition or post-close economics.
+
+## Section architecture
+
+Scale the section based on business-model complexity, perimeter complexity, and the presence of operating dependencies or comparability issues.
 
 Target length:
-- 260-560 words
+
+- `concise`: 180-300 words for straightforward single-model businesses
+- `standard`: 260-480 words for most situations
+- `expanded`: 420-650 words when multiple optional blocks are triggered
 
 Required blocks:
-- `Business model`
-- `Customers and go-to-market`
-- `Operating model`
-- `Recent changes and context for financial trends`
 
-Scaling rules:
-- Keep concise for straightforward single-model businesses with one dominant channel and limited structural change.
-- Expand `Business model` with segment or entity composition where earnings are driven by multiple lines of business.
-- Expand `Customers and go-to-market` where channel mix, pricing mechanics, or contract terms are core margin drivers.
-- Expand `Operating model` where shared services, management overlap, or allocation mechanics affect earnings quality.
-- Expand `Recent changes and context for financial trends` when organization, channel, or product changes materially affect forward profile.
+- `Business snapshot and perimeter`
+  - Purpose: identify the Company, define the transaction perimeter, and establish the core operating footprint.
+  - Typical density: 2-4 bullets.
+- `How the business works`
+  - Purpose: explain the core offering and how revenue is generated.
+  - Typical density: 2-5 bullets.
 
-Block slot map:
-- `Business model`: 1 `snapshot_bullet` + 2 `driver_bullet` + optional 1-2 `composition_bullet`
-- `Customers and go-to-market`: 1 `snapshot_bullet` + 2 `driver_bullet` + optional 1-2 `composition_bullet`
-- `Operating model`: 1 `snapshot_bullet` + 2 `dependency_bullet` + optional 1 `composition_bullet`
-- `Recent changes and context for financial trends`: 2-4 `change_bullet`
+Optional blocks:
 
-## Available slot shapes
+- `Composition and scale`
+  - Use when multiple entities, service lines, channels, or geographies have meaningfully different economics.
+  - Use when scale anchors are needed to make the model concrete.
+  - Use when business mix changes how the reader interprets the business.
+- `Operating structure and dependencies`
+  - Use when shared services, centralized functions, intercompany arrangements, supplier reliance, platform reliance, labor model, or regulatory framework materially affect how the business runs.
+  - Use when the current structure affects earnings interpretation or operational resilience.
+- `Recent changes relevant to the current model`
+  - Use when acquisitions, restructurings, launches, closures, pricing changes, or footprint changes are necessary to understand the current business model.
+  - Use when recent changes explain why the business should not be read as static.
+- `Comparability / standalone considerations`
+  - Use when historical perimeter differs from current perimeter.
+  - Use when cost allocations or shared functions distort historical comparability.
+  - Use when post-close standalone operation may differ from historical group economics.
 
-Use these as building blocks. Choose only what the section needs.
+Ordering rules:
 
-### `snapshot_bullet`
-- Purpose: define what the company does and where it operates.
-- Best use: opening bullet in each block.
-- Target length: 20-45 words.
-- Placeholders: allowed.
+- Start with `Business snapshot and perimeter`.
+- Follow with `How the business works`.
+- Add optional blocks only when their trigger conditions are met.
+- When multiple optional blocks are needed, use this default order: `Composition and scale` -> `Operating structure and dependencies` -> `Recent changes relevant to the current model` -> `Comparability / standalone considerations`.
 
-### `driver_bullet`
-- Purpose: connect an operating fact to earnings or margin behavior.
-- Best use: core explanatory bullets.
+Inclusion rule:
+
+- Do not include an optional block just because the source mentions it. Include it only when it changes how the business should be understood.
+
+Boundary rule:
+
+- Do not create a universal `Customers and go-to-market` block. Customer, channel, and geography detail should appear only when it clarifies monetization or business mechanics.
+
+## Available narrative components
+
+Use these as building blocks for bullets or short sentence clusters. Choose only the components the section needs.
+
+Placeholder usage follows `references/global-writing-conventions.md` and is not restated in each component definition.
+
+### `locator`
+
+- Purpose: identify the Company and operating footprint at first mention.
+- Use when: opening the section or reorienting the reader after a complex perimeter description.
+- Do not use when: repeating basic identity facts already established in the section.
+- Target length: 15-35 words.
+- Source note: usually not needed unless the footprint or perimeter statement is non-obvious.
+- Example: `Northfield Care Group provides outpatient primary care and diagnostic services across Ontario and Quebec through a regional clinic network.`
+
+### `perimeter note`
+
+- Purpose: define what is included and excluded from the transaction perimeter.
+- Use when: the perimeter is narrower or more complex than the full enterprise.
+- Do not use when: the transaction perimeter matches the full operating business and no exclusion needs to be made explicit.
+- Target length: 15-40 words.
+- Source note: recommended when exclusions, carve-outs, or structured entities are involved.
+- Example: `The transaction perimeter includes clinic and laboratory operations and excludes a separately owned real estate holdco and one non-core pharmacy JV.`
+
+### `entity-set`
+
+- Purpose: explain the material operating entities, brands, or business lines and their roles.
+- Use when: multiple entities or brands exist and the reader needs to understand how they fit together.
+- Do not use when: one operating entity and one business line adequately explain the business.
 - Target length: 20-50 words.
-- Placeholders: allowed.
+- Source note: recommended when the structure is legal-entity driven or carve-out sensitive.
+- Example: `The Group operates through three clinic entities and one centralized diagnostics entity, each serving a distinct region or service role.`
 
-### `composition_bullet`
-- Purpose: describe composition across channel/customer/product/segment/geography.
-- Best use: business model and GTM blocks.
+### `business-model statement`
+
+- Purpose: state what the business actually provides to customers.
+- Use when: describing the core offering or service model.
+- Do not use when: the sentence drifts into generic strategy or end-market commentary.
+- Target length: 18-40 words.
+- Source note: usually not needed unless the service scope is unusually broad or specialized.
+- Example: `The Company delivers physician-led consultations, diagnostic testing, and ancillary care through community clinic sites and affiliated labs.`
+
+### `monetization statement`
+
+- Purpose: explain how revenue is generated and which mechanics matter.
+- Use when: the business has identifiable pricing, contract, utilization, commission, or transaction drivers.
+- Do not use when: the sentence simply repeats the business-model statement without explaining how the business gets paid.
 - Target length: 18-45 words.
-- Placeholders: allowed.
+- Source note: recommended when the revenue model is specialized, mixed, or deal-critical.
+- Example: `Revenue is generated through a mix of capitated contracts, fee-for-service billings, and employer-paid occupational health programs.`
 
-### `dependency_bullet`
-- Purpose: describe operational dependencies that can affect quality of earnings.
-- Best use: operating model block.
-- Target length: 20-55 words.
-- Placeholders: allowed.
+### `composition statement`
 
-### `change_bullet`
-- Purpose: describe a change over time and likely impact direction.
-- Best use: recent changes block.
-- Target length: 20-55 words.
-- Placeholders: allowed.
+- Purpose: explain mix across service lines, channels, entities, geographies, or customer groups.
+- Use when: different parts of the business carry meaningfully different economics or strategic roles.
+- Do not use when: the composition detail does not change how the business model is interpreted.
+- Target length: 20-45 words.
+- Source note: recommended when using percentages, ranking, or stated revenue mix.
+- Example: `Core clinic visits represented approximately 68% of FY2024 revenue, diagnostics represented 22%, and employer programs represented 10%, resulting in different margin and utilization dynamics across the platform.`
 
-### `source_note`
-- Purpose: compact support note for a block.
-- Best use: once per block when needed.
-- Target length: 8-25 words.
-- Placeholders: allowed.
+### `scale anchor`
 
-## Render skeleton
+- Purpose: make the business model concrete through a concise operating metric.
+- Use when: site count, member count, customers, assets, branches, studies, terminals, or similar metrics help the reader visualize the business.
+- Do not use when: the metric is interesting but not explanatory.
+- Target length: 12-35 words.
+- Source note: recommended when the metric is precise, time-anchored, or likely to be repeated elsewhere.
+- Example: `As of December 31, 2024, the Group operated 26 clinics, four lab sites, and served approximately 210,000 active patients.`
+
+### `dependency note`
+
+- Purpose: explain a structural dependency that affects how the business operates or should be interpreted.
+- Use when: shared services, supplier reliance, platform dependence, workforce model, or regulation materially shapes the business.
+- Do not use when: the point is a general risk statement rather than a business-model explanation.
+- Target length: 18-50 words.
+- Source note: recommended when the dependency is sensitive or non-obvious.
+- Example: `Centralized scheduling, billing, and physician recruitment support all regions, which improves operating consistency but concentrates execution dependence in the corporate platform.`
+
+### `change-context note`
+
+- Purpose: explain a recent change that materially affects how the current business model should be read.
+- Use when: acquisitions, restructurings, launches, closures, or pricing changes altered the business.
+- Do not use when: the change is historical color only and does not help interpret the current model.
+- Target length: 18-50 words.
+- Source note: recommended when dates, acquired businesses, or stated operational changes are involved.
+- Example: `Between FY2023 and FY2024, the Group added six clinics through acquisition, increasing urban density and expanding the diagnostics referral base.`
+
+### `comparability note`
+
+- Purpose: explain why historical structure, allocations, or perimeter may not map cleanly to the current or post-close business.
+- Use when: shared functions, holdco allocations, carve-outs, or post-close redesign could affect interpretation.
+- Do not use when: no genuine historical-versus-current or group-versus-standalone issue exists.
+- Target length: 18-55 words.
+- Source note: recommended when the issue affects period comparability or standalone understanding.
+- Example: `Historical clinic profitability by legal entity is not fully comparable because corporate overhead and physician recruitment costs were managed centrally and allocated after period-end.`
+
+## Assembly patterns
+
+Use one of these patterns based on business shape. These are assembly guides, not mandatory templates.
+
+### `Simple single-model business`
+
+- Recommended block order: `Business snapshot and perimeter` -> `How the business works`
+- Optional blocks typically activated: none; add `Composition and scale` only if a scale anchor materially clarifies the model
+- Target density: 4-6 bullets total
+- Stop adding detail when: the reader knows what is being acquired, what it sells, how it gets paid, and the one or two facts that make the model concrete
+
+### `Multi-entity / multi-line business`
+
+- Recommended block order: `Business snapshot and perimeter` -> `How the business works` -> `Composition and scale` -> `Operating structure and dependencies` -> `Comparability / standalone considerations` when needed
+- Optional blocks typically activated: `Composition and scale`, `Operating structure and dependencies`, and sometimes `Comparability / standalone considerations`
+- Target density: 6-10 bullets total
+- Stop adding detail when: each material entity or line of business has a defined role and the reader can understand how the parts fit together without a separate market explainer
+
+### `Change-heavy or roll-up business`
+
+- Recommended block order: `Business snapshot and perimeter` -> `How the business works` -> `Recent changes relevant to the current model` -> `Composition and scale` -> `Operating structure and dependencies` -> `Comparability / standalone considerations` when needed
+- Optional blocks typically activated: `Recent changes relevant to the current model`, `Composition and scale`, and `Comparability / standalone considerations`
+- Target density: 6-10 bullets total
+- Stop adding detail when: the current business model is clear and the reader understands why the current business should not be read as a static continuation of earlier periods
+
+## Section-specific writing guidance
+
+1. Lead with perimeter before elaborating on offerings, customers, or geography.
+2. Explain what the business does in terms of offerings and revenue mechanics, not abstract strategy.
+3. Use customer, channel, and geography detail only when it helps explain how the business gets paid or how the model is structured.
+4. Use scale anchors only when they make the business model more concrete.
+5. Keep one business idea per bullet or sentence cluster.
+6. Keep historical or forward-looking context only when it helps interpret the current business model.
+7. Avoid drifting into historical performance commentary, margin analysis, or deal recommendation language.
+8. Avoid generic strategy, market-positioning, or management-presentation phrasing.
+
+## Verification and review checks
+
+Use these checks before finalizing a Business Overview draft.
+
+1. `Business snapshot and perimeter` and `How the business works` both exist.
+2. The transaction perimeter is clear, including exclusions when relevant.
+3. The business model is explicit.
+4. Monetization is explicit, or the section clearly signals that monetization detail is unavailable.
+5. Optional blocks appear only when their stated trigger rules are met.
+6. The section does not contain a default standalone `Customers and go-to-market` block.
+7. The section does not drift into detailed historical performance commentary or a generic risk register.
+8. No slot, layout, or `deckSpec` language appears in the drafted Business Overview section.
+9. Missing information uses inline placeholders rather than open-item headings.
+10. The final draft reflects the narrative-component model shown in this reference.
+11. Language and tone pass `references/global-writing-conventions.md`.
+12. Split or tighten any bullet that exceeds 55 words or becomes difficult to scan.
+13. Split any block that is trying to do more than one analytical job.
+14. Prefer a separate optional block over overloading a mandatory block.
+15. Do not split solely to mimic slide layouts or visual symmetry.
+16. Keep multi-entity or multi-line explanations grouped by business meaning, not by arbitrary formatting.
+
+## Full examples
+
+### Example 1: Simple single-model business
 
 ```markdown
 ## Business overview
 
-### Business model
-- [Company] operates [business model] across [geography], with revenue generated through [primary products/services].
-- [Entity/segment] contributes approximately [x]% of revenue and is driven by [volume/pricing/utilization] mechanics.
-- Gross margin performance is primarily influenced by [input cost / labor mix / channel mix], with [key factor] acting as the main variability driver.
-- [Optional] Revenue is split across [segment A/B/C] at [x]% / [x]% / [x]%, which affects margin profile and seasonality.
-- Source note: [source_note optional]
+### Business snapshot and perimeter
 
-### Customers and go-to-market
-- [Company] serves primarily [customer type] through [direct sales / channel partners / contracts] across [key markets].
-- Revenue concentration is [low/moderate/high], with the top [x] customers accounting for approximately [x]% of sales in [period].
-- Commercial outcomes are most sensitive to [pricing renewal / retention / acquisition cost / throughput], which drives short-term margin movement.
-- [Optional] Channel mix is currently [direct/indirect/online] at [x]% / [x]% / [x]%, with [channel] carrying comparatively [higher/lower] gross margin.
-- Source note: [source_note optional]
+- Ridgeview Fire Protection Ltd. provides inspection, maintenance, and minor repair services for commercial fire-safety systems across Alberta and Saskatchewan.
+- The transaction perimeter includes the operating company, service fleet, and field-service assets, and excludes a separately owned property entity that holds the head office and warehouse.
 
-### Operating model
-- The business operates through [single entity / multi-entity] structure with [centralized/decentralized] support for finance, HR, procurement, and IT.
-- Shared services and management overlap across [entities/sites] affect cost allocations and standalone comparability of reported margins.
-- Key operating dependencies include [supplier concentration / workforce model / platform dependency], each of which can influence earnings quality and volatility.
-- [Optional] As at [Date], approximately [x] FTEs support more than one business unit, with associated payroll and overhead allocations under [current methodology].
-- Source note: [source_note optional]
+### How the business works
 
-### Recent changes and context for financial trends
-- During [period], the business [expanded/restructured/divested] [specific activity], which increased exposure to [new driver] and reduced reliance on [old driver].
-- Management implemented [pricing/go-to-market/operational] changes in [period], with early impact visible in [revenue growth / gross margin / cost base].
-- [Optional] The current structure does not fully align to a standalone post-transaction model, and margin comparability may change after transitional arrangements are normalized.
-- Source note: [source_note optional]
+- The Company serves property managers, industrial sites, and multi-site commercial customers through recurring inspection contracts and call-out repair work.
+- Revenue is generated primarily from scheduled inspection visits billed per site or device, with additional repair revenue driven by service-call volume and replacement parts.
+- As of March 31, 2025, Ridgeview employed 48 technicians from one dispatch center and serviced approximately 3,200 active customer sites.
 ```
 
-## Common mistakes (and fixes)
-
-1. Mistake: generic positioning language with no business mechanics.
-- Fix: replace adjectives with operating facts and revenue mechanics.
-
-2. Mistake: detailed financial analysis inside business overview.
-- Fix: keep this section business-and-driver focused; move deep performance commentary to P&L sections.
-
-3. Mistake: adding open-item lists.
-- Fix: keep missing facts inline using placeholders such as `$[x]` and `[Date]`.
-
-4. Mistake: citing every sentence.
-- Fix: use one compact source note per block only when needed.
-
-5. Mistake: long merged bullets from extracted text.
-- Fix: split into one idea per bullet and keep sequence logical.
-
-## Structural preflight rules (must pass)
-
-1. All four required blocks exist and are in this exact order.
-2. No `Open items` or `Data requests` headings appear.
-3. Missing data uses inline placeholders.
-4. Bullet density is within contract range.
-5. Render skeleton and full example are materially different (template vs worked output).
-6. Language and tone pass global conventions.
-
-## Split policy rules
-
-1. Split a block when it exceeds 6 bullets.
-2. Split a bullet when it exceeds 55 words.
-3. Split into two short blocks when one block mixes unrelated ideas.
-4. Prefer subhead bullets over dense paragraphs for complex structures.
-
-## Full example
+### Example 2: Multi-entity and change-heavy business
 
 ```markdown
 ## Business overview
 
-### Business model
-- Aurora Coffee Group operates an integrated food and beverage platform in Thailand, with revenue generated through branded retail coffee stores, packaged coffee manufacturing, and bakery production.
-- Retail operations represent approximately 58% of group revenue and are primarily driven by same-store traffic, average ticket, and store-level labor efficiency.
-- Manufacturing and bakery segments account for the remaining 42% of revenue and are driven by utilization of production lines, product mix, and commodity input costs.
-- In FY2024, retail generated 58% of revenue, coffee manufacturing generated 24%, and bakery generated 18%; manufacturing carried the highest gross margin profile.
+### Business snapshot and perimeter
 
-### Customers and go-to-market
-- Urban consumers purchase through a 146-store network, while franchise support, café supply contracts, and catering generate B2B revenue.
-- The top ten B2B customers represented 19% of non-retail revenue in FY2024, indicating moderate concentration in contract-based channels.
-- Commercial performance is most sensitive to product mix and pricing cadence in retail, as well as contract renewal terms in manufacturing supply agreements.
-- In FY2024, direct retail sales represented 63% of channel mix, franchise and supply contracts represented 22%, and catering and events represented 15%; direct retail carried lower margin volatility.
+- Meridian Home Services Group operates a residential plumbing, HVAC, and electrical services platform across the US Southeast through a portfolio of local service brands.
+- The transaction perimeter includes 14 operating branches across three legal entities and excludes a seller-owned call-center entity and two non-core real estate entities.
 
-### Operating model
-- The group operates through three legal entities with centralized finance, procurement, and HR functions managed at holdco level.
-- Shared management responsibilities across entities affect allocation of payroll and overhead, reducing comparability of historical standalone margins by legal entity.
-- A small number of coffee bean and dairy suppliers concentrates procurement dependency and can move gross margin when commodity prices change.
-- As at December 31, 2024, 34 FTEs supported multiple entities, with allocated payroll costs recorded across retail, manufacturing, and bakery entities using management allocation keys.
+### How the business works
 
-### Recent changes and context for financial trends
-- Between FY2022 and FY2024, the group expanded into bakery and contract catering, increasing revenue diversification but also adding operational coordination complexity.
-- In Q3 FY2024, management repriced selected beverage SKUs and renegotiated two key supply contracts, which supported gross margin expansion in H2 FY2024.
-- Management indicated that current intercompany support and service-charge arrangements would require redesign for a standalone post-transaction model, which could shift entity-level margins despite stable group economics.
+- The Group provides emergency repair, replacement, and maintenance services to residential customers, with additional revenue from equipment installation and membership plans.
+- Revenue is generated through one-time service jobs, larger installation tickets, and recurring membership fees that support repeat demand and dispatch efficiency.
+- Customer and channel detail is relevant only to the extent it explains monetization: digitally generated leads and outbound membership renewals drive a significant portion of booked work.
+
+### Composition and scale
+
+- HVAC represented approximately 48% of FY2024 revenue, plumbing represented 31%, and electrical represented 21%; installation-heavy HVAC work carried the highest average ticket size.
+- Membership plans represented approximately 18% of FY2024 revenue and supported recurring demand across all three service lines.
+- As of December 31, 2024, the Group operated 14 branches, employed approximately 420 field technicians, and completed more than 190,000 service calls during the year.
+
+### Operating structure and dependencies
+
+- Branch-level operations are managed locally, while procurement, digital marketing, finance, and call routing are coordinated centrally by the corporate platform.
+- The current model depends on centralized lead generation, shared dispatcher workflows, and a concentrated group of equipment suppliers, each of which affects branch productivity and service mix.
+
+### Recent changes relevant to the current model
+
+- Between FY2023 and FY2024, the Group completed six acquisitions and closed two underperforming locations, which increased route density in core markets and shifted revenue mix toward acquired HVAC operations.
+- Management also introduced a unified financing program for larger installation jobs in FY2024, increasing conversion on higher-ticket replacement work.
+
+### Comparability / standalone considerations
+
+- Historical branch results are not fully comparable across periods because marketing, dispatch, and certain corporate payroll costs were centralized and allocated after period-end.
+- The excluded seller-owned call-center entity would require replacement or transitional support in a standalone post-close structure, even though lead-generation economics are embedded in historical branch performance.
 ```

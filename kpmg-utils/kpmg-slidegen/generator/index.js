@@ -281,7 +281,7 @@ export async function generateToFile(deckSpec, outPath, options = {}) {
   const overflowRepairSuggestions = buildOverflowRepairSuggestions(renderQa?.overflowEvents || []);
   const overflowRisks = renderQa?.overflowRisks || buildOverflowRisks(renderQa?.overflowEvents || []);
   const baseRepairSuggestions = renderQa?.repairSuggestions || validation?.qa?.repairSuggestions || [];
-  const pagination = renderQa?.pagination || renderQa?.paginationDecisions || [];
+  const pagination = renderQa?.paginationDecisions || [];
 
   const qaReport = {
     generatedAt: new Date().toISOString(),
@@ -364,7 +364,7 @@ export async function main(argv = process.argv.slice(2)) {
   }
 
   console.log(`Generated: ${cli.outPath}`);
-  console.log(`QA report: ${result.qaPath || getQaPath(cli.outPath, cli.qaOutPath)}`);
+  console.log(`QA report: ${result.qaPath}`);
 
   const postprocess = result?.strictSummary?.postprocess;
   if (postprocess?.preview?.status === 'ok') {

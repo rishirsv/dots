@@ -80,13 +80,20 @@ function clamp(value, min, max) {
 function normalizeChartAnnotations(raw) {
   if (!Array.isArray(raw)) return [];
   const out = [];
-  for (const item of raw) {
-    if (!item || typeof item !== 'object') continue;
-    const title = sanitizeText(item.title || item.heading);
-    const text = sanitizeText(item.text || item.body);
-    if (!title && !text) continue;
-    const anchor = sanitizeText(item.anchor || 'topRight');
-    if (!['topLeft', 'topRight', 'bottomLeft', 'bottomRight'].includes(anchor)) continue;
+  for (let idx = 0; idx < raw.length; idx += 1) {
+    const item = raw[idx];
+    if (!item || typeof item !== 'object') {
+      throw new Error(`chart.annotations[${idx}] must be an object`);
+    }
+    const title = sanitizeText(item.title);
+    const text = sanitizeText(item.text);
+    if (!title && !text) {
+      throw new Error(`chart.annotations[${idx}] must include title or text`);
+    }
+    const anchor = sanitizeText(item.anchor);
+    if (!['topLeft', 'topRight', 'bottomLeft', 'bottomRight'].includes(anchor)) {
+      throw new Error(`chart.annotations[${idx}] anchor must be one of topLeft|topRight|bottomLeft|bottomRight`);
+    }
     out.push({ title, text, anchor });
     if (out.length >= 4) break;
   }

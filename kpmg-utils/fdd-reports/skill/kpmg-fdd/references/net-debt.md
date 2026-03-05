@@ -2,234 +2,308 @@
 
 ## Table of contents
 
-- Core rule
-- Writing guidance
-- Layout
-- Available slot shapes
-- Render skeleton
-- Common mistakes (and fixes)
-- Structural preflight rules (must pass)
-- Split policy rules
-- Full example
+- Section objective
+- Core principles
+- Analytical workflow
+- Section architecture
+- Available analytical units
+- Assembly patterns
+- Section-specific writing guidance
+- Verification and review checks
+- Full examples
 
-## Core rule
+## Section objective
 
-Produce a purchase-price-relevant net debt view as at a clearly stated date, with defensible classification of debt, cash, and debt-like items.
-
-The section must read as client-ready diligence writing: factual, concise, and explicit about scope, cut-off mechanics, and residual uncertainty.
+The Net Debt and Debt-like Items section defines the purchase-price-relevant indebtedness position as at a clearly stated date. It should tell the reader what is included in reported net debt or net cash, which additional items should be treated as debt-like or cash-like, and which closing mechanics or unresolved items could still change the funds flow.
 
 Global writing, placeholder, and language rules are defined in `references/global-writing-conventions.md` and apply here.
 
-## Writing guidance
+## Core principles
 
-1. Start with the headline position (reported vs adjusted, as at date, and primary drivers).
-2. Define scope before analysis (what counts as cash, debt, debt-like, and explicit exclusions).
-3. Show the schedule before commentary.
-4. Present `Debt-like adjustments and rationale` as a numbered list, with each item following this structure: `Item ($[x]): [what it includes as at date]. Treat this item as [debt-like / cash-like / other] because [basis]. [closing implication or uncertainty, where relevant].`
-5. Use `Other considerations` for potential debt/debt-like items that are not fully quantifiable, are outside immediate scope, or depend on closing-date updates.
-6. In `Other considerations`, state treatment direction, why it matters, and what is needed to finalize quantification.
-7. Convert missing support into inline placeholders; avoid process notes in the final narrative.
-8. Preferred lead-ins for this block include `Other considerations to net cash / (debt) include...` and `Other items for consideration include...`.
-9. Keep adjustments in full, client-ready sentences and avoid clipped or telegraphic fragments.
+1. **Position first, then classification:** Start with the reported position and the adjusted position when available, then explain the treatment calls that move between those two views.
+2. **Treat the schedule as the anchor exhibit:** Strong net debt sections are built around a dated schedule or components list, not around free-form commentary.
+3. **Define what cash means:** Clarify restricted, trust, settlement, trapped, or otherwise unavailable cash whenever the classification is not obvious.
+4. **Separate quantified items from contingent items:** Put quantified debt-like and cash-like treatment calls in the main analysis and reserve `Other considerations` for unresolved or contingent items.
+5. **Show cross-workstream consequences:** When an item is reclassified from net working capital or linked to QoE treatment, state the closing or peg implication explicitly.
+6. **Keep closing mechanics visible:** Taxes, earn-outs, leases, dividends, transaction costs, bonuses, and similar items often require a statement about treatment at closing or completion.
+7. **Keep the section on purchase-price mechanics:** Do not turn this section into a covenant summary, a debt instrument appendix, or a generic open-items register.
 
-## Layout
+## Analytical workflow
 
-Scale the depth of the section based on the complexity.
+1. **Anchor the section to one reference date:** Identify the `as at [Date]` point used for the schedule, headline, and conclusions.
+2. **Define the net debt perimeter:** Determine what counts as debt, cash, debt-like, cash-like, excluded, or outside scope for this engagement.
+3. **Build the core exhibit:** Start from the reported balance sheet or management schedule and organize the main line items into a net debt schedule or components list.
+4. **Identify treatment calls beyond reported debt less cash:** Pull in acquisition-related obligations, taxes, lease issues, transaction items, working-capital reclasses, and other purchase-price-relevant balances.
+5. **Separate fully quantified items from contingent items:** Keep items with clear quantum in the main schedule or rationale block and move unresolved or out-of-scope items to a conditional watchlist.
+6. **State closing mechanics where they matter:** Add explicit completion, locked-box, or working-capital-peg implications when the classification could change purchase price mechanics.
+7. **Scale the section to complexity:** Keep simple situations short, and expand only when the number of treatment calls, definition issues, or closing sensitivities makes it necessary.
+
+## Section architecture
+
+Scale the section based on the complexity of the cash definition, the number of debt-like items, and the importance of closing-date mechanics.
 
 Target length:
 
-- 320-780 words (including schedule and adjustments)
+- `concise`: 180-320 words plus schedule for straightforward net cash or net debt positions with few adjustments
+- `standard`: 280-520 words plus schedule for most situations
+- `expanded`: 450-750 words plus schedule when there are multiple debt-like categories, reclasses, or closing sensitivities
 
 Required blocks:
 
-- `Headline position`
-- `Definition and scope`
+- `Headline position and scope`
+  - Purpose: state the reported and adjusted position as at the reference date and define the key classification boundary.
+  - Typical density: 2-4 bullets.
 - `Net debt schedule`
+  - Purpose: show the reported balances and the core classified items that support the net debt or net cash conclusion.
+  - Typical density: one exhibit plus one short source note.
 - `Debt-like adjustments and rationale`
+  - Purpose: explain the material treatment calls that move beyond reported bank debt less cash.
+  - Typical density: 3-8 numbered items.
+
+Optional blocks:
+
+- `Definition details`
+  - Use when cash availability, lease measurement, or locked-box / SPA mechanics are not obvious from the required blocks.
+  - Use when the section needs to distinguish unrestricted cash from trust, settlement, trapped, or regulatory balances.
+- `Closing and peg considerations`
+  - Use when the treatment at completion differs from accounting presentation or when a reclassification affects the working-capital peg or funds flow.
+  - Use when taxes, earn-outs, transaction costs, dividends, or leases require explicit closing-date handling.
 - `Other considerations`
+  - Use when unresolved, contingent, unquantified, or out-of-scope items could still affect purchase price.
+  - Use when another diligence workstream may influence final classification.
+- `Instrument or category detail`
+  - Use when debt instrument terms, acquisition-item groupings, or cash subcategories materially change the treatment conclusion or make the section easier to follow.
 
-Scaling rules:
+Ordering rules:
 
-- Keep concise for simple fact patterns (fewer adjustments, limited uncertainty).
-- Expand `Debt-like adjustments and rationale` with category subheaders when treatment calls are numerous.
-- Add explicit reclassification language whenever any item moves between net debt and working capital categories.
-- Expand `Other considerations` when timing updates, unresolved support, definition dependencies, or unquantifiable debt-like exposures are material.
+- Start with `Headline position and scope`.
+- Follow with `Net debt schedule`.
+- Follow with `Debt-like adjustments and rationale`.
+- Add optional blocks only when their trigger conditions are met.
+- When multiple optional blocks are needed, use this default order: `Definition details` -> `Closing and peg considerations` -> `Other considerations` -> `Instrument or category detail`.
 
-Block slot map:
+Inclusion rule:
 
-- `Headline position`: 1 `textArray` (1-2 bullets)
-- `Definition and scope`: 1 `textArray` (3-6 bullets)
-- `Net debt schedule`: 1 `table` + 1 `text` source note
-- `Debt-like adjustments and rationale`: 1 `textArray` (3-12 numbered items), grouped by category when needed; each item follows `Item ($[x]): includes... Treat this item as...`
-- `Other considerations`: 1 `textArray` (2-8 bullets), focused on potential debt/debt-like items where quantification is pending or contingent
+- Do not add an optional block just because the source mentions it. Add it only when it changes how the reader should interpret purchase-price mechanics or net debt classification.
 
-## Available slot shapes
+Boundary rule:
 
-### `text`
+- Do not create a generic `open items` or `data requests` block. Use inline placeholders and add `Other considerations` only when unresolved items are still decision-useful.
 
-- Plain string.
-- Use for source notes, labels, and short block headers.
+## Available analytical units
 
-### `textArray`
+Use these as building blocks for bullets, short sentence clusters, or numbered treatment items. Choose only the units the section needs.
 
-- Array of bullets or short statements.
-- Use for all narrative blocks (`Headline position`, `Definition and scope`, `Debt-like adjustments`, `Other considerations`).
+Placeholder usage follows `references/global-writing-conventions.md` and is not restated in each unit definition.
 
-### `table`
+### `position bridge`
 
-- Object with `headers` and `rows`.
-- Use for the net debt schedule.
+- Purpose: state the reported and adjusted position, the date anchor, and the main drivers.
+- Use when: opening the section.
+- Do not use when: repeating the same bridge after the schedule already established it clearly.
+- Target length: 20-45 words.
+- Source note: usually not needed if the schedule immediately follows.
+- Example: `As at June 30, 2024, the Company reported net cash of $[x], which adjusts to $[y] after tax, lease, and working-capital reclassifications.`
 
-### `bodyStyle`
+### `scope note`
 
-- `"bullets"` or `"paragraphs"` only.
-- Default to `"bullets"` for this section.
+- Purpose: define what is included and excluded from net debt, especially for cash and borderline balances.
+- Use when: restricted cash, settlement balances, trust accounts, trapped cash, leases, or locked-box mechanics affect the classification.
+- Do not use when: the cash and debt boundary is obvious from the schedule and no special treatment is needed.
+- Target length: 18-45 words.
+- Source note: recommended when the definition differs from management presentation or deal mechanics.
+- Example: `Cash includes unrestricted operating balances only and excludes settlement cash and trust balances that remain within working capital or regulated accounts until release.`
 
-## Render skeleton
+### `schedule framing line`
+
+- Purpose: introduce the main exhibit and tell the reader what it captures.
+- Use when: the section uses a schedule or component list as its anchor exhibit.
+- Do not use when: the exhibit title already does the full job and an additional sentence would repeat it.
+- Target length: 18-40 words.
+- Source note: not needed beyond the exhibit source note.
+- Example: `The schedule below illustrates the net indebtedness position as at December 31, 2024, including reported debt, operating cash, and identified debt-like reclassifications.`
+
+### `component definition`
+
+- Purpose: define a major schedule component or explain why it belongs in the exhibit.
+- Use when: a line item such as leases, due-to-sellers, shareholder balances, or trust cash needs a one-line explanation.
+- Do not use when: the line item is self-explanatory and no treatment ambiguity exists.
+- Target length: 15-40 words.
+- Source note: recommended when the balance is non-obvious or partially off-balance-sheet.
+- Example: `Finance lease obligations include the property lease and equipment financing arrangements currently presented at the present value of future lease payments in the audited statements.`
+
+### `treatment unit`
+
+- Purpose: explain one debt-like, cash-like, excluded, or contingent classification decision.
+- Use when: a material item changes adjusted net debt or requires an explicit treatment call.
+- Do not use when: the point is only a descriptive component with no real classification decision.
+- Target length: 30-85 words.
+- Source note: recommended when the amount, basis, or support is non-obvious.
+- Example: `Income tax payable ($[x]): This balance relates to profits generated before completion and should be treated as debt-like. If the final tax computation remains outstanding, the unpaid pre-completion amount should be estimated at closing.`
+
+### `closing mechanics note`
+
+- Purpose: state how an item should be handled at completion, in the locked-box, or in the funds flow.
+- Use when: accounting presentation and purchase-price treatment are not the same, or the item may change at closing.
+- Do not use when: the treatment is fully static and there is no timing consequence.
+- Target length: 18-50 words.
+- Source note: recommended when linked to transaction definitions or management representations.
+- Example: `Lease obligations are carried at present value in the accounts, but the closing funds flow should confirm whether the agreed net debt definition requires undiscounted settlement value at completion.`
+
+### `workstream interaction note`
+
+- Purpose: explain how net debt classification interacts with net working capital or QoE.
+- Use when: an item is reclassified from working capital, linked to an EBITDA add-back, or otherwise at risk of double counting.
+- Do not use when: the item is self-contained within net debt and no cross-workstream implication exists.
+- Target length: 18-45 words.
+- Source note: recommended when the interaction is tied to another section's conclusion.
+- Example: `If capex payables are treated as debt-like at closing, they should be removed from the working-capital peg to avoid double counting.`
+
+### `contingent item note`
+
+- Purpose: flag an unresolved or unquantified item that may still affect purchase price.
+- Use when: support is incomplete, quantum is not final, or another workstream must confirm treatment.
+- Do not use when: the item is already quantified and can be treated directly in the main rationale list.
+- Target length: 18-55 words.
+- Source note: recommended.
+- Example: `Payroll tax deferral ($[x] / unquantified): This may be debt-like because it relates to pre-completion payroll obligations, but final quantification is outstanding from Management.`
+
+## Assembly patterns
+
+Use one of these patterns based on the section's complexity. These are assembly guides, not mandatory templates.
+
+### `Simple reported net cash / debt section`
+
+- Recommended block order: `Headline position and scope` -> `Net debt schedule` -> `Debt-like adjustments and rationale`
+- Optional blocks typically activated: none; add `Definition details` only if cash availability or lease treatment is unclear
+- Target density: 3-5 bullets plus one short exhibit
+- Stop adding detail when: the reader understands the reported position, the one or two material adjustments, and the resulting purchase-price view
+
+### `Schedule-backed classification review`
+
+- Recommended block order: `Headline position and scope` -> `Net debt schedule` -> `Debt-like adjustments and rationale` -> `Closing and peg considerations` when needed -> `Other considerations` when needed
+- Optional blocks typically activated: `Closing and peg considerations` and `Other considerations`
+- Target density: 5-9 bullets plus one fuller exhibit
+- Stop adding detail when: each material treatment call has a basis, the schedule is auditable, and the closing implications are explicit
+
+### `Deal-mechanics-heavy / locked-box section`
+
+- Recommended block order: `Headline position and scope` -> `Definition details` -> `Net debt schedule` -> `Debt-like adjustments and rationale` -> `Closing and peg considerations` -> `Other considerations`
+- Optional blocks typically activated: all optional blocks except `Instrument or category detail`, which should be added only if it improves readability
+- Target density: 7-11 bullets plus one detailed exhibit
+- Stop adding detail when: the reader can distinguish reported accounting balances from the agreed transaction definition and see which items remain for negotiation or closing true-up
+
+## Section-specific writing guidance
+
+1. Lead with the `as at [Date]` anchor and the reported versus adjusted position whenever both are available.
+2. Use the schedule or component list as the structural anchor; do not bury the main classification logic in prose alone.
+3. Define the cash boundary whenever restricted, trust, settlement, trapped, or PSP-style balances could change the conclusion.
+4. Write treatment units in full sentences that state the item, the reason for treatment, and the closing implication when relevant.
+5. State explicitly when an item should be treated as debt-like, cash-like, excluded, or contingent; do not imply the conclusion indirectly.
+6. Call out working-capital or QoE interaction whenever the same balance could otherwise be counted twice.
+7. Use `Other considerations` only for unresolved or contingent items that are still relevant to purchase-price thinking.
+8. Keep debt instrument detail only to the extent it changes classification, measurement, or closing treatment.
+9. Avoid extraction artifacts, process notes, and generic requests for information.
+10. Avoid turning the section into a lender memo, a tax memo, or a risk register.
+
+## Verification and review checks
+
+Use these checks before finalizing a Net Debt and Debt-like Items draft.
+
+1. `Headline position and scope`, `Net debt schedule`, and `Debt-like adjustments and rationale` all exist.
+2. The section is anchored to one explicit `as at [Date]`.
+3. The reported position and adjusted position are both stated when the evidence supports both; if the adjusted position is unavailable, the section signals that clearly.
+4. The schedule includes units and a `Source note`.
+5. The section goes beyond bank debt less cash and addresses debt-like or cash-like treatment where relevant.
+6. Cash definition is explicit when restricted, trust, settlement, trapped, or equivalent balances are relevant.
+7. Lease measurement and other closing-mechanics issues are stated when accounting presentation may differ from purchase-price treatment.
+8. Optional blocks appear only when their trigger rules are met.
+9. `Other considerations` contains unresolved purchase-price-relevant items, not a generic data-request list.
+10. No extraction-artifact language appears, including `Not present in source report` or `extraction policy`.
+11. No slot, layout, or `deckSpec` language appears in the drafted section.
+12. Missing information uses inline placeholders rather than unsupported claims or open-item headings.
+13. The final draft reflects the schedule-backed, treatment-unit model shown in this reference.
+14. Language and tone pass `references/global-writing-conventions.md`.
+15. Split any treatment item that becomes hard to scan or tries to do more than one analytical job.
+
+## Full examples
+
+### Example 1: Simple reported net cash section
 
 ```markdown
 ## Net debt and debt-like items
 
-### Headline position
+### Headline position and scope
 
-- [textArray: 1-2 bullets]
+- As at June 30, 2024, the Company reported net cash of $12.4 million, which adjusts to $11.8 million after one working-capital reclassification and one debt-like accrual.
+- Cash includes unrestricted operating balances only and excludes $0.2 million held in settlement accounts, which remain within working capital until remitted.
 
-### Definition and scope
+### Net debt schedule
 
-- [textArray: 3-6 bullets]
-- Source note: [text optional]
+Source note: Management-prepared net debt schedule as at June 30, 2024, reconciled to the June 2024 trial balance.
 
-### Net debt schedule (as at [Date], $[units])
-
-Source note: [text required]
-
-| Line item                          | Classification                        | Balance ($[units]) |
-| ---------------------------------- | ------------------------------------- | -----------------: |
-| [text]                             | [Debt/Cash/Debt-like/Cash-like/Other] |               $[x] |
-| [text]                             | [Debt/Cash/Debt-like/Cash-like/Other] |               $[x] |
-| [text]                             | [Debt/Cash/Debt-like/Cash-like/Other] |               $[x] |
-| **Adjusted net debt / (net cash)** | **Total**                             |           **$[x]** |
+| Line item | Classification | Balance ($m) |
+| --- | --- | ---: |
+| Cash and cash equivalents | Cash | 12.6 |
+| Settlement cash | Excluded | (0.2) |
+| Finance leases | Debt | (0.4) |
+| Income tax payable | Debt-like | (0.1) |
+| Refund buffer reclass | Working-capital reclass | (0.1) |
+| **Adjusted net cash / (net debt)** | **Total** | **11.8** |
 
 ### Debt-like adjustments and rationale
 
-1. Income tax payable ($[x]): The balance includes current income taxes payable as at [Date] that relate to pre-completion profits. Treat this item as debt-like because the vendor generated the underlying tax liability before completion. Estimate unpaid pre-completion amounts at closing when final year-end computation remains pending.
-2. Earn-out payable ($[x]): Management reported earn-outs payable on past acquisitions of $[x] as at [Date]. Treat this item as debt-like because the obligation arose from pre-completion transactions. Review forecast assumptions and contractual terms at closing to finalize quantum.
-3. Deferred purchase price payable ($[x]): The balance includes deferred consideration owed to vendors of acquired operations. Treat this item as debt-like when settlement remains payable post-completion.
-4. Transaction costs and bonuses ($[x]): The balance includes accrued professional fees and transaction-related incentives. Treat unpaid amounts at completion as indebtedness.
-5. Capex payables ($[x]): The balance includes non-trade amounts payable to capital suppliers. Treat this item as debt-like when the balance relates to pre-completion capital spend.
-6. [Other item] ($[x] / unquantifiable): The balance relates to [description]. Treat this item as [debt-like / cash-like / other] based on [required support], and confirm final treatment and quantum at closing.
-- Source note: [text optional]
-
-### Other considerations
-- Other considerations to net cash / (debt) include:
-- [Item]: [Context and why it may be debt-like, cash-like, or excluded.]
-- [Item]: [State what the deal team should review at closing and what support is required.]
-- [Item]: [If outside scope or not fully quantifiable, state this explicitly and describe potential purchase price relevance.]
-- Source note: [text optional]
+1. Refund buffer ($0.1 million): A minimum balance remains in the payment account to process customer refunds. Treat this item as working-capital rather than cash-like because the balance supports ongoing operating activity and is not freely distributable at closing.
+2. Income tax payable ($0.1 million): This balance relates to profits generated before completion and should be treated as debt-like. Final quantum should be confirmed against the closing tax computation if the period-end estimate changes.
+3. Finance leases ($0.4 million): These balances are included in reported debt and reflect present-value lease obligations. Confirm at closing whether the agreed net debt definition requires any different measurement basis.
 ```
 
-## Common mistakes (and fixes)
-
-1. Mistake: presenting only bank debt less cash with no debt-like analysis.
-
-- Fix: include a debt-like adjustments block with treatment rationale for material items.
-
-2. Mistake: missing or inconsistent as-at date anchors.
-
-- Fix: anchor headline, schedule, and conclusions to one explicit reference date.
-
-3. Mistake: unclear cash definition (for example, restricted/trust/settlement balances not addressed).
-
-- Fix: state inclusion/exclusion rules in `Definition and scope`.
-
-4. Mistake: classification conclusion without basis.
-
-- Fix: add rationale plus source note for every material item.
-
-5. Mistake: process notes in narrative (for example, `missing from source` or `support pending`).
-
-- Fix: replace with placeholders and capture unresolved points in `Other considerations`.
-
-6. Mistake: reclassifications between net debt and working capital without an explicit treatment note.
-
-- Fix: include one explicit reclassification and rationale bullet.
-
-7. Mistake: using `Other considerations` as a generic request list with no treatment view.
-
-- Fix: include only potential debt/debt-like items and state treatment direction plus quantification status.
-
-8. Mistake: telegraphic adjustment bullets that read like fragments.
-
-- Fix: write full-sentence bullets after the colon, including treatment and implication.
-
-## Structural preflight rules (must pass)
-
-1. All five required blocks exist and are in this exact order.
-2. The section includes at least one explicit `as at [Date]` anchor in headline and schedule title.
-3. The schedule includes units and at least one source note.
-4. Debt-like adjustments include treatment plus rationale for each material item.
-5. If any item is reclassified between net debt and working capital, the reclassification and rationale are explicitly stated.
-6. `Other considerations` includes potential debt/debt-like items with clear treatment direction and quantification status.
-7. Missing information is handled with placeholders and `Other considerations`, not process notes.
-8. Language and tone pass global conventions.
-
-## Split policy rules
-
-1. Split `Debt-like adjustments and rationale` into category sub-blocks when bullets exceed 8.
-2. Split any adjustment bullet longer than 85 words into two bullets.
-3. Split schedule into core + supplemental table when line items exceed 15.
-4. Split `Other considerations` into sub-themes (timing, reclassification, non-quantifiable debt-like exposures) when bullets exceed 6.
-
-## Full example
+### Example 2: Schedule-backed classification review
 
 ```markdown
 ## Net debt and debt-like items
 
-### Headline position
+### Headline position and scope
 
-- As at December 31, 2024, retractable redeemable shares, long-term debt facilities, and line-of-credit balances drove reported net debt of $504.7 million, partly offset by operating cash.
-- After identified reclassifications and additional debt-like items totaling $16.6 million, adjusted net debt is $521.3 million for purchase price analysis.
+- As at December 31, 2024, reported net debt was $504.7 million, driven primarily by long-term debt facilities, retractable redeemable shares, and acquisition-related obligations, partly offset by operating cash.
+- After identified reclassifications and additional debt-like items of $16.6 million, adjusted net debt was $521.3 million.
+- Cash includes unrestricted operating balances only and excludes trust balances and other amounts not available for general use at closing.
 
-### Definition and scope
-
-- Net debt in this section includes third-party borrowings, retractable redeemable shares, acquisition-related payables, tax payables, and other identified debt-like obligations expected to affect closing funds flow.
-- Cash includes unrestricted operating balances only; balances held in trust accounts are excluded from operating cash for net debt purposes.
-- Balances reclassified from working capital are included where they relate to non-trade or pre-completion obligations and are expected to settle in cash post-completion.
-- The schedule presents lease and other long-term obligations on the accounting basis in the underlying financial statements and aligns final classification to transaction definitions at closing.
-
-### Net debt schedule (as at December 31, 2024, $m)
+### Net debt schedule
 
 Source note: Management-prepared net debt schedule as at December 31, 2024, reconciled to the December 2024 trial balance and supporting balance sheet schedules.
 
-| Line item                          | Classification       | Balance ($m) |
-| ---------------------------------- | -------------------- | -------------: |
-| Cash and cash equivalents          | Cash                 |            8.3 |
-| Revolver and line of credit        | Debt                 |         (12.8) |
-| Long-term debt facilities          | Debt                 |        (258.3) |
-| Retractable redeemable shares      | Debt-like            |        (241.9) |
-| Earn-out payable                   | Debt-like            |          (1.5) |
-| Purchase price payable             | Debt-like            |          (0.2) |
-| Income taxes payable               | Debt-like            |          (9.7) |
-| Stock options liability            | Debt-like            |          (1.9) |
-| Transaction costs accrual          | Debt-like            |          (1.6) |
-| Capex payables (NWC reclass)       | Debt-like            |          (1.7) |
-| **Adjusted net debt / (net cash)** | **Total**            |      **(521.3)** |
+| Line item | Classification | Balance ($m) |
+| --- | --- | ---: |
+| Cash and cash equivalents | Cash | 8.3 |
+| Revolver and line of credit | Debt | (12.8) |
+| Long-term debt facilities | Debt | (258.3) |
+| Retractable redeemable shares | Debt-like | (241.9) |
+| Earn-out payable | Debt-like | (1.5) |
+| Purchase price payable | Debt-like | (0.2) |
+| Income taxes payable | Debt-like | (9.7) |
+| Stock options liability | Debt-like | (1.9) |
+| Transaction costs accrual | Debt-like | (1.6) |
+| Capex payables (NWC reclass) | Debt-like | (1.7) |
+| **Adjusted net debt / (net cash)** | **Total** | **(521.3)** |
 
 ### Debt-like adjustments and rationale
 
-1. Income tax payable ($9.7 million): The balance relates to profits generated before completion. Treat this item as debt-like because the vendor generated the underlying tax liability. Estimate the pre-completion portion at closing when final year-end computation remains pending.
-2. Earn-out payable ($1.5 million): The balance relates to historical acquisitions. Treat this item as debt-like because the obligation arose from pre-completion M&A activity. Review forecast assumptions and contractual terms at closing to finalize the amount.
-3. Purchase price payable ($0.2 million): The balance relates to deferred consideration owed to vendors of acquired operations. Treat this item as debt-like when settlement remains payable post-completion.
-4. Transaction costs accrual ($1.6 million): The balance includes professional fees connected to the contemplated transaction. Treat unpaid amounts at completion as indebtedness.
-5. Stock options liability ($1.9 million): The balance relates to obligations under employee equity incentive arrangements. Treat this item as debt-like when balances crystallize on change of control.
-6. Capex payables ($1.7 million): The balance includes non-trade amounts payable to capital suppliers. Reclassify this item from working capital and treat it as debt-like.
+1. Income taxes payable ($9.7 million): This balance relates to profits generated before completion and should be treated as debt-like. The unpaid pre-completion amount should be estimated at closing if the final year-end tax computation remains outstanding.
+2. Earn-out payable ($1.5 million): This balance relates to historical acquisitions and is measured using current forecast assumptions. Treat this item as debt-like because the obligation arose from pre-completion transactions, and review the underlying assumptions at closing.
+3. Purchase price payable ($0.2 million): This balance reflects deferred consideration owed to vendors of acquired operations and should be treated as debt-like while settlement remains payable after completion.
+4. Stock options liability ($1.9 million): This balance relates to outstanding obligations under employee equity incentive arrangements and should be treated as debt-like to the extent the obligation crystallizes on a change of control.
+5. Transaction costs accrual ($1.6 million): This balance includes professional fees connected to the contemplated transaction and should be treated as indebtedness if unpaid at completion.
+6. Capex payables ($1.7 million): This balance includes non-trade amounts payable to capital suppliers and should be treated as debt-like because it relates to pre-completion capital spend. If treated this way at closing, it should be removed from the working-capital peg to avoid double counting.
+
+### Closing and peg considerations
+
+- Lease, tax, and acquisition-related items should be confirmed against the agreed closing definition of net debt if the SPA or funds-flow mechanics differ from accounting presentation.
+- Any unpaid dividends, transaction bonuses, or severance expected to crystallize at completion should be captured in the closing funds flow as debt-like if they remain for the account of the vendor.
 
 ### Other considerations
 
-- In addition to adjusted net debt, this section identifies other potential debt-like items where final treatment or quantum remains subject to further support.
-- Other considerations to net cash / (debt) include unpaid dividends, near-term IT investment plans, and balances where the deal team should validate recoverability or settlement position at closing.
-- Note receivable balances of $1.1 million include a sales price adjustment receivable and other recoverable amounts from former shareholders; the deal team should assess collectability at closing to determine purchase price implications.
-- Potential employee benefit obligations not fully estimated by Management may represent additional debt-like exposure, and the quantum is currently unquantifiable.
-- Tax and regulatory exposures outside the immediate scope of this workstream may be debt-like in substance; tax and legal workstreams should assess them before finalizing purchase price treatment.
-- The closing funds flow should account for the portion of consolidated indebtedness attributable to minority interests that will remain in the business.
+- Note receivable balances of $1.1 million include a sales price adjustment receivable and amounts recoverable from former shareholders. Final treatment depends on collectability at closing and whether the receivable is treated as cash-like or excluded from purchase price consideration.
+- Near-term IT investment tied to legacy acquisitions may be relevant to purchase-price negotiations, but final treatment depends on the agreed transaction definition and the supporting diligence from the IT workstream.
+- Minority-interest-related indebtedness should be finalized before closing so the funds flow reflects only the portion that remains for the purchaser's account.
 ```

@@ -134,7 +134,7 @@ Normalize / clean patterns
 
 Avoid patterns
 
-- Leaving missing content as silent gaps; instead, explicitly list as open items and use labeled placeholders (skill critical rule). `[context/skill/kpmg-fdd/SKILL.md:L69-L73]`
+- Leaving missing content as silent gaps; instead, explicitly list as missing information and use labeled placeholders (skill critical rule). `[context/skill/kpmg-fdd/SKILL.md:L69-L73]`
 
 2. Structural analysis
 
@@ -248,7 +248,7 @@ Failure mode 4: Invented numbers or unlabeled placeholders
 
 - Prevention controls
   - Prompt rule: “If a numeric field is missing, write ‘$[x]’ and add an open item specifying the exact missing source.”
-  - Template: include a small “Open items (section-specific)” block that must be populated if placeholders exist.
+  - Template: include a small “Missing information (section-specific)” block that must be populated if placeholders exist.
 
 Failure mode 5: Layout-references (“above / below / adjacent”) that break in markdown/DOCX
 
@@ -263,12 +263,12 @@ Failure mode 5: Layout-references (“above / below / adjacent”) that break in
 Failure mode 6: Drifting into prescriptive recommendations / legal advice inside this section
 
 - Observed in corpus: “should…”, “Consult with your legal advisor…” appears within the historical performance section content. `[context/docs/report-mining/section-corpus/sections/historical-financial-performance.md:L160-L170]`
-- Why it’s risky: this section’s objective is historical performance + drivers; recommendations belong in open items and risks, and legal advice is out of scope for FDD writing standards unless explicitly requested.
+- Why it’s risky: this section’s objective is historical performance + drivers; recommendations belong in missing information and risks, and legal advice is out of scope for FDD writing standards unless explicitly requested.
 - Detection heuristic (lint)
-  - Flag modal verbs “should”, “must”, “recommend”, “consider” unless inside an “Open items & data requests” block.
+  - Flag modal verbs “should”, “must”, “recommend”, “consider” unless inside an “Missing information & data requests” block.
 
 - Prevention controls
-  - Template constraint: include a dedicated “Open items / diligence follow-ups” block and require all “should/consider” content to live there.
+  - Template constraint: include a dedicated “Missing information / diligence follow-ups” block and require all “should/consider” content to live there.
   - Tone rule: “Present facts + implications; recommendations should be phrased as diligence requests.” (aligned to claim discipline). `[context/skill/kpmg-fdd/references/writing-standards.md:L21-L27]`
 
 Failure mode 7: Missing “set-up for QoE normalization”
@@ -310,7 +310,7 @@ Reference: `skill/kpmg-fdd/references/report-structure.md` and `skill/kpmg-fdd/r
 4. Evidence sources (at minimum one)
 
 - Basis line(s) such as: audited FS, management accounts, trial balance extract, management schedule, KPI pack.
-- If basis is not available, do not invent numbers; use placeholders and list open items.
+- If basis is not available, do not invent numbers; use placeholders and list missing information.
 
 ## Canonical block order (default / standard report)
 
@@ -346,15 +346,15 @@ Reference: `skill/kpmg-fdd/references/report-structure.md` and `skill/kpmg-fdd/r
 - Audited vs management reporting (if known).
 - Any known reclasses, estimation methods, or gaps.
 - Any constraints that limit conclusions (e.g., “supporting documentation not provided”).
-- If unknown, add open items explicitly.
+- If unknown, add missing information explicitly.
 
 6. Implications for QoE (required)
 
 - 1–3 bullets linking this section’s observed volatility/one-offs to the QoE bridge and adjustment rationale (do not restate the full bridge here).
 
-7. Section-specific open items (conditional but strongly recommended)
+7. Section-specific missing information (conditional but strongly recommended)
 
-- If any placeholders exist in H1 or the narrative, list the open items here and mirror them in the report-level “Open items & data requests” section.
+- If any placeholders exist in H1 or the narrative, list the missing information here and mirror them in the report-level “Missing information & data requests” section.
 
 ## Evidence / basis rules (defensibility)
 
@@ -427,7 +427,7 @@ PASS only if all are true:
 
 FAIL (do not deliver) if any of the following occur:
 
-- Material quantitative claims have no basis/source and are not flagged as open items.
+- Material quantitative claims have no basis/source and are not flagged as missing information.
 - Units/periods are inconsistent or not defined.
 - Invented numbers or unlabeled placeholders appear.
 ```
@@ -515,7 +515,7 @@ _(Optional for complex revenue models)_
 - [Observed volatility / non-recurring items] are addressed in the QoE section (see “QoE and earnings adjustments”).
 - [List any items that may drive adjustments, phrased as diligence points, not conclusions.]
 
-### Section-specific open items (include only if needed; mirror into report-level open items)
+### Section-specific missing information (include only if needed; mirror into report-level missing information)
 
 - [P0/P1/P2] [Exact request] — affects [metric/period] — why it matters: [impact on driver conclusion / QoE normalization].
 ```

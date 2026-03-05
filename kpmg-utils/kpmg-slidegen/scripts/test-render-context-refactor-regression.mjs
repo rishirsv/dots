@@ -150,8 +150,8 @@ const renderedText = textObjects
   .filter(Boolean);
 
 assert.ok(
-  renderedText.some((text) => text.includes('Firstname Lastname')),
-  'back cover should render fallback contacts when contacts are omitted',
+  !renderedText.some((text) => text.includes('Firstname Lastname')),
+  'back cover should not render placeholder contacts when contacts are omitted',
 );
 
 const urlRun = textObjects

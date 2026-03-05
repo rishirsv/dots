@@ -102,7 +102,7 @@ Keep as-is patterns:
 Normalize/clean patterns:
 
 - Enforce consistent units and sign conventions (parentheses for negatives), and label units in the exhibit caption/units row. (`context/skill/kpmg-fdd/references/writing-standards.md:L56-L60`, `context/skill/kpmg-fdd/references/exhibits-and-tables.md:L34-L39`)
-- Replace vague “significant” with quantified impact where available; otherwise label as qualitative and put quantification into open items. (House tone and QC dimensions both push this direction.) (`context/skill/kpmg-fdd/references/writing-standards.md:L19-L21`, `context/skill/kpmg-fdd/references/qc-checklist.md:L33-L41`)
+- Replace vague “significant” with quantified impact where available; otherwise label as qualitative and put quantification into missing information. (House tone and QC dimensions both push this direction.) (`context/skill/kpmg-fdd/references/writing-standards.md:L19-L21`, `context/skill/kpmg-fdd/references/qc-checklist.md:L33-L41`)
 
 Avoid patterns:
 
@@ -119,12 +119,12 @@ Observed patterns (common + important for defensibility):
 
 Keep as-is patterns:
 
-- Keep the “not all-inclusive / information-to-date” disclaimer, but link it to the open-items list so it’s actionable. (`context/docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md:L30-L30`)
+- Keep the “not all-inclusive / information-to-date” disclaimer, but link it to the missing-information list so it’s actionable. (`context/docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md:L30-L30`)
 - Keep “subjective / not quantifiable → not included” as explicit guardrails between the bridge and “other considerations”. (`context/docs/report-mining/section-corpus/sections/qoe-and-earnings-adjustments.md:L70-L70`)
 
 Normalize/clean patterns:
 
-- Convert generic disclaimers into specific open items (“Missing: monthly financials for [period]; impact could change revenue cut-off adjustment.”) consistent with open-items discipline. (`context/skill/kpmg-fdd/references/writing-standards.md:L65-L73`)
+- Convert generic disclaimers into specific missing information (“Missing: monthly financials for [period]; impact could change revenue cut-off adjustment.”) consistent with missing-information discipline. (`context/skill/kpmg-fdd/references/writing-standards.md:L65-L73`)
 - Prefer “We have not adjusted…” over “not present” to reflect analyst choice and defensibility.
 
 Avoid patterns:
@@ -166,7 +166,7 @@ Variant D: “Other considerations” explicitly separated as subjective / not q
 
 ### Recommended default structure (house-standardized 2B)
 
-Default structure should be driven by the “minimum content” requirements for this canonical section: bridge, basis, recurrence commentary, open items. (`context/skill/kpmg-fdd/references/report-structure.md:L128-L136`)
+Default structure should be driven by the “minimum content” requirements for this canonical section: bridge, basis, recurrence commentary, missing information. (`context/skill/kpmg-fdd/references/report-structure.md:L128-L136`)
 
 Recommended default (canonical block order):
 
@@ -174,7 +174,7 @@ Recommended default (canonical block order):
 2. Exhibit: Reported → Adjusted bridge table (primary exhibit; auditable)
 3. Adjustment rationale by type (grouped; each adjustment uses defensibility quartet)
 4. Other considerations not included in adjusted earnings (explicitly excluded; why)
-5. Sensitivities and open items that could change the bridge (prioritized P0/P1/P2)
+5. Sensitivities and missing information that could change the bridge (prioritized P0/P1/P2)
 
 Allowed variants (explicitly permitted):
 
@@ -190,7 +190,7 @@ Required (must always be present in skill output):
 - Reported → Adjusted bridge exhibit (even if “TBD” values, but structure must exist)
 - Recurrence framing for each material adjustment (non-recurring vs run-rate vs recurring/uncertain)
 - Basis/source for each material adjustment, or explicit open item if missing
-- Open items list specific to items that could change the bridge
+- Missing information list specific to items that could change the bridge
 
 These are hard-gated by report-structure minimums and QC “do not deliver” checks. (`context/skill/kpmg-fdd/references/report-structure.md:L128-L136`, `context/skill/kpmg-fdd/references/qc-checklist.md:L8-L13`)
 
@@ -259,7 +259,7 @@ Prevention controls:
 
 - Micro-template per adjustment must include “Why non-recurring/run-rate” and “Residual risk”.
 - Lint: each adjustment must have Recurrence = one of {Non-recurring, Run-rate, Recurring, Uncertain}; if missing → fail.
-- Prompt rule: “If recurrence is uncertain, label it Uncertain and move to open items / sensitivity.”
+- Prompt rule: “If recurrence is uncertain, label it Uncertain and move to missing information / sensitivity.”
 
 Evidence:
 
@@ -297,7 +297,7 @@ Prevention controls:
 
 - Prompt rule: never invent numbers; use `$[x]` and add an open item.
 - Lint: fail if pattern “$X” or “[DATE]” appears in final output unless inside an explicit placeholder token or open-item list.
-- Template: explicitly include placeholder syntax and an “Open items” block.
+- Template: explicitly include placeholder syntax and an “Missing information” block.
 
 Evidence:
 
@@ -337,7 +337,7 @@ Minimum content required for this canonical section:
 - A clear bridge: Reported → Adjustments (by type) → Adjusted
 - Evidence/basis for each material adjustment
 - Commentary on recurrence and sustainability
-- A list of open items that could change the bridge
+- A list of missing information that could change the bridge
   (Ref: `skill/kpmg-fdd/references/report-structure.md`)
 
 ## Required inputs (use what is available; do not block)
@@ -362,7 +362,7 @@ If an input is missing:
 2. Exhibit: Reported → Adjusted [metric] bridge (primary exhibit)
 3. Adjustment rationale by type (narrative; grouped; defensibility micro-template)
 4. Other considerations (not included in adjusted [metric]) — optional but common
-5. Key sensitivities and open items that could change the bridge (prioritized)
+5. Key sensitivities and missing information that could change the bridge (prioritized)
 
 Allowed variants:
 
@@ -434,9 +434,9 @@ Preferred basis phrasing:
 - “Source: invoices provided by management; we noted no exceptions in the sample reviewed.”
 - “Source: [contract / settlement agreement] dated [YYYY-MM-DD].”
 
-## Open items behavior (when data is missing or conclusion is not defensible)
+## Missing information behavior (when data is missing or conclusion is not defensible)
 
-Always maintain an “Open items & sensitivities” list that is specific to this section and prioritized:
+Always maintain an “Missing information & sensitivities” list that is specific to this section and prioritized:
 
 - P0 = gating items that could materially change adjusted earnings
 - P1 = important refinements
@@ -466,16 +466,16 @@ Preferred cross-references:
 PASS requires all of the following:
 
 - Bridge table is present and readable (Reported → Adjustments → Adjusted)
-- Bridge ties out where numbers exist; otherwise the tie-out is explicitly marked as pending with open items
+- Bridge ties out where numbers exist; otherwise the tie-out is explicitly marked as pending with missing information
 - Every material adjustment has: recurrence label + basis/source + quantification method (or explicit open item)
 - Units and periods are consistent throughout the section
-- No invented numbers; placeholders are clearly labeled and logged as open items
+- No invented numbers; placeholders are clearly labeled and logged as missing information
 - “Other considerations” items are explicitly stated as not included in adjusted earnings (if applicable)
 
 FAIL if any of the “do not deliver” QC issues occur:
 
 - QoE section present but no reported-to-adjusted bridge (or bridge does not sum)
-- Material quantitative claims have no basis/source and are not flagged as open items
+- Material quantitative claims have no basis/source and are not flagged as missing information
 - Units/periods inconsistent
 - Invented placeholders not labeled
   (Ref: `skill/kpmg-fdd/references/qc-checklist.md`)
@@ -496,7 +496,7 @@ FAIL if any of the “do not deliver” QC issues occur:
 
 4. Placeholder discipline:
 
-- Reject tokens like “EBITDA was $X” unless $X is formatted as $[x] and appears in Open items
+- Reject tokens like “EBITDA was $X” unless $X is formatted as $[x] and appears in Missing information
 
 5. Cross-reference hygiene:
 
@@ -523,7 +523,7 @@ Key references embedded above are drawn directly from the house standards and QC
 
 If reported / adjusted values are not available:
 
-- A reported-to-adjusted bridge is pending receipt of [missing inputs]. We have outlined the adjustment areas identified to date and the open items required to quantify and validate each item.
+- A reported-to-adjusted bridge is pending receipt of [missing inputs]. We have outlined the adjustment areas identified to date and the missing information required to quantify and validate each item.
 
 ## Exhibit [#]: Reported to Adjusted [EBITDA/EBT] bridge ([period], $[units])
 
@@ -593,16 +593,16 @@ List items identified that may be subjective and/or not quantifiable at this sta
 
 - [Item]: [why it matters], [why not adjusted], [what would be needed to quantify], [potential directional impact if known].
 
-## Key sensitivities and open items (could change the bridge)
+## Key sensitivities and missing information (could change the bridge)
 
-Prioritize open items as P0/P1/P2.
+Prioritize missing information as P0/P1/P2.
 
 - **P0 (gating):** [open item] — Impact: [potentially material / unknown]; Needed: [specific data]; Affects: [bridge line item].
 - **P1:** [open item] — Impact: [likely moderate]; Needed: [data].
 - **P2:** [open item] — Impact: [informational]; Needed: [data].
 ```
 
-This template enforces the section minimums (bridge, basis, recurrence, open items) and is consistent with the exhibit requirements and the “do not deliver if” QC gates. (`context/skill/kpmg-fdd/references/report-structure.md:L128-L136`, `context/skill/kpmg-fdd/references/exhibits-and-tables.md:L17-L50`, `context/skill/kpmg-fdd/references/qc-checklist.md:L8-L13`, `context/skill/kpmg-fdd/references/writing-standards.md:L47-L54`, `context/skill/kpmg-fdd/SKILL.md:L71-L73`)
+This template enforces the section minimums (bridge, basis, recurrence, missing information) and is consistent with the exhibit requirements and the “do not deliver if” QC gates. (`context/skill/kpmg-fdd/references/report-structure.md:L128-L136`, `context/skill/kpmg-fdd/references/exhibits-and-tables.md:L17-L50`, `context/skill/kpmg-fdd/references/qc-checklist.md:L8-L13`, `context/skill/kpmg-fdd/references/writing-standards.md:L47-L54`, `context/skill/kpmg-fdd/SKILL.md:L71-L73`)
 
 ---
 

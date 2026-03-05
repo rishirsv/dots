@@ -1,26 +1,5 @@
 import { addImageSmart } from '../helpers/media.js';
-import { THEME_COMPONENT_KEYS, resolveTheme } from '../helpers/theme.js';
-
-const DEFAULT_CONTACTS = Object.freeze([
-  {
-    name: 'Firstname Lastname',
-    role: 'Job Title',
-    phone: 'T: +1 000 000 0001',
-    email: 'E: firstname.lastname@kpmg.ca',
-  },
-  {
-    name: 'Firstname Lastname',
-    role: 'Job Title',
-    phone: 'T: +1 000 000 0002',
-    email: 'E: firstname.lastname@kpmg.ca',
-  },
-  {
-    name: 'Firstname Lastname',
-    role: 'Job Title',
-    phone: 'T: +1 000 000 0003',
-    email: 'E: firstname.lastname@kpmg.ca',
-  },
-]);
+import { THEME_COMPONENT_KEYS, resolveTextThemePrimitives, resolveTheme, toFiniteNumber } from '../helpers/theme.js';
 
 function buildContacts(rawContacts = []) {
   const normalized = Array.isArray(rawContacts)
@@ -35,7 +14,7 @@ function buildContacts(rawContacts = []) {
         .filter((item) => item.name || item.role || item.phone || item.email)
         .slice(0, 3)
     : [];
-  return normalized.length > 0 ? normalized : DEFAULT_CONTACTS.map((contact) => ({ ...contact }));
+  return normalized;
 }
 
 function legalFooterLines(footerValues = {}) {
@@ -81,6 +60,10 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
   const bodyFont = resolvedTheme.fonts.body;
   const backCoverTokens = resolvedTheme.components?.[THEME_COMPONENT_KEYS.backCover] || {};
   const backCoverFontSizes = backCoverTokens.fontSizes || {};
+  const textTokens = resolveTextThemePrimitives(resolvedTheme);
+  const contactTokens = backCoverTokens.contacts || {};
+  const iconTokens = backCoverTokens.icon || {};
+  const legalTokens = backCoverTokens.legal || {};
   const slide = masterName ? pptx.addSlide({ masterName }) : pptx.addSlide();
   const g = geometry || {};
   if (!g.logoBox || !g.headingBox || !g.disclaimerBox || !g.urlBox) {
@@ -107,30 +90,34 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
 
   addImageSmart(slide, logo, { ...g.logoBox, altText: 'KPMG logo' });
 
-  slide.addText('The contacts at KPMG in connection with this report are:', {
-    ...g.headingBox,
-    fontFace: headingFont,
-    fontSize: Number(backCoverFontSizes.heading || resolvedTheme.typeSizes.title),
-    bold: true,
-    color: textColor,
-    valign: 'top',
-    wrap: true,
-  });
+  if (contacts.length > 0) {
+    slide.addText('The contacts at KPMG in connection with this report are:', {
+      ...g.headingBox,
+      fontFace: headingFont,
+      fontSize: toFiniteNumber(backCoverFontSizes.heading, resolvedTheme.typeSizes.title),
+      bold: true,
+      color: textColor,
+      valign: 'top',
+      wrap: true,
+    });
+  }
 
-  const colW = 2.55;
-  const colY = 3.03;
+  const colW = toFiniteNumber(contactTokens.columnWidth, 2.55);
+  const colY = toFiniteNumber(contactTokens.y, 3.03);
+  const colXStart = toFiniteNumber(contactTokens.xStart, 1.24);
+  const colXGap = toFiniteNumber(contactTokens.xGap, 2.55);
   contacts.forEach((contact, idx) => {
-    const x = 1.24 + idx * 2.55;
+    const x = colXStart + idx * colXGap;
     slide.addText(contact.name, {
       x,
       y: colY,
       w: colW,
       h: 0.22,
       fontFace: bodyFont,
-      fontSize: Number(backCoverFontSizes.contactName || resolvedTheme.typeSizes.body),
+      fontSize: toFiniteNumber(backCoverFontSizes.contactName, resolvedTheme.typeSizes.body),
       color: textColor,
       bold: true,
-      margin: 0,
+      margin: textTokens.marginNone,
       valign: 'top',
     });
     slide.addText(`${contact.role}\n${contact.phone}\n${contact.email}`, {
@@ -139,21 +126,26 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
       w: colW,
       h: 0.74,
       fontFace: bodyFont,
-      fontSize: Number(backCoverFontSizes.contactDetails || resolvedTheme.typeSizes.body),
+      fontSize: toFiniteNumber(backCoverFontSizes.contactDetails, resolvedTheme.typeSizes.body),
       color: textColor,
       wrap: true,
-      margin: 0,
+      margin: textTokens.marginNone,
       valign: 'top',
       breakLine: true,
     });
   });
 
+  const iconXStart = toFiniteNumber(iconTokens.xStart, 1.09);
+  const iconXGap = toFiniteNumber(iconTokens.xGap, 0.43);
+  const iconY = toFiniteNumber(iconTokens.y, 5.9);
+  const iconW = toFiniteNumber(iconTokens.w, 0.36);
+  const iconH = toFiniteNumber(iconTokens.h, 0.36);
   socialIcons.forEach((icon, idx) => {
     addImageSmart(slide, icon, {
-      x: 1.09 + idx * 0.43,
-      y: 5.9,
-      w: 0.36,
-      h: 0.36,
+      x: iconXStart + idx * iconXGap,
+      y: iconY,
+      w: iconW,
+      h: iconH,
       altText: 'Social icon',
     });
   });
@@ -161,36 +153,38 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
   slide.addText(disclaimer || legal.legal1, {
     ...g.disclaimerBox,
     fontFace: bodyFont,
-    fontSize: Number(backCoverFontSizes.disclaimer || resolvedTheme.typeSizes.source),
+    fontSize: toFiniteNumber(backCoverFontSizes.disclaimer, resolvedTheme.typeSizes.source),
     color: textColor,
     valign: 'top',
     wrap: true,
-    margin: 0,
+    margin: textTokens.marginNone,
   });
 
+  const legal2 = legalTokens.line2 || {};
   slide.addText(legal.legal2, {
-    x: 1.09,
-    y: 6.92,
-    w: 10.5,
-    h: 0.2,
+    x: toFiniteNumber(legal2.x, 1.09),
+    y: toFiniteNumber(legal2.y, 6.92),
+    w: toFiniteNumber(legal2.w, 10.5),
+    h: toFiniteNumber(legal2.h, 0.2),
     fontFace: bodyFont,
-    fontSize: Number(backCoverFontSizes.legalBody || resolvedTheme.typeSizes.source),
+    fontSize: toFiniteNumber(backCoverFontSizes.legalBody, resolvedTheme.typeSizes.source),
     color: textColor,
     valign: 'top',
     wrap: true,
-    margin: 0,
+    margin: textTokens.marginNone,
   });
 
+  const legalClassification = legalTokens.classification || {};
   slide.addText(legal.classification, {
-    x: 1.09,
-    y: 7.36,
-    w: 3.5,
-    h: 0.1,
+    x: toFiniteNumber(legalClassification.x, 1.09),
+    y: toFiniteNumber(legalClassification.y, 7.36),
+    w: toFiniteNumber(legalClassification.w, 3.5),
+    h: toFiniteNumber(legalClassification.h, 0.1),
     fontFace: bodyFont,
-    fontSize: Number(backCoverFontSizes.classification || resolvedTheme.typeSizes.source),
+    fontSize: toFiniteNumber(backCoverFontSizes.classification, resolvedTheme.typeSizes.source),
     color: textColor,
     bold: true,
-    margin: 0,
+    margin: textTokens.marginNone,
     valign: 'mid',
   });
 
@@ -202,7 +196,7 @@ export function addBackCover(pptx, slideSpec = {}, ctx = {}) {
     bold: true,
     underline: Boolean(normalizedUrl),
     ...(normalizedUrl ? { hyperlink: { url: normalizedUrl } } : {}),
-    margin: 0,
+    margin: textTokens.marginNone,
     valign: 'top',
   });
 

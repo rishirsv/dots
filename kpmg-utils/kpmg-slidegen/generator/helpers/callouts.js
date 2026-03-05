@@ -66,12 +66,17 @@ function normalizeBodyLines(value) {
 export function normalizeCallouts(rawCallouts, { maxCallouts = MAX_CALLOUTS } = {}) {
   if (!Array.isArray(rawCallouts)) return [];
   const out = [];
-  for (const item of rawCallouts) {
+  for (let idx = 0; idx < rawCallouts.length; idx += 1) {
+    const item = rawCallouts[idx];
     if (out.length >= maxCallouts) break;
-    if (!item || typeof item !== 'object') continue;
-    const heading = sanitizeText(item.heading ?? item.title);
+    if (!item || typeof item !== 'object') {
+      throw new Error(`callouts[${idx}] must be an object`);
+    }
+    const heading = sanitizeText(item.heading);
     const body = normalizeBodyLines(item.body);
-    if (!heading && body.length === 0) continue;
+    if (!heading && body.length === 0) {
+      throw new Error(`callouts[${idx}] must include heading or body text`);
+    }
     out.push({ heading, body });
   }
   return out;
@@ -287,7 +292,8 @@ export function renderCallouts(
   for (let idx = 0; idx < count; idx += 1) {
     const callout = callouts[idx];
     const box = boxes[idx];
-    if (!callout || !isGeometryBox(box)) continue;
+    if (!callout) throw new Error(`Missing callout payload at index ${idx}`);
+    if (!isGeometryBox(box)) throw new Error(`Invalid callout geometry at index ${idx}`);
 
     const anchor = autoAnchor({
       index: idx,
