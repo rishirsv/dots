@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "policies": {
+    "none.v1": {
+      "strategy": "none",
+      "mode": "none",
+      "dropFields": [],
+      "recomputeFields": []
+    },
+    "text.twoColumn.v1": {
+      "strategy": "twoColumnBullets",
+      "mode": "two-column-bullets",
+      "dropFields": [],
+      "recomputeFields": []
+    },
+    "text.oneColumn.v1": {
+      "strategy": "oneColumnBullets",
+      "mode": "one-column-bullets",
+      "dropFields": ["callouts"],
+      "recomputeFields": [],
+      "options": {
+        "layoutVariant": "oneColumn"
+      }
+    },
+    "text.analysisWide.2cols.v1": {
+      "strategy": "oneColumnBullets",
+      "mode": "text-with-chart",
+      "dropFields": ["callouts"],
+      "recomputeFields": [],
+      "options": {
+        "layoutVariant": "analysisWideChart2ColsText"
+      }
+    },
+    "text.analysisWide.table.v1": {
+      "strategy": "oneColumnBullets",
+      "mode": "text-with-chart",
+      "dropFields": ["callouts"],
+      "recomputeFields": [],
+      "options": {
+        "layoutVariant": "analysisWideChartTableText"
+      }
+    },
+    "table.rows.v1": {
+      "strategy": "tableRows",
+      "mode": "table-rows",
+      "dropFields": [],
+      "recomputeFields": []
+    },
+    "contents.sections.v1": {
+      "strategy": "contentsSections",
+      "mode": "contents-sections",
+      "dropFields": [],
+      "recomputeFields": ["contentsPageRanges"]
+    },
+    "bridge.analysisColumns.v1": {
+      "strategy": "bridgeAnalysisColumns",
+      "mode": "bridge-analysis-columns",
+      "dropFields": [],
+      "recomputeFields": []
+    },
+    "business.overviewBody.v1": {
+      "strategy": "businessOverview",
+      "mode": "business-overview-overview-body",
+      "dropFields": ["chart"],
+      "recomputeFields": []
+    }
+  }
+}

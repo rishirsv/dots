@@ -1,0 +1,10 @@
+{
+  "name": "kpmg-slides-skill",
+  "private": true,
+  "type": "module",
+  "description": "Standalone runtime dependencies for the bundled kpmg-slides skill.",
+  "dependencies": {
+    "image-size": "2.0.2",
+    "pptxgenjs": "4.0.1"
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "metadata": {
+    "title": "Detailed Starter Deck",
+    "author": "KPMG LLP",
+    "company": "KPMG LLP",
+    "subject": "Detailed starter structure",
+    "allowSparse": false,
+    "textAmount": "lg",
+    "densityProfile": "denser",
+    "slideCountPolicy": "auto",
+    "styleIntent": "diligence",
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential"
+    }
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "title": "[Client name] detailed review",
+      "subtitle": "[Scope, audience, and timing for the detailed deck]"
+    },
+    {
+      "type": "contents",
+      "title": "Contents",
+      "sections": [
+        {
+          "number": "01",
+          "title": "[Executive summary]",
+          "items": [
+            "[Headline findings and implications]"
+          ]
+        },
+        {
+          "number": "02",
+          "title": "[Current-state assessment]",
+          "items": [
+            "[Strengths and pressure points]"
+          ]
+        },
+        {
+          "number": "03",
+          "title": "[Risks and controls]",
+          "items": [
+            "[Material issues and root causes]"
+          ]
+        },
+        {
+          "number": "04",
+          "title": "[Quantitative evidence]",
+          "items": [
+            "[Metrics, trends, and supporting facts]"
+          ]
+        },
+        {
+          "number": "05",
+          "title": "[Recommendations]",
+          "items": [
+            "[Action plan and ownership]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "dividerDark",
+      "sectionNumber": "01",
+      "sectionTitle": "[Section heading]"
+    },
+    {
+      "type": "oneColumnText",
+      "title": "[One detailed claim]",
+      "strapline": "[One sentence that frames the decision and urgency.]",
+      "bodyStyle": "bullets",
+      "body": [
+        {
+          "text": "[Context]",
+          "subheader": true
+        },
+        "[Summarize the current state with one specific operational or financial fact.]",
+        "[Call out the most material constraint and the evidence supporting it.]",
+        {
+          "text": "[Implication]",
+          "subheader": true
+        },
+        "[Explain the management implication in terms of timing, ownership, or financial impact.]",
+        "[State the recommended action and the expected benefit.]"
+      ],
+      "source": "Source: [Insert source]"
+    },
+    {
+      "type": "twoColumnText",
+      "title": "[Current vs target]",
+      "strapline": "[Use when the audience needs a richer side-by-side comparison.]",
+      "bodyStyle": "bullets",
+      "leftBody": [
+        {
+          "text": "[Current]",
+          "subheader": true
+        },
+        "[Describe today's operating model with concrete evidence.]",
+        "[Explain the main bottleneck or control gap.]",
+        "[Note the observable consequence for the business.]"
+      ],
+      "rightBody": [
+        {
+          "text": "[Target]",
+          "subheader": true
+        },
+        "[Describe the future-state design or action plan.]",
+        "[Explain how the change addresses the current gap.]",
+        "[State the owner and near-term milestone.]"
+      ]
+    },
+    {
+      "type": "analysisNarrowTable",
+      "title": "[Detailed evidence table]",
+      "strapline": "[Use for a richer metric comparison with clear takeaways.]",
+      "table": {
+        "headers": [
+          "Metric",
+          "Current",
+          "Target",
+          "Gap"
+        ],
+        "rows": [
+          [
+            "Metric A",
+            "12",
+            "15",
+            "3"
+          ],
+          [
+            "Metric B",
+            "5%",
+            "7%",
+            "2%"
+          ],
+          [
+            "Metric C",
+            "10",
+            "12",
+            "2"
+          ],
+          [
+            "Metric D",
+            "3",
+            "4",
+            "1"
+          ],
+          [
+            "Metric E",
+            "72%",
+            "80%",
+            "8%"
+          ],
+          [
+            "Metric F",
+            "8",
+            "10",
+            "2"
+          ],
+          [
+            "Metric G",
+            "14",
+            "18",
+            "4"
+          ],
+          [
+            "Metric H",
+            "22",
+            "28",
+            "6"
+          ]
+        ]
+      },
+      "insights": [
+        "[Call out the most material gap.]",
+        "[Explain the operational implication.]",
+        "[Explain the financial implication.]",
+        "[State the priority action.]"
+      ]
+    },
+    {
+      "type": "backCover"
+    }
+  ]
+}

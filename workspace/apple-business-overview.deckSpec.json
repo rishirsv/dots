@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "title": "Apple business overview",
+    "author": "KPMG LLP",
+    "company": "KPMG LLP",
+    "subject": "Apple qualitative business overview",
+    "allowSparse": false,
+    "textAmount": "md",
+    "densityProfile": "dense",
+    "slideCountPolicy": "user",
+    "styleIntent": "diligence",
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential"
+    }
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Apple business overview",
+      "subtitle": "Diligence-style company profile and assumed perimeter overview"
+    },
+    {
+      "type": "businessOverview",
+      "title": "Apple operates an integrated ecosystem",
+      "leftHeading": "Illustrative perimeter",
+      "rightHeading": "Overview",
+      "bodyStyle": "bullets",
+      "structure": {
+        "topTier": [
+          "Apple Inc.",
+          "Assumed FDD perimeter"
+        ],
+        "midTier": [
+          "Consolidated Apple business"
+        ],
+        "bottomTier": [
+          "Products",
+          "Services",
+          "Distribution"
+        ],
+        "links": [
+          {
+            "fromTier": "top",
+            "fromIndex": 0,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "top",
+            "fromIndex": 1,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 1
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 2
+          }
+        ],
+        "perimeter": {
+          "enabled": true,
+          "label": "Assumed perimeter",
+          "subLabel": "Consolidated Apple business; no carve-outs assumed"
+        }
+      },
+      "overviewBody": [
+        "Apple designs, manufactures, and sells consumer devices, software, and related services through an integrated hardware-and-platform model, with revenue led by branded device sales and iPhone historically the largest category.",
+        "Services monetizes the installed base through digital content, cloud, warranties, advertising, payment-related offerings, and subscriptions, creating recurring revenue alongside hardware cycles.",
+        "The model is vertically integrated: Apple controls product design, operating systems, key software layers, and significant elements of distribution, supporting ecosystem retention and premium pricing.",
+        "Performance depends on launch cadence, upgrade cycles, services attach rates, global supply-chain execution, and continued operation of Apple-controlled distribution and developer channels."
+      ],
+      "note": "Prepared from general knowledge only; no current-period web-sourced data included."
+    },
+    {
+      "type": "backCover"
+    }
+  ]
+}

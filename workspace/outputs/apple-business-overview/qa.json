@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "generatedAt": "2026-03-06T21:41:55.955Z",
+    "template": "kpmg-diligence",
+    "strictRequested": false,
+    "allowSparse": false,
+    "inputSlideCount": 3,
+    "outputSlideCount": 3,
+    "textAmount": "md",
+    "densityProfile": "dense",
+    "slideCountPolicy": "user",
+    "styleIntent": "diligence"
+  },
+  "outcome": {
+    "status": "pass",
+    "blockingIssueCount": 0,
+    "advisoryIssueCount": 0,
+    "failedChecks": [],
+    "warningChecks": []
+  },
+  "checks": [
+    {
+      "id": "contracts",
+      "status": "pass",
+      "blocking": true,
+      "summary": "Template contracts and master wiring completed without runtime fallback usage.",
+      "metrics": {
+        "fallbackCount": 0,
+        "masterMismatchCount": 0
+      },
+      "details": {
+        "fallbacks": []
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "validation",
+      "status": "pass",
+      "blocking": true,
+      "summary": "Deck validation passed.",
+      "metrics": {
+        "errorCount": 0,
+        "warningCount": 0,
+        "missingSlotCount": 0,
+        "slotIssueCount": 0
+      },
+      "details": {},
+      "artifacts": {}
+    },
+    {
+      "id": "verbosity",
+      "status": "pass",
+      "blocking": false,
+      "summary": "Requested verbosity tier is aligned with the authored slides.",
+      "metrics": {
+        "failCount": 0,
+        "warningCount": 0,
+        "checkedSlideCount": 3,
+        "textAmount": "md",
+        "densityProfile": "dense"
+      },
+      "details": {},
+      "artifacts": {}
+    },
+    {
+      "id": "pagination",
+      "status": "pass",
+      "blocking": true,
+      "summary": "Pagination completed without blocking issues.",
+      "metrics": {
+        "decisionCount": 0,
+        "splitCount": 0,
+        "recomputeFieldCount": 0,
+        "tableWarningCount": 0
+      },
+      "details": {
+        "recomputeFields": [],
+        "decisions": []
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "overlap",
+      "status": "skipped",
+      "blocking": true,
+      "summary": "Overlap inspection was skipped.",
+      "metrics": {
+        "severeCount": 0,
+        "warningCount": 0,
+        "slideCount": 0
+      },
+      "details": {},
+      "artifacts": {}
+    },
+    {
+      "id": "visual_preview",
+      "status": "skipped",
+      "blocking": false,
+      "summary": "Preview generation was skipped.",
+      "metrics": {
+        "attempted": false,
+        "slideImageCount": 0
+      },
+      "details": {},
+      "artifacts": {}
+    },
+    {
+      "id": "montage",
+      "status": "skipped",
+      "blocking": false,
+      "summary": "Montage generation was skipped.",
+      "metrics": {
+        "attempted": false
+      },
+      "details": {},
+      "artifacts": {}
+    },
+    {
+      "id": "visual_overflow",
+      "status": "skipped",
+      "blocking": false,
+      "summary": "Visual overflow inspection was skipped.",
+      "metrics": {
+        "attempted": false,
+        "failingSlideCount": 0
+      },
+      "details": {},
+      "artifacts": {}
+    }
+  ],
+  "findings": [],
+  "slides": [
+    {
+      "inputSlideIndex": 0,
+      "outputSlideIndex": 0,
+      "slideType": "cover",
+      "sourceSlideType": "cover",
+      "status": "pass",
+      "pagination": {
+        "mode": "none",
+        "policyKey": "none.v1",
+        "pageIndex": 0,
+        "pageCount": 1,
+        "split": false,
+        "originalCount": 0
+      },
+      "master": {
+        "slideIndex": 0,
+        "slideType": "cover",
+        "expectedMaster": "KPMG_COVER",
+        "appliedMaster": "KPMG_COVER",
+        "matched": true
+      },
+      "density": {
+        "slideIndex": 0,
+        "slideType": "cover",
+        "status": "OK",
+        "score": 1,
+        "minScore": 0.65,
+        "acceptableFloor": 0.552,
+        "shouldRepair": false
+      },
+      "verbosity": {
+        "findings": []
+      },
+      "findingCodes": []
+    },
+    {
+      "inputSlideIndex": 1,
+      "outputSlideIndex": 1,
+      "slideType": "businessOverview",
+      "sourceSlideType": "businessOverview",
+      "status": "pass",
+      "pagination": {
+        "mode": "business-overview-overview-body",
+        "policyKey": "business.overviewBody.v1",
+        "pageIndex": 0,
+        "pageCount": 1,
+        "split": false,
+        "originalCount": 4
+      },
+      "master": {
+        "slideIndex": 1,
+        "slideType": "businessOverview",
+        "expectedMaster": "KPMG_WHITE",
+        "appliedMaster": "KPMG_WHITE",
+        "matched": true
+      },
+      "density": {
+        "slideIndex": 1,
+        "slideType": "businessOverview",
+        "status": "OK",
+        "score": 1,
+        "minScore": 0.74,
+        "acceptableFloor": 0.629,
+        "shouldRepair": false
+      },
+      "verbosity": {
+        "findings": []
+      },
+      "findingCodes": []
+    },
+    {
+      "inputSlideIndex": 2,
+      "outputSlideIndex": 2,
+      "slideType": "backCover",
+      "sourceSlideType": "backCover",
+      "status": "pass",
+      "pagination": {
+        "mode": "none",
+        "policyKey": "none.v1",
+        "pageIndex": 0,
+        "pageCount": 1,
+        "split": false,
+        "originalCount": 0
+      },
+      "master": {
+        "slideIndex": 2,
+        "slideType": "backCover",
+        "expectedMaster": "KPMG_CLOSING",
+        "appliedMaster": "KPMG_CLOSING",
+        "matched": true
+      },
+      "density": {
+        "slideIndex": 2,
+        "slideType": "backCover",
+        "status": "OK",
+        "score": 1,
+        "minScore": 0,
+        "acceptableFloor": 1,
+        "shouldRepair": false
+      },
+      "verbosity": {
+        "findings": []
+      },
+      "findingCodes": []
+    }
+  ],
+  "artifacts": {
+    "runRoot": "/Users/rishi/Code/ai-tools/workspace/outputs/apple-business-overview",
+    "deck": {
+      "path": "apple-business-overview.pptx",
+      "exists": true
+    },
+    "qa": {
+      "path": "qa.json",
+      "exists": true
+    },
+    "preview": {
+      "status": "skipped",
+      "outputDir": null,
+      "slideCount": 0,
+      "imagePaths": [],
+      "width": null,
+      "height": null,
+      "reason": null
+    },
+    "montage": {
+      "status": "skipped",
+      "path": null,
+      "reason": null
+    },
+    "overflowVisual": {
+      "status": "skipped",
+      "failingSlides": [],
+      "imagePaths": [],
+      "reason": null
+    }
+  }
+}
