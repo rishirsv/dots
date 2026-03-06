@@ -1,0 +1,33 @@
+kpmg-utils/kpmg-slidegen/README.md::Top-level project overview and user-facing workflow
+kpmg-utils/kpmg-slidegen/ARCHITECTURE.md::Architecture and code organization overview
+kpmg-utils/kpmg-slidegen/package.json::Public command surface and test lanes
+kpmg-utils/kpmg-slidegen/docs/exec-plans/active/agent-harness-engineering-plan.md::Current harness engineering plan and intended direction
+kpmg-utils/kpmg-slidegen/generator::Parent generator implementation including runtime, QA, postprocess, and Python runtime
+kpmg-utils/kpmg-slidegen/scripts/support.mjs::Shared script runner and repo-root resolution
+kpmg-utils/kpmg-slidegen/scripts/harness/lib.mjs::Harness support helpers for fixture generation and artifact inspection
+kpmg-utils/kpmg-slidegen/scripts/new-layout.mjs::Current layout-onboarding scaffold to critique and improve
+kpmg-utils/kpmg-slidegen/scripts/sync-skill-bundle.mjs::Skill sync pipeline from parent repo into portable bundle
+kpmg-utils/kpmg-slidegen/scripts/verify-skill-bundle.mjs::Distribution verification and smoke checks
+kpmg-utils/kpmg-slidegen/scripts/test-contracts.mjs::Contract lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-fixtures.mjs::Fixture governance lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-structure.mjs::Structure lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-render.mjs::Render lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-visual.mjs::Visual lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-onboarding.mjs::Layout onboarding lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-pr.mjs::PR bundle lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-nightly.mjs::Nightly bundle lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/scripts/test-dist.mjs::Distribution lane for the rebuilt harness
+kpmg-utils/kpmg-slidegen/fixtures/harness/fixtures.manifest.json::Harness fixture taxonomy and governance
+kpmg-utils/kpmg-slidegen/fixtures/harness/invalid/legacy-nested-bullets/deckSpec.json::Representative invalid fixture
+kpmg-utils/kpmg-slidegen/fixtures/harness/regression/nested-bullets-children/deckSpec.json::Representative structure regression fixture
+kpmg-utils/kpmg-slidegen/fixtures/harness/regression/analysis-wide-chart-table-overflow/deckSpec.json::Representative pagination regression fixture
+kpmg-utils/kpmg-slidegen/fixtures/harness/scenario/saas-mid-diligence/deckSpec.json::Representative scenario fixture
+kpmg-utils/kpmg-slidegen/fixtures/harness/reference-parity/business-overview-coffee/deckSpec.json::Representative parity fixture
+kpmg-utils/kpmg-slidegen/fixtures/harness/stress/analysis-bridge-overflow/deckSpec.json::Representative stress fixture
+kpmg-utils/kpmg-slidegen/presets/authoring::Prepared verbosity and density authoring presets
+kpmg-utils/kpmg-slidegen/skills/kpmg-slides/SKILL.md::Portable skill instructions as distributed to users
+kpmg-utils/kpmg-slidegen/skills/kpmg-slides/agents/openai.yaml::Portable skill metadata for the packaged skill
+kpmg-utils/kpmg-slidegen/skills/kpmg-slides/scripts/run_kpmg_slides.sh::Portable skill runner entrypoint
+kpmg-utils/kpmg-slidegen/skills/kpmg-slides/references::Portable skill references and contracts
+kpmg-utils/kpmg-slidegen/skills/kpmg-slides/assets/bundle-manifest.json::Portable skill sync manifest
+kpmg-utils/kpmg-slidegen/skills/kpmg-slides/assets/templates::Portable skill starter and preset deck specs

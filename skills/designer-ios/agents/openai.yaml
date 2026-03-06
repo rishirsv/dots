@@ -1,0 +1,4 @@
+interface:
+  display_name: "Designer iOS"
+  short_description: "Expo iOS native UI design skill"
+  default_prompt: "Use $designer-ios to design or refine an Apple-style Expo interface, including Expo Router structure and SwiftUI-inspired UI guidance."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Init"
+  short_description: "Create or refresh repo design context"
+  default_prompt: "Use $design-init to create or refresh docs/DESIGN.md from the current repository before UI iteration."

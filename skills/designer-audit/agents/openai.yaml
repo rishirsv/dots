@@ -1,0 +1,4 @@
+interface:
+  display_name: "Designer Audit"
+  short_description: "Review interface quality and design effectiveness"
+  default_prompt: "Use $designer-audit to review this interface and produce prioritized findings with clear handoff guidance."

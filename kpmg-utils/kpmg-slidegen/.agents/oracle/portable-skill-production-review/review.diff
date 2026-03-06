@@ -1,0 +1,12 @@
+diff --git a/kpmg-utils/kpmg-slidegen/skills/kpmg-slides/assets/bundle-manifest.json b/kpmg-utils/kpmg-slidegen/skills/kpmg-slides/assets/bundle-manifest.json
+index 306f3c0..66b8438 100644
+--- a/kpmg-utils/kpmg-slidegen/skills/kpmg-slides/assets/bundle-manifest.json
++++ b/kpmg-utils/kpmg-slidegen/skills/kpmg-slides/assets/bundle-manifest.json
+@@ -1,6 +1,6 @@
+ {
+   "schemaVersion": 1,
+-  "generatedAt": "2026-03-06T03:21:19.331Z",
++  "generatedAt": "2026-03-06T03:28:58.811Z",
+   "entries": [
+     {
+       "source": "generator/app/artifacts.js",

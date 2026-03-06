@@ -131,7 +131,7 @@ When creating/updating `AGENTS.md`:
 
 - `ideate` handles discovery and brainstorming.
 - `code-docs` handles canonical spec/doc writing and maintenance.
-- `designer` can own full design detail; `code-docs` keeps durable design map placeholders when requested.
+- `designer-frontend` can own full web design detail, `designer-native-ios` can own Apple-mobile design detail, and `designer-context` keeps the durable design map when requested.
 
 ## Assets
 
