@@ -127,12 +127,6 @@ When creating/updating `AGENTS.md`:
 - Preserve the full spec shape from the template (problem statement, goals/non-goals, domain model, workflow/config contracts, failure model, validation matrix, implementation checklist).
 - If implementation-derived evidence is incomplete, call it out explicitly instead of guessing.
 
-## Cross-Skill Alignment
-
-- `ideate` handles discovery and brainstorming.
-- `code-docs` handles canonical spec/doc writing and maintenance.
-- `designer-frontend` can own full web design detail, `designer-native-ios` can own Apple-mobile design detail, and `designer-context` keeps the durable design map when requested.
-
 ## Assets
 
 | Document Type                                   | Asset                                  | Canonical Path                                  |
