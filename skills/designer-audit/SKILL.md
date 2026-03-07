@@ -3,6 +3,9 @@ name: designer-audit
 description: "Audit and critique frontend interfaces from both a systematic quality and design-effectiveness perspective. Use when Codex needs to review a UI, produce findings, score or prioritize problems, diagnose accessibility, responsive, theming, or performance issues, detect generic AI design tells, or explain why a design is or is not working. This skill reports problems; it does not implement fixes."
 ---
 
+# Designer Audit
+
+
 Conduct a holistic interface review that combines systematic audit coverage with high-level design critique. Think like a design director and a quality auditor at the same time.
 
 Use `designer-frontend` as the reference point for design principles and anti-patterns. This skill does not redesign the interface directly. It diagnoses, prioritizes, and explains.

@@ -1,7 +1,7 @@
 import { buildTemplateContracts } from './template-contracts.js';
 import { buildTheme } from './theme.js';
 import {
-  getSlideRegistry,
+  createSlideRegistry,
   assertRegistryCoversTemplateTypes,
   validateRegistry,
 } from './slide-registry.js';
@@ -87,9 +87,11 @@ function resolveAssetsForType(templatePackage = {}, registryType) {
 
 export function buildRenderContext({ templatePackage = {}, deckSpec = null, options = {} } = {}) {
   const theme = buildTheme(templatePackage, { deckSpec, options });
-  validateRegistry();
-  const slideRegistry = getSlideRegistry();
-  assertRegistryCoversTemplateTypes(templatePackage?.layouts?.types || {});
+  const slideRegistry =
+    options.slideRegistry ||
+    createSlideRegistry({ overrides: options.slideRegistryOverrides || null });
+  validateRegistry(slideRegistry.byType);
+  assertRegistryCoversTemplateTypes(templatePackage?.layouts?.types || {}, slideRegistry);
   const paginationPolicy = buildPaginationPolicy(templatePackage);
   assertPolicyCoverage(slideRegistry, paginationPolicy);
   const templateContracts = buildTemplateContracts(templatePackage, {

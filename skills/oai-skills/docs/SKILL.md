@@ -2,7 +2,7 @@
 name: docs
 description: "DOCX reading, creation, and review guidance with visual QA loops. Use when working with .docx files and needing formatting-safe edits or document quality checks."
 ---
-# DOCX reading, creation, and review guidance
+# Docs
 
 ## Reading DOCXs
 - Use `soffice -env:UserInstallation=file:///tmp/lo_profile_$$ --headless --convert-to pdf --outdir $OUTDIR $INPUT_DOCX` to convert DOCXs to PDFs.

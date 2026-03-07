@@ -20,7 +20,7 @@ Template-driven generator that converts `deckSpec` JSON inputs into:
 - Keep docs and code aligned when changing slide types, slot rules, or QA shape.
 - Validate with explicit CLI paths when you need deterministic artifact locations.
 - Do not add backward-compatibility fallback paths unless explicitly requested.
-- New slide layout creation and onboarding scaffolds are currently unsupported; work only within the existing layout set.
+- Use the repo-only onboarding workflow when creating new canonical layouts. Keep draft PPTX inputs, seeds, prompts, and diff artifacts in the parent repo only.
 
 ## Prerequisites
 
@@ -100,6 +100,8 @@ If `--out` is omitted, generation writes to `./outputs/kpmg-slidegen/<timestamp>
 - `npm run test:render`: end-to-end generation plus normalized `qa.json` assertions.
 - `npm run test:visual`: preview, montage, and visual-overflow lane.
 - `npm run test:dist`: skill bundle sync, portability, and smoke verification.
+- `npm run test:onboarding`: repo-only onboarding smoke lane.
+- `npm run onboard:run`: initialize, render, and compare one draft layout.
 - `npm run test:nightly`: full parent harness sweep.
 - Repo CI note: GitHub Actions runs `npm run test:pr` on every push and pull request, and runs `npm run test:nightly` on the scheduled nightly job.
 
@@ -123,6 +125,11 @@ Optional postprocess artifacts:
 - `montage.png`
 - overflow diagnostic image paths in `qa.artifacts.overflowVisual.imagePaths`
 
+Repo-only onboarding artifacts:
+- `onboarding/layouts/<layout-id>/`: stable draft workspace (`source.json`, candidate scaffold files, optional seed data)
+- `outputs/onboarding/<layout-id>/candidate/`: draft deck, QA, preview, optional montage
+- `outputs/onboarding/<layout-id>/compare/`: reference, candidate, diff, metrics, scorecard
+
 ## Troubleshooting
 
 - `Usage: node generator/index.js --in ...`:
@@ -140,8 +147,14 @@ Optional postprocess artifacts:
 
 - `ARCHITECTURE.md`: runtime architecture and module boundaries.
 - `docs/exec-plans/active/agent-harness-engineering-plan.md`: active harness maintenance plan and implementation checklist.
+- `docs/exec-plans/completed/repo-only-layout-onboarding-plan.md`: completed repo-only layout onboarding implementation plan.
+- `docs/onboarding/README.md`: repo-only single-layout onboarding workflow.
+- `docs/onboarding/agent-batch-workflow.md`: repo-only batch workflow for agent-driven onboarding loops.
 - `AGENTS.md`: working rules and repo scope.
+- `references/INDEX.md`: canonical parent-repo references index.
+- `references/slide-contract.md`: canonical slide contract.
+- `references/deckspec.schema.json`: canonical deck spec schema.
 - `skills/kpmg-slides/SKILL.md`: portable skill instructions and preset vocabulary.
-- `skills/kpmg-slides/references/quality_assurance.md`: QA triage guide for the normalized `qa.json`.
+- `skills/kpmg-slides/references/quality_assurance.md`: skill-local mirrored QA guidance for the portable bundle.
 - `testing/README.md`: data preparation helpers.
 - `testing/manual-test-plan.md`: manual verification plan.

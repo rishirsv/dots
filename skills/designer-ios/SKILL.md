@@ -3,7 +3,7 @@ name: designer-ios
 description: "Expo iOS-native UI design and implementation guidance for building polished apps with Expo Router and @expo/ui/swift-ui. Use when Codex needs to design, build, or refine Apple-style Expo/React Native interfaces, navigation, styling, animations, native tabs, or SwiftUI-inspired views and modifiers in Expo apps."
 ---
 
-# Expo UI Guidelines
+# Designer iOS
 
 ## Priority Rule
 

@@ -3,7 +3,7 @@ name: data-room-simulator
 description: "Generate complete M&A data rooms for fictitious companies with consistent financial data. Use when the user asks to \"create a data room\", \"simulate due diligence\", \"generate M&A documents\", or mentions \"data room\", \"QoE\", \"quality of earnings\"."
 ---
 
-# M&A Data Room Simulator
+# Data Room Simulator
 
 Generate realistic, internally consistent M&A data rooms for training, testing, or demonstration purposes.
 

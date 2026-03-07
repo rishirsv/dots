@@ -3,6 +3,9 @@ name: designer-frontend
 description: "Create or redesign distinctive, production-grade frontend interfaces with high design quality. Use when Codex needs to build web components, pages, flows, posters, or applications, implement a strong visual direction that avoids generic AI aesthetics, or add purposeful motion and micro-interactions during interface creation. This skill owns interface creation and redesign, not formal audit reporting or exhaustive final ship-readiness QA."
 ---
 
+# Designer Frontend
+
+
 Create distinctive, production-grade frontend interfaces that avoid generic AI aesthetics. Implement real working code with strong aesthetic direction and careful attention to detail.
 
 ## Priority Rule

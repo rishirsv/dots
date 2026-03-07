@@ -8,6 +8,7 @@ import { REPO_ROOT } from './support.mjs';
 
 const templatePackage = loadTemplatePackage('kpmg-diligence');
 const ctx = buildRenderContext({ templatePackage });
+const onboardedRegistryIndex = readJson('generator/runtime/onboarded-registry.index.json');
 const expectedBuilderCtxKeys = [
   'assets',
   'diagnostics',
@@ -85,7 +86,7 @@ function hasRequiredGeometryValue(value) {
   return isFiniteBox(value);
 }
 
-const schema = readJson('skills/kpmg-slides/references/deckspec.schema.json');
+const schema = readJson('references/deckspec.schema.json');
 const templateTypes = sortedUnique(Object.keys(templatePackage?.layouts?.types || {}));
 const schemaTypes = sortedUnique(
   Object.entries(schema?.$defs || {})
@@ -100,6 +101,17 @@ assert.deepEqual(diff(schemaTypes, templateTypes), [], 'Schema must not document
 assert.deepEqual(registryTypes, templateTypes, 'Slide registry must cover every template type exactly once.');
 assert.ok(templatePackage?.layouts?.masters?.variants, 'Template package must expose master variants.');
 assert.ok(templatePackage?.tokens?.dimensions, 'Template package must expose slide dimensions.');
+
+for (const entry of onboardedRegistryIndex.entries || []) {
+  assert.ok(entry.type, 'Onboarded registry entries must declare a type.');
+  assert.ok(entry.builderFile, `Onboarded registry entry missing builderFile for ${entry.type}`);
+  assert.ok(entry.exportName, `Onboarded registry entry missing exportName for ${entry.type}`);
+  assert.equal(
+    fs.existsSync(path.join(REPO_ROOT, 'generator', 'builders', 'onboarded', `${entry.builderFile}.js`)),
+    true,
+    `Onboarded builder file missing for ${entry.type}`,
+  );
+}
 
 for (const type of registryTypes) {
   const entry = ctx.slideRegistry.get(type);

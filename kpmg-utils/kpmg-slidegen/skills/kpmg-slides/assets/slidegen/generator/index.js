@@ -86,6 +86,8 @@ export async function generateToFile(deckSpec, outPath, options = {}) {
     allowSparse: options.allowSparse,
     strict: options.strict,
     validationResult: validation,
+    slideRegistry: options.slideRegistry,
+    slideRegistryOverrides: options.slideRegistryOverrides,
   });
 
   let overlapReport = null;

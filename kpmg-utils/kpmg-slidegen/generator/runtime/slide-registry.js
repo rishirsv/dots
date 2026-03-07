@@ -12,6 +12,7 @@ import { addDivider } from '../builders/divider-slide.js';
 import { addOneColumnText } from '../builders/one-column-text.js';
 import { addTitleStrapline4TextBoxes } from '../builders/title-strapline-4-boxes.js';
 import { addTwoColumnTextWithStrapline } from '../builders/two-column-text.js';
+import { ONBOARDED_REGISTRY_ENTRIES } from './onboarded-registry.generated.js';
 
 const SLIDE_REGISTRY_SCHEMA_VERSION = '2.0.0';
 
@@ -33,7 +34,7 @@ function withGeometryContract(entry) {
   });
 }
 
-const REGISTRY = Object.freeze({
+const BUILTIN_REGISTRY = Object.freeze({
   cover: withGeometryContract({
     builderId: 'cover',
     builder: addCover,
@@ -170,8 +171,8 @@ const REGISTRY = Object.freeze({
   }),
 });
 
-export function validateRegistry() {
-  for (const [type, entry] of Object.entries(REGISTRY)) {
+export function validateRegistry(registry = BUILTIN_REGISTRY) {
+  for (const [type, entry] of Object.entries(registry || {})) {
     if (typeof entry.builder !== 'function') {
       throw new Error(`registry.${type}: missing builder`);
     }
@@ -193,46 +194,83 @@ export function resolveRegistryTypeForSlide(slideSpec = {}) {
   return type || null;
 }
 
+function buildSlideRegistry(overrides = null) {
+  const normalizedOnboarded = Object.fromEntries(
+    Object.entries(ONBOARDED_REGISTRY_ENTRIES || {}).map(([type, entry]) => [
+      type,
+      withGeometryContract(entry),
+    ]),
+  );
+  const normalizedOverrides = Object.fromEntries(
+    Object.entries(overrides || {}).map(([type, entry]) => [type, withGeometryContract(entry)]),
+  );
+  const merged = Object.freeze({
+    ...BUILTIN_REGISTRY,
+    ...normalizedOnboarded,
+    ...normalizedOverrides,
+  });
+
+  validateRegistry(merged);
+
+  return {
+    schemaVersion: SLIDE_REGISTRY_SCHEMA_VERSION,
+    byType: merged,
+    get(type) {
+      if (!type || typeof type !== 'string') return null;
+      return merged[type] || null;
+    },
+    list() {
+      return Object.keys(merged);
+    },
+  };
+}
+
+const DEFAULT_SLIDE_REGISTRY = buildSlideRegistry();
+
 export function listRegisteredSlideTypes() {
-  return Object.keys(REGISTRY);
+  return DEFAULT_SLIDE_REGISTRY.list();
 }
 
 export function getSlideEntry(type) {
-  const entry = REGISTRY[type];
+  const entry = DEFAULT_SLIDE_REGISTRY.get(type);
   if (!entry) throw new Error(`Unknown slide type '${type}' (registry)`);
   return entry;
 }
 
 export function getSlideRegistryEntry(type) {
   if (!type || typeof type !== 'string') return null;
-  return REGISTRY[type] || null;
+  return DEFAULT_SLIDE_REGISTRY.get(type);
 }
 
 export function getGeometryContractForType(type) {
-  const entry = getSlideRegistryEntry(type);
+  const entry = DEFAULT_SLIDE_REGISTRY.get(type);
   return entry?.geometryContract || null;
 }
 
 export function getSlideRegistry() {
-  return {
-    schemaVersion: SLIDE_REGISTRY_SCHEMA_VERSION,
-    byType: REGISTRY,
-    get(type) {
-      return getSlideRegistryEntry(type);
-    },
-    list() {
-      return listRegisteredSlideTypes();
-    },
-  };
+  return DEFAULT_SLIDE_REGISTRY;
+}
+
+export function getBuiltinSlideRegistryEntries() {
+  return BUILTIN_REGISTRY;
+}
+
+export function createSlideRegistry({ overrides = null } = {}) {
+  if (!overrides || Object.keys(overrides).length === 0) {
+    return DEFAULT_SLIDE_REGISTRY;
+  }
+  return buildSlideRegistry(overrides);
 }
 
 export function registryTypeSet() {
-  return new Set(listRegisteredSlideTypes());
+  return new Set(DEFAULT_SLIDE_REGISTRY.list());
 }
 
-export function assertRegistryCoversTemplateTypes(templateLayouts = {}) {
+export function assertRegistryCoversTemplateTypes(templateLayouts = {}, slideRegistry = null) {
   const templateTypes = Object.keys(templateLayouts || {});
-  const registryTypes = registryTypeSet();
+  const registryTypes = new Set(
+    Array.isArray(slideRegistry?.list?.()) ? slideRegistry.list() : DEFAULT_SLIDE_REGISTRY.list(),
+  );
   const missing = templateTypes.filter((type) => !registryTypes.has(type));
   const extra = [...registryTypes].filter((type) => !Object.prototype.hasOwnProperty.call(templateLayouts || {}, type));
 
@@ -245,7 +283,7 @@ export function assertRegistryCoversTemplateTypes(templateLayouts = {}) {
 }
 
 export function defaultMasterNameForType(type) {
-  const entry = getSlideRegistryEntry(type);
+  const entry = DEFAULT_SLIDE_REGISTRY.get(type);
   const master = entry?.master;
   if (!master) {
     throw new Error(`Missing master in slide registry for type "${type}"`);
@@ -254,9 +292,9 @@ export function defaultMasterNameForType(type) {
 }
 
 export function isExcludedFromLogicalPaging(type) {
-  return Boolean(getSlideRegistryEntry(type)?.excludeFromLogicalPaging);
+  return Boolean(DEFAULT_SLIDE_REGISTRY.get(type)?.excludeFromLogicalPaging);
 }
 
-validateRegistry();
+validateRegistry(BUILTIN_REGISTRY);
 
 export { SLIDE_REGISTRY_SCHEMA_VERSION };

@@ -2,7 +2,7 @@
 name: spreadsheets
 description: "Spreadsheet creation, editing, analysis, and visualization guidance. Use when working with .xlsx, .csv, or .tsv files and needing formulas, formatting, recalculation, or charting."
 ---
-# Spreadsheet Skill (Create • Edit • Analyze • Visualize)
+# Spreadsheets
 
 Use this skill when you need to work with spreadsheets (.xlsx, .csv, .tsv) to do any of the following:
 - Create a new workbook/sheet with proper formulas, cell/number formatting, and structured layout

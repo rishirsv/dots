@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "families": {
+    "cover": {
+      "builderModule": "generator/builders/cover-slide.js",
+      "builderExport": "addCover"
+    },
+    "divider": {
+      "builderModule": "generator/builders/divider-slide.js",
+      "builderExport": "addDivider"
+    },
+    "dividerDark": {
+      "builderModule": "generator/builders/divider-slide.js",
+      "builderExport": "addDivider"
+    },
+    "dividerLight": {
+      "builderModule": "generator/builders/divider-slide.js",
+      "builderExport": "addDivider"
+    },
+    "contents": {
+      "builderModule": "generator/builders/contents-slide.js",
+      "builderExport": "addContentsSlide"
+    },
+    "oneColumnText": {
+      "builderModule": "generator/builders/one-column-text.js",
+      "builderExport": "addOneColumnText"
+    },
+    "twoColumnText": {
+      "builderModule": "generator/builders/two-column-text.js",
+      "builderExport": "addTwoColumnTextWithStrapline"
+    },
+    "analysisNarrowTable": {
+      "builderModule": "generator/builders/analysis-narrow-table.js",
+      "builderExport": "addAnalysisNarrowTable"
+    },
+    "analysisWideChart2ColsText": {
+      "builderModule": "generator/builders/analysis-wide-chart-text.js",
+      "builderExport": "addAnalysisWideChart2ColsText"
+    },
+    "analysisWideChartTableText": {
+      "builderModule": "generator/builders/analysis-wide-chart-text.js",
+      "builderExport": "addAnalysisWideChartTableText"
+    },
+    "analysisBridge": {
+      "builderModule": "generator/builders/analysis-bridge.js",
+      "builderExport": "addAnalysisBridge"
+    },
+    "businessOverview": {
+      "builderModule": "generator/builders/business-overview.js",
+      "builderExport": "addBusinessOverview"
+    },
+    "titleStrapline4TextBoxes": {
+      "builderModule": "generator/builders/title-strapline-4-boxes.js",
+      "builderExport": "addTitleStrapline4TextBoxes"
+    },
+    "backCover": {
+      "builderModule": "generator/builders/back-cover-slide.js",
+      "builderExport": "addBackCover"
+    }
+  }
+}

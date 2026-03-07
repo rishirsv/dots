@@ -2,10 +2,6 @@ import {
   normalizeExtractedGeometry,
   validateCanonicalGeometry,
 } from './geometry-contract.js';
-import {
-  defaultMasterNameForType,
-  getGeometryContractForType,
-} from './slide-registry.js';
 
 export const CANONICAL_GEOMETRY_SCHEMA_VERSION = '2.0.0';
 
@@ -53,13 +49,16 @@ export function buildTemplateContracts(templatePackage = {}, { slideRegistry } =
       throw new Error(`template-contracts: missing slide registry entry for type "${type}"`);
     }
 
-    const geometryContract = getGeometryContractForType(type) || {};
+    const geometryContract = entry?.geometryContract || {};
     const requiredKeys = Array.isArray(geometryContract.requiredKeys)
       ? geometryContract.requiredKeys
       : [];
     const optionalDefaults = geometryContract.optionalDefaults || {};
 
-    const masterName = defaultMasterNameForType(type, templatePackage);
+    const masterName = entry?.master;
+    if (!masterName || typeof masterName !== 'string') {
+      throw new Error(`template-contracts: missing master for slide type "${type}"`);
+    }
     const footerSafeTop = Object.prototype.hasOwnProperty.call(footerSafeTopByMaster, masterName)
       ? footerSafeTopByMaster[masterName]
       : null;
