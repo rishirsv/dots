@@ -3,7 +3,7 @@ name: batch
 description: "Instructions for orchestrating a large, parallelizable change across a codebase."
 ---
 
-# Batch: Parallel Work Orchestration
+# Batch
 
 You are orchestrating a large, parallelizable change across this codebase.
 

@@ -12,7 +12,7 @@ verification-state: verified
 
 This plan keeps the public `kpmg-slidegen` harness truthful, compact, and usable by both repo contributors and skill-bundle maintainers.
 
-The current repo supports generation within the existing layout set, a normalized `qa.json` contract, curated fixture lanes, and portable skill verification. It does not currently support automated new-layout onboarding, so the plan should not describe that path as an active workflow.
+The current repo supports generation, repo-only layout onboarding, a normalized `qa.json` contract, curated fixture lanes, and portable skill verification. Repo docs should describe onboarding truthfully as a parent-repo-only workflow and should keep the portable skill boundary explicit.
 
 ## What Success Looks Like
 
@@ -21,7 +21,7 @@ When this plan is healthy:
 1. Contributors can understand the supported harness surface from the docs alone.
 2. Every documented command exists in `package.json` and maps to a real script.
 3. Repo docs and skill docs describe the same QA, artifact, and portability model.
-4. Deferred capabilities stay explicitly deferred instead of being implied by stale docs.
+4. Repo-only onboarding and portable-skill boundaries stay explicit instead of being implied by stale docs.
 
 ## Current Supported Command Surface
 
@@ -65,7 +65,7 @@ These two `dev:*` commands are sample render helpers only. They are not part of 
 
 Outcome:
 - README, AGENTS, testing docs, and active plans all describe the command surface that actually exists today.
-- Retired onboarding/layout-authoring paths are not presented as supported workflows.
+- Repo-only onboarding is presented as supported, and portable-skill sync remains clearly separate.
 
 ### Phase 2: Stable Evaluation Lanes
 
@@ -79,10 +79,10 @@ Outcome:
 - Parent-repo docs remain clear about which commands are repo maintenance commands.
 - Skill-facing docs remain portable and avoid repo-root assumptions.
 
-### Phase 4: Deferred Expansion Stays Explicit
+### Phase 4: Onboarding Boundary Stays Explicit
 
 Outcome:
-- New layout creation, onboarding automation, and other future harness growth areas stay clearly marked as deferred until the repo is ready to support them end to end.
+- Repo-only onboarding is documented as supported, while portable-skill sync and later bundle publication remain clearly separate follow-up concerns.
 
 ## Current Reality Snapshot
 
@@ -91,13 +91,12 @@ Outcome:
 - The public npm script surface for generation, QA lanes, skill sync, and skill verification is present in `package.json`.
 - The active harness lanes map to real scripts under `scripts/`.
 - The repo and skill now share a normalized `qa.json` contract and portable output-path guidance.
-- Layout authoring/onboarding is explicitly unsupported in the current repo surface.
+- Repo-only layout onboarding is now a supported parent-repo workflow.
 
 ### Deferred By Design
 
-- New layout creation scaffolds
-- Automated layout onboarding
-- Any documentation that implies reference extraction or candidate-layout promotion is currently part of the supported workflow
+- Portable-skill sync as part of onboarding
+- Any documentation that implies draft onboarding artifacts belong in the portable skill bundle
 
 ### Documentation Boundaries
 
@@ -121,9 +120,9 @@ Outcome:
   - [x] 3.1 Preserve `skill:sync`, `skill:verify`, and `skill:smoke` as the parent-repo distribution surface.
   - [x] 3.2 Keep skill-facing references portable and aligned to the shipped references set.
 
-- [ ] 4.0 Reopen future expansion only with real support
-  - [ ] 4.1 Reintroduce layout onboarding only when the repo has a supported end-to-end workflow for it.
-  - [ ] 4.2 Add any future public lane only when script, docs, and verification evidence land together.
+- [x] 4.0 Keep onboarding boundary truthful
+  - [x] 4.1 Document repo-only layout onboarding as supported now that the end-to-end workflow exists.
+  - [x] 4.2 Keep portable-skill sync and later bundle publication clearly outside the onboarding workflow.
 
 - [x] 5.0 Verify this doc refresh against the repo
   - [x] 5.1 Audit `package.json` against the on-disk `scripts/` surface.
@@ -143,6 +142,6 @@ Completed on 2026-03-06:
 This plan is considered fulfilled when all of the following remain true:
 
 1. Every documented public command exists and is runnable from the repo surface it is documented for.
-2. No repo doc implies that new layout creation is supported today.
+2. Repo docs describe layout onboarding truthfully as a parent-repo workflow and do not imply that draft onboarding assets belong in the portable skill.
 3. No testing doc points at missing support files.
 4. Repo-facing docs and skill-facing docs stay clear about their different execution environments.

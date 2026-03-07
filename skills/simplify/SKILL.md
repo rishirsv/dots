@@ -3,7 +3,7 @@ name: simplify
 description: "Instructions for simplifying code"
 ---
 
-# Simplify: Code Review and Cleanup
+# Simplify
 
 Review all changed files for reuse, quality, and efficiency. Fix any issues found.
 

@@ -96,7 +96,7 @@ if [[ ! -f "$GENERATOR_ENTRY" ]]; then
 fi
 
 mkdir -p "$OUT_DIR"
-DECK_FILENAME="$(node --input-type=module -e "import fs from 'node:fs'; import { buildSuggestedDeckFilename } from './assets/slidegen/generator/app/output-naming.js'; const deckSpec = JSON.parse(fs.readFileSync(process.argv[1], 'utf8')); console.log(buildSuggestedDeckFilename(deckSpec, { inputPath: process.argv[1] }));" "$IN_PATH")"
+DECK_FILENAME="$(cd "$SKILL_ROOT" && node --input-type=module -e "import fs from 'node:fs'; import { buildSuggestedDeckFilename } from './assets/slidegen/generator/app/output-naming.js'; const deckSpec = JSON.parse(fs.readFileSync(process.argv[1], 'utf8')); console.log(buildSuggestedDeckFilename(deckSpec, { inputPath: process.argv[1] }));" "$IN_PATH")"
 DECK_OUT="$OUT_DIR/$DECK_FILENAME"
 QA_OUT="$OUT_DIR/qa.json"
 PREVIEW_DIR="$OUT_DIR/preview"

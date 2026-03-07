@@ -16,6 +16,7 @@
     "test:structure": "node scripts/test-structure.mjs",
     "test:render": "node scripts/test-render.mjs",
     "test:visual": "node scripts/test-visual.mjs",
+    "test:onboarding": "node scripts/test-onboarding.mjs",
     "test:pr": "node scripts/test-pr.mjs",
     "test:nightly": "node scripts/test-nightly.mjs",
     "test:dist": "node scripts/test-dist.mjs",
@@ -24,7 +25,11 @@
     "skill:smoke": "node scripts/verify-skill-bundle.mjs",
     "smoke": "npm run -s test:render",
     "dev:cover": "node scripts/dev/render-cover-sample.mjs",
-    "dev:analysis-narrow": "node scripts/dev/render-analysis-narrow-sample.mjs"
+    "dev:analysis-narrow": "node scripts/dev/render-analysis-narrow-sample.mjs",
+    "onboard:init": "node scripts/onboarding/init-layout.mjs",
+    "onboard:render": "node scripts/onboarding/render-candidate.mjs",
+    "onboard:compare": "node scripts/onboarding/compare-candidate.mjs",
+    "onboard:run": "node scripts/onboarding/run-layout-onboarding.mjs"
   },
   "dependencies": {
     "image-size": "^2.0.2",

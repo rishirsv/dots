@@ -1,7 +1,7 @@
 import { buildTemplateContracts } from './template-contracts.js';
 import { buildTheme } from './theme.js';
 import {
-  getSlideRegistry,
+  createSlideRegistry,
   assertRegistryCoversTemplateTypes,
   validateRegistry,
 } from './slide-registry.js';
@@ -21,63 +21,69 @@ function requireAssetPath(assetPath, assetKey, slideType) {
   throw new Error(`Missing required template asset "${assetKey}" for slide type "${slideType}"`);
 }
 
-function resolveAssetsForType(templatePackage = {}, registryType) {
+function resolveAssetsForType(templatePackage = {}, registryType, registryEntry = null, masterName = null) {
   const resolveAssetPath = templatePackage?.resolveAssetPath;
   if (typeof resolveAssetPath !== 'function') return EMPTY_ASSETS;
 
-  if (registryType === 'cover') {
+  const effectiveMaster = String(masterName || registryEntry?.master || '').trim();
+
+  if (registryType === 'cover' || effectiveMaster === 'KPMG_COVER') {
     return Object.freeze({
       logoWhite: requireAssetPath(
         resolveAssetPath('logoWhitePng') || resolveAssetPath('logoWhiteSvg'),
         'logoWhitePng/logoWhiteSvg',
-        'cover',
+        registryType,
       ),
-      coverPhoto: requireAssetPath(resolveAssetPath('coverPhoto'), 'coverPhoto', 'cover'),
+      coverPhoto: requireAssetPath(resolveAssetPath('coverPhoto'), 'coverPhoto', registryType),
     });
   }
 
-  if (DIVIDER_TYPES.has(registryType)) {
+  if (
+    DIVIDER_TYPES.has(registryType) ||
+    effectiveMaster === 'KPMG_SECTION_DARK' ||
+    effectiveMaster === 'KPMG_SECTION_LIGHT'
+  ) {
     return Object.freeze({
       gradientDivider: resolveAssetPath('gradientDividerWindow') || null,
     });
   }
 
-  if (registryType === 'backCover') {
+  if (registryType === 'backCover' || effectiveMaster === 'KPMG_CLOSING') {
     return Object.freeze({
       gradientBackCover: requireAssetPath(
         resolveAssetPath('gradientBackCover'),
         'gradientBackCover',
-        'backCover',
+        registryType,
       ),
       closingLogoWhite: requireAssetPath(
         resolveAssetPath('closingLogoWhite'),
         'closingLogoWhite',
-        'backCover',
+        registryType,
       ),
       closingSocialTwitter: requireAssetPath(
         resolveAssetPath('closingSocialTwitter'),
         'closingSocialTwitter',
-        'backCover',
+        registryType,
       ),
       closingSocialLinkedin: requireAssetPath(
         resolveAssetPath('closingSocialLinkedin'),
         'closingSocialLinkedin',
-        'backCover',
+        registryType,
       ),
       closingSocialFacebook: requireAssetPath(
         resolveAssetPath('closingSocialFacebook'),
         'closingSocialFacebook',
-        'backCover',
+        registryType,
       ),
       closingSocialInstagram: requireAssetPath(
         resolveAssetPath('closingSocialInstagram'),
         'closingSocialInstagram',
-        'backCover',
+        registryType,
       ),
       closingSocialYoutube: requireAssetPath(
         resolveAssetPath('closingSocialYoutube'),
         'closingSocialYoutube',
-        'backCover',
+        registryType,
       ),
     });
   }
@@ -87,9 +93,11 @@ function resolveAssetsForType(templatePackage = {}, registryType) {
 
 export function buildRenderContext({ templatePackage = {}, deckSpec = null, options = {} } = {}) {
   const theme = buildTheme(templatePackage, { deckSpec, options });
-  validateRegistry();
-  const slideRegistry = getSlideRegistry();
-  assertRegistryCoversTemplateTypes(templatePackage?.layouts?.types || {});
+  const slideRegistry =
+    options.slideRegistry ||
+    createSlideRegistry({ overrides: options.slideRegistryOverrides || null });
+  validateRegistry(slideRegistry.byType);
+  assertRegistryCoversTemplateTypes(templatePackage?.layouts?.types || {}, slideRegistry);
   const paginationPolicy = buildPaginationPolicy(templatePackage);
   assertPolicyCoverage(slideRegistry, paginationPolicy);
   const templateContracts = buildTemplateContracts(templatePackage, {
@@ -112,11 +120,12 @@ export function buildRenderContext({ templatePackage = {}, deckSpec = null, opti
         throw new Error('Unable to resolve slide type for builder contract');
       }
       if (resolvedByType.has(resolvedType)) return resolvedByType.get(resolvedType);
+      const registryEntry = slideRegistry.get(resolvedType);
       const { geometry, masterName } = templateContracts.resolveForSlide(slideSpec, resolvedType);
       const resolved = Object.freeze({
         geometry,
         masterName,
-        assets: resolveAssetsForType(templatePackage, resolvedType),
+        assets: resolveAssetsForType(templatePackage, resolvedType, registryEntry, masterName),
       });
       resolvedByType.set(resolvedType, resolved);
       return resolved;

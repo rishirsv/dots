@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "thresholds": {
+    "changedPixelRatioMax": 0.25,
+    "meanAbsMax": 20,
+    "rmsMax": 30
+  }
+}

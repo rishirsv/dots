@@ -1,4 +1,6 @@
 interface:
   display_name: "Meeting Intelligence"
   short_description: "Generate structured meeting notes from transcripts"
+  icon_small: "./assets/meeting-intelligence-logo.png"
+  icon_large: "./assets/meeting-intelligence-logo.png"
   default_prompt: "Produce comprehensive structured meeting notes from a transcript, choosing FDD or general business template automatically."

@@ -3,6 +3,8 @@ name: designer-polish
 description: "Refine nearly complete frontend interfaces so they are ready to ship. Use when Codex needs a final quality pass covering visual polish, interaction completeness, performance tuning, resilience, edge cases, and production hardening, or when the user asks for iterative polish loops such as `design polish 5x`. This skill improves and finishes existing work after the design direction is already set; it is not the primary ideation or formal audit skill."
 ---
 
+# Designer Polish
+
 Perform the final implementation pass that turns good UI into ship-ready UI. This skill combines detail polish, resilience hardening, and performance optimization into one finishing workflow.
 
 Use this only when the interface is already mostly complete. Do not spend time polishing something that still needs core product or layout decisions. If the user wants a review instead of changes, use `designer-audit`.
@@ -10,6 +12,7 @@ Use this only when the interface is already mostly complete. Do not spend time p
 ## Priority Rule
 
 Before following any other workflow in this skill:
+
 - check for `docs/DESIGN.md` in the project root
 - if it exists, read it first and treat it as the highest-priority design context
 - preserve the existing design conventions, tokens, spacing, component patterns, and interaction language unless the user explicitly asks for a redesign or a deliberate departure
@@ -35,11 +38,13 @@ If `docs/DESIGN.md` does not exist, do not create or refresh it silently. Use `d
 Treat iterative wording such as `design polish 5x`, `designer-polish 5x`, `iterate polish`, `repeat polish`, or `run a polish loop` as iterative mode.
 
 Behavior:
+
 - no iterative wording: run the normal single-pass polish workflow
 - iterative wording without an explicit count: run 3 iterations
 - iterative wording with `Nx`: run exactly `N` iterations
 
 In iterative mode, each pass should:
+
 1. capture before-state evidence
 2. evaluate the current state
 3. choose 1-3 high-impact improvements only
@@ -75,6 +80,7 @@ Choose screenshot and capture tooling based on project type first.
 ## Evidence Contract
 
 Store artifacts under:
+
 - `./.agents/screenshots/<feature>/iter-XX-web-before.png`
 - `./.agents/screenshots/<feature>/iter-XX-web-after.png`
 - `./.agents/screenshots/<feature>/iter-XX-expo-before.png`
@@ -94,6 +100,7 @@ Work in this order so effort goes to the highest-value issues first.
 ### 1. Assess Readiness
 
 Understand the current state:
+
 - Is the feature functionally complete?
 - What quality bar matters here: MVP, strong default, flagship?
 - What is the likely ship window?
@@ -115,6 +122,7 @@ For iterative requests, follow this loop for each pass:
 7. Write the iteration report and list the next candidates without implementing them yet.
 
 Evaluation depth should alternate:
+
 - iteration 1: fuller audit-style baseline using `designer-audit` standards
 - middle iterations: quick high-impact evaluation to keep momentum
 - final iteration: fuller closing evaluation to confirm what remains
@@ -137,6 +145,7 @@ Refine the details that make the product feel intentional:
 - Responsive consistency across breakpoints
 
 Check for:
+
 - Random spacing values
 - Elements that feel optically off
 - Missing states on interactive controls
@@ -150,6 +159,7 @@ Check for:
 Make the feature resilient to reality, not just ideal mock data.
 
 Test and improve:
+
 - Very long text
 - Empty or missing data
 - Large numbers
@@ -167,6 +177,7 @@ Prefer flexible layouts and logical sizing over fixed-width assumptions. Use app
 Measure first, then optimize what actually matters.
 
 Focus on:
+
 - Large or badly sized images
 - Unnecessary JavaScript and dead dependencies
 - Render thrash and unnecessary re-renders
@@ -175,6 +186,7 @@ Focus on:
 - Heavy off-screen content that should be lazy loaded or virtualized
 
 Prefer:
+
 - Smaller bundles
 - Better image sizing and formats
 - Code splitting where it meaningfully helps
@@ -214,6 +226,7 @@ Before calling the work done, confirm:
 ## Output Expectations
 
 When using this skill:
+
 - Make concrete improvements, not vague suggestions.
 - Explain the highest-value fixes briefly.
 - Validate with the strongest available checks for the project.

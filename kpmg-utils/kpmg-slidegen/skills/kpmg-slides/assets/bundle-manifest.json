@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-06T19:57:33.338Z",
+  "generatedAt": "2026-03-07T22:39:57.238Z",
   "entries": [
     {
       "source": "skills/kpmg-slides/agents/openai.yaml",
@@ -103,6 +103,12 @@
       "target": "skills/kpmg-slides/assets/slidegen/generator/builders/divider-slide.js",
       "size": 3544,
       "sha256": "4e6b30173a91572d7d2aab818a1230adf82f3892c623e7295ff3b1504c918194"
+    },
+    {
+      "source": "generator/builders/onboarded/.gitkeep",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/builders/onboarded/.gitkeep",
+      "size": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
     },
     {
       "source": "generator/builders/one-column-text.js",
@@ -233,8 +239,8 @@
     {
       "source": "generator/index.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/index.js",
-      "size": 5947,
-      "sha256": "2a461c8fe217320815a8667db0cbd0bcef60ebfe9c361cb1e009cfe64bcd7c8e"
+      "size": 6049,
+      "sha256": "688929e84a8ca631778927f4b08b0f93570240a3d1e429a5ae2e63ff44c453aa"
     },
     {
       "source": "generator/postprocess/slides-adapter.js",
@@ -279,6 +285,18 @@
       "sha256": "680057a3f1cb642dc8bf48fa59aac60e75b25677eb59fe72c3d498572670e779"
     },
     {
+      "source": "generator/runtime/onboarded-registry.generated.js",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/onboarded-registry.generated.js",
+      "size": 61,
+      "sha256": "f5d846cb21b7654bc470ec7d5b9f7bf75d9e8e78cfec585a71f6798fd92d576e"
+    },
+    {
+      "source": "generator/runtime/onboarded-registry.index.json",
+      "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/onboarded-registry.index.json",
+      "size": 42,
+      "sha256": "7060c267c912e3156b87c646e3bc970eac1ac8bdd964cf0a794b83e6f1250614"
+    },
+    {
       "source": "generator/runtime/paginate.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/paginate.js",
       "size": 38430,
@@ -293,8 +311,8 @@
     {
       "source": "generator/runtime/render-context.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/render-context.js",
-      "size": 5662,
-      "sha256": "ce95e7ae2c3d69762a867d75519f5f866ff625a585d97c986ca92de7c827d3e1"
+      "size": 6197,
+      "sha256": "b914c906439a3fe5149f492c50d854b8389f6e29ea54397fd7bd28714808b78e"
     },
     {
       "source": "generator/runtime/render-deck.js",
@@ -305,20 +323,20 @@
     {
       "source": "generator/runtime/slide-registry.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/slide-registry.js",
-      "size": 9247,
-      "sha256": "4dfbea66b97019c4fe5ef3b208312873caa81d8109b923864eaf6ff3e56d8019"
+      "size": 10511,
+      "sha256": "6163a4ba7276b765e8f77c48f57d78bf4e6e4d9353b5047048d55dce9257d17a"
     },
     {
       "source": "generator/runtime/template-contracts.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/template-contracts.js",
-      "size": 4124,
-      "sha256": "c236c719cd162ff288a6b5fd2da335c5f3bd930b09f163993d0a70641fa802f5"
+      "size": 4133,
+      "sha256": "7b7a0549d0e9f1f4b70fb034d3eb9711e1c9a956fec74f5a93f2cfb5f4b2e2e2"
     },
     {
       "source": "generator/runtime/template-package.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/template-package.js",
-      "size": 1431,
-      "sha256": "f58f1ded6f2adb8e7483fd357e8890c38053ba1fcbf32fe038f1b1567e4b8d52"
+      "size": 2439,
+      "sha256": "ef63d0e5a8335e2c1768d035b47106c9c2bff158fb9fae9360f86f2d332e2585"
     },
     {
       "source": "generator/runtime/template-roots.js",
@@ -557,8 +575,8 @@
     {
       "source": "skills/kpmg-slides/scripts/run_kpmg_slides.sh",
       "target": "skills/kpmg-slides/scripts/run_kpmg_slides.sh",
-      "size": 3638,
-      "sha256": "04c0e339fd2e24c66ac9f568bb58b294cca9eb949aeaaaa5f7cfd18e5272e570"
+      "size": 3658,
+      "sha256": "e5d1560bdafd686c9bafe7b9b2c4a42c7047b232668efd77fbc06c80b7404fc3"
     },
     {
       "source": "skills/kpmg-slides/SKILL.md",

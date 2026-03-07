@@ -2,7 +2,7 @@
 name: pdfs
 description: "PDF reading, creation, and review guidance with image-based visual QA loops. Use when working with PDF files for generation, edits, or quality checks."
 ---
-# PDF reading, creation, and review guidance
+# PDFs
 
 ## Reading PDFs
 - Use `pdftoppm -png $OUTDIR/$BASENAME.pdf $OUTDIR/$BASENAME` to convert PDFs to PNGs.

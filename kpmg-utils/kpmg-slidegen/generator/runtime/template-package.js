@@ -45,3 +45,37 @@ export function loadTemplatePackage(templateName = 'kpmg-diligence') {
     resolveAssetPath,
   };
 }
+
+/**
+ * Clone a template package with shallow layout and pagination overrides.
+ * This keeps onboarding/runtime overlays programmatic and out of the public CLI.
+ *
+ * @param {object} templatePackage
+ * @param {object} overrides
+ * @returns {object}
+ */
+export function cloneTemplatePackage(templatePackage = {}, overrides = {}) {
+  const baseLayouts = templatePackage?.layouts || {};
+  const baseTypes = baseLayouts?.types || {};
+  const basePolicies = templatePackage?.paginationPolicy?.policies || {};
+
+  return {
+    ...templatePackage,
+    layouts: {
+      ...baseLayouts,
+      ...(overrides.layouts || {}),
+      types: {
+        ...baseTypes,
+        ...((overrides.layouts && overrides.layouts.types) || {}),
+      },
+    },
+    paginationPolicy: {
+      ...(templatePackage?.paginationPolicy || {}),
+      ...(overrides.paginationPolicy || {}),
+      policies: {
+        ...basePolicies,
+        ...((overrides.paginationPolicy && overrides.paginationPolicy.policies) || {}),
+      },
+    },
+  };
+}

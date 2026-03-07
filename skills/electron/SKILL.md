@@ -4,7 +4,7 @@ description: Automate Electron desktop apps (VS Code, Slack, Discord, Figma, Not
 allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*)
 ---
 
-# Electron App Automation
+# Electron
 
 Automate any Electron desktop app using agent-browser. Electron apps are built on Chromium and expose a Chrome DevTools Protocol (CDP) port that agent-browser can connect to, enabling the same snapshot-interact workflow used for web pages.
 

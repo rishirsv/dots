@@ -143,6 +143,7 @@ function verifyNoAbsolutePaths() {
     '.txt',
   ]);
   const files = listFilesRecursively(SKILL_ROOT).filter((file) => {
+    if (file.includes(`${path.sep}node_modules${path.sep}`)) return false;
     if (path.basename(file) === 'bundle-manifest.json') return false;
     return textExtensions.has(path.extname(file).toLowerCase()) || path.basename(file) === 'SKILL.md';
   });
