@@ -1,128 +1,173 @@
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const REPO_ROOT = '/Users/rishi/Code/ai-tools/kpmg-utils/kpmg-slidegen';
-const DESKTOP_ROOT = '/Users/rishi/Desktop/kpmg-slidegen-verbosity-density-matrix';
-const REPO_OUTPUT_ROOT = path.join(REPO_ROOT, 'presets', 'authoring', 'review-matrix');
+function parseArgs(argv) {
+  const options = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) continue;
+    const key = token.slice(2);
+    const next = argv[index + 1];
+    if (!next || next.startsWith('--')) {
+      options[key] = true;
+      continue;
+    }
+    options[key] = next;
+    index += 1;
+  }
+  return options;
+}
 
-const TEXT_AMOUNTS = [
-  { id: 'sm', presetId: 'minimal', label: 'Minimal' },
-  { id: 'md', presetId: 'concise', label: 'Concise' },
-  { id: 'lg', presetId: 'detailed', label: 'Detailed' },
-  { id: 'xl', presetId: 'extensive', label: 'Extensive' },
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
+const DEFAULT_DESKTOP_ROOT = path.join(os.homedir(), 'Desktop', 'kpmg-slidegen-verbosity-density-matrix');
+const DEFAULT_REPO_OUTPUT_ROOT = path.join(DEFAULT_REPO_ROOT, 'presets', 'authoring', 'review-matrix');
+const ARGS = parseArgs(process.argv.slice(2));
+
+const REPO_ROOT = path.resolve(String(ARGS['repo-root'] || DEFAULT_REPO_ROOT));
+const DESKTOP_ROOT = path.resolve(String(ARGS['desktop-root'] || DEFAULT_DESKTOP_ROOT));
+const REPO_OUTPUT_ROOT = path.resolve(String(ARGS['repo-output-root'] || DEFAULT_REPO_OUTPUT_ROOT));
+
+const LEVELS = [
+  { id: 'concise', textAmount: 'md', label: 'Concise' },
+  { id: 'detailed', textAmount: 'lg', label: 'Detailed' },
+  { id: 'extensive', textAmount: 'xl', label: 'Extensive' },
 ];
 
-const COUNT_TARGETS = Object.freeze({
-  sm: {
-    oneColumnItems: 4,
-    twoColumnItems: 2,
-    chartItems: 4,
-    chartTableItems: 4,
-    chartTableRows: 4,
-    narrowInsights: 2,
-    narrowRows: 4,
-    bridgePhases: 1,
-    bridgeSteps: 5,
-    bridgePhaseItems: 2,
-    overviewItems: 2,
-    boxItems: 3,
+const CLAUSES = [
+  'supported by management interviews and corroborated with recent operating evidence',
+  'linked to transaction impact through revenue, margin, cash flow, or execution confidence',
+  'framed with the next decision leadership should take during the diligence process',
+  'written to feel like consulting commentary rather than presentation shorthand',
+  'grounded in a fact pattern that can be defended in follow-up management sessions',
+];
+
+const LEVEL_BUDGETS = {
+  concise: {
+    oneColumn: { count: 5, chars: 150 },
+    twoColumn: { count: 3, chars: 120 },
+    chartText: { count: 4, chars: 175 },
+    chartTable: { bullets: 4, bulletChars: 110, rows: 4, cellChars: 44 },
+    narrowTable: { bullets: 3, bulletChars: 155, rows: 4, cellChars: 40 },
+    bridge: { phases: 2, phaseBullets: 2, phaseChars: 95, steps: 8 },
+    overview: { bullets: 4, chars: 180 },
+    fourBox: { count: 3, chars: 126 },
   },
-  md: {
-    oneColumnItems: 5,
-    twoColumnItems: 3,
-    chartItems: 4,
-    chartTableItems: 4,
-    chartTableRows: 4,
-    narrowInsights: 3,
-    narrowRows: 6,
-    bridgePhases: 2,
-    bridgeSteps: 8,
-    bridgePhaseItems: 2,
-    overviewItems: 3,
-    boxItems: 3,
+  detailed: {
+    oneColumn: { count: 6, chars: 195 },
+    twoColumn: { count: 4, chars: 150 },
+    chartText: { count: 5, chars: 215 },
+    chartTable: { bullets: 4, bulletChars: 125, rows: 4, cellChars: 50 },
+    narrowTable: { bullets: 4, bulletChars: 180, rows: 4, cellChars: 44 },
+    bridge: { phases: 3, phaseBullets: 2, phaseChars: 105, steps: 9 },
+    overview: { bullets: 4, chars: 215 },
+    fourBox: { count: 3, chars: 138 },
   },
-  lg: {
-    oneColumnItems: 6,
-    twoColumnItems: 4,
-    chartItems: 5,
-    chartTableItems: 5,
-    chartTableRows: 6,
-    narrowInsights: 4,
-    narrowRows: 8,
-    bridgePhases: 3,
-    bridgeSteps: 10,
-    bridgePhaseItems: 2,
-    overviewItems: 4,
-    boxItems: 4,
+  extensive: {
+    oneColumn: { count: 7, chars: 235 },
+    twoColumn: { count: 4, chars: 185 },
+    chartText: { count: 5, chars: 245 },
+    chartTable: { bullets: 4, bulletChars: 140, rows: 4, cellChars: 56 },
+    narrowTable: { bullets: 4, bulletChars: 195, rows: 4, cellChars: 48 },
+    bridge: { phases: 3, phaseBullets: 2, phaseChars: 115, steps: 10 },
+    overview: { bullets: 4, chars: 220 },
+    fourBox: { count: 3, chars: 148 },
   },
-  xl: {
-    oneColumnItems: 7,
-    twoColumnItems: 5,
-    chartItems: 6,
-    chartTableItems: 5,
-    chartTableRows: 8,
-    narrowInsights: 4,
-    narrowRows: 10,
-    bridgePhases: 3,
-    bridgeSteps: 12,
-    bridgePhaseItems: 3,
-    overviewItems: 6,
-    boxItems: 4,
-  },
-});
+};
 
 const PHASE_HEADINGS = ['Growth drivers', 'Execution risks', 'Forward view'];
 const WORKSTREAMS = ['Commercial', 'Operations', 'Technology', 'Governance'];
 
-function textAmountDescriptor(textAmount) {
-  switch (textAmount) {
-    case 'sm':
-      return 'Keep points short and decision-led.';
-    case 'md':
-      return 'Add a concrete proof point to each section.';
-    case 'lg':
-      return 'Use fuller evidence and implication in each point.';
-    case 'xl':
-      return 'Carry report-style detail while preserving slide readability.';
-    default:
-      return '';
-  }
+function normalizeText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
 }
 
-function payload(theme, index, textAmount) {
-  const base = `${theme} point ${index + 1} anchors the storyline around measurable operating performance`;
-  if (textAmount === 'sm') {
-    return `${base}.`;
+function trimTrailingFragment(text) {
+  let cleaned = String(text || '').replace(/[,\s]+$/, '');
+  const trailingWords = new Set([
+    'a',
+    'an',
+    'and',
+    'by',
+    'for',
+    'from',
+    'in',
+    'of',
+    'on',
+    'or',
+    'the',
+    'through',
+    'to',
+    'with',
+    'supported',
+    'linked',
+    'framed',
+    'management',
+  ]);
+
+  while (cleaned) {
+    const parts = cleaned.split(/\s+/);
+    const last = String(parts[parts.length - 1] || '').toLowerCase();
+    if (!trailingWords.has(last)) break;
+    parts.pop();
+    cleaned = parts.join(' ').replace(/[,\s]+$/, '');
   }
-  if (textAmount === 'md') {
-    return `${base}, supported by a recent management fact pattern.`;
-  }
-  if (textAmount === 'lg') {
-    return `${base}, supported by a recent management fact pattern and linked to a clear owner-led response.`;
-  }
-  return `${base}, supported by recent management evidence, linked to decision impact, and framed with the next action leadership should prioritize.`;
+  return cleaned;
 }
 
-function buildBullets(theme, count, textAmount) {
-  return Array.from({ length: count }, (_, index) => payload(theme, index, textAmount));
+function fitText(seed, targetChars) {
+  let text = normalizeText(seed);
+  let clauseIndex = 0;
+  while (text.length < targetChars - 20) {
+    text += `${text.endsWith('.') ? '' : ','} ${CLAUSES[clauseIndex % CLAUSES.length]}`;
+    clauseIndex += 1;
+  }
+  if (text.length > targetChars) {
+    text = text.slice(0, targetChars);
+    const cut = Math.max(text.lastIndexOf(','), text.lastIndexOf(' '));
+    if (cut > Math.floor(targetChars * 0.75)) {
+      text = text.slice(0, cut);
+    }
+  }
+  text = trimTrailingFragment(text);
+  if (!text.endsWith('.')) text += '.';
+  return text;
 }
 
-function buildRows(prefix, count, textAmount) {
-  return Array.from({ length: count }, (_, index) => {
-    const metric = `${prefix} metric ${index + 1}`;
-    const current = `${68 + index * 3}%`;
-    const target = `${72 + index * 3}%`;
-    const gap = '4%';
-    const readThrough =
-      textAmount === 'sm'
-        ? 'Target remains achievable.'
-        : textAmount === 'md'
-          ? 'Target remains achievable with focused execution.'
-          : textAmount === 'lg'
-            ? 'Target remains achievable if management keeps current governance cadence in place.'
-            : 'Target remains achievable if management sustains governance discipline, resolves dependencies early, and protects accountability in weekly operating reviews.';
-    return [metric, current, target, gap, readThrough];
-  });
+function buildBullets(theme, count, chars) {
+  return Array.from({ length: count }, (_, index) =>
+    fitText(
+      `${theme} point ${index + 1} explains the operating pattern and why it matters for diligence outcomes`,
+      chars,
+    ),
+  );
+}
+
+function buildWideRows(prefix, count, chars) {
+  return Array.from({ length: count }, (_, index) => [
+    `${prefix} ${index + 1}`,
+    `${50 + index * 7}`,
+    `$${80 + index * 35}k`,
+    fitText(
+      `${prefix} read-through ${index + 1} explains the commercial plan, the management response, and the implication for run-rate confidence`,
+      chars,
+    ),
+  ]);
+}
+
+function buildNarrowRows(prefix, count, chars) {
+  return Array.from({ length: count }, (_, index) => [
+    `${prefix} ${index + 1}`,
+    `${68 + index * 3}%`,
+    `${72 + index * 3}%`,
+    '4%',
+    fitText(
+      `${prefix} read-through ${index + 1} explains the gap, the management response, and the implication for execution certainty`,
+      chars,
+    ),
+  ]);
 }
 
 function buildBridgeSteps(count) {
@@ -151,64 +196,39 @@ function sumBridgeDeltas(steps) {
   return steps.reduce((total, step) => total + Number(step?.delta || 0), 0);
 }
 
-function buildAnalysisColumns(phaseCount, bodyCount, textAmount) {
-  return Array.from({ length: phaseCount }, (_, index) => ({
-    heading: PHASE_HEADINGS[index],
-    body: buildBullets(PHASE_HEADINGS[index], bodyCount, textAmount),
-  }));
-}
-
-function buildColumns(itemCount, textAmount) {
-  return WORKSTREAMS.map((heading, index) => ({
-    heading,
-    body: buildBullets(`${heading} workstream`, itemCount, textAmount).map((text, itemIndex) =>
-      itemIndex === 0 && index === 0 ? text.replace('point 1', 'priority 1') : text,
-    ),
-  }));
-}
-
-function buildContentsSections(presetId, textAmount) {
+function buildContentsSections(level) {
   return [
     {
       number: '01',
       title: 'Settings summary',
-      items: [`${presetId} preset using ${textAmount.toUpperCase()}`],
+      items: [`${level.label} preset using ${level.textAmount.toUpperCase()}`],
     },
     {
       number: '02',
       title: 'Narrative samples',
-      items: ['One-column and two-column slides'],
+      items: ['One-column, two-column, and chart-led commentary'],
     },
     {
       number: '03',
-      title: 'Analytical samples',
-      items: ['Chart, table, and bridge layouts'],
-    },
-    {
-      number: '04',
-      title: 'Structure samples',
-      items: ['Overview and four-box layouts'],
+      title: 'Constrained layouts',
+      items: ['Table, bridge, overview, and four-box samples'],
     },
   ];
 }
 
-function buildDeck({ presetId, label, textAmount, id }) {
-  const resolvedTextAmount = textAmount || id;
-  const counts = COUNT_TARGETS[resolvedTextAmount];
-  const deckLabel = `${label} (${resolvedTextAmount.toUpperCase()})`;
-  const guidance = textAmountDescriptor(resolvedTextAmount);
+function buildDeck(level) {
+  const budget = LEVEL_BUDGETS[level.id];
+  const bridgeSteps = buildBridgeSteps(budget.bridge.steps);
   const bridgeStartValue = 122;
-  const bridgeSteps = buildBridgeSteps(counts.bridgeSteps);
-  const bridgeEndValue = bridgeStartValue + sumBridgeDeltas(bridgeSteps);
 
   return {
     metadata: {
-      title: `Verbosity Review ${deckLabel}`,
+      title: `Verbosity Review ${level.label}`,
       author: 'KPMG LLP',
       company: 'KPMG LLP',
-      subject: `Review sample for ${deckLabel}`,
+      subject: `Review sample for ${level.label}`,
       allowSparse: false,
-      textAmount: resolvedTextAmount,
+      textAmount: level.textAmount,
       slideCountPolicy: 'auto',
       styleIntent: 'diligence',
       footer: {
@@ -223,13 +243,13 @@ function buildDeck({ presetId, label, textAmount, id }) {
     slides: [
       {
         type: 'cover',
-        title: `${deckLabel} sample deck`,
-        subtitle: `Review deck showing the ${resolvedTextAmount.toUpperCase()} text budget under the new default density guardrail.`,
+        title: `${level.label} review deck`,
+        subtitle: 'Review deck calibrated to the approved three-level consulting payload model.',
       },
       {
         type: 'contents',
         title: 'Contents',
-        sections: buildContentsSections(presetId, resolvedTextAmount),
+        sections: buildContentsSections(level),
       },
       {
         type: 'dividerDark',
@@ -239,12 +259,9 @@ function buildDeck({ presetId, label, textAmount, id }) {
       {
         type: 'oneColumnText',
         title: 'How to review this sample',
-        strapline: `${label} text budget. ${guidance}`,
+        strapline: 'Narrative bullets should fill the slide with consulting-style detail before the layout adds more count.',
         bodyStyle: 'bullets',
-        body: [
-          { text: 'What changes', subheader: true },
-          ...buildBullets('Review focus', counts.oneColumnItems - 1, resolvedTextAmount),
-        ],
+        body: buildBullets('Review focus commentary', budget.oneColumn.count, budget.oneColumn.chars),
         source: 'Source: generated review matrix sample.',
       },
       {
@@ -255,30 +272,22 @@ function buildDeck({ presetId, label, textAmount, id }) {
       {
         type: 'twoColumnText',
         title: 'Current vs target operating model',
-        strapline: 'Two-column example calibrated to the selected text amount.',
+        strapline: 'Two-column example showing richer evidence as the text amount increases.',
         bodyStyle: 'bullets',
-        leftBody: buildBullets('Current state', counts.twoColumnItems, resolvedTextAmount),
-        rightBody: buildBullets('Target state', counts.twoColumnItems, resolvedTextAmount),
+        leftBody: buildBullets('Current-state commentary', budget.twoColumn.count, budget.twoColumn.chars),
+        rightBody: buildBullets('Target-state commentary', budget.twoColumn.count, budget.twoColumn.chars),
       },
       {
         type: 'analysisWideChart2ColsText',
         title: 'Revenue and margin trend',
-        strapline: 'Chart slide showing how narrative depth changes while the data stays constant.',
+        strapline: 'Chart-right, commentary-left example using the calibrated narrative budgets.',
         bodyStyle: 'bullets',
-        body: buildBullets('Revenue trend', counts.chartItems, resolvedTextAmount),
+        body: buildBullets('Revenue trend commentary', budget.chartText.count, budget.chartText.chars),
         chart: {
           type: 'bar',
           data: [
-            {
-              name: 'Revenue ($M)',
-              labels: ['2023', '2024', '2025'],
-              values: [74, 88, 109],
-            },
-            {
-              name: 'Gross margin (%)',
-              labels: ['2023', '2024', '2025'],
-              values: [69, 71, 73],
-            },
+            { name: 'Revenue ($M)', labels: ['2023', '2024', '2025'], values: [74, 88, 109] },
+            { name: 'Gross margin (%)', labels: ['2023', '2024', '2025'], values: [69, 71, 73] },
           ],
           opts: {
             showValue: true,
@@ -289,25 +298,22 @@ function buildDeck({ presetId, label, textAmount, id }) {
         },
       },
       {
+        type: 'dividerLight',
+        sectionNumber: '03',
+        sectionTitle: 'Constrained layouts',
+      },
+      {
         type: 'analysisWideChartTableText',
         title: 'Packaging and performance view',
-        strapline: 'Chart plus table example for combined evidence layouts.',
+        strapline: 'Wide chart/table example using hard row caps and richer commentary.',
         heading: 'Plan mix and current run-rate',
         bodyStyle: 'bullets',
-        body: buildBullets('Packaging view', counts.chartTableItems, resolvedTextAmount),
+        body: buildBullets('Packaging view commentary', budget.chartTable.bullets, budget.chartTable.bulletChars),
         chart: {
           type: 'bar',
           data: [
-            {
-              name: 'Customers',
-              labels: ['Starter', 'Growth', 'Enterprise'],
-              values: [118, 86, 42],
-            },
-            {
-              name: 'MRR ($000)',
-              labels: ['Starter', 'Growth', 'Enterprise'],
-              values: [76, 214, 468],
-            },
+            { name: 'Customers', labels: ['Starter', 'Growth', 'Enterprise'], values: [118, 86, 42] },
+            { name: 'MRR ($000)', labels: ['Starter', 'Growth', 'Enterprise'], values: [76, 214, 468] },
           ],
           opts: {
             showValue: true,
@@ -318,45 +324,47 @@ function buildDeck({ presetId, label, textAmount, id }) {
         },
         table: {
           headers: ['Plan', 'Customers', 'MRR', 'Read-through'],
-          rows: buildRows('Plan', counts.chartTableRows, resolvedTextAmount).map(([metric, current, target, , readThrough], index) => [
-            metric.replace('metric', ['Starter', 'Growth', 'Enterprise', 'Expansion', 'Renewal', 'Upsell', 'Pipeline', 'Services'][index] || `Line ${index + 1}`),
-            `${50 + index * 7}`,
-            `$${80 + index * 35}k`,
-            readThrough,
-          ]),
+          rows: buildWideRows('Plan', budget.chartTable.rows, budget.chartTable.cellChars),
         },
         noteSource: 'Source: generated review matrix metrics.',
       },
       {
         type: 'analysisNarrowTable',
         title: 'Metric gap assessment',
-        strapline: 'Table-led example with insight bullets tuned to the selected text amount.',
+        strapline: 'Table-led example with insight bullets tuned to the approved caps.',
         table: {
           headers: ['Metric', 'Current', 'Target', 'Gap', 'Read-through'],
-          rows: buildRows('Operational', counts.narrowRows, resolvedTextAmount),
+          rows: buildNarrowRows('Operational', budget.narrowTable.rows, budget.narrowTable.cellChars),
         },
-        insights: buildBullets('Metric implication', counts.narrowInsights, resolvedTextAmount),
+        insights: buildBullets(
+          'Metric implication commentary',
+          budget.narrowTable.bullets,
+          budget.narrowTable.bulletChars,
+        ),
         notes: 'Source: generated review matrix metrics.',
       },
       {
         type: 'analysisBridge',
         title: 'Adjusted EBITDA bridge',
-        strapline: 'Bridge example using the same numeric story across the review set.',
+        strapline: 'Bridge example showing that richer commentary can work if bullet count stays disciplined.',
         bodyStyle: 'paragraphs',
         bridge: {
           startLabel: 'FY23 EBITDA',
           endLabel: 'FY25 EBITDA',
           startValue: bridgeStartValue,
-          endValue: bridgeEndValue,
+          endValue: bridgeStartValue + sumBridgeDeltas(bridgeSteps),
           unitPrefix: '$',
           unitSuffix: 'm',
           decimals: 0,
           tolerance: 0.5,
           steps: bridgeSteps,
         },
-        analysisColumns: buildAnalysisColumns(counts.bridgePhases, counts.bridgePhaseItems, resolvedTextAmount),
+        analysisColumns: Array.from({ length: budget.bridge.phases }, (_, index) => ({
+          heading: PHASE_HEADINGS[index],
+          body: buildBullets(PHASE_HEADINGS[index], budget.bridge.phaseBullets, budget.bridge.phaseChars),
+        })),
         source: 'Source: generated review matrix metrics.',
-        note: guidance,
+        note: 'Use richer evidence before adding more bridge commentary boxes.',
       },
       {
         type: 'businessOverview',
@@ -390,27 +398,24 @@ function buildDeck({ presetId, label, textAmount, id }) {
             subLabel: 'Entities under diligence scope',
           },
         },
-        overviewBody: buildBullets('Overview summary', counts.overviewItems, resolvedTextAmount),
+        overviewBody: buildBullets('Overview summary commentary', budget.overview.bullets, budget.overview.chars),
         chart: {
           type: 'area',
-          data: [
-            {
-              name: 'Revenue trend',
-              labels: ['FY21', 'FY22', 'FY23', 'FY24', 'FY25'],
-              values: [96, 108, 121, 142, 164],
-            },
-          ],
+          data: [{ name: 'Revenue trend', labels: ['FY21', 'FY22', 'FY23', 'FY24', 'FY25'], values: [96, 108, 121, 142, 164] }],
           source: 'Source: generated review matrix metrics.',
         },
         source: 'Source: generated review matrix metrics.',
-        note: guidance,
+        note: 'Keep the overview bullet count flat and increase richness across levels.',
       },
       {
         type: 'titleStrapline4TextBoxes',
         title: 'Program workstreams and ownership',
-        strapline: 'Four-box example showing how short-form workstreams scale by text amount.',
+        strapline: 'Four-box example showing that richer commentary works if each box stays at three bullets.',
         bodyStyle: 'paragraphs',
-        columns: buildColumns(counts.boxItems, resolvedTextAmount),
+        columns: WORKSTREAMS.map((heading) => ({
+          heading,
+          body: buildBullets(`${heading} workstream commentary`, budget.fourBox.count, budget.fourBox.chars),
+        })),
       },
       {
         type: 'backCover',
@@ -423,11 +428,12 @@ function buildManifest(entries) {
   const lines = [
     '# Verbosity Review Set',
     '',
-    'This bundle contains one rendered deck for each supported `textAmount` value after the density-profile refactor.',
+    'This bundle contains one rendered deck for each approved starter level after the payload-cap refactor.',
     '',
     'Simple reading guide:',
-    '- `textAmount` changes how much content each slide is expected to carry.',
-    '- Layout density enforcement is now internal and uses the new default denser baseline.',
+    '- `concise` is the lowest useful working-deck setting.',
+    '- `detailed` is the normal consulting / diligence baseline.',
+    '- `extensive` increases evidence richness without letting constrained layouts overflow by default.',
     '',
     'Included review decks:',
   ];
@@ -455,19 +461,19 @@ async function main() {
 
   const manifestEntries = [];
 
-  for (const entry of TEXT_AMOUNTS) {
-    const deckSpec = buildDeck(entry);
-    const repoPath = path.join(REPO_OUTPUT_ROOT, `${entry.presetId}.deckSpec.json`);
-    await fs.writeFile(repoPath, `${JSON.stringify(deckSpec, null, 2)}\n`);
+  for (const level of LEVELS) {
+    const deckSpec = buildDeck(level);
+    const repoPath = path.join(REPO_OUTPUT_ROOT, `${level.id}.deckSpec.json`);
+    const desktopDir = path.join(DESKTOP_ROOT, level.id);
 
-    const desktopDir = path.join(DESKTOP_ROOT, entry.presetId);
     await ensureDir(desktopDir);
+    await fs.writeFile(repoPath, `${JSON.stringify(deckSpec, null, 2)}\n`);
     await fs.writeFile(path.join(desktopDir, 'deckspec.json'), `${JSON.stringify(deckSpec, null, 2)}\n`);
 
     manifestEntries.push({
-      id: entry.presetId,
-      label: entry.label,
-      textAmount: entry.id,
+      id: level.id,
+      label: level.label,
+      textAmount: level.textAmount,
     });
   }
 

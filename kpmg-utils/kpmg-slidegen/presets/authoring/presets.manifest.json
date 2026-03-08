@@ -2,16 +2,6 @@
   "schemaVersion": 1,
   "presets": [
     {
-      "id": "minimal",
-      "aliases": [
-        "minimal",
-        "simple"
-      ],
-      "label": "Minimal",
-      "textAmount": "sm",
-      "deckSpec": "minimal.deckSpec.json"
-    },
-    {
       "id": "concise",
       "aliases": [
         "concise"

@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "title": "Verbosity Review Concise",
+    "title": "Payload Calibration Concise",
     "author": "KPMG LLP",
     "company": "KPMG LLP",
-    "subject": "Review sample for Concise",
+    "subject": "Calibration deck for Concise",
     "allowSparse": false,
     "textAmount": "md",
     "slideCountPolicy": "auto",
@@ -20,64 +20,32 @@
   "slides": [
     {
       "type": "cover",
-      "title": "Concise review deck",
-      "subtitle": "Review deck calibrated to the approved three-level consulting payload model."
-    },
-    {
-      "type": "contents",
-      "title": "Contents",
-      "sections": [
-        {
-          "number": "01",
-          "title": "Settings summary",
-          "items": [
-            "Concise preset using MD"
-          ]
-        },
-        {
-          "number": "02",
-          "title": "Narrative samples",
-          "items": [
-            "One-column, two-column, and chart-led commentary"
-          ]
-        },
-        {
-          "number": "03",
-          "title": "Constrained layouts",
-          "items": [
-            "Table, bridge, overview, and four-box samples"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "dividerDark",
-      "sectionNumber": "01",
-      "sectionTitle": "Settings summary"
-    },
-    {
-      "type": "oneColumnText",
-      "title": "How to review this sample",
-      "strapline": "Narrative bullets should fill the slide with consulting-style detail before the layout adds more count.",
-      "bodyStyle": "bullets",
-      "body": [
-        "Review focus commentary point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews.",
-        "Review focus commentary point 2 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews.",
-        "Review focus commentary point 3 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews.",
-        "Review focus commentary point 4 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews.",
-        "Review focus commentary point 5 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews."
-      ],
-      "source": "Source: generated review matrix sample."
+      "title": "Concise payload calibration",
+      "subtitle": "Controlled character-budget deck for visual and text-density calibration."
     },
     {
       "type": "dividerLight",
-      "sectionNumber": "02",
-      "sectionTitle": "Narrative samples"
+      "sectionNumber": "01",
+      "sectionTitle": "Narrative layouts"
+    },
+    {
+      "type": "oneColumnText",
+      "title": "One-column narrative (5x150)",
+      "strapline": "Testing richer diligence bullets without changing the slide family.",
+      "bodyStyle": "bullets",
+      "body": [
+        "One-column commentary point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "One-column commentary point 2 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "One-column commentary point 3 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "One-column commentary point 4 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "One-column commentary point 5 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and."
+      ],
+      "source": "Source: payload calibration sample."
     },
     {
       "type": "twoColumnText",
-      "title": "Current vs target operating model",
-      "strapline": "Two-column example showing richer evidence as the text amount increases.",
+      "title": "Two-column narrative (3x120 per side)",
+      "strapline": "Testing balanced left/right evidence at controlled character budgets.",
       "bodyStyle": "bullets",
       "leftBody": [
         "Current-state commentary point 1 explains the operating pattern and why it matters for diligence outcomes.",
@@ -92,8 +60,8 @@
     },
     {
       "type": "analysisWideChart2ColsText",
-      "title": "Revenue and margin trend",
-      "strapline": "Chart-right, commentary-left example using the calibrated narrative budgets.",
+      "title": "Chart with text (4x175)",
+      "strapline": "Testing the chart-right, commentary-left narrative budget.",
       "bodyStyle": "bullets",
       "body": [
         "Revenue trend commentary point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and corroborated with recent.",
@@ -136,25 +104,25 @@
           "showLegend": true,
           "valAxisTitle": "$M / %"
         },
-        "source": "Source: generated review matrix metrics."
+        "source": "Source: payload calibration metrics."
       }
     },
     {
       "type": "dividerLight",
-      "sectionNumber": "03",
+      "sectionNumber": "02",
       "sectionTitle": "Constrained layouts"
     },
     {
       "type": "analysisWideChartTableText",
-      "title": "Packaging and performance view",
-      "strapline": "Wide chart/table example using hard row caps and richer commentary.",
+      "title": "Chart + table (4 bullets, 5 rows)",
+      "strapline": "Testing combined chart/table/commentary density under controlled text cells.",
       "heading": "Plan mix and current run-rate",
       "bodyStyle": "bullets",
       "body": [
-        "Packaging view commentary point 1 explains the operating pattern and why it matters for diligence outcomes.",
-        "Packaging view commentary point 2 explains the operating pattern and why it matters for diligence outcomes.",
-        "Packaging view commentary point 3 explains the operating pattern and why it matters for diligence outcomes.",
-        "Packaging view commentary point 4 explains the operating pattern and why it matters for diligence outcomes."
+        "Packaging view commentary point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "Packaging view commentary point 2 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "Packaging view commentary point 3 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "Packaging view commentary point 4 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and."
       ],
       "chart": {
         "type": "bar",
@@ -191,7 +159,7 @@
           "showLegend": true,
           "valAxisTitle": "Count / $000"
         },
-        "source": "Source: generated review matrix metrics."
+        "source": "Source: payload calibration metrics."
       },
       "table": {
         "headers": [
@@ -205,34 +173,40 @@
             "Plan 1",
             "50",
             "$80k",
-            "Plan read-through 1 explains the commercial."
+            "Plan read-through 1 explains the commercial plan, the management response, and."
           ],
           [
             "Plan 2",
             "57",
             "$115k",
-            "Plan read-through 2 explains the commercial."
+            "Plan read-through 2 explains the commercial plan, the management response, and."
           ],
           [
             "Plan 3",
             "64",
             "$150k",
-            "Plan read-through 3 explains the commercial."
+            "Plan read-through 3 explains the commercial plan, the management response, and."
           ],
           [
             "Plan 4",
             "71",
             "$185k",
-            "Plan read-through 4 explains the commercial."
+            "Plan read-through 4 explains the commercial plan, the management response, and."
+          ],
+          [
+            "Plan 5",
+            "78",
+            "$220k",
+            "Plan read-through 5 explains the commercial plan, the management response, and."
           ]
         ]
       },
-      "noteSource": "Source: generated review matrix metrics."
+      "noteSource": "Source: payload calibration metrics."
     },
     {
       "type": "analysisNarrowTable",
-      "title": "Metric gap assessment",
-      "strapline": "Table-led example with insight bullets tuned to the approved caps.",
+      "title": "Narrow table (5 rows, 3 insights)",
+      "strapline": "Testing table-led density with controlled right-side insight text.",
       "table": {
         "headers": [
           "Metric",
@@ -243,52 +217,59 @@
         ],
         "rows": [
           [
-            "Operational 1",
+            "Operational metric 1",
             "68%",
             "72%",
             "4%",
-            "Operational read-through 1 explains."
+            "Operational read-through 1 explains the gap, the management response, and the."
           ],
           [
-            "Operational 2",
+            "Operational metric 2",
             "71%",
             "75%",
             "4%",
-            "Operational read-through 2 explains."
+            "Operational read-through 2 explains the gap, the management response, and the."
           ],
           [
-            "Operational 3",
+            "Operational metric 3",
             "74%",
             "78%",
             "4%",
-            "Operational read-through 3 explains."
+            "Operational read-through 3 explains the gap, the management response, and the."
           ],
           [
-            "Operational 4",
+            "Operational metric 4",
             "77%",
             "81%",
             "4%",
-            "Operational read-through 4 explains."
+            "Operational read-through 4 explains the gap, the management response, and the."
+          ],
+          [
+            "Operational metric 5",
+            "80%",
+            "84%",
+            "4%",
+            "Operational read-through 5 explains the gap, the management response, and the."
           ]
         ]
       },
       "insights": [
-        "Metric implication commentary point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews.",
-        "Metric implication commentary point 2 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews.",
-        "Metric implication commentary point 3 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews."
+        "Metric implication commentary point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "Metric implication commentary point 2 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and.",
+        "Metric implication commentary point 3 explains the operating pattern and why it matters for diligence outcomes, supported by management interviews and."
       ],
-      "notes": "Source: generated review matrix metrics."
+      "notes": "Source: payload calibration metrics."
     },
     {
       "type": "analysisBridge",
-      "title": "Adjusted EBITDA bridge",
-      "strapline": "Bridge example showing that richer commentary can work if bullet count stays disciplined.",
+      "title": "Bridge (9 steps, 2 phases)",
+      "strapline": "Testing how far bridge commentary can stretch before the slide becomes visually overloaded.",
       "bodyStyle": "paragraphs",
       "bridge": {
         "startLabel": "FY23 EBITDA",
         "endLabel": "FY25 EBITDA",
         "startValue": 122,
-        "endValue": 176,
+        "endValue": 173,
         "unitPrefix": "$",
         "unitSuffix": "m",
         "decimals": 0,
@@ -325,6 +306,10 @@
           {
             "label": "Vendor savings",
             "delta": 4
+          },
+          {
+            "label": "Headcount ramp",
+            "delta": -3
           }
         ]
       },
@@ -332,24 +317,24 @@
         {
           "heading": "Growth drivers",
           "body": [
-            "Growth drivers point 1 explains the operating pattern and why it matters for diligence outcomes.",
-            "Growth drivers point 2 explains the operating pattern and why it matters for diligence outcomes."
+            "Growth drivers point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management.",
+            "Growth drivers point 2 explains the operating pattern and why it matters for diligence outcomes, supported by management."
           ]
         },
         {
           "heading": "Execution risks",
           "body": [
-            "Execution risks point 1 explains the operating pattern and why it matters for diligence.",
-            "Execution risks point 2 explains the operating pattern and why it matters for diligence."
+            "Execution risks point 1 explains the operating pattern and why it matters for diligence outcomes, supported by management.",
+            "Execution risks point 2 explains the operating pattern and why it matters for diligence outcomes, supported by management."
           ]
         }
       ],
-      "source": "Source: generated review matrix metrics.",
-      "note": "Use richer evidence before adding more bridge commentary boxes."
+      "source": "Source: payload calibration metrics.",
+      "note": "Calibration deck for bridge readability."
     },
     {
       "type": "businessOverview",
-      "title": "Business overview and trend",
+      "title": "Business overview (4x180)",
       "leftHeading": "Legal and ownership structure",
       "rightHeading": "Operating and performance summary",
       "bodyStyle": "paragraphs",
@@ -459,15 +444,15 @@
             ]
           }
         ],
-        "source": "Source: generated review matrix metrics."
+        "source": "Source: payload calibration metrics."
       },
-      "source": "Source: generated review matrix metrics.",
-      "note": "Keep the overview bullet count flat and increase richness across levels."
+      "source": "Source: payload calibration metrics.",
+      "note": "Calibration deck for consulting-style overview density."
     },
     {
       "type": "titleStrapline4TextBoxes",
-      "title": "Program workstreams and ownership",
-      "strapline": "Four-box example showing that richer commentary works if each box stays at three bullets.",
+      "title": "Four-box layout (3x118 per box)",
+      "strapline": "Testing the practical upper bound for four parallel workstream boxes.",
       "bodyStyle": "paragraphs",
       "columns": [
         {
@@ -503,9 +488,6 @@
           ]
         }
       ]
-    },
-    {
-      "type": "backCover"
     }
   ]
 }

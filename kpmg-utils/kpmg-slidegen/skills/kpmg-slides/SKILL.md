@@ -71,7 +71,6 @@ Set `metadata.allowSparse` to `false` by default. Only set `true` when the user 
 
 Start from the matching starter when possible:
 
-- `assets/templates/presets/minimal.deckSpec.json`
 - `assets/templates/presets/concise.deckSpec.json`
 - `assets/templates/presets/detailed.deckSpec.json`
 - `assets/templates/presets/extensive.deckSpec.json`
@@ -81,11 +80,10 @@ Start from the matching starter when possible:
 1. If the user provides explicit numeric constraints (slide count, bullets per slide, table rows), follow them.
 2. Else follow verbosity tier mapping:
 
-- `Minimal -> sm`
 - `Concise -> md`
 - `Detailed -> lg`
 - `Extensive -> xl`
-- `simple -> sm`
+- `simple -> md`
 - `detailed deck -> lg`
 - `most detailed` or `extensive -> xl` unless the user explicitly sets a different `textAmount`
 
@@ -374,7 +372,6 @@ Use two locations intentionally:
 
 - Copy a starter from the skill bundle into the working directory as `<name>.deckSpec.json`.
 - Preferred starter source files:
-  - `assets/templates/presets/minimal.deckSpec.json`
   - `assets/templates/presets/concise.deckSpec.json`
   - `assets/templates/presets/detailed.deckSpec.json`
   - `assets/templates/presets/extensive.deckSpec.json`

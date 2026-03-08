@@ -88,8 +88,8 @@ const presetManifest = readJson(PRESET_MANIFEST_PATH);
 const presetEntries = presetManifest.presets || [];
 assert.deepEqual(
   presetEntries.map((entry) => entry.id).sort(),
-  ['concise', 'detailed', 'extensive', 'minimal'],
-  'Authoring presets must cover the four supported verbosity tiers.',
+  ['concise', 'detailed', 'extensive'],
+  'Authoring presets must cover the approved three starter tiers.',
 );
 
 for (const entry of presetEntries) {

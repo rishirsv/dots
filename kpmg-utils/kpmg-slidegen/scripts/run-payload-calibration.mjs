@@ -1,10 +1,35 @@
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-const REPO_ROOT = '/Users/rishi/Code/ai-tools/kpmg-utils/kpmg-slidegen';
-const OUTPUT_ROOT = '/Users/rishi/Desktop/kpmg-slidegen-payload-calibration';
-const SPEC_ROOT = path.join(REPO_ROOT, 'presets', 'authoring', 'payload-calibration');
+function parseArgs(argv) {
+  const options = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) continue;
+    const key = token.slice(2);
+    const next = argv[index + 1];
+    if (!next || next.startsWith('--')) {
+      options[key] = true;
+      continue;
+    }
+    options[key] = next;
+    index += 1;
+  }
+  return options;
+}
+
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
+const DEFAULT_OUTPUT_ROOT = path.join(os.homedir(), 'Desktop', 'kpmg-slidegen-payload-calibration');
+const DEFAULT_SPEC_ROOT = path.join(DEFAULT_REPO_ROOT, 'presets', 'authoring', 'payload-calibration');
+const ARGS = parseArgs(process.argv.slice(2));
+
+const REPO_ROOT = path.resolve(String(ARGS['repo-root'] || DEFAULT_REPO_ROOT));
+const OUTPUT_ROOT = path.resolve(String(ARGS['output-root'] || DEFAULT_OUTPUT_ROOT));
+const SPEC_ROOT = path.resolve(String(ARGS['spec-root'] || DEFAULT_SPEC_ROOT));
 
 const LEVELS = [
   { id: 'concise', textAmount: 'md', label: 'Concise' },
@@ -68,6 +93,39 @@ function normalizeText(value) {
   return String(value || '').replace(/\s+/g, ' ').trim();
 }
 
+function trimTrailingFragment(text) {
+  let cleaned = String(text || '').replace(/[,\s]+$/, '');
+  const trailingWords = new Set([
+    'a',
+    'an',
+    'and',
+    'by',
+    'for',
+    'from',
+    'in',
+    'of',
+    'on',
+    'or',
+    'the',
+    'through',
+    'to',
+    'with',
+    'supported',
+    'linked',
+    'framed',
+    'management',
+  ]);
+
+  while (cleaned) {
+    const parts = cleaned.split(/\s+/);
+    const last = String(parts[parts.length - 1] || '').toLowerCase();
+    if (!trailingWords.has(last)) break;
+    parts.pop();
+    cleaned = parts.join(' ').replace(/[,\s]+$/, '');
+  }
+  return cleaned;
+}
+
 function fitText(seed, targetChars) {
   let text = normalizeText(seed);
   let clauseIndex = 0;
@@ -82,7 +140,7 @@ function fitText(seed, targetChars) {
       text = text.slice(0, cut);
     }
   }
-  text = text.replace(/[,\s]+$/, '');
+  text = trimTrailingFragment(text);
   if (!text.endsWith('.')) text += '.';
   return text;
 }

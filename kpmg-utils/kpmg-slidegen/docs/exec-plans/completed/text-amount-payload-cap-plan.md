@@ -70,6 +70,16 @@ Calibration headline result:
 - The table-led layouts split much earlier than their current row-count rules suggest.
 - The four-box layout is more robust than the old synthetic samples implied, provided the bullet count stays flat.
 
+Post-implementation output check:
+
+- Final review decks render without auto-splits across `concise`, `detailed`, and `extensive`.
+- Final generated deck medians remain below North / Coffee at the whole-deck level because the review bundle includes divider / cover slides and deliberately conservative constrained-layout caps.
+- The final review bundle now reaches these output ranges:
+  - `concise`: slide-total median `621.5`, p75 `823.8`, p90 `1,021.9`
+  - `detailed`: slide-total median `753.5`, p75 `1,197.5`, p90 `1,288.1`
+  - `extensive`: slide-total median `791.5`, p75 `1,336.8`, p90 `1,550.9`
+  - `extensive` paragraph-length p90: `235`, which is directionally inside the consulting-style range observed in North / Coffee for substantive commentary
+
 ## Product Interpretation
 
 The correct default model is:
@@ -277,9 +287,9 @@ Recommendation:
 - keep the count flat at `3` bullets per box across all three levels
 - use a modest char ladder instead of count growth
 
-## Pending Final Recommendation
+## Implemented Recommendation
 
-If we implement without changing geometry first, the calibrated direction should be:
+The calibrated direction was implemented without changing the base layout geometry. The shipped contract is:
 
 - `oneColumnText`
   - `concise`: `5` bullets at about `150` chars
@@ -310,6 +320,38 @@ If we implement without changing geometry first, the calibrated direction should
 - `titleStrapline4TextBoxes`
   - `3 / 3 / 3` bullets per box
   - about `118 / 132 / 146` chars per bullet as the initial safe ladder
+
+## Final Implementation Outcomes
+
+- The starter surface now exposes exactly three user-facing presets: `concise`, `detailed`, and `extensive`.
+- `minimal` was removed from the parent repo and the portable skill bundle.
+- `textAmount` now evaluates layouts with mixed count and character budgets instead of count-only growth.
+- Narrative layouts were allowed to carry materially richer consulting-style commentary.
+- Constrained layouts were capped to prevent avoidable overflow and pagination.
+- The Desktop review bundle was regenerated with root-level `.pptx` files for direct review.
+- The portable skill bundle was re-synced and verified after the contract change.
+
+Review artifacts:
+
+- Desktop review bundle: `/Users/rishi/Desktop/kpmg-slidegen-verbosity-density-matrix`
+- Root review decks:
+  - `/Users/rishi/Desktop/kpmg-slidegen-verbosity-density-matrix/concise.pptx`
+  - `/Users/rishi/Desktop/kpmg-slidegen-verbosity-density-matrix/detailed.pptx`
+  - `/Users/rishi/Desktop/kpmg-slidegen-verbosity-density-matrix/extensive.pptx`
+  - `/Users/rishi/Desktop/kpmg-slidegen-verbosity-density-matrix/all-layouts-sample.pptx`
+
+Validation results:
+
+- `npm run test:fixtures`: pass
+- `npm run test:structure`: pass
+- `npm run test:render`: pass
+- `npm run test:dist`: pass
+- Review decks: no auto-splits across `concise`, `detailed`, or `extensive`
+
+Residual non-blocking observations:
+
+- `analysisNarrowTable` still emits an advisory density warning in QA under the richer consulting-style payload, but it remains visually acceptable in the regenerated review set.
+- Minor overlap heuristics can still appear as warnings in some generated outputs, but there are no blocking verification failures.
 
 ## Phase Outcomes
 
@@ -359,34 +401,34 @@ The refactor is only accepted if the generated decks are directionally aligned t
   - [x] 2.2 Extract text for paragraph and slide-level measurements
   - [x] 2.3 Convert representative slides to PNG for visual inspection
   - [x] 2.4 Summarize reference character ranges and layout behavior
-- [ ] 3.0 Run a pre-implementation payload calibration pass
+- [x] 3.0 Run a pre-implementation payload calibration pass
   - [x] 3.1 Create calibration deckspecs with intentional character-count ladders for each key layout family
   - [x] 3.2 Render those calibration decks to PPTX, PDF, and PNG
   - [x] 3.3 Measure actual slide-level and paragraph-level character counts from the generated outputs
   - [x] 3.4 Visually inspect the rendered slides to identify the highest safe payload for each layout and level
-  - [ ] 3.5 Freeze the final recommended caps only after user confirmation
-- [ ] 4.0 Rework `textAmount` semantics around payload
-  - [ ] 4.1 Replace count-only expectations with mixed count + character targets in `generator/runtime/verbosity-contract.js`
-  - [ ] 4.2 Decide where char caps, line caps, and count caps belong for each layout family
-  - [ ] 4.3 Tune the `concise`, `detailed`, and `extensive` ladder around the approved targets
-- [ ] 5.0 Add constrained-layout protections
-  - [ ] 5.1 Add hard payload caps for `titleStrapline4TextBoxes`
-  - [ ] 5.2 Add hard payload caps for `analysisWideChartTableText`
-  - [ ] 5.3 Add hard payload caps for `analysisNarrowTable`
-  - [ ] 5.4 Rebalance `analysisBridge` and `businessOverview` high-end growth
-- [ ] 6.0 Refactor the full product surface across parent and skill
-  - [ ] 6.1 Update presets and starter deck specs
-  - [ ] 6.2 Update fixtures and fixture governance checks
-  - [ ] 6.3 Update docs and skill guidance
-  - [ ] 6.4 Sync the skill bundle and verify portability
-- [ ] 7.0 Re-export and validate
-  - [ ] 7.1 Regenerate review decks on the Desktop
-  - [ ] 7.2 Regenerate the all-layouts sample deck
-  - [ ] 7.3 Validate QA output and pagination behavior
-  - [ ] 7.4 Spot-check visually against the consulting reference style
-- [ ] 8.0 Run end-to-end density calibration
-  - [ ] 8.1 Render the updated review decks and representative fixture decks to PPTX, PDF, and PNG
-  - [ ] 8.2 Extract slide-level and paragraph-level text-character metrics from the regenerated outputs
-  - [ ] 8.3 Compare generated output ranges against `north_fdd.pptx` and `coffee_fdd.pptx`
-  - [ ] 8.4 Review representative slides side-by-side for visual density, whitespace balance, and overflow behavior
-  - [ ] 8.5 Revise payload caps and rerun the comparison if the output is still materially thinner or more overloaded than the references
+  - [x] 3.5 Freeze the final recommended caps only after user confirmation
+- [x] 4.0 Rework `textAmount` semantics around payload
+  - [x] 4.1 Replace count-only expectations with mixed count + character targets in `generator/runtime/verbosity-contract.js`
+  - [x] 4.2 Decide where char caps, line caps, and count caps belong for each layout family
+  - [x] 4.3 Tune the `concise`, `detailed`, and `extensive` ladder around the approved targets
+- [x] 5.0 Add constrained-layout protections
+  - [x] 5.1 Add hard payload caps for `titleStrapline4TextBoxes`
+  - [x] 5.2 Add hard payload caps for `analysisWideChartTableText`
+  - [x] 5.3 Add hard payload caps for `analysisNarrowTable`
+  - [x] 5.4 Rebalance `analysisBridge` and `businessOverview` high-end growth
+- [x] 6.0 Refactor the full product surface across parent and skill
+  - [x] 6.1 Update presets and starter deck specs
+  - [x] 6.2 Update fixtures and fixture governance checks
+  - [x] 6.3 Update docs and skill guidance
+  - [x] 6.4 Sync the skill bundle and verify portability
+- [x] 7.0 Re-export and validate
+  - [x] 7.1 Regenerate review decks on the Desktop
+  - [x] 7.2 Regenerate the all-layouts sample deck
+  - [x] 7.3 Validate QA output and pagination behavior
+  - [x] 7.4 Spot-check visually against the consulting reference style
+- [x] 8.0 Run end-to-end density calibration
+  - [x] 8.1 Render the updated review decks and representative fixture decks to PPTX, PDF, and PNG
+  - [x] 8.2 Extract slide-level and paragraph-level text-character metrics from the regenerated outputs
+  - [x] 8.3 Compare generated output ranges against `north_fdd.pptx` and `coffee_fdd.pptx`
+  - [x] 8.4 Review representative slides side-by-side for visual density, whitespace balance, and overflow behavior
+  - [x] 8.5 Revise payload caps and rerun the comparison if the output is still materially thinner or more overloaded than the references
