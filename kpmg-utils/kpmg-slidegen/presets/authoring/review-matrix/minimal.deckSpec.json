@@ -1,0 +1,491 @@
+{
+  "metadata": {
+    "title": "Verbosity Review Minimal (SM)",
+    "author": "KPMG LLP",
+    "company": "KPMG LLP",
+    "subject": "Review sample for Minimal (SM)",
+    "allowSparse": false,
+    "textAmount": "sm",
+    "slideCountPolicy": "auto",
+    "styleIntent": "diligence",
+    "footer": {
+      "year": 2026,
+      "legalEntityName": "KPMG LLP",
+      "jurisdiction": "Ontario",
+      "legalStructure": "limited liability partnership",
+      "documentClassification": "KPMG Confidential",
+      "officeContactText": "kpmg.com/ca"
+    }
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Minimal (SM) sample deck",
+      "subtitle": "Review deck showing the SM text budget under the new default density guardrail."
+    },
+    {
+      "type": "contents",
+      "title": "Contents",
+      "sections": [
+        {
+          "number": "01",
+          "title": "Settings summary",
+          "items": [
+            "minimal preset using SM"
+          ]
+        },
+        {
+          "number": "02",
+          "title": "Narrative samples",
+          "items": [
+            "One-column and two-column slides"
+          ]
+        },
+        {
+          "number": "03",
+          "title": "Analytical samples",
+          "items": [
+            "Chart, table, and bridge layouts"
+          ]
+        },
+        {
+          "number": "04",
+          "title": "Structure samples",
+          "items": [
+            "Overview and four-box layouts"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "dividerDark",
+      "sectionNumber": "01",
+      "sectionTitle": "Settings summary"
+    },
+    {
+      "type": "oneColumnText",
+      "title": "How to review this sample",
+      "strapline": "Minimal text budget. Keep points short and decision-led.",
+      "bodyStyle": "bullets",
+      "body": [
+        {
+          "text": "What changes",
+          "subheader": true
+        },
+        "Review focus point 1 anchors the storyline around measurable operating performance.",
+        "Review focus point 2 anchors the storyline around measurable operating performance.",
+        "Review focus point 3 anchors the storyline around measurable operating performance."
+      ],
+      "source": "Source: generated review matrix sample."
+    },
+    {
+      "type": "dividerLight",
+      "sectionNumber": "02",
+      "sectionTitle": "Narrative samples"
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Current vs target operating model",
+      "strapline": "Two-column example calibrated to the selected text amount.",
+      "bodyStyle": "bullets",
+      "leftBody": [
+        "Current state point 1 anchors the storyline around measurable operating performance.",
+        "Current state point 2 anchors the storyline around measurable operating performance."
+      ],
+      "rightBody": [
+        "Target state point 1 anchors the storyline around measurable operating performance.",
+        "Target state point 2 anchors the storyline around measurable operating performance."
+      ]
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "title": "Revenue and margin trend",
+      "strapline": "Chart slide showing how narrative depth changes while the data stays constant.",
+      "bodyStyle": "bullets",
+      "body": [
+        "Revenue trend point 1 anchors the storyline around measurable operating performance.",
+        "Revenue trend point 2 anchors the storyline around measurable operating performance.",
+        "Revenue trend point 3 anchors the storyline around measurable operating performance.",
+        "Revenue trend point 4 anchors the storyline around measurable operating performance."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Revenue ($M)",
+            "labels": [
+              "2023",
+              "2024",
+              "2025"
+            ],
+            "values": [
+              74,
+              88,
+              109
+            ]
+          },
+          {
+            "name": "Gross margin (%)",
+            "labels": [
+              "2023",
+              "2024",
+              "2025"
+            ],
+            "values": [
+              69,
+              71,
+              73
+            ]
+          }
+        ],
+        "opts": {
+          "showValue": true,
+          "showLegend": true,
+          "valAxisTitle": "$M / %"
+        },
+        "source": "Source: generated review matrix metrics."
+      }
+    },
+    {
+      "type": "analysisWideChartTableText",
+      "title": "Packaging and performance view",
+      "strapline": "Chart plus table example for combined evidence layouts.",
+      "heading": "Plan mix and current run-rate",
+      "bodyStyle": "bullets",
+      "body": [
+        "Packaging view point 1 anchors the storyline around measurable operating performance.",
+        "Packaging view point 2 anchors the storyline around measurable operating performance.",
+        "Packaging view point 3 anchors the storyline around measurable operating performance.",
+        "Packaging view point 4 anchors the storyline around measurable operating performance."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Customers",
+            "labels": [
+              "Starter",
+              "Growth",
+              "Enterprise"
+            ],
+            "values": [
+              118,
+              86,
+              42
+            ]
+          },
+          {
+            "name": "MRR ($000)",
+            "labels": [
+              "Starter",
+              "Growth",
+              "Enterprise"
+            ],
+            "values": [
+              76,
+              214,
+              468
+            ]
+          }
+        ],
+        "opts": {
+          "showValue": true,
+          "showLegend": true,
+          "valAxisTitle": "Count / $000"
+        },
+        "source": "Source: generated review matrix metrics."
+      },
+      "table": {
+        "headers": [
+          "Plan",
+          "Customers",
+          "MRR",
+          "Read-through"
+        ],
+        "rows": [
+          [
+            "Plan Starter 1",
+            "50",
+            "$80k",
+            "Target remains achievable."
+          ],
+          [
+            "Plan Growth 2",
+            "57",
+            "$115k",
+            "Target remains achievable."
+          ],
+          [
+            "Plan Enterprise 3",
+            "64",
+            "$150k",
+            "Target remains achievable."
+          ],
+          [
+            "Plan Expansion 4",
+            "71",
+            "$185k",
+            "Target remains achievable."
+          ]
+        ]
+      },
+      "noteSource": "Source: generated review matrix metrics."
+    },
+    {
+      "type": "analysisNarrowTable",
+      "title": "Metric gap assessment",
+      "strapline": "Table-led example with insight bullets tuned to the selected text amount.",
+      "table": {
+        "headers": [
+          "Metric",
+          "Current",
+          "Target",
+          "Gap",
+          "Read-through"
+        ],
+        "rows": [
+          [
+            "Operational metric 1",
+            "68%",
+            "72%",
+            "4%",
+            "Target remains achievable."
+          ],
+          [
+            "Operational metric 2",
+            "71%",
+            "75%",
+            "4%",
+            "Target remains achievable."
+          ],
+          [
+            "Operational metric 3",
+            "74%",
+            "78%",
+            "4%",
+            "Target remains achievable."
+          ],
+          [
+            "Operational metric 4",
+            "77%",
+            "81%",
+            "4%",
+            "Target remains achievable."
+          ]
+        ]
+      },
+      "insights": [
+        "Metric implication point 1 anchors the storyline around measurable operating performance.",
+        "Metric implication point 2 anchors the storyline around measurable operating performance."
+      ],
+      "notes": "Source: generated review matrix metrics."
+    },
+    {
+      "type": "analysisBridge",
+      "title": "Adjusted EBITDA bridge",
+      "strapline": "Bridge example using the same numeric story across the review set.",
+      "bodyStyle": "paragraphs",
+      "bridge": {
+        "startLabel": "FY23 EBITDA",
+        "endLabel": "FY25 EBITDA",
+        "startValue": 122,
+        "endValue": 171,
+        "unitPrefix": "$",
+        "unitSuffix": "m",
+        "decimals": 0,
+        "tolerance": 0.5,
+        "steps": [
+          {
+            "label": "Volume growth",
+            "delta": 18
+          },
+          {
+            "label": "Pricing discipline",
+            "delta": 10
+          },
+          {
+            "label": "Customer retention",
+            "delta": 8
+          },
+          {
+            "label": "Mix improvement",
+            "delta": 7
+          },
+          {
+            "label": "Support efficiency",
+            "delta": 6
+          }
+        ]
+      },
+      "analysisColumns": [
+        {
+          "heading": "Growth drivers",
+          "body": [
+            "Growth drivers point 1 anchors the storyline around measurable operating performance.",
+            "Growth drivers point 2 anchors the storyline around measurable operating performance."
+          ]
+        }
+      ],
+      "source": "Source: generated review matrix metrics.",
+      "note": "Keep points short and decision-led."
+    },
+    {
+      "type": "businessOverview",
+      "title": "Business overview and trend",
+      "leftHeading": "Legal and ownership structure",
+      "rightHeading": "Operating and performance summary",
+      "bodyStyle": "paragraphs",
+      "structure": {
+        "topTier": [
+          {
+            "label": "Investor A",
+            "pct": "45%"
+          },
+          {
+            "label": "Investor B",
+            "pct": "35%"
+          },
+          {
+            "label": "Founder",
+            "pct": "20%"
+          }
+        ],
+        "midTier": [
+          {
+            "label": "HoldCo",
+            "pct": "100%"
+          }
+        ],
+        "bottomTier": [
+          {
+            "label": "OpCo North",
+            "pct": "100%"
+          },
+          {
+            "label": "OpCo Central",
+            "pct": "100%"
+          },
+          {
+            "label": "Shared Services",
+            "pct": "100%"
+          }
+        ],
+        "links": [
+          {
+            "fromTier": "top",
+            "fromIndex": 0,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "top",
+            "fromIndex": 1,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "top",
+            "fromIndex": 2,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 1
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 2
+          }
+        ],
+        "perimeter": {
+          "enabled": true,
+          "label": "Transaction perimeter",
+          "subLabel": "Entities under diligence scope"
+        }
+      },
+      "overviewBody": [
+        "Overview summary point 1 anchors the storyline around measurable operating performance.",
+        "Overview summary point 2 anchors the storyline around measurable operating performance."
+      ],
+      "chart": {
+        "type": "area",
+        "data": [
+          {
+            "name": "Revenue trend",
+            "labels": [
+              "FY21",
+              "FY22",
+              "FY23",
+              "FY24",
+              "FY25"
+            ],
+            "values": [
+              96,
+              108,
+              121,
+              142,
+              164
+            ]
+          }
+        ],
+        "source": "Source: generated review matrix metrics."
+      },
+      "source": "Source: generated review matrix metrics.",
+      "note": "Keep points short and decision-led."
+    },
+    {
+      "type": "titleStrapline4TextBoxes",
+      "title": "Program workstreams and ownership",
+      "strapline": "Four-box example showing how short-form workstreams scale by text amount.",
+      "bodyStyle": "paragraphs",
+      "columns": [
+        {
+          "heading": "Commercial",
+          "body": [
+            "Commercial workstream priority 1 anchors the storyline around measurable operating performance.",
+            "Commercial workstream point 2 anchors the storyline around measurable operating performance.",
+            "Commercial workstream point 3 anchors the storyline around measurable operating performance."
+          ]
+        },
+        {
+          "heading": "Operations",
+          "body": [
+            "Operations workstream point 1 anchors the storyline around measurable operating performance.",
+            "Operations workstream point 2 anchors the storyline around measurable operating performance.",
+            "Operations workstream point 3 anchors the storyline around measurable operating performance."
+          ]
+        },
+        {
+          "heading": "Technology",
+          "body": [
+            "Technology workstream point 1 anchors the storyline around measurable operating performance.",
+            "Technology workstream point 2 anchors the storyline around measurable operating performance.",
+            "Technology workstream point 3 anchors the storyline around measurable operating performance."
+          ]
+        },
+        {
+          "heading": "Governance",
+          "body": [
+            "Governance workstream point 1 anchors the storyline around measurable operating performance.",
+            "Governance workstream point 2 anchors the storyline around measurable operating performance.",
+            "Governance workstream point 3 anchors the storyline around measurable operating performance."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "backCover"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-07T22:39:57.238Z",
+  "generatedAt": "2026-03-07T23:27:05.798Z",
   "entries": [
     {
       "source": "skills/kpmg-slides/agents/openai.yaml",
@@ -47,8 +47,8 @@
     {
       "source": "generator/app/qa-report.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/app/qa-report.js",
-      "size": 27052,
-      "sha256": "20143f92b8c47bfb5045ec9d6918df534096501883b195ef8f449bd197e0f03d"
+      "size": 26918,
+      "sha256": "06a3bca85113b52cb0093b5b689211f1a9cd2c1f208c9943ab6fa0b7066bbbbc"
     },
     {
       "source": "generator/app/strict-overflow.js",
@@ -353,8 +353,8 @@
     {
       "source": "generator/runtime/verbosity-contract.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/verbosity-contract.js",
-      "size": 11215,
-      "sha256": "6ff0019f7a113c9143ebbf253dddc2b49a7554a0ce64f655523bf8be03aee900"
+      "size": 10030,
+      "sha256": "1c2d6bda4a75f9c58891f40a4c0737d42bda27e1a9d7dbee3c39be4a087f1b0e"
     },
     {
       "source": "generator/strict/overlap.js",
@@ -461,8 +461,8 @@
     {
       "source": "templates/kpmg-diligence/package/layouts.json",
       "target": "skills/kpmg-slides/assets/slidegen/templates/kpmg-diligence/package/layouts.json",
-      "size": 116861,
-      "sha256": "72a6712b40e7cb80c42bc466505cf0ee5e04109c0869859b54c5360faa32faa9"
+      "size": 116862,
+      "sha256": "c206ddf0b1e3dc95eca5969da003a229c8ef5e1990814605202b6e67e998b969"
     },
     {
       "source": "templates/kpmg-diligence/package/pagination-policy.json",
@@ -479,38 +479,38 @@
     {
       "source": "presets/authoring/detailed.deckSpec.json",
       "target": "skills/kpmg-slides/assets/templates/deckspec-starter.json",
-      "size": 4704,
-      "sha256": "635ab22a4df0f83f157c303ec732581d9df84a7b7c631a9f3e80fe401bd167f3"
+      "size": 4672,
+      "sha256": "1bd6f303199bda083d3668bfd5b79735eaa3ca921661685858357860af582a55"
     },
     {
       "source": "presets/authoring/concise.deckSpec.json",
       "target": "skills/kpmg-slides/assets/templates/presets/concise.deckSpec.json",
-      "size": 4303,
-      "sha256": "d8914764fb942691681073cae945c57a4dfc95eaa4c0889b8b60179ea8fc5a66"
+      "size": 4272,
+      "sha256": "39012ebba491a4eadc603066b4267679e2859bdef2dc8ee976a71fb9c80d3e35"
     },
     {
       "source": "presets/authoring/detailed.deckSpec.json",
       "target": "skills/kpmg-slides/assets/templates/presets/detailed.deckSpec.json",
-      "size": 4704,
-      "sha256": "635ab22a4df0f83f157c303ec732581d9df84a7b7c631a9f3e80fe401bd167f3"
+      "size": 4672,
+      "sha256": "1bd6f303199bda083d3668bfd5b79735eaa3ca921661685858357860af582a55"
     },
     {
       "source": "presets/authoring/extensive.deckSpec.json",
       "target": "skills/kpmg-slides/assets/templates/presets/extensive.deckSpec.json",
-      "size": 5478,
-      "sha256": "0621a5dad192c3e1aa83d465f838a9781a6488753d19a81c1c3f209ead0d1902"
+      "size": 5445,
+      "sha256": "559d198803ceec3953c1034099d02c13b278379d1c87eacf8344d908fb6a49b9"
     },
     {
       "source": "presets/authoring/minimal.deckSpec.json",
       "target": "skills/kpmg-slides/assets/templates/presets/minimal.deckSpec.json",
-      "size": 3773,
-      "sha256": "2db9b379216b389b4afa434b3510a5fb22244974544df166e856f72582806ae6"
+      "size": 3742,
+      "sha256": "c31a129a3326696b4e8847e7a3b139b03053a0d4386eb410550b318009ff7e4e"
     },
     {
       "source": "presets/authoring/presets.manifest.json",
       "target": "skills/kpmg-slides/assets/templates/presets/presets.manifest.json",
-      "size": 959,
-      "sha256": "dd81d10ce3200b3de6ac2af426aa883b363f03dc2080b4de04071a1102f45349"
+      "size": 819,
+      "sha256": "c77237a8420f044328af91ce3582cd7c5631a20cbd36bb45a65b8d528f3cd793"
     },
     {
       "source": "skills/kpmg-slides/package-lock.json",
@@ -533,8 +533,8 @@
     {
       "source": "skills/kpmg-slides/references/deckspec.schema.json",
       "target": "skills/kpmg-slides/references/deckspec.schema.json",
-      "size": 26108,
-      "sha256": "538614d141d8e67bd58d63d8acbe6aadebf50e1a0c3d4126bdc3e0d700005dfa"
+      "size": 25944,
+      "sha256": "ddf2beb9c49401db5cf128827cda14f20eff7f219fb3dbe58ca4f8e7c16f4fd4"
     },
     {
       "source": "skills/kpmg-slides/references/INDEX.md",
@@ -551,8 +551,8 @@
     {
       "source": "skills/kpmg-slides/references/quality_assurance.md",
       "target": "skills/kpmg-slides/references/quality_assurance.md",
-      "size": 8717,
-      "sha256": "901426798644036fbea759fc82213d91a3457b498873492f653f76ef0a9d70ba"
+      "size": 8689,
+      "sha256": "fbe787356b9aa2ceb59c86b4cdc49f6338c953ec0c3b8b61c9708fdfbfbc79fe"
     },
     {
       "source": "skills/kpmg-slides/references/slide-contract.md",
@@ -581,8 +581,8 @@
     {
       "source": "skills/kpmg-slides/SKILL.md",
       "target": "skills/kpmg-slides/SKILL.md",
-      "size": 19043,
-      "sha256": "bcaa427d985d898228a3308f462a498c1d5707172e92bb22ee7ae2730b0b95be"
+      "size": 18897,
+      "sha256": "523b964a0135331c11cb76dfb2910b6e2e0af163ee9588f35815e427f95d03a7"
     }
   ]
 }

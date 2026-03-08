@@ -9,7 +9,6 @@
       ],
       "label": "Minimal",
       "textAmount": "sm",
-      "densityProfile": "dense",
       "deckSpec": "minimal.deckSpec.json"
     },
     {
@@ -19,7 +18,6 @@
       ],
       "label": "Concise",
       "textAmount": "md",
-      "densityProfile": "dense",
       "deckSpec": "concise.deckSpec.json"
     },
     {
@@ -29,19 +27,17 @@
       ],
       "label": "Detailed",
       "textAmount": "lg",
-      "densityProfile": "denser",
       "deckSpec": "detailed.deckSpec.json"
     },
     {
       "id": "extensive",
       "aliases": [
         "extensive",
-        "highest density",
-        "densest"
+        "most detailed",
+        "full"
       ],
       "label": "Extensive",
       "textAmount": "xl",
-      "densityProfile": "densest",
       "deckSpec": "extensive.deckSpec.json"
     }
   ]

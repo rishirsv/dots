@@ -1,12 +1,4 @@
-const TEXT_AMOUNT_TO_DENSITY = Object.freeze({
-  sm: 'dense',
-  md: 'dense',
-  lg: 'denser',
-  xl: 'densest',
-});
-
-const SUPPORTED_TEXT_AMOUNTS = new Set(Object.keys(TEXT_AMOUNT_TO_DENSITY));
-const SUPPORTED_DENSITY_PROFILES = new Set(['dense', 'denser', 'densest']);
+const SUPPORTED_TEXT_AMOUNTS = new Set(['sm', 'md', 'lg', 'xl']);
 
 const SLIDE_RULES = Object.freeze({
   oneColumnText: {
@@ -209,17 +201,14 @@ function countRows(table) {
 }
 
 /**
- * Resolve the effective textAmount and densityProfile contract for a deck.
+ * Resolve the effective textAmount contract for a deck.
  * @param {object} metadata
- * @returns {{textAmount: string, densityProfile: string, warnings: object[]}}
+ * @returns {{textAmount: string, warnings: object[]}}
  */
 export function resolveVerbosityMetadata(metadata = {}) {
   const warnings = [];
   const errors = [];
   const textAmount = SUPPORTED_TEXT_AMOUNTS.has(metadata?.textAmount) ? metadata.textAmount : null;
-  let densityProfile = SUPPORTED_DENSITY_PROFILES.has(metadata?.densityProfile)
-    ? metadata.densityProfile
-    : null;
 
   if (!textAmount) {
     errors.push({
@@ -231,30 +220,8 @@ export function resolveVerbosityMetadata(metadata = {}) {
     });
   }
 
-  if (SUPPORTED_TEXT_AMOUNTS.has(metadata?.densityProfile)) {
-    densityProfile = null;
-    errors.push({
-      code: 'legacy_density_profile_alias',
-      severity: 'error',
-      status: 'fail',
-      message: `metadata.densityProfile used legacy alias "${metadata.densityProfile}".`,
-      suggestedRemedy: `Use densityProfile values dense, denser, or densest instead of "${TEXT_AMOUNT_TO_DENSITY[metadata.densityProfile]}".`,
-    });
-  }
-
-  if (!densityProfile) {
-    errors.push({
-      code: 'missing_density_profile',
-      severity: 'error',
-      status: 'fail',
-      message: 'metadata.densityProfile is required and must be one of dense, denser, or densest.',
-      suggestedRemedy: 'Set metadata.densityProfile to dense, denser, or densest.',
-    });
-  }
-
   return {
     textAmount,
-    densityProfile,
     errors,
     warnings,
   };
@@ -338,7 +305,7 @@ export function evaluateVerbosityContract(deckSpec = {}) {
   const findings = [...metadata.errors, ...metadata.warnings];
   const slides = Array.isArray(deckSpec?.slides) ? deckSpec.slides : [];
 
-  if (!metadata.textAmount || !metadata.densityProfile) {
+  if (!metadata.textAmount) {
     return {
       metadata,
       findings,
