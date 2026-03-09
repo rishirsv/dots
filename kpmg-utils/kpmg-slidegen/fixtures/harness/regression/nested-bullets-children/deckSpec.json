@@ -2,6 +2,7 @@
   "metadata": {
     "title": "Nested Bullets Dense Children",
     "textAmount": "lg",
+    "densityProfile": "denser",
     "allowSparse": true
   },
   "slides": [

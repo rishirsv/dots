@@ -9,6 +9,7 @@
         "all"
       ],
       "textAmount": "lg",
+      "densityProfile": "denser",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": true,
@@ -23,6 +24,7 @@
         "diligence"
       ],
       "textAmount": "md",
+      "densityProfile": "dense",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -37,6 +39,7 @@
         "qoe"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": false,
       "baselineBearing": false,
@@ -51,6 +54,7 @@
         "ic"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": false,
       "baselineBearing": false,
@@ -65,6 +69,7 @@
         "oneColumnText"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -79,6 +84,7 @@
         "twoColumnText"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -93,6 +99,7 @@
         "analysisWideChartTableText"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -107,6 +114,7 @@
         "businessOverview"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -121,6 +129,7 @@
         "oneColumnText"
       ],
       "textAmount": "lg",
+      "densityProfile": "denser",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -135,6 +144,7 @@
         "theme"
       ],
       "textAmount": "lg",
+      "densityProfile": "denser",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": true,
@@ -149,6 +159,7 @@
         "analysisBridge"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -163,6 +174,7 @@
         "oneColumnText"
       ],
       "textAmount": "lg",
+      "densityProfile": "denser",
       "expectedOutcome": "fail",
       "blockingSafe": true,
       "baselineBearing": false,
@@ -177,6 +189,7 @@
         "businessOverview"
       ],
       "textAmount": "xl",
+      "densityProfile": "densest",
       "expectedOutcome": "pass",
       "blockingSafe": false,
       "baselineBearing": false,
@@ -196,6 +209,7 @@
         "businessOverview"
       ],
       "textAmount": "lg",
+      "densityProfile": "denser",
       "expectedOutcome": "pass",
       "blockingSafe": false,
       "baselineBearing": false,

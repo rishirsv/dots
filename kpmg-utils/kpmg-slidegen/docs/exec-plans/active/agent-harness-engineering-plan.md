@@ -28,6 +28,7 @@ When this plan is healthy:
 ### Generation
 
 - `npm run generate`
+- `npm run generate:minimal`
 - `npm run generate:concise`
 - `npm run generate:detailed`
 - `npm run generate:extensive`

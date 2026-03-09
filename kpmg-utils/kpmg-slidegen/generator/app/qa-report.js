@@ -629,6 +629,7 @@ export function buildQaReport({
       warningCount: Number(verbositySummary.warnCount || 0),
       checkedSlideCount: Number(verbositySummary.checkedSlideCount || 0),
       textAmount: verbosity?.metadata?.textAmount || null,
+      densityProfile: verbosity?.metadata?.densityProfile || null,
     },
   });
 
@@ -765,6 +766,7 @@ export function buildQaReport({
       inputSlideCount,
       outputSlideCount,
       textAmount: verbosity?.metadata?.textAmount || null,
+      densityProfile: verbosity?.metadata?.densityProfile || null,
       slideCountPolicy: deckSpec?.metadata?.slideCountPolicy || null,
       styleIntent: deckSpec?.metadata?.styleIntent || null,
     },
