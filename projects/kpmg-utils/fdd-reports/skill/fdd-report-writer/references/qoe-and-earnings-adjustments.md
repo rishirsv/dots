@@ -7,7 +7,7 @@
 - Request handling model
 - Analytical workflow
 - Section architecture
-- Available analytical units
+- Typical content areas
 - Assembly patterns
 - Section-specific writing guidance
 - Verification and review checks
@@ -38,7 +38,7 @@ Use this section before drafting. It defines the QoE-specific scope logic for th
 - Use when: the user provides existing QoE prose, rough adjustment paragraphs, or weak wording and asks to rewrite, tighten, or polish it.
 - Output shape: revised prose only for the text provided.
 - Do not do: generate a full bridge, add new section blocks, or infer a broader scope than the request.
-- Preferred building blocks: single-adjustment units from this reference.
+- Preferred building blocks: single-adjustment content areas from this reference.
 - Typical signals: `rewrite this adjustment`, `tighten this paragraph`, `clean up this QoE text`.
 
 ### `Adjustment-set request`
@@ -153,9 +153,9 @@ Target length:
 - Do not include `Other considerations / not included` unless there are real excluded items worth flagging.
 - Do not omit `Key sensitivities and missing information` from a full QoE section. If no additional quantified sensitivities or open items are identified, state that explicitly.
 
-## Available analytical units
+## Typical content areas
 
-Use these analytical units as the local writing primitives. Some are concise single-adjustment templates and others are section-level assembly units. Use them directly when they fit instead of paraphrasing them into weaker prose.
+Use these typical content areas as the local writing primitives. Some are concise single-adjustment templates and others are section-level assembly areas. Use them directly when they fit instead of paraphrasing them into weaker prose.
 
 ### Core single-adjustment templates
 
@@ -338,7 +338,7 @@ Use one of these patterns based on the user's ask. These are assembly guides, no
 ### `Single adjustment rewrite`
 
 - Recommended order: rewrite the item directly, preserving the existing logic and scope.
-- Preferred primitives: one core single-adjustment template or one corpus-derived timing / sell-side / standalone template.
+- Preferred primitives: one core single-adjustment template or one timing / sell-side / standalone template.
 - Target density: 1 paragraph per item.
 - Stop adding detail when: the revised paragraph states the item, treatment, why, impact, and basis cleanly.
 
@@ -380,7 +380,7 @@ Use one of these patterns based on the user's ask. These are assembly guides, no
 6. Write each material adjustment so the reader can answer five questions quickly: what is it, why is it treated that way, how big is it, what supports it, and what could still change.
 7. Use `Other considerations / not included` for subjective or unquantified items, not as a dumping ground for generic open questions.
 8. Use `Key sensitivities and missing information` to close the section cleanly, even when the conclusion is that no additional quantified sensitivities were identified beyond the matters already described.
-9. Remove corpus artifacts such as `Not present in source report`, `following pages`, `adjacent table`, or repeated standalone headings.
+9. Remove source artifacts such as `Not present in source report`, `following pages`, `adjacent table`, or repeated standalone headings.
 10. Avoid turning an adjustment-only ask into a full diligence memo.
 
 ## Verification and review checks
@@ -398,7 +398,7 @@ Use these checks before finalizing a QoE response.
 9. No extraction-artifact language appears, including `Not present in source report`.
 10. No slot, layout, or `deckSpec` language appears in the drafted QoE response.
 11. Missing information uses inline placeholders rather than unsupported claims.
-12. The final draft reflects the request-shaped model and analytical units shown in this reference.
+12. The final draft reflects the request-shaped model and typical content areas shown in this reference.
 13. Language and tone pass `references/global-writing-conventions.md`.
 
 ## Full examples
