@@ -6,7 +6,7 @@
 - Core principles
 - Analytical workflow
 - Section architecture
-- Available analytical units
+- Typical content areas
 - Assembly patterns
 - Section-specific writing guidance
 - Verification and review checks
@@ -14,377 +14,294 @@
 
 ## Section objective
 
-The Net Working Capital section defines the operating working-capital position in terms that matter for purchase price and closing mechanics. It should tell the reader how working capital is defined for the engagement, how reported balances move to normalized balances, which adjustments matter, and whether the available evidence supports a target or peg conclusion.
+The Net working capital section explains the operating working-capital position in terms that matter for purchase price and closing mechanics. In most cases, it starts with a reported and adjusted working-capital schedule, explains the basis of presentation and the nature of the adjustments, and then walks the key normalization items that move reported working capital to the adjusted or target view.
+
+This section operates similarly to the net debt section, but it focuses on operating working-capital balances and working-capital adjustments rather than indebtedness. It should explain what is included in working capital, what is excluded, how the major adjustments are categorized, and what the resulting analysis means for normalized working capital, target working capital, or closing true-up mechanics.
 
 Global writing, placeholder, and language rules are defined in `references/global-writing-conventions.md` and apply here.
 
 ## Core principles
 
-1. **Definition comes before normalization:** Clarify what is included and excluded from working capital before presenting trend, bridge, or target conclusions.
-2. **Treat the bridge as the anchor exhibit:** Strong NWC sections are built around a reported-to-normalized bridge, not around a long narrative with hidden math.
-3. **Separate recurring operating behavior from adjustments:** Keep baseline line-item behavior distinct from definitional, diligence, and pro forma adjustments.
-4. **Use target or peg language only when sourced:** State a target comparison only when the basis and value are actually supported; otherwise state that clearly.
-5. **Add seasonality only when it changes interpretation:** DSO, DIO, DPO, billing cadence, and quarter-end timing belong here when they affect how normalized NWC should be understood.
-6. **Keep optional analysis trigger-based:** Days analysis, pro forma linkage, sell-side reliance, and other considerations should appear only when the evidence requires them.
-7. **Keep the section on purchase-price mechanics:** Do not turn the section into a generic balance sheet deep dive or a list of unsupported data requests.
+1. **Anchor the section to the right NWC basis:** Be clear whether the section is discussing period-end working capital, average working capital, adjusted working capital, normalized working capital, target working capital, or a closing peg basis.
+2. **Use the schedule as the anchor exhibit:** Strong working-capital sections are built around a schedule or bridge, with commentary drafted beside it rather than as free-form prose.
+3. **State the basis of presentation clearly:** Explain the periods shown, the basis of the schedule, and the adjustment categories used in the analysis.
+4. **Separate the categories of adjustment:** Keep definitional adjustments, due diligence adjustments, pro forma adjustments, sell-side adjustments, and other considerations distinct when those categories are used in the source analysis.
+5. **Explain the adjustment through the balance and the operating logic:** Describe what the balance relates to, why it is included or excluded from working capital, and how it affects normalized working capital or closing mechanics.
+6. **Use drivers and days analysis selectively:** Include receivables, inventory, payables, deferred revenue, DSO, DPO, DIO, billing patterns, or seasonality only when they materially improve interpretation of the working-capital level or target.
+7. **State target or peg conclusions only when supported:** If the source supports a target, peg, surplus, or deficit conclusion, state it clearly. Otherwise, stop at the adjusted or normalized working-capital analysis.
+8. **Keep the section focused on purchase-price mechanics:** Do not let the section drift into a generic balance sheet discussion or a long list of unsupported possible adjustments.
 
 ## Analytical workflow
 
-1. **Anchor the section to the right basis:** Determine whether the section is speaking about period-end balances, average balances, normalized balances, or a deal-defined target basis, and state that basis clearly.
-2. **Define the operating boundary:** Identify what is included in working capital, what is excluded, and why, especially for cash, debt-like items, taxes, capex payables, and non-operating balances.
-3. **Build the reported-to-normalized bridge:** Start from reported working capital and map the definitional, diligence, and, where relevant, pro forma steps to the normalized view.
-4. **Explain the adjustments one by one:** For each material adjustment, state what it is, how it is treated, why, and what it does to normalized working capital.
-5. **Add driver commentary only where it informs interpretation:** Use receivables, inventory, payables, accruals, deferred revenue, and days metrics when they explain seasonality, volatility, or peg risk.
-6. **State target status explicitly:** Compare normalized working capital to the target or peg when sourced; otherwise state that no supported target basis or value was provided.
-7. **Scale the section to the evidence:** Keep simple cases concise, and activate the optional blocks only when the data shape or deal mechanics actually require them.
+1. **Confirm the working-capital basis:** Identify whether the analysis is period-end, average, trailing, target-based, or otherwise deal-defined, and carry that basis consistently through the section.
+2. **Review the full schedule first:** Start from the reported and adjusted working-capital schedule, or the trial-balance-based working-capital support, and identify the main reported balances and adjustment categories.
+3. **Define the operating boundary:** Determine which balances are included in net working capital and which balances are excluded because they are cash, debt-like, tax, capex-related, non-operating, or otherwise outside the agreed working-capital perimeter.
+4. **Set out the basis of presentation:** Explain the periods presented and the categories of adjustments used in the analysis, such as definitional, due diligence, sell-side, buy-side, or pro forma.
+5. **Identify the key adjustments:** Pull out the adjustments that most affect adjusted or normalized working capital and explain them one by one.
+6. **Find the closest adjustment pattern:** For each material adjustment, identify the closest example type in this reference and model the sentence pattern on that example before adapting it to the company-specific facts.
+7. **Add driver and seasonality commentary where relevant:** Use line-item commentary and days metrics only when they help the reader understand whether the reported or adjusted working-capital level is representative.
+8. **State the target or peg outcome where supported:** Explain the target comparison, surplus, deficit, or lack of support for a target only when the evidence supports that conclusion.
+9. **Stop when the working-capital analysis is interpretable:** Include enough detail for the reader to understand the reported schedule, the major adjustments, and the target or closing implications without turning the section into a complete operating balance-sheet appendix.
 
 ## Section architecture
 
-Scale the section based on the complexity of the definition boundary, the number of normalization adjustments, and the importance of seasonality or target mechanics.
+Scale the section based on the complexity of the working-capital definition, the number of adjustment categories, the importance of seasonality, and whether the analysis supports a target or peg conclusion.
 
-Target length:
+**Verbosity:**
 
-- `concise`: 220-360 words plus core exhibits for simple snapshot or low-adjustment situations
-- `standard`: 320-600 words plus core exhibits for most situations
-- `expanded`: 520-850 words plus core exhibits when seasonality, target mechanics, or adjustment volume materially increases complexity
+- Stop adding detail when the reader can understand the working-capital basis, the major balances within the schedule, the material adjustments, and any target or closing implications. In most cases, aim for one anchor schedule plus 5-10 commentary bullets or numbered items and roughly 300-850 words. Move above that range only when the section includes multiple adjustment categories, extensive seasonality analysis, or a more involved target-setting discussion.
 
-Required blocks:
+**Required content areas:**
 
-- `NWC position and basis`
-  - Purpose: state the reported and normalized position, the date or period basis, and the directional implication.
-  - Typical density: 2-4 bullets.
-- `Definition and scope`
-  - Purpose: define the operating working-capital perimeter using a clear included / excluded / rationale structure.
-  - Typical density: one definition table plus 1-3 short clarifying bullets.
-- `NWC schedule and normalization bridge`
-  - Purpose: show the reported-to-normalized bridge that supports the section's conclusion.
-  - Typical density: one bridge exhibit plus one source note.
-- `Adjustments and normalization logic`
-  - Purpose: explain the material definitional, diligence, and conditional pro forma adjustments.
-  - Typical density: 3-8 numbered items.
-- `Target / peg status`
-  - Purpose: state the sourced target comparison when available, or explicitly state that no supported target basis or value was provided.
-  - Typical density: 1-3 bullets.
+- NWC position and basis
+  - State the reported and adjusted working-capital position and the basis on which the section is written.
+- Basis of presentation and adjustment categories
+  - Explain the periods shown and the types of adjustments used in the analysis.
+- Working-capital schedule and adjustment commentary
+  - Present the schedule and explain the main adjustments that move reported working capital to the adjusted or normalized view.
 
-Optional blocks:
+**Optional content areas:**
 
-- `Working-capital drivers and seasonality`
-  - Use when AR, inventory, AP, accruals, deferred revenue, billing cadence, or quarter-end timing materially affects interpretation of normalized working capital.
-  - Use when line-item behavior explains why a spot balance or average balance should be read cautiously.
-- `Days analysis`
-  - Use when DSO, DIO, DPO, or equivalent metrics are available and materially improve interpretation.
-  - Use when the metrics support, rather than merely repeat, the driver commentary.
-- `Pro forma impact`
-  - Use when normalized working capital is meaningfully affected by QoE-linked run-rate assumptions or other explicit pro forma logic.
-  - Use when the reader needs the pro forma step separated from definitional or diligence adjustments.
-- `Other considerations`
-  - Use when unresolved, unquantified, or timing-sensitive items could still affect closing working capital or target-setting.
-  - Use when another workstream or missing support could change the final NWC conclusion.
-- `Snapshot-only limitation`
-  - Use when the analysis is constrained to a limited number of dates and does not support a confident seasonality or target conclusion.
-- `Sell-side reliance / what changed from seller analysis`
-  - Use when the section starts from seller-prepared or prior diligence analysis and the reader needs to know what was accepted versus changed.
+- Working-capital definition detail
+  - Add when the included and excluded balances need clearer explanation.
+- Drivers and seasonality
+  - Add when receivable, payable, inventory, deferred revenue, or billing patterns materially affect interpretation.
+- Days analysis
+  - Add when DSO, DPO, DIO, or similar metrics help explain the working-capital profile or support a target conclusion.
+- Target or peg conclusion
+  - Add when the source supports a target, peg, surplus, or deficit analysis.
+- Sell-side or prior-analysis comparison
+  - Add when the section starts from seller-prepared or prior diligence work and the reader needs to know what was retained, changed, or challenged.
+- Other considerations
+  - Add when unresolved or still-developing items may affect final working capital or the closing true-up.
 
-Ordering rules:
+**Data / information typically needed:**
 
-- Start with `NWC position and basis`.
-- Follow with `Definition and scope`.
-- Follow with `NWC schedule and normalization bridge`.
-- Follow with `Adjustments and normalization logic`.
-- Follow with `Target / peg status`.
-- Add optional blocks only when their trigger conditions are met.
-- When multiple optional blocks are needed, use this default order: `Working-capital drivers and seasonality` -> `Days analysis` -> `Pro forma impact` -> `Other considerations` -> `Snapshot-only limitation` -> `Sell-side reliance / what changed from seller analysis`.
+- The reported and adjusted working-capital schedule for the relevant periods
+- The trial balance, balance sheet support, or account detail underlying the material working-capital captions
+- The working-capital definition or SPA guidance where relevant
+- The list or schedule of definitional, due diligence, sell-side, buy-side, or pro forma adjustments where relevant
+- Supporting detail for receivables, inventory, payables, accruals, deferred revenue, and other material working-capital balances where relevant
+- Days metrics, seasonal data, and billing or settlement timing information where relevant
+- Any target-working-capital or peg analysis where relevant
 
-Inclusion rule:
+**Data mapping considerations:**
 
-- Do not include an optional block just because the source mentions it. Include it only when it changes how the reader should interpret normalized working capital, target status, or closing mechanics.
+- Start from the full working-capital schedule and identify the major reported balances and the largest adjustments first.
+- Explain the basis of presentation before walking the adjustments.
+- Keep the adjustment categories visible when the source analysis uses them, such as definitional, due diligence, pro forma, or sell-side adjustments.
+- Quantify significant balances and explain what they relate to when that improves understanding of the adjustment.
+- Use drivers and days metrics only when they help the reader understand whether the adjusted balance is representative.
+- If the target is not supported, say so directly rather than implying a surplus or deficit.
+- If the user has already provided the schedule or exhibit, write the commentary to sit beside it rather than recreating it unless requested.
 
-Boundary rule:
+**Formatting principle:**
 
-- Do not create a generic `Data requests`, `Missing information`, or `Open items` section. Keep missing information inline with placeholders and use `Other considerations` only when unresolved items remain decision-useful.
+- Use a short overview followed by a basis-of-presentation note and then adjustment commentary aligned to the schedule.
+- When the source analysis uses adjustment categories, state them explicitly in the same plain language style as the source, such as `Definitional adjustments`, `Due diligence adjustments`, `Pro forma adjustments`, or `Sell-side adjustments`.
+- When discussing a balance or adjustment that maps directly to the schedule, use the schedule label followed by a colon in bold, then explain what it relates to and how it affects working capital.
+- Format fiscal years as `FY24`, `FY25`, etc. Format trailing periods as `TTM Jun-24`, `LTM Dec-24`, or similar source-consistent shorthand. Format monetary amounts as `$x.x million`, and use full amounts such as `$325,000` or `$90,000` for balances below `$0.1 million`.
 
-## Available analytical units
+**Ordering rules:**
 
-Use these as building blocks for bullets, short sentence clusters, or numbered treatment items. Choose only the units the section needs.
+- Start with the reported and adjusted position and the basis on which the analysis is written.
+- Follow with the basis of presentation and the categories of adjustments used.
+- Then walk the material working-capital adjustments.
+- Add drivers, days analysis, and target commentary only where they materially improve interpretation.
+- End with other considerations only when unresolved items are still relevant to the working-capital or closing view.
 
-Placeholder usage follows `references/global-writing-conventions.md` and is not restated in each unit definition.
+## Typical content areas
 
-### `position unit`
+Use these as the main building blocks for the section. Choose only the content areas the draft actually needs.
 
-- Purpose: state the reported and normalized NWC position, the period basis, and the directional implication.
-- Use when: opening the section.
-- Do not use when: repeating the same position after the bridge already established it clearly.
-- Target length: 20-45 words.
-- Source note: usually not needed if the bridge immediately follows.
-- Example: `Average reported net working capital for FY2024 was $[x], compared with normalized net working capital of $[y] after definitional and diligence adjustments.`
+The standard pattern is an overview of the reported and adjusted position, followed by basis-of-presentation commentary and then the working-capital adjustments.
 
-### `definition unit`
+Placeholder usage follows `references/global-writing-conventions.md` and is not restated in each content-area definition.
 
-- Purpose: define what is included and excluded from working capital and explain the rationale.
-- Use when: setting the operating boundary of the section.
-- Do not use when: replacing the definition table with prose alone.
-- Target length: one table plus 1-2 clarifying bullets.
-- Source note: recommended when the definition follows SPA or offer-letter mechanics rather than management presentation.
-- Example: `Capex payables are excluded from working capital because they relate to non-operating investment activity and are treated outside operating closing mechanics.`
+### Opening position line
 
-### `bridge unit`
+- Start with one line that states the working-capital basis and the adjusted position the reader should focus on.
+- Sample wording: `Adjusted average net working capital for TTM Jun-24 is [$x.x million], compared with reported average net working capital of [$x.x million].`
 
-- Purpose: show the path from reported working capital to normalized working capital.
-- Use when: presenting the core exhibit.
-- Do not use when: the section only has a narrative conclusion and no underlying numerical bridge.
-- Target length: one table plus one source note.
-- Source note: required.
-- Example: `The bridge below moves from reported working capital to normalized working capital through definitional, diligence, and, where applicable, pro forma adjustments.`
+### Basis of presentation
 
-### `adjustment rationale unit`
+- Use a short note to explain the periods shown and how the adjustments are grouped.
+- Sample wording: `The working capital schedule summarizes reported and adjusted net working capital for FY22 to TTM Jun-24. Adjustments are grouped as definitional, due diligence, and pro forma items.`
 
-- Purpose: explain one normalization adjustment by stating the item, treatment, rationale, and impact.
-- Use when: a material definitional, diligence, or pro forma adjustment affects normalized NWC.
-- Do not use when: the item is a routine line-item movement rather than an adjustment.
-- Target length: 30-90 words.
-- Source note: recommended when the amount or basis is non-obvious.
-- Example: `Interac DSO normalization ($[x]): Receivables increased as customer settlement timing extended during a temporary pricing dispute. This section normalizes the balance by applying the customer's historic DSO rather than the elevated dispute-period DSO. The adjustment decreases normalized working capital by $[x].`
+### Adjustment category lead-ins
 
-### `driver unit`
+- Where the schedule separates the adjustments into clear groups, introduce each group in the same plain language used in the schedule.
+- Sample wording: `**Definitional adjustments:** Adjustments to remove balances outside the operating working-capital perimeter.`
+- Sample wording: `**Due diligence adjustments:** Incremental adjustments identified through the diligence process.`
+- Sample wording: `**Pro forma adjustments:** Adjustments to reflect the run-rate working-capital impact of recent business changes.`
+- Sample wording: `**Sell-side adjustments:** Adjustments presented in the seller's diligence analysis.`
 
-- Purpose: explain the operating reason a working-capital line moved or behaves the way it does.
-- Use when: receivables, inventory, payables, accruals, or deferred revenue behavior affects interpretation.
-- Do not use when: the sentence simply restates a line-item balance with no explanation.
-- Target length: 20-55 words.
-- Source note: recommended when based on management explanation or non-obvious data.
-- Example: `Trade receivables increased by $[x] as enterprise customer billings shifted later in the quarter, increasing DSO from [x] to [y] days.`
+### Adjustment narratives
 
-### `days unit`
+- This is the core of the section. Explain each material adjustment in the same order it appears in the schedule, using the caption label in bold followed by a concise narrative.
+- Sample wording: `**Contract liabilities:** Contract liabilities of [$x.x million] are removed from net working capital as they relate to the timing of revenue recognition for services to be delivered in future periods, rather than the operating liquidity requirement of the business.`
 
-- Purpose: translate line-item behavior into DSO, DIO, DPO, or similar efficiency metrics.
-- Use when: days metrics are available and materially improve interpretation.
-- Do not use when: the metric is unavailable or would only duplicate the driver commentary.
-- Target length: 15-35 words.
-- Source note: recommended.
-- Example: `DPO increased from [x] to [y] days as vendor settlement timing shifted closer to month-end.`
+### Sample Adjustment Narratives
 
-### `target-status unit`
+Here are common adjustment narrative examples, which can be used as templates. Choose the closest narrative and adapt the structure and level of detail to the actual balance being discussed.
 
-- Purpose: state the target comparison, or clearly state that no supported target basis or value was provided.
-- Use when: concluding the section's purchase-price implication.
-- Do not use when: target status is left implied or omitted.
-- Target length: 18-45 words.
-- Source note: required when a target or peg is stated.
-- Example: `No supported target basis or value was provided, so this section presents normalized working-capital levels and sensitivities only and does not conclude on surplus or deficit.`
+- `**Cash:** Cash of [$x.x million] is excluded from net working capital and presented within net debt. Where relevant, this adjustment also excludes restricted, trust, or other non-operating cash balances from the working-capital analysis.`
+- `**Debt-like liabilities:** Current debt-like balances of [$x.x million], including [lease liabilities / accrued interest / taxes payable / dividend payables], are excluded from net working capital as they do not reflect recurring operating funding.`
+- `**Contract liabilities:** Contract liabilities of [$x.x million] are removed from net working capital as they relate to the timing of revenue recognition for services to be delivered in future periods, but do not reflect the operating liquidity profile of the business.`
+- `**Non-current deferred revenue:** The non-current portion of deferred revenue of [$x.x million] is excluded from net working capital as it relates to obligations extending beyond the operating working-capital horizon used in this analysis.`
+- `**Customer deposits:** Customer deposits of [$x.x million] are excluded from net working capital as they represent refundable balances or advance collections that do not form part of the ongoing operating working-capital requirement.`
+- `**Out-of-period entries:** Out-of-period accrued liabilities and bonus accruals totaling [$x.x million] are adjusted to the periods in which they relate so the working-capital analysis reflects the underlying timing of the obligations rather than the period in which the correcting entry was posted.`
+- `**Accrued interest:** Accrued interest of [$x.x million] is removed from net working capital as it relates to financing obligations rather than operating trading activity.`
+- `**Severance liability:** Severance liabilities of [$x.x million] are removed from net working capital as they relate to specific terminated roles and do not form part of the ongoing operating accrual profile of the business.`
+- `**Transaction or advisory costs:** Non-recurring legal, advisory, or transaction-related accruals of [$x,xxx] are removed from net working capital as they do not reflect the recurring operating liability profile of the business.`
+- `**Due to / from sellers or related parties:** Balances of [$x.x million] due to or from sellers, shareholders, or related parties are excluded from net working capital as they are expected to settle outside the ordinary course or prior to closing.`
+- `**CAPEX payables:** Payables of [$x.x million] relating to capital projects, fixed-asset purchases, or other non-trade expenditures are excluded from net working capital as they relate to investment activity rather than operating funding.`
+- `**CAPEX deposits:** Deposits of [$x.x million] relating to construction, fixed assets, or other capital projects are excluded from net working capital as they relate to non-operating investment activity.`
+- `**Non-operational receivables:** Receivables of [$x.x million] relating to shareholders, affiliates, tax recoveries, or other non-trade items are excluded from net working capital as they do not form part of the recurring operating conversion cycle.`
+- `**Long-outstanding receivables:** Long-outstanding receivables of [$x.x million] aged greater than [x] days are excluded from net working capital where they are considered non-current, non-trade, or not collectible within the normal operating cycle.`
+- `**Withholding tax asset:** Withholding tax balances of [$x,xxx] are excluded from net working capital where management does not intend to seek recovery and the amounts do not relate to recurring operating activity.`
+- `**Cash in transit or float-related receivables:** Cash-in-transit or float-related receivables of [$x.x million] are excluded from net working capital where they represent timing-related cash movements rather than operating trade receivables.`
+- `**Excess cash in trust:** Excess cash held in trust of [$x.x million] is excluded from net working capital to the extent it exceeds minimum operating or regulatory requirements and is assessed separately within the net debt analysis.`
+- `**AP impact of QofE adjustments:** The accounts payable impact of the related quality of earnings adjustments is estimated at [$x.x million] using the Company’s historical DPO to reflect the expected settlement profile of the adjusted expenses.`
+- `**AR impact of QofE adjustments:** The accounts receivable impact of the related quality of earnings adjustments is estimated at [$x.x million] using the Company’s historical DSO to reflect the expected collection profile of the adjusted revenue.`
+- `**Bad debt expense:** The Company recorded a one-time bad debt provision of [$x,xxx] in [Month Year], which was subsequently collected or otherwise resolved. This adjustment removes the provision from net working capital as it does not represent an ongoing operating working-capital requirement.`
+- `**Accrued payroll impact:** The payroll accrual impact of the related adjustment is estimated at [$x.x million] using the Company’s payroll cycle and the monthly compensation associated with the affected roles or open positions.`
+- `**Bonus true-up:** Bonus accruals are adjusted by [$x,xxx] to align the reported balance with the underlying period of employee service and the expected timing of payment.`
+- `**Payroll methodology change:** Payroll or wage accruals of [$x.x million] are adjusted to reflect the correct cut-off methodology based on when services were performed rather than when cash was disbursed or the correcting journal was recorded.`
+- `**DSO normalization:** Customer-specific DSO increased to [x] days from a historical range of [x]-[x] days during [period] as payments were delayed. This adjustment normalizes the related receivable balance to [x] days based on historic collection patterns.`
+- `**DPO normalization:** Trade creditor days increased to [x] days during [period] as payments were delayed beyond the normal settlement pattern. This adjustment normalizes the payable balance to a more representative operating DPO of [x] days.`
+- `**Prepaid expense normalization:** Prepaid expenses of [$x.x million] peak when annual software, insurance, or other contracts are paid and then unwind through the year. This adjustment straight-lines the balance to reflect a more representative monthly run-rate.`
+- `**Seasonal billing or settlement timing:** Receivables or payables of [$x.x million] are adjusted where the reported balance reflects unusual month-end timing associated with billing cycles, settlement patterns, or a known seasonal peak rather than the underlying run-rate profile of the business.`
+- `**QofE-linked working-capital impact:** The working-capital impact of the related quality of earnings adjustment is estimated at [$x.x million] using the Company’s normal DSO, DPO, or payroll cycle so that the adjusted EBITDA change is reflected consistently in working capital.`
+- `**Sell-side adjustment challenge:** A seller-proposed working-capital adjustment of [$x.x million] has been reversed or revised where the underlying item appears recurring, the phasing assumption is not supportable, or the related balance remains part of the go-forward working-capital profile.`
+- `**Pro forma working-capital adjustment:** A pro forma adjustment of [$x.x million] is included to reflect the working-capital effect of [new customers / lost customers / matured locations / revised pricing / business change] on a run-rate basis.`
 
-### `limitation note`
+### Supporting notes
 
-- Purpose: state a meaningful constraint on what the analysis supports.
-- Use when: data coverage is limited, seasonality cannot be assessed, or the section relies on snapshot balances only.
-- Do not use when: the note is a generic disclaimer that adds no decision-useful context.
-- Target length: 18-45 words.
-- Source note: recommended.
-- Example: `The analysis is based on period-end balances for [Period] only, so the section does not conclude on average-seasonality target mechanics.`
-
-### `sell-side reliance note`
-
-- Purpose: explain how the section uses or departs from seller-prepared or prior diligence analysis.
-- Use when: the working-capital analysis starts from a pre-existing schedule or report.
-- Do not use when: the section is entirely first-principles and no prior analysis matters.
-- Target length: 18-45 words.
-- Source note: recommended.
-- Example: `This section starts from the seller-prepared working-capital schedule and revises the normalization bridge for capex, tax, and out-of-period accrual treatment.`
-
-### `other-considerations note`
-
-- Purpose: flag a residual item that is unresolved, timing-sensitive, or not yet fully quantified.
-- Use when: a remaining issue could still move closing NWC or target-setting.
-- Do not use when: the item is already fully captured in the main bridge or adjustment list.
-- Target length: 18-55 words.
-- Source note: recommended.
-- Example: `Quarter-end collection timing could move closing receivables by approximately $[x], so the final true-up should be assessed against the agreed cut-off convention at closing.`
+- Add these only when they materially improve the reader's interpretation of the schedule.
+- `Drivers or seasonality:` Use a short note when receivable, payable, inventory, or deferred revenue levels need operating context to be read properly. Sample wording: `**Seasonality:** Billings are typically strongest in the second half of the year, which results in higher receivable balances and elevated DSO at the peak trading dates.`
+- `Days analysis:` Use DSO, DPO, DIO, or similar metrics only when they explain why a reported or adjusted balance is high, low, or non-representative. Sample wording: `**Average adjusted DSO:** Adjusted DSO remained between [x] and [x] days over the historical period, with the increase in [period] driven by delayed customer payment timing.`
+- `Target or peg conclusion:` State the target, peg, surplus, or deficit only when the basis is supported. Sample wording: `**Target working capital:** Based on the draft SPA definition, adjusted average working capital indicates a [$x.x million] surplus against the agreed target basis.`
+- `Sell-side or prior-analysis note:` Use a short note when the analysis starts from seller-prepared work and the reader needs to know what was retained, changed, or challenged. Sample wording: `**Sell-side adjustments:** The seller-prepared adjustments were used as the starting point for the analysis, with changes made where recurring items, phasing assumptions, or classification were not considered supportable.`
+- `Other considerations:` Keep this brief and use it only for unresolved items that still matter to the closing or target view. Sample wording: `**Quarter-end timing:** Collection and payment timing around the closing date may move the final receivable and payable balances, so the true-up should be assessed using the agreed cut-off conventions.`
 
 ## Assembly patterns
 
-Use one of these patterns based on the section's complexity. These are assembly guides, not mandatory templates.
+Use one of these patterns based on the shape of the analysis.
 
-### `Simple snapshot normalization`
+### Standard adjusted working-capital section
 
-- Recommended block order: `NWC position and basis` -> `Definition and scope` -> `NWC schedule and normalization bridge` -> `Adjustments and normalization logic` -> `Target / peg status`
-- Optional blocks typically activated: `Snapshot-only limitation` when the data does not support broader trend conclusions
-- Target density: 4-6 bullets plus the core exhibits
-- Stop adding detail when: the reader understands the operating definition, the small number of adjustments, and whether the analysis supports a target conclusion
+- Usual flow: opening position line -> basis of presentation -> schedule -> material adjustment narratives -> target conclusion if supported.
+- This is the default pattern when the section is mainly about reported versus adjusted working capital.
 
-### `Standard bridge-backed section`
+### Driver- or seasonality-supported section
 
-- Recommended block order: `NWC position and basis` -> `Definition and scope` -> `NWC schedule and normalization bridge` -> `Adjustments and normalization logic` -> `Target / peg status` -> `Working-capital drivers and seasonality` when needed
-- Optional blocks typically activated: `Working-capital drivers and seasonality`, sometimes `Days analysis`
-- Target density: 6-10 bullets plus the core exhibits
-- Stop adding detail when: the bridge is auditable, the adjustment logic is explicit, and the main operating drivers are clear
+- Usual flow: opening position line -> basis of presentation -> schedule -> material adjustment narratives -> supporting notes on drivers, seasonality, or days -> target conclusion if supported.
+- Use this when a spot or average working-capital balance needs operating context to be interpreted properly.
 
-### `Seasonality / target-heavy section`
+### Sell-side or multi-category section
 
-- Recommended block order: `NWC position and basis` -> `Definition and scope` -> `NWC schedule and normalization bridge` -> `Adjustments and normalization logic` -> `Working-capital drivers and seasonality` -> `Days analysis` -> `Target / peg status` -> `Other considerations` when needed
-- Optional blocks typically activated: `Working-capital drivers and seasonality`, `Days analysis`, and `Other considerations`; add `Pro forma impact` or `Sell-side reliance / what changed from seller analysis` only when genuinely needed
-- Target density: 8-12 bullets plus the core exhibits
-- Stop adding detail when: the reader can distinguish operating seasonality from normalization adjustments and understand how that affects the target or peg conclusion
+- Usual flow: opening position line -> basis of presentation -> schedule -> grouped adjustment categories -> sell-side or prior-analysis note -> target or other considerations.
+- Use this when reported, sell-side adjusted, buy-side adjusted, or pro forma working capital all appear in the same analysis.
 
 ## Section-specific writing guidance
 
-1. Lead with a quantified, period-anchored opening that states reported and normalized NWC when both are available.
-2. Always define the operating boundary before interpreting the bridge.
-3. Use the bridge as the structural anchor and keep the narrative tied to it.
-4. Write adjustments as numbered full-sentence rationale units that state the item, treatment, reason, and impact.
-5. Keep cause-and-effect driver commentary focused on what actually changes interpretation of normalized NWC.
-6. Use days metrics only when they add meaning beyond the line-item commentary.
-7. State target or peg conclusions only when the basis and value are sourced; otherwise explicitly state that no supported target basis or value was provided.
-8. Use `Other considerations` only for unresolved or timing-sensitive items that still matter to closing or target-setting.
-9. Avoid extraction artifacts, malformed placeholders, and renderer-era slot language.
-10. Avoid turning the section into a mandatory exhibit pack when the evidence only supports a simpler bridge-backed narrative.
+1. Use the working-capital schedule as the structural anchor and keep the commentary aligned to the way the schedule is presented.
+2. State the basis of presentation and the categories of adjustment clearly before walking the adjustments.
+3. Explain each adjustment through the balance, the operating or definitional logic, and the effect on adjusted working capital.
+4. Where an adjustment type has a close analogue in the sample narrative bank, follow that sentence pattern and adapt it to the company-specific facts rather than inventing a new structure.
+5. Use supporting notes for drivers, days, sell-side differences, or other considerations only when they materially improve the section.
 
 ## Verification and review checks
 
-Use these checks before finalizing a Net Working Capital draft.
+**Verification questions:**
 
-1. `NWC position and basis`, `Definition and scope`, `NWC schedule and normalization bridge`, `Adjustments and normalization logic`, and `Target / peg status` all exist.
-2. The section is anchored to explicit dates or periods and uses consistent units.
-3. The definition table states included accounts, excluded accounts, and rationale.
-4. The bridge shows reported working capital, definitional adjustments, diligence adjustments, and normalized working capital; pro forma appears only when actually needed.
-5. Every material adjustment rationale states the item, treatment, reason, and impact.
-6. Target / peg status either states a sourced comparison or explicitly states that no supported target basis or value was provided.
-7. Optional blocks appear only when their trigger rules are met.
-8. `Working-capital drivers and seasonality` and `Days analysis` do not appear unless they materially improve interpretation.
-9. `Other considerations` contains unresolved or timing-sensitive issues, not a generic missing-information list.
-10. No extraction-artifact language appears, including `Not present in source report` or `extraction policy`.
-11. No slot, layout, or `deckSpec` language appears in the drafted section.
-12. Missing information uses inline placeholders rather than unsupported claims or separate open-item headings.
-13. The final draft reflects the bridge-centered, adjustment-rationale model shown in this reference.
-14. Language and tone pass `references/global-writing-conventions.md`.
-15. Split any adjustment item or driver block that becomes difficult to scan or tries to do more than one analytical job.
+- Is the section clear on whether it is discussing reported, adjusted, normalized, average, or target working capital?
+- Does the section explain the basis of presentation and the categories of adjustments before walking the adjustments themselves?
+- For each material adjustment, does the commentary explain what it relates to and how it affects working capital?
+- Where relevant, does the section explain the key working-capital drivers or days metrics without overloading the section with unnecessary operating detail?
+- If a target or peg conclusion is stated, is it clearly supported by the source basis?
+- Does the section provide enough detail for the reader to understand the working-capital bridge and its purchase-price implications without turning into a complete balance-sheet appendix?
 
 ## Full examples
 
-### Example 1: Simple no-target normalization
+These examples show content flow, not required headings or exact bullet counts.
+
+The examples below are generalized and anonymized. They are meant to show the writing pattern and level of detail the model should follow, not to reproduce any specific source company.
+
+### Example 1: Adjusted working capital with operating context
 
 ```markdown
 ## Net working capital
 
-### NWC position and basis
+- Adjusted average net working capital for TTM Sep-25 is [$6.4 million]. The main adjustments relate to deferred revenue, the receivable impact of quality of earnings adjustments, and the normalization of elevated DSO during a temporary billing disruption.
 
-- As at December 31, 2024, reported net working capital was $7.5 million and normalized net working capital was $10.6 million after definitional and diligence adjustments.
-- This section is based on period-end balances as at December 31, 2024 and does not conclude on a target or peg because no supported target basis or value was provided.
+Basis of presentation
+The working capital schedule presents reported and adjusted net working capital for FY22, FY23, FY24, and TTM Sep-25.
+Adjustments are grouped as follows:
+**Definitional adjustments:** Adjustments to exclude cash and debt-like items from net working capital.
+**Due diligence adjustments:** Net working capital impact of adjustments identified during diligence.
+**Pro forma adjustments:** Adjustments for changes in business operations that may impact working capital.
 
-### Definition and scope
+**Seasonality:** Revenue activity is generally lower in the first quarter and strongest through the summer and early fall. This pattern is reflected in receivable balances and DSO, which are typically higher in the peak operating months. The adjusted balance should therefore be read in the context of the average profile rather than the month-end balance in isolation.
 
-| Included in NWC | Excluded from NWC | Rationale |
-| --- | --- | --- |
-| Trade accounts receivable | Cash and cash equivalents | Cash is addressed in net debt and excluded from operating working capital. |
-| Inventory | Income taxes payable | Tax balances are treated outside operating working capital for purchase price purposes. |
-| Prepaid and other operating current assets | Debt-like or financing liabilities | Financing and debt-like balances are assessed outside operating working capital. |
-| Trade payables and operating accruals | Capex payables | Capex-related balances do not represent recurring operating funding. |
-| Current deferred revenue | Non-current or non-operating balances | Non-current and non-operating items are outside target operating working capital. |
+Source note: Management-prepared working-capital schedules and supporting account detail for FY22-FY24 and TTM Sep-25.
 
-- The working-capital definition in this section follows management classification adjusted for identified non-operating and debt-like items.
+| Line item                    | FY22 | FY23 | FY24 | TTM Sep-25 |
+| ---------------------------- | ---: | ---: | ---: | ---------: |
+| Reported working capital     |  5.1 |  5.4 |  5.8 |        5.2 |
+| Definitional adjustments     |  0.7 |  0.8 |  0.9 |        0.8 |
+| Due diligence adjustments    |  0.2 |  0.3 |  0.4 |        0.3 |
+| Pro forma adjustments        |  0.1 |  0.1 |  0.2 |        0.1 |
+| **Adjusted working capital** |**6.1**|**6.6**|**7.3**|    **6.4** |
 
-### NWC schedule and normalization bridge
+Net working capital adjustments
 
-Source note: Management-prepared working-capital schedule as at December 31, 2024, reconciled to the December 2024 trial balance.
+1. **Deferred revenue:** Deferred revenue of [$0.9 million] is excluded from net working capital to the extent it reflects upfront billings for services to be delivered in future periods, rather than the operating liquidity profile of the business.
+2. **Out-of-period entries:** Out-of-period accrued liabilities and bonus accruals totaling [$0.3 million] are adjusted to the periods in which they relate so the working-capital analysis reflects the underlying timing of the obligations rather than the period in which the correcting entries were posted.
+3. **AR impact of QofE adjustments:** The accounts receivable impact of the related quality of earnings adjustments is estimated at [$0.2 million] using the Company's historical DSO to reflect the expected collection profile of the adjusted revenue.
+4. **Professional fees accrual:** A non-recurring accrual of [$180,000] for advisory fees is removed from net working capital as it does not reflect the recurring operating liability profile of the business.
+5. **DSO normalization:** Customer-specific DSO increased to [82] days from a historical range of [48]-[52] days during [Q2-25 to Q3-25] as payments were delayed. This adjustment normalizes the related receivable balance to [50] days based on historic collection patterns.
+6. **Prepaid expense normalization:** Prepaid expenses of [$0.4 million] peak when annual software, insurance, and maintenance contracts are paid and then unwind through the year. This adjustment straight-lines the balance to reflect a more representative monthly run-rate.
 
-| Line item | Balance ($m) |
-| --- | ---: |
-| Trade receivables | 24.6 |
-| Inventory | 10.2 |
-| Prepaid and other operating current assets | 5.2 |
-| Trade payables | (14.7) |
-| Operating accruals | (8.3) |
-| Deferred revenue | (9.5) |
-| **Reported net working capital** | **7.5** |
-| Definitional adjustments | 2.6 |
-| Diligence adjustments | 0.5 |
-| **Normalized net working capital** | **10.6** |
-
-### Adjustments and normalization logic
-
-1. Income taxes payable exclusion ($2.1 million): This balance relates to tax liabilities rather than recurring operating funding. The section excludes it from normalized working capital because it is outside the agreed operating boundary. The adjustment increases normalized working capital by $2.1 million.
-2. Capex payables exclusion ($0.7 million): This balance relates to fixed-asset supplier invoices and does not represent recurring operating funding. The adjustment increases normalized working capital by $0.7 million.
-3. Out-of-period payroll accrual correction ($0.5 million): This balance includes payroll accruals recorded in December 2024 that relate to prior periods. The section normalizes the accrual to align it with the related service period, increasing normalized working capital by $0.5 million.
-
-### Target / peg status
-
-- No supported target basis or value was provided, so this section presents normalized working-capital levels only and does not conclude on surplus or deficit.
-
-### Snapshot-only limitation
-
-- The analysis is based on period-end balances only, so it does not support a conclusion on average-seasonality target mechanics.
+No supported target or peg basis was provided, so the section presents adjusted working-capital levels only and does not conclude on a surplus or deficit.
 ```
 
-### Example 2: Schedule-backed section with drivers, modeled adjustment, and target
+### Example 2: Multi-category working-capital section with sell-side and buy-side layers
 
 ```markdown
 ## Net working capital
 
-### NWC position and basis
+- Average reported net working capital for FY25 was [$14.2 million], which increases to [$15.0 million] after definitional and sell-side adjustments and decreases to [$14.6 million] after buy-side diligence adjustments.
 
-- Average reported net working capital for FY2024 was $7.5 million, compared with average normalized net working capital of $12.6 million after definitional, diligence, and pro forma adjustments.
-- Based on the draft SPA dated January 20, 2025, normalized net working capital indicates a $0.5 million surplus against the agreed target basis.
+Basis of presentation
+The summary adjusted net working capital schedule presents reported, sell-side adjusted, and final adjusted net working capital for FY24, TTM Oct-25, and FY25.
+Adjustments are grouped as follows:
+**Definitional adjustments:** Adjustments to remove cash- and debt-like balances from reported working capital.
+**Sell-side adjustments:** Adjustments presented in the seller's due diligence report.
+**Buy-side diligence adjustments:** Incremental changes made where the sell-side assumptions, phasing, or classification did not appear supportable.
 
-### Definition and scope
+Source note: Management working-capital schedules, seller due diligence schedules, and buy-side analysis.
 
-| Included in NWC | Excluded from NWC | Rationale |
-| --- | --- | --- |
-| Trade accounts receivable | Cash and cash equivalents | Cash is excluded from operating working capital and addressed in net debt. |
-| Inventory | Income taxes payable | Tax balances are outside operating working capital for purchase price purposes. |
-| Prepaid and other operating current assets | Debt-like and financing liabilities | Financing and debt-like balances are outside the operating working-capital perimeter. |
-| Trade payables and operating accruals | Capex payables | Capex-related balances do not represent recurring operating funding. |
-| Current deferred revenue | Non-current or non-operating balances | Non-current and non-operating items fall outside the target operating definition. |
+| Line item                           | FY24 | FY25 |
+| ----------------------------------- | ---: | ---: |
+| Reported working capital            | 10.3 | 10.7 |
+| Definitional adjustments            |  3.1 |  3.4 |
+| Sell-side adjustments               |  1.4 |  1.2 |
+| Buy-side diligence adjustments      | (0.5) | (0.7) |
+| **Adjusted working capital**        |**14.3**|**14.6**|
 
-- The working-capital definition in this section follows the draft SPA definition as at January 20, 2025.
-- Where management classification differs from SPA treatment, the bridge below applies the required definitional adjustments.
+**Working-capital profile:** Receivable and payable behavior remained relatively stable through the historical period, with the main movement in FY25 driven by higher accrued incentive receivables and increased payables associated with growth.
 
-### NWC schedule and normalization bridge
+Net working capital adjustments
 
-Source note: Management trial balance extracts FY2022-FY2024 and monthly working-capital schedules prepared for transaction support.
+1. **Definitional adjustments:** The main definitional adjustments impacting average net working capital in FY25 include income taxes payable, accrued interest, and the exclusion of reported operating cash. These balances fall outside the operating working-capital perimeter and are therefore removed from the working-capital view.
+2. **Sell-side adjustments:** The seller-prepared adjustments were used as the starting point for the analysis, with the largest items relating to transaction-related costs, excess cash held in trust, and non-recurring accruals.
+3. **Recurring cost challenge:** A seller-proposed adjustment of [$0.2 million] has been reversed where the underlying IT support and recruitment costs appear recurring and remain part of the go-forward working-capital profile.
+4. **Bonus true-up:** Bonus accruals are adjusted by [$140,000] to align the reported balance with the underlying period of employee service and the expected timing of payment.
+5. **Excess cash in trust:** Excess cash held in trust of [$0.5 million] is excluded from net working capital to the extent it exceeds minimum operating or regulatory requirements and is assessed separately within the net debt analysis.
+6. **Pro forma working-capital adjustment:** A pro forma adjustment of [$0.3 million] is included to reflect the working-capital effect of new customer volumes added during the most recent period on a run-rate basis.
 
-| Line item | FY2022 | FY2023 | FY2024 | TTM Dec-2024 |
-| --- | ---: | ---: | ---: | ---: |
-| Trade receivables | 18.4 | 21.8 | 24.6 | 25.1 |
-| Inventory | 8.9 | 9.6 | 10.2 | 10.3 |
-| Prepaid and other operating current assets | 4.1 | 4.7 | 5.2 | 5.4 |
-| Trade payables | (12.8) | (13.9) | (14.7) | (14.9) |
-| Operating accruals | (6.5) | (7.1) | (8.3) | (8.4) |
-| Deferred revenue | (6.7) | (7.9) | (9.5) | (9.7) |
-| **Reported net working capital** | **5.4** | **7.2** | **7.5** | **7.8** |
-| Definitional adjustments | 3.1 | 3.8 | 4.4 | 4.5 |
-| Diligence adjustments | 0.4 | 0.7 | 0.5 | 0.4 |
-| Pro forma adjustments | 0.2 | 0.3 | 0.4 | 0.3 |
-| **Normalized net working capital** | **9.1** | **12.0** | **12.8** | **13.0** |
-
-### Adjustments and normalization logic
-
-1. Income taxes payable exclusion ($2.6 million): This balance includes current tax liabilities that do not arise from operating trading flows. The section excludes it from normalized working capital because the draft SPA treats it outside operating working capital. The adjustment increases normalized working capital by $2.6 million.
-2. Capex payables exclusion ($1.2 million): This balance includes supplier invoices related to fixed-asset projects. The section excludes it from normalized working capital because these balances are capex-related and outside operating closing mechanics. The adjustment increases normalized working capital by $1.2 million.
-3. Out-of-period payroll accrual correction ($0.5 million): This balance includes payroll accruals recorded in December 2024 that relate to periods prior to Q4 2024. The section normalizes the accrual to the related service period, increasing normalized working capital by $0.5 million.
-4. Customer-specific DSO normalization (($0.4) million): Average days sales outstanding for one major customer increased from 45 days to 86 days between September 2023 and June 2024 while disputed invoices were under internal review. This section normalizes the receivable balance by applying the customer's historic 45-day DSO to the affected revenue stream rather than the elevated dispute-period collection profile. The adjustment decreases normalized working capital by $0.4 million because payment timing returned to historic patterns after the dispute was resolved.
-5. Pro forma receivables timing adjustment ($0.4 million): This balance reflects receivables timing effects linked to the run-rate revenue assumptions used in the QoE bridge. The section includes the related receivables effect so normalized working capital aligns with the pro forma trading basis. The adjustment increases normalized working capital by $0.4 million.
-
-### Target / peg status
-
-- Deal definition / source: Draft SPA, dated January 20, 2025.
-- Target basis: Average normalized net working capital over the 12 months preceding completion.
-- Average normalized net working capital for FY2024 was $12.6 million versus a target of $12.5 million, implying a $0.1 million surplus on this basis.
-
-### Working-capital drivers and seasonality
-
-- Trade receivables increased by $6.2 million from FY2022 to FY2024, primarily driven by higher enterprise billing volume and slower quarter-end collections. Reported DSO increased from 53 to 56 days overall, but the normalization bridge separately adjusts one dispute-related customer balance back to its historic collection profile.
-- Inventory increased by $1.3 million over the same period, primarily driven by safety-stock builds in FY2023 and more stable purchasing cadence in FY2024.
-- Trade payables and operating accruals increased by $3.7 million from FY2022 to FY2024, primarily due to higher vendor spend and variable compensation accruals in line with revenue growth.
-- Deferred revenue increased by $2.8 million as annual contract pre-billing expanded, reducing reported working capital while supporting recurring cash conversion.
-
-### Days analysis
-
-| Working-capital days | FY2022 | FY2023 | FY2024 | TTM Dec-2024 |
-| --- | ---: | ---: | ---: | ---: |
-| DSO | 53 | 54 | 56 | 55 |
-| DIO | 46 | 45 | 42 | 42 |
-| DPO | 47 | 47 | 49 | 48 |
-
-### Other considerations
-
-- Quarter-end collection timing remains a key swing factor for closing receivables and could move closing working capital by approximately $0.4 million.
-- Deferred revenue seasonality is concentrated around annual contract renewal months and should be considered when comparing a closing-month balance to the average target basis.
+Target working capital
+No independent target-working-capital amount was provided beyond the adjusted working-capital analysis shown above. The section therefore stops at adjusted working capital and does not conclude on a separate target surplus or deficit.
 ```

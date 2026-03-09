@@ -75,8 +75,124 @@ Source corpus: `extracted/cleaned/*.md`
 ### Verbatim Extract
 
 
-- As at 31 [MONTH] 20[X]3, [ENTITY 2] reported negative NAV of USD 93.6 million. This negative NAV was resulted from net losses carried forward and net loss incurred in MM[X]3 due to competitive market as well as the economic downturn. The net current liabilities position, loans obtained from banks and directors to support working capital, and accumulated deficit suggest potential liquidity and going concern issues. Please note that the scopes of work on Balance Sheet is on a high level basis only, and we recommend to conduct full analysis in the next due diligence phase in order to understand key balance sheet captions in more details, such as Non-current assets, Working capital items, and Debt items. The major components of assets as at 31 [MONTH] 20[X]3 were fixed and intangible assets, accounting for 80.9% of total assets. Management confirmed that all assets are free of encumbrance. Cash and cash equivalents included petty cash at head office and cash at banks. Cash at tills in all stores were included in other non-current assets. According to the cash deposit policy at store level, store/on-site managers are responsible for the preparation of sales record on logbook and pay-in slip for cash sales Store managers will deposit cash to [ENTITY 2]’s bank accounts before 2 pm, and inform the deposit amount to the accounting staff for reconciliation process on a daily basis. Cash collected from customers after 2pm will be handled by store managers and deposited the next day. Trade and other receivables as at 31 [MONTH] 20[X]3 largely consisted of trade receivables from third parties (48.3%), prepaid IT system license and service expenses (30.5%) and prepaid store rental fees (11.3%). According to Management, the normal credit term provided to customers is 30 days. Management stated that there is no outstanding receivable over one year nor bad debt written off. Inventories as at 31 [MONTH] 20[X]3 mainly comprised of supplies (e.g., napkins, straws, plastic bags, etc.) (37.0%), beverage raw materials (27.4%), and packaging (11.5%). Inventories are stated at the lower of cost and net realisable value. Cost of inventories was based on weighted average costing method under perpetual inventory system. According to Management, full physical count of inventory is done at every month end. For beverage ingredients, store staff also perform physical count on a weekly basis. For expired bakery, each store has to report the waste in POS system and return the expired bakery back to the warehouse for disposal of stock waste. destruction. (Cont.) Warehouse staff is responsible for monitoring of slow-moving inventory and expiry date of inventory. Management informed us that each store will order beverage ingredients and bakery products, from the distribution centre located in [ENTITY 3]’s building, to sell for 5-7 days which are also the shelf life of bakery products. Beverage ingredients, apart from milk and dairy products, usually have long lifespan. Loan to related party represented loan to [ENTITY 3], bearing interest rate of 1% p.a.. There is no formal written contract. Fixed assets as at 31 [MONTH] 20[X]3 primarily consisted of store and leasehold improvement (71.0%) and store equipment (22.1%). According to Management, store staff will perform full physical count of fixed assets located at the store on a quarterly basis, while, a full physical count of fixed assets located at head office will be taken place once a year. [ENTITY 2] has no formal policy on impairment assessment of fixed assets. Management informed us that [ENTITY 2] uses space at [ENTITY 3]’s building for warehouse and storage and chill/ freezer room as [ENTITY 2]’s distribution centre for free of charge. Intangible assets included computer software, e.g. POS system (Synature), ERP system (Microsoft D365), etc. Leasehold rights related to rental leases of two office buildings at [PLACE, CITY], which are being used as [ENTITY 2]’s head office. As at 31 [MONTH] 20[X]3, the majority of liabilities consisted of loans from related parties (38.5%), long-term borrowings from financial institution (36.7%) and trade and other payables (17.5%). According to customer royalty program, under TFRS15, [ENTITY 2] should record contract liabilities from unredeemed points on the Balance sheet due to the future obligation of sales promotion. However, Management informed us that currently reward points are recognised as discount in the P&L upon redemption. Other non-current assets as at 31 [MONTH] 20[X]3 consisted of deposits for rental and service agreements (74.5%), WHT receivables (8.0%), cash at stores (6.4%), deposits paid to suppliers/ contractors (6.0%), and deposit for electricity/ water usage (5.1%). The decrease in non-current assets was mainly caused by the return of deposits for rental agreements from lessors at the end of lease term. According to Management, cash at stores are divided into two portions; 1) cash float used as changes ranging from USD 2,000 – USD 10,000 per store, and 2) petty cash used for miscellaneous payments in a range from USD 500 – USD 3,000 per store. Short-term borrowing from financial institution represented overdraft from [BANK 1] with the limit of USD 10 million. The OD is secured by directors’ land and guaranteed by a related company. Trade and other payables as at 31 [MONTH] 20[X]3 mainly comprised of trade payables from related parties (64.5%) and other payables (16.1%) (e.g. fleet card, electricity, water, communication, maintenance, security guard, audit fee, etc.). The normal credit term received from suppliers is 30 days. According to Management, the decrease in trade and other payables as at 31 [MONTH] 20[X]3 was from advance check of USD 10.3 million paid to [ENTITY 1] due to insufficient cashflow in the operation. Lease liabilities related to vehicle leases from [LESSEE]Public Co., Ltd. of USD 0.9 million and [LESSEE 2] of USD 0.8 million as at 31 [MONTH] 20[X]3 with the maturity date of lease agreements in [MONTH] 20[X]3 and 20[X]4, respectively. Long-term borrowings as at 31 [MONTH] 20[X]3 consisted of six tranches of loans obtained from [BANK 1], bearing interest rate at MLR or/and MLR-0.25% to -1.5% p.a. Other current liabilities comprised of VAT and WHT payables to the Revenue Department, and accrued SSF and PF contribution payables. The increase in other current liabilities as at 31 [MONTH] 20[X]3 was largely driven by accrued SSF contribution payables as the temporary reduction in the contribution rate due to the COVID-19 pandemic has discontinued, coupled with delayed payments of SSF contribution and taxes in April. Loans from related parties as at 31 [MONTH] 20[X]3 consisted of loans from [GROUP NAME] and [ENTITY 1], bearing interest rate of 1% p.a., with outstanding balances of USD 1.0 million and USD 8.8 million, respectively. In addition, [ENTITY 2] obtained interest-free loans from the directors, i.e. [MR./MRS.] [FAMILY MEMBER 5], [MR./MRS.] [FAMILY MEMBER 4] S., and [MR./MRS.] [FAMILY MEMBER 1] S., with total outstanding balance of USD 68.3 million. These loans from related parties are made without a formal written agreement and due at call. Employee benefit obligations was calculated by HR department based on management best estimate method per TFRS for NPAEs. Due to the high turnover rate of store staff, the provision was set up only for staff who is aged more than 45 years old as Management believed that these staff have higher probability to stay at [ENTITY 2] until retirement (i.e. 60 years old). Management informed us that [ENTITY 2] normally records EBO at the year end.
-- As at 31 [MONTH] 20[X]3, [ENTITY 1] reported NAV of USD 84.4 million. The increase in NAV was resulted from net profit in MM[X]3 and the increase in inventories from the purchases of coffee beans following the harvesting season during the mid-year period. Inventories mainly consisted of raw materials (e.g. [EXAMPLES]) (63.3%) and semi – products (i.e. coffee beans that are already graded and sorted in preparation for the next production process.) (21.4%). Inventories are recorded at cost based on the lower of the average cost or the estimated net realisable value. [ENTITY 1] conducts full stock counts at the end of each month. The increase in inventories from 31 [MONTH] 20[X]2 to 31 [MONTH] 20[X]3 was primarily attributed to the increases in purchases of [VARIANT] beans from [COUNTRY] with the import window during mid-year. Restricted cash as at 31 [MONTH] 20[X]3 consisted of restricted cash of USD 0.5 million. The decrease from the balance as at 31 [MONTH] 20[X]2 was due to the release of bank guarantees at the end of the sales contract between [ENTITY 1] and [CUSTOMER 1] Co., Ltd. Property, plant and equipment as at 31 [MONTH] 20[X]3 mainly consisted of land (22.5%) and building improvement (16.8%). [ENTITY 1] has production facilities in two locations Green bean warehouse and roasting facilities locating in [FACTORY 1]. The warehouse is located on the land that is owned by [ENTITY 1]. The roasting equipment is located inside the [ENTITY 3] building, with a monthly rent of 160,000 baht per month. Production facilities for concentrated drinks, syrups, beverages, and powder mixes locating in [VILLAGE NAME] village. There are two buildings which are connected to each other. One is owned by [ENTITY 1] and the other one is a rental from an external party at USD 44,000 per month. Trade and other receivables as at 31 [MONTH] 20[X]3 largely consisted of trade receivables from customers (85.2%) and accrued interest receivables (5.2%). The decrease in trade and other receivables from 31 [MONTH] 20[X]2 to 31 [MONTH] 20[X]3 was primarily due to two reasons: The high balance as at 31 [MONTH] 20[X]2 was due to the receipt of advance payment from [ENTITY 2] through post-dated cheques, amounting to USD 10.3 million. The sales agreement with [CUSTOMER 1] has ended in [MONTH] 20[X]3, resulting in a decreased balance as at 31 [MONTH] 20[X]3. The credit term provided to customer is 30 days from billing date. We were informed that there are long-outstanding receivables from the individual (USD 177,000) which is under legal proceeding. Trade receivables - Related parties as at 31 [MONTH] 20[X]3 consisted of receivable from [ENTITY 2] and [ENTITY 3], amounting to USD 18.4 million and USD 6,967, respectively. Although credit term provided to related parties is also 30 days, actual payments may vary depending on cash flow and financial liquidity of related parties. The increased in trade receivable from related parties as at 31 [MONTH] 20[X]3 compared to 31 [MONTH] 20[X]2 primarily due to the increase in outstanding amount with [ENTITY 2]. Loan to related parties as at 31 [MONTH] 20[X]3  consisted of loans to [ENTITY 2] (USD 8.8 million) and [ENTITY 3] (USD 8.4 million) which are repayable at call. Although these loans have no written agreements, we were informed that there has been a reduction in interest rate from the original rate of 3% to 1% which became effective on 1 January 20[X]3. This reduction was made in response to the economic downturn affecting the financial performance of [ENTITY 3] and [ENTITY 2]. The major components of assets as at 31 [MONTH] 20[X]3 were inventories (37.5%) and property, plant and equipment (36.2%). Intangible assets as at 31 [MONTH] 20[X]3 consisted of software under development (61.8%) and a computer program license (38.2%). Additionally, there was a [BRAND 1] brand trademark with a 10 useful life years, which has been fully amortised. We did not receive further details on the trademark agreement and whether a renewal is required. Bank overdraft and shot-term borrowings from financial institutions consisted overdraft from [BANK 1] and [BANK 2], as well as a promissory note from [BANK 1] bearing MOR (Minimum Overdraft Rate) interest rates, with monthly payments due on the last business day of each bank. [ENTITY 1] has used its land, buildings, and lease agreements as collaterals for these loans. Trade and other payables as at  31 [MONTH] 20[X]3 largely consisted of domestic trade payables (38.5%), and other payables (45.5%) (such as ERP software, land tax, audit fee, etc.). The increase in trade and other payables from 31 [MONTH] 20[X]2 to 31 [MONTH] 20[X]3 was mainly due to the purchases of [VARIANT] coffee beans as discussed in note 4 – Inventories. Loans from directors represented interest-free loans from [MR./MRS.] [FAMILY MEMBER 5] and [MR./MRS.] [FAMILY MEMBER 4] [SURNAME], the directors of [ENTITY 1]. We were informed that these loans are repayable at call and does not have a formal agreement. Lease liabilities as at 31 [MONTH] 20[X]3 represent lease of vehicle from [LESSEE]Public Co., Ltd., amounting to USD 1.1 million. Long-term loan borrowing as at 31 [MAY] 20[X]3, comprised two tranches obtained from [BANK 1] and [BANK 3]. The first tranche is a loan from [BANK 1] with an outstanding balance of USD 15 million, bearing interest at MLR-1.50% to 0.25% per annum, with interest payments due on the 20th of each month. The loan agreement's maturity date is in March 2030. It has a grace period of 24 months from [MONTH] 20[X]1 to [MONTH] 20[X]3. This long-term loan is secured by the company’s land and building and guaranteed by the directors. The negotiation process for the extension of grace period is still ongoing. The second tranche is a loan from [BANK 3] with an outstanding balance of USD 8.4 million, bearing interest at 2% to MLR-1.0% per annum, with interest payments due on the 15th of each month. The loan agreement does not specify the maturity date. It had a grace period of 6 months, starting from [MONTH] to [MONTH] 20[X]1. The major components of liabilities as at 31 [MONTH] 20[X]3 were bank overdraft and short-term borrowing from financial institutions (36.3%) and loan from directors (33.8%). As at 31 [MONTH] 20[X]3, [ENTITY 3] reported negative NAV of USD 19.2 million. This negative NAV was resulted from net loss carried forward and net loss incurred in MM[X]3. The audited financial statements [ENTITY 3] noted the potential going concern issue due to net loss, negative retained earnings exceeding share capital, and the current liabilities exceeding current assets The major components of assets as at 31 [MONTH] 20[X]3 were property, plant and equipment (81.9%) and inventories (7.6%). However, total assets may be overstated by WIP balance of USD 5.4 million due to the incorrect data input in the Bill of Materials (BOM) resulting in additional costs, which should have been recognised as the cost of goods sold (COGS). Property, plant and equipment as at 31 [MONTH] 20[X]3 mainly consisted of building (63.3%) and land (12.7%). [ENTITY 3] factory and office are located in the [FACTORY 1], [CITY], serving as a warehouse for storage and the production of bakery products. Intangible assets as at 31 [MONTH] 20[X]3 consisted of software license (43.8%) and trademark with useful life of 10 years (28.3%). We were not provided further details on the trademark fee paid to [BRAND 1]. Bank overdraft and shot-term borrowing from financial institutions as at 31 [MONTH] 20[X]3 represented overdraft from [BANK 1] used for working capital, bearing interest at 12.1% per annum. This overdraft is secured by [ENTITY 3]’s land and personal guarantees from the directors. Trade and other payables as at  31 [MONTH] 20[X]3 largely consisted of trade payables (72.8%) and other payables such as ERP software, land tax, audit fee, etc. (14.3%). Lease liabilities as at 31 [MONTH] 20[X]3 represent the outstanding amount of car hire purchase debts from [LESSEE] Public Co., Ltd., amounting to USD 0.5 million. Trade and other receivables as at 31 [MONTH] 20[X]3 largely consisted of trade receivables from customer (52.4%), and trade receivables from related parties (42.0%). The credit term provided to customer is 30 days from billing date.The decrease from 31 [MONTH] 20[X]2 to 31 [MONTH] 20[X]3 was primarily due to the payment from [ENTITY 2]. We were informed that there are no long-outstanding receivables from customers. Inventories mainly consisted of raw materials (e.g. [EXAMPLES] etc.), work in process as well as packaging and labeling materials. Inventories was overstated due to the WIP balance of USD 5.4 million which remained on the Balance sheet throughout 31 [MONTH] 2020 to 31 [MONTH] 20[X]3.  According to Management, this WIP balance represented the incorrect input of data per the Bill of Materials (BOM), leading to additional costs which should have been recognised as cost of goods sold (COGS) in FY[X]1. Please refer to QoE adj no.7 in QoE analysis. Inventories were recorded at the lower of average cost or the net realisable value. The level of inventories as at 31 [MONTH] 20[X]2 was high as the company stocks up on raw materials at the end of the year. We were informed that some suppliers stopped their operations or deliveries during the New Year holidays and a first few days after they reopened. The major components of liabilities as at 31 [MONTH] 20[X]3 were long-term borrowing (82.6%) bank overdraft and short-term borrowing from financial institutions (9.2%) which are secured by the [ENTITY 3]’s land and guaranteed by the directors. Long-term loan borrowing as at 31 [MONTH] 20[X]3, comprised three tranches obtained from [BANK 1]. The first tranche is a loan with an outstanding balance of USD 8.9 million, bearing interest of 4% per annum, with interest payment due on the 25th day of each month. The second tranche is a loan with an outstanding balance of USD 8.9 million, bearing interest at 4% per annum, with interest payment due on the 19th day of each month. The third tranche is a loan with an outstanding balance of USD 5.6 million, bearing interest at MLR-1% to MLR per annum, with interest payment due on the 7th day of each month. These long-term loans are secured by the [ENTITY 3]’s land and guaranteed by the directors. All of these loans have a grace period of 24 months, starting from [MONTH] 20[X]1 to [MONTH] 20[X]3. Management stated that the negotiation process for the extension of grace period is still ongoing. Loan from related parties as at 31 [MONTH] 20[X]3 consisted of loans from [ENTITY 1] (USD 8.4 million) and [GROUP NAME] (USD 4.1 million) bearing interest rate of 1% per annum. In addition, [ENTITY 3] obtained interest-free loans from the directors, i.e. [MR./MRS.] [FAMILY MEMBER 5], [MR./MRS.] [FAMILY MEMBER 4] and [MR./MRS.] [FAMILY MEMBER 1], with total outstanding balance of USD 99.7 million. These loans from related parties are made without a formal written agreement and due at call.
+- [ENTITY 2] as at 31 [MONTH] 20[X]3:
+  - Reported negative NAV of USD 93.6 million driven by carried-forward losses and net loss incurred in MM[X]3 due to the competitive market and economic downturn.
+  - Net current liabilities, bank and director funding for working capital, and accumulated deficit suggest liquidity and going concern issues.
+  - Scope note: the balance sheet work was high level only, with recommendation for fuller diligence in the next phase on non-current assets, working capital items, and debt items.
+  - Major assets were fixed and intangible assets, representing 80.9% of total assets; Management confirmed all assets are free of encumbrance.
+  - Cash and cash equivalents included petty cash at head office and cash at banks; cash at tills in all stores was included in other non-current assets.
+  - Store cash process:
+    - Store or on-site managers prepare sales records on logbook and pay-in slips for cash sales.
+    - Store managers deposit cash to [ENTITY 2]’s bank accounts before 2 pm and inform accounting daily for reconciliation.
+    - Cash collected after 2 pm is handled by store managers and deposited the next day.
+  - Trade and other receivables largely consisted of trade receivables from third parties (48.3%), prepaid IT system license and service expenses (30.5%), and prepaid store rental fees (11.3%).
+  - Management stated:
+    - Normal customer credit term is 30 days.
+    - No receivable is outstanding over one year.
+    - No bad debt has been written off.
+  - Inventories mainly comprised supplies (37.0%), beverage raw materials (27.4%), and packaging (11.5%).
+  - Inventory policies and practices:
+    - Recorded at the lower of cost and net realisable value.
+    - Cost based on weighted average costing under a perpetual inventory system.
+    - Full physical counts are done monthly, with weekly counts for beverage ingredients at store level.
+    - Expired bakery must be reported in the POS system and returned to the warehouse for disposal.
+    - Warehouse staff monitor slow-moving inventory and expiry dates.
+    - Stores order beverage ingredients and bakery products from the distribution centre in [ENTITY 3]’s building for 5-7 days of sales, matching bakery shelf life.
+    - Beverage ingredients other than milk and dairy products usually have a long lifespan.
+  - Loan to related party represented a loan to [ENTITY 3], bearing 1% p.a., with no formal written contract.
+  - Fixed assets primarily consisted of store and leasehold improvements (71.0%) and store equipment (22.1%).
+  - Fixed asset observations:
+    - Store-level fixed assets are physically counted quarterly.
+    - Head office fixed assets are fully counted annually.
+    - No formal impairment assessment policy exists.
+    - [ENTITY 2] uses warehouse, storage, and chill/freezer space in [ENTITY 3]’s building free of charge as its distribution centre.
+  - Intangible assets included computer software such as POS system (Synature) and ERP system (Microsoft D365).
+  - Leasehold rights related to rental leases of two office buildings at [PLACE, CITY] used as head office.
+  - Majority of liabilities consisted of loans from related parties (38.5%), long-term borrowings from financial institutions (36.7%), and trade and other payables (17.5%).
+  - Under the customer royalty program, Management noted that under TFRS15 [ENTITY 2] should record contract liabilities for unredeemed points on the balance sheet, but currently recognises reward points as discount in the P&L upon redemption.
+  - Other non-current assets consisted of deposits for rental and service agreements (74.5%), WHT receivables (8.0%), cash at stores (6.4%), deposits paid to suppliers/contractors (6.0%), and electricity/water deposits (5.1%).
+  - Non-current asset movement and store cash detail:
+    - Decrease in non-current assets was mainly caused by return of rental deposits at lease end.
+    - Cash at stores includes cash float of USD 2,000-10,000 per store and petty cash of USD 500-3,000 per store.
+  - Short-term borrowing represented overdraft from [BANK 1] with a USD 10 million limit, secured by directors’ land and guaranteed by a related company.
+  - Trade and other payables mainly comprised trade payables from related parties (64.5%) and other payables (16.1%) such as fleet card, utilities, communications, maintenance, security guard, and audit fees.
+  - Supplier credit term is normally 30 days.
+  - Decrease in trade and other payables was driven by an advance cheque of USD 10.3 million paid to [ENTITY 1] due to insufficient operating cash flow.
+  - Lease liabilities related to vehicle leases from [LESSEE] Public Co., Ltd. (USD 0.9 million) and [LESSEE 2] (USD 0.8 million), with maturities in [MONTH] 20[X]3 and 20[X]4 respectively.
+  - Long-term borrowings consisted of six tranches of loans from [BANK 1], bearing interest at MLR and/or MLR-0.25% to -1.5% p.a.
+  - Other current liabilities comprised VAT and WHT payables and accrued SSF and PF contributions.
+  - Increase in other current liabilities was largely driven by accrued SSF contribution payables after the temporary COVID-19 contribution rate reduction ended, alongside delayed SSF and tax payments in April.
+  - Related party loans consisted of:
+    - Loans from [GROUP NAME] and [ENTITY 1] at 1% p.a., with balances of USD 1.0 million and USD 8.8 million respectively.
+    - Interest-free director loans from [MR./MRS.] [FAMILY MEMBER 5], [MR./MRS.] [FAMILY MEMBER 4] S., and [MR./MRS.] [FAMILY MEMBER 1] S., totaling USD 68.3 million.
+    - These loans had no formal written agreements and were due at call.
+  - Employee benefit obligations were calculated by HR using Management’s best estimate method under TFRS for NPAEs.
+  - Due to high turnover, provision was set only for staff older than 45, based on Management’s view that they were more likely to remain until retirement age 60.
+  - Management informed us that EBO is normally recorded at year end.
+- [ENTITY 1] and [ENTITY 3] as at 31 [MONTH] 20[X]3:
+  - [ENTITY 1] reported NAV of USD 84.4 million, with the increase driven by net profit in MM[X]3 and higher coffee bean inventories following the mid-year harvest season.
+  - [ENTITY 1] inventory profile:
+    - Mainly raw materials (63.3%) and semi-products (21.4%).
+    - Recorded at the lower of average cost or estimated net realisable value.
+    - Full stock counts are conducted monthly.
+    - Increase versus prior period was primarily due to additional purchases of [VARIANT] beans from [COUNTRY] during the import window.
+  - Restricted cash at [ENTITY 1] was USD 0.5 million, down due to release of bank guarantees after the sales contract with [CUSTOMER 1] Co., Ltd. ended.
+  - [ENTITY 1] property, plant, and equipment mainly consisted of land (22.5%) and building improvements (16.8%).
+  - [ENTITY 1] operating footprint:
+    - Green bean warehouse and roasting facilities are in [FACTORY 1], with the warehouse on land owned by [ENTITY 1].
+    - Roasting equipment is inside the [ENTITY 3] building at monthly rent of 160,000 baht.
+    - Concentrated drinks, syrups, beverages, and powder mix facilities are in [VILLAGE NAME], across two connected buildings, one owned and one rented for USD 44,000 per month.
+  - [ENTITY 1] receivables:
+    - Mainly trade receivables from customers (85.2%) and accrued interest receivables (5.2%).
+    - Decrease from prior period reflected the prior-year receipt of USD 10.3 million advance payment from [ENTITY 2] through post-dated cheques and the end of the [CUSTOMER 1] sales agreement in [MONTH] 20[X]3.
+    - Normal customer credit term is 30 days from billing.
+    - Long-outstanding individual receivable of USD 177,000 is under legal proceeding.
+  - Trade receivables from related parties totaled USD 18.4 million from [ENTITY 2] and USD 6,967 from [ENTITY 3].
+  - Although related party credit terms are also 30 days, actual payment timing varies with cash flow and liquidity.
+  - Increase in related party receivables was primarily due to higher outstanding amounts with [ENTITY 2].
+  - Loans to related parties totaled USD 8.8 million to [ENTITY 2] and USD 8.4 million to [ENTITY 3], repayable at call.
+  - Management indicated these loans have no written agreements, and interest was reduced from 3% to 1% effective 1 January 20[X]3 in response to the economic downturn affecting [ENTITY 2] and [ENTITY 3].
+  - Major [ENTITY 1] assets were inventories (37.5%) and property, plant, and equipment (36.2%).
+  - Intangible assets consisted of software under development (61.8%) and a computer program license (38.2%); a [BRAND 1] trademark with 10-year useful life was fully amortised, and no further detail was provided on renewal requirements.
+  - Bank overdraft and short-term borrowings included overdrafts from [BANK 1] and [BANK 2] and a promissory note from [BANK 1] bearing MOR interest; [ENTITY 1] pledged land, buildings, and lease agreements as collateral.
+  - Trade and other payables largely consisted of domestic trade payables (38.5%) and other payables (45.5%) such as ERP software, land tax, and audit fee.
+  - Increase in payables was mainly due to purchases of [VARIANT] coffee beans.
+  - Director loans were interest-free, repayable at call, and had no formal agreement.
+  - Lease liabilities included a vehicle lease from [LESSEE] Public Co., Ltd. of USD 1.1 million.
+  - [ENTITY 1] long-term borrowings:
+    - Two tranches from [BANK 1] and [BANK 3].
+    - [BANK 1] tranche: USD 15 million outstanding, interest at MLR-1.50% to 0.25%, monthly interest due on the 20th, maturity in March 2030, 24-month grace period from [MONTH] 20[X]1 to [MONTH] 20[X]3, secured by land and building and guaranteed by directors.
+    - [BANK 3] tranche: USD 8.4 million outstanding, interest at 2% to MLR-1.0%, monthly interest due on the 15th, no specified maturity date, six-month grace period from [MONTH] to [MONTH] 20[X]1.
+    - Management noted negotiations to extend grace periods were ongoing.
+  - Major [ENTITY 1] liabilities were bank overdraft and short-term financial institution borrowings (36.3%) and loans from directors (33.8%).
+  - [ENTITY 3] reported negative NAV of USD 19.2 million due to carried-forward losses and net loss incurred in MM[X]3.
+  - [ENTITY 3] audited financial statements noted going concern issues due to net loss, negative retained earnings exceeding share capital, and current liabilities exceeding current assets.
+  - Major [ENTITY 3] assets were property, plant, and equipment (81.9%) and inventories (7.6%).
+  - Management noted total assets may be overstated by USD 5.4 million of WIP caused by incorrect BOM input that should have been recognised in COGS.
+  - [ENTITY 3] property, plant, and equipment mainly consisted of building (63.3%) and land (12.7%), with factory and office facilities in [FACTORY 1], [CITY] serving as warehouse and bakery production site.
+  - Intangible assets consisted of software license (43.8%) and trademark (28.3%) with 10-year useful life; no further detail was provided on trademark fees paid to [BRAND 1].
+  - Bank overdraft and short-term financial institution borrowing represented [BANK 1] overdraft for working capital at 12.1% p.a., secured by [ENTITY 3] land and personal guarantees from directors.
+  - Trade and other payables largely consisted of trade payables (72.8%) and other payables such as ERP software, land tax, and audit fee (14.3%).
+  - Lease liabilities represented car hire purchase debt from [LESSEE] Public Co., Ltd. of USD 0.5 million.
+  - Trade and other receivables largely consisted of trade receivables from customers (52.4%) and related parties (42.0%); customer credit term is 30 days from billing, and the decrease from prior period was primarily due to payment from [ENTITY 2].
+  - Management stated there are no long-outstanding customer receivables.
+  - [ENTITY 3] inventories mainly consisted of raw materials, WIP, and packaging/labelling materials.
+  - Inventory overstatement note:
+    - WIP of USD 5.4 million remained on the balance sheet from 31 [MONTH] 2020 to 31 [MONTH] 20[X]3 due to incorrect BOM input.
+    - Management stated the amount should have been recognised as COGS in FY[X]1.
+    - Refer to QoE adjustment no. 7.
+    - Inventories were recorded at the lower of average cost or net realisable value.
+    - Inventory at 31 [MONTH] 20[X]2 was elevated because the company stocked up on raw materials at year end due to supplier shutdowns and delayed reopening around New Year holidays.
+  - Major [ENTITY 3] liabilities were long-term borrowing (82.6%) and bank overdraft/short-term financial institution borrowing (9.2%), secured by land and guaranteed by directors.
+  - [ENTITY 3] long-term borrowings:
+    - Three tranches from [BANK 1].
+    - Tranche 1: USD 8.9 million, 4% p.a., interest due on the 25th of each month.
+    - Tranche 2: USD 8.9 million, 4% p.a., interest due on the 19th of each month.
+    - Tranche 3: USD 5.6 million, MLR-1% to MLR p.a., interest due on the 7th of each month.
+    - All loans were secured by [ENTITY 3] land, guaranteed by directors, and had 24-month grace periods from [MONTH] 20[X]1 to [MONTH] 20[X]3.
+    - Management stated negotiations to extend grace periods were ongoing.
+  - Related party loans consisted of loans from [ENTITY 1] (USD 8.4 million) and [GROUP NAME] (USD 4.1 million) at 1% p.a., plus interest-free director loans totaling USD 99.7 million.
+  - These loans had no formal written agreements and were due at call.
 
 
 ---
@@ -480,25 +596,21 @@ Source corpus: `extracted/cleaned/*.md`
 ### Verbatim Extract
 
 
-- The reported balance sheet has been stratified into Net working capital (NWC), Infrastructure, Net debt and Other categories. For net working capital, 
-refer to the following pages for additional analysis.
-The aside table presents 
-the combined net assets 
-of GAES, GADW and 
-WIWM segregated into 
-its components as at 
-June 30, 2019.
-The Company’s 
-consolidated net assets 
-as at June 31, 2019 were 
-$3.17 million.
-- Accounts payable and accruals: 
-Included trade payables and accruals 
-for salaries and wages, vacation, 
-property tax and other miscellaneous 
-accruals.
-Other current liabilities: Current portion 
-of long term debt.
+- The reported balance sheet has been stratified into:
+  - Net working capital (NWC)
+  - Infrastructure
+  - Net debt
+  - Other
+- For net working capital, refer to the following pages for additional analysis.
+- The aside table presents the combined net assets of GAES, GADW, and WIWM, segregated into components as at June 30, 2019.
+- The Company’s consolidated net assets as at June 31, 2019 were $3.17 million.
+- Accounts payable and accruals included:
+  - Trade payables
+  - Accruals for salaries and wages
+  - Vacation accruals
+  - Property tax accruals
+  - Other miscellaneous accruals
+- Other current liabilities: current portion of long term debt.
 
 
 ---
@@ -719,4 +831,3 @@ expense.
 - In connection with incurred and capitalized contract costs, [CLIENT NAME] also receives reimbursements from customers. Reimbursements are invoiced and recognized as a liability (deferred contract liabilities).
 - Fluctuations in projected other liabilities largely relate to lease liabilities, which are expected to increase in FYXX and FYXX mainly due to new facility leases in [REGION].
 - Projected other provisions are expected to increase due to sales and warranty provisions which are projected based on NPS levels.
-

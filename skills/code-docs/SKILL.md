@@ -1,6 +1,6 @@
 ---
 name: code-docs
-description: "Create or update canonical docs structure, policy docs, reference docs, product specs, and project specs (including writing/updating specs from implemented features)."
+description: "Create or update code related documentation and product specs."
 ---
 
 # Code Docs
@@ -11,7 +11,7 @@ Create or update repository documentation using canonical structure and naming. 
 
 ## Scope
 
-This skill manages:
+Use this skill when:
 
 - root docs (`AGENTS.md`, `ARCHITECTURE.md`, `TODOS.md`)
 - docs policy/reference docs and index files
@@ -21,6 +21,7 @@ This skill manages:
 - solution knowledge docs (optional, when explicitly requested)
 
 This skill does not own execution of feature code changes. It can inspect source code to document behavior and contracts.
+Do not use this when updating any docs, only the above scope.
 
 ## Hard Rules
 

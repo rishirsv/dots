@@ -262,7 +262,7 @@ Do not allow these artifacts to survive into a section contract or example:
 - extraction-corrupted text
 - renderer, slot, or `deckSpec` language
 
-If a corpus phrase is useful but layout-dependent, convert it into clean markdown-native wording such as:
+If a source phrase is useful but layout-dependent, convert it into clean markdown-native wording such as:
 
 - `discussed below`
 - `shown in the bridge below`
@@ -293,7 +293,7 @@ Before finalizing any section:
 4. Attribution is clear where evidence level matters.
 5. Missing data is handled with inline placeholders or explicit limitation language, not open-item sections.
 6. Source notes appear only where needed and at the right level of density.
-7. No renderer-era, extraction-era, or corpus-artifact language remains.
+7. No renderer-era, extraction-era, or source-artifact language remains.
 8. Bullets and paragraphs are scannable and not overloaded.
 9. Tone and language controls pass.
 
