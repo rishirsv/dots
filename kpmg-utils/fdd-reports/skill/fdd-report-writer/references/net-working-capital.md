@@ -6,8 +6,8 @@
 - Core principles
 - Analytical workflow
 - Section architecture
+- Data and drafting inputs
 - Typical content areas
-- Assembly patterns
 - Section-specific writing guidance
 - Verification and review checks
 - Full examples
@@ -33,15 +33,16 @@ Global writing, placeholder, and language rules are defined in `references/globa
 
 ## Analytical workflow
 
-1. **Confirm the working-capital basis:** Identify whether the analysis is period-end, average, trailing, target-based, or otherwise deal-defined, and carry that basis consistently through the section.
+1. **Confirm the working-capital basis and default scope:** Identify whether the analysis is period-end, average, trailing, target-based, or otherwise deal-defined, and carry that basis consistently through the section. If the user has not narrowed the request, treat the section as a full working-capital adjustment walkthrough.
 2. **Review the full schedule first:** Start from the reported and adjusted working-capital schedule, or the trial-balance-based working-capital support, and identify the main reported balances and adjustment categories.
 3. **Define the operating boundary:** Determine which balances are included in net working capital and which balances are excluded because they are cash, debt-like, tax, capex-related, non-operating, or otherwise outside the agreed working-capital perimeter.
-4. **Set out the basis of presentation:** Explain the periods presented and the categories of adjustments used in the analysis, such as definitional, due diligence, sell-side, buy-side, or pro forma.
-5. **Identify the key adjustments:** Pull out the adjustments that most affect adjusted or normalized working capital and explain them one by one.
-6. **Find the closest adjustment pattern:** For each material adjustment, identify the closest example type in this reference and model the sentence pattern on that example before adapting it to the company-specific facts.
-7. **Add driver and seasonality commentary where relevant:** Use line-item commentary and days metrics only when they help the reader understand whether the reported or adjusted working-capital level is representative.
-8. **State the target or peg outcome where supported:** Explain the target comparison, surplus, deficit, or lack of support for a target only when the evidence supports that conclusion.
-9. **Stop when the working-capital analysis is interpretable:** Include enough detail for the reader to understand the reported schedule, the major adjustments, and the target or closing implications without turning the section into a complete operating balance-sheet appendix.
+4. **Choose the section shape and identify what needs emphasis:** Decide whether the section should read as a straightforward adjusted working-capital section or whether seasonality, sell-side layers, driver analysis, or target-setting need more emphasis.
+5. **Set out the basis of presentation:** Explain the periods presented and the categories of adjustments used in the analysis, such as definitional, due diligence, sell-side, buy-side, or pro forma.
+6. **Identify the key adjustments:** Pull out the adjustments that most affect adjusted or normalized working capital and explain them one by one.
+7. **Find the closest adjustment pattern:** For each material adjustment, identify the closest example type in the adjustment narrative library and model the sentence pattern on that example before adapting it to the company-specific facts.
+8. **Draft the section in final reading order:** Start with the position and basis of presentation, present the schedule, then walk the material adjustments in schedule order, and add supporting notes only where they improve interpretation.
+9. **Add driver, days, target, or sell-side commentary selectively:** Use line-item commentary and days metrics only when they help the reader understand whether the reported or adjusted working-capital level is representative.
+10. **Stop when the working-capital analysis is interpretable:** Include enough detail for the reader to understand the reported schedule, the major adjustments, and the target or closing implications without turning the section into a complete operating balance-sheet appendix.
 
 ## Section architecture
 
@@ -75,6 +76,8 @@ Scale the section based on the complexity of the working-capital definition, the
 - Other considerations
   - Add when unresolved or still-developing items may affect final working capital or the closing true-up.
 
+## Data and drafting inputs
+
 **Data / information typically needed:**
 
 - The reported and adjusted working-capital schedule for the relevant periods
@@ -94,29 +97,20 @@ Scale the section based on the complexity of the working-capital definition, the
 - Use drivers and days metrics only when they help the reader understand whether the adjusted balance is representative.
 - If the target is not supported, say so directly rather than implying a surplus or deficit.
 - If the user has already provided the schedule or exhibit, write the commentary to sit beside it rather than recreating it unless requested.
+- If source information is thin, keep the section concise and stay close to the supported adjustments.
+- If a relevant adjustment point matters but support is incomplete, use an inline placeholder in square brackets rather than vague filler. Example: `Deferred revenue of [...] is excluded from working capital because [...]`
 
 **Formatting principle:**
 
-- Use a short overview followed by a basis-of-presentation note and then adjustment commentary aligned to the schedule.
-- When the source analysis uses adjustment categories, state them explicitly in the same plain language style as the source, such as `Definitional adjustments`, `Due diligence adjustments`, `Pro forma adjustments`, or `Sell-side adjustments`.
+- Use a short overview followed by a basis-of-presentation note, the schedule, and then adjustment commentary aligned to the schedule.
+- When the source analysis uses adjustment categories, state them explicitly in the same plain-language style as the source, such as `Definitional adjustments`, `Due diligence adjustments`, `Pro forma adjustments`, or `Sell-side adjustments`.
 - When discussing a balance or adjustment that maps directly to the schedule, use the schedule label followed by a colon in bold, then explain what it relates to and how it affects working capital.
-- Format fiscal years as `FY24`, `FY25`, etc. Format trailing periods as `TTM Jun-24`, `LTM Dec-24`, or similar source-consistent shorthand. Format monetary amounts as `$x.x million`, and use full amounts such as `$325,000` or `$90,000` for balances below `$0.1 million`.
-
-**Ordering rules:**
-
-- Start with the reported and adjusted position and the basis on which the analysis is written.
-- Follow with the basis of presentation and the categories of adjustments used.
-- Then walk the material working-capital adjustments.
-- Add drivers, days analysis, and target commentary only where they materially improve interpretation.
-- End with other considerations only when unresolved items are still relevant to the working-capital or closing view.
 
 ## Typical content areas
 
 Use these as the main building blocks for the section. Choose only the content areas the draft actually needs.
 
-The standard pattern is an overview of the reported and adjusted position, followed by basis-of-presentation commentary and then the working-capital adjustments.
-
-Placeholder usage follows `references/global-writing-conventions.md` and is not restated in each content-area definition.
+The standard pattern is an overview of the reported and adjusted position, followed by basis-of-presentation commentary, the working-capital schedule, and then the working-capital adjustments, with supporting notes added only where they improve interpretation.
 
 ### Opening position line
 
@@ -130,7 +124,8 @@ Placeholder usage follows `references/global-writing-conventions.md` and is not 
 
 ### Adjustment category lead-ins
 
-- Where the schedule separates the adjustments into clear groups, introduce each group in the same plain language used in the schedule.
+- Use when the schedule separates the adjustments into clear groups.
+- Keep the grouping labels in the same plain language used in the schedule.
 - Sample wording: `**Definitional adjustments:** Adjustments to remove balances outside the operating working-capital perimeter.`
 - Sample wording: `**Due diligence adjustments:** Incremental adjustments identified through the diligence process.`
 - Sample wording: `**Pro forma adjustments:** Adjustments to reflect the run-rate working-capital impact of recent business changes.`
@@ -141,9 +136,9 @@ Placeholder usage follows `references/global-writing-conventions.md` and is not 
 - This is the core of the section. Explain each material adjustment in the same order it appears in the schedule, using the caption label in bold followed by a concise narrative.
 - Sample wording: `**Contract liabilities:** Contract liabilities of [$x.x million] are removed from net working capital as they relate to the timing of revenue recognition for services to be delivered in future periods, rather than the operating liquidity requirement of the business.`
 
-### Sample Adjustment Narratives
+#### Adjustment narrative library
 
-Here are common adjustment narrative examples, which can be used as templates. Choose the closest narrative and adapt the structure and level of detail to the actual balance being discussed.
+Choose the closest narrative and adapt the structure and level of detail to the actual balance being discussed. Keep the underlying logic, but replace the placeholders and tailor the explanation to the facts of the company.
 
 - `**Cash:** Cash of [$x.x million] is excluded from net working capital and presented within net debt. Where relevant, this adjustment also excludes restricted, trust, or other non-operating cash balances from the working-capital analysis.`
 - `**Debt-like liabilities:** Current debt-like balances of [$x.x million], including [lease liabilities / accrued interest / taxes payable / dividend payables], are excluded from net working capital as they do not reflect recurring operating funding.`
@@ -162,17 +157,17 @@ Here are common adjustment narrative examples, which can be used as templates. C
 - `**Withholding tax asset:** Withholding tax balances of [$x,xxx] are excluded from net working capital where management does not intend to seek recovery and the amounts do not relate to recurring operating activity.`
 - `**Cash in transit or float-related receivables:** Cash-in-transit or float-related receivables of [$x.x million] are excluded from net working capital where they represent timing-related cash movements rather than operating trade receivables.`
 - `**Excess cash in trust:** Excess cash held in trust of [$x.x million] is excluded from net working capital to the extent it exceeds minimum operating or regulatory requirements and is assessed separately within the net debt analysis.`
-- `**AP impact of QofE adjustments:** The accounts payable impact of the related quality of earnings adjustments is estimated at [$x.x million] using the Company’s historical DPO to reflect the expected settlement profile of the adjusted expenses.`
-- `**AR impact of QofE adjustments:** The accounts receivable impact of the related quality of earnings adjustments is estimated at [$x.x million] using the Company’s historical DSO to reflect the expected collection profile of the adjusted revenue.`
+- `**AP impact of QoE adjustments:** The accounts payable impact of the related quality of earnings adjustments is estimated at [$x.x million] using the Company's historical DPO to reflect the expected settlement profile of the adjusted expenses.`
+- `**AR impact of QoE adjustments:** The accounts receivable impact of the related quality of earnings adjustments is estimated at [$x.x million] using the Company's historical DSO to reflect the expected collection profile of the adjusted revenue.`
 - `**Bad debt expense:** The Company recorded a one-time bad debt provision of [$x,xxx] in [Month Year], which was subsequently collected or otherwise resolved. This adjustment removes the provision from net working capital as it does not represent an ongoing operating working-capital requirement.`
-- `**Accrued payroll impact:** The payroll accrual impact of the related adjustment is estimated at [$x.x million] using the Company’s payroll cycle and the monthly compensation associated with the affected roles or open positions.`
+- `**Accrued payroll impact:** The payroll accrual impact of the related adjustment is estimated at [$x.x million] using the Company's payroll cycle and the monthly compensation associated with the affected roles or open positions.`
 - `**Bonus true-up:** Bonus accruals are adjusted by [$x,xxx] to align the reported balance with the underlying period of employee service and the expected timing of payment.`
 - `**Payroll methodology change:** Payroll or wage accruals of [$x.x million] are adjusted to reflect the correct cut-off methodology based on when services were performed rather than when cash was disbursed or the correcting journal was recorded.`
 - `**DSO normalization:** Customer-specific DSO increased to [x] days from a historical range of [x]-[x] days during [period] as payments were delayed. This adjustment normalizes the related receivable balance to [x] days based on historic collection patterns.`
 - `**DPO normalization:** Trade creditor days increased to [x] days during [period] as payments were delayed beyond the normal settlement pattern. This adjustment normalizes the payable balance to a more representative operating DPO of [x] days.`
 - `**Prepaid expense normalization:** Prepaid expenses of [$x.x million] peak when annual software, insurance, or other contracts are paid and then unwind through the year. This adjustment straight-lines the balance to reflect a more representative monthly run-rate.`
 - `**Seasonal billing or settlement timing:** Receivables or payables of [$x.x million] are adjusted where the reported balance reflects unusual month-end timing associated with billing cycles, settlement patterns, or a known seasonal peak rather than the underlying run-rate profile of the business.`
-- `**QofE-linked working-capital impact:** The working-capital impact of the related quality of earnings adjustment is estimated at [$x.x million] using the Company’s normal DSO, DPO, or payroll cycle so that the adjusted EBITDA change is reflected consistently in working capital.`
+- `**QoE-linked working-capital impact:** The working-capital impact of the related quality of earnings adjustment is estimated at [$x.x million] using the Company's normal DSO, DPO, or payroll cycle so that the adjusted EBITDA change is reflected consistently in working capital.`
 - `**Sell-side adjustment challenge:** A seller-proposed working-capital adjustment of [$x.x million] has been reversed or revised where the underlying item appears recurring, the phasing assumption is not supportable, or the related balance remains part of the go-forward working-capital profile.`
 - `**Pro forma working-capital adjustment:** A pro forma adjustment of [$x.x million] is included to reflect the working-capital effect of [new customers / lost customers / matured locations / revised pricing / business change] on a run-rate basis.`
 
@@ -185,31 +180,12 @@ Here are common adjustment narrative examples, which can be used as templates. C
 - `Sell-side or prior-analysis note:` Use a short note when the analysis starts from seller-prepared work and the reader needs to know what was retained, changed, or challenged. Sample wording: `**Sell-side adjustments:** The seller-prepared adjustments were used as the starting point for the analysis, with changes made where recurring items, phasing assumptions, or classification were not considered supportable.`
 - `Other considerations:` Keep this brief and use it only for unresolved items that still matter to the closing or target view. Sample wording: `**Quarter-end timing:** Collection and payment timing around the closing date may move the final receivable and payable balances, so the true-up should be assessed using the agreed cut-off conventions.`
 
-## Assembly patterns
-
-Use one of these patterns based on the shape of the analysis.
-
-### Standard adjusted working-capital section
-
-- Usual flow: opening position line -> basis of presentation -> schedule -> material adjustment narratives -> target conclusion if supported.
-- This is the default pattern when the section is mainly about reported versus adjusted working capital.
-
-### Driver- or seasonality-supported section
-
-- Usual flow: opening position line -> basis of presentation -> schedule -> material adjustment narratives -> supporting notes on drivers, seasonality, or days -> target conclusion if supported.
-- Use this when a spot or average working-capital balance needs operating context to be interpreted properly.
-
-### Sell-side or multi-category section
-
-- Usual flow: opening position line -> basis of presentation -> schedule -> grouped adjustment categories -> sell-side or prior-analysis note -> target or other considerations.
-- Use this when reported, sell-side adjusted, buy-side adjusted, or pro forma working capital all appear in the same analysis.
-
 ## Section-specific writing guidance
 
 1. Use the working-capital schedule as the structural anchor and keep the commentary aligned to the way the schedule is presented.
 2. State the basis of presentation and the categories of adjustment clearly before walking the adjustments.
 3. Explain each adjustment through the balance, the operating or definitional logic, and the effect on adjusted working capital.
-4. Where an adjustment type has a close analogue in the sample narrative bank, follow that sentence pattern and adapt it to the company-specific facts rather than inventing a new structure.
+4. Where an adjustment type has a close analogue in the adjustment narrative library, follow that sentence pattern and adapt it to the company-specific facts rather than inventing a new structure.
 5. Use supporting notes for drivers, days, sell-side differences, or other considerations only when they materially improve the section.
 
 ## Verification and review checks
@@ -243,8 +219,6 @@ Adjustments are grouped as follows:
 **Due diligence adjustments:** Net working capital impact of adjustments identified during diligence.
 **Pro forma adjustments:** Adjustments for changes in business operations that may impact working capital.
 
-**Seasonality:** Revenue activity is generally lower in the first quarter and strongest through the summer and early fall. This pattern is reflected in receivable balances and DSO, which are typically higher in the peak operating months. The adjusted balance should therefore be read in the context of the average profile rather than the month-end balance in isolation.
-
 Source note: Management-prepared working-capital schedules and supporting account detail for FY22-FY24 and TTM Sep-25.
 
 | Line item                    | FY22 | FY23 | FY24 | TTM Sep-25 |
@@ -259,10 +233,12 @@ Net working capital adjustments
 
 1. **Deferred revenue:** Deferred revenue of [$0.9 million] is excluded from net working capital to the extent it reflects upfront billings for services to be delivered in future periods, rather than the operating liquidity profile of the business.
 2. **Out-of-period entries:** Out-of-period accrued liabilities and bonus accruals totaling [$0.3 million] are adjusted to the periods in which they relate so the working-capital analysis reflects the underlying timing of the obligations rather than the period in which the correcting entries were posted.
-3. **AR impact of QofE adjustments:** The accounts receivable impact of the related quality of earnings adjustments is estimated at [$0.2 million] using the Company's historical DSO to reflect the expected collection profile of the adjusted revenue.
+3. **AR impact of QoE adjustments:** The accounts receivable impact of the related quality of earnings adjustments is estimated at [$0.2 million] using the Company's historical DSO to reflect the expected collection profile of the adjusted revenue.
 4. **Professional fees accrual:** A non-recurring accrual of [$180,000] for advisory fees is removed from net working capital as it does not reflect the recurring operating liability profile of the business.
 5. **DSO normalization:** Customer-specific DSO increased to [82] days from a historical range of [48]-[52] days during [Q2-25 to Q3-25] as payments were delayed. This adjustment normalizes the related receivable balance to [50] days based on historic collection patterns.
 6. **Prepaid expense normalization:** Prepaid expenses of [$0.4 million] peak when annual software, insurance, and maintenance contracts are paid and then unwind through the year. This adjustment straight-lines the balance to reflect a more representative monthly run-rate.
+
+**Seasonality:** Revenue activity is generally lower in the first quarter and strongest through the summer and early fall. This pattern is reflected in receivable balances and DSO, which are typically higher in the peak operating months. The adjusted balance should therefore be read in the context of the average profile rather than the month-end balance in isolation.
 
 No supported target or peg basis was provided, so the section presents adjusted working-capital levels only and does not conclude on a surplus or deficit.
 ```
@@ -278,20 +254,18 @@ Basis of presentation
 The summary adjusted net working capital schedule presents reported, sell-side adjusted, and final adjusted net working capital for FY24, TTM Oct-25, and FY25.
 Adjustments are grouped as follows:
 **Definitional adjustments:** Adjustments to remove cash- and debt-like balances from reported working capital.
-**Sell-side adjustments:** Adjustments presented in the seller's due diligence report.
+**Sell-side adjustments:** Adjustments presented in the seller's diligence report.
 **Buy-side diligence adjustments:** Incremental changes made where the sell-side assumptions, phasing, or classification did not appear supportable.
 
 Source note: Management working-capital schedules, seller due diligence schedules, and buy-side analysis.
 
-| Line item                           | FY24 | FY25 |
-| ----------------------------------- | ---: | ---: |
-| Reported working capital            | 10.3 | 10.7 |
-| Definitional adjustments            |  3.1 |  3.4 |
-| Sell-side adjustments               |  1.4 |  1.2 |
-| Buy-side diligence adjustments      | (0.5) | (0.7) |
-| **Adjusted working capital**        |**14.3**|**14.6**|
-
-**Working-capital profile:** Receivable and payable behavior remained relatively stable through the historical period, with the main movement in FY25 driven by higher accrued incentive receivables and increased payables associated with growth.
+| Line item                      | FY24 | FY25 |
+| ------------------------------ | ---: | ---: |
+| Reported working capital       | 10.3 | 10.7 |
+| Definitional adjustments       |  3.1 |  3.4 |
+| Sell-side adjustments          |  1.4 |  1.2 |
+| Buy-side diligence adjustments | (0.5) | (0.7) |
+| **Adjusted working capital**   |**14.3**|**14.6**|
 
 Net working capital adjustments
 
@@ -301,6 +275,8 @@ Net working capital adjustments
 4. **Bonus true-up:** Bonus accruals are adjusted by [$140,000] to align the reported balance with the underlying period of employee service and the expected timing of payment.
 5. **Excess cash in trust:** Excess cash held in trust of [$0.5 million] is excluded from net working capital to the extent it exceeds minimum operating or regulatory requirements and is assessed separately within the net debt analysis.
 6. **Pro forma working-capital adjustment:** A pro forma adjustment of [$0.3 million] is included to reflect the working-capital effect of new customer volumes added during the most recent period on a run-rate basis.
+
+**Working-capital profile:** Receivable and payable behavior remained relatively stable through the historical period, with the main movement in FY25 driven by higher accrued incentive receivables and increased payables associated with growth.
 
 Target working capital
 No independent target-working-capital amount was provided beyond the adjusted working-capital analysis shown above. The section therefore stops at adjusted working capital and does not conclude on a separate target surplus or deficit.

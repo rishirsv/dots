@@ -21,13 +21,25 @@ Use this checklist when reviewing each section reference manually. These items a
 
 ## Section architecture
 
-- Keep `Section architecture` focused on the overall draft shape, expected density, required content, optional content, and ordering.
+- Keep `Section architecture` focused on the finished output contract rather than the drafting process.
+- If a nearby reference already has a cleaner architecture pattern, use it as the baseline to simplify peer sections instead of inventing a section-specific structure.
 - Use a single verbosity rule rather than multiple overlapping density schemes.
 - Express verbosity as a sentence such as `Stop adding detail when...`, followed by a practical target for bullets, word count, or density.
 - Keep required content areas concise and practical.
 - Keep optional content areas concise at the architecture level, and leave detailed trigger logic to the `Typical content areas` section.
+- Prefer `Section architecture` to contain only `Verbosity`, `Required content areas`, and `Optional content areas` unless a section has a strong reason to add more.
 - Use bold inline subsection labels inside `Section architecture` to match the formatting style used in `slide-templates.md`.
 - If optional items are really interpretation lenses or writing considerations, frame them that way instead of implying they are standalone sections.
+- Do not keep sequencing rules, workflow logic, or drafting-order instructions inside `Section architecture`; those belong in `Analytical workflow`.
+- If `Assembly patterns` mainly restates draft shape, remove it and move any genuinely useful sequencing guidance into `Analytical workflow` instead of preserving a separate section.
+
+## Analytical workflow
+
+- Use `Analytical workflow` for the drafting sequence, not the output contract.
+- Expand the workflow when needed so it clearly covers how the writer moves from inputs to final section shape.
+- Put section-order guidance here when it is part of the drafting sequence, such as basis first, then anchor exhibit, then material commentary.
+- If the draft needs a choice among a few common section shapes, explain that choice in the workflow rather than repeating it in architecture.
+- Keep the workflow action-oriented: review inputs, identify the main drivers, choose the shape, draft in reading order, and stop at the right density.
 
 ## Typical content areas
 
@@ -49,6 +61,7 @@ Use this checklist when reviewing each section reference manually. These items a
 ## Data and drafting inputs
 
 - Add `Data / information typically needed` where it would help the model understand the minimum required inputs for drafting.
+- If input requirements, mapping logic, or formatting conventions are useful but do not belong in `Section architecture`, place them in a separate section such as `Data and drafting inputs`.
 - Structure input guidance in the same style as `slide-templates.md`, using subsections such as:
   - `Typical content areas`
   - `Data / information typically needed`
@@ -78,8 +91,10 @@ Use this checklist when reviewing each section reference manually. These items a
 - Remove duplicate guidance between `Core principles`, `Analytical workflow`, `Section architecture`, and `Typical content areas`.
 - Keep `Core principles` focused on decision rules.
 - Keep `Analytical workflow` focused on the sequence for building the section.
-- Keep `Section architecture` focused on draft shape and density.
+- Keep `Section architecture` focused on the output contract, especially verbosity plus required and optional content.
 - Keep `Typical content areas` focused on detailed content guidance.
+- If data requirements, mapping logic, or formatting rules are useful but create clutter inside `Section architecture`, move them into a dedicated section rather than letting architecture expand.
+- If a standalone section exists only to repeat structure guidance in a slightly different form, remove it rather than preserving it for symmetry.
 - Rewrite awkward or overly technical phrasing into more natural language wherever possible.
 - If a concept is really a writing consideration or interpretation lens, do not turn it into a separate pseudo-section or drafting primitive.
 - Make one drafting pattern dominant throughout the file so the model does not learn two competing structures.
@@ -97,11 +112,13 @@ Use this checklist when reviewing each section reference manually. These items a
 - Match the verification style used in `slide-templates.md` rather than maintaining long compliance-style lists.
 - Add a short note above examples clarifying that they show content flow, not required headings or exact bullet counts.
 - Make sure examples demonstrate the intended drafting behavior clearly enough that the user can infer the pattern without cross-referencing the full section.
+- Review examples for analytical correctness, not just style; they should not teach the wrong grouping, classification, perimeter, or purchase-price logic.
 - If the skill usually writes commentary around a user-supplied exhibit, make the examples start where the drafted commentary actually starts instead of reproducing the exhibit.
 - Use examples to show the real output scope of the skill. If the model is not expected to build a table or chart by default, do not teach that as part of the example output.
 - Keep examples in the actual report-writing voice, not an explanatory or training voice.
 - If seeing the incoming data shape is important, include a representative exhibit with an explicit note that it is an example of the input the skill may receive, followed by the commentary the skill would draft from it.
 - Make sure example commentary aligns tightly to the exhibit values, captions, and labels.
+- Make sure non-caption notes, such as source-basis notes, sit outside grouped caption lists unless they are genuinely part of the caption commentary.
 - Treat examples as gold-standard wording: they should model the sentence structure, density, quantification, and detail level the downstream model is expected to reproduce.
 - Rewrite examples if the surrounding guidance changes materially, so the examples teach the same pattern as the instruction sections below `Typical content areas`.
 - Where the section explains balances tied to financing or purchase price, use examples that include the practical detail a reader would actually want, such as facility type, lease type, acquisition obligation, or settlement mechanics, while still staying concise.
@@ -114,6 +131,7 @@ Use this checklist when reviewing each section reference manually. These items a
 - Standardize date, fiscal-year, and monetary formatting rules wherever the section benefits from them.
 - Make those formatting rules explicit in the reference if the corpus shows a consistent convention.
 - Use examples that reinforce the required formatting style, not examples that quietly violate it.
+- Match label types to the underlying financial statement logic, such as using as-at date labels for balance-sheet snapshots rather than period labels that imply flow-based reporting.
 - Prefer plain-English labels and natural report-writing sentences over process-language or instructional phrasing inside examples.
 
 ## Manual review prompt
@@ -123,8 +141,11 @@ When reviewing the next reference file, check:
 - Does the structure reflect the real corpus pattern?
 - Are the section labels plain-English and easy to follow?
 - Is detailed guidance kept in one place instead of repeated across sections?
+- Is `Analytical workflow` handling the drafting sequence while `Section architecture` handles only the output contract?
+- Has any redundant standalone section, such as `Assembly patterns`, been absorbed or removed if it does not add unique guidance?
 - Does the density guidance help the drafting model match the examples?
 - Are missing-data cases handled with placeholders rather than vague filler?
-- Are examples and verification guidance short, practical, and easy to scan?
+- Are examples and verification guidance short, practical, easy to scan, and analytically correct?
 - Does the file remain standalone once shipped, without relying on the corpus or surrounding process context?
 - If the section is caption-driven, does the guidance clearly teach how to quantify the caption and add the terms or mechanics needed to interpret it?
+- Do the examples teach the right grouping and labeling conventions for the underlying analysis, rather than a stylistically clean but technically wrong pattern?

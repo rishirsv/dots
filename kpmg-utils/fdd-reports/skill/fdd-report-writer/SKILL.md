@@ -1,6 +1,6 @@
 ---
 name: fdd-report-writer
-description: Draft, rewrite, and polish financial due diligence report content in Markdown using the live section contracts and global writing conventions in this skill. Use when Codex needs to write or revise an executive summary, business overview, historical financial performance section, QoE section or earnings adjustments, net working capital section or adjustments, net debt section, balance sheet section, reporting environment section, a diligence exhibit narrative, or a full FDD report from diligence materials. Do not use for PowerPoint decks, report-checker automation, or reference-maintenance tasks.
+description: Draft, rewrite, and polish financial due diligence report content in Markdown using the live section contracts and global writing conventions in this skill. Use when Codex needs to write or revise an executive summary, business overview, historical financial performance section, quality of earnings section or earnings adjustments, net working capital section or adjustments, net debt section, balance sheet section, reporting environment section, a diligence exhibit narrative, or a full FDD report from diligence materials. Do not use for PowerPoint decks, report-checker automation, or reference-maintenance tasks.
 ---
 
 # FDD Report Writer
@@ -11,7 +11,7 @@ Draft client-ready FDD report content in Markdown.
 
 - Default to section-by-section drafting.
 - Treat `full_report` as a secondary path.
-- Use [references/INDEX.md](references/INDEX.md) as the live drafting system.
+- Use the live section contracts in `references/` as the drafting system.
 - Use [references/global-writing-conventions.md](references/global-writing-conventions.md) in every drafting path.
 - Do not assume legacy slot-template behavior unless the user explicitly asks to preserve an existing draft that already uses it.
 
@@ -50,7 +50,7 @@ Canonical sections:
 - Executive summary
 - Business overview
 - Historical financial performance
-- QoE and earnings adjustments
+- Quality of earnings
 - Net working capital
 - Net debt
 - Balance sheet
@@ -64,12 +64,12 @@ Always read:
 
 - [references/global-writing-conventions.md](references/global-writing-conventions.md)
 
-Then read only the relevant section contract from [references/INDEX.md](references/INDEX.md):
+Then read only the relevant section contract from `references/`:
 
 - [references/executive-summary.md](references/executive-summary.md)
 - [references/business-overview.md](references/business-overview.md)
 - [references/historical-financial-performance.md](references/historical-financial-performance.md)
-- [references/qoe-and-earnings-adjustments.md](references/qoe-and-earnings-adjustments.md)
+- [references/quality-of-earnings.md](references/quality-of-earnings.md)
 - [references/net-working-capital.md](references/net-working-capital.md)
 - [references/net-debt.md](references/net-debt.md)
 - [references/balance-sheet.md](references/balance-sheet.md)
@@ -146,4 +146,4 @@ For `full_report` requests, return:
 
 ## Key References
 
-Start with [references/INDEX.md](references/INDEX.md).
+Start with [references/global-writing-conventions.md](references/global-writing-conventions.md) and then load only the relevant section contract from `references/`.

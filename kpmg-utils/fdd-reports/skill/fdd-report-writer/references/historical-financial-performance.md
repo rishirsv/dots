@@ -1,4 +1,4 @@
-# Section contract: Historical / financial performance
+# Section contract: Historical financial performance
 
 ## Table of contents
 
@@ -6,39 +6,41 @@
 - Core principles
 - Analytical workflow
 - Section architecture
+- Data and drafting inputs
 - Typical content areas
-- Assembly patterns
 - Section-specific writing guidance
 - Verification and review checks
 - Full examples
 
 ## Section objective
 
-The Historical / financial performance section explains how trading performance moved over the historical period and what the supplied income statement actually means. It should walk through the significant captions on the P&L, decompose the composition and drivers of those captions over time, and provide enough detail for the reader to understand the parts of the income statement that matter to diligence.
+The Historical financial performance section explains how trading performance moved over the covered periods and what the supplied income statement means in diligence terms. In most cases, it starts with the basis of the income statement where needed, summarizes the headline revenue and earnings trend, and then walks the significant P&L captions in order.
+
+It should explain the historical trading story, what the major income-statement captions include, how those captions changed over time, and which operating, commercial, accounting, or comparability factors matter for interpreting the trends.
 
 Global writing, placeholder, and language rules are defined in `references/global-writing-conventions.md` and apply here.
 
 ## Core principles
 
-1. **Treat the income statement as the anchor exhibit:** The section should be written to sit beside the user-supplied or separately pasted P&L unless the user explicitly asks for the exhibit to be recreated.
+1. **Treat the income statement as the anchor exhibit:** Write the section to sit beside the user-supplied or separately pasted P&L unless the user explicitly asks for the exhibit to be recreated.
 2. **Lead with the historical trading story:** Start with the headline movement in revenue, margin, and earnings before walking the underlying captions.
-3. **Walk the significant captions in P&L order:** In most cases, move from revenue to direct or variable expense, gross profit, operating cost captions, operating profit or EBITDA, and then below-EBITDA lines where relevant.
+3. **Walk the significant captions in P&L order:** In most cases, move from revenue to direct or variable expense, gross profit, operating cost captions, operating profit or EBITDA, and then below-EBITDA lines only where relevant.
 4. **Provide real caption detail:** For each significant caption, explain what it includes, quantify the major balances or subcomponents where useful, and explain the historical drivers of change.
-5. **Use the relevant mechanics for the caption:** Include pricing, volume, same-site growth, utilization, compensation structure, capitalization policy, lease treatment, interest-rate effects, or other operating and accounting mechanics where they help interpret the trend.
-6. **Bring in related analyses where they improve the P&L story:** Use gross margin by LOB, segment analysis, or workstream cross-references when they genuinely help explain the historical trading pattern.
-7. **Keep the focus on historical performance:** This is not a QoE bridge or a recommendation section. Use the historical P&L and its drivers as the organizing logic.
+5. **Use mechanics selectively:** Include pricing, volume, same-site growth, utilization, compensation structure, capitalization policy, lease treatment, interest-rate effects, or other operating and accounting mechanics only when they help interpret the trend.
+6. **Keep the section focused on historical performance:** This is not a QoE bridge, a recommendation section, or a generic strategy discussion. Use the historical P&L and its drivers as the organizing logic.
 
 ## Analytical workflow
 
-1. **Confirm the exhibit basis:** Identify the periods, units, and basis of the income statement, including whether it is reported, adjusted, reclassified, or perimeter-adjusted.
+1. **Confirm the exhibit basis and default scope:** Identify the periods, units, and basis of the income statement, including whether it is reported, adjusted, reclassified, or perimeter-adjusted. If the user has not narrowed the request, treat the section as a full historical P&L walkthrough.
 2. **Review the full P&L before drafting:** Identify the largest movements in revenue, direct costs, gross profit, operating expenses, operating profit, and any below-EBITDA captions that are relevant to the historical story.
-3. **Review any supporting analyses:** Use gross-margin-by-LOB, segment schedules, or caption support where available to understand composition and drivers.
-4. **Identify the significant captions:** Focus on the lines that matter most by absolute size, margin impact, historical movement, or interpretive complexity.
-5. **Draft the overview first:** Write 1-2 opening lines that explain the overall trading trend across the historical period.
-6. **Build the caption commentary in income-statement order:** Walk the significant captions in the same order the reader sees them in the exhibit.
+3. **Review supporting analyses where useful:** Use gross-margin-by-LOB, segment schedules, caption support, or other operating data where available to understand composition and drivers.
+4. **Choose the section shape and determine what additional context is needed:** Decide whether the section should read as a straightforward P&L walkthrough or whether basis notes, segment support, comparability context, or below-EBITDA commentary need additional emphasis.
+5. **Identify the material captions:** Focus on the lines that matter most by absolute size, margin impact, historical movement, or interpretive complexity.
+6. **Draft the section in final reading order:** Start with the exhibit basis where needed, then write a short overview of the historical trading trend, and then walk the material captions in income-statement order.
 7. **Decompose each material caption:** For each key line, state what it includes, quantify the major components where useful, and explain the main historical drivers.
-8. **Add basis or comparability context where relevant:** Explain reclasses, adjusted views, accounting policy impacts, or support limitations when they materially affect how the trends should be read.
-9. **Stop when the income statement is fully interpretable:** Include enough detail for the reader to understand every material part of the P&L, but do not force commentary for immaterial captions.
+8. **Add mechanics, segment support, and comparability context selectively:** Bring in supporting analyses, accounting mechanics, or basis notes only where they materially improve how the trend should be read.
+9. **Close the section when the earnings story is clear:** End with the relevant earnings takeaway, and include below-EBITDA commentary only where it materially affects interpretation.
+10. **Stop when the income statement is interpretable:** Include enough detail for the reader to understand the historical trading story and the material P&L captions without forcing commentary for immaterial lines.
 
 ## Section architecture
 
@@ -50,25 +52,25 @@ Scale the section based on the complexity of the P&L, the number of material cap
 
 **Required content areas:**
 
-- Performance overview
-  - State the headline movement in revenue, margin, and profit over the historical period.
-- Key driver commentary
+- Basis and performance overview
+  - State the exhibit basis where needed and summarize the headline movement in revenue, margin, and profit over the covered periods.
+- Material caption commentary
   - Walk the significant captions in income-statement order and explain what they include and why they moved.
-- Earnings takeaway
-  - Tie the caption movements back to gross profit, operating profit, EBITDA, EBT, or another relevant earnings measure.
 
 **Optional content areas:**
 
-- Exhibit basis note
-  - Add when the exhibit is adjusted, reclassified, perimeter-adjusted, or otherwise needs context before the trends can be interpreted.
 - Segment or LOB support
   - Add when gross-margin-by-LOB, entity, channel, or segment information materially improves understanding of the P&L.
 - Caption mechanics note
   - Add when a caption includes sector-specific or accounting-specific mechanics that materially affect interpretation.
 - Comparability note
-  - Add when reclasses, policy changes, timing differences, or partial-period support affect how periods should be compared.
+  - Add when reclasses, policy changes, timing differences, or basis changes affect how periods should be compared.
 - Below-EBITDA commentary
   - Add when interest, tax, other income, FX, fair-value movements, or other non-operating lines are material to the historical story.
+- Earnings takeaway
+  - Add when a short closing line helps tie the caption commentary back to EBITDA, operating profit, EBT, net income, or another relevant earnings measure.
+
+## Data and drafting inputs
 
 **Data / information typically needed:**
 
@@ -90,140 +92,89 @@ Scale the section based on the complexity of the P&L, the number of material cap
 - Bring in gross-margin-by-LOB or segment support when the main P&L alone does not explain the margin story.
 - Use below-EBITDA commentary only when those lines are relevant to the historical trading story or to how the period results should be interpreted.
 - If the user has supplied the exhibit already, write the commentary to sit beside it rather than recreating the exhibit.
+- If source information is thin, keep the section concise and stay close to the reported captions.
+- If a relevant detail or driver matters but is not provided, use an inline placeholder in square brackets rather than padding with generic commentary. Example: `Revenue growth was primarily driven by [...]` or `Sales and marketing includes [...]`
 
 **Formatting principle:**
 
-- Use a short opening overview followed by bulleted or numbered caption-level commentary that mirrors the order of the income statement exhibit.
-- Format fiscal years as `FY24`, `FY25`, etc. Format trailing periods as `TTM Jun-24`, `LTM Dec-24`, or similar source-consistent shorthand.
-- Format monetary amounts as `$x.x million`, and use full amounts such as `$325,000` or `$90,000` for balances below `$0.1 million`.
+- Use a short basis note where needed, followed by a short opening overview and then bulleted or numbered caption-level commentary that mirrors the order of the income statement exhibit.
 - When discussing a caption, use the exhibit label followed by a colon in bold, then explain the composition, mechanics, and historical drivers. If the source output uses numbered key drivers, keep the numbered sequence aligned to the exhibit order.
-
-**Ordering rules:**
-
-- Start with the exhibit basis note when the reader needs that context before reading the P&L.
-- Follow with the performance overview.
-- Then walk the significant captions in income-statement order.
-- Use segment or LOB support where it helps explain the margin or revenue story.
-- End with below-EBITDA lines or comparability notes only when they are relevant to the historical reading.
 
 ## Typical content areas
 
 Use these as the main building blocks for the section. Choose only the content areas the draft actually needs.
 
-The standard pattern is a short overview followed by bulleted or numbered caption commentary in income-statement order.
-
-Placeholder usage follows `references/global-writing-conventions.md` and is not restated in each content-area definition.
+The standard pattern is a short basis note where needed, a concise overview of the historical trading story, and then bulleted or numbered caption commentary in income-statement order, with a short earnings takeaway where helpful.
 
 ### Exhibit basis note
 
-- Purpose: explain what the income statement exhibit represents when the basis is not self-explanatory.
 - Use when: the exhibit is adjusted, reclassified, annualized, or perimeter-adjusted.
 - Skip when: the exhibit basis is already obvious.
-- Target length: 15-40 words.
-- Source note: recommended.
-- Example: `The income statement information included in this section is presented on an adjusted basis and excludes standalone cost considerations.`
+- Keep this short and factual.
+- Sample wording: `The income statement information included in this section is presented on an adjusted basis and excludes standalone cost considerations.`
 
-### Overview line
+### Performance overview
 
-- Purpose: state the main historical trading story in 1-2 sentences.
-- Use when: opening the section.
-- Skip when: never; this is the normal entry point to the section.
-- Target length: 20-60 words.
-- Source note: usually not needed if the exhibit is visible.
-- Example: `Increase in revenue from $52.8 million in FY22 to $81.4 million in TTM Sep-25 is primarily driven by higher membership volumes and improved retention.`
+- Open with 1-2 lines that state the main historical trading story.
+- Focus on the headline movement in revenue, margin, and earnings.
+- Sample wording: `Revenue increased from $52.8 million in FY22 to $81.4 million in TTM Sep-25, primarily driven by higher membership volumes and expansion within the enterprise base.`
 
 ### Revenue commentary
 
-- Purpose: explain the composition of revenue and the main drivers of historical movement.
-- Use when: revenue is a material part of the story, which is most cases.
-- Skip when: never for a standard P&L section.
-- Target length: 45-110 words.
-- Source note: recommended when based on management support or segment detail.
-- Example: `**Revenue:** The Company primarily earns revenue through recurring subscription fees ($46.2 million), implementation services ($21.8 million), and professional services ($9.4 million). Revenue increased from FY22 to TTM Sep-25 primarily due to new customer wins, annual price increases, and expansion within existing enterprise accounts.`
+- Explain what revenue includes and the main drivers of historical movement.
+- This is usually a core part of the section.
+- Sample wording: `**Revenue:** The Company primarily earns revenue through recurring subscription fees ($46.2 million), implementation services ($21.8 million), and professional services ($9.4 million). Revenue increased over the historical period due to new customer wins, annual price increases, and expansion within existing enterprise accounts.`
 
 ### Direct cost or gross-margin commentary
 
-- Purpose: explain direct costs, variable costs, or gross margin and the factors driving change over time.
-- Use when: the section includes direct costs, cost of revenue, variable expenses, or gross profit.
-- Skip when: the business model has no meaningful gross-margin layer.
-- Target length: 45-120 words.
-- Source note: recommended.
-- Example: `**Cost of revenue:** Cost of revenue primarily includes implementation labour ($8.1 million), third-party hosting and software licenses ($5.6 million), and customer support payroll ($4.2 million). Gross margin improved from 68.4% in FY22 to 71.6% in TTM Sep-25, primarily due to pricing actions and a higher mix of subscription revenue.`
+- Use when: the business has a meaningful direct-cost or gross-margin layer.
+- Skip when: the business model does not have a meaningful gross-margin construct.
+- Sample wording: `**Cost of revenue:** Cost of revenue primarily includes implementation labour ($8.1 million), third-party hosting and software licenses ($5.6 million), and customer support payroll ($4.2 million). Gross margin improved from 68.4% in FY22 to 71.6% in TTM Sep-25, primarily due to pricing actions and a higher mix of recurring subscription revenue.`
 
 ### Operating cost commentary
 
-- Purpose: explain a significant operating cost caption and the major components within it.
-- Use when: a cost caption materially affects EBITDA or the historical trend.
-- Skip when: the line is too small to matter.
-- Target length: 40-120 words.
-- Source note: recommended.
-- Example: `**Sales and marketing:** TTM Sep-25 sales and marketing includes salaries and commissions ($6.7 million), digital demand generation ($2.1 million), channel partner fees ($1.4 million), and customer events ($0.6 million). The increase over the historical period reflects investment in enterprise sales capacity and higher commission expense on new bookings.`
+- Use for the operating cost captions that materially affect EBITDA or the historical trend.
+- Keep the commentary focused on what the caption includes and why it moved.
+- Sample wording: `**Sales and marketing:** TTM Sep-25 sales and marketing includes salaries and commissions ($6.7 million), digital demand generation ($2.1 million), channel partner fees ($1.4 million), and customer events ($0.6 million). The increase over the historical period reflects investment in enterprise sales capacity and higher commission expense on new bookings.`
 
 ### Caption mechanics note
 
-- Purpose: explain operating, commercial, or accounting mechanics that are necessary to interpret a caption.
-- Use when: a caption involves capitalization, revenue recognition, lease accounting, funding costs, provisioning, or other non-obvious mechanics.
+- Use when: a caption involves capitalization, revenue recognition, lease accounting, funding costs, provisioning, or another non-obvious mechanic.
 - Skip when: the caption can be understood without additional mechanics.
-- Target length: 30-100 words.
-- Source note: recommended.
-- Example: `**Capitalized development costs:** Relates to internally capitalized labour costs for product development. Once a project is placed in service, capitalized costs are amortized over the expected useful life, typically three to five years, which affects the split between operating expense and depreciation and amortization.`
+- Sample wording: `**Capitalized development costs:** Relate to internally capitalized labour costs for product development. Once a project is placed in service, capitalized costs are amortized over the expected useful life, typically three to five years, which affects the split between operating expense and depreciation and amortization.`
 
 ### Below-EBITDA commentary
 
-- Purpose: explain interest, tax, FX, fair-value, or other below-EBITDA lines when they are relevant to the historical story.
-- Use when: below-EBITDA lines are material or unusual.
-- Skip when: those lines are immaterial to the section.
-- Target length: 30-100 words.
-- Source note: recommended.
-- Example: `**Interest expense:** Primarily comprises interest on the term loan and revolving credit facility. The increase from FY22 to FY24 reflects both higher average debt balances and higher reference rates over the historical period.`
+- Use when: interest, tax, FX, fair-value, or other below-EBITDA lines are material or unusual.
+- Skip when: those lines are not important to the historical reading.
+- Sample wording: `**Interest expense:** Primarily comprises interest on the term loan and revolving credit facility. The increase over the historical period reflects both higher average debt balances and a higher rate environment.`
 
 ### Comparability note
 
-- Purpose: explain a restatement, reclass, or basis issue that affects period comparability.
-- Use when: periods are comparable only on an adjusted basis or a policy change materially affects the trend.
+- Use when: periods are comparable only on an adjusted basis, or a reclass or policy change materially affects the trend.
 - Skip when: the issue is immaterial.
-- Target length: 20-60 words.
-- Source note: recommended.
-- Example: `The historical periods are presented on a reclassified basis to align direct costs and operating expenses across the covered periods.`
+- Sample wording: `The historical periods are presented on a reclassified basis to align direct costs and operating expenses across the covered periods.`
 
-## Assembly patterns
+### Earnings takeaway
 
-Use one of these patterns based on the section. These are practical guides, not fixed templates.
-
-### Standard P&L walkthrough
-
-- Usual flow: exhibit basis note if needed -> overview -> revenue -> direct costs or gross profit -> operating costs -> EBITDA or operating profit.
-- In practice, this pattern often uses 6-10 caption commentary items.
-- Aim for 8-12 commentary items plus one exhibit.
-- Stop adding detail when the reader can interpret the significant captions and understand the historical trading story.
-
-### Driver-heavy income statement section
-
-- Usual flow: overview -> revenue and gross-margin drivers -> multiple operating-cost captions -> earnings conclusion -> below-EBITDA captions if relevant.
-- In practice, this pattern often includes deeper caption composition and operating mechanics.
-- Aim for 10-14 commentary items plus one exhibit.
-- Stop adding detail when each major caption has a clear composition and driver explanation.
-
-### Basis or comparability-heavy section
-
-- Usual flow: exhibit basis note -> overview -> core caption commentary -> comparability or reconciliation notes -> earnings conclusion.
-- In practice, this pattern often appears where adjusted or perimeter-aligned P&Ls are used.
-- Aim for 8-12 commentary items plus one exhibit.
-- Stop adding detail when the reader can distinguish the basis of presentation and read the historical trends correctly.
+- Use when: a short closing line helps tie the caption commentary back to EBITDA, operating profit, EBT, or net income.
+- Skip when: the section already ends naturally with a clear earnings conclusion.
+- Sample wording: `**Earnings takeaway:** EBITDA increased from $14.1 million in FY22 to $28.4 million in TTM Sep-25 as revenue growth outpaced the increase in operating costs and gross margin improved over the covered periods.`
 
 ## Section-specific writing guidance
 
 1. Use the same caption language as the income statement exhibit whenever possible.
 2. When a caption maps directly to a line in the exhibit, use the caption name followed by a colon in bold, then the explanation.
-3. Use bullets or numbered key drivers consistently through the section instead of switching between paragraphs, bullets, and subheadings.
-4. Keep cross-references brief and use them only when another section genuinely helps explain the historical trading story.
+3. Keep the commentary aligned to the order of the exhibit so the reader can scan the section beside the P&L.
+4. Use bullets or numbered key drivers consistently through the section instead of switching between paragraphs, bullets, and subheadings.
+5. Keep cross-references brief and use them only when another section genuinely helps explain the historical trading story.
 
 ## Verification and review checks
 
 **Verification questions:**
 
 - Does the section explain the historical trading story clearly in the first 1-2 lines?
-- Does the section follow a clear overview-plus-key-drivers pattern that a reader can scan beside the exhibit?
+- Does the section follow a clear basis-plus-overview-plus-key-drivers pattern that a reader can scan beside the exhibit?
 - Does the commentary walk the significant captions in the same order the reader sees them in the income statement?
 - For each material caption, does the commentary explain what it includes, how it moved, and why it matters?
 - Where relevant, does the commentary quantify significant balances within the caption and include the mechanics needed to interpret them?
@@ -239,7 +190,7 @@ The examples below show a type of income-statement exhibit the skill might typic
 ### Example 1: Standard income-statement walkthrough
 
 ```markdown
-## Historical / financial performance
+## Historical financial performance
 
 - The table below presents the reported income statement for FY22 to FY24 and TTM Sep-25.
 
@@ -260,7 +211,7 @@ Source note: Management financial statements and supporting schedules for FY22-F
 | **Net income**                                    |    **8.1** |    **9.9** |   **14.1** |    **17.8** |
 | EBITDA                                            |   **14.1** |   **17.0** |   **23.2** |    **28.4** |
 
-Increase in revenue from $52.8 million in FY22 to $81.4 million in TTM Sep-25 is primarily driven by higher subscription volumes and customer expansion within the enterprise base.
+Revenue increased from $52.8 million in FY22 to $81.4 million in TTM Sep-25, primarily driven by higher subscription volumes and customer expansion within the enterprise base.
 
 1. **Revenue:** The Company primarily earns revenue through recurring subscription fees ($46.2 million), implementation services ($21.8 million), and professional services ($9.4 million). Revenue increased over the historical period due to new customer wins, annual price increases, and expansion within existing enterprise accounts. Professional services revenue remained more project-based and therefore grew less consistently than subscription revenue.
 2. **Cost of revenue:** Cost of revenue primarily includes implementation labour ($8.1 million), third-party hosting and software licenses ($5.6 million), and customer support payroll ($4.2 million). Gross margin improved from 68.4% in FY22 to 71.6% in TTM Sep-25, primarily due to pricing actions, automation within support workflows, and a higher mix of recurring subscription revenue.
@@ -275,9 +226,9 @@ Increase in revenue from $52.8 million in FY22 to $81.4 million in TTM Sep-25 is
 ### Example 2: Adjusted basis and driver-heavy P&L section
 
 ```markdown
-## Historical / financial performance
+## Historical financial performance
 
-- The table below presents the adjusted income statement for FY23 to FY25 and includes perimeter and QofE alignment adjustments.
+- The table below presents the adjusted income statement for FY23 to FY25 and includes perimeter and QoE alignment adjustments.
 
 Source note: Audited financial statements FY23-FY25, management trial balances, and adjusted perimeter schedules.
 
@@ -305,10 +256,10 @@ Revenue is primarily generated through net interest income and interchange incom
 2. **Interchange income:** Represents revenue earned from the payment network as customers transact on their cards. Interchange increased from $146.8 million in FY23 to $194.6 million in FY25, primarily due to higher spend volume and cardholder growth.
 3. **Other card and fee income:** Includes annual fees, foreign exchange fees, balance protection premiums, cash-advance fees, and other customer charges. The increase over the historical period reflects portfolio growth and higher penetration of premium card products.
 4. **Provision for credit losses:** Comprises direct write-offs and the movement in expected credit loss reserves. The provision increased from FY23 to FY25 in line with receivable growth and updated macroeconomic assumptions embedded in the reserve model.
-5. **Loyalty program costs:** Represents the cost of points issued to customers and reimbursed to the loyalty counterparty upon redemption. This caption increased with higher cardholder spend and greater rewards activity across the portfolio.
-6. **Processing and servicing costs:** Includes payment-network fees, third-party processing, cardholder account-management systems, call-center support, and collection services. A meaningful portion of this caption scales with transaction volumes and active account growth.
-7. **Salaries and employee benefits:** Includes salaries, employer benefits, paid time off, and variable compensation. Payroll increased from $39.5 million in FY23 to $50.8 million in FY25, primarily driven by headcount additions across risk, servicing, and technology functions.
-8. **Marketing and customer acquisition:** Includes digital marketing, partner commissions, welcome offers, and customer acquisition costs paid to third-party vendors. FY25 includes higher fixed program spend and increased variable acquisition costs tied to new-account growth.
+5. **Loyalty program costs:** Represent the cost of points issued to customers and reimbursed to the loyalty counterparty upon redemption. This caption increased with higher cardholder spend and greater rewards activity across the portfolio.
+6. **Processing and servicing costs:** Include payment-network fees, third-party processing, cardholder account-management systems, call-center support, and collection services. A meaningful portion of this caption scales with transaction volumes and active account growth.
+7. **Salaries and employee benefits:** Include salaries, employer benefits, paid time off, and variable compensation. Payroll increased from $39.5 million in FY23 to $50.8 million in FY25, primarily driven by headcount additions across risk, servicing, and technology functions.
+8. **Marketing and customer acquisition:** Include digital marketing, partner commissions, welcome offers, and customer acquisition costs paid to third-party vendors. FY25 includes higher fixed program spend and increased variable acquisition costs tied to new-account growth.
 9. **Fraud losses and service fees:** FY25 includes $6.1 million in fraud losses and $8.5 million in service fees incurred to monitor and resolve fraud-related activity as transaction volumes increased.
 10. **Adjusted EBITDA:** Adjusted EBITDA increased from $248.3 million in FY23 to $282.2 million in FY25 as revenue growth and operating leverage were partly offset by higher credit provisioning, marketing investment, and fraud-related costs.
 ```

@@ -1,4 +1,4 @@
-# Section contract: Policies
+# Section contract: Reporting environment
 
 ## Table of contents
 
@@ -6,42 +6,41 @@
 - Core principles
 - Analytical workflow
 - Section architecture
+- Data and drafting inputs
 - Typical content areas
-- Assembly patterns
 - Section-specific writing guidance
 - Verification and review checks
 - Full examples
 
 ## Section objective
 
-The Policies section summarizes the company-specific policies that matter to diligence. In most cases, this section is primarily a financial reporting and accounting policy section, so it should explain the reporting basis, assurance background, close process, systems, key accounting policies, and the team structure that supports financial reporting. However, the section can also be used for other policy areas, such as payroll, benefits, IT, or other target-company policies, when those are the user’s focus or are materially relevant to the analysis.
+The Reporting environment section summarizes the company-specific policies and reporting practices that matter to diligence. In most cases, this is a financial reporting and accounting policy section, so it should explain the reporting basis, audit status, close process, systems, key accounting policies, and the team structure that supports financial reporting. It can also flex to narrower policy areas, such as payroll, benefits, IT, or other target-company policies, when those are the user's focus or are materially relevant to the analysis.
 
-The goal is to explain how a policy works in practice, who owns it, how often it operates, what systems or processes support it, and why it matters for interpreting the business or the reported numbers. Summarize the policy in company-specific language rather than repeating policy text word for word.
+The goal is to explain how a policy or reporting process works in practice, who owns it, how often it operates, what systems or processes support it, and why it matters for interpreting the business or the reported numbers. Summarize the policy in company-specific language rather than repeating policy text or standards language word for word.
 
 Global writing, placeholder, and language rules are defined in `references/global-writing-conventions.md` and apply here.
 
 ## Core principles
 
 1. **Match the section title and scope to the user’s context:** The heading may be `Reporting environment`, `Accounting policies`, `Finance and reporting policies`, `Payroll and benefits policies`, `IT policies`, or another policy-focused label depending on the request.
-2. **Default to financial reporting policies when the ask is broad:** If the user asks for this section generally, lead with reporting basis, assurance, close process, systems, finance-team ownership, and the key accounting policies that shape the reported numbers.
-3. **Keep policy discussion company-specific:** Explain how the policy operates at the Company, not how the accounting standard or policy manual reads in the abstract.
-4. **Show how the policy actually works:** Include cadence, workflow, approvals, ownership, system inputs, thresholds, estimates, or exceptions when they explain how the policy is applied in practice.
-5. **Use team and ownership context where it matters:** Describe the staff, composition, outsourcing, or shared-service structure when it helps the reader understand how the policy is executed or controlled.
-6. **Keep assurance and reporting basis explicit where relevant:** Distinguish audited, reviewed, compiled, and management-prepared information clearly when the section is financial-reporting focused.
-7. **Focus on material policies and implications:** Cover the policies that affect reported numbers, operating interpretation, or diligence conclusions. Do not reproduce immaterial handbook language or generic boilerplate.
-8. **End with what the policy means for the reader:** Make clear how the policies should shape interpretation of the financial analysis, the operating model, or the specific topic the user asked about.
+2. **Default broad requests to the financial reporting environment:** If the user asks for this section generally, lead with reporting basis, audit status, close process, systems, finance-team ownership, and the accounting policies that shape the reported numbers.
+3. **Keep the discussion company-specific and practical:** Explain how the policy operates at the Company rather than paraphrasing a policy manual or accounting standard in the abstract.
+4. **Focus on the policies that change interpretation:** Cover the policies that affect reported numbers, operating interpretation, process reliability, or diligence conclusions, and leave out immaterial handbook-style detail.
+5. **Add execution context where it matters:** Include ownership, cadence, systems, thresholds, estimates, approvals, or exceptions when they help the reader understand how the policy is applied in practice.
+6. **End with the implication for the reader:** Make clear how the policy should shape interpretation of the financial analysis, operating model, or specific topic the user asked about.
 
 ## Analytical workflow
 
 1. **Define the requested policy scope:** Determine whether the user wants the default financial reporting environment, a specific policy area such as payroll or IT, or a broader mix of policy topics.
 2. **Review all provided source material before drafting:** Pull the relevant policies from the full report contents, management materials, policy summaries, audit background, system descriptions, and team information provided by the user.
-3. **Anchor the section in the right context:** If the section is reporting-focused, confirm the framework, entity coverage, assurance status, and reporting layers first. If the section is non-financial, confirm the function, policy owner, and operating scope first.
-4. **Identify the core policy topics:** Focus on the policies that most affect reported numbers, process reliability, employee obligations, system governance, or the topic requested by the user.
-5. **Map ownership, cadence, and execution:** For each material policy area, identify who owns it, how often it operates, what systems or support it relies on, and where manual intervention or judgment enters the process.
-6. **Summarize the policy in practical terms:** State how the policy works, the important thresholds or mechanics, and any exceptions or limitations that matter to the reader.
-7. **Add policy-change or framework-transition context where relevant:** Include changes in auditors, frameworks, systems, accounting treatment, or policy application only when they affect interpretation or comparability.
-8. **Describe the implications:** Explain how the policy affects the financial analysis, the operating model, or the requested topic, rather than ending with policy description alone.
-9. **Stop when the policy is fully interpretable:** Include enough detail for the reader to understand how the policy operates and why it matters, but do not turn the section into a policy manual or a controls audit.
+3. **Anchor the section in the right context:** If the section is reporting-focused, confirm the framework, entity coverage, audit status, and reporting layers first. If the section is non-financial, confirm the function, policy owner, and operating scope first.
+4. **Choose the section shape:** Decide whether the section should read as a default reporting-environment section, an accounting-policy-focused section, or a function-specific policy section.
+5. **Identify the core policy topics:** Focus on the policies that most affect reported numbers, process reliability, employee obligations, system governance, or the topic requested by the user.
+6. **Map the execution detail:** For each material policy area, identify who owns it, how often it operates, what systems or support it relies on, and where manual intervention or judgment enters the process.
+7. **Draft in final reading order:** Start with the scope and reporting context, then cover the core policy topics, then add ownership, systems, process, or transition context in the clearest order for the requested topic.
+8. **Add exceptions only when they change interpretation:** Include policy changes, framework transitions, system migrations, or manual-process limitations only when they affect comparability, reliance, or understanding.
+9. **Close with the practical implication:** Explain how the policy affects the financial analysis, operating model, or requested topic, rather than ending with policy description alone.
+10. **Stop when the policy is fully interpretable:** Include enough detail for the reader to understand how the policy operates and why it matters, but do not turn the section into a policy manual or a controls audit.
 
 ## Section architecture
 
@@ -49,12 +48,12 @@ Scale the section based on the breadth of policy topics requested, the amount of
 
 **Verbosity:**
 
-- Stop adding detail when the reader can understand which policies matter, how they operate in practice, who owns them, and what they mean for the analysis. In most cases, aim for 6-14 bullets or numbered items and roughly 450-1,050 words. Move above that range only when the section covers multiple policy areas, mixed assurance or framework issues, or a policy topic that requires deeper practical explanation.
+- Stop adding detail when the reader can understand the reporting basis, close environment, key policy mechanics, ownership, and the main implications for the analysis. In most cases, aim for 5-10 substantive bullets or numbered items and roughly 400-900 words. Move above that range only when the section covers multiple policy areas, mixed reporting-basis issues, or several policy topics that each require practical explanation.
 
 **Required content areas:**
 
 - Scope and basis
-  - Define what policy area the section covers and the context in which it should be read.
+  - Define what policy area the section covers and how the reader should frame it.
 - Core policy commentary
   - Explain the material policies in practical, company-specific terms.
 - Ownership and process context
@@ -62,24 +61,26 @@ Scale the section based on the breadth of policy topics requested, the amount of
 
 **Optional content areas:**
 
-- Assurance and audit background
-  - Add when the section is financial-reporting focused and audit status or assurance mix affects reliance.
+- Audit and reporting background
+  - Add when the section is financial-reporting focused and audit status or reporting layers affect reliance or interpretation.
 - Close process and reporting cadence
-  - Add when close timing, year-end-only entries, or review cadence affects how reported numbers should be read.
+  - Add when close timing, year-end-only entries, or reporting cadence affects how reported numbers should be read.
 - Systems and data flow
   - Add when the policy depends on specific systems, integrations, uploads, or manual journals that affect execution or reliability.
 - Policy change or framework transition
   - Add when a change in accounting framework, auditor, system, or policy application affects comparability or interpretation.
-- Non-financial policy areas
+- Topic-specific policy areas
   - Add when the user asks for payroll, benefits, IT, HR, treasury, or other policy topics beyond financial reporting.
 - Diligence implication
   - Add when the reader needs an explicit statement of how the policy should affect QoE, NWC, net debt, balance-sheet, operating, or other analysis.
+
+## Data and drafting inputs
 
 **Data / information typically needed:**
 
 - The user’s requested policy scope or the full report contents if the policy topics need to be inferred
 - Audited financial statements, management accounts, or statutory accounts where relevant
-- Audit status, review status, compilation status, or other assurance information where relevant
+- Audit status, compilation status, or other reporting-basis information where relevant
 - Policy summaries, accounting memos, management explanations, or process descriptions
 - Close calendars, reporting cadence notes, and reviewer or approver roles where relevant
 - Finance, accounting, HR, payroll, IT, or other function ownership and team composition where relevant
@@ -100,156 +101,88 @@ Scale the section based on the breadth of policy topics requested, the amount of
 **Formatting principle:**
 
 - Use a short opening scope line followed by bulleted or numbered policy commentary grouped in the order most natural for the requested topic.
-- When a policy or topic is clear, use the topic name followed by a colon in bold, then explain how the policy works in practice.
+- Prefer denser, integrated bullets over a long list of short fragments. It is usually better to combine closely related points such as reporting basis, close cadence, audit status, and key systems into one well-structured opening bullet than to split them artificially.
+- When a policy or topic is clear, use the topic name followed by a colon in bold, then explain how the policy works in practice and, where helpful, what it means for the reader.
 - Match the section title to the user’s context. Use titles such as `Reporting environment`, `Accounting policies`, `Finance and reporting policies`, `Payroll and benefits policies`, or `IT policies` as appropriate.
-- Format fiscal years as `FY24`, `FY25`, etc. Format monetary amounts as `$x.x million`, and use full amounts such as `$325,000` or `$90,000` for balances below `$0.1 million`.
-
-**Ordering rules:**
-
-- For a broad or default policy section, use this order: scope and basis -> assurance or reporting background -> close process -> systems and team ownership -> key policies -> diligence implication.
-- For a pure accounting-policy section, use this order: scope and reporting basis -> key accounting policies -> estimates or judgment areas -> transition or comparability points -> implication.
-- For a non-financial policy section, use this order: scope -> ownership and process -> core policy bullets -> exceptions or terms -> implication.
-- If financial reporting and non-financial policies both appear, lead with the financial reporting environment first unless the user clearly prioritizes another topic.
 
 ## Typical content areas
 
 Use these as the main building blocks for the section. Choose only the content areas the draft actually needs.
 
-The standard pattern is a short scope-setting line followed by policy commentary grouped by topic.
-
-Placeholder usage follows `references/global-writing-conventions.md` and is not restated in each content-area definition.
+The standard pattern is a short scope-setting line followed by policy commentary grouped by topic, with an implication line only where it adds meaning.
 
 ### Scope and title note
 
-- Purpose: define what policy area the section covers and how the reader should frame it.
-- Use when: opening the section.
-- Skip when: never; this is the normal entry point.
-- Target length: 15-40 words.
-- Source note: usually not needed.
-- Example: `The section below summarizes the Company’s reporting environment and the accounting policies that most affect historical comparability and interpretation of the financial analysis.`
+- Open the section by defining what policy area it covers and how the reader should frame it.
+- Keep this short and practical.
+- Sample wording: `The section below summarizes the Company’s reporting environment and the accounting policies that most affect historical comparability and interpretation of the financial analysis.`
 
-### Reporting basis and assurance
+### Reporting basis and audit status
 
-- Purpose: explain the reporting framework, assurance status, and the main implication for reliance.
-- Use when: the section is financial-reporting focused.
-- Skip when: the user requested a non-financial policy topic only.
-- Target length: 25-75 words.
-- Source note: recommended.
-- Example: `**Reporting basis and assurance:** The Company reports under IFRS, with audited consolidated financial statements through FY24 and management-prepared monthly packs used for FY25 YTD analysis. Annual periods can therefore be used as the primary anchor for trend work, while interim periods should be read together with the estimate and close-process notes below.`
+- Use when the section is financial-reporting focused.
+- Explain the reporting framework, audit status, close timing, and the main implication for interpretation in one integrated opening point where possible.
+- Sample wording: `**Reporting basis and close environment:** The Company has a December 31 fiscal year-end, reports under IFRS, and completes month-end close in approximately four business days. Annual financial statements are audited by BDO, while interim reporting is management-prepared. Annual periods therefore form the primary anchor for trend analysis, with interim periods read together with the estimate and close-process notes below.`
 
 ### Close process and reporting cadence
 
-- Purpose: explain how often the books or policy cycle is run and where timing or review differences matter.
-- Use when: close speed, year-end-only entries, payroll cycles, quarterly reviews, or similar cadence affects interpretation.
-- Skip when: cadence adds no meaningful context.
-- Target length: 25-80 words.
-- Source note: recommended.
-- Example: `**Close process:** Month-end close is typically completed within four business days, with quarter-end and year-end closes following the same core process plus additional review over reserve, deferred revenue, and intercompany balances.`
+- Use when close speed, year-end-only entries, payroll cycles, quarterly reviews, or similar cadence affects interpretation.
+- Skip when cadence adds no meaningful context.
+- Sample wording: `**Close process:** Month-end close is typically completed within four business days, with quarter-end and year-end closes following the same core process plus additional review over reserve, deferred revenue, and intercompany balances.`
 
 ### Team and ownership
 
-- Purpose: explain who owns the policy and how the team structure affects execution or reliance.
-- Use when: team composition, outsourcing, shared-service dependence, or concentrated ownership matters.
-- Skip when: ownership detail adds no interpretive value.
-- Target length: 25-80 words.
-- Source note: recommended.
-- Example: `**Finance team:** The finance function is led by the CFO and comprises 11 FTEs across controllership, FP&A, payroll, and treasury. The team structure supports monthly consolidation internally, although policy knowledge remains concentrated with the Controller and VP Finance.`
+- Use when team composition, outsourcing, shared-service dependence, or concentrated ownership matters.
+- Skip when ownership detail adds no interpretive value.
+- Sample wording: `**Finance team:** The finance function is led by the CFO and comprises 11 FTEs across controllership, FP&A, payroll, and treasury. The team structure supports monthly consolidation internally, although policy knowledge remains concentrated with the Controller and VP Finance.`
 
 ### Systems and data flow
 
-- Purpose: explain the systems and interfaces that support the policy or reporting process.
-- Use when: ERP, payroll, consolidation, reporting, or manual uploads materially shape execution.
-- Skip when: the content would become a software inventory with no policy implication.
-- Target length: 25-80 words.
-- Source note: recommended.
-- Example: `**Systems:** The Company uses Business Central as its ERP, Workday for payroll and HR, and a separate consolidation model for group reporting. Payroll and certain operating systems are uploaded through scheduled interfaces, with manual reclasses concentrated in consolidation and shared-service allocations.`
+- Use when ERP, payroll, consolidation, reporting, or manual uploads materially shape execution.
+- Skip when the content would become a software inventory with no policy implication.
+- Sample wording: `**Systems:** The Company uses Business Central as its ERP, Workday for payroll and HR, and a separate consolidation model for group reporting. Payroll and certain operating systems are uploaded through scheduled interfaces, with manual reclasses concentrated in consolidation and shared-service allocations.`
 
 ### Accounting policy summary
 
-- Purpose: explain a specific accounting or reporting policy in practical company-specific terms.
-- Use when: the section includes revenue recognition, leases, capitalization, provisions, loyalty, ECL, commissions, or other financial policies.
-- Skip when: the point is just a generic accounting-standard summary.
-- Target length: 35-110 words.
-- Source note: recommended.
-- Example: `**Revenue recognition:** Subscription revenue is recognized ratably over the service period, while implementation revenue is recognized using an input method based on labour hours incurred relative to total expected project hours. Monthly contract-asset and contract-liability entries are recorded where actual billings differ from revenue recognized.`
+- Use when the section includes revenue recognition, leases, capitalization, provisions, loyalty, ECL, commissions, or other financial policies.
+- Skip when the point is just a generic accounting-standard summary.
+- Sample wording: `**Revenue recognition:** Subscription revenue is recognized ratably over the service period, while implementation revenue is recognized using an input method based on labour hours incurred relative to total expected project hours. Contract assets and contract liabilities are recorded monthly where billings differ from revenue recognized, which means interim balances can move with project progress and billing timing rather than invoicing alone.`
 
 ### Estimate or judgment note
 
-- Purpose: explain where management judgment, assumptions, or year-end true-ups affect the policy outcome.
-- Use when: reserves, provisions, loyalty balances, bonus commissions, impairment, or other judgment-heavy items are material.
-- Skip when: the policy can be understood without discussing estimates.
-- Target length: 25-80 words.
-- Source note: recommended.
-- Example: `**Expected credit losses:** ECL is model-based and reviewed formally each quarter by the CFO and credit-risk leadership. Monthly results therefore reflect the standing reserve approach, while quarter-end periods may include larger assumption updates and overlay entries.`
+- Use when reserves, provisions, loyalty balances, bonus commissions, impairment, or other judgment-heavy items are material.
+- Skip when the policy can be understood without discussing estimates.
+- Sample wording: `**Expected credit losses:** ECL is model-based and reviewed formally each quarter by the CFO and credit-risk leadership. Monthly results therefore reflect the standing reserve approach, while quarter-end periods may include larger assumption updates and overlay entries.`
 
 ### Payroll or benefits policy
 
-- Purpose: explain payroll, bonus, vacation, sick leave, or employee benefits policies when requested or relevant.
-- Use when: the user asks for people-related policies or the source materials emphasize them.
-- Skip when: the section is strictly financial-reporting focused and these policies do not matter to the request.
-- Target length: 25-90 words.
-- Source note: recommended.
-- Example: `**Payroll and benefits:** Employees are paid bi-weekly, with short-term bonuses paid in the following fiscal year and long-term incentives vesting over three years. Employees are entitled to three to five weeks of vacation based on tenure, with up to one week permitted to be carried forward.`
+- Use when the user asks for people-related policies or the source materials emphasize them.
+- Skip when the section is strictly financial-reporting focused and these policies do not matter to the request.
+- Sample wording: `**Payroll and benefits:** Employees are paid bi-weekly, with short-term bonuses paid in the following fiscal year and long-term incentives vesting over three years. Employees are entitled to three to five weeks of vacation based on tenure, with up to one week permitted to be carried forward.`
 
 ### IT or systems policy
 
-- Purpose: explain IT governance, system access, data ownership, or related operating policies when requested or materially relevant.
-- Use when: the user asks for IT policies or system governance materially affects reporting or operations.
-- Skip when: IT detail is not relevant to the section’s purpose.
-- Target length: 25-90 words.
-- Source note: recommended.
-- Example: `**IT policy environment:** Core finance, payroll, and reporting systems are maintained internally, with user access administered centrally and reviewed periodically by finance and IT leadership. Key reporting outputs are therefore generated within controlled systems, although certain consolidation steps remain spreadsheet-based.`
+- Use when the user asks for IT policies or system governance materially affects reporting or operations.
+- Skip when IT detail is not relevant to the section’s purpose.
+- Sample wording: `**IT policy environment:** Core finance, payroll, and reporting systems are maintained internally, with user access administered centrally and reviewed periodically by finance and IT leadership. Key reporting outputs are therefore generated within controlled systems, although certain consolidation steps remain spreadsheet-based.`
 
 ### Policy change or framework transition
 
-- Purpose: explain a change in framework, auditor, system, or policy application that affects comparability or interpretation.
-- Use when: there is an audit change, framework bridge, system conversion, or policy transition that matters to the reader.
-- Skip when: no material transition exists.
-- Target length: 20-70 words.
-- Source note: recommended.
-- Example: `**Framework transition:** Standalone statutory entities report under local GAAP, while group reporting is prepared under IFRS. Historical periods should therefore be read using the consolidation bridge rather than the statutory accounts in isolation.`
+- Use when there is an audit change, framework bridge, system conversion, or policy transition that matters to the reader.
+- Skip when no material transition exists.
+- Sample wording: `**Framework transition:** Standalone statutory entities report under local GAAP, while group reporting is prepared under IFRS. Historical periods should therefore be read using the consolidation bridge rather than the statutory accounts in isolation.`
 
 ### Diligence implication
 
-- Purpose: state what the policy environment means for the reader’s analysis.
-- Use when: the policy discussion changes how the numbers, operations, or requested topic should be interpreted.
-- Skip when: the implication is already obvious from the preceding bullets.
-- Target length: 20-70 words.
-- Source note: usually not needed.
-- Example: `**Implication for diligence:** Annual audited periods can be relied on as the main basis for trend analysis, while interim periods should be normalized for quarterly estimate updates and any year-end-only true-up entries.`
-
-## Assembly patterns
-
-Use one of these patterns based on the policy scope. These are practical guides, not fixed templates.
-
-### Default reporting environment section
-
-- Usual flow: scope note -> reporting basis and assurance -> close process -> systems and team ownership -> key accounting policies -> diligence implication.
-- In practice, this pattern often uses 6-10 bullets.
-- Aim for 6-10 bullets plus one small exhibit only if the incoming data shape is important to show.
-- Stop adding detail when the reader understands how the reported numbers are prepared, who drives the process, and which policies matter most.
-
-### Accounting-policy deep dive
-
-- Usual flow: scope note -> reporting basis -> multiple accounting policy bullets -> estimate or transition notes -> implication.
-- In practice, this pattern often appears where revenue recognition, leases, ECL, contingent commissions, loyalty, or capitalization policies materially affect interpretation.
-- Aim for 6-12 bullets or numbered items.
-- Stop adding detail when each material policy is clear in terms of practical application and financial statement effect.
-
-### Functional policy section
-
-- Usual flow: scope note -> ownership and cadence -> payroll, benefits, IT, or other requested policy bullets -> exceptions or terms -> implication.
-- In practice, this pattern often applies when the user asks for a specific non-financial policy topic.
-- Aim for 5-9 bullets or numbered items.
-- Stop adding detail when the reader understands how the requested policies operate in practice and where the main obligations, exceptions, or dependencies sit.
+- Use when the policy discussion changes how the numbers, operations, or requested topic should be interpreted.
+- Skip when the implication is already obvious from the preceding bullets.
+- Sample wording: `**Implication for diligence:** Annual audited periods provide the strongest basis for historical analysis, while interim periods should be read together with monthly estimate updates, year-end true-ups, and any policy areas where balance recognition depends on management assumptions or billing timing.`
 
 ## Section-specific writing guidance
 
 1. Match the section title to the actual topic requested rather than forcing everything into `Reporting environment`.
 2. Use bold topic labels and explain how the policy works in practice instead of paraphrasing a policy document line by line.
-3. Include ownership, cadence, and key terms or thresholds when they materially affect how the policy should be understood.
-4. Keep audit, assurance, or limitation language factual and brief.
-5. Keep systems, staffing, and process detail only where it helps explain policy execution or interpretation.
+3. Include ownership, cadence, thresholds, or estimate mechanics only when they materially affect how the policy should be understood.
+4. Keep audit, reporting-basis, system, and limitation language factual and brief.
 
 ## Verification and review checks
 
@@ -259,7 +192,7 @@ Use one of these patterns based on the policy scope. These are practical guides,
 - If the request is broad, does the section cover the reporting basis, key policy topics, and the team or process context needed to understand them?
 - For each material policy, does the section explain how it works in practice, who owns it, and why it matters?
 - Where relevant, does the section include cadence, systems, manual dependencies, or estimate mechanics rather than describing the policy at a purely abstract level?
-- If there is an assurance, framework, or policy-transition issue, is it stated clearly and tied to interpretation?
+- If there is an audit, framework, or policy-transition issue, is it stated clearly and tied to interpretation?
 - Does the section stay company-specific and avoid reciting policy wording or accounting standards word for word?
 
 ## Full examples
@@ -275,14 +208,12 @@ The examples below show the style of policy commentary the skill should draft. T
 
 - The section below summarizes the Company’s reporting environment and the accounting policies that most affect interpretation of the historical financial analysis.
 
-- **Reporting basis and assurance:** The Company prepares consolidated financial statements under IFRS, with audited annual financial statements through FY24 and management-prepared monthly reporting packs used for FY25 YTD analysis. Annual periods therefore form the primary basis for trend work, while interim periods should be read together with the close-process and estimate notes below.
-- **Close process:** Month-end close is typically completed within four business days. Quarter-end and year-end follow the same core process, with additional review over deferred revenue, capitalization, intercompany balances, and accruals before financials are approved by the CFO.
-- **Finance team:** The finance function is led by the CFO and comprises 12 FTEs across controllership, FP&A, payroll, and treasury. Monthly reporting is prepared internally, although policy knowledge for consolidation and capitalization remains concentrated with the Controller and VP Finance.
-- **Systems:** The Company uses Business Central as its ERP, Workday for payroll and HR, and a separate consolidation model for board and lender reporting. Payroll and selected operating-system data are uploaded through scheduled interfaces, while consolidation and shared-service allocation entries include a limited number of manual journals.
-- **Revenue recognition:** Subscription revenue is recognized ratably over the contract term, while implementation revenue is recognized using an input method based on labour hours incurred relative to total expected project hours. Contract assets and liabilities are recorded monthly where billings differ from revenue recognized.
-- **Capitalized development costs:** Internal and external development costs are capitalized once projects move beyond the preliminary stage and meet the Company’s IAS 38 criteria. Capitalized costs consist primarily of labour and are amortized over three to five years once the related software is placed in service.
-- **Reserve and estimate areas:** The Company’s principal judgment areas are deferred revenue, expected implementation margins, and annual bonus accruals. These balances are reviewed monthly, with more formal challenge and true-up procedures performed at quarter-end and year-end.
-- **Implication for diligence:** Annual audited periods can be relied on as the main basis for historical analysis. Interim periods should be normalized for quarter-end estimate updates and for any capitalization or accrual true-ups recorded outside the standard month-end process.
+- **Reporting basis and close environment:** The Company has a December 31 fiscal year-end, prepares consolidated financial statements under IFRS, and completes month-end close in approximately four business days. Annual financial statements are audited by BDO through FY24, while FY25 YTD reporting is based on management-prepared monthly packs. Quarter-end and year-end follow the same core process, with additional review over deferred revenue, capitalization, intercompany balances, and accruals. Annual periods therefore form the primary basis for trend analysis, while interim periods should be read together with the estimate and close-process notes below.
+- **Finance team and systems:** The finance function is led by the CFO and comprises 12 FTEs across controllership, FP&A, payroll, and treasury. Business Central serves as the ERP, Workday supports payroll and HR, and a separate consolidation model is used for board and lender reporting. Monthly reporting is prepared internally, although policy knowledge for consolidation and capitalization remains concentrated with the Controller and VP Finance, and a limited number of manual journals continue to be posted through the consolidation process.
+- **Revenue recognition:** Subscription revenue is recognized ratably over the contract term, while implementation revenue is recognized using an input method based on labour hours incurred relative to total expected project hours. Contract assets and contract liabilities are recorded monthly where billings differ from revenue recognized, such that interim revenue and balance-sheet movements reflect both project progress and billing timing.
+- **Capitalized development costs:** Internal and external development costs are capitalized once projects move beyond the preliminary stage and meet the Company’s IAS 38 criteria. Capitalized costs consist primarily of labour and are amortized over three to five years once the related software is placed in service. Monthly capitalization is calculated using project-hour reports and standard employee cost rates, with review performed by Finance and the relevant project leaders.
+- **Reserve and estimate areas:** The principal judgment areas are deferred revenue, expected implementation margins, expected credit losses, and annual bonus accruals. These balances are reviewed monthly, with more formal challenge and true-up procedures performed at quarter-end and year-end. As a result, interim periods may include estimate revisions that are less visible in annual audited balances.
+- **Implication for diligence:** The overall reporting environment is established and decision-useful, but historical analysis should anchor on annual audited periods and assess interim movements together with recurring estimate updates, capitalization entries, and other adjustments recorded as part of the close process rather than through transaction-level invoicing alone.
 ```
 
 ### Example 2: Payroll, benefits, and IT policies
@@ -292,12 +223,9 @@ The examples below show the style of policy commentary the skill should draft. T
 
 - The section below summarizes the Company’s payroll, incentive, employee-benefit, and related IT administration policies as they operate in practice.
 
-- **Team ownership:** Payroll and benefits administration is owned jointly by the HR Director and Payroll Manager, with payroll processing supported by a third-party provider and final approval performed internally by Finance.
-- **Payroll cycle:** Employees are paid bi-weekly, with payroll covering the prior two-week work period and cash disbursed on the following Friday. Executive payroll follows the same cycle, while commission and overtime balances are reviewed and approved separately before each run.
-- **Short-term incentives:** Annual bonuses are paid in the first quarter following the fiscal year-end and are based on role-specific target percentages and company performance measures. Bonus accruals are recognized during the year through the monthly close.
-- **Long-term incentives:** Senior management participates in a three-year cash-settled long-term incentive plan linked to EBITDA and strategic objectives. Amounts are accrued over the service period and paid following the applicable vesting date.
-- **Vacation and leave:** Employees receive three weeks of vacation on hire, increasing with tenure, and may carry forward up to one week of unused vacation into the following year. Sick days do not carry forward and are not paid out on termination.
-- **Benefits administration:** Health, dental, and disability coverage are administered through a national broker, with employee deductions processed directly through payroll. Changes in employee status, salary, and participation are updated in the HRIS before the payroll cut-off for the next pay period.
-- **IT administration:** Payroll and HR data are maintained in the Company’s HRIS, with user access administered by IT and reviewed periodically by HR and Finance. Payroll files are transferred to the third-party processor through controlled exports rather than manual re-entry.
-- **Implication:** These policies are operationally standard, but the annual bonus and long-term incentive programs create recurring accrual balances, and the HRIS-to-payroll interface should be understood when interpreting payroll-related working-capital and compensation trends.
+- **Ownership and payroll cycle:** Payroll and benefits administration is owned jointly by the HR Director and Payroll Manager, with payroll processing supported by a third-party provider and final approval performed internally by Finance. Employees are paid bi-weekly for the prior two-week work period, with cash disbursed on the following Friday. Executive payroll follows the same cycle, while commission and overtime balances are reviewed separately before each run.
+- **Incentive compensation:** Annual bonuses are paid in the first quarter following the fiscal year-end and are based on role-specific target percentages and company performance measures. Senior management also participates in a three-year cash-settled long-term incentive plan linked to EBITDA and strategic objectives. Both plans are accrued through the monthly close, such that payroll-related liabilities build during the year rather than only at payment date.
+- **Vacation and benefits:** Employees receive three weeks of vacation on hire, increasing with tenure, and may carry forward up to one week of unused vacation into the following year. Sick days do not carry forward and are not paid out on termination. Health, dental, and disability coverage are administered through a national broker, with employee deductions processed directly through payroll and status changes updated in the HRIS before payroll cut-off.
+- **IT administration and controls:** Payroll and HR data are maintained in the Company’s HRIS, with user access administered by IT and reviewed periodically by HR and Finance. Payroll files are transferred to the third-party processor through controlled exports rather than manual re-entry, reducing manual handling risk within the payroll process.
+- **Implication:** These policies are operationally standard, but the bonus, LTIP, and vacation programs create recurring accrual balances, and the HRIS-to-payroll interface should be understood when interpreting payroll-related working-capital balances and compensation trends.
 ```
