@@ -1,0 +1,32 @@
+{
+  "id": "analysisNarrowTable",
+  "version": 1,
+  "builderModule": "generator/builders/analysis-narrow-table.js",
+  "builderExport": "addAnalysisNarrowTable",
+  "geometryKinds": {
+    "titleBox": "box",
+    "straplineBox": "box",
+    "tableBox": "box",
+    "rightTitleBox": "box",
+    "rightBodyBox": "box",
+    "noteBox": "box"
+  },
+  "requiredGeometry": [
+    "titleBox",
+    "straplineBox",
+    "tableBox",
+    "rightTitleBox",
+    "rightBodyBox"
+  ],
+  "optionalGeometry": [
+    "noteBox"
+  ],
+  "optionalDefaults": {},
+  "paginationPolicyKey": "table.rows.v1",
+  "master": "KPMG_WHITE",
+  "slotSchemaRef": "analysisNarrowTable",
+  "validationHooks": [
+    "tableShape"
+  ],
+  "excludeFromLogicalPaging": false
+}

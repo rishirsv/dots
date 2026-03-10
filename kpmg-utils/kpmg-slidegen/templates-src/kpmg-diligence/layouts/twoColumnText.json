@@ -1,0 +1,100 @@
+{
+  "type": "twoColumnText",
+  "primitive": "twoColumnText@1",
+  "description": "Two-column body text layout",
+  "templateLayout": "Two columns text",
+  "geometry": {
+    "titleBox": {
+      "x": 1.0918635170603674,
+      "y": 0.4722222222222222,
+      "w": 11.149606299212598,
+      "h": 0.5833333333333334
+    },
+    "straplineBox": {
+      "x": 1.0919,
+      "y": 1.2899,
+      "w": 11.1496,
+      "h": 0.5276
+    },
+    "leftBox": {
+      "x": 1.0905511811023623,
+      "y": 1.2899311023622047,
+      "w": 5.5078740157480315,
+      "h": 5.133858267716535
+    },
+    "rightBox": {
+      "x": 6.7362204724409445,
+      "y": 1.2899311023622047,
+      "w": 5.5078740157480315,
+      "h": 5.133858267716535
+    }
+  },
+  "slots": {
+    "leftBody": {
+      "kind": "textArray",
+      "required": true,
+      "minItems": 2,
+      "minChars": 80,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "bullet",
+        "keepTogether": false,
+        "priority": "high"
+      }
+    },
+    "rightBody": {
+      "kind": "textArray",
+      "required": true,
+      "minItems": 2,
+      "minChars": 80,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "bullet",
+        "keepTogether": false,
+        "priority": "high"
+      }
+    },
+    "strapline": {
+      "kind": "text",
+      "required": false,
+      "minChars": 12,
+      "maxChars": 700,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "medium"
+      }
+    },
+    "title": {
+      "kind": "text",
+      "required": true,
+      "minChars": 12,
+      "maxChars": 50,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "medium"
+      },
+      "enforceMaxChars": true
+    },
+    "bodyStyle": {
+      "kind": "text",
+      "required": false,
+      "minChars": 7,
+      "maxChars": 10,
+      "pattern": "^(bullets|paragraphs)$",
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "label",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    }
+  },
+  "densityTarget": {
+    "mode": "balanced",
+    "minScore": 0.75
+  }
+}

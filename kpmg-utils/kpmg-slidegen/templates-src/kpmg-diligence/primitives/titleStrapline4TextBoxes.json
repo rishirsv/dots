@@ -1,0 +1,23 @@
+{
+  "id": "titleStrapline4TextBoxes",
+  "version": 1,
+  "builderModule": "generator/builders/title-strapline-4-boxes.js",
+  "builderExport": "addTitleStrapline4TextBoxes",
+  "geometryKinds": {
+    "titleBox": "box",
+    "straplineBox": "box",
+    "columnBoxes": "boxArray"
+  },
+  "requiredGeometry": [
+    "titleBox",
+    "straplineBox",
+    "columnBoxes"
+  ],
+  "optionalGeometry": [],
+  "optionalDefaults": {},
+  "paginationPolicyKey": "none.v1",
+  "master": "KPMG_WHITE",
+  "slotSchemaRef": "titleStrapline4TextBoxes",
+  "validationHooks": [],
+  "excludeFromLogicalPaging": false
+}

@@ -1,0 +1,37 @@
+{
+  "id": "analysisWideChartTableText",
+  "version": 1,
+  "builderModule": "generator/builders/analysis-wide-chart-text.js",
+  "builderExport": "addAnalysisWideChartTableText",
+  "geometryKinds": {
+    "titleBox": "box",
+    "straplineBox": "box",
+    "headingBox": "box",
+    "bodyBox": "box",
+    "chartBox": "box",
+    "tableBox": "box",
+    "calloutBoxes": "boxArray",
+    "noteBox": "box"
+  },
+  "requiredGeometry": [
+    "titleBox",
+    "straplineBox",
+    "headingBox",
+    "bodyBox",
+    "chartBox",
+    "tableBox"
+  ],
+  "optionalGeometry": [
+    "calloutBoxes",
+    "noteBox"
+  ],
+  "optionalDefaults": {},
+  "paginationPolicyKey": "text.analysisWide.table.v1",
+  "master": "KPMG_WHITE",
+  "slotSchemaRef": "analysisWideChartTableText",
+  "validationHooks": [
+    "chartShape",
+    "tableShape"
+  ],
+  "excludeFromLogicalPaging": false
+}

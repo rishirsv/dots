@@ -6,7 +6,7 @@ Use this workflow when you want an agent to onboard 20-40 candidate layouts in t
 
 Each layout should move through the same repo-only stages:
 
-1. `init`: create the draft workspace, capture `reference.png`, optionally extract `geometry.seed.json`.
+1. `init`: create the draft workspace, capture `reference.png`, and emit `intake.json`, `extract.raw.json`, `extract.normalized.json`, `fingerprint.json`, and the compatibility `seed/geometry.seed.json`.
 2. `render`: build a deterministic one-slide candidate and collect `qa.json` plus preview PNG.
 3. `compare`: produce `candidate.png`, `diff.png`, `diff.json`, and `scorecard.json`.
 4. `review`: inspect deterministic failures first, then use an agent for visual triage and prioritization.
@@ -17,7 +17,7 @@ Each layout should move through the same repo-only stages:
 For each source slide:
 
 1. Run `run-layout-onboarding.mjs --stop-after init` with a chosen `layout-id`.
-2. Ask the agent to inspect `source.json`, `candidate.layout.json`, `candidate.builder.js`, `candidate.deckSpec.json`, and `seed/geometry.seed.json`.
+2. Ask the agent to inspect `source.json`, `intake.json`, `extract.raw.json`, `extract.normalized.json`, `fingerprint.json`, `candidate.layout.json`, `candidate.builder.js`, `candidate.deckSpec.json`, and `seed/geometry.seed.json`.
 3. Let the agent tighten geometry and candidate content until `render-candidate.mjs` succeeds with zero blocking QA.
 4. Run `compare-candidate.mjs`.
 5. Ask the agent to summarize the top visual mismatches using `diff.json`, `scorecard.json`, `reference.png`, `candidate.png`, and `diff.png`.
@@ -33,7 +33,7 @@ Stop the iteration and fix the draft before any promotion discussion when:
 3. `qa.json` contains blocking checks.
 4. Visual overflow is failing.
 5. Reference and candidate dimensions do not match.
-6. `scorecard.json` is missing or `pass` is `false`.
+6. `scorecard.json` is missing or `deterministicStatus` is `fail`.
 
 ## Repo-Only Boundaries
 
@@ -41,7 +41,7 @@ Keep these out of the portable skill entirely:
 
 1. Source PPTX files.
 2. Draft onboarding fixtures.
-3. Geometry seeds.
+3. Extraction evidence.
 4. Diff artifacts.
 5. Onboarding scripts.
 6. Agent prompts and review checklists.

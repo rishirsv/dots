@@ -1,1387 +1,4 @@
 {
-  "generatedAt": "2026-02-21T03:45:53.098Z",
-  "types": {
-    "analysisNarrowTable": {
-      "description": "Analysis with narrow table",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0918635170603674,
-          "y": 0.4722222222222222,
-          "w": 11.149606299212598,
-          "h": 0.5833333333333334
-        },
-        "straplineBox": {
-          "x": 1.088540026246719,
-          "y": 1.2899311023622047,
-          "w": 11.149606299212598,
-          "h": 0.5275590551181102
-        },
-        "tableBox": {
-          "x": 1.088540026246719,
-          "y": 1.9155555555555555,
-          "w": 4.035978783902012,
-          "h": 4.5078740157480315
-        },
-        "rightTitleBox": {
-          "x": 5.266138451443569,
-          "y": 1.9155555555555555,
-          "w": 6.9763779527559056,
-          "h": 0.2755905511811024
-        },
-        "rightBodyBox": {
-          "x": 5.266138451443569,
-          "y": 2.191146106736658,
-          "w": 6.975332458442694,
-          "h": 4.232283464566929
-        }
-      },
-      "slots": {
-        "notes": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "strapline": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "table": {
-          "kind": "table",
-          "required": true,
-          "minItems": 3,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "table",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 50,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          },
-          "enforceMaxChars": true
-        },
-        "insights": {
-          "kind": "textArray",
-          "required": true,
-          "minItems": 2,
-          "minChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "insightTitle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 6,
-          "maxChars": 80,
-          "allowEmpty": true,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        }
-      },
-      "templateLayout": "Analysis_narrow table",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "analysisWideChart2ColsText": {
-      "description": "Analysis with chart (right) and commentary (left)",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0918635170603674,
-          "y": 0.4722222222222222,
-          "w": 11.149606299212598,
-          "h": 0.5833333333333334
-        },
-        "straplineBox": {
-          "x": 1.088540026246719,
-          "y": 1.2899311023622047,
-          "w": 11.14643372703412,
-          "h": 0.5275590551181102
-        },
-        "bodyBox": {
-          "x": 1.088540026246719,
-          "y": 1.9155555555555555,
-          "w": 5.5078740157480315,
-          "h": 4.409448818897638
-        },
-        "chartBox": {
-          "x": 6.7362204724409445,
-          "y": 1.9155555555555555,
-          "w": 5.5078740157480315,
-          "h": 4.409448818897638
-        },
-        "calloutBoxes": [
-          {
-            "x": 4.82,
-            "y": 2.05,
-            "w": 1.75,
-            "h": 1.05
-          },
-          {
-            "x": 4.82,
-            "y": 3.22,
-            "w": 1.75,
-            "h": 1.05
-          }
-        ]
-      },
-      "slots": {
-        "body": {
-          "kind": "textArray",
-          "required": true,
-          "minItems": 4,
-          "minChars": 180,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "chart": {
-          "kind": "chart",
-          "required": true,
-          "minItems": 1,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "chart",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "strapline": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 50,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          },
-          "enforceMaxChars": true
-        },
-        "bodyStyle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 7,
-          "maxChars": 10,
-          "pattern": "^(bullets|paragraphs)$",
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "callouts": {
-          "kind": "columns",
-          "required": false,
-          "minItems": 1,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "columns",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "templateLayout": "Analysis_wide chart + 2 cols text",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "analysisWideChartTableText": {
-      "description": "Analysis with chart, table, and commentary",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0918635170603674,
-          "y": 0.4722222222222222,
-          "w": 11.149606299212598,
-          "h": 0.5833333333333334
-        },
-        "straplineBox": {
-          "x": 1.088540026246719,
-          "y": 1.2899311023622047,
-          "w": 8.298253499562554,
-          "h": 0.5275590551181102
-        },
-        "headingBox": {
-          "x": 1.088540026246719,
-          "y": 1.9155555555555555,
-          "w": 11.14643372703412,
-          "h": 0.2755905511811024
-        },
-        "bodyBox": {
-          "x": 6.7362204724409445,
-          "y": 4.2194116360454945,
-          "w": 5.505083114610674,
-          "h": 2.204724409448819
-        },
-        "chartBox": {
-          "x": 9.533981846019248,
-          "y": 1.0758639545056867,
-          "w": 2.707489063867017,
-          "h": 0.7416262029746282
-        },
-        "tableBox": {
-          "x": 1.088540026246719,
-          "y": 4.219412729658792,
-          "w": 5.5078740157480315,
-          "h": 2.204724409448819
-        },
-        "noteBox": {
-          "x": 1.09,
-          "y": 6.52,
-          "w": 11.14,
-          "h": 0.18
-        },
-        "calloutBoxes": [
-          {
-            "x": 10,
-            "y": 2.25,
-            "w": 2.24,
-            "h": 0.8
-          },
-          {
-            "x": 10,
-            "y": 3.15,
-            "w": 2.24,
-            "h": 0.8
-          }
-        ]
-      },
-      "slots": {
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 50,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          },
-          "enforceMaxChars": true
-        },
-        "strapline": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "heading": {
-          "kind": "text",
-          "required": false,
-          "minChars": 6,
-          "maxChars": 120,
-          "allowEmpty": true,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "body": {
-          "kind": "textArray",
-          "required": true,
-          "minItems": 4,
-          "minChars": 180,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "chart": {
-          "kind": "chart",
-          "required": true,
-          "minItems": 1,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "chart",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "table": {
-          "kind": "table",
-          "required": false,
-          "minItems": 3,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "table",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "noteSource": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "bodyStyle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 7,
-          "maxChars": 10,
-          "pattern": "^(bullets|paragraphs)$",
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "callouts": {
-          "kind": "columns",
-          "required": false,
-          "minItems": 1,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "columns",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "templateLayout": "Analysis_wide chart+table+text",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "analysisBridge": {
-      "description": "Waterfall bridge with flexible analysis phases",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0919,
-          "y": 0.4722,
-          "w": 11.1496,
-          "h": 0.5833
-        },
-        "chartBox": {
-          "x": 0.9325,
-          "y": 1.7348,
-          "w": 11.3089,
-          "h": 2.9287
-        },
-        "analysisBoxes": [
-          {
-            "x": 1.0989,
-            "y": 4.8637,
-            "w": 3.8176,
-            "h": 1.5817
-          },
-          {
-            "x": 5.0543,
-            "y": 4.8665,
-            "w": 4.0557,
-            "h": 1.5817
-          },
-          {
-            "x": 9.2549,
-            "y": 4.8637,
-            "w": 2.986,
-            "h": 1.5817
-          }
-        ],
-        "sourceBox": {
-          "x": 1.1008,
-          "y": 6.4648,
-          "w": 5.7035,
-          "h": 0.202
-        },
-        "typography": {
-          "strapline": 10,
-          "bridgeValue": 6.5,
-          "bridgeLabel": 6,
-          "phaseBadge": 8,
-          "analysisBadge": 7,
-          "analysisHeading": 10,
-          "analysisBody": 9,
-          "error": 9
-        }
-      },
-      "slots": {
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "high"
-          },
-          "enforceMaxChars": true
-        },
-        "bridge": {
-          "kind": "bridge",
-          "required": true,
-          "minItems": 4,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "chart",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "analysisColumns": {
-          "kind": "columns",
-          "required": true,
-          "minItems": 1,
-          "maxItems": 4,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "strapline": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "bodyStyle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 7,
-          "maxChars": 10,
-          "pattern": "^(bullets|paragraphs)$",
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "source": {
-          "kind": "text",
-          "required": false,
-          "minChars": 10,
-          "maxChars": 500,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "note": {
-          "kind": "text",
-          "required": false,
-          "minChars": 10,
-          "maxChars": 500,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.76
-      }
-    },
-    "businessOverview": {
-      "description": "Business overview with transaction perimeter panel and company narrative",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0919,
-          "y": 0.4722,
-          "w": 11.1496,
-          "h": 0.5833
-        },
-        "leftHeadingBox": {
-          "x": 1.0885,
-          "y": 1.2899,
-          "w": 6.2,
-          "h": 0.34
-        },
-        "leftBox": {
-          "x": 1.01,
-          "y": 1.66,
-          "w": 6.35,
-          "h": 2.95
-        },
-        "rightHeadingBox": {
-          "x": 7.6,
-          "y": 1.2899,
-          "w": 4.62,
-          "h": 0.34
-        },
-        "bodyBox": {
-          "x": 7.6,
-          "y": 1.66,
-          "w": 4.62,
-          "h": 4.76
-        },
-        "chartBox": {
-          "x": 9.34,
-          "y": 5.08,
-          "w": 2.88,
-          "h": 1.56
-        },
-        "sourceBox": {
-          "x": 1.1008,
-          "y": 6.4648,
-          "w": 6,
-          "h": 0.2
-        }
-      },
-      "slots": {
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 50,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "high"
-          },
-          "enforceMaxChars": true
-        },
-        "leftHeading": {
-          "kind": "text",
-          "required": false,
-          "minChars": 6,
-          "maxChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "rightHeading": {
-          "kind": "text",
-          "required": false,
-          "minChars": 6,
-          "maxChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "structure": {
-          "kind": "businessStructure",
-          "required": true,
-          "minItems": 4,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "diagram",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "overviewBody": {
-          "kind": "textArray",
-          "required": true,
-          "minItems": 2,
-          "minChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "chart": {
-          "kind": "chart",
-          "required": false,
-          "minItems": 1,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "chart",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "source": {
-          "kind": "text",
-          "required": false,
-          "minChars": 10,
-          "maxChars": 500,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "note": {
-          "kind": "text",
-          "required": false,
-          "minChars": 10,
-          "maxChars": 500,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "bodyStyle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 7,
-          "maxChars": 10,
-          "pattern": "^(bullets|paragraphs)$",
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "backCover": {
-      "description": "Back cover with disclaimer",
-      "slots": {
-        "disclaimer": {
-          "kind": "text",
-          "required": false,
-          "minChars": 80,
-          "maxChars": 700,
-          "allowEmpty": true,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "url": {
-          "kind": "text",
-          "required": false,
-          "minChars": 5,
-          "maxChars": 60,
-          "allowEmpty": true,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "templateLayout": "Back cover_2",
-      "geometry": {
-        "logoBox": {
-          "x": 1.0919466316710411,
-          "y": 0.4060706474190726,
-          "w": 1,
-          "h": 0.4028280839895013
-        },
-        "headingBox": {
-          "x": 1.095,
-          "y": 1.11,
-          "w": 10.25,
-          "h": 1.05
-        },
-        "disclaimerBox": {
-          "x": 1.09,
-          "y": 6.45,
-          "w": 10.65,
-          "h": 0.42
-        },
-        "urlBox": {
-          "x": 1.09,
-          "y": 7.18,
-          "w": 2.3,
-          "h": 0.16
-        }
-      },
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0
-      }
-    },
-    "cover": {
-      "description": "Cover with blue background, left title, right image window",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0919488188976378,
-          "y": 1.5927252843394575,
-          "w": 4.043974190726159,
-          "h": 3.7486253280839894
-        },
-        "subtitleBox": {
-          "x": 1.0919488188976378,
-          "y": 5.475732720909886,
-          "w": 4.043974190726159,
-          "h": 0.8858267716535433
-        },
-        "photoBox": {
-          "x": 5.37616469816273,
-          "y": 1.5927252843394575,
-          "w": 6.872099737532809,
-          "h": 4.77361220472441
-        },
-        "logoBox": {
-          "x": 1.0919466316710411,
-          "y": 0.4060706474190726,
-          "w": 1,
-          "h": 0.4028280839895013
-        }
-      },
-      "slots": {
-        "subtitle": {
-          "kind": "text",
-          "maxLength": 200,
-          "required": true,
-          "minChars": 12,
-          "maxChars": 200,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "title": {
-          "kind": "text",
-          "maxLength": 100,
-          "required": true,
-          "minChars": 8,
-          "maxChars": 100,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        }
-      },
-      "templateLayout": "Cover page_Right Horizontal Window",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.65
-      }
-    },
-    "divider": {
-      "description": "Section divider with gradient window",
-      "geometry": {
-        "gradientBox": {
-          "x": 1.0919466316710411,
-          "y": 1.0674245406824148,
-          "w": 7.722863079615048,
-          "h": 5.364583333333333
-        },
-        "numberBox": {
-          "x": 1.4106080489938757,
-          "y": 1.246794619422572,
-          "w": 1.1840277777777777,
-          "h": 0.8885936132983377
-        },
-        "titleBox": {
-          "x": 1.410609142607174,
-          "y": 2.385036089238845,
-          "w": 6.913194444444445,
-          "h": 0.7620100612423447
-        }
-      },
-      "slots": {
-        "sectionNumber": {
-          "kind": "text",
-          "pattern": "^\\d{2}$",
-          "required": true,
-          "minChars": 2,
-          "maxChars": 2,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "sectionTitle": {
-          "kind": "text",
-          "maxLength": 80,
-          "required": true,
-          "minChars": 6,
-          "maxChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        }
-      },
-      "templateLayout": "Divider slide_5",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "oneColumnText": {
-      "description": "Single-column body text layout",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0918635170603674,
-          "y": 0.4722222222222222,
-          "w": 11.149606299212598,
-          "h": 0.5833333333333334
-        },
-        "straplineBox": {
-          "x": 1.0919,
-          "y": 1.2899,
-          "w": 11.1496,
-          "h": 0.5276
-        },
-        "bodyBox": {
-          "x": 1.0919,
-          "y": 1.2899,
-          "w": 11.1596,
-          "h": 5.18
-        },
-        "sourceBox": {
-          "x": 1.0919,
-          "y": 6.52,
-          "w": 11.1596,
-          "h": 0.18
-        },
-        "calloutBoxes": [
-          {
-            "x": 9.05,
-            "y": 2,
-            "w": 3.2,
-            "h": 1.15
-          },
-          {
-            "x": 9.05,
-            "y": 3.25,
-            "w": 3.2,
-            "h": 1.15
-          }
-        ]
-      },
-      "slots": {
-        "body": {
-          "kind": "textArray",
-          "required": true,
-          "minItems": 3,
-          "minChars": 180,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "strapline": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "source": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 50,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          },
-          "enforceMaxChars": true
-        },
-        "bodyStyle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 7,
-          "maxChars": 10,
-          "pattern": "^(bullets|paragraphs)$",
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        },
-        "callouts": {
-          "kind": "columns",
-          "required": false,
-          "minItems": 1,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "columns",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "titleStrapline4TextBoxes": {
-      "description": "Title + strapline + 4 text boxes",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0918635170603674,
-          "y": 0.4722222222222222,
-          "w": 11.149606299212598,
-          "h": 0.5833333333333334
-        },
-        "straplineBox": {
-          "x": 1.0919,
-          "y": 1.2899,
-          "w": 11.1496,
-          "h": 0.5276
-        },
-        "columnBoxes": [
-          {
-            "x": 1.0919,
-            "y": 1.2899,
-            "w": 2.6,
-            "h": 5.16
-          },
-          {
-            "x": 3.9,
-            "y": 1.2899,
-            "w": 2.6,
-            "h": 5.16
-          },
-          {
-            "x": 6.7,
-            "y": 1.2899,
-            "w": 2.6,
-            "h": 5.16
-          },
-          {
-            "x": 9.5,
-            "y": 1.2899,
-            "w": 2.6,
-            "h": 5.16
-          }
-        ]
-      },
-      "slots": {
-        "columns": {
-          "kind": "columns",
-          "required": true,
-          "minItems": 4,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "columns",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "strapline": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 50,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          },
-          "enforceMaxChars": true
-        },
-        "bodyStyle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 7,
-          "maxChars": 10,
-          "pattern": "^(bullets|paragraphs)$",
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "templateLayout": "Title+strapline+4 text boxes",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "twoColumnText": {
-      "description": "Two-column body text layout",
-      "geometry": {
-        "titleBox": {
-          "x": 1.0918635170603674,
-          "y": 0.4722222222222222,
-          "w": 11.149606299212598,
-          "h": 0.5833333333333334
-        },
-        "straplineBox": {
-          "x": 1.0919,
-          "y": 1.2899,
-          "w": 11.1496,
-          "h": 0.5276
-        },
-        "leftBox": {
-          "x": 1.0905511811023623,
-          "y": 1.2899311023622047,
-          "w": 5.5078740157480315,
-          "h": 5.133858267716535
-        },
-        "rightBox": {
-          "x": 6.7362204724409445,
-          "y": 1.2899311023622047,
-          "w": 5.5078740157480315,
-          "h": 5.133858267716535
-        }
-      },
-      "slots": {
-        "leftBody": {
-          "kind": "textArray",
-          "required": true,
-          "minItems": 2,
-          "minChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "rightBody": {
-          "kind": "textArray",
-          "required": true,
-          "minItems": 2,
-          "minChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "bullet",
-            "keepTogether": false,
-            "priority": "high"
-          }
-        },
-        "strapline": {
-          "kind": "text",
-          "required": false,
-          "minChars": 12,
-          "maxChars": 700,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          }
-        },
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 12,
-          "maxChars": 50,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "paragraph",
-            "keepTogether": true,
-            "priority": "medium"
-          },
-          "enforceMaxChars": true
-        },
-        "bodyStyle": {
-          "kind": "text",
-          "required": false,
-          "minChars": 7,
-          "maxChars": 10,
-          "pattern": "^(bullets|paragraphs)$",
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "low"
-          }
-        }
-      },
-      "templateLayout": "Two columns text",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "dividerDark": {
-      "description": "Section divider (dark variant)",
-      "geometry": {
-        "gradientBox": {
-          "x": 1.0919466316710411,
-          "y": 1.0674245406824148,
-          "w": 7.722863079615048,
-          "h": 5.364583333333333
-        },
-        "numberBox": {
-          "x": 1.4106080489938757,
-          "y": 1.246794619422572,
-          "w": 1.1840277777777777,
-          "h": 0.8885936132983377
-        },
-        "titleBox": {
-          "x": 1.410609142607174,
-          "y": 2.385036089238845,
-          "w": 6.913194444444445,
-          "h": 0.7620100612423447
-        }
-      },
-      "slots": {
-        "sectionNumber": {
-          "kind": "text",
-          "pattern": "^\\d{2}$",
-          "required": true,
-          "minChars": 2,
-          "maxChars": 2,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "sectionTitle": {
-          "kind": "text",
-          "maxLength": 80,
-          "required": true,
-          "minChars": 6,
-          "maxChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        }
-      },
-      "templateLayout": "Divider slide_5",
-      "variant": "dark",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "dividerLight": {
-      "description": "Section divider (light variant)",
-      "geometry": {
-        "gradientBox": {
-          "x": 1.0919466316710411,
-          "y": 1.0674245406824148,
-          "w": 7.722863079615048,
-          "h": 5.364583333333333
-        },
-        "numberBox": {
-          "x": 1.4106080489938757,
-          "y": 1.246794619422572,
-          "w": 1.1840277777777777,
-          "h": 0.8885936132983377
-        },
-        "titleBox": {
-          "x": 1.410609142607174,
-          "y": 2.385036089238845,
-          "w": 6.913194444444445,
-          "h": 0.7620100612423447
-        }
-      },
-      "slots": {
-        "sectionNumber": {
-          "kind": "text",
-          "pattern": "^\\d{2}$",
-          "required": true,
-          "minChars": 2,
-          "maxChars": 2,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "label",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "sectionTitle": {
-          "kind": "text",
-          "maxLength": 80,
-          "required": true,
-          "minChars": 6,
-          "maxChars": 80,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        }
-      },
-      "templateLayout": "Divider slide_2",
-      "variant": "light",
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.75
-      }
-    },
-    "contents": {
-      "description": "Table of contents slide with two rows of section blocks",
-      "templateLayout": "Contents",
-      "geometry": {
-        "titleBox": {
-          "x": 1.089,
-          "y": 0.472,
-          "w": 11.1457,
-          "h": 0.6181
-        },
-        "topRowBox": {
-          "x": 1.089,
-          "y": 1.38,
-          "w": 11.153,
-          "h": 2.35
-        },
-        "bottomRowBox": {
-          "x": 1.089,
-          "y": 4.04,
-          "w": 11.153,
-          "h": 2.35
-        }
-      },
-      "slots": {
-        "title": {
-          "kind": "text",
-          "required": true,
-          "minChars": 6,
-          "maxChars": 40,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "heading",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        },
-        "sections": {
-          "kind": "contentsSections",
-          "required": true,
-          "minItems": 3,
-          "allowEmpty": false,
-          "renderingHints": {
-            "mode": "contents",
-            "keepTogether": true,
-            "priority": "high"
-          }
-        }
-      },
-      "densityTarget": {
-        "mode": "balanced",
-        "minScore": 0.8
-      }
-    }
-  },
   "detectedLayoutSlots": {
     "Analysis_2 columns text": {
       "chartNames": [],
@@ -4777,6 +3394,1390 @@
             "h": 7.5
           }
         ]
+      }
+    }
+  },
+  "generatedFileHeader": "GENERATED FILE - DO NOT EDIT DIRECTLY. Source: templates-src/kpmg-diligence/*",
+  "types": {
+    "analysisBridge": {
+      "description": "Waterfall bridge with flexible analysis phases",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0919,
+          "y": 0.4722,
+          "w": 11.1496,
+          "h": 0.5833
+        },
+        "chartBox": {
+          "x": 0.9325,
+          "y": 1.7348,
+          "w": 11.3089,
+          "h": 2.9287
+        },
+        "analysisBoxes": [
+          {
+            "x": 1.0989,
+            "y": 4.8637,
+            "w": 3.8176,
+            "h": 1.5817
+          },
+          {
+            "x": 5.0543,
+            "y": 4.8665,
+            "w": 4.0557,
+            "h": 1.5817
+          },
+          {
+            "x": 9.2549,
+            "y": 4.8637,
+            "w": 2.986,
+            "h": 1.5817
+          }
+        ],
+        "sourceBox": {
+          "x": 1.1008,
+          "y": 6.4648,
+          "w": 5.7035,
+          "h": 0.202
+        },
+        "typography": {
+          "strapline": 10,
+          "bridgeValue": 6.5,
+          "bridgeLabel": 6,
+          "phaseBadge": 8,
+          "analysisBadge": 7,
+          "analysisHeading": 10,
+          "analysisBody": 9,
+          "error": 9
+        }
+      },
+      "slots": {
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "high"
+          },
+          "enforceMaxChars": true
+        },
+        "bridge": {
+          "kind": "bridge",
+          "required": true,
+          "minItems": 4,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "chart",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "analysisColumns": {
+          "kind": "columns",
+          "required": true,
+          "minItems": 1,
+          "maxItems": 4,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "strapline": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "bodyStyle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 7,
+          "maxChars": 10,
+          "pattern": "^(bullets|paragraphs)$",
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "source": {
+          "kind": "text",
+          "required": false,
+          "minChars": 10,
+          "maxChars": 500,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "note": {
+          "kind": "text",
+          "required": false,
+          "minChars": 10,
+          "maxChars": 500,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "analysisBridge",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.76
+      }
+    },
+    "analysisNarrowTable": {
+      "description": "Analysis with narrow table",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0918635170603674,
+          "y": 0.4722222222222222,
+          "w": 11.149606299212598,
+          "h": 0.5833333333333334
+        },
+        "straplineBox": {
+          "x": 1.088540026246719,
+          "y": 1.2899311023622047,
+          "w": 11.149606299212598,
+          "h": 0.5275590551181102
+        },
+        "tableBox": {
+          "x": 1.088540026246719,
+          "y": 1.9155555555555555,
+          "w": 4.035978783902012,
+          "h": 4.5078740157480315
+        },
+        "rightTitleBox": {
+          "x": 5.266138451443569,
+          "y": 1.9155555555555555,
+          "w": 6.9763779527559056,
+          "h": 0.2755905511811024
+        },
+        "rightBodyBox": {
+          "x": 5.266138451443569,
+          "y": 2.191146106736658,
+          "w": 6.975332458442694,
+          "h": 4.232283464566929
+        }
+      },
+      "slots": {
+        "notes": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "strapline": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "table": {
+          "kind": "table",
+          "required": true,
+          "minItems": 3,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "table",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 50,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          },
+          "enforceMaxChars": true
+        },
+        "insights": {
+          "kind": "textArray",
+          "required": true,
+          "minItems": 2,
+          "minChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "insightTitle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 6,
+          "maxChars": 80,
+          "allowEmpty": true,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        }
+      },
+      "templateLayout": "Analysis_narrow table",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "analysisWideChart2ColsText": {
+      "description": "Analysis with chart (right) and commentary (left)",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0918635170603674,
+          "y": 0.4722222222222222,
+          "w": 11.149606299212598,
+          "h": 0.5833333333333334
+        },
+        "straplineBox": {
+          "x": 1.088540026246719,
+          "y": 1.2899311023622047,
+          "w": 11.14643372703412,
+          "h": 0.5275590551181102
+        },
+        "bodyBox": {
+          "x": 1.088540026246719,
+          "y": 1.9155555555555555,
+          "w": 5.5078740157480315,
+          "h": 4.409448818897638
+        },
+        "chartBox": {
+          "x": 6.7362204724409445,
+          "y": 1.9155555555555555,
+          "w": 5.5078740157480315,
+          "h": 4.409448818897638
+        },
+        "calloutBoxes": [
+          {
+            "x": 4.82,
+            "y": 2.05,
+            "w": 1.75,
+            "h": 1.05
+          },
+          {
+            "x": 4.82,
+            "y": 3.22,
+            "w": 1.75,
+            "h": 1.05
+          }
+        ]
+      },
+      "slots": {
+        "body": {
+          "kind": "textArray",
+          "required": true,
+          "minItems": 4,
+          "minChars": 180,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "chart": {
+          "kind": "chart",
+          "required": true,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "chart",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "strapline": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 50,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          },
+          "enforceMaxChars": true
+        },
+        "bodyStyle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 7,
+          "maxChars": 10,
+          "pattern": "^(bullets|paragraphs)$",
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "callouts": {
+          "kind": "columns",
+          "required": false,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "columns",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "Analysis_wide chart + 2 cols text",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "analysisWideChartTableText": {
+      "description": "Analysis with chart, table, and commentary",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0918635170603674,
+          "y": 0.4722222222222222,
+          "w": 11.149606299212598,
+          "h": 0.5833333333333334
+        },
+        "straplineBox": {
+          "x": 1.088540026246719,
+          "y": 1.2899311023622047,
+          "w": 8.298253499562554,
+          "h": 0.5275590551181102
+        },
+        "headingBox": {
+          "x": 1.088540026246719,
+          "y": 1.9155555555555555,
+          "w": 11.14643372703412,
+          "h": 0.2755905511811024
+        },
+        "bodyBox": {
+          "x": 6.7362204724409445,
+          "y": 4.2194116360454945,
+          "w": 5.505083114610674,
+          "h": 2.204724409448819
+        },
+        "chartBox": {
+          "x": 9.533981846019248,
+          "y": 1.0758639545056867,
+          "w": 2.707489063867017,
+          "h": 0.7416262029746282
+        },
+        "tableBox": {
+          "x": 1.088540026246719,
+          "y": 4.219412729658792,
+          "w": 5.5078740157480315,
+          "h": 2.204724409448819
+        },
+        "noteBox": {
+          "x": 1.09,
+          "y": 6.52,
+          "w": 11.14,
+          "h": 0.18
+        },
+        "calloutBoxes": [
+          {
+            "x": 10,
+            "y": 2.25,
+            "w": 2.24,
+            "h": 0.8
+          },
+          {
+            "x": 10,
+            "y": 3.15,
+            "w": 2.24,
+            "h": 0.8
+          }
+        ]
+      },
+      "slots": {
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 50,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          },
+          "enforceMaxChars": true
+        },
+        "strapline": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "heading": {
+          "kind": "text",
+          "required": false,
+          "minChars": 6,
+          "maxChars": 120,
+          "allowEmpty": true,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "body": {
+          "kind": "textArray",
+          "required": true,
+          "minItems": 4,
+          "minChars": 180,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "chart": {
+          "kind": "chart",
+          "required": true,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "chart",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "table": {
+          "kind": "table",
+          "required": false,
+          "minItems": 3,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "table",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "noteSource": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "bodyStyle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 7,
+          "maxChars": 10,
+          "pattern": "^(bullets|paragraphs)$",
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "callouts": {
+          "kind": "columns",
+          "required": false,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "columns",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "Analysis_wide chart+table+text",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "backCover": {
+      "description": "Back cover with disclaimer",
+      "geometry": {
+        "logoBox": {
+          "x": 1.0919466316710411,
+          "y": 0.4060706474190726,
+          "w": 1,
+          "h": 0.4028280839895013
+        },
+        "headingBox": {
+          "x": 1.095,
+          "y": 1.11,
+          "w": 10.25,
+          "h": 1.05
+        },
+        "disclaimerBox": {
+          "x": 1.09,
+          "y": 6.45,
+          "w": 10.65,
+          "h": 0.42
+        },
+        "urlBox": {
+          "x": 1.09,
+          "y": 7.18,
+          "w": 2.3,
+          "h": 0.16
+        }
+      },
+      "slots": {
+        "disclaimer": {
+          "kind": "text",
+          "required": false,
+          "minChars": 80,
+          "maxChars": 700,
+          "allowEmpty": true,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "url": {
+          "kind": "text",
+          "required": false,
+          "minChars": 5,
+          "maxChars": 60,
+          "allowEmpty": true,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "Back cover_2",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0
+      }
+    },
+    "businessOverview": {
+      "description": "Business overview with transaction perimeter panel and company narrative",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0919,
+          "y": 0.4722,
+          "w": 11.1496,
+          "h": 0.5833
+        },
+        "leftHeadingBox": {
+          "x": 1.0885,
+          "y": 1.2899,
+          "w": 6.2,
+          "h": 0.34
+        },
+        "leftBox": {
+          "x": 1.01,
+          "y": 1.66,
+          "w": 6.35,
+          "h": 2.95
+        },
+        "rightHeadingBox": {
+          "x": 7.6,
+          "y": 1.2899,
+          "w": 4.62,
+          "h": 0.34
+        },
+        "bodyBox": {
+          "x": 7.6,
+          "y": 1.66,
+          "w": 4.62,
+          "h": 4.76
+        },
+        "chartBox": {
+          "x": 9.34,
+          "y": 5.08,
+          "w": 2.88,
+          "h": 1.56
+        },
+        "sourceBox": {
+          "x": 1.1008,
+          "y": 6.4648,
+          "w": 6,
+          "h": 0.2
+        }
+      },
+      "slots": {
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 50,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "high"
+          },
+          "enforceMaxChars": true
+        },
+        "leftHeading": {
+          "kind": "text",
+          "required": false,
+          "minChars": 6,
+          "maxChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "rightHeading": {
+          "kind": "text",
+          "required": false,
+          "minChars": 6,
+          "maxChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "structure": {
+          "kind": "businessStructure",
+          "required": true,
+          "minItems": 4,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "diagram",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "overviewBody": {
+          "kind": "textArray",
+          "required": true,
+          "minItems": 2,
+          "minChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "chart": {
+          "kind": "chart",
+          "required": false,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "chart",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "source": {
+          "kind": "text",
+          "required": false,
+          "minChars": 10,
+          "maxChars": 500,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "note": {
+          "kind": "text",
+          "required": false,
+          "minChars": 10,
+          "maxChars": 500,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "bodyStyle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 7,
+          "maxChars": 10,
+          "pattern": "^(bullets|paragraphs)$",
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "businessOverview",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "contents": {
+      "description": "Table of contents slide with two rows of section blocks",
+      "geometry": {
+        "titleBox": {
+          "x": 1.089,
+          "y": 0.472,
+          "w": 11.1457,
+          "h": 0.6181
+        },
+        "topRowBox": {
+          "x": 1.089,
+          "y": 1.38,
+          "w": 11.153,
+          "h": 2.35
+        },
+        "bottomRowBox": {
+          "x": 1.089,
+          "y": 4.04,
+          "w": 11.153,
+          "h": 2.35
+        }
+      },
+      "slots": {
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 6,
+          "maxChars": 40,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "sections": {
+          "kind": "contentsSections",
+          "required": true,
+          "minItems": 3,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "contents",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        }
+      },
+      "templateLayout": "Contents",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.8
+      }
+    },
+    "cover": {
+      "description": "Cover with blue background, left title, right image window",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0919488188976378,
+          "y": 1.5927252843394575,
+          "w": 4.043974190726159,
+          "h": 3.7486253280839894
+        },
+        "subtitleBox": {
+          "x": 1.0919488188976378,
+          "y": 5.475732720909886,
+          "w": 4.043974190726159,
+          "h": 0.8858267716535433
+        },
+        "photoBox": {
+          "x": 5.37616469816273,
+          "y": 1.5927252843394575,
+          "w": 6.872099737532809,
+          "h": 4.77361220472441
+        },
+        "logoBox": {
+          "x": 1.0919466316710411,
+          "y": 0.4060706474190726,
+          "w": 1,
+          "h": 0.4028280839895013
+        }
+      },
+      "slots": {
+        "subtitle": {
+          "kind": "text",
+          "maxLength": 200,
+          "required": true,
+          "minChars": 12,
+          "maxChars": 200,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "title": {
+          "kind": "text",
+          "maxLength": 100,
+          "required": true,
+          "minChars": 8,
+          "maxChars": 100,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        }
+      },
+      "templateLayout": "Cover page_Right Horizontal Window",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.65
+      }
+    },
+    "divider": {
+      "description": "Section divider with gradient window",
+      "geometry": {
+        "gradientBox": {
+          "x": 1.0919466316710411,
+          "y": 1.0674245406824148,
+          "w": 7.722863079615048,
+          "h": 5.364583333333333
+        },
+        "numberBox": {
+          "x": 1.4106080489938757,
+          "y": 1.246794619422572,
+          "w": 1.1840277777777777,
+          "h": 0.8885936132983377
+        },
+        "titleBox": {
+          "x": 1.410609142607174,
+          "y": 2.385036089238845,
+          "w": 6.913194444444445,
+          "h": 0.7620100612423447
+        }
+      },
+      "slots": {
+        "sectionNumber": {
+          "kind": "text",
+          "pattern": "^\\d{2}$",
+          "required": true,
+          "minChars": 2,
+          "maxChars": 2,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "sectionTitle": {
+          "kind": "text",
+          "maxLength": 80,
+          "required": true,
+          "minChars": 6,
+          "maxChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        }
+      },
+      "templateLayout": "Divider slide_5",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "dividerDark": {
+      "description": "Section divider (dark variant)",
+      "geometry": {
+        "gradientBox": {
+          "x": 1.0919466316710411,
+          "y": 1.0674245406824148,
+          "w": 7.722863079615048,
+          "h": 5.364583333333333
+        },
+        "numberBox": {
+          "x": 1.4106080489938757,
+          "y": 1.246794619422572,
+          "w": 1.1840277777777777,
+          "h": 0.8885936132983377
+        },
+        "titleBox": {
+          "x": 1.410609142607174,
+          "y": 2.385036089238845,
+          "w": 6.913194444444445,
+          "h": 0.7620100612423447
+        }
+      },
+      "slots": {
+        "sectionNumber": {
+          "kind": "text",
+          "pattern": "^\\d{2}$",
+          "required": true,
+          "minChars": 2,
+          "maxChars": 2,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "sectionTitle": {
+          "kind": "text",
+          "maxLength": 80,
+          "required": true,
+          "minChars": 6,
+          "maxChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        }
+      },
+      "templateLayout": "Divider slide_5",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "dividerLight": {
+      "description": "Section divider (light variant)",
+      "geometry": {
+        "gradientBox": {
+          "x": 1.0919466316710411,
+          "y": 1.0674245406824148,
+          "w": 7.722863079615048,
+          "h": 5.364583333333333
+        },
+        "numberBox": {
+          "x": 1.4106080489938757,
+          "y": 1.246794619422572,
+          "w": 1.1840277777777777,
+          "h": 0.8885936132983377
+        },
+        "titleBox": {
+          "x": 1.410609142607174,
+          "y": 2.385036089238845,
+          "w": 6.913194444444445,
+          "h": 0.7620100612423447
+        }
+      },
+      "slots": {
+        "sectionNumber": {
+          "kind": "text",
+          "pattern": "^\\d{2}$",
+          "required": true,
+          "minChars": 2,
+          "maxChars": 2,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "sectionTitle": {
+          "kind": "text",
+          "maxLength": 80,
+          "required": true,
+          "minChars": 6,
+          "maxChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "heading",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        }
+      },
+      "templateLayout": "Divider slide_2",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "oneColumnText": {
+      "description": "Single-column body text layout",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0918635170603674,
+          "y": 0.4722222222222222,
+          "w": 11.149606299212598,
+          "h": 0.5833333333333334
+        },
+        "straplineBox": {
+          "x": 1.0919,
+          "y": 1.2899,
+          "w": 11.1496,
+          "h": 0.5276
+        },
+        "bodyBox": {
+          "x": 1.0919,
+          "y": 1.2899,
+          "w": 11.1596,
+          "h": 5.18
+        },
+        "sourceBox": {
+          "x": 1.0919,
+          "y": 6.52,
+          "w": 11.1596,
+          "h": 0.18
+        },
+        "calloutBoxes": [
+          {
+            "x": 9.05,
+            "y": 2,
+            "w": 3.2,
+            "h": 1.15
+          },
+          {
+            "x": 9.05,
+            "y": 3.25,
+            "w": 3.2,
+            "h": 1.15
+          }
+        ]
+      },
+      "slots": {
+        "body": {
+          "kind": "textArray",
+          "required": true,
+          "minItems": 3,
+          "minChars": 180,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "strapline": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "source": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 50,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          },
+          "enforceMaxChars": true
+        },
+        "bodyStyle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 7,
+          "maxChars": 10,
+          "pattern": "^(bullets|paragraphs)$",
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        },
+        "callouts": {
+          "kind": "columns",
+          "required": false,
+          "minItems": 1,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "columns",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "oneColumnText",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "titleStrapline4TextBoxes": {
+      "description": "Title + strapline + 4 text boxes",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0918635170603674,
+          "y": 0.4722222222222222,
+          "w": 11.149606299212598,
+          "h": 0.5833333333333334
+        },
+        "straplineBox": {
+          "x": 1.0919,
+          "y": 1.2899,
+          "w": 11.1496,
+          "h": 0.5276
+        },
+        "columnBoxes": [
+          {
+            "x": 1.0919,
+            "y": 1.2899,
+            "w": 2.6,
+            "h": 5.16
+          },
+          {
+            "x": 3.9,
+            "y": 1.2899,
+            "w": 2.6,
+            "h": 5.16
+          },
+          {
+            "x": 6.7,
+            "y": 1.2899,
+            "w": 2.6,
+            "h": 5.16
+          },
+          {
+            "x": 9.5,
+            "y": 1.2899,
+            "w": 2.6,
+            "h": 5.16
+          }
+        ]
+      },
+      "slots": {
+        "columns": {
+          "kind": "columns",
+          "required": true,
+          "minItems": 4,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "columns",
+            "keepTogether": true,
+            "priority": "high"
+          }
+        },
+        "strapline": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 50,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          },
+          "enforceMaxChars": true
+        },
+        "bodyStyle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 7,
+          "maxChars": 10,
+          "pattern": "^(bullets|paragraphs)$",
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "Title+strapline+4 text boxes",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
+      }
+    },
+    "twoColumnText": {
+      "description": "Two-column body text layout",
+      "geometry": {
+        "titleBox": {
+          "x": 1.0918635170603674,
+          "y": 0.4722222222222222,
+          "w": 11.149606299212598,
+          "h": 0.5833333333333334
+        },
+        "straplineBox": {
+          "x": 1.0919,
+          "y": 1.2899,
+          "w": 11.1496,
+          "h": 0.5276
+        },
+        "leftBox": {
+          "x": 1.0905511811023623,
+          "y": 1.2899311023622047,
+          "w": 5.5078740157480315,
+          "h": 5.133858267716535
+        },
+        "rightBox": {
+          "x": 6.7362204724409445,
+          "y": 1.2899311023622047,
+          "w": 5.5078740157480315,
+          "h": 5.133858267716535
+        }
+      },
+      "slots": {
+        "leftBody": {
+          "kind": "textArray",
+          "required": true,
+          "minItems": 2,
+          "minChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "rightBody": {
+          "kind": "textArray",
+          "required": true,
+          "minItems": 2,
+          "minChars": 80,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "bullet",
+            "keepTogether": false,
+            "priority": "high"
+          }
+        },
+        "strapline": {
+          "kind": "text",
+          "required": false,
+          "minChars": 12,
+          "maxChars": 700,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          }
+        },
+        "title": {
+          "kind": "text",
+          "required": true,
+          "minChars": 12,
+          "maxChars": 50,
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "paragraph",
+            "keepTogether": true,
+            "priority": "medium"
+          },
+          "enforceMaxChars": true
+        },
+        "bodyStyle": {
+          "kind": "text",
+          "required": false,
+          "minChars": 7,
+          "maxChars": 10,
+          "pattern": "^(bullets|paragraphs)$",
+          "allowEmpty": false,
+          "renderingHints": {
+            "mode": "label",
+            "keepTogether": true,
+            "priority": "low"
+          }
+        }
+      },
+      "templateLayout": "Two columns text",
+      "densityTarget": {
+        "mode": "balanced",
+        "minScore": 0.75
       }
     }
   }

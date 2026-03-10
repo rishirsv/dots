@@ -1,0 +1,147 @@
+{
+  "type": "analysisBridge",
+  "primitive": "analysisBridge@1",
+  "description": "Waterfall bridge with flexible analysis phases",
+  "templateLayout": "analysisBridge",
+  "geometry": {
+    "titleBox": {
+      "x": 1.0919,
+      "y": 0.4722,
+      "w": 11.1496,
+      "h": 0.5833
+    },
+    "chartBox": {
+      "x": 0.9325,
+      "y": 1.7348,
+      "w": 11.3089,
+      "h": 2.9287
+    },
+    "analysisBoxes": [
+      {
+        "x": 1.0989,
+        "y": 4.8637,
+        "w": 3.8176,
+        "h": 1.5817
+      },
+      {
+        "x": 5.0543,
+        "y": 4.8665,
+        "w": 4.0557,
+        "h": 1.5817
+      },
+      {
+        "x": 9.2549,
+        "y": 4.8637,
+        "w": 2.986,
+        "h": 1.5817
+      }
+    ],
+    "sourceBox": {
+      "x": 1.1008,
+      "y": 6.4648,
+      "w": 5.7035,
+      "h": 0.202
+    },
+    "typography": {
+      "strapline": 10,
+      "bridgeValue": 6.5,
+      "bridgeLabel": 6,
+      "phaseBadge": 8,
+      "analysisBadge": 7,
+      "analysisHeading": 10,
+      "analysisBody": 9,
+      "error": 9
+    }
+  },
+  "slots": {
+    "title": {
+      "kind": "text",
+      "required": true,
+      "minChars": 12,
+      "maxChars": 80,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "high"
+      },
+      "enforceMaxChars": true
+    },
+    "bridge": {
+      "kind": "bridge",
+      "required": true,
+      "minItems": 4,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "chart",
+        "keepTogether": true,
+        "priority": "high"
+      }
+    },
+    "analysisColumns": {
+      "kind": "columns",
+      "required": true,
+      "minItems": 1,
+      "maxItems": 4,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "bullet",
+        "keepTogether": false,
+        "priority": "high"
+      }
+    },
+    "strapline": {
+      "kind": "text",
+      "required": false,
+      "minChars": 12,
+      "maxChars": 700,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "medium"
+      }
+    },
+    "bodyStyle": {
+      "kind": "text",
+      "required": false,
+      "minChars": 7,
+      "maxChars": 10,
+      "pattern": "^(bullets|paragraphs)$",
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "label",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    },
+    "source": {
+      "kind": "text",
+      "required": false,
+      "minChars": 10,
+      "maxChars": 500,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    },
+    "note": {
+      "kind": "text",
+      "required": false,
+      "minChars": 10,
+      "maxChars": 500,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    }
+  },
+  "densityTarget": {
+    "mode": "balanced",
+    "minScore": 0.76
+  }
+}

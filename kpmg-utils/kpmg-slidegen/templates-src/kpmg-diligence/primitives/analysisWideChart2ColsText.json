@@ -1,0 +1,30 @@
+{
+  "id": "analysisWideChart2ColsText",
+  "version": 1,
+  "builderModule": "generator/builders/analysis-wide-chart-text.js",
+  "builderExport": "addAnalysisWideChart2ColsText",
+  "geometryKinds": {
+    "titleBox": "box",
+    "straplineBox": "box",
+    "bodyBox": "box",
+    "chartBox": "box",
+    "calloutBoxes": "boxArray"
+  },
+  "requiredGeometry": [
+    "titleBox",
+    "straplineBox",
+    "bodyBox",
+    "chartBox"
+  ],
+  "optionalGeometry": [
+    "calloutBoxes"
+  ],
+  "optionalDefaults": {},
+  "paginationPolicyKey": "text.analysisWide.2cols.v1",
+  "master": "KPMG_WHITE",
+  "slotSchemaRef": "analysisWideChart2ColsText",
+  "validationHooks": [
+    "chartShape"
+  ],
+  "excludeFromLogicalPaging": false
+}

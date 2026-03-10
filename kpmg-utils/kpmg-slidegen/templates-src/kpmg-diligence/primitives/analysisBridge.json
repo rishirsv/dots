@@ -1,0 +1,30 @@
+{
+  "id": "analysisBridge",
+  "version": 1,
+  "builderModule": "generator/builders/analysis-bridge.js",
+  "builderExport": "addAnalysisBridge",
+  "geometryKinds": {
+    "titleBox": "box",
+    "chartBox": "box",
+    "analysisBoxes": "boxArray",
+    "sourceBox": "box",
+    "typography": "object"
+  },
+  "requiredGeometry": [
+    "titleBox",
+    "chartBox",
+    "analysisBoxes",
+    "sourceBox"
+  ],
+  "optionalGeometry": [
+    "typography"
+  ],
+  "optionalDefaults": {},
+  "paginationPolicyKey": "bridge.analysisColumns.v1",
+  "master": "KPMG_WHITE",
+  "slotSchemaRef": "analysisBridge",
+  "validationHooks": [
+    "bridgeSpec"
+  ],
+  "excludeFromLogicalPaging": false
+}

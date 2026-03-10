@@ -9,6 +9,7 @@
     "id",
     "version",
     "builderModule",
+    "builderExport",
     "geometryKinds",
     "requiredGeometry",
     "paginationPolicyKey",
@@ -26,7 +27,11 @@
     },
     "builderModule": {
       "type": "string",
-      "pattern": "^generator/builders/primitives/.+\\.(mjs|js)$"
+      "pattern": "^generator/builders/.+\\.(mjs|js)$"
+    },
+    "builderExport": {
+      "type": "string",
+      "minLength": 1
     },
     "geometryKinds": {
       "type": "object",
@@ -53,6 +58,10 @@
       },
       "default": []
     },
+    "optionalDefaults": {
+      "type": "object",
+      "default": {}
+    },
     "paginationPolicyKey": {
       "type": "string",
       "minLength": 1
@@ -64,6 +73,17 @@
     "slotSchemaRef": {
       "type": "string",
       "minLength": 1
+    },
+    "validationHooks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "excludeFromLogicalPaging": {
+      "type": "boolean",
+      "default": false
     },
     "defaults": {
       "$ref": "#/$defs/defaults"

@@ -4,7 +4,6 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
-import { generateToFile } from '../../generator/index.js';
 import { createSlidesAdapter } from '../../generator/postprocess/slides-adapter.js';
 import { getSlideRegistry } from '../../generator/runtime/slide-registry.js';
 import {
@@ -196,7 +195,11 @@ export function getLayoutPaths(layoutId) {
   return {
     layoutId: normalized,
     layoutRoot,
+    intakePath: path.join(layoutRoot, 'intake.json'),
     sourcePath: path.join(layoutRoot, 'source.json'),
+    extractRawPath: path.join(layoutRoot, 'extract.raw.json'),
+    extractNormalizedPath: path.join(layoutRoot, 'extract.normalized.json'),
+    fingerprintPath: path.join(layoutRoot, 'fingerprint.json'),
     seedDir: path.join(layoutRoot, 'seed'),
     seedPath: path.join(layoutRoot, 'seed', 'geometry.seed.json'),
     candidateLayoutPath: path.join(layoutRoot, 'candidate.layout.json'),
@@ -528,6 +531,77 @@ export function extractGeometrySeed({ pptxPath, slideNumber, seedPath }) {
 }
 
 /**
+ * Run the onboarding evidence extractor for a selected slide.
+ *
+ * @param {object} params
+ */
+export function extractOnboardingEvidence({
+  pptxPath,
+  slideNumber,
+  rawPath,
+  normalizedPath,
+  fingerprintPath,
+  seedPath = null,
+}) {
+  const scriptPath = path.join(REPO_ROOT, 'scripts', 'onboarding', 'extract_slide_seed.py');
+  ensureDir(path.dirname(rawPath));
+  ensureDir(path.dirname(normalizedPath));
+  ensureDir(path.dirname(fingerprintPath));
+  if (seedPath) ensureDir(path.dirname(seedPath));
+  const args = [
+    scriptPath,
+    '--pptx',
+    pptxPath,
+    '--slide',
+    String(slideNumber),
+    '--raw-out',
+    rawPath,
+    '--normalized-out',
+    normalizedPath,
+    '--fingerprint-out',
+    fingerprintPath,
+  ];
+  if (seedPath) {
+    args.push('--out', seedPath);
+  }
+  const result = spawnSync('python3', args, {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      PYTHONDONTWRITEBYTECODE: '1',
+    },
+  });
+  if (result.status !== 0) {
+    throw new Error(
+      `Evidence extraction failed.\n${result.stdout || ''}\n${result.stderr || ''}`.trim(),
+    );
+  }
+}
+
+/**
+ * Build a stable onboarding intake record.
+ *
+ * @param {object} input
+ * @returns {object}
+ */
+export function buildIntakeRecord(input) {
+  return {
+    schemaVersion: 1,
+    layoutId: input.layoutId,
+    sourcePptxPath: input.sourcePptxPath,
+    sourceSlideNumber: Number(input.sourceSlideNumber),
+    family: input.family || null,
+    requestedEvidence: {
+      referencePng: true,
+      extractRaw: true,
+      extractNormalized: true,
+      fingerprint: true,
+    },
+  };
+}
+
+/**
  * Build a stable onboarding source record.
  *
  * @param {object} input
@@ -550,8 +624,14 @@ export function buildSourceRecord(input) {
       notes: null,
     },
     artifacts: {
+      intakePath: input.intakePath || null,
       referencePngPath: input.referencePngPath || null,
+      extractRawPath: input.extractRawPath || null,
+      extractNormalizedPath: input.extractNormalizedPath || null,
+      fingerprintPath: input.fingerprintPath || null,
       candidateQaPath: input.candidateQaPath || null,
+      candidatePngPath: input.candidatePngPath || null,
+      diffJsonPath: input.diffJsonPath || null,
       scorecardPath: input.scorecardPath || null,
     },
   };
@@ -627,6 +707,7 @@ export async function renderCandidate({
   layoutId,
   withMontage = false,
 }) {
+  const { generateToFile } = await import('../../generator/index.js');
   const paths = ensureLayoutPaths(layoutId);
   const source = loadSourceRecord(layoutId);
   if (!source.family) {

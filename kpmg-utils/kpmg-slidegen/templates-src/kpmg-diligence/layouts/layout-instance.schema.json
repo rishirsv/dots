@@ -9,6 +9,7 @@
     "type",
     "primitive",
     "description",
+    "templateLayout",
     "geometry"
   ],
   "properties": {
@@ -24,12 +25,26 @@
       "type": "string",
       "minLength": 1
     },
+    "templateLayout": {
+      "type": "string",
+      "minLength": 1
+    },
     "geometry": {
       "type": "object",
       "minProperties": 1,
       "additionalProperties": {
         "$ref": "#/$defs/geometryValue"
       }
+    },
+    "slots": {
+      "type": "object",
+      "default": {}
+    },
+    "densityTarget": {
+      "type": [
+        "object",
+        "null"
+      ]
     },
     "slotOverrides": {
       "type": "object",

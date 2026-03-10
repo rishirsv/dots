@@ -1,17 +1,18 @@
-import { parseArgMap, renderCandidate } from './lib.mjs';
+import { normalizeCaseId, renderCase } from './case-lib.mjs';
+import { parseArgMap } from './lib.mjs';
 
 function usage() {
   throw new Error(
-    'Usage: node scripts/onboarding/render-candidate.mjs --layout-id <camelCaseId> [--with-montage]',
+    'Usage: node scripts/onboarding/render-candidate.mjs --case-id <kebab-case> [--with-montage]',
   );
 }
 
 const args = parseArgMap(process.argv.slice(2));
-const layoutId = args.get('layout-id');
-if (!layoutId) usage();
+const caseId = normalizeCaseId(args.get('case-id'));
+if (!caseId) usage();
 
-const result = await renderCandidate({
-  layoutId: String(layoutId),
+const result = await renderCase({
+  caseId,
   withMontage: Boolean(args.get('with-montage')),
 });
 

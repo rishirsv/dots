@@ -166,6 +166,26 @@ function verifyNoAbsolutePaths() {
   }
 }
 
+function verifyNoRepoOnlyOnboardingArtifacts() {
+  const manifest = readJson(MANIFEST_PATH);
+  const forbiddenPrefixes = [
+    'templates-src/',
+    'onboarding/',
+    'outputs/onboarding/',
+  ];
+  const violations = (Array.isArray(manifest?.entries) ? manifest.entries : []).filter((entry) =>
+    forbiddenPrefixes.some((prefix) => entry.source.startsWith(prefix) || entry.target.startsWith(prefix)),
+  );
+  if (violations.length) {
+    throw new Error(
+      `Repo-only onboarding artifacts leaked into the skill bundle:\n${violations
+        .slice(0, 20)
+        .map((entry) => `${entry.source} -> ${entry.target}`)
+        .join('\n')}`,
+    );
+  }
+}
+
 function verifyOpenAiMetadata() {
   if (!fs.existsSync(SKILL_MD_PATH)) throw new Error(`Missing skill file: ${SKILL_MD_PATH}`);
   if (!fs.existsSync(OPENAI_YAML_PATH)) throw new Error(`Missing agents metadata: ${OPENAI_YAML_PATH}`);
@@ -234,6 +254,7 @@ function main() {
   verifyManifest();
   verifyManifestCoverage();
   verifyNoAbsolutePaths();
+  verifyNoRepoOnlyOnboardingArtifacts();
   verifyOpenAiMetadata();
   verifyBundledPostprocessRuntime();
   if (!SKIP_SMOKE) runSmoke();

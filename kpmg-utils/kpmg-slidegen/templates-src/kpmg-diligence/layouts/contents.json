@@ -1,0 +1,55 @@
+{
+  "type": "contents",
+  "primitive": "contents@1",
+  "description": "Table of contents slide with two rows of section blocks",
+  "templateLayout": "Contents",
+  "geometry": {
+    "titleBox": {
+      "x": 1.089,
+      "y": 0.472,
+      "w": 11.1457,
+      "h": 0.6181
+    },
+    "topRowBox": {
+      "x": 1.089,
+      "y": 1.38,
+      "w": 11.153,
+      "h": 2.35
+    },
+    "bottomRowBox": {
+      "x": 1.089,
+      "y": 4.04,
+      "w": 11.153,
+      "h": 2.35
+    }
+  },
+  "slots": {
+    "title": {
+      "kind": "text",
+      "required": true,
+      "minChars": 6,
+      "maxChars": 40,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "heading",
+        "keepTogether": true,
+        "priority": "high"
+      }
+    },
+    "sections": {
+      "kind": "contentsSections",
+      "required": true,
+      "minItems": 3,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "contents",
+        "keepTogether": true,
+        "priority": "high"
+      }
+    }
+  },
+  "densityTarget": {
+    "mode": "balanced",
+    "minScore": 0.8
+  }
+}

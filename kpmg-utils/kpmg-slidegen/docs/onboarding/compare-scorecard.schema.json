@@ -7,17 +7,182 @@
   "additionalProperties": false,
   "required": [
     "schemaVersion",
+    "deterministicStatus",
+    "manualDisposition",
+    "approvedExceptions",
     "pass",
+    "metrics",
     "thresholds",
     "checks"
   ],
   "properties": {
     "schemaVersion": {
       "type": "integer",
-      "minimum": 1
+      "const": 2
+    },
+    "deterministicStatus": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "manualDisposition": {
+      "type": "string",
+      "enum": [
+        "unreviewed",
+        "accepted",
+        "rejected",
+        "needs-follow-up"
+      ]
+    },
+    "approvedExceptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "pass": {
       "type": "boolean"
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimensions",
+        "pixelDelta",
+        "similarity"
+      ],
+      "properties": {
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "pixelDelta": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "changedPixels",
+            "totalPixels",
+            "changedPixelRatio",
+            "meanAbs",
+            "rms",
+            "maxAbs",
+            "changedBounds"
+          ],
+          "properties": {
+            "changedPixels": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "totalPixels": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "changedPixelRatio": {
+              "type": "number",
+              "minimum": 0
+            },
+            "meanAbs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "rms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "maxAbs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "changedBounds": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "left",
+                    "top",
+                    "right",
+                    "bottom"
+                  ],
+                  "properties": {
+                    "left": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "top": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "right": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bottom": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "similarity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ssim",
+            "phash"
+          ],
+          "properties": {
+            "ssim": {
+              "type": "number",
+              "minimum": -1,
+              "maximum": 1
+            },
+            "phash": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "reference",
+                "candidate",
+                "distance"
+              ],
+              "properties": {
+                "reference": {
+                  "type": "string"
+                },
+                "candidate": {
+                  "type": "string"
+                },
+                "distance": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "thresholds": {
       "type": "object",
@@ -41,12 +206,19 @@
         "rmsMax": {
           "type": "number",
           "minimum": 0
+        },
+        "ssimMin": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
         }
       }
     },
     "checks": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": {
+        "$ref": "#/$defs/checkResult"
+      },
       "required": [
         "changedPixelRatio",
         "meanAbs",
@@ -71,17 +243,18 @@
       "additionalProperties": false,
       "required": [
         "actual",
-        "max",
         "pass"
       ],
       "properties": {
         "actual": {
-          "type": "number",
-          "minimum": 0
+          "type": "number"
         },
         "max": {
           "type": "number",
           "minimum": 0
+        },
+        "min": {
+          "type": "number"
         },
         "pass": {
           "type": "boolean"

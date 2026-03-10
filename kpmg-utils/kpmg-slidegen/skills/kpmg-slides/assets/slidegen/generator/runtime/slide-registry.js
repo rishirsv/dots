@@ -12,6 +12,7 @@ import { addDivider } from '../builders/divider-slide.js';
 import { addOneColumnText } from '../builders/one-column-text.js';
 import { addTitleStrapline4TextBoxes } from '../builders/title-strapline-4-boxes.js';
 import { addTwoColumnTextWithStrapline } from '../builders/two-column-text.js';
+import { deriveLegacyGeometryKinds } from './geometry-contract.js';
 import { ONBOARDED_REGISTRY_ENTRIES } from './onboarded-registry.generated.js';
 
 const SLIDE_REGISTRY_SCHEMA_VERSION = '2.0.0';
@@ -20,16 +21,34 @@ function withGeometryContract(entry) {
   const requiredGeometry = Object.freeze([...(entry?.requiredGeometry || [])]);
   const optionalGeometry = Object.freeze([...(entry?.optionalGeometry || [])]);
   const optionalDefaults = Object.freeze({ ...(entry?.optionalDefaults || {}) });
+  const declaredGeometryKeys = [
+    ...requiredGeometry,
+    ...optionalGeometry,
+    ...Object.keys(optionalDefaults),
+  ];
+  const primitiveGeometryKinds =
+    (entry?.primitive && typeof entry.primitive === 'object' && entry.primitive.geometryKinds) ||
+    (entry?.primitiveMetadata &&
+      typeof entry.primitiveMetadata === 'object' &&
+      entry.primitiveMetadata.geometryKinds) ||
+    null;
+  const geometryKinds = Object.freeze({
+    ...deriveLegacyGeometryKinds(declaredGeometryKeys),
+    ...((primitiveGeometryKinds && typeof primitiveGeometryKinds === 'object') ? primitiveGeometryKinds : {}),
+    ...((entry?.geometryKinds && typeof entry.geometryKinds === 'object') ? entry.geometryKinds : {}),
+  });
   const geometryContract = Object.freeze({
     requiredKeys: requiredGeometry,
     optionalKeys: optionalGeometry,
     optionalDefaults,
+    geometryKinds,
   });
   return Object.freeze({
     ...entry,
     requiredGeometry,
     optionalGeometry,
     optionalDefaults,
+    geometryKinds,
     geometryContract,
   });
 }
@@ -181,6 +200,18 @@ export function validateRegistry(registry = BUILTIN_REGISTRY) {
     }
     if (!Array.isArray(entry.requiredGeometry)) {
       throw new Error(`registry.${type}: requiredGeometry must be array`);
+    }
+    if (!entry.geometryKinds || typeof entry.geometryKinds !== 'object') {
+      throw new Error(`registry.${type}: missing geometryKinds`);
+    }
+    for (const key of [
+      ...(entry.requiredGeometry || []),
+      ...((Array.isArray(entry.optionalGeometry) ? entry.optionalGeometry : [])),
+      ...Object.keys(entry.optionalDefaults || {}),
+    ]) {
+      if (!entry.geometryKinds[key]) {
+        throw new Error(`registry.${type}: missing geometry kind for "${key}"`);
+      }
     }
     if (typeof entry.paginationPolicyKey !== 'string' || entry.paginationPolicyKey.trim().length === 0) {
       throw new Error(`registry.${type}: missing paginationPolicyKey`);

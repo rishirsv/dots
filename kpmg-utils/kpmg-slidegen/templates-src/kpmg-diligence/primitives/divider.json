@@ -1,0 +1,24 @@
+{
+  "id": "divider",
+  "version": 1,
+  "builderModule": "generator/builders/divider-slide.js",
+  "builderExport": "addDivider",
+  "geometryKinds": {
+    "numberBox": "box",
+    "titleBox": "box",
+    "gradientBox": "box"
+  },
+  "requiredGeometry": [
+    "numberBox",
+    "titleBox"
+  ],
+  "optionalGeometry": [
+    "gradientBox"
+  ],
+  "optionalDefaults": {},
+  "paginationPolicyKey": "none.v1",
+  "master": "KPMG_SECTION_DARK",
+  "slotSchemaRef": "divider",
+  "validationHooks": [],
+  "excludeFromLogicalPaging": true
+}

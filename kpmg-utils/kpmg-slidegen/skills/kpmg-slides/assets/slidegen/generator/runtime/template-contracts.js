@@ -54,6 +54,7 @@ export function buildTemplateContracts(templatePackage = {}, { slideRegistry } =
       ? geometryContract.requiredKeys
       : [];
     const optionalDefaults = geometryContract.optionalDefaults || {};
+    const geometryKinds = geometryContract.geometryKinds || entry?.geometryKinds || null;
 
     const masterName = entry?.master;
     if (!masterName || typeof masterName !== 'string') {
@@ -63,12 +64,13 @@ export function buildTemplateContracts(templatePackage = {}, { slideRegistry } =
       ? footerSafeTopByMaster[masterName]
       : null;
 
-    const canonical = normalizeExtractedGeometry(layout?.geometry || {}, { type });
+    const canonical = normalizeExtractedGeometry(layout?.geometry || {}, { type, geometryKinds });
     const validated = validateCanonicalGeometry(canonical, {
       slideW,
       slideH,
       requiredKeys,
       optionalDefaults,
+      geometryKinds,
       type,
       masterName,
       footerSafeTop,

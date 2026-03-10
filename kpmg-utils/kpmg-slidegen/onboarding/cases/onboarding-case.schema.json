@@ -50,15 +50,25 @@
       "type": "string",
       "pattern": "^[A-Za-z][A-Za-z0-9-]*@[1-9][0-9]*$"
     },
+    "builderMode": {
+      "type": "string",
+      "enum": [
+        "existing-primitive",
+        "new-primitive"
+      ]
+    },
     "status": {
       "type": "string",
       "enum": [
-        "draft",
-        "review",
+        "extracted",
+        "classified",
+        "scaffolded",
+        "rendered",
+        "compared",
         "approved",
         "promoted"
       ],
-      "default": "draft"
+      "default": "extracted"
     },
     "artifacts": {
       "type": "object",
@@ -101,6 +111,14 @@
         "candidateDeckSpec": {
           "type": "string",
           "const": "candidate.deckSpec.json"
+        },
+        "candidatePrimitive": {
+          "type": "string",
+          "const": "candidate.primitive.json"
+        },
+        "candidateBuilder": {
+          "type": "string",
+          "const": "candidate.builder.js"
         },
         "review": {
           "type": "string",

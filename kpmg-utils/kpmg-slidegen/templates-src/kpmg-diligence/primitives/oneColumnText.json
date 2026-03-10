@@ -1,0 +1,28 @@
+{
+  "id": "oneColumnText",
+  "version": 1,
+  "builderModule": "generator/builders/one-column-text.js",
+  "builderExport": "addOneColumnText",
+  "geometryKinds": {
+    "titleBox": "box",
+    "straplineBox": "box",
+    "bodyBox": "box",
+    "sourceBox": "box",
+    "calloutBoxes": "boxArray"
+  },
+  "requiredGeometry": [
+    "titleBox",
+    "straplineBox",
+    "bodyBox",
+    "sourceBox"
+  ],
+  "optionalGeometry": [
+    "calloutBoxes"
+  ],
+  "optionalDefaults": {},
+  "paginationPolicyKey": "text.oneColumn.v1",
+  "master": "KPMG_WHITE",
+  "slotSchemaRef": "oneColumnText",
+  "validationHooks": [],
+  "excludeFromLogicalPaging": false
+}

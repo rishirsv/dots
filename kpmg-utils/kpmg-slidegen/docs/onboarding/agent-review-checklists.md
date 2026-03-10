@@ -7,7 +7,9 @@ Use these repo-only checklists when an agent is helping with layout onboarding.
 Ask the agent to inspect:
 
 1. `onboarding/layouts/<layout-id>/source.json`
-2. `onboarding/layouts/<layout-id>/seed/geometry.seed.json`
+2. `onboarding/layouts/<layout-id>/extract.normalized.json`
+3. `onboarding/layouts/<layout-id>/fingerprint.json`
+4. `onboarding/layouts/<layout-id>/seed/geometry.seed.json`
 3. `onboarding/layouts/<layout-id>/candidate.layout.json`
 4. `outputs/onboarding/<layout-id>/compare/reference.png`
 

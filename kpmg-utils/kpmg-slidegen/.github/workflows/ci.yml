@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -27,8 +29,41 @@ jobs:
       - name: Install skill Node dependencies
         run: npm ci --prefix skills/kpmg-slides
 
+      - name: Regenerate runtime aggregates
+        run: npm run onboard:regen
+
+      - name: Fail on dirty generated files
+        run: git diff --exit-code -- templates/kpmg-diligence/package/layouts.json generator/runtime/onboarded-registry.index.json generator/runtime/onboarded-registry.generated.js
+
+      - name: Run docs verification
+        run: npm run docs:verify
+
+      - name: Run changed layout lane
+        run: npm run test:changed-layouts
+
+      - name: Run primitive stress lane
+        run: npm run test:primitive-stress
+
       - name: Run PR lane
         run: npm run test:pr
+
+      - name: Sync and verify skill bundle when bundle inputs change
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.sha }}"
+            CHANGED="$(git diff --name-only "$BASE" "$HEAD")"
+          else
+            CHANGED="$(git diff --name-only HEAD^ HEAD || true)"
+          fi
+          if echo "$CHANGED" | grep -E '^(generator/|templates/|presets/authoring/|scripts/sync-skill-bundle.mjs|scripts/verify-skill-bundle.mjs|skills/kpmg-slides/)' >/dev/null; then
+            npm run skill:sync
+            git diff --exit-code -- skills/kpmg-slides
+            npm run skill:verify -- --skip-smoke
+          else
+            echo "Skill bundle inputs unchanged; skipping skill verification."
+          fi
 
   nightly:
     if: github.event_name == 'schedule'

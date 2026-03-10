@@ -5,11 +5,12 @@ import { loadTemplatePackage } from '../../generator/runtime/template-package.js
 import {
   buildCandidateBuilderSource,
   buildCandidateDeckSpecScaffold,
+  buildIntakeRecord,
   buildCandidateLayoutScaffold,
   buildSourceRecord,
   captureReferenceSlide,
   ensureLayoutPaths,
-  extractGeometrySeed,
+  extractOnboardingEvidence,
   normalizeLayoutId,
   parseArgMap,
   writeJson,
@@ -40,7 +41,11 @@ if (!fs.existsSync(sourcePptxPath)) {
 const paths = ensureLayoutPaths(layoutId);
 if (!force) {
   for (const filePath of [
+    paths.intakePath,
     paths.sourcePath,
+    paths.extractRawPath,
+    paths.extractNormalizedPath,
+    paths.fingerprintPath,
     paths.candidateLayoutPath,
     paths.candidateBuilderPath,
     paths.candidateDeckSpecPath,
@@ -72,14 +77,24 @@ captureReferenceSlide({
   referencePngPath: paths.referencePngPath,
 });
 
-if (extractSeed) {
-  extractGeometrySeed({
-    pptxPath: sourcePptxPath,
-    slideNumber,
-    seedPath: paths.seedPath,
-  });
-}
+extractOnboardingEvidence({
+  pptxPath: sourcePptxPath,
+  slideNumber,
+  rawPath: paths.extractRawPath,
+  normalizedPath: paths.extractNormalizedPath,
+  fingerprintPath: paths.fingerprintPath,
+  seedPath: paths.seedPath,
+});
 
+writeJson(
+  paths.intakePath,
+  buildIntakeRecord({
+    layoutId,
+    sourcePptxPath,
+    sourceSlideNumber: slideNumber,
+    family,
+  }),
+);
 writeJson(
   paths.sourcePath,
   buildSourceRecord({
@@ -89,7 +104,14 @@ writeJson(
     family,
     status: family ? 'draft' : 'awaiting_family',
     extractSeed,
+    intakePath: path.relative(paths.layoutRoot, paths.intakePath).split(path.sep).join('/'),
     referencePngPath: path.relative(paths.outputRoot, paths.referencePngPath).split(path.sep).join('/'),
+    extractRawPath: path.relative(paths.layoutRoot, paths.extractRawPath).split(path.sep).join('/'),
+    extractNormalizedPath: path
+      .relative(paths.layoutRoot, paths.extractNormalizedPath)
+      .split(path.sep)
+      .join('/'),
+    fingerprintPath: path.relative(paths.layoutRoot, paths.fingerprintPath).split(path.sep).join('/'),
   }),
 );
 writeJson(paths.candidateLayoutPath, candidateLayout);
@@ -98,6 +120,8 @@ writeText(paths.candidateBuilderPath, candidateBuilderSource);
 
 console.log(`Initialized onboarding workspace: ${paths.layoutRoot}`);
 console.log(`Reference PNG: ${paths.referencePngPath}`);
-if (extractSeed) {
-  console.log(`Geometry seed: ${paths.seedPath}`);
-}
+console.log(`Intake record: ${paths.intakePath}`);
+console.log(`Raw extract: ${paths.extractRawPath}`);
+console.log(`Normalized extract: ${paths.extractNormalizedPath}`);
+console.log(`Fingerprint: ${paths.fingerprintPath}`);
+console.log(`Geometry seed compatibility file: ${paths.seedPath}`);

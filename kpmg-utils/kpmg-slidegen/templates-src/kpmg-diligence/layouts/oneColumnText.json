@@ -1,0 +1,125 @@
+{
+  "type": "oneColumnText",
+  "primitive": "oneColumnText@1",
+  "description": "Single-column body text layout",
+  "templateLayout": "oneColumnText",
+  "geometry": {
+    "titleBox": {
+      "x": 1.0918635170603674,
+      "y": 0.4722222222222222,
+      "w": 11.149606299212598,
+      "h": 0.5833333333333334
+    },
+    "straplineBox": {
+      "x": 1.0919,
+      "y": 1.2899,
+      "w": 11.1496,
+      "h": 0.5276
+    },
+    "bodyBox": {
+      "x": 1.0919,
+      "y": 1.2899,
+      "w": 11.1596,
+      "h": 5.18
+    },
+    "sourceBox": {
+      "x": 1.0919,
+      "y": 6.52,
+      "w": 11.1596,
+      "h": 0.18
+    },
+    "calloutBoxes": [
+      {
+        "x": 9.05,
+        "y": 2,
+        "w": 3.2,
+        "h": 1.15
+      },
+      {
+        "x": 9.05,
+        "y": 3.25,
+        "w": 3.2,
+        "h": 1.15
+      }
+    ]
+  },
+  "slots": {
+    "body": {
+      "kind": "textArray",
+      "required": true,
+      "minItems": 3,
+      "minChars": 180,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "bullet",
+        "keepTogether": false,
+        "priority": "high"
+      }
+    },
+    "strapline": {
+      "kind": "text",
+      "required": false,
+      "minChars": 12,
+      "maxChars": 700,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "medium"
+      }
+    },
+    "source": {
+      "kind": "text",
+      "required": false,
+      "minChars": 12,
+      "maxChars": 700,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    },
+    "title": {
+      "kind": "text",
+      "required": true,
+      "minChars": 12,
+      "maxChars": 50,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "medium"
+      },
+      "enforceMaxChars": true
+    },
+    "bodyStyle": {
+      "kind": "text",
+      "required": false,
+      "minChars": 7,
+      "maxChars": 10,
+      "pattern": "^(bullets|paragraphs)$",
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "label",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    },
+    "callouts": {
+      "kind": "columns",
+      "required": false,
+      "minItems": 1,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "columns",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    }
+  },
+  "densityTarget": {
+    "mode": "balanced",
+    "minScore": 0.75
+  }
+}

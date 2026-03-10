@@ -1,0 +1,164 @@
+{
+  "type": "businessOverview",
+  "primitive": "businessOverview@1",
+  "description": "Business overview with transaction perimeter panel and company narrative",
+  "templateLayout": "businessOverview",
+  "geometry": {
+    "titleBox": {
+      "x": 1.0919,
+      "y": 0.4722,
+      "w": 11.1496,
+      "h": 0.5833
+    },
+    "leftHeadingBox": {
+      "x": 1.0885,
+      "y": 1.2899,
+      "w": 6.2,
+      "h": 0.34
+    },
+    "leftBox": {
+      "x": 1.01,
+      "y": 1.66,
+      "w": 6.35,
+      "h": 2.95
+    },
+    "rightHeadingBox": {
+      "x": 7.6,
+      "y": 1.2899,
+      "w": 4.62,
+      "h": 0.34
+    },
+    "bodyBox": {
+      "x": 7.6,
+      "y": 1.66,
+      "w": 4.62,
+      "h": 4.76
+    },
+    "chartBox": {
+      "x": 9.34,
+      "y": 5.08,
+      "w": 2.88,
+      "h": 1.56
+    },
+    "sourceBox": {
+      "x": 1.1008,
+      "y": 6.4648,
+      "w": 6,
+      "h": 0.2
+    }
+  },
+  "slots": {
+    "title": {
+      "kind": "text",
+      "required": true,
+      "minChars": 12,
+      "maxChars": 50,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "high"
+      },
+      "enforceMaxChars": true
+    },
+    "leftHeading": {
+      "kind": "text",
+      "required": false,
+      "minChars": 6,
+      "maxChars": 80,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "heading",
+        "keepTogether": true,
+        "priority": "medium"
+      }
+    },
+    "rightHeading": {
+      "kind": "text",
+      "required": false,
+      "minChars": 6,
+      "maxChars": 80,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "heading",
+        "keepTogether": true,
+        "priority": "medium"
+      }
+    },
+    "structure": {
+      "kind": "businessStructure",
+      "required": true,
+      "minItems": 4,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "diagram",
+        "keepTogether": true,
+        "priority": "high"
+      }
+    },
+    "overviewBody": {
+      "kind": "textArray",
+      "required": true,
+      "minItems": 2,
+      "minChars": 80,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "bullet",
+        "keepTogether": false,
+        "priority": "high"
+      }
+    },
+    "chart": {
+      "kind": "chart",
+      "required": false,
+      "minItems": 1,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "chart",
+        "keepTogether": true,
+        "priority": "medium"
+      }
+    },
+    "source": {
+      "kind": "text",
+      "required": false,
+      "minChars": 10,
+      "maxChars": 500,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    },
+    "note": {
+      "kind": "text",
+      "required": false,
+      "minChars": 10,
+      "maxChars": 500,
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    },
+    "bodyStyle": {
+      "kind": "text",
+      "required": false,
+      "minChars": 7,
+      "maxChars": 10,
+      "pattern": "^(bullets|paragraphs)$",
+      "allowEmpty": false,
+      "renderingHints": {
+        "mode": "label",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    }
+  },
+  "densityTarget": {
+    "mode": "balanced",
+    "minScore": 0.75
+  }
+}

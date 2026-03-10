@@ -1,0 +1,62 @@
+{
+  "type": "backCover",
+  "primitive": "backCover@1",
+  "description": "Back cover with disclaimer",
+  "templateLayout": "Back cover_2",
+  "geometry": {
+    "logoBox": {
+      "x": 1.0919466316710411,
+      "y": 0.4060706474190726,
+      "w": 1,
+      "h": 0.4028280839895013
+    },
+    "headingBox": {
+      "x": 1.095,
+      "y": 1.11,
+      "w": 10.25,
+      "h": 1.05
+    },
+    "disclaimerBox": {
+      "x": 1.09,
+      "y": 6.45,
+      "w": 10.65,
+      "h": 0.42
+    },
+    "urlBox": {
+      "x": 1.09,
+      "y": 7.18,
+      "w": 2.3,
+      "h": 0.16
+    }
+  },
+  "slots": {
+    "disclaimer": {
+      "kind": "text",
+      "required": false,
+      "minChars": 80,
+      "maxChars": 700,
+      "allowEmpty": true,
+      "renderingHints": {
+        "mode": "paragraph",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    },
+    "url": {
+      "kind": "text",
+      "required": false,
+      "minChars": 5,
+      "maxChars": 60,
+      "allowEmpty": true,
+      "renderingHints": {
+        "mode": "label",
+        "keepTogether": true,
+        "priority": "low"
+      }
+    }
+  },
+  "densityTarget": {
+    "mode": "balanced",
+    "minScore": 0
+  }
+}
