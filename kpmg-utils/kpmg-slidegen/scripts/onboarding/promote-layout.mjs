@@ -77,6 +77,7 @@ function upsertOnboardedRegistryEntry({ layoutId, family }) {
       requiredGeometry: [...(baseEntry.requiredGeometry || [])],
       optionalGeometry: [...(baseEntry.optionalGeometry || [])],
       optionalDefaults: { ...(baseEntry.optionalDefaults || {}) },
+      geometryKinds: { ...(baseEntry.geometryKinds || {}) },
       paginationPolicyKey: baseEntry.paginationPolicyKey,
       validationHooks: [...(baseEntry.validationHooks || [])],
       excludeFromLogicalPaging: Boolean(baseEntry.excludeFromLogicalPaging),

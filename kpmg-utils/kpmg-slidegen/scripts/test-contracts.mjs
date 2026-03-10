@@ -3,6 +3,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { buildRenderContext } from '../generator/runtime/render-context.js';
+import {
+  normalizeExtractedGeometry,
+  validateCanonicalGeometry,
+} from '../generator/runtime/geometry-contract.js';
 import { getSlideRegistry } from '../generator/runtime/slide-registry.js';
 import { cloneTemplatePackage, loadTemplatePackage } from '../generator/runtime/template-package.js';
 import { REPO_ROOT } from './support.mjs';
@@ -121,6 +125,7 @@ for (const type of registryTypes) {
   assert.ok(entry.builderId, `builderId missing for ${type}`);
   assert.equal(typeof entry.master, 'string', `master missing for ${type}`);
   assert.ok(entry.paginationPolicyKey, `paginationPolicyKey missing for ${type}`);
+  assert.ok(entry.geometryKinds, `geometryKinds missing for ${type}`);
 
   const policy = ctx.paginationPolicy.get(entry.paginationPolicyKey);
   assert.ok(policy, `Pagination policy missing for ${type}`);
@@ -155,7 +160,40 @@ for (const type of registryTypes) {
   );
 }
 
+const oneColumnEntry = ctx.slideRegistry.get('oneColumnText');
+assert.equal(
+  oneColumnEntry.geometryContract.geometryKinds.titleBox,
+  'box',
+  'Legacy built-in title geometry should derive the box kind.',
+);
+assert.equal(
+  oneColumnEntry.geometryContract.geometryKinds.calloutBoxes,
+  'boxArray',
+  'Legacy built-in array geometry should derive the boxArray kind.',
+);
+
+const oneColumnLayout = templatePackage.layouts.types.oneColumnText;
+const normalizedOneColumnGeometry = normalizeExtractedGeometry(oneColumnLayout.geometry, {
+  type: 'oneColumnText',
+  geometryKinds: oneColumnEntry.geometryContract.geometryKinds,
+});
+const validatedOneColumnGeometry = validateCanonicalGeometry(normalizedOneColumnGeometry, {
+  slideW: ctx.templateContracts.dims.w,
+  slideH: ctx.templateContracts.dims.h,
+  requiredKeys: oneColumnEntry.geometryContract.requiredKeys,
+  optionalDefaults: oneColumnEntry.geometryContract.optionalDefaults,
+  geometryKinds: oneColumnEntry.geometryContract.geometryKinds,
+  type: 'oneColumnText',
+  masterName: oneColumnEntry.master,
+  footerSafeTop: ctx.templateContracts.footerSafeTopByMaster[oneColumnEntry.master] ?? null,
+});
+assert.ok(
+  hasFiniteBox(validatedOneColumnGeometry.titleBox),
+  'Legacy built-in geometry should still validate with derived geometry kinds.',
+);
+
 const customBackCoverType = 'customBackCoverContractSmoke';
+const semanticFrameworkType = 'semanticFrameworkContractSmoke';
 const builtinBackCoverEntry = getSlideRegistry().get('backCover');
 const customTemplatePackage = cloneTemplatePackage(templatePackage, {
   layouts: {
@@ -163,6 +201,29 @@ const customTemplatePackage = cloneTemplatePackage(templatePackage, {
       [customBackCoverType]: JSON.parse(
         JSON.stringify(templatePackage.layouts.types.backCover),
       ),
+      [semanticFrameworkType]: {
+        templateLayout: 'KPMG_WHITE',
+        slots: {},
+        geometry: {
+          titleBox: { x: 0.5, y: 0.5, w: 3.5, h: 0.7 },
+          framework: {
+            columns: [
+              {
+                header: { x: 0.7, y: 1.5, w: 2.4, h: 0.6 },
+                stages: [
+                  { x: 0.7, y: 2.3, w: 2.4, h: 0.8 },
+                  { x: 0.7, y: 3.2, w: 2.4, h: 0.8 },
+                ],
+              },
+            ],
+          },
+          version: 2,
+          family: 'framework',
+          metadata: {
+            variant: 'semantic',
+          },
+        },
+      },
     },
   },
 });
@@ -173,6 +234,30 @@ const customCtx = buildRenderContext({
       [customBackCoverType]: {
         ...builtinBackCoverEntry,
         builderId: customBackCoverType,
+      },
+      [semanticFrameworkType]: {
+        builderId: semanticFrameworkType,
+        builder: builtinBackCoverEntry.builder,
+        master: 'KPMG_WHITE',
+        requiredGeometry: ['titleBox', 'framework', 'version', 'family', 'metadata'],
+        geometryKinds: {
+          titleBox: 'box',
+          framework: 'boxTree',
+          version: 'number',
+          family: 'string',
+          metadata: 'object',
+        },
+        primitiveMetadata: {
+          id: 'framework',
+          version: 1,
+          geometryKinds: {
+            titleBox: 'box',
+            framework: 'boxTree',
+          },
+        },
+        paginationPolicyKey: 'none.v1',
+        validationHooks: [],
+        excludeFromLogicalPaging: false,
       },
     },
   },
@@ -189,6 +274,79 @@ assert.ok(
 assert.ok(
   customBackCoverBuilderCtx.assets?.closingSocialLinkedin,
   'Custom backCover override types should inherit social icon assets.',
+);
+
+const semanticRegistry = customCtx.slideRegistry.get(semanticFrameworkType);
+assert.equal(
+  semanticRegistry.geometryContract.geometryKinds.framework,
+  'boxTree',
+  'Registry should resolve geometryKinds from primitive metadata.',
+);
+
+const semanticGeometryKinds = semanticRegistry.geometryContract.geometryKinds;
+const semanticGeometry = normalizeExtractedGeometry(
+  customTemplatePackage.layouts.types[semanticFrameworkType].geometry,
+  {
+    type: semanticFrameworkType,
+    geometryKinds: semanticGeometryKinds,
+  },
+);
+const validatedSemanticGeometry = validateCanonicalGeometry(semanticGeometry, {
+  slideW: customCtx.templateContracts.dims.w,
+  slideH: customCtx.templateContracts.dims.h,
+  requiredKeys: semanticRegistry.geometryContract.requiredKeys,
+  geometryKinds: semanticGeometryKinds,
+  type: semanticFrameworkType,
+  masterName: semanticRegistry.master,
+});
+assert.equal(validatedSemanticGeometry.version, 2, 'Semantic number geometry should validate.');
+assert.equal(validatedSemanticGeometry.family, 'framework', 'Semantic string geometry should validate.');
+assert.equal(validatedSemanticGeometry.metadata.variant, 'semantic', 'Semantic object geometry should validate.');
+
+assert.throws(
+  () =>
+    normalizeExtractedGeometry(
+      {
+        titleBox: { x: 0.5, y: 0.5, w: 3.5, h: 0.7 },
+        rogueBox: { x: 0.5, y: 1.5, w: 2.0, h: 0.6 },
+      },
+      {
+        type: semanticFrameworkType,
+        geometryKinds: semanticGeometryKinds,
+      },
+    ),
+  /unknown key\(s\): rogueBox/,
+  'Unknown geometry keys should remain fatal.',
+);
+
+assert.throws(
+  () =>
+    validateCanonicalGeometry(
+      {
+        titleBox: { x: 0.5, y: 0.5, w: 3.5, h: 0.7 },
+        framework: {
+          columns: [
+            {
+              header: { x: 0.7, y: 1.5, w: 2.4, h: 0.6 },
+              stages: ['bad'],
+            },
+          ],
+        },
+        version: 2,
+        family: 'framework',
+        metadata: { variant: 'semantic' },
+      },
+      {
+        slideW: customCtx.templateContracts.dims.w,
+        slideH: customCtx.templateContracts.dims.h,
+        requiredKeys: semanticRegistry.geometryContract.requiredKeys,
+        geometryKinds: semanticGeometryKinds,
+        type: semanticFrameworkType,
+        masterName: semanticRegistry.master,
+      },
+    ),
+  /expected box tree/,
+  'Malformed boxTree payloads should fail validation.',
 );
 
 console.log('Contract lane passed.');

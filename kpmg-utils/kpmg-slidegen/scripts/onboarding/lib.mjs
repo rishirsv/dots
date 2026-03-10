@@ -447,10 +447,12 @@ export function buildDraftRegistryEntry({ family, layoutId, builder }) {
     requiredGeometry: [...(baseEntry.requiredGeometry || [])],
     optionalGeometry: [...(baseEntry.optionalGeometry || [])],
     optionalDefaults: { ...(baseEntry.optionalDefaults || {}) },
+    geometryKinds: { ...(baseEntry.geometryKinds || {}) },
     geometryContract: {
       requiredKeys: [...(baseEntry.geometryContract?.requiredKeys || [])],
       optionalKeys: [...(baseEntry.geometryContract?.optionalKeys || [])],
       optionalDefaults: { ...(baseEntry.geometryContract?.optionalDefaults || {}) },
+      geometryKinds: { ...(baseEntry.geometryContract?.geometryKinds || {}) },
     },
   };
 }
