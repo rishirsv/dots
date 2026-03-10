@@ -1,4 +1,4 @@
 interface:
   display_name: "FDD Report Writer"
-  short_description: "Draft and revise FDD reports"
-  default_prompt: "Use $fdd-report-writer to draft or revise a client-ready FDD report section from diligence materials."
+  short_description: "Draft FDD sections, exhibits, and adjustments"
+  default_prompt: "Use $fdd-report-writer to draft or revise a client-ready FDD section, exhibit narrative, adjustment write-up, or executive summary from diligence materials."

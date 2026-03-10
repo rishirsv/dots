@@ -1,6 +1,6 @@
 ---
 name: fdd-report-writer
-description: Draft, rewrite, and polish financial due diligence report content in Markdown using the live section contracts and global writing conventions in this skill. Use when Codex needs to write or revise an executive summary, business overview, historical financial performance section, quality of earnings section or earnings adjustments, net working capital section or adjustments, net debt section, balance sheet section, reporting environment section, a diligence exhibit narrative, or a full FDD report from diligence materials. Do not use for PowerPoint decks, report-checker automation, or reference-maintenance tasks.
+description: Draft, rewrite, and polish financial due diligence report content in Markdown using the live section contracts and global writing conventions in this skill. Use when Codex needs to write or revise an executive summary, business overview, historical financial performance section, quality of earnings section or earnings adjustments, net working capital section or adjustments, net debt section, balance sheet section, reporting environment section, or a diligence exhibit narrative from diligence materials. This skill is primarily for section-level and exhibit-level report writing, not full-report generation, although it can still help if the user explicitly asks for a full report outline or coordinated multi-section build. Do not use for PowerPoint decks, report-checker automation, or reference-maintenance tasks.
 ---
 
 # FDD Report Writer
@@ -10,7 +10,7 @@ Draft client-ready FDD report content in Markdown.
 ## Overview
 
 - Default to section-by-section drafting.
-- Treat `full_report` as a secondary path.
+- Treat `full_report` as a rare explicit path, not a default workflow.
 - Use the live section contracts in `references/` as the drafting system.
 - Use [references/global-writing-conventions.md](references/global-writing-conventions.md) in every drafting path.
 - Do not assume legacy slot-template behavior unless the user explicitly asks to preserve an existing draft that already uses it.
@@ -23,7 +23,7 @@ Pick the narrowest artifact that matches the request.
 
 - `section`: Use for one or more report sections in prose form.
 - `exhibit`: Use for a narrower analytical block such as adjustments, a bridge narrative, a schedule narrative, a table commentary, or another exhibit-sized writeup.
-- `full_report`: Use only when the user explicitly asks for a full report or a clearly multi-section report build.
+- `full_report`: Use only when the user explicitly asks for a full report outline or a coordinated multi-section report build.
 
 If the user asks for an actual PowerPoint slide or `.pptx`, use `kpmg-slides` instead.
 
@@ -109,7 +109,7 @@ Apply the operation as follows:
 - `rewrite`: Improve weak structure when it blocks clarity, but preserve the existing structure when it is already workable.
 - `polish`: Keep the existing structure and meaning; focus on language, rhythm, precision, and defensibility.
 
-### Use an outline-first flow for full reports
+### Use an outline-first flow only for explicit full-report requests
 
 For `full_report` requests:
 

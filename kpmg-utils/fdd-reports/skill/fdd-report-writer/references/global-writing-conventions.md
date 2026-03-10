@@ -2,6 +2,21 @@
 
 These conventions apply across the FDD report-writer skill. They define how the final writing should read. Local reference files should add only section-specific guidance and should not restate shared writing behavior unless a section requires a true override.
 
+## Table of contents
+
+- Objective
+- Default style
+- Core principles
+- Artifact behavior
+- Default section flow
+- Structure and flow
+- Sentence and bullet patterns
+- Quantification, time, and terminology
+- Attribution and calibrated certainty
+- Exhibits, schedules, and source notes
+- Placeholders and missing information
+- Language controls
+
 ## Objective
 
 Every draft should read like client-ready Big 4 diligence writing: polished, precise, analytical, and easy to scan. The writing should help the reader understand the relevant basis, the fact pattern, and the practical implication without filler, assurance-style language, or management-presentation tone.
