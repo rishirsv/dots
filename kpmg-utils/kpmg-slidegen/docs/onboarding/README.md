@@ -5,7 +5,7 @@ Use this workflow when you want to turn a slide from a source PowerPoint into a 
 This workflow is repo-only by design:
 - Keep source PPTX files, seeds, prompts, and diff artifacts in this repo only.
 - Do not sync draft onboarding assets into `skills/kpmg-slides/`.
-- Only promote a layout after deterministic checks pass and you explicitly approve it.
+- Only promote a layout after the compare scorecard either passes deterministically or is manually accepted with recorded exceptions.
 
 ## Workspace Model
 
@@ -67,12 +67,37 @@ node scripts/onboarding/classify-case.mjs \
   --case-id coffee-business-overview
 ```
 
+If classification does not produce an accepted recommendation, `classify.json` will set `recommendedPrimitiveRef` to `null` and `requiresManualSelection` to `true`. In that case, pass `--primitive-ref` for existing primitive reuse or `--base-primitive-ref` for a new primitive scaffold.
+
+Pick one scaffold decision:
+
+1. Existing primitive reuse: `--primitive-ref`
+2. Extend an existing primitive: `--new-primitive-id` plus `--base-primitive-ref`
+3. New primitive from the classified closest match: `--new-primitive-id`
+
 Scaffold against an existing primitive:
 
 ```bash
 node scripts/onboarding/scaffold-case.mjs \
   --case-id coffee-business-overview \
   --primitive-ref businessOverview@1
+```
+
+Extend an existing primitive into a new primitive:
+
+```bash
+node scripts/onboarding/scaffold-case.mjs \
+  --case-id coffee-business-overview \
+  --new-primitive-id businessOverviewAlt \
+  --base-primitive-ref businessOverview@1
+```
+
+Start a new primitive scaffold from the classified closest primitive:
+
+```bash
+node scripts/onboarding/scaffold-case.mjs \
+  --case-id coffee-business-overview \
+  --new-primitive-id businessOverviewAlt
 ```
 
 Render a deterministic one-slide candidate:
@@ -121,6 +146,18 @@ node scripts/onboarding/promote-layout.mjs \
   --approval-notes "Residual visual differences reviewed and accepted."
 ```
 
+Manual approval override for a deterministic compare failure:
+
+```bash
+node scripts/onboarding/promote-layout.mjs \
+  --case-id coffee-business-overview \
+  --approved-by "Your Name" \
+  --approval-notes "Approved with cosmetic differences recorded." \
+  --manual-disposition accepted \
+  --approved-exception "Minor header anti-aliasing drift" \
+  --approved-exception "Footer alignment shift outside decision-useful content"
+```
+
 ## Deterministic Blocking Gates
 
 Promotion requires all of these:
@@ -131,7 +168,8 @@ Promotion requires all of these:
 4. `candidate/qa.json` exists and has zero blocking checks.
 5. Visual overflow is acceptable for the candidate run.
 6. Reference and candidate image dimensions match.
-7. `compare/scorecard.json` exists and its `pass` flag is `true`.
+7. `compare/scorecard.json` exists and resolves to a promotable state:
+   deterministic pass, or deterministic fail with `manualDisposition: accepted` plus recorded `approvedExceptions`.
 
 ## Non-Blocking Agent Tasks
 

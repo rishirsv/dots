@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "kpmg-slidegen/docs/onboarding/compare-scorecard.schema.json",
   "title": "KPMG SlideGen Compare Scorecard",
-  "description": "Schema for deterministic compare scorecards produced by onboarding image comparison.",
+  "description": "Schema for compare scorecards produced by onboarding image comparison and any explicit manual promotion review.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -21,6 +21,7 @@
       "const": 2
     },
     "deterministicStatus": {
+      "description": "Raw deterministic compare outcome before any manual review override.",
       "type": "string",
       "enum": [
         "pass",
@@ -28,6 +29,7 @@
       ]
     },
     "manualDisposition": {
+      "description": "Optional human review disposition that can approve deterministic failures with recorded exceptions or block promotion explicitly.",
       "type": "string",
       "enum": [
         "unreviewed",
@@ -37,12 +39,14 @@
       ]
     },
     "approvedExceptions": {
+      "description": "Recorded reasons for accepting a deterministic compare failure. Required when manualDisposition accepts a deterministic failure.",
       "type": "array",
       "items": {
         "type": "string"
       }
     },
     "pass": {
+      "description": "Final promotion readiness after applying deterministicStatus and any manual review disposition.",
       "type": "boolean"
     },
     "metrics": {
@@ -237,6 +241,97 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "deterministicStatus": {
+            "const": "pass"
+          },
+          "manualDisposition": {
+            "enum": [
+              "unreviewed",
+              "accepted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pass": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "deterministicStatus": {
+            "const": "pass"
+          },
+          "manualDisposition": {
+            "enum": [
+              "rejected",
+              "needs-follow-up"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pass": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "deterministicStatus": {
+            "const": "fail"
+          },
+          "manualDisposition": {
+            "const": "accepted"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pass": {
+            "const": true
+          },
+          "approvedExceptions": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "deterministicStatus": {
+            "const": "fail"
+          },
+          "manualDisposition": {
+            "enum": [
+              "unreviewed",
+              "rejected",
+              "needs-follow-up"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pass": {
+            "const": false
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "checkResult": {
       "type": "object",

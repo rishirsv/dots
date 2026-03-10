@@ -38,7 +38,11 @@ npm run onboard:classify -- \
   --case-id coffee-business-overview
 ```
 
-Scaffold from an existing primitive:
+Classification only auto-recommends a primitive when the top candidate is above the acceptance threshold and not tied. If `classify.json` sets `requiresManualSelection: true`, choose a primitive explicitly with `--primitive-ref` before scaffolding an existing primitive, or pass `--base-primitive-ref` when extending into a new primitive.
+
+Choose one scaffold mode:
+
+1. Existing primitive reuse
 
 ```bash
 npm run onboard:scaffold -- \
@@ -46,14 +50,21 @@ npm run onboard:scaffold -- \
   --primitive-ref businessOverview@1
 ```
 
-Scaffold a new primitive:
+2. Extend an existing primitive into a new primitive
 
 ```bash
 npm run onboard:scaffold -- \
   --case-id coffee-business-overview \
-  --primitive-ref businessOverview@1 \
   --new-primitive-id businessOverviewAlt \
-  --builder-from-family businessOverview
+  --base-primitive-ref businessOverview@1
+```
+
+3. New primitive from the classified closest match
+
+```bash
+npm run onboard:scaffold -- \
+  --case-id coffee-business-overview \
+  --new-primitive-id businessOverviewAlt
 ```
 
 Render:
@@ -77,6 +88,18 @@ npm run onboard:promote -- \
   --case-id coffee-business-overview \
   --approved-by "Your Name" \
   --approval-notes "Residual differences reviewed and accepted."
+```
+
+Manual override for a deterministic compare failure:
+
+```bash
+npm run onboard:promote -- \
+  --case-id coffee-business-overview \
+  --approved-by "Your Name" \
+  --approval-notes "Approved with documented cosmetic exceptions." \
+  --manual-disposition accepted \
+  --approved-exception "Header anti-aliasing drift outside core content region" \
+  --approved-exception "Minor footer baseline shift within acceptable tolerance"
 ```
 
 Regenerate aggregates:
@@ -139,6 +162,18 @@ Rendering keeps the draft overlay approach:
 - use the primitive builder directly for existing primitives
 - use the candidate draft builder only for new primitives
 
+## Operator Decision
+
+Pick one of these before scaffold:
+- existing primitive: use `--primitive-ref`
+- extend existing primitive: use `--new-primitive-id` and `--base-primitive-ref`
+- new primitive: use `--new-primitive-id` only and let scaffold start from the classified closest primitive
+
+Manual primitive selection is required when classification records:
+- `recommendedPrimitiveRef: null`
+- `requiresManualSelection: true`
+- a `manualSelectionReason` such as `zero-score`, `below-threshold`, or `ambiguous-tie`
+
 The public generator CLI remains unchanged:
 
 ```bash
@@ -154,12 +189,20 @@ Promotion is allowed only when:
 - extraction evidence exists
 - classification exists
 - scaffold files exist
-- candidate render succeeds
-- candidate QA has zero blocking checks
-- compare scorecard has `pass: true`
+- case status is `compared`
+- `candidate.layout.json` exists
+- `candidate/preview/slide-1.png` exists
+- `candidate/qa.json` exists and has zero blocking checks
+- `compare/diff.json` exists
+- `compare/scorecard.json` exists and resolves to one of:
+- deterministic pass
+- deterministic fail plus `manualDisposition: accepted` with at least one recorded `approvedExceptions` entry
+- `manualDisposition: rejected` or `needs-follow-up` blocks promotion explicitly
 - source fragments can be written to `templates-src/`
 - `npm run onboard:regen` succeeds
 - `npm run onboard:verify-generated` succeeds
+
+Promotion fails closed with an explicit error naming the missing lifecycle artifact when one of those required files is absent.
 
 ## Skill Boundary
 

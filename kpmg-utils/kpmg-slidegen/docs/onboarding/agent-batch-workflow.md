@@ -10,7 +10,7 @@ Each layout should move through the same repo-only stages:
 2. `render`: build a deterministic one-slide candidate and collect `qa.json` plus preview PNG.
 3. `compare`: produce `candidate.png`, `diff.png`, `diff.json`, and `scorecard.json`.
 4. `review`: inspect deterministic failures first, then use an agent for visual triage and prioritization.
-5. `promote`: only after explicit approval metadata is present and deterministic gates pass.
+5. `promote`: only after explicit approval metadata is present and the compare scorecard is promotable.
 
 ## Recommended Agent Loop
 
@@ -21,7 +21,7 @@ For each source slide:
 3. Let the agent tighten geometry and candidate content until `render-candidate.mjs` succeeds with zero blocking QA.
 4. Run `compare-candidate.mjs`.
 5. Ask the agent to summarize the top visual mismatches using `diff.json`, `scorecard.json`, `reference.png`, `candidate.png`, and `diff.png`.
-6. Repeat until the scorecard passes and remaining differences are judged cosmetic.
+6. Repeat until the scorecard either passes deterministically or a human is prepared to approve the remaining differences with recorded exceptions.
 7. Human owner decides whether to run `promote-layout.mjs`.
 
 ## Deterministic Stop Rules
@@ -33,7 +33,8 @@ Stop the iteration and fix the draft before any promotion discussion when:
 3. `qa.json` contains blocking checks.
 4. Visual overflow is failing.
 5. Reference and candidate dimensions do not match.
-6. `scorecard.json` is missing or `deterministicStatus` is `fail`.
+6. `scorecard.json` is missing.
+7. `scorecard.json` is deterministically failing and no approved exception path has been recorded.
 
 ## Repo-Only Boundaries
 

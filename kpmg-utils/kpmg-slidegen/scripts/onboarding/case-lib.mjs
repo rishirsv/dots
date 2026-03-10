@@ -11,20 +11,19 @@ import {
   readSourcePrimitives,
 } from '../codegen/lib.mjs';
 import {
-  REPO_ROOT,
   DEFAULT_PREVIEW_HEIGHT,
   DEFAULT_PREVIEW_WIDTH,
-  buildCandidateBuilderSource,
   buildCandidatePostprocessOptions,
-  buildStarterSlideFromFamily,
   captureReferenceSlide,
   compareCandidateImages,
   ensureDir,
   extractOnboardingEvidence,
   getBlockingChecks,
+  GOLDEN_ALL_LAYOUTS_PATH,
   loadDraftBuilder,
   normalizePng,
   readJson,
+  REPO_ROOT,
   toPascalCase,
   writeJson,
   writeText,
@@ -34,6 +33,7 @@ export const ONBOARDING_CASE_ROOT =
   process.env.ONBOARDING_CASE_ROOT || path.join(REPO_ROOT, 'onboarding', 'cases');
 export const ONBOARDING_OUTPUT_ROOT =
   process.env.ONBOARDING_OUTPUT_ROOT || path.join(REPO_ROOT, 'outputs', 'onboarding');
+export const PRIMITIVE_CLASSIFICATION_ACCEPTANCE_THRESHOLD = 5;
 
 function primitivesByRef() {
   const primitives = readSourcePrimitives();
@@ -42,6 +42,81 @@ function primitivesByRef() {
 
 function layoutsByType() {
   return Object.fromEntries(readSourceLayouts().map((layout) => [layout.type, layout]));
+}
+
+function cloneJson(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+/**
+ * Rank available primitives against the extracted fingerprint evidence.
+ *
+ * @param {object} fingerprint
+ * @param {object[]} primitives
+ * @returns {object[]}
+ */
+export function rankPrimitivesForFingerprint(fingerprint = {}, primitives = []) {
+  return primitives.map((primitive) => {
+    let score = 0;
+    if ((fingerprint.likelyPrimitiveCandidates || []).includes(primitive.id)) score += 5;
+    if (fingerprint.connectorCount > 0 && primitive.geometryKinds?.framework === 'boxTree') score += 2;
+    if (fingerprint.repeatedCardCount >= 3 && primitive.geometryKinds?.analysisBoxes === 'boxArray') score += 1;
+    if (fingerprint.hasTitleBand && primitive.requiredGeometry?.includes('titleBox')) score += 1;
+    return {
+      primitiveRef: primitiveVersionRef(primitive),
+      primitiveId: primitive.id,
+      score,
+      reasons: [
+        ...(fingerprint.likelyPrimitiveCandidates || []).includes(primitive.id) ? ['fingerprint-likely-match'] : [],
+        fingerprint.hasTitleBand && primitive.requiredGeometry?.includes('titleBox') ? ['title-band-match'] : [],
+      ],
+    };
+  }).sort((left, right) => right.score - left.score || left.primitiveId.localeCompare(right.primitiveId));
+}
+
+/**
+ * Resolve whether the ranked candidates produce an accepted recommendation.
+ *
+ * @param {object} params
+ * @returns {object}
+ */
+export function buildClassificationDecision({
+  caseId,
+  scores,
+  acceptanceThreshold = PRIMITIVE_CLASSIFICATION_ACCEPTANCE_THRESHOLD,
+}) {
+  const rankedAlternatives = Array.isArray(scores) ? scores.map((entry) => ({ ...entry })) : [];
+  const topScore = Number(rankedAlternatives[0]?.score || 0);
+  const topPrimitiveRef = rankedAlternatives[0]?.primitiveRef || null;
+  const tiedTopAlternatives = rankedAlternatives.filter((entry) => Number(entry?.score || 0) === topScore);
+  let recommendedPrimitiveRef = topPrimitiveRef;
+  let requiresManualSelection = false;
+  let manualSelectionReason = null;
+
+  if (topScore <= 0) {
+    recommendedPrimitiveRef = null;
+    requiresManualSelection = true;
+    manualSelectionReason = 'zero-score';
+  } else if (topScore < acceptanceThreshold) {
+    recommendedPrimitiveRef = null;
+    requiresManualSelection = true;
+    manualSelectionReason = 'below-threshold';
+  } else if (tiedTopAlternatives.length > 1) {
+    recommendedPrimitiveRef = null;
+    requiresManualSelection = true;
+    manualSelectionReason = 'ambiguous-tie';
+  }
+
+  return {
+    schemaVersion: 2,
+    caseId,
+    acceptanceThreshold,
+    topScore,
+    recommendedPrimitiveRef,
+    requiresManualSelection,
+    manualSelectionReason,
+    rankedAlternatives,
+  };
 }
 
 export function normalizeCaseId(raw) {
@@ -179,27 +254,78 @@ export function readClassification(caseId) {
   return readJson(paths.classifyPath);
 }
 
-function baseSlideForPrimitive(primitiveId, layoutId) {
-  try {
-    return buildStarterSlideFromFamily(primitiveId, layoutId);
-  } catch {
-    return {
-      type: layoutId,
-      title: `Draft ${layoutId}`,
-      body: ['Replace this placeholder with candidate content.'],
-      bodyStyle: 'bullets',
-    };
+function layoutSourceForPrimitive(primitive) {
+  const layoutType = String(primitive?.slotSchemaRef || primitive?.id || '').trim();
+  if (!layoutType) return null;
+  return layoutsByType()[layoutType] || null;
+}
+
+function buildGenericStarterSlide(layoutId) {
+  return {
+    type: layoutId,
+    title: `Draft ${layoutId}`,
+    body: ['Replace this placeholder with candidate content.'],
+    bodyStyle: 'bullets',
+  };
+}
+
+function starterDeckSpecPathForPrimitive(primitive) {
+  const configured = String(primitive?.scaffoldFixture?.deckSpecPath || '').trim();
+  if (!configured) return GOLDEN_ALL_LAYOUTS_PATH;
+  return path.join(REPO_ROOT, configured);
+}
+
+function buildStarterSlideFromPrimitive({
+  layoutId,
+  starterPrimitive,
+}) {
+  const deckSpecPath = starterDeckSpecPathForPrimitive(starterPrimitive);
+  if (!fs.existsSync(deckSpecPath)) {
+    return buildGenericStarterSlide(layoutId);
   }
+
+  const deckSpec = readJson(deckSpecPath);
+  const sourceTypes = [
+    String(starterPrimitive?.slotSchemaRef || '').trim(),
+    String(starterPrimitive?.id || '').trim(),
+  ].filter(Boolean);
+  const slides = Array.isArray(deckSpec?.slides) ? deckSpec.slides : [];
+  const baseSlide = slides.find((slide) => sourceTypes.includes(String(slide?.type || '').trim()))
+    || slides[0]
+    || null;
+
+  if (!baseSlide) {
+    return buildGenericStarterSlide(layoutId);
+  }
+
+  return {
+    ...cloneJson(baseSlide),
+    type: layoutId,
+  };
+}
+
+function buildCandidateBuilderSourceFromPrimitive({
+  layoutId,
+  sourcePrimitive,
+}) {
+  if (!sourcePrimitive?.builderModule || !sourcePrimitive?.builderExport) {
+    throw new Error(`Cannot scaffold builder for ${layoutId} without a base primitive builder.`);
+  }
+
+  const pascal = toPascalCase(layoutId);
+  const importPath = pathToFileURL(path.join(REPO_ROOT, sourcePrimitive.builderModule)).href;
+  return `import { ${sourcePrimitive.builderExport} } from '${importPath}';\n\nexport function build${pascal}(pptx, slideSpec, ctx) {\n  return ${sourcePrimitive.builderExport}(pptx, slideSpec, ctx);\n}\n\nexport default build${pascal};\n`;
 }
 
 export function buildCandidateLayoutFromPrimitive({
   layoutId,
   primitive,
+  sourcePrimitive = primitive,
 }) {
-  const layoutSource = layoutsByType()[primitive.id];
+  const layoutSource = layoutSourceForPrimitive(sourcePrimitive);
   if (layoutSource) {
     return {
-      ...JSON.parse(JSON.stringify(layoutSource)),
+      ...cloneJson(layoutSource),
       type: layoutId,
       primitive: primitiveVersionRef(primitive),
       description: `Draft layout ${layoutId} using ${primitive.id}`,
@@ -223,8 +349,12 @@ export function buildCandidateLayoutFromPrimitive({
 export function buildDeckSpecFromPrimitive({
   layoutId,
   primitive,
+  starterPrimitive = primitive,
 }) {
-  const starterSlide = baseSlideForPrimitive(primitive.id, layoutId);
+  const starterSlide = buildStarterSlideFromPrimitive({
+    layoutId,
+    starterPrimitive,
+  });
   return {
     metadata: {
       title: `Draft ${layoutId}`,
@@ -342,29 +472,11 @@ export function classifyCase({ caseId }) {
   const paths = getCasePaths(caseId);
   const fingerprint = readJson(paths.fingerprintPath);
   const primitives = readSourcePrimitives();
-  const scores = primitives.map((primitive) => {
-    let score = 0;
-    if ((fingerprint.likelyPrimitiveCandidates || []).includes(primitive.id)) score += 5;
-    if (fingerprint.connectorCount > 0 && primitive.geometryKinds?.framework === 'boxTree') score += 2;
-    if (fingerprint.repeatedCardCount >= 3 && primitive.geometryKinds?.analysisBoxes === 'boxArray') score += 1;
-    if (fingerprint.hasTitleBand && primitive.requiredGeometry?.includes('titleBox')) score += 1;
-    return {
-      primitiveRef: primitiveVersionRef(primitive),
-      primitiveId: primitive.id,
-      score,
-      reasons: [
-        ...(fingerprint.likelyPrimitiveCandidates || []).includes(primitive.id) ? ['fingerprint-likely-match'] : [],
-        fingerprint.hasTitleBand && primitive.requiredGeometry?.includes('titleBox') ? ['title-band-match'] : [],
-      ],
-    };
-  }).sort((left, right) => right.score - left.score || left.primitiveId.localeCompare(right.primitiveId));
-
-  const classification = {
-    schemaVersion: 1,
+  const scores = rankPrimitivesForFingerprint(fingerprint, primitives);
+  const classification = buildClassificationDecision({
     caseId: record.caseId,
-    recommendedPrimitiveRef: scores[0]?.primitiveRef || null,
-    candidates: scores.slice(0, 5),
-  };
+    scores,
+  });
   writeJson(paths.classifyPath, classification);
   writeCaseRecord(caseId, {
     ...record,
@@ -378,21 +490,34 @@ export function scaffoldCase({
   caseId,
   primitiveRef = null,
   newPrimitiveId = null,
-  builderFromFamily = null,
+  basePrimitiveRef = null,
 }) {
   const record = loadCaseRecord(caseId);
   const paths = getCasePaths(caseId);
-  const selectedPrimitiveRef = primitiveRef || record.primitiveRef || readClassification(caseId).recommendedPrimitiveRef;
+  const classification = fs.existsSync(paths.classifyPath) ? readJson(paths.classifyPath) : null;
+  const acceptedRecommendedPrimitiveRef =
+    classification?.requiresManualSelection
+      ? null
+      : (classification?.recommendedPrimitiveRef || record.primitiveRef || null);
+
+  if (primitiveRef && newPrimitiveId) {
+    throw new Error('Use --primitive-ref for existing primitive reuse, or --new-primitive-id with optional --base-primitive-ref for new primitive scaffolding.');
+  }
 
   let builderMode = 'existing-primitive';
-  let primitive = resolvePrimitive(selectedPrimitiveRef);
+  let primitive = null;
   let candidatePrimitive = null;
-  const basePrimitive = primitive;
+  let scaffoldSourcePrimitive = null;
 
   if (newPrimitiveId) {
+    const effectiveBasePrimitiveRef = basePrimitiveRef || acceptedRecommendedPrimitiveRef;
+    if (!effectiveBasePrimitiveRef) {
+      throw new Error('New primitive scaffolding requires an accepted classified primitive or an explicit --base-primitive-ref.');
+    }
+    scaffoldSourcePrimitive = resolvePrimitive(effectiveBasePrimitiveRef);
     builderMode = 'new-primitive';
     candidatePrimitive = {
-      ...JSON.parse(JSON.stringify(basePrimitive)),
+      ...cloneJson(scaffoldSourcePrimitive),
       id: newPrimitiveId,
       version: 1,
       slotSchemaRef: newPrimitiveId,
@@ -400,27 +525,35 @@ export function scaffoldCase({
       builderExport: `build${toPascalCase(newPrimitiveId)}`,
     };
     primitive = candidatePrimitive;
+  } else {
+    const selectedPrimitiveRef = primitiveRef || acceptedRecommendedPrimitiveRef;
+    if (!selectedPrimitiveRef) {
+      throw new Error('Unable to determine a primitive for scaffolding. Run onboard:classify until it recommends one above threshold, or pass --primitive-ref.');
+    }
+    primitive = resolvePrimitive(selectedPrimitiveRef);
+    scaffoldSourcePrimitive = primitive;
   }
 
   const candidateLayout = buildCandidateLayoutFromPrimitive({
     layoutId: record.layoutId,
     primitive,
+    sourcePrimitive: scaffoldSourcePrimitive,
   });
   const candidateDeckSpec = buildDeckSpecFromPrimitive({
     layoutId: record.layoutId,
     primitive,
+    starterPrimitive: scaffoldSourcePrimitive,
   });
   writeJson(paths.candidateLayoutPath, candidateLayout);
   writeJson(paths.candidateDeckSpecPath, candidateDeckSpec);
 
   if (candidatePrimitive) {
     writeJson(paths.candidatePrimitivePath, candidatePrimitive);
-    const family = builderFromFamily || primitive.id;
     writeText(
       paths.candidateBuilderPath,
-      buildCandidateBuilderSource({
-        family: builderFromFamily || basePrimitive.id,
+      buildCandidateBuilderSourceFromPrimitive({
         layoutId: newPrimitiveId,
+        sourcePrimitive: scaffoldSourcePrimitive,
       }),
     );
   } else {
@@ -546,22 +679,152 @@ export function compareCase({ caseId }) {
   return compared;
 }
 
-export function promoteCase({
+function requirePromotionArtifact(filePath, label) {
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Cannot promote because required artifact is missing: ${label} (${filePath})`);
+  }
+}
+
+function normalizeApprovedExceptions(values = []) {
+  if (!Array.isArray(values)) return [];
+  return Array.from(
+    new Set(
+      values
+        .map((value) => String(value || '').trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+function resolvePromotionScorecard({
+  scorecard,
+  manualDisposition = null,
+  approvedExceptions = [],
+}) {
+  if (!scorecard || typeof scorecard !== 'object') {
+    throw new Error('Cannot promote because compare scorecard is missing or invalid.');
+  }
+
+  const resolved = JSON.parse(JSON.stringify(scorecard));
+  const allowedManualDispositions = new Set(['unreviewed', 'accepted', 'rejected', 'needs-follow-up']);
+  const requestedManualDisposition =
+    manualDisposition === null || manualDisposition === undefined
+      ? null
+      : String(manualDisposition).trim();
+  if (requestedManualDisposition !== null && !allowedManualDispositions.has(requestedManualDisposition)) {
+    throw new Error(
+      `Cannot promote because manualDisposition must be one of ${Array.from(allowedManualDispositions).join(', ')}.`,
+    );
+  }
+
+  if (requestedManualDisposition !== null) {
+    resolved.manualDisposition = requestedManualDisposition;
+  }
+  const hasRequestedExceptions = Array.isArray(approvedExceptions) && approvedExceptions.length > 0;
+  if (hasRequestedExceptions || resolved.manualDisposition === 'accepted') {
+    resolved.approvedExceptions = normalizeApprovedExceptions(
+      hasRequestedExceptions ? approvedExceptions : resolved.approvedExceptions,
+    );
+  } else if (requestedManualDisposition !== null) {
+    resolved.approvedExceptions = [];
+  } else {
+    resolved.approvedExceptions = normalizeApprovedExceptions(resolved.approvedExceptions);
+  }
+
+  const deterministicStatus = String(resolved.deterministicStatus || '').trim();
+  const disposition = String(resolved.manualDisposition || 'unreviewed').trim();
+  if (!['pass', 'fail'].includes(deterministicStatus)) {
+    throw new Error('Cannot promote because compare scorecard deterministicStatus must be pass or fail.');
+  }
+  if (!allowedManualDispositions.has(disposition)) {
+    throw new Error('Cannot promote because compare scorecard manualDisposition is invalid.');
+  }
+
+  if (deterministicStatus === 'pass') {
+    if (disposition === 'rejected') {
+      throw new Error('Cannot promote because compare scorecard was manually rejected.');
+    }
+    if (disposition === 'needs-follow-up') {
+      throw new Error('Cannot promote because compare scorecard still needs manual follow-up.');
+    }
+    resolved.pass = true;
+    return resolved;
+  }
+
+  if (disposition === 'accepted') {
+    if (resolved.approvedExceptions.length === 0) {
+      throw new Error('Cannot promote because manual approval of a deterministic compare failure requires approvedExceptions to be recorded.');
+    }
+    resolved.pass = true;
+    return resolved;
+  }
+  if (disposition === 'rejected') {
+    throw new Error('Cannot promote because compare scorecard deterministically failed and was manually rejected.');
+  }
+  if (disposition === 'needs-follow-up') {
+    throw new Error('Cannot promote because compare scorecard deterministically failed and still needs manual follow-up.');
+  }
+  throw new Error('Cannot promote because compare scorecard deterministically failed and has not been manually approved with recorded exceptions.');
+}
+
+/**
+ * Validate that a case has completed the full render+compare lifecycle and is safe to promote.
+ *
+ * @param {object} params
+ * @returns {object}
+ */
+export function assertPromotionReady({
   caseId,
-  approvedBy,
-  approvalNotes = null,
+  manualDisposition = null,
+  approvedExceptions = [],
 }) {
   const record = loadCaseRecord(caseId);
   const paths = getCasePaths(caseId);
+
+  if (record.status !== 'compared') {
+    throw new Error(`Cannot promote because case status must be "compared" before promotion. Received: ${record.status || 'unknown'}.`);
+  }
+
+  requirePromotionArtifact(paths.candidateLayoutPath, 'candidate.layout.json');
+  requirePromotionArtifact(paths.candidatePreviewPngPath, 'candidate/preview/slide-1.png');
+  requirePromotionArtifact(paths.candidateQaPath, 'candidate/qa.json');
+  requirePromotionArtifact(paths.diffJsonPath, 'compare/diff.json');
+  requirePromotionArtifact(paths.scorecardPath, 'compare/scorecard.json');
+
   const qa = readJson(paths.candidateQaPath);
   const blockingChecks = getBlockingChecks(qa);
   if (blockingChecks.length > 0) {
     throw new Error(`Cannot promote because candidate QA has blocking checks: ${blockingChecks.map((check) => `${check.id}:${check.status}`).join(', ')}`);
   }
-  const scorecard = readJson(paths.scorecardPath);
-  if (!scorecard?.pass) {
-    throw new Error('Cannot promote because compare scorecard did not pass.');
-  }
+
+  const scorecard = resolvePromotionScorecard({
+    scorecard: readJson(paths.scorecardPath),
+    manualDisposition,
+    approvedExceptions,
+  });
+
+  return {
+    record,
+    paths,
+    qa,
+    scorecard,
+  };
+}
+
+export function promoteCase({
+  caseId,
+  approvedBy,
+  approvalNotes = null,
+  manualDisposition = null,
+  approvedExceptions = [],
+}) {
+  const { record, paths, scorecard } = assertPromotionReady({
+    caseId,
+    manualDisposition,
+    approvedExceptions,
+  });
+
+  writeJson(paths.scorecardPath, scorecard);
 
   const candidateLayout = readJson(paths.candidateLayoutPath);
   const layoutFragment = JSON.parse(JSON.stringify(candidateLayout));
@@ -596,6 +859,18 @@ export function promoteCase({
   });
   if (regen.status !== 0) {
     throw new Error('Failed to regenerate runtime aggregates during promotion.');
+  }
+
+  const verifyGenerated = spawnSync(process.execPath, [path.join(REPO_ROOT, 'scripts', 'codegen', 'generate-runtime-aggregates.mjs'), '--check'], {
+    cwd: REPO_ROOT,
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      PYTHONDONTWRITEBYTECODE: '1',
+    },
+  });
+  if (verifyGenerated.status !== 0) {
+    throw new Error('Failed to verify generated runtime aggregates during promotion.');
   }
 
   writeCaseRecord(caseId, {
