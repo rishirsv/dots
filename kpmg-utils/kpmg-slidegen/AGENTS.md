@@ -34,7 +34,7 @@ This repo converts `deckSpec` JSON files into `.pptx` outputs with a consolidate
 - Validate changes by running the generator with explicit `--in` and either `--out` or `--out-dir`, plus `--qa-out` when you need a deterministic QA artifact path.
 - Keep postprocess runtime portable: repo runs and skill runs must work without external `.agents` dependencies.
 - This repo is pre-release. Do not add backward-compatibility fallbacks or dual-path parsers unless explicitly requested.
-- Use the repo-only onboarding workflow under `scripts/onboarding/` and `onboarding/layouts/` for new canonical layout work. Do not put draft onboarding assets, source PPTX files, seeds, or diff artifacts into the portable skill bundle.
+- Use the repo-only onboarding workflow under `scripts/onboarding/` and `onboarding/cases/` for new canonical layout work. Do not put draft onboarding assets, source PPTX files, or diff artifacts into the portable skill bundle.
 
 ## Quick Start
 
@@ -55,7 +55,7 @@ node generator/index.js \
 - `generator/postprocess/slides-runtime/`: bundled Python postprocess runtime (`render_slides.py`, `create_montage.py`, `slides_test.py`, `ensure_raster_image.py`).
 - `templates/kpmg-diligence/package/layouts.json`: slide-type layout contract.
 - `scripts/onboarding/`: repo-only layout extraction, render, compare, and promotion tooling.
-- `onboarding/layouts/`: repo-only draft layout workspaces.
+- `onboarding/cases/`: repo-only onboarding case workspaces.
 
 ## Skill Bundle Contract
 

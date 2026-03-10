@@ -11,4 +11,8 @@ if (!caseId) usage();
 
 const classification = classifyCase({ caseId });
 console.log(`Classification: ${classification.recommendedPrimitiveRef || 'none'}`);
-console.log(`Candidates: ${classification.candidates.length}`);
+console.log(`Manual selection required: ${classification.requiresManualSelection ? 'yes' : 'no'}`);
+if (classification.manualSelectionReason) {
+  console.log(`Reason: ${classification.manualSelectionReason}`);
+}
+console.log(`Ranked alternatives: ${classification.rankedAlternatives.length}`);

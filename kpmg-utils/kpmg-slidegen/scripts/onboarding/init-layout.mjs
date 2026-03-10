@@ -3,10 +3,10 @@ import path from 'node:path';
 
 import { loadTemplatePackage } from '../../generator/runtime/template-package.js';
 import {
-  buildCandidateBuilderSource,
-  buildCandidateDeckSpecScaffold,
+  buildLegacyCandidateBuilderSource,
+  buildLegacyCandidateDeckSpecScaffold,
   buildIntakeRecord,
-  buildCandidateLayoutScaffold,
+  buildLegacyCandidateLayoutScaffold,
   buildSourceRecord,
   captureReferenceSlide,
   ensureLayoutPaths,
@@ -19,7 +19,7 @@ import {
 
 function usage() {
   throw new Error(
-    'Usage: node scripts/onboarding/init-layout.mjs --source-pptx <file.pptx> --slide <n> --layout-id <camelCaseId> [--family <existingType>] [--extract-seed] [--force]',
+    'Usage: node scripts/onboarding/init-layout.mjs --source-pptx <file.pptx> --slide <n> --layout-id <camelCaseId> [--family <existingType>] [--extract-seed] [--force]\nLegacy helper: case-based onboarding should use extract/classify/scaffold instead.',
   );
 }
 
@@ -57,16 +57,16 @@ if (!force) {
 }
 
 const templatePackage = loadTemplatePackage('kpmg-diligence');
-const candidateLayout = buildCandidateLayoutScaffold({
+const candidateLayout = buildLegacyCandidateLayoutScaffold({
   templatePackage,
   family,
   layoutId,
 });
-const candidateDeckSpec = buildCandidateDeckSpecScaffold({
+const candidateDeckSpec = buildLegacyCandidateDeckSpecScaffold({
   family,
   layoutId,
 });
-const candidateBuilderSource = buildCandidateBuilderSource({
+const candidateBuilderSource = buildLegacyCandidateBuilderSource({
   family,
   layoutId,
 });

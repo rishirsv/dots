@@ -6,6 +6,7 @@ import { REPO_ROOT, resolveRepoPath } from './support.mjs';
 
 const SKILL_ROOT = resolveRepoPath('skills', 'kpmg-slides');
 const MANIFEST_PATH = path.join(SKILL_ROOT, 'assets', 'bundle-manifest.json');
+export { MANIFEST_PATH, SKILL_ROOT };
 
 const DIRECTORY_SYNC_MAP = [
   {
@@ -192,13 +193,16 @@ function buildManifestEntries(pairs) {
     .sort((a, b) => a.target.localeCompare(b.target));
 }
 
-function writeManifest(entries) {
-  ensureDir(path.dirname(MANIFEST_PATH));
-  const manifest = {
+export function buildManifestDocument(entries) {
+  return {
     schemaVersion: 1,
-    generatedAt: new Date().toISOString(),
     entries,
   };
+}
+
+function writeManifest(entries) {
+  ensureDir(path.dirname(MANIFEST_PATH));
+  const manifest = buildManifestDocument(entries);
   fs.writeFileSync(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
@@ -216,7 +220,7 @@ function removeMacMetadata(rootDir) {
   }
 }
 
-function main() {
+export function syncSkillBundle() {
   const resolvedFileSyncMap = resolveFileSyncMap(FILE_SYNC_MAP);
   const dirPairs = DIRECTORY_SYNC_MAP.flatMap(({ source, target }) => syncDirectory(source, target));
   const filePairs = syncFiles(resolvedFileSyncMap);
@@ -229,8 +233,19 @@ function main() {
   removeMacMetadata(SKILL_ROOT);
   const entries = buildManifestEntries([...dirPairs, ...filePairs, ...nativePairs]);
   writeManifest(entries);
-  console.log(`Skill bundle sync complete: ${relativeToRepo(SKILL_ROOT)}`);
-  console.log(`Manifest: ${relativeToRepo(MANIFEST_PATH)} (${entries.length} entries)`);
+  return {
+    entries,
+    manifestPath: MANIFEST_PATH,
+    skillRoot: SKILL_ROOT,
+  };
 }
 
-main();
+function main() {
+  const { entries, manifestPath } = syncSkillBundle();
+  console.log(`Skill bundle sync complete: ${relativeToRepo(SKILL_ROOT)}`);
+  console.log(`Manifest: ${relativeToRepo(manifestPath)} (${entries.length} entries)`);
+}
+
+if (process.argv[1] && import.meta.url === `file://${path.resolve(process.argv[1])}`) {
+  main();
+}

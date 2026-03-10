@@ -29,6 +29,9 @@ jobs:
       - name: Install skill Node dependencies
         run: npm ci --prefix skills/kpmg-slides
 
+      - name: Validate authoring fragments
+        run: npm run schema:validate:authoring
+
       - name: Regenerate runtime aggregates
         run: npm run onboard:regen
 
@@ -39,7 +42,15 @@ jobs:
         run: npm run docs:verify
 
       - name: Run changed layout lane
-        run: npm run test:changed-layouts
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            npm run test:changed-layouts -- --base-ref "${{ github.event.pull_request.base.sha }}" --head-ref "${{ github.sha }}"
+          elif [[ -n "${{ github.event.before }}" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+            npm run test:changed-layouts -- --base-ref "${{ github.event.before }}" --head-ref "${{ github.sha }}"
+          else
+            npm run test:changed-layouts
+          fi
 
       - name: Run primitive stress lane
         run: npm run test:primitive-stress
@@ -89,6 +100,9 @@ jobs:
 
       - name: Install skill Node dependencies
         run: npm ci --prefix skills/kpmg-slides
+
+      - name: Validate authoring fragments
+        run: npm run schema:validate:authoring
 
       - name: Install system packages for visual runtime
         run: |

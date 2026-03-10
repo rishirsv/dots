@@ -9,6 +9,7 @@ import {
 } from '../generator/runtime/geometry-contract.js';
 import { getSlideRegistry } from '../generator/runtime/slide-registry.js';
 import { cloneTemplatePackage, loadTemplatePackage } from '../generator/runtime/template-package.js';
+import { readSourceLayoutPackageMeta, readSourceLayouts } from './codegen/lib.mjs';
 import { REPO_ROOT } from './support.mjs';
 
 const templatePackage = loadTemplatePackage('kpmg-diligence');
@@ -100,21 +101,38 @@ const schemaTypes = sortedUnique(
     .filter(Boolean),
 );
 const registryTypes = ctx.slideRegistry.list().slice().sort();
+const sourceLayoutTypes = sortedUnique(readSourceLayouts().map((layout) => layout.type));
+const authoredRegistryTypes = sortedUnique((onboardedRegistryIndex.entries || []).map((entry) => entry.type));
+const authoredLayoutPackageMeta = readSourceLayoutPackageMeta();
+const generatedLayoutsPackageMeta = Object.fromEntries(
+  Object.entries(templatePackage.layouts || {}).filter(([key]) => key !== 'types' && key !== 'generatedFileHeader'),
+);
 
 assert.deepEqual(diff(templateTypes, schemaTypes), [], 'Every template type must appear in the docs schema.');
 assert.deepEqual(diff(schemaTypes, templateTypes), [], 'Schema must not document unknown slide types.');
 assert.deepEqual(registryTypes, templateTypes, 'Slide registry must cover every template type exactly once.');
+assert.deepEqual(
+  generatedLayoutsPackageMeta,
+  authoredLayoutPackageMeta,
+  'Generated layout package metadata must come directly from authored layout package metadata.',
+);
+assert.deepEqual(
+  authoredRegistryTypes,
+  sourceLayoutTypes,
+  'Generated authored registry index must cover every source layout type, including built-ins.',
+);
+assert.equal(onboardedRegistryIndex.schemaVersion, 4, 'Onboarded registry index schema version should reflect authoritative authored built-in entries.');
 assert.ok(templatePackage?.layouts?.masters?.variants, 'Template package must expose master variants.');
 assert.ok(templatePackage?.tokens?.dimensions, 'Template package must expose slide dimensions.');
 
 for (const entry of onboardedRegistryIndex.entries || []) {
   assert.ok(entry.type, 'Onboarded registry entries must declare a type.');
-  assert.ok(entry.builderFile, `Onboarded registry entry missing builderFile for ${entry.type}`);
-  assert.ok(entry.exportName, `Onboarded registry entry missing exportName for ${entry.type}`);
+  assert.ok(entry.builderModule, `Onboarded registry entry missing builderModule for ${entry.type}`);
+  assert.ok(entry.builderExport, `Onboarded registry entry missing builderExport for ${entry.type}`);
   assert.equal(
-    fs.existsSync(path.join(REPO_ROOT, 'generator', 'builders', 'onboarded', `${entry.builderFile}.js`)),
+    fs.existsSync(path.join(REPO_ROOT, entry.builderModule)),
     true,
-    `Onboarded builder file missing for ${entry.type}`,
+    `Onboarded builder module missing for ${entry.type}`,
   );
 }
 

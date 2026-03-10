@@ -10,7 +10,14 @@
     "generate:detailed": "node generator/index.js --in presets/authoring/detailed.deckSpec.json",
     "generate:extensive": "node generator/index.js --in presets/authoring/extensive.deckSpec.json",
     "qa": "npm run -s test:pr",
+    "schema:validate:authoring": "node scripts/validate-authoring-fragments.mjs",
     "test:contracts": "node scripts/test-contracts.mjs",
+    "test:authoring-schema-validation": "node scripts/test-authoring-schema-validation.mjs",
+    "test:codegen-onboarded-registry": "node scripts/test-codegen-onboarded-registry.mjs",
+    "test:codegen-source-reproducibility": "node scripts/test-codegen-source-reproducibility.mjs",
+    "test:changed-layout-detection": "node scripts/test-changed-layouts-selection.mjs",
+    "test:skill-bundle-determinism": "node scripts/test-skill-bundle-determinism.mjs",
+    "test:onboarding-classification": "node scripts/test-onboarding-classification.mjs",
     "test:fixtures": "node scripts/test-fixtures.mjs",
     "test:structure": "node scripts/test-structure.mjs",
     "test:render": "node scripts/test-render.mjs",
@@ -41,14 +48,14 @@
     "onboard:verify-generated": "node scripts/codegen/generate-runtime-aggregates.mjs --check",
     "codegen:bootstrap-authoring": "node scripts/codegen/bootstrap-authoring-from-runtime.mjs",
     "codegen:runtime-package": "node scripts/codegen/generate-runtime-aggregates.mjs",
-    "codegen:onboarded-registry": "node scripts/codegen/generate-runtime-aggregates.mjs",
-    "schema:validate:authoring": "node -e \"console.log('TODO Phase 2: authoring schema validation is not wired yet')\""
+    "codegen:onboarded-registry": "node scripts/codegen/generate-runtime-aggregates.mjs"
   },
   "dependencies": {
     "image-size": "^2.0.2",
     "pptxgenjs": "^4.0.1"
   },
   "devDependencies": {
-    "acorn": "^8.15.0"
+    "acorn": "^8.15.0",
+    "ajv": "^8.18.0"
   }
 }

@@ -1,0 +1,645 @@
+{
+  "metadata": {
+    "title": "Primitive Render Stress Matrix",
+    "textAmount": "xl",
+    "allowSparse": true
+  },
+  "slides": [
+    {
+      "type": "contents",
+      "title": "Contents and Workstream Decision Index",
+      "sections": [
+        {
+          "number": "01",
+          "title": "Executive framing and transaction objectives with expanded decision context",
+          "items": [
+            "Scope framing",
+            "Decision context"
+          ]
+        },
+        {
+          "number": "02",
+          "title": "Commercial performance, concentration signals, and customer retention themes",
+          "items": [
+            "Growth drivers",
+            "Retention quality"
+          ]
+        },
+        {
+          "number": "03",
+          "title": "Margin and cost dynamics, bridge evidence, and cost takeout sequencing",
+          "items": [
+            "Bridge evidence",
+            "Sustainability"
+          ]
+        },
+        {
+          "number": "04",
+          "title": "Operational resilience, service continuity, and escalation governance",
+          "items": [
+            "Service continuity",
+            "Escalation paths"
+          ]
+        },
+        {
+          "number": "05",
+          "title": "Technology architecture, security posture, and control maturity roadmap",
+          "items": [
+            "Architecture",
+            "Control maturity"
+          ]
+        },
+        {
+          "number": "06",
+          "title": "Data quality, reporting lineage, and management-pack reliability",
+          "items": [
+            "Evidence quality",
+            "Governance"
+          ]
+        },
+        {
+          "number": "07",
+          "title": "Management actions, interlock cadence, and accountability model",
+          "items": [
+            "Roadmap",
+            "Ownership"
+          ]
+        },
+        {
+          "number": "08",
+          "title": "Risk themes, mitigation sequencing, and unresolved dependencies",
+          "items": [
+            "Priority risks",
+            "Mitigation status"
+          ]
+        },
+        {
+          "number": "09",
+          "title": "Integration implications, dependencies, and readiness assumptions",
+          "items": [
+            "Dependencies",
+            "Readiness"
+          ]
+        },
+        {
+          "number": "10",
+          "title": "Synergy perspective, revenue upside, and cost realization guardrails",
+          "items": [
+            "Revenue synergies",
+            "Cost synergies"
+          ]
+        },
+        {
+          "number": "11",
+          "title": "Value creation plan, near-term milestones, and KPI ownership",
+          "items": [
+            "Milestones",
+            "KPIs"
+          ]
+        },
+        {
+          "number": "12",
+          "title": "Appendix, methodology notes, and decision-useful definitions",
+          "items": [
+            "Methodology",
+            "Definitions"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "dividerLight",
+      "sectionNumber": "07",
+      "sectionTitle": "Operational resilience, technology readiness, and control actions"
+    },
+    {
+      "type": "oneColumnText",
+      "title": "Governance Narrative Stress and Text Reflow",
+      "strapline": "Extended governance strapline to pressure strapline fit, verify reserved spacing, and confirm that omitted optional source and callout content do not create rendering drift.",
+      "bodyStyle": "paragraphs",
+      "body": [
+        "Management introduced a tighter monthly operating rhythm with explicit owners, dated decisions, and evidence thresholds that improve auditability without slowing frontline issue resolution.",
+        "The new process materially reduced ambiguity in accountability across cross-functional workstreams and made late-stage escalation decisions easier to trace during weekly steering reviews.",
+        "Residual inconsistency remains in supporting evidence quality, especially where decisions depend on manual reconciliations compiled across multiple reporting owners and timelines.",
+        "Interview evidence suggests that control maturity improved more quickly in highly visible workstreams than in lower-visibility processes with fragmented ownership and weaker documentation baselines.",
+        "Management believes the newer routines will support more stable forecast variance explanations, but sustainability still depends on consistent data stewardship and timely escalation discipline.",
+        "Near-term focus should remain on issues that combine high operational impact with weak evidence lineage, because these continue to slow executive decision-making and remediation closure.",
+        "The governance approach appears directionally positive, though real durability will depend on whether the organization keeps the same discipline during periods of elevated delivery pressure."
+      ]
+    },
+    {
+      "type": "twoColumnText",
+      "title": "Comparative Snapshot Stress and Continuation Fit",
+      "bodyStyle": "paragraphs",
+      "leftBody": [
+        "Revenue retention improved as account teams began quarterly renewal prep earlier and used a tighter exception path for pricing and commercial terms.",
+        "Commercial approvals became more disciplined, reducing late discounting and creating clearer rationale for strategic concessions in highly contested renewals.",
+        "Cross-sell momentum remains dependent on specialist capacity, and the backlog of enablement work continues to influence conversion timing in larger accounts.",
+        "Management reported better forecast discipline, but outcome reliability still varies when pipeline hygiene is weak in rapidly changing territories."
+      ],
+      "rightBody": [
+        "Operational reliability improved through standard incident playbooks, clearer severity classification, and stronger escalation ownership during high-volume periods.",
+        "Quality assurance throughput benefited from earlier test planning, though exception-heavy releases still create timing risk when dependencies arrive late.",
+        "Control ownership is clearer than a year ago, but documentation quality remains uneven in teams managing both platform change and day-to-day service operations.",
+        "Leadership expects the newer cadence to reduce surprise rework, assuming staffing continuity and evidence discipline hold through the next planning cycle."
+      ]
+    },
+    {
+      "type": "titleStrapline4TextBoxes",
+      "title": "Program Workstreams and Ownership Stress Matrix",
+      "bodyStyle": "paragraphs",
+      "columns": [
+        {
+          "heading": "Commercial",
+          "body": [
+            "Stabilize renewal execution for lower-margin cohorts and enforce consistent exception documentation before quarter-end approvals.",
+            "Align pipeline governance to conversion quality, not just topline coverage, so management can separate velocity from forecast reliability.",
+            "Clarify ownership for high-touch strategic accounts where discount discipline and retention risk remain tightly linked."
+          ]
+        },
+        {
+          "heading": "Operations",
+          "body": [
+            "Reduce blocker-driven cycle time with tighter dependency triage and named owners for late-stage delivery decisions.",
+            "Standardize QA checkpoints and evidence thresholds so remediation closure reflects durable fixes rather than temporary workarounds.",
+            "Track aging unresolved actions more visibly in weekly operating reviews to prevent quiet backlog accumulation."
+          ]
+        },
+        {
+          "heading": "Technology",
+          "body": [
+            "Prioritize control instrumentation in high-change services where release velocity currently outpaces observability maturity.",
+            "Sequence migration work with governance changes so teams are not asked to absorb multiple control-model shifts at once.",
+            "Focus platform investment on areas where delivery friction is most clearly tied to recurring incident or evidence-quality gaps."
+          ]
+        },
+        {
+          "heading": "Governance",
+          "body": [
+            "Improve decision-log quality and escalation clarity so executive reviewers can trace rationale without reconstructing fragmented meeting notes.",
+            "Use outcome metrics alongside closure counts to confirm that management attention is landing on the highest-value remediation themes.",
+            "Keep action ownership stable during peak planning windows to avoid preventable slippage caused by role ambiguity."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "title": "Wide Chart Commentary Stress and Fit Checks",
+      "strapline": "Extended chart strapline to verify spacing, dense commentary fit, and optional callout omission while the chart region still carries annotation pressure and legend treatment.",
+      "bodyStyle": "bullets",
+      "body": [
+        {
+          "text": "Observed pattern",
+          "header": true
+        },
+        "Quarterly performance improved after governance changes created clearer owner accountability, tighter review cadence, and more consistent evidence requirements across teams.",
+        "Leadership reported a more stable execution baseline once operating reviews focused on unresolved blockers rather than broad status recaps and ambiguous action owners.",
+        "The improvement pattern still varies by function, suggesting that process discipline is strongest where reporting lineage and metric definitions are already well established.",
+        {
+          "text": "Implication",
+          "subheader": true
+        },
+        "Teams with higher baseline process maturity appear to convert governance structure into better outcomes more quickly than teams still resolving evidence and data ownership gaps.",
+        "Management should continue prioritizing the unresolved dependency chain between reporting quality, action ownership, and escalation timing in the most complex workstreams.",
+        "The overall trend remains encouraging, but durability depends on whether teams preserve the same discipline during more volatile operating periods."
+      ],
+      "chart": {
+        "type": "bar",
+        "data": [
+          {
+            "name": "Observed",
+            "labels": [
+              "Q1",
+              "Q2",
+              "Q3",
+              "Q4",
+              "Q5",
+              "Q6"
+            ],
+            "values": [
+              46,
+              52,
+              57,
+              64,
+              70,
+              77
+            ]
+          },
+          {
+            "name": "Target",
+            "labels": [
+              "Q1",
+              "Q2",
+              "Q3",
+              "Q4",
+              "Q5",
+              "Q6"
+            ],
+            "values": [
+              42,
+              48,
+              54,
+              60,
+              67,
+              73
+            ]
+          }
+        ],
+        "source": "Source: synthetic stress dataset for chart rendering and annotation placement.",
+        "opts": {
+          "showLegend": true,
+          "legendPos": "b"
+        },
+        "annotations": [
+          {
+            "anchor": "topRight",
+            "title": "Acceleration",
+            "text": "Performance steps up after operating cadence resets."
+          },
+          {
+            "anchor": "bottomLeft",
+            "title": "Baseline",
+            "text": "Starting point remained below internal target range."
+          }
+        ]
+      }
+    },
+    {
+      "type": "analysisWideChartTableText",
+      "title": "Wide Chart Table Hybrid Stress and Fit Checks",
+      "strapline": "Hybrid chart and table strapline to pressure title, heading, body, chart, and table coordination while optional callouts and note source stay absent on purpose.",
+      "heading": "Function-level synthesis and management implications",
+      "bodyStyle": "bullets",
+      "body": [
+        {
+          "text": "Interpretation",
+          "header": true
+        },
+        "Function-level maturity remains uneven, with the strongest disciplines appearing in areas where metrics, owners, and escalation routes are already well defined.",
+        "The weaker areas tend to combine fragmented evidence ownership with remediation plans that are directionally sound but still insufficiently sequenced for execution reality.",
+        "Management can improve pace by linking action plans more tightly to the operating constraints that currently create the most repeat review effort and late-cycle rework.",
+        "Current momentum is credible, but durability will depend on how quickly the weaker functions improve evidence quality and day-to-day follow-through.",
+        {
+          "text": "Operating response",
+          "subheader": true
+        },
+        "Near-term emphasis should remain on the functions where weaker maturity intersects most directly with delivery risk and executive decision latency.",
+        "Remediation sequencing should prioritize measures that clarify ownership and improve evidence capture before adding new process layers.",
+        "Management reporting would become more decision-useful if actions, dates, and target outcomes were consistently visible in one place."
+      ],
+      "chart": {
+        "type": "line",
+        "data": [
+          {
+            "name": "Average score",
+            "labels": [
+              "Q1",
+              "Q2",
+              "Q3",
+              "Q4",
+              "Q5",
+              "Q6"
+            ],
+            "values": [
+              2.0,
+              2.1,
+              2.2,
+              2.3,
+              2.4,
+              2.5
+            ]
+          }
+        ],
+        "source": "Source: synthetic maturity trend data."
+      },
+      "table": {
+        "title": "Function summary table",
+        "heading": "Score and actionability",
+        "headers": [
+          "Function",
+          "Avg Score",
+          "Band",
+          "Action window"
+        ],
+        "rows": [
+          [
+            "Govern",
+            "2.3",
+            "Developing",
+            "Q2-Q3"
+          ],
+          [
+            "Identify",
+            "2.2",
+            "Developing",
+            "Q2-Q4"
+          ],
+          [
+            "Protect",
+            "2.0",
+            "Developing",
+            "Q1-Q4"
+          ],
+          [
+            "Detect",
+            "1.9",
+            "Initial",
+            "Q1-Q4"
+          ],
+          [
+            "Respond",
+            "2.7",
+            "Managed",
+            "Q2-Q3"
+          ],
+          [
+            "Recover",
+            "2.5",
+            "Managed",
+            "Q3-Q4"
+          ],
+          [
+            "Assure",
+            "2.1",
+            "Developing",
+            "Q2-Q4"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "analysisNarrowTable",
+      "title": "Narrow Table Request Register Stress Case",
+      "strapline": "Dense request register strapline to validate table fit and insight panel behavior while optional notes and insight title remain intentionally absent.",
+      "table": {
+        "title": "Priority requests",
+        "heading": "Expanded diligence backlog",
+        "headers": [
+          "Priority",
+          "Data request",
+          "Rationale"
+        ],
+        "rows": [
+          [
+            "High",
+            "Customer cohort retention file by channel and contract age",
+            "Required for topline durability assessment."
+          ],
+          [
+            "High",
+            "Pricing waterfall by segment and quarter",
+            "Supports margin bridge validation."
+          ],
+          [
+            "Medium",
+            "Support headcount roster with location and tenure detail",
+            "Assesses delivery capacity and execution resilience."
+          ],
+          [
+            "Medium",
+            "Product exception log with named approvers",
+            "Clarifies control discipline and pricing governance."
+          ],
+          [
+            "Low",
+            "Legacy lease schedule by location",
+            "Confirms non-core fixed cost commitments."
+          ],
+          [
+            "Low",
+            "Vendor concentration schedule with renewal dates",
+            "Highlights dependency and cost timing exposure."
+          ]
+        ]
+      },
+      "insights": [
+        "High-priority asks directly affect valuation confidence and should be resolved before confirmatory work starts.",
+        "Medium-priority asks can proceed in parallel if management provides clear owner-level weekly checkpoints and evidence standards.",
+        "Lower-priority asks remain useful because unresolved dependency themes often become more material when diligence timelines tighten."
+      ]
+    },
+    {
+      "type": "analysisBridge",
+      "title": "Adjusted EBITDA Bridge Stress with Dense Narrative Across Columns",
+      "strapline": "Extended bridge strapline to pressure heading fit, subtotal handling, and dense analysis-column commentary while the optional note remains absent.",
+      "bodyStyle": "paragraphs",
+      "bridge": {
+        "startLabel": "FY22 EBITDA",
+        "endLabel": "TTM FY25 EBITDA",
+        "startValue": 118,
+        "endValue": 176,
+        "unitPrefix": "$",
+        "unitSuffix": "m",
+        "decimals": 0,
+        "tolerance": 0.5,
+        "steps": [
+          {
+            "label": "Volume growth",
+            "delta": 36
+          },
+          {
+            "label": "Pricing discipline",
+            "delta": 18
+          },
+          {
+            "label": "Cost inflation",
+            "delta": -14
+          },
+          {
+            "label": "FY23 subtotal",
+            "kind": "subtotal",
+            "value": 158
+          },
+          {
+            "label": "Efficiency program",
+            "delta": 12
+          },
+          {
+            "label": "Risk controls investment",
+            "delta": -8
+          },
+          {
+            "label": "Working-capital timing",
+            "delta": 3
+          },
+          {
+            "label": "FY24 subtotal",
+            "kind": "subtotal",
+            "value": 165
+          },
+          {
+            "label": "Mix improvement",
+            "delta": 11
+          },
+          {
+            "label": "Execution drag",
+            "delta": -7
+          },
+          {
+            "label": "Procurement savings",
+            "delta": 5
+          },
+          {
+            "label": "Portfolio rationalization",
+            "delta": 2
+          }
+        ]
+      },
+      "analysisColumns": [
+        {
+          "heading": "Growth drivers",
+          "body": [
+            "Growth improved as pricing discipline and volume trends aligned more closely than in prior periods, with management citing better control over discount exceptions and retention trade-offs.",
+            "Commercial leadership reported that clearer governance improved decision quality in larger renewals, particularly where cross-functional review had previously been too late or too fragmented.",
+            "The resulting uplift appears partly structural, though durability still depends on keeping the same cadence once transaction volume and internal change activity accelerate again."
+          ]
+        },
+        {
+          "heading": "Cost offsets",
+          "body": [
+            "Management partially offset growth gains through targeted efficiency work, though inflationary pressure and control investment still absorbed a meaningful share of incremental benefit.",
+            "Several cost actions produced visible improvement only after supporting owner accountability and evidence collection became more consistent across functions.",
+            "The profile suggests further upside is available, but likely only if operating teams keep sequencing initiatives with clearer execution discipline."
+          ]
+        },
+        {
+          "heading": "Forward view",
+          "body": [
+            "Forward expectations remain favorable because management believes the operating baseline is stronger and the remaining control investments are more scoped than a year ago.",
+            "Near-term risks still center on execution drag where dependencies cut across multiple owners and where reporting quality lags decision needs.",
+            "Overall, the bridge supports a constructive outlook, provided management keeps focus on the few unresolved constraints that could slow conversion of planned gains."
+          ]
+        }
+      ],
+      "source": "Source: synthetic bridge dataset for deterministic stress rendering."
+    },
+    {
+      "type": "businessOverview",
+      "title": "Business Overview Stress and Ownership Fit",
+      "leftHeading": "Legal and ownership structure",
+      "rightHeading": "Operating and performance summary",
+      "bodyStyle": "paragraphs",
+      "structure": {
+        "topTier": [
+          {
+            "label": "Investor A",
+            "pct": "34%"
+          },
+          {
+            "label": "Investor B",
+            "pct": "33%"
+          },
+          {
+            "label": "Investor C",
+            "pct": "33%"
+          }
+        ],
+        "midTier": [
+          {
+            "label": "HoldCo",
+            "pct": "100%"
+          }
+        ],
+        "bottomTier": [
+          {
+            "label": "OpCo North",
+            "pct": "100%"
+          },
+          {
+            "label": "OpCo South",
+            "pct": "85%"
+          },
+          {
+            "label": "Shared Services",
+            "pct": "100%"
+          },
+          {
+            "label": "Data Services",
+            "pct": "100%"
+          }
+        ],
+        "links": [
+          {
+            "fromTier": "top",
+            "fromIndex": 0,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "top",
+            "fromIndex": 1,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "top",
+            "fromIndex": 2,
+            "toTier": "mid",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 0
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 1
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 2
+          },
+          {
+            "fromTier": "mid",
+            "fromIndex": 0,
+            "toTier": "bottom",
+            "toIndex": 3
+          }
+        ],
+        "perimeter": {
+          "enabled": true,
+          "label": "Transaction perimeter",
+          "subLabel": "Entities under diligence scope"
+        }
+      },
+      "overviewBody": [
+        "The business operates with a stronger governance baseline than a year ago, but reporting quality and decision readiness still vary meaningfully by function and location.",
+        "Management has improved ownership clarity for major actions, which reduced the number of unresolved issues carried between operating reviews and executive forums.",
+        "Remaining pressure points relate mostly to evidence quality, dependency management, and the speed with which action plans turn into verifiable operating outcomes.",
+        "The current structure supports further performance improvement, although benefits are likely to arrive unevenly until lower-maturity workstreams close their data and process gaps.",
+        "Overall, the business appears capable of sustaining improvement if leadership continues prioritizing the same small set of cross-functional execution constraints."
+      ],
+      "chart": {
+        "type": "area",
+        "data": [
+          {
+            "name": "Revenue trend",
+            "labels": [
+              "FY21",
+              "FY22",
+              "FY23",
+              "FY24",
+              "TTM FY25"
+            ],
+            "values": [
+              102,
+              121,
+              139,
+              154,
+              168
+            ]
+          }
+        ],
+        "source": "Source: synthetic trend data for mixed-shape stress rendering."
+      },
+      "source": "Source: management accounts, structure pack, and operating review extracts."
+    }
+  ]
+}

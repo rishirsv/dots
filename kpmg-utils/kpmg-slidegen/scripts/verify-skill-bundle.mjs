@@ -34,6 +34,13 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+function readManifest() {
+  if (!fs.existsSync(MANIFEST_PATH)) {
+    throw new Error(`Missing bundle manifest: ${MANIFEST_PATH}. Run: npm run skill:sync`);
+  }
+  return readJson(MANIFEST_PATH);
+}
+
 function listFilesRecursively(rootDir) {
   const out = [];
   const stack = [rootDir];
@@ -71,10 +78,18 @@ function parseOpenAiYamlInterface(yamlPath) {
 }
 
 function verifyManifest() {
-  if (!fs.existsSync(MANIFEST_PATH)) {
-    throw new Error(`Missing bundle manifest: ${MANIFEST_PATH}. Run: npm run skill:sync`);
+  const manifest = readManifest();
+  if (manifest?.schemaVersion !== 1) {
+    throw new Error(`Unsupported bundle manifest schema version: ${manifest?.schemaVersion ?? 'missing'}.`);
   }
-  const manifest = readJson(MANIFEST_PATH);
+  const unexpectedKeys = Object.keys(manifest || {}).filter(
+    (key) => !['schemaVersion', 'entries'].includes(key),
+  );
+  if (unexpectedKeys.length) {
+    throw new Error(
+      `Bundle manifest has unexpected top-level key(s): ${unexpectedKeys.join(', ')}. Keep bundle metadata deterministic and limit the manifest to schemaVersion plus entries.`,
+    );
+  }
   const entries = Array.isArray(manifest?.entries) ? manifest.entries : [];
   if (entries.length === 0) throw new Error(`Bundle manifest has no entries: ${MANIFEST_PATH}`);
 
@@ -107,7 +122,7 @@ function verifyManifest() {
 }
 
 function verifyManifestCoverage() {
-  const manifest = readJson(MANIFEST_PATH);
+  const manifest = readManifest();
   const coveredTargets = new Set(
     (Array.isArray(manifest?.entries) ? manifest.entries : []).map((entry) =>
       path.resolve(path.join(REPO_ROOT, entry.target)),
@@ -167,7 +182,7 @@ function verifyNoAbsolutePaths() {
 }
 
 function verifyNoRepoOnlyOnboardingArtifacts() {
-  const manifest = readJson(MANIFEST_PATH);
+  const manifest = readManifest();
   const forbiddenPrefixes = [
     'templates-src/',
     'onboarding/',

@@ -6,6 +6,7 @@ import { REPO_ROOT } from '../support.mjs';
 export const TEMPLATE_SRC_ROOT = path.join(REPO_ROOT, 'templates-src', 'kpmg-diligence');
 export const LAYOUT_SRC_ROOT = path.join(TEMPLATE_SRC_ROOT, 'layouts');
 export const PRIMITIVE_SRC_ROOT = path.join(TEMPLATE_SRC_ROOT, 'primitives');
+export const LAYOUT_PACKAGE_META_PATH = path.join(TEMPLATE_SRC_ROOT, 'layout-package.meta.json');
 export const GENERATED_LAYOUTS_PATH = path.join(
   REPO_ROOT,
   'templates',
@@ -119,6 +120,10 @@ export function readSourceLayouts() {
 
 export function readSourcePrimitives() {
   return listJsonFiles(PRIMITIVE_SRC_ROOT).map((filePath) => readJson(filePath));
+}
+
+export function readSourceLayoutPackageMeta() {
+  return readJson(LAYOUT_PACKAGE_META_PATH);
 }
 
 export function makeJsonContent(value) {

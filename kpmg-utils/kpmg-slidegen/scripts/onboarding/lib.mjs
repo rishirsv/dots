@@ -31,7 +31,7 @@ export const DIFF_THRESHOLDS_PATH = path.join(
   ONBOARDING_POLICY_ROOT,
   'diff-thresholds.json',
 );
-export const FAMILY_POLICIES_PATH = path.join(
+export const LEGACY_FAMILY_POLICIES_PATH = path.join(
   ONBOARDING_POLICY_ROOT,
   'families.json',
 );
@@ -240,12 +240,12 @@ export function ensureLayoutPaths(layoutId) {
 }
 
 /**
- * Load repo-only onboarding policies.
+ * Load legacy family policies for the deprecated layout-workspace onboarding flow.
  *
  * @returns {object}
  */
-export function loadFamilyPolicies() {
-  return readJson(FAMILY_POLICIES_PATH);
+export function loadLegacyFamilyPolicies() {
+  return readJson(LEGACY_FAMILY_POLICIES_PATH);
 }
 
 /**
@@ -258,28 +258,28 @@ export function loadDiffThresholds() {
 }
 
 /**
- * Return the base family policy or throw.
+ * Return the legacy base family policy or throw.
  *
  * @param {string} family
  * @returns {object}
  */
-export function getFamilyPolicy(family) {
-  const policies = loadFamilyPolicies();
+export function getLegacyFamilyPolicy(family) {
+  const policies = loadLegacyFamilyPolicies();
   const entry = policies?.families?.[family];
   if (!entry) {
-    throw new Error(`Unknown onboarding family: ${family}`);
+    throw new Error(`Unknown legacy onboarding family: ${family}`);
   }
   return entry;
 }
 
 /**
- * Load the golden all-layouts deck and return a starter slide for a family.
+ * Load the golden all-layouts deck and return a starter slide for a legacy family.
  *
  * @param {string} family
  * @param {string} layoutId
  * @returns {object}
  */
-export function buildStarterSlideFromFamily(family, layoutId) {
+export function buildStarterSlideFromLegacyFamily(family, layoutId) {
   const golden = readJson(GOLDEN_ALL_LAYOUTS_PATH);
   const baseSlide = (golden?.slides || []).find((slide) => slide?.type === family);
   if (!baseSlide) {
@@ -297,12 +297,12 @@ export function buildStarterSlideFromFamily(family, layoutId) {
 }
 
 /**
- * Build a candidate layout scaffold.
+ * Build a legacy candidate layout scaffold from a base family.
  *
  * @param {object} params
  * @returns {object}
  */
-export function buildCandidateLayoutScaffold({ templatePackage, family, layoutId }) {
+export function buildLegacyCandidateLayoutScaffold({ templatePackage, family, layoutId }) {
   if (!family) {
     return {
       schemaVersion: 1,
@@ -335,12 +335,12 @@ export function buildCandidateLayoutScaffold({ templatePackage, family, layoutId
 }
 
 /**
- * Build a candidate deckspec scaffold.
+ * Build a legacy candidate deckspec scaffold from a base family.
  *
  * @param {object} params
  * @returns {object}
  */
-export function buildCandidateDeckSpecScaffold({ family, layoutId }) {
+export function buildLegacyCandidateDeckSpecScaffold({ family, layoutId }) {
   if (!family) {
     return {
       metadata: {
@@ -358,23 +358,23 @@ export function buildCandidateDeckSpecScaffold({ family, layoutId }) {
       textAmount: 'lg',
       allowSparse: true,
     },
-    slides: [buildStarterSlideFromFamily(family, layoutId)],
+    slides: [buildStarterSlideFromLegacyFamily(family, layoutId)],
   };
 }
 
 /**
- * Build the candidate builder scaffold source.
+ * Build a legacy family-based candidate builder scaffold source.
  *
  * @param {object} params
  * @returns {string}
  */
-export function buildCandidateBuilderSource({ family, layoutId }) {
+export function buildLegacyCandidateBuilderSource({ family, layoutId }) {
   const pascal = toPascalCase(layoutId);
   if (!family) {
     return `export function build${pascal}() {\n  throw new Error('Select a base family in source.json before rendering this candidate layout.');\n}\n\nexport default build${pascal};\n`;
   }
 
-  const policy = getFamilyPolicy(family);
+  const policy = getLegacyFamilyPolicy(family);
   const importPath = pathToFileURL(path.join(REPO_ROOT, policy.builderModule)).href;
 
   return `import { ${policy.builderExport} } from '${importPath}';\n\nexport function build${pascal}(pptx, slideSpec, ctx) {\n  return ${policy.builderExport}(pptx, slideSpec, ctx);\n}\n\nexport default build${pascal};\n`;
@@ -432,12 +432,12 @@ export function buildDraftTemplatePackage({ templatePackage, layoutId, candidate
 }
 
 /**
- * Build a draft slide registry entry from a base family plus builder.
+ * Build a legacy draft slide registry entry from a base family plus builder.
  *
  * @param {object} params
  * @returns {object}
  */
-export function buildDraftRegistryEntry({ family, layoutId, builder }) {
+export function buildLegacyDraftRegistryEntry({ family, layoutId, builder }) {
   const baseRegistry = getSlideRegistry();
   const baseEntry = baseRegistry.get(family);
   if (!baseEntry) {
@@ -723,7 +723,7 @@ export async function renderCandidate({
     layoutId,
     candidateLayout,
   });
-  const draftRegistryEntry = buildDraftRegistryEntry({
+  const draftRegistryEntry = buildLegacyDraftRegistryEntry({
     family: source.family,
     layoutId,
     builder,
@@ -821,14 +821,14 @@ export function compareCandidateImages({
 }
 
 /**
- * Rebuild the generated canonical onboarded registry module from an index file.
+ * Rebuild the generated canonical authored runtime registry module from an index file.
  *
  * @param {object[]} entries
  * @returns {string}
  */
 export function buildOnboardedRegistryModule(entries = []) {
   if (entries.length === 0) {
-    return 'export const ONBOARDED_REGISTRY_ENTRIES = Object.freeze({});\n';
+    return 'export const AUTHORED_REGISTRY_ENTRIES = Object.freeze({});\n';
   }
 
   const importLines = entries.map(
@@ -836,7 +836,7 @@ export function buildOnboardedRegistryModule(entries = []) {
       `import ${entry.exportName} from '../builders/onboarded/${entry.builderFile}.js';`,
   );
 
-  return `${importLines.join('\n')}\n\nexport const ONBOARDED_REGISTRY_ENTRIES = Object.freeze({\n${entries
+  return `${importLines.join('\n')}\n\nexport const AUTHORED_REGISTRY_ENTRIES = Object.freeze({\n${entries
     .map((entry) => {
       const entryLiteral = JSON.stringify(entry.registryEntry, null, 2)
         .replace(/"__BUILDER_REF__"/g, entry.exportName);
@@ -846,7 +846,7 @@ export function buildOnboardedRegistryModule(entries = []) {
 }
 
 /**
- * Load the canonical onboarded registry index.
+ * Load the canonical authored runtime registry index.
  *
  * @returns {object}
  */
@@ -855,13 +855,13 @@ export function loadOnboardedRegistryIndex() {
 }
 
 /**
- * Persist the canonical onboarded registry index and generated module.
+ * Persist the canonical authored runtime registry index and generated module.
  *
  * @param {object[]} entries
  */
 export function writeOnboardedRegistry(entries = []) {
   writeJson(ONBOARDED_REGISTRY_INDEX_PATH, {
-    schemaVersion: 1,
+    schemaVersion: 4,
     entries,
   });
   fs.writeFileSync(ONBOARDED_REGISTRY_MODULE_PATH, buildOnboardedRegistryModule(entries));

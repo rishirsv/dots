@@ -1,5 +1,578 @@
 {
   "generatedFileHeader": "GENERATED FILE - DO NOT EDIT DIRECTLY. Source: templates-src/kpmg-diligence/*",
-  "schemaVersion": 2,
-  "entries": []
+  "schemaVersion": 4,
+  "entries": [
+    {
+      "type": "analysisBridge",
+      "builderModule": "generator/builders/analysis-bridge.js",
+      "builderExport": "addAnalysisBridge",
+      "registryEntry": {
+        "builderId": "analysisBridge",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "chartBox",
+          "analysisBoxes",
+          "sourceBox"
+        ],
+        "optionalGeometry": [
+          "typography"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "chartBox": "box",
+          "analysisBoxes": "boxArray",
+          "sourceBox": "box",
+          "typography": "object"
+        },
+        "primitiveMetadata": {
+          "id": "analysisBridge",
+          "version": 1,
+          "slotSchemaRef": "analysisBridge",
+          "geometryKinds": {
+            "titleBox": "box",
+            "chartBox": "box",
+            "analysisBoxes": "boxArray",
+            "sourceBox": "box",
+            "typography": "object"
+          }
+        },
+        "paginationPolicyKey": "bridge.analysisColumns.v1",
+        "validationHooks": [
+          "bridgeSpec"
+        ],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "analysisNarrowTable",
+      "builderModule": "generator/builders/analysis-narrow-table.js",
+      "builderExport": "addAnalysisNarrowTable",
+      "registryEntry": {
+        "builderId": "analysisNarrowTable",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "straplineBox",
+          "tableBox",
+          "rightTitleBox",
+          "rightBodyBox"
+        ],
+        "optionalGeometry": [
+          "noteBox"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "straplineBox": "box",
+          "tableBox": "box",
+          "rightTitleBox": "box",
+          "rightBodyBox": "box",
+          "noteBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "analysisNarrowTable",
+          "version": 1,
+          "slotSchemaRef": "analysisNarrowTable",
+          "geometryKinds": {
+            "titleBox": "box",
+            "straplineBox": "box",
+            "tableBox": "box",
+            "rightTitleBox": "box",
+            "rightBodyBox": "box",
+            "noteBox": "box"
+          }
+        },
+        "paginationPolicyKey": "table.rows.v1",
+        "validationHooks": [
+          "tableShape"
+        ],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "analysisWideChart2ColsText",
+      "builderModule": "generator/builders/analysis-wide-chart-text.js",
+      "builderExport": "addAnalysisWideChart2ColsText",
+      "registryEntry": {
+        "builderId": "analysisWideChart2ColsText",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "straplineBox",
+          "bodyBox",
+          "chartBox"
+        ],
+        "optionalGeometry": [
+          "calloutBoxes"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "straplineBox": "box",
+          "bodyBox": "box",
+          "chartBox": "box",
+          "calloutBoxes": "boxArray"
+        },
+        "primitiveMetadata": {
+          "id": "analysisWideChart2ColsText",
+          "version": 1,
+          "slotSchemaRef": "analysisWideChart2ColsText",
+          "geometryKinds": {
+            "titleBox": "box",
+            "straplineBox": "box",
+            "bodyBox": "box",
+            "chartBox": "box",
+            "calloutBoxes": "boxArray"
+          }
+        },
+        "paginationPolicyKey": "text.analysisWide.2cols.v1",
+        "validationHooks": [
+          "chartShape"
+        ],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "analysisWideChartTableText",
+      "builderModule": "generator/builders/analysis-wide-chart-text.js",
+      "builderExport": "addAnalysisWideChartTableText",
+      "registryEntry": {
+        "builderId": "analysisWideChartTableText",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "straplineBox",
+          "headingBox",
+          "bodyBox",
+          "chartBox",
+          "tableBox"
+        ],
+        "optionalGeometry": [
+          "calloutBoxes",
+          "noteBox"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "straplineBox": "box",
+          "headingBox": "box",
+          "bodyBox": "box",
+          "chartBox": "box",
+          "tableBox": "box",
+          "calloutBoxes": "boxArray",
+          "noteBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "analysisWideChartTableText",
+          "version": 1,
+          "slotSchemaRef": "analysisWideChartTableText",
+          "geometryKinds": {
+            "titleBox": "box",
+            "straplineBox": "box",
+            "headingBox": "box",
+            "bodyBox": "box",
+            "chartBox": "box",
+            "tableBox": "box",
+            "calloutBoxes": "boxArray",
+            "noteBox": "box"
+          }
+        },
+        "paginationPolicyKey": "text.analysisWide.table.v1",
+        "validationHooks": [
+          "chartShape",
+          "tableShape"
+        ],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "backCover",
+      "builderModule": "generator/builders/back-cover-slide.js",
+      "builderExport": "addBackCover",
+      "registryEntry": {
+        "builderId": "backCover",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_CLOSING",
+        "requiredGeometry": [
+          "logoBox",
+          "headingBox",
+          "disclaimerBox",
+          "urlBox"
+        ],
+        "optionalGeometry": [],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "logoBox": "box",
+          "headingBox": "box",
+          "disclaimerBox": "box",
+          "urlBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "backCover",
+          "version": 1,
+          "slotSchemaRef": "backCover",
+          "geometryKinds": {
+            "logoBox": "box",
+            "headingBox": "box",
+            "disclaimerBox": "box",
+            "urlBox": "box"
+          }
+        },
+        "paginationPolicyKey": "none.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": true
+      }
+    },
+    {
+      "type": "businessOverview",
+      "builderModule": "generator/builders/business-overview.js",
+      "builderExport": "addBusinessOverview",
+      "registryEntry": {
+        "builderId": "businessOverview",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "leftHeadingBox",
+          "leftBox",
+          "rightHeadingBox",
+          "bodyBox",
+          "chartBox",
+          "sourceBox"
+        ],
+        "optionalGeometry": [],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "leftHeadingBox": "box",
+          "leftBox": "box",
+          "rightHeadingBox": "box",
+          "bodyBox": "box",
+          "chartBox": "box",
+          "sourceBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "businessOverview",
+          "version": 1,
+          "slotSchemaRef": "businessOverview",
+          "geometryKinds": {
+            "titleBox": "box",
+            "leftHeadingBox": "box",
+            "leftBox": "box",
+            "rightHeadingBox": "box",
+            "bodyBox": "box",
+            "chartBox": "box",
+            "sourceBox": "box"
+          }
+        },
+        "paginationPolicyKey": "business.overviewBody.v1",
+        "validationHooks": [
+          "businessStructureSpec"
+        ],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "contents",
+      "builderModule": "generator/builders/contents-slide.js",
+      "builderExport": "addContentsSlide",
+      "registryEntry": {
+        "builderId": "contents",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "topRowBox",
+          "bottomRowBox"
+        ],
+        "optionalGeometry": [],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "topRowBox": "box",
+          "bottomRowBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "contents",
+          "version": 1,
+          "slotSchemaRef": "contents",
+          "geometryKinds": {
+            "titleBox": "box",
+            "topRowBox": "box",
+            "bottomRowBox": "box"
+          }
+        },
+        "paginationPolicyKey": "contents.sections.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "cover",
+      "builderModule": "generator/builders/cover-slide.js",
+      "builderExport": "addCover",
+      "registryEntry": {
+        "builderId": "cover",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_COVER",
+        "requiredGeometry": [
+          "titleBox",
+          "subtitleBox",
+          "photoBox",
+          "logoBox"
+        ],
+        "optionalGeometry": [],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "subtitleBox": "box",
+          "photoBox": "box",
+          "logoBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "cover",
+          "version": 1,
+          "slotSchemaRef": "cover",
+          "geometryKinds": {
+            "titleBox": "box",
+            "subtitleBox": "box",
+            "photoBox": "box",
+            "logoBox": "box"
+          }
+        },
+        "paginationPolicyKey": "none.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": true
+      }
+    },
+    {
+      "type": "divider",
+      "builderModule": "generator/builders/divider-slide.js",
+      "builderExport": "addDivider",
+      "registryEntry": {
+        "builderId": "divider",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_SECTION_DARK",
+        "requiredGeometry": [
+          "numberBox",
+          "titleBox"
+        ],
+        "optionalGeometry": [
+          "gradientBox"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "numberBox": "box",
+          "titleBox": "box",
+          "gradientBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "divider",
+          "version": 1,
+          "slotSchemaRef": "divider",
+          "geometryKinds": {
+            "numberBox": "box",
+            "titleBox": "box",
+            "gradientBox": "box"
+          }
+        },
+        "paginationPolicyKey": "none.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": true
+      }
+    },
+    {
+      "type": "dividerDark",
+      "builderModule": "generator/builders/divider-slide.js",
+      "builderExport": "addDivider",
+      "registryEntry": {
+        "builderId": "dividerDark",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_SECTION_DARK",
+        "requiredGeometry": [
+          "numberBox",
+          "titleBox"
+        ],
+        "optionalGeometry": [
+          "gradientBox"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "numberBox": "box",
+          "titleBox": "box",
+          "gradientBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "dividerDark",
+          "version": 1,
+          "slotSchemaRef": "dividerDark",
+          "geometryKinds": {
+            "numberBox": "box",
+            "titleBox": "box",
+            "gradientBox": "box"
+          }
+        },
+        "paginationPolicyKey": "none.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": true
+      }
+    },
+    {
+      "type": "dividerLight",
+      "builderModule": "generator/builders/divider-slide.js",
+      "builderExport": "addDivider",
+      "registryEntry": {
+        "builderId": "dividerLight",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_SECTION_LIGHT",
+        "requiredGeometry": [
+          "numberBox",
+          "titleBox"
+        ],
+        "optionalGeometry": [
+          "gradientBox"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "numberBox": "box",
+          "titleBox": "box",
+          "gradientBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "dividerLight",
+          "version": 1,
+          "slotSchemaRef": "dividerLight",
+          "geometryKinds": {
+            "numberBox": "box",
+            "titleBox": "box",
+            "gradientBox": "box"
+          }
+        },
+        "paginationPolicyKey": "none.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": true
+      }
+    },
+    {
+      "type": "oneColumnText",
+      "builderModule": "generator/builders/one-column-text.js",
+      "builderExport": "addOneColumnText",
+      "registryEntry": {
+        "builderId": "oneColumnText",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "straplineBox",
+          "bodyBox",
+          "sourceBox"
+        ],
+        "optionalGeometry": [
+          "calloutBoxes"
+        ],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "straplineBox": "box",
+          "bodyBox": "box",
+          "sourceBox": "box",
+          "calloutBoxes": "boxArray"
+        },
+        "primitiveMetadata": {
+          "id": "oneColumnText",
+          "version": 1,
+          "slotSchemaRef": "oneColumnText",
+          "geometryKinds": {
+            "titleBox": "box",
+            "straplineBox": "box",
+            "bodyBox": "box",
+            "sourceBox": "box",
+            "calloutBoxes": "boxArray"
+          }
+        },
+        "paginationPolicyKey": "text.oneColumn.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "titleStrapline4TextBoxes",
+      "builderModule": "generator/builders/title-strapline-4-boxes.js",
+      "builderExport": "addTitleStrapline4TextBoxes",
+      "registryEntry": {
+        "builderId": "titleStrapline4TextBoxes",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "straplineBox",
+          "columnBoxes"
+        ],
+        "optionalGeometry": [],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "straplineBox": "box",
+          "columnBoxes": "boxArray"
+        },
+        "primitiveMetadata": {
+          "id": "titleStrapline4TextBoxes",
+          "version": 1,
+          "slotSchemaRef": "titleStrapline4TextBoxes",
+          "geometryKinds": {
+            "titleBox": "box",
+            "straplineBox": "box",
+            "columnBoxes": "boxArray"
+          }
+        },
+        "paginationPolicyKey": "none.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": false
+      }
+    },
+    {
+      "type": "twoColumnText",
+      "builderModule": "generator/builders/two-column-text.js",
+      "builderExport": "addTwoColumnTextWithStrapline",
+      "registryEntry": {
+        "builderId": "twoColumnText",
+        "builder": "__BUILDER_REF__",
+        "master": "KPMG_WHITE",
+        "requiredGeometry": [
+          "titleBox",
+          "straplineBox",
+          "leftBox",
+          "rightBox"
+        ],
+        "optionalGeometry": [],
+        "optionalDefaults": {},
+        "geometryKinds": {
+          "titleBox": "box",
+          "straplineBox": "box",
+          "leftBox": "box",
+          "rightBox": "box"
+        },
+        "primitiveMetadata": {
+          "id": "twoColumnText",
+          "version": 1,
+          "slotSchemaRef": "twoColumnText",
+          "geometryKinds": {
+            "titleBox": "box",
+            "straplineBox": "box",
+            "leftBox": "box",
+            "rightBox": "box"
+          }
+        },
+        "paginationPolicyKey": "text.twoColumn.v1",
+        "validationHooks": [],
+        "excludeFromLogicalPaging": false
+      }
+    }
+  ]
 }

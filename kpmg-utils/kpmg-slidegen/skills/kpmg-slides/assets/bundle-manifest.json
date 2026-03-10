@@ -1,6 +1,5 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-10T03:39:46.374Z",
   "entries": [
     {
       "source": "skills/kpmg-slides/agents/openai.yaml",
@@ -293,14 +292,14 @@
     {
       "source": "generator/runtime/onboarded-registry.generated.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/onboarded-registry.generated.js",
-      "size": 142,
-      "sha256": "61c85211656114cafdcd5e520923215b5e1fd6990df4eb2772da29ebd52c7471"
+      "size": 13301,
+      "sha256": "beecbf791940eda91e2cbaec61cbf1444eb9fe76e1e49847cb7635f1caaef2e8"
     },
     {
       "source": "generator/runtime/onboarded-registry.index.json",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/onboarded-registry.index.json",
-      "size": 148,
-      "sha256": "73db94510c957233125e0e93e5b1b67d349543982088235d198edd6240230098"
+      "size": 16398,
+      "sha256": "7441b3356fcac95758cbf4eed15fa4d6122938f511e5778cdf1d692b3ac9b73b"
     },
     {
       "source": "generator/runtime/paginate.js",
@@ -329,8 +328,8 @@
     {
       "source": "generator/runtime/slide-registry.js",
       "target": "skills/kpmg-slides/assets/slidegen/generator/runtime/slide-registry.js",
-      "size": 11823,
-      "sha256": "cf66604bf841eefdab8761b6762f081cb933aa9dc2ca2c54f55976fe195c17f4"
+      "size": 6488,
+      "sha256": "6848febddeb26693846c26060c426f03f91620dae45bec6a2942e67031dabb3a"
     },
     {
       "source": "generator/runtime/template-contracts.js",

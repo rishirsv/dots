@@ -16,7 +16,18 @@ onboarding/cases/<case-id>/
   review.md
 ```
 
+`classify.json` follows `onboarding/cases/classification.schema.json` and fails closed:
+- `recommendedPrimitiveRef` is `null` when the best score is zero, below threshold, or ambiguously tied
+- `requiresManualSelection` tells the operator whether an explicit primitive choice is required before scaffold
+- `rankedAlternatives` preserves the sorted candidates for review
+
 `candidate.primitive.json` and `candidate.builder.js` are only used when the case is creating a new primitive.
+
+Scaffold choices:
+
+1. Existing primitive reuse: `--primitive-ref <primitive@version>`
+2. Extend an existing primitive: `--new-primitive-id <id> --base-primitive-ref <primitive@version>`
+3. New primitive from the classified closest match: `--new-primitive-id <id>`
 
 Primitive-first lifecycle:
 

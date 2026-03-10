@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "kpmg-slidegen/templates-src/kpmg-diligence/layouts/layout-instance.schema.json",
   "title": "KPMG SlideGen Layout Instance",
-  "description": "Repo-only authoring contract for a user-facing layout instance backed by a primitive definition.",
+  "description": "Repo-only authoring contract for a user-facing layout instance backed by a primitive definition and the runtime geometry contract.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -65,44 +65,88 @@
   },
   "$defs": {
     "geometryValue": {
-      "oneOf": [
+      "anyOf": [
+        {
+          "$ref": "#/$defs/box"
+        },
+        {
+          "$ref": "#/$defs/boxArray"
+        },
+        {
+          "$ref": "#/$defs/boxTree"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/semanticObject"
+        }
+      ]
+    },
+    "boxArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/box"
+      }
+    },
+    "boxTree": {
+      "anyOf": [
         {
           "$ref": "#/$defs/box"
         },
         {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/box"
+            "$ref": "#/$defs/boxTree"
           }
         },
         {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/geometryNode"
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/boxTree"
           }
         }
       ]
     },
-    "geometryNode": {
+    "semanticObject": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "box"
-      ],
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "box": {
+      "additionalProperties": {
+        "$ref": "#/$defs/semanticValue"
+      }
+    },
+    "semanticArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/semanticValue"
+      }
+    },
+    "semanticValue": {
+      "anyOf": [
+        {
           "$ref": "#/$defs/box"
         },
-        "children": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/geometryNode"
-          }
+        {
+          "$ref": "#/$defs/semanticObject"
+        },
+        {
+          "$ref": "#/$defs/semanticArray"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
         }
-      }
+      ]
     },
     "box": {
       "type": "object",

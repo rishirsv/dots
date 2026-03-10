@@ -47,12 +47,19 @@
       }
     },
     "primitiveRef": {
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "pattern": "^[A-Za-z][A-Za-z0-9-]*@[1-9][0-9]*$"
     },
     "builderMode": {
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "enum": [
+        null,
         "existing-primitive",
         "new-primitive"
       ]

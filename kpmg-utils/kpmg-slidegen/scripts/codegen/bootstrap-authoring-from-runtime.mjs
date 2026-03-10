@@ -1,36 +1,33 @@
 import path from 'node:path';
 
-import { getSlideRegistry } from '../../generator/runtime/slide-registry.js';
 import { loadTemplatePackage } from '../../generator/runtime/template-package.js';
 import {
-  BUILTIN_BUILDER_MAP,
+  GENERATED_ONBOARDED_INDEX_PATH,
   LAYOUT_SRC_ROOT,
   PRIMITIVE_SRC_ROOT,
   listJsonFiles,
   makeJsonContent,
   primitiveVersionRef,
+  readJson,
   writeFileIfChanged,
 } from './lib.mjs';
 
-function derivePrimitiveFromRegistry(type, entry) {
-  const builderMeta = BUILTIN_BUILDER_MAP[type];
-  if (!builderMeta) {
-    throw new Error(`Missing builtin builder metadata for ${type}`);
-  }
+function derivePrimitiveFromIndex(entry) {
+  const primitiveMetadata = entry?.registryEntry?.primitiveMetadata || {};
   return {
-    id: type,
-    version: 1,
-    builderModule: builderMeta.builderModule,
-    builderExport: builderMeta.builderExport,
-    geometryKinds: entry.geometryKinds || {},
-    requiredGeometry: [...(entry.requiredGeometry || [])],
-    optionalGeometry: [...(entry.optionalGeometry || [])],
-    optionalDefaults: { ...(entry.optionalDefaults || {}) },
-    paginationPolicyKey: entry.paginationPolicyKey,
-    master: entry.master,
-    slotSchemaRef: type,
-    validationHooks: [...(entry.validationHooks || [])],
-    excludeFromLogicalPaging: Boolean(entry.excludeFromLogicalPaging),
+    id: primitiveMetadata.id,
+    version: primitiveMetadata.version,
+    builderModule: entry.builderModule,
+    builderExport: entry.builderExport,
+    geometryKinds: entry.registryEntry?.geometryKinds || primitiveMetadata.geometryKinds || {},
+    requiredGeometry: [...(entry.registryEntry?.requiredGeometry || [])],
+    optionalGeometry: [...(entry.registryEntry?.optionalGeometry || [])],
+    optionalDefaults: { ...(entry.registryEntry?.optionalDefaults || {}) },
+    paginationPolicyKey: entry.registryEntry?.paginationPolicyKey,
+    master: entry.registryEntry?.master,
+    slotSchemaRef: primitiveMetadata.slotSchemaRef || primitiveMetadata.id,
+    validationHooks: [...(entry.registryEntry?.validationHooks || [])],
+    excludeFromLogicalPaging: Boolean(entry.registryEntry?.excludeFromLogicalPaging),
   };
 }
 
@@ -55,27 +52,35 @@ function main() {
   }
 
   const templatePackage = loadTemplatePackage('kpmg-diligence');
-  const registry = getSlideRegistry();
+  const authoredRegistryIndex = readJson(GENERATED_ONBOARDED_INDEX_PATH);
   const layoutsByType = templatePackage.layouts?.types || {};
+  const entriesByType = Object.fromEntries(
+    (authoredRegistryIndex.entries || []).map((entry) => [entry.type, entry]),
+  );
+  const primitivesByRef = new Map();
 
   for (const type of Object.keys(layoutsByType).sort()) {
-    const entry = registry.get(type);
+    const entry = entriesByType[type];
     if (!entry) {
-      throw new Error(`Missing registry entry for layout type ${type}`);
+      throw new Error(`Missing generated authored registry entry for layout type ${type}`);
     }
-    const primitive = derivePrimitiveFromRegistry(type, entry);
+    const primitive = derivePrimitiveFromIndex(entry);
     const layoutFragment = deriveLayoutFragment(type, layoutsByType[type], primitive);
-    writeFileIfChanged(
-      path.join(PRIMITIVE_SRC_ROOT, `${primitive.id}.json`),
-      makeJsonContent(primitive),
-    );
+    primitivesByRef.set(primitiveVersionRef(primitive), primitive);
     writeFileIfChanged(
       path.join(LAYOUT_SRC_ROOT, `${type}.json`),
       makeJsonContent(layoutFragment),
     );
   }
 
-  console.log('Bootstrapped templates-src authoring fragments from current runtime aggregates.');
+  for (const primitive of Array.from(primitivesByRef.values()).sort((left, right) => left.id.localeCompare(right.id))) {
+    writeFileIfChanged(
+      path.join(PRIMITIVE_SRC_ROOT, `${primitive.id}.json`),
+      makeJsonContent(primitive),
+    );
+  }
+
+  console.log('Bootstrapped templates-src authoring fragments from generated runtime aggregates. After bootstrap, templates-src fragments are authoritative.');
 }
 
 main();

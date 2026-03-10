@@ -45,6 +45,7 @@ Use a new layout instance when the structure is already covered by an existing p
 Manual authoring files:
 - `templates-src/kpmg-diligence/layouts/*.json`
 - `templates-src/kpmg-diligence/primitives/*.json`
+- `templates-src/kpmg-diligence/layout-package.meta.json`
 - `generator/builders/primitives/*.js`
 - `onboarding/cases/<case-id>/*`
 
@@ -52,6 +53,18 @@ Generated runtime files:
 - `templates/kpmg-diligence/package/layouts.json`
 - `generator/runtime/onboarded-registry.index.json`
 - `generator/runtime/onboarded-registry.generated.js`
+
+Built-in and onboarded layouts now share the same model:
+- `templates-src/kpmg-diligence/layouts/` and `templates-src/kpmg-diligence/primitives/` are authoritative for all runtime registry metadata
+- `templates-src/kpmg-diligence/layout-package.meta.json` is the authoritative source for package-level layout metadata such as masters, density rules, and detected layout metadata
+- the historical generated files `generator/runtime/onboarded-registry.index.json` and `generator/runtime/onboarded-registry.generated.js` now contain the full authored runtime registry, including built-ins
+- if a built-in primitive or layout changes, edit the source fragment and regenerate; do not patch `generator/runtime/slide-registry.js`
+- runtime aggregate codegen must not read generated files as inputs; `templates/kpmg-diligence/package/layouts.json` is output-only
+
+Relative path resolution rule for onboarded registry codegen:
+- keep `builderModule` repo-relative in primitive authoring, for example `generator/builders/one-column-text.js`
+- generate the runtime import specifier relative to `generator/runtime/onboarded-registry.generated.js`
+- dedupe generated imports by `builderModule` plus `builderExport`; do not collapse module paths to basenames
 
 Never hand-edit generated runtime files. Regenerate them with:
 
@@ -63,6 +76,12 @@ Verify they are current with:
 
 ```bash
 npm run onboard:verify-generated
+```
+
+Validate primitive and layout authoring fragments with:
+
+```bash
+npm run schema:validate:authoring
 ```
 
 ## Onboarding Relationship
@@ -113,8 +132,13 @@ Before opening a PR for layout work, run:
 
 ```bash
 npm run docs:verify
+npm run schema:validate:authoring
+npm run test:changed-layouts
 npm run onboard:regen
 npm run onboard:verify-generated
-npm run test:changed-layouts
 npm run test:primitive-stress
 ```
+
+Changed-layout detection modes:
+- local no-arg use: `npm run test:changed-layouts`
+- CI explicit refs: `npm run test:changed-layouts -- --base-ref <base-sha> --head-ref <head-sha>`

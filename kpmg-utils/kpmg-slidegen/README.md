@@ -101,7 +101,7 @@ If `--out` is omitted, generation writes to `./outputs/kpmg-slidegen/<timestamp>
 - `npm run test:visual`: preview, montage, and visual-overflow lane.
 - `npm run test:dist`: skill bundle sync, portability, and smoke verification.
 - `npm run test:onboarding`: repo-only onboarding smoke lane.
-- `npm run onboard:run`: initialize, render, and compare one draft layout.
+- `npm run onboard:run`: run the extract, classify, scaffold, render, and compare lifecycle for one onboarding case.
 - `npm run test:nightly`: full parent harness sweep.
 - Repo CI note: GitHub Actions runs `npm run test:pr` on every push and pull request, and runs `npm run test:nightly` on the scheduled nightly job.
 
@@ -126,9 +126,9 @@ Optional postprocess artifacts:
 - overflow diagnostic image paths in `qa.artifacts.overflowVisual.imagePaths`
 
 Repo-only onboarding artifacts:
-- `onboarding/layouts/<layout-id>/`: stable draft workspace (`source.json`, candidate scaffold files, optional seed data)
-- `outputs/onboarding/<layout-id>/candidate/`: draft deck, QA, preview, optional montage
-- `outputs/onboarding/<layout-id>/compare/`: reference, candidate, diff, metrics, scorecard
+- `onboarding/cases/<case-id>/`: stable case workspace (`intake.json`, extraction evidence, classification, candidate scaffold files, and review notes)
+- `outputs/onboarding/<case-id>/candidate/`: draft deck, QA, preview, optional montage
+- `outputs/onboarding/<case-id>/compare/`: reference, candidate, diff, metrics, scorecard
 
 ## Troubleshooting
 

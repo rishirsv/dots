@@ -156,6 +156,29 @@
       "deckSpec": "stress/analysis-bridge-overflow/deckSpec.json"
     },
     {
+      "id": "stress-primitive-render-matrix",
+      "class": "stress",
+      "owner": "slidegen",
+      "families": [
+        "contents",
+        "dividerLight",
+        "oneColumnText",
+        "twoColumnText",
+        "titleStrapline4TextBoxes",
+        "analysisWideChart2ColsText",
+        "analysisWideChartTableText",
+        "analysisNarrowTable",
+        "analysisBridge",
+        "businessOverview"
+      ],
+      "textAmount": "xl",
+      "expectedOutcome": "pass",
+      "blockingSafe": true,
+      "baselineBearing": false,
+      "origin": "synthetic",
+      "deckSpec": "stress/primitive-render-matrix/deckSpec.json"
+    },
+    {
       "id": "invalid-legacy-nested-bullets",
       "class": "invalid",
       "owner": "slidegen",

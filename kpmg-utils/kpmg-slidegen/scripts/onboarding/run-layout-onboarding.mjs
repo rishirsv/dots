@@ -5,7 +5,7 @@ import { parseArgMap } from './lib.mjs';
 
 function usage() {
   throw new Error(
-    'Usage: node scripts/onboarding/run-layout-onboarding.mjs --case-id <kebab-case> --source-pptx <file.pptx> --slide <n> --layout-id <camelCaseId> [--primitive-ref <primitive@version>] [--with-montage] [--stop-after extract|classify|scaffold|render|compare] [--force]',
+    'Usage: node scripts/onboarding/run-layout-onboarding.mjs --case-id <kebab-case> --source-pptx <file.pptx> --slide <n> --layout-id <camelCaseId> [--primitive-ref <primitive@version>] [--new-primitive-id <id>] [--base-primitive-ref <primitive@version>] [--with-montage] [--stop-after extract|classify|scaffold|render|compare] [--force]',
   );
 }
 
@@ -56,7 +56,7 @@ if (stopAfter === 'classify') process.exit(0);
 const scaffoldArgs = ['--case-id', String(caseId)];
 if (args.get('primitive-ref')) scaffoldArgs.push('--primitive-ref', String(args.get('primitive-ref')));
 if (args.get('new-primitive-id')) scaffoldArgs.push('--new-primitive-id', String(args.get('new-primitive-id')));
-if (args.get('builder-from-family')) scaffoldArgs.push('--builder-from-family', String(args.get('builder-from-family')));
+if (args.get('base-primitive-ref')) scaffoldArgs.push('--base-primitive-ref', String(args.get('base-primitive-ref')));
 runNode('scaffold-case.mjs', scaffoldArgs);
 if (stopAfter === 'scaffold') process.exit(0);
 
