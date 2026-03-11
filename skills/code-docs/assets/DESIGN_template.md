@@ -1,14 +1,13 @@
----
-owner: "<team-or-role-or-unassigned>"
-design-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 60
-source-of-truth: "<figma|repo|mixed>"
-verification-state: unverified
----
-
 # DESIGN.md
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Design owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 60
+- Source of truth: `<figma|repo|mixed>`
+- Verification state: unverified
 
 ## Purpose
 Design operating contract for this repo: source of truth, system map, agent editing boundaries, and verification guidance.

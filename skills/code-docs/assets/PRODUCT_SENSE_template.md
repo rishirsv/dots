@@ -1,14 +1,13 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 90
-source-of-truth: "docs/PRODUCT_SENSE.md"
-verification-state: unverified
-stakeholders: []
----
-
 # PRODUCT_SENSE.md
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 90
+- Source of truth: `docs/PRODUCT_SENSE.md`
+- Verification state: unverified
+- Stakeholders: []
 
 ## Purpose
 Defines prioritization logic and product decision boundaries.

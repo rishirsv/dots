@@ -1,7 +1,6 @@
 ---
 name: agent-browser
 description: Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", or any task requiring programmatic web interaction.
-allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)
 ---
 
 # Agent Browser
@@ -84,6 +83,11 @@ agent-browser wait 2000               # Wait milliseconds
 agent-browser download @e1 ./file.pdf          # Click element to trigger download
 agent-browser wait --download ./output.zip     # Wait for any download to complete
 agent-browser --download-path ./downloads open <url>  # Set default download directory
+
+# Viewport & Device Emulation
+agent-browser set viewport 1920 1080           # Set viewport size (default: 1280x720)
+agent-browser set viewport 1920 1080 2         # 2x retina scale for higher-res screenshots
+agent-browser set device "iPhone 14"           # Emulate device viewport + user agent
 
 # Capture
 agent-browser screenshot              # Screenshot to temp dir
@@ -218,6 +222,28 @@ AGENT_BROWSER_COLOR_SCHEME=dark agent-browser open https://example.com
 # Or set during session (persists for subsequent commands)
 agent-browser set media dark
 ```
+
+### Viewport & Responsive Testing
+
+```bash
+# Desktop layout
+agent-browser set viewport 1920 1080
+agent-browser screenshot desktop.png
+
+# Mobile-width layout
+agent-browser set viewport 375 812
+agent-browser screenshot mobile.png
+
+# HiDPI/retina rendering without changing CSS layout
+agent-browser set viewport 1920 1080 2
+agent-browser screenshot retina.png
+
+# Device emulation in one step
+agent-browser set device "iPhone 14"
+agent-browser screenshot device.png
+```
+
+The third `set viewport` argument controls pixel density without changing layout width. Use it when testing retina rendering or capturing sharper screenshots.
 
 ### Visual Browser (Debugging)
 

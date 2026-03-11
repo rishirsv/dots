@@ -1,13 +1,12 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 14
-source-of-truth: "docs/ISSUES.md"
-verification-state: unverified
----
-
 # ISSUES.md
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 14
+- Source of truth: `docs/ISSUES.md`
+- Verification state: unverified
 
 ## Purpose
 Single issue registry with machine-checkable lifecycle metadata.

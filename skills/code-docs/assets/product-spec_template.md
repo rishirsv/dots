@@ -1,17 +1,16 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: draft
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 30
-source-of-truth: "docs/product-specs/<feature-slug>-spec.md"
-verification-state: unverified
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-related-plans: []
-related-issues: []
----
-
 # Feature: <feature-name>
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: draft
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 30
+- Source of truth: `docs/product-specs/<feature-slug>-spec.md`
+- Verification state: unverified
+- Created: YYYY-MM-DD
+- Updated: YYYY-MM-DD
+- Related plans: []
+- Related issues: []
 
 ## TL;DR
 - Problem: <one sentence>

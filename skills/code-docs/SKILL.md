@@ -37,7 +37,7 @@ Do not use this when updating any docs, only the above scope.
 - Respect layered instruction ecosystems:
   - If repo already uses `CLAUDE.md` and/or `.github/copilot-instructions.md`, do not create competing guidance by default.
   - If nested `AGENTS.md` files exist, preserve precedence and keep root guidance high-level.
-- For canonical docs/specs, use metadata frontmatter fields:
+- For canonical docs/specs, include a `## Metadata` section with these fields:
   - `status`
   - `last-reviewed`
   - `review-cycle-days`

@@ -1,13 +1,12 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 30
-source-of-truth: "docs/exec-plans/tech-debt-tracker.md"
-verification-state: unverified
----
-
 # Tech Debt Tracker
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 30
+- Source of truth: `docs/exec-plans/tech-debt-tracker.md`
+- Verification state: unverified
 
 ## Scoring Rubric
 Score each item as:

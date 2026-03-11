@@ -1,15 +1,14 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 60
-source-of-truth: "docs/FRONTEND.md"
-verification-state: unverified
-stack: "<framework + router + state + styling>"
-platforms: "<web|ios|android|desktop>"
----
-
 # FRONTEND.md
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 60
+- Source of truth: `docs/FRONTEND.md`
+- Verification state: unverified
+- Stack: `<framework + router + state + styling>`
+- Platforms: `<web|ios|android|desktop>`
 
 ## Purpose
 Frontend contracts for architecture, ownership boundaries, and verification loops.

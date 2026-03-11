@@ -1,6 +1,0 @@
-interface:
-  display_name: "FDD Researcher"
-  short_description: "Build FDD kickoff briefs from CIM/VDD docs and web research"
-  icon_small: "./assets/fdd-researcher-icon.png"
-  icon_large: "./assets/fdd-researcher-icon.png"
-  default_prompt: "Prepare an FDD kickoff brief by combining uploaded deal documents with industry benchmark research."

@@ -1,14 +1,13 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 30
-source-of-truth: "<migrations|db|mixed>"
-verification-state: unverified
-last-generated: YYYY-MM-DD
----
-
 # DB-SCHEMA.md
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 30
+- Source of truth: `<migrations|db|mixed>`
+- Verification state: unverified
+- Last generated: YYYY-MM-DD
 
 ## Purpose
 Human-readable schema digest focused on critical entities and invariants.

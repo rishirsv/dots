@@ -1,17 +1,16 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 90
-source-of-truth: "docs/solutions/<solution-slug>.md"
-verification-state: unverified
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-related-issue: <path-or-none>
-related-pr: <link-or-none>
----
-
 # Solution: <clear-title>
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 90
+- Source of truth: `docs/solutions/<solution-slug>.md`
+- Verification state: unverified
+- Created: YYYY-MM-DD
+- Updated: YYYY-MM-DD
+- Related issue: <path-or-none>
+- Related PR: <link-or-none>
 
 ## Problem Signature
 - Surface: <where it appears>

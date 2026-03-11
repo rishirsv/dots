@@ -1,13 +1,12 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 30
-source-of-truth: "docs/PLANS.md"
-verification-state: unverified
----
-
 # PLANS.md
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 30
+- Source of truth: `docs/PLANS.md`
+- Verification state: unverified
 
 ## Purpose
 Defines the execution plan lifecycle and required structure for plan files.

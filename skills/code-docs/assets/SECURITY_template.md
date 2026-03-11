@@ -1,14 +1,13 @@
----
-owner: "<team-or-role-or-unassigned>"
-security-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 90
-source-of-truth: "docs/SECURITY.md"
-verification-state: unverified
----
-
 # SECURITY.md
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Security owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 90
+- Source of truth: `docs/SECURITY.md`
+- Verification state: unverified
 
 ## Purpose
 Defines security boundaries, controls, and response expectations.

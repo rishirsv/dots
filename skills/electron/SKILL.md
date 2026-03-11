@@ -1,7 +1,6 @@
 ---
 name: electron
 description: Automate Electron desktop apps (VS Code, Slack, Discord, Figma, Notion, Spotify, etc.) using agent-browser via Chrome DevTools Protocol. Use when the user needs to interact with an Electron app, automate a desktop app, connect to a running app, control a native app, or test an Electron application. Triggers include "automate Slack app", "control VS Code", "interact with Discord app", "test this Electron app", "connect to desktop app", or any task requiring automation of a native Electron application.
-allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*)
 ---
 
 # Electron
@@ -101,6 +100,25 @@ agent-browser tab 2
 # Switch by URL pattern
 agent-browser tab --url "*settings*"
 ```
+
+## Webview Support
+
+When an Electron app embeds `<webview>` surfaces, prefer native mode so those targets appear in the tab list and can be controlled directly.
+
+```bash
+# Connect in native mode
+agent-browser --native connect 9222
+
+# List windows and embedded webviews
+agent-browser tab
+
+# Switch to a webview target
+agent-browser tab 1
+agent-browser snapshot -i
+agent-browser click @e3
+```
+
+Use this when the main window is only a shell and the interactive content lives inside one or more embedded webviews. Standard Playwright-backed CDP mode may not expose those targets cleanly.
 
 ## Common Patterns
 

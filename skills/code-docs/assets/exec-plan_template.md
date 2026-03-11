@@ -1,18 +1,17 @@
----
-owner: "<team-or-role-or-unassigned>"
-status: active
-last-reviewed: YYYY-MM-DD
-review-cycle-days: 14
-source-of-truth: "docs/exec-plans/active/<feature-slug>-plan.md"
-verification-state: unverified
-created: YYYY-MM-DD
-last-updated: YYYY-MM-DD
-related-spec: docs/product-specs/<feature-slug>-spec.md
-related-issues: []
-acceptance-criteria: []
----
-
 # Exec Plan: <feature-name>
+
+## Metadata
+- Owner: <team-or-role-or-unassigned>
+- Status: active
+- Last reviewed: YYYY-MM-DD
+- Review cycle days: 14
+- Source of truth: `docs/exec-plans/active/<feature-slug>-plan.md`
+- Verification state: unverified
+- Created: YYYY-MM-DD
+- Last updated: YYYY-MM-DD
+- Related spec: `docs/product-specs/<feature-slug>-spec.md`
+- Related issues: []
+- Acceptance criteria: []
 
 ## Description and User Impact
 <what changes for users and why>
