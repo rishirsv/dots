@@ -1,9 +1,0 @@
-Two stories remain incomplete (2.11 and 3.0). Story 2.10 is done. Ending normally so the loop can continue.
-
-**Story 2.10: Mine Tech industry SOWs — COMPLETE**
-
-- Created `docs/mining/tech.json` with 12 FDD sections, 38 industry-specific terms, and 3 workstreams
-- Both source files (Project Vortex and Project Zeno) fully parsed with verbatim bullets and source tags
-- Shared sections (Quality of earnings, Net working capital) merge bullets from both files
-- Verification passed
-- Committed as `ad1b885`

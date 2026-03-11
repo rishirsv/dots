@@ -1,4 +1,0 @@
-interface:
-  display_name: "FDD Request List"
-  short_description: "Help create FDD request lists and workbooks"
-  default_prompt: "Generate a KPMG-style FDD information request list and Excel workbook using the bundled template."

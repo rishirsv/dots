@@ -1,7 +1,0 @@
-interface:
-  display_name: "kpmg-slides"
-  short_description: "Create and revise KPMG-branded PowerPoint decks"
-  icon_small: "./assets/kpmg-slides-small.png"
-  icon_large: "./assets/kpmg-slides.png"
-  brand_color: "#00338D"
-  default_prompt: "Use $kpmg-slides to plan, draft, generate, and QA a KPMG-branded deck from my inputs."
