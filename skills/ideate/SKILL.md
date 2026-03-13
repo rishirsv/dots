@@ -1,11 +1,13 @@
 ---
 name: ideate
-description: "Create a feature specification through natural conversation. Use when the user asks to ideate, brainstorm, or write a spec."
+description: "Create a feature specification through natural conversation. Use only when the user explicitly invokes `ideate`/`$ideate` or explicitly asks to use the ideate skill for brainstorming and spec writing. Do not auto-activate for general brainstorming, planning, or spec-writing requests."
 ---
 
 # Ideate
 
 Turn ideas into fully formed designs and clear specifications through collaborative dialogue.
+
+Only use this skill after an explicit user request to use `ideate`/`$ideate`.
 
 Start by understanding the current project's context and conventions. Ask the user questions to refine the idea.
 
