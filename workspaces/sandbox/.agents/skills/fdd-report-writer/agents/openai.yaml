@@ -1,6 +1,0 @@
-interface:
-  display_name: "FDD Report Writer"
-  short_description: "Draft FDD sections, exhibits, and adjustments"
-  icon_small: "./assets/fdd-report-writer-small.png"
-  icon_large: "./assets/fdd-report-writer.png"
-  default_prompt: "Use $fdd-report-writer to draft or revise a client-ready FDD section, exhibit narrative, adjustment write-up, or executive summary from diligence materials."

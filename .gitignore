@@ -41,3 +41,7 @@ pycache
 
 # slide-gen
 /outputs/
+
+# Workspace
+sandbox
+
