@@ -1,0 +1,30 @@
+# __TASK_NAME__ Codex Exec Eval
+
+This folder is a self-contained `codex exec` evaluation harness.
+
+## What to edit first
+
+1. Open `codex-eval.json` and confirm the model, sandbox, and output settings.
+2. Edit `prompts/task-prompt.md` so the base prompt matches the real task.
+3. Replace the starter cases in `cases.json`.
+4. Optionally keep `cases.csv` in sync if spreadsheet editing is helpful.
+
+## How to run
+
+```bash
+python3 run_eval.py
+```
+
+## What gets created
+
+- `outputs/raw/`: per-case logs and raw results
+- `outputs/reports/summary.json`: machine-readable summary
+- `outputs/reports/summary.md`: human-readable summary
+
+## Simple workflow
+
+1. define or import cases
+2. run the harness
+3. inspect failures
+4. tighten the prompt or checks
+5. rerun

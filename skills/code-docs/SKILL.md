@@ -119,6 +119,7 @@ When creating/updating `AGENTS.md`:
   5. Record references to relevant code and docs paths.
 - If evidence is incomplete, state missing evidence explicitly in `Assumptions` or `Context`.
 - Keep specs concise and decision-oriented.
+- Include Mermaid diagrams in product specs when they materially improve comprehension of flows, state transitions, architecture, or lifecycle behavior; skip them when prose is clearer.
 
 ## Project Specs Handling
 

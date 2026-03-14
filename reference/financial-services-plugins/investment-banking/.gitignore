@@ -1,2 +1,5 @@
 # User-specific settings
 .claude/*.local.md
+
+# ---- agents ----
+.agents/

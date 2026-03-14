@@ -34,13 +34,14 @@
 - As a <user_type>, I want <action> so that <benefit>.
 
 ## Requirements
-- [ ] <requirement>
-- [ ] <requirement>
-- [ ] <requirement>
+- <requirement>
+- <requirement>
+- <requirement>
 
 ## How It Works (Optional)
 - Describe the architecture in 2-3 concise paragraphs.
 - Include UX/UI notes, data flow, and integration behavior as needed.
+- Include a `mermaid` diagram when it makes flows, states, or component interactions easier to understand.
 
 ## Acceptance Criteria (3-10)
 - Given <state>, when <action>, then <outcome>.

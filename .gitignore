@@ -33,6 +33,7 @@ chatgpt/kpmg-slidegen/outputs/runs/
 
 # ---- oracle ----
 .agents/oracle/
+skills/oracle/
 # ---- oracle ----
 
 # Node
@@ -44,4 +45,3 @@ pycache
 
 # Workspace
 sandbox
-

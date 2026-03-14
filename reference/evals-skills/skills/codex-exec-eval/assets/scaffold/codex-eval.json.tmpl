@@ -1,0 +1,42 @@
+{
+  "task": {
+    "name": "__TASK_NAME__",
+    "description": "__TASK_DESCRIPTION__",
+    "prompt_template_file": "prompts/task-prompt.md",
+    "success_definition": "__SUCCESS_DEFINITION__"
+  },
+  "codex_exec": {
+    "model": "__MODEL__",
+    "sandbox": "__SANDBOX__",
+    "full_auto": __FULL_AUTO__,
+    "ephemeral": __EPHEMERAL__,
+    "skip_git_repo_check": __SKIP_GIT_REPO_CHECK__,
+    "json_output": __JSON_OUTPUT__,
+    "output_schema": "",
+    "add_dirs": [],
+    "working_directory": "."
+  },
+  "inputs": {
+    "mode": "__INPUT_MODE__",
+    "case_prompt_strategy": "append_case_fields",
+    "allow_source_files": true
+  },
+  "cases": {
+    "json_path": "cases.json",
+    "csv_path": "cases.csv",
+    "source": "__CASE_SOURCE__"
+  },
+  "evaluation": {
+    "mode": "__EVALUATION_MODE__",
+    "require_zero_exit": true,
+    "expect_last_message_json": false,
+    "custom_assertion_script": ""
+  },
+  "outputs": {
+    "root_dir": "outputs",
+    "raw_dir": "outputs/raw",
+    "reports_dir": "outputs/reports",
+    "summary_json": "outputs/reports/summary.json",
+    "summary_md": "outputs/reports/summary.md"
+  }
+}

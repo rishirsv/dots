@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Exec Eval"
+  short_description: "Set up and run guided Codex eval harnesses"
+  default_prompt: "Use $codex-exec-eval to set up a guided Codex exec eval harness for this task, choose the run settings, and scaffold a reusable mini eval project."

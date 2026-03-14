@@ -25,3 +25,6 @@ raycast/RaycastWrapped/
 raycast/Updates/
 raycast/extensions/
 
+
+# ---- agents ----
+.agents/

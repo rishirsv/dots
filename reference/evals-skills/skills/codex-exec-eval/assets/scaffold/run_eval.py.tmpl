@@ -1,0 +1,281 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import shlex
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+
+PLACEHOLDERS = {
+    "{{case_id}}": "id",
+    "{{case_prompt}}": "prompt",
+    "{{input_text}}": "input_text",
+    "{{source_files}}": "source_files",
+    "{{case_notes}}": "notes",
+}
+
+
+@dataclass
+class CheckResult:
+    name: str
+    passed: bool
+    details: str
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run a codex exec eval harness.")
+    parser.add_argument("--config", default="codex-eval.json", help="Path to codex-eval.json")
+    parser.add_argument("--case-id", action="append", default=[], help="Run only these case IDs")
+    parser.add_argument("--limit", type=int, default=0, help="Run only the first N matching cases")
+    parser.add_argument("--dry-run", action="store_true", help="Print commands without executing Codex")
+    return parser.parse_args()
+
+
+def load_config(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_cases(path: Path) -> list[dict]:
+    with path.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
+    if isinstance(data, list):
+        cases = data
+    elif isinstance(data, dict) and isinstance(data.get("cases"), list):
+        cases = data["cases"]
+    else:
+        raise ValueError("cases.json must contain an array or an object with a 'cases' array")
+    return cases
+
+
+def render_prompt(template: str, case: dict) -> str:
+    result = template
+    for placeholder, field in PLACEHOLDERS.items():
+        value = case.get(field, "")
+        if isinstance(value, list):
+            value = "\n".join(f"- {item}" for item in value) if value else "(none)"
+        elif value == "":
+            value = "(none)"
+        result = result.replace(placeholder, str(value))
+    return result
+
+
+def build_command(config: dict, project_dir: Path, last_message_path: Path) -> list[str]:
+    cx = config["codex_exec"]
+    cmd = ["codex", "exec"]
+    working_directory = str((project_dir / cx.get("working_directory", ".")).resolve())
+    cmd.extend(["-C", working_directory])
+
+    model = cx.get("model", "").strip()
+    if model:
+        cmd.extend(["--model", model])
+
+    if cx.get("full_auto", False):
+        cmd.append("--full-auto")
+    else:
+        sandbox = cx.get("sandbox", "").strip()
+        if sandbox:
+            cmd.extend(["--sandbox", sandbox])
+
+    if cx.get("ephemeral", False):
+        cmd.append("--ephemeral")
+    if cx.get("skip_git_repo_check", False):
+        cmd.append("--skip-git-repo-check")
+    if cx.get("json_output", False):
+        cmd.append("--json")
+
+    output_schema = cx.get("output_schema", "").strip()
+    if output_schema:
+        cmd.extend(["--output-schema", str((project_dir / output_schema).resolve())])
+
+    for add_dir in cx.get("add_dirs", []):
+        cmd.extend(["--add-dir", str((project_dir / add_dir).resolve())])
+
+    cmd.extend(["-o", str(last_message_path)])
+    cmd.append("-")
+    return cmd
+
+
+def run_command(cmd: list[str], prompt: str, stdout_path: Path, stderr_path: Path, dry_run: bool) -> int:
+    if dry_run:
+        stdout_path.write_text("", encoding="utf-8")
+        stderr_path.write_text("dry-run: command not executed\n", encoding="utf-8")
+        return 0
+
+    proc = subprocess.run(
+        cmd,
+        input=prompt,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    stdout_path.write_text(proc.stdout, encoding="utf-8")
+    stderr_path.write_text(proc.stderr, encoding="utf-8")
+    return proc.returncode
+
+
+def check_exit_code(expected: dict, exit_code: int) -> CheckResult:
+    expected_code = expected.get("exit_code")
+    if expected_code is None:
+        return CheckResult("exit_code", True, "No exit code requirement")
+    passed = exit_code == expected_code
+    return CheckResult("exit_code", passed, f"Expected {expected_code}, got {exit_code}")
+
+
+def check_text(expected: dict, last_message: str) -> list[CheckResult]:
+    checks: list[CheckResult] = []
+    for text in expected.get("text_contains", []):
+        passed = text in last_message
+        checks.append(CheckResult("text_contains", passed, f"Required text: {text}"))
+    for text in expected.get("text_not_contains", []):
+        passed = text not in last_message
+        checks.append(CheckResult("text_not_contains", passed, f"Forbidden text: {text}"))
+    return checks
+
+
+def check_files(expected: dict, project_dir: Path, working_directory: str) -> list[CheckResult]:
+    checks: list[CheckResult] = []
+    base = (project_dir / working_directory).resolve()
+    for relative_path in expected.get("files_exist", []):
+        target = (base / relative_path).resolve()
+        passed = target.exists()
+        checks.append(CheckResult("files_exist", passed, f"Expected file: {target}"))
+    return checks
+
+
+def check_json_keys(expected: dict, last_message: str) -> list[CheckResult]:
+    keys = expected.get("json_keys", [])
+    if not keys:
+        return []
+    try:
+        payload = json.loads(last_message)
+    except json.JSONDecodeError as exc:
+        return [CheckResult("json_keys", False, f"Last message is not valid JSON: {exc}")]
+    checks: list[CheckResult] = []
+    for key in keys:
+        passed = key in payload
+        checks.append(CheckResult("json_keys", passed, f"Expected top-level key: {key}"))
+    return checks
+
+
+def write_summary_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def write_summary_md(path: Path, payload: dict) -> None:
+    lines = [
+        "# Eval Summary",
+        "",
+        f"- Task: {payload['task_name']}",
+        f"- Cases run: {payload['cases_run']}",
+        f"- Passed: {payload['passed_cases']}",
+        f"- Failed: {payload['failed_cases']}",
+        "",
+        "## Case Results",
+        "",
+    ]
+    for case in payload["cases"]:
+        status = "PASS" if case["passed"] else "FAIL"
+        lines.append(f"### {case['id']} [{status}]")
+        lines.append(f"- Exit code: {case['exit_code']}")
+        lines.append(f"- Prompt file: {case['prompt_file']}")
+        lines.append(f"- Last message: {case['last_message_file']}")
+        for check in case["checks"]:
+            check_status = "PASS" if check["passed"] else "FAIL"
+            lines.append(f"- {check['name']}: {check_status} - {check['details']}")
+        lines.append("")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def maybe_run_custom_assertion(script_path: str, project_dir: Path, case_dir: Path) -> CheckResult | None:
+    if not script_path:
+        return None
+    script = (project_dir / script_path).resolve()
+    proc = subprocess.run(
+        [str(script), str(case_dir)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    details = proc.stdout.strip() or proc.stderr.strip() or "custom assertion completed"
+    return CheckResult("custom_assertion", proc.returncode == 0, details)
+
+
+def main() -> int:
+    args = parse_args()
+    config_path = Path(args.config).resolve()
+    project_dir = config_path.parent
+    config = load_config(config_path)
+
+    cases_path = project_dir / config["cases"]["json_path"]
+    cases = load_cases(cases_path)
+    selected_ids = set(args.case_id)
+    if selected_ids:
+        cases = [case for case in cases if case.get("id") in selected_ids]
+    if args.limit:
+        cases = cases[: args.limit]
+
+    prompt_template_path = project_dir / config["task"]["prompt_template_file"]
+    prompt_template = prompt_template_path.read_text(encoding="utf-8")
+
+    raw_dir = project_dir / config["outputs"]["raw_dir"]
+    raw_dir.mkdir(parents=True, exist_ok=True)
+
+    case_summaries: list[dict] = []
+    for case in cases:
+        case_id = str(case["id"])
+        case_dir = raw_dir / case_id
+        case_dir.mkdir(parents=True, exist_ok=True)
+
+        prompt_text = render_prompt(prompt_template, case)
+        prompt_file = case_dir / "assembled-prompt.md"
+        prompt_file.write_text(prompt_text, encoding="utf-8")
+
+        last_message_path = case_dir / "last-message.txt"
+        stdout_path = case_dir / ("stdout.jsonl" if config["codex_exec"].get("json_output", False) else "stdout.txt")
+        stderr_path = case_dir / "stderr.log"
+        cmd = build_command(config, project_dir, last_message_path)
+        exit_code = run_command(cmd, prompt_text, stdout_path, stderr_path, args.dry_run)
+
+        last_message = last_message_path.read_text(encoding="utf-8") if last_message_path.exists() else ""
+        checks = [check_exit_code(case.get("expected", {}), exit_code)]
+        checks.extend(check_text(case.get("expected", {}), last_message))
+        checks.extend(check_files(case.get("expected", {}), project_dir, config["codex_exec"].get("working_directory", ".")))
+        checks.extend(check_json_keys(case.get("expected", {}), last_message))
+
+        custom_check = maybe_run_custom_assertion(config["evaluation"].get("custom_assertion_script", ""), project_dir, case_dir)
+        if custom_check is not None:
+            checks.append(custom_check)
+
+        passed = all(check.passed for check in checks)
+        case_summary = {
+            "id": case_id,
+            "passed": passed,
+            "exit_code": exit_code,
+            "command": " ".join(shlex.quote(part) for part in cmd),
+            "prompt_file": str(prompt_file.relative_to(project_dir)),
+            "last_message_file": str(last_message_path.relative_to(project_dir)),
+            "checks": [check.__dict__ for check in checks],
+        }
+        write_summary_json(case_dir / "result.json", case_summary)
+        case_summaries.append(case_summary)
+
+    summary = {
+        "task_name": config["task"]["name"],
+        "cases_run": len(case_summaries),
+        "passed_cases": sum(1 for case in case_summaries if case["passed"]),
+        "failed_cases": sum(1 for case in case_summaries if not case["passed"]),
+        "cases": case_summaries,
+    }
+    write_summary_json(project_dir / config["outputs"]["summary_json"], summary)
+    write_summary_md(project_dir / config["outputs"]["summary_md"], summary)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -40,3 +40,6 @@ categorical_distributions.png
 .DS_Store
 Thumbs.db
 
+
+# ---- agents ----
+.agents/
