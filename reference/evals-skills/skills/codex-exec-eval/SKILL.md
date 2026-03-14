@@ -1,6 +1,6 @@
 ---
 name: codex-exec-eval
-description: Set up and run a guided `codex exec` evaluation harness for open-ended tasks such as prompt testing, file transformations, prompt-plus-file workflows, regression suites, and existing Codex eval improvements. Use when Codex needs to interview the user, choose explicit model and sandbox settings, scaffold a reusable mini eval project, create or import cases, run batch executions, apply deterministic checks first, and add deeper review only when needed.
+description: Set up and run a guided `codex exec` evaluation and self-improvement harness for open-ended tasks and skill packages. Use when Codex needs to onboard the user around a task or a target skill, choose explicit model and sandbox settings, scaffold a reusable mini eval project, create or import cases, run candidate versions, collect fixed-batch human grades in a local review app, iterate on the skill package itself, and stage a winning revision for approval.
 ---
 
 # Codex Exec Eval
@@ -13,13 +13,14 @@ Keep the experience single-skill and plain-language. Do not send the user to oth
 
 ## Core Rules
 
-- Use this skill as the only user-facing entrypoint for `codex exec` eval setup.
+- Use this skill as the only user-facing entrypoint for `codex exec` eval setup and skill improvement.
 - Keep all major run settings explicit in the generated config. Never hide the model, sandbox, or output mode inside opaque scripts.
 - Default to deterministic evaluation. Add judge-based evaluation only when the success criteria truly require interpretation.
 - Keep JSON as the canonical cases format. Support CSV only as an import/export convenience layer.
 - Produce a self-contained mini eval project in one folder.
 - Summarize the setup choices back to the user before scaffolding or revising the harness.
 - Keep the workflow understandable for a non-technical operator.
+- Treat the skill package itself as the mutation surface during self-improvement. Work on candidate copies first and only stage winners for approval.
 
 ## Trigger Patterns
 
@@ -31,6 +32,8 @@ Use this skill when the user asks for things like:
 - "Create a regression suite for this Codex task."
 - "Help me generate test cases for Codex."
 - "Improve this existing Codex eval setup."
+- "Improve this skill using Codex exec eval."
+- "Create candidate skill revisions and grade them."
 
 Tasks this skill should handle cleanly:
 
@@ -40,6 +43,8 @@ Tasks this skill should handle cleanly:
 - repeated regression runs
 - lightweight deterministic checks
 - optional deeper review when simple checks are not enough
+- skill-package improvement with versioned candidates
+- local browser-based human grading
 
 ## Guided Workflow
 
@@ -55,6 +60,10 @@ Ask for these decisions in plain language:
 6. Which model should run the task?
 7. Which sandbox or permission level should be used?
 8. Where should the eval project live?
+9. If this is an improvement loop, which skill is being improved and where does it live?
+10. Which files belong to that skill package?
+11. How many training cases should be human-graded each round?
+12. Which holdout set is the promotion gate?
 
 Use the structure in [references/onboarding-guide.md](references/onboarding-guide.md). Keep the conversation short and decisive. Make reasonable defaults when the user does not care, but always state the defaults back clearly.
 
@@ -66,6 +75,12 @@ Before scaffolding, write a short setup summary that includes:
 - task description
 - input type
 - case source
+- target skill path, when applicable
+- active baseline version
+- mutation scope
+- review batch size
+- holdout rule
+- promotion policy
 - selected model
 - selected sandbox mode
 - run defaults
@@ -87,7 +102,10 @@ python3 scripts/init_codex_exec_eval.py \
   --case-source <existing_json|existing_csv|manual|synthetic> \
   --model <model> \
   --sandbox <read-only|workspace-write|danger-full-access> \
-  --evaluation-mode <deterministic|judge_optional>
+  --evaluation-mode <deterministic|judge_optional> \
+  --target-skill-root <skill-root> \
+  --review-batch-size <count> \
+  --holdout-target-pass-count <count>
 ```
 
 Generate a self-contained folder with:
@@ -95,10 +113,18 @@ Generate a self-contained folder with:
 - `codex-eval.json`
 - `cases.json`
 - optional `cases.csv`
+- `candidates/V1/skill/`
+- later `candidates/V2/skill/`, `candidates/V3/skill/`, ...
 - `prompts/task-prompt.md`
+- `prompts/improvement-prompt.md`
 - `run_eval.py`
+- `optimize_skill.py`
+- `promote_candidate.py`
+- `review_server.py`
 - `README.md`
 - `setup-summary.md`
+- `review/grades.json`
+- `promotion/staged/`
 - `outputs/raw/`
 - `outputs/reports/`
 
@@ -110,6 +136,8 @@ After scaffolding:
 - replace placeholder cases with real or synthetic cases
 - tighten deterministic checks
 - confirm file paths and working directory assumptions
+- confirm the target skill package and tracked files are correct
+- confirm the review batch and holdout split are sensible
 
 Use these references as needed:
 
@@ -132,15 +160,23 @@ python3 scripts/cases_csv.py export --json <target-dir>/cases.json --csv <target
 python3 scripts/cases_csv.py import --csv <target-dir>/cases.csv --json <target-dir>/cases.json
 ```
 
+Open the review UI when human grading is required:
+
+```bash
+python3 review_server.py --project-dir <target-dir>
+```
+
 ### 6. Explain how to run and iterate
 
 Hand off the generated project in plain language:
 
 1. edit the prompt template or cases
 2. adjust model or sandbox in `codex-eval.json`
-3. run `python3 run_eval.py`
-4. read the summary in `outputs/reports/`
-5. improve and rerun
+3. run `python3 run_eval.py --candidate V1`
+4. grade the fixed review batch in the local review app
+5. create the next candidate with `python3 optimize_skill.py draft-next --from V1`
+6. rerun and compare
+7. stage a winner with `python3 promote_candidate.py stage --candidate Vn`
 
 ## Decision Rules
 
@@ -153,6 +189,8 @@ Use these defaults unless the user clearly wants something else:
 - `json_output`: `true`
 - evaluation mode: `deterministic`
 - cases format: JSON canonical with optional CSV export
+- review storage backend: JSON
+- promotion mode: `stage_then_approve`
 
 Use `judge_optional` only when deterministic checks cannot capture the success criteria.
 
@@ -162,6 +200,15 @@ Prefer case source in this order:
 2. existing CSV or spreadsheet data converted into JSON
 3. manual starter cases
 4. synthetic cases
+
+Use candidate versions in this order:
+
+1. import the real skill into `V1`
+2. revise into `V2`
+3. revise into `V3`
+4. continue until improvement stalls or the holdout gate is cleared
+
+Promotion requires a separate held-out validation set to hit the target pass count before the winning candidate is staged.
 
 ## Invisible Complexity Rule
 
@@ -195,5 +242,11 @@ Do not:
   - explain the cases format and supported fields
 - `references/evaluation-strategy.md`
   - explain rules-first evaluation and the optional deeper-review path
+- `references/self-improvement-guide.md`
+  - explain candidate versioning, the fixed review batch, and staged promotion
+- `references/review-ui-guide.md`
+  - explain the local browser-based grading app
 - `assets/scaffold/`
   - templates for the generated mini eval project
+- `README.md`
+  - user-facing explanation of the full loop

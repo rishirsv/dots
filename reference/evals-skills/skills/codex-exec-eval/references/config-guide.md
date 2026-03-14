@@ -49,6 +49,50 @@ Point to the case data.
 - `csv_path`: optional CSV mirror or import/export path
 - `source`: `existing_json`, `existing_csv`, `manual`, or `synthetic`
 
+### `target_skill`
+
+Describe the skill package being improved.
+
+- `root_path`: original skill path on disk
+- `tracked_files`: files or globs considered part of the candidate package
+- `baseline_version`: usually `V1`
+- `candidate_root`: where candidate copies live inside the eval project
+- `active_candidate`: which candidate the loop should use by default
+
+### `optimization`
+
+Control the self-improvement loop.
+
+- `enabled`: whether candidate iteration is enabled
+- `max_rounds`: maximum number of candidate revisions
+- `naming_scheme`: version format such as `V{n}`
+- `mutation_scope`: which files in the skill package are allowed to change
+- `review_batch_size`: how many training cases should be human-reviewed each round
+- `holdout_tags`: which case tags or splits count as holdout
+- `target_holdout_pass_count`: how many holdout passes are required for promotion
+- `promotion_mode`: usually `stage_then_approve`
+- `optimizer_model`: model used when Codex creates the next candidate
+- `optimizer_sandbox`: sandbox used for candidate mutation runs
+
+### `grading`
+
+Control label storage and scoring.
+
+- `deterministic_enabled`: whether automatic checks are active
+- `human_review_required`: whether the loop expects human labels
+- `judge_mode`: `off`, `optional`, or another future mode
+- `label_store`: path to the local labels file
+- `combined_strategy`: how human labels and automatic checks are combined
+
+### `ui`
+
+Control the local review app.
+
+- `enabled`: whether the review app is generated
+- `storage_backend`: JSON in v1
+- `port`: local port for the review server
+- `launch_command`: operator command for opening the review UI
+
 ### `evaluation`
 
 Control how results are judged.
@@ -72,6 +116,10 @@ Control where results go.
 
 - Change the model by editing `codex_exec.model`.
 - Change the sandbox by editing `codex_exec.sandbox`.
+- Change the target skill path by editing `target_skill.root_path`.
+- Change the active candidate version by editing `target_skill.active_candidate`.
+- Change the review batch size by editing `optimization.review_batch_size`.
+- Change the holdout pass target by editing `optimization.target_holdout_pass_count`.
 - Turn on `full_auto` only when the run environment is intentionally permissive.
 - Keep `codex_exec.json_output` set to `true` unless there is a good reason not to capture event streams.
 - Keep the task prompt in a separate file so it is easy to iterate on without touching the runner.

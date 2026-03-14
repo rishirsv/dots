@@ -2,13 +2,72 @@
   "cases": [
     {
       "id": "case-001",
-      "prompt": "Replace this prompt with the first real case.",
+      "prompt": "Replace this prompt with the first real training case.",
       "input_text": "",
       "source_files": [],
       "tags": [
-        "starter"
+        "starter",
+        "train"
       ],
+      "split": "train",
       "notes": "Edit this case to match the real task.",
+      "expected": {
+        "exit_code": 0,
+        "text_contains": [],
+        "text_not_contains": [],
+        "files_exist": [],
+        "json_keys": []
+      }
+    },
+    {
+      "id": "case-002",
+      "prompt": "Replace this prompt with another training case.",
+      "input_text": "",
+      "source_files": [],
+      "tags": [
+        "starter",
+        "train"
+      ],
+      "split": "train",
+      "notes": "Training cases are the fixed human-reviewed batch source.",
+      "expected": {
+        "exit_code": 0,
+        "text_contains": [],
+        "text_not_contains": [],
+        "files_exist": [],
+        "json_keys": []
+      }
+    },
+    {
+      "id": "case-003",
+      "prompt": "Replace this prompt with a holdout validation case.",
+      "input_text": "",
+      "source_files": [],
+      "tags": [
+        "starter",
+        "holdout"
+      ],
+      "split": "holdout",
+      "notes": "Holdout cases decide whether a candidate can be promoted.",
+      "expected": {
+        "exit_code": 0,
+        "text_contains": [],
+        "text_not_contains": [],
+        "files_exist": [],
+        "json_keys": []
+      }
+    },
+    {
+      "id": "case-004",
+      "prompt": "Replace this prompt with a second holdout validation case.",
+      "input_text": "",
+      "source_files": [],
+      "tags": [
+        "starter",
+        "holdout"
+      ],
+      "split": "holdout",
+      "notes": "Use at least two holdout cases when the promotion gate requires more than one pass.",
       "expected": {
         "exit_code": 0,
         "text_contains": [],

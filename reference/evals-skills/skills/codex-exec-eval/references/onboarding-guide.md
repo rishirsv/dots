@@ -34,7 +34,18 @@ Keep the interview in this order:
    - Should runs be ephemeral?
    - Should the harness capture JSONL output?
 
-6. **Location**
+6. **Target skill**, when the user wants self-improvement
+   - Which skill is being improved?
+   - Where does it live on disk?
+   - Which files belong to that skill package?
+   - Is the whole skill folder in scope, or only a subset?
+
+7. **Improvement loop settings**
+   - How many training cases should be human-graded each round?
+   - Which cases are holdout?
+   - What should count as a winning candidate?
+
+8. **Location**
    - Where should the mini eval project be generated?
 
 ## Recommended Defaults
@@ -48,6 +59,9 @@ Use these defaults when the user has no strong preference:
 - `json_output`: `true`
 - evaluation mode: `deterministic`
 - case source: existing real cases first, manual starter cases second
+- review batch size: `3` starter cases in v1 unless the user specifies a larger batch
+- holdout pass target: `10`
+- promotion mode: stage first, approve later
 
 ## Required Setup Summary
 
@@ -58,6 +72,12 @@ Before generating files, summarize the setup using this shape:
 - Input type
 - Case source
 - Success definition
+- Target skill path
+- Baseline version
+- Mutation scope
+- Review batch size
+- Holdout validation rule
+- Promotion policy
 - Evaluation mode
 - Model
 - Sandbox
@@ -68,6 +88,7 @@ If any of those are still missing and would materially change the scaffold, reso
 ## Plain-Language Guidance
 
 - Talk about "cases", "runs", "results", and "checks".
+- When improving a skill, talk about "candidate versions" and "review batches".
 - Do not introduce hidden methodology or internal skill names.
 - Explain model and sandbox choices in plain language.
 - Prefer "we’ll start simple and leave room to deepen later" over presenting the full evaluation universe up front.

@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import difflib
+from pathlib import Path
+import shutil
+import sys
+
+from eval_lib import candidate_entry, candidate_skill_root, compute_candidate_score, load_candidate_index, load_config, stage_skill_root
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Stage and apply winning candidate skill revisions.")
+    parser.add_argument("--config", default="codex-eval.json")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    stage = subparsers.add_parser("stage", help="Stage a winning candidate for approval")
+    stage.add_argument("--candidate", required=True)
+
+    apply_cmd = subparsers.add_parser("apply", help="Apply a staged candidate to the real skill after approval")
+    apply_cmd.add_argument("--candidate", required=True)
+    apply_cmd.add_argument("--approve", action="store_true")
+    return parser.parse_args()
+
+
+def build_diff_summary(source_root: Path, candidate_root: Path, tracked_files: list[str]) -> str:
+    sections = []
+    for relative in tracked_files:
+        src = source_root / relative
+        cand = candidate_root / relative
+        src_text = src.read_text(encoding="utf-8").splitlines() if src.exists() else []
+        cand_text = cand.read_text(encoding="utf-8").splitlines() if cand.exists() else []
+        diff = list(
+            difflib.unified_diff(
+                src_text,
+                cand_text,
+                fromfile=f"source/{relative}",
+                tofile=f"candidate/{relative}",
+                lineterm="",
+            )
+        )
+        if diff:
+            sections.append(f"## {relative}\n\n```diff\n" + "\n".join(diff[:400]) + "\n```")
+    return "\n\n".join(sections) if sections else "No tracked-file diff detected."
+
+
+def do_stage(project_dir: Path, config: dict, candidate: str) -> int:
+    score = compute_candidate_score(project_dir, config, candidate)
+    if not score["holdout_gate_met"]:
+        raise SystemExit(f"{candidate} does not clear the holdout gate yet.")
+
+    index = load_candidate_index(project_dir, config)
+    entry = candidate_entry(index, candidate)
+    if entry is None:
+        raise SystemExit(f"Unknown candidate: {candidate}")
+
+    baseline = index.get("baseline_version", config["target_skill"].get("baseline_version", "V1"))
+    baseline_score = compute_candidate_score(project_dir, config, baseline) if baseline else None
+
+    candidate_root = candidate_skill_root(project_dir, config, candidate)
+    staged_root = stage_skill_root(project_dir, config, candidate)
+    if staged_root.exists():
+        shutil.rmtree(staged_root)
+    staged_root.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(candidate_root, staged_root)
+
+    source_root = Path(config["target_skill"]["root_path"]) if config["target_skill"]["root_path"] else candidate_root
+    tracked_files = entry.get("tracked_files", config["target_skill"].get("tracked_files", []))
+    summary_path = staged_root.parent / "promotion-summary.md"
+    summary_path.write_text(
+        "\n".join(
+            [
+                f"# Promotion Summary for {candidate}",
+                "",
+                f"- Candidate: {candidate}",
+                f"- Baseline: {baseline}",
+                f"- Baseline deterministic score: {(baseline_score or {}).get('deterministic_passed', 0)}/{(baseline_score or {}).get('deterministic_total', 0)}",
+                f"- Candidate deterministic score: {score['deterministic_passed']}/{score['deterministic_total']}",
+                f"- Holdout passed: {score['holdout_passed']}/{score['target_holdout_pass_count']}",
+                f"- Review batch passed: {score['review_passed']}/{score['review_labeled']}",
+                "",
+                "## Diff Summary",
+                "",
+                build_diff_summary(source_root, candidate_root, tracked_files),
+            ]
+        ),
+        encoding="utf-8",
+    )
+    print(staged_root.parent)
+    return 0
+
+
+def do_apply(project_dir: Path, config: dict, candidate: str, approve: bool) -> int:
+    if not approve:
+        raise SystemExit("Refusing to apply without --approve.")
+    target_root_raw = config["target_skill"].get("root_path", "")
+    if not target_root_raw:
+        raise SystemExit("target_skill.root_path is not configured.")
+    target_root = Path(target_root_raw)
+    staged_root = stage_skill_root(project_dir, config, candidate)
+    if not staged_root.exists():
+        raise SystemExit(f"Staged candidate not found: {staged_root}")
+    if target_root.exists():
+        shutil.rmtree(target_root)
+    target_root.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(staged_root, target_root)
+    print(target_root)
+    return 0
+
+
+def main() -> int:
+    args = parse_args()
+    project_dir = Path(args.config).resolve().parent
+    config = load_config(project_dir)
+    if args.command == "stage":
+        return do_stage(project_dir, config, args.candidate)
+    return do_apply(project_dir, config, args.candidate, args.approve)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

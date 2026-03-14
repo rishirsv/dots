@@ -1,2 +1,5 @@
-id,prompt,input_text,source_files,tags,notes,exit_code,text_contains,text_not_contains,files_exist,json_keys
-case-001,Replace this prompt with the first real case.,,,"starter",Edit this case to match the real task.,0,,,,
+id,prompt,input_text,source_files,tags,split,notes,exit_code,text_contains,text_not_contains,files_exist,json_keys
+case-001,Replace this prompt with the first real training case.,,,"starter;train",train,Edit this case to match the real task.,0,,,,
+case-002,Replace this prompt with another training case.,,,"starter;train",train,Training cases are the fixed human-reviewed batch source.,0,,,,
+case-003,Replace this prompt with a holdout validation case.,,,"starter;holdout",holdout,Holdout cases decide whether a candidate can be promoted.,0,,,,
+case-004,Replace this prompt with a second holdout validation case.,,,"starter;holdout",holdout,Use at least two holdout cases when the promotion gate requires more than one pass.,0,,,,

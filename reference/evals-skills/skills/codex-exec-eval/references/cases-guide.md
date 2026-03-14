@@ -28,6 +28,8 @@ Each case should usually contain:
   - optional list of file paths relative to the eval project or working directory
 - `tags`
   - optional labels for grouping cases
+- `split`
+  - usually `train` or `holdout`
 - `notes`
   - optional operator notes
 - `expected`
@@ -52,6 +54,7 @@ Example:
   "input_text": "Original draft text here.",
   "source_files": [],
   "tags": ["rewrite", "tone"],
+  "split": "train",
   "notes": "Simple prompt-only example.",
   "expected": {
     "exit_code": 0,
@@ -68,5 +71,6 @@ Example:
 - Keep one case focused on one concrete scenario.
 - Use small starter cases first.
 - Prefer real examples when available.
+- Use `split: "train"` for the fixed human-reviewed batch source and `split: "holdout"` for the promotion gate.
 - Use CSV only when spreadsheet editing is important for the user.
 - If cases come from CSV, convert them into JSON before treating them as canonical.

@@ -1,30 +1,49 @@
 # __TASK_NAME__ Codex Exec Eval
 
-This folder is a self-contained `codex exec` evaluation harness.
+This folder is a self-contained `codex exec` evaluation and skill-improvement harness.
 
 ## What to edit first
 
-1. Open `codex-eval.json` and confirm the model, sandbox, and output settings.
-2. Edit `prompts/task-prompt.md` so the base prompt matches the real task.
+1. Open `codex-eval.json` and confirm the model, sandbox, target skill path, and optimization settings.
+2. Edit `prompts/task-prompt.md` so the task prompt matches the real workflow.
 3. Replace the starter cases in `cases.json`.
-4. Optionally keep `cases.csv` in sync if spreadsheet editing is helpful.
+4. Confirm `candidates/V1/skill/` contains the baseline skill package you want to improve.
+5. Optionally keep `cases.csv` in sync if spreadsheet editing is helpful.
 
-## How to run
+## Core loop
 
 ```bash
-python3 run_eval.py
+# Run the active candidate
+python3 run_eval.py --candidate V1
+
+# Open the local grading app
+python3 review_server.py --project-dir .
+
+# Draft the next candidate after grading the fixed review batch
+python3 optimize_skill.py draft-next --from V1
+
+# Run the next candidate
+python3 run_eval.py --candidate V2
+
+# Stage a winning candidate after holdout clears
+python3 promote_candidate.py stage --candidate V2
 ```
 
 ## What gets created
 
-- `outputs/raw/`: per-case logs and raw results
-- `outputs/reports/summary.json`: machine-readable summary
-- `outputs/reports/summary.md`: human-readable summary
+- `candidates/V1/skill/`: baseline imported skill
+- later `candidates/V2/skill/`, `candidates/V3/skill/`, ...
+- `outputs/raw/`: per-case logs and raw results per candidate
+- `outputs/reports/`: candidate summaries and improvement prompts
+- `review/grades.json`: local human grades
+- `promotion/staged/`: staged winners awaiting approval
+- `review-ui/`: local browser review app
 
 ## Simple workflow
 
 1. define or import cases
-2. run the harness
-3. inspect failures
-4. tighten the prompt or checks
-5. rerun
+2. run the current candidate
+3. grade the fixed review batch in the browser
+4. create the next candidate revision
+5. rerun and compare
+6. use the holdout gate to decide whether a version can be promoted

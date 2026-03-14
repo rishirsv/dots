@@ -3,6 +3,7 @@
     "name": "__TASK_NAME__",
     "description": "__TASK_DESCRIPTION__",
     "prompt_template_file": "prompts/task-prompt.md",
+    "improvement_prompt_file": "prompts/improvement-prompt.md",
     "success_definition": "__SUCCESS_DEFINITION__"
   },
   "codex_exec": {
@@ -26,6 +27,42 @@
     "csv_path": "cases.csv",
     "source": "__CASE_SOURCE__"
   },
+  "target_skill": {
+    "root_path": "__TARGET_SKILL_ROOT__",
+    "tracked_files": __TRACKED_FILES_JSON__,
+    "baseline_version": "V1",
+    "candidate_root": "candidates",
+    "active_candidate": "V1"
+  },
+  "optimization": {
+    "enabled": true,
+    "max_rounds": __MAX_ROUNDS__,
+    "naming_scheme": "V{n}",
+    "mutation_scope": __MUTATION_SCOPE_JSON__,
+    "review_batch_size": __REVIEW_BATCH_SIZE__,
+    "review_batch_case_ids": [],
+    "holdout_case_ids": [],
+    "holdout_tags": [
+      "holdout"
+    ],
+    "target_holdout_pass_count": __HOLDOUT_TARGET__,
+    "promotion_mode": "stage_then_approve",
+    "optimizer_model": "__OPTIMIZER_MODEL__",
+    "optimizer_sandbox": "__OPTIMIZER_SANDBOX__"
+  },
+  "grading": {
+    "deterministic_enabled": true,
+    "human_review_required": true,
+    "judge_mode": "__JUDGE_MODE__",
+    "label_store": "review/grades.json",
+    "combined_strategy": "human_labels_for_review_and_holdout"
+  },
+  "ui": {
+    "enabled": true,
+    "storage_backend": "json",
+    "port": __UI_PORT__,
+    "launch_command": "python3 review_server.py --project-dir . --port __UI_PORT__"
+  },
   "evaluation": {
     "mode": "__EVALUATION_MODE__",
     "require_zero_exit": true,
@@ -36,7 +73,8 @@
     "root_dir": "outputs",
     "raw_dir": "outputs/raw",
     "reports_dir": "outputs/reports",
-    "summary_json": "outputs/reports/summary.json",
-    "summary_md": "outputs/reports/summary.md"
+    "summary_json": "outputs/reports/latest-summary.json",
+    "summary_md": "outputs/reports/latest-summary.md",
+    "promotion_root": "promotion/staged"
   }
 }

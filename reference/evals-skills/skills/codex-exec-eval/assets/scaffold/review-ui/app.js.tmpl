@@ -1,0 +1,197 @@
+let appState = null;
+let filteredCases = [];
+let currentIndex = -1;
+let saveTimer = null;
+
+const els = {
+  candidateSelect: document.getElementById("candidateSelect"),
+  splitFilter: document.getElementById("splitFilter"),
+  scoreboard: document.getElementById("scoreboard"),
+  caseList: document.getElementById("caseList"),
+  caseBody: document.getElementById("caseBody"),
+  caseTitle: document.getElementById("caseTitle"),
+  candidateMeta: document.getElementById("candidateMeta"),
+  casePrompt: document.getElementById("casePrompt"),
+  caseInput: document.getElementById("caseInput"),
+  caseResult: document.getElementById("caseResult"),
+  checksList: document.getElementById("checksList"),
+  notesInput: document.getElementById("notesInput"),
+  saveStatus: document.getElementById("saveStatus"),
+  passBtn: document.getElementById("passBtn"),
+  failBtn: document.getElementById("failBtn"),
+  deferBtn: document.getElementById("deferBtn"),
+  prevBtn: document.getElementById("prevBtn"),
+  nextBtn: document.getElementById("nextBtn"),
+};
+
+async function fetchState(candidate = "") {
+  const query = candidate ? `?candidate=${encodeURIComponent(candidate)}` : "";
+  const response = await fetch(`/api/state${query}`);
+  appState = await response.json();
+  populateCandidateSelect();
+  applyFilters();
+}
+
+function populateCandidateSelect() {
+  const current = appState.candidate;
+  els.candidateSelect.innerHTML = "";
+  for (const version of appState.candidates) {
+    const option = document.createElement("option");
+    option.value = version;
+    option.textContent = version;
+    option.selected = version === current;
+    els.candidateSelect.appendChild(option);
+  }
+}
+
+function applyFilters() {
+  const filter = els.splitFilter.value;
+  filteredCases = appState.cases.filter((item) => {
+    if (filter === "train") return item.split === "train";
+    if (filter === "holdout") return item.holdout_case;
+    if (filter === "review") return item.review_required;
+    return true;
+  });
+  renderScoreboard();
+  renderCaseList();
+  if (!filteredCases.length) {
+    currentIndex = -1;
+    els.caseBody.classList.add("hidden");
+    els.caseTitle.textContent = "No cases match this filter";
+    return;
+  }
+  if (currentIndex < 0 || currentIndex >= filteredCases.length) {
+    currentIndex = 0;
+  }
+  renderCurrentCase();
+}
+
+function renderScoreboard() {
+  const score = appState.score;
+  els.scoreboard.innerHTML = `
+    <strong>${appState.candidate}</strong><br />
+    Deterministic: ${score.deterministic_passed}/${score.deterministic_total}<br />
+    Review batch: ${score.review_passed}/${score.review_total} passed<br />
+    Holdout: ${score.holdout_passed}/${score.target_holdout_pass_count}<br />
+    Gate met: ${score.holdout_gate_met ? "yes" : "no"}
+  `;
+}
+
+function badgeText(item) {
+  if (item.label && item.label.verdict) return item.label.verdict.toUpperCase();
+  if (item.review_required) return "REVIEW";
+  if (item.holdout_case) return "HOLDOUT";
+  return item.split.toUpperCase();
+}
+
+function renderCaseList() {
+  els.caseList.innerHTML = "";
+  filteredCases.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = `case-item${index === currentIndex ? " active" : ""}`;
+    div.innerHTML = `
+      <strong>${item.id}</strong><br />
+      <small>${badgeText(item)}</small><br />
+      <small>${item.prompt.slice(0, 72) || "(no prompt)"}</small>
+    `;
+    div.addEventListener("click", () => {
+      currentIndex = index;
+      renderCaseList();
+      renderCurrentCase();
+    });
+    els.caseList.appendChild(div);
+  });
+}
+
+function renderChecks(checks) {
+  els.checksList.innerHTML = "";
+  for (const check of checks || []) {
+    const li = document.createElement("li");
+    li.textContent = `${check.name}: ${check.passed ? "PASS" : "FAIL"} - ${check.details}`;
+    els.checksList.appendChild(li);
+  }
+}
+
+function setVerdictButtons(verdict) {
+  for (const button of [els.passBtn, els.failBtn, els.deferBtn]) {
+    button.classList.toggle("active", button.dataset.verdict === verdict);
+  }
+}
+
+function renderCurrentCase() {
+  const item = filteredCases[currentIndex];
+  if (!item) return;
+  els.caseBody.classList.remove("hidden");
+  els.caseTitle.textContent = item.id;
+  els.candidateMeta.textContent = `${appState.candidate} · ${item.split} · ${item.review_required ? "review batch" : "not in review batch"}`;
+  els.casePrompt.textContent = item.prompt || "(no prompt)";
+  els.caseInput.textContent = item.input_text || "(no input text)";
+  els.caseResult.textContent = item.last_message || "(no result yet)";
+  renderChecks(item.result ? item.result.checks : []);
+  els.notesInput.value = item.label ? item.label.notes || "" : "";
+  setVerdictButtons(item.label ? item.label.verdict : "");
+  els.saveStatus.textContent = item.label ? `Saved ${item.label.updated_at || ""}` : "Not saved";
+}
+
+async function saveLabel(verdictOverride = null) {
+  const item = filteredCases[currentIndex];
+  if (!item) return;
+  const verdict = verdictOverride || (item.label ? item.label.verdict : "defer");
+  const notes = els.notesInput.value;
+  await fetch("/api/label", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      candidate: appState.candidate,
+      case_id: item.id,
+      verdict,
+      notes,
+    }),
+  });
+  item.label = { verdict, notes, updated_at: new Date().toISOString() };
+  setVerdictButtons(verdict);
+  els.saveStatus.textContent = `Saved ${item.label.updated_at}`;
+  renderCaseList();
+  await fetchState(appState.candidate);
+  currentIndex = filteredCases.findIndex((entry) => entry.id === item.id);
+  renderCaseList();
+  renderCurrentCase();
+}
+
+function scheduleNotesSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const item = filteredCases[currentIndex];
+    if (!item) return;
+    saveLabel(item.label ? item.label.verdict : "defer");
+  }, 500);
+}
+
+function move(delta) {
+  if (!filteredCases.length) return;
+  currentIndex = Math.max(0, Math.min(filteredCases.length - 1, currentIndex + delta));
+  renderCaseList();
+  renderCurrentCase();
+}
+
+els.candidateSelect.addEventListener("change", async (event) => {
+  currentIndex = -1;
+  await fetchState(event.target.value);
+});
+els.splitFilter.addEventListener("change", applyFilters);
+els.passBtn.addEventListener("click", () => saveLabel("pass"));
+els.failBtn.addEventListener("click", () => saveLabel("fail"));
+els.deferBtn.addEventListener("click", () => saveLabel("defer"));
+els.prevBtn.addEventListener("click", () => move(-1));
+els.nextBtn.addEventListener("click", () => move(1));
+els.notesInput.addEventListener("input", scheduleNotesSave);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "1") saveLabel("pass");
+  if (event.key === "2") saveLabel("fail");
+  if (event.key.toLowerCase() === "d") saveLabel("defer");
+  if (event.key === "ArrowLeft") move(-1);
+  if (event.key === "ArrowRight") move(1);
+});
+
+fetchState();

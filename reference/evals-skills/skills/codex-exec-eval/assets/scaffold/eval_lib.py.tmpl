@@ -1,0 +1,316 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+from datetime import datetime, timezone
+import json
+from pathlib import Path
+import re
+import shlex
+import subprocess
+
+
+PLACEHOLDERS = {
+    "{{case_id}}": "id",
+    "{{case_prompt}}": "prompt",
+    "{{input_text}}": "input_text",
+    "{{source_files}}": "source_files",
+    "{{case_notes}}": "notes",
+}
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def load_json(path: Path, default=None):
+    if not path.exists():
+        return {} if default is None else default
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def save_json(path: Path, payload) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def load_config(project_dir: Path) -> dict:
+    return load_json(project_dir / "codex-eval.json")
+
+
+def load_cases(project_dir: Path, config: dict) -> list[dict]:
+    data = load_json(project_dir / config["cases"]["json_path"])
+    if isinstance(data, list):
+        return data
+    return data.get("cases", [])
+
+
+def candidate_index_path(project_dir: Path, config: dict) -> Path:
+    return project_dir / config["target_skill"]["candidate_root"] / "index.json"
+
+
+def load_candidate_index(project_dir: Path, config: dict) -> dict:
+    return load_json(candidate_index_path(project_dir, config), default={"baseline_version": "V1", "active_candidate": "V1", "candidates": []})
+
+
+def save_candidate_index(project_dir: Path, config: dict, payload: dict) -> None:
+    save_json(candidate_index_path(project_dir, config), payload)
+
+
+def parse_version_number(version: str) -> int:
+    match = re.search(r"(\d+)$", version)
+    return int(match.group(1)) if match else 0
+
+
+def next_candidate_version(index: dict, naming_scheme: str) -> str:
+    existing = [parse_version_number(candidate.get("version", "")) for candidate in index.get("candidates", [])]
+    next_number = max(existing or [0]) + 1
+    return naming_scheme.replace("{n}", str(next_number))
+
+
+def candidate_entry(index: dict, version: str) -> dict | None:
+    for candidate in index.get("candidates", []):
+        if candidate.get("version") == version:
+            return candidate
+    return None
+
+
+def latest_candidate(index: dict) -> str:
+    versions = [candidate.get("version", "") for candidate in index.get("candidates", [])]
+    versions = sorted([version for version in versions if version], key=parse_version_number)
+    return versions[-1] if versions else index.get("active_candidate", "V1")
+
+
+def candidate_skill_root(project_dir: Path, config: dict, version: str) -> Path:
+    entry = candidate_entry(load_candidate_index(project_dir, config), version)
+    if entry and entry.get("path"):
+        return project_dir / entry["path"]
+    return project_dir / config["target_skill"]["candidate_root"] / version / "skill"
+
+
+def stage_skill_root(project_dir: Path, config: dict, version: str) -> Path:
+    return project_dir / config["outputs"]["promotion_root"] / version / "skill"
+
+
+def review_batch_ids(cases: list[dict], config: dict) -> list[str]:
+    configured = config["optimization"].get("review_batch_case_ids", [])
+    if configured:
+        return configured
+    train_cases = [case["id"] for case in cases if case.get("split", "train") == "train"]
+    return train_cases[: config["optimization"]["review_batch_size"]]
+
+
+def holdout_case_ids(cases: list[dict], config: dict) -> list[str]:
+    configured = config["optimization"].get("holdout_case_ids", [])
+    if configured:
+        return configured
+    holdout_tags = set(config["optimization"].get("holdout_tags", ["holdout"]))
+    ids = []
+    for case in cases:
+        tags = set(case.get("tags", []))
+        if case.get("split") == "holdout" or holdout_tags.intersection(tags):
+            ids.append(case["id"])
+    return ids
+
+
+def load_labels(project_dir: Path, config: dict) -> dict:
+    return load_json(project_dir / config["grading"]["label_store"], default={"labels": []})
+
+
+def save_labels(project_dir: Path, config: dict, payload: dict) -> None:
+    save_json(project_dir / config["grading"]["label_store"], payload)
+
+
+def label_lookup(labels_payload: dict) -> dict:
+    lookup = {}
+    for item in labels_payload.get("labels", []):
+        lookup[(item.get("candidate"), item.get("case_id"))] = item
+    return lookup
+
+
+def upsert_label(labels_payload: dict, candidate: str, case_id: str, verdict: str, notes: str) -> dict:
+    labels = labels_payload.setdefault("labels", [])
+    for item in labels:
+        if item.get("candidate") == candidate and item.get("case_id") == case_id:
+            item["verdict"] = verdict
+            item["notes"] = notes
+            item["updated_at"] = now_iso()
+            return labels_payload
+    labels.append(
+        {
+            "candidate": candidate,
+            "case_id": case_id,
+            "verdict": verdict,
+            "notes": notes,
+            "updated_at": now_iso(),
+        }
+    )
+    return labels_payload
+
+
+def render_prompt(template: str, case: dict, candidate_version: str, candidate_root: Path, tracked_files: list[str]) -> str:
+    rendered = template
+    for placeholder, field in PLACEHOLDERS.items():
+        value = case.get(field, "")
+        if isinstance(value, list):
+            value = "\n".join(f"- {item}" for item in value) if value else "(none)"
+        elif value == "":
+            value = "(none)"
+        rendered = rendered.replace(placeholder, str(value))
+    rendered = rendered.replace("{{candidate_version}}", candidate_version)
+    rendered = rendered.replace("{{candidate_skill_root}}", candidate_root.as_posix())
+    rendered = rendered.replace(
+        "{{candidate_tracked_files}}",
+        "\n".join(f"- {item}" for item in tracked_files) if tracked_files else "(all files in candidate root)",
+    )
+    return rendered
+
+
+def build_codex_command(
+    config: dict,
+    project_dir: Path,
+    last_message_path: Path,
+    model_override: str = "",
+    sandbox_override: str = "",
+    working_directory: str = "",
+) -> list[str]:
+    cx = config["codex_exec"]
+    cmd = ["codex", "exec"]
+
+    chosen_workdir = working_directory or cx.get("working_directory", ".")
+    resolved_workdir = str((project_dir / chosen_workdir).resolve())
+    cmd.extend(["-C", resolved_workdir])
+
+    model = model_override or cx.get("model", "")
+    if model:
+        cmd.extend(["--model", model])
+
+    if sandbox_override:
+        cmd.extend(["--sandbox", sandbox_override])
+    elif cx.get("full_auto", False):
+        cmd.append("--full-auto")
+    else:
+        sandbox = cx.get("sandbox", "").strip()
+        if sandbox:
+            cmd.extend(["--sandbox", sandbox])
+
+    if cx.get("ephemeral", False):
+        cmd.append("--ephemeral")
+    if cx.get("skip_git_repo_check", False):
+        cmd.append("--skip-git-repo-check")
+    if cx.get("json_output", False):
+        cmd.append("--json")
+
+    output_schema = cx.get("output_schema", "").strip()
+    if output_schema:
+        cmd.extend(["--output-schema", str((project_dir / output_schema).resolve())])
+
+    for add_dir in cx.get("add_dirs", []):
+        cmd.extend(["--add-dir", str((project_dir / add_dir).resolve())])
+
+    cmd.extend(["-o", str(last_message_path)])
+    cmd.append("-")
+    return cmd
+
+
+def run_codex_command(cmd: list[str], prompt: str, stdout_path: Path, stderr_path: Path, dry_run: bool) -> int:
+    stdout_path.parent.mkdir(parents=True, exist_ok=True)
+    stderr_path.parent.mkdir(parents=True, exist_ok=True)
+    if dry_run:
+        stdout_path.write_text("", encoding="utf-8")
+        stderr_path.write_text("dry-run: command not executed\n", encoding="utf-8")
+        return 0
+
+    proc = subprocess.run(
+        cmd,
+        input=prompt,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    stdout_path.write_text(proc.stdout, encoding="utf-8")
+    stderr_path.write_text(proc.stderr, encoding="utf-8")
+    return proc.returncode
+
+
+def deterministic_checks(expected: dict, last_message: str, project_dir: Path, working_directory: str, exit_code: int) -> list[dict]:
+    checks = []
+    expected_code = expected.get("exit_code")
+    if expected_code is None:
+        checks.append({"name": "exit_code", "passed": True, "details": "No exit code requirement"})
+    else:
+        checks.append({"name": "exit_code", "passed": exit_code == expected_code, "details": f"Expected {expected_code}, got {exit_code}"})
+    for text in expected.get("text_contains", []):
+        checks.append({"name": "text_contains", "passed": text in last_message, "details": f"Required text: {text}"})
+    for text in expected.get("text_not_contains", []):
+        checks.append({"name": "text_not_contains", "passed": text not in last_message, "details": f"Forbidden text: {text}"})
+    base = (project_dir / working_directory).resolve()
+    for relative_path in expected.get("files_exist", []):
+        target = (base / relative_path).resolve()
+        checks.append({"name": "files_exist", "passed": target.exists(), "details": f"Expected file: {target}"})
+    keys = expected.get("json_keys", [])
+    if keys:
+        try:
+            payload = json.loads(last_message)
+            for key in keys:
+                checks.append({"name": "json_keys", "passed": key in payload, "details": f"Expected top-level key: {key}"})
+        except json.JSONDecodeError as exc:
+            checks.append({"name": "json_keys", "passed": False, "details": f"Last message is not valid JSON: {exc}"})
+    return checks
+
+
+def get_case_result(project_dir: Path, config: dict, candidate: str, case_id: str) -> dict:
+    result_path = project_dir / config["outputs"]["raw_dir"] / candidate / case_id / "result.json"
+    return load_json(result_path, default={})
+
+
+def compute_candidate_score(project_dir: Path, config: dict, candidate: str) -> dict:
+    cases = load_cases(project_dir, config)
+    review_ids = set(review_batch_ids(cases, config))
+    holdout_ids = set(holdout_case_ids(cases, config))
+    labels = label_lookup(load_labels(project_dir, config))
+
+    deterministic_passed = 0
+    deterministic_total = 0
+    review_passed = 0
+    review_total = len(review_ids)
+    review_labeled = 0
+    holdout_passed = 0
+    holdout_total = len(holdout_ids)
+    holdout_labeled = 0
+
+    for case in cases:
+        result = get_case_result(project_dir, config, candidate, case["id"])
+        if result:
+            deterministic_total += 1
+            if result.get("passed"):
+                deterministic_passed += 1
+
+        label = labels.get((candidate, case["id"]))
+        if case["id"] in review_ids and label:
+            review_labeled += 1
+            if label.get("verdict") == "pass":
+                review_passed += 1
+        if case["id"] in holdout_ids and label:
+            holdout_labeled += 1
+            if label.get("verdict") == "pass":
+                holdout_passed += 1
+
+    target = config["optimization"]["target_holdout_pass_count"]
+    gate_met = holdout_labeled == target and holdout_passed == target
+    return {
+        "candidate": candidate,
+        "deterministic_passed": deterministic_passed,
+        "deterministic_total": deterministic_total,
+        "review_passed": review_passed,
+        "review_labeled": review_labeled,
+        "review_total": review_total,
+        "holdout_passed": holdout_passed,
+        "holdout_labeled": holdout_labeled,
+        "holdout_total": holdout_total,
+        "target_holdout_pass_count": target,
+        "holdout_gate_met": gate_met,
+    }
+
+
+def shell_join(parts: list[str]) -> str:
+    return " ".join(shlex.quote(part) for part in parts)

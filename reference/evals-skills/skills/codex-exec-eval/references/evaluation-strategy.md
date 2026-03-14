@@ -14,6 +14,8 @@ Start with rules:
 
 This is the default because it is easy to understand, cheap to run, and easy to debug.
 
+In the self-improvement loop, deterministic checks are not the only signal. They are the first signal. The second signal is the fixed human-reviewed batch.
+
 ## When to Stay Deterministic
 
 Stay on deterministic checks when the task mostly cares about:
@@ -38,6 +40,16 @@ When that happens, keep the user experience inside this skill:
 2. collect or review a small labeled set
 3. add a judge prompt or human-review step
 4. validate that evaluator before trusting it broadly
+
+## Self-Improvement Scoring
+
+In v1, score candidates using:
+
+1. deterministic checks on all cases
+2. fixed-batch human labels on training cases
+3. held-out validation labels as the promotion gate
+
+Do not promote a candidate just because it improved the reviewed training batch. Promotion requires the holdout gate to pass.
 
 ## Operator Guidance
 

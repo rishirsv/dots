@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import shutil
+import sys
+
+from eval_lib import (
+    build_codex_command,
+    candidate_entry,
+    candidate_skill_root,
+    compute_candidate_score,
+    label_lookup,
+    latest_candidate,
+    load_candidate_index,
+    load_cases,
+    load_config,
+    load_labels,
+    next_candidate_version,
+    review_batch_ids,
+    run_codex_command,
+    save_candidate_index,
+    save_json,
+)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Create and manage candidate skill revisions.")
+    parser.add_argument("--config", default="codex-eval.json")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    status = subparsers.add_parser("status", help="Show score and review status for a candidate")
+    status.add_argument("--candidate", default="")
+
+    draft = subparsers.add_parser("draft-next", help="Create the next candidate version from an evaluated one")
+    draft.add_argument("--from", dest="from_candidate", default="")
+    draft.add_argument("--to", dest="to_candidate", default="")
+    draft.add_argument("--dry-run", action="store_true")
+    return parser.parse_args()
+
+
+def summarize_review_notes(project_dir: Path, config: dict, candidate: str) -> str:
+    cases = load_cases(project_dir, config)
+    review_ids = set(review_batch_ids(cases, config))
+    labels = label_lookup(load_labels(project_dir, config))
+    reports_dir = project_dir / config["outputs"]["reports_dir"]
+    summary = []
+    for case in cases:
+        if case["id"] not in review_ids:
+            continue
+        label = labels.get((candidate, case["id"]))
+        if not label:
+            continue
+        result_path = project_dir / config["outputs"]["raw_dir"] / candidate / case["id"] / "result.json"
+        result = json.loads(result_path.read_text(encoding="utf-8")) if result_path.exists() else {}
+        summary.append(
+            {
+                "id": case["id"],
+                "prompt": case.get("prompt", ""),
+                "verdict": label.get("verdict"),
+                "notes": label.get("notes", ""),
+                "deterministic_passed": result.get("passed"),
+                "checks": result.get("checks", []),
+            }
+        )
+    return json.dumps(summary, indent=2)
+
+
+def build_improvement_prompt(project_dir: Path, config: dict, current: str, nxt: str, tracked_files: list[str]) -> str:
+    template = (project_dir / config["task"]["improvement_prompt_file"]).read_text(encoding="utf-8")
+    score = compute_candidate_score(project_dir, config, current)
+    holdout_summary = {
+        "target_holdout_pass_count": score["target_holdout_pass_count"],
+        "holdout_labeled": score["holdout_labeled"],
+        "holdout_passed": score["holdout_passed"],
+        "holdout_gate_met": score["holdout_gate_met"],
+    }
+    replacements = {
+        "{{current_candidate_version}}": current,
+        "{{next_candidate_version}}": nxt,
+        "{{candidate_skill_root}}": candidate_skill_root(project_dir, config, nxt).as_posix(),
+        "{{candidate_tracked_files}}": "\n".join(f"- {item}" for item in tracked_files) if tracked_files else "(all tracked files)",
+        "{{mutation_scope}}": json.dumps(config["optimization"]["mutation_scope"], indent=2),
+        "{{training_summary_json}}": json.dumps(score, indent=2),
+        "{{holdout_summary_json}}": json.dumps(holdout_summary, indent=2),
+        "{{human_review_notes}}": summarize_review_notes(project_dir, config, current),
+    }
+    for token, value in replacements.items():
+        template = template.replace(token, value)
+    return template
+
+
+def ensure_review_batch_complete(project_dir: Path, config: dict, candidate: str) -> None:
+    cases = load_cases(project_dir, config)
+    review_ids = review_batch_ids(cases, config)
+    labels = label_lookup(load_labels(project_dir, config))
+    missing = [case_id for case_id in review_ids if (candidate, case_id) not in labels]
+    if missing:
+        raise SystemExit(f"Missing human labels for review batch on {candidate}: {', '.join(missing)}")
+
+
+def do_status(project_dir: Path, config: dict, candidate: str) -> int:
+    chosen = candidate or config["target_skill"].get("active_candidate")
+    print(json.dumps(compute_candidate_score(project_dir, config, chosen), indent=2))
+    return 0
+
+
+def do_draft_next(project_dir: Path, config: dict, from_candidate: str, to_candidate: str, dry_run: bool) -> int:
+    index = load_candidate_index(project_dir, config)
+    current = from_candidate or index.get("active_candidate") or config["target_skill"].get("active_candidate") or latest_candidate(index)
+    ensure_review_batch_complete(project_dir, config, current)
+
+    current_entry = candidate_entry(index, current)
+    if current_entry is None:
+        raise SystemExit(f"Unknown candidate: {current}")
+
+    nxt = to_candidate or next_candidate_version(index, config["optimization"]["naming_scheme"])
+    current_root = candidate_skill_root(project_dir, config, current)
+    next_root = candidate_skill_root(project_dir, config, nxt)
+    if next_root.exists():
+        shutil.rmtree(next_root)
+    next_root.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(current_root, next_root)
+
+    tracked_files = current_entry.get("tracked_files", config["target_skill"].get("tracked_files", []))
+    prompt_text = build_improvement_prompt(project_dir, config, current, nxt, tracked_files)
+    prompt_path = project_dir / config["outputs"]["reports_dir"] / f"{nxt}-improvement-prompt.md"
+    prompt_path.write_text(prompt_text, encoding="utf-8")
+
+    optimizer_model = config["optimization"].get("optimizer_model") or config["codex_exec"]["model"]
+    optimizer_sandbox = config["optimization"].get("optimizer_sandbox") or config["codex_exec"]["sandbox"]
+    last_message_path = project_dir / config["outputs"]["raw_dir"] / nxt / "optimizer-last-message.txt"
+    stdout_path = project_dir / config["outputs"]["raw_dir"] / nxt / "optimizer-stdout.txt"
+    stderr_path = project_dir / config["outputs"]["raw_dir"] / nxt / "optimizer-stderr.log"
+    cmd = build_codex_command(
+        config,
+        project_dir,
+        last_message_path,
+        model_override=optimizer_model,
+        sandbox_override=optimizer_sandbox,
+        working_directory=str(next_root.relative_to(project_dir)),
+    )
+    exit_code = run_codex_command(cmd, prompt_text, stdout_path, stderr_path, dry_run)
+
+    index["active_candidate"] = nxt
+    index["candidates"].append(
+        {
+            "version": nxt,
+            "parent": current,
+            "source": "candidate",
+            "path": str(next_root.relative_to(project_dir)),
+            "tracked_files": tracked_files,
+            "optimizer_exit_code": exit_code,
+            "improvement_prompt": str(prompt_path.relative_to(project_dir)),
+        }
+    )
+    save_candidate_index(project_dir, config, index)
+    config["target_skill"]["active_candidate"] = nxt
+    save_json(project_dir / "codex-eval.json", config)
+    save_json(project_dir / "review" / "review_state.json", {"last_candidate": nxt, "parent_candidate": current})
+    print(nxt)
+    return 0
+
+
+def main() -> int:
+    args = parse_args()
+    project_dir = Path(args.config).resolve().parent
+    config = load_config(project_dir)
+    if args.command == "status":
+        return do_status(project_dir, config, args.candidate)
+    return do_draft_next(project_dir, config, args.from_candidate, args.to_candidate, args.dry_run)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

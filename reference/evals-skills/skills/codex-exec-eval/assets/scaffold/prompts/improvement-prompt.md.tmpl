@@ -1,0 +1,31 @@
+You are improving a candidate skill package inside a Codex exec evaluation loop.
+
+Current candidate version: {{current_candidate_version}}
+Next candidate version: {{next_candidate_version}}
+Target skill root: {{candidate_skill_root}}
+
+Task name: __TASK_NAME__
+Task description:
+__TASK_DESCRIPTION__
+
+Success definition:
+__SUCCESS_DEFINITION__
+
+Only modify files inside the current candidate skill package.
+
+Tracked files:
+{{candidate_tracked_files}}
+
+Mutation scope:
+{{mutation_scope}}
+
+Training evidence summary:
+{{training_summary_json}}
+
+Holdout evidence summary:
+{{holdout_summary_json}}
+
+Human review notes:
+{{human_review_notes}}
+
+Your goal is to create the next candidate revision so it performs better on the reviewed training batch without breaking the broader task. Keep the skill coherent, concise, and aligned with the evaluation target. Do not modify the eval harness itself.

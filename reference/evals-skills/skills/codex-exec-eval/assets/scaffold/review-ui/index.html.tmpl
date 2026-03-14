@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Codex Exec Eval Review</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h1>Review</h1>
+          <p>Grade one candidate at a time.</p>
+        </div>
+        <label>
+          Candidate
+          <select id="candidateSelect"></select>
+        </label>
+        <label>
+          Filter
+          <select id="splitFilter">
+            <option value="all">All cases</option>
+            <option value="train">Training only</option>
+            <option value="holdout">Holdout only</option>
+            <option value="review">Review batch</option>
+          </select>
+        </label>
+        <div id="scoreboard" class="scoreboard"></div>
+        <div id="caseList" class="case-list"></div>
+      </aside>
+      <main class="content">
+        <header class="content-header">
+          <div>
+            <h2 id="caseTitle">Select a case</h2>
+            <p id="candidateMeta"></p>
+          </div>
+          <div class="shortcuts">Keys: 1 = Pass, 2 = Fail, D = Defer, ←/→ navigate</div>
+        </header>
+        <section id="caseBody" class="case-body hidden">
+          <div class="panel">
+            <h3>Case Prompt</h3>
+            <pre id="casePrompt"></pre>
+          </div>
+          <div class="panel">
+            <h3>Input Text</h3>
+            <pre id="caseInput"></pre>
+          </div>
+          <div class="panel">
+            <h3>Result</h3>
+            <pre id="caseResult"></pre>
+          </div>
+          <div class="panel">
+            <h3>Deterministic Checks</h3>
+            <ul id="checksList" class="checks-list"></ul>
+          </div>
+          <div class="panel grading-panel">
+            <h3>Grade</h3>
+            <div class="grade-buttons">
+              <button id="passBtn" data-verdict="pass">Pass</button>
+              <button id="failBtn" data-verdict="fail">Fail</button>
+              <button id="deferBtn" data-verdict="defer">Defer</button>
+            </div>
+            <label class="notes-label">
+              Notes
+              <textarea id="notesInput" rows="6" placeholder="Why did this pass, fail, or need deferral?"></textarea>
+            </label>
+            <div class="status-row">
+              <span id="saveStatus">Not saved</span>
+              <button id="prevBtn">Previous</button>
+              <button id="nextBtn">Next</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

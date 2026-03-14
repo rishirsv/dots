@@ -13,6 +13,7 @@ FIELDNAMES = [
     "input_text",
     "source_files",
     "tags",
+    "split",
     "notes",
     "exit_code",
     "text_contains",
@@ -63,6 +64,7 @@ def export_json_to_csv(json_path: Path, csv_path: Path) -> None:
                     "input_text": case.get("input_text", ""),
                     "source_files": join_list(case.get("source_files", [])),
                     "tags": join_list(case.get("tags", [])),
+                    "split": case.get("split", "train"),
                     "notes": case.get("notes", ""),
                     "exit_code": expected.get("exit_code", ""),
                     "text_contains": join_list(expected.get("text_contains", [])),
@@ -85,6 +87,7 @@ def import_csv_to_json(csv_path: Path, json_path: Path) -> None:
                 "input_text": row.get("input_text", "").strip(),
                 "source_files": split_list(row.get("source_files", "")),
                 "tags": split_list(row.get("tags", "")),
+                "split": row.get("split", "train").strip() or "train",
                 "notes": row.get("notes", "").strip(),
                 "expected": {
                     "exit_code": int(exit_code) if exit_code else 0,
