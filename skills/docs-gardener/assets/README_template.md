@@ -33,6 +33,7 @@ Success signal:
 
 ## Where Docs Live
 - `AGENTS.md` - operating guidance
+- `WORK-TRACKER.md` - unified operational backlog
 - `docs/README.md` - docs index
 
 ## Verification

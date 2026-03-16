@@ -1,17 +1,12 @@
 # FRONTEND.md
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 60
-- Source of truth: `docs/FRONTEND.md`
-- Verification state: unverified
-- Stack: `<framework + router + state + styling>`
-- Platforms: `<web|ios|android|desktop>`
-
 ## Purpose
-Frontend contracts for architecture, ownership boundaries, and verification loops.
+Frontend contracts for architecture, ownership boundaries, runtime behavior, and verification loops.
+
+## Frontend / Design Boundary
+- `docs/FRONTEND.md` owns route ownership, navigation APIs, async/loading/paging behavior, state/lifecycle contracts, and release-gating checks.
+- `docs/DESIGN.md` owns visual language, token semantics, primitive intent, material rules, typography, and canonical review-surface expectations.
+- Do not restate the full visual system here; point to `docs/DESIGN.md` when implementation needs visual guidance.
 
 ## Fill-In Fields
 - Framework/runtime: <value>
@@ -31,6 +26,7 @@ Frontend contracts for architecture, ownership boundaries, and verification loop
 - Component organization: <pattern>
 - Reuse policy: <pattern>
 - Error and empty states: <pattern>
+- Styling implementation rules: <class/style split, token consumption, primitive usage>
 
 ## Verification Loop
 - Unit checks: `<command>`

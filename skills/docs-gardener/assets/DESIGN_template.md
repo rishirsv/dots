@@ -1,16 +1,12 @@
 # DESIGN.md
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Design owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 60
-- Source of truth: `<figma|repo|mixed>`
-- Verification state: unverified
-
 ## Purpose
-Design operating contract for this repo: source of truth, system map, agent editing boundaries, and verification guidance.
+Design operating contract for this repo: source of truth, system map, visual-language boundaries, and review-surface guidance.
+
+## Design / Frontend Boundary
+- `docs/DESIGN.md` owns visual language, token semantics, primitive intent, material recipes, typography, and canonical design review surfaces.
+- `docs/FRONTEND.md` owns runtime behavior, route ownership, navigation APIs, async/loading rules, and release-gating verification loops.
+- Do not duplicate canonical routing, behavior, or test-command guidance here unless the visual system cannot be understood without a short pointer.
 
 ## Source of Truth
 - Primary: <figma-link-or-repo-path>
@@ -33,16 +29,16 @@ Must capture:
 
 ## Layout Context
 Must capture:
-- app/layout shells and ownership boundaries
-- route/surface contracts
+- design-relevant app/layout shell composition
+- only the route/surface constraints that materially affect visual composition
 - risky geometry/safe-area/inset behavior
 - targeted snippets with anchors
 
 ## Route Context
 Must capture:
 - route map: path, file, layout relation
-- navigation contracts and ownership notes
-- risky transitions and cross-surface openings
+- only the navigation constraints that materially affect design review or surface composition
+- pointers to `docs/FRONTEND.md` for canonical ownership/runtime rules
 
 ## Theme and Token Context
 Must capture:
@@ -76,6 +72,6 @@ Snippet guidance:
 - Large visual system rewrites require explicit sign-off.
 
 ## Validation Notes
-- How to validate UI changes: <checklist or command>
+- Visual-review baseline: <design scan / workspace check / screenshot check>
 - How to validate design token sync: <process/command>
 - Accessibility baseline: <contrast/focus/target-size expectation>

@@ -1,17 +1,5 @@
 # Feature: <feature-name>
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Status: draft
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 30
-- Source of truth: `docs/product-specs/<feature-slug>-spec.md`
-- Verification state: unverified
-- Created: YYYY-MM-DD
-- Updated: YYYY-MM-DD
-- Related plans: []
-- Related issues: []
-
 ## TL;DR
 - Problem: <one sentence>
 - Solution:
@@ -66,7 +54,7 @@
 ## Verification
 - Manual checks: <checks>
 - Automated checks: `<commands/tests>`
-- Verification evidence (required if `verification-state: verified`): <links/outputs>
+- Verification evidence: <links/outputs>
 
 ## Post-Implementation Notes
 - Shipped behavior summary: <short summary>

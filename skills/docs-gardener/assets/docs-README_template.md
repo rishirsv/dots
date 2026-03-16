@@ -1,13 +1,5 @@
 # Docs Index
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 30
-- Source of truth: `docs/README.md`
-- Verification state: unverified
-
 ## Purpose
 Navigation index for repository documentation.
 
@@ -15,9 +7,9 @@ Navigation index for repository documentation.
 - `../AGENTS.md`
 - `../ARCHITECTURE.md`
 - `../TODOS.md`
+- `../WORK-TRACKER.md`
 
 ## Policy Docs
-- `ISSUES.md`
 - `PLANS.md`
 - `PRODUCT_SENSE.md`
 - `RELIABILITY.md`
@@ -33,5 +25,5 @@ Navigation index for repository documentation.
 - `design-docs/`
 
 ## Maintenance Rule
-- Mark missing files as `not in this repo`.
+- Include only docs and paths that actually exist.
 - Keep links current when files are added, renamed, or removed.

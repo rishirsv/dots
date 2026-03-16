@@ -1,13 +1,5 @@
 # ARCHITECTURE.md
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 90
-- Source of truth: `ARCHITECTURE.md`
-- Verification state: unverified
-
 ## Purpose
 Describe stable architecture so contributors and agents can quickly locate responsibilities, constraints, and validation paths.
 

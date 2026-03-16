@@ -1,17 +1,5 @@
 # Solution: <clear-title>
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 90
-- Source of truth: `docs/solutions/<solution-slug>.md`
-- Verification state: unverified
-- Created: YYYY-MM-DD
-- Updated: YYYY-MM-DD
-- Related issue: <path-or-none>
-- Related PR: <link-or-none>
-
 ## Problem Signature
 - Surface: <where it appears>
 - Trigger: <when it appears>

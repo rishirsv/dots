@@ -1,13 +1,5 @@
 # Core Beliefs
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 180
-- Source of truth: `docs/design-docs/core-beliefs.md`
-- Verification state: unverified
-
 ## Product Beliefs
 - <one sentence belief>
 - Example in practice: <how this appears in shipped behavior>

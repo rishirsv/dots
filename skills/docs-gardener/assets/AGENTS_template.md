@@ -1,40 +1,41 @@
 # AGENTS.md
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 30
-- Source of truth: `AGENTS.md`
-- Verification state: unverified
-- Applies to: `/`
-
 ## Purpose
 
 This file is the navigation layer for how agents and contributors work in this repo. Keep it short, operational, and easy to scan.
 
 ## Keep This File Short
 
-- Target length: about 100-150 lines.
+- Target length: about 80-120 lines.
+- Hard cap: 150 lines. If a new rule is important enough to add, remove or compress something else.
 - Keep policy detail in dedicated docs.
 - Link out instead of embedding long rule blocks.
+- Rewrite and prune regularly; do not grow this file by accumulation.
 
 ## Layering and Precedence
 
 - Root `AGENTS.md` sets global defaults.
 - Nested `AGENTS.md` files may override or extend rules for subdirectories.
-- If `CLAUDE.md` already exists, treat them as peer instruction sources and avoid contradictory guidance.
+- Avoid overlapping instruction files that compete with this one.
 
 ## Table of Contents
 
-Use links that exist in this repo. If a doc is missing, mark it `not in this repo`.
+Include only links that actually exist in this repo.
 
 - `AGENTS.md` - contributor and agent operating contract.
-- `ARCHITECTURE.md` - system boundaries and invariants. (`not in this repo`)
-- `TODOS.md` - priorities and queue. (`not in this repo`)
-- `docs/README.md` - docs index. (`not in this repo`)
-- `docs/ISSUES.md` - issue registry. (`not in this repo`)
-- `docs/PLANS.md` - planning lifecycle rules. (`not in this repo`)
+- `ARCHITECTURE.md` - system boundaries and invariants.
+- `TODOS.md` - priorities and queue.
+- `WORK-TRACKER.md` - unified operational backlog.
+- `docs/README.md` - docs index.
+- `docs/PLANS.md` - planning lifecycle rules.
+
+## Maintenance Rules
+
+- On every edit, remove stale, duplicate, or low-value guidance instead of only appending.
+- Update commands, paths, linked docs, and validation steps whenever they change.
+- Collapse repeated rules into one clearer rule.
+- Keep instructions concrete, imperative, and easy to scan.
+- If a rule is no longer enforced in code or process, delete it.
 
 ## Scope
 

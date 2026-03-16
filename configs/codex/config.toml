@@ -57,6 +57,14 @@ description = "Review-focused subagent. For every task, invoke $review first, th
 config_file = "agents/worker.toml"
 description = "Implementation-focused subagent that ships scoped changes, runs simplify/tests/e2e, and reports a PR URL."
 
+[agents.worker_fast]
+config_file = "agents/worker-fast.toml"
+description = "Fast implementation-focused subagent using Codex Spark for quicker scoped changes and PR delivery."
+
+[agents.worker_med]
+config_file = "agents/worker-med.toml"
+description = "Medium-latency implementation-focused subagent using Codex 5.3 with high reasoning for scoped changes and PR delivery."
+
 [agents.docs_gardener]
 config_file = "agents/docs-gardener.toml"
 description = "Documentation-maintenance subagent that keeps docs aligned with current code behavior and repository conventions."

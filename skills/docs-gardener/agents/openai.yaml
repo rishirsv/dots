@@ -1,0 +1,7 @@
+interface:
+  display_name: "Docs Gardener"
+  short_description: "Autonomous documentation steward"
+  default_prompt: "Use $docs-gardener to audit, update, and reconcile this repo's documentation."
+
+policy:
+  allow_implicit_invocation: false

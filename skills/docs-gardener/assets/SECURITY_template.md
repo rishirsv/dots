@@ -1,14 +1,5 @@
 # SECURITY.md
 
-## Metadata
-- Owner: <team-or-role-or-unassigned>
-- Security owner: <team-or-role-or-unassigned>
-- Status: active
-- Last reviewed: YYYY-MM-DD
-- Review cycle days: 90
-- Source of truth: `docs/SECURITY.md`
-- Verification state: unverified
-
 ## Purpose
 Defines security boundaries, controls, and response expectations.
 
