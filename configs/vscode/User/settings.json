@@ -12,6 +12,7 @@
   "files.autoSave": "onFocusChange",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "window.commandCenter": false,
+  "window.autoDetectColorScheme": true,
   "chat.commandCenter.enabled": false,
   "workbench.editor.enablePreviewFromQuickOpen": true,
   "workbench.statusBar.visible": false,
