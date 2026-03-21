@@ -1,6 +1,6 @@
 ---
 name: batch
-description: "Instructions for orchestrating a large, parallelizable change across a codebase."
+description: "Orchestrate a large, parallelizable codebase change by researching scope, decomposing the work into independent units, defining shared validation, and coordinating parallel workers. Use only when invoked explicitly; do not auto-activate."
 ---
 
 # Batch

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Ideate"
+  short_description: "Turn ideas into decision-complete specs"
+  default_prompt: "Use $ideate to explore the repo, interview me through the key product decisions, and turn the idea into a clear feature spec."
+
+policy:
+  allow_implicit_invocation: false

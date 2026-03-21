@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Clarify requirements before implementing. Do not use automatically, only when invoked explicitly."
+description: "Ask the minimum clarifying questions needed before planning or implementation when requirements, scope, constraints, or acceptance criteria are underspecified. Use only when invoked explicitly; do not auto-activate."
 ---
 
 # Clarify

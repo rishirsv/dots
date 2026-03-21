@@ -1,4 +1,0 @@
-interface:
-  display_name: "Designer Frontend"
-  short_description: "Design standout frontend UI and motion"
-  default_prompt: "Use $designer-frontend to create or redesign a distinctive frontend interface with purposeful motion and polished implementation."

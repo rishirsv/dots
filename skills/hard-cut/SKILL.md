@@ -1,6 +1,6 @@
 ---
 name: hard-cut
-description: "Enforce a hard-cut product policy: keep one canonical current-state implementation and delete compatibility, migration, fallback, adapter, and dual-behavior code unless the user explicitly asks for transition support. Use when a task changes product behavior, persisted state, startup recovery, routing, contracts, configuration, schema or enum shapes, feature flags, or architecture where old-state compatibility might otherwise be preserved."
+description: "Enforce a hard-cut product policy: keep one canonical current-state implementation and remove compatibility, migration, fallback, adapter, and dual-behavior code unless the user explicitly asks for transition support. Use when changing product behavior, persisted state, startup recovery, routing, contracts, configuration, schema or enum shapes, feature flags, or architecture where old-state compatibility might otherwise be preserved."
 ---
 
 # Hard-Cut Policy
