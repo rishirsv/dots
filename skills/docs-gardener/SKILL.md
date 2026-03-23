@@ -1,3 +1,7 @@
+---
+name: docs-gardener
+description: Keep documentation aligned with code and repo structure. Use when updating canonical docs, docs indexes, specs, work trackers, or repairing drift between docs and implementation.
+---
 
 # Docs Gardener
 

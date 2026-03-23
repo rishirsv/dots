@@ -1,4 +1,0 @@
-interface:
-  display_name: "Designer Polish"
-  short_description: "Ship-ready polish and iterative evidence loops"
-  default_prompt: "Use $designer-polish to finish this nearly complete interface or run an iterative polish loop such as design polish 5x with screenshot evidence."

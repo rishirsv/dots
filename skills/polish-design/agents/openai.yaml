@@ -1,0 +1,4 @@
+interface:
+  display_name: "Polish Design"
+  short_description: "Audit and polish UI in one tight loop"
+  default_prompt: "Use $polish-design to review and fix this interface, or run an iterative loop such as polish-design 3x."
