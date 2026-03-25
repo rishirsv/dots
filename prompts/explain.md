@@ -1,11 +1,16 @@
 ---
-description: Explain a topic in plain, non-technical language so I can make a decision.
+description: Explain something clearly and simply, adapting to the situation without being long.
 argument-hint: [TOPIC="<optional: what to explain>"]
 ---
 
 # Explain
 
-Explain a topic (or the current discussion) in plain, non-technical language so I can make a decision quickly.
+Explain the topic, code, change, error, or discussion in a way that is easy to understand quickly.
+
+Make this a first-class explanation ability:
+- default to clarity, brevity, and usefulness
+- adapt to the situation instead of forcing one template
+- teach well without sounding slow, padded, or academic
 
 ## Inputs (optional)
 
@@ -23,37 +28,68 @@ Explain a topic (or the current discussion) in plain, non-technical language so 
 
 ## Operating rules
 
-- Assume I am smart but new to this topic. Avoid jargon. If needed, define a term in one short sentence.
-- If no topic is given, infer it from context and confirm in one line.
-- If ambiguous, ask up to **1** clarifying question before explaining.
-- Keep the default response short (roughly one screen).
-- Focus on decision support: what it is, why it matters, and trade-offs.
-- After a large change (or many changed files), **always** include:
-  - A plain-language summary of what changed and why.
-  - A file-by-file section covering each modified file and why it matters.
-- State assumptions and uncertainty clearly.
-- In code review or planning discussions, present each potential option simply and explain 2-3 options each with their benefits and tradeoffs.
+- Assume I am capable but may be new to the topic. Never talk down to me.
+- Start from the simplest correct mental model.
+- Avoid jargon. If a term matters, define it in one short sentence.
+- Prefer short explanations by default. Only go longer when the topic genuinely needs it.
+- Infer what kind of explanation is needed from the context instead of asking unless ambiguity would materially change the answer.
+- If needed, ask at most 1 clarifying question.
+- Optimize for understanding, not completeness.
+- Be concrete. Use plain examples, analogies, or tiny code snippets only when they make the explanation faster to grasp.
+- State assumptions, uncertainty, and edge cases briefly and clearly.
+- Do not add filler, throat-clearing, or repeated caveats.
+
+## Choose the explanation mode automatically
+
+Pick the mode that best fits the request and context:
+
+- **Concept:** explain what something is, how it works, and why it matters.
+- **Code walkthrough:** explain what a block, function, file, or system is doing.
+- **Change explanation:** explain what changed, why it changed, and what the practical impact is.
+- **Error explanation:** explain what is going wrong, why, and the most likely fix direction.
+- **Decision help:** explain the main options, trade-offs, and when to choose each.
+
+Use only the sections that help for that mode. Do not force every section every time.
 
 ## Output format (Markdown)
 
-## In plain words
+Start with a short heading that fits the topic if useful. Otherwise skip the heading.
 
-[2-4 short sentences. No jargon.]
+Open with a brief plain-English explanation in 2-5 sentences.
 
-## What changed (large change default)
+Then include only the most relevant sections from the list below:
 
-[Simple summary of the change and impact.]
+## What It Means
 
-## File-by-file changes
+[Simple explanation of the core idea.]
 
-- `path/to/file` - [What changed in simple terms, and why it matters]
-- `path/to/file` - [What changed in simple terms, and why it matters]
+## How It Works
 
-## Trade-offs (if choosing between options)
+[Short step-by-step or structural explanation.]
 
-- **Option A:** gain / give up / best when
-- **Option B:** gain / give up / best when
+## Why It Matters
 
-## Recommendation
+[Why I should care, in practical terms.]
 
-[Short conditional recommendation: "If X matters most, choose Y. If A matters most, choose B."]
+## What Changed
+
+[For diffs or recent work: summarize the change and impact in plain language.]
+
+## Key Files
+
+- `path/to/file` - [Only when file-level detail helps understanding]
+
+## Trade-offs
+
+- **Option A:** what you gain / what you give up / best when
+- **Option B:** what you gain / what you give up / best when
+
+## Bottom Line
+
+[One short takeaway or recommendation.]
+
+## Style target
+
+- concise enough to read quickly
+- clear enough that I can reuse the idea right away
+- flexible enough to work for code, architecture, product decisions, errors, and diffs
