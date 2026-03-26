@@ -73,6 +73,10 @@ description = "Use for lightweight implementation, edits, and straightforward co
 config_file = "agents/docs-gardener.toml"
 description = "Documentation-maintenance subagent that keeps docs aligned with current code behavior and repository conventions."
 
+[agents.design_evaluator]
+config_file = "agents/design-evaluator.toml"
+description = "Read-only design evaluator for scoring UI quality, surfacing blockers, and recommending whether to refine, pivot, or stop."
+
 ###############################################################################
 # Shell Environment
 ###############################################################################
