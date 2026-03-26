@@ -52,8 +52,9 @@ Outcome: evaluator-led runs keep compact artifacts and concise in-chat summaries
 - [x] 4.3 Instruct it to defer to `docs/DESIGN.md` first when present
 - [x] 4.4 Instruct it to use `frontend-skill` as the aesthetic baseline
 - [x] 4.5 Keep it project-specific
-- [x] 4.6 Give it read-only sandbox and high reasoning defaults
+- [x] 4.6 Give it read-only sandbox and medium reasoning defaults
 - [x] 5.0 Store advanced-run artifacts under `.agents/polish-design/`
+- [x] 5.0a Store any saved screen captures under `.agents/polish-design/<run-id>/screens/`, never under `docs/`
 - [x] 5.1 Keep artifacts compact and operational
 - [x] 5.2 Define the core file set: `brief.md`, `pass-01-eval.md`, `pass-01-plan.md`, `pass-02-eval.md`, `summary.md`
 - [x] 5.3 Track pass history: scores, blockers, changes attempted, unresolved issues, recommendation

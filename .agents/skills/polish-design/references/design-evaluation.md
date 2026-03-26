@@ -6,10 +6,32 @@ Use this file only when running the evaluator-led `polish-design` loop or the `d
 
 - Be skeptical by default. A clean report is rare.
 - Evaluate the real interface, not the intent.
-- Use screenshot evidence first, then code evidence when needed.
+- Evaluate screenshots and other visual captures only. Do not evaluate code directly.
+- Require the caller to pass the screenshot folder for the current run.
 - Defer to `docs/DESIGN.md` first if it exists.
 - Use `frontend-skill` as the aesthetic baseline.
 - Prefer a few decisive blockers over long critique lists.
+
+## Screenshot handoff
+
+The caller should pass the run screenshot folder, not just a vague mention of screenshots.
+
+Expected folder:
+
+- `.agents/polish-design/<run-id>/screens/`
+
+Preferred naming order:
+
+- `00-current.png`
+- `01-before-pass-01.png`
+- `02-after-pass-01.png`
+- `03-before-pass-02.png`
+- `04-after-pass-02.png`
+
+Read the folder in sequence order when possible. Treat lower numbers as earlier captures and higher numbers as later captures.
+
+Before scoring, do a one-line sanity check that the screenshot set appears to match the intended surface. If the screenshots appear to show a different page, stale run, or unrelated UI, stop the evaluation and say so instead of passing the design.
+If visual evidence is missing or ambiguous, ask for better screenshots or stop. Do not infer design quality from code.
 
 ## Rubric
 
@@ -210,6 +232,10 @@ List each category with:
 - score
 - one-line reason
 
+Start with one line in this form:
+
+- `Screenshot check: matches the intended <surface>` or `Screenshot check: does not match the intended <surface>`
+
 Then include:
 
 - weighted total
@@ -252,8 +278,10 @@ Recommended contents:
 - `pass-01-plan.md`: implementation move for that pass
 - `pass-02-eval.md`: next scorecard and recommendation
 - `summary.md`: final trend, unresolved issues, and stopping reason
+- `screens/`: all saved screen captures for the run
 
 Keep each file short. Prefer bullets over prose.
+Do not store screen captures in `docs/` or any documentation folder.
 
 ## Calibration examples
 

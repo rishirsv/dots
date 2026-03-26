@@ -29,6 +29,7 @@ Examples that should trigger the evaluator-led path:
 - `Use polish-design with subagents`
 - `Run polish-design 3x with design_evaluator`
 - `Use a design evaluator before each pass`
+- `Use design_evaluator and pass the screenshot folder`
 
 Examples that should stay in the default path:
 
@@ -40,11 +41,11 @@ Examples that should stay in the default path:
 Use this path for most requests.
 
 1. Review the current design in code.
-2. Capture the current interface.
+2. Capture the current interface. If the capture is saved to disk, save it under `.agents/polish-design/<run-id>/screens/`.
 3. Audit the screenshot and code together.
 4. Output concise findings in chat.
 5. Implement 1-3 high-impact fixes.
-6. Re-capture and confirm the result.
+6. Re-capture and confirm the result. If the capture is saved to disk, save it under `.agents/polish-design/<run-id>/screens/`.
 
 ### Default Audit Categories
 
@@ -72,12 +73,12 @@ The evaluator should be the dedicated `design_evaluator` custom agent when avail
 ### Evaluator-Led Steps
 
 1. Write a short polish contract and save it to `.agents/polish-design/<run-id>/brief.md`.
-2. Capture the current interface.
-3. Ask the evaluator to score the interface using `references/design-evaluation.md`.
+2. Capture the current interface and save any screen files under `.agents/polish-design/<run-id>/screens/`.
+3. Ask the evaluator to score the interface using `references/design-evaluation.md`, and pass the run screenshot folder path.
 4. Summarize the evaluator result in chat very concisely.
 5. Implement only the highest-leverage fixes for that pass.
-6. Re-capture the interface.
-7. Ask the evaluator to score the new state and recommend `refine`, `pivot`, or `stop`.
+6. Re-capture the interface and save any screen files under `.agents/polish-design/<run-id>/screens/`.
+7. Ask the evaluator to score the new state and recommend `refine`, `pivot`, or `stop`, again passing the same run screenshot folder path.
 8. Save the pass artifacts and post a concise in-chat summary.
 
 ### Polish Contract
@@ -108,6 +109,22 @@ Use this file set:
 - `pass-01-plan.md`
 - `pass-02-eval.md`
 - `summary.md`
+
+Store screen captures only under:
+
+- `.agents/polish-design/<run-id>/screens/`
+
+Do not save screens under `docs/`, `docs/polish`, or any other documentation path.
+
+Use a simple sequence-friendly naming structure inside `screens/`:
+
+- `00-current.png` when there is only one baseline capture
+- `01-before-pass-01.png`
+- `02-after-pass-01.png`
+- `03-before-pass-02.png`
+- `04-after-pass-02.png`
+
+The caller should pass the `screens/` folder path to the evaluator. Exact screenshot paths are optional.
 
 Artifacts must stay operational and compact. They are not reports.
 
@@ -140,15 +157,19 @@ Next move: strengthen imagery and CTA contrast
 2. Chrome DevTools MCP or another available browser MCP
 3. If nothing is available and new setup is required, stop and ask before installing anything
 
+If a capture tool saves files, route them to `.agents/polish-design/<run-id>/screens/`.
+
 ### Expo iOS
 
 - Use Expo simulator capture commands
 - Do not route through `agent-browser` unless the content itself is web
+- Save any captured screens under `.agents/polish-design/<run-id>/screens/`.
 
 ### Native iOS
 
 - Use Xcode simulator capture
 - Do not route through `agent-browser`
+- Save any captured screens under `.agents/polish-design/<run-id>/screens/`.
 
 ## Guardrails
 
@@ -160,3 +181,4 @@ Next move: strengthen imagery and CTA contrast
 - Preserve the repo's design language unless the user explicitly asks for departure.
 - In evaluator-led mode, do not spawn subagents unless the user explicitly asked for them.
 - The evaluator must never edit files.
+- When invoking the evaluator, always pass the screenshot folder for the current run.
