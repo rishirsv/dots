@@ -19,6 +19,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -188,21 +189,88 @@ def get_test_inputs(case_filter: str | None = None) -> list[Path]:
 # Skill execution
 # ---------------------------------------------------------------------------
 
-def run_skill(skill_content: str, test_input: str) -> str:
-    """Run the skill against a test input via claude -p."""
-    prompt = f"{skill_content}\n\n---\n\n{test_input}"
+def get_agent_settings(config: dict[str, Any]) -> dict[str, str]:
+    """Return the configured backend, model, and custom command."""
+    agent = config.get("agent", {})
+    backend = str(agent.get("backend", "claude")).strip() or "claude"
+    model = str(agent.get("model", "")).strip()
+    custom_command = str(agent.get("custom_command", "")).strip()
+
+    if backend not in {"claude", "codex", "custom"}:
+        if not custom_command:
+            custom_command = backend
+        backend = "custom"
+
+    return {
+        "backend": backend,
+        "model": model,
+        "custom_command": custom_command,
+    }
+
+
+def run_agent_prompt(
+    prompt_text: str,
+    agent_settings: dict[str, str],
+    timeout: int,
+) -> str:
+    """Run a prompt through the configured backend."""
+    agents_script = SCRIPT_DIR / "agents.sh"
+    if not agents_script.exists():
+        print("Error: agents.sh not found", file=sys.stderr)
+        sys.exit(1)
+
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False) as tmp:
+        tmp.write(prompt_text)
+        prompt_path = Path(tmp.name)
+
+    cmd = [
+        "bash",
+        str(agents_script),
+        "exec",
+        "--backend",
+        agent_settings["backend"],
+        "--prompt-file",
+        str(prompt_path),
+    ]
+    if agent_settings["model"]:
+        cmd.extend(["--model", agent_settings["model"]])
+    if agent_settings["backend"] == "custom":
+        if not agent_settings["custom_command"]:
+            print("Error: custom backend requires agent.custom_command", file=sys.stderr)
+            sys.exit(1)
+        cmd.extend(["--custom-cmd", agent_settings["custom_command"]])
+
     try:
         result = subprocess.run(
-            ["claude", "-p", "--dangerously-skip-permissions", prompt],
+            cmd,
             capture_output=True,
             text=True,
-            timeout=300,
+            timeout=timeout,
         )
+        if result.returncode != 0:
+            message = result.stderr.strip() or result.stdout.strip() or (
+                f"agent backend exited with {result.returncode}"
+            )
+            print(f"Error: {message}", file=sys.stderr)
+            sys.exit(1)
         return result.stdout.strip()
     except subprocess.TimeoutExpired:
-        return "[ERROR: skill execution timed out after 300s]"
+        return f"[ERROR: agent execution timed out after {timeout}s]"
+    finally:
+        prompt_path.unlink(missing_ok=True)
+
+
+def run_skill(
+    skill_content: str,
+    test_input: str,
+    agent_settings: dict[str, str],
+) -> str:
+    """Run the skill against a test input via the configured backend."""
+    prompt = f"{skill_content}\n\n---\n\n{test_input}"
+    try:
+        return run_agent_prompt(prompt, agent_settings, timeout=300)
     except FileNotFoundError:
-        print("Error: 'claude' CLI not found on PATH", file=sys.stderr)
+        print("Error: required CLI not found on PATH", file=sys.stderr)
         sys.exit(1)
 
 
@@ -239,7 +307,11 @@ def check_code(output: str, eval_def: dict[str, Any]) -> bool:
 # Scoring: judge-based checks
 # ---------------------------------------------------------------------------
 
-def check_judge(output: str, eval_def: dict[str, Any]) -> bool:
+def check_judge(
+    output: str,
+    eval_def: dict[str, Any],
+    agent_settings: dict[str, str],
+) -> bool:
     """Run a judge-based eval. Returns True for Pass."""
     judge_file = eval_def.get("judge_file", "")
     judge_path = SCRIPT_DIR / judge_file
@@ -257,19 +329,13 @@ def check_judge(output: str, eval_def: dict[str, Any]) -> bool:
     )
 
     try:
-        result = subprocess.run(
-            ["claude", "-p", "--dangerously-skip-permissions", full_prompt],
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-        response = result.stdout.strip()
+        response = run_agent_prompt(full_prompt, agent_settings, timeout=120)
         return _parse_judge_verdict(response)
     except subprocess.TimeoutExpired:
         print(f"Warning: judge timed out for eval '{eval_def.get('name')}'", file=sys.stderr)
         return False
     except FileNotFoundError:
-        print("Error: 'claude' CLI not found on PATH", file=sys.stderr)
+        print("Error: required CLI not found on PATH", file=sys.stderr)
         sys.exit(1)
 
 
@@ -310,6 +376,7 @@ def evaluate(
     skill_content = target_path.read_text(encoding="utf-8")
     evals = get_evals(config)
     test_inputs = get_test_inputs(case_filter)
+    agent_settings = get_agent_settings(config)
 
     if not evals:
         print("Error: no evals defined in config.toml", file=sys.stderr)
@@ -330,7 +397,7 @@ def evaluate(
         test_input = input_path.read_text(encoding="utf-8")
 
         print(f"  Running: {input_name}...", file=sys.stderr)
-        output = run_skill(skill_content, test_input)
+        output = run_skill(skill_content, test_input, agent_settings)
 
         details = []
         input_pass = 0
@@ -343,7 +410,7 @@ def evaluate(
             if eval_type == "code":
                 passed = check_code(output, eval_def)
             elif eval_type == "judge":
-                passed = check_judge(output, eval_def)
+                passed = check_judge(output, eval_def, agent_settings)
             else:
                 print(f"Warning: unknown eval type '{eval_type}'", file=sys.stderr)
                 passed = False

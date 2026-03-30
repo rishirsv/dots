@@ -14,6 +14,13 @@ Optimize any skill through automated experimentation. Run it dozens of times,
 score every output against binary evals, tighten the prompt until failures
 disappear.
 
+## Reference Files
+
+| File | When to read it |
+|---|---|
+| [references/judge-design.md](references/judge-design.md) | Read before writing or debugging any judge-based eval. |
+| [references/dashboard-spec.md](references/dashboard-spec.md) | Read only when the dashboard behavior, state contract, or UI needs to be validated or customized. |
+
 ---
 
 ## When This Skill is Triggered
@@ -75,7 +82,7 @@ Run: `auto-research-eval setup <path-to-skill>`
 
 Run: `auto-research-eval configure`
 
-Guide the user through five steps. Do NOT proceed to run until all steps are complete.
+Guide the user through six steps. Before defining evals, set the downstream agent in `config.toml`: choose `backend = "claude"` or `backend = "codex"`, and set `model` if the user wants a specific downstream model such as `gpt-5.4-mini`.
 
 ### Step 1: Identify Failure Modes
 
@@ -198,6 +205,8 @@ Before proceeding to run, verify:
 - [ ] At least 3 test inputs in test_inputs/
 - [ ] Judge prompt exists for every judge-based eval
 - [ ] program.md is filled in
+- [ ] `[agent] backend` is set to `claude` or `codex`
+- [ ] `[agent] model` is set if the user wants a specific downstream model
 - [ ] Loop parameters set in config.toml (max_experiments, stall_limit)
 
 ---
@@ -217,6 +226,7 @@ Run: `auto-research-eval run` or `./.autoresearch/run.sh`
    ./run.sh --preview          # Show current state
    ./run.sh --no-dashboard     # Skip dashboard server
    ```
+   The optimization loop and the evaluation harness both use the configured `[agent] backend` and `[agent] model`.
 3. The dashboard opens automatically at `http://localhost:8384` — watch it live
 4. The loop runs autonomously. Do NOT interrupt between experiments.
 

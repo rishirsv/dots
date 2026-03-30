@@ -2,6 +2,14 @@
 
 How to write binary LLM-as-Judge evaluators for autoresearch.
 
+## Contents
+
+- [When to use a judge](#when-to-use-a-judge)
+- [The four components](#the-four-components)
+- [Template](#template)
+- [Anti-patterns](#anti-patterns)
+- [Validation (optional but recommended)](#validation-optional-but-recommended)
+
 ## When to use a judge
 
 Use a judge only when code cannot reliably decide. Exhaust code-based options first:

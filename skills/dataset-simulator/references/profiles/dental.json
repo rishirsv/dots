@@ -1,0 +1,354 @@
+{
+  "profile_version": "2.0",
+  "industry": "dental",
+  "display_name": "Dental Practices",
+  "revenue_model": "clinical_service_based",
+  "description": "Clinic-based revenue with provider and hygiene production, insurance receivables, and schedule utilization",
+
+  "identity": {
+    "sector": "Healthcare Services",
+    "subvertical": "Dental",
+    "jurisdiction": "US",
+    "currency": "USD"
+  },
+
+  "revenue_streams": [
+    {
+      "name": "Doctor Production",
+      "model": "clinical",
+      "pct": 0.58,
+      "recognition": "as services rendered",
+      "billing": "at service / insurer follow-up",
+      "lag": [10, 75],
+      "contract_months": null,
+      "unit": "patient_encounter"
+    },
+    {
+      "name": "Hygiene Production",
+      "model": "clinical",
+      "pct": 0.28,
+      "recognition": "as services rendered",
+      "billing": "at service",
+      "lag": [10, 45],
+      "contract_months": null,
+      "unit": "patient_encounter"
+    },
+    {
+      "name": "Specialty Production",
+      "model": "clinical",
+      "pct": 0.10,
+      "recognition": "as services rendered",
+      "billing": "at service / insurer follow-up",
+      "lag": [15, 90],
+      "contract_months": null,
+      "unit": "patient_encounter"
+    },
+    {
+      "name": "Other Revenue",
+      "model": "clinical",
+      "pct": 0.04,
+      "recognition": "as earned",
+      "billing": "monthly",
+      "lag": [15, 30],
+      "contract_months": null,
+      "unit": "practice"
+    }
+  ],
+
+  "operating_model": {
+    "primary_units": ["practice", "provider", "patient_encounter"],
+    "asset_intensity": "medium",
+    "inventory_model": "light_consumables",
+    "labor_model": "licensed_provider",
+    "site_model": "clinic_network",
+    "customer_model": "payer_network"
+  },
+
+  "regulatory_model": {
+    "burden": "heavy",
+    "regimes": ["HIPAA", "OSHA", "state_dental_board", "DEA"],
+    "required_compliance_docs": [
+      "license_roster",
+      "training_log",
+      "incident_log",
+      "OSHA_log",
+      "HIPAA_compliance",
+      "credentialing_roster"
+    ]
+  },
+
+  "document_triggers": {
+    "needs_deferred_revenue_schedule": false,
+    "needs_mrr_analysis": false,
+    "needs_wip_schedule": false,
+    "needs_inventory_ledger": false,
+    "needs_provider_production": true,
+    "needs_store_master": false,
+    "needs_project_master": false,
+    "needs_timesheet_data": false,
+    "needs_loan_tape": false,
+    "needs_fleet_master": false,
+    "needs_credentialing_roster": true,
+    "needs_lot_traceability": false,
+    "needs_route_economics": false,
+    "needs_payer_mix": true,
+    "needs_backlog_schedule": false,
+    "needs_comp_sales": false,
+    "needs_bom": false
+  },
+
+  "red_flag_library": [
+    {
+      "name": "Provider concentration",
+      "description": "Single provider >30% of production",
+      "detection": "Provider production as pct of total collections",
+      "severity": "critical"
+    },
+    {
+      "name": "Declining hygiene PPH",
+      "description": "Hygiene production per hour below $150 or declining",
+      "detection": "Monthly hygiene PPH trend",
+      "severity": "significant"
+    },
+    {
+      "name": "Insurance AR aging",
+      "description": "Insurance AR >90 days exceeding 10% of total AR",
+      "detection": "Insurance AR aging bucket analysis",
+      "severity": "significant"
+    },
+    {
+      "name": "Patient attrition",
+      "description": "Active patient count declining despite new patient growth",
+      "detection": "Patient flow: new vs lost vs reactivated",
+      "severity": "critical"
+    },
+    {
+      "name": "Below-market collection rate",
+      "description": "Net collection rate below 92%",
+      "detection": "Gross charges vs net collections trend",
+      "severity": "significant"
+    }
+  ],
+
+  "narrative_style": {
+    "industry_terms": [
+      "production",
+      "collections",
+      "hygiene PPH",
+      "schedule utilization",
+      "chair utilization",
+      "payer mix",
+      "fee schedule",
+      "treatment acceptance",
+      "active patients",
+      "new patients",
+      "reactivations",
+      "practice management system",
+      "dental service organization",
+      "DSO"
+    ],
+    "banker_terms": [
+      "provider-level EBITDA",
+      "de novo vs acquisition growth",
+      "same-practice revenue",
+      "provider retention",
+      "reimbursement risk"
+    ],
+    "legal_terms": [
+      "management services agreement",
+      "professional corporation",
+      "provider employment agreement",
+      "non-compete",
+      "restrictive covenant",
+      "credentialing",
+      "malpractice tail"
+    ]
+  },
+
+  "size_model": {
+    "small": {
+      "revenue_min": 5000000,
+      "revenue_max": 20000000,
+      "headcount_min": 20,
+      "headcount_max": 90,
+      "practice_count_min": 1,
+      "practice_count_max": 4,
+      "provider_count_min": 3,
+      "provider_count_max": 15,
+      "patient_count_min": 3500,
+      "patient_count_max": 18000
+    },
+    "mid": {
+      "revenue_min": 20000000,
+      "revenue_max": 100000000,
+      "headcount_min": 80,
+      "headcount_max": 350,
+      "practice_count_min": 4,
+      "practice_count_max": 20,
+      "provider_count_min": 12,
+      "provider_count_max": 70,
+      "patient_count_min": 15000,
+      "patient_count_max": 80000
+    },
+    "large": {
+      "revenue_min": 100000000,
+      "revenue_max": 500000000,
+      "headcount_min": 300,
+      "headcount_max": 1400,
+      "practice_count_min": 20,
+      "practice_count_max": 80,
+      "provider_count_min": 60,
+      "provider_count_max": 300,
+      "patient_count_min": 70000,
+      "patient_count_max": 350000
+    }
+  },
+
+  "chart_of_accounts": {
+    "revenue": [
+      {"code": "4000", "name": "Doctor Production Revenue", "typical_pct": 0.58},
+      {"code": "4010", "name": "Hygiene Production Revenue", "typical_pct": 0.28},
+      {"code": "4020", "name": "Specialty and Ancillary Revenue", "typical_pct": 0.10},
+      {"code": "4090", "name": "Other Clinical Revenue", "typical_pct": 0.04}
+    ],
+    "cogs": [
+      {"code": "5000", "name": "Clinical Staff Compensation", "typical_pct": 0.34},
+      {"code": "5100", "name": "Dental Lab Fees", "typical_pct": 0.09},
+      {"code": "5200", "name": "Clinical Supplies", "typical_pct": 0.07},
+      {"code": "5300", "name": "Claim and Merchant Processing Fees", "typical_pct": 0.02}
+    ],
+    "opex": [
+      {"code": "6000", "name": "Front Office Payroll", "typical_pct": 0.11},
+      {"code": "6100", "name": "Rent and Occupancy", "typical_pct": 0.08},
+      {"code": "6200", "name": "Marketing and Patient Acquisition", "typical_pct": 0.04},
+      {"code": "6300", "name": "General and Administrative", "typical_pct": 0.09},
+      {"code": "6400", "name": "Technology and Practice Systems", "typical_pct": 0.03}
+    ],
+    "assets": [
+      {"code": "1000", "name": "Cash and Cash Equivalents"},
+      {"code": "1100", "name": "Accounts Receivable - Total"},
+      {"code": "1110", "name": "Accounts Receivable - Insurance"},
+      {"code": "1120", "name": "Accounts Receivable - Patient"},
+      {"code": "1200", "name": "Prepaid Expenses"},
+      {"code": "1300", "name": "Dental Equipment"},
+      {"code": "1400", "name": "Accumulated Depreciation"}
+    ],
+    "liabilities": [
+      {"code": "2000", "name": "Accounts Payable"},
+      {"code": "2100", "name": "Accrued Expenses"},
+      {"code": "2200", "name": "Accrued Compensation"},
+      {"code": "2300", "name": "Patient Prepayments"},
+      {"code": "2400", "name": "Line of Credit"},
+      {"code": "2500", "name": "Equipment Loans"}
+    ],
+    "equity": [
+      {"code": "3000", "name": "Common Stock"},
+      {"code": "3100", "name": "Retained Earnings"},
+      {"code": "3200", "name": "Owner Distributions"}
+    ]
+  },
+
+  "financial_model": {
+    "working_capital_drivers": {
+      "dso": [25, 55],
+      "dpo": [20, 35],
+      "inventory_days": [10, 25],
+      "deferred_revenue_months": [0, 0],
+      "retainage_pct": [0, 0]
+    },
+    "capex_policy": {
+      "pct": [0.04, 0.08],
+      "threshold": 2500,
+      "useful_life": [5, 10]
+    },
+    "debt_structure": {
+      "type": "term_loan",
+      "leverage": [2.0, 4.0],
+      "interest": [0.06, 0.09]
+    }
+  },
+
+  "documents": {
+    "operations": [
+      "practice_master",
+      "provider_roster",
+      "provider_production_monthly",
+      "appointment_utilization_monthly",
+      "patient_flow_monthly",
+      "insurance_ar_aging",
+      "benchmark_overlay_monthly"
+    ],
+    "financials": [
+      "trial_balance",
+      "income_statement",
+      "balance_sheet",
+      "cash_flow",
+      "ar_aging",
+      "ap_aging",
+      "nwc_schedule"
+    ]
+  },
+
+  "validation_rules": [
+    {
+      "id": "production_collection_tie",
+      "description": "Monthly total collections tie to monthly P&L revenue",
+      "check": "provider_production_monthly.total_collections == trial_balance.total_revenue"
+    },
+    {
+      "id": "insurance_ar_tie",
+      "description": "Insurance AR aging total ties to balance sheet AR",
+      "check": "insurance_ar_aging.total_amount == balance_sheet.accounts_receivable"
+    },
+    {
+      "id": "hygiene_productivity",
+      "description": "Hygiene production per hour remains within configured range",
+      "check": "hygiene_production_per_hour between kpi.min and kpi.max"
+    },
+    {
+      "id": "utilization_band",
+      "description": "Schedule utilization remains within practical operating range",
+      "check": "utilization_pct between kpi.min and kpi.max"
+    }
+  ],
+
+  "seasonality_patterns": {
+    "q1": 0.24,
+    "q2": 0.25,
+    "q3": 0.24,
+    "q4": 0.27,
+    "notes": "Q4 uplift from remaining annual benefits and year-end scheduling"
+  },
+
+  "kpis": {
+    "gross_margin": {"min": 0.42, "max": 0.58, "typical": 0.50},
+    "collection_rate": {"min": 0.90, "max": 0.98, "typical": 0.94},
+    "hygiene_production_per_hour": {"min": 130, "max": 220, "typical": 165},
+    "schedule_utilization": {"min": 0.75, "max": 0.95, "typical": 0.86},
+    "ar_over_90_days_pct": {"min": 0.03, "max": 0.12, "typical": 0.07}
+  },
+
+  "qoe_adjustments": {
+    "common": [
+      "Provider compensation normalization for owner-dentists",
+      "Lab fee and supply usage normalization",
+      "One-time clinical staffing gaps and temporary labor",
+      "Insurance write-offs and collection timing true-up",
+      "Non-recurring legal and licensing costs"
+    ],
+    "owner_addbacks": [
+      "Personal travel and auto expenses",
+      "Related party rent normalization",
+      "Owner family payroll adjustments"
+    ]
+  },
+
+  "departments": [
+    {"name": "Clinical Providers", "typical_pct": 0.25},
+    {"name": "Hygiene", "typical_pct": 0.18},
+    {"name": "Clinical Support", "typical_pct": 0.27},
+    {"name": "Front Desk", "typical_pct": 0.14},
+    {"name": "Revenue Cycle", "typical_pct": 0.08},
+    {"name": "Administration", "typical_pct": 0.08}
+  ]
+}

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Polish Design"
-  short_description: "Polish UI with a fast default loop or an explicit evaluator-led loop"
-  default_prompt: "Use $polish-design to audit and improve this interface. Keep it single-agent by default, or explicitly request the evaluator-led loop with the design_evaluator agent for multi-pass polish."
-policy:
-  allow_implicit_invocation: true

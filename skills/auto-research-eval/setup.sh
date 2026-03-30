@@ -96,6 +96,7 @@ done
 chmod +x "$TARGET_DIR/run.sh" 2>/dev/null || true
 chmod +x "$TARGET_DIR/dashboard.py" 2>/dev/null || true
 chmod +x "$TARGET_DIR/evaluate.py" 2>/dev/null || true
+chmod +x "$TARGET_DIR/agents.sh" 2>/dev/null || true
 
 # Create empty files (only if they don't exist)
 for f in program.md progress.md errors.log; do

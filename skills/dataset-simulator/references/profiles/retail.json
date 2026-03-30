@@ -1,0 +1,326 @@
+{
+  "profile_version": "2.0",
+  "industry": "retail",
+  "display_name": "Retail",
+  "description": "Transaction-based revenue with inventory management, heavy seasonality, and store operations",
+
+  "identity": {
+    "sector": "Consumer Retail",
+    "subvertical": "Retail",
+    "jurisdiction": "US",
+    "currency": "USD"
+  },
+
+  "revenue_streams": [
+    {
+      "name": "Retail Sales",
+      "model": "transaction",
+      "pct": 0.92,
+      "recognition": "at point of sale",
+      "billing": "at transaction",
+      "lag": [0, 3],
+      "contract_months": null,
+      "unit": "store"
+    },
+    {
+      "name": "E-commerce Sales",
+      "model": "transaction",
+      "pct": 0.06,
+      "recognition": "at delivery",
+      "billing": "at order",
+      "lag": [0, 7],
+      "contract_months": null,
+      "unit": "order"
+    },
+    {
+      "name": "Other Revenue",
+      "model": "transaction",
+      "pct": 0.02,
+      "recognition": "as earned",
+      "billing": "monthly",
+      "lag": [15, 30],
+      "contract_months": null,
+      "unit": "store"
+    }
+  ],
+
+  "operating_model": {
+    "primary_units": ["store", "SKU"],
+    "asset_intensity": "medium",
+    "inventory_model": "retail",
+    "labor_model": "shift_hourly",
+    "site_model": "retail_chain",
+    "customer_model": "consumer_retail"
+  },
+
+  "regulatory_model": {
+    "burden": "light",
+    "regimes": ["OSHA", "state_sales_tax"],
+    "required_compliance_docs": ["safety_policy", "training_log"]
+  },
+
+  "document_triggers": {
+    "needs_deferred_revenue_schedule": false,
+    "needs_mrr_analysis": false,
+    "needs_wip_schedule": false,
+    "needs_inventory_ledger": true,
+    "needs_provider_production": false,
+    "needs_store_master": true,
+    "needs_project_master": false,
+    "needs_timesheet_data": false,
+    "needs_loan_tape": false,
+    "needs_fleet_master": false,
+    "needs_credentialing_roster": false,
+    "needs_lot_traceability": false,
+    "needs_route_economics": false,
+    "needs_payer_mix": false,
+    "needs_backlog_schedule": false,
+    "needs_comp_sales": true,
+    "needs_bom": false
+  },
+
+  "red_flag_library": [
+    {
+      "name": "Negative comp sales",
+      "description": "Same-store sales declining for 2+ quarters",
+      "detection": "Comp sales trend by quarter",
+      "severity": "critical"
+    },
+    {
+      "name": "Inventory buildup",
+      "description": "Inventory days increasing faster than revenue growth",
+      "detection": "Inventory turns trend vs revenue trend",
+      "severity": "significant"
+    },
+    {
+      "name": "Shrink spike",
+      "description": "Shrink rate above 3% or rising sharply",
+      "detection": "Shrink rate by store and period",
+      "severity": "significant"
+    },
+    {
+      "name": "Lease concentration",
+      "description": "Multiple leases expiring within 12 months",
+      "detection": "Lease maturity schedule",
+      "severity": "manageable"
+    }
+  ],
+
+  "narrative_style": {
+    "industry_terms": [
+      "comp sales",
+      "same-store",
+      "four-wall margin",
+      "basket size",
+      "traffic",
+      "conversion",
+      "markdown",
+      "shrink",
+      "SKU rationalization",
+      "planogram",
+      "category management",
+      "e-commerce penetration"
+    ],
+    "banker_terms": [
+      "unit economics",
+      "store-level EBITDA",
+      "new store ramp",
+      "whitespace analysis",
+      "omnichannel"
+    ],
+    "legal_terms": [
+      "retail lease",
+      "co-tenancy clause",
+      "CAM reconciliation",
+      "percentage rent",
+      "exclusive use",
+      "radius restriction"
+    ]
+  },
+
+  "size_model": {
+    "small": {
+      "revenue_min": 5000000,
+      "revenue_max": 20000000,
+      "headcount_min": 20,
+      "headcount_max": 80,
+      "store_count_min": 1,
+      "store_count_max": 5,
+      "sku_count_min": 500,
+      "sku_count_max": 5000
+    },
+    "mid": {
+      "revenue_min": 20000000,
+      "revenue_max": 100000000,
+      "headcount_min": 80,
+      "headcount_max": 400,
+      "store_count_min": 3,
+      "store_count_max": 25,
+      "sku_count_min": 2000,
+      "sku_count_max": 20000
+    },
+    "large": {
+      "revenue_min": 100000000,
+      "revenue_max": 500000000,
+      "headcount_min": 300,
+      "headcount_max": 1500,
+      "store_count_min": 15,
+      "store_count_max": 100,
+      "sku_count_min": 10000,
+      "sku_count_max": 100000
+    }
+  },
+
+  "financial_model": {
+    "working_capital_drivers": {
+      "dso": [5, 15],
+      "dpo": [30, 60],
+      "inventory_days": [30, 90],
+      "deferred_revenue_months": [0, 0],
+      "retainage_pct": [0, 0]
+    },
+    "capex_policy": {
+      "pct": [0.03, 0.06],
+      "threshold": 2500,
+      "useful_life": [5, 10]
+    },
+    "debt_structure": {
+      "type": "abl",
+      "leverage": [1.0, 3.0],
+      "interest": [0.05, 0.09]
+    }
+  },
+
+  "chart_of_accounts": {
+    "revenue": [
+      {"code": "4000", "name": "Retail Sales", "typical_pct": 0.92},
+      {"code": "4100", "name": "E-commerce Sales", "typical_pct": 0.06},
+      {"code": "4200", "name": "Other Revenue", "typical_pct": 0.02}
+    ],
+    "cogs": [
+      {"code": "5000", "name": "Cost of Goods Sold", "typical_pct": 0.55},
+      {"code": "5100", "name": "Freight & Shipping", "typical_pct": 0.03},
+      {"code": "5200", "name": "Inventory Shrinkage", "typical_pct": 0.02}
+    ],
+    "opex": [
+      {"code": "6000", "name": "Store Labor", "typical_pct": 0.15},
+      {"code": "6100", "name": "Rent & Occupancy", "typical_pct": 0.08},
+      {"code": "6200", "name": "Marketing & Advertising", "typical_pct": 0.04},
+      {"code": "6300", "name": "General & Administrative", "typical_pct": 0.06},
+      {"code": "6400", "name": "Utilities", "typical_pct": 0.02}
+    ],
+    "assets": [
+      {"code": "1000", "name": "Cash and Cash Equivalents"},
+      {"code": "1100", "name": "Accounts Receivable"},
+      {"code": "1200", "name": "Inventory"},
+      {"code": "1300", "name": "Prepaid Expenses"},
+      {"code": "1400", "name": "Leasehold Improvements"},
+      {"code": "1500", "name": "Fixtures & Equipment"},
+      {"code": "1600", "name": "Accumulated Depreciation"}
+    ],
+    "liabilities": [
+      {"code": "2000", "name": "Accounts Payable - Trade"},
+      {"code": "2100", "name": "Accrued Expenses"},
+      {"code": "2200", "name": "Accrued Payroll"},
+      {"code": "2300", "name": "Gift Card Liability"},
+      {"code": "2400", "name": "Sales Tax Payable"},
+      {"code": "2500", "name": "Line of Credit"},
+      {"code": "2600", "name": "Lease Liabilities"}
+    ],
+    "equity": [
+      {"code": "3000", "name": "Common Stock"},
+      {"code": "3100", "name": "Retained Earnings"},
+      {"code": "3200", "name": "Shareholder Distributions"}
+    ]
+  },
+
+  "kpis": {
+    "gross_margin": {"min": 0.35, "max": 0.55, "typical": 0.42},
+    "inventory_turns": {"min": 3, "max": 8, "typical": 5},
+    "sales_per_sqft": {"min": 200, "max": 600, "typical": 350},
+    "four_wall_margin": {"min": 0.10, "max": 0.25, "typical": 0.15},
+    "shrink_rate": {"min": 0.01, "max": 0.03, "typical": 0.015}
+  },
+
+  "qoe_adjustments": {
+    "common": [
+      "Inventory reserve / obsolescence",
+      "Gift card breakage timing",
+      "Lease accounting adjustments",
+      "Shrinkage reserve normalization"
+    ],
+    "owner_addbacks": [
+      "Owner compensation normalization",
+      "Related party rent",
+      "Personal purchases through store"
+    ]
+  },
+
+  "departments": [
+    {"name": "Store Operations", "typical_pct": 0.60},
+    {"name": "Warehouse & Logistics", "typical_pct": 0.15},
+    {"name": "Buying & Merchandising", "typical_pct": 0.08},
+    {"name": "Marketing", "typical_pct": 0.05},
+    {"name": "E-commerce", "typical_pct": 0.05},
+    {"name": "Administration", "typical_pct": 0.07}
+  ],
+
+  "seasonality_patterns": {
+    "q1": 0.18,
+    "q2": 0.22,
+    "q3": 0.22,
+    "q4": 0.38,
+    "notes": "Heavy Q4 holiday season; Q1 post-holiday slowdown",
+    "monthly": {
+      "jan": 0.05, "feb": 0.06, "mar": 0.07,
+      "apr": 0.07, "may": 0.08, "jun": 0.07,
+      "jul": 0.07, "aug": 0.08, "sep": 0.07,
+      "oct": 0.09, "nov": 0.13, "dec": 0.16
+    }
+  },
+
+  "validation_rules": [
+    {
+      "id": "sales_transaction_tie",
+      "description": "Sum of sales transactions equals P&L retail sales",
+      "check": "sum(sales_transactions.amount) == income_statement.retail_sales"
+    },
+    {
+      "id": "inventory_flow",
+      "description": "COGS = Beginning inventory + Purchases - Ending inventory",
+      "check": "cogs == beginning_inventory + purchases - ending_inventory"
+    },
+    {
+      "id": "inventory_ledger_tie",
+      "description": "Inventory ledger totals tie to balance sheet inventory",
+      "check": "sum(inventory_ledger.value) == balance_sheet.inventory"
+    },
+    {
+      "id": "store_pl_consolidation",
+      "description": "Sum of store-level P&Ls equals consolidated P&L",
+      "check": "sum(store_pl.net_income) == income_statement.net_income"
+    }
+  ],
+
+  "documents": {
+    "operations": [
+      "product_catalog",
+      "sales_transactions",
+      "inventory_ledger",
+      "supplier_master",
+      "purchase_orders",
+      "store_master",
+      "daily_sales_summary"
+    ],
+    "financials": [
+      "trial_balance",
+      "income_statement",
+      "balance_sheet",
+      "cash_flow",
+      "ar_aging",
+      "ap_aging",
+      "inventory_valuation",
+      "store_level_pl"
+    ]
+  }
+}

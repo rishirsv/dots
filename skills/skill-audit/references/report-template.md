@@ -134,7 +134,8 @@ Each should include: Verdict, Issues Found, Suggested Fixes, and Metrics.}}
 - **Dimensions marginal:** {{count}}/9
 - **Dimensions failing:** {{count}}/9
 - **Dimensions auto-pass:** {{count}}/9
-- **Estimated fix effort:** {{small (< 30 min) | medium (30-60 min) | large (> 60 min)}}
+- **Fix scope:** {{count}} fixes across {{file_count}} files
+- **Validation:** All findings have evidence, counts match scorecard, no duplicate fixes
 ```
 
 ## Notes
@@ -143,4 +144,3 @@ Each should include: Verdict, Issues Found, Suggested Fixes, and Metrics.}}
 - Every issue in the scorecard must appear in the detailed findings.
 - Every issue in the issues diagram must appear in the detailed findings.
 - Every fix should resolve one or more concrete findings already listed.
-- When useful, borrow fix style from [exemplar-patterns.md](exemplar-patterns.md).

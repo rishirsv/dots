@@ -40,6 +40,8 @@ HYPOTHESIS_FILE="$SCRIPT_DIR/.hypothesis.tmp"
 MAX_EXPERIMENTS=30
 STALL_LIMIT=5
 AGENT_BACKEND="claude"
+AGENT_MODEL=""
+AGENT_CUSTOM_CMD=""
 DASHBOARD_PORT=8384
 DASHBOARD_AUTO_OPEN=true
 NO_DASHBOARD=false
@@ -82,10 +84,22 @@ load_config() {
   [ -n "$val" ] && STALL_LIMIT="$val"
   val=$(toml_get "$CONFIG" "agent" "backend")
   [ -n "$val" ] && AGENT_BACKEND="$val"
+  val=$(toml_get "$CONFIG" "agent" "model")
+  [ -n "$val" ] && AGENT_MODEL="$val"
+  val=$(toml_get "$CONFIG" "agent" "custom_command")
+  [ -n "$val" ] && AGENT_CUSTOM_CMD="$val"
   val=$(toml_get "$CONFIG" "dashboard" "port")
   [ -n "$val" ] && DASHBOARD_PORT="$val"
   val=$(toml_get "$CONFIG" "dashboard" "auto_open")
   [ "$val" = "false" ] && DASHBOARD_AUTO_OPEN=false
+
+  case "$AGENT_BACKEND" in
+    claude|codex|custom) ;;
+    *)
+      AGENT_CUSTOM_CMD="$AGENT_BACKEND"
+      AGENT_BACKEND="custom"
+      ;;
+  esac
 }
 
 # ---------------------------------------------------------------------------
@@ -256,12 +270,59 @@ print(count)
   prompt="${prompt//\{\{GUARDRAILS_CONTENT\}\}/$guardrails_content}"
   prompt="${prompt//\{\{HYPOTHESIS_PATH\}\}/$HYPOTHESIS_FILE}"
 
-  # Call agent
+  local prompt_file
+  prompt_file=$(mktemp)
+  printf '%s' "$prompt" > "$prompt_file"
+  call_agent_file "$prompt_file"
+  local rc=$?
+  rm -f "$prompt_file"
+  return $rc
+}
+
+call_agent_file() {
+  local prompt_file="$1"
+  local args=(bash "$SCRIPT_DIR/agents.sh" exec --backend "$AGENT_BACKEND" --prompt-file "$prompt_file")
+  if [ -n "$AGENT_MODEL" ]; then
+    args+=(--model "$AGENT_MODEL")
+  fi
+  if [ "$AGENT_BACKEND" = "custom" ]; then
+    args+=(--custom-cmd "$AGENT_CUSTOM_CMD")
+  fi
+  "${args[@]}"
+}
+
+preflight_check() {
+  local errors=0
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo -e "${RED}Error: python3 is required${NC}"
+    errors=$((errors + 1))
+  fi
+
   case "$AGENT_BACKEND" in
-    claude) run_claude "$prompt" ;;
-    codex)  run_codex "$prompt" ;;
-    *)      run_custom "$prompt" "$AGENT_BACKEND" ;;
+    claude)
+      if ! command -v claude >/dev/null 2>&1; then
+        echo -e "${RED}Error: claude CLI is required when agent.backend = \"claude\"${NC}"
+        errors=$((errors + 1))
+      fi
+      ;;
+    codex)
+      if ! command -v codex >/dev/null 2>&1; then
+        echo -e "${RED}Error: codex CLI is required when agent.backend = \"codex\"${NC}"
+        errors=$((errors + 1))
+      fi
+      ;;
+    custom)
+      if [ -z "$AGENT_CUSTOM_CMD" ]; then
+        echo -e "${RED}Error: agent.custom_command is required when agent.backend = \"custom\"${NC}"
+        errors=$((errors + 1))
+      fi
+      ;;
   esac
+
+  if [ "$errors" -gt 0 ]; then
+    exit 1
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -626,8 +687,8 @@ while [ $# -gt 0 ]; do
 done
 
 case "$MODE" in
-  baseline) do_baseline ;;
+  baseline) preflight_check; do_baseline ;;
   preview)  do_preview ;;
   review)   do_review ;;
-  run)      do_run "$MAX_EXPERIMENTS" ;;
+  run)      preflight_check; do_run "$MAX_EXPERIMENTS" ;;
 esac

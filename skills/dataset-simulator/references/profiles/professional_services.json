@@ -1,0 +1,297 @@
+{
+  "profile_version": "2.0",
+  "industry": "professional_services",
+  "display_name": "Professional Services",
+  "revenue_model": "time_based",
+  "description": "Time-based revenue with utilization tracking, WIP, billable hours, and engagement management",
+
+  "identity": {
+    "sector": "Professional Services",
+    "subvertical": "Professional Services",
+    "jurisdiction": "US",
+    "currency": "USD"
+  },
+
+  "revenue_streams": [
+    {
+      "name": "Professional Fees",
+      "model": "time_based",
+      "pct": 0.85,
+      "recognition": "as services rendered",
+      "billing": "invoice net 30",
+      "lag": [30, 60],
+      "contract_months": null,
+      "unit": "engagement"
+    },
+    {
+      "name": "Retainer Revenue",
+      "model": "subscription",
+      "pct": 0.10,
+      "recognition": "over contract term",
+      "billing": "monthly recurring",
+      "lag": [15, 30],
+      "contract_months": 12,
+      "unit": "client"
+    },
+    {
+      "name": "Reimbursable Revenue",
+      "model": "time_based",
+      "pct": 0.05,
+      "recognition": "as incurred",
+      "billing": "invoice net 30",
+      "lag": [30, 45],
+      "contract_months": null,
+      "unit": "engagement"
+    }
+  ],
+
+  "operating_model": {
+    "primary_units": ["client", "engagement", "professional"],
+    "asset_intensity": "light",
+    "inventory_model": "none",
+    "labor_model": "billable_professional",
+    "site_model": "multi_site",
+    "customer_model": "enterprise_msa"
+  },
+
+  "regulatory_model": {
+    "burden": "light",
+    "regimes": ["state_professional_license"],
+    "required_compliance_docs": ["license_roster", "ethics_policy"]
+  },
+
+  "document_triggers": {
+    "needs_deferred_revenue_schedule": false,
+    "needs_mrr_analysis": false,
+    "needs_wip_schedule": true,
+    "needs_inventory_ledger": false,
+    "needs_bom": false,
+    "needs_provider_production": false,
+    "needs_store_master": false,
+    "needs_project_master": false,
+    "needs_timesheet_data": true,
+    "needs_loan_tape": false,
+    "needs_fleet_master": false,
+    "needs_credentialing_roster": false,
+    "needs_lot_traceability": false,
+    "needs_route_economics": false,
+    "needs_payer_mix": false,
+    "needs_backlog_schedule": true,
+    "needs_comp_sales": false
+  },
+
+  "red_flag_library": [
+    {
+      "name": "Key person dependence",
+      "description": "Top 3 professionals generate >40% of revenue",
+      "detection": "Revenue by originating/responsible professional",
+      "severity": "critical"
+    },
+    {
+      "name": "Declining utilization",
+      "description": "Billable utilization dropping below 70%",
+      "detection": "Monthly utilization trend by level",
+      "severity": "significant"
+    },
+    {
+      "name": "Realization erosion",
+      "description": "Billing realization rate declining (write-offs increasing)",
+      "detection": "Standard vs actual billing rate analysis",
+      "severity": "significant"
+    },
+    {
+      "name": "Client concentration",
+      "description": "Top client >15% of fees",
+      "detection": "Revenue by client analysis",
+      "severity": "significant"
+    },
+    {
+      "name": "WIP aging",
+      "description": "Unbilled WIP >60 days growing as pct of revenue",
+      "detection": "WIP aging by engagement",
+      "severity": "manageable"
+    }
+  ],
+
+  "narrative_style": {
+    "industry_terms": ["utilization", "realization", "billable hours", "leverage ratio", "revenue per professional", "WIP", "engagement", "retainer", "matter", "practice area", "origination", "bill rate", "collection rate", "backlog"],
+    "banker_terms": ["revenue per headcount", "utilization-adjusted margin", "practice mix", "client stickiness", "key-person risk", "organic vs lateral growth"],
+    "legal_terms": ["engagement letter", "MSA", "statement of work", "professional liability", "non-solicitation", "garden leave", "partnership agreement", "carried interest"]
+  },
+
+  "bounds": {
+    "small": {
+      "revenue_min": 5000000,
+      "revenue_max": 20000000,
+      "headcount_min": 20,
+      "headcount_max": 80,
+      "client_count_min": 30,
+      "client_count_max": 150
+    },
+    "mid": {
+      "revenue_min": 20000000,
+      "revenue_max": 100000000,
+      "headcount_min": 70,
+      "headcount_max": 350,
+      "client_count_min": 100,
+      "client_count_max": 500
+    },
+    "large": {
+      "revenue_min": 100000000,
+      "revenue_max": 500000000,
+      "headcount_min": 300,
+      "headcount_max": 1500,
+      "client_count_min": 400,
+      "client_count_max": 2000
+    }
+  },
+
+  "financial_model": {
+    "working_capital_drivers": {
+      "dso": [45, 75],
+      "dpo": [20, 35],
+      "inventory_days": [0, 0],
+      "deferred_revenue_months": [0, 3],
+      "retainage_pct": [0, 0]
+    },
+    "capex_policy": {
+      "pct": [0.01, 0.03],
+      "threshold": 2500,
+      "useful_life": [3, 5]
+    },
+    "debt_structure": {
+      "type": "revolver",
+      "leverage": [0, 1.5],
+      "interest": [0.05, 0.07]
+    }
+  },
+
+  "chart_of_accounts": {
+    "revenue": [
+      {"code": "4000", "name": "Professional Fees", "typical_pct": 0.85},
+      {"code": "4100", "name": "Retainer Revenue", "typical_pct": 0.10},
+      {"code": "4200", "name": "Reimbursable Expenses", "typical_pct": 0.05}
+    ],
+    "cogs": [
+      {"code": "5000", "name": "Professional Staff Salaries", "typical_pct": 0.40},
+      {"code": "5100", "name": "Subcontractor Costs", "typical_pct": 0.08},
+      {"code": "5200", "name": "Direct Project Costs", "typical_pct": 0.02}
+    ],
+    "opex": [
+      {"code": "6000", "name": "Business Development", "typical_pct": 0.05},
+      {"code": "6100", "name": "Professional Development", "typical_pct": 0.03},
+      {"code": "6200", "name": "General & Administrative", "typical_pct": 0.12},
+      {"code": "6300", "name": "Facility Costs", "typical_pct": 0.06},
+      {"code": "6400", "name": "Technology & Software", "typical_pct": 0.04}
+    ],
+    "assets": [
+      {"code": "1000", "name": "Cash and Cash Equivalents"},
+      {"code": "1100", "name": "Accounts Receivable - Billed"},
+      {"code": "1150", "name": "Unbilled Receivables (WIP)"},
+      {"code": "1200", "name": "Prepaid Expenses"},
+      {"code": "1300", "name": "Furniture & Equipment"},
+      {"code": "1400", "name": "Accumulated Depreciation"}
+    ],
+    "liabilities": [
+      {"code": "2000", "name": "Accounts Payable"},
+      {"code": "2100", "name": "Accrued Expenses"},
+      {"code": "2200", "name": "Accrued Compensation"},
+      {"code": "2300", "name": "Deferred Revenue"},
+      {"code": "2400", "name": "Line of Credit"}
+    ],
+    "equity": [
+      {"code": "3000", "name": "Partner Capital"},
+      {"code": "3100", "name": "Retained Earnings"},
+      {"code": "3200", "name": "Partner Distributions"}
+    ]
+  },
+
+  "documents": {
+    "operations": [
+      "client_master",
+      "engagement_register",
+      "timesheet_data",
+      "wip_schedule",
+      "invoice_register",
+      "rate_card",
+      "utilization_report"
+    ],
+    "financials": [
+      "trial_balance",
+      "income_statement",
+      "balance_sheet",
+      "cash_flow",
+      "ar_aging",
+      "ap_aging",
+      "wip_aging"
+    ]
+  },
+
+  "consistency_rules": [
+    {
+      "id": "billable_hours_revenue",
+      "description": "Billable hours × effective rate = professional fees revenue",
+      "check": "sum(hours * rate) == income_statement.professional_fees"
+    },
+    {
+      "id": "wip_tie",
+      "description": "WIP schedule ending balance ties to unbilled receivables",
+      "check": "wip_schedule.ending_balance == balance_sheet.unbilled_receivables"
+    },
+    {
+      "id": "utilization_calculation",
+      "description": "Utilization = Billable hours / Available hours",
+      "check": "utilization == billable_hours / available_hours"
+    },
+    {
+      "id": "realization_rate",
+      "description": "Realization = Collected / Standard billing",
+      "check": "realization == actual_collected / standard_billing"
+    }
+  ],
+
+  "seasonality_patterns": {
+    "q1": 0.27,
+    "q2": 0.26,
+    "q3": 0.21,
+    "q4": 0.26,
+    "notes": "Q3 summer slowdown; Q1/Q4 busy with year-end work"
+  },
+
+  "kpis": {
+    "gross_margin": {"min": 0.40, "max": 0.60, "typical": 0.50},
+    "utilization_rate": {"min": 0.60, "max": 0.85, "typical": 0.72},
+    "realization_rate": {"min": 0.85, "max": 1.0, "typical": 0.92},
+    "revenue_per_employee": {"min": 150000, "max": 300000, "typical": 200000}
+  },
+
+  "qoe_adjustments": {
+    "common": [
+      "WIP write-offs / bad debt",
+      "Partner compensation normalization",
+      "Revenue recognition timing (milestone vs. time)",
+      "Non-recurring project costs"
+    ],
+    "owner_addbacks": [
+      "Above-market partner compensation",
+      "Partner perquisites (auto, travel)",
+      "Related party rent"
+    ]
+  },
+
+  "departments": [
+    {"name": "Professional Staff", "typical_pct": 0.65},
+    {"name": "Business Development", "typical_pct": 0.10},
+    {"name": "Administration", "typical_pct": 0.15},
+    {"name": "IT & Operations", "typical_pct": 0.05},
+    {"name": "Executive", "typical_pct": 0.05}
+  ],
+
+  "staff_levels": [
+    {"level": "Partner", "typical_pct": 0.10, "utilization_target": 0.50, "rate_multiplier": 3.0},
+    {"level": "Director", "typical_pct": 0.15, "utilization_target": 0.65, "rate_multiplier": 2.0},
+    {"level": "Manager", "typical_pct": 0.25, "utilization_target": 0.75, "rate_multiplier": 1.5},
+    {"level": "Senior Associate", "typical_pct": 0.25, "utilization_target": 0.80, "rate_multiplier": 1.2},
+    {"level": "Associate", "typical_pct": 0.25, "utilization_target": 0.85, "rate_multiplier": 1.0}
+  ]
+}

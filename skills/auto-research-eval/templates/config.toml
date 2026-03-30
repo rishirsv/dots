@@ -6,7 +6,9 @@ max_experiments = 30
 stall_limit = 5
 
 [agent]
-backend = "claude"                   # "claude" or "codex"
+backend = "claude"                   # "claude", "codex", or "custom"
+model = ""                           # Exact CLI model name, e.g. "gpt-5.4-mini" or "sonnet"
+# custom_command = ""                # Optional when backend = "custom"; use {prompt} or stdin
 
 [dashboard]
 port = 8384
