@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skillify"
+  short_description: "Turn finished work into reusable skills"
+  default_prompt: "Use $skillify to turn the work from this session into a reusable skill."
