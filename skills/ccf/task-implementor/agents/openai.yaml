@@ -1,0 +1,7 @@
+interface:
+  display_name: 'Task Implementor'
+  short_description: 'Implements a single task'
+  default_prompt: 'Use $task-implementor to implement one task.'
+
+policy:
+  allow_implicit_invocation: true

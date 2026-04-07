@@ -1,28 +1,39 @@
 ---
 name: polish-design
-description: "Review and polish frontend interfaces with a fast default loop or an explicit evaluator-led multi-pass loop. Use when the interface needs a quality pass that both diagnoses design issues and improves them, especially when the user asks for iterative polish such as `polish-design 3x`, asks to use subagents, or wants a dedicated design evaluator."
+description: "Review and polish frontend interfaces with a fast default loop or an explicit evaluator-led multi-pass loop. Also supports critique-first review and resilience-focused hardening within the same skill. Use when the interface needs a quality pass that diagnoses and improves design, especially when the user asks for polish, critique, hardening, iterative refinement such as `polish-design 3x`, subagents, or a dedicated design evaluator."
 ---
 
 # Polish Design
 
 Polish frontend interfaces with a tight implementation loop by default, and switch to a stricter evaluator-led loop only when the user explicitly asks for subagents, a dedicated evaluator, or multi-pass critique.
 
-Use `frontend-skill` as the design principles foundation. Every judgment call defers first to `docs/DESIGN.md` if it exists in the repo, then to `frontend-skill`, then to the evaluator rubric in `references/design-evaluation.md`.
+Use `frontend-skill` as the design principles foundation. Every judgment call defers first to `docs/DESIGN.md` if it exists in the repo, then to `frontend-skill`, then to the evaluator rubric in `references/design-evaluation.md`, the critique rubric in `references/design-critique.md`, and the resilience checks in `references/hardening-checklist.md`.
 
 ## Priority Rule
 
 - Check for `docs/DESIGN.md` in the project root. If it exists, read it first and treat it as the primary design context.
 - Do not create or refresh `docs/DESIGN.md` silently.
 - For evaluator-led runs, read `references/design-evaluation.md` before producing any score or recommendation.
+- For critique-first requests, read `references/design-critique.md` before producing findings.
+- For hardening-focused requests or when resilience issues appear material, read `references/hardening-checklist.md` before recommending or making changes.
 
 ## Mode Selection
 
-Default to the single-agent loop unless the user explicitly requests one of these:
+Default to the single-agent polish loop unless the user explicitly requests one of these:
 
+- critique, review, assess, or diagnose before editing
+- harden, productionize, handle edge cases, or make the UI more resilient
 - use subagents
 - use the `design_evaluator` agent
 - run multiple evaluator-led passes
 - compare passes, persist artifacts, or decide whether to refine, pivot, or stop
+
+Mode routing:
+
+- `default polish`: audit and improve in one pass
+- `critique-first`: findings first, edits second only if requested or clearly implied
+- `hardening-first`: prioritize resilience, states, overflow, and edge cases over visual flourish
+- `evaluator-led`: use the dedicated multi-pass scoring loop
 
 Examples that should trigger the evaluator-led path:
 
@@ -36,6 +47,18 @@ Examples that should stay in the default path:
 - `Polish this page`
 - `Give this dashboard one design pass`
 
+Examples that should trigger `critique-first`:
+
+- `Critique this settings flow before changing anything`
+- `Review this screen and tell me what's wrong`
+- `Assess the UX before we polish it`
+
+Examples that should trigger `hardening-first`:
+
+- `Polish this form, but focus on edge cases`
+- `Harden this dashboard before release`
+- `Make this UI production-ready`
+
 ## Default Loop
 
 Use this path for most requests.
@@ -46,6 +69,8 @@ Use this path for most requests.
 4. Output concise findings in chat.
 5. Implement 1-3 high-impact fixes.
 6. Re-capture and confirm the result. If the capture is saved to disk, save it under `.agents/polish-design/<run-id>/screens/`.
+
+When issues are obvious, include critique and hardening lenses in the same pass rather than treating polish as purely visual.
 
 ### Default Audit Categories
 
@@ -58,6 +83,52 @@ Organize concise findings under these categories:
 5. Motion & Performance
 
 For each bullet: state the problem, where it is, severity (`Critical`, `High`, `Medium`, `Low`), and the fix direction in one line.
+
+## Critique-First Loop
+
+Use this path when the user asks for review, critique, or diagnosis before implementation.
+
+1. Review the current design in code and capture the interface when possible.
+2. Read `references/design-critique.md`.
+3. Output findings first, with no code changes yet.
+4. Prioritize the top 3-5 issues by user impact and leverage.
+5. If the user asked only for critique, stop after findings and next-step recommendations.
+6. If edits are requested or clearly implied, fix only the highest-leverage issues and then re-check.
+
+### Critique Output
+
+Structure findings under:
+
+1. Anti-Patterns Verdict
+2. Overall Impression
+3. What's Working
+4. Priority Issues
+5. Persona or Flow Red Flags
+6. Recommended Next Move
+
+Keep critique concrete. Name the problem, why it matters, and the fix direction. Do not drift into vague design commentary.
+
+## Hardening-First Loop
+
+Use this path when resilience is the priority, or when the main blockers are not aesthetic but operational.
+
+1. Review the current design in code and capture the interface when possible.
+2. Read `references/hardening-checklist.md`.
+3. Identify the highest-risk resilience failures before cosmetic issues.
+4. Focus fixes on states, overflow, responsive failure, long content, input extremes, async behavior, permissions, and i18n-sensitive layout.
+5. Re-check the affected flows after implementation.
+
+### Hardening Priorities
+
+Default priority order:
+
+1. broken or missing states
+2. text overflow and layout breakage
+3. touch target and responsive issues
+4. async, retry, and permission flows
+5. i18n, RTL, and data-shape resilience
+
+Do not spend the pass on visual flourish if resilience blockers remain.
 
 ## Evaluator-Led Loop
 
@@ -97,6 +168,8 @@ Include only:
 - If the same blocker persists for two passes, do not keep polishing blindly. Re-evaluate the direction.
 - When the evaluator recommends `pivot`, change the design direction before more incremental polish.
 - When the evaluator recommends `stop`, do not chase cosmetic nits.
+- In critique-first mode, findings come before edits.
+- In hardening-first mode, resilience blockers outrank purely visual polish.
 
 ## Artifact Routing
 
@@ -175,9 +248,12 @@ If a capture tool saves files, route them to `.agents/polish-design/<run-id>/scr
 
 - Always reference `frontend-skill` principles when judging design quality.
 - The evaluator output must be skeptical, concise, and actionable.
+- Use critique and hardening references only when they materially fit the task; do not load every reference by default.
 - Do not drift into feature work or refactors unless a design blocker cannot be solved without them.
 - Do not install capture tools without asking.
 - Do not over-polish minor details while systemic problems remain.
+- Do not confuse critique with implementation. If the user asked for review only, stop after findings.
+- Do not confuse hardening with feature expansion. Add resilience, not scope.
 - Preserve the repo's design language unless the user explicitly asks for departure.
 - In evaluator-led mode, do not spawn subagents unless the user explicitly asked for them.
 - The evaluator must never edit files.

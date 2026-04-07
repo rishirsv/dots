@@ -1,6 +1,6 @@
 interface:
   display_name: "Polish Design"
-  short_description: "Polish UI with a fast default loop or an explicit evaluator-led loop"
-  default_prompt: "Use $polish-design to audit and improve this interface. Keep it single-agent by default, or explicitly request the evaluator-led loop with the design_evaluator agent for multi-pass polish."
+  short_description: "Polish, critique, or harden UI with a default loop or evaluator-led passes"
+  default_prompt: "Use $polish-design to review and improve this interface. By default, run a single-agent polish pass. If critique is the goal, use critique-first mode and present findings before editing. If resilience is the goal, use hardening-first mode and prioritize states, edge cases, and layout durability. Use the evaluator-led loop only when explicitly requested."
 policy:
   allow_implicit_invocation: true
