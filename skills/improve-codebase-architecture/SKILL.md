@@ -11,7 +11,7 @@ Explore a codebase for architectural friction and refactoring opportunities. Fav
 
 ### 1. Explore the codebase
 
-Use the `explore` agent or a focused local search to understand where the codebase feels shallow or tightly coupled.
+Use the `explorer` agent or a focused local search to understand where the codebase feels shallow or tightly coupled.
 
 Look for:
 

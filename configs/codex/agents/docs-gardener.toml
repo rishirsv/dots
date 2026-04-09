@@ -1,3 +1,5 @@
+name = "docs_gardener"
+description = "Documentation-maintenance agent that keeps docs aligned with current code behavior and repository conventions."
 model = "gpt-5.4"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
@@ -28,3 +30,7 @@ What NOT to do:
 
 Always use the $docs-gardener skill if available.
 """
+
+[[skills.config]]
+name = "docs-gardener"
+enabled = true

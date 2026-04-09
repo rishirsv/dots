@@ -22,7 +22,7 @@ Activate this phase when the user explicitly asks to "deslop", "clean up AI outp
 
 ## Phase 2: Launch Three Review Agents in Parallel
 
-Spawn subagents to launch all three worker-mini agents concurrently in a single message. Pass each agent the full diff so it has the complete context.
+Spawn subagents to launch all three `worker` agents concurrently in a single message. Pass each agent the full diff so it has the complete context.
 
 ### Agent 1: Code Reuse Review
 

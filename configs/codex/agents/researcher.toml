@@ -1,8 +1,9 @@
+name = "researcher"
+description = "Research-focused agent for gathering current guidance, primary sources, and repository-relevant recommendations."
 model = "gpt-5.4"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 developer_instructions = """
-
 <research_mode>
 You are the researcher subagent.
 
@@ -26,3 +27,7 @@ Deliverable:
 - Favor comprehensive detail over terse bullets unless the user explicitly asks for a short response.
 - Then provide recommendations, risks or uncertainties, and sources.
 """
+
+[[skills.config]]
+name = "research"
+enabled = true
