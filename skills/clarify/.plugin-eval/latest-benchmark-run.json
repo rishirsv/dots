@@ -1,0 +1,613 @@
+{
+  "kind": "benchmark-run",
+  "createdAt": "2026-04-19T22:22:06.102Z",
+  "mode": "codex-cli",
+  "target": {
+    "kind": "skill",
+    "path": "/Users/rishi/Code/ai-tools/skills/clarify",
+    "entryPath": "/Users/rishi/Code/ai-tools/skills/clarify/SKILL.md",
+    "name": "clarify",
+    "relativePath": "skills/clarify"
+  },
+  "codexVersion": "codex-cli 0.120.0",
+  "config": {
+    "source": "file",
+    "path": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/benchmark.json",
+    "runnerType": "codex-cli",
+    "model": "gpt-5.4-mini",
+    "sandbox": "workspace-write",
+    "approvalPolicy": "never",
+    "scenarioCount": 3,
+    "workspaceSourcePath": "/Users/rishi/Code/ai-tools",
+    "workspaceSetupMode": "copy",
+    "workspacePreserve": "on-failure",
+    "targetProvisioningMode": "isolated-skill-home",
+    "verifierCount": 0
+  },
+  "runDirectory": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06",
+  "usageLogPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl",
+  "resultPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/latest-benchmark-run.json",
+  "summary": {
+    "scenarioCount": 3,
+    "completedScenarios": 3,
+    "failedScenarios": 0,
+    "sampleCount": 3,
+    "usageAvailability": "present",
+    "averageInputTokens": 533942.67,
+    "averageOutputTokens": 8835.67,
+    "averageTotalTokens": 542778.33,
+    "generatedFileCount": 3,
+    "generatedTestFileCount": 0,
+    "toolCallCount": 0,
+    "shellCommandCount": 0,
+    "failedShellCommands": 0,
+    "verifierPassCount": 0,
+    "verifierFailCount": 0
+  },
+  "scenarios": [
+    {
+      "id": "repo-context-doc",
+      "title": "Repo-grounded context artifact",
+      "purpose": "Check whether the skill can inspect repo evidence, narrow ambiguity, and create a useful docs-only context artifact without drifting into implementation planning.",
+      "successChecklist": [
+        "A new docs artifact exists at docs/artifacts/contexts/clarify-contract-context.md.",
+        "The artifact is grounded in repo evidence rather than generic advice.",
+        "The final answer ends with a short Common Understanding summary."
+      ],
+      "status": "completed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 86766,
+      "prompt": "Use the local Codex skill \"clarify\". Review the current clarify skill and its references, then create a docs-only artifact at docs/artifacts/contexts/clarify-contract-context.md that captures the current shared understanding of what this skill is for, what its required output is, and when it should create optional docs artifacts. End with a short Common Understanding summary in your final answer. Do not edit source files outside the new docs artifact.",
+      "finalMessagePath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/01-repo-context-doc/final-message.txt",
+      "finalMessagePreview": "Created [docs/artifacts/contexts/clarify-contract-context.md](/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-repo-context-doc-UYOwtP/workspace/docs/artifacts/contexts/clarify-contract-context.md) from the `clarify` skill and its references, and left all source files untouched.\n\n**Common Understanding**\n- Agreed: `clarify` reduces ambiguity before planning or implementation, always ends with `Common Understanding`, and only creates durable docs under `docs/` when the user asks for one.\n- Open: none identified.\n- Next: use the new context doc as the shared baseline for future `clarify` work.",
+      "rawEventLogPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/01-repo-context-doc/codex.stdout.jsonl",
+      "stderrLogPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/01-repo-context-doc/codex.stderr.log",
+      "usage": {
+        "input_tokens": 524526,
+        "output_tokens": 9804,
+        "total_tokens": 534330,
+        "raw": {
+          "input_tokens": 524526,
+          "cached_input_tokens": 471808,
+          "output_tokens": 9804
+        }
+      },
+      "usageAvailability": "present",
+      "telemetry": {
+        "threadId": "019da7d2-9863-7a01-a2d7-f82f4c48ab09",
+        "eventCount": 50,
+        "ignoredLineCount": 0,
+        "finalStatus": "completed",
+        "errorMessages": [],
+        "toolCallCount": 0,
+        "shellCommandCount": 0,
+        "failedShellCommandCount": 0,
+        "toolNames": [],
+        "shellCommands": [],
+        "usage": {
+          "input_tokens": 524526,
+          "output_tokens": 9804,
+          "total_tokens": 534330,
+          "raw": {
+            "input_tokens": 524526,
+            "cached_input_tokens": 471808,
+            "output_tokens": 9804
+          }
+        },
+        "usageAvailability": "present"
+      },
+      "workspacePath": null,
+      "workspaceSummary": {
+        "addedFileCount": 1,
+        "modifiedFileCount": 0,
+        "deletedFileCount": 0,
+        "changedFileCount": 1,
+        "generatedFileCount": 1,
+        "generatedTestFileCount": 0,
+        "changedTestFileCount": 0,
+        "changedTextLineDelta": 80,
+        "changedFiles": [
+          {
+            "path": "docs/artifacts/contexts/clarify-contract-context.md",
+            "status": "added",
+            "isText": true,
+            "lineCountBefore": 0,
+            "lineCountAfter": 80,
+            "lineDelta": 80
+          }
+        ],
+        "allChanges": [
+          {
+            "path": "docs/artifacts/contexts/clarify-contract-context.md",
+            "status": "added",
+            "isText": true,
+            "lineCountBefore": 0,
+            "lineCountAfter": 80,
+            "lineDelta": 80
+          }
+        ]
+      },
+      "workspaceChanges": [
+        {
+          "path": "docs/artifacts/contexts/clarify-contract-context.md",
+          "status": "added",
+          "isText": true,
+          "lineCountBefore": 0,
+          "lineCountAfter": 80,
+          "lineDelta": 80
+        }
+      ],
+      "generatedCode": {
+        "checks": [],
+        "metrics": [
+          {
+            "id": "coverage_artifact_count",
+            "category": "coverage",
+            "value": 3,
+            "unit": "files",
+            "band": "good",
+            "source": "core"
+          },
+          {
+            "id": "coverage_percent",
+            "category": "coverage",
+            "value": 82,
+            "unit": "percent",
+            "band": "moderate",
+            "source": "core"
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "coverage-artifacts",
+            "type": "coverage",
+            "label": "Coverage artifacts",
+            "description": "Coverage files discovered during evaluation.",
+            "source": "core",
+            "data": {
+              "files": [
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/coverage-final.json",
+                  "coverage": 50
+                },
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/coverage.xml",
+                  "coverage": 82
+                },
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/lcov.info",
+                  "coverage": 75
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "verifierResults": [],
+      "installedTargetPath": "/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-repo-context-doc-UYOwtP/home/.codex/skills/clarify",
+      "codexHomePath": "/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-repo-context-doc-UYOwtP/home/.codex"
+    },
+    {
+      "id": "standard-mode-common-understanding",
+      "title": "Minimal-question clarification summary",
+      "purpose": "Measure whether the skill can stay lightweight, inspect first, and produce a crisp Common Understanding when the request is underspecified but partially answerable from repo context.",
+      "successChecklist": [
+        "A concise docs artifact exists at docs/artifacts/contexts/clarify-doc-routing-context.md.",
+        "The result stays in clarification territory and does not become an execution plan.",
+        "The output distinguishes agreed context from remaining open questions."
+      ],
+      "status": "completed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 45528,
+      "prompt": "Use the local Codex skill \"clarify\". I want to improve this skill's docs artifact behavior, but I do not want implementation planning. Inspect the repo first, then write a short note at docs/artifacts/contexts/clarify-doc-routing-context.md that states what is agreed, what is still open, and what the next durable doc should be if a user asks for an unspecified artifact. Keep it concise and do not create any plan file.",
+      "finalMessagePath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/02-standard-mode-common-understanding/final-message.txt",
+      "finalMessagePreview": "I inspected `skills/clarify/SKILL.md` and its routing references first, then wrote the note at [/private/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-standard-mode-common-understanding-00xWXS/workspace/docs/artifacts/contexts/clarify-doc-routing-context.md](/private/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-standard-mode-common-understanding-00xWXS/workspace/docs/artifacts/contexts/clarify-doc-routing-context.md).\n\nIt captures:\n- Agreed: `clarify` only writes durable docs when asked, and unspecified artifacts route to a context doc unless a stronger canonical family exists.\n- Open: which topic-specific doc families, if any, should override that default in this repo.\n- Next: for an unspecified artifact, create the topic context doc under `docs/artifacts/contexts/`, not a plan file.\n\nNo plan file was created.",
+      "rawEventLogPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/02-standard-mode-common-understanding/codex.stdout.jsonl",
+      "stderrLogPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/02-standard-mode-common-understanding/codex.stderr.log",
+      "usage": {
+        "input_tokens": 385381,
+        "output_tokens": 4486,
+        "total_tokens": 389867,
+        "raw": {
+          "input_tokens": 385381,
+          "cached_input_tokens": 319744,
+          "output_tokens": 4486
+        }
+      },
+      "usageAvailability": "present",
+      "telemetry": {
+        "threadId": "019da7d3-f77f-7fc0-a0af-2272697db7a6",
+        "eventCount": 36,
+        "ignoredLineCount": 0,
+        "finalStatus": "completed",
+        "errorMessages": [],
+        "toolCallCount": 0,
+        "shellCommandCount": 0,
+        "failedShellCommandCount": 0,
+        "toolNames": [],
+        "shellCommands": [],
+        "usage": {
+          "input_tokens": 385381,
+          "output_tokens": 4486,
+          "total_tokens": 389867,
+          "raw": {
+            "input_tokens": 385381,
+            "cached_input_tokens": 319744,
+            "output_tokens": 4486
+          }
+        },
+        "usageAvailability": "present"
+      },
+      "workspacePath": null,
+      "workspaceSummary": {
+        "addedFileCount": 1,
+        "modifiedFileCount": 0,
+        "deletedFileCount": 0,
+        "changedFileCount": 1,
+        "generatedFileCount": 1,
+        "generatedTestFileCount": 0,
+        "changedTestFileCount": 0,
+        "changedTextLineDelta": 13,
+        "changedFiles": [
+          {
+            "path": "docs/artifacts/contexts/clarify-doc-routing-context.md",
+            "status": "added",
+            "isText": true,
+            "lineCountBefore": 0,
+            "lineCountAfter": 13,
+            "lineDelta": 13
+          }
+        ],
+        "allChanges": [
+          {
+            "path": "docs/artifacts/contexts/clarify-doc-routing-context.md",
+            "status": "added",
+            "isText": true,
+            "lineCountBefore": 0,
+            "lineCountAfter": 13,
+            "lineDelta": 13
+          }
+        ]
+      },
+      "workspaceChanges": [
+        {
+          "path": "docs/artifacts/contexts/clarify-doc-routing-context.md",
+          "status": "added",
+          "isText": true,
+          "lineCountBefore": 0,
+          "lineCountAfter": 13,
+          "lineDelta": 13
+        }
+      ],
+      "generatedCode": {
+        "checks": [],
+        "metrics": [
+          {
+            "id": "coverage_artifact_count",
+            "category": "coverage",
+            "value": 3,
+            "unit": "files",
+            "band": "good",
+            "source": "core"
+          },
+          {
+            "id": "coverage_percent",
+            "category": "coverage",
+            "value": 82,
+            "unit": "percent",
+            "band": "moderate",
+            "source": "core"
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "coverage-artifacts",
+            "type": "coverage",
+            "label": "Coverage artifacts",
+            "description": "Coverage files discovered during evaluation.",
+            "source": "core",
+            "data": {
+              "files": [
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/coverage-final.json",
+                  "coverage": 50
+                },
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/coverage.xml",
+                  "coverage": 82
+                },
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/lcov.info",
+                  "coverage": 75
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "verifierResults": [],
+      "installedTargetPath": "/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-standard-mode-common-understanding-00xWXS/home/.codex/skills/clarify",
+      "codexHomePath": "/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-standard-mode-common-understanding-00xWXS/home/.codex"
+    },
+    {
+      "id": "boundary-narrowing",
+      "title": "Boundary narrowing on implementation-like ask",
+      "purpose": "Check whether the skill narrows the request honestly when the ask starts to look like implementation instead of clarification.",
+      "successChecklist": [
+        "A docs artifact exists at docs/artifacts/contexts/clarify-boundary-context.md.",
+        "The run narrows the task to clarification instead of drifting into implementation.",
+        "Any edits stay aligned with the justified clarification-only scope."
+      ],
+      "status": "completed",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 97076,
+      "prompt": "This task is only a partial match for the local Codex skill \"clarify\". I am tempted to jump into implementing a larger rewrite of the clarify skill, but first I want only the clarification slice. Inspect the repo and create docs/artifacts/contexts/clarify-boundary-context.md that says what is already decided, what still needs clarification before implementation, and what the next artifact should be. Do not edit SKILL.md or any source files.",
+      "finalMessagePath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/03-boundary-narrowing/final-message.txt",
+      "finalMessagePreview": "Created [docs/artifacts/contexts/clarify-boundary-context.md](/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-boundary-narrowing-WnFuAq/workspace/docs/artifacts/contexts/clarify-boundary-context.md).\n\nIt captures:\n- Already decided: `clarify` stays pre-implementation, keeps the `standard`/`grill` split, ends with `Common Understanding`, and uses `docs/` for durable artifacts.\n- Still needs clarification: exact rewrite scope, whether this is wording vs behavior vs contract change, whether the mode/question boundaries change, and what downstream docs need updates.\n- Next artifact: a formal implementation plan under `docs/exec-plans/active/` once those scope questions are settled.\n\nI didn’t edit `SKILL.md` or any source files.",
+      "rawEventLogPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/03-boundary-narrowing/codex.stdout.jsonl",
+      "stderrLogPath": "/Users/rishi/Code/ai-tools/skills/clarify/.plugin-eval/runs/2026-04-19T22-18-06/03-boundary-narrowing/codex.stderr.log",
+      "usage": {
+        "input_tokens": 691921,
+        "output_tokens": 12217,
+        "total_tokens": 704138,
+        "raw": {
+          "input_tokens": 691921,
+          "cached_input_tokens": 639360,
+          "output_tokens": 12217
+        }
+      },
+      "usageAvailability": "present",
+      "telemetry": {
+        "threadId": "019da7d4-b2f0-7c71-a784-38a37fab3bb3",
+        "eventCount": 54,
+        "ignoredLineCount": 0,
+        "finalStatus": "completed",
+        "errorMessages": [],
+        "toolCallCount": 0,
+        "shellCommandCount": 0,
+        "failedShellCommandCount": 0,
+        "toolNames": [],
+        "shellCommands": [],
+        "usage": {
+          "input_tokens": 691921,
+          "output_tokens": 12217,
+          "total_tokens": 704138,
+          "raw": {
+            "input_tokens": 691921,
+            "cached_input_tokens": 639360,
+            "output_tokens": 12217
+          }
+        },
+        "usageAvailability": "present"
+      },
+      "workspacePath": null,
+      "workspaceSummary": {
+        "addedFileCount": 1,
+        "modifiedFileCount": 0,
+        "deletedFileCount": 0,
+        "changedFileCount": 1,
+        "generatedFileCount": 1,
+        "generatedTestFileCount": 0,
+        "changedTestFileCount": 0,
+        "changedTextLineDelta": 23,
+        "changedFiles": [
+          {
+            "path": "docs/artifacts/contexts/clarify-boundary-context.md",
+            "status": "added",
+            "isText": true,
+            "lineCountBefore": 0,
+            "lineCountAfter": 23,
+            "lineDelta": 23
+          }
+        ],
+        "allChanges": [
+          {
+            "path": "docs/artifacts/contexts/clarify-boundary-context.md",
+            "status": "added",
+            "isText": true,
+            "lineCountBefore": 0,
+            "lineCountAfter": 23,
+            "lineDelta": 23
+          }
+        ]
+      },
+      "workspaceChanges": [
+        {
+          "path": "docs/artifacts/contexts/clarify-boundary-context.md",
+          "status": "added",
+          "isText": true,
+          "lineCountBefore": 0,
+          "lineCountAfter": 23,
+          "lineDelta": 23
+        }
+      ],
+      "generatedCode": {
+        "checks": [],
+        "metrics": [
+          {
+            "id": "coverage_artifact_count",
+            "category": "coverage",
+            "value": 3,
+            "unit": "files",
+            "band": "good",
+            "source": "core"
+          },
+          {
+            "id": "coverage_percent",
+            "category": "coverage",
+            "value": 82,
+            "unit": "percent",
+            "band": "moderate",
+            "source": "core"
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "coverage-artifacts",
+            "type": "coverage",
+            "label": "Coverage artifacts",
+            "description": "Coverage files discovered during evaluation.",
+            "source": "core",
+            "data": {
+              "files": [
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/coverage-final.json",
+                  "coverage": 50
+                },
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/coverage.xml",
+                  "coverage": 82
+                },
+                {
+                  "path": "plugins/plugin-eval/fixtures/coverage-samples/lcov.info",
+                  "coverage": 75
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "verifierResults": [],
+      "installedTargetPath": "/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-boundary-narrowing-WnFuAq/home/.codex/skills/clarify",
+      "codexHomePath": "/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-boundary-narrowing-WnFuAq/home/.codex"
+    }
+  ],
+  "nextSteps": [
+    "Analyze the observed usage with: plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+    "Review the measurement plan with: plugin-eval measurement-plan ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown"
+  ],
+  "workflowGuide": {
+    "kind": "workflow-guide",
+    "createdAt": "2026-04-19T22:22:06.103Z",
+    "target": {
+      "kind": "skill",
+      "path": "/Users/rishi/Code/ai-tools/skills/clarify",
+      "entryPath": "/Users/rishi/Code/ai-tools/skills/clarify/SKILL.md",
+      "name": "clarify",
+      "relativePath": "skills/clarify"
+    },
+    "requestedGoal": "measure",
+    "requestedChatPrompt": null,
+    "requestRouting": null,
+    "recommendedWorkflowId": "measure",
+    "recommendedWorkflow": {
+      "id": "measure",
+      "label": "Measure Real Token Usage",
+      "chatPrompt": "Measure the real token usage of this skill.",
+      "summary": "You already have a local usage log, so the next step is to fold those real measurements back into the report.",
+      "firstCommand": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+      "commands": [
+        "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+        "plugin-eval measurement-plan ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown"
+      ],
+      "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'Measure the real token usage of this skill.' --format markdown"
+    },
+    "workflowStatus": {
+      "hasBenchmarkConfig": true,
+      "hasUsageLog": true
+    },
+    "beginnerSummary": "Start with a natural chat request, then let plugin-eval show the exact local command sequence behind it.",
+    "startHere": {
+      "chatPrompt": "Measure the real token usage of this skill.",
+      "label": "Measure Real Token Usage",
+      "summary": "You already have a local usage log, so the next step is to fold those real measurements back into the report.",
+      "routingExplanation": "Plugin Eval recommended Measure Real Token Usage from the current local state for this skill.",
+      "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'Measure the real token usage of this skill.' --format markdown",
+      "firstCommand": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+      "commands": [
+        "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+        "plugin-eval measurement-plan ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown"
+      ]
+    },
+    "entrypoints": [
+      {
+        "id": "analysis",
+        "label": "Full Skill Analysis",
+        "chatPrompt": "Give me a full analysis of this skill, including benchmark setup.",
+        "summary": "Use this when you want the full report plus measured usage follow-through for this skill.",
+        "firstCommand": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+        "commands": [
+          "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+          "plugin-eval measurement-plan ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown"
+        ],
+        "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'Give me a full analysis of this skill, including benchmark setup.' --format markdown"
+      },
+      {
+        "id": "evaluate",
+        "label": "Evaluate Skill",
+        "chatPrompt": "Evaluate this skill.",
+        "summary": "Start here when you want the overall report for a skill, including structure, budgets, and code checks.",
+        "firstCommand": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --format markdown",
+        "commands": [
+          "plugin-eval analyze ~/Code/ai-tools/skills/clarify --format markdown"
+        ],
+        "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'Evaluate this skill.' --format markdown"
+      },
+      {
+        "id": "budget",
+        "label": "Explain Token Budget",
+        "chatPrompt": "Explain the token budget for this skill.",
+        "summary": "Use this when the main question is why the skill feels expensive before you collect any live measurements.",
+        "firstCommand": "plugin-eval explain-budget ~/Code/ai-tools/skills/clarify --format markdown",
+        "commands": [
+          "plugin-eval explain-budget ~/Code/ai-tools/skills/clarify --format markdown"
+        ],
+        "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'Explain the token budget for this skill.' --format markdown"
+      },
+      {
+        "id": "measure",
+        "label": "Measure Real Token Usage",
+        "chatPrompt": "Measure the real token usage of this skill.",
+        "summary": "You already have a local usage log, so the next step is to fold those real measurements back into the report.",
+        "firstCommand": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+        "commands": [
+          "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+          "plugin-eval measurement-plan ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown"
+        ],
+        "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'Measure the real token usage of this skill.' --format markdown"
+      },
+      {
+        "id": "benchmark",
+        "label": "Benchmark With Starter Scenarios",
+        "chatPrompt": "Help me benchmark this skill.",
+        "summary": "Use this when you want starter scenarios and a repeatable real-Codex benchmark run for this skill.",
+        "firstCommand": "plugin-eval benchmark ~/Code/ai-tools/skills/clarify --config ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark.json",
+        "commands": [
+          "plugin-eval benchmark ~/Code/ai-tools/skills/clarify --config ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark.json"
+        ],
+        "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'Help me benchmark this skill.' --format markdown"
+      },
+      {
+        "id": "next",
+        "label": "Start Here",
+        "chatPrompt": "What should I run next?",
+        "summary": "You already collected benchmark output, so the best next step is to analyze the real usage and decide what to improve.",
+        "firstCommand": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+        "commands": [
+          "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+          "plugin-eval measurement-plan ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown"
+        ],
+        "startCommand": "plugin-eval start ~/Code/ai-tools/skills/clarify --request 'What should I run next?' --format markdown"
+      }
+    ],
+    "nextSteps": [
+      "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+      "plugin-eval measurement-plan ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown"
+    ],
+    "nextAction": {
+      "label": "Measure Real Token Usage",
+      "why": "Plugin Eval recommended Measure Real Token Usage from the current local state for this skill.",
+      "command": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+      "chatPrompt": "Measure the real token usage of this skill."
+    }
+  },
+  "nextAction": {
+    "label": "Fold the usage log back into analysis",
+    "why": "The Codex run produced observed usage, so the next step is to re-run analysis with those measurements.",
+    "command": "plugin-eval analyze ~/Code/ai-tools/skills/clarify --observed-usage ~/Code/ai-tools/skills/clarify/.plugin-eval/benchmark-usage.jsonl --format markdown",
+    "chatPrompt": "What should I run next?"
+  }
+}

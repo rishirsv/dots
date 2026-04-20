@@ -1,0 +1,30 @@
+{
+  "failure_modes": [
+    {
+      "id": "fm-1",
+      "name": "",
+      "check_type": "code",
+      "check": ""
+    }
+  ],
+  "scenarios": {
+    "calibration": [
+      {
+        "id": "cal-1",
+        "prompt_file": "",
+        "checks": [
+          "fm-1"
+        ]
+      }
+    ],
+    "holdout": [
+      {
+        "id": "hold-1",
+        "prompt_file": "",
+        "checks": [
+          "fm-1"
+        ]
+      }
+    ]
+  }
+}

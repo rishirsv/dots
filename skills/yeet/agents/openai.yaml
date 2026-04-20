@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yeet"
+  short_description: "Stage, commit, push, and open a safer PR"
+  default_prompt: "Inspect the current git state, isolate the intended diff if the worktree is dirty or detached, stage only the intended changes, create a focused commit, optionally rebase onto the current base branch when repo instructions or the user request call for it and doing so is clearly safe, then push the branch and open a draft PR with a detailed published-changes style body."

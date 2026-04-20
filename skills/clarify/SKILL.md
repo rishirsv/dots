@@ -1,107 +1,114 @@
 ---
 name: clarify
-description: "Use only when the user explicitly asks for clarifying questions before planning or implementation. Ask only the minimum questions needed to make the task safe to proceed."
+description: "Ask clarifying questions before planning or implementation. Use when the user wants the minimum questions needed to proceed safely, or explicitly wants a deeper grill-style interview. End with a short Common Understanding summary; create docs-only artifacts only when requested."
 ---
 
 # Clarify
 
 ## Goal
 
-Ask the minimum set of clarifying questions needed to avoid wrong work; do not start implementing until the must-have questions are answered (or the user explicitly approves proceeding with stated assumptions).
+Reduce ambiguity before planning or implementation, then leave a usable shared-understanding artifact.
 
-Use the RequestUserInput or AskUserQuestion tool to ask questions if available; otherwise, ask questions in plain text.
+This skill has two modes:
+- `standard`: ask the minimum clarifying questions needed to avoid wrong work
+- `grill`: interview relentlessly until there is shared understanding
 
-## Workflow
+Do not start implementing until the needed unknowns are resolved, or the user explicitly approves proceeding with stated assumptions.
 
-### 1) Decide whether the request is underspecified
+## Required Output
 
-Treat a request as underspecified if after exploring how to perform the work, some or all of the following are not clear:
+Always finish with `Common Understanding`, even if the request is still blocked.
 
-- Define the objective (what should change vs stay the same)
-- Define "done" (acceptance criteria, examples, edge cases)
-- Define scope (which files/components/users are in/out)
-- Define constraints (compatibility, performance, style, deps, time)
-- Identify environment (language/runtime versions, OS, build/test runner)
-- Clarify safety/reversibility (data migration, rollout/rollback, risk)
+Use this structure:
 
-If multiple plausible interpretations exist, assume it is underspecified.
+```md
+# Common Understanding
 
-### 2) Ask must-have questions first (keep it small)
+## Agreed
+- ...
 
-Ask 1-5 questions in the first pass. Prefer questions that eliminate whole branches of work.
+## Open
+- ...
 
-Make questions easy to answer:
+## Next
+- ...
+```
 
-- Optimize for scannability (short, numbered questions; avoid paragraphs)
-- Offer multiple-choice options when possible
-- Suggest reasonable defaults when appropriate (mark them clearly as the default/recommended choice; bold the recommended choice in the list, or if you present options in a code block, put a bold "Recommended" line immediately above the block and also tag defaults inside the block)
-- Include a fast-path response (e.g., reply `defaults` to accept all recommended/default choices)
-- Include a low-friction "not sure" option when helpful (e.g., "Not sure - use default")
-- Separate "Need to know" from "Nice to know" if that reduces friction
-- Structure options so the user can respond with compact decisions (e.g., `1b 2a 3c`); restate the chosen options in plain language to confirm
+Rules:
+- Keep it short, concrete, and decision-oriented.
+- Do not turn it into an execution plan.
+- Read `references/common-understanding.md` when you need guidance on what belongs in `Agreed`, `Open`, or `Next`, including canonical terms, ADRs, and doc propagation.
 
-Example:
+## Optional Durable Artifacts
 
-````text
-User: Review the plan for the weather feature and clarify.
+Create a durable artifact only when the user wants one.
 
-Assistant: I'll start with a small batch of questions. 😊
-Please answer with the option letter for each question.
+Artifact rules:
+- Write durable artifacts only under `docs/`; do not write source files from this skill.
+- Inspect existing repo docs first and preserve established canonical doc families when they exist.
+- If the user wants an artifact but does not specify which one, default to a context doc.
+- If the repo has a canonical spec template or docs skill, follow that existing structure instead of inventing a parallel format.
+- Default to a context doc when no stronger repo convention exists. Read `references/context-format.md` only if you need to create one.
 
-1) Which weather API should we use?
-   A. OpenWeatherMap
-   B. WeatherAPI
-   C. Weatherbit
-   D. Other: <free text>
+## Mode Selection
 
-User: 1B
+Default to `standard` mode.
 
-Assistant: Great - WeatherAPI is the recommended choice.
-Next, I'll ask about the weather data we need.
+Switch to `grill` mode only when the user explicitly signals they want deeper interrogation, for example:
+- `grill me`
+- `stress-test this`
+- `interview me on this`
+- `keep asking until we really understand it`
+- `question this thoroughly`
 
-### 3) Pause before acting
+Do not auto-switch into `grill` mode just because the task is vague.
 
-Until must-have answers arrive:
-- Do not run commands, edit files, or produce a detailed plan that depends on unknowns
-- Do perform a clearly labeled, low-risk discovery step only if it does not commit you to a direction (e.g., inspect repo structure, read relevant config files)
+## Shared Rules
 
-If the user explicitly asks you to proceed without answers:
-- State your assumptions as a short numbered list
-- Ask for confirmation; proceed only after they confirm or correct them
+- If a question can be answered with a quick, low-risk discovery read, inspect first instead of asking
+- Do not ask the user to decide things the repo or docs already answer
+- Prefer questions that eliminate whole branches of work
+- Sharpen fuzzy or overloaded language into canonical terms when that would reduce ambiguity
+- If the user's description conflicts with existing code or docs, surface the contradiction directly
+- Restate your understanding before proceeding
+- Do not produce a detailed plan or implementation direction that depends on unresolved must-have unknowns
+- Use the `RequestUserInput` or `AskUserQuestion` tool when available; otherwise, ask in plain text
 
-### 4) Confirm interpretation, then proceed
+## Standard Mode
 
-Once you have answers, restate the requirements in 1-3 sentences (including key constraints and what success looks like), then start work.
+- Use this when the goal is to get just enough information to proceed safely.
+- Treat the request as underspecified when multiple plausible interpretations still exist after low-risk discovery.
+- Ask 1-5 must-have questions first.
+- Make questions easy to answer: short numbered questions, multiple-choice when possible, reasonable defaults, and a compact reply path such as `defaults` or `1b 2a`.
+- Until must-have answers arrive, do not run commands, edit files, or produce a detailed plan that depends on unknowns.
+- If the user asks you to proceed anyway, state assumptions briefly and ask for confirmation.
+- Once the needed answers are in, restate the requirements in 1-3 sentences and end with `Common Understanding`.
 
-## Question templates
+## Grill Mode
 
-- "Before I start, I need: (1) ..., (2) ..., (3) .... If you don't care about (2), I will assume ...."
-- "Which of these should it be? A) ... B) ... C) ... (pick one)"
-- "What would you consider 'done'? For example: ..."
-- "Any constraints I must follow (versions, performance, style, deps)? If none, I will target the existing project defaults."
-- Use numbered questions with lettered options and a clear reply format
+- Use this only when the user explicitly wants deeper interrogation or pressure-testing.
+- Start with low-risk discovery if docs or code can answer obvious questions.
+- Walk the decision tree one branch at a time: problem, scope, stakeholders, core flow, constraints, edge cases, success criteria.
+- Ask one focused question at a time and keep going until you can describe the solution or direction without guessing.
+- For each question, provide your recommended answer or default.
+- Use concrete scenarios when they expose hidden ambiguity or ownership.
+- Stop when there is shared understanding, the user says to stop, or the remaining unknowns are clearly optional.
+- End with `Common Understanding` and create any requested docs artifact under `docs/`.
 
-```text
-1) Scope?
-a) Minimal change (default)
-b) Refactor while touching the area
-c) Not sure - use default
-2) Compatibility target?
-a) Current project defaults (default)
-b) Also support older versions: <specify>
-c) Not sure - use default
+## Anti-Patterns
 
-Reply with: defaults (or 1a 2a)
-````
-
-## Anti-patterns
-
-- Don't ask questions you can answer with a quick, low-risk discovery read (e.g., configs, existing patterns, docs).
-- Don't ask open-ended questions if a tight multiple-choice or yes/no would eliminate ambiguity faster.
+- Do not ask questions the repo can answer with a quick read
+- Do not ask open-ended questions if a tight choice would resolve ambiguity faster
+- Do not turn standard mode into a full interview
+- Do not turn grill mode into a batch questionnaire
+- Do not sharpen terminology by inventing a taxonomy the user does not need
+- Do not write docs artifacts unless the user asked for a durable artifact or clearly wants one
+- Do not create docs outside `docs/` for this skill
+- Do not proceed to implementation while must-have unknowns remain unresolved
 
 ## Tools
 
-Use the following tools to present the clarification questions to the user if available:
+Use the following tools to present clarification questions if available:
 
-- AskUserQuestion tool
-- RequestUserInput
+- `AskUserQuestion`
+- `RequestUserInput`

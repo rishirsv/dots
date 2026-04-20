@@ -1,6 +1,6 @@
 ---
 name: hard-cut
-description: "Use for pre-release or internal-draft refactors where the goal is one final shape and compatibility code should be removed, especially around schemas, contracts, persisted state, routing, configuration, feature flags, enum values, or architecture."
+description: "Enforce a hard-cut cleanup policy: keep one canonical implementation and delete compatibility, migration, fallback, adapter, coercion, and dual-shape code. Use for pre-release or internal-draft refactors where the goal is one final shape, especially when changing schemas, contracts, persisted state, routing, configuration, feature flags, enum/value sets, or architecture."
 ---
 
 # Hard-Cut Policy
@@ -12,7 +12,6 @@ Keep one canonical codepath. Remove old-shape handling. Do not preserve draft or
 ## Default assumption
 
 Treat previous shapes as internal draft shapes unless there is concrete evidence they are already:
-
 - persisted external or user data
 - on-disk or database state that must still load
 - a wire format used across process or service boundaries
@@ -62,7 +61,6 @@ Apply these rules in order:
 ## Deliverables
 
 Deliver only:
-
 - a minimal implementation that supports the canonical shape
 - updated tests for the canonical shape only
 - removal of obsolete legacy-shape tests
@@ -74,7 +72,6 @@ Deliver only:
 Make an exception only when removing the old shape would break already persisted external or user data, on-disk or database state, cross-boundary wire formats, or a real public contract.
 
 If such a boundary exists:
-
 - do not invent new compatibility layers elsewhere
 - name the exact file and function
 - describe the concrete persisted or public dependency

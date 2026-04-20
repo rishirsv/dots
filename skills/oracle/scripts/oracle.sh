@@ -2,11 +2,11 @@
 # oracle.sh - Convenience wrapper for build-context-zip.py
 #
 # Usage:
-#   oracle.sh --out <path> [--text-out <path>] --task "..." --entry "path::reason" [options]
+#   oracle.sh [--out <path>] [--text-out <path>] --task "..." --entry "path::reason" [options]
 #   oracle.sh --help
 #   oracle.sh --dry-run ...    # Preview manifest without writing zip
 #   oracle.sh --estimate-tokens ...  # Estimate token count
-#   oracle.sh --text-out ...         # Also write a ChatGPT-web-friendly text bundle
+#   oracle.sh --text-out ...         # Write a ChatGPT-web-friendly text bundle
 #
 # Environment:
 #   REPO_ROOT - Repository root (defaults to current directory)

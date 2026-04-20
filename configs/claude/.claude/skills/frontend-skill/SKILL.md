@@ -1,6 +1,6 @@
 ---
 name: frontend-skill
-description: Use when the task asks for a visually strong landing page, website, app, prototype, demo, or game UI. This skill enforces restrained composition, image-led hierarchy, cohesive content structure, tasteful motion, and conditional iOS/Expo-native guidance when the work actually targets iOS.
+description: Use when the task needs a visually strong landing page, website, app, prototype, demo, or game UI with clear art direction, hierarchy, restraint, and interface copy.
 ---
 
 # Frontend Skill
@@ -21,7 +21,7 @@ When guidance overlaps, resolve it in this order:
 
 1. repository-specific design context
 2. the general frontend guidance in this skill
-3. the iOS/Expo addendum, but only for iOS-native or Expo app work
+3. the interface-writing guidance when the task includes meaningful product copy
 
 ## Working Model
 
@@ -33,6 +33,21 @@ Before building, write three things:
 
 Each section gets one job, one dominant visual idea, and one primary takeaway or action.
 
+If the task includes meaningful interface copy, also define:
+
+- voice lens: the existing product voice or the 3-4 traits you will write against
+- copy hotspots: the strings that carry the experience, usually headline, CTA, empty state, error, onboarding, and settings text
+
+## Interface Writing
+
+Apply this section when the frontend task also includes copy inside the product surface: headlines, labels, buttons, empty states, onboarding text, errors, alerts, settings descriptions, helper text, or accessibility labels.
+
+- Treat interface writing as part of the design work, not filler added at the end.
+- First, search for voice guidance in `AGENTS.md`, `CLAUDE.md`, `docs/DESIGN.md`, the design system, or existing product copy.
+- If the task needs copy review, rewriting, or new UI text, read `references/interface-writing.md` before finalizing the screen.
+- Keep the scope to end-user product copy inside the interface. Do not let this skill drift into brand campaigns, blog writing, app store marketing, or general documentation unless the user explicitly asks.
+- For design-heavy tasks, keep the output visual-first and use the writing reference to sharpen the text, not to turn the response into a copy exercise.
+
 ## Beautiful Defaults
 
 - Start with composition, not components.
@@ -43,6 +58,23 @@ Each section gets one job, one dominant visual idea, and one primary takeaway or
 - Limit the system: two typefaces max, one accent color by default.
 - Default to cardless layouts. Use sections, columns, dividers, lists, and media blocks instead.
 - Treat the first viewport as a poster, not a document.
+- Break layout repetition early. Do not let section after section collapse into the same text-and-image split.
+- Pick a visual system and enforce it consistently across radius, stroke weight, shadows, and spacing.
+- Default away from `Inter` when the brief calls for a distinctive visual identity.
+
+## Layout Rhythm
+
+- Avoid repeating the same section architecture more than once in a row.
+- If one section uses a split layout, the next should shift the rhythm through stacking, overlap, pinning, asymmetry, or a single dominant media plane.
+- Prefer compositional variety that still feels like one system, not a grab bag of unrelated tricks.
+- When a page needs multiple showcase moments, give each section a different dominant device: poster hero, editorial stack, asymmetrical feature rail, pinned story band, or restrained grid.
+- Do not use "text left, image right" as the default answer.
+
+## Design System Discipline
+
+- Establish the core tokens up front: type pairing, radius family, border behavior, shadow language, and accent strategy.
+- Keep those choices consistent across the whole surface. Do not mix soft glass cards, brutal borders, and editorial minimalism in the same concept unless the brief clearly demands it.
+- For custom decorative SVGs or shapes, keep them geometric and support the layout. Do not invent literal illustrations unless the brief calls for illustration.
 
 ## Landing Pages
 
@@ -61,6 +93,7 @@ Hero rules:
 - Brand first, headline second, body third, CTA fourth.
 - No hero cards, stat strips, logo clouds, pill soup, or floating dashboards by default.
 - Keep headlines to roughly 2-3 lines on desktop and readable in one glance on mobile.
+- Give the H1 enough width to breathe so it does not collapse into a tall text wall.
 - Keep the text column narrow and anchored to a calm area of the image.
 - All text over imagery must maintain strong contrast and clear tap targets.
 
@@ -110,6 +143,7 @@ Imagery must do narrative work.
 - Do not use images with embedded signage, logos, or typographic clutter fighting the UI.
 - Do not generate images with built-in UI frames, splits, cards, or panels.
 - If multiple moments are needed, use multiple images, not one collage.
+- Treat images before placing them. Crop for calm text zones and use tonal adjustments when needed so the page feels art-directed rather than stock.
 
 The first viewport needs a real visual anchor. Decorative texture is not enough.
 
@@ -121,6 +155,7 @@ The first viewport needs a real visual anchor. Decorative texture is not enough.
 - Cut repetition between sections.
 - Do not include prompt language or design commentary into the UI.
 - Give every section one responsibility: explain, prove, deepen, or convert.
+- When the task is copy-sensitive, use `references/interface-writing.md` to review voice, buttons, errors, empty states, onboarding, and settings text before shipping.
 
 If deleting 30 percent of the copy improves the page, keep deleting.
 
@@ -165,58 +200,11 @@ Motion rules:
 - consistent across the page
 - removed if ornamental only
 
-## iOS And Expo Addendum
+## Spacing And Overflow
 
-Apply this section only when the work is one of these:
-
-- a native iOS interface
-- an Expo or React Native app
-- a cross-platform app explicitly trying to feel iOS-native
-
-Do not apply these rules to regular web work, desktop web apps, or non-Expo stacks unless the user explicitly asks for iOS conventions.
-
-Use the iOS reference material in `references/ios/` only when it is relevant to the task:
-
-- `animations.md`
-- `controls.md`
-- `form-sheet.md`
-- `gradients.md`
-- `icons.md`
-- `media.md`
-- `route-structure.md`
-- `search.md`
-- `storage.md`
-- `tabs.md`
-- `toolbar-and-headers.md`
-- `visual-effects.md`
-- `webgpu-three.md`
-- `zoom-transitions.md`
-
-For iOS and Expo work:
-
-- keep the repo's design language, but express it through native-feeling spacing, typography, materials, and motion
-- start with Expo Go before recommending custom native builds
-- use Expo Router conventions and keep routes inside `app`
-- remove old route files when navigation is restructured
-- prefer path aliases over brittle relative imports during refactors
-- prefer current Expo packages and APIs over removed or legacy React Native or Expo modules
-- prefer `process.env.EXPO_OS` over `Platform.OS`
-- prefer `useWindowDimensions` over `Dimensions.get()`
-- do not use intrinsic web elements like `img` or `div` in native surfaces
-- treat safe-area handling as mandatory
-- default route content to a `ScrollView`, `FlatList`, or `SectionList` with `contentInsetAdjustmentBehavior="automatic"` when appropriate
-- prefer inline styles for local React Native styling, and use `boxShadow` instead of legacy shadow or elevation props
-- use continuous corner curves for rounded surfaces unless a capsule is intended
-- use stack titles instead of hand-rolled page headers
-- use utility copy and selectable text where it improves real product use
-- add haptics, context menus, previews, and native search only when they meaningfully improve the flow
-- prefer system-feeling controls, materials, tabs, and headers over custom chrome when the app wants an Apple-native feel
-
-When Expo UI or SwiftUI-style primitives are part of the task:
-
-- verify the current Expo UI API before coding against it
-- wrap SwiftUI trees in `Host`
-- only recommend local native extensions when the required component or modifier is genuinely missing, and call that out explicitly
+- Use generous vertical spacing so major sections read like distinct chapters rather than stacked widgets.
+- Check horizontal overflow whenever the concept uses off-axis media, absolute positioning, rotation, or marquee motion.
+- Treat overflow bugs as a design failure, not a QA footnote.
 
 ## Hard Rules
 
@@ -230,6 +218,9 @@ When Expo UI or SwiftUI-style primitives are part of the task:
 - No split-screen hero unless text sits on a calm, unified side.
 - No more than two typefaces without a clear reason.
 - No more than one accent color unless the product already has a strong system.
+- No six-line hero headlines.
+- No arbitrary badge spam around the headline.
+- No accidental horizontal scroll.
 
 ## Reject These Failures
 
@@ -240,16 +231,21 @@ When Expo UI or SwiftUI-style primitives are part of the task:
 - Sections that repeat the same mood statement
 - Carousel with no narrative purpose
 - App UI made of stacked cards instead of layout
-- iOS-native rules applied blindly to non-iOS work
-- Web conventions copied into native Expo screens without adaptation
+- Platform-specific visual tropes applied where they do not serve the product
+- Repeating the same section composition down the whole page
+- Inconsistent radius, shadow, or stroke language
+- Headline wrapped into a tall text block because the container is too narrow
 
 ## Litmus Checks
 
 - Is the brand or product unmistakable in the first screen?
 - Is there one strong visual anchor?
 - Can the page be understood by scanning headlines only?
+- Do the headline, primary action, and support text tell the person what to do next?
+- Does the hero headline stay within 2-3 lines at common desktop widths?
 - Does each section have one job?
 - Are cards actually necessary?
 - Does motion improve hierarchy or atmosphere?
 - Would the design still feel premium if all decorative shadows were removed?
-- If this is iOS or Expo work, do the platform-specific choices improve the product instead of merely signaling "Apple"?
+- Does the layout rhythm change enough from section to section to avoid a template feel?
+- Are radius, borders, shadows, and accents behaving like one deliberate system?

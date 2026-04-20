@@ -40,3 +40,8 @@ pycache
 
 # Workspace
 sandbox
+
+# plugin-eval repo-side benchmark outputs
+/tests/plugin-eval/*/latest/
+/tests/plugin-eval/*/runs/
+/tests/plugin-eval/site/

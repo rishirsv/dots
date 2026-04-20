@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skill Autoresearch"
+  short_description: "Improve a skill with measured checks"
+  default_prompt: "Resolve the target skill, choose a fast or deep eval loop, establish a baseline, and keep only rewrites that survive calibration and holdout."
+
+policy:
+  allow_implicit_invocation: false

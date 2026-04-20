@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tech Debt"
+  short_description: "Clean up duplicate code debt"
+  default_prompt: "Use $tech-debt to review this session's changes, remove redundant duplicate code, consolidate it into shared modules, and verify the cleanup."

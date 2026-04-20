@@ -1,7 +1,7 @@
 interface:
   display_name: "Clarify"
-  short_description: "Ask only the questions needed to proceed"
-  default_prompt: "Ask the minimum clarifying questions needed to make this task safe to plan or implement."
+  short_description: "Clarify requests with shared summary and docs"
+  default_prompt: "Use $clarify to ask only the needed questions, sharpen fuzzy language, leave a short Common Understanding summary, and optionally create a docs artifact."
 
 policy:
   allow_implicit_invocation: false

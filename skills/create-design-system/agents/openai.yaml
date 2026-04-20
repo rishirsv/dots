@@ -1,0 +1,7 @@
+interface:
+  display_name: "Create Design System"
+  short_description: "Build reusable brand design systems"
+  default_prompt: "Use $create-design-system to build or refresh a reusable brand design system from repo, Figma, and asset sources."
+
+policy:
+  allow_implicit_invocation: false

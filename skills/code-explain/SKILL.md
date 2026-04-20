@@ -177,6 +177,7 @@ Avoid:
 For code walkthroughs:
 
 - focus on purpose, flow, and important files
+- add a small diagram in the chat when it would make a data flow or handoff easier to follow
 - skip tiny implementation details unless they change the meaning
 
 For diff explanations:
@@ -189,6 +190,7 @@ For architecture and data model explanations:
 
 - use a small number of parts
 - explain relationships in human terms
+- use a simple diagram when the user would understand the flow faster by seeing it
 - say what each part is for
 
 For errors:

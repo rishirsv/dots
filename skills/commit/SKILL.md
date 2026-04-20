@@ -42,6 +42,7 @@ git diff --staged -- path/to/file
 - Ignore unrelated files and changes you did not make.
 - Prefer explicit path staging over broad staging.
 - If the user gave an exact scope or exact message, follow it unless it is clearly wrong.
+- If the user named a clear slice such as a feature, screen, or directory, infer that as the intended commit scope and proceed unless the diff contradicts it.
 - If there is already a clean staged set that matches the request, prefer committing it instead of restaging everything.
 - If there is nothing to commit, say so plainly and stop.
 
@@ -51,6 +52,7 @@ git diff --staged -- path/to/file
 - Never amend, rebase, squash, or push unless asked.
 - Never use `git add .` or `git commit -a` for this skill.
 - Avoid interactive git flows by default.
+- Do not stop just because the worktree is dirty or detached if the intended commit subset is still obvious.
 - If only part of a file should be committed and there is no safe non-interactive split available, stop and ask instead of guessing.
 - If staged changes appear to include unrelated work, do not silently commit them.
 - If multiple plausible commit scopes exist, ask one concise question before proceeding.
@@ -128,4 +130,5 @@ git commit -m "subject" -m "optional body"
 - If hooks fail, show the failure, fix it if straightforward, then retry.
 - If git refuses to commit because nothing is staged, re-check scope instead of forcing it.
 - If the branch or worktree state looks unusual but not dangerous, state the assumption you are making.
+- If the request is part of a larger "open a PR" flow, treat a focused commit as a stepping stone, not a blocker that requires a separate user decision.
 - If proceeding could capture someone else's work, stop and ask.

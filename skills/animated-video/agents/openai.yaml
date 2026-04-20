@@ -1,0 +1,7 @@
+interface:
+  display_name: "Animated Video"
+  short_description: "Create HTML motion design pieces"
+  default_prompt: "Use $animated-video to create or refine this timeline-based animated HTML video or motion piece."
+
+policy:
+  allow_implicit_invocation: false

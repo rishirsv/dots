@@ -1,4 +1,0 @@
-interface:
-  display_name: "Auto-Research Eval"
-  short_description: "Optimize a skill with repeated eval-driven runs"
-  default_prompt: "Run repeated evals against this skill, score outputs with pass or fail criteria, mutate the prompt, and keep the strongest improvement."

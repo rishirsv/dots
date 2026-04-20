@@ -1,4 +1,4 @@
 interface:
   display_name: "Commit"
   short_description: "Create a safe, focused git commit"
-  default_prompt: "Inspect the current changes, stage only the intended files, and create one clear git commit."
+  default_prompt: "Inspect the current changes, infer the intended scope, stage only the relevant files even in a mixed worktree when that scope is obvious, and create one clear git commit."

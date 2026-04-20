@@ -1,4 +1,0 @@
-interface:
-  display_name: "Skill Audit"
-  short_description: "Audit a skill for release readiness"
-  default_prompt: "Audit this skill for release readiness, instruction quality, scope clarity, and resource design."

@@ -1,0 +1,72 @@
+{
+  "kind": "plugin-eval-benchmark",
+  "schemaVersion": 2,
+  "version": 2,
+  "targetKind": "skill",
+  "targetName": "clarify",
+  "runner": {
+    "type": "codex-cli",
+    "model": "gpt-5.4-mini",
+    "sandbox": "workspace-write",
+    "approvalPolicy": "never",
+    "extraArgs": []
+  },
+  "workspace": {
+    "sourcePath": "/Users/rishi/Code/ai-tools",
+    "setupMode": "copy",
+    "preserve": "on-failure"
+  },
+  "targetProvisioning": {
+    "mode": "isolated-skill-home"
+  },
+  "verifiers": {
+    "commands": []
+  },
+  "notes": [
+    "Edit workspace.sourcePath so it points at the repo or template you want Codex to work inside.",
+    "Edit the scenarios so they match real tasks instead of generic starter prompts.",
+    "Benchmark means real codex exec runs now. There is no simulated dry-run mode."
+  ],
+  "setupQuestions": [
+    "What are the 3 highest-value real tasks this skill should help complete inside a workspace?",
+    "Which scenario is the must-pass end-to-end task for this skill?",
+    "What output should exist on disk if the scenario succeeds?",
+    "Which verification command would tell you the result is actually usable?",
+    "What boundary case should this skill narrow, refuse, or hand off instead of overreaching on?"
+  ],
+  "scenarios": [
+    {
+      "id": "repo-context-doc",
+      "title": "Repo-grounded context artifact",
+      "purpose": "Check whether the skill can inspect repo evidence, narrow ambiguity, and create a useful docs-only context artifact without drifting into implementation planning.",
+      "userInput": "Use the local Codex skill \"clarify\". Review the current clarify skill and its references, then create a docs-only artifact at docs/artifacts/contexts/clarify-contract-context.md that captures the current shared understanding of what this skill is for, what its required output is, and when it should create optional docs artifacts. End with a short Common Understanding summary in your final answer. Do not edit source files outside the new docs artifact.",
+      "successChecklist": [
+        "A new docs artifact exists at docs/artifacts/contexts/clarify-contract-context.md.",
+        "The artifact is grounded in repo evidence rather than generic advice.",
+        "The final answer ends with a short Common Understanding summary."
+      ]
+    },
+    {
+      "id": "standard-mode-common-understanding",
+      "title": "Minimal-question clarification summary",
+      "purpose": "Measure whether the skill can stay lightweight, inspect first, and produce a crisp Common Understanding when the request is underspecified but partially answerable from repo context.",
+      "userInput": "Use the local Codex skill \"clarify\". I want to improve this skill's docs artifact behavior, but I do not want implementation planning. Inspect the repo first, then write a short note at docs/artifacts/contexts/clarify-doc-routing-context.md that states what is agreed, what is still open, and what the next durable doc should be if a user asks for an unspecified artifact. Keep it concise and do not create any plan file.",
+      "successChecklist": [
+        "A concise docs artifact exists at docs/artifacts/contexts/clarify-doc-routing-context.md.",
+        "The result stays in clarification territory and does not become an execution plan.",
+        "The output distinguishes agreed context from remaining open questions."
+      ]
+    },
+    {
+      "id": "boundary-narrowing",
+      "title": "Boundary narrowing on implementation-like ask",
+      "purpose": "Check whether the skill narrows the request honestly when the ask starts to look like implementation instead of clarification.",
+      "userInput": "This task is only a partial match for the local Codex skill \"clarify\". I am tempted to jump into implementing a larger rewrite of the clarify skill, but first I want only the clarification slice. Inspect the repo and create docs/artifacts/contexts/clarify-boundary-context.md that says what is already decided, what still needs clarification before implementation, and what the next artifact should be. Do not edit SKILL.md or any source files.",
+      "successChecklist": [
+        "A docs artifact exists at docs/artifacts/contexts/clarify-boundary-context.md.",
+        "The run narrows the task to clarification instead of drifting into implementation.",
+        "Any edits stay aligned with the justified clarification-only scope."
+      ]
+    }
+  ]
+}

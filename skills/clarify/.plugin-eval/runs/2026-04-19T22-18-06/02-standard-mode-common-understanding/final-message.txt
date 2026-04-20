@@ -1,0 +1,8 @@
+I inspected `skills/clarify/SKILL.md` and its routing references first, then wrote the note at [/private/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-standard-mode-common-understanding-00xWXS/workspace/docs/artifacts/contexts/clarify-doc-routing-context.md](/private/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-standard-mode-common-understanding-00xWXS/workspace/docs/artifacts/contexts/clarify-doc-routing-context.md).
+
+It captures:
+- Agreed: `clarify` only writes durable docs when asked, and unspecified artifacts route to a context doc unless a stronger canonical family exists.
+- Open: which topic-specific doc families, if any, should override that default in this repo.
+- Next: for an unspecified artifact, create the topic context doc under `docs/artifacts/contexts/`, not a plan file.
+
+No plan file was created.

@@ -1,27 +1,27 @@
 # Custom Prompt Guide
 
-Use a custom prompt when none of the bundled templates fit cleanly.
+Use a custom prompt only when none of the bundled templates fit cleanly.
 
-The goal is not to write a long prompt. The goal is to assemble the smallest set of prompt blocks that makes the downstream model reliable, grounded, and easy to use.
+The goal is not to write a long prompt. The goal is to assemble the smallest prompt that still makes the downstream model reliable, grounded, and easy to use.
 
-See [prompt-blocks.md](prompt-blocks.md) for the reusable block catalog.
+See [prompt-blocks.md](prompt-blocks.md) for reusable blocks.
 
 ## Core Rules
 
 - Start with one concrete task and one desired end state.
-- Use XML blocks so the prompt structure is stable.
+- Use XML blocks so the prompt shape is stable.
 - Add an explicit output contract instead of vague prose.
-- Add grounding and verification only where the task needs them.
-- Tell the model to proceed with assumptions and list unknowns instead of asking questions.
+- Tell the model to proceed with assumptions and list unknowns instead of asking routine questions.
+- Keep the prompt short enough that you can also show it inline in chat.
 
-## Minimum Viable Custom Prompt
+## Minimum Viable Review Prompt
 
 ```xml
 <task>
 You are {ROLE}.
 
 I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
+Start by reading `MANIFEST.md` at the root of the archive.
 
 {TASK_DESCRIPTION}
 </task>
@@ -39,93 +39,38 @@ Only stop to ask questions when a missing detail changes correctness or safety m
 </default_follow_through_policy>
 ```
 
-That is often enough. Only add more blocks if they change quality materially.
-
-## Block Selection
-
-Add these blocks when needed:
-
-- `compact_output_contract`: when concise prose is better than a schema
-- `verification_loop`: when correctness matters and the model should sanity-check itself before answering
-- `completeness_contract`: when the task should not stop at the first plausible answer
-- `missing_context_gating`: when guessing would be dangerous
-- `grounding_rules`: when claims must stay tied to repo evidence
-- `citation_rules`: when using external research or quoted material
-- `action_safety`: when recommending code or config changes
-- `research_mode`: when comparing options or making recommendations
-- `dig_deeper_nudge`: when you want a more adversarial review for hidden regressions
-
-## Recommended Assembly Order
-
-Keep blocks in a predictable order:
-
-1. `<task>`
-2. `<structured_output_contract>` or `<compact_output_contract>`
-3. `<default_follow_through_policy>`
-4. `<completeness_contract>` and/or `<verification_loop>` if needed
-5. `<missing_context_gating>`, `<grounding_rules>`, or `<citation_rules>` if needed
-6. `<action_safety>`, `<research_mode>`, or other task-specific blocks if needed
-
-## Good vs Bad
-
-### Task framing
-
-Good:
+## Minimum Viable Ultraplan Prompt
 
 ```xml
 <task>
-Review the auth middleware and session handling in this repository for RBAC bypass risks.
-Focus on whether the current implementation can allow unauthorized access.
+You are {ROLE}.
+
+I am uploading `context.txt` containing a curated repository slice and manifest.
+Treat `context.txt` as authoritative.
+Start by reading the manifest section at the top of `context.txt`.
+
+{TASK_DESCRIPTION}
 </task>
-```
 
-Bad:
-
-```text
-Look at the auth stuff and tell me what you think.
-```
-
-### Output contract
-
-Good:
-
-```xml
 <structured_output_contract>
 Return:
-1. top findings ordered by severity
-2. evidence with file paths
-3. smallest safe remediations
+1. current understanding
+2. assumptions and unknowns
+3. recommended approach
+4. ## Approved Plan
+5. validation checklist
 </structured_output_contract>
 ```
 
-Bad:
+## Add More Only When Needed
 
-```text
-Give me your thoughts.
-```
+Add these blocks when they materially improve quality:
 
-### Grounding
-
-Good:
-
-```xml
-<grounding_rules>
-Ground every claim in the uploaded bundle.
-If a point is an inference, label it clearly.
-</grounding_rules>
-```
-
-Bad:
-
-```text
-Tell me exactly why production failed.
-```
-
-## Use Custom Prompts When
-
-- the task spans multiple domains and the canned templates feel awkward
-- you need a specialized output format
-- you are critiquing a prompt, workflow, or agent instruction set
-- the recommendation depends on comparing options with explicit tradeoffs
+- `verification_loop`: correctness-sensitive tasks
+- `completeness_contract`: planning or multi-step diagnosis
+- `missing_context_gating`: dangerous to guess
+- `grounding_rules`: repo-based critique, review, or diagnosis
+- `action_safety`: change recommendations that could sprawl
+- `research_mode`: tradeoff-heavy recommendation work
 
 If a bundled template already fits, use it instead of rebuilding the prompt from scratch.

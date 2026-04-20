@@ -1,4 +1,0 @@
-interface:
-  display_name: "Create PR"
-  short_description: "Publish a concise, reviewer-friendly PR"
-  default_prompt: "Inspect the current branch, write a concise PR title and body, create the pull request with gh, and optionally add @codex review after creation."

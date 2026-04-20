@@ -1,11 +1,11 @@
 # Oracle Prompt Templates
 
-Use these templates to generate `prompt.md` for ChatGPT Pro or another external expert model.
+Use these templates to generate `prompt.md` for Oracle handoffs.
 
-Review-oriented templates assume the downstream model sees only `context.zip`.
-The Ultraplan template assumes the downstream model sees only `context.txt`.
-Copy the smallest template that fits, then trim anything you do not need.
-For reusable building blocks, see [prompt-blocks.md](prompt-blocks.md).
+- `review` templates assume the downstream model sees only `context.zip`
+- `ultraplan` templates assume the downstream model sees only `context.txt`
+
+Copy the smallest template that fits, then trim anything that does not matter for the task.
 
 ## Role Values
 
@@ -16,11 +16,7 @@ Replace `{ROLE}` with one of these:
 | Code review | a staff engineer doing a careful code review for correctness and maintainability |
 | Debugging | a senior engineer debugging a tricky issue with limited context |
 | Architecture | a principal engineer reviewing system design |
-| Security | a security engineer threat-modeling and reviewing deployment hardening |
-| Performance | a performance engineer identifying bottlenecks and optimization opportunities |
-| Data/SQL | a database engineer reviewing correctness and performance |
-| UI/UX | an expert UI/UX designer doing a rigorous visual and interaction review |
-| Prompting | a prompt engineer improving Codex or GPT-5.4 prompts for reliability and clarity |
+| Prompting | a prompt engineer improving Codex or GPT prompts for reliability and clarity |
 | Planning | a principal engineer creating a high-confidence implementation plan for a complex change in an unfamiliar codebase |
 
 ## Ultraplan Template
@@ -42,11 +38,6 @@ Task: {TASK}
 Success criteria: {SUCCESS_CRITERIA}
 Constraints: {CONSTRAINTS}
 Draft plan to refine, if provided: {SEED_PLAN}
-
-Repository-specific preferences:
-- Prefer the smallest change that fits the existing codebase.
-- Avoid fallback solutions unless the task explicitly requires them.
-- Separate observed facts, assumptions, and recommendations.
 </task>
 
 <structured_output_contract>
@@ -71,12 +62,6 @@ Default to the most reasonable low-risk interpretation and keep going.
 Only stop to ask questions when a missing detail changes correctness or safety materially.
 </default_follow_through_policy>
 
-<completeness_contract>
-Resolve the planning task fully before stopping.
-Do not stop at the first plausible plan.
-Check for edge cases, sequencing issues, missing validations, and risky assumptions before finalizing.
-</completeness_contract>
-
 <grounding_rules>
 Ground every concrete claim in `context.txt`.
 Cite file paths for codebase claims.
@@ -85,24 +70,22 @@ If a point is an inference, label it clearly.
 
 <action_safety>
 Keep the recommended plan tightly scoped to the stated task.
-Avoid unrelated refactors, renames, or cleanup unless they are required for correctness.
-Call out risky or irreversible actions explicitly.
+Avoid unrelated refactors or cleanup unless they are required for correctness.
 </action_safety>
 
 <verification_loop>
-Before finalizing, verify that the plan matches the uploaded repository slice and the requested outcome.
-If the first draft is underspecified, revise it instead of stopping early.
+Before finalizing, verify that the plan matches the uploaded repository slice and requested outcome.
 </verification_loop>
 ```
 
-## Code Review Template
+## Review Template
 
 ```xml
 <task>
 You are {ROLE}.
 
 I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
+Start by reading `MANIFEST.md` at the root of the archive.
 
 Review the change, design, or implementation described below.
 Focus on correctness, maintainability, safety, and fit with the existing codebase.
@@ -117,7 +100,7 @@ Return:
 1. short summary of what the code does and your overall assessment
 2. findings ordered by severity with why each matters
 3. smallest safe fixes or follow-ups
-4. overall correctness verdict: Correct, Probably correct with caveats, or Not correct
+4. overall verdict: Correct, Probably correct with caveats, or Not correct
 </structured_output_contract>
 
 <default_follow_through_policy>
@@ -131,10 +114,6 @@ For concrete claims, cite file paths and line numbers when available.
 If a point is an inference, label it clearly.
 </grounding_rules>
 
-<dig_deeper_nudge>
-After finding the first plausible issue, also check for second-order regressions, empty-state behavior, retries, stale state, and rollback paths.
-</dig_deeper_nudge>
-
 <verification_loop>
 Before finalizing, verify that each finding is material, actionable, and supported by the bundle.
 </verification_loop>
@@ -147,7 +126,7 @@ Before finalizing, verify that each finding is material, actionable, and support
 You are {ROLE}.
 
 I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
+Start by reading `MANIFEST.md` at the root of the archive.
 
 Diagnose the most likely root cause of this issue.
 
@@ -181,140 +160,16 @@ If required context is absent from the bundle, state exactly what remains unknow
 Ground every claim in the uploaded bundle.
 Prefer falsifiable hypotheses over broad speculation.
 </grounding_rules>
-
-<verification_loop>
-Before finalizing, verify that the proposed root cause matches the observed evidence.
-</verification_loop>
 ```
 
-## Security Review Template
+## Recommendation Template
 
 ```xml
 <task>
 You are {ROLE}.
 
 I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
-
-Review this repository slice for material security risks.
-
-Scope: {SECURITY_SCOPE}
-Specific concerns: {CONCERNS}
-</task>
-
-<structured_output_contract>
-Return:
-1. short threat model summary
-2. findings ordered by severity
-3. impact and exploitability for each finding
-4. smallest safe remediations
-5. overall verdict: Secure, Needs remediation, or Insufficient context
-</structured_output_contract>
-
-<default_follow_through_policy>
-Do not ask questions; proceed with assumptions and label them.
-</default_follow_through_policy>
-
-<grounding_rules>
-Ground every claim in the uploaded bundle.
-For each finding, cite the relevant file paths.
-</grounding_rules>
-
-<dig_deeper_nudge>
-Check authentication, authorization, trust boundaries, input validation, secrets handling, and unsafe defaults before finalizing.
-</dig_deeper_nudge>
-
-<verification_loop>
-Before finalizing, verify that each finding is both material and supported by the bundle.
-</verification_loop>
-```
-
-## Performance Audit Template
-
-```xml
-<task>
-You are {ROLE}.
-
-I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
-
-Review this repository slice for meaningful performance or scalability issues.
-
-Performance scope: {PERF_SCOPE}
-Known symptoms: {SYMPTOMS}
-Constraints: {CONSTRAINTS}
-</task>
-
-<structured_output_contract>
-Return:
-1. executive summary of the biggest bottlenecks
-2. hotspots ordered by likely impact
-3. concrete optimization recommendations
-4. verification ideas or measurements to confirm the recommendation
-5. tradeoffs or risks
-</structured_output_contract>
-
-<default_follow_through_policy>
-Do not ask questions; proceed with assumptions and label them.
-</default_follow_through_policy>
-
-<grounding_rules>
-Ground every claim in the uploaded bundle.
-Focus on issues with likely measurable impact; avoid speculative micro-optimizations.
-</grounding_rules>
-
-<verification_loop>
-Before finalizing, verify that the recommended optimizations are proportionate to the evidence.
-</verification_loop>
-```
-
-## Architecture Review Template
-
-```xml
-<task>
-You are {ROLE}.
-
-I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
-
-Review the architecture or design represented in this repository slice.
-
-Architecture scope: {ARCH_SCOPE}
-What I want validated: {VALIDATION_GOALS}
-Constraints: {CONSTRAINTS}
-</task>
-
-<structured_output_contract>
-Return:
-1. current architecture summary
-2. strengths worth keeping
-3. structural concerns or design risks
-4. prioritized recommendations
-5. overall verdict: Sound architecture, Needs refactoring, or Major concerns
-</structured_output_contract>
-
-<default_follow_through_policy>
-Do not ask questions; proceed with assumptions and label them.
-</default_follow_through_policy>
-
-<grounding_rules>
-Ground every claim in the uploaded bundle.
-Focus on structural concerns, boundaries, dependencies, and changeability.
-</grounding_rules>
-
-<verification_loop>
-Before finalizing, verify that the recommendations match the actual architecture shown in the bundle rather than a hypothetical redesign.
-</verification_loop>
-```
-
-## General Recommendation Template
-
-```xml
-<task>
-You are {ROLE}.
-
-I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
+Start by reading `MANIFEST.md` at the root of the archive.
 
 Use the uploaded repository context to answer this task:
 {TASK}
@@ -338,7 +193,6 @@ Do not ask questions; proceed with assumptions and label them.
 
 <research_mode>
 Separate observed facts, reasoned inferences, and open questions.
-Prefer breadth first, then go deeper only where the evidence changes the recommendation.
 </research_mode>
 
 <grounding_rules>
@@ -346,16 +200,14 @@ Ground repo-specific claims in the uploaded bundle.
 </grounding_rules>
 ```
 
-## Prompt-Patching Template
-
-Use this when the real object of review is a prompt, skill, or agent instruction set.
+## Prompt-Critique Template
 
 ```xml
 <task>
 You are {ROLE}.
 
 I am uploading `context.zip` containing repository files. Treat those files as authoritative.
-Start by reading `context/MANIFEST.md`.
+Start by reading `MANIFEST.md` at the root of the archive.
 
 Diagnose why this prompt, skill, or instruction set is underperforming and propose the smallest high-leverage changes.
 
