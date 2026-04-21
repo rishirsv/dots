@@ -1,11 +1,11 @@
 ---
-name: code-explain
-description: Use only when the user explicitly asks for a plain-language explanation of code, diffs, files, data models, errors, or architecture. Read the real code first and explain it for a non-technical audience.
+name: explain
+description: Use when the user explicitly asks for a plain-language explanation of technical artifacts such as code, diffs, files, configs, data models, workflows, errors, or architecture. Read the real artifacts first and explain them for a non-technical audience.
 ---
 
-# Code Explain
+# Explain
 
-Explain technical work in simple, short, plain English.
+Explain technical systems, changes, and artifacts in simple, short, plain English.
 
 Stay in explanation mode:
 
@@ -31,9 +31,9 @@ If a technical term matters, explain it in one short everyday sentence.
 
 Always inspect the real context first when possible:
 
-- read the relevant file
+- read the relevant file or artifact
 - inspect the diff
-- identify the changed files
+- identify the changed artifacts
 - understand the purpose before explaining
 
 Then explain only what helps the user understand the change or system.
@@ -42,16 +42,16 @@ Then explain only what helps the user understand the change or system.
 
 Choose the lightest mode that fits the request.
 
-### 1. Code walkthrough
+### 1. Artifact walkthrough
 
-Use when the user wants to understand a file, function, module, or flow.
+Use when the user wants to understand a file, function, module, config, API shape, or flow.
 
 Explain:
 
 - what this part does
 - the main steps
-- how data moves through it
-- what the important files are
+- how information moves through it
+- what the important files or artifacts are
 
 ### 2. Diff explanation
 
@@ -59,8 +59,8 @@ Use when the user wants to understand what changed.
 
 Explain:
 
-- all changed files that matter to the request
-- what changed in each file
+- all changed files or artifacts that matter to the request
+- what changed in each one
 - why that change was made
 - the practical effect of the change
 
@@ -97,6 +97,17 @@ Explain:
 - what part of the system is involved
 - the likely fix direction
 
+### 6. Workflow explanation
+
+Use when the user wants to understand a process, handoff, or integration.
+
+Explain:
+
+- the main steps in order
+- what owns each step
+- where inputs come from
+- where outputs go
+
 ## Output rules
 
 - Default to a short explanation.
@@ -105,6 +116,7 @@ Explain:
 - Avoid sounding academic, padded, or over-careful.
 - Do not dump raw code unless a tiny snippet makes the explanation clearer.
 - If the request is about a diff or change, mention the files directly.
+- If structure, flow, or relationships are easier to see than describe, include a small diagram.
 
 ## Recommended structure
 
@@ -129,6 +141,10 @@ Then include only the sections that help:
 
 [Short step-by-step explanation]
 
+## Diagram
+
+[Small diagram only when it helps]
+
 ## Why It Matters
 
 [Practical impact]
@@ -138,16 +154,16 @@ Then include only the sections that help:
 [One short takeaway]
 ```
 
-## File coverage rules
+## Artifact coverage rules
 
 When explaining a diff or change:
 
-- include all changed files that matter to the requested scope
+- include all changed files or artifacts that matter to the requested scope
 - if the user asks for all changed files, list all of them
-- for each file, say what changed in plain language
-- group low-importance files together when that keeps the explanation shorter
+- for each one, say what changed in plain language
+- group low-importance items together when that keeps the explanation shorter
 
-Do not list files just to be exhaustive if they add no understanding, unless the user explicitly asked for the full list.
+Do not list items just to be exhaustive if they add no understanding, unless the user explicitly asked for the full list.
 
 ## Simplicity rules
 
@@ -157,10 +173,12 @@ Translate technical ideas into everyday language:
 - "architecture" becomes "how the main parts are split up and connected"
 - "validation" becomes "the checks that make sure the input is acceptable"
 - "diff" becomes "the exact code changes"
+- "workflow" becomes "the step-by-step process"
 
 Prefer:
 
 - "This file decides..."
+- "This step hands off..."
 - "This part stores..."
 - "This change makes..."
 - "Before, it did X. Now it does Y."
@@ -174,7 +192,7 @@ Avoid:
 
 ## Practical guidance by mode
 
-For code walkthroughs:
+For artifact walkthroughs:
 
 - focus on purpose, flow, and important files
 - add a small diagram in the chat when it would make a data flow or handoff easier to follow
@@ -186,11 +204,12 @@ For diff explanations:
 - then cover the changed files
 - finish with the real-world impact
 
-For architecture and data model explanations:
+For architecture, data model, and workflow explanations:
 
 - use a small number of parts
 - explain relationships in human terms
-- use a simple diagram when the user would understand the flow faster by seeing it
+- use a simple diagram when the user would understand the shape or flow faster by seeing it
+- prefer Mermaid for boxes, arrows, ownership, and relationships when the chat supports it
 - say what each part is for
 
 For errors:
@@ -199,12 +218,19 @@ For errors:
 - say where it likely broke
 - say what kind of fix is needed
 
+## Diagram guidance
+
+- Keep diagrams small and direct.
+- Show only the parts needed for the explanation.
+- Prefer simple boxes and arrows over detailed notation.
+- Use diagrams most often for architecture, data models, workflows, integrations, and state changes.
+
 ## Final check
 
 Before finishing, make sure the explanation answers:
 
 1. What is this?
 2. What changed or how does it work?
-3. Which files matter?
+3. Which files or artifacts matter?
 4. Why should the user care?
 5. Could a non-technical person follow this without re-reading it three times?

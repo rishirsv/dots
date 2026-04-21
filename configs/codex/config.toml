@@ -27,12 +27,16 @@ writable_roots = []
 apps = true
 multi_agent = true
 prevent_idle_sleep = true
+memories = true
 rmcp_client = true
 shell_snapshot = true
 steer = true
 undo = true
 unified_exec = true
 voice_transcription = true
+
+[memories]
+consolidation_model = "gpt-5.4-mini"
 
 ###############################################################################
 # Agents
