@@ -1,7 +1,7 @@
 interface:
   display_name: "Brainstorm"
-  short_description: "Explore ideas through structured conversation"
-  default_prompt: "Use $brainstorm to explore this idea with me — interview me until we have a shared understanding of what to build and how."
+  short_description: "Flexible brainstorming for ideas, specs, and decisions"
+  default_prompt: "Use $brainstorm to brainstorm this idea, pressure-test options, and help me converge on the best next step."
 
 policy:
   allow_implicit_invocation: false
