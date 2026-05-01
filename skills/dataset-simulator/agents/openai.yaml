@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dataset Simulator"
-  short_description: "Generate realistic synthetic datasets"
-  default_prompt: "Generate a realistic synthetic dataset for this task, preserving internal consistency and the requested structure or domain."

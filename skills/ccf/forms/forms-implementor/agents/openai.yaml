@@ -1,4 +1,0 @@
-interface:
-  display_name: "Forms Implementor"
-  short_description: "Implement one scoped forms task"
-  default_prompt: "Implement one scoped forms task in code using the repository conventions and the task artifact."

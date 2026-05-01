@@ -1,4 +1,0 @@
-interface:
-  display_name: "Change Request Orchestrator"
-  short_description: "Turn a change request into the next artifact"
-  default_prompt: "Analyze this change request, create the right durable artifact, and recommend only the immediate next phase."

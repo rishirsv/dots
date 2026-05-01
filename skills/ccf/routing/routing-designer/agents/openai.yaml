@@ -1,4 +1,0 @@
-interface:
-  display_name: "Routing Designer"
-  short_description: "Design one scoped routing task"
-  default_prompt: "Design one scoped routing task for this request without implementing code."

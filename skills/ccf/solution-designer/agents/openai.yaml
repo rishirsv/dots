@@ -1,4 +1,0 @@
-interface:
-  display_name: "Solution Designer"
-  short_description: "Turn requirements into a feature and task plan"
-  default_prompt: "Analyze these requirements and produce a feature-level solution design with dependency-aware tasks and execution batches."

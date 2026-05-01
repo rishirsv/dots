@@ -1,4 +1,0 @@
-interface:
-  display_name: "Data Display Designer"
-  short_description: "Design one scoped data display task"
-  default_prompt: "Design one scoped data display task for this request without implementing code."

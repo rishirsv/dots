@@ -1,4 +1,0 @@
-interface:
-  display_name: "Tester"
-  short_description: "Plan comprehensive feature testing"
-  default_prompt: "Create a production-ready test plan for these features, covering positive, negative, edge, regression, security, and resilience scenarios."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "State Implementor"
-  short_description: "Implement one scoped state management task"
-  default_prompt: "Implement one scoped state management task in code using the repository conventions and the task artifact."

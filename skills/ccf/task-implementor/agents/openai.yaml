@@ -1,4 +1,0 @@
-interface:
-  display_name: "Task Implementor"
-  short_description: "Implement one scoped task"
-  default_prompt: "Implement one selected task by choosing the smallest applicable implementor skills and making the required code changes."

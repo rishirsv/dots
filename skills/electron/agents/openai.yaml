@@ -1,4 +1,0 @@
-interface:
-  display_name: "Electron"
-  short_description: "Automate Electron desktop apps with CDP"
-  default_prompt: "Connect to this Electron app through Chrome DevTools Protocol and automate the workflow with snapshots and interactions."

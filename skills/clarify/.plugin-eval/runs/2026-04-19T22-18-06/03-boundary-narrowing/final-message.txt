@@ -1,8 +1,0 @@
-Created [docs/artifacts/contexts/clarify-boundary-context.md](/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-boundary-narrowing-WnFuAq/workspace/docs/artifacts/contexts/clarify-boundary-context.md).
-
-It captures:
-- Already decided: `clarify` stays pre-implementation, keeps the `standard`/`grill` split, ends with `Common Understanding`, and uses `docs/` for durable artifacts.
-- Still needs clarification: exact rewrite scope, whether this is wording vs behavior vs contract change, whether the mode/question boundaries change, and what downstream docs need updates.
-- Next artifact: a formal implementation plan under `docs/exec-plans/active/` once those scope questions are settled.
-
-I didn’t edit `SKILL.md` or any source files.

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Navigation Common"
-  short_description: "Provide shared navigation guidance"
-  default_prompt: "Load the shared navigation guidance needed for this task and apply its repository conventions."

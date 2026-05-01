@@ -1,4 +1,0 @@
-interface:
-  display_name: "App Store Connect"
-  short_description: "Operate App Store Connect from the CLI"
-  default_prompt: "Use the App Store Connect CLI to authenticate, inspect commands, and handle builds, TestFlight, metadata, or release steps for this task."

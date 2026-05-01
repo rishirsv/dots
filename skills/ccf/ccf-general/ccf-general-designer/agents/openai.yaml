@@ -1,4 +1,0 @@
-interface:
-  display_name: "CCF General Designer"
-  short_description: "Design one scoped repository-aware task"
-  default_prompt: "Design one scoped repository-aware task for this request without implementing code."

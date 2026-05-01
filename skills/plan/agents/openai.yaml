@@ -1,7 +1,0 @@
-interface:
-  display_name: "Plan"
-  short_description: "Create a formal implementation plan"
-  default_prompt: "Explore the repository and create a concise formal implementation plan for this request."
-
-policy:
-  allow_implicit_invocation: false

@@ -1,4 +1,0 @@
-interface:
-  display_name: "State Common"
-  short_description: "Provide shared state management guidance"
-  default_prompt: "Load the shared state management guidance needed for this task and apply its repository conventions."

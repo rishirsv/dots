@@ -1,22 +1,49 @@
-# AI Tools
+# RS Tools
 
-This repo is organized by purpose so configs, production skills, internal projects, third-party references, and disposable workspaces stay separate.
+Personal Codex plugin marketplace and reusable agent skills.
 
 ## Structure
 
-- `configs/`: synced configuration and prompt material
-- `configs/chatgpt/`: ChatGPT-specific prompts, archives, and reference files
-- `configs/local/`: local machine configs you sync between computers
-- `skills/production/`: final, deployed skills you actively use
-- `projects/kpmg-utils/`: KPMG/internal AI utilities and development work
-- `vendor/examples/`: third-party example skill and plugin repositories from the internet
-- `vendor/chatgpt-imports/`: ChatGPT-oriented imports or subsets kept for reference
-- `workspaces/sandbox/`: install/test area with `.agents`, sample files, and generated outputs
-- `docs/`: lightweight repo documentation
+- `skills/`: loose reusable skills while drafting or before plugin packaging.
+- `plugins/`: installable Codex plugins.
+- `.agents/plugins/marketplace.json`: repo-scoped Codex marketplace catalog.
+- `.codex/config.toml`: repo-local Codex config that registers this marketplace.
+- `configs/`: reusable agent and prompt configuration.
+- `references/`: external examples, archived candidate skills, and source material.
+- `TODO.md`: improvement backlog for future skill rebuilds.
 
-## Conventions
+## Local Marketplace
 
-- Build and experiment in `projects/` or `workspaces/`, not inside `skills/production/`.
-- Promote only stable, deployable skills into `skills/production/`.
-- Keep third-party material in `vendor/` so it never gets confused with your own shipped work.
-- Treat `workspaces/sandbox/` as disposable operating space for tests and task execution.
+This repo exposes a local Codex marketplace named `rs-tools`.
+
+Current plugin:
+
+- `plugins/rs-core`: starter Codex plugin that bundles the `rs-tools` skill.
+
+Bundled skills:
+
+- `agent-browser`: live browser and Electron automation through Vercel Agent Browser.
+- `commit`: safe focused git commits.
+- `handoff`: concise continuation briefs.
+- `hard-cut`: one canonical implementation, no legacy compatibility paths.
+- `oracle`: repo-context packages for external review or planning.
+- `rs-tools`: guidance for this plugin repo.
+
+After opening this repo in Codex, restart Codex so it detects `.agents/plugins/marketplace.json`. Then open the plugin directory, choose the `RS Tools` marketplace, and install `RS Core`.
+
+Codex installs a selected plugin into its plugin cache and loads that installed copy. For local plugins, the installed version is `local`.
+
+## References
+
+Reference folders are not installed as active skills. They exist to guide future skill rebuilds and KPMG/deck work:
+
+- `references/oai/`: OAI artifact package, OAI skills, and presentation references.
+- `references/candidates/`: archived skills to mine while rebuilding coding and design workflows.
+- `references/system/`: installed system skills kept as design references.
+- `references/anthropic/`: Anthropic knowledge-work and financial-services plugin examples.
+
+## Repo Codex Config
+
+This repo keeps its Codex config in `.codex/config.toml`.
+
+That file registers `.agents/plugins/marketplace.json` as the `rs-tools` marketplace and enables `rs-core@rs-tools` for this repo. User-specific secrets, auth, and machine-wide defaults should stay in `~/.codex/config.toml`.

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Accessibility Implementor"
-  short_description: "Implement one scoped accessibility task"
-  default_prompt: "Implement one scoped accessibility task in code using the repository conventions and the task artifact."

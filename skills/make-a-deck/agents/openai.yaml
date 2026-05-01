@@ -1,7 +1,0 @@
-interface:
-  display_name: "Make a Deck"
-  short_description: "Design HTML presentation decks"
-  default_prompt: "Use $make-a-deck to create or refine this presentation deck as a speaker-ready HTML slide deck."
-
-policy:
-  allow_implicit_invocation: false

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Batch"
-  short_description: "Coordinate large execution plans in batches"
-  default_prompt: "Turn this saved or in-chat plan into a dependency-aware execution plan, batch the ready work, and track resumable progress through one canonical execution tracker."

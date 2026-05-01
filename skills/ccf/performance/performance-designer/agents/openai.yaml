@@ -1,4 +1,0 @@
-interface:
-  display_name: "Performance Designer"
-  short_description: "Design one scoped performance task"
-  default_prompt: "Design one scoped performance task for this request without implementing code."

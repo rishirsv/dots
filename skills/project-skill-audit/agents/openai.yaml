@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Skill Audit"
-  short_description: "Recommend high-value project skills"
-  default_prompt: "Audit this project's history, memory, and local skills to recommend the highest-value skills to create or update."

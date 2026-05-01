@@ -1,4 +1,0 @@
-interface:
-  display_name: "Task Designer"
-  short_description: "Turn one high-level task into a task artifact"
-  default_prompt: "Turn one high-level task into a detailed implementation-ready task artifact without re-planning the whole feature."

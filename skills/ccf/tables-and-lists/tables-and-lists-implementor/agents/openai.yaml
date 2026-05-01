@@ -1,4 +1,0 @@
-interface:
-  display_name: "Tables and Lists Implementor"
-  short_description: "Implement one scoped tables and lists task"
-  default_prompt: "Implement one scoped tables and lists task in code using the repository conventions and the task artifact."

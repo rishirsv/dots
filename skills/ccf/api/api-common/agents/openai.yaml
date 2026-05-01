@@ -1,4 +1,0 @@
-interface:
-  display_name: "API Common"
-  short_description: "Provide shared API guidance"
-  default_prompt: "Load the shared API guidance needed for this task and apply its repository conventions."

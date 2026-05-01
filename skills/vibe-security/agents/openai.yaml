@@ -1,5 +1,0 @@
-interface:
-  display_name: "Vibe Security"
-  short_description: "Audit AI-built apps for common security issues"
-  brand_color: "#DC2626"
-  default_prompt: "Audit this project for security vulnerabilities common in AI-generated applications."

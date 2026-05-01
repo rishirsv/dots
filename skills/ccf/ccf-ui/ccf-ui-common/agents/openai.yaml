@@ -1,4 +1,0 @@
-interface:
-  display_name: "CCF UI Common"
-  short_description: "Provide shared CCF UI engineering guidance"
-  default_prompt: "Load the shared CCF UI guidance needed for this task and apply its repository conventions."

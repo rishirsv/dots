@@ -1,4 +1,0 @@
-interface:
-  display_name: "Improve Codebase Architecture"
-  short_description: "Find high-value architecture improvements"
-  default_prompt: "Explore this codebase and recommend the highest-value architecture improvements for cohesion, testability, and navigation."

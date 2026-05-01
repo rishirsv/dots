@@ -1,4 +1,0 @@
-interface:
-  display_name: "SWR Common"
-  short_description: "Provide shared SWR guidance"
-  default_prompt: "Load the shared SWR guidance needed for this task and apply its repository conventions."

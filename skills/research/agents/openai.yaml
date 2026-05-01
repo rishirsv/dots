@@ -1,4 +1,0 @@
-interface:
-  display_name: "Research"
-  short_description: "Produce a sourced research brief"
-  default_prompt: "Research current best practices, relevant primary sources, and repo patterns for this task, then summarize the findings with citations."

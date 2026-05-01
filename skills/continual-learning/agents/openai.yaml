@@ -1,4 +1,0 @@
-interface:
-  display_name: "Continual Learning"
-  short_description: "Propose durable AGENTS.md memory updates"
-  default_prompt: "Mine recent Codex chat changes for durable user preferences or workspace facts and propose concise AGENTS.md updates."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Accessibility Designer"
-  short_description: "Design one scoped accessibility task"
-  default_prompt: "Design one scoped accessibility task for this request without implementing code."

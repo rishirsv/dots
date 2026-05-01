@@ -1,4 +1,0 @@
-interface:
-  display_name: "File Upload and Download Implementor"
-  short_description: "Implement one scoped file transfer task"
-  default_prompt: "Implement one scoped file upload and download task in code using the repository conventions and the task artifact."

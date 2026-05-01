@@ -1,4 +1,0 @@
-interface:
-  display_name: "CCF General Implementor"
-  short_description: "Implement one scoped repository-aware task"
-  default_prompt: "Implement one scoped repository-aware task in code using the repository conventions and the task artifact."

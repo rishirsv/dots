@@ -1,4 +1,0 @@
-interface:
-  display_name: "Last 30 Days"
-  short_description: "Research recent discussion across Reddit, X, and the web"
-  default_prompt: "Research this topic using discussion from the last 30 days across Reddit, X, and the web, then deliver the key findings and copy-paste-ready prompts when useful."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Agent Browser"
-  short_description: "Automate websites with a browser CLI"
-  default_prompt: "Interact with this website through a browser, including navigation, snapshots, form filling, clicking, extraction, screenshots, or testing."

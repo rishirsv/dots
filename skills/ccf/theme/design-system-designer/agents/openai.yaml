@@ -1,4 +1,0 @@
-interface:
-  display_name: "Design System Designer"
-  short_description: "Design one scoped design system task"
-  default_prompt: "Design one scoped design system task for this request without implementing code."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Data Fetching Common"
-  short_description: "Provide shared data fetching guidance"
-  default_prompt: "Load the shared data fetching guidance needed for this task and apply its repository conventions."

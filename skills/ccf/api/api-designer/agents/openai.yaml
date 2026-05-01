@@ -1,4 +1,0 @@
-interface:
-  display_name: "API Designer"
-  short_description: "Design one scoped API task"
-  default_prompt: "Design one scoped API task for this request without implementing code."

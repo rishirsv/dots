@@ -1,4 +1,0 @@
-interface:
-  display_name: "Navigation Designer"
-  short_description: "Design one scoped navigation task"
-  default_prompt: "Design one scoped navigation task for this request without implementing code."

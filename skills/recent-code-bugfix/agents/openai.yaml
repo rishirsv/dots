@@ -1,4 +1,0 @@
-interface:
-  display_name: "Recent Code Bugfix"
-  short_description: "Fix bugs from recent author commits"
-  default_prompt: "Find and fix a bug from my changes in the last week."

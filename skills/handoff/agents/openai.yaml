@@ -1,7 +1,0 @@
-interface:
-  display_name: "Handoff"
-  short_description: "Create a clear continuation handoff"
-  default_prompt: "Create a concise continuation brief with the current state, files touched, decisions, risks, and the exact next step."
-
-policy:
-  allow_implicit_invocation: false

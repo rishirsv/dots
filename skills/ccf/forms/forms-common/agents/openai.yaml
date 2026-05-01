@@ -1,4 +1,0 @@
-interface:
-  display_name: "Forms Common"
-  short_description: "Provide shared forms guidance"
-  default_prompt: "Load the shared forms guidance needed for this task and apply its repository conventions."

@@ -1,0 +1,30 @@
+# Repo-local Codex config for rs-tools.
+# This supplements ~/.codex/config.toml when Codex is opened in this repository.
+
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+web_search = "live"
+
+[tools]
+view_image = true
+
+[features]
+apps = true
+codex_hooks = true
+memories = true
+prevent_idle_sleep = true
+undo = true
+
+[apps._default]
+enabled = true
+default_tools_enabled = true
+default_tools_approval_mode = "approve"
+open_world_enabled = true
+destructive_enabled = true
+
+[marketplaces.rs-tools]
+source_type = "local"
+source = "/Users/rishi/Code/rs-tools/.agents/plugins/marketplace.json"
+
+[plugins."rs-core@rs-tools"]
+enabled = true

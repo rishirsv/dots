@@ -1,4 +1,0 @@
-interface:
-  display_name: "Data Fetching Designer"
-  short_description: "Design one scoped data fetching task"
-  default_prompt: "Design one scoped data fetching task for this request without implementing code."

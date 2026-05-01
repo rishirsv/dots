@@ -1,4 +1,0 @@
-interface:
-  display_name: "Database Designer"
-  short_description: "Design one scoped database task"
-  default_prompt: "Design one scoped database task for this request without implementing code."

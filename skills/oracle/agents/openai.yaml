@@ -1,7 +1,0 @@
-interface:
-  display_name: "Oracle"
-  short_description: "Package one repo-context handoff for external review or GPT-5 web planning"
-  default_prompt: "Prepare one Oracle handoff for this repository task: review uses prompt.md plus context.zip, ultraplan uses prompt.md plus context.txt, and show the final prompt inline in chat."
-
-policy:
-  allow_implicit_invocation: false

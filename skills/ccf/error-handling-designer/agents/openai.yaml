@@ -1,4 +1,0 @@
-interface:
-  display_name: "Error Handling Designer"
-  short_description: "Design scoped UI error handling"
-  default_prompt: "Design the error handling behavior for this UI task without implementing code."

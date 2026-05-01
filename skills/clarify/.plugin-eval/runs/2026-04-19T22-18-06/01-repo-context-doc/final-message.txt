@@ -1,6 +1,0 @@
-Created [docs/artifacts/contexts/clarify-contract-context.md](/var/folders/t9/zddpblm14zv__zdqy7m726b00000gn/T/plugin-eval-repo-context-doc-UYOwtP/workspace/docs/artifacts/contexts/clarify-contract-context.md) from the `clarify` skill and its references, and left all source files untouched.
-
-**Common Understanding**
-- Agreed: `clarify` reduces ambiguity before planning or implementation, always ends with `Common Understanding`, and only creates durable docs under `docs/` when the user asks for one.
-- Open: none identified.
-- Next: use the new context doc as the shared baseline for future `clarify` work.

@@ -1,0 +1,30 @@
+{
+  "name": "rs-core",
+  "version": "0.1.0",
+  "description": "Rishi's core personal Codex workflows and reusable skills.",
+  "author": {
+    "name": "Rishi"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "personal",
+    "skills",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "RS Core",
+    "shortDescription": "Core personal Codex skills.",
+    "longDescription": "A personal bundle for reusable Codex workflows and skills maintained in rs-tools.",
+    "developerName": "Rishi",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use the rs-tools skill to explain how this personal plugin repo is organized."
+    ],
+    "brandColor": "#10A37F"
+  }
+}

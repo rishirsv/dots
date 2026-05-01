@@ -1,7 +1,0 @@
-interface:
-  display_name: "Review"
-  short_description: "Review code, plans, or documents without editing"
-  default_prompt: "Review this code change, plan, or document, prioritize concrete findings and risks, and do not implement fixes."
-
-policy:
-  allow_implicit_invocation: false

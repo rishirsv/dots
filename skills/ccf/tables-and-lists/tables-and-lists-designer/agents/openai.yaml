@@ -1,4 +1,0 @@
-interface:
-  display_name: "Tables and Lists Designer"
-  short_description: "Design one scoped tables and lists task"
-  default_prompt: "Design one scoped tables and lists task for this request without implementing code."

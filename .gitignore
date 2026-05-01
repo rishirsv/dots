@@ -1,47 +1,23 @@
-# ---- codex:system-and-env ----
-# System files
 .DS_Store
-.AppleDouble
-.LSOverride
-Icon?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-desktop.ini
-*.swp
-*.swo
-*~
-
-# ---- kpmg-pptx-gen ----
-chatgpt/kpmg-pptx-gen/**/__pycache__/
-# ---- /kpmg-pptx-gen ----
-
-# ---- kpmg-slidegen ----
-chatgpt/kpmg-slidegen/outputs/runs/
-.agents/skills/oai-skills/slides/__pycache__/
-# ---- /kpmg-slidegen ----
-
-# Env files
+*.log
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+build/
+!references/oai/artifact/node_modules/
+!references/oai/artifact/node_modules/**
+!references/oai/artifact/dist/
+!references/oai/artifact/dist/**
 .env
 .env.*
-!.env*.example
-!.env*.sample
-!.env*.template
-# ---- /codex:system-and-env ----
 
-# Node
-node_modules
-pycache
+# Generated sync state
+*.tmp
 
-# slide-gen
-/outputs/
-
-# Workspace
-sandbox
-
-# plugin-eval repo-side benchmark outputs
-/tests/plugin-eval/*/latest/
-/tests/plugin-eval/*/runs/
-/tests/plugin-eval/site/
+# Local generated runs
+**/.plugin-eval/runs/
+**/.autoresearch/runs/
+**/outputs/

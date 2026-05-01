@@ -1,6 +1,0 @@
-pandas
-openpyxl
-faker
-numpy
-reportlab
-jinja2

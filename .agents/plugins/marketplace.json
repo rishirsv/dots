@@ -1,0 +1,20 @@
+{
+  "name": "rs-tools",
+  "interface": {
+    "displayName": "RS Tools"
+  },
+  "plugins": [
+    {
+      "name": "rs-core",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rs-core"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,4 +1,0 @@
-interface:
-  display_name: "CCF General Common"
-  short_description: "Provide shared repository-wide engineering guidance"
-  default_prompt: "Load the shared repository-wide engineering guidance needed for this task and apply its conventions."

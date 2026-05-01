@@ -1,4 +1,0 @@
-interface:
-  display_name: "File Upload and Download Designer"
-  short_description: "Design one scoped file transfer task"
-  default_prompt: "Design one scoped file upload and download task for this request without implementing code."

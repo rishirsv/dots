@@ -1,4 +1,0 @@
-interface:
-  display_name: "Layout Implementor"
-  short_description: "Implement one scoped layout task"
-  default_prompt: "Implement one scoped layout task in code using the repository conventions and the task artifact."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Accessibility Common"
-  short_description: "Provide shared accessibility guidance"
-  default_prompt: "Load the shared accessibility guidance needed for this task and apply its repository conventions."

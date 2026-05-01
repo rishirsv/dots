@@ -1,4 +1,0 @@
-interface:
-  display_name: "Data Fetching Implementor"
-  short_description: "Implement one scoped data fetching task"
-  default_prompt: "Implement one scoped data fetching task in code using the repository conventions and the task artifact."

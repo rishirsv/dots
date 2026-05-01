@@ -1,0 +1,7 @@
+interface:
+  display_name: "Handoff"
+  short_description: "Create a clear continuation handoff"
+  default_prompt: "Use $handoff to create a concise continuation brief with current state, decisions, risks, and next step."
+
+policy:
+  allow_implicit_invocation: false

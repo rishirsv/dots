@@ -1,4 +1,0 @@
-interface:
-  display_name: "Component Implementor"
-  short_description: "Implement one scoped component task"
-  default_prompt: "Implement one scoped component task in code using the repository conventions and the task artifact."
