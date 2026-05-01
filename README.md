@@ -28,6 +28,7 @@ Bundled skills:
 - `hard-cut`: one canonical implementation, no legacy compatibility paths.
 - `oracle`: repo-context packages for external review or planning.
 - `rs-tools`: guidance for this plugin repo.
+- `yeet`: CLI-first commit, push, and draft PR flow.
 
 After opening this repo in Codex, restart Codex so it detects `.agents/plugins/marketplace.json`. Then open the plugin directory, choose the `RS Tools` marketplace, and install `RS Core`.
 
