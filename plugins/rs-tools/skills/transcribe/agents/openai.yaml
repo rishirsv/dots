@@ -1,0 +1,4 @@
+interface:
+  display_name: "Transcribe"
+  short_description: "Create raw and clean local transcripts"
+  default_prompt: "Use $transcribe to turn this audio or video file into raw and clean Markdown transcripts using local Parakeet MLX."

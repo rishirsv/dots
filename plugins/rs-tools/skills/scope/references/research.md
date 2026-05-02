@@ -1,0 +1,78 @@
+# Research
+
+Research is a support layer inside Scope, not a user-facing lane.
+
+Use enough repo or web research to make framing honest. Do not turn Scope into a full sourced-brief workflow.
+
+## Repo Research
+
+Use repo research by default for repo, product, or implementation topics.
+
+Start with:
+
+- `AGENTS.md`
+- `README.md`
+- TODOs
+- product specs
+- project specs
+- exec plans
+- context docs
+- adjacent source files or examples
+
+Keep it shallow for Clarify. Go deeper for Ideate or Pressure-Test when the topic is broad, architectural, or high-stakes.
+
+## Web Research
+
+Use web research when outside or current facts materially affect the answer:
+
+- current platform guidance
+- API or framework behavior
+- market or competitor patterns
+- examples outside the repo
+- legal, medical, financial, compliance, or safety-sensitive claims
+- user explicitly asks to search, verify, or look up something
+
+Skip web research when the user only needs local thinking, when repo context is enough, or when the user says not to research.
+
+Keep sourced findings separate from assumptions and inference.
+
+## Research Skill Boundary
+
+Scope should not become a full research-brief workflow.
+
+Hand off to a separate Research skill only when the task itself is research:
+
+- sourced briefs
+- current best-practice reviews
+- primary-source comparisons
+- broad external evidence gathering
+- recommendations that need citations and source-quality judgment
+
+## Sub-Agents
+
+Use sub-agents only when parallel context gathering or independent idea generation materially improves the result.
+
+Useful cases:
+
+- broad Ideate runs
+- large repo scans
+- high-stakes Pressure-Test work
+- repo context and web context can be gathered in parallel
+- multiple independent source angles are needed
+
+Avoid sub-agents for:
+
+- quick Clarify
+- narrow local repo checks
+- facts the main agent can verify in one or two reads
+- decisions that depend mainly on user intent rather than evidence
+
+Research sub-agent output should be raw material:
+
+- sources
+- findings
+- confidence
+- contradictions
+- risks
+
+The main agent owns synthesis, ranking, and recommendation.

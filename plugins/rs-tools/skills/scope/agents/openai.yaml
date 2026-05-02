@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scope"
+  short_description: "Clarify, ideate, or pressure-test before planning"
+  default_prompt: "Use $scope to clarify this idea, explore options, and recommend the next artifact."

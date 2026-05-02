@@ -1,0 +1,6 @@
+interface:
+  display_name: "Tech Debt"
+  short_description: "Review architecture debt and update TECH-DEBT.md."
+  default_prompt: "Use $tech-debt to review this repo or module for architectural debt and update TECH-DEBT.md with focused findings."
+policy:
+  allow_implicit_invocation: false
