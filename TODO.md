@@ -48,7 +48,7 @@ References:
 
 Direction:
 - Mine for deck generation, artifact rendering, and presentation quality rules.
-- Keep out of `plugins/rs-core` until there is a clean, portable deck workflow.
+- Keep out of `plugins/rs-tools` until there is a clean, portable deck workflow.
 - Use Anthropic financial-services plugins as structural inspiration for KPMG workflows.
 
 ## External Plugin References

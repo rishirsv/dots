@@ -26,5 +26,5 @@ destructive_enabled = true
 source_type = "local"
 source = "/Users/rishi/Code/rs-tools/.agents/plugins/marketplace.json"
 
-[plugins."rs-core@rs-tools"]
+[plugins."rs-tools@rs-tools"]
 enabled = true

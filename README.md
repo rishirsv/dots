@@ -18,7 +18,7 @@ This repo exposes a local Codex marketplace named `rs-tools`.
 
 Current plugin:
 
-- `plugins/rs-core`: starter Codex plugin that bundles the `rs-tools` skill.
+- `plugins/rs-tools`: starter Codex plugin that bundles the `rs-tools` skill.
 
 Bundled skills:
 
@@ -30,7 +30,7 @@ Bundled skills:
 - `rs-tools`: guidance for this plugin repo.
 - `yeet`: CLI-first commit, push, and draft PR flow.
 
-After opening this repo in Codex, restart Codex so it detects `.agents/plugins/marketplace.json`. Then open the plugin directory, choose the `RS Tools` marketplace, and install `RS Core`.
+After opening this repo in Codex, restart Codex so it detects `.agents/plugins/marketplace.json`. Then open the plugin directory, choose the `RS Tools` marketplace, and install `RS Tools`.
 
 Codex installs a selected plugin into its plugin cache and loads that installed copy. For local plugins, the installed version is `local`.
 
@@ -47,4 +47,4 @@ Reference folders are not installed as active skills. They exist to guide future
 
 This repo keeps its Codex config in `.codex/config.toml`.
 
-That file registers `.agents/plugins/marketplace.json` as the `rs-tools` marketplace and enables `rs-core@rs-tools` for this repo. User-specific secrets, auth, and machine-wide defaults should stay in `~/.codex/config.toml`.
+That file registers `.agents/plugins/marketplace.json` as the `rs-tools` marketplace and enables `rs-tools@rs-tools` for this repo. User-specific secrets, auth, and machine-wide defaults should stay in `~/.codex/config.toml`.

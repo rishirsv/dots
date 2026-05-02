@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "rs-core",
+      "name": "rs-tools",
       "source": {
         "source": "local",
-        "path": "./plugins/rs-core"
+        "path": "./plugins/rs-tools"
       },
       "policy": {
         "installation": "AVAILABLE",

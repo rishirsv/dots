@@ -6,7 +6,7 @@ Copy the prompt below into Claude on the target Mac.
 
 You are helping me fully reset and reinstall OpenAI Codex on this Mac using my `rs-tools` repo as the source of truth.
 
-Goal: delete the existing Codex app, Codex CLI, Codex configs, Codex caches, Codex plugins, and Codex skills; reinstall the Codex CLI fresh; clone my `rs-tools` repo; install its Codex config and local plugin marketplace; and verify Codex works with my `rs-core` plugin.
+Goal: delete the existing Codex app, Codex CLI, Codex configs, Codex caches, Codex plugins, and Codex skills; reinstall the Codex CLI fresh; clone my `rs-tools` repo; install its Codex config and local plugin marketplace; and verify Codex works with my `rs-tools` plugin.
 
 Repo:
 
@@ -92,7 +92,7 @@ Expected important settings:
     source_type = "local"
     source = "/Users/rishi/Code/rs-tools/.agents/plugins/marketplace.json"
 
-    [plugins."rs-core@rs-tools"]
+    [plugins."rs-tools@rs-tools"]
     enabled = true
 
 If this Mac's username is not `rishi`, update the `source` path in `~/.codex/config.toml` to the actual cloned repo path, for example:
@@ -128,8 +128,8 @@ Then restart Codex after login.
 Check:
 
     test -f ~/Code/rs-tools/.agents/plugins/marketplace.json
-    test -f ~/Code/rs-tools/plugins/rs-core/.codex-plugin/plugin.json
-    find ~/Code/rs-tools/plugins/rs-core/skills -maxdepth 2 -name SKILL.md | sort
+    test -f ~/Code/rs-tools/plugins/rs-tools/.codex-plugin/plugin.json
+    find ~/Code/rs-tools/plugins/rs-tools/skills -maxdepth 2 -name SKILL.md | sort
 
 Expected skills include:
 
@@ -145,14 +145,14 @@ Expected skills include:
 
 Run:
 
-    rg -n 'github@openai-curated|rs-core@rs-tools|marketplaces.rs-tools' ~/.codex/config.toml || true
+    rg -n 'github@openai-curated|rs-tools@rs-tools|marketplaces.rs-tools' ~/.codex/config.toml || true
 
 Expected:
 
     [plugins."github@openai-curated"]
     enabled = false
 
-    [plugins."rs-core@rs-tools"]
+    [plugins."rs-tools@rs-tools"]
     enabled = true
 
 If the GitHub plugin block is missing, that is acceptable. Do not enable it.
@@ -165,5 +165,5 @@ Report:
 - Whether `~/.codex/config.toml` was installed.
 - Whether `rs-tools` was cloned or updated.
 - Whether the `rs-tools` marketplace is registered.
-- Whether `rs-core` appears enabled.
+- Whether `rs-tools` appears enabled.
 - Any login or restart still required.

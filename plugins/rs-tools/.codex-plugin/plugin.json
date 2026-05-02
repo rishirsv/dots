@@ -1,7 +1,7 @@
 {
-  "name": "rs-core",
+  "name": "rs-tools",
   "version": "0.1.0",
-  "description": "Rishi's core personal Codex workflows and reusable skills.",
+  "description": "Rishi's personal Codex workflows and reusable skills.",
   "author": {
     "name": "Rishi"
   },
@@ -13,8 +13,8 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "RS Core",
-    "shortDescription": "Core personal Codex skills.",
+    "displayName": "RS Tools",
+    "shortDescription": "Personal Codex skills.",
     "longDescription": "A personal bundle for reusable Codex workflows and skills maintained in rs-tools.",
     "developerName": "Rishi",
     "category": "Productivity",

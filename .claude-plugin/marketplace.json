@@ -1,0 +1,24 @@
+{
+  "name": "rs-tools",
+  "owner": {
+    "name": "Rishi"
+  },
+  "metadata": {
+    "version": "0.1.0",
+    "description": "Rishi's personal Claude plugin marketplace and reusable skills."
+  },
+  "plugins": [
+    {
+      "name": "rs-tools",
+      "description": "Rishi's personal Claude workflows and reusable skills.",
+      "source": "./plugins/rs-tools",
+      "version": "0.1.0",
+      "category": "productivity",
+      "tags": [
+        "personal",
+        "skills",
+        "workflow"
+      ]
+    }
+  ]
+}
