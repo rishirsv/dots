@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Prompt - Presentation Graphic v3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* KPMG Official Primary Palette */
+            --kpmg-blue: #00338D;
+            --kpmg-medium-blue: #005EB8;
+            --kpmg-light-blue: #0091DA;
+
+            /* KPMG Official Secondary Palette */
+            --kpmg-violet: #483698;
+            --kpmg-purple: #470A68;
+            --kpmg-light-purple: #6D2077;
+            --kpmg-green: #00A3A1;
+
+            /* Derived */
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(0, 145, 218, 0.3);
+        }
+
+        body {
+            /* Arial - KPMG specified for PPT/Word/Email */
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .slide {
+            width: 1920px;
+            height: 1080px;
+            background: linear-gradient(145deg,
+                #001a4d 0%,
+                var(--kpmg-blue) 40%,
+                var(--kpmg-medium-blue) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* === ATMOSPHERIC LAYERS === */
+
+        /* Primary glow - Light Blue accent */
+        .atmosphere-primary {
+            position: absolute;
+            top: -15%;
+            left: 0%;
+            width: 900px;
+            height: 900px;
+            background: radial-gradient(ellipse, var(--kpmg-light-blue) 0%, transparent 55%);
+            opacity: 0.2;
+            filter: blur(100px);
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        /* Secondary glow - Violet accent */
+        .atmosphere-secondary {
+            position: absolute;
+            bottom: -25%;
+            right: 5%;
+            width: 800px;
+            height: 700px;
+            background: radial-gradient(ellipse, var(--kpmg-violet) 0%, transparent 50%);
+            opacity: 0.2;
+            filter: blur(100px);
+            animation: breathe 10s ease-in-out infinite reverse;
+        }
+
+        /* Tertiary glow - Green accent for depth */
+        .atmosphere-tertiary {
+            position: absolute;
+            top: 50%;
+            right: 20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--kpmg-green) 0%, transparent 60%);
+            opacity: 0.1;
+            filter: blur(80px);
+        }
+
+        /* Diagonal accent line */
+        .diagonal-accent {
+            position: absolute;
+            top: 0;
+            left: 40%;
+            width: 3px;
+            height: 200%;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                var(--kpmg-light-blue) 25%,
+                var(--kpmg-violet) 50%,
+                var(--kpmg-green) 75%,
+                transparent 100%);
+            transform: rotate(12deg);
+            transform-origin: top center;
+            opacity: 0.35;
+        }
+
+        /* Noise texture */
+        .noise {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.025;
+            pointer-events: none;
+        }
+
+        /* Geometric accents */
+        .geo-ring {
+            position: absolute;
+            border: 1px solid rgba(0, 145, 218, 0.12);
+            border-radius: 50%;
+        }
+        .geo-ring-1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            right: -150px;
+        }
+        .geo-ring-2 {
+            width: 300px;
+            height: 300px;
+            bottom: 80px;
+            right: 180px;
+            border-color: rgba(72, 54, 152, 0.15);
+        }
+        .geo-ring-3 {
+            width: 200px;
+            height: 200px;
+            bottom: 140px;
+            left: 35%;
+            border-color: rgba(0, 163, 161, 0.1);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.08); opacity: 0.25; }
+        }
+
+        /* === CONTENT === */
+
+        .content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            padding: 70px 90px;
+        }
+
+        /* LEFT COLUMN - 42% */
+        .left-column {
+            width: 42%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 80px;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Logo with glow */
+        .logo-container {
+            margin-bottom: 36px;
+            position: relative;
+        }
+
+        .logo {
+            width: 130px;
+            height: 130px;
+            border-radius: 26px;
+            position: relative;
+            z-index: 2;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 50px rgba(0, 145, 218, 0.4),
+                0 0 80px rgba(0, 145, 218, 0.2);
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+
+        .logo-glow {
+            position: absolute;
+            inset: -15px;
+            background: radial-gradient(circle, var(--kpmg-light-blue) 0%, transparent 70%);
+            opacity: 0.4;
+            filter: blur(25px);
+            z-index: 1;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 88px;
+            font-weight: bold;
+            line-height: 1.05;
+            margin-bottom: 14px;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 30px;
+            font-weight: normal;
+            margin-bottom: 32px;
+        }
+
+        .value-prop {
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 23px;
+            line-height: 1.6;
+            margin-bottom: 36px;
+            max-width: 540px;
+        }
+
+        .value-prop strong {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg,
+                rgba(0, 145, 218, 0.2) 0%,
+                rgba(72, 54, 152, 0.15) 100%);
+            border: 1px solid rgba(0, 145, 218, 0.35);
+            color: #ffffff;
+            padding: 14px 26px;
+            border-radius: 40px;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .badge-dot {
+            width: 9px;
+            height: 9px;
+            background: var(--kpmg-green);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--kpmg-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+        }
+
+        /* RIGHT COLUMN - 58% */
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 60px;
+            position: relative;
+        }
+
+        /* Vertical accent bar */
+        .right-column::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12%;
+            height: 76%;
+            width: 3px;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                var(--kpmg-light-blue) 15%,
+                var(--kpmg-violet) 50%,
+                var(--kpmg-green) 85%,
+                transparent 100%);
+            border-radius: 2px;
+        }
+
+        .features-heading {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 26px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .features-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, transparent 70%);
+        }
+
+        .features-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .feature-item {
+            background: var(--card-bg);
+            padding: 24px 28px;
+            border-radius: 18px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            transition: all 0.3s ease;
+            animation: fadeSlideIn 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.15s; }
+        .feature-item:nth-child(2) { animation-delay: 0.3s; }
+        .feature-item:nth-child(3) { animation-delay: 0.45s; }
+        .feature-item:nth-child(4) { animation-delay: 0.6s; }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--card-border);
+            transform: translateX(6px);
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Feature icons with KPMG secondary colors */
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .feature-icon-1 {
+            background: linear-gradient(135deg, var(--kpmg-light-blue) 0%, var(--kpmg-medium-blue) 100%);
+            box-shadow: 0 4px 16px rgba(0, 145, 218, 0.35);
+        }
+
+        .feature-icon-2 {
+            background: linear-gradient(135deg, var(--kpmg-violet) 0%, var(--kpmg-purple) 100%);
+            box-shadow: 0 4px 16px rgba(72, 54, 152, 0.35);
+        }
+
+        .feature-icon-3 {
+            background: linear-gradient(135deg, var(--kpmg-green) 0%, #008080 100%);
+            box-shadow: 0 4px 16px rgba(0, 163, 161, 0.35);
+        }
+
+        .feature-icon-4 {
+            background: linear-gradient(135deg, var(--kpmg-light-purple) 0%, var(--kpmg-purple) 100%);
+            box-shadow: 0 4px 16px rgba(109, 32, 119, 0.35);
+        }
+
+        .feature-content {
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        .feature-title {
+            color: #ffffff;
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 16px;
+            line-height: 1.45;
+        }
+
+        /* Use cases pills */
+        .use-cases {
+            margin-top: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .use-case-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .use-case-pill:hover {
+            background: rgba(0, 145, 218, 0.12);
+            border-color: rgba(0, 145, 218, 0.3);
+            color: #fff;
+        }
+
+        /* FOOTER */
+        .footer {
+            position: absolute;
+            bottom: 36px;
+            left: 90px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 15px;
+        }
+
+        .footer-divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-contact {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 15px;
+        }
+
+        .kpmg-logo-footer {
+            position: absolute;
+            bottom: 34px;
+            right: 70px;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <!-- Atmospheric layers -->
+        <div class="atmosphere-primary"></div>
+        <div class="atmosphere-secondary"></div>
+        <div class="atmosphere-tertiary"></div>
+        <div class="diagonal-accent"></div>
+        <div class="noise"></div>
+        <div class="geo-ring geo-ring-1"></div>
+        <div class="geo-ring geo-ring-2"></div>
+        <div class="geo-ring geo-ring-3"></div>
+
+        <div class="content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <div class="logo-container">
+                    <div class="logo-glow"></div>
+                    <img src="Generated Image November 23, 2025 - 1_09PM.jpeg" alt="Meta Prompt" class="logo" />
+                </div>
+
+                <h1>Meta Prompt</h1>
+                <div class="tagline">Your Prompt Engineering Specialist</div>
+
+                <div class="value-prop">
+                    Stop writing prompts from scratch. <strong>Describe your task</strong> and Meta Prompt transforms it into an optimized, structured prompt ready to use.
+                </div>
+
+                <div class="platform-badge">
+                    <span class="badge-dot"></span>
+                    Available in ChatGPT Enterprise
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <div class="features-heading">Key Features</div>
+
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon feature-icon-1">⚡</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Smart Templates</div>
+                            <div class="feature-desc">Auto-selects Essential, Standard, or Research structure based on your task</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon feature-icon-2">✏️</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Canvas Integration</div>
+                            <div class="feature-desc">Say "Open in Canvas" to edit and refine your prompt in real time</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon feature-icon-3">📋</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Clean Output</div>
+                            <div class="feature-desc">No commentary, no explanations — just copy and paste</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon feature-icon-4">🔄</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Iterative Refinement</div>
+                            <div class="feature-desc">Request changes and get updated prompts instantly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-cases">
+                    <span class="use-case-pill">Research briefs</span>
+                    <span class="use-case-pill">Data extraction</span>
+                    <span class="use-case-pill">Analysis tasks</span>
+                    <span class="use-case-pill">Report generation</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span class="footer-text">KPMG Deal Advisory</span>
+            <span class="footer-divider"></span>
+            <span class="footer-contact">rishisharma@kpmg.ca</span>
+        </div>
+        <div class="kpmg-logo-footer">KPMG</div>
+    </div>
+</body>
+</html>

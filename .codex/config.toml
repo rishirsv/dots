@@ -11,9 +11,14 @@ view_image = true
 [features]
 apps = true
 codex_hooks = true
+goals = true
 memories = true
 prevent_idle_sleep = true
 undo = true
+
+[agents]
+max_threads = 6
+max_depth = 1
 
 [apps._default]
 enabled = true

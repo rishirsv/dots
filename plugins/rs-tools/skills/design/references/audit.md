@@ -4,7 +4,7 @@ Audit is read-only. It combines technical UI quality and design critique, then p
 
 ## Evidence
 
-Use rendered inspection when available: simulator, preview, device screenshot, Browser Use, Agent Browser, Playwright, or provided screenshots. Code-only audit is acceptable only when rendering is unavailable; say that the evidence is weaker.
+Use rendered inspection when available: simulator, preview, device screenshot, Browser Use, Agent Browser, project-native screenshot tooling, or provided screenshots. Code-only audit is acceptable only when rendering is unavailable; say that the evidence is weaker.
 
 ## What To Check
 

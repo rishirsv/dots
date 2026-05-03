@@ -7,12 +7,11 @@ Status: promoted to `plugins/rs-tools/skills/scope`.
 Purpose: pre-plan thinking before implementation.
 
 Modes:
-- clarify fuzzy ideas with minimum questions
 - ideate broad options and ranked directions
-- pressure-test existing ideas or implementation directions
+- discuss existing ideas or implementation directions
 
 Notes:
-- Replaces the active need for separate `brainstorm` and `clarify` skills.
+- Replaces the active need for a separate `brainstorm` skill.
 - Keeps research as a support layer, not a standalone default workflow.
 - Durable outputs route into existing repo artifact conventions: contexts, product specs, or ExecPlans.
 
@@ -29,7 +28,8 @@ References:
 Direction:
 - Merge refactor, tech-debt, and simplify into one sharp coding-improvement skill.
 - Keep `hard-cut` separate as a strict cleanup policy.
-- Treat `scope` as the pre-workflow owner for clarify, ideate, and pressure-test behavior.
+- Treat `scope` as the pre-workflow owner for ideate and discuss behavior.
+- Keep explicit requirements clarification in the separate `clarify` skill.
 - Avoid heavy candidate matrices unless the user explicitly asks for deep analysis.
 - Default to the highest-leverage cleanup that can be executed and verified safely.
 

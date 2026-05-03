@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Prompt - Presentation Graphic</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .slide {
+            width: 1920px;
+            height: 1080px;
+            background: linear-gradient(135deg, #00338D 0%, #005eb8 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Decorative elements */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -15%;
+            width: 900px;
+            height: 900px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .slide::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -15%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            padding: 80px 100px;
+        }
+
+        /* Left Column - Main Info */
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 60px;
+        }
+
+        .logo-container {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 84px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            color: rgba(255,255,255,0.95);
+            font-size: 36px;
+            font-weight: normal;
+            margin-bottom: 40px;
+        }
+
+        .value-prop {
+            color: #ffffff;
+            font-size: 28px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            max-width: 700px;
+        }
+
+        .platform-badge {
+            background-color: rgba(255,255,255,0.2);
+            color: #ffffff;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 20px;
+            display: block;
+            text-align: center;
+            max-width: 320px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Right Column - Features */
+        .right-column {
+            width: 700px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 40px;
+            border-left: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .features-heading {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+        }
+
+        .features-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .feature-item {
+            background: rgba(255,255,255,0.12);
+            padding: 24px 28px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            color: rgba(255,255,255,0.85);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .use-cases {
+            margin-top: 30px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .use-cases-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .use-cases-text {
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 40px;
+            left: 100px;
+            color: rgba(255,255,255,0.6);
+            font-size: 18px;
+        }
+
+        .kpmg-logo-footer {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            color: rgba(255,255,255,0.5);
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <div class="logo-container">
+                    <img src="Generated Image November 23, 2025 - 1_09PM.jpeg" alt="Meta Prompt" class="logo" />
+                </div>
+
+                <h1>Meta Prompt</h1>
+                <div class="tagline">Your Prompt Engineering Specialist</div>
+
+                <div class="value-prop">
+                    Stop writing prompts from scratch. Describe your task and Meta Prompt transforms it into an optimized, ready-to-use prompt with the right structure and clear instructions.
+                </div>
+
+                <div class="platform-badge">Available in ChatGPT Enterprise</div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <div class="features-heading">Key Features</div>
+
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">&#128221;</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Smart Templates</div>
+                            <div class="feature-desc">Dynamically builds your prompt using Essential, Standard, or Research structure</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">&#9998;</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Open in Canvas</div>
+                            <div class="feature-desc">Say "Open in Canvas" to edit and refine your prompt in real time</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">&#128196;</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Ready to Use</div>
+                            <div class="feature-desc">Clean output with no extra commentary — just copy and paste</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">&#128260;</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Iterative Refinement</div>
+                            <div class="feature-desc">Request changes and get updated prompts instantly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-cases">
+                    <div class="use-cases-label">Perfect for</div>
+                    <div class="use-cases-text">Research briefs &bull; Data extraction &bull; Analysis tasks &bull; Report generation &bull; Any AI workflow</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">Questions? Contact rishisharma@kpmg.ca</div>
+    </div>
+</body>
+</html>

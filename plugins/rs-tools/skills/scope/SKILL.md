@@ -1,11 +1,11 @@
 ---
 name: scope
-description: "Use for pre-plan thinking before implementation: clarify a fuzzy idea, ideate possible directions, pressure-test an existing direction, or decide whether the next artifact should be chat, a context, a product spec, or an ExecPlan. Trigger on requests like 'clarify this', 'ideate', or 'scope this'. Do not use for clear implementation requests, routine edits, code review, or accepted plans."
+description: "Use for pre-plan thinking before implementation: ideate possible directions, discuss an existing direction, or decide whether the next artifact should be chat, a context, a product spec, or an ExecPlan. Trigger on requests like 'scope this', 'ideate', 'discuss this', 'think this through', or 'what should we do here'. Do not use for requirements clarification, clear implementation requests, routine edits, code review, or accepted plans."
 ---
 
 # Scope
 
-Turn an unclear idea, broad request, option set, or proposed implementation direction into something clear enough to act on.
+Turn a broad idea, option set, or proposed direction into something clear enough to act on.
 
 Do not implement. Scope ends when the next step is clear.
 
@@ -13,11 +13,10 @@ Do not implement. Scope ends when the next step is clear.
 
 Classify the request into one lane:
 
-- **Clarify**: the user roughly knows what they want and needs the minimum questions required to proceed safely. Read `references/clarify.md`.
 - **Ideate**: the user wants broad options, surprising directions, or a stronger candidate set before choosing what to develop. Read `references/ideate.md`.
-- **Pressure-Test**: the user has an idea, plan, or implementation direction and wants it questioned thoroughly before planning or coding. Read `references/pressure-test.md`.
+- **Discuss**: the user has an idea, plan, or implementation direction and wants a live conversation that examines it before planning or coding. Read `references/discuss.md`.
 
-If the request is already concrete, say Scope is not needed and proceed directly.
+If the user mainly needs requirements clarification, stop Scope and say this is a clarification task. If the request is already concrete, say Scope is not needed and proceed directly.
 
 ## Common Workflow
 
@@ -60,8 +59,11 @@ Do not create a separate ideation artifact family by default. Important ideation
 ## Guardrails
 
 - Exit Scope early when the request is already decided and concrete enough to execute.
-- Ask one question at a time when questioning is needed.
+- In Discuss, prefer a live interview over an immediate essay.
+- Ask one useful question at a time when questioning is needed.
 - Provide a recommended default when asking the user to choose.
+- Ask in plain English for a smart non-technical user. Start with the simple version, use everyday words before technical terms, and add a one-sentence "why this matters" when context helps the user answer.
+- Keep asking until the next step is clear, the remaining unknowns are optional, or the user asks to stop.
 - Generate before evaluating in Ideate.
 - Filter weak ideas before presenting recommendations.
 - Keep research findings separate from assumptions.
@@ -73,7 +75,9 @@ Do not create a separate ideation artifact family by default. Important ideation
 - Implementing during Scope.
 - Turning every conversation into a document.
 - Asking a batch of intake questions.
+- Asking questions in dense implementation language when plain words would do.
+- Ending Discuss with a polished opinion before asking the next obvious question.
 - Generating ideas without filtering them.
 - Converging before enough options exist.
-- Treating pressure-testing as negativity instead of precision.
+- Treating discussion as either automatic agreement or ungrounded skepticism.
 - Letting Scope become planning, coding, review, or a full research-brief workflow.

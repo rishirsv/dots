@@ -169,7 +169,7 @@ Use the strongest available way to see the UI:
 
 1. Native app, simulator, device, preview, or screenshot tooling.
 2. Browser Use, Agent Browser, or in-app browser for web/local targets.
-3. Playwright or project screenshot tests.
+3. Project-native screenshot, snapshot, or preview tooling.
 4. Existing screenshots or user-provided images.
 5. Static code review only when rendering is unavailable.
 

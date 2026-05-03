@@ -19,7 +19,7 @@ Start with:
 - context docs
 - adjacent source files or examples
 
-Keep it shallow for Clarify. Go deeper for Ideate or Pressure-Test when the topic is broad, architectural, or high-stakes.
+Keep research proportional. Go deeper for Ideate or Discuss when the topic is broad, architectural, or high-stakes.
 
 ## Web Research
 
@@ -56,13 +56,13 @@ Useful cases:
 
 - broad Ideate runs
 - large repo scans
-- high-stakes Pressure-Test work
+- high-stakes Discuss work
 - repo context and web context can be gathered in parallel
 - multiple independent source angles are needed
 
 Avoid sub-agents for:
 
-- quick Clarify
+- quick local checks the main agent can do directly
 - narrow local repo checks
 - facts the main agent can verify in one or two reads
 - decisions that depend mainly on user intent rather than evidence

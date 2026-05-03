@@ -20,4 +20,5 @@ build/
 # Local generated runs
 **/.plugin-eval/runs/
 **/.autoresearch/runs/
+**/.agents/screenshots/
 **/outputs/

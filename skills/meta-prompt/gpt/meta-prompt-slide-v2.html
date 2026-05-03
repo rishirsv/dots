@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Prompt - Presentation Graphic v2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* KPMG Base */
+            --kpmg-deep: #001a4d;
+            --kpmg-primary: #00338D;
+            --kpmg-bright: #0052cc;
+
+            /* GPT Accent - extracted from logo (purple/cyan gradient) */
+            --accent-purple: #8B5CF6;
+            --accent-cyan: #06B6D4;
+            --accent-glow: rgba(139, 92, 246, 0.6);
+
+            /* Surfaces */
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(139, 92, 246, 0.3);
+            --card-hover: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .slide {
+            width: 1920px;
+            height: 1080px;
+            background: linear-gradient(145deg, var(--kpmg-deep) 0%, var(--kpmg-primary) 50%, var(--kpmg-bright) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* === ATMOSPHERIC LAYERS === */
+
+        /* Primary glow - logo accent color bleeding into background */
+        .atmosphere-primary {
+            position: absolute;
+            top: -20%;
+            left: 5%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(ellipse, var(--accent-purple) 0%, transparent 60%);
+            opacity: 0.25;
+            filter: blur(80px);
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        /* Secondary glow - cyan accent */
+        .atmosphere-secondary {
+            position: absolute;
+            bottom: -30%;
+            right: 10%;
+            width: 900px;
+            height: 700px;
+            background: radial-gradient(ellipse, var(--accent-cyan) 0%, transparent 55%);
+            opacity: 0.15;
+            filter: blur(100px);
+            animation: breathe 10s ease-in-out infinite reverse;
+        }
+
+        /* Diagonal accent line - grid breaker */
+        .diagonal-accent {
+            position: absolute;
+            top: 0;
+            left: 38%;
+            width: 4px;
+            height: 200%;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                var(--accent-purple) 30%,
+                var(--accent-cyan) 70%,
+                transparent 100%);
+            transform: rotate(15deg);
+            transform-origin: top center;
+            opacity: 0.4;
+        }
+
+        /* Noise texture overlay */
+        .noise {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        /* Geometric accents */
+        .geo-circle {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        .geo-circle-1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+        }
+        .geo-circle-2 {
+            width: 250px;
+            height: 250px;
+            bottom: 100px;
+            right: 200px;
+            border-color: rgba(139, 92, 246, 0.15);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.25; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+
+        /* === CONTENT === */
+
+        .content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            padding: 70px 90px;
+        }
+
+        /* LEFT COLUMN - 40% width, asymmetric */
+        .left-column {
+            width: 42%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 80px;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Logo with GLOW */
+        .logo-container {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo {
+            width: 140px;
+            height: 140px;
+            border-radius: 28px;
+            position: relative;
+            z-index: 2;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 60px var(--accent-glow),
+                0 0 100px rgba(139, 92, 246, 0.3);
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+
+        .logo-glow {
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%);
+            opacity: 0.5;
+            filter: blur(30px);
+            z-index: 1;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: #ffffff;
+            font-size: 92px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 16px;
+            letter-spacing: -2px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 36px;
+            letter-spacing: -0.5px;
+        }
+
+        .value-prop {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 24px;
+            line-height: 1.65;
+            margin-bottom: 40px;
+            max-width: 560px;
+        }
+
+        .value-prop strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: #ffffff;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* RIGHT COLUMN - 58% width */
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 60px;
+            position: relative;
+        }
+
+        /* Vertical accent bar */
+        .right-column::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            height: 70%;
+            width: 3px;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                var(--accent-purple) 20%,
+                var(--accent-cyan) 80%,
+                transparent 100%);
+            border-radius: 2px;
+        }
+
+        .features-heading {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .features-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, transparent 80%);
+        }
+
+        .features-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-item {
+            background: var(--card-bg);
+            padding: 26px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 22px;
+            transition: all 0.3s ease;
+            animation: fadeSlideIn 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.2s; }
+        .feature-item:nth-child(2) { animation-delay: 0.35s; }
+        .feature-item:nth-child(3) { animation-delay: 0.5s; }
+        .feature-item:nth-child(4) { animation-delay: 0.65s; }
+
+        .feature-item:hover {
+            background: var(--card-hover);
+            border-color: var(--card-border);
+            transform: translateX(8px);
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-cyan) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+        }
+
+        .feature-content {
+            flex: 1;
+            padding-top: 4px;
+        }
+
+        .feature-title {
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        /* Use cases - horizontal pills */
+        .use-cases {
+            margin-top: 32px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .use-case-pill {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .use-case-pill:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        /* FOOTER */
+        .footer {
+            position: absolute;
+            bottom: 36px;
+            left: 90px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+        }
+
+        .footer-divider {
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-contact {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+        }
+
+        .kpmg-logo-footer {
+            position: absolute;
+            bottom: 36px;
+            right: 70px;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <!-- Atmospheric layers -->
+        <div class="atmosphere-primary"></div>
+        <div class="atmosphere-secondary"></div>
+        <div class="diagonal-accent"></div>
+        <div class="noise"></div>
+        <div class="geo-circle geo-circle-1"></div>
+        <div class="geo-circle geo-circle-2"></div>
+
+        <div class="content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <div class="logo-container">
+                    <div class="logo-glow"></div>
+                    <img src="Generated Image November 23, 2025 - 1_09PM.jpeg" alt="Meta Prompt" class="logo" />
+                </div>
+
+                <h1>Meta Prompt</h1>
+                <div class="tagline">Your Prompt Engineering Specialist</div>
+
+                <div class="value-prop">
+                    Stop writing prompts from scratch. <strong>Describe your task</strong> and Meta Prompt transforms it into an optimized, structured prompt ready to use.
+                </div>
+
+                <div class="platform-badge">
+                    <span class="badge-dot"></span>
+                    Available in ChatGPT Enterprise
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <div class="features-heading">Key Features</div>
+
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Smart Templates</div>
+                            <div class="feature-desc">Auto-selects Essential, Standard, or Research structure based on your task</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">✏️</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Canvas Integration</div>
+                            <div class="feature-desc">Say "Open in Canvas" to edit and refine your prompt in real time</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Clean Output</div>
+                            <div class="feature-desc">No commentary, no explanations — just copy and paste</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🔄</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Iterative Refinement</div>
+                            <div class="feature-desc">Request changes and get updated prompts instantly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-cases">
+                    <span class="use-case-pill">Research briefs</span>
+                    <span class="use-case-pill">Data extraction</span>
+                    <span class="use-case-pill">Analysis tasks</span>
+                    <span class="use-case-pill">Report generation</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span class="footer-text">KPMG Deal Advisory</span>
+            <span class="footer-divider"></span>
+            <span class="footer-contact">rishisharma@kpmg.ca</span>
+        </div>
+        <div class="kpmg-logo-footer">KPMG</div>
+    </div>
+</body>
+</html>

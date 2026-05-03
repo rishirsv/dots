@@ -23,14 +23,17 @@ Current plugin:
 Bundled skills:
 
 - `agent-browser`: live browser and Electron automation through Vercel Agent Browser.
+- `clarify`: explicit requirement clarification before implementation.
 - `commit`: safe focused git commits.
+- `docs-gardener`: canonical docs maintenance, consolidation, and drift repair.
+- `explain`: plain-language explanations of code, diffs, configs, errors, and system flows.
 - `handoff`: concise continuation briefs.
 - `hard-cut`: one canonical implementation, no legacy compatibility paths.
 - `oracle`: repo-context packages for external review or planning.
 - `research`: explicit sourced research with repo context and primary-source guidance.
 - `rs-tools`: guidance for this plugin repo.
 - `simplify`: post-implementation cleanup for clarity, reuse, quality, and efficiency.
-- `scope`: clarify, ideate, or pressure-test before planning or implementation.
+- `scope`: ideate or discuss before planning or implementation.
 - `tech-debt`: explicit architecture debt review that updates `TECH-DEBT.md`.
 - `yeet`: CLI-first commit, push, and draft PR flow.
 

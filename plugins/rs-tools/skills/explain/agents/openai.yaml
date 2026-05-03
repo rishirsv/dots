@@ -1,0 +1,7 @@
+interface:
+  display_name: "Explain"
+  short_description: "Explain technical work in plain language"
+  default_prompt: "Use $explain to explain this code, diff, config, data model, or system flow in short, plain language for a non-technical audience."
+
+policy:
+  allow_implicit_invocation: false

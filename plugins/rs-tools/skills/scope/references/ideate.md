@@ -10,7 +10,7 @@ Generate many grounded possibilities, critique them, and present only the strong
 
 ## Workflow
 
-1. Identify the subject. If the subject is too vague for useful generation, ask one scope question.
+1. Identify the subject. If the subject is too vague for useful generation, ask one plain-language scope question with a recommended default and a one-sentence explanation of why it matters.
 2. Ground first. Use repo context, user-provided context, or web research when it materially changes the ideas.
 3. Generate before evaluating.
 4. Use varied lenses:
