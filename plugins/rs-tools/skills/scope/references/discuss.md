@@ -1,23 +1,38 @@
 # Discuss
 
-Use Discuss when the user has an existing idea, plan, architecture, implementation direction, or decision and wants to examine it carefully before planning or coding.
+## Contents
+
+- Goal
+- Workflow
+- Question Voice
+- What To Discuss
+- Terminology Pressure Testing
+- Output
+
+Use Discuss when the user has an existing idea, plan, architecture, workflow, implementation direction, or decision and wants to examine it carefully before planning or coding.
 
 If the user is not asking for critique and the direction is already accepted, exit Scope and proceed directly instead of reopening settled decisions.
 
 ## Goal
 
-Interview the user until there is shared understanding of what is sound, what is uncertain, what needs evidence, and what might be simpler before the direction hardens.
+Interview the user persistently until there is shared understanding of what is sound, what is uncertain, what needs evidence, and what might be simpler before the direction hardens.
+
+Keep asking until the direction is genuinely clear. Do not settle for surface agreement, but ask with curiosity rather than pressure.
 
 ## Workflow
 
-1. Restate the idea in one or two sentences.
-2. If repo claims are checkable, inspect the repo before treating them as true.
-3. Interview the user persistently until there is shared understanding.
-4. Ask one focused question at a time. Each question should expose a meaningful uncertainty, tradeoff, assumption, or decision.
-5. For each question, include your recommended answer or likely default when useful.
-6. Use plain English. Start with the simple version, explain why the question matters in one short sentence when helpful, and avoid dense implementation language unless the topic requires it.
-7. Keep going until the direction is clear enough to proceed, the remaining unknowns are optional, or the user asks to stop.
-8. Only then recommend proceed, revise, split, or drop.
+1. Restate the idea in one or two sentences as **Current Understanding**.
+2. If project, product, or workflow claims are checkable, inspect source of truth before treating them as true.
+3. Ask one focused question at a time. Each question should expose a meaningful uncertainty, tradeoff, assumption, term, boundary, or decision.
+4. Include your recommended answer or likely default when useful.
+5. Use a topic label when it helps the user follow the branch being explored, such as `On artifact routing:` or `Switching to the data model:`.
+6. Name topic transitions naturally: "That settles the user-facing flow. Next I want to test the rollout risk."
+7. After 3-4 questions, or at a natural topic boundary, give a brief 2-3 sentence checkpoint of what has resolved before continuing.
+8. Treat a branch as settled when the answer resolves the decision, the remaining unknowns are optional, or another branch now carries the real risk.
+9. Use the lenses in What To Discuss below to guide your questions, but let the conversation determine which branches to explore and in what order.
+10. If the discussion reveals the user does not have a direction yet, offer to shift into Ideate before planning or implementation.
+11. When multiple plausible directions remain after the relevant branch has been explored, present 2-3 options before recommending one.
+12. End with the **Scoped Direction** shape from `SKILL.md`.
 
 ## Question Voice
 
@@ -46,9 +61,17 @@ Avoid:
 - questions that sound like an engineering intake form
 - deep implementation trivia unless the decision depends on it
 
-## What To Discuss
+Example:
 
-Use these as lenses for the interview, not as a checklist to dump into chat.
+```md
+On web authentication:
+
+Right now, the product has both password login and magic-link login. I think the safer default is to keep both for existing users, but make magic links the primary path for new users because it reduces password reset support.
+
+Does that match your intent, or should password login stay equally prominent?
+```
+
+## What To Discuss
 
 Look for:
 
@@ -57,7 +80,7 @@ Look for:
 - unsupported user or business value
 - duplicated systems or duplicate truth
 - simpler alternatives
-- scope that should be split
+- scope that should be separated into different deliverables
 - edge cases and failure modes
 - migration or compatibility costs
 - verification gaps
@@ -70,23 +93,38 @@ For product or UX work, also discuss:
 - whether empty, error, and transition states are accounted for
 - whether the idea adds surface area instead of reducing friction
 
+For fuzzy product or workflow direction, use these as optional product probes when the existing lenses are not specific enough:
+
+- **Evidence**: what observable behavior, request, workaround, or pain says this matters?
+- **Specificity**: who exactly is affected, and what changes for them?
+- **Counterfactual**: what happens today if nothing changes?
+- **Smallest proving version**: what is the smallest version that would prove the bet?
+- **Durability**: only when relevant, what plausible near-term change would make this idea weaker?
+
+These probes supplement the lenses above. Do not run them as a checklist.
+
+## Terminology Pressure Testing
+
+Use this only for project, product, architecture, workflow, or domain discussions where shared language affects the work.
+
+When grounding reveals a term that conflicts with the user's language, or when the user uses a vague or overloaded term:
+
+- Name the conflict plainly.
+- Ask whether the terms are the same or distinct.
+- Recommend the canonical term when project docs, code, or prior decisions point to one.
+- Name aliases or meanings to avoid.
+- Test the distinction with a concrete scenario when the boundary is still fuzzy.
+
+Frame this as discovery, not prescription. Prefer: "The code uses `Account`, but you are saying `Customer`. Are those the same thing here, or is there a distinction we should preserve?"
+
+Do not pressure-test terminology during loose Ideate sessions unless the user has narrowed to a direction and asks to discuss it.
+
 ## Output
 
-This lane's output shape supersedes the common Scope summary.
+End with the **Scoped Direction** shape from `SKILL.md`.
 
-End with one recommendation:
+Do not use `Proceed`, `Revise`, `Split`, or `Drop` as formal verdicts. If the work should be separated, say so naturally inside `Chosen Direction`, `What We Resolved`, or `Recommended Next Step`.
 
-- **Proceed**: the direction is sound enough to plan or implement.
-- **Revise**: the core idea is good, but a specific part needs reshaping.
-- **Split**: the idea combines separate decisions or deliverables.
-- **Drop**: the idea is not worth pursuing in its current form.
+When options were compared, put the selected option in `Chosen Direction`. Mention rejected alternatives only when they materially explain the choice.
 
-Include:
-
-- strong parts
-- risks
-- hidden assumptions
-- simpler alternative when one exists
-- recommended next step
-
-Default to chat. Save only when the discussed direction should become a context or product spec.
+Default to chat. Save only when `SKILL.md` says the result needs a durable artifact.

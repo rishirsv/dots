@@ -11,7 +11,7 @@ Generate many grounded possibilities, critique them, and present only the strong
 ## Workflow
 
 1. Identify the subject. If the subject is too vague for useful generation, ask one plain-language scope question with a recommended default and a one-sentence explanation of why it matters.
-2. Ground first. Use repo context, user-provided context, or web research when it materially changes the ideas.
+2. Ground first. Use local project context, user-provided context, or web research when it materially changes the ideas.
 3. Generate before evaluating.
 4. Use varied lenses:
    - pain and friction
@@ -23,12 +23,13 @@ Generate many grounded possibilities, critique them, and present only the strong
 5. Merge, dedupe, and combine overlapping ideas.
 6. Reject weak ideas before presenting survivors.
 7. Recommend what to develop next.
+8. If a survivor becomes promising but still needs pressure testing, offer to shift into Discuss before planning or implementation.
 
 ## Warrants
 
 Each serious idea needs a warrant:
 
-- `direct`: repo evidence, user-provided context, docs, code, tracker item, shipped behavior, or explicit quote.
+- `direct`: local project evidence, user-provided context, docs, code, tracker item, shipped behavior, or explicit quote.
 - `external`: named source, current web/source research, prior art, or known pattern.
 - `reasoned`: written first-principles argument.
 
@@ -44,12 +45,10 @@ Reject ideas that are:
 - not grounded in context
 - too expensive for likely value
 - already covered by existing docs, plans, or workflows
-- generic advice that ignores the repo or domain
+- generic advice that ignores the project, workspace, or domain
 - subject replacement rather than improvement
 
 ## Output
-
-This lane's output shape supersedes the common Scope summary.
 
 Present a ranked set of survivors. For each survivor include:
 
@@ -60,6 +59,11 @@ Present a ranked set of survivors. For each survivor include:
 - risk or unknown
 - recommended next step
 
-Include a short rejection or parked-ideas summary when it helps the user trust the narrowing.
+Include a short rejected or parked-ideas summary when it helps the user trust the narrowing.
 
-Default to chat. Save only when the selected direction or important rejected options should persist as a context or product spec.
+End with:
+
+- **Open Questions**: unresolved questions, or `None`.
+- **Recommended Next Step**: the exact next chat, artifact, plan, Discuss session, or implementation move.
+
+Default to chat. Save only when `SKILL.md` says the selected direction or important rejected options need a durable artifact.

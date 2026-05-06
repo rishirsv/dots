@@ -1,4 +1,4 @@
 interface:
   display_name: "Scope"
-  short_description: "Ideate or discuss before planning"
-  default_prompt: "Use $scope to explore options, discuss the direction, and recommend the next artifact."
+  short_description: "Shape big fuzzy work before planning"
+  default_prompt: "Use $scope to ideate options or discuss a broad direction until we share the same understanding, then recommend the next chat, artifact, plan, or implementation move."
