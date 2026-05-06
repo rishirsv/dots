@@ -24,6 +24,8 @@ Activate this phase when the user explicitly asks to "deslop", "clean up AI outp
 
 Spawn subagents to launch all three `worker` agents concurrently in a single message. Pass each agent the full diff so it has the complete context.
 
+Tell each agent to use available skills, plugins, repo instructions, and repo review guidance when they apply to the changed code.
+
 ### Agent 1: Code Reuse Review
 
 For each change:
