@@ -5,8 +5,10 @@
 - Goal
 - Workflow
 - Question Voice
+- Decision Tree Discipline
 - What To Discuss
 - Terminology Pressure Testing
+- Before Ending
 - Output
 
 Use Discuss when the user has an existing idea, plan, architecture, workflow, implementation direction, new-feature concept, or decision and wants to examine it carefully before planning or coding.
@@ -19,24 +21,25 @@ Interview the user persistently until there is shared understanding of what is s
 
 Keep asking until the direction is genuinely clear. Do not settle for surface agreement, but ask with curiosity rather than pressure.
 
-When the discussion scopes a new feature or materially reshapes a feature, the durable output should usually be a clean spec. Capture the contents of the discussion as settled requirements and decisions, not as a transcript.
+When the discussion scopes a new feature, artifact, workflow, or decision, the durable output should usually be a clean spec or context artifact. Capture the contents of the discussion as settled requirements and decisions, not as a transcript.
 
 ## Workflow
 
 1. Restate the idea in one or two sentences as **Current Understanding**.
 2. If project, product, repo, or workflow claims are checkable, inspect the source of truth before treating them as true.
-3. Ask one focused question at a time. Each question should expose a meaningful uncertainty, tradeoff, assumption, term, boundary, or decision.
-4. Include your recommended answer or likely default when useful.
-5. Use plain English. Start with the simple version, explain why the question matters in one short sentence when helpful, and avoid dense implementation language unless the topic requires it.
-6. Use a topic label when it helps the user follow the branch being explored, such as `On artifact routing:` or `Switching to the data model:`.
-7. Name topic transitions naturally: "That settles the user-facing flow. Next I want to test the rollout risk."
-8. After 3-4 questions, or at a natural topic boundary, give a brief 2-3 sentence checkpoint of what has resolved before continuing.
-9. Treat a branch as settled when the answer resolves the decision, the remaining unknowns are optional, or another branch now carries the real risk.
-10. Use the lenses in What To Discuss below to guide your questions, but let the conversation determine which branches to explore and in what order.
-11. If the discussion reveals the user does not have a direction yet, offer to shift into Ideate before planning or implementation.
-12. When multiple plausible directions remain after the relevant branch has been explored, present 2-3 options before recommending one.
-13. If the result should guide feature implementation, create or update the repo's canonical spec with the clarified decisions and requirements.
-14. End with the **Scoped Direction** shape from `SKILL.md`.
+3. Identify the live decision branches before asking: audience, reader, or stakeholder experience; visible language; behavior; source of truth; ownership; edge states; rollout or delivery; verification; and durable artifact. Use only the branches that matter.
+4. Ask one focused question at a time. Each question should expose a meaningful uncertainty, tradeoff, assumption, term, boundary, or decision.
+5. Include your recommended answer or likely default for each question.
+6. Use plain English. Start with the simple version, explain why the question matters in one short sentence when helpful, and avoid dense implementation language unless the topic requires it.
+7. Use a topic label when it helps the user follow the branch being explored, such as `On artifact routing:` or `Switching to the data model:`.
+8. Name topic transitions naturally: "That settles the user-facing flow. Next I want to test the rollout risk."
+9. After 3-4 questions, or at a natural topic boundary, give a brief 2-3 sentence checkpoint of what has resolved before continuing.
+10. Treat a branch as settled only when the answer resolves the decision, the decision is explicitly out of scope, the remaining unknown would not change the next artifact or execution path, or another branch now carries the real risk.
+11. Use the lenses in What To Discuss below to guide your questions, but let the conversation determine which branches to explore and in what order.
+12. If the discussion reveals the user does not have a direction yet, offer to shift into Ideate before planning or implementation.
+13. When multiple plausible directions remain after the relevant branch has been explored, present 2-3 options before recommending one.
+14. If the result should guide future work across sessions or agents, create or update the repo's canonical artifact with the clarified decisions and requirements.
+15. Run the Before Ending audit below, then end with the **Scoped Direction** shape from `SKILL.md`.
 
 ## Question Voice
 
@@ -48,7 +51,7 @@ Use:
 - plain words
 - one question at a time
 - one sentence of context before a question, only when it helps
-- a recommended/default answer when there is a sensible default
+- a recommended/default answer for every question
 - a short "why this matters" when the practical impact is not obvious
 
 Prefer:
@@ -75,6 +78,18 @@ Right now, the product has both password login and magic-link login. I think the
 Does that match your intent, or should password login stay equally prominent?
 ```
 
+## Decision Tree Discipline
+
+Walk the plan as a decision tree, resolving dependencies one branch at a time. Keep the structure internal; the user should experience a calm sequence of sharp questions, not an intake form.
+
+For each active branch:
+
+- Ask one question at a time.
+- Provide your recommended answer or default.
+- Explore the source material, docs, workspace, codebase, or provided context instead of asking when the answer is discoverable.
+- Use concrete scenarios when a decision is fuzzy or a boundary could change the outcome.
+- Do not treat mechanical feasibility as enough shared understanding when human-facing behavior, language, or domain meaning is still unsettled.
+
 ## What To Discuss
 
 Look for:
@@ -90,10 +105,12 @@ Look for:
 - verification gaps
 - places where the idea solves the symptom but not the underlying problem
 
-For product or UX work, also discuss:
+For work with a human-facing surface, also discuss:
 
-- whether the proposed flow matches the real user moment
-- whether the UI burden is proportionate to the value
+- whether the proposed experience, artifact, or workflow matches the real moment of use
+- what a user, reader, teammate, operator, or future agent will see
+- whether visible language, tone, timing, placement, empty states, error states, and success states are resolved or explicitly deferred
+- whether the surface area or process burden is proportionate to the value
 - whether empty, error, and transition states are accounted for
 - whether the idea adds surface area instead of reducing friction
 
@@ -124,6 +141,14 @@ When grounding reveals a term that conflicts with the user's language, or when t
 Frame this as discovery, not prescription. Prefer: "The code uses `Account`, but you are saying `Customer`. Are those the same thing here, or is there a distinction we should preserve?"
 
 Do not pressure-test terminology during loose Ideate sessions unless the user has narrowed to a direction and asks to discuss it.
+
+## Before Ending
+
+Before ending Discuss, ask internally:
+
+"Is there any unresolved question whose answer would change human-facing behavior, reader-facing language, domain meaning, artifact shape, or execution path?"
+
+If yes, ask that question instead of ending. If no, make sure any deferred question is named in **Open Questions** or marked out of scope.
 
 ## Output
 
