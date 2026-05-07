@@ -1,110 +1,275 @@
 ---
 name: scope
-description: "Use for broad or fuzzy pre-plan thinking before implementation or major decisions: ideate possible directions, persistently discuss an existing direction until shared understanding exists, or decide whether the next artifact should be chat, context, product spec, or ExecPlan. Trigger on requests like 'scope this', 'ideate', 'discuss this', 'think this through', or 'what should we do here'. Do not use for requirements clarification, clear implementation requests, routine edits, code review, or accepted plans."
+description: "Use for broad, fuzzy, consequential, or pre-plan work before execution: Codex goals, substantial features, coding tasks, documents, presentations, research, strategy, workflow design, plugin/skill design, artifact design, and general knowledge work. Scope runs a persistent one-question-at-a-time discussion until shared understanding exists and the next chat decision, artifact, plan, Codex goal, research move, or implementation move is genuinely clear. Do not use for narrow requirements clarification, accepted plans, routine edits, direct implementation, code review, or fully settled work."
 ---
 
 # Scope
 
-Turn a broad idea, option set, or proposed direction into shared understanding clear enough to act on.
+Scope turns broad or fuzzy work into shared understanding clear enough to act on.
 
-Where requirements clarification asks the minimum needed to proceed, Scope asks as many useful questions as needed to reach shared understanding.
+Scope is a pre-plan discussion skill. Do not implement during Scope. Do not produce a detailed execution plan while material scoping questions remain unanswered.
 
-Do not implement. Scope ends when the next step is clear.
+Scope ends only when the next move is clear: a chat decision, durable artifact, brief, spec, ExecPlan, Codex goal setup, research move, implementation move, or decision to stop.
 
-## Lanes
+## Scope vs Clarify
 
-Classify the request into one lane:
+Use **Clarify** when the user already has a concrete request and only the minimum must-have questions are needed before execution.
 
-- **Ideate**: the user wants broad options, surprising directions, or a stronger candidate set before choosing what to develop. Read `references/ideate.md`.
-- **Discuss**: the user has an idea, plan, architecture, workflow, implementation direction, or decision and wants to examine it before planning or coding. Read `references/discuss.md`.
+Use **Scope** when the work is broad, fuzzy, high-consequence, multi-session, strategic, creative, agentic, or likely to shape future work.
 
-If the user mainly needs requirements clarification, stop Scope and say this is a clarification task. If the request is already concrete enough to execute, say Scope is not needed and proceed directly.
+Clarify asks the fewest questions needed to avoid wrong execution.
 
-Keep quick Scope sessions brief, but use persistent Discuss when the work is broad, fuzzy, or high-consequence.
+Scope asks as many useful questions as needed to build shared understanding.
 
-## Common Workflow
+Do not collapse Scope into Clarify. Do not turn Scope into implementation.
 
-1. Classify the lane.
-2. Ground the topic before asking avoidable questions.
-3. Use local project research, web research, or sub-agents only when they materially change the answer. Read `references/research.md` when the grounding decision is non-trivial.
-4. Run the selected lane.
-5. Use the Durable Outputs rules below to decide whether the result stays in chat or becomes an artifact.
-6. End with the selected lane's output shape.
+## When To Use Scope
 
-## Grounding
+Use Scope for:
 
-For project, product, or workflow topics, inspect local source of truth first:
+- Codex goals, long-running autonomous work, or multi-agent setup
+- substantial feature, architecture, refactor, migration, or implementation setup
+- documents, presentations, memos, briefs, research plans, or strategy work
+- workflow design, process design, plugin design, skill design, or agent-workflow design
+- broad ideation before choosing a direction
+- pressure-testing an existing idea, plan, artifact, workflow, or decision
+- deciding what the next durable artifact should be
+- work where ambiguity would compound if an agent started executing too soon
+
+Do not use Scope for:
+
+- a small request that is already clear enough to execute
+- routine edits or mechanical changes
+- code review
+- accepted plans where the user wants execution
+- narrow requirements clarification that belongs in Clarify
+- full sourced research briefs, unless the next scoped move is to define and hand off the research
+
+If Scope is not needed, say so briefly and recommend the direct next move.
+
+## Operating Modes
+
+Choose the lightest mode that fits.
+
+### Short Scope
+
+Use for small but fuzzy topics. Ask only the questions needed to choose the next move, often 1-5 total. End in chat unless the result needs to persist.
+
+### Persistent Scope
+
+Use for substantial, high-consequence, multi-session, agentic, or durable work.
+
+Ask one focused question at a time. For substantial topics, expect a real scoping conversation, often roughly 20-50 focused questions total when that materially reduces ambiguity.
+
+This is not a quota. Do not ask filler questions. Stop earlier when the next move is genuinely clear. Continue longer when unresolved ambiguity would change the artifact, plan, Codex goal, implementation path, audience experience, domain meaning, validation approach, or future-agent instructions.
+
+### Ideation To Discussion
+
+Use when the user wants options before choosing a direction. Generate possibilities before evaluating them. Filter weak, generic, duplicative, or unsupported ideas before presenting survivors. Once a promising direction emerges, shift into the one-question-at-a-time scoping loop before planning or execution.
+
+## The Scoping Loop
+
+Follow this loop until the next move is clear.
+
+1. **Ground first.** Inspect the relevant source of truth before asking questions the workspace, repo, docs, files, existing artifacts, user-provided context, or current sources can answer.
+2. **State current understanding.** Restate the goal or direction in 1-3 concise sentences.
+3. **Choose the highest-leverage branch.** Focus on the uncertainty that most affects the next artifact, plan, Codex goal, implementation move, research move, or decision.
+4. **Ask one focused question.** Ask only one question at a time unless a tiny grouped choice is clearly faster.
+5. **Give a recommended default.** When useful, state the likely default or recommended answer and why.
+6. **Record what changed.** Treat the answer as a decision, constraint, assumption, term, non-goal, validation expectation, artifact-routing choice, open question, or future-agent instruction.
+7. **Checkpoint every 3-4 questions.** Briefly summarize what has resolved, what remains live, and which branch you are moving to next.
+8. **Continue persistently.** Do not end because the conversation has become long. End only when the next move is genuinely clear or the user asks to stop.
+9. **Run the ending audit.** Before ending, ask internally: "Is there any unresolved question whose answer would change the next artifact, plan, Codex goal, implementation path, audience-facing result, domain meaning, validation approach, or future-agent instruction?" If yes, ask that question instead of ending.
+10. **Capture durable outcomes.** If future work will rely on the discussion, update or create the appropriate source-of-truth artifact before Scope ends.
+
+The user should experience a calm sequence of sharp questions, not a giant questionnaire.
+
+## Question Style
+
+Ask in plain English for a smart non-technical user unless the topic itself requires technical language.
+
+Use:
+
+- short questions
+- one question at a time
+- concrete choices when helpful
+- a recommended/default answer when helpful
+- one sentence of context before the question when needed
+- one sentence explaining why the answer matters when the impact is not obvious
+
+Avoid:
+
+- giant questionnaires
+- mechanical intake forms
+- dense implementation language
+- asking trivia that does not change the next move
+- asking the user to decide things the project already decides
+- turning every answer into a new artifact
+- pretending surface agreement is shared understanding
+
+Good question shape:
+
+```md
+On the audience:
+
+I think the default should be to write this for future agents first, then humans second, because the artifact will mainly guide follow-through work.
+
+Should the source of truth be optimized for future agents, human reviewers, or both equally?
+```
+
+Good checkpoint shape:
+
+```md
+Checkpoint: We have settled the target reader, the non-goals, and the validation bar. The remaining risk is artifact shape: whether this should become a short context note, a full spec, or a Codex goal setup. I want to resolve that next.
+```
+
+## What To Explore
+
+Use these lenses as prompts, not a checklist.
+
+- **Outcome**: what success looks like, who it serves, and what should be different when the work is done
+- **Audience or user**: the reader, user, stakeholder, operator, reviewer, or future agent
+- **Scope boundaries**: what is in scope, out of scope, deferred, and explicitly not worth doing
+- **Evidence and motivation**: the pain, request, observation, risk, opportunity, or strategic reason behind the work
+- **Terms and shared language**: vague, overloaded, or conflicting terms that affect the work
+- **Source of truth**: where future agents or collaborators should look first
+- **Constraints**: style, tone, time, budget, dependencies, compatibility, privacy, safety, data, migration, rollout, maintainability, or reversibility
+- **Tradeoffs and alternatives**: live options, smaller versions, simpler alternatives, and rejected directions that explain the choice
+- **Edge cases and failure modes**: empty states, error states, transition states, permission issues, operational burden, adoption risk, and symptom-vs-cause gaps
+- **Validation**: how the user, reviewer, future agent, test suite, reader, or stakeholder will know the work is done
+- **Future-agent instructions**: what future agents must preserve, avoid, check, update, and report
+
+## Grounding And Research
+
+Grounding is required when it would prevent avoidable questions or wrong framing.
+
+For local project or workspace topics, inspect relevant sources such as:
 
 - `AGENTS.md`
-- `CLAUDE.md`
 - `README.md`
-- TODOs, product specs, project specs, exec plans, context docs
-- relevant source files or examples
+- existing specs, plans, briefs, notes, TODOs, and context docs
+- active or completed ExecPlans
+- nearby source files, examples, tests, configs, routes, schemas, or artifacts
+- user-provided files and conversation context
 
-Do not ask the user to answer something the local project, workspace, or provided materials can answer.
+For external or current facts, use web or source research when current outside information materially affects the scoped decision.
 
+Use research proportionally. Scope should not become a full research-brief workflow. If the main task is research, Scope should define the research question, sources, output shape, depth, validation bar, and next artifact, then hand off to research.
+
+Keep sourced findings separate from assumptions and inference.
+
+## Ideation Behavior
+
+When ideating:
+
+1. Ground enough to avoid generic ideas.
+2. Generate broadly before judging.
+3. Use varied lenses: removal, simplification, inversion, leverage, compounding, analogy, constraint flip, and smallest useful version.
+4. Merge and dedupe overlapping ideas.
+5. Reject weak ideas before presenting survivors.
+6. Give each serious survivor a warrant:
+   - **Direct**: user-provided context, local project evidence, docs, shipped behavior, examples, or explicit quotes
+   - **External**: current source, prior art, market pattern, platform guidance, or named reference
+   - **Reasoned**: first-principles argument tied to the user's goal
+7. Recommend what to develop or discuss next.
+8. Shift into Persistent Scope before substantial planning or execution.
+
+Do not present a long undifferentiated idea dump.
+
+## Durable Capture
+
+Default to chat for small, throwaway, or fully resolved conversations.
+
+Create or update a durable artifact when any of these are true:
+
+- the user asks for one
+- another agent, session, collaborator, plan, or Codex goal will rely on the result
+- the session produces reusable decisions, terms, constraints, assumptions, non-goals, validation expectations, artifact-routing choices, or future-agent instructions
+- the work is substantial, multi-session, high-consequence, or likely to be resumed later
+- the result would be hard to reconstruct from chat
+
+Hard invariant:
+
+If an artifact is created or updated, it must contain every durable outcome of the Scope session before Scope ends.
+
+Durable outcomes include:
+
+- goal and desired outcome
+- audience, reader, user, stakeholder, or future-agent target
+- decisions made and why they were made
+- constraints and accepted defaults
+- canonical terms, aliases, and rejected meanings
+- assumptions the next agent may rely on
+- non-goals and deferred work
+- in-scope and out-of-scope boundaries
+- tradeoffs and rejected options when they explain the choice
+- validation expectations and definition of done
+- artifact-routing decisions
+- open questions and whether they block action
+- instructions future agents must follow
+- context needed to avoid re-litigating settled points
+
+Write durable artifacts as source-of-truth substance, not as transcripts. Do not paste the conversation. Do not write a vague summary. The artifact should be complete enough for a future agent to continue without rereading the chat.
+
+When a canonical artifact already exists, update it instead of creating a competing source of truth.
+
+If the right artifact does not exist but durable decisions are being made, create the smallest appropriate artifact in the project's conventional location, or ask where it should live when there is no convention and the location materially matters.
+
+## Artifact Routing
+
+Choose the smallest durable structure future work will actually use. Prefer one canonical source of truth. Use a small bundle only when a Codex goal, long-running workflow, or project convention truly requires multiple maintained files.
+
+When using a Scope asset template, read the matching file before writing:
+
+- **Context note**: shared understanding, constraints, terminology, assumptions, non-goals, and next-step guidance that future agents need but that is not yet a full spec or plan. Read `assets/context-template.md`.
+- **Domain context**: terminology, ownership boundaries, structural relationships, or flagged ambiguity that should become canonical. Read `assets/domain-context-template.md`.
+- **Brief or product spec**: documents, presentations, research, strategy, product work, workflows, plugins, skills, or features where the desired outcome and acceptance criteria need to guide later drafting, planning, or implementation. Read `assets/product-spec-template.md`.
+- **ExecPlan**: substantial implementation sequencing. Follow local planning instructions first; if the project has no stronger convention, read `assets/exec-plan-template.md`.
+- **Codex goal setup**: long-running autonomous work, multi-agent work, or work that must stay alive across turns. Capture the goal, why it matters, scope, non-goals, standards, workflow instructions, validation expectations, progress logging expectations, decision-log expectations, risks, assumptions, and continuation instructions. Use supporting files only when they will actually be read and maintained.
+- **Project-native artifact**: use the repo, workspace, or organization's existing artifact type when it is the real source of truth.
+
+Do not create an ExecPlan while scope-level decisions remain unsettled. Scope may create or update the decisions that an ExecPlan will rely on, then recommend the ExecPlan as the next move.
+
+## Final Chat Output
+
+End every Scope session with a concise **Scoped Direction** unless the user explicitly asks for a different format.
+
+Use this shape:
+
+```md
 ## Scoped Direction
 
-Discuss ends with **Scoped Direction**. Use one compact block:
+**Chosen Direction:** The direction to carry forward, or the remaining live options if no direction is chosen.
 
-- **Chosen Direction**: the direction to carry forward; if no direction is chosen, state the remaining live options.
-- **What We Resolved**: choices, tradeoffs, terms, or boundaries settled during the conversation; use `None yet` when nothing was resolved.
-- **In Scope**: what belongs in the next step.
-- **Out Of Scope**: what should stay out for now.
-- **Remaining Risk**: the main uncertainty, cost, or failure mode still worth watching.
-- **Open Questions**: unresolved questions, or `None`.
-- **Recommended Next Step**: the exact next chat, artifact, plan, or implementation move.
+**What We Resolved:** Decisions, terms, constraints, assumptions, non-goals, validation expectations, and artifact-routing choices settled during Scope.
 
-Ideate keeps its ranked-survivor output, then ends with **Open Questions** and **Recommended Next Step**.
+**In Scope:** What belongs in the next move.
 
-## Durable Outputs
+**Out Of Scope:** What should stay out for now.
 
-Default to chat. Create or update an artifact only when at least one is true:
+**Remaining Risks:** The main uncertainties, costs, or failure modes still worth watching.
 
-- The user asks for a durable output.
-- Another agent, session, or future plan needs the result to continue the work.
-- Resolved language, decisions, or constraints will matter later and would be hard to reconstruct from the chat.
+**Open Questions:** Unresolved questions, or `None`. Say whether each open question blocks action.
 
-A Discuss session that confirms the user's original direction and resolves no new terms, decisions, or durable constraints does not need an artifact. The conversation record is enough.
+**Durable Capture:** `Chat only`, or the artifact path(s) updated/created and what they now contain.
 
-When an artifact is needed:
+**Recommended Next Step:** The exact next chat, artifact, plan, Codex goal, research move, or implementation move.
+```
 
-1. Follow local convention first: root guidance, docs-folder guidance, existing artifact folders, nearby examples, and active plans.
-2. If a matching context, product spec, or plan exists, read it and ask whether to continue from it or start fresh.
-3. Choose exactly one artifact family.
-4. Prefer project-specific templates when they exist. Otherwise read the matching Scope asset template before writing; do not write from memory.
-5. Use project-relative paths in durable workspace docs. Absolute paths are fine in chat, but they make artifacts less portable.
-6. Ask where to store the artifact if the project has no convention and the user has not specified a destination.
+For ideation, include a ranked survivor list before **Scoped Direction**.
 
-Artifact families:
-
-- **Context**: shared understanding, scope boundaries, constraints, decisions, and next steps that need to persist. Read `assets/context-template.md`.
-- **Domain context**: terminology, ownership boundaries, domain relationships, or flagged ambiguity that should become canonical. Read `assets/domain-context-template.md`.
-- **Product spec**: product or feature scope stable enough to guide planning or implementation. Read `assets/product-spec-template.md`.
-- **ExecPlan**: substantial implementation planning. Read local plan instructions first; if the project has no stronger convention, read `assets/exec-plan-template.md`.
-
-Do not create a separate ideation artifact family. Important ideation output should either stay in chat or become part of a context or product spec.
+For substantial Scope sessions, the final output should be short because the durable artifact carries the source-of-truth substance.
 
 ## Guardrails
 
-- Exit Scope early when the request is already decided and concrete enough to execute.
-- Ask in plain English for a smart non-technical user. Start with the simple version, use everyday words before technical terms, and add a one-sentence "why this matters" when context helps the user answer.
-- Provide a recommended default when asking the user to choose.
-- Keep asking until the next step is clear, the remaining unknowns are optional, or the user asks to stop.
-- Generate before evaluating in Ideate.
-- Filter weak ideas before presenting recommendations.
-- Keep research findings separate from assumptions.
-- Keep implementation details out unless the topic itself is technical or architectural.
-- The main agent owns synthesis and recommendation, even when sub-agents help gather material.
-
-## Anti-Patterns
-
-- Implementing during Scope.
-- Turning every conversation into a document.
-- Asking a batch of intake questions in Discuss.
-- Asking questions in dense implementation language when plain words would do.
-- Ending Discuss with a polished opinion before the interview has created shared understanding.
-- Generating ideas without filtering them.
-- Converging before enough options exist.
-- Treating discussion as either automatic agreement or ungrounded skepticism.
-- Letting Scope become planning, coding, review, or a full research-brief workflow.
+- Do not implement during Scope.
+- Do not produce a detailed execution plan while important scoping questions remain.
+- Do not dump a giant questionnaire.
+- Do not ask mechanical questions just to reach a target count.
+- Do not stop early when unresolved ambiguity would change the next move.
+- Do not turn every conversation into an artifact.
+- Do not leave durable decisions only in chat when future work will rely on them.
+- Do not create competing artifacts when a canonical artifact already exists.
+- Do not make Scope coding-biased; use the same discipline for documents, decks, research, strategy, workflows, skills, and general knowledge work.
+- Do not ask the user to answer what source material can answer.
+- Do not hide uncertainty. Mark assumptions and open questions clearly.

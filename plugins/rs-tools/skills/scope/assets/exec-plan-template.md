@@ -1,6 +1,6 @@
 # ExecPlan Template
 
-Use When: Use this only when no project-specific template exists and the work involves substantial features, architecture changes, refactors, migrations, or multi-session work where another agent should be able to continue from the plan plus the current working tree. Follow local planning instructions first when they exist. Use project-relative paths for local files.
+Use When: Use this only when no project-specific template exists and the work involves substantial features, architecture changes, refactors, migrations, or multi-session work where another agent should be able to continue from the plan plus the current working tree. Follow local planning instructions first when they exist. Capture every durable decision, constraint, assumption, non-goal, validation expectation, artifact-routing choice, and future-agent instruction produced during scoping. Use project-relative paths for local files.
 
 ```md
 # <Feature Or Change> ExecPlan
@@ -8,6 +8,12 @@ Use When: Use this only when no project-specific template exists and the work in
 ## Purpose
 
 Explain the user-visible outcome and why it matters.
+
+## Scope
+
+- In scope:
+- Out of scope:
+- Accepted assumptions:
 
 ## Phase Outcomes
 
@@ -29,6 +35,14 @@ List exact checks to run and what success looks like.
 ## Decision Log
 
 - <Decision>: <why it was made>
+
+## Constraints And Future-Agent Instructions
+
+- <Constraint, standard, preference, or instruction future agents must preserve.>
+
+## Open Questions
+
+- <Unresolved question, or `None`. Say whether each open question blocks action.>
 
 ## Surprises And Discoveries
 

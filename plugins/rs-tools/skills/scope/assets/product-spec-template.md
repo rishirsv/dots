@@ -1,9 +1,9 @@
 # Product Spec Template
 
-Use When: Use this only when no project-specific template exists and product or feature scope is stable enough to guide planning, implementation, review, or handoff. Use project-relative paths for local files.
+Use When: Use this only when no project-specific template exists and product, artifact, workflow, or feature scope is stable enough to guide planning, implementation, drafting, review, or handoff. Capture every durable decision, constraint, assumption, non-goal, validation expectation, artifact-routing choice, and future-agent instruction produced during scoping. Use project-relative paths for local files.
 
 ```md
-# <Feature Or Product Area> Product Spec
+# <Feature, Artifact, Workflow, Or Product Area> Spec
 
 ## TL;DR
 
@@ -15,7 +15,7 @@ Use When: Use this only when no project-specific template exists and product or 
 
 ## What We Are Building
 
-- <User-visible capability, workflow, or behavior.>
+- <User-visible capability, artifact, workflow, reader-facing result, or behavior.>
 
 ## How It Works
 
@@ -33,9 +33,17 @@ Use When: Use this only when no project-specific template exists and product or 
 
 - <Decision or tradeoff settled during scoping.>
 
+## Constraints And Accepted Defaults
+
+- <Constraint, style preference, standard, assumption, or default future work may rely on.>
+
+## Future-Agent Instructions
+
+- <What future agents must preserve, avoid, check, update, or report.>
+
 ## Open Questions
 
-- <Unresolved question, or `None`.>
+- <Unresolved question, or `None`. Say whether each open question blocks action.>
 
 ## Acceptance Criteria
 

@@ -1,6 +1,6 @@
 # Domain Context Template
 
-Use When: Use this only when no project-specific template exists and the conversation resolved terminology, ownership boundaries, structural relationships, or flagged ambiguity that should become canonical. Use for coding and non-coding domains only when language or relationships materially affect future work. Use project-relative paths for local files.
+Use When: Use this only when no project-specific template exists and the conversation resolved terminology, ownership boundaries, structural relationships, or flagged ambiguity that should become canonical. Use for coding and non-coding domains only when language or relationships materially affect future work. Capture every durable term, rejected meaning, ownership boundary, assumption, constraint, validation expectation, and future-agent instruction produced during scoping. Use project-relative paths for local files.
 
 ```md
 # <Domain Or Context Name>
@@ -27,9 +27,21 @@ _Avoid_: <aliases, overloaded words, or rejected meanings>
 
 - <Ambiguous term or relationship, plus the resolution or current open question.>
 
+## Decisions And Constraints
+
+- <Decision, constraint, assumption, non-goal, or rejected interpretation future work should preserve.>
+
 ## Related Decisions
 
 - <Link or summarize any decision, plan, or artifact this context depends on. Use `None` if not applicable.>
+
+## Future-Agent Instructions
+
+- <What future agents must preserve, avoid, check, update, or report when using this domain context.>
+
+## Validation Expectations
+
+- <How to tell whether future work is using this language or relationship correctly.>
 
 ## Recommended Next Step
 

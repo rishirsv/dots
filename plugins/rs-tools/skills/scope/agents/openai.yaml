@@ -1,4 +1,4 @@
 interface:
   display_name: "Scope"
-  short_description: "Shape big fuzzy work before planning"
-  default_prompt: "Use $scope to ideate options or discuss a broad direction until we share the same understanding, then recommend the next chat, artifact, plan, or implementation move."
+  short_description: "Run deep pre-plan scoping before substantial work"
+  default_prompt: "Use $scope to run a one-question-at-a-time scoping discussion until the next chat decision, artifact, plan, Codex goal, research move, or implementation move is genuinely clear."
