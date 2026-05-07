@@ -1,0 +1,7 @@
+interface:
+  display_name: "Improve Plan"
+  short_description: "Improve existing plans into auditable artifacts"
+  default_prompt: "Use $improve-plan to turn an existing plan into one canonical, evidence-backed, continuation-ready replacement before implementation."
+
+policy:
+  allow_implicit_invocation: false

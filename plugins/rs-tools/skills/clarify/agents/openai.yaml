@@ -1,4 +1,4 @@
 interface:
   display_name: "Clarify"
   short_description: "Clarify requirements before implementation"
-  default_prompt: "Use $clarify to inspect the relevant context, ask only the must-have questions, and summarize common understanding before implementation."
+  default_prompt: "Use $clarify to inspect the relevant context, ask only the must-have questions, summarize common understanding, and for feature-scale work capture the settled decisions in the spec before implementation."

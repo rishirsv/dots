@@ -9,7 +9,7 @@
 - Terminology Pressure Testing
 - Output
 
-Use Discuss when the user has an existing idea, plan, architecture, workflow, implementation direction, or decision and wants to examine it carefully before planning or coding.
+Use Discuss when the user has an existing idea, plan, architecture, workflow, implementation direction, new-feature concept, or decision and wants to examine it carefully before planning or coding.
 
 If the user is not asking for critique and the direction is already accepted, exit Scope and proceed directly instead of reopening settled decisions.
 
@@ -19,20 +19,24 @@ Interview the user persistently until there is shared understanding of what is s
 
 Keep asking until the direction is genuinely clear. Do not settle for surface agreement, but ask with curiosity rather than pressure.
 
+When the discussion scopes a new feature or materially reshapes a feature, the durable output should usually be a clean spec. Capture the contents of the discussion as settled requirements and decisions, not as a transcript.
+
 ## Workflow
 
 1. Restate the idea in one or two sentences as **Current Understanding**.
-2. If project, product, or workflow claims are checkable, inspect source of truth before treating them as true.
+2. If project, product, repo, or workflow claims are checkable, inspect the source of truth before treating them as true.
 3. Ask one focused question at a time. Each question should expose a meaningful uncertainty, tradeoff, assumption, term, boundary, or decision.
 4. Include your recommended answer or likely default when useful.
-5. Use a topic label when it helps the user follow the branch being explored, such as `On artifact routing:` or `Switching to the data model:`.
-6. Name topic transitions naturally: "That settles the user-facing flow. Next I want to test the rollout risk."
-7. After 3-4 questions, or at a natural topic boundary, give a brief 2-3 sentence checkpoint of what has resolved before continuing.
-8. Treat a branch as settled when the answer resolves the decision, the remaining unknowns are optional, or another branch now carries the real risk.
-9. Use the lenses in What To Discuss below to guide your questions, but let the conversation determine which branches to explore and in what order.
-10. If the discussion reveals the user does not have a direction yet, offer to shift into Ideate before planning or implementation.
-11. When multiple plausible directions remain after the relevant branch has been explored, present 2-3 options before recommending one.
-12. End with the **Scoped Direction** shape from `SKILL.md`.
+5. Use plain English. Start with the simple version, explain why the question matters in one short sentence when helpful, and avoid dense implementation language unless the topic requires it.
+6. Use a topic label when it helps the user follow the branch being explored, such as `On artifact routing:` or `Switching to the data model:`.
+7. Name topic transitions naturally: "That settles the user-facing flow. Next I want to test the rollout risk."
+8. After 3-4 questions, or at a natural topic boundary, give a brief 2-3 sentence checkpoint of what has resolved before continuing.
+9. Treat a branch as settled when the answer resolves the decision, the remaining unknowns are optional, or another branch now carries the real risk.
+10. Use the lenses in What To Discuss below to guide your questions, but let the conversation determine which branches to explore and in what order.
+11. If the discussion reveals the user does not have a direction yet, offer to shift into Ideate before planning or implementation.
+12. When multiple plausible directions remain after the relevant branch has been explored, present 2-3 options before recommending one.
+13. If the result should guide feature implementation, create or update the repo's canonical spec with the clarified decisions and requirements.
+14. End with the **Scoped Direction** shape from `SKILL.md`.
 
 ## Question Voice
 
@@ -111,9 +115,11 @@ When grounding reveals a term that conflicts with the user's language, or when t
 
 - Name the conflict plainly.
 - Ask whether the terms are the same or distinct.
-- Recommend the canonical term when project docs, code, or prior decisions point to one.
+- Recommend the canonical term when existing project language, code, or prior decisions point to one.
 - Name aliases or meanings to avoid.
 - Test the distinction with a concrete scenario when the boundary is still fuzzy.
+- Once a term is resolved, use it consistently in later questions and in the final output.
+- Do not create a glossary, language doc, or extra output section just because terminology was discussed; fold important terms into the existing decision, spec, or Scoped Direction only when they affect the next step.
 
 Frame this as discovery, not prescription. Prefer: "The code uses `Account`, but you are saying `Customer`. Are those the same thing here, or is there a distinction we should preserve?"
 
@@ -127,4 +133,16 @@ Do not use `Proceed`, `Revise`, `Split`, or `Drop` as formal verdicts. If the wo
 
 When options were compared, put the selected option in `Chosen Direction`. Mention rejected alternatives only when they materially explain the choice.
 
-Default to chat. Save only when `SKILL.md` says the result needs a durable artifact.
+Include:
+
+- strong parts
+- risks
+- hidden assumptions
+- simpler alternative when one exists
+- recommended next step
+
+Default to chat. Save only when `SKILL.md` says the result needs a durable artifact or the discussed direction should become a context or product spec.
+
+If saving a product spec, write it cleanly from the discussion using the repo's canonical template, or read `assets/product-spec-template.md` when no project template exists.
+
+Do not create a separate "discussion" artifact for feature scope. The spec is the durable source of truth; an ExecPlan may come later for sequencing implementation work.

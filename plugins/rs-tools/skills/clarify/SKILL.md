@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Clarify requirements before implementation when the user explicitly invokes $clarify, asks to clarify an underspecified request, or wants questions before work starts. Inspect relevant repo/code context first, ask only must-have questions, and summarize the current common understanding in chat. Do not use for general brainstorming, design discussion, code review, accepted plans, or routine implementation."
+description: "Clarify requirements before implementation when the user explicitly invokes $clarify, asks to clarify an underspecified request, or wants questions before work starts. Inspect relevant repo/code context first, ask only must-have questions, summarize the common understanding, and for feature-scale work create or update the spec with the settled decisions needed to implement end to end. Do not use for general brainstorming, design discussion, code review, accepted plans, or routine implementation."
 ---
 
 # Clarify
@@ -11,7 +11,7 @@ Do not implement. Do not produce a detailed plan that depends on unanswered must
 
 ## Goal
 
-Ask the minimum set of clarifying questions needed to avoid wrong work, then state the current common understanding in concise bullets.
+Ask the minimum set of clarifying questions needed to avoid wrong work, then state the current common understanding in concise bullets. For feature-scale work, preserve the clarified decisions in the relevant spec so implementation should not need another requirements interview.
 
 ## Workflow
 
@@ -33,6 +33,7 @@ Ask the minimum set of clarifying questions needed to avoid wrong work, then sta
 6. Pause before acting. Until must-have answers arrive, do not edit files, run destructive commands, or commit to a plan.
 7. If the user asks you to proceed without answers, state assumptions briefly and ask for confirmation.
 8. Once must-have answers are settled, output the common understanding and recommend the next move.
+9. If the clarified work is feature-scale, cross-session, or likely to be implemented by another agent, create or update the repo's canonical spec with the settled decisions before implementation starts.
 
 If the request is already concrete enough, say Clarify is not needed, provide the common understanding, and recommend proceeding.
 
@@ -111,7 +112,28 @@ Use concise bullets:
 
 When asking questions, put **Need To Know** before **Common Understanding** so the user sees what to answer first.
 
-Default to chat. Create or update a durable artifact only if the user asks or the shared understanding needs to persist for later planning or implementation.
+Default to chat for small changes. Create or update a durable spec when the shared understanding needs to persist for later planning or implementation, especially for new features or end-to-end feature changes.
+
+## Spec Capture
+
+Use the repo's existing spec location and format when one exists. Update an existing spec instead of creating a competing artifact. If the repo has no clear spec convention and the user did not name a path, ask where the spec should live before writing it.
+
+Write the spec cleanly. Capture the substance of the discussion, but do not paste the transcript or preserve conversational wording. The spec should read like the source of truth for implementation.
+
+For feature-scale clarification, the spec must capture:
+
+- **Goal**: the user-visible outcome and why it matters
+- **User-Facing Behavior**: what changes in the product or workflow
+- **In Scope**: what implementation must cover
+- **Out Of Scope / Non-Goals**: what should not be built
+- **Decisions Made**: settled product, UX, technical, data, migration, or rollout decisions
+- **Assumptions Accepted**: assumptions the agent may rely on during implementation
+- **Acceptance Criteria**: observable behavior that proves the feature is done
+- **Edge Cases**: important empty, error, transition, permission, compatibility, or data states
+- **Validation Expectations**: tests, manual checks, review steps, or artifact checks expected after implementation
+- **Open Questions**: `None` before implementation unless the user explicitly accepts a remaining optional unknown
+
+Do not use the spec as an ExecPlan. The spec captures requirements and decisions; an ExecPlan, when needed, sequences the implementation work after the spec is stable.
 
 ## Anti-Patterns
 
@@ -121,3 +143,5 @@ Default to chat. Create or update a durable artifact only if the user asks or th
 - Producing a detailed plan while must-have unknowns remain.
 - Treating nice-to-have preferences as blockers.
 - Implementing from Clarify without the user's answers or confirmed assumptions.
+- Creating a new artifact family when the right durable output is a clean spec.
+- Leaving implementation-blocking questions open in a feature spec.
