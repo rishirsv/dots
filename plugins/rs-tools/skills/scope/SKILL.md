@@ -110,18 +110,29 @@ Avoid:
 Good question shape:
 
 ```md
-On the audience:
+**On the audience:**
 
 I think the default should be to write this for future agents first, then humans second, because the artifact will mainly guide follow-through work.
 
-Should the source of truth be optimized for future agents, human reviewers, or both equally?
+**Question:** Should the source of truth be optimized for future agents, human reviewers, or both equally?
 ```
 
 Good checkpoint shape:
 
 ```md
-Checkpoint: We have settled the target reader, the non-goals, and the validation bar. The remaining risk is artifact shape: whether this should become a short context note, a full spec, or a Codex goal setup. I want to resolve that next.
+**Checkpoint:** We have settled the target reader, the non-goals, and the validation bar. The remaining risk is artifact shape: whether this should become a short context note, a full spec, or a Codex goal setup. I want to resolve that next.
 ```
+
+## Conversation Formatting
+
+Make Scope easy to scan while the discussion is still in progress.
+
+- Use short structured blocks when sharing current understanding, a recommendation, a checkpoint, or the next question.
+- Bold lead-in labels including the colon, for example `**Current Understanding:**`, `**Recommended Default:**`, `**Why This Matters:**`, `**Question:**`, and `**Checkpoint:**`.
+- Separate the current understanding, recommendation, and question into distinct paragraphs when more than one is present.
+- Keep labels natural and task-neutral. The same formatting should work for coding, documents, research, strategy, workflows, and other knowledge work.
+- Put examples, candidate wording, tables, or concrete options on their own lines when that makes the decision easier to inspect.
+- Do not over-template casual turns. Use structure to improve readability, not to make the conversation feel mechanical.
 
 ## What To Explore
 

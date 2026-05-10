@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harness Engineering"
+  short_description: "Assess repo readiness for agentic engineering"
+  default_prompt: "Use $harness-engineering to assess this repository for harness-engineering opportunities."

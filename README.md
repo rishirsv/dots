@@ -28,6 +28,7 @@ Bundled skills:
 - `commit`: safe focused git commits.
 - `docs-gardener`: canonical docs maintenance, consolidation, and drift repair.
 - `explain`: plain-language explanations of code, diffs, configs, errors, and system flows.
+- `harness-engineering`: deep repo assessment for agent-readiness and harness opportunities.
 - `handoff`: concise continuation briefs.
 - `hard-cut`: one canonical implementation, no legacy compatibility paths.
 - `oracle`: repo-context packages for external review or planning.

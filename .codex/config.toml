@@ -11,7 +11,7 @@ view_image = true
 
 [features]
 apps = true
-codex_hooks = true
+hooks = true
 goals = true
 memories = true
 prevent_idle_sleep = true
