@@ -43,7 +43,15 @@ _Avoid_: <aliases, overloaded words, or rejected meanings>
 
 - <How to tell whether future work is using this language or relationship correctly.>
 
-## Recommended Next Step
+## Open Trails
 
-<The exact next chat, artifact, plan, or implementation move.>
+- <Unresolved question, ambiguity, branch, or assumption, or `None`. Say whether each one blocks the next handoff.>
+
+## Planning Closure
+
+<`Scope concluded` or `Scope not concluded`. If concluded, say whether there are no more open trails that would change the next handoff.>
+
+## Recommended Handoff
+
+<The exact next chat, artifact, plan, Codex goal, research handoff, implementation handoff, or decision. If implementation is ready, describe what should be handed to the implementing agent without starting the work.>
 ```

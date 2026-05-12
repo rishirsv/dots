@@ -45,11 +45,15 @@ Use When: Use this only when no project-specific template exists and durable sha
 
 - <Main uncertainty, cost, or failure mode still worth watching.>
 
-## Open Questions
+## Open Trails
 
-- <Unresolved question, or `None`. Say whether each open question blocks action.>
+- <Unresolved question, ambiguity, branch, or assumption, or `None`. Say whether each one blocks the next handoff.>
 
-## Recommended Next Step
+## Planning Closure
 
-<The exact next chat, artifact, plan, or implementation move.>
+<`Scope concluded` or `Scope not concluded`. If concluded, say whether there are no more open trails that would change the next handoff.>
+
+## Recommended Handoff
+
+<The exact next chat, artifact, plan, Codex goal, research handoff, implementation handoff, or decision. If implementation is ready, describe what should be handed to the implementing agent without starting the work.>
 ```

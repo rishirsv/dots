@@ -41,9 +41,9 @@ Use When: Use this only when no project-specific template exists and product, ar
 
 - <What future agents must preserve, avoid, check, update, or report.>
 
-## Open Questions
+## Open Trails
 
-- <Unresolved question, or `None`. Say whether each open question blocks action.>
+- <Unresolved question, ambiguity, branch, or assumption, or `None`. Say whether each one blocks the next handoff.>
 
 ## Acceptance Criteria
 

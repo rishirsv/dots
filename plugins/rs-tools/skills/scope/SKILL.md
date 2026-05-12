@@ -1,15 +1,27 @@
 ---
 name: scope
-description: "Use for broad, fuzzy, consequential, or pre-plan work before execution: Codex goals, substantial features, coding tasks, documents, presentations, research, strategy, workflow design, plugin/skill design, artifact design, and general knowledge work. Scope runs a persistent one-question-at-a-time discussion until shared understanding exists and the next chat decision, artifact, plan, Codex goal, research move, or implementation move is genuinely clear. Do not use for narrow requirements clarification, accepted plans, routine edits, direct implementation, code review, or fully settled work."
+description: "Use for broad, fuzzy, consequential, or pre-plan work before execution: Codex goals, substantial features, coding tasks, documents, presentations, research, strategy, workflow design, plugin/skill design, artifact design, and general knowledge work. Scope runs a persistent one-question-at-a-time discussion until shared understanding exists and the next chat decision, artifact, plan, Codex goal, research handoff, implementation handoff, or decision to stop is genuinely clear. Do not use for narrow requirements clarification, accepted plans where the user wants execution, routine edits, direct implementation, code review, or fully settled work."
 ---
 
 # Scope
 
 Scope turns broad or fuzzy work into shared understanding clear enough to act on.
 
-Scope is a pre-plan discussion skill. Do not implement during Scope. Do not produce a detailed execution plan while material scoping questions remain unanswered.
+<what-to-do>
 
-Scope ends only when the next move is clear: a chat decision, durable artifact, brief, spec, ExecPlan, Codex goal setup, research move, implementation move, or decision to stop.
+Run a pre-plan discussion. Do not implement during Scope. Do not offer to implement inside Scope. Do not produce a detailed execution plan while material scoping questions remain unanswered.
+
+Ask one focused question at a time, waiting for the user's answer before continuing. If a question can be answered by inspecting the workspace, provided materials, or current sources, inspect those sources instead of asking.
+
+Walk the decision tree until every open trail that would change the next artifact, plan, goal, research handoff, implementation handoff, or decision has either been resolved, explicitly deferred, or marked as a non-blocking risk.
+
+End only with a concise **Scoped Direction** that makes closure explicit: Scope is concluded or not concluded, whether any open trails remain, what durable capture exists, and what the next handoff is.
+
+If the chosen next move is implementation, phrase it as a handoff after Scope, not as work this skill is starting. Scope may say implementation is ready; it must not begin implementation or drift into implementation advice beyond the decisions needed for the handoff.
+
+</what-to-do>
+
+<supporting-info>
 
 ## Scope vs Clarify
 
@@ -73,14 +85,16 @@ Follow this loop until the next move is clear.
 
 1. **Ground first.** Inspect the relevant source of truth before asking questions the workspace, repo, docs, files, existing artifacts, user-provided context, or current sources can answer.
 2. **State current understanding.** Restate the goal or direction in 1-3 concise sentences.
-3. **Choose the highest-leverage branch.** Focus on the uncertainty that most affects the next artifact, plan, Codex goal, implementation move, research move, or decision.
+3. **Choose the highest-leverage branch.** Focus on the uncertainty that most affects the next artifact, plan, Codex goal, research handoff, implementation handoff, or decision.
 4. **Ask one focused question.** Ask only one question at a time unless a tiny grouped choice is clearly faster.
 5. **Give a recommended default.** When useful, state the likely default or recommended answer and why.
-6. **Record what changed.** Treat the answer as a decision, constraint, assumption, term, non-goal, validation expectation, artifact-routing choice, open question, or future-agent instruction.
-7. **Checkpoint every 3-4 questions.** Briefly summarize what has resolved, what remains live, and which branch you are moving to next.
-8. **Continue persistently.** Do not end because the conversation has become long. End only when the next move is genuinely clear or the user asks to stop.
-9. **Run the ending audit.** Before ending, ask internally: "Is there any unresolved question whose answer would change the next artifact, plan, Codex goal, implementation path, audience-facing result, domain meaning, validation approach, or future-agent instruction?" If yes, ask that question instead of ending.
-10. **Capture durable outcomes.** If future work will rely on the discussion, update or create the appropriate source-of-truth artifact before Scope ends.
+6. **Challenge language and assumptions.** When terms are vague, overloaded, or inconsistent with project language, call that out and propose a precise meaning. Use concrete scenarios to test boundaries.
+7. **Record what changed.** Treat the answer as a decision, constraint, assumption, term, non-goal, validation expectation, artifact-routing choice, open question, or future-agent instruction.
+8. **Keep support separate from action.** Use the lenses below to decide what to ask or inspect, but do not dump them as the answer. Output only the current understanding, the question, checkpoints, durable capture, and the final Scoped Direction.
+9. **Checkpoint every 3-4 questions.** Briefly summarize what has resolved, what remains live, and which branch you are moving to next.
+10. **Continue persistently.** Do not end because the conversation has become long. End only when the next handoff is genuinely clear or the user asks to stop.
+11. **Run the ending audit.** Before ending, ask internally: "Is there any unresolved question whose answer would change the next artifact, plan, Codex goal, implementation path, audience-facing result, domain meaning, validation approach, or future-agent instruction?" If yes, ask that question instead of ending.
+12. **Capture durable outcomes.** If future work will rely on the discussion, update or create the appropriate source-of-truth artifact before Scope ends.
 
 The user should experience a calm sequence of sharp questions, not a giant questionnaire.
 
@@ -102,6 +116,7 @@ Avoid:
 - giant questionnaires
 - mechanical intake forms
 - dense implementation language
+- implementation suggestions before Scope has concluded
 - asking trivia that does not change the next move
 - asking the user to decide things the project already decides
 - turning every answer into a new artifact
@@ -149,6 +164,17 @@ Use these lenses as prompts, not a checklist.
 - **Edge cases and failure modes**: empty states, error states, transition states, permission issues, operational burden, adoption risk, and symptom-vs-cause gaps
 - **Validation**: how the user, reviewer, future agent, test suite, reader, or stakeholder will know the work is done
 - **Future-agent instructions**: what future agents must preserve, avoid, check, update, and report
+
+## Pressure Testing
+
+Borrow the useful shape of a grilling session without making Scope combative.
+
+- Challenge conflicts with the project language, source material, or prior decisions immediately.
+- Sharpen fuzzy terms by proposing a canonical meaning and asking whether it is right.
+- Discuss concrete scenarios when relationships, workflow boundaries, ownership, or edge cases are unclear.
+- Cross-reference source material when the user states how something works and the workspace may already answer it.
+- Separate settled decisions from supporting observations, assumptions, and inference.
+- Do not treat pressure testing as permission to design the implementation. Keep it at the level needed to resolve the scoped direction.
 
 ## Grounding And Research
 
@@ -222,6 +248,8 @@ Durable outcomes include:
 
 Write durable artifacts as source-of-truth substance, not as transcripts. Do not paste the conversation. Do not write a vague summary. The artifact should be complete enough for a future agent to continue without rereading the chat.
 
+Capture decisions and constraints only. Do not expand durable capture into execution, implementation, or detailed project planning unless the user explicitly asks for that separate next move.
+
 When a canonical artifact already exists, update it instead of creating a competing source of truth.
 
 If the right artifact does not exist but durable decisions are being made, create the smallest appropriate artifact in the project's conventional location, or ask where it should live when there is no convention and the location materially matters.
@@ -260,11 +288,13 @@ Use this shape:
 
 **Remaining Risks:** The main uncertainties, costs, or failure modes still worth watching.
 
-**Open Questions:** Unresolved questions, or `None`. Say whether each open question blocks action.
+**Open Trails:** Unresolved questions, ambiguities, branches, or assumptions, or `None`. Say whether each one blocks the next handoff.
 
 **Durable Capture:** `Chat only`, or the artifact path(s) updated/created and what they now contain.
 
-**Recommended Next Step:** The exact next chat, artifact, plan, Codex goal, research move, or implementation move.
+**Planning Closure:** `Scope concluded` or `Scope not concluded`. If concluded, say whether there are no more open trails that would change the next handoff. If not concluded, say what remains unresolved.
+
+**Recommended Handoff:** The exact next chat, artifact, plan, Codex goal, research handoff, implementation handoff, or decision. If implementation is ready, say what should be handed to the implementing agent without starting the work.
 ```
 
 For ideation, include a ranked survivor list before **Scoped Direction**.
@@ -274,13 +304,18 @@ For substantial Scope sessions, the final output should be short because the dur
 ## Guardrails
 
 - Do not implement during Scope.
+- Do not offer to start implementation during Scope.
+- Do not let a final handoff become implementation advice in disguise.
 - Do not produce a detailed execution plan while important scoping questions remain.
 - Do not dump a giant questionnaire.
 - Do not ask mechanical questions just to reach a target count.
 - Do not stop early when unresolved ambiguity would change the next move.
+- Do not conclude Scope without explicitly saying whether open trails remain.
 - Do not turn every conversation into an artifact.
 - Do not leave durable decisions only in chat when future work will rely on them.
 - Do not create competing artifacts when a canonical artifact already exists.
 - Do not make Scope coding-biased; use the same discipline for documents, decks, research, strategy, workflows, skills, and general knowledge work.
 - Do not ask the user to answer what source material can answer.
 - Do not hide uncertainty. Mark assumptions and open questions clearly.
+
+</supporting-info>

@@ -40,9 +40,9 @@ List exact checks to run and what success looks like.
 
 - <Constraint, standard, preference, or instruction future agents must preserve.>
 
-## Open Questions
+## Open Trails
 
-- <Unresolved question, or `None`. Say whether each open question blocks action.>
+- <Unresolved question, ambiguity, branch, or assumption, or `None`. Say whether each one blocks the plan or can be resolved during implementation.>
 
 ## Surprises And Discoveries
 
