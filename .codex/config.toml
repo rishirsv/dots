@@ -5,6 +5,7 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 web_search = "live"
 suppress_unstable_features_warning = true
+consolidation_model = "gpt-5.4-mini"
 
 [tools]
 view_image = true
@@ -12,6 +13,7 @@ view_image = true
 [features]
 apps = true
 goals = true
+hooks = true
 memories = true
 prevent_idle_sleep = true
 undo = true
