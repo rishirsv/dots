@@ -1,10 +1,5 @@
 # AGENTS.md
 
-## Plans
-
-- Store active plans in `docs/exec-plans/active/`; move completed plans to `docs/exec-plans/completed/`.
-- Rewrite existing plans instead of creating addendums.
-
 ## Perks Repo
 
 In `~/Code/perks`:
