@@ -1,4 +1,0 @@
-interface:
-  display_name: "GH Review"
-  short_description: "Triage PR reviews into debt or fixes"
-  default_prompt: "Use $gh-review to summarize open PRs and collect review comments into the repo tracker."

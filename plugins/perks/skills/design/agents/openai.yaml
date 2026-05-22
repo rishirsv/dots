@@ -1,6 +1,0 @@
-interface:
-  display_name: "Design"
-  short_description: "Mock, craft, audit, polish, and harden UI"
-  default_prompt: "Use $design to mock or improve this interface with repo context and rendered evidence."
-policy:
-  allow_implicit_invocation: false

@@ -1,7 +1,0 @@
-interface:
-  display_name: "Agent Browser"
-  short_description: "Automate live browser and Electron workflows"
-  default_prompt: "Use $agent-browser to open this app in a browser, inspect the page, and interact with it."
-
-policy:
-  allow_implicit_invocation: true

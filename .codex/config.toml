@@ -28,10 +28,3 @@ default_tools_enabled = true
 default_tools_approval_mode = "approve"
 open_world_enabled = true
 destructive_enabled = true
-
-[marketplaces.perks]
-source_type = "local"
-source = "/Users/rishi/Code/perks/.agents/plugins/marketplace.json"
-
-[plugins."perks@perks"]
-enabled = true
