@@ -29,12 +29,12 @@ Rename Rishi's personal Codex plugin repo and installable plugin from `rs-tools`
   - [x] 3.2 Reclassify `.claude-plugin/marketplace.json` as Claude compatibility metadata.
   - [x] 3.3 Update README, AGENTS, INSTALL, TODO, and config references from `rs-tools` to `perks`.
   - [x] 3.4 Validation for 3.0: repo search has no stale active `plugins/rs-tools`, `rs-tools@rs-tools`, or GitHub URL references outside historical docs.
-- [ ] 4.0 Rename repo locally and remotely
-  - [ ] 4.1 Commit the migration in the current checkout.
-  - [ ] 4.2 Push to GitHub.
-  - [ ] 4.3 Rename GitHub repo from `rishirsv/rs-tools` to `rishirsv/perks`.
-  - [ ] 4.4 Rename local checkout folder from `rs-tools` to `perks` and update `origin`.
-  - [ ] 4.5 Validation for 4.0: `gh repo view rishirsv/perks` succeeds and local `git remote -v` points at `perks`.
+- [x] 4.0 Rename repo locally and remotely
+  - [x] 4.1 Commit the migration in the current checkout.
+  - [x] 4.2 Push to GitHub.
+  - [x] 4.3 Rename GitHub repo from `rishirsv/rs-tools` to `rishirsv/perks`.
+  - [x] 4.4 Rename local checkout folder from `rs-tools` to `perks` and update `origin`.
+  - [x] 4.5 Validation for 4.0: `gh repo view rishirsv/perks` succeeds and local `git remote -v` points at `perks`.
 
 ## Validation
 
@@ -60,4 +60,6 @@ Rename Rishi's personal Codex plugin repo and installable plugin from `rs-tools`
 
 ## Completion Notes
 
-- Pending.
+- Shipped: renamed the GitHub repo to `rishirsv/perks`, moved the local checkout to `/Users/rishi/Code/perks`, renamed the installable plugin to `perks`, set display name to `Perks`, and updated repo docs/configs.
+- Shipped: kept `.agents/plugins/marketplace.json` as the canonical Codex marketplace, documented `.claude-plugin/marketplace.json` as compatibility metadata, and symlinked `plugins/perks/.claude-plugin/plugin.json` to the Codex plugin manifest.
+- Validation passed: plugin validator, `perks` skill quick validation, JSON parsing, stale-reference scan, GitHub repo readback, and clean working tree after the final plan commit.
