@@ -1,4 +1,0 @@
-interface:
-  display_name: "Meta Prompt"
-  short_description: "Creates stronger text and image prompts"
-  default_prompt: "Create a prompt for <TASK> with the right structure, constraints, and output format"

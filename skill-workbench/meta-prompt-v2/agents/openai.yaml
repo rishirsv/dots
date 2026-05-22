@@ -1,4 +1,0 @@
-interface:
-  display_name: "Meta Prompt v2"
-  short_description: "Creates current GPT, Codex, and image prompts"
-  default_prompt: "Use $meta-prompt-v2 to rewrite this into a stronger prompt."

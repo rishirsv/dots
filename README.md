@@ -1,6 +1,6 @@
 # Perks
 
-Source repo for Rishi's personal Perks skills and local Codex/Claude plugin builds.
+Source repo for Rishi's personal Perks skills and Codex/Claude plugin builds.
 
 ## Edit Surface
 
@@ -20,11 +20,10 @@ Everything else exists to package, install, sync, or stage those two surfaces.
 ## Structure
 
 - `skills/`: canonical Perks skills. This is the source folder to edit.
-- `skill-workbench/`: WIP and imported skills that are not part of the active Perks plugin yet.
 - `plugins/codex/perks/`: generated Codex plugin package.
 - `plugins/claude/perks/`: generated Claude plugin package.
-- `.agents/plugins/marketplace.json`: Codex marketplace entry for the local Perks plugin.
-- `.claude-plugin/marketplace.json` and `marketplace.json`: Claude marketplace entry for the local Perks plugin.
+- `.agents/plugins/marketplace.json`: Codex marketplace entry for Perks.
+- `.claude-plugin/marketplace.json` and `marketplace.json`: Claude marketplace entry for Perks.
 - `AGENTS.md`: compact system guidance shared by this repo, Codex, and Claude.
 - `.codex/config.toml`: repo-local Codex config for working in this repo.
 - `.codex/agents/loader.toml`: active Codex helper agent for Perks repo sync discipline.

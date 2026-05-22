@@ -95,7 +95,7 @@ Run:
     cd ~/Code/perks
     scripts/sync-plugins.sh
 
-This rebuilds the Codex and Claude plugin folders from `skills/`, registers the local marketplaces, installs `perks@perks`, refreshes local plugin caches, copies repo `AGENTS.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `AGENTS.md`.
+This rebuilds the Codex and Claude plugin folders from `skills/`, registers the public Perks marketplace from GitHub, installs `perks@perks`, refreshes local plugin caches, copies repo `AGENTS.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `AGENTS.md`.
 
 7. Open Codex once so it initializes plugin/cache state.
 
@@ -117,7 +117,6 @@ Check:
     test -f ~/Code/perks/README.md
     test -f ~/Code/perks/.codex/config.toml
     test -d ~/Code/perks/skills
-    test -d ~/Code/perks/skill-workbench
     test -d ~/Code/perks/plugins/codex/perks/skills
     test -d ~/Code/perks/plugins/claude/perks/skills
     test -f ~/Code/perks/.agents/plugins/marketplace.json
