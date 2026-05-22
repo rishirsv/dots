@@ -82,13 +82,14 @@ Use subagents as independent planning reviewers when the plan is broad enough to
 Good subagent tasks are narrow, read-only, and non-overlapping:
 
 - evidence scout: find relevant files, commands, tests, and existing patterns
+- resource reviewer: identify available plugins, skills, tools, or local docs that should shape the plan or raise the quality bar
 - risk reviewer: identify missing failure modes, scope creep, and weak assumptions
 - validation reviewer: check whether proposed tests and gates actually prove the requirements
 - sequencing reviewer: find dependency order problems and parallelization boundaries
 
-Give each subagent only the minimum context needed. Ask for raw evidence with relevant paths, commands, confidence, contradictions, and concrete plan implications, not a rewritten plan. Integrate the useful findings into one final plan.
+Give each subagent only the minimum context needed. Ask for raw evidence with relevant paths, commands, confidence, contradictions, applicable best practices, and concrete plan implications, not a rewritten plan. Integrate the useful findings into one final plan.
 
-If subagents are not available, simulate the loop with separate local passes: evidence, risks, validation, sequencing.
+If subagents are not available, simulate the loop with separate local passes: evidence, resources and best practices, risks, validation, sequencing.
 
 ## Workflow
 
@@ -97,9 +98,10 @@ Drive the plan through these states in order:
 1. `draft detected`
 2. `gaps identified`
 3. `repo evidence gathered`
-4. `clarification resolved`
-5. `plan rewritten`
-6. `ready`, `batch-ready`, or `blocked on one decision`
+4. `resources and best practices checked`
+5. `clarification resolved`
+6. `plan rewritten`
+7. `ready`, `batch-ready`, or `blocked on one decision`
 
 Do not skip a state because the draft sounds polished.
 
@@ -154,7 +156,20 @@ Inspect only the sources needed to close gaps:
 
 Update the plan with discoveries as you learn. When external behavior could have drifted, verify it from primary sources and note the source.
 
-### 4. Clarification resolved
+### 4. Resources and best practices checked
+
+Before rewriting, check whether available plugins, skills, tools, local guidance, or domain-specific docs should improve the plan.
+
+Look for:
+
+- installed or repo-provided skills that cover the work domain
+- plugins or tools that change the best implementation or validation path
+- subagents that should review evidence, risks, validation, sequencing, or best-practice alignment
+- local standards, official docs, or primary sources that define current best practice
+
+Use only resources that are relevant enough to change the plan. Record the implication in the plan as a decision, validation step, reuse note, or explicit non-use reason.
+
+### 5. Clarification resolved
 
 After exploration, choose the lightest mode:
 
@@ -164,7 +179,7 @@ After exploration, choose the lightest mode:
 
 When asking, keep questions tight and explain what part of the plan depends on the answer. Offer a recommended default when appropriate.
 
-### 5. Plan rewritten
+### 6. Plan rewritten
 
 Respect the project's required plan template. If none exists, use the repo's lightweight ExecPlan shape as the canonical fallback:
 
@@ -199,6 +214,7 @@ When rewriting:
 - make the purpose and user outcome short and concrete
 - name real files, modules, commands, tests, artifacts, and contracts when that removes ambiguity
 - cite file paths or commands for concrete repo claims when the plan relies on them
+- include the relevant skill/plugin/tool guidance that should shape execution or validation
 - put validation inside each major phase and in a final validation section
 - map every explicit requirement to evidence in the prompt-to-artifact checklist
 - make checkpoints resumable by stating:
@@ -212,7 +228,7 @@ When rewriting:
 - make completion criteria strict enough for a later completion audit
 - keep optional ideas out of the main plan unless the user explicitly requires them
 
-### 6. Ready, batch-ready, or blocked
+### 7. Ready, batch-ready, or blocked
 
 End with one classification:
 
