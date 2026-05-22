@@ -1,26 +1,32 @@
 # AGENTS.md
 
-This repo is Rishi's source workspace for the Perks skills and generated Codex/Claude plugin packages.
+Rishi's compact system guidance for Codex and Claude.
 
-## Layout
+## Defaults
 
-- `skills/`: canonical Perks skills. Edit these first.
-- `skill-workbench/`: WIP/imported skills that are not active Perks plugin skills.
-- `plugins/codex/perks/`: generated Codex plugin package.
-- `plugins/claude/perks/`: generated Claude plugin package.
-- `.agents/plugins/marketplace.json`: Codex marketplace for this repo.
-- `.claude-plugin/marketplace.json` and `marketplace.json`: Claude marketplace for this repo.
-- `.codex/config.toml`: repo-local Codex config.
-- `.codex/agents/loader.toml`: active Codex helper agent for Perks sync discipline.
-- `scripts/sync-plugins.sh`: canonical sync script.
+- Be direct, pragmatic, and concise.
+- Read the repo before editing. Prefer existing patterns over new abstractions.
+- Protect unrelated local changes. Never revert user work unless explicitly asked.
+- Use `rg`/`rg --files` for search. Validate with the narrowest useful checks.
+- Do not commit secrets, tokens, credentials, or machine-local state.
 
-## Rules
+## Plans
 
-- When work changes anything under `skills/`, run `scripts/sync-plugins.sh` before committing.
-- The sync script must be the path that copies skills into both plugin packages and refreshes local Codex/Claude registrations and caches.
-- Do not hand-edit generated copies under `plugins/codex/perks/skills/` or `plugins/claude/perks/skills/`; edit `skills/` and run the script.
-- Keep WIP or imported material in `skill-workbench/` until it should become an active Perks skill.
-- Put repo-specific Codex settings in `.codex/config.toml`.
-- Keep Codex instructions in `AGENTS.md`; do not move them into `.codex/`.
-- Update `~/.codex/config.toml` only for intentionally global settings, and ask first.
-- Never commit secrets, tokens, or credentials.
+- Use an ExecPlan only for substantial features, migrations, refactors, or multi-session work.
+- Keep active plans in `docs/exec-plans/active/` and move completed plans to `docs/exec-plans/completed/`.
+- Update existing plans instead of creating addendums.
+
+## Git
+
+- Ignore unrelated dirty files.
+- Commit only when asked or when the task clearly includes repo maintenance.
+- Prefer non-interactive git commands.
+
+## Perks Repo
+
+In `/Users/rishi/Code/perks`:
+
+- `skills/` is the source of truth for active Perks skills.
+- `skill-workbench/` is for WIP/imported skills.
+- Do not hand-edit generated plugin skill copies under `plugins/codex/perks/skills/` or `plugins/claude/perks/skills/`.
+- If `AGENTS.md` or anything under `skills/` changes, run `scripts/sync-plugins.sh` before committing. It updates Codex/Claude plugin folders, local plugin registrations/caches, `~/.codex/AGENTS.md`, and `~/.claude/CLAUDE.md`.

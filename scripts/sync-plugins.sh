@@ -12,9 +12,17 @@ CODEX_MARKETPLACE_DIR="$ROOT/.agents/plugins"
 CODEX_MARKETPLACE="$CODEX_MARKETPLACE_DIR/marketplace.json"
 CLAUDE_MARKETPLACE="$ROOT/.claude-plugin/marketplace.json"
 CLAUDE_MARKETPLACE_COMPAT="$ROOT/marketplace.json"
+SYSTEM_AGENTS_SOURCE="$ROOT/AGENTS.md"
+CODEX_SYSTEM_AGENTS="$HOME/.codex/AGENTS.md"
+CLAUDE_SYSTEM_AGENTS="$HOME/.claude/CLAUDE.md"
 
 if [[ ! -d "$SOURCE_SKILLS" ]]; then
   echo "Missing source skills directory: $SOURCE_SKILLS" >&2
+  exit 1
+fi
+
+if [[ ! -f "$SYSTEM_AGENTS_SOURCE" ]]; then
+  echo "Missing system agents source: $SYSTEM_AGENTS_SOURCE" >&2
   exit 1
 fi
 
@@ -28,6 +36,14 @@ mkdir -p \
 
 rsync -a --delete --exclude '.DS_Store' "$SOURCE_SKILLS/" "$CODEX_PLUGIN/skills/"
 rsync -a --delete --exclude '.DS_Store' "$SOURCE_SKILLS/" "$CLAUDE_PLUGIN/skills/"
+
+mkdir -p "$HOME/.codex" "$HOME/.claude"
+cp "$SYSTEM_AGENTS_SOURCE" "$CODEX_SYSTEM_AGENTS"
+
+if [[ -e "$CLAUDE_SYSTEM_AGENTS" && ! -L "$CLAUDE_SYSTEM_AGENTS" ]]; then
+  mv "$CLAUDE_SYSTEM_AGENTS" "$CLAUDE_SYSTEM_AGENTS.bak.$(date +%Y%m%d%H%M%S)"
+fi
+ln -sfn "$SYSTEM_AGENTS_SOURCE" "$CLAUDE_SYSTEM_AGENTS"
 
 python3 - "$ROOT" "$PLUGIN_NAME" "$VERSION" <<'PY'
 import json
@@ -158,3 +174,6 @@ echo "  $CLAUDE_PLUGIN/skills"
 echo "Refreshed local caches:"
 echo "  $CODEX_CACHE"
 echo "  $CLAUDE_CACHE"
+echo "Synced system agent instructions:"
+echo "  $CODEX_SYSTEM_AGENTS"
+echo "  $CLAUDE_SYSTEM_AGENTS -> $SYSTEM_AGENTS_SOURCE"

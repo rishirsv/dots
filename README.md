@@ -10,6 +10,7 @@ Source repo for Rishi's personal Perks skills and local Codex/Claude plugin buil
 - `plugins/claude/perks/`: generated Claude plugin package.
 - `.agents/plugins/marketplace.json`: Codex marketplace entry for the local Perks plugin.
 - `.claude-plugin/marketplace.json` and `marketplace.json`: Claude marketplace entry for the local Perks plugin.
+- `AGENTS.md`: compact system guidance shared by this repo, Codex, and Claude.
 - `.codex/config.toml`: repo-local Codex config for working in this repo.
 - `.codex/agents/loader.toml`: active Codex helper agent for Perks repo sync discipline.
 - `scripts/sync-plugins.sh`: rebuilds plugin folders from `skills/`, validates manifests, registers/install plugins, and refreshes local caches.
@@ -29,6 +30,8 @@ The script updates:
 - `plugins/claude/perks/skills/`
 - Codex marketplace/install state
 - Claude marketplace/install state
+- `~/.codex/AGENTS.md` by copying repo `AGENTS.md`
+- `~/.claude/CLAUDE.md` by symlinking to repo `AGENTS.md`
 - Local plugin caches under `~/.codex/plugins/cache/perks/perks/0.1.0` and `~/.claude/plugins/cache/perks/perks/0.1.0`
 
 ## Repo Codex Config

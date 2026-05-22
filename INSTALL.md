@@ -95,7 +95,7 @@ Run:
     cd ~/Code/perks
     scripts/sync-plugins.sh
 
-This rebuilds the Codex and Claude plugin folders from `skills/`, registers the local marketplaces, installs `perks@perks`, and refreshes local plugin caches.
+This rebuilds the Codex and Claude plugin folders from `skills/`, registers the local marketplaces, installs `perks@perks`, refreshes local plugin caches, copies repo `AGENTS.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `AGENTS.md`.
 
 7. Open Codex once so it initializes plugin/cache state.
 
@@ -122,6 +122,8 @@ Check:
     test -d ~/Code/perks/plugins/claude/perks/skills
     test -f ~/Code/perks/.agents/plugins/marketplace.json
     test -f ~/Code/perks/.claude-plugin/marketplace.json
+    test -f ~/.codex/AGENTS.md
+    test -L ~/.claude/CLAUDE.md
 
 9. Verify Codex config no longer enables the OpenAI-curated GitHub plugin.
 
