@@ -1,18 +1,15 @@
 # Repo-local Codex config for perks.
-# This supplements ~/.codex/config.toml when Codex is opened in this repository.
+# Supplements ~/.codex/config.toml when this trusted repository is open.
 
 approval_policy = "never"
-sandbox_mode = "danger-full-access"
+default_permissions = ":danger-full-access"
 web_search = "live"
-suppress_unstable_features_warning = true
-consolidation_model = "gpt-5.4-mini"
 
 [tools]
 view_image = true
 
 [features]
 apps = true
-goals = true
 hooks = true
 memories = true
 prevent_idle_sleep = true
@@ -24,7 +21,5 @@ max_depth = 1
 
 [apps._default]
 enabled = true
-default_tools_enabled = true
-default_tools_approval_mode = "approve"
 open_world_enabled = true
 destructive_enabled = true
