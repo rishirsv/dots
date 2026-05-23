@@ -7,15 +7,19 @@ VERSION="0.1.0"
 MARKETPLACE_SOURCE="${PERKS_MARKETPLACE_SOURCE:-rishirsv/perks}"
 
 SOURCE_SKILLS="$ROOT/skills"
+SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
 SOURCE_ASSETS="$ROOT/assets/$PLUGIN_NAME"
 CODEX_PLUGIN="$ROOT/plugins/codex/$PLUGIN_NAME"
 CLAUDE_PLUGIN="$ROOT/plugins/claude/$PLUGIN_NAME"
+CODEX_PLUGIN_AGENTS="$CODEX_PLUGIN/agents"
 CODEX_MARKETPLACE_DIR="$ROOT/.agents/plugins"
 CODEX_MARKETPLACE="$CODEX_MARKETPLACE_DIR/marketplace.json"
 CLAUDE_MARKETPLACE="$ROOT/.claude-plugin/marketplace.json"
 CLAUDE_MARKETPLACE_COMPAT="$ROOT/marketplace.json"
 SYSTEM_AGENTS_SOURCE="$ROOT/AGENTS.md"
 CODEX_SYSTEM_AGENTS="$HOME/.codex/AGENTS.md"
+CODEX_USER_AGENTS="$HOME/.codex/agents"
+CODEX_USER_AGENT_MARKER="$CODEX_USER_AGENTS/.perks-managed-agents"
 CLAUDE_SYSTEM_AGENTS="$HOME/.claude/CLAUDE.md"
 
 if [[ ! -d "$SOURCE_SKILLS" ]]; then
@@ -31,6 +35,7 @@ fi
 mkdir -p \
   "$CODEX_PLUGIN/.codex-plugin" \
   "$CODEX_PLUGIN/skills" \
+  "$CODEX_PLUGIN_AGENTS" \
   "$CODEX_PLUGIN/assets" \
   "$CLAUDE_PLUGIN/.claude-plugin" \
   "$CLAUDE_PLUGIN/skills" \
@@ -40,12 +45,33 @@ mkdir -p \
 rsync -a --delete --exclude '.DS_Store' "$SOURCE_SKILLS/" "$CODEX_PLUGIN/skills/"
 rsync -a --delete --exclude '.DS_Store' "$SOURCE_SKILLS/" "$CLAUDE_PLUGIN/skills/"
 
+if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
+  rsync -a --delete --exclude '.DS_Store' "$SOURCE_CODEX_AGENTS/" "$CODEX_PLUGIN_AGENTS/"
+else
+  rm -rf "$CODEX_PLUGIN_AGENTS"
+fi
+
 if [[ -d "$SOURCE_ASSETS" ]]; then
   rsync -a --delete --exclude '.DS_Store' "$SOURCE_ASSETS/" "$CODEX_PLUGIN/assets/"
 fi
 
-mkdir -p "$HOME/.codex" "$HOME/.claude"
+mkdir -p "$HOME/.codex" "$HOME/.claude" "$CODEX_USER_AGENTS"
 cp "$SYSTEM_AGENTS_SOURCE" "$CODEX_SYSTEM_AGENTS"
+
+if [[ -f "$CODEX_USER_AGENT_MARKER" ]]; then
+  while IFS= read -r managed_agent; do
+    [[ -n "$managed_agent" ]] || continue
+    rm -f "$CODEX_USER_AGENTS/$managed_agent"
+  done < "$CODEX_USER_AGENT_MARKER"
+fi
+
+: > "$CODEX_USER_AGENT_MARKER"
+if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
+  for agent_file in "$SOURCE_CODEX_AGENTS"/*.toml(N); do
+    cp "$agent_file" "$CODEX_USER_AGENTS/${agent_file:t}"
+    print -r -- "${agent_file:t}" >> "$CODEX_USER_AGENT_MARKER"
+  done
+fi
 
 if [[ -e "$CLAUDE_SYSTEM_AGENTS" && ! -L "$CLAUDE_SYSTEM_AGENTS" ]]; then
   mv "$CLAUDE_SYSTEM_AGENTS" "$CLAUDE_SYSTEM_AGENTS.bak.$(date +%Y%m%d%H%M%S)"
@@ -188,3 +214,5 @@ echo "  $CLAUDE_CACHE"
 echo "Synced system agent instructions:"
 echo "  $CODEX_SYSTEM_AGENTS"
 echo "  $CLAUDE_SYSTEM_AGENTS -> $SYSTEM_AGENTS_SOURCE"
+echo "Synced Codex custom agents:"
+echo "  $CODEX_USER_AGENTS"
