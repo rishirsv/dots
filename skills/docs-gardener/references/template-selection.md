@@ -35,6 +35,11 @@ This reference helps the skill choose the right template without loading the who
 - `assets/exec-plan_template.md`
 - `assets/solution_template.md`
 
+Use `project-spec_template.md` for durable whole-project specifications, including
+code repositories, services, internal programs, research/knowledge-work systems,
+and cross-functional operating projects. Adapt the domain model and operating
+contract to the project type; do not leave it as a service-only scaffold.
+
 ## Tracker-specific helpers
 
 - `assets/work-tracker-entry_template.md`
