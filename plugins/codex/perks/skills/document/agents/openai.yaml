@@ -1,0 +1,7 @@
+interface:
+  display_name: "Document"
+  short_description: "Write or update repo documentation"
+  default_prompt: "Use $document to write or update a doc such as README.md, AGENTS.md, ARCHITECTURE.md, or DESIGN.md, matching the existing voice."
+
+policy:
+  allow_implicit_invocation: false
