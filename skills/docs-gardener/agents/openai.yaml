@@ -1,0 +1,7 @@
+interface:
+  display_name: "Docs Gardener"
+  short_description: "Write or update durable project docs"
+  default_prompt: "Use $docs-gardener to write or update a durable project doc such as README.md, AGENTS.md, ARCHITECTURE.md, or DESIGN.md, matching the existing voice."
+
+policy:
+  allow_implicit_invocation: false

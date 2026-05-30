@@ -1,11 +1,11 @@
 ---
-name: document
-description: "Use when writing or updating repo documentation such as README.md, AGENTS.md, ARCHITECTURE.md, DESIGN.md, runbooks, API docs, or migration notes, including scaffolding a DESIGN.md in the Google Stitch open format and style-preserving updates that match an existing doc's voice; not for design critique, planning artifacts, code review, or one-off prose unrelated to repo documentation."
+name: docs-gardener
+description: "Use when writing or updating durable project documentation such as README.md, AGENTS.md, ARCHITECTURE.md, DESIGN.md, runbooks, API docs, or migration notes, including scaffolding a DESIGN.md in the Google Stitch open format and style-preserving updates that match an existing doc's voice; not for design critique, planning artifacts, code review, or one-off prose unrelated to project documentation."
 ---
 
-# Document
+# Docs Gardener
 
-Write or update repo documentation that a maintainer or future agent can rely on. Preserve the existing doc's structure and voice unless the user explicitly asks for a reflow.
+Write or update durable project documentation that a maintainer or future agent can rely on. Preserve the existing doc's structure and voice unless the user explicitly asks for a reflow.
 
 ## Reference Map
 
@@ -21,7 +21,7 @@ Write or update repo documentation that a maintainer or future agent can rely on
 
 In scope:
 
-- writing or updating repo-level operating docs such as `README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `DESIGN.md`
+- writing or updating project-level operating docs such as `README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `DESIGN.md`
 - runbooks, API docs, migration notes, and module-level docs
 - repairing broken links, stale paths, and drift between docs and code in the touched area
 - creating a `DESIGN.md` for AI coding agents using the Google Stitch open format
@@ -30,8 +30,8 @@ Not in scope:
 
 - design critique or polish on rendered UI (use `$design`)
 - planning artifacts, execution plans, specs (use `$improve-plan` for plans)
-- code review or technical debt logging (use `$gh-review` or `$refining-architecture`)
-- proposals, slide narratives, or reader-facing prose unrelated to repo documentation (use `$doc-coauthoring`)
+- code review or technical debt logging (use `$gh-review` or `$code-quality`)
+- proposals, slide narratives, or reader-facing prose unrelated to project documentation (use `$doc-coauthoring`)
 
 ## Workflow
 
