@@ -12,16 +12,22 @@ Prefer imagegen first when a visual direction is unclear, the user asks for mock
 
 If the question is about business logic, state transitions, or data shape, use [LOGIC.md](LOGIC.md).
 
-## Source Context For Imagegen
+## Source Context For UI Prototypes
 
-Use the strongest available visual reference without stopping for a screenshot hunt:
+Before generating image mockups, building standalone HTML, or editing route variants, use the strongest available visual reference without stopping for a screenshot hunt:
 
-1. Maintained screenshots, screen recordings, design docs, or fixture images.
+1. Repo-maintained app screenshots or captures, especially folders named `screens`, `screenshots`, `captures`, `snapshots`, `previews`, `fixtures`, or visual evidence under `docs/`.
 2. Rendered UI from browser, simulator, preview, snapshot, or project tooling.
 3. Existing components, routes, tokens, CSS, native views, product copy, and adjacent screens.
 4. Static code and repo conventions.
 
-If screenshots exist, use them as imagegen references so the mock stays close to the product, resolution, density, and frame. If screenshots do not exist, infer the frame and UI from code, docs, and available tooling. Do not ask the user just to obtain screenshots.
+Do a quick file sweep for likely visual references, for example:
+
+```bash
+rg --files | rg -i '(^|/)(screens?|screenshots?|captures?|snapshots?|previews?|fixtures?)/|\\.(png|jpe?g|webp)$'
+```
+
+Prefer current-app screenshots over external references. Use nearby or adjacent surfaces as anchors for frame, density, navigation, spacing, typography, color, component shape, copy tone, and platform chrome. If screenshots exist, reference them explicitly in the prompt or HTML notes and keep the prototype recognizable as the same product. If screenshots do not exist, infer the frame and UI from code, docs, and available tooling. Do not ask the user just to obtain screenshots.
 
 For radically different exploration, do not over-anchor on current screenshots. Preserve only the product semantics, required content, and recognizable identity the user named; let structure, hierarchy, density, and visual language diverge.
 
@@ -36,6 +42,18 @@ For radically different exploration, do not over-anchor on current screenshots. 
 7. Generate the mockup image.
 8. Inspect and analyze the image. If one narrow fix would materially improve the artifact, iterate once with a targeted prompt.
 9. Return the mockup, final prompt or prompt set, concise analysis, what varied, what stayed fixed, and the decision the artifact helps make.
+
+## Standalone HTML Prototype Workflow
+
+Use standalone HTML when the user wants an inspectable interactive prototype but production source should stay untouched.
+
+1. Run the source-reference sweep above and choose the smallest relevant screenshot set.
+2. Read only the app files needed to understand content, states, and behavior.
+3. Build one self-contained HTML/CSS/JS artifact outside production source, such as under `.agents/tmp/`.
+4. Match the existing app's visual language from screenshots first, then fill gaps from design docs, tokens, and components.
+5. Simulate interaction, detents, focus, keyboard, state changes, and failure prompts with local browser state only.
+6. Include a short note in the artifact or final response naming which screenshots or rendered references anchored the prototype.
+7. Inspect the HTML in a browser when possible and report what was checked.
 
 ## Board And Contact Sheet Workflow
 
@@ -243,6 +261,10 @@ Common targeted fixes:
 Stop when the artifact answers the design question. Do not over-iterate for pixel polish unless the user asked for production-quality visuals.
 
 ## Runnable UI Variants
+
+Use this only when the user explicitly asks for variants inside the running app or when imagegen/standalone HTML cannot answer the interaction question. Do not choose this path from "prototype" alone.
+
+For design-only or production-source-prohibited prototypes, build a standalone HTML/CSS/JS artifact or generate image mockups instead of editing app source.
 
 Generate several radically different UI variations on a single route, switchable from a floating bottom bar. The user flips between variants in the browser, picks one or steals bits from each, then throws the rest away.
 
