@@ -1,0 +1,36 @@
+{
+  "name": "meta-skill",
+  "version": "0.1.0",
+  "description": "Create, evaluate, and improve reusable skills with a shared meta-skill CLI.",
+  "author": {
+    "name": "Rishi"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "skills",
+    "evaluation",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Meta Skill",
+    "shortDescription": "Create, evaluate, and improve reusable skills.",
+    "longDescription": "Meta Skill bundles skill-create, skill-eval, and skill-improve with one TypeScript meta-skill CLI for portable skill scaffolding, .meta-skill workbenches, deterministic linting, App Server-backed scenario evals, bounded improvement plans, releases, and packages.",
+    "developerName": "Rishi",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Create a reusable skill for this workflow.",
+      "Evaluate this skill with scenario evals.",
+      "Plan a bounded improvement from eval evidence."
+    ],
+    "brandColor": "#2F6FED",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "screenshots": []
+  }
+}
