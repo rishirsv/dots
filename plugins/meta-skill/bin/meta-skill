@@ -3,6 +3,18 @@ set -eu
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
-CLI_DIR="$REPO_ROOT"
+CLI_DIR="$REPO_ROOT/cli"
+ENTRY="$CLI_DIR/dist/main.js"
 
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$CLI_DIR${PYTHONPATH:+:$PYTHONPATH}" exec python3 -B -m cli "$@"
+if [ ! -f "$ENTRY" ]; then
+  if [ -f "$CLI_DIR/package.json" ]; then
+    (cd "$CLI_DIR" && npm run build >/dev/null 2>&1) || true
+  fi
+fi
+
+if [ ! -f "$ENTRY" ]; then
+  echo "error: Meta Skill CLI is not built. Run: cd $CLI_DIR && npm install && npm run build" >&2
+  exit 1
+fi
+
+exec node "$ENTRY" "$@"

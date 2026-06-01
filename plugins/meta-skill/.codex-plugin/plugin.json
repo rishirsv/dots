@@ -16,7 +16,7 @@
   "interface": {
     "displayName": "Meta Skill",
     "shortDescription": "Create, evaluate, and improve reusable skills.",
-    "longDescription": "Meta Skill bundles skill-create, skill-eval, and skill-improve with a shared meta-skill CLI for scaffolding, validation, local eval runs, and bounded improvement loops.",
+    "longDescription": "Meta Skill bundles skill-create, skill-eval, and skill-improve with one TypeScript meta-skill CLI for portable skill scaffolding, .meta-skill workbenches, deterministic linting, App Server-backed scenario evals, bounded improvement plans, releases, and packages.",
     "developerName": "Rishi",
     "category": "Coding",
     "capabilities": [
@@ -25,7 +25,7 @@
     ],
     "defaultPrompt": [
       "Create a reusable skill for this workflow.",
-      "Evaluate this skill with local prompts.",
+      "Evaluate this skill with scenario evals.",
       "Plan a bounded improvement from eval evidence."
     ],
     "brandColor": "#2F6FED",

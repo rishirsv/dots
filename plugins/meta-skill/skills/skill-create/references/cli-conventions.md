@@ -1,119 +1,53 @@
 # CLI Conventions
 
-Shared rules for every `meta-skill` command across the three Meta Skill lanes (`skill-create`, `skill-eval`, `skill-improve`). Read once and assume these conventions hold in every per-lane reference unless that reference explicitly overrides them.
+Read this for shared `meta-skill` command behavior across create, eval, and improve lanes.
 
-## Scope Map
+## Command Surface
 
-- Command Shape: how subcommands and verbs nest.
-- Path Argument: how positional paths resolve and which roots are refused.
-- Exit Codes: 0, 1, 2 and what each one means.
-- Output Channels: what goes to stdout vs. stderr.
-- Format: markdown default and `--format json`.
-- Common Flags: shared meaning across every command.
-- Interactive vs. Non-Interactive: opening reports, prompting, baseline acceptance.
-- Human Gates: actions that need a human before commit.
-- Implicit Init: how `review run` behaves on an uninitialized project.
-- Run Identifiers: the shape and meaning of run and session ids.
+V1 uses one TypeScript CLI with top-level commands:
 
-## Command Shape
-
-The CLI is one binary with two levels of nesting:
-
-```
-meta-skill <area> <verb> [args] [flags]
-```
-
-- Top-level verbs that act on a single skill or workspace are flat: `meta-skill create`, `meta-skill validate`.
-- Lane verbs are grouped under an area: `meta-skill eval <verb>`, `meta-skill improve <verb>`.
-- A verb is one word. Do not add a third nesting level.
-
-The eight built verbs are:
-
-```
-meta-skill create
-meta-skill validate
-meta-skill eval init
-meta-skill eval run
-meta-skill eval open
-meta-skill improve plan
-meta-skill improve run
-meta-skill improve decide
+```bash
+meta-skill create ...
+meta-skill create --project ...
+meta-skill project init <skill-dir>
+meta-skill lint <project-or-skill> [--run <run-id>] [--json]
+meta-skill review <project> [--json]
+meta-skill eval init <project>
+meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--compare release] [--with-judges] [--no-lint]
+meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
+meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
+meta-skill eval open <project> [--run <run-id>] [--list]
+meta-skill plan <project> [--from-run <run-id>] [--from-review <review-id>]
+meta-skill promote <project> --plan <plan-id>
+meta-skill decide <project> --session <session-id> --accept | --reject
+meta-skill release <project>
+meta-skill package <project> [--source candidate|release] [--out <zip>] [--out-dir <dir>]
 ```
 
-## Path Argument
+Do not suggest command namespaces outside the v1 surface above.
 
-Most commands take a positional path that resolves to a project root or a review root:
+## Path Model
 
-- If the argument is omitted, the command resolves against the current working directory.
-- A project root is the folder that contains the canonical portable payload at `skill/SKILL.md`.
-- A review root is either `<project>/reviews/` (flat mode) or `<project>/reviews/<name>/` (named mode).
-- `.agents/skills/...` paths are runtime installs, not source. Commands refuse them by default; pass `--allow-installed-skill` only for explicit installed-copy smoke tests.
+The project root is also the current portable candidate payload. It contains `SKILL.md` plus optional `agents/`, `references/`, `scripts/`, and `assets/`.
 
-## Exit Codes
+Workbench state lives under `.meta-skill/`. Commands must not create alternate root-level workbench folders.
 
-- `0` — success, or success with advisory warnings.
-- `1` — invalid input, missing required state, or failed deterministic check.
-- `2` — usage error (bad flags, unknown subcommand). argparse owns this code.
+Installed skill copies are runtime state, not canonical source. Prefer the source project path.
 
-Commands that succeed but discover advisory findings (audit warnings, judge concerns) still exit `0`. Use `--strict` on commands that support it to promote warnings to exit `1`.
+## Output And Exit Codes
 
-## Output Channels
+- `0`: success, including success with advisory warnings.
+- `1`: invalid project state, failed deterministic check, unavailable runner, or blocked human-gated action.
+- `2`: usage error, unknown command, or bad flags.
 
-- **stdout** carries results: report paths, generated file paths, next-step commands, structured output when `--format json` is used.
-- **stderr** carries progress, status lines, and human-readable errors. Reserve it for things a script would normally discard.
-- A successful command ends with one `next step:` line on stdout when there is a useful follow-up.
-
-Non-interactive callers should be able to consume stdout alone.
-
-## Format
-
-- `--format markdown` (default) prints human-readable output.
-- `--format json` prints a single JSON object. The schema is per-command and is documented in that command's reference.
-
-## Common Flags
-
-These flags carry the same meaning everywhere they appear:
-
-- `--audit` — run an audit pass before the main action. Audit output prints first, then a blank line, then the main action's output.
-- `--label "..."` — human-readable label attached to a run or session. Defaults to the candidate skill's Git commit subject when available.
-- `--no-open` — never open a report or artifact in a viewer, even in an interactive terminal.
-- `--from-skill-spec <path>` — seed config from a structured spec block. Plain-prose specs are not parsed; the block must be structured.
-- `--keep-workspace` — keep staged role workspaces for debugging. Off by default.
-- `--allow-absolute-paths` — allow durable config to reference absolute paths. Off by default; portable configs use relative paths.
-- `--allow-installed-skill` — allow `.agents/skills/...` source paths. Off by default.
-
-## Interactive vs. Non-Interactive
-
-A command is interactive when stdout is a TTY and the user did not pass `--no-open` or an equivalent suppressor.
-
-- Interactive runs may open reports, prompt for confirmation, and ask whether to accept a first-run baseline.
-- Non-interactive runs must not open viewers, never prompt, and never write a baseline. They print the report path and the exact follow-up command instead.
+Human-readable results print to stdout. Errors print to stderr. Use `--json` only where the command supports machine-readable output.
 
 ## Human Gates
 
-A human must approve before any of these actions:
+Commands may prepare evidence, plans, packages, and snapshots, but the human gate remains explicit. Require user approval before package, install, publish, sync, release replacement, external writes, or source promotion.
 
-- packaging a skill or building a `dist/`
-- installing into `.agents/skills/`
-- syncing to a workspace marketplace
-- publishing or releasing
-- writing to external systems (HTTP POST, file uploads, send/post)
-- promoting a candidate into canonical source
-- accepting a review baseline beyond the first-run prompt
+## Evidence Rules
 
-A CLI command may prepare these actions, but the final commit is gated. Non-interactive runs surface the proposed action and stop; they do not auto-confirm.
+Run IDs are readable sequenced folders such as `001-initial-candidate`. Treat them as opaque once created.
 
-## Implicit Init
-
-`meta-skill eval run` on a project that has no `review.yaml` will create defaults and proceed. The CLI prints one line to stderr (`No review found. Creating default review and proceeding.`) and continues with the run. To opt out, run `meta-skill eval init` first or pass `--no-init` where supported.
-
-## Run Identifiers
-
-Run and session IDs are timestamp-based and stable: `YYYY-MM-DDTHHMMSSZ-<short-sha>-<rand>`. Treat them as opaque. The CLI accepts a prefix where unambiguous.
-
-## What This Document Does Not Cover
-
-Per-command flags, compare modes, baseline semantics, prompt selection, and lane-specific outputs live in each lane's own references:
-
-- `skill-eval`: see `references/cli.md` in the sibling `skill-eval` skill for review compare modes, baseline acceptance, and prompt filtering.
-- `skill-improve`: see the sibling `skill-improve` skill's references for improve session lifecycle and decision recording. (Plan-of-record; add when written.)
+Every eval run records unavailable token metrics explicitly when exact usage cannot be collected. Do not hide missing usage fields.
