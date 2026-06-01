@@ -15,7 +15,6 @@ export class CliError extends Error {
 
 export const PORTABLE_FILES = new Set(["SKILL.md"]);
 export const PORTABLE_DIRS = new Set(["agents", "references", "scripts", "assets"]);
-export const LEGACY_TOP_LEVEL = new Set(["skill", "evals", "tests", "versions", ".skill-improve"]);
 
 export function utcNow(): string {
   return new Date().toISOString();

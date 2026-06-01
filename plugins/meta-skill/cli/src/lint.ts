@@ -5,7 +5,6 @@ import { promisify } from "node:util";
 import type { Issue, LintReport, ScenarioCriteria, ScenarioMetadata, TestManifest } from "./models";
 import {
   CliError,
-  LEGACY_TOP_LEVEL,
   PORTABLE_DIRS,
   PORTABLE_FILES,
   appendJsonl,
@@ -122,10 +121,6 @@ async function validatePortablePayload(root: string, failures: Issue[], warnings
 
   for (const entry of entries) {
     if (entry.name === ".meta-skill") continue;
-    if (LEGACY_TOP_LEVEL.has(entry.name)) failures.push(issue("failure", `legacy target output is not part of v1 layout: ${entry.name}`, path.join(root, entry.name)));
-    if (entry.name === "docs" && (await exists(path.join(root, "docs", "spec.md")))) {
-      failures.push(issue("failure", "docs/spec.md is a legacy target output; use .meta-skill/spec.md", path.join(root, "docs", "spec.md")));
-    }
     if (entry.isDirectory() && !PORTABLE_DIRS.has(entry.name) && entry.name !== ".meta-skill") {
       warnings.push(issue("warning", `top-level directory is outside the portable payload contract and will not package: ${entry.name}`, path.join(root, entry.name)));
     }

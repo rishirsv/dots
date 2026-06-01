@@ -25,10 +25,6 @@ describe("project layout and packaging", () => {
     assert.equal(await exists(path.join(target, "SKILL.md")), true);
     assert.equal(await exists(path.join(target, ".meta-skill", "evals", "evals.json")), true);
     assert.equal(await exists(path.join(target, ".meta-skill", "tests", "manifest.json")), true);
-    for (const legacy of ["skill", "evals", "tests", "versions", "docs"]) {
-      assert.equal(await exists(path.join(target, legacy)), false, `legacy root ${legacy} should not exist`);
-    }
-
     const portableFiles = await listPortablePayloadFiles(target);
     assert.deepEqual(portableFiles.sort(), ["SKILL.md", "agents/openai.yaml"].sort());
   });

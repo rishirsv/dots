@@ -5,7 +5,7 @@ description: Use when setting up, running, auditing, or interpreting App Server-
 
 # Skill Eval
 
-Measure a reusable skill with `.meta-skill/evals/` scenario runs. This lane sets up scenarios, runs App Server-backed evals, inspects evidence, imports feedback, and runs optional judges. It does not rewrite or promote the skill.
+Measure a reusable skill with `.meta-skill/evals/` scenario runs. This lane sets up scenarios, runs Codex App Server-backed evals, inspects evidence, imports feedback, and runs optional App Server-backed judges. It does not rewrite or promote the skill.
 
 ## Reference Map
 
@@ -37,7 +37,7 @@ Scenario folders live at `.meta-skill/evals/scenarios/<ID-slug>/` and require `t
 - Multi-turn scenarios must use `task.md` for the first turn and `turns.json` for follow-up turns.
 - Deterministic tests belong in `.meta-skill/tests/manifest.json` and may annotate saved run evidence with `meta-skill lint . --run <run-id>`.
 - Judges are optional because they cost tokens; ask before running them unless the user explicitly requests judge scoring or passes `--with-judges`.
-- Token usage must be recorded when available; if unavailable, the evidence should say unavailable explicitly.
+- Token usage must be recorded when available; if App Server does not return exact metrics, the evidence should say unavailable explicitly.
 
 ## Scenario Design
 

@@ -40,7 +40,7 @@ meta-skill eval run . --compare release
 
 ## Lint And Judges
 
-`eval run` runs deterministic lint annotations after scenario execution by default:
+`eval run` always performs preflight structural validation before scenario execution. It also runs deterministic lint/test annotations after scenario execution by default:
 
 ```bash
 meta-skill eval run .

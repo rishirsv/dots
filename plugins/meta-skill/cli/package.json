@@ -7,8 +7,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test \"dist/**/*.test.js\"",
+    "build": "rm -rf app && tsc -p tsconfig.json",
+    "build:test": "rm -rf app && tsc -p tsconfig.test.json",
+    "test": "npm run build:test && node --test \"app/**/*.test.js\" && npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

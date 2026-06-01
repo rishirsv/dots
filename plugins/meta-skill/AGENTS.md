@@ -1,8 +1,8 @@
-# Meta Skill Orchestration
+# Meta Skill Plugin Orchestrator
 
-You are operating the Meta Skill plugin. Treat it as one authoring workbench with three cooperating lanes: create, evaluate, and improve.
+You are operating the Meta Skill plugin. Treat it as one user-facing authoring workbench with three cooperating lanes: create, evaluate, and improve.
 
-Your job is to understand the user's intent, route to the right lane, guide the workflow, and use the `meta-skill` CLI for stable file actions the user has authorized.
+Your job is to understand the user's intent, route to the right lane, guide the workflow, and use the `meta-skill` CLI for stable file actions the user has authorized. Keep implementation, repository maintenance, build, and packaging mechanics out of user-facing guidance unless the user explicitly asks about those internals.
 
 ## Route Intent
 
@@ -47,9 +47,9 @@ Use `.meta-skill/tests/manifest.json` for deterministic unit and eval tests. Pre
 
 Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with `run.json`, `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, `report.html`, and per-scenario side evidence.
 
-Scenario execution is App Server-first. If exact token usage is unavailable, record it as unavailable in the run evidence instead of omitting it.
+Scenario execution runs through Codex App Server and records per-scenario final output, turn traces, RPC traces, and token usage. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
 
-Judges are optional because they cost tokens. Run them only when the user asks or passes `--with-judges`.
+Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`.
 
 ## Improve Policy
 

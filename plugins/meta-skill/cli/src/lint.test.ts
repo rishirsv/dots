@@ -3,7 +3,6 @@ import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
-import { runCommand } from "./commands";
 import { runEval } from "./evals";
 import { lintProject } from "./lint";
 import { CliError, exists, readText, writeJson, writeText } from "./project";
@@ -37,12 +36,7 @@ describe("lint, command parsing, and eval evidence", () => {
     assert.equal(report.failures.length, 0);
   });
 
-  it("rejects legacy command namespaces", async () => {
-    await assert.rejects(() => runCommand(["validate", "."]), (error) => error instanceof CliError && error.exitCode === 2);
-    await assert.rejects(() => runCommand(["improve", "plan", "."]), (error) => error instanceof CliError && error.exitCode === 2);
-  });
-
-  it("writes App Server-first run evidence with explicit unavailable token usage", async () => {
+  it("writes App Server run evidence and fails when eval tests fail", async () => {
     const project = await fixtureProject("eval-run-check");
     await writeScenario(project, {
       folder: "F1-multiturn",
@@ -50,7 +44,36 @@ describe("lint, command parsing, and eval evidence", () => {
       family: "failure_mode",
       turns: [{ content: "Now tighten it." }]
     });
-    const result = await runEval({ project, selector: {}, noLint: true });
+    await writeJson(path.join(project, ".meta-skill", "tests", "manifest.json"), {
+      schema_version: 1,
+      tests: [{ id: "failing-eval", kind: "eval", command: "node -e \"process.exit(1)\"" }]
+    });
+    const result = await runEval({
+      project,
+      selector: {},
+      scenarioRunner: {
+        async run(input) {
+          const sideRoot = path.join(input.runRoot, "scenarios", input.scenario.folder, input.side);
+          await fs.mkdir(path.join(sideRoot, "stage", "skill"), { recursive: true });
+          await writeText(path.join(sideRoot, "stage", "skill", "SKILL.md"), "fixture");
+          await writeText(path.join(sideRoot, "final.md"), "Fixture final.");
+          await writeText(path.join(sideRoot, "turns.jsonl"), "");
+          await writeJson(path.join(sideRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
+          await writeText(path.join(sideRoot, "rpc.jsonl"), "");
+          return {
+            status: "needs_review",
+            token_usage: {
+              input_tokens: { available: true, value: 1 },
+              output_tokens: { available: true, value: 1 },
+              total_tokens: { available: true, value: 2 }
+            },
+            final_path: path.join(sideRoot, "final.md"),
+            evidence_path: path.join("scenarios", input.scenario.folder, input.side)
+          };
+        },
+        close() {}
+      }
+    });
     assert.equal(result.ok, false);
     assert.equal(await exists(path.join(result.runRoot, "run.json")), true);
     assert.equal(await exists(path.join(result.runRoot, "events.jsonl")), true);
@@ -61,9 +84,8 @@ describe("lint, command parsing, and eval evidence", () => {
     assert.equal(await exists(path.join(result.runRoot, "scenarios", "F1-multiturn", "candidate", "rpc.jsonl")), true);
     assert.equal(await exists(path.join(result.runRoot, "scenarios", "F1-multiturn", "candidate", "stage", "skill", "SKILL.md")), true);
 
-    const results = await readText(path.join(result.runRoot, "results.jsonl"));
-    assert.match(results, /"available":false/);
-    assert.match(results, /App Server execution failed before token metrics/);
+    const tests = await readText(path.join(result.runRoot, "tests.jsonl"));
+    assert.match(tests, /"status":"failed"/);
   });
 });
 

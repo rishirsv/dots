@@ -1,0 +1,150 @@
+import path from "node:path";
+import { AppServerUnavailableError, appServerConfig, codexVersion } from "../app-server/client";
+import { AppServerScenarioRunner } from "../app-server/runner";
+import { lintProject } from "../lint";
+import {
+  CliError,
+  appendJsonl,
+  ensureDir,
+  eventEnvelope,
+  exists,
+  nextSequencedId,
+  projectPaths,
+  relativePath,
+  requirePortableSkill,
+  touch,
+  unavailableTokenUsage,
+  utcNow,
+  writeJson
+} from "../project";
+import { writeEvalReport } from "../report";
+import { judgeRun } from "./judge";
+import { classifyScenarioStatus, recordScenarioResult, runStatus } from "./results";
+import { loadScenarios } from "./scenarios";
+import type { EvalRunOptions, RunFailureClassification } from "./types";
+
+export async function runEval(options: EvalRunOptions): Promise<{ runId: string; runRoot: string; report: string; ok: boolean }> {
+  const root = await requirePortableSkill(options.project);
+  const p = projectPaths(root);
+  if (!(await exists(p.evalManifest))) throw new CliError("eval workbench is missing; run `meta-skill eval init <project>` first");
+
+  const preflight = await lintProject(root, { executeTests: false });
+  if (preflight.failures.length) {
+    throw new CliError(`lint failed before eval run:\n${preflight.failures.map((failure) => `- ${failure.message}`).join("\n")}`);
+  }
+
+  const scenarios = await loadScenarios(root, options.selector);
+  if (!scenarios.length) throw new CliError("no scenarios selected");
+
+  const sides: Array<"candidate" | "release"> = ["candidate"];
+  if (options.compare === "release") {
+    if (!(await exists(path.join(p.releaseSkill, "SKILL.md")))) {
+      throw new CliError("`--compare release` requires .meta-skill/versions/release/skill/SKILL.md; run `meta-skill release <project>` first");
+    }
+    sides.push("release");
+  }
+
+  const runId = await nextSequencedId(p.runs, options.label || (options.compare === "release" ? "release-compare" : "initial-candidate"));
+  const runRoot = path.join(p.runs, runId);
+  await ensureDir(runRoot);
+  for (const file of ["events.jsonl", "results.jsonl", "tests.jsonl", "grades.jsonl", "feedback.jsonl"]) {
+    await touch(path.join(runRoot, file));
+  }
+
+  const appServer = await appServerConfig(options.appServerEndpoint);
+  const runnerVersion = await codexVersion();
+  const runJson = {
+    schema_version: 1,
+    run_id: runId,
+    created_at: utcNow(),
+    status: "running",
+    label: options.label || null,
+    suite: "default",
+    scenarios_path: "../../scenarios",
+    scenarios: { selection: scenarios.map((scenario) => scenario.folder) },
+    sides: sides.map((side) =>
+      side === "candidate"
+        ? { id: "candidate", kind: "working_tree", skill_root: "../../../.." }
+        : { id: "release", kind: "version", skill_root: "../../../versions/release/skill" }
+    ),
+    runner: {
+      backend: "app_server",
+      app_server: appServer,
+      codex_version: runnerVersion,
+      protocol: "generated-ts",
+      sandbox: "read-only",
+      approval_policy: "never",
+      network_access: false,
+      timeout_ms: 120000
+    },
+    orchestration: {
+      mode: "thread_per_scenario_side",
+      turn_count: null
+    }
+  };
+  await writeJson(path.join(runRoot, "run.json"), runJson);
+  await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "run_started", run_id: runId, source: "meta-skill eval run", payload: runJson }));
+
+  const runner = options.scenarioRunner || new AppServerScenarioRunner();
+  let ok = true;
+  const scenarioStatuses = new Set<string>();
+  const failureClassifications = new Set<RunFailureClassification>();
+  try {
+    for (const scenario of scenarios) {
+      for (const side of sides) {
+        const skillRoot = side === "candidate" ? root : p.releaseSkill;
+        await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "scenario_side_started", run_id: runId, scenario_id: scenario.id, side, source: "meta-skill eval run", payload: { folder: scenario.folder } }));
+        try {
+          const result = await runner.run({ projectRoot: root, skillRoot, scenario, side, runId, runRoot, appServer });
+          scenarioStatuses.add(result.status);
+          const classification = classifyScenarioStatus(result.status);
+          if (classification) {
+            ok = false;
+            failureClassifications.add(classification);
+          }
+          await recordScenarioResult(runRoot, runId, scenario, side, result.status, result.token_usage, result.evidence_path, result.error, classification);
+        } catch (error) {
+          ok = false;
+          const message = error instanceof AppServerUnavailableError || error instanceof Error ? error.message : String(error);
+          const classification: RunFailureClassification = error instanceof AppServerUnavailableError ? "app_server_unavailable" : "harness_unavailable";
+          failureClassifications.add(classification);
+          scenarioStatuses.add("errored");
+          const evidencePath = relativePath(runRoot, path.join(runRoot, "scenarios", scenario.folder, side));
+          const tokenUsage = unavailableTokenUsage("App Server execution failed before token metrics were available.");
+          await recordScenarioResult(runRoot, runId, scenario, side, "errored", tokenUsage, evidencePath, message, classification);
+          await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "scenario_side_failed", run_id: runId, scenario_id: scenario.id, side, source: "app_server", payload: { error: message, failure_classification: classification, token_usage: tokenUsage } }));
+        }
+      }
+    }
+  } finally {
+    runner.close();
+  }
+
+  if (!options.noLint) {
+    const lint = await lintProject(root, { runId });
+    ok = ok && lint.ok;
+    if (!lint.ok) failureClassifications.add("lint_test_failure");
+  } else {
+    await appendJsonl(path.join(runRoot, "tests.jsonl"), eventEnvelope({ type: "lint_skipped", run_id: runId, source: "meta-skill eval run", payload: { reason: "--no-lint" } }));
+  }
+
+  if (options.withJudges) {
+    const judges = await (options.judgeRunner || judgeRun)({ project: root, runId, allJudges: true, allScenarios: true });
+    ok = ok && judges.ok;
+    for (const classification of judges.failureClassifications || []) failureClassifications.add(classification);
+    if (!judges.ok && !(judges.failureClassifications || []).length) failureClassifications.add("judge_failure");
+  }
+
+  const status = runStatus(ok, scenarioStatuses);
+  const finalRunJson = {
+    ...runJson,
+    status,
+    completed_at: utcNow(),
+    ok,
+    failure_classifications: [...failureClassifications].sort()
+  };
+  await writeJson(path.join(runRoot, "run.json"), finalRunJson);
+  await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, failure_classifications: finalRunJson.failure_classifications } }));
+  const report = await writeEvalReport(runRoot);
+  return { runId, runRoot, report, ok };
+}

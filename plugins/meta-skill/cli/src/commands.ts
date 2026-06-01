@@ -58,11 +58,6 @@ export async function runCommand(argv: string[]): Promise<number> {
       return commandRelease(rest);
     case "package":
       return commandPackage(rest);
-    case "validate":
-      throw new CliError("that validation command was removed in v1; use `meta-skill lint <project-or-skill>`", 2);
-    case "improve":
-    case "version":
-      throw new CliError(`command namespace removed in v1: ${command}`, 2);
     default:
       throw new CliError(`unknown command: ${command}\n\n${HELP}`, 2);
   }
