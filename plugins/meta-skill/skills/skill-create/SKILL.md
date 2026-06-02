@@ -32,7 +32,7 @@ Read only what the task needs:
 
 ## CLI
 
-Use the shared TypeScript CLI through `bin/meta-skill`:
+Use the shared TypeScript CLI through the plugin package `meta-skill` bin:
 
 ```bash
 meta-skill create <skill-dir> --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
