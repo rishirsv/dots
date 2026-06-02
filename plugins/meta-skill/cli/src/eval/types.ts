@@ -1,4 +1,5 @@
 import type { AppServerScenarioRunner } from "../app-server/runner";
+import type { EvalSide, ScenarioRecord } from "../models";
 
 export interface EvalSelector {
   scenario?: string[];
@@ -25,6 +26,16 @@ export interface JudgeOptions {
   allJudges?: boolean;
   scenario?: string;
   allScenarios?: boolean;
+  judgeExecutor?: (input: JudgeExecutionInput) => Promise<Record<string, unknown>>;
+}
+
+export interface JudgeExecutionInput {
+  projectRoot: string;
+  judgeId: string;
+  judgePrompt: string;
+  scenario: ScenarioRecord;
+  side: EvalSide;
+  final: string;
 }
 
 export type RunFailureClassification =

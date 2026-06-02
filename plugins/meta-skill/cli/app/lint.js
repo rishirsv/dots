@@ -10,6 +10,7 @@ const node_fs_1 = require("node:fs");
 const node_path_1 = __importDefault(require("node:path"));
 const node_util_1 = require("node:util");
 const project_1 = require("./project");
+const report_1 = require("./report");
 const execAsync = (0, node_util_1.promisify)(node_child_process_1.exec);
 const FAMILY_BY_PREFIX = {
     R: "regression",
@@ -60,6 +61,7 @@ async function lintProject(target, options = {}) {
                 }
             }));
             annotations += 1;
+            await (0, report_1.writeEvalReport)(runRoot);
         }
     }
     return { ok: failures.length === 0 && tests.every((test) => test.status !== "failed"), failures, warnings, tests, annotations };
@@ -83,8 +85,10 @@ function formatLintReport(report) {
 async function validatePortablePayload(root, failures, warnings) {
     const entries = await node_fs_1.promises.readdir(root, { withFileTypes: true });
     const skillMd = node_path_1.default.join(root, "SKILL.md");
+    const skillText = await node_fs_1.promises.readFile(skillMd, "utf8");
     const frontmatter = await (0, project_1.parseSkillFrontmatter)(skillMd);
     const expected = node_path_1.default.basename(root);
+    const body = skillBody(skillText);
     if (!frontmatter.name)
         failures.push(issue("failure", "SKILL.md is missing required frontmatter field 'name'", skillMd));
     if (frontmatter.name && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(frontmatter.name))
@@ -99,6 +103,12 @@ async function validatePortablePayload(root, failures, warnings) {
     if (frontmatter.description && !/\bnot for\b/i.test(frontmatter.description)) {
         warnings.push(issue("warning", "description should include a nearby 'not for' boundary", skillMd));
     }
+    if (!body.trim())
+        failures.push(issue("failure", "SKILL.md body is missing", skillMd));
+    if (skillText.split(/\r?\n/).length > 220)
+        warnings.push(issue("warning", "SKILL.md is long; move conditional detail to directly linked references", skillMd));
+    await validateRuntimeResourceLinks(root, skillText, warnings);
+    await validateAgentManifest(root, frontmatter, failures, warnings);
     for (const entry of entries) {
         if (entry.name === ".meta-skill")
             continue;
@@ -109,6 +119,54 @@ async function validatePortablePayload(root, failures, warnings) {
             warnings.push(issue("warning", `top-level file is outside the portable payload contract and will not package: ${entry.name}`, node_path_1.default.join(root, entry.name)));
         }
     }
+}
+function skillBody(skillText) {
+    if (!skillText.startsWith("---\n"))
+        return skillText;
+    const end = skillText.indexOf("\n---\n", 4);
+    if (end === -1)
+        return "";
+    return skillText.slice(end + 5);
+}
+async function validateRuntimeResourceLinks(root, skillText, warnings) {
+    for (const dir of ["references", "scripts", "assets"]) {
+        const dirPath = node_path_1.default.join(root, dir);
+        if (!(await (0, project_1.exists)(dirPath)))
+            continue;
+        const files = (await node_fs_1.promises.readdir(dirPath, { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isFile());
+        for (const file of files) {
+            const relative = `${dir}/${file.name}`;
+            if (!skillText.includes(`](${relative})`) && !skillText.includes(`](${relative.replace(/ /g, "%20")})`)) {
+                warnings.push(issue("warning", `runtime ${dir.slice(0, -1)} should be directly linked from SKILL.md: ${relative}`, node_path_1.default.join(root, relative)));
+            }
+        }
+    }
+}
+async function validateAgentManifest(root, frontmatter, failures, warnings) {
+    const manifestPath = node_path_1.default.join(root, "agents", "openai.yaml");
+    if (!(await (0, project_1.exists)(manifestPath)))
+        return;
+    const text = await node_fs_1.promises.readFile(manifestPath, "utf8");
+    const topLevel = parseSimpleYaml(text);
+    const hasCodexShape = Boolean(topLevel.name && topLevel.description);
+    const hasInterfaceShape = /^\s*interface\s*:/m.test(text);
+    if (!hasCodexShape && !hasInterfaceShape) {
+        failures.push(issue("failure", "agents/openai.yaml must use top-level name/description or documented interface metadata", manifestPath));
+        return;
+    }
+    if (topLevel.name && frontmatter.name && topLevel.name !== frontmatter.name) {
+        warnings.push(issue("warning", `agents/openai.yaml name ${topLevel.name} does not match SKILL.md name ${frontmatter.name}`, manifestPath));
+    }
+}
+function parseSimpleYaml(text) {
+    const parsed = {};
+    for (const line of text.split(/\r?\n/)) {
+        const match = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
+        if (!match)
+            continue;
+        parsed[match[1]] = match[2].replace(/^['"]|['"]$/g, "").trim();
+    }
+    return parsed;
 }
 async function validateWorkbench(root, failures, warnings) {
     const p = (0, project_1.projectPaths)(root);

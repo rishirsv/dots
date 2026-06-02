@@ -17,10 +17,10 @@ import {
   utcNow,
   writeJson
 } from "../project";
-import { writeEvalReport } from "../report";
 import { judgeRun } from "./judge";
 import { classifyScenarioStatus, recordScenarioResult, runStatus } from "./results";
-import { loadScenarios } from "./scenarios";
+import { loadScenarios, writeRunScenarioSnapshots } from "./scenarios";
+import { refreshRunEvidence } from "./runs";
 import type { EvalRunOptions, RunFailureClassification } from "./types";
 
 export async function runEval(options: EvalRunOptions): Promise<{ runId: string; runRoot: string; report: string; ok: boolean; status: "passed" | "needs_review" | "failed"; manualReviewRequired: boolean; failureClassifications: RunFailureClassification[] }> {
@@ -88,6 +88,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   };
   await writeJson(path.join(runRoot, "run.json"), runJson);
   await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "run_started", run_id: runId, source: "meta-skill eval run", payload: runJson }));
+  await writeRunScenarioSnapshots(runRoot, scenarios);
 
   const runner = options.scenarioRunner || new AppServerScenarioRunner();
   let hasFailures = false;
@@ -155,6 +156,6 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   };
   await writeJson(path.join(runRoot, "run.json"), finalRunJson);
   await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, manual_review_required: manualReviewRequired, failure_classifications: finalRunJson.failure_classifications } }));
-  const report = await writeEvalReport(runRoot);
+  const { report } = await refreshRunEvidence(root, runId);
   return { runId, runRoot, report, ok, status, manualReviewRequired, failureClassifications: sortedFailureClassifications };
 }

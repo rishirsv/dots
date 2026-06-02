@@ -5,7 +5,8 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { AppServerUnavailableError } from "./app-server/client";
 import type { ScenarioRunInput, ScenarioRunResult } from "./app-server/runner";
-import { runEval } from "./evals";
+import { importFeedback, judgeRun, listRunSummaries, openRun, runEval } from "./evals";
+import { judgePassed } from "./eval/judge";
 import { packageProject } from "./package";
 import { exists, readJson, readText, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
@@ -76,6 +77,18 @@ describe("App Server eval orchestration", () => {
     assert.match(report, /unresolved; not pass proof/);
     assert.match(report, /Fixture final|ok/);
     assert.match(report, /lint skipped/);
+    const normalized = await readJson<{ summary: { run_id: string; status: string; unresolved_count: number }; scenarios: unknown[]; readiness: { status: string } }>(path.join(result.runRoot, "report.json"));
+    assert.equal(normalized.summary.run_id, result.runId);
+    assert.equal(normalized.summary.status, "needs_review");
+    assert.equal(normalized.summary.unresolved_count, 1);
+    assert.equal(normalized.scenarios.length, 1);
+    assert.equal(normalized.readiness.status, "needs_review");
+    const index = await readJson<{ runs: Array<{ run_id: string; status: string; readiness_status: string }> }>(path.join(path.dirname(result.runRoot), "index.json"));
+    assert.deepEqual(index.runs.map((row) => [row.run_id, row.status, row.readiness_status]), [[result.runId, "needs_review", "needs_review"]]);
+    const opened = await openRun(project, result.runId);
+    assert.equal(opened.data.summary.run_id, result.runId);
+    const listed = await listRunSummaries(project);
+    assert.equal(listed.at(-1)?.run_id, result.runId);
   });
 
   it("classifies App Server scenario failures without reporting a false green", async () => {
@@ -160,6 +173,80 @@ describe("App Server eval orchestration", () => {
     const report = await readText(result.report);
     assert.match(report, /lint_test_failure/);
     assert.match(report, /Judge Details/);
+  });
+
+  it("enforces judge thresholds before trusting pass and refreshes normalized reports", async () => {
+    const project = await fixtureProject("eval-judge-threshold");
+    await writeScenario(project, {
+      judges: [{ id: "artifact-quality", threshold: { overall_min: 4 } }]
+    });
+    await writeText(
+      path.join(project, ".meta-skill", "evals", "judges", "artifact-quality.md"),
+      `---\nid: artifact-quality\ntype: rubric\nscale: 1-5\n---\n\n# Artifact Quality\n\n## Output\n\nReturn JSON.\n\n## Calibration Example\n\nGood output scores 5.\n`
+    );
+
+    const result = await runEval({
+      project,
+      selector: {},
+      noLint: true,
+      scenarioRunner: scenarioRunner("passed")
+    });
+    await writeJson(path.join(project, ".meta-skill", "evals", "scenarios", "R1-basic", "criteria.json"), {
+      schema_version: 1,
+      what_it_tests: "Changed current criteria",
+      expected_behavior: "Changed after the run.",
+      assertions: ["Changed."],
+      tests: [],
+      judges: [{ id: "artifact-quality", threshold: { overall_min: 1 } }]
+    });
+
+    const judged = await judgeRun({
+      project,
+      runId: result.runId,
+      allJudges: true,
+      allScenarios: true,
+      async judgeExecutor() {
+        return { overall: 3, pass: true, rationale: "Looks okay.", dimensions: {} };
+      }
+    });
+
+    assert.equal(judged.ok, false);
+    assert.deepEqual(judged.failureClassifications, ["judge_failure"]);
+    assert.equal(judgePassed({ overall: 3, pass: true }, { overall_min: 4 }), false);
+    const grades = await readJsonl(path.join(result.runRoot, "grades.jsonl"));
+    assert.equal(grades.at(-1)?.payload?.status, "failed");
+    assert.equal((grades.at(-1)?.payload?.threshold as { overall_min?: number })?.overall_min, 4);
+    assert.equal(grades.at(-1)?.payload?.evidence_basis, "run_snapshot");
+    const normalized = await readJson<{ summary: { assessment_status: string; failure_classifications: string[] }; judges: JsonlRow[]; readiness: { status: string } }>(path.join(result.runRoot, "report.json"));
+    assert.equal(normalized.summary.assessment_status, "failed");
+    assert.deepEqual(normalized.summary.failure_classifications, ["judge_failure"]);
+    assert.equal(normalized.judges.at(-1)?.payload?.status, "failed");
+    assert.equal(normalized.readiness.status, "blocked");
+    const html = await readText(result.report);
+    assert.match(html, /Judge Details/);
+    assert.match(html, /judge_failure/);
+  });
+
+  it("refreshes normalized report and run index after feedback import", async () => {
+    const project = await fixtureProject("eval-feedback-refresh");
+    await writeScenario(project);
+    const result = await runEval({
+      project,
+      selector: {},
+      noLint: true,
+      scenarioRunner: scenarioRunner("passed")
+    });
+    const feedback = path.join(path.dirname(project), "feedback.jsonl");
+    await writeText(feedback, JSON.stringify({ scenario_id: "R1", side: "candidate", source: "reviewer", label: "fail", note: "Missing source grounding." }));
+
+    const imported = await importFeedback(project, result.runId, feedback);
+
+    assert.equal(imported.rows, 1);
+    const normalized = await readJson<{ feedback: JsonlRow[] }>(path.join(result.runRoot, "report.json"));
+    assert.equal(normalized.feedback.length, 1);
+    assert.equal(normalized.feedback[0].payload?.label, "fail");
+    const index = await readJson<{ runs: Array<{ run_id: string }> }>(path.join(path.dirname(result.runRoot), "index.json"));
+    assert.equal(index.runs.some((row) => row.run_id === result.runId), true);
   });
 
   it("passes run-scoped environment variables to eval tests", async () => {
@@ -251,7 +338,18 @@ async function fixtureProject(slug: string): Promise<string> {
   return project;
 }
 
-async function writeScenario(project: string): Promise<void> {
+async function writeScenario(
+  project: string,
+  options: {
+    judges?: Array<{
+      id: string;
+      threshold?: {
+        overall_min?: number;
+        dimensions?: Record<string, number>;
+      };
+    }>;
+  } = {}
+): Promise<void> {
   const scenario = path.join(project, ".meta-skill", "evals", "scenarios", "R1-basic");
   await fs.mkdir(scenario, { recursive: true });
   await writeText(path.join(scenario, "task.md"), "Do the eval task.");
@@ -272,7 +370,7 @@ async function writeScenario(project: string): Promise<void> {
     expected_behavior: "The skill should answer directly.",
     assertions: ["Answers directly."],
     tests: [],
-    judges: []
+    judges: options.judges || []
   });
 }
 

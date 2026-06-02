@@ -6,7 +6,7 @@ import path from "node:path";
 import { PassThrough } from "node:stream";
 import { describe, it } from "node:test";
 import type { ScenarioRecord } from "../models";
-import { readJson, readText, writeJson, writeText } from "../project";
+import { exists, readJson, readText, writeJson, writeText } from "../project";
 import { AppServerScenarioRunner } from "./runner";
 import { AppServerJsonClient } from "./client";
 
@@ -15,7 +15,7 @@ describe("AppServerScenarioRunner", () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-"));
     const skillRoot = path.join(root, "skill");
     const scenario = await fixtureScenario(root, [{ content: "Second turn." }]);
-    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: runner-skill\ndescription: Use when testing runner staging; not for live evals.\n---\n\n# Skill\n");
     const runRoot = path.join(root, "run");
     const fake = new FakeScenarioClient();
     const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
@@ -82,7 +82,11 @@ describe("AppServerScenarioRunner", () => {
     const firstInput = (turnStarts[0].params as { input: Array<{ type: string }> }).input;
     const secondInput = (turnStarts[1].params as { input: Array<{ type: string }> }).input;
     assert.equal(firstInput.some((item) => item.type === "skill"), true);
+    assert.equal((firstInput.find((item) => item.type === "skill") as { name?: string } | undefined)?.name, "runner-skill");
     assert.equal(secondInput.some((item) => item.type === "skill"), false);
+    assert.equal(await exists(path.join(sideRoot, "stage", "scenario", "task.md")), true);
+    assert.equal(await exists(path.join(sideRoot, "stage", "scenario", "scenario.json")), true);
+    assert.equal(await exists(path.join(sideRoot, "stage", "scenario", "criteria.json")), false);
     assert.deepEqual(result.token_usage, {
       input_tokens: { available: true, value: 5 },
       output_tokens: { available: true, value: 7 },

@@ -102,7 +102,7 @@ Types are `behavior`, `trigger`, `artifact`, or `gate`.
 }
 ```
 
-Scenarios may have no tests or judges in v1, but that makes them manual-review only and should be reported as a warning.
+Scenarios may have no tests or judges, but that makes them manual-review only and should be reported as a warning.
 
 ## Test Manifest
 
@@ -149,10 +149,19 @@ Each run writes:
   tests.jsonl
   grades.jsonl
   feedback.jsonl
+  report.json
   report.html
+  snapshots/
+    <scenario-folder>/
+      task.md
+      scenario.json
+      criteria.json
+      turns.json          optional
+      capability.txt      optional
   scenarios/
     <scenario-folder>/
       candidate/
+        stage/
         rpc.jsonl
         thread.json
         turns.jsonl
@@ -164,9 +173,27 @@ Each run writes:
 
 `run.json` is the plan. `events.jsonl` is the chronological execution ledger. `results.jsonl` is derived summary data. `tests.jsonl`, `grades.jsonl`, and `feedback.jsonl` are append-only annotation streams.
 
+`snapshots/<scenario-folder>/` stores evaluator-side task, metadata, criteria, and turns as they existed when the run started. Judges read these snapshots with saved final outputs. If an older run has no snapshot, the CLI marks the judge evidence basis as legacy current-project criteria.
+
+`report.json` is the normalized view consumed by `report.html`, `eval open --json`, and the runs `index.json`. It contains run summary, scenario side rows, tests, judges, feedback, comparisons, artifacts, and readiness.
+
+`runs/index.json` stores one summary row per run for `eval open --list`, `eval list`, and future local evidence browsers.
+
+The staged solver workspace includes `task.md`, `scenario.json`, `turns.json`, `capability.txt`, and `resources/` when present. It must not include `criteria.json`; criteria are evaluator evidence, not solver context.
+
 Every result should include token usage fields. If exact usage is unavailable, the fields should explicitly say unavailable and why.
 
 `needs_review` means unresolved. It records that scenario execution produced evidence for a human, deterministic test, or judge to inspect; it is not a passing result.
+
+## Evidence Claims
+
+| Claim | Required support |
+|---|---|
+| Execution completed | `results.jsonl` side status plus per-side `final.md`, `turns.jsonl`, and `thread.json` |
+| Deterministic pass | `tests.jsonl` rows with passing eval tests and no lint/test failures |
+| Judge pass | `grades.jsonl` rows where thresholds are satisfied; threshold failure overrides a judge's raw `pass: true` |
+| Human pass | `feedback.jsonl` rows with reviewer label, notes, scenario, and side |
+| Release-ready | Fresh `report.json` readiness, human approval, and release metadata such as `release --from-run <run-id>` |
 
 ## Feedback
 

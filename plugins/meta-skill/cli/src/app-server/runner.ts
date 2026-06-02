@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { ScenarioRecord, TokenUsage } from "../models";
-import { appendJsonl, copyPortablePayload, ensureDir, eventEnvelope, readText, unavailableTokenUsage, writeJson, writeText } from "../project";
+import { appendJsonl, copyPortablePayload, ensureDir, parseSkillFrontmatter, readText, unavailableTokenUsage, writeJson, writeText } from "../project";
 import type { AppServerConfig, AppServerLine } from "./client";
 import { AppServerJsonClient } from "./client";
 
@@ -54,6 +54,7 @@ export class AppServerScenarioRunner {
     await ensureDir(path.join(rawRoot, "artifacts"));
     const stageRoot = path.join(rawRoot, "stage");
     await stageWorkspace(input, stageRoot);
+    const attachmentName = await runtimeSkillName(input.skillRoot);
 
     const rpcPath = path.join(rawRoot, "rpc.jsonl");
     await this.client?.flush?.();
@@ -85,7 +86,7 @@ export class AppServerScenarioRunner {
     const turns = [{ content: input.scenario.task, source: "task.md" }, ...input.scenario.turns.map((turn) => ({ content: turn.content, source: "turns.json" }))];
     for (const [index, turn] of turns.entries()) {
       turnRecords.push({ role: "user", index, source: turn.source, content: turn.content, status: "sent" });
-      const result = await runTurn(client, threadId, stageRoot, input.scenario, turn.content, index === 0, this.turnTimeoutMs);
+      const result = await runTurn(client, threadId, stageRoot, input.scenario, turn.content, index === 0, this.turnTimeoutMs, attachmentName);
       final = result.final || final;
       tokenUsage = result.tokenUsage || tokenUsage;
       turnRecords.push({ role: "assistant", index, source: "app-server", content: result.final, status: "completed", turn_id: result.turnId });
@@ -142,11 +143,12 @@ async function runTurn(
   scenario: ScenarioRecord,
   content: string,
   includeSkill: boolean,
-  turnTimeoutMs: number
+  turnTimeoutMs: number,
+  attachmentName: string
 ): Promise<{ turnId: string; final: string; tokenUsage?: TokenUsage }> {
   const mark = client.eventCount();
   const input = [
-    ...(includeSkill ? [{ type: "skill", name: "candidate", path: path.join(stageRoot, "skill") }] : []),
+    ...(includeSkill ? [{ type: "skill", name: attachmentName, path: path.join(stageRoot, "skill") }] : []),
     { type: "text", text: content, text_elements: [] }
   ];
   const started = await client.request("turn/start", {
@@ -191,7 +193,7 @@ async function stageWorkspace(input: ScenarioRunInput, stageRoot: string): Promi
   await ensureDir(stageRoot);
   await copyPortablePayload(input.skillRoot, path.join(stageRoot, "skill"));
   await ensureDir(path.join(stageRoot, "scenario"));
-  for (const name of ["task.md", "criteria.json", "scenario.json", "turns.json", "capability.txt"]) {
+  for (const name of ["task.md", "scenario.json", "turns.json", "capability.txt"]) {
     const source = path.join(input.scenario.path, name);
     try {
       await fs.copyFile(source, path.join(stageRoot, "scenario", name));
@@ -209,4 +211,9 @@ async function stageWorkspace(input: ScenarioRunInput, stageRoot: string): Promi
     path.join(stageRoot, "HARNESS.md"),
     `# Meta Skill App Server Harness\n\nRun ${input.runId}, scenario ${input.scenario.id}, side ${input.side}.\n`
   );
+}
+
+async function runtimeSkillName(skillRoot: string): Promise<string> {
+  const frontmatter = await parseSkillFrontmatter(path.join(skillRoot, "SKILL.md"));
+  return frontmatter.name || path.basename(skillRoot);
 }

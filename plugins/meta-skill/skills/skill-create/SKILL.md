@@ -51,6 +51,7 @@ meta-skill lint <skill-dir>
 4. Draft the portable runtime payload.
 5. Add `.meta-skill/` only when requested or clearly implied.
 6. Run `meta-skill lint <skill-dir>` and stop before packaging, release, install, or publish unless the user explicitly asks.
+7. Do not recommend `release` until project mode exists or the user explicitly wants `release` to create the workbench.
 
 Ask one focused question only when the answer changes routing, runtime instructions, resources, gates, or project mode. Include your recommended answer.
 
@@ -59,6 +60,8 @@ Single-shot creation is opt-in. If the user says "one shot," "no questions," or 
 ## Runtime Payload Rules
 
 - Keep build notes, review notes, raw source examples, and eval evidence out of the portable payload.
+- Quote or escape YAML frontmatter values when they contain punctuation.
+- `agents/openai.yaml` should use supported Codex metadata (`name` and `description`) unless a documented interface shape is intentionally used.
 - Add runtime references, scripts, or assets only when they are real reusable materials.
 - Link every runtime reference, script, or asset directly from `SKILL.md`.
 - Runtime scripts should get or recommend unit tests in `.meta-skill/tests/manifest.json` when project mode exists.

@@ -1,9 +1,10 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { EventEnvelope } from "../models";
-import { CliError, appendJsonl, eventEnvelope, exists, projectPaths, readText, requirePortableSkill } from "../project";
+import type { EventEnvelope, RunIndex, RunIndexRow, RunReport } from "../models";
+import { CliError, appendJsonl, eventEnvelope, exists, projectPaths, readJson, readText, requirePortableSkill } from "../project";
+import { updateRunsIndex, writeEvalReport } from "../report";
 
-export async function importFeedback(project: string, runId: string, feedbackFile: string): Promise<{ rows: number }> {
+export async function importFeedback(project: string, runId: string, feedbackFile: string): Promise<{ rows: number; report: string }> {
   const root = await requirePortableSkill(project);
   const p = projectPaths(root);
   const runRoot = path.join(p.runs, runId);
@@ -24,23 +25,55 @@ export async function importFeedback(project: string, runId: string, feedbackFil
     await appendJsonl(path.join(runRoot, "feedback.jsonl"), envelope);
     rows += 1;
   }
-  return { rows };
+  const refreshed = await refreshRunEvidence(root, runId);
+  return { rows, report: refreshed.report };
 }
 
 export async function listRuns(project: string): Promise<string[]> {
+  const rows = await listRunSummaries(project);
+  return rows.map((row) => row.run_id);
+}
+
+export async function listRunSummaries(project: string, options: { limit?: number; status?: string } = {}): Promise<RunIndexRow[]> {
   const root = await requirePortableSkill(project);
   const p = projectPaths(root);
   if (!(await exists(p.runs))) return [];
-  const dirs = (await fs.readdir(p.runs, { withFileTypes: true })).filter((entry) => entry.isDirectory()).map((entry) => entry.name);
-  return dirs.sort();
+  const index = await ensureRunsIndex(p.runs);
+  let rows = [...index.runs].sort((a, b) => String(a.run_id).localeCompare(String(b.run_id)));
+  if (options.status) rows = rows.filter((row) => row.status === options.status || row.assessment_status === options.status || row.readiness_status === options.status);
+  if (options.limit !== undefined) rows = rows.slice(Math.max(0, rows.length - options.limit));
+  return rows;
 }
 
-export async function openRun(project: string, runId?: string): Promise<{ report: string; runId: string }> {
-  const runs = await listRuns(project);
-  const selected = runId || runs[runs.length - 1];
+export async function openRun(project: string, runId?: string): Promise<{ report: string; reportJson: string; runId: string; data: RunReport }> {
+  const runs = await listRunSummaries(project);
+  const selected = runId || runs[runs.length - 1]?.run_id;
   if (!selected) throw new CliError("no eval runs found; run `meta-skill eval run <project>` first");
   const root = await requirePortableSkill(project);
-  const report = path.join(projectPaths(root).runs, selected, "report.html");
-  if (!(await exists(report))) throw new CliError(`report does not exist: ${report}`);
-  return { report, runId: selected };
+  return refreshRunEvidence(root, selected);
+}
+
+export async function refreshRunEvidence(project: string, runId: string): Promise<{ report: string; reportJson: string; runId: string; data: RunReport }> {
+  const root = await requirePortableSkill(project);
+  const runRoot = path.join(projectPaths(root).runs, runId);
+  if (!(await exists(runRoot))) throw new CliError(`run does not exist: ${runId}`);
+  if (!(await exists(path.join(runRoot, "run.json")))) throw new CliError(`run is missing run.json: ${runId}`);
+  const report = await writeEvalReport(runRoot);
+  const reportJson = path.join(runRoot, "report.json");
+  const data = await readJson<RunReport>(reportJson);
+  return { report, reportJson, runId, data };
+}
+
+async function ensureRunsIndex(runsRoot: string): Promise<RunIndex> {
+  const indexPath = path.join(runsRoot, "index.json");
+  if (await exists(indexPath)) return readJson<RunIndex>(indexPath);
+  if (!(await exists(runsRoot))) return { schema_version: 1, updated_at: new Date(0).toISOString(), runs: [] };
+  const dirs = (await fs.readdir(runsRoot, { withFileTypes: true })).filter((entry) => entry.isDirectory());
+  for (const dir of dirs) {
+    const runRoot = path.join(runsRoot, dir.name);
+    if ((await exists(path.join(runRoot, "run.json"))) && !(await exists(path.join(runRoot, "report.json")))) {
+      await writeEvalReport(runRoot);
+    }
+  }
+  return updateRunsIndex(runsRoot);
 }

@@ -2,7 +2,7 @@
   "name": "@perks/meta-skill-cli",
   "version": "0.1.0",
   "private": true,
-  "description": "Meta Skill v1 TypeScript CLI for portable skill workbenches.",
+  "description": "Meta Skill TypeScript CLI for portable skill workbenches.",
   "engines": {
     "node": ">=20"
   },

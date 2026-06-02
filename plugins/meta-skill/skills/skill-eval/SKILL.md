@@ -5,7 +5,7 @@ description: Use when setting up, running, auditing, or interpreting App Server-
 
 # Skill Eval
 
-Measure a reusable skill with `.meta-skill/evals/` scenario runs. This lane sets up scenarios, runs Codex App Server-backed evals, inspects evidence, imports feedback, and runs optional App Server-backed judges. It does not rewrite or promote the skill.
+Measure a reusable skill with `.meta-skill/evals/` scenario runs. This lane sets up scenarios, runs Codex App Server-backed evals, inspects evidence, imports feedback, handles draft scenario-generation requests honestly, and runs optional App Server-backed judges. It does not rewrite or promote the skill.
 
 ## Reference Map
 
@@ -31,13 +31,18 @@ Scenario folders live at `.meta-skill/evals/scenarios/<ID-slug>/` and require `t
 ## Operating Rules
 
 - Scenario evals measure behavior; they do not apply source edits.
+- The current runner force-attaches the staged skill on the first turn. Treat it as forced-skill final-answer evidence, not proof of no-skill uplift, true trigger routing, or artifact-writing behavior.
 - Candidate is the portable skill payload at the project root.
 - Release comparison is explicit: `meta-skill eval run . --compare release`.
+- Baseline comparison and `eval generate` are scaffolded but unsupported; do not present them as available proof.
 - Release comparison uses `.meta-skill/versions/release/skill/`, not stale output from an old run.
 - Multi-turn scenarios must use `task.md` for the first turn and `turns.json` for follow-up turns.
+- Criteria are evaluator evidence and must not be staged into candidate or release solver workspaces.
 - Deterministic tests belong in `.meta-skill/tests/manifest.json` and may annotate saved run evidence with `meta-skill lint . --run <run-id>`.
 - Eval tests should read `META_SKILL_RUN_ID`, `META_SKILL_RUN_ROOT`, and `META_SKILL_PROJECT_ROOT` when lint annotates a saved run. Do not guess the newest run folder.
 - Judges are optional because they cost tokens; ask before running them unless the user explicitly requests judge scoring or passes `--with-judges`.
+- Judges read saved run snapshots plus final output. Threshold failures override a raw judge `pass: true`.
+- Standalone judges, feedback imports, and `lint --run` annotations refresh `report.json`, `report.html`, and `.meta-skill/evals/runs/index.json`.
 - Token usage must be recorded when available; if App Server does not return exact metrics, the evidence should say unavailable explicitly.
 - `needs_review` is unresolved evidence, not pass proof. Report what executed, where final answers and traces live, and what still needs deterministic tests, judge approval, or human review.
 
@@ -61,7 +66,7 @@ Run evidence lives under:
 .meta-skill/evals/runs/<run-id>/
 ```
 
-Inspect `report.html` first, then drill into `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, and `scenarios/<scenario>/<side>/`.
+Inspect `report.html` first, use `report.json` or `meta-skill eval open . --run <run-id> --json` for machine-readable summaries, then drill into `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, snapshots, and `scenarios/<scenario>/<side>/`.
 
 If the user wants to turn evidence into edits, hand off to `skill-improve` with the run ID, scenario ID, first-failure note, test or judge result, and any human feedback.
 

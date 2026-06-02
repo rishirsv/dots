@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { packageProject } from "./package";
-import { exists, listPortablePayloadFiles, nextSequencedId, readText } from "./project";
+import { exists, listPortablePayloadFiles, nextSequencedId, readJson, readText, writeJson } from "./project";
 import { createSkill } from "./skills";
 import { releaseProject } from "./versions";
 
@@ -12,17 +12,19 @@ describe("project layout and packaging", () => {
   it("creates a project-mode portable skill with a hidden workbench", async () => {
     const root = await tempDir();
     const target = path.join(root, "source-pack-triage");
+    const description = "Use when triaging source packs: examples, notes, and traces; not for publishing skills.";
     const result = await createSkill({
       target,
       slug: "source-pack-triage",
       title: "Source Pack Triage",
-      description: "Use when triaging a source pack into reusable guidance; not for publishing skills.",
+      description,
       job: "Turn source material into a concise reusable workflow.",
       project: true
     });
 
     assert.equal(result.path, target);
     assert.equal(await exists(path.join(target, "SKILL.md")), true);
+    assert.match(await readText(path.join(target, "SKILL.md")), new RegExp(`description: ${escapeRegExp(JSON.stringify(description))}`));
     assert.equal(await exists(path.join(target, ".meta-skill", "evals", "evals.json")), true);
     assert.equal(await exists(path.join(target, ".meta-skill", "tests", "manifest.json")), true);
     const portableFiles = await listPortablePayloadFiles(target);
@@ -66,6 +68,61 @@ describe("project layout and packaging", () => {
     assert.equal(await readText(path.join(release.releaseRoot, "skill", "SKILL.md")), releasedSkill);
   });
 
+  it("can release a portable-only skill by creating the workbench", async () => {
+    const root = await tempDir();
+    const target = path.join(root, "portable-release");
+    await createSkill({
+      target,
+      slug: "portable-release",
+      description: "Use when checking portable release behavior; not for publishing."
+    });
+
+    const release = await releaseProject(target);
+
+    assert.equal(await exists(path.join(target, ".meta-skill", "evals", "evals.json")), true);
+    assert.equal(await exists(path.join(release.releaseRoot, "skill", "SKILL.md")), true);
+    assert.equal(await exists(path.join(release.releaseRoot, "version.json")), true);
+  });
+
+  it("records source run readiness and payload digests in release metadata", async () => {
+    const root = await tempDir();
+    const target = path.join(root, "release-from-run");
+    await createSkill({
+      target,
+      slug: "release-from-run",
+      description: "Use when checking run-backed release evidence; not for publishing.",
+      project: true
+    });
+    const runRoot = path.join(target, ".meta-skill", "evals", "runs", "001-ready");
+    await fs.mkdir(runRoot, { recursive: true });
+    await writeJson(path.join(runRoot, "run.json"), {
+      schema_version: 1,
+      run_id: "001-ready",
+      created_at: "2026-06-02T00:00:00.000Z",
+      completed_at: "2026-06-02T00:01:00.000Z",
+      status: "passed",
+      ok: true,
+      manual_review_required: false,
+      failure_classifications: [],
+      runner: { backend: "test" }
+    });
+
+    const release = await releaseProject(target, { fromRun: "001-ready" });
+    const version = await readJson<{
+      source_run_id: string;
+      readiness_summary: { status: string };
+      payload_digest: string;
+      file_digests: Record<string, string>;
+      created_from_evidence: string;
+    }>(path.join(release.releaseRoot, "version.json"));
+
+    assert.equal(version.source_run_id, "001-ready");
+    assert.equal(version.created_from_evidence, "eval_run");
+    assert.equal(version.readiness_summary.status, "ready");
+    assert.match(version.payload_digest, /^sha256:/);
+    assert.match(version.file_digests["SKILL.md"], /^sha256:/);
+  });
+
   it("generates sorted, human-readable run IDs", async () => {
     const root = await tempDir();
     await fs.mkdir(path.join(root, "001-initial-candidate"), { recursive: true });
@@ -76,4 +133,8 @@ describe("project layout and packaging", () => {
 
 async function tempDir(): Promise<string> {
   return fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-test-"));
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

@@ -86,10 +86,13 @@ Pass this first-failure note to `meta-skill plan` or the improvement discussion.
 
 ## Release-Facing Evidence
 
-V1 has no sealed release gate. For release confidence, prefer:
+There is no sealed release gate. For release confidence, prefer:
 
 - relevant `R`, `F`, `T`, and `G` coverage for the risk
 - deterministic tests where possible
 - human-reviewed judge prompt quality when judges matter
 - fresh `--compare release` runs after a release snapshot exists
 - explicit human review before release or package decisions
+- `meta-skill release . --from-run <run-id>` when a run supports readiness, so the release metadata records the evidence basis
+
+Current App Server scenarios force-attach the staged skill and run read-only final-answer checks. Use them for forced-skill behavior evidence. Do not claim true trigger routing, no-skill uplift, or writable artifact proof until the runner supports those modes.

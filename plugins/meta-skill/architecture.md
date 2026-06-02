@@ -90,7 +90,7 @@ flowchart LR
 flowchart LR
   create["create\nportable payload"] --> init["project init\n.meta-skill/"]
   init --> lint["lint\nstructure + tests"]
-  lint --> review["review\nheuristic report"]
+  lint --> review["review\nquality rubric report"]
   lint --> evalInit["eval init\nscenario workbench"]
   evalInit --> evalRun["eval run\nApp Server evidence"]
   review --> plan["plan\nfrom review"]
@@ -119,7 +119,7 @@ Top-level command dispatch lives in `cli/src/commands.ts`.
 | `eval run` | `cli/src/eval/run.ts` |
 | `eval judge` | `cli/src/eval/judge.ts` |
 | `eval feedback import` | `cli/src/eval/runs.ts` |
-| `eval open` | `cli/src/eval/runs.ts` |
+| `eval open`, `eval list`, `eval view` | `cli/src/eval/runs.ts` |
 | `plan`, `promote`, `decide` | `cli/src/improve.ts` |
 | `release` | `cli/src/versions.ts` |
 | `package` | `cli/src/package.ts` |
@@ -140,7 +140,8 @@ sequenceDiagram
   CLI->>CLI: lint preflight without tests
   CLI->>Run: create run.json and JSONL files
   loop each scenario and side
-    CLI->>Stage: copy portable skill and scenario files
+    CLI->>Run: snapshot task, metadata, criteria, and turns
+    CLI->>Stage: copy portable skill and solver-visible scenario files
     CLI->>App: start read-only ephemeral thread
     CLI->>App: send task.md with staged skill attached
     CLI->>App: send turns.json follow-ups
@@ -149,7 +150,7 @@ sequenceDiagram
   end
   CLI->>Run: run deterministic eval tests unless --no-lint
   CLI->>Run: run judges only when requested
-  CLI->>Run: write final run.json and report.html
+  CLI->>Run: write final run.json, report.json, report.html, and index.json
 ```
 
 Default runner constraints: managed stdio App Server, read-only sandbox,
@@ -185,7 +186,13 @@ is set and Codex App Server auth is available.
       tests.jsonl
       grades.jsonl
       feedback.jsonl
+      report.json
       report.html
+      snapshots/
+        R1-basic/
+          task.md
+          scenario.json
+          criteria.json
       scenarios/
         R1-basic/
           candidate/
@@ -201,8 +208,14 @@ is set and Codex App Server auth is available.
 
 Scenario IDs are strict: `R` regression, `F` failure mode, `T` trigger, and
 `G` gate. `run.json` is the run header; JSONL files store events, scenario
-results, deterministic tests, judge grades, and feedback; `report.html` links
-back into the evidence bundle.
+results, deterministic tests, judge grades, and feedback. `report.json` is the
+normalized summary consumed by `report.html`, `eval open --json`, and
+`runs/index.json`.
+
+Solver staging does not include `criteria.json`. Criteria are evaluator
+evidence and are captured in `snapshots/` so judges grade old finals against
+the scenario definitions used by that run. Legacy runs without snapshots must
+be marked as using current scenario definitions.
 
 ## Human Gates
 
@@ -248,9 +261,15 @@ root `AGENTS.md`, `.codex/agents/`, `assets/perks/`, or source `skills/`, run
 - `needs_review` is unresolved evidence, not proof of pass. A completed App
   Server scenario usually returns `needs_review` unless deterministic checks,
   judges, or harness errors classify a failure.
-- `review` is heuristic. It is useful triage, not semantic proof.
+- `review` writes a deterministic quality-rubric fallback with Discovery,
+  Implementation, Validation, and Suggestions. It represents the read-only
+  reviewer concept but does not claim a live semantic subagent ran.
 - `plan` is a scaffold. It creates an empty edit list that someone must fill
   from evidence before `promote`.
+- `eval generate` is scaffolded but unsupported.
+- Baseline/no-skill comparison and true trigger routing are unsupported because
+  the current App Server runner force-attaches the staged skill on the first
+  turn.
 - Attached App Server endpoints are not implemented.
 - The plugin is Codex-only and depends on Codex skill attachment plus App Server.
 - `cli/src/` and committed `cli/app/` can drift if maintainers forget to build.

@@ -1,10 +1,10 @@
 import path from "node:path";
-import type { ScenarioRecord } from "../models";
 import { AppServerJsonClient, AppServerUnavailableError, appServerConfig } from "../app-server/client";
 import { CliError, appendJsonl, eventEnvelope, exists, projectPaths, readText, relativePath, requirePortableSkill } from "../project";
-import { loadScenarios } from "./scenarios";
+import { writeEvalReport } from "../report";
+import { loadRunScenarioSnapshots } from "./scenarios";
 import { sidesInRun } from "./results";
-import type { JudgeOptions, JudgeRunResult, RunFailureClassification } from "./types";
+import type { JudgeExecutionInput, JudgeOptions, JudgeRunResult, RunFailureClassification } from "./types";
 
 export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
   const root = await requirePortableSkill(options.project);
@@ -14,20 +14,25 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
   if (!options.judge && !options.allJudges) throw new CliError("eval judge requires --judge <id> or --all-judges", 2);
   if (!options.scenario && !options.allScenarios) throw new CliError("eval judge requires --scenario <id> or --all-scenarios", 2);
 
-  const scenarios = await loadScenarios(root, options.allScenarios ? {} : { scenario: [options.scenario as string] });
+  const scenarios = await loadRunScenarioSnapshots(root, runRoot, options.allScenarios ? {} : { scenario: [options.scenario as string] });
   let annotations = 0;
   let ok = true;
   const failureClassifications = new Set<RunFailureClassification>();
-  const appServer = await appServerConfig();
-  const judgeClient = new AppServerJsonClient(async (line) => {
-    await appendJsonl(path.join(runRoot, "grades.rpc.jsonl"), {
-      schema_version: 1,
-      direction: line.direction,
-      message: line.message
-    });
-  });
+  let judgeClient: AppServerJsonClient | undefined;
+  let judgeExecutor = options.judgeExecutor;
   try {
-    await judgeClient.connect(appServer);
+    if (!judgeExecutor) {
+      const appServer = await appServerConfig();
+      judgeClient = new AppServerJsonClient(async (line) => {
+        await appendJsonl(path.join(runRoot, "grades.rpc.jsonl"), {
+          schema_version: 1,
+          direction: line.direction,
+          message: line.message
+        });
+      });
+      await judgeClient.connect(appServer);
+      judgeExecutor = (input) => runJudge(judgeClient as AppServerJsonClient, input);
+    }
     for (const scenario of scenarios) {
       const judgeIds = options.allJudges ? (scenario.criteria.judges || []).map((judge) => judge.id) : [options.judge as string];
       for (const judgeId of judgeIds) {
@@ -60,7 +65,7 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
             continue;
           }
           const final = await readText(finalPath);
-          const result = await runJudge(judgeClient, root, judgeId, judgePrompt, scenario, side, final);
+          const result = await judgeExecutor({ projectRoot: root, judgeId, judgePrompt, scenario, side, final });
           const passed = judgePassed(result, threshold);
           ok = ok && passed;
           if (!passed) failureClassifications.add("judge_failure");
@@ -77,6 +82,7 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
                 status: passed ? "passed" : "failed",
                 failure_classification: passed ? null : "judge_failure",
                 threshold: threshold || null,
+                evidence_basis: scenario.evidence_basis || "run_snapshot",
                 result
               }
             })
@@ -115,24 +121,20 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
       }
     }
   } finally {
-    await judgeClient.flush();
-    judgeClient.close();
+    await judgeClient?.flush();
+    judgeClient?.close();
   }
+  await writeEvalReport(runRoot);
   return { annotations, ok, failureClassifications: [...failureClassifications].sort() };
 }
 
 async function runJudge(
   client: AppServerJsonClient,
-  projectRoot: string,
-  judgeId: string,
-  judgePrompt: string,
-  scenario: ScenarioRecord,
-  side: "candidate" | "release",
-  final: string
+  input: JudgeExecutionInput
 ): Promise<Record<string, unknown>> {
   const start = await client.request("thread/start", {
-    cwd: projectRoot,
-    runtimeWorkspaceRoots: [projectRoot],
+    cwd: input.projectRoot,
+    runtimeWorkspaceRoots: [input.projectRoot],
     approvalPolicy: "never",
     sandbox: "read-only",
     experimentalRawEvents: false,
@@ -146,19 +148,19 @@ async function runJudge(
   const mark = client.eventCount();
   const prompt = [
     "# Judge Prompt",
-    judgePrompt,
+    input.judgePrompt,
     "# Scenario",
-    JSON.stringify({ id: scenario.id, folder: scenario.folder, side, metadata: scenario.metadata, criteria: scenario.criteria }, null, 2),
+    JSON.stringify({ id: input.scenario.id, folder: input.scenario.folder, side: input.side, evidence_basis: input.scenario.evidence_basis || "run_snapshot", metadata: input.scenario.metadata, criteria: input.scenario.criteria }, null, 2),
     "# Candidate Final",
-    final,
+    input.final,
     "# Required Output",
     'Return compact JSON with: {"overall": number from 1 to 5, "pass": boolean, "rationale": string, "dimensions": object}.'
   ].join("\n\n");
   const turn = await client.request("turn/start", {
     threadId,
     input: [{ type: "text", text: prompt, text_elements: [] }],
-    cwd: projectRoot,
-    runtimeWorkspaceRoots: [projectRoot],
+    cwd: input.projectRoot,
+    runtimeWorkspaceRoots: [input.projectRoot],
     approvalPolicy: "never",
     sandboxPolicy: { type: "readOnly", networkAccess: false }
   });
@@ -187,9 +189,14 @@ function parseJudgeJson(text: string): Record<string, unknown> {
   }
 }
 
-function judgePassed(result: Record<string, unknown>, threshold?: { overall_min?: number; dimensions?: Record<string, number> }): boolean {
-  if (typeof result.pass === "boolean") return result.pass;
+export function judgePassed(result: Record<string, unknown>, threshold?: { overall_min?: number; dimensions?: Record<string, number> }): boolean {
   const overall = typeof result.overall === "number" ? result.overall : 0;
-  if (threshold?.overall_min !== undefined) return overall >= threshold.overall_min;
+  if (threshold?.overall_min !== undefined && overall < threshold.overall_min) return false;
+  for (const [name, min] of Object.entries(threshold?.dimensions || {})) {
+    const dimensions = result.dimensions && typeof result.dimensions === "object" ? (result.dimensions as Record<string, unknown>) : {};
+    const value = Number(dimensions[name] ?? 0);
+    if (value < min) return false;
+  }
+  if (typeof result.pass === "boolean") return result.pass;
   return overall >= 3;
 }

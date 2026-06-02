@@ -5,7 +5,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { runEval } from "./evals";
 import { lintProject } from "./lint";
-import { CliError, exists, readText, writeJson, writeText } from "./project";
+import { CliError, exists, readJson, readText, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
 
 describe("lint, command parsing, and eval evidence", () => {
@@ -86,6 +86,14 @@ describe("lint, command parsing, and eval evidence", () => {
 
     const tests = await readText(path.join(result.runRoot, "tests.jsonl"));
     assert.match(tests, /"status":"failed"/);
+    const before = await readJson<{ tests: unknown[] }>(path.join(result.runRoot, "report.json"));
+    const lint = await lintProject(project, { runId: result.runId });
+    assert.equal(lint.annotations, 2);
+    const after = await readJson<{ tests: unknown[]; summary: { failure_classifications: string[] } }>(path.join(result.runRoot, "report.json"));
+    assert.equal(after.tests.length > before.tests.length, true);
+    assert.deepEqual(after.summary.failure_classifications, ["lint_test_failure"]);
+    const index = await readJson<{ runs: Array<{ run_id: string; readiness_status: string }> }>(path.join(path.dirname(result.runRoot), "index.json"));
+    assert.equal(index.runs.some((row) => row.run_id === result.runId && row.readiness_status === "blocked"), true);
   });
 });
 

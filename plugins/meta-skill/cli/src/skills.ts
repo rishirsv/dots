@@ -50,7 +50,7 @@ export async function createSkill(options: CreateSkillOptions): Promise<{ path: 
   const files: string[] = [];
   await writeText(
     path.join(target, "SKILL.md"),
-    `---\nname: ${slug}\ndescription: ${description}\n---\n\n# ${title}\n\n${sentence(job)}\n\n## Workflow\n\n1. Confirm the request matches the trigger boundary.\n2. Gather only the context needed for the reusable workflow.\n3. Produce the smallest complete output that satisfies the user.\n\n## Boundaries\n\n- Ask for missing inputs only when they change the result.\n- Do not package, publish, install, or write to external systems without explicit approval.\n`
+    `---\nname: ${slug}\ndescription: ${JSON.stringify(description)}\n---\n\n# ${title}\n\n${sentence(job)}\n\n## Workflow\n\n1. Confirm the request matches the trigger boundary.\n2. Gather only the context needed for the reusable workflow.\n3. Produce the smallest complete output that satisfies the user.\n\n## Boundaries\n\n- Ask for missing inputs only when they change the result.\n- Do not package, publish, install, or write to external systems without explicit approval.\n`
   );
   files.push("SKILL.md");
 

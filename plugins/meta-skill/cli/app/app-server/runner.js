@@ -23,6 +23,7 @@ class AppServerScenarioRunner {
         await (0, project_1.ensureDir)(node_path_1.default.join(rawRoot, "artifacts"));
         const stageRoot = node_path_1.default.join(rawRoot, "stage");
         await stageWorkspace(input, stageRoot);
+        const attachmentName = await runtimeSkillName(input.skillRoot);
         const rpcPath = node_path_1.default.join(rawRoot, "rpc.jsonl");
         await this.client?.flush?.();
         this.rpcPath = rpcPath;
@@ -52,7 +53,7 @@ class AppServerScenarioRunner {
         const turns = [{ content: input.scenario.task, source: "task.md" }, ...input.scenario.turns.map((turn) => ({ content: turn.content, source: "turns.json" }))];
         for (const [index, turn] of turns.entries()) {
             turnRecords.push({ role: "user", index, source: turn.source, content: turn.content, status: "sent" });
-            const result = await runTurn(client, threadId, stageRoot, input.scenario, turn.content, index === 0, this.turnTimeoutMs);
+            const result = await runTurn(client, threadId, stageRoot, input.scenario, turn.content, index === 0, this.turnTimeoutMs, attachmentName);
             final = result.final || final;
             tokenUsage = result.tokenUsage || tokenUsage;
             turnRecords.push({ role: "assistant", index, source: "app-server", content: result.final, status: "completed", turn_id: result.turnId });
@@ -100,10 +101,10 @@ class AppServerScenarioRunner {
     }
 }
 exports.AppServerScenarioRunner = AppServerScenarioRunner;
-async function runTurn(client, threadId, stageRoot, scenario, content, includeSkill, turnTimeoutMs) {
+async function runTurn(client, threadId, stageRoot, scenario, content, includeSkill, turnTimeoutMs, attachmentName) {
     const mark = client.eventCount();
     const input = [
-        ...(includeSkill ? [{ type: "skill", name: "candidate", path: node_path_1.default.join(stageRoot, "skill") }] : []),
+        ...(includeSkill ? [{ type: "skill", name: attachmentName, path: node_path_1.default.join(stageRoot, "skill") }] : []),
         { type: "text", text: content, text_elements: [] }
     ];
     const started = await client.request("turn/start", {
@@ -144,7 +145,7 @@ async function stageWorkspace(input, stageRoot) {
     await (0, project_1.ensureDir)(stageRoot);
     await (0, project_1.copyPortablePayload)(input.skillRoot, node_path_1.default.join(stageRoot, "skill"));
     await (0, project_1.ensureDir)(node_path_1.default.join(stageRoot, "scenario"));
-    for (const name of ["task.md", "criteria.json", "scenario.json", "turns.json", "capability.txt"]) {
+    for (const name of ["task.md", "scenario.json", "turns.json", "capability.txt"]) {
         const source = node_path_1.default.join(input.scenario.path, name);
         try {
             await node_fs_1.promises.copyFile(source, node_path_1.default.join(stageRoot, "scenario", name));
@@ -161,4 +162,8 @@ async function stageWorkspace(input, stageRoot) {
         // Scenario resources are optional.
     }
     await (0, project_1.writeText)(node_path_1.default.join(stageRoot, "HARNESS.md"), `# Meta Skill App Server Harness\n\nRun ${input.runId}, scenario ${input.scenario.id}, side ${input.side}.\n`);
+}
+async function runtimeSkillName(skillRoot) {
+    const frontmatter = await (0, project_1.parseSkillFrontmatter)(node_path_1.default.join(skillRoot, "SKILL.md"));
+    return frontmatter.name || node_path_1.default.basename(skillRoot);
 }

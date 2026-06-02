@@ -9,10 +9,10 @@ const client_1 = require("../app-server/client");
 const runner_1 = require("../app-server/runner");
 const lint_1 = require("../lint");
 const project_1 = require("../project");
-const report_1 = require("../report");
 const judge_1 = require("./judge");
 const results_1 = require("./results");
 const scenarios_1 = require("./scenarios");
+const runs_1 = require("./runs");
 async function runEval(options) {
     if (options.appServerEndpoint) {
         throw new project_1.CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
@@ -72,6 +72,7 @@ async function runEval(options) {
     };
     await (0, project_1.writeJson)(node_path_1.default.join(runRoot, "run.json"), runJson);
     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_started", run_id: runId, source: "meta-skill eval run", payload: runJson }));
+    await (0, scenarios_1.writeRunScenarioSnapshots)(runRoot, scenarios);
     const runner = options.scenarioRunner || new runner_1.AppServerScenarioRunner();
     let hasFailures = false;
     const scenarioStatuses = new Set();
@@ -141,6 +142,6 @@ async function runEval(options) {
     };
     await (0, project_1.writeJson)(node_path_1.default.join(runRoot, "run.json"), finalRunJson);
     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, manual_review_required: manualReviewRequired, failure_classifications: finalRunJson.failure_classifications } }));
-    const report = await (0, report_1.writeEvalReport)(runRoot);
+    const { report } = await (0, runs_1.refreshRunEvidence)(root, runId);
     return { runId, runRoot, report, ok, status, manualReviewRequired, failureClassifications: sortedFailureClassifications };
 }

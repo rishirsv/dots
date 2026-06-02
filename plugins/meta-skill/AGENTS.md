@@ -12,7 +12,7 @@ Meta Skill is Codex-only for now. Do not treat absent Claude packaging, Claude a
 
 Use `skill-create` when the user wants to create a reusable skill, redesign a draft skill, distill examples into runtime instructions, or decide whether a workflow should become a skill.
 
-Use `skill-eval` when the user wants to create scenario eval scaffolding, run App Server-backed scenarios, inspect run evidence, import feedback, or run optional judges.
+Use `skill-eval` when the user wants to create scenario eval scaffolding, run App Server-backed scenarios, inspect run evidence, import feedback, handle scenario-generation requests, or run optional judges.
 
 Use `skill-improve` when the user wants a best-practice review, a bounded improvement plan, a promoted candidate edit, or a recorded accept/reject decision from concrete evidence.
 
@@ -49,13 +49,15 @@ Use `.meta-skill/evals/scenarios/<ID-slug>/` for executable scenarios. `task.md`
 
 Use `.meta-skill/tests/manifest.json` for deterministic unit and eval tests. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with `run.json`, `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, `report.html`, and per-scenario side evidence.
+Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with `run.json`, `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, `report.json`, `report.html`, snapshots, and per-scenario side evidence. `.meta-skill/evals/runs/index.json` stores the run-list summary.
 
-Scenario execution runs through Codex App Server and records per-scenario final output, turn traces, RPC traces, and token usage. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
+Scenario execution runs through Codex App Server and records per-scenario final output, turn traces, RPC traces, and token usage. The current runner force-attaches the staged skill on the first turn, so trigger scenarios are not true routing proof and baseline/no-skill uplift is not supported yet. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
+
+Criteria are evaluator evidence and must not appear in the solver stage. Judges read saved run snapshots plus final output; if a legacy run lacks snapshots, say so.
 
 `needs_review` is unresolved evidence, not pass proof. When a run has `needs_review`, say manual review is still required and identify the saved evidence to inspect before claiming behavior passed.
 
-Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`.
+Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` annotations regenerate `report.json`, `report.html`, and the runs index.
 
 ## Improve Policy
 
@@ -71,7 +73,7 @@ meta-skill promote <project> --plan <plan-id>
 meta-skill decide <project> --session <session-id> --accept
 ```
 
-`promote` applies a human-approved candidate edit to the working portable payload. It does not create a release. `release` creates or replaces `.meta-skill/versions/release/` only after validation and human approval.
+`promote` applies a human-approved candidate edit to the working portable payload. It does not create a release. `release` creates or replaces `.meta-skill/versions/release/` only after validation and human approval. Prefer `meta-skill release <project> --from-run <run-id>` when eval evidence supports readiness so `version.json` records the source run, readiness summary, and payload digests.
 
 ## Human Gates
 

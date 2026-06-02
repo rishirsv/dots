@@ -29,7 +29,7 @@ async function createSkill(options) {
     validateSingleLine("job", job);
     await (0, project_1.ensureDir)(target);
     const files = [];
-    await (0, project_1.writeText)(node_path_1.default.join(target, "SKILL.md"), `---\nname: ${slug}\ndescription: ${description}\n---\n\n# ${title}\n\n${sentence(job)}\n\n## Workflow\n\n1. Confirm the request matches the trigger boundary.\n2. Gather only the context needed for the reusable workflow.\n3. Produce the smallest complete output that satisfies the user.\n\n## Boundaries\n\n- Ask for missing inputs only when they change the result.\n- Do not package, publish, install, or write to external systems without explicit approval.\n`);
+    await (0, project_1.writeText)(node_path_1.default.join(target, "SKILL.md"), `---\nname: ${slug}\ndescription: ${JSON.stringify(description)}\n---\n\n# ${title}\n\n${sentence(job)}\n\n## Workflow\n\n1. Confirm the request matches the trigger boundary.\n2. Gather only the context needed for the reusable workflow.\n3. Produce the smallest complete output that satisfies the user.\n\n## Boundaries\n\n- Ask for missing inputs only when they change the result.\n- Do not package, publish, install, or write to external systems without explicit approval.\n`);
     files.push("SKILL.md");
     await (0, project_1.ensureDir)(node_path_1.default.join(target, "agents"));
     await (0, project_1.writeText)(node_path_1.default.join(target, "agents", "openai.yaml"), `name: ${slug}\ndescription: ${JSON.stringify(description)}\n`);

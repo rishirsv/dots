@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runCommand = runCommand;
 exports.formatEvalRunSummary = formatEvalRunSummary;
+exports.formatRunList = formatRunList;
 const node_child_process_1 = require("node:child_process");
 const node_util_1 = require("node:util");
 const evals_1 = require("./evals");
@@ -13,7 +14,7 @@ const review_1 = require("./review");
 const skills_1 = require("./skills");
 const versions_1 = require("./versions");
 const execFileAsync = (0, node_util_1.promisify)(node_child_process_1.execFile);
-const HELP = `meta-skill v1
+const HELP = `meta-skill
 
 Usage:
   meta-skill create [skill-dir] [--project] --slug <slug> --title <title> --description <text> --job <text>
@@ -21,14 +22,17 @@ Usage:
   meta-skill lint <project-or-skill> [--run <run-id>] [--json]
   meta-skill review <project> [--json]
   meta-skill eval init <project>
-  meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--compare release] [--with-judges] [--no-lint]
+  meta-skill eval generate <project> [--count <n>] [--family <R|F|T|G>] [--topic <topic>] [--strategy merge|replace] [--json]
+  meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--compare release|none] [--with-judges] [--no-lint]
   meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
   meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
-  meta-skill eval open <project> [--run <run-id>] [--list]
+  meta-skill eval open <project> [--run <run-id>] [--list] [--json]
+  meta-skill eval list <project> [--limit <n>] [--status <status>] [--json]
+  meta-skill eval view <project> [--run <run-id>] [--last] [--json]
   meta-skill plan <project> [--from-run <run-id>] [--from-review <review-id>]
   meta-skill promote <project> --plan <plan-id>
   meta-skill decide <project> --session <session-id> --accept | --reject
-  meta-skill release <project>
+  meta-skill release <project> [--from-run <run-id>]
   meta-skill package <project> [--source candidate|release] [--out <zip>] [--out-dir <dir>]
 `;
 async function runCommand(argv) {
@@ -125,14 +129,20 @@ async function commandEval(argv) {
             return commandEvalInit(rest);
         case "run":
             return commandEvalRun(rest);
+        case "generate":
+            return commandEvalGenerate(rest);
         case "judge":
             return commandEvalJudge(rest);
         case "feedback":
             return commandEvalFeedback(rest);
         case "open":
-            return commandEvalOpen(rest);
+            return commandEvalOpen(rest, true);
+        case "list":
+            return commandEvalList(rest);
+        case "view":
+            return commandEvalOpen(rest, false);
         default:
-            throw new project_1.CliError("eval command supports init, run, judge, feedback import, and open", 2);
+            throw new project_1.CliError("eval command supports init, generate, run, judge, feedback import, open, list, and view", 2);
     }
 }
 async function commandEvalInit(argv) {
@@ -152,8 +162,10 @@ async function commandEvalRun(argv) {
         throw new project_1.CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
     }
     const compare = args.one("compare");
-    if (compare && compare !== "release")
-        throw new project_1.CliError("eval run supports only --compare release", 2);
+    if (compare === "baseline")
+        throw new project_1.CliError("--compare baseline is not supported yet; the current App Server runner force-attaches the staged skill and cannot prove no-skill uplift.", 2);
+    if (compare && !["release", "none"].includes(compare))
+        throw new project_1.CliError("eval run supports --compare release or --compare none", 2);
     const family = args.one("family");
     if (family && !["R", "F", "T", "G"].includes(family))
         throw new project_1.CliError("--family must be one of R, F, T, G", 2);
@@ -161,13 +173,17 @@ async function commandEvalRun(argv) {
         project,
         selector: { scenario: args.many("scenario"), family, topic: args.many("topic") },
         label: args.one("label"),
-        compare: compare,
+        compare: compare === "release" ? "release" : undefined,
         withJudges: args.has("with-judges"),
         noLint: args.has("no-lint"),
         appServerEndpoint: undefined
     });
     console.log(formatEvalRunSummary(project, result));
     return result.ok ? 0 : 1;
+}
+async function commandEvalGenerate(argv) {
+    parse(argv, ["count", "family", "topic", "strategy", "from-review", "from-run"], ["dry-run", "json"]);
+    throw new project_1.CliError("eval generate is scaffolded but not implemented yet; create scenarios manually under .meta-skill/evals/scenarios/. Baseline-compatible generation remains future work because the current runner force-attaches the skill.", 2);
 }
 function formatEvalRunSummary(project, result) {
     const lines = [
@@ -198,6 +214,7 @@ async function commandEvalJudge(argv) {
         allScenarios: args.has("all-scenarios")
     });
     console.log(`judge annotations: ${result.annotations}`);
+    console.log(`report refreshed: .meta-skill/evals/runs/${runId}/report.html`);
     console.log(`next step: inspect .meta-skill/evals/runs/${runId}/grades.jsonl`);
     return result.ok ? 0 : 1;
 }
@@ -215,23 +232,41 @@ async function commandEvalFeedback(argv) {
         throw new project_1.CliError("feedback import requires <feedback.jsonl>", 2);
     const result = await (0, evals_1.importFeedback)(project, runId, feedback);
     console.log(`imported feedback rows: ${result.rows}`);
+    console.log(`report refreshed: ${result.report}`);
     console.log(`next step: meta-skill plan ${shellPath(project)} --from-run ${runId}`);
     return 0;
 }
-async function commandEvalOpen(argv) {
-    const args = parse(argv, ["run"], ["list"]);
+async function commandEvalOpen(argv, openHtml) {
+    const args = parse(argv, ["run", "limit", "status"], ["list", "json", "last"]);
     const project = args.positionals[0] || ".";
     if (args.has("list")) {
-        const runs = await (0, evals_1.listRuns)(project);
-        for (const run of runs)
-            console.log(run);
+        const runs = await (0, evals_1.listRunSummaries)(project, parseRunListOptions(args));
+        if (args.has("json"))
+            console.log(JSON.stringify(runs, null, 2));
+        else
+            console.log(formatRunList(runs));
         return 0;
     }
     const result = await (0, evals_1.openRun)(project, args.one("run"));
-    if (process.stdout.isTTY) {
+    if (args.has("json")) {
+        console.log(JSON.stringify(result.data, null, 2));
+        return 0;
+    }
+    if (openHtml && process.stdout.isTTY) {
         await execFileAsync("open", [result.report]).catch(() => undefined);
     }
     console.log(`report: ${result.report}`);
+    console.log(`json: ${result.reportJson}`);
+    return 0;
+}
+async function commandEvalList(argv) {
+    const args = parse(argv, ["limit", "status"], ["json"]);
+    const project = args.positionals[0] || ".";
+    const runs = await (0, evals_1.listRunSummaries)(project, parseRunListOptions(args));
+    if (args.has("json"))
+        console.log(JSON.stringify(runs, null, 2));
+    else
+        console.log(formatRunList(runs));
     return 0;
 }
 async function commandPlan(argv) {
@@ -271,13 +306,42 @@ async function commandDecide(argv) {
     return 0;
 }
 async function commandRelease(argv) {
-    const args = parse(argv, [], []);
+    const args = parse(argv, ["from-run"], []);
     const project = args.positionals[0] || ".";
-    const result = await (0, versions_1.releaseProject)(project);
+    const result = await (0, versions_1.releaseProject)(project, { fromRun: args.one("from-run") });
     console.log(`release: ${result.releaseRoot}`);
     console.log(`files: ${result.files.join(", ")}`);
     console.log(`next step: meta-skill package ${shellPath(project)} --source release`);
     return 0;
+}
+function formatRunList(runs) {
+    if (!runs.length)
+        return "No eval runs found.";
+    const header = "Run ID\tStatus\tCreated\tCompleted\tLabel\tCompare\tScenarios\tManual Review\tFailures\tReadiness";
+    const rows = runs.map((run) => [
+        run.run_id,
+        run.status,
+        run.created_at || "",
+        run.completed_at || "",
+        run.label || "",
+        run.comparison_mode,
+        String(run.scenario_count),
+        run.manual_review_required ? "yes" : "no",
+        run.failure_classifications.length ? run.failure_classifications.join(",") : "none",
+        run.readiness_status
+    ].join("\t"));
+    return [header, ...rows].join("\n");
+}
+function parseRunListOptions(args) {
+    const rawLimit = args.one("limit");
+    const limit = rawLimit === undefined ? undefined : Number(rawLimit);
+    if (rawLimit !== undefined) {
+        const parsed = Number(rawLimit);
+        if (!Number.isInteger(parsed) || parsed < 1)
+            throw new project_1.CliError("--limit must be a positive integer", 2);
+        return { limit: parsed, status: args.one("status") };
+    }
+    return { limit, status: args.one("status") };
 }
 async function commandPackage(argv) {
     const args = parse(argv, ["source", "out", "out-dir"], []);

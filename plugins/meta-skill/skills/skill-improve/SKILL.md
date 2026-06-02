@@ -1,6 +1,6 @@
 ---
 name: skill-improve
-description: Use when reviewing, planning, patching, promoting, or recording decisions for an existing skill from lint, review, eval, judge, trace, artifact, or human-feedback evidence; not for creating new skills, running scenario evals, autonomous optimization, or silent release.
+description: Use when reviewing, planning, patching, promoting, or recording decisions for an existing skill from lint, review, eval, judge, trace, artifact, or human-feedback evidence; not for creating new skills, running scenario evals, autonomous rewrites, or silent release.
 ---
 
 # Skill Improve
@@ -21,7 +21,7 @@ Improve an existing skill with evidence and restraint. This lane owns best-pract
 - Use `.meta-skill/reviews/` for best-practice review output.
 - Use `.meta-skill/plans/` for bounded improvement plans.
 - Use `.meta-skill/sessions/` for promotion and decision records.
-- Require evidence before planning a patch: lint output, review ID, eval run ID, scenario ID, test failure, judge note, trace, artifact, or human feedback.
+- Require evidence before planning a patch: lint output, review ID, eval run ID, scenario ID, test failure, judge note, trace, artifact, or human feedback. Each planned edit should cite at least one evidence reference.
 - Do not invent proof, auto-promote, release, package, install, or publish.
 - Treat `needs_review` eval status as unresolved evidence, not pass proof. Before planning or promoting from it, name what ran, what evidence exists, and what still needs deterministic test coverage, judge approval, or human review.
 
@@ -42,7 +42,7 @@ meta-skill decide <project> --session <session-id> --reject
 
 `promote` applies a human-approved candidate edit from the plan into the working portable payload at the project root. It does not create a release.
 
-`decide` records accept/reject in `.meta-skill/sessions/<session-id>/`.
+`decide` records accept/reject in `.meta-skill/sessions/<session-id>/`. Reject records intent; it does not restore files.
 
 Use `meta-skill release <project>` only after validation and human approval. Release is separate from promotion.
 

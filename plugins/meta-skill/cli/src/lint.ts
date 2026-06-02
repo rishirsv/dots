@@ -13,9 +13,9 @@ import {
   parseSkillFrontmatter,
   projectPaths,
   readJson,
-  requirePortableSkill,
-  utcNow
+  requirePortableSkill
 } from "./project";
+import { writeEvalReport } from "./report";
 
 const execAsync = promisify(exec);
 
@@ -85,6 +85,7 @@ export async function lintProject(target: string, options: LintOptions = {}): Pr
         })
       );
       annotations += 1;
+      await writeEvalReport(runRoot);
     }
   }
 
@@ -105,8 +106,10 @@ export function formatLintReport(report: LintReport): string {
 async function validatePortablePayload(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
   const entries = await fs.readdir(root, { withFileTypes: true });
   const skillMd = path.join(root, "SKILL.md");
+  const skillText = await fs.readFile(skillMd, "utf8");
   const frontmatter = await parseSkillFrontmatter(skillMd);
   const expected = path.basename(root);
+  const body = skillBody(skillText);
 
   if (!frontmatter.name) failures.push(issue("failure", "SKILL.md is missing required frontmatter field 'name'", skillMd));
   if (frontmatter.name && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(frontmatter.name)) failures.push(issue("failure", "skill name must use lowercase letters, numbers, and single hyphens", skillMd));
@@ -118,6 +121,10 @@ async function validatePortablePayload(root: string, failures: Issue[], warnings
   if (frontmatter.description && !/\bnot for\b/i.test(frontmatter.description)) {
     warnings.push(issue("warning", "description should include a nearby 'not for' boundary", skillMd));
   }
+  if (!body.trim()) failures.push(issue("failure", "SKILL.md body is missing", skillMd));
+  if (skillText.split(/\r?\n/).length > 220) warnings.push(issue("warning", "SKILL.md is long; move conditional detail to directly linked references", skillMd));
+  await validateRuntimeResourceLinks(root, skillText, warnings);
+  await validateAgentManifest(root, frontmatter, failures, warnings);
 
   for (const entry of entries) {
     if (entry.name === ".meta-skill") continue;
@@ -128,6 +135,53 @@ async function validatePortablePayload(root: string, failures: Issue[], warnings
       warnings.push(issue("warning", `top-level file is outside the portable payload contract and will not package: ${entry.name}`, path.join(root, entry.name)));
     }
   }
+}
+
+function skillBody(skillText: string): string {
+  if (!skillText.startsWith("---\n")) return skillText;
+  const end = skillText.indexOf("\n---\n", 4);
+  if (end === -1) return "";
+  return skillText.slice(end + 5);
+}
+
+async function validateRuntimeResourceLinks(root: string, skillText: string, warnings: Issue[]): Promise<void> {
+  for (const dir of ["references", "scripts", "assets"]) {
+    const dirPath = path.join(root, dir);
+    if (!(await exists(dirPath))) continue;
+    const files = (await fs.readdir(dirPath, { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isFile());
+    for (const file of files) {
+      const relative = `${dir}/${file.name}`;
+      if (!skillText.includes(`](${relative})`) && !skillText.includes(`](${relative.replace(/ /g, "%20")})`)) {
+        warnings.push(issue("warning", `runtime ${dir.slice(0, -1)} should be directly linked from SKILL.md: ${relative}`, path.join(root, relative)));
+      }
+    }
+  }
+}
+
+async function validateAgentManifest(root: string, frontmatter: { name?: string; description?: string }, failures: Issue[], warnings: Issue[]): Promise<void> {
+  const manifestPath = path.join(root, "agents", "openai.yaml");
+  if (!(await exists(manifestPath))) return;
+  const text = await fs.readFile(manifestPath, "utf8");
+  const topLevel = parseSimpleYaml(text);
+  const hasCodexShape = Boolean(topLevel.name && topLevel.description);
+  const hasInterfaceShape = /^\s*interface\s*:/m.test(text);
+  if (!hasCodexShape && !hasInterfaceShape) {
+    failures.push(issue("failure", "agents/openai.yaml must use top-level name/description or documented interface metadata", manifestPath));
+    return;
+  }
+  if (topLevel.name && frontmatter.name && topLevel.name !== frontmatter.name) {
+    warnings.push(issue("warning", `agents/openai.yaml name ${topLevel.name} does not match SKILL.md name ${frontmatter.name}`, manifestPath));
+  }
+}
+
+function parseSimpleYaml(text: string): Record<string, string> {
+  const parsed: Record<string, string> = {};
+  for (const line of text.split(/\r?\n/)) {
+    const match = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
+    if (!match) continue;
+    parsed[match[1]] = match[2].replace(/^['"]|['"]$/g, "").trim();
+  }
+  return parsed;
 }
 
 async function validateWorkbench(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
