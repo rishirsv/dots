@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meta Skill — Guide</title>
+<meta name="description" content="A workbench for building reusable agent skills: create a portable skill, prove it with scenario evals, and improve it from the evidence." />
+<style>
+  :root {
+    --paper: oklch(98.6% 0.004 255);
+    --paper-2: oklch(96.7% 0.006 255);
+    --paper-3: oklch(94.6% 0.008 255);
+    --ink: oklch(27% 0.025 262);
+    --ink-2: oklch(43% 0.022 262);
+    --ink-3: oklch(57% 0.016 262);
+    --line: oklch(90.5% 0.009 262);
+    --line-2: oklch(85% 0.012 262);
+    --accent: oklch(56% 0.16 258);
+    --accent-strong: oklch(48% 0.16 258);
+    --accent-wash: oklch(95.5% 0.028 258);
+    --accent-line: oklch(82% 0.07 258);
+    --gate: oklch(56% 0.12 70);
+    --gate-wash: oklch(95.5% 0.04 80);
+    --gate-line: oklch(82% 0.08 75);
+
+    --term: oklch(25.5% 0.018 262);
+    --term-2: oklch(30% 0.02 262);
+    --term-3: oklch(34% 0.02 262);
+    --term-line: oklch(40% 0.02 262);
+    --term-ink: oklch(91% 0.012 255);
+    --term-mut: oklch(64% 0.02 255);
+    --term-blue: oklch(74% 0.12 250);
+    --term-green: oklch(80% 0.13 155);
+    --term-amber: oklch(82% 0.11 80);
+    --dot-r: oklch(64% 0.13 25);
+    --dot-y: oklch(78% 0.1 85);
+    --dot-g: oklch(72% 0.12 150);
+
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+
+    --t-xs: 0.78rem;
+    --t-sm: 0.9rem;
+    --t-base: 1.0625rem;
+    --t-lg: 1.2rem;
+    --t-xl: 1.5rem;
+    --t-2xl: 2rem;
+
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px;
+    --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+    --r: 8px; --r-sm: 6px; --r-lg: 12px;
+    --edge: clamp(20px, 5vw, 64px);
+    --measure: 64ch;
+    --shadow-1: 0 1px 2px oklch(40% 0.03 262 / 0.05);
+    --shadow-2: 0 10px 30px -12px oklch(40% 0.04 262 / 0.22);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--t-base);
+    line-height: 1.6;
+    letter-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-wrap: break-word;
+  }
+  main { overflow-x: clip; }
+  h1, h2, h3, h4 { letter-spacing: 0; line-height: 1.14; margin: 0; font-weight: 650; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: var(--accent-strong); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  code, pre { font-family: var(--mono); }
+
+  .band { position: relative; padding: var(--s8) var(--edge); border-bottom: 1px solid var(--line); }
+  .band.alt { background: var(--paper-2); }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  .anatomy > *, .quick > *, .lane > *, .deep > * { min-width: 0; }
+  .lede { color: var(--ink-2); max-width: var(--measure); font-size: var(--t-lg); line-height: 1.5; text-wrap: pretty; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: var(--s2);
+    font-size: var(--t-xs); font-weight: 600; color: var(--accent-strong);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .kicker::before { content: ""; width: 18px; height: 1.5px; background: var(--accent); }
+  .section-head { margin-bottom: var(--s6); }
+  .section-head h2 { font-size: var(--t-2xl); margin: var(--s3) 0; max-width: 22ch; }
+  .section-head p { color: var(--ink-2); max-width: var(--measure); text-wrap: pretty; }
+
+  /* ---- header ---- */
+  header.site {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--s4);
+    padding: var(--s3) var(--edge);
+    background: color-mix(in oklch, var(--paper) 85%, transparent);
+    backdrop-filter: saturate(1.3) blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; color: var(--ink); }
+  .mark { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; background: var(--accent); color: white; flex: none; box-shadow: var(--shadow-1); }
+  .mark svg { width: 14px; height: 14px; }
+  header .nav { display: flex; gap: var(--s2); font-size: var(--t-sm); }
+  header .nav a { color: var(--ink-2); padding: 5px 11px; border-radius: 999px; transition: color 160ms ease-out, background 160ms ease-out; }
+  header .nav a:hover { color: var(--ink); text-decoration: none; background: var(--paper-3); }
+  header .nav a.active { color: var(--accent-strong); background: var(--accent-wash); }
+  @media (max-width: 760px) { header .nav { display: none; } }
+
+  /* ---- hero ---- */
+  .hero { padding-top: var(--s9); padding-bottom: var(--s8); overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(var(--line-2) 1px, transparent 1.4px);
+    background-size: 26px 26px;
+    opacity: 0.5;
+    -webkit-mask-image: radial-gradient(120% 90% at 78% 6%, #000 0%, transparent 62%);
+    mask-image: radial-gradient(120% 90% at 78% 6%, #000 0%, transparent 62%);
+  }
+  .hero .wrap { position: relative; z-index: 1; }
+  .hero h1 { font-size: clamp(2.1rem, 6vw, 3.3rem); font-weight: 680; max-width: 17ch; margin: var(--s4) 0; }
+  .hero h1 em { font-style: normal; color: var(--accent-strong); }
+  .hero .lede { margin-bottom: var(--s6); }
+
+  /* loop diagram */
+  .loop {
+    display: flex; align-items: stretch; flex-wrap: wrap; gap: var(--s3);
+    padding: var(--s5); border: 1px solid var(--line-2); border-radius: var(--r-lg);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+    box-shadow: var(--shadow-2); margin-top: var(--s6);
+  }
+  .loop .node {
+    position: relative; display: flex; flex-direction: column; gap: 3px;
+    padding: var(--s3) var(--s4) var(--s3) var(--s4);
+    border-radius: var(--r-sm); border: 1px solid var(--line-2); background: var(--paper);
+    min-width: 140px; box-shadow: var(--shadow-1);
+  }
+  .loop .node .top { display: flex; align-items: center; gap: 7px; }
+  .loop .node .ic { width: 16px; height: 16px; color: var(--accent); }
+  .loop .node b { font-size: var(--t-sm); }
+  .loop .node span { font-size: var(--t-xs); color: var(--ink-3); }
+  .loop .node.active { border-color: var(--accent-line); background: var(--accent-wash); }
+  .loop .node.active b { color: var(--accent-strong); }
+  .loop .arrow { color: var(--ink-3); display: inline-flex; align-self: center; }
+  .loop .arrow svg { width: 24px; height: 14px; }
+  .loop .ship { font-size: var(--t-sm); color: var(--ink-2); display: inline-flex; align-items: center; gap: 7px; align-self: center; font-weight: 600; }
+  .loop .ship svg { width: 16px; height: 16px; color: var(--gate); }
+  .loop .iterate {
+    flex-basis: 100%; display: flex; align-items: center; gap: 8px;
+    margin-top: var(--s2); padding-top: var(--s3); border-top: 1px dashed var(--line-2);
+    font-size: var(--t-xs); color: var(--ink-3);
+  }
+  .loop .iterate svg { width: 16px; height: 16px; color: var(--accent); flex: none; }
+
+  /* ---- terminal window ---- */
+  .term-win {
+    margin-top: var(--s4); border-radius: var(--r); overflow: hidden;
+    border: 1px solid var(--term-line); background: var(--term); box-shadow: var(--shadow-2);
+  }
+  .term-bar {
+    display: flex; align-items: center; gap: var(--s3);
+    padding: 9px var(--s4); background: var(--term-2);
+    border-bottom: 1px solid var(--term-line);
+  }
+  .term-bar .dots { display: flex; gap: 7px; flex: none; }
+  .term-bar .dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .term-bar .dots i:nth-child(1) { background: var(--dot-r); }
+  .term-bar .dots i:nth-child(2) { background: var(--dot-y); }
+  .term-bar .dots i:nth-child(3) { background: var(--dot-g); }
+  .term-bar .ttl { font-family: var(--mono); font-size: var(--t-xs); color: var(--term-mut); }
+  .term-bar .copy { margin-left: auto; }
+  .term-body { padding: var(--s4); overflow-x: auto; font-size: var(--t-sm); line-height: 1.7; color: var(--term-ink); }
+  .term-body code { white-space: pre; display: block; }
+  .term-body .prompt { color: var(--term-green); user-select: none; }
+  .term-body .c-cmd { color: var(--term-ink); }
+  .term-body .c-flag { color: var(--term-blue); }
+  .term-body .c-arg { color: var(--term-amber); }
+  .term-body .c-str { color: var(--term-mut); }
+  .term-body .c-cmt { color: var(--term-mut); font-style: italic; }
+  .copy {
+    flex: none; width: 30px; height: 30px; border-radius: 6px;
+    border: 1px solid var(--term-line); background: var(--term-3); color: var(--term-ink);
+    display: grid; place-items: center; cursor: pointer;
+    transition: background 160ms ease-out, border-color 160ms ease-out, transform 120ms ease-out;
+  }
+  .copy:hover { border-color: var(--term-blue); transform: translateY(-1px); }
+  .copy:active { transform: translateY(0); }
+  .copy svg { width: 15px; height: 15px; }
+  .copy .ic-check { display: none; color: var(--term-green); }
+  .copy.done .ic-copy { display: none; }
+  .copy.done .ic-check { display: block; }
+
+  /* ---- workbench tree ---- */
+  .anatomy { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: var(--s7); align-items: start; }
+  @media (max-width: 880px) { .anatomy { grid-template-columns: 1fr; gap: var(--s6); } }
+  .tree {
+    background: var(--term); color: var(--term-ink);
+    border-radius: var(--r); padding: var(--s5); border: 1px solid var(--term-line);
+    box-shadow: var(--shadow-2);
+    font-family: var(--mono); font-size: var(--t-sm); line-height: 1.85; overflow-x: auto;
+    min-width: 0;
+  }
+  .tree .root { color: var(--term-ink); font-weight: 600; }
+  .tree .port { color: var(--term-green); }
+  .tree .work { color: var(--term-blue); }
+  .tree .cmt { color: var(--term-mut); }
+  .tree .dim { color: var(--term-mut); }
+  .legend { display: grid; gap: var(--s5); }
+  .legend .row { display: grid; grid-template-columns: 14px 1fr; gap: var(--s3); align-items: start; }
+  .legend .dot { width: 11px; height: 11px; border-radius: 3px; margin-top: 7px; }
+  .legend .dot.port { background: oklch(62% 0.16 150); }
+  .legend .dot.work { background: var(--accent); }
+  .legend .dot.start { background: var(--ink-3); }
+  .legend h4 { font-size: var(--t-base); margin-bottom: 3px; }
+  .legend p { font-size: var(--t-sm); color: var(--ink-2); }
+  .legend code, .inline-code { font-family: var(--mono); font-size: 0.84em; background: var(--paper); border: 1px solid var(--line-2); padding: 1px 6px; border-radius: 5px; color: var(--ink); white-space: nowrap; }
+
+  /* ---- lanes ---- */
+  .lanes { display: grid; gap: var(--s4); }
+  .lane {
+    display: grid; grid-template-columns: 220px 1fr; gap: var(--s6);
+    padding: var(--s5) var(--s6); border: 1px solid var(--line); border-radius: var(--r-lg);
+    background: var(--paper); box-shadow: var(--shadow-1);
+    transition: box-shadow 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out;
+  }
+  .lane:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); border-color: var(--line-2); }
+  .lane .lhead .ltag { display: inline-flex; align-items: center; gap: 10px; }
+  .lane .lhead .ictile { width: 32px; height: 32px; border-radius: 9px; background: var(--accent-wash); border: 1px solid var(--accent-line); display: grid; place-items: center; flex: none; }
+  .lane .lhead .ictile svg { width: 17px; height: 17px; color: var(--accent-strong); }
+  .lane .lhead h3 { font-size: var(--t-lg); color: var(--accent-strong); }
+  .lane .lhead .skill { font-size: var(--t-xs); color: var(--ink-3); font-family: var(--mono); margin-top: 8px; display: block; }
+  .lane .lhead p { font-size: var(--t-sm); color: var(--ink-2); margin-top: var(--s3); }
+  .lane.ship .lhead h3 { color: var(--gate); }
+  .lane.ship .lhead .ictile { background: var(--gate-wash); border-color: var(--gate-line); }
+  .lane.ship .lhead .ictile svg { color: var(--gate); }
+  .lane .lbody { align-self: center; }
+
+  .steps { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s1); margin: 0; padding: 0; list-style: none; }
+  .step {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: var(--t-sm);
+    padding: 7px 12px; border-radius: var(--r-sm);
+    background: var(--paper-2); border: 1px solid var(--line-2); color: var(--ink);
+  }
+  .step .opt { color: var(--ink-3); font-family: var(--sans); font-size: var(--t-xs); }
+  .step.gated { border-color: var(--gate-line); background: var(--gate-wash); }
+  .step.gated svg { width: 13px; height: 13px; color: var(--gate); }
+  .chevron { color: var(--line-2); display: inline-flex; }
+  .chevron svg { width: 16px; height: 12px; }
+  .produces { margin-top: var(--s4); font-size: var(--t-sm); color: var(--ink-2); }
+  .produces b { color: var(--ink); font-weight: 600; }
+  .produces .inline-code { margin: 0 1px; }
+  @media (max-width: 760px) {
+    .lane { grid-template-columns: 1fr; gap: var(--s4); padding: var(--s5); }
+  }
+
+  /* ---- deep dive (families + evidence) ---- */
+  .deep { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: var(--s7); align-items: start; }
+  @media (max-width: 880px) { .deep { grid-template-columns: 1fr; gap: var(--s6); } }
+  .deep h3 { font-size: var(--t-base); margin-bottom: var(--s4); }
+  .families { display: grid; gap: var(--s2); }
+  .fam { display: grid; grid-template-columns: 34px 1fr; gap: var(--s3); align-items: baseline; padding: var(--s3) 0; border-top: 1px solid var(--line); }
+  .fam:first-of-type { border-top: 0; }
+  .fam .badge {
+    width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+    font-family: var(--mono); font-weight: 650; font-size: var(--t-sm);
+    background: var(--accent-wash); color: var(--accent-strong); border: 1px solid var(--accent-line);
+  }
+  .fam .badge.g { background: var(--gate-wash); color: var(--gate); border-color: var(--gate-line); }
+  .fam b { font-size: var(--t-sm); }
+  .fam p { font-size: var(--t-sm); color: var(--ink-2); }
+  .sandbox { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s5); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-xs); color: var(--ink-2); background: var(--paper); border: 1px solid var(--line-2); border-radius: 999px; padding: 5px 11px; }
+  .pill svg { width: 12px; height: 12px; color: var(--accent); }
+
+  .evidence .term-win { margin-top: 0; }
+  .evidence .ev-cap { font-size: var(--t-sm); color: var(--ink-2); margin-top: var(--s3); }
+  .ev .ev-row { display: block; }
+  .ev .path { color: var(--term-blue); }
+  .ev .file { color: var(--term-ink); }
+  .ev .cmt { color: var(--term-mut); }
+
+  /* ---- gates ---- */
+  .gates { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s4); }
+  @media (max-width: 880px) { .gates { grid-template-columns: 1fr; } }
+  .gate-card { border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s5); background: var(--paper); box-shadow: var(--shadow-1); transition: box-shadow 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out; }
+  .gate-card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); border-color: var(--line-2); }
+  .gate-card .h { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
+  .gate-card .lockbadge { width: 30px; height: 30px; border-radius: 8px; background: var(--gate-wash); border: 1px solid var(--gate-line); display: grid; place-items: center; flex: none; }
+  .gate-card .lockbadge svg { width: 15px; height: 15px; color: var(--gate); }
+  .gate-card h3 { font-size: var(--t-base); }
+  .gate-card ul { margin: 0; padding-left: 1.1em; color: var(--ink-2); font-size: var(--t-sm); }
+  .gate-card li { margin: 5px 0; }
+  .gate-card code { font-family: var(--mono); font-size: 0.85em; color: var(--ink); }
+
+  /* ---- command reference ---- */
+  .cmdtable { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-1); background: var(--paper); }
+  .crow { display: grid; grid-template-columns: 188px 1fr; gap: var(--s5); align-items: baseline; padding: var(--s3) var(--s5); border-top: 1px solid var(--line); transition: background 140ms ease-out; }
+  .crow:first-child { border-top: 0; }
+  .crow:not(.lane-row):hover { background: var(--paper-2); }
+  .crow.lane-row { background: var(--paper-2); padding-top: var(--s4); padding-bottom: var(--s4); }
+  .crow.lane-row .lane-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; color: var(--accent-strong); font-size: var(--t-sm); text-transform: uppercase; letter-spacing: 0.04em; }
+  .crow.lane-row.ship-row .lane-name { color: var(--gate); }
+  .crow.lane-row .lane-name svg { width: 15px; height: 15px; }
+  .crow .cmd-name { font-family: var(--mono); font-size: var(--t-sm); color: var(--ink); display: inline-flex; align-items: center; gap: 7px; }
+  .crow .cmd-name .lk { width: 12px; height: 12px; color: var(--gate); }
+  .crow .cmd-desc { font-size: var(--t-sm); color: var(--ink-2); }
+  @media (max-width: 760px) {
+    .crow { grid-template-columns: 1fr; gap: var(--s1); padding: var(--s3) var(--s4); }
+    .crow .cmd-desc { color: var(--ink-3); }
+  }
+
+  /* ---- quickstart ---- */
+  .quick { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: var(--s7); align-items: start; }
+  @media (max-width: 880px) { .quick { grid-template-columns: 1fr; gap: var(--s5); } }
+  .qsteps { display: grid; gap: var(--s4); }
+  .qstep { display: grid; grid-template-columns: 30px 1fr; gap: var(--s3); align-items: start; }
+  .qstep .num {
+    width: 27px; height: 27px; border-radius: 999px; flex: none;
+    border: 1px solid var(--accent-line); color: var(--accent-strong); background: var(--accent-wash);
+    display: grid; place-items: center; font-size: var(--t-xs); font-weight: 650; font-variant-numeric: tabular-nums;
+  }
+  .qstep h4 { font-size: var(--t-base); margin: 2px 0 2px; }
+  .qstep p { font-size: var(--t-sm); color: var(--ink-2); }
+  .note {
+    display: flex; gap: var(--s3); margin-top: var(--s5);
+    padding: var(--s4); border: 1px solid var(--accent-line); border-radius: var(--r);
+    background: var(--accent-wash); font-size: var(--t-sm); color: var(--ink-2);
+  }
+  .note svg { width: 18px; height: 18px; color: var(--accent-strong); flex: none; margin-top: 2px; }
+  .note code { font-family: var(--mono); font-size: 0.86em; }
+
+  footer.site { padding: var(--s7) var(--edge); color: var(--ink-3); font-size: var(--t-sm); background: var(--paper-2); }
+  footer .wrap { display: flex; justify-content: space-between; gap: var(--s4); flex-wrap: wrap; align-items: center; }
+  footer .brand { color: var(--ink-2); font-weight: 600; }
+  footer .mark { width: 20px; height: 20px; }
+  footer code { font-family: var(--mono); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .lane, .gate-card, .crow, .copy, header .nav a { transition: none; }
+    .lane:hover, .gate-card:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M9 3h6M10 3v6L5 19a1.5 1.5 0 0 0 1.4 2h11.2A1.5 1.5 0 0 0 19 19l-5-10V3M7.5 14h9"/></symbol>
+  <symbol id="i-tune" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M5 21V14M5 10V3M12 21v-9M12 8V3M19 21v-5M19 12V3M2 14h6M9 8h6M16 16h6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 16"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M2 8h18m0 0l-5-5m5 5l-5 5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 16 12"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M5 2l4 4-4 4"/></symbol>
+  <symbol id="i-loop" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M4 9a8 8 0 0 1 14-3l2 2M20 6V3m0 3h-3M20 15a8 8 0 0 1-14 3l-2-2m0 0v3m0-3h3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M6 11V8a6 6 0 0 1 12 0v3M5 11h14v9H5z"/></symbol>
+  <symbol id="i-ship" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M3 14l9-10 9 10M5 12v7h14v-7"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M9 9h10v12H9zM5 15H4V3h12v1"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12l5 5L20 6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 7.5v.5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="i-no-net" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM4 12h16M12 4c2.5 2.2 2.5 13.8 0 16M12 4c-2.5 2.2-2.5 13.8 0 16M5 5l14 14"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M6 11V6.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-1a1.5 1.5 0 0 1 3 0v1m0-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1.5a5 5 0 0 1-3.6-1.5L4 16"/></symbol>
+</svg>
+
+<header class="site">
+  <a class="brand" href="#top" aria-label="Meta Skill home">
+    <span class="mark"><svg aria-hidden="true"><use href="#i-spark"/></svg></span>
+    Meta Skill
+  </a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#model">Model</a>
+    <a href="#lanes">Lanes</a>
+    <a href="#evals">Evals</a>
+    <a href="#gates">Gates</a>
+    <a href="#reference">Reference</a>
+    <a href="#start">Quickstart</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="band hero">
+    <div class="wrap">
+      <p class="kicker">Codex plugin · skill workbench</p>
+      <h1>Build skills your agents can <em>trust</em>.</h1>
+      <p class="lede">One CLI-backed workbench with three lanes — <strong>create</strong>, <strong>evaluate</strong>, <strong>improve</strong>. Turn a workflow into a portable skill, prove it with scenario evals, and change it only from evidence.</p>
+
+      <div class="term-win" role="group" aria-label="First command">
+        <div class="term-bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ttl">your first command</span>
+          <button class="copy" type="button" aria-label="Copy command">
+            <svg class="ic-copy" aria-hidden="true"><use href="#i-copy"/></svg>
+            <svg class="ic-check" aria-hidden="true"><use href="#i-check"/></svg>
+          </button>
+        </div>
+        <div class="term-body"><code><span class="prompt">$ </span><span class="c-cmd">meta-skill create</span> <span class="c-arg">my-skill</span> <span class="c-flag">--slug</span> my-skill <span class="c-flag">--description</span> <span class="c-str">"Use when …; not for …"</span></code></div>
+      </div>
+
+      <div class="loop" role="img" aria-label="The loop: Create, then Evaluate, then Improve, then Ship. Evaluate and Improve repeat until the evidence holds.">
+        <div class="node active">
+          <span class="top"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg><b>Create</b></span>
+          <span>portable skill</span>
+        </div>
+        <span class="arrow"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+        <div class="node">
+          <span class="top"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg><b>Evaluate</b></span>
+          <span>scenario evidence</span>
+        </div>
+        <span class="arrow"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+        <div class="node">
+          <span class="top"><svg class="ic" aria-hidden="true"><use href="#i-tune"/></svg><b>Improve</b></span>
+          <span>evidence-led edits</span>
+        </div>
+        <span class="arrow"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+        <span class="ship"><svg aria-hidden="true"><use href="#i-ship"/></svg> Ship</span>
+        <div class="iterate"><svg aria-hidden="true"><use href="#i-loop"/></svg> Evaluate ⇄ Improve repeats until the evidence holds.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODEL -->
+  <section class="band alt" id="model">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">The mental model</p>
+        <h2>Two folders, one rule.</h2>
+        <p>A skill is a <strong>portable payload</strong> you can hand to any agent. Everything that helps you build and test it lives beside it in a <span class="inline-code">.meta-skill/</span> workbench that never ships. The rule: <strong>improve only from evidence</strong>.</p>
+      </div>
+      <div class="anatomy">
+        <pre class="tree" aria-label="Project layout. The portable payload at the root ships; the dot-meta-skill workbench stays local."><span class="root">my-skill/</span>
+<span class="port">├─ SKILL.md</span><span class="cmt">          ← the skill (always ships)</span>
+<span class="port">├─ references/</span><span class="cmt">        ← deep detail, loaded on demand</span>
+<span class="port">├─ scripts/  agents/  assets/</span>
+<span class="work">└─ .meta-skill/</span><span class="cmt">       ← workbench (never packages)</span>
+<span class="work">   ├─ spec.md</span><span class="dim">          decisions + residual risk</span>
+<span class="work">   ├─ evals/</span><span class="dim">           scenarios/ judges/ runs/</span>
+<span class="work">   ├─ tests/</span><span class="dim">           manifest.json</span>
+<span class="work">   ├─ reviews/ plans/ sessions/</span>
+<span class="work">   └─ versions/release/</span><span class="cmt"> ← sealed snapshot</span></pre>
+        <div class="legend">
+          <div class="row">
+            <span class="dot port" aria-hidden="true"></span>
+            <div>
+              <h4>Portable payload</h4>
+              <p>The root. What an agent runs, and the only thing <span class="inline-code">package</span> exports.</p>
+            </div>
+          </div>
+          <div class="row">
+            <span class="dot work" aria-hidden="true"></span>
+            <div>
+              <h4>.meta-skill/ workbench</h4>
+              <p>Added on demand with <span class="inline-code">project init</span>. Holds every spec, eval run, and decision as inspectable evidence — and stays out of the shipped skill.</p>
+            </div>
+          </div>
+          <div class="row">
+            <span class="dot start" aria-hidden="true"></span>
+            <div>
+              <h4>Portable by default</h4>
+              <p>Start with just <span class="inline-code">SKILL.md</span>. Add the workbench only when you need evals, releases, or team reuse.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LANES -->
+  <section class="band" id="lanes">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">The three lanes</p>
+        <h2>Each lane is a skill and a set of commands.</h2>
+        <p>You stay in plain language — the plugin routes your intent to the right lane and runs the CLI for stable file actions. Steps marked with a lock need your approval first.</p>
+      </div>
+
+      <div class="lanes">
+
+        <div class="lane">
+          <div class="lhead">
+            <span class="ltag"><span class="ictile"><svg aria-hidden="true"><use href="#i-spark"/></svg></span><h3>Create</h3></span>
+            <span class="skill">skill-create</span>
+            <p>Shape a workflow into a portable skill: a sharp trigger, clear boundaries, and the smallest useful runtime. Lint validates the frontmatter and payload contract.</p>
+          </div>
+          <div class="lbody">
+            <ol class="steps" aria-label="Create lane steps">
+              <li class="step">create</li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step">project&nbsp;init <span class="opt">optional</span></li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step">lint</li>
+            </ol>
+            <p class="produces"><b>Produces</b> · a valid <span class="inline-code">SKILL.md</span> + payload, structure and frontmatter checked.</p>
+          </div>
+        </div>
+
+        <div class="lane">
+          <div class="lhead">
+            <span class="ltag"><span class="ictile"><svg aria-hidden="true"><use href="#i-flask"/></svg></span><h3>Evaluate</h3></span>
+            <span class="skill">skill-eval</span>
+            <p>Run the skill against real scenarios through App Server in a read-only sandbox, and collect evidence — traces, outputs, deterministic tests, optional judges.</p>
+          </div>
+          <div class="lbody">
+            <ol class="steps" aria-label="Evaluate lane steps">
+              <li class="step">eval&nbsp;init</li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step">eval&nbsp;run</li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step">eval&nbsp;judge <span class="opt">optional</span></li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step">eval&nbsp;open</li>
+            </ol>
+            <p class="produces"><b>Produces</b> · a run under <span class="inline-code">evals/runs/</span> with a report and full evidence trail.</p>
+          </div>
+        </div>
+
+        <div class="lane">
+          <div class="lhead">
+            <span class="ltag"><span class="ictile"><svg aria-hidden="true"><use href="#i-tune"/></svg></span><h3>Improve</h3></span>
+            <span class="skill">skill-improve</span>
+            <p>Read the evidence, plan one bounded edit, apply it to the payload, and record the decision. Review scores eight best-practice dimensions.</p>
+          </div>
+          <div class="lbody">
+            <ol class="steps" aria-label="Improve lane steps">
+              <li class="step">review</li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step">plan</li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step gated">promote <svg aria-hidden="true"><use href="#i-lock"/></svg></li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step">decide</li>
+            </ol>
+            <p class="produces"><b>Produces</b> · a plan tied to a run or review, a promoted edit, and a recorded decision in <span class="inline-code">sessions/</span>.</p>
+          </div>
+        </div>
+
+        <div class="lane ship">
+          <div class="lhead">
+            <span class="ltag"><span class="ictile"><svg aria-hidden="true"><use href="#i-ship"/></svg></span><h3>Ship</h3></span>
+            <span class="skill">release · package</span>
+            <p>Seal a validated snapshot, then export the portable payload as a zip. Both wait for an explicit go and require a clean lint.</p>
+          </div>
+          <div class="lbody">
+            <ol class="steps" aria-label="Ship steps">
+              <li class="step gated">release <svg aria-hidden="true"><use href="#i-lock"/></svg></li>
+              <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+              <li class="step gated">package <svg aria-hidden="true"><use href="#i-lock"/></svg></li>
+            </ol>
+            <p class="produces"><b>Produces</b> · a sealed <span class="inline-code">versions/release/</span> and a shippable zip of the payload only.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- EVALS DEEP DIVE -->
+  <section class="band alt" id="evals">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Inside an eval</p>
+        <h2>Evidence you can read, not a score you trust blindly.</h2>
+        <p>Scenarios are tagged by what they stress. Each run executes through App Server and writes a complete, inspectable trail to disk.</p>
+      </div>
+      <div class="deep">
+        <div class="families-col">
+          <h3>Scenario families</h3>
+          <div class="families">
+            <div class="fam"><span class="badge" aria-hidden="true">R</span><div><b>Regression</b><p>A normal task that should keep working.</p></div></div>
+            <div class="fam"><span class="badge" aria-hidden="true">F</span><div><b>Failure mode</b><p>A hard, ambiguous, or multi-turn case.</p></div></div>
+            <div class="fam"><span class="badge" aria-hidden="true">T</span><div><b>Trigger</b><p>Activates — or correctly declines — on the boundary.</p></div></div>
+            <div class="fam"><span class="badge g" aria-hidden="true">G</span><div><b>Gate</b><p>Stops for approval or a safe default.</p></div></div>
+          </div>
+          <div class="sandbox" aria-label="Sandbox guarantees">
+            <span class="pill"><svg aria-hidden="true"><use href="#i-eye"/></svg> read-only</span>
+            <span class="pill"><svg aria-hidden="true"><use href="#i-no-net"/></svg> no network</span>
+            <span class="pill"><svg aria-hidden="true"><use href="#i-hand"/></svg> no auto-approval</span>
+          </div>
+        </div>
+        <div class="evidence">
+          <h3>What a run records</h3>
+          <div class="term-win">
+            <div class="term-bar">
+              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ttl">.meta-skill/evals/runs/003-after-edit/</span>
+            </div>
+            <div class="term-body ev"><code><span class="ev-row"><span class="file">run.json</span><span class="cmt">        orchestration + sandbox config</span></span>
+<span class="ev-row"><span class="file">events.jsonl</span><span class="cmt">    run lifecycle</span></span>
+<span class="ev-row"><span class="file">results.jsonl</span><span class="cmt">   per-scenario outcome + tokens</span></span>
+<span class="ev-row"><span class="file">tests.jsonl</span><span class="cmt">     deterministic test results</span></span>
+<span class="ev-row"><span class="file">grades.jsonl</span><span class="cmt">    judge scorecards (optional)</span></span>
+<span class="ev-row"><span class="file">report.html</span><span class="cmt">     the readable summary</span></span>
+<span class="ev-row"><span class="path">scenarios/F1/candidate/</span></span>
+<span class="ev-row">  <span class="file">final.md</span><span class="cmt">       the agent's answer</span></span>
+<span class="ev-row">  <span class="file">rpc.jsonl</span><span class="cmt">      full turn-by-turn trace</span></span></code></div>
+          </div>
+          <p class="ev-cap">Token usage is recorded per scenario — or marked <span class="inline-code">unavailable</span> with a reason when App Server returns none.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GATES -->
+  <section class="band" id="gates">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Human gates</p>
+        <h2>Nothing leaves without a yes.</h2>
+        <p>The plugin moves fast inside the workbench, but stops at every edge where work becomes real. You confirm before anything is written into source or sent outward.</p>
+      </div>
+      <div class="gates">
+        <div class="gate-card">
+          <div class="h"><span class="lockbadge" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><h3>Into source</h3></div>
+          <ul>
+            <li><code>promote</code> writes a planned edit into the live payload</li>
+            <li>only applies edits from a plan you approved</li>
+          </ul>
+        </div>
+        <div class="gate-card">
+          <div class="h"><span class="lockbadge" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><h3>Sealing a version</h3></div>
+          <ul>
+            <li><code>release</code> snapshots a validated build</li>
+            <li>blocked unless lint passes; confirms before replacing</li>
+          </ul>
+        </div>
+        <div class="gate-card">
+          <div class="h"><span class="lockbadge" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><h3>Going outward</h3></div>
+          <ul>
+            <li><code>package</code>, install, publish, or marketplace sync</li>
+            <li>judges cost tokens — opt in with <code>--with-judges</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMAND REFERENCE -->
+  <section class="band alt" id="reference">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Command reference</p>
+        <h2>One CLI, grouped by lane.</h2>
+        <p>Every command takes the project path. The agent narrates intent; these are the stable actions it runs.</p>
+      </div>
+      <div class="cmdtable">
+        <div class="crow lane-row"><span class="lane-name"><svg aria-hidden="true"><use href="#i-spark"/></svg> Create</span></div>
+        <div class="crow"><span class="cmd-name">meta-skill create</span><span class="cmd-desc">scaffold a portable skill (<span class="inline-code">--project</span> adds a workbench)</span></div>
+        <div class="crow"><span class="cmd-name">project init</span><span class="cmd-desc">add a <span class="inline-code">.meta-skill/</span> workbench to an existing skill</span></div>
+        <div class="crow"><span class="cmd-name">lint</span><span class="cmd-desc">validate structure, frontmatter, scenarios; run manifest tests</span></div>
+
+        <div class="crow lane-row"><span class="lane-name"><svg aria-hidden="true"><use href="#i-flask"/></svg> Evaluate</span></div>
+        <div class="crow"><span class="cmd-name">eval init</span><span class="cmd-desc">scaffold the evals workbench and scan for scenarios</span></div>
+        <div class="crow"><span class="cmd-name">eval run</span><span class="cmd-desc">execute scenarios via App Server; record the evidence trail</span></div>
+        <div class="crow"><span class="cmd-name">eval judge</span><span class="cmd-desc">score saved evidence with LLM judges (optional, costs tokens)</span></div>
+        <div class="crow"><span class="cmd-name">eval open</span><span class="cmd-desc">open a run's <span class="inline-code">report.html</span>, or list runs</span></div>
+
+        <div class="crow lane-row"><span class="lane-name"><svg aria-hidden="true"><use href="#i-tune"/></svg> Improve</span></div>
+        <div class="crow"><span class="cmd-name">review</span><span class="cmd-desc">score eight best-practice dimensions into a review</span></div>
+        <div class="crow"><span class="cmd-name">plan</span><span class="cmd-desc">bound one edit to a run or review as evidence</span></div>
+        <div class="crow"><span class="cmd-name">promote <svg class="lk" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="cmd-desc">apply the planned edit to the portable payload</span></div>
+        <div class="crow"><span class="cmd-name">decide</span><span class="cmd-desc">record an accept or reject decision for the session</span></div>
+
+        <div class="crow lane-row ship-row"><span class="lane-name"><svg aria-hidden="true"><use href="#i-ship"/></svg> Ship</span></div>
+        <div class="crow"><span class="cmd-name">release <svg class="lk" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="cmd-desc">seal a validated snapshot under <span class="inline-code">versions/release/</span></span></div>
+        <div class="crow"><span class="cmd-name">package <svg class="lk" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="cmd-desc">export the portable payload as a zip (payload only)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICKSTART -->
+  <section class="band" id="start">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Quickstart</p>
+        <h2>Your first run, top to bottom.</h2>
+      </div>
+      <div class="quick">
+        <div class="qsteps">
+          <div class="qstep"><span class="num">1</span><div><h4>Create a portable skill</h4><p>One folder, one <span class="inline-code">SKILL.md</span>. Front-load the trigger.</p></div></div>
+          <div class="qstep"><span class="num">2</span><div><h4>Add a workbench</h4><p>Only when you want evals, releases, or reuse.</p></div></div>
+          <div class="qstep"><span class="num">3</span><div><h4>Lint &amp; review</h4><p>Catch structure problems and best-practice gaps.</p></div></div>
+          <div class="qstep"><span class="num">4</span><div><h4>Evaluate</h4><p>Generate starter scenarios, run them, open the report.</p></div></div>
+          <div class="qstep"><span class="num">5</span><div><h4>Improve from a run</h4><p>Plan one edit tied to the run, promote it, decide.</p></div></div>
+        </div>
+        <div>
+          <div class="term-win" role="group" aria-label="Quickstart commands">
+            <div class="term-bar">
+              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ttl">first-run.sh</span>
+              <button class="copy" type="button" aria-label="Copy quickstart commands">
+                <svg class="ic-copy" aria-hidden="true"><use href="#i-copy"/></svg>
+                <svg class="ic-check" aria-hidden="true"><use href="#i-check"/></svg>
+              </button>
+            </div>
+            <div class="term-body"><code><span class="c-cmt"># 1 · create a portable skill</span>
+<span class="prompt">$ </span><span class="c-cmd">meta-skill create</span> <span class="c-arg">my-skill</span> <span class="c-flag">--slug</span> my-skill <span class="c-flag">--description</span> <span class="c-str">"Use when …; not for …"</span>
+<span class="prompt">$ </span><span class="c-cmd">cd</span> my-skill
+
+<span class="c-cmt"># 2 · add a workbench (optional)</span>
+<span class="prompt">$ </span><span class="c-cmd">meta-skill project init</span> .
+
+<span class="c-cmt"># 3 · check &amp; review</span>
+<span class="prompt">$ </span><span class="c-cmd">meta-skill lint</span> .
+<span class="prompt">$ </span><span class="c-cmd">meta-skill review</span> .
+
+<span class="c-cmt"># 4 · scenario evals</span>
+<span class="prompt">$ </span><span class="c-cmd">meta-skill eval init</span> .
+<span class="prompt">$ </span><span class="c-cmd">meta-skill eval run</span> .
+<span class="prompt">$ </span><span class="c-cmd">meta-skill eval open</span> .
+
+<span class="c-cmt"># 5 · improve from the run</span>
+<span class="prompt">$ </span><span class="c-cmd">meta-skill plan</span> . <span class="c-flag">--from-run</span> <span class="c-arg">&lt;run-id&gt;</span>
+<span class="prompt">$ </span><span class="c-cmd">meta-skill promote</span> . <span class="c-flag">--plan</span> <span class="c-arg">&lt;plan-id&gt;</span>
+<span class="prompt">$ </span><span class="c-cmd">meta-skill decide</span> . <span class="c-flag">--session</span> <span class="c-arg">&lt;session-id&gt;</span> <span class="c-flag">--accept</span></code></div>
+          </div>
+          <p class="note"><svg aria-hidden="true"><use href="#i-info"/></svg><span>The <strong>eval</strong> lane runs through <strong>Codex App Server</strong>, so it needs the <code>codex</code> CLI installed and authenticated. Everything else runs locally with no dependencies.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span class="brand"><span class="mark"><svg aria-hidden="true"><use href="#i-spark"/></svg></span> Meta Skill <code>v0.1.0</code></span>
+    <span>Create, evaluate, improve reusable skills. Run <code>meta-skill</code> with no arguments to start.</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    // copy-to-clipboard
+    document.querySelectorAll(".copy").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var win = btn.closest(".term-win");
+        var code = win && win.querySelector(".term-body code");
+        if (!code) return;
+        var text = code.innerText.replace(/^\s*\$\s/gm, "").trim();
+        navigator.clipboard.writeText(text).then(function () {
+          btn.classList.add("done");
+          btn.setAttribute("aria-label", "Copied");
+          setTimeout(function () {
+            btn.classList.remove("done");
+            btn.setAttribute("aria-label", "Copy command");
+          }, 1400);
+        });
+      });
+    });
+
+    // scrollspy nav active state (progressive enhancement; never hides content)
+    var links = Array.prototype.slice.call(document.querySelectorAll("header .nav a"));
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+    if ("IntersectionObserver" in window && links.length) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && map[e.target.id]) {
+            links.forEach(function (l) { l.classList.remove("active"); l.removeAttribute("aria-current"); });
+            map[e.target.id].classList.add("active");
+            map[e.target.id].setAttribute("aria-current", "true");
+          }
+        });
+      }, { rootMargin: "-45% 0px -50% 0px" });
+      ["model", "lanes", "evals", "gates", "reference", "start"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) spy.observe(el);
+      });
+    }
+  })();
+</script>
+</body>
+</html>
