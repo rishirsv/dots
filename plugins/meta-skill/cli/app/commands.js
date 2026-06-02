@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runCommand = runCommand;
+exports.formatEvalRunSummary = formatEvalRunSummary;
 const node_child_process_1 = require("node:child_process");
 const node_util_1 = require("node:util");
 const evals_1 = require("./evals");
@@ -147,6 +148,9 @@ async function commandEvalInit(argv) {
 async function commandEvalRun(argv) {
     const args = parse(argv, ["scenario", "family", "topic", "label", "compare", "app-server-endpoint"], ["with-judges", "no-lint"]);
     const project = args.positionals[0] || ".";
+    if (args.one("app-server-endpoint")) {
+        throw new project_1.CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
+    }
     const compare = args.one("compare");
     if (compare && compare !== "release")
         throw new project_1.CliError("eval run supports only --compare release", 2);
@@ -160,12 +164,24 @@ async function commandEvalRun(argv) {
         compare: compare,
         withJudges: args.has("with-judges"),
         noLint: args.has("no-lint"),
-        appServerEndpoint: args.one("app-server-endpoint")
+        appServerEndpoint: undefined
     });
-    console.log(`run: ${result.runId}`);
-    console.log(`report: ${result.report}`);
-    console.log(`next step: meta-skill eval open ${shellPath(project)} --run ${result.runId}`);
+    console.log(formatEvalRunSummary(project, result));
     return result.ok ? 0 : 1;
+}
+function formatEvalRunSummary(project, result) {
+    const lines = [
+        `run: ${result.runId}`,
+        `status: ${result.status}`,
+        `manual review required: ${result.manualReviewRequired ? "yes" : "no"}`,
+        `failure classifications: ${result.failureClassifications.length ? result.failureClassifications.join(", ") : "none"}`,
+        `report: ${result.report}`,
+        `next step: meta-skill eval open ${shellPath(project)} --run ${result.runId}`
+    ];
+    if (result.status === "needs_review") {
+        lines.push("note: needs_review is unresolved evidence, not pass proof.");
+    }
+    return lines.join("\n");
 }
 async function commandEvalJudge(argv) {
     const args = parse(argv, ["run", "judge", "scenario"], ["all-judges", "all-scenarios"]);

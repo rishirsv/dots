@@ -47,7 +47,7 @@ export function classifyScenarioStatus(status: string): RunFailureClassification
   return status === "failed" || status === "errored" ? "scenario_failed" : null;
 }
 
-export function runStatus(ok: boolean, scenarioStatuses: Set<string>): "passed" | "needs_review" | "failed" {
-  if (!ok) return "failed";
+export function runStatus(hasFailures: boolean, scenarioStatuses: Set<string>): "passed" | "needs_review" | "failed" {
+  if (hasFailures) return "failed";
   return scenarioStatuses.has("needs_review") ? "needs_review" : "passed";
 }

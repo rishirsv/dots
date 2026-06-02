@@ -6,8 +6,10 @@ import { describe, it } from "node:test";
 import { AppServerUnavailableError } from "./app-server/client";
 import type { ScenarioRunInput, ScenarioRunResult } from "./app-server/runner";
 import { runEval } from "./evals";
+import { packageProject } from "./package";
 import { exists, readJson, readText, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
+import { releaseProject } from "./versions";
 
 type JsonlRow = Record<string, unknown> & { type?: string; payload?: Record<string, unknown> };
 
@@ -44,16 +46,20 @@ describe("App Server eval orchestration", () => {
       }
     });
 
-    assert.equal(result.ok, true);
+    assert.equal(result.ok, false);
+    assert.equal(result.status, "needs_review");
+    assert.equal(result.manualReviewRequired, true);
     assert.equal(closed, true);
     const run = await readJson<{
       status: string;
       ok: boolean;
+      manual_review_required: boolean;
       failure_classifications: string[];
       runner: { sandbox: string; approval_policy: string; network_access: boolean; backend: string; protocol: string };
     }>(path.join(result.runRoot, "run.json"));
     assert.equal(run.status, "needs_review");
-    assert.equal(run.ok, true);
+    assert.equal(run.ok, false);
+    assert.equal(run.manual_review_required, true);
     assert.deepEqual(run.failure_classifications, []);
     assert.equal(run.runner.backend, "app_server");
     assert.equal(run.runner.protocol, "generated-ts");
@@ -64,7 +70,12 @@ describe("App Server eval orchestration", () => {
     assert.match(tests, /"type":"lint_skipped"/);
     const completed = (await readJsonl(path.join(result.runRoot, "events.jsonl"))).find((row) => row.type === "run_completed");
     assert.equal(completed?.payload?.status, "needs_review");
+    assert.equal(completed?.payload?.manual_review_required, true);
     assert.deepEqual(completed?.payload?.failure_classifications, []);
+    const report = await readText(result.report);
+    assert.match(report, /unresolved; not pass proof/);
+    assert.match(report, /Fixture final|ok/);
+    assert.match(report, /lint skipped/);
   });
 
   it("classifies App Server scenario failures without reporting a false green", async () => {
@@ -146,6 +157,59 @@ describe("App Server eval orchestration", () => {
     assert.deepEqual(run.failure_classifications, ["judge_failure", "lint_test_failure"]);
     const tests = await readText(path.join(result.runRoot, "tests.jsonl"));
     assert.match(tests, /"status":"failed"/);
+    const report = await readText(result.report);
+    assert.match(report, /lint_test_failure/);
+    assert.match(report, /Judge Details/);
+  });
+
+  it("passes run-scoped environment variables to eval tests", async () => {
+    const project = await fixtureProject("eval-env-vars");
+    await writeScenario(project);
+    await writeJson(path.join(project, ".meta-skill", "tests", "manifest.json"), {
+      schema_version: 1,
+      tests: [
+        {
+          id: "run-env",
+          kind: "eval",
+          command:
+            "node -e \"const fs=require('fs'); const path=require('path'); if (!process.env.META_SKILL_RUN_ID || !process.env.META_SKILL_RUN_ROOT || !process.env.META_SKILL_PROJECT_ROOT) process.exit(1); fs.writeFileSync(path.join(process.env.META_SKILL_RUN_ROOT, 'env-proof.json'), JSON.stringify({runId: process.env.META_SKILL_RUN_ID, projectRoot: process.env.META_SKILL_PROJECT_ROOT}));\""
+        }
+      ]
+    });
+
+    const result = await runEval({
+      project,
+      selector: {},
+      scenarioRunner: scenarioRunner("passed")
+    });
+
+    assert.equal(result.ok, true);
+    const proof = await readJson<{ runId: string; projectRoot: string }>(path.join(result.runRoot, "env-proof.json"));
+    assert.equal(proof.runId, result.runId);
+    assert.equal(proof.projectRoot, project);
+  });
+
+  it("covers release, release comparison, and release packaging without packaging .meta-skill", async () => {
+    const project = await fixtureProject("release-e2e");
+    await writeScenario(project);
+    const release = await releaseProject(project);
+    assert.equal(await exists(path.join(release.releaseRoot, "skill", ".meta-skill")), false);
+
+    const result = await runEval({
+      project,
+      selector: {},
+      compare: "release",
+      noLint: true,
+      scenarioRunner: scenarioRunner("passed")
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(await exists(path.join(result.runRoot, "scenarios", "R1-basic", "candidate", "final.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "scenarios", "R1-basic", "release", "final.md")), true);
+    const outDir = path.join(path.dirname(project), "release-pkg");
+    const packaged = await packageProject({ project, source: "release", outDir });
+    assert.equal(await exists(path.join(packaged.artifact, "SKILL.md")), true);
+    assert.equal(await exists(path.join(packaged.artifact, ".meta-skill")), false);
   });
 });
 

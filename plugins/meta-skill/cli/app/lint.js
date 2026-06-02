@@ -31,7 +31,7 @@ async function lintProject(target, options = {}) {
     }
     if (options.executeTests !== false && (await (0, project_1.exists)(p.testManifest))) {
         const manifest = await (0, project_1.readJson)(p.testManifest);
-        tests.push(...(await runManifestTests(root, manifest, options.runId ? "eval" : "unit")));
+        tests.push(...(await runManifestTests(root, manifest, options.runId ? "eval" : "unit", options.runId ? { runId: options.runId, runRoot: node_path_1.default.join(p.runs, options.runId), projectRoot: root } : undefined)));
     }
     let annotations = 0;
     if (options.runId) {
@@ -266,13 +266,25 @@ function parseMarkdownFrontmatter(text) {
     }
     return result;
 }
-async function runManifestTests(root, manifest, kind) {
+async function runManifestTests(root, manifest, kind, runEnv) {
     const rows = [];
     for (const test of manifest.tests || []) {
         if (test.kind !== kind)
             continue;
         try {
-            const { stdout, stderr } = await execAsync(test.command, { cwd: root, timeout: 120000, maxBuffer: 1024 * 1024 });
+            const { stdout, stderr } = await execAsync(test.command, {
+                cwd: root,
+                timeout: 120000,
+                maxBuffer: 1024 * 1024,
+                env: runEnv
+                    ? {
+                        ...process.env,
+                        META_SKILL_RUN_ID: runEnv.runId,
+                        META_SKILL_RUN_ROOT: runEnv.runRoot,
+                        META_SKILL_PROJECT_ROOT: runEnv.projectRoot
+                    }
+                    : process.env
+            });
             rows.push({ id: test.id, kind: test.kind, status: "passed", command: test.command, output: `${stdout}${stderr}`.trim() });
         }
         catch (error) {

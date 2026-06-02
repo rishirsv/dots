@@ -9,7 +9,8 @@
   "scripts": {
     "build": "rm -rf app && tsc -p tsconfig.json",
     "build:test": "rm -rf app && tsc -p tsconfig.test.json",
-    "test": "npm run build:test && node --test \"app/**/*.test.js\" && npm run build",
+    "check:app": "tmp=$(mktemp -d) && trap 'rm -rf \"$tmp\"' EXIT && tsc -p tsconfig.json --outDir \"$tmp\" && diff -qr \"$tmp\" app",
+    "test": "npm run build:test && node --test \"app/**/*.test.js\" && npm run build && npm run check:app",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

@@ -14,6 +14,9 @@ const judge_1 = require("./judge");
 const results_1 = require("./results");
 const scenarios_1 = require("./scenarios");
 async function runEval(options) {
+    if (options.appServerEndpoint) {
+        throw new project_1.CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
+    }
     const root = await (0, project_1.requirePortableSkill)(options.project);
     const p = (0, project_1.projectPaths)(root);
     if (!(await (0, project_1.exists)(p.evalManifest)))
@@ -70,7 +73,7 @@ async function runEval(options) {
     await (0, project_1.writeJson)(node_path_1.default.join(runRoot, "run.json"), runJson);
     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_started", run_id: runId, source: "meta-skill eval run", payload: runJson }));
     const runner = options.scenarioRunner || new runner_1.AppServerScenarioRunner();
-    let ok = true;
+    let hasFailures = false;
     const scenarioStatuses = new Set();
     const failureClassifications = new Set();
     try {
@@ -83,13 +86,13 @@ async function runEval(options) {
                     scenarioStatuses.add(result.status);
                     const classification = (0, results_1.classifyScenarioStatus)(result.status);
                     if (classification) {
-                        ok = false;
+                        hasFailures = true;
                         failureClassifications.add(classification);
                     }
                     await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, side, result.status, result.token_usage, result.evidence_path, result.error, classification);
                 }
                 catch (error) {
-                    ok = false;
+                    hasFailures = true;
                     const message = error instanceof client_1.AppServerUnavailableError || error instanceof Error ? error.message : String(error);
                     const classification = error instanceof client_1.AppServerUnavailableError ? "app_server_unavailable" : "harness_unavailable";
                     failureClassifications.add(classification);
@@ -107,31 +110,37 @@ async function runEval(options) {
     }
     if (!options.noLint) {
         const lint = await (0, lint_1.lintProject)(root, { runId });
-        ok = ok && lint.ok;
-        if (!lint.ok)
+        if (!lint.ok) {
+            hasFailures = true;
             failureClassifications.add("lint_test_failure");
+        }
     }
     else {
         await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "tests.jsonl"), (0, project_1.eventEnvelope)({ type: "lint_skipped", run_id: runId, source: "meta-skill eval run", payload: { reason: "--no-lint" } }));
     }
     if (options.withJudges) {
         const judges = await (options.judgeRunner || judge_1.judgeRun)({ project: root, runId, allJudges: true, allScenarios: true });
-        ok = ok && judges.ok;
+        if (!judges.ok)
+            hasFailures = true;
         for (const classification of judges.failureClassifications || [])
             failureClassifications.add(classification);
         if (!judges.ok && !(judges.failureClassifications || []).length)
             failureClassifications.add("judge_failure");
     }
-    const status = (0, results_1.runStatus)(ok, scenarioStatuses);
+    const status = (0, results_1.runStatus)(hasFailures, scenarioStatuses);
+    const ok = status === "passed";
+    const manualReviewRequired = status === "needs_review";
+    const sortedFailureClassifications = [...failureClassifications].sort();
     const finalRunJson = {
         ...runJson,
         status,
         completed_at: (0, project_1.utcNow)(),
         ok,
-        failure_classifications: [...failureClassifications].sort()
+        manual_review_required: manualReviewRequired,
+        failure_classifications: sortedFailureClassifications
     };
     await (0, project_1.writeJson)(node_path_1.default.join(runRoot, "run.json"), finalRunJson);
-    await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, failure_classifications: finalRunJson.failure_classifications } }));
+    await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, manual_review_required: manualReviewRequired, failure_classifications: finalRunJson.failure_classifications } }));
     const report = await (0, report_1.writeEvalReport)(runRoot);
-    return { runId, runRoot, report, ok };
+    return { runId, runRoot, report, ok, status, manualReviewRequired, failureClassifications: sortedFailureClassifications };
 }

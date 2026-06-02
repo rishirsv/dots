@@ -36,8 +36,10 @@ Scenario folders live at `.meta-skill/evals/scenarios/<ID-slug>/` and require `t
 - Release comparison uses `.meta-skill/versions/release/skill/`, not stale output from an old run.
 - Multi-turn scenarios must use `task.md` for the first turn and `turns.json` for follow-up turns.
 - Deterministic tests belong in `.meta-skill/tests/manifest.json` and may annotate saved run evidence with `meta-skill lint . --run <run-id>`.
+- Eval tests should read `META_SKILL_RUN_ID`, `META_SKILL_RUN_ROOT`, and `META_SKILL_PROJECT_ROOT` when lint annotates a saved run. Do not guess the newest run folder.
 - Judges are optional because they cost tokens; ask before running them unless the user explicitly requests judge scoring or passes `--with-judges`.
 - Token usage must be recorded when available; if App Server does not return exact metrics, the evidence should say unavailable explicitly.
+- `needs_review` is unresolved evidence, not pass proof. Report what executed, where final answers and traces live, and what still needs deterministic tests, judge approval, or human review.
 
 ## Scenario Design
 
@@ -67,4 +69,4 @@ If the user wants to turn evidence into edits, hand off to `skill-improve` with 
 
 For setup or run help, return the next command, what it reads or writes, and where evidence will live.
 
-For interpretation, summarize selected scenarios, sides, pass/fail/needs-review/error counts, token usage availability, skipped lint or judges, and the next useful step.
+For interpretation, summarize selected scenarios, sides, pass/fail/needs-review/error counts, token usage availability, skipped lint or judges, and the next useful step. Never describe `needs_review` as passing.

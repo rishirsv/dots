@@ -129,6 +129,14 @@ Scenarios may have no tests or judges in v1, but that makes them manual-review o
 
 Use `unit` for runtime scripts and helpers. Use `eval` for checks against saved run evidence.
 
+When eval tests are run as part of a saved run, the CLI sets:
+
+- `META_SKILL_RUN_ID`
+- `META_SKILL_RUN_ROOT`
+- `META_SKILL_PROJECT_ROOT`
+
+Eval tests should inspect those exact paths instead of sorting `.meta-skill/evals/runs/` or assuming the latest run.
+
 ## Run Bundle
 
 Each run writes:
@@ -157,6 +165,8 @@ Each run writes:
 `run.json` is the plan. `events.jsonl` is the chronological execution ledger. `results.jsonl` is derived summary data. `tests.jsonl`, `grades.jsonl`, and `feedback.jsonl` are append-only annotation streams.
 
 Every result should include token usage fields. If exact usage is unavailable, the fields should explicitly say unavailable and why.
+
+`needs_review` means unresolved. It records that scenario execution produced evidence for a human, deterministic test, or judge to inspect; it is not a passing result.
 
 ## Feedback
 

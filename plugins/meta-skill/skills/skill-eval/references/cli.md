@@ -47,6 +47,14 @@ meta-skill eval run .
 meta-skill eval run . --no-lint
 ```
 
+Eval-test commands receive run-scoped environment variables when they execute during `eval run` or `meta-skill lint . --run <run-id>`:
+
+- `META_SKILL_RUN_ID`: the current run ID
+- `META_SKILL_RUN_ROOT`: absolute path to `.meta-skill/evals/runs/<run-id>`
+- `META_SKILL_PROJECT_ROOT`: absolute path to the portable skill project
+
+Use these variables instead of guessing the newest run folder.
+
 Judges are independent and opt-in:
 
 ```bash

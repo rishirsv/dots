@@ -149,6 +149,9 @@ async function commandEvalInit(argv: string[]): Promise<number> {
 async function commandEvalRun(argv: string[]): Promise<number> {
   const args = parse(argv, ["scenario", "family", "topic", "label", "compare", "app-server-endpoint"], ["with-judges", "no-lint"]);
   const project = args.positionals[0] || ".";
+  if (args.one("app-server-endpoint")) {
+    throw new CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
+  }
   const compare = args.one("compare");
   if (compare && compare !== "release") throw new CliError("eval run supports only --compare release", 2);
   const family = args.one("family");
@@ -160,12 +163,28 @@ async function commandEvalRun(argv: string[]): Promise<number> {
     compare: compare as "release" | undefined,
     withJudges: args.has("with-judges"),
     noLint: args.has("no-lint"),
-    appServerEndpoint: args.one("app-server-endpoint")
+    appServerEndpoint: undefined
   });
-  console.log(`run: ${result.runId}`);
-  console.log(`report: ${result.report}`);
-  console.log(`next step: meta-skill eval open ${shellPath(project)} --run ${result.runId}`);
+  console.log(formatEvalRunSummary(project, result));
   return result.ok ? 0 : 1;
+}
+
+export function formatEvalRunSummary(
+  project: string,
+  result: { runId: string; status: string; manualReviewRequired: boolean; failureClassifications: string[]; report: string }
+): string {
+  const lines = [
+    `run: ${result.runId}`,
+    `status: ${result.status}`,
+    `manual review required: ${result.manualReviewRequired ? "yes" : "no"}`,
+    `failure classifications: ${result.failureClassifications.length ? result.failureClassifications.join(", ") : "none"}`,
+    `report: ${result.report}`,
+    `next step: meta-skill eval open ${shellPath(project)} --run ${result.runId}`
+  ];
+  if (result.status === "needs_review") {
+    lines.push("note: needs_review is unresolved evidence, not pass proof.");
+  }
+  return lines.join("\n");
 }
 
 async function commandEvalJudge(argv: string[]): Promise<number> {

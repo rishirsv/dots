@@ -41,6 +41,7 @@ export class AppServerScenarioRunner {
   private client: AppServerClientLike | undefined;
   private readonly clientFactory: (onLine: (line: AppServerLine) => Promise<void>) => AppServerClientLike;
   private readonly turnTimeoutMs: number;
+  private rpcPath: string | undefined;
 
   constructor(options: AppServerScenarioRunnerOptions = {}) {
     this.clientFactory = options.clientFactory || ((onLine) => new AppServerJsonClient(onLine));
@@ -55,13 +56,9 @@ export class AppServerScenarioRunner {
     await stageWorkspace(input, stageRoot);
 
     const rpcPath = path.join(rawRoot, "rpc.jsonl");
-    const client = await this.ensureClient(input.appServer, async (line) => {
-      await appendJsonl(rpcPath, {
-        schema_version: 1,
-        direction: line.direction,
-        message: line.message
-      });
-    });
+    await this.client?.flush?.();
+    this.rpcPath = rpcPath;
+    const client = await this.ensureClient(input.appServer);
 
     const start = await client.request("thread/start", {
       cwd: stageRoot,
@@ -122,9 +119,16 @@ export class AppServerScenarioRunner {
     this.client = undefined;
   }
 
-  private async ensureClient(appServer: AppServerConfig, onLine: (line: AppServerLine) => Promise<void>): Promise<AppServerClientLike> {
+  private async ensureClient(appServer: AppServerConfig): Promise<AppServerClientLike> {
     if (!this.client) {
-      this.client = this.clientFactory(onLine);
+      this.client = this.clientFactory(async (line) => {
+        if (!this.rpcPath) return;
+        await appendJsonl(this.rpcPath, {
+          schema_version: 1,
+          direction: line.direction,
+          message: line.message
+        });
+      });
       if (this.client instanceof AppServerJsonClient) await this.client.connect(appServer);
     }
     return this.client;

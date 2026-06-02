@@ -1,0 +1,274 @@
+# Meta Skill Architecture
+
+Meta Skill is a Codex-only plugin for building, evaluating, improving,
+releasing, and packaging reusable skills. It is one plugin with three lane
+skills and one CLI.
+
+## Big Picture
+
+```mermaid
+flowchart LR
+  user["User or agent"] --> orchestrator["AGENTS.md\norchestrator"]
+  orchestrator --> create["skill-create\nmake skill payloads"]
+  orchestrator --> eval["skill-eval\nrun scenarios"]
+  orchestrator --> improve["skill-improve\npatch from evidence"]
+  create --> cli["bin/meta-skill\nCLI runtime"]
+  eval --> cli
+  improve --> cli
+  cli --> project["Skill project\nportable payload + .meta-skill workbench"]
+```
+
+It creates portable payloads, adds `.meta-skill/` workbenches, records eval
+evidence, turns evidence into bounded edits, snapshots releases, and packages
+candidate or release payloads. It is not a marketplace publisher, installer, or
+sync system. Human approval remains required for promotion, release replacement,
+packaging, install, publish, marketplace sync, and external writes.
+
+## Repository Map
+
+```text
+plugins/meta-skill/
+  AGENTS.md                     plugin orchestrator prompt
+  .codex-plugin/plugin.json     plugin manifest
+  bin/meta-skill                shell shim to cli/app/main.js
+  assets/                       manifest icon and logo
+  skills/
+    skill-create/               creation lane and references
+    skill-eval/                 eval lane and references
+    skill-improve/              improvement lane and references
+  cli/
+    package.json                build, typecheck, test scripts
+    src/                        TypeScript source
+    app/                        committed JavaScript runtime
+```
+
+`bin/meta-skill` runs `cli/app/main.js`, so TypeScript changes must be rebuilt
+into `cli/app/`. The committed runtime is not optional.
+
+This plugin is separate from generated Perks plugin packages under
+`plugins/codex/perks/` and `plugins/claude/perks/`. Do not hand-edit those
+generated packages.
+
+## Skill Project Model
+
+```mermaid
+flowchart TB
+  root["Skill project root"] --> payload["Portable candidate payload"]
+  root --> workbench[".meta-skill/ workbench"]
+  payload --> skill["SKILL.md"]
+  payload --> agents["agents/"]
+  payload --> refs["references/"]
+  payload --> scripts["scripts/"]
+  payload --> assets["assets/"]
+  workbench --> spec["spec.md"]
+  workbench --> evals["evals/"]
+  workbench --> tests["tests/"]
+  workbench --> reviews["reviews/"]
+  workbench --> plans["plans/"]
+  workbench --> sessions["sessions/"]
+  workbench --> versions["versions/release/"]
+```
+
+The project root is the current candidate. Only `SKILL.md`, `agents/`,
+`references/`, `scripts/`, and `assets/` can be packaged. `.meta-skill/` stores
+specs, scenarios, run evidence, tests, reviews, plans, promotion sessions, and
+release snapshots. It must not be packaged.
+
+Candidate and release are different:
+
+```mermaid
+flowchart LR
+  candidate["candidate\nproject root payload"] -->|meta-skill release| release["release snapshot"]
+  release --> releasePath[".meta-skill/versions/release/skill/"]
+  candidate -->|meta-skill package --source candidate| candidatePkg["candidate package"]
+  release -->|meta-skill package --source release| releasePkg["release package"]
+```
+
+## Lifecycle
+
+```mermaid
+flowchart LR
+  create["create\nportable payload"] --> init["project init\n.meta-skill/"]
+  init --> lint["lint\nstructure + tests"]
+  lint --> review["review\nheuristic report"]
+  lint --> evalInit["eval init\nscenario workbench"]
+  evalInit --> evalRun["eval run\nApp Server evidence"]
+  review --> plan["plan\nfrom review"]
+  evalRun --> plan2["plan\nfrom run"]
+  plan --> promote["promote\napply approved edit"]
+  plan2 --> promote
+  promote --> decide["decide\naccept or reject"]
+  decide --> release["release\nsnapshot payload"]
+  release --> package["package\nzip or directory"]
+```
+
+Lane boundaries: `skill-create` scaffolds, `skill-eval` measures without
+editing source, and `skill-improve` edits only from evidence with gates.
+
+## CLI Ownership
+
+Top-level command dispatch lives in `cli/src/commands.ts`.
+
+| Command | Owner |
+|---|---|
+| `create` | `cli/src/skills.ts` |
+| `project init` | `cli/src/skills.ts`, `cli/src/project.ts` |
+| `lint` | `cli/src/lint.ts` |
+| `review` | `cli/src/review.ts` |
+| `eval init` | `cli/src/eval/scenarios.ts` |
+| `eval run` | `cli/src/eval/run.ts` |
+| `eval judge` | `cli/src/eval/judge.ts` |
+| `eval feedback import` | `cli/src/eval/runs.ts` |
+| `eval open` | `cli/src/eval/runs.ts` |
+| `plan`, `promote`, `decide` | `cli/src/improve.ts` |
+| `release` | `cli/src/versions.ts` |
+| `package` | `cli/src/package.ts` |
+
+Shared helpers are `cli/src/project.ts` for paths, JSON/JSONL, payload copying,
+IDs, git context, and token-unavailable records; `cli/src/models.ts` for data
+contracts; and `cli/src/report.ts` for reports.
+
+## Eval Runner
+
+```mermaid
+sequenceDiagram
+  participant CLI as meta-skill eval run
+  participant Run as .meta-skill/evals/runs/<run-id>
+  participant Stage as staged workspace
+  participant App as managed Codex App Server
+
+  CLI->>CLI: lint preflight without tests
+  CLI->>Run: create run.json and JSONL files
+  loop each scenario and side
+    CLI->>Stage: copy portable skill and scenario files
+    CLI->>App: start read-only ephemeral thread
+    CLI->>App: send task.md with staged skill attached
+    CLI->>App: send turns.json follow-ups
+    App-->>Run: final.md, turns.jsonl, thread.json, rpc.jsonl
+    CLI->>Run: append scenario_result
+  end
+  CLI->>Run: run deterministic eval tests unless --no-lint
+  CLI->>Run: run judges only when requested
+  CLI->>Run: write final run.json and report.html
+```
+
+Default runner constraints: managed stdio App Server, read-only sandbox,
+`approvalPolicy: "never"`, no network access, one thread per scenario side,
+first turn with staged skill attached, follow-ups from `turns.json`, and token
+metrics recorded as available or explicitly unavailable.
+
+`--app-server-endpoint` is not supported yet; the CLI rejects it.
+
+Live App Server behavior is opt-in. The normal test run skips
+`cli/src/app-server/live-smoke.test.ts` unless `META_SKILL_LIVE_APP_SERVER=1`
+is set and Codex App Server auth is available.
+
+## Evidence Layout
+
+```text
+.meta-skill/evals/
+  evals.json
+  scenarios/
+    R1-basic/
+      task.md
+      scenario.json
+      criteria.json
+      turns.json          optional
+      capability.txt      optional
+      resources/          optional
+    judges/
+  runs/
+    001-initial-candidate/
+      run.json
+      events.jsonl
+      results.jsonl
+      tests.jsonl
+      grades.jsonl
+      feedback.jsonl
+      report.html
+      scenarios/
+        R1-basic/
+          candidate/
+            stage/
+            thread.json
+            turns.jsonl
+            final.md
+            rpc.jsonl
+            artifacts/
+          release/
+            ...
+```
+
+Scenario IDs are strict: `R` regression, `F` failure mode, `T` trigger, and
+`G` gate. `run.json` is the run header; JSONL files store events, scenario
+results, deterministic tests, judge grades, and feedback; `report.html` links
+back into the evidence bundle.
+
+## Human Gates
+
+```mermaid
+flowchart TB
+  auto["Automated or CLI-safe"] --> scaffold["scaffold files"]
+  auto --> lint["lint and tests"]
+  auto --> evals["read-only scenario runs"]
+  auto --> reviews["heuristic reviews"]
+  auto --> plans["plan scaffolds"]
+
+  gate["Needs human approval"] --> promote["promote edits into candidate"]
+  gate --> decide["accept source decision"]
+  gate --> release["create or replace release"]
+  gate --> package["package when not explicitly requested"]
+  gate --> publish["install, publish, sync, marketplace, external writes"]
+```
+
+Keep the verbs separate: `promote` edits candidate files, `decide` records
+accept or reject, `release` snapshots candidate, and `package` emits an artifact.
+
+## Build And Tests
+
+Run from `plugins/meta-skill/cli/`:
+
+```bash
+npm run typecheck
+npm test
+npm run build
+```
+
+`npm test` builds tests into `cli/app/`, runs `node --test "app/**/*.test.js"`,
+then rebuilds production runtime into `cli/app/`. Tests cover layout and
+packaging, lint and manifests, eval orchestration, App Server protocol, staging,
+token usage, the opt-in live smoke contract, and runtime package shape.
+
+Root Perks sync is not required for this architecture doc. If a change touches
+root `AGENTS.md`, `.codex/agents/`, `assets/perks/`, or source `skills/`, run
+`scripts/sync-plugins.sh` before committing.
+
+## Current Limits
+
+- `needs_review` is unresolved evidence, not proof of pass. A completed App
+  Server scenario usually returns `needs_review` unless deterministic checks,
+  judges, or harness errors classify a failure.
+- `review` is heuristic. It is useful triage, not semantic proof.
+- `plan` is a scaffold. It creates an empty edit list that someone must fill
+  from evidence before `promote`.
+- Attached App Server endpoints are not implemented.
+- The plugin is Codex-only and depends on Codex skill attachment plus App Server.
+- `cli/src/` and committed `cli/app/` can drift if maintainers forget to build.
+- Replacing an existing release snapshot requires interactive confirmation.
+
+## Extension Checklist
+
+Add commands in `cli/src/commands.ts`, keep logic in the owning module, update
+`cli/src/models.ts` for new data shapes, test the changed area, run `npm test`,
+and commit regenerated `cli/app/` for code changes.
+
+For eval changes, preserve `.meta-skill/evals/runs/<run-id>/`, scenario-side
+evidence under `scenarios/<scenario>/<side>/`, unavailable-token records,
+read-only/no-approval/no-network defaults, and optional judges.
+
+For package changes, package only the portable payload, never `.meta-skill/`,
+keep candidate and release separate, and keep promote, decide, release, and
+package as separate gated operations.
+
+For lane changes, edit `plugins/meta-skill/skills/<lane>/`, update references
+when syntax or paths change, and keep `AGENTS.md` aligned with routing and gates.

@@ -38,8 +38,8 @@ async function sidesInRun(runRoot, scenarioFolder) {
 function classifyScenarioStatus(status) {
     return status === "failed" || status === "errored" ? "scenario_failed" : null;
 }
-function runStatus(ok, scenarioStatuses) {
-    if (!ok)
+function runStatus(hasFailures, scenarioStatuses) {
+    if (hasFailures)
         return "failed";
     return scenarioStatuses.has("needs_review") ? "needs_review" : "passed";
 }

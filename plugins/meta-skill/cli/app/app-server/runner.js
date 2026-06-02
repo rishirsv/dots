@@ -12,6 +12,7 @@ class AppServerScenarioRunner {
     client;
     clientFactory;
     turnTimeoutMs;
+    rpcPath;
     constructor(options = {}) {
         this.clientFactory = options.clientFactory || ((onLine) => new client_1.AppServerJsonClient(onLine));
         this.turnTimeoutMs = options.turnTimeoutMs || 120000;
@@ -23,13 +24,9 @@ class AppServerScenarioRunner {
         const stageRoot = node_path_1.default.join(rawRoot, "stage");
         await stageWorkspace(input, stageRoot);
         const rpcPath = node_path_1.default.join(rawRoot, "rpc.jsonl");
-        const client = await this.ensureClient(input.appServer, async (line) => {
-            await (0, project_1.appendJsonl)(rpcPath, {
-                schema_version: 1,
-                direction: line.direction,
-                message: line.message
-            });
-        });
+        await this.client?.flush?.();
+        this.rpcPath = rpcPath;
+        const client = await this.ensureClient(input.appServer);
         const start = await client.request("thread/start", {
             cwd: stageRoot,
             runtimeWorkspaceRoots: [stageRoot],
@@ -85,9 +82,17 @@ class AppServerScenarioRunner {
         this.client?.close();
         this.client = undefined;
     }
-    async ensureClient(appServer, onLine) {
+    async ensureClient(appServer) {
         if (!this.client) {
-            this.client = this.clientFactory(onLine);
+            this.client = this.clientFactory(async (line) => {
+                if (!this.rpcPath)
+                    return;
+                await (0, project_1.appendJsonl)(this.rpcPath, {
+                    schema_version: 1,
+                    direction: line.direction,
+                    message: line.message
+                });
+            });
             if (this.client instanceof client_1.AppServerJsonClient)
                 await this.client.connect(appServer);
         }

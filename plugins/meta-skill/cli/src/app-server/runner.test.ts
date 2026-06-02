@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { PassThrough } from "node:stream";
 import { describe, it } from "node:test";
 import type { ScenarioRecord } from "../models";
 import { readJson, readText, writeJson, writeText } from "../project";
 import { AppServerScenarioRunner } from "./runner";
+import { AppServerJsonClient } from "./client";
 
 describe("AppServerScenarioRunner", () => {
   it("writes source-honest App Server evidence with real turn IDs and flushed trace", async () => {
@@ -85,6 +88,56 @@ describe("AppServerScenarioRunner", () => {
       output_tokens: { available: true, value: 7 },
       total_tokens: { available: true, value: 12 }
     });
+  });
+
+  it("writes each reused-client scenario side trace to that side rpc.jsonl", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-trace-"));
+    const skillRoot = path.join(root, "skill");
+    const scenario = await fixtureScenario(root, []);
+    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    const runRoot = path.join(root, "run");
+    const fake = new FakeScenarioClient();
+    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+    const appServer = { mode: "managed" as const, endpoint: null, auth: "inherited" as const, protocol: "generated-ts" as const, generatedTypes: "test" };
+
+    await runner.run({ projectRoot: skillRoot, skillRoot, scenario, side: "candidate", runId: "001-test", runRoot, appServer });
+    await runner.run({ projectRoot: skillRoot, skillRoot, scenario, side: "release", runId: "001-test", runRoot, appServer });
+
+    const candidateTrace = await readText(path.join(runRoot, "scenarios", scenario.folder, "candidate", "rpc.jsonl"));
+    const releaseTrace = await readText(path.join(runRoot, "scenarios", scenario.folder, "release", "rpc.jsonl"));
+    assert.match(candidateTrace, /thread\/start/);
+    assert.match(releaseTrace, /thread\/start/);
+  });
+
+  it("covers the runner JSONL protocol contract without a live App Server", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-contract-"));
+    const skillRoot = path.join(root, "skill");
+    const scenario = await fixtureScenario(root, []);
+    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    const child = new ProtocolFixtureChild();
+    const runner = new AppServerScenarioRunner({
+      clientFactory: (onLine) => new AppServerJsonClient({ onLine, spawnProcess: () => child.asChild(), requestTimeoutMs: 1000 }),
+      turnTimeoutMs: 1000
+    });
+
+    const result = await runner.run({
+      projectRoot: skillRoot,
+      skillRoot,
+      scenario,
+      side: "candidate",
+      runId: "001-test",
+      runRoot: path.join(root, "run"),
+      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    assert.equal(result.status, "needs_review");
+    assert.deepEqual(
+      child.messages.map((message) => message.method),
+      ["initialize", "initialized", "thread/start", "turn/start"]
+    );
+    assert.equal("jsonrpc" in child.messages[0], false);
+    assert.equal((child.messages.find((message) => message.method === "thread/start")?.params as { sandbox?: string }).sandbox, "read-only");
+    assert.deepEqual((child.messages.find((message) => message.method === "turn/start")?.params as { sandboxPolicy?: unknown }).sandboxPolicy, { type: "readOnly", networkAccess: false });
   });
 
   it("times out when a turn never completes", async () => {
@@ -197,4 +250,62 @@ class FakeScenarioClient {
   }
 
   close(): void {}
+}
+
+class ProtocolFixtureChild extends EventEmitter {
+  stdin = new PassThrough();
+  stdout = new PassThrough();
+  stderr = new PassThrough();
+  messages: Array<Record<string, unknown>> = [];
+  private buffer = "";
+
+  constructor() {
+    super();
+    this.stdin.on("data", (chunk) => {
+      this.buffer += chunk.toString();
+      let newline = this.buffer.indexOf("\n");
+      while (newline >= 0) {
+        const line = this.buffer.slice(0, newline);
+        this.buffer = this.buffer.slice(newline + 1);
+        if (line.trim()) this.receive(JSON.parse(line) as Record<string, unknown>);
+        newline = this.buffer.indexOf("\n");
+      }
+    });
+  }
+
+  asChild() {
+    return this as unknown as import("node:child_process").ChildProcessWithoutNullStreams;
+  }
+
+  kill(): boolean {
+    this.emit("exit", 0);
+    return true;
+  }
+
+  private receive(message: Record<string, unknown>): void {
+    this.messages.push(message);
+    if (message.method === "initialize") {
+      this.respond(message.id, {});
+      return;
+    }
+    if (message.method === "initialized") return;
+    if (message.method === "thread/start") {
+      this.respond(message.id, { thread: { id: "thread-contract" } });
+      return;
+    }
+    if (message.method === "turn/start") {
+      this.respond(message.id, { turn: { id: "turn-contract" } });
+      this.writeStdout(`${JSON.stringify({ method: "item/agentMessage/delta", params: { threadId: "thread-contract", turnId: "turn-contract", delta: "contract final" } })}\n`);
+      this.writeStdout(`${JSON.stringify({ method: "thread/tokenUsage/updated", params: { threadId: "thread-contract", turnId: "turn-contract", tokenUsage: { last: { inputTokens: 3, outputTokens: 4, totalTokens: 7 } } } })}\n`);
+      this.writeStdout(`${JSON.stringify({ method: "turn/completed", params: { threadId: "thread-contract", turn: { id: "turn-contract" } } })}\n`);
+    }
+  }
+
+  private respond(id: unknown, result: unknown): void {
+    this.writeStdout(`${JSON.stringify({ id, result })}\n`);
+  }
+
+  private writeStdout(text: string): void {
+    this.stdout.write(text);
+  }
 }

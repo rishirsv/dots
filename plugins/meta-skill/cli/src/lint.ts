@@ -50,7 +50,7 @@ export async function lintProject(target: string, options: LintOptions = {}): Pr
 
   if (options.executeTests !== false && (await exists(p.testManifest))) {
     const manifest = await readJson<TestManifest>(p.testManifest);
-    tests.push(...(await runManifestTests(root, manifest, options.runId ? "eval" : "unit")));
+    tests.push(...(await runManifestTests(root, manifest, options.runId ? "eval" : "unit", options.runId ? { runId: options.runId, runRoot: path.join(p.runs, options.runId), projectRoot: root } : undefined)));
   }
 
   let annotations = 0;
@@ -267,12 +267,29 @@ function parseMarkdownFrontmatter(text: string): Record<string, string> {
   return result;
 }
 
-async function runManifestTests(root: string, manifest: TestManifest, kind: "unit" | "eval"): Promise<LintReport["tests"]> {
+async function runManifestTests(
+  root: string,
+  manifest: TestManifest,
+  kind: "unit" | "eval",
+  runEnv?: { runId: string; runRoot: string; projectRoot: string }
+): Promise<LintReport["tests"]> {
   const rows: LintReport["tests"] = [];
   for (const test of manifest.tests || []) {
     if (test.kind !== kind) continue;
     try {
-      const { stdout, stderr } = await execAsync(test.command, { cwd: root, timeout: 120000, maxBuffer: 1024 * 1024 });
+      const { stdout, stderr } = await execAsync(test.command, {
+        cwd: root,
+        timeout: 120000,
+        maxBuffer: 1024 * 1024,
+        env: runEnv
+          ? {
+              ...process.env,
+              META_SKILL_RUN_ID: runEnv.runId,
+              META_SKILL_RUN_ROOT: runEnv.runRoot,
+              META_SKILL_PROJECT_ROOT: runEnv.projectRoot
+            }
+          : process.env
+      });
       rows.push({ id: test.id, kind: test.kind, status: "passed", command: test.command, output: `${stdout}${stderr}`.trim() });
     } catch (error) {
       const output = error && typeof error === "object" && "stdout" in error ? `${(error as { stdout?: string }).stdout || ""}${(error as { stderr?: string }).stderr || ""}`.trim() : String(error);

@@ -17,7 +17,9 @@ describe("runtime package layout", () => {
     assert.match(packageJson.scripts.build, /rm -rf app && tsc -p tsconfig\.json/);
     assert.match(packageJson.scripts["build:test"], /rm -rf app && tsc -p tsconfig\.test\.json/);
     assert.match(packageJson.scripts.test, /node --test "app\/\*\*\/\*\.test\.js"/);
-    assert.match(packageJson.scripts.test, /npm run build$/);
+    assert.match(packageJson.scripts.test, /npm run build && npm run check:app$/);
+    assert.match(packageJson.scripts["check:app"], /diff -qr "\$tmp" app/);
+    assert.match(packageJson.scripts.test, /npm run check:app$/);
     assert.match(bin, /app\/main\.js/);
   });
 });
