@@ -12,7 +12,7 @@ flowchart LR
   orchestrator --> create["skill-create\nmake skill payloads"]
   orchestrator --> eval["skill-eval\nrun scenarios"]
   orchestrator --> improve["skill-improve\npatch from evidence"]
-  create --> cli["bin/meta-skill\nCLI runtime"]
+  create --> cli["scripts/meta-skill.js\nCLI runtime"]
   eval --> cli
   improve --> cli
   cli --> project["Skill project\nportable payload + .meta-skill workbench"]
@@ -30,20 +30,22 @@ packaging, install, publish, marketplace sync, and external writes.
 plugins/meta-skill/
   AGENTS.md                     plugin orchestrator prompt
   .codex-plugin/plugin.json     plugin manifest
-  bin/meta-skill                shell shim to cli/app/main.js
+  package.json                  Node package root and meta-skill bin
+  package-lock.json             locked TypeScript toolchain
+  tsconfig.json                 production TypeScript build
+  tsconfig.test.json            test TypeScript build
+  scripts/meta-skill.js         Node bin entrypoint to app/main.js
+  src/                          TypeScript source
+  app/                          committed JavaScript runtime
   assets/                       manifest icon and logo
   skills/
     skill-create/               creation lane and references
     skill-eval/                 eval lane and references
     skill-improve/              improvement lane and references
-  cli/
-    package.json                build, typecheck, test scripts
-    src/                        TypeScript source
-    app/                        committed JavaScript runtime
 ```
 
-`bin/meta-skill` runs `cli/app/main.js`, so TypeScript changes must be rebuilt
-into `cli/app/`. The committed runtime is not optional.
+`scripts/meta-skill.js` runs `app/main.js`, so TypeScript changes must be
+rebuilt into `app/`. The committed runtime is not optional.
 
 This plugin is separate from generated Agent plugin packages under
 `plugins/codex/agent/` and `plugins/claude/agent/`. Do not hand-edit those
@@ -107,26 +109,26 @@ editing source, and `skill-improve` edits only from evidence with gates.
 
 ## CLI Ownership
 
-Top-level command dispatch lives in `cli/src/commands.ts`.
+Top-level command dispatch lives in `src/commands.ts`.
 
 | Command | Owner |
 |---|---|
-| `create` | `cli/src/skills.ts` |
-| `project init` | `cli/src/skills.ts`, `cli/src/project.ts` |
-| `lint` | `cli/src/lint.ts` |
-| `review` | `cli/src/review.ts` |
-| `eval init` | `cli/src/eval/scenarios.ts` |
-| `eval run` | `cli/src/eval/run.ts` |
-| `eval judge` | `cli/src/eval/judge.ts` |
-| `eval feedback import` | `cli/src/eval/runs.ts` |
-| `eval open`, `eval list`, `eval view` | `cli/src/eval/runs.ts` |
-| `plan`, `promote`, `decide` | `cli/src/improve.ts` |
-| `release` | `cli/src/versions.ts` |
-| `package` | `cli/src/package.ts` |
+| `create` | `src/skills.ts` |
+| `project init` | `src/skills.ts`, `src/project.ts` |
+| `lint` | `src/lint.ts` |
+| `review` | `src/review.ts` |
+| `eval init` | `src/eval/scenarios.ts` |
+| `eval run` | `src/eval/run.ts` |
+| `eval judge` | `src/eval/judge.ts` |
+| `eval feedback import` | `src/eval/runs.ts` |
+| `eval open`, `eval list`, `eval view` | `src/eval/runs.ts` |
+| `plan`, `promote`, `decide` | `src/improve.ts` |
+| `release` | `src/versions.ts` |
+| `package` | `src/package.ts` |
 
-Shared helpers are `cli/src/project.ts` for paths, JSON/JSONL, payload copying,
-IDs, git context, and token-unavailable records; `cli/src/models.ts` for data
-contracts; and `cli/src/report.ts` for reports.
+Shared helpers are `src/project.ts` for paths, JSON/JSONL, payload copying,
+IDs, git context, and token-unavailable records; `src/models.ts` for data
+contracts; and `src/report.ts` for reports.
 
 ## Eval Runner
 
@@ -161,7 +163,7 @@ metrics recorded as available or explicitly unavailable.
 `--app-server-endpoint` is not supported yet; the CLI rejects it.
 
 Live App Server behavior is opt-in. The normal test run skips
-`cli/src/app-server/live-smoke.test.ts` unless `META_SKILL_LIVE_APP_SERVER=1`
+`src/app-server/live-smoke.test.ts` unless `META_SKILL_LIVE_APP_SERVER=1`
 is set and Codex App Server auth is available.
 
 ## Evidence Layout
@@ -239,7 +241,7 @@ accept or reject, `release` snapshots candidate, and `package` emits an artifact
 
 ## Build And Tests
 
-Run from `plugins/meta-skill/cli/`:
+Run from `plugins/meta-skill/`:
 
 ```bash
 npm run typecheck
@@ -247,8 +249,8 @@ npm test
 npm run build
 ```
 
-`npm test` builds tests into `cli/app/`, runs `node --test "app/**/*.test.js"`,
-then rebuilds production runtime into `cli/app/`. Tests cover layout and
+`npm test` builds tests into `app/`, runs `node --test "app/**/*.test.js"`,
+then rebuilds production runtime into `app/`. Tests cover layout and
 packaging, lint and manifests, eval orchestration, App Server protocol, staging,
 token usage, the opt-in live smoke contract, and runtime package shape.
 
@@ -272,14 +274,14 @@ root `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or source `skills/`, run
   turn.
 - Attached App Server endpoints are not implemented.
 - The plugin is Codex-only and depends on Codex skill attachment plus App Server.
-- `cli/src/` and committed `cli/app/` can drift if maintainers forget to build.
+- `src/` and committed `app/` can drift if maintainers forget to build.
 - Replacing an existing release snapshot requires interactive confirmation.
 
 ## Extension Checklist
 
-Add commands in `cli/src/commands.ts`, keep logic in the owning module, update
-`cli/src/models.ts` for new data shapes, test the changed area, run `npm test`,
-and commit regenerated `cli/app/` for code changes.
+Add commands in `src/commands.ts`, keep logic in the owning module, update
+`src/models.ts` for new data shapes, test the changed area, run `npm test`,
+and commit regenerated `app/` for code changes.
 
 For eval changes, preserve `.meta-skill/evals/runs/<run-id>/`, scenario-side
 evidence under `scenarios/<scenario>/<side>/`, unavailable-token records,

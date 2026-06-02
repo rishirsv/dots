@@ -6,11 +6,12 @@ import { describe, it } from "node:test";
 describe("runtime package layout", () => {
   it("keeps tests out of the shipped app build while preserving one runtime folder", async () => {
     const root = process.cwd();
-    const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { scripts: Record<string, string> };
+    const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { bin: Record<string, string>; scripts: Record<string, string> };
     const tsconfig = JSON.parse(await fs.readFile(path.join(root, "tsconfig.json"), "utf8")) as { compilerOptions: { outDir: string }; exclude: string[] };
     const testTsconfig = JSON.parse(await fs.readFile(path.join(root, "tsconfig.test.json"), "utf8")) as { compilerOptions: { outDir: string } };
-    const bin = await fs.readFile(path.join(root, "..", "bin", "meta-skill"), "utf8");
+    const launcher = await fs.readFile(path.join(root, "scripts", "meta-skill.js"), "utf8");
 
+    assert.equal(packageJson.bin["meta-skill"], "./scripts/meta-skill.js");
     assert.equal(tsconfig.compilerOptions.outDir, "app");
     assert.equal(testTsconfig.compilerOptions.outDir, "app");
     assert.equal(tsconfig.exclude.includes("src/**/*.test.ts"), true);
@@ -20,6 +21,6 @@ describe("runtime package layout", () => {
     assert.match(packageJson.scripts.test, /npm run build && npm run check:app$/);
     assert.match(packageJson.scripts["check:app"], /diff -qr "\$tmp" app/);
     assert.match(packageJson.scripts.test, /npm run check:app$/);
-    assert.match(bin, /app\/main\.js/);
+    assert.match(launcher, /app", "main\.js/);
   });
 });
