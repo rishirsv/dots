@@ -113,5 +113,5 @@ If this is a re-review, say what changed since the previous review and whether t
 """
 
 [[skills.config]]
-path = "/Users/rishi/Code/perks/skills/code-quality/SKILL.md"
+path = "/Users/rishi/Code/agent/skills/code-quality/SKILL.md"
 enabled = true

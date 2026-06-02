@@ -17,7 +17,7 @@ Default to an inline handoff. Write a file only when the user asks for one, the 
 4. List the next concrete actions in execution order.
 5. Name validation already run and validation still needed.
 6. Call out blockers, assumptions, risks, and unknowns.
-7. Suggest only the Perks skills that would materially help the next agent.
+7. Suggest only the Agent skills that would materially help the next agent.
 
 ## Output
 

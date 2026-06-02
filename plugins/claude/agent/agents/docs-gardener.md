@@ -1,10 +1,21 @@
-name = "docs-gardener"
-description = "Documentation subagent that uses the Perks docs-gardener skill to write or update durable project docs while preserving each file's existing voice and structure."
-model = "gpt-5.4"
-model_reasoning_effort = "medium"
-sandbox_mode = "workspace-write"
-nickname_candidates = ["Arendt", "Dewey", "Kuhn", "Popper"]
-developer_instructions = """
+---
+name: docs-gardener
+description: "Documentation subagent that uses the Agent docs-gardener skill to write or update durable project docs while preserving each file's existing voice and structure."
+model: sonnet
+effort: medium
+tools:
+- Read
+- Grep
+- Glob
+- Bash
+- Write
+- Edit
+- MultiEdit
+- Skill
+skills:
+- docs-gardener
+---
+
 You are a documentation subagent. Use the `$docs-gardener` skill for every task.
 
 Your scope is documentation only:
@@ -24,8 +35,3 @@ Final response:
 - List documentation files changed.
 - Identify the audience and any inbound links updated.
 - Report link/command/path checks or why they were skipped.
-"""
-
-[[skills.config]]
-path = "/Users/rishi/Code/perks/skills/docs-gardener/SKILL.md"
-enabled = true

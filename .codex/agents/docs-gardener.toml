@@ -1,5 +1,5 @@
 name = "docs-gardener"
-description = "Documentation subagent that uses the Perks docs-gardener skill to write or update durable project docs while preserving each file's existing voice and structure."
+description = "Documentation subagent that uses the Agent docs-gardener skill to write or update durable project docs while preserving each file's existing voice and structure."
 model = "gpt-5.4"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
@@ -27,5 +27,5 @@ Final response:
 """
 
 [[skills.config]]
-path = "/Users/rishi/Code/perks/skills/docs-gardener/SKILL.md"
+path = "/Users/rishi/Code/agent/skills/docs-gardener/SKILL.md"
 enabled = true

@@ -4,13 +4,13 @@ Copy the prompt below into Claude on the target Mac.
 
 ---
 
-You are helping me fully reset and reinstall OpenAI Codex on this Mac using my `perks` repo as reference material.
+You are helping me fully reset and reinstall OpenAI Codex on this Mac using my `agent` repo as reference material.
 
-Goal: delete the existing Codex app, Codex CLI, Codex configs, Codex caches, Codex plugins, and Codex skills; reinstall the Codex CLI fresh; clone my `perks` repo; install its Codex config; and run the Perks plugin sync.
+Goal: delete the existing Codex app, Codex CLI, Codex configs, Codex caches, Codex plugins, and Codex skills; reinstall the Codex CLI fresh; clone my `agent` repo; install its Codex config; and run the Agent plugin sync.
 
 Repo:
 
-    https://github.com/rishirsv/perks.git
+    https://github.com/rishirsv/agent.git
 
 Important behavior:
 
@@ -58,17 +58,17 @@ Then verify:
     which codex
     codex --version
 
-4. Clone or update `perks`.
+4. Clone or update `agent`.
 
 Use:
 
     mkdir -p ~/Code
-    if [ -d ~/Code/perks/.git ]; then
-      cd ~/Code/perks
+    if [ -d ~/Code/agent/.git ]; then
+      cd ~/Code/agent
       git pull --ff-only
     else
-      git clone https://github.com/rishirsv/perks.git ~/Code/perks
-      cd ~/Code/perks
+      git clone https://github.com/rishirsv/agent.git ~/Code/agent
+      cd ~/Code/agent
     fi
 
 5. Install the repo Codex config into the machine config.
@@ -76,7 +76,7 @@ Use:
 Create `~/.codex` and copy the repo config:
 
     mkdir -p ~/.codex
-    cp ~/Code/perks/.codex/config.toml ~/.codex/config.toml
+    cp ~/Code/agent/.codex/config.toml ~/.codex/config.toml
 
 Then inspect it:
 
@@ -88,20 +88,20 @@ Expected important settings:
     sandbox_mode = "danger-full-access"
     web_search = "live"
 
-6. Sync and install the Perks plugins.
+6. Sync and install the Agent plugins.
 
 Run:
 
-    cd ~/Code/perks
+    cd ~/Code/agent
     scripts/sync-plugins.sh
 
-This rebuilds the Codex and Claude plugin folders from `skills/`, registers the public Perks marketplace from GitHub, installs `perks@perks`, refreshes local plugin caches, copies repo `AGENTS.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `AGENTS.md`.
+This rebuilds the Codex and Claude plugin folders from `skills/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, refreshes local plugin caches, copies repo `AGENTS.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `AGENTS.md`.
 
 7. Open Codex once so it initializes plugin/cache state.
 
 Run:
 
-    cd ~/Code/perks
+    cd ~/Code/agent
     codex --help
 
 If Codex requires login, run:
@@ -110,17 +110,17 @@ If Codex requires login, run:
 
 Then restart Codex after login.
 
-8. Verify the Perks repo state.
+8. Verify the Agent repo state.
 
 Check:
 
-    test -f ~/Code/perks/README.md
-    test -f ~/Code/perks/.codex/config.toml
-    test -d ~/Code/perks/skills
-    test -d ~/Code/perks/plugins/codex/perks/skills
-    test -d ~/Code/perks/plugins/claude/perks/skills
-    test -f ~/Code/perks/.agents/plugins/marketplace.json
-    test -f ~/Code/perks/.claude-plugin/marketplace.json
+    test -f ~/Code/agent/README.md
+    test -f ~/Code/agent/.codex/config.toml
+    test -d ~/Code/agent/skills
+    test -d ~/Code/agent/plugins/codex/agent/skills
+    test -d ~/Code/agent/plugins/claude/agent/skills
+    test -f ~/Code/agent/.agents/plugins/marketplace.json
+    test -f ~/Code/agent/.claude-plugin/marketplace.json
     test -f ~/.codex/AGENTS.md
     test -L ~/.claude/CLAUDE.md
 
@@ -128,14 +128,14 @@ Check:
 
 Run:
 
-    rg -n 'github@openai-curated|perks@perks|marketplaces.perks' ~/.codex/config.toml || true
+    rg -n 'github@openai-curated|agent@agent|marketplaces.agent' ~/.codex/config.toml || true
 
 Expected:
 
     [plugins."github@openai-curated"]
     enabled = false
 
-Expected: `perks@perks` is enabled after `scripts/sync-plugins.sh`. If the GitHub plugin block is missing, that is acceptable. Do not enable it unless intentionally needed.
+Expected: `agent@agent` is enabled after `scripts/sync-plugins.sh`. If the GitHub plugin block is missing, that is acceptable. Do not enable it unless intentionally needed.
 
 10. Final report.
 
@@ -143,7 +143,7 @@ Report:
 
 - Codex CLI path and version.
 - Whether `~/.codex/config.toml` was installed.
-- Whether `perks` was cloned or updated.
-- Confirm that the `perks` marketplace is registered.
-- Confirm that `perks@perks` is enabled.
+- Whether `agent` was cloned or updated.
+- Confirm that the `agent` marketplace is registered.
+- Confirm that `agent@agent` is enabled.
 - Any login or restart still required.

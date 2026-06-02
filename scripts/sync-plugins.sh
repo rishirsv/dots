@@ -2,9 +2,9 @@
 set -euo pipefail
 
 ROOT="${0:A:h:h}"
-PLUGIN_NAME="perks"
+PLUGIN_NAME="agent"
 VERSION="0.1.0"
-MARKETPLACE_SOURCE="${PERKS_MARKETPLACE_SOURCE:-rishirsv/perks}"
+MARKETPLACE_SOURCE="${AGENT_MARKETPLACE_SOURCE:-rishirsv/agent}"
 
 SOURCE_SKILLS="$ROOT/skills"
 SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
@@ -16,14 +16,13 @@ CLAUDE_PLUGIN_AGENTS="$CLAUDE_PLUGIN/agents"
 CODEX_MARKETPLACE_DIR="$ROOT/.agents/plugins"
 CODEX_MARKETPLACE="$CODEX_MARKETPLACE_DIR/marketplace.json"
 CLAUDE_MARKETPLACE="$ROOT/.claude-plugin/marketplace.json"
-CLAUDE_MARKETPLACE_COMPAT="$ROOT/marketplace.json"
 SYSTEM_AGENTS_SOURCE="$ROOT/AGENTS.md"
 CODEX_SYSTEM_AGENTS="$HOME/.codex/AGENTS.md"
 CODEX_USER_AGENTS="$HOME/.codex/agents"
-CODEX_USER_AGENT_MARKER="$CODEX_USER_AGENTS/.perks-managed-agents"
+CODEX_USER_AGENT_MARKER="$CODEX_USER_AGENTS/.agent-managed-agents"
 CLAUDE_SYSTEM_AGENTS="$HOME/.claude/CLAUDE.md"
 CLAUDE_USER_AGENTS="$HOME/.claude/agents"
-CLAUDE_USER_AGENT_MARKER="$CLAUDE_USER_AGENTS/.perks-managed-agents"
+CLAUDE_USER_AGENT_MARKER="$CLAUDE_USER_AGENTS/.agent-managed-agents"
 
 if [[ ! -d "$SOURCE_SKILLS" ]]; then
   echo "Missing source skills directory: $SOURCE_SKILLS" >&2
@@ -211,25 +210,24 @@ codex_plugin = root / "plugins" / "codex" / name / ".codex-plugin" / "plugin.jso
 claude_plugin = root / "plugins" / "claude" / name / ".claude-plugin" / "plugin.json"
 codex_marketplace = root / ".agents" / "plugins" / "marketplace.json"
 claude_marketplace = root / ".claude-plugin" / "marketplace.json"
-claude_marketplace_compat = root / "marketplace.json"
 
 codex_manifest = {
     "name": name,
     "version": version,
-    "description": "Rishi's personal Codex workflows and reusable skills.",
+    "description": "Rishi's personal agent workflows and reusable skills for Codex.",
     "author": {"name": "Rishi"},
-    "repository": "https://github.com/rishirsv/perks",
+    "repository": "https://github.com/rishirsv/agent",
     "license": "UNLICENSED",
     "keywords": ["personal", "skills", "workflow"],
     "skills": "./skills/",
     "interface": {
-        "displayName": "Perks",
-        "shortDescription": "Rishi's personal Codex workflows.",
-        "longDescription": "Perks packages Rishi's reusable coding, review, planning, and workflow skills for Codex.",
+        "displayName": "Agent",
+        "shortDescription": "Rishi's personal agent workflows.",
+        "longDescription": "Agent packages Rishi's reusable coding, review, planning, and workflow skills for Codex.",
         "developerName": "Rishi",
         "category": "Productivity",
         "capabilities": ["Read", "Write"],
-        "defaultPrompt": "Use Perks for this workflow.",
+        "defaultPrompt": "Use Agent for this workflow.",
         "brandColor": "#006DFF",
         "composerIcon": "./assets/icon.png",
         "logo": "./assets/logo.png",
@@ -240,9 +238,9 @@ codex_manifest = {
 claude_manifest = {
     "name": name,
     "version": version,
-    "description": "Rishi's personal Claude workflows and reusable skills.",
+    "description": "Rishi's personal agent workflows and reusable skills for Claude.",
     "author": {"name": "Rishi"},
-    "repository": "https://github.com/rishirsv/perks",
+    "repository": "https://github.com/rishirsv/agent",
     "license": "UNLICENSED",
     "keywords": ["personal", "skills", "workflow"],
     "skills": "./skills/"
@@ -250,11 +248,11 @@ claude_manifest = {
 
 codex_catalog = {
     "name": name,
-    "interface": {"displayName": "Perks"},
+    "interface": {"displayName": "Agent"},
     "plugins": [
         {
             "name": name,
-            "source": {"source": "local", "path": "./plugins/codex/perks"},
+            "source": {"source": "local", "path": f"./plugins/codex/{name}"},
             "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
             "category": "Productivity"
         }
@@ -277,13 +275,13 @@ claude_catalog = {
     "owner": {"name": "Rishi"},
     "metadata": {
         "version": version,
-        "description": "Rishi's personal Claude plugin marketplace and reusable skills."
+        "description": "Rishi's personal agent plugin marketplace and reusable skills."
     },
     "plugins": [
         {
             "name": name,
-            "description": "Rishi's personal Claude workflows and reusable skills.",
-            "source": "./plugins/claude/perks",
+            "description": "Rishi's personal agent workflows and reusable skills for Claude.",
+            "source": f"./plugins/claude/{name}",
             "version": version,
             "category": "productivity",
             "tags": ["personal", "skills", "workflow"]
@@ -296,7 +294,6 @@ for path, data in [
     (claude_plugin, claude_manifest),
     (codex_marketplace, codex_catalog),
     (claude_marketplace, claude_catalog),
-    (claude_marketplace_compat, claude_catalog),
 ]:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2) + "\n")
@@ -309,23 +306,26 @@ fi
 
 if command -v claude >/dev/null 2>&1; then
   claude plugin validate "$CLAUDE_PLUGIN"
-  claude plugin validate "$ROOT"
 fi
 
 if command -v codex >/dev/null 2>&1; then
-  codex plugin remove "rs-tools@rs-tools" >/dev/null 2>&1 || true
-  codex plugin marketplace remove "rs-tools" >/dev/null 2>&1 || true
   codex plugin marketplace remove "$PLUGIN_NAME" >/dev/null 2>&1 || true
-  codex plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .agents --sparse plugins/codex --sparse plugins/meta-skill
+  if [[ -d "$MARKETPLACE_SOURCE" ]]; then
+    codex plugin marketplace add "$MARKETPLACE_SOURCE"
+  else
+    codex plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .agents --sparse plugins/codex --sparse plugins/meta-skill
+  fi
   codex plugin remove "$PLUGIN_NAME@$PLUGIN_NAME" >/dev/null 2>&1 || true
   codex plugin add "$PLUGIN_NAME@$PLUGIN_NAME"
 fi
 
 if command -v claude >/dev/null 2>&1; then
-  claude plugin uninstall "rs-tools@rs-tools" --scope user >/dev/null 2>&1 || true
-  claude plugin marketplace remove "rs-tools" >/dev/null 2>&1 || true
   claude plugin marketplace remove "$PLUGIN_NAME" >/dev/null 2>&1 || true
-  claude plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .claude-plugin plugins/claude
+  if [[ -d "$MARKETPLACE_SOURCE" ]]; then
+    claude plugin marketplace add "$MARKETPLACE_SOURCE"
+  else
+    claude plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .claude-plugin plugins/claude
+  fi
   claude plugin uninstall "$PLUGIN_NAME@$PLUGIN_NAME" >/dev/null 2>&1 || true
   claude plugin install "$PLUGIN_NAME@$PLUGIN_NAME" --scope user || claude plugin update "$PLUGIN_NAME@$PLUGIN_NAME" --scope user
 fi

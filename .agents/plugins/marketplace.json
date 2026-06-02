@@ -1,14 +1,14 @@
 {
-  "name": "perks",
+  "name": "agent",
   "interface": {
-    "displayName": "Perks"
+    "displayName": "Agent"
   },
   "plugins": [
     {
-      "name": "perks",
+      "name": "agent",
       "source": {
         "source": "local",
-        "path": "./plugins/codex/perks"
+        "path": "./plugins/codex/agent"
       },
       "policy": {
         "installation": "AVAILABLE",

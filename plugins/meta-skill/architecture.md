@@ -45,8 +45,8 @@ plugins/meta-skill/
 `bin/meta-skill` runs `cli/app/main.js`, so TypeScript changes must be rebuilt
 into `cli/app/`. The committed runtime is not optional.
 
-This plugin is separate from generated Perks plugin packages under
-`plugins/codex/perks/` and `plugins/claude/perks/`. Do not hand-edit those
+This plugin is separate from generated Agent plugin packages under
+`plugins/codex/agent/` and `plugins/claude/agent/`. Do not hand-edit those
 generated packages.
 
 ## Skill Project Model
@@ -252,8 +252,8 @@ then rebuilds production runtime into `cli/app/`. Tests cover layout and
 packaging, lint and manifests, eval orchestration, App Server protocol, staging,
 token usage, the opt-in live smoke contract, and runtime package shape.
 
-Root Perks sync is not required for this architecture doc. If a change touches
-root `AGENTS.md`, `.codex/agents/`, `assets/perks/`, or source `skills/`, run
+Root Agent sync is not required for this architecture doc. If a change touches
+root `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or source `skills/`, run
 `scripts/sync-plugins.sh` before committing.
 
 ## Current Limits

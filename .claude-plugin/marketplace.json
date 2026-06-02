@@ -1,17 +1,17 @@
 {
-  "name": "perks",
+  "name": "agent",
   "owner": {
     "name": "Rishi"
   },
   "metadata": {
     "version": "0.1.0",
-    "description": "Rishi's personal Claude plugin marketplace and reusable skills."
+    "description": "Rishi's personal agent plugin marketplace and reusable skills."
   },
   "plugins": [
     {
-      "name": "perks",
-      "description": "Rishi's personal Claude workflows and reusable skills.",
-      "source": "./plugins/claude/perks",
+      "name": "agent",
+      "description": "Rishi's personal agent workflows and reusable skills for Claude.",
+      "source": "./plugins/claude/agent",
       "version": "0.1.0",
       "category": "productivity",
       "tags": [

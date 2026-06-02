@@ -1,5 +1,5 @@
 {
-  "name": "@perks/meta-skill-cli",
+  "name": "@agent/meta-skill-cli",
   "version": "0.1.0",
   "private": true,
   "description": "Meta Skill TypeScript CLI for portable skill workbenches.",

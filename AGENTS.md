@@ -1,9 +1,9 @@
 # AGENTS.md
 
-## Perks Repo
+## Agent Repo
 
-In `~/Code/perks`:
+In `~/Code/agent`:
 
-- `skills/`, `.codex/agents/`, `assets/perks/`, and `AGENTS.md` are the source files to edit.
-- Do not hand-edit generated plugin packages under `plugins/codex/perks/` or `plugins/claude/perks/`.
-- If `AGENTS.md`, `.codex/agents/`, `assets/perks/`, or anything under `skills/` changes, run `scripts/sync-plugins.sh` before committing.
+- `skills/`, `.codex/agents/`, `assets/agent/`, and `AGENTS.md` are the source files to edit.
+- Do not hand-edit generated plugin packages under `plugins/codex/agent/` or `plugins/claude/agent/`.
+- If `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or anything under `skills/` changes, run `scripts/sync-plugins.sh` before committing.

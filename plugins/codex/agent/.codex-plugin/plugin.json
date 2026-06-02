@@ -1,11 +1,11 @@
 {
-  "name": "perks",
+  "name": "agent",
   "version": "0.1.0",
-  "description": "Rishi's personal Codex workflows and reusable skills.",
+  "description": "Rishi's personal agent workflows and reusable skills for Codex.",
   "author": {
     "name": "Rishi"
   },
-  "repository": "https://github.com/rishirsv/perks",
+  "repository": "https://github.com/rishirsv/agent",
   "license": "UNLICENSED",
   "keywords": [
     "personal",
@@ -14,16 +14,16 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Perks",
-    "shortDescription": "Rishi's personal Codex workflows.",
-    "longDescription": "Perks packages Rishi's reusable coding, review, planning, and workflow skills for Codex.",
+    "displayName": "Agent",
+    "shortDescription": "Rishi's personal agent workflows.",
+    "longDescription": "Agent packages Rishi's reusable coding, review, planning, and workflow skills for Codex.",
     "developerName": "Rishi",
     "category": "Productivity",
     "capabilities": [
       "Read",
       "Write"
     ],
-    "defaultPrompt": "Use Perks for this workflow.",
+    "defaultPrompt": "Use Agent for this workflow.",
     "brandColor": "#006DFF",
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png",
