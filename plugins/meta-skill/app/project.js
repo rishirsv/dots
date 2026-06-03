@@ -263,9 +263,13 @@ async function sha256File(target) {
 }
 function unavailableTokenUsage(reason) {
     return {
-        input_tokens: { available: false, reason },
-        output_tokens: { available: false, reason },
-        total_tokens: { available: false, reason }
+        input_tokens: null,
+        output_tokens: null,
+        total_tokens: null,
+        cached_input_tokens: null,
+        reasoning_tokens: null,
+        model_context_window: null,
+        unavailable_reason: reason
     };
 }
 function eventEnvelope(input) {

@@ -5,7 +5,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { runEval } from "./evals";
 import { lintProject } from "./lint";
-import type { TokenUsageSummary } from "./models";
+import type { TokenUsage } from "./models";
 import { CliError, exists, readJson, readText, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
 
@@ -61,6 +61,7 @@ describe("lint, command parsing, and eval evidence", () => {
           await writeText(path.join(scenarioRoot, "turns.jsonl"), "");
           await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
           await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
+          await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
           return {
             execution_status: "completed",
             token_usage: tokenSummary(1, 1, 2),
@@ -94,17 +95,21 @@ describe("lint, command parsing, and eval evidence", () => {
   });
 });
 
-function tokenSummary(input: number, output: number, total: number): TokenUsageSummary {
+function tokenSummary(input: number, output: number, total: number): TokenUsage {
   return {
-    availability: "present",
-    sample_unit: "scenario",
-    sample_count: 1,
-    unavailable_count: 0,
-    input_tokens: { total: input, average: input, min: input, max: input },
-    output_tokens: { total: output, average: output, min: output, max: output },
-    total_tokens: { total, average: total, min: total, max: total },
-    unavailable_reasons: []
+    input_tokens: input,
+    output_tokens: output,
+    total_tokens: total,
+    cached_input_tokens: null,
+    reasoning_tokens: null,
+    model_context_window: null,
+    unavailable_reason: null
   };
+}
+
+function tokenUsageEvidence(input: number, output: number, total: number) {
+  const summary = tokenSummary(input, output, total);
+  return { schema_version: 1, source_event: "thread/tokenUsage/updated", summary, turns: [] };
 }
 
 async function fixtureProject(slug: string): Promise<string> {

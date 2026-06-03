@@ -157,17 +157,19 @@ sequenceDiagram
 
 Default runner constraints: managed stdio App Server, read-only sandbox,
 `approvalPolicy: "never"`, no network access, one thread per scenario,
-first turn with the selected payload attached unless `--no-skill` is used, follow-ups from `turns.json`, and token
-metrics recorded as available or explicitly unavailable.
+first turn with the selected payload attached unless `--no-skill` is used,
+follow-ups from `turns.json`, and token metrics recorded with nullable counts
+plus one unavailable reason when telemetry is missing.
 
 Token evidence is measured App Server telemetry. Each scenario writes
-`usage.json` as the canonical token file, attaches per-turn usage to assistant
-rows in `turns.jsonl`, and denormalizes the scenario summary into `results.jsonl`.
+`usage.json` as the canonical token file and may attach compact per-turn usage
+to assistant rows in `turns.jsonl` for transcript inspection.
 For multi-turn scenarios, App Server cumulative `tokenUsage.total` from the final
 reporting turn is authoritative; per-turn `tokenUsage.last` is retained for
-transcript and turn-level inspection. A run records exactly one source. There is
-no first-class comparison artifact; inspect separate run reports manually when
-you need contrast.
+transcript and turn-level inspection. `results.jsonl` records execution and
+verdict facts only; report token totals are derived from scenario `usage.json`
+files. A run records exactly one source. There is no first-class comparison
+artifact; inspect separate run reports manually when you need contrast.
 
 `--app-server-endpoint` is not supported yet; the CLI rejects it.
 

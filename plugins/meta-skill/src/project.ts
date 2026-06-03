@@ -260,9 +260,13 @@ export async function sha256File(target: string): Promise<string> {
 
 export function unavailableTokenUsage(reason: string) {
   return {
-    input_tokens: { available: false as const, reason },
-    output_tokens: { available: false as const, reason },
-    total_tokens: { available: false as const, reason }
+    input_tokens: null,
+    output_tokens: null,
+    total_tokens: null,
+    cached_input_tokens: null,
+    reasoning_tokens: null,
+    model_context_window: null,
+    unavailable_reason: reason
   };
 }
 

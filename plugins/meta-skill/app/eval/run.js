@@ -84,7 +84,7 @@ async function runEval(options) {
                     hasFailures = true;
                     failureClassifications.add(classification);
                 }
-                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.token_usage, result.evidence_path, result.error, classification, result.verdict);
+                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.evidence_path, result.error, classification, result.verdict);
             }
             catch (error) {
                 hasFailures = true;
@@ -93,8 +93,11 @@ async function runEval(options) {
                 failureClassifications.add(classification);
                 const evidencePath = (0, project_1.relativePath)(runRoot, node_path_1.default.join(runRoot, "scenarios", scenario.folder));
                 const tokenUsage = (0, project_1.unavailableTokenUsage)("App Server execution failed before token metrics were available.");
-                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, "errored", tokenUsage, evidencePath, message, classification);
-                await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "scenario_failed", run_id: runId, scenario_id: scenario.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification, token_usage: tokenUsage } }));
+                const scenarioRoot = node_path_1.default.join(runRoot, "scenarios", scenario.folder);
+                await (0, project_1.ensureDir)(scenarioRoot);
+                await (0, project_1.writeJson)(node_path_1.default.join(scenarioRoot, "usage.json"), { schema_version: 1, source_event: null, summary: tokenUsage, turns: [] });
+                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, "errored", evidencePath, message, classification);
+                await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "scenario_failed", run_id: runId, scenario_id: scenario.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification } }));
             }
         }
     }
