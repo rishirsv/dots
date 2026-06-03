@@ -54,32 +54,21 @@ describe("AppServerJsonClient", () => {
     client.close();
   });
 
-  it("retries overloaded requests with exponential backoff and jitter", async () => {
+  it("surfaces overloaded request errors without client-side retry", async () => {
     const child = new FakeChild();
     let attempts = 0;
-    const sleeps: number[] = [];
     child.onMessage((message) => {
       if (message.method === "initialize") child.respond(message.id, {});
       if (message.method === "thread/start") {
         attempts += 1;
-        if (attempts < 3) child.reject(message.id, -32001, "Server overloaded; retry later.");
-        else child.respond(message.id, { thread: { id: "thread-ok" } });
+        child.reject(message.id, -32001, "Server overloaded; retry later.");
       }
     });
-    const client = new AppServerJsonClient({
-      spawnProcess: () => child.asChild(),
-      retryPolicy: { maxRetries: 3, baseDelayMs: 10, jitterMs: 5 },
-      random: () => 0.4,
-      sleep: async (ms) => {
-        sleeps.push(ms);
-      }
-    });
+    const client = new AppServerJsonClient({ spawnProcess: () => child.asChild() });
     await client.connect(managedConfig());
-    const result = await client.request("thread/start", {});
 
-    assert.deepEqual(result, { thread: { id: "thread-ok" } });
-    assert.equal(attempts, 3);
-    assert.deepEqual(sleeps, [12, 22]);
+    await assert.rejects(client.request("thread/start", {}), (error) => error instanceof AppServerProtocolError && error.code === -32001 && /overloaded/.test(error.message));
+    assert.equal(attempts, 1);
     client.close();
   });
 
@@ -93,7 +82,7 @@ describe("AppServerJsonClient", () => {
         child.reject(message.id, -32602, "Invalid params");
       }
     });
-    const client = new AppServerJsonClient({ spawnProcess: () => child.asChild(), sleep: async () => assert.fail("should not sleep") });
+    const client = new AppServerJsonClient({ spawnProcess: () => child.asChild() });
     await client.connect(managedConfig());
 
     await assert.rejects(client.request("thread/start", {}), (error) => error instanceof AppServerProtocolError && error.code === -32602 && /Invalid params/.test(error.message));
@@ -118,7 +107,11 @@ describe("AppServerJsonClient", () => {
     });
     const exitClient = new AppServerJsonClient({ spawnProcess: () => exitChild.asChild(), requestTimeoutMs: 1000 });
     await exitClient.connect(managedConfig());
+    const waiting = exitClient.waitFor((message) => message.method === "turn/completed", 1000);
     await assert.rejects(exitClient.request("turn/start", {}), (error) => error instanceof AppServerUnavailableError && /process exited/.test(error.message));
+    await assert.rejects(waiting, (error) => error instanceof AppServerUnavailableError && /process exited/.test(error.message));
+    assert.throws(() => exitClient.notify("initialized"), /not connected/);
+    await assert.rejects(exitClient.request("thread/start", {}), /not connected/);
   });
 });
 

@@ -719,7 +719,7 @@
 <span class="prompt">$ </span><span class="c-cmd">meta-skill promote</span> . <span class="c-flag">--plan</span> <span class="c-arg">&lt;plan-id&gt;</span>
 <span class="prompt">$ </span><span class="c-cmd">meta-skill decide</span> . <span class="c-flag">--session</span> <span class="c-arg">&lt;session-id&gt;</span> <span class="c-flag">--accept</span></code></div>
           </div>
-          <p class="note"><svg aria-hidden="true"><use href="#i-info"/></svg><span>The <strong>eval</strong> lane runs through <strong>Codex App Server</strong>, so it needs the <code>codex</code> CLI installed and authenticated. Everything else runs locally with no dependencies.</span></p>
+          <p class="note"><svg aria-hidden="true"><use href="#i-info"/></svg><span>The <strong>eval</strong> lane runs through <strong>Codex App Server</strong>, so it needs the <code>codex</code> CLI installed and authenticated. App Server requests are single-shot; process exits may get one scenario-level respawn attempt before unavailable evidence is recorded. Everything else runs locally with no dependencies.</span></p>
         </div>
       </div>
     </div>

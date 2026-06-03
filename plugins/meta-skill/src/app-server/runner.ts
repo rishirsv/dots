@@ -3,7 +3,7 @@ import path from "node:path";
 import type { EvalRunSource, ScenarioRecord, TokenUsage, TokenUsageTurn } from "../models";
 import { appendJsonl, copyPortablePayload, ensureDir, parseSkillFrontmatter, readText, unavailableTokenUsage, writeJson, writeText } from "../project";
 import type { AppServerConfig, AppServerLine } from "./client";
-import { AppServerJsonClient } from "./client";
+import { AppServerJsonClient, AppServerUnavailableError } from "./client";
 
 interface AppServerClientLike {
   request(method: string, params: unknown): Promise<Record<string, unknown>>;
@@ -17,6 +17,7 @@ interface AppServerClientLike {
 export interface AppServerScenarioRunnerOptions {
   clientFactory?: (onLine: (line: AppServerLine) => Promise<void>) => AppServerClientLike;
   turnTimeoutMs?: number;
+  maxScenarioRespawns?: number;
 }
 
 export interface ScenarioRunInput {
@@ -43,14 +44,27 @@ export class AppServerScenarioRunner {
   private client: AppServerClientLike | undefined;
   private readonly clientFactory: (onLine: (line: AppServerLine) => Promise<void>) => AppServerClientLike;
   private readonly turnTimeoutMs: number;
+  private readonly maxScenarioRespawns: number;
   private rpcPath: string | undefined;
 
   constructor(options: AppServerScenarioRunnerOptions = {}) {
     this.clientFactory = options.clientFactory || ((onLine) => new AppServerJsonClient(onLine));
     this.turnTimeoutMs = options.turnTimeoutMs || 120000;
+    this.maxScenarioRespawns = options.maxScenarioRespawns ?? 1;
   }
 
   async run(input: ScenarioRunInput): Promise<ScenarioRunResult> {
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        return await this.runOnce(input);
+      } catch (error) {
+        if (!(error instanceof AppServerUnavailableError) || attempt >= this.maxScenarioRespawns) throw error;
+        this.close();
+      }
+    }
+  }
+
+  private async runOnce(input: ScenarioRunInput): Promise<ScenarioRunResult> {
     const rawRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
     await ensureDir(rawRoot);
     const stageRoot = path.join(rawRoot, "stage");

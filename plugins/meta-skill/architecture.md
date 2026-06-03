@@ -159,7 +159,11 @@ Default runner constraints: managed stdio App Server, read-only sandbox,
 `approvalPolicy: "never"`, no network access, one thread per scenario,
 first turn with the selected payload attached unless `--no-skill` is used,
 follow-ups from `turns.json`, and token metrics recorded with nullable counts
-plus one unavailable reason when telemetry is missing.
+plus one unavailable reason when telemetry is missing. App Server JSON-RPC
+requests are single-shot; the client does not perform overload retries,
+exponential backoff, or jitter. If the managed stdio process exits, the runner
+clears the process, rejects active scenario work, and allows at most one
+scenario-level respawn attempt before recording the scenario as unavailable.
 
 Token evidence is measured App Server telemetry. Each scenario writes
 `usage.json` as the canonical token file and may attach compact per-turn usage
@@ -292,6 +296,8 @@ root `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or source `skills/`, run
 - Automated uplift comparison and true trigger routing are unsupported. Treat
   no-skill runs as manual control evidence, not an uplift score.
 - Attached App Server endpoints are not implemented.
+- App Server request retries are scenario-level only: no per-request retry
+  policy exists, and a process-exit respawn is attempted at most once.
 - The plugin is Codex-only and depends on Codex skill attachment plus App Server.
 - `src/` and committed `app/` can drift if maintainers forget to build.
 - Replacing an existing release snapshot requires interactive confirmation.

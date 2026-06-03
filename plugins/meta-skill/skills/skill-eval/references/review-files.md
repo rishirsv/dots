@@ -184,6 +184,8 @@ For multi-turn scenarios, the scenario summary uses App Server cumulative `token
 
 Every scenario should have `usage.json`. If exact usage is unavailable, its summary fields should be null and `unavailable_reason` should say why.
 
+Managed App Server JSON-RPC requests are single-shot. Do not describe overload handling as exponential backoff, jitter, or a configurable retry policy. If the stdio process exits, active work is rejected and the runner may make one scenario-level respawn attempt before preserving unavailable evidence.
+
 Scenario results record execution facts separately from verdict facts. `execution_status: "completed"` means the runner produced evidence; it is not a passing result. If no deterministic test, judge, or human feedback verdict is present, reports say no verdict is recorded.
 
 ## Evidence Claims

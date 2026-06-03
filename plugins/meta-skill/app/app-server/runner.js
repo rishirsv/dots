@@ -12,12 +12,26 @@ class AppServerScenarioRunner {
     client;
     clientFactory;
     turnTimeoutMs;
+    maxScenarioRespawns;
     rpcPath;
     constructor(options = {}) {
         this.clientFactory = options.clientFactory || ((onLine) => new client_1.AppServerJsonClient(onLine));
         this.turnTimeoutMs = options.turnTimeoutMs || 120000;
+        this.maxScenarioRespawns = options.maxScenarioRespawns ?? 1;
     }
     async run(input) {
+        for (let attempt = 0;; attempt += 1) {
+            try {
+                return await this.runOnce(input);
+            }
+            catch (error) {
+                if (!(error instanceof client_1.AppServerUnavailableError) || attempt >= this.maxScenarioRespawns)
+                    throw error;
+                this.close();
+            }
+        }
+    }
+    async runOnce(input) {
         const rawRoot = node_path_1.default.join(input.runRoot, "scenarios", input.scenario.folder);
         await (0, project_1.ensureDir)(rawRoot);
         const stageRoot = node_path_1.default.join(rawRoot, "stage");

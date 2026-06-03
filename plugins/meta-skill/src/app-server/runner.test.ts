@@ -8,7 +8,7 @@ import { describe, it } from "node:test";
 import type { ScenarioRecord } from "../models";
 import { exists, readJson, readText, writeJson, writeText } from "../project";
 import { AppServerScenarioRunner } from "./runner";
-import { AppServerJsonClient } from "./client";
+import { AppServerJsonClient, AppServerUnavailableError } from "./client";
 
 const workingRunSource = { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true } as const;
 
@@ -201,6 +201,67 @@ describe("AppServerScenarioRunner", () => {
     assert.match(secondTrace, /thread\/start/);
   });
 
+  it("respawns the App Server client once for a scenario after process unavailability", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-respawn-"));
+    const skillRoot = path.join(root, "skill");
+    const scenario = await fixtureScenario(root, []);
+    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    const runRoot = path.join(root, "run");
+    const first = new UnavailableOnceClient();
+    const second = new FakeScenarioClient();
+    const clients = [first, second];
+    const runner = new AppServerScenarioRunner({
+      clientFactory: (onLine) => (clients.shift() || new FakeScenarioClient()).attach(onLine),
+      turnTimeoutMs: 25
+    });
+
+    const result = await runner.run({
+      projectRoot: skillRoot,
+      skillRoot,
+      attachSkill: true,
+      scenario,
+      runSource: workingRunSource,
+      runId: "001-test",
+      runRoot,
+      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    assert.equal(result.execution_status, "completed");
+    assert.equal(first.closed, true);
+    assert.equal(second.requests.filter((request) => request.method === "thread/start").length, 1);
+  });
+
+  it("does not repeatedly respawn unavailable App Server clients", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-respawn-limit-"));
+    const skillRoot = path.join(root, "skill");
+    const scenario = await fixtureScenario(root, []);
+    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    const runRoot = path.join(root, "run");
+    let created = 0;
+    const runner = new AppServerScenarioRunner({
+      clientFactory: (onLine) => {
+        created += 1;
+        return new UnavailableOnceClient().attach(onLine);
+      },
+      turnTimeoutMs: 25
+    });
+
+    await assert.rejects(
+      runner.run({
+        projectRoot: skillRoot,
+        skillRoot,
+        attachSkill: true,
+        scenario,
+        runSource: workingRunSource,
+        runId: "001-test",
+        runRoot,
+        appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+      }),
+      /App Server process exited/
+    );
+    assert.equal(created, 2);
+  });
+
   it("covers the runner JSONL protocol contract without a live App Server", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-contract-"));
     const skillRoot = path.join(root, "skill");
@@ -357,6 +418,19 @@ class FakeScenarioClient {
   }
 
   close(): void {}
+}
+
+class UnavailableOnceClient extends FakeScenarioClient {
+  closed = false;
+
+  async request(method: string, params: unknown): Promise<Record<string, unknown>> {
+    if (method === "thread/start") throw new AppServerUnavailableError("App Server process exited");
+    return super.request(method, params);
+  }
+
+  close(): void {
+    this.closed = true;
+  }
 }
 
 class ProtocolFixtureChild extends EventEmitter {

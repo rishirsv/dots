@@ -48,9 +48,6 @@ class AppServerJsonClient {
     onLine;
     spawnProcess;
     requestTimeoutMs;
-    retryPolicy;
-    sleep;
-    random;
     traceQueue = Promise.resolve();
     constructor(onLineOrOptions) {
         const options = typeof onLineOrOptions === "function" ? { onLine: onLineOrOptions } : onLineOrOptions || {};
@@ -61,9 +58,6 @@ class AppServerJsonClient {
                     stdio: ["pipe", "pipe", "pipe"]
                 }));
         this.requestTimeoutMs = options.requestTimeoutMs || 120000;
-        this.retryPolicy = options.retryPolicy || { maxRetries: 3, baseDelayMs: 250, jitterMs: 250 };
-        this.sleep = options.sleep || ((ms) => new Promise((resolve) => setTimeout(resolve, ms)));
-        this.random = options.random || Math.random;
     }
     async connect(config) {
         if (config.mode !== "managed") {
@@ -78,10 +72,8 @@ class AppServerJsonClient {
             this.trace({ direction: "stderr", message: text });
         });
         this.child.on("exit", () => {
-            const error = new AppServerUnavailableError("App Server process exited");
-            for (const pending of this.pending.values())
-                pending.reject(error);
-            this.pending.clear();
+            this.child = undefined;
+            this.rejectActive(new AppServerUnavailableError("App Server process exited"));
         });
         await this.request("initialize", {
             clientInfo: { name: "meta-skill", version: "0.1.0" },
@@ -90,32 +82,6 @@ class AppServerJsonClient {
         this.notify("initialized");
     }
     async request(method, params) {
-        let attempt = 0;
-        while (true) {
-            try {
-                return await this.requestOnce(method, params);
-            }
-            catch (error) {
-                if (!(error instanceof AppServerProtocolError) || error.code !== -32001 || attempt >= this.retryPolicy.maxRetries) {
-                    throw error;
-                }
-                const delay = this.retryPolicy.baseDelayMs * 2 ** attempt + Math.floor(this.random() * this.retryPolicy.jitterMs);
-                attempt += 1;
-                await this.sleep(delay);
-            }
-        }
-    }
-    notify(method, params) {
-        if (!this.child)
-            throw new AppServerUnavailableError("App Server is not connected");
-        const notification = params === undefined ? { method } : { method, params };
-        this.trace({ direction: "client", message: notification });
-        this.child.stdin.write(`${JSON.stringify(notification)}\n`);
-    }
-    async flush() {
-        await this.traceQueue;
-    }
-    async requestOnce(method, params) {
         if (!this.child)
             throw new AppServerUnavailableError("App Server is not connected");
         const id = String(this.nextId++);
@@ -140,6 +106,16 @@ class AppServerJsonClient {
         this.child.stdin.write(`${JSON.stringify(request)}\n`);
         return response;
     }
+    notify(method, params) {
+        if (!this.child)
+            throw new AppServerUnavailableError("App Server is not connected");
+        const notification = params === undefined ? { method } : { method, params };
+        this.trace({ direction: "client", message: notification });
+        this.child.stdin.write(`${JSON.stringify(notification)}\n`);
+    }
+    async flush() {
+        await this.traceQueue;
+    }
     waitFor(predicate, timeoutMs) {
         const existing = this.notifications.find(predicate);
         if (existing)
@@ -148,6 +124,7 @@ class AppServerJsonClient {
             const waiter = {
                 predicate,
                 resolve,
+                reject,
                 timeout: setTimeout(() => {
                     this.waiters = this.waiters.filter((item) => item !== waiter);
                     reject(new AppServerUnavailableError("Timed out waiting for App Server notification"));
@@ -167,6 +144,17 @@ class AppServerJsonClient {
             return;
         this.child.kill("SIGTERM");
         this.child = undefined;
+        this.rejectActive(new AppServerUnavailableError("App Server is not connected"));
+    }
+    rejectActive(error) {
+        for (const pending of this.pending.values())
+            pending.reject(error);
+        this.pending.clear();
+        for (const waiter of this.waiters) {
+            clearTimeout(waiter.timeout);
+            waiter.reject(error);
+        }
+        this.waiters = [];
     }
     trace(line) {
         if (!this.onLine)
