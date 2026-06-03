@@ -83,9 +83,7 @@ class AppServerScenarioRunner {
                 source: "app-server",
                 content: result.final,
                 status: "completed",
-                turn_id: result.turnId,
-                ...(result.tokenUsage ? { token_usage: result.tokenUsage } : {}),
-                ...(result.cumulativeTokenUsage ? { cumulative_token_usage: result.cumulativeTokenUsage } : {})
+                turn_id: result.turnId
             });
         }
         await client.flush?.();

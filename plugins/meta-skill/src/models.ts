@@ -235,7 +235,6 @@ export interface RunReport {
   tests: EventEnvelope[];
   judges: EventEnvelope[];
   feedback: EventEnvelope[];
-  artifacts: Array<{ scenario_id: string; path: string; kind: string; legacy_side?: LegacyEvalSide }>;
   readiness: RunReadiness;
 }
 

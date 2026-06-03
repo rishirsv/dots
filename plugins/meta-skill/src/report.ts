@@ -120,7 +120,6 @@ export async function buildRunReport(runRoot: string): Promise<RunReport> {
     tests: testRows,
     judges: judgeRows,
     feedback: feedbackRows,
-    artifacts: await listArtifacts(runRoot, scenarios),
     readiness
   };
 }
@@ -478,31 +477,6 @@ function evidenceStatus(row: EventEnvelope): "passed" | "failed" | undefined {
   return undefined;
 }
 
-async function listArtifacts(runRoot: string, scenarios: RunReportScenario[]): Promise<Array<{ scenario_id: string; path: string; kind: string; legacy_side?: LegacyEvalSide }>> {
-  const artifacts: Array<{ scenario_id: string; path: string; kind: string; legacy_side?: LegacyEvalSide }> = [];
-  for (const scenario of scenarios) {
-    for (const attempt of scenario.attempts) {
-      const artifactRoot = path.join(runRoot, attempt.evidence_path, "artifacts");
-      if (!(await exists(artifactRoot))) continue;
-      for (const relative of await walkFiles(artifactRoot)) {
-        artifacts.push({ scenario_id: scenario.id, path: path.join(attempt.evidence_path, "artifacts", relative).split(path.sep).join("/"), kind: "file", ...(attempt.legacy_side ? { legacy_side: attempt.legacy_side } : {}) });
-      }
-    }
-  }
-  return artifacts;
-}
-
-async function walkFiles(root: string, relativeDir = ""): Promise<string[]> {
-  const dir = path.join(root, relativeDir);
-  const files: string[] = [];
-  for (const entry of await fs.readdir(dir, { withFileTypes: true }).catch(() => [])) {
-    const relative = path.join(relativeDir, entry.name);
-    if (entry.isDirectory()) files.push(...(await walkFiles(root, relative)));
-    else if (entry.isFile()) files.push(relative.split(path.sep).join("/"));
-  }
-  return files.sort();
-}
-
 export function indexRowFromReport(report: RunReport): RunIndexRow {
   const normalized = normalizeRunReportForRead(report);
   return {
@@ -600,7 +574,6 @@ export function normalizeRunReportForRead(value: RunReport): RunReport {
     tests: Array.isArray(report.tests) ? report.tests : [],
     judges: Array.isArray(report.judges) ? report.judges : [],
     feedback: Array.isArray(report.feedback) ? report.feedback : [],
-    artifacts: normalizeRunArtifactsForRead(report.artifacts),
     readiness
   };
 }
@@ -674,20 +647,6 @@ function normalizeRunReadinessForRead(value: unknown, assessmentStatus: RunRepor
     };
   }
   return readinessFor(assessmentStatus, failureClassifications, noVerdictCount, counts);
-}
-
-function normalizeRunArtifactsForRead(value: unknown): RunReport["artifacts"] {
-  if (!Array.isArray(value)) return [];
-  return value.map((artifact) => {
-    const item = objectValue(artifact);
-    const legacySide = legacySideFromValue(item.legacy_side || item.side);
-    return {
-      scenario_id: String(item.scenario_id || ""),
-      path: String(item.path || ""),
-      kind: String(item.kind || "file"),
-      ...(legacySide ? { legacy_side: legacySide } : {})
-    };
-  });
 }
 
 function legacySideFromValue(value: unknown): LegacyEvalSide | undefined {

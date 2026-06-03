@@ -101,15 +101,7 @@ describe("AppServerScenarioRunner", () => {
     assert.equal(usage.summary.total_tokens, 24);
     assert.equal(usage.turns[0].total_tokens, 12);
     assert.equal(usage.turns[0].cumulative_total_tokens, 12);
-    assert.deepEqual((turns.find((turn) => turn.role === "assistant" && turn.index === 0) as { token_usage?: unknown }).token_usage, {
-      input_tokens: 5,
-      output_tokens: 7,
-      total_tokens: 12,
-      cached_input_tokens: 2,
-      reasoning_tokens: 0,
-      model_context_window: 200000,
-      unavailable_reason: null
-    });
+    assert.equal("token_usage" in (turns.find((turn) => turn.role === "assistant" && turn.index === 0) as Record<string, unknown>), false);
   });
 
   it("records unavailable token usage when a completed turn has no token event", async () => {

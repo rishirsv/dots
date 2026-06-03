@@ -171,11 +171,11 @@ token extraction; when that window drops events, `rpc.jsonl` receives a
 `evidence_warnings` entry.
 
 Token evidence is measured App Server telemetry. Each scenario writes
-`usage.json` as the canonical token file and may attach compact per-turn usage
-to assistant rows in `turns.jsonl` for transcript inspection.
+`usage.json` as the canonical token file. `turns.jsonl` is transcript evidence
+only and does not duplicate token summaries.
 For multi-turn scenarios, App Server cumulative `tokenUsage.total` from the final
-reporting turn is authoritative; per-turn `tokenUsage.last` is retained for
-transcript and turn-level inspection. `results.jsonl` records execution and
+reporting turn is authoritative; per-turn `tokenUsage.last` is retained in
+`usage.json` for turn-level inspection. `results.jsonl` records execution and
 verdict facts only; report token totals are derived from scenario `usage.json`
 files. A run records exactly one source. There is no first-class comparison
 artifact; inspect separate run reports manually when you need contrast.
@@ -315,8 +315,9 @@ and commit regenerated `app/` for code changes.
 
 For eval changes, preserve `.meta-skill/evals/runs/<run-id>/`, per-scenario
 evidence under `scenarios/<scenario>/`, unavailable-token records,
-read-only/no-approval/no-network defaults, optional judges, and additional
-artifact directories only when the harness actually writes files there.
+read-only/no-approval/no-network defaults, optional judges, and the smaller
+evidence bundle: run header, lifecycle/result streams, snapshots, transcript,
+canonical usage, raw RPC trace, final output, and derived reports/indexes.
 
 For package changes, package only the portable payload, never `.meta-skill/`,
 keep working payload and saved snapshot packaging separate, and keep promote, decide, release, and

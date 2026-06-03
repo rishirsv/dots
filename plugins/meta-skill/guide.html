@@ -592,12 +592,14 @@
             </div>
             <div class="term-body ev"><code><span class="ev-row"><span class="file">run.json</span><span class="cmt">        orchestration + sandbox config</span></span>
 <span class="ev-row"><span class="file">events.jsonl</span><span class="cmt">    run lifecycle</span></span>
-<span class="ev-row"><span class="file">results.jsonl</span><span class="cmt">   per-scenario outcome + tokens</span></span>
+<span class="ev-row"><span class="file">results.jsonl</span><span class="cmt">   per-scenario outcomes</span></span>
 <span class="ev-row"><span class="file">tests.jsonl</span><span class="cmt">     deterministic test results</span></span>
 <span class="ev-row"><span class="file">grades.jsonl</span><span class="cmt">    judge scorecards (optional)</span></span>
 <span class="ev-row"><span class="file">report.html</span><span class="cmt">     the readable summary</span></span>
 <span class="ev-row"><span class="path">scenarios/F1/</span></span>
 <span class="ev-row">  <span class="file">final.md</span><span class="cmt">       the agent's answer</span></span>
+<span class="ev-row">  <span class="file">turns.jsonl</span><span class="cmt">    transcript</span></span>
+<span class="ev-row">  <span class="file">usage.json</span><span class="cmt">     canonical token evidence</span></span>
 <span class="ev-row">  <span class="file">rpc.jsonl</span><span class="cmt">      durable raw trace; may include overflow warnings</span></span></code></div>
           </div>
           <p class="ev-cap">Token usage is recorded per scenario — or marked <span class="inline-code">unavailable</span> with a reason when App Server returns none.</p>

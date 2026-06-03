@@ -97,7 +97,7 @@ export class AppServerScenarioRunner {
     const threadId = thread?.id;
     if (!threadId) throw new Error("App Server thread/start response did not include thread.id");
 
-    const turnRecords: Array<{ role: "user" | "assistant"; index: number; source: string; content: string; status: string; turn_id?: string; token_usage?: TokenUsage; cumulative_token_usage?: TokenUsage }> = [];
+    const turnRecords: Array<{ role: "user" | "assistant"; index: number; source: string; content: string; status: string; turn_id?: string }> = [];
     const usageTurns: TokenUsageTurn[] = [];
     const evidenceWarnings = new Set<string>();
     let finalCumulativeUsage: TokenUsage | undefined;
@@ -118,9 +118,7 @@ export class AppServerScenarioRunner {
         source: "app-server",
         content: result.final,
         status: "completed",
-        turn_id: result.turnId,
-        ...(result.tokenUsage ? { token_usage: result.tokenUsage } : {}),
-        ...(result.cumulativeTokenUsage ? { cumulative_token_usage: result.cumulativeTokenUsage } : {})
+        turn_id: result.turnId
       });
     }
     await client.flush?.();

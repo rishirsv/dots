@@ -146,7 +146,7 @@ describe("central reporting service", () => {
       judges: [],
       feedback: [],
       comparisons: [],
-      artifacts: [],
+      artifacts: [{ scenario_id: "R1", path: "scenarios/R1-legacy/candidate/artifacts/old.txt", kind: "file" }],
       readiness: { status: "needs_review", summary: "Legacy report.", blockers: [], unresolved: 1, basis: "report.json" }
     });
     await writeJson(path.join(runsRoot, "index.json"), {
@@ -292,7 +292,6 @@ function reportFixture(): RunReport {
     tests: [{ schema_version: 1, type: "test_result", run_id: "app-run", scenario_id: "R2", created_at: "now", source: "fixture", payload: { scenario_id: "R2", status: "failed", id: "check" } }],
     judges: [{ schema_version: 1, type: "judge_result", run_id: "app-run", scenario_id: "R2", created_at: "now", source: "fixture", payload: { scenario_id: "R2", status: "failed", failure_classification: "judge_failure" } }],
     feedback: [],
-    artifacts: [],
     readiness: { status: "blocked", summary: "Run has blocking failures.", blockers: ["scenario_failure"], no_verdict_count: 1, basis: "report.json" }
   };
 }

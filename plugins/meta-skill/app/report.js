@@ -130,7 +130,6 @@ async function buildRunReport(runRoot) {
         tests: testRows,
         judges: judgeRows,
         feedback: feedbackRows,
-        artifacts: await listArtifacts(runRoot, scenarios),
         readiness
     };
 }
@@ -466,32 +465,6 @@ function evidenceStatus(row) {
         return "failed";
     return undefined;
 }
-async function listArtifacts(runRoot, scenarios) {
-    const artifacts = [];
-    for (const scenario of scenarios) {
-        for (const attempt of scenario.attempts) {
-            const artifactRoot = node_path_1.default.join(runRoot, attempt.evidence_path, "artifacts");
-            if (!(await (0, project_1.exists)(artifactRoot)))
-                continue;
-            for (const relative of await walkFiles(artifactRoot)) {
-                artifacts.push({ scenario_id: scenario.id, path: node_path_1.default.join(attempt.evidence_path, "artifacts", relative).split(node_path_1.default.sep).join("/"), kind: "file", ...(attempt.legacy_side ? { legacy_side: attempt.legacy_side } : {}) });
-            }
-        }
-    }
-    return artifacts;
-}
-async function walkFiles(root, relativeDir = "") {
-    const dir = node_path_1.default.join(root, relativeDir);
-    const files = [];
-    for (const entry of await node_fs_1.promises.readdir(dir, { withFileTypes: true }).catch(() => [])) {
-        const relative = node_path_1.default.join(relativeDir, entry.name);
-        if (entry.isDirectory())
-            files.push(...(await walkFiles(root, relative)));
-        else if (entry.isFile())
-            files.push(relative.split(node_path_1.default.sep).join("/"));
-    }
-    return files.sort();
-}
 function indexRowFromReport(report) {
     const normalized = normalizeRunReportForRead(report);
     return {
@@ -586,7 +559,6 @@ function normalizeRunReportForRead(value) {
         tests: Array.isArray(report.tests) ? report.tests : [],
         judges: Array.isArray(report.judges) ? report.judges : [],
         feedback: Array.isArray(report.feedback) ? report.feedback : [],
-        artifacts: normalizeRunArtifactsForRead(report.artifacts),
         readiness
     };
 }
@@ -657,20 +629,6 @@ function normalizeRunReadinessForRead(value, assessmentStatus, failureClassifica
         };
     }
     return readinessFor(assessmentStatus, failureClassifications, noVerdictCount, counts);
-}
-function normalizeRunArtifactsForRead(value) {
-    if (!Array.isArray(value))
-        return [];
-    return value.map((artifact) => {
-        const item = objectValue(artifact);
-        const legacySide = legacySideFromValue(item.legacy_side || item.side);
-        return {
-            scenario_id: String(item.scenario_id || ""),
-            path: String(item.path || ""),
-            kind: String(item.kind || "file"),
-            ...(legacySide ? { legacy_side: legacySide } : {})
-        };
-    });
 }
 function legacySideFromValue(value) {
     return value === "candidate" || value === "release" ? value : undefined;

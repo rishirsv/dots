@@ -172,13 +172,13 @@ Each run writes:
 
 `snapshots/<scenario-folder>/` stores evaluator-side task, metadata, criteria, and turns as they existed when the run started. Judges read these snapshots with saved final outputs. If an older run has no snapshot, the CLI marks the judge evidence basis as legacy current-project criteria.
 
-`report.json` is the normalized view consumed by `report.html`, `eval open --json`, and the runs `index.json`. It contains run summary, scenario attempts, tests, judges, feedback, any additional artifact files that actually exist, and readiness.
+`report.json` is the normalized view consumed by `report.html`, `eval open --json`, and the runs `index.json`. It contains run summary, scenario attempts, tests, judges, feedback, and readiness.
 
 `runs/index.json` stores one summary row per run for `eval open --list`, `eval list`, and future local evidence browsers.
 
 The staged solver workspace includes `task.md`, `scenario.json`, `turns.json`, `capability.txt`, and `resources/` when present. It must not include `criteria.json`; criteria are evaluator evidence, not solver context.
 
-`usage.json` is the canonical structured token evidence for a scenario. It records `schema_version`, `source_event`, a nullable numeric scenario summary, one `unavailable_reason` when telemetry is missing, and compact per-turn `tokenUsage.last` / cumulative `tokenUsage.total` data when a token event is observed. `turns.jsonl` may also carry compact token usage on assistant rows for transcript-adjacent inspection. `results.jsonl` does not carry token summaries.
+`usage.json` is the canonical structured token evidence for a scenario. It records `schema_version`, `source_event`, a nullable numeric scenario summary, one `unavailable_reason` when telemetry is missing, and compact per-turn `tokenUsage.last` / cumulative `tokenUsage.total` data when a token event is observed. `turns.jsonl` is transcript evidence only. `results.jsonl` does not carry token summaries.
 
 `rpc.jsonl` is the durable raw App Server trace. The runner keeps only a bounded in-memory event window for current waits, final text, and token extraction. If that window overflows, `rpc.jsonl` includes a `meta-skill/eventBufferOverflow` warning marker and scenario evidence may include `evidence_warnings`; use the raw trace for follow-up trajectory parsing instead of assuming all events remained resident.
 
