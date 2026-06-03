@@ -294,6 +294,40 @@ describe("AppServerScenarioRunner", () => {
     assert.deepEqual((child.messages.find((message) => message.method === "turn/start")?.params as { sandboxPolicy?: unknown }).sandboxPolicy, { type: "readOnly", networkAccess: false });
   });
 
+  it("records evidence warnings when the App Server event window overflows", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-overflow-"));
+    const skillRoot = path.join(root, "skill");
+    const scenario = await fixtureScenario(root, []);
+    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    const child = new ProtocolFixtureChild({ noisyDeltas: 3 });
+    const runner = new AppServerScenarioRunner({
+      clientFactory: (onLine) => new AppServerJsonClient({ onLine, spawnProcess: () => child.asChild(), requestTimeoutMs: 1000, maxBufferedEvents: 2 }),
+      turnTimeoutMs: 1000
+    });
+    const runRoot = path.join(root, "run");
+
+    await runner.run({
+      projectRoot: skillRoot,
+      skillRoot,
+      attachSkill: true,
+      scenario,
+      runSource: workingRunSource,
+      runId: "001-test",
+      runRoot,
+      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
+    const thread = await readJson<{ evidence_warnings?: string[] }>(path.join(scenarioRoot, "thread.json"));
+    const usage = await readJson<{ evidence_warnings?: string[] }>(path.join(scenarioRoot, "usage.json"));
+    const trace = await readText(path.join(scenarioRoot, "rpc.jsonl"));
+
+    assert.match(thread.evidence_warnings?.[0] || "", /in-memory event buffer overflowed/);
+    assert.deepEqual(usage.evidence_warnings, thread.evidence_warnings);
+    assert.match(trace, /meta-skill\/eventBufferOverflow/);
+    assert.match(trace, /noisy 0/);
+  });
+
   it("times out when a turn never completes", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-timeout-"));
     const skillRoot = path.join(root, "skill");
@@ -359,11 +393,11 @@ class FakeScenarioClient {
   private events: Record<string, unknown>[] = [];
   private turnCount = 0;
   private pendingTrace: Promise<void>[] = [];
-  private onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void> = async () => {};
+  private onLine: (line: { direction: "client" | "server" | "stderr" | "warning"; message: unknown }) => Promise<void> = async () => {};
 
   constructor(private options: { completeTurns?: boolean; emitTokenUsage?: boolean; emitCumulativeTokenUsage?: boolean } = { completeTurns: true, emitTokenUsage: true, emitCumulativeTokenUsage: true }) {}
 
-  attach(onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>): this {
+  attach(onLine: (line: { direction: "client" | "server" | "stderr" | "warning"; message: unknown }) => Promise<void>): this {
     this.onLine = onLine;
     return this;
   }
@@ -412,6 +446,10 @@ class FakeScenarioClient {
     return this.events.slice(index);
   }
 
+  eventBufferWarningsSince(): string[] {
+    return [];
+  }
+
   async flush(): Promise<void> {
     await Promise.all(this.pendingTrace);
     this.flushed = true;
@@ -440,7 +478,7 @@ class ProtocolFixtureChild extends EventEmitter {
   messages: Array<Record<string, unknown>> = [];
   private buffer = "";
 
-  constructor() {
+  constructor(private options: { noisyDeltas?: number } = {}) {
     super();
     this.stdin.on("data", (chunk) => {
       this.buffer += chunk.toString();
@@ -476,6 +514,9 @@ class ProtocolFixtureChild extends EventEmitter {
     }
     if (message.method === "turn/start") {
       this.respond(message.id, { turn: { id: "turn-contract" } });
+      for (let index = 0; index < (this.options.noisyDeltas || 0); index += 1) {
+        this.writeStdout(`${JSON.stringify({ method: "item/agentMessage/delta", params: { threadId: "thread-contract", turnId: "turn-contract", delta: `noisy ${index}` } })}\n`);
+      }
       this.writeStdout(`${JSON.stringify({ method: "item/agentMessage/delta", params: { threadId: "thread-contract", turnId: "turn-contract", delta: "contract final" } })}\n`);
       this.writeStdout(`${JSON.stringify({ method: "thread/tokenUsage/updated", params: { threadId: "thread-contract", turnId: "turn-contract", tokenUsage: { last: { inputTokens: 3, outputTokens: 4, totalTokens: 7 } } } })}\n`);
       this.writeStdout(`${JSON.stringify({ method: "turn/completed", params: { threadId: "thread-contract", turn: { id: "turn-contract" } } })}\n`);

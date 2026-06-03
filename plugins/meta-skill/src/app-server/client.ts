@@ -44,7 +44,7 @@ interface PendingRequest {
 }
 
 export interface AppServerLine {
-  direction: "client" | "server" | "stderr";
+  direction: "client" | "server" | "stderr" | "warning";
   message: unknown;
 }
 
@@ -52,6 +52,7 @@ export interface AppServerJsonClientOptions {
   onLine?: (line: AppServerLine) => void | Promise<void>;
   spawnProcess?: () => ChildProcessWithoutNullStreams;
   requestTimeoutMs?: number;
+  maxBufferedEvents?: number;
 }
 
 export class AppServerProtocolError extends AppServerUnavailableError {
@@ -66,6 +67,9 @@ export class AppServerJsonClient {
   private buffer = "";
   private pending = new Map<string, PendingRequest>();
   private notifications: JsonRecord[] = [];
+  private notificationOffset = 0;
+  private notificationCount = 0;
+  private eventBufferOverflows: Array<{ atEventIndex: number; droppedEvents: number; bufferLimit: number }> = [];
   private waiters: Array<{
     predicate: (message: JsonRecord) => boolean;
     resolve: (message: JsonRecord) => void;
@@ -75,6 +79,7 @@ export class AppServerJsonClient {
   private readonly onLine?: (line: AppServerLine) => void | Promise<void>;
   private readonly spawnProcess: () => ChildProcessWithoutNullStreams;
   private readonly requestTimeoutMs: number;
+  private readonly maxBufferedEvents: number;
   private traceQueue: Promise<void> = Promise.resolve();
 
   constructor(onLineOrOptions?: ((line: AppServerLine) => void | Promise<void>) | AppServerJsonClientOptions) {
@@ -87,6 +92,7 @@ export class AppServerJsonClient {
           stdio: ["pipe", "pipe", "pipe"]
         }));
     this.requestTimeoutMs = options.requestTimeoutMs || 120000;
+    this.maxBufferedEvents = Math.max(1, options.maxBufferedEvents || 10000);
   }
 
   async connect(config: AppServerConfig): Promise<void> {
@@ -165,11 +171,18 @@ export class AppServerJsonClient {
   }
 
   eventCount(): number {
-    return this.notifications.length;
+    return this.notificationCount;
   }
 
   eventsSince(index: number): JsonRecord[] {
-    return this.notifications.slice(index);
+    return this.notifications.slice(Math.max(0, index - this.notificationOffset));
+  }
+
+  eventBufferWarningsSince(index: number): string[] {
+    const markers = this.eventBufferOverflows.filter((marker) => marker.atEventIndex > index);
+    if (!markers.length && index >= this.notificationOffset) return [];
+    const droppedEvents = markers.at(-1)?.droppedEvents || Math.max(0, this.notificationOffset - index);
+    return [`App Server in-memory event buffer overflowed; rpc.jsonl contains the durable raw trace, but ${droppedEvents} event${droppedEvents === 1 ? " was" : "s were"} no longer available for in-memory extraction.`];
   }
 
   close(): void {
@@ -224,13 +237,34 @@ export class AppServerJsonClient {
       else pending.resolve(message.result as JsonRecord);
       return;
     }
-    this.notifications.push(message);
+    this.retainNotification(message);
     for (const waiter of [...this.waiters]) {
       if (!waiter.predicate(message)) continue;
       clearTimeout(waiter.timeout);
       this.waiters = this.waiters.filter((item) => item !== waiter);
       waiter.resolve(message);
     }
+  }
+
+  private retainNotification(message: JsonRecord): void {
+    this.notifications.push(message);
+    this.notificationCount += 1;
+    if (this.notifications.length <= this.maxBufferedEvents) return;
+    this.notifications.shift();
+    this.notificationOffset += 1;
+    const marker = {
+      atEventIndex: this.notificationCount,
+      droppedEvents: this.notificationOffset,
+      bufferLimit: this.maxBufferedEvents
+    };
+    this.eventBufferOverflows.push(marker);
+    this.trace({
+      direction: "warning",
+      message: {
+        method: "meta-skill/eventBufferOverflow",
+        params: marker
+      }
+    });
   }
 }
 

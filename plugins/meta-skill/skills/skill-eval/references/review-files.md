@@ -180,6 +180,8 @@ The staged solver workspace includes `task.md`, `scenario.json`, `turns.json`, `
 
 `usage.json` is the canonical structured token evidence for a scenario. It records `schema_version`, `source_event`, a nullable numeric scenario summary, one `unavailable_reason` when telemetry is missing, and compact per-turn `tokenUsage.last` / cumulative `tokenUsage.total` data when a token event is observed. `turns.jsonl` may also carry compact token usage on assistant rows for transcript-adjacent inspection. `results.jsonl` does not carry token summaries.
 
+`rpc.jsonl` is the durable raw App Server trace. The runner keeps only a bounded in-memory event window for current waits, final text, and token extraction. If that window overflows, `rpc.jsonl` includes a `meta-skill/eventBufferOverflow` warning marker and scenario evidence may include `evidence_warnings`; use the raw trace for follow-up trajectory parsing instead of assuming all events remained resident.
+
 For multi-turn scenarios, the scenario summary uses App Server cumulative `tokenUsage.total` from the final reporting turn as authoritative. Do not sum per-turn `last` values when explaining scenario totals. Compare multiple runs only in a separate report-level artifact; do not pool separate executions into one run total.
 
 Every scenario should have `usage.json`. If exact usage is unavailable, its summary fields should be null and `unavailable_reason` should say why.

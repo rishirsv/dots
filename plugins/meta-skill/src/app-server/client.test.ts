@@ -54,6 +54,38 @@ describe("AppServerJsonClient", () => {
     client.close();
   });
 
+  it("bounds retained App Server events and traces overflow markers", async () => {
+    const child = new FakeChild();
+    const lines: AppServerLine[] = [];
+    child.onMessage((message) => {
+      if (message.method === "initialize") child.respond(message.id, {});
+    });
+    const client = new AppServerJsonClient({
+      spawnProcess: () => child.asChild(),
+      maxBufferedEvents: 2,
+      onLine: (line) => {
+        lines.push(line);
+      }
+    });
+    await client.connect(managedConfig());
+
+    child.writeStdout(`${JSON.stringify({ method: "event/one" })}\n`);
+    child.writeStdout(`${JSON.stringify({ method: "event/two" })}\n`);
+    child.writeStdout(`${JSON.stringify({ method: "event/three" })}\n`);
+    await client.flush();
+
+    assert.equal(client.eventCount(), 3);
+    assert.deepEqual(
+      client.eventsSince(0).map((message) => message.method),
+      ["event/two", "event/three"]
+    );
+    assert.match(client.eventBufferWarningsSince(0)[0], /in-memory event buffer overflowed/);
+    assert.deepEqual(client.eventBufferWarningsSince(3), []);
+    const marker = lines.find((line) => line.direction === "warning" && (line.message as { method?: string }).method === "meta-skill/eventBufferOverflow");
+    assert.deepEqual((marker?.message as { params?: unknown }).params, { atEventIndex: 3, droppedEvents: 1, bufferLimit: 2 });
+    client.close();
+  });
+
   it("surfaces overloaded request errors without client-side retry", async () => {
     const child = new FakeChild();
     let attempts = 0;

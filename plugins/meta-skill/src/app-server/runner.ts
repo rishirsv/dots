@@ -10,6 +10,7 @@ interface AppServerClientLike {
   waitFor(predicate: (message: Record<string, unknown>) => boolean, timeoutMs: number): Promise<Record<string, unknown>>;
   eventCount(): number;
   eventsSince(index: number): Record<string, unknown>[];
+  eventBufferWarningsSince?(index: number): string[];
   close(): void;
   flush?(): Promise<void>;
 }
@@ -75,6 +76,7 @@ export class AppServerScenarioRunner {
     await this.client?.flush?.();
     this.rpcPath = rpcPath;
     const client = await this.ensureClient(input.appServer);
+    const scenarioEventMark = client.eventCount();
 
     const start = await client.request("thread/start", {
       cwd: stageRoot,
@@ -97,12 +99,14 @@ export class AppServerScenarioRunner {
 
     const turnRecords: Array<{ role: "user" | "assistant"; index: number; source: string; content: string; status: string; turn_id?: string; token_usage?: TokenUsage; cumulative_token_usage?: TokenUsage }> = [];
     const usageTurns: TokenUsageTurn[] = [];
+    const evidenceWarnings = new Set<string>();
     let finalCumulativeUsage: TokenUsage | undefined;
     let final = "";
     const turns = [{ content: input.scenario.task, source: "task.md" }, ...input.scenario.turns.map((turn) => ({ content: turn.content, source: "turns.json" }))];
     for (const [index, turn] of turns.entries()) {
       turnRecords.push({ role: "user", index, source: turn.source, content: turn.content, status: "sent" });
       const result = await runTurn(client, threadId, stageRoot, input.scenario, turn.content, index === 0 && input.attachSkill, this.turnTimeoutMs, attachmentName);
+      for (const warning of result.evidenceWarnings) evidenceWarnings.add(warning);
       final = result.final || final;
       if (result.tokenUsage) {
         usageTurns.push(toUsageTurn(result.turnId, index, result.tokenUsage, result.cumulativeTokenUsage));
@@ -120,12 +124,15 @@ export class AppServerScenarioRunner {
       });
     }
     await client.flush?.();
+    for (const warning of client.eventBufferWarningsSince?.(scenarioEventMark) || []) evidenceWarnings.add(warning);
+    const warnings = [...evidenceWarnings];
     const scenarioSummary = summarizeScenarioUsage(finalCumulativeUsage);
     const usageEvidence = {
       schema_version: 1 as const,
       source_event: scenarioSummary.unavailable_reason ? null : ("thread/tokenUsage/updated" as const),
       turns: usageTurns,
-      summary: scenarioSummary
+      summary: scenarioSummary,
+      ...(warnings.length ? { evidence_warnings: warnings } : {})
     };
 
     await writeJson(path.join(rawRoot, "thread.json"), {
@@ -137,7 +144,8 @@ export class AppServerScenarioRunner {
       resume_from_id: null,
       app_server: input.appServer,
       status: "completed",
-      error: null
+      error: null,
+      ...(warnings.length ? { evidence_warnings: warnings } : {})
     });
     await writeText(path.join(rawRoot, "turns.jsonl"), turnRecords.map((row) => JSON.stringify(row)).join("\n"));
     await writeJson(path.join(rawRoot, "usage.json"), usageEvidence);
@@ -181,7 +189,7 @@ async function runTurn(
   includeSkill: boolean,
   turnTimeoutMs: number,
   attachmentName?: string
-): Promise<{ turnId: string; final: string; tokenUsage?: TokenUsage; cumulativeTokenUsage?: TokenUsage; tokenEvent: boolean }> {
+): Promise<{ turnId: string; final: string; tokenUsage?: TokenUsage; cumulativeTokenUsage?: TokenUsage; tokenEvent: boolean; evidenceWarnings: string[] }> {
   const mark = client.eventCount();
   const input = [
     ...(includeSkill && attachmentName ? [{ type: "skill", name: attachmentName, path: path.join(stageRoot, "skill") }] : []),
@@ -204,6 +212,7 @@ async function runTurn(
     turnTimeoutMs
   );
   const events = client.eventsSince(mark);
+  const evidenceWarnings = client.eventBufferWarningsSince?.(mark) || [];
   const final = events
     .filter((message) => message.method === "item/agentMessage/delta" && (message.params as { threadId?: string; turnId?: string } | undefined)?.threadId === threadId && (message.params as { turnId?: string } | undefined)?.turnId === turnId)
     .map((message) => String((message.params as { delta?: string }).delta || ""))
@@ -211,7 +220,7 @@ async function runTurn(
   const tokenEvent = [...events]
     .reverse()
     .find((message) => message.method === "thread/tokenUsage/updated" && (message.params as { threadId?: string; turnId?: string } | undefined)?.threadId === threadId && (message.params as { turnId?: string } | undefined)?.turnId === turnId);
-  if (!tokenEvent) return { turnId, final, tokenEvent: false };
+  if (!tokenEvent) return { turnId, final, tokenEvent: false, evidenceWarnings };
   const params = tokenEvent.params as { tokenUsage?: { last?: unknown; total?: unknown }; modelContextWindow?: unknown };
   const tokenUsage = params.tokenUsage;
   const modelContextWindow = numberOrNull(params.modelContextWindow);
@@ -220,7 +229,8 @@ async function runTurn(
     final,
     tokenUsage: toTokenUsage(tokenUsage?.last, `App Server last token metrics were unavailable for turn ${turnId}.`, modelContextWindow),
     cumulativeTokenUsage: tokenUsage?.total ? toTokenUsage(tokenUsage.total, `App Server cumulative token metrics were unavailable for turn ${turnId}.`, modelContextWindow) : undefined,
-    tokenEvent: true
+    tokenEvent: true,
+    evidenceWarnings
   };
 }
 

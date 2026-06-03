@@ -164,6 +164,11 @@ requests are single-shot; the client does not perform overload retries,
 exponential backoff, or jitter. If the managed stdio process exits, the runner
 clears the process, rejects active scenario work, and allows at most one
 scenario-level respawn attempt before recording the scenario as unavailable.
+`rpc.jsonl` is the durable raw event log. The client keeps only a bounded
+in-memory event window for current wait predicates, final-text extraction, and
+token extraction; when that window drops events, `rpc.jsonl` receives a
+`meta-skill/eventBufferOverflow` warning marker and scenario evidence records an
+`evidence_warnings` entry.
 
 Token evidence is measured App Server telemetry. Each scenario writes
 `usage.json` as the canonical token file and may attach compact per-turn usage
@@ -229,7 +234,7 @@ zero.
           turns.jsonl
           usage.json
           final.md
-          rpc.jsonl
+          rpc.jsonl  # durable raw App Server trace, including overflow markers
 ```
 
 Scenario IDs are strict: `R` regression, `F` failure mode, `T` trigger, and
