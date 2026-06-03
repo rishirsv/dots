@@ -16,15 +16,24 @@ PR #21, merge commit `03bc2b4d3f365cbd50006107dd1bec381f5a8101`, split the verdi
 
 PR #22, merge commit `5911f43214b120915af26d7aeb6b9a6a9c50239c`, collapsed token usage evidence. Scenario `usage.json` is now the canonical token evidence file, token metrics are nullable numbers with one `unavailable_reason`, `results.jsonl` no longer duplicates token summaries, and reports derive token totals and unavailable reasons from scenario usage evidence. Token parsing now reads the recorded generated App Server camelCase token fields instead of probing multiple alias shapes.
 
-The App Server runner currently behaves mostly like a reliable final-answer runner: it starts one read-only/no-approval/no-network thread per scenario, force-attaches the skill payload when a skill source is used, scrapes final answer deltas, captures token telemetry when present, and saves raw RPC events. It does not yet use the App Server surfaces that would justify the extra machinery: structured trajectory assertions, forked decision trees, tool/sandbox event checks, writable artifact capture, trigger routing, or bounded sampling.
+Commit `f03a230707c09a82f0ce9a2d4ee119cc3352ce53` removed the remaining eval comparison surface. Commit `ec8485b78ae40f43732d198d9fc40d049672cacc` removed the dead `eval generate` command path and associated docs/tests.
+
+Commit `57c4ebe03a896db21027071ad87d620755d5ccc4` simplified local App Server retry behavior. The client no longer has exponential backoff, jitter, or retry policy configuration; child process exit clears the child handle and rejects active requests; scenario orchestration owns the single explicit respawn/retry boundary.
+
+Commit `9e36774debad466646264a699d4f93ea62ab6354` bounded client-side App Server event retention. `rpc.jsonl` remains the durable raw event log, the in-memory client window is bounded, and overflow writes evidence warnings instead of silently losing context.
+
+Commit `888cda9788c42b4624f07aaf4365019091a02f58` simplified the evidence surface. Scenario `usage.json` remains canonical token evidence, assistant transcript rows no longer duplicate token metrics, generated reports no longer write dead artifact summaries, and legacy report compatibility stays narrow/read-only.
+
+The App Server runner currently behaves mostly like a reliable final-answer runner: it starts one read-only/no-approval/no-network thread per scenario, force-attaches the skill payload when a skill source is used, scrapes final answer deltas, captures token telemetry when present, saves raw RPC events, and reports bounded-buffer warnings. It does not yet use the App Server surfaces that would justify the extra machinery: structured trajectory assertions, forked decision trees, tool/sandbox event checks, writable artifact capture, trigger routing, or bounded sampling.
 
 The evidence model is still heavier than the measurement power:
 
 - readiness still exists as `ready | blocked | unknown`; keep it source-honest and avoid rebuilding verdict-shaped review states.
 - App Server protocol drift is still handled mostly by unavailable token evidence; add a clearer canary/gate before building more event-stream features.
 - trigger/artifact concepts are exposed before the runner can prove native routing or writable outputs.
-- `eval generate` is still a documented throwing stub.
-- retry/backoff, schema versions, committed `src/` to `app/` drift, and many report/index fields add ceremony before there are external consumers.
+- schema versions and committed `src/` to `app/` drift still add ceremony before there are external consumers.
+- bounded event retention needs a small hardening pass so overflow bookkeeping itself cannot grow without bound.
+- final-answer extraction should avoid carrying forward a previous turn's final text when the current turn overflows before deltas are available.
 
 Validation baseline from the current merged slice:
 
@@ -36,7 +45,7 @@ Validation baseline from the current merged slice:
 
 ### 1. Remove Dead Eval Surface And Artifact Claims
 
-Status: dead/unusable surface.
+Status: completed by commits `ec8485b78ae40f43732d198d9fc40d049672cacc` and `888cda9788c42b4624f07aaf4365019091a02f58`.
 
 Context: `eval generate` is wired as a throwing stub. Artifact scenario claims and empty `artifacts/` directories imply writable output capture, but the runner uses read-only sandbox instructions.
 
@@ -88,7 +97,7 @@ Collapse Meta Skill scenario taxonomy in /Users/rishi/Code/agent. Remove `Scenar
 
 ### 3. Simplify App Server Retry And Crash Recovery
 
-Status: remove local-process overkill.
+Status: completed by commit `57c4ebe03a896db21027071ad87d620755d5ccc4`.
 
 Context: The JSON-RPC client retries overloaded protocol errors with exponential backoff and jitter even though the server is a managed local stdio subprocess. At the same time, child exit rejects pending requests but does not clear the child handle.
 
@@ -114,7 +123,7 @@ Simplify Meta Skill App Server client retry behavior in /Users/rishi/Code/agent.
 
 ### 4. Bound The App Server Event Buffer
 
-Status: incremental reliability fix.
+Status: completed by commit `9e36774debad466646264a699d4f93ea62ab6354`; needs a follow-up to make overflow warning bookkeeping constant-space.
 
 Context: The client stores raw App Server events in memory and scenario code asks for `eventsSince(mark)`. This is fine for tiny runs but becomes risky once trajectory parsing, sampling, or fuzzing is added.
 
@@ -138,9 +147,14 @@ Implementation Prompt:
 Bound Meta Skill App Server event buffering in /Users/rishi/Code/agent. Keep `rpc.jsonl` as the durable raw event log, but replace unbounded client-side event retention with a bounded buffer or per-turn collector that supports current wait/final/token extraction. If the buffer overflows, record an explicit evidence warning rather than silently losing context. Update `plugins/meta-skill/src/app-server/client.ts`, `src/app-server/runner.ts`, tests, docs, and generated `app/`. Run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
+Review follow-ups:
+
+- Collapse overflow warning bookkeeping to constant state so the warning metadata cannot become a second unbounded buffer.
+- When the current turn overflows before final deltas are available, do not preserve a previous turn's final text as the scenario final; write an explicit unavailable final/evidence warning instead.
+
 ### 5. Reduce Evidence Ceremony Where It Has No Consumer
 
-Status: simplification pass after core semantics are stable.
+Status: completed by commit `888cda9788c42b4624f07aaf4365019091a02f58`.
 
 Context: A run writes `run.json`, multiple JSONL streams, snapshots, `thread.json`, `turns.jsonl`, `usage.json`, `rpc.jsonl`, `final.md`, report files, indexes, and sometimes empty artifact directories.
 
