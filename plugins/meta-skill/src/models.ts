@@ -178,7 +178,8 @@ export interface EventEnvelope {
 
 export interface RunReportAttempt {
   run_source: EvalRunSource;
-  status: string;
+  execution_status: string;
+  verdict?: "passed" | "failed";
   evidence_path: string;
   final_path?: string;
   final_preview?: string;
@@ -209,14 +210,16 @@ export interface RunReportScenario {
   evidence_basis: "run_snapshot" | "legacy_current_project" | "unavailable";
   attempts: RunReportAttempt[];
   status: string;
-  unresolved: boolean;
+  execution_status: string;
+  verdict?: "passed" | "failed";
+  no_verdict_recorded: boolean;
 }
 
 export interface RunReadiness {
-  status: "ready" | "needs_review" | "blocked";
+  status: "ready" | "blocked" | "unknown";
   summary: string;
   blockers: string[];
-  unresolved: number;
+  no_verdict_count: number;
   basis: string;
 }
 
@@ -234,10 +237,15 @@ export interface RunReport {
     attempt_count: number;
     result_count: number;
     run_source: EvalRunSource;
-    manual_review_required: boolean;
     failure_classifications: string[];
-    assessment_status: "passed" | "needs_review" | "failed" | "unknown";
-    unresolved_count: number;
+    execution_status: "completed" | "failed" | "running" | "unknown";
+    assessment_status?: "passed" | "failed";
+    no_verdict_count: number;
+    evidence_counts: {
+      tests: number;
+      judges: number;
+      feedback: number;
+    };
     token_usage: RunTokenUsageSummary;
   };
   scenarios: RunReportScenario[];
@@ -256,10 +264,10 @@ export interface RunIndexRow {
   completed_at?: string;
   scenario_count: number;
   run_source: EvalRunSource;
-  manual_review_required: boolean;
   failure_classifications: string[];
-  assessment_status: string;
-  unresolved_count: number;
+  execution_status: string;
+  assessment_status?: string;
+  no_verdict_count: number;
   readiness_status: string;
 }
 

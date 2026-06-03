@@ -62,7 +62,7 @@ describe("lint, command parsing, and eval evidence", () => {
           await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
           await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
           return {
-            status: "needs_review",
+            execution_status: "completed",
             token_usage: tokenSummary(1, 1, 2),
             final_path: path.join(scenarioRoot, "final.md"),
             evidence_path: path.join("scenarios", input.scenario.folder)

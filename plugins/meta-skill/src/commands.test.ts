@@ -8,11 +8,10 @@ import { CliError } from "./project";
 import { createSkill } from "./skills";
 
 describe("command output", () => {
-  it("prints passed eval run artifacts", () => {
+  it("prints completed eval run artifacts", () => {
     const output = formatEvalRunSummary(".", {
       runId: "001-basic",
-      status: "passed",
-      manualReviewRequired: false,
+      status: "completed",
       failureClassifications: [],
       report: "/tmp/evals/runs/001-basic/report.html"
     });
@@ -21,34 +20,11 @@ describe("command output", () => {
       output,
       [
         "run: 001-basic",
-        "status: passed",
-        "manual review required: no",
+        "status: completed",
         "failure classifications: none",
         "report.html: /tmp/evals/runs/001-basic/report.html",
-        "report.json: /tmp/evals/runs/001-basic/report.json"
-      ].join("\n")
-    );
-  });
-
-  it("prints needs_review as unresolved evidence", () => {
-    const output = formatEvalRunSummary(".", {
-      runId: "002-review",
-      status: "needs_review",
-      manualReviewRequired: true,
-      failureClassifications: [],
-      report: "/tmp/evals/runs/002-review/report.html"
-    });
-
-    assert.equal(
-      output,
-      [
-        "run: 002-review",
-        "status: needs_review",
-        "manual review required: yes",
-        "failure classifications: none",
-        "report.html: /tmp/evals/runs/002-review/report.html",
-        "report.json: /tmp/evals/runs/002-review/report.json",
-        "note: needs_review is unresolved evidence, not pass proof."
+        "report.json: /tmp/evals/runs/001-basic/report.json",
+        "note: execution completed; behavioral verdicts appear only when deterministic tests, judges, or human feedback record one."
       ].join("\n")
     );
   });
@@ -57,7 +33,6 @@ describe("command output", () => {
     const output = formatEvalRunSummary(".", {
       runId: "003-failed",
       status: "failed",
-      manualReviewRequired: false,
       failureClassifications: ["scenario_failed", "deterministic_test_failed"],
       report: "/tmp/evals/runs/003-failed/report.html"
     });
@@ -67,7 +42,6 @@ describe("command output", () => {
       [
         "run: 003-failed",
         "status: failed",
-        "manual review required: no",
         "failure classifications: scenario_failed, deterministic_test_failed",
         "report.html: /tmp/evals/runs/003-failed/report.html",
         "report.json: /tmp/evals/runs/003-failed/report.json"

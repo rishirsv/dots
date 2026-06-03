@@ -39,7 +39,7 @@ describe("AppServerScenarioRunner", () => {
       }
     });
 
-    assert.equal(result.status, "needs_review");
+    assert.equal(result.execution_status, "completed");
     const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
     const thread = await readJson<{ thread_id: string; turn_ids: string[]; status: string }>(path.join(scenarioRoot, "thread.json"));
     assert.deepEqual(thread, {
@@ -214,7 +214,7 @@ describe("AppServerScenarioRunner", () => {
       appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    assert.equal(result.status, "needs_review");
+    assert.equal(result.execution_status, "completed");
     assert.deepEqual(
       child.messages.map((message) => message.method),
       ["initialize", "initialized", "thread/start", "turn/start"]

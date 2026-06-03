@@ -6,7 +6,7 @@ import { describe, it } from "node:test";
 import type { ScenarioRunInput, ScenarioRunResult } from "./app-server/runner";
 import type { RunReport, TokenUsageSummary } from "./models";
 import { openRun, runEval } from "./evals";
-import { renderEvalReportHtml } from "./report";
+import { buildRunReport, renderEvalReportHtml } from "./report";
 import { buildMetaSkillReport, listRunSummariesForReport, renderReportMarkdown, renderRunListMarkdown } from "./reporting";
 import { exists, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
@@ -41,7 +41,7 @@ describe("central reporting service", () => {
       project,
       selector: {},
       noLint: true,
-      scenarioRunner: scenarioRunner("needs_review")
+      scenarioRunner: scenarioRunner(undefined)
     });
     await fs.rm(path.join(result.runRoot, "report.json"));
     await fs.rm(path.join(result.runRoot, "report.html"));
@@ -63,7 +63,7 @@ describe("central reporting service", () => {
       project,
       selector: {},
       noLint: true,
-      scenarioRunner: scenarioRunner("needs_review")
+      scenarioRunner: scenarioRunner(undefined)
     });
 
     const report = await buildMetaSkillReport({ project, view: "status", runId: result.runId, executeLint: false });
@@ -73,7 +73,7 @@ describe("central reporting service", () => {
     assert.match(status, /Meta Skill Report: report-render/);
     assert.match(status, /Recommended Next Step/);
     assert.match(evalView, new RegExp(`Meta Skill Eval ${result.runId}`));
-    assert.match(evalView, /unresolved; not pass proof/);
+    assert.match(evalView, /no verdict recorded/);
   });
 
   it("renders legacy v1 token availability counts without throwing", () => {
@@ -137,6 +137,34 @@ describe("central reporting service", () => {
 
     assert.match(html, /Legacy availability counts: 2 available, 1 unavailable/);
     assert.match(html, /<td>3<\/td>/);
+  });
+
+  it("does not mark mixed assessed and unassessed runs ready", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-mixed-verdict-"));
+    const runRoot = path.join(root, "001-mixed");
+    await fs.mkdir(runRoot, { recursive: true });
+    await writeJson(path.join(runRoot, "run.json"), {
+      schema_version: 1,
+      run_id: "001-mixed",
+      status: "completed",
+      failure_classifications: []
+    });
+    await writeText(
+      path.join(runRoot, "results.jsonl"),
+      [
+        jsonlEvent("scenario_result", "001-mixed", "R1", { scenario_folder: "R1-passed", execution_status: "completed", evidence_path: "scenarios/R1-passed" }),
+        jsonlEvent("scenario_result", "001-mixed", "R2", { scenario_folder: "R2-unassessed", execution_status: "completed", evidence_path: "scenarios/R2-unassessed" })
+      ].join("\n")
+    );
+    await writeText(path.join(runRoot, "tests.jsonl"), `${jsonlEvent("test_result", "001-mixed", "R1", { scenario_id: "R1", status: "passed", id: "scenario-pass" })}\n`);
+    await writeText(path.join(runRoot, "grades.jsonl"), "");
+    await writeText(path.join(runRoot, "feedback.jsonl"), "");
+
+    const report = await buildRunReport(runRoot);
+
+    assert.equal(report.summary.no_verdict_count, 1);
+    assert.equal(report.summary.assessment_status, undefined);
+    assert.equal(report.readiness.status, "unknown");
   });
 
   it("normalizes legacy side-shaped reports and indexes in read mode", async () => {
@@ -211,7 +239,7 @@ describe("central reporting service", () => {
     const html = renderEvalReportHtml(report.evidence.latest_eval_run?.report as RunReport);
 
     assert.match(listMarkdown, /Working payload/);
-    assert.match(evalMarkdown, /Legacy working payload side \/ needs_review/);
+    assert.match(evalMarkdown, /Legacy working payload side \/ completed/);
     assert.match(evalMarkdown, /Legacy saved snapshot side \/ passed/);
     assert.match(html, /Old working payload output/);
     assert.match(html, /Old saved snapshot output/);
@@ -227,7 +255,7 @@ describe("central reporting service", () => {
     assert.match(html, /Token usage/);
     assert.match(html, /Raw evidence/);
     assert.match(html, /data-scenario-id="R2" aria-current="true"/);
-    assert.match(html, /Needs review is unresolved evidence, not pass proof/);
+    assert.match(html, /no deterministic test, judge, or human feedback verdict is recorded/);
     assert.match(html, /Forced-skill run: final-answer behavior only/);
     assert.match(html, /Working payload failed answer/);
     assert.match(html, /<td>Working payload<\/td><td>30<\/td>/);
@@ -260,15 +288,16 @@ function reportFixture(): RunReport {
     summary: {
       run_id: "app-run",
       label: "fixture",
-      status: "needs_review",
+      status: "completed",
       scenario_count: 3,
       attempt_count: 3,
       result_count: 3,
       run_source: workingSource,
-      manual_review_required: true,
       failure_classifications: ["scenario_failure"],
+      execution_status: "completed",
       assessment_status: "failed",
-      unresolved_count: 1,
+      no_verdict_count: 1,
+      evidence_counts: { tests: 1, judges: 1, feedback: 0 },
       token_usage: { by_run_source: { working_payload: failedUsage }, availability_counts: { available: 2, unavailable: 1 } }
     },
     scenarios: [
@@ -281,9 +310,10 @@ function reportFixture(): RunReport {
         topics: ["review"],
         evidence_basis: "run_snapshot",
         criteria: { what_it_tests: "Review", expected_behavior: "Review expected.", assertions: ["Review assertion."], tests: [], judges: [] },
-        attempts: [{ run_source: workingSource, status: "needs_review", evidence_path: "scenarios/R1-review", final_path: "scenarios/R1-review/final.md", final_preview: "Working payload review answer.", token_usage: undefined }],
-        status: "needs_review",
-        unresolved: true
+        attempts: [{ run_source: workingSource, execution_status: "completed", evidence_path: "scenarios/R1-review", final_path: "scenarios/R1-review/final.md", final_preview: "Working payload review answer.", token_usage: undefined }],
+        status: "completed",
+        execution_status: "completed",
+        no_verdict_recorded: true
       },
       {
         id: "R2",
@@ -294,9 +324,11 @@ function reportFixture(): RunReport {
         topics: ["failure"],
         evidence_basis: "run_snapshot",
         criteria: { what_it_tests: "Failure", expected_behavior: "Pass the check.", assertions: ["No failure."], tests: ["check"], judges: ["judge"] },
-        attempts: [{ run_source: workingSource, status: "failed", evidence_path: "scenarios/R2-failed", final_path: "scenarios/R2-failed/final.md", final_preview: "Working payload failed answer.", token_usage: failedUsage, failure_classification: "scenario_failure" }],
+        attempts: [{ run_source: workingSource, execution_status: "completed", verdict: "failed", evidence_path: "scenarios/R2-failed", final_path: "scenarios/R2-failed/final.md", final_preview: "Working payload failed answer.", token_usage: failedUsage, failure_classification: "scenario_failure" }],
         status: "failed",
-        unresolved: false
+        execution_status: "completed",
+        verdict: "failed",
+        no_verdict_recorded: false
       },
       {
         id: "R3",
@@ -307,20 +339,22 @@ function reportFixture(): RunReport {
         topics: ["pass"],
         evidence_basis: "run_snapshot",
         criteria: { expected_behavior: "Pass.", assertions: [], tests: [], judges: [] },
-        attempts: [{ run_source: workingSource, status: "passed", evidence_path: "scenarios/R3-passed", final_path: "scenarios/R3-passed/final.md", final_preview: "Working payload passed answer.", token_usage: passedUsage }],
+        attempts: [{ run_source: workingSource, execution_status: "completed", verdict: "passed", evidence_path: "scenarios/R3-passed", final_path: "scenarios/R3-passed/final.md", final_preview: "Working payload passed answer.", token_usage: passedUsage }],
         status: "passed",
-        unresolved: false
+        execution_status: "completed",
+        verdict: "passed",
+        no_verdict_recorded: false
       }
     ],
     tests: [{ schema_version: 1, type: "test_result", run_id: "app-run", scenario_id: "R2", created_at: "now", source: "fixture", payload: { scenario_id: "R2", status: "failed", id: "check" } }],
     judges: [{ schema_version: 1, type: "judge_result", run_id: "app-run", scenario_id: "R2", created_at: "now", source: "fixture", payload: { scenario_id: "R2", status: "failed", failure_classification: "judge_failure" } }],
     feedback: [],
     artifacts: [],
-    readiness: { status: "blocked", summary: "Run has blocking failures.", blockers: ["scenario_failure"], unresolved: 1, basis: "report.json" }
+    readiness: { status: "blocked", summary: "Run has blocking failures.", blockers: ["scenario_failure"], no_verdict_count: 1, basis: "report.json" }
   };
 }
 
-function scenarioRunner(status: ScenarioRunResult["status"], error?: string) {
+function scenarioRunner(verdict: ScenarioRunResult["verdict"], error?: string) {
   return {
     async run(input: ScenarioRunInput): Promise<ScenarioRunResult> {
       const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
@@ -331,7 +365,8 @@ function scenarioRunner(status: ScenarioRunResult["status"], error?: string) {
       await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
       await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
       return {
-        status,
+        execution_status: "completed",
+        ...(verdict ? { verdict } : {}),
         token_usage: tokenSummary(1, 1, 2),
         final_path: path.join(scenarioRoot, "final.md"),
         evidence_path: path.join("scenarios", input.scenario.folder),
@@ -353,6 +388,18 @@ function tokenSummary(input: number, output: number, total: number): TokenUsageS
     total_tokens: { total, average: total, min: total, max: total },
     unavailable_reasons: []
   };
+}
+
+function jsonlEvent(type: string, runId: string, scenarioId: string, payload: Record<string, unknown>): string {
+  return JSON.stringify({
+    schema_version: 1,
+    type,
+    run_id: runId,
+    scenario_id: scenarioId,
+    created_at: "2026-06-03T00:00:00.000Z",
+    source: "fixture",
+    payload
+  });
 }
 
 async function fixtureProject(slug: string): Promise<string> {

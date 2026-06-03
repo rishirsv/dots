@@ -100,12 +100,23 @@ describe("project layout and packaging", () => {
       run_id: "001-ready",
       created_at: "2026-06-02T00:00:00.000Z",
       completed_at: "2026-06-02T00:01:00.000Z",
-      status: "passed",
+      status: "completed",
       ok: true,
-      manual_review_required: false,
       failure_classifications: [],
       runner: { backend: "test" }
     });
+    await fs.writeFile(
+      path.join(runRoot, "tests.jsonl"),
+      `${JSON.stringify({
+        schema_version: 1,
+        type: "test_result",
+        run_id: "001-ready",
+        created_at: "2026-06-02T00:01:00.000Z",
+        source: "fixture",
+        payload: { id: "release-ready", status: "passed" }
+      })}\n`,
+      "utf8"
+    );
 
     const release = await releaseProject(target, { fromRun: "001-ready" });
     const version = await readJson<{

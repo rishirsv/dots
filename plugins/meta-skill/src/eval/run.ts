@@ -24,7 +24,7 @@ import { refreshRunEvidence } from "./runs";
 import type { EvalRunOptions, RunFailureClassification } from "./types";
 import type { EvalRunSource, EvalRunSourceKind } from "../models";
 
-export async function runEval(options: EvalRunOptions): Promise<{ runId: string; runRoot: string; report: string; ok: boolean; status: "passed" | "needs_review" | "failed"; manualReviewRequired: boolean; failureClassifications: RunFailureClassification[] }> {
+export async function runEval(options: EvalRunOptions): Promise<{ runId: string; runRoot: string; report: string; ok: boolean; status: "completed" | "failed"; failureClassifications: RunFailureClassification[] }> {
   if (options.appServerEndpoint) {
     throw new CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
   }
@@ -89,26 +89,23 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
 
   const runner = options.scenarioRunner || new AppServerScenarioRunner();
   let hasFailures = false;
-  const scenarioStatuses = new Set<string>();
   const failureClassifications = new Set<RunFailureClassification>();
   try {
     for (const scenario of scenarios) {
       await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "scenario_started", run_id: runId, scenario_id: scenario.id, source: "meta-skill eval run", payload: { folder: scenario.folder, run_source: runSourceConfig.runSource } }));
       try {
         const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, attachSkill: runSourceConfig.runSource.attached_skill, scenario, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
-        scenarioStatuses.add(result.status);
-        const classification = classifyScenarioStatus(result.status);
+        const classification = classifyScenarioStatus(result.verdict || result.execution_status);
         if (classification) {
           hasFailures = true;
           failureClassifications.add(classification);
         }
-        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, result.status, result.token_usage, result.evidence_path, result.error, classification);
+        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.token_usage, result.evidence_path, result.error, classification, result.verdict);
       } catch (error) {
         hasFailures = true;
         const message = error instanceof AppServerUnavailableError || error instanceof Error ? error.message : String(error);
         const classification: RunFailureClassification = error instanceof AppServerUnavailableError ? "app_server_unavailable" : "harness_unavailable";
         failureClassifications.add(classification);
-        scenarioStatuses.add("errored");
         const evidencePath = relativePath(runRoot, path.join(runRoot, "scenarios", scenario.folder));
         const tokenUsage = unavailableTokenUsage("App Server execution failed before token metrics were available.");
         await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, "errored", tokenUsage, evidencePath, message, classification);
@@ -136,22 +133,20 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
     if (!judges.ok && !(judges.failureClassifications || []).length) failureClassifications.add("judge_failure");
   }
 
-  const status = runStatus(hasFailures, scenarioStatuses);
-  const ok = status === "passed";
-  const manualReviewRequired = status === "needs_review";
+  const status = runStatus(hasFailures);
+  const ok = status === "completed";
   const sortedFailureClassifications = [...failureClassifications].sort();
   const finalRunJson = {
     ...runJson,
     status,
     completed_at: utcNow(),
     ok,
-    manual_review_required: manualReviewRequired,
     failure_classifications: sortedFailureClassifications
   };
   await writeJson(path.join(runRoot, "run.json"), finalRunJson);
-  await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, manual_review_required: manualReviewRequired, failure_classifications: finalRunJson.failure_classifications } }));
+  await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, failure_classifications: finalRunJson.failure_classifications } }));
   const { report } = await refreshRunEvidence(root, runId);
-  return { runId, runRoot, report, ok, status, manualReviewRequired, failureClassifications: sortedFailureClassifications };
+  return { runId, runRoot, report, ok, status, failureClassifications: sortedFailureClassifications };
 }
 
 function evalRunSourceConfig(kind: EvalRunSourceKind, projectRoot: string, releaseSkill: string): { skillRoot?: string; runSource: EvalRunSource; defaultLabel: string } {

@@ -95,4 +95,4 @@ There is no sealed release gate. For release confidence, prefer:
 - explicit human review before release or package decisions
 - `meta-skill release . --from-run <run-id>` when a run supports readiness, so the release metadata records the evidence basis
 
-Working-payload and saved-snapshot App Server scenarios force-attach the staged skill and run read-only final-answer checks. Use them for forced-skill behavior evidence. No-skill runs are available with `--no-skill`, but compare them against skill-attached runs only as a separate report-level analysis over multiple run IDs. Do not claim true trigger routing or writable artifact proof until the runner supports those modes.
+Working-payload and saved-snapshot App Server scenarios force-attach the staged skill and run read-only final-answer checks. Use them for forced-skill behavior evidence. No-skill runs are available with `--no-skill` as manual control evidence, not as an automated uplift score. Do not claim true trigger routing or writable artifact proof until the runner supports those modes.

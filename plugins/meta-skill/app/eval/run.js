@@ -73,27 +73,24 @@ async function runEval(options) {
     await (0, scenarios_1.writeRunScenarioSnapshots)(runRoot, scenarios);
     const runner = options.scenarioRunner || new runner_1.AppServerScenarioRunner();
     let hasFailures = false;
-    const scenarioStatuses = new Set();
     const failureClassifications = new Set();
     try {
         for (const scenario of scenarios) {
             await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "scenario_started", run_id: runId, scenario_id: scenario.id, source: "meta-skill eval run", payload: { folder: scenario.folder, run_source: runSourceConfig.runSource } }));
             try {
                 const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, attachSkill: runSourceConfig.runSource.attached_skill, scenario, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
-                scenarioStatuses.add(result.status);
-                const classification = (0, results_1.classifyScenarioStatus)(result.status);
+                const classification = (0, results_1.classifyScenarioStatus)(result.verdict || result.execution_status);
                 if (classification) {
                     hasFailures = true;
                     failureClassifications.add(classification);
                 }
-                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, result.status, result.token_usage, result.evidence_path, result.error, classification);
+                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.token_usage, result.evidence_path, result.error, classification, result.verdict);
             }
             catch (error) {
                 hasFailures = true;
                 const message = error instanceof client_1.AppServerUnavailableError || error instanceof Error ? error.message : String(error);
                 const classification = error instanceof client_1.AppServerUnavailableError ? "app_server_unavailable" : "harness_unavailable";
                 failureClassifications.add(classification);
-                scenarioStatuses.add("errored");
                 const evidencePath = (0, project_1.relativePath)(runRoot, node_path_1.default.join(runRoot, "scenarios", scenario.folder));
                 const tokenUsage = (0, project_1.unavailableTokenUsage)("App Server execution failed before token metrics were available.");
                 await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, "errored", tokenUsage, evidencePath, message, classification);
@@ -123,22 +120,20 @@ async function runEval(options) {
         if (!judges.ok && !(judges.failureClassifications || []).length)
             failureClassifications.add("judge_failure");
     }
-    const status = (0, results_1.runStatus)(hasFailures, scenarioStatuses);
-    const ok = status === "passed";
-    const manualReviewRequired = status === "needs_review";
+    const status = (0, results_1.runStatus)(hasFailures);
+    const ok = status === "completed";
     const sortedFailureClassifications = [...failureClassifications].sort();
     const finalRunJson = {
         ...runJson,
         status,
         completed_at: (0, project_1.utcNow)(),
         ok,
-        manual_review_required: manualReviewRequired,
         failure_classifications: sortedFailureClassifications
     };
     await (0, project_1.writeJson)(node_path_1.default.join(runRoot, "run.json"), finalRunJson);
-    await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, manual_review_required: manualReviewRequired, failure_classifications: finalRunJson.failure_classifications } }));
+    await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_completed", run_id: runId, source: "meta-skill eval run", payload: { ok, status, failure_classifications: finalRunJson.failure_classifications } }));
     const { report } = await (0, runs_1.refreshRunEvidence)(root, runId);
-    return { runId, runRoot, report, ok, status, manualReviewRequired, failureClassifications: sortedFailureClassifications };
+    return { runId, runRoot, report, ok, status, failureClassifications: sortedFailureClassifications };
 }
 function evalRunSourceConfig(kind, projectRoot, releaseSkill) {
     if (kind === "snapshot_payload") {

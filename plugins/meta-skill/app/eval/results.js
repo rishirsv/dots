@@ -10,7 +10,7 @@ exports.runStatus = runStatus;
 const node_fs_1 = require("node:fs");
 const node_path_1 = __importDefault(require("node:path"));
 const project_1 = require("../project");
-async function recordScenarioResult(runRoot, runId, scenario, runSource, status, tokenUsage, evidencePath, error, failureClassification) {
+async function recordScenarioResult(runRoot, runId, scenario, runSource, executionStatus, tokenUsage, evidencePath, error, failureClassification, verdict) {
     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "results.jsonl"), (0, project_1.eventEnvelope)({
         type: "scenario_result",
         run_id: runId,
@@ -18,7 +18,8 @@ async function recordScenarioResult(runRoot, runId, scenario, runSource, status,
         source: "meta-skill eval run",
         payload: {
             run_source: runSource,
-            status,
+            execution_status: executionStatus,
+            ...(verdict ? { verdict } : {}),
             scenario_folder: scenario.folder,
             evidence_path: evidencePath,
             token_usage: tokenUsage,
@@ -62,8 +63,8 @@ function legacyRunSource(value) {
 function classifyScenarioStatus(status) {
     return status === "failed" || status === "errored" ? "scenario_failed" : null;
 }
-function runStatus(hasFailures, scenarioStatuses) {
+function runStatus(hasFailures) {
     if (hasFailures)
         return "failed";
-    return scenarioStatuses.has("needs_review") ? "needs_review" : "passed";
+    return "completed";
 }

@@ -33,7 +33,7 @@ Scenario folders live at `.meta-skill/evals/scenarios/<ID-slug>/` and require `t
 - Scenario evals measure behavior; they do not apply source edits.
 - By default, the runner force-attaches the working payload on the first turn. Treat working-payload and saved-snapshot runs as forced-skill final-answer evidence, not proof of true trigger routing or artifact-writing behavior.
 - A run evaluates exactly one source: the working payload, a saved snapshot payload with `--snapshot`, or no skill with `--no-skill`.
-- `--compare` was removed. Comparisons belong in separate report-level artifacts over multiple run IDs, not inside one run.
+- `--compare` was removed. A run evaluates one source only; there is no first-class comparison report.
 - Saved snapshot runs use `.meta-skill/versions/release/skill/`, not stale output from an old run.
 - `eval generate` is scaffolded but unsupported; do not present generated scenarios as available proof.
 - Multi-turn scenarios must use `task.md` for the first turn and `turns.json` for follow-up turns.
@@ -46,7 +46,7 @@ Scenario folders live at `.meta-skill/evals/scenarios/<ID-slug>/` and require `t
 - Token usage is measured telemetry, not a quality score. Inspect `usage.json` for canonical per-scenario usage and `report.html`/`report.json` for run summaries.
 - Multi-turn scenario totals come from App Server cumulative `tokenUsage.total` on the final reporting turn; per-turn `tokenUsage.last` is retained only as turn evidence.
 - If App Server does not return exact metrics, the evidence should say unavailable explicitly with a reason.
-- `needs_review` is unresolved evidence, not pass proof. Report what executed, where final answers and traces live, and what still needs deterministic tests, judge approval, or human review.
+- Completed execution is not pass proof. Report what executed, where final answers and traces live, whether a deterministic test, judge, or human feedback verdict exists, and say "no verdict recorded" when none exists.
 
 ## Scenario Design
 
@@ -76,4 +76,4 @@ If the user wants to turn evidence into edits, hand off to `skill-improve` with 
 
 For setup or run help, return the next command, what it reads or writes, and where evidence will live.
 
-For interpretation, summarize the run source, selected scenarios, pass/fail/needs-review/error counts, measured token totals, token usage availability, skipped lint or judges, and the next useful step. Never describe `needs_review` as passing.
+For interpretation, summarize the run source, selected scenarios, execution completed/error counts, pass/fail verdict counts from tests, judges, or human feedback, measured token totals, token usage availability, skipped lint or judges, and the next useful step. Never describe completed execution without a verdict as passing.

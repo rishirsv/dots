@@ -35,7 +35,8 @@ export interface ScenarioRunInput {
 }
 
 export interface ScenarioRunResult {
-  status: "passed" | "failed" | "needs_review" | "errored";
+  execution_status: "completed" | "errored";
+  verdict?: "passed" | "failed";
   token_usage: TokenUsageSummary;
   final_path: string;
   evidence_path: string;
@@ -136,7 +137,7 @@ export class AppServerScenarioRunner {
     await writeText(path.join(rawRoot, "final.md"), final || "(no final assistant message captured)");
 
     return {
-      status: "needs_review",
+      execution_status: "completed",
       token_usage: scenarioSummary,
       final_path: path.join(rawRoot, "final.md"),
       evidence_path: path.relative(input.runRoot, rawRoot)
