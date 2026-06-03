@@ -42,9 +42,9 @@ meta-skill eval run . --no-skill
 
 `--snapshot` runs the saved snapshot payload from `.meta-skill/versions/release/skill/`. It should error with a helpful next step when no saved snapshot exists.
 
-`--no-skill` runs the same scenario with no skill attached. Do not compare it inside the same run; create separate run IDs and compare them in a separate report-level artifact when that command exists.
+`--no-skill` runs the same scenario with no skill attached. Treat it as manual control evidence, not as part of an automated uplift report.
 
-`--compare` was removed. A run evaluates one source only.
+`--compare` was removed. A run evaluates one source only; there is no replacement comparison command.
 
 ## Generate Scenarios
 

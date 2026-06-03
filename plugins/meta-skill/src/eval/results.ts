@@ -9,11 +9,12 @@ export async function recordScenarioResult(
   runId: string,
   scenario: ScenarioRecord,
   runSource: EvalRunSource,
-  status: string,
+  executionStatus: string,
   tokenUsage: unknown,
   evidencePath: string,
   error?: string,
-  failureClassification?: RunFailureClassification | null
+  failureClassification?: RunFailureClassification | null,
+  verdict?: "passed" | "failed"
 ): Promise<void> {
   await appendJsonl(
     path.join(runRoot, "results.jsonl"),
@@ -24,7 +25,8 @@ export async function recordScenarioResult(
       source: "meta-skill eval run",
       payload: {
         run_source: runSource,
-        status,
+        execution_status: executionStatus,
+        ...(verdict ? { verdict } : {}),
         scenario_folder: scenario.folder,
         evidence_path: evidencePath,
         token_usage: tokenUsage,
@@ -67,7 +69,7 @@ export function classifyScenarioStatus(status: string): RunFailureClassification
   return status === "failed" || status === "errored" ? "scenario_failed" : null;
 }
 
-export function runStatus(hasFailures: boolean, scenarioStatuses: Set<string>): "passed" | "needs_review" | "failed" {
+export function runStatus(hasFailures: boolean): "completed" | "failed" {
   if (hasFailures) return "failed";
-  return scenarioStatuses.has("needs_review") ? "needs_review" : "passed";
+  return "completed";
 }

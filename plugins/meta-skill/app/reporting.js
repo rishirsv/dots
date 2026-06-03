@@ -189,7 +189,7 @@ function renderRunListMarkdown(runs) {
     const normalizedRuns = runs.map(report_1.normalizeRunIndexRowForRead).filter((run) => run.run_id);
     if (!normalizedRuns.length)
         return "No eval runs found.";
-    const header = "Run ID\tStatus\tCreated\tCompleted\tLabel\tSource\tScenarios\tManual Review\tFailures\tReadiness";
+    const header = "Run ID\tStatus\tCreated\tCompleted\tLabel\tSource\tScenarios\tAssessment\tNo Verdict\tFailures\tReadiness";
     const rows = normalizedRuns.map((run) => [
         run.run_id,
         run.status,
@@ -198,7 +198,8 @@ function renderRunListMarkdown(runs) {
         run.label || "",
         run.run_source.label,
         String(run.scenario_count),
-        run.manual_review_required ? "yes" : "no",
+        run.assessment_status || "none",
+        String(run.no_verdict_count),
         run.failure_classifications.length ? run.failure_classifications.join(",") : "none",
         run.readiness_status
     ].join("\t"));
@@ -210,12 +211,14 @@ function renderEvalRunMarkdown(report) {
         `# Meta Skill Eval ${report.summary.run_id}`,
         "",
         "## At a Glance",
-        `- Status: ${report.summary.status}${report.summary.status === "needs_review" ? " (unresolved; not pass proof)" : ""}`,
+        `- Status: ${report.summary.status}`,
+        `- Execution: ${report.summary.execution_status}`,
         `- Readiness: ${report.readiness.status}`,
+        `- Assessment: ${report.summary.assessment_status || "no verdict recorded"}`,
         `- Scenarios: ${report.summary.scenario_count}`,
-        `- Unresolved: ${report.summary.unresolved_count}`,
+        `- No verdict recorded: ${report.summary.no_verdict_count}`,
         `- Failure classifications: ${report.summary.failure_classifications.length ? report.summary.failure_classifications.join(", ") : "none"}`,
-        `- Manual review required: ${report.summary.manual_review_required ? "yes" : "no"}`,
+        `- Evidence counts: tests ${report.summary.evidence_counts.tests}, judges ${report.summary.evidence_counts.judges}, feedback ${report.summary.evidence_counts.feedback}`,
         "",
         "## Readiness",
         report.readiness.summary,
@@ -225,9 +228,9 @@ function renderEvalRunMarkdown(report) {
     if (!report.scenarios.length)
         lines.push("- No scenario rows recorded.");
     for (const scenario of report.scenarios) {
-        lines.push(`- ${scenario.id} ${scenario.title || scenario.folder}: ${scenario.status}${scenario.unresolved ? " (unresolved)" : ""}`);
+        lines.push(`- ${scenario.id} ${scenario.title || scenario.folder}: ${scenario.status}${scenario.no_verdict_recorded ? " (no verdict recorded)" : ""}`);
         for (const attempt of scenario.attempts) {
-            const detail = [attempt.run_source.label, attempt.status, attempt.failure_classification || attempt.error || ""].filter(Boolean).join(" / ");
+            const detail = [attempt.run_source.label, attempt.verdict || attempt.execution_status, attempt.failure_classification || attempt.error || ""].filter(Boolean).join(" / ");
             lines.push(`  - ${detail}`);
         }
     }
@@ -298,20 +301,20 @@ function renderPlanSessionMarkdown(report) {
 }
 function readinessForProject(lint, run, release, errors) {
     if (errors.length)
-        return { status: "blocked", summary: "Some evidence could not be read.", blockers: errors, unresolved: 0, basis: "report evidence read" };
+        return { status: "blocked", summary: "Some evidence could not be read.", blockers: errors, no_verdict_count: 0, basis: "report evidence read" };
     if (lint?.failures.length)
-        return { status: "blocked", summary: "Lint has blocking failures.", blockers: lint.failures.map((failure) => failure.message), unresolved: 0, basis: "lint" };
+        return { status: "blocked", summary: "Lint has blocking failures.", blockers: lint.failures.map((failure) => failure.message), no_verdict_count: 0, basis: "lint" };
     if (run?.readiness.status === "blocked")
         return run.readiness;
-    if (run?.readiness.status === "needs_review")
+    if (run?.readiness.status === "unknown")
         return run.readiness;
     if (release?.newer_run_exists)
-        return { status: "needs_review", summary: "A newer run exists after the release snapshot.", blockers: [], unresolved: 1, basis: "release version and eval runs" };
+        return { status: "unknown", summary: "A newer run exists after the release snapshot.", blockers: [], no_verdict_count: 0, basis: "release version and eval runs" };
     if (lint?.warnings.length)
-        return { status: "needs_review", summary: "Lint passed with warnings.", blockers: [], unresolved: lint.warnings.length, basis: "lint" };
+        return { status: "unknown", summary: "Lint passed with warnings.", blockers: [], no_verdict_count: 0, basis: "lint" };
     if (run?.readiness.status === "ready")
         return run.readiness;
-    return { status: "unknown", summary: "Not enough evidence exists yet to classify readiness.", blockers: [], unresolved: 0, basis: "project state" };
+    return { status: "unknown", summary: "Not enough evidence exists yet to classify readiness.", blockers: [], no_verdict_count: 0, basis: "project state" };
 }
 function nextActionForProject(root, lint, runs, run, release, readiness) {
     const project = shellPath(root);
@@ -321,7 +324,7 @@ function nextActionForProject(root, lint, runs, run, release, readiness) {
         return { label: "Run evals", why: "No eval runs exist yet.", command: `meta-skill eval run ${project}` };
     if (run?.readiness.status === "blocked")
         return { label: "Inspect eval blockers", why: run.readiness.summary, command: `meta-skill report ${project} --view eval --run ${run.summary.run_id}` };
-    if (run?.readiness.status === "needs_review")
+    if (run?.readiness.status === "unknown")
         return { label: "Inspect latest eval evidence", why: run.readiness.summary, command: `meta-skill report ${project} --view eval --run ${run.summary.run_id}` };
     if (readiness.status === "ready" && !release?.exists && run)
         return { label: "Create release snapshot", why: "Latest run is ready and no release snapshot exists.", command: `meta-skill release ${project} --from-run ${run.summary.run_id}` };
@@ -471,9 +474,9 @@ function findingsFor(report) {
         findings.push(`Lint warning: ${warning.message}`);
     for (const blocker of report.evidence.latest_eval_run?.report.readiness.blockers || [])
         findings.push(`Eval blocker: ${blocker}`);
-    const unresolved = report.evidence.latest_eval_run?.report.readiness.unresolved || 0;
-    if (unresolved)
-        findings.push(`Eval unresolved: ${unresolved} scenario${unresolved === 1 ? "" : "s"} need review.`);
+    const noVerdict = report.evidence.latest_eval_run?.report.readiness.no_verdict_count || 0;
+    if (noVerdict)
+        findings.push(`Eval assessment: ${noVerdict} scenario${noVerdict === 1 ? "" : "s"} completed with no verdict recorded.`);
     if (report.evidence.release?.newer_run_exists)
         findings.push("Release: A newer run exists after the release snapshot.");
     for (const error of report.evidence.evidence_errors)

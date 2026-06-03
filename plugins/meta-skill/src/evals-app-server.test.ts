@@ -32,7 +32,7 @@ describe("App Server eval orchestration", () => {
           await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
           await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn-1"], status: "completed" });
           return {
-            status: "needs_review",
+            execution_status: "completed",
             token_usage: tokenSummary(1, 2, 3),
             final_path: path.join(scenarioRoot, "final.md"),
             evidence_path: path.join("scenarios", input.scenario.folder)
@@ -44,20 +44,17 @@ describe("App Server eval orchestration", () => {
       }
     });
 
-    assert.equal(result.ok, false);
-    assert.equal(result.status, "needs_review");
-    assert.equal(result.manualReviewRequired, true);
+    assert.equal(result.ok, true);
+    assert.equal(result.status, "completed");
     assert.equal(closed, true);
     const run = await readJson<{
       status: string;
       ok: boolean;
-      manual_review_required: boolean;
       failure_classifications: string[];
       runner: { sandbox: string; approval_policy: string; network_access: boolean; backend: string; protocol: string };
     }>(path.join(result.runRoot, "run.json"));
-    assert.equal(run.status, "needs_review");
-    assert.equal(run.ok, false);
-    assert.equal(run.manual_review_required, true);
+    assert.equal(run.status, "completed");
+    assert.equal(run.ok, true);
     assert.deepEqual(run.failure_classifications, []);
     assert.equal(run.runner.backend, "app_server");
     assert.equal(run.runner.protocol, "generated-ts");
@@ -67,21 +64,20 @@ describe("App Server eval orchestration", () => {
     const tests = await readText(path.join(result.runRoot, "tests.jsonl"));
     assert.match(tests, /"type":"lint_skipped"/);
     const completed = (await readJsonl(path.join(result.runRoot, "events.jsonl"))).find((row) => row.type === "run_completed");
-    assert.equal(completed?.payload?.status, "needs_review");
-    assert.equal(completed?.payload?.manual_review_required, true);
+    assert.equal(completed?.payload?.status, "completed");
     assert.deepEqual(completed?.payload?.failure_classifications, []);
     const report = await readText(result.report);
-    assert.match(report, /unresolved; not pass proof/);
+    assert.match(report, /No verdict recorded|no deterministic test, judge, or human feedback verdict is recorded/);
     assert.match(report, /Fixture final|ok/);
     assert.match(report, /lint skipped/);
-    const normalized = await readJson<{ summary: { run_id: string; status: string; unresolved_count: number }; scenarios: unknown[]; readiness: { status: string } }>(path.join(result.runRoot, "report.json"));
+    const normalized = await readJson<{ summary: { run_id: string; status: string; no_verdict_count: number }; scenarios: unknown[]; readiness: { status: string } }>(path.join(result.runRoot, "report.json"));
     assert.equal(normalized.summary.run_id, result.runId);
-    assert.equal(normalized.summary.status, "needs_review");
-    assert.equal(normalized.summary.unresolved_count, 1);
+    assert.equal(normalized.summary.status, "completed");
+    assert.equal(normalized.summary.no_verdict_count, 1);
     assert.equal(normalized.scenarios.length, 1);
-    assert.equal(normalized.readiness.status, "needs_review");
+    assert.equal(normalized.readiness.status, "unknown");
     const index = await readJson<{ runs: Array<{ run_id: string; status: string; readiness_status: string }> }>(path.join(path.dirname(result.runRoot), "index.json"));
-    assert.deepEqual(index.runs.map((row) => [row.run_id, row.status, row.readiness_status]), [[result.runId, "needs_review", "needs_review"]]);
+    assert.deepEqual(index.runs.map((row) => [row.run_id, row.status, row.readiness_status]), [[result.runId, "completed", "unknown"]]);
     const opened = await openRun(project, result.runId);
     assert.equal(opened.data.summary.run_id, result.runId);
     const listed = await listRunSummaries(project);
@@ -114,7 +110,7 @@ describe("App Server eval orchestration", () => {
     assert.equal(run.ok, false);
     assert.deepEqual(run.failure_classifications, ["app_server_unavailable"]);
     const results = await readJsonl(path.join(result.runRoot, "results.jsonl"));
-    assert.equal(results[0]?.payload?.status, "errored");
+    assert.equal(results[0]?.payload?.execution_status, "errored");
     assert.equal(results[0]?.payload?.failure_classification, "app_server_unavailable");
     const events = await readText(path.join(result.runRoot, "events.jsonl"));
     assert.match(events, /"type":"scenario_failed"/);
@@ -137,7 +133,8 @@ describe("App Server eval orchestration", () => {
     assert.equal(run.status, "failed");
     assert.deepEqual(run.failure_classifications, ["scenario_failed"]);
     const results = await readJsonl(path.join(result.runRoot, "results.jsonl"));
-    assert.equal(results[0]?.payload?.status, "failed");
+    assert.equal(results[0]?.payload?.execution_status, "completed");
+    assert.equal(results[0]?.payload?.verdict, "failed");
     assert.equal(results[0]?.payload?.failure_classification, "scenario_failed");
     assert.equal(results[0]?.payload?.error, "Scenario assertions failed.");
   });
@@ -160,7 +157,7 @@ describe("App Server eval orchestration", () => {
           await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
           await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn"], status: "completed" });
           return {
-            status: "passed",
+            execution_status: "completed",
             token_usage: tokenSummary(1, 1, 2),
             final_path: path.join(scenarioRoot, "final.md"),
             evidence_path: path.join("scenarios", input.scenario.folder)
@@ -335,7 +332,7 @@ describe("App Server eval orchestration", () => {
   });
 });
 
-function scenarioRunner(status: ScenarioRunResult["status"], error?: string) {
+function scenarioRunner(verdict: ScenarioRunResult["verdict"], error?: string) {
   return {
     async run(input: ScenarioRunInput): Promise<ScenarioRunResult> {
       const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
@@ -349,7 +346,8 @@ function scenarioRunner(status: ScenarioRunResult["status"], error?: string) {
       await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
       await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
       return {
-        status,
+        execution_status: "completed",
+        ...(verdict ? { verdict } : {}),
         token_usage: tokenSummary(1, 1, 2),
         final_path: path.join(scenarioRoot, "final.md"),
         evidence_path: path.join("scenarios", input.scenario.folder),

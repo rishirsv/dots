@@ -165,8 +165,9 @@ Token evidence is measured App Server telemetry. Each scenario writes
 rows in `turns.jsonl`, and denormalizes the scenario summary into `results.jsonl`.
 For multi-turn scenarios, App Server cumulative `tokenUsage.total` from the final
 reporting turn is authoritative; per-turn `tokenUsage.last` is retained for
-transcript and turn-level inspection. A run records exactly one source; compare
-multiple runs only in separate report-level artifacts.
+transcript and turn-level inspection. A run records exactly one source. There is
+no first-class comparison artifact; inspect separate run reports manually when
+you need contrast.
 
 `--app-server-endpoint` is not supported yet; the CLI rejects it.
 
@@ -278,18 +279,18 @@ root `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or source `skills/`, run
 
 ## Current Limits
 
-- `needs_review` is unresolved evidence, not proof of pass. A completed App
-  Server scenario usually returns `needs_review` unless deterministic checks,
-  judges, or harness errors classify a failure.
+- App Server scenario execution records `execution_status` such as `completed`
+  or `errored`. Behavioral pass/fail appears only when deterministic tests,
+  judges, or human feedback record a verdict. Completed execution with no such
+  evidence is reported as no verdict recorded.
 - `review` writes a deterministic quality-rubric fallback with Discovery,
   Implementation, Validation, and Suggestions. It represents the read-only
   reviewer concept but does not claim a live semantic subagent ran.
 - `plan` is a scaffold. It creates an empty edit list that someone must fill
   from evidence before `promote`.
 - `eval generate` is scaffolded but unsupported.
-- Baseline/no-skill comparison and true trigger routing are unsupported because
-  the current App Server runner force-attaches the staged skill on the first
-  turn.
+- Automated uplift comparison and true trigger routing are unsupported. Treat
+  no-skill runs as manual control evidence, not an uplift score.
 - Attached App Server endpoints are not implemented.
 - The plugin is Codex-only and depends on Codex skill attachment plus App Server.
 - `src/` and committed `app/` can drift if maintainers forget to build.

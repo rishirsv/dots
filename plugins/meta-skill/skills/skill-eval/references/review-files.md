@@ -185,7 +185,7 @@ For multi-turn scenarios, the scenario summary uses App Server cumulative `token
 
 Every result should include token usage fields. If exact usage is unavailable, the fields should explicitly say unavailable and why.
 
-`needs_review` means unresolved. It records that scenario execution produced evidence for a human, deterministic test, or judge to inspect; it is not a passing result.
+Scenario results record execution facts separately from verdict facts. `execution_status: "completed"` means the runner produced evidence; it is not a passing result. If no deterministic test, judge, or human feedback verdict is present, reports say no verdict is recorded.
 
 ## Evidence Claims
 
@@ -199,6 +199,6 @@ Every result should include token usage fields. If exact usage is unavailable, t
 
 ## Feedback
 
-Feedback rows are append-only JSONL. Use labels such as `pass`, `fail`, `needs_review`, and `defer`. `defer` is a human label, not a framework result status.
+Feedback rows are append-only JSONL. Use labels such as `pass`, `fail`, and `defer`. `defer` is a human label, not a framework result status.
 
 When feedback motivates an edit, cite the run ID, scenario ID, label, first failure step, and notes in the improvement plan.

@@ -55,7 +55,7 @@ Scenario execution runs through Codex App Server and records per-scenario final 
 
 Criteria are evaluator evidence and must not appear in the solver stage. Judges read saved run snapshots plus final output; if a legacy run lacks snapshots, say so.
 
-`needs_review` is unresolved evidence, not pass proof. When a run has `needs_review`, say manual review is still required and identify the saved evidence to inspect before claiming behavior passed.
+Completed scenario execution is not a behavioral verdict. When no deterministic test, judge, or human feedback verdict is recorded, say execution completed with no verdict recorded and identify the saved evidence to inspect before claiming behavior passed.
 
 Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` annotations regenerate `report.json`, `report.html`, and the runs index.
 

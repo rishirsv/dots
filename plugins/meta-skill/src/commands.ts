@@ -198,12 +198,11 @@ async function commandEvalInit(argv: string[]): Promise<number> {
 }
 
 async function commandEvalRun(argv: string[]): Promise<number> {
-  const args = parse(argv, ["scenario", "family", "topic", "label", "compare", "app-server-endpoint"], ["snapshot", "no-skill", "with-judges", "no-lint"]);
+  const args = parse(argv, ["scenario", "family", "topic", "label", "app-server-endpoint"], ["snapshot", "no-skill", "with-judges", "no-lint"]);
   const project = args.positionals[0] || ".";
   if (args.one("app-server-endpoint")) {
     throw new CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
   }
-  if (args.one("compare")) throw new CliError("--compare was removed. Run one source at a time: omit source flags for the working payload, pass --snapshot for the saved snapshot payload, or pass --no-skill for unassisted execution.", 2);
   if (args.has("snapshot") && args.has("no-skill")) throw new CliError("eval run accepts only one source flag: --snapshot or --no-skill", 2);
   const family = args.one("family");
   if (family && !["R", "F", "T", "G"].includes(family)) throw new CliError("--family must be one of R, F, T, G", 2);
@@ -227,19 +226,18 @@ async function commandEvalGenerate(argv: string[]): Promise<number> {
 
 export function formatEvalRunSummary(
   project: string,
-  result: { runId: string; status: string; manualReviewRequired: boolean; failureClassifications: string[]; report: string }
+  result: { runId: string; status: string; failureClassifications: string[]; report: string }
 ): string {
   const reportJson = path.join(path.dirname(result.report), "report.json");
   const lines = [
     `run: ${result.runId}`,
     `status: ${result.status}`,
-    `manual review required: ${result.manualReviewRequired ? "yes" : "no"}`,
     `failure classifications: ${result.failureClassifications.length ? result.failureClassifications.join(", ") : "none"}`,
     `report.html: ${result.report}`,
     `report.json: ${reportJson}`
   ];
-  if (result.status === "needs_review") {
-    lines.push("note: needs_review is unresolved evidence, not pass proof.");
+  if (result.status === "completed") {
+    lines.push("note: execution completed; behavioral verdicts appear only when deterministic tests, judges, or human feedback record one.");
   }
   return lines.join("\n");
 }

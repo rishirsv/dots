@@ -96,7 +96,7 @@ class AppServerScenarioRunner {
         await (0, project_1.writeJson)(node_path_1.default.join(rawRoot, "usage.json"), usageEvidence);
         await (0, project_1.writeText)(node_path_1.default.join(rawRoot, "final.md"), final || "(no final assistant message captured)");
         return {
-            status: "needs_review",
+            execution_status: "completed",
             token_usage: scenarioSummary,
             final_path: node_path_1.default.join(rawRoot, "final.md"),
             evidence_path: node_path_1.default.relative(input.runRoot, rawRoot)
