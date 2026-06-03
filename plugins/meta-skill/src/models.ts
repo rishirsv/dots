@@ -18,6 +18,54 @@ export interface TokenUsage {
   input_tokens: TokenMetric;
   output_tokens: TokenMetric;
   total_tokens: TokenMetric;
+  cached_tokens?: TokenMetric;
+  reasoning_tokens?: TokenMetric;
+}
+
+export type TokenAvailability = "present" | "partial" | "unavailable";
+export type TokenSampleUnit = "turn" | "scenario_side";
+
+export interface TokenStat {
+  total: number;
+  average: number;
+  min: number;
+  max: number;
+}
+
+export interface TokenUsageSummary {
+  availability: TokenAvailability;
+  sample_unit: TokenSampleUnit;
+  sample_count: number;
+  unavailable_count: number;
+  input_tokens: TokenStat;
+  output_tokens: TokenStat;
+  total_tokens: TokenStat;
+  cached_tokens?: TokenStat;
+  reasoning_tokens?: TokenStat;
+  unavailable_reasons: string[];
+}
+
+export interface TokenUsageTurn {
+  turn_id: string;
+  index: number;
+  usage: TokenUsage;
+  cumulative_usage?: TokenUsage;
+  source_event: "thread/tokenUsage/updated";
+}
+
+export interface TokenUsageEvidence {
+  schema_version: 1;
+  availability: TokenAvailability;
+  turns: TokenUsageTurn[];
+  summary: TokenUsageSummary;
+}
+
+export interface RunTokenUsageSummary {
+  by_side: Partial<Record<EvalSide, TokenUsageSummary>>;
+  availability_counts: {
+    available: number;
+    unavailable: number;
+  };
 }
 
 export interface EvalManifest {
@@ -125,7 +173,7 @@ export interface RunReportSide {
   evidence_path: string;
   final_path?: string;
   final_preview?: string;
-  token_usage?: unknown;
+  token_usage?: TokenUsageSummary;
   failure_classification?: string | null;
   error?: string;
   raw?: Record<string, unknown>;
@@ -171,7 +219,7 @@ export interface RunReadiness {
 }
 
 export interface RunReport {
-  schema_version: 1;
+  schema_version: 2;
   generated_at: string;
   run: Record<string, unknown>;
   summary: {
@@ -188,10 +236,7 @@ export interface RunReport {
     failure_classifications: string[];
     assessment_status: "passed" | "needs_review" | "failed" | "unknown";
     unresolved_count: number;
-    token_usage: {
-      available: number;
-      unavailable: number;
-    };
+    token_usage: RunTokenUsageSummary;
   };
   scenarios: RunReportScenario[];
   tests: EventEnvelope[];

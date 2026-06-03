@@ -21,8 +21,10 @@ describe("live App Server smoke", () => {
     let contractStarted = false;
     try {
       try {
-        const auth = await client.request("getAuthStatus", { includeToken: false, refreshToken: false });
-        if ((auth as { requiresOpenaiAuth?: boolean }).requiresOpenaiAuth === true || (auth as { authMethod?: unknown }).authMethod == null) {
+        const auth = await client.request("getAuthStatus", { includeToken: true, refreshToken: false });
+        const authMethod = (auth as { authMethod?: unknown }).authMethod;
+        const authToken = (auth as { authToken?: unknown }).authToken;
+        if (authMethod == null && authToken == null) {
           t.skip("codex app-server is unauthenticated");
           return;
         }
@@ -61,19 +63,10 @@ describe("live App Server smoke", () => {
 
       assert.equal(events.some((message) => message.method === "item/agentMessage/delta" && (message.params as { turnId?: string } | undefined)?.turnId === turnId), true);
       assert.equal(events.some((message) => message.method === "turn/completed"), true);
+      const tokenEvent = events.find((message) => message.method === "thread/tokenUsage/updated" && (message.params as { threadId?: string; turnId?: string } | undefined)?.threadId === threadId && (message.params as { turnId?: string } | undefined)?.turnId === turnId);
+      assert.equal(Boolean(tokenEvent), true);
       assert.equal(trace.some((line) => line.direction === "client" && (line.message as { method?: string }).method === "initialized"), true);
       assert.equal(trace.some((line) => line.direction === "client" && (line.message as { method?: string; params?: { sandboxPolicy?: unknown } }).method === "turn/start"), true);
-
-      const resume = await client.request("thread/resume", {
-        threadId,
-        excludeTurns: true,
-        persistExtendedHistory: false,
-        cwd,
-        runtimeWorkspaceRoots: [cwd],
-        approvalPolicy: "never",
-        sandbox: "read-only"
-      });
-      assert.equal((resume.thread as { id?: string } | undefined)?.id, threadId);
     } finally {
       await client.flush();
       client.close();

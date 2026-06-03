@@ -5,6 +5,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { AppServerUnavailableError } from "./app-server/client";
 import type { ScenarioRunInput, ScenarioRunResult } from "./app-server/runner";
+import type { TokenUsageSummary } from "./models";
 import { importFeedback, judgeRun, listRunSummaries, openRun, runEval } from "./evals";
 import { judgePassed } from "./eval/judge";
 import { packageProject } from "./package";
@@ -32,11 +33,7 @@ describe("App Server eval orchestration", () => {
           await writeJson(path.join(sideRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn-1"], status: "completed" });
           return {
             status: "needs_review",
-            token_usage: {
-              input_tokens: { available: true, value: 1 },
-              output_tokens: { available: true, value: 2 },
-              total_tokens: { available: true, value: 3 }
-            },
+            token_usage: tokenSummary(1, 2, 3),
             final_path: path.join(sideRoot, "final.md"),
             evidence_path: path.join("scenarios", input.scenario.folder, input.side)
           };
@@ -312,17 +309,26 @@ function scenarioRunner(status: ScenarioRunResult["status"], error?: string) {
       await writeText(path.join(sideRoot, "rpc.jsonl"), "");
       return {
         status,
-        token_usage: {
-          input_tokens: { available: true, value: 1 },
-          output_tokens: { available: true, value: 1 },
-          total_tokens: { available: true, value: 2 }
-        },
+        token_usage: tokenSummary(1, 1, 2),
         final_path: path.join(sideRoot, "final.md"),
         evidence_path: path.join("scenarios", input.scenario.folder, input.side),
         error
       };
     },
     close() {}
+  };
+}
+
+function tokenSummary(input: number, output: number, total: number): TokenUsageSummary {
+  return {
+    availability: "present",
+    sample_unit: "scenario_side",
+    sample_count: 1,
+    unavailable_count: 0,
+    input_tokens: { total: input, average: input, min: input, max: input },
+    output_tokens: { total: output, average: output, min: output, max: output },
+    total_tokens: { total, average: total, min: total, max: total },
+    unavailable_reasons: []
   };
 }
 

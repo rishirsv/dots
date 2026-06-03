@@ -231,13 +231,14 @@ async function commandEvalGenerate(argv) {
     throw new project_1.CliError("eval generate is scaffolded but not implemented yet; create scenarios manually under .meta-skill/evals/scenarios/. Baseline-compatible generation remains future work because the current runner force-attaches the skill.", 2);
 }
 function formatEvalRunSummary(project, result) {
+    const reportJson = node_path_1.default.join(node_path_1.default.dirname(result.report), "report.json");
     const lines = [
         `run: ${result.runId}`,
         `status: ${result.status}`,
         `manual review required: ${result.manualReviewRequired ? "yes" : "no"}`,
         `failure classifications: ${result.failureClassifications.length ? result.failureClassifications.join(", ") : "none"}`,
-        `report: ${result.report}`,
-        `next step: meta-skill report ${shellPath(project)} --view eval --run ${result.runId}`
+        `report.html: ${result.report}`,
+        `report.json: ${reportJson}`
     ];
     if (result.status === "needs_review") {
         lines.push("note: needs_review is unresolved evidence, not pass proof.");

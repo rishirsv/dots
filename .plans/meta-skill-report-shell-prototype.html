@@ -1,0 +1,1138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meta Skill Run Inspector Prototype</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f5;
+      --surface: #ffffff;
+      --surface-soft: #fafafa;
+      --ink: #171717;
+      --muted: #6b6b6b;
+      --line: #dfdfdc;
+      --line-strong: #b9b9b4;
+      --accent: #2563eb;
+      --accent-soft: #eef4ff;
+      --bad: #d92d20;
+      --bad-soft: #fff4f2;
+      --warn: #b26a00;
+      --warn-soft: #fff8eb;
+      --ok: #16833a;
+      --ok-soft: #eff8f1;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 52px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav,
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .product {
+      font-weight: 650;
+    }
+
+    .nav a,
+    .nav-actions a {
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .nav-actions a {
+      color: var(--muted);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 296px minmax(0, 1fr) 318px;
+      min-height: calc(100vh - 52px);
+      background: var(--surface);
+    }
+
+    .left,
+    .right {
+      background: var(--surface-soft);
+    }
+
+    .left {
+      border-right: 1px solid var(--line);
+    }
+
+    .right {
+      border-left: 1px solid var(--line);
+    }
+
+    .left-inner,
+    .right-inner {
+      padding: 20px;
+    }
+
+    .main {
+      min-width: 0;
+      padding: 34px 36px 44px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    dl {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 650;
+    }
+
+    h2 {
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 650;
+    }
+
+    h3 {
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .run-select {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .run-select span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .run-select strong {
+      display: block;
+      margin-top: 3px;
+      font-weight: 650;
+    }
+
+    .chevron {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .scenario-tools {
+      display: grid;
+      gap: 10px;
+      padding: 18px 0 12px;
+    }
+
+    .scenario-tools h2 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .search {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .search:focus,
+    .filter:focus-visible,
+    .scenario-row:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter {
+      min-height: 28px;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .filter[aria-pressed="true"] {
+      border-color: #a9c4f7;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 650;
+    }
+
+    .scenario-list {
+      display: grid;
+      gap: 2px;
+    }
+
+    .scenario-row {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr);
+      gap: 10px;
+      width: 100%;
+      padding: 10px 8px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .scenario-row:hover {
+      background: var(--surface);
+    }
+
+    .scenario-row.active {
+      border-color: #c9d8f9;
+      background: var(--accent-soft);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    .dot.failed {
+      background: var(--bad);
+    }
+
+    .dot.review {
+      background: var(--warn);
+    }
+
+    .dot.passed {
+      background: var(--ok);
+    }
+
+    .scenario-copy {
+      min-width: 0;
+    }
+
+    .scenario-copy strong,
+    .scenario-copy span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .scenario-copy strong {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .scenario-copy span {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .left-note {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .case-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status.failed {
+      color: var(--bad);
+    }
+
+    .status.review {
+      color: var(--warn);
+    }
+
+    .status.passed {
+      color: var(--ok);
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr 1fr 1fr;
+      gap: 20px;
+      margin-top: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .summary-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-item strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 15px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .section {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+    }
+
+    .review-lines {
+      display: grid;
+      gap: 8px;
+      max-width: 880px;
+    }
+
+    .review-lines p {
+      font-size: 14px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .answer-pane {
+      min-width: 0;
+      padding: 16px 20px 18px 0;
+    }
+
+    .answer-pane + .answer-pane {
+      padding-right: 0;
+      padding-left: 20px;
+      border-left: 1px solid var(--line);
+    }
+
+    .answer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .answer {
+      min-height: 170px;
+      color: #252525;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.58;
+      white-space: pre-wrap;
+    }
+
+    .note-line {
+      display: block;
+      margin: 10px 0;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface-soft);
+      font-family: var(--mono);
+    }
+
+    .note-line.problem {
+      border-color: #e5b9b4;
+      background: var(--bad-soft);
+    }
+
+    .note-line.correct {
+      border-color: #addcb8;
+      background: var(--ok-soft);
+    }
+
+    .note-line b {
+      display: block;
+      margin-bottom: 3px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    td:nth-child(2),
+    th:nth-child(2) {
+      width: 150px;
+    }
+
+    .details {
+      display: grid;
+      gap: 18px;
+    }
+
+    .detail-group {
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .detail-group:last-child {
+      border-bottom: 0;
+    }
+
+    .detail-group h2 {
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-list div {
+      display: grid;
+      gap: 2px;
+    }
+
+    .detail-list dt {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .detail-list dd {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .token-table td,
+    .token-table th {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .token-table td:not(:first-child),
+    .token-table th:not(:first-child) {
+      padding-left: 14px;
+      text-align: right;
+    }
+
+    .link-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .link-list a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      font-size: 13px;
+    }
+
+    .file-icon {
+      display: inline-block;
+      width: 14px;
+      height: 16px;
+      border: 1px solid #9bbaf1;
+      border-radius: 2px;
+      background: #f8fbff;
+    }
+
+    .empty {
+      padding: 16px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1180px) {
+      .app {
+        grid-template-columns: 270px minmax(0, 1fr);
+      }
+
+      .right {
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+
+      .right-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px 14px;
+      }
+
+      .app,
+      .answers,
+      .summary-row,
+      .right-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .left {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .left-inner {
+        padding: 14px;
+      }
+
+      .scenario-list {
+        max-height: 218px;
+        overflow: auto;
+      }
+
+      .main {
+        padding: 24px 18px 30px;
+      }
+
+      .summary-row {
+        gap: 10px;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .summary-item strong {
+        margin-top: 0;
+        text-align: right;
+      }
+
+      .answer-pane,
+      .answer-pane + .answer-pane {
+        padding: 16px 0;
+        border-left: 0;
+      }
+
+      .answer-pane + .answer-pane {
+        border-top: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="Primary">
+      <span class="product">Meta Skill evals</span>
+      <a href="index.json">Runs</a>
+      <a href="../../../../SKILL.md">Skill</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="report.json">Docs</a>
+      <a href="run.json">Run JSON</a>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="left" aria-label="Run scenarios">
+      <div class="left-inner">
+        <div class="run-select">
+          <div>
+            <span>Run</span>
+            <strong>004-release-compare</strong>
+          </div>
+          <span class="chevron" aria-hidden="true">v</span>
+        </div>
+
+        <div class="scenario-tools">
+          <h2>Scenarios <span class="muted" id="scenario-count">6</span></h2>
+          <label class="sr-only" for="scenario-search">Search scenarios</label>
+          <input id="scenario-search" class="search" type="search" placeholder="Search scenarios">
+          <div class="filters" aria-label="Scenario filters">
+            <button class="filter" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter" data-filter="failed" aria-pressed="false">Failed</button>
+            <button class="filter" data-filter="needs_review" aria-pressed="false">Review</button>
+            <button class="filter" data-filter="passed" aria-pressed="false">Passed</button>
+            <button class="filter" data-filter="token_unavailable" aria-pressed="false">No tokens</button>
+          </div>
+        </div>
+
+        <div id="scenario-list" class="scenario-list"></div>
+
+        <p class="left-note">Forced-skill run: final-answer behavior only.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section aria-labelledby="scenario-heading">
+        <div class="case-title">
+          <h1 id="scenario-heading">F1 Missing attachment recovery</h1>
+          <span id="overall-status" class="status failed">Failed</span>
+        </div>
+
+        <div class="summary-row" aria-label="Selected scenario summary">
+          <div class="summary-item">
+            <span>Run</span>
+            <strong>004-release-compare</strong>
+          </div>
+          <div class="summary-item">
+            <span>Comparison</span>
+            <strong id="comparison-summary">release better</strong>
+          </div>
+          <div class="summary-item">
+            <span>Deterministic test</span>
+            <strong id="test-summary">Failed</strong>
+          </div>
+          <div class="summary-item">
+            <span>Judge</span>
+            <strong id="judge-summary">Failed</strong>
+          </div>
+          <div class="summary-item">
+            <span>Overall</span>
+            <strong id="overall-summary">Failed</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="review-heading">
+        <h2 id="review-heading">Review reason</h2>
+        <div class="review-lines">
+          <p id="test-reason">Deterministic test failed: expected attachment request with specific filenames not found.</p>
+          <p id="judge-reason">Judge failed: candidate proceeds without the missing source pack.</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="answers-heading">
+        <h2 id="answers-heading">Final answer preview</h2>
+        <div class="answers">
+          <article class="answer-pane">
+            <div class="answer-head">
+              <h3>Candidate</h3>
+              <span id="candidate-status" class="status failed">Failed</span>
+            </div>
+            <div id="candidate-answer" class="answer"></div>
+          </article>
+          <article class="answer-pane">
+            <div class="answer-head">
+              <h3>Release</h3>
+              <span id="release-status" class="status passed">Passed</span>
+            </div>
+            <div id="release-answer" class="answer"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="evidence-heading">
+        <h2 id="evidence-heading">Evaluation evidence</h2>
+        <table>
+          <thead><tr><th>Type</th><th>Status</th><th>Details</th></tr></thead>
+          <tbody id="evidence-body"></tbody>
+        </table>
+      </section>
+
+      <section class="section" aria-labelledby="criteria-heading">
+        <h2 id="criteria-heading">Criteria</h2>
+        <table>
+          <thead><tr><th>Criterion</th><th>Expectation</th></tr></thead>
+          <tbody id="criteria-body"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <aside class="right" aria-label="Run details">
+      <div class="right-inner">
+        <section class="detail-group">
+          <h2>Run details</h2>
+          <dl class="detail-list">
+            <div><dt>Skill</dt><dd>source-pack-triage</dd></div>
+            <div><dt>Run</dt><dd>004-release-compare</dd></div>
+            <div><dt>Mode</dt><dd>forced skill</dd></div>
+            <div><dt>Scope</dt><dd>final answer only</dd></div>
+            <div><dt>Status</dt><dd id="detail-status">Failed</dd></div>
+            <div><dt>Comparison</dt><dd id="detail-comparison">release better</dd></div>
+          </dl>
+        </section>
+
+        <section class="detail-group">
+          <h2>Token usage</h2>
+          <table class="token-table">
+            <thead><tr><th>Metric</th><th>Candidate</th><th>Release</th></tr></thead>
+            <tbody id="token-body"></tbody>
+          </table>
+          <p id="token-note" class="muted"></p>
+        </section>
+
+        <section class="detail-group">
+          <h2>Raw evidence</h2>
+          <div id="evidence-links" class="link-list"></div>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  <script type="application/json" id="report-data">
+    {
+      "scenarios": [
+        {
+          "id": "F1",
+          "title": "Missing attachment recovery",
+          "meta": "Failure mode - behavior - recovery",
+          "status": "failed",
+          "comparison": "release better",
+          "candidateStatus": "failed",
+          "releaseStatus": "passed",
+          "testStatus": "failed",
+          "judgeStatus": "failed",
+          "reviewReasons": [
+            "Deterministic test failed: expected attachment request with specific filenames not found.",
+            "Judge failed: candidate proceeds without the missing source pack."
+          ],
+          "tokens": {
+            "input_tokens": {"candidate": "7.8k", "release": "8.0k"},
+            "output_tokens": {"candidate": "2.4k", "release": "3.0k"},
+            "total_tokens": {"candidate": "10.2k", "release": "11.0k"}
+          },
+          "tokenNote": "Candidate and release are separate executions. Totals are not pooled.",
+          "candidateAnswer": "I can proceed from the summary you provided.\n\n<span class=\"note-line problem\"><b>Problem</b>This continues without the missing source pack and does not ask for the attachment.</span>",
+          "releaseAnswer": "I do not have the source pack in this thread.\n\n<span class=\"note-line correct\"><b>Correct behavior</b>Please attach it or point me to the local file path before I summarize it.</span>",
+          "evidence": [
+            ["Deterministic test", "Failed", "asks-for-missing-file"],
+            ["Judge", "Failed", "candidate invented availability"],
+            ["Feedback", "-", "none recorded"]
+          ],
+          "criteria": [
+            ["Expected behavior", "Do not infer missing file contents."],
+            ["Assertion", "Ask for the missing attachment or path."],
+            ["Evidence basis", "run snapshot"]
+          ],
+          "links": [
+            {"label": "final.md", "href": "scenarios/F1-missing-attachment-recovery/candidate/final.md"},
+            {"label": "turns.jsonl", "href": "scenarios/F1-missing-attachment-recovery/candidate/turns.jsonl"},
+            {"label": "usage.json", "href": "scenarios/F1-missing-attachment-recovery/candidate/usage.json"},
+            {"label": "rpc.jsonl", "href": "scenarios/F1-missing-attachment-recovery/candidate/rpc.jsonl"}
+          ]
+        },
+        {
+          "id": "R2",
+          "title": "Source citation drift",
+          "meta": "Regression - behavior - source grounding",
+          "status": "needs_review",
+          "comparison": "needs review",
+          "candidateStatus": "needs review",
+          "releaseStatus": "passed",
+          "testStatus": "failed",
+          "judgeStatus": "needs review",
+          "reviewReasons": [
+            "Deterministic test failed: citation order check did not pass.",
+            "Judge needs review: source priority is ambiguous."
+          ],
+          "tokens": {
+            "input_tokens": {"candidate": "11.2k", "release": "12.9k"},
+            "output_tokens": {"candidate": "7.2k", "release": "8.1k"},
+            "total_tokens": {"candidate": "18.4k", "release": "21.0k"}
+          },
+          "tokenNote": "Token usage is measured telemetry, not a quality score.",
+          "candidateAnswer": "The pack contains three useful sources, but the answer leads with the summary before naming where the evidence came from.\n\n<span class=\"note-line problem\"><b>Review</b>Primary source is not named first.</span>",
+          "releaseAnswer": "The pack contains three useful sources.\n\n<span class=\"note-line correct\"><b>Release behavior</b>Cite project-notes.md before the reviewer memo.</span>",
+          "evidence": [
+            ["Deterministic test", "Failed", "citation order check"],
+            ["Judge", "Needs review", "source priority is ambiguous"],
+            ["Feedback", "Fail", "reviewer marked candidate fail"]
+          ],
+          "criteria": [
+            ["Expected behavior", "Identify the primary source first."],
+            ["Assertion", "Summarize reviewer risk without overstating confidence."],
+            ["Evidence basis", "run snapshot"]
+          ],
+          "links": [
+            {"label": "final.md", "href": "scenarios/R2-source-citation-drift/candidate/final.md"},
+            {"label": "turns.jsonl", "href": "scenarios/R2-source-citation-drift/candidate/turns.jsonl"},
+            {"label": "usage.json", "href": "scenarios/R2-source-citation-drift/candidate/usage.json"},
+            {"label": "rpc.jsonl", "href": "scenarios/R2-source-citation-drift/candidate/rpc.jsonl"}
+          ]
+        },
+        {
+          "id": "G1",
+          "title": "Release gate wording",
+          "meta": "Gate - behavior - approval",
+          "status": "needs_review",
+          "comparison": "needs review",
+          "candidateStatus": "needs review",
+          "releaseStatus": "needs review",
+          "testStatus": "passed",
+          "judgeStatus": "needs review",
+          "reviewReasons": [
+            "Judge needs review: release wording changed.",
+            "Manual approval language must remain explicit."
+          ],
+          "tokens": {
+            "input_tokens": {"candidate": "6.0k", "release": "6.2k"},
+            "output_tokens": {"candidate": "1.8k", "release": "2.1k"},
+            "total_tokens": {"candidate": "7.8k", "release": "8.3k"}
+          },
+          "tokenNote": "Token usage is measured telemetry, not a quality score.",
+          "candidateAnswer": "The run looks good enough to release after the reviewer confirms the two unresolved scenarios.",
+          "releaseAnswer": "The run should not be released until the reviewer resolves the two open scenarios and records explicit approval.",
+          "evidence": [
+            ["Deterministic test", "Passed", "release gate check"],
+            ["Judge", "Needs review", "wording changed"],
+            ["Feedback", "Defer", "manual approval still required"]
+          ],
+          "criteria": [
+            ["Expected behavior", "Preserve manual approval as a release gate."],
+            ["Assertion", "Do not imply automatic release readiness."],
+            ["Evidence basis", "run snapshot"]
+          ],
+          "links": [
+            {"label": "final.md", "href": "scenarios/G1-release-gate-wording/candidate/final.md"},
+            {"label": "turns.jsonl", "href": "scenarios/G1-release-gate-wording/candidate/turns.jsonl"},
+            {"label": "usage.json", "href": "scenarios/G1-release-gate-wording/candidate/usage.json"},
+            {"label": "rpc.jsonl", "href": "scenarios/G1-release-gate-wording/candidate/rpc.jsonl"}
+          ]
+        },
+        {
+          "id": "R1",
+          "title": "Baseline triage summary",
+          "meta": "Regression - behavior - summary",
+          "status": "passed",
+          "comparison": "same",
+          "candidateStatus": "passed",
+          "releaseStatus": "passed",
+          "testStatus": "passed",
+          "judgeStatus": "passed",
+          "reviewReasons": [
+            "No blocking evidence recorded.",
+            "Candidate and release produced equivalent final answers."
+          ],
+          "tokens": {
+            "input_tokens": {"candidate": "9.1k", "release": "9.4k"},
+            "output_tokens": {"candidate": "4.7k", "release": "4.8k"},
+            "total_tokens": {"candidate": "13.8k", "release": "14.2k"}
+          },
+          "tokenNote": "Token usage is measured telemetry, not a quality score.",
+          "candidateAnswer": "Prioritize the billing regression, keep the migration note as context, and defer the speculative API cleanup.",
+          "releaseAnswer": "Prioritize the billing regression, keep the migration note as context, and defer the speculative API cleanup.",
+          "evidence": [
+            ["Deterministic test", "Passed", "triage summary"],
+            ["Judge", "Passed", "quality threshold met"],
+            ["Feedback", "-", "none recorded"]
+          ],
+          "criteria": [
+            ["Expected behavior", "Produce a concise triage."],
+            ["Assertion", "Include priority, supporting evidence, and deferred work."],
+            ["Evidence basis", "run snapshot"]
+          ],
+          "links": [
+            {"label": "final.md", "href": "scenarios/R1-baseline-triage-summary/candidate/final.md"},
+            {"label": "turns.jsonl", "href": "scenarios/R1-baseline-triage-summary/candidate/turns.jsonl"},
+            {"label": "usage.json", "href": "scenarios/R1-baseline-triage-summary/candidate/usage.json"},
+            {"label": "rpc.jsonl", "href": "scenarios/R1-baseline-triage-summary/candidate/rpc.jsonl"}
+          ]
+        },
+        {
+          "id": "F2",
+          "title": "Unavailable token event",
+          "meta": "Failure mode - telemetry - fallback",
+          "status": "passed",
+          "comparison": "same",
+          "candidateStatus": "passed",
+          "releaseStatus": "passed",
+          "testStatus": "passed",
+          "judgeStatus": "not run",
+          "tokenUnavailable": true,
+          "reviewReasons": [
+            "No quality failure recorded.",
+            "Candidate token usage was unavailable for the final reporting turn."
+          ],
+          "tokens": {
+            "input_tokens": {"candidate": "n/a", "release": "4.7k"},
+            "output_tokens": {"candidate": "n/a", "release": "1.2k"},
+            "total_tokens": {"candidate": "unavailable", "release": "5.9k"}
+          },
+          "tokenNote": "Candidate token usage was unavailable for the final reporting turn.",
+          "candidateAnswer": "The answer completed, but token metrics were unavailable for the final reporting turn.",
+          "releaseAnswer": "The answer completed and token metrics were recorded from the final reporting turn.",
+          "evidence": [
+            ["Deterministic test", "Passed", "telemetry fallback"],
+            ["Judge", "Not run", "-"],
+            ["Feedback", "-", "none recorded"]
+          ],
+          "criteria": [
+            ["Expected behavior", "Keep report inspection usable when token usage is unavailable."],
+            ["Assertion", "Explain unavailable token metrics explicitly."],
+            ["Evidence basis", "run snapshot"]
+          ],
+          "links": [
+            {"label": "final.md", "href": "scenarios/F2-unavailable-token-event/candidate/final.md"},
+            {"label": "turns.jsonl", "href": "scenarios/F2-unavailable-token-event/candidate/turns.jsonl"},
+            {"label": "usage.json", "href": "scenarios/F2-unavailable-token-event/candidate/usage.json"},
+            {"label": "rpc.jsonl", "href": "scenarios/F2-unavailable-token-event/candidate/rpc.jsonl"}
+          ]
+        },
+        {
+          "id": "R3",
+          "title": "Token reporting wording",
+          "meta": "Regression - telemetry - wording",
+          "status": "passed",
+          "comparison": "same",
+          "candidateStatus": "passed",
+          "releaseStatus": "passed",
+          "testStatus": "passed",
+          "judgeStatus": "not run",
+          "reviewReasons": [
+            "No blocking evidence recorded.",
+            "Token wording remains source-honest."
+          ],
+          "tokens": {
+            "input_tokens": {"candidate": "5.2k", "release": "5.2k"},
+            "output_tokens": {"candidate": "1.7k", "release": "1.6k"},
+            "total_tokens": {"candidate": "6.9k", "release": "6.8k"}
+          },
+          "tokenNote": "Token usage is measured telemetry, not a quality score.",
+          "candidateAnswer": "Token usage is measured telemetry and should be reviewed beside answer quality evidence.",
+          "releaseAnswer": "Token usage is measured telemetry and should be reviewed beside answer quality evidence.",
+          "evidence": [
+            ["Deterministic test", "Passed", "telemetry wording"],
+            ["Judge", "Not run", "-"],
+            ["Feedback", "-", "none recorded"]
+          ],
+          "criteria": [
+            ["Expected behavior", "Do not treat lower token usage as better by itself."],
+            ["Assertion", "Keep candidate and release usage separate."],
+            ["Evidence basis", "run snapshot"]
+          ],
+          "links": [
+            {"label": "final.md", "href": "scenarios/R3-token-reporting-wording/candidate/final.md"},
+            {"label": "turns.jsonl", "href": "scenarios/R3-token-reporting-wording/candidate/turns.jsonl"},
+            {"label": "usage.json", "href": "scenarios/R3-token-reporting-wording/candidate/usage.json"},
+            {"label": "rpc.jsonl", "href": "scenarios/R3-token-reporting-wording/candidate/rpc.jsonl"}
+          ]
+        }
+      ]
+    }
+  </script>
+
+  <script>
+    const data = JSON.parse(document.getElementById("report-data").textContent);
+    const listEl = document.getElementById("scenario-list");
+    const countEl = document.getElementById("scenario-count");
+    const searchEl = document.getElementById("scenario-search");
+    let activeFilter = "all";
+    let selectedId = data.scenarios.find((scenario) => scenario.status === "failed")?.id || data.scenarios.find((scenario) => scenario.status === "needs_review")?.id || data.scenarios[0]?.id;
+
+    function titleCase(value) {
+      return String(value).replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+    }
+
+    function statusClass(status) {
+      const normalized = String(status).toLowerCase().replace(/\s+/g, "_");
+      if (normalized === "failed") return "failed";
+      if (normalized === "passed") return "passed";
+      return "review";
+    }
+
+    function scenarioMatches(scenario) {
+      const query = searchEl.value.trim().toLowerCase();
+      const haystack = [scenario.id, scenario.title, scenario.meta, scenario.status, scenario.comparison].join(" ").toLowerCase();
+      if (query && !haystack.includes(query)) return false;
+      if (activeFilter === "all") return true;
+      if (activeFilter === "token_unavailable") return Boolean(scenario.tokenUnavailable);
+      return scenario.status === activeFilter;
+    }
+
+    function renderList() {
+      const shown = data.scenarios.filter(scenarioMatches);
+      countEl.textContent = String(shown.length);
+      listEl.innerHTML = shown.map((scenario) => `
+        <button class="scenario-row ${scenario.id === selectedId ? "active" : ""}" data-id="${scenario.id}">
+          <span class="dot ${statusClass(scenario.status)}" aria-hidden="true"></span>
+          <span class="scenario-copy">
+            <strong>${scenario.id} ${scenario.title}</strong>
+            <span>${titleCase(scenario.status)}</span>
+          </span>
+        </button>
+      `).join("") || `<div class="empty">No scenarios match this filter.</div>`;
+      listEl.querySelectorAll("button[data-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedId = button.dataset.id;
+          render();
+        });
+      });
+    }
+
+    function renderRows(target, rows) {
+      document.getElementById(target).innerHTML = rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("");
+    }
+
+    function renderSelected() {
+      const scenario = data.scenarios.find((item) => item.id === selectedId) || data.scenarios[0];
+      document.getElementById("scenario-heading").textContent = `${scenario.id} ${scenario.title}`;
+      document.getElementById("overall-status").textContent = titleCase(scenario.status);
+      document.getElementById("overall-status").className = `status ${statusClass(scenario.status)}`;
+      document.getElementById("comparison-summary").textContent = scenario.comparison;
+      document.getElementById("test-summary").textContent = titleCase(scenario.testStatus);
+      document.getElementById("judge-summary").textContent = titleCase(scenario.judgeStatus);
+      document.getElementById("overall-summary").textContent = titleCase(scenario.status);
+      document.getElementById("test-reason").textContent = scenario.reviewReasons[0] || "";
+      document.getElementById("judge-reason").textContent = scenario.reviewReasons[1] || "";
+      document.getElementById("candidate-status").textContent = titleCase(scenario.candidateStatus);
+      document.getElementById("candidate-status").className = `status ${statusClass(scenario.candidateStatus)}`;
+      document.getElementById("release-status").textContent = titleCase(scenario.releaseStatus);
+      document.getElementById("release-status").className = `status ${statusClass(scenario.releaseStatus)}`;
+      document.getElementById("candidate-answer").innerHTML = scenario.candidateAnswer;
+      document.getElementById("release-answer").innerHTML = scenario.releaseAnswer;
+      renderRows("evidence-body", scenario.evidence);
+      renderRows("criteria-body", scenario.criteria);
+      document.getElementById("detail-status").textContent = titleCase(scenario.status);
+      document.getElementById("detail-comparison").textContent = scenario.comparison;
+      document.getElementById("token-body").innerHTML = Object.entries(scenario.tokens).map(([metric, values]) => `
+        <tr><td>${metric.replace(/_/g, " ")}</td><td>${values.candidate}</td><td>${values.release}</td></tr>
+      `).join("");
+      document.getElementById("token-note").textContent = scenario.tokenNote;
+      document.getElementById("evidence-links").innerHTML = scenario.links.map((link) => `<a href="${link.href}"><span class="file-icon" aria-hidden="true"></span>${link.label}</a>`).join("");
+    }
+
+    function render() {
+      renderList();
+      renderSelected();
+    }
+
+    document.querySelectorAll(".filter").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        document.querySelectorAll(".filter").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        render();
+      });
+    });
+
+    searchEl.addEventListener("input", renderList);
+    render();
+  </script>
+</body>
+</html>

@@ -87,11 +87,84 @@ describe("AppServerScenarioRunner", () => {
     assert.equal(await exists(path.join(sideRoot, "stage", "scenario", "task.md")), true);
     assert.equal(await exists(path.join(sideRoot, "stage", "scenario", "scenario.json")), true);
     assert.equal(await exists(path.join(sideRoot, "stage", "scenario", "criteria.json")), false);
-    assert.deepEqual(result.token_usage, {
+    assert.equal(result.token_usage.total_tokens.total, 24);
+    assert.equal(result.token_usage.input_tokens.total, 10);
+    assert.equal(result.token_usage.cached_tokens?.total, 4);
+    assert.equal(result.token_usage.output_tokens.total, 14);
+    assert.equal(result.token_usage.reasoning_tokens?.total, 0);
+    const usage = await readJson<{ availability: string; turns: Array<{ usage: unknown; cumulative_usage?: unknown; source_event?: string }>; summary: { total_tokens: { total: number } } }>(path.join(sideRoot, "usage.json"));
+    assert.equal(usage.availability, "present");
+    assert.equal(usage.turns.length, 2);
+    assert.equal(usage.summary.total_tokens.total, 24);
+    assert.equal(usage.turns[0].source_event, "thread/tokenUsage/updated");
+    assert.deepEqual((turns.find((turn) => turn.role === "assistant" && turn.index === 0) as { token_usage?: unknown }).token_usage, {
       input_tokens: { available: true, value: 5 },
       output_tokens: { available: true, value: 7 },
-      total_tokens: { available: true, value: 12 }
+      total_tokens: { available: true, value: 12 },
+      cached_tokens: { available: true, value: 2 },
+      reasoning_tokens: { available: true, value: 0 }
     });
+  });
+
+  it("records unavailable token usage when a completed turn has no token event", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-no-usage-"));
+    const skillRoot = path.join(root, "skill");
+    const scenario = await fixtureScenario(root, []);
+    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    const fake = new FakeScenarioClient({ emitTokenUsage: false });
+    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+
+    const result = await runner.run({
+      projectRoot: skillRoot,
+      skillRoot,
+      scenario,
+      side: "candidate",
+      runId: "001-test",
+      runRoot: path.join(root, "run"),
+      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    assert.equal(result.token_usage.availability, "unavailable");
+    assert.match(result.token_usage.unavailable_reasons[0], /turn-1/);
+    const usage = await readJson<{ turns: Array<{ source_event?: string }> }>(path.join(root, "run", "scenarios", scenario.folder, "candidate", "usage.json"));
+    assert.equal("source_event" in usage.turns[0], false);
+  });
+
+  it("does not promote per-turn usage into side totals when final cumulative usage is missing", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-last-only-"));
+    const skillRoot = path.join(root, "skill");
+    const scenario = await fixtureScenario(root, []);
+    await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
+    const fake = new FakeScenarioClient({ emitCumulativeTokenUsage: false });
+    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+    const runRoot = path.join(root, "run");
+
+    const result = await runner.run({
+      projectRoot: skillRoot,
+      skillRoot,
+      scenario,
+      side: "candidate",
+      runId: "001-test",
+      runRoot,
+      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    assert.equal(result.token_usage.availability, "unavailable");
+    assert.equal(result.token_usage.total_tokens.total, 0);
+    assert.match(result.token_usage.unavailable_reasons[0], /cumulative token metrics were unavailable for final reporting turn turn-1/);
+    const sideRoot = path.join(runRoot, "scenarios", scenario.folder, "candidate");
+    const usage = await readJson<{ turns: Array<{ usage: unknown; cumulative_usage?: unknown; source_event?: string }>; summary: { availability: string; total_tokens: { total: number } } }>(path.join(sideRoot, "usage.json"));
+    assert.equal(usage.summary.availability, "unavailable");
+    assert.equal(usage.summary.total_tokens.total, 0);
+    assert.deepEqual(usage.turns[0].usage, {
+      input_tokens: { available: true, value: 5 },
+      output_tokens: { available: true, value: 7 },
+      total_tokens: { available: true, value: 12 },
+      cached_tokens: { available: true, value: 2 },
+      reasoning_tokens: { available: true, value: 0 }
+    });
+    assert.equal("cumulative_usage" in usage.turns[0], false);
+    assert.equal(usage.turns[0].source_event, "thread/tokenUsage/updated");
   });
 
   it("writes each reused-client scenario side trace to that side rpc.jsonl", async () => {
@@ -210,7 +283,7 @@ class FakeScenarioClient {
   private pendingTrace: Promise<void>[] = [];
   private onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void> = async () => {};
 
-  constructor(private options: { completeTurns?: boolean } = { completeTurns: true }) {}
+  constructor(private options: { completeTurns?: boolean; emitTokenUsage?: boolean; emitCumulativeTokenUsage?: boolean } = { completeTurns: true, emitTokenUsage: true, emitCumulativeTokenUsage: true }) {}
 
   attach(onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>): this {
     this.onLine = onLine;
@@ -227,7 +300,19 @@ class FakeScenarioClient {
       this.events.push({ method: "item/agentMessage/delta", params: { threadId: "other-thread", turnId, delta: "wrong" } });
       this.events.push({ method: "item/agentMessage/delta", params: { threadId: "thread-1", turnId, delta: `final ${turnId}` } });
       this.events.push({ method: "item/agentMessage/delta", params: { threadId: "thread-1", turnId, delta: "\n" } });
-      this.events.push({ method: "thread/tokenUsage/updated", params: { threadId: "thread-1", turnId, tokenUsage: { last: { inputTokens: 5, outputTokens: 7, totalTokens: 12 } } } });
+      if (this.options.emitTokenUsage !== false) {
+        this.events.push({
+          method: "thread/tokenUsage/updated",
+          params: {
+            threadId: "thread-1",
+            turnId,
+            tokenUsage: {
+              last: { inputTokens: 5, cachedInputTokens: 2, outputTokens: 7, reasoningOutputTokens: 0, totalTokens: 12 },
+              ...(this.options.emitCumulativeTokenUsage === false ? {} : { total: { inputTokens: 5 * this.turnCount, cachedInputTokens: 2 * this.turnCount, outputTokens: 7 * this.turnCount, reasoningOutputTokens: 0, totalTokens: 12 * this.turnCount } })
+            }
+          }
+        });
+      }
       if (this.options.completeTurns !== false) this.events.push({ method: "turn/completed", params: { threadId: "thread-1", turn: { id: turnId } } });
       return { turn: { id: turnId } };
     }

@@ -5,6 +5,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { runEval } from "./evals";
 import { lintProject } from "./lint";
+import type { TokenUsageSummary } from "./models";
 import { CliError, exists, readJson, readText, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
 
@@ -62,11 +63,7 @@ describe("lint, command parsing, and eval evidence", () => {
           await writeText(path.join(sideRoot, "rpc.jsonl"), "");
           return {
             status: "needs_review",
-            token_usage: {
-              input_tokens: { available: true, value: 1 },
-              output_tokens: { available: true, value: 1 },
-              total_tokens: { available: true, value: 2 }
-            },
+            token_usage: tokenSummary(1, 1, 2),
             final_path: path.join(sideRoot, "final.md"),
             evidence_path: path.join("scenarios", input.scenario.folder, input.side)
           };
@@ -96,6 +93,19 @@ describe("lint, command parsing, and eval evidence", () => {
     assert.equal(index.runs.some((row) => row.run_id === result.runId && row.readiness_status === "blocked"), true);
   });
 });
+
+function tokenSummary(input: number, output: number, total: number): TokenUsageSummary {
+  return {
+    availability: "present",
+    sample_unit: "scenario_side",
+    sample_count: 1,
+    unavailable_count: 0,
+    input_tokens: { total: input, average: input, min: input, max: input },
+    output_tokens: { total: output, average: output, min: output, max: output },
+    total_tokens: { total, average: total, min: total, max: total },
+    unavailable_reasons: []
+  };
+}
 
 async function fixtureProject(slug: string): Promise<string> {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-test-"));

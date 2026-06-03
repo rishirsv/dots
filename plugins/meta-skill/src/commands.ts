@@ -230,13 +230,14 @@ export function formatEvalRunSummary(
   project: string,
   result: { runId: string; status: string; manualReviewRequired: boolean; failureClassifications: string[]; report: string }
 ): string {
+  const reportJson = path.join(path.dirname(result.report), "report.json");
   const lines = [
     `run: ${result.runId}`,
     `status: ${result.status}`,
     `manual review required: ${result.manualReviewRequired ? "yes" : "no"}`,
     `failure classifications: ${result.failureClassifications.length ? result.failureClassifications.join(", ") : "none"}`,
-    `report: ${result.report}`,
-    `next step: meta-skill report ${shellPath(project)} --view eval --run ${result.runId}`
+    `report.html: ${result.report}`,
+    `report.json: ${reportJson}`
   ];
   if (result.status === "needs_review") {
     lines.push("note: needs_review is unresolved evidence, not pass proof.");

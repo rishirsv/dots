@@ -8,19 +8,72 @@ import { CliError } from "./project";
 import { createSkill } from "./skills";
 
 describe("command output", () => {
-  it("prints needs_review as unresolved evidence", () => {
+  it("prints passed eval run artifacts", () => {
     const output = formatEvalRunSummary(".", {
       runId: "001-basic",
+      status: "passed",
+      manualReviewRequired: false,
+      failureClassifications: [],
+      report: "/tmp/evals/runs/001-basic/report.html"
+    });
+
+    assert.equal(
+      output,
+      [
+        "run: 001-basic",
+        "status: passed",
+        "manual review required: no",
+        "failure classifications: none",
+        "report.html: /tmp/evals/runs/001-basic/report.html",
+        "report.json: /tmp/evals/runs/001-basic/report.json"
+      ].join("\n")
+    );
+  });
+
+  it("prints needs_review as unresolved evidence", () => {
+    const output = formatEvalRunSummary(".", {
+      runId: "002-review",
       status: "needs_review",
       manualReviewRequired: true,
       failureClassifications: [],
-      report: "/tmp/report.html"
+      report: "/tmp/evals/runs/002-review/report.html"
     });
 
-    assert.match(output, /status: needs_review/);
-    assert.match(output, /manual review required: yes/);
-    assert.match(output, /failure classifications: none/);
-    assert.match(output, /needs_review is unresolved evidence, not pass proof/);
+    assert.equal(
+      output,
+      [
+        "run: 002-review",
+        "status: needs_review",
+        "manual review required: yes",
+        "failure classifications: none",
+        "report.html: /tmp/evals/runs/002-review/report.html",
+        "report.json: /tmp/evals/runs/002-review/report.json",
+        "note: needs_review is unresolved evidence, not pass proof."
+      ].join("\n")
+    );
+  });
+
+  it("prints failed eval run classifications and artifacts", () => {
+    const output = formatEvalRunSummary(".", {
+      runId: "003-failed",
+      status: "failed",
+      manualReviewRequired: false,
+      failureClassifications: ["scenario_failed", "deterministic_test_failed"],
+      report: "/tmp/evals/runs/003-failed/report.html"
+    });
+
+    assert.equal(
+      output,
+      [
+        "run: 003-failed",
+        "status: failed",
+        "manual review required: no",
+        "failure classifications: scenario_failed, deterministic_test_failed",
+        "report.html: /tmp/evals/runs/003-failed/report.html",
+        "report.json: /tmp/evals/runs/003-failed/report.json"
+      ].join("\n")
+    );
+    assert.doesNotMatch(output, /meta-skill report/);
   });
 
   it("rejects unsupported attached App Server endpoints before creating a run", async () => {

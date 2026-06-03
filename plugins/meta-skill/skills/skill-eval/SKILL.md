@@ -43,7 +43,9 @@ Scenario folders live at `.meta-skill/evals/scenarios/<ID-slug>/` and require `t
 - Judges are optional because they cost tokens; ask before running them unless the user explicitly requests judge scoring or passes `--with-judges`.
 - Judges read saved run snapshots plus final output. Threshold failures override a raw judge `pass: true`.
 - Standalone judges, feedback imports, and `lint --run` annotations refresh `report.json`, `report.html`, and `.meta-skill/evals/runs/index.json`.
-- Token usage must be recorded when available; if App Server does not return exact metrics, the evidence should say unavailable explicitly.
+- Token usage is measured telemetry, not a quality score. Inspect `usage.json` for canonical per-side usage and `report.html`/`report.json` for side-by-side candidate/release summaries.
+- Multi-turn side totals come from App Server cumulative `tokenUsage.total` on the final reporting turn; per-turn `tokenUsage.last` is retained only as turn evidence.
+- If App Server does not return exact metrics, the evidence should say unavailable explicitly with a reason.
 - `needs_review` is unresolved evidence, not pass proof. Report what executed, where final answers and traces live, and what still needs deterministic tests, judge approval, or human review.
 
 ## Scenario Design
@@ -74,4 +76,4 @@ If the user wants to turn evidence into edits, hand off to `skill-improve` with 
 
 For setup or run help, return the next command, what it reads or writes, and where evidence will live.
 
-For interpretation, summarize selected scenarios, sides, pass/fail/needs-review/error counts, token usage availability, skipped lint or judges, and the next useful step. Never describe `needs_review` as passing.
+For interpretation, summarize selected scenarios, sides, pass/fail/needs-review/error counts, measured token totals by side, token usage availability, skipped lint or judges, and the next useful step. Never describe `needs_review` as passing.

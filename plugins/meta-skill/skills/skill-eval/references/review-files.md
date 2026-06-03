@@ -165,6 +165,7 @@ Each run writes:
         rpc.jsonl
         thread.json
         turns.jsonl
+        usage.json
         final.md
         artifacts/
       release/
@@ -180,6 +181,10 @@ Each run writes:
 `runs/index.json` stores one summary row per run for `eval open --list`, `eval list`, and future local evidence browsers.
 
 The staged solver workspace includes `task.md`, `scenario.json`, `turns.json`, `capability.txt`, and `resources/` when present. It must not include `criteria.json`; criteria are evaluator evidence, not solver context.
+
+`usage.json` is the canonical structured token evidence for a scenario side. It records `schema_version`, availability, per-turn `tokenUsage.last`, cumulative App Server `tokenUsage.total` when present, and a side summary. `turns.jsonl` also carries token usage on assistant rows for transcript-adjacent inspection, and `results.jsonl.payload.token_usage` carries a denormalized side summary for compatibility.
+
+For multi-turn scenarios, the side summary uses App Server cumulative `tokenUsage.total` from the final reporting turn as authoritative. Do not sum per-turn `last` values when explaining side totals. Candidate and release usage are separate executions and should be compared side by side, never pooled into one run total.
 
 Every result should include token usage fields. If exact usage is unavailable, the fields should explicitly say unavailable and why.
 

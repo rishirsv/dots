@@ -147,7 +147,7 @@ sequenceDiagram
     CLI->>App: start read-only ephemeral thread
     CLI->>App: send task.md with staged skill attached
     CLI->>App: send turns.json follow-ups
-    App-->>Run: final.md, turns.jsonl, thread.json, rpc.jsonl
+    App-->>Run: final.md, turns.jsonl, usage.json, thread.json, rpc.jsonl
     CLI->>Run: append scenario_result
   end
   CLI->>Run: run deterministic eval tests unless --no-lint
@@ -160,11 +160,31 @@ Default runner constraints: managed stdio App Server, read-only sandbox,
 first turn with staged skill attached, follow-ups from `turns.json`, and token
 metrics recorded as available or explicitly unavailable.
 
+Token evidence is measured App Server telemetry. Each scenario side writes
+`usage.json` as the canonical token file, attaches per-turn usage to assistant
+rows in `turns.jsonl`, and denormalizes the side summary into `results.jsonl`.
+For multi-turn sides, App Server cumulative `tokenUsage.total` from the final
+reporting turn is authoritative; per-turn `tokenUsage.last` is retained for
+transcript and turn-level inspection. Reports aggregate candidate and release
+separately so comparison runs never pool two executions into one total.
+
 `--app-server-endpoint` is not supported yet; the CLI rejects it.
 
 Live App Server behavior is opt-in. The normal test run skips
 `src/app-server/live-smoke.test.ts` unless `META_SKILL_LIVE_APP_SERVER=1`
 is set and Codex App Server auth is available.
+
+Live token usage capture note, 2026-06-02: a focused managed-stdio App Server
+capture used the existing client path with `experimentalRawEvents: true`.
+`getAuthStatus` returned `authMethod: "chatgpt"`, a present auth token, and
+`requiresOpenaiAuth: true`, so `requiresOpenaiAuth` is not by itself an
+unauthenticated signal. The captured `thread/tokenUsage/updated` payload
+included `tokenUsage.total`, `tokenUsage.last`, and `modelContextWindow`.
+Both `total` and `last` used camelCase token fields:
+`totalTokens`, `inputTokens`, `cachedInputTokens`, `outputTokens`, and
+`reasoningOutputTokens`. The observed one-turn reply had cumulative `total`
+present, cached input tokens present, and reasoning output tokens present as
+zero.
 
 ## Evidence Layout
 
@@ -201,6 +221,7 @@ is set and Codex App Server auth is available.
             stage/
             thread.json
             turns.jsonl
+            usage.json
             final.md
             rpc.jsonl
             artifacts/
