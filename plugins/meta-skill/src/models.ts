@@ -8,10 +8,6 @@ export type ScenarioFamily =
 
 export type ScenarioType = "behavior" | "trigger" | "artifact" | "gate";
 
-export type TokenMetric =
-  | { available: true; value: number }
-  | { available: false; reason: string };
-
 export type LegacyEvalSide = "candidate" | "release";
 export type EvalRunSourceKind = "working_payload" | "snapshot_payload" | "no_skill";
 
@@ -23,57 +19,44 @@ export interface EvalRunSource {
 }
 
 export interface TokenUsage {
-  input_tokens: TokenMetric;
-  output_tokens: TokenMetric;
-  total_tokens: TokenMetric;
-  cached_tokens?: TokenMetric;
-  reasoning_tokens?: TokenMetric;
-}
-
-export type TokenAvailability = "present" | "partial" | "unavailable";
-export type TokenSampleUnit = "turn" | "scenario";
-
-export interface TokenStat {
-  total: number;
-  average: number;
-  min: number;
-  max: number;
-}
-
-export interface TokenUsageSummary {
-  availability: TokenAvailability;
-  sample_unit: TokenSampleUnit;
-  sample_count: number;
-  unavailable_count: number;
-  input_tokens: TokenStat;
-  output_tokens: TokenStat;
-  total_tokens: TokenStat;
-  cached_tokens?: TokenStat;
-  reasoning_tokens?: TokenStat;
-  unavailable_reasons: string[];
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  cached_input_tokens?: number | null;
+  reasoning_tokens?: number | null;
+  model_context_window?: number | null;
+  unavailable_reason: string | null;
 }
 
 export interface TokenUsageTurn {
   turn_id: string;
   index: number;
-  usage: TokenUsage;
-  cumulative_usage?: TokenUsage;
-  source_event: "thread/tokenUsage/updated";
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  cumulative_input_tokens: number | null;
+  cumulative_output_tokens: number | null;
+  cumulative_total_tokens: number | null;
+  cached_input_tokens?: number | null;
+  reasoning_tokens?: number | null;
+  model_context_window?: number | null;
+  unavailable_reason: string | null;
 }
 
 export interface TokenUsageEvidence {
   schema_version: 1;
-  availability: TokenAvailability;
+  source_event: "thread/tokenUsage/updated" | null;
   turns: TokenUsageTurn[];
-  summary: TokenUsageSummary;
+  summary: TokenUsage;
 }
 
 export interface RunTokenUsageSummary {
-  by_run_source: Partial<Record<string, TokenUsageSummary>>;
-  availability_counts: {
-    available: number;
-    unavailable: number;
-  };
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  scenario_count: number;
+  unavailable_scenario_count: number;
+  unavailable_reasons: Array<{ scenario_id: string; run_source: string; reason: string }>;
 }
 
 export interface EvalManifest {
@@ -183,7 +166,7 @@ export interface RunReportAttempt {
   evidence_path: string;
   final_path?: string;
   final_preview?: string;
-  token_usage?: TokenUsageSummary;
+  token_usage?: TokenUsage;
   failure_classification?: string | null;
   error?: string;
   raw?: Record<string, unknown>;

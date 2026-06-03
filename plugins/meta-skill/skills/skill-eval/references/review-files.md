@@ -179,11 +179,11 @@ Each run writes:
 
 The staged solver workspace includes `task.md`, `scenario.json`, `turns.json`, `capability.txt`, and `resources/` when present. It must not include `criteria.json`; criteria are evaluator evidence, not solver context.
 
-`usage.json` is the canonical structured token evidence for a scenario. It records `schema_version`, availability, per-turn `tokenUsage.last`, cumulative App Server `tokenUsage.total` when present, and a scenario summary. `turns.jsonl` also carries token usage on assistant rows for transcript-adjacent inspection, and `results.jsonl.payload.token_usage` carries a denormalized scenario summary.
+`usage.json` is the canonical structured token evidence for a scenario. It records `schema_version`, `source_event`, a nullable numeric scenario summary, one `unavailable_reason` when telemetry is missing, and compact per-turn `tokenUsage.last` / cumulative `tokenUsage.total` data when a token event is observed. `turns.jsonl` may also carry compact token usage on assistant rows for transcript-adjacent inspection. `results.jsonl` does not carry token summaries.
 
 For multi-turn scenarios, the scenario summary uses App Server cumulative `tokenUsage.total` from the final reporting turn as authoritative. Do not sum per-turn `last` values when explaining scenario totals. Compare multiple runs only in a separate report-level artifact; do not pool separate executions into one run total.
 
-Every result should include token usage fields. If exact usage is unavailable, the fields should explicitly say unavailable and why.
+Every scenario should have `usage.json`. If exact usage is unavailable, its summary fields should be null and `unavailable_reason` should say why.
 
 Scenario results record execution facts separately from verdict facts. `execution_status: "completed"` means the runner produced evidence; it is not a passing result. If no deterministic test, judge, or human feedback verdict is present, reports say no verdict is recorded.
 

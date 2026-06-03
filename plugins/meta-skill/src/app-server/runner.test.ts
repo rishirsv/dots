@@ -90,22 +90,25 @@ describe("AppServerScenarioRunner", () => {
     assert.equal(await exists(path.join(scenarioRoot, "stage", "scenario", "task.md")), true);
     assert.equal(await exists(path.join(scenarioRoot, "stage", "scenario", "scenario.json")), true);
     assert.equal(await exists(path.join(scenarioRoot, "stage", "scenario", "criteria.json")), false);
-    assert.equal(result.token_usage.total_tokens.total, 24);
-    assert.equal(result.token_usage.input_tokens.total, 10);
-    assert.equal(result.token_usage.cached_tokens?.total, 4);
-    assert.equal(result.token_usage.output_tokens.total, 14);
-    assert.equal(result.token_usage.reasoning_tokens?.total, 0);
-    const usage = await readJson<{ availability: string; turns: Array<{ usage: unknown; cumulative_usage?: unknown; source_event?: string }>; summary: { total_tokens: { total: number } } }>(path.join(scenarioRoot, "usage.json"));
-    assert.equal(usage.availability, "present");
+    assert.equal(result.token_usage.total_tokens, 24);
+    assert.equal(result.token_usage.input_tokens, 10);
+    assert.equal(result.token_usage.cached_input_tokens, 4);
+    assert.equal(result.token_usage.output_tokens, 14);
+    assert.equal(result.token_usage.reasoning_tokens, 0);
+    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null } }>(path.join(scenarioRoot, "usage.json"));
+    assert.equal(usage.source_event, "thread/tokenUsage/updated");
     assert.equal(usage.turns.length, 2);
-    assert.equal(usage.summary.total_tokens.total, 24);
-    assert.equal(usage.turns[0].source_event, "thread/tokenUsage/updated");
+    assert.equal(usage.summary.total_tokens, 24);
+    assert.equal(usage.turns[0].total_tokens, 12);
+    assert.equal(usage.turns[0].cumulative_total_tokens, 12);
     assert.deepEqual((turns.find((turn) => turn.role === "assistant" && turn.index === 0) as { token_usage?: unknown }).token_usage, {
-      input_tokens: { available: true, value: 5 },
-      output_tokens: { available: true, value: 7 },
-      total_tokens: { available: true, value: 12 },
-      cached_tokens: { available: true, value: 2 },
-      reasoning_tokens: { available: true, value: 0 }
+      input_tokens: 5,
+      output_tokens: 7,
+      total_tokens: 12,
+      cached_input_tokens: 2,
+      reasoning_tokens: 0,
+      model_context_window: 200000,
+      unavailable_reason: null
     });
   });
 
@@ -128,10 +131,11 @@ describe("AppServerScenarioRunner", () => {
       appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    assert.equal(result.token_usage.availability, "unavailable");
-    assert.match(result.token_usage.unavailable_reasons[0], /turn-1/);
-    const usage = await readJson<{ turns: Array<{ source_event?: string }> }>(path.join(root, "run", "scenarios", scenario.folder, "usage.json"));
-    assert.equal("source_event" in usage.turns[0], false);
+    assert.equal(result.token_usage.total_tokens, null);
+    assert.equal(result.token_usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
+    const usage = await readJson<{ source_event: string | null; turns: unknown[] }>(path.join(root, "run", "scenarios", scenario.folder, "usage.json"));
+    assert.equal(usage.source_event, null);
+    assert.deepEqual(usage.turns, []);
   });
 
   it("does not promote per-turn usage into scenario totals when final cumulative usage is missing", async () => {
@@ -154,22 +158,27 @@ describe("AppServerScenarioRunner", () => {
       appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    assert.equal(result.token_usage.availability, "unavailable");
-    assert.equal(result.token_usage.total_tokens.total, 0);
-    assert.match(result.token_usage.unavailable_reasons[0], /cumulative token metrics were unavailable for final reporting turn turn-1/);
+    assert.equal(result.token_usage.total_tokens, null);
+    assert.equal(result.token_usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
     const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
-    const usage = await readJson<{ turns: Array<{ usage: unknown; cumulative_usage?: unknown; source_event?: string }>; summary: { availability: string; total_tokens: { total: number } } }>(path.join(scenarioRoot, "usage.json"));
-    assert.equal(usage.summary.availability, "unavailable");
-    assert.equal(usage.summary.total_tokens.total, 0);
-    assert.deepEqual(usage.turns[0].usage, {
-      input_tokens: { available: true, value: 5 },
-      output_tokens: { available: true, value: 7 },
-      total_tokens: { available: true, value: 12 },
-      cached_tokens: { available: true, value: 2 },
-      reasoning_tokens: { available: true, value: 0 }
+    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null; unavailable_reason: string | null } }>(path.join(scenarioRoot, "usage.json"));
+    assert.equal(usage.source_event, null);
+    assert.equal(usage.summary.total_tokens, null);
+    assert.equal(usage.summary.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
+    assert.deepEqual(usage.turns[0], {
+      turn_id: "turn-1",
+      index: 0,
+      input_tokens: 5,
+      output_tokens: 7,
+      total_tokens: 12,
+      cumulative_input_tokens: null,
+      cumulative_output_tokens: null,
+      cumulative_total_tokens: null,
+      cached_input_tokens: 2,
+      reasoning_tokens: 0,
+      model_context_window: 200000,
+      unavailable_reason: null
     });
-    assert.equal("cumulative_usage" in usage.turns[0], false);
-    assert.equal(usage.turns[0].source_event, "thread/tokenUsage/updated");
   });
 
   it("writes each reused-client scenario trace to that scenario rpc.jsonl", async () => {
@@ -317,7 +326,8 @@ class FakeScenarioClient {
             tokenUsage: {
               last: { inputTokens: 5, cachedInputTokens: 2, outputTokens: 7, reasoningOutputTokens: 0, totalTokens: 12 },
               ...(this.options.emitCumulativeTokenUsage === false ? {} : { total: { inputTokens: 5 * this.turnCount, cachedInputTokens: 2 * this.turnCount, outputTokens: 7 * this.turnCount, reasoningOutputTokens: 0, totalTokens: 12 * this.turnCount } })
-            }
+            },
+            modelContextWindow: 200000
           }
         });
       }

@@ -10,7 +10,7 @@ exports.runStatus = runStatus;
 const node_fs_1 = require("node:fs");
 const node_path_1 = __importDefault(require("node:path"));
 const project_1 = require("../project");
-async function recordScenarioResult(runRoot, runId, scenario, runSource, executionStatus, tokenUsage, evidencePath, error, failureClassification, verdict) {
+async function recordScenarioResult(runRoot, runId, scenario, runSource, executionStatus, evidencePath, error, failureClassification, verdict) {
     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "results.jsonl"), (0, project_1.eventEnvelope)({
         type: "scenario_result",
         run_id: runId,
@@ -22,7 +22,6 @@ async function recordScenarioResult(runRoot, runId, scenario, runSource, executi
             ...(verdict ? { verdict } : {}),
             scenario_folder: scenario.folder,
             evidence_path: evidencePath,
-            token_usage: tokenUsage,
             failure_classification: failureClassification || null,
             error
         }

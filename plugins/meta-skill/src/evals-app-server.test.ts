@@ -5,7 +5,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { AppServerUnavailableError } from "./app-server/client";
 import type { ScenarioRunInput, ScenarioRunResult } from "./app-server/runner";
-import type { TokenUsageSummary } from "./models";
+import type { TokenUsage } from "./models";
 import { importFeedback, judgeRun, listRunSummaries, openRun, runEval } from "./evals";
 import { judgePassed } from "./eval/judge";
 import { packageProject } from "./package";
@@ -28,10 +28,11 @@ describe("App Server eval orchestration", () => {
         async run(input) {
           const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
           await fs.mkdir(scenarioRoot, { recursive: true });
-          await writeText(path.join(scenarioRoot, "final.md"), "ok");
-          await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
-          await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn-1"], status: "completed" });
-          return {
+            await writeText(path.join(scenarioRoot, "final.md"), "ok");
+            await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
+            await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn-1"], status: "completed" });
+            await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 2, 3));
+            return {
             execution_status: "completed",
             token_usage: tokenSummary(1, 2, 3),
             final_path: path.join(scenarioRoot, "final.md"),
@@ -115,7 +116,11 @@ describe("App Server eval orchestration", () => {
     const events = await readText(path.join(result.runRoot, "events.jsonl"));
     assert.match(events, /"type":"scenario_failed"/);
     assert.match(events, /"failure_classification":"app_server_unavailable"/);
-    assert.match(events, /"available":false/);
+    const usage = await readJson<{ source_event: string | null; summary: { total_tokens: number | null; unavailable_reason: string | null }; turns: unknown[] }>(path.join(result.runRoot, "scenarios", "R1-basic", "usage.json"));
+    assert.equal(usage.source_event, null);
+    assert.equal(usage.summary.total_tokens, null);
+    assert.equal(usage.summary.unavailable_reason, "App Server execution failed before token metrics were available.");
+    assert.deepEqual(usage.turns, []);
   });
 
   it("classifies failed scenario results separately from harness failures", async () => {
@@ -153,10 +158,11 @@ describe("App Server eval orchestration", () => {
           sawNoSkill = !input.attachSkill && !input.skillRoot && input.runSource.kind === "no_skill";
           const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
           await fs.mkdir(scenarioRoot, { recursive: true });
-          await writeText(path.join(scenarioRoot, "final.md"), "Unassisted final.");
-          await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
-          await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn"], status: "completed" });
-          return {
+            await writeText(path.join(scenarioRoot, "final.md"), "Unassisted final.");
+            await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
+            await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn"], status: "completed" });
+            await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
+            return {
             execution_status: "completed",
             token_usage: tokenSummary(1, 1, 2),
             final_path: path.join(scenarioRoot, "final.md"),
@@ -345,6 +351,7 @@ function scenarioRunner(verdict: ScenarioRunResult["verdict"], error?: string) {
       await writeText(path.join(scenarioRoot, "turns.jsonl"), "");
       await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
       await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
+      await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
       return {
         execution_status: "completed",
         ...(verdict ? { verdict } : {}),
@@ -358,17 +365,21 @@ function scenarioRunner(verdict: ScenarioRunResult["verdict"], error?: string) {
   };
 }
 
-function tokenSummary(input: number, output: number, total: number): TokenUsageSummary {
+function tokenSummary(input: number, output: number, total: number): TokenUsage {
   return {
-    availability: "present",
-    sample_unit: "scenario",
-    sample_count: 1,
-    unavailable_count: 0,
-    input_tokens: { total: input, average: input, min: input, max: input },
-    output_tokens: { total: output, average: output, min: output, max: output },
-    total_tokens: { total, average: total, min: total, max: total },
-    unavailable_reasons: []
+    input_tokens: input,
+    output_tokens: output,
+    total_tokens: total,
+    cached_input_tokens: null,
+    reasoning_tokens: null,
+    model_context_window: null,
+    unavailable_reason: null
   };
+}
+
+function tokenUsageEvidence(input: number, output: number, total: number) {
+  const summary = tokenSummary(input, output, total);
+  return { schema_version: 1, source_event: "thread/tokenUsage/updated", summary, turns: [] };
 }
 
 async function fixtureProject(slug: string): Promise<string> {

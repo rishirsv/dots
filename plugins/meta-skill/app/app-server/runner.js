@@ -49,19 +49,17 @@ class AppServerScenarioRunner {
             throw new Error("App Server thread/start response did not include thread.id");
         const turnRecords = [];
         const usageTurns = [];
+        let finalCumulativeUsage;
         let final = "";
         const turns = [{ content: input.scenario.task, source: "task.md" }, ...input.scenario.turns.map((turn) => ({ content: turn.content, source: "turns.json" }))];
         for (const [index, turn] of turns.entries()) {
             turnRecords.push({ role: "user", index, source: turn.source, content: turn.content, status: "sent" });
             const result = await runTurn(client, threadId, stageRoot, input.scenario, turn.content, index === 0 && input.attachSkill, this.turnTimeoutMs, attachmentName);
             final = result.final || final;
-            usageTurns.push({
-                turn_id: result.turnId,
-                index,
-                usage: result.tokenUsage,
-                cumulative_usage: result.cumulativeTokenUsage,
-                ...(result.tokenEvent ? { source_event: "thread/tokenUsage/updated" } : {})
-            });
+            if (result.tokenUsage) {
+                usageTurns.push(toUsageTurn(result.turnId, index, result.tokenUsage, result.cumulativeTokenUsage));
+            }
+            finalCumulativeUsage = result.cumulativeTokenUsage;
             turnRecords.push({
                 role: "assistant",
                 index,
@@ -69,15 +67,15 @@ class AppServerScenarioRunner {
                 content: result.final,
                 status: "completed",
                 turn_id: result.turnId,
-                token_usage: result.tokenUsage,
-                cumulative_token_usage: result.cumulativeTokenUsage
+                ...(result.tokenUsage ? { token_usage: result.tokenUsage } : {}),
+                ...(result.cumulativeTokenUsage ? { cumulative_token_usage: result.cumulativeTokenUsage } : {})
             });
         }
         await client.flush?.();
-        const scenarioSummary = summarizeScenarioUsage(usageTurns);
+        const scenarioSummary = summarizeScenarioUsage(finalCumulativeUsage);
         const usageEvidence = {
             schema_version: 1,
-            availability: scenarioSummary.availability,
+            source_event: scenarioSummary.unavailable_reason ? null : "thread/tokenUsage/updated",
             turns: usageTurns,
             summary: scenarioSummary
         };
@@ -151,78 +149,62 @@ async function runTurn(client, threadId, stageRoot, scenario, content, includeSk
     const tokenEvent = [...events]
         .reverse()
         .find((message) => message.method === "thread/tokenUsage/updated" && message.params?.threadId === threadId && message.params?.turnId === turnId);
-    if (!tokenEvent) {
-        return { turnId, final, tokenUsage: (0, project_1.unavailableTokenUsage)(`App Server token metrics were unavailable for turn ${turnId}.`), tokenEvent: false };
-    }
-    const tokenUsage = tokenEvent.params.tokenUsage;
+    if (!tokenEvent)
+        return { turnId, final, tokenEvent: false };
+    const params = tokenEvent.params;
+    const tokenUsage = params.tokenUsage;
+    const modelContextWindow = numberOrNull(params.modelContextWindow);
     return {
         turnId,
         final,
-        tokenUsage: toTokenUsage(tokenUsage?.last, `App Server last token metrics were unavailable for turn ${turnId}.`),
-        cumulativeTokenUsage: tokenUsage?.total ? toTokenUsage(tokenUsage.total, `App Server cumulative token metrics were unavailable for turn ${turnId}.`) : undefined,
+        tokenUsage: toTokenUsage(tokenUsage?.last, `App Server last token metrics were unavailable for turn ${turnId}.`, modelContextWindow),
+        cumulativeTokenUsage: tokenUsage?.total ? toTokenUsage(tokenUsage.total, `App Server cumulative token metrics were unavailable for turn ${turnId}.`, modelContextWindow) : undefined,
         tokenEvent: true
     };
 }
-function toTokenUsage(raw, reason = "App Server token metrics were unavailable.") {
+function toTokenUsage(raw, reason = "App Server token metrics were unavailable.", modelContextWindow = null) {
     const metrics = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : undefined;
     if (!metrics)
         return (0, project_1.unavailableTokenUsage)(reason);
-    const input = metricFrom(metrics.inputTokens ?? metrics.input_tokens, reason);
-    const output = metricFrom(metrics.outputTokens ?? metrics.output_tokens, reason);
-    const total = metricFrom(metrics.totalTokens ?? metrics.total_tokens, reason);
-    const cached = metricFrom(metrics.cachedTokens ?? metrics.cached_tokens ?? metrics.cachedInputTokens ?? metrics.cached_input_tokens ?? objectValue(metrics.input_token_details).cached_tokens ?? objectValue(metrics.inputTokenDetails).cachedTokens, reason);
-    const reasoning = metricFrom(metrics.reasoningTokens ?? metrics.reasoning_tokens ?? metrics.reasoningOutputTokens ?? metrics.reasoning_output_tokens ?? objectValue(metrics.output_tokens_details).reasoning_tokens ?? objectValue(metrics.outputTokenDetails).reasoningTokens, reason);
+    const input = numberOrNull(metrics.inputTokens);
+    const output = numberOrNull(metrics.outputTokens);
+    const total = numberOrNull(metrics.totalTokens);
+    const cachedInput = numberOrNull(metrics.cachedInputTokens);
+    const reasoning = numberOrNull(metrics.reasoningOutputTokens);
+    const unavailableReason = input === null || output === null || total === null ? reason : null;
     return {
         input_tokens: input,
         output_tokens: output,
         total_tokens: total,
-        ...(cached.available ? { cached_tokens: cached } : {}),
-        ...(reasoning.available ? { reasoning_tokens: reasoning } : {})
+        cached_input_tokens: cachedInput,
+        reasoning_tokens: reasoning,
+        model_context_window: modelContextWindow,
+        unavailable_reason: unavailableReason
     };
 }
-function summarizeScenarioUsage(turns) {
-    const finalTurn = turns.at(-1);
-    const reason = finalTurn
-        ? `App Server cumulative token metrics were unavailable for final reporting turn ${finalTurn.turn_id}; scenario totals require tokenUsage.total from that turn.`
-        : "App Server completed without a final reporting turn; scenario totals require tokenUsage.total from the final turn.";
-    const sample = finalTurn?.cumulative_usage?.total_tokens.available ? finalTurn.cumulative_usage : (0, project_1.unavailableTokenUsage)(reason);
-    return summarizeUsageSamples([sample], "scenario");
+function summarizeScenarioUsage(finalCumulativeUsage) {
+    if (finalCumulativeUsage?.total_tokens !== null && finalCumulativeUsage?.total_tokens !== undefined)
+        return finalCumulativeUsage;
+    return (0, project_1.unavailableTokenUsage)("App Server completed without tokenUsage.total on the final turn.");
 }
-function summarizeUsageSamples(samples, sampleUnit) {
-    const present = samples.filter((usage) => usage.total_tokens.available);
-    const unavailableReasons = [...new Set(samples.flatMap(reasonsForUsage))].sort();
-    const unavailableCount = samples.length - present.length;
-    const availability = present.length === samples.length && samples.length > 0 ? "present" : present.length > 0 ? "partial" : "unavailable";
+function toUsageTurn(turnId, index, usage, cumulativeUsage) {
     return {
-        availability,
-        sample_unit: sampleUnit,
-        sample_count: present.length,
-        unavailable_count: unavailableCount,
-        input_tokens: tokenStat(present.map((usage) => usage.input_tokens)),
-        output_tokens: tokenStat(present.map((usage) => usage.output_tokens)),
-        total_tokens: tokenStat(present.map((usage) => usage.total_tokens)),
-        ...(present.some((usage) => usage.cached_tokens?.available) ? { cached_tokens: tokenStat(present.map((usage) => usage.cached_tokens)) } : {}),
-        ...(present.some((usage) => usage.reasoning_tokens?.available) ? { reasoning_tokens: tokenStat(present.map((usage) => usage.reasoning_tokens)) } : {}),
-        unavailable_reasons: unavailableReasons
+        turn_id: turnId,
+        index,
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens,
+        total_tokens: usage.total_tokens,
+        cumulative_input_tokens: cumulativeUsage?.input_tokens ?? null,
+        cumulative_output_tokens: cumulativeUsage?.output_tokens ?? null,
+        cumulative_total_tokens: cumulativeUsage?.total_tokens ?? null,
+        cached_input_tokens: usage.cached_input_tokens ?? null,
+        reasoning_tokens: usage.reasoning_tokens ?? null,
+        model_context_window: usage.model_context_window ?? cumulativeUsage?.model_context_window ?? null,
+        unavailable_reason: cumulativeUsage?.unavailable_reason ?? usage.unavailable_reason
     };
 }
-function tokenStat(metrics) {
-    const values = metrics.filter((metric) => Boolean(metric?.available)).map((metric) => metric.value);
-    if (!values.length)
-        return { total: 0, average: 0, min: 0, max: 0 };
-    const total = values.reduce((sum, value) => sum + value, 0);
-    return { total, average: total / values.length, min: Math.min(...values), max: Math.max(...values) };
-}
-function reasonsForUsage(usage) {
-    return [usage.input_tokens, usage.output_tokens, usage.total_tokens, usage.cached_tokens, usage.reasoning_tokens]
-        .filter((metric) => Boolean(metric && !metric.available))
-        .map((metric) => metric.reason);
-}
-function metricFrom(value, reason) {
-    return typeof value === "number" && Number.isFinite(value) ? { available: true, value } : { available: false, reason };
-}
-function objectValue(value) {
-    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+function numberOrNull(value) {
+    return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 async function stageWorkspace(input, stageRoot) {
     await node_fs_1.promises.rm(stageRoot, { recursive: true, force: true });

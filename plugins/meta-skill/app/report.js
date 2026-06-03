@@ -52,7 +52,7 @@ async function buildRunReport(runRoot) {
             const legacySide = row.side;
             const evidencePath = String(row.payload?.evidence_path || "");
             const finalPath = evidencePath ? node_path_1.default.join(evidencePath, "final.md") : undefined;
-            const tokenUsage = await readAttemptTokenUsage(runRoot, evidencePath, row.payload?.token_usage);
+            const tokenUsage = await readAttemptTokenUsage(runRoot, evidencePath);
             const verdict = verdictFromPayload(row.payload);
             return {
                 run_source: normalizeRunSource(row.payload?.run_source, legacySide),
@@ -313,96 +313,67 @@ function readinessFor(assessmentStatus, failureClassifications, noVerdictCount, 
     };
 }
 function countTokenUsage(scenarios) {
-    const byRunSource = {};
-    let available = 0;
-    let unavailable = 0;
-    const sourceKeys = [...new Set(scenarios.flatMap((scenario) => scenario.attempts.map((attempt) => attempt.run_source.kind || attempt.run_source.label)))].sort();
-    for (const sourceKey of sourceKeys) {
-        const summaries = scenarios.flatMap((scenario) => scenario.attempts
-            .filter((attempt) => (attempt.run_source.kind || attempt.run_source.label) === sourceKey)
-            .map((attempt) => attempt.token_usage)
-            .filter((usage) => Boolean(usage)));
-        if (!summaries.length)
-            continue;
-        byRunSource[sourceKey] = aggregateTokenSummaries(summaries);
-        available += summaries.filter((summary) => summary.availability !== "unavailable").length;
-        unavailable += summaries.filter((summary) => summary.availability === "unavailable").length;
-    }
-    return { by_run_source: byRunSource, availability_counts: { available, unavailable } };
+    const attempts = scenarios.flatMap((scenario) => scenario.attempts.map((attempt) => ({ scenario, attempt })));
+    const available = attempts.filter(({ attempt }) => attempt.token_usage?.total_tokens !== null && attempt.token_usage?.total_tokens !== undefined && !attempt.token_usage.unavailable_reason);
+    const unavailableReasons = attempts
+        .filter(({ attempt }) => !attempt.token_usage || attempt.token_usage.total_tokens === null || attempt.token_usage.unavailable_reason)
+        .map(({ scenario, attempt }) => ({
+        scenario_id: scenario.id,
+        run_source: attempt.run_source.kind || attempt.run_source.label,
+        reason: attempt.token_usage?.unavailable_reason || "usage.json was unavailable for this scenario."
+    }));
+    return {
+        input_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.input_tokens ?? null)),
+        output_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.output_tokens ?? null)),
+        total_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.total_tokens ?? null)),
+        scenario_count: scenarios.length,
+        unavailable_scenario_count: unavailableReasons.length,
+        unavailable_reasons: unavailableReasons
+    };
 }
-async function readAttemptTokenUsage(runRoot, evidencePath, legacy) {
+async function readAttemptTokenUsage(runRoot, evidencePath) {
     const usagePath = evidencePath ? node_path_1.default.join(runRoot, evidencePath, "usage.json") : "";
     if (usagePath && (await (0, project_1.exists)(usagePath))) {
         const evidence = await (0, project_1.readJson)(usagePath);
-        return normalizeTokenUsageSummary(evidence.summary);
-    }
-    return normalizeLegacyTokenUsage(legacy);
-}
-function normalizeLegacyTokenUsage(value) {
-    const object = objectValue(value);
-    if (!Object.keys(object).length)
-        return undefined;
-    if (typeof object.availability === "string" && object.input_tokens && object.output_tokens && object.total_tokens && "sample_count" in object) {
-        return normalizeTokenUsageSummary(object);
-    }
-    if (object.input_tokens || object.output_tokens || object.total_tokens) {
-        return summarizeUsageSamples([normalizeTokenUsage(object)], "scenario");
+        return normalizeTokenUsage(evidence.summary);
     }
     return undefined;
 }
-function normalizeTokenUsageSummary(value) {
+function normalizeTokenUsage(value) {
     const object = objectValue(value);
     return {
-        availability: ["present", "partial", "unavailable"].includes(String(object.availability)) ? String(object.availability) : Number(object.sample_count || 0) > 0 ? "present" : "unavailable",
-        sample_unit: object.sample_unit === "turn" ? "turn" : "scenario",
-        sample_count: Number(object.sample_count || 0),
-        unavailable_count: Number(object.unavailable_count || 0),
-        input_tokens: normalizeStat(object.input_tokens),
-        output_tokens: normalizeStat(object.output_tokens),
-        total_tokens: normalizeStat(object.total_tokens),
-        ...(object.cached_tokens ? { cached_tokens: normalizeStat(object.cached_tokens) } : {}),
-        ...(object.reasoning_tokens ? { reasoning_tokens: normalizeStat(object.reasoning_tokens) } : {}),
-        unavailable_reasons: Array.isArray(object.unavailable_reasons) ? object.unavailable_reasons.map(String) : []
+        input_tokens: nullableNumber(object.input_tokens),
+        output_tokens: nullableNumber(object.output_tokens),
+        total_tokens: nullableNumber(object.total_tokens),
+        cached_input_tokens: nullableNumber(object.cached_input_tokens),
+        reasoning_tokens: nullableNumber(object.reasoning_tokens),
+        model_context_window: nullableNumber(object.model_context_window),
+        unavailable_reason: object.unavailable_reason === null || object.unavailable_reason === undefined ? null : String(object.unavailable_reason)
     };
 }
-function aggregateTokenSummaries(summaries) {
-    const usable = summaries.filter((summary) => summary.total_tokens.total > 0 || summary.sample_count > 0);
-    const unavailableReasons = [...new Set(summaries.flatMap((summary) => summary.unavailable_reasons))].sort();
-    const availability = usable.length === summaries.length && summaries.length > 0 ? "present" : usable.length > 0 ? "partial" : "unavailable";
-    return {
-        availability,
-        sample_unit: "scenario",
-        sample_count: usable.length,
-        unavailable_count: summaries.length - usable.length,
-        input_tokens: statFromNumbers(usable.map((summary) => summary.input_tokens.total)),
-        output_tokens: statFromNumbers(usable.map((summary) => summary.output_tokens.total)),
-        total_tokens: statFromNumbers(usable.map((summary) => summary.total_tokens.total)),
-        ...(usable.some((summary) => summary.cached_tokens) ? { cached_tokens: statFromNumbers(usable.map((summary) => summary.cached_tokens?.total ?? 0)) } : {}),
-        ...(usable.some((summary) => summary.reasoning_tokens) ? { reasoning_tokens: statFromNumbers(usable.map((summary) => summary.reasoning_tokens?.total ?? 0)) } : {}),
-        unavailable_reasons: unavailableReasons
-    };
+function normalizeOptionalTokenUsage(value) {
+    const object = objectValue(value);
+    return Object.keys(object).length ? normalizeTokenUsage(object) : undefined;
 }
-function summarizeUsageSamples(samples, sampleUnit) {
-    const present = samples.filter((usage) => usage.total_tokens.available);
-    const unavailableReasons = [...new Set(samples.flatMap(reasonsForUsage))].sort();
-    const unavailableCount = samples.length - present.length;
-    const availability = present.length === samples.length && samples.length > 0 ? "present" : present.length > 0 ? "partial" : "unavailable";
+function normalizeRunTokenUsageSummary(value) {
+    const object = objectValue(value);
+    const reasons = Array.isArray(object.unavailable_reasons)
+        ? object.unavailable_reasons.map((item) => {
+            const reason = objectValue(item);
+            return {
+                scenario_id: String(reason.scenario_id || "unknown"),
+                run_source: String(reason.run_source || "unknown"),
+                reason: String(reason.reason || "Token usage was unavailable.")
+            };
+        })
+        : [];
     return {
-        availability,
-        sample_unit: sampleUnit,
-        sample_count: present.length,
-        unavailable_count: unavailableCount,
-        input_tokens: statFromMetrics(present.map((usage) => usage.input_tokens)),
-        output_tokens: statFromMetrics(present.map((usage) => usage.output_tokens)),
-        total_tokens: statFromMetrics(present.map((usage) => usage.total_tokens)),
-        unavailable_reasons: unavailableReasons
-    };
-}
-function normalizeTokenUsage(value) {
-    return {
-        input_tokens: normalizeMetric(value.input_tokens),
-        output_tokens: normalizeMetric(value.output_tokens),
-        total_tokens: normalizeMetric(value.total_tokens)
+        input_tokens: nullableNumber(object.input_tokens),
+        output_tokens: nullableNumber(object.output_tokens),
+        total_tokens: nullableNumber(object.total_tokens),
+        scenario_count: numberFrom(object.scenario_count),
+        unavailable_scenario_count: numberFrom(object.unavailable_scenario_count),
+        unavailable_reasons: reasons
     };
 }
 function normalizeRunSource(value, legacySide) {
@@ -609,7 +580,7 @@ function normalizeRunReportForRead(value) {
             ...(assessmentStatus ? { assessment_status: assessmentStatus } : {}),
             no_verdict_count: noVerdictCount,
             evidence_counts: evidenceCountSummary,
-            token_usage: summary.token_usage || { by_run_source: {}, availability_counts: { available: 0, unavailable: 0 } }
+            token_usage: normalizeRunTokenUsageSummary(summary.token_usage)
         },
         scenarios,
         tests: Array.isArray(report.tests) ? report.tests : [],
@@ -655,7 +626,7 @@ function normalizeRunReportAttemptForRead(value) {
         evidence_path: String(attempt.evidence_path || ""),
         final_path: attempt.final_path ? String(attempt.final_path) : undefined,
         final_preview: attempt.final_preview ? String(attempt.final_preview) : "",
-        token_usage: normalizeLegacyTokenUsage(attempt.token_usage),
+        token_usage: normalizeOptionalTokenUsage(attempt.token_usage),
         failure_classification: attempt.failure_classification || null,
         error: attempt.error ? String(attempt.error) : undefined,
         raw: objectValue(attempt.raw),
@@ -739,7 +710,7 @@ function toReportAppModel(report) {
             no_verdict_count: report.summary.no_verdict_count,
             failure_classifications: report.summary.failure_classifications,
             evidence_counts: report.summary.evidence_counts,
-            token_usage: normalizeRunTokenUsageSummaryForRender(report.summary.token_usage)
+            token_usage: normalizeRunTokenUsageSummary(report.summary.token_usage)
         },
         scenarios: report.scenarios.map((scenario) => toReportAppScenario(report, scenario))
     };
@@ -776,7 +747,7 @@ function attemptsForScenario(scenario) {
         status: attempt.verdict || attempt.execution_status,
         final_preview: attempt.final_preview || "",
         final_href: attempt.final_path,
-        token_usage: normalizeLegacyTokenUsage(attempt.token_usage),
+        token_usage: attempt.token_usage,
         failure_classification: attempt.failure_classification,
         error: attempt.error,
         raw_links: rawLinksForAttempt(attempt)
@@ -951,52 +922,18 @@ ${REPORT_APP_JS}
 </html>`;
 }
 function renderRunTokenSummary(summary) {
-    const normalized = normalizeRunTokenUsageSummaryForRender(summary);
-    if ("legacy" in normalized) {
-        return `<p class="muted">Legacy availability counts: ${normalized.legacy.available} available, ${normalized.legacy.unavailable} unavailable. Detailed token totals are unavailable in v1 reports.</p>`;
-    }
-    const rows = Object.entries(normalized.by_run_source)
-        .map(([source, usage]) => {
-        if (!usage)
-            return "";
-        return `<tr><td>${escapeHtml(sentenceStatus(source))}</td><td>${escapeHtml(usage.availability)}</td><td>${usage.sample_count}</td><td>${formatNumber(usage.total_tokens.total)}</td><td>${formatNumber(usage.total_tokens.average)}</td><td>${formatNumber(usage.input_tokens.total)}</td><td>${formatNumber(usage.output_tokens.total)}</td><td>${escapeHtml(usage.unavailable_reasons.join("; ") || "none")}</td></tr>`;
-    })
-        .filter(Boolean)
-        .join("\n");
-    if (!rows)
+    const normalized = normalizeRunTokenUsageSummary(summary);
+    if (!normalized.scenario_count)
         return '<p class="muted">No token usage recorded.</p>';
+    const reasonRows = normalized.unavailable_reasons
+        .map((item) => `<tr><td>${escapeHtml(item.scenario_id)}</td><td>${escapeHtml(sentenceStatus(item.run_source))}</td><td>${escapeHtml(item.reason)}</td></tr>`)
+        .join("");
     return `<table>
-    <thead><tr><th>Source</th><th>Availability</th><th>Samples</th><th>Total Tokens</th><th>Avg / Scenario</th><th>Input</th><th>Output</th><th>Unavailable Reasons</th></tr></thead>
-    <tbody>${rows}</tbody>
+    <thead><tr><th>Scenarios</th><th>Unavailable</th><th>Total Tokens</th><th>Input</th><th>Output</th></tr></thead>
+    <tbody><tr><td>${normalized.scenario_count}</td><td>${normalized.unavailable_scenario_count}</td><td>${formatNullableNumber(normalized.total_tokens)}</td><td>${formatNullableNumber(normalized.input_tokens)}</td><td>${formatNullableNumber(normalized.output_tokens)}</td></tr></tbody>
   </table>
-  <p class="muted">Availability counts: ${normalized.availability_counts.available} available, ${normalized.availability_counts.unavailable} unavailable. Token usage is measured telemetry and is not a readiness verdict.</p>`;
-}
-function renderSideTokenUsage(value) {
-    const summary = normalizeLegacyTokenUsage(value);
-    if (!summary)
-        return '<span class="muted">unavailable</span>';
-    const reasons = summary.unavailable_reasons.length ? `<br><span class="muted">${escapeHtml(summary.unavailable_reasons.join("; "))}</span>` : "";
-    return `<strong>${formatNumber(summary.total_tokens.total)}</strong> total<br><span class="muted">${escapeHtml(summary.availability)}; ${formatNumber(summary.input_tokens.total)} in / ${formatNumber(summary.output_tokens.total)} out</span>${reasons}`;
-}
-function normalizeRunTokenUsageSummaryForRender(value) {
-    const object = objectValue(value);
-    if (!("by_run_source" in object) && !("by_side" in object) && ("available" in object || "unavailable" in object)) {
-        return { legacy: { available: numberFrom(object.available), unavailable: numberFrom(object.unavailable) } };
-    }
-    const byRunSource = objectValue(object.by_run_source);
-    const legacyBySide = objectValue(object.by_side);
-    const counts = objectValue(object.availability_counts);
-    return {
-        by_run_source: {
-            ...Object.fromEntries(Object.entries(byRunSource).map(([key, usage]) => [key, normalizeTokenUsageSummary(usage)])),
-            ...(legacyBySide.candidate ? { legacy_working_payload_side: normalizeTokenUsageSummary(legacyBySide.candidate) } : {}),
-            ...(legacyBySide.release ? { legacy_saved_snapshot_side: normalizeTokenUsageSummary(legacyBySide.release) } : {})
-        },
-        availability_counts: {
-            available: numberFrom(counts.available),
-            unavailable: numberFrom(counts.unavailable)
-        }
-    };
+  ${reasonRows ? `<table><thead><tr><th>Scenario</th><th>Source</th><th>Unavailable Reason</th></tr></thead><tbody>${reasonRows}</tbody></table>` : ""}
+  <p class="muted">Token usage is measured telemetry and is not a readiness verdict.</p>`;
 }
 function renderScenarioRail(scenarios, selectedId) {
     if (!scenarios.length)
@@ -1074,14 +1011,12 @@ function renderScenarioTokenUsage(scenario) {
     return `<table><thead><tr><th>Source</th><th>Total</th><th>Input</th><th>Output</th></tr></thead><tbody>${scenario.attempts
         .map((attempt) => {
         const usage = attempt.token_usage;
-        return `<tr><td>${escapeHtml(attempt.label)}</td><td>${usage ? formatNumber(usage.total_tokens.total) : "unavailable"}</td><td>${usage ? formatNumber(usage.input_tokens.total) : "-"}</td><td>${usage ? formatNumber(usage.output_tokens.total) : "-"}</td></tr>`;
+        return `<tr><td>${escapeHtml(attempt.label)}</td><td>${formatNullableNumber(usage?.total_tokens ?? null)}</td><td>${formatNullableNumber(usage?.input_tokens ?? null)}</td><td>${formatNullableNumber(usage?.output_tokens ?? null)}</td></tr>`;
     })
         .join("")}</tbody></table>`;
 }
 function renderRunTokenFootnote(summary) {
-    if ("legacy" in summary)
-        return `<p class="muted rail-note">Legacy availability counts: ${summary.legacy.available} available, ${summary.legacy.unavailable} unavailable.</p>`;
-    return `<p class="muted rail-note">Token usage is measured telemetry, not a quality score. Availability: ${summary.availability_counts.available} available, ${summary.availability_counts.unavailable} unavailable.</p>`;
+    return `<p class="muted rail-note">Token usage is measured telemetry, not a quality score. Unavailable scenarios: ${summary.unavailable_scenario_count}.</p>`;
 }
 function renderRawLinks(scenario) {
     const groups = scenario.attempts.filter((attempt) => attempt.raw_links.length);
@@ -1136,7 +1071,7 @@ function esc(value) { return String(value ?? "").replace(/[&<>"]/g, (c) => ({ "&
 function label(value) { return String(value || "").replace(/_/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase()); }
 function evidenceLabel(value) { return label(String(value || "").replace(/-/g, " ")); }
 function number(value) { return Number.isInteger(value) ? String(value) : Number(value || 0).toFixed(1); }
-function hasNoTokens(s) { return !s.attempts.some((a) => a.token_usage && a.token_usage.availability !== "unavailable"); }
+function hasNoTokens(s) { return !s.attempts.some((a) => a.token_usage && a.token_usage.total_tokens !== null && !a.token_usage.unavailable_reason); }
 function filtered() {
   const q = search.value.trim().toLowerCase();
   return data.scenarios.filter((s) => {
@@ -1166,10 +1101,9 @@ function renderDetail(s) {
   return '<div class="scenario-head"><span class="status ' + esc(s.status) + '"><span class="dot"></span>' + esc(label(s.status)) + '</span><h1>' + esc(s.title) + '</h1><p class="muted">' + esc(s.id) + ' · ' + esc(s.subtitle) + '</p></div><div class="fact-row"><div class="fact"><span>Run</span><strong>' + esc(data.run.id) + '</strong></div><div class="fact"><span>Source</span><strong>' + esc(data.run.run_source.label) + '</strong></div><div class="fact"><span>Evidence basis</span><strong>' + esc(label(s.evidence_basis)) + '</strong></div><div class="fact"><span>Execution</span><strong>' + esc(label(s.execution_status)) + '</strong></div></div><section class="section"><h2>Review reasons</h2>' + reasons + '</section><section class="section"><h2>Final answer preview</h2><div class="answers">' + attemptBlocks(s) + '</div></section><section class="section"><h2>Evaluation evidence</h2>' + evidence + '</section><section class="section"><h2>Criteria</h2>' + criteria + '</section>';
 }
 function renderRail(s) {
-  const tokenRows = s && s.attempts.length ? '<table><thead><tr><th>Source</th><th>Total</th><th>Input</th><th>Output</th></tr></thead><tbody>' + s.attempts.map((a) => '<tr><td>' + esc(a.label) + '</td><td>' + (a.token_usage ? number(a.token_usage.total_tokens.total) : "unavailable") + '</td><td>' + (a.token_usage ? number(a.token_usage.input_tokens.total) : "-") + '</td><td>' + (a.token_usage ? number(a.token_usage.output_tokens.total) : "-") + '</td></tr>').join("") + '</tbody></table>' : '<p class="empty">No token usage recorded.</p>';
+  const tokenRows = s && s.attempts.length ? '<table><thead><tr><th>Source</th><th>Total</th><th>Input</th><th>Output</th></tr></thead><tbody>' + s.attempts.map((a) => '<tr><td>' + esc(a.label) + '</td><td>' + (a.token_usage && a.token_usage.total_tokens !== null ? number(a.token_usage.total_tokens) : "unavailable") + '</td><td>' + (a.token_usage && a.token_usage.input_tokens !== null ? number(a.token_usage.input_tokens) : "-") + '</td><td>' + (a.token_usage && a.token_usage.output_tokens !== null ? number(a.token_usage.output_tokens) : "-") + '</td></tr>').join("") + '</tbody></table>' : '<p class="empty">No token usage recorded.</p>';
   const raw = s ? s.attempts.filter((a) => a.raw_links.length).map((a) => '<div class="raw-group"><strong>' + esc(a.label) + '</strong><div class="raw-files">' + a.raw_links.map((r) => '<a href="' + esc(r.href) + '">' + esc(r.label) + '</a>').join("") + '</div></div>').join("") : "";
-  const legacy = data.summary.token_usage.legacy;
-  const foot = legacy ? 'Legacy availability counts: ' + legacy.available + ' available, ' + legacy.unavailable + ' unavailable.' : 'Token usage is measured telemetry, not a quality score. Availability: ' + data.summary.token_usage.availability_counts.available + ' available, ' + data.summary.token_usage.availability_counts.unavailable + ' unavailable.';
+  const foot = 'Token usage is measured telemetry, not a quality score. Unavailable scenarios: ' + data.summary.token_usage.unavailable_scenario_count + '.';
   return '<section class="rail-section"><h2>Run details</h2><dl class="kv"><div><dt>Status</dt><dd>' + esc(label(data.run.status)) + '</dd></div><div><dt>Execution</dt><dd>' + esc(label(data.run.execution_status)) + '</dd></div><div><dt>Readiness</dt><dd>' + esc(label(data.run.readiness_status)) + '</dd></div><div><dt>Assessment</dt><dd>' + esc(data.run.assessment_status ? label(data.run.assessment_status) : "No verdict recorded") + '</dd></div><div><dt>Runner</dt><dd>' + esc([data.run.runner_backend, data.run.runner_mode].filter(Boolean).join(" / ") || "unknown") + '</dd></div></dl><p class="muted rail-note">' + esc(data.run.readiness_summary) + '</p></section><section class="rail-section"><h2>Token usage</h2>' + tokenRows + '<p class="muted rail-note">' + esc(foot) + '</p></section><section class="rail-section"><h2>Raw evidence</h2><div class="links">' + (raw || '<p class="empty">No raw evidence links recorded.</p>') + '</div></section>';
 }
 function render() {
@@ -1242,38 +1176,20 @@ function formatJudgeSummary(rows) {
 function formatFeedbackSummary(rows) {
     return formatCounts(countBy(rows, (row) => String(row.payload?.label || row.payload?.status || "unlabeled")));
 }
-function normalizeStat(value) {
-    const object = objectValue(value);
-    return {
-        total: Number(object.total || 0),
-        average: Number(object.average || 0),
-        min: Number(object.min || 0),
-        max: Number(object.max || 0)
-    };
-}
-function normalizeMetric(value) {
-    const object = objectValue(value);
-    if (object.available === true)
-        return { available: true, value: Number(object.value || 0) };
-    return { available: false, reason: String(object.reason || "Token metrics were unavailable.") };
-}
-function statFromMetrics(metrics) {
-    return statFromNumbers(metrics.filter((metric) => Boolean(metric?.available)).map((metric) => metric.value));
-}
-function statFromNumbers(values) {
-    const finite = values.filter((value) => Number.isFinite(value));
+function sumNullable(values) {
+    const finite = values.filter((value) => typeof value === "number" && Number.isFinite(value));
     if (!finite.length)
-        return { total: 0, average: 0, min: 0, max: 0 };
-    const total = finite.reduce((sum, value) => sum + value, 0);
-    return { total, average: total / finite.length, min: Math.min(...finite), max: Math.max(...finite) };
-}
-function reasonsForUsage(usage) {
-    return [usage.input_tokens, usage.output_tokens, usage.total_tokens, usage.cached_tokens, usage.reasoning_tokens]
-        .filter((metric) => Boolean(metric && !metric.available))
-        .map((metric) => metric.reason);
+        return null;
+    return finite.reduce((sum, value) => sum + value, 0);
 }
 function formatNumber(value) {
     return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+function formatNullableNumber(value) {
+    return value === null ? "unavailable" : formatNumber(value);
+}
+function nullableNumber(value) {
+    return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 function numberFrom(value) {
     const number = Number(value || 0);

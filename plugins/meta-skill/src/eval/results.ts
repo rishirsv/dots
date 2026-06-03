@@ -10,7 +10,6 @@ export async function recordScenarioResult(
   scenario: ScenarioRecord,
   runSource: EvalRunSource,
   executionStatus: string,
-  tokenUsage: unknown,
   evidencePath: string,
   error?: string,
   failureClassification?: RunFailureClassification | null,
@@ -29,7 +28,6 @@ export async function recordScenarioResult(
         ...(verdict ? { verdict } : {}),
         scenario_folder: scenario.folder,
         evidence_path: evidencePath,
-        token_usage: tokenUsage,
         failure_classification: failureClassification || null,
         error
       }

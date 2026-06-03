@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import type { ScenarioRunInput, ScenarioRunResult } from "./app-server/runner";
-import type { RunReport, TokenUsageSummary } from "./models";
+import type { RunReport, TokenUsage } from "./models";
 import { openRun, runEval } from "./evals";
 import { buildRunReport, renderEvalReportHtml } from "./report";
 import { buildMetaSkillReport, listRunSummariesForReport, renderReportMarkdown, renderRunListMarkdown } from "./reporting";
@@ -76,69 +76,6 @@ describe("central reporting service", () => {
     assert.match(evalView, /no verdict recorded/);
   });
 
-  it("renders legacy v1 token availability counts without throwing", () => {
-    const report = {
-      schema_version: 1,
-      generated_at: "2026-06-02T00:00:00.000Z",
-      run: { runner: { backend: "app_server", app_server: { mode: "managed" } } },
-      summary: {
-        run_id: "legacy-run",
-        label: null,
-        status: "needs_review",
-        scenario_count: 1,
-        attempt_count: 1,
-        result_count: 1,
-        run_source: { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true },
-        manual_review_required: true,
-        failure_classifications: [],
-        assessment_status: "needs_review",
-        unresolved_count: 1,
-        token_usage: { available: 2, unavailable: 1 }
-      },
-      scenarios: [
-        {
-          id: "R1",
-          folder: "R1-legacy",
-          title: "Legacy",
-          topics: [],
-          evidence_basis: "run_snapshot",
-          attempts: [
-            {
-              run_source: { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true },
-              status: "needs_review",
-              evidence_path: "scenarios/R1-legacy",
-              final_path: "scenarios/R1-legacy/final.md",
-              final_preview: "Fixture final.",
-              token_usage: {
-                input_tokens: { available: true, value: 1 },
-                output_tokens: { available: true, value: 2 },
-                total_tokens: { available: true, value: 3 }
-              }
-            }
-          ],
-          status: "needs_review",
-          unresolved: true
-        }
-      ],
-      tests: [],
-      judges: [],
-      feedback: [],
-      artifacts: [],
-      readiness: {
-        status: "needs_review",
-        summary: "Legacy report fixture.",
-        blockers: [],
-        unresolved: 1,
-        basis: "report.json"
-      }
-    } as unknown as RunReport;
-
-    const html = renderEvalReportHtml(report);
-
-    assert.match(html, /Legacy availability counts: 2 available, 1 unavailable/);
-    assert.match(html, /<td>3<\/td>/);
-  });
-
   it("does not mark mixed assessed and unassessed runs ready", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-mixed-verdict-"));
     const runRoot = path.join(root, "001-mixed");
@@ -188,8 +125,7 @@ describe("central reporting service", () => {
         manual_review_required: true,
         failure_classifications: [],
         assessment_status: "needs_review",
-        unresolved_count: 1,
-        token_usage: { by_side: {}, availability_counts: { available: 0, unavailable: 2 } }
+        unresolved_count: 1
       },
       scenarios: [
         {
@@ -298,7 +234,14 @@ function reportFixture(): RunReport {
       assessment_status: "failed",
       no_verdict_count: 1,
       evidence_counts: { tests: 1, judges: 1, feedback: 0 },
-      token_usage: { by_run_source: { working_payload: failedUsage }, availability_counts: { available: 2, unavailable: 1 } }
+      token_usage: {
+        input_tokens: 13,
+        output_tokens: 24,
+        total_tokens: 37,
+        scenario_count: 3,
+        unavailable_scenario_count: 1,
+        unavailable_reasons: [{ scenario_id: "R1", run_source: "working_payload", reason: "usage.json was unavailable for this scenario." }]
+      }
     },
     scenarios: [
       {
@@ -364,6 +307,7 @@ function scenarioRunner(verdict: ScenarioRunResult["verdict"], error?: string) {
       await writeText(path.join(scenarioRoot, "turns.jsonl"), "");
       await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
       await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
+      await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
       return {
         execution_status: "completed",
         ...(verdict ? { verdict } : {}),
@@ -377,17 +321,21 @@ function scenarioRunner(verdict: ScenarioRunResult["verdict"], error?: string) {
   };
 }
 
-function tokenSummary(input: number, output: number, total: number): TokenUsageSummary {
+function tokenSummary(input: number, output: number, total: number): TokenUsage {
   return {
-    availability: "present",
-    sample_unit: "scenario",
-    sample_count: 1,
-    unavailable_count: 0,
-    input_tokens: { total: input, average: input, min: input, max: input },
-    output_tokens: { total: output, average: output, min: output, max: output },
-    total_tokens: { total, average: total, min: total, max: total },
-    unavailable_reasons: []
+    input_tokens: input,
+    output_tokens: output,
+    total_tokens: total,
+    cached_input_tokens: null,
+    reasoning_tokens: null,
+    model_context_window: null,
+    unavailable_reason: null
   };
+}
+
+function tokenUsageEvidence(input: number, output: number, total: number) {
+  const summary = tokenSummary(input, output, total);
+  return { schema_version: 1, source_event: "thread/tokenUsage/updated", summary, turns: [] };
 }
 
 function jsonlEvent(type: string, runId: string, scenarioId: string, payload: Record<string, unknown>): string {

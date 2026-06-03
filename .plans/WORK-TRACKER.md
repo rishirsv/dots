@@ -26,7 +26,7 @@ PR #20 is the current implemented slice. It removed the forward-facing per-run/p
 
 New evidence is written under `scenarios/<scenario>/` instead of `scenarios/<scenario>/<side>/`. `--compare` has been removed from `eval run`; there is no replacement comparison artifact planned. Old side-shaped runs remain readable through legacy compatibility paths, but the write model is single-source.
 
-Token/reporting support remains in place: measured App Server token evidence is recorded in `usage.json`, `turns.jsonl`, `results.jsonl`, `report.json`, and `report.html`, with final cumulative `tokenUsage.total` authoritative for scenario totals.
+Token/reporting support remains in place: measured App Server token evidence is canonical in scenario `usage.json`, compact per-turn token data may appear in `turns.jsonl` for transcript inspection, and `report.json` / `report.html` derive token totals from `usage.json`. `results.jsonl` records execution and verdict facts without duplicating token summaries. Final cumulative `tokenUsage.total` is authoritative for scenario totals.
 
 Validation reported by PR #20:
 
@@ -57,6 +57,14 @@ Context: The tool needs to answer whether a skill helped compared with no skill.
 Fix landed: `meta-skill eval run <project> --no-skill` stages and runs the scenario without copying or attaching a skill. Reports label this as no-skill evidence, not routing proof.
 
 Remaining follow-up: keep no-skill runs as manual control evidence only. Do not build a first-class uplift or comparison system around them.
+
+### 3. Collapse Token Availability To Canonical Usage Evidence
+
+Status: completed locally in this worktree.
+
+Context: Token evidence had per-metric availability objects, `partial` summaries, unavailable counts, per-metric unavailable reason arrays, and denormalized summaries across `usage.json`, `turns.jsonl`, `results.jsonl`, `report.json`, and `report.html`.
+
+Fix landed: `usage.json` is the canonical scenario token evidence. Token usage is a nullable numeric summary plus one `unavailable_reason`; final cumulative `tokenUsage.total` from the final reporting turn is authoritative for scenario totals. `results.jsonl` no longer carries token summaries, and reports aggregate totals and unavailable reasons from scenario `usage.json`.
 
 ## Priority Issue Backlog
 
@@ -160,16 +168,16 @@ Add crash recovery to Meta Skill App Server eval execution without adding concur
 
 Status: correctness hardening for the current reporting slice.
 
-Context: Token reporting now records `usage.json`, per-turn usage, run-source/scenario summaries, and report aggregates. It depends on App Server `thread/tokenUsage/updated` payloads.
+Context: Token reporting now records canonical scenario `usage.json`, compact per-turn usage, and report aggregates derived from usage evidence. It depends on App Server `thread/tokenUsage/updated` payloads.
 
 Issue: Token parsing currently follows observed event shapes. If the App Server protocol changes, the tool may degrade into widespread unavailable metrics without clearly saying "unsupported protocol version."
 
-Fix: Move token extraction into a small adapter keyed by recorded Codex/App Server version and raw event shape. Distinguish "no usage event emitted" from "usage event emitted but protocol unsupported."
+Fix: Move current App Server token extraction into a small adapter keyed by recorded Codex/App Server version and raw event shape. Distinguish "no usage event emitted" from "usage event emitted but protocol unsupported" without adding fallback support for abandoned token shapes.
 
 Implementation Prompt:
 
 ```text
-Create a small Meta Skill App Server token usage adapter in /Users/rishi/Code/agent. Move token parsing out of `src/app-server/runner.ts` into a focused module with typed parse results: present, unavailable-no-event, unavailable-missing-fields, and unsupported-protocol. Record the Codex version already captured in run.json and include protocol/version context in unavailable reasons. Add fixture tests for camelCase fields, snake_case fields, nested cached/reasoning fields, missing `total`, no event, and unknown shapes. Keep `usage.json` canonical and keep report rendering unchanged except for clearer reasons. Run `npm test`, `npm run check:app`, and `git diff --check`.
+Create a small Meta Skill App Server token usage adapter in /Users/rishi/Code/agent. Move token parsing out of `src/app-server/runner.ts` into a focused module with typed parse results: present, unavailable-no-event, unavailable-missing-current-fields, and unsupported-protocol. Record the Codex version already captured in run.json and include protocol/version context in unavailable reasons. Add fixture tests for the current camelCase App Server fields, missing `tokenUsage.total`, no event, and unknown current-protocol shapes. Keep `usage.json` canonical and keep report rendering unchanged except for clearer reasons. Run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 8. Reduce Evidence Ceremony Where It Has No Consumer
@@ -217,7 +225,7 @@ Fix: Continue report polish only after the saved report stays source-honest abou
 Implementation Prompt:
 
 ```text
-Continue Meta Skill report polish only after the measurement backlog remains explicit. In /Users/rishi/Code/agent, improve per-run `report.html` as a static single-source investigation surface. Include scenario navigation, token section, readable transcripts, evidence hierarchy, lean project rollup links, and Codex Browser visual QA. Keep source-honest labels for forced-skill evidence, no-skill evidence, completed execution without verdict, failed verdicts, and passed verdicts. Do not add a server, live watch, pricing, comparison reports, or thread resume/fork. Add rendering tests for legacy/minimal reports, failed/completed/passed scenarios, raw links, token availability, and transcripts. Run `npm test`, `npm run check:app`, and visual QA where possible.
+Continue Meta Skill report polish only after the measurement backlog remains explicit. In /Users/rishi/Code/agent, improve per-run `report.html` as a static single-source investigation surface. Include scenario navigation, token section, readable transcripts, evidence hierarchy, lean project rollup links, and Codex Browser visual QA. Keep source-honest labels for forced-skill evidence, no-skill evidence, completed execution without verdict, failed verdicts, and passed verdicts. Do not add a server, live watch, pricing, comparison reports, or thread resume/fork. Add rendering tests for legacy/minimal reports, failed/completed/passed scenarios, raw links, unavailable token evidence, and transcripts. Run `npm test`, `npm run check:app`, and visual QA where possible.
 ```
 
 ## Parking Lot

@@ -100,7 +100,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
           hasFailures = true;
           failureClassifications.add(classification);
         }
-        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.token_usage, result.evidence_path, result.error, classification, result.verdict);
+        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.evidence_path, result.error, classification, result.verdict);
       } catch (error) {
         hasFailures = true;
         const message = error instanceof AppServerUnavailableError || error instanceof Error ? error.message : String(error);
@@ -108,8 +108,11 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
         failureClassifications.add(classification);
         const evidencePath = relativePath(runRoot, path.join(runRoot, "scenarios", scenario.folder));
         const tokenUsage = unavailableTokenUsage("App Server execution failed before token metrics were available.");
-        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, "errored", tokenUsage, evidencePath, message, classification);
-        await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "scenario_failed", run_id: runId, scenario_id: scenario.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification, token_usage: tokenUsage } }));
+        const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
+        await ensureDir(scenarioRoot);
+        await writeJson(path.join(scenarioRoot, "usage.json"), { schema_version: 1, source_event: null, summary: tokenUsage, turns: [] });
+        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, "errored", evidencePath, message, classification);
+        await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "scenario_failed", run_id: runId, scenario_id: scenario.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification } }));
       }
     }
   } finally {
