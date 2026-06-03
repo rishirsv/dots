@@ -18,7 +18,7 @@ const FAMILY_BY_PREFIX = {
     T: "trigger",
     G: "gate"
 };
-const VALID_TYPES = new Set(["behavior", "trigger", "artifact", "gate"]);
+const VALID_TYPES = new Set(["behavior", "trigger", "gate"]);
 const VALID_FAMILIES = new Set(Object.values(FAMILY_BY_PREFIX));
 async function lintProject(target, options = {}) {
     const root = await (0, project_1.requirePortableSkill)(target);

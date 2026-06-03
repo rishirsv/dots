@@ -10,15 +10,15 @@ Use Markdown with minimal frontmatter:
 
 ```md
 ---
-id: artifact-quality
+id: final-answer-quality
 type: rubric
 scale: 1-5
-inputs: [task, final, artifacts]
+inputs: [task, final]
 ---
 
-# Artifact Quality Judge
+# Final Answer Quality Judge
 
-You evaluate the generated artifact for the user's task.
+You evaluate the final answer for the user's task.
 
 ## Rubric
 
@@ -34,8 +34,8 @@ Return JSON with an overall score and critique.
 
 ## Calibration Examples
 
-- A complete artifact with traceable source claims scores 5.
-- An artifact with unsupported material claims scores at most 3.
+- A complete final answer with traceable source claims scores 5.
+- A final answer with unsupported material claims scores at most 3.
 ```
 
 Supported judge types:
@@ -49,7 +49,7 @@ Thresholds live in scenario `criteria.json`, not in judge files:
 
 ```json
 {
-  "id": "artifact-quality",
+  "id": "final-answer-quality",
   "threshold": {
     "overall_min": 4
   }
@@ -60,7 +60,7 @@ The same judge can be report-only in one scenario and thresholded in another.
 
 ## Good Judge Scope
 
-Use one judge for one recurring subjective pattern. Good scopes include source faithfulness, recommendation quality, artifact usefulness, tone fit, and ambiguity handling.
+Use one judge for one recurring subjective pattern. Good scopes include source faithfulness, recommendation quality, final-answer usefulness, tone fit, and ambiguity handling.
 
 Avoid broad "overall quality" judges as the main signal. If a deterministic test can answer the question, write a test instead.
 
@@ -70,7 +70,7 @@ Feed only the information needed:
 
 - task text
 - final response
-- selected artifacts
+- selected final-output excerpts
 - relevant source excerpts
 - deterministic test summaries
 

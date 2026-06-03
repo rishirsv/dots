@@ -29,7 +29,6 @@ Usage:
   meta-skill report <project> [--view status|runs|eval|review|release|full|lint] [--run <run-id>] [--review <review-id>] [--json] [--html] [--refresh] [--open]
   meta-skill review <project> [--json]
   meta-skill eval init <project>
-  meta-skill eval generate <project> [--count <n>] [--family <R|F|T|G>] [--topic <topic>] [--strategy merge|replace] [--json]
   meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
   meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
   meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
@@ -174,8 +173,6 @@ async function commandEval(argv) {
             return commandEvalInit(rest);
         case "run":
             return commandEvalRun(rest);
-        case "generate":
-            return commandEvalGenerate(rest);
         case "judge":
             return commandEvalJudge(rest);
         case "feedback":
@@ -187,7 +184,7 @@ async function commandEval(argv) {
         case "view":
             return commandEvalOpen(rest, false);
         default:
-            throw new project_1.CliError("eval command supports init, generate, run, judge, feedback import, open, list, and view", 2);
+            throw new project_1.CliError("eval command supports init, run, judge, feedback import, open, list, and view", 2);
     }
 }
 async function commandEvalInit(argv) {
@@ -222,10 +219,6 @@ async function commandEvalRun(argv) {
     });
     console.log(formatEvalRunSummary(project, result));
     return result.ok ? 0 : 1;
-}
-async function commandEvalGenerate(argv) {
-    parse(argv, ["count", "family", "topic", "strategy", "from-review", "from-run"], ["dry-run", "json"]);
-    throw new project_1.CliError("eval generate is scaffolded but not implemented yet; create scenarios manually under .meta-skill/evals/scenarios/. Baseline-compatible generation remains future work because the current runner force-attaches the skill.", 2);
 }
 function formatEvalRunSummary(project, result) {
     const reportJson = node_path_1.default.join(node_path_1.default.dirname(result.report), "report.json");

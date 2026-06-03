@@ -6,7 +6,7 @@ export type ScenarioFamily =
   | "trigger"
   | "gate";
 
-export type ScenarioType = "behavior" | "trigger" | "artifact" | "gate";
+export type ScenarioType = "behavior" | "trigger" | "gate";
 
 export type LegacyEvalSide = "candidate" | "release";
 export type EvalRunSourceKind = "working_payload" | "snapshot_payload" | "no_skill";

@@ -305,7 +305,7 @@ export function renderEvalRunMarkdown(report: RunReport): string {
   }
   lines.push("", "## Evidence Paths");
   for (const artifact of report.artifacts) lines.push(`- ${artifact.scenario_id}: ${artifact.path}`);
-  if (!report.artifacts.length) lines.push("- No artifact files recorded.");
+  if (!report.artifacts.length) lines.push("- No additional artifact files recorded.");
   lines.push("", "## Tests, Judges, Feedback");
   lines.push(`- Tests: ${report.tests.length}`);
   lines.push(`- Judges: ${report.judges.length}`);

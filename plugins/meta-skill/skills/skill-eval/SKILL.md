@@ -5,7 +5,7 @@ description: Use when setting up, running, auditing, or interpreting App Server-
 
 # Skill Eval
 
-Measure a reusable skill with `.meta-skill/evals/` scenario runs. This lane sets up scenarios, runs Codex App Server-backed evals, inspects evidence, imports feedback, handles draft scenario-generation requests honestly, and runs optional App Server-backed judges. It does not rewrite or promote the skill.
+Measure a reusable skill with `.meta-skill/evals/` scenario runs. This lane sets up manually authored scenarios, runs Codex App Server-backed evals, inspects evidence, imports feedback, and runs optional App Server-backed judges. It does not generate scenarios, rewrite, or promote the skill.
 
 ## Reference Map
 
@@ -31,11 +31,10 @@ Scenario folders live at `.meta-skill/evals/scenarios/<ID-slug>/` and require `t
 ## Operating Rules
 
 - Scenario evals measure behavior; they do not apply source edits.
-- By default, the runner force-attaches the working payload on the first turn. Treat working-payload and saved-snapshot runs as forced-skill final-answer evidence, not proof of true trigger routing or artifact-writing behavior.
+- By default, the runner force-attaches the working payload on the first turn. Treat working-payload and saved-snapshot runs as forced-skill final-answer evidence, not proof of true trigger routing or writable file behavior.
 - A run evaluates exactly one source: the working payload, a saved snapshot payload with `--snapshot`, or no skill with `--no-skill`.
 - `--compare` was removed. A run evaluates one source only; there is no first-class comparison report.
 - Saved snapshot runs use `.meta-skill/versions/release/skill/`, not stale output from an old run.
-- `eval generate` is scaffolded but unsupported; do not present generated scenarios as available proof.
 - Multi-turn scenarios must use `task.md` for the first turn and `turns.json` for follow-up turns.
 - Criteria are evaluator evidence and must not be staged into solver workspaces.
 - Deterministic tests belong in `.meta-skill/tests/manifest.json` and may annotate saved run evidence with `meta-skill lint . --run <run-id>`.
@@ -56,7 +55,7 @@ Start with 3-5 scenarios:
 2. `F` failure mode: a hard, ambiguous, or multi-turn behavior.
 3. `T` trigger: activation or non-activation boundary.
 4. `G` gate: approval, safe stop, or safe default.
-5. Source-grounding or artifact scenario when the skill depends on files.
+5. Source-grounding scenario when the skill depends on files.
 
 Prefer deterministic tests before judges. Use judges only for subjective qualities such as usefulness, source faithfulness, tone fit, recommendation quality, or handling ambiguity.
 

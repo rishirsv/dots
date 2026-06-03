@@ -226,7 +226,6 @@ zero.
           usage.json
           final.md
           rpc.jsonl
-          artifacts/
 ```
 
 Scenario IDs are strict: `R` regression, `F` failure mode, `T` trigger, and
@@ -290,7 +289,6 @@ root `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or source `skills/`, run
   reviewer concept but does not claim a live semantic subagent ran.
 - `plan` is a scaffold. It creates an empty edit list that someone must fill
   from evidence before `promote`.
-- `eval generate` is scaffolded but unsupported.
 - Automated uplift comparison and true trigger routing are unsupported. Treat
   no-skill runs as manual control evidence, not an uplift score.
 - Attached App Server endpoints are not implemented.
@@ -306,7 +304,8 @@ and commit regenerated `app/` for code changes.
 
 For eval changes, preserve `.meta-skill/evals/runs/<run-id>/`, per-scenario
 evidence under `scenarios/<scenario>/`, unavailable-token records,
-read-only/no-approval/no-network defaults, and optional judges.
+read-only/no-approval/no-network defaults, optional judges, and additional
+artifact directories only when the harness actually writes files there.
 
 For package changes, package only the portable payload, never `.meta-skill/`,
 keep working payload and saved snapshot packaging separate, and keep promote, decide, release, and

@@ -77,7 +77,7 @@ Families are strict:
 - `T` -> `trigger`
 - `G` -> `gate`
 
-Types are `behavior`, `trigger`, `artifact`, or `gate`.
+Types are `behavior`, `trigger`, or `gate`.
 
 ## Criteria
 
@@ -166,14 +166,13 @@ Each run writes:
       turns.jsonl
       usage.json
       final.md
-      artifacts/
 ```
 
 `run.json` is the plan. `events.jsonl` is the chronological execution ledger. `results.jsonl` is derived summary data. `tests.jsonl`, `grades.jsonl`, and `feedback.jsonl` are append-only annotation streams.
 
 `snapshots/<scenario-folder>/` stores evaluator-side task, metadata, criteria, and turns as they existed when the run started. Judges read these snapshots with saved final outputs. If an older run has no snapshot, the CLI marks the judge evidence basis as legacy current-project criteria.
 
-`report.json` is the normalized view consumed by `report.html`, `eval open --json`, and the runs `index.json`. It contains run summary, scenario attempts, tests, judges, feedback, artifacts, and readiness.
+`report.json` is the normalized view consumed by `report.html`, `eval open --json`, and the runs `index.json`. It contains run summary, scenario attempts, tests, judges, feedback, any additional artifact files that actually exist, and readiness.
 
 `runs/index.json` stores one summary row per run for `eval open --list`, `eval list`, and future local evidence browsers.
 

@@ -504,7 +504,7 @@
           <div class="lhead">
             <span class="ltag"><span class="ictile"><svg aria-hidden="true"><use href="#i-flask"/></svg></span><h3>Evaluate</h3></span>
             <span class="skill">skill-eval</span>
-            <p>Run the skill against real scenarios through App Server in a read-only sandbox, and collect evidence — traces, outputs, deterministic tests, optional judges.</p>
+            <p>Run the skill against real scenarios through App Server in a read-only sandbox, and collect evidence from final answers, traces, deterministic tests, and optional judges.</p>
           </div>
           <div class="lbody">
             <ol class="steps" aria-label="Evaluate lane steps">
@@ -516,7 +516,7 @@
               <span class="chevron" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
               <li class="step">eval&nbsp;open</li>
             </ol>
-            <p class="produces"><b>Produces</b> · a run under <span class="inline-code">evals/runs/</span> with a report and full evidence trail.</p>
+            <p class="produces"><b>Produces</b> · a run under <span class="inline-code">evals/runs/</span> with final answers, traces, usage, and a report.</p>
           </div>
         </div>
 
@@ -566,7 +566,7 @@
       <div class="section-head">
         <p class="kicker">Inside an eval</p>
         <h2>Evidence you can read, not a score you trust blindly.</h2>
-        <p>Scenarios are tagged by what they stress. Each run executes through App Server and writes a complete, inspectable trail to disk.</p>
+        <p>Scenarios are tagged by what they stress. Each run executes through App Server and writes final-answer and trace evidence to disk.</p>
       </div>
       <div class="deep">
         <div class="families-col">
@@ -596,7 +596,7 @@
 <span class="ev-row"><span class="file">tests.jsonl</span><span class="cmt">     deterministic test results</span></span>
 <span class="ev-row"><span class="file">grades.jsonl</span><span class="cmt">    judge scorecards (optional)</span></span>
 <span class="ev-row"><span class="file">report.html</span><span class="cmt">     the readable summary</span></span>
-<span class="ev-row"><span class="path">scenarios/F1/candidate/</span></span>
+<span class="ev-row"><span class="path">scenarios/F1/</span></span>
 <span class="ev-row">  <span class="file">final.md</span><span class="cmt">       the agent's answer</span></span>
 <span class="ev-row">  <span class="file">rpc.jsonl</span><span class="cmt">      full turn-by-turn trace</span></span></code></div>
           </div>
@@ -656,7 +656,7 @@
 
         <div class="crow lane-row"><span class="lane-name"><svg aria-hidden="true"><use href="#i-flask"/></svg> Evaluate</span></div>
         <div class="crow"><span class="cmd-name">eval init</span><span class="cmd-desc">scaffold the evals workbench and scan for scenarios</span></div>
-        <div class="crow"><span class="cmd-name">eval run</span><span class="cmd-desc">execute scenarios via App Server; record the evidence trail</span></div>
+        <div class="crow"><span class="cmd-name">eval run</span><span class="cmd-desc">execute scenarios via App Server; record final answers and traces</span></div>
         <div class="crow"><span class="cmd-name">eval judge</span><span class="cmd-desc">score saved evidence with LLM judges (optional, costs tokens)</span></div>
         <div class="crow"><span class="cmd-name">eval open</span><span class="cmd-desc">open a run's <span class="inline-code">report.html</span>, or list runs</span></div>
 
@@ -685,7 +685,7 @@
           <div class="qstep"><span class="num">1</span><div><h4>Create a portable skill</h4><p>One folder, one <span class="inline-code">SKILL.md</span>. Front-load the trigger.</p></div></div>
           <div class="qstep"><span class="num">2</span><div><h4>Add a workbench</h4><p>Only when you want evals, releases, or reuse.</p></div></div>
           <div class="qstep"><span class="num">3</span><div><h4>Lint &amp; review</h4><p>Catch structure problems and best-practice gaps.</p></div></div>
-          <div class="qstep"><span class="num">4</span><div><h4>Evaluate</h4><p>Generate starter scenarios, run them, open the report.</p></div></div>
+          <div class="qstep"><span class="num">4</span><div><h4>Evaluate</h4><p>Add starter scenarios, run them, open the report.</p></div></div>
           <div class="qstep"><span class="num">5</span><div><h4>Improve from a run</h4><p>Plan one edit tied to the run, promote it, decide.</p></div></div>
         </div>
         <div>

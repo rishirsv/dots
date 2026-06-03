@@ -6,7 +6,6 @@ Read this for exact `meta-skill eval ...` command guidance.
 
 ```bash
 meta-skill eval init <project>
-meta-skill eval generate <project> [--count <n>] [--family <R|F|T|G>] [--topic <topic>] [--strategy merge|replace] [--json]
 meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
 meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
 meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
@@ -46,9 +45,9 @@ meta-skill eval run . --no-skill
 
 `--compare` was removed. A run evaluates one source only; there is no replacement comparison command.
 
-## Generate Scenarios
+## Scenario Authoring
 
-`meta-skill eval generate` is scaffolded but not implemented. Keep scenario authoring manual for now:
+Scenario authoring is manual for now:
 
 ```text
 .meta-skill/evals/scenarios/<ID-slug>/
@@ -56,8 +55,6 @@ meta-skill eval run . --no-skill
   scenario.json
   criteria.json
 ```
-
-Generated no-skill-aware scenarios are future work. Do not claim generated scenarios are release-facing evidence until a human has reviewed them.
 
 ## Lint And Judges
 
@@ -80,7 +77,7 @@ Judges are independent and opt-in:
 
 ```bash
 meta-skill eval run . --with-judges
-meta-skill eval judge . --run 004-saved-snapshot --judge artifact-quality --scenario G2
+meta-skill eval judge . --run 004-saved-snapshot --judge final-answer-quality --scenario G2
 meta-skill eval judge . --run 004-saved-snapshot --all-judges --all-scenarios
 ```
 

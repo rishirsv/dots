@@ -12,7 +12,7 @@ import { exists, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
 
 describe("central reporting service", () => {
-  it("builds read-only project reports without materializing missing eval artifacts", async () => {
+  it("builds read-only project reports without materializing missing eval reports", async () => {
     const project = await fixtureProject("report-read-only");
     await writeScenario(project);
     const result = await runEval({

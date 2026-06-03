@@ -53,7 +53,6 @@ export class AppServerScenarioRunner {
   async run(input: ScenarioRunInput): Promise<ScenarioRunResult> {
     const rawRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
     await ensureDir(rawRoot);
-    await ensureDir(path.join(rawRoot, "artifacts"));
     const stageRoot = path.join(rawRoot, "stage");
     await stageWorkspace(input, stageRoot);
     const attachmentName = input.attachSkill && input.skillRoot ? await runtimeSkillName(input.skillRoot) : undefined;

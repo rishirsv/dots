@@ -214,11 +214,11 @@ describe("App Server eval orchestration", () => {
   it("enforces judge thresholds before trusting pass and refreshes normalized reports", async () => {
     const project = await fixtureProject("eval-judge-threshold");
     await writeScenario(project, {
-      judges: [{ id: "artifact-quality", threshold: { overall_min: 4 } }]
+      judges: [{ id: "final-answer-quality", threshold: { overall_min: 4 } }]
     });
     await writeText(
-      path.join(project, ".meta-skill", "evals", "judges", "artifact-quality.md"),
-      `---\nid: artifact-quality\ntype: rubric\nscale: 1-5\n---\n\n# Artifact Quality\n\n## Output\n\nReturn JSON.\n\n## Calibration Example\n\nGood output scores 5.\n`
+      path.join(project, ".meta-skill", "evals", "judges", "final-answer-quality.md"),
+      `---\nid: final-answer-quality\ntype: rubric\nscale: 1-5\n---\n\n# Final Answer Quality\n\n## Output\n\nReturn JSON.\n\n## Calibration Example\n\nGood output scores 5.\n`
     );
 
     const result = await runEval({
@@ -233,7 +233,7 @@ describe("App Server eval orchestration", () => {
       expected_behavior: "Changed after the run.",
       assertions: ["Changed."],
       tests: [],
-      judges: [{ id: "artifact-quality", threshold: { overall_min: 1 } }]
+      judges: [{ id: "final-answer-quality", threshold: { overall_min: 1 } }]
     });
 
     const judged = await judgeRun({

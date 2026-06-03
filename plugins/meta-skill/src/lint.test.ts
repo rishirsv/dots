@@ -17,7 +17,7 @@ describe("lint, command parsing, and eval evidence", () => {
       id: "R1",
       family: "regression",
       tests: ["exact-output"],
-      judges: ["artifact-quality"]
+      judges: ["final-answer-quality"]
     });
 
     let report = await lintProject(project, { executeTests: false });
@@ -30,8 +30,8 @@ describe("lint, command parsing, and eval evidence", () => {
       tests: [{ id: "exact-output", kind: "eval", command: "node -e \"process.exit(0)\"" }]
     });
     await writeText(
-      path.join(project, ".meta-skill", "evals", "judges", "artifact-quality.md"),
-      `---\nid: artifact-quality\ntype: rubric\nscale: 1-5\ninputs: [task, final]\n---\n\n# Artifact Quality\n\n## Rubric\n\n5: Excellent.\n1: Poor.\n\n## Output\n\nReturn JSON.\n\n## Calibration Example\n\nGood output scores 5.\n`
+      path.join(project, ".meta-skill", "evals", "judges", "final-answer-quality.md"),
+      `---\nid: final-answer-quality\ntype: rubric\nscale: 1-5\ninputs: [task, final]\n---\n\n# Final Answer Quality\n\n## Rubric\n\n5: Excellent.\n1: Poor.\n\n## Output\n\nReturn JSON.\n\n## Calibration Example\n\nGood output scores 5.\n`
     );
     report = await lintProject(project, { executeTests: false });
     assert.equal(report.failures.length, 0);

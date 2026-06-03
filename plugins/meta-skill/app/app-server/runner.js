@@ -20,7 +20,6 @@ class AppServerScenarioRunner {
     async run(input) {
         const rawRoot = node_path_1.default.join(input.runRoot, "scenarios", input.scenario.folder);
         await (0, project_1.ensureDir)(rawRoot);
-        await (0, project_1.ensureDir)(node_path_1.default.join(rawRoot, "artifacts"));
         const stageRoot = node_path_1.default.join(rawRoot, "stage");
         await stageWorkspace(input, stageRoot);
         const attachmentName = input.attachSkill && input.skillRoot ? await runtimeSkillName(input.skillRoot) : undefined;

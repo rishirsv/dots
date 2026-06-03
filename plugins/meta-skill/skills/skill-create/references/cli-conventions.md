@@ -13,8 +13,7 @@ meta-skill project init <skill-dir>
 meta-skill lint <project-or-skill> [--run <run-id>] [--json]
 meta-skill review <project> [--json]
 meta-skill eval init <project>
-meta-skill eval generate <project> [--count <n>] [--family <R|F|T|G>] [--topic <topic>] [--strategy merge|replace] [--json]
-meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--compare release|none] [--with-judges] [--no-lint]
+meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
 meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
 meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
 meta-skill eval open <project> [--run <run-id>] [--list] [--json]
@@ -55,4 +54,4 @@ Run IDs are readable sequenced folders such as `001-initial-candidate`. Treat th
 
 Every eval run records unavailable token metrics explicitly when exact usage cannot be collected. Do not hide missing usage fields.
 
-`eval generate` is scaffolded but not implemented. Do not present generated scenarios, no-skill baselines, or trigger-routing proof as supported until the runner has a real generation and baseline mode.
+Scenario authoring is manual. Do not present generated scenarios, automated uplift scores, or trigger-routing proof as supported until the runner has those modes.

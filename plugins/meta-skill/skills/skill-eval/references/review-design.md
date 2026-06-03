@@ -10,7 +10,7 @@ Use this loop:
 lint workbench
   -> add realistic scenarios
   -> run App Server-backed eval
-  -> inspect traces, final outputs, artifacts, tests, judges, and feedback
+  -> inspect traces, final outputs, tests, judges, and feedback
   -> identify repeated failure patterns
   -> add deterministic tests where possible
   -> add optional judges only for subjective qualities
@@ -27,7 +27,7 @@ Start with 3-5 scenarios:
 2. `F`: known hard behavior, ambiguity, multi-turn handling, or source-grounding risk.
 3. `T`: activation or non-activation boundary.
 4. `G`: approval, safe stop, or safe default.
-5. Artifact/source scenario when the skill creates files or uses evidence.
+5. Source-grounding scenario when the skill uses files or evidence.
 
 Each scenario needs at least one concrete assertion.
 
@@ -48,7 +48,6 @@ Do not pack a transcript into one prompt when the behavior depends on real follo
 
 Prefer tests when the check is objective:
 
-- expected artifact exists
 - JSON parses
 - required section appears
 - citation pattern is present
@@ -64,7 +63,7 @@ Use judges for subjective qualities:
 - source faithfulness
 - recommendation quality
 - tone fit
-- artifact usefulness
+- final-answer usefulness
 - handling ambiguity
 
 Judges are optional by default because they cost tokens. Keep them narrow and human-authored. Store judge prompts in `.meta-skill/evals/judges/` and thresholds in scenario `criteria.json`.
@@ -75,11 +74,11 @@ For each failure, identify the first place it went wrong:
 
 - trigger decision
 - user task interpretation
-- source retrieval or artifact read
+- source retrieval or staged resource read
 - runtime script
 - tool call
 - final response
-- generated artifact
+- final response
 - human gate
 
 Pass this first-failure note to `meta-skill plan` or the improvement discussion.
@@ -95,4 +94,4 @@ There is no sealed release gate. For release confidence, prefer:
 - explicit human review before release or package decisions
 - `meta-skill release . --from-run <run-id>` when a run supports readiness, so the release metadata records the evidence basis
 
-Working-payload and saved-snapshot App Server scenarios force-attach the staged skill and run read-only final-answer checks. Use them for forced-skill behavior evidence. No-skill runs are available with `--no-skill` as manual control evidence, not as an automated uplift score. Do not claim true trigger routing or writable artifact proof until the runner supports those modes.
+Working-payload and saved-snapshot App Server scenarios force-attach the staged skill and run read-only final-answer checks. Use them for forced-skill behavior evidence. No-skill runs are available with `--no-skill` as manual control evidence, not as an automated uplift score. Do not claim true trigger routing or writable file proof until the runner supports those modes.

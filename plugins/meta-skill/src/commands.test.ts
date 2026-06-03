@@ -8,7 +8,7 @@ import { CliError } from "./project";
 import { createSkill } from "./skills";
 
 describe("command output", () => {
-  it("prints completed eval run artifacts", () => {
+  it("prints completed eval run report paths", () => {
     const output = formatEvalRunSummary(".", {
       runId: "001-basic",
       status: "completed",
@@ -29,7 +29,7 @@ describe("command output", () => {
     );
   });
 
-  it("prints failed eval run classifications and artifacts", () => {
+  it("prints failed eval run classifications and report paths", () => {
     const output = formatEvalRunSummary(".", {
       runId: "003-failed",
       status: "failed",
@@ -54,6 +54,25 @@ describe("command output", () => {
     await assert.rejects(
       runCommand(["eval", "run", ".", "--app-server-endpoint", "http://127.0.0.1:1234"]),
       (error) => error instanceof CliError && error.exitCode === 2 && /not supported yet/.test(error.message)
+    );
+  });
+
+  it("does not expose unsupported eval scenario generation", async () => {
+    const lines: string[] = [];
+    const original = console.log;
+    console.log = (value?: unknown) => {
+      lines.push(String(value ?? ""));
+    };
+    try {
+      await runCommand(["--help"]);
+    } finally {
+      console.log = original;
+    }
+
+    assert.doesNotMatch(lines.join("\n"), /eval generate/);
+    await assert.rejects(
+      runCommand(["eval", "generate", "."]),
+      (error) => error instanceof CliError && error.exitCode === 2 && /supports init, run, judge/.test(error.message)
     );
   });
 
