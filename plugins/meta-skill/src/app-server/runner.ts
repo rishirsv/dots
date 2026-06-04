@@ -5,6 +5,7 @@ import type { SkillActivation, EvalRunSource, CaseRecord, TokenUsage } from "../
 import { appendJsonl, ensureDir, exists, parseSkillFrontmatter, unavailableTokenUsage, writeText } from "../project.ts";
 import type { AppServerConfig, AppServerLine } from "./client.ts";
 import { AppServerJsonClient, AppServerUnavailableError } from "./client.ts";
+import { collectTurnEvents, type AppServerTraceLine, type Trajectory, type TrajectoryTurn } from "./trajectory.ts";
 
 interface AppServerClientLike {
   request(method: string, params: unknown): Promise<Record<string, unknown>>;
@@ -37,6 +38,7 @@ export interface CaseRunResult {
   token_usage: TokenUsage;
   final_path: string;
   rpc_path: string;
+  trajectory_path: string;
   evidence_path: string;
   thread_id?: string;
   turn_ids: string[];
@@ -49,6 +51,7 @@ export class AppServerCaseRunner {
   private readonly turnTimeoutMs: number;
   private readonly maxCaseRespawns: number;
   private rpcPath: string | undefined;
+  private rawTrace: AppServerTraceLine[] = [];
 
   constructor(options: AppServerCaseRunnerOptions = {}) {
     this.clientFactory = options.clientFactory || ((onLine) => new AppServerJsonClient(onLine));
@@ -80,8 +83,10 @@ export class AppServerCaseRunner {
 
     try {
       const rpcPath = path.join(rawRoot, "rpc.jsonl");
+      const trajectoryPath = path.join(rawRoot, "trajectory.json");
       await this.client?.flush?.();
       this.rpcPath = rpcPath;
+      this.rawTrace = [];
       const client = await this.ensureClient(input.appServer);
 
       const start = await client.request("thread/start", {
@@ -104,24 +109,26 @@ export class AppServerCaseRunner {
       if (!threadId) throw new Error("App Server thread/start response did not include thread.id");
 
       const turnIds: string[] = [];
-      let finalCumulativeUsage: TokenUsage | undefined;
       let final = "";
+      const trajectory: Trajectory = { schema_version: 1, source: "codex_app_server", threadId, turns: [] };
       const turns = [{ content: input.case.task, source: "case.md#Task" }, ...input.case.turns.map((turn, index) => ({ content: turn.content, source: `case.md#Turn ${index + 2}` }))];
       for (const [index, turn] of turns.entries()) {
-        const result = await runTurn(client, threadId, runtimeRoot, workspaceRoots, turn.content, index === 0 && forceSkill, this.turnTimeoutMs, attachmentName, input.skillRoot);
-        final = result.final || final;
-        finalCumulativeUsage = result.cumulativeTokenUsage;
-        if (result.turnId) turnIds.push(result.turnId);
+        const result = await runTurn(client, this.rawTrace, threadId, runtimeRoot, workspaceRoots, turn.content, index === 0 && forceSkill, this.turnTimeoutMs, attachmentName, input.skillRoot);
+        trajectory.turns.push(result);
+        final = result.finalText || final;
+        turnIds.push(result.turnId);
       }
       await client.flush?.();
-      const caseSummary = summarizeCaseUsage(finalCumulativeUsage);
+      const caseSummary = summarizeCaseUsage(trajectory.turns.at(-1));
       await writeText(path.join(rawRoot, "final.md"), final || "(no final assistant message captured)");
+      await writeText(trajectoryPath, `${JSON.stringify(trajectory, null, 2)}\n`);
 
       return {
         execution_status: "completed",
         token_usage: caseSummary,
         final_path: path.join(rawRoot, "final.md"),
         rpc_path: rpcPath,
+        trajectory_path: trajectoryPath,
         evidence_path: path.relative(input.runRoot, rawRoot),
         thread_id: threadId,
         turn_ids: turnIds
@@ -140,6 +147,7 @@ export class AppServerCaseRunner {
     if (!this.client) {
       this.client = this.clientFactory(async (line) => {
         if (!this.rpcPath) return;
+        this.rawTrace.push({ direction: line.direction, message: line.message });
         await appendJsonl(this.rpcPath, {
           schema_version: 1,
           direction: line.direction,
@@ -154,6 +162,7 @@ export class AppServerCaseRunner {
 
 async function runTurn(
   client: AppServerClientLike,
+  rawTrace: AppServerTraceLine[],
   threadId: string,
   runtimeRoot: string,
   workspaceRoots: string[],
@@ -162,7 +171,8 @@ async function runTurn(
   turnTimeoutMs: number,
   attachmentName?: string,
   skillRoot?: string
-): Promise<{ turnId: string; final: string; cumulativeTokenUsage?: TokenUsage }> {
+): Promise<TrajectoryTurn> {
+  const traceMark = rawTrace.length;
   const mark = client.eventCount();
   const input = [
     ...(includeSkill && attachmentName && skillRoot ? [{ type: "skill", name: attachmentName, path: skillRoot }] : []),
@@ -184,52 +194,15 @@ async function runTurn(
     (message) => message.method === "turn/completed" && (message.params as { threadId?: string; turn?: { id?: string } } | undefined)?.threadId === threadId && (message.params as { turn?: { id?: string } } | undefined)?.turn?.id === turnId,
     turnTimeoutMs
   );
-  const events = client.eventsSince(mark);
-  const final = events
-    .filter((message) => message.method === "item/agentMessage/delta" && (message.params as { threadId?: string; turnId?: string } | undefined)?.threadId === threadId && (message.params as { turnId?: string } | undefined)?.turnId === turnId)
-    .map((message) => String((message.params as { delta?: string }).delta || ""))
-    .join("");
-  const tokenEvent = [...events]
-    .reverse()
-    .find((message) => message.method === "thread/tokenUsage/updated" && (message.params as { threadId?: string; turnId?: string } | undefined)?.threadId === threadId && (message.params as { turnId?: string } | undefined)?.turnId === turnId);
-  if (!tokenEvent) return { turnId, final };
-  const params = tokenEvent.params as { tokenUsage?: { last?: unknown; total?: unknown }; modelContextWindow?: unknown };
-  const tokenUsage = params.tokenUsage;
-  const modelContextWindow = numberOrNull(params.modelContextWindow);
-  return {
-    turnId,
-    final,
-    cumulativeTokenUsage: tokenUsage?.total ? toTokenUsage(tokenUsage.total, `App Server cumulative token metrics were unavailable for turn ${turnId}.`, modelContextWindow) : undefined
-  };
+  await client.flush?.();
+  const traceEvents = rawTrace.slice(traceMark);
+  const hasServerMessages = traceEvents.some((event) => event.direction === "server" && event.message && typeof event.message === "object" && "method" in event.message);
+  return collectTurnEvents(hasServerMessages ? traceEvents : client.eventsSince(mark), { threadId, turnId });
 }
 
-function toTokenUsage(raw: unknown, reason = "App Server token metrics were unavailable.", modelContextWindow: number | null = null): TokenUsage {
-  const metrics = raw && typeof raw === "object" && !Array.isArray(raw) ? (raw as Record<string, unknown>) : undefined;
-  if (!metrics) return unavailableTokenUsage(reason);
-  const input = numberOrNull(metrics.inputTokens);
-  const output = numberOrNull(metrics.outputTokens);
-  const total = numberOrNull(metrics.totalTokens);
-  const cachedInput = numberOrNull(metrics.cachedInputTokens);
-  const reasoning = numberOrNull(metrics.reasoningOutputTokens);
-  const unavailableReason = input === null || output === null || total === null ? reason : null;
-  return {
-    input_tokens: input,
-    output_tokens: output,
-    total_tokens: total,
-    cached_input_tokens: cachedInput,
-    reasoning_tokens: reasoning,
-    model_context_window: modelContextWindow,
-    unavailable_reason: unavailableReason
-  };
-}
-
-function summarizeCaseUsage(finalCumulativeUsage?: TokenUsage): TokenUsage {
-  if (finalCumulativeUsage?.total_tokens !== null && finalCumulativeUsage?.total_tokens !== undefined) return finalCumulativeUsage;
+function summarizeCaseUsage(finalTurn?: TrajectoryTurn): TokenUsage {
+  if (finalTurn?.tokenUsage.total_tokens !== null && finalTurn?.tokenUsage.total_tokens !== undefined) return finalTurn.tokenUsage;
   return unavailableTokenUsage("App Server completed without tokenUsage.total on the final turn.");
-}
-
-function numberOrNull(value: unknown): number | null {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
 async function runtimeWorkspaceRoots(runtimeRoot: string, casePath: string): Promise<string[]> {

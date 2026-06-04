@@ -36,6 +36,7 @@ export interface JudgeExecutionInput {
   case: CaseRecord;
   runSourceLabel: string;
   final: string;
+  trajectorySummary?: string;
 }
 
 export type RunFailureClassification =

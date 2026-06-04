@@ -11,7 +11,7 @@ import { createSkill } from "./skills.ts";
 import { ensureDir, exists, readText, writeText } from "./project.ts";
 
 describe("eval evidence hard cut", () => {
-  it("writes one fact log and three per-case files", async () => {
+  it("writes one fact log and the hard-cut per-case evidence files", async () => {
     const project = await fixtureProject("fact-run");
     await writeCase(project);
     const result = await runEval({
@@ -25,11 +25,14 @@ describe("eval evidence hard cut", () => {
     assert.equal(await exists(path.join(result.runRoot, "payload", "SKILL.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "case.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "rpc.jsonl")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "trajectory.json")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "final.md")), true);
 
     const facts = await readFacts(result.runRoot);
     assert.deepEqual(facts.map((fact) => fact.type), ["run_started", "payload_frozen", "case_defined", "case_trial_finished", "check_observed", "run_finished"]);
-    assert.equal((facts.find((fact) => fact.type === "case_trial_finished")?.payload.usage as TokenUsage).total_tokens, 2);
+    const trial = facts.find((fact) => fact.type === "case_trial_finished");
+    assert.equal((trial?.payload.usage as TokenUsage).total_tokens, 2);
+    assert.equal(trial?.payload.trajectory_path, "cases/R1-basic/trajectory.json");
   });
 
   it("imports feedback into facts", async () => {
@@ -52,12 +55,33 @@ function caseRunner() {
       const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
       await ensureDir(caseRoot);
       await writeText(path.join(caseRoot, "rpc.jsonl"), JSON.stringify({ direction: "server", message: { ok: true } }));
+      await writeText(
+        path.join(caseRoot, "trajectory.json"),
+        `${JSON.stringify({
+          schema_version: 1,
+          source: "codex_app_server",
+          threadId: "thread",
+          turns: [
+            {
+              threadId: "thread",
+              turnId: "turn",
+              status: "completed",
+              finalText: "Final answer.",
+              tokenUsage: tokenUsageEvidence(1, 1, 2),
+              items: [],
+              approvals: [],
+              unknownMethods: []
+            }
+          ]
+        })}\n`
+      );
       await writeText(path.join(caseRoot, "final.md"), "Final answer.");
       return {
         execution_status: "completed",
         token_usage: tokenUsageEvidence(1, 1, 2),
         final_path: path.join(caseRoot, "final.md"),
         rpc_path: path.join(caseRoot, "rpc.jsonl"),
+        trajectory_path: path.join(caseRoot, "trajectory.json"),
         evidence_path: path.join("cases", input.case.folder),
         turn_ids: ["turn"]
       };

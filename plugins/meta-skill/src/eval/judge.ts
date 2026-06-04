@@ -1,5 +1,6 @@
 import path from "node:path";
 import { AppServerJsonClient, AppServerUnavailableError, appServerConfig } from "../app-server/client.ts";
+import { formatTrajectorySummary, summarizeTrajectory, type Trajectory } from "../app-server/trajectory.ts";
 import { appendFact } from "../facts.ts";
 import { CliError, appendJsonl, exists, projectPaths, readText, relativePath, requirePortableSkill } from "../project.ts";
 import { buildRunEvidenceReport } from "../report.ts";
@@ -57,8 +58,9 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
             continue;
           }
           const final = await readText(finalPath);
+          const trajectorySummary = await readJudgeTrajectorySummary(path.join(runRoot, attempt.evidencePath, "trajectory.json"));
           rpcPath = path.join(runRoot, attempt.evidencePath, "rpc.jsonl");
-          const result = await judgeExecutor({ projectRoot: root, judgeId, judgePrompt, case: item, runSourceLabel: attempt.runSource.label, final });
+          const result = await judgeExecutor({ projectRoot: root, judgeId, judgePrompt, case: item, runSourceLabel: attempt.runSource.label, final, trajectorySummary });
           await appendFact(runRoot, {
             type: "check_observed",
             run_id: options.runId,
@@ -119,6 +121,7 @@ async function runJudge(
     input.judgePrompt,
     "# Case",
     JSON.stringify({ id: input.case.id, folder: input.case.folder, run_source: input.runSourceLabel, metadata: input.case.metadata, criteria: input.case.criteria }, null, 2),
+    ...(input.trajectorySummary ? ["# Trajectory Summary", input.trajectorySummary] : []),
     "# Final Output",
     input.final,
     "# Required Output",
@@ -141,6 +144,12 @@ async function runJudge(
   const final = extractFinalJson(client.eventsSince(mark), completed);
   if (!final) throw new Error("judge did not return JSON");
   return final;
+}
+
+async function readJudgeTrajectorySummary(target: string): Promise<string | undefined> {
+  if (!(await exists(target))) return undefined;
+  const trajectory = JSON.parse(await readText(target)) as Trajectory;
+  return formatTrajectorySummary(summarizeTrajectory(trajectory));
 }
 
 function extractFinalJson(events: Record<string, unknown>[], completed: Record<string, unknown>): Record<string, unknown> | undefined {

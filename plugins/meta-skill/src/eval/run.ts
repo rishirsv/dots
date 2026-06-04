@@ -109,6 +109,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
             evidence_path: result.evidence_path,
             final_path: relativePath(runRoot, result.final_path),
             rpc_path: relativePath(runRoot, result.rpc_path),
+            trajectory_path: relativePath(runRoot, result.trajectory_path),
             thread_id: result.thread_id || null,
             turn_ids: result.turn_ids,
             usage: result.token_usage

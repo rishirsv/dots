@@ -148,6 +148,16 @@ export interface ReportCase {
   observations: ReportObservation[];
   final?: EvidenceRef;
   rpc?: EvidenceRef;
+  trajectory?: EvidenceRef;
+  trajectory_summary?: {
+    turn_count: number;
+    item_count: number;
+    command_executions: number;
+    file_changes: number;
+    tool_calls: number;
+    approval_requests: number;
+    unknown_methods: string[];
+  };
   usage?: TokenUsage;
 }
 

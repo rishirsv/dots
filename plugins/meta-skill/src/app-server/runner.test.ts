@@ -8,7 +8,7 @@ import type { CaseRecord } from "../models.ts";
 import { exists, readText, writeText } from "../project.ts";
 
 describe("AppServerCaseRunner", () => {
-  it("writes only rpc and final per case and returns usage", async () => {
+  it("writes rpc, trajectory, and final per case and returns usage", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-"));
     const runRoot = path.join(root, "run");
     const skillRoot = path.join(root, "skill");
@@ -30,9 +30,13 @@ describe("AppServerCaseRunner", () => {
 
     const caseRoot = path.join(runRoot, "cases", "R1-basic");
     assert.equal(await exists(path.join(caseRoot, "rpc.jsonl")), true);
+    assert.equal(await exists(path.join(caseRoot, "trajectory.json")), true);
     assert.equal(await exists(path.join(caseRoot, "final.md")), true);
+    assert.equal(result.trajectory_path, path.join(caseRoot, "trajectory.json"));
     assert.equal(result.token_usage.total_tokens, 24);
     assert.match(await readText(path.join(caseRoot, "final.md")), /final answer/);
+    const trajectory = JSON.parse(await readText(path.join(caseRoot, "trajectory.json")));
+    assert.equal(trajectory.turns[0].finalText, "final answer");
   });
 });
 

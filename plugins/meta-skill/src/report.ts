@@ -3,6 +3,7 @@ import path from "node:path";
 import type { CheckRef, EvidenceReport, FactRow, MissingCheck, ReportCase, ReportError, ReportObservation, RunTokenUsageSummary, TokenUsage } from "./models.ts";
 import { readFacts } from "./facts.ts";
 import { exists, projectPaths, readText, requirePortableSkill } from "./project.ts";
+import { formatTrajectorySummary, summarizeTrajectory, type Trajectory, type TrajectorySummary } from "./app-server/trajectory.ts";
 
 type FactWithLine = FactRow & { line: number };
 
@@ -46,6 +47,8 @@ export async function buildRunEvidenceReport(runRoot: string, options: { caseId?
     const missingChecks = checks.filter((check) => !observed.has(`${check.kind}:${check.id}`));
     if (missingChecks.length) missing.push({ case_id: caseId, checks: missingChecks });
     const trial = latestFact(facts.filter((fact) => fact.type === "case_trial_finished" && fact.case_id === caseId));
+    const trajectoryPath = trial?.payload.trajectory_path ? String(trial.payload.trajectory_path) : undefined;
+    const trajectorySummary = trajectoryPath ? await readTrajectorySummary(path.join(runRoot, trajectoryPath)) : undefined;
     cases.push({
       id: caseId,
       folder: String(definition.payload.folder || caseId),
@@ -54,6 +57,8 @@ export async function buildRunEvidenceReport(runRoot: string, options: { caseId?
       observations,
       final: trial?.payload.final_path ? { path: String(trial.payload.final_path) } : undefined,
       rpc: trial?.payload.rpc_path ? { path: String(trial.payload.rpc_path) } : undefined,
+      trajectory: trajectoryPath ? { path: trajectoryPath } : undefined,
+      trajectory_summary: trajectorySummary,
       usage: normalizeTokenUsage(trial?.payload.usage)
     });
   }
@@ -112,11 +117,12 @@ export function renderEvidenceReportMarkdown(report: EvidenceReport): string {
     lines.push("", "## Missing Checks", "", "| Case | Missing |", "|---|---|");
     for (const item of report.missing) lines.push(`| ${item.case_id} | ${item.checks.map((check) => `${check.kind}: ${check.id}`).join(", ")} |`);
   }
-  lines.push("", "## Cases", "", "| Case | Checks | Observations | Final |", "|---|---|---|---|");
+  lines.push("", "## Cases", "", "| Case | Checks | Observations | Final | Trajectory |", "|---|---|---|---|---|");
   for (const item of report.cases) {
     const checks = item.checks.map((check) => `${check.kind}: ${check.id}`).join(", ") || "none";
     const observations = item.observations.map((row) => `${row.kind}: ${row.id}${row.outcome ? ` (${row.outcome})` : ""}`).join(", ") || "none";
-    lines.push(`| ${item.title || item.id} | ${checks} | ${observations} | ${item.final?.path || ""} |`);
+    const trajectory = item.trajectory_summary ? formatTrajectorySummary(item.trajectory_summary) : "";
+    lines.push(`| ${item.title || item.id} | ${checks} | ${observations} | ${item.final?.path || ""} | ${trajectory} |`);
   }
   if (report.decisions.length) {
     lines.push("", "## Decisions", "", ...report.decisions.map((item) => `- ${item.decision} (${formatRef(item.evidence)})`));
@@ -169,6 +175,12 @@ function normalizeTokenUsage(value: unknown): TokenUsage | undefined {
     model_context_window: nullableNumber(object.model_context_window),
     unavailable_reason: object.unavailable_reason === null || object.unavailable_reason === undefined ? null : String(object.unavailable_reason)
   };
+}
+
+async function readTrajectorySummary(target: string): Promise<TrajectorySummary | undefined> {
+  if (!(await exists(target))) return undefined;
+  const parsed = JSON.parse(await readText(target)) as Trajectory;
+  return summarizeTrajectory(parsed);
 }
 
 function summarizeUsage(cases: ReportCase[]): RunTokenUsageSummary {
