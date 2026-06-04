@@ -153,7 +153,7 @@ sequenceDiagram
   end
   CLI->>Run: run deterministic eval tests unless --no-lint
   CLI->>Run: run judges only when requested
-  CLI->>Run: write final run.json, report.json, report.html, and index.json
+  CLI->>Run: write final run.json, report.json, and index.json
 ```
 
 Default runner constraints: managed stdio App Server, read-only sandbox,
@@ -215,7 +215,6 @@ zero.
       grades.jsonl
       feedback.jsonl
       report.json
-      report.html
       snapshots/
         R1-basic/
           case.md
@@ -232,7 +231,7 @@ zero.
 Case IDs are strict: `R` regression, `F` failure mode, and
 `G` gate. `run.json` is the run header; JSONL files store events, case
 results, deterministic tests, judge grades, and feedback. `report.json` is the
-normalized summary consumed by `report.html`, `eval open --json`, and
+normalized summary consumed by `eval open`, `eval open --json`, and
 `runs/index.json`.
 
 Solver staging does not include `criteria.json`. Criteria are evaluator

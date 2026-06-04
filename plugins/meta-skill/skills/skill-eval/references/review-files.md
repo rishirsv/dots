@@ -143,7 +143,6 @@ Each run writes:
   grades.jsonl
   feedback.jsonl
   report.json
-  report.html
   snapshots/
     <case-folder>/
       case.md
@@ -162,7 +161,7 @@ Each run writes:
 
 `snapshots/<case-folder>/` stores evaluator-side `case.md` and declared fixtures as they existed when the run started. Judges read these snapshots with saved final outputs.
 
-`report.json` is the normalized view consumed by `report.html`, `eval open --json`, and the runs `index.json`. It contains run summary, case attempts, tests, judges, feedback, and readiness.
+`report.json` is the normalized view consumed by `eval open`, `eval open --json`, and the runs `index.json`. It contains run summary, case attempts, tests, judges, feedback, and readiness.
 
 `runs/index.json` stores one summary row per run for `eval open --list`, `eval list`, and future local evidence browsers.
 

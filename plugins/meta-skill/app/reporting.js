@@ -10,7 +10,6 @@ exports.listRunSummariesForReport = listRunSummariesForReport;
 exports.openRunForReport = openRunForReport;
 exports.materializeReviewReport = materializeReviewReport;
 exports.renderReportMarkdown = renderReportMarkdown;
-exports.renderReportHtml = renderReportHtml;
 exports.renderLintReportMarkdown = renderLintReportMarkdown;
 exports.renderRunListMarkdown = renderRunListMarkdown;
 exports.renderEvalRunMarkdown = renderEvalRunMarkdown;
@@ -125,9 +124,10 @@ async function openRunForReport(project, runId, refresh = "refresh") {
         throw new project_1.CliError(`run is missing run.json: ${selected}`);
     if (refresh === "read") {
         const data = await readOrBuildRunReport(runRoot);
+        const reportJson = node_path_1.default.join(runRoot, "report.json");
         return {
-            report: node_path_1.default.join(runRoot, "report.html"),
-            reportJson: node_path_1.default.join(runRoot, "report.json"),
+            report: reportJson,
+            reportJson,
             runId: selected,
             data
         };
@@ -162,25 +162,6 @@ function renderReportMarkdown(report, view = report.subject.view) {
         ].join("\n\n");
     }
     return renderStatusMarkdown(report);
-}
-function renderReportHtml(report, view = report.subject.view) {
-    if (view === "eval" && report.evidence.latest_eval_run)
-        return (0, report_1.renderEvalReportHtml)(report.evidence.latest_eval_run.report);
-    const markdown = renderReportMarkdown(report, view);
-    return `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Meta Skill Report ${escapeHtml(report.project.skill_name)}</title>
-  <style>
-    body { font-family: system-ui, sans-serif; margin: 32px; color: #1f2937; }
-    pre { white-space: pre-wrap; background: #f9fafb; border: 1px solid #e5e7eb; padding: 12px; border-radius: 4px; }
-  </style>
-</head>
-<body>
-  <pre>${escapeHtml(markdown)}</pre>
-</body>
-</html>`;
 }
 function renderLintReportMarkdown(report) {
     return (0, lint_1.formatLintReport)(report);
@@ -335,7 +316,6 @@ async function readEvalRunForReport(root, runId, refresh) {
         run_id: opened.runId,
         run_root: runRoot,
         report_path: opened.reportJson,
-        html_path: opened.report,
         report: opened.data
     };
 }

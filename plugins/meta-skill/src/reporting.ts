@@ -9,7 +9,6 @@ import {
   materializeEvalRunReport,
   normalizeRunIndexRowForRead,
   normalizeRunReportForRead,
-  renderEvalReportHtml,
   renderReviewReportMarkdown,
   updateRunsIndex
 } from "./report";
@@ -57,7 +56,6 @@ export interface MetaSkillReport {
       run_id: string;
       run_root: string;
       report_path?: string;
-      html_path?: string;
       report: RunReport;
     };
     latest_review?: {
@@ -194,9 +192,10 @@ export async function openRunForReport(project: string, runId?: string, refresh:
   if (!(await exists(path.join(runRoot, "run.json")))) throw new CliError(`run is missing run.json: ${selected}`);
   if (refresh === "read") {
     const data = await readOrBuildRunReport(runRoot);
+    const reportJson = path.join(runRoot, "report.json");
     return {
-      report: path.join(runRoot, "report.html"),
-      reportJson: path.join(runRoot, "report.json"),
+      report: reportJson,
+      reportJson,
       runId: selected,
       data
     };
@@ -228,25 +227,6 @@ export function renderReportMarkdown(report: MetaSkillReport, view: ReportView =
     ].join("\n\n");
   }
   return renderStatusMarkdown(report);
-}
-
-export function renderReportHtml(report: MetaSkillReport, view: ReportView = report.subject.view): string {
-  if (view === "eval" && report.evidence.latest_eval_run) return renderEvalReportHtml(report.evidence.latest_eval_run.report);
-  const markdown = renderReportMarkdown(report, view);
-  return `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Meta Skill Report ${escapeHtml(report.project.skill_name)}</title>
-  <style>
-    body { font-family: system-ui, sans-serif; margin: 32px; color: #1f2937; }
-    pre { white-space: pre-wrap; background: #f9fafb; border: 1px solid #e5e7eb; padding: 12px; border-radius: 4px; }
-  </style>
-</head>
-<body>
-  <pre>${escapeHtml(markdown)}</pre>
-</body>
-</html>`;
 }
 
 export function renderLintReportMarkdown(report: LintReport): string {
@@ -396,7 +376,6 @@ async function readEvalRunForReport(root: string, runId: string, refresh: Report
     run_id: opened.runId,
     run_root: runRoot,
     report_path: opened.reportJson,
-    html_path: opened.report,
     report: opened.data
   };
 }

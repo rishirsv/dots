@@ -4,9 +4,9 @@ import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import type { CaseRunInput, CaseRunResult } from "./app-server/runner";
-import type { RunReport, TokenUsage } from "./models";
+import type { TokenUsage } from "./models";
 import { openRun, runEval } from "./evals";
-import { buildRunReport, renderEvalReportHtml } from "./report";
+import { buildRunReport } from "./report";
 import { buildMetaSkillReport, listRunSummariesForReport, renderReportMarkdown, renderRunListMarkdown } from "./reporting";
 import { exists, writeJson, writeText } from "./project";
 import { createSkill } from "./skills";
@@ -22,7 +22,6 @@ describe("central reporting service", () => {
       caseRunner: caseRunner("passed")
     });
     await fs.rm(path.join(result.runRoot, "report.json"));
-    await fs.rm(path.join(result.runRoot, "report.html"));
     await fs.rm(path.join(path.dirname(result.runRoot), "index.json"));
 
     const report = await buildMetaSkillReport({ project, view: "status", executeLint: false });
@@ -30,12 +29,11 @@ describe("central reporting service", () => {
     assert.equal(report.summary.latest_run_id, result.runId);
     assert.equal(report.evidence.latest_eval_run?.report.summary.run_id, result.runId);
     assert.equal(await exists(path.join(result.runRoot, "report.json")), false);
-    assert.equal(await exists(path.join(result.runRoot, "report.html")), false);
     assert.equal(await exists(path.join(path.dirname(result.runRoot), "index.json")), false);
   });
 
-  it("keeps old eval open behavior as a shared-service materialized read", async () => {
-    const project = await fixtureProject("report-open-compat");
+  it("materializes eval open as JSON evidence through the shared reporting service", async () => {
+    const project = await fixtureProject("report-open-json");
     await writeCase(project);
     const result = await runEval({
       project,
@@ -44,7 +42,6 @@ describe("central reporting service", () => {
       caseRunner: caseRunner(undefined)
     });
     await fs.rm(path.join(result.runRoot, "report.json"));
-    await fs.rm(path.join(result.runRoot, "report.html"));
     await fs.rm(path.join(path.dirname(result.runRoot), "index.json"));
 
     const opened = await openRun(project, result.runId);
@@ -52,7 +49,7 @@ describe("central reporting service", () => {
 
     assert.equal(opened.data.summary.run_id, result.runId);
     assert.equal(await exists(path.join(result.runRoot, "report.json")), true);
-    assert.equal(await exists(path.join(result.runRoot, "report.html")), true);
+    assert.equal(opened.report, path.join(result.runRoot, "report.json"));
     assert.equal(rows.at(-1)?.run_id, result.runId);
   });
 
@@ -172,125 +169,12 @@ describe("central reporting service", () => {
     const listMarkdown = renderRunListMarkdown(runs);
     const report = await buildMetaSkillReport({ project, view: "eval", runId: "001-legacy", executeLint: false });
     const evalMarkdown = renderReportMarkdown(report, "eval");
-    const html = renderEvalReportHtml(report.evidence.latest_eval_run?.report as RunReport);
 
     assert.match(listMarkdown, /Working payload/);
     assert.match(evalMarkdown, /Legacy working payload side \/ completed/);
     assert.match(evalMarkdown, /Legacy saved snapshot side \/ passed/);
-    assert.match(html, /Old working payload output/);
-    assert.match(html, /Old saved snapshot output/);
-  });
-
-  it("renders the eval report app shell and selects failed cases first", () => {
-    const html = renderEvalReportHtml(reportFixture());
-
-    assert.match(html, /Meta Skill evals/);
-    assert.match(html, /Cases/);
-    assert.match(html, /Final answer preview/);
-    assert.match(html, /Evaluation evidence/);
-    assert.match(html, /Token usage/);
-    assert.match(html, /Raw evidence/);
-    assert.match(html, /data-case-id="R2" aria-current="true"/);
-    assert.match(html, /no deterministic test, judge, or human feedback verdict is recorded/);
-    assert.match(html, /Forced-skill run: final-answer behavior only/);
-    assert.match(html, /Working payload failed answer/);
-    assert.match(html, /<td>Working payload<\/td><td>30<\/td>/);
-    assert.match(html, /href="cases\/R2-failed\/final\.md"/);
-    assert.match(html, /href="cases\/R2-failed\/turns\.jsonl"/);
-    assert.match(html, /href="cases\/R2-failed\/usage\.json"/);
-    assert.match(html, /href="cases\/R2-failed\/rpc\.jsonl"/);
-    assert.doesNotMatch(html, /Artifact section/i);
-  });
-
-  it("renders one-source reports without extra attempts", () => {
-    const report = reportFixture();
-    report.cases = [report.cases[2]];
-
-    const html = renderEvalReportHtml(report);
-
-    assert.match(html, /Working payload passed answer/);
-    assert.doesNotMatch(html, /No saved snapshot attempt in this run/);
   });
 });
-
-function reportFixture(): RunReport {
-  const workingSource = { kind: "working_payload", label: "Working payload", skill_root: "../../../..", skill_activation: "forced" } as const;
-  const failedUsage = tokenSummary(10, 20, 30);
-  const passedUsage = tokenSummary(3, 4, 7);
-  return {
-    schema_version: 2,
-    generated_at: "2026-06-03T00:00:00.000Z",
-    run: { skill_name: "fixture-skill", runner: { backend: "app_server", app_server: { mode: "managed" } } },
-    summary: {
-      run_id: "app-run",
-      label: "fixture",
-      status: "completed",
-      case_count: 3,
-      attempt_count: 3,
-      result_count: 3,
-      run_source: workingSource,
-      failure_classifications: ["case_failed"],
-      execution_status: "completed",
-      assessment_status: "failed",
-      no_verdict_count: 1,
-      evidence_counts: { tests: 1, judges: 1, feedback: 0 },
-      token_usage: {
-        input_tokens: 13,
-        output_tokens: 24,
-        total_tokens: 37,
-        case_count: 3,
-        unavailable_case_count: 1
-      }
-    },
-    cases: [
-      {
-        id: "R1",
-        folder: "R1-review",
-        title: "Review case",
-        type: "regression",
-        topics: ["review"],
-        evidence_basis: "run_snapshot",
-        criteria: { what_it_tests: "Review", expected_behavior: "Review expected.", assertions: ["Review assertion."], tests: [], judges: [] },
-        attempts: [{ run_source: workingSource, execution_status: "completed", evidence_path: "cases/R1-review", final_path: "cases/R1-review/final.md", final_preview: "Working payload review answer.", token_usage: undefined }],
-        status: "completed",
-        execution_status: "completed",
-        no_verdict_recorded: true
-      },
-      {
-        id: "R2",
-        folder: "R2-failed",
-        title: "Failed case",
-        type: "regression",
-        topics: ["failure"],
-        evidence_basis: "run_snapshot",
-        criteria: { what_it_tests: "Failure", expected_behavior: "Pass the check.", assertions: ["No failure."], tests: ["check"], judges: ["judge"] },
-        attempts: [{ run_source: workingSource, execution_status: "completed", verdict: "failed", evidence_path: "cases/R2-failed", final_path: "cases/R2-failed/final.md", final_preview: "Working payload failed answer.", token_usage: failedUsage, failure_classification: "case_failed" }],
-        status: "failed",
-        execution_status: "completed",
-        verdict: "failed",
-        no_verdict_recorded: false
-      },
-      {
-        id: "R3",
-        folder: "R3-passed",
-        title: "Passed case",
-        type: "regression",
-        topics: ["pass"],
-        evidence_basis: "run_snapshot",
-        criteria: { expected_behavior: "Pass.", assertions: [], tests: [], judges: [] },
-        attempts: [{ run_source: workingSource, execution_status: "completed", verdict: "passed", evidence_path: "cases/R3-passed", final_path: "cases/R3-passed/final.md", final_preview: "Working payload passed answer.", token_usage: passedUsage }],
-        status: "passed",
-        execution_status: "completed",
-        verdict: "passed",
-        no_verdict_recorded: false
-      }
-    ],
-    tests: [{ schema_version: 1, type: "test_result", run_id: "app-run", case_id: "R2", created_at: "now", source: "fixture", payload: { case_id: "R2", status: "failed", id: "check" } }],
-    judges: [{ schema_version: 1, type: "judge_result", run_id: "app-run", case_id: "R2", created_at: "now", source: "fixture", payload: { case_id: "R2", status: "failed", failure_classification: "judge_failure" } }],
-    feedback: [],
-    readiness: { status: "blocked", summary: "Run has blocking failures.", blockers: ["case_failed"], no_verdict_count: 1, basis: "report.json" }
-  };
-}
 
 function caseRunner(verdict: CaseRunResult["verdict"], error?: string) {
   return {

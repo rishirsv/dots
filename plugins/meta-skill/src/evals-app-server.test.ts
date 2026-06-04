@@ -67,16 +67,15 @@ describe("App Server eval orchestration", () => {
     const completed = (await readJsonl(path.join(result.runRoot, "events.jsonl"))).find((row) => row.type === "run_completed");
     assert.equal(completed?.payload?.status, "completed");
     assert.deepEqual(completed?.payload?.failure_classifications, []);
-    const report = await readText(result.report);
-    assert.match(report, /No verdict recorded|no deterministic test, judge, or human feedback verdict is recorded/);
-    assert.match(report, /Fixture final|ok/);
-    assert.match(report, /lint skipped/);
-    const normalized = await readJson<{ summary: { run_id: string; status: string; no_verdict_count: number }; cases: unknown[]; readiness: { status: string } }>(path.join(result.runRoot, "report.json"));
+    const normalized = await readJson<{ summary: { run_id: string; status: string; no_verdict_count: number }; cases: Array<{ attempts: Array<{ final_preview: string }> }>; tests: JsonlRow[]; readiness: { status: string; summary: string } }>(result.report);
     assert.equal(normalized.summary.run_id, result.runId);
     assert.equal(normalized.summary.status, "completed");
     assert.equal(normalized.summary.no_verdict_count, 1);
     assert.equal(normalized.cases.length, 1);
     assert.equal(normalized.readiness.status, "unknown");
+    assert.match(normalized.readiness.summary, /no behavioral verdict recorded/);
+    assert.match(normalized.cases[0]?.attempts[0]?.final_preview || "", /Fixture final|ok/);
+    assert.equal(normalized.tests.some((row) => row.type === "lint_skipped"), true);
     const index = await readJson<{ runs: Array<{ run_id: string; status: string; readiness_status: string }> }>(path.join(path.dirname(result.runRoot), "index.json"));
     assert.deepEqual(index.runs.map((row) => [row.run_id, row.status, row.readiness_status]), [[result.runId, "completed", "unknown"]]);
     const opened = await openRun(project, result.runId);
@@ -206,7 +205,7 @@ describe("App Server eval orchestration", () => {
     assert.match(tests, /"status":"failed"/);
     const report = await readText(result.report);
     assert.match(report, /lint_test_failure/);
-    assert.match(report, /Judge Details/);
+    assert.match(report, /judge_failure/);
   });
 
   it("enforces judge thresholds before trusting pass and refreshes normalized reports", async () => {
@@ -249,9 +248,8 @@ describe("App Server eval orchestration", () => {
     assert.deepEqual(normalized.summary.failure_classifications, ["judge_failure"]);
     assert.equal(normalized.judges.at(-1)?.payload?.status, "failed");
     assert.equal(normalized.readiness.status, "blocked");
-    const html = await readText(result.report);
-    assert.match(html, /Judge Details/);
-    assert.match(html, /judge_failure/);
+    const report = await readText(result.report);
+    assert.match(report, /judge_failure/);
   });
 
   it("refreshes normalized report and run index after feedback import", async () => {

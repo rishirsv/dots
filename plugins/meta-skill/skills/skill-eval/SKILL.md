@@ -41,8 +41,8 @@ Case folders live at `.meta-skill/evals/cases/<ID-slug>/` and require one `case.
 - Eval tests should read `META_SKILL_RUN_ID`, `META_SKILL_RUN_ROOT`, and `META_SKILL_PROJECT_ROOT` when lint annotates a saved run. Do not guess the newest run folder.
 - Judges are optional because they cost tokens; ask before running them unless the user explicitly requests judge scoring or passes `--with-judges`.
 - Judges read saved run snapshots plus final output. Threshold failures override a raw judge `pass: true`.
-- Standalone judges, feedback imports, and `lint --run` annotations refresh `report.json`, `report.html`, and `.meta-skill/evals/runs/index.json`.
-- Token usage is measured telemetry, not a quality score. Inspect `usage.json` for canonical per-case usage and `report.html`/`report.json` for run summaries.
+- Standalone judges, feedback imports, and `lint --run` annotations refresh `report.json` and `.meta-skill/evals/runs/index.json`.
+- Token usage is measured telemetry, not a quality score. Inspect `usage.json` for canonical per-case usage and `report.json` for run summaries.
 - Multi-turn case totals come from App Server cumulative `tokenUsage.total` on the final reporting turn; inspect `rpc.jsonl` for per-turn token events.
 - If App Server does not return exact metrics, the evidence should say unavailable explicitly with a reason.
 - Managed App Server requests are not retried with backoff or jitter. A process-exit failure may get one case-level respawn attempt before the run records App Server unavailable evidence.
@@ -68,7 +68,7 @@ Run evidence lives under:
 .meta-skill/evals/runs/<run-id>/
 ```
 
-Inspect `report.html` first, use `report.json` or `meta-skill eval open . --run <run-id> --json` for machine-readable summaries, then drill into `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, snapshots, and `cases/<case>/`.
+Inspect `meta-skill eval open . --run <run-id>` first, use `report.json` or `meta-skill eval open . --run <run-id> --json` for machine-readable summaries, then drill into `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, snapshots, and `cases/<case>/`.
 
 If the user wants to turn evidence into edits, hand off to `skill-improve` with the run ID, case ID, first-failure note, test or judge result, and any human feedback.
 

@@ -94,7 +94,7 @@ meta-skill eval feedback import . --run 003-after-edit reviewer-feedback.jsonl
 
 Use feedback as evidence for `meta-skill plan`, not as source changes.
 
-After feedback import, the CLI regenerates `report.json`, `report.html`, and the runs `index.json`.
+After feedback import, the CLI regenerates `report.json` and the runs `index.json`.
 
 ## Opening Reports
 

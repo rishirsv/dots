@@ -13,7 +13,7 @@ describe("command output", () => {
       runId: "001-basic",
       status: "completed",
       failureClassifications: [],
-      report: "/tmp/evals/runs/001-basic/report.html"
+      report: "/tmp/evals/runs/001-basic/report.json"
     });
 
     assert.equal(
@@ -22,7 +22,6 @@ describe("command output", () => {
         "run: 001-basic",
         "status: completed",
         "failure classifications: none",
-        "report.html: /tmp/evals/runs/001-basic/report.html",
         "report.json: /tmp/evals/runs/001-basic/report.json",
         "note: execution completed; behavioral verdicts appear only when deterministic tests, judges, or human feedback record one."
       ].join("\n")
@@ -34,7 +33,7 @@ describe("command output", () => {
       runId: "003-failed",
       status: "failed",
       failureClassifications: ["case_failed", "deterministic_test_failed"],
-      report: "/tmp/evals/runs/003-failed/report.html"
+      report: "/tmp/evals/runs/003-failed/report.json"
     });
 
     assert.equal(
@@ -43,7 +42,6 @@ describe("command output", () => {
         "run: 003-failed",
         "status: failed",
         "failure classifications: case_failed, deterministic_test_failed",
-        "report.html: /tmp/evals/runs/003-failed/report.html",
         "report.json: /tmp/evals/runs/003-failed/report.json"
       ].join("\n")
     );

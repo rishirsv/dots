@@ -51,7 +51,7 @@ Use `.meta-skill/evals/cases/<ID-slug>/` for executable cases. `case.md` contain
 
 Use `.meta-skill/tests/manifest.json` for deterministic unit and eval tests. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with `run.json`, `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, `report.json`, `report.html`, snapshots, and per-case evidence. `.meta-skill/evals/runs/index.json` stores the run-list summary.
+Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with `run.json`, `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, `report.json`, snapshots, and per-case evidence. `.meta-skill/evals/runs/index.json` stores the run-list summary.
 
 Case execution runs through Codex App Server and records per-case final output, turn traces, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof and baseline/no-skill uplift is not supported yet. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
 
@@ -59,7 +59,7 @@ Criteria are evaluator evidence and must not appear in solver-visible runtime in
 
 Completed case execution is not a behavioral verdict. When no deterministic test, judge, or human feedback verdict is recorded, say execution completed with no verdict recorded and identify the saved evidence to inspect before claiming behavior passed.
 
-Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` annotations regenerate `report.json`, `report.html`, and the runs index.
+Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` annotations regenerate `report.json` and the runs index.
 
 ## Improve Policy
 
