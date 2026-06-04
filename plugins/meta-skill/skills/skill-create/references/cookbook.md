@@ -207,7 +207,7 @@ Use when work can fail in predictable ways.
 
 ### 14. Human Approval Gates
 
-Use before external action, final client-facing delivery, destructive edits, packaging, installing, syncing, publishing, posting, sending, submitting, or promotion.
+Use before external action, final client-facing delivery, destructive edits, packaging, installing, syncing, publishing, posting, sending, submitting, or source edits.
 
 ```md
 Do not send, publish, install, sync, or final-deliver the artifact until the user explicitly approves that action. Drafting or validating the artifact is not approval to release it.
