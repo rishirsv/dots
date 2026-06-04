@@ -43,10 +43,10 @@ Case folders live at `.meta-skill/evals/cases/<ID-slug>/` and require one `case.
 - Judges read saved run snapshots plus final output. Threshold failures override a raw judge `pass: true`.
 - Standalone judges, feedback imports, and `lint --run` annotations refresh `report.json`, `report.html`, and `.meta-skill/evals/runs/index.json`.
 - Token usage is measured telemetry, not a quality score. Inspect `usage.json` for canonical per-case usage and `report.html`/`report.json` for run summaries.
-- Multi-turn case totals come from App Server cumulative `tokenUsage.total` on the final reporting turn; per-turn `tokenUsage.last` is retained only as turn evidence.
+- Multi-turn case totals come from App Server cumulative `tokenUsage.total` on the final reporting turn; inspect `rpc.jsonl` for per-turn token events.
 - If App Server does not return exact metrics, the evidence should say unavailable explicitly with a reason.
 - Managed App Server requests are not retried with backoff or jitter. A process-exit failure may get one case-level respawn attempt before the run records App Server unavailable evidence.
-- `rpc.jsonl` is the durable raw App Server trace. In-memory event retention is bounded; if it overflows, inspect `evidence_warnings` and the `meta-skill/eventBufferOverflow` marker in `rpc.jsonl`.
+- `rpc.jsonl` is the durable raw App Server trace. It records every client, server, and stderr line as `{schema_version, direction, message}`.
 - Completed execution is not pass proof. Report what executed, where final answers and traces live, whether a deterministic test, judge, or human feedback verdict exists, and say "no verdict recorded" when none exists.
 
 ## Case Design

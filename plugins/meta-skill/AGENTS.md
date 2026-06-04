@@ -12,7 +12,7 @@ Meta Skill is Codex-only for now. Do not treat absent Claude packaging, Claude a
 
 Use `skill-create` when the user wants to create a reusable skill, redesign a draft skill, distill examples into runtime instructions, or decide whether a workflow should become a skill.
 
-Use `skill-eval` when the user wants to create scenario eval scaffolding, run App Server-backed scenarios, inspect run evidence, import feedback, handle scenario-generation requests, or run optional judges.
+Use `skill-eval` when the user wants to create case eval scaffolding, run App Server-backed cases, inspect run evidence, import feedback, handle case-generation requests, or run optional judges.
 
 Use `skill-improve` when the user wants a best-practice review, a bounded improvement plan, a promoted candidate edit, or a recorded accept/reject decision from concrete evidence.
 
@@ -36,32 +36,34 @@ agents/
 references/
 scripts/
 assets/
+resources/
+<other runtime files or folders>
 .meta-skill/
 ```
 
-Do not create alternate root-level workbench folders. The portable payload stays at the root, and all authoring state stays under `.meta-skill/`.
+Do not create alternate root-level workbench folders. The portable payload stays at the root, arbitrary runtime folders are allowed, and all authoring state stays under `.meta-skill/`.
 
 ## Eval Policy
 
 Use `.meta-skill/evals/`, not a root review folder.
 
-Use `.meta-skill/evals/scenarios/<ID-slug>/` for executable scenarios. `task.md` is the first user turn, and `turns.json` contains follow-up user turns.
+Use `.meta-skill/evals/cases/<ID-slug>/` for executable cases. `case.md` contains the first user turn and any follow-up user turns.
 
 Use `.meta-skill/tests/manifest.json` for deterministic unit and eval tests. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with `run.json`, `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, `report.json`, `report.html`, snapshots, and per-scenario side evidence. `.meta-skill/evals/runs/index.json` stores the run-list summary.
+Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with `run.json`, `events.jsonl`, `results.jsonl`, `tests.jsonl`, `grades.jsonl`, `feedback.jsonl`, `report.json`, `report.html`, snapshots, and per-case evidence. `.meta-skill/evals/runs/index.json` stores the run-list summary.
 
-Scenario execution runs through Codex App Server and records per-scenario final output, turn traces, RPC traces, and token usage. The current runner force-attaches the staged skill on the first turn, so trigger scenarios are not true routing proof and baseline/no-skill uplift is not supported yet. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
+Case execution runs through Codex App Server and records per-case final output, turn traces, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof and baseline/no-skill uplift is not supported yet. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
 
-Criteria are evaluator evidence and must not appear in the solver stage. Judges read saved run snapshots plus final output; if a legacy run lacks snapshots, say so.
+Criteria are evaluator evidence and must not appear in solver-visible runtime inputs. Judges read saved run snapshots plus final output; if a legacy run lacks snapshots, say so.
 
-Completed scenario execution is not a behavioral verdict. When no deterministic test, judge, or human feedback verdict is recorded, say execution completed with no verdict recorded and identify the saved evidence to inspect before claiming behavior passed.
+Completed case execution is not a behavioral verdict. When no deterministic test, judge, or human feedback verdict is recorded, say execution completed with no verdict recorded and identify the saved evidence to inspect before claiming behavior passed.
 
 Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` annotations regenerate `report.json`, `report.html`, and the runs index.
 
 ## Improve Policy
 
-Improve only from evidence. Cite the lint output, review ID, run ID, scenario ID, test result, judge note, trace, artifact, or feedback row that motivates the change.
+Improve only from evidence. Cite the lint output, review ID, run ID, case ID, test result, judge note, trace, artifact, or feedback row that motivates the change.
 
 Use top-level commands:
 

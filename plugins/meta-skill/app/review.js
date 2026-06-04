@@ -134,8 +134,6 @@ function checkName(message) {
         return "runtime_resource_links";
     if (/agents\/openai\.yaml/.test(message))
         return "agent_manifest_shape";
-    if (/outside the portable payload/.test(message))
-        return "portable_payload_contract";
     if (/case/.test(message))
         return "case_validation";
     if (/judge/.test(message))

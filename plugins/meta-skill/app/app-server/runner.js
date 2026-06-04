@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppServerCaseRunner = void 0;
 const node_fs_1 = require("node:fs");
+const node_os_1 = __importDefault(require("node:os"));
 const node_path_1 = __importDefault(require("node:path"));
 const project_1 = require("../project");
 const client_1 = require("./client");
@@ -32,93 +33,83 @@ class AppServerCaseRunner {
         }
     }
     async runOnce(input) {
+        if (input.skill_activation === "discoverable") {
+            throw new Error("Discoverable skill activation requires an App Server availability-only skill API.");
+        }
         const rawRoot = node_path_1.default.join(input.runRoot, "cases", input.case.folder);
         await (0, project_1.ensureDir)(rawRoot);
-        const stageRoot = node_path_1.default.join(rawRoot, "stage");
-        await stageWorkspace(input, stageRoot);
-        const attachmentName = input.attachSkill && input.skillRoot ? await runtimeSkillName(input.skillRoot) : undefined;
-        const rpcPath = node_path_1.default.join(rawRoot, "rpc.jsonl");
-        await this.client?.flush?.();
-        this.rpcPath = rpcPath;
-        const client = await this.ensureClient(input.appServer);
-        const caseEventMark = client.eventCount();
-        const start = await client.request("thread/start", {
-            cwd: stageRoot,
-            runtimeWorkspaceRoots: [stageRoot],
-            approvalPolicy: "never",
-            sandbox: "read-only",
-            experimentalRawEvents: true,
-            persistExtendedHistory: false,
-            ephemeral: true,
-            baseInstructions: input.attachSkill ? "You are executing a Meta Skill eval case. Follow the staged skill payload exactly and answer the user's task." : "You are executing a Meta Skill eval case without an attached skill. Answer the user's task directly.",
-            developerInstructions: [
-                input.attachSkill ? "Use the skill mounted in this turn as the only runtime skill guidance." : "No skill is mounted for this case. Answer without skill-specific runtime guidance.",
-                "The user messages are supplied directly by the harness. Solver-visible fixture files, when present, live under fixtures/ in the staged workspace.",
-                input.attachSkill ? "Do not modify files. Produce the final answer that the skill would give the user." : "Do not modify files. Produce the final answer you would give without a skill."
-            ].join("\n")
-        });
-        const thread = start.thread;
-        const threadId = thread?.id;
-        if (!threadId)
-            throw new Error("App Server thread/start response did not include thread.id");
-        const turnRecords = [];
-        const usageTurns = [];
-        const evidenceWarnings = new Set();
-        let finalCumulativeUsage;
-        let final = "";
-        const turns = [{ content: input.case.task, source: "case.md#Task" }, ...input.case.turns.map((turn, index) => ({ content: turn.content, source: `case.md#Turn ${index + 2}` }))];
-        for (const [index, turn] of turns.entries()) {
-            turnRecords.push({ role: "user", index, source: turn.source, content: turn.content, status: "sent" });
-            const result = await runTurn(client, threadId, stageRoot, turn.content, index === 0 && input.attachSkill, this.turnTimeoutMs, attachmentName);
-            for (const warning of result.evidenceWarnings)
-                evidenceWarnings.add(warning);
-            final = result.final || final;
-            if (result.tokenUsage) {
-                usageTurns.push(toUsageTurn(result.turnId, index, result.tokenUsage, result.cumulativeTokenUsage));
-            }
-            finalCumulativeUsage = result.cumulativeTokenUsage;
-            turnRecords.push({
-                role: "assistant",
-                index,
-                source: "app-server",
-                content: result.final,
-                status: "completed",
-                turn_id: result.turnId
+        const runtimeRoot = await node_fs_1.promises.mkdtemp(node_path_1.default.join(node_os_1.default.tmpdir(), "meta-skill-case-"));
+        const forceSkill = input.skill_activation === "forced";
+        const attachmentName = forceSkill && input.skillRoot ? await runtimeSkillName(input.skillRoot) : undefined;
+        const workspaceRoots = await runtimeWorkspaceRoots(runtimeRoot, input.case.path);
+        try {
+            const rpcPath = node_path_1.default.join(rawRoot, "rpc.jsonl");
+            await this.client?.flush?.();
+            this.rpcPath = rpcPath;
+            const client = await this.ensureClient(input.appServer);
+            const start = await client.request("thread/start", {
+                cwd: runtimeRoot,
+                runtimeWorkspaceRoots: workspaceRoots,
+                approvalPolicy: "never",
+                sandbox: "read-only",
+                experimentalRawEvents: true,
+                persistExtendedHistory: false,
+                ephemeral: true,
+                baseInstructions: forceSkill ? "You are executing a Meta Skill eval case. Follow the mounted skill payload exactly and answer the user's task." : "You are executing a Meta Skill eval case without an attached skill. Answer the user's task directly.",
+                developerInstructions: [
+                    forceSkill ? "Use the skill mounted in this turn as the only runtime skill guidance." : "No skill is mounted for this case. Answer without skill-specific runtime guidance.",
+                    "The user messages are supplied directly by the harness. Solver-visible fixture files, when present, are mounted as read-only workspace roots.",
+                    forceSkill ? "Do not modify files. Produce the final answer that the skill would give the user." : "Do not modify files. Produce the final answer you would give without a skill."
+                ].join("\n")
             });
+            const thread = start.thread;
+            const threadId = thread?.id;
+            if (!threadId)
+                throw new Error("App Server thread/start response did not include thread.id");
+            const turnRecords = [];
+            let finalCumulativeUsage;
+            let final = "";
+            const turns = [{ content: input.case.task, source: "case.md#Task" }, ...input.case.turns.map((turn, index) => ({ content: turn.content, source: `case.md#Turn ${index + 2}` }))];
+            for (const [index, turn] of turns.entries()) {
+                turnRecords.push({ role: "user", index, source: turn.source, content: turn.content, status: "sent" });
+                const result = await runTurn(client, threadId, runtimeRoot, workspaceRoots, turn.content, index === 0 && forceSkill, this.turnTimeoutMs, attachmentName, input.skillRoot);
+                final = result.final || final;
+                finalCumulativeUsage = result.cumulativeTokenUsage;
+                turnRecords.push({
+                    role: "assistant",
+                    index,
+                    source: "app-server",
+                    content: result.final,
+                    status: "completed",
+                    turn_id: result.turnId
+                });
+            }
+            await client.flush?.();
+            const caseSummary = summarizeCaseUsage(finalCumulativeUsage);
+            await (0, project_1.writeJson)(node_path_1.default.join(rawRoot, "thread.json"), {
+                schema_version: 1,
+                thread_id: threadId,
+                turn_ids: turnRecords.filter((row) => row.role === "assistant").map((row) => row.turn_id),
+                parent_thread_id: null,
+                forked_from_id: null,
+                resume_from_id: null,
+                app_server: input.appServer,
+                status: "completed",
+                error: null
+            });
+            await (0, project_1.writeText)(node_path_1.default.join(rawRoot, "turns.jsonl"), turnRecords.map((row) => JSON.stringify(row)).join("\n"));
+            await (0, project_1.writeJson)(node_path_1.default.join(rawRoot, "usage.json"), caseSummary);
+            await (0, project_1.writeText)(node_path_1.default.join(rawRoot, "final.md"), final || "(no final assistant message captured)");
+            return {
+                execution_status: "completed",
+                token_usage: caseSummary,
+                final_path: node_path_1.default.join(rawRoot, "final.md"),
+                evidence_path: node_path_1.default.relative(input.runRoot, rawRoot)
+            };
         }
-        await client.flush?.();
-        for (const warning of client.eventBufferWarningsSince?.(caseEventMark) || [])
-            evidenceWarnings.add(warning);
-        const warnings = [...evidenceWarnings];
-        const caseSummary = summarizeCaseUsage(finalCumulativeUsage);
-        const usageEvidence = {
-            schema_version: 1,
-            source_event: caseSummary.unavailable_reason ? null : "thread/tokenUsage/updated",
-            turns: usageTurns,
-            summary: caseSummary,
-            ...(warnings.length ? { evidence_warnings: warnings } : {})
-        };
-        await (0, project_1.writeJson)(node_path_1.default.join(rawRoot, "thread.json"), {
-            schema_version: 1,
-            thread_id: threadId,
-            turn_ids: turnRecords.filter((row) => row.role === "assistant").map((row) => row.turn_id),
-            parent_thread_id: null,
-            forked_from_id: null,
-            resume_from_id: null,
-            app_server: input.appServer,
-            status: "completed",
-            error: null,
-            ...(warnings.length ? { evidence_warnings: warnings } : {})
-        });
-        await (0, project_1.writeText)(node_path_1.default.join(rawRoot, "turns.jsonl"), turnRecords.map((row) => JSON.stringify(row)).join("\n"));
-        await (0, project_1.writeJson)(node_path_1.default.join(rawRoot, "usage.json"), usageEvidence);
-        await (0, project_1.writeText)(node_path_1.default.join(rawRoot, "final.md"), final || "(no final assistant message captured)");
-        return {
-            execution_status: "completed",
-            token_usage: caseSummary,
-            final_path: node_path_1.default.join(rawRoot, "final.md"),
-            evidence_path: node_path_1.default.relative(input.runRoot, rawRoot)
-        };
+        finally {
+            await node_fs_1.promises.rm(runtimeRoot, { recursive: true, force: true });
+        }
     }
     close() {
         this.client?.close();
@@ -142,17 +133,17 @@ class AppServerCaseRunner {
     }
 }
 exports.AppServerCaseRunner = AppServerCaseRunner;
-async function runTurn(client, threadId, stageRoot, content, includeSkill, turnTimeoutMs, attachmentName) {
+async function runTurn(client, threadId, runtimeRoot, workspaceRoots, content, includeSkill, turnTimeoutMs, attachmentName, skillRoot) {
     const mark = client.eventCount();
     const input = [
-        ...(includeSkill && attachmentName ? [{ type: "skill", name: attachmentName, path: node_path_1.default.join(stageRoot, "skill") }] : []),
+        ...(includeSkill && attachmentName && skillRoot ? [{ type: "skill", name: attachmentName, path: skillRoot }] : []),
         { type: "text", text: content, text_elements: [] }
     ];
     const started = await client.request("turn/start", {
         threadId,
         input,
-        cwd: stageRoot,
-        runtimeWorkspaceRoots: [stageRoot],
+        cwd: runtimeRoot,
+        runtimeWorkspaceRoots: workspaceRoots,
         approvalPolicy: "never",
         sandboxPolicy: { type: "readOnly", networkAccess: false }
     });
@@ -162,7 +153,6 @@ async function runTurn(client, threadId, stageRoot, content, includeSkill, turnT
         throw new Error("App Server turn/start response did not include turn.id");
     await client.waitFor((message) => message.method === "turn/completed" && message.params?.threadId === threadId && message.params?.turn?.id === turnId, turnTimeoutMs);
     const events = client.eventsSince(mark);
-    const evidenceWarnings = client.eventBufferWarningsSince?.(mark) || [];
     const final = events
         .filter((message) => message.method === "item/agentMessage/delta" && message.params?.threadId === threadId && message.params?.turnId === turnId)
         .map((message) => String(message.params.delta || ""))
@@ -171,16 +161,14 @@ async function runTurn(client, threadId, stageRoot, content, includeSkill, turnT
         .reverse()
         .find((message) => message.method === "thread/tokenUsage/updated" && message.params?.threadId === threadId && message.params?.turnId === turnId);
     if (!tokenEvent)
-        return { turnId, final, evidenceWarnings };
+        return { turnId, final };
     const params = tokenEvent.params;
     const tokenUsage = params.tokenUsage;
     const modelContextWindow = numberOrNull(params.modelContextWindow);
     return {
         turnId,
         final,
-        tokenUsage: toTokenUsage(tokenUsage?.last, `App Server last token metrics were unavailable for turn ${turnId}.`, modelContextWindow),
-        cumulativeTokenUsage: tokenUsage?.total ? toTokenUsage(tokenUsage.total, `App Server cumulative token metrics were unavailable for turn ${turnId}.`, modelContextWindow) : undefined,
-        evidenceWarnings
+        cumulativeTokenUsage: tokenUsage?.total ? toTokenUsage(tokenUsage.total, `App Server cumulative token metrics were unavailable for turn ${turnId}.`, modelContextWindow) : undefined
     };
 }
 function toTokenUsage(raw, reason = "App Server token metrics were unavailable.", modelContextWindow = null) {
@@ -208,38 +196,15 @@ function summarizeCaseUsage(finalCumulativeUsage) {
         return finalCumulativeUsage;
     return (0, project_1.unavailableTokenUsage)("App Server completed without tokenUsage.total on the final turn.");
 }
-function toUsageTurn(turnId, index, usage, cumulativeUsage) {
-    return {
-        turn_id: turnId,
-        index,
-        input_tokens: usage.input_tokens,
-        output_tokens: usage.output_tokens,
-        total_tokens: usage.total_tokens,
-        cumulative_input_tokens: cumulativeUsage?.input_tokens ?? null,
-        cumulative_output_tokens: cumulativeUsage?.output_tokens ?? null,
-        cumulative_total_tokens: cumulativeUsage?.total_tokens ?? null,
-        cached_input_tokens: usage.cached_input_tokens ?? null,
-        reasoning_tokens: usage.reasoning_tokens ?? null,
-        model_context_window: usage.model_context_window ?? cumulativeUsage?.model_context_window ?? null,
-        unavailable_reason: cumulativeUsage?.unavailable_reason ?? usage.unavailable_reason
-    };
-}
 function numberOrNull(value) {
     return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
-async function stageWorkspace(input, stageRoot) {
-    await node_fs_1.promises.rm(stageRoot, { recursive: true, force: true });
-    await (0, project_1.ensureDir)(stageRoot);
-    if (input.attachSkill && input.skillRoot)
-        await (0, project_1.copyPortablePayload)(input.skillRoot, node_path_1.default.join(stageRoot, "skill"));
-    const fixtures = node_path_1.default.join(input.case.path, "fixtures");
-    try {
-        await node_fs_1.promises.cp(fixtures, node_path_1.default.join(stageRoot, "fixtures"), { recursive: true });
-    }
-    catch {
-        // Case fixtures are optional.
-    }
-    await (0, project_1.writeText)(node_path_1.default.join(stageRoot, "HARNESS.md"), `# Meta Skill App Server Harness\n\nRun ${input.runId}, case ${input.case.id}, source ${input.runSource.label}.\n`);
+async function runtimeWorkspaceRoots(runtimeRoot, casePath) {
+    const roots = [runtimeRoot];
+    const fixtures = node_path_1.default.join(casePath, "fixtures");
+    if (await (0, project_1.exists)(fixtures))
+        roots.push(fixtures);
+    return roots;
 }
 async function runtimeSkillName(skillRoot) {
     const frontmatter = await (0, project_1.parseSkillFrontmatter)(node_path_1.default.join(skillRoot, "SKILL.md"));

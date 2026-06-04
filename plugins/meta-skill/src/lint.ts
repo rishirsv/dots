@@ -5,8 +5,6 @@ import { promisify } from "node:util";
 import type { Issue, LintReport, TestManifest } from "./models";
 import {
   CliError,
-  PORTABLE_DIRS,
-  PORTABLE_FILES,
   appendJsonl,
   eventEnvelope,
   exists,
@@ -95,7 +93,6 @@ export function formatLintReport(report: LintReport): string {
 }
 
 async function validatePortablePayload(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
-  const entries = await fs.readdir(root, { withFileTypes: true });
   const skillMd = path.join(root, "SKILL.md");
   const skillText = await fs.readFile(skillMd, "utf8");
   const frontmatter = await parseSkillFrontmatter(skillMd);
@@ -116,16 +113,6 @@ async function validatePortablePayload(root: string, failures: Issue[], warnings
   if (skillText.split(/\r?\n/).length > 220) warnings.push(issue("warning", "SKILL.md is long; move conditional detail to directly linked references", skillMd));
   await validateRuntimeResourceLinks(root, skillText, warnings);
   await validateAgentManifest(root, frontmatter, failures, warnings);
-
-  for (const entry of entries) {
-    if (entry.name === ".meta-skill") continue;
-    if (entry.isDirectory() && !PORTABLE_DIRS.has(entry.name) && entry.name !== ".meta-skill") {
-      warnings.push(issue("warning", `top-level directory is outside the portable payload contract and will not package: ${entry.name}`, path.join(root, entry.name)));
-    }
-    if (entry.isFile() && !PORTABLE_FILES.has(entry.name)) {
-      warnings.push(issue("warning", `top-level file is outside the portable payload contract and will not package: ${entry.name}`, path.join(root, entry.name)));
-    }
-  }
 }
 
 function skillBody(skillText: string): string {

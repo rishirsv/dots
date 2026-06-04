@@ -7,12 +7,13 @@ export type CaseType =
 
 export type LegacyEvalSide = "candidate" | "release";
 export type EvalRunSourceKind = "working_payload" | "snapshot_payload" | "no_skill";
+export type SkillActivation = "forced" | "none" | "discoverable";
 
 export interface EvalRunSource {
   kind: EvalRunSourceKind | string;
   label: string;
   skill_root?: string | null;
-  attached_skill: boolean;
+  skill_activation: SkillActivation;
 }
 
 export interface TokenUsage {
@@ -25,27 +26,7 @@ export interface TokenUsage {
   unavailable_reason: string | null;
 }
 
-export interface TokenUsageTurn {
-  turn_id: string;
-  index: number;
-  input_tokens: number | null;
-  output_tokens: number | null;
-  total_tokens: number | null;
-  cumulative_input_tokens: number | null;
-  cumulative_output_tokens: number | null;
-  cumulative_total_tokens: number | null;
-  cached_input_tokens?: number | null;
-  reasoning_tokens?: number | null;
-  model_context_window?: number | null;
-  unavailable_reason: string | null;
-}
-
-export interface TokenUsageEvidence {
-  schema_version: 1;
-  source_event: "thread/tokenUsage/updated" | null;
-  turns: TokenUsageTurn[];
-  summary: TokenUsage;
-}
+export type TokenUsageEvidence = TokenUsage;
 
 export interface RunTokenUsageSummary {
   input_tokens: number | null;
@@ -53,7 +34,6 @@ export interface RunTokenUsageSummary {
   total_tokens: number | null;
   case_count: number;
   unavailable_case_count: number;
-  unavailable_reasons: Array<{ case_id: string; run_source: string; reason: string }>;
 }
 
 export interface EvalManifest {

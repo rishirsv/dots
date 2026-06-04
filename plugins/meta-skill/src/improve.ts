@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { CliError, ensureDir, exists, nextSequencedId, projectPaths, readJson, requirePortableSkill, utcNow, writeJson, writeText } from "./project";
+import { CliError, ensureDir, exists, isPortablePayloadPath, nextSequencedId, projectPaths, readJson, requirePortableSkill, utcNow, writeJson, writeText } from "./project";
 
 export async function planImprovement(options: { project: string; fromRun?: string; fromReview?: string }): Promise<{ planId: string; planRoot: string }> {
   const root = await requirePortableSkill(options.project);
@@ -81,9 +81,5 @@ export async function decideSession(project: string, sessionId: string, decision
 
 function validatePortableEdit(relative: string): void {
   if (path.isAbsolute(relative) || relative.includes("..")) throw new CliError(`edit path must stay inside portable payload: ${relative}`);
-  const first = relative.split(/[\\/]/)[0];
-  if (!["SKILL.md", "agents", "references", "scripts", "assets"].includes(first)) {
-    throw new CliError(`promote may only edit portable payload files, not ${relative}`);
-  }
-  if (first === ".meta-skill") throw new CliError("promote must not edit .meta-skill/");
+  if (!isPortablePayloadPath(relative)) throw new CliError(`promote may only edit portable payload files, not ${relative}`);
 }

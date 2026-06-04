@@ -214,7 +214,7 @@ describe("central reporting service", () => {
 });
 
 function reportFixture(): RunReport {
-  const workingSource = { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true } as const;
+  const workingSource = { kind: "working_payload", label: "Working payload", skill_root: "../../../..", skill_activation: "forced" } as const;
   const failedUsage = tokenSummary(10, 20, 30);
   const passedUsage = tokenSummary(3, 4, 7);
   return {
@@ -239,8 +239,7 @@ function reportFixture(): RunReport {
         output_tokens: 24,
         total_tokens: 37,
         case_count: 3,
-        unavailable_case_count: 1,
-        unavailable_reasons: [{ case_id: "R1", run_source: "working_payload", reason: "usage.json was unavailable for this item." }]
+        unavailable_case_count: 1
       }
     },
     cases: [
@@ -297,8 +296,7 @@ function caseRunner(verdict: CaseRunResult["verdict"], error?: string) {
   return {
     async run(input: CaseRunInput): Promise<CaseRunResult> {
       const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
-      await fs.mkdir(path.join(caseRoot, "stage", "skill"), { recursive: true });
-      await writeText(path.join(caseRoot, "stage", "skill", "SKILL.md"), "fixture");
+      await fs.mkdir(caseRoot, { recursive: true });
       await writeText(path.join(caseRoot, "final.md"), "Fixture final.");
       await writeText(path.join(caseRoot, "turns.jsonl"), "");
       await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
@@ -330,8 +328,7 @@ function tokenSummary(input: number, output: number, total: number): TokenUsage 
 }
 
 function tokenUsageEvidence(input: number, output: number, total: number) {
-  const summary = tokenSummary(input, output, total);
-  return { schema_version: 1, source_event: "thread/tokenUsage/updated", summary, turns: [] };
+  return tokenSummary(input, output, total);
 }
 
 function jsonlEvent(type: string, runId: string, caseId: string, payload: Record<string, unknown>): string {

@@ -116,11 +116,9 @@ describe("App Server eval orchestration", () => {
     const events = await readText(path.join(result.runRoot, "events.jsonl"));
     assert.match(events, /"type":"case_failed"/);
     assert.match(events, /"failure_classification":"app_server_unavailable"/);
-    const usage = await readJson<{ source_event: string | null; summary: { total_tokens: number | null; unavailable_reason: string | null }; turns: unknown[] }>(path.join(result.runRoot, "cases", "R1-basic", "usage.json"));
-    assert.equal(usage.source_event, null);
-    assert.equal(usage.summary.total_tokens, null);
-    assert.equal(usage.summary.unavailable_reason, "App Server execution failed before token metrics were available.");
-    assert.deepEqual(usage.turns, []);
+    const usage = await readJson<{ total_tokens: number | null; unavailable_reason: string | null }>(path.join(result.runRoot, "cases", "R1-basic", "usage.json"));
+    assert.equal(usage.total_tokens, null);
+    assert.equal(usage.unavailable_reason, "App Server execution failed before token metrics were available.");
   });
 
   it("classifies failed case results separately from harness failures", async () => {
@@ -155,14 +153,14 @@ describe("App Server eval orchestration", () => {
       noLint: true,
       caseRunner: {
         async run(input) {
-          sawNoSkill = !input.attachSkill && !input.skillRoot && input.runSource.kind === "no_skill";
+          sawNoSkill = input.skill_activation === "none" && !input.skillRoot && input.runSource.kind === "no_skill";
           const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
           await fs.mkdir(caseRoot, { recursive: true });
-            await writeText(path.join(caseRoot, "final.md"), "Unassisted final.");
-            await writeText(path.join(caseRoot, "rpc.jsonl"), "");
-            await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn"], status: "completed" });
-            await writeJson(path.join(caseRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
-            return {
+          await writeText(path.join(caseRoot, "final.md"), "Unassisted final.");
+          await writeText(path.join(caseRoot, "rpc.jsonl"), "");
+          await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn"], status: "completed" });
+          await writeJson(path.join(caseRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
+          return {
             execution_status: "completed",
             token_usage: tokenSummary(1, 1, 2),
             final_path: path.join(caseRoot, "final.md"),
@@ -175,10 +173,10 @@ describe("App Server eval orchestration", () => {
 
     assert.equal(result.ok, true);
     assert.equal(sawNoSkill, true);
-    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "stage", "skill", "SKILL.md")), false);
-    const run = await readJson<{ run_source: { kind: string; attached_skill: boolean } }>(path.join(result.runRoot, "run.json"));
+    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "stage")), false);
+    const run = await readJson<{ run_source: { kind: string; skill_activation: string } }>(path.join(result.runRoot, "run.json"));
     assert.equal(run.run_source.kind, "no_skill");
-    assert.equal(run.run_source.attached_skill, false);
+    assert.equal(run.run_source.skill_activation, "none");
   });
 
   it("marks runs failed when deterministic checks or judges fail", async () => {
@@ -336,10 +334,6 @@ function caseRunner(verdict: CaseRunResult["verdict"], error?: string) {
     async run(input: CaseRunInput): Promise<CaseRunResult> {
       const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
       await fs.mkdir(caseRoot, { recursive: true });
-      if (input.attachSkill) {
-        await fs.mkdir(path.join(caseRoot, "stage", "skill"), { recursive: true });
-        await writeText(path.join(caseRoot, "stage", "skill", "SKILL.md"), "fixture");
-      }
       await writeText(path.join(caseRoot, "final.md"), "Fixture final.");
       await writeText(path.join(caseRoot, "turns.jsonl"), "");
       await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
@@ -371,8 +365,7 @@ function tokenSummary(input: number, output: number, total: number): TokenUsage 
 }
 
 function tokenUsageEvidence(input: number, output: number, total: number) {
-  const summary = tokenSummary(input, output, total);
-  return { schema_version: 1, source_event: "thread/tokenUsage/updated", summary, turns: [] };
+  return tokenSummary(input, output, total);
 }
 
 async function fixtureProject(slug: string): Promise<string> {

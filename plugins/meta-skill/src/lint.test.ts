@@ -78,8 +78,7 @@ describe("lint, command parsing, and eval evidence", () => {
       caseRunner: {
         async run(input) {
           const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
-          await fs.mkdir(path.join(caseRoot, "stage", "skill"), { recursive: true });
-          await writeText(path.join(caseRoot, "stage", "skill", "SKILL.md"), "fixture");
+          await fs.mkdir(caseRoot, { recursive: true });
           await writeText(path.join(caseRoot, "final.md"), "Fixture final.");
           await writeText(path.join(caseRoot, "turns.jsonl"), "");
           await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
@@ -103,7 +102,7 @@ describe("lint, command parsing, and eval evidence", () => {
     assert.equal(await exists(path.join(result.runRoot, "grades.jsonl")), true);
     assert.equal(await exists(path.join(result.runRoot, "feedback.jsonl")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "F1-multiturn", "rpc.jsonl")), true);
-    assert.equal(await exists(path.join(result.runRoot, "cases", "F1-multiturn", "stage", "skill", "SKILL.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "F1-multiturn", "stage")), false);
 
     const tests = await readText(path.join(result.runRoot, "tests.jsonl"));
     assert.match(tests, /"status":"failed"/);
@@ -131,8 +130,7 @@ function tokenSummary(input: number, output: number, total: number): TokenUsage 
 }
 
 function tokenUsageEvidence(input: number, output: number, total: number) {
-  const summary = tokenSummary(input, output, total);
-  return { schema_version: 1, source_event: "thread/tokenUsage/updated", summary, turns: [] };
+  return tokenSummary(input, output, total);
 }
 
 async function fixtureProject(slug: string): Promise<string> {

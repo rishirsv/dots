@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PORTABLE_DIRS = exports.PORTABLE_FILES = exports.CliError = void 0;
+exports.CliError = void 0;
 exports.utcNow = utcNow;
 exports.slugify = slugify;
 exports.assertSlug = assertSlug;
@@ -20,6 +20,7 @@ exports.projectPaths = projectPaths;
 exports.requirePortableSkill = requirePortableSkill;
 exports.createWorkbench = createWorkbench;
 exports.listPortablePayloadFiles = listPortablePayloadFiles;
+exports.isPortablePayloadPath = isPortablePayloadPath;
 exports.copyPortablePayload = copyPortablePayload;
 exports.nextSequencedId = nextSequencedId;
 exports.relativePath = relativePath;
@@ -41,8 +42,24 @@ class CliError extends Error {
     }
 }
 exports.CliError = CliError;
-exports.PORTABLE_FILES = new Set(["SKILL.md"]);
-exports.PORTABLE_DIRS = new Set(["agents", "references", "scripts", "assets"]);
+const EXCLUDED_PAYLOAD_NAMES = new Set([
+    ".DS_Store",
+    ".cache",
+    ".git",
+    ".idea",
+    ".meta-skill",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".vscode",
+    "__pycache__",
+    "build",
+    "coverage",
+    "dist",
+    "node_modules",
+    "target",
+    "Thumbs.db"
+]);
 function utcNow() {
     return new Date().toISOString();
 }
@@ -201,13 +218,9 @@ async function listPortablePayloadFiles(skillRoot) {
         const absoluteDir = node_path_1.default.join(root, relativeDir);
         for (const dirent of await node_fs_1.promises.readdir(absoluteDir, { withFileTypes: true })) {
             const relative = node_path_1.default.join(relativeDir, dirent.name);
-            if (relative === ".meta-skill" || relative.startsWith(`.meta-skill${node_path_1.default.sep}`))
-                continue;
-            if (!relativeDir && !(exports.PORTABLE_FILES.has(dirent.name) || exports.PORTABLE_DIRS.has(dirent.name)))
+            if (!isPortablePayloadPath(relative))
                 continue;
             if (dirent.isDirectory()) {
-                if (!relativeDir && !exports.PORTABLE_DIRS.has(dirent.name))
-                    continue;
                 await walk(relative);
             }
             else if (dirent.isFile()) {
@@ -217,6 +230,19 @@ async function listPortablePayloadFiles(skillRoot) {
     }
     await walk("");
     return entries.sort();
+}
+function isPortablePayloadPath(relative) {
+    if (!relative || node_path_1.default.isAbsolute(relative) || relative.split(/[\\/]/).includes(".."))
+        return false;
+    const parts = relative.split(/[\\/]/).filter(Boolean);
+    if (!parts.length)
+        return false;
+    if (parts.some((part) => EXCLUDED_PAYLOAD_NAMES.has(part)))
+        return false;
+    const last = parts.at(-1) || "";
+    if (last.endsWith(".zip") || last.endsWith(".metadata.json") || last.endsWith(".meta-skill-package.json"))
+        return false;
+    return true;
 }
 async function copyPortablePayload(sourceRoot, destinationRoot) {
     const source = node_path_1.default.resolve(sourceRoot);

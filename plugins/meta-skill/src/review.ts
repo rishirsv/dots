@@ -130,7 +130,6 @@ function checkName(message: string): string {
   if (/long/.test(message)) return "skill_md_line_count";
   if (/directly linked/.test(message)) return "runtime_resource_links";
   if (/agents\/openai\.yaml/.test(message)) return "agent_manifest_shape";
-  if (/outside the portable payload/.test(message)) return "portable_payload_contract";
   if (/case/.test(message)) return "case_validation";
   if (/judge/.test(message)) return "judge_validation";
   if (/test/.test(message)) return "test_validation";

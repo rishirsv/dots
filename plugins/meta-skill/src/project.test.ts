@@ -41,11 +41,24 @@ describe("project layout and packaging", () => {
       project: true
     });
     await fs.writeFile(path.join(target, ".meta-skill", "private.txt"), "secret\n");
+    await fs.mkdir(path.join(target, "resources", "fonts"), { recursive: true });
+    await fs.writeFile(path.join(target, "resources", "fonts", "display.txt"), "font\n");
+    await fs.mkdir(path.join(target, "cli"), { recursive: true });
+    await fs.writeFile(path.join(target, "cli", "tool.js"), "console.log('tool');\n");
+    await fs.mkdir(path.join(target, "node_modules", "private-package"), { recursive: true });
+    await fs.writeFile(path.join(target, "node_modules", "private-package", "index.js"), "secret\n");
+    await fs.writeFile(path.join(target, ".DS_Store"), "junk\n");
+    await fs.writeFile(path.join(target, "artifact-review-candidate.zip"), "artifact\n");
     const outDir = path.join(root, "pkg");
     const result = await packageProject({ project: target, source: "candidate", outDir });
     assert.equal(await exists(path.join(outDir, "SKILL.md")), true);
     assert.equal(await exists(path.join(outDir, "agents", "openai.yaml")), true);
+    assert.equal(await exists(path.join(outDir, "resources", "fonts", "display.txt")), true);
+    assert.equal(await exists(path.join(outDir, "cli", "tool.js")), true);
     assert.equal(await exists(path.join(outDir, ".meta-skill")), false);
+    assert.equal(await exists(path.join(outDir, "node_modules")), false);
+    assert.equal(await exists(path.join(outDir, ".DS_Store")), false);
+    assert.equal(await exists(path.join(outDir, "artifact-review-candidate.zip")), false);
     assert.equal(await exists(result.metadata), true);
   });
 
@@ -58,9 +71,12 @@ describe("project layout and packaging", () => {
       description: "Use when checking a release-ready skill snapshot; not for packaging without approval.",
       project: true
     });
+    await fs.mkdir(path.join(target, "fonts"), { recursive: true });
+    await fs.writeFile(path.join(target, "fonts", "display.txt"), "font\n");
     const release = await releaseProject(target);
     assert.equal(await exists(path.join(release.releaseRoot, "version.json")), true);
     assert.equal(await exists(path.join(release.releaseRoot, "skill", "SKILL.md")), true);
+    assert.equal(await exists(path.join(release.releaseRoot, "skill", "fonts", "display.txt")), true);
     assert.equal(await exists(path.join(release.releaseRoot, "skill", ".meta-skill")), false);
 
     const releasedSkill = await readText(path.join(release.releaseRoot, "skill", "SKILL.md"));

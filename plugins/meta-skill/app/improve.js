@@ -86,10 +86,6 @@ async function decideSession(project, sessionId, decision) {
 function validatePortableEdit(relative) {
     if (node_path_1.default.isAbsolute(relative) || relative.includes(".."))
         throw new project_1.CliError(`edit path must stay inside portable payload: ${relative}`);
-    const first = relative.split(/[\\/]/)[0];
-    if (!["SKILL.md", "agents", "references", "scripts", "assets"].includes(first)) {
+    if (!(0, project_1.isPortablePayloadPath)(relative))
         throw new project_1.CliError(`promote may only edit portable payload files, not ${relative}`);
-    }
-    if (first === ".meta-skill")
-        throw new project_1.CliError("promote must not edit .meta-skill/");
 }

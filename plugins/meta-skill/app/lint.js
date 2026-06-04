@@ -76,7 +76,6 @@ function formatLintReport(report) {
     return lines.join("\n");
 }
 async function validatePortablePayload(root, failures, warnings) {
-    const entries = await node_fs_1.promises.readdir(root, { withFileTypes: true });
     const skillMd = node_path_1.default.join(root, "SKILL.md");
     const skillText = await node_fs_1.promises.readFile(skillMd, "utf8");
     const frontmatter = await (0, project_1.parseSkillFrontmatter)(skillMd);
@@ -102,16 +101,6 @@ async function validatePortablePayload(root, failures, warnings) {
         warnings.push(issue("warning", "SKILL.md is long; move conditional detail to directly linked references", skillMd));
     await validateRuntimeResourceLinks(root, skillText, warnings);
     await validateAgentManifest(root, frontmatter, failures, warnings);
-    for (const entry of entries) {
-        if (entry.name === ".meta-skill")
-            continue;
-        if (entry.isDirectory() && !project_1.PORTABLE_DIRS.has(entry.name) && entry.name !== ".meta-skill") {
-            warnings.push(issue("warning", `top-level directory is outside the portable payload contract and will not package: ${entry.name}`, node_path_1.default.join(root, entry.name)));
-        }
-        if (entry.isFile() && !project_1.PORTABLE_FILES.has(entry.name)) {
-            warnings.push(issue("warning", `top-level file is outside the portable payload contract and will not package: ${entry.name}`, node_path_1.default.join(root, entry.name)));
-        }
-    }
 }
 function skillBody(skillText) {
     if (!skillText.startsWith("---\n"))

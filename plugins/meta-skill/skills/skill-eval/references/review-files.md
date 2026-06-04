@@ -151,9 +151,6 @@ Each run writes:
       snapshot.json
   cases/
     <case-folder>/
-      stage/
-        fixtures/        optional
-        skill/           when a skill payload is attached
       rpc.jsonl
       thread.json
       turns.jsonl
@@ -169,11 +166,11 @@ Each run writes:
 
 `runs/index.json` stores one summary row per run for `eval open --list`, `eval list`, and future local evidence browsers.
 
-The staged solver workspace includes `fixtures/` when present and the staged skill payload when a skill source is used. It does not include `case.md`; task text travels in turn messages, and frontmatter criteria remain evaluator-only.
+The solver runtime uses an ephemeral cwd outside the run evidence. Case fixtures, when present, are mounted as read-only workspace roots. The selected skill payload is mounted directly for forced runs and is not copied into case evidence. `case.md` task text travels in turn messages, and frontmatter criteria remain evaluator-only.
 
-`usage.json` is the canonical structured token evidence for a case. It records `schema_version`, `source_event`, a nullable numeric case summary, one `unavailable_reason` when telemetry is missing, and compact per-turn `tokenUsage.last` / cumulative `tokenUsage.total` data when a token event is observed. `turns.jsonl` is transcript evidence only. `results.jsonl` does not carry token summaries.
+`usage.json` is the canonical structured token evidence for a case. It records one flat nullable numeric case summary plus one `unavailable_reason` when telemetry is missing. `turns.jsonl` is transcript evidence only. `results.jsonl` does not carry token summaries.
 
-`rpc.jsonl` is the durable raw App Server trace. The runner keeps only a bounded in-memory event window for current waits, final text, and token extraction. If that window overflows, `rpc.jsonl` includes a `meta-skill/eventBufferOverflow` warning marker and case evidence may include `evidence_warnings`; use the raw trace for follow-up trajectory parsing instead of assuming all events remained resident.
+`rpc.jsonl` is the durable raw App Server trace. It records every client, server, and stderr line as `{schema_version, direction, message}` through a serialized trace queue. Use the raw trace for follow-up trajectory and per-turn token inspection.
 
 For multi-turn cases, the case summary uses App Server cumulative `tokenUsage.total` from the final reporting turn as authoritative. Do not sum per-turn `last` values when explaining case totals. Compare multiple runs only in a separate report-level artifact; do not pool separate executions into one run total.
 

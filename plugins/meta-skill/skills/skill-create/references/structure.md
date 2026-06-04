@@ -13,9 +13,13 @@ The portable payload is the project root:
   references/      optional
   scripts/         optional
   assets/          optional
+  resources/       optional
+  <other runtime files or folders>
 ```
 
-Only these files and folders package. `.meta-skill/` never packages.
+Any root-level runtime file or folder may package unless it is explicit private,
+workbench, dependency, build/cache, package-artifact, editor, or OS junk state.
+`.meta-skill/` never packages.
 
 ## Project Workbench
 
@@ -28,6 +32,7 @@ Project mode adds hidden authoring state:
   references/
   scripts/
   assets/
+  resources/
   .meta-skill/
     spec.md
     evals/

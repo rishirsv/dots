@@ -56,12 +56,12 @@ async function runSourceFor(runRoot: string): Promise<EvalRunSource> {
   } catch {
     // Missing run.json is handled by the caller's evidence checks.
   }
-  return { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true };
+  return { kind: "working_payload", label: "Working payload", skill_root: "../../../..", skill_activation: "forced" };
 }
 
 function legacyRunSource(value: string): EvalRunSource {
-  if (value === "release") return { kind: "legacy_side", label: "Legacy saved snapshot side", skill_root: "../../../versions/release/skill", attached_skill: true };
-  return { kind: "legacy_side", label: "Legacy working payload side", skill_root: "../../../..", attached_skill: true };
+  if (value === "release") return { kind: "legacy_side", label: "Legacy saved snapshot side", skill_root: "../../../versions/release/skill", skill_activation: "forced" };
+  return { kind: "legacy_side", label: "Legacy working payload side", skill_root: "../../../..", skill_activation: "forced" };
 }
 
 export function classifyCaseStatus(status: string): RunFailureClassification | null {

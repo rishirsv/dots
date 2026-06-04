@@ -63,7 +63,6 @@ describe("live App Server smoke", () => {
 
       assert.equal(events.some((message) => message.method === "item/agentMessage/delta" && (message.params as { turnId?: string } | undefined)?.turnId === turnId), true);
       assert.equal(events.some((message) => message.method === "turn/completed"), true);
-      assert.deepEqual(client.eventBufferWarningsSince(mark), []);
       const tokenEvent = events.find((message) => message.method === "thread/tokenUsage/updated" && (message.params as { threadId?: string; turnId?: string } | undefined)?.threadId === threadId && (message.params as { turnId?: string } | undefined)?.turnId === turnId);
       assert.equal(Boolean(tokenEvent), true);
       assert.equal(trace.some((line) => line.direction === "client" && (line.message as { method?: string }).method === "initialized"), true);

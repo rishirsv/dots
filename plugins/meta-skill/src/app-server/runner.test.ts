@@ -10,14 +10,14 @@ import { exists, readJson, readText, writeJson, writeText } from "../project";
 import { AppServerCaseRunner } from "./runner";
 import { AppServerJsonClient, AppServerUnavailableError } from "./client";
 
-const workingRunSource = { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true } as const;
+const workingRunSource = { kind: "working_payload", label: "Working payload", skill_root: "../../../..", skill_activation: "forced" } as const;
 
 describe("AppServerCaseRunner", () => {
   it("writes source-honest App Server evidence with real turn IDs and flushed trace", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-"));
     const skillRoot = path.join(root, "skill");
     const item = await fixtureCase(root, [{ content: "Second turn." }]);
-    await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: runner-skill\ndescription: Use when testing runner staging; not for live evals.\n---\n\n# Skill\n");
+    await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: runner-skill\ndescription: Use when testing runner mounting; not for live evals.\n---\n\n# Skill\n");
     const runRoot = path.join(root, "run");
     const fake = new FakeCaseClient();
     const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
@@ -25,7 +25,7 @@ describe("AppServerCaseRunner", () => {
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
-      attachSkill: true,
+      skill_activation: "forced",
        case: item,
       runSource: workingRunSource,
       runId: "001-test",
@@ -85,21 +85,19 @@ describe("AppServerCaseRunner", () => {
     const firstInput = (turnStarts[0].params as { input: Array<{ type: string }> }).input;
     const secondInput = (turnStarts[1].params as { input: Array<{ type: string }> }).input;
     assert.equal(firstInput.some((item) => item.type === "skill"), true);
-    assert.equal((firstInput.find((item) => item.type === "skill") as { name?: string } | undefined)?.name, "runner-skill");
+    const mountedSkill = firstInput.find((item) => item.type === "skill") as { name?: string; path?: string } | undefined;
+    assert.equal(mountedSkill?.name, "runner-skill");
+    assert.equal(mountedSkill?.path, skillRoot);
     assert.equal(secondInput.some((item) => item.type === "skill"), false);
-    assert.equal(await exists(path.join(caseRoot, "stage", "case.md")), false);
-    assert.equal(await exists(path.join(caseRoot, "stage", "fixtures")), false);
+    assert.equal(await exists(path.join(caseRoot, "stage")), false);
     assert.equal(result.token_usage.total_tokens, 24);
     assert.equal(result.token_usage.input_tokens, 10);
     assert.equal(result.token_usage.cached_input_tokens, 4);
     assert.equal(result.token_usage.output_tokens, 14);
     assert.equal(result.token_usage.reasoning_tokens, 0);
-    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null } }>(path.join(caseRoot, "usage.json"));
-    assert.equal(usage.source_event, "thread/tokenUsage/updated");
-    assert.equal(usage.turns.length, 2);
-    assert.equal(usage.summary.total_tokens, 24);
-    assert.equal(usage.turns[0].total_tokens, 12);
-    assert.equal(usage.turns[0].cumulative_total_tokens, 12);
+    const usage = await readJson<{ total_tokens: number | null; input_tokens: number | null }>(path.join(caseRoot, "usage.json"));
+    assert.equal(usage.total_tokens, 24);
+    assert.equal(usage.input_tokens, 10);
     assert.equal("token_usage" in (turns.find((turn) => turn.role === "assistant" && turn.index === 0) as Record<string, unknown>), false);
   });
 
@@ -114,7 +112,7 @@ describe("AppServerCaseRunner", () => {
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
-      attachSkill: true,
+      skill_activation: "forced",
        case: item,
       runSource: workingRunSource,
       runId: "001-test",
@@ -124,9 +122,9 @@ describe("AppServerCaseRunner", () => {
 
     assert.equal(result.token_usage.total_tokens, null);
     assert.equal(result.token_usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
-    const usage = await readJson<{ source_event: string | null; turns: unknown[] }>(path.join(root, "run", "cases", item.folder, "usage.json"));
-    assert.equal(usage.source_event, null);
-    assert.deepEqual(usage.turns, []);
+    const usage = await readJson<{ total_tokens: number | null; unavailable_reason: string | null }>(path.join(root, "run", "cases", item.folder, "usage.json"));
+    assert.equal(usage.total_tokens, null);
+    assert.equal(usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
   });
 
   it("does not promote per-turn usage into case totals when final cumulative usage is missing", async () => {
@@ -141,7 +139,7 @@ describe("AppServerCaseRunner", () => {
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
-      attachSkill: true,
+      skill_activation: "forced",
        case: item,
       runSource: workingRunSource,
       runId: "001-test",
@@ -152,24 +150,9 @@ describe("AppServerCaseRunner", () => {
     assert.equal(result.token_usage.total_tokens, null);
     assert.equal(result.token_usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
     const caseRoot = path.join(runRoot, "cases", item.folder);
-    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null; unavailable_reason: string | null } }>(path.join(caseRoot, "usage.json"));
-    assert.equal(usage.source_event, null);
-    assert.equal(usage.summary.total_tokens, null);
-    assert.equal(usage.summary.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
-    assert.deepEqual(usage.turns[0], {
-      turn_id: "turn-1",
-      index: 0,
-      input_tokens: 5,
-      output_tokens: 7,
-      total_tokens: 12,
-      cumulative_input_tokens: null,
-      cumulative_output_tokens: null,
-      cumulative_total_tokens: null,
-      cached_input_tokens: 2,
-      reasoning_tokens: 0,
-      model_context_window: 200000,
-      unavailable_reason: null
-    });
+    const usage = await readJson<{ total_tokens: number | null; unavailable_reason: string | null }>(path.join(caseRoot, "usage.json"));
+    assert.equal(usage.total_tokens, null);
+    assert.equal(usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
   });
 
   it("writes each reused-client case trace to that case rpc.jsonl", async () => {
@@ -183,8 +166,8 @@ describe("AppServerCaseRunner", () => {
     const appServer = { mode: "managed" as const, endpoint: null, auth: "inherited" as const, protocol: "generated-ts" as const, generatedTypes: "test" };
     const secondCase = { ...item, folder: "R2-second", id: "R2" };
 
-    await runner.run({ projectRoot: skillRoot, skillRoot, attachSkill: true, case: item, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
-    await runner.run({ projectRoot: skillRoot, skillRoot, attachSkill: true, case: secondCase, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
+    await runner.run({ projectRoot: skillRoot, skillRoot, skill_activation: "forced", case: item, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
+    await runner.run({ projectRoot: skillRoot, skillRoot, skill_activation: "forced", case: secondCase, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
 
     const firstTrace = await readText(path.join(runRoot, "cases", item.folder, "rpc.jsonl"));
     const secondTrace = await readText(path.join(runRoot, "cases", secondCase.folder, "rpc.jsonl"));
@@ -209,7 +192,7 @@ describe("AppServerCaseRunner", () => {
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
-      attachSkill: true,
+      skill_activation: "forced",
        case: item,
       runSource: workingRunSource,
       runId: "001-test",
@@ -241,7 +224,7 @@ describe("AppServerCaseRunner", () => {
       runner.run({
         projectRoot: skillRoot,
         skillRoot,
-        attachSkill: true,
+        skill_activation: "forced",
          case: item,
         runSource: workingRunSource,
         runId: "001-test",
@@ -267,7 +250,7 @@ describe("AppServerCaseRunner", () => {
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
-      attachSkill: true,
+      skill_activation: "forced",
        case: item,
       runSource: workingRunSource,
       runId: "001-test",
@@ -285,14 +268,14 @@ describe("AppServerCaseRunner", () => {
     assert.deepEqual((child.messages.find((message) => message.method === "turn/start")?.params as { sandboxPolicy?: unknown }).sandboxPolicy, { type: "readOnly", networkAccess: false });
   });
 
-  it("records evidence warnings when the App Server event window overflows", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-overflow-"));
+  it("retains noisy App Server events for final extraction", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-retained-events-"));
     const skillRoot = path.join(root, "skill");
     const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
     const child = new ProtocolFixtureChild({ noisyDeltas: 3 });
     const runner = new AppServerCaseRunner({
-      clientFactory: (onLine) => new AppServerJsonClient({ onLine, spawnProcess: () => child.asChild(), requestTimeoutMs: 1000, maxBufferedEvents: 2 }),
+      clientFactory: (onLine) => new AppServerJsonClient({ onLine, spawnProcess: () => child.asChild(), requestTimeoutMs: 1000 }),
       turnTimeoutMs: 1000
     });
     const runRoot = path.join(root, "run");
@@ -300,7 +283,7 @@ describe("AppServerCaseRunner", () => {
     await runner.run({
       projectRoot: skillRoot,
       skillRoot,
-      attachSkill: true,
+      skill_activation: "forced",
        case: item,
       runSource: workingRunSource,
       runId: "001-test",
@@ -309,13 +292,10 @@ describe("AppServerCaseRunner", () => {
     });
 
     const caseRoot = path.join(runRoot, "cases", item.folder);
-    const thread = await readJson<{ evidence_warnings?: string[] }>(path.join(caseRoot, "thread.json"));
-    const usage = await readJson<{ evidence_warnings?: string[] }>(path.join(caseRoot, "usage.json"));
+    const final = await readText(path.join(caseRoot, "final.md"));
     const trace = await readText(path.join(caseRoot, "rpc.jsonl"));
 
-    assert.match(thread.evidence_warnings?.[0] || "", /in-memory event buffer overflowed/);
-    assert.deepEqual(usage.evidence_warnings, thread.evidence_warnings);
-    assert.match(trace, /meta-skill\/eventBufferOverflow/);
+    assert.match(final, /noisy 0noisy 1noisy 2contract final/);
     assert.match(trace, /noisy 0/);
   });
 
@@ -331,7 +311,7 @@ describe("AppServerCaseRunner", () => {
       runner.run({
         projectRoot: skillRoot,
         skillRoot,
-        attachSkill: true,
+        skill_activation: "forced",
          case: item,
         runSource: workingRunSource,
         runId: "001-test",
@@ -383,11 +363,11 @@ class FakeCaseClient {
   private events: Record<string, unknown>[] = [];
   private turnCount = 0;
   private pendingTrace: Promise<void>[] = [];
-  private onLine: (line: { direction: "client" | "server" | "stderr" | "warning"; message: unknown }) => Promise<void> = async () => {};
+  private onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void> = async () => {};
 
   constructor(private options: { completeTurns?: boolean; emitTokenUsage?: boolean; emitCumulativeTokenUsage?: boolean } = { completeTurns: true, emitTokenUsage: true, emitCumulativeTokenUsage: true }) {}
 
-  attach(onLine: (line: { direction: "client" | "server" | "stderr" | "warning"; message: unknown }) => Promise<void>): this {
+  attach(onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>): this {
     this.onLine = onLine;
     return this;
   }
@@ -434,10 +414,6 @@ class FakeCaseClient {
 
   eventsSince(index: number): Record<string, unknown>[] {
     return this.events.slice(index);
-  }
-
-  eventBufferWarningsSince(): string[] {
-    return [];
   }
 
   async flush(): Promise<void> {

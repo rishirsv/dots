@@ -44,14 +44,10 @@ class AppServerJsonClient {
     buffer = "";
     pending = new Map();
     notifications = [];
-    notificationOffset = 0;
-    notificationCount = 0;
-    eventBufferOverflows = [];
     waiters = [];
     onLine;
     spawnProcess;
     requestTimeoutMs;
-    maxBufferedEvents;
     traceQueue = Promise.resolve();
     constructor(onLineOrOptions) {
         const options = typeof onLineOrOptions === "function" ? { onLine: onLineOrOptions } : onLineOrOptions || {};
@@ -62,7 +58,6 @@ class AppServerJsonClient {
                     stdio: ["pipe", "pipe", "pipe"]
                 }));
         this.requestTimeoutMs = options.requestTimeoutMs || 120000;
-        this.maxBufferedEvents = Math.max(1, options.maxBufferedEvents || 10000);
     }
     async connect(config) {
         if (config.mode !== "managed") {
@@ -139,17 +134,10 @@ class AppServerJsonClient {
         });
     }
     eventCount() {
-        return this.notificationCount;
+        return this.notifications.length;
     }
     eventsSince(index) {
-        return this.notifications.slice(Math.max(0, index - this.notificationOffset));
-    }
-    eventBufferWarningsSince(index) {
-        const markers = this.eventBufferOverflows.filter((marker) => marker.atEventIndex > index);
-        if (!markers.length && index >= this.notificationOffset)
-            return [];
-        const droppedEvents = markers.at(-1)?.droppedEvents || Math.max(0, this.notificationOffset - index);
-        return [`App Server in-memory event buffer overflowed; rpc.jsonl contains the durable raw trace, but ${droppedEvents} event${droppedEvents === 1 ? " was" : "s were"} no longer available for in-memory extraction.`];
+        return this.notifications.slice(index);
     }
     close() {
         if (!this.child)
@@ -217,24 +205,6 @@ class AppServerJsonClient {
     }
     retainNotification(message) {
         this.notifications.push(message);
-        this.notificationCount += 1;
-        if (this.notifications.length <= this.maxBufferedEvents)
-            return;
-        this.notifications.shift();
-        this.notificationOffset += 1;
-        const marker = {
-            atEventIndex: this.notificationCount,
-            droppedEvents: this.notificationOffset,
-            bufferLimit: this.maxBufferedEvents
-        };
-        this.eventBufferOverflows.push(marker);
-        this.trace({
-            direction: "warning",
-            message: {
-                method: "meta-skill/eventBufferOverflow",
-                params: marker
-            }
-        });
     }
 }
 exports.AppServerJsonClient = AppServerJsonClient;

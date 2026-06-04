@@ -316,27 +316,20 @@ function readinessFor(assessmentStatus, failureClassifications, noVerdictCount, 
 function countTokenUsage(cases) {
     const attempts = cases.flatMap((item) => item.attempts.map((attempt) => ({ item, attempt })));
     const available = attempts.filter(({ attempt }) => attempt.token_usage?.total_tokens !== null && attempt.token_usage?.total_tokens !== undefined && !attempt.token_usage.unavailable_reason);
-    const unavailableReasons = attempts
-        .filter(({ attempt }) => !attempt.token_usage || attempt.token_usage.total_tokens === null || attempt.token_usage.unavailable_reason)
-        .map(({ item, attempt }) => ({
-        case_id: item.id,
-        run_source: attempt.run_source.kind || attempt.run_source.label,
-        reason: attempt.token_usage?.unavailable_reason || "usage.json was unavailable for this item."
-    }));
+    const unavailable = attempts.filter(({ attempt }) => !attempt.token_usage || attempt.token_usage.total_tokens === null || attempt.token_usage.unavailable_reason);
     return {
         input_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.input_tokens ?? null)),
         output_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.output_tokens ?? null)),
         total_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.total_tokens ?? null)),
         case_count: cases.length,
-        unavailable_case_count: unavailableReasons.length,
-        unavailable_reasons: unavailableReasons
+        unavailable_case_count: unavailable.length
     };
 }
 async function readAttemptTokenUsage(runRoot, evidencePath) {
     const usagePath = evidencePath ? node_path_1.default.join(runRoot, evidencePath, "usage.json") : "";
     if (usagePath && (await (0, project_1.exists)(usagePath))) {
         const evidence = await (0, project_1.readJson)(usagePath);
-        return normalizeTokenUsage(evidence.summary);
+        return normalizeTokenUsage(evidence);
     }
     return undefined;
 }
@@ -358,23 +351,12 @@ function normalizeOptionalTokenUsage(value) {
 }
 function normalizeRunTokenUsageSummary(value) {
     const object = objectValue(value);
-    const reasons = Array.isArray(object.unavailable_reasons)
-        ? object.unavailable_reasons.map((item) => {
-            const reason = objectValue(item);
-            return {
-                case_id: String(reason.case_id || "unknown"),
-                run_source: String(reason.run_source || "unknown"),
-                reason: String(reason.reason || "Token usage was unavailable.")
-            };
-        })
-        : [];
     return {
         input_tokens: nullableNumber(object.input_tokens),
         output_tokens: nullableNumber(object.output_tokens),
         total_tokens: nullableNumber(object.total_tokens),
         case_count: numberFrom(object.case_count),
-        unavailable_case_count: numberFrom(object.unavailable_case_count),
-        unavailable_reasons: reasons
+        unavailable_case_count: numberFrom(object.unavailable_case_count)
     };
 }
 function normalizeRunSource(value, legacySide) {
@@ -384,12 +366,15 @@ function normalizeRunSource(value, legacySide) {
             kind: object.kind,
             label: typeof object.label === "string" ? object.label : sentenceStatus(object.kind),
             skill_root: typeof object.skill_root === "string" || object.skill_root === null ? object.skill_root : undefined,
-            attached_skill: object.attached_skill === true
+            skill_activation: normalizeSkillActivation(object.skill_activation)
         };
     }
     if (legacySide === "release")
-        return { kind: "legacy_side", label: "Legacy saved snapshot side", skill_root: "../../../versions/release/skill", attached_skill: true };
-    return { kind: legacySide ? "legacy_side" : "working_payload", label: legacySide ? "Legacy working payload side" : "Working payload", skill_root: "../../../..", attached_skill: true };
+        return { kind: "legacy_side", label: "Legacy saved snapshot side", skill_root: "../../../versions/release/skill", skill_activation: "forced" };
+    return { kind: legacySide ? "legacy_side" : "working_payload", label: legacySide ? "Legacy working payload side" : "Working payload", skill_root: "../../../..", skill_activation: "forced" };
+}
+function normalizeSkillActivation(value) {
+    return value === "none" || value === "discoverable" ? value : "forced";
 }
 function executionStatusFromPayload(value) {
     const payload = objectValue(value);
@@ -884,14 +869,10 @@ function renderRunTokenSummary(summary) {
     const normalized = normalizeRunTokenUsageSummary(summary);
     if (!normalized.case_count)
         return '<p class="muted">No token usage recorded.</p>';
-    const reasonRows = normalized.unavailable_reasons
-        .map((item) => `<tr><td>${escapeHtml(item.case_id)}</td><td>${escapeHtml(sentenceStatus(item.run_source))}</td><td>${escapeHtml(item.reason)}</td></tr>`)
-        .join("");
     return `<table>
     <thead><tr><th>Cases</th><th>Unavailable</th><th>Total Tokens</th><th>Input</th><th>Output</th></tr></thead>
     <tbody><tr><td>${normalized.case_count}</td><td>${normalized.unavailable_case_count}</td><td>${formatNullableNumber(normalized.total_tokens)}</td><td>${formatNullableNumber(normalized.input_tokens)}</td><td>${formatNullableNumber(normalized.output_tokens)}</td></tr></tbody>
   </table>
-  ${reasonRows ? `<table><thead><tr><th>Case</th><th>Source</th><th>Unavailable Reason</th></tr></thead><tbody>${reasonRows}</tbody></table>` : ""}
   <p class="muted">Token usage is measured telemetry and is not a readiness verdict.</p>`;
 }
 function renderCaseRail(cases, selectedId) {

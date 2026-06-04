@@ -13,8 +13,24 @@ export class CliError extends Error {
   }
 }
 
-export const PORTABLE_FILES = new Set(["SKILL.md"]);
-export const PORTABLE_DIRS = new Set(["agents", "references", "scripts", "assets"]);
+const EXCLUDED_PAYLOAD_NAMES = new Set([
+  ".DS_Store",
+  ".cache",
+  ".git",
+  ".idea",
+  ".meta-skill",
+  ".mypy_cache",
+  ".pytest_cache",
+  ".ruff_cache",
+  ".vscode",
+  "__pycache__",
+  "build",
+  "coverage",
+  "dist",
+  "node_modules",
+  "target",
+  "Thumbs.db"
+]);
 
 export function utcNow(): string {
   return new Date().toISOString();
@@ -197,10 +213,8 @@ export async function listPortablePayloadFiles(skillRoot: string): Promise<strin
     const absoluteDir = path.join(root, relativeDir);
     for (const dirent of await fs.readdir(absoluteDir, { withFileTypes: true })) {
       const relative = path.join(relativeDir, dirent.name);
-      if (relative === ".meta-skill" || relative.startsWith(`.meta-skill${path.sep}`)) continue;
-      if (!relativeDir && !(PORTABLE_FILES.has(dirent.name) || PORTABLE_DIRS.has(dirent.name))) continue;
+      if (!isPortablePayloadPath(relative)) continue;
       if (dirent.isDirectory()) {
-        if (!relativeDir && !PORTABLE_DIRS.has(dirent.name)) continue;
         await walk(relative);
       } else if (dirent.isFile()) {
         entries.push(relative);
@@ -210,6 +224,16 @@ export async function listPortablePayloadFiles(skillRoot: string): Promise<strin
 
   await walk("");
   return entries.sort();
+}
+
+export function isPortablePayloadPath(relative: string): boolean {
+  if (!relative || path.isAbsolute(relative) || relative.split(/[\\/]/).includes("..")) return false;
+  const parts = relative.split(/[\\/]/).filter(Boolean);
+  if (!parts.length) return false;
+  if (parts.some((part) => EXCLUDED_PAYLOAD_NAMES.has(part))) return false;
+  const last = parts.at(-1) || "";
+  if (last.endsWith(".zip") || last.endsWith(".metadata.json") || last.endsWith(".meta-skill-package.json")) return false;
+  return true;
 }
 
 export async function copyPortablePayload(sourceRoot: string, destinationRoot: string): Promise<string[]> {

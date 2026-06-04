@@ -94,7 +94,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
     for (const item of cases) {
       await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "case_started", run_id: runId, case_id: item.id, source: "meta-skill eval run", payload: { folder: item.folder, run_source: runSourceConfig.runSource } }));
       try {
-        const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, attachSkill: runSourceConfig.runSource.attached_skill, case: item, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
+        const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, skill_activation: runSourceConfig.runSource.skill_activation, case: item, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
         const classification = classifyCaseStatus(result.verdict || result.execution_status);
         if (classification) {
           hasFailures = true;
@@ -110,7 +110,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
         const tokenUsage = unavailableTokenUsage("App Server execution failed before token metrics were available.");
         const caseRoot = path.join(runRoot, "cases", item.folder);
         await ensureDir(caseRoot);
-        await writeJson(path.join(caseRoot, "usage.json"), { schema_version: 1, source_event: null, summary: tokenUsage, turns: [] });
+        await writeJson(path.join(caseRoot, "usage.json"), tokenUsage);
         await recordCaseResult(runRoot, runId, item, runSourceConfig.runSource, "errored", evidencePath, message, classification);
         await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "case_failed", run_id: runId, case_id: item.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification } }));
       }
@@ -154,10 +154,10 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
 
 function evalRunSourceConfig(kind: EvalRunSourceKind, projectRoot: string, releaseSkill: string): { skillRoot?: string; runSource: EvalRunSource; defaultLabel: string } {
   if (kind === "snapshot_payload") {
-    return { skillRoot: releaseSkill, runSource: { kind, label: "Saved snapshot payload", skill_root: "../../../versions/release/skill", attached_skill: true }, defaultLabel: "saved-snapshot" };
+    return { skillRoot: releaseSkill, runSource: { kind, label: "Saved snapshot payload", skill_root: "../../../versions/release/skill", skill_activation: "forced" }, defaultLabel: "saved-snapshot" };
   }
   if (kind === "no_skill") {
-    return { runSource: { kind, label: "No skill", skill_root: null, attached_skill: false }, defaultLabel: "no-skill" };
+    return { runSource: { kind, label: "No skill", skill_root: null, skill_activation: "none" }, defaultLabel: "no-skill" };
   }
-  return { skillRoot: projectRoot, runSource: { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true }, defaultLabel: "working-payload" };
+  return { skillRoot: projectRoot, runSource: { kind: "working_payload", label: "Working payload", skill_root: "../../../..", skill_activation: "forced" }, defaultLabel: "working-payload" };
 }

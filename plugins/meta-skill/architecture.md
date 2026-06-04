@@ -10,7 +10,7 @@ skills and one CLI.
 flowchart LR
   user["User or agent"] --> orchestrator["AGENTS.md\norchestrator"]
   orchestrator --> create["skill-create\nmake skill payloads"]
-  orchestrator --> eval["skill-eval\nrun scenarios"]
+  orchestrator --> eval["skill-eval\nrun cases"]
   orchestrator --> improve["skill-improve\npatch from evidence"]
   create --> cli["scripts/meta-skill.js\nCLI runtime"]
   eval --> cli
@@ -71,9 +71,10 @@ flowchart TB
   workbench --> versions["versions/release/"]
 ```
 
-The project root is the working payload. Only `SKILL.md`, `agents/`,
-`references/`, `scripts/`, and `assets/` can be packaged. `.meta-skill/` stores
-specs, scenarios, run evidence, tests, reviews, plans, promotion sessions, and
+The project root is the working payload. Any root-level runtime file or folder
+can be packaged unless it is explicit private, workbench, dependency,
+build/cache, package-artifact, editor, or OS junk state. `.meta-skill/` stores
+specs, cases, run evidence, tests, reviews, plans, promotion sessions, and
 release snapshots. It must not be packaged.
 
 The working payload and saved snapshot payload are different:
@@ -93,7 +94,7 @@ flowchart LR
   create["create\nportable payload"] --> init["project init\n.meta-skill/"]
   init --> lint["lint\nstructure + tests"]
   lint --> review["review\nquality rubric report"]
-  lint --> evalInit["eval init\nscenario workbench"]
+  lint --> evalInit["eval init\ncase workbench"]
   evalInit --> evalRun["eval run\nApp Server evidence"]
   review --> plan["plan\nfrom review"]
   evalRun --> plan2["plan\nfrom run"]
@@ -117,7 +118,7 @@ Top-level command dispatch lives in `src/commands.ts`.
 | `project init` | `src/skills.ts`, `src/project.ts` |
 | `lint` | `src/lint.ts` |
 | `review` | `src/review.ts` |
-| `eval init` | `src/eval/scenarios.ts` |
+| `eval init` | `src/eval/cases.ts` |
 | `eval run` | `src/eval/run.ts` |
 | `eval judge` | `src/eval/judge.ts` |
 | `eval feedback import` | `src/eval/runs.ts` |
@@ -136,19 +137,19 @@ contracts; and `src/report.ts` for reports.
 sequenceDiagram
   participant CLI as meta-skill eval run
   participant Run as .meta-skill/evals/runs/<run-id>
-  participant Stage as staged workspace
+  participant Tmp as temp runtime cwd
   participant App as managed Codex App Server
 
   CLI->>CLI: lint preflight without tests
   CLI->>Run: create run.json and JSONL files
-  loop each scenario
-    CLI->>Run: snapshot task, metadata, criteria, and turns
-    CLI->>Stage: copy selected payload and solver-visible scenario files
+  loop each case
+    CLI->>Run: snapshot task, metadata, criteria, turns, and fixtures
+    CLI->>Tmp: create ephemeral cwd outside run evidence
     CLI->>App: start read-only ephemeral thread
-    CLI->>App: send task.md with selected payload attached, or no skill for --no-skill
-    CLI->>App: send turns.json follow-ups
+    CLI->>App: send task with selected payload mounted, or no skill for --no-skill
+    CLI->>App: send follow-up turns
     App-->>Run: final.md, turns.jsonl, usage.json, thread.json, rpc.jsonl
-    CLI->>Run: append scenario_result
+    CLI->>Run: append case_result
   end
   CLI->>Run: run deterministic eval tests unless --no-lint
   CLI->>Run: run judges only when requested
@@ -156,27 +157,23 @@ sequenceDiagram
 ```
 
 Default runner constraints: managed stdio App Server, read-only sandbox,
-`approvalPolicy: "never"`, no network access, one thread per scenario,
-first turn with the selected payload attached unless `--no-skill` is used,
-follow-ups from `turns.json`, and token metrics recorded with nullable counts
+`approvalPolicy: "never"`, no network access, one thread per case,
+first turn with the selected payload mounted unless `--no-skill` is used,
+follow-ups from `case.md`, and token metrics recorded with nullable counts
 plus one unavailable reason when telemetry is missing. App Server JSON-RPC
 requests are single-shot; the client does not perform overload retries,
 exponential backoff, or jitter. If the managed stdio process exits, the runner
-clears the process, rejects active scenario work, and allows at most one
-scenario-level respawn attempt before recording the scenario as unavailable.
-`rpc.jsonl` is the durable raw event log. The client keeps only a bounded
-in-memory event window for current wait predicates, final-text extraction, and
-token extraction; when that window drops events, `rpc.jsonl` receives a
-`meta-skill/eventBufferOverflow` warning marker and scenario evidence records an
-`evidence_warnings` entry.
+clears the process, rejects active case work, and allows at most one
+case-level respawn attempt before recording the case as unavailable.
+`rpc.jsonl` is the durable raw event log and records every client, server, and
+stderr line through a serialized trace queue.
 
-Token evidence is measured App Server telemetry. Each scenario writes
+Token evidence is measured App Server telemetry. Each case writes
 `usage.json` as the canonical token file. `turns.jsonl` is transcript evidence
 only and does not duplicate token summaries.
-For multi-turn scenarios, App Server cumulative `tokenUsage.total` from the final
-reporting turn is authoritative; per-turn `tokenUsage.last` is retained in
-`usage.json` for turn-level inspection. `results.jsonl` records execution and
-verdict facts only; report token totals are derived from scenario `usage.json`
+For multi-turn cases, App Server cumulative `tokenUsage.total` from the final
+reporting turn is authoritative; per-turn inspection reads `rpc.jsonl`.
+`results.jsonl` records execution and verdict facts only; report token totals are derived from case `usage.json`
 files. A run records exactly one source. There is no first-class comparison
 artifact; inspect separate run reports manually when you need contrast.
 
@@ -203,14 +200,11 @@ zero.
 ```text
 .meta-skill/evals/
   evals.json
-  scenarios/
+  cases/
     R1-basic/
-      task.md
-      scenario.json
+      case.md
       criteria.json
-      turns.json          optional
-      capability.txt      optional
-      resources/          optional
+      fixtures/           optional
     judges/
   runs/
     001-working-payload/
@@ -224,29 +218,27 @@ zero.
       report.html
       snapshots/
         R1-basic/
-          task.md
-          scenario.json
+          case.md
           criteria.json
-      scenarios/
+      cases/
         R1-basic/
-          stage/
           thread.json
           turns.jsonl
           usage.json
           final.md
-          rpc.jsonl  # durable raw App Server trace, including overflow markers
+          rpc.jsonl  # durable raw App Server trace
 ```
 
-Scenario IDs are strict: `R` regression, `F` failure mode, `T` trigger, and
-`G` gate. `run.json` is the run header; JSONL files store events, scenario
+Case IDs are strict: `R` regression, `F` failure mode, and
+`G` gate. `run.json` is the run header; JSONL files store events, case
 results, deterministic tests, judge grades, and feedback. `report.json` is the
 normalized summary consumed by `report.html`, `eval open --json`, and
 `runs/index.json`.
 
 Solver staging does not include `criteria.json`. Criteria are evaluator
 evidence and are captured in `snapshots/` so judges grade old finals against
-the scenario definitions used by that run. Legacy runs without snapshots must
-be marked as using current scenario definitions.
+the case definitions used by that run. Legacy runs without snapshots must
+be marked as using current case definitions.
 
 ## Human Gates
 
@@ -254,7 +246,7 @@ be marked as using current scenario definitions.
 flowchart TB
   auto["Automated or CLI-safe"] --> scaffold["scaffold files"]
   auto --> lint["lint and tests"]
-  auto --> evals["read-only scenario runs"]
+  auto --> evals["read-only case runs"]
   auto --> reviews["heuristic reviews"]
   auto --> plans["plan scaffolds"]
 
@@ -289,7 +281,7 @@ root `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or source `skills/`, run
 
 ## Current Limits
 
-- App Server scenario execution records `execution_status` such as `completed`
+- App Server case execution records `execution_status` such as `completed`
   or `errored`. Behavioral pass/fail appears only when deterministic tests,
   judges, or human feedback record a verdict. Completed execution with no such
   evidence is reported as no verdict recorded.
@@ -299,9 +291,10 @@ root `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or source `skills/`, run
 - `plan` is a scaffold. It creates an empty edit list that someone must fill
   from evidence before `promote`.
 - Automated uplift comparison and true trigger routing are unsupported. Treat
-  no-skill runs as manual control evidence, not an uplift score.
+  no-skill runs as manual control evidence, not an uplift score. True trigger
+  routing requires a future discoverable activation mode.
 - Attached App Server endpoints are not implemented.
-- App Server request retries are scenario-level only: no per-request retry
+- App Server request retries are case-level only: no per-request retry
   policy exists, and a process-exit respawn is attempted at most once.
 - The plugin is Codex-only and depends on Codex skill attachment plus App Server.
 - `src/` and committed `app/` can drift if maintainers forget to build.
@@ -313,8 +306,8 @@ Add commands in `src/commands.ts`, keep logic in the owning module, update
 `src/models.ts` for new data shapes, test the changed area, run `npm test`,
 and commit regenerated `app/` for code changes.
 
-For eval changes, preserve `.meta-skill/evals/runs/<run-id>/`, per-scenario
-evidence under `scenarios/<scenario>/`, unavailable-token records,
+For eval changes, preserve `.meta-skill/evals/runs/<run-id>/`, per-case
+evidence under `cases/<case>/`, unavailable-token records,
 read-only/no-approval/no-network defaults, optional judges, and the smaller
 evidence bundle: run header, lifecycle/result streams, snapshots, transcript,
 canonical usage, raw RPC trace, final output, and derived reports/indexes.
