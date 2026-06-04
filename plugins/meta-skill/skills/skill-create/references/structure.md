@@ -35,13 +35,9 @@ Project mode adds hidden authoring state:
   resources/
   .meta-skill/
     spec.md
-    evals/
-      evals.json
-      cases/<ID-slug>/
-      judges/
-      runs/
+    cases/<ID-slug>/
+    runs/<run-id>/
     tests/
-      manifest.json
       unit/
       eval/
 ```
@@ -72,7 +68,7 @@ Use `scripts/` only when code is safer or cheaper than prose.
 - Link every script directly from `SKILL.md`.
 - State when to run it, what inputs it accepts, what output means, and what nonzero exit means.
 - Prefer standard-library dependencies unless a package materially improves reliability.
-- If project mode exists, add or recommend unit tests for runtime scripts in `.meta-skill/tests/manifest.json`.
+- If project mode exists, add or recommend executable unit tests for runtime scripts in `.meta-skill/tests/unit/`.
 
 ## Assets
 

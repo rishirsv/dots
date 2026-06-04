@@ -5,14 +5,14 @@ description: Use when setting up, running, auditing, or interpreting App Server-
 
 # Skill Eval
 
-Measure a reusable skill with `.meta-skill/evals/` case runs. This lane sets up manually authored cases, runs Codex App Server-backed evidence collection, inspects fact-backed reports, imports feedback, and runs optional App Server-backed judges. It does not generate cases, rewrite, package, or edit the skill.
+Measure a reusable skill with `.meta-skill/cases/` and `.meta-skill/runs/`. This lane sets up manually authored cases, runs Codex App Server-backed evidence collection, inspects fact-backed reports, imports feedback, and runs optional App Server-backed judges. It does not generate cases, rewrite, package, or edit the skill.
 
 ## Reference Map
 
 | Need | Read |
 |---|---|
 | Exact command syntax and examples | [cli.md](references/cli.md) |
-| Human-authored judge prompts and rubrics | [judge-prompts.md](references/judge-prompts.md) |
+| Human-authored judge rubrics | [judge-prompts.md](references/judge-prompts.md) |
 
 ## Beginner Path
 
@@ -23,7 +23,7 @@ meta-skill run .
 meta-skill report
 ```
 
-Case folders live at `.meta-skill/evals/cases/<ID-slug>/` and require one `case.md`. Put optional solver-visible files under `fixtures/`; use `## Task` for the first turn and `## Turn 2`, `## Turn 3`, and so on for real follow-up user turns.
+Case folders live at `.meta-skill/cases/<ID-slug>/` and require one `case.md`. Put optional solver-visible files under `fixtures/`; use `## Task` for the first turn and `## Turn 2`, `## Turn 3`, and so on for real follow-up user turns.
 
 ## Operating Rules
 
@@ -31,7 +31,7 @@ Case folders live at `.meta-skill/evals/cases/<ID-slug>/` and require one `case.
 - By default, the runner force-attaches the current portable payload on the first turn. Treat runs as forced-skill final-answer evidence, not proof of true trigger routing or writable file behavior.
 - A run evaluates exactly one source: the current payload or no skill with `--no-skill`.
 - Criteria are evaluator evidence in `case.md` frontmatter and must not be staged into solver workspaces.
-- Deterministic tests belong in `.meta-skill/tests/manifest.json` and may annotate saved run evidence with `meta-skill lint . --run <run-id>`.
+- Deterministic tests are executable files under `.meta-skill/tests/unit/` and `.meta-skill/tests/eval/`; eval tests may annotate saved run evidence with `meta-skill lint . --run <run-id>`.
 - Eval tests should read `META_SKILL_RUN_ID`, `META_SKILL_RUN_ROOT`, and `META_SKILL_PROJECT_ROOT` when lint annotates a saved run. Do not guess the newest run folder.
 - Judges are optional because they cost tokens; ask before running them unless the user explicitly requests judge scoring or passes `--with-judges`.
 - Judges read frozen run cases plus final output. Threshold failures are recorded as check observations; the report does not compute pass/fail.
@@ -59,7 +59,7 @@ Prefer deterministic tests before judges. Use judges only for subjective qualiti
 Run evidence lives under:
 
 ```text
-.meta-skill/evals/runs/<run-id>/
+.meta-skill/runs/<run-id>/
 ```
 
 Inspect `meta-skill report <run-id> --json` for machine-readable evidence, then drill into `facts.jsonl`, `cases/<case>/case.md`, `cases/<case>/rpc.jsonl`, and `cases/<case>/final.md`.

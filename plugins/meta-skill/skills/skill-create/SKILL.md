@@ -63,7 +63,7 @@ Single-shot creation is opt-in. If the user says "one shot," "no questions," or 
 - `agents/openai.yaml` should use supported Codex metadata (`name` and `description`) unless a documented interface shape is intentionally used.
 - Add runtime references, scripts, or assets only when they are real reusable materials.
 - Link every runtime reference, script, or asset directly from `SKILL.md`.
-- Runtime scripts should get or recommend unit tests in `.meta-skill/tests/manifest.json` when project mode exists.
+- Runtime scripts should get or recommend executable unit tests in `.meta-skill/tests/unit/` when project mode exists.
 - Add human gates before packaging, installing, publishing, syncing, source edits, external writes, or final client/user-facing delivery.
 
 ## Output

@@ -8,7 +8,7 @@ import type { TokenUsage } from "./models.ts";
 import { importFeedback, runEval } from "./evals.ts";
 import { readFacts } from "./facts.ts";
 import { createSkill } from "./skills.ts";
-import { ensureDir, exists, readText, writeJson, writeText } from "./project.ts";
+import { ensureDir, exists, readText, writeText } from "./project.ts";
 
 describe("eval evidence hard cut", () => {
   it("writes one fact log and three per-case files", async () => {
@@ -81,7 +81,7 @@ async function fixtureProject(slug: string): Promise<string> {
 }
 
 async function writeCase(project: string): Promise<void> {
-  const caseRoot = path.join(project, ".meta-skill", "evals", "cases", "R1-basic");
+  const caseRoot = path.join(project, ".meta-skill", "cases", "R1-basic");
   await ensureDir(caseRoot);
   await writeText(
     path.join(caseRoot, "case.md"),
@@ -100,7 +100,6 @@ criteria:
 Answer directly.
 `
   );
-  await writeJson(path.join(project, ".meta-skill", "tests", "manifest.json"), { schema_version: 1, tests: [] });
 }
 
 function tokenUsageEvidence(input: number, output: number, total: number): TokenUsage {

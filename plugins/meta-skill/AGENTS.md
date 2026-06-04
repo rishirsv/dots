@@ -45,13 +45,13 @@ Do not create alternate root-level workbench folders. The portable payload stays
 
 ## Eval Policy
 
-Use `.meta-skill/evals/`, not a root review folder.
+Use `.meta-skill/cases/`, not an `evals/` namespace or root review folder.
 
-Use `.meta-skill/evals/cases/<ID-slug>/` for executable cases. `case.md` contains the first user turn and any follow-up user turns.
+Use `.meta-skill/cases/<ID-slug>/` for executable cases. `case.md` contains the first user turn and any follow-up user turns.
 
-Use `.meta-skill/tests/manifest.json` for deterministic unit and eval tests. Prefer deterministic tests when a rule can answer the question.
+Use executable files under `.meta-skill/tests/unit/` and `.meta-skill/tests/eval/` for deterministic tests. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/evals/runs/<run-id>/` with one `facts.jsonl` log, a frozen `payload/`, and per-case `case.md`, `rpc.jsonl`, and `final.md` files.
+Run evidence lives under `.meta-skill/runs/<run-id>/` with one `facts.jsonl` log, a frozen `payload/`, and per-case `case.md`, `rpc.jsonl`, and `final.md` files.
 
 Case execution runs through Codex App Server and records per-case final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
 
@@ -59,7 +59,7 @@ Criteria are evaluator evidence and must not appear in solver-visible runtime in
 
 Completed case execution is evidence, not proof of quality. Identify the saved facts and files to inspect before claiming behavior is good.
 
-Judges run over saved evidence through App Server. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` append facts; reports compute from those facts on demand.
+Judges run over saved evidence through App Server using each case's inline `criteria.rubric`. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` append facts; reports compute from those facts on demand.
 
 ## Improve Policy
 

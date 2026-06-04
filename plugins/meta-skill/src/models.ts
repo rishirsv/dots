@@ -33,23 +33,6 @@ export interface RunTokenUsageSummary {
   unavailable_case_count: number;
 }
 
-export interface EvalManifest {
-  schema_version: 1;
-  skill_name: string;
-  suite: {
-    name: string;
-    description?: string;
-  };
-  cases: {
-    path: "cases";
-  };
-  defaults: {
-    runner: "app_server";
-    run_source: EvalRunSourceKind;
-    timeout_ms: number;
-  };
-}
-
 export interface CaseFixture {
   path: string;
   description?: string;
@@ -87,17 +70,6 @@ export interface CaseRecord {
   criteria: CaseCriteria;
   task: string;
   turns: Array<{ content: string }>;
-}
-
-export interface TestManifest {
-  schema_version: 1;
-  tests: Array<{
-    id: string;
-    kind: "unit" | "eval";
-    command: string;
-    grader?: string;
-    description?: string;
-  }>;
 }
 
 export interface Issue {

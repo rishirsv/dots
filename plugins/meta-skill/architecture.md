@@ -14,7 +14,7 @@ Commands have one side-effect class:
 
 ## Eval Evidence
 
-Runs live under `.meta-skill/evals/runs/<run-id>/`:
+Runs live under `.meta-skill/runs/<run-id>/`:
 
 ```text
 facts.jsonl

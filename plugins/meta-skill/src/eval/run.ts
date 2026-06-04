@@ -28,7 +28,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
 
   const root = await requirePortableSkill(options.project);
   const p = projectPaths(root);
-  if (!(await exists(p.evalManifest))) throw new CliError("eval workbench is missing; run `meta-skill project init <project>` first");
+  if (!(await exists(p.cases))) throw new CliError("case workbench is missing; run `meta-skill project init <project>` first");
 
   const preflight = await lintProject(root, { executeTests: false });
   if (preflight.failures.length) {

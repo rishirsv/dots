@@ -1,51 +1,36 @@
 # Judge Prompt Guidance
 
-Read this when creating or revising `.meta-skill/evals/judges/*.md`.
+Read this when creating or revising case-owned judge rubrics in `case.md`.
 
-Judges are human-authored rubrics or pass/fail prompts for subjective qualities. They are optional by default because they cost tokens and should never replace deterministic tests when code can answer the question.
+Judges are human-authored rubrics in `case.md` criteria for subjective qualities. They are optional by default because they cost tokens and should never replace deterministic tests when code can answer the question.
 
 ## File Shape
 
-Use Markdown with minimal frontmatter:
+Put the rubric and judge IDs in `case.md` frontmatter:
 
-```md
+```yaml
 ---
-id: final-answer-quality
-type: rubric
-scale: 1-5
-inputs: [task, final]
+title: Source faithful answer
+criteria:
+  expected_behavior: The answer cites only facts present in the fixture.
+  assertions:
+    - Uses provided sources.
+  rubric: |
+    Score 5 when every factual claim is source-grounded.
+    Score 3 when the answer is mostly grounded but includes weak support.
+    Score 1 when the answer invents facts.
+  judges:
+    - id: source-faithfulness
+      threshold:
+        overall_min: 4
 ---
-
-# Final Answer Quality Judge
-
-You evaluate the final answer for the user's task.
-
-## Rubric
-
-5: Excellent. Complete, specific, well-structured, directly usable.
-4: Good. Minor gaps, still usable.
-3: Adequate. Meets the core request with noticeable omissions.
-2: Weak. Partially useful but misses important requirements.
-1: Poor. Fails the task or misleads the user.
-
-## Output
-
-Return JSON with an overall score and critique.
-
-## Calibration Examples
-
-- A complete final answer with traceable source claims scores 5.
-- A final answer with unsupported material claims scores at most 3.
 ```
 
-Supported judge types:
-
-- `rubric`: universal 1-5 score plus critique
-- `pass_fail`: binary subjective judgment for one specific failure mode
+The judge ID names the observation in facts and reports. The rubric is the prompt.
 
 ## Thresholds
 
-Thresholds live in `case.md` criteria frontmatter, not in judge files:
+Thresholds live beside the judge ID:
 
 ```json
 {

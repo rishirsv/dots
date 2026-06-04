@@ -31,7 +31,7 @@ meta-skill decide <project> --run <run-id> --evidence <path[:line]> --reject
 
 Edit the working portable payload directly after the evidence justifies the change. Git is the application mechanism and diff review surface.
 
-`decide` appends a `decision_recorded` fact to `.meta-skill/evals/runs/<run-id>/facts.jsonl`. Accept records the commit the human approved; reject records intent and evidence but does not restore files.
+`decide` appends a `decision_recorded` fact to `.meta-skill/runs/<run-id>/facts.jsonl`. Accept records the commit the human approved; reject records intent and evidence but does not restore files.
 
 ## Edit Discipline
 

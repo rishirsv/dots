@@ -2,14 +2,12 @@ import { exec } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
-import type { Issue, LintReport, TestManifest } from "./models.ts";
+import type { Issue, LintReport } from "./models.ts";
 import { appendFact, readFacts } from "./facts.ts";
 import {
-  CliError,
   exists,
   parseSkillFrontmatter,
   projectPaths,
-  readJson,
   requirePortableSkill
 } from "./project.ts";
 import { caseIdentity, readCase } from "./eval/cases.ts";
@@ -35,9 +33,8 @@ export async function lintProject(target: string, options: LintOptions = {}): Pr
     await validateWorkbench(root, failures, warnings);
   }
 
-  if (options.executeTests !== false && (await exists(p.testManifest))) {
-    const manifest = await readJson<TestManifest>(p.testManifest);
-    tests.push(...(await runManifestTests(root, manifest, options.runId ? "eval" : "unit", options.runId ? { runId: options.runId, runRoot: path.join(p.runs, options.runId), projectRoot: root } : undefined)));
+  if (options.executeTests !== false) {
+    tests.push(...(await runDiscoveredTests(root, options.runId ? "eval" : "unit", options.runId ? { runId: options.runId, runRoot: path.join(p.runs, options.runId), projectRoot: root } : undefined)));
   }
 
   let annotations = 0;
@@ -158,32 +155,8 @@ function parseSimpleYaml(text: string): Record<string, string> {
 async function validateWorkbench(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
   const p = projectPaths(root);
   if (!(await exists(p.spec))) failures.push(issue("failure", ".meta-skill/spec.md is missing", p.spec));
-  if (!(await exists(p.evalManifest))) failures.push(issue("failure", ".meta-skill/evals/evals.json is missing", p.evalManifest));
-  if (!(await exists(p.testManifest))) failures.push(issue("failure", ".meta-skill/tests/manifest.json is missing", p.testManifest));
 
-  let testIds = new Set<string>();
-  if (await exists(p.testManifest)) {
-    const manifest = await readJson<TestManifest>(p.testManifest);
-    if (manifest.schema_version !== 1) failures.push(issue("failure", "tests manifest schema_version must be 1", p.testManifest));
-    if (!Array.isArray(manifest.tests)) failures.push(issue("failure", "tests manifest must contain tests array", p.testManifest));
-    testIds = new Set((manifest.tests || []).map((test) => test.id));
-    if (testIds.size !== (manifest.tests || []).length) failures.push(issue("failure", "tests manifest contains duplicate test IDs", p.testManifest));
-    for (const test of manifest.tests || []) {
-      if (!test.id || !/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/.test(test.id)) failures.push(issue("failure", `invalid test id: ${test.id}`, p.testManifest));
-      if (!["unit", "eval"].includes(test.kind)) failures.push(issue("failure", `invalid test kind for ${test.id}: ${test.kind}`, p.testManifest));
-      if (!test.command) failures.push(issue("failure", `test ${test.id} is missing command`, p.testManifest));
-    }
-  }
-
-  const judgeIds = await validateJudges(p.judges, failures, warnings);
-
-  if (await exists(p.evalManifest)) {
-    const manifest = await readJson<Record<string, unknown>>(p.evalManifest);
-    if (manifest.schema_version !== 1) failures.push(issue("failure", "eval manifest schema_version must be 1", p.evalManifest));
-    if ((manifest.defaults as Record<string, unknown> | undefined)?.runner !== "app_server") {
-      failures.push(issue("failure", "eval manifest defaults.runner must be app_server", p.evalManifest));
-    }
-  }
+  const testIds = await validateTests(root, p.tests, failures);
 
   if (!(await exists(p.cases))) {
     warnings.push(issue("warning", "no eval cases folder yet", p.cases));
@@ -193,13 +166,13 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
   if (!caseDirs.length) warnings.push(issue("warning", "no eval cases yet", p.cases));
   const seenIds = new Set<string>();
   for (const dirent of caseDirs) {
-    await validateCase(path.join(p.cases, dirent.name), dirent.name, seenIds, testIds, judgeIds, failures, warnings);
+    await validateCase(path.join(p.cases, dirent.name), dirent.name, seenIds, testIds, failures, warnings);
   }
 
   if ((await exists(path.join(root, "scripts"))) && (await hasFiles(path.join(root, "scripts")))) {
-    const manifest = (await exists(p.testManifest)) ? await readJson<TestManifest>(p.testManifest) : { tests: [] };
-    if (!manifest.tests.some((test) => test.kind === "unit")) {
-      warnings.push(issue("warning", "runtime scripts are present; add or recommend unit tests in .meta-skill/tests/manifest.json", path.join(root, "scripts")));
+    const tests = await listTestFiles(root, p.unitTests, "unit");
+    if (!tests.length) {
+      warnings.push(issue("warning", "runtime scripts are present; add or recommend unit tests in .meta-skill/tests/unit/", path.join(root, "scripts")));
     }
   }
 }
@@ -209,7 +182,6 @@ async function validateCase(
   folder: string,
   seenIds: Set<string>,
   testIds: Set<string>,
-  judgeIds: Set<string>,
   failures: Issue[],
   warnings: Issue[]
 ): Promise<void> {
@@ -241,7 +213,7 @@ async function validateCase(
     if (!testIds.has(testId)) failures.push(issue("failure", `criteria references missing test id: ${testId}`, caseMd));
   }
   for (const judge of item.criteria.judges || []) {
-    if (!judgeIds.has(judge.id)) failures.push(issue("failure", `criteria references missing judge id: ${judge.id}`, caseMd));
+    if (!item.criteria.rubric) failures.push(issue("failure", `criteria judge ${judge.id} requires criteria.rubric`, caseMd));
     if (judge.threshold?.overall_min !== undefined && (judge.threshold.overall_min < 1 || judge.threshold.overall_min > 5)) {
       failures.push(issue("failure", `judge threshold overall_min must be 1-5 for ${judge.id}`, caseMd));
     }
@@ -278,45 +250,43 @@ async function listFixtureFiles(fixturesDir: string): Promise<string[]> {
   return files.sort();
 }
 
-async function validateJudges(judgesDir: string, failures: Issue[], warnings: Issue[]): Promise<Set<string>> {
+interface DiscoveredTest {
+  id: string;
+  kind: "unit" | "eval";
+  path: string;
+  command: string;
+}
+
+async function validateTests(root: string, testsDir: string, failures: Issue[]): Promise<Set<string>> {
+  const tests = [...(await listTestFiles(root, path.join(testsDir, "unit"), "unit")), ...(await listTestFiles(root, path.join(testsDir, "eval"), "eval"))];
   const ids = new Set<string>();
-  if (!(await exists(judgesDir))) return ids;
-  const files = (await fs.readdir(judgesDir, { withFileTypes: true })).filter((entry) => entry.isFile() && entry.name.endsWith(".md"));
-  for (const file of files) {
-    const full = path.join(judgesDir, file.name);
-    const text = await fs.readFile(full, "utf8");
-    const parsed = parseMarkdownFrontmatter(text);
-    if (!parsed.id) failures.push(issue("failure", "judge frontmatter missing id", full));
-    if (parsed.id) ids.add(parsed.id);
-    if (!["rubric", "pass_fail"].includes(parsed.type || "")) failures.push(issue("failure", `judge ${file.name} type must be rubric or pass_fail`, full));
-    if (parsed.type === "rubric" && parsed.scale !== "1-5") failures.push(issue("failure", `rubric judge ${file.name} must use scale 1-5`, full));
-    if (!/##?\s+Output/i.test(text)) warnings.push(issue("warning", `judge ${file.name} should define structured output guidance`, full));
-    if (!/example|calibration/i.test(text)) warnings.push(issue("warning", `judge ${file.name} has no examples yet`, full));
+  for (const test of tests) {
+    if (ids.has(test.id)) failures.push(issue("failure", `duplicate test id: ${test.id}`, test.path));
+    ids.add(test.id);
+    if (!/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/.test(test.id)) failures.push(issue("failure", `invalid test id: ${test.id}`, test.path));
   }
   return ids;
 }
 
-function parseMarkdownFrontmatter(text: string): Record<string, string> {
-  if (!text.startsWith("---\n")) return {};
-  const end = text.indexOf("\n---\n", 4);
-  if (end === -1) return {};
-  const result: Record<string, string> = {};
-  for (const line of text.slice(4, end).split(/\r?\n/)) {
-    const match = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
-    if (match) result[match[1]] = match[2].replace(/^['"]|['"]$/g, "").trim();
+async function listTestFiles(root: string, dir: string, kind: "unit" | "eval"): Promise<DiscoveredTest[]> {
+  if (!(await exists(dir))) return [];
+  const files: DiscoveredTest[] = [];
+  for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+    if (!entry.isFile() || entry.name.startsWith(".")) continue;
+    const full = path.join(dir, entry.name);
+    const id = path.basename(entry.name, path.extname(entry.name));
+    files.push({ id, kind, path: full, command: path.relative(root, full).split(path.sep).join("/") });
   }
-  return result;
+  return files.sort((a, b) => a.id.localeCompare(b.id));
 }
 
-async function runManifestTests(
+async function runDiscoveredTests(
   root: string,
-  manifest: TestManifest,
   kind: "unit" | "eval",
   runEnv?: { runId: string; runRoot: string; projectRoot: string }
 ): Promise<LintReport["tests"]> {
   const rows: LintReport["tests"] = [];
-  for (const test of manifest.tests || []) {
-    if (test.kind !== kind) continue;
+  for (const test of await listTestFiles(root, path.join(root, ".meta-skill", "tests", kind), kind)) {
     try {
       const { stdout, stderr } = await execAsync(test.command, {
         cwd: root,

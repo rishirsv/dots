@@ -31,9 +31,9 @@ Do not let a broad review request become an unbounded rewrite.
 Valid improvement evidence includes:
 
 - `meta-skill lint` failures or warnings
-- `.meta-skill/evals/runs/<run-id>/facts.jsonl`
-- `.meta-skill/evals/runs/<run-id>/cases/<case-folder>/final.md`
-- `.meta-skill/evals/runs/<run-id>/cases/<case-folder>/rpc.jsonl`
+- `.meta-skill/runs/<run-id>/facts.jsonl`
+- `.meta-skill/runs/<run-id>/cases/<case-folder>/final.md`
+- `.meta-skill/runs/<run-id>/cases/<case-folder>/rpc.jsonl`
 - `tests.jsonl`, `grades.jsonl`, or `feedback.jsonl`
 - case `case.md`, criteria, trace, final output, or artifacts
 - concrete user-observed failure
@@ -48,7 +48,7 @@ Use only lanes relevant to the request:
 - Runtime clarity: default path, output contract, stop/ask points, final checks.
 - Resources: linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - Controls: user files as data, approval gates, external writes, package/publish gates.
-- Eval evidence: `.meta-skill/evals/` cases, `.meta-skill/tests/manifest.json`, judge quality, token usage visibility.
+- Eval evidence: `.meta-skill/cases/`, executable tests under `.meta-skill/tests/`, judge quality, token usage visibility.
 
 ## Prompt Doctor Loop
 

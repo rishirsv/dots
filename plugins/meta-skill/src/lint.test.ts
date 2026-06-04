@@ -7,15 +7,16 @@ import { appendFact } from "./facts.ts";
 import { lintProject } from "./lint.ts";
 import { readFacts } from "./facts.ts";
 import { createSkill } from "./skills.ts";
-import { ensureDir, writeJson, writeText } from "./project.ts";
+import { ensureDir, writeText } from "./project.ts";
 
 describe("lint", () => {
   it("annotates saved runs through facts", async () => {
     const project = await fixtureProject("lint-facts");
-    const runRoot = path.join(project, ".meta-skill", "evals", "runs", "001-run");
+    const runRoot = path.join(project, ".meta-skill", "runs", "001-run");
     await ensureDir(runRoot);
     await appendFact(runRoot, { type: "run_started", run_id: "001-run", source: "test", payload: {} });
-    await writeJson(path.join(project, ".meta-skill", "tests", "manifest.json"), { schema_version: 1, tests: [{ id: "unit", kind: "eval", command: "true" }] });
+    await writeText(path.join(project, ".meta-skill", "tests", "eval", "case-check.sh"), "#!/bin/sh\ntrue\n");
+    await fs.chmod(path.join(project, ".meta-skill", "tests", "eval", "case-check.sh"), 0o755);
 
     const result = await lintProject(project, { runId: "001-run" });
 
@@ -36,7 +37,7 @@ async function fixtureProject(slug: string): Promise<string> {
     description: `Use when testing ${slug}; not for unrelated tasks.`,
     job: "Handle the task."
   });
-  await ensureDir(path.join(target, ".meta-skill", "evals", "runs"));
-  await writeText(path.join(target, ".meta-skill", "evals", "cases", "R1-basic", "case.md"), "---\ntitle: Basic\ncriteria:\n  expected_behavior: ok\n  assertions: []\n---\n\n## Task\n\nok\n");
+  await ensureDir(path.join(target, ".meta-skill", "runs"));
+  await writeText(path.join(target, ".meta-skill", "cases", "R1-basic", "case.md"), "---\ntitle: Basic\ncriteria:\n  expected_behavior: ok\n  assertions: []\n  tests:\n    - case-check\n---\n\n## Task\n\nok\n");
   return target;
 }

@@ -10,8 +10,8 @@ export async function initEvals(project: string): Promise<{ path: string; warnin
   const warnings: string[] = [];
   const p = projectPaths(root);
   const cases = (await exists(p.cases)) ? (await fs.readdir(p.cases, { withFileTypes: true })).filter((entry) => entry.isDirectory()) : [];
-  if (!cases.length) warnings.push("No cases exist yet. Add .meta-skill/evals/cases/<ID-slug>/case.md.");
-  return { path: p.evals, warnings };
+  if (!cases.length) warnings.push("No cases exist yet. Add .meta-skill/cases/<ID-slug>/case.md.");
+  return { path: p.cases, warnings };
 }
 
 export async function loadCases(project: string, selector: EvalSelector = {}): Promise<CaseRecord[]> {

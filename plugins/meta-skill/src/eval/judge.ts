@@ -38,9 +38,8 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
     for (const item of cases) {
       const judgeIds = options.allJudges ? (item.criteria.judges || []).map((judge) => judge.id) : [options.judge as string];
       for (const judgeId of judgeIds) {
-        const judgePath = path.join(p.judges, `${judgeId}.md`);
-        if (!(await exists(judgePath))) throw new CliError(`judge does not exist: ${judgeId}`);
-        const judgePrompt = await readText(judgePath);
+        const judgePrompt = item.criteria.rubric;
+        if (!judgePrompt) throw new CliError(`case ${item.id} does not define criteria.rubric for judge ${judgeId}`);
         const threshold = (item.criteria.judges || []).find((judge) => judge.id === judgeId)?.threshold;
         for (const attempt of await attemptsInRun(runRoot, item.folder)) {
           const finalPath = path.join(runRoot, attempt.evidencePath, "final.md");

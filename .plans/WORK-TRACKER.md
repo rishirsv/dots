@@ -145,7 +145,7 @@ Context: Gate, source-grounding, and failure cases often care less about the fin
 
 Issue: Current deterministic tests can inspect files/commands externally, but they do not have a first-class way to assert on App Server behavior.
 
-Surface: `.meta-skill/evals/cases/*/case.md`, `.meta-skill/tests/manifest.json`, `lint.ts`, `eval/run.ts`, `report.ts`, and trajectory evidence files.
+Surface: `.meta-skill/cases/*/case.md`, executable tests under `.meta-skill/tests/`, `lint.ts`, `eval/run.ts`, `report.ts`, and trajectory evidence files.
 
 Solution Shape: Add a tiny assertion layer over trajectory facts: expected tool called, forbidden tool not called, file read occurred, command count under N, approval requested, no writes, no network, final answer present, first failed step. Report the first failed assertion beside the final answer.
 
@@ -197,7 +197,7 @@ Context: A final answer can still look fine while behavior drifts: the agent sto
 
 Issue: Current snapshots capture payloads and final reports, not known-good agent behavior.
 
-Surface: trajectory evidence files, snapshots under `.meta-skill/versions/`, case criteria, report diff rendering, and deterministic tests.
+Surface: trajectory evidence files, case criteria, report diff rendering, and deterministic tests.
 
 Solution Shape: Let authors bless a compact trajectory snapshot for a case, then compare later runs against that snapshot. Diff normalized behavior, not raw event IDs or timestamps.
 

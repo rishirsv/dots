@@ -76,7 +76,7 @@ export async function createSkill(options: CreateSkillOptions): Promise<{ path: 
 
   if (options.project) {
     await createWorkbench(target, { force: options.force });
-    files.push(".meta-skill/spec.md", ".meta-skill/evals/evals.json", ".meta-skill/tests/manifest.json");
+    files.push(".meta-skill/spec.md", ".meta-skill/cases/", ".meta-skill/runs/", ".meta-skill/tests/");
   }
 
   return { path: target, project: Boolean(options.project), files };

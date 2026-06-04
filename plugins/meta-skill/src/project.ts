@@ -3,7 +3,6 @@ import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
-import type { EvalManifest, TestManifest } from "./models.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -134,13 +133,9 @@ export function projectPaths(projectRoot: string) {
     skillMd: path.join(root, "SKILL.md"),
     meta,
     spec: path.join(meta, "spec.md"),
-    evals: path.join(meta, "evals"),
-    evalManifest: path.join(meta, "evals", "evals.json"),
-    cases: path.join(meta, "evals", "cases"),
-    judges: path.join(meta, "evals", "judges"),
-    runs: path.join(meta, "evals", "runs"),
+    cases: path.join(meta, "cases"),
+    runs: path.join(meta, "runs"),
     tests: path.join(meta, "tests"),
-    testManifest: path.join(meta, "tests", "manifest.json"),
     unitTests: path.join(meta, "tests", "unit"),
     evalTests: path.join(meta, "tests", "eval")
   };
@@ -162,7 +157,6 @@ export async function createWorkbench(projectRoot: string, options: { force?: bo
 
   await ensureDir(p.meta);
   await ensureDir(p.cases);
-  await ensureDir(p.judges);
   await ensureDir(p.runs);
   await ensureDir(p.unitTests);
   await ensureDir(p.evalTests);
@@ -172,25 +166,6 @@ export async function createWorkbench(projectRoot: string, options: { force?: bo
       p.spec,
       `# ${skillName} Meta Skill Spec\n\n## Purpose\n\nRecord why this skill exists, the workflow boundary, and the eval intent.\n\n## Boundaries\n\n- Portable payload lives at the project root.\n- Authoring workbench state lives under \`.meta-skill/\`.\n\n## Open Questions\n\n- None recorded yet.\n`
     );
-  }
-
-  if (options.force || !(await exists(p.evalManifest))) {
-    const manifest: EvalManifest = {
-      schema_version: 1,
-      skill_name: skillName,
-      suite: {
-        name: "default",
-        description: "Behavior, routing, gates, and known failure-mode coverage."
-      },
-      cases: { path: "cases" },
-      defaults: { runner: "app_server", run_source: "working_payload", timeout_ms: 120000 }
-    };
-    await writeJson(p.evalManifest, manifest);
-  }
-
-  if (options.force || !(await exists(p.testManifest))) {
-    const tests: TestManifest = { schema_version: 1, tests: [] };
-    await writeJson(p.testManifest, tests);
   }
 }
 
