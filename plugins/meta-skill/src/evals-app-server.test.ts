@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { AppServerUnavailableError } from "./app-server/client";
-import type { ScenarioRunInput, ScenarioRunResult } from "./app-server/runner";
+import type { CaseRunInput, CaseRunResult } from "./app-server/runner";
 import type { TokenUsage } from "./models";
 import { importFeedback, judgeRun, listRunSummaries, openRun, runEval } from "./evals";
 import { judgePassed } from "./eval/judge";
@@ -16,27 +16,27 @@ import { releaseProject } from "./versions";
 type JsonlRow = Record<string, unknown> & { type?: string; payload?: Record<string, unknown> };
 
 describe("App Server eval orchestration", () => {
-  it("records read-only runner metadata and closes the scenario runner", async () => {
+  it("records read-only runner metadata and closes the case runner", async () => {
     const project = await fixtureProject("eval-app-server-metadata");
-    await writeScenario(project);
+    await writeCase(project);
     let closed = false;
     const result = await runEval({
       project,
       selector: {},
       noLint: true,
-      scenarioRunner: {
+      caseRunner: {
         async run(input) {
-          const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
-          await fs.mkdir(scenarioRoot, { recursive: true });
-            await writeText(path.join(scenarioRoot, "final.md"), "ok");
-            await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
-            await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn-1"], status: "completed" });
-            await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 2, 3));
+          const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
+          await fs.mkdir(caseRoot, { recursive: true });
+            await writeText(path.join(caseRoot, "final.md"), "ok");
+            await writeText(path.join(caseRoot, "rpc.jsonl"), "");
+            await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn-1"], status: "completed" });
+            await writeJson(path.join(caseRoot, "usage.json"), tokenUsageEvidence(1, 2, 3));
             return {
             execution_status: "completed",
             token_usage: tokenSummary(1, 2, 3),
-            final_path: path.join(scenarioRoot, "final.md"),
-            evidence_path: path.join("scenarios", input.scenario.folder)
+            final_path: path.join(caseRoot, "final.md"),
+            evidence_path: path.join("cases", input.case.folder)
           };
         },
         close() {
@@ -71,11 +71,11 @@ describe("App Server eval orchestration", () => {
     assert.match(report, /No verdict recorded|no deterministic test, judge, or human feedback verdict is recorded/);
     assert.match(report, /Fixture final|ok/);
     assert.match(report, /lint skipped/);
-    const normalized = await readJson<{ summary: { run_id: string; status: string; no_verdict_count: number }; scenarios: unknown[]; readiness: { status: string } }>(path.join(result.runRoot, "report.json"));
+    const normalized = await readJson<{ summary: { run_id: string; status: string; no_verdict_count: number }; cases: unknown[]; readiness: { status: string } }>(path.join(result.runRoot, "report.json"));
     assert.equal(normalized.summary.run_id, result.runId);
     assert.equal(normalized.summary.status, "completed");
     assert.equal(normalized.summary.no_verdict_count, 1);
-    assert.equal(normalized.scenarios.length, 1);
+    assert.equal(normalized.cases.length, 1);
     assert.equal(normalized.readiness.status, "unknown");
     const index = await readJson<{ runs: Array<{ run_id: string; status: string; readiness_status: string }> }>(path.join(path.dirname(result.runRoot), "index.json"));
     assert.deepEqual(index.runs.map((row) => [row.run_id, row.status, row.readiness_status]), [[result.runId, "completed", "unknown"]]);
@@ -85,15 +85,15 @@ describe("App Server eval orchestration", () => {
     assert.equal(listed.at(-1)?.run_id, result.runId);
   });
 
-  it("classifies App Server scenario failures without reporting a false green", async () => {
+  it("classifies App Server case failures without reporting a false green", async () => {
     const project = await fixtureProject("eval-app-server-failure");
-    await writeScenario(project);
+    await writeCase(project);
     let closed = false;
     const result = await runEval({
       project,
       selector: {},
       noLint: true,
-      scenarioRunner: {
+      caseRunner: {
         async run() {
           throw new AppServerUnavailableError("App Server process exited");
         },
@@ -105,7 +105,7 @@ describe("App Server eval orchestration", () => {
 
     assert.equal(result.ok, false);
     assert.equal(closed, true);
-    assert.equal(await exists(path.join(result.runRoot, "scenarios", "R1-basic", "final.md")), false);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "final.md")), false);
     const run = await readJson<{ status: string; ok: boolean; failure_classifications: string[] }>(path.join(result.runRoot, "run.json"));
     assert.equal(run.status, "failed");
     assert.equal(run.ok, false);
@@ -114,59 +114,59 @@ describe("App Server eval orchestration", () => {
     assert.equal(results[0]?.payload?.execution_status, "errored");
     assert.equal(results[0]?.payload?.failure_classification, "app_server_unavailable");
     const events = await readText(path.join(result.runRoot, "events.jsonl"));
-    assert.match(events, /"type":"scenario_failed"/);
+    assert.match(events, /"type":"case_failed"/);
     assert.match(events, /"failure_classification":"app_server_unavailable"/);
-    const usage = await readJson<{ source_event: string | null; summary: { total_tokens: number | null; unavailable_reason: string | null }; turns: unknown[] }>(path.join(result.runRoot, "scenarios", "R1-basic", "usage.json"));
+    const usage = await readJson<{ source_event: string | null; summary: { total_tokens: number | null; unavailable_reason: string | null }; turns: unknown[] }>(path.join(result.runRoot, "cases", "R1-basic", "usage.json"));
     assert.equal(usage.source_event, null);
     assert.equal(usage.summary.total_tokens, null);
     assert.equal(usage.summary.unavailable_reason, "App Server execution failed before token metrics were available.");
     assert.deepEqual(usage.turns, []);
   });
 
-  it("classifies failed scenario results separately from harness failures", async () => {
-    const project = await fixtureProject("eval-scenario-failed");
-    await writeScenario(project);
+  it("classifies failed case results separately from harness failures", async () => {
+    const project = await fixtureProject("eval-case-failed");
+    await writeCase(project);
     const result = await runEval({
       project,
       selector: {},
       noLint: true,
-      scenarioRunner: scenarioRunner("failed", "Scenario assertions failed.")
+      caseRunner: caseRunner("failed", "Case assertions failed.")
     });
 
     assert.equal(result.ok, false);
     const run = await readJson<{ status: string; failure_classifications: string[] }>(path.join(result.runRoot, "run.json"));
     assert.equal(run.status, "failed");
-    assert.deepEqual(run.failure_classifications, ["scenario_failed"]);
+    assert.deepEqual(run.failure_classifications, ["case_failed"]);
     const results = await readJsonl(path.join(result.runRoot, "results.jsonl"));
     assert.equal(results[0]?.payload?.execution_status, "completed");
     assert.equal(results[0]?.payload?.verdict, "failed");
-    assert.equal(results[0]?.payload?.failure_classification, "scenario_failed");
-    assert.equal(results[0]?.payload?.error, "Scenario assertions failed.");
+    assert.equal(results[0]?.payload?.failure_classification, "case_failed");
+    assert.equal(results[0]?.payload?.error, "Case assertions failed.");
   });
 
-  it("runs unassisted scenarios without attaching a skill", async () => {
+  it("runs unassisted cases without attaching a skill", async () => {
     const project = await fixtureProject("eval-no-skill");
-    await writeScenario(project);
+    await writeCase(project);
     let sawNoSkill = false;
     const result = await runEval({
       project,
       selector: {},
       runSource: "no_skill",
       noLint: true,
-      scenarioRunner: {
+      caseRunner: {
         async run(input) {
           sawNoSkill = !input.attachSkill && !input.skillRoot && input.runSource.kind === "no_skill";
-          const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
-          await fs.mkdir(scenarioRoot, { recursive: true });
-            await writeText(path.join(scenarioRoot, "final.md"), "Unassisted final.");
-            await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
-            await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn"], status: "completed" });
-            await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
+          const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
+          await fs.mkdir(caseRoot, { recursive: true });
+            await writeText(path.join(caseRoot, "final.md"), "Unassisted final.");
+            await writeText(path.join(caseRoot, "rpc.jsonl"), "");
+            await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "thread", turn_ids: ["turn"], status: "completed" });
+            await writeJson(path.join(caseRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
             return {
             execution_status: "completed",
             token_usage: tokenSummary(1, 1, 2),
-            final_path: path.join(scenarioRoot, "final.md"),
-            evidence_path: path.join("scenarios", input.scenario.folder)
+            final_path: path.join(caseRoot, "final.md"),
+            evidence_path: path.join("cases", input.case.folder)
           };
         },
         close() {}
@@ -175,7 +175,7 @@ describe("App Server eval orchestration", () => {
 
     assert.equal(result.ok, true);
     assert.equal(sawNoSkill, true);
-    assert.equal(await exists(path.join(result.runRoot, "scenarios", "R1-basic", "stage", "skill", "SKILL.md")), false);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "stage", "skill", "SKILL.md")), false);
     const run = await readJson<{ run_source: { kind: string; attached_skill: boolean } }>(path.join(result.runRoot, "run.json"));
     assert.equal(run.run_source.kind, "no_skill");
     assert.equal(run.run_source.attached_skill, false);
@@ -183,7 +183,7 @@ describe("App Server eval orchestration", () => {
 
   it("marks runs failed when deterministic checks or judges fail", async () => {
     const project = await fixtureProject("eval-failure-status");
-    await writeScenario(project);
+    await writeCase(project);
     await writeJson(path.join(project, ".meta-skill", "tests", "manifest.json"), {
       schema_version: 1,
       tests: [{ id: "failing-eval", kind: "eval", command: "node -e \"process.exit(1)\"" }]
@@ -193,7 +193,7 @@ describe("App Server eval orchestration", () => {
       project,
       selector: {},
       withJudges: true,
-      scenarioRunner: scenarioRunner("passed"),
+      caseRunner: caseRunner("passed"),
       async judgeRunner() {
         return { annotations: 1, ok: false, failureClassifications: ["judge_failure"] };
       }
@@ -213,7 +213,7 @@ describe("App Server eval orchestration", () => {
 
   it("enforces judge thresholds before trusting pass and refreshes normalized reports", async () => {
     const project = await fixtureProject("eval-judge-threshold");
-    await writeScenario(project, {
+    await writeCase(project, {
       judges: [{ id: "final-answer-quality", threshold: { overall_min: 4 } }]
     });
     await writeText(
@@ -225,22 +225,15 @@ describe("App Server eval orchestration", () => {
       project,
       selector: {},
       noLint: true,
-      scenarioRunner: scenarioRunner("passed")
+      caseRunner: caseRunner("passed")
     });
-    await writeJson(path.join(project, ".meta-skill", "evals", "scenarios", "R1-basic", "criteria.json"), {
-      schema_version: 1,
-      what_it_tests: "Changed current criteria",
-      expected_behavior: "Changed after the run.",
-      assertions: ["Changed."],
-      tests: [],
-      judges: [{ id: "final-answer-quality", threshold: { overall_min: 1 } }]
-    });
+    await writeCase(project, { judges: [{ id: "final-answer-quality", threshold: { overall_min: 1 } }], expectedBehavior: "Changed after the run.", assertion: "Changed." });
 
     const judged = await judgeRun({
       project,
       runId: result.runId,
       allJudges: true,
-      allScenarios: true,
+      allCases: true,
       async judgeExecutor() {
         return { overall: 3, pass: true, rationale: "Looks okay.", dimensions: {} };
       }
@@ -265,15 +258,15 @@ describe("App Server eval orchestration", () => {
 
   it("refreshes normalized report and run index after feedback import", async () => {
     const project = await fixtureProject("eval-feedback-refresh");
-    await writeScenario(project);
+    await writeCase(project);
     const result = await runEval({
       project,
       selector: {},
       noLint: true,
-      scenarioRunner: scenarioRunner("passed")
+      caseRunner: caseRunner("passed")
     });
     const feedback = path.join(path.dirname(project), "feedback.jsonl");
-    await writeText(feedback, JSON.stringify({ scenario_id: "R1", source: "reviewer", label: "fail", note: "Missing source grounding." }));
+    await writeText(feedback, JSON.stringify({ case_id: "R1", source: "reviewer", label: "fail", note: "Missing source grounding." }));
 
     const imported = await importFeedback(project, result.runId, feedback);
 
@@ -287,7 +280,7 @@ describe("App Server eval orchestration", () => {
 
   it("passes run-scoped environment variables to eval tests", async () => {
     const project = await fixtureProject("eval-env-vars");
-    await writeScenario(project);
+    await writeCase(project);
     await writeJson(path.join(project, ".meta-skill", "tests", "manifest.json"), {
       schema_version: 1,
       tests: [
@@ -303,7 +296,7 @@ describe("App Server eval orchestration", () => {
     const result = await runEval({
       project,
       selector: {},
-      scenarioRunner: scenarioRunner("passed")
+      caseRunner: caseRunner("passed")
     });
 
     assert.equal(result.ok, true);
@@ -314,7 +307,7 @@ describe("App Server eval orchestration", () => {
 
   it("runs a saved snapshot payload and packages it without packaging .meta-skill", async () => {
     const project = await fixtureProject("snapshot-e2e");
-    await writeScenario(project);
+    await writeCase(project);
     const release = await releaseProject(project);
     assert.equal(await exists(path.join(release.releaseRoot, "skill", ".meta-skill")), false);
 
@@ -323,11 +316,11 @@ describe("App Server eval orchestration", () => {
       selector: {},
       runSource: "snapshot_payload",
       noLint: true,
-      scenarioRunner: scenarioRunner("passed")
+      caseRunner: caseRunner("passed")
     });
 
     assert.equal(result.ok, true);
-    assert.equal(await exists(path.join(result.runRoot, "scenarios", "R1-basic", "final.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "final.md")), true);
     const run = await readJson<{ run_source: { kind: string; label: string } }>(path.join(result.runRoot, "run.json"));
     assert.equal(run.run_source.kind, "snapshot_payload");
     assert.equal(run.run_source.label, "Saved snapshot payload");
@@ -338,26 +331,26 @@ describe("App Server eval orchestration", () => {
   });
 });
 
-function scenarioRunner(verdict: ScenarioRunResult["verdict"], error?: string) {
+function caseRunner(verdict: CaseRunResult["verdict"], error?: string) {
   return {
-    async run(input: ScenarioRunInput): Promise<ScenarioRunResult> {
-      const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
-      await fs.mkdir(scenarioRoot, { recursive: true });
+    async run(input: CaseRunInput): Promise<CaseRunResult> {
+      const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
+      await fs.mkdir(caseRoot, { recursive: true });
       if (input.attachSkill) {
-        await fs.mkdir(path.join(scenarioRoot, "stage", "skill"), { recursive: true });
-        await writeText(path.join(scenarioRoot, "stage", "skill", "SKILL.md"), "fixture");
+        await fs.mkdir(path.join(caseRoot, "stage", "skill"), { recursive: true });
+        await writeText(path.join(caseRoot, "stage", "skill", "SKILL.md"), "fixture");
       }
-      await writeText(path.join(scenarioRoot, "final.md"), "Fixture final.");
-      await writeText(path.join(scenarioRoot, "turns.jsonl"), "");
-      await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
-      await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
-      await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
+      await writeText(path.join(caseRoot, "final.md"), "Fixture final.");
+      await writeText(path.join(caseRoot, "turns.jsonl"), "");
+      await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
+      await writeText(path.join(caseRoot, "rpc.jsonl"), "");
+      await writeJson(path.join(caseRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
       return {
         execution_status: "completed",
         ...(verdict ? { verdict } : {}),
         token_usage: tokenSummary(1, 1, 2),
-        final_path: path.join(scenarioRoot, "final.md"),
-        evidence_path: path.join("scenarios", input.scenario.folder),
+        final_path: path.join(caseRoot, "final.md"),
+        evidence_path: path.join("cases", input.case.folder),
         error
       };
     },
@@ -394,7 +387,7 @@ async function fixtureProject(slug: string): Promise<string> {
   return project;
 }
 
-async function writeScenario(
+async function writeCase(
   project: string,
   options: {
     judges?: Array<{
@@ -404,29 +397,32 @@ async function writeScenario(
         dimensions?: Record<string, number>;
       };
     }>;
+    expectedBehavior?: string;
+    assertion?: string;
   } = {}
 ): Promise<void> {
-  const scenario = path.join(project, ".meta-skill", "evals", "scenarios", "R1-basic");
-  await fs.mkdir(scenario, { recursive: true });
-  await writeText(path.join(scenario, "task.md"), "Do the eval task.");
-  await writeJson(path.join(scenario, "scenario.json"), {
-    schema_version: 1,
-    id: "R1",
-    type: "regression",
-    title: "Basic behavior",
-    topics: ["smoke"],
-    include: [],
-    setup: [],
-    metadata: {}
-  });
-  await writeJson(path.join(scenario, "criteria.json"), {
-    schema_version: 1,
-    what_it_tests: "Basic behavior",
-    expected_behavior: "The skill should answer directly.",
-    assertions: ["Answers directly."],
-    tests: [],
-    judges: options.judges || []
-  });
+  const item = path.join(project, ".meta-skill", "evals", "cases", "R1-basic");
+  await fs.mkdir(item, { recursive: true });
+  await writeText(
+    path.join(item, "case.md"),
+    `---
+title: Basic behavior
+topics:
+  - smoke
+criteria:
+  what_it_tests: Basic behavior
+  expected_behavior: ${options.expectedBehavior || "The skill should answer directly."}
+  assertions:
+    - ${options.assertion || "Answers directly."}
+  tests: []
+  judges:${(options.judges || []).length ? `\n${(options.judges || []).map((judge) => `    - id: ${judge.id}${judge.threshold?.overall_min !== undefined ? `\n      threshold:\n        overall_min: ${judge.threshold.overall_min}` : ""}`).join("\n")}` : " []"}
+---
+
+## Task
+
+Do the eval task.
+`
+  );
 }
 
 async function readJsonl(target: string): Promise<JsonlRow[]> {

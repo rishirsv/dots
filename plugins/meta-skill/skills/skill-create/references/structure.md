@@ -32,7 +32,7 @@ Project mode adds hidden authoring state:
     spec.md
     evals/
       evals.json
-      scenarios/<ID-slug>/
+      cases/<ID-slug>/
       judges/
       runs/
     tests/

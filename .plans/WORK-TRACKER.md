@@ -10,13 +10,13 @@ PR #20 removed the forward-facing eval `side` model. A run now evaluates one exe
 - saved snapshot payload with `--snapshot`
 - no skill / unassisted execution with `--no-skill`
 
-New run evidence is written under `scenarios/<scenario>/`, not `scenarios/<scenario>/<side>/`. `--compare` has been removed from `eval run`; no first-class comparison report is planned. No-skill runs are manual control evidence, not an automated uplift score.
+New run evidence is written under `cases/<case>/`, not `cases/<case>/<side>/`. `--compare` has been removed from `eval run`; no first-class comparison report is planned. No-skill runs are manual control evidence, not an automated uplift score.
 
-PR #21, merge commit `03bc2b4d3f365cbd50006107dd1bec381f5a8101`, split the verdict contract. Current eval writes use execution facts plus optional verdict evidence: successful App Server execution is `execution_status: completed`, and pass/fail comes only from deterministic tests, judges, or human feedback. Current reports say "no verdict recorded" when a scenario executed but has no verdict. Old `needs_review` evidence is normalized read-only.
+PR #21, merge commit `03bc2b4d3f365cbd50006107dd1bec381f5a8101`, split the verdict contract. Current eval writes use execution facts plus optional verdict evidence: successful App Server execution is `execution_status: completed`, and pass/fail comes only from deterministic tests, judges, or human feedback. Current reports say "no verdict recorded" when a case executed but has no verdict. Old `needs_review` evidence is normalized read-only.
 
-PR #22, merge commit `5911f43214b120915af26d7aeb6b9a6a9c50239c`, collapsed token usage evidence. Scenario `usage.json` is now the canonical token evidence file, token metrics are nullable numbers with one `unavailable_reason`, `results.jsonl` no longer duplicates token summaries, and reports derive token totals and unavailable reasons from scenario usage evidence. Token parsing now reads the recorded generated App Server camelCase token fields instead of probing multiple alias shapes.
+PR #22, merge commit `5911f43214b120915af26d7aeb6b9a6a9c50239c`, collapsed token usage evidence. Case `usage.json` is now the canonical token evidence file, token metrics are nullable numbers with one `unavailable_reason`, `results.jsonl` no longer duplicates token summaries, and reports derive token totals and unavailable reasons from case usage evidence. Token parsing now reads the recorded generated App Server camelCase token fields instead of probing multiple alias shapes.
 
-The App Server runner currently behaves mostly like a reliable final-answer runner: it starts one read-only/no-approval/no-network thread per scenario, force-attaches the skill payload when a skill source is used, scrapes final answer deltas, captures token telemetry when present, saves raw RPC events, and reports bounded-buffer warnings. It does not yet use the App Server surfaces that would justify the extra machinery: structured trajectory assertions, forked decision trees, tool/sandbox event checks, writable artifact capture, trigger routing, or bounded sampling.
+The App Server runner currently behaves mostly like a reliable final-answer runner: it starts one read-only/no-approval/no-network thread per case, force-attaches the skill payload when a skill source is used, scrapes final answer deltas, captures token telemetry when present, saves raw RPC events, and reports bounded-buffer warnings. It does not yet use the App Server surfaces that would justify the extra machinery: structured trajectory assertions, forked decision trees, tool/sandbox event checks, writable artifact capture, trigger routing, or bounded sampling.
 
 The evidence model is still heavier than the measurement power:
 
@@ -35,22 +35,22 @@ Validation baseline from the current merged slice:
 
 ## To Do
 
-### 1. Collapse Scenario Classification Axes
+### 1. Collapse Case Classification Axes
 
 Status: implemented in current working-tree change.
 
-Context: Scenario metadata used to have both `family` (`R/F/T/G`) and `type` (`behavior/trigger/artifact/gate`). Trigger and artifact types were more aspirational than executable.
+Context: Case metadata used to have both `family` (`R/F/T/G`) and `type` (`behavior/trigger/artifact/gate`). Trigger and artifact types were more aspirational than executable.
 
 Issue: Authors had to choose two overlapping fields, and the runner cannot prove native trigger routing or writable artifacts anyway.
 
-Surface: `models.ts`, `lint.ts`, scenario fixtures, eval docs, report subtitles, and generated `app/`.
+Surface: `models.ts`, `lint.ts`, case fixtures, eval docs, report subtitles, and generated `app/`.
 
-Solution Shape: Keep one author-facing axis: executable scenario types. For now use `R`, `F`, and `G`; derive display text from the scenario type. Treat source-grounding as topic/criteria, not a separate type.
+Solution Shape: Keep one author-facing axis: executable case types. For now use `R`, `F`, and `G`; derive display text from the case type. Treat source-grounding as topic/criteria, not a separate type.
 
 Mini Plan:
 
 1. Consolidate supported type constants.
-2. Remove the old `ScenarioType` meaning from required scenario metadata and lint validation.
+2. Remove the old `behavior/trigger/artifact/gate` type axis from required case metadata and lint validation.
 3. Remove `T`/trigger and artifact references from CLI selection/docs until protocol-proven modes exist.
 4. Update fixtures, loading, reports, and tests.
 5. Preserve old-run display only if existing report reads need it.
@@ -58,16 +58,16 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Collapse Meta Skill scenario taxonomy in /Users/rishi/Code/agent. Rename the executable scenario classification from `family` to `type`, remove the old `behavior/trigger/gate` type axis, and keep supported types to `R`/`F`/`G` until trigger routing is protocol-proven. Update `plugins/meta-skill/src/models.ts`, `src/lint.ts`, scenario loading, docs, fixtures, and reports. Do not add compatibility aliases unless old-run read mode requires them. Rebuild `app/`, run `npm test`, `npm run check:app`, and `git diff --check`.
+Collapse Meta Skill case taxonomy in /Users/rishi/Code/agent. Rename the executable case classification from `family` to `type`, remove the old `behavior/trigger/gate` type axis, and keep supported types to `R`/`F`/`G` until trigger routing is protocol-proven. Update `plugins/meta-skill/src/models.ts`, `src/lint.ts`, case loading, docs, fixtures, and reports. Do not add compatibility aliases unless old-run read mode requires them. Rebuild `app/`, run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 2. Harden App Server Event Buffer Overflow Handling
 
 Status: follow-up from bounded buffer review.
 
-Context: The client stores raw App Server events in memory and scenario code asks for `eventsSince(mark)`. This is fine for tiny runs but becomes risky once trajectory parsing, sampling, or fuzzing is added.
+Context: The client stores raw App Server events in memory and case code asks for `eventsSince(mark)`. This is fine for tiny runs but becomes risky once trajectory parsing, sampling, or fuzzing is added.
 
-Issue: An unbounded event buffer makes long or noisy scenarios a memory risk and can hide missing persistence boundaries.
+Issue: An unbounded event buffer makes long or noisy cases a memory risk and can hide missing persistence boundaries.
 
 Surface: `app-server/client.ts`, `app-server/runner.ts`, `rpc.jsonl` persistence, live-smoke tests, and future trajectory parsing.
 
@@ -76,7 +76,7 @@ Solution Shape: Keep `rpc.jsonl` as the durable event log, collapse overflow war
 Mini Plan:
 
 1. Replace per-overflow warning retention with aggregate constant-space overflow state.
-2. Keep warning rows in `rpc.jsonl` and evidence warnings in scenario outputs.
+2. Keep warning rows in `rpc.jsonl` and evidence warnings in case outputs.
 3. Do not preserve a previous turn's final text when the current turn overflows before final deltas are available.
 4. Add overflow regression tests for both warning memory and final-answer behavior.
 5. Rebuild generated `app/`.
@@ -130,7 +130,7 @@ Mini Plan:
 1. Add parser tests for final text, completion, token event present/missing, wrong thread/turn ignored.
 2. Add observed tool/file/command/approval event families from real or fixture App Server traces.
 3. Replace scattered method-name filters in runner and judge code with the parser.
-4. Persist compact trajectory facts under each scenario evidence folder.
+4. Persist compact trajectory facts under each case evidence folder.
 5. Render trajectory summary only when facts exist.
 
 Implementation Prompt:
@@ -143,18 +143,18 @@ Add structured App Server trajectory parsing to Meta Skill in /Users/rishi/Code/
 
 Status: depends on structured trajectory parsing.
 
-Context: Gate, source-grounding, and failure scenarios often care less about the final text than about whether the agent read the right file, used the right tool, avoided a write, asked for approval, or stopped at the right point.
+Context: Gate, source-grounding, and failure cases often care less about the final text than about whether the agent read the right file, used the right tool, avoided a write, asked for approval, or stopped at the right point.
 
 Issue: Current deterministic tests can inspect files/commands externally, but they do not have a first-class way to assert on App Server behavior.
 
-Surface: `.meta-skill/evals/scenarios/*/criteria.json`, `.meta-skill/tests/manifest.json`, `lint.ts`, `eval/run.ts`, `report.ts`, and trajectory evidence files.
+Surface: `.meta-skill/evals/cases/*/case.md`, `.meta-skill/tests/manifest.json`, `lint.ts`, `eval/run.ts`, `report.ts`, and trajectory evidence files.
 
 Solution Shape: Add a tiny assertion layer over trajectory facts: expected tool called, forbidden tool not called, file read occurred, command count under N, approval requested, no writes, no network, final answer present, first failed step. Report the first failed assertion beside the final answer.
 
 Mini Plan:
 
 1. Define a small assertion manifest shape or extend deterministic test metadata.
-2. Run assertions after scenario execution using `trajectory.json`.
+2. Run assertions after case execution using `trajectory.json`.
 3. Record assertion results in `tests.jsonl` with first-failure localization.
 4. Render failed trajectory assertions in `report.html`.
 5. Keep judges optional and separate.
@@ -162,7 +162,7 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Add deterministic trajectory assertions to Meta Skill in /Users/rishi/Code/agent. Build on structured App Server trajectory evidence and support a small assertion set: expected tool/file/command event, forbidden event, approval requested, no write, no network, max tool calls, and final answer present. Record assertion results in `tests.jsonl`, show first-failure localization in `report.html`, and keep judges separate. Update scenario docs, lint validation, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add deterministic trajectory assertions to Meta Skill in /Users/rishi/Code/agent. Build on structured App Server trajectory evidence and support a small assertion set: expected tool/file/command event, forbidden event, approval requested, no write, no network, max tool calls, and final answer present. Record assertion results in `tests.jsonl`, show first-failure localization in `report.html`, and keep judges separate. Update case docs, lint validation, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 6. Add Cost / Latency / Tool-Budget Gates
@@ -199,9 +199,9 @@ Context: A final answer can still look fine while behavior drifts: the agent sto
 
 Issue: Current snapshots capture payloads and final reports, not known-good agent behavior.
 
-Surface: trajectory evidence files, snapshots under `.meta-skill/versions/`, scenario criteria, report diff rendering, and deterministic tests.
+Surface: trajectory evidence files, snapshots under `.meta-skill/versions/`, case criteria, report diff rendering, and deterministic tests.
 
-Solution Shape: Let authors bless a compact trajectory snapshot for a scenario, then compare later runs against that snapshot. Diff normalized behavior, not raw event IDs or timestamps.
+Solution Shape: Let authors bless a compact trajectory snapshot for a case, then compare later runs against that snapshot. Diff normalized behavior, not raw event IDs or timestamps.
 
 Mini Plan:
 
@@ -209,12 +209,12 @@ Mini Plan:
 2. Add a command or test mode to bless a snapshot from a run.
 3. Compare new trajectory facts against the blessed snapshot.
 4. Report additions/removals/reordered critical events.
-5. Keep snapshot tests opt-in per scenario.
+5. Keep snapshot tests opt-in per case.
 
 Implementation Prompt:
 
 ```text
-Add golden-trajectory snapshot tests to Meta Skill in /Users/rishi/Code/agent. Use normalized trajectory facts, not raw RPC IDs or timestamps, to bless known-good behavior for selected scenarios and flag behavioral drift on later runs. Support opt-in scenario configuration, snapshot blessing from a run, deterministic diff output, report rendering, tests, docs, generated `app/`, and validation with `npm test`, `npm run check:app`, and `git diff --check`.
+Add golden-trajectory snapshot tests to Meta Skill in /Users/rishi/Code/agent. Use normalized trajectory facts, not raw RPC IDs or timestamps, to bless known-good behavior for selected cases and flag behavioral drift on later runs. Support opt-in case configuration, snapshot blessing from a run, deterministic diff output, report rendering, tests, docs, generated `app/`, and validation with `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 8. Behavioral Trajectory Diff Between Separate Runs
@@ -232,7 +232,7 @@ Solution Shape: Add a separate investigation command or report view that compare
 Mini Plan:
 
 1. Require two explicit run IDs; do not compare inside `eval run`.
-2. Align scenarios by ID and turns by stable order.
+2. Align cases by ID and turns by stable order.
 3. Compute first behavioral divergence from normalized trajectory facts.
 4. Render compact diffs: file/tool/command/approval/final-text deltas.
 5. Keep summary language source-honest: manual behavioral diff, no verdict.
@@ -240,7 +240,7 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Add a manual behavioral trajectory diff view to Meta Skill in /Users/rishi/Code/agent without reviving eval sides or `--compare`. The command should accept two explicit run IDs, read normalized trajectory facts, align scenarios/turns, and show the first behavioral divergence plus compact tool/file/command/approval deltas. Label it as manual inspection evidence, not an automated uplift or verdict. Update report code, docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add a manual behavioral trajectory diff view to Meta Skill in /Users/rishi/Code/agent without reviving eval sides or `--compare`. The command should accept two explicit run IDs, read normalized trajectory facts, align cases/turns, and show the first behavioral divergence plus compact tool/file/command/approval deltas. Label it as manual inspection evidence, not an automated uplift or verdict. Update report code, docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 9. Counterfactual Fork Trees
@@ -249,16 +249,16 @@ Status: App Server-native capability, gated on protocol proof.
 
 Context: The App Server can potentially preserve thread state and fork from a decision point. That lets a run share the expensive prefix and branch only where behavior matters: a gate, ambiguity, refusal boundary, or trigger moment.
 
-Issue: Re-running whole scenarios cannot efficiently answer "what happens if the user pushes back here?" or "does the gate hold under pressure?"
+Issue: Re-running whole cases cannot efficiently answer "what happens if the user pushes back here?" or "does the gate hold under pressure?"
 
-Surface: generated App Server thread/fork protocol, scenario turn definitions, trajectory evidence, report tree rendering, and run storage.
+Surface: generated App Server thread/fork protocol, case turn definitions, trajectory evidence, report tree rendering, and run storage.
 
-Solution Shape: Add explicit fork-point scenarios after confirming the protocol. A base thread runs to a marked turn, then child branches inject pressure prompts. Store a tree of branch trajectories with shared prefix metadata.
+Solution Shape: Add explicit fork-point cases after confirming the protocol. A base thread runs to a marked turn, then child branches inject pressure prompts. Store a tree of branch trajectories with shared prefix metadata.
 
 Mini Plan:
 
 1. Verify exact App Server fork/resume/thread-state protocol.
-2. Add a small scenario config for fork points and branch prompts.
+2. Add a small case config for fork points and branch prompts.
 3. Persist base prefix evidence once plus per-branch trajectory evidence.
 4. Run branch trajectory assertions independently.
 5. Render the decision tree and branch outcomes in `report.html`.
@@ -266,7 +266,7 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Prototype counterfactual fork-tree evals in Meta Skill in /Users/rishi/Code/agent after verifying the generated App Server fork/resume protocol. Add explicit scenario config for a fork point and branch prompts, run a shared prefix once, fork N branches with different user pressures, persist per-branch trajectory evidence, and render a decision tree in `report.html`. Keep this single-source per run and do not reintroduce sides or comparison reports. Add tests/fixtures, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Prototype counterfactual fork-tree evals in Meta Skill in /Users/rishi/Code/agent after verifying the generated App Server fork/resume protocol. Add explicit case config for a fork point and branch prompts, run a shared prefix once, fork N branches with different user pressures, persist per-branch trajectory evidence, and render a decision tree in `report.html`. Keep this single-source per run and do not reintroduce sides or comparison reports. Add tests/fixtures, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 10. User-Simulator Branches For Follow-Up Pressure
@@ -275,16 +275,16 @@ Status: useful after fork trees.
 
 Context: Many skill failures appear only after a user follow-up: the user asks for an unsafe shortcut, rejects a clarification, provides partial evidence, or tries to bypass a gate.
 
-Issue: Hand-authoring every follow-up is slow, and single-turn scenarios miss interaction behavior.
+Issue: Hand-authoring every follow-up is slow, and single-turn cases miss interaction behavior.
 
-Surface: fork-tree scenario config, branch prompt generation, evaluator docs, run evidence, and trajectory assertions.
+Surface: fork-tree case config, branch prompt generation, evaluator docs, run evidence, and trajectory assertions.
 
 Solution Shape: Add a constrained user-simulator branch generator that proposes follow-up prompts from named personas such as naive user, impatient user, adversarial user, distractor user, or missing-context user. Human-authored branches remain the default; generated branches are labeled generated pressure cases.
 
 Mini Plan:
 
 1. Define a small set of simulator profiles and output constraints.
-2. Generate branch prompts only from scenario task/criteria, not hidden answer keys.
+2. Generate branch prompts only from case task text and visible fixture descriptions, not hidden criteria or answer keys.
 3. Save generated branches before execution for reviewability.
 4. Run branches through the same fork/trajectory assertion path.
 5. Label generated-user evidence clearly in reports.
@@ -292,7 +292,7 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Add constrained user-simulator branches to Meta Skill in /Users/rishi/Code/agent after fork-tree support exists. Generate labeled follow-up pressure prompts from scenario-visible context using profiles like naive, impatient, adversarial, distractor, and missing-context user. Save generated prompts before execution, avoid criteria leakage, run them as fork branches, and report them as generated pressure evidence. Update docs, tests/fixtures, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add constrained user-simulator branches to Meta Skill in /Users/rishi/Code/agent after fork-tree support exists. Generate labeled follow-up pressure prompts from case-visible context using profiles like naive, impatient, adversarial, distractor, and missing-context user. Save generated prompts before execution, avoid criteria leakage, run them as fork branches, and report them as generated pressure evidence. Update docs, tests/fixtures, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 11. Tool Chaos / Graceful-Degradation Evals
@@ -303,33 +303,33 @@ Context: Skill quality often depends on how the agent behaves when a preferred t
 
 Issue: Final-answer evals cannot distinguish graceful degradation from tool dependency collapse.
 
-Surface: App Server tool/MCP/sandbox configuration, trajectory assertions, failure classification, report evidence, and scenario config.
+Surface: App Server tool/MCP/sandbox configuration, trajectory assertions, failure classification, report evidence, and case config.
 
-Solution Shape: Add explicit tool-availability policies for a scenario: allow only selected tools, deny selected tools, disable network, or simulate tool failure if the protocol supports it. Assert that the agent asks for alternatives, reports unavailability, or uses an approved fallback.
+Solution Shape: Add explicit tool-availability policies for a case: allow only selected tools, deny selected tools, disable network, or simulate tool failure if the protocol supports it. Assert that the agent asks for alternatives, reports unavailability, or uses an approved fallback.
 
 Mini Plan:
 
 1. Verify which tool/MCP/server controls the App Server exposes.
-2. Add explicit scenario policy fields for allowed/denied capabilities.
-3. Record policy in `run.json` and scenario evidence.
+2. Add explicit case policy fields for allowed/denied capabilities.
+3. Record policy in `run.json` and case evidence.
 4. Assert on graceful degradation trajectory/final-answer facts.
 5. Render policy and observed behavior in the report.
 
 Implementation Prompt:
 
 ```text
-Add tool chaos and graceful-degradation evals to Meta Skill in /Users/rishi/Code/agent after verifying App Server tool/MCP/sandbox controls. Support explicit scenario policies for allowed or denied tools/capabilities, record the policy in run evidence, and assert that the skill handles missing tools by using approved fallbacks or clearly reporting unavailability. Update trajectory assertions, failure classification, report rendering, docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add tool chaos and graceful-degradation evals to Meta Skill in /Users/rishi/Code/agent after verifying App Server tool/MCP/sandbox controls. Support explicit case policies for allowed or denied tools/capabilities, record the policy in run evidence, and assert that the skill handles missing tools by using approved fallbacks or clearly reporting unavailability. Update trajectory assertions, failure classification, report rendering, docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 12. Trigger Fuzzing After Native Routing Exists
 
 Status: future only; requires non-forced skill routing.
 
-Context: Trigger scenarios should test whether a skill fires under paraphrase, typo, indirection, or distractor noise. Today the runner force-attaches skill payloads, so trigger firing cannot be tested.
+Context: Trigger cases should test whether a skill fires under paraphrase, typo, indirection, or distractor noise. Today the runner force-attaches skill payloads, so trigger firing cannot be tested.
 
 Issue: A hand-authored trigger phrasing is weak evidence, and force-attached runs are not trigger-routing proof.
 
-Surface: native routing protocol, scenario taxonomy, prompt mutator, sampling/fork support, trajectory evidence, and reports.
+Surface: native routing protocol, case taxonomy, prompt mutator, sampling/fork support, trajectory evidence, and reports.
 
 Solution Shape: Once the App Server can make a skill available without force-attaching it, generate prompt mutations and sample/fork them. Record activation or non-activation evidence from the event stream.
 
@@ -344,33 +344,33 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Add trigger fuzzing to Meta Skill in /Users/rishi/Code/agent only after the App Server exposes native skill routing evidence without force-attaching the skill. Restore trigger type `T` at that point, generate prompt mutations for trigger scenarios, run them as sampled or forked cases, record activation/non-activation from trajectory evidence, and report trigger robustness with representative examples. Do not restore `T` as an executable type until routing proof is real. Update taxonomy, docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add trigger fuzzing to Meta Skill in /Users/rishi/Code/agent only after the App Server exposes native skill routing evidence without force-attaching the skill. Restore trigger type `T` at that point, generate prompt mutations for trigger cases, run them as sampled or forked cases, record activation/non-activation from trajectory evidence, and report trigger robustness with representative examples. Do not restore `T` as an executable type until routing proof is real. Update taxonomy, docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 13. Writable Sandbox And Artifact Capture
 
 Status: future only; requires protocol-proven writable policy.
 
-Context: Some skills produce files. The current runner is read-only, so artifact scenarios are currently theater.
+Context: Some skills produce files. The current runner is read-only, so artifact cases are currently theater.
 
 Issue: Without writable sandbox evidence, the tool cannot test whether a skill produces the right artifact, avoids writing outside the stage, or cleans up after itself.
 
-Surface: App Server sandbox policy, stage workspace, artifact collector, trajectory assertions, report artifact listing, scenario taxonomy, and docs.
+Surface: App Server sandbox policy, stage workspace, artifact collector, trajectory assertions, report artifact listing, case taxonomy, and docs.
 
 Solution Shape: Add explicit writable mode limited to the staged workspace/artifacts area. Capture generated files deterministically and assert no writes escape the allowed area.
 
 Mini Plan:
 
 1. Verify writable sandbox policy and file-write event shapes.
-2. Add an explicit scenario/run policy for writable artifact mode.
+2. Add an explicit case/run policy for writable artifact mode.
 3. Capture artifacts under a known evidence folder.
 4. Add trajectory/file assertions for allowed and forbidden writes.
-5. Reintroduce artifact scenario claims only after this works.
+5. Reintroduce artifact case claims only after this works.
 
 Implementation Prompt:
 
 ```text
-Add writable sandbox artifact capture to Meta Skill in /Users/rishi/Code/agent only after verifying the App Server writable sandbox protocol. Support explicit writable scenarios scoped to the staged workspace/artifacts area, capture generated files deterministically, assert no writes escape the allowed area, and render artifact evidence in reports. Reintroduce artifact scenario docs only after the capability is real. Update runner, scenario config, trajectory assertions, report code, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add writable sandbox artifact capture to Meta Skill in /Users/rishi/Code/agent only after verifying the App Server writable sandbox protocol. Support explicit writable cases scoped to the staged workspace/artifacts area, capture generated files deterministically, assert no writes escape the allowed area, and render artifact evidence in reports. Reintroduce artifact case docs only after the capability is real. Update runner, case config, trajectory assertions, report code, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 14. Closed-Loop Eval Diagnose Fork-Verify
@@ -379,42 +379,42 @@ Status: high-wow future capability; keep human-gated.
 
 Context: The improve lane should turn failing evidence into bounded proposed edits. App Server fork/rerun support can test whether an edit would plausibly fix the failure before a human promotes it.
 
-Issue: Without fork-verified evidence, improvement can become vibes: a critic suggests changes, but the tool does not prove the scenario improves.
+Issue: Without fork-verified evidence, improvement can become vibes: a critic suggests changes, but the tool does not prove the case improves.
 
 Surface: `skill-improve`, eval run evidence, failing trajectories, patch proposal storage, forked verification run, reports, and human promotion gates.
 
-Solution Shape: On failure, spawn a critic thread that reads the failing trajectory and proposes a bounded skill edit. Apply it in a temporary payload or forked workspace, rerun the failing scenario, and present before/after evidence. Never auto-promote.
+Solution Shape: On failure, spawn a critic thread that reads the failing trajectory and proposes a bounded skill edit. Apply it in a temporary payload or forked workspace, rerun the failing case, and present before/after evidence. Never auto-promote.
 
 Mini Plan:
 
 1. Define a patch proposal evidence file with cited failure references.
 2. Run critic analysis in a separate no-tools or read-limited thread.
 3. Apply proposed edit only to a temporary verification payload.
-4. Rerun the failing scenario/fork and compare verdict/trajectory evidence.
+4. Rerun the failing case/fork and compare verdict/trajectory evidence.
 5. Require human approval before promotion or release.
 
 Implementation Prompt:
 
 ```text
-Add a human-gated closed-loop eval diagnose fork-verify workflow to Meta Skill in /Users/rishi/Code/agent. On a failed scenario, create a critic thread that reads the failing trajectory and proposes a bounded skill edit with evidence citations. Apply the edit only to a temporary verification payload, rerun the failing scenario, and present before/after trajectory/test evidence to the human. Do not auto-promote or release. Update skill-improve docs, eval evidence storage, tests/fixtures, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add a human-gated closed-loop eval diagnose fork-verify workflow to Meta Skill in /Users/rishi/Code/agent. On a failed case, create a critic thread that reads the failing trajectory and proposes a bounded skill edit with evidence citations. Apply the edit only to a temporary verification payload, rerun the failing case, and present before/after trajectory/test evidence to the human. Do not auto-promote or release. Update skill-improve docs, eval evidence storage, tests/fixtures, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 15. Answer-Only Runner As An Explicit Escape Hatch
 
 Status: my addition; optional strategic simplification.
 
-Context: If a scenario only grades final answer quality, the App Server is overkill. A plain model API style runner could run faster and cheaper, with massive parallelism and simple text judging.
+Context: If a case only grades final answer quality, the App Server is overkill. A plain model API style runner could run faster and cheaper, with massive parallelism and simple text judging.
 
-Issue: The project should be honest about when it is grading answers versus behavior. Keeping every scenario on App Server can obscure that distinction.
+Issue: The project should be honest about when it is grading answers versus behavior. Keeping every case on App Server can obscure that distinction.
 
-Surface: eval runner selection, scenario config, docs, report labels, judge inputs, and validation.
+Surface: eval runner selection, case config, docs, report labels, judge inputs, and validation.
 
-Solution Shape: Add an explicit `answer-only` runner mode only for final-answer scenarios, or document why the project refuses it. Label its evidence clearly as text-only: no trajectory, no sandbox, no trigger proof.
+Solution Shape: Add an explicit `answer-only` runner mode only for final-answer cases, or document why the project refuses it. Label its evidence clearly as text-only: no trajectory, no sandbox, no trigger proof.
 
 Mini Plan:
 
 1. Decide whether answer-only mode belongs in the tool or only as a design note.
-2. If implemented, keep it opt-in and unavailable for gate/trajectory/artifact scenarios.
+2. If implemented, keep it opt-in and unavailable for gate/trajectory/artifact cases.
 3. Persist runner mode in `run.json`.
 4. Report text-only evidence limitations prominently.
 5. Keep App Server as the default for behavior evals.
@@ -422,24 +422,24 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Evaluate and, if accepted, add an explicit answer-only runner mode to Meta Skill in /Users/rishi/Code/agent. This mode should be opt-in, limited to final-answer scenarios, and clearly labeled as text-only evidence with no trajectory, sandbox, trigger, or artifact proof. If the team decides not to implement it, record that decision in docs and keep App Server as the behavior-eval default. Update runner selection, report labels, tests, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Evaluate and, if accepted, add an explicit answer-only runner mode to Meta Skill in /Users/rishi/Code/agent. This mode should be opt-in, limited to final-answer cases, and clearly labeled as text-only evidence with no trajectory, sandbox, trigger, or artifact proof. If the team decides not to implement it, record that decision in docs and keep App Server as the behavior-eval default. Update runner selection, report labels, tests, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
-### 16. Scenario Minimality And Criteria-Leak Audit
+### 16. Case Minimality And Criteria-Leak Audit
 
 Status: my addition; protects eval integrity.
 
-Context: The runner already omits `criteria.json` from the solver workspace. As scenario generation, fuzzing, user simulators, and fork trees arrive, leakage and over-broad context become easier to reintroduce accidentally.
+Context: The runner omits `case.md` from the solver workspace so criteria frontmatter never stages beside solver-visible fixtures. As case generation, fuzzing, user simulators, and fork trees arrive, leakage and over-broad context become easier to reintroduce accidentally.
 
 Issue: Behavior evals lose credibility if hidden criteria, judge rubrics, or answer keys leak into solver-visible prompts, branch prompts, or generated follow-ups.
 
-Surface: `stageWorkspace`, scenario loader, generated/fuzzed branch prompts, judge inputs, report evidence, and lint.
+Surface: `stageWorkspace`, case loader, generated/fuzzed branch prompts, judge inputs, report evidence, and lint.
 
 Solution Shape: Add an audit that records exactly which files/prompts were solver-visible and checks that hidden criteria/judge material did not enter task, branch, or simulator prompts.
 
 Mini Plan:
 
-1. Record solver-visible files and prompts per scenario.
+1. Record solver-visible files and prompts per case.
 2. Add lint/audit checks for criteria/judge leakage.
 3. Include generated branch/fuzz prompts in the audit.
 4. Render a compact "criteria hidden" evidence row in reports.
@@ -448,24 +448,24 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Add a scenario minimality and criteria-leak audit to Meta Skill in /Users/rishi/Code/agent. Record solver-visible files and prompts for each scenario, verify hidden `criteria.json` and judge/rubric material do not leak into task, branch, simulator, or fuzz prompts, and render compact evidence in reports. Update stage workspace code, lint/audit tests, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add a case minimality and criteria-leak audit to Meta Skill in /Users/rishi/Code/agent. Record solver-visible files and prompts for each case, verify hidden `case.md` criteria and judge/rubric material do not leak into task, branch, simulator, or fuzz prompts, and render compact evidence in reports. Update stage workspace code, lint/audit tests, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
-### 17. Scenario Flake Ledger
+### 17. Case Flake Ledger
 
 Status: my addition; useful before full sampling UI.
 
-Context: Repeated runs of the same scenario will happen manually before formal sampling ships. The run index could expose instability without adding a full flake-rate dashboard.
+Context: Repeated runs of the same case will happen manually before formal sampling ships. The run index could expose instability without adding a full flake-rate dashboard.
 
-Issue: A single run is weak evidence, but adding n-sample machinery too early risks more ceremony. A ledger of repeated scenario outcomes is a smaller step.
+Issue: A single run is weak evidence, but adding n-sample machinery too early risks more ceremony. A ledger of repeated case outcomes is a smaller step.
 
-Surface: run index, scenario IDs, verdict/test outcomes, token usage, trajectory summaries, and report project view.
+Surface: run index, case IDs, verdict/test outcomes, token usage, trajectory summaries, and report project view.
 
-Solution Shape: Add a read-only aggregation over historical runs: for each scenario, show recent execution failures, test/judge verdicts, token totals, and notable trajectory assertion failures. No new run mode required.
+Solution Shape: Add a read-only aggregation over historical runs: for each case, show recent execution failures, test/judge verdicts, token totals, and notable trajectory assertion failures. No new run mode required.
 
 Mini Plan:
 
-1. Read existing run reports/index entries by scenario ID.
+1. Read existing run reports/index entries by case ID.
 2. Aggregate last N outcomes without changing run execution.
 3. Show instability markers in project report.
 4. Keep it informational, not a promotion gate.
@@ -474,7 +474,7 @@ Mini Plan:
 Implementation Prompt:
 
 ```text
-Add a read-only scenario flake ledger to Meta Skill in /Users/rishi/Code/agent. Aggregate recent outcomes for each scenario across existing runs, including execution failures, test/judge verdicts, token totals, and trajectory assertion failures when present. Show instability markers in the project report without adding sampling mode or promotion gates. Update report/index code, tests, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add a read-only case flake ledger to Meta Skill in /Users/rishi/Code/agent. Aggregate recent outcomes for each case across existing runs, including execution failures, test/judge verdicts, token totals, and trajectory assertion failures when present. Show instability markers in the project report without adding sampling mode or promotion gates. Update report/index code, tests, docs, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ### 18. Protocol Canary Run
@@ -483,7 +483,7 @@ Status: my addition; cheap protection for App Server drift.
 
 Context: The tracker wants to pin App Server event shapes. A small canary can prove the currently installed App Server still emits the expected methods before a full eval run.
 
-Issue: If protocol drift appears only inside scenario execution, users get noisy failures or "unavailable" evidence without a clear cause.
+Issue: If protocol drift appears only inside case execution, users get noisy failures or "unavailable" evidence without a clear cause.
 
 Surface: live-smoke test, CLI preflight, token parser, trajectory parser, architecture capture notes, and report warnings.
 
@@ -513,27 +513,27 @@ Issue: A review thread needs the small set of files that matter: task, final ans
 
 Surface: report/open commands, run evidence paths, skill-improve workflow, and thread handoff docs.
 
-Solution Shape: Add a command that emits a compact Markdown evidence brief for a run/scenario. It should cite local evidence paths, summarize execution/verdict/trajectory facts, and avoid embedding hidden criteria unless explicitly requested.
+Solution Shape: Add a command that emits a compact Markdown evidence brief for a run/case. It should cite local evidence paths, summarize execution/verdict/trajectory facts, and avoid embedding hidden criteria unless explicitly requested.
 
 Mini Plan:
 
 1. Define the evidence brief fields.
-2. Add a command or report action for one scenario/run.
+2. Add a command or report action for one case/run.
 3. Pull from canonical evidence files only.
 4. Include local file links and raw evidence paths.
-5. Add tests with failed, no-verdict, and trajectory-rich scenarios.
+5. Add tests with failed, no-verdict, and trajectory-rich cases.
 
 Implementation Prompt:
 
 ```text
-Add a compact eval evidence brief export to Meta Skill in /Users/rishi/Code/agent. For a selected run/scenario, emit Markdown that summarizes execution status, verdict evidence, final answer, token usage, trajectory highlights, failed assertions, and local evidence paths without leaking hidden criteria by default. Use canonical evidence files only. Update commands/report docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
+Add a compact eval evidence brief export to Meta Skill in /Users/rishi/Code/agent. For a selected run/case, emit Markdown that summarizes execution status, verdict evidence, final answer, token usage, trajectory highlights, failed assertions, and local evidence paths without leaking hidden criteria by default. Use canonical evidence files only. Update commands/report docs, tests, generated `app/`, and run `npm test`, `npm run check:app`, and `git diff --check`.
 ```
 
 ## Completed Items
 
 - PR #20 / `6b4086da`: Removed forward-facing eval sides so each run evaluates one source at a time and no-skill runs stay manual control evidence.
 - PR #21 / `03bc2b4d`: Split execution status from verdict evidence so successful execution no longer implies pass/fail.
-- PR #22 / `5911f432`: Made scenario `usage.json` the canonical token evidence and removed duplicate token summaries from result streams.
+- PR #22 / `5911f432`: Made case `usage.json` the canonical token evidence and removed duplicate token summaries from result streams.
 - `f03a2307`: Removed the remaining eval comparison surface without reviving in-run sides or automated uplift language.
 - `ec8485b7`: Removed the dead `eval generate` command path and its docs/tests.
 - `57c4ebe0`: Simplified App Server retry/crash recovery by deleting backoff policy and moving recovery to one explicit orchestration retry.

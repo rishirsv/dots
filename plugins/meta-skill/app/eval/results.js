@@ -3,41 +3,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.recordScenarioResult = recordScenarioResult;
+exports.recordCaseResult = recordCaseResult;
 exports.attemptsInRun = attemptsInRun;
-exports.classifyScenarioStatus = classifyScenarioStatus;
+exports.classifyCaseStatus = classifyCaseStatus;
 exports.runStatus = runStatus;
 const node_fs_1 = require("node:fs");
 const node_path_1 = __importDefault(require("node:path"));
 const project_1 = require("../project");
-async function recordScenarioResult(runRoot, runId, scenario, runSource, executionStatus, evidencePath, error, failureClassification, verdict) {
+async function recordCaseResult(runRoot, runId, item, runSource, executionStatus, evidencePath, error, failureClassification, verdict) {
     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "results.jsonl"), (0, project_1.eventEnvelope)({
-        type: "scenario_result",
+        type: "case_result",
         run_id: runId,
-        scenario_id: scenario.id,
+        case_id: item.id,
         source: "meta-skill eval run",
         payload: {
             run_source: runSource,
             execution_status: executionStatus,
             ...(verdict ? { verdict } : {}),
-            scenario_folder: scenario.folder,
+            case_folder: item.folder,
             evidence_path: evidencePath,
             failure_classification: failureClassification || null,
             error
         }
     }));
 }
-async function attemptsInRun(runRoot, scenarioFolder) {
-    const scenarioRoot = node_path_1.default.join(runRoot, "scenarios", scenarioFolder);
-    if (await (0, project_1.exists)(node_path_1.default.join(scenarioRoot, "final.md")))
-        return [{ runSource: await runSourceFor(runRoot), evidencePath: node_path_1.default.join("scenarios", scenarioFolder) }];
+async function attemptsInRun(runRoot, caseFolder) {
+    const caseRoot = node_path_1.default.join(runRoot, "cases", caseFolder);
+    if (await (0, project_1.exists)(node_path_1.default.join(caseRoot, "final.md")))
+        return [{ runSource: await runSourceFor(runRoot), evidencePath: node_path_1.default.join("cases", caseFolder) }];
     const attempts = [];
-    // Legacy read-only support for runs that wrote scenarios/<scenario>/<side>/ evidence.
+    // Legacy read-only support for old run evidence written before the case contract.
+    const scenarioRoot = node_path_1.default.join(runRoot, "scenarios", caseFolder);
     for (const side of ["candidate", "release"]) {
         if (await (0, project_1.exists)(node_path_1.default.join(scenarioRoot, side)))
-            attempts.push({ runSource: legacyRunSource(side), evidencePath: node_path_1.default.join("scenarios", scenarioFolder, side), legacySide: side });
+            attempts.push({ runSource: legacyRunSource(side), evidencePath: node_path_1.default.join("scenarios", caseFolder, side), legacySide: side });
     }
-    return attempts.length ? attempts : [{ runSource: await runSourceFor(runRoot), evidencePath: node_path_1.default.join("scenarios", scenarioFolder) }];
+    return attempts.length ? attempts : [{ runSource: await runSourceFor(runRoot), evidencePath: node_path_1.default.join("cases", caseFolder) }];
 }
 async function runSourceFor(runRoot) {
     try {
@@ -59,8 +60,8 @@ function legacyRunSource(value) {
         return { kind: "legacy_side", label: "Legacy saved snapshot side", skill_root: "../../../versions/release/skill", attached_skill: true };
     return { kind: "legacy_side", label: "Legacy working payload side", skill_root: "../../../..", attached_skill: true };
 }
-function classifyScenarioStatus(status) {
-    return status === "failed" || status === "errored" ? "scenario_failed" : null;
+function classifyCaseStatus(status) {
+    return status === "failed" || status === "errored" ? "case_failed" : null;
 }
 function runStatus(hasFailures) {
     if (hasFailures)

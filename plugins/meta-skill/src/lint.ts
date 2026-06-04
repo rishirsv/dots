@@ -2,7 +2,7 @@ import { exec } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
-import type { Issue, LintReport, ScenarioCriteria, ScenarioMetadata, TestManifest } from "./models";
+import type { Issue, LintReport, TestManifest } from "./models";
 import {
   CliError,
   PORTABLE_DIRS,
@@ -16,16 +16,9 @@ import {
   requirePortableSkill
 } from "./project";
 import { writeEvalReport } from "./report";
+import { caseIdentity, readCase } from "./eval/cases";
 
 const execAsync = promisify(exec);
-
-const TYPE_BY_PREFIX: Record<string, string> = {
-  R: "regression",
-  F: "failure_mode",
-  G: "gate"
-};
-
-const VALID_TYPES = new Set(Object.values(TYPE_BY_PREFIX));
 
 export interface LintOptions {
   runId?: string;
@@ -212,15 +205,15 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
     }
   }
 
-  if (!(await exists(p.scenarios))) {
-    warnings.push(issue("warning", "no eval scenarios folder yet", p.scenarios));
+  if (!(await exists(p.cases))) {
+    warnings.push(issue("warning", "no eval cases folder yet", p.cases));
     return;
   }
-  const scenarioDirs = (await fs.readdir(p.scenarios, { withFileTypes: true })).filter((entry) => entry.isDirectory());
-  if (!scenarioDirs.length) warnings.push(issue("warning", "no eval scenarios yet", p.scenarios));
+  const caseDirs = (await fs.readdir(p.cases, { withFileTypes: true })).filter((entry) => entry.isDirectory());
+  if (!caseDirs.length) warnings.push(issue("warning", "no eval cases yet", p.cases));
   const seenIds = new Set<string>();
-  for (const dirent of scenarioDirs) {
-    await validateScenario(path.join(p.scenarios, dirent.name), dirent.name, seenIds, testIds, judgeIds, failures, warnings);
+  for (const dirent of caseDirs) {
+    await validateCase(path.join(p.cases, dirent.name), dirent.name, seenIds, testIds, judgeIds, failures, warnings);
   }
 
   if ((await exists(path.join(root, "scripts"))) && (await hasFiles(path.join(root, "scripts")))) {
@@ -231,8 +224,8 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
   }
 }
 
-async function validateScenario(
-  scenarioDir: string,
+async function validateCase(
+  caseDir: string,
   folder: string,
   seenIds: Set<string>,
   testIds: Set<string>,
@@ -240,52 +233,69 @@ async function validateScenario(
   failures: Issue[],
   warnings: Issue[]
 ): Promise<void> {
-  const match = /^([RFG]\d+)-[a-z0-9][a-z0-9-]*$/.exec(folder);
-  if (!match) failures.push(issue("failure", `scenario folder must use <ID>-<slug> with R/F/G prefix: ${folder}`, scenarioDir));
-  const folderId = match?.[1] || folder.split("-")[0];
-  for (const name of ["task.md", "criteria.json", "scenario.json"]) {
-    if (!(await exists(path.join(scenarioDir, name)))) failures.push(issue("failure", `scenario is missing ${name}`, path.join(scenarioDir, name)));
+  try {
+    caseIdentity(folder);
+  } catch (error) {
+    failures.push(issue("failure", error instanceof Error ? error.message : String(error), caseDir));
   }
-  if (!(await exists(path.join(scenarioDir, "scenario.json"))) || !(await exists(path.join(scenarioDir, "criteria.json")))) return;
-
-  const metadata = await readJson<ScenarioMetadata>(path.join(scenarioDir, "scenario.json"));
-  const criteria = await readJson<ScenarioCriteria>(path.join(scenarioDir, "criteria.json"));
-  if (metadata.schema_version !== 1) failures.push(issue("failure", "scenario.json schema_version must be 1", path.join(scenarioDir, "scenario.json")));
-  if (metadata.id !== folderId) failures.push(issue("failure", `scenario id ${metadata.id} must match folder id ${folderId}`, path.join(scenarioDir, "scenario.json")));
-  if (seenIds.has(metadata.id)) failures.push(issue("failure", `duplicate scenario id: ${metadata.id}`, path.join(scenarioDir, "scenario.json")));
-  seenIds.add(metadata.id);
-  const prefix = metadata.id.charAt(0);
-  if (metadata.type !== TYPE_BY_PREFIX[prefix]) failures.push(issue("failure", `${metadata.id} must use type ${TYPE_BY_PREFIX[prefix]}`, path.join(scenarioDir, "scenario.json")));
-  if (!VALID_TYPES.has(metadata.type)) failures.push(issue("failure", `invalid scenario type: ${metadata.type}`, path.join(scenarioDir, "scenario.json")));
-  if (!metadata.title) warnings.push(issue("warning", "scenario title is empty", path.join(scenarioDir, "scenario.json")));
-
-  if (criteria.schema_version !== 1) failures.push(issue("failure", "criteria.json schema_version must be 1", path.join(scenarioDir, "criteria.json")));
-  if (!criteria.expected_behavior) failures.push(issue("failure", "criteria.json expected_behavior is required", path.join(scenarioDir, "criteria.json")));
-  if (!Array.isArray(criteria.assertions) || !criteria.assertions.length) failures.push(issue("failure", "criteria.json must include at least one assertion", path.join(scenarioDir, "criteria.json")));
-  for (const testId of criteria.tests || []) {
-    if (!testIds.has(testId)) failures.push(issue("failure", `criteria references missing test id: ${testId}`, path.join(scenarioDir, "criteria.json")));
+  const caseMd = path.join(caseDir, "case.md");
+  if (!(await exists(caseMd))) {
+    failures.push(issue("failure", "case is missing case.md", caseMd));
+    return;
   }
-  for (const judge of criteria.judges || []) {
-    if (!judgeIds.has(judge.id)) failures.push(issue("failure", `criteria references missing judge id: ${judge.id}`, path.join(scenarioDir, "criteria.json")));
+
+  let item;
+  try {
+    item = await readCase(caseDir, folder);
+  } catch (error) {
+    failures.push(issue("failure", error instanceof Error ? error.message : String(error), caseMd));
+    return;
+  }
+  if (seenIds.has(item.id)) failures.push(issue("failure", `duplicate case id: ${item.id}`, caseMd));
+  seenIds.add(item.id);
+  if (!item.metadata.title) warnings.push(issue("warning", "case title is empty", caseMd));
+
+  if (!item.criteria.expected_behavior) failures.push(issue("failure", "case criteria.expected_behavior is required", caseMd));
+  if (!Array.isArray(item.criteria.assertions) || !item.criteria.assertions.length) failures.push(issue("failure", "case criteria.assertions must include at least one assertion", caseMd));
+  for (const testId of item.criteria.tests || []) {
+    if (!testIds.has(testId)) failures.push(issue("failure", `criteria references missing test id: ${testId}`, caseMd));
+  }
+  for (const judge of item.criteria.judges || []) {
+    if (!judgeIds.has(judge.id)) failures.push(issue("failure", `criteria references missing judge id: ${judge.id}`, caseMd));
     if (judge.threshold?.overall_min !== undefined && (judge.threshold.overall_min < 1 || judge.threshold.overall_min > 5)) {
-      failures.push(issue("failure", `judge threshold overall_min must be 1-5 for ${judge.id}`, path.join(scenarioDir, "criteria.json")));
+      failures.push(issue("failure", `judge threshold overall_min must be 1-5 for ${judge.id}`, caseMd));
     }
   }
-  if (!(criteria.tests || []).length) warnings.push(issue("warning", `${metadata.id} has no deterministic tests`, path.join(scenarioDir, "criteria.json")));
-  if (!(criteria.judges || []).length) warnings.push(issue("warning", `${metadata.id} has no judges and is manual-review only`, path.join(scenarioDir, "criteria.json")));
+  if (!(item.criteria.tests || []).length) warnings.push(issue("warning", `${item.id} has no deterministic tests`, caseMd));
+  if (!(item.criteria.judges || []).length) warnings.push(issue("warning", `${item.id} has no judges and is manual-review only`, caseMd));
 
-  if (await exists(path.join(scenarioDir, "turns.json"))) {
-    const turns = await readJson<unknown>(path.join(scenarioDir, "turns.json"));
-    if (!Array.isArray(turns) || !turns.every((turn) => typeof turn === "object" && turn !== null && typeof (turn as { content?: unknown }).content === "string")) {
-      failures.push(issue("failure", "turns.json must be an array of objects with content strings", path.join(scenarioDir, "turns.json")));
+  const declared = new Set((item.metadata.fixtures || []).map((fixture) => fixture.path));
+  const fixtureFiles = await listFixtureFiles(path.join(caseDir, "fixtures"));
+  for (const fixture of declared) {
+    const resolved = path.resolve(caseDir, fixture);
+    const relative = path.relative(caseDir, resolved);
+    if (!fixture.startsWith("fixtures/")) failures.push(issue("failure", `fixture path must live under fixtures/: ${fixture}`, caseMd));
+    if (relative.startsWith("..") || path.isAbsolute(relative)) failures.push(issue("failure", `fixture path escapes case folder: ${fixture}`, caseMd));
+    if (!(await exists(resolved))) failures.push(issue("failure", `declared fixture does not exist: ${fixture}`, caseMd));
+  }
+  for (const fixture of fixtureFiles) {
+    if (!declared.has(fixture)) failures.push(issue("failure", `fixture is present but undeclared: ${fixture}`, caseMd));
+  }
+}
+
+async function listFixtureFiles(fixturesDir: string): Promise<string[]> {
+  if (!(await exists(fixturesDir))) return [];
+  const root = path.dirname(fixturesDir);
+  const files: string[] = [];
+  async function walk(dir: string): Promise<void> {
+    for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) await walk(full);
+      else if (entry.isFile()) files.push(path.relative(root, full).split(path.sep).join("/"));
     }
   }
-
-  for (const include of metadata.include || []) {
-    const resolved = path.resolve(scenarioDir, include);
-    if (!resolved.startsWith(path.resolve(scenarioDir))) failures.push(issue("failure", `scenario include escapes scenario folder: ${include}`, path.join(scenarioDir, "scenario.json")));
-    if (!(await exists(resolved))) failures.push(issue("failure", `scenario include does not exist: ${include}`, path.join(scenarioDir, "scenario.json")));
-  }
+  await walk(fixturesDir);
+  return files.sort();
 }
 
 async function validateJudges(judgesDir: string, failures: Issue[], warnings: Issue[]): Promise<Set<string>> {

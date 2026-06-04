@@ -2,7 +2,7 @@ import path from "node:path";
 import { AppServerJsonClient, AppServerUnavailableError, appServerConfig } from "../app-server/client";
 import { CliError, appendJsonl, eventEnvelope, exists, projectPaths, readText, relativePath, requirePortableSkill } from "../project";
 import { writeEvalReport } from "../report";
-import { loadRunScenarioSnapshots } from "./scenarios";
+import { loadRunCaseSnapshots } from "./cases";
 import { attemptsInRun } from "./results";
 import type { JudgeExecutionInput, JudgeOptions, JudgeRunResult, RunFailureClassification } from "./types";
 
@@ -12,9 +12,9 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
   const runRoot = path.join(p.runs, options.runId);
   if (!(await exists(runRoot))) throw new CliError(`run does not exist: ${options.runId}`);
   if (!options.judge && !options.allJudges) throw new CliError("eval judge requires --judge <id> or --all-judges", 2);
-  if (!options.scenario && !options.allScenarios) throw new CliError("eval judge requires --scenario <id> or --all-scenarios", 2);
+  if (!options.case && !options.allCases) throw new CliError("eval judge requires --case <id> or --all-cases", 2);
 
-  const scenarios = await loadRunScenarioSnapshots(root, runRoot, options.allScenarios ? {} : { scenario: [options.scenario as string] });
+  const cases = await loadRunCaseSnapshots(root, runRoot, options.allCases ? {} : { case: [options.case as string] });
   let annotations = 0;
   let ok = true;
   const failureClassifications = new Set<RunFailureClassification>();
@@ -33,14 +33,14 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
       await judgeClient.connect(appServer);
       judgeExecutor = (input) => runJudge(judgeClient as AppServerJsonClient, input);
     }
-    for (const scenario of scenarios) {
-      const judgeIds = options.allJudges ? (scenario.criteria.judges || []).map((judge) => judge.id) : [options.judge as string];
+    for (const item of cases) {
+      const judgeIds = options.allJudges ? (item.criteria.judges || []).map((judge) => judge.id) : [options.judge as string];
       for (const judgeId of judgeIds) {
         const judgePath = path.join(p.judges, `${judgeId}.md`);
         if (!(await exists(judgePath))) throw new CliError(`judge does not exist: ${judgeId}`);
         const judgePrompt = await readText(judgePath);
-        const threshold = (scenario.criteria.judges || []).find((judge) => judge.id === judgeId)?.threshold;
-        for (const attempt of await attemptsInRun(runRoot, scenario.folder)) {
+        const threshold = (item.criteria.judges || []).find((judge) => judge.id === judgeId)?.threshold;
+        for (const attempt of await attemptsInRun(runRoot, item.folder)) {
           const finalPath = path.join(runRoot, attempt.evidencePath, "final.md");
           if (!(await exists(finalPath))) {
             ok = false;
@@ -50,7 +50,7 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
               eventEnvelope({
                 type: "judge_result",
                 run_id: options.runId,
-                scenario_id: scenario.id,
+                case_id: item.id,
                 ...(attempt.legacySide ? { side: attempt.legacySide } : {}),
                 source: judgeId,
                 payload: {
@@ -58,7 +58,7 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
                   run_source: attempt.runSource,
                   status: "unavailable",
                   failure_classification: "harness_unavailable",
-                  reason: `missing scenario final evidence: ${relativePath(runRoot, finalPath)}`
+                  reason: `missing case final evidence: ${relativePath(runRoot, finalPath)}`
                 }
               })
             );
@@ -66,7 +66,7 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
             continue;
           }
           const final = await readText(finalPath);
-          const result = await judgeExecutor({ projectRoot: root, judgeId, judgePrompt, scenario, runSourceLabel: attempt.runSource.label, final });
+          const result = await judgeExecutor({ projectRoot: root, judgeId, judgePrompt, case: item, runSourceLabel: attempt.runSource.label, final });
           const passed = judgePassed(result, threshold);
           ok = ok && passed;
           if (!passed) failureClassifications.add("judge_failure");
@@ -75,7 +75,7 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
             eventEnvelope({
               type: "judge_result",
               run_id: options.runId,
-              scenario_id: scenario.id,
+              case_id: item.id,
               ...(attempt.legacySide ? { side: attempt.legacySide } : {}),
               source: judgeId,
               payload: {
@@ -84,7 +84,7 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
                 status: passed ? "passed" : "failed",
                 failure_classification: passed ? null : "judge_failure",
                 threshold: threshold || null,
-                evidence_basis: scenario.evidence_basis || "run_snapshot",
+                evidence_basis: item.evidence_basis || "run_snapshot",
                 result
               }
             })
@@ -98,16 +98,16 @@ export async function judgeRun(options: JudgeOptions): Promise<JudgeRunResult> {
     const message = error instanceof Error ? error.message : String(error);
     const classification: RunFailureClassification = error instanceof AppServerUnavailableError ? "app_server_unavailable" : "judge_failure";
     failureClassifications.add(classification);
-    for (const scenario of scenarios) {
-      const judgeIds = options.allJudges ? (scenario.criteria.judges || []).map((judge) => judge.id) : [options.judge as string];
+    for (const item of cases) {
+      const judgeIds = options.allJudges ? (item.criteria.judges || []).map((judge) => judge.id) : [options.judge as string];
       for (const judgeId of judgeIds) {
-        for (const attempt of await attemptsInRun(runRoot, scenario.folder)) {
+        for (const attempt of await attemptsInRun(runRoot, item.folder)) {
           await appendJsonl(
             path.join(runRoot, "grades.jsonl"),
             eventEnvelope({
               type: "judge_result",
               run_id: options.runId,
-              scenario_id: scenario.id,
+              case_id: item.id,
               ...(attempt.legacySide ? { side: attempt.legacySide } : {}),
               source: judgeId,
               payload: {
@@ -144,7 +144,7 @@ async function runJudge(
     persistExtendedHistory: false,
     ephemeral: true,
     baseInstructions: "You are a strict Meta Skill eval judge. Return only JSON.",
-    developerInstructions: "Evaluate the saved scenario evidence against the judge prompt. Do not use tools."
+    developerInstructions: "Evaluate the saved case evidence against the judge prompt. Do not use tools."
   });
   const threadId = (start.thread as { id?: string } | undefined)?.id;
   if (!threadId) throw new Error("judge thread/start response did not include thread.id");
@@ -152,8 +152,8 @@ async function runJudge(
   const prompt = [
     "# Judge Prompt",
     input.judgePrompt,
-    "# Scenario",
-    JSON.stringify({ id: input.scenario.id, folder: input.scenario.folder, run_source: input.runSourceLabel, evidence_basis: input.scenario.evidence_basis || "run_snapshot", metadata: input.scenario.metadata, criteria: input.scenario.criteria }, null, 2),
+    "# Case",
+    JSON.stringify({ id: input.case.id, folder: input.case.folder, run_source: input.runSourceLabel, evidence_basis: input.case.evidence_basis || "run_snapshot", metadata: input.case.metadata, criteria: input.case.criteria }, null, 2),
     "# Final Output",
     input.final,
     "# Required Output",

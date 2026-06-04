@@ -131,7 +131,7 @@ function checkName(message: string): string {
   if (/directly linked/.test(message)) return "runtime_resource_links";
   if (/agents\/openai\.yaml/.test(message)) return "agent_manifest_shape";
   if (/outside the portable payload/.test(message)) return "portable_payload_contract";
-  if (/scenario/.test(message)) return "scenario_validation";
+  if (/case/.test(message)) return "case_validation";
   if (/judge/.test(message)) return "judge_validation";
   if (/test/.test(message)) return "test_validation";
   return message.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 48) || "validation_check";

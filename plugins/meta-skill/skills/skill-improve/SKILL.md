@@ -1,6 +1,6 @@
 ---
 name: skill-improve
-description: Use when reviewing, planning, patching, promoting, or recording decisions for an existing skill from lint, review, eval, judge, trace, artifact, or human-feedback evidence; not for creating new skills, running scenario evals, autonomous rewrites, or silent release.
+description: Use when reviewing, planning, patching, promoting, or recording decisions for an existing skill from lint, review, eval, judge, trace, artifact, or human-feedback evidence; not for creating new skills, running eval cases, autonomous rewrites, or silent release.
 ---
 
 # Skill Improve
@@ -21,7 +21,7 @@ Improve an existing skill with evidence and restraint. This lane owns best-pract
 - Use `.meta-skill/reviews/` for best-practice review output.
 - Use `.meta-skill/plans/` for bounded improvement plans.
 - Use `.meta-skill/sessions/` for promotion and decision records.
-- Require evidence before planning a patch: lint output, review ID, eval run ID, scenario ID, test failure, judge note, trace, artifact, or human feedback. Each planned edit should cite at least one evidence reference.
+- Require evidence before planning a patch: lint output, review ID, eval run ID, case ID, test failure, judge note, trace, artifact, or human feedback. Each planned edit should cite at least one evidence reference.
 - Do not invent proof, auto-promote, release, package, install, or publish.
 - Treat completed eval execution without a verdict as evidence only, not pass proof. Before planning or promoting from it, name what ran, what evidence exists, and whether deterministic tests, judge approval, or human feedback recorded a pass/fail verdict.
 
@@ -55,7 +55,7 @@ Read [prompt-doctor.md](references/prompt-doctor.md) before non-trivial edits.
 - Keep the smallest useful change tied to evidence.
 - Preserve trigger meaning, output contract, tone, and unrelated resources unless they are the problem.
 - Update `.meta-skill/spec.md` when behavior changes.
-- Rerun `meta-skill lint` and relevant `meta-skill eval run` scenarios after edits.
+- Rerun `meta-skill lint` and relevant `meta-skill eval run` cases after edits.
 
 ## Output
 

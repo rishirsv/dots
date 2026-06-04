@@ -5,28 +5,28 @@ import os from "node:os";
 import path from "node:path";
 import { PassThrough } from "node:stream";
 import { describe, it } from "node:test";
-import type { ScenarioRecord } from "../models";
+import type { CaseRecord } from "../models";
 import { exists, readJson, readText, writeJson, writeText } from "../project";
-import { AppServerScenarioRunner } from "./runner";
+import { AppServerCaseRunner } from "./runner";
 import { AppServerJsonClient, AppServerUnavailableError } from "./client";
 
 const workingRunSource = { kind: "working_payload", label: "Working payload", skill_root: "../../../..", attached_skill: true } as const;
 
-describe("AppServerScenarioRunner", () => {
+describe("AppServerCaseRunner", () => {
   it("writes source-honest App Server evidence with real turn IDs and flushed trace", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, [{ content: "Second turn." }]);
+    const item = await fixtureCase(root, [{ content: "Second turn." }]);
     await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: runner-skill\ndescription: Use when testing runner staging; not for live evals.\n---\n\n# Skill\n");
     const runRoot = path.join(root, "run");
-    const fake = new FakeScenarioClient();
-    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+    const fake = new FakeCaseClient();
+    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
 
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
       attachSkill: true,
-      scenario,
+       case: item,
       runSource: workingRunSource,
       runId: "001-test",
       runRoot,
@@ -40,8 +40,8 @@ describe("AppServerScenarioRunner", () => {
     });
 
     assert.equal(result.execution_status, "completed");
-    const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
-    const thread = await readJson<{ thread_id: string; turn_ids: string[]; status: string }>(path.join(scenarioRoot, "thread.json"));
+    const caseRoot = path.join(runRoot, "cases", item.folder);
+    const thread = await readJson<{ thread_id: string; turn_ids: string[]; status: string }>(path.join(caseRoot, "thread.json"));
     assert.deepEqual(thread, {
       schema_version: 1,
       thread_id: "thread-1",
@@ -59,8 +59,8 @@ describe("AppServerScenarioRunner", () => {
       status: "completed",
       error: null
     });
-    assert.equal(await readText(path.join(scenarioRoot, "final.md")), "final turn-2\n");
-    const turns = (await readText(path.join(scenarioRoot, "turns.jsonl"))).trim().split("\n").map((line) => JSON.parse(line));
+    assert.equal(await readText(path.join(caseRoot, "final.md")), "final turn-2\n");
+    const turns = (await readText(path.join(caseRoot, "turns.jsonl"))).trim().split("\n").map((line) => JSON.parse(line));
     assert.deepEqual(
       turns.map((turn) => [turn.role, turn.index, turn.turn_id || null]),
       [
@@ -70,7 +70,7 @@ describe("AppServerScenarioRunner", () => {
         ["assistant", 1, "turn-2"]
       ]
     );
-    const traceRows = (await readText(path.join(scenarioRoot, "rpc.jsonl"))).trim().split("\n").map((line) => JSON.parse(line));
+    const traceRows = (await readText(path.join(caseRoot, "rpc.jsonl"))).trim().split("\n").map((line) => JSON.parse(line));
     assert.equal(traceRows.length >= 3, true);
     assert.equal(fake.flushed, true);
 
@@ -87,15 +87,14 @@ describe("AppServerScenarioRunner", () => {
     assert.equal(firstInput.some((item) => item.type === "skill"), true);
     assert.equal((firstInput.find((item) => item.type === "skill") as { name?: string } | undefined)?.name, "runner-skill");
     assert.equal(secondInput.some((item) => item.type === "skill"), false);
-    assert.equal(await exists(path.join(scenarioRoot, "stage", "scenario", "task.md")), true);
-    assert.equal(await exists(path.join(scenarioRoot, "stage", "scenario", "scenario.json")), true);
-    assert.equal(await exists(path.join(scenarioRoot, "stage", "scenario", "criteria.json")), false);
+    assert.equal(await exists(path.join(caseRoot, "stage", "case.md")), false);
+    assert.equal(await exists(path.join(caseRoot, "stage", "fixtures")), false);
     assert.equal(result.token_usage.total_tokens, 24);
     assert.equal(result.token_usage.input_tokens, 10);
     assert.equal(result.token_usage.cached_input_tokens, 4);
     assert.equal(result.token_usage.output_tokens, 14);
     assert.equal(result.token_usage.reasoning_tokens, 0);
-    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null } }>(path.join(scenarioRoot, "usage.json"));
+    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null } }>(path.join(caseRoot, "usage.json"));
     assert.equal(usage.source_event, "thread/tokenUsage/updated");
     assert.equal(usage.turns.length, 2);
     assert.equal(usage.summary.total_tokens, 24);
@@ -107,16 +106,16 @@ describe("AppServerScenarioRunner", () => {
   it("records unavailable token usage when a completed turn has no token event", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-no-usage-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
-    const fake = new FakeScenarioClient({ emitTokenUsage: false });
-    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+    const fake = new FakeCaseClient({ emitTokenUsage: false });
+    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
 
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
       attachSkill: true,
-      scenario,
+       case: item,
       runSource: workingRunSource,
       runId: "001-test",
       runRoot: path.join(root, "run"),
@@ -125,25 +124,25 @@ describe("AppServerScenarioRunner", () => {
 
     assert.equal(result.token_usage.total_tokens, null);
     assert.equal(result.token_usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
-    const usage = await readJson<{ source_event: string | null; turns: unknown[] }>(path.join(root, "run", "scenarios", scenario.folder, "usage.json"));
+    const usage = await readJson<{ source_event: string | null; turns: unknown[] }>(path.join(root, "run", "cases", item.folder, "usage.json"));
     assert.equal(usage.source_event, null);
     assert.deepEqual(usage.turns, []);
   });
 
-  it("does not promote per-turn usage into scenario totals when final cumulative usage is missing", async () => {
+  it("does not promote per-turn usage into case totals when final cumulative usage is missing", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-last-only-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
-    const fake = new FakeScenarioClient({ emitCumulativeTokenUsage: false });
-    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+    const fake = new FakeCaseClient({ emitCumulativeTokenUsage: false });
+    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
     const runRoot = path.join(root, "run");
 
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
       attachSkill: true,
-      scenario,
+       case: item,
       runSource: workingRunSource,
       runId: "001-test",
       runRoot,
@@ -152,8 +151,8 @@ describe("AppServerScenarioRunner", () => {
 
     assert.equal(result.token_usage.total_tokens, null);
     assert.equal(result.token_usage.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
-    const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
-    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null; unavailable_reason: string | null } }>(path.join(scenarioRoot, "usage.json"));
+    const caseRoot = path.join(runRoot, "cases", item.folder);
+    const usage = await readJson<{ source_event: string | null; turns: Array<Record<string, unknown>>; summary: { total_tokens: number | null; unavailable_reason: string | null } }>(path.join(caseRoot, "usage.json"));
     assert.equal(usage.source_event, null);
     assert.equal(usage.summary.total_tokens, null);
     assert.equal(usage.summary.unavailable_reason, "App Server completed without tokenUsage.total on the final turn.");
@@ -173,37 +172,37 @@ describe("AppServerScenarioRunner", () => {
     });
   });
 
-  it("writes each reused-client scenario trace to that scenario rpc.jsonl", async () => {
+  it("writes each reused-client case trace to that case rpc.jsonl", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-trace-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
     const runRoot = path.join(root, "run");
-    const fake = new FakeScenarioClient();
-    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+    const fake = new FakeCaseClient();
+    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
     const appServer = { mode: "managed" as const, endpoint: null, auth: "inherited" as const, protocol: "generated-ts" as const, generatedTypes: "test" };
-    const secondScenario = { ...scenario, folder: "R2-second", id: "R2" };
+    const secondCase = { ...item, folder: "R2-second", id: "R2" };
 
-    await runner.run({ projectRoot: skillRoot, skillRoot, attachSkill: true, scenario, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
-    await runner.run({ projectRoot: skillRoot, skillRoot, attachSkill: true, scenario: secondScenario, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
+    await runner.run({ projectRoot: skillRoot, skillRoot, attachSkill: true, case: item, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
+    await runner.run({ projectRoot: skillRoot, skillRoot, attachSkill: true, case: secondCase, runSource: workingRunSource, runId: "001-test", runRoot, appServer });
 
-    const firstTrace = await readText(path.join(runRoot, "scenarios", scenario.folder, "rpc.jsonl"));
-    const secondTrace = await readText(path.join(runRoot, "scenarios", secondScenario.folder, "rpc.jsonl"));
+    const firstTrace = await readText(path.join(runRoot, "cases", item.folder, "rpc.jsonl"));
+    const secondTrace = await readText(path.join(runRoot, "cases", secondCase.folder, "rpc.jsonl"));
     assert.match(firstTrace, /thread\/start/);
     assert.match(secondTrace, /thread\/start/);
   });
 
-  it("respawns the App Server client once for a scenario after process unavailability", async () => {
+  it("respawns the App Server client once for a case after process unavailability", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-respawn-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
     const runRoot = path.join(root, "run");
     const first = new UnavailableOnceClient();
-    const second = new FakeScenarioClient();
+    const second = new FakeCaseClient();
     const clients = [first, second];
-    const runner = new AppServerScenarioRunner({
-      clientFactory: (onLine) => (clients.shift() || new FakeScenarioClient()).attach(onLine),
+    const runner = new AppServerCaseRunner({
+      clientFactory: (onLine) => (clients.shift() || new FakeCaseClient()).attach(onLine),
       turnTimeoutMs: 25
     });
 
@@ -211,7 +210,7 @@ describe("AppServerScenarioRunner", () => {
       projectRoot: skillRoot,
       skillRoot,
       attachSkill: true,
-      scenario,
+       case: item,
       runSource: workingRunSource,
       runId: "001-test",
       runRoot,
@@ -226,11 +225,11 @@ describe("AppServerScenarioRunner", () => {
   it("does not repeatedly respawn unavailable App Server clients", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-respawn-limit-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
     const runRoot = path.join(root, "run");
     let created = 0;
-    const runner = new AppServerScenarioRunner({
+    const runner = new AppServerCaseRunner({
       clientFactory: (onLine) => {
         created += 1;
         return new UnavailableOnceClient().attach(onLine);
@@ -243,7 +242,7 @@ describe("AppServerScenarioRunner", () => {
         projectRoot: skillRoot,
         skillRoot,
         attachSkill: true,
-        scenario,
+         case: item,
         runSource: workingRunSource,
         runId: "001-test",
         runRoot,
@@ -257,10 +256,10 @@ describe("AppServerScenarioRunner", () => {
   it("covers the runner JSONL protocol contract without a live App Server", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-contract-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
     const child = new ProtocolFixtureChild();
-    const runner = new AppServerScenarioRunner({
+    const runner = new AppServerCaseRunner({
       clientFactory: (onLine) => new AppServerJsonClient({ onLine, spawnProcess: () => child.asChild(), requestTimeoutMs: 1000 }),
       turnTimeoutMs: 1000
     });
@@ -269,7 +268,7 @@ describe("AppServerScenarioRunner", () => {
       projectRoot: skillRoot,
       skillRoot,
       attachSkill: true,
-      scenario,
+       case: item,
       runSource: workingRunSource,
       runId: "001-test",
       runRoot: path.join(root, "run"),
@@ -289,10 +288,10 @@ describe("AppServerScenarioRunner", () => {
   it("records evidence warnings when the App Server event window overflows", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-overflow-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
     const child = new ProtocolFixtureChild({ noisyDeltas: 3 });
-    const runner = new AppServerScenarioRunner({
+    const runner = new AppServerCaseRunner({
       clientFactory: (onLine) => new AppServerJsonClient({ onLine, spawnProcess: () => child.asChild(), requestTimeoutMs: 1000, maxBufferedEvents: 2 }),
       turnTimeoutMs: 1000
     });
@@ -302,17 +301,17 @@ describe("AppServerScenarioRunner", () => {
       projectRoot: skillRoot,
       skillRoot,
       attachSkill: true,
-      scenario,
+       case: item,
       runSource: workingRunSource,
       runId: "001-test",
       runRoot,
       appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
-    const thread = await readJson<{ evidence_warnings?: string[] }>(path.join(scenarioRoot, "thread.json"));
-    const usage = await readJson<{ evidence_warnings?: string[] }>(path.join(scenarioRoot, "usage.json"));
-    const trace = await readText(path.join(scenarioRoot, "rpc.jsonl"));
+    const caseRoot = path.join(runRoot, "cases", item.folder);
+    const thread = await readJson<{ evidence_warnings?: string[] }>(path.join(caseRoot, "thread.json"));
+    const usage = await readJson<{ evidence_warnings?: string[] }>(path.join(caseRoot, "usage.json"));
+    const trace = await readText(path.join(caseRoot, "rpc.jsonl"));
 
     assert.match(thread.evidence_warnings?.[0] || "", /in-memory event buffer overflowed/);
     assert.deepEqual(usage.evidence_warnings, thread.evidence_warnings);
@@ -323,17 +322,17 @@ describe("AppServerScenarioRunner", () => {
   it("times out when a turn never completes", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-timeout-"));
     const skillRoot = path.join(root, "skill");
-    const scenario = await fixtureScenario(root, []);
+    const item = await fixtureCase(root, []);
     await writeText(path.join(skillRoot, "SKILL.md"), "# Skill\n");
-    const fake = new FakeScenarioClient({ completeTurns: false });
-    const runner = new AppServerScenarioRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 5 });
+    const fake = new FakeCaseClient({ completeTurns: false });
+    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 5 });
 
     await assert.rejects(
       runner.run({
         projectRoot: skillRoot,
         skillRoot,
         attachSkill: true,
-        scenario,
+         case: item,
         runSource: workingRunSource,
         runId: "001-test",
         runRoot: path.join(root, "run"),
@@ -344,41 +343,41 @@ describe("AppServerScenarioRunner", () => {
   });
 });
 
-async function fixtureScenario(root: string, turns: Array<{ content: string }>): Promise<ScenarioRecord> {
-  const scenarioPath = path.join(root, "scenario");
-  await fs.mkdir(scenarioPath, { recursive: true });
-  await writeText(path.join(scenarioPath, "task.md"), "First turn.");
-  await writeJson(path.join(scenarioPath, "scenario.json"), {
-    schema_version: 1,
-    id: "R1",
-    type: "regression",
-    title: "Runner",
-    topics: [],
-    include: [],
-    setup: [],
-    metadata: {}
-  });
-  await writeJson(path.join(scenarioPath, "criteria.json"), {
-    schema_version: 1,
-    what_it_tests: "Runner",
-    expected_behavior: "Runs",
-    assertions: [],
-    tests: [],
-    judges: []
-  });
-  if (turns.length) await writeJson(path.join(scenarioPath, "turns.json"), turns);
+async function fixtureCase(root: string, turns: Array<{ content: string }>): Promise<CaseRecord> {
+  const casePath = path.join(root, "case");
+  await fs.mkdir(casePath, { recursive: true });
+  await writeText(
+    path.join(casePath, "case.md"),
+    `---
+title: Runner
+topics: []
+criteria:
+  what_it_tests: Runner
+  expected_behavior: Runs
+  assertions:
+    - Runs.
+  tests: []
+  judges: []
+---
+
+## Task
+
+First turn.
+${turns.map((turn, index) => `\n## Turn ${index + 2}\n\n${turn.content}\n`).join("")}`
+  );
   return {
     folder: "R1-runner",
     id: "R1",
-    path: scenarioPath,
-    metadata: await readJson(path.join(scenarioPath, "scenario.json")),
-    criteria: await readJson(path.join(scenarioPath, "criteria.json")),
+    type: "regression",
+    path: casePath,
+    metadata: { title: "Runner", topics: [] },
+    criteria: { what_it_tests: "Runner", expected_behavior: "Runs", assertions: ["Runs."], tests: [], judges: [] },
     task: "First turn.",
     turns
   };
 }
 
-class FakeScenarioClient {
+class FakeCaseClient {
   requests: Array<{ method: string; params: unknown }> = [];
   flushed = false;
   private events: Record<string, unknown>[] = [];
@@ -449,7 +448,7 @@ class FakeScenarioClient {
   close(): void {}
 }
 
-class UnavailableOnceClient extends FakeScenarioClient {
+class UnavailableOnceClient extends FakeCaseClient {
   closed = false;
 
   async request(method: string, params: unknown): Promise<Record<string, unknown>> {

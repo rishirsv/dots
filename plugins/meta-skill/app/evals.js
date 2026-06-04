@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadScenarios = exports.loadRunScenarioSnapshots = exports.initEvals = exports.refreshRunEvidence = exports.openRun = exports.listRunSummaries = exports.listRuns = exports.importFeedback = exports.runEval = exports.recordScenarioResult = exports.judgeRun = void 0;
+exports.loadCases = exports.loadRunCaseSnapshots = exports.initEvals = exports.refreshRunEvidence = exports.openRun = exports.listRunSummaries = exports.listRuns = exports.importFeedback = exports.runEval = exports.recordCaseResult = exports.judgeRun = void 0;
 var judge_1 = require("./eval/judge");
 Object.defineProperty(exports, "judgeRun", { enumerable: true, get: function () { return judge_1.judgeRun; } });
 var results_1 = require("./eval/results");
-Object.defineProperty(exports, "recordScenarioResult", { enumerable: true, get: function () { return results_1.recordScenarioResult; } });
+Object.defineProperty(exports, "recordCaseResult", { enumerable: true, get: function () { return results_1.recordCaseResult; } });
 var run_1 = require("./eval/run");
 Object.defineProperty(exports, "runEval", { enumerable: true, get: function () { return run_1.runEval; } });
 var runs_1 = require("./eval/runs");
@@ -13,7 +13,7 @@ Object.defineProperty(exports, "listRuns", { enumerable: true, get: function () 
 Object.defineProperty(exports, "listRunSummaries", { enumerable: true, get: function () { return runs_1.listRunSummaries; } });
 Object.defineProperty(exports, "openRun", { enumerable: true, get: function () { return runs_1.openRun; } });
 Object.defineProperty(exports, "refreshRunEvidence", { enumerable: true, get: function () { return runs_1.refreshRunEvidence; } });
-var scenarios_1 = require("./eval/scenarios");
-Object.defineProperty(exports, "initEvals", { enumerable: true, get: function () { return scenarios_1.initEvals; } });
-Object.defineProperty(exports, "loadRunScenarioSnapshots", { enumerable: true, get: function () { return scenarios_1.loadRunScenarioSnapshots; } });
-Object.defineProperty(exports, "loadScenarios", { enumerable: true, get: function () { return scenarios_1.loadScenarios; } });
+var cases_1 = require("./eval/cases");
+Object.defineProperty(exports, "initEvals", { enumerable: true, get: function () { return cases_1.initEvals; } });
+Object.defineProperty(exports, "loadRunCaseSnapshots", { enumerable: true, get: function () { return cases_1.loadRunCaseSnapshots; } });
+Object.defineProperty(exports, "loadCases", { enumerable: true, get: function () { return cases_1.loadCases; } });

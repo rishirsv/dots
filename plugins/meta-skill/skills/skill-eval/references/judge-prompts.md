@@ -45,7 +45,7 @@ Supported judge types:
 
 ## Thresholds
 
-Thresholds live in scenario `criteria.json`, not in judge files:
+Thresholds live in `case.md` criteria frontmatter, not in judge files:
 
 ```json
 {
@@ -56,7 +56,7 @@ Thresholds live in scenario `criteria.json`, not in judge files:
 }
 ```
 
-The same judge can be report-only in one scenario and thresholded in another.
+The same judge can be report-only in one case and thresholded in another.
 
 ## Good Judge Scope
 
@@ -74,7 +74,7 @@ Feed only the information needed:
 - relevant source excerpts
 - deterministic test summaries
 
-Do not feed private evaluator answer keys into solver workspaces. Judges run over saved evidence after the scenario run.
+Do not feed private evaluator answer keys into solver workspaces. Judges run over saved evidence after the case run.
 
 ## Anti-Patterns
 

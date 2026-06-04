@@ -11,13 +11,8 @@ const node_path_1 = __importDefault(require("node:path"));
 const node_util_1 = require("node:util");
 const project_1 = require("./project");
 const report_1 = require("./report");
+const cases_1 = require("./eval/cases");
 const execAsync = (0, node_util_1.promisify)(node_child_process_1.exec);
-const TYPE_BY_PREFIX = {
-    R: "regression",
-    F: "failure_mode",
-    G: "gate"
-};
-const VALID_TYPES = new Set(Object.values(TYPE_BY_PREFIX));
 async function lintProject(target, options = {}) {
     const root = await (0, project_1.requirePortableSkill)(target);
     const failures = [];
@@ -202,16 +197,16 @@ async function validateWorkbench(root, failures, warnings) {
             failures.push(issue("failure", "eval manifest defaults.runner must be app_server", p.evalManifest));
         }
     }
-    if (!(await (0, project_1.exists)(p.scenarios))) {
-        warnings.push(issue("warning", "no eval scenarios folder yet", p.scenarios));
+    if (!(await (0, project_1.exists)(p.cases))) {
+        warnings.push(issue("warning", "no eval cases folder yet", p.cases));
         return;
     }
-    const scenarioDirs = (await node_fs_1.promises.readdir(p.scenarios, { withFileTypes: true })).filter((entry) => entry.isDirectory());
-    if (!scenarioDirs.length)
-        warnings.push(issue("warning", "no eval scenarios yet", p.scenarios));
+    const caseDirs = (await node_fs_1.promises.readdir(p.cases, { withFileTypes: true })).filter((entry) => entry.isDirectory());
+    if (!caseDirs.length)
+        warnings.push(issue("warning", "no eval cases yet", p.cases));
     const seenIds = new Set();
-    for (const dirent of scenarioDirs) {
-        await validateScenario(node_path_1.default.join(p.scenarios, dirent.name), dirent.name, seenIds, testIds, judgeIds, failures, warnings);
+    for (const dirent of caseDirs) {
+        await validateCase(node_path_1.default.join(p.cases, dirent.name), dirent.name, seenIds, testIds, judgeIds, failures, warnings);
     }
     if ((await (0, project_1.exists)(node_path_1.default.join(root, "scripts"))) && (await hasFiles(node_path_1.default.join(root, "scripts")))) {
         const manifest = (await (0, project_1.exists)(p.testManifest)) ? await (0, project_1.readJson)(p.testManifest) : { tests: [] };
@@ -220,67 +215,83 @@ async function validateWorkbench(root, failures, warnings) {
         }
     }
 }
-async function validateScenario(scenarioDir, folder, seenIds, testIds, judgeIds, failures, warnings) {
-    const match = /^([RFG]\d+)-[a-z0-9][a-z0-9-]*$/.exec(folder);
-    if (!match)
-        failures.push(issue("failure", `scenario folder must use <ID>-<slug> with R/F/G prefix: ${folder}`, scenarioDir));
-    const folderId = match?.[1] || folder.split("-")[0];
-    for (const name of ["task.md", "criteria.json", "scenario.json"]) {
-        if (!(await (0, project_1.exists)(node_path_1.default.join(scenarioDir, name))))
-            failures.push(issue("failure", `scenario is missing ${name}`, node_path_1.default.join(scenarioDir, name)));
+async function validateCase(caseDir, folder, seenIds, testIds, judgeIds, failures, warnings) {
+    try {
+        (0, cases_1.caseIdentity)(folder);
     }
-    if (!(await (0, project_1.exists)(node_path_1.default.join(scenarioDir, "scenario.json"))) || !(await (0, project_1.exists)(node_path_1.default.join(scenarioDir, "criteria.json"))))
+    catch (error) {
+        failures.push(issue("failure", error instanceof Error ? error.message : String(error), caseDir));
+    }
+    const caseMd = node_path_1.default.join(caseDir, "case.md");
+    if (!(await (0, project_1.exists)(caseMd))) {
+        failures.push(issue("failure", "case is missing case.md", caseMd));
         return;
-    const metadata = await (0, project_1.readJson)(node_path_1.default.join(scenarioDir, "scenario.json"));
-    const criteria = await (0, project_1.readJson)(node_path_1.default.join(scenarioDir, "criteria.json"));
-    if (metadata.schema_version !== 1)
-        failures.push(issue("failure", "scenario.json schema_version must be 1", node_path_1.default.join(scenarioDir, "scenario.json")));
-    if (metadata.id !== folderId)
-        failures.push(issue("failure", `scenario id ${metadata.id} must match folder id ${folderId}`, node_path_1.default.join(scenarioDir, "scenario.json")));
-    if (seenIds.has(metadata.id))
-        failures.push(issue("failure", `duplicate scenario id: ${metadata.id}`, node_path_1.default.join(scenarioDir, "scenario.json")));
-    seenIds.add(metadata.id);
-    const prefix = metadata.id.charAt(0);
-    if (metadata.type !== TYPE_BY_PREFIX[prefix])
-        failures.push(issue("failure", `${metadata.id} must use type ${TYPE_BY_PREFIX[prefix]}`, node_path_1.default.join(scenarioDir, "scenario.json")));
-    if (!VALID_TYPES.has(metadata.type))
-        failures.push(issue("failure", `invalid scenario type: ${metadata.type}`, node_path_1.default.join(scenarioDir, "scenario.json")));
-    if (!metadata.title)
-        warnings.push(issue("warning", "scenario title is empty", node_path_1.default.join(scenarioDir, "scenario.json")));
-    if (criteria.schema_version !== 1)
-        failures.push(issue("failure", "criteria.json schema_version must be 1", node_path_1.default.join(scenarioDir, "criteria.json")));
-    if (!criteria.expected_behavior)
-        failures.push(issue("failure", "criteria.json expected_behavior is required", node_path_1.default.join(scenarioDir, "criteria.json")));
-    if (!Array.isArray(criteria.assertions) || !criteria.assertions.length)
-        failures.push(issue("failure", "criteria.json must include at least one assertion", node_path_1.default.join(scenarioDir, "criteria.json")));
-    for (const testId of criteria.tests || []) {
+    }
+    let item;
+    try {
+        item = await (0, cases_1.readCase)(caseDir, folder);
+    }
+    catch (error) {
+        failures.push(issue("failure", error instanceof Error ? error.message : String(error), caseMd));
+        return;
+    }
+    if (seenIds.has(item.id))
+        failures.push(issue("failure", `duplicate case id: ${item.id}`, caseMd));
+    seenIds.add(item.id);
+    if (!item.metadata.title)
+        warnings.push(issue("warning", "case title is empty", caseMd));
+    if (!item.criteria.expected_behavior)
+        failures.push(issue("failure", "case criteria.expected_behavior is required", caseMd));
+    if (!Array.isArray(item.criteria.assertions) || !item.criteria.assertions.length)
+        failures.push(issue("failure", "case criteria.assertions must include at least one assertion", caseMd));
+    for (const testId of item.criteria.tests || []) {
         if (!testIds.has(testId))
-            failures.push(issue("failure", `criteria references missing test id: ${testId}`, node_path_1.default.join(scenarioDir, "criteria.json")));
+            failures.push(issue("failure", `criteria references missing test id: ${testId}`, caseMd));
     }
-    for (const judge of criteria.judges || []) {
+    for (const judge of item.criteria.judges || []) {
         if (!judgeIds.has(judge.id))
-            failures.push(issue("failure", `criteria references missing judge id: ${judge.id}`, node_path_1.default.join(scenarioDir, "criteria.json")));
+            failures.push(issue("failure", `criteria references missing judge id: ${judge.id}`, caseMd));
         if (judge.threshold?.overall_min !== undefined && (judge.threshold.overall_min < 1 || judge.threshold.overall_min > 5)) {
-            failures.push(issue("failure", `judge threshold overall_min must be 1-5 for ${judge.id}`, node_path_1.default.join(scenarioDir, "criteria.json")));
+            failures.push(issue("failure", `judge threshold overall_min must be 1-5 for ${judge.id}`, caseMd));
         }
     }
-    if (!(criteria.tests || []).length)
-        warnings.push(issue("warning", `${metadata.id} has no deterministic tests`, node_path_1.default.join(scenarioDir, "criteria.json")));
-    if (!(criteria.judges || []).length)
-        warnings.push(issue("warning", `${metadata.id} has no judges and is manual-review only`, node_path_1.default.join(scenarioDir, "criteria.json")));
-    if (await (0, project_1.exists)(node_path_1.default.join(scenarioDir, "turns.json"))) {
-        const turns = await (0, project_1.readJson)(node_path_1.default.join(scenarioDir, "turns.json"));
-        if (!Array.isArray(turns) || !turns.every((turn) => typeof turn === "object" && turn !== null && typeof turn.content === "string")) {
-            failures.push(issue("failure", "turns.json must be an array of objects with content strings", node_path_1.default.join(scenarioDir, "turns.json")));
-        }
-    }
-    for (const include of metadata.include || []) {
-        const resolved = node_path_1.default.resolve(scenarioDir, include);
-        if (!resolved.startsWith(node_path_1.default.resolve(scenarioDir)))
-            failures.push(issue("failure", `scenario include escapes scenario folder: ${include}`, node_path_1.default.join(scenarioDir, "scenario.json")));
+    if (!(item.criteria.tests || []).length)
+        warnings.push(issue("warning", `${item.id} has no deterministic tests`, caseMd));
+    if (!(item.criteria.judges || []).length)
+        warnings.push(issue("warning", `${item.id} has no judges and is manual-review only`, caseMd));
+    const declared = new Set((item.metadata.fixtures || []).map((fixture) => fixture.path));
+    const fixtureFiles = await listFixtureFiles(node_path_1.default.join(caseDir, "fixtures"));
+    for (const fixture of declared) {
+        const resolved = node_path_1.default.resolve(caseDir, fixture);
+        const relative = node_path_1.default.relative(caseDir, resolved);
+        if (!fixture.startsWith("fixtures/"))
+            failures.push(issue("failure", `fixture path must live under fixtures/: ${fixture}`, caseMd));
+        if (relative.startsWith("..") || node_path_1.default.isAbsolute(relative))
+            failures.push(issue("failure", `fixture path escapes case folder: ${fixture}`, caseMd));
         if (!(await (0, project_1.exists)(resolved)))
-            failures.push(issue("failure", `scenario include does not exist: ${include}`, node_path_1.default.join(scenarioDir, "scenario.json")));
+            failures.push(issue("failure", `declared fixture does not exist: ${fixture}`, caseMd));
     }
+    for (const fixture of fixtureFiles) {
+        if (!declared.has(fixture))
+            failures.push(issue("failure", `fixture is present but undeclared: ${fixture}`, caseMd));
+    }
+}
+async function listFixtureFiles(fixturesDir) {
+    if (!(await (0, project_1.exists)(fixturesDir)))
+        return [];
+    const root = node_path_1.default.dirname(fixturesDir);
+    const files = [];
+    async function walk(dir) {
+        for (const entry of await node_fs_1.promises.readdir(dir, { withFileTypes: true })) {
+            const full = node_path_1.default.join(dir, entry.name);
+            if (entry.isDirectory())
+                await walk(full);
+            else if (entry.isFile())
+                files.push(node_path_1.default.relative(root, full).split(node_path_1.default.sep).join("/"));
+        }
+    }
+    await walk(fixturesDir);
+    return files.sort();
 }
 async function validateJudges(judgesDir, failures, warnings) {
     const ids = new Set();

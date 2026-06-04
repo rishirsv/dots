@@ -1,8 +1,8 @@
-import type { AppServerScenarioRunner } from "../app-server/runner";
-import type { EvalRunSourceKind, ScenarioRecord } from "../models";
+import type { AppServerCaseRunner } from "../app-server/runner";
+import type { CaseRecord, EvalRunSourceKind } from "../models";
 
 export interface EvalSelector {
-  scenario?: string[];
+  case?: string[];
   type?: string;
   topic?: string[];
 }
@@ -15,7 +15,7 @@ export interface EvalRunOptions {
   withJudges?: boolean;
   noLint?: boolean;
   appServerEndpoint?: string;
-  scenarioRunner?: Pick<AppServerScenarioRunner, "run" | "close">;
+  caseRunner?: Pick<AppServerCaseRunner, "run" | "close">;
   judgeRunner?: (options: JudgeOptions) => Promise<JudgeRunResult>;
 }
 
@@ -24,8 +24,8 @@ export interface JudgeOptions {
   runId: string;
   judge?: string;
   allJudges?: boolean;
-  scenario?: string;
-  allScenarios?: boolean;
+  case?: string;
+  allCases?: boolean;
   judgeExecutor?: (input: JudgeExecutionInput) => Promise<Record<string, unknown>>;
 }
 
@@ -33,7 +33,7 @@ export interface JudgeExecutionInput {
   projectRoot: string;
   judgeId: string;
   judgePrompt: string;
-  scenario: ScenarioRecord;
+  case: CaseRecord;
   runSourceLabel: string;
   final: string;
 }
@@ -43,7 +43,7 @@ export type RunFailureClassification =
   | "harness_unavailable"
   | "judge_failure"
   | "lint_test_failure"
-  | "scenario_failed";
+  | "case_failed";
 
 export interface JudgeRunResult {
   annotations: number;

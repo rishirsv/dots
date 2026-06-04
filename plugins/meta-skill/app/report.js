@@ -18,6 +18,7 @@ exports.renderEvalReportHtml = renderEvalReportHtml;
 const node_fs_1 = require("node:fs");
 const node_path_1 = __importDefault(require("node:path"));
 const project_1 = require("./project");
+const cases_1 = require("./eval/cases");
 async function materializeEvalRunReport(runRoot, options = {}) {
     const report = await buildRunReport(runRoot);
     const jsonPath = node_path_1.default.join(runRoot, "report.json");
@@ -33,21 +34,21 @@ async function writeEvalReport(runRoot) {
 }
 async function buildRunReport(runRoot) {
     const runJson = await (0, project_1.readJson)(node_path_1.default.join(runRoot, "run.json"));
-    const scenarioRows = (await readJsonl(node_path_1.default.join(runRoot, "results.jsonl"))).filter((row) => row.type === "scenario_result");
+    const caseRows = (await readJsonl(node_path_1.default.join(runRoot, "results.jsonl"))).filter((row) => row.type === "case_result");
     const testRows = (await readJsonl(node_path_1.default.join(runRoot, "tests.jsonl"))).filter((row) => row.type === "test_result" || row.type === "lint_summary" || row.type === "lint_skipped");
     const judgeRows = (await readJsonl(node_path_1.default.join(runRoot, "grades.jsonl"))).filter((row) => row.type === "judge_result");
     const feedbackRows = (await readJsonl(node_path_1.default.join(runRoot, "feedback.jsonl")));
     const byFolder = new Map();
-    for (const row of scenarioRows) {
-        const folder = String(row.payload?.scenario_folder || row.scenario_id || "unknown");
+    for (const row of caseRows) {
+        const folder = String(row.payload?.case_folder || row.case_id || "unknown");
         if (!byFolder.has(folder))
             byFolder.set(folder, []);
         byFolder.get(folder)?.push(row);
     }
-    const scenarios = [];
+    const cases = [];
     for (const [folder, rows] of [...byFolder.entries()].sort(([a], [b]) => a.localeCompare(b))) {
-        const snapshot = await readScenarioSnapshot(runRoot, folder);
-        const scenarioId = snapshot?.metadata?.id || String(rows[0]?.scenario_id || folder.split("-")[0]);
+        const snapshot = await readCaseSnapshot(runRoot, folder);
+        const caseId = snapshot?.id || String(rows[0]?.case_id || folder.split("-")[0]);
         const attempts = await Promise.all(rows.map(async (row) => {
             const legacySide = row.side;
             const evidencePath = String(row.payload?.evidence_path || "");
@@ -68,16 +69,16 @@ async function buildRunReport(runRoot) {
                 ...(legacySide ? { legacy_side: legacySide } : {})
             };
         }));
-        const verdict = verdictForScenarioEvidence(scenarioId, folder, attempts, testRows, judgeRows, feedbackRows);
-        const executionStatus = scenarioExecutionStatus(attempts);
-        const status = scenarioStatus(executionStatus, verdict);
-        scenarios.push({
-            id: scenarioId,
+        const verdict = verdictForCaseEvidence(caseId, folder, attempts, testRows, judgeRows, feedbackRows);
+        const executionStatus = caseExecutionStatus(attempts);
+        const status = caseStatus(executionStatus, verdict);
+        cases.push({
+            id: caseId,
             folder,
             title: snapshot?.metadata?.title,
-            type: snapshot?.metadata?.type,
+            type: snapshot?.type,
             topics: snapshot?.metadata?.topics || [],
-            capability: snapshot?.capability || null,
+            capability: snapshot?.metadata?.capability || null,
             criteria: snapshot?.criteria
                 ? {
                     what_it_tests: snapshot.criteria.what_it_tests,
@@ -96,10 +97,10 @@ async function buildRunReport(runRoot) {
             no_verdict_recorded: executionStatus === "completed" && !verdict
         });
     }
-    const failureClassifications = derivedFailureClassifications(runJson, testRows, judgeRows, scenarioRows);
-    const noVerdictCount = scenarios.reduce((sum, scenario) => sum + (scenario.no_verdict_recorded ? 1 : 0), 0);
+    const failureClassifications = derivedFailureClassifications(runJson, testRows, judgeRows, caseRows);
+    const noVerdictCount = cases.reduce((sum, item) => sum + (item.no_verdict_recorded ? 1 : 0), 0);
     const counts = evidenceCounts(testRows, judgeRows, feedbackRows);
-    const tokenUsage = countTokenUsage(scenarios);
+    const tokenUsage = countTokenUsage(cases);
     const assessmentStatus = assessmentStatusFor(failureClassifications, noVerdictCount, testRows, judgeRows, feedbackRows);
     const readiness = readinessFor(assessmentStatus, failureClassifications, noVerdictCount, counts);
     const runSource = normalizeRunSource(runJson.run_source);
@@ -114,9 +115,9 @@ async function buildRunReport(runRoot) {
             status: String(runJson.status || "unknown"),
             created_at: runJson.created_at ? String(runJson.created_at) : undefined,
             completed_at: runJson.completed_at ? String(runJson.completed_at) : undefined,
-            scenario_count: scenarios.length,
-            attempt_count: scenarios.reduce((sum, scenario) => sum + scenario.attempts.length, 0),
-            result_count: scenarioRows.length,
+            case_count: cases.length,
+            attempt_count: cases.reduce((sum, item) => sum + item.attempts.length, 0),
+            result_count: caseRows.length,
             run_source: runSource,
             failure_classifications: failureClassifications,
             execution_status: executionStatus,
@@ -125,16 +126,16 @@ async function buildRunReport(runRoot) {
             evidence_counts: counts,
             token_usage: tokenUsage
         },
-        scenarios,
+        cases,
         tests: testRows,
         judges: judgeRows,
         feedback: feedbackRows,
         readiness
     };
 }
-function derivedFailureClassifications(runJson, tests, judges, scenarios) {
+function derivedFailureClassifications(runJson, tests, judges, cases) {
     const failures = new Set(Array.isArray(runJson.failure_classifications) ? runJson.failure_classifications.map(String) : []);
-    for (const row of scenarios) {
+    for (const row of cases) {
         const classification = row.payload?.failure_classification;
         if (classification)
             failures.add(String(classification));
@@ -246,25 +247,27 @@ ${validationRows || "| none | No validation checks were available. | unavailable
 ${suggestions || "No material suggestions."}
 `;
 }
-async function readScenarioSnapshot(runRoot, folder) {
+async function readCaseSnapshot(runRoot, folder) {
     const snapshot = node_path_1.default.join(runRoot, "snapshots", folder);
-    if (!(await (0, project_1.exists)(node_path_1.default.join(snapshot, "scenario.json"))))
+    if (!(await (0, project_1.exists)(node_path_1.default.join(snapshot, "item.md"))))
         return undefined;
+    const item = await (0, cases_1.readCase)(snapshot, folder);
     return {
         basis: "run_snapshot",
-        metadata: await (0, project_1.readJson)(node_path_1.default.join(snapshot, "scenario.json")),
-        criteria: (await (0, project_1.exists)(node_path_1.default.join(snapshot, "criteria.json"))) ? await (0, project_1.readJson)(node_path_1.default.join(snapshot, "criteria.json")) : { assertions: [] },
-        capability: (await (0, project_1.exists)(node_path_1.default.join(snapshot, "capability.txt"))) ? (await (0, project_1.readText)(node_path_1.default.join(snapshot, "capability.txt"))).trim() : undefined
+        id: item.id,
+        type: item.type,
+        metadata: item.metadata,
+        criteria: item.criteria
     };
 }
-function scenarioExecutionStatus(attempts) {
+function caseExecutionStatus(attempts) {
     if (attempts.some((attempt) => attempt.execution_status === "errored"))
         return "errored";
     if (attempts.some((attempt) => attempt.execution_status === "completed"))
         return "completed";
     return "unknown";
 }
-function scenarioStatus(executionStatus, verdict) {
+function caseStatus(executionStatus, verdict) {
     if (executionStatus === "errored")
         return "failed";
     return verdict || executionStatus || "unknown";
@@ -310,22 +313,22 @@ function readinessFor(assessmentStatus, failureClassifications, noVerdictCount, 
         basis: "run.json, results.jsonl, tests.jsonl, grades.jsonl, feedback.jsonl"
     };
 }
-function countTokenUsage(scenarios) {
-    const attempts = scenarios.flatMap((scenario) => scenario.attempts.map((attempt) => ({ scenario, attempt })));
+function countTokenUsage(cases) {
+    const attempts = cases.flatMap((item) => item.attempts.map((attempt) => ({ item, attempt })));
     const available = attempts.filter(({ attempt }) => attempt.token_usage?.total_tokens !== null && attempt.token_usage?.total_tokens !== undefined && !attempt.token_usage.unavailable_reason);
     const unavailableReasons = attempts
         .filter(({ attempt }) => !attempt.token_usage || attempt.token_usage.total_tokens === null || attempt.token_usage.unavailable_reason)
-        .map(({ scenario, attempt }) => ({
-        scenario_id: scenario.id,
+        .map(({ item, attempt }) => ({
+        case_id: item.id,
         run_source: attempt.run_source.kind || attempt.run_source.label,
-        reason: attempt.token_usage?.unavailable_reason || "usage.json was unavailable for this scenario."
+        reason: attempt.token_usage?.unavailable_reason || "usage.json was unavailable for this item."
     }));
     return {
         input_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.input_tokens ?? null)),
         output_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.output_tokens ?? null)),
         total_tokens: sumNullable(available.map(({ attempt }) => attempt.token_usage?.total_tokens ?? null)),
-        scenario_count: scenarios.length,
-        unavailable_scenario_count: unavailableReasons.length,
+        case_count: cases.length,
+        unavailable_case_count: unavailableReasons.length,
         unavailable_reasons: unavailableReasons
     };
 }
@@ -359,7 +362,7 @@ function normalizeRunTokenUsageSummary(value) {
         ? object.unavailable_reasons.map((item) => {
             const reason = objectValue(item);
             return {
-                scenario_id: String(reason.scenario_id || "unknown"),
+                case_id: String(reason.case_id || "unknown"),
                 run_source: String(reason.run_source || "unknown"),
                 reason: String(reason.reason || "Token usage was unavailable.")
             };
@@ -369,8 +372,8 @@ function normalizeRunTokenUsageSummary(value) {
         input_tokens: nullableNumber(object.input_tokens),
         output_tokens: nullableNumber(object.output_tokens),
         total_tokens: nullableNumber(object.total_tokens),
-        scenario_count: numberFrom(object.scenario_count),
-        unavailable_scenario_count: numberFrom(object.unavailable_scenario_count),
+        case_count: numberFrom(object.case_count),
+        unavailable_case_count: numberFrom(object.unavailable_case_count),
         unavailable_reasons: reasons
     };
 }
@@ -426,26 +429,26 @@ function evidenceCounts(tests, judges, feedback) {
         feedback: feedback.filter((row) => row.type === "human_feedback").length
     };
 }
-function verdictForScenarioEvidence(scenarioId, folder, attempts, tests, judges, feedback) {
+function verdictForCaseEvidence(caseId, folder, attempts, tests, judges, feedback) {
     if (attempts.some((attempt) => attempt.execution_status === "errored"))
         return "failed";
     if (attempts.some((attempt) => attempt.verdict === "failed"))
         return "failed";
-    if (scenarioEvidenceRows(scenarioId, folder, tests, judges, feedback).some((row) => evidenceStatus(row) === "failed"))
+    if (caseEvidenceRows(caseId, folder, tests, judges, feedback).some((row) => evidenceStatus(row) === "failed"))
         return "failed";
     if (attempts.some((attempt) => attempt.verdict === "passed"))
         return "passed";
-    if (scenarioEvidenceRows(scenarioId, folder, tests, judges, feedback).some((row) => evidenceStatus(row) === "passed"))
+    if (caseEvidenceRows(caseId, folder, tests, judges, feedback).some((row) => evidenceStatus(row) === "passed"))
         return "passed";
     return undefined;
 }
-function scenarioEvidenceRows(scenarioId, folder, tests, judges, feedback) {
-    return [...tests, ...judges, ...feedback].filter((row) => eventMatchesScenarioKeys(row, scenarioId, folder));
+function caseEvidenceRows(caseId, folder, tests, judges, feedback) {
+    return [...tests, ...judges, ...feedback].filter((row) => eventMatchesCaseKeys(row, caseId, folder));
 }
-function eventMatchesScenarioKeys(row, scenarioId, folder) {
+function eventMatchesCaseKeys(row, caseId, folder) {
     const payload = row.payload || {};
-    const candidates = [row.scenario_id, payload.scenario_id, payload.scenario_folder, payload.folder, payload.id].filter((value) => value !== undefined && value !== null).map(String);
-    return candidates.includes(scenarioId) || candidates.includes(folder);
+    const candidates = [row.case_id, payload.case_id, payload.case_folder, payload.folder, payload.id].filter((value) => value !== undefined && value !== null).map(String);
+    return candidates.includes(caseId) || candidates.includes(folder);
 }
 function hasFailedEvidence(tests, judges, feedback) {
     return [...tests, ...judges, ...feedback].some((row) => evidenceStatus(row) === "failed");
@@ -472,7 +475,7 @@ function indexRowFromReport(report) {
         status: normalized.summary.status,
         created_at: normalized.summary.created_at,
         completed_at: normalized.summary.completed_at,
-        scenario_count: normalized.summary.scenario_count,
+        case_count: normalized.summary.case_count,
         run_source: normalized.summary.run_source,
         failure_classifications: normalized.summary.failure_classifications,
         execution_status: normalized.summary.execution_status,
@@ -489,7 +492,7 @@ function indexRowFromRun(run, fallbackId) {
         status: String(run.status || "unknown"),
         created_at: run.created_at ? String(run.created_at) : undefined,
         completed_at: run.completed_at ? String(run.completed_at) : undefined,
-        scenario_count: Array.isArray(run.scenarios?.selection) ? (run.scenarios.selection || []).length : 0,
+        case_count: Array.isArray(run.cases?.selection) ? (run.cases.selection || []).length : 0,
         run_source: normalizeRunSource(run.run_source),
         failure_classifications: failures,
         execution_status: runExecutionStatus(String(run.status || "unknown")),
@@ -508,7 +511,7 @@ function normalizeRunIndexRowForRead(value) {
         status,
         created_at: row.created_at ? String(row.created_at) : undefined,
         completed_at: row.completed_at ? String(row.completed_at) : undefined,
-        scenario_count: numberFrom(row.scenario_count),
+        case_count: numberFrom(row.case_count),
         run_source: normalizeRunSource(row.run_source),
         failure_classifications: failures,
         execution_status: String(row.execution_status || runExecutionStatus(status)),
@@ -521,10 +524,10 @@ function normalizeRunReportForRead(value) {
     const report = objectValue(value);
     const summary = objectValue(report.summary);
     const run = objectValue(report.run);
-    const scenarios = Array.isArray(report.scenarios) ? report.scenarios.map(normalizeRunReportScenarioForRead) : [];
+    const cases = Array.isArray(report.cases) ? report.cases.map(normalizeRunReportCaseForRead) : [];
     const failureClassifications = Array.isArray(summary.failure_classifications) ? summary.failure_classifications.map(String) : [];
     const status = String(summary.status || run.status || "unknown");
-    const noVerdictCount = summary.no_verdict_count !== undefined ? numberFrom(summary.no_verdict_count) : summary.unresolved_count !== undefined ? numberFrom(summary.unresolved_count) : scenarios.reduce((sum, scenario) => sum + (scenario.no_verdict_recorded ? 1 : 0), 0);
+    const noVerdictCount = summary.no_verdict_count !== undefined ? numberFrom(summary.no_verdict_count) : summary.unresolved_count !== undefined ? numberFrom(summary.unresolved_count) : cases.reduce((sum, item) => sum + (item.no_verdict_recorded ? 1 : 0), 0);
     const assessmentStatus = summary.assessment_status === "passed" || summary.assessment_status === "failed" ? String(summary.assessment_status) : status === "passed" || status === "failed" ? status : undefined;
     const counts = objectValue(summary.evidence_counts);
     const evidenceCountSummary = {
@@ -543,8 +546,8 @@ function normalizeRunReportForRead(value) {
             status,
             created_at: summary.created_at ? String(summary.created_at) : undefined,
             completed_at: summary.completed_at ? String(summary.completed_at) : undefined,
-            scenario_count: summary.scenario_count !== undefined ? numberFrom(summary.scenario_count) : scenarios.length,
-            attempt_count: summary.attempt_count !== undefined ? numberFrom(summary.attempt_count) : scenarios.reduce((sum, scenario) => sum + scenario.attempts.length, 0),
+            case_count: summary.case_count !== undefined ? numberFrom(summary.case_count) : cases.length,
+            attempt_count: summary.attempt_count !== undefined ? numberFrom(summary.attempt_count) : cases.reduce((sum, item) => sum + item.attempts.length, 0),
             result_count: numberFrom(summary.result_count),
             run_source: normalizeRunSource(summary.run_source),
             failure_classifications: failureClassifications,
@@ -554,35 +557,35 @@ function normalizeRunReportForRead(value) {
             evidence_counts: evidenceCountSummary,
             token_usage: normalizeRunTokenUsageSummary(summary.token_usage)
         },
-        scenarios,
+        cases,
         tests: Array.isArray(report.tests) ? report.tests : [],
         judges: Array.isArray(report.judges) ? report.judges : [],
         feedback: Array.isArray(report.feedback) ? report.feedback : [],
         readiness
     };
 }
-function normalizeRunReportScenarioForRead(value) {
-    const scenario = objectValue(value);
-    const rawAttempts = Array.isArray(scenario.attempts) ? scenario.attempts : Array.isArray(scenario.sides) ? scenario.sides : [];
+function normalizeRunReportCaseForRead(value) {
+    const item = objectValue(value);
+    const rawAttempts = Array.isArray(item.attempts) ? item.attempts : Array.isArray(item.sides) ? item.sides : [];
     const attempts = rawAttempts.map(normalizeRunReportAttemptForRead);
-    const verdict = scenario.verdict === "passed" || scenario.verdict === "failed" ? String(scenario.verdict) : attempts.find((attempt) => attempt.verdict)?.verdict;
-    const executionStatus = String(scenario.execution_status || scenarioExecutionStatus(attempts));
-    const status = String(scenario.status || scenarioStatus(executionStatus, verdict));
+    const verdict = item.verdict === "passed" || item.verdict === "failed" ? String(item.verdict) : attempts.find((attempt) => attempt.verdict)?.verdict;
+    const executionStatus = String(item.execution_status || caseExecutionStatus(attempts));
+    const status = String(item.status || caseStatus(executionStatus, verdict));
     return {
-        id: String(scenario.id || scenario.folder || "unknown"),
-        folder: String(scenario.folder || scenario.id || "unknown"),
-        title: scenario.title ? String(scenario.title) : undefined,
-        type: scenario.type ? String(scenario.type) : undefined,
-        topics: Array.isArray(scenario.topics) ? scenario.topics.map(String) : [],
-        capability: scenario.capability || null,
-        criteria: normalizeScenarioCriteriaForRead(scenario.criteria),
-        metadata: objectValue(scenario.metadata),
-        evidence_basis: ["run_snapshot", "legacy_current_project", "unavailable"].includes(String(scenario.evidence_basis)) ? String(scenario.evidence_basis) : "unavailable",
+        id: String(item.id || item.folder || "unknown"),
+        folder: String(item.folder || item.id || "unknown"),
+        title: item.title ? String(item.title) : undefined,
+        type: item.type ? String(item.type) : undefined,
+        topics: Array.isArray(item.topics) ? item.topics.map(String) : [],
+        capability: item.capability || null,
+        criteria: normalizeCaseCriteriaForRead(item.criteria),
+        metadata: objectValue(item.metadata),
+        evidence_basis: ["run_snapshot", "legacy_current_project", "unavailable"].includes(String(item.evidence_basis)) ? String(item.evidence_basis) : "unavailable",
         attempts,
         status,
         execution_status: executionStatus,
         ...(verdict ? { verdict } : {}),
-        no_verdict_recorded: scenario.no_verdict_recorded !== undefined ? Boolean(scenario.no_verdict_recorded) : Boolean(scenario.unresolved) || status === "needs_review" || attempts.some((attempt) => !attempt.verdict && attempt.execution_status === "completed")
+        no_verdict_recorded: item.no_verdict_recorded !== undefined ? Boolean(item.no_verdict_recorded) : Boolean(item.unresolved) || status === "needs_review" || attempts.some((attempt) => !attempt.verdict && attempt.execution_status === "completed")
     };
 }
 function normalizeRunReportAttemptForRead(value) {
@@ -603,7 +606,7 @@ function normalizeRunReportAttemptForRead(value) {
         ...(legacySide ? { legacy_side: legacySide } : {})
     };
 }
-function normalizeScenarioCriteriaForRead(value) {
+function normalizeCaseCriteriaForRead(value) {
     const criteria = objectValue(value);
     if (!Object.keys(criteria).length)
         return undefined;
@@ -660,7 +663,7 @@ function toReportAppModel(report) {
             runner_mode: appServer.mode ? String(appServer.mode) : undefined
         },
         summary: {
-            scenario_count: report.summary.scenario_count,
+            case_count: report.summary.case_count,
             attempt_count: report.summary.attempt_count,
             result_count: report.summary.result_count,
             no_verdict_count: report.summary.no_verdict_count,
@@ -668,32 +671,32 @@ function toReportAppModel(report) {
             evidence_counts: report.summary.evidence_counts,
             token_usage: normalizeRunTokenUsageSummary(report.summary.token_usage)
         },
-        scenarios: report.scenarios.map((scenario) => toReportAppScenario(report, scenario))
+        cases: report.cases.map((item) => toReportAppCase(report, item))
     };
 }
-function toReportAppScenario(report, scenario) {
-    const evidence = evidenceRowsForScenario(report, scenario);
+function toReportAppCase(report, item) {
+    const evidence = evidenceRowsForCase(report, item);
     return {
-        id: scenario.id,
-        folder: scenario.folder,
-        title: scenario.title || scenario.folder,
-        subtitle: scenarioSubtitle(scenario),
-        status: scenario.status,
-        execution_status: scenario.execution_status,
-        verdict: scenario.verdict,
-        no_verdict_recorded: scenario.no_verdict_recorded,
-        evidence_basis: scenario.evidence_basis,
-        criteria: criteriaRowsForScenario(scenario),
-        attempts: attemptsForScenario(scenario),
+        id: item.id,
+        folder: item.folder,
+        title: item.title || item.folder,
+        subtitle: caseSubtitle(item),
+        status: item.status,
+        execution_status: item.execution_status,
+        verdict: item.verdict,
+        no_verdict_recorded: item.no_verdict_recorded,
+        evidence_basis: item.evidence_basis,
+        criteria: criteriaRowsForCase(item),
+        attempts: attemptsForCase(item),
         evidence,
-        review_reasons: reviewReasonsForScenario(scenario, evidence)
+        review_reasons: reviewReasonsForCase(item, evidence)
     };
 }
-function scenarioSubtitle(scenario) {
-    return [scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / ") || scenario.folder;
+function caseSubtitle(item) {
+    return [item.type, item.topics.join(", ")].filter(Boolean).join(" / ") || item.folder;
 }
-function attemptsForScenario(scenario) {
-    return scenario.attempts
+function attemptsForCase(item) {
+    return item.attempts
         .slice()
         .map((attempt) => ({
         source_kind: attempt.run_source.kind,
@@ -714,8 +717,8 @@ function rawLinksForAttempt(attempt) {
         return [];
     return ["final.md", "turns.jsonl", "usage.json", "rpc.jsonl"].map((file) => ({ label: file, href: `${attempt.evidence_path}/${file}`.split(node_path_1.default.sep).join("/") }));
 }
-function criteriaRowsForScenario(scenario) {
-    const criteria = scenario.criteria;
+function criteriaRowsForCase(item) {
+    const criteria = item.criteria;
     if (!criteria)
         return [];
     return [
@@ -726,14 +729,14 @@ function criteriaRowsForScenario(scenario) {
         { label: "Judges", value: criteria.judges.join(", ") }
     ].filter((row) => row.value);
 }
-function evidenceRowsForScenario(report, scenario) {
+function evidenceRowsForCase(report, item) {
     const rows = [];
-    for (const attempt of scenario.attempts) {
+    for (const attempt of item.attempts) {
         if (attempt.failure_classification || attempt.error)
             rows.push({ type: attempt.run_source.label, status: attempt.verdict || attempt.execution_status, detail: attempt.failure_classification || attempt.error || "" });
     }
     for (const row of [...report.tests, ...report.judges, ...report.feedback]) {
-        if (!eventMatchesScenario(row, scenario))
+        if (!eventMatchesCase(row, item))
             continue;
         rows.push({
             type: evidenceTypeLabel(String(row.type || row.source || "evidence")),
@@ -743,22 +746,22 @@ function evidenceRowsForScenario(report, scenario) {
     }
     return rows;
 }
-function eventMatchesScenario(row, scenario) {
+function eventMatchesCase(row, item) {
     const payload = row.payload || {};
-    const candidates = [row.scenario_id, payload.scenario_id, payload.scenario_folder, payload.folder, payload.id].filter((value) => value !== undefined && value !== null).map(String);
-    return candidates.includes(scenario.id) || candidates.includes(scenario.folder);
+    const candidates = [row.case_id, payload.case_id, payload.case_folder, payload.folder, payload.id].filter((value) => value !== undefined && value !== null).map(String);
+    return candidates.includes(item.id) || candidates.includes(item.folder);
 }
-function reviewReasonsForScenario(scenario, evidence) {
+function reviewReasonsForCase(item, evidence) {
     const reasons = new Set();
-    if (scenario.status === "failed")
-        reasons.add("Failed scenario evidence needs attention first.");
-    if (scenario.no_verdict_recorded)
-        reasons.add("Execution completed; no deterministic test, judge, or human feedback verdict is recorded for this scenario.");
+    if (item.status === "failed")
+        reasons.add("Failed case evidence needs attention first.");
+    if (item.no_verdict_recorded)
+        reasons.add("Execution completed; no deterministic test, judge, or human feedback verdict is recorded for this item.");
     for (const row of evidence) {
         if (row.status === "failed" || row.status === "unavailable")
             reasons.add(`${sentenceStatus(row.status)} evidence: ${sentenceStatus(row.detail || row.type)}`);
     }
-    for (const attempt of scenario.attempts) {
+    for (const attempt of item.attempts) {
         if (attempt.error)
             reasons.add(attempt.error);
         if (attempt.failure_classification)
@@ -766,8 +769,8 @@ function reviewReasonsForScenario(scenario, evidence) {
     }
     return [...reasons];
 }
-function defaultSelectedScenario(scenarios) {
-    return scenarios.slice().sort((a, b) => statusRank(a.status) - statusRank(b.status))[0];
+function defaultSelectedCase(cases) {
+    return cases.slice().sort((a, b) => statusRank(a.status) - statusRank(b.status))[0];
 }
 function statusRank(status) {
     if (status === "failed")
@@ -780,7 +783,7 @@ function statusRank(status) {
 }
 function renderEvalReportHtml(report) {
     const model = toReportAppModel(normalizeRunReportForRead(report));
-    const selected = defaultSelectedScenario(model.scenarios);
+    const selected = defaultSelectedCase(model.cases);
     return `<!doctype html>
 <html lang="en">
 <head>
@@ -804,22 +807,22 @@ function renderEvalReportHtml(report) {
     h1, h2, h3, p, dl { margin: 0; } h1 { font-size: 23px; line-height: 1.22; font-weight: 650; } h2 { font-size: 14px; font-weight: 650; } h3 { font-size: 13px; font-weight: 650; }
     .muted { color: var(--muted); font-size: 12px; }
     .run-select { display: grid; gap: 4px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-    .scenario-tools { display: grid; gap: 10px; padding: 18px 0 12px; }
-    .scenario-tools h2 { display: flex; justify-content: space-between; font-size: 13px; }
+    .case-tools { display: grid; gap: 10px; padding: 18px 0 12px; }
+    .case-tools h2 { display: flex; justify-content: space-between; font-size: 13px; }
     .search { width: 100%; height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); outline: none; }
-    .search:focus, .filter:focus-visible, .scenario-row:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.14); }
+    .search:focus, .filter:focus-visible, .case-row:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.14); }
     .filters { display: flex; flex-wrap: wrap; gap: 6px; }
     .filter { min-height: 28px; padding: 3px 8px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; }
     .filter[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); }
-    .scenario-list { display: grid; gap: 2px; margin-top: 6px; }
-    .scenario-row { width: 100%; padding: 9px 8px; border: 1px solid transparent; border-radius: 4px; background: transparent; text-align: left; cursor: pointer; }
-    .scenario-row[aria-current="true"] { background: var(--surface); border-color: transparent; box-shadow: inset 2px 0 0 var(--ink); }
-    .scenario-row strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .scenario-row span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; }
+    .case-list { display: grid; gap: 2px; margin-top: 6px; }
+    .case-row { width: 100%; padding: 9px 8px; border: 1px solid transparent; border-radius: 4px; background: transparent; text-align: left; cursor: pointer; }
+    .case-row[aria-current="true"] { background: var(--surface); border-color: transparent; box-shadow: inset 2px 0 0 var(--ink); }
+    .case-row strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .case-row span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; }
     .status { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
     .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--muted); }
     .failed .dot { background: var(--bad); } .completed .dot { background: var(--warn); } .passed .dot { background: var(--ok); }
-    .scenario-head { display: grid; gap: 8px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .case-head { display: grid; gap: 8px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
     .fact-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 20px 0 2px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .fact { padding: 11px 0; border-right: 0; } .fact span { display: block; color: var(--muted); font-size: 12px; } .fact strong { display: block; margin-top: 3px; font-weight: 600; }
     .section { padding: 24px 0; border-top: 1px solid var(--line); } .section:first-of-type { border-top: 0; }
@@ -852,18 +855,18 @@ function renderEvalReportHtml(report) {
   </nav>
   <div class="app">
     <aside class="left"><div class="left-inner">
-      <div class="run-select"><span class="muted">Run</span><strong>${escapeHtml(model.run.id)}</strong><span class="muted">${escapeHtml(sentenceStatus(model.run.status))} · ${model.summary.scenario_count} scenarios</span></div>
-      <div class="scenario-tools">
-        <h2>Scenarios <span class="muted" id="scenario-count">${model.scenarios.length}</span></h2>
-        <input class="search" id="scenario-search" type="search" placeholder="Search scenarios" aria-label="Search scenarios">
+      <div class="run-select"><span class="muted">Run</span><strong>${escapeHtml(model.run.id)}</strong><span class="muted">${escapeHtml(sentenceStatus(model.run.status))} · ${model.summary.case_count} cases</span></div>
+      <div class="case-tools">
+        <h2>Cases <span class="muted" id="case-count">${model.cases.length}</span></h2>
+        <input class="search" id="case-search" type="search" placeholder="Search cases" aria-label="Search cases">
         <div class="filters" id="filters">
           ${["all", "failed", "completed", "passed", "no_tokens"].map((filter) => `<button class="filter" type="button" data-filter="${filter}" aria-pressed="${filter === "all"}">${escapeHtml(filterLabel(filter))}</button>`).join("")}
         </div>
       </div>
-      <div class="scenario-list" id="scenario-list">${renderScenarioRail(model.scenarios, selected?.id)}</div>
+      <div class="case-list" id="case-list">${renderCaseRail(model.cases, selected?.id)}</div>
       <p class="muted" style="margin-top:18px;">Forced-skill run: final-answer behavior only.</p>
     </div></aside>
-    <main class="main" id="scenario-detail">${selected ? renderScenarioDetail(selected, model) : '<p class="empty">No scenarios recorded.</p>'}</main>
+    <main class="main" id="case-detail">${selected ? renderCaseDetail(selected, model) : '<p class="empty">No cases recorded.</p>'}</main>
     <aside class="right"><div class="right-inner" id="metadata-rail">${renderMetadataRail(selected, model)}</div></aside>
   </div>
   <div hidden>
@@ -879,67 +882,67 @@ ${REPORT_APP_JS}
 }
 function renderRunTokenSummary(summary) {
     const normalized = normalizeRunTokenUsageSummary(summary);
-    if (!normalized.scenario_count)
+    if (!normalized.case_count)
         return '<p class="muted">No token usage recorded.</p>';
     const reasonRows = normalized.unavailable_reasons
-        .map((item) => `<tr><td>${escapeHtml(item.scenario_id)}</td><td>${escapeHtml(sentenceStatus(item.run_source))}</td><td>${escapeHtml(item.reason)}</td></tr>`)
+        .map((item) => `<tr><td>${escapeHtml(item.case_id)}</td><td>${escapeHtml(sentenceStatus(item.run_source))}</td><td>${escapeHtml(item.reason)}</td></tr>`)
         .join("");
     return `<table>
-    <thead><tr><th>Scenarios</th><th>Unavailable</th><th>Total Tokens</th><th>Input</th><th>Output</th></tr></thead>
-    <tbody><tr><td>${normalized.scenario_count}</td><td>${normalized.unavailable_scenario_count}</td><td>${formatNullableNumber(normalized.total_tokens)}</td><td>${formatNullableNumber(normalized.input_tokens)}</td><td>${formatNullableNumber(normalized.output_tokens)}</td></tr></tbody>
+    <thead><tr><th>Cases</th><th>Unavailable</th><th>Total Tokens</th><th>Input</th><th>Output</th></tr></thead>
+    <tbody><tr><td>${normalized.case_count}</td><td>${normalized.unavailable_case_count}</td><td>${formatNullableNumber(normalized.total_tokens)}</td><td>${formatNullableNumber(normalized.input_tokens)}</td><td>${formatNullableNumber(normalized.output_tokens)}</td></tr></tbody>
   </table>
-  ${reasonRows ? `<table><thead><tr><th>Scenario</th><th>Source</th><th>Unavailable Reason</th></tr></thead><tbody>${reasonRows}</tbody></table>` : ""}
+  ${reasonRows ? `<table><thead><tr><th>Case</th><th>Source</th><th>Unavailable Reason</th></tr></thead><tbody>${reasonRows}</tbody></table>` : ""}
   <p class="muted">Token usage is measured telemetry and is not a readiness verdict.</p>`;
 }
-function renderScenarioRail(scenarios, selectedId) {
-    if (!scenarios.length)
-        return '<p class="empty">No scenarios match this filter.</p>';
-    return scenarios
-        .map((scenario) => `<button class="scenario-row" type="button" data-scenario-id="${escapeHtml(scenario.id)}" aria-current="${scenario.id === selectedId}">
-      <strong>${escapeHtml(scenario.id)} · ${escapeHtml(scenario.title)}</strong>
-      <span>${escapeHtml(sentenceStatus(scenario.status))} · ${escapeHtml(scenario.attempts.map((attempt) => attempt.label).join(", ") || "No output")}</span>
+function renderCaseRail(cases, selectedId) {
+    if (!cases.length)
+        return '<p class="empty">No cases match this filter.</p>';
+    return cases
+        .map((item) => `<button class="case-row" type="button" data-case-id="${escapeHtml(item.id)}" aria-current="${item.id === selectedId}">
+      <strong>${escapeHtml(item.id)} · ${escapeHtml(item.title)}</strong>
+      <span>${escapeHtml(sentenceStatus(item.status))} · ${escapeHtml(item.attempts.map((attempt) => attempt.label).join(", ") || "No output")}</span>
     </button>`)
         .join("");
 }
-function renderScenarioDetail(scenario, model) {
-    return `<div class="scenario-head">
-    <span class="status ${escapeHtml(scenario.status)}"><span class="dot"></span>${escapeHtml(sentenceStatus(scenario.status))}</span>
-    <h1>${escapeHtml(scenario.title)}</h1>
-    <p class="muted">${escapeHtml(scenario.id)} · ${escapeHtml(scenario.subtitle)}</p>
+function renderCaseDetail(item, model) {
+    return `<div class="case-head">
+    <span class="status ${escapeHtml(item.status)}"><span class="dot"></span>${escapeHtml(sentenceStatus(item.status))}</span>
+    <h1>${escapeHtml(item.title)}</h1>
+    <p class="muted">${escapeHtml(item.id)} · ${escapeHtml(item.subtitle)}</p>
   </div>
   <div class="fact-row">
     <div class="fact"><span>Run</span><strong>${escapeHtml(model.run.id)}</strong></div>
     <div class="fact"><span>Source</span><strong>${escapeHtml(model.run.run_source.label)}</strong></div>
-    <div class="fact"><span>Evidence basis</span><strong>${escapeHtml(sentenceStatus(scenario.evidence_basis))}</strong></div>
-    <div class="fact"><span>Execution</span><strong>${escapeHtml(sentenceStatus(scenario.execution_status))}</strong></div>
+    <div class="fact"><span>Evidence basis</span><strong>${escapeHtml(sentenceStatus(item.evidence_basis))}</strong></div>
+    <div class="fact"><span>Execution</span><strong>${escapeHtml(sentenceStatus(item.execution_status))}</strong></div>
   </div>
   <section class="section">
     <h2>Review reasons</h2>
-    ${scenario.review_reasons.length ? `<ul class="reason-list">${scenario.review_reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>` : '<p class="empty">No review reasons recorded.</p>'}
+    ${item.review_reasons.length ? `<ul class="reason-list">${item.review_reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>` : '<p class="empty">No review reasons recorded.</p>'}
   </section>
   <section class="section">
     <h2>Final answer preview</h2>
-    <div class="answers">${renderAttemptPreviews(scenario, model)}</div>
+    <div class="answers">${renderAttemptPreviews(item, model)}</div>
   </section>
   <section class="section">
     <h2>Evaluation evidence</h2>
-    ${scenario.evidence.length ? `<table><thead><tr><th>Type</th><th>Status</th><th>Detail</th></tr></thead><tbody>${scenario.evidence.map((row) => `<tr><td>${escapeHtml(row.type)}</td><td>${escapeHtml(sentenceStatus(row.status))}</td><td>${escapeHtml(row.detail || "recorded")}</td></tr>`).join("")}</tbody></table>` : '<p class="empty">No confidently matched tests, judges, or feedback for this scenario.</p>'}
+    ${item.evidence.length ? `<table><thead><tr><th>Type</th><th>Status</th><th>Detail</th></tr></thead><tbody>${item.evidence.map((row) => `<tr><td>${escapeHtml(row.type)}</td><td>${escapeHtml(sentenceStatus(row.status))}</td><td>${escapeHtml(row.detail || "recorded")}</td></tr>`).join("")}</tbody></table>` : '<p class="empty">No confidently matched tests, judges, or feedback for this item.</p>'}
   </section>
   <section class="section">
     <h2>Criteria</h2>
-    ${scenario.criteria.length ? `<table><tbody>${scenario.criteria.map((row) => `<tr><th>${escapeHtml(row.label)}</th><td>${escapeHtml(row.value)}</td></tr>`).join("")}</tbody></table>` : '<p class="empty">No criteria recorded.</p>'}
+    ${item.criteria.length ? `<table><tbody>${item.criteria.map((row) => `<tr><th>${escapeHtml(row.label)}</th><td>${escapeHtml(row.value)}</td></tr>`).join("")}</tbody></table>` : '<p class="empty">No criteria recorded.</p>'}
   </section>`;
 }
-function renderAttemptPreviews(scenario, model) {
+function renderAttemptPreviews(item, model) {
     const fallback = { label: model.run.run_source.label, execution_status: "unknown", status: "unknown", final_preview: "No final output recorded.", source_kind: model.run.run_source.kind, raw_links: [] };
-    return (scenario.attempts.length ? scenario.attempts : [fallback])
+    return (item.attempts.length ? item.attempts : [fallback])
         .map((attempt) => {
         const problem = [attempt.failure_classification, attempt.error].filter(Boolean).join(" · ");
         return `<div class="answer"><h3><span>${escapeHtml(attempt.label)}</span> <span class="status ${escapeHtml(attempt.status)}"><span class="dot"></span>${escapeHtml(sentenceStatus(attempt.status))}</span></h3>${problem ? `<p class="muted">${escapeHtml(sentenceStatus(problem))}</p>` : ""}<pre>${escapeHtml(attempt.final_preview || "No final output recorded.")}</pre>${attempt.final_href ? `<p class="answer-actions"><a href="${escapeHtml(attempt.final_href)}">Open final</a></p>` : ""}</div>`;
     })
         .join("");
 }
-function renderMetadataRail(scenario, model) {
+function renderMetadataRail(item, model) {
     return `<section class="rail-section">
     <h2>Run details</h2>
     <dl class="kv">
@@ -953,18 +956,18 @@ function renderMetadataRail(scenario, model) {
   </section>
   <section class="rail-section">
     <h2>Token usage</h2>
-    ${scenario ? renderScenarioTokenUsage(scenario) : '<p class="empty">No scenario selected.</p>'}
+    ${item ? renderCaseTokenUsage(item) : '<p class="empty">No case selected.</p>'}
     ${renderRunTokenFootnote(model.summary.token_usage)}
   </section>
   <section class="rail-section">
     <h2>Raw evidence</h2>
-    ${scenario ? renderRawLinks(scenario) : '<p class="empty">No scenario selected.</p>'}
+    ${item ? renderRawLinks(item) : '<p class="empty">No case selected.</p>'}
   </section>`;
 }
-function renderScenarioTokenUsage(scenario) {
-    if (!scenario.attempts.length)
+function renderCaseTokenUsage(item) {
+    if (!item.attempts.length)
         return '<p class="empty">No token usage recorded.</p>';
-    return `<table><thead><tr><th>Source</th><th>Total</th><th>Input</th><th>Output</th></tr></thead><tbody>${scenario.attempts
+    return `<table><thead><tr><th>Source</th><th>Total</th><th>Input</th><th>Output</th></tr></thead><tbody>${item.attempts
         .map((attempt) => {
         const usage = attempt.token_usage;
         return `<tr><td>${escapeHtml(attempt.label)}</td><td>${formatNullableNumber(usage?.total_tokens ?? null)}</td><td>${formatNullableNumber(usage?.input_tokens ?? null)}</td><td>${formatNullableNumber(usage?.output_tokens ?? null)}</td></tr>`;
@@ -972,10 +975,10 @@ function renderScenarioTokenUsage(scenario) {
         .join("")}</tbody></table>`;
 }
 function renderRunTokenFootnote(summary) {
-    return `<p class="muted rail-note">Token usage is measured telemetry, not a quality score. Unavailable scenarios: ${summary.unavailable_scenario_count}.</p>`;
+    return `<p class="muted rail-note">Token usage is measured telemetry, not a quality score. Unavailable cases: ${summary.unavailable_case_count}.</p>`;
 }
-function renderRawLinks(scenario) {
-    const groups = scenario.attempts.filter((attempt) => attempt.raw_links.length);
+function renderRawLinks(item) {
+    const groups = item.attempts.filter((attempt) => attempt.raw_links.length);
     if (!groups.length)
         return '<p class="empty">No raw evidence links recorded.</p>';
     return `<div class="links">${groups
@@ -1016,12 +1019,12 @@ function escapeJsonForHtml(value) {
 }
 const REPORT_APP_JS = `
 const data = JSON.parse(document.getElementById("report-data").textContent);
-let selectedId = (data.scenarios.find((s) => s.status === "failed") || data.scenarios.find((s) => s.status === "completed") || data.scenarios[0] || {}).id;
+let selectedId = (data.cases.find((s) => s.status === "failed") || data.cases.find((s) => s.status === "completed") || data.cases[0] || {}).id;
 let filter = "all";
-const search = document.getElementById("scenario-search");
-const list = document.getElementById("scenario-list");
-const count = document.getElementById("scenario-count");
-const detail = document.getElementById("scenario-detail");
+const search = document.getElementById("case-search");
+const list = document.getElementById("case-list");
+const count = document.getElementById("case-count");
+const detail = document.getElementById("case-detail");
 const rail = document.getElementById("metadata-rail");
 function esc(value) { return String(value ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 function label(value) { return String(value || "").replace(/_/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase()); }
@@ -1030,7 +1033,7 @@ function number(value) { return Number.isInteger(value) ? String(value) : Number
 function hasNoTokens(s) { return !s.attempts.some((a) => a.token_usage && a.token_usage.total_tokens !== null && !a.token_usage.unavailable_reason); }
 function filtered() {
   const q = search.value.trim().toLowerCase();
-  return data.scenarios.filter((s) => {
+  return data.cases.filter((s) => {
     const filterOk = filter === "all" || (filter === "no_tokens" ? hasNoTokens(s) : s.status === filter);
     const hay = [s.id, s.title, s.subtitle, s.status, s.attempts.map((a) => a.label).join(" ")].join(" ").toLowerCase();
     return filterOk && (!q || hay.includes(q));
@@ -1039,8 +1042,8 @@ function filtered() {
 function renderList() {
   const rows = filtered();
   count.textContent = rows.length;
-  list.innerHTML = rows.length ? rows.map((s) => '<button class="scenario-row" type="button" data-scenario-id="' + esc(s.id) + '" aria-current="' + (s.id === selectedId) + '"><strong>' + esc(s.id) + ' · ' + esc(s.title) + '</strong><span>' + esc(label(s.status)) + ' · ' + esc(s.attempts.map((a) => a.label).join(", ") || "No output") + '</span></button>').join("") : '<p class="empty">No scenarios match this filter.</p>';
-  list.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { selectedId = button.dataset.scenarioId; render(); }));
+  list.innerHTML = rows.length ? rows.map((s) => '<button class="case-row" type="button" data-case-id="' + esc(s.id) + '" aria-current="' + (s.id === selectedId) + '"><strong>' + esc(s.id) + ' · ' + esc(s.title) + '</strong><span>' + esc(label(s.status)) + ' · ' + esc(s.attempts.map((a) => a.label).join(", ") || "No output") + '</span></button>').join("") : '<p class="empty">No cases match this filter.</p>';
+  list.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { selectedId = button.dataset.caseId; render(); }));
 }
 function attemptBlocks(s) {
   const attempts = s.attempts.length ? s.attempts : [{ label: data.run.run_source.label, status: "unknown", final_preview: "No final output recorded.", raw_links: [] }];
@@ -1050,23 +1053,23 @@ function attemptBlocks(s) {
   }).join("");
 }
 function renderDetail(s) {
-  if (!s) return '<p class="empty">No scenarios recorded.</p>';
+  if (!s) return '<p class="empty">No cases recorded.</p>';
   const reasons = s.review_reasons.length ? '<ul class="reason-list">' + s.review_reasons.map((r) => '<li>' + esc(r) + '</li>').join("") + '</ul>' : '<p class="empty">No review reasons recorded.</p>';
-  const evidence = s.evidence.length ? '<table><thead><tr><th>Type</th><th>Status</th><th>Detail</th></tr></thead><tbody>' + s.evidence.map((r) => '<tr><td>' + esc(evidenceLabel(r.type)) + '</td><td>' + esc(label(r.status)) + '</td><td>' + esc(evidenceLabel(r.detail || "recorded")) + '</td></tr>').join("") + '</tbody></table>' : '<p class="empty">No confidently matched tests, judges, or feedback for this scenario.</p>';
+  const evidence = s.evidence.length ? '<table><thead><tr><th>Type</th><th>Status</th><th>Detail</th></tr></thead><tbody>' + s.evidence.map((r) => '<tr><td>' + esc(evidenceLabel(r.type)) + '</td><td>' + esc(label(r.status)) + '</td><td>' + esc(evidenceLabel(r.detail || "recorded")) + '</td></tr>').join("") + '</tbody></table>' : '<p class="empty">No confidently matched tests, judges, or feedback for this item.</p>';
   const criteria = s.criteria.length ? '<table><tbody>' + s.criteria.map((r) => '<tr><th>' + esc(r.label) + '</th><td>' + esc(r.value) + '</td></tr>').join("") + '</tbody></table>' : '<p class="empty">No criteria recorded.</p>';
-  return '<div class="scenario-head"><span class="status ' + esc(s.status) + '"><span class="dot"></span>' + esc(label(s.status)) + '</span><h1>' + esc(s.title) + '</h1><p class="muted">' + esc(s.id) + ' · ' + esc(s.subtitle) + '</p></div><div class="fact-row"><div class="fact"><span>Run</span><strong>' + esc(data.run.id) + '</strong></div><div class="fact"><span>Source</span><strong>' + esc(data.run.run_source.label) + '</strong></div><div class="fact"><span>Evidence basis</span><strong>' + esc(label(s.evidence_basis)) + '</strong></div><div class="fact"><span>Execution</span><strong>' + esc(label(s.execution_status)) + '</strong></div></div><section class="section"><h2>Review reasons</h2>' + reasons + '</section><section class="section"><h2>Final answer preview</h2><div class="answers">' + attemptBlocks(s) + '</div></section><section class="section"><h2>Evaluation evidence</h2>' + evidence + '</section><section class="section"><h2>Criteria</h2>' + criteria + '</section>';
+  return '<div class="case-head"><span class="status ' + esc(s.status) + '"><span class="dot"></span>' + esc(label(s.status)) + '</span><h1>' + esc(s.title) + '</h1><p class="muted">' + esc(s.id) + ' · ' + esc(s.subtitle) + '</p></div><div class="fact-row"><div class="fact"><span>Run</span><strong>' + esc(data.run.id) + '</strong></div><div class="fact"><span>Source</span><strong>' + esc(data.run.run_source.label) + '</strong></div><div class="fact"><span>Evidence basis</span><strong>' + esc(label(s.evidence_basis)) + '</strong></div><div class="fact"><span>Execution</span><strong>' + esc(label(s.execution_status)) + '</strong></div></div><section class="section"><h2>Review reasons</h2>' + reasons + '</section><section class="section"><h2>Final answer preview</h2><div class="answers">' + attemptBlocks(s) + '</div></section><section class="section"><h2>Evaluation evidence</h2>' + evidence + '</section><section class="section"><h2>Criteria</h2>' + criteria + '</section>';
 }
 function renderRail(s) {
   const tokenRows = s && s.attempts.length ? '<table><thead><tr><th>Source</th><th>Total</th><th>Input</th><th>Output</th></tr></thead><tbody>' + s.attempts.map((a) => '<tr><td>' + esc(a.label) + '</td><td>' + (a.token_usage && a.token_usage.total_tokens !== null ? number(a.token_usage.total_tokens) : "unavailable") + '</td><td>' + (a.token_usage && a.token_usage.input_tokens !== null ? number(a.token_usage.input_tokens) : "-") + '</td><td>' + (a.token_usage && a.token_usage.output_tokens !== null ? number(a.token_usage.output_tokens) : "-") + '</td></tr>').join("") + '</tbody></table>' : '<p class="empty">No token usage recorded.</p>';
   const raw = s ? s.attempts.filter((a) => a.raw_links.length).map((a) => '<div class="raw-group"><strong>' + esc(a.label) + '</strong><div class="raw-files">' + a.raw_links.map((r) => '<a href="' + esc(r.href) + '">' + esc(r.label) + '</a>').join("") + '</div></div>').join("") : "";
-  const foot = 'Token usage is measured telemetry, not a quality score. Unavailable scenarios: ' + data.summary.token_usage.unavailable_scenario_count + '.';
+  const foot = 'Token usage is measured telemetry, not a quality score. Unavailable cases: ' + data.summary.token_usage.unavailable_case_count + '.';
   return '<section class="rail-section"><h2>Run details</h2><dl class="kv"><div><dt>Status</dt><dd>' + esc(label(data.run.status)) + '</dd></div><div><dt>Execution</dt><dd>' + esc(label(data.run.execution_status)) + '</dd></div><div><dt>Readiness</dt><dd>' + esc(label(data.run.readiness_status)) + '</dd></div><div><dt>Assessment</dt><dd>' + esc(data.run.assessment_status ? label(data.run.assessment_status) : "No verdict recorded") + '</dd></div><div><dt>Runner</dt><dd>' + esc([data.run.runner_backend, data.run.runner_mode].filter(Boolean).join(" / ") || "unknown") + '</dd></div></dl><p class="muted rail-note">' + esc(data.run.readiness_summary) + '</p></section><section class="rail-section"><h2>Token usage</h2>' + tokenRows + '<p class="muted rail-note">' + esc(foot) + '</p></section><section class="rail-section"><h2>Raw evidence</h2><div class="links">' + (raw || '<p class="empty">No raw evidence links recorded.</p>') + '</div></section>';
 }
 function render() {
   renderList();
-  const scenario = data.scenarios.find((s) => s.id === selectedId) || data.scenarios[0];
-  detail.innerHTML = renderDetail(scenario);
-  rail.innerHTML = renderRail(scenario);
+  const item = data.cases.find((s) => s.id === selectedId) || data.cases[0];
+  detail.innerHTML = renderDetail(item);
+  rail.innerHTML = renderRail(item);
 }
 search.addEventListener("input", render);
 document.getElementById("filters").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => {
@@ -1076,13 +1079,13 @@ document.getElementById("filters").querySelectorAll("button").forEach((button) =
 }));
 render();
 `;
-function renderScenarioCard(scenario) {
-    const criteria = scenario.criteria;
-    return `<section class="scenario">
-    <h3>${escapeHtml(scenario.id)} ${escapeHtml(scenario.title || scenario.folder)}</h3>
-    <p class="muted">${escapeHtml([scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / "))}</p>
-    <p><strong>Evidence basis:</strong> ${escapeHtml(scenario.evidence_basis)}</p>
-    <p><strong>Capability:</strong> ${escapeHtml(scenario.capability || "not recorded")}</p>
+function renderCaseCard(item) {
+    const criteria = item.criteria;
+    return `<section class="case">
+    <h3>${escapeHtml(item.id)} ${escapeHtml(item.title || item.folder)}</h3>
+    <p class="muted">${escapeHtml([item.type, item.topics.join(", ")].filter(Boolean).join(" / "))}</p>
+    <p><strong>Evidence basis:</strong> ${escapeHtml(item.evidence_basis)}</p>
+    <p><strong>Capability:</strong> ${escapeHtml(item.capability || "not recorded")}</p>
     <p><strong>Expected behavior:</strong> ${escapeHtml(criteria?.expected_behavior || "not recorded")}</p>
     <table>
       <thead><tr><th>Assertions</th><th>Tests</th><th>Judges</th></tr></thead>

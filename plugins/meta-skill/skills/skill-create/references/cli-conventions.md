@@ -13,8 +13,8 @@ meta-skill project init <skill-dir>
 meta-skill lint <project-or-skill> [--run <run-id>] [--json]
 meta-skill review <project> [--json]
 meta-skill eval init <project>
-meta-skill eval run <project> [--scenario <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
-meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
+meta-skill eval run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
+meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--case <id> | --all-cases)
 meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
 meta-skill eval open <project> [--run <run-id>] [--list] [--json]
 meta-skill eval list <project> [--limit <n>] [--status <status>] [--json]
@@ -54,4 +54,4 @@ Run IDs are readable sequenced folders such as `001-initial-candidate`. Treat th
 
 Every eval run records unavailable token metrics explicitly when exact usage cannot be collected. Do not hide missing usage fields.
 
-Scenario authoring is manual. Do not present generated scenarios, automated uplift scores, or trigger-routing proof as supported until the runner has those modes.
+Case authoring is manual. Do not present generated cases, automated uplift scores, or trigger-routing proof as supported until the runner has those modes.

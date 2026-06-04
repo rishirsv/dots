@@ -10,9 +10,9 @@ import { CliError, exists, readJson, readText, writeJson, writeText } from "./pr
 import { createSkill } from "./skills";
 
 describe("lint, command parsing, and eval evidence", () => {
-  it("validates scenario manifests, tests, and judges", async () => {
-    const project = await fixtureProject("scenario-check");
-    await writeScenario(project, {
+  it("validates case manifests, tests, and judges", async () => {
+    const project = await fixtureProject("case-check");
+    await writeCase(project, {
       folder: "R1-basic",
       id: "R1",
       type: "regression",
@@ -37,9 +37,32 @@ describe("lint, command parsing, and eval evidence", () => {
     assert.equal(report.failures.length, 0);
   });
 
+  it("requires declared fixtures to match files on disk", async () => {
+    const project = await fixtureProject("case-fixtures");
+    await writeCase(project, {
+      folder: "R1-fixtures",
+      id: "R1",
+      type: "regression",
+      fixtures: [{ path: "fixtures/source-pack.md" }]
+    });
+    const caseDir = path.join(project, ".meta-skill", "evals", "cases", "R1-fixtures");
+
+    let report = await lintProject(project, { executeTests: false });
+    assert.match(report.failures.map((item) => item.message).join("\n"), /declared fixture does not exist/);
+
+    await fs.mkdir(path.join(caseDir, "fixtures"), { recursive: true });
+    await writeText(path.join(caseDir, "fixtures", "source-pack.md"), "source");
+    report = await lintProject(project, { executeTests: false });
+    assert.equal(report.failures.length, 0);
+
+    await writeText(path.join(caseDir, "fixtures", "extra.md"), "extra");
+    report = await lintProject(project, { executeTests: false });
+    assert.match(report.failures.map((item) => item.message).join("\n"), /fixture is present but undeclared/);
+  });
+
   it("writes App Server run evidence and fails when eval tests fail", async () => {
     const project = await fixtureProject("eval-run-check");
-    await writeScenario(project, {
+    await writeCase(project, {
       folder: "F1-multiturn",
       id: "F1",
       type: "failure_mode",
@@ -52,21 +75,21 @@ describe("lint, command parsing, and eval evidence", () => {
     const result = await runEval({
       project,
       selector: {},
-      scenarioRunner: {
+      caseRunner: {
         async run(input) {
-          const scenarioRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
-          await fs.mkdir(path.join(scenarioRoot, "stage", "skill"), { recursive: true });
-          await writeText(path.join(scenarioRoot, "stage", "skill", "SKILL.md"), "fixture");
-          await writeText(path.join(scenarioRoot, "final.md"), "Fixture final.");
-          await writeText(path.join(scenarioRoot, "turns.jsonl"), "");
-          await writeJson(path.join(scenarioRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
-          await writeText(path.join(scenarioRoot, "rpc.jsonl"), "");
-          await writeJson(path.join(scenarioRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
+          const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
+          await fs.mkdir(path.join(caseRoot, "stage", "skill"), { recursive: true });
+          await writeText(path.join(caseRoot, "stage", "skill", "SKILL.md"), "fixture");
+          await writeText(path.join(caseRoot, "final.md"), "Fixture final.");
+          await writeText(path.join(caseRoot, "turns.jsonl"), "");
+          await writeJson(path.join(caseRoot, "thread.json"), { schema_version: 1, thread_id: "fixture", turn_ids: ["turn"], status: "completed" });
+          await writeText(path.join(caseRoot, "rpc.jsonl"), "");
+          await writeJson(path.join(caseRoot, "usage.json"), tokenUsageEvidence(1, 1, 2));
           return {
             execution_status: "completed",
             token_usage: tokenSummary(1, 1, 2),
-            final_path: path.join(scenarioRoot, "final.md"),
-            evidence_path: path.join("scenarios", input.scenario.folder)
+            final_path: path.join(caseRoot, "final.md"),
+            evidence_path: path.join("cases", input.case.folder)
           };
         },
         close() {}
@@ -79,8 +102,8 @@ describe("lint, command parsing, and eval evidence", () => {
     assert.equal(await exists(path.join(result.runRoot, "tests.jsonl")), true);
     assert.equal(await exists(path.join(result.runRoot, "grades.jsonl")), true);
     assert.equal(await exists(path.join(result.runRoot, "feedback.jsonl")), true);
-    assert.equal(await exists(path.join(result.runRoot, "scenarios", "F1-multiturn", "rpc.jsonl")), true);
-    assert.equal(await exists(path.join(result.runRoot, "scenarios", "F1-multiturn", "stage", "skill", "SKILL.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "F1-multiturn", "rpc.jsonl")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "F1-multiturn", "stage", "skill", "SKILL.md")), true);
 
     const tests = await readText(path.join(result.runRoot, "tests.jsonl"));
     assert.match(tests, /"status":"failed"/);
@@ -124,7 +147,7 @@ async function fixtureProject(slug: string): Promise<string> {
   return project;
 }
 
-async function writeScenario(
+async function writeCase(
   project: string,
   options: {
     folder: string;
@@ -133,28 +156,30 @@ async function writeScenario(
     tests?: string[];
     judges?: string[];
     turns?: Array<{ content: string }>;
+    fixtures?: Array<{ path: string; description?: string }>;
   }
 ): Promise<void> {
-  const scenario = path.join(project, ".meta-skill", "evals", "scenarios", options.folder);
-  await fs.mkdir(scenario, { recursive: true });
-  await writeText(path.join(scenario, "task.md"), "Do the eval task.");
-  await writeJson(path.join(scenario, "scenario.json"), {
-    schema_version: 1,
-    id: options.id,
-    type: options.type,
-    title: "Basic behavior",
-    topics: ["smoke"],
-    include: [],
-    setup: [],
-    metadata: {}
-  });
-  await writeJson(path.join(scenario, "criteria.json"), {
-    schema_version: 1,
-    what_it_tests: "Basic behavior",
-    expected_behavior: "The skill should answer directly.",
-    assertions: ["Answers directly."],
-    tests: options.tests || [],
-    judges: (options.judges || []).map((id) => ({ id }))
-  });
-  if (options.turns) await writeJson(path.join(scenario, "turns.json"), options.turns);
+  const item = path.join(project, ".meta-skill", "evals", "cases", options.folder);
+  await fs.mkdir(item, { recursive: true });
+  await writeText(
+    path.join(item, "case.md"),
+    `---
+title: Basic behavior
+topics:
+  - smoke
+${(options.fixtures || []).length ? `fixtures:\n${(options.fixtures || []).map((fixture) => `  - path: ${fixture.path}${fixture.description ? `\n    description: ${fixture.description}` : ""}`).join("\n")}` : "fixtures: []"}
+criteria:
+  what_it_tests: Basic behavior
+  expected_behavior: The skill should answer directly.
+  assertions:
+    - Answers directly.
+  tests:${(options.tests || []).length ? `\n${(options.tests || []).map((id) => `    - ${id}`).join("\n")}` : " []"}
+  judges:${(options.judges || []).length ? `\n${(options.judges || []).map((id) => `    - id: ${id}`).join("\n")}` : " []"}
+---
+
+## Task
+
+Do the eval task.
+${(options.turns || []).map((turn, index) => `\n## Turn ${index + 2}\n\n${turn.content}\n`).join("")}`
+  );
 }

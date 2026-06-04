@@ -33,7 +33,7 @@ describe("command output", () => {
     const output = formatEvalRunSummary(".", {
       runId: "003-failed",
       status: "failed",
-      failureClassifications: ["scenario_failed", "deterministic_test_failed"],
+      failureClassifications: ["case_failed", "deterministic_test_failed"],
       report: "/tmp/evals/runs/003-failed/report.html"
     });
 
@@ -42,7 +42,7 @@ describe("command output", () => {
       [
         "run: 003-failed",
         "status: failed",
-        "failure classifications: scenario_failed, deterministic_test_failed",
+        "failure classifications: case_failed, deterministic_test_failed",
         "report.html: /tmp/evals/runs/003-failed/report.html",
         "report.json: /tmp/evals/runs/003-failed/report.json"
       ].join("\n")
@@ -57,7 +57,7 @@ describe("command output", () => {
     );
   });
 
-  it("does not expose unsupported eval scenario generation", async () => {
+  it("does not expose unsupported eval case generation", async () => {
     const lines: string[] = [];
     const original = console.log;
     console.log = (value?: unknown) => {

@@ -256,7 +256,7 @@ export function renderLintReportMarkdown(report: LintReport): string {
 export function renderRunListMarkdown(runs: RunIndexRow[]): string {
   const normalizedRuns = runs.map(normalizeRunIndexRowForRead).filter((run) => run.run_id);
   if (!normalizedRuns.length) return "No eval runs found.";
-  const header = "Run ID\tStatus\tCreated\tCompleted\tLabel\tSource\tScenarios\tAssessment\tNo Verdict\tFailures\tReadiness";
+  const header = "Run ID\tStatus\tCreated\tCompleted\tLabel\tSource\tCases\tAssessment\tNo Verdict\tFailures\tReadiness";
   const rows = normalizedRuns.map((run) =>
     [
       run.run_id,
@@ -265,7 +265,7 @@ export function renderRunListMarkdown(runs: RunIndexRow[]): string {
       run.completed_at || "",
       run.label || "",
       run.run_source.label,
-      String(run.scenario_count),
+      String(run.case_count),
       run.assessment_status || "none",
       String(run.no_verdict_count),
       run.failure_classifications.length ? run.failure_classifications.join(",") : "none",
@@ -285,7 +285,7 @@ export function renderEvalRunMarkdown(report: RunReport): string {
     `- Execution: ${report.summary.execution_status}`,
     `- Readiness: ${report.readiness.status}`,
     `- Assessment: ${report.summary.assessment_status || "no verdict recorded"}`,
-    `- Scenarios: ${report.summary.scenario_count}`,
+    `- Cases: ${report.summary.case_count}`,
     `- No verdict recorded: ${report.summary.no_verdict_count}`,
     `- Failure classifications: ${report.summary.failure_classifications.length ? report.summary.failure_classifications.join(", ") : "none"}`,
     `- Evidence counts: tests ${report.summary.evidence_counts.tests}, judges ${report.summary.evidence_counts.judges}, feedback ${report.summary.evidence_counts.feedback}`,
@@ -293,12 +293,12 @@ export function renderEvalRunMarkdown(report: RunReport): string {
     "## Readiness",
     report.readiness.summary,
     "",
-    "## Scenarios"
+    "## Cases"
   ];
-  if (!report.scenarios.length) lines.push("- No scenario rows recorded.");
-  for (const scenario of report.scenarios) {
-    lines.push(`- ${scenario.id} ${scenario.title || scenario.folder}: ${scenario.status}${scenario.no_verdict_recorded ? " (no verdict recorded)" : ""}`);
-    for (const attempt of scenario.attempts) {
+  if (!report.cases.length) lines.push("- No case rows recorded.");
+  for (const item of report.cases) {
+    lines.push(`- ${item.id} ${item.title || item.folder}: ${item.status}${item.no_verdict_recorded ? " (no verdict recorded)" : ""}`);
+    for (const attempt of item.attempts) {
       const detail = [attempt.run_source.label, attempt.verdict || attempt.execution_status, attempt.failure_classification || attempt.error || ""].filter(Boolean).join(" / ");
       lines.push(`  - ${detail}`);
     }
@@ -523,7 +523,7 @@ function findingsFor(report: MetaSkillReport): string[] {
   for (const warning of report.evidence.lint?.warnings || []) findings.push(`Lint warning: ${warning.message}`);
   for (const blocker of report.evidence.latest_eval_run?.report.readiness.blockers || []) findings.push(`Eval blocker: ${blocker}`);
   const noVerdict = report.evidence.latest_eval_run?.report.readiness.no_verdict_count || 0;
-  if (noVerdict) findings.push(`Eval assessment: ${noVerdict} scenario${noVerdict === 1 ? "" : "s"} completed with no verdict recorded.`);
+  if (noVerdict) findings.push(`Eval assessment: ${noVerdict} case${noVerdict === 1 ? "" : "s"} completed with no verdict recorded.`);
   if (report.evidence.release?.newer_run_exists) findings.push("Release: A newer run exists after the release snapshot.");
   for (const error of report.evidence.evidence_errors) findings.push(`Evidence error: ${error}`);
   return findings;

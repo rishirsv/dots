@@ -47,7 +47,7 @@ Create or update a skill when most of these are true:
 - The instructions are portable enough to live in runtime guidance rather than local project docs.
 - The request is substantive enough that specialized guidance would change behavior; simple one-step tasks may be better handled by the base agent.
 
-When the activation scenario already belongs to an existing skill, update that skill rather than creating a new one. Create a new skill only when the workflow has its own recognizable trigger and operating sequence.
+When the activation case already belongs to an existing skill, update that skill rather than creating a new one. Create a new skill only when the workflow has its own recognizable trigger and operating sequence.
 
 Do not make a skill when:
 

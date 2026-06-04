@@ -1,6 +1,6 @@
 import path from "node:path";
 import { AppServerUnavailableError, appServerConfig, codexVersion } from "../app-server/client";
-import { AppServerScenarioRunner } from "../app-server/runner";
+import { AppServerCaseRunner } from "../app-server/runner";
 import { lintProject } from "../lint";
 import {
   CliError,
@@ -18,8 +18,8 @@ import {
   writeJson
 } from "../project";
 import { judgeRun } from "./judge";
-import { classifyScenarioStatus, recordScenarioResult, runStatus } from "./results";
-import { loadScenarios, writeRunScenarioSnapshots } from "./scenarios";
+import { classifyCaseStatus, recordCaseResult, runStatus } from "./results";
+import { loadCases, writeRunCaseSnapshots } from "./cases";
 import { refreshRunEvidence } from "./runs";
 import type { EvalRunOptions, RunFailureClassification } from "./types";
 import type { EvalRunSource, EvalRunSourceKind } from "../models";
@@ -38,8 +38,8 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
     throw new CliError(`lint failed before eval run:\n${preflight.failures.map((failure) => `- ${failure.message}`).join("\n")}`);
   }
 
-  const scenarios = await loadScenarios(root, options.selector);
-  if (!scenarios.length) throw new CliError("no scenarios selected");
+  const cases = await loadCases(root, options.selector);
+  if (!cases.length) throw new CliError("no cases selected");
 
   const runSourceKind = options.runSource || "working_payload";
   const runSourceConfig = evalRunSourceConfig(runSourceKind, root, p.releaseSkill);
@@ -65,8 +65,8 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
     status: "running",
     label: options.label || null,
     suite: "default",
-    scenarios_path: "../../scenarios",
-    scenarios: { selection: scenarios.map((scenario) => scenario.folder) },
+    cases_path: "../../cases",
+    cases: { selection: cases.map((item) => item.folder) },
     run_source: runSourceConfig.runSource,
     runner: {
       backend: "app_server",
@@ -79,40 +79,40 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
       timeout_ms: 120000
     },
     orchestration: {
-      mode: "thread_per_scenario",
+      mode: "thread_per_case",
       turn_count: null
     }
   };
   await writeJson(path.join(runRoot, "run.json"), runJson);
   await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "run_started", run_id: runId, source: "meta-skill eval run", payload: runJson }));
-  await writeRunScenarioSnapshots(runRoot, scenarios);
+  await writeRunCaseSnapshots(runRoot, cases);
 
-  const runner = options.scenarioRunner || new AppServerScenarioRunner();
+  const runner = options.caseRunner || new AppServerCaseRunner();
   let hasFailures = false;
   const failureClassifications = new Set<RunFailureClassification>();
   try {
-    for (const scenario of scenarios) {
-      await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "scenario_started", run_id: runId, scenario_id: scenario.id, source: "meta-skill eval run", payload: { folder: scenario.folder, run_source: runSourceConfig.runSource } }));
+    for (const item of cases) {
+      await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "case_started", run_id: runId, case_id: item.id, source: "meta-skill eval run", payload: { folder: item.folder, run_source: runSourceConfig.runSource } }));
       try {
-        const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, attachSkill: runSourceConfig.runSource.attached_skill, scenario, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
-        const classification = classifyScenarioStatus(result.verdict || result.execution_status);
+        const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, attachSkill: runSourceConfig.runSource.attached_skill, case: item, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
+        const classification = classifyCaseStatus(result.verdict || result.execution_status);
         if (classification) {
           hasFailures = true;
           failureClassifications.add(classification);
         }
-        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.evidence_path, result.error, classification, result.verdict);
+        await recordCaseResult(runRoot, runId, item, runSourceConfig.runSource, result.execution_status, result.evidence_path, result.error, classification, result.verdict);
       } catch (error) {
         hasFailures = true;
         const message = error instanceof AppServerUnavailableError || error instanceof Error ? error.message : String(error);
         const classification: RunFailureClassification = error instanceof AppServerUnavailableError ? "app_server_unavailable" : "harness_unavailable";
         failureClassifications.add(classification);
-        const evidencePath = relativePath(runRoot, path.join(runRoot, "scenarios", scenario.folder));
+        const evidencePath = relativePath(runRoot, path.join(runRoot, "cases", item.folder));
         const tokenUsage = unavailableTokenUsage("App Server execution failed before token metrics were available.");
-        const scenarioRoot = path.join(runRoot, "scenarios", scenario.folder);
-        await ensureDir(scenarioRoot);
-        await writeJson(path.join(scenarioRoot, "usage.json"), { schema_version: 1, source_event: null, summary: tokenUsage, turns: [] });
-        await recordScenarioResult(runRoot, runId, scenario, runSourceConfig.runSource, "errored", evidencePath, message, classification);
-        await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "scenario_failed", run_id: runId, scenario_id: scenario.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification } }));
+        const caseRoot = path.join(runRoot, "cases", item.folder);
+        await ensureDir(caseRoot);
+        await writeJson(path.join(caseRoot, "usage.json"), { schema_version: 1, source_event: null, summary: tokenUsage, turns: [] });
+        await recordCaseResult(runRoot, runId, item, runSourceConfig.runSource, "errored", evidencePath, message, classification);
+        await appendJsonl(path.join(runRoot, "events.jsonl"), eventEnvelope({ type: "case_failed", run_id: runId, case_id: item.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification } }));
       }
     }
   } finally {
@@ -130,7 +130,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   }
 
   if (options.withJudges) {
-    const judges = await (options.judgeRunner || judgeRun)({ project: root, runId, allJudges: true, allScenarios: true });
+    const judges = await (options.judgeRunner || judgeRun)({ project: root, runId, allJudges: true, allCases: true });
     if (!judges.ok) hasFailures = true;
     for (const classification of judges.failureClassifications || []) failureClassifications.add(classification);
     if (!judges.ok && !(judges.failureClassifications || []).length) failureClassifications.add("judge_failure");

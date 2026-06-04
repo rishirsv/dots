@@ -34,7 +34,7 @@ Valid improvement evidence includes:
 - `.meta-skill/reviews/<review-id>/review.json`
 - `.meta-skill/evals/runs/<run-id>/results.jsonl`
 - `tests.jsonl`, `grades.jsonl`, or `feedback.jsonl`
-- scenario `task.md`, `turns.json`, criteria, trace, final output, or artifacts
+- case `case.md`, criteria, trace, final output, or artifacts
 - concrete user-observed failure
 
 If evidence is missing, ask the user to run `meta-skill lint`, `meta-skill review`, or `meta-skill eval run`, or to authorize a manual review path.
@@ -47,7 +47,7 @@ Use only lanes relevant to the request:
 - Runtime clarity: default path, output contract, stop/ask points, final checks.
 - Resources: linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - Controls: user files as data, approval gates, external writes, release/package gates.
-- Eval readiness: `.meta-skill/evals/` scenarios, `.meta-skill/tests/manifest.json`, judge quality, token usage visibility.
+- Eval readiness: `.meta-skill/evals/` cases, `.meta-skill/tests/manifest.json`, judge quality, token usage visibility.
 
 ## Prompt Doctor Loop
 
@@ -66,7 +66,7 @@ Prefer replacing a misleading sentence over adding a prohibition. Preserve unrel
 ```markdown
 ### Finding: <specific issue>
 
-Evidence: <file path, run ID, scenario ID, or exact section>
+Evidence: <file path, run ID, case ID, or exact section>
 Impact: <why future skill behavior suffers>
 Fix: <smallest strong edit>
 ```

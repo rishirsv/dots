@@ -1,6 +1,6 @@
-export type ScenarioTypeCode = "R" | "F" | "G";
+export type CaseTypeCode = "R" | "F" | "G";
 
-export type ScenarioType =
+export type CaseType =
   | "regression"
   | "failure_mode"
   | "gate";
@@ -51,9 +51,9 @@ export interface RunTokenUsageSummary {
   input_tokens: number | null;
   output_tokens: number | null;
   total_tokens: number | null;
-  scenario_count: number;
-  unavailable_scenario_count: number;
-  unavailable_reasons: Array<{ scenario_id: string; run_source: string; reason: string }>;
+  case_count: number;
+  unavailable_case_count: number;
+  unavailable_reasons: Array<{ case_id: string; run_source: string; reason: string }>;
 }
 
 export interface EvalManifest {
@@ -63,8 +63,8 @@ export interface EvalManifest {
     name: string;
     description?: string;
   };
-  scenarios: {
-    path: string;
+  cases: {
+    path: "cases";
   };
   defaults: {
     runner: "app_server";
@@ -73,19 +73,20 @@ export interface EvalManifest {
   };
 }
 
-export interface ScenarioMetadata {
-  schema_version: 1;
-  id: string;
-  type: ScenarioType;
+export interface CaseFixture {
+  path: string;
+  description?: string;
+}
+
+export interface CaseMetadata {
   title: string;
   topics?: string[];
-  include?: string[];
-  setup?: string[];
+  capability?: string;
+  fixtures?: CaseFixture[];
   metadata?: Record<string, unknown>;
 }
 
-export interface ScenarioCriteria {
-  schema_version: 1;
+export interface CaseCriteria {
   what_it_tests?: string;
   expected_behavior: string;
   assertions: string[];
@@ -100,12 +101,13 @@ export interface ScenarioCriteria {
   rubric?: string;
 }
 
-export interface ScenarioRecord {
+export interface CaseRecord {
   folder: string;
   id: string;
   path: string;
-  metadata: ScenarioMetadata;
-  criteria: ScenarioCriteria;
+  type: CaseType;
+  metadata: CaseMetadata;
+  criteria: CaseCriteria;
   task: string;
   turns: Array<{ content: string }>;
   evidence_basis?: "run_snapshot" | "legacy_current_project";
@@ -147,7 +149,7 @@ export interface EventEnvelope {
   schema_version: 1;
   type: string;
   run_id?: string;
-  scenario_id?: string;
+  case_id?: string;
   /** Read-only compatibility for old run evidence written before eval subjects replaced sides. */
   side?: LegacyEvalSide;
   created_at: string;
@@ -166,11 +168,11 @@ export interface RunReportAttempt {
   failure_classification?: string | null;
   error?: string;
   raw?: Record<string, unknown>;
-  /** Read-only compatibility marker for old scenario/<side>/ evidence. */
+  /** Read-only compatibility marker for old case/<side>/ evidence. */
   legacy_side?: LegacyEvalSide;
 }
 
-export interface RunReportScenario {
+export interface RunReportCase {
   id: string;
   folder: string;
   title?: string;
@@ -211,7 +213,7 @@ export interface RunReport {
     status: string;
     created_at?: string;
     completed_at?: string;
-    scenario_count: number;
+    case_count: number;
     attempt_count: number;
     result_count: number;
     run_source: EvalRunSource;
@@ -226,7 +228,7 @@ export interface RunReport {
     };
     token_usage: RunTokenUsageSummary;
   };
-  scenarios: RunReportScenario[];
+  cases: RunReportCase[];
   tests: EventEnvelope[];
   judges: EventEnvelope[];
   feedback: EventEnvelope[];
@@ -239,7 +241,7 @@ export interface RunIndexRow {
   status: string;
   created_at?: string;
   completed_at?: string;
-  scenario_count: number;
+  case_count: number;
   run_source: EvalRunSource;
   failure_classifications: string[];
   execution_status: string;

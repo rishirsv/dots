@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { EvalRunSource, ScenarioRecord, TokenUsage, TokenUsageTurn } from "../models";
+import type { EvalRunSource, CaseRecord, TokenUsage, TokenUsageTurn } from "../models";
 import { appendJsonl, copyPortablePayload, ensureDir, parseSkillFrontmatter, readText, unavailableTokenUsage, writeJson, writeText } from "../project";
 import type { AppServerConfig, AppServerLine } from "./client";
 import { AppServerJsonClient, AppServerUnavailableError } from "./client";
@@ -15,24 +15,24 @@ interface AppServerClientLike {
   flush?(): Promise<void>;
 }
 
-export interface AppServerScenarioRunnerOptions {
+export interface AppServerCaseRunnerOptions {
   clientFactory?: (onLine: (line: AppServerLine) => Promise<void>) => AppServerClientLike;
   turnTimeoutMs?: number;
-  maxScenarioRespawns?: number;
+  maxCaseRespawns?: number;
 }
 
-export interface ScenarioRunInput {
+export interface CaseRunInput {
   projectRoot: string;
   skillRoot?: string;
   attachSkill: boolean;
-  scenario: ScenarioRecord;
+  case: CaseRecord;
   runSource: EvalRunSource;
   runId: string;
   runRoot: string;
   appServer: AppServerConfig;
 }
 
-export interface ScenarioRunResult {
+export interface CaseRunResult {
   execution_status: "completed" | "errored";
   verdict?: "passed" | "failed";
   token_usage: TokenUsage;
@@ -41,32 +41,32 @@ export interface ScenarioRunResult {
   error?: string;
 }
 
-export class AppServerScenarioRunner {
+export class AppServerCaseRunner {
   private client: AppServerClientLike | undefined;
   private readonly clientFactory: (onLine: (line: AppServerLine) => Promise<void>) => AppServerClientLike;
   private readonly turnTimeoutMs: number;
-  private readonly maxScenarioRespawns: number;
+  private readonly maxCaseRespawns: number;
   private rpcPath: string | undefined;
 
-  constructor(options: AppServerScenarioRunnerOptions = {}) {
+  constructor(options: AppServerCaseRunnerOptions = {}) {
     this.clientFactory = options.clientFactory || ((onLine) => new AppServerJsonClient(onLine));
     this.turnTimeoutMs = options.turnTimeoutMs || 120000;
-    this.maxScenarioRespawns = options.maxScenarioRespawns ?? 1;
+    this.maxCaseRespawns = options.maxCaseRespawns ?? 1;
   }
 
-  async run(input: ScenarioRunInput): Promise<ScenarioRunResult> {
+  async run(input: CaseRunInput): Promise<CaseRunResult> {
     for (let attempt = 0; ; attempt += 1) {
       try {
         return await this.runOnce(input);
       } catch (error) {
-        if (!(error instanceof AppServerUnavailableError) || attempt >= this.maxScenarioRespawns) throw error;
+        if (!(error instanceof AppServerUnavailableError) || attempt >= this.maxCaseRespawns) throw error;
         this.close();
       }
     }
   }
 
-  private async runOnce(input: ScenarioRunInput): Promise<ScenarioRunResult> {
-    const rawRoot = path.join(input.runRoot, "scenarios", input.scenario.folder);
+  private async runOnce(input: CaseRunInput): Promise<CaseRunResult> {
+    const rawRoot = path.join(input.runRoot, "cases", input.case.folder);
     await ensureDir(rawRoot);
     const stageRoot = path.join(rawRoot, "stage");
     await stageWorkspace(input, stageRoot);
@@ -76,7 +76,7 @@ export class AppServerScenarioRunner {
     await this.client?.flush?.();
     this.rpcPath = rpcPath;
     const client = await this.ensureClient(input.appServer);
-    const scenarioEventMark = client.eventCount();
+    const caseEventMark = client.eventCount();
 
     const start = await client.request("thread/start", {
       cwd: stageRoot,
@@ -86,10 +86,10 @@ export class AppServerScenarioRunner {
       experimentalRawEvents: true,
       persistExtendedHistory: false,
       ephemeral: true,
-      baseInstructions: input.attachSkill ? "You are executing a Meta Skill scenario. Follow the staged skill payload exactly and answer the user's task." : "You are executing a Meta Skill scenario without an attached skill. Answer the user's task directly.",
+      baseInstructions: input.attachSkill ? "You are executing a Meta Skill eval case. Follow the staged skill payload exactly and answer the user's task." : "You are executing a Meta Skill eval case without an attached skill. Answer the user's task directly.",
       developerInstructions: [
-        input.attachSkill ? "Use the skill mounted in this turn as the only runtime skill guidance." : "No skill is mounted for this scenario. Answer without skill-specific runtime guidance.",
-        "Treat stage/scenario/task.md as the first user request and stage/scenario/turns.json as follow-up user turns.",
+        input.attachSkill ? "Use the skill mounted in this turn as the only runtime skill guidance." : "No skill is mounted for this case. Answer without skill-specific runtime guidance.",
+        "The user messages are supplied directly by the harness. Solver-visible fixture files, when present, live under fixtures/ in the staged workspace.",
         input.attachSkill ? "Do not modify files. Produce the final answer that the skill would give the user." : "Do not modify files. Produce the final answer you would give without a skill."
       ].join("\n")
     });
@@ -102,10 +102,10 @@ export class AppServerScenarioRunner {
     const evidenceWarnings = new Set<string>();
     let finalCumulativeUsage: TokenUsage | undefined;
     let final = "";
-    const turns = [{ content: input.scenario.task, source: "task.md" }, ...input.scenario.turns.map((turn) => ({ content: turn.content, source: "turns.json" }))];
+    const turns = [{ content: input.case.task, source: "case.md#Task" }, ...input.case.turns.map((turn, index) => ({ content: turn.content, source: `case.md#Turn ${index + 2}` }))];
     for (const [index, turn] of turns.entries()) {
       turnRecords.push({ role: "user", index, source: turn.source, content: turn.content, status: "sent" });
-      const result = await runTurn(client, threadId, stageRoot, input.scenario, turn.content, index === 0 && input.attachSkill, this.turnTimeoutMs, attachmentName);
+      const result = await runTurn(client, threadId, stageRoot, turn.content, index === 0 && input.attachSkill, this.turnTimeoutMs, attachmentName);
       for (const warning of result.evidenceWarnings) evidenceWarnings.add(warning);
       final = result.final || final;
       if (result.tokenUsage) {
@@ -122,14 +122,14 @@ export class AppServerScenarioRunner {
       });
     }
     await client.flush?.();
-    for (const warning of client.eventBufferWarningsSince?.(scenarioEventMark) || []) evidenceWarnings.add(warning);
+    for (const warning of client.eventBufferWarningsSince?.(caseEventMark) || []) evidenceWarnings.add(warning);
     const warnings = [...evidenceWarnings];
-    const scenarioSummary = summarizeScenarioUsage(finalCumulativeUsage);
+    const caseSummary = summarizeCaseUsage(finalCumulativeUsage);
     const usageEvidence = {
       schema_version: 1 as const,
-      source_event: scenarioSummary.unavailable_reason ? null : ("thread/tokenUsage/updated" as const),
+      source_event: caseSummary.unavailable_reason ? null : ("thread/tokenUsage/updated" as const),
       turns: usageTurns,
-      summary: scenarioSummary,
+      summary: caseSummary,
       ...(warnings.length ? { evidence_warnings: warnings } : {})
     };
 
@@ -151,7 +151,7 @@ export class AppServerScenarioRunner {
 
     return {
       execution_status: "completed",
-      token_usage: scenarioSummary,
+      token_usage: caseSummary,
       final_path: path.join(rawRoot, "final.md"),
       evidence_path: path.relative(input.runRoot, rawRoot)
     };
@@ -182,12 +182,11 @@ async function runTurn(
   client: AppServerClientLike,
   threadId: string,
   stageRoot: string,
-  scenario: ScenarioRecord,
   content: string,
   includeSkill: boolean,
   turnTimeoutMs: number,
   attachmentName?: string
-): Promise<{ turnId: string; final: string; tokenUsage?: TokenUsage; cumulativeTokenUsage?: TokenUsage; tokenEvent: boolean; evidenceWarnings: string[] }> {
+): Promise<{ turnId: string; final: string; tokenUsage?: TokenUsage; cumulativeTokenUsage?: TokenUsage; evidenceWarnings: string[] }> {
   const mark = client.eventCount();
   const input = [
     ...(includeSkill && attachmentName ? [{ type: "skill", name: attachmentName, path: path.join(stageRoot, "skill") }] : []),
@@ -218,7 +217,7 @@ async function runTurn(
   const tokenEvent = [...events]
     .reverse()
     .find((message) => message.method === "thread/tokenUsage/updated" && (message.params as { threadId?: string; turnId?: string } | undefined)?.threadId === threadId && (message.params as { turnId?: string } | undefined)?.turnId === turnId);
-  if (!tokenEvent) return { turnId, final, tokenEvent: false, evidenceWarnings };
+  if (!tokenEvent) return { turnId, final, evidenceWarnings };
   const params = tokenEvent.params as { tokenUsage?: { last?: unknown; total?: unknown }; modelContextWindow?: unknown };
   const tokenUsage = params.tokenUsage;
   const modelContextWindow = numberOrNull(params.modelContextWindow);
@@ -227,7 +226,6 @@ async function runTurn(
     final,
     tokenUsage: toTokenUsage(tokenUsage?.last, `App Server last token metrics were unavailable for turn ${turnId}.`, modelContextWindow),
     cumulativeTokenUsage: tokenUsage?.total ? toTokenUsage(tokenUsage.total, `App Server cumulative token metrics were unavailable for turn ${turnId}.`, modelContextWindow) : undefined,
-    tokenEvent: true,
     evidenceWarnings
   };
 }
@@ -252,7 +250,7 @@ function toTokenUsage(raw: unknown, reason = "App Server token metrics were unav
   };
 }
 
-function summarizeScenarioUsage(finalCumulativeUsage?: TokenUsage): TokenUsage {
+function summarizeCaseUsage(finalCumulativeUsage?: TokenUsage): TokenUsage {
   if (finalCumulativeUsage?.total_tokens !== null && finalCumulativeUsage?.total_tokens !== undefined) return finalCumulativeUsage;
   return unavailableTokenUsage("App Server completed without tokenUsage.total on the final turn.");
 }
@@ -278,28 +276,19 @@ function numberOrNull(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-async function stageWorkspace(input: ScenarioRunInput, stageRoot: string): Promise<void> {
+async function stageWorkspace(input: CaseRunInput, stageRoot: string): Promise<void> {
   await fs.rm(stageRoot, { recursive: true, force: true });
   await ensureDir(stageRoot);
   if (input.attachSkill && input.skillRoot) await copyPortablePayload(input.skillRoot, path.join(stageRoot, "skill"));
-  await ensureDir(path.join(stageRoot, "scenario"));
-  for (const name of ["task.md", "scenario.json", "turns.json", "capability.txt"]) {
-    const source = path.join(input.scenario.path, name);
-    try {
-      await fs.copyFile(source, path.join(stageRoot, "scenario", name));
-    } catch {
-      // Optional scenario files are simply absent from the staged workspace.
-    }
-  }
-  const resources = path.join(input.scenario.path, "resources");
+  const fixtures = path.join(input.case.path, "fixtures");
   try {
-    await fs.cp(resources, path.join(stageRoot, "scenario", "resources"), { recursive: true });
+    await fs.cp(fixtures, path.join(stageRoot, "fixtures"), { recursive: true });
   } catch {
-    // Scenario resources are optional.
+    // Case fixtures are optional.
   }
   await writeText(
     path.join(stageRoot, "HARNESS.md"),
-    `# Meta Skill App Server Harness\n\nRun ${input.runId}, scenario ${input.scenario.id}, source ${input.runSource.label}.\n`
+    `# Meta Skill App Server Harness\n\nRun ${input.runId}, case ${input.case.id}, source ${input.runSource.label}.\n`
   );
 }
 

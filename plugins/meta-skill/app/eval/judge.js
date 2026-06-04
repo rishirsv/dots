@@ -9,7 +9,7 @@ const node_path_1 = __importDefault(require("node:path"));
 const client_1 = require("../app-server/client");
 const project_1 = require("../project");
 const report_1 = require("../report");
-const scenarios_1 = require("./scenarios");
+const cases_1 = require("./cases");
 const results_1 = require("./results");
 async function judgeRun(options) {
     const root = await (0, project_1.requirePortableSkill)(options.project);
@@ -19,9 +19,9 @@ async function judgeRun(options) {
         throw new project_1.CliError(`run does not exist: ${options.runId}`);
     if (!options.judge && !options.allJudges)
         throw new project_1.CliError("eval judge requires --judge <id> or --all-judges", 2);
-    if (!options.scenario && !options.allScenarios)
-        throw new project_1.CliError("eval judge requires --scenario <id> or --all-scenarios", 2);
-    const scenarios = await (0, scenarios_1.loadRunScenarioSnapshots)(root, runRoot, options.allScenarios ? {} : { scenario: [options.scenario] });
+    if (!options.case && !options.allCases)
+        throw new project_1.CliError("eval judge requires --case <id> or --all-cases", 2);
+    const cases = await (0, cases_1.loadRunCaseSnapshots)(root, runRoot, options.allCases ? {} : { case: [options.case] });
     let annotations = 0;
     let ok = true;
     const failureClassifications = new Set();
@@ -40,15 +40,15 @@ async function judgeRun(options) {
             await judgeClient.connect(appServer);
             judgeExecutor = (input) => runJudge(judgeClient, input);
         }
-        for (const scenario of scenarios) {
-            const judgeIds = options.allJudges ? (scenario.criteria.judges || []).map((judge) => judge.id) : [options.judge];
+        for (const item of cases) {
+            const judgeIds = options.allJudges ? (item.criteria.judges || []).map((judge) => judge.id) : [options.judge];
             for (const judgeId of judgeIds) {
                 const judgePath = node_path_1.default.join(p.judges, `${judgeId}.md`);
                 if (!(await (0, project_1.exists)(judgePath)))
                     throw new project_1.CliError(`judge does not exist: ${judgeId}`);
                 const judgePrompt = await (0, project_1.readText)(judgePath);
-                const threshold = (scenario.criteria.judges || []).find((judge) => judge.id === judgeId)?.threshold;
-                for (const attempt of await (0, results_1.attemptsInRun)(runRoot, scenario.folder)) {
+                const threshold = (item.criteria.judges || []).find((judge) => judge.id === judgeId)?.threshold;
+                for (const attempt of await (0, results_1.attemptsInRun)(runRoot, item.folder)) {
                     const finalPath = node_path_1.default.join(runRoot, attempt.evidencePath, "final.md");
                     if (!(await (0, project_1.exists)(finalPath))) {
                         ok = false;
@@ -56,7 +56,7 @@ async function judgeRun(options) {
                         await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "grades.jsonl"), (0, project_1.eventEnvelope)({
                             type: "judge_result",
                             run_id: options.runId,
-                            scenario_id: scenario.id,
+                            case_id: item.id,
                             ...(attempt.legacySide ? { side: attempt.legacySide } : {}),
                             source: judgeId,
                             payload: {
@@ -64,14 +64,14 @@ async function judgeRun(options) {
                                 run_source: attempt.runSource,
                                 status: "unavailable",
                                 failure_classification: "harness_unavailable",
-                                reason: `missing scenario final evidence: ${(0, project_1.relativePath)(runRoot, finalPath)}`
+                                reason: `missing case final evidence: ${(0, project_1.relativePath)(runRoot, finalPath)}`
                             }
                         }));
                         annotations += 1;
                         continue;
                     }
                     const final = await (0, project_1.readText)(finalPath);
-                    const result = await judgeExecutor({ projectRoot: root, judgeId, judgePrompt, scenario, runSourceLabel: attempt.runSource.label, final });
+                    const result = await judgeExecutor({ projectRoot: root, judgeId, judgePrompt, case: item, runSourceLabel: attempt.runSource.label, final });
                     const passed = judgePassed(result, threshold);
                     ok = ok && passed;
                     if (!passed)
@@ -79,7 +79,7 @@ async function judgeRun(options) {
                     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "grades.jsonl"), (0, project_1.eventEnvelope)({
                         type: "judge_result",
                         run_id: options.runId,
-                        scenario_id: scenario.id,
+                        case_id: item.id,
                         ...(attempt.legacySide ? { side: attempt.legacySide } : {}),
                         source: judgeId,
                         payload: {
@@ -88,7 +88,7 @@ async function judgeRun(options) {
                             status: passed ? "passed" : "failed",
                             failure_classification: passed ? null : "judge_failure",
                             threshold: threshold || null,
-                            evidence_basis: scenario.evidence_basis || "run_snapshot",
+                            evidence_basis: item.evidence_basis || "run_snapshot",
                             result
                         }
                     }));
@@ -102,14 +102,14 @@ async function judgeRun(options) {
         const message = error instanceof Error ? error.message : String(error);
         const classification = error instanceof client_1.AppServerUnavailableError ? "app_server_unavailable" : "judge_failure";
         failureClassifications.add(classification);
-        for (const scenario of scenarios) {
-            const judgeIds = options.allJudges ? (scenario.criteria.judges || []).map((judge) => judge.id) : [options.judge];
+        for (const item of cases) {
+            const judgeIds = options.allJudges ? (item.criteria.judges || []).map((judge) => judge.id) : [options.judge];
             for (const judgeId of judgeIds) {
-                for (const attempt of await (0, results_1.attemptsInRun)(runRoot, scenario.folder)) {
+                for (const attempt of await (0, results_1.attemptsInRun)(runRoot, item.folder)) {
                     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "grades.jsonl"), (0, project_1.eventEnvelope)({
                         type: "judge_result",
                         run_id: options.runId,
-                        scenario_id: scenario.id,
+                        case_id: item.id,
                         ...(attempt.legacySide ? { side: attempt.legacySide } : {}),
                         source: judgeId,
                         payload: {
@@ -142,7 +142,7 @@ async function runJudge(client, input) {
         persistExtendedHistory: false,
         ephemeral: true,
         baseInstructions: "You are a strict Meta Skill eval judge. Return only JSON.",
-        developerInstructions: "Evaluate the saved scenario evidence against the judge prompt. Do not use tools."
+        developerInstructions: "Evaluate the saved case evidence against the judge prompt. Do not use tools."
     });
     const threadId = start.thread?.id;
     if (!threadId)
@@ -151,8 +151,8 @@ async function runJudge(client, input) {
     const prompt = [
         "# Judge Prompt",
         input.judgePrompt,
-        "# Scenario",
-        JSON.stringify({ id: input.scenario.id, folder: input.scenario.folder, run_source: input.runSourceLabel, evidence_basis: input.scenario.evidence_basis || "run_snapshot", metadata: input.scenario.metadata, criteria: input.scenario.criteria }, null, 2),
+        "# Case",
+        JSON.stringify({ id: input.case.id, folder: input.case.folder, run_source: input.runSourceLabel, evidence_basis: input.case.evidence_basis || "run_snapshot", metadata: input.case.metadata, criteria: input.case.criteria }, null, 2),
         "# Final Output",
         input.final,
         "# Required Output",

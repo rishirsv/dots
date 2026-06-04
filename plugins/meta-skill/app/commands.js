@@ -29,8 +29,8 @@ Usage:
   meta-skill report <project> [--view status|runs|eval|review|release|full|lint] [--run <run-id>] [--review <review-id>] [--json] [--html] [--refresh] [--open]
   meta-skill review <project> [--json]
   meta-skill eval init <project>
-  meta-skill eval run <project> [--scenario <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
-  meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
+  meta-skill eval run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
+  meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--case <id> | --all-cases)
   meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
   meta-skill eval open <project> [--run <run-id>] [--list] [--json]
   meta-skill eval list <project> [--limit <n>] [--status <status>] [--json]
@@ -194,11 +194,11 @@ async function commandEvalInit(argv) {
     console.log(`eval workbench: ${result.path}`);
     for (const warning of result.warnings)
         console.log(`warning: ${warning}`);
-    console.log(`next step: add scenarios, then meta-skill eval run ${shellPath(project)}`);
+    console.log(`next step: add cases, then meta-skill eval run ${shellPath(project)}`);
     return 0;
 }
 async function commandEvalRun(argv) {
-    const args = parse(argv, ["scenario", "type", "topic", "label", "app-server-endpoint"], ["snapshot", "no-skill", "with-judges", "no-lint"]);
+    const args = parse(argv, ["case", "type", "topic", "label", "app-server-endpoint"], ["snapshot", "no-skill", "with-judges", "no-lint"]);
     const project = args.positionals[0] || ".";
     if (args.one("app-server-endpoint")) {
         throw new project_1.CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
@@ -210,7 +210,7 @@ async function commandEvalRun(argv) {
         throw new project_1.CliError("--type must be one of R, F, G", 2);
     const result = await (0, evals_1.runEval)({
         project,
-        selector: { scenario: args.many("scenario"), type, topic: args.many("topic") },
+        selector: { case: args.many("case"), type, topic: args.many("topic") },
         label: args.one("label"),
         runSource: args.has("snapshot") ? "snapshot_payload" : args.has("no-skill") ? "no_skill" : "working_payload",
         withJudges: args.has("with-judges"),
@@ -235,7 +235,7 @@ function formatEvalRunSummary(project, result) {
     return lines.join("\n");
 }
 async function commandEvalJudge(argv) {
-    const args = parse(argv, ["run", "judge", "scenario"], ["all-judges", "all-scenarios"]);
+    const args = parse(argv, ["run", "judge", "case"], ["all-judges", "all-cases"]);
     const project = args.positionals[0] || ".";
     const runId = args.one("run");
     if (!runId)
@@ -245,8 +245,8 @@ async function commandEvalJudge(argv) {
         runId,
         judge: args.one("judge"),
         allJudges: args.has("all-judges"),
-        scenario: args.one("scenario"),
-        allScenarios: args.has("all-scenarios")
+        case: args.one("case"),
+        allCases: args.has("all-cases")
     });
     console.log(`judge annotations: ${result.annotations}`);
     console.log(`report refreshed: .meta-skill/evals/runs/${runId}/report.html`);

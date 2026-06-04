@@ -117,7 +117,7 @@ export function projectPaths(projectRoot: string) {
     spec: path.join(meta, "spec.md"),
     evals: path.join(meta, "evals"),
     evalManifest: path.join(meta, "evals", "evals.json"),
-    scenarios: path.join(meta, "evals", "scenarios"),
+    cases: path.join(meta, "evals", "cases"),
     judges: path.join(meta, "evals", "judges"),
     runs: path.join(meta, "evals", "runs"),
     tests: path.join(meta, "tests"),
@@ -148,7 +148,7 @@ export async function createWorkbench(projectRoot: string, options: { force?: bo
   const skillName = frontmatter.name || path.basename(root);
 
   await ensureDir(p.meta);
-  await ensureDir(p.scenarios);
+  await ensureDir(p.cases);
   await ensureDir(p.judges);
   await ensureDir(p.runs);
   await ensureDir(p.unitTests);
@@ -174,7 +174,7 @@ export async function createWorkbench(projectRoot: string, options: { force?: bo
         name: "default",
         description: "Behavior, routing, gates, and known failure-mode coverage."
       },
-      scenarios: { path: "scenarios" },
+      cases: { path: "cases" },
       defaults: { runner: "app_server", run_source: "working_payload", timeout_ms: 120000 }
     };
     await writeJson(p.evalManifest, manifest);

@@ -1,6 +1,6 @@
-# Scenario Design
+# Case Design
 
-Read this when creating or auditing scenario coverage for a reusable skill.
+Read this when creating or auditing case coverage for a reusable skill.
 
 ## Lifecycle
 
@@ -8,7 +8,7 @@ Use this loop:
 
 ```text
 lint workbench
-  -> add realistic scenarios
+  -> add realistic cases
   -> run App Server-backed eval
   -> inspect traces, final outputs, tests, judges, and feedback
   -> identify repeated failure patterns
@@ -21,25 +21,31 @@ Observed failures come before evaluator machinery. Do not begin with a broad jud
 
 ## Starter Coverage
 
-Start with 3-5 scenarios:
+Start with 3-5 cases:
 
 1. `R`: normal expected behavior.
 2. `F`: known hard behavior, ambiguity, multi-turn handling, or source-grounding risk.
-3. `T`: activation or non-activation boundary.
-4. `G`: approval, safe stop, or safe default.
-5. Source-grounding scenario when the skill uses files or evidence.
+3. `G`: approval, safe stop, or safe default.
+4. Source-grounding case when the skill uses files or evidence.
 
-Each scenario needs at least one concrete assertion.
+Each case needs at least one concrete assertion.
 
 ## Multi-Turn Cases
 
-Use `task.md` for the first turn and `turns.json` for follow-ups:
+Use `## Task` in `case.md` for the first turn and `## Turn N` headings for follow-ups:
 
-```json
-[
-  { "content": "Now tighten the recommendation for an executive reader." },
-  { "content": "List the two biggest risks in the source material." }
-]
+```md
+## Task
+
+Summarize the source pack.
+
+## Turn 2
+
+Now tighten the recommendation for an executive reader.
+
+## Turn 3
+
+List the two biggest risks in the source material.
 ```
 
 Do not pack a transcript into one prompt when the behavior depends on real follow-up turns.
@@ -54,7 +60,7 @@ Prefer tests when the check is objective:
 - script exits successfully
 - token or turn budget is within limit
 
-Scenario criteria reference test IDs from `.meta-skill/tests/manifest.json`; they do not embed commands.
+Case criteria reference test IDs from `.meta-skill/tests/manifest.json`; they do not embed commands.
 
 ## Judges
 
@@ -66,7 +72,7 @@ Use judges for subjective qualities:
 - final-answer usefulness
 - handling ambiguity
 
-Judges are optional by default because they cost tokens. Keep them narrow and human-authored. Store judge prompts in `.meta-skill/evals/judges/` and thresholds in scenario `criteria.json`.
+Judges are optional by default because they cost tokens. Keep them narrow and human-authored. Store judge prompts in `.meta-skill/evals/judges/` and thresholds in `case.md` frontmatter.
 
 ## Error Analysis
 
@@ -74,7 +80,7 @@ For each failure, identify the first place it went wrong:
 
 - trigger decision
 - user task interpretation
-- source retrieval or staged resource read
+- source retrieval or staged fixture read
 - runtime script
 - tool call
 - final response
@@ -87,11 +93,11 @@ Pass this first-failure note to `meta-skill plan` or the improvement discussion.
 
 There is no sealed release gate. For release confidence, prefer:
 
-- relevant `R`, `F`, `T`, and `G` coverage for the risk
+- relevant `R`, `F`, and `G` coverage for the risk
 - deterministic tests where possible
 - human-reviewed judge prompt quality when judges matter
 - fresh saved-snapshot runs with `meta-skill eval run . --snapshot` when snapshot evidence matters
 - explicit human review before release or package decisions
 - `meta-skill release . --from-run <run-id>` when a run supports readiness, so the release metadata records the evidence basis
 
-Working-payload and saved-snapshot App Server scenarios force-attach the staged skill and run read-only final-answer checks. Use them for forced-skill behavior evidence. No-skill runs are available with `--no-skill` as manual control evidence, not as an automated uplift score. Do not claim true trigger routing or writable file proof until the runner supports those modes.
+Working-payload and saved-snapshot App Server cases force-attach the staged skill and run read-only final-answer checks. Use them for forced-skill behavior evidence. No-skill runs are available with `--no-skill` as manual control evidence, not as an automated uplift score. Do not claim true trigger routing or writable file proof until the runner supports those modes.

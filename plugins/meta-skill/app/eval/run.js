@@ -11,7 +11,7 @@ const lint_1 = require("../lint");
 const project_1 = require("../project");
 const judge_1 = require("./judge");
 const results_1 = require("./results");
-const scenarios_1 = require("./scenarios");
+const cases_1 = require("./cases");
 const runs_1 = require("./runs");
 async function runEval(options) {
     if (options.appServerEndpoint) {
@@ -25,9 +25,9 @@ async function runEval(options) {
     if (preflight.failures.length) {
         throw new project_1.CliError(`lint failed before eval run:\n${preflight.failures.map((failure) => `- ${failure.message}`).join("\n")}`);
     }
-    const scenarios = await (0, scenarios_1.loadScenarios)(root, options.selector);
-    if (!scenarios.length)
-        throw new project_1.CliError("no scenarios selected");
+    const cases = await (0, cases_1.loadCases)(root, options.selector);
+    if (!cases.length)
+        throw new project_1.CliError("no cases selected");
     const runSourceKind = options.runSource || "working_payload";
     const runSourceConfig = evalRunSourceConfig(runSourceKind, root, p.releaseSkill);
     if (runSourceKind === "snapshot_payload") {
@@ -50,8 +50,8 @@ async function runEval(options) {
         status: "running",
         label: options.label || null,
         suite: "default",
-        scenarios_path: "../../scenarios",
-        scenarios: { selection: scenarios.map((scenario) => scenario.folder) },
+        cases_path: "../../cases",
+        cases: { selection: cases.map((item) => item.folder) },
         run_source: runSourceConfig.runSource,
         runner: {
             backend: "app_server",
@@ -64,40 +64,40 @@ async function runEval(options) {
             timeout_ms: 120000
         },
         orchestration: {
-            mode: "thread_per_scenario",
+            mode: "thread_per_case",
             turn_count: null
         }
     };
     await (0, project_1.writeJson)(node_path_1.default.join(runRoot, "run.json"), runJson);
     await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "run_started", run_id: runId, source: "meta-skill eval run", payload: runJson }));
-    await (0, scenarios_1.writeRunScenarioSnapshots)(runRoot, scenarios);
-    const runner = options.scenarioRunner || new runner_1.AppServerScenarioRunner();
+    await (0, cases_1.writeRunCaseSnapshots)(runRoot, cases);
+    const runner = options.caseRunner || new runner_1.AppServerCaseRunner();
     let hasFailures = false;
     const failureClassifications = new Set();
     try {
-        for (const scenario of scenarios) {
-            await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "scenario_started", run_id: runId, scenario_id: scenario.id, source: "meta-skill eval run", payload: { folder: scenario.folder, run_source: runSourceConfig.runSource } }));
+        for (const item of cases) {
+            await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "case_started", run_id: runId, case_id: item.id, source: "meta-skill eval run", payload: { folder: item.folder, run_source: runSourceConfig.runSource } }));
             try {
-                const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, attachSkill: runSourceConfig.runSource.attached_skill, scenario, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
-                const classification = (0, results_1.classifyScenarioStatus)(result.verdict || result.execution_status);
+                const result = await runner.run({ projectRoot: root, skillRoot: runSourceConfig.skillRoot, attachSkill: runSourceConfig.runSource.attached_skill, case: item, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
+                const classification = (0, results_1.classifyCaseStatus)(result.verdict || result.execution_status);
                 if (classification) {
                     hasFailures = true;
                     failureClassifications.add(classification);
                 }
-                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, result.execution_status, result.evidence_path, result.error, classification, result.verdict);
+                await (0, results_1.recordCaseResult)(runRoot, runId, item, runSourceConfig.runSource, result.execution_status, result.evidence_path, result.error, classification, result.verdict);
             }
             catch (error) {
                 hasFailures = true;
                 const message = error instanceof client_1.AppServerUnavailableError || error instanceof Error ? error.message : String(error);
                 const classification = error instanceof client_1.AppServerUnavailableError ? "app_server_unavailable" : "harness_unavailable";
                 failureClassifications.add(classification);
-                const evidencePath = (0, project_1.relativePath)(runRoot, node_path_1.default.join(runRoot, "scenarios", scenario.folder));
+                const evidencePath = (0, project_1.relativePath)(runRoot, node_path_1.default.join(runRoot, "cases", item.folder));
                 const tokenUsage = (0, project_1.unavailableTokenUsage)("App Server execution failed before token metrics were available.");
-                const scenarioRoot = node_path_1.default.join(runRoot, "scenarios", scenario.folder);
-                await (0, project_1.ensureDir)(scenarioRoot);
-                await (0, project_1.writeJson)(node_path_1.default.join(scenarioRoot, "usage.json"), { schema_version: 1, source_event: null, summary: tokenUsage, turns: [] });
-                await (0, results_1.recordScenarioResult)(runRoot, runId, scenario, runSourceConfig.runSource, "errored", evidencePath, message, classification);
-                await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "scenario_failed", run_id: runId, scenario_id: scenario.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification } }));
+                const caseRoot = node_path_1.default.join(runRoot, "cases", item.folder);
+                await (0, project_1.ensureDir)(caseRoot);
+                await (0, project_1.writeJson)(node_path_1.default.join(caseRoot, "usage.json"), { schema_version: 1, source_event: null, summary: tokenUsage, turns: [] });
+                await (0, results_1.recordCaseResult)(runRoot, runId, item, runSourceConfig.runSource, "errored", evidencePath, message, classification);
+                await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "events.jsonl"), (0, project_1.eventEnvelope)({ type: "case_failed", run_id: runId, case_id: item.id, source: "app_server", payload: { run_source: runSourceConfig.runSource, error: message, failure_classification: classification } }));
             }
         }
     }
@@ -115,7 +115,7 @@ async function runEval(options) {
         await (0, project_1.appendJsonl)(node_path_1.default.join(runRoot, "tests.jsonl"), (0, project_1.eventEnvelope)({ type: "lint_skipped", run_id: runId, source: "meta-skill eval run", payload: { reason: "--no-lint" } }));
     }
     if (options.withJudges) {
-        const judges = await (options.judgeRunner || judge_1.judgeRun)({ project: root, runId, allJudges: true, allScenarios: true });
+        const judges = await (options.judgeRunner || judge_1.judgeRun)({ project: root, runId, allJudges: true, allCases: true });
         if (!judges.ok)
             hasFailures = true;
         for (const classification of judges.failureClassifications || [])
