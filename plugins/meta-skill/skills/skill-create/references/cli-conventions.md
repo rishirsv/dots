@@ -13,7 +13,7 @@ meta-skill project init <skill-dir>
 meta-skill lint <project-or-skill> [--run <run-id>] [--json]
 meta-skill review <project> [--json]
 meta-skill eval init <project>
-meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
+meta-skill eval run <project> [--scenario <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
 meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
 meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
 meta-skill eval open <project> [--run <run-id>] [--list] [--json]

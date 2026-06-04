@@ -90,9 +90,9 @@ function selectScenarios(records, selector) {
             if (!wanted.has(scenario.id) && !wanted.has(scenario.folder))
                 return false;
         }
-        if (selector.family) {
+        if (selector.type) {
             const prefix = scenario.id.charAt(0);
-            if (prefix !== selector.family)
+            if (prefix !== selector.type)
                 return false;
         }
         if (selector.topic?.length) {

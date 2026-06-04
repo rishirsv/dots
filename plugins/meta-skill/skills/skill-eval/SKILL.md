@@ -55,9 +55,8 @@ Start with 3-5 scenarios:
 
 1. `R` regression: a normal task the skill should handle.
 2. `F` failure mode: a hard, ambiguous, or multi-turn behavior.
-3. `T` trigger: activation or non-activation boundary.
-4. `G` gate: approval, safe stop, or safe default.
-5. Source-grounding scenario when the skill depends on files.
+3. `G` gate: approval, safe stop, or safe default.
+4. Source-grounding scenario when the skill depends on files.
 
 Prefer deterministic tests before judges. Use judges only for subjective qualities such as usefulness, source faithfulness, tone fit, recommendation quality, or handling ambiguity.
 

@@ -75,7 +75,6 @@ async function buildRunReport(runRoot) {
             id: scenarioId,
             folder,
             title: snapshot?.metadata?.title,
-            family: snapshot?.metadata?.family,
             type: snapshot?.metadata?.type,
             topics: snapshot?.metadata?.topics || [],
             capability: snapshot?.capability || null,
@@ -573,7 +572,6 @@ function normalizeRunReportScenarioForRead(value) {
         id: String(scenario.id || scenario.folder || "unknown"),
         folder: String(scenario.folder || scenario.id || "unknown"),
         title: scenario.title ? String(scenario.title) : undefined,
-        family: scenario.family ? String(scenario.family) : undefined,
         type: scenario.type ? String(scenario.type) : undefined,
         topics: Array.isArray(scenario.topics) ? scenario.topics.map(String) : [],
         capability: scenario.capability || null,
@@ -692,7 +690,7 @@ function toReportAppScenario(report, scenario) {
     };
 }
 function scenarioSubtitle(scenario) {
-    return [scenario.family, scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / ") || scenario.folder;
+    return [scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / ") || scenario.folder;
 }
 function attemptsForScenario(scenario) {
     return scenario.attempts
@@ -1082,7 +1080,7 @@ function renderScenarioCard(scenario) {
     const criteria = scenario.criteria;
     return `<section class="scenario">
     <h3>${escapeHtml(scenario.id)} ${escapeHtml(scenario.title || scenario.folder)}</h3>
-    <p class="muted">${escapeHtml([scenario.family, scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / "))}</p>
+    <p class="muted">${escapeHtml([scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / "))}</p>
     <p><strong>Evidence basis:</strong> ${escapeHtml(scenario.evidence_basis)}</p>
     <p><strong>Capability:</strong> ${escapeHtml(scenario.capability || "not recorded")}</p>
     <p><strong>Expected behavior:</strong> ${escapeHtml(criteria?.expected_behavior || "not recorded")}</p>

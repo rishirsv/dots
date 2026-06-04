@@ -12,14 +12,12 @@ const node_util_1 = require("node:util");
 const project_1 = require("./project");
 const report_1 = require("./report");
 const execAsync = (0, node_util_1.promisify)(node_child_process_1.exec);
-const FAMILY_BY_PREFIX = {
+const TYPE_BY_PREFIX = {
     R: "regression",
     F: "failure_mode",
-    T: "trigger",
     G: "gate"
 };
-const VALID_TYPES = new Set(["behavior", "trigger", "gate"]);
-const VALID_FAMILIES = new Set(Object.values(FAMILY_BY_PREFIX));
+const VALID_TYPES = new Set(Object.values(TYPE_BY_PREFIX));
 async function lintProject(target, options = {}) {
     const root = await (0, project_1.requirePortableSkill)(target);
     const failures = [];
@@ -223,9 +221,9 @@ async function validateWorkbench(root, failures, warnings) {
     }
 }
 async function validateScenario(scenarioDir, folder, seenIds, testIds, judgeIds, failures, warnings) {
-    const match = /^([RFTG]\d+)-[a-z0-9][a-z0-9-]*$/.exec(folder);
+    const match = /^([RFG]\d+)-[a-z0-9][a-z0-9-]*$/.exec(folder);
     if (!match)
-        failures.push(issue("failure", `scenario folder must use <ID>-<slug> with R/F/T/G prefix: ${folder}`, scenarioDir));
+        failures.push(issue("failure", `scenario folder must use <ID>-<slug> with R/F/G prefix: ${folder}`, scenarioDir));
     const folderId = match?.[1] || folder.split("-")[0];
     for (const name of ["task.md", "criteria.json", "scenario.json"]) {
         if (!(await (0, project_1.exists)(node_path_1.default.join(scenarioDir, name))))
@@ -243,10 +241,8 @@ async function validateScenario(scenarioDir, folder, seenIds, testIds, judgeIds,
         failures.push(issue("failure", `duplicate scenario id: ${metadata.id}`, node_path_1.default.join(scenarioDir, "scenario.json")));
     seenIds.add(metadata.id);
     const prefix = metadata.id.charAt(0);
-    if (metadata.family !== FAMILY_BY_PREFIX[prefix])
-        failures.push(issue("failure", `${metadata.id} must use family ${FAMILY_BY_PREFIX[prefix]}`, node_path_1.default.join(scenarioDir, "scenario.json")));
-    if (!VALID_FAMILIES.has(metadata.family))
-        failures.push(issue("failure", `invalid scenario family: ${metadata.family}`, node_path_1.default.join(scenarioDir, "scenario.json")));
+    if (metadata.type !== TYPE_BY_PREFIX[prefix])
+        failures.push(issue("failure", `${metadata.id} must use type ${TYPE_BY_PREFIX[prefix]}`, node_path_1.default.join(scenarioDir, "scenario.json")));
     if (!VALID_TYPES.has(metadata.type))
         failures.push(issue("failure", `invalid scenario type: ${metadata.type}`, node_path_1.default.join(scenarioDir, "scenario.json")));
     if (!metadata.title)

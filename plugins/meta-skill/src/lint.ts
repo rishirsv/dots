@@ -19,15 +19,13 @@ import { writeEvalReport } from "./report";
 
 const execAsync = promisify(exec);
 
-const FAMILY_BY_PREFIX: Record<string, string> = {
+const TYPE_BY_PREFIX: Record<string, string> = {
   R: "regression",
   F: "failure_mode",
-  T: "trigger",
   G: "gate"
 };
 
-const VALID_TYPES = new Set(["behavior", "trigger", "gate"]);
-const VALID_FAMILIES = new Set(Object.values(FAMILY_BY_PREFIX));
+const VALID_TYPES = new Set(Object.values(TYPE_BY_PREFIX));
 
 export interface LintOptions {
   runId?: string;
@@ -242,8 +240,8 @@ async function validateScenario(
   failures: Issue[],
   warnings: Issue[]
 ): Promise<void> {
-  const match = /^([RFTG]\d+)-[a-z0-9][a-z0-9-]*$/.exec(folder);
-  if (!match) failures.push(issue("failure", `scenario folder must use <ID>-<slug> with R/F/T/G prefix: ${folder}`, scenarioDir));
+  const match = /^([RFG]\d+)-[a-z0-9][a-z0-9-]*$/.exec(folder);
+  if (!match) failures.push(issue("failure", `scenario folder must use <ID>-<slug> with R/F/G prefix: ${folder}`, scenarioDir));
   const folderId = match?.[1] || folder.split("-")[0];
   for (const name of ["task.md", "criteria.json", "scenario.json"]) {
     if (!(await exists(path.join(scenarioDir, name)))) failures.push(issue("failure", `scenario is missing ${name}`, path.join(scenarioDir, name)));
@@ -257,8 +255,7 @@ async function validateScenario(
   if (seenIds.has(metadata.id)) failures.push(issue("failure", `duplicate scenario id: ${metadata.id}`, path.join(scenarioDir, "scenario.json")));
   seenIds.add(metadata.id);
   const prefix = metadata.id.charAt(0);
-  if (metadata.family !== FAMILY_BY_PREFIX[prefix]) failures.push(issue("failure", `${metadata.id} must use family ${FAMILY_BY_PREFIX[prefix]}`, path.join(scenarioDir, "scenario.json")));
-  if (!VALID_FAMILIES.has(metadata.family)) failures.push(issue("failure", `invalid scenario family: ${metadata.family}`, path.join(scenarioDir, "scenario.json")));
+  if (metadata.type !== TYPE_BY_PREFIX[prefix]) failures.push(issue("failure", `${metadata.id} must use type ${TYPE_BY_PREFIX[prefix]}`, path.join(scenarioDir, "scenario.json")));
   if (!VALID_TYPES.has(metadata.type)) failures.push(issue("failure", `invalid scenario type: ${metadata.type}`, path.join(scenarioDir, "scenario.json")));
   if (!metadata.title) warnings.push(issue("warning", "scenario title is empty", path.join(scenarioDir, "scenario.json")));
 

@@ -3,7 +3,7 @@ import type { EvalRunSourceKind, ScenarioRecord } from "../models";
 
 export interface EvalSelector {
   scenario?: string[];
-  family?: string;
+  type?: string;
   topic?: string[];
 }
 

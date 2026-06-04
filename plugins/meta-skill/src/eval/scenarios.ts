@@ -84,9 +84,9 @@ function selectScenarios(records: ScenarioRecord[], selector: EvalSelector): Sce
       const wanted = new Set(selector.scenario);
       if (!wanted.has(scenario.id) && !wanted.has(scenario.folder)) return false;
     }
-    if (selector.family) {
+    if (selector.type) {
       const prefix = scenario.id.charAt(0);
-      if (prefix !== selector.family) return false;
+      if (prefix !== selector.type) return false;
     }
     if (selector.topic?.length) {
       const topics = new Set(scenario.metadata.topics || []);

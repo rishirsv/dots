@@ -6,7 +6,7 @@ Read this for exact `meta-skill eval ...` command guidance.
 
 ```bash
 meta-skill eval init <project>
-meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
+meta-skill eval run <project> [--scenario <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
 meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
 meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
 meta-skill eval open <project> [--run <run-id>] [--list] [--json]
@@ -23,11 +23,11 @@ When no selector is provided, `eval run` selects every scenario.
 ```bash
 meta-skill eval run . --scenario F1
 meta-skill eval run . --scenario F1-multiturn
-meta-skill eval run . --family G
+meta-skill eval run . --type G
 meta-skill eval run . --topic source-faithfulness
 ```
 
-Selectors narrow the run. `--family` uses the strict ID prefix: `R`, `F`, `T`, or `G`.
+Selectors narrow the run. `--type` uses the strict ID prefix: `R`, `F`, or `G`.
 
 ## Run Source
 

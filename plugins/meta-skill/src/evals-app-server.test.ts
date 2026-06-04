@@ -412,8 +412,7 @@ async function writeScenario(
   await writeJson(path.join(scenario, "scenario.json"), {
     schema_version: 1,
     id: "R1",
-    family: "regression",
-    type: "behavior",
+    type: "regression",
     title: "Basic behavior",
     topics: ["smoke"],
     include: [],

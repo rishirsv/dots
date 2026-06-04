@@ -63,7 +63,6 @@ export async function buildRunReport(runRoot: string): Promise<RunReport> {
       id: scenarioId,
       folder,
       title: snapshot?.metadata?.title,
-      family: snapshot?.metadata?.family,
       type: snapshot?.metadata?.type,
       topics: snapshot?.metadata?.topics || [],
       capability: snapshot?.capability || null,
@@ -244,7 +243,6 @@ async function readScenarioSnapshot(
       basis: "run_snapshot";
       metadata: {
         id: string;
-        family: string;
         type: string;
         title?: string;
         topics?: string[];
@@ -589,7 +587,6 @@ function normalizeRunReportScenarioForRead(value: unknown): RunReportScenario {
     id: String(scenario.id || scenario.folder || "unknown"),
     folder: String(scenario.folder || scenario.id || "unknown"),
     title: scenario.title ? String(scenario.title) : undefined,
-    family: scenario.family ? String(scenario.family) : undefined,
     type: scenario.type ? String(scenario.type) : undefined,
     topics: Array.isArray(scenario.topics) ? scenario.topics.map(String) : [],
     capability: (scenario.capability as string | null | undefined) || null,
@@ -770,7 +767,7 @@ function toReportAppScenario(report: RunReport, scenario: RunReportScenario): Re
 }
 
 function scenarioSubtitle(scenario: RunReportScenario): string {
-  return [scenario.family, scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / ") || scenario.folder;
+  return [scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / ") || scenario.folder;
 }
 
 function attemptsForScenario(scenario: RunReportScenario): ReportAppScenarioV1["attempts"] {
@@ -1157,7 +1154,7 @@ function renderScenarioCard(scenario: RunReportScenario): string {
   const criteria = scenario.criteria;
   return `<section class="scenario">
     <h3>${escapeHtml(scenario.id)} ${escapeHtml(scenario.title || scenario.folder)}</h3>
-    <p class="muted">${escapeHtml([scenario.family, scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / "))}</p>
+    <p class="muted">${escapeHtml([scenario.type, scenario.topics.join(", ")].filter(Boolean).join(" / "))}</p>
     <p><strong>Evidence basis:</strong> ${escapeHtml(scenario.evidence_basis)}</p>
     <p><strong>Capability:</strong> ${escapeHtml(scenario.capability || "not recorded")}</p>
     <p><strong>Expected behavior:</strong> ${escapeHtml(criteria?.expected_behavior || "not recorded")}</p>

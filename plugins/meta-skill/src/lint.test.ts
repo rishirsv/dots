@@ -15,7 +15,7 @@ describe("lint, command parsing, and eval evidence", () => {
     await writeScenario(project, {
       folder: "R1-basic",
       id: "R1",
-      family: "regression",
+      type: "regression",
       tests: ["exact-output"],
       judges: ["final-answer-quality"]
     });
@@ -42,7 +42,7 @@ describe("lint, command parsing, and eval evidence", () => {
     await writeScenario(project, {
       folder: "F1-multiturn",
       id: "F1",
-      family: "failure_mode",
+      type: "failure_mode",
       turns: [{ content: "Now tighten it." }]
     });
     await writeJson(path.join(project, ".meta-skill", "tests", "manifest.json"), {
@@ -129,7 +129,7 @@ async function writeScenario(
   options: {
     folder: string;
     id: string;
-    family: "regression" | "failure_mode" | "trigger" | "gate";
+    type: "regression" | "failure_mode" | "gate";
     tests?: string[];
     judges?: string[];
     turns?: Array<{ content: string }>;
@@ -141,8 +141,7 @@ async function writeScenario(
   await writeJson(path.join(scenario, "scenario.json"), {
     schema_version: 1,
     id: options.id,
-    family: options.family,
-    type: "behavior",
+    type: options.type,
     title: "Basic behavior",
     topics: ["smoke"],
     include: [],

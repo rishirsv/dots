@@ -1,12 +1,9 @@
-export type ScenarioFamilyCode = "R" | "F" | "T" | "G";
+export type ScenarioTypeCode = "R" | "F" | "G";
 
-export type ScenarioFamily =
+export type ScenarioType =
   | "regression"
   | "failure_mode"
-  | "trigger"
   | "gate";
-
-export type ScenarioType = "behavior" | "trigger" | "gate";
 
 export type LegacyEvalSide = "candidate" | "release";
 export type EvalRunSourceKind = "working_payload" | "snapshot_payload" | "no_skill";
@@ -79,7 +76,6 @@ export interface EvalManifest {
 export interface ScenarioMetadata {
   schema_version: 1;
   id: string;
-  family: ScenarioFamily;
   type: ScenarioType;
   title: string;
   topics?: string[];
@@ -178,7 +174,6 @@ export interface RunReportScenario {
   id: string;
   folder: string;
   title?: string;
-  family?: string;
   type?: string;
   topics: string[];
   capability?: string | null;

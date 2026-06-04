@@ -351,8 +351,7 @@ async function fixtureScenario(root: string, turns: Array<{ content: string }>):
   await writeJson(path.join(scenarioPath, "scenario.json"), {
     schema_version: 1,
     id: "R1",
-    family: "regression",
-    type: "behavior",
+    type: "regression",
     title: "Runner",
     topics: [],
     include: [],

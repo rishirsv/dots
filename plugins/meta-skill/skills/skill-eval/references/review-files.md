@@ -54,14 +54,13 @@ Folder names use strict ID plus slug:
 ```text
 R1-stock-lookup
 F1-complicated-multiturn
-T1-nonactivation-boundary
 G1-human-approval-stop
 ```
 
 Required files:
 
 - `task.md`: initial user turn
-- `scenario.json`: metadata, family, type, topics, resources
+- `scenario.json`: metadata, type, topics, resources
 - `criteria.json`: assertions, tests, judges, thresholds
 
 Optional files:
@@ -70,14 +69,11 @@ Optional files:
 - `capability.txt`: human note for reports
 - `resources/`: scenario-private files copied into the staged workspace
 
-Families are strict:
+Types are strict:
 
 - `R` -> `regression`
 - `F` -> `failure_mode`
-- `T` -> `trigger`
 - `G` -> `gate`
-
-Types are `behavior`, `trigger`, or `gate`.
 
 ## Criteria
 

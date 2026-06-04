@@ -24,7 +24,7 @@ Usage:
   meta-skill report <project> [--view status|runs|eval|review|release|full|lint] [--run <run-id>] [--review <review-id>] [--json] [--html] [--refresh] [--open]
   meta-skill review <project> [--json]
   meta-skill eval init <project>
-  meta-skill eval run <project> [--scenario <id>] [--family <R|F|T|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
+  meta-skill eval run <project> [--scenario <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--snapshot | --no-skill] [--with-judges] [--no-lint]
   meta-skill eval judge <project> --run <run-id> (--judge <id> | --all-judges) (--scenario <id> | --all-scenarios)
   meta-skill eval feedback import <project> --run <run-id> <feedback.jsonl>
   meta-skill eval open <project> [--run <run-id>] [--list] [--json]
@@ -195,17 +195,17 @@ async function commandEvalInit(argv: string[]): Promise<number> {
 }
 
 async function commandEvalRun(argv: string[]): Promise<number> {
-  const args = parse(argv, ["scenario", "family", "topic", "label", "app-server-endpoint"], ["snapshot", "no-skill", "with-judges", "no-lint"]);
+  const args = parse(argv, ["scenario", "type", "topic", "label", "app-server-endpoint"], ["snapshot", "no-skill", "with-judges", "no-lint"]);
   const project = args.positionals[0] || ".";
   if (args.one("app-server-endpoint")) {
     throw new CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
   }
   if (args.has("snapshot") && args.has("no-skill")) throw new CliError("eval run accepts only one source flag: --snapshot or --no-skill", 2);
-  const family = args.one("family");
-  if (family && !["R", "F", "T", "G"].includes(family)) throw new CliError("--family must be one of R, F, T, G", 2);
+  const type = args.one("type");
+  if (type && !["R", "F", "G"].includes(type)) throw new CliError("--type must be one of R, F, G", 2);
   const result = await runEval({
     project,
-    selector: { scenario: args.many("scenario"), family, topic: args.many("topic") },
+    selector: { scenario: args.many("scenario"), type, topic: args.many("topic") },
     label: args.one("label"),
     runSource: args.has("snapshot") ? "snapshot_payload" : args.has("no-skill") ? "no_skill" : "working_payload",
     withJudges: args.has("with-judges"),
