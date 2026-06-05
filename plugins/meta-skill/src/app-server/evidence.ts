@@ -1,6 +1,6 @@
 import type { TokenUsage } from "../models.ts";
 import { unavailableTokenUsage } from "../project.ts";
-import type { TrajectoryTurn } from "./trajectory.ts";
+import type { TurnEvidenceTurn } from "./turn-evidence.ts";
 
 export function tokenUsageFromAppServer(params: Record<string, unknown>, turnId: string): TokenUsage {
   const tokenUsage = objectValue(params.tokenUsage);
@@ -22,7 +22,7 @@ export function tokenUsageFromAppServer(params: Record<string, unknown>, turnId:
   };
 }
 
-export function summarizeCaseUsage(finalTurn?: Pick<TrajectoryTurn, "tokenUsage">): TokenUsage {
+export function summarizeCaseUsage(finalTurn?: Pick<TurnEvidenceTurn, "tokenUsage">): TokenUsage {
   if (finalTurn?.tokenUsage.total_tokens !== null && finalTurn?.tokenUsage.total_tokens !== undefined) return finalTurn.tokenUsage;
   return unavailableTokenUsage("App Server completed without tokenUsage.total on the final turn.");
 }

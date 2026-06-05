@@ -36,12 +36,11 @@ agents/
 references/
 scripts/
 assets/
-resources/
 <other runtime files or folders>
 .meta-skill/
 ```
 
-Do not create alternate root-level workbench folders. The portable payload stays at the root, arbitrary runtime folders are allowed, and all authoring state stays under `.meta-skill/`.
+Do not create alternate root-level workbench folders. The portable payload stays at the root, `references/`, `scripts/`, and `assets/` are the first-class runtime support folders, other non-excluded runtime files or folders may ship when intentional, and all authoring state stays under `.meta-skill/`.
 
 ## Eval Policy
 
@@ -51,11 +50,11 @@ Use `.meta-skill/cases/<ID-slug>/` for executable cases. `case.md` contains the 
 
 Use executable files under `.meta-skill/tests/unit/` for deterministic tests. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-case `case.md`, `rpc.jsonl`, `trajectory.json`, and `final.md` files. Token usage is stored in `trajectory.json`.
+Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-case `case.md`, `rpc.jsonl`, `turn-evidence.json`, and `final.md` files. Token usage is stored in `turn-evidence.json`.
 
 Case types are `R`, `F`, and `G`. Current workflow guidance uses manually authored cases, one execution source per run, and read-only App Server evidence.
 
-Case execution runs through Codex App Server and records per-case final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in `trajectory.json` instead of omitting it.
+Case execution runs through Codex App Server and records per-case final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in `turn-evidence.json` instead of omitting it.
 
 Criteria are evaluator evidence and must not appear in solver-visible runtime inputs.
 

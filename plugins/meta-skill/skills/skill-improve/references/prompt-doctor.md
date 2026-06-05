@@ -47,7 +47,7 @@ Use only lanes relevant to the request:
 - Runtime clarity: default path, output contract, stop/ask points, final checks.
 - Resources: linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - Controls: user files as data, approval gates, external writes, package/publish gates.
-- Eval evidence: `.meta-skill/cases/`, executable tests under `.meta-skill/tests/`, trajectory quality, token usage visibility.
+- Eval evidence: `.meta-skill/cases/`, executable tests under `.meta-skill/tests/`, turn evidence quality, token usage visibility.
 
 ## Prompt Doctor Loop
 

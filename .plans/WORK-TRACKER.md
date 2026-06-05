@@ -4,14 +4,14 @@ Use this tracker to keep the Meta Skill plugin roadmap centered on evaluation tr
 
 ## Current State Summary
 
-Meta Skill has one top-level TypeScript CLI surface: `create`, `project init`, `lint`, `run`, `judge`, `feedback import`, `report`, `decide`, and `package`. TypeScript runs directly from `plugins/meta-skill/src/` through `scripts/meta-skill.js`; validation is `npm test`, `npm run typecheck`, and repo-level `git diff --check`.
+Meta Skill has one top-level TypeScript CLI surface: `create`, `project init`, `lint`, `run`, and `package`. TypeScript runs directly from `plugins/meta-skill/src/` through `scripts/meta-skill.js`; validation is `npm test`, `npm run typecheck`, and repo-level `git diff --check`.
 
 The workbench has one compact project-local shape:
 
 - portable payload at the project root, with `SKILL.md` plus runtime support folders.
 - authoring and evidence state under `.meta-skill/`.
 - cases under `.meta-skill/cases/<ID-slug>/`.
-- deterministic tests under `.meta-skill/tests/unit/` and `.meta-skill/tests/eval/`.
+- deterministic tests under `.meta-skill/tests/unit/`.
 - run evidence under `.meta-skill/runs/<run-id>/`.
 
 Case taxonomy is one executable axis. `meta-skill run --type` accepts `R`, `F`, and `G`, mapping to regression, failure mode, and gate cases.
@@ -21,31 +21,30 @@ A run evaluates one execution source at a time:
 - working payload by default
 - no skill / unassisted execution with `--no-skill`
 
-Run evidence uses one append-only fact log and per-case files:
+Run evidence uses per-case files:
 
 ```text
 .meta-skill/runs/<run-id>/
-  facts.jsonl
-  payload/
+  payload/                 working-payload runs only
   cases/<case-folder>/
     case.md
     rpc.jsonl
-    trajectory.json
+    turn-evidence.json
     final.md
 ```
 
-`payload/` exists for working-payload runs. No-skill runs omit it. Token metrics live on `case_trial_finished` facts as nullable numbers plus one `unavailable_reason`; reports derive token totals from those facts. Reports are deterministic projections over facts and referenced case evidence. They print Markdown or JSON and do not persist report files.
+`payload/` exists for working-payload runs. No-skill runs omit it. Token metrics live in `turn-evidence.json` as nullable numbers plus one `unavailable_reason` when exact usage cannot be collected.
 
-Execution facts and verdict evidence are separate. Successful App Server execution is `execution_status: completed`; pass/fail style evidence comes only from deterministic tests, judges, or human feedback. Completed execution without a check observation remains evidence, not proof of quality.
+Successful App Server execution is evidence, not proof of quality. Pass/fail confidence comes from deterministic tests, human review, or future judge/review layers.
 
-The App Server runner starts one read-only/no-approval/no-network thread per case, force-attaches the skill payload for working-payload runs, collects final answer text, saves raw RPC rows, writes normalized `trajectory.json`, captures final cumulative token telemetry when present, and records case completion facts. The current trajectory summary includes turns, items, command executions, file changes, tool calls, approval requests, and unknown methods. It feeds reports and optional judge context.
+The App Server runner starts one read-only/no-approval/no-network thread per case, force-attaches the skill payload for working-payload runs, collects final answer text, saves raw RPC rows, writes normalized `turn-evidence.json`, and captures final cumulative token telemetry when present. The current turn evidence summary includes turns, items, command executions, file changes, tool calls, approval requests, warning items, and unknown methods.
 
-The next measurement gap is the assertion layer over trajectory evidence:
+The next measurement gap is the assertion layer over turn evidence:
 
 - App Server protocol drift is still handled mostly by unavailable token evidence; add a clearer canary/gate before building more event-stream features.
 - trigger and writable-output concepts stay future-only until the runner can prove native routing or writable outputs.
-- bounded event retention needs a small hardening pass so overflow bookkeeping itself cannot grow without bound.
-- final-answer extraction should avoid carrying forward a previous turn's final text when the current turn overflows before deltas are available.
+- run output needs a small case-result index so selected, attempted, completed, and errored cases cannot blur together.
+- event evidence needs tighter case and turn attribution before concurrency, turn-evidence assertions, or larger suites expand the surface.
 
 Validation baseline from the current merged slice:
 
@@ -55,67 +54,157 @@ Validation baseline from the current merged slice:
 
 ## Pre-Scaling Architecture Refinement
 
-These findings came from a read-only code-quality scan before adding more behavior-scaling features. Treat them as cleanup multipliers: they should reduce protocol drift, repeated I/O, and schema looseness before trajectory assertions, fork trees, or larger eval suites expand the surface.
+These findings came from a read-only code-quality scan before adding more behavior-scaling features. Treat them as cleanup multipliers: they should reduce protocol drift, evidence ambiguity, packaging risk, and source/generated drift before turn-evidence assertions, fork trees, or larger eval suites expand the surface.
 
-### Deepen App Server Turn Execution
-
-- Recommendation: Strong
-- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
-- Where: `plugins/meta-skill/src/app-server/runner.ts`, `plugins/meta-skill/src/eval/judge.ts`, `plugins/meta-skill/src/app-server/trajectory.ts`, and `plugins/meta-skill/architecture.md`.
-- Finding: Solver runs and judge runs both speak generated App Server JSON-RPC directly. They each construct `thread/start` and `turn/start` payloads, wait for completion, track event marks, and extract final output, but the judge path uses a different completion shape than the solver path.
-- Why it matters: App Server protocol changes now have multiple shallow seams to update, optional judge runs can drift from solver behavior, and future protocol canaries or trajectory assertions will have to understand duplicated orchestration.
-- Suggested improvement: Add one deeper App Server turn/session module that owns thread start, turn start, completion matching by thread and turn, transient event slicing, RPC persistence, and final text extraction. Solver and judge paths should pass policy, prompt, and response parsing into that module instead of issuing raw protocol calls themselves.
-- Verification: Add fake App Server tests covering solver and judge execution through the shared module, including generated `turn/completed` events, `item/agentMessage/delta`, final JSON extraction, and token/final event handling. Run `npm test` and `npm run typecheck` from `plugins/meta-skill/`.
-
-### Type The Fact Log Interface
+### Harden Deterministic Test Execution
 
 - Recommendation: Strong
 - Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
-- Where: `plugins/meta-skill/src/models.ts`, `plugins/meta-skill/src/facts.ts`, `plugins/meta-skill/src/eval/run.ts`, `plugins/meta-skill/src/lint.ts`, `plugins/meta-skill/src/eval/judge.ts`, `plugins/meta-skill/src/improve.ts`, and `plugins/meta-skill/src/report.ts`.
-- Finding: `facts.jsonl` is the canonical evidence log, but the TypeScript interface is still `payload: Record<string, unknown>`. Producers append ad hoc payloads while reports recover meaning through string coercion, optional probes, and report-time normalization.
-- Why it matters: Evidence schema drift becomes a runtime/reporting surprise instead of a type error, and every new behavior assertion will spread more payload-key knowledge across run, lint, judge, feedback, decide, and report code.
-- Suggested improvement: Move fact-kind payload shapes into a discriminated union in `facts.ts` or `models.ts`, and expose typed constructors or append helpers for `run_started`, `case_defined`, `case_trial_finished`, `check_observed`, `feedback_imported`, and `decision_recorded`. Keep external feedback loose only at import, then normalize before appending.
-- Verification: Add focused fact/report tests for each fact kind and use `satisfies` or typed fixtures so malformed payloads fail `npm run typecheck`. Run `npm test` and `npm run typecheck` from `plugins/meta-skill/`.
+- Where: `plugins/meta-skill/src/lint.ts` and `plugins/meta-skill/src/eval/discovery.ts`.
+- Finding: Discovered unit tests are converted from filenames into shell command strings, and `lintProject()` can continue to execution even after invalid test ID failures are recorded.
+- Why it matters: Workbench test files are local user-controlled inputs. A shell command boundary makes malformed filenames more dangerous than the intended deterministic-test interface and weakens confidence before larger suites.
+- Suggested improvement: Represent discovered tests as typed executable paths, validate IDs before execution, skip invalid tests, and run valid files with `execFile` or `spawn` using an argv array.
+- Verification: Add fixture tests for invalid filenames, duplicate IDs, filenames containing shell metacharacters, and a valid executable unit test. Run `npm test` and `npm run typecheck` from `plugins/meta-skill/`.
 
-### Collapse Duplicate Run Report Projection
+### Add A Minimal Run Result Index
 
 - Recommendation: Strong
-- Evidence: 2026-06-05 efficiency review; `npm test`, `npm run typecheck`, and `git diff --check` passed during the read-only scan.
-- Where: `plugins/meta-skill/src/eval/run.ts`, `plugins/meta-skill/src/commands.ts`, and `plugins/meta-skill/src/report.ts`.
-- Finding: `runEval()` builds a run report at the end, discards it, and then `commandRun()` builds the same report again to print it. Each projection rereads `facts.jsonl` and per-case `trajectory.json` files.
-- Why it matters: This is avoidable file I/O and JSON parsing on the main eval path, and it blurs the producer/projection boundary the architecture doc is trying to keep crisp.
-- Suggested improvement: Make report projection single-owner. Either return the built report from `runEval()` for `commandRun()` to print, or remove the internal projection and let the command/report lane build it exactly once. While there, index facts by type and case during report construction instead of repeatedly filtering the full fact list.
-- Verification: Add a multi-case CLI or unit test proving run output is unchanged and report projection happens once. Run `npm test` and `npm run typecheck` from `plugins/meta-skill/`.
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/eval/run.ts`, `plugins/meta-skill/src/app-server/runner.ts`, `plugins/meta-skill/src/eval/types.ts`, and `plugins/meta-skill/src/commands.ts`.
+- Finding: `runEval()` returns `runId`, `runRoot`, `ok`, bare error messages, and a `cases` list. It ignores structured `CaseRunResult` details and pushes the case folder into the list even after a runner failure.
+- Why it matters: As suites grow, run output cannot cleanly distinguish selected, attempted, completed, and failed cases. Failed cases can look completed to downstream readers, and failures lose case-local evidence context.
+- Suggested improvement: Add one run-owned case result model or tiny run manifest with per-case evidence paths, execution status, final path, turn-evidence path, token availability, and error detail.
+- Verification: Add fake-runner tests for one passing case, one runner failure, and one lint-observation failure. Assert CLI output and result shape do not claim failed cases as completed.
 
-### Consolidate Frontmatter And Metadata Parsing
+### Isolate App Server Case Event Sessions
+
+- Recommendation: Strong
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/app-server/runner.ts`, `plugins/meta-skill/src/app-server/trace.ts`, `plugins/meta-skill/src/app-server/client.ts`, and `plugins/meta-skill/src/eval/run.ts`.
+- Finding: `AppServerCaseRunner` keeps one mutable client, trace recorder, and raw trace buffer, then flushes and resets them per case. All client lines are routed through the runner's current mutable buffers while cases are forced to run sequentially.
+- Why it matters: Evidence attribution depends on runner-wide mutable state, which makes late events, respawns, and future bounded case concurrency hard to reason about.
+- Suggested improvement: Introduce a per-case `AppServerCaseSession` or `TurnEventStream` that owns trace recording, in-memory marks, overflow state, and client lifetime/binding for one case. Let `runEval()` depend on that deeper interface.
+- Verification: Add delayed fake-client tests with two cases and late events, proving `rpc.jsonl` and `turn-evidence.json` stay isolated. Add bounded-concurrency tests only after this isolation exists.
+
+### Tighten Turn Evidence Event Attribution
+
+- Recommendation: Strong
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/app-server/turn-evidence.ts` and `plugins/meta-skill/src/app-server/turn-evidence.test.ts`.
+- Finding: Turn evidence folding applies one broad `belongsToTurn` gate, then treats events with no `turnId` as belonging to the selected turn. Tests cover wrong thread and turn IDs, but not missing-turn multi-turn contamination.
+- Why it matters: Thread-level or malformed App Server events can be folded into a turn silently, weakening `turn-evidence.json` as protocol-drift evidence.
+- Suggested improvement: Add an event classifier with explicit `turn`, `thread`, `request`, and `unknown/unscoped` handling. Require turn identity for turn/item methods, and quarantine missing-turn events unless the method is intentionally thread-scoped.
+- Verification: Add multi-turn parser tests with thread-level events and item events missing `turnId`; assert they do not affect final text, token usage, or item counts unless explicitly classified.
+
+### Make Package Artifact Integrity First-Class
+
+- Recommendation: Strong
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/package.ts` and `plugins/meta-skill/src/project.test.ts`.
+- Finding: `package.ts` hand-writes ZIP records and CRCs, computes the artifact SHA, and discards that hash. Tests cover `--out-dir`, but not the default ZIP artifact.
+- Why it matters: `package` is the sharing boundary. A custom ZIP writer can be fine, but without ZIP-open verification or metadata checksum use, packaging regressions may pass tests while producing bad artifacts.
+- Suggested improvement: Either use the computed SHA in metadata or remove it. Add default ZIP packaging tests that open/list/extract the artifact, verify file ordering, confirm `.meta-skill/` exclusion, and verify metadata points to the exact artifact.
+- Verification: Add ZIP fixture tests plus the existing out-dir test. Run `npm test`, `npm run typecheck`, and a ZIP integrity check.
+
+### Add A Non-Mutating Generated-Sync Gate
+
+- Recommendation: Strong
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `AGENTS.md`, `scripts/sync-plugins.sh`, `skills/`, `.codex/agents/`, `assets/agent/`, `plugins/codex/agent/`, and `plugins/claude/agent/`.
+- Finding: Source boundaries are documented, generated-package edits are prohibited, and sync is mandatory after source changes, but the only sync command mutates generated package trees and user install/cache state.
+- Why it matters: The repo relies on humans remembering to run a mutating script. Scaling the tool needs a cheap proof that generated plugin packages match source before commit or PR.
+- Suggested improvement: Add `scripts/check-plugin-sync.sh` or `scripts/sync-plugins.sh --verify` that compares `skills/`, `.codex/agents/`, and `assets/agent/` against generated plugin outputs without writing.
+- Verification: An unsynced source edit fails the check; running `scripts/sync-plugins.sh` makes it pass. Include the verify command in the normal validation path.
+
+### Split Sync Generation From User-Install Side Effects
+
+- Recommendation: Strong
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `scripts/sync-plugins.sh`.
+- Finding: One script owns repo package generation, manifest writing, user dotfiles, marketplace registration, installation, and cache refresh.
+- Why it matters: The safe verification surface is much larger than the source/generated boundary actually needs, and CI-style checks cannot easily exercise the repo generation path without touching user state.
+- Suggested improvement: Keep one user-facing command if desired, but factor pure repo generation/verification from install/cache refresh. Add explicit modes such as repo-only, install, cache, and verify.
+- Verification: Repo-only mode changes only tracked generated package/marketplace files; verify mode is read-only; install/cache mode can be skipped in CI.
+
+### Make Arbitrary Runtime Folders Visible
+
+- Recommendation: Strong
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/ARCHITECTURE.md`, `plugins/meta-skill/skills/skill-create/references/cli-conventions.md`, `plugins/meta-skill/src/project.ts`, `plugins/meta-skill/src/lint.ts`, and `plugins/meta-skill/src/commands.ts`.
+- Finding: Packaging includes arbitrary non-excluded root folders, while create/lint only give first-class copy and link-check treatment to `references`, `scripts`, and `assets`. Durable docs now describe other packaged files as intentional runtime files, not a canonical `resources/` folder.
+- Why it matters: Skills do not have to use `references/`, `scripts/`, or `assets/`, and their root folders can technically be named anything. Packaging should keep supporting that flexibility, while maintainers still need visibility into non-standard payload files.
+- Suggested improvement: Keep docs generic and add validation or package metadata that makes intentionally packaged non-standard files visible without turning `resources/` into a first-class contract.
+- Verification: Add package tests proving arbitrary root folders are included in the ZIP and excluded folders stay out; add lint/package visibility checks if maintainers need a stronger warning surface.
+
+### Refresh Tracker And Docs Before Scaling
+
+- Recommendation: Strong
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `.plans/WORK-TRACKER.md`, `plugins/meta-skill/ARCHITECTURE.md`, `plugins/meta-skill/src/commands.ts`, and `plugins/meta-skill/src/evals-app-server.test.ts`.
+- Finding: The tracker had current-state text for deleted `judge`, `feedback import`, `report`, `decide`, `facts.jsonl`, and report/fact projection surfaces while live source exposes only `create`, `project init`, `lint`, `run`, and `package`, and tests assert `facts.jsonl` is absent.
+- Why it matters: The tracker is the planning surface for scaling Meta Skill. Stale current-state language can reintroduce broad command surfaces or old fact/report assumptions.
+- Suggested improvement: Keep tracker and docs in present-tense alignment with live help, architecture docs, and evidence tests. Move future review/report/fact language into explicit roadmap entries only where still wanted.
+- Verification: Compare `node scripts/meta-skill.js --help`, `commands.test.ts`, `evals-app-server.test.ts`, and tracker current-state lines in one docs check. Run `npm test` and `git diff --check`.
+
+### Collapse Dual Transient Event Buffers
 
 - Recommendation: Worth exploring
 - Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
-- Where: `plugins/meta-skill/src/project.ts`, `plugins/meta-skill/src/eval/cases.ts`, `plugins/meta-skill/src/lint.ts`, and `plugins/meta-skill/package.json`.
-- Finding: Skill frontmatter, case frontmatter, and agent manifest metadata are parsed by separate hand-rolled paths with different capabilities. Case parsing implements a larger YAML subset, while skill and manifest parsing are line-oriented; malformed fields often coerce to empty strings, arrays, or objects.
-- Why it matters: Adding trajectory assertions, budget gates, or richer case metadata will increase parser complexity and make diagnostics inconsistent unless one module owns the supported metadata shape.
-- Suggested improvement: Add one frontmatter/metadata module with typed decoders for `SKILL.md`, `case.md`, and `agents/openai.yaml`. If avoiding dependencies is intentional, keep the parser local but document and test the supported YAML subset in one place.
-- Verification: Add table-driven parser tests for quoted strings, nested judge thresholds, invalid scalar/list shapes, required fields, and manifest metadata. Run existing lint/case tests, `npm test`, and `npm run typecheck` from `plugins/meta-skill/`.
+- Where: `plugins/meta-skill/src/app-server/client.ts`, `plugins/meta-skill/src/app-server/trace.ts`, `plugins/meta-skill/src/app-server/runner.ts`, and `plugins/meta-skill/src/app-server/runner.test.ts`.
+- Finding: The client exposes `eventCount/eventsSince` while `BoundedTraceBuffer` maintains a separate transient event buffer. Runner tests exercise normal extraction through one path and overflow behavior through another.
+- Why it matters: Two event sources for one evidence concept create branchy extraction and let tests exercise different semantics from production.
+- Suggested improvement: Define one `AppServerEventStream` with `mark/since/overflow`; make real and fake clients emit through it, and keep durable JSONL recording as a subscriber.
+- Verification: Convert runner tests to one event-source path; assert normal extraction and overflow warning behavior still pass.
 
-### Collapse Unsupported Future App Server Modes
+### Delete Or Connect Unused Turn Evidence Summary Projection
 
 - Recommendation: Worth exploring
 - Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
-- Where: `plugins/meta-skill/src/commands.ts`, `plugins/meta-skill/src/eval/run.ts`, `plugins/meta-skill/src/app-server/client.ts`, `plugins/meta-skill/src/app-server/runner.ts`, and `plugins/meta-skill/src/models.ts`.
-- Finding: `--app-server-endpoint`, attached App Server mode, and discoverable skill activation remain executable interface concepts even though the implementation immediately rejects them. They are one-adapter seams whose current variation is only hypothetical.
-- Why it matters: Callers and tests must carry unsupported concepts while the current invariant is simpler: managed stdio App Server with forced payload or no-skill activation. Future modes already have tracker/docs space until protocol proof exists.
-- Suggested improvement: Remove unsupported modes from the executable CLI/types, or centralize their rejection in one boundary with no extra flags leaking through run configuration. Keep attached/discoverable routing as roadmap language until the App Server protocol proves it.
-- Verification: Update command help tests and type references so unsupported modes disappear from executable paths or reject from one place. Run `npm test`, `npm run typecheck`, and `git diff --check`.
+- Where: `plugins/meta-skill/src/app-server/turn-evidence.ts` and `plugins/meta-skill/src/app-server/turn-evidence.test.ts`.
+- Finding: `summarizeTurnEvidence()` and `formatTurnEvidenceSummary()` are exported but have no production callers; only tests exercise them.
+- Why it matters: This looks like report/view scaffolding that is not wired into current run flow, adding surface area without leverage.
+- Suggested improvement: If report/view work is imminent, move this projection to the reporting boundary and test it through user-visible output. Otherwise delete it until there is a caller.
+- Verification: `rg summarizeTurnEvidence formatTurnEvidenceSummary`; then `npm test` and `npm run typecheck`.
 
-### Add Bounded Scheduling Only Where Evidence Ordering Is Preserved
+### Tighten Project Module Ownership And Dead Exports
 
 - Recommendation: Worth exploring
-- Evidence: 2026-06-05 efficiency review.
-- Where: `plugins/meta-skill/src/eval/run.ts`, `plugins/meta-skill/src/lint.ts`, and `plugins/meta-skill/src/eval/judge.ts`.
-- Finding: Cases, deterministic tests, and judge observations all run sequentially even when some inputs and outputs are independent.
-- Why it matters: Larger eval suites will pay unnecessary wall-clock cost, but naive concurrency could scramble fact ordering or overload the managed App Server.
-- Suggested improvement: Add a small bounded scheduler, likely exposed as `--jobs`, starting with deterministic tests and fake-runner-safe case execution. Keep App Server concurrency capped and explicit, and preserve deterministic fact ordering when appending observations.
-- Verification: Add delayed fake runner/test fixtures that prove bounded concurrency, deterministic fact ordering, and unchanged report output. Run `npm test` from `plugins/meta-skill/`.
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/project.ts`, `plugins/meta-skill/src/package.ts`, and `plugins/meta-skill/src/eval/types.ts`.
+- Finding: `project.ts` mixes filesystem helpers, workbench creation, payload filtering/copying, sequence IDs, git context, hashes, and token fallback construction. Dead-looking exports/imports include `touch`, `relativePath`, `gitContext`, `RunFailureClassification`, and unused package imports; `tsconfig.json` does not enable unused checks.
+- Why it matters: `project.ts` is becoming a low-depth utility drawer. As package/eval/project boundaries grow, shared helpers make ownership harder to see and dead exports linger quietly.
+- Suggested improvement: Do a narrow cleanup pass: enable `noUnusedLocals`/`noUnusedParameters` if tolerable, delete dead exports, and move payload packaging policy behind a small payload/package-owned module only if the deletion pass shows repeated callers.
+- Verification: Run `npm run typecheck` with unused checks enabled, add focused payload-list tests if extracting payload ownership, then run `npm test`.
+
+### Centralize The CLI Contract
+
+- Recommendation: Worth exploring
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/commands.ts`, `plugins/meta-skill/skills/skill-create/references/cli-conventions.md`, and `plugins/meta-skill/ARCHITECTURE.md`.
+- Finding: Runtime help, parser flags, skill-create CLI guidance, and architecture command taxonomy each repeat the command contract.
+- Why it matters: Future flags or command removals can drift between runtime, help, skill guidance, and architecture docs.
+- Suggested improvement: Introduce a small CLI contract module or golden contract test that drives help, docs assertions, and command parser expectations from one source.
+- Verification: Updating a command or flag requires one source change and a focused `npm test` from `plugins/meta-skill/`.
+
+### Remove Dormant Discoverable Activation
+
+- Recommendation: Worth exploring
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/models.ts`, `plugins/meta-skill/src/app-server/runner.ts`, and `plugins/meta-skill/ARCHITECTURE.md`.
+- Finding: `SkillActivation` includes `discoverable`, but the runner immediately throws for it. The architecture doc says trigger routing is roadmap, not current behavior.
+- Why it matters: A runtime union member with no supported adapter is a shallow future seam. It invites callers to model behavior the runner cannot execute.
+- Suggested improvement: Remove `discoverable` from runtime types until App Server support exists, or move it to roadmap/design docs outside executable contracts.
+- Verification: `npm run typecheck` and existing runner/eval tests pass with only `forced | none`.
+
+### Add Bounded Scheduling After Evidence Boundaries Are Stable
+
+- Recommendation: Worth exploring
+- Evidence: 2026-06-05 architecture-refinement scan with parallel subagent review.
+- Where: `plugins/meta-skill/src/eval/run.ts` and `plugins/meta-skill/src/lint.ts`.
+- Finding: Cases and deterministic tests run sequentially even when some inputs and outputs are independent.
+- Why it matters: Larger eval suites will pay unnecessary wall-clock cost, but naive concurrency could scramble case evidence or overload the managed App Server.
+- Suggested improvement: Add a small bounded scheduler only after per-case run results and event-session isolation exist. Start with deterministic tests and fake-runner-safe case execution; keep App Server concurrency capped and explicit.
+- Verification: Add delayed fake runner/test fixtures that prove bounded concurrency, deterministic case attribution, and unchanged CLI output. Run `npm test` from `plugins/meta-skill/`.
 
 ## Tessl-Inspired Product Roadmap
 
@@ -133,20 +222,20 @@ These roadmap items came from a 2026-06-05 review of Tessl's public skill review
 ### Upgrade Eval Viewing Before Adding More Eval Modes
 
 - Recommendation: Strong.
-- Evidence: Tessl registry pages make quality, impact, evals, security/advisory, and files legible in one view; current Meta Skill reports are printed Markdown/JSON projections with terse token and case summaries.
-- Where: `plugins/meta-skill/src/report.ts`, `plugins/meta-skill/src/commands.ts`, report tests, and optional local static HTML under run evidence or generated on demand.
-- Finding: Meta Skill has useful facts, trajectories, final answers, feedback, checks, and token usage, but the user-visible report hides too much detail and requires manual file drilling.
-- Suggested improvement: Add `meta-skill eval list <project>` and `meta-skill eval view <project> [--run <id>|--last] [--json]`. Show run status, case status, missing checks, execution errors, final answer previews, trajectory links, token totals/availability, tests, judges, feedback, decisions, and manual-review flags. Keep `report` as a compatibility projection or make it an alias once the view is stable.
-- Verification: Add fixture runs for clean, failed, no-verdict, missing-check, token-unavailable, and trajectory-rich cases. Verify Markdown/JSON output remains deterministic.
+- Evidence: Tessl registry pages make quality, impact, evals, security/advisory, and files legible in one view; current Meta Skill run output is terse and file-first.
+- Where: `plugins/meta-skill/src/commands.ts`, a future eval-view module, view tests, and optional local static HTML under run evidence or generated on demand.
+- Finding: Meta Skill has useful case definitions, trajectories, final answers, lint output, and token usage, but no first-class eval viewer. Users still need manual file drilling.
+- Suggested improvement: Add `meta-skill eval list <project>` and `meta-skill eval view <project> [--run <id>|--last] [--json]`. Show run status, case status, missing checks, execution errors, final answer previews, turn-evidence links, token totals/availability, tests, review artifacts, human decisions, and manual-review flags.
+- Verification: Add fixture runs for clean, failed, no-verdict, missing-check, token-unavailable, and turn-evidence-rich cases. Verify Markdown/JSON output remains deterministic.
 
 ### Make Baseline-Vs-Candidate Impact First-Class
 
 - Recommendation: Strong.
 - Evidence: Tessl's strongest eval concept is impact: compare task performance with and without skill context. Meta Skill can run working-payload or no-skill executions today, but only one source per run.
-- Where: `plugins/meta-skill/src/eval/run.ts`, `plugins/meta-skill/src/models.ts`, fact payload shapes, report rendering, and `skill-eval` docs.
+- Where: `plugins/meta-skill/src/eval/run.ts`, `plugins/meta-skill/src/models.ts`, run result artifacts, eval-view rendering, and `skill-eval` docs.
 - Finding: Separate `--no-skill` runs are honest manual control evidence, but they do not give users a direct impact table showing where the skill helped, regressed, or was unnecessary.
-- Suggested improvement: Add `meta-skill run <project> --compare baseline` or a future `meta-skill eval run <project> --compare baseline`. Store baseline and candidate side evidence per case, never pool token usage, and report cases as candidate improves, candidate regresses, both fail, baseline already succeeds, or needs review.
-- Verification: Add fake-runner tests for two-sided case execution, side-specific facts, unavailable side evidence, no pooled tokens, and report status categories.
+- Suggested improvement: Add `meta-skill run <project> --compare baseline` or a future `meta-skill eval run <project> --compare baseline`. Store baseline and candidate evidence per case, never pool token usage, and report cases as candidate improves, candidate regresses, both fail, baseline already succeeds, or requires human review.
+- Verification: Add fake-runner tests for baseline/candidate case execution, source-specific evidence, unavailable source evidence, no pooled tokens, and report status categories.
 
 ### Generate Draft Starter Cases
 
@@ -161,10 +250,10 @@ These roadmap items came from a 2026-06-05 review of Tessl's public skill review
 
 - Recommendation: Strong after `review` exists.
 - Evidence: Tessl exposes `skill review --optimize`, but Meta Skill should keep the more careful "improve" language and human-gated edit semantics.
-- Where: `plugins/meta-skill/skills/skill-improve/`, future review facts, `plugins/meta-skill/src/improve.ts`, and decision recording.
-- Finding: Meta Skill has `decide` for human-reviewed outcomes, but no tight chain from review findings to scoped edit proposals to validation.
+- Where: `plugins/meta-skill/skills/skill-improve/`, future review artifacts, a future improve module, and decision artifacts.
+- Finding: Meta Skill does not yet have a tight chain from review findings to scoped edit proposals to validation.
 - Suggested improvement: Add an improve flow that can read a review ID or run/case evidence, propose bounded source edits, rerun relevant lint/evals, and require human approval before package, publish, install, sync, or accept decisions. Keep `review` read-only.
-- Verification: Add tests that review evidence can be referenced by improve/decide facts and that improve mode refuses to edit without explicit edit intent.
+- Verification: Add tests that review evidence can be referenced by improve and decision artifacts and that improve mode refuses to edit without explicit edit intent.
 
 ### Add Publish / Package Readiness Gates Instead Of A Registry
 

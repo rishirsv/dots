@@ -8,7 +8,7 @@ import type { CaseRecord } from "../models.ts";
 import { exists, readText, writeText } from "../project.ts";
 
 describe("AppServerCaseRunner", () => {
-  it("writes rpc, trajectory, and final per case and returns usage", async () => {
+  it("writes rpc, turn evidence, and final per case and returns usage", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-"));
     const runRoot = path.join(root, "run");
     const skillRoot = path.join(root, "skill");
@@ -30,13 +30,13 @@ describe("AppServerCaseRunner", () => {
 
     const caseRoot = path.join(runRoot, "cases", "R1-basic");
     assert.equal(await exists(path.join(caseRoot, "rpc.jsonl")), true);
-    assert.equal(await exists(path.join(caseRoot, "trajectory.json")), true);
+    assert.equal(await exists(path.join(caseRoot, "turn-evidence.json")), true);
     assert.equal(await exists(path.join(caseRoot, "final.md")), true);
-    assert.equal(result.trajectory_path, path.join(caseRoot, "trajectory.json"));
+    assert.equal(result.turn_evidence_path, path.join(caseRoot, "turn-evidence.json"));
     assert.equal(result.token_usage.total_tokens, 24);
     assert.match(await readText(path.join(caseRoot, "final.md")), /final answer/);
-    const trajectory = JSON.parse(await readText(path.join(caseRoot, "trajectory.json")));
-    assert.equal(trajectory.turns[0].finalText, "final answer");
+    const turnEvidence = JSON.parse(await readText(path.join(caseRoot, "turn-evidence.json")));
+    assert.equal(turnEvidence.turns[0].finalText, "final answer");
   });
 
   it("writes an unavailable final warning instead of reusing an earlier turn final after trace overflow", async () => {
@@ -64,10 +64,10 @@ describe("AppServerCaseRunner", () => {
     assert.doesNotMatch(final, /first turn final/);
     assert.match(final, /Final assistant message unavailable for turn turn-2/);
     assert.match(final, /rpc\.jsonl/);
-    const trajectory = JSON.parse(await readText(path.join(caseRoot, "trajectory.json")));
-    assert.equal(trajectory.turns[0].finalText, "first turn final");
-    assert.match(trajectory.turns[1].finalText, /Final assistant message unavailable/);
-    assert.equal(trajectory.turns[1].items.some((item: { type?: string; method?: string }) => item.type === "warning" && item.method === "metaSkill/traceBuffer/overflow"), true);
+    const turnEvidence = JSON.parse(await readText(path.join(caseRoot, "turn-evidence.json")));
+    assert.equal(turnEvidence.turns[0].finalText, "first turn final");
+    assert.match(turnEvidence.turns[1].finalText, /Final assistant message unavailable/);
+    assert.equal(turnEvidence.turns[1].items.some((item: { type?: string; method?: string }) => item.type === "warning" && item.method === "metaSkill/traceBuffer/overflow"), true);
   });
 });
 

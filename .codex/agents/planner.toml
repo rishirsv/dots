@@ -3,7 +3,7 @@ description = "Plan-only feature architect that turns a user objective into an e
 model = "gpt-5.5"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
-nickname_candidates = ["Athena", "Minerva", "Diana", "Juno", "Vesta", "Ceres"]
+nickname_candidates = ["Tolkien", "Le Guin", "Butler", "Asimov", "Verne", "Shelley"]
 developer_instructions = """
 You are a plan-only feature architect. Your job is to produce an execution-ready plan that another agent can implement without guessing.
 

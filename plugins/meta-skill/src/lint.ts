@@ -2,12 +2,11 @@ import { exec } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
-import { parseAgentManifestMetadata } from "./metadata.ts";
-import type { AgentManifestMetadata, SkillFrontmatter } from "./metadata.ts";
+import { parseAgentManifestMetadata, parseSkillFrontmatterFull } from "./metadata.ts";
+import type { AgentManifestMetadata, SkillFrontmatterFull } from "./metadata.ts";
 import type { Issue, LintReport } from "./models.ts";
 import {
   exists,
-  parseSkillFrontmatter,
   projectPaths,
   requirePortableSkill
 } from "./project.ts";
@@ -51,12 +50,15 @@ export function formatLintReport(report: LintReport): string {
   return lines.join("\n");
 }
 
+// agentskills.io SKILL.md frontmatter fields. Anything else is flagged.
+const SPEC_FRONTMATTER_KEYS = new Set(["name", "description", "license", "compatibility", "metadata", "allowed-tools"]);
+
 async function validatePortablePayload(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
   const skillMd = path.join(root, "SKILL.md");
   const skillText = await fs.readFile(skillMd, "utf8");
-  let frontmatter: SkillFrontmatter;
+  let frontmatter: SkillFrontmatterFull;
   try {
-    frontmatter = await parseSkillFrontmatter(skillMd);
+    frontmatter = await parseSkillFrontmatterFull(skillMd);
   } catch (error) {
     failures.push(issue("failure", error instanceof Error ? error.message : String(error), skillMd));
     return;
@@ -64,20 +66,90 @@ async function validatePortablePayload(root: string, failures: Issue[], warnings
   const expected = path.basename(root);
   const body = skillBody(skillText);
 
-  if (!frontmatter.name) failures.push(issue("failure", "SKILL.md is missing required frontmatter field 'name'", skillMd));
-  if (frontmatter.name && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(frontmatter.name)) failures.push(issue("failure", "skill name must use lowercase letters, numbers, and single hyphens", skillMd));
-  if (frontmatter.name && frontmatter.name !== expected) warnings.push(issue("warning", `skill name ${frontmatter.name} does not match folder ${expected}`, skillMd));
-  if (!frontmatter.description) failures.push(issue("failure", "SKILL.md is missing required frontmatter field 'description'", skillMd));
-  if (frontmatter.description && !/\b(use when|when|asked to|for)\b/i.test(frontmatter.description)) {
-    warnings.push(issue("warning", "description should include trigger context", skillMd));
-  }
-  if (frontmatter.description && !/\bnot for\b/i.test(frontmatter.description)) {
-    warnings.push(issue("warning", "description should include a nearby 'not for' boundary", skillMd));
-  }
+  validateName(frontmatter, expected, skillMd, failures, warnings);
+  validateDescription(frontmatter, skillMd, failures, warnings);
+  validateOptionalFrontmatter(frontmatter, skillMd, failures, warnings);
+  validateUnknownKeys(frontmatter, skillMd, warnings);
+
   if (!body.trim()) failures.push(issue("failure", "SKILL.md body is missing", skillMd));
   if (skillText.split(/\r?\n/).length > 220) warnings.push(issue("warning", "SKILL.md is long; move conditional detail to directly linked references", skillMd));
   await validateRuntimeResourceLinks(root, skillText, warnings);
+  await validateLinkIntegrity(root, skillText, failures);
   await validateAgentManifest(root, frontmatter, failures, warnings);
+}
+
+function validateName(frontmatter: SkillFrontmatterFull, expected: string, skillMd: string, failures: Issue[], warnings: Issue[]): void {
+  const name = frontmatter.name;
+  if (!name) {
+    failures.push(issue("failure", "SKILL.md is missing required frontmatter field 'name'", skillMd));
+    return;
+  }
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name)) {
+    failures.push(issue("failure", "skill name must use lowercase letters, numbers, and single hyphens (no leading, trailing, or consecutive hyphens)", skillMd));
+  }
+  if (name.length > 64) {
+    failures.push(issue("failure", `skill name must be 64 characters or fewer (currently ${name.length})`, skillMd));
+  }
+  if (name !== expected) {
+    warnings.push(issue("warning", `skill name ${name} does not match folder ${expected}`, skillMd));
+  }
+}
+
+function validateDescription(frontmatter: SkillFrontmatterFull, skillMd: string, failures: Issue[], warnings: Issue[]): void {
+  const description = frontmatter.description;
+  if (!description) {
+    failures.push(issue("failure", "SKILL.md is missing required frontmatter field 'description'", skillMd));
+    return;
+  }
+  if (description.length > 1024) {
+    failures.push(issue("failure", `description must be 1024 characters or fewer (currently ${description.length})`, skillMd));
+  } else if (description.length > 500) {
+    warnings.push(issue("warning", `description is long (${description.length} chars); aim for under 500`, skillMd));
+  }
+  if (!/\b(use when|when|asked to|for)\b/i.test(description)) {
+    warnings.push(issue("warning", "description should include trigger context", skillMd));
+  }
+  if (!/\bnot for\b/i.test(description)) {
+    warnings.push(issue("warning", "description should include a nearby 'not for' boundary", skillMd));
+  }
+  if (readsLikeWorkflow(description)) {
+    warnings.push(issue("warning", "description reads like a workflow sequence; describe when to use the skill, not its steps (the body holds the procedure)", skillMd));
+  }
+}
+
+// design.md "dangerous shortcut": a description that lists steps can make the
+// agent follow the description instead of loading the body.
+function readsLikeWorkflow(description: string): boolean {
+  if (/\bstep\s*\d/i.test(description)) return true;
+  if (/\bfirst\b[^.]*\bthen\b/i.test(description)) return true;
+  return (description.match(/\bthen\b/gi)?.length ?? 0) >= 2;
+}
+
+function validateOptionalFrontmatter(frontmatter: SkillFrontmatterFull, skillMd: string, failures: Issue[], warnings: Issue[]): void {
+  const { compatibility, allowedTools, license, metadata } = frontmatter;
+  if (compatibility !== undefined) {
+    if (!compatibility.length) failures.push(issue("failure", "compatibility must be 1-500 characters when present", skillMd));
+    else if (compatibility.length > 500) failures.push(issue("failure", `compatibility must be 500 characters or fewer (currently ${compatibility.length})`, skillMd));
+  }
+  if (allowedTools !== undefined && !allowedTools.trim()) {
+    warnings.push(issue("warning", "allowed-tools is present but empty", skillMd));
+  }
+  if (license !== undefined && !license.trim()) {
+    warnings.push(issue("warning", "license is present but empty", skillMd));
+  }
+  if (metadata) {
+    const nonString = Object.entries(metadata).filter(([, value]) => typeof value !== "string").map(([key]) => key);
+    if (nonString.length) {
+      warnings.push(issue("warning", `metadata values should be strings; quote: ${nonString.join(", ")}`, skillMd));
+    }
+  }
+}
+
+function validateUnknownKeys(frontmatter: SkillFrontmatterFull, skillMd: string, warnings: Issue[]): void {
+  const unknown = frontmatter.keys.filter((key) => !SPEC_FRONTMATTER_KEYS.has(key));
+  if (unknown.length) {
+    warnings.push(issue("warning", `unknown frontmatter key(s): ${unknown.join(", ")}; remove or move under 'metadata'`, skillMd));
+  }
 }
 
 function skillBody(skillText: string): string {
@@ -99,6 +171,76 @@ async function validateRuntimeResourceLinks(root: string, skillText: string, war
       }
     }
   }
+}
+
+// Every relative markdown link in live prose (SKILL.md + references/*.md) must
+// resolve to a real file inside the packaging unit. Links shown as examples
+// live in code fences or backticks and are deliberately excluded.
+async function validateLinkIntegrity(root: string, skillText: string, failures: Issue[]): Promise<void> {
+  const boundary = await resolveLinkBoundary(root);
+  const docs: Array<{ rel: string; dir: string; text: string }> = [{ rel: "SKILL.md", dir: root, text: skillText }];
+  const refDir = path.join(root, "references");
+  if (await exists(refDir)) {
+    const entries = await fs.readdir(refDir, { withFileTypes: true }).catch(() => []);
+    for (const entry of entries) {
+      if (entry.isFile() && entry.name.endsWith(".md")) {
+        docs.push({ rel: `references/${entry.name}`, dir: refDir, text: await fs.readFile(path.join(refDir, entry.name), "utf8") });
+      }
+    }
+  }
+
+  const seen = new Set<string>();
+  for (const doc of docs) {
+    for (const raw of extractProseLinks(doc.text)) {
+      const target = normalizeLinkTarget(raw);
+      if (!target) continue;
+      const key = `${doc.rel}::${target}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const resolved = path.resolve(doc.dir, target);
+      const relToBoundary = path.relative(boundary, resolved);
+      if (relToBoundary.startsWith("..") || path.isAbsolute(relToBoundary)) {
+        failures.push(issue("failure", `${doc.rel} links outside the packaged payload: ${target}`, path.join(root, doc.rel)));
+      } else if (resolved.split(path.sep).includes(".meta-skill")) {
+        failures.push(issue("failure", `${doc.rel} links into a .meta-skill workbench, which does not package: ${target}`, path.join(root, doc.rel)));
+      } else if (!(await exists(resolved))) {
+        failures.push(issue("failure", `${doc.rel} has a broken link: ${target}`, path.join(root, doc.rel)));
+      }
+    }
+  }
+}
+
+// Links may resolve anywhere inside the packaging unit. A skill that lives in a
+// plugin (marked by .codex-plugin/plugin.json) may reference sibling skills; a
+// standalone skill is bounded by its own root.
+async function resolveLinkBoundary(skillRoot: string): Promise<string> {
+  let dir = path.dirname(skillRoot);
+  while (true) {
+    if (await exists(path.join(dir, ".codex-plugin", "plugin.json"))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) return skillRoot;
+    dir = parent;
+  }
+}
+
+function extractProseLinks(text: string): string[] {
+  const prose = text.replace(/```[\s\S]*?```/g, "").replace(/`[^`\n]*`/g, "");
+  const links: string[] = [];
+  const re = /\]\(([^)]+)\)/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(prose)) !== null) links.push(match[1]);
+  return links;
+}
+
+function normalizeLinkTarget(raw: string): string | null {
+  let target = raw.trim();
+  if (target.startsWith("<") && target.endsWith(">")) target = target.slice(1, -1).trim();
+  const space = target.search(/\s/);
+  if (space !== -1) target = target.slice(0, space); // drop a ](path "title")
+  target = target.split("#")[0].split("?")[0].replace(/%20/g, " ");
+  if (!target) return null; // pure anchor
+  if (/^[a-z][a-z0-9+.-]*:/i.test(target)) return null; // URL scheme (http:, mailto:, ...)
+  return target;
 }
 
 async function validateAgentManifest(root: string, frontmatter: { name?: string; description?: string }, failures: Issue[], warnings: Issue[]): Promise<void> {
@@ -123,6 +265,7 @@ async function validateAgentManifest(root: string, frontmatter: { name?: string;
 async function validateWorkbench(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
   const p = projectPaths(root);
   if (!(await exists(p.spec))) failures.push(issue("failure", ".meta-skill/spec.md is missing", p.spec));
+  else await validateSpecPlaceholders(p.spec, warnings);
 
   const testIds = await validateTests(root, p.tests, failures);
 
@@ -193,6 +336,15 @@ async function validateCase(
   }
   for (const fixture of fixtureFiles) {
     if (!declared.has(fixture)) failures.push(issue("failure", `fixture is present but undeclared: ${fixture}`, caseMd));
+  }
+}
+
+// The spec template ships with <...> placeholders; the skill is not authored
+// until they are filled. TODO markers are caught the same way.
+async function validateSpecPlaceholders(specPath: string, warnings: Issue[]): Promise<void> {
+  const text = await fs.readFile(specPath, "utf8");
+  if (/<[^>\n]{2,}>/.test(text) || /\bTODO\b/.test(text)) {
+    warnings.push(issue("warning", "spec.md still contains template placeholders (<...> or TODO); fill them before treating the skill as authored", specPath));
   }
 }
 

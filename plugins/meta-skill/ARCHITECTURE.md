@@ -24,11 +24,11 @@ agents/
 references/
 scripts/
 assets/
-resources/
+<other runtime files or folders>/
 .meta-skill/
 ```
 
-Only `SKILL.md` is required by the portable payload. Runtime support folders are allowed when the skill needs them. `.meta-skill/` is authoring and evidence state, not runtime payload, and packaging ignores it.
+Only `SKILL.md` is required by the portable payload. `references/`, `scripts/`, and `assets/` are the first-class runtime support folders that create/lint know how to copy and link-check. Other non-excluded runtime files or folders can ship in the payload when the skill needs them. `.meta-skill/` is authoring and evidence state, not runtime payload, and packaging ignores it.
 
 Workbench state uses the flat project-local layout:
 
@@ -52,7 +52,7 @@ payload/
 cases/<case-folder>/
   case.md
   rpc.jsonl
-  trajectory.json
+  turn-evidence.json
   final.md
 ```
 
@@ -62,7 +62,7 @@ Per-case files have one nature each:
 
 - `case.md`: frozen definition
 - `rpc.jsonl`: raw App Server trace
-- `trajectory.json`: normalized App Server turn evidence
+- `turn-evidence.json`: normalized App Server turn evidence
 - `final.md`: final answer
 
 ## Runner Boundary
@@ -70,18 +70,18 @@ Per-case files have one nature each:
 The App Server runner has one contract:
 
 ```text
-(world, turns, policy) -> (final, rpc, trajectory)
+(world, turns, policy) -> (final, rpc, turn evidence)
 ```
 
-Token cost uses the final cumulative App Server `tokenUsage.total`; if exact usage is unavailable, `trajectory.json` stores null numeric fields plus `unavailable_reason`.
+Token cost uses the final cumulative App Server `tokenUsage.total`; if exact usage is unavailable, `turn-evidence.json` stores null numeric fields plus `unavailable_reason`.
 
 The solver-visible world contains the portable payload and solver-visible resources. Harness metadata stays out of the staged world.
 
 Working-payload eval runs force-attach the payload on the first turn. No-skill control runs mount no payload. Solver threads run read-only, with approval policy `never` and network disabled.
 
-`rpc.jsonl` preserves generated App Server JSON-RPC rows as the durable raw event log. The runner also keeps bounded in-memory event windows for per-turn extraction; when a window overflows, `trajectory.json` records a warning item and the raw event log remains the source for forensic inspection. If the current turn overflows before final assistant deltas are retained, `final.md` and the turn trajectory say the final answer is unavailable instead of reusing a previous turn's final text.
+`rpc.jsonl` preserves generated App Server JSON-RPC rows as the durable raw event log. The runner also keeps bounded in-memory event windows for per-turn extraction; when a window overflows, `turn-evidence.json` records a warning item and the raw event log remains the source for forensic inspection. If the current turn overflows before final assistant deltas are retained, `final.md` and the turn evidence say the final answer is unavailable instead of reusing a previous turn's final text.
 
-`trajectory.json` is the normalized behavior view for the run: turn IDs, final text or explicit unavailable-final warning, completion status, token usage, command execution items, file change items, tool calls, approval requests, warning items, and unknown event methods.
+`turn-evidence.json` is the normalized behavior view for the run: turn IDs, final text or explicit unavailable-final warning, completion status, token usage, command execution items, file change items, tool calls, approval requests, warning items, and unknown event methods.
 
 The current runner measures behavior for mounted-payload and no-skill executions. Trigger routing, writable output production, side-by-side uplift scoring, generated cases, fork trees, and tool-chaos policies are roadmap capabilities that require additional App Server protocol support or assertion layers.
 

@@ -24,12 +24,12 @@ describe("eval evidence hard cut", () => {
     assert.equal(await exists(path.join(result.runRoot, "payload", "SKILL.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "case.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "rpc.jsonl")), true);
-    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "trajectory.json")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "turn-evidence.json")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "final.md")), true);
 
     assert.deepEqual(result.cases, ["R1-basic"]);
-    const trajectory = JSON.parse(await readText(path.join(result.runRoot, "cases", "R1-basic", "trajectory.json")));
-    assert.equal((trajectory.turns[0].tokenUsage as TokenUsage).total_tokens, 2);
+    const turnEvidence = JSON.parse(await readText(path.join(result.runRoot, "cases", "R1-basic", "turn-evidence.json")));
+    assert.equal((turnEvidence.turns[0].tokenUsage as TokenUsage).total_tokens, 2);
   });
 });
 
@@ -40,7 +40,7 @@ function caseRunner() {
       await ensureDir(caseRoot);
       await writeText(path.join(caseRoot, "rpc.jsonl"), JSON.stringify({ direction: "server", message: { ok: true } }));
       await writeText(
-        path.join(caseRoot, "trajectory.json"),
+        path.join(caseRoot, "turn-evidence.json"),
         `${JSON.stringify({
           source: "codex_app_server",
           threadId: "thread",
@@ -64,7 +64,7 @@ function caseRunner() {
         token_usage: tokenUsageEvidence(1, 1, 2),
         final_path: path.join(caseRoot, "final.md"),
         rpc_path: path.join(caseRoot, "rpc.jsonl"),
-        trajectory_path: path.join(caseRoot, "trajectory.json"),
+        turn_evidence_path: path.join(caseRoot, "turn-evidence.json"),
         evidence_path: path.join("cases", input.case.folder),
         turn_ids: ["turn"]
       };

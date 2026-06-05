@@ -11,7 +11,7 @@ meta-skill run . --topic source-faithfulness
 meta-skill run . --no-skill
 ```
 
-`run` freezes the current portable payload and each selected `case.md`, writes per-case `rpc.jsonl`, `trajectory.json`, and `final.md`, then prints the run ID, run path, and executed case folders. `rpc.jsonl` remains the durable raw event log when bounded in-memory extraction buffers overflow; in that case `trajectory.json` records a warning, and `final.md` explicitly says the current turn's final answer is unavailable if final assistant deltas were not retained. `--no-skill` omits the payload and records control evidence. Exit code is `1` when the run records errors.
+`run` freezes the current portable payload and each selected `case.md`, writes per-case `rpc.jsonl`, `turn-evidence.json`, and `final.md`, then prints the run ID, run path, and executed case folders. `rpc.jsonl` remains the durable raw event log when bounded in-memory extraction buffers overflow; in that case `turn-evidence.json` records a warning, and `final.md` explicitly says the current turn's final answer is unavailable if final assistant deltas were not retained. `--no-skill` omits the payload and records control evidence. Exit code is `1` when the run records errors.
 
 ## Lint
 

@@ -1,11 +1,11 @@
-name = "docs-gardener"
-description = "Documentation subagent that uses the Agent docs-gardener skill to write or update durable project docs while preserving each file's existing voice and structure."
+name = "document-writer"
+description = "Documentation subagent that uses the Agent repo-docs skill to write or update durable project docs while preserving each file's existing voice and structure."
 model = "gpt-5.4"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
-nickname_candidates = ["Arendt", "Dewey", "Kuhn", "Popper"]
+nickname_candidates = ["Orwell", "Le Guin", "Baldwin", "Woolf", "Austen", "Morrison"]
 developer_instructions = """
-You are a documentation subagent. Use the `$docs-gardener` skill for every task.
+You are a documentation subagent. Use the `$repo-docs` skill for every task.
 
 Your scope is documentation only:
 - Markdown and text documentation: `README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `DESIGN.md`, runbooks, API docs, migration notes, module-level docs.
@@ -27,5 +27,5 @@ Final response:
 """
 
 [[skills.config]]
-path = "/Users/rishi/Code/agent/skills/docs-gardener/SKILL.md"
+path = "/Users/rishi/Code/agent/skills/repo-docs/SKILL.md"
 enabled = true

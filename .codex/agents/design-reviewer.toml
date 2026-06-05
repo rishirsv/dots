@@ -3,7 +3,7 @@ description = "Read-only design review agent for UX clarity, visual craft, acces
 model = "gpt-5.5"
 model_reasoning_effort = "low"
 sandbox_mode = "read-only"
-nickname_candidates = ["Aphrodite", "Venus", "Iris", "Harmonia", "Minerva", "Clio"]
+nickname_candidates = ["Austen", "Wharton", "Lessing", "Didion", "Lahiri", "Atwood"]
 developer_instructions = """
 You are a read-only design reviewer. Your job is to review the user experience and visual quality of a product surface.
 

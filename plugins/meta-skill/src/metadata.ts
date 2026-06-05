@@ -6,6 +6,16 @@ export interface SkillFrontmatter {
   description?: string;
 }
 
+export interface SkillFrontmatterFull {
+  name?: string;
+  description?: string;
+  license?: string;
+  compatibility?: string;
+  allowedTools?: string;
+  metadata?: Record<string, unknown>;
+  keys: string[];
+}
+
 export interface AgentManifestMetadata {
   name?: string;
   description?: string;
@@ -27,6 +37,14 @@ export async function parseSkillFrontmatter(skillMd: string): Promise<SkillFront
   const parsed = parseOptionalFrontmatter(await fs.readFile(skillMd, "utf8"), skillMd);
   if (!parsed) return {};
   return decodeSkillFrontmatter(parsed.frontmatter, skillMd);
+}
+
+// Spec-complete view of the frontmatter for validation: every agentskills.io
+// field plus the raw key set so the linter can flag unknown keys.
+export async function parseSkillFrontmatterFull(skillMd: string): Promise<SkillFrontmatterFull> {
+  const parsed = parseOptionalFrontmatter(await fs.readFile(skillMd, "utf8"), skillMd);
+  if (!parsed) return { keys: [] };
+  return decodeSkillFrontmatterFull(parsed.frontmatter, skillMd);
 }
 
 export function parseCaseFrontmatter(text: string, filePath: string): { metadata: CaseMetadata; criteria: CaseCriteria; body: string } {
@@ -65,6 +83,18 @@ function decodeSkillFrontmatter(frontmatter: Record<string, unknown>, filePath: 
   return {
     name: decodeString(frontmatter, "name", filePath, { optional: true }),
     description: decodeString(frontmatter, "description", filePath, { optional: true })
+  };
+}
+
+function decodeSkillFrontmatterFull(frontmatter: Record<string, unknown>, filePath: string): SkillFrontmatterFull {
+  return {
+    name: decodeString(frontmatter, "name", filePath, { optional: true }),
+    description: decodeString(frontmatter, "description", filePath, { optional: true }),
+    license: decodeString(frontmatter, "license", filePath, { optional: true }),
+    compatibility: decodeString(frontmatter, "compatibility", filePath, { optional: true }),
+    allowedTools: decodeString(frontmatter, "allowed-tools", filePath, { optional: true }),
+    metadata: decodeOptionalObject(frontmatter, "metadata", filePath),
+    keys: Object.keys(frontmatter)
   };
 }
 
@@ -208,6 +238,12 @@ function decodeObject(
 ): Record<string, unknown> {
   const value = source[key];
   if (value === undefined) return options.defaultValue || {};
+  return asObject(value, filePath, `frontmatter field '${key}'`);
+}
+
+function decodeOptionalObject(source: Record<string, unknown>, key: string, filePath: string): Record<string, unknown> | undefined {
+  const value = source[key];
+  if (value === undefined || value === null) return undefined;
   return asObject(value, filePath, `frontmatter field '${key}'`);
 }
 

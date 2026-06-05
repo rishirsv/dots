@@ -3,24 +3,24 @@ import { unavailableTokenUsage } from "../project.ts";
 import { tokenUsageFromAppServer } from "./evidence.ts";
 import type { AppServerTraceLine } from "./trace.ts";
 
-export interface Trajectory {
+export interface TurnEvidence {
   source: "codex_app_server";
   threadId: string;
-  turns: TrajectoryTurn[];
+  turns: TurnEvidenceTurn[];
 }
 
-export interface TrajectoryTurn {
+export interface TurnEvidenceTurn {
   threadId: string;
   turnId: string;
   status: string | null;
   finalText: string;
   tokenUsage: TokenUsage;
-  items: TrajectoryItem[];
-  approvals: TrajectoryApproval[];
+  items: TurnEvidenceItem[];
+  approvals: TurnEvidenceApproval[];
   unknownMethods: string[];
 }
 
-export interface TrajectoryItem {
+export interface TurnEvidenceItem {
   id: string | null;
   type: string;
   status?: string | null;
@@ -40,7 +40,7 @@ export interface TrajectoryItem {
   raw?: unknown;
 }
 
-export interface TrajectoryApproval {
+export interface TurnEvidenceApproval {
   requestId: string | null;
   method: string;
   itemId: string | null;
@@ -52,7 +52,7 @@ export interface TrajectoryApproval {
   sandboxRelevant: boolean;
 }
 
-export interface TrajectorySummary {
+export interface TurnEvidenceSummary {
   turn_count: number;
   item_count: number;
   command_executions: number;
@@ -62,10 +62,10 @@ export interface TrajectorySummary {
   unknown_methods: string[];
 }
 
-export function collectTurnEvents(events: unknown[], selector: { threadId: string; turnId: string }): TrajectoryTurn {
-  const itemById = new Map<string, TrajectoryItem>();
-  const anonymousItems: TrajectoryItem[] = [];
-  const approvals = new Map<string, TrajectoryApproval>();
+export function collectTurnEvidence(events: unknown[], selector: { threadId: string; turnId: string }): TurnEvidenceTurn {
+  const itemById = new Map<string, TurnEvidenceItem>();
+  const anonymousItems: TurnEvidenceItem[] = [];
+  const approvals = new Map<string, TurnEvidenceApproval>();
   const unknownMethods = new Set<string>();
   const finalDeltas: string[] = [];
   let completedFinalText: string | undefined;
@@ -83,7 +83,8 @@ export function collectTurnEvents(events: unknown[], selector: { threadId: strin
       continue;
     }
     const params = objectValue(record.params);
-    if (!belongsToTurn(params, selector)) continue;
+    const eventScope = classifyEventScope(method, params, selector);
+    if (eventScope !== "selectedTurn") continue;
 
     if (method === "item/agentMessage/delta") {
       const delta = stringValue(params.delta);
@@ -144,21 +145,21 @@ export function collectTurnEvents(events: unknown[], selector: { threadId: strin
   };
 }
 
-export function summarizeTrajectory(trajectory: Trajectory): TrajectorySummary {
-  const items = trajectory.turns.flatMap((turn) => turn.items);
-  const unknown = new Set(trajectory.turns.flatMap((turn) => turn.unknownMethods));
+export function summarizeTurnEvidence(turnEvidence: TurnEvidence): TurnEvidenceSummary {
+  const items = turnEvidence.turns.flatMap((turn) => turn.items);
+  const unknown = new Set(turnEvidence.turns.flatMap((turn) => turn.unknownMethods));
   return {
-    turn_count: trajectory.turns.length,
+    turn_count: turnEvidence.turns.length,
     item_count: items.length,
     command_executions: items.filter((item) => item.type === "commandExecution").length,
     file_changes: items.filter((item) => item.type === "fileChange").length,
     tool_calls: items.filter((item) => item.type === "mcpToolCall" || item.type === "dynamicToolCall" || item.type === "collabAgentToolCall" || item.type === "collabToolCall").length,
-    approval_requests: trajectory.turns.reduce((sum, turn) => sum + turn.approvals.length, 0),
+    approval_requests: turnEvidence.turns.reduce((sum, turn) => sum + turn.approvals.length, 0),
     unknown_methods: [...unknown].sort()
   };
 }
 
-export function formatTrajectorySummary(summary: TrajectorySummary): string {
+export function formatTurnEvidenceSummary(summary: TurnEvidenceSummary): string {
   const parts = [
     `${summary.turn_count} turn${summary.turn_count === 1 ? "" : "s"}`,
     `${summary.item_count} item${summary.item_count === 1 ? "" : "s"}`,
@@ -177,22 +178,47 @@ function envelopeFrom(event: unknown): AppServerTraceLine {
   return { message: event };
 }
 
-function belongsToTurn(params: Record<string, unknown>, selector: { threadId: string; turnId: string }): boolean {
-  const threadId = stringValue(params.threadId);
-  if (threadId && threadId !== selector.threadId) return false;
-  const turnId = stringValue(params.turnId) || stringValue(objectValue(params.turn).id);
-  return !turnId || turnId === selector.turnId;
+type EventScope = "selectedTurn" | "otherTurn" | "thread" | "unscoped" | "unknown";
+
+function classifyEventScope(method: string, params: Record<string, unknown>, selector: { threadId: string; turnId: string }): EventScope {
+  if (isIntentionallyThreadScoped(method)) {
+    const threadId = stringValue(params.threadId);
+    if (!threadId) return "unscoped";
+    return threadId === selector.threadId ? "thread" : "unknown";
+  }
+
+  if (isTurnScoped(method)) {
+    const threadId = stringValue(params.threadId);
+    const turnId = turnIdFrom(params);
+    if (!threadId || !turnId) return "unscoped";
+    if (threadId !== selector.threadId || turnId !== selector.turnId) return "otherTurn";
+    return "selectedTurn";
+  }
+
+  return "unknown";
+}
+
+function isTurnScoped(method: string): boolean {
+  return method.startsWith("item/") || method.startsWith("turn/") || method === "thread/tokenUsage/updated" || method === "serverRequest/resolved" || isApprovalRequest(method);
+}
+
+function isIntentionallyThreadScoped(_method: string): boolean {
+  return false;
+}
+
+function turnIdFrom(params: Record<string, unknown>): string | null {
+  return stringValue(params.turnId) || stringValue(objectValue(params.turn).id);
 }
 
 function turnStatus(params: Record<string, unknown>): string | null {
   return stringValue(objectValue(params.turn).status) || stringValue(params.status) || "completed";
 }
 
-function itemFrom(raw: unknown, method: string): TrajectoryItem | undefined {
+function itemFrom(raw: unknown, method: string): TurnEvidenceItem | undefined {
   const item = objectValue(raw);
   const type = stringValue(item.type);
   if (!type) return undefined;
-  const base: TrajectoryItem = {
+  const base: TurnEvidenceItem = {
     id: idValue(item.id),
     type,
     status: stringValue(item.status),
@@ -225,7 +251,7 @@ function itemFrom(raw: unknown, method: string): TrajectoryItem | undefined {
   return base;
 }
 
-function deltaItemFrom(method: string, params: Record<string, unknown>): TrajectoryItem | undefined {
+function deltaItemFrom(method: string, params: Record<string, unknown>): TurnEvidenceItem | undefined {
   const itemId = idValue(params.itemId);
   if (method === "item/commandExecution/outputDelta" || method === "item/commandExecution/terminalInteraction") {
     return { id: itemId, type: "commandExecution", method, output: stringValue(params.delta) || stringValue(params.output) || "" };
@@ -238,7 +264,7 @@ function deltaItemFrom(method: string, params: Record<string, unknown>): Traject
   return undefined;
 }
 
-function upsertItem(items: Map<string, TrajectoryItem>, anonymousItems: TrajectoryItem[], next: TrajectoryItem): void {
+function upsertItem(items: Map<string, TurnEvidenceItem>, anonymousItems: TurnEvidenceItem[], next: TurnEvidenceItem): void {
   if (!next.id) {
     anonymousItems.push(next);
     return;
@@ -255,7 +281,7 @@ function upsertItem(items: Map<string, TrajectoryItem>, anonymousItems: Trajecto
   });
 }
 
-function approvalFrom(method: string, requestId: string | null, params: Record<string, unknown>): TrajectoryApproval {
+function approvalFrom(method: string, requestId: string | null, params: Record<string, unknown>): TurnEvidenceApproval {
   return {
     requestId,
     method,
@@ -268,12 +294,12 @@ function approvalFrom(method: string, requestId: string | null, params: Record<s
   };
 }
 
-function pairApprovalResponse(approvals: Map<string, TrajectoryApproval>, envelope: AppServerTraceLine, message: Record<string, unknown>): void {
+function pairApprovalResponse(approvals: Map<string, TurnEvidenceApproval>, envelope: AppServerTraceLine, message: Record<string, unknown>): void {
   const id = idValue(message.id);
   if (!id || envelope.direction !== "client") return;
   const key = findApprovalKey(approvals, id, null);
   if (!key) return;
-  const approval = approvals.get(key) as TrajectoryApproval;
+  const approval = approvals.get(key) as TurnEvidenceApproval;
   approvals.set(key, { ...approval, status: "responded", decision: objectValue(message.result).decision || objectValue(message.params).decision || message.result });
 }
 
@@ -285,7 +311,7 @@ function approvalKey(requestId: string | null, approvalId: string | null, method
   return requestId || approvalId || method;
 }
 
-function findApprovalKey(approvals: Map<string, TrajectoryApproval>, requestId: string | null, approvalId: string | null): string | undefined {
+function findApprovalKey(approvals: Map<string, TurnEvidenceApproval>, requestId: string | null, approvalId: string | null): string | undefined {
   for (const [key, approval] of approvals) {
     if (requestId && approval.requestId === requestId) return key;
     if (approvalId && approval.approvalId === approvalId) return key;

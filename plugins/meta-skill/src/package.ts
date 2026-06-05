@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { lintProject } from "./lint.ts";
-import { CliError, copyPortablePayload, ensureDir, exists, listPortablePayloadFiles, projectPaths, requirePortableSkill, sha256File, utcNow, writeJson } from "./project.ts";
+import { CliError, copyPortablePayload, ensureDir, listPortablePayloadFiles, requirePortableSkill, sha256File, utcNow, writeJson } from "./project.ts";
 
 export interface PackageOptions {
   project: string;
@@ -28,16 +28,17 @@ export async function packageProject(options: PackageOptions): Promise<{ artifac
   const artifact = path.resolve(options.out || path.join(root, `${path.basename(root)}.zip`));
   await writeZip(sourceRoot, artifact, files);
   const metadata = `${artifact}.metadata.json`;
-  await writePackageMetadata(metadata, { source, sourceRoot, artifact, files });
+  await writePackageMetadata(metadata, { source, sourceRoot, artifact, artifactSha256: await sha256File(artifact), files });
   return { artifact, metadata, files };
 }
 
-async function writePackageMetadata(target: string, data: { source: string; sourceRoot: string; artifact: string; files: string[] }): Promise<void> {
+async function writePackageMetadata(target: string, data: { source: string; sourceRoot: string; artifact: string; artifactSha256?: string; files: string[] }): Promise<void> {
   await writeJson(target, {
     created_at: utcNow(),
     source: data.source,
     source_path: data.sourceRoot,
     artifact: data.artifact,
+    ...(data.artifactSha256 ? { artifact_sha256: data.artifactSha256 } : {}),
     files: data.files
   });
 }
@@ -105,7 +106,6 @@ async function writeZip(sourceRoot: string, target: string, files: string[]): Pr
   end.writeUInt16LE(0, 20);
   chunks.push(end);
   await fs.writeFile(target, Buffer.concat(chunks));
-  await sha256File(target);
 }
 
 let crcTable: number[] | undefined;

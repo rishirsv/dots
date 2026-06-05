@@ -7,7 +7,7 @@ import type { AppServerConfig, AppServerLine } from "./client.ts";
 import { AppServerJsonClient, AppServerUnavailableError } from "./client.ts";
 import { summarizeCaseUsage } from "./evidence.ts";
 import { BoundedTraceBuffer, JsonlTraceRecorder } from "./trace.ts";
-import { collectTurnEvents, type Trajectory, type TrajectoryTurn } from "./trajectory.ts";
+import { collectTurnEvidence, type TurnEvidence, type TurnEvidenceTurn } from "./turn-evidence.ts";
 
 const DEFAULT_TURN_TIMEOUT_MS = 120000;
 const DEFAULT_TRACE_EVENTS = 10000;
@@ -47,7 +47,7 @@ export interface CaseRunResult {
   token_usage: TokenUsage;
   final_path: string;
   rpc_path: string;
-  trajectory_path: string;
+  turn_evidence_path: string;
   evidence_path: string;
   thread_id?: string;
   turn_ids: string[];
@@ -94,7 +94,7 @@ export class AppServerCaseRunner {
 
     try {
       const rpcPath = path.join(rawRoot, "rpc.jsonl");
-      const trajectoryPath = path.join(rawRoot, "trajectory.json");
+      const turnEvidencePath = path.join(rawRoot, "turn-evidence.json");
       await this.client?.flush?.();
       await this.traceRecorder.flush();
       this.traceRecorder.reset(rpcPath);
@@ -122,26 +122,26 @@ export class AppServerCaseRunner {
 
       const turnIds: string[] = [];
       let final = "";
-      const trajectory: Trajectory = { source: "codex_app_server", threadId, turns: [] };
+      const turnEvidence: TurnEvidence = { source: "codex_app_server", threadId, turns: [] };
       const turns = [{ content: input.case.task, source: "case.md#Task" }, ...input.case.turns.map((turn, index) => ({ content: turn.content, source: `case.md#Turn ${index + 2}` }))];
       for (const [index, turn] of turns.entries()) {
         const result = await runTurn(client, this.rawTrace, threadId, runtimeRoot, workspaceRoots, turn.content, index === 0 && forceSkill, this.turnTimeoutMs, attachmentName, input.skillRoot);
-        trajectory.turns.push(result);
+        turnEvidence.turns.push(result);
         final = result.finalText;
         turnIds.push(result.turnId);
       }
       await client.flush?.();
       await this.traceRecorder.flush();
-      const caseSummary = summarizeCaseUsage(trajectory.turns.at(-1));
+      const caseSummary = summarizeCaseUsage(turnEvidence.turns.at(-1));
       await writeText(path.join(rawRoot, "final.md"), final || "(no final assistant message captured)");
-      await writeText(trajectoryPath, `${JSON.stringify(trajectory, null, 2)}\n`);
+      await writeText(turnEvidencePath, `${JSON.stringify(turnEvidence, null, 2)}\n`);
 
       return {
         execution_status: "completed",
         token_usage: caseSummary,
         final_path: path.join(rawRoot, "final.md"),
         rpc_path: rpcPath,
-        trajectory_path: trajectoryPath,
+        turn_evidence_path: turnEvidencePath,
         evidence_path: path.relative(input.runRoot, rawRoot),
         thread_id: threadId,
         turn_ids: turnIds
@@ -179,7 +179,7 @@ async function runTurn(
   turnTimeoutMs: number,
   attachmentName?: string,
   skillRoot?: string
-): Promise<TrajectoryTurn> {
+): Promise<TurnEvidenceTurn> {
   const traceMark = rawTrace.mark();
   const mark = client.eventCount();
   const input = [
@@ -206,7 +206,7 @@ async function runTurn(
   const traceSlice = rawTrace.since(traceMark);
   const traceEvents = traceSlice.events;
   const hasServerMessages = traceEvents.some((event) => event.direction === "server" && event.message && typeof event.message === "object" && "method" in event.message);
-  const collectedTurn = collectTurnEvents(hasServerMessages ? traceEvents : client.eventsSince(mark), { threadId, turnId });
+  const collectedTurn = collectTurnEvidence(hasServerMessages ? traceEvents : client.eventsSince(mark), { threadId, turnId });
   if (!traceSlice.overflowed) return collectedTurn;
   return withTraceOverflowWarning(collectedTurn, traceSlice.droppedEventCount);
 }
@@ -223,7 +223,7 @@ async function runtimeSkillName(skillRoot: string): Promise<string> {
   return frontmatter.name || path.basename(skillRoot);
 }
 
-function withTraceOverflowWarning(turn: TrajectoryTurn, droppedEventCount: number): TrajectoryTurn {
+function withTraceOverflowWarning(turn: TurnEvidenceTurn, droppedEventCount: number): TurnEvidenceTurn {
   const text = overflowFinalWarning(turn.turnId, droppedEventCount);
   return {
     ...turn,

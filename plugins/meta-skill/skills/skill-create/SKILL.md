@@ -19,14 +19,17 @@ Add the hidden `.meta-skill/` workbench only when the user requests project mode
 
 ## Routing
 
-Start every build by understanding intent, then pick one path. All paths converge on the Interview, which completes the Skill Specification before any file is generated.
+Two decisions precede the build, and neither is a phase.
 
-1. **Not skill-shaped** — a one-off answer, an obvious base capability, or pure logic that validation code should enforce. Do not build a skill; say so and stop. See the skill-or-not gate in [design.md](references/design.md).
-2. **Capture a workflow from this conversation** — the conversation already shows a workflow the user ran or referenced, or the user says "turn this into a skill" / "make a skill out of this." Read [skillify.md](references/skillify.md) and reconstruct the method from history before interviewing.
-3. **Distill a source pack** — the user hands over input files plus finished outputs. Read [distillation.md](references/distillation.md) to extract the method, then interview only for the gaps.
-4. **Build from intent** — a topic or job with no captured workflow or source pack. Go straight to the Interview.
+**Is it skill-shaped?** Build a skill only when recurring workflow guidance would change future agent behavior. Weigh the artifact, not the topic: a one-off answer needs nothing durable, a simple preference is a memory or rule, a lightweight repeated prompt is a prompt file, project-specific behavior belongs in a repo doc, and only a portable, recurring, multi-step capability is a skill. If it is not skill-shaped, say so and stop. See the skill-or-not gate in [design.md](references/design.md).
 
-Routing is a branch decision, not a phase. Once the path is chosen, run the Workflow below.
+**Where does the context come from?** The build is the single Workflow below. What feeds its Interview depends on the material that already exists:
+
+- A workflow the user ran or referenced in this conversation or a prior session → reconstruct it with [skillify.md](references/skillify.md).
+- Provided source files or a finished-output pack → extract the method with [distillation.md](references/distillation.md).
+- Neither → interview from intent, using comparable skills for defaults.
+
+These are context sources, not separate routes. Source material supports the standard workflow; it does not fork it. Most builds combine them — a captured workflow plus a couple of interview confirmations is the common case.
 
 ## Reference Map
 
@@ -35,7 +38,7 @@ Read only what the task needs:
 | Need | Read |
 |---|---|
 | Decide whether the workflow should become a skill; write frontmatter, runtime guidance, boundaries, and trigger contract | [design.md](references/design.md) |
-| Capture a workflow that already happened in this conversation and reconstruct it from history | [skillify.md](references/skillify.md) |
+| Turn a workflow from this conversation or a prior session into candidate skill rules (session-to-skill) | [skillify.md](references/skillify.md) |
 | Look up compact snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Distill a source pack or past outputs into reusable runtime guidance without leaking engagement-specific facts | [distillation.md](references/distillation.md) |
 | Decide what belongs in `SKILL.md`, `references/`, `scripts/`, `assets/`, and `.meta-skill/` | [structure.md](references/structure.md) |
@@ -63,11 +66,12 @@ Run the build as flight phases. Do not generate any file until the Skill Specifi
 
 The interview is the primary surface. Its job is to complete the **Skill Specification** before anything is scaffolded. Fill every answer from existing context first, then ask only what context cannot answer.
 
-**Required answer-set.** You must know all of these — from the conversation, from history (skillify route), from a source pack (distillation route), or from a question:
+**Required answer-set.** You must know all of these — pulled from the conversation, from a captured workflow (skillify), from a source pack (distillation), or from a question:
 
 - **Job** — the one recurring job the skill does, not "what we did once."
 - **Trigger** — when it should fire, in real user language, plus the nearest `not for` boundary.
 - **Inputs and output** — what it consumes and the expected output shape.
+- **Invariants and failure shields** — what the skill must always do, what it must never do, and the common mistakes or user corrections to guard against. Usually extracted from source material; ask only when it is absent.
 - **Fragility** — judgment-prose, a fixed shape, or a deterministic script (drives instruction strength).
 - **Gates** — approvals required before external writes or final client-facing delivery.
 - **Project mode** — set up test cases / evals / team reuse, or keep it portable-only.
@@ -94,7 +98,7 @@ Keep the turn shape tight: numbered questions, lettered options, recommended/def
 
 **Log the result as the Skill Specification** — the create-lane analog of clarify's Common Understanding:
 
-- **Job**, **Trigger** (+ `not for`), **Inputs and output**, **Fragility**, **Gates**, **Project mode**, **Still open** (`None` when settled).
+- **Job**, **Trigger** (+ `not for`), **Inputs and output**, **Invariants and failure shields**, **Fragility**, **Gates**, **Project mode**, **Still open** (`None` when settled).
 
 When project mode exists, persist this to `.meta-skill/spec.md` using [skill-spec-template.md](assets/skill-spec-template.md).
 
@@ -108,7 +112,7 @@ Skipping changes the clarification budget, not the quality budget: the Specifica
 
 ### Phase 2 — Distill (source-derived only)
 
-When the skill comes from a captured workflow (skillify route) or a source pack, run every candidate rule through the Mechanism Gates and Rule Surface Form in [distillation.md](references/distillation.md) before it enters runtime. Generalize named products, repos, commands, or skills to the user-facing concept unless the runtime actually invokes them. Skip this phase for a from-intent skill with no source material.
+When the skill is source-derived — a captured workflow via skillify, or a source pack via distillation — run every candidate rule through the Mechanism Gates and Rule Surface Form in [distillation.md](references/distillation.md) before it enters runtime. Generalize named products, repos, commands, or skills to the user-facing concept unless the runtime actually invokes them. Skip this phase for a from-intent skill with no source material.
 
 ### Phase 3 — Generate the scaffold
 

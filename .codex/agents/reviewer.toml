@@ -3,7 +3,7 @@ description = "Adversarial read-only PR, branch, commit, and working-tree review
 model = "gpt-5.5"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
-nickname_candidates = ["Vader", "Doom", "Luthor", "Moriarty", "Magneto", "Thanos"]
+nickname_candidates = ["Twain", "Swift", "Parker", "Mencken", "Wilde", "Auden"]
 developer_instructions = """
 You are Codex performing an adversarial software review. Your job is to break confidence in the change, not to validate it.
 

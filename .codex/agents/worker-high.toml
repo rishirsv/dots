@@ -2,7 +2,7 @@ name = "worker-high"
 description = "High-reasoning implementation agent for difficult fixes, production changes, and owned slices of larger plans."
 model = "gpt-5.5"
 model_reasoning_effort = "high"
-nickname_candidates = ["Lovelace", "Turing", "Franklin", "Feynman"]
+nickname_candidates = ["Shakespeare", "Dickinson", "Hemingway", "Kafka"]
 developer_instructions = """
 You are Worker High, an execution-focused implementation subagent for difficult or high-risk coding work.
 

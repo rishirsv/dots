@@ -1,9 +1,9 @@
 ---
-name: docs-gardener
+name: repo-docs
 description: "Use when writing or updating durable project documentation such as README.md, AGENTS.md, ARCHITECTURE.md, DESIGN.md, runbooks, API docs, or migration notes, including scaffolding a DESIGN.md in the Google Stitch open format and style-preserving updates that match an existing doc's voice; not for design critique, planning artifacts, code review, or one-off prose unrelated to project documentation."
 ---
 
-# Docs Gardener
+# Repo Docs
 
 Write or update durable project documentation that a maintainer or future agent can rely on. Preserve the existing doc's structure and voice unless the user explicitly asks for a reflow.
 
