@@ -10,12 +10,8 @@ Meta Skill uses one TypeScript CLI with top-level commands:
 meta-skill create ...
 meta-skill create --project ...
 meta-skill project init <skill-dir>
-meta-skill lint <project-or-skill> [--run <run-id>] [--json]
-meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--no-skill] [--with-judges] [--no-lint]
-meta-skill judge <project> --run <run-id> (--judge <id> | --all-judges) (--case <id> | --all-cases)
-meta-skill feedback import <project> --run <run-id> <feedback.jsonl>
-meta-skill report [run-id] [case-id] [--project <dir>] [--json]
-meta-skill decide <project> --run <run-id> --evidence <path[:line]> [--evidence <path[:line]> ...] [--commit <sha>] --accept | --reject
+meta-skill lint <project-or-skill> [--json]
+meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--no-skill] [--no-lint]
 meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 ```
 
@@ -45,6 +41,6 @@ Commands may prepare evidence and packages, but the human gate remains explicit.
 
 Run IDs are readable sequenced folders such as `001-working-payload`. Treat them as opaque once created.
 
-Every eval run records unavailable token metrics explicitly when exact usage cannot be collected. Do not hide missing usage fields.
+Every eval run records unavailable token metrics explicitly in `trajectory.json` when exact usage cannot be collected. Do not hide missing usage fields.
 
-Case authoring is manual. Current eval reports are printed projections over saved facts and case evidence. Current eval guidance uses manually authored cases, one execution source per run, read-only App Server evidence, and direct TypeScript runtime validation.
+Case authoring is manual. Current eval guidance uses manually authored cases, one execution source per run, read-only App Server evidence, and direct TypeScript runtime validation.

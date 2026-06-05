@@ -20,6 +20,7 @@ export interface AppServerCaseRunnerOptions {
   clientFactory?: (onLine: (line: AppServerLine) => Promise<void>) => AppServerClientLike;
   turnTimeoutMs?: number;
   maxCaseRespawns?: number;
+  maxTraceEvents?: number;
 }
 
 export interface CaseRunInput {
@@ -50,13 +51,15 @@ export class AppServerCaseRunner {
   private readonly clientFactory: (onLine: (line: AppServerLine) => Promise<void>) => AppServerClientLike;
   private readonly turnTimeoutMs: number;
   private readonly maxCaseRespawns: number;
+  private readonly maxTraceEvents: number;
   private rpcPath: string | undefined;
-  private rawTrace: AppServerTraceLine[] = [];
+  private rawTrace = new BoundedTraceBuffer();
 
   constructor(options: AppServerCaseRunnerOptions = {}) {
     this.clientFactory = options.clientFactory || ((onLine) => new AppServerJsonClient(onLine));
     this.turnTimeoutMs = options.turnTimeoutMs || 120000;
     this.maxCaseRespawns = options.maxCaseRespawns ?? 1;
+    this.maxTraceEvents = options.maxTraceEvents ?? 10000;
   }
 
   async run(input: CaseRunInput): Promise<CaseRunResult> {
@@ -86,7 +89,7 @@ export class AppServerCaseRunner {
       const trajectoryPath = path.join(rawRoot, "trajectory.json");
       await this.client?.flush?.();
       this.rpcPath = rpcPath;
-      this.rawTrace = [];
+      this.rawTrace = new BoundedTraceBuffer(this.maxTraceEvents);
       const client = await this.ensureClient(input.appServer);
 
       const start = await client.request("thread/start", {
@@ -110,12 +113,12 @@ export class AppServerCaseRunner {
 
       const turnIds: string[] = [];
       let final = "";
-      const trajectory: Trajectory = { schema_version: 1, source: "codex_app_server", threadId, turns: [] };
+      const trajectory: Trajectory = { source: "codex_app_server", threadId, turns: [] };
       const turns = [{ content: input.case.task, source: "case.md#Task" }, ...input.case.turns.map((turn, index) => ({ content: turn.content, source: `case.md#Turn ${index + 2}` }))];
       for (const [index, turn] of turns.entries()) {
         const result = await runTurn(client, this.rawTrace, threadId, runtimeRoot, workspaceRoots, turn.content, index === 0 && forceSkill, this.turnTimeoutMs, attachmentName, input.skillRoot);
         trajectory.turns.push(result);
-        final = result.finalText || final;
+        final = result.finalText;
         turnIds.push(result.turnId);
       }
       await client.flush?.();
@@ -147,9 +150,8 @@ export class AppServerCaseRunner {
     if (!this.client) {
       this.client = this.clientFactory(async (line) => {
         if (!this.rpcPath) return;
-        this.rawTrace.push({ direction: line.direction, message: line.message });
+        this.rawTrace.append({ direction: line.direction, message: line.message });
         await appendJsonl(this.rpcPath, {
-          schema_version: 1,
           direction: line.direction,
           message: line.message
         });
@@ -162,7 +164,7 @@ export class AppServerCaseRunner {
 
 async function runTurn(
   client: AppServerClientLike,
-  rawTrace: AppServerTraceLine[],
+  rawTrace: BoundedTraceBuffer,
   threadId: string,
   runtimeRoot: string,
   workspaceRoots: string[],
@@ -172,7 +174,7 @@ async function runTurn(
   attachmentName?: string,
   skillRoot?: string
 ): Promise<TrajectoryTurn> {
-  const traceMark = rawTrace.length;
+  const traceMark = rawTrace.mark();
   const mark = client.eventCount();
   const input = [
     ...(includeSkill && attachmentName && skillRoot ? [{ type: "skill", name: attachmentName, path: skillRoot }] : []),
@@ -195,9 +197,12 @@ async function runTurn(
     turnTimeoutMs
   );
   await client.flush?.();
-  const traceEvents = rawTrace.slice(traceMark);
+  const traceSlice = rawTrace.since(traceMark);
+  const traceEvents = traceSlice.events;
   const hasServerMessages = traceEvents.some((event) => event.direction === "server" && event.message && typeof event.message === "object" && "method" in event.message);
-  return collectTurnEvents(hasServerMessages ? traceEvents : client.eventsSince(mark), { threadId, turnId });
+  const collectedTurn = collectTurnEvents(hasServerMessages ? traceEvents : client.eventsSince(mark), { threadId, turnId });
+  if (!traceSlice.overflowed) return collectedTurn;
+  return withTraceOverflowWarning(collectedTurn, traceSlice.droppedEventCount);
 }
 
 function summarizeCaseUsage(finalTurn?: TrajectoryTurn): TokenUsage {
@@ -215,4 +220,61 @@ async function runtimeWorkspaceRoots(runtimeRoot: string, casePath: string): Pro
 async function runtimeSkillName(skillRoot: string): Promise<string> {
   const frontmatter = await parseSkillFrontmatter(path.join(skillRoot, "SKILL.md"));
   return frontmatter.name || path.basename(skillRoot);
+}
+
+class BoundedTraceBuffer {
+  private events: Array<{ index: number; event: AppServerTraceLine }> = [];
+  private nextIndex = 0;
+  private readonly maxEvents: number;
+
+  constructor(maxEvents = 10000) {
+    this.maxEvents = maxEvents;
+  }
+
+  append(event: AppServerTraceLine): void {
+    this.events.push({ index: this.nextIndex, event });
+    this.nextIndex += 1;
+    while (this.events.length > this.maxEvents) {
+      this.events.shift();
+    }
+  }
+
+  mark(): number {
+    return this.nextIndex;
+  }
+
+  since(index: number): { events: AppServerTraceLine[]; overflowed: boolean; droppedEventCount: number } {
+    const firstRetainedIndex = this.events[0]?.index ?? this.nextIndex;
+    return {
+      events: this.events.filter((item) => item.index >= index).map((item) => item.event),
+      overflowed: index < firstRetainedIndex,
+      droppedEventCount: Math.max(0, firstRetainedIndex - index)
+    };
+  }
+}
+
+function withTraceOverflowWarning(turn: TrajectoryTurn, droppedEventCount: number): TrajectoryTurn {
+  const text = overflowFinalWarning(turn.turnId, droppedEventCount);
+  return {
+    ...turn,
+    finalText: turn.finalText || text,
+    items: [
+      ...turn.items,
+      {
+        id: null,
+        type: "warning",
+        method: "metaSkill/traceBuffer/overflow",
+        text,
+        raw: {
+          droppedEventCount,
+          warning: "The in-memory App Server trace buffer overflowed; rpc.jsonl remains the durable raw event log."
+        }
+      }
+    ],
+    unknownMethods: [...new Set([...turn.unknownMethods, "metaSkill/traceBuffer/overflow"])].sort()
+  };
+}
+
+function overflowFinalWarning(turnId: string, droppedEventCount: number): string {
+  return `Final assistant message unavailable for turn ${turnId}: the in-memory App Server trace buffer overflowed before final assistant deltas were captured (${droppedEventCount} dropped event${droppedEventCount === 1 ? "" : "s"}). Inspect rpc.jsonl for the durable raw event log.`;
 }

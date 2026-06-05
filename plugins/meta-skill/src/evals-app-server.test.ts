@@ -5,13 +5,12 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import type { CaseRunInput, CaseRunResult } from "./app-server/runner.ts";
 import type { TokenUsage } from "./models.ts";
-import { importFeedback, runEval } from "./evals.ts";
-import { readFacts } from "./facts.ts";
+import { runEval } from "./evals.ts";
 import { createSkill } from "./skills.ts";
 import { ensureDir, exists, readText, writeText } from "./project.ts";
 
 describe("eval evidence hard cut", () => {
-  it("writes one fact log and the hard-cut per-case evidence files", async () => {
+  it("writes only the hard-cut per-case evidence files", async () => {
     const project = await fixtureProject("fact-run");
     await writeCase(project);
     const result = await runEval({
@@ -21,31 +20,16 @@ describe("eval evidence hard cut", () => {
       caseRunner: caseRunner()
     });
 
-    assert.equal(await exists(path.join(result.runRoot, "facts.jsonl")), true);
+    assert.equal(await exists(path.join(result.runRoot, "facts.jsonl")), false);
     assert.equal(await exists(path.join(result.runRoot, "payload", "SKILL.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "case.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "rpc.jsonl")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "trajectory.json")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "final.md")), true);
 
-    const facts = await readFacts(result.runRoot);
-    assert.deepEqual(facts.map((fact) => fact.type), ["run_started", "payload_frozen", "case_defined", "case_trial_finished", "check_observed", "run_finished"]);
-    const trial = facts.find((fact) => fact.type === "case_trial_finished");
-    assert.equal((trial?.payload.usage as TokenUsage).total_tokens, 2);
-    assert.equal(trial?.payload.trajectory_path, "cases/R1-basic/trajectory.json");
-  });
-
-  it("imports feedback into facts", async () => {
-    const project = await fixtureProject("feedback-run");
-    await writeCase(project);
-    const result = await runEval({ project, selector: {}, noLint: true, caseRunner: caseRunner() });
-    const feedback = path.join(path.dirname(project), "feedback.jsonl");
-    await writeText(feedback, JSON.stringify({ case_id: "R1", source: "reviewer", label: "note", notes: "Looks usable." }));
-
-    await importFeedback(project, result.runId, feedback);
-
-    const facts = await readFacts(result.runRoot);
-    assert.equal(facts.some((fact) => fact.type === "feedback_imported" && fact.case_id === "R1"), true);
+    assert.deepEqual(result.cases, ["R1-basic"]);
+    const trajectory = JSON.parse(await readText(path.join(result.runRoot, "cases", "R1-basic", "trajectory.json")));
+    assert.equal((trajectory.turns[0].tokenUsage as TokenUsage).total_tokens, 2);
   });
 });
 
@@ -58,7 +42,6 @@ function caseRunner() {
       await writeText(
         path.join(caseRoot, "trajectory.json"),
         `${JSON.stringify({
-          schema_version: 1,
           source: "codex_app_server",
           threadId: "thread",
           turns: [
@@ -116,7 +99,6 @@ criteria:
   assertions:
     - Answers.
   tests: []
-  judges: []
 ---
 
 ## Task

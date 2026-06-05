@@ -38,6 +38,37 @@ describe("AppServerCaseRunner", () => {
     const trajectory = JSON.parse(await readText(path.join(caseRoot, "trajectory.json")));
     assert.equal(trajectory.turns[0].finalText, "final answer");
   });
+
+  it("writes an unavailable final warning instead of reusing an earlier turn final after trace overflow", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-overflow-"));
+    const runRoot = path.join(root, "run");
+    const skillRoot = path.join(root, "skill");
+    await fs.mkdir(skillRoot, { recursive: true });
+    await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: demo\n---\n# Demo\n");
+    const fake = new OverflowFakeClient();
+    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25, maxTraceEvents: 4 });
+
+    await runner.run({
+      projectRoot: skillRoot,
+      skillRoot,
+      skill_activation: "forced",
+      case: { ...caseRecord(root), turns: [{ content: "Follow up." }] },
+      runSource: { kind: "working_payload", label: "Working payload", skill_root: "payload", skill_activation: "forced" },
+      runId: "001-test",
+      runRoot,
+      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    const caseRoot = path.join(runRoot, "cases", "R1-basic");
+    const final = await readText(path.join(caseRoot, "final.md"));
+    assert.doesNotMatch(final, /first turn final/);
+    assert.match(final, /Final assistant message unavailable for turn turn-2/);
+    assert.match(final, /rpc\.jsonl/);
+    const trajectory = JSON.parse(await readText(path.join(caseRoot, "trajectory.json")));
+    assert.equal(trajectory.turns[0].finalText, "first turn final");
+    assert.match(trajectory.turns[1].finalText, /Final assistant message unavailable/);
+    assert.equal(trajectory.turns[1].items.some((item: { type?: string; method?: string }) => item.type === "warning" && item.method === "metaSkill/traceBuffer/overflow"), true);
+  });
 });
 
 class FakeClient {
@@ -65,6 +96,41 @@ class FakeClient {
   }
 }
 
+class OverflowFakeClient {
+  private onLine?: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>;
+  private turnNumber = 0;
+  private activeTurnId = "";
+
+  attach(onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>) {
+    this.onLine = onLine;
+    return {
+      request: async (method: string) => {
+        await this.onLine?.({ direction: "client", message: { method } });
+        if (method === "thread/start") return { thread: { id: "thread-1" } };
+        this.turnNumber += 1;
+        this.activeTurnId = `turn-${this.turnNumber}`;
+        return { turn: { id: this.activeTurnId } };
+      },
+      waitFor: async () => {
+        if (this.activeTurnId === "turn-1") {
+          await this.onLine?.({ direction: "server", message: { method: "item/agentMessage/delta", params: { threadId: "thread-1", turnId: "turn-1", delta: "first turn final" } } });
+          await this.onLine?.({ direction: "server", message: { method: "turn/completed", params: { threadId: "thread-1", turn: { id: "turn-1", status: "completed" } } } });
+        } else {
+          for (let index = 0; index < 5; index += 1) {
+            await this.onLine?.({ direction: "server", message: { method: "item/reasoning/delta", params: { threadId: "thread-1", turnId: "turn-2", delta: `step ${index}` } } });
+          }
+          await this.onLine?.({ direction: "server", message: { method: "turn/completed", params: { threadId: "thread-1", turn: { id: "turn-2", status: "completed" } } } });
+        }
+        return { msg: { type: "turn/completed" } };
+      },
+      eventCount: () => 0,
+      eventsSince: () => [],
+      close: () => {},
+      flush: async () => {}
+    };
+  }
+}
+
 function caseRecord(root: string): CaseRecord {
   return {
     folder: "R1-basic",
@@ -72,7 +138,7 @@ function caseRecord(root: string): CaseRecord {
     path: root,
     type: "regression",
     metadata: { title: "Basic" },
-    criteria: { expected_behavior: "Runs", assertions: [], tests: [], judges: [] },
+    criteria: { expected_behavior: "Runs", assertions: [], tests: [] },
     task: "Answer.",
     turns: []
   };

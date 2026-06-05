@@ -91,7 +91,6 @@ describe("collectTurnEvents", () => {
 
   it("summarizes a trajectory without writing another fact file", () => {
     const trajectory: Trajectory = {
-      schema_version: 1,
       source: "codex_app_server",
       threadId: "thread-1",
       turns: [

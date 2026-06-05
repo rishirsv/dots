@@ -54,7 +54,7 @@ describe("AppServerJsonClient", () => {
     client.close();
   });
 
-  it("retains all App Server events in memory for current extraction", async () => {
+  it("retains a bounded App Server event buffer and warns when reading before the retained window", async () => {
     const child = new FakeChild();
     const lines: AppServerLine[] = [];
     child.onMessage((message) => {
@@ -64,7 +64,8 @@ describe("AppServerJsonClient", () => {
       spawnProcess: () => child.asChild(),
       onLine: (line) => {
         lines.push(line);
-      }
+      },
+      maxBufferedEvents: 2
     });
     await client.connect(managedConfig());
 
@@ -76,7 +77,11 @@ describe("AppServerJsonClient", () => {
     assert.equal(client.eventCount(), 3);
     assert.deepEqual(
       client.eventsSince(0).map((message) => message.method),
-      ["event/one", "event/two", "event/three"]
+      ["metaSkill/clientEventBuffer/overflow", "event/two", "event/three"]
+    );
+    assert.deepEqual(
+      client.eventsSince(2).map((message) => message.method),
+      ["event/three"]
     );
     assert.equal(lines.some((line) => line.direction === "server" && (line.message as { method?: string }).method === "event/three"), true);
     client.close();

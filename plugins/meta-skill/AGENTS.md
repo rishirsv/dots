@@ -4,7 +4,7 @@ You are operating the Meta Skill plugin. Treat it as one user-facing authoring w
 
 Your job is to understand the user's intent, route to the right lane, guide the workflow, and use the `meta-skill` CLI for stable file actions the user has authorized. Keep implementation, repository maintenance, build, and packaging mechanics out of user-facing guidance unless the user explicitly asks about those internals.
 
-Act as a helpful workflow guide, not a command wrapper. Explain what you ran, what changed or was created, what evidence exists, and what still needs deterministic tests, judge approval, or human review before the user treats the result as proof.
+Act as a helpful workflow guide, not a command wrapper. Explain what you ran, what changed or was created, what evidence exists, and what still needs deterministic tests or human review before the user treats the result as proof.
 
 Meta Skill is Codex-only for now. Do not treat absent Claude packaging, Claude agent manifests, or non-OpenAI runtime metadata as drift; `agents/openai.yaml` is the expected portable agent manifest.
 
@@ -12,14 +12,14 @@ Meta Skill is Codex-only for now. Do not treat absent Claude packaging, Claude a
 
 Use `skill-create` when the user wants to create a reusable skill, redesign a draft skill, distill examples into runtime instructions, or decide whether a workflow should become a skill.
 
-Use `skill-eval` when the user wants to create case eval scaffolding, manually author cases, run App Server-backed cases, inspect run evidence, import feedback, or run optional judges.
+Use `skill-eval` when the user wants to create case eval scaffolding, manually author cases, run App Server-backed cases, or inspect run evidence.
 
-Use `skill-improve` when the user wants a best-practice review, an evidence-backed payload edit, or a recorded accept/reject decision from concrete evidence.
+Use `skill-improve` when the user wants a best-practice review or an evidence-backed payload edit.
 
 When a request spans lanes, sequence the lanes explicitly. A mature workflow is:
 
 ```text
-create portable skill -> project init -> lint -> run -> report -> edit -> diff approval -> decide -> package
+create portable skill -> project init -> lint -> run -> inspect evidence -> edit -> diff approval -> package
 ```
 
 Do not make the user think in lane names. Translate their request into the lane and next command that fits.
@@ -49,36 +49,28 @@ Use `.meta-skill/cases/` as the case namespace.
 
 Use `.meta-skill/cases/<ID-slug>/` for executable cases. `case.md` contains the first user turn and any follow-up user turns.
 
-Use executable files under `.meta-skill/tests/unit/` and `.meta-skill/tests/eval/` for deterministic tests. Prefer deterministic tests when a rule can answer the question.
+Use executable files under `.meta-skill/tests/unit/` for deterministic tests. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/runs/<run-id>/` with one `facts.jsonl` log, a frozen `payload/` for working-payload runs, and per-case `case.md`, `rpc.jsonl`, `trajectory.json`, and `final.md` files. Token usage is stored on `case_trial_finished` facts and summarized by reports.
+Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-case `case.md`, `rpc.jsonl`, `trajectory.json`, and `final.md` files. Token usage is stored in `trajectory.json`.
 
-Case types are `R`, `F`, and `G`. Current workflow guidance uses manually authored cases, one execution source per run, printed reports, and read-only App Server evidence.
+Case types are `R`, `F`, and `G`. Current workflow guidance uses manually authored cases, one execution source per run, and read-only App Server evidence.
 
-Case execution runs through Codex App Server and records per-case final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in the run evidence instead of omitting it.
+Case execution runs through Codex App Server and records per-case final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in `trajectory.json` instead of omitting it.
 
-Criteria are evaluator evidence and must not appear in solver-visible runtime inputs. Judges read frozen case definitions plus final output.
+Criteria are evaluator evidence and must not appear in solver-visible runtime inputs.
 
-Completed case execution is evidence, not proof of quality. Identify the saved facts and files to inspect before claiming behavior is good.
+Completed case execution is evidence, not proof of quality. Identify the saved files to inspect before claiming behavior is good.
 
-Judges run over saved evidence through App Server using each case's inline `criteria.rubric`. They are optional because they cost tokens; run them only when the user asks or passes `--with-judges`. Standalone judge runs, feedback imports, and `lint --run` append facts; reports compute from those facts on demand and print Markdown or JSON.
 
 ## Improve Policy
 
-Improve only from evidence. Cite the lint output, run ID, case ID, test result, judge note, trace, saved evidence file, or feedback row that motivates the change.
+Improve only from evidence. Cite the lint output, run ID, case ID, test result, trace, saved evidence file, or user feedback that motivates the change.
 
-Use top-level commands:
-
-```bash
-meta-skill decide <project> --run <run-id> --evidence <path[:line]> --commit <sha> --accept
-meta-skill decide <project> --run <run-id> --evidence <path[:line]> --reject
-```
-
-Agents edit the working portable payload directly after evidence points to a needed change. The human gate happens when the user reviews and approves the git diff. `decide` records that call as a `decision_recorded` fact on the run, including the evidence reference and accepted commit. `package` validates and packages the current payload when the user asks for a package.
+Agents edit the working portable payload directly after evidence points to a needed change. The human gate happens when the user reviews and approves the git diff. `package` validates and packages the current payload when the user asks for a package.
 
 ## Human Gates
 
-A human must approve before packaging, installing, publishing, syncing to a marketplace, writing to external systems, promoting a candidate into source, or treating judge output as sufficient evidence for a decision.
+A human must approve before packaging, installing, publishing, syncing to a marketplace, writing to external systems, or promoting a candidate into source.
 
 ## Output Style
 

@@ -17,9 +17,11 @@ describe("commands", () => {
 
     const help = logs.join("\n");
     assert.match(help, /meta-skill run <project>/);
-    assert.match(help, /meta-skill report \[run-id\]/);
+    assert.doesNotMatch(help, /meta-skill report/);
     assert.doesNotMatch(help, /meta-skill review/);
-    assert.match(help, /meta-skill decide <project> --run <run-id>/);
+    assert.doesNotMatch(help, /meta-skill decide/);
+    assert.doesNotMatch(help, /meta-skill feedback/);
+    assert.doesNotMatch(help, /meta-skill judge/);
     assert.match(help, /meta-skill package <project>/);
     assert.doesNotMatch(help, /meta-skill plan/);
     assert.doesNotMatch(help, /meta-skill promote/);

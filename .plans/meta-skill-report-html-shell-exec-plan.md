@@ -103,7 +103,6 @@ Target shape:
 
 ```ts
 interface ReportAppModelV1 {
-  schema_version: 1;
   skill: {
     name: string;
   };
@@ -401,7 +400,7 @@ Rules:
 - Keep focus rings visible.
 - Avoid heavy shadows. The only acceptable shadow-like treatment is focus state.
 - Avoid dashboard cards and repeated metric tiles.
-- Avoid visible implementation words such as `schema_version`, `payload`, or raw enum-ish labels unless they are the actual evidence value users need.
+- Avoid visible implementation words such as `payload` or raw enum-ish labels unless they are the actual evidence value users need.
 
 ### JavaScript Direction
 

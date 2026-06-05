@@ -136,8 +136,7 @@ export function projectPaths(projectRoot: string) {
     cases: path.join(meta, "cases"),
     runs: path.join(meta, "runs"),
     tests: path.join(meta, "tests"),
-    unitTests: path.join(meta, "tests", "unit"),
-    evalTests: path.join(meta, "tests", "eval")
+    unitTests: path.join(meta, "tests", "unit")
   };
 }
 
@@ -159,7 +158,6 @@ export async function createWorkbench(projectRoot: string, options: { force?: bo
   await ensureDir(p.cases);
   await ensureDir(p.runs);
   await ensureDir(p.unitTests);
-  await ensureDir(p.evalTests);
 
   if (options.force || !(await exists(p.spec))) {
     await writeText(

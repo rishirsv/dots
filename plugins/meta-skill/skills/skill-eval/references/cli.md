@@ -11,38 +11,16 @@ meta-skill run . --topic source-faithfulness
 meta-skill run . --no-skill
 ```
 
-`run` freezes the current portable payload and each selected `case.md`, writes per-case `rpc.jsonl`, `trajectory.json`, and `final.md`, appends facts to `facts.jsonl`, records token usage on case trial facts, and prints the run report. `--no-skill` omits the payload and records control evidence. Exit code is `1` when the run records errors.
+`run` freezes the current portable payload and each selected `case.md`, writes per-case `rpc.jsonl`, `trajectory.json`, and `final.md`, then prints the run ID, run path, and executed case folders. `rpc.jsonl` remains the durable raw event log when bounded in-memory extraction buffers overflow; in that case `trajectory.json` records a warning, and `final.md` explicitly says the current turn's final answer is unavailable if final assistant deltas were not retained. `--no-skill` omits the payload and records control evidence. Exit code is `1` when the run records errors.
 
-## Lint And Judges
-
-```bash
-meta-skill lint . --run 001-working-payload
-meta-skill run . --with-judges
-meta-skill judge . --run 001-working-payload --judge final-answer-quality --case G2
-meta-skill judge . --run 001-working-payload --all-judges --all-cases
-```
-
-`lint --run` appends deterministic check observations to the run's `facts.jsonl`. `judge` reads frozen run cases and final outputs, then appends judge observations.
-
-## Feedback
+## Lint
 
 ```bash
-meta-skill feedback import . --run 001-working-payload reviewer-feedback.jsonl
+meta-skill lint .
 ```
 
-Each line is one JSON object preserved verbatim as a fact payload. Optional `case_id` links the row to a case; optional `source` names the reviewer.
-
-## Reports
-
-```bash
-meta-skill report
-meta-skill report 001-working-payload
-meta-skill report 001-working-payload R1
-meta-skill report 001-working-payload --json
-```
-
-Reports are projections over `facts.jsonl` plus referenced case evidence and are never persisted. JSON exposes `subject`, `missing`, `errors`, `usage`, `cases`, and `decisions`, plus `runs` at project level. Markdown may include human-facing case titles and compact trajectory summaries.
+`lint` validates the portable payload, workbench shape, case definitions, fixture declarations, and unit tests. It does not mutate saved run evidence.
 
 ## Current Boundaries
 
-Use the top-level commands from `cli-conventions.md`, manually authored `R`/`F`/`G` cases, one execution source per run, printed reports, read-only App Server evidence, and direct TypeScript runtime validation.
+Use the top-level commands from `cli-conventions.md`, manually authored `R`/`F`/`G` cases, one execution source per run, read-only App Server evidence, and direct TypeScript runtime validation.

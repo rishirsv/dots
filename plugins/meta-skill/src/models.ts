@@ -25,14 +25,6 @@ export interface TokenUsage {
   unavailable_reason: string | null;
 }
 
-export interface RunTokenUsageSummary {
-  input_tokens: number | null;
-  output_tokens: number | null;
-  total_tokens: number | null;
-  case_count: number;
-  unavailable_case_count: number;
-}
-
 export interface CaseFixture {
   path: string;
   description?: string;
@@ -51,14 +43,6 @@ export interface CaseCriteria {
   expected_behavior: string;
   assertions: string[];
   tests?: string[];
-  judges?: Array<{
-    id: string;
-    threshold?: {
-      overall_min?: number;
-      dimensions?: Record<string, number>;
-    };
-  }>;
-  rubric?: string;
 }
 
 export interface CaseRecord {
@@ -84,89 +68,9 @@ export interface LintReport {
   warnings: Issue[];
   tests: Array<{
     id: string;
-    kind: "unit" | "eval";
+    kind: "unit";
     status: "passed" | "failed" | "skipped";
     command?: string;
     output?: string;
   }>;
-  annotations?: number;
-}
-
-export interface EvidenceRef {
-  path: string;
-  line?: number;
-}
-
-export type FactKind =
-  | "run_started"
-  | "payload_frozen"
-  | "case_defined"
-  | "case_trial_finished"
-  | "check_observed"
-  | "feedback_imported"
-  | "decision_recorded"
-  | "run_finished";
-
-export interface FactRow {
-  type: FactKind;
-  run_id: string;
-  case_id?: string;
-  created_at: string;
-  source: string;
-  payload: Record<string, unknown>;
-}
-
-export interface CheckRef {
-  kind: "test" | "judge";
-  id: string;
-}
-
-export interface MissingCheck {
-  case_id: string;
-  checks: CheckRef[];
-}
-
-export interface ReportError {
-  case_id?: string;
-  message: string;
-  classification?: string;
-  evidence: EvidenceRef;
-}
-
-export interface ReportObservation {
-  kind: "test" | "judge" | "feedback";
-  id: string;
-  outcome?: string;
-  evidence: EvidenceRef;
-}
-
-export interface ReportCase {
-  id: string;
-  folder: string;
-  title?: string;
-  checks: CheckRef[];
-  observations: ReportObservation[];
-  final?: EvidenceRef;
-  rpc?: EvidenceRef;
-  trajectory?: EvidenceRef;
-  trajectory_summary?: {
-    turn_count: number;
-    item_count: number;
-    command_executions: number;
-    file_changes: number;
-    tool_calls: number;
-    approval_requests: number;
-    unknown_methods: string[];
-  };
-  usage?: TokenUsage;
-}
-
-export interface EvidenceReport {
-  subject: { kind: "project" | "run" | "case"; id?: string };
-  runs?: Array<{ id: string; label?: string | null; created_at?: string; finished_at?: string; case_count: number }>;
-  missing: MissingCheck[];
-  errors: ReportError[];
-  usage: RunTokenUsageSummary;
-  cases: ReportCase[];
-  decisions: Array<{ decision: string; evidence: EvidenceRef; payload: Record<string, unknown> }>;
 }

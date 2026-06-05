@@ -52,6 +52,7 @@ export interface AppServerJsonClientOptions {
   onLine?: (line: AppServerLine) => void | Promise<void>;
   spawnProcess?: () => ChildProcessWithoutNullStreams;
   requestTimeoutMs?: number;
+  maxBufferedEvents?: number;
 }
 
 export class AppServerProtocolError extends AppServerUnavailableError {
@@ -68,7 +69,8 @@ export class AppServerJsonClient {
   private nextId = 1;
   private buffer = "";
   private pending = new Map<string, PendingRequest>();
-  private notifications: JsonRecord[] = [];
+  private notifications: Array<{ index: number; message: JsonRecord }> = [];
+  private nextNotificationIndex = 0;
   private waiters: Array<{
     predicate: (message: JsonRecord) => boolean;
     resolve: (message: JsonRecord) => void;
@@ -78,6 +80,7 @@ export class AppServerJsonClient {
   private readonly onLine?: (line: AppServerLine) => void | Promise<void>;
   private readonly spawnProcess: () => ChildProcessWithoutNullStreams;
   private readonly requestTimeoutMs: number;
+  private readonly maxBufferedEvents: number;
   private traceQueue: Promise<void> = Promise.resolve();
 
   constructor(onLineOrOptions?: ((line: AppServerLine) => void | Promise<void>) | AppServerJsonClientOptions) {
@@ -90,6 +93,7 @@ export class AppServerJsonClient {
           stdio: ["pipe", "pipe", "pipe"]
         }));
     this.requestTimeoutMs = options.requestTimeoutMs || 120000;
+    this.maxBufferedEvents = options.maxBufferedEvents ?? 10000;
   }
 
   async connect(config: AppServerConfig): Promise<void> {
@@ -151,8 +155,8 @@ export class AppServerJsonClient {
   }
 
   waitFor(predicate: (message: JsonRecord) => boolean, timeoutMs: number): Promise<JsonRecord> {
-    const existing = this.notifications.find(predicate);
-    if (existing) return Promise.resolve(existing);
+    const existing = this.notifications.find((item) => predicate(item.message));
+    if (existing) return Promise.resolve(existing.message);
     return new Promise((resolve, reject) => {
       const waiter = {
         predicate,
@@ -168,11 +172,14 @@ export class AppServerJsonClient {
   }
 
   eventCount(): number {
-    return this.notifications.length;
+    return this.nextNotificationIndex;
   }
 
   eventsSince(index: number): JsonRecord[] {
-    return this.notifications.slice(index);
+    const firstRetainedIndex = this.notifications[0]?.index ?? this.nextNotificationIndex;
+    const messages = this.notifications.filter((item) => item.index >= index).map((item) => item.message);
+    if (index >= firstRetainedIndex) return messages;
+    return [eventBufferOverflowWarning(firstRetainedIndex - index), ...messages];
   }
 
   close(): void {
@@ -237,8 +244,22 @@ export class AppServerJsonClient {
   }
 
   private retainNotification(message: JsonRecord): void {
-    this.notifications.push(message);
+    this.notifications.push({ index: this.nextNotificationIndex, message });
+    this.nextNotificationIndex += 1;
+    while (this.notifications.length > this.maxBufferedEvents) {
+      this.notifications.shift();
+    }
   }
+}
+
+function eventBufferOverflowWarning(droppedEventCount: number): JsonRecord {
+  return {
+    method: "metaSkill/clientEventBuffer/overflow",
+    params: {
+      droppedEventCount,
+      warning: "The client-side App Server event buffer overflowed; inspect rpc.jsonl for the durable raw event log."
+    }
+  };
 }
 
 function toProtocolError(error: unknown): AppServerProtocolError {

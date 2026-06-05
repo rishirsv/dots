@@ -208,7 +208,6 @@ The subagent should return structured JSON plus a Markdown report:
 
 ```json
 {
-  "schema_version": 1,
   "rubric_version": "meta-skill-quality-v1",
   "quality": {
     "score": 95,
@@ -431,8 +430,8 @@ Generated scenario output should use the existing Meta Skill schema:
 Generation should create at least:
 
 - `task.md`: realistic initial user task.
-- `scenario.json`: strict `schema_version`, `id`, `family`, `type`, `title`, `topics`, optional `include`, optional `setup`, optional metadata.
-- `criteria.json`: `schema_version`, `what_it_tests`, `expected_behavior`, concrete assertions, optional tests, optional judges.
+- `scenario.json`: strict `id`, `family`, `type`, `title`, `topics`, optional `include`, optional `setup`, optional metadata.
+- `criteria.json`: `what_it_tests`, `expected_behavior`, concrete assertions, optional tests, optional judges.
 - `capability.txt`: short note explaining what capability this scenario covers.
 
 Recommended starter set:

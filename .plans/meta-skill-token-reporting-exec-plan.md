@@ -179,7 +179,6 @@ Also write a small `usage.json` next to `turns.jsonl`:
 
 ```json
 {
-  "schema_version": 1,
   "availability": "present",
   "turns": [...],
   "summary": {...}
@@ -200,7 +199,7 @@ Update `buildRunReport()` to read `usage.json` when present. For older runs with
 
 This keeps old run reports readable while making new runs richer.
 
-Bump `report.json` `schema_version` because `summary.token_usage` changes from availability counts to a richer object. The raw compatibility surface remains the saved run evidence, not the derived report.
+Update `report.json` because `summary.token_usage` changes from availability counts to a richer object. The raw compatibility surface remains the saved run evidence, not the derived report.
 
 ### Milestone 4 - Aggregate run-level token usage
 
@@ -342,7 +341,6 @@ New side evidence writes `usage.json`:
 
 ```json
 {
-  "schema_version": 1,
   "availability": "present",
   "turns": [
     {
@@ -366,7 +364,7 @@ New side evidence writes `usage.json`:
 }
 ```
 
-`report.json` is now schema version 2. `summary.token_usage` contains `{ by_side, availability_counts }`, where `by_side.candidate` and `by_side.release` are separate `TokenUsageSummary` objects. Scenario side rows expose the side summary, and `buildRunReport()` prefers `usage.json` while still normalizing legacy `results.jsonl.payload.token_usage` snapshots.
+`report.json` now has a richer `summary.token_usage` shape containing `{ by_side, availability_counts }`, where `by_side.candidate` and `by_side.release` are separate `TokenUsageSummary` objects. Scenario side rows expose the side summary, and `buildRunReport()` prefers `usage.json` while still normalizing legacy `results.jsonl.payload.token_usage` snapshots.
 
 `report.html` now renders a Token Usage section with side-keyed availability, sample counts, totals, averages, input/output splits, and unavailable reasons. Scenario rows show compact readable token totals and link to `usage.json`; raw visible `JSON.stringify(side.token_usage)` was removed.
 

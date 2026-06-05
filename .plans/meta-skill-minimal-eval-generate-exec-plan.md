@@ -182,7 +182,7 @@ Default generation creates one scenario per family:
 - `F<number>-boundary-behavior`: family `failure_mode`, type `behavior`, template `boundary_behavior`.
 - `G<number>-missing-context-gate`: family `gate`, type `gate`, template `missing_context_gate`.
 
-Every generated `scenario.json` must include `schema_version`, `id`, `family`, `type`, `title`, `topics`, and generator metadata. Every `criteria.json` must include `schema_version`, `what_it_tests`, `expected_behavior`, at least three assertions, and empty `tests` and `judges` arrays.
+Every generated `scenario.json` must include `id`, `family`, `type`, `title`, `topics`, and generator metadata. Every `criteria.json` must include `what_it_tests`, `expected_behavior`, at least three assertions, and empty `tests` and `judges` arrays.
 
 The wording for `F` must say "forced-skill boundary behavior" and must not say "should not trigger."
 

@@ -3,7 +3,6 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 import type { Issue, LintReport } from "./models.ts";
-import { appendFact, readFacts } from "./facts.ts";
 import {
   exists,
   parseSkillFrontmatter,
@@ -15,7 +14,6 @@ import { caseIdentity, readCase } from "./eval/cases.ts";
 const execAsync = promisify(exec);
 
 export interface LintOptions {
-  runId?: string;
   json?: boolean;
   executeTests?: boolean;
 }
@@ -34,41 +32,10 @@ export async function lintProject(target: string, options: LintOptions = {}): Pr
   }
 
   if (options.executeTests !== false) {
-    tests.push(...(await runDiscoveredTests(root, options.runId ? "eval" : "unit", options.runId ? { runId: options.runId, runRoot: path.join(p.runs, options.runId), projectRoot: root } : undefined)));
+    tests.push(...(await runDiscoveredTests(root, "unit")));
   }
 
-  let annotations = 0;
-  if (options.runId) {
-    const runRoot = path.join(p.runs, options.runId);
-    if (!(await exists(runRoot))) {
-      failures.push(issue("failure", `run evidence does not exist: ${options.runId}`, runRoot));
-    } else {
-      const runFacts = await readFacts(runRoot);
-      for (const test of tests.filter((row) => row.kind === "eval")) {
-        const declaredCases = runFacts.filter((fact) => fact.type === "case_defined" && Array.isArray(fact.payload.tests) && fact.payload.tests.map(String).includes(test.id));
-        const targets = declaredCases.length ? declaredCases : [undefined];
-        for (const target of targets) {
-          await appendFact(runRoot, {
-            type: "check_observed",
-            run_id: options.runId,
-            ...(target?.case_id ? { case_id: target.case_id } : {}),
-            source: "meta-skill lint",
-            payload: { kind: "test", id: test.id, outcome: test.status, command: test.command, output: test.output }
-          });
-          annotations += 1;
-        }
-      }
-      await appendFact(runRoot, {
-        type: "check_observed",
-        run_id: options.runId,
-        source: "meta-skill lint",
-        payload: { kind: "test", id: "lint", outcome: failures.length ? "failed" : "passed", failures: failures.length, warnings: warnings.length, tests: tests.length }
-      });
-      annotations += 1;
-    }
-  }
-
-  return { ok: failures.length === 0 && tests.every((test) => test.status !== "failed"), failures, warnings, tests, annotations };
+  return { ok: failures.length === 0 && tests.every((test) => test.status !== "failed"), failures, warnings, tests };
 }
 
 export function formatLintReport(report: LintReport): string {
@@ -76,7 +43,6 @@ export function formatLintReport(report: LintReport): string {
   for (const failure of report.failures) lines.push(`FAIL: ${formatIssue(failure)}`);
   for (const warning of report.warnings) lines.push(`WARN: ${formatIssue(warning)}`);
   for (const test of report.tests) lines.push(`TEST ${test.status.toUpperCase()}: ${test.id}`);
-  if (report.annotations) lines.push(`ANNOTATIONS: ${report.annotations}`);
   if (!lines.length) lines.push("OK: no failures or warnings");
   else if (!report.failures.length && report.tests.every((test) => test.status !== "failed")) lines.push(`OK: no failures (${report.warnings.length} warnings)`);
   return lines.join("\n");
@@ -170,7 +136,7 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
   }
 
   if ((await exists(path.join(root, "scripts"))) && (await hasFiles(path.join(root, "scripts")))) {
-    const tests = await listTestFiles(root, p.unitTests, "unit");
+    const tests = await listTestFiles(root, p.unitTests);
     if (!tests.length) {
       warnings.push(issue("warning", "runtime scripts are present; add or recommend unit tests in .meta-skill/tests/unit/", path.join(root, "scripts")));
     }
@@ -212,14 +178,7 @@ async function validateCase(
   for (const testId of item.criteria.tests || []) {
     if (!testIds.has(testId)) failures.push(issue("failure", `criteria references missing test id: ${testId}`, caseMd));
   }
-  for (const judge of item.criteria.judges || []) {
-    if (!item.criteria.rubric) failures.push(issue("failure", `criteria judge ${judge.id} requires criteria.rubric`, caseMd));
-    if (judge.threshold?.overall_min !== undefined && (judge.threshold.overall_min < 1 || judge.threshold.overall_min > 5)) {
-      failures.push(issue("failure", `judge threshold overall_min must be 1-5 for ${judge.id}`, caseMd));
-    }
-  }
   if (!(item.criteria.tests || []).length) warnings.push(issue("warning", `${item.id} has no deterministic tests`, caseMd));
-  if (!(item.criteria.judges || []).length) warnings.push(issue("warning", `${item.id} has no judges and is manual-review only`, caseMd));
 
   const declared = new Set((item.metadata.fixtures || []).map((fixture) => fixture.path));
   const fixtureFiles = await listFixtureFiles(path.join(caseDir, "fixtures"));
@@ -252,13 +211,13 @@ async function listFixtureFiles(fixturesDir: string): Promise<string[]> {
 
 interface DiscoveredTest {
   id: string;
-  kind: "unit" | "eval";
+  kind: "unit";
   path: string;
   command: string;
 }
 
 async function validateTests(root: string, testsDir: string, failures: Issue[]): Promise<Set<string>> {
-  const tests = [...(await listTestFiles(root, path.join(testsDir, "unit"), "unit")), ...(await listTestFiles(root, path.join(testsDir, "eval"), "eval"))];
+  const tests = await listTestFiles(root, path.join(testsDir, "unit"));
   const ids = new Set<string>();
   for (const test of tests) {
     if (ids.has(test.id)) failures.push(issue("failure", `duplicate test id: ${test.id}`, test.path));
@@ -268,38 +227,30 @@ async function validateTests(root: string, testsDir: string, failures: Issue[]):
   return ids;
 }
 
-async function listTestFiles(root: string, dir: string, kind: "unit" | "eval"): Promise<DiscoveredTest[]> {
+async function listTestFiles(root: string, dir: string): Promise<DiscoveredTest[]> {
   if (!(await exists(dir))) return [];
   const files: DiscoveredTest[] = [];
   for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
     if (!entry.isFile() || entry.name.startsWith(".")) continue;
     const full = path.join(dir, entry.name);
     const id = path.basename(entry.name, path.extname(entry.name));
-    files.push({ id, kind, path: full, command: path.relative(root, full).split(path.sep).join("/") });
+    files.push({ id, kind: "unit", path: full, command: path.relative(root, full).split(path.sep).join("/") });
   }
   return files.sort((a, b) => a.id.localeCompare(b.id));
 }
 
 async function runDiscoveredTests(
   root: string,
-  kind: "unit" | "eval",
-  runEnv?: { runId: string; runRoot: string; projectRoot: string }
+  kind: "unit"
 ): Promise<LintReport["tests"]> {
   const rows: LintReport["tests"] = [];
-  for (const test of await listTestFiles(root, path.join(root, ".meta-skill", "tests", kind), kind)) {
+  for (const test of await listTestFiles(root, path.join(root, ".meta-skill", "tests", kind))) {
     try {
       const { stdout, stderr } = await execAsync(test.command, {
         cwd: root,
         timeout: 120000,
         maxBuffer: 1024 * 1024,
-        env: runEnv
-          ? {
-              ...process.env,
-              META_SKILL_RUN_ID: runEnv.runId,
-              META_SKILL_RUN_ROOT: runEnv.runRoot,
-              META_SKILL_PROJECT_ROOT: runEnv.projectRoot
-            }
-          : process.env
+        env: process.env
       });
       rows.push({ id: test.id, kind: test.kind, status: "passed", command: test.command, output: `${stdout}${stderr}`.trim() });
     } catch (error) {

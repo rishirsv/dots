@@ -152,7 +152,6 @@ Create `plugins/meta-skill/src/report-model.ts`. This file should define stable 
 The top-level model should be flat:
 
     export interface MetaSkillReport {
-      schema_version: 1;
       generated_at: string;
       project: ProjectReportState;
       summary: ReportSummary;
@@ -543,7 +542,6 @@ The default report should feel like this:
 The JSON model should feel like this:
 
     {
-      "schema_version": 1,
       "generated_at": "2026-06-03T00:35:00.000Z",
       "project": {
         "path": "/tmp/source-pack-triage",

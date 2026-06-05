@@ -7,7 +7,6 @@ export interface AppServerTraceLine {
 }
 
 export interface Trajectory {
-  schema_version: 1;
   source: "codex_app_server";
   threadId: string;
   turns: TrajectoryTurn[];

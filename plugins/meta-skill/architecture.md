@@ -1,6 +1,6 @@
 # Meta Skill Architecture
 
-Meta Skill is a local TypeScript CLI for creating portable skills, collecting eval evidence, recording human decisions about reviewed diffs, and packaging the current portable payload.
+Meta Skill is a local TypeScript CLI for creating portable skills, collecting eval evidence, and packaging the current portable payload.
 
 ## Command Taxonomy
 
@@ -8,11 +8,11 @@ Commands have one side-effect class:
 
 | Kind | Commands | Rule |
 |---|---|---|
-| Producer | `run`, `judge`, `feedback`, `decide` | append evidence facts |
-| Projection | `report`, `lint` | compute output and keep reports read-only |
+| Producer | `run` | write run evidence |
+| Projection | `lint` | compute output without mutating run evidence |
 | Transform | `create`, `project init`, `package` | write files the user explicitly requested |
 
-The current top-level command surface is `create`, `project init`, `lint`, `run`, `judge`, `feedback import`, `report`, `decide`, and `package`. `run` selects manually authored cases by `--case`, `--type <R|F|G>`, or `--topic`; it evaluates either the working payload or a no-skill control with `--no-skill`.
+The current top-level command surface is `create`, `project init`, `lint`, `run`, and `package`. `run` selects manually authored cases by `--case`, `--type <R|F|G>`, or `--topic`; it evaluates either the working payload or a no-skill control with `--no-skill`.
 
 ## Project Shape
 
@@ -38,7 +38,6 @@ Workbench state uses the flat project-local layout:
   cases/
   tests/
     unit/
-    eval/
   runs/
 ```
 
@@ -49,7 +48,6 @@ Executable cases live under `.meta-skill/cases/<ID-slug>/`. The case ID prefix i
 Runs live under `.meta-skill/runs/<run-id>/`:
 
 ```text
-facts.jsonl
 payload/
 cases/<case-folder>/
   case.md
@@ -60,8 +58,6 @@ cases/<case-folder>/
 
 `payload/` exists only for working-payload runs. No-skill control runs omit the frozen payload.
 
-`facts.jsonl` is the single append-only fact log. It records run lifecycle, payload freezing, case definitions, case trial completion, check observations, feedback, decisions, and token cost. Token usage is stored on `case_trial_finished` payloads as nullable numeric fields plus one `unavailable_reason`.
-
 Per-case files have one nature each:
 
 - `case.md`: frozen definition
@@ -69,25 +65,23 @@ Per-case files have one nature each:
 - `trajectory.json`: normalized App Server turn evidence
 - `final.md`: final answer
 
-Reports are deterministic projections over facts plus referenced case evidence. They print Markdown by default or JSON with `--json`; report output is not written back into `.meta-skill/`. JSON reports expose `subject`, `missing`, `errors`, `usage`, `cases`, and `decisions`. Run/case reports include final, RPC, trajectory, check, feedback, decision, and token evidence references when present.
-
-`decide` appends a `decision_recorded` fact to the selected run after the human has reviewed the working-tree diff. The fact records the accept/reject call, the evidence references that justified it, and the commit blessed by an accept decision. Git remains the mechanism that applies payload edits and provides the diff review surface.
-
 ## Runner Boundary
 
 The App Server runner has one contract:
 
 ```text
-(world, turns, policy) -> (final, rpc, trajectory, usage)
+(world, turns, policy) -> (final, rpc, trajectory)
 ```
 
-The same execution shape is used for solver runs and judge work. Token cost uses the final cumulative App Server `tokenUsage.total`; if exact usage is unavailable, fact rows store null numeric fields plus `unavailable_reason`.
+Token cost uses the final cumulative App Server `tokenUsage.total`; if exact usage is unavailable, `trajectory.json` stores null numeric fields plus `unavailable_reason`.
 
-The solver-visible world contains the portable payload and solver-visible resources. Harness metadata lives in facts, not in the staged world.
+The solver-visible world contains the portable payload and solver-visible resources. Harness metadata stays out of the staged world.
 
 Working-payload eval runs force-attach the payload on the first turn. No-skill control runs mount no payload. Solver threads run read-only, with approval policy `never` and network disabled.
 
-`rpc.jsonl` preserves generated App Server JSON-RPC rows with a protocol-boundary `schema_version`. `trajectory.json` is the normalized behavior view for the run: turn IDs, final text, completion status, token usage, command execution items, file change items, tool calls, approval requests, and unknown event methods. Reports summarize trajectory counts, and judges may receive the compact trajectory summary with the frozen case and final answer.
+`rpc.jsonl` preserves generated App Server JSON-RPC rows as the durable raw event log. The runner also keeps bounded in-memory event windows for per-turn extraction; when a window overflows, `trajectory.json` records a warning item and the raw event log remains the source for forensic inspection. If the current turn overflows before final assistant deltas are retained, `final.md` and the turn trajectory say the final answer is unavailable instead of reusing a previous turn's final text.
+
+`trajectory.json` is the normalized behavior view for the run: turn IDs, final text or explicit unavailable-final warning, completion status, token usage, command execution items, file change items, tool calls, approval requests, warning items, and unknown event methods.
 
 The current runner measures behavior for mounted-payload and no-skill executions. Trigger routing, writable output production, side-by-side uplift scoring, generated cases, fork trees, and tool-chaos policies are roadmap capabilities that require additional App Server protocol support or assertion layers.
 

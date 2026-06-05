@@ -52,8 +52,7 @@ Delete rows that do not exist.
 
 - Structural check: `meta-skill lint <skill-dir>`
 - Case coverage to add: <R/F/G families and topics>
-- Deterministic tests: <unit/eval test IDs or planned tests>
-- Judges: <optional rubric/pass-fail judges and why they cost tokens>
+- Deterministic tests: <unit test IDs or planned tests>
 
 ## Update Notes
 

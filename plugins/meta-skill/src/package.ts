@@ -34,7 +34,6 @@ export async function packageProject(options: PackageOptions): Promise<{ artifac
 
 async function writePackageMetadata(target: string, data: { source: string; sourceRoot: string; artifact: string; files: string[] }): Promise<void> {
   await writeJson(target, {
-    schema_version: 1,
     created_at: utcNow(),
     source: data.source,
     source_path: data.sourceRoot,

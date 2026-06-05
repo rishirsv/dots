@@ -54,7 +54,6 @@ The app can be generated from existing `RunReport`, but the rendered app payload
 
 ```ts
 interface ReportAppModelV1 {
-  schema_version: 1;
   skill: {
     name: string;
     project_path?: string;

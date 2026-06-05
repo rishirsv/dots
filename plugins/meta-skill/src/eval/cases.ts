@@ -29,22 +29,6 @@ export async function loadCases(project: string, selector: EvalSelector = {}): P
   return selected;
 }
 
-export async function loadRunCaseSnapshots(project: string, runRoot: string, selector: EvalSelector = {}): Promise<CaseRecord[]> {
-  const root = await requirePortableSkill(project);
-  const casesRoot = path.join(runRoot, "cases");
-  if (!(await exists(casesRoot))) return loadCases(root, selector);
-  const dirs = (await fs.readdir(casesRoot, { withFileTypes: true })).filter((entry) => entry.isDirectory());
-  const records: CaseRecord[] = [];
-  for (const dirent of dirs) {
-    const casePath = path.join(casesRoot, dirent.name);
-    if (await exists(path.join(casePath, "case.md"))) records.push(await readCase(casePath, dirent.name));
-  }
-
-  const selected = selectCases(records, selector);
-  if (selector.case?.length && !selected.length) throw new CliError("no cases selected");
-  return selected;
-}
-
 export async function readCase(casePath: string, folder = path.basename(casePath)): Promise<CaseRecord> {
   const { id, type } = caseIdentity(folder);
   const parsed = parseCaseMarkdown(await readText(path.join(casePath, "case.md")), path.join(casePath, "case.md"));
@@ -98,9 +82,7 @@ function parseCaseMarkdown(text: string, filePath: string): { metadata: CaseMeta
       what_it_tests: criteria.what_it_tests === undefined ? undefined : stringField(criteria.what_it_tests),
       expected_behavior: stringField(criteria.expected_behavior),
       assertions: arrayOfStrings(criteria.assertions),
-      tests: arrayOfStrings(criteria.tests),
-      judges: arrayOfJudges(criteria.judges),
-      rubric: criteria.rubric === undefined ? undefined : stringField(criteria.rubric)
+      tests: arrayOfStrings(criteria.tests)
     },
     ...parseTurns(body, filePath)
   };
@@ -241,20 +223,5 @@ function arrayOfFixtures(value: unknown): CaseFixture[] {
         .map((item) => objectField(item))
         .filter((item) => typeof item.path === "string")
         .map((item) => ({ path: String(item.path), ...(typeof item.description === "string" ? { description: item.description } : {}) }))
-    : [];
-}
-
-function arrayOfJudges(value: unknown): CaseCriteria["judges"] {
-  return Array.isArray(value)
-    ? value
-        .map((item) => objectField(item))
-        .filter((item) => typeof item.id === "string")
-        .map((item) => {
-          const threshold = objectField(item.threshold, true);
-          return {
-            id: String(item.id),
-            ...(Object.keys(threshold).length ? { threshold: threshold as { overall_min?: number; dimensions?: Record<string, number> } } : {})
-          };
-        })
     : [];
 }
