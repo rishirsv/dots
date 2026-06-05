@@ -4,17 +4,15 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 
 export interface AppServerConfig {
-  mode: "managed" | "attached";
-  endpoint: string | null;
+  mode: "managed";
   auth: "inherited";
   protocol: "generated-ts";
   generatedTypes: string;
 }
 
-export async function appServerConfig(endpoint?: string): Promise<AppServerConfig> {
+export async function appServerConfig(): Promise<AppServerConfig> {
   return {
-    mode: endpoint ? "attached" : "managed",
-    endpoint: endpoint || null,
+    mode: "managed",
     auth: "inherited",
     protocol: "generated-ts",
     generatedTypes: "codex app-server generate-ts snapshot"
@@ -97,9 +95,6 @@ export class AppServerJsonClient {
   }
 
   async connect(config: AppServerConfig): Promise<void> {
-    if (config.mode !== "managed") {
-      throw new AppServerUnavailableError("attached App Server endpoints are not supported by this CLI yet; omit --app-server-endpoint to use a managed stdio app-server");
-    }
     if (this.child) return;
     this.child = this.spawnProcess();
     this.child.stdout.on("data", (chunk) => this.receive(chunk.toString()));

@@ -2,10 +2,18 @@ import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { SkillActivation, EvalRunSource, CaseRecord, TokenUsage } from "../models.ts";
-import { appendJsonl, ensureDir, exists, parseSkillFrontmatter, unavailableTokenUsage, writeText } from "../project.ts";
+import { ensureDir, exists, parseSkillFrontmatter, writeText } from "../project.ts";
 import type { AppServerConfig, AppServerLine } from "./client.ts";
 import { AppServerJsonClient, AppServerUnavailableError } from "./client.ts";
-import { collectTurnEvents, type AppServerTraceLine, type Trajectory, type TrajectoryTurn } from "./trajectory.ts";
+import { summarizeCaseUsage } from "./evidence.ts";
+import { BoundedTraceBuffer, JsonlTraceRecorder } from "./trace.ts";
+import { collectTurnEvents, type Trajectory, type TrajectoryTurn } from "./trajectory.ts";
+
+const DEFAULT_TURN_TIMEOUT_MS = 120000;
+const DEFAULT_TRACE_EVENTS = 10000;
+const EVAL_APPROVAL_POLICY = "never";
+const THREAD_SANDBOX = "read-only";
+const TURN_SANDBOX_POLICY = { type: "readOnly" as const, networkAccess: false };
 
 interface AppServerClientLike {
   request(method: string, params: unknown): Promise<Record<string, unknown>>;
@@ -52,14 +60,14 @@ export class AppServerCaseRunner {
   private readonly turnTimeoutMs: number;
   private readonly maxCaseRespawns: number;
   private readonly maxTraceEvents: number;
-  private rpcPath: string | undefined;
-  private rawTrace = new BoundedTraceBuffer();
+  private readonly traceRecorder = new JsonlTraceRecorder();
+  private rawTrace = new BoundedTraceBuffer(DEFAULT_TRACE_EVENTS);
 
   constructor(options: AppServerCaseRunnerOptions = {}) {
     this.clientFactory = options.clientFactory || ((onLine) => new AppServerJsonClient(onLine));
-    this.turnTimeoutMs = options.turnTimeoutMs || 120000;
+    this.turnTimeoutMs = options.turnTimeoutMs || DEFAULT_TURN_TIMEOUT_MS;
     this.maxCaseRespawns = options.maxCaseRespawns ?? 1;
-    this.maxTraceEvents = options.maxTraceEvents ?? 10000;
+    this.maxTraceEvents = options.maxTraceEvents ?? DEFAULT_TRACE_EVENTS;
   }
 
   async run(input: CaseRunInput): Promise<CaseRunResult> {
@@ -88,15 +96,16 @@ export class AppServerCaseRunner {
       const rpcPath = path.join(rawRoot, "rpc.jsonl");
       const trajectoryPath = path.join(rawRoot, "trajectory.json");
       await this.client?.flush?.();
-      this.rpcPath = rpcPath;
+      await this.traceRecorder.flush();
+      this.traceRecorder.reset(rpcPath);
       this.rawTrace = new BoundedTraceBuffer(this.maxTraceEvents);
       const client = await this.ensureClient(input.appServer);
 
       const start = await client.request("thread/start", {
         cwd: runtimeRoot,
         runtimeWorkspaceRoots: workspaceRoots,
-        approvalPolicy: "never",
-        sandbox: "read-only",
+        approvalPolicy: EVAL_APPROVAL_POLICY,
+        sandbox: THREAD_SANDBOX,
         experimentalRawEvents: true,
         persistExtendedHistory: false,
         ephemeral: true,
@@ -122,6 +131,7 @@ export class AppServerCaseRunner {
         turnIds.push(result.turnId);
       }
       await client.flush?.();
+      await this.traceRecorder.flush();
       const caseSummary = summarizeCaseUsage(trajectory.turns.at(-1));
       await writeText(path.join(rawRoot, "final.md"), final || "(no final assistant message captured)");
       await writeText(trajectoryPath, `${JSON.stringify(trajectory, null, 2)}\n`);
@@ -149,12 +159,8 @@ export class AppServerCaseRunner {
   private async ensureClient(appServer: AppServerConfig): Promise<AppServerClientLike> {
     if (!this.client) {
       this.client = this.clientFactory(async (line) => {
-        if (!this.rpcPath) return;
         this.rawTrace.append({ direction: line.direction, message: line.message });
-        await appendJsonl(this.rpcPath, {
-          direction: line.direction,
-          message: line.message
-        });
+        this.traceRecorder.append({ direction: line.direction, message: line.message });
       });
       if (this.client instanceof AppServerJsonClient) await this.client.connect(appServer);
     }
@@ -185,8 +191,8 @@ async function runTurn(
     input,
     cwd: runtimeRoot,
     runtimeWorkspaceRoots: workspaceRoots,
-    approvalPolicy: "never",
-    sandboxPolicy: { type: "readOnly", networkAccess: false }
+    approvalPolicy: EVAL_APPROVAL_POLICY,
+    sandboxPolicy: TURN_SANDBOX_POLICY
   });
   const turn = started.turn as { id?: string } | undefined;
   const turnId = turn?.id;
@@ -205,11 +211,6 @@ async function runTurn(
   return withTraceOverflowWarning(collectedTurn, traceSlice.droppedEventCount);
 }
 
-function summarizeCaseUsage(finalTurn?: TrajectoryTurn): TokenUsage {
-  if (finalTurn?.tokenUsage.total_tokens !== null && finalTurn?.tokenUsage.total_tokens !== undefined) return finalTurn.tokenUsage;
-  return unavailableTokenUsage("App Server completed without tokenUsage.total on the final turn.");
-}
-
 async function runtimeWorkspaceRoots(runtimeRoot: string, casePath: string): Promise<string[]> {
   const roots = [runtimeRoot];
   const fixtures = path.join(casePath, "fixtures");
@@ -220,37 +221,6 @@ async function runtimeWorkspaceRoots(runtimeRoot: string, casePath: string): Pro
 async function runtimeSkillName(skillRoot: string): Promise<string> {
   const frontmatter = await parseSkillFrontmatter(path.join(skillRoot, "SKILL.md"));
   return frontmatter.name || path.basename(skillRoot);
-}
-
-class BoundedTraceBuffer {
-  private events: Array<{ index: number; event: AppServerTraceLine }> = [];
-  private nextIndex = 0;
-  private readonly maxEvents: number;
-
-  constructor(maxEvents = 10000) {
-    this.maxEvents = maxEvents;
-  }
-
-  append(event: AppServerTraceLine): void {
-    this.events.push({ index: this.nextIndex, event });
-    this.nextIndex += 1;
-    while (this.events.length > this.maxEvents) {
-      this.events.shift();
-    }
-  }
-
-  mark(): number {
-    return this.nextIndex;
-  }
-
-  since(index: number): { events: AppServerTraceLine[]; overflowed: boolean; droppedEventCount: number } {
-    const firstRetainedIndex = this.events[0]?.index ?? this.nextIndex;
-    return {
-      events: this.events.filter((item) => item.index >= index).map((item) => item.event),
-      overflowed: index < firstRetainedIndex,
-      droppedEventCount: Math.max(0, firstRetainedIndex - index)
-    };
-  }
 }
 
 function withTraceOverflowWarning(turn: TrajectoryTurn, droppedEventCount: number): TrajectoryTurn {

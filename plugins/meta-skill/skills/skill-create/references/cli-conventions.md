@@ -11,7 +11,7 @@ meta-skill create ...
 meta-skill create --project ...
 meta-skill project init <skill-dir>
 meta-skill lint <project-or-skill> [--json]
-meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--no-skill] [--no-lint]
+meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
 meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 ```
 

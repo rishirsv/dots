@@ -25,7 +25,7 @@ describe("AppServerCaseRunner", () => {
       runSource: { kind: "working_payload", label: "Working payload", skill_root: "payload", skill_activation: "forced" },
       runId: "001-test",
       runRoot,
-      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+      appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
     const caseRoot = path.join(runRoot, "cases", "R1-basic");
@@ -56,7 +56,7 @@ describe("AppServerCaseRunner", () => {
       runSource: { kind: "working_payload", label: "Working payload", skill_root: "payload", skill_activation: "forced" },
       runId: "001-test",
       runRoot,
-      appServer: { mode: "managed", endpoint: null, auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+      appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
     const caseRoot = path.join(runRoot, "cases", "R1-basic");

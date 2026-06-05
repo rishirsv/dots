@@ -151,7 +151,6 @@ describe("AppServerJsonClient", () => {
 function managedConfig() {
   return {
     mode: "managed" as const,
-    endpoint: null,
     auth: "inherited" as const,
     protocol: "generated-ts" as const,
     generatedTypes: "test"

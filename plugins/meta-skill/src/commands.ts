@@ -12,7 +12,7 @@ Usage:
   meta-skill create [skill-dir] [--project] --slug <slug> --title <title> --description <text> --job <text>
   meta-skill project init <skill-dir>
   meta-skill lint <project-or-skill> [--json]
-  meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--no-skill] [--no-lint]
+  meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
   meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 `;
 
@@ -82,9 +82,8 @@ async function commandLint(argv: string[]): Promise<number> {
 }
 
 async function commandRun(argv: string[]): Promise<number> {
-  const args = parse(argv, ["case", "type", "topic", "label", "app-server-endpoint"], ["no-skill", "no-lint"]);
+  const args = parse(argv, ["case", "type", "topic", "label", "turn-timeout-ms", "trace-buffer-events"], ["no-skill", "no-lint"]);
   const project = args.positionals[0] || ".";
-  if (args.one("app-server-endpoint")) throw new CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
   const type = args.one("type");
   if (type && !["R", "F", "G"].includes(type)) throw new CliError("--type must be one of R, F, G", 2);
   const result = await runEval({
@@ -93,7 +92,8 @@ async function commandRun(argv: string[]): Promise<number> {
     label: args.one("label"),
     runSource: args.has("no-skill") ? "no_skill" : "working_payload",
     noLint: args.has("no-lint"),
-    appServerEndpoint: undefined
+    turnTimeoutMs: positiveInteger(args.one("turn-timeout-ms"), "--turn-timeout-ms"),
+    traceBufferEvents: positiveInteger(args.one("trace-buffer-events"), "--trace-buffer-events")
   });
   console.log(`run: ${result.runId}`);
   console.log(`path: ${result.runRoot}`);
@@ -140,6 +140,13 @@ function parse(argv: string[], valueFlags: string[], booleanFlags: string[]) {
 
 function stringValues(value: unknown): string[] {
   return Array.isArray(value) ? value : [];
+}
+
+function positiveInteger(value: string | undefined, label: string): number | undefined {
+  if (value === undefined) return undefined;
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed <= 0) throw new CliError(`${label} must be a positive integer`, 2);
+  return parsed;
 }
 
 function isParseArgsError(error: unknown): error is Error {

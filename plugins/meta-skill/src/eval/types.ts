@@ -13,7 +13,8 @@ export interface EvalRunOptions {
   label?: string;
   runSource?: EvalRunSourceKind;
   noLint?: boolean;
-  appServerEndpoint?: string;
+  turnTimeoutMs?: number;
+  traceBufferEvents?: number;
   caseRunner?: Pick<AppServerCaseRunner, "run" | "close">;
 }
 

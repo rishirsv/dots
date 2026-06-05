@@ -17,10 +17,6 @@ import type { EvalRunOptions } from "./types.ts";
 import type { EvalRunSource, EvalRunSourceKind } from "../models.ts";
 
 export async function runEval(options: EvalRunOptions): Promise<{ runId: string; runRoot: string; ok: boolean; errors: string[]; cases: string[] }> {
-  if (options.appServerEndpoint) {
-    throw new CliError("--app-server-endpoint is not supported yet; omit it to use the managed stdio App Server", 2);
-  }
-
   const root = await requirePortableSkill(options.project);
   const p = projectPaths(root);
   if (!(await exists(p.cases))) throw new CliError("case workbench is missing; run `meta-skill project init <project>` first");
@@ -38,13 +34,18 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   const runId = await nextSequencedId(p.runs, options.label || runSourceConfig.defaultLabel);
   const runRoot = path.join(p.runs, runId);
   await ensureDir(runRoot);
-  const appServer = await appServerConfig(options.appServerEndpoint);
+  const appServer = await appServerConfig();
 
   if (runSourceKind === "working_payload") {
     await copyPortablePayload(root, path.join(runRoot, "payload"));
   }
 
-  const runner = options.caseRunner || new AppServerCaseRunner();
+  const runner =
+    options.caseRunner ||
+    new AppServerCaseRunner({
+      turnTimeoutMs: options.turnTimeoutMs,
+      maxTraceEvents: options.traceBufferEvents
+    });
   const errors: string[] = [];
   const completedCases: string[] = [];
   try {

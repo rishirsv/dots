@@ -2,6 +2,8 @@ import { exec } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
+import { parseAgentManifestMetadata } from "./metadata.ts";
+import type { AgentManifestMetadata, SkillFrontmatter } from "./metadata.ts";
 import type { Issue, LintReport } from "./models.ts";
 import {
   exists,
@@ -10,6 +12,7 @@ import {
   requirePortableSkill
 } from "./project.ts";
 import { caseIdentity, readCase } from "./eval/cases.ts";
+import { isValidTestId, listCaseFolders, listUnitTests } from "./eval/discovery.ts";
 
 const execAsync = promisify(exec);
 
@@ -51,7 +54,13 @@ export function formatLintReport(report: LintReport): string {
 async function validatePortablePayload(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
   const skillMd = path.join(root, "SKILL.md");
   const skillText = await fs.readFile(skillMd, "utf8");
-  const frontmatter = await parseSkillFrontmatter(skillMd);
+  let frontmatter: SkillFrontmatter;
+  try {
+    frontmatter = await parseSkillFrontmatter(skillMd);
+  } catch (error) {
+    failures.push(issue("failure", error instanceof Error ? error.message : String(error), skillMd));
+    return;
+  }
   const expected = path.basename(root);
   const body = skillBody(skillText);
 
@@ -95,27 +104,20 @@ async function validateRuntimeResourceLinks(root: string, skillText: string, war
 async function validateAgentManifest(root: string, frontmatter: { name?: string; description?: string }, failures: Issue[], warnings: Issue[]): Promise<void> {
   const manifestPath = path.join(root, "agents", "openai.yaml");
   if (!(await exists(manifestPath))) return;
-  const text = await fs.readFile(manifestPath, "utf8");
-  const topLevel = parseSimpleYaml(text);
-  const hasCodexShape = Boolean(topLevel.name && topLevel.description);
-  const hasInterfaceShape = /^\s*interface\s*:/m.test(text);
-  if (!hasCodexShape && !hasInterfaceShape) {
+  let metadata: AgentManifestMetadata;
+  try {
+    metadata = await parseAgentManifestMetadata(manifestPath);
+  } catch (error) {
+    failures.push(issue("failure", error instanceof Error ? error.message : String(error), manifestPath));
+    return;
+  }
+  if (!(metadata.name && metadata.description) && !metadata.hasInterface) {
     failures.push(issue("failure", "agents/openai.yaml must use top-level name/description or documented interface metadata", manifestPath));
     return;
   }
-  if (topLevel.name && frontmatter.name && topLevel.name !== frontmatter.name) {
-    warnings.push(issue("warning", `agents/openai.yaml name ${topLevel.name} does not match SKILL.md name ${frontmatter.name}`, manifestPath));
+  if (metadata.name && frontmatter.name && metadata.name !== frontmatter.name) {
+    warnings.push(issue("warning", `agents/openai.yaml name ${metadata.name} does not match SKILL.md name ${frontmatter.name}`, manifestPath));
   }
-}
-
-function parseSimpleYaml(text: string): Record<string, string> {
-  const parsed: Record<string, string> = {};
-  for (const line of text.split(/\r?\n/)) {
-    const match = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
-    if (!match) continue;
-    parsed[match[1]] = match[2].replace(/^['"]|['"]$/g, "").trim();
-  }
-  return parsed;
 }
 
 async function validateWorkbench(root: string, failures: Issue[], warnings: Issue[]): Promise<void> {
@@ -128,15 +130,15 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
     warnings.push(issue("warning", "no eval cases folder yet", p.cases));
     return;
   }
-  const caseDirs = (await fs.readdir(p.cases, { withFileTypes: true })).filter((entry) => entry.isDirectory());
-  if (!caseDirs.length) warnings.push(issue("warning", "no eval cases yet", p.cases));
+  const caseFolders = await listCaseFolders(p.cases);
+  if (!caseFolders.length) warnings.push(issue("warning", "no eval cases yet", p.cases));
   const seenIds = new Set<string>();
-  for (const dirent of caseDirs) {
-    await validateCase(path.join(p.cases, dirent.name), dirent.name, seenIds, testIds, failures, warnings);
+  for (const folder of caseFolders) {
+    await validateCase(path.join(p.cases, folder), folder, seenIds, testIds, failures, warnings);
   }
 
   if ((await exists(path.join(root, "scripts"))) && (await hasFiles(path.join(root, "scripts")))) {
-    const tests = await listTestFiles(root, p.unitTests);
+    const tests = await listUnitTests(root, p.unitTests);
     if (!tests.length) {
       warnings.push(issue("warning", "runtime scripts are present; add or recommend unit tests in .meta-skill/tests/unit/", path.join(root, "scripts")));
     }
@@ -209,34 +211,15 @@ async function listFixtureFiles(fixturesDir: string): Promise<string[]> {
   return files.sort();
 }
 
-interface DiscoveredTest {
-  id: string;
-  kind: "unit";
-  path: string;
-  command: string;
-}
-
 async function validateTests(root: string, testsDir: string, failures: Issue[]): Promise<Set<string>> {
-  const tests = await listTestFiles(root, path.join(testsDir, "unit"));
+  const tests = await listUnitTests(root, path.join(testsDir, "unit"));
   const ids = new Set<string>();
   for (const test of tests) {
     if (ids.has(test.id)) failures.push(issue("failure", `duplicate test id: ${test.id}`, test.path));
     ids.add(test.id);
-    if (!/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/.test(test.id)) failures.push(issue("failure", `invalid test id: ${test.id}`, test.path));
+    if (!isValidTestId(test.id)) failures.push(issue("failure", `invalid test id: ${test.id}`, test.path));
   }
   return ids;
-}
-
-async function listTestFiles(root: string, dir: string): Promise<DiscoveredTest[]> {
-  if (!(await exists(dir))) return [];
-  const files: DiscoveredTest[] = [];
-  for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
-    if (!entry.isFile() || entry.name.startsWith(".")) continue;
-    const full = path.join(dir, entry.name);
-    const id = path.basename(entry.name, path.extname(entry.name));
-    files.push({ id, kind: "unit", path: full, command: path.relative(root, full).split(path.sep).join("/") });
-  }
-  return files.sort((a, b) => a.id.localeCompare(b.id));
 }
 
 async function runDiscoveredTests(
@@ -244,7 +227,7 @@ async function runDiscoveredTests(
   kind: "unit"
 ): Promise<LintReport["tests"]> {
   const rows: LintReport["tests"] = [];
-  for (const test of await listTestFiles(root, path.join(root, ".meta-skill", "tests", kind))) {
+  for (const test of await listUnitTests(root, path.join(root, ".meta-skill", "tests", kind))) {
     try {
       const { stdout, stderr } = await execAsync(test.command, {
         cwd: root,

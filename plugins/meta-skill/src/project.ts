@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
+import { parseSkillFrontmatter } from "./metadata.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -98,32 +99,7 @@ export async function touch(target: string): Promise<void> {
   await fs.appendFile(target, "");
 }
 
-export interface Frontmatter {
-  name?: string;
-  description?: string;
-}
-
-export async function parseSkillFrontmatter(skillMd: string): Promise<Frontmatter> {
-  const text = await readText(skillMd);
-  if (!text.startsWith("---\n")) {
-    return {};
-  }
-  const end = text.indexOf("\n---\n", 4);
-  if (end === -1) {
-    return {};
-  }
-  const raw = text.slice(4, end).split(/\r?\n/);
-  const parsed: Frontmatter = {};
-  for (const line of raw) {
-    const match = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
-    if (!match) continue;
-    const key = match[1];
-    const value = match[2].replace(/^['"]|['"]$/g, "").trim();
-    if (key === "name") parsed.name = value;
-    if (key === "description") parsed.description = value;
-  }
-  return parsed;
-}
+export { parseSkillFrontmatter };
 
 export function projectPaths(projectRoot: string) {
   const root = path.resolve(projectRoot);

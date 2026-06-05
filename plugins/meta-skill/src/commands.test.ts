@@ -26,6 +26,9 @@ describe("commands", () => {
     assert.match(help, /meta-skill package <project>/);
     assert.doesNotMatch(help, /meta-skill plan/);
     assert.doesNotMatch(help, /meta-skill promote/);
+    assert.doesNotMatch(help, /app-server-endpoint/);
+    assert.match(help, /turn-timeout-ms/);
+    assert.match(help, /trace-buffer-events/);
   });
 
   it("reports unknown flags as CLI usage errors", async () => {

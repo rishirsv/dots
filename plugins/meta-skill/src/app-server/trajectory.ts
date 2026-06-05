@@ -1,10 +1,7 @@
 import type { TokenUsage } from "../models.ts";
 import { unavailableTokenUsage } from "../project.ts";
-
-export interface AppServerTraceLine {
-  direction?: "client" | "server" | "stderr";
-  message: unknown;
-}
+import { tokenUsageFromAppServer } from "./evidence.ts";
+import type { AppServerTraceLine } from "./trace.ts";
 
 export interface Trajectory {
   source: "codex_app_server";
@@ -95,7 +92,7 @@ export function collectTurnEvents(events: unknown[], selector: { threadId: strin
     }
 
     if (method === "thread/tokenUsage/updated") {
-      tokenUsage = tokenUsageFrom(params, selector.turnId);
+      tokenUsage = tokenUsageFromAppServer(params, selector.turnId);
       continue;
     }
 
@@ -185,26 +182,6 @@ function belongsToTurn(params: Record<string, unknown>, selector: { threadId: st
   if (threadId && threadId !== selector.threadId) return false;
   const turnId = stringValue(params.turnId) || stringValue(objectValue(params.turn).id);
   return !turnId || turnId === selector.turnId;
-}
-
-function tokenUsageFrom(params: Record<string, unknown>, turnId: string): TokenUsage {
-  const tokenUsage = objectValue(params.tokenUsage);
-  const modelContextWindow = numberOrNull(params.modelContextWindow);
-  const total = objectValue(tokenUsage.total);
-  if (!Object.keys(total).length) return unavailableTokenUsage(`App Server tokenUsage.total was unavailable for turn ${turnId}.`);
-  const input = numberOrNull(total.inputTokens);
-  const output = numberOrNull(total.outputTokens);
-  const totalTokens = numberOrNull(total.totalTokens);
-  const unavailableReason = input === null || output === null || totalTokens === null ? `App Server cumulative token metrics were unavailable for turn ${turnId}.` : null;
-  return {
-    input_tokens: input,
-    output_tokens: output,
-    total_tokens: totalTokens,
-    cached_input_tokens: numberOrNull(total.cachedInputTokens),
-    reasoning_tokens: numberOrNull(total.reasoningOutputTokens),
-    model_context_window: modelContextWindow,
-    unavailable_reason: unavailableReason
-  };
 }
 
 function turnStatus(params: Record<string, unknown>): string | null {
