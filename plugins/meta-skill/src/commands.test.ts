@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { runCommand } from "./commands.ts";
+import { CliError } from "./project.ts";
 
 describe("commands", () => {
   it("prints the flat command surface", async () => {
@@ -25,5 +26,23 @@ describe("commands", () => {
     assert.match(help, /meta-skill package <project>/);
     assert.doesNotMatch(help, /meta-skill plan/);
     assert.doesNotMatch(help, /meta-skill promote/);
+  });
+
+  it("reports unknown flags as CLI usage errors", async () => {
+    await assert.rejects(runCommand(["lint", "--wat"]), (error) => {
+      assert.ok(error instanceof CliError);
+      assert.equal(error.exitCode, 2);
+      assert.match(error.message, /Unknown option '--wat'/);
+      return true;
+    });
+  });
+
+  it("reports missing flag values as CLI usage errors", async () => {
+    await assert.rejects(runCommand(["package", "--out"]), (error) => {
+      assert.ok(error instanceof CliError);
+      assert.equal(error.exitCode, 2);
+      assert.match(error.message, /Option '--out <value>' argument missing/);
+      return true;
+    });
   });
 });

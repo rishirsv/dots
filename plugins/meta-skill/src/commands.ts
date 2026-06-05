@@ -1,3 +1,4 @@
+import { parseArgs as parseNodeArgs } from "node:util";
 import { initEvals, runEval } from "./evals.ts";
 import { lintProject } from "./lint.ts";
 import { packageProject } from "./package.ts";
@@ -114,56 +115,35 @@ async function commandPackage(argv: string[]): Promise<number> {
   return 0;
 }
 
-class ParsedArgs {
-  positionals: string[];
-  private values: Map<string, string[]>;
-  private booleans: Set<string>;
-
-  constructor(positionals: string[], values: Map<string, string[]>, booleans: Set<string>) {
-    this.positionals = positionals;
-    this.values = values;
-    this.booleans = booleans;
-  }
-
-  one(name: string): string | undefined {
-    return this.values.get(name)?.at(-1);
-  }
-
-  many(name: string): string[] {
-    return this.values.get(name) || [];
-  }
-
-  has(name: string): boolean {
-    return this.booleans.has(name);
+function parse(argv: string[], valueFlags: string[], booleanFlags: string[]) {
+  try {
+    const parsed = parseNodeArgs({
+      args: argv,
+      allowPositionals: true,
+      options: Object.fromEntries([
+        ...valueFlags.map((name) => [name, { type: "string", multiple: true }] as const),
+        ...booleanFlags.map((name) => [name, { type: "boolean" }] as const)
+      ])
+    });
+    const values = parsed.values as Record<string, unknown>;
+    return {
+      positionals: parsed.positionals,
+      one: (name: string) => stringValues(values[name]).at(-1),
+      many: (name: string) => stringValues(values[name]),
+      has: (name: string) => values[name] === true
+    };
+  } catch (error) {
+    if (isParseArgsError(error)) throw new CliError(error.message, 2);
+    throw error;
   }
 }
 
-function parse(argv: string[], valueFlags: string[], booleanFlags: string[]): ParsedArgs {
-  const valueSet = new Set(valueFlags);
-  const booleanSet = new Set(booleanFlags);
-  const values = new Map<string, string[]>();
-  const booleans = new Set<string>();
-  const positionals: string[] = [];
+function stringValues(value: unknown): string[] {
+  return Array.isArray(value) ? value : [];
+}
 
-  for (let index = 0; index < argv.length; index += 1) {
-    const token = argv[index];
-    if (!token.startsWith("--")) {
-      positionals.push(token);
-      continue;
-    }
-    const name = token.slice(2);
-    if (booleanSet.has(name)) {
-      booleans.add(name);
-      continue;
-    }
-    if (!valueSet.has(name)) throw new CliError(`unknown flag: --${name}`, 2);
-    const value = argv[index + 1];
-    if (value === undefined || value.startsWith("--")) throw new CliError(`--${name} requires a value`, 2);
-    if (!values.has(name)) values.set(name, []);
-    values.get(name)?.push(value);
-    index += 1;
-  }
-  return new ParsedArgs(positionals, values, booleans);
+function isParseArgsError(error: unknown): error is Error {
+  return error instanceof TypeError && /^ERR_PARSE_ARGS_/.test(String((error as { code?: unknown }).code));
 }
 
 function shellPath(target: string): string {
