@@ -18,12 +18,13 @@ Measure a reusable skill with `.meta-skill/evals/` and `.meta-skill/runs/`. This
 
 ```bash
 meta-skill project init .
+# Fill .meta-skill/eval-scenarios.md first.
 meta-skill evals create .
 meta-skill lint .
 meta-skill run .
 ```
 
-`meta-skill evals create` reads `.meta-skill/eval-scenarios.md` and creates draft `.meta-skill/evals/<slug>/task.md` and `.meta-skill/evals/<slug>/criteria.json` files. Refine the generated task text before running. Put optional solver-visible files under `fixtures/`; use `## Task` for the first turn and `## Turn 2`, `## Turn 3`, and so on for real follow-up user turns.
+`meta-skill evals create` reads `.meta-skill/eval-scenarios.md` and creates draft `.meta-skill/evals/<slug>/task.md` and `.meta-skill/evals/<slug>/criteria.json` files. Refine both generated files before running: `task.md` should read like a real user request, and `criteria.json` should contain binary questions that can be answered from saved evidence or explicitly captured validation output. Put optional solver-visible files under `fixtures/`; task text can refer to them as `fixtures/<file>`. Use `## Task` for the first turn and `## Turn 2`, `## Turn 3`, and so on for real follow-up user turns.
 
 ## Operating Rules
 
@@ -49,9 +50,9 @@ Each eval folder contains:
 1. `task.md`: solver-visible title, capability, problem description, output specification, first turn, and real follow-up turns.
 2. `criteria.json`: evaluator-only JSON for fixtures, tests, metadata, and criteria objects with `criterion`, `phase`, `dimension`, `question`, and `evidence`.
 
-Good evals cover normal workflow, hard ambiguity, source-grounding, and safe-stop behavior. Criteria should include the shared base dimensions across Quality, Implementation, and Validation, then add only skill-specific dimensions needed by the scenario. Write questions that can be answered from `response.md`, `transcript.json`, deterministic tests, or declared artifacts.
+Good evals cover normal workflow, hard ambiguity, source-grounding, and safe-stop behavior. Criteria should include the shared base dimensions across Quality, Implementation, and Validation, then add only skill-specific dimensions needed by the scenario. Write questions that can be answered from `response.md`, `transcript.json`, `rpc.jsonl`, declared artifacts, human review, or explicitly captured validation command output.
 
-Prefer deterministic tests when code can answer the question. Use manual review of `response.md` and `transcript.json` for subjective qualities.
+Prefer deterministic tests when code can answer the question, but remember they run through `meta-skill lint`; their output is command evidence unless you explicitly save or quote it in the handoff. Use manual review of `response.md` and `transcript.json` for subjective qualities.
 
 ## Inspect Evidence
 

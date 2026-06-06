@@ -138,7 +138,9 @@ function criteriaRows(seed: ScenarioSeed): Array<{ criterion: string; phase: str
       criterion: seed.capability ? `Addresses ${seed.capability}` : "Addresses scenario capability",
       phase: primary.phase,
       dimension: primary.dimension,
-      question: `Does the response satisfy the ${seed.capability || seed.scenario} capability?`,
+      question: seed.expectedSkillLift
+        ? `Does the response deliver this expected skill lift: ${seed.expectedSkillLift}?`
+        : `Does the response complete the ${seed.capability || seed.scenario} capability with observable output?`,
       evidence: "response"
     }
   ];
@@ -152,7 +154,7 @@ function criteriaRows(seed: ScenarioSeed): Array<{ criterion: string; phase: str
       phase: dimension.phase,
       dimension: dimension.dimension,
       question: criteriaQuestion(dimension.phase, dimension.dimension, seed),
-      evidence: "response, transcript, tests"
+      evidence: dimension.phase === "Validation" ? "response, transcript, captured validation output" : "response, transcript"
     });
   }
   if (seed.baselineRisk) {
@@ -201,9 +203,9 @@ function dimensionNamed(dimensions: Array<{ dimension: string }>, wanted: string
 
 function criteriaQuestion(phase: string, dimension: string, seed: ScenarioSeed): string {
   const target = seed.expectedSkillLift || seed.capability || seed.scenario;
-  if (phase === "Quality") return `Is the response strong on ${dimension} for ${target}?`;
-  if (phase === "Validation") return `Can the saved evidence validate ${dimension} for ${target}?`;
-  return `Does the response implement ${dimension} for ${target}?`;
+  if (phase === "Quality") return `Does the response include concrete, scenario-specific evidence of ${dimension} for ${target}?`;
+  if (phase === "Validation") return `Does the saved evidence show ${dimension} is satisfied for ${target}?`;
+  return `Does the response implement ${dimension} for ${target} with observable output?`;
 }
 
 function withBasePhaseCoverage(
@@ -223,7 +225,7 @@ function withBasePhaseCoverage(
       phase: base.phase,
       dimension: base.dimension,
       question: criteriaQuestion(base.phase, base.dimension, seed),
-      evidence: base.phase === "Validation" ? "response, transcript, tests" : "response"
+      evidence: base.phase === "Validation" ? "response, transcript, captured validation output" : "response"
     });
   }
   return rows;

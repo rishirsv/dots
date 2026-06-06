@@ -214,7 +214,9 @@ async function runTurn(
 async function runtimeWorkspaceRoots(runtimeRoot: string, evalPath: string): Promise<string[]> {
   const roots = [runtimeRoot];
   const fixtures = path.join(evalPath, "fixtures");
-  if (await exists(fixtures)) roots.push(fixtures);
+  if (await exists(fixtures)) {
+    await fs.cp(fixtures, path.join(runtimeRoot, "fixtures"), { recursive: true });
+  }
   return roots;
 }
 

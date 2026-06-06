@@ -41,6 +41,8 @@ describe("eval generation", () => {
     const generated = JSON.parse(await readText(path.join(p.evals, "capture-a-decision-record", "criteria.json")));
     assert.equal(generated.metadata.generated_from, ".meta-skill/eval-scenarios.md");
     assert.ok(generated.criteria.some((criterion: { criterion?: string; phase?: string; dimension?: string }) => criterion.criterion === "Exercises Required Content Capture" && criterion.phase === "Implementation" && criterion.dimension === "Required Content Capture"));
+    assert.ok(generated.criteria.every((criterion: { question?: string }) => criterion.question?.startsWith("Does ")));
+    assert.ok(generated.criteria.some((criterion: { question?: string }) => criterion.question?.includes("expected skill lift")));
     assert.match(await readText(path.join(p.evals, "capture-a-decision-record", "task.md")), /Captures decision, options, and follow-ups/);
   });
 });

@@ -1,5 +1,13 @@
 Read this for eval command semantics and examples. The full command surface lives in the sibling create-skill [cli-conventions.md](../../create-skill/references/cli-conventions.md); do not invent commands or flags beyond it.
 
+## Evals Create
+
+```bash
+meta-skill evals create .
+```
+
+`evals create` reads the filled Scenario Plan table in `.meta-skill/eval-scenarios.md` and creates missing `.meta-skill/evals/<slug>/task.md` and `.meta-skill/evals/<slug>/criteria.json` drafts. It does not run the eval and does not make the drafts final. Review both files before running: strengthen `task.md` into a realistic user task and make `criteria.json` questions binary and evidence-backed.
+
 ## Run Selection
 
 ```bash

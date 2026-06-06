@@ -69,6 +69,32 @@ describe("AppServerEvalRunner", () => {
     assert.match(transcript.turns[1].finalText, /Final assistant message unavailable/);
     assert.equal(transcript.turns[1].items.some((item: { type?: string; method?: string }) => item.type === "warning" && item.method === "metaSkill/traceBuffer/overflow"), true);
   });
+
+  it("exposes eval fixtures under fixtures/ in the runtime workspace", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-fixtures-"));
+    const runRoot = path.join(root, "run");
+    const skillRoot = path.join(root, "skill");
+    const evalPath = path.join(root, "eval");
+    await fs.mkdir(path.join(evalPath, "fixtures"), { recursive: true });
+    await fs.mkdir(skillRoot, { recursive: true });
+    await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: demo\n---\n# Demo\n");
+    await writeText(path.join(evalPath, "fixtures", "source.md"), "Fixture source");
+    const fake = new FixtureFakeClient();
+    const runner = new AppServerEvalRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+
+    await runner.run({
+      projectRoot: skillRoot,
+      skillRoot,
+      skill_activation: "forced",
+      eval: { ...evalRecord(evalPath), path: evalPath },
+      runSource: { kind: "working_payload", label: "Working payload", skill_root: "payload", skill_activation: "forced" },
+      runId: "001-test",
+      runRoot,
+      appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    assert.equal(fake.sawFixturePath, true);
+  });
 });
 
 class FakeClient {
@@ -125,6 +151,33 @@ class OverflowFakeClient {
       },
       eventCount: () => 0,
       eventsSince: () => [],
+      close: () => {},
+      flush: async () => {}
+    };
+  }
+}
+
+class FixtureFakeClient {
+  private onLine?: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>;
+  sawFixturePath = false;
+
+  attach(onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>) {
+    this.onLine = onLine;
+    return {
+      request: async (method: string, params?: unknown) => {
+        await this.onLine?.({ direction: "client", message: { method } });
+        if (method === "thread/start") {
+          const cwd = typeof params === "object" && params && "cwd" in params ? String((params as { cwd: unknown }).cwd) : "";
+          this.sawFixturePath = await exists(path.join(cwd, "fixtures", "source.md"));
+          return { thread: { id: "thread-1" } };
+        }
+        return { turn: { id: "turn-1" } };
+      },
+      waitFor: async () => ({ msg: { type: "turn/completed" } }),
+      eventCount: () => 0,
+      eventsSince: () => [
+        { method: "item/agentMessage/delta", params: { threadId: "thread-1", turnId: "turn-1", delta: "final answer" } }
+      ],
       close: () => {},
       flush: async () => {}
     };
