@@ -24,6 +24,8 @@ describe("project workbench", () => {
     const p = projectPaths(target);
     assert.equal(await exists(p.tests), true);
     assert.equal(await exists(path.join(p.tests, "unit")), false);
+    assert.equal(await exists(p.evalScenarios), true);
+    assert.equal(await exists(p.evals), true);
   });
 });
 

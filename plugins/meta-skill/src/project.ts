@@ -109,7 +109,8 @@ export function projectPaths(projectRoot: string) {
     skillMd: path.join(root, "SKILL.md"),
     meta,
     spec: path.join(meta, "spec.md"),
-    cases: path.join(meta, "cases"),
+    evalScenarios: path.join(meta, "eval-scenarios.md"),
+    evals: path.join(meta, "evals"),
     runs: path.join(meta, "runs"),
     tests: path.join(meta, "tests")
   };
@@ -130,7 +131,7 @@ export async function createWorkbench(projectRoot: string, options: { force?: bo
   const skillName = frontmatter.name || path.basename(root);
 
   await ensureDir(p.meta);
-  await ensureDir(p.cases);
+  await ensureDir(p.evals);
   await ensureDir(p.runs);
   await ensureDir(p.tests);
 
@@ -140,6 +141,66 @@ export async function createWorkbench(projectRoot: string, options: { force?: bo
       `# ${skillName} Meta Skill Spec\n\n## Purpose\n\nRecord why this skill exists, the workflow boundary, and the eval intent.\n\n## Boundaries\n\n- Portable payload lives at the project root.\n- Authoring workbench state lives under \`.meta-skill/\`.\n\n## Open Questions\n\n- None recorded yet.\n`
     );
   }
+
+  if (options.force || !(await exists(p.evalScenarios))) {
+    await writeText(p.evalScenarios, evalScenariosTemplate(skillName));
+  }
+}
+
+function evalScenariosTemplate(skillName: string): string {
+  return `# Eval Scenarios
+
+## Evaluation Purpose
+
+Record what ${skillName} should improve compared with a base agent.
+
+## Source Distillation
+
+| Source | Claim / rule / pattern | Why it matters for evals |
+|---|---|---|
+| \`SKILL.md\` | <core trigger or workflow claim> | <what an eval should exercise> |
+
+## Evaluation Framework
+
+### Quality
+
+Base dimensions:
+- Specificity
+- Completeness
+- Trigger Term Quality
+- Distinctiveness / Conflict Risk
+
+Additive dimensions:
+- <skill-specific quality dimension>
+
+### Implementation
+
+Base dimensions:
+- Conciseness
+- Actionability
+- Workflow Clarity
+- Progressive Disclosure
+
+Additive dimensions:
+- <skill-specific implementation dimension>
+
+### Validation
+
+Base dimensions:
+- Structural correctness
+- Metadata correctness
+- Required body/content presence
+- Formatting compatibility
+
+Additive dimensions:
+- <skill-specific validation dimension>
+
+## Scenario Plan
+
+| Scenario | Phase focus | Capability | User task shape | Baseline risk | Expected skill lift | Dimensions exercised | Source basis |
+|---|---|---|---|---|---|---|---|
+| <scenario name> | Quality / Implementation / Validation | <capability> | <high-level task archetype> | <what a base agent may miss> | <what should improve> | <base and additive dimensions> | <source rows or files> |
+`;
 }
 
 export async function listPortablePayloadFiles(skillRoot: string): Promise<string[]> {

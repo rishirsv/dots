@@ -1,6 +1,6 @@
-export type CaseTypeCode = "R" | "F" | "G";
+export type EvalTypeCode = "R" | "F" | "G";
 
-export type CaseType =
+export type EvalType =
   | "regression"
   | "failure_mode"
   | "gate";
@@ -25,33 +25,33 @@ export interface TokenUsage {
   unavailable_reason: string | null;
 }
 
-export interface CaseFixture {
+export interface EvalFixture {
   path: string;
   description?: string;
 }
 
-export interface CaseMetadata {
+export interface EvalMetadata {
   title: string;
   topics?: string[];
   capability?: string;
-  fixtures?: CaseFixture[];
+  fixtures?: EvalFixture[];
   metadata?: Record<string, unknown>;
 }
 
-export interface CaseCriteria {
+export interface EvalCriteria {
   what_it_tests?: string;
   expected_behavior: string;
   assertions: string[];
   tests?: string[];
 }
 
-export interface CaseRecord {
+export interface EvalRecord {
   folder: string;
   id: string;
   path: string;
-  type: CaseType;
-  metadata: CaseMetadata;
-  criteria: CaseCriteria;
+  type: EvalType;
+  metadata: EvalMetadata;
+  criteria: EvalCriteria;
   task: string;
   turns: Array<{ content: string }>;
 }

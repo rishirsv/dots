@@ -3,7 +3,7 @@ import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
-import { parseAgentManifestMetadata, parseCaseFrontmatter, parseSkillFrontmatter } from "./metadata.ts";
+import { parseAgentManifestMetadata, parseEvalFrontmatter, parseSkillFrontmatter } from "./metadata.ts";
 
 describe("metadata parsing", () => {
   it("decodes skill frontmatter with the shared YAML subset", async () => {
@@ -24,8 +24,8 @@ description: 'Use when testing shared metadata; not for production.'
     });
   });
 
-  it("decodes case metadata, criteria, fixture maps, and body from one parser", () => {
-    const parsed = parseCaseFrontmatter(
+  it("decodes eval metadata, criteria, fixture maps, and body from one parser", () => {
+    const parsed = parseEvalFrontmatter(
       `---
 title: Basic
 topics:
@@ -49,7 +49,7 @@ criteria:
 
 Answer directly.
 `,
-      "case.md"
+      "eval.md"
     );
 
     assert.deepEqual(parsed.metadata, {
@@ -71,7 +71,7 @@ Answer directly.
   it("rejects malformed typed fields instead of coercing them", () => {
     assert.throws(
       () =>
-        parseCaseFrontmatter(
+        parseEvalFrontmatter(
           `---
 title: 12
 criteria:
@@ -83,9 +83,9 @@ criteria:
 
 Answer.
 `,
-          "case.md"
+          "eval.md"
         ),
-      /case.md: frontmatter field 'title' must be a string/
+      /eval.md: frontmatter field 'title' must be a string/
     );
   });
 

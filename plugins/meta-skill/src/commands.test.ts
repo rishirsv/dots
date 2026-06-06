@@ -17,6 +17,7 @@ describe("commands", () => {
     }
 
     const help = logs.join("\n");
+    assert.match(help, /meta-skill evals create <project>/);
     assert.match(help, /meta-skill run <project>/);
     assert.doesNotMatch(help, /meta-skill report/);
     assert.doesNotMatch(help, /meta-skill review/);

@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs";
-import type { CaseCriteria, CaseFixture, CaseMetadata } from "./models.ts";
+import type { EvalCriteria, EvalFixture, EvalMetadata } from "./models.ts";
 
 export interface SkillFrontmatter {
   name?: string;
@@ -47,8 +47,8 @@ export async function parseSkillFrontmatterFull(skillMd: string): Promise<SkillF
   return decodeSkillFrontmatterFull(parsed.frontmatter, skillMd);
 }
 
-export function parseCaseFrontmatter(text: string, filePath: string): { metadata: CaseMetadata; criteria: CaseCriteria; body: string } {
-  const parsed = parseRequiredFrontmatter(text, filePath, "case.md must start with YAML frontmatter");
+export function parseEvalFrontmatter(text: string, filePath: string): { metadata: EvalMetadata; criteria: EvalCriteria; body: string } {
+  const parsed = parseRequiredFrontmatter(text, filePath, "eval.md must start with YAML frontmatter");
   const frontmatter = parsed.frontmatter;
   const criteria = decodeObject(frontmatter, "criteria", filePath);
   return {
@@ -247,7 +247,7 @@ function decodeOptionalObject(source: Record<string, unknown>, key: string, file
   return asObject(value, filePath, `frontmatter field '${key}'`);
 }
 
-function decodeFixtures(source: Record<string, unknown>, filePath: string): CaseFixture[] {
+function decodeFixtures(source: Record<string, unknown>, filePath: string): EvalFixture[] {
   const value = source.fixtures;
   if (value === undefined) return [];
   if (!Array.isArray(value)) throw new MetadataError(`${filePath}: frontmatter field 'fixtures' must be a list of fixture objects`);

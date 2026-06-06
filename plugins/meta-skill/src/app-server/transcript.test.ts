@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { collectTurnEvidence, summarizeTurnEvidence, type TurnEvidence } from "./turn-evidence.ts";
+import { collectTranscript, summarizeTranscript, type Transcript } from "./transcript.ts";
 
-describe("collectTurnEvidence", () => {
+describe("collectTranscript", () => {
   it("collects final text, completion, and token usage for the selected turn", () => {
-    const turn = collectTurnEvidence(
+    const turn = collectTranscript(
       [
         event("item/agentMessage/delta", { threadId: "wrong", turnId: "turn-1", delta: "ignore" }),
         event("item/agentMessage/delta", { threadId: "thread-1", turnId: "wrong", delta: "ignore" }),
@@ -29,7 +29,7 @@ describe("collectTurnEvidence", () => {
   });
 
   it("uses completed agent message text when observed", () => {
-    const turn = collectTurnEvidence(
+    const turn = collectTranscript(
       [
         event("item/agentMessage/delta", { threadId: "thread-1", turnId: "turn-1", delta: "draft" }),
         event("item/completed", { threadId: "thread-1", turnId: "turn-1", item: { id: "msg-1", type: "agentMessage", text: "final" } })
@@ -42,7 +42,7 @@ describe("collectTurnEvidence", () => {
   });
 
   it("requires explicit matching thread and turn attribution", () => {
-    const turn = collectTurnEvidence(
+    const turn = collectTranscript(
       [
         event("item/agentMessage/delta", { threadId: "thread-1", delta: "missing turn final" }),
         event("item/agentMessage/delta", { turnId: "turn-1", delta: "missing thread final" }),
@@ -76,14 +76,14 @@ describe("collectTurnEvidence", () => {
   });
 
   it("records unavailable token evidence when the token event is missing", () => {
-    const turn = collectTurnEvidence([event("turn/completed", { threadId: "thread-1", turn: { id: "turn-1" } })], { threadId: "thread-1", turnId: "turn-1" });
+    const turn = collectTranscript([event("turn/completed", { threadId: "thread-1", turn: { id: "turn-1" } })], { threadId: "thread-1", turnId: "turn-1" });
 
     assert.equal(turn.tokenUsage.total_tokens, null);
     assert.match(turn.tokenUsage.unavailable_reason || "", /without tokenUsage\.total/);
   });
 
   it("captures command, file, and tool item lifecycles", () => {
-    const turn = collectTurnEvidence(
+    const turn = collectTranscript(
       [
         event("item/started", { threadId: "thread-1", turnId: "turn-1", item: { id: "cmd-1", type: "commandExecution", command: "ls", cwd: "/tmp", status: "running" } }),
         event("item/commandExecution/outputDelta", { threadId: "thread-1", turnId: "turn-1", itemId: "cmd-1", delta: "a.txt\n" }),
@@ -103,7 +103,7 @@ describe("collectTurnEvidence", () => {
   });
 
   it("captures approval request and resolution lifecycle from raw JSON-RPC direction", () => {
-    const turn = collectTurnEvidence(
+    const turn = collectTranscript(
       [
         trace("server", { id: "approval-req-1", method: "item/commandExecution/requestApproval", params: { threadId: "thread-1", turnId: "turn-1", itemId: "cmd-1", approvalId: "approval-1", command: ["rm", "x"], cwd: "/tmp" } }),
         trace("client", { id: "approval-req-1", result: { decision: "approved" } }),
@@ -118,13 +118,13 @@ describe("collectTurnEvidence", () => {
   });
 
   it("preserves unknown observed App Server methods", () => {
-    const turn = collectTurnEvidence([event("item/newFamily/delta", { threadId: "thread-1", turnId: "turn-1", value: true })], { threadId: "thread-1", turnId: "turn-1" });
+    const turn = collectTranscript([event("item/newFamily/delta", { threadId: "thread-1", turnId: "turn-1", value: true })], { threadId: "thread-1", turnId: "turn-1" });
 
     assert.deepEqual(turn.unknownMethods, ["item/newFamily/delta"]);
   });
 
-  it("summarizes turn evidence without writing another fact file", () => {
-    const turnEvidence: TurnEvidence = {
+  it("summarizes transcript without writing another fact file", () => {
+    const transcript: Transcript = {
       source: "codex_app_server",
       threadId: "thread-1",
       turns: [
@@ -141,7 +141,7 @@ describe("collectTurnEvidence", () => {
       ]
     };
 
-    assert.deepEqual(summarizeTurnEvidence(turnEvidence), {
+    assert.deepEqual(summarizeTranscript(transcript), {
       turn_count: 1,
       item_count: 1,
       command_executions: 1,

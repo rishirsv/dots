@@ -10,11 +10,11 @@ Meta Skill is Codex-only for now. Do not treat absent Claude packaging, Claude a
 
 ## Route Intent
 
-Use `skill-create` when the user wants to create a reusable skill, redesign a draft skill, distill examples into runtime instructions, or decide whether a workflow should become a skill.
+Use `create-skill` when the user wants to create a reusable skill, redesign a draft skill, distill examples into runtime instructions, or decide whether a workflow should become a skill.
 
-Use `skill-eval` when the user wants to create case eval scaffolding, manually author cases, run App Server-backed cases, or inspect run evidence.
+Use `evaluate-skill` when the user wants to create eval scaffolding, manually author evals, run App Server-backed evals, or inspect run evidence.
 
-Use `skill-improve` when the user wants a best-practice review or an evidence-backed payload edit.
+Use `improve-skill` when the user wants a best-practice review or an evidence-backed payload edit.
 
 When a request spans lanes, sequence the lanes explicitly. A mature workflow is:
 
@@ -44,26 +44,28 @@ Do not create alternate root-level workbench folders. The portable payload stays
 
 ## Eval Policy
 
-Use `.meta-skill/cases/` as the case namespace.
+Use `.meta-skill/evals/` as the eval namespace.
 
-Use `.meta-skill/cases/<ID-slug>/` for executable cases. `case.md` contains the first user turn and any follow-up user turns.
+Use `.meta-skill/eval-scenarios.md` as the high-level create-time scenario plan. Keep it to evaluation purpose, source distillation, base quality/implementation/validation dimensions, additive skill-specific dimensions, and scenario-plan rows. Executable details belong in `.meta-skill/evals/<ID-slug>/eval.md`.
+
+Use `.meta-skill/evals/<ID-slug>/` for executable evals. `eval.md` contains the first user turn and any follow-up user turns.
 
 Use executable files directly under `.meta-skill/tests/` for deterministic tests. Do not create nested test folders. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-case `case.md`, `rpc.jsonl`, `turn-evidence.json`, and `final.md` files. Token usage is stored in `turn-evidence.json`.
+Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-eval `eval.md`, `rpc.jsonl`, `transcript.json`, and `response.md` files. Token usage is stored in `transcript.json`.
 
-Case types are `R`, `F`, and `G`. Current workflow guidance uses manually authored cases, one execution source per run, and read-only App Server evidence.
+Eval types are `R`, `F`, and `G`. Current workflow guidance uses manually authored evals, one execution source per run, and read-only App Server evidence.
 
-Case execution runs through Codex App Server and records per-case final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger cases are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in `turn-evidence.json` instead of omitting it.
+Eval execution runs through Codex App Server and records per-eval final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger evals are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in `transcript.json` instead of omitting it.
 
 Criteria are evaluator evidence and must not appear in solver-visible runtime inputs.
 
-Completed case execution is evidence, not proof of quality. Identify the saved files to inspect before claiming behavior is good.
+Completed eval execution is evidence, not proof of quality. Identify the saved files to inspect before claiming behavior is good.
 
 
 ## Improve Policy
 
-Improve only from evidence. Cite the lint output, run ID, case ID, test result, trace, saved evidence file, or user feedback that motivates the change.
+Improve only from evidence. Cite the lint output, run ID, eval ID, test result, trace, saved evidence file, or user feedback that motivates the change.
 
 Agents edit the working portable payload directly after evidence points to a needed change. The human gate happens when the user reviews and approves the git diff. `package` validates and packages the current payload when the user asks for a package.
 

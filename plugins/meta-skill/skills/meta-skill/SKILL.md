@@ -11,13 +11,13 @@ Meta Skill helps authors create portable skill payloads, add maintained `.meta-s
 
 ## Router Only
 
-When a request matches `skill-create`, `skill-eval`, or `skill-improve`, load the focused skill before drafting, running commands, editing payload files, or interpreting evidence. If a request spans lanes, name the sequence once, then follow each selected lane in order.
+When a request matches `create-skill`, `evaluate-skill`, or `improve-skill`, load the focused skill before drafting, running commands, editing payload files, or interpreting evidence. If a request spans lanes, name the sequence once, then follow each selected lane in order.
 
 Use the smallest useful lane set:
 
-- Start with `skill-create` for new reusable skills, existing draft redesigns, source-pack distillation, workflow capture, trigger-contract decisions, runtime payload structure, and portable-vs-project-mode choices.
-- Use `skill-eval` for `.meta-skill/cases/` setup, manual case authoring, App Server-backed `meta-skill run` execution, run inspection, baseline runs, and eval evidence interpretation.
-- Use `skill-improve` for best-practice review, lint-backed findings, eval-backed edits, trace-backed fixes, human-feedback-backed patches, and bounded redesign of existing skills.
+- Start with `create-skill` for new reusable skills, existing draft redesigns, source-pack distillation, workflow capture, trigger-contract decisions, runtime payload structure, and portable-vs-project-mode choices.
+- Use `evaluate-skill` for `.meta-skill/evals/` setup, manual eval authoring, App Server-backed `meta-skill run` execution, run inspection, baseline runs, and eval evidence interpretation.
+- Use `improve-skill` for best-practice review, lint-backed findings, eval-backed edits, trace-backed fixes, human-feedback-backed patches, and bounded redesign of existing skills.
 - Handle package, release, install, publish, marketplace, or promotion questions at the Meta Skill level until a focused lane is needed for validation or edits. Require explicit user approval before any such action.
 
 ## Route Order
@@ -28,7 +28,7 @@ Use the smallest useful lane set:
 4. If the request spans lanes, sequence them in the useful authoring order:
 
 ```text
-create portable skill -> project init when needed -> lint -> author cases -> run -> inspect evidence -> improve -> lint/run again -> package only after approval
+create portable skill -> project init when needed -> lint -> author evals -> run -> inspect evidence -> improve -> lint/run again -> package only after approval
 ```
 
 5. Before finalizing, report the chosen lane, files changed or evidence created, validation run, and any human gate still outstanding.
@@ -42,14 +42,14 @@ Use this shape:
 ```md
 Meta Skill can help with:
 - Creating portable reusable skills from a workflow, draft, source pack, or example output
-- Adding a `.meta-skill/` workbench for cases, runs, tests, and maintained-skill evidence
+- Adding a `.meta-skill/` workbench for evals, runs, tests, and maintained-skill evidence
 - Running App Server-backed skill evals and inspecting saved evidence
 - Reviewing or patching skills from lint, eval, trace, or human-feedback evidence
 - Packaging a validated payload after explicit approval
 
 Good first prompts:
 - `@Meta Skill create a reusable skill for this workflow.`
-- `@Meta Skill add eval cases for this skill.`
+- `@Meta Skill add evals for this skill.`
 - `@Meta Skill improve this skill from run <run-id>.`
 ```
 
@@ -65,38 +65,40 @@ Common commands:
 meta-skill create <skill-dir> --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
 meta-skill create <skill-dir> --project --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
 meta-skill project init <skill-dir>
+meta-skill evals create <project>
 meta-skill lint <project-or-skill>
-meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--no-skill]
+meta-skill run <project> [--eval <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--no-skill]
 meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 ```
 
 Command routing:
 
-- `create` writes a portable skill payload. Add `--project` only when the user needs cases, tests, comparison, release discipline, or maintained-skill evidence.
+- `create` writes a portable skill payload. Add `--project` only when the user needs evals, tests, comparison, release discipline, or maintained-skill evidence.
 - `project init` adds `.meta-skill/` to an existing portable payload without moving the runtime files.
-- `lint` validates the portable payload, workbench shape, links, cases, and deterministic tests. Use it after create, after edits, before runs, and before packaging.
+- `evals create` reads `.meta-skill/eval-scenarios.md` and creates draft `.meta-skill/evals/<ID-slug>/eval.md` files.
+- `lint` validates the portable payload, workbench shape, links, evals, and deterministic tests. Use it after create, after edits, before runs, and before packaging.
 - `run` records new eval evidence under `.meta-skill/runs/<run-id>/`. Working-payload runs force-attach the selected skill, so treat the result as mounted-skill behavior evidence, not true trigger-routing proof.
 - `package` runs lint and exports the current portable payload. Use it only after explicit user approval for packaging, and keep install, publish, marketplace sync, or promotion as separate explicit approvals.
 
 ## Skill Map
 
-### skill-create
+### create-skill
 
 Route here for turning a workflow, example output, existing skill draft, or repeated knowledge-work task into a reusable portable skill. It owns trigger boundaries, skill-or-not decisions, runtime payload design, source-pack distillation, conversation-to-skill capture, project-mode decisions, and creation-time lint.
 
 Do not use it for running evals, improving from evidence, packaging, installing, or publishing.
 
-### skill-eval
+### evaluate-skill
 
-Route here for setting up, running, auditing, or interpreting App Server-backed eval cases with `meta-skill run`. It owns `.meta-skill/cases/`, `.meta-skill/runs/`, case types `R`, `F`, and `G`, baseline runs with `--no-skill`, and evidence readouts.
+Route here for setting up, running, auditing, or interpreting App Server-backed evals with `meta-skill run`. It owns `.meta-skill/eval-scenarios.md`, `.meta-skill/evals/`, `.meta-skill/runs/`, eval types `R`, `F`, and `G`, baseline runs with `--no-skill`, and evidence readouts.
 
 Do not use it for rewriting skills, best-practice review, packaging, installing, or publishing.
 
-### skill-improve
+### improve-skill
 
-Route here for reviewing or patching an existing skill from evidence: lint output, eval run ID, case ID, test failure, trace, saved evidence file, or human feedback. It owns review-only findings, surgical edits, bounded redesigns, and rerunning relevant validation after edits.
+Route here for reviewing or patching an existing skill from evidence: lint output, eval run ID, eval ID, test failure, trace, saved evidence file, or human feedback. It owns review-only findings, surgical edits, bounded redesigns, and rerunning relevant validation after edits.
 
-Do not use it for creating new skills, running eval cases, autonomous rewrites without evidence, packaging, installing, or publishing.
+Do not use it for creating new skills, running evals, autonomous rewrites without evidence, packaging, installing, or publishing.
 
 ## Top-Level Gates
 

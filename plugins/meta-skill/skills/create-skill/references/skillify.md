@@ -46,7 +46,7 @@ A captured workflow carries the same overfit risk as a source pack. Run every ex
 
 ## Seed Evals From The Session
 
-Do not stop at synthesis. When the build chooses project mode, turn the session's success criteria and observed failures into seed eval cases — a regression case for the normal task and a failure-mode case from an observed mistake — and hand them to `skill-eval`.
+Do not stop at synthesis. When the build chooses project mode, turn the session's success criteria and observed failures into seed evals — a regression eval for the normal task and a failure-mode eval from an observed mistake — and hand them to `evaluate-skill`.
 
 ## Output: Skillify Brief
 

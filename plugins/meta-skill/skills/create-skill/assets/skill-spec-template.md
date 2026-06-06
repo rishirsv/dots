@@ -14,7 +14,7 @@ Use this shape for `.meta-skill/spec.md`. Write a Skill Spec only when the user 
 - Description: <frontmatter description>
 - Should trigger: <realistic user phrasings>
 - Should not trigger: <adjacent asks that belong elsewhere>
-- Near miss: <ambiguous case and routing decision>
+- Near miss: <ambiguous eval and routing decision>
 
 ## Inputs And Sources
 
@@ -56,7 +56,8 @@ have. Delete optional rows and folders that do not exist.
     <name>
   .meta-skill/
     spec.md
-    cases/<ID-slug>/case.md
+    eval-scenarios.md
+    evals/<ID-slug>/eval.md
     tests/<name>.test.<ext>
 ```
 
@@ -76,7 +77,8 @@ have. Delete optional rows and folders that do not exist.
 | Path | Create? | Purpose | Generated structure |
 |---|---:|---|---|
 | `.meta-skill/spec.md` | project mode | <this design record> | current template filled with final decisions, no unresolved placeholders except explicitly open questions. |
-| `.meta-skill/cases/<ID-slug>/case.md` | project mode when evals exist | <manual behavior case> | frontmatter with case type/criteria when needed; `## Task` first user turn; optional `## Turn 2`, fixtures map, and review criteria. |
+| `.meta-skill/eval-scenarios.md` | project mode | <high-level eval plan> | evaluation purpose, source distillation, base quality/implementation/validation dimensions, additive skill-specific dimensions, and scenario-plan rows. |
+| `.meta-skill/evals/<ID-slug>/eval.md` | project mode when evals exist | <manual behavior eval> | frontmatter with eval type/criteria when needed; `## Task` first user turn; optional `## Turn 2`, fixtures map, and review criteria. |
 | `.meta-skill/tests/<name>.test.<ext>` | project mode when scripts exist | <deterministic script or fixture test> | executable test that can run locally; covers success and failure paths for runtime scripts or fragile generated assets. |
 
 ### File Generation Notes
@@ -94,7 +96,7 @@ have. Delete optional rows and folders that do not exist.
 ## Evals And Tests
 
 - Structural check: `meta-skill lint <skill-dir>`
-- Case coverage to add: <R/F/G families and topics>
+- Eval coverage to add: <R/F/G families and topics>
 - Deterministic tests: <test IDs or planned tests>
 
 ## Update Notes

@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { AppServerUnavailableError, appServerConfig } from "../app-server/client.ts";
-import { AppServerCaseRunner } from "../app-server/runner.ts";
+import { AppServerEvalRunner } from "../app-server/runner.ts";
 import { lintProject } from "../lint.ts";
 import {
   CliError,
@@ -12,22 +12,22 @@ import {
   projectPaths,
   requirePortableSkill
 } from "../project.ts";
-import { loadCases } from "./cases.ts";
+import { loadEvals } from "./evals.ts";
 import type { EvalRunOptions } from "./types.ts";
 import type { EvalRunSource, EvalRunSourceKind } from "../models.ts";
 
-export async function runEval(options: EvalRunOptions): Promise<{ runId: string; runRoot: string; ok: boolean; errors: string[]; cases: string[] }> {
+export async function runEval(options: EvalRunOptions): Promise<{ runId: string; runRoot: string; ok: boolean; errors: string[]; evals: string[] }> {
   const root = await requirePortableSkill(options.project);
   const p = projectPaths(root);
-  if (!(await exists(p.cases))) throw new CliError("case workbench is missing; run `meta-skill project init <project>` first");
+  if (!(await exists(p.evals))) throw new CliError("eval workbench is missing; run `meta-skill project init <project>` first");
 
   const preflight = await lintProject(root, { executeTests: false });
   if (preflight.failures.length) {
     throw new CliError(`lint failed before run:\n${preflight.failures.map((failure) => `- ${failure.message}`).join("\n")}`);
   }
 
-  const cases = await loadCases(root, options.selector);
-  if (!cases.length) throw new CliError("no cases selected");
+  const evals = await loadEvals(root, options.selector);
+  if (!evals.length) throw new CliError("no evals selected");
 
   const runSourceKind = options.runSource || "working_payload";
   const runSourceConfig = evalRunSourceConfig(runSourceKind);
@@ -41,26 +41,26 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   }
 
   const runner =
-    options.caseRunner ||
-    new AppServerCaseRunner({
+    options.evalRunner ||
+    new AppServerEvalRunner({
       turnTimeoutMs: options.turnTimeoutMs,
       maxTraceEvents: options.traceBufferEvents
     });
   const errors: string[] = [];
-  const completedCases: string[] = [];
+  const completedEvals: string[] = [];
   try {
-    for (const item of cases) {
-      const caseRoot = path.join(runRoot, "cases", item.folder);
-      await ensureDir(caseRoot);
-      await fs.copyFile(path.join(item.path, "case.md"), path.join(caseRoot, "case.md"));
+    for (const item of evals) {
+      const evalRoot = path.join(runRoot, "evals", item.folder);
+      await ensureDir(evalRoot);
+      await fs.copyFile(path.join(item.path, "eval.md"), path.join(evalRoot, "eval.md"));
       try {
         const skillRoot = runSourceKind === "working_payload" ? path.join(runRoot, "payload") : undefined;
-        await runner.run({ projectRoot: root, skillRoot, skill_activation: runSourceConfig.runSource.skill_activation, case: { ...item, path: caseRoot }, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
+        await runner.run({ projectRoot: root, skillRoot, skill_activation: runSourceConfig.runSource.skill_activation, eval: { ...item, path: evalRoot }, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
       } catch (error) {
         const message = error instanceof AppServerUnavailableError || error instanceof Error ? error.message : String(error);
         errors.push(message);
       }
-      completedCases.push(item.folder);
+      completedEvals.push(item.folder);
     }
   } finally {
     runner.close();
@@ -71,7 +71,7 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
     if (!lint.ok) errors.push("lint checks recorded non-passing observations");
   }
 
-  return { runId, runRoot, ok: errors.length === 0, errors, cases: completedCases };
+  return { runId, runRoot, ok: errors.length === 0, errors, evals: completedEvals };
 }
 
 function evalRunSourceConfig(kind: EvalRunSourceKind): { runSource: EvalRunSource; defaultLabel: string } {

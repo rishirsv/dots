@@ -1,5 +1,5 @@
 import { parseArgs as parseNodeArgs } from "node:util";
-import { initEvals, runEval } from "./evals.ts";
+import { generateEvalsFromScenarios, initEvals, runEval } from "./evals.ts";
 import { lintProject } from "./lint.ts";
 import { packageProject } from "./package.ts";
 import { CliError } from "./project.ts";
@@ -11,8 +11,9 @@ const HELP = `meta-skill
 Usage:
   meta-skill create [skill-dir] [--project] --slug <slug> --title <title> --description <text> --job <text>
   meta-skill project init <skill-dir>
+  meta-skill evals create <project>
   meta-skill lint <project-or-skill> [--json]
-  meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
+  meta-skill run <project> [--eval <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
   meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 `;
 
@@ -28,6 +29,8 @@ export async function runCommand(argv: string[]): Promise<number> {
       return commandCreate(rest);
     case "project":
       return commandProject(rest);
+    case "evals":
+      return commandEvals(rest);
     case "lint":
       return commandLint(rest);
     case "run":
@@ -68,7 +71,19 @@ async function commandProject(argv: string[]): Promise<number> {
   const result = await initProject(target, { force: args.has("force") });
   await initEvals(result.path);
   console.log(`initialized .meta-skill workbench: ${result.path}`);
-  console.log(`next step: add cases, then meta-skill run ${shellPath(result.path)}`);
+  console.log(`next step: add evals, then meta-skill run ${shellPath(result.path)}`);
+  return 0;
+}
+
+async function commandEvals(argv: string[]): Promise<number> {
+  const [subcommand, ...rest] = argv;
+  if (subcommand !== "create") throw new CliError("evals command supports only: meta-skill evals create <project>", 2);
+  const args = parse(rest, [], []);
+  const project = args.positionals[0] || ".";
+  const result = await generateEvalsFromScenarios(project);
+  console.log(`scenarios: ${result.scenariosPath}`);
+  console.log(`created evals: ${result.created.length ? result.created.join(", ") : "(none)"}`);
+  if (result.skipped.length) console.log(`skipped existing scenarios: ${result.skipped.join(", ")}`);
   return 0;
 }
 
@@ -82,13 +97,13 @@ async function commandLint(argv: string[]): Promise<number> {
 }
 
 async function commandRun(argv: string[]): Promise<number> {
-  const args = parse(argv, ["case", "type", "topic", "label", "turn-timeout-ms", "trace-buffer-events"], ["no-skill", "no-lint"]);
+  const args = parse(argv, ["eval", "type", "topic", "label", "turn-timeout-ms", "trace-buffer-events"], ["no-skill", "no-lint"]);
   const project = args.positionals[0] || ".";
   const type = args.one("type");
   if (type && !["R", "F", "G"].includes(type)) throw new CliError("--type must be one of R, F, G", 2);
   const result = await runEval({
     project,
-    selector: { case: args.many("case"), type, topic: args.many("topic") },
+    selector: { eval: args.many("eval"), type, topic: args.many("topic") },
     label: args.one("label"),
     runSource: args.has("no-skill") ? "no_skill" : "working_payload",
     noLint: args.has("no-lint"),
@@ -97,7 +112,7 @@ async function commandRun(argv: string[]): Promise<number> {
   });
   console.log(`run: ${result.runId}`);
   console.log(`path: ${result.runRoot}`);
-  console.log(`cases: ${result.cases.join(", ")}`);
+  console.log(`evals: ${result.evals.join(", ")}`);
   if (result.errors.length) {
     console.log("errors:");
     for (const error of result.errors) console.log(`- ${error}`);

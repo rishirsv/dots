@@ -44,7 +44,7 @@ You are writing instructions a future agent will read mid-task, while doing the 
 
 ### Explain why, not just what
 
-Pair a directive with its reason when the reason is not obvious. The reason lets the agent generalize to cases you did not foresee; a bare command only covers the one you wrote.
+Pair a directive with its reason when the reason is not obvious. The reason lets the agent generalize to evals you did not foresee; a bare command only covers the one you wrote.
 
 - Before: `Always cite the source file for every number.`
 - After: `Cite the source file for every number, so the reader can tell sourced figures from estimates.`
@@ -98,7 +98,7 @@ Create or update a skill when most of these are true:
 - The instructions are portable enough to live in runtime guidance rather than local project docs.
 - The request is substantive enough that specialized guidance would change behavior; simple one-step tasks may be better handled by the base agent.
 
-When the activation case already belongs to an existing skill, update that skill rather than creating a new one. Create a new skill only when the workflow has its own recognizable trigger and operating sequence.
+When the activation eval already belongs to an existing skill, update that skill rather than creating a new one. Create a new skill only when the workflow has its own recognizable trigger and operating sequence.
 
 Do not make a skill when:
 
@@ -106,7 +106,7 @@ Do not make a skill when:
 - The behavior is an obvious general capability.
 - The rule is purely mechanical and should be enforced by validation code.
 - The content is project-specific and belongs in local docs.
-- The requested process would require multiple skills, managed agents, or a separate operating system. In that case, define the boundary and hand off the larger process separately.
+- The requested process would require multiple skills, managed agents, or a separate operating system. In that eval, define the boundary and hand off the larger process separately.
 
 ## Intake
 
@@ -157,7 +157,7 @@ A strong description:
 - includes likely search terms, synonyms, file extensions, tools, or artifact names when those are natural user language
 - describes the problem or handoff moment, not just the solution category
 
-Lean slightly assertive. Skills more often fail by *under*-triggering than over-triggering, so cover the implicit cases too — phrasings where the user describes the problem or names the file type without naming the skill. Let the `not for` boundary do the opposite job, fencing out adjacent work, so assertiveness does not become overreach.
+Lean slightly assertive. Skills more often fail by *under*-triggering than over-triggering, so cover the implicit evals too — phrasings where the user describes the problem or names the file type without naming the skill. Let the `not for` boundary do the opposite job, fencing out adjacent work, so assertiveness does not become overreach.
 
 Pattern:
 
@@ -211,7 +211,7 @@ Before accepting a description, record a tiny trigger set in the spec:
 |---|---|
 | Should trigger | The description includes real user language and the correct work object |
 | Should not trigger | Adjacent ordinary work routes elsewhere |
-| Near miss | Ambiguous cases lead to clarification or correct non-use |
+| Near miss | Ambiguous evals lead to clarification or correct non-use |
 
 Prompts should be realistic and substantive enough that the skill should improve behavior. Avoid toy positives like “use the skill,” tiny one-step tasks like “read this file,” and obvious negatives like “write Fibonacci” unless the skill is actually about coding basics.
 

@@ -1,9 +1,9 @@
 ---
-name: skill-create
+name: create-skill
 description: Use when turning a workflow, example output, existing skill draft, or repeated knowledge-work task into a reusable portable skill; not for running evals, improving from evidence, packaging, installing, or publishing.
 ---
 
-# Skill Create
+# Create Skill
 
 Create practical, reusable skills. The default output is a portable skill payload rooted at the skill directory:
 
@@ -29,7 +29,7 @@ Settle two questions before building.
 - Provided source files or a finished-output pack → extract the method with [distillation.md](references/distillation.md).
 - Neither → work from intent, using comparable skills for defaults.
 
-These are context sources, not separate routes. Source material feeds the standard workflow; it does not fork it. Most builds combine them — a captured workflow plus a couple of confirmations is the common case.
+These are context sources, not separate routes. Source material feeds the standard workflow; it does not fork it. Most builds combine them — a captured workflow plus a couple of confirmations is the common eval.
 
 ## Reference Map
 
@@ -103,7 +103,7 @@ c) Not sure — use default
 
 2. Set up evals/tests (project mode)?
 a) Portable-only, no workbench (recommended)
-b) Project mode with `.meta-skill/` cases and tests
+b) Project mode with `.meta-skill/` evals and tests
 
 Reply with `defaults`, or a compact answer like `1a 2b`.
 ```
@@ -126,11 +126,11 @@ With the Current Understanding settled, scaffold the payload, then draft it foll
 meta-skill create <skill-dir> --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
 ```
 
-Add `--project` only in project mode. Then draft the runtime payload: use [design.md](references/design.md) for body shape, [cookbook.md](references/cookbook.md) for snippet shapes, and [structure.md](references/structure.md) for references, scripts, and assets.
+Add `--project` only in project mode. Project mode also creates `.meta-skill/eval-scenarios.md`; keep it high-level with source distillation, base quality/implementation/validation dimensions, additive skill-specific dimensions, and scenario-plan rows for `evaluate-skill` to expand later. Then draft the runtime payload: use [design.md](references/design.md) for body shape, [cookbook.md](references/cookbook.md) for snippet shapes, and [structure.md](references/structure.md) for references, scripts, and assets.
 
 ### Step 4 — Validate and stop
 
-Run `meta-skill lint <skill-dir>`. Stop before packaging, install, publish, sync, source edits, external writes, or final client/user-facing delivery unless the user explicitly asks. Hand off review, evals, or evidence-backed edits to `skill-eval` or `skill-improve` rather than crossing lanes.
+Run `meta-skill lint <skill-dir>`. Stop before packaging, install, publish, sync, source edits, external writes, or final client/user-facing delivery unless the user explicitly asks. Hand off review, evals, or evidence-backed edits to `evaluate-skill` or `improve-skill` rather than crossing lanes.
 
 ## CLI
 

@@ -73,13 +73,13 @@ Distillation Brief for source-derived builds:
   script or asset candidates, eval seeds, spec-only review items, and discards.
 - **Runtime structure:** proposed `SKILL.md` sections and any linked
   `references/`, `scripts/`, or `assets/` justified by [structure.md](structure.md).
-- **Eval seeds:** project-mode case ideas, usually one normal regression, one
-  failure/counterexample, one gate/source-grounding case, and any deterministic
+- **Eval seeds:** project-mode eval ideas, usually one normal regression, one
+  failure/counterexample, one gate/source-grounding eval, and any deterministic
   tests worth adding.
 - **Open questions:** only decisions that change routing, runtime behavior,
   resources, gates, or source permission.
 
-The brief feeds the standard skill-create workflow. It does not create a
+The brief feeds the standard create-skill workflow. It does not create a
 separate build route.
 
 ## Distillation Workflow
@@ -121,8 +121,8 @@ separate build route.
     scripts, or assets only when they prevent repeated mistakes, save tokens,
     standardize fragile output, or perform deterministic work better than prose.
 12. **Seed evals and probes.** In project mode, propose manually authored
-    `.meta-skill/cases/` ideas. Include a normal case, a counterexample or
-    failure case, and a gate/source-grounding case. For source-heavy skills,
+    `.meta-skill/evals/` ideas. Include a normal eval, a counterexample or
+    failure eval, and a gate/source-grounding eval. For source-heavy skills,
     include a probe asking whether major claims trace to supplied sources or are
     labeled as inference.
 13. **Rehearse generalization.** Before finalizing, ask whether the method would
@@ -291,7 +291,7 @@ Use the fields that fit the evidence:
   disposition: <runtime rule | scoped default | eval seed | human review | discard>
   confidence: <high | scoped | weak | needs human review>
   runtime_location: <SKILL.md section or reference file, if promoted>
-  eval_seed: <case idea, if any>
+  eval_seed: <eval idea, if any>
   redaction_notes: <what was generalized or removed>
 ```
 

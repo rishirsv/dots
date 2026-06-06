@@ -31,10 +31,10 @@ Do not let a broad review request become an unbounded rewrite.
 Valid improvement evidence includes:
 
 - `meta-skill lint` failures or warnings
-- `.meta-skill/runs/<run-id>/cases/<case-folder>/final.md`
-- `.meta-skill/runs/<run-id>/cases/<case-folder>/rpc.jsonl`
+- `.meta-skill/runs/<run-id>/evals/<eval-folder>/response.md`
+- `.meta-skill/runs/<run-id>/evals/<eval-folder>/rpc.jsonl`
 - `tests.jsonl`, `grades.jsonl`, or `feedback.jsonl`
-- case `case.md`, criteria, trace, final output, or artifacts
+- eval `eval.md`, criteria, trace, final output, or artifacts
 - concrete user-observed failure
 
 If evidence is missing, ask the user to run `meta-skill lint` or `meta-skill run`, or to authorize a manual review path.
@@ -47,12 +47,12 @@ Use only lanes relevant to the request:
 - Runtime clarity: default path, output contract, stop/ask points, final checks.
 - Resources: linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - Controls: user files as data, approval gates, external writes, package/publish gates.
-- Eval evidence: `.meta-skill/cases/`, executable tests under `.meta-skill/tests/`, turn evidence quality, token usage visibility.
+- Eval evidence: `.meta-skill/evals/`, executable tests under `.meta-skill/tests/`, transcript quality, token usage visibility.
 
 ## Prompt Doctor Loop
 
 1. Name the observed fail state in plain language.
-2. Separate recurring failure pattern from one-off edge case.
+2. Separate recurring failure pattern from one-off edge eval.
 3. Find the smallest likely source: description, boundary, example, workflow branch, output contract, reference pointer, script contract, or missing gate.
 4. Propose no more than four candidate edits.
 5. Apply only the smallest useful change that removes the ambiguity or wrong encouragement.
@@ -66,7 +66,7 @@ Prefer replacing a misleading sentence over adding a prohibition. Preserve unrel
 ```markdown
 ### Finding: <specific issue>
 
-Evidence: <file path, run ID, case ID, or exact section>
+Evidence: <file path, run ID, eval ID, or exact section>
 Impact: <why future skill behavior suffers>
 Fix: <smallest strong edit>
 ```

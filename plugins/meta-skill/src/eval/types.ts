@@ -1,8 +1,8 @@
-import type { AppServerCaseRunner } from "../app-server/runner.ts";
+import type { AppServerEvalRunner } from "../app-server/runner.ts";
 import type { EvalRunSourceKind } from "../models.ts";
 
 export interface EvalSelector {
-  case?: string[];
+  eval?: string[];
   type?: string;
   topic?: string[];
 }
@@ -15,10 +15,10 @@ export interface EvalRunOptions {
   noLint?: boolean;
   turnTimeoutMs?: number;
   traceBufferEvents?: number;
-  caseRunner?: Pick<AppServerCaseRunner, "run" | "close">;
+  evalRunner?: Pick<AppServerEvalRunner, "run" | "close">;
 }
 
 export type RunFailureClassification =
   | "app_server_unavailable"
   | "runner_unavailable"
-  | "case_error";
+  | "eval_error";

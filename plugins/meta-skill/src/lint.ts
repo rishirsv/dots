@@ -10,8 +10,8 @@ import {
   projectPaths,
   requirePortableSkill
 } from "./project.ts";
-import { caseIdentity, readCase } from "./eval/cases.ts";
-import { isValidTestId, listCaseFolders, listDeterministicTests } from "./eval/discovery.ts";
+import { evalIdentity, readEval } from "./eval/evals.ts";
+import { isValidTestId, listEvalFolders, listDeterministicTests } from "./eval/discovery.ts";
 
 const execAsync = promisify(exec);
 
@@ -262,18 +262,19 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
   const p = projectPaths(root);
   if (!(await exists(p.spec))) failures.push(issue("failure", ".meta-skill/spec.md is missing", p.spec));
   else await validateSpecPlaceholders(p.spec, warnings);
+  if (!(await exists(p.evalScenarios))) failures.push(issue("failure", ".meta-skill/eval-scenarios.md is missing", p.evalScenarios));
 
   const testIds = await validateTests(root, p.tests, failures);
 
-  if (!(await exists(p.cases))) {
-    warnings.push(issue("warning", "no eval cases folder yet", p.cases));
+  if (!(await exists(p.evals))) {
+    warnings.push(issue("warning", "no evals folder yet", p.evals));
     return;
   }
-  const caseFolders = await listCaseFolders(p.cases);
-  if (!caseFolders.length) warnings.push(issue("warning", "no eval cases yet", p.cases));
+  const evalFolders = await listEvalFolders(p.evals);
+  if (!evalFolders.length) warnings.push(issue("warning", "no evals yet", p.evals));
   const seenIds = new Set<string>();
-  for (const folder of caseFolders) {
-    await validateCase(path.join(p.cases, folder), folder, seenIds, testIds, failures, warnings);
+  for (const folder of evalFolders) {
+    await validateEval(path.join(p.evals, folder), folder, seenIds, testIds, failures, warnings);
   }
 
   if ((await exists(path.join(root, "scripts"))) && (await hasFiles(path.join(root, "scripts")))) {
@@ -284,8 +285,8 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
   }
 }
 
-async function validateCase(
-  caseDir: string,
+async function validateEval(
+  evalDir: string,
   folder: string,
   seenIds: Set<string>,
   testIds: Set<string>,
@@ -293,45 +294,45 @@ async function validateCase(
   warnings: Issue[]
 ): Promise<void> {
   try {
-    caseIdentity(folder);
+    evalIdentity(folder);
   } catch (error) {
-    failures.push(issue("failure", error instanceof Error ? error.message : String(error), caseDir));
+    failures.push(issue("failure", error instanceof Error ? error.message : String(error), evalDir));
   }
-  const caseMd = path.join(caseDir, "case.md");
-  if (!(await exists(caseMd))) {
-    failures.push(issue("failure", "case is missing case.md", caseMd));
+  const evalMd = path.join(evalDir, "eval.md");
+  if (!(await exists(evalMd))) {
+    failures.push(issue("failure", "eval is missing eval.md", evalMd));
     return;
   }
 
   let item;
   try {
-    item = await readCase(caseDir, folder);
+    item = await readEval(evalDir, folder);
   } catch (error) {
-    failures.push(issue("failure", error instanceof Error ? error.message : String(error), caseMd));
+    failures.push(issue("failure", error instanceof Error ? error.message : String(error), evalMd));
     return;
   }
-  if (seenIds.has(item.id)) failures.push(issue("failure", `duplicate case id: ${item.id}`, caseMd));
+  if (seenIds.has(item.id)) failures.push(issue("failure", `duplicate eval id: ${item.id}`, evalMd));
   seenIds.add(item.id);
-  if (!item.metadata.title) warnings.push(issue("warning", "case title is empty", caseMd));
+  if (!item.metadata.title) warnings.push(issue("warning", "eval title is empty", evalMd));
 
-  if (!item.criteria.expected_behavior) failures.push(issue("failure", "case criteria.expected_behavior is required", caseMd));
-  if (!Array.isArray(item.criteria.assertions) || !item.criteria.assertions.length) failures.push(issue("failure", "case criteria.assertions must include at least one assertion", caseMd));
+  if (!item.criteria.expected_behavior) failures.push(issue("failure", "eval criteria.expected_behavior is required", evalMd));
+  if (!Array.isArray(item.criteria.assertions) || !item.criteria.assertions.length) failures.push(issue("failure", "eval criteria.assertions must include at least one assertion", evalMd));
   for (const testId of item.criteria.tests || []) {
-    if (!testIds.has(testId)) failures.push(issue("failure", `criteria references missing test id: ${testId}`, caseMd));
+    if (!testIds.has(testId)) failures.push(issue("failure", `criteria references missing test id: ${testId}`, evalMd));
   }
-  if (!(item.criteria.tests || []).length) warnings.push(issue("warning", `${item.id} has no deterministic tests`, caseMd));
+  if (!(item.criteria.tests || []).length) warnings.push(issue("warning", `${item.id} has no deterministic tests`, evalMd));
 
   const declared = new Set((item.metadata.fixtures || []).map((fixture) => fixture.path));
-  const fixtureFiles = await listFixtureFiles(path.join(caseDir, "fixtures"));
+  const fixtureFiles = await listFixtureFiles(path.join(evalDir, "fixtures"));
   for (const fixture of declared) {
-    const resolved = path.resolve(caseDir, fixture);
-    const relative = path.relative(caseDir, resolved);
-    if (!fixture.startsWith("fixtures/")) failures.push(issue("failure", `fixture path must live under fixtures/: ${fixture}`, caseMd));
-    if (relative.startsWith("..") || path.isAbsolute(relative)) failures.push(issue("failure", `fixture path escapes case folder: ${fixture}`, caseMd));
-    if (!(await exists(resolved))) failures.push(issue("failure", `declared fixture does not exist: ${fixture}`, caseMd));
+    const resolved = path.resolve(evalDir, fixture);
+    const relative = path.relative(evalDir, resolved);
+    if (!fixture.startsWith("fixtures/")) failures.push(issue("failure", `fixture path must live under fixtures/: ${fixture}`, evalMd));
+    if (relative.startsWith("..") || path.isAbsolute(relative)) failures.push(issue("failure", `fixture path escapes eval folder: ${fixture}`, evalMd));
+    if (!(await exists(resolved))) failures.push(issue("failure", `declared fixture does not exist: ${fixture}`, evalMd));
   }
   for (const fixture of fixtureFiles) {
-    if (!declared.has(fixture)) failures.push(issue("failure", `fixture is present but undeclared: ${fixture}`, caseMd));
+    if (!declared.has(fixture)) failures.push(issue("failure", `fixture is present but undeclared: ${fixture}`, evalMd));
   }
 }
 

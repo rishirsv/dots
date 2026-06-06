@@ -28,7 +28,7 @@ Each command has one side-effect class:
 
 | Class | Commands | Meaning |
 |---|---|---|
-| Transform | `create`, `project init`, `package` | Write files the user authorized |
+| Transform | `create`, `project init`, `evals create`, `package` | Write files the user authorized |
 | Projection | `lint` | Inspect current state without mutating run evidence |
 | Producer | `run` | Record new eval evidence under `.meta-skill/runs/` |
 
@@ -51,6 +51,7 @@ plugin:
 
 ```bash
 meta-skill create <skill-dir> --project --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
+meta-skill evals create <skill-dir>
 meta-skill lint <skill-dir>
 meta-skill run <skill-dir>
 ```
@@ -76,8 +77,9 @@ Use only these top-level commands:
 ```bash
 meta-skill create [skill-dir] [--project] --slug <slug> --title <title> --description <text> --job <text>
 meta-skill project init <skill-dir>
+meta-skill evals create <project>
 meta-skill lint <project-or-skill> [--json]
-meta-skill run <project> [--case <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
+meta-skill run <project> [--eval <id>] [--type <R|F|G>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
 meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 ```
 
@@ -99,8 +101,8 @@ use it only when the user has clearly authorized replacement.
 Use `create` after the Current Understanding is settled.
 
 `create` writes `SKILL.md` and `agents/openai.yaml`. With `--project`, it also
-creates `.meta-skill/spec.md`, `.meta-skill/cases/`, `.meta-skill/runs/`, and
-`.meta-skill/tests/`.
+creates `.meta-skill/spec.md`, `.meta-skill/eval-scenarios.md`,
+`.meta-skill/evals/`, `.meta-skill/runs/`, and `.meta-skill/tests/`.
 
 The generated scaffold is a starting point, not the final authored skill. After
 creation, edit the portable payload from the Current Understanding, link every
@@ -114,8 +116,9 @@ discipline.
 It requires a root with `SKILL.md` and adds `.meta-skill/` in place. It does not
 nest, move, or copy the portable payload.
 
-Next step: add or refine `.meta-skill/spec.md`, manually author cases under
-`.meta-skill/cases/<ID-slug>/`, then run `lint`.
+Next step: add or refine `.meta-skill/spec.md` and
+`.meta-skill/eval-scenarios.md`, then run `meta-skill evals create <skill-dir>`
+or manually author evals under `.meta-skill/evals/<ID-slug>/`.
 
 ## Lint
 
@@ -126,24 +129,34 @@ Use `lint` after create, after edits, before runs, and before packaging.
 - `SKILL.md` frontmatter, trigger wording, `not for` boundary, and body.
 - `agents/openai.yaml` metadata when present.
 - Runtime references, scripts, and assets are directly linked from `SKILL.md`.
-- `.meta-skill/spec.md`, case folders, case frontmatter, fixtures, and
+- `.meta-skill/spec.md`, eval folders, eval frontmatter, fixtures, and
   deterministic test IDs when project mode exists.
 - Executable deterministic tests directly under `.meta-skill/tests/`.
 
 `lint --json` is the machine-readable form. Human-readable lint output may end
 with `OK: no failures (...)` even when advisory warnings remain.
 
+## Evals Create
+
+Use `evals create` when `.meta-skill/eval-scenarios.md` has a filled Scenario
+Plan table and the user wants draft executable eval files.
+
+The command reads `.meta-skill/eval-scenarios.md` and creates missing
+`.meta-skill/evals/<ID-slug>/eval.md` drafts. It preserves the scenario plan as
+the high-level create-time artifact; the generated `eval.md` files are the
+evaluate-time artifacts to refine before running.
+
 ## Run
 
-Use `run` only for project skills with manually authored cases.
+Use `run` only for project skills with authored evals.
 
-Case folders live at `.meta-skill/cases/<ID-slug>/`, where the ID starts with:
+Eval folders live at `.meta-skill/evals/<ID-slug>/`, where the ID starts with:
 
 - `R`: regression behavior the skill should preserve.
 - `F`: failure mode, ambiguity, or hard multi-turn behavior.
 - `G`: gate behavior such as approval, safe stop, or safe default.
 
-Select cases with `--case <id-or-folder>`, `--type <R|F|G>`, or
+Select evals with `--eval <id-or-folder>`, `--type <R|F|G>`, or
 `--topic <topic>`. Use `--label` to make the run folder easier to recognize.
 
 By default, `run` evaluates the current working payload. It snapshots that
@@ -151,7 +164,7 @@ payload into the run folder before execution. Use `--no-skill` for no-skill
 control evidence. A run evaluates one source only; do not mix candidate and
 baseline evidence in the same run.
 
-Use `--turn-timeout-ms` only when a real case needs a longer or shorter turn
+Use `--turn-timeout-ms` only when a real eval needs a longer or shorter turn
 timeout. Use `--trace-buffer-events` when trace extraction needs a larger
 in-memory event window. `rpc.jsonl` remains the durable raw trace.
 
@@ -165,14 +178,14 @@ Run evidence is saved under:
 ```text
 .meta-skill/runs/<run-id>/
   payload/                 working-payload runs only
-  cases/<case-folder>/
-    case.md                frozen case definition
+  evals/<eval-folder>/
+    eval.md                frozen eval definition
     rpc.jsonl              raw App Server trace
-    turn-evidence.json     normalized turn evidence
-    final.md               final assistant answer
+    transcript.json         normalized transcript
+    response.md             final assistant answer
 ```
 
-Inspect `final.md` for the answer, `turn-evidence.json` for normalized commands,
+Inspect `response.md` for the answer, `transcript.json` for normalized commands,
 tool calls, approvals, unknown methods, and token usage, and `rpc.jsonl` for the
 raw audit trail.
 
@@ -184,7 +197,7 @@ Working-payload runs force-attach the skill on the first turn, so they measure
 mounted-skill behavior. They do not prove true trigger routing or writable
 file-output behavior.
 
-If App Server token metrics are unavailable, `turn-evidence.json` records null
+If App Server token metrics are unavailable, `transcript.json` records null
 numeric token fields plus `unavailable_reason`. Do not hide or backfill missing
 token usage.
 
@@ -228,4 +241,4 @@ accepted.
 
 Evidence-backed edits belong to the improve lane. Name the evidence first, edit
 the working portable payload only after the user has asked for edit mode, then
-rerun `lint` and relevant `run` cases.
+rerun `lint` and relevant `run` evals.

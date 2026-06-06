@@ -3,40 +3,40 @@ import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
-import { AppServerCaseRunner } from "./runner.ts";
-import type { CaseRecord } from "../models.ts";
+import { AppServerEvalRunner } from "./runner.ts";
+import type { EvalRecord } from "../models.ts";
 import { exists, readText, writeText } from "../project.ts";
 
-describe("AppServerCaseRunner", () => {
-  it("writes rpc, turn evidence, and final per case and returns usage", async () => {
+describe("AppServerEvalRunner", () => {
+  it("writes rpc, transcript, and final per eval and returns usage", async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-"));
     const runRoot = path.join(root, "run");
     const skillRoot = path.join(root, "skill");
     await fs.mkdir(skillRoot, { recursive: true });
     await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: demo\n---\n# Demo\n");
     const fake = new FakeClient();
-    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+    const runner = new AppServerEvalRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
 
     const result = await runner.run({
       projectRoot: skillRoot,
       skillRoot,
       skill_activation: "forced",
-      case: caseRecord(root),
+      eval: caseRecord(root),
       runSource: { kind: "working_payload", label: "Working payload", skill_root: "payload", skill_activation: "forced" },
       runId: "001-test",
       runRoot,
       appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    const caseRoot = path.join(runRoot, "cases", "R1-basic");
-    assert.equal(await exists(path.join(caseRoot, "rpc.jsonl")), true);
-    assert.equal(await exists(path.join(caseRoot, "turn-evidence.json")), true);
-    assert.equal(await exists(path.join(caseRoot, "final.md")), true);
-    assert.equal(result.turn_evidence_path, path.join(caseRoot, "turn-evidence.json"));
+    const evalRoot = path.join(runRoot, "evals", "R1-basic");
+    assert.equal(await exists(path.join(evalRoot, "rpc.jsonl")), true);
+    assert.equal(await exists(path.join(evalRoot, "transcript.json")), true);
+    assert.equal(await exists(path.join(evalRoot, "response.md")), true);
+    assert.equal(result.transcript_path, path.join(evalRoot, "transcript.json"));
     assert.equal(result.token_usage.total_tokens, 24);
-    assert.match(await readText(path.join(caseRoot, "final.md")), /final answer/);
-    const turnEvidence = JSON.parse(await readText(path.join(caseRoot, "turn-evidence.json")));
-    assert.equal(turnEvidence.turns[0].finalText, "final answer");
+    assert.match(await readText(path.join(evalRoot, "response.md")), /final answer/);
+    const transcript = JSON.parse(await readText(path.join(evalRoot, "transcript.json")));
+    assert.equal(transcript.turns[0].finalText, "final answer");
   });
 
   it("writes an unavailable final warning instead of reusing an earlier turn final after trace overflow", async () => {
@@ -46,28 +46,28 @@ describe("AppServerCaseRunner", () => {
     await fs.mkdir(skillRoot, { recursive: true });
     await writeText(path.join(skillRoot, "SKILL.md"), "---\nname: demo\n---\n# Demo\n");
     const fake = new OverflowFakeClient();
-    const runner = new AppServerCaseRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25, maxTraceEvents: 4 });
+    const runner = new AppServerEvalRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25, maxTraceEvents: 4 });
 
     await runner.run({
       projectRoot: skillRoot,
       skillRoot,
       skill_activation: "forced",
-      case: { ...caseRecord(root), turns: [{ content: "Follow up." }] },
+      eval: { ...caseRecord(root), turns: [{ content: "Follow up." }] },
       runSource: { kind: "working_payload", label: "Working payload", skill_root: "payload", skill_activation: "forced" },
       runId: "001-test",
       runRoot,
       appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    const caseRoot = path.join(runRoot, "cases", "R1-basic");
-    const final = await readText(path.join(caseRoot, "final.md"));
+    const evalRoot = path.join(runRoot, "evals", "R1-basic");
+    const final = await readText(path.join(evalRoot, "response.md"));
     assert.doesNotMatch(final, /first turn final/);
     assert.match(final, /Final assistant message unavailable for turn turn-2/);
     assert.match(final, /rpc\.jsonl/);
-    const turnEvidence = JSON.parse(await readText(path.join(caseRoot, "turn-evidence.json")));
-    assert.equal(turnEvidence.turns[0].finalText, "first turn final");
-    assert.match(turnEvidence.turns[1].finalText, /Final assistant message unavailable/);
-    assert.equal(turnEvidence.turns[1].items.some((item: { type?: string; method?: string }) => item.type === "warning" && item.method === "metaSkill/traceBuffer/overflow"), true);
+    const transcript = JSON.parse(await readText(path.join(evalRoot, "transcript.json")));
+    assert.equal(transcript.turns[0].finalText, "first turn final");
+    assert.match(transcript.turns[1].finalText, /Final assistant message unavailable/);
+    assert.equal(transcript.turns[1].items.some((item: { type?: string; method?: string }) => item.type === "warning" && item.method === "metaSkill/traceBuffer/overflow"), true);
   });
 });
 
@@ -131,7 +131,7 @@ class OverflowFakeClient {
   }
 }
 
-function caseRecord(root: string): CaseRecord {
+function caseRecord(root: string): EvalRecord {
   return {
     folder: "R1-basic",
     id: "R1",

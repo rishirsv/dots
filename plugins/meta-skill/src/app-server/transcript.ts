@@ -3,24 +3,24 @@ import { unavailableTokenUsage } from "../project.ts";
 import { tokenUsageFromAppServer } from "./evidence.ts";
 import type { AppServerTraceLine } from "./trace.ts";
 
-export interface TurnEvidence {
+export interface Transcript {
   source: "codex_app_server";
   threadId: string;
-  turns: TurnEvidenceTurn[];
+  turns: TranscriptTurn[];
 }
 
-export interface TurnEvidenceTurn {
+export interface TranscriptTurn {
   threadId: string;
   turnId: string;
   status: string | null;
   finalText: string;
   tokenUsage: TokenUsage;
-  items: TurnEvidenceItem[];
-  approvals: TurnEvidenceApproval[];
+  items: TranscriptItem[];
+  approvals: TranscriptApproval[];
   unknownMethods: string[];
 }
 
-export interface TurnEvidenceItem {
+export interface TranscriptItem {
   id: string | null;
   type: string;
   status?: string | null;
@@ -40,7 +40,7 @@ export interface TurnEvidenceItem {
   raw?: unknown;
 }
 
-export interface TurnEvidenceApproval {
+export interface TranscriptApproval {
   requestId: string | null;
   method: string;
   itemId: string | null;
@@ -52,7 +52,7 @@ export interface TurnEvidenceApproval {
   sandboxRelevant: boolean;
 }
 
-export interface TurnEvidenceSummary {
+export interface TranscriptSummary {
   turn_count: number;
   item_count: number;
   command_executions: number;
@@ -62,10 +62,10 @@ export interface TurnEvidenceSummary {
   unknown_methods: string[];
 }
 
-export function collectTurnEvidence(events: unknown[], selector: { threadId: string; turnId: string }): TurnEvidenceTurn {
-  const itemById = new Map<string, TurnEvidenceItem>();
-  const anonymousItems: TurnEvidenceItem[] = [];
-  const approvals = new Map<string, TurnEvidenceApproval>();
+export function collectTranscript(events: unknown[], selector: { threadId: string; turnId: string }): TranscriptTurn {
+  const itemById = new Map<string, TranscriptItem>();
+  const anonymousItems: TranscriptItem[] = [];
+  const approvals = new Map<string, TranscriptApproval>();
   const unknownMethods = new Set<string>();
   const finalDeltas: string[] = [];
   let completedFinalText: string | undefined;
@@ -145,21 +145,21 @@ export function collectTurnEvidence(events: unknown[], selector: { threadId: str
   };
 }
 
-export function summarizeTurnEvidence(turnEvidence: TurnEvidence): TurnEvidenceSummary {
-  const items = turnEvidence.turns.flatMap((turn) => turn.items);
-  const unknown = new Set(turnEvidence.turns.flatMap((turn) => turn.unknownMethods));
+export function summarizeTranscript(transcript: Transcript): TranscriptSummary {
+  const items = transcript.turns.flatMap((turn) => turn.items);
+  const unknown = new Set(transcript.turns.flatMap((turn) => turn.unknownMethods));
   return {
-    turn_count: turnEvidence.turns.length,
+    turn_count: transcript.turns.length,
     item_count: items.length,
     command_executions: items.filter((item) => item.type === "commandExecution").length,
     file_changes: items.filter((item) => item.type === "fileChange").length,
     tool_calls: items.filter((item) => item.type === "mcpToolCall" || item.type === "dynamicToolCall" || item.type === "collabAgentToolCall" || item.type === "collabToolCall").length,
-    approval_requests: turnEvidence.turns.reduce((sum, turn) => sum + turn.approvals.length, 0),
+    approval_requests: transcript.turns.reduce((sum, turn) => sum + turn.approvals.length, 0),
     unknown_methods: [...unknown].sort()
   };
 }
 
-export function formatTurnEvidenceSummary(summary: TurnEvidenceSummary): string {
+export function formatTranscriptSummary(summary: TranscriptSummary): string {
   const parts = [
     `${summary.turn_count} turn${summary.turn_count === 1 ? "" : "s"}`,
     `${summary.item_count} item${summary.item_count === 1 ? "" : "s"}`,
@@ -214,11 +214,11 @@ function turnStatus(params: Record<string, unknown>): string | null {
   return stringValue(objectValue(params.turn).status) || stringValue(params.status) || "completed";
 }
 
-function itemFrom(raw: unknown, method: string): TurnEvidenceItem | undefined {
+function itemFrom(raw: unknown, method: string): TranscriptItem | undefined {
   const item = objectValue(raw);
   const type = stringValue(item.type);
   if (!type) return undefined;
-  const base: TurnEvidenceItem = {
+  const base: TranscriptItem = {
     id: idValue(item.id),
     type,
     status: stringValue(item.status),
@@ -251,7 +251,7 @@ function itemFrom(raw: unknown, method: string): TurnEvidenceItem | undefined {
   return base;
 }
 
-function deltaItemFrom(method: string, params: Record<string, unknown>): TurnEvidenceItem | undefined {
+function deltaItemFrom(method: string, params: Record<string, unknown>): TranscriptItem | undefined {
   const itemId = idValue(params.itemId);
   if (method === "item/commandExecution/outputDelta" || method === "item/commandExecution/terminalInteraction") {
     return { id: itemId, type: "commandExecution", method, output: stringValue(params.delta) || stringValue(params.output) || "" };
@@ -264,7 +264,7 @@ function deltaItemFrom(method: string, params: Record<string, unknown>): TurnEvi
   return undefined;
 }
 
-function upsertItem(items: Map<string, TurnEvidenceItem>, anonymousItems: TurnEvidenceItem[], next: TurnEvidenceItem): void {
+function upsertItem(items: Map<string, TranscriptItem>, anonymousItems: TranscriptItem[], next: TranscriptItem): void {
   if (!next.id) {
     anonymousItems.push(next);
     return;
@@ -281,7 +281,7 @@ function upsertItem(items: Map<string, TurnEvidenceItem>, anonymousItems: TurnEv
   });
 }
 
-function approvalFrom(method: string, requestId: string | null, params: Record<string, unknown>): TurnEvidenceApproval {
+function approvalFrom(method: string, requestId: string | null, params: Record<string, unknown>): TranscriptApproval {
   return {
     requestId,
     method,
@@ -294,12 +294,12 @@ function approvalFrom(method: string, requestId: string | null, params: Record<s
   };
 }
 
-function pairApprovalResponse(approvals: Map<string, TurnEvidenceApproval>, envelope: AppServerTraceLine, message: Record<string, unknown>): void {
+function pairApprovalResponse(approvals: Map<string, TranscriptApproval>, envelope: AppServerTraceLine, message: Record<string, unknown>): void {
   const id = idValue(message.id);
   if (!id || envelope.direction !== "client") return;
   const key = findApprovalKey(approvals, id, null);
   if (!key) return;
-  const approval = approvals.get(key) as TurnEvidenceApproval;
+  const approval = approvals.get(key) as TranscriptApproval;
   approvals.set(key, { ...approval, status: "responded", decision: objectValue(message.result).decision || objectValue(message.params).decision || message.result });
 }
 
@@ -311,7 +311,7 @@ function approvalKey(requestId: string | null, approvalId: string | null, method
   return requestId || approvalId || method;
 }
 
-function findApprovalKey(approvals: Map<string, TurnEvidenceApproval>, requestId: string | null, approvalId: string | null): string | undefined {
+function findApprovalKey(approvals: Map<string, TranscriptApproval>, requestId: string | null, approvalId: string | null): string | undefined {
   for (const [key, approval] of approvals) {
     if (requestId && approval.requestId === requestId) return key;
     if (approvalId && approval.approvalId === approvalId) return key;

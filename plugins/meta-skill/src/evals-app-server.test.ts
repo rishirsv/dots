@@ -3,44 +3,44 @@ import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
-import type { CaseRunInput, CaseRunResult } from "./app-server/runner.ts";
+import type { EvalRunInput, EvalRunResult } from "./app-server/runner.ts";
 import type { TokenUsage } from "./models.ts";
 import { runEval } from "./evals.ts";
 import { createSkill } from "./skills.ts";
 import { ensureDir, exists, readText, writeText } from "./project.ts";
 
 describe("eval evidence hard cut", () => {
-  it("writes only the hard-cut per-case evidence files", async () => {
+  it("writes only the hard-cut per-eval evidence files", async () => {
     const project = await fixtureProject("fact-run");
     await writeCase(project);
     const result = await runEval({
       project,
       selector: {},
       noLint: true,
-      caseRunner: caseRunner()
+      evalRunner: evalRunner()
     });
 
     assert.equal(await exists(path.join(result.runRoot, "facts.jsonl")), false);
     assert.equal(await exists(path.join(result.runRoot, "payload", "SKILL.md")), true);
-    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "case.md")), true);
-    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "rpc.jsonl")), true);
-    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "turn-evidence.json")), true);
-    assert.equal(await exists(path.join(result.runRoot, "cases", "R1-basic", "final.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "evals", "R1-basic", "eval.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "evals", "R1-basic", "rpc.jsonl")), true);
+    assert.equal(await exists(path.join(result.runRoot, "evals", "R1-basic", "transcript.json")), true);
+    assert.equal(await exists(path.join(result.runRoot, "evals", "R1-basic", "response.md")), true);
 
-    assert.deepEqual(result.cases, ["R1-basic"]);
-    const turnEvidence = JSON.parse(await readText(path.join(result.runRoot, "cases", "R1-basic", "turn-evidence.json")));
-    assert.equal((turnEvidence.turns[0].tokenUsage as TokenUsage).total_tokens, 2);
+    assert.deepEqual(result.evals, ["R1-basic"]);
+    const transcript = JSON.parse(await readText(path.join(result.runRoot, "evals", "R1-basic", "transcript.json")));
+    assert.equal((transcript.turns[0].tokenUsage as TokenUsage).total_tokens, 2);
   });
 });
 
-function caseRunner() {
+function evalRunner() {
   return {
-    async run(input: CaseRunInput): Promise<CaseRunResult> {
-      const caseRoot = path.join(input.runRoot, "cases", input.case.folder);
-      await ensureDir(caseRoot);
-      await writeText(path.join(caseRoot, "rpc.jsonl"), JSON.stringify({ direction: "server", message: { ok: true } }));
+    async run(input: EvalRunInput): Promise<EvalRunResult> {
+      const evalRoot = path.join(input.runRoot, "evals", input.eval.folder);
+      await ensureDir(evalRoot);
+      await writeText(path.join(evalRoot, "rpc.jsonl"), JSON.stringify({ direction: "server", message: { ok: true } }));
       await writeText(
-        path.join(caseRoot, "turn-evidence.json"),
+        path.join(evalRoot, "transcript.json"),
         `${JSON.stringify({
           source: "codex_app_server",
           threadId: "thread",
@@ -58,14 +58,14 @@ function caseRunner() {
           ]
         })}\n`
       );
-      await writeText(path.join(caseRoot, "final.md"), "Final answer.");
+      await writeText(path.join(evalRoot, "response.md"), "Final answer.");
       return {
         execution_status: "completed",
         token_usage: tokenUsageEvidence(1, 1, 2),
-        final_path: path.join(caseRoot, "final.md"),
-        rpc_path: path.join(caseRoot, "rpc.jsonl"),
-        turn_evidence_path: path.join(caseRoot, "turn-evidence.json"),
-        evidence_path: path.join("cases", input.case.folder),
+        response_path: path.join(evalRoot, "response.md"),
+        rpc_path: path.join(evalRoot, "rpc.jsonl"),
+        transcript_path: path.join(evalRoot, "transcript.json"),
+        evidence_path: path.join("evals", input.eval.folder),
         turn_ids: ["turn"]
       };
     },
@@ -88,10 +88,10 @@ async function fixtureProject(slug: string): Promise<string> {
 }
 
 async function writeCase(project: string): Promise<void> {
-  const caseRoot = path.join(project, ".meta-skill", "cases", "R1-basic");
-  await ensureDir(caseRoot);
+  const evalRoot = path.join(project, ".meta-skill", "evals", "R1-basic");
+  await ensureDir(evalRoot);
   await writeText(
-    path.join(caseRoot, "case.md"),
+    path.join(evalRoot, "eval.md"),
     `---
 title: Basic
 criteria:

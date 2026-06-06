@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evaluate Skill"
+  short_description: "Design and run App Server-backed skill evals"
+  default_prompt: "Use $evaluate-skill to initialize, run, inspect, or audit .meta-skill evals with the meta-skill CLI."
