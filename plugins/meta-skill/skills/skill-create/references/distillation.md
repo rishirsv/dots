@@ -11,9 +11,9 @@ Use [design.md](design.md) for skill-or-not, trigger contract, body shape, and g
 ## Contents
 
 - Distillation flow (5 steps).
-- Mechanism Gates (5 hard gates with override paths).
-- Engagement-leak Failure Modes (4 named patterns).
-- Rule Surface Form (language-level discipline).
+- Rule gates (5 checks each rule must pass).
+- How engagement details leak in (4 patterns to scan for).
+- How to phrase rules (language-level discipline).
 - Examples in the Runtime Skill (when concrete content is allowed).
 - What is NOT a Source.
 - Source Provenance (`source_ref` requirement).
@@ -22,12 +22,12 @@ Use [design.md](design.md) for skill-or-not, trigger contract, body shape, and g
 ## Distillation Flow
 
 1. **Classify source roles.** Label each pack item: raw inputs, finished outputs, templates, process notes, rubrics or checklists, rejected or noisy examples, or sensitive one-off material. Items without a clear procedural role stay in project docs, not the runtime.
-2. **Pair inputs to outputs.** For each reusable output section, identify which input files, fields, tabs, excerpts, or calculations informed it. A rule cannot earn its place without ≥2 input-output pairs supporting it (see Mechanism Gates).
-3. **Classify and extract transformations.** Before writing each rule, name its transformation type: normalization, structural reshape, categorization, calculation, judgment move, caveat pattern, or check. Then state the rule in procedural form (see Rule Surface Form). Categorical labeling forces abstraction before drafting.
-4. **Validate against Mechanism Gates.** Each candidate rule must pass all five gates. Single-engagement evidence triggers a "needs human review" flag in the spec.
+2. **Pair inputs to outputs.** For each reusable output section, identify which input files, fields, tabs, excerpts, or calculations informed it. A rule cannot earn its place without ≥2 input-output pairs supporting it (see Rule Gates).
+3. **Classify and extract transformations.** Before writing each rule, name its transformation type: normalization, structural reshape, categorization, calculation, judgment move, caveat pattern, or check. Then state the rule in procedural form (see How to Phrase Rules). Categorical labeling forces abstraction before drafting.
+4. **Validate against the rule gates.** Each candidate rule must pass all five gates. Single-engagement evidence triggers a "needs human review" flag in the spec.
 5. **Map and finalize.** Decide which `SKILL.md` section each surviving rule belongs to. Attach a `source_ref` to each rule in the project spec, never in the runtime. Source pack, raw pairings, rejected candidates, and engagement-specific evidence stay in project docs.
 
-## Mechanism Gates
+## Rule Gates
 
 A candidate rule must pass all five before landing in the runtime skill:
 
@@ -39,9 +39,9 @@ A candidate rule must pass all five before landing in the runtime skill:
 
 One gate failure rejects the rule. One human-review flag records the rule in the spec but keeps it out of the runtime until reviewed.
 
-## Engagement-leak Failure Modes
+## How Engagement Details Leak In
 
-These are the named patterns engagement-specific content takes when it slips into a runtime rule. Scan every draft for them:
+These are the patterns engagement-specific content takes when it slips into a runtime rule. Scan every draft for them:
 
 - **Claim rot.** Rule cites volatile numbers, fiscal-year-specific values, or vendor names that will not survive the next engagement. Example: "EBITDA was $4.2M" should become "subtract one-time grants when normalizing EBITDA."
 - **One-source overfit.** Rule's only support is the single past engagement being studied. Flag for human review; do not ship as a general rule.
@@ -49,7 +49,7 @@ These are the named patterns engagement-specific content takes when it slips int
 - **Self-citation.** Rule cites the past output as authority for itself. The past output is evidence the rule was applied once; it is not authority for the rule's validity.
 - **Source-tool leakage.** Rule carries through another product, repo, command, plugin, skill, or internal namespace from the source material even though the generated skill should not directly use that dependency. Replace the named surface with the user-facing concept it represents. A provider-specific session-report command should become "generate a local session-insights report" unless the runtime actually calls that command.
 
-## Rule Surface Form
+## How to Phrase Rules
 
 Procedural rules survive across engagements. Instance-specific rules rot on first reuse. Language style enforces the shape:
 

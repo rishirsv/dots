@@ -38,8 +38,6 @@ Project mode adds hidden authoring state:
     cases/<ID-slug>/
     runs/<run-id>/
     tests/
-      unit/
-      eval/
 ```
 
 Use `meta-skill create --project ...` for new project-mode skills and `meta-skill project init <skill-dir>` for an existing portable skill.
@@ -79,7 +77,7 @@ Use `assets/` only for approved reusable runtime materials such as templates, sc
 
 ## Metadata
 
-`agents/openai.yaml` is part of the portable payload when the runtime needs interface metadata. Keep it aligned with `SKILL.md` frontmatter.
+`agents/openai.yaml` is part of the portable payload when the skill needs Codex UI metadata, an invocation policy, or declared tool dependencies. It is optional and holds `interface`, `policy`, and `dependencies` sections only — the skill name and description live in `SKILL.md` frontmatter, not in this file. Keep `display_name` and `default_prompt` consistent with what the skill actually does.
 
 ## Packaging
 

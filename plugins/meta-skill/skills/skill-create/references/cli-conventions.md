@@ -96,14 +96,14 @@ use it only when the user has clearly authorized replacement.
 
 ## Create
 
-Use `create` after the Skill Specification is settled.
+Use `create` after the Current Understanding is settled.
 
 `create` writes `SKILL.md` and `agents/openai.yaml`. With `--project`, it also
 creates `.meta-skill/spec.md`, `.meta-skill/cases/`, `.meta-skill/runs/`, and
 `.meta-skill/tests/unit/`.
 
 The generated scaffold is a starting point, not the final authored skill. After
-creation, edit the portable payload from the Skill Specification, link every
+creation, edit the portable payload from the Current Understanding, link every
 runtime reference/script/asset from `SKILL.md`, and run `lint`.
 
 ## Project Init

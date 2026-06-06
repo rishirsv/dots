@@ -5,7 +5,7 @@ description: Use when turning a workflow, example output, existing skill draft, 
 
 # Skill Create
 
-Create practical reusable skills. The default output is a portable skill payload rooted at the skill directory:
+Create practical, reusable skills. The default output is a portable skill payload rooted at the skill directory:
 
 ```text
 SKILL.md
@@ -15,21 +15,21 @@ scripts/         optional
 assets/          optional
 ```
 
-Add the hidden `.meta-skill/` workbench only when the user requests project mode or clearly needs evals, tests, comparison, team reuse, or a maintained production capability.
+Add the hidden `.meta-skill/` workbench only when the user asks for project mode or clearly needs evals, tests, or comparison runs. Plain portability — "so my team can use it" — does not by itself call for the workbench; a portable payload already travels.
 
 ## Routing
 
-Two decisions precede the build, and neither is a phase.
+Settle two questions before building.
 
 **Is it skill-shaped?** Build a skill only when recurring workflow guidance would change future agent behavior. Weigh the artifact, not the topic: a one-off answer needs nothing durable, a simple preference is a memory or rule, a lightweight repeated prompt is a prompt file, project-specific behavior belongs in a repo doc, and only a portable, recurring, multi-step capability is a skill. If it is not skill-shaped, say so and stop. See the skill-or-not gate in [design.md](references/design.md).
 
-**Where does the context come from?** The build is the single Workflow below. What feeds its Interview depends on the material that already exists:
+**Where does the context come from?** The build is the single workflow below; what feeds its first step depends on the material that already exists:
 
 - A workflow the user ran or referenced in this conversation or a prior session → reconstruct it with [skillify.md](references/skillify.md).
 - Provided source files or a finished-output pack → extract the method with [distillation.md](references/distillation.md).
-- Neither → interview from intent, using comparable skills for defaults.
+- Neither → work from intent, using comparable skills for defaults.
 
-These are context sources, not separate routes. Source material supports the standard workflow; it does not fork it. Most builds combine them — a captured workflow plus a couple of interview confirmations is the common case.
+These are context sources, not separate routes. Source material feeds the standard workflow; it does not fork it. Most builds combine them — a captured workflow plus a couple of confirmations is the common case.
 
 ## Reference Map
 
@@ -37,110 +37,121 @@ Read only what the task needs:
 
 | Need | Read |
 |---|---|
-| Decide whether the workflow should become a skill; write frontmatter, runtime guidance, boundaries, and trigger contract | [design.md](references/design.md) |
-| Turn a workflow from this conversation or a prior session into candidate skill rules (session-to-skill) | [skillify.md](references/skillify.md) |
-| Look up compact snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
-| Distill a source pack or past outputs into reusable runtime guidance without leaking engagement-specific facts | [distillation.md](references/distillation.md) |
+| Decide whether the workflow should become a skill; write frontmatter, runtime guidance, boundaries, and the trigger contract | [design.md](references/design.md) |
+| Hold the right voice, tone, and syntax while drafting | [design.md](references/design.md) (Voice and Style) |
+| Turn a workflow from this conversation or a prior session into candidate skill rules | [skillify.md](references/skillify.md) |
+| Distill a source pack or past outputs into reusable guidance without leaking engagement-specific facts | [distillation.md](references/distillation.md) |
+| Look up a compact runtime snippet after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Decide what belongs in `SKILL.md`, `references/`, `scripts/`, `assets/`, and `.meta-skill/` | [structure.md](references/structure.md) |
-| Use the shared CLI conventions | [cli-conventions.md](references/cli-conventions.md) |
-| Copy or adapt the project spec shape | [skill-spec-template.md](assets/skill-spec-template.md) |
+| Use the shared CLI | [cli-conventions.md](references/cli-conventions.md) |
+| Capture decisions as a Skill Spec, on request or in project mode | [skill-spec-template.md](assets/skill-spec-template.md) |
 
-## CLI
+## Writing Style
 
-Use the shared TypeScript CLI through the plugin package `meta-skill` bin:
+You are writing instructions a future agent will read while doing the job. Write to that agent, in plain, direct language. The fuller treatment, with before/after examples, is in the Voice and Style section of [design.md](references/design.md); these rules apply to this skill too.
 
-```bash
-meta-skill create <skill-dir> --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
-meta-skill create <skill-dir> --project --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
-meta-skill project init <skill-dir>
-meta-skill lint <skill-dir>
-```
-
-`meta-skill create` scaffolds a portable payload. `--project` adds `.meta-skill/`. `project init` adds `.meta-skill/` to an existing portable skill without moving the payload into a nested folder.
+- **Explain why, not just what.** A short reason ("...so the reader can tell sourced figures from estimates") earns more reliable behavior than a bare command. Models reason well; give them the intent, not only the rule.
+- **Go easy on hard commands.** Stacked MUSTs and all-caps ALWAYS/NEVER are a yellow flag. Before reaching for one, try a clearer section name, an example, or a sentence of reasoning. Reserve absolutes for safety and approval gates.
+- **Lean.** Every line should change behavior. Cut background the base model already knows, motivation, and filler.
+- **Outcome over process.** Define what a good result looks like and let the agent find the steps; spell out a rigid sequence only where order or risk demands it.
+- **Generalize, don't overfit.** Describe the move, not the one example you saw. Name roles and types ("the base period," "the target metric"), not specific values.
+- **Plain names, no house jargon.** Section names should sound like the job ("Normalization," "Review Posture"), not coined brand terms. If a label needs its own gloss to be understood, rename it.
 
 ## Workflow
 
-Run the build as flight phases. Do not generate any file until the Skill Specification is complete.
+Run the build as a short sequence that ends in a created skill within the same working session. Do not scaffold files until the Current Understanding is settled.
 
-### Phase 1 — Interview
+### Step 1 — Understand
 
-The interview is the primary surface. Its job is to complete the **Skill Specification** before anything is scaffolded. Fill every answer from existing context first, then ask only what context cannot answer.
+Start from what you already have. Read the conversation, the provided files, and any captured workflow, and answer as much as possible without asking. Reflect it back to the user as a short **Current Understanding** so they can correct course in one glance:
 
-**Required answer-set.** You must know all of these — pulled from the conversation, from a captured workflow (skillify), from a source pack (distillation), or from a question:
+```md
+Current Understanding
+- Job: extract tables from supplier PDFs into one normalized CSV.
+- Trigger: "pull the line items out of these invoices"; not for summarizing PDF prose.
+- Inputs → output: a folder of PDFs → one CSV with validated columns.
+- Guardrails: never invent a missing value; flag pages that fail to parse.
+- Fragility: deterministic — script-backed extraction and validation.
+- Gates: none; portable-only.
+- Still open: none.
+```
+
+Keep it to a few lines. When everything is settled, say so and move to the build; when something is open, that line drives the questions below.
+
+**Ask only what context cannot answer.** Skip any question the conversation, files, or a skillify/distillation extraction already settle. Skip the questions entirely when the whole picture is already clear, or when the user said "just build it," "no questions," or "one-shot" — take the strongest defensible reading, note any guesses in the Current Understanding, and proceed. Over-asking after the context already answered is the most common failure here.
+
+**What you need to know** before building — pulled from context first, then from a question:
 
 - **Job** — the one recurring job the skill does, not "what we did once."
 - **Trigger** — when it should fire, in real user language, plus the nearest `not for` boundary.
-- **Inputs and output** — what it consumes and the expected output shape.
-- **Invariants and failure shields** — what the skill must always do, what it must never do, and the common mistakes or user corrections to guard against. Usually extracted from source material; ask only when it is absent.
-- **Fragility** — judgment-prose, a fixed shape, or a deterministic script (drives instruction strength).
+- **Inputs and output** — what it consumes and the shape it produces.
+- **Invariants and guardrails** — what the skill must always do, what it must never do, and the mistakes or corrections to guard against. Usually extracted from source material; ask only when absent.
+- **Fragility** — judgment prose, a fixed shape, or a deterministic script (this drives instruction strength).
 - **Gates** — approvals required before external writes or final client-facing delivery.
-- **Project mode** — set up test cases / evals / team reuse, or keep it portable-only.
+- **Project mode** — only when the user wants evals, tests, or comparison runs; otherwise stay portable-only.
 
-**Ask the minimum.** Resolve as many answers as possible from context and from how comparable skills in the library already decide each one. Then ask only the unresolved questions, and prefer lettered multiple choice with a marked default so the user can answer in seconds:
+For the still-open items, ask tight, lettered multiple choice with a recommended default so the user can answer in seconds:
 
 ```md
-Skill Specification — a couple of quick decisions before I scaffold.
+A couple of quick decisions before I build:
 
 1. When should it trigger?
 a) <real user phrasing inferred from context> (recommended)
 b) <broader alternative>
 c) Not sure — use default
 
-2. Set up evals/tests?
+2. Set up evals/tests (project mode)?
 a) Portable-only, no workbench (recommended)
 b) Project mode with `.meta-skill/` cases and tests
-c) Not sure — use default
 
-Reply with: `defaults`, or a compact answer like `1a 2b`.
+Reply with `defaults`, or a compact answer like `1a 2b`.
 ```
 
-Keep the turn shape tight: numbered questions, lettered options, recommended/default marked, one screen, a `defaults` fast path. Always recommend an answer; never ask an open-ended question when a tight multiple-choice eliminates the ambiguity faster.
+Keep it to one screen: numbered questions, lettered options, a marked default, a `defaults` fast path. Always recommend an answer; never ask open-ended when a tight choice resolves it faster.
 
-**Log the result as the Skill Specification** — the create-lane analog of clarify's Common Understanding:
+**Then build.** Once the Current Understanding holds, move straight into the build. The Skill Spec is not the goal — offer it as a choice rather than producing it by default: when the questions are settled, ask whether to **start building now** or **capture the conversation as a Skill Spec** first. Write the spec when the user asks for it, or in project mode, using [skill-spec-template.md](assets/skill-spec-template.md) at `.meta-skill/spec.md`.
 
-- **Job**, **Trigger** (+ `not for`), **Inputs and output**, **Invariants and failure shields**, **Fragility**, **Gates**, **Project mode**, **Still open** (`None` when settled).
+Skipping questions changes the clarification budget, not the quality budget: the build still needs a real job sentence, a real trigger contract, and an output shape. See [design.md](references/design.md) for intake depth and trigger-contract quality.
 
-When project mode exists, persist this to `.meta-skill/spec.md` using [skill-spec-template.md](assets/skill-spec-template.md).
+### Step 2 — Distill (source-derived only)
 
-**When to skip the interview (implicit bypass).** The interview self-bypasses; the user does not have to ask. Skip a question whenever context already answers it, and skip the interview entirely when the whole required answer-set is already settled. Skip cases:
+When the skill comes from a captured workflow (skillify) or a source pack (distillation), run every candidate rule through the gates in [distillation.md](references/distillation.md) before it enters runtime. Skip this step for a from-intent skill with no source material.
 
-- Context complete — the conversation, files, or skillify extraction already answer every required item. Confirm the Specification in one line and proceed.
-- Single-shot — the user said "just build it," "no questions," or "one-shot." Take the strongest defensible interpretation, record unresolved choices in the Specification (and `.meta-skill/spec.md` in project mode), and proceed.
-- Trivial — routing already showed the request is not skill-shaped.
+### Step 3 — Build
 
-Skipping changes the clarification budget, not the quality budget: the Specification still needs a real job sentence, a real trigger contract, and an output shape. See [design.md](references/design.md) for intake depth and trigger-contract quality.
-
-### Phase 2 — Distill (source-derived only)
-
-When the skill is source-derived — a captured workflow via skillify, or a source pack via distillation — run every candidate rule through the Mechanism Gates and Rule Surface Form in [distillation.md](references/distillation.md) before it enters runtime. Generalize named products, repos, commands, or skills to the user-facing concept unless the runtime actually invokes them. Skip this phase for a from-intent skill with no source material.
-
-### Phase 3 — Generate the scaffold
-
-With the Specification complete, scaffold the payload:
+With the Current Understanding settled, scaffold the payload, then draft it following the Writing Style above:
 
 ```bash
 meta-skill create <skill-dir> --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
 ```
 
-Add `--project` when the Specification chose project mode. Then draft the runtime payload from the Specification: use [design.md](references/design.md) for body shape, [cookbook.md](references/cookbook.md) for snippet shapes, and [structure.md](references/structure.md) for references, scripts, and assets.
+Add `--project` only in project mode. Then draft the runtime payload: use [design.md](references/design.md) for body shape, [cookbook.md](references/cookbook.md) for snippet shapes, and [structure.md](references/structure.md) for references, scripts, and assets.
 
-### Phase 4 — Validate and stop
+### Step 4 — Validate and stop
 
-Run `meta-skill lint <skill-dir>`. Stop before packaging, install, publish, sync, source edits, external writes, or final client/user-facing delivery unless the user explicitly asks. Hand off review, evals, or evidence-backed edits to `skill-eval` or `skill-improve` rather than crossing lanes silently.
+Run `meta-skill lint <skill-dir>`. Stop before packaging, install, publish, sync, source edits, external writes, or final client/user-facing delivery unless the user explicitly asks. Hand off review, evals, or evidence-backed edits to `skill-eval` or `skill-improve` rather than crossing lanes.
+
+## CLI
+
+Use the shared TypeScript CLI through the `meta-skill` plugin bin. The full command contract is in [cli-conventions.md](references/cli-conventions.md).
+
+```bash
+meta-skill create <skill-dir> --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"
+meta-skill create <skill-dir> --project ...   # also scaffolds .meta-skill/
+meta-skill project init <skill-dir>           # adds .meta-skill/ to an existing portable skill
+meta-skill lint <skill-dir>
+```
 
 ## Runtime Payload Rules
 
 - Keep build notes, review notes, raw source examples, and eval evidence out of the portable payload.
-- When source material names another product, repo, command, plugin, or skill, generalize it to the user-facing concept unless the generated skill directly invokes that dependency as part of its runtime workflow.
-- Quote or escape YAML frontmatter values when they contain punctuation.
-- `agents/openai.yaml` should use supported Codex metadata (`name` and `description`) unless a documented interface shape is intentionally used.
-- Add runtime references, scripts, or assets only when they are real reusable materials.
-- Link every runtime reference, script, or asset directly from `SKILL.md`.
-- Runtime scripts should get or recommend executable unit tests in `.meta-skill/tests/unit/` when project mode exists.
+- Generalize a named product, repo, command, plugin, or skill to the user-facing concept unless the generated skill directly invokes it at runtime.
+- Quote or escape YAML frontmatter values that contain punctuation.
+- `agents/openai.yaml` is optional Codex metadata: an `interface` block (`display_name`, `short_description`, `icon_small`, `icon_large`, `brand_color`, `default_prompt`), a `policy` block (`allow_implicit_invocation`), and `dependencies`. The skill name and description live in `SKILL.md` frontmatter, not here. See [cookbook.md](references/cookbook.md) for the shape.
+- Add references, scripts, or assets only when they are real reusable materials, and link each one directly from `SKILL.md`.
+- In project mode, give runtime scripts executable unit tests in `.meta-skill/tests/unit/`.
 - Add human gates before packaging, installing, publishing, syncing, source edits, external writes, or final client/user-facing delivery.
 
 ## Output
 
-For new builds, report the path, files created, routing path taken, Skill Specification (job, trigger contract, nearest non-trigger boundary), resources added or omitted, project-mode decision, lint result, and any spec gaps.
-
-For review, eval, or evidence-backed edits, hand off to `skill-improve` or `skill-eval` instead of silently crossing lanes.
+Close with a short report: the skill path, what was built, the lint result, and anything still open. Keep it proportional — do not pad.

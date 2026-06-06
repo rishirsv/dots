@@ -17,9 +17,9 @@ export interface SkillFrontmatterFull {
 }
 
 export interface AgentManifestMetadata {
-  name?: string;
-  description?: string;
   hasInterface: boolean;
+  hasPolicy: boolean;
+  hasDependencies: boolean;
 }
 
 interface YamlLine {
@@ -73,9 +73,9 @@ export async function parseAgentManifestMetadata(manifestPath: string): Promise<
   const text = await fs.readFile(manifestPath, "utf8");
   const frontmatter = parseYamlObject(text, manifestPath);
   return {
-    name: decodeString(frontmatter, "name", manifestPath, { optional: true }),
-    description: decodeString(frontmatter, "description", manifestPath, { optional: true }),
-    hasInterface: Object.hasOwn(frontmatter, "interface")
+    hasInterface: Object.hasOwn(frontmatter, "interface"),
+    hasPolicy: Object.hasOwn(frontmatter, "policy"),
+    hasDependencies: Object.hasOwn(frontmatter, "dependencies")
   };
 }
 

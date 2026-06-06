@@ -75,7 +75,7 @@ async function validatePortablePayload(root: string, failures: Issue[], warnings
   if (skillText.split(/\r?\n/).length > 220) warnings.push(issue("warning", "SKILL.md is long; move conditional detail to directly linked references", skillMd));
   await validateRuntimeResourceLinks(root, skillText, warnings);
   await validateLinkIntegrity(root, skillText, failures);
-  await validateAgentManifest(root, frontmatter, failures, warnings);
+  await validateAgentManifest(root, failures);
 }
 
 function validateName(frontmatter: SkillFrontmatterFull, expected: string, skillMd: string, failures: Issue[], warnings: Issue[]): void {
@@ -243,7 +243,7 @@ function normalizeLinkTarget(raw: string): string | null {
   return target;
 }
 
-async function validateAgentManifest(root: string, frontmatter: { name?: string; description?: string }, failures: Issue[], warnings: Issue[]): Promise<void> {
+async function validateAgentManifest(root: string, failures: Issue[]): Promise<void> {
   const manifestPath = path.join(root, "agents", "openai.yaml");
   if (!(await exists(manifestPath))) return;
   let metadata: AgentManifestMetadata;
@@ -253,12 +253,8 @@ async function validateAgentManifest(root: string, frontmatter: { name?: string;
     failures.push(issue("failure", error instanceof Error ? error.message : String(error), manifestPath));
     return;
   }
-  if (!(metadata.name && metadata.description) && !metadata.hasInterface) {
-    failures.push(issue("failure", "agents/openai.yaml must use top-level name/description or documented interface metadata", manifestPath));
-    return;
-  }
-  if (metadata.name && frontmatter.name && metadata.name !== frontmatter.name) {
-    warnings.push(issue("warning", `agents/openai.yaml name ${metadata.name} does not match SKILL.md name ${frontmatter.name}`, manifestPath));
+  if (!(metadata.hasInterface || metadata.hasPolicy || metadata.hasDependencies)) {
+    failures.push(issue("failure", "agents/openai.yaml must declare interface, policy, or dependencies metadata; skill name and description belong in SKILL.md frontmatter", manifestPath));
   }
 }
 

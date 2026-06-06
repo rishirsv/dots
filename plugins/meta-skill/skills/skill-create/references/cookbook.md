@@ -64,20 +64,35 @@ For overlapping workflows, add an early route section:
 
 ### 2. Metadata And Invocation Policy
 
-Use when writing OpenAI/Codex metadata.
+Use when writing OpenAI/Codex metadata in `agents/openai.yaml`. The file is optional; the skill name and description live in `SKILL.md` frontmatter, not here. Supported sections are `interface`, `policy`, and `dependencies`.
 
 ```yaml
 interface:
   display_name: "Deck QC"
   short_description: "Review decks for source and rendering defects"
   default_prompt: "Use $deck-qc to review this deck for source and rendering defects."
+  icon_small: "./assets/icon-small.svg"   # optional
+  icon_large: "./assets/icon-large.png"   # optional
+  brand_color: "#3B82F6"                   # optional
 ```
 
-For explicit-only skills:
+For explicit-only skills (Codex will not auto-trigger; the user must call `$deck-qc`):
 
 ```yaml
 policy:
   allow_implicit_invocation: false
+```
+
+To declare a tool the skill depends on, such as an MCP server:
+
+```yaml
+dependencies:
+  tools:
+    - type: mcp
+      value: example-server
+      description: "Source-data lookups"
+      transport: streamable_http
+      url: "https://example.com/mcp"
 ```
 
 ### 3. Input-As-Material Boundary

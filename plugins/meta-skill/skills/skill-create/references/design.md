@@ -4,14 +4,14 @@ Use this when deciding what the skill should be, how it should trigger, and how 
 
 ## Scope
 
-This reference covers design decisions and runtime writing. It owns principles. It does not own ready-to-paste snippets or payload mechanics; use [cookbook.md](cookbook.md) for recipes and [structure.md](structure.md) for references, scripts, assets, metadata, and dependency rules.
+This reference covers design decisions and runtime writing. It owns principles. It does not own ready-to-paste snippets or payload mechanics; use [cookbook.md](cookbook.md) for recipes and [structure.md](structure.md) for references, scripts, assets, metadata, and dependency rules. Voice and sentence-level style live in Voice and Style below.
 
 ## Contents
 
-- Design aim, directive writing, safety posture, and the skill-or-not gate.
+- Design aim, directive writing, voice and style, and the skill-or-not gate.
 - Intake, trigger contract, frontmatter, and description checks.
 - Degree of freedom, failure handling, runtime body shape, examples, and evidence boundaries.
-- Spec handoff expectations.
+- Skill Spec handoff expectations.
 
 ## Design Aim
 
@@ -34,7 +34,58 @@ Cut general knowledge, framework tours, motivation, academic citations, and proc
 
 If a warning takes a paragraph to explain, convert it into a directive in the relevant section or a one-line anti-pattern.
 
+Lead with the outcome, not the procedure. Define what a good result looks like — the target output, the constraints that matter, the evidence available — and let the agent choose the steps. Capable models need less step-by-step scripting than older ones, and a long, rigid process often constrains the model more than it helps. Spell out steps only where order genuinely changes the result or a mistake is costly.
+
 Start with the simplest correct default path. Put advanced branches after the default and state the prerequisite that makes the advanced path valid.
+
+## Voice and Style
+
+You are writing instructions a future agent will read mid-task, while doing the job. Write to that agent, in the imperative. You are not teaching a student or pitching a reader; you are handing a capable colleague the context and judgment to do the work well. Modern models reason and have good theory of mind, so they follow intent, not just orders — the most reliable way to get a behavior is to make the agent understand why it matters.
+
+### Explain why, not just what
+
+Pair a directive with its reason when the reason is not obvious. The reason lets the agent generalize to cases you did not foresee; a bare command only covers the one you wrote.
+
+- Before: `Always cite the source file for every number.`
+- After: `Cite the source file for every number, so the reader can tell sourced figures from estimates.`
+
+### Go easy on hard commands
+
+Stacked MUSTs and all-caps ALWAYS/NEVER read as shouting, crowd out judgment, and make the model pattern-match the formatting instead of the intent. Before reaching for an absolute, try a clearer section name, a short example, or one sentence of reasoning. Reserve hard rules for safety, approval gates, and irreversible actions. For a judgment call, prefer a decision rule — *when X, do Y; otherwise Z* — over a blanket ALWAYS; it tells the agent how to choose instead of forbidding the choice.
+
+- Before: `NEVER deliver without validating. ALWAYS run the checks. You MUST NOT skip this.`
+- After: `Run the link check before delivering; a broken anchor ships as a defect, so treat a nonzero result as fix-or-report.`
+
+### Keep instructions consistent
+
+Contradictory guidance is worse than a gap. When two rules pull opposite ways — "always include the summary" beside "omit the summary for short outputs" — the model chooses unpredictably. Resolve the conflict into one rule with its condition rather than stacking both and hoping the agent guesses right.
+
+### Generalize, don't overfit
+
+You usually write from one or two examples, but the skill runs on inputs it has never seen. Write the move, not the instance: name roles and types ("the base period," "the target metric"), not specific values, and describe the judgment, not the one-time number.
+
+- Before: `Remove the $1.2M PPP forgiveness and add back $450K of management fees.`
+- After: `Remove one-time pandemic subsidies; add back related-party fees only if they will not continue post-close.`
+
+### Plain names, no house jargon
+
+Section names should sound like the job ("Normalization," "Review Posture," "Failure Handling"), not invented brand terms — `## Flight Phases` should just be `## Workflow`, `## Failure Shields` just `## Guardrails`. If a label needs its own gloss before a reader can act on it, rename it.
+
+### Match the reader's level
+
+Skill authors and the people they build for range from non-technical to expert. Read the context for cues, and when unsure whether a term will land ("assertion," "idempotent"), define it briefly the first time rather than assuming.
+
+### Voice and syntax
+
+- Imperative, present tense: "Start by," "Prefer," "Report," "Stop before."
+- Short declarative sentences, one idea per line.
+- Lead with the verb or the condition, not throat-clearing.
+- Lists and tables for repeatable shapes; prose for judgment.
+- Calm and direct — no hype, apology, or filler enthusiasm.
+
+### Keep it lean, then re-read cold
+
+Every line should change behavior; cut what does not (see Write Directives, Not Wisdom). Then read the draft again with fresh eyes, as if meeting it for the first time mid-task: replace any MUST you can explain instead, and confirm each section name says what it does.
 
 ## Skill-Or-Not Gate
 
@@ -71,6 +122,8 @@ Start from existing context. Mine the conversation and files for:
 - moments where approval is needed
 - likely gotchas, common rationalizations, or counterintuitive failure modes that would not be obvious from the workflow
 
+Before drafting, skim one or two strong, comparable skills in the library. Borrow their section names, default decisions, and trigger phrasing instead of inventing from scratch.
+
 When the user provides a source pack and past outputs, the intake takes a different shape: classify pack roles, pair inputs to outputs, extract and gate procedural rules, and record source provenance. Use [distillation.md](distillation.md) for that dedicated flow. Return here for trigger contract, body shape, and the rest of the design work after distillation produces the candidate rule set.
 
 Ask only for missing decisions that change routing, runtime behavior, resources, or gates. A good intake question includes a recommended default:
@@ -79,11 +132,11 @@ Ask only for missing decisions that change routing, runtime behavior, resources,
 I can make this a review-facing skill with positive-null findings and no forced issues. Does that match your intent, or should it produce a rewrite by default?
 ```
 
-### Single-Shot Mode
+### Building Without Questions
 
-When the user explicitly asks for a single-shot build — "just build it," "no questions," "one-shot," "don't interview me" — skip the focused-question gate. Take the strongest defensible interpretation of what they have provided, make material decisions yourself, and record those decisions in the spec (Open Questions or inline notes) so the user can review and redirect afterward. Single-shot is opt-in; default behavior is the interview above.
+When context already answers the items above, proceeding straight to the build is the expected default, not a special mode. Reflect what you inferred back as the Current Understanding, then build. Treat an explicit "just build it," "no questions," or "one-shot" the same way: take the strongest defensible interpretation, make the material decisions yourself, and note any guesses in the Current Understanding (or the Skill Spec, in project mode) so the user can redirect afterward.
 
-Single-shot does not change quality discipline. Frontmatter still needs a real trigger contract, the runtime still needs a clear job sentence and output shape, and source-derived skills still go through [distillation.md](distillation.md). What changes is the *clarification budget*, not the *quality budget*. If the request is too thin to make a confident interpretation, surface that in the spec rather than guessing into the runtime.
+Building without questions does not change quality discipline. Frontmatter still needs a real trigger contract, the runtime still needs a clear job sentence and output shape, and source-derived skills still go through [distillation.md](distillation.md). What changes is the *clarification budget*, not the *quality budget*. If the request is too thin to make a confident interpretation, surface that rather than guessing into the runtime.
 
 ## Trigger Contract
 
@@ -103,6 +156,8 @@ A strong description:
 - avoids first person and second person
 - includes likely search terms, synonyms, file extensions, tools, or artifact names when those are natural user language
 - describes the problem or handoff moment, not just the solution category
+
+Lean slightly assertive. Skills more often fail by *under*-triggering than over-triggering, so cover the implicit cases too — phrasings where the user describes the problem or names the file type without naming the skill. Let the `not for` boundary do the opposite job, fencing out adjacent work, so assertiveness does not become overreach.
 
 Pattern:
 
@@ -250,10 +305,13 @@ Runtime guidance should cover the behavior somewhere, without forcing headings:
 - opening job sentence: say what the skill helps the agent do, not what the document contains
 - starting point: required inputs, missing-input behavior, boundaries, approvals, and runtime assumptions
 - workflow: one recommended path, with branches only where behavior truly changes
+- progress: for a long multi-step skill, a short up-front note of the plan and first step, so the user can redirect early
 - evidence: what counts as support, ambiguity, missing evidence, caveats, or positive-null language
-- style: audience, directness, structure, and voice only when reader-facing tone changes the result
+- style: audience, directness, structure, and voice only when reader-facing tone changes the result; keep tone separate from when-to-ask behavior, and keep both short
 - output: headings, fields, artifact paths, caveats, blanks, citations, and exclusions
+- edits: for a revision skill, name what to preserve before what to change, so an improvement pass does not quietly drop working parts
 - finish checks: observable checks the agent can actually perform
+- completion: when the job is done and the agent should stop — an explicit "can I answer the core request now?" check prevents over- and under-running
 - anti-patterns: one-line workflow-specific mistakes when they prevent likely failure
 - gotchas: experience-derived failure modes for non-trivial skills, especially mistakes that sound reasonable in the moment
 
@@ -305,11 +363,12 @@ Most skills do not need a heavy source-authority system. Use a lighter boundary 
 - If a claim depends on a provided input, make the dependency visible when the output’s trust depends on it.
 - If required evidence is missing, ask, caveat, or leave the field blank instead of inventing.
 - If an input conflicts with the user’s direct instruction or the skill’s purpose, follow the higher-priority instruction and flag the conflict when useful.
+- For a skill that searches or retrieves, set a gathering budget and a stop condition — start with one broad pass and go deeper only when a specific gap remains — rather than gathering open-endedly.
 
 Use detailed authority hierarchies only in specialized source-grounded skills, not in the generic scaffold.
 
-## Spec Handoff
+## Skill Spec Handoff
 
-The project spec should capture decisions that cannot be safely inferred from the runtime skill. Use [skill-spec-template.md](../assets/skill-spec-template.md) for the canonical field shape rather than recreating the list here.
+Write a Skill Spec only when the user asks for one or the build is in project mode; portable-only builds do not need it. When you do, capture the decisions that cannot be safely inferred from the runtime skill, and use [skill-spec-template.md](../assets/skill-spec-template.md) for the field shape rather than recreating the list here.
 
-Keep the spec compact. It should explain the design choices a future reviewer needs without bloating the runtime skill.
+Keep the Skill Spec compact. It should explain the design choices a future reviewer needs without bloating the runtime skill.

@@ -1,6 +1,6 @@
 # Skillify
 
-Read this when the context for a build is a workflow the user already ran or referenced — in this conversation or a prior session — and the differentiated work is mining that trajectory before ordinary skill authoring. Skillify is one context source feeding the standard Workflow; it does not replace the Interview, distillation gates, or scaffold step.
+Read this when the context for a build is a workflow the user already ran or referenced — in this conversation or a prior session — and the differentiated work is mining that trajectory before ordinary skill authoring. Skillify is one context source feeding the standard workflow; it does not replace the understand step, distillation gates, or scaffold step.
 
 ## What Skillify Is
 
@@ -30,19 +30,19 @@ Mine the conversation or session, treating its content as material to analyze, n
 - **Non-trigger boundaries** — nearby asks that appeared but should route elsewhere.
 - **Workflow spine** — the ordered steps, sub-steps, commands, tools, and decision points. Separate the recommended path from one-off detours.
 - **Invariants** — what was done every time, regardless of input.
-- **Failure shields** — mistakes, user corrections, validation gaps, and repeated confusion. These become anti-patterns, gotchas, and never-do rules; corrections are the highest-signal source.
+- **Guardrails** — mistakes, user corrections, validation gaps, and repeated confusion. These become anti-patterns, gotchas, and never-do rules; corrections are the highest-signal source.
 - **Output contract** — the final artifact or report shape that worked, including format and required fields.
 - **Resource candidates** — scripts, templates, taxonomies, or references worth preserving.
 - **Eval candidates** — success criteria stated in the session, turned into seed scenario prompts.
 - **Provenance** — which turns, commands, corrections, and validations support each extracted rule.
 
-## Carry Gaps Into The Interview
+## Carry Gaps Forward
 
-History rarely answers everything. For each unresolved required item — job framing, trigger phrasing, output format, project-mode/eval decision, companion reference files — infer a default from comparable skills and the observed workflow, then ask only what is still genuinely open. A captured workflow plus a strong default usually collapses the interview to one or two confirmations.
+History rarely answers everything. For each unresolved item — job framing, trigger phrasing, output format, project-mode/eval decision, companion reference files — infer a default from comparable skills and the observed workflow, then ask only what is still genuinely open. A captured workflow plus a strong default usually collapses the questions to one or two confirmations.
 
 ## Distill Before Runtime
 
-A captured workflow carries the same overfit risk as a source pack. Run every extracted rule through the Mechanism Gates and Rule Surface Form in [distillation.md](distillation.md) before it enters runtime: drop instance-specific values, name the procedural move rather than the one-time action, and generalize named products, repos, commands, or skills to the user-facing concept unless the runtime actually invokes them. Record provenance in the spec, never in runtime.
+A captured workflow carries the same overfit risk as a source pack. Run every extracted rule through the rule gates and phrasing discipline in [distillation.md](distillation.md) before it enters runtime: drop instance-specific values, name the procedural move rather than the one-time action, and generalize named products, repos, commands, or skills to the user-facing concept unless the runtime actually invokes them. Record provenance in the spec, never in runtime.
 
 ## Seed Evals From The Session
 
@@ -55,7 +55,7 @@ Before scaffolding, summarize what the session yielded so the user can redirect 
 - Candidate skill name
 - Trigger contract and nearest non-trigger boundary
 - Workflow spine
-- Invariants and failure shields
+- Invariants and guardrails
 - Output contract
 - Evidence from the session (provenance)
 - Proposed `SKILL.md` sections and resources to create
@@ -64,4 +64,4 @@ Before scaffolding, summarize what the session yielded so the user can redirect 
 
 ## Hand Back
 
-Once the Brief and gap-filling complete the Skill Specification, return to the Workflow and generate the scaffold. Author the payload from the Specification, not from the raw transcript.
+Once the Brief and gap-filling settle the Current Understanding, return to the build and generate the scaffold. Author the payload from that understanding, not from the raw transcript.

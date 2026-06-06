@@ -1,6 +1,6 @@
 # Skill Spec Template
 
-Use this shape for `.meta-skill/spec.md`. The spec is the workbench-owned design record; `SKILL.md` remains the runtime instruction surface.
+Use this shape for `.meta-skill/spec.md`. Write a Skill Spec only when the user asks for one or the build is in project mode — portable-only builds do not need it. The spec is the workbench-owned design record; `SKILL.md` remains the runtime instruction surface.
 
 ```markdown
 # <Skill Name> Spec

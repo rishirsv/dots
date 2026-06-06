@@ -57,7 +57,7 @@ export async function createSkill(options: CreateSkillOptions): Promise<{ path: 
   await ensureDir(path.join(target, "agents"));
   await writeText(
     path.join(target, "agents", "openai.yaml"),
-    `name: ${slug}\ndescription: ${JSON.stringify(description)}\n`
+    `interface:\n  display_name: ${JSON.stringify(title)}\n  short_description: ${JSON.stringify(job)}\n  default_prompt: ${JSON.stringify(`Use $${slug} to run this workflow.`)}\n`
   );
   files.push("agents/openai.yaml");
 
