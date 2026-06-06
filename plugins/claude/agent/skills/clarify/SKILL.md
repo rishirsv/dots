@@ -76,7 +76,7 @@ Useful route defaults:
 | Signal | Recommended route |
 |---|---|
 | Missing requirements before implementation | stay in `$clarify` until must-have questions are answered |
-| Direction exists but terminology, scope, or domain model needs pressure-testing | `$sharpen` |
+| Direction exists but terminology, scope, or domain model needs pressure-testing | `$grill` |
 | Durable repo docs, PRD, feature/domain doc, runbook, API docs, or spec | `$docs-writer` |
 | Reproducible or suspected software bug | `$debug` |
 | Cross-agent or cross-session transfer | `$handoff` |

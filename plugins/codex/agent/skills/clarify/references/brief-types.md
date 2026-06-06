@@ -11,7 +11,7 @@ Use this reference only after Clarify has inspected relevant local context. Pick
 | Docs | reader, owner document, durable purpose, evidence to verify | "Who needs this doc, and what should they be able to do after reading it?" | `$docs-writer` |
 | Debug | symptom, expected behavior, actual behavior, repro/failing command, affected flow | "What did you expect, what happened, and how can I reproduce it?" | `$debug` |
 | Handoff | recipient, current state, completed work, next action, blockers, proof | "Who is receiving this, and what should they do next?" | `$handoff` |
-| Decision / Sharpen | decision to make, competing options, constraints, source of truth, reversibility | "Which choice are we deciding between, and what would make one wrong?" | `$sharpen` or existing owner doc |
+| Decision / Grill | decision to make, competing options, constraints, source of truth, reversibility | "Which choice are we deciding between, and what would make one wrong?" | `$grill` or existing owner doc |
 | Commit / PR | intended scope, files included, validation expectations, publish target | "Should this be a local commit only, or a PR-ready publish flow?" | `$commit` or `$yeet` |
 
 ## Playback Shape

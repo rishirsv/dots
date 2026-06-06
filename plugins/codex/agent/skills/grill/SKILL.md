@@ -1,17 +1,76 @@
 ---
-name: sharpen
+name: grill
 description: "Use to pressure-test a serious idea, plan, domain model, feature shape, or terminology against durable docs and source reality before implementation. Ask one question at a time, recommend an answer, challenge vague or conflicting language, check the repo when a claim is source-verifiable, and capture settled terms or decisions only in the smallest appropriate durable artifact. Not for broad ideation, routine clarification, implementation, code review, or one-off prose."
 ---
 
-# Sharpen
+# Grill
 
 Pressure-test a plan or idea until its terms, boundaries, assumptions, and next artifact are crisp enough to act on.
 
-Sharpen is more forceful than ordinary clarification. Use it when the user already has a direction and wants it challenged against the project's actual language, docs, and code. Do not use it when the user wants many possible ideas first; route those to ideation or brainstorming.
+Grill is more forceful than ordinary clarification. Use it when the user already has a direction and wants it challenged against the project's actual language, docs, and code. Do not use it when the user wants many possible ideas first; route those to ideation or brainstorming.
+
+<what-to-do>
+
+"Interview me relentlessly about every aspect of this plan until we reach a shared understanding."
+
+Walk down each branch of the design tree. Resolve dependencies between decisions one by one. For each question, provide your recommended answer.
+
+Ask questions one at a time and wait for feedback before continuing. If source files or docs can answer the question, inspect them instead of asking.
+
+</what-to-do>
+
+<supporting-info>
+
+## Domain Awareness
+
+During repo exploration, also look for existing documentation:
+
+- root or domain-specific `CONTEXT.md`
+- `CONTEXT-MAP.md` for multi-context repos
+- ADRs, usually under `docs/adr/` or a context-local docs folder
+- product docs, specs, PRDs, architecture docs, and module docs that define the current language
+
+Create files lazily. Default to chat, and propose a write only when a term, boundary, or decision has crystallized enough to be worth preserving.
+
+## During The Session
+
+### Challenge Against The Glossary
+
+When the user uses a term that conflicts with existing project language, call it out immediately. Name the existing meaning, name the apparent new meaning, and ask which one is intended.
+
+### Tighten Fuzzy Language
+
+When the user uses vague or overloaded terms, propose a precise canonical term. Make rejected meanings visible so future agents do not resurrect them.
+
+### Discuss Concrete Scenarios
+
+When domain relationships are being discussed, stress-test them with specific scenarios. Invent edge cases that force the user to be precise about boundaries between concepts.
+
+### Cross-Reference With Code
+
+When the user states how something works, check whether the code agrees. If the docs, user language, and code disagree, surface the contradiction plainly and make the user choose the source of truth.
+
+### Capture Terms Inline When Needed
+
+When a term is resolved and durable capture seems useful, propose the smallest owner doc and exact capture first. Update or create that doc only after the user asks for durable capture, approves the specific edit, or invoked Grill with an explicit save/update instruction.
+
+Glossary/context docs define domain language. Do not treat them as specs, scratch pads, implementation notes, or decision logs.
+
+### Offer ADRs Sparingly
+
+Only offer an ADR when all three are true:
+
+1. The decision is hard to reverse.
+2. The decision would be surprising without context.
+3. The decision came from a real trade-off.
+
+If any of the three is missing, skip the ADR.
+
+</supporting-info>
 
 ## Workflow
 
-1. Identify the thing being sharpened: plan, feature, domain model, workflow, name, document, decision, or scope boundary.
+1. Identify the thing being grilled: plan, feature, domain model, workflow, name, document, decision, or scope boundary.
 2. Read the closest durable context before asking deep questions: `AGENTS.md`, README, architecture docs, product docs, specs, PRDs, ADRs, glossary/domain docs, and relevant source files.
 3. Ask one question at a time. Each question should resolve one real ambiguity, contradiction, term, boundary, scenario, or decision.
 4. Always provide a recommended answer and why.
@@ -20,7 +79,7 @@ Sharpen is more forceful than ordinary clarification. Use it when the user alrea
 7. Test boundaries with concrete scenarios, especially edge cases that distinguish similar concepts.
 8. When the user says how something works, check source reality when available. Surface contradictions plainly.
 9. Keep a compact record of settled terms, constraints, assumptions, non-goals, decisions, and open trails.
-10. End by naming the sharpened direction and the next artifact or action.
+10. End by naming the grilled direction and the next artifact or action.
 
 ## Question Shape
 
@@ -49,7 +108,7 @@ Add short options only when the decision naturally has 2-3 clean choices. Do not
 
 ## Durable Capture
 
-Default to chat. Write files only when the sharpened outcome needs to survive the session or the user asks for durable capture.
+Default to chat. Write files only when the user asks for durable capture, approves a proposed edit, or invokes Grill with an explicit save/update instruction.
 
 Choose the smallest existing owner doc before creating anything new:
 
@@ -60,16 +119,16 @@ Choose the smallest existing owner doc before creating anything new:
 - AGENTS.md for every-session agent operating rules
 - README or module docs for contributor-facing workflow or module guidance
 
-If no owner exists and a glossary/context doc is appropriate, use [references/context-format.md](references/context-format.md). If an ADR is appropriate, use [references/adr-format.md](references/adr-format.md).
+If no owner exists and a glossary/context doc is appropriate, propose [references/context-format.md](references/context-format.md). If an ADR is appropriate, propose [references/adr-format.md](references/adr-format.md).
 
-Do not create a parallel source of truth. Do not write implementation plans inside Sharpen unless the idea has already settled and the user explicitly asks for that handoff.
+Do not create a parallel source of truth. Do not write implementation plans inside Grill unless the idea has already settled and the user explicitly asks for that handoff.
 
 ## Output
 
-When the sharpening session is ready to close, use:
+When the grilling session is ready to close, use:
 
 ```md
-## Sharpened Direction
+## Grilled Direction
 
 **Direction:** <the crisp version of the idea or plan>
 
