@@ -55,6 +55,25 @@ When the user states how something works, check whether the code agrees. If the 
 
 When a grilling question requires repo research beyond a quick local read, send one or two read-only `explorer-mini` Quick Explore subagents as needed. Good splits are by source class, module, term family, workflow, or artifact type.
 
+#### Opening Multi-Lane Grill
+
+Before asking the first Grill question, pause after the closest-context read and name the evidence lanes. If there are two or more independent lanes, launch one or two narrow read-only subagents before synthesizing the first question.
+
+Default to subagents when the idea crosses independent evidence lanes, such as:
+
+- external SDK or product docs plus a local repo adaptation
+- multiple repos, packages, apps, or generated-vs-source boundaries
+- hosted and self-hosted/runtime variants
+- repo docs plus source code plus prior project memory that each constrain the answer
+- a user goal that combines product shape, integration boundaries, and documentation or review workflow
+
+For an external SDK plus local repo adaptation, a good split is:
+
+- subagent 1: SDK docs, APIs, package boundaries, hosted/self-hosted assumptions, and source terminology
+- subagent 2: local repo docs, markdown/artifact workflows, existing review surfaces, and project-specific constraints
+
+Do not treat a few main-thread `rg` or `sed` reads as enough for these broader lanes unless the first pass proves the question is narrow. If you decide not to delegate after seeing multiple evidence lanes, say why in the Grill context before asking the next question, using a compact note such as: `Evidence lanes considered: <lanes>. Delegation skipped because <reason>.`
+
 Keep the main Grill session responsible for synthesis, recommendations, and the next question. Give each subagent a compact brief with:
 
 - the exact question to answer
@@ -98,14 +117,15 @@ For ADRs or decision records, Grill may recommend the artifact even when the rep
 
 1. Identify the thing being grilled: plan, feature, domain model, workflow, name, document, decision, or scope boundary.
 2. Read the closest durable context before asking deep questions: `AGENTS.md`, README, architecture docs, design docs, product docs, specs, PRDs, feature/domain/concept docs, module docs, decision records, plans, and relevant source files.
-3. Ask one question at a time. Each question should resolve one real ambiguity, contradiction, term, boundary, scenario, or decision.
-4. Always provide a recommended answer and why.
-5. If the question can be answered by inspecting docs or code, inspect first. Use one or two Quick Explore subagents when broader read-only repo research would help, then ask only about the remaining judgment call.
-6. Challenge fuzzy terms immediately. Propose a canonical meaning and name rejected meanings when useful.
-7. Test boundaries with concrete scenarios, especially edge cases that distinguish similar concepts.
-8. When the user says how something works, check source reality when available. Surface contradictions plainly.
-9. Keep a compact record of settled terms, constraints, assumptions, non-goals, decisions, and open trails.
-10. End by naming the grilled direction and the next artifact or action.
+3. Before the first question, name the evidence lanes. If the first question spans independent lanes, send one or two read-only Quick Explore subagents before synthesizing; if it does not, continue with the main-thread read.
+4. Ask one question at a time. Each question should resolve one real ambiguity, contradiction, term, boundary, scenario, or decision.
+5. Always provide a recommended answer and why.
+6. If the question can be answered by inspecting docs or code, inspect first. Use one or two Quick Explore subagents when broader read-only repo research would help, then ask only about the remaining judgment call.
+7. Challenge fuzzy terms immediately. Propose a canonical meaning and name rejected meanings when useful.
+8. Test boundaries with concrete scenarios, especially edge cases that distinguish similar concepts.
+9. When the user says how something works, check source reality when available. Surface contradictions plainly.
+10. Keep a compact record of settled terms, constraints, assumptions, non-goals, decisions, and open trails.
+11. End by naming the grilled direction and the next artifact or action.
 
 ## Question Shape
 
