@@ -49,7 +49,7 @@ Do not put these phrases in the user task sent to a solver subagent:
 Use this envelope shape:
 
 ```md
-Work in /path/to/project. Use only the provided files and instructions. Do not edit files. Do not inspect unrelated project files or parent-thread context. Do not spawn nested subagents. Return the answer you would give the maintainer.
+Work in /path/to/project. Use only the provided files and instructions. Do not edit target payload, generated package, docs, or source files. Do not inspect unrelated project files or parent-thread context. Do not spawn nested subagents. Return the answer you would give the maintainer.
 ```
 
 Use this user-task shape:
@@ -76,7 +76,7 @@ Parent flow:
 Envelope:
 
 ```md
-Work in /path/to/project. Read only the provided skill files and fixtures. Do not edit files. Do not inspect unrelated files or parent-thread context. Return the answer you would give the user.
+Work in /path/to/project. Read only the provided skill files and fixtures. Do not edit target payload, generated package, docs, or source files. Do not inspect unrelated files or parent-thread context. Return the answer you would give the user.
 ```
 
 User task:
@@ -100,7 +100,7 @@ Parent flow:
 Envelope:
 
 ```md
-Work in /path/to/project. Use only the provided task and fixture files. Do not edit files. Do not inspect unrelated files or parent-thread context. Return the completed response you would give the maintainer.
+Work in /path/to/project. Use only the provided task and fixture files. Do not edit target payload, generated package, docs, or source files. Do not inspect unrelated files or parent-thread context. Return the completed response you would give the maintainer.
 ```
 
 User task:
@@ -124,7 +124,7 @@ Parent flow:
 Envelope:
 
 ```md
-Work in /path/to/project. Review only the provided files and evidence. Do not edit files. Do not inspect unrelated files or parent-thread context. Do not spawn nested subagents.
+Work in /path/to/project. Review only the provided files and evidence. You may write `.meta-skill/review.md` only when running `meta-skill review`; do not edit target payload, generated package, docs, or source files. Do not inspect unrelated files or parent-thread context. Do not spawn nested subagents.
 ```
 
 User task:
@@ -146,7 +146,7 @@ Parent flow:
 Envelope:
 
 ```md
-Work in /path/to/project. Inspect only the provided routing-surface files and command output. Do not edit files. Do not inspect unrelated files or parent-thread context.
+Work in /path/to/project. Inspect only the provided routing-surface files and command output. Do not edit target payload, generated package, docs, or source files. Do not inspect unrelated files or parent-thread context.
 ```
 
 User task:
