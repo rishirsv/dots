@@ -156,6 +156,7 @@ A strong description:
 - avoids first person and second person
 - includes likely search terms, synonyms, file extensions, tools, or artifact names when those are natural user language
 - describes the problem or handoff moment, not just the solution category
+- avoids system, provider, or implementation plumbing terms unless the user-facing task directly depends on that exact named surface
 
 Lean slightly assertive. Skills more often fail by *under*-triggering than over-triggering, so cover the implicit evals too — phrasings where the user describes the problem or names the file type without naming the skill. Let the `not for` boundary do the opposite job, fencing out adjacent work, so assertiveness does not become overreach.
 
@@ -240,6 +241,7 @@ Add runtime-specific fields only when the target runtime requires them. Decorati
 - one safe YAML scalar
 - under 1024 characters; usually under 500
 - no unsupported capability claims
+- no system, provider, or implementation plumbing terms such as backend runner names, RPC protocols, trace buffers, or plugin-cache mechanics
 
 For description content (task object, real user phrasing, adjacent boundary, no workflow summary, third person, keyword coverage), see Trigger Contract above. Do not restate those rules here.
 

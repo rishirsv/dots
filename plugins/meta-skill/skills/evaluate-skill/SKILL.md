@@ -1,11 +1,11 @@
 ---
 name: evaluate-skill
-description: Use when setting up, running, auditing, or interpreting App Server-backed evals for reusable skills with `meta-skill run`; not for rewriting skills, best-practice skill review, packaging, or installing.
+description: Use when setting up, running, auditing, or interpreting .meta-skill evals for reusable skills; not for rewriting skills, best-practice skill review, packaging, or installing.
 ---
 
 # Evaluate Skill
 
-Measure a reusable skill with `.meta-skill/evals/` and `.meta-skill/runs/`. This lane sets up manually authored evals, runs Codex App Server-backed evidence collection, and inspects saved run evidence. It does not rewrite, package, or edit the skill.
+Measure a reusable skill with `.meta-skill/evals/` and `.meta-skill/runs/`. This lane sets up manually authored evals, runs evidence collection, and inspects saved run evidence. It does not rewrite, package, or edit the skill.
 
 ## Reference Map
 

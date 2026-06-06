@@ -77,7 +77,7 @@ Use `assets/` only for approved reusable runtime materials such as templates, sc
 
 ## Metadata
 
-`agents/openai.yaml` is part of the portable payload when the skill needs Codex UI metadata, an invocation policy, or declared tool dependencies. It is optional and holds `interface`, `policy`, and `dependencies` sections only — the skill name and description live in `SKILL.md` frontmatter, not in this file. Keep `display_name` and `default_prompt` consistent with what the skill actually does.
+`agents/openai.yaml` is part of the portable payload for generated skills. Include `interface.default_prompt` and keep it consistent with what the skill actually does. The file may also hold Codex UI metadata, an invocation policy, or declared tool dependencies. It uses `interface`, `policy`, and `dependencies` sections only — the skill name and description live in `SKILL.md` frontmatter, not in this file. Keep `display_name`, `short_description`, and `default_prompt` user-facing, with no system or implementation-plumbing terms unless the user-facing task directly depends on that exact named surface.
 
 ## Packaging
 

@@ -64,7 +64,7 @@ For overlapping workflows, add an early route section:
 
 ### 2. Metadata And Invocation Policy
 
-Use when writing OpenAI/Codex metadata in `agents/openai.yaml`. The file is optional; the skill name and description live in `SKILL.md` frontmatter, not here. Supported sections are `interface`, `policy`, and `dependencies`.
+Use when writing OpenAI/Codex metadata in `agents/openai.yaml`. Include this file for generated skills, and always include `interface.default_prompt`. The skill name and description live in `SKILL.md` frontmatter, not here. Supported sections are `interface`, `policy`, and `dependencies`.
 
 ```yaml
 interface:
@@ -75,6 +75,8 @@ interface:
   icon_large: "./assets/icon-large.png"   # optional
   brand_color: "#3B82F6"                   # optional
 ```
+
+Keep `short_description` and `default_prompt` user-facing. Do not mention system, provider, or implementation plumbing terms unless the user-facing task directly depends on that exact named surface.
 
 For explicit-only skills (Codex will not auto-trigger; the user must call `$deck-qc`):
 
@@ -264,7 +266,7 @@ Script-backed skill:
 - Source authority is present only when source order changes behavior.
 - Output shape, tone, and review posture are explicit where they matter.
 - Runtime references, scripts, and assets are direct, flat, linked, and implemented.
-- OpenAI/Codex metadata mentions `$skill-name` in `default_prompt`.
+- OpenAI/Codex metadata includes `default_prompt`, mentions `$skill-name`, and avoids system or implementation-plumbing terms in routing/UI text.
 - `policy.allow_implicit_invocation: false` appears only for explicit-only skills.
 - Artifact checks occur before clean conclusions or delivery language.
 - Human approval gates appear before consequential actions.

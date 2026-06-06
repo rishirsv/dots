@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Clarify requirements before implementation when the user invokes $clarify, asks to clarify an underspecified request, wants questions before work starts, or needs intake/routing before an expensive multi-skill workflow. Inspect repo/code context first, ask only must-have questions or play back a sufficient brief, summarize common understanding, and recommend the next route. Not for brainstorming, design discussion, PRD authoring, code review, accepted plans, or routine implementation."
+description: "Clarify requirements before implementation when the user invokes $clarify, asks to clarify an underspecified request, wants questions before work starts, or an agent needs must-have user context before an ambiguous workflow. Inspect repo/code context first, ask only must-have questions or play back a sufficient brief, summarize common understanding, and recommend the next route. Not for brainstorming, PRD authoring, code review, accepted plans, or routine implementation."
 ---
 
 # Clarify

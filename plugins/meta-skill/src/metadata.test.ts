@@ -54,7 +54,12 @@ dependencies:
     assert.deepEqual(await parseAgentManifestMetadata(manifest), {
       hasInterface: true,
       hasPolicy: false,
-      hasDependencies: false
+      hasDependencies: false,
+      interface: {
+        displayName: undefined,
+        shortDescription: undefined,
+        defaultPrompt: "Use $demo-skill."
+      }
     });
   });
 });

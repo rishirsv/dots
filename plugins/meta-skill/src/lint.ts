@@ -97,6 +97,18 @@ function validateName(frontmatter: SkillFrontmatterFull, expected: string, skill
   }
 }
 
+const INTERNAL_ROUTING_TERMS = [
+  "App Server",
+  "JSON-RPC",
+  "RPC",
+  "trace buffer",
+  "plugin cache",
+  "runtime internals",
+  "managed thread",
+  "mounted-skill",
+  "system prompt"
+];
+
 function validateDescription(frontmatter: SkillFrontmatterFull, skillMd: string, failures: Issue[], warnings: Issue[]): void {
   const description = frontmatter.description;
   if (!description) {
@@ -117,6 +129,7 @@ function validateDescription(frontmatter: SkillFrontmatterFull, skillMd: string,
   if (readsLikeWorkflow(description)) {
     warnings.push(issue("warning", "description reads like a workflow sequence; describe when to use the skill, not its steps (the body holds the procedure)", skillMd));
   }
+  validatePublicRoutingText("frontmatter description", description, skillMd, failures);
 }
 
 // design.md "dangerous shortcut": a description that lists steps can make the
@@ -260,6 +273,30 @@ async function validateAgentManifest(root: string, failures: Issue[]): Promise<v
   }
   if (!(metadata.hasInterface || metadata.hasPolicy || metadata.hasDependencies)) {
     failures.push(issue("failure", "agents/openai.yaml must declare interface, policy, or dependencies metadata; skill name and description belong in SKILL.md frontmatter", manifestPath));
+  }
+  if (metadata.hasInterface) {
+    const defaultPrompt = metadata.interface?.defaultPrompt;
+    if (!defaultPrompt) {
+      failures.push(issue("failure", "agents/openai.yaml interface.default_prompt is required", manifestPath));
+    } else {
+      validatePublicRoutingText("openai default_prompt", defaultPrompt, manifestPath, failures);
+      const expected = `$${path.basename(root)}`;
+      if (!defaultPrompt.includes(expected)) {
+        failures.push(issue("failure", `agents/openai.yaml interface.default_prompt must mention ${expected}`, manifestPath));
+      }
+    }
+    if (metadata.interface?.shortDescription) {
+      validatePublicRoutingText("openai short_description", metadata.interface.shortDescription, manifestPath, failures);
+    }
+  }
+}
+
+function validatePublicRoutingText(surface: string, text: string, filePath: string, failures: Issue[]): void {
+  for (const term of INTERNAL_ROUTING_TERMS) {
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (new RegExp(`\\b${escaped}\\b`, "i").test(text)) {
+      failures.push(issue("failure", `${surface} exposes internal implementation term '${term}'; use user-facing task language`, filePath));
+    }
   }
 }
 

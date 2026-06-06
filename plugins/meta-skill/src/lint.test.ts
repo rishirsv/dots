@@ -93,6 +93,42 @@ metadata:
     const report = await lintProject(root, { executeTests: false });
     assert.ok(messages(report.warnings).some((m) => m.includes("workflow sequence")));
   });
+
+  it("fails when the description exposes internal implementation terms", async () => {
+    const root = await tempSkill("demo-skill", `name: demo-skill\ndescription: Use when running App Server-backed checks; not for production.`);
+    const report = await lintProject(root, { executeTests: false });
+    assert.ok(messages(report.failures).some((m) => m.includes("frontmatter description exposes internal implementation term")));
+  });
+});
+
+describe("lint openai metadata", () => {
+  it("requires interface default_prompt when openai metadata exists", async () => {
+    const root = await tempSkill("demo-skill", `name: demo-skill\ndescription: Use when testing metadata; not for production.`);
+    await fs.mkdir(path.join(root, "agents"), { recursive: true });
+    await fs.writeFile(path.join(root, "agents", "openai.yaml"), `interface:\n  display_name: Demo Skill\n  short_description: Demo metadata\n`);
+    const report = await lintProject(root, { executeTests: false });
+    assert.ok(messages(report.failures).some((m) => m.includes("interface.default_prompt is required")));
+  });
+
+  it("requires default_prompt to mention the skill invocation", async () => {
+    const root = await tempSkill("demo-skill", `name: demo-skill\ndescription: Use when testing metadata; not for production.`);
+    await fs.mkdir(path.join(root, "agents"), { recursive: true });
+    await fs.writeFile(path.join(root, "agents", "openai.yaml"), `interface:\n  display_name: Demo Skill\n  short_description: Demo metadata\n  default_prompt: Use this skill for demo metadata.\n`);
+    const report = await lintProject(root, { executeTests: false });
+    assert.ok(messages(report.failures).some((m) => m.includes("must mention $demo-skill")));
+  });
+
+  it("fails when openai routing metadata exposes internal implementation terms", async () => {
+    const root = await tempSkill("demo-skill", `name: demo-skill\ndescription: Use when testing metadata; not for production.`);
+    await fs.mkdir(path.join(root, "agents"), { recursive: true });
+    await fs.writeFile(
+      path.join(root, "agents", "openai.yaml"),
+      `interface:\n  display_name: Demo Skill\n  short_description: App Server metadata\n  default_prompt: Use $demo-skill to inspect RPC evidence.\n`
+    );
+    const report = await lintProject(root, { executeTests: false });
+    assert.ok(messages(report.failures).some((m) => m.includes("openai short_description exposes internal implementation term")));
+    assert.ok(messages(report.failures).some((m) => m.includes("openai default_prompt exposes internal implementation term")));
+  });
 });
 
 describe("lint link integrity", () => {

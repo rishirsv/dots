@@ -151,7 +151,7 @@ meta-skill lint <skill-dir>
 - Keep build notes, review notes, raw source examples, and eval evidence out of the portable payload.
 - Generalize a named product, repo, command, plugin, or skill to the user-facing concept unless the generated skill directly invokes it at runtime.
 - Quote or escape YAML frontmatter values that contain punctuation.
-- `agents/openai.yaml` is optional Codex metadata: an `interface` block (`display_name`, `short_description`, `icon_small`, `icon_large`, `brand_color`, `default_prompt`), a `policy` block (`allow_implicit_invocation`), and `dependencies`. The skill name and description live in `SKILL.md` frontmatter, not here. See [cookbook.md](references/cookbook.md) for the shape.
+- Always include `agents/openai.yaml` with an `interface.default_prompt` that mentions `$<skill-name>` and describes the user-facing job. The file can also hold `display_name`, `short_description`, optional icons/color, a `policy` block (`allow_implicit_invocation`), and `dependencies`. The skill name and description live in `SKILL.md` frontmatter, not here. Keep frontmatter, `short_description`, and `default_prompt` free of system, provider, or implementation plumbing terms unless the user-facing task directly depends on that exact named surface. See [cookbook.md](references/cookbook.md) for the shape.
 - Add references, scripts, or assets only when they are real reusable materials, and link each one directly from `SKILL.md`.
 - In project mode, give runtime scripts executable deterministic tests directly under `.meta-skill/tests/`.
 - Add human gates before packaging, installing, publishing, syncing, source edits, external writes, or final client/user-facing delivery.

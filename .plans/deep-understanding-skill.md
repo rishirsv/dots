@@ -1,4 +1,4 @@
-# Teach Skill Plan
+# Explain Skill Plan
 
 ## Current Understanding
 
@@ -16,7 +16,7 @@ Create a new skill. This is not just a preference for simpler wording: it change
 
 Do not reuse the deleted `$explain` skill as-is. The old skill owned one-shot artifact explanation. This new skill owns interactive teaching and comprehension verification.
 
-Final name: `teach`.
+Final name: `explain`.
 
 Source posture: follow the official GPT-5.5 prompt guidance by keeping the runtime short, outcome-first, and explicit about personality. Personality should control how the teaching feels; collaboration rules should control how the agent decides, checks, and stops.
 
@@ -25,7 +25,7 @@ Alternate names considered:
 | Name | Read | Decision |
 |---|---|---|
 | `explain` | Too broad; previously existed as a general explanation skill. | Reject. |
-| `teach` | Short, direct, matches the explicit `$teach` invocation, and routes well for teaching requests. | Selected. |
+| `explain` | Short, direct, matches the explicit `` invocation, and routes well for explanation requests. | Selected. |
 | `teachback` | Captures verification, but sounds too narrow and test-like. | Reject. |
 | `deep-understanding` | Accurate but clunky and abstract. | Reject. |
 | `orient` | Good for repo/session orientation, but too zoomed-out for active teaching. | Reject for this workflow. |
@@ -46,13 +46,13 @@ Near miss:
 
 > "Can you summarize what you changed before committing?"
 
-This should usually be a normal summary or handoff. Trigger `teach` only if the user also asks to learn, restate, ELI5/ELI14/ELII, or verify comprehension.
+This should usually be a normal summary or handoff. Trigger `explain` only if the user also asks to learn, restate, ELI5/ELI14/ELII, or verify comprehension.
 
 ## Proposed Frontmatter
 
 ```yaml
 ---
-name: teach
+name: explain
 description: "Use when the user wants to deeply understand a technical session, large change, code concept, repo workflow, bug, architecture, decision, or agent workflow through incremental teaching, restatement, ELI5/ELI14/explain-like-an-intern levels, or verified comprehension. Not for one-shot explanations, ordinary summaries, implementation, code review, or requirement clarification."
 ---
 ```
@@ -61,14 +61,14 @@ description: "Use when the user wants to deeply understand a technical session, 
 
 The runtime now uses two files:
 
-- `skills/teach/SKILL.md`
-- `skills/teach/references/memory.md`
+- `skills/explain/SKILL.md`
+- `skills/explain/references/memory.md`
 
 Do not add `scripts/` or `assets/` for the first build. Keep dark HTML templates inline and tiny so the skill stays low-latency.
 
 Proposed sections:
 
-1. `# Teach`
+1. `# Explain`
 2. `## Personality`
 3. `## Outcome`
 4. `## Fast Teaching Loop`
@@ -244,21 +244,21 @@ The skill can stop when the checklist is complete, the user has demonstrated eno
 
 ## Build Plan
 
-1. Scaffold the source skill at `skills/teach/`.
-2. Draft `skills/teach/SKILL.md` using the frontmatter and runtime shape above.
+1. Scaffold the source skill at `skills/explain/`.
+2. Draft `skills/explain/SKILL.md` using the frontmatter and runtime shape above.
 3. Add `references/memory.md` for durable presentation preferences; keep all other runtime material in `SKILL.md`.
-4. Run `meta-skill lint skills/teach`.
+4. Run `meta-skill lint skills/explain`.
 5. Run `scripts/sync-plugins.sh` because a source skill changed.
-6. Run a focused git diff check for `skills/teach/` and generated sync output.
+6. Run a focused git diff check for `skills/explain/` and generated sync output.
 
 ## Validation Plan
 
-- `meta-skill lint skills/teach`
+- `meta-skill lint skills/explain`
 - `scripts/sync-plugins.sh`
-- `git diff -- skills/teach .codex/agents plugins/codex/agent plugins/claude/agent`
+- `git diff -- skills/explain .codex/agents plugins/codex/agent plugins/claude/agent`
 
 ## Closed Decisions
 
-- Name: `teach`, matching the requested `$teach` invocation.
-- Payload shape: `skills/teach/SKILL.md` plus `skills/teach/references/memory.md`; no `agents/openai.yaml`, `scripts/`, or `assets/`.
+- Name: `explain`, matching the requested `` invocation.
+- Payload shape: `skills/explain/SKILL.md` plus `skills/explain/references/memory.md`; no `agents/openai.yaml`, `scripts/`, or `assets/`.
 - Invocation posture: the trigger covers "I am lost," "teach me," ELI5/ELI14/ELII, restatement, and verified comprehension, but excludes ordinary one-shot explanation and summaries.

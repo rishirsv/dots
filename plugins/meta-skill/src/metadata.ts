@@ -19,6 +19,11 @@ export interface AgentManifestMetadata {
   hasInterface: boolean;
   hasPolicy: boolean;
   hasDependencies: boolean;
+  interface?: {
+    displayName?: string;
+    shortDescription?: string;
+    defaultPrompt?: string;
+  };
 }
 
 interface YamlLine {
@@ -49,10 +54,20 @@ export async function parseSkillFrontmatterFull(skillMd: string): Promise<SkillF
 export async function parseAgentManifestMetadata(manifestPath: string): Promise<AgentManifestMetadata> {
   const text = await fs.readFile(manifestPath, "utf8");
   const frontmatter = parseYamlObject(text, manifestPath);
+  const interfaceBlock = optionalObject(frontmatter.interface);
   return {
     hasInterface: Object.hasOwn(frontmatter, "interface"),
     hasPolicy: Object.hasOwn(frontmatter, "policy"),
-    hasDependencies: Object.hasOwn(frontmatter, "dependencies")
+    hasDependencies: Object.hasOwn(frontmatter, "dependencies"),
+    ...(interfaceBlock
+      ? {
+          interface: {
+            displayName: optionalString(interfaceBlock.display_name),
+            shortDescription: optionalString(interfaceBlock.short_description),
+            defaultPrompt: optionalString(interfaceBlock.default_prompt)
+          }
+        }
+      : {})
   };
 }
 
@@ -202,4 +217,13 @@ function decodeOptionalObject(source: Record<string, unknown>, key: string, file
 function asObject(value: unknown, filePath: string, label: string): Record<string, unknown> {
   if (value && typeof value === "object" && !Array.isArray(value)) return value as Record<string, unknown>;
   throw new MetadataError(`${filePath}: ${label} must be an object`);
+}
+
+function optionalObject(value: unknown): Record<string, unknown> | undefined {
+  if (value && typeof value === "object" && !Array.isArray(value)) return value as Record<string, unknown>;
+  return undefined;
+}
+
+function optionalString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
 }

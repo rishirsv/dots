@@ -58,11 +58,12 @@ The tests check:
 - tests are flat under `.meta-skill/tests`
 - review output keeps the Quality-page shape
 - deprecated `Judge Score`, `Total Score`, and `.meta-skill/reviews/` surfaces stay removed
+- frontmatter descriptions and OpenAI metadata stay user-facing, avoid implementation-plumbing terms, and include default prompts for each lane skill
 
 ## Review Rules
 
 - Treat deterministic tests as structural evidence, not proof of good skill behavior.
-- Treat App Server eval responses as behavior evidence, not automatic pass/fail proof.
+- Treat eval responses as behavior evidence, not automatic pass/fail proof.
 - Criteria stay evaluator-only in `criteria.json`.
 - Task text should read like a real user request or scenario, not a rubric dump.
 - Subagent sampling should follow `references/subagent-patterns.md`: keep subagents isolated, keep criteria hidden, and keep solver prompts free of test or benchmark framing.
