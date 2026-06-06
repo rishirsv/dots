@@ -104,6 +104,8 @@ Validation Score: ${input.validationScore}%
 
 Complete Discovery and Implementation as an agent-authored Quality review. Overall assessments should be 2-4 substantive sentences. Each dimension should cite concrete evidence and explain why the score is not higher or lower.
 
+If the target has .meta-skill/eval-scenarios.md or .meta-skill/evals/*/criteria.json, use those Quality, Implementation, and Validation dimensions as additional review lenses. Judge whether the skill guidance can satisfy the same dimensions its evals measure. Do not invent validation rows, run IDs, lint results, deterministic test status, or evidence files.
+
 ### Discovery
 
 Agent-authored review required. Replace this section by reviewing the target skill's description against \`references/review-criteria.md\`.

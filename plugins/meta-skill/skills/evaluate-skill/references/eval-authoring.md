@@ -18,6 +18,27 @@ Use this order:
 
 If you have no examples, create a small starter set, run it through the actual skill workflow, then review the resulting traces before expanding the suite. Do not keep scaling synthetic evals that have not been grounded in real behavior.
 
+## Command Truth
+
+Eval authoring may describe only commands and flags that the current Meta Skill CLI supports. If you are unsure a command exists, check the CLI help or source before including it.
+
+Current safe command pattern:
+
+```bash
+meta-skill lint <project>
+meta-skill run <project>
+```
+
+Use a selected eval, labels, no-skill baselines, comparison modes, judges, or generated reports only when the current CLI/source proves that exact surface exists. Otherwise describe the need as a future or manual step. Do not invent flags, run IDs, baseline comparisons, pass/fail scores, token usage, or evidence paths that have not been produced.
+
+When writing an honest run plan:
+
+- say which files must be authored before running
+- name the command you know is supported
+- say what evidence should exist after a successful run
+- say what remains unproven until the run and review actually happen
+- keep baseline or solver-comparison language as manual analysis unless a supported compare command exists
+
 ## Core Loop
 
 Write each eval in this order:

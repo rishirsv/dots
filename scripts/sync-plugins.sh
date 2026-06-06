@@ -334,11 +334,18 @@ if command -v claude >/dev/null 2>&1; then
 fi
 
 CODEX_CACHE="$HOME/.codex/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME/$VERSION"
+META_SKILL_CACHE="$HOME/.codex/plugins/cache/$PLUGIN_NAME/meta-skill/$VERSION"
 CLAUDE_CACHE="$HOME/.claude/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME/$VERSION"
 rm -rf "$CODEX_CACHE" "$CLAUDE_CACHE"
 mkdir -p "$CODEX_CACHE" "$CLAUDE_CACHE"
 rsync -a --delete --exclude '.DS_Store' "$CODEX_PLUGIN/" "$CODEX_CACHE/"
 rsync -a --delete --exclude '.DS_Store' "$CLAUDE_PLUGIN/" "$CLAUDE_CACHE/"
+
+if [[ -d "$ROOT/plugins/meta-skill" ]]; then
+  rm -rf "$META_SKILL_CACHE"
+  mkdir -p "$META_SKILL_CACHE"
+  rsync -a --delete --exclude '.DS_Store' --exclude 'node_modules' "$ROOT/plugins/meta-skill/" "$META_SKILL_CACHE/"
+fi
 
 if [[ ! -f "$CODEX_CACHE/skills/commit/SKILL.md" ]]; then
   echo "Expected Agent plugin skills in Codex cache, but none were found: $CODEX_CACHE/skills" >&2
@@ -352,6 +359,9 @@ echo "Removed direct managed Desktop skill installs:"
 echo "  $CODEX_DESKTOP_SKILLS"
 echo "Refreshed local caches:"
 echo "  $CODEX_CACHE"
+if [[ -d "$META_SKILL_CACHE" ]]; then
+  echo "  $META_SKILL_CACHE"
+fi
 echo "  $CLAUDE_CACHE"
 echo "Synced system agent instructions:"
 echo "  $CODEX_SYSTEM_AGENTS"

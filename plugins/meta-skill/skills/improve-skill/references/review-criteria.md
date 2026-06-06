@@ -12,17 +12,20 @@ The review mirrors the registry Quality page shape:
 
 `meta-skill review <skill-dir>` writes the deterministic validation evidence and a worksheet. The reviewing agent must complete Discovery, Implementation, the overall Quality Score, and combined findings. The TypeScript command must not fabricate Discovery, Implementation, or judge-style scores.
 
+When the target has eval planning or eval criteria, the review should mirror those dimensions. Read `.meta-skill/eval-scenarios.md` and any relevant `.meta-skill/evals/*/criteria.json`, then judge whether the skill can satisfy the same Quality, Implementation, and Validation dimensions it asks evals to measure. The base review dimensions stay fixed; eval dimensions are additive evidence lenses and findings sources, not a separate score framework.
+
 ## Review Flow
 
 1. Run `meta-skill review <skill-dir>`.
 2. Read the target `SKILL.md` and directly linked references needed to judge runtime behavior.
-3. Use the criteria below to replace every `Agent review required` placeholder in `.meta-skill/review.md`.
-4. Compute Discovery and Implementation scores from the completed dimensions.
-5. Use the deterministic Validation score already written by the command.
-6. Compute `Quality Score` as the average of Discovery, Implementation, and Validation percentages.
-7. Merge deterministic validation findings with agent-authored Discovery and Implementation findings in severity order.
+3. If present, read `.meta-skill/eval-scenarios.md` and relevant `.meta-skill/evals/*/criteria.json` to identify the skill's declared Quality, Implementation, and Validation dimensions.
+4. Use the criteria below to replace every `Agent review required` placeholder in `.meta-skill/review.md`.
+5. Compute Discovery and Implementation scores from the completed dimensions, using declared eval dimensions as additional evidence for strengths or findings.
+6. Use the deterministic Validation score already written by the command. Do not rescore Validation by feel.
+7. Compute `Quality Score` as the average of Discovery, Implementation, and Validation percentages.
+8. Merge deterministic validation findings with agent-authored Discovery, Implementation, and eval-dimension findings in severity order.
 
-Do not add `Judge Score`, `Total Score`, confidence, basis, unavailable states, sidecar JSON, or review folders.
+Do not add `Judge Score`, `Total Score`, confidence, basis, unavailable states, sidecar JSON, or review folders. Do not fabricate validation tables, lint output, deterministic test status, run IDs, or evidence paths. If the generated review lacks evidence needed for a claim, write a finding about the missing evidence instead of manufacturing it.
 
 ## Reasoning Standard
 
@@ -35,6 +38,25 @@ The completed review should read like a compact expert quality assessment, not a
 - Mention interactions between dimensions when they matter, such as a strong description weakened by a generic name, or clear workflow weakened by oversized references.
 - Keep scoring calibrated. Do not give all `3`s unless there are no meaningful routing, runtime, disclosure, or validation weaknesses.
 - Findings should be deeper than the score table: include the observed defect, why it matters in agent behavior, and the smallest useful next step.
+
+## Eval Dimension Alignment
+
+Use this section whenever the target has `.meta-skill/eval-scenarios.md` or `.meta-skill/evals/*/criteria.json`.
+
+- Extract declared dimensions from each eval criterion's `phase` and `dimension`.
+- Keep the phase names fixed: `Quality`, `Implementation`, and `Validation`.
+- Treat these dimensions as the target's own quality contract. If the skill's instructions do not teach agents how to satisfy a declared eval dimension, add a finding.
+- Do not copy evaluator-only criteria into solver-visible task text or recommend doing so.
+- Do not create a separate eval score inside the review. Use eval dimensions to inform Discovery, Implementation, findings, and next steps.
+- Preserve deterministic Validation exactly as generated. Eval dimensions can explain validation gaps, but they cannot override deterministic evidence.
+
+Common mapping:
+
+| Eval phase | Review lens |
+|---|---|
+| Quality | Discovery and task-fit quality: trigger boundaries, completeness, specificity, conflict risk, and user-visible outcome expectations. |
+| Implementation | Runtime guidance quality: actionability, workflow clarity, source handling, artifact shape, handoff discipline, and progressive disclosure. |
+| Validation | Evidence quality: deterministic checks, artifact integrity, criteria privacy, score shape, proof limits, and deprecated-surface avoidance. |
 
 ## Score Calibration
 
@@ -85,7 +107,7 @@ The command writes:
 - validation pass/warning/failure table
 - deterministic lint output
 
-Use validation findings as evidence. If validation has warnings or failures, they must appear in the combined findings unless there is a more specific agent-authored finding that subsumes them.
+Use validation findings as evidence. If validation has warnings or failures, they must appear in the combined findings unless there is a more specific agent-authored finding that subsumes them. If validation output is absent, stale, or inconsistent with the review being completed, do not invent replacement rows; record that the evidence is missing and rerun the review command.
 
 ## Findings
 

@@ -31,7 +31,7 @@ Do not let a broad review request become an unbounded rewrite.
 Valid improvement evidence includes:
 
 - `meta-skill lint` failures or warnings
-- `.meta-skill/review.md`
+- completed `.meta-skill/review.md` with a concrete finding heading
 - `.meta-skill/runs/<run-id>/evals/<eval-folder>/response.md`
 - `.meta-skill/runs/<run-id>/evals/<eval-folder>/transcript.json`
 - `.meta-skill/runs/<run-id>/evals/<eval-folder>/rpc.jsonl`
@@ -39,6 +39,8 @@ Valid improvement evidence includes:
 - explicitly captured deterministic test or validation command output
 - saved artifacts tied to the run, eval, or user-observed failure
 - concrete user-observed failure
+
+Generated review worksheets that still contain `Agent review required` placeholders are not edit evidence. Complete the review first, or cite a different concrete evidence source.
 
 If evidence is missing, ask the user to run `meta-skill lint` or `meta-skill run`, or to authorize a manual review path.
 

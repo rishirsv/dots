@@ -40,6 +40,8 @@ describe("skill review", () => {
     assert.match(review, /## Quality/);
     assert.match(review, /Overall assessments should be 2-4 substantive sentences/);
     assert.match(review, /Each dimension should cite concrete evidence/);
+    assert.match(review, /use those Quality, Implementation, and Validation dimensions as additional review lenses/);
+    assert.match(review, /Do not invent validation rows, run IDs, lint results, deterministic test status, or evidence files/);
     assert.match(review, /### Discovery/);
     assert.match(review, /### Implementation/);
     assert.match(review, /### Validation/);

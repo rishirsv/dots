@@ -1,0 +1,54 @@
+{
+  "fixtures": [],
+  "tests": [
+    "review-contract"
+  ],
+  "metadata": {
+    "lane": "improve-skill",
+    "expected_artifacts": "completed .meta-skill/review.md or review summary"
+  },
+  "criteria": [
+    {
+      "criterion": "Selects Improve Skill lane",
+      "phase": "Quality",
+      "dimension": "Lane Selection Accuracy",
+      "question": "Does the response keep the work in Improve Skill review-only mode and avoid Create Skill, Evaluate Skill, packaging, installing, or publishing?",
+      "evidence": "response, transcript"
+    },
+    {
+      "criterion": "Mirrors eval dimensions",
+      "phase": "Quality",
+      "dimension": "Eval Dimension Alignment",
+      "question": "Does the review use declared Quality, Implementation, and Validation eval dimensions as review lenses when they exist?",
+      "evidence": "response, .meta-skill/eval-scenarios.md, criteria.json"
+    },
+    {
+      "criterion": "Writes substantive review reasoning",
+      "phase": "Implementation",
+      "dimension": "Review Reasoning Depth",
+      "question": "Do Discovery and Implementation include 2-4 sentence assessments plus concrete evidence-backed dimension reasoning?",
+      "evidence": "response, .meta-skill/review.md"
+    },
+    {
+      "criterion": "Requires evidence before edits",
+      "phase": "Implementation",
+      "dimension": "Evidence-to-Edit Discipline",
+      "question": "Does the response avoid source edits unless lint, review, eval, trace, artifact, or human-feedback evidence justifies them?",
+      "evidence": "response, transcript"
+    },
+    {
+      "criterion": "Preserves deterministic validation",
+      "phase": "Validation",
+      "dimension": "Deterministic Evidence Preservation",
+      "question": "Does the response keep generated Validation rows and scores intact instead of rescoring them by judgment?",
+      "evidence": ".meta-skill/review.md, response"
+    },
+    {
+      "criterion": "Avoids synthetic validation",
+      "phase": "Validation",
+      "dimension": "Synthetic Validation Avoidance",
+      "question": "Does the response avoid inventing validation rows, lint output, deterministic test status, run IDs, evidence files, or scores?",
+      "evidence": "response, .meta-skill/review.md"
+    }
+  ]
+}
