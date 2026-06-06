@@ -35,7 +35,7 @@ Valid improvement evidence includes:
 - `.meta-skill/runs/<run-id>/cases/<eval-folder>/response.md`
 - `.meta-skill/runs/<run-id>/cases/<eval-folder>/transcript.json`
 - `.meta-skill/runs/<run-id>/cases/<eval-folder>/rpc.jsonl`
-- frozen eval `task.md` and `criteria.json` from the run folder
+- frozen run case `task.md` plus the source `.meta-skill/evals/<eval-folder>/criteria.json` identified by the run result criteria fingerprint
 - explicitly captured deterministic test or validation command output
 - saved artifacts tied to the run, eval, or user-observed failure
 - concrete user-observed failure

@@ -349,7 +349,7 @@ For complex workflows, criteria should cover both outcome and process. Outcome c
 
 When sampling eval behavior with subagents, keep the subagent prompt aligned with `task.md`. The subagent should feel like it is answering a real maintainer or end user, not participating in a test harness.
 
-Follow the shared patterns in [subagent-patterns.md](../../../references/subagent-patterns.md):
+Follow the shared patterns in `../../../references/subagent-patterns.md`:
 
 - Put isolation, file-scope, and read-only rules in the harness envelope.
 - Put only the realistic user request in the solver-visible task.
@@ -360,7 +360,7 @@ Follow the shared patterns in [subagent-patterns.md](../../../references/subagen
 Weak subagent task:
 
 ```md
-You are running one read-only self-eval case. Do not read criteria.json. Produce the eval response.
+Use the skill and send back the result.
 ```
 
 Strong subagent task:

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import { describe, it } from "node:test";
 import type { EvalRunInput, EvalRunResult } from "./app-server/runner.ts";
 import type { TokenUsage } from "./models.ts";
@@ -60,6 +61,40 @@ describe("eval evidence hard cut", () => {
     assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "response.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "cases", "draft-broken")), false);
   });
+
+  it("keeps parallel eval results ordered while isolating per-case runners and evidence", async () => {
+    const project = await fixtureProject("parallel-run");
+    await writeEval(project, "alpha");
+    await writeEval(project, "beta");
+    await writeEval(project, "gamma");
+    const state = {
+      active: 0,
+      maxActive: 0,
+      nextRunnerId: 0,
+      runnerIdsByFolder: new Map<string, number>(),
+      closedRunnerIds: [] as number[]
+    };
+
+    const result = await runEval({
+      project,
+      selector: {},
+      noLint: true,
+      concurrency: 2,
+      evalRunnerFactory: () => parallelEvalRunner(state)
+    });
+
+    assert.deepEqual(result.evals, ["alpha", "beta", "gamma"]);
+    assert.deepEqual(result.results.map((item) => item.folder), ["alpha", "beta", "gamma"]);
+    assert.equal(state.maxActive, 2);
+    assert.equal(new Set(state.runnerIdsByFolder.values()).size, 3);
+    assert.deepEqual(state.closedRunnerIds.sort((a, b) => a - b), [1, 2, 3]);
+    for (const folder of ["alpha", "beta", "gamma"]) {
+      const caseRoot = path.join(result.runRoot, "cases", folder);
+      assert.equal((await readText(path.join(caseRoot, "fixtures", "input.txt"))).trimEnd(), `Fixture text for ${folder}.`);
+      assert.match(await readText(path.join(caseRoot, "response.md")), new RegExp(`Runner ${state.runnerIdsByFolder.get(folder)} answered ${folder}`));
+      assert.equal(result.results.find((item) => item.folder === folder)?.response_path, path.join("cases", folder, "response.md"));
+    }
+  });
 });
 
 function evalRunner() {
@@ -102,6 +137,59 @@ function evalRunner() {
   };
 }
 
+function parallelEvalRunner(state: { active: number; maxActive: number; nextRunnerId: number; runnerIdsByFolder: Map<string, number>; closedRunnerIds: number[] }) {
+  const runnerId = ++state.nextRunnerId;
+  return {
+    async run(input: EvalRunInput): Promise<EvalRunResult> {
+      state.active += 1;
+      state.maxActive = Math.max(state.maxActive, state.active);
+      state.runnerIdsByFolder.set(input.eval.folder, runnerId);
+      try {
+        const evalRoot = path.join(input.runRoot, "cases", input.eval.folder);
+        assert.equal(input.eval.path, evalRoot);
+        assert.equal((await readText(path.join(evalRoot, "fixtures", "input.txt"))).trimEnd(), `Fixture text for ${input.eval.folder}.`);
+        await delay(input.eval.folder === "alpha" ? 40 : 1);
+        await ensureDir(evalRoot);
+        await writeText(path.join(evalRoot, "rpc.jsonl"), JSON.stringify({ direction: "server", message: { runnerId, folder: input.eval.folder } }));
+        await writeText(
+          path.join(evalRoot, "transcript.json"),
+          `${JSON.stringify({
+            source: "codex_app_server",
+            threadId: `thread-${runnerId}`,
+            turns: [
+              {
+                threadId: `thread-${runnerId}`,
+                turnId: `turn-${runnerId}`,
+                status: "completed",
+                finalText: `Runner ${runnerId} answered ${input.eval.folder}.`,
+                tokenUsage: tokenUsageEvidence(1, 1, 2),
+                items: [],
+                approvals: [],
+                unknownMethods: []
+              }
+            ]
+          })}\n`
+        );
+        await writeText(path.join(evalRoot, "response.md"), `Runner ${runnerId} answered ${input.eval.folder}.`);
+        return {
+          execution_status: "completed",
+          token_usage: tokenUsageEvidence(1, 1, 2),
+          response_path: path.join(evalRoot, "response.md"),
+          rpc_path: path.join(evalRoot, "rpc.jsonl"),
+          transcript_path: path.join(evalRoot, "transcript.json"),
+          evidence_path: path.join("cases", input.eval.folder),
+          turn_ids: [`turn-${runnerId}`]
+        };
+      } finally {
+        state.active -= 1;
+      }
+    },
+    close() {
+      state.closedRunnerIds.push(runnerId);
+    }
+  };
+}
+
 async function fixtureProject(slug: string): Promise<string> {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-"));
   const target = path.join(root, slug);
@@ -116,13 +204,13 @@ async function fixtureProject(slug: string): Promise<string> {
   return target;
 }
 
-async function writeEval(project: string): Promise<void> {
-  const evalRoot = path.join(project, ".meta-skill", "evals", "basic");
+async function writeEval(project: string, folder = "basic"): Promise<void> {
+  const evalRoot = path.join(project, ".meta-skill", "evals", folder);
   await ensureDir(evalRoot);
-  await writeText(path.join(evalRoot, "fixtures", "input.txt"), "Fixture text.");
+  await writeText(path.join(evalRoot, "fixtures", "input.txt"), `Fixture text for ${folder}.`);
   await writeText(
     path.join(evalRoot, "task.md"),
-    `# Basic
+    `# ${folder}
 
 ## Problem Description
 
@@ -134,7 +222,7 @@ Return a concise direct answer.
 
 ## Task
 
-Answer directly.
+Answer directly for ${folder}.
 `
   );
   await writeJson(

@@ -52,9 +52,11 @@ Use `.meta-skill/evals/<slug>/` for executable evals. `task.md` contains the sol
 
 Use executable files directly under `.meta-skill/tests/` for deterministic tests. Do not create nested test folders. Prefer deterministic tests when a rule can answer the question.
 
-Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-eval `task.md`, `criteria.json`, `rpc.jsonl`, `transcript.json`, and `response.md` files. Token usage is stored in `transcript.json`.
+Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-eval `task.md`, `rpc.jsonl`, `transcript.json`, and `response.md` files under `cases/<eval>/`. Source `.meta-skill/evals/<eval>/criteria.json` stays evaluator-only; run results return its fingerprint instead of copying it. Token usage is stored in `transcript.json`.
 
 Current workflow guidance uses manually authored evals, one execution source per run, and read-only App Server evidence.
+
+After editing a Meta Skill payload, run `node plugins/meta-skill/scripts/meta-skill.js lint <skill-or-project-path>` for that edited skill or project before syncing, packaging, or committing.
 
 Eval execution runs through Codex App Server and records per-eval final output, RPC traces, and token usage. The current runner force-mounts the selected skill on the first turn, so trigger evals are not true routing proof. Use `--no-skill` when the user asks for a baseline. If exact token usage is unavailable because App Server did not return metrics, record it as unavailable in `transcript.json` instead of omitting it.
 

@@ -32,6 +32,7 @@ describe("commands", () => {
     assert.doesNotMatch(help, /--topic/);
     assert.match(help, /turn-timeout-ms/);
     assert.match(help, /trace-buffer-events/);
+    assert.match(help, /concurrency/);
   });
 
   it("reports unknown flags as CLI usage errors", async () => {
@@ -48,6 +49,15 @@ describe("commands", () => {
       assert.ok(error instanceof CliError);
       assert.equal(error.exitCode, 2);
       assert.match(error.message, /Option '--out <value>' argument missing/);
+      return true;
+    });
+  });
+
+  it("reports invalid concurrency as a CLI usage error", async () => {
+    await assert.rejects(runCommand(["run", ".", "--concurrency", "0"]), (error) => {
+      assert.ok(error instanceof CliError);
+      assert.equal(error.exitCode, 2);
+      assert.match(error.message, /--concurrency must be a positive integer/);
       return true;
     });
   });

@@ -14,8 +14,8 @@ import {
   requirePortableSkill
 } from "../project.ts";
 import { loadEvals } from "./evals.ts";
-import type { EvalRunOptions } from "./types.ts";
-import type { EvalRunSource, EvalRunSourceKind } from "../models.ts";
+import type { EvalRunner, EvalRunOptions } from "./types.ts";
+import type { EvalRecord, EvalRunSource, EvalRunSourceKind } from "../models.ts";
 
 interface EvalRunEvalSummary {
   id: string;
@@ -39,6 +39,10 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   const root = await requirePortableSkill(options.project);
   const p = projectPaths(root);
   if (!(await exists(p.evals))) throw new CliError("eval workbench is missing; run `meta-skill project init <project>` first");
+  const concurrency = evalConcurrency(options.concurrency);
+  if (concurrency > 1 && options.evalRunner && !options.evalRunnerFactory) {
+    throw new CliError("parallel eval runs require evalRunnerFactory when injecting a runner");
+  }
 
   const preflight = await lintProject(root, { executeTests: false, evalSelector: options.selector });
   if (preflight.failures.length) {
@@ -59,66 +63,27 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   if (runSourceKind === "working_payload") {
     await copyPortablePayload(root, path.join(runRoot, "payload"));
   }
-  const evalSummaries: EvalRunEvalSummary[] = [];
 
-  const runner =
-    options.evalRunner ||
-    new AppServerEvalRunner({
-      turnTimeoutMs: options.turnTimeoutMs,
-      maxTraceEvents: options.traceBufferEvents
-    });
-  const errors: string[] = [];
-  const completedEvals: string[] = [];
+  const evalSummaries = new Array<EvalRunEvalSummary>(evals.length);
+  const completedEvals = new Array<string>(evals.length);
   try {
-    for (const item of evals) {
-      const evalRoot = path.join(runRoot, "cases", item.folder);
-      const criteriaPath = path.join(item.path, "criteria.json");
-      const criteriaSha256 = await fileSha256(criteriaPath);
-      await ensureDir(evalRoot);
-      await fs.copyFile(path.join(item.path, "task.md"), path.join(evalRoot, "task.md"));
-      const fixtures = path.join(item.path, "fixtures");
-      if (await exists(fixtures)) await fs.cp(fixtures, path.join(evalRoot, "fixtures"), { recursive: true });
-      try {
-        const skillRoot = runSourceKind === "working_payload" ? path.join(runRoot, "payload") : undefined;
-        const runResult = await runner.run({ projectRoot: root, skillRoot, skill_activation: runSourceConfig.runSource.skill_activation, eval: { ...item, path: evalRoot }, runSource: runSourceConfig.runSource, runId, runRoot, appServer });
-        evalSummaries.push({
-          id: item.id,
-          folder: item.folder,
-          title: item.metadata.title,
-          execution_status: runResult.execution_status,
-          task_path: path.join("cases", item.folder, "task.md"),
-          criteria_path: path.relative(root, criteriaPath),
-          criteria_sha256: criteriaSha256,
-          response_path: path.relative(runRoot, runResult.response_path),
-          rpc_path: path.relative(runRoot, runResult.rpc_path),
-          transcript_path: path.relative(runRoot, runResult.transcript_path),
-          scoring_status: "review_required",
-          score: null,
-          max_score: rubricMaxScore(item.criteria.criteria),
-          token_usage: runResult.token_usage
-        });
-      } catch (error) {
-        const message = error instanceof AppServerUnavailableError || error instanceof Error ? error.message : String(error);
-        errors.push(message);
-        evalSummaries.push({
-          id: item.id,
-          folder: item.folder,
-          title: item.metadata.title,
-          execution_status: "errored",
-          task_path: path.join("cases", item.folder, "task.md"),
-          criteria_path: path.relative(root, criteriaPath),
-          criteria_sha256: criteriaSha256,
-          scoring_status: "unavailable",
-          score: null,
-          max_score: rubricMaxScore(item.criteria.criteria),
-          error: message
-        });
-      }
-      completedEvals.push(item.folder);
-    }
+    await runBounded(evals, concurrency, async (item, index) => {
+      evalSummaries[index] = await runSingleEval({
+        item,
+        root,
+        runRoot,
+        runId,
+        runSourceKind,
+        runSource: runSourceConfig.runSource,
+        appServer,
+        options
+      });
+      completedEvals[index] = item.folder;
+    });
   } finally {
-    runner.close();
+    if (options.evalRunner) options.evalRunner.close();
   }
+  const errors = evalSummaries.flatMap((item) => (item.error ? [item.error] : []));
 
   if (!options.noLint) {
     const lint = await lintProject(root, { evalSelector: options.selector });
@@ -126,6 +91,88 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   }
 
   return { runId, runRoot, ok: errors.length === 0, errors, evals: completedEvals, payload, results: evalSummaries };
+}
+
+async function runSingleEval(input: { item: EvalRecord; root: string; runRoot: string; runId: string; runSourceKind: EvalRunSourceKind; runSource: EvalRunSource; appServer: Awaited<ReturnType<typeof appServerConfig>>; options: EvalRunOptions }): Promise<EvalRunEvalSummary> {
+  const { item, root, runRoot, runId, runSourceKind, runSource, appServer, options } = input;
+  const evalRoot = path.join(runRoot, "cases", item.folder);
+  const criteriaPath = path.join(item.path, "criteria.json");
+  const criteriaSha256 = await fileSha256(criteriaPath);
+  await ensureDir(evalRoot);
+  await fs.copyFile(path.join(item.path, "task.md"), path.join(evalRoot, "task.md"));
+  const fixtures = path.join(item.path, "fixtures");
+  if (await exists(fixtures)) await fs.cp(fixtures, path.join(evalRoot, "fixtures"), { recursive: true });
+
+  const runner = createEvalRunner(options);
+  try {
+    const skillRoot = runSourceKind === "working_payload" ? path.join(runRoot, "payload") : undefined;
+    const runResult = await runner.instance.run({ projectRoot: root, skillRoot, skill_activation: runSource.skill_activation, eval: { ...item, path: evalRoot }, runSource, runId, runRoot, appServer });
+    return {
+      id: item.id,
+      folder: item.folder,
+      title: item.metadata.title,
+      execution_status: runResult.execution_status,
+      task_path: path.join("cases", item.folder, "task.md"),
+      criteria_path: path.relative(root, criteriaPath),
+      criteria_sha256: criteriaSha256,
+      response_path: path.relative(runRoot, runResult.response_path),
+      rpc_path: path.relative(runRoot, runResult.rpc_path),
+      transcript_path: path.relative(runRoot, runResult.transcript_path),
+      scoring_status: "review_required",
+      score: null,
+      max_score: rubricMaxScore(item.criteria.criteria),
+      token_usage: runResult.token_usage
+    };
+  } catch (error) {
+    const message = error instanceof AppServerUnavailableError || error instanceof Error ? error.message : String(error);
+    return {
+      id: item.id,
+      folder: item.folder,
+      title: item.metadata.title,
+      execution_status: "errored",
+      task_path: path.join("cases", item.folder, "task.md"),
+      criteria_path: path.relative(root, criteriaPath),
+      criteria_sha256: criteriaSha256,
+      scoring_status: "unavailable",
+      score: null,
+      max_score: rubricMaxScore(item.criteria.criteria),
+      error: message
+    };
+  } finally {
+    if (runner.closeAfterRun) runner.instance.close();
+  }
+}
+
+function createEvalRunner(options: EvalRunOptions): { instance: EvalRunner; closeAfterRun: boolean } {
+  if (options.evalRunnerFactory) return { instance: options.evalRunnerFactory(), closeAfterRun: true };
+  if (options.evalRunner) return { instance: options.evalRunner, closeAfterRun: false };
+  return {
+    instance: new AppServerEvalRunner({
+      turnTimeoutMs: options.turnTimeoutMs,
+      maxTraceEvents: options.traceBufferEvents
+    }),
+    closeAfterRun: true
+  };
+}
+
+async function runBounded<T>(items: T[], concurrency: number, task: (item: T, index: number) => Promise<void>): Promise<void> {
+  let next = 0;
+  const workerCount = Math.min(concurrency, items.length);
+  const workers = Array.from({ length: workerCount }, async () => {
+    for (;;) {
+      const index = next;
+      next += 1;
+      if (index >= items.length) return;
+      await task(items[index], index);
+    }
+  });
+  await Promise.all(workers);
+}
+
+function evalConcurrency(value: number | undefined): number {
+  if (value === undefined) return 1;
+  if (!Number.isInteger(value) || value <= 0) throw new CliError("--concurrency must be a positive integer");
+  return value;
 }
 
 function evalRunSourceConfig(kind: EvalRunSourceKind): { runSource: EvalRunSource; defaultLabel: string } {

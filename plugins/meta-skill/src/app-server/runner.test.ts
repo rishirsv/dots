@@ -155,6 +155,7 @@ function assertSolverInstructionsAreNatural(params: unknown): void {
   const start = params as { baseInstructions?: string; developerInstructions?: string };
   const visibleInstructions = `${start.baseInstructions || ""}\n${start.developerInstructions || ""}`;
   assert.doesNotMatch(visibleInstructions, /\beval\b/i);
+  assert.doesNotMatch(visibleInstructions, /self[- ]?eval(?:uation)?/i);
   assert.doesNotMatch(visibleInstructions, /\btest\b/i);
   assert.doesNotMatch(visibleInstructions, /\bbenchmark\b/i);
   assert.doesNotMatch(visibleInstructions, /no skill is mounted/i);

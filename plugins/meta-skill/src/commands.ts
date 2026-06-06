@@ -15,7 +15,7 @@ Usage:
   meta-skill evals create <project>
   meta-skill lint <project-or-skill> [--json]
   meta-skill review <project-or-skill>
-  meta-skill run <project> [--eval <id>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
+  meta-skill run <project> [--eval <id>] [--label "..."] [--concurrency <n>] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
   meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 `;
 
@@ -111,7 +111,7 @@ async function commandReview(argv: string[]): Promise<number> {
 }
 
 async function commandRun(argv: string[]): Promise<number> {
-  const args = parse(argv, ["eval", "label", "turn-timeout-ms", "trace-buffer-events"], ["no-skill", "no-lint"]);
+  const args = parse(argv, ["eval", "label", "concurrency", "turn-timeout-ms", "trace-buffer-events"], ["no-skill", "no-lint"]);
   const project = args.positionals[0] || ".";
   const result = await runEval({
     project,
@@ -119,6 +119,7 @@ async function commandRun(argv: string[]): Promise<number> {
     label: args.one("label"),
     runSource: args.has("no-skill") ? "no_skill" : "working_payload",
     noLint: args.has("no-lint"),
+    concurrency: positiveInteger(args.one("concurrency"), "--concurrency"),
     turnTimeoutMs: positiveInteger(args.one("turn-timeout-ms"), "--turn-timeout-ms"),
     traceBufferEvents: positiveInteger(args.one("trace-buffer-events"), "--trace-buffer-events")
   });

@@ -45,7 +45,7 @@ meta-skill project init <skill-dir>
 meta-skill evals create <project>
 meta-skill lint <project-or-skill> [--json]
 meta-skill review <project-or-skill>
-meta-skill run <project> [--eval <id>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
+meta-skill run <project> [--eval <id>] [--label "..."] [--concurrency <n>] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
 meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 ```
 
@@ -96,6 +96,7 @@ Run all evals, a focused eval, or a no-skill baseline:
 meta-skill run <skill-dir>
 meta-skill run <skill-dir> --eval normal-authoring-flow
 meta-skill run <skill-dir> --eval multi-turn-source-grounding
+meta-skill run <skill-dir> --concurrency 3
 meta-skill run <skill-dir> --no-skill
 ```
 
@@ -188,6 +189,9 @@ Use `run` only for project skills with authored evals.
 Eval folders live at `.meta-skill/evals/<slug>/`, where `<slug>` is lowercase
 and hyphenated. Select evals with `--eval <id-or-folder>`.
 Use `--label` to make the run folder easier to recognize.
+Use `--concurrency <n>` to run multiple selected evals at once. The default is
+`1` for easier debugging. Parallel runs keep per-eval case evidence isolated and
+return results in selected-eval order.
 
 By default, `run` evaluates the current working payload. It snapshots that
 payload into the run folder before execution. Use `--no-skill` for no-skill
