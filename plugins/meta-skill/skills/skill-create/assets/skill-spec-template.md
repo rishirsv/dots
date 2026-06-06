@@ -1,8 +1,8 @@
 # Skill Spec Template
 
-Use this shape for `.meta-skill/spec.md`. Write a Skill Spec only when the user asks for one or the build is in project mode — portable-only builds do not need it. The spec is the workbench-owned design record; `SKILL.md` remains the runtime instruction surface.
+Use this shape for `.meta-skill/spec.md`. Write a Skill Spec only when the user asks for one or the build is in project mode; portable-only builds do not need it. The spec is the workbench-owned design record; `SKILL.md` remains the runtime instruction surface.
 
-```markdown
+````markdown
 # <Skill Name> Spec
 
 ## Purpose
@@ -38,15 +38,58 @@ Delete this section if the input shape is obvious from the trigger.
 - Human gates: <package, install, publish, sync, source edit, external write>
 - Anti-patterns: <specific mistakes worth preserving against>
 
-## Runtime Payload
+## Skill Shape
 
-- `SKILL.md`: <purpose>
-- `agents/openai.yaml`: <metadata purpose>
-- `references/<name>.md`: <when to read>
-- `scripts/<name>`: <what it does and test expectation>
-- `assets/<name>`: <approved use>
+Record the exact files to create and the generated structure each file should
+have. Delete optional rows and folders that do not exist.
 
-Delete rows that do not exist.
+```text
+<skill-dir>/
+  SKILL.md
+  agents/
+    openai.yaml
+  references/
+    <name>.md
+  scripts/
+    <name>
+  assets/
+    <name>
+  .meta-skill/
+    spec.md
+    cases/<ID-slug>/case.md
+    tests/unit/<name>.test.<ext>
+```
+
+### Runtime Files
+
+| Path | Create? | Purpose | Generated structure |
+|---|---:|---|---|
+| `SKILL.md` | yes | <primary runtime instruction surface> | YAML frontmatter with `name` and `description`; H1; short job statement; routing or prerequisites; workflow/default path; guardrails; output/final checks; direct links to any runtime resources. |
+| `agents/openai.yaml` | optional | <Codex UI metadata, invocation policy, or dependencies> | `interface` with display metadata/default prompt; `policy` with invocation behavior; `dependencies` only when the runtime actually needs them. |
+| `references/<name>.md` | optional | <conditional runtime guidance; when to read it> | H1; opening "Read this when..." sentence; compact sections for the decision/rules/examples; no build notes or raw source evidence. Link directly from `SKILL.md`. |
+| `scripts/<name>` | optional | <deterministic helper that is safer or cheaper than prose> | executable script; usage comment or CLI help; clear inputs/outputs; nonzero exit meaning; standard-library preference; linked from `SKILL.md`. |
+| `assets/<name>` | optional | <approved reusable template/schema/starter material> | sanitized reusable content only; short usage note in `SKILL.md` or adjacent reference; no raw uploads, sensitive examples, or licensed material without approval. |
+| `resources/<name>` | optional | <runtime data or support material that does not fit references/scripts/assets> | documented purpose, owner, and read path; include only when it packages intentionally and passes the runtime resource test. |
+
+### Workbench Files
+
+| Path | Create? | Purpose | Generated structure |
+|---|---:|---|---|
+| `.meta-skill/spec.md` | project mode | <this design record> | current template filled with final decisions, no unresolved placeholders except explicitly open questions. |
+| `.meta-skill/cases/<ID-slug>/case.md` | project mode when evals exist | <manual behavior case> | frontmatter with case type/criteria when needed; `## Task` first user turn; optional `## Turn 2`, fixtures map, and review criteria. |
+| `.meta-skill/tests/unit/<name>.test.<ext>` | project mode when scripts exist | <deterministic script or fixture test> | executable test that can run locally; covers success and failure paths for runtime scripts or fragile generated assets. |
+
+### File Generation Notes
+
+- Runtime files are the portable payload. Keep build reasoning, source pairings,
+  rejected candidates, eval evidence, and local test state in `.meta-skill/`.
+- Every runtime reference, script, asset, or resource needs a direct pointer from
+  `SKILL.md`; otherwise future agents will not know when to load it.
+- Add a file only when it changes future behavior: prevents repeated mistakes,
+  saves tokens, standardizes fragile output, or performs deterministic work
+  better than prose.
+- If the skill is portable-only, omit the `.meta-skill/` rows from the generated
+  payload and keep this spec as chat or authoring context only.
 
 ## Evals And Tests
 
@@ -57,6 +100,6 @@ Delete rows that do not exist.
 ## Update Notes
 
 <Use only for later revisions. Record changed behavior, evidence used, and residual risk.>
-```
+````
 
 Keep the spec short, concrete, and free of placeholders before treating a skill as authored.

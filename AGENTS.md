@@ -4,7 +4,7 @@
 
 In `~/Code/agent`:
 
-- `skills/`, `.codex/agents/`, `assets/agent/`, and `AGENTS.md` are the source files to edit.
+- `skills/`, `.codex/agents/`, `plugins/codex/agent/assets/`, and `AGENTS.md` are the source files to edit.
 - Save all plan documents under `.plans/`; do not leave ExecPlans or planning docs inside plugin, skill, or package directories.
-- Do not hand-edit generated plugin packages under `plugins/codex/agent/` or `plugins/claude/agent/`.
-- If `AGENTS.md`, `.codex/agents/`, `assets/agent/`, or anything under `skills/` changes, run `scripts/sync-plugins.sh` before committing.
+- Do not hand-edit generated plugin package files under `plugins/codex/agent/skills/`, `plugins/codex/agent/agents/`, or `plugins/claude/agent/`.
+- If `AGENTS.md`, `.codex/agents/`, `plugins/codex/agent/assets/`, or anything under `skills/` changes, run `scripts/sync-plugins.sh` before committing.

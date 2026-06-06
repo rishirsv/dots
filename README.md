@@ -8,7 +8,7 @@ Day to day, only edit:
 
 - `skills/`: active agent skills.
 - `.codex/agents/`: source Codex custom agents; the sync script also converts these into Claude agents.
-- `assets/agent/`: source plugin icon assets.
+- `plugins/codex/agent/assets/`: editable Codex plugin icon assets.
 - `AGENTS.md`: compact system guidance shared by this repo, Codex, and Claude.
 
 Then run:
@@ -17,14 +17,15 @@ Then run:
 scripts/sync-plugins.sh
 ```
 
-Everything else exists to package, install, sync, or stage those two surfaces.
+Everything else exists to package, install, sync, or stage those surfaces.
 
 ## Structure
 
-This repo keeps editable sources separate from host-specific plugin packages.
+This repo keeps editable skills and agents separate from host-specific plugin packages.
 Do not collapse the generated packages into a single `plugins/<plugin-name>/`
 folder: Codex and Claude use different plugin manifests, marketplace shapes, and
-agent formats.
+agent formats. Codex plugin assets are the exception: they live directly in the
+Codex plugin package because the Codex manifest references them from that root.
 
 ```text
 agent/
@@ -42,11 +43,6 @@ agent/
 │  ├─ config.toml
 │  └─ agents/
 │     └─ <agent>.toml
-│
-├─ assets/
-│  └─ agent/
-│     ├─ icon.png
-│     └─ logo.png
 │
 ├─ skills/
 │  └─ <skill-name>/
@@ -82,19 +78,19 @@ agent/
 
 - `skills/`: canonical agent skills. This is the source folder to edit.
 - `.codex/agents/`: canonical Codex custom agent definitions. The sync script converts these into Claude agent files.
-- `assets/agent/`: canonical plugin icon assets copied into the Codex package.
-- `plugins/codex/agent/`: generated Codex plugin package with `.codex-plugin/plugin.json`.
+- `plugins/codex/agent/assets/`: editable Codex plugin icon assets.
+- `plugins/codex/agent/`: Codex plugin package with `.codex-plugin/plugin.json`; `skills/` and `agents/` are refreshed from the root source folders.
 - `plugins/claude/agent/`: generated Claude plugin package with `.claude-plugin/plugin.json`.
 - `plugins/meta-skill/`: separate Codex plugin package for Meta Skill.
 - `.agents/plugins/marketplace.json`: Codex marketplace index.
 - `.claude-plugin/marketplace.json`: Claude marketplace index.
 - `AGENTS.md`: compact system guidance shared by this repo, Codex, and Claude.
 - `.codex/config.toml`: repo-local Codex config for working in this repo.
-- `scripts/sync-plugins.sh`: rebuilds plugin folders from `skills/`, validates manifests, registers/install plugins, and refreshes local caches.
+- `scripts/sync-plugins.sh`: refreshes plugin folders from source skills/agents, validates manifests, registers/install plugins, and refreshes local caches.
 
 ## Sync
 
-After any change under `skills/`, `.codex/agents/`, `assets/agent/`, or `AGENTS.md`, run:
+After any change under `skills/`, `.codex/agents/`, `plugins/codex/agent/assets/`, or `AGENTS.md`, run:
 
 ```sh
 scripts/sync-plugins.sh

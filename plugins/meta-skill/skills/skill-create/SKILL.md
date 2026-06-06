@@ -60,6 +60,7 @@ You are writing instructions a future agent will read while doing the job. Write
 ## Workflow
 
 Run the build as a short sequence that ends in a created skill within the same working session. Do not scaffold files until the Current Understanding is settled.
+Before scaffolding, pressure-check the trigger against [design.md](references/design.md) by naming one should-trigger prompt, one should-not-trigger prompt, and the nearest near miss.
 
 ### Step 1 — Understand
 

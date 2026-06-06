@@ -8,7 +8,6 @@ MARKETPLACE_SOURCE="${AGENT_MARKETPLACE_SOURCE:-rishirsv/agent}"
 
 SOURCE_SKILLS="$ROOT/skills"
 SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
-SOURCE_ASSETS="$ROOT/assets/$PLUGIN_NAME"
 CODEX_PLUGIN="$ROOT/plugins/codex/$PLUGIN_NAME"
 CLAUDE_PLUGIN="$ROOT/plugins/claude/$PLUGIN_NAME"
 CODEX_PLUGIN_AGENTS="$CODEX_PLUGIN/agents"
@@ -38,7 +37,6 @@ mkdir -p \
   "$CODEX_PLUGIN/.codex-plugin" \
   "$CODEX_PLUGIN/skills" \
   "$CODEX_PLUGIN_AGENTS" \
-  "$CODEX_PLUGIN/assets" \
   "$CLAUDE_PLUGIN/.claude-plugin" \
   "$CLAUDE_PLUGIN/skills" \
   "$CLAUDE_PLUGIN_AGENTS" \
@@ -149,10 +147,6 @@ for path in sorted(source.glob("*.toml")):
 PY
 else
   rm -rf "$CLAUDE_PLUGIN_AGENTS"
-fi
-
-if [[ -d "$SOURCE_ASSETS" ]]; then
-  rsync -a --delete --exclude '.DS_Store' "$SOURCE_ASSETS/" "$CODEX_PLUGIN/assets/"
 fi
 
 mkdir -p "$HOME/.codex" "$HOME/.claude" "$CODEX_USER_AGENTS" "$CLAUDE_USER_AGENTS"

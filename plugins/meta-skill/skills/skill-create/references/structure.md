@@ -23,26 +23,22 @@ workbench, dependency, build/cache, package-artifact, editor, or OS junk state.
 
 ## Project Workbench
 
-Project mode adds hidden authoring state:
+Project mode adds only the implemented hidden authoring state under
+`.meta-skill/`:
 
 ```text
-<skill-dir>/
-  SKILL.md
-  agents/
-  references/
-  scripts/
-  assets/
-  resources/
-  .meta-skill/
-    spec.md
-    cases/<ID-slug>/
-    runs/<run-id>/
-    tests/
+.meta-skill/
+  spec.md
+  cases/<ID-slug>/case.md
+  runs/<run-id>/
+  tests/unit/
 ```
 
 Use `meta-skill create --project ...` for new project-mode skills and `meta-skill project init <skill-dir>` for an existing portable skill.
 
-Do not create alternate root-level workbench folders.
+Do not create or document alternate workbench surfaces as current behavior:
+`reviews/`, `plans/`, `sessions/`, `evals.json`, and `tests/manifest.json` are
+not live workbench paths.
 
 ## Runtime Resource Test
 
