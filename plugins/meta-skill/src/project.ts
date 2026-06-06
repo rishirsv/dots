@@ -198,9 +198,9 @@ Additive dimensions:
 
 ## Scenario Plan
 
-| Scenario | Phase focus | Capability | User task shape | Baseline risk | Expected skill lift | Dimensions exercised | Source basis |
-|---|---|---|---|---|---|---|---|
-| <scenario name> | Quality / Implementation / Validation | <capability> | <high-level task archetype> | <what a base agent may miss> | <what should improve> | <base and additive dimensions> | <source rows or files> |
+| Scenario | Phase focus | User task shape | Baseline risk | Expected skill lift | Dimensions exercised | Source basis |
+|---|---|---|---|---|---|---|
+| <scenario name> | Quality / Implementation / Validation | <high-level task archetype> | <what a base agent may miss> | <what should improve> | <base and additive dimensions> | <source rows or files> |
 `;
 }
 

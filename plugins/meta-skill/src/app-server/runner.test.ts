@@ -37,6 +37,30 @@ describe("AppServerEvalRunner", () => {
     assert.match(await readText(path.join(evalRoot, "response.md")), /final answer/);
     const transcript = JSON.parse(await readText(path.join(evalRoot, "transcript.json")));
     assert.equal(transcript.turns[0].finalText, "final answer");
+    assertSolverInstructionsAreNatural(fake.startParams);
+    assert.match(JSON.stringify(fake.startParams), /SKILL\.md/);
+    assert.match(JSON.stringify(fake.startParams), /global cache paths/);
+  });
+
+  it("keeps no-skill control instructions free of test harness language", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-runner-natural-"));
+    const runRoot = path.join(root, "run");
+    const projectRoot = path.join(root, "project");
+    await fs.mkdir(projectRoot, { recursive: true });
+    const fake = new FakeClient();
+    const runner = new AppServerEvalRunner({ clientFactory: (onLine) => fake.attach(onLine), turnTimeoutMs: 25 });
+
+    await runner.run({
+      projectRoot,
+      skill_activation: "none",
+      eval: evalRecord(root),
+      runSource: { kind: "no_skill", label: "No skill", skill_root: null, skill_activation: "none" },
+      runId: "001-test",
+      runRoot,
+      appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
+    });
+
+    assertSolverInstructionsAreNatural(fake.startParams);
   });
 
   it("writes an unavailable final warning instead of reusing an earlier turn final after trace overflow", async () => {
@@ -100,13 +124,17 @@ describe("AppServerEvalRunner", () => {
 class FakeClient {
   private onLine?: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>;
   private events: Record<string, unknown>[] = [];
+  startParams: unknown = undefined;
 
   attach(onLine: (line: { direction: "client" | "server" | "stderr"; message: unknown }) => Promise<void>) {
     this.onLine = onLine;
     return {
-      request: async (method: string) => {
+      request: async (method: string, params?: unknown) => {
         await this.onLine?.({ direction: "client", message: { method } });
-        if (method === "thread/start") return { thread: { id: "thread-1" } };
+        if (method === "thread/start") {
+          this.startParams = params;
+          return { thread: { id: "thread-1" } };
+        }
         this.events.push({ method: "thread/tokenUsage/updated", params: { threadId: "thread-1", turnId: "turn-1", tokenUsage: { total: { inputTokens: 10, outputTokens: 14, totalTokens: 24, cachedInputTokens: 4, reasoningOutputTokens: 0 } } } });
         return { turn: { id: "turn-1" } };
       },
@@ -120,6 +148,16 @@ class FakeClient {
       flush: async () => {}
     };
   }
+}
+
+function assertSolverInstructionsAreNatural(params: unknown): void {
+  assert.ok(params && typeof params === "object");
+  const start = params as { baseInstructions?: string; developerInstructions?: string };
+  const visibleInstructions = `${start.baseInstructions || ""}\n${start.developerInstructions || ""}`;
+  assert.doesNotMatch(visibleInstructions, /\beval\b/i);
+  assert.doesNotMatch(visibleInstructions, /\btest\b/i);
+  assert.doesNotMatch(visibleInstructions, /\bbenchmark\b/i);
+  assert.doesNotMatch(visibleInstructions, /no skill is mounted/i);
 }
 
 class OverflowFakeClient {
@@ -189,7 +227,7 @@ function evalRecord(root: string): EvalRecord {
     folder: "basic",
     id: "basic",
     path: root,
-    metadata: { title: "Basic", capability: "Basic answer" },
+    metadata: { title: "Basic" },
     criteria: {
       criteria: [
         { criterion: "Specific", phase: "Quality", dimension: "Specificity", question: "Is it specific?", evidence: "response" },

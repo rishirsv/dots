@@ -25,8 +25,6 @@ export interface EvalFixture {
 
 export interface EvalMetadata {
   title: string;
-  topics?: string[];
-  capability?: string;
   fixtures?: EvalFixture[];
   metadata?: Record<string, unknown>;
 }
@@ -41,6 +39,7 @@ export interface EvalCriterion {
   dimension?: string;
   question: string;
   evidence?: string;
+  max_score?: number;
 }
 
 export interface EvalCriteria {

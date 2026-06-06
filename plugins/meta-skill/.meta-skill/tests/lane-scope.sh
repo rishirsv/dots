@@ -12,7 +12,7 @@ const required = [
   "Create Skill",
   "Evaluate Skill",
   "Improve Skill",
-  "Meta Skill router",
+  "Route broad Meta Skill request across lanes",
   "skills/create-skill/SKILL.md",
   "skills/evaluate-skill/SKILL.md",
   "skills/improve-skill/SKILL.md",

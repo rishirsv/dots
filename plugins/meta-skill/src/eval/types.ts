@@ -3,7 +3,6 @@ import type { EvalRunSourceKind } from "../models.ts";
 
 export interface EvalSelector {
   eval?: string[];
-  topic?: string[];
 }
 
 export interface EvalRunOptions {

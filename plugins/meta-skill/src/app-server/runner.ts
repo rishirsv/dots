@@ -109,12 +109,13 @@ export class AppServerEvalRunner {
         experimentalRawEvents: true,
         persistExtendedHistory: false,
         ephemeral: true,
-        baseInstructions: forceSkill ? "You are executing a Meta Skill eval. Follow the mounted skill payload exactly and answer the user's task." : "You are executing a Meta Skill eval without an attached skill. Answer the user's task directly.",
+        baseInstructions: forceSkill ? "Use the provided skill guidance to answer the user's request." : "Answer the user's request directly using the provided files.",
         developerInstructions: [
-          forceSkill ? "Use the skill mounted in this turn as the only runtime skill guidance." : "No skill is mounted for this eval. Answer without skill-specific runtime guidance.",
+          forceSkill ? "Use the skill guidance mounted in this turn as the only runtime skill guidance." : "No skill guidance is mounted. Answer without skill-specific runtime guidance.",
+          forceSkill && input.skillRoot ? `The attached skill root is ${input.skillRoot}. The skill instruction file is ${path.join(input.skillRoot, "SKILL.md")}. If you inspect skill files, use this mounted path rather than global cache paths.` : "",
           "The user messages are supplied directly. Solver-visible fixture files, when present, are mounted as read-only workspace roots.",
           forceSkill ? "Do not modify files. Produce the final answer that the skill would give the user." : "Do not modify files. Produce the final answer you would give without a skill."
-        ].join("\n")
+        ].filter(Boolean).join("\n")
       });
       const thread = start.thread as { id?: string } | undefined;
       const threadId = thread?.id;

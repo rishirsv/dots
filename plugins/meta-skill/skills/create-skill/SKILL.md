@@ -150,6 +150,7 @@ meta-skill lint <skill-dir>
 
 - Keep build notes, review notes, raw source examples, and eval evidence out of the portable payload.
 - Generalize a named product, repo, command, plugin, or skill to the user-facing concept unless the generated skill directly invokes it at runtime.
+- Before validation, scan the portable payload for source contamination: copied user prompt text, model names, provider docs, raw research links, author or source provenance, thread IDs, one-off file paths, and source notes. Keep only runtime dependencies and reusable behavior. Move provenance, research notes, and rejected source material to `.meta-skill/spec.md` in project mode or the handoff summary in portable-only mode.
 - Quote or escape YAML frontmatter values that contain punctuation.
 - Always include `agents/openai.yaml` with an `interface.default_prompt` that mentions `$<skill-name>` and describes the user-facing job. The file can also hold `display_name`, `short_description`, optional icons/color, a `policy` block (`allow_implicit_invocation`), and `dependencies`. The skill name and description live in `SKILL.md` frontmatter, not here. Keep frontmatter, `short_description`, and `default_prompt` free of system, provider, or implementation plumbing terms unless the user-facing task directly depends on that exact named surface. See [cookbook.md](references/cookbook.md) for the shape.
 - Add references, scripts, or assets only when they are real reusable materials, and link each one directly from `SKILL.md`.

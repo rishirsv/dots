@@ -66,6 +66,8 @@ The tests check:
 - Treat eval responses as behavior evidence, not automatic pass/fail proof.
 - Criteria stay evaluator-only in `criteria.json`.
 - Task text should read like a real user request or scenario, not a rubric dump.
+- `task.md` should not expose `Capability:` or `Topics:` metadata; do not model eval selection around capability or topics.
+- Fixtures are optional and should exist only when the task needs provided files, source packets, screenshots, or generated evidence.
 - Subagent sampling should follow `references/subagent-patterns.md`: keep subagents isolated, keep criteria hidden, and keep solver prompts free of test or benchmark framing.
 - Findings should name the defect, evidence, agent-behavior impact, smallest useful fix, and next validation command.
 

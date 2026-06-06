@@ -19,8 +19,11 @@ for (const folder of folders) {
   if (!fs.existsSync(criteriaPath)) errors.push(`${folder}: missing criteria.json`);
   if (!fs.existsSync(taskPath) || !fs.existsSync(criteriaPath)) continue;
   const task = fs.readFileSync(taskPath, "utf8");
-  for (const section of ["# ", "Capability:", "## Problem Description", "## Output Specification", "## Task"]) {
+  for (const section of ["# ", "## Problem Description", "## Output Specification", "## Task"]) {
     if (!task.includes(section)) errors.push(`${folder}: task.md missing ${section}`);
+  }
+  if (/^Capability:\s*.+$/m.test(task) || /^Topics:\s*.+$/m.test(task)) {
+    errors.push(`${folder}: task.md must not include Capability: or Topics: metadata`);
   }
   if (/should pass|0\s*\/\s*3|1\s*\/\s*3|2\s*\/\s*3|3\s*\/\s*3/i.test(task.split("## Task")[1] || "")) {
     errors.push(`${folder}: task text appears to expose evaluator criteria`);
@@ -35,6 +38,16 @@ for (const folder of folders) {
   if (!Array.isArray(criteria.criteria) || criteria.criteria.length < 3) {
     errors.push(`${folder}: criteria array must contain at least 3 entries`);
     continue;
+  }
+  const declaredFixtures = new Set((criteria.fixtures || []).map((fixture) => fixture && fixture.path).filter(Boolean));
+  if (/\.meta-skill\/review\.md/.test(task) || /\.meta-skill\/review\.md/.test(JSON.stringify(criteria.criteria))) {
+    errors.push(`${folder}: review evidence must be provided as a declared fixture, not referenced from .meta-skill/review.md`);
+  }
+  for (const match of `${task}\n${JSON.stringify(criteria.criteria)}`.matchAll(/fixtures\/[A-Za-z0-9._/-]+/g)) {
+    if (!declaredFixtures.has(match[0])) errors.push(`${folder}: references undeclared fixture ${match[0]}`);
+  }
+  if (criteria.metadata && ("capability" in criteria.metadata || "topics" in criteria.metadata)) {
+    errors.push(`${folder}: criteria.json metadata must not include capability or topics`);
   }
   const present = new Set();
   for (const [index, row] of criteria.criteria.entries()) {

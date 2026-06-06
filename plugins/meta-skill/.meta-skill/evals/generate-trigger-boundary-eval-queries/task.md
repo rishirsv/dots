@@ -1,8 +1,5 @@
 # Generate Trigger Boundary Eval Queries
 
-Capability: Evaluate Skill and Improve Skill handoff
-Topics: trigger-queries, evaluate-skill, improve-skill
-
 ## Problem Description
 
 A skill called `spreadsheet-analyst` helps users analyze spreadsheet data: cleaning rows, computing aggregates, generating summaries, and spotting anomalies. It under-triggers when users ask about CSV or Excel work without saying "spreadsheet," and over-triggers on unrelated data tasks like cleaning JSON config or writing SQL queries.

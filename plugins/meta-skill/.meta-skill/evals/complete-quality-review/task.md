@@ -1,11 +1,8 @@
 # Complete Registry-Quality Skill Review
 
-Capability: Improve Skill
-Topics: improve-skill, quality-review, review-criteria
-
 ## Problem Description
 
-A maintainer asks for a read-only review of an existing skill. The review command has generated `.meta-skill/review.md` with deterministic Validation evidence and placeholders for Discovery and Implementation. The maintainer wants the completed review in the same shape as a public registry Quality page.
+A maintainer asks for a read-only review of an existing skill. The review command has generated `fixtures/review.md` with deterministic Validation evidence and placeholders for Discovery and Implementation. The maintainer wants the completed review in the same shape as a public registry Quality page.
 
 ## Output Specification
 
@@ -22,4 +19,4 @@ Return a completed Quality review. The response must include:
 
 ## Task
 
-Complete the generated review as an agent-authored Quality page. Do not edit the target skill.
+Complete the generated review from `fixtures/review.md` as an agent-authored Quality page. Use the provided fixture evidence only; if something is missing, say it is missing. Do not edit the target skill.

@@ -45,7 +45,7 @@ meta-skill project init <skill-dir>
 meta-skill evals create <project>
 meta-skill lint <project-or-skill> [--json]
 meta-skill review <project-or-skill>
-meta-skill run <project> [--eval <id>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
+meta-skill run <project> [--eval <id>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
 meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 ```
 
@@ -90,13 +90,12 @@ meta-skill project init <skill-dir>
 meta-skill lint <skill-dir>
 ```
 
-Run a focused eval, a topic slice, or a no-skill baseline:
+Run all evals, a focused eval, or a no-skill baseline:
 
 ```bash
 meta-skill run <skill-dir>
 meta-skill run <skill-dir> --eval normal-authoring-flow
 meta-skill run <skill-dir> --eval multi-turn-source-grounding
-meta-skill run <skill-dir> --topic source-faithfulness
 meta-skill run <skill-dir> --no-skill
 ```
 
@@ -186,13 +185,18 @@ evidence-backed.
 Use `run` only for project skills with authored evals.
 
 Eval folders live at `.meta-skill/evals/<slug>/`, where `<slug>` is lowercase
-and hyphenated. Select evals with `--eval <id-or-folder>` or `--topic <topic>`.
+and hyphenated. Select evals with `--eval <id-or-folder>`.
 Use `--label` to make the run folder easier to recognize.
 
 By default, `run` evaluates the current working payload. It snapshots that
 payload into the run folder before execution. Use `--no-skill` for no-skill
 control evidence. A run evaluates one source only; do not mix candidate and
 baseline evidence in the same run.
+
+The command prints the mounted skill file path and review-required score totals
+computed from `criteria.json`. These scores are run-result metadata only until a
+human or scorer reviews evidence; `run` does not write separate summary or score
+files.
 
 Use `--turn-timeout-ms` only when a real eval needs a longer or shorter turn
 timeout. Use `--trace-buffer-events` when trace extraction needs a larger

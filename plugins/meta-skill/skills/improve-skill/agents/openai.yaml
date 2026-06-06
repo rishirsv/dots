@@ -1,4 +1,4 @@
 interface:
   display_name: "Improve Skill"
-  short_description: "Review and record skill improvements"
-  default_prompt: "Use $improve-skill to review a skill, make evidence-backed edits, or record a human decision."
+  short_description: "Review, prompt doctor, and patch skills"
+  default_prompt: "Use $improve-skill to prompt doctor a skill, review it, make evidence-backed edits, or record a human decision."

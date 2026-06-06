@@ -26,10 +26,10 @@ describe("eval generation", () => {
 
 ## Scenario Plan
 
-| Scenario | Phase focus | Capability | User task shape | Baseline risk | Expected skill lift | Dimensions exercised | Source basis |
-|---|---|---|---|---|---|---|---|
-| Capture a decision record | Implementation | Source-backed capture | Turn meeting notes into a durable decision record | Misses rejected options | Captures decision, options, and follow-ups | Actionability; Required Content Capture | SKILL.md |
-| Stop on missing approval | Validation | Approval gate | User asks to publish externally without approval | Proceeds without approval | Stops and asks for approval | Prohibited Behavior Avoidance | SKILL.md |
+| Scenario | Phase focus | User task shape | Baseline risk | Expected skill lift | Dimensions exercised | Source basis |
+|---|---|---|---|---|---|---|
+| Capture a decision record | Implementation | Turn meeting notes into a durable decision record | Misses rejected options | Captures decision, options, and follow-ups | Actionability; Required Content Capture | SKILL.md |
+| Stop on missing approval | Validation | User asks to publish externally without approval | Proceeds without approval | Stops and asks for approval | Prohibited Behavior Avoidance | SKILL.md |
 `
     );
 
@@ -40,9 +40,15 @@ describe("eval generation", () => {
     assert.equal(await exists(path.join(p.evals, "capture-a-decision-record", "criteria.json")), true);
     const generated = JSON.parse(await readText(path.join(p.evals, "capture-a-decision-record", "criteria.json")));
     assert.equal(generated.metadata.generated_from, ".meta-skill/eval-scenarios.md");
+    assert.ok(!("capability" in generated.metadata));
+    assert.ok(!("topics" in generated.metadata));
     assert.ok(generated.criteria.some((criterion: { criterion?: string; phase?: string; dimension?: string }) => criterion.criterion === "Exercises Required Content Capture" && criterion.phase === "Implementation" && criterion.dimension === "Required Content Capture"));
     assert.ok(generated.criteria.every((criterion: { question?: string }) => criterion.question?.startsWith("Does ")));
     assert.ok(generated.criteria.some((criterion: { question?: string }) => criterion.question?.includes("expected skill lift")));
-    assert.match(await readText(path.join(p.evals, "capture-a-decision-record", "task.md")), /Captures decision, options, and follow-ups/);
+    assert.ok(generated.criteria.every((criterion: { max_score?: number }) => typeof criterion.max_score === "number" && criterion.max_score > 0));
+    const task = await readText(path.join(p.evals, "capture-a-decision-record", "task.md"));
+    assert.match(task, /Captures decision, options, and follow-ups/);
+    assert.doesNotMatch(task, /^Capability:/m);
+    assert.doesNotMatch(task, /^Topics:/m);
   });
 });

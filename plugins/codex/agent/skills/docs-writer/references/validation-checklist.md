@@ -19,6 +19,7 @@ Run the checks that match the change. Do not claim validation that was not perfo
 | README | quickstart command, install/run/test commands, config paths, docs index links |
 | AGENTS | edit boundaries, validation loop, precedence/layering, no one-off memories |
 | ARCHITECTURE | module map paths, dependency rules, diagrams, ADR/RFC links, verification commands |
+| ADR / decision record | decision statement, context, considered options, consequences, owner path, links to affected docs/code |
 | DESIGN | YAML validity, token references, duplicate headings, contrast claims, source evidence for tokens |
 | PRD | correct depth selected, user/job clarity, in/out scope, acceptance criteria, essential implementation notes, open questions |
 | Canonical feature/domain doc | simple version, scope, surfaces, how-it-works walkthrough, ownership boundaries, data/state truth, diagrams if helpful, acceptance, verification |

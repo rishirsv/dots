@@ -11,32 +11,33 @@ Grill is more forceful than ordinary clarification. Use it when the user already
 
 <what-to-do>
 
-"Interview me relentlessly about every aspect of this plan until we reach a shared understanding."
+Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
 
-Walk down each branch of the design tree. Resolve dependencies between decisions one by one. For each question, provide your recommended answer.
+Ask the questions one at a time, waiting for feedback on each question before continuing.
 
-Ask questions one at a time and wait for feedback before continuing. If source files or docs can answer the question, inspect them instead of asking.
+If a question can be answered by exploring the codebase, explore the codebase instead.
 
 </what-to-do>
 
 <supporting-info>
 
-## Domain Awareness
+## Domain awareness
 
-During repo exploration, also look for existing documentation:
+During repo exploration, also look for existing durable documentation:
 
-- root or domain-specific `CONTEXT.md`
-- `CONTEXT-MAP.md` for multi-context repos
-- ADRs, usually under `docs/adr/` or a context-local docs folder
-- product docs, specs, PRDs, architecture docs, and module docs that define the current language
+- `AGENTS.md`, README, architecture docs, design docs, product docs, specs, PRDs, and module docs
+- feature, domain, concept, glossary, or language docs that define the project's terms
+- plans, decision/rationale records, runbooks, API docs, migration notes, and other durable docs that show how the repo captures work
+
+Do not assume the repo has or should have `CONTEXT.md` or `CONTEXT-MAP.md`. Treat context/glossary files as possible local conventions, not Grill's default output shape.
 
 Create files lazily. Default to chat, and propose a write only when a term, boundary, or decision has crystallized enough to be worth preserving.
 
 ## During The Session
 
-### Challenge Against The Glossary
+### Challenge Against Existing Language
 
-When the user uses a term that conflicts with existing project language, call it out immediately. Name the existing meaning, name the apparent new meaning, and ask which one is intended.
+When the user uses a term that conflicts with existing project language in docs or code, call it out immediately. Name the existing meaning, name the apparent new meaning, and ask which one is intended.
 
 ### Tighten Fuzzy Language
 
@@ -50,31 +51,56 @@ When domain relationships are being discussed, stress-test them with specific sc
 
 When the user states how something works, check whether the code agrees. If the docs, user language, and code disagree, surface the contradiction plainly and make the user choose the source of truth.
 
+### Use Quick Explore Subagents For Repo Research
+
+When a grilling question requires repo research beyond a quick local read, send one or two read-only `explorer-mini` Quick Explore subagents as needed. Good splits are by source class, module, term family, workflow, or artifact type.
+
+Keep the main Grill session responsible for synthesis, recommendations, and the next question. Give each subagent a compact brief with:
+
+- the exact question to answer
+- the repo area, docs, terms, symbols, or workflows to inspect
+- what evidence to return: file paths, symbols, snippets, commands searched, contradictions, and uncertainty
+- a reminder to stay read-only and not write files, implement, stage, commit, or make final decisions
+
+Use one subagent for one narrow lane. Use two subagents when independent lanes would materially improve coverage or speed. If subagents are unavailable, perform the same read-only exploration yourself and say so when the user explicitly requested subagents.
+
 ### Capture Terms Inline When Needed
 
 When a term is resolved and durable capture seems useful, propose the smallest owner doc and exact capture first. Update or create that doc only after the user asks for durable capture, approves the specific edit, or invoked Grill with an explicit save/update instruction.
 
-Glossary/context docs define domain language. Do not treat them as specs, scratch pads, implementation notes, or decision logs.
+Glossary or concept docs define domain language. Do not treat them as specs, scratch pads, implementation notes, or decision logs.
 
-### Offer ADRs Sparingly
+### Route Durable Artifacts Through Docs Writer
 
-Only offer an ADR when all three are true:
+When the session is converging on a durable artifact, name the likely artifact and hand off to `$docs-writer`. Grill selects the artifact type from the session; Docs Writer owns the template, path convention, style matching, source verification, and final write.
 
-1. The decision is hard to reverse.
-2. The decision would be surprising without context.
-3. The decision came from a real trade-off.
+Use this routing index:
 
-If any of the three is missing, skip the ADR.
+| Session result | Durable artifact to recommend | Usual owner or location |
+|---|---|---|
+| Product scope, user outcome, acceptance criteria, or open product questions | PRD | existing product docs or `docs/prd/<slug>.md` |
+| Implementation sequencing for complex work | ExecPlan / execution plan | repo convention, often `.plans/<slug>.md` |
+| Normative system, service, workflow, lifecycle, or interface contract | Project spec | existing specs area or `docs/specs/<slug>.md` |
+| Long-lived feature behavior, domain language, ownership, or runtime flow | Feature/domain doc | existing feature docs, module docs, or `docs/features/<slug>.md` |
+| Stable boundaries, invariants, dependencies, or architecture rationale | Architecture doc | `ARCHITECTURE.md` or existing architecture docs |
+| Hard-to-reverse or rationale-heavy decision | ADR or decision record | Docs Writer convention, typically `docs/ADRs/<number>-<slug>.md` |
+| Agent or contributor operating rule | `AGENTS.md` | nearest applicable `AGENTS.md` |
+| Contributor setup, usage, command map, or doc index | README or module docs | root README, module README, or existing contributor docs |
+| Repeatable operational procedure | Runbook | existing runbooks or `docs/runbooks/<slug>.md` |
+| API, event, schema, SDK, or integration behavior | API docs | generated spec first, otherwise existing API docs |
+| Breaking or compatibility-affecting adoption path | Migration notes | existing migration docs or `docs/migrations/<slug>.md` |
+
+For ADRs or decision records, Grill may recommend the artifact even when the repo has not used ADRs before. Do not write the ADR inside Grill; route to `$docs-writer`, which owns the ADR template and final path.
 
 </supporting-info>
 
 ## Workflow
 
 1. Identify the thing being grilled: plan, feature, domain model, workflow, name, document, decision, or scope boundary.
-2. Read the closest durable context before asking deep questions: `AGENTS.md`, README, architecture docs, product docs, specs, PRDs, ADRs, glossary/domain docs, and relevant source files.
+2. Read the closest durable context before asking deep questions: `AGENTS.md`, README, architecture docs, design docs, product docs, specs, PRDs, feature/domain/concept docs, module docs, decision records, plans, and relevant source files.
 3. Ask one question at a time. Each question should resolve one real ambiguity, contradiction, term, boundary, scenario, or decision.
 4. Always provide a recommended answer and why.
-5. If the question can be answered by inspecting docs or code, inspect first and ask only about the remaining judgment call.
+5. If the question can be answered by inspecting docs or code, inspect first. Use one or two Quick Explore subagents when broader read-only repo research would help, then ask only about the remaining judgment call.
 6. Challenge fuzzy terms immediately. Propose a canonical meaning and name rejected meanings when useful.
 7. Test boundaries with concrete scenarios, especially edge cases that distinguish similar concepts.
 8. When the user says how something works, check source reality when available. Surface contradictions plainly.
@@ -110,16 +136,7 @@ Add short options only when the decision naturally has 2-3 clean choices. Do not
 
 Default to chat. Write files only when the user asks for durable capture, approves a proposed edit, or invokes Grill with an explicit save/update instruction.
 
-Choose the smallest existing owner doc before creating anything new:
-
-- glossary/domain/context doc for canonical terms and rejected synonyms
-- PRD, requirements note, or brief for user-facing behavior and success signals
-- architecture doc for boundaries, invariants, and system shape
-- ADR for hard-to-reverse, surprising, trade-off decisions
-- AGENTS.md for every-session agent operating rules
-- README or module docs for contributor-facing workflow or module guidance
-
-If no owner exists and a glossary/context doc is appropriate, propose [references/context-format.md](references/context-format.md). If an ADR is appropriate, propose [references/adr-format.md](references/adr-format.md).
+Use the routing index above to recommend the artifact. Prefer the smallest existing owner doc before creating anything new. If the artifact needs to be written, route to `$docs-writer` with the grilled direction, locked decisions, open questions, source evidence checked, and likely artifact type.
 
 Do not create a parallel source of truth. Do not write implementation plans inside Grill unless the idea has already settled and the user explicitly asks for that handoff.
 
@@ -138,7 +155,7 @@ When the grilling session is ready to close, use:
 
 **Durable Output:** <chat only, existing doc updated, new doc path, or recommended artifact>
 
-**Next Move:** <decision, docs-writer handoff, PRD handoff, prototype handoff, implementation handoff, or stop>
+**Next Move:** <decision, docs-writer handoff, prototype handoff, implementation handoff, or stop>
 ```
 
 ## Guardrails
@@ -146,7 +163,7 @@ When the grilling session is ready to close, use:
 - Do not implement.
 - Do not ask what repo source can answer.
 - Do not silently accept vague or conflicting language.
-- Do not create ADRs for reversible, obvious, or no-tradeoff decisions.
 - Do not turn every settled term into a file edit.
 - Do not create a new document when an existing owner doc should be updated.
+- Do not write durable docs that belong to `$docs-writer`.
 - Do not keep asking questions after the next needed move is research, prototype, implementation, or documentation.

@@ -367,7 +367,6 @@ async function validateEval(
   if (seenIds.has(item.id)) failures.push(issue("failure", `duplicate eval id: ${item.id}`, taskMd));
   seenIds.add(item.id);
   if (!item.metadata.title) failures.push(issue("failure", "task.md title is required", taskMd));
-  if (!item.metadata.capability) failures.push(issue("failure", "task.md capability is required", taskMd));
   if (!item.problemDescription) failures.push(issue("failure", "task.md problem description is required", taskMd));
   if (!item.outputSpecification) failures.push(issue("failure", "task.md output specification is required", taskMd));
   if (!item.task) failures.push(issue("failure", "task.md task is required", taskMd));

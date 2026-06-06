@@ -53,6 +53,6 @@ Additive dimensions:
 
 ## Scenario Plan
 
-| Scenario | Phase focus | Capability | User task shape | Baseline risk | Expected skill lift | Dimensions exercised | Source basis |
-|---|---|---|---|---|---|---|---|
-| Complete evidence-backed review | Quality / Implementation / Validation | Improve Skill | User asks for a read-only review of a skill that already has eval scenarios and a generated review worksheet. | Base agent invents validation rows, ignores eval dimensions, or reports vague findings. | Completes Discovery and Implementation with evidence-backed reasoning, mirrors eval dimensions in findings, preserves deterministic Validation, and avoids edits. | Quality: Eval Dimension Alignment; Implementation: Review Reasoning Depth; Implementation: Evidence-to-Edit Discipline; Validation: Synthetic Validation Avoidance; Validation: Deterministic Evidence Preservation | `SKILL.md`, `references/review-criteria.md` |
+| Scenario | Phase focus | User task shape | Baseline risk | Expected skill lift | Dimensions exercised | Source basis |
+|---|---|---|---|---|---|---|
+| Complete evidence-backed review | Quality / Implementation / Validation | User asks for a read-only review of a skill that already has eval scenarios and a generated review worksheet. | Base agent invents validation rows, ignores eval dimensions, or reports vague findings. | Completes Discovery and Implementation with evidence-backed reasoning, mirrors eval dimensions in findings, preserves deterministic Validation, and avoids edits. | Quality: Eval Dimension Alignment; Implementation: Review Reasoning Depth; Implementation: Evidence-to-Edit Discipline; Validation: Synthetic Validation Avoidance; Validation: Deterministic Evidence Preservation | `SKILL.md`, `references/review-criteria.md` |

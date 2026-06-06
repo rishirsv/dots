@@ -1,8 +1,5 @@
 # Route Broad Meta Skill Request Across Lanes
 
-Capability: Meta Skill router
-Topics: routing, lane-handoff, human-gates
-
 ## Problem Description
 
 A user says:

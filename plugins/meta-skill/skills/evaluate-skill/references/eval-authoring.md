@@ -79,12 +79,11 @@ Map the Scenario Plan row like this:
 |---|---|
 | `Scenario` | Eval folder slug and `task.md` title. |
 | `Phase focus` | Primary pressure point, not the only criterion phase. |
-| `Capability` | `Capability:` line in `task.md` and the first implementation criterion. |
 | `User task shape` | Starting point for the realistic user request. |
 | `Baseline risk` | The failure hypothesis and at least one validation criterion. |
 | `Expected skill lift` | Output specification and success behavior. |
 | `Dimensions exercised` | Criteria dimensions. Add rows, do not invent a new framework. |
-| `Source basis` | Fixture, source file, or reference to inspect for grounding. |
+| `Source basis` | Fixture, source file, user-provided evidence, external source class, or reference to inspect for grounding. |
 
 Do not copy the Scenario Plan row verbatim into `task.md`. Expand it into a realistic assignment with enough context and constraints to create meaningful behavior.
 
@@ -159,13 +158,10 @@ Why it is strong:
 
 ## `task.md`
 
-`task.md` is solver-visible.
+`task.md` is solver-visible. Keep parser metadata out of it.
 
 ```md
 # <Scenario Title>
-
-Capability: <capability>
-Topics: <topic>
 
 ## Problem Description
 
@@ -181,6 +177,8 @@ Topics: <topic>
 ```
 
 Use `## Turn 2`, `## Turn 3`, and later turns only for realistic follow-up user behavior. Do not put criteria, scoring hints, hidden expected answers, or "use the skill" phrasing in `task.md`.
+
+Fixtures are optional. Use them when the task depends on files, screenshots, source packets, generated review worksheets, or other solver-visible evidence. Do not invent fixtures just to make an eval look more complete. Knowledge-work and research evals often need no local fixture; their evidence may be the final response, transcript, cited sources, or captured validation output instead.
 
 ## Criteria Thinking
 
@@ -223,27 +221,30 @@ Use generic metrics only as exploration signals for finding traces to review. Do
       "phase": "Quality",
       "dimension": "<dimension>",
       "question": "<binary pass/fail question>",
-      "evidence": "response"
+      "evidence": "response",
+      "max_score": 25
     },
     {
       "criterion": "<observable check>",
       "phase": "Implementation",
       "dimension": "<dimension>",
       "question": "<binary pass/fail question>",
-      "evidence": "response, transcript"
+      "evidence": "response, transcript",
+      "max_score": 25
     },
     {
       "criterion": "<observable check>",
       "phase": "Validation",
       "dimension": "<dimension>",
       "question": "<binary pass/fail question>",
-      "evidence": "response, transcript, captured validation output"
+      "evidence": "response, transcript, captured validation output",
+      "max_score": 25
     }
   ]
 }
 ```
 
-Phases are fixed: `Quality`, `Implementation`, and `Validation`.
+Phases are fixed: `Quality`, `Implementation`, and `Validation`. Use `max_score` when you want the run result to expose Tessl-style weighted-checklist totals; omit it only when all criteria should have equal review weight. Do not create separate score files during authoring.
 
 Dimensions are dynamic but additive. Start with the shared base dimensions from `.meta-skill/eval-scenarios.md`, then add skill-specific dimensions only when the scenario needs them.
 

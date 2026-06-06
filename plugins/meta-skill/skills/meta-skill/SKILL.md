@@ -27,7 +27,7 @@ Use the smallest useful lane set:
 
 - Start with `create-skill` for new reusable skills, existing draft redesigns, source-pack distillation, workflow capture, trigger-contract decisions, runtime payload structure, and portable-vs-project-mode choices.
 - Use `evaluate-skill` for `.meta-skill/evals/` setup, manual eval authoring, `meta-skill run` execution, run inspection, baseline runs, and eval evidence interpretation.
-- Use `improve-skill` for best-practice review, lint-backed findings, eval-backed edits, trace-backed fixes, human-feedback-backed patches, and bounded redesign of existing skills.
+- Use `improve-skill` for prompt-doctor requests, best-practice review, lint-backed findings, eval-backed edits, trace-backed fixes, human-feedback-backed patches, and bounded redesign of existing skills.
 - Handle package, release, install, publish, marketplace, or promotion questions at the Meta Skill level until a focused lane is needed for validation or edits. Require explicit user approval before any such action.
 
 ## Route Order
@@ -95,7 +95,7 @@ Do not use it for rewriting skills, best-practice review, packaging, installing,
 
 ### improve-skill
 
-Route here for reviewing or patching an existing skill from evidence: `.meta-skill/review.md`, lint output, eval run ID, eval ID, test failure, trace, saved evidence file, or human feedback. It owns review-only findings, surgical edits, bounded redesigns, and rerunning relevant validation after edits.
+Route here for prompt-doctoring, reviewing, or patching an existing skill from evidence: `.meta-skill/review.md`, lint output, eval run ID, eval ID, test failure, trace, saved evidence file, or human feedback. It owns review-only findings, surgical edits, bounded redesigns, and rerunning relevant validation after edits.
 
 Do not use it for creating new skills, running evals, autonomous rewrites without evidence, packaging, installing, or publishing.
 

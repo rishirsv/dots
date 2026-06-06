@@ -1,6 +1,6 @@
 ---
 name: improve-skill
-description: "Use when a user asks for skill review, fix my skill, update a skill, or improve an existing reusable skill from evidence: run/read review.md, fix lint issues, apply targeted patches to SKILL.md, references, scripts, or assets, and incorporate eval, trace, or human-feedback findings; not for creating new skills, running evals, broad rewrites without evidence, packaging, installing, or publishing."
+description: "Use when a user asks to improve a skill, prompt doctor a skill, review a skill, fix my skill, update a skill, or make evidence-backed changes to an existing reusable skill: run/read review.md, fix lint issues, patch SKILL.md, references, scripts, or assets, and incorporate eval, trace, or human-feedback findings; not for creating new skills, running evals, broad rewrites without evidence, packaging, installing, or publishing."
 ---
 
 # Improve Skill

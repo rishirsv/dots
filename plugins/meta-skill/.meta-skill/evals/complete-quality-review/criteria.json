@@ -1,5 +1,14 @@
 {
-  "fixtures": [],
+  "fixtures": [
+    {
+      "path": "fixtures/review.md",
+      "description": "Generated review worksheet with deterministic Validation evidence and Discovery/Implementation placeholders."
+    },
+    {
+      "path": "fixtures/eval-scenarios.md",
+      "description": "Scenario dimensions that should inform the review lenses."
+    }
+  ],
   "tests": [
     "review-quality-shape",
     "score-contract"
@@ -22,28 +31,28 @@
       "phase": "Implementation",
       "dimension": "Quality Review Depth",
       "question": "Does the completed review fill Discovery and Implementation with 2-4 sentence assessments plus evidence-backed dimension reasoning?",
-      "evidence": "response, .meta-skill/review.md"
+      "evidence": "response, fixtures/review.md"
     },
     {
       "criterion": "Uses calibrated scores",
       "phase": "Implementation",
       "dimension": "Evidence-to-Edit Discipline",
       "question": "Do scores explain why they are not higher or lower and cite concrete phrases, sections, links, validation output, or missing artifacts?",
-      "evidence": "response, .meta-skill/review.md"
+      "evidence": "response, fixtures/review.md"
     },
     {
       "criterion": "Preserves deterministic validation",
       "phase": "Validation",
       "dimension": "Review Score Shape",
       "question": "Does the review keep Validation deterministic instead of rescoring it by feel?",
-      "evidence": ".meta-skill/review.md"
+      "evidence": "fixtures/review.md"
     },
     {
       "criterion": "Avoids deprecated score surfaces",
       "phase": "Validation",
       "dimension": "Deprecated Surface Avoidance",
       "question": "Does the review omit `Judge Score`, `Total Score`, confidence, basis, unavailable states, sidecar JSON, and review folders?",
-      "evidence": "response, .meta-skill/review.md, captured validation output"
+      "evidence": "response, fixtures/review.md, captured validation output"
     }
   ]
 }

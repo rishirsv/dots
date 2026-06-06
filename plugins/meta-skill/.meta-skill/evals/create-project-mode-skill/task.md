@@ -1,8 +1,5 @@
 # Create Project-Mode Skill from Workflow
 
-Capability: Create Skill
-Topics: create-skill, project-mode, source-distillation
-
 ## Problem Description
 
 A product engineering team repeatedly asks agents to generate API documentation from source files. They want a reusable portable skill for this workflow, and they also want to maintain it over time with eval scenarios. The source material is a short description of the workflow plus three example user prompts:

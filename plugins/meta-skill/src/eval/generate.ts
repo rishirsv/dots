@@ -6,7 +6,6 @@ import { listEvalFolders } from "./discovery.ts";
 interface ScenarioSeed {
   scenario: string;
   phaseFocus: string;
-  capability: string;
   userTaskShape: string;
   baselineRisk: string;
   expectedSkillLift: string;
@@ -23,7 +22,6 @@ export interface GenerateEvalsResult {
 const SCENARIO_COLUMNS = [
   "scenario",
   "phase focus",
-  "capability",
   "user task shape",
   "baseline risk",
   "expected skill lift",
@@ -74,12 +72,11 @@ function parseScenarioPlan(text: string): ScenarioSeed[] {
       seeds.push({
         scenario: cells[0],
         phaseFocus: cells[1],
-        capability: cells[2],
-        userTaskShape: cells[3],
-        baselineRisk: cells[4],
-        expectedSkillLift: cells[5],
-        dimensionsExercised: cells[6],
-        sourceBasis: cells[7]
+        userTaskShape: cells[2],
+        baselineRisk: cells[3],
+        expectedSkillLift: cells[4],
+        dimensionsExercised: cells[5],
+        sourceBasis: cells[6]
       });
       index += 1;
     }
@@ -92,11 +89,8 @@ function isPlaceholder(value: string): boolean {
 }
 
 function taskDraft(seed: ScenarioSeed): string {
-  const expected = seed.expectedSkillLift || `The skill improves the ${seed.capability || seed.scenario} workflow.`;
+  const expected = seed.expectedSkillLift || `The skill improves the ${seed.scenario} workflow.`;
   return `# ${seed.scenario}
-
-Capability: ${seed.capability || seed.scenario}
-Topics: ${slugify(seed.phaseFocus || "implementation", "implementation")}
 
 ## Problem Description
 
@@ -130,18 +124,19 @@ function criteriaDraft(seed: ScenarioSeed): Record<string, unknown> {
   };
 }
 
-function criteriaRows(seed: ScenarioSeed): Array<{ criterion: string; phase: string; dimension: string; question: string; evidence: string }> {
+function criteriaRows(seed: ScenarioSeed): Array<{ criterion: string; phase: string; dimension: string; question: string; evidence: string; max_score: number }> {
   const dimensions = splitDimensions(seed.dimensionsExercised, seed.phaseFocus);
   const primary = dimensions[0] || { phase: phaseName(seed.phaseFocus || "Implementation"), dimension: "Actionability" };
   const rows = [
     {
-      criterion: seed.capability ? `Addresses ${seed.capability}` : "Addresses scenario capability",
+      criterion: "Addresses scenario",
       phase: primary.phase,
       dimension: primary.dimension,
       question: seed.expectedSkillLift
         ? `Does the response deliver this expected skill lift: ${seed.expectedSkillLift}?`
-        : `Does the response complete the ${seed.capability || seed.scenario} capability with observable output?`,
-      evidence: "response"
+        : `Does the response complete the ${seed.scenario} scenario with observable output?`,
+      evidence: "response",
+      max_score: 25
     }
   ];
   const seenDimensions = new Set([`${primary.phase}:${primary.dimension}`.toLowerCase()]);
@@ -154,7 +149,8 @@ function criteriaRows(seed: ScenarioSeed): Array<{ criterion: string; phase: str
       phase: dimension.phase,
       dimension: dimension.dimension,
       question: criteriaQuestion(dimension.phase, dimension.dimension, seed),
-      evidence: dimension.phase === "Validation" ? "response, transcript, captured validation output" : "response, transcript"
+      evidence: dimension.phase === "Validation" ? "response, transcript, captured validation output" : "response, transcript",
+      max_score: 20
     });
   }
   if (seed.baselineRisk) {
@@ -163,7 +159,8 @@ function criteriaRows(seed: ScenarioSeed): Array<{ criterion: string; phase: str
       phase: "Validation",
       dimension: dimensionNamed(dimensions, "Prohibited Behavior Avoidance") || "Prohibited Behavior Avoidance",
       question: `Does the response avoid this baseline risk: ${seed.baselineRisk}?`,
-      evidence: "response"
+      evidence: "response",
+      max_score: 20
     });
   }
   if (seed.sourceBasis) {
@@ -172,7 +169,8 @@ function criteriaRows(seed: ScenarioSeed): Array<{ criterion: string; phase: str
       phase: "Validation",
       dimension: dimensionNamed(dimensions, "Source Faithfulness") || "Source Faithfulness",
       question: `Does the response ground its behavior in ${seed.sourceBasis}?`,
-      evidence: "response"
+      evidence: "response",
+      max_score: 15
     });
   }
   return withBasePhaseCoverage(rows, seed);
@@ -202,16 +200,16 @@ function dimensionNamed(dimensions: Array<{ dimension: string }>, wanted: string
 }
 
 function criteriaQuestion(phase: string, dimension: string, seed: ScenarioSeed): string {
-  const target = seed.expectedSkillLift || seed.capability || seed.scenario;
+  const target = seed.expectedSkillLift || seed.scenario;
   if (phase === "Quality") return `Does the response include concrete, scenario-specific evidence of ${dimension} for ${target}?`;
   if (phase === "Validation") return `Does the saved evidence show ${dimension} is satisfied for ${target}?`;
   return `Does the response implement ${dimension} for ${target} with observable output?`;
 }
 
 function withBasePhaseCoverage(
-  rows: Array<{ criterion: string; phase: string; dimension: string; question: string; evidence: string }>,
+  rows: Array<{ criterion: string; phase: string; dimension: string; question: string; evidence: string; max_score: number }>,
   seed: ScenarioSeed
-): Array<{ criterion: string; phase: string; dimension: string; question: string; evidence: string }> {
+): Array<{ criterion: string; phase: string; dimension: string; question: string; evidence: string; max_score: number }> {
   const existing = new Set(rows.map((row) => row.phase));
   const baseRows = [
     { phase: "Quality", dimension: "Specificity", criterion: "Specific output quality" },
@@ -225,7 +223,8 @@ function withBasePhaseCoverage(
       phase: base.phase,
       dimension: base.dimension,
       question: criteriaQuestion(base.phase, base.dimension, seed),
-      evidence: base.phase === "Validation" ? "response, transcript, captured validation output" : "response"
+      evidence: base.phase === "Validation" ? "response, transcript, captured validation output" : "response",
+      max_score: 20
     });
   }
   return rows;

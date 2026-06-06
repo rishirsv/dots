@@ -12,7 +12,7 @@ Commands have one side-effect class:
 | Projection | `lint`, `review` | compute output without mutating run evidence |
 | Transform | `create`, `project init`, `evals create`, `package` | write files the user explicitly requested |
 
-The current top-level command surface is `create`, `project init`, `evals create`, `lint`, `review`, `run`, and `package`. `evals create` drafts executable eval files from `.meta-skill/eval-scenarios.md`. `review` writes `.meta-skill/review.md` as the single review artifact. `run` selects authored evals by `--eval` or `--topic`; it evaluates either the working payload or a no-skill control with `--no-skill`.
+The current top-level command surface is `create`, `project init`, `evals create`, `lint`, `review`, `run`, and `package`. `evals create` drafts executable eval files from `.meta-skill/eval-scenarios.md`. `review` writes `.meta-skill/review.md` as the single review artifact. `run` selects authored evals by `--eval`; it evaluates either the working payload or a no-skill control with `--no-skill`.
 
 ## Project Shape
 
@@ -67,6 +67,11 @@ Per-eval files have one nature each:
 - `rpc.jsonl`: raw App Server trace
 - `transcript.json`: normalized App Server transcript
 - `response.md`: final answer
+
+The run command returns in-memory metadata for the mounted skill path, per-eval
+evidence paths, token usage, and review-required weighted score totals derived
+from `criteria.json`. That metadata is surfaced at the CLI boundary without
+adding `run.json`, score files, or summary files to the run directory.
 
 ## Runner Boundary
 

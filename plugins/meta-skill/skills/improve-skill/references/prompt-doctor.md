@@ -53,6 +53,7 @@ Use only lanes relevant to the request:
 - Activation: trigger clarity, realistic phrasing, near misses, non-trigger boundary.
 - Runtime clarity: default path, output contract, stop/ask points, final checks.
 - Resources: linked references/scripts/assets, dependency clarity, source leakage, stale files.
+- Runtime contamination: copied user prompt text, model names, provider docs, raw research links, author or source provenance, thread IDs, one-off file paths, and source notes in `SKILL.md`, references, scripts, assets, or metadata instead of reusable behavior or true runtime dependencies.
 - Controls: user files as data, approval gates, external writes, package/publish gates.
 - Eval evidence: `.meta-skill/evals/`, executable tests under `.meta-skill/tests/`, transcript quality, token usage visibility.
 - Review score: `.meta-skill/review.md` Quality Score, Discovery, Implementation, Validation, and combined findings.

@@ -15,7 +15,7 @@ Usage:
   meta-skill evals create <project>
   meta-skill lint <project-or-skill> [--json]
   meta-skill review <project-or-skill>
-  meta-skill run <project> [--eval <id>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
+  meta-skill run <project> [--eval <id>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
   meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 `;
 
@@ -111,11 +111,11 @@ async function commandReview(argv: string[]): Promise<number> {
 }
 
 async function commandRun(argv: string[]): Promise<number> {
-  const args = parse(argv, ["eval", "topic", "label", "turn-timeout-ms", "trace-buffer-events"], ["no-skill", "no-lint"]);
+  const args = parse(argv, ["eval", "label", "turn-timeout-ms", "trace-buffer-events"], ["no-skill", "no-lint"]);
   const project = args.positionals[0] || ".";
   const result = await runEval({
     project,
-    selector: { eval: args.many("eval"), topic: args.many("topic") },
+    selector: { eval: args.many("eval") },
     label: args.one("label"),
     runSource: args.has("no-skill") ? "no_skill" : "working_payload",
     noLint: args.has("no-lint"),
@@ -124,7 +124,12 @@ async function commandRun(argv: string[]): Promise<number> {
   });
   console.log(`run: ${result.runId}`);
   console.log(`path: ${result.runRoot}`);
+  if (result.payload) console.log(`skill: ${result.payload.skill_md}`);
   console.log(`evals: ${result.evals.join(", ")}`);
+  for (const item of result.results) {
+    const score = item.score === null ? `review required/${item.max_score}` : `${item.score}/${item.max_score}`;
+    console.log(`score: ${item.folder} ${score}`);
+  }
   if (result.errors.length) {
     console.log("errors:");
     for (const error of result.errors) console.log(`- ${error}`);

@@ -29,6 +29,7 @@ describe("commands", () => {
     assert.doesNotMatch(help, /meta-skill promote/);
     assert.doesNotMatch(help, /app-server-endpoint/);
     assert.doesNotMatch(help, /--type/);
+    assert.doesNotMatch(help, /--topic/);
     assert.match(help, /turn-timeout-ms/);
     assert.match(help, /trace-buffer-events/);
   });

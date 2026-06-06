@@ -48,7 +48,7 @@ Use `.meta-skill/evals/` as the eval namespace.
 
 Use `.meta-skill/eval-scenarios.md` as the high-level create-time scenario plan. Keep it to evaluation purpose, source distillation, base quality/implementation/validation dimensions, additive skill-specific dimensions, and scenario-plan rows. Executable details belong in `.meta-skill/evals/<slug>/task.md` and `.meta-skill/evals/<slug>/criteria.json`.
 
-Use `.meta-skill/evals/<slug>/` for executable evals. `task.md` contains the solver-visible problem description, output specification, first user turn, and any follow-up user turns. `criteria.json` contains evaluator-only fixtures, deterministic test refs, metadata, and review criteria.
+Use `.meta-skill/evals/<slug>/` for executable evals. `task.md` contains the solver-visible problem description, output specification, first user turn, and any follow-up user turns. It must not contain parser-only `Capability:` or `Topics:` metadata. `criteria.json` contains evaluator-only optional fixtures, deterministic test refs, metadata, and review criteria.
 
 Use executable files directly under `.meta-skill/tests/` for deterministic tests. Do not create nested test folders. Prefer deterministic tests when a rule can answer the question.
 

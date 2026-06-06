@@ -21,15 +21,23 @@ describe("eval evidence hard cut", () => {
     });
 
     assert.equal(await exists(path.join(result.runRoot, "facts.jsonl")), false);
+    assert.equal(await exists(path.join(result.runRoot, "run.json")), false);
+    assert.equal(await exists(path.join(result.runRoot, "summary.md")), false);
     assert.equal(await exists(path.join(result.runRoot, "payload", "SKILL.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "payload", "skill-under-test.json")), false);
     assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "task.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "criteria.json")), true);
     assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "fixtures", "input.txt")), true);
     assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "rpc.jsonl")), true);
     assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "transcript.json")), true);
     assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "response.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "scores.json")), false);
 
     assert.deepEqual(result.evals, ["basic"]);
+    assert.equal(result.payload?.skill_md, "payload/SKILL.md");
+    assert.equal(result.results[0].folder, "basic");
+    assert.equal(result.results[0].scoring_status, "review_required");
+    assert.equal(result.results[0].max_score, 3);
     const transcript = JSON.parse(await readText(path.join(result.runRoot, "evals", "basic", "transcript.json")));
     assert.equal((transcript.turns[0].tokenUsage as TokenUsage).total_tokens, 2);
   });
@@ -113,8 +121,6 @@ async function writeEval(project: string): Promise<void> {
   await writeText(
     path.join(evalRoot, "task.md"),
     `# Basic
-
-Capability: Direct answer
 
 ## Problem Description
 

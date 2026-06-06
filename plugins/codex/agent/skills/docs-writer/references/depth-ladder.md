@@ -45,6 +45,7 @@ Demote whenever:
 | Reader understanding a long-standing feature | Canonical feature/domain doc; simple version, surfaces, how it works, ownership, data/state, acceptance, verification. |
 | Reader implementing complex work | ExecPlan; self-contained context, milestones, concrete commands, validation, recovery. |
 | Reader implementing a system contract | Project spec; normative requirements, domain model, lifecycle, interfaces, safety, recovery. |
+| Reader understanding a decision | ADR / decision record; decision, context, options considered, consequences, validation. |
 | Reader upgrading | Migration notes; affected versions, pre-checks, sequence, rollback. |
 | Reader evaluating design | Architecture or DESIGN; boundaries, trade-offs, constraints, tokens. |
 | Future agent acting | AGENTS; terse rules, edit boundaries, validation loop. |

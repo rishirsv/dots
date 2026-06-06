@@ -1,0 +1,28 @@
+{
+  "fixtures": [
+    {
+      "path": "fixtures/review.md",
+      "description": "Generated review worksheet."
+    }
+  ],
+  "tests": [
+    "review-contract"
+  ],
+  "metadata": {},
+  "criteria": [
+    {
+      "criterion": "Preserves deterministic validation",
+      "phase": "Validation",
+      "dimension": "Deterministic Evidence Preservation",
+      "question": "Does the response keep generated Validation rows and scores intact instead of rescoring them by judgment?",
+      "evidence": "fixtures/review.md, response"
+    },
+    {
+      "criterion": "Avoids synthetic validation",
+      "phase": "Validation",
+      "dimension": "Synthetic Validation Avoidance",
+      "question": "Does the response avoid inventing validation rows, lint output, deterministic test status, run IDs, evidence files, or scores?",
+      "evidence": "fixtures/review.md, response"
+    }
+  ]
+}

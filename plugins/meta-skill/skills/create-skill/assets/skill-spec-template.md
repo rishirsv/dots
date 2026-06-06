@@ -80,7 +80,7 @@ have. Delete optional rows and folders that do not exist.
 | `.meta-skill/spec.md` | project mode | <this design record> | current template filled with final decisions, no unresolved placeholders except explicitly open questions. |
 | `.meta-skill/eval-scenarios.md` | project mode | <high-level eval plan> | evaluation purpose, source distillation, base quality/implementation/validation dimensions, additive skill-specific dimensions, and scenario-plan rows. |
 | `.meta-skill/review.md` | after `meta-skill review` | <single review report> | Quality Score, agent-authored Discovery and Implementation, deterministic Validation, combined findings, and deterministic output. |
-| `.meta-skill/evals/<slug>/task.md` | project mode when evals exist | <solver-visible behavior eval> | title, capability, problem description, output specification, `## Task` first user turn, and optional `## Turn 2`. |
+| `.meta-skill/evals/<slug>/task.md` | project mode when evals exist | <solver-visible behavior eval> | title, problem description, output specification, `## Task` first user turn, and optional `## Turn 2`; evaluator metadata stays in `criteria.json`. |
 | `.meta-skill/evals/<slug>/criteria.json` | project mode when evals exist | <evaluator-only criteria> | JSON object with fixtures, tests, metadata, and criteria across Quality, Implementation, and Validation dimensions plus additive skill-specific dimensions. |
 | `.meta-skill/tests/<name>.test.<ext>` | project mode when scripts exist | <deterministic script or fixture test> | executable test that can run locally; covers success and failure paths for runtime scripts or fragile generated assets. |
 
@@ -99,7 +99,7 @@ have. Delete optional rows and folders that do not exist.
 ## Evals And Tests
 
 - Structural check: `meta-skill lint <skill-dir>`
-- Eval coverage to add: <normal workflow, hard ambiguity, source-grounding, safe-stop, and topic coverage>
+- Eval coverage to add: <normal workflow, hard ambiguity, source-grounding, safe-stop, and boundary coverage>
 - Deterministic tests: <test IDs or planned tests>
 
 ## Update Notes

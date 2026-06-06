@@ -1,8 +1,5 @@
 # Author Eval Infrastructure from Scenarios
 
-Capability: Evaluate Skill
-Topics: evaluate-skill, eval-authoring, criteria-json
-
 ## Problem Description
 
 A reusable skill already has a filled `.meta-skill/eval-scenarios.md` with three accepted scenarios:

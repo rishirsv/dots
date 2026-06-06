@@ -226,8 +226,9 @@ Language style enforces the shape:
 Concrete tokens that should not appear in a runtime rule extracted from source
 material unless they are direct runtime dependencies: client names, deal sponsor
 names, dollar amounts, fiscal-year labels, file paths, identifying dates, target
-identifiers, repo names, product names, plugin names, skill names, command names,
-and provider-specific namespaces.
+identifiers, copied prompt text, model names, raw hyperlinks, source-note
+summaries, author or research provenance, repo names, product names, plugin
+names, skill names, command names, and provider-specific namespaces.
 
 ## Examples in the Runtime Skill
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Research"
+  short_description: "Run explicit source-grounded external or current research"
+  default_prompt: "Use $research to answer this with source-grounded external/current research, citations, recency checks, contradictions, uncertainty, and optional standard or heavy workstreams."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,6 +1,6 @@
 ---
 name: docs-writer
-description: "Use when writing, updating, repairing, or distilling durable repository documentation such as README.md, AGENTS.md, ARCHITECTURE.md, DESIGN.md, PRDs, project specs, execution plans/ExecPlans, runbooks, API docs, migration notes, and module-level docs; especially useful for style-preserving edits, document-type-specific standards, scaling the depth of documentation work, and turning Codex design/interview sessions into durable docs. Not for design critique, code review, changelog automation, or one-off prose unrelated to repository documentation."
+description: "Use when writing, updating, repairing, or distilling durable repo docs: README.md, AGENTS.md, ARCHITECTURE.md, DESIGN.md, PRDs, project specs, ADRs/decision records, ExecPlans, runbooks, API docs, migration notes, and module docs. Covers style-preserving edits, doc-type standards, depth selection, and turning Codex sessions into durable docs. Not for design critique, code review, changelog automation, or one-off non-repo prose."
 ---
 
 # Docs Writer
@@ -19,6 +19,7 @@ Write durable repository documentation that future maintainers, operators, users
 | Write a product requirements document | [references/prd-format.md](references/prd-format.md) |
 | Write an execution plan / ExecPlan | [references/execplan-format.md](references/execplan-format.md) |
 | Write a language-agnostic project or service specification | [references/project-spec-format.md](references/project-spec-format.md) |
+| Write an ADR or decision record | [references/adr-format.md](references/adr-format.md) |
 | Write operator runbooks | [references/runbook-format.md](references/runbook-format.md) |
 | Write HTTP, event, JSON, SDK, or internal API docs | [references/api-docs-format.md](references/api-docs-format.md) |
 | Write migration notes or upgrade guides | [references/migration-notes-format.md](references/migration-notes-format.md) |
@@ -33,6 +34,7 @@ Write durable repository documentation that future maintainers, operators, users
 | Seed a full/detailed PRD | [assets/PRD_FULL_template.md](assets/PRD_FULL_template.md) |
 | Seed a new execution plan / ExecPlan | [assets/EXECPLAN_template.md](assets/EXECPLAN_template.md) |
 | Seed a new project spec | [assets/PROJECT_SPEC_template.md](assets/PROJECT_SPEC_template.md) |
+| Seed a new ADR or decision record | [assets/ADR_template.md](assets/ADR_template.md) |
 | Seed a new runbook | [assets/RUNBOOK_template.md](assets/RUNBOOK_template.md) |
 | Seed API Markdown when generated specs are absent or need human context | [assets/API_DOC_template.md](assets/API_DOC_template.md) |
 | Seed migration notes | [assets/MIGRATION_NOTES_template.md](assets/MIGRATION_NOTES_template.md) |
@@ -43,7 +45,7 @@ Write durable repository documentation that future maintainers, operators, users
 In scope:
 
 - durable repository docs: `README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `DESIGN.md`, runbooks, API docs, migration notes, and module-level docs
-- durable product and planning docs: PRDs, project specs, execution plans, and ExecPlans when they are intended to be checked in or handed off as the source of truth for future work
+- durable product and planning docs: PRDs, project specs, ADRs/decision records, execution plans, and ExecPlans when they are intended to be checked in or handed off as the source of truth for future work
 - style-preserving doc updates that match an existing document's voice, density, headings, and examples
 - repairing drift in touched docs: stale commands, paths, links, snippets, module names, configuration, and validation steps
 - choosing the right durable owner doc for knowledge created during a Codex design, interview, or implementation session
@@ -82,6 +84,7 @@ Not in scope:
 | Long-standing feature or main app domain needs one durable explainer for how it works | canonical feature/domain doc | simple walkthrough, ownership-aware, diagram-friendly |
 | Implementer needs a self-contained, living plan for a complex feature or refactor | ExecPlan / execution plan | novice-guiding, command-backed, progress-updated |
 | Team needs a normative language-agnostic contract for a system, service, workflow, or application | project spec | RFC-style, requirement-heavy, boundary-explicit |
+| Maintainers need durable rationale for a hard-to-reverse or surprising decision | ADR / decision record | concise, decision-first, trade-off-aware |
 | Operator must repeat a known procedure | runbook | sequential, rollback-aware, expected-signal driven |
 | Consumer must call, publish, subscribe to, or implement an interface | API docs | contract-first, explicit errors and side effects |
 | User must adapt to breaking or compatibility-affecting change | migration notes | caution-first, version-specific, reversible where proven |
@@ -163,5 +166,6 @@ For read-only reviews, lead with findings ordered by severity and include exact 
 - For PRDs, use the concise template by default. Promote only for canonical feature/domain docs or explicit full/detailed PRDs.
 - For PRDs, separate product decisions from implementation tactics. If implementation detail dominates, route to an ExecPlan or project spec instead.
 - For project specs, use normative language for requirements and label implementation-defined behavior instead of hiding choices in prose.
+- For ADRs or decision records, prefer existing repo convention; if none exists, `docs/ADRs/<number>-<slug>.md` is the default new path.
 - For ExecPlans, include purpose, progress, discoveries, decision log, retrospective, context, work plan, concrete commands, validation, recovery, artifacts, and interfaces.
 - For migration notes, do not claim a step is safe or reversible unless source evidence or validation proves it.

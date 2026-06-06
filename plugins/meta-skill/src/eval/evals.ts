@@ -42,8 +42,6 @@ export async function readEval(evalPath: string, folder = path.basename(evalPath
     path: evalPath,
     metadata: {
       title: task.title,
-      topics: task.topics,
-      capability: task.capability,
       fixtures: criteria.fixtures,
       metadata: criteria.metadata
     },
@@ -57,31 +55,22 @@ export async function readEval(evalPath: string, folder = path.basename(evalPath
 
 function selectEvals(records: EvalRecord[], selector: EvalSelector): EvalRecord[] {
   const wantedEvals = selector.eval?.length ? new Set(selector.eval) : undefined;
-  const wantedTopics = selector.topic?.length ? new Set(selector.topic) : undefined;
   return records.filter((item) => {
     if (wantedEvals) {
       if (!wantedEvals.has(item.id) && !wantedEvals.has(item.folder)) return false;
-    }
-    if (wantedTopics) {
-      if (!(item.metadata.topics || []).some((topic) => wantedTopics.has(topic))) return false;
     }
     return true;
   });
 }
 
-function parseTaskMarkdown(text: string, filePath: string): { title: string; capability?: string; topics: string[]; problemDescription: string; outputSpecification: string; task: string; turns: Array<{ content: string }> } {
+function parseTaskMarkdown(text: string, filePath: string): { title: string; problemDescription: string; outputSpecification: string; task: string; turns: Array<{ content: string }> } {
   const title = /^#\s+(.+?)\s*$/m.exec(text)?.[1]?.trim() || "";
-  const capability = /^Capability:\s*(.+?)\s*$/m.exec(text)?.[1]?.trim();
-  const topics = (/^Topics:\s*(.+?)\s*$/m.exec(text)?.[1] || "")
-    .split(",")
-    .map((topic) => topic.trim())
-    .filter(Boolean);
   const sections = markdownSections(text);
   const problemDescription = sections.find((section) => section.heading === "Problem Description")?.content || "";
   const outputSpecification = sections.find((section) => section.heading === "Output Specification")?.content || "";
   const task = sections.find((section) => section.heading === "Task");
   if (!title) throw new CliError(`${filePath}: task.md must start with a scenario title heading`);
-  if (!capability) throw new CliError(`${filePath}: task.md must include Capability: <capability>`);
+  if (/^Capability:\s*.+$/m.test(text) || /^Topics:\s*.+$/m.test(text)) throw new CliError(`${filePath}: task.md must not include Capability: or Topics: metadata`);
   if (!problemDescription) throw new CliError(`${filePath}: task.md must include ## Problem Description`);
   if (!outputSpecification) throw new CliError(`${filePath}: task.md must include ## Output Specification`);
   if (!task?.content) throw new CliError(`${filePath}: task.md must include ## Task with task text`);
@@ -92,7 +81,7 @@ function parseTaskMarkdown(text: string, filePath: string): { title: string; cap
   if (sections.some((section) => !["Problem Description", "Output Specification", "Task"].includes(section.heading) && !/^Turn\s+\d+$/.test(section.heading))) {
     throw new CliError(`${filePath}: task.md supports only ## Problem Description, ## Output Specification, ## Task, and ## Turn N headings`);
   }
-  return { title, capability, topics, problemDescription, outputSpecification, task: task.content, turns };
+  return { title, problemDescription, outputSpecification, task: task.content, turns };
 }
 
 function markdownSections(body: string): Array<{ heading: string; content: string }> {
@@ -123,7 +112,8 @@ function parseCriterion(value: unknown, index: number, filePath: string): EvalCr
     phase: parseEvalPhase(stringField(item, "phase", filePath, `criteria[${index}]`), filePath),
     dimension: stringField(item, "dimension", filePath, `criteria[${index}]`),
     question: stringField(item, "question", filePath, `criteria[${index}]`),
-    evidence: stringField(item, "evidence", filePath, `criteria[${index}]`)
+    evidence: stringField(item, "evidence", filePath, `criteria[${index}]`),
+    max_score: optionalPositiveNumberField(item, "max_score", filePath, `criteria[${index}]`)
   };
 }
 
@@ -159,6 +149,13 @@ function optionalStringField(source: Record<string, unknown>, key: string, fileP
   const value = source[key];
   if (value === undefined) return undefined;
   if (typeof value !== "string") throw new CliError(`${filePath}: ${label}.${key} must be a string`);
+  return value;
+}
+
+function optionalPositiveNumberField(source: Record<string, unknown>, key: string, filePath: string, label: string): number | undefined {
+  const value = source[key];
+  if (value === undefined) return undefined;
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) throw new CliError(`${filePath}: ${label}.${key} must be a positive number`);
   return value;
 }
 
