@@ -29,4 +29,4 @@ Return:
 
 ## Task
 
-Use Evaluate Skill to author the trigger query eval set. Do not rewrite the skill description yet.
+Author the trigger query eval set. Do not rewrite the skill description yet.

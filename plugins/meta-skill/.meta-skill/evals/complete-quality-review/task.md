@@ -22,4 +22,4 @@ Return a completed Quality review. The response must include:
 
 ## Task
 
-Use Meta Skill's Improve Skill lane to complete the generated review as an agent-authored Quality page. Do not edit the target skill.
+Complete the generated review as an agent-authored Quality page. Do not edit the target skill.

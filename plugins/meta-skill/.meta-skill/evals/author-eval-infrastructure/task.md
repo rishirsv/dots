@@ -26,4 +26,4 @@ Return the exact eval file plan for the three scenarios. The response must inclu
 
 ## Task
 
-Use Meta Skill's Evaluate Skill lane to turn the accepted high-level scenarios into concrete eval cases. Keep criteria evaluator-only and do not edit the skill implementation.
+Turn the accepted high-level scenarios into concrete eval cases. Keep criteria evaluator-only and do not edit the skill implementation.

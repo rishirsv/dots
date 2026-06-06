@@ -13,6 +13,7 @@ Improve an existing skill with evidence and restraint. This lane owns best-pract
 |---|---|
 | Review/edit mode, prompt-doctor loop, finding shape, surgical update rules, and review output | [prompt-doctor.md](references/prompt-doctor.md) |
 | Quality page shape, review dimensions, scoring rules, and finding format | [review-criteria.md](references/review-criteria.md) |
+| Running isolated subagent trials or adversarial reviews | [subagent-patterns.md](../../references/subagent-patterns.md) |
 
 ## Runtime Contract
 
@@ -23,6 +24,7 @@ Improve an existing skill with evidence and restraint. This lane owns best-pract
 - Require evidence before patching: lint output, eval run ID, eval ID, test failure, trace, saved evidence file, or human feedback. Each edit should cite at least one evidence reference.
 - Do not invent proof, auto-apply edits, package, install, or publish. Never fabricate validation rows, lint results, deterministic test status, scores, run IDs, or evidence files; if evidence is missing, say what is missing and keep the finding evidence-scoped.
 - Treat completed eval execution as evidence only, not pass proof. Before editing from it, name what ran, what files exist, and what the evidence shows.
+- For non-trivial edits, use an isolated read-only subagent review when available. Follow [subagent-patterns.md](../../references/subagent-patterns.md): the subagent receives a compact scope and realistic maintainer request, while the parent keeps hidden criteria, scoring, edits, and final validation.
 
 Edit the working portable payload directly after the evidence justifies the change. Git is the application mechanism and diff review surface.
 

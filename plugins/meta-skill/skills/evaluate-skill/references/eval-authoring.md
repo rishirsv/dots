@@ -344,6 +344,30 @@ When reviewing multi-turn or agentic evidence:
 
 For complex workflows, criteria should cover both outcome and process. Outcome checks ask whether the final user-visible result met the requirement. Process checks ask whether necessary approvals, tool choices, source reads, writes, or validation steps happened correctly.
 
+## Subagent Sampling
+
+When sampling eval behavior with subagents, keep the subagent prompt aligned with `task.md`. The subagent should feel like it is answering a real maintainer or end user, not participating in a test harness.
+
+Follow the shared patterns in [subagent-patterns.md](../../../references/subagent-patterns.md):
+
+- Put isolation, file-scope, and read-only rules in the harness envelope.
+- Put only the realistic user request in the solver-visible task.
+- Do not expose `criteria.json`, expected answers, scoring notes, parent hypotheses, or comparison goals.
+- Do not tell the solver it is running a test, benchmark, grader pass, or self-eval case.
+- Parent agents own scoring, trace review, edits, and final validation.
+
+Weak subagent task:
+
+```md
+You are running one read-only self-eval case. Do not read criteria.json. Produce the eval response.
+```
+
+Strong subagent task:
+
+```md
+I need concrete API-docs eval files from these accepted scenarios. Please draft the task files, criteria, fixture declarations, flat deterministic checks, and an honest run plan.
+```
+
 ## Calibration Pass
 
 Before running the eval, do a quick mental baseline:

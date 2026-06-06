@@ -26,7 +26,7 @@ When a request matches `create-skill`, `evaluate-skill`, or `improve-skill`, loa
 Use the smallest useful lane set:
 
 - Start with `create-skill` for new reusable skills, existing draft redesigns, source-pack distillation, workflow capture, trigger-contract decisions, runtime payload structure, and portable-vs-project-mode choices.
-- Use `evaluate-skill` for `.meta-skill/evals/` setup, manual eval authoring, App Server-backed `meta-skill run` execution, run inspection, baseline runs, and eval evidence interpretation.
+- Use `evaluate-skill` for `.meta-skill/evals/` setup, manual eval authoring, `meta-skill run` execution, run inspection, baseline runs, and eval evidence interpretation.
 - Use `improve-skill` for best-practice review, lint-backed findings, eval-backed edits, trace-backed fixes, human-feedback-backed patches, and bounded redesign of existing skills.
 - Handle package, release, install, publish, marketplace, or promotion questions at the Meta Skill level until a focused lane is needed for validation or edits. Require explicit user approval before any such action.
 
@@ -53,7 +53,7 @@ Use this shape:
 Meta Skill can help with:
 - Creating portable reusable skills from a workflow, draft, source pack, or example output
 - Adding a `.meta-skill/` workbench for evals, runs, tests, and maintained-skill evidence
-- Running App Server-backed skill evals and inspecting saved evidence
+- Running skill evals and inspecting saved evidence
 - Reviewing or patching skills from lint, eval, trace, or human-feedback evidence
 - Packaging a validated payload after explicit approval
 
@@ -89,7 +89,7 @@ Do not use it for running evals, improving from evidence, packaging, installing,
 
 ### evaluate-skill
 
-Route here for setting up, running, auditing, or interpreting App Server-backed evals with `meta-skill run`. It owns `.meta-skill/eval-scenarios.md`, split-file evals under `.meta-skill/evals/`, `.meta-skill/runs/`, baseline runs with `--no-skill`, and evidence readouts.
+Route here for setting up, running, auditing, or interpreting evals with `meta-skill run`. It owns `.meta-skill/eval-scenarios.md`, split-file evals under `.meta-skill/evals/`, `.meta-skill/runs/`, baseline runs with `--no-skill`, and evidence readouts.
 
 Do not use it for rewriting skills, best-practice review, packaging, installing, or publishing.
 
@@ -104,3 +104,7 @@ Do not use it for creating new skills, running evals, autonomous rewrites withou
 Ask for explicit approval before packaging, installing, publishing, syncing to a marketplace, promoting a candidate into source, writing to external systems, or final-delivering a user-facing artifact.
 
 Completed lint or eval execution is useful evidence, not proof that a skill is good. When reporting results, name what ran, what files exist, what the evidence shows, and what remains unverified.
+
+## Subagent Patterns
+
+When a broad Meta Skill request would benefit from parallel eval sampling, isolated skill trials, or adversarial Improve Skill review, use [subagent-patterns.md](../../references/subagent-patterns.md). Keep subagents isolated, keep hidden criteria and parent hypotheses out of solver contexts, and make solver prompts read like real user or maintainer requests rather than test or benchmark instructions.

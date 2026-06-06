@@ -26,4 +26,4 @@ Produce a plan or artifact summary for a portable skill payload and project-mode
 
 ## Task
 
-Use Meta Skill's Create Skill lane to create the API documentation skill design and project-mode eval-scenario plan. Do not run evals, do not package, and do not claim validation you have not performed.
+Create the API documentation skill design and project-mode eval-scenario plan. Do not run evals, do not package, and do not claim validation you have not performed.

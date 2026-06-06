@@ -25,4 +25,4 @@ Return a routed execution plan. It must include:
 
 ## Task
 
-Use Meta Skill as the router. Sequence the work across the three focused lanes and name proof limits.
+Sequence the work across the three focused lanes and name proof limits.

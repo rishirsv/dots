@@ -13,6 +13,7 @@ Measure a reusable skill with `.meta-skill/evals/` and `.meta-skill/runs/`. This
 |---|---|
 | Eval command examples and evidence semantics | [cli-conventions.md](../../references/cli-conventions.md) |
 | Writing strong eval tasks and criteria | [eval-authoring.md](references/eval-authoring.md) |
+| Running isolated subagent samples or reviews | [subagent-patterns.md](../../references/subagent-patterns.md) |
 
 ## Beginner Path
 
@@ -40,6 +41,7 @@ meta-skill run .
 - `rpc.jsonl` is the durable raw App Server trace for an eval. The runner keeps bounded in-memory event windows only for extraction. If those windows overflow, inspect `rpc.jsonl`; `transcript.json` records a warning item, and `response.md` says the final answer is unavailable when final assistant deltas were not retained for the current turn.
 - Current eval guidance uses manually authored evals, one execution source per run, and read-only App Server evidence.
 - Completed execution is not pass proof. Report what executed, execution errors, saved evidence paths, measured token totals, and token usage availability.
+- When using subagents to sample eval tasks, follow [subagent-patterns.md](../../references/subagent-patterns.md): keep criteria and expected answers out of the subagent context, keep the subagent read-only, and make the task prompt read like a real user request rather than a test or benchmark instruction.
 
 ## Eval Design
 

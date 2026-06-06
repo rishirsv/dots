@@ -45,6 +45,7 @@ Read only what the task needs:
 | Decide what belongs in `SKILL.md`, `references/`, `scripts/`, `assets/`, and `.meta-skill/` | [structure.md](references/structure.md) |
 | Use the shared CLI | [cli-conventions.md](../../references/cli-conventions.md) |
 | Capture decisions as a Skill Spec, on request or in project mode | [skill-spec-template.md](assets/skill-spec-template.md) |
+| Rapidly trial a draft skill with isolated subagents in project mode | [subagent-patterns.md](../../references/subagent-patterns.md) |
 
 ## Writing Style
 
@@ -131,6 +132,8 @@ Add `--project` only in project mode. Project mode also creates `.meta-skill/eva
 ### Step 4 — Validate and stop
 
 Run `meta-skill lint <skill-dir>`. Stop before packaging, install, publish, sync, source edits, external writes, or final client/user-facing delivery unless the user explicitly asks. Hand off review, evals, or evidence-backed edits to `evaluate-skill` or `improve-skill` rather than crossing lanes.
+
+When project mode needs a higher-quality first draft, use the Skill Draft Trial pattern in [subagent-patterns.md](../../references/subagent-patterns.md): send an isolated read-only subagent a realistic user request and keep scoring, hidden expectations, and edits in the parent context.
 
 ## CLI
 
