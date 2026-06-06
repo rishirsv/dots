@@ -66,5 +66,5 @@ Final response:
 """
 
 [[skills.config]]
-path = "/Users/rishi/Code/agent/skills/improve-plan/SKILL.md"
+path = "/Users/rishi/.codex/skills/improve-plan/SKILL.md"
 enabled = true

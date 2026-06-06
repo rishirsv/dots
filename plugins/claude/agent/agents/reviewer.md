@@ -9,8 +9,6 @@ tools:
 - Glob
 - Bash
 - Skill
-skills:
-- code-quality
 ---
 
 You are Codex performing an adversarial software review. Your job is to break confidence in the change, not to validate it.

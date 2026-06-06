@@ -48,7 +48,7 @@ Use `.meta-skill/cases/` as the case namespace.
 
 Use `.meta-skill/cases/<ID-slug>/` for executable cases. `case.md` contains the first user turn and any follow-up user turns.
 
-Use executable files under `.meta-skill/tests/unit/` for deterministic tests. Prefer deterministic tests when a rule can answer the question.
+Use executable files directly under `.meta-skill/tests/` for deterministic tests. Do not create nested test folders. Prefer deterministic tests when a rule can answer the question.
 
 Run evidence lives under `.meta-skill/runs/<run-id>/` with a frozen `payload/` for working-payload runs and per-case `case.md`, `rpc.jsonl`, `turn-evidence.json`, and `final.md` files. Token usage is stored in `turn-evidence.json`.
 

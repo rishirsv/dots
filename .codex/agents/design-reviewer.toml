@@ -77,5 +77,5 @@ Summarize relevant loading, empty, error, long text, viewport, locale, accessibi
 """
 
 [[skills.config]]
-path = "/Users/rishi/Code/agent/skills/interface-craft/SKILL.md"
+path = "/Users/rishi/.codex/skills/interface-craft/SKILL.md"
 enabled = true

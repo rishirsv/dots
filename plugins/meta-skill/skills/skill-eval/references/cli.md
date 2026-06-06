@@ -19,7 +19,7 @@ meta-skill run . --no-skill
 meta-skill lint .
 ```
 
-`lint` validates the portable payload, workbench shape, case definitions, fixture declarations, and unit tests. It does not mutate saved run evidence.
+`lint` validates the portable payload, workbench shape, case definitions, fixture declarations, and deterministic tests. It does not mutate saved run evidence.
 
 ## Current Boundaries
 

@@ -100,7 +100,7 @@ Use `create` after the Current Understanding is settled.
 
 `create` writes `SKILL.md` and `agents/openai.yaml`. With `--project`, it also
 creates `.meta-skill/spec.md`, `.meta-skill/cases/`, `.meta-skill/runs/`, and
-`.meta-skill/tests/unit/`.
+`.meta-skill/tests/`.
 
 The generated scaffold is a starting point, not the final authored skill. After
 creation, edit the portable payload from the Current Understanding, link every
@@ -126,9 +126,9 @@ Use `lint` after create, after edits, before runs, and before packaging.
 - `SKILL.md` frontmatter, trigger wording, `not for` boundary, and body.
 - `agents/openai.yaml` metadata when present.
 - Runtime references, scripts, and assets are directly linked from `SKILL.md`.
-- `.meta-skill/spec.md`, case folders, case frontmatter, fixtures, and unit
-  test IDs when project mode exists.
-- Executable unit tests under `.meta-skill/tests/unit/`.
+- `.meta-skill/spec.md`, case folders, case frontmatter, fixtures, and
+  deterministic test IDs when project mode exists.
+- Executable deterministic tests directly under `.meta-skill/tests/`.
 
 `lint --json` is the machine-readable form. Human-readable lint output may end
 with `OK: no failures (...)` even when advisory warnings remain.

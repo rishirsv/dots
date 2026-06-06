@@ -1,7 +1,0 @@
-interface:
-  display_name: "Explain"
-  short_description: "Explain anything clearly, matching depth to the question"
-  default_prompt: "Use $explain to explain this code, diff, config, data model, workflow, error, architecture, diagram, or process with the right depth."
-
-policy:
-  allow_implicit_invocation: false

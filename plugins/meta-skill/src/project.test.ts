@@ -6,7 +6,26 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { packageProject } from "./package.ts";
 import { createSkill } from "./skills.ts";
-import { exists, readJson } from "./project.ts";
+import { exists, projectPaths, readJson } from "./project.ts";
+
+describe("project workbench", () => {
+  it("scaffolds deterministic tests directly under .meta-skill/tests", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "meta-skill-project-"));
+    const target = path.join(root, "project-check");
+    await createSkill({
+      target,
+      project: true,
+      slug: "project-check",
+      title: "Project Check",
+      description: "Use when checking project behavior; not for unrelated tasks.",
+      job: "Project."
+    });
+
+    const p = projectPaths(target);
+    assert.equal(await exists(p.tests), true);
+    assert.equal(await exists(path.join(p.tests, "unit")), false);
+  });
+});
 
 describe("project packaging", () => {
   it("packages only the current portable payload", async () => {

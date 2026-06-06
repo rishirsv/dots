@@ -5,7 +5,7 @@ import { CliError, exists } from "../project.ts";
 
 export interface DiscoveredTest {
   id: string;
-  kind: "unit";
+  kind: "deterministic";
   path: string;
   command: string;
 }
@@ -30,14 +30,14 @@ export async function listCaseFolders(casesDir: string): Promise<string[]> {
   return (await fs.readdir(casesDir, { withFileTypes: true })).filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
 }
 
-export async function listUnitTests(root: string, dir: string): Promise<DiscoveredTest[]> {
+export async function listDeterministicTests(root: string, dir: string): Promise<DiscoveredTest[]> {
   if (!(await exists(dir))) return [];
   const files: DiscoveredTest[] = [];
   for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
     if (!entry.isFile() || entry.name.startsWith(".")) continue;
     const full = path.join(dir, entry.name);
     const id = path.basename(entry.name, path.extname(entry.name));
-    files.push({ id, kind: "unit", path: full, command: path.relative(root, full).split(path.sep).join("/") });
+    files.push({ id, kind: "deterministic", path: full, command: path.relative(root, full).split(path.sep).join("/") });
   }
   return files.sort((a, b) => a.id.localeCompare(b.id));
 }

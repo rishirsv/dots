@@ -9,10 +9,8 @@
   "license": "UNLICENSED",
   "keywords": [
     "personal",
-    "skills",
     "workflow"
   ],
-  "skills": "./skills/",
   "interface": {
     "displayName": "Agent",
     "shortDescription": "Rishi's personal agent workflows.",

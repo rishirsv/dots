@@ -37,7 +37,6 @@ Workbench state uses the flat project-local layout:
   spec.md
   cases/
   tests/
-    unit/
   runs/
 ```
 

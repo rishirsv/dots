@@ -29,7 +29,7 @@ Case folders live at `.meta-skill/cases/<ID-slug>/` and require one `case.md`. P
 - By default, the runner force-attaches the current portable payload on the first turn. Treat runs as mounted-skill behavior evidence, not proof of true trigger routing or writable file behavior.
 - A run evaluates exactly one source: the current payload or no skill with `--no-skill`.
 - Criteria are evaluator evidence in `case.md` frontmatter and must not be staged into solver workspaces.
-- Deterministic tests are executable files under `.meta-skill/tests/unit/`.
+- Deterministic tests are executable files directly under `.meta-skill/tests/`; do not create nested test folders.
 - Token usage is measured telemetry, not a quality score. Token cost is recorded in `turn-evidence.json`.
 - Multi-turn case totals come from App Server cumulative `tokenUsage.total` on the final turn; inspect `rpc.jsonl` for per-turn token events.
 - If App Server does not return exact metrics, the evidence says unavailable explicitly with a reason.

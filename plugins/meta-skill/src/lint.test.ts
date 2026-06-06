@@ -198,3 +198,31 @@ describe("lint workbench placeholder scan", () => {
     assert.ok(!messages(report.warnings).some((m) => m.includes("template placeholders")));
   });
 });
+
+describe("lint deterministic tests", () => {
+  it("executes test files directly under .meta-skill/tests", async () => {
+    const root = await tempSkill("demo-skill", `name: demo-skill\ndescription: Use when testing; not for production.`);
+    const testsDir = path.join(root, ".meta-skill", "tests");
+    await fs.mkdir(testsDir, { recursive: true });
+    const testFile = path.join(testsDir, "script-check.sh");
+    await fs.writeFile(testFile, "#!/usr/bin/env bash\nexit 0\n");
+    await fs.chmod(testFile, 0o755);
+
+    const report = await lintProject(root);
+
+    assert.deepEqual(
+      report.tests.map((test) => ({ id: test.id, kind: test.kind, status: test.status, command: test.command })),
+      [{ id: "script-check", kind: "deterministic", status: "passed", command: ".meta-skill/tests/script-check.sh" }]
+    );
+  });
+
+  it("fails nested test folders under .meta-skill/tests", async () => {
+    const root = await tempSkill("demo-skill", `name: demo-skill\ndescription: Use when testing; not for production.`);
+    await fs.mkdir(path.join(root, ".meta-skill", "tests", "unit"), { recursive: true });
+    await fs.writeFile(path.join(root, ".meta-skill", "tests", "unit", "old-shape.sh"), "#!/usr/bin/env bash\nexit 0\n");
+
+    const report = await lintProject(root, { executeTests: false });
+
+    assert.ok(messages(report.failures).some((m) => m.includes("nested test folders are not supported") && m.includes("unit")));
+  });
+});

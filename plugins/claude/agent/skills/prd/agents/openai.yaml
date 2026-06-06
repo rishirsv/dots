@@ -1,4 +1,0 @@
-interface:
-  display_name: "PRD"
-  short_description: "Turn settled context into a PRD"
-  default_prompt: "Use $prd to turn our current conversation into an implementation-ready PRD."

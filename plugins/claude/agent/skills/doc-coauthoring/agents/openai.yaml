@@ -1,4 +1,0 @@
-interface:
-  display_name: "Doc Coauthoring"
-  short_description: "Guide structured document drafting"
-  default_prompt: "Use $doc-coauthoring to help me turn rough notes into a clear reader-facing document."

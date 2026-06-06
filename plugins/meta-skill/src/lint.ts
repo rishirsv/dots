@@ -11,7 +11,7 @@ import {
   requirePortableSkill
 } from "./project.ts";
 import { caseIdentity, readCase } from "./eval/cases.ts";
-import { isValidTestId, listCaseFolders, listUnitTests } from "./eval/discovery.ts";
+import { isValidTestId, listCaseFolders, listDeterministicTests } from "./eval/discovery.ts";
 
 const execAsync = promisify(exec);
 
@@ -34,7 +34,7 @@ export async function lintProject(target: string, options: LintOptions = {}): Pr
   }
 
   if (options.executeTests !== false) {
-    tests.push(...(await runDiscoveredTests(root, "unit")));
+    tests.push(...(await runDiscoveredTests(root)));
   }
 
   return { ok: failures.length === 0 && tests.every((test) => test.status !== "failed"), failures, warnings, tests };
@@ -277,9 +277,9 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
   }
 
   if ((await exists(path.join(root, "scripts"))) && (await hasFiles(path.join(root, "scripts")))) {
-    const tests = await listUnitTests(root, p.unitTests);
+    const tests = await listDeterministicTests(root, p.tests);
     if (!tests.length) {
-      warnings.push(issue("warning", "runtime scripts are present; add or recommend unit tests in .meta-skill/tests/unit/", path.join(root, "scripts")));
+      warnings.push(issue("warning", "runtime scripts are present; add or recommend deterministic tests in .meta-skill/tests/", path.join(root, "scripts")));
     }
   }
 }
@@ -360,7 +360,15 @@ async function listFixtureFiles(fixturesDir: string): Promise<string[]> {
 }
 
 async function validateTests(root: string, testsDir: string, failures: Issue[]): Promise<Set<string>> {
-  const tests = await listUnitTests(root, path.join(testsDir, "unit"));
+  if (await exists(testsDir)) {
+    const entries = await fs.readdir(testsDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        failures.push(issue("failure", `nested test folders are not supported under .meta-skill/tests/: ${entry.name}`, path.join(testsDir, entry.name)));
+      }
+    }
+  }
+  const tests = await listDeterministicTests(root, testsDir);
   const ids = new Set<string>();
   for (const test of tests) {
     if (ids.has(test.id)) failures.push(issue("failure", `duplicate test id: ${test.id}`, test.path));
@@ -370,12 +378,9 @@ async function validateTests(root: string, testsDir: string, failures: Issue[]):
   return ids;
 }
 
-async function runDiscoveredTests(
-  root: string,
-  kind: "unit"
-): Promise<LintReport["tests"]> {
+async function runDiscoveredTests(root: string): Promise<LintReport["tests"]> {
   const rows: LintReport["tests"] = [];
-  for (const test of await listUnitTests(root, path.join(root, ".meta-skill", "tests", kind))) {
+  for (const test of await listDeterministicTests(root, path.join(root, ".meta-skill", "tests"))) {
     try {
       const { stdout, stderr } = await execAsync(test.command, {
         cwd: root,

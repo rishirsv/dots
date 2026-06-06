@@ -57,7 +57,7 @@ have. Delete optional rows and folders that do not exist.
   .meta-skill/
     spec.md
     cases/<ID-slug>/case.md
-    tests/unit/<name>.test.<ext>
+    tests/<name>.test.<ext>
 ```
 
 ### Runtime Files
@@ -77,7 +77,7 @@ have. Delete optional rows and folders that do not exist.
 |---|---:|---|---|
 | `.meta-skill/spec.md` | project mode | <this design record> | current template filled with final decisions, no unresolved placeholders except explicitly open questions. |
 | `.meta-skill/cases/<ID-slug>/case.md` | project mode when evals exist | <manual behavior case> | frontmatter with case type/criteria when needed; `## Task` first user turn; optional `## Turn 2`, fixtures map, and review criteria. |
-| `.meta-skill/tests/unit/<name>.test.<ext>` | project mode when scripts exist | <deterministic script or fixture test> | executable test that can run locally; covers success and failure paths for runtime scripts or fragile generated assets. |
+| `.meta-skill/tests/<name>.test.<ext>` | project mode when scripts exist | <deterministic script or fixture test> | executable test that can run locally; covers success and failure paths for runtime scripts or fragile generated assets. |
 
 ### File Generation Notes
 
@@ -95,7 +95,7 @@ have. Delete optional rows and folders that do not exist.
 
 - Structural check: `meta-skill lint <skill-dir>`
 - Case coverage to add: <R/F/G families and topics>
-- Deterministic tests: <unit test IDs or planned tests>
+- Deterministic tests: <test IDs or planned tests>
 
 ## Update Notes
 

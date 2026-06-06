@@ -1,4 +1,0 @@
-interface:
-  display_name: "Commit"
-  short_description: "Create a safe, focused git commit"
-  default_prompt: "Use $commit to inspect the current changes, stage only the intended files, and create one clear git commit."

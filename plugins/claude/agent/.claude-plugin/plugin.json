@@ -9,8 +9,6 @@
   "license": "UNLICENSED",
   "keywords": [
     "personal",
-    "skills",
     "workflow"
-  ],
-  "skills": "./skills/"
+  ]
 }

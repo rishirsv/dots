@@ -150,7 +150,7 @@ meta-skill lint <skill-dir>
 - Quote or escape YAML frontmatter values that contain punctuation.
 - `agents/openai.yaml` is optional Codex metadata: an `interface` block (`display_name`, `short_description`, `icon_small`, `icon_large`, `brand_color`, `default_prompt`), a `policy` block (`allow_implicit_invocation`), and `dependencies`. The skill name and description live in `SKILL.md` frontmatter, not here. See [cookbook.md](references/cookbook.md) for the shape.
 - Add references, scripts, or assets only when they are real reusable materials, and link each one directly from `SKILL.md`.
-- In project mode, give runtime scripts executable unit tests in `.meta-skill/tests/unit/`.
+- In project mode, give runtime scripts executable deterministic tests directly under `.meta-skill/tests/`.
 - Add human gates before packaging, installing, publishing, syncing, source edits, external writes, or final client/user-facing delivery.
 
 ## Output

@@ -12,6 +12,8 @@ CODEX_PLUGIN="$ROOT/plugins/codex/$PLUGIN_NAME"
 CLAUDE_PLUGIN="$ROOT/plugins/claude/$PLUGIN_NAME"
 CODEX_PLUGIN_AGENTS="$CODEX_PLUGIN/agents"
 CLAUDE_PLUGIN_AGENTS="$CLAUDE_PLUGIN/agents"
+CODEX_DESKTOP_SKILLS="$HOME/.codex/skills"
+CODEX_DESKTOP_SKILL_MARKER="$CODEX_DESKTOP_SKILLS/.agent-managed-skills"
 CODEX_MARKETPLACE_DIR="$ROOT/.agents/plugins"
 CODEX_MARKETPLACE="$CODEX_MARKETPLACE_DIR/marketplace.json"
 CLAUDE_MARKETPLACE="$ROOT/.claude-plugin/marketplace.json"
@@ -35,16 +37,28 @@ fi
 
 mkdir -p \
   "$CODEX_PLUGIN/.codex-plugin" \
-  "$CODEX_PLUGIN/skills" \
   "$CODEX_PLUGIN_AGENTS" \
   "$CLAUDE_PLUGIN/.claude-plugin" \
-  "$CLAUDE_PLUGIN/skills" \
   "$CLAUDE_PLUGIN_AGENTS" \
   "$ROOT/.agents/plugins" \
   "$ROOT/.claude-plugin"
 
-rsync -a --delete --exclude '.DS_Store' "$SOURCE_SKILLS/" "$CODEX_PLUGIN/skills/"
-rsync -a --delete --exclude '.DS_Store' "$SOURCE_SKILLS/" "$CLAUDE_PLUGIN/skills/"
+rm -rf "$CODEX_PLUGIN/skills" "$CLAUDE_PLUGIN/skills"
+
+mkdir -p "$CODEX_DESKTOP_SKILLS"
+if [[ -f "$CODEX_DESKTOP_SKILL_MARKER" ]]; then
+  while IFS= read -r managed_skill; do
+    [[ -n "$managed_skill" && "$managed_skill" != */* ]] || continue
+    rm -rf "$CODEX_DESKTOP_SKILLS/$managed_skill"
+  done < "$CODEX_DESKTOP_SKILL_MARKER"
+fi
+
+: > "$CODEX_DESKTOP_SKILL_MARKER"
+for skill_dir in "$SOURCE_SKILLS"/*(/N); do
+  target_skill="$CODEX_DESKTOP_SKILLS/${skill_dir:t}"
+  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$target_skill/"
+  print -r -- "${skill_dir:t}" >> "$CODEX_DESKTOP_SKILL_MARKER"
+done
 
 if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
   rsync -a --delete --exclude '.DS_Store' "$SOURCE_CODEX_AGENTS/" "$CODEX_PLUGIN_AGENTS/"
@@ -67,7 +81,7 @@ for stale in target.glob("*.md"):
 
 def parse_codex_agent(path: Path) -> dict:
     text = path.read_text()
-    data = {"skills": []}
+    data = {}
 
     for key in ["name", "description", "model", "model_reasoning_effort", "sandbox_mode"]:
         match = re.search(rf'^{key}\s*=\s*"([^"]*)"', text, re.MULTILINE)
@@ -76,9 +90,6 @@ def parse_codex_agent(path: Path) -> dict:
 
     instruction_match = re.search(r'developer_instructions\s*=\s*"""(.*?)"""', text, re.DOTALL)
     data["developer_instructions"] = instruction_match.group(1).strip() if instruction_match else ""
-
-    for match in re.finditer(r'^\s*path\s*=\s*"([^"]*/skills/([^/]+)/SKILL\.md)"', text, re.MULTILINE):
-        data["skills"].append(match.group(2))
 
     return data
 
@@ -132,10 +143,6 @@ for path in sorted(source.glob("*.toml")):
         "effort": claude_effort(agent.get("model_reasoning_effort") if isinstance(agent.get("model_reasoning_effort"), str) else None),
         "tools": tools_for(agent.get("sandbox_mode") if isinstance(agent.get("sandbox_mode"), str) else None),
     }
-
-    skills = agent.get("skills", [])
-    if isinstance(skills, list) and skills:
-        frontmatter["skills"] = skills
 
     body = str(agent.get("developer_instructions", "")).strip()
     output = "---\n"
@@ -212,8 +219,7 @@ codex_manifest = {
     "author": {"name": "Rishi"},
     "repository": "https://github.com/rishirsv/agent",
     "license": "UNLICENSED",
-    "keywords": ["personal", "skills", "workflow"],
-    "skills": "./skills/",
+    "keywords": ["personal", "workflow"],
     "interface": {
         "displayName": "Agent",
         "shortDescription": "Rishi's personal agent workflows.",
@@ -236,8 +242,7 @@ claude_manifest = {
     "author": {"name": "Rishi"},
     "repository": "https://github.com/rishirsv/agent",
     "license": "UNLICENSED",
-    "keywords": ["personal", "skills", "workflow"],
-    "skills": "./skills/"
+    "keywords": ["personal", "workflow"]
 }
 
 codex_catalog = {
@@ -278,7 +283,7 @@ claude_catalog = {
             "source": f"./plugins/claude/{name}",
             "version": version,
             "category": "productivity",
-            "tags": ["personal", "skills", "workflow"]
+            "tags": ["personal", "workflow"]
         }
     ]
 }
@@ -330,9 +335,8 @@ mkdir -p "$CODEX_CACHE" "$CLAUDE_CACHE"
 rsync -a --delete --exclude '.DS_Store' "$CODEX_PLUGIN/" "$CODEX_CACHE/"
 rsync -a --delete --exclude '.DS_Store' "$CLAUDE_PLUGIN/" "$CLAUDE_CACHE/"
 
-echo "Synced skills to:"
-echo "  $CODEX_PLUGIN/skills"
-echo "  $CLAUDE_PLUGIN/skills"
+echo "Synced Desktop skills:"
+echo "  $CODEX_DESKTOP_SKILLS"
 echo "Refreshed local caches:"
 echo "  $CODEX_CACHE"
 echo "  $CLAUDE_CACHE"

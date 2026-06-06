@@ -68,7 +68,7 @@ export interface LintReport {
   warnings: Issue[];
   tests: Array<{
     id: string;
-    kind: "unit";
+    kind: "deterministic";
     status: "passed" | "failed" | "skipped";
     command?: string;
     output?: string;

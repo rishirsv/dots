@@ -31,7 +31,7 @@ Project mode adds only the implemented hidden authoring state under
   spec.md
   cases/<ID-slug>/case.md
   runs/<run-id>/
-  tests/unit/
+  tests/
 ```
 
 Use `meta-skill create --project ...` for new project-mode skills and `meta-skill project init <skill-dir>` for an existing portable skill.
@@ -62,7 +62,7 @@ Use `scripts/` only when code is safer or cheaper than prose.
 - Link every script directly from `SKILL.md`.
 - State when to run it, what inputs it accepts, what output means, and what nonzero exit means.
 - Prefer standard-library dependencies unless a package materially improves reliability.
-- If project mode exists, add or recommend executable unit tests for runtime scripts in `.meta-skill/tests/unit/`.
+- If project mode exists, add or recommend executable deterministic tests for runtime scripts directly under `.meta-skill/tests/`.
 
 ## Assets
 

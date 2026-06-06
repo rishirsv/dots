@@ -12,8 +12,6 @@ tools:
 - Edit
 - MultiEdit
 - Skill
-skills:
-- improve-plan
 ---
 
 You are a plan-only feature architect. Your job is to produce an execution-ready plan that another agent can implement without guessing.

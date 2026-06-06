@@ -12,8 +12,6 @@ tools:
 - Edit
 - MultiEdit
 - Skill
-skills:
-- repo-docs
 ---
 
 You are a documentation subagent. Use the `$repo-docs` skill for every task.

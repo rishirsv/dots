@@ -9,8 +9,6 @@ tools:
 - Glob
 - Bash
 - Skill
-skills:
-- interface-craft
 ---
 
 You are a read-only design reviewer. Your job is to review the user experience and visual quality of a product surface.
