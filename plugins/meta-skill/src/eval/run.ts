@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { AppServerUnavailableError, appServerConfig } from "../app-server/client.ts";
 import { AppServerEvalRunner } from "../app-server/runner.ts";
@@ -24,6 +25,9 @@ interface EvalRunEvalSummary {
   response_path?: string;
   rpc_path?: string;
   transcript_path?: string;
+  task_path?: string;
+  criteria_path: string;
+  criteria_sha256: string;
   scoring_status: "review_required" | "unavailable";
   score: number | null;
   max_score: number;
@@ -67,12 +71,11 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
   const completedEvals: string[] = [];
   try {
     for (const item of evals) {
-      const evalRoot = path.join(runRoot, "evals", item.folder);
+      const evalRoot = path.join(runRoot, "cases", item.folder);
+      const criteriaPath = path.join(item.path, "criteria.json");
+      const criteriaSha256 = await fileSha256(criteriaPath);
       await ensureDir(evalRoot);
-      await Promise.all([
-        fs.copyFile(path.join(item.path, "task.md"), path.join(evalRoot, "task.md")),
-        fs.copyFile(path.join(item.path, "criteria.json"), path.join(evalRoot, "criteria.json"))
-      ]);
+      await fs.copyFile(path.join(item.path, "task.md"), path.join(evalRoot, "task.md"));
       const fixtures = path.join(item.path, "fixtures");
       if (await exists(fixtures)) await fs.cp(fixtures, path.join(evalRoot, "fixtures"), { recursive: true });
       try {
@@ -83,6 +86,9 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
           folder: item.folder,
           title: item.metadata.title,
           execution_status: runResult.execution_status,
+          task_path: path.join("cases", item.folder, "task.md"),
+          criteria_path: path.relative(root, criteriaPath),
+          criteria_sha256: criteriaSha256,
           response_path: path.relative(runRoot, runResult.response_path),
           rpc_path: path.relative(runRoot, runResult.rpc_path),
           transcript_path: path.relative(runRoot, runResult.transcript_path),
@@ -99,6 +105,9 @@ export async function runEval(options: EvalRunOptions): Promise<{ runId: string;
           folder: item.folder,
           title: item.metadata.title,
           execution_status: "errored",
+          task_path: path.join("cases", item.folder, "task.md"),
+          criteria_path: path.relative(root, criteriaPath),
+          criteria_sha256: criteriaSha256,
           scoring_status: "unavailable",
           score: null,
           max_score: rubricMaxScore(item.criteria.criteria),
@@ -139,4 +148,9 @@ function payloadMetadata(runRoot: string, sourceRoot: string): { skill_root: str
 
 function rubricMaxScore(criteria: Array<{ max_score?: number }>): number {
   return criteria.reduce((total, criterion) => total + (criterion.max_score ?? 1), 0);
+}
+
+async function fileSha256(filePath: string): Promise<string> {
+  const content = await fs.readFile(filePath);
+  return createHash("sha256").update(content).digest("hex");
 }

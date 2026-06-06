@@ -19,13 +19,13 @@ Measure a reusable skill with `.meta-skill/evals/` and `.meta-skill/runs/`. This
 
 ```bash
 meta-skill project init .
-# Fill .meta-skill/eval-scenarios.md first.
+# Fill .meta-skill/eval-scenarios.md first if using scenario-plan generation.
 meta-skill evals create .
 meta-skill lint .
 meta-skill run .
 ```
 
-`meta-skill evals create` reads `.meta-skill/eval-scenarios.md` and creates draft `.meta-skill/evals/<slug>/task.md` and `.meta-skill/evals/<slug>/criteria.json` files. Refine both generated files before running: `task.md` should read like a real user request, and `criteria.json` should contain binary questions that can be answered from saved evidence or explicitly captured validation output. Put optional solver-visible files under `fixtures/`; task text can refer to them as `fixtures/<file>`. Use `## Task` for the first turn and `## Turn 2`, `## Turn 3`, and so on for real follow-up user turns.
+`meta-skill evals create` reads optional `.meta-skill/eval-scenarios.md` planning rows and creates draft `.meta-skill/evals/<slug>/task.md` and `.meta-skill/evals/<slug>/criteria.json` files. You can also author concrete eval folders directly. Refine both files before running: `task.md` should read like a real user request, and `criteria.json` should contain binary questions that can be answered from saved evidence or explicitly captured validation output. Put optional solver-visible files under `fixtures/`; task text can refer to them as `fixtures/<file>`. Use `## Task` for the first turn and `## Turn 2`, `## Turn 3`, and so on for real follow-up user turns.
 
 ## Operating Rules
 
@@ -45,7 +45,7 @@ meta-skill run .
 
 ## Eval Design
 
-Start from `.meta-skill/eval-scenarios.md`, which should stay high-level: evaluation purpose, source distillation, base quality/implementation/validation dimensions, additive skill-specific dimensions, and a Scenario Plan table. Then generate or author 3-5 evals.
+Start from concrete evals under `.meta-skill/evals/`, or use optional `.meta-skill/eval-scenarios.md` planning when you need a high-level source distillation and Scenario Plan table first. Then generate or author 3-5 evals.
 
 Each eval folder contains:
 
@@ -64,7 +64,7 @@ Run evidence lives under:
 .meta-skill/runs/<run-id>/
 ```
 
-Inspect `evals/<eval>/task.md`, `evals/<eval>/criteria.json`, `evals/<eval>/rpc.jsonl`, `evals/<eval>/transcript.json`, and `evals/<eval>/response.md`.
+Inspect `cases/<eval>/task.md`, `cases/<eval>/rpc.jsonl`, `cases/<eval>/transcript.json`, and `cases/<eval>/response.md`. Use the returned criteria fingerprint to connect the run back to source `.meta-skill/evals/<eval>/criteria.json`.
 
 If the user wants to turn evidence into edits, hand off to `improve-skill` with the run ID, eval ID, saved evidence file, and observed issue.
 

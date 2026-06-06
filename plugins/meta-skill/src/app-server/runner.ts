@@ -85,7 +85,7 @@ export class AppServerEvalRunner {
     if (input.skill_activation === "discoverable") {
       throw new Error("Discoverable skill activation requires an App Server availability-only skill API.");
     }
-    const rawRoot = path.join(input.runRoot, "evals", input.eval.folder);
+    const rawRoot = path.join(input.runRoot, "cases", input.eval.folder);
     await ensureDir(rawRoot);
     const runtimeRoot = await fs.mkdtemp(path.join(os.tmpdir(), "meta-evaluate-skill-"));
     const forceSkill = input.skill_activation === "forced";

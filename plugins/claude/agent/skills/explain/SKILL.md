@@ -1,6 +1,6 @@
 ---
 name: explain
-description: "Use when the user wants to understand a technical session, large change, code concept, repo workflow, bug, architecture, decision, or agent workflow through plain-English explanation, visuals, restatement, or verified comprehension; not for ordinary summaries, implementation, code review, or requirement clarification."
+description: "Use when the user asks for a simple explanation, wants to be taught a technical concept, says they are confused or wants something broken down, or wants to understand a code concept, repo workflow, bug, architecture, decision, or agent workflow through plain-English explanation; not for ordinary summaries, implementation, code review, or requirement clarification."
 ---
 
 # Explain

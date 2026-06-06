@@ -42,7 +42,7 @@ Workbench state uses the flat project-local layout:
   runs/
 ```
 
-`.meta-skill/eval-scenarios.md` is the high-level create-time scenario plan. Executable evals live under `.meta-skill/evals/<slug>/` with lowercase hyphenated folder names. Eval files may be manually authored or drafted from the scenario plan with `meta-skill evals create`, then refined before running.
+`.meta-skill/eval-scenarios.md` is an optional high-level create-time scenario plan. Executable evals live under `.meta-skill/evals/<slug>/` with lowercase hyphenated folder names. Eval files may be manually authored or drafted from the scenario plan with `meta-skill evals create`, then refined before running. Once concrete evals exist, runs do not require the scenario-plan file.
 
 ## Eval Evidence
 
@@ -50,9 +50,8 @@ Runs live under `.meta-skill/runs/<run-id>/`:
 
 ```text
 payload/
-evals/<eval-folder>/
+cases/<eval-folder>/
   task.md
-  criteria.json
   rpc.jsonl
   transcript.json
   response.md
@@ -63,14 +62,14 @@ evals/<eval-folder>/
 Per-eval files have one nature each:
 
 - `task.md`: frozen solver-visible task definition
-- `criteria.json`: frozen evaluator-only criteria, fixtures, tests, and metadata
+- `criteria.json`: source evaluator-only criteria under `.meta-skill/evals/`; run results return its fingerprint instead of copying it
 - `rpc.jsonl`: raw App Server trace
 - `transcript.json`: normalized App Server transcript
 - `response.md`: final answer
 
 The run command returns in-memory metadata for the mounted skill path, per-eval
-evidence paths, token usage, and review-required weighted score totals derived
-from `criteria.json`. That metadata is surfaced at the CLI boundary without
+case evidence paths, token usage, criteria fingerprint, and review-required weighted score totals derived
+from source `criteria.json`. That metadata is surfaced at the CLI boundary without
 adding `run.json`, score files, or summary files to the run directory.
 
 ## Runner Boundary

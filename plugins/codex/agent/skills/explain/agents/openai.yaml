@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $explain to explain the current technical session, code concept, repo workflow, architecture decision, bug, or agent workflow in plain English with a small checklist, helpful visuals, and light comprehension checks."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

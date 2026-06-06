@@ -111,8 +111,9 @@ meta-skill package <skill-dir> --out-dir <artifact-dir>
 Use `create` after the current understanding is settled.
 
 `create` writes `SKILL.md` and `agents/openai.yaml`. With `--project`, it also
-creates `.meta-skill/spec.md`, `.meta-skill/eval-scenarios.md`,
-`.meta-skill/evals/`, `.meta-skill/runs/`, and `.meta-skill/tests/`.
+creates `.meta-skill/spec.md`, optional `.meta-skill/eval-scenarios.md`
+planning scaffolding, `.meta-skill/evals/`, `.meta-skill/runs/`, and
+`.meta-skill/tests/`.
 
 The generated scaffold is a starting point, not the final authored skill. After
 creation, edit the portable payload from the current understanding, link every
@@ -126,8 +127,8 @@ discipline.
 It requires a root with `SKILL.md` and adds `.meta-skill/` in place. It does not
 nest, move, or copy the portable payload.
 
-Next step: add or refine `.meta-skill/spec.md` and
-`.meta-skill/eval-scenarios.md`, then run `meta-skill evals create <skill-dir>`
+Next step: add or refine `.meta-skill/spec.md`, then either fill
+`.meta-skill/eval-scenarios.md` and run `meta-skill evals create <skill-dir>`,
 or manually author evals under `.meta-skill/evals/<slug>/`.
 
 ## Lint
@@ -194,9 +195,9 @@ control evidence. A run evaluates one source only; do not mix candidate and
 baseline evidence in the same run.
 
 The command prints the mounted skill file path and review-required score totals
-computed from `criteria.json`. These scores are run-result metadata only until a
-human or scorer reviews evidence; `run` does not write separate summary or score
-files.
+computed from `criteria.json`, plus the criteria fingerprint. These scores are
+run-result metadata only until a human or scorer reviews evidence; `run` does
+not write separate summary, score, or copied criteria files.
 
 Use `--turn-timeout-ms` only when a real eval needs a longer or shorter turn
 timeout. Use `--trace-buffer-events` when trace extraction needs a larger
@@ -212,9 +213,8 @@ Run evidence is saved under:
 ```text
 .meta-skill/runs/<run-id>/
   payload/                   working-payload runs only
-  evals/<eval-folder>/
+  cases/<eval-folder>/
     task.md                  frozen solver-visible task definition
-    criteria.json            frozen evaluator-only criteria definition
     rpc.jsonl                raw App Server trace
     transcript.json          normalized transcript
     response.md              final assistant answer
@@ -223,6 +223,10 @@ Run evidence is saved under:
 Inspect `response.md` for the answer, `transcript.json` for normalized
 commands, tool calls, approvals, unknown methods, token usage, and extraction
 warnings, and `rpc.jsonl` for the raw audit trail.
+
+The source `.meta-skill/evals/<slug>/criteria.json` remains the rubric source of
+truth. `run` returns its fingerprint with the run result instead of copying it
+into the evidence folder.
 
 `rpc.jsonl` is durable even when bounded in-memory extraction buffers overflow.
 When extraction cannot retain the current turn's final assistant deltas,

@@ -304,7 +304,7 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
   const p = projectPaths(root);
   if (!(await exists(p.spec))) failures.push(issue("failure", ".meta-skill/spec.md is missing", p.spec));
   else await validateSpecPlaceholders(p.spec, warnings);
-  if (!(await exists(p.evalScenarios))) failures.push(issue("failure", ".meta-skill/eval-scenarios.md is missing", p.evalScenarios));
+  if (!(await exists(p.evalScenarios))) warnings.push(issue("warning", ".meta-skill/eval-scenarios.md is missing; add it only when you want scenario-plan-driven eval generation", p.evalScenarios));
 
   const testIds = await validateTests(root, p.tests, failures);
 

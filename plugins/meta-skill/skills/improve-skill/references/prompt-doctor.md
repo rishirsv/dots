@@ -32,9 +32,9 @@ Valid improvement evidence includes:
 
 - `meta-skill lint` failures or warnings
 - completed `.meta-skill/review.md` with a concrete finding heading
-- `.meta-skill/runs/<run-id>/evals/<eval-folder>/response.md`
-- `.meta-skill/runs/<run-id>/evals/<eval-folder>/transcript.json`
-- `.meta-skill/runs/<run-id>/evals/<eval-folder>/rpc.jsonl`
+- `.meta-skill/runs/<run-id>/cases/<eval-folder>/response.md`
+- `.meta-skill/runs/<run-id>/cases/<eval-folder>/transcript.json`
+- `.meta-skill/runs/<run-id>/cases/<eval-folder>/rpc.jsonl`
 - frozen eval `task.md` and `criteria.json` from the run folder
 - explicitly captured deterministic test or validation command output
 - saved artifacts tied to the run, eval, or user-observed failure

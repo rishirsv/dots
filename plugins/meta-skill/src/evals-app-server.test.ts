@@ -25,20 +25,22 @@ describe("eval evidence hard cut", () => {
     assert.equal(await exists(path.join(result.runRoot, "summary.md")), false);
     assert.equal(await exists(path.join(result.runRoot, "payload", "SKILL.md")), true);
     assert.equal(await exists(path.join(result.runRoot, "payload", "skill-under-test.json")), false);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "task.md")), true);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "criteria.json")), true);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "fixtures", "input.txt")), true);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "rpc.jsonl")), true);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "transcript.json")), true);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "response.md")), true);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "scores.json")), false);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "task.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "criteria.json")), false);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "fixtures", "input.txt")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "rpc.jsonl")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "transcript.json")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "response.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "scores.json")), false);
 
     assert.deepEqual(result.evals, ["basic"]);
     assert.equal(result.payload?.skill_md, "payload/SKILL.md");
     assert.equal(result.results[0].folder, "basic");
+    assert.equal(result.results[0].criteria_path, path.join(".meta-skill", "evals", "basic", "criteria.json"));
+    assert.match(result.results[0].criteria_sha256, /^[a-f0-9]{64}$/);
     assert.equal(result.results[0].scoring_status, "review_required");
     assert.equal(result.results[0].max_score, 3);
-    const transcript = JSON.parse(await readText(path.join(result.runRoot, "evals", "basic", "transcript.json")));
+    const transcript = JSON.parse(await readText(path.join(result.runRoot, "cases", "basic", "transcript.json")));
     assert.equal((transcript.turns[0].tokenUsage as TokenUsage).total_tokens, 2);
   });
 
@@ -55,15 +57,15 @@ describe("eval evidence hard cut", () => {
     });
 
     assert.deepEqual(result.evals, ["basic"]);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "basic", "response.md")), true);
-    assert.equal(await exists(path.join(result.runRoot, "evals", "draft-broken")), false);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "basic", "response.md")), true);
+    assert.equal(await exists(path.join(result.runRoot, "cases", "draft-broken")), false);
   });
 });
 
 function evalRunner() {
   return {
     async run(input: EvalRunInput): Promise<EvalRunResult> {
-      const evalRoot = path.join(input.runRoot, "evals", input.eval.folder);
+      const evalRoot = path.join(input.runRoot, "cases", input.eval.folder);
       await ensureDir(evalRoot);
       await writeText(path.join(evalRoot, "rpc.jsonl"), JSON.stringify({ direction: "server", message: { ok: true } }));
       await writeText(
@@ -92,7 +94,7 @@ function evalRunner() {
         response_path: path.join(evalRoot, "response.md"),
         rpc_path: path.join(evalRoot, "rpc.jsonl"),
         transcript_path: path.join(evalRoot, "transcript.json"),
-        evidence_path: path.join("evals", input.eval.folder),
+        evidence_path: path.join("cases", input.eval.folder),
         turn_ids: ["turn"]
       };
     },

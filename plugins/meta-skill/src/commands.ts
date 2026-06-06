@@ -129,6 +129,7 @@ async function commandRun(argv: string[]): Promise<number> {
   for (const item of result.results) {
     const score = item.score === null ? `review required/${item.max_score}` : `${item.score}/${item.max_score}`;
     console.log(`score: ${item.folder} ${score}`);
+    console.log(`rubric: ${item.folder} ${item.criteria_sha256}`);
   }
   if (result.errors.length) {
     console.log("errors:");

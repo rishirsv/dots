@@ -28,7 +28,7 @@ describe("AppServerEvalRunner", () => {
       appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    const evalRoot = path.join(runRoot, "evals", "basic");
+    const evalRoot = path.join(runRoot, "cases", "basic");
     assert.equal(await exists(path.join(evalRoot, "rpc.jsonl")), true);
     assert.equal(await exists(path.join(evalRoot, "transcript.json")), true);
     assert.equal(await exists(path.join(evalRoot, "response.md")), true);
@@ -83,7 +83,7 @@ describe("AppServerEvalRunner", () => {
       appServer: { mode: "managed", auth: "inherited", protocol: "generated-ts", generatedTypes: "test" }
     });
 
-    const evalRoot = path.join(runRoot, "evals", "basic");
+    const evalRoot = path.join(runRoot, "cases", "basic");
     const final = await readText(path.join(evalRoot, "response.md"));
     assert.doesNotMatch(final, /first turn final/);
     assert.match(final, /Final assistant message unavailable for turn turn-2/);
