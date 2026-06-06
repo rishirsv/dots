@@ -30,6 +30,7 @@ Project mode adds only the implemented hidden authoring state under
 .meta-skill/
   spec.md
   eval-scenarios.md
+  review.md
   evals/<slug>/task.md
   evals/<slug>/criteria.json
   runs/<run-id>/
@@ -40,7 +41,8 @@ Use `meta-skill create --project ...` for new project-mode skills and `meta-skil
 
 Do not create or document alternate workbench surfaces as current behavior:
 `reviews/`, `plans/`, `sessions/`, `evals.json`, and `tests/manifest.json` are
-not live workbench paths.
+not live workbench paths. Review evidence uses the single `.meta-skill/review.md`
+file.
 
 ## Runtime Resource Test
 

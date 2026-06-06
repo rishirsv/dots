@@ -22,7 +22,7 @@ Primary output:
 - A self-contained ExecPlan when the work is multi-step, multi-file, risky, or likely to run under a Codex goal.
 - A shorter implementation brief only when the work is small enough that an ExecPlan would be ceremony.
 
-Use the `$improve-plan` skill when improving an existing plan or hardening a drafted plan. For new plans, use its principles manually:
+When improving an existing plan or hardening a drafted plan, use these planning principles:
 - Gather repo evidence before planning.
 - Preserve local conventions.
 - Define objective, scope, non-goals, success criteria, validation, checkpoints, and completion standard.

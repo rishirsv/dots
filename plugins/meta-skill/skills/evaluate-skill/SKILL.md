@@ -11,7 +11,7 @@ Measure a reusable skill with `.meta-skill/evals/` and `.meta-skill/runs/`. This
 
 | Need | Read |
 |---|---|
-| Eval command examples and evidence semantics | [cli.md](references/cli.md) |
+| Eval command examples and evidence semantics | [cli-conventions.md](../../references/cli-conventions.md) |
 | Writing strong eval tasks and criteria | [eval-authoring.md](references/eval-authoring.md) |
 
 ## Beginner Path

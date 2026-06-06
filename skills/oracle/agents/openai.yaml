@@ -1,7 +1,0 @@
-interface:
-  display_name: "Oracle"
-  short_description: "Package repo context for external review"
-  default_prompt: "Use $oracle to package a focused repo-context handoff for an external review."
-
-policy:
-  allow_implicit_invocation: false

@@ -110,6 +110,7 @@ export function projectPaths(projectRoot: string) {
     meta,
     spec: path.join(meta, "spec.md"),
     evalScenarios: path.join(meta, "eval-scenarios.md"),
+    review: path.join(meta, "review.md"),
     evals: path.join(meta, "evals"),
     runs: path.join(meta, "runs"),
     tests: path.join(meta, "tests")

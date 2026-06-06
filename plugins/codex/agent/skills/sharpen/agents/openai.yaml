@@ -1,0 +1,7 @@
+interface:
+  display_name: "Sharpen"
+  short_description: "Pressure-test ideas against source reality"
+  default_prompt: "Use $sharpen to pressure-test this idea against durable docs and source reality, one question at a time."
+
+policy:
+  allow_implicit_invocation: false

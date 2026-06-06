@@ -143,6 +143,7 @@ describe("lint link integrity", () => {
     );
     const report = await lintProject(root, { executeTests: false });
     assert.equal(report.failures.length, 0, messages(report.failures).join("; "));
+    assert.ok(messages(report.warnings).some((m) => m.includes("sibling plugin file")));
   });
 
   it("fails when a link escapes the plugin", async () => {

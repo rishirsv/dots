@@ -67,6 +67,8 @@ Completed eval execution is evidence, not proof of quality. Identify the saved f
 
 Improve only from evidence. Cite the lint output, run ID, eval ID, test result, trace, saved evidence file, or user feedback that motivates the change.
 
+Use `meta-skill review <skill-dir>` for read-only review. It writes the single review artifact at `.meta-skill/review.md` with deterministic validation evidence and a Quality-page worksheet. The reviewing agent completes Discovery, Implementation, Quality Score, and combined findings from `review-criteria.md`. Do not create `.meta-skill/reviews/`.
+
 Agents edit the working portable payload directly after evidence points to a needed change. The human gate happens when the user reviews and approves the git diff. `package` validates and packages the current payload when the user asks for a package.
 
 ## Human Gates

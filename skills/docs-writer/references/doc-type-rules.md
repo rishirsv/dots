@@ -1,0 +1,28 @@
+# Document Type Rules
+
+Use this file to choose document-type-specific constraints without importing a large prose manual into every doc task.
+
+## Matrix
+
+| Document type | Use when | Adopt | Avoid overfitting |
+|---|---|---|---|
+| `README.md` | Readers need project purpose, setup, usage, common commands, or a docs index. | Explain why the project is useful, what readers can do with it, and how to use it. Include quickstart, success signal, common commands, configuration, and docs index when applicable. | Do not force public project sections into private/internal repos unless present or requested. Do not turn a README into architecture, agent policy, or a runbook. |
+| `AGENTS.md` | Future agents or contributors need every-session operating rules. | Keep durable instructions: setup, build/test commands, style, testing, edit boundaries, safety, and review expectations. Use layering/precedence rules. | Do not use it as a memory dump, policy encyclopedia, or transcript archive. Do not add one-off preferences. |
+| `ARCHITECTURE.md` | Stable boundaries, flows, dependencies, or invariants are non-obvious. | Capture system context, boundaries, module map, dependency rules, forbidden couplings, core flows, decisions, and verification. | Do not force a comprehensive architecture framework when the repo needs only a concise boundary explanation. Do not draw diagrams that restate obvious folders without explaining boundaries. |
+| `DESIGN.md` | Coding agents need visual identity, tokens, components, or design-system rules. | Use optional YAML frontmatter for machine-readable tokens and Markdown for contextual guidance. Follow the expected section order: Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts. | Do not treat the format as a full design-review framework. Do not invent tokens or brand claims without project evidence. |
+| PRD | Product scope, user outcomes, acceptance criteria, and open decisions need a durable owner. | Use the concise PRD by default. Capture problem, desired outcome, user/job, proposed shape, scope, acceptance criteria, implementation notes, and open questions. | Do not let implementation sequencing take over. Do not use the full template unless the user asks or the feature genuinely needs it. |
+| Canonical feature/domain doc | A long-standing feature or main app domain needs one durable explainer for how it works. | Capture the simple version, goal, current/future state when useful, scope, surfaces, runtime flow, ownership, data/state model, acceptance, and verification. Use diagrams when they clarify flow or boundaries. | Do not turn it into a roadmap dump or a huge requirements inventory. It should explain the domain clearly. |
+| ExecPlan / execution plan | A complex feature or refactor needs a self-contained implementation handoff. | Include purpose, progress, discoveries, decision log, retrospective, context, work plan, concrete commands, validation, recovery, artifacts, and interfaces. | Do not write a thin checklist. Do not depend on prior conversation or external docs for required knowledge. |
+| Project spec | A system, service, workflow, or application needs a language-agnostic contract. | Define problem, goals/non-goals, components, domain model, requirements, lifecycle, state machine, interfaces, observability, safety, recovery, validation, and implementation-defined behavior. | Do not confuse a spec with a PRD or an implementation plan. Keep product motivation brief and implementation sequencing out. |
+| Runbooks | An operator must repeat a known procedure. | Include trigger, scope, prerequisites, steps, expected signals, rollback, validation, and escalation. | Do not import platform assumptions unless present in the repo. Do not write incident theory when the reader needs a procedure. |
+| API docs | A consumer must call, publish, subscribe to, or implement an interface. | Choose the right source of truth: generated spec, code comments, schema files, or human Markdown. Capture auth, inputs, outputs, side effects, errors, examples, versioning, and compatibility. | Do not force HTTP API structure onto internal functions or SDK-only APIs. Do not duplicate generated reference without adding human context. |
+| Migration notes | Users must adapt to breaking or compatibility-affecting change. | State who must migrate, affected versions, breaking changes, compatibility window, pre-checks, step sequence, replacement map, rollback, validation, and known gaps. | Do not confuse changelogs with migration instructions. Do not claim reversibility or safety without evidence. |
+| Module-level docs | A local package/module boundary needs explanation. | Prefer code-near docs for public APIs. Use local README files only when a directory boundary, workflow, or package-level context is non-obvious. Capture purpose, public API, invariants, examples, failure modes, and side effects. | Do not create long module READMEs for obvious folders. Do not apply one language's doc-comment style to another. |
+
+## Selection Rules
+
+1. Use the existing owner document if one exists.
+2. Use generated contracts for machine-readable interfaces.
+3. Use Markdown for human context, examples, procedures, migration rationale, and failure modes.
+4. Use templates only to seed absent docs; never force every section.
+5. Name uncertainty and standardization limits in the final handoff when they matter.

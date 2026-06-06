@@ -9,10 +9,10 @@ Commands have one side-effect class:
 | Kind | Commands | Rule |
 |---|---|---|
 | Producer | `run` | write run evidence |
-| Projection | `lint` | compute output without mutating run evidence |
+| Projection | `lint`, `review` | compute output without mutating run evidence |
 | Transform | `create`, `project init`, `evals create`, `package` | write files the user explicitly requested |
 
-The current top-level command surface is `create`, `project init`, `evals create`, `lint`, `run`, and `package`. `evals create` drafts executable eval files from `.meta-skill/eval-scenarios.md`. `run` selects authored evals by `--eval` or `--topic`; it evaluates either the working payload or a no-skill control with `--no-skill`.
+The current top-level command surface is `create`, `project init`, `evals create`, `lint`, `review`, `run`, and `package`. `evals create` drafts executable eval files from `.meta-skill/eval-scenarios.md`. `review` writes `.meta-skill/review.md` as the single review artifact. `run` selects authored evals by `--eval` or `--topic`; it evaluates either the working payload or a no-skill control with `--no-skill`.
 
 ## Project Shape
 
@@ -36,6 +36,7 @@ Workbench state uses the flat project-local layout:
 .meta-skill/
   spec.md
   eval-scenarios.md
+  review.md
   evals/
   tests/
   runs/

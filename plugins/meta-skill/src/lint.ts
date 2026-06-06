@@ -31,7 +31,7 @@ export async function lintProject(target: string, options: LintOptions = {}): Pr
 
   await validatePortablePayload(root, failures, warnings);
 
-  if (await exists(p.meta)) {
+  if (await hasProjectWorkbench(p)) {
     await validateWorkbench(root, failures, warnings, options.evalSelector);
   }
 
@@ -76,7 +76,7 @@ async function validatePortablePayload(root: string, failures: Issue[], warnings
   if (!body.trim()) failures.push(issue("failure", "SKILL.md body is missing", skillMd));
   if (skillText.split(/\r?\n/).length > 220) warnings.push(issue("warning", "SKILL.md is long; move conditional detail to directly linked references", skillMd));
   await validateRuntimeResourceLinks(root, skillText, warnings);
-  await validateLinkIntegrity(root, skillText, failures);
+  await validateLinkIntegrity(root, skillText, failures, warnings);
   await validateAgentManifest(root, failures);
 }
 
@@ -178,7 +178,7 @@ async function validateRuntimeResourceLinks(root: string, skillText: string, war
 // Every relative markdown link in live prose (SKILL.md + references/*.md) must
 // resolve to a real file inside the packaging unit. Links shown as examples
 // live in code fences or backticks and are deliberately excluded.
-async function validateLinkIntegrity(root: string, skillText: string, failures: Issue[]): Promise<void> {
+async function validateLinkIntegrity(root: string, skillText: string, failures: Issue[], warnings: Issue[]): Promise<void> {
   const boundary = await resolveLinkBoundary(root);
   const docs: Array<{ rel: string; dir: string; text: string }> = [{ rel: "SKILL.md", dir: root, text: skillText }];
   const refDir = path.join(root, "references");
@@ -201,12 +201,15 @@ async function validateLinkIntegrity(root: string, skillText: string, failures: 
       seen.add(key);
       const resolved = path.resolve(doc.dir, target);
       const relToBoundary = path.relative(boundary, resolved);
+      const relToRoot = path.relative(root, resolved);
       if (relToBoundary.startsWith("..") || path.isAbsolute(relToBoundary)) {
         failures.push(issue("failure", `${doc.rel} links outside the packaged payload: ${target}`, path.join(root, doc.rel)));
       } else if (resolved.split(path.sep).includes(".meta-skill")) {
         failures.push(issue("failure", `${doc.rel} links into a .meta-skill workbench, which does not package: ${target}`, path.join(root, doc.rel)));
       } else if (!(await exists(resolved))) {
         failures.push(issue("failure", `${doc.rel} has a broken link: ${target}`, path.join(root, doc.rel)));
+      } else if ((relToRoot.startsWith("..") || path.isAbsolute(relToRoot)) && boundary !== root) {
+        warnings.push(issue("warning", `${doc.rel} links to a sibling plugin file that may not package with the standalone skill: ${target}`, path.join(root, doc.rel)));
       }
     }
   }
@@ -286,6 +289,10 @@ async function validateWorkbench(root: string, failures: Issue[], warnings: Issu
       warnings.push(issue("warning", "runtime scripts are present; add or recommend deterministic tests in .meta-skill/tests/", path.join(root, "scripts")));
     }
   }
+}
+
+async function hasProjectWorkbench(p: ReturnType<typeof projectPaths>): Promise<boolean> {
+  return (await exists(p.spec)) || (await exists(p.evalScenarios)) || (await exists(p.evals)) || (await exists(p.tests)) || (await exists(p.runs));
 }
 
 async function validateEval(

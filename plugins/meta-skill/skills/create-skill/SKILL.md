@@ -43,7 +43,7 @@ Read only what the task needs:
 | Distill a source pack or past outputs into reusable guidance without leaking engagement-specific facts | [distillation.md](references/distillation.md) |
 | Look up a compact runtime snippet after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Decide what belongs in `SKILL.md`, `references/`, `scripts/`, `assets/`, and `.meta-skill/` | [structure.md](references/structure.md) |
-| Use the shared CLI | [cli-conventions.md](references/cli-conventions.md) |
+| Use the shared CLI | [cli-conventions.md](../../references/cli-conventions.md) |
 | Capture decisions as a Skill Spec, on request or in project mode | [skill-spec-template.md](assets/skill-spec-template.md) |
 
 ## Writing Style
@@ -134,7 +134,7 @@ Run `meta-skill lint <skill-dir>`. Stop before packaging, install, publish, sync
 
 ## CLI
 
-Use the shared TypeScript CLI through the `meta-skill` plugin bin. The full command contract is in [cli-conventions.md](references/cli-conventions.md).
+Use the shared TypeScript CLI through the `meta-skill` plugin bin. For the full command contract, flags, output, and exit codes, follow [cli-conventions.md](../../references/cli-conventions.md).
 
 ```bash
 meta-skill create <skill-dir> --slug <slug> --title "<title>" --description "<Use when ...; not for ...>" --job "<job>"

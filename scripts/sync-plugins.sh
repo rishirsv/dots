@@ -10,6 +10,8 @@ SOURCE_SKILLS="$ROOT/skills"
 SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
 CODEX_PLUGIN="$ROOT/plugins/codex/$PLUGIN_NAME"
 CLAUDE_PLUGIN="$ROOT/plugins/claude/$PLUGIN_NAME"
+CODEX_PLUGIN_SKILLS="$CODEX_PLUGIN/skills"
+CLAUDE_PLUGIN_SKILLS="$CLAUDE_PLUGIN/skills"
 CODEX_PLUGIN_AGENTS="$CODEX_PLUGIN/agents"
 CLAUDE_PLUGIN_AGENTS="$CLAUDE_PLUGIN/agents"
 CODEX_DESKTOP_SKILLS="$HOME/.codex/skills"
@@ -37,13 +39,16 @@ fi
 
 mkdir -p \
   "$CODEX_PLUGIN/.codex-plugin" \
+  "$CODEX_PLUGIN_SKILLS" \
   "$CODEX_PLUGIN_AGENTS" \
   "$CLAUDE_PLUGIN/.claude-plugin" \
+  "$CLAUDE_PLUGIN_SKILLS" \
   "$CLAUDE_PLUGIN_AGENTS" \
   "$ROOT/.agents/plugins" \
   "$ROOT/.claude-plugin"
 
 rm -rf "$CODEX_PLUGIN/skills" "$CLAUDE_PLUGIN/skills"
+mkdir -p "$CODEX_PLUGIN_SKILLS" "$CLAUDE_PLUGIN_SKILLS"
 
 mkdir -p "$CODEX_DESKTOP_SKILLS"
 if [[ -f "$CODEX_DESKTOP_SKILL_MARKER" ]]; then
@@ -52,12 +57,11 @@ if [[ -f "$CODEX_DESKTOP_SKILL_MARKER" ]]; then
     rm -rf "$CODEX_DESKTOP_SKILLS/$managed_skill"
   done < "$CODEX_DESKTOP_SKILL_MARKER"
 fi
+rm -f "$CODEX_DESKTOP_SKILL_MARKER"
 
-: > "$CODEX_DESKTOP_SKILL_MARKER"
 for skill_dir in "$SOURCE_SKILLS"/*(/N); do
-  target_skill="$CODEX_DESKTOP_SKILLS/${skill_dir:t}"
-  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$target_skill/"
-  print -r -- "${skill_dir:t}" >> "$CODEX_DESKTOP_SKILL_MARKER"
+  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$CODEX_PLUGIN_SKILLS/${skill_dir:t}/"
+  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$CLAUDE_PLUGIN_SKILLS/${skill_dir:t}/"
 done
 
 if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
@@ -331,11 +335,20 @@ fi
 
 CODEX_CACHE="$HOME/.codex/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME/$VERSION"
 CLAUDE_CACHE="$HOME/.claude/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME/$VERSION"
+rm -rf "$CODEX_CACHE" "$CLAUDE_CACHE"
 mkdir -p "$CODEX_CACHE" "$CLAUDE_CACHE"
 rsync -a --delete --exclude '.DS_Store' "$CODEX_PLUGIN/" "$CODEX_CACHE/"
 rsync -a --delete --exclude '.DS_Store' "$CLAUDE_PLUGIN/" "$CLAUDE_CACHE/"
 
-echo "Synced Desktop skills:"
+if [[ ! -f "$CODEX_CACHE/skills/commit/SKILL.md" ]]; then
+  echo "Expected Agent plugin skills in Codex cache, but none were found: $CODEX_CACHE/skills" >&2
+  exit 1
+fi
+
+echo "Packaged plugin skills:"
+echo "  $CODEX_PLUGIN_SKILLS"
+echo "  $CLAUDE_PLUGIN_SKILLS"
+echo "Removed direct managed Desktop skill installs:"
 echo "  $CODEX_DESKTOP_SKILLS"
 echo "Refreshed local caches:"
 echo "  $CODEX_CACHE"

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Ideate"
+  short_description: "Generate three visual design options"
+  default_prompt: "Use $ideate to confirm the product design brief, inspect visual references, generate exactly three independent visual options that preserve constraints, and stop for selection before implementation."
+
+policy:
+  allow_implicit_invocation: false

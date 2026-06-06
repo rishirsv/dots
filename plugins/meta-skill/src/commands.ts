@@ -4,6 +4,7 @@ import { lintProject } from "./lint.ts";
 import { packageProject } from "./package.ts";
 import { CliError } from "./project.ts";
 import { formatLintReport } from "./lint.ts";
+import { reviewSkill } from "./review.ts";
 import { createSkill, initProject } from "./skills.ts";
 
 const HELP = `meta-skill
@@ -13,6 +14,7 @@ Usage:
   meta-skill project init <skill-dir>
   meta-skill evals create <project>
   meta-skill lint <project-or-skill> [--json]
+  meta-skill review <project-or-skill>
   meta-skill run <project> [--eval <id>] [--topic <topic>] [--label "..."] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
   meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 `;
@@ -33,6 +35,8 @@ export async function runCommand(argv: string[]): Promise<number> {
       return commandEvals(rest);
     case "lint":
       return commandLint(rest);
+    case "review":
+      return commandReview(rest);
     case "run":
       return commandRun(rest);
     case "package":
@@ -94,6 +98,16 @@ async function commandLint(argv: string[]): Promise<number> {
   if (args.has("json")) console.log(JSON.stringify(report, null, 2));
   else console.log(formatLintReport(report));
   return report.ok ? 0 : 1;
+}
+
+async function commandReview(argv: string[]): Promise<number> {
+  const args = parse(argv, [], []);
+  const target = args.positionals[0] || ".";
+  const result = await reviewSkill(target);
+  console.log(`review: ${result.reviewPath}`);
+  console.log("quality score: agent review required");
+  console.log(`validation score: ${result.validationScore}%`);
+  return 0;
 }
 
 async function commandRun(argv: string[]): Promise<number> {

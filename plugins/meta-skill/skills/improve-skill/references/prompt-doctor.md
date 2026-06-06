@@ -21,7 +21,7 @@ Before changing anything, identify:
 - current description and trigger contract
 - core job
 - linked references, scripts, assets, and metadata
-- `.meta-skill/` evidence available
+- `.meta-skill/review.md` and other `.meta-skill/` evidence available
 - user's requested scope
 
 Do not let a broad review request become an unbounded rewrite.
@@ -31,6 +31,7 @@ Do not let a broad review request become an unbounded rewrite.
 Valid improvement evidence includes:
 
 - `meta-skill lint` failures or warnings
+- `.meta-skill/review.md`
 - `.meta-skill/runs/<run-id>/evals/<eval-folder>/response.md`
 - `.meta-skill/runs/<run-id>/evals/<eval-folder>/transcript.json`
 - `.meta-skill/runs/<run-id>/evals/<eval-folder>/rpc.jsonl`
@@ -41,6 +42,8 @@ Valid improvement evidence includes:
 
 If evidence is missing, ask the user to run `meta-skill lint` or `meta-skill run`, or to authorize a manual review path.
 
+For read-only review requests, run `meta-skill review <skill-dir>` first, then complete `.meta-skill/review.md` as a Quality page using [review-criteria.md](review-criteria.md). The completed report is the evidence artifact. For later edit requests, cite `.meta-skill/review.md` and the finding heading before changing the portable payload.
+
 ## Review Lanes
 
 Use only lanes relevant to the request:
@@ -50,6 +53,7 @@ Use only lanes relevant to the request:
 - Resources: linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - Controls: user files as data, approval gates, external writes, package/publish gates.
 - Eval evidence: `.meta-skill/evals/`, executable tests under `.meta-skill/tests/`, transcript quality, token usage visibility.
+- Review score: `.meta-skill/review.md` Quality Score, Discovery, Implementation, Validation, and combined findings.
 
 ## Prompt Doctor Loop
 
