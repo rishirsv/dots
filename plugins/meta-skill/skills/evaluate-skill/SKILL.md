@@ -14,6 +14,13 @@ Turn realistic skill-use requests into inspectable behavior evidence. This lane 
 | Writing strong eval tasks and criteria | [eval-authoring.md](references/eval-authoring.md) |
 | Running Codex child-thread comparisons and collecting compact evidence | [codex-threads-runner.md](../../references/codex-threads-runner.md) |
 
+For local file/evidence support, run:
+
+- `msk run new <run-id>`
+- `msk run add-thread <run-id> --task <task-id> --variant <variant-id> --thread <thread-id>`
+- `msk run extract <run-id> --thread-export <path> [--rebuild|--append]`
+- `msk run report <run-id>`
+
 For isolated subagent sampling patterns, use `../../references/subagent-patterns.md`.
 
 ## Beginner Path

@@ -75,6 +75,9 @@ Workflow routing:
 - Project-mode work adds `.meta-skill/` only when maintained evidence is needed.
 - Eval work authors `.meta-skill/evals/<slug>/task.md`, `criteria.json`, and optional `fixtures/` directly.
 - Eval execution is Codex Desktop-first: the parent thread spawns local or worktree child threads, requires compact result blocks, records `run.json` and `results.jsonl`, and uses read-only extraction only to keep evidence compact.
+- For local project-mode support files, use `msk` with `run new`, `run add-thread`,
+  `run extract`, and `run report`. It is a typed utility for small compact
+  evidence artifacts, not a hidden runner.
 - Review work writes `.meta-skill/review.md` only when a review artifact is useful and allowed.
 - Validation means reading the changed files, checking referenced links/files, running any deterministic tests that already exist for the skill, and reporting proof limits.
 - Packaging remains a separate explicit approval gate.

@@ -133,6 +133,8 @@ Browser route priority when the user has approved a browser-based provider:
 - `openai-api`: use a Responses API or provider CLI only after confirming credentials and cost approval. Write the answer to the package folder, for example `answer.openai.md`.
 - `oracle`: if `oracle` or `npx -y @steipete/oracle` is installed and the user wants that path, it can handle prompt/file bundling directly. Run a dry preview first (`--dry-run summary --files-report`) and capture output with `--write-output` when spending tokens.
 
+For ChatGPT browser assists, follow [references/chatgpt-browser.md](references/chatgpt-browser.md): attach `context.zip` first, ensure `prompt.md` is visible in the text field, click **Show in text field** if ChatGPT turns the prompt into an attachment, then send only after the zip attachment and prompt text are both present.
+
 For Claude Code, keep in mind that `-p` / `--print` is the documented non-interactive path and may have account or billing implications; state that gate before running it.
 
 ## Prompt Shape

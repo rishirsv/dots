@@ -9,6 +9,16 @@ approve a promotion.
 This is not a Meta Skill command surface or hidden local runner. APIs and
 scripts are support machinery only.
 
+When a compact evidence pass is needed locally, run `msk`:
+
+```text
+msk init
+msk run new <run-id>
+msk run add-thread <run-id> --task <task-id> --variant <variant-id> --thread <thread-id> [--attempt <attempt-id>]
+msk run extract <run-id> --thread-export <path>... [--rebuild|--append]
+msk run report <run-id>
+```
+
 ## Canonical Run Files
 
 Keep the durable artifact model small:

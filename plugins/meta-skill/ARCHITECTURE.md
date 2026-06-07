@@ -1,16 +1,18 @@
 # Meta Skill Architecture
 
 Meta Skill is a Codex skill bundle for creating, evaluating, and improving
-portable reusable skills. It has no command wrapper, local eval runner, or local
-API. Codex Desktop is the visible cockpit for evaluation and improvement runs.
+portable reusable skills. It uses Codex Desktop as the visible cockpit for
+orchestration, with a small typed local utility (`msk`) to keep run evidence small
+and repeatable.
 
 ## Shape
 
-The plugin is only:
+The plugin ships a support utility (`msk`) alongside the skill payload:
 
 ```text
 plugins/meta-skill/
   .codex-plugin/plugin.json
+  tools/
   assets/
   references/
   skills/
@@ -59,6 +61,20 @@ authoring notes, evals, tests, review artifacts, or run evidence:
 ```
 
 `.meta-skill/` is authoring and evidence state. It is not runtime payload.
+
+## `msk` Support Utility
+
+`msk` is intentionally narrow. It writes and reads `.meta-skill/runs/<run-id>/`
+control and evidence files but does not start or control threads.
+
+Supported commands in this worktree:
+
+- `msk init`
+- `msk skill new <slug>`
+- `msk run new <run-id>`
+- `msk run add-thread <run-id> --task <task-id> --variant <variant-id> --thread <thread-id> [--attempt <attempt-id>]`
+- `msk run extract <run-id> --thread-export <path>... [--rebuild|--append]`
+- `msk run report <run-id>`
 
 ## Evidence
 
