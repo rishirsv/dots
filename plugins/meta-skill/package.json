@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "msk": "tsx tools/msk.ts",
+    "msk": "node tools/msk.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx --test tools/tests/run-extract.test.ts"
+    "test": "node --test tools/tests/run-extract.test.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.1",

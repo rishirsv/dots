@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { getRunDirs } from "../core/paths.js";
+import { getRunDirs } from "../core/paths.ts";
 
 export async function commandInit(cwd: string): Promise<{ created: string[]; existing: string[] }> {
   const wanted = getRunDirs(cwd);

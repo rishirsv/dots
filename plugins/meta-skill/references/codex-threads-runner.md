@@ -80,6 +80,25 @@ row with `status: "missing-result"` and an empty summary.
 ## Extraction
 
 Extraction keeps the parent from loading many child conversations into context.
+`msk run extract --thread-export <path>` accepts the Codex app `read_thread`
+JSON shape directly:
+
+```json
+{
+  "schemaVersion": 1,
+  "thread": { "id": "thread-id" },
+  "turns": [
+    { "items": [{ "type": "agentMessage", "text": "final text", "phase": "final_answer" }] }
+  ]
+}
+```
+
+The extractor flattens `turns[].items[]`, reads assistant output from
+`agentMessage`, and rejects exports with no supported text-bearing messages. A
+result block is usable only when its `run_id`, `task_id`, `attempt_id`, and
+`thread_id` match the expected attempt; mismatches write a degraded
+`missing-result` row so the parent can inspect that child thread manually.
+
 Use this priority:
 
 1. Stable Codex thread read/export APIs when available.
@@ -90,8 +109,13 @@ Use this priority:
 Never write to Codex local storage. Label fallback rows as degraded. Reference
 raw rollout logs by path instead of copying them into the run folder.
 
+The Agent repo does not own Codex Desktop thread tool implementations. A real
+app export primitive should live in the Codex app/tool layer and write the
+`read_thread` shape above, for example `export_thread(threadId, path)`.
+
 ## Boundaries
 
 `msk` does not manage variants, scores, decisions, validation arrays, worktrees,
-promotion, packaging, install, publish, or thread creation in this slice. Those
-can be added later only if compact extraction proves useful.
+promotion, packaging, install, publish, thread creation, or private Codex
+storage access in this slice. Those can be added later only if compact
+extraction proves useful.

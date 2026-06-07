@@ -1,5 +1,6 @@
-import { ChildResult } from "./schemas.js";
-import { extractAssistantMessages, extractTextFromMessage, ThreadExport } from "./transcript-export.js";
+import type { ChildResult } from "./schemas.ts";
+import { extractAssistantMessages, extractTextFromMessage } from "./transcript-export.ts";
+import type { ThreadExport } from "./transcript-export.ts";
 
 const RESULT_KEY = "codex_thread_result";
 const FENCED_JSON = /```(?:json)?\s*([\s\S]*?)\s*```/gi;

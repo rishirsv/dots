@@ -1,4 +1,4 @@
-import { parseJsonOrJsonl } from "./jsonl.js";
+import { parseJsonOrJsonl } from "./jsonl.ts";
 import { readFileSync } from "node:fs";
 
 export interface ThreadExport {
@@ -8,7 +8,7 @@ export interface ThreadExport {
 }
 
 const THREAD_ID_KEYS = ["thread_id", "threadId", "id"] as const;
-const MESSAGE_FIELDS = ["messages", "turns", "events", "entries", "transcript"] as const;
+const MESSAGE_FIELDS = ["messages", "turns", "events", "entries", "transcript", "items"] as const;
 const TEXT_FIELDS = ["text", "content", "output", "body", "message", "details", "result"] as const;
 
 export function loadThreadExport(filePath: string): ThreadExport {
@@ -53,6 +53,13 @@ export function loadThreadExport(filePath: string): ThreadExport {
     }
   }
 
+  if (messages.length === 0) {
+    throw new Error(`thread export "${filePath}" has no supported messages`);
+  }
+  if (!messages.some((message) => extractTextFromMessage(message))) {
+    throw new Error(`thread export "${filePath}" has no supported text-bearing messages`);
+  }
+
   return { thread_id: threadId, messages, metadata };
 }
 
@@ -63,6 +70,10 @@ function extractThreadId(payload: Record<string, unknown>): string | undefined {
       return value.trim();
     }
   }
+  const thread = payload.thread;
+  if (thread && typeof thread === "object") {
+    return extractThreadId(thread as Record<string, unknown>);
+  }
   return undefined;
 }
 
@@ -70,12 +81,24 @@ function extractMessages(payload: Record<string, unknown>): Record<string, unkno
   for (const field of MESSAGE_FIELDS) {
     const value = payload[field];
     if (Array.isArray(value)) {
+      if (field === "turns") {
+        return value.flatMap((entry) => extractTurnMessages(entry));
+      }
       return value.filter((entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null);
     }
   }
+  return [];
+}
 
-  const fallback = payload as unknown;
-  return typeof fallback === "object" ? [fallback as Record<string, unknown>] : [];
+function extractTurnMessages(turn: unknown): Record<string, unknown>[] {
+  if (!turn || typeof turn !== "object") {
+    return [];
+  }
+  const items = (turn as Record<string, unknown>).items;
+  if (!Array.isArray(items)) {
+    return [];
+  }
+  return items.filter((entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null);
 }
 
 export function extractTextFromMessage(message: Record<string, unknown>): string {
@@ -97,9 +120,6 @@ export function extractTextFromMessage(message: Record<string, unknown>): string
   }
 
   for (const value of Object.values(message)) {
-    if (typeof value === "string" && value.trim().length > 0) {
-      return value.trim();
-    }
     if (Array.isArray(value)) {
       for (const item of value) {
         const text = extractTextFromMessage(
@@ -116,13 +136,15 @@ export function extractTextFromMessage(message: Record<string, unknown>): string
 }
 
 export function extractRole(message: Record<string, unknown>): string {
-  return String(message.role || message.author || message.actor || message.type || "").toLowerCase();
+  return String(message.role || message.author || message.actor || message.type || "")
+    .replace(/[_-]/g, "")
+    .toLowerCase();
 }
 
 export function extractAssistantMessages(messages: Record<string, unknown>[]): Record<string, unknown>[] {
   const assistant = messages.filter((item) => {
     const role = extractRole(item);
-    return role === "assistant" || role === "assistant-message" || role === "assistant_message" || role === "model";
+    return role === "assistant" || role === "assistantmessage" || role === "agentmessage" || role === "model";
   });
   return assistant.length > 0 ? assistant : messages.slice(-1);
 }

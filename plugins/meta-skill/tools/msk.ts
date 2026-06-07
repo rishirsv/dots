@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runCli } from "./src/cli.js";
+import { runCli } from "./src/cli.ts";
 
 runCli(process.argv.slice(2)).catch((error) => {
   if (error instanceof Error) {

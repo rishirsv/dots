@@ -1,11 +1,13 @@
-import { writeJsonl } from "../core/jsonl.js";
-import { getRunResultsPath } from "../core/paths.js";
-import { ThreadExport, loadThreadExport } from "../core/transcript-export.js";
-import { extractResultFromExport, ExtractedResult, missingKeysFromResult } from "../core/result-block.js";
-import { ResultRow, TaskAttempt, RunFile } from "../core/schemas.js";
-import { createRun, nextAttemptId, readRun, upsertAttempt, writeRun } from "../core/run-store.js";
-import { readJsonOrJsonlFile } from "../core/jsonl.js";
-import { assertSafeAttemptId, assertSafeRunId, assertSafeTaskId } from "../core/ids.js";
+import { writeJsonl } from "../core/jsonl.ts";
+import { getRunResultsPath } from "../core/paths.ts";
+import { loadThreadExport } from "../core/transcript-export.ts";
+import type { ThreadExport } from "../core/transcript-export.ts";
+import { extractResultFromExport, missingKeysFromResult } from "../core/result-block.ts";
+import type { ExtractedResult } from "../core/result-block.ts";
+import type { ResultRow, TaskAttempt, RunFile } from "../core/schemas.ts";
+import { createRun, nextAttemptId, readRun, upsertAttempt, writeRun } from "../core/run-store.ts";
+import { readJsonOrJsonlFile } from "../core/jsonl.ts";
+import { assertSafeAttemptId, assertSafeRunId, assertSafeTaskId } from "../core/ids.ts";
 
 export interface RunCheckSummary {
   expected_attempts: number;
@@ -122,6 +124,18 @@ function normalizeRow(runId: string, task: TaskAttempt, exportItem: ThreadExport
     const requiredMissing = missingKeysFromResult(result, result.run_id || runId, result.task_id || task.task_id);
     for (const key of requiredMissing) {
       missing.add(key);
+    }
+    if (result.run_id && result.run_id !== runId) {
+      missing.add("run_id");
+    }
+    if (result.task_id && result.task_id !== task.task_id) {
+      missing.add("task_id");
+    }
+    if (result.attempt_id && result.attempt_id !== task.attempt_id) {
+      missing.add("attempt_id");
+    }
+    if (result.thread_id && result.thread_id !== task.thread_id) {
+      missing.add("thread_id");
     }
   }
   if (!result || missing.size > 0) {

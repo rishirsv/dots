@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
-import { getRunJsonPath, getRunPath } from "./paths.js";
-import { TaskAttempt, RunFile } from "./schemas.js";
-import { assertSafeRunId } from "./ids.js";
+import { getRunJsonPath, getRunPath } from "./paths.ts";
+import type { TaskAttempt, RunFile } from "./schemas.ts";
+import { assertSafeRunId } from "./ids.ts";
 
 const RUN_FILE_SCHEMA = 1;
 

@@ -1,7 +1,7 @@
-import { commandInit } from "./commands/init.js";
-import { commandSkillNew } from "./commands/skill.js";
-import { runAddThread, runCheck, runExtract, runNew } from "./commands/run.js";
-import { printHelp, printRunHelp, printSkillHelp } from "./help.js";
+import { commandInit } from "./commands/init.ts";
+import { commandSkillNew } from "./commands/skill.ts";
+import { runAddThread, runCheck, runExtract, runNew } from "./commands/run.ts";
+import { printHelp, printRunHelp, printSkillHelp } from "./help.ts";
 
 function parseNamedArg(argv: string[], name: string): string | undefined {
   const withEquals = argv.find((value) => value.startsWith(`--${name}=`));

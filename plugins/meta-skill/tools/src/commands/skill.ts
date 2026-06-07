@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { assertSafeSkillSlug } from "../core/ids.js";
+import { assertSafeSkillSlug } from "../core/ids.ts";
 
 export async function commandSkillNew(
   cwd: string,

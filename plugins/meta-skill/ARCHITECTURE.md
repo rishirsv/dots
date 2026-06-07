@@ -65,7 +65,7 @@ authoring notes, evals, tests, review artifacts, or run evidence:
 ## `msk` Support Utility
 
 `msk` is intentionally narrow. It writes and reads `.meta-skill/runs/<run-id>/`
-control and evidence files but does not start or control threads.
+control and evidence files but does not start, control, or export threads.
 
 Supported commands in this worktree:
 
@@ -94,6 +94,24 @@ The canonical run files are:
 child result rows extracted from `codex_thread_result` blocks. Do not persist
 copied raw transcripts by default; cite child thread ids and drill into raw
 threads only for degraded rows, surprising results, or user-requested audit.
+
+`msk run extract --thread-export <path>` accepts Codex app `read_thread` JSON
+exports directly:
+
+```json
+{
+  "schemaVersion": 1,
+  "thread": { "id": "thread-id" },
+  "turns": [
+    { "items": [{ "type": "agentMessage", "text": "final text", "phase": "final_answer" }] }
+  ]
+}
+```
+
+Extraction flattens `turns[].items[]`, reads `agentMessage` text, and matches
+the export to the expected attempt by thread id. A parsed result block degrades
+to a missing-result row when its `run_id`, `task_id`, `attempt_id`, or
+`thread_id` does not match the expected attempt.
 
 Completed evidence is not proof by itself. Agents should inspect the compact
 rows first, use `msk run check <run-id>` for counts, cite what the evidence

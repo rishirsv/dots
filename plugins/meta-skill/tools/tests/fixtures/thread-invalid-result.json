@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "thread": {
+    "id": "thread-invalid-result",
+    "title": "Invalid result fixture"
+  },
+  "turns": [
+    {
+      "id": "turn-1",
+      "status": "completed",
+      "items": [
+        {
+          "type": "agentMessage",
+          "id": "item-1",
+          "text": "```json\n{\n  \"codex_thread_result\": {\n    \"schema_version\": 1,\n    \"run_id\": \"app-native-export\",\n    \"task_id\": \"task-invalid\",\n    \"attempt_id\": \"task-invalid.1\",\n    \"thread_id\": \"thread-invalid-result\",\n    \"status\": \"completed\"\n  }\n}\n```",
+          "phase": "final_answer"
+        }
+      ]
+    }
+  ]
+}

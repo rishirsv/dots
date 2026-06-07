@@ -4,8 +4,9 @@ import { mkdtempSync, rmSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { runCli } from "../src/cli.js";
-import { readJsonOrJsonlFile } from "../src/core/jsonl.js";
+import { runCli } from "../src/cli.ts";
+import { readJsonOrJsonlFile } from "../src/core/jsonl.ts";
+import { loadThreadExport } from "../src/core/transcript-export.ts";
 
 const fixtureDir = path.dirname(fileURLToPath(import.meta.url));
 const fixtureBase = path.join(fixtureDir, "fixtures");
@@ -152,6 +153,85 @@ describe("msk minimal extraction", () => {
     }
   });
 
+  it("ingests the app-native read_thread export shape without manual reshaping", async () => {
+    const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
+    try {
+      const runId = "app-native-export";
+      await runCli(["init"], cwd);
+      await runCli(["run", "new", runId], cwd);
+      await runCli([
+        "run",
+        "add-thread",
+        runId,
+        "--task",
+        "task-app-native",
+        "--thread",
+        "thread-app-native",
+      ], cwd);
+
+      const exportPath = path.join(fixtureBase, "thread-app-native-export.json");
+      const parsed = loadThreadExport(exportPath);
+      assert.equal(parsed.thread_id, "thread-app-native");
+      assert.ok(parsed.messages.some((message) => message.type === "agentMessage"));
+
+      await runCli(
+        [
+          "run",
+          "extract",
+          runId,
+          "--thread-export",
+          exportPath,
+          "--rebuild",
+        ],
+        cwd,
+      );
+
+      const rowsPath = path.join(cwd, ".meta-skill", "runs", runId, "results.jsonl");
+      const rows = (await readJsonOrJsonlFile(rowsPath)) as Record<string, unknown>[];
+      assert.equal(rows.length, 1);
+      assert.deepEqual(rows[0], {
+        schema_version: 1,
+        run_id: runId,
+        task_id: "task-app-native",
+        attempt_id: "task-app-native.1",
+        thread_id: "thread-app-native",
+        status: "completed",
+        summary: "App-native export parsed without reshaping",
+        extraction_source: "thread-export",
+        extraction_degraded: false,
+      });
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects unsupported transcript message shapes", async () => {
+    const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
+    try {
+      const runId = "unsupported-export";
+      await runCli(["init"], cwd);
+      await runCli(["run", "new", runId], cwd);
+      await runCli(["run", "add-thread", runId, "--task", "task-a", "--thread", "thread-unsupported"], cwd);
+      await assertRejectsMessage(
+        () =>
+          runCli(
+            [
+              "run",
+              "extract",
+              runId,
+              "--thread-export",
+              path.join(fixtureBase, "thread-unsupported-shape.json"),
+              "--rebuild",
+            ],
+            cwd,
+          ),
+        /no supported text-bearing messages/,
+      );
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
   it("prints compact check counts", async () => {
     const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
     try {
@@ -176,6 +256,67 @@ describe("msk minimal extraction", () => {
       assert.deepEqual(lines, [
         "expected_attempts: 2",
         "extracted_rows: 2",
+        "degraded_rows: 2",
+        "missing_rows: 2",
+      ]);
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it("prints quality counts for valid and degraded app-native exports", async () => {
+    const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
+    try {
+      const runId = "app-native-export";
+      await runCli(["init"], cwd);
+      await runCli(["run", "new", runId], cwd);
+      await runCli([
+        "run",
+        "add-thread",
+        runId,
+        "--task",
+        "task-app-native",
+        "--thread",
+        "thread-app-native",
+      ], cwd);
+      await runCli([
+        "run",
+        "add-thread",
+        runId,
+        "--task",
+        "task-invalid",
+        "--thread",
+        "thread-invalid-result",
+      ], cwd);
+      await runCli(["run", "add-thread", runId, "--task", "task-missing", "--thread", "thread-missing"], cwd);
+
+      await runCli(
+        [
+          "run",
+          "extract",
+          runId,
+          "--thread-export",
+          path.join(fixtureBase, "thread-app-native-export.json"),
+          "--thread-export",
+          path.join(fixtureBase, "thread-invalid-result.json"),
+          "--thread-export",
+          path.join(fixtureBase, "thread-missing.jsonl"),
+          "--rebuild",
+        ],
+        cwd,
+      );
+
+      const rowsPath = path.join(cwd, ".meta-skill", "runs", runId, "results.jsonl");
+      const rows = (await readJsonOrJsonlFile(rowsPath)) as Record<string, unknown>[];
+      assert.equal(rows.length, 3);
+      assert.equal(rows.find((row) => row.task_id === "task-app-native")?.extraction_degraded, false);
+      assert.equal(rows.find((row) => row.task_id === "task-invalid")?.extraction_degraded, true);
+      assert.equal(rows.find((row) => row.task_id === "task-missing")?.extraction_degraded, true);
+
+      const lines = await captureConsole(() => runCli(["run", "check", runId], cwd));
+      assert.deepEqual(lines, [
+        "expected_attempts: 3",
+        "extracted_rows: 3",
         "degraded_rows: 2",
         "missing_rows: 2",
       ]);
