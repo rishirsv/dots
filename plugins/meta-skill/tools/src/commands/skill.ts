@@ -1,12 +1,14 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { assertSafeSkillSlug } from "../core/ids.js";
 
 export async function commandSkillNew(
   cwd: string,
   slug: string,
   opts: { description?: string } = {},
 ): Promise<void> {
-  const target = path.join(cwd, slug);
+  const safeSlug = assertSafeSkillSlug(slug);
+  const target = path.join(cwd, safeSlug);
   await fs.mkdir(target, { recursive: true });
 
   const skillPath = path.join(target, "SKILL.md");
@@ -19,11 +21,11 @@ export async function commandSkillNew(
   }
 
   const content = `---
-name: ${slug}
-description: ${opts.description ?? `Meta Skill utility scaffold for ${slug}`}.
+name: ${safeSlug}
+description: ${opts.description ?? `Meta Skill utility scaffold for ${safeSlug}`}.
 ---
 
-# ${slug}
+# ${safeSlug}
 
 Add your runtime payload here.
 `;

@@ -1,4 +1,4 @@
-import { ChildResult, ExtractionConfidence, ValidationRecord } from "./schemas.js";
+import { ChildResult } from "./schemas.js";
 import { extractAssistantMessages, extractTextFromMessage, ThreadExport } from "./transcript-export.js";
 
 const RESULT_KEY = "codex_thread_result";
@@ -6,7 +6,6 @@ const FENCED_JSON = /```(?:json)?\s*([\s\S]*?)\s*```/gi;
 
 export interface ExtractedResult {
   result: ChildResult | undefined;
-  confidence: ExtractionConfidence;
   missingFields: Set<string>;
 }
 
@@ -18,7 +17,7 @@ export function missingKeysFromResult(result: ChildResult, runId: string, taskId
   if (!taskId) {
     output.add("task_id");
   }
-  for (const key of ["attempt_id", "variant_id", "status", "decision"]) {
+  for (const key of ["attempt_id", "thread_id", "status", "summary"]) {
     if (!result[key as keyof ChildResult]) {
       output.add(key);
     }
@@ -41,7 +40,6 @@ export function extractResultFromExport(exportData: ThreadExport, fallbackRunId:
       const finalTask = candidate.result.task_id || taskId;
       return {
         result: candidate.result,
-        confidence: candidate.confidence,
         missingFields: missingKeysFromResult(candidate.result, runId || "", finalTask || ""),
       };
     }
@@ -49,16 +47,15 @@ export function extractResultFromExport(exportData: ThreadExport, fallbackRunId:
 
   return {
     result: undefined,
-    confidence: "low",
     missingFields: new Set(["codex_thread_result"]),
   };
 }
 
-function parseResultFromText(text: string): { result: ChildResult | undefined; confidence: ExtractionConfidence } {
+function parseResultFromText(text: string): { result: ChildResult | undefined } {
   const direct = safeJsonParse<unknown>(text);
   const directPick = pickCodexResult(direct);
   if (directPick) {
-    return { result: directPick, confidence: "high" };
+    return { result: directPick };
   }
 
   for (const block of text.matchAll(FENCED_JSON)) {
@@ -66,24 +63,23 @@ function parseResultFromText(text: string): { result: ChildResult | undefined; c
     const parsed = safeJsonParse<unknown>(blockText);
     const picked = pickCodexResult(parsed);
     if (picked) {
-      return { result: picked, confidence: "high" };
+      return { result: picked };
     }
   }
 
   const markerIndex = text.indexOf(`"${RESULT_KEY}"`);
   if (markerIndex === -1) {
-    return { result: undefined, confidence: "low" };
+    return { result: undefined };
   }
 
   const start = text.lastIndexOf("{", markerIndex);
   if (start === -1) {
-    return { result: undefined, confidence: "low" };
+    return { result: undefined };
   }
 
   const parsed = parseBalancedJson(text, start);
   return {
     result: pickCodexResult(parsed),
-    confidence: parsed ? "medium" : "low",
   };
 }
 
@@ -116,40 +112,15 @@ function pickCodexResult(payload: unknown): ChildResult | undefined {
 
 function sanitizeChildResult(raw: Record<string, unknown>): ChildResult {
   const schemaVersion = typeof raw.schema_version === "number" ? raw.schema_version : undefined;
-  const score = typeof raw.score === "number" || typeof raw.score === "string" ? raw.score : null;
   return {
     schema_version: schemaVersion,
     run_id: typeof raw.run_id === "string" ? raw.run_id : undefined,
     task_id: typeof raw.task_id === "string" ? raw.task_id : undefined,
     attempt_id: typeof raw.attempt_id === "string" ? raw.attempt_id : undefined,
-    variant_id: typeof raw.variant_id === "string" ? raw.variant_id : undefined,
-    status: typeof raw.status === "string" ? raw.status : "completed",
-    decision: typeof raw.decision === "string" ? raw.decision : "review-required",
-    score,
-    changed_files: Array.isArray(raw.changed_files) ? raw.changed_files : [],
-    validation: sanitizeValidation(raw.validation),
-    evidence: typeof raw.evidence === "string" ? raw.evidence : undefined,
-    risks: Array.isArray(raw.risks) ? raw.risks : [],
-    next_action: typeof raw.next_action === "string" ? raw.next_action : undefined,
     thread_id: typeof raw.thread_id === "string" ? raw.thread_id : undefined,
+    status: typeof raw.status === "string" ? raw.status : "completed",
+    summary: typeof raw.summary === "string" ? raw.summary : undefined,
   };
-}
-
-function sanitizeValidation(input: unknown): ValidationRecord[] {
-  if (!Array.isArray(input)) {
-    return [];
-  }
-  return input.filter((entry): entry is ValidationRecord => {
-    if (!entry || typeof entry !== "object") {
-      return false;
-    }
-    const candidate = entry as Record<string, unknown>;
-    return (
-      typeof candidate.name === "string" &&
-      ["passed", "failed", "skipped"].includes(String(candidate.outcome)) &&
-      typeof candidate.notes === "string"
-    );
-  });
 }
 
 function parseBalancedJson(text: string, start: number): unknown | undefined {

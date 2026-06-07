@@ -52,7 +52,7 @@ Use `.meta-skill/evals/<slug>/` for executable evals. `task.md` contains the sol
 
 Use executable files directly under `.meta-skill/tests/` for deterministic tests. Do not create nested test folders. Prefer deterministic tests when a rule can answer the question.
 
-Codex Threads Runner evidence lives under `.meta-skill/runs/<run-id>/` with a small `run.json` control ledger and append-only `results.jsonl`. Optional projections such as `threads.jsonl`, `scores.jsonl`, or `report.md` are rebuildable views. The full child thread and worktree remain the heavy evidence surface.
+Codex Threads Runner evidence lives under `.meta-skill/runs/<run-id>/` with a small `run.json` control ledger and append-only `results.jsonl`. Do not create generated reports or copy raw transcripts by default. Read compact rows first, use `msk run check` for counts, and open full child threads only for degraded rows, surprising results, or user-requested audit.
 
 Current workflow guidance uses manually authored evals, Codex Desktop child threads as the visible execution surface, and API-first read-only extraction when compact telemetry is needed.
 

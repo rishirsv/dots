@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { describe, it } from "node:test";
-import { mkdtempSync, rmSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { mkdtempSync, rmSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,8 +10,85 @@ import { readJsonOrJsonlFile } from "../src/core/jsonl.js";
 const fixtureDir = path.dirname(fileURLToPath(import.meta.url));
 const fixtureBase = path.join(fixtureDir, "fixtures");
 
-describe("msk run extract/report", () => {
-  it("writes success and degraded rows from thread exports", async () => {
+async function assertRejectsMessage(action: () => Promise<void>, pattern: RegExp): Promise<void> {
+  await assert.rejects(action, (error: unknown) => {
+    assert.match((error as Error).message, pattern);
+    return true;
+  });
+}
+
+async function captureConsole(action: () => Promise<void>): Promise<string[]> {
+  const lines: string[] = [];
+  const original = console.log;
+  console.log = (message?: unknown) => {
+    lines.push(String(message ?? ""));
+  };
+  try {
+    await action();
+  } finally {
+    console.log = original;
+  }
+  return lines;
+}
+
+describe("msk minimal extraction", () => {
+  it("rejects unsafe run ids before filesystem writes", async () => {
+    const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
+    try {
+      await runCli(["init"], cwd);
+      await runCli(["run", "new", "safe-id_1.2"], cwd);
+      await assertRejectsMessage(
+        () => runCli(["run", "new", ""], cwd),
+        /msk run new requires <run-id>/,
+      );
+      await assertRejectsMessage(
+        () => runCli(["run", "new", "bad/id"], cwd),
+        /invalid run id/,
+      );
+      await assertRejectsMessage(
+        () => runCli(["run", "new", "."], cwd),
+        /invalid run id/,
+      );
+      await assertRejectsMessage(
+        () => runCli(["run", "new", "../escape"], cwd),
+        /invalid run id/,
+      );
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it("does not overwrite an existing run", async () => {
+    const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
+    try {
+      const runId = "repeat-run";
+      await runCli(["init"], cwd);
+      await runCli(["run", "new", runId], cwd);
+      const runJson = path.join(cwd, ".meta-skill", "runs", runId, "run.json");
+      writeFileSync(runJson, '{"sentinel":true}\n');
+      await assertRejectsMessage(
+        () => runCli(["run", "new", runId], cwd),
+        /Run already exists/,
+      );
+      assert.equal(readFileSync(runJson, "utf8"), '{"sentinel":true}\n');
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects unsafe skill slugs before scaffold writes", async () => {
+    const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
+    try {
+      await assertRejectsMessage(
+        () => runCli(["skill", "new", "../escape-skill"], cwd),
+        /invalid skill slug/,
+      );
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it("writes minimal success and degraded rows from thread exports", async () => {
     const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
     try {
       const runId = "extractor-next-slice";
@@ -23,8 +100,6 @@ describe("msk run extract/report", () => {
         runId,
         "--task",
         "task-success",
-        "--variant",
-        "current",
         "--thread",
         "thread-success",
       ], cwd);
@@ -34,8 +109,6 @@ describe("msk run extract/report", () => {
         runId,
         "--task",
         "task-missing",
-        "--variant",
-        "current",
         "--thread",
         "thread-missing",
       ], cwd);
@@ -59,107 +132,53 @@ describe("msk run extract/report", () => {
       const success = rows.find((row) => row.task_id === "task-success") as Record<string, unknown>;
       const missing = rows.find((row) => row.task_id === "task-missing") as Record<string, unknown>;
       assert.ok(success);
-      assert.equal(success.decision, "accepted");
+      assert.equal(success.attempt_id, "task-success.1");
+      assert.equal(success.thread_id, "thread-success");
+      assert.equal(success.status, "completed");
+      assert.equal(success.summary, "Implementation complete");
       assert.equal(success.extraction_degraded, false);
-      assert.equal(success.score, "3/3");
-      assert.ok(Array.isArray(success.validation));
+      assert.equal(success.score, undefined);
+      assert.equal(success.decision, undefined);
+      assert.equal(success.variant_id, undefined);
 
       assert.ok(missing);
-      assert.equal(missing.decision, "review-required");
+      assert.equal(missing.attempt_id, "task-missing.1");
+      assert.equal(missing.thread_id, "thread-missing");
+      assert.equal(missing.status, "missing-result");
+      assert.equal(missing.summary, "");
       assert.equal(missing.extraction_degraded, true);
-      assert.ok((missing.extraction_missing_fields as string[]).includes("codex_thread_result"));
     } finally {
       rmSync(cwd, { recursive: true, force: true });
     }
   });
 
-  it("runs add-thread without clobbering existing tasks", async () => {
+  it("prints compact check counts", async () => {
     const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
     try {
-      const runId = "task-update";
+      const runId = "check-run";
       await runCli(["init"], cwd);
       await runCli(["run", "new", runId], cwd);
-
-      const runFile = path.join(cwd, ".meta-skill", "runs", runId, "run.json");
-      await runCli([
-        "run",
-        "add-thread",
-        runId,
-        "--task",
-        "task-a",
-        "--variant",
-        "current",
-        "--thread",
-        "thread-a",
-      ], cwd);
-      await runCli([
-        "run",
-        "add-thread",
-        runId,
-        "--task",
-        "task-a",
-        "--variant",
-        "current",
-        "--thread",
-        "thread-a2",
-      ], cwd);
-
-      const payload = JSON.parse(readFileSync(runFile, "utf8"));
-      assert.equal(payload.tasks.length, 2);
-      const attempts = payload.tasks.map((entry: { attempt_id: string }) => entry.attempt_id);
-      assert.ok(attempts.includes("task-a.current.1"));
-      assert.ok(attempts.includes("task-a.current.2"));
-    } finally {
-      rmSync(cwd, { recursive: true, force: true });
-    }
-  });
-
-  it("writes a readable report from results", async () => {
-    const cwd = mkdtempSync(path.join(tmpdir(), "msk-cli-"));
-    try {
-      const runId = "report-run";
-      const runDir = path.join(cwd, ".meta-skill", "runs", runId);
-      mkdirSync(runDir, { recursive: true });
-      writeFileSync(
-        path.join(runDir, "run.json"),
-        JSON.stringify({
-          schema_version: 1,
-          run_id: runId,
-          status: "completed",
-          tasks: [],
-        }),
-      );
-      writeFileSync(
-        path.join(runDir, "results.jsonl"),
+      await runCli(["run", "add-thread", runId, "--task", "task-a", "--thread", "thread-a"], cwd);
+      await runCli(["run", "add-thread", runId, "--task", "task-b", "--thread", "thread-b"], cwd);
+      await runCli(
         [
-          JSON.stringify({
-            schema_version: 1,
-            run_id: runId,
-            task_id: "task-a",
-            attempt_id: "task-a.current.1",
-            variant_id: "current",
-            thread_id: "thread-a",
-            status: "completed",
-            decision: "accepted",
-            score: "3/3",
-            changed_files: [],
-            validation: [],
-            evidence: "good",
-            risks: [],
-            next_action: "accept",
-            extraction_source: "thread-export",
-            extraction_confidence: "high",
-            extraction_missing_fields: [],
-            extraction_degraded: false,
-          }),
-          "\n",
-        ].join(""),
+          "run",
+          "extract",
+          runId,
+          "--thread-export",
+          path.join(fixtureBase, "thread-success.json"),
+          "--rebuild",
+        ],
+        cwd,
       );
-      await runCli(["run", "report", runId], cwd);
-      const reportText = readFileSync(path.join(runDir, "report.md"), "utf8");
-      assert.match(reportText, /Attempts/);
-      assert.match(reportText, /task-a/);
-      assert.match(reportText, /accepted/);
+
+      const lines = await captureConsole(() => runCli(["run", "check", runId], cwd));
+      assert.deepEqual(lines, [
+        "expected_attempts: 2",
+        "extracted_rows: 2",
+        "degraded_rows: 2",
+        "missing_rows: 2",
+      ]);
     } finally {
       rmSync(cwd, { recursive: true, force: true });
     }

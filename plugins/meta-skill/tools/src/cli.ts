@@ -1,7 +1,7 @@
 import { commandInit } from "./commands/init.js";
 import { commandSkillNew } from "./commands/skill.js";
-import { runAddThread, runExtract, runNew, runReport } from "./commands/run.js";
-import { printHelp } from "./help.js";
+import { runAddThread, runCheck, runExtract, runNew } from "./commands/run.js";
+import { printHelp, printRunHelp, printSkillHelp } from "./help.js";
 
 function parseNamedArg(argv: string[], name: string): string | undefined {
   const withEquals = argv.find((value) => value.startsWith(`--${name}=`));
@@ -42,8 +42,12 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<void>
 
   if (command === "skill") {
     const sub = argv[1];
+    if (!sub || ["-h", "--help"].includes(sub)) {
+      printSkillHelp();
+      return;
+    }
     if (sub !== "new") {
-      throw new Error("Usage: msk skill new <slug> [--description <text>]");
+      throw new Error(`unknown msk skill command: ${sub}`);
     }
     const slug = argv[2];
     if (!slug) {
@@ -57,27 +61,33 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<void>
 
   if (command === "run") {
     const sub = argv[1];
-    const runId = argv[2];
-    if (!runId) {
-      throw new Error("msk run <command> requires <run-id>");
+    if (!sub || ["-h", "--help"].includes(sub)) {
+      printRunHelp();
+      return;
     }
     switch (sub) {
       case "new": {
+        const runId = argv[2];
+        if (!runId) {
+          throw new Error("msk run new requires <run-id>");
+        }
         await runNew(cwd, runId);
         console.log(`Created ${runId} at .meta-skill/runs/${runId}/run.json`);
         return;
       }
       case "add-thread": {
+        const runId = argv[2];
+        if (!runId) {
+          throw new Error("msk run add-thread requires <run-id>");
+        }
         const taskId = parseNamedArg(argv, "task");
-        const variantId = parseNamedArg(argv, "variant");
         const threadId = parseNamedArg(argv, "thread");
-        if (!taskId || !variantId || !threadId) {
-          throw new Error("msk run add-thread requires --task, --variant, and --thread");
+        if (!taskId || !threadId) {
+          throw new Error("msk run add-thread requires --task and --thread");
         }
         const attempt = await runAddThread(cwd, {
           runId,
           taskId,
-          variantId,
           threadId,
           attemptId: parseNamedArg(argv, "attempt"),
         });
@@ -85,6 +95,10 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<void>
         return;
       }
       case "extract": {
+        const runId = argv[2];
+        if (!runId) {
+          throw new Error("msk run extract requires <run-id>");
+        }
         const exports = [];
         for (let i = 0; i < argv.length; i += 1) {
           if (argv[i] === "--thread-export" && argv[i + 1]) {
@@ -105,13 +119,20 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<void>
         console.log(`Wrote ${wrote} rows to .meta-skill/runs/${runId}/results.jsonl`);
         return;
       }
-      case "report": {
-        const report = await runReport(cwd, runId);
-        console.log(`Wrote report: ${report}`);
+      case "check": {
+        const runId = argv[2];
+        if (!runId) {
+          throw new Error("msk run check requires <run-id>");
+        }
+        const summary = await runCheck(cwd, runId);
+        console.log(`expected_attempts: ${summary.expected_attempts}`);
+        console.log(`extracted_rows: ${summary.extracted_rows}`);
+        console.log(`degraded_rows: ${summary.degraded_rows}`);
+        console.log(`missing_rows: ${summary.missing_rows}`);
         return;
       }
       default:
-        throw new Error("Usage: msk run [new|add-thread|extract|report] <run-id>");
+        throw new Error(`unknown msk run command: ${sub}`);
     }
   }
 

@@ -7,7 +7,7 @@
     },
     {
       "role": "assistant",
-      "content": "Result follows:\n```json\n{\n  \"codex_thread_result\": {\n    \"schema_version\": 1,\n    \"run_id\": \"extractor-next-slice\",\n    \"task_id\": \"task-success\",\n    \"attempt_id\": \"task-success.current.1\",\n    \"variant_id\": \"current\",\n    \"status\": \"completed\",\n    \"decision\": \"accepted\",\n    \"score\": \"3/3\",\n    \"changed_files\": [\"plugins/foo/handlers.ts\"],\n    \"validation\": [{\"name\": \"manual review\", \"outcome\": \"passed\", \"notes\": \"good coverage\"}],\n    \"evidence\": \"Implementation complete\",\n    \"risks\": [\"none\"],\n    \"next_action\": \"accept\"\n  }\n}\n```"
+      "content": "Result follows:\n```json\n{\n  \"codex_thread_result\": {\n    \"schema_version\": 1,\n    \"run_id\": \"extractor-next-slice\",\n    \"task_id\": \"task-success\",\n    \"attempt_id\": \"task-success.1\",\n    \"thread_id\": \"thread-success\",\n    \"status\": \"completed\",\n    \"summary\": \"Implementation complete\"\n  }\n}\n```"
     }
   ]
 }

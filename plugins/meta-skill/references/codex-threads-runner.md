@@ -1,22 +1,21 @@
 # Codex Threads Runner
 
-Use this reference when Meta Skill work needs evals, comparison, auto-research,
-or iterative improvement evidence. The parent Codex Desktop thread is the
-visible cockpit. It creates child threads, tracks child worktrees, compares
-compact results, and decides whether to continue, reject, or ask the user to
-approve a promotion.
+Use this reference when Meta Skill work needs compact evidence from multiple
+Codex child threads. The parent Codex Desktop thread remains the visible
+orchestrator. `msk` only records expected child attempts, extracts structured
+child results, and prints compact counts.
 
-This is not a Meta Skill command surface or hidden local runner. APIs and
-scripts are support machinery only.
+This is not an App Server, hidden local runner, dashboard, worktree manager, or
+promotion system.
 
-When a compact evidence pass is needed locally, run `msk`:
+When a compact evidence pass is needed locally, run:
 
 ```text
 msk init
 msk run new <run-id>
-msk run add-thread <run-id> --task <task-id> --variant <variant-id> --thread <thread-id> [--attempt <attempt-id>]
+msk run add-thread <run-id> --task <task-id> --thread <thread-id> [--attempt <attempt-id>]
 msk run extract <run-id> --thread-export <path>... [--rebuild|--append]
-msk run report <run-id>
+msk run check <run-id>
 ```
 
 ## Canonical Run Files
@@ -29,39 +28,32 @@ Keep the durable artifact model small:
   results.jsonl
 ```
 
-`run.json` is the control ledger: run status, parent thread id, variants, child
-tasks, child thread ids, pending worktree ids, cwd, extraction source,
-confidence, and missing fields.
+`run.json` is the control ledger for expected child attempts: task id, attempt
+id, thread id, and status.
 
-`results.jsonl` is append-only compact evidence: one row per task attempt with
-task id, attempt id, variant id, thread id, status, decision, score when
-available, and a short summary.
+`results.jsonl` is compact evidence: one row per expected child attempt with
+task id, attempt id, thread id, status, summary, and whether extraction
+degraded.
 
-Generated files such as `threads.jsonl`, `scores.jsonl`, `report.md`, or
-`report.html` are rebuildable projections. Do not copy raw transcripts, full
-diffs, or debug folders by default. The child thread and worktree remain the
-heavy evidence surface.
+Do not copy raw transcripts, full diffs, generated reports, or debug folders by
+default. The child thread remains the heavy evidence surface. The parent reads
+`results.jsonl` and `msk run check` first, then opens raw child threads only for
+degraded rows, surprising results, or user-requested audit.
 
 ## Parent Flow
 
 1. Choose a `run_id` and create `run.json`.
 2. Convert eval cases, feedback, or research tasks into child prompts.
-3. Include a compact `codex_thread_result` JSON block contract in every child
+3. Include the minimal `codex_thread_result` JSON block contract in every child
    prompt.
-4. Spawn local child threads for read-only sampling and worktree child threads
-   for edit candidates.
-5. Record `thread_id` immediately, or `pending_worktree_id` until a worktree
-   child resolves.
-6. Collect compact child results before reading full transcripts.
-7. Append or refresh `results.jsonl`.
-8. Compare variants only after checking source ref, payload digest, model,
-   effort, and worktree state.
-9. Continue the same child, spawn a sibling, accept, reject, or ask for user
-   approval based on evidence.
+4. Spawn child threads through Codex Desktop.
+5. Record each `thread_id` immediately with `msk run add-thread`.
+6. Export or read the child threads through an available read-only thread API.
+7. Run `msk run extract` to write compact rows.
+8. Run `msk run check` and inspect raw threads only for flagged rows.
 
-The parent should not read every child transcript. Open full child threads only
-for missing result blocks, close calls, high-impact failures, accepted
-candidates, or user-requested inspection.
+The parent should not read every child transcript. If many evaluations ran, the
+compact rows are the normal review surface.
 
 ## Child Result Contract
 
@@ -73,35 +65,17 @@ Ask every child to end with a parseable JSON block shaped like:
     "schema_version": 1,
     "run_id": "skill-eval-001",
     "task_id": "case-a",
-    "attempt_id": "case-a.current.1",
-    "variant_id": "current",
+    "attempt_id": "case-a.1",
+    "thread_id": "thread-id",
     "status": "completed",
-    "decision": "accepted|rejected|partial|review-required|follow-up",
-    "score": "3/3",
-    "changed_files": [],
-    "worktree": {
-      "mode": "local|codex-managed|manual-git-worktree|scratch-copy",
-      "cwd": "/path/to/project",
-      "git_head": "abc123",
-      "branch": "main",
-      "dirty": false
-    },
-    "validation": [
-      {
-        "name": "manual review",
-        "outcome": "passed|failed|skipped",
-        "notes": "short note"
-      }
-    ],
-    "evidence": "short evidence summary",
-    "risks": [],
-    "next_action": "one concrete next action"
+    "summary": "short result summary"
   }
 }
 ```
 
 The human summary can follow the JSON block. The JSON block is the parent
-contract.
+contract. If the block is missing or incomplete, extraction writes a degraded
+row with `status: "missing-result"` and an empty summary.
 
 ## Extraction
 
@@ -110,33 +84,14 @@ Use this priority:
 
 1. Stable Codex thread read/export APIs when available.
 2. Available local control-plane read/list/turn/event APIs when stable enough.
-3. Local thread indexes and rollout logs only as read-only fallback
-   observation.
+3. Local thread indexes and rollout logs only as read-only fallback observation.
 4. Manual parent inspection when no stable programmatic surface exists.
 
-Never write to Codex local storage. Label fallback fields with source,
-confidence, missing fields, and degraded-evidence notes. Reference raw rollout
-logs by path and digest instead of copying them into the run folder.
+Never write to Codex local storage. Label fallback rows as degraded. Reference
+raw rollout logs by path instead of copying them into the run folder.
 
-## Improvement Loop
+## Boundaries
 
-Use a flat comparison model:
-
-```text
-run
-  variants:
-    no_skill
-    current_payload
-    candidate_a
-    candidate_b
-  tasks:
-    <case> x <variant> x <attempt>
-```
-
-Candidate edits belong in child worktrees. Auto-improve may create candidate
-branches, compact evidence, and recommendations, but it must not merge,
-package, install, publish, or promote source changes without user approval.
-
-Before recommending promotion, inspect the candidate worktree dirty state,
-branch, HEAD, changed files, diffstat, validation output, regression or holdout
-results, and unresolved risks.
+`msk` does not manage variants, scores, decisions, validation arrays, worktrees,
+promotion, packaging, install, publish, or thread creation in this slice. Those
+can be added later only if compact extraction proves useful.

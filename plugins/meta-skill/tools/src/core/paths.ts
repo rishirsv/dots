@@ -19,10 +19,6 @@ export function getRunResultsPath(cwd: string, runId: string): string {
   return path.join(getRunPath(cwd, runId), "results.jsonl");
 }
 
-export function getReportPath(cwd: string, runId: string): string {
-  return path.join(getRunPath(cwd, runId), "report.md");
-}
-
 export function getRunDirs(cwd: string): string[] {
   const root = getMetaSkillDir(cwd);
   return [

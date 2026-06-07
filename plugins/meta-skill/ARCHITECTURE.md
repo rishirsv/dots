@@ -72,9 +72,9 @@ Supported commands in this worktree:
 - `msk init`
 - `msk skill new <slug>`
 - `msk run new <run-id>`
-- `msk run add-thread <run-id> --task <task-id> --variant <variant-id> --thread <thread-id> [--attempt <attempt-id>]`
+- `msk run add-thread <run-id> --task <task-id> --thread <thread-id> [--attempt <attempt-id>]`
 - `msk run extract <run-id> --thread-export <path>... [--rebuild|--append]`
-- `msk run report <run-id>`
+- `msk run check <run-id>`
 
 ## Evidence
 
@@ -90,14 +90,14 @@ The canonical run files are:
   results.jsonl
 ```
 
-Optional projections such as `threads.jsonl`, `scores.jsonl`, and `report.md`
-may be regenerated from the ledger, child-thread results, and read-only
-extraction. Do not persist copied raw transcripts by default; cite child thread
-ids, worktree paths, and source digests for drill-down.
+`run.json` records expected child attempts. `results.jsonl` records compact
+child result rows extracted from `codex_thread_result` blocks. Do not persist
+copied raw transcripts by default; cite child thread ids and drill into raw
+threads only for degraded rows, surprising results, or user-requested audit.
 
 Completed evidence is not proof by itself. Agents should inspect the compact
-rows and any selected child-thread/worktree evidence, cite what they show, and
-say what remains unverified.
+rows first, use `msk run check <run-id>` for counts, cite what the evidence
+shows, and say what remains unverified.
 
 ## Validation
 

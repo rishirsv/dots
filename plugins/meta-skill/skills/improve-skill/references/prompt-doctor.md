@@ -36,9 +36,9 @@ Valid improvement evidence includes:
 - file/link review failures or warnings
 - completed `.meta-skill/review.md` with a concrete finding heading
 - `.meta-skill/runs/<run-id>/results.jsonl` rows tied to a concrete `task_id` and `attempt_id`
-- `.meta-skill/runs/<run-id>/run.json` task state or variant metadata
+- `.meta-skill/runs/<run-id>/run.json` task state
 - a child thread result block, child thread id, or selected child-thread/worktree evidence
-- optional compact projections such as `.meta-skill/runs/<run-id>/report.md` or `threads.jsonl`
+- compact extraction rows such as `.meta-skill/runs/<run-id>/results.jsonl`
 - source `.meta-skill/evals/<eval-folder>/task.md` plus evaluator-only `criteria.json` tied to the result by `task_id`
 - explicitly captured deterministic test or validation output
 - saved artifacts tied to the run, eval, or user-observed failure

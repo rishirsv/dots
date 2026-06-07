@@ -35,7 +35,7 @@ export function loadThreadExport(filePath: string): ThreadExport {
     }
 
     for (const [key, value] of Object.entries(obj)) {
-      if (["task_id", "attempt_id", "variant_id", "thread_id", "status"].includes(key)) {
+      if (["task_id", "attempt_id", "thread_id", "status"].includes(key)) {
         if (typeof value === "string" && value.trim()) {
           metadata[key] = value;
         }
