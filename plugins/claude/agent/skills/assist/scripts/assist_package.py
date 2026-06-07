@@ -254,6 +254,18 @@ def build_git_markdown(root: Path, included: list[dict[str, object]]) -> str:
     )
 
 
+def build_diff(root: Path, included: list[dict[str, object]], diff_mode: str) -> tuple[str, list[str]]:
+    if diff_mode == "none":
+        return "", []
+    if diff_mode == "all":
+        return run_git(["diff", "--binary"], root), ["*"]
+
+    paths = [str(entry["path"]) for entry in included]
+    if not paths:
+        return "", []
+    return run_git(["diff", "--binary", "--", *paths], root), paths
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build a focused Assist package.")
     parser.add_argument("--task", help="Task text for the assist model.")
@@ -264,6 +276,12 @@ def main() -> int:
     parser.add_argument("--root", default=".", help="Repository/project root.")
     parser.add_argument("--output-dir", default=str(Path.home() / "Desktop"), help="Directory where package folder is created.")
     parser.add_argument("--name", help="Package folder name. Defaults to assist-<timestamp>-<task-slug>.")
+    parser.add_argument(
+        "--diff-mode",
+        choices=["selected", "all", "none"],
+        default="selected",
+        help="Which working diff to include: selected files only, all files, or none.",
+    )
     parser.add_argument("--max-file-bytes", type=int, default=1_000_000, help="Reject individual files above this size.")
     parser.add_argument("--max-total-bytes", type=int, default=12_000_000, help="Reject bundle above this total size.")
     parser.add_argument("--allow-sensitive", action="store_true", help="Allow sensitive-looking filenames.")
@@ -315,7 +333,7 @@ def main() -> int:
         )
         total_bytes += size
 
-    diff_text = run_git(["diff", "--binary"], root)
+    diff_text, diff_paths = build_diff(root, included, args.diff_mode)
     diff_path = package_dir / "diff.patch"
     diff_path.write_text(diff_text, encoding="utf-8")
 
@@ -350,6 +368,8 @@ def main() -> int:
         "context_zip": "context.zip",
         "git": "git.md",
         "diff": "diff.patch",
+        "diff_mode": args.diff_mode,
+        "diff_paths": diff_paths,
         "included_files": included,
         "skipped_files": skipped,
         "exclude_patterns": excludes,
