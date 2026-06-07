@@ -21,3 +21,4 @@ build/
 **/.agents/oracle/
 **/.agents/tmp/
 **/outputs/
+**/.meta-skill/

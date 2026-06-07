@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meta Skill Codex Runner V1</title>
+<style>
+  :root{color-scheme:dark;--bg:#0d1117;--panel:#161b22;--line:#30363d;--text:#e6edf3;--muted:#9da7b3;--blue:#7dd3fc;--yellow:#facc15;--green:#86efac}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+  main{max-width:1100px;margin:0 auto;padding:28px}
+  h1{font-size:30px;margin:0 0 8px}
+  h2{font-size:20px;margin:30px 0 12px}
+  h3{font-size:15px;margin:0 0 6px;color:var(--blue)}
+  p{margin:0 0 10px;color:var(--muted)}
+  code{background:#0b1220;border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:#dbeafe}
+  .hero,.card{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:16px}
+  .hero{background:linear-gradient(180deg,#161b22,#10151d);padding:22px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .flow{display:grid;grid-template-columns:repeat(5,minmax(145px,1fr));gap:10px;margin-top:16px}
+  .step{border:1px solid var(--line);background:#10161f;border-radius:8px;padding:12px}
+  .step b{display:block;color:var(--yellow);margin-bottom:5px}
+  .tree{white-space:pre;overflow:auto;border:1px solid var(--line);background:#070b12;border-radius:8px;padding:16px;color:#c9d1d9}
+  .meter{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .metric{border:1px solid var(--line);border-radius:8px;padding:14px;background:#10161f}
+  .metric b{font-size:26px;color:var(--green);display:block}
+  @media (max-width:860px){.flow,.meter{grid-template-columns:1fr}main{padding:16px}}
+</style>
+<main>
+  <section class="hero">
+    <h1>V1 is a batch runner, not an archive viewer.</h1>
+    <p>The parent Codex thread launches many child threads/worktrees, reads their structured results, and reports progress. Files are only recovery state.</p>
+    <div class="flow">
+      <div class="step"><b>1. Load tasks</b><p>Parent gets 30 tasks from evals or improve lane.</p></div>
+      <div class="step"><b>2. Launch children</b><p>Starts child threads with bounded concurrency.</p></div>
+      <div class="step"><b>3. Children work</b><p>Each child has its own worktree.</p></div>
+      <div class="step"><b>4. Read results</b><p>Parent reads structured child finals.</p></div>
+      <div class="step"><b>5. Report status</b><p>Parent shows completed/running/blocked/errored.</p></div>
+    </div>
+  </section>
+
+  <h2>What The User Sees</h2>
+  <div class="card">
+    <div class="meter">
+      <div class="metric"><b>30</b><span>tasks launched</span></div>
+      <div class="metric"><b>12</b><span>completed</span></div>
+      <div class="metric"><b>16</b><span>running</span></div>
+      <div class="metric"><b>2</b><span>blocked</span></div>
+    </div>
+    <p style="margin-top:14px">The parent thread is the status surface. The user opens a child thread or worktree only when a result needs inspection or follow-up.</p>
+  </div>
+
+  <h2>Runtime Shape</h2>
+  <div class="grid">
+    <div class="card"><h3>Parent thread</h3><p>Owns the batch, launches children, reads results, reports progress.</p></div>
+    <div class="card"><h3>Child thread</h3><p>Runs one task and returns one structured result.</p></div>
+    <div class="card"><h3>Worktree</h3><p>Isolated workspace for that child task.</p></div>
+    <div class="card"><h3>Local state</h3><p>Only enough to recover: <code>run.json</code> and <code>results.jsonl</code>.</p></div>
+  </div>
+
+  <h2>Saved Files</h2>
+  <div class="tree">.meta-skill/runs/&lt;run-id&gt;/
+  run.json
+  results.jsonl</div>
+
+  <h2>What Files Do</h2>
+  <div class="grid">
+    <div class="card"><h3>run.json</h3><p>The batch ledger: task list, child thread ids, worktree paths, statuses, concurrency.</p></div>
+    <div class="card"><h3>results.jsonl</h3><p>Append-only stream: one completed, blocked, or errored result per child task.</p></div>
+  </div>
+
+  <h2>What We Are Not Building In V1</h2>
+  <div class="grid">
+    <div class="card"><h3>No CLI</h3><p>The Codex parent skill is the runner.</p></div>
+    <div class="card"><h3>No comparison layer</h3><p>Thirty tasks can run without ranking candidates.</p></div>
+    <div class="card"><h3>No per-child archive</h3><p>Threads and worktrees are the evidence; files are recovery state.</p></div>
+    <div class="card"><h3>No export package</h3><p>Later work, after the runner works.</p></div>
+  </div>
+</main>
+</html>

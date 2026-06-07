@@ -20,6 +20,9 @@ describe("commands", () => {
     assert.match(help, /meta-skill evals create <project>/);
     assert.match(help, /meta-skill review <project-or-skill>/);
     assert.match(help, /meta-skill run <project>/);
+    assert.match(help, /meta-skill harvest <project>/);
+    assert.match(help, /meta-skill child-result parse/);
+    assert.match(help, /meta-skill view <project>/);
     assert.doesNotMatch(help, /meta-skill report/);
     assert.doesNotMatch(help, /meta-skill decide/);
     assert.doesNotMatch(help, /meta-skill feedback/);

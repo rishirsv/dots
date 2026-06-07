@@ -35,6 +35,23 @@ When the request is code-quality-shaped, include the relevant lane vocabulary fr
 
 For coding-plan assists or any prompt where the response shape matters, use [references/prompts.md](references/prompts.md) to decide whether XML, Markdown, or a hybrid prompt is the right fit.
 
+## Context Development
+
+Develop the context before calling the package script. The script packages selected files; it does not decide which files are relevant.
+
+Work in passes:
+
+1. Start from the assist question. Identify the decision the other model must help with, the artifact it should critique or produce, and the claims it must be able to verify.
+2. Extract anchors from the request: explicit paths, symbols, plan files, diffs, errors, commands, logs, failing tests, user constraints, and named concepts.
+3. Find local source-of-truth files with normal repo exploration: `rg` for symbols and phrases, read nearby package scripts, inspect repo instructions, and check docs/specs that define the intended behavior.
+4. Expand only to adjacent context that changes the answer: callers and callees, owning config, route or entrypoint files, tests and fixtures for the same behavior, existing examples to imitate, and relevant current diffs.
+5. Add verification surfaces: exact commands, test files, failing output, logs, or manual checks the primary agent will use before adopting the assist answer.
+6. Prune aggressively. Remove unrelated dirty files, generated output, dependency folders, caches, large artifacts, screenshots unless directly relevant, secrets, and context that merely makes the package look complete.
+7. Write a context map. Every included file or diff needs a one-line reason tied to the assist question. If a file cannot be justified, exclude it.
+8. Name missing context. If a fresh model would still have to guess about a material fact, either add the smallest missing file or ask the assist model to return that missing-context request instead of guessing.
+
+Use the smallest bundle that lets the other model answer correctly. A good package has enough source to challenge the plan or advice, enough tests/docs to verify claims, and enough constraints to avoid locally wrong recommendations.
+
 ## Package
 
 Create a Desktop package when the user wants a sendable assist bundle, when a provider CLI needs file context, or when the context is too large to paste comfortably.
@@ -57,19 +74,48 @@ The script writes `~/Desktop/assist-<slug>/` with:
 - `context.zip`: selected files plus copies of `git.md`, `diff.patch`, and `file-map.txt`
 - `manifest.json`: package metadata, file list, exclusions, and size totals
 
+Use that script contract as the default package shape. Do not invent additional top-level artifacts or a stricter schema unless the user asks for a redesigned package format; if you need a file map, use the one inside `context.zip` and the authoritative `manifest.json`.
+
 Preview the manifest before sending if the context is sensitive or broad. If the package is missing essential context, rebuild it; do not patch the zip by hand.
+
+## End-To-End Assist
+
+When the user asks for an assist and has approved a provider or browser route, do not stop at package creation. Use the Desktop package as the durable local record, then try to complete the assist end to end:
+
+1. Build the package on the Desktop.
+2. Inspect `manifest.json` for selected files, skipped files, size, and sensitive-looking paths.
+3. If the package is safe and the route is approved, upload `context.zip` through the provider's file attachment control, preferably the visible `+` / "Add files and more" control in browser UIs.
+4. Paste or send `prompt.md` with the uploaded context.
+5. Wait for the answer, then save it in the package folder as `answer.<provider>.md` when the route allows copying or export.
+6. Report the package path, provider route, uploaded files, answer path, and verification boundary.
+
+If upload is unavailable, blocked, or ambiguous, fall back without losing progress: leave the package ready on the Desktop, paste or summarize `prompt.md` only if useful, and tell the user exactly what still needs manual attachment or approval. Do not silently switch to an external route, spend money, or send private code when the user has not approved that route.
 
 ## Provider Routes
 
 Prefer a route the user has already asked for or configured. Ask before spending API money, driving a logged-in browser, or sending private code outside the local machine.
 
-- `package-only`: default when provider access is unclear. Give the user the Desktop package path and the exact `prompt.md` to paste or send.
+Safe sequence for any non-local or paid route:
+
+1. Build or inspect the local package first.
+2. Ask for explicit approval naming the provider, account or CLI, files or prompt to send, likely cost, and answer save path.
+3. Run the provider CLI's local `--help` or equivalent before relying on exact flags.
+4. Invoke the provider only if the approved route and current CLI help both support the planned command shape.
+
+Browser route priority when the user has approved a browser-based provider:
+
+1. `codex-browser`: prefer the Codex in-app Browser when it can access the provider, attach files, and use the requested model. It keeps the assist workflow inside the current Codex work surface and is the default browser route for ChatGPT-style web assists.
+2. `browser-use`: use the available browser-use/in-app browser controls to navigate, click the visible `+` / "Add files and more" control, upload `context.zip`, paste `prompt.md`, select the requested model or mode, and capture the answer when the route is supported.
+3. `chrome-extension`: use the Chrome extension route only when the task needs the user's existing Chrome profile state, an already logged-in Chrome session, an extension-only capability, or the user explicitly asks for Chrome. Do not switch to Chrome just because provider auth in another route is missing; ask the user to reauthenticate or approve Chrome as the fallback.
+
+- `package-only`: fallback when provider access is unclear, approval is missing, upload fails, or the user only wants a sendable bundle. Give the user the Desktop package path and the exact `prompt.md` to paste or send.
+- `chatgpt-browser`: when the user has approved ChatGPT or another browser provider route and is logged in, follow the browser route priority above. Use the provider's `+` / file attachment control to upload `context.zip`, paste `prompt.md`, select the requested model or mode when available, send the task, and save the returned answer to the package folder when possible. If the file control is disabled while a response is running, wait or ask before stopping the response.
 - `claude-code`: use `claude --bare -p "$(cat ~/Desktop/<package>/prompt.md)" --output-format json` for non-interactive Claude Code when the user approves that route and the local CLI supports those flags. Pipe or attach `context.zip` only when the CLI/provider supports it; otherwise paste the prompt and summarize the package contents.
 - `codex`: use `codex exec --ephemeral --sandbox read-only "$(cat ~/Desktop/<package>/prompt.md)"` when the useful assist is another local Codex run. Use `--output-last-message` when you need a saved answer file.
 - `openai-api`: use a Responses API or provider CLI only after confirming credentials and cost approval. Write the answer to the package folder, for example `answer.openai.md`.
 - `oracle`: if `oracle` or `npx -y @steipete/oracle` is installed and the user wants that path, it can handle prompt/file bundling directly. Run a dry preview first (`--dry-run summary --files-report`) and capture output with `--write-output` when spending tokens.
 
-Before invoking any provider CLI, run its local `--help` when the exact flags matter; these tools change quickly. For Claude Code, keep in mind that `-p` / `--print` is the documented non-interactive path and may have account or billing implications; state that gate before running it.
+For Claude Code, keep in mind that `-p` / `--print` is the documented non-interactive path and may have account or billing implications; state that gate before running it.
 
 ## Prompt Shape
 
@@ -95,7 +141,22 @@ Ask the other model to return advisory output, not to claim final proof. Strong 
 
 ## After The Assist
 
-Read the answer critically before using it. Verify file claims against the repo, rerun relevant tests or searches, and separate:
+Read the answer critically before using it. If the assist answer is pasted, quoted, summarized, or included inline in the user's request, treat that as the answer to review; ask for more only when the answer or original task is genuinely absent.
+
+Before adopting advice:
+
+1. Extract concrete claims: file paths, commands, APIs, tests, production usage, compatibility needs, external facts, and proposed edits.
+2. Verify local claims against the repo with searches, file reads, package scripts, tests, docs, or git status before stating them as facts.
+3. Check the advice against user constraints, especially hard-cut, privacy, compatibility, scope, and source-of-truth rules.
+4. Classify each material suggestion:
+   - adopt now: supported by local evidence and constraints
+   - verify first: plausible but not yet proven
+   - reject: hallucinated, stale, unsafe, or contrary to constraints
+   - missing context: the smallest fact needed before deciding
+
+Do not restate unverified assist claims as true; write "the assist claims..." until local evidence supports them.
+
+Verify file claims against the repo, rerun relevant tests or searches, and separate:
 
 - useful changes to implement now
 - plausible ideas that need local proof

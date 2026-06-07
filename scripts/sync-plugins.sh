@@ -60,8 +60,8 @@ fi
 rm -f "$CODEX_DESKTOP_SKILL_MARKER"
 
 for skill_dir in "$SOURCE_SKILLS"/*(/N); do
-  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$CODEX_PLUGIN_SKILLS/${skill_dir:t}/"
-  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$CLAUDE_PLUGIN_SKILLS/${skill_dir:t}/"
+  rsync -a --delete --exclude '.DS_Store' --exclude '.meta-skill' "$skill_dir/" "$CODEX_PLUGIN_SKILLS/${skill_dir:t}/"
+  rsync -a --delete --exclude '.DS_Store' --exclude '.meta-skill' "$skill_dir/" "$CLAUDE_PLUGIN_SKILLS/${skill_dir:t}/"
 done
 
 if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then

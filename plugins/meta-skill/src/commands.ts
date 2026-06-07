@@ -1,4 +1,7 @@
 import { parseArgs as parseNodeArgs } from "node:util";
+import { parseChildResultBlock, renderChildResultSummary } from "./codex-session/child-result.ts";
+import { findCodexSessionPath, harvestCodexSession, parseCodexSession, type IsolationBackend, type ParentDecision } from "./codex-session/harvest.ts";
+import { renderCodexRunView } from "./codex-session/view.ts";
 import { generateEvalsFromScenarios, initEvals, runEval } from "./evals.ts";
 import { lintProject } from "./lint.ts";
 import { packageProject } from "./package.ts";
@@ -16,6 +19,9 @@ Usage:
   meta-skill lint <project-or-skill> [--json]
   meta-skill review <project-or-skill>
   meta-skill run <project> [--eval <id>] [--label "..."] [--concurrency <n>] [--turn-timeout-ms <ms>] [--trace-buffer-events <count>] [--no-skill] [--no-lint]
+  meta-skill harvest <project> (--session <jsonl>|--thread <thread-id>) --run <run-id> --attempt <attempt-id> [--eval <id>]
+  meta-skill child-result parse (--session <jsonl>|--thread <thread-id>) [--json]
+  meta-skill view <project> --run <run-id>
   meta-skill package <project> [--out <zip>] [--out-dir <dir>]
 `;
 
@@ -39,6 +45,12 @@ export async function runCommand(argv: string[]): Promise<number> {
       return commandReview(rest);
     case "run":
       return commandRun(rest);
+    case "harvest":
+      return commandHarvest(rest);
+    case "child-result":
+      return commandChildResult(rest);
+    case "view":
+      return commandView(rest);
     case "package":
       return commandPackage(rest);
     default:
@@ -139,6 +151,53 @@ async function commandRun(argv: string[]): Promise<number> {
   return result.ok ? 0 : 1;
 }
 
+async function commandHarvest(argv: string[]): Promise<number> {
+  const args = parse(argv, ["session", "thread", "session-root", "run", "attempt", "eval", "parent-thread", "isolation", "decision", "parent-review"], []);
+  const project = args.positionals[0] || ".";
+  const result = await harvestCodexSession({
+    project,
+    sessionPath: args.one("session"),
+    threadId: args.one("thread"),
+    sessionRoot: args.one("session-root"),
+    runId: required(args.one("run"), "--run"),
+    attemptId: required(args.one("attempt"), "--attempt"),
+    evalId: args.one("eval"),
+    parentThreadId: args.one("parent-thread"),
+    isolationBackend: enumValue(args.one("isolation"), ["git-worktree", "scratch-copy", "local-thread", "unknown"], "--isolation"),
+    decision: enumValue(args.one("decision"), ["accepted", "rejected", "partial", "review-required", "follow-up", "errored"], "--decision"),
+    parentReview: args.one("parent-review")
+  });
+  console.log(`harvest: ${result.attemptRoot}`);
+  console.log(`turns: ${result.turnCount}`);
+  console.log(`items: ${result.itemCount}`);
+  console.log(`final: ${result.finalPath}`);
+  console.log(`manifest: ${result.manifestPath}`);
+  console.log(`child result: ${result.childResultPath || "(not found)"}`);
+  console.log(`parent summary: ${result.parentSummaryPath}`);
+  return 0;
+}
+
+async function commandChildResult(argv: string[]): Promise<number> {
+  const [subcommand, ...rest] = argv;
+  if (subcommand !== "parse") throw new CliError("child-result command supports only: meta-skill child-result parse (--session <jsonl>|--thread <thread-id>)", 2);
+  const args = parse(rest, ["session", "thread", "session-root"], ["json"]);
+  const sessionPath = args.one("session") || await findCodexSessionPath(required(args.one("thread"), "--thread or --session"), args.one("session-root"));
+  const session = await parseCodexSession(sessionPath);
+  const parsed = parseChildResultBlock(session.finalText);
+  if (!parsed) throw new CliError("no meta_skill_child_result block found in child final response", 1);
+  if (args.has("json")) console.log(JSON.stringify(parsed.result, null, 2));
+  else console.log(renderChildResultSummary(parsed.result));
+  return 0;
+}
+
+async function commandView(argv: string[]): Promise<number> {
+  const args = parse(argv, ["run"], []);
+  const project = args.positionals[0] || ".";
+  const runId = required(args.one("run"), "--run");
+  console.log(await renderCodexRunView(project, runId));
+  return 0;
+}
+
 async function commandPackage(argv: string[]): Promise<number> {
   const args = parse(argv, ["out", "out-dir"], []);
   const project = args.positionals[0] || ".";
@@ -181,6 +240,17 @@ function positiveInteger(value: string | undefined, label: string): number | und
   const parsed = Number(value);
   if (!Number.isInteger(parsed) || parsed <= 0) throw new CliError(`${label} must be a positive integer`, 2);
   return parsed;
+}
+
+function required(value: string | undefined, label: string): string {
+  if (!value) throw new CliError(`requires ${label}`, 2);
+  return value;
+}
+
+function enumValue<T extends string>(value: string | undefined, allowed: readonly T[], label: string): T | undefined {
+  if (value === undefined) return undefined;
+  if ((allowed as readonly string[]).includes(value)) return value as T;
+  throw new CliError(`${label} must be one of: ${allowed.join(", ")}`, 2);
 }
 
 function isParseArgsError(error: unknown): error is Error {
