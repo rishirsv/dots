@@ -64,7 +64,7 @@ Sources:
 
 MUSE-Autoskill proposes a skill lifecycle with creation, memory, management, evaluation, and refinement. It emphasizes creating skills on demand, storing/reusing them across tasks, and evaluating with unit tests and runtime feedback.
 
-Trace2Skill is the closest formal precedent found for session/trace-to-skill creation. It analyzes execution traces, extracts local lessons, and consolidates them into reusable transferable skill directories. SkillOpt adds a useful improvement constraint: bounded text edits should be accepted only when validation improves, which fits Meta Skill's existing evidence-first improvement posture.
+Trace2Skill is the closest formal precedent found for session/trace-to-skill creation. It analyzes execution traces, extracts local lessons, and consolidates them into reusable transferable skill directories. SkillOpt adds a useful improvement constraint: bounded text edits should be accepted only when validation improves, which fits evidence-first skill improvement work.
 
 Implication for Skillify:
 
@@ -84,7 +84,7 @@ The name "Skillify" appears in broader web projects, but not in the session-to-s
 
 Implication for Skillify:
 
-- If Meta Skill uses the name, define it explicitly as session-to-skill distillation.
+- If this repo uses the name, define it explicitly as session-to-skill distillation.
 - Avoid ambiguity with URL-to-skill or package-documentation skill generators.
 
 Sources:

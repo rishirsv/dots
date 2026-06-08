@@ -60,8 +60,8 @@ fi
 rm -f "$CODEX_DESKTOP_SKILL_MARKER"
 
 for skill_dir in "$SOURCE_SKILLS"/*(/N); do
-  rsync -a --delete --exclude '.DS_Store' --exclude '.meta-skill' "$skill_dir/" "$CODEX_PLUGIN_SKILLS/${skill_dir:t}/"
-  rsync -a --delete --exclude '.DS_Store' --exclude '.meta-skill' "$skill_dir/" "$CLAUDE_PLUGIN_SKILLS/${skill_dir:t}/"
+  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$CODEX_PLUGIN_SKILLS/${skill_dir:t}/"
+  rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$CLAUDE_PLUGIN_SKILLS/${skill_dir:t}/"
 done
 
 if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
@@ -262,17 +262,6 @@ codex_catalog = {
     ]
 }
 
-meta_skill_plugin = root / "plugins" / "meta-skill" / ".codex-plugin" / "plugin.json"
-if meta_skill_plugin.exists():
-    codex_catalog["plugins"].append(
-        {
-            "name": "meta-skill",
-            "source": {"source": "local", "path": "./plugins/meta-skill"},
-            "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
-            "category": "Coding",
-        }
-    )
-
 claude_catalog = {
     "name": name,
     "owner": {"name": "Rishi"},
@@ -316,7 +305,7 @@ if command -v codex >/dev/null 2>&1; then
   if [[ -d "$MARKETPLACE_SOURCE" ]]; then
     codex plugin marketplace add "$MARKETPLACE_SOURCE"
   else
-    codex plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .agents --sparse plugins/codex --sparse plugins/meta-skill
+    codex plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .agents --sparse plugins/codex
   fi
   codex plugin remove "$PLUGIN_NAME@$PLUGIN_NAME" >/dev/null 2>&1 || true
   codex plugin add "$PLUGIN_NAME@$PLUGIN_NAME"
@@ -334,18 +323,11 @@ if command -v claude >/dev/null 2>&1; then
 fi
 
 CODEX_CACHE="$HOME/.codex/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME/$VERSION"
-META_SKILL_CACHE="$HOME/.codex/plugins/cache/$PLUGIN_NAME/meta-skill/$VERSION"
 CLAUDE_CACHE="$HOME/.claude/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME/$VERSION"
 rm -rf "$CODEX_CACHE" "$CLAUDE_CACHE"
 mkdir -p "$CODEX_CACHE" "$CLAUDE_CACHE"
 rsync -a --delete --exclude '.DS_Store' "$CODEX_PLUGIN/" "$CODEX_CACHE/"
 rsync -a --delete --exclude '.DS_Store' "$CLAUDE_PLUGIN/" "$CLAUDE_CACHE/"
-
-if [[ -d "$ROOT/plugins/meta-skill" ]]; then
-  rm -rf "$META_SKILL_CACHE"
-  mkdir -p "$META_SKILL_CACHE"
-  rsync -a --delete --exclude '.DS_Store' --exclude 'node_modules' "$ROOT/plugins/meta-skill/" "$META_SKILL_CACHE/"
-fi
 
 if [[ ! -f "$CODEX_CACHE/skills/commit/SKILL.md" ]]; then
   echo "Expected Agent plugin skills in Codex cache, but none were found: $CODEX_CACHE/skills" >&2
@@ -359,9 +341,6 @@ echo "Removed direct managed Desktop skill installs:"
 echo "  $CODEX_DESKTOP_SKILLS"
 echo "Refreshed local caches:"
 echo "  $CODEX_CACHE"
-if [[ -d "$META_SKILL_CACHE" ]]; then
-  echo "  $META_SKILL_CACHE"
-fi
 echo "  $CLAUDE_CACHE"
 echo "Synced system agent instructions:"
 echo "  $CODEX_SYSTEM_AGENTS"

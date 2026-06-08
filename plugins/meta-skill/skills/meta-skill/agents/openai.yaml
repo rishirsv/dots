@@ -1,4 +1,0 @@
-interface:
-  display_name: "Meta Skill"
-  short_description: "Route reusable skill work"
-  default_prompt: "Use $meta-skill to route reusable skill creation, evaluation, prompt doctor, review, improvement, packaging, or release work."

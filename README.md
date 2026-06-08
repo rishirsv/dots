@@ -65,13 +65,6 @@ agent/
 │  │     │  └─ plugin.json
 │  │     └─ agents/
 │  │
-│  └─ meta-skill/
-│     ├─ .codex-plugin/
-│     │  └─ plugin.json
-│     ├─ skills/
-│     ├─ assets/
-│     └─ ...
-│
 └─ scripts/
    └─ sync-plugins.sh
 ```
@@ -81,7 +74,6 @@ agent/
 - `plugins/codex/agent/assets/`: editable Codex plugin icon assets.
 - `plugins/codex/agent/`: Codex plugin package with `.codex-plugin/plugin.json`; `agents/` is refreshed from `.codex/agents/`.
 - `plugins/claude/agent/`: generated Claude plugin package with `.claude-plugin/plugin.json`.
-- `plugins/meta-skill/`: separate Codex plugin package for Meta Skill.
 - `.agents/plugins/marketplace.json`: Codex marketplace index.
 - `.claude-plugin/marketplace.json`: Claude marketplace index.
 - `AGENTS.md`: compact system guidance shared by this repo, Codex, and Claude.
