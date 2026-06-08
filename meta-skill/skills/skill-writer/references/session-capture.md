@@ -24,13 +24,18 @@ separate planning document.
 
 Choose the capture mode before reading deeply:
 
-- **Session distillation**: use when the user points to a prior thread,
-  source pack, example output, or observed workflow and wants a reusable skill.
-  Mine enough evidence to design the recurring job, trigger boundary, runtime
-  guidance, and resources.
+- **Session distillation**: use when the user points to a prior thread or
+  observed workflow and wants a reusable skill. Mine enough evidence to design
+  the recurring job, trigger boundary, runtime guidance, and resources.
 - **Recent success capture**: use when the user asks to make the work they just
   completed permanent or reusable. Promote only the bounded workflow that
   recently succeeded; do not turn the whole conversation into runtime guidance.
+
+If the session also includes source packs, example input/output pairs,
+transcripts plus notes, writing samples, or prior artifacts, read
+[source-distillation.md](source-distillation.md) after locating the session
+evidence. Session capture recovers the observed workflow; source distillation
+extracts reusable rules from the source material.
 
 Recent success capture is stricter than ordinary session distillation. It needs
 evidence that the workflow actually worked, such as accepted output, a

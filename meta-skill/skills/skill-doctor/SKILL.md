@@ -53,10 +53,10 @@ Route, evidence, the Prompt Doctor Loop, and surgical update rules live in
 edits the user approved; smallest correct change; edit the **source** skill,
 never a generated package copy.
 
-For one-off improvement testing, use the shared isolated Codex thread trial in
-[isolated-thread-trial.md](../../references/isolated-thread-trial.md). Prefer a
-child worktree for candidate edits; the child demonstrates or revises in
-isolation, while the parent applies only approved source edits.
+For one-off improvement testing, use the shared skill trial run workflow in
+[skill-trial-runs.md](../../references/skill-trial-runs.md). Prefer a child
+worktree for candidate edits; the child demonstrates or revises in isolation,
+while the parent applies only approved source edits.
 
 ## Verify
 

@@ -37,7 +37,7 @@ Read only what the task needs:
 | Add compact runtime snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Scaffold, lint, package, initialize through the OpenAI route, generate metadata, or quick-validate a skill | [scripts/meta_skill.py](scripts/meta_skill.py) |
 | Understand OpenAI/Codex UI metadata fields generated through `meta_skill.py openai-yaml` or `create` | [openai_yaml.md](references/openai_yaml.md) |
-| Run one isolated Codex thread trial for the draft skill | [isolated-thread-trial.md](../../references/isolated-thread-trial.md) |
+| Run a trial of a draft skill in an isolated Codex thread or worktree | [skill-trial-runs.md](../../references/skill-trial-runs.md) |
 
 Treat [design.md](references/design.md) as the governing principle guide. Treat
 [cookbook.md](references/cookbook.md) as a recipe lookup, not a template to copy
@@ -177,9 +177,9 @@ report any untested scripts.
 If the user asks for one-off testing, or if one realistic isolated run would
 materially improve confidence in a fragile trigger, resource, script, or output
 contract, read
-[isolated-thread-trial.md](../../references/isolated-thread-trial.md) and offer
-an isolated Codex thread trial. It is optional by default and is not release
-proof; route systematic multi-scenario measurement to `skill-evaluator`.
+[skill-trial-runs.md](../../references/skill-trial-runs.md) and offer a skill
+trial run. It is optional by default and is not release proof; route systematic
+multi-scenario measurement to `skill-evaluator`.
 
 Stop before packaging, installing, publishing, syncing, external writes, or
 final delivery unless the user explicitly approved that action or the current

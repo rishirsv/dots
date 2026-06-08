@@ -16,7 +16,7 @@ live in [rubric.md](rubric.md#review-lanes); the scoring rubric is
 | "improve this skill", "review this skill", "diagnose this fail state", "what would you change", "is this good" | Clarify and diagnose |
 | "update", "patch", "fix", "apply your changes", "make the edit" | Apply a surgical edit |
 | "run evals", "use this trace", "use a subagent", "iterate", "autonomously improve" | Evidence loop |
-| "test one prompt", "try the candidate in another thread", "use a worktree", "trial this improvement" | Isolated thread trial |
+| "test one prompt", "try the candidate in another thread", "use a worktree", "trial this improvement" | Skill trial run |
 | Ambiguous improvement request | Clarify and diagnose |
 
 Clarify and diagnose is the default. **Do not silently rewrite the target skill
@@ -72,14 +72,14 @@ before changing the portable payload.
 For subagent review, the subagent is evidence support only. The parent owns
 diagnosis, candidate edits, final editing, validation, and the recommendation.
 
-## Isolated Thread Trial
+## Skill Trial Run
 
 For one-off prompt-doctor improvements, read
-[isolated-thread-trial.md](../../../references/isolated-thread-trial.md). Use a
-Codex worktree child thread when the candidate edit should be tested without
-mutating the parent checkout. The child may apply or inspect the candidate in
-its worktree and return the structured trial result; the parent decides whether
-to apply the source edit, refresh review/verify evidence, or escalate to
+[skill-trial-runs.md](../../../references/skill-trial-runs.md). Use a Codex
+worktree child thread when the candidate edit should be tested without mutating
+the parent checkout. The child may apply or inspect the candidate in its
+worktree and return the structured trial result; the parent decides whether to
+apply the source edit, refresh review/verify evidence, or escalate to
 `skill-evaluator`.
 
 This route is not a full evaluation suite. Use it for one realistic prompt or

@@ -221,7 +221,12 @@ Start from existing context. Mine the conversation and files for:
 
 Before drafting, skim one or two strong, comparable skills in the library. Borrow their section names, default decisions, and trigger phrasing instead of inventing from scratch.
 
-When the user provides a source pack and past outputs, the intake takes a different shape: classify pack roles, pair inputs to outputs, extract and gate procedural rules, and record source provenance. Return here for trigger contract, body shape, and the rest of the design work after the source material produces the candidate rule set.
+When the user provides a source pack and past outputs, the intake takes a
+different shape. Read [source-distillation.md](source-distillation.md) to
+classify source roles, select lenses, pair inputs to outputs, extract and gate
+procedural rules, and record authoring-only provenance. Return here for trigger
+contract, body shape, and the rest of the design work after the source material
+produces the candidate rule set.
 
 Ask only for missing decisions that change routing, runtime behavior, resources, or gates. A good intake question includes a recommended default:
 
