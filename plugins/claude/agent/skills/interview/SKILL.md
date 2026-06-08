@@ -1,6 +1,6 @@
 ---
 name: interview
-description: "Use when the user wants to stress-test a serious plan against the project's language, domain model, documented decisions, source reality, and relevant outside evidence. Interview one decision at a time, recommend an answer, default repo exploration to read-only subagents to preserve main-thread context, and route durable capture to the right owner. Not for broad ideation, routine clarification, implementation, code review, or one-off prose."
+description: "Use when the user has a serious direction and wants to pressure-test a plan, challenge assumptions, decide between options, or turn a fuzzy idea into crisp evidence-backed decisions against repo language, docs, code, tests, and relevant outside evidence. Not for broad ideation, routine clarification, implementation, code review, or one-off prose."
 ---
 
 # Interview
@@ -20,16 +20,6 @@ Be warm, direct, and grounded. Do not agree with a claim that conflicts with evi
 Use short sentences and everyday words. Start with the simple version, then add precision. Make technical ideas graspable without flattening the real tradeoffs.
 
 Keep formatting light. Use a small table only when the user needs to compare options. Use bullets when they make the decision easier to scan. Do not turn the interview into a worksheet.
-
-<what-to-do>
-
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
-
-Ask the questions one at a time, waiting for feedback on each question before continuing.
-
-If a question can be answered by exploring the repo, explore the repo instead.
-
-</what-to-do>
 
 <supporting-info>
 
@@ -51,7 +41,7 @@ Before asking deep questions, send read-only `explorer-mini` lanes to inspect th
 - plans, decision/rationale records, runbooks, API docs, migration notes, and relevant source files
 - generated artifacts, tests, schemas, config, and runtime code when they are closer to the truth than prose
 
-Use the main thread for repo exploration only when the needed evidence is narrow enough to fit in one or two quick reads. If the question touches multiple files, modules, doc families, generated-vs-source boundaries, or unclear terminology, delegate first.
+Use main-thread reads only for one or two known files or commands. Delegate when the answer requires comparing multiple modules, docs, generated/source boundaries, or project terminology.
 
 Create files lazily. Default to chat, and propose a write only when a term, boundary, decision, or handoff has crystallized enough to be worth preserving.
 
@@ -75,13 +65,13 @@ When the user states how something works, check whether docs, tests, generated a
 
 ### Use Subagents For Evidence Lanes
 
-Use read-only subagents by default for evidence gathering:
+When repo or outside evidence is broad enough to delegate under **Explore The Repo**, use read-only subagents:
 
 - use `explorer-mini` for local repo surfaces such as docs, code, tests, schemas, generated files, commands, package boundaries, terminology, and artifact conventions
 - use `researcher` for external/current-source lanes such as SDK or product behavior, official documentation, standards, market context, library choices, or source-sensitive best practices
 - use one subagent for one narrow lane; use two when independent lanes would materially improve coverage or speed
 
-Before the first substantive question, name the evidence lanes. Delegate narrow read-only checks before synthesizing the next question whenever repo exploration would otherwise consume meaningful main-thread context. Keep the main Interview session responsible for synthesis, recommendations, and deciding what to ask next.
+Before the first substantive question, name the evidence lanes you opened. Keep the main Interview session responsible for synthesis, recommendations, and deciding what to ask next.
 
 Give each subagent a compact brief with:
 
@@ -90,7 +80,7 @@ Give each subagent a compact brief with:
 - the evidence to return: file paths or URLs, symbols, snippets, commands searched, contradictions, and uncertainty
 - a reminder to stay read-only and not write files, implement, stage, commit, or make final decisions
 
-If a few `rg` or `sed` reads prove the question is truly narrow, stay in the main thread. If broader lanes were considered but not delegated, say why in one compact sentence before asking the next question.
+If broader lanes were considered but not delegated, say why in one compact sentence before asking the next question.
 
 ### Capture Decisions Without Creating Clutter
 
@@ -113,10 +103,10 @@ If the user asks to save the Interview result as a repo artifact but no owner do
 ## Workflow
 
 1. Identify the thing being interviewed: plan, feature, domain model, workflow, name, document, decision, scope boundary, or handoff.
-2. Explore the closest repo context before asking deep questions. Default to subagent-led repo exploration; use the main thread only for tiny orientation reads.
+2. Explore the closest repo context before asking deep questions.
 3. Ask one question at a time. Each question should resolve one real ambiguity, contradiction, term, boundary, scenario, or decision.
 4. Always provide a recommended answer and why.
-5. Do not ask what repo source or external source can answer. Inspect or delegate first, then ask only about the remaining judgment call.
+5. Inspect or delegate before asking anything repo source or external source can answer; ask only about the remaining judgment call.
 6. Challenge fuzzy terms immediately. Propose a canonical meaning and name rejected meanings when useful.
 7. Test boundaries with concrete scenarios, especially edge cases that distinguish similar concepts.
 8. Use a **Common Understanding** checkpoint when the interview has enough settled material to help the user see progress.
@@ -197,7 +187,6 @@ When the session is ready to close, use:
 ## Guardrails
 
 - Do not implement.
-- Do not ask what repo source or external source can answer.
 - Do not silently accept vague or conflicting language.
 - Do not turn every settled term into a file edit.
 - Do not create a new document when an existing owner doc should be updated.

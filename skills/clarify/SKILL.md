@@ -32,7 +32,7 @@ Ask the minimum set of clarifying questions needed to avoid wrong work, or provi
    - read `AGENTS.md`, `README.md`, specs, plans, TODOs, and nearby code or examples when they are relevant
    - inspect configs, package files, tests, routes, schemas, or UI surfaces that would answer environment or ownership questions
    - use web research only when current outside facts materially affect the requirements
-   - use sub-agents only when available and helpful for broad repo or research discovery
+   - for broad repo or research discovery, use available sub-agents when the answer spans multiple directories, modules, doc families, unclear owners, several outside sources, or many unrelated files
 3. Decide whether must-have ambiguity remains.
 4. Choose a mode:
    - **Question mode**: required context is missing. Ask only the missing must-have questions.
@@ -49,7 +49,7 @@ Ask the minimum set of clarifying questions needed to avoid wrong work, or provi
 7. Pause before acting. Until must-have answers arrive, do not edit files, run destructive commands, or commit to a plan.
 8. If the user asks you to proceed without answers, state assumptions briefly and ask for confirmation.
 9. Once must-have answers are settled, output the common understanding and recommend the next move.
-10. If the clarified work is feature-scale, cross-session, or likely to be implemented by another agent, recommend the smallest durable artifact needed next: a requirements document, decision record, implementation brief, or existing owner-doc update.
+10. If the clarified work needs to persist, recommend the smallest durable route using **Durable Routing**.
 
 If the request is already concrete enough, use Common Understanding mode: say Clarify does not need more questions, provide the common understanding, and recommend proceeding through the exact route.
 
@@ -146,8 +146,6 @@ Use concise bullets:
 
 When asking questions, put **Need To Know** before **Common Understanding** so the user sees what to answer first.
 
-Default to chat. Recommend durable capture when the shared understanding needs to persist for later planning or implementation, but do not create a full requirements document from Clarify unless the user explicitly asks for that artifact.
-
 ## Durable Routing
 
 When the clarified work needs to persist, route it to the right artifact:
@@ -158,6 +156,8 @@ When the clarified work needs to persist, route it to the right artifact:
 - **Implementation brief or plan**: implementation sequencing after requirements are stable.
 - **Decision record**: hard-to-reverse decisions that need durable rationale.
 
+Default to chat. Recommend durable capture when the shared understanding needs to persist for later planning, implementation, another agent, or a future session. Do not create a full requirements document from Clarify unless the user explicitly asks for that artifact.
+
 If the user explicitly asks Clarify to save a durable summary, update the existing canonical artifact when one exists. If no clear owner exists and the user did not name a path, ask where it should live before writing.
 
 ## Anti-Patterns
@@ -165,11 +165,7 @@ If the user explicitly asks Clarify to save a durable summary, update the existi
 - Asking questions a quick, low-risk repo read can answer.
 - Asking open-ended questions when a tight multiple-choice or yes/no would eliminate ambiguity faster.
 - Asking about implementation details before product or behavior meaning is clear.
-- Producing a detailed plan while must-have unknowns remain.
 - Treating nice-to-have preferences as blockers.
 - Asking for confirmation after every Common Understanding summary when the work is small and low-risk.
 - Using Clarify as a mandatory gate before every skill.
-- Implementing from Clarify without the user's answers or confirmed assumptions.
-- Creating a new artifact family when a chat summary or existing owner doc is enough.
-- Writing a requirements spec from Clarify when a short common-understanding summary is enough.
 - Leaving implementation-blocking questions unresolved while recommending implementation.

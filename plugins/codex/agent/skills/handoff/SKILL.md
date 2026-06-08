@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Use when creating a concise continuation handoff for another agent or future session after the user asks for a handoff, session summary, continuation brief, context transfer, next-agent instructions, a new Codex thread, or a worktree-backed continuation thread.
+description: "Use when creating a concise continuation handoff for another agent or future session after the user asks for a handoff, session summary, continuation brief, context transfer, next-agent instructions, a new Codex thread, or a worktree-backed continuation thread. Not for general thread management unless the user asks to hand off or continue work."
 ---
 
 # Handoff
@@ -8,6 +8,8 @@ description: Use when creating a concise continuation handoff for another agent 
 Create a practical continuation brief for the current task, branch, PR, issue, plan, or conversation.
 
 Default to an inline handoff. Write a file only when the user asks for one, the handoff is too large for chat, or a durable artifact is clearly needed. If saving a file, use the user-requested path; otherwise use a clearly named temporary handoff path and report it.
+
+Thread actions are part of this skill only when the user asks for continuation in a new, forked, or worktree-backed Codex thread.
 
 ## Codex Thread Handoff
 
@@ -30,7 +32,7 @@ Use `fork_thread` when the user wants a child thread derived from this thread's 
 
 The new thread prompt should include the handoff content, the intended outcome, relevant paths or URLs, current branch/worktree assumptions, validation already run, validation still needed, blockers, and suggested skills. Do not include secrets or unnecessary personal data.
 
-After a successful `create_thread`, report the created thread using the required Codex thread directive in the final response. If worktree setup is queued and returns a pending worktree id, report that pending id instead.
+After a successful `create_thread`, report the created thread using the required Codex thread directive in the final response. If worktree setup is queued and returns a pending worktree id, report that pending id instead. After a successful `fork_thread`, report the child thread id or pending worktree id returned by the app.
 
 ## Workflow
 
