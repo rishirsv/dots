@@ -1,0 +1,15 @@
+{
+  "name": "meta-skill",
+  "version": "0.1.0",
+  "description": "Author, improve, and evaluate agent skills (Claude).",
+  "author": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/agent",
+  "license": "UNLICENSED",
+  "keywords": [
+    "skills",
+    "meta",
+    "workflow"
+  ]
+}

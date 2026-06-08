@@ -1,0 +1,3 @@
+# Source skills for the meta-skill plugin live here, one directory per skill.
+# Empty for now — see ../docs/ARCHITECTURE.md for the planned skill set.
+# `scripts/sync-plugins.sh` packages every directory here into the meta-skill plugin.

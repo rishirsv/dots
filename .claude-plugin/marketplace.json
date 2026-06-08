@@ -18,6 +18,18 @@
         "personal",
         "workflow"
       ]
+    },
+    {
+      "name": "meta-skill",
+      "description": "Author, improve, and evaluate agent skills (Claude).",
+      "source": "./plugins/claude/meta-skill",
+      "version": "0.1.0",
+      "category": "productivity",
+      "tags": [
+        "skills",
+        "meta",
+        "workflow"
+      ]
     }
   ]
 }

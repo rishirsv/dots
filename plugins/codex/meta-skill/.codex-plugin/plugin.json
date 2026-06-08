@@ -1,0 +1,29 @@
+{
+  "name": "meta-skill",
+  "version": "0.1.0",
+  "description": "Author, improve, and evaluate agent skills (Codex).",
+  "author": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/agent",
+  "license": "UNLICENSED",
+  "keywords": [
+    "skills",
+    "meta",
+    "workflow"
+  ],
+  "interface": {
+    "displayName": "Meta-Skill",
+    "shortDescription": "Author, improve, and evaluate agent skills.",
+    "longDescription": "Meta-Skill is a full-stop shop for the agent-skill lifecycle: a router front-ending skill-writer, skill-doctor, and skill-evaluator.",
+    "developerName": "Rishi",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Meta-Skill to work on an agent skill.",
+    "brandColor": "#006DFF",
+    "screenshots": []
+  }
+}
