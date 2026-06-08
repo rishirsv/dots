@@ -15,8 +15,29 @@ identified. Do not scan unrelated sessions to hunt for patterns unless the user
 explicitly asks.
 
 Treat session capture as one context source for ordinary skill authoring. It
-does not replace the skill-or-not gate, trigger design, payload rules, or final
-validation.
+feeds the interview answer-set in [interview.md](interview.md), but it does not
+replace the skill-or-not gate, trigger design, payload rules, or final
+validation. Draft the extracted decisions into `SKILL.md` itself rather than a
+separate planning document.
+
+## Capture Modes
+
+Choose the capture mode before reading deeply:
+
+- **Session distillation**: use when the user points to a prior thread,
+  source pack, example output, or observed workflow and wants a reusable skill.
+  Mine enough evidence to design the recurring job, trigger boundary, runtime
+  guidance, and resources.
+- **Recent success capture**: use when the user asks to make the work they just
+  completed permanent or reusable. Promote only the bounded workflow that
+  recently succeeded; do not turn the whole conversation into runtime guidance.
+
+Recent success capture is stricter than ordinary session distillation. It needs
+evidence that the workflow actually worked, such as accepted output, a
+successful artifact, a passing validation step, or a tool/script/browser flow
+that reached the stated result. If that proof is absent, do not invent the
+workflow from intent alone; return to ordinary interview and scaffold from the
+best available requirements.
 
 ## Lesson Gate
 
@@ -30,7 +51,7 @@ A thread can contain many durable lessons. Do not turn all of them into skills.
 
 Create a skill only for the last case. If the captured workflow appears once and
 the user has not said it should recur, treat it as provisional and confirm the
-recurring job in the Current Understanding.
+recurring job in the draft outline.
 
 ## Locate Thread Evidence
 
@@ -49,6 +70,15 @@ Pull enough evidence to recover the repeatable workflow. Do not load the whole
 session when a bounded turn range, user story, or file/tool cluster gives the
 answer.
 
+For recent success capture, walk back only far enough to identify the successful
+workflow and its immediate setup. If no recent successful workflow is visible,
+stop with a concise refusal and next step:
+
+```text
+No recent successful workflow found. Run or identify the workflow first, then
+ask to make it reusable.
+```
+
 ## Extract
 
 Capture the parts that change skill behavior:
@@ -60,6 +90,10 @@ Capture the parts that change skill behavior:
 - **Workflow spine**: the useful sequence of decisions, reads, commands, tool
   calls, edits, checks, and finalization. Separate the recommended path from
   one-off detours.
+- **Final successful slice**: for recent success capture, use only the final
+  attempt that produced the accepted result. Keep failed attempts out of the
+  runtime path; use them only as gotchas, failure shields, or evidence for why a
+  deterministic resource may be useful.
 - **Invariants**: steps or checks that held across turns, files, attempts, or
   examples. These are stronger skill material than isolated actions.
 - **Tool surface**: tools, CLIs, scripts, MCP/thread/browser/computer tools,
@@ -75,21 +109,37 @@ Capture the parts that change skill behavior:
   or misleading intermediate conclusions the skill should prevent.
 - **Output contract**: final answer shape, created artifact shape, caveats,
   positive-null behavior, and stop condition.
+- **Project mode signal**: whether the workflow needs `.meta-skill/` state,
+  durable authoring notes, team reuse material, or should remain portable-only.
 
 Keep provenance for reasoning while drafting, but keep it out of runtime unless
 the skill directly depends on that exact source.
 
+Map the extraction into the required interview answer-set:
+
+| Answer-set field | Session evidence to use |
+|---|---|
+| Job | Recurring workflow spine, not the one-off result. |
+| Trigger (+ not for) | User phrases, symptoms, file types, handoff moments, and adjacent non-trigger tasks. |
+| Inputs and output | Files, tools, source material, created artifacts, final answer shape. |
+| Invariants and failure shields | User corrections, repeated checks, source-vs-generated boundaries, failure modes. |
+| Fragility | Whether success depended on judgment prose, fixed output shape, deterministic scripts, or strict command order. |
+| Gates | Approval moments before external writes, package/sync/install, destructive edits, or final delivery. |
+| Project mode | Whether durable `.meta-skill/` docs, team reuse material, or portable-only output is needed. |
+
 ## Clarify Budget
 
-Ask at most one or two questions before building. Ask only for decisions the
-thread cannot answer:
+Ask at most one or two tight interview questions before building. Ask only for
+required answer-set decisions the thread cannot answer:
 
 1. The recurring job and nearest `not for` boundary.
 2. Whether to preserve a tool/script/resource as runtime payload or leave it as
    prose guidance.
+3. Project mode: portable-only, or `.meta-skill/` authoring docs/team reuse
+   material.
 
 If the thread evidence gives a defensible default, state the default in the
-Current Understanding and build.
+draft outline and build.
 
 ## Distill
 
@@ -107,25 +157,36 @@ Generalize the session before writing runtime:
   mistakes.
 - Preserve source-vs-generated boundaries when a future agent could edit the
   wrong surface.
-- Seed future eval ideas only when they naturally fall out of the session:
-  a normal-path prompt and one observed failure-mode prompt are enough.
 
 ## Handoff Back
 
-Before editing files, produce a compact Current Understanding:
+Before editing files, produce promotion evidence when using recent success
+capture:
 
 ```md
-Current Understanding
+Promotion Evidence
+- Recent success: <what proved the workflow worked>
+- Final successful slice: <the commands/tools/files actually used>
+- User acceptance: <explicit, inferred from completed delivery, or missing>
+- Reusable job: <what should recur>
+- Excluded detours: <failed or irrelevant attempts not copied into runtime>
+```
+
+Then produce a compact draft outline:
+
+```md
+Draft Skill Outline
 - Job: <recurring workflow captured from the thread>
-- Trigger: <user phrase>; not for <nearest boundary>
-- Inputs -> output: <thread-derived input and output shape>
-- Tools/resources: <essential tools, scripts, references, or none>
-- Guardrails: <corrections, gates, failure modes>
-- Skill shape: <candidate sections/resources/eval seeds, if any>
+- Trigger (+ not for): <user phrase>; not for <nearest boundary>
+- Inputs and output: <thread-derived input and output shape>
+- Invariants and failure shields: <corrections, gates, failure modes>
+- Fragility: <judgment prose | fixed shape | script-backed | strict sequence>
+- Gates: <approval gates or none>
+- Project mode: <portable-only | project mode with .meta-skill/...>
 - Still open: <one or two questions, or none>
 ```
 
 When `Still open` is `none`, create the skill. Use
 [design.md](design.md) for the trigger/body design and
 [cookbook.md](cookbook.md) only for the smallest useful runtime snippet.
-Author the payload from the Current Understanding, not from the raw transcript.
+Author the payload from the draft outline, not from the raw transcript.

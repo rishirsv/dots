@@ -4,20 +4,24 @@ Use this when deciding what the skill should be, how it should trigger, and how 
 
 ## Scope
 
-This reference covers design decisions and runtime writing. It owns principles. It does not own ready-to-paste snippets or payload mechanics; use [cookbook.md](cookbook.md) for recipes and the Skill Writer payload rules for references, scripts, assets, metadata, and dependency rules. Voice and sentence-level style live in Voice and Style below.
+This reference covers design decisions and runtime writing after the idea is plausibly skill-shaped. Use [skill-shape.md](skill-shape.md) first when deciding whether the better artifact is a skill, memory, project doc, validator, app, or managed agent system. This file owns runtime design principles. It does not own ready-to-paste snippets or payload mechanics; use [cookbook.md](cookbook.md) for recipes and the Skill Writer payload rules for references, scripts, assets, metadata, and dependency rules. Voice and sentence-level style live in Voice and Style below.
 
 ## Contents
 
-- Design aim, directive writing, voice and style, and the skill-or-not gate.
+- Design aim, directive writing, voice and style, the skill-or-not gate, and skill type taxonomy.
 - Intake, trigger contract, frontmatter, and description checks.
-- Degree of freedom, failure handling, runtime body shape, examples, and evidence boundaries.
-- Skill Spec handoff expectations.
+- Degree of freedom, failure handling, runtime body shape, examples, setup/state, future measurement boundaries, and evidence boundaries.
+- Draft outline and authoring-note expectations.
 
 ## Design Aim
 
 A good skill is a reusable behavior harness. It gives a future agent the extra context, judgment pattern, file structure, or deterministic script it needs to handle a recurring task better than it would from the user prompt alone.
 
 Skills should be practical, not encyclopedic. Treat every runtime `SKILL.md` as scarce attention budget: include what changes future behavior, omit background the base model already knows, and move detailed or conditional material behind progressive disclosure.
+
+The strongest skills behave like foldered context engineering. The frontmatter
+gets the agent to the right playbook; the body gives the default path; optional
+files let the agent load or execute only what the current task needs.
 
 ## Write Directives, Not Wisdom
 
@@ -44,7 +48,7 @@ You are writing instructions a future agent will read mid-task, while doing the 
 
 ### Explain why, not just what
 
-Pair a directive with its reason when the reason is not obvious. The reason lets the agent generalize to evals you did not foresee; a bare command only covers the one you wrote.
+Pair a directive with its reason when the reason is not obvious. The reason lets the agent generalize to situations you did not foresee; a bare command only covers the one you wrote.
 
 - Before: `Always cite the source file for every number.`
 - After: `Cite the source file for every number, so the reader can tell sourced figures from estimates.`
@@ -89,6 +93,9 @@ Every line should change behavior; cut what does not (see Write Directives, Not 
 
 ## Skill-Or-Not Gate
 
+If the shape is not settled, read [skill-shape.md](skill-shape.md) before using
+this gate. The gate here is the final design check before drafting runtime.
+
 Create or update a skill when most of these are true:
 
 - The workflow will recur across users, files, clients, or projects.
@@ -98,7 +105,7 @@ Create or update a skill when most of these are true:
 - The instructions are portable enough to live in runtime guidance rather than local project docs.
 - The request is substantive enough that specialized guidance would change behavior; simple one-step tasks may be better handled by the base agent.
 
-When the activation eval already belongs to an existing skill, update that skill rather than creating a new one. Create a new skill only when the workflow has its own recognizable trigger and operating sequence.
+When the activation request already belongs to an existing skill, update that skill rather than creating a new one. Create a new skill only when the workflow has its own recognizable trigger and operating sequence.
 
 Do not make a skill when:
 
@@ -106,7 +113,96 @@ Do not make a skill when:
 - The behavior is an obvious general capability.
 - The rule is purely mechanical and should be enforced by validation code.
 - The content is project-specific and belongs in local docs.
-- The requested process would require multiple skills, managed agents, or a separate operating system. In that eval, define the boundary and hand off the larger process separately.
+- The requested process would require multiple skills, managed agents, or a separate operating system. In that case, define the boundary and hand off the larger process separately.
+
+## Skill Type
+
+Classify the draft before choosing resources. The type is a design aid, not a
+frontmatter label. Good skills usually fit one primary type; if a draft straddles
+several, narrow the ownership boundary or split it.
+
+| Type | Use when | Likely runtime payload | Verification shape |
+|---|---|---|---|
+| Library or API reference | Correct use of a library, SDK, CLI, schema, or design system is non-obvious. | `references/` with gotchas, signatures, examples, and known footguns. | Example prompts that require the obscure API rule; optional script smoke tests. |
+| Product verification | The skill proves product behavior, UI state, or artifact quality. | Driver scripts, browser/tool instructions, assertion points, screenshots or render checks. | Programmatic assertions plus human-visible evidence when useful. |
+| Data fetching or analysis | The task needs canonical tables, dashboards, metrics, queries, or monitoring context. | Query helpers, dashboard IDs, schemas, statistical rules, source hierarchy. | Reproducible query/script runs and expected interpretation checks. |
+| Business process or team automation | The skill completes a recurring workflow across tools or messages. | Templates, routing rules, config setup, approval gates, prior-output log guidance. | Delta-only examples, required fields, and external-write gates. |
+| Code scaffolding or templates | Natural-language requirements combine with repeated boilerplate. | `assets/` templates, generators, naming rules, migration or app skeletons. | Generated-file checks and compile/lint/build smoke tests. |
+| Code quality or review | The skill finds defects or enforces org-specific standards. | Rubric, severity definitions, deterministic linters, review posture. | Findings quality cases, positive-null case, and deterministic checks. |
+| CI/CD or deployment | The skill helps fetch, push, release, monitor, or recover delivery workflows. | Runbook steps, command wrappers, rollback gates, log/query lookups. | Dry-run/smoke-test paths and explicit approval before release actions. |
+| Runbook or incident investigation | A symptom leads to a multi-tool diagnosis and report. | Symptom-to-tool map, query patterns, escalation rules, report template. | Representative alert/error cases and evidence completeness checks. |
+| Infrastructure operations | Routine maintenance may affect live resources or cost/security posture. | Guardrails, soak periods, confirmation prompts, command scripts, audit output. | Non-destructive dry runs, exact target listing, and approval gates. |
+
+Let the type drive what to include. For example, a verification skill should
+usually carry scripts or assertion guidance; a reference skill may need only
+well-linked gotchas and examples; an automation skill often needs config setup
+and stable state instructions.
+
+## Portable Payload And Project State
+
+Default to the general Agent Skill shape unless the target repo has a stricter
+local convention:
+
+```text
+<skill-dir>/
+├── SKILL.md
+├── agents/
+├── references/      optional
+├── scripts/         optional
+├── assets/          optional
+├── resources/       optional
+├── examples/        optional when examples are runtime material
+├── <other runtime files or folders>
+└── .meta-skill/     private workbench, excluded from packages
+```
+
+The portable payload is the project root. `.meta-skill/` is not portable; use it
+for durable authoring docs, research reports, source captures, test fixtures,
+package metadata, temporary reviews, and source-specific or client-specific
+development notes. Keep `.meta-skill/tests/` flat; do not create nested
+category folders inside it.
+
+Do not force a `skill/` wrapper unless the current repo explicitly requires one.
+If an existing repo still uses wrappers, follow that repo for maintenance work
+but keep new general guidance rooted at `<skill-dir>/`.
+
+## Runtime Folder Choices
+
+Pick folders from the skill's actual runtime needs. `references/`, `scripts/`,
+and `assets/` are defaults, not the full vocabulary.
+
+| Folder | Include when | Avoid when |
+|---|---|---|
+| `references/` | A future agent should read conditional runtime guidance, API details, schemas, policies, gotchas, or long examples only when needed. | The material is source-specific, client-specific, build-only, or better kept in `.meta-skill/docs/`. |
+| `scripts/` | Deterministic code is safer, cheaper, or more reliable than prose; the shipped skill should run it at runtime. | The code is a repo-only build helper, future measurement helper, or one-off migration. |
+| `assets/` | Approved reusable runtime files are used in outputs: templates, schemas, starter workbooks, icons, fonts, boilerplate, sample forms. | The file is a raw user upload, sensitive material, licensed content without approval, or research evidence. |
+| `resources/` | The skill needs runtime data or structured resources that are not naturally references, scripts, or assets. | The content is private workbench state or generated package metadata. |
+| `examples/` | Examples are themselves runtime material the future agent should inspect or copy patterns from. | Examples are source captures, authoring evidence, or future measurement material; keep those in `.meta-skill/`. |
+| Other runtime folder | A domain convention makes the folder clearer than forcing material into a default bucket. | The folder exists only because the authoring process produced it. |
+
+Link every runtime folder from `SKILL.md` and state when to read, run, copy, or
+ignore it. Keep references one level deep unless the local runtime or package
+standard explicitly supports deeper discovery.
+
+## Workbench Folder Choices
+
+Use `.meta-skill/` only in project mode. It is for work that helps author,
+review, or package the skill but should not be loaded by a future runtime agent.
+
+| Folder | Use for |
+|---|---|
+| `.meta-skill/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, and review context. |
+| `.meta-skill/docs/research/` | Research reports from web/source review, connector-backed research, sub-agent research, or research skills. Name files by topic, not by tool. |
+| `.meta-skill/plans/` | Local implementation plans for the skill project when the surrounding repo has no stronger planning convention. |
+| `.meta-skill/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Keep this folder flat; do not create nested category folders inside it. |
+| `.meta-skill/dist/` | Package artifacts and package metadata produced by `meta_skill.py package`. |
+
+If intake requires outside research, keep it bounded and source-grounded. Use an
+available researcher sub-agent or research skill when that is natural for the
+environment, especially when the research can run in parallel with other intake
+work. Do not make that a hard dependency: a normal source review is enough for
+small or obvious questions. Store the report under `.meta-skill/docs/research/`
+and move only reusable operational rules into the portable payload.
 
 ## Intake
 
@@ -118,6 +214,7 @@ Start from existing context. Mine the conversation and files for:
 - adjacent tasks the skill should not handle
 - repeated manual steps that can be scripted
 - tools, packages, file types, or runtime assumptions
+- skill type and resource/test expectations
 - success criteria and one or two realistic task prompts the skill should handle well
 - moments where approval is needed
 - likely gotchas, common rationalizations, or counterintuitive failure modes that would not be obvious from the workflow
@@ -134,7 +231,7 @@ I can make this a review-facing skill with positive-null findings and no forced 
 
 ### Building Without Questions
 
-When context already answers the items above, proceeding straight to the build is the expected default, not a special mode. Reflect what you inferred back as the Current Understanding, then build. Treat an explicit "just build it," "no questions," or "one-shot" the same way: take the strongest defensible interpretation, make the material decisions yourself, and note any guesses in the Current Understanding (or the Skill Spec, in project mode) so the user can redirect afterward.
+When context already answers the items above, proceeding straight to the build is the expected default, not a special mode. Reflect what you inferred back as the draft outline, then build. Treat an explicit "just build it," "no questions," or "one-shot" the same way: take the strongest defensible interpretation, make the material decisions yourself, and note any guesses in the draft outline so the user can redirect afterward.
 
 Building without questions does not change quality discipline. Frontmatter still needs a real trigger contract, the runtime still needs a clear job sentence and output shape, and source-derived skills still need source material distilled into reusable rules before runtime drafting. What changes is the *clarification budget*, not the *quality budget*. If the request is too thin to make a confident interpretation, surface that rather than guessing into the runtime.
 
@@ -158,7 +255,7 @@ A strong description:
 - describes the problem or handoff moment, not just the solution category
 - avoids system, provider, or implementation plumbing terms unless the user-facing task directly depends on that exact named surface
 
-Lean slightly assertive. Skills more often fail by *under*-triggering than over-triggering, so cover the implicit evals too — phrasings where the user describes the problem or names the file type without naming the skill. Let the `not for` boundary do the opposite job, fencing out adjacent work, so assertiveness does not become overreach.
+Lean slightly assertive. Skills more often fail by *under*-triggering than over-triggering, so cover implicit prompts too: phrasings where the user describes the problem or names the file type without naming the skill. Let the `not for` boundary do the opposite job, fencing out adjacent work, so assertiveness does not become overreach.
 
 Pattern:
 
@@ -206,13 +303,13 @@ That last form can cause the agent to follow the description instead of loading 
 
 ## Description Pressure Check
 
-Before accepting a description, record a tiny trigger set in the spec:
+Before accepting a description, record a tiny trigger set in the draft outline:
 
 | Prompt type | What it proves |
 |---|---|
 | Should trigger | The description includes real user language and the correct work object |
 | Should not trigger | Adjacent ordinary work routes elsewhere |
-| Near miss | Ambiguous evals lead to clarification or correct non-use |
+| Near miss | Ambiguous prompts lead to clarification or correct non-use |
 
 Prompts should be realistic and substantive enough that the skill should improve behavior. Avoid toy positives like “use the skill,” tiny one-step tasks like “read this file,” and obvious negatives like “write Fibonacci” unless the skill is actually about coding basics.
 
@@ -306,6 +403,7 @@ Runtime guidance should cover the behavior somewhere, without forcing headings:
 
 - opening job sentence: say what the skill helps the agent do, not what the document contains
 - starting point: required inputs, missing-input behavior, boundaries, approvals, and runtime assumptions
+- setup/state: required first-run config, stable storage, and history-reading rules when they change behavior
 - workflow: one recommended path, with branches only where behavior truly changes
 - progress: for a long multi-step skill, a short up-front note of the plan and first step, so the user can redirect early
 - evidence: what counts as support, ambiguity, missing evidence, caveats, or positive-null language
@@ -369,8 +467,51 @@ Most skills do not need a heavy source-authority system. Use a lighter boundary 
 
 Use detailed authority hierarchies only in specialized source-grounded skills, not in the generic scaffold.
 
-## Skill Spec Handoff
+## Setup, Config, And State
 
-Write a Skill Spec only when the user asks for one or the build is in project mode; portable-only builds do not need it. When you do, capture only the decisions that cannot be safely inferred from the runtime skill.
+Add setup/state guidance only when the skill needs information that is not
+present in ordinary prompts or when prior runs materially improve the next run.
 
-Keep the Skill Spec compact. It should explain the design choices a future reviewer needs without bloating the runtime skill.
+- First-run setup: state the minimum config needed, the recommended default, and
+  the one question to ask if it is missing.
+- Config files: keep stable, user-specific settings out of portable runtime
+  instructions when the target runtime provides a durable plugin/project data
+  folder. Use a small JSON/TOML file only when the skill must read repeatable
+  settings such as channel names, dashboard IDs, or default folders.
+- History or memory: use append-only logs or structured records only for skills
+  where deltas matter, such as standups, recaps, cleanup runs, or recurring
+  status posts. Tell the agent what to read, how to compare, and when to ignore
+  stale history.
+- Upgrade safety: assume files inside an installed skill directory may be
+  replaced during upgrades. Put mutable state in the stable data/workbench
+  location provided by the project or runtime, usually `.meta-skill/` for
+  project-mode authoring, not inside the portable payload.
+- Privacy and approvals: do not persist secrets, credentials, private messages,
+  or external-write targets unless the user explicitly approves the storage
+  location and purpose.
+
+Skip this section for ordinary guidance skills. Empty config/state rules create
+maintenance burden without changing behavior.
+
+## Future Measurement Boundary
+
+Do not create measurement suites, seed cases, or special measurement folders
+during ordinary skill authoring. That process is separate and not fully designed
+for this scaffold.
+
+If the user explicitly asks to preserve future measurement ideas, keep them in
+`.meta-skill/docs/` as private authoring notes. Keep user-provided fixtures or
+sample inputs in the flat `.meta-skill/tests/` folder. Do not put future
+measurement material in the portable payload unless the examples are approved
+runtime material the future agent should actually read.
+
+## Draft Outline Handoff
+
+Use the scaffolded `SKILL.md` as the authoring outline while the skill is still
+being shaped. The outline should contain the recurring job, trigger boundary,
+inputs and output, invariants, fragility, gates, project-mode choice, and any
+still-open uncertainty.
+
+Finalize by rewriting that same `SKILL.md` into runtime guidance and removing
+stale intake notes. In project mode, keep durable non-runtime notes under
+`.meta-skill/docs/`; they are review support, not the source of runtime truth.

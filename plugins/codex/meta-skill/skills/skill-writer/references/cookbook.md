@@ -14,7 +14,7 @@ Snippet headings are illustrative. Derive actual section names from the job, fil
 ## Contents
 
 - Signal matrix and recipe-use rules.
-- Pattern cards for trigger, input, output, evidence, review, artifact, script, asset, failure, and approval snippets.
+- Pattern cards for trigger, input, output, evidence, review, artifact, script, asset, setup/state, scaffold, failure, approval, and future measurement snippets.
 - Worked mini examples and conversion checklist.
 
 ## Signal Matrix
@@ -27,7 +27,10 @@ Snippet headings are illustrative. Derive actual section names from the job, fil
 | Review, audit, QC, or findings output | Reviewer-safe findings | Review-only posture, severity shape, and positive-null behavior | Judge severity definitions and finding examples |
 | Artifact, deck, spreadsheet, document, image, chart, or PDF output | Artifact verification | Render, inspect, validate, or tie-out loop | Confirm the check is meaningful for the artifact |
 | Runtime script, CLI, renderer, MCP tool, or package | Tools and dependencies | Direct Markdown link, command, dependency note, and failure behavior | Judge whether code behavior is correct |
-| Approved template, schema, boilerplate, or reusable visual | Runtime asset | Direct asset reference and use instruction | Confirm licensing and approval for portable use |
+| Approved template, schema, boilerplate, reusable visual, runtime dataset, or example corpus | Runtime folders | Direct folder/file reference and use instruction | Confirm licensing, approval, and whether it belongs in portable payload |
+| First-run config, persistent history, or prior-run deltas | Setup and state | Config/state section with storage location and missing-config behavior | Confirm privacy, upgrade safety, and whether state really changes output |
+| User explicitly asks to preserve future measurement ideas | Future measurement note | Private workbench note outside runtime payload | Confirm it stays out of scaffolded runtime and package output |
+| New skill or user-requested skill project | Scaffold command | `scripts/meta_skill.py create` command with optional `--project` | Confirm target path and project-vs-portable intent |
 | Client-facing delivery, external write, package, install, publish, sync, or send | Human gate | Explicit approval before the action | Confirm who can approve |
 | Explicit-only activation | Metadata invocation policy | `policy.allow_implicit_invocation: false` in `agents/openai.yaml` | Confirm explicit-only is intentional |
 | Fragile inputs, scripts, artifacts, external material, or partial evidence | Failure handling | Short failure section with ask, caveat, stop, or partial-completion behavior | Judge whether recovery behavior protects the workflow |
@@ -202,12 +205,24 @@ For tools:
 Requires a local PDF renderer and Python standard library only. If the renderer is unavailable, skip rendering, report that limitation, and continue with text-only checks.
 ```
 
-### 12. Runtime Assets And Templates
+### 12. Runtime Assets, Resources, And Examples
 
 Use only for approved reusable runtime materials.
 
 ```md
 Copy `assets/review-template.docx` as the starting file, fill only the marked fields, and preserve the template headings.
+```
+
+For non-asset runtime material:
+
+```md
+Read `examples/good-findings.md` only when calibrating finding style. Use it for
+shape and tone, not as source evidence.
+```
+
+```md
+Use `resources/segment-definitions.json` as the canonical segment map. If a
+segment is missing, mark it unknown rather than inferring it from nearby labels.
 ```
 
 ### 13. Failure Handling And Partial Completion
@@ -238,6 +253,112 @@ Use when the skill must stay inside a provided folder, archive, or source pack.
 Use only files inside the provided source pack unless the user explicitly adds another source. If a needed file is outside the pack, ask before reading or treating it as evidence.
 ```
 
+### 16. Setup, Config, And State
+
+Use only when first-run setup or prior-run history changes behavior.
+
+```md
+## Setup And State
+
+Need a configured default channel and workspace ID before posting. If either is
+missing, ask once and store the answer in the project/runtime data folder named
+by the user or runtime. Read the prior-run log before drafting so the next output
+is delta-only; ignore log entries older than the configured lookback window.
+Do not store secrets, credentials, or private message contents.
+```
+
+For lightweight config:
+
+```md
+Use `config.json` only for stable user choices such as default folder, channel,
+or dashboard ID. If the file is absent, ask for the minimum missing value and
+continue with a draft instead of guessing.
+```
+
+### 17. Future Measurement Parking Lot
+
+Use only when the user explicitly asks to preserve future measurement ideas.
+Do not create these notes by default during ordinary skill authoring.
+
+```md
+Measurement notes:
+- Candidate positive prompt: "<realistic messy user prompt>"
+- Candidate formal prompt: "<formal prompt with expected file/resource>"
+- Candidate near miss: "<adjacent request that should route away>"
+
+Expected behavior:
+- Positive prompts produce <artifact/output shape>.
+- Objective checks: <field exists>, <script exits 0>, <no unsupported claims>.
+- Baseline: no skill for greenfield; old skill for approved improvements.
+```
+
+Keep measurement ideas out of the portable runtime unless examples are required
+during execution. Put authoring-only notes in `.meta-skill/docs/`, the
+workbench, or final handoff until the measurement process is designed.
+
+### 18. Skill And Project Scaffolds
+
+Use the scaffold script only when creating a new skill and the target repo has no
+better local initializer. Resolve relative paths from the user's current working
+directory.
+
+General portable root-payload skill:
+
+```bash
+scripts/meta_skill.py create ./my-skill \
+  --slug my-skill \
+  --title "My Skill" \
+  --description "Use when doing one specific recurring job; not for adjacent ordinary work." \
+  --job "do one specific recurring job"
+```
+
+Use project mode only when the user wants durable workbench state, research
+reports, fixtures/check inputs, team reuse material, or a packaged placeholder
+zip:
+
+```bash
+scripts/meta_skill.py create ./my-skill \
+  --slug my-skill \
+  --title "My Skill" \
+  --description "Use when doing one specific recurring job; not for adjacent ordinary work." \
+  --job "do one specific recurring job" \
+  --project
+```
+
+Create additional runtime folders only when the design needs them:
+
+```bash
+scripts/meta_skill.py create ./my-skill \
+  --slug my-skill \
+  --title "My Skill" \
+  --description "Use when doing one specific recurring job; not for adjacent ordinary work." \
+  --job "do one specific recurring job" \
+  --folders references,scripts,assets,examples,resources
+```
+
+Lint:
+
+```bash
+scripts/meta_skill.py lint ./my-skill
+```
+
+Refresh OpenAI/Codex UI metadata through the same runner:
+
+```bash
+scripts/meta_skill.py openai-yaml ./my-skill \
+  --interface default_prompt='Use $my-skill to do one specific recurring job.'
+```
+
+Package only after approval:
+
+```bash
+scripts/meta_skill.py package ./my-skill
+```
+
+The portable payload is `./my-skill/` itself: `SKILL.md`, `agents/`, and linked
+runtime folders. `.meta-skill/` is private workbench state and is excluded from
+packages. Package metadata is written next to the zip artifact.
+
 ## Worked Mini Examples
 
 Thin prompt skill:
@@ -265,7 +386,12 @@ Script-backed skill:
 - Missing inputs say ask, caveat, stop, or continue with labeled limits.
 - Source authority is present only when source order changes behavior.
 - Output shape, tone, and review posture are explicit where they matter.
-- Runtime references, scripts, and assets are direct, flat, linked, and implemented.
+- Runtime references, scripts, assets, resources, examples, or other folders are direct, flat where discovery matters, linked, and implemented.
+- Setup/config/state rules appear only when they change behavior and name stable storage.
+- Future measurement ideas, when requested, stay in `.meta-skill/` and out of the portable runtime.
+- Scaffolds use the current-working-directory-relative `<skill-dir>` as the root payload; no `skill/` wrapper unless a repo explicitly requires it.
+- `meta_skill.py` is the single public script runner; lower-level OpenAI init,
+  metadata, and validation scripts are implementation commands routed through it.
 - OpenAI/Codex metadata includes `default_prompt`, mentions `$skill-name`, and avoids system or implementation-plumbing terms in routing/UI text.
 - `policy.allow_implicit_invocation: false` appears only for explicit-only skills.
 - Artifact checks occur before clean conclusions or delivery language.
