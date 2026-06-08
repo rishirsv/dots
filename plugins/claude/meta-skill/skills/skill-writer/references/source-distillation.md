@@ -33,7 +33,7 @@ interview and design flow:
 4. Extract candidate rules through the selected lenses.
 5. Promote, reject, or park each candidate rule.
 6. Check against examples by dimension, not wording.
-7. Map promoted rules into the answer-set in [interview.md](interview.md).
+7. Map promoted rules into the main workflow answer-set in `SKILL.md`.
 8. Return to [design.md](design.md) for trigger, body shape, and runtime
    placement.
 
@@ -519,6 +519,6 @@ Source Distillation Notes
 ```
 
 Then map the promoted rules into the required answer-set in
-[interview.md](interview.md), return to [design.md](design.md) for trigger and
+the main workflow answer-set, return to [design.md](design.md) for trigger and
 runtime shape, and use [cookbook.md](cookbook.md) only for the smallest snippets
 that make the distilled behavior executable.

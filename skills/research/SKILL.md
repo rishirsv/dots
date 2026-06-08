@@ -1,6 +1,6 @@
 ---
 name: research
-description: "Use only when the user explicitly invokes $research for source-grounded external or current research, including standard and heavy research briefs with citations, recency checks, contradictions, uncertainty, optional read-only subagent workstreams, and optional repo capture; not for routine local code inspection, implementation, brainstorming, general clarification, or unsourced summaries."
+description: "Use when the user explicitly invokes $research or the Research skill, asks for researcher subagents, or wants a formal source-grounded external/current research brief or report where citations, recency, contradictions, uncertainty, and source quality matter. Not for routine local code inspection, implementation, brainstorming, clarification, unsourced summaries, or bespoke domain reports that should follow another workflow."
 ---
 
 # Research
@@ -9,7 +9,7 @@ Run source-grounded external or current research. Produce an answer, brief, or r
 
 ## Route First
 
-Use this skill only when the user explicitly calls `$research` or asks to use the Research skill. If this file is already loaded for an explicit research request, run the workflow directly; do not look for a separate command.
+Use this skill when the user explicitly calls `$research`, asks to use the Research skill, asks for `researcher` subagents, or asks for a formal source-grounded external/current research brief or report where citations, recency, contradictions, uncertainty, and source quality are part of the deliverable. If this file is already loaded for a matching request, run the workflow directly; do not look for a separate command.
 
 In scope:
 
@@ -17,6 +17,7 @@ In scope:
 - source-grounded market, technical, policy, company, product, standards, academic, or public-record research
 - broad scans where source quality, recency, contradictions, and uncertainty matter
 - heavy research when the user asks for depth, comparison, high confidence, or multiple workstreams
+- requests for `researcher` subagents or read-only research lanes
 
 Out of scope:
 
@@ -24,6 +25,7 @@ Out of scope:
 - implementation, debugging, code review, or ordinary docs writing
 - brainstorming, ideation, strategy without source lookup, or general clarification
 - unsourced summaries, memory-only answers, or "probably current" claims
+- bespoke domain reports that need a different skill or custom workflow even if they contain research
 
 When an explicit request is out of scope, say so and recommend the right next action instead of completing it as a research brief:
 
@@ -73,7 +75,7 @@ Quote sparingly. Prefer paraphrase plus citation unless exact wording matters.
 
 ## Subagent Workstreams
 
-Use researcher subagents when research is supporting another active workflow. If the conversation is only a research task and `$research` is the current context, the main session can do the research directly. If the main session is implementing a feature, writing a plan, debugging, reviewing code, or otherwise needs research to decide how to proceed, delegate that research lane to `researcher` so the main session can keep ownership of the primary task.
+Use researcher subagents when the user asks for `researcher` subagents or when research is supporting another active workflow. If the conversation is only a research task and `$research` is the current context, the main session can do the research directly unless the user asked for subagents. If the main session is implementing a feature, writing a plan, debugging, reviewing code, or otherwise needs research to decide how to proceed, delegate that research lane to `researcher` so the main session can keep ownership of the primary task.
 
 For standalone `heavy` research, use researcher subagents when independent lanes would improve coverage or reduce latency. Good splits are by source class, subquestion, geography, timeframe, product, competitor, or claim family.
 

@@ -164,6 +164,7 @@ For read-only reviews, lead with findings ordered by severity and include exact 
 - Do not claim a standard exists when only local convention or best practice exists.
 - For `DESIGN.md`, the token YAML frontmatter is normative; the prose is contextual.
 - For PRDs, use the concise template by default. Promote only for canonical feature/domain docs or explicit full/detailed PRDs.
+- For PRDs, include user stories whose acceptance criteria are agent-verifiable: each story needs one user outcome and concrete evidence that would let Codex know the story is done.
 - For PRDs, separate product decisions from implementation tactics. If implementation detail dominates, route to an ExecPlan or project spec instead.
 - For project specs, use normative language for requirements and label implementation-defined behavior instead of hiding choices in prose.
 - For ADRs or decision records, prefer existing repo convention; if none exists, `docs/ADRs/<number>-<slug>.md` is the default new path.

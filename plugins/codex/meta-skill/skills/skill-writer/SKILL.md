@@ -30,7 +30,6 @@ Read only what the task needs:
 | Need | Read |
 |---|---|
 | Decide what a skill is, whether the idea is skill-shaped, and what artifact should be created if it is not a skill | [skill-shape.md](references/skill-shape.md) |
-| Complete the interview answer-set from context, ask only unresolved decisions, and draft the outline into `SKILL.md` | [interview.md](references/interview.md) |
 | Distill source packs, example input/output pairs, transcripts plus notes, or prior artifacts into reusable skill rules | [source-distillation.md](references/source-distillation.md) |
 | Decide whether the workflow should become a skill; classify the skill type; write the trigger contract, frontmatter, runtime body, instruction strength, setup/state, future measurement handoff, evidence boundaries, and voice | [design.md](references/design.md) |
 | Capture an active or prior Codex thread/session into a durable skill | [session-capture.md](references/session-capture.md) |
@@ -58,9 +57,49 @@ artifacts, or other source-derived skill requests, read
 When the request is still an idea rather than a settled skill, read
 [skill-shape.md](references/skill-shape.md) before drafting.
 
-Use [interview.md](references/interview.md) to complete the required answer-set
-before scaffolding. Fill every answer from context first. Ask only unresolved
-decisions, using tight multiple-choice defaults when a question is needed.
+Complete this answer-set before scaffolding. Answers may come from the
+conversation, a captured session, source material, comparable skills, repo
+conventions, or a question:
+
+| Field | Required answer |
+|---|---|
+| Job | The one recurring job the skill does, not what happened once. |
+| Trigger | Real user language that should fire the skill, plus the nearest `not for` boundary. |
+| Inputs and output | What the skill consumes and the expected output shape or artifact. |
+| Invariants and failure shields | What the skill should preserve, prevent, or flag; include common mistakes and user corrections. |
+| Fragility | Whether the work is judgment prose, fixed-shape output, script-backed, or a strict sequence. |
+| Gates | Approvals required before external writes, destructive actions, publishing, sending, install/sync, or final client-facing delivery. |
+| Project mode | Portable-only, or project mode with `.meta-skill/` docs, research, fixtures, package artifacts, and team reuse material. |
+
+Fill every answer from context first. Resolve answers before asking by mining
+the current conversation, provided files, source packs, user corrections,
+session-capture output, comparable skills, and the skill type in
+[design.md](references/design.md). Ask only for decisions that change routing,
+runtime behavior, resources, approval gates, or project mode.
+
+When a question is needed, ask in one screen with numbered questions, lettered
+options, a recommended default, and a `defaults` fast path:
+
+```md
+Skill outline - a couple of quick decisions before I scaffold.
+
+1. When should it trigger?
+a) <real user phrasing inferred from context> (recommended)
+b) <broader alternative>
+c) Not sure - use default
+
+2. Set up a workbench?
+a) Portable-only, no workbench (recommended)
+b) Project mode with `.meta-skill/` authoring docs, research, fixtures, and package output
+c) Not sure - use default
+
+Reply with: `defaults`, or a compact answer like `1a 2b`.
+```
+
+Always recommend an answer. Do not ask open-ended questions when tight choices
+would resolve the ambiguity faster. If a required answer is thin but not
+blocking, record the best defensible default and mark the uncertainty in
+`Still open`.
 
 Reflect the settled shape as a compact **Draft Skill Outline** before editing.
 When scaffolding a new skill, put this outline in `SKILL.md` itself, then
@@ -81,6 +120,11 @@ Draft Skill Outline
 Before scaffolding, pressure-check the trigger by naming one should-trigger
 prompt, one should-not-trigger prompt, and the nearest near miss. Use
 [design.md](references/design.md) for trigger-contract quality.
+
+The interview self-bypasses when context is complete, the user says "just build
+it" or "no questions," or the idea is not skill-shaped. Skipping changes the
+clarification budget, not the quality budget: the draft outline still needs a
+real job sentence, trigger contract, and output shape before runtime drafting.
 
 ### 2. Design
 

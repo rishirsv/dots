@@ -21,7 +21,7 @@ Run the checks that match the change. Do not claim validation that was not perfo
 | ARCHITECTURE | module map paths, dependency rules, diagrams, ADR/RFC links, verification commands |
 | ADR / decision record | decision statement, context, considered options, consequences, owner path, links to affected docs/code |
 | DESIGN | YAML validity, token references, duplicate headings, contrast claims, source evidence for tokens |
-| PRD | correct depth selected, user/job clarity, in/out scope, acceptance criteria, essential implementation notes, open questions |
+| PRD | correct depth selected, user/job clarity, in/out scope, user stories with agent-verifiable acceptance criteria, essential implementation notes, open questions |
 | Canonical feature/domain doc | simple version, scope, surfaces, how-it-works walkthrough, ownership boundaries, data/state truth, diagrams if helpful, acceptance, verification |
 | ExecPlan | self-containment, living sections, repo-relative paths, concrete commands, expected outputs, validation, recovery |
 | Project spec | normative language, goals/non-goals, domain model, lifecycle/state machine, interfaces, observability, recovery, implementation-defined behavior |

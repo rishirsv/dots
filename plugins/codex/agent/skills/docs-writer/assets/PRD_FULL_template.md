@@ -55,11 +55,29 @@ Add diagrams only when they clarify a flow, state machine, surface map, or owner
 - <Inputs, outputs, persisted state, derived state, or deletion behavior>
 - <Privacy, retention, visibility, or audit requirement>
 
-## Acceptance Criteria
+## User Stories
+
+### Story 1: <Outcome>
+
+As a <user or role>, I want <capability or behavior> so that <user-visible outcome>.
+
+Acceptance criteria:
 
 - Given <state>, when <user action>, then <observable result>.
-- Given <edge case>, when <user action/system event>, then <expected result>.
-- The feature is acceptable only when <test, metric, or operator-visible signal>.
+- Given <edge case>, when <user action or system event>, then <expected result>.
+- Done when <artifact, UI state, data state, command, metric, or review evidence proves completion>.
+
+### Story 2: <Outcome>
+
+As a <user or role>, I want <capability or behavior> so that <user-visible outcome>.
+
+Acceptance criteria:
+
+- Given <state>, when <user action>, then <observable result>.
+- Given <failure, permission, empty, or recovery state>, when <action or event>, then <expected result>.
+- Done when <verifiable stopping condition>.
+
+Add more stories only when each one has its own user outcome and agent-verifiable acceptance criteria.
 
 ## Implementation Notes
 

@@ -15,7 +15,8 @@ Do not send when the prompt exists only as an attached file.
 ## Algorithm
 
 1. Build the Assist package on the Desktop.
-2. Inspect `manifest.json` for selected files, skipped files, total size, and
+2. Inspect `prompt.md`, the `context.zip` file list, `diff.patch`, and the
+   package script output for selected files, skipped files, total size, and
    sensitive-looking paths.
 3. Open ChatGPT in the browser route the user approved.
 4. Confirm the requested model or mode is available enough for the task.
