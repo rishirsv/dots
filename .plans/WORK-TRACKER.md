@@ -71,6 +71,11 @@ Accepted constraints:
 
 Next task: execute `.plans/meta-skill/baseline-impact-comparison.md`.
 
+Before starting, read `.plans/meta-skill/anthropic-eval-flow-alignment.md`.
+It compares Anthropic's skill-creator eval loop with Meta Skill and keeps the
+next implementation aligned to baseline/current/candidate impact without adding
+parallelism, an HTML viewer, or split terminology.
+
 Why next: the methodology pass is now done and uses the simple vocabulary we
 want: baseline, current skill, and candidate. The code already represents edited
 candidates as `candidates` backed by git refs, branches, or worktrees, but it
