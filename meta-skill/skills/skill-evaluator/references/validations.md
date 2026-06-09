@@ -21,6 +21,16 @@ General checks already exist and apply to any skill: skill body present, valid
 front matter, length bounds, and deprecated-surface avoidance. Do not re-author
 them per target.
 
+## Deterministic First
+
+Prefer a deterministic validator over a judge dimension wherever the check can
+be made exact: required strings, file presence, schema shape, exit codes,
+event-log assertions. Judges are for semantic quality a script cannot decide.
+
+When authoring a rubric, each judged criterion should state why it cannot be
+deterministic. If no reason survives writing it down, move the check into
+`validate.*`.
+
 Case-local validators check behavior unique to one case. They live beside the
 case as `validate.*`, but they are hidden from the solver. They run after solver
 output exists.

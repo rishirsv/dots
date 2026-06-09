@@ -27,7 +27,7 @@ Answer these about the target, then turn the answers into dimensions:
 ## Map Answers To The Workbench
 
 - **Suite metadata** goes in `.meta-skill/evals.json`: target, defaults, runner
-  plan, splits, candidates, case IDs, and repetitions.
+  plan, candidates, case IDs, and repetitions.
 - **Visible task content** goes in `cases/<case-id>/task.md`. It contains only
   bytes the solver may see.
 - **Judged criteria** go in `cases/<case-id>/rubric.md`.

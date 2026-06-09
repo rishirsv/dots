@@ -10,8 +10,10 @@ judge: label a small slice, confirm the judge agrees, then let the judge scale.
 1. **Anchor the rubric.** Put discrete level descriptions in
    `cases/<case-id>/rubric.md`. Ambiguous criteria are the main cause of an
    unreliable judge.
-2. **Select a gold slice.** Mark calibration cases in `evals.json` with a split
-   such as `gold`, or select an explicit set before the run.
+2. **Select a spot-check slice.** Pick a small set of representative trial
+   outputs before trusting the judge for a decision. For small skill suites, a
+   few human-labeled examples are usually enough to reveal obvious rubric or
+   judge defects.
 3. **Collect human grades.** Store human labels as `grades.jsonl` rows over trial
    outputs. Do not put human labels in `task.md`, and do not hide them as front
    matter in case files.
@@ -20,8 +22,9 @@ judge: label a small slice, confirm the judge agrees, then let the judge scale.
    weighted kappa or correlation only when statistical rigor is needed.
 5. **Refine on disagreement.** Every material judge/human disagreement is a
    rubric or judge-prompt defect. Tighten `rubric.md`, then rerun the judge.
-6. **Scale and re-audit.** The calibrated judge grades the full set; relabel a
-   fresh slice occasionally to catch drift.
+6. **Scale carefully.** Let the judge grade the rest only after disagreements
+   look explainable and fixable. Recheck a small slice after any rubric or
+   judge-model change — prior agreement does not transfer.
 
 ## Grade Rows
 
@@ -50,8 +53,12 @@ Use `candidate`, not `candidate_id`. Use `trial_id`, not `attempt_id`.
 ## Surfacing Divergence
 
 Flag every case where `|human - judge| >= 1` for review, and propose the rubric
-or anchor change that would close it. A few well-chosen gold cases beat labeling
-everything.
+or anchor change that would close it. A few well-chosen spot checks beat
+labeling everything.
+
+Do not turn calibration into a separate label system. If a decision depends on
+judge scores, say whether a human spot check was done and summarize any
+disagreements in plain language.
 
 ## Judge Bias Controls
 

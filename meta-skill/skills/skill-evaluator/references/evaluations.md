@@ -26,15 +26,15 @@ Use a manifest plus materialized case folders:
 ```
 
 `evals.json` is authoritative for metadata: target, defaults, runner plan,
-splits, repetitions, candidate selection, and materialization intent.
+repetitions, candidate selection, and materialization intent.
 
 Case folders are authoritative for authored content after materialization:
 visible task bytes, fixtures, rubric content, expected outputs, and validator
 code.
 
 `task.md` contains only bytes the solver may see. Do not put YAML front matter,
-split names, expected output, rubric text, validator hints, grader notes, target
-metadata, or harness instructions in `task.md`.
+expected output, rubric text, validator hints, grader notes, target metadata, or
+harness instructions in `task.md`.
 
 ## Minimal `evals.json`
 
@@ -59,7 +59,7 @@ One manifest per target, in `<project>/.meta-skill/evals.json`:
     },
     {
       "candidate": "attempt-1",
-      "display": "Attempt 1",
+      "display": "Candidate 1",
       "source": { "kind": "branch", "ref": "meta-skill/client-email/attempt-1" }
     }
   ],
@@ -67,7 +67,6 @@ One manifest per target, in `<project>/.meta-skill/evals.json`:
     {
       "id": "natural-trigger",
       "type": "trigger",
-      "split": "dev",
       "repetitions": 5,
       "task": {
         "path": "task.md",
@@ -146,13 +145,28 @@ against the request, format/structure, and adherence to the skill's stated
 guarantees. Adjust per target; a non-skill target derives dimensions from
 [generalist.md](generalist.md).
 
+## Coverage Statement
+
+Close every suite report with a coverage statement; a green suite without one
+overclaims. State:
+
+- cases by type — for example 3 quality / 2 trigger / 1 gate
+- which behaviors of the target the cases actually exercised
+- known behaviors not yet tested, and why
+
+Keep it to a few bullets. Baseline, skill, and candidate comparison guidance lives
+in [methodology.md](methodology.md).
+
 ## Candidates And Trials
 
 Use `candidate` for the thing under test:
 
 ```json
-{ "candidate": "attempt-1", "display": "Attempt 1" }
+{ "candidate": "attempt-1", "display": "Candidate 1" }
 ```
+
+Use **candidate** in user-facing prose and in manifest fields. Do not add a
+separate edited-skill term.
 
 Use `trial_id` for one execution of one case under one candidate:
 
@@ -165,6 +179,19 @@ Do not use `attempt_id` internally. "Attempt 1" is display text for a candidate.
 Candidate source lives in git branches and worktrees. Run evidence records the
 branch, commit, worktree path when active, and `payload_digest`. The digest is
 computed from the staged `skill/` payload tree, not from the commit.
+
+A no-skill baseline is the next planned candidate source:
+
+```json
+{
+  "candidate": "baseline",
+  "display": "Baseline",
+  "source": { "kind": "none" }
+}
+```
+
+Until `source.kind: "none"` lands in code, baseline comparison is conceptual or
+manual. Do not fake a no-skill baseline by staging a different skill payload.
 
 `runs/<run-id>/candidates/<candidate>/` stores output artifacts only. Never store
 source copies there.

@@ -1,13 +1,14 @@
 ---
 name: skill-evaluator
-description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to quantify triggering, quality, candidate performance, and variance. Specializes in agent skills and generalizes through a rubric builder. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, reproducing one failure, or generating candidates autonomously."
+description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to compare a baseline, the current skill, and edited candidates. Specializes in agent skills and generalizes through a rubric builder. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, reproducing one failure, or generating candidates autonomously."
 ---
 
 # Skill Evaluator
 
 Author an **evaluation suite** for a target and run the parts that can be
-mechanized. The evaluator measures selected candidates; it does not fix the
-target and does not generate new candidate improvements.
+mechanized. The evaluator compares a baseline, the current skill, and selected
+edited candidates; it does not fix the target and does not generate new
+candidate improvements.
 
 The suite has two pillars:
 
@@ -18,8 +19,8 @@ Master a universal eval craft: anything can be evaluated. This skill
 **specializes in agent skills** with built-in defaults and **generalizes to any
 artifact** by building a rubric from the artifact's job.
 
-**Measure, don't fix.** Report metrics, failed cases, and gated outcomes; hand
-fixes to `skill-doctor`. Future autonomous candidate generation belongs to
+**Measure, don't fix.** Report comparisons, failed cases, and coverage limits;
+hand fixes to `skill-doctor`. Future autonomous candidate generation belongs to
 `skill-autoresearch`.
 
 ## Route By Target
@@ -62,14 +63,14 @@ namespace.
 Authority is split cleanly:
 
 - `evals.json` owns all metadata: suite membership, defaults, runner plan,
-  splits, candidate selection, repetition counts, and materialization intent.
+  candidate selection, repetition counts, and materialization intent.
 - Case folders own authored content: `task.md`, fixtures, rubric content,
   expected outputs, and validator code.
 - `runs/<run-id>/` owns what actually ran.
 
 `task.md` contains only visible solver bytes. Never put front matter, hidden
-rubrics, expected outputs, validator hints, split names, grader notes, or harness
-metadata in `task.md`.
+rubrics, expected outputs, validator hints, grader notes, or harness metadata in
+`task.md`.
 
 ## Reference Map
 
@@ -77,6 +78,7 @@ Read only what the task needs:
 
 | Need | Read |
 |---|---|
+| Choose the smallest eval loop, compare baseline/skill/candidate, or skip a suite | [references/methodology.md](references/methodology.md) |
 | Author `evals.json`, materialize `task.md` cases, and keep hidden files out of the solver workspace | [references/evaluations.md](references/evaluations.md) |
 | Calibrate the judge against human grades | [references/calibration.md](references/calibration.md) |
 | Author deterministic validations and case-local `validate.*` checks | [references/validations.md](references/validations.md) |
@@ -103,12 +105,16 @@ Read only what the task needs:
 Name the target and its job, then pick the route: skill defaults or generalist
 rubric builder. For a skill, state whether triggering is in scope.
 
+Before authoring, check "When Not To Evaluate" in
+[references/methodology.md](references/methodology.md); a one-off fix, an
+unstable draft, or a purely deterministic question does not need a suite.
+
 ### 2. Author The Suite Manifest
 
 Write or update `.meta-skill/evals.json` — see
 [references/evaluations.md](references/evaluations.md). Keep metadata minimal:
-target, defaults, cases, splits, repetition counts, runner intent, candidate
-selection, and materialization intent.
+target, defaults, cases, repetition counts, runner intent, candidate selection,
+and materialization intent.
 
 Do not put hidden metadata in `task.md`. Do not create another metadata file in
 case folders.
@@ -128,7 +134,7 @@ only when a case needs exact, deterministic checks.
 ### 5. Calibrate
 
 Before trusting a judge at scale, compare judge grades with human grades on a
-small gold slice — see [references/calibration.md](references/calibration.md).
+small spot-check slice — see [references/calibration.md](references/calibration.md).
 Refine the rubric on disagreement.
 
 ### 6. Run And Report
@@ -163,8 +169,8 @@ run files. The report separates runner completion from behavioral grades and
 lists failed, ungraded, and missing-evidence trials. Use `eval list` to find
 earlier runs in the same workbench.
 
-Report per-case results, grades, aggregate performance, failed cases, and gates.
-Hand fixes to `skill-doctor`.
+Report per-case results, grades, aggregate performance, failed cases, and the
+baseline/skill/candidate comparison. Hand fixes to `skill-doctor`.
 
 ## Output
 
@@ -174,7 +180,7 @@ Close with:
 - what metadata and cases were authored
 - what candidates and cases were run
 - what was skipped
-- headline metrics and gated outcome
+- headline metrics and comparison outcome
 - failed cases handed to `skill-doctor`
 - coverage limits
 

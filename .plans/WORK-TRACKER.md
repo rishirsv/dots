@@ -30,9 +30,10 @@ current incremental roadmap until the tracker is explicitly revised again.
 
 Core conclusion: the App Server/Python runner foundation is healthy enough; the
 next cycle should consolidate the evidence loop instead of building a broader
-platform. Prioritize shipped-language hygiene, readable eval reporting,
-baseline-vs-candidate impact, evaluator methodology, dogfood suites, readiness
-gates, and only then a guidance-only `skill-autoresearch` lane.
+platform. Keep the evaluator model simple: baseline, current skill, and edited
+candidate. Prioritize shipped-language hygiene, readable eval reporting,
+baseline/current/candidate impact, dogfood suites, readiness gates, and only
+then a guidance-only `skill-autoresearch` lane.
 
 Accepted constraints:
 
@@ -44,8 +45,8 @@ Accepted constraints:
 - Prefer Markdown/JSON reports and deterministic fixtures before UI.
 - Review, eval, and autoresearch may recommend; mutation requires explicit
   human approval.
-- Generated evals and model grades are scaffolding/evidence, not proof unless
-  calibrated or validated.
+- Generated evals and model grades are evidence, but baseline comparison,
+  deterministic validators, or human review should support important decisions.
 - Human grade rows in `grades.jsonl` must not be overwritten by re-grading.
 - Maintainer docs under `meta-skill/.meta-skill/docs/` must be reconciled or
   deleted when superseded.
@@ -59,8 +60,8 @@ Accepted constraints:
 |---|---|---|
 | 1 | `.plans/meta-skill/lane-hygiene-pass.md` | Fix shipped draft markers, TODOs, stale `context.md`, CLI doc drift, runner naming confusion, and unused grader defaults. |
 | 2 | `.plans/meta-skill/eval-report-command.md` | Merge "eval viewing" and "lifecycle report" into read-only `eval list` / `eval report`. |
-| 3 | `.plans/meta-skill/evaluator-methodology-references.md` | Add evaluation methodology: splits, variance, taxonomy, scaffold-vs-proof, baseline thinking, uncertainty, and when not to evaluate. |
-| 4 | `.plans/meta-skill/baseline-impact-comparison.md` | Add a no-skill baseline candidate and per-case impact categories. |
+| 3 | `.plans/meta-skill/evaluator-methodology-references.md` | Add simple evaluation methodology: baseline, current skill, candidate, deterministic-first checks, human spot checks, and when not to evaluate. |
+| 4 | `.plans/meta-skill/baseline-impact-comparison.md` | Add a no-skill baseline candidate and per-case baseline/current/candidate impact categories. |
 | 5 | `.plans/meta-skill/seed-lane-evals.md` | Add router and writer dogfood cases for routing and interview behavior. |
 | 6 | `.plans/meta-skill/eval-generate-draft-scaffolds.md` | Add deterministic, labeled starter eval generation. |
 | 7 | `.plans/meta-skill/package-readiness-check.md` | Add local package/readiness gates over existing evidence. |
@@ -68,38 +69,43 @@ Accepted constraints:
 
 ### Next Task Scope
 
-Next task: execute `.plans/meta-skill/evaluator-methodology-references.md`.
+Next task: execute `.plans/meta-skill/baseline-impact-comparison.md`.
 
-Why next: `eval list` / `eval report` now makes run evidence readable, but the
-evaluator payload still lacks the methodology language that tells future agents
-how to trust, split, repeat, label, and report that evidence. Baseline impact
-comparison should come after this docs-only methodology pass so the baseline
-feature can reuse settled terms such as `dev`, `held-out`, `gold`,
-`gated best`, scaffold-vs-proof, and model-grade uncertainty.
+Why next: the methodology pass is now done and uses the simple vocabulary we
+want: baseline, current skill, and candidate. The code already represents edited
+candidates as `candidates` backed by git refs, branches, or worktrees, but it
+does not yet have a true no-skill baseline. A `none` candidate source plus
+per-case impact categories in `eval report` turns run evidence into skill-lift
+measurement, the backbone `skill-autoresearch` later uses without adding a
+broader platform.
 
 Scope:
 
-- Add `meta-skill/skills/skill-evaluator/references/methodology.md`.
-- Tighten `calibration.md`, `validations.md`, and `evaluations.md`.
-- Add only a small pointer row/check to `skill-evaluator/SKILL.md`; keep the
-  skill body skinny.
-- Keep the work docs-only. No CLI, runner, grader, manifest, or report code
-  changes.
-- Align failure taxonomy language with `skill-doctor` so failed eval cases can
-  hand off cleanly.
+- Support `{"source": {"kind": "none"}}` baseline candidates in the manifest,
+  `resolve_candidate`, and staging (no `skill/` payload, null digest).
+- Add the Impact section to `eval report` with per-case categories:
+  `candidate_improves`, `candidate_regresses`, `both_fail`,
+  `baseline_already_succeeds`, `needs_human_review`.
+- Never pool token usage or scores across candidates.
+- Document baseline, current skill, and candidates in `evaluations.md` and
+  `cli.md`.
 
 Validation:
 
-- `scripts/meta-skill validate meta-skill/skills/skill-evaluator`
-- `grep -n "methodology.md" meta-skill/skills/skill-evaluator/SKILL.md`
+- `python3 meta-skill/src/characterize_meta_skill.py`
+- Fixture run with `baseline` + `current` + one candidate exercising every impact
+  category
 - `scripts/sync-plugins.sh`
 
-Stop rule: if a methodology concept needs new tooling to be actionable, name
-the future plan item and stop. Do not add speculative workflow prose or code in
-this task.
+Stop rule: if chat-only cases cannot be classified because grading lacks a
+response-scoring path, mark them `needs_human_review` and file a tracker item.
+Do not extend the judge in that plan.
 
 ### Tracker Reconciliation
 
+- Treat `.plans/meta-skill/evaluator-methodology-references.md` as completed:
+  the evaluator now uses baseline/current/candidate vocabulary and avoids split
+  systems or calibration labels for ordinary skill work.
 - Merge "Upgrade Eval Viewing" and "Polish The Skill Lifecycle Report" into
   `eval-report-command.md`; they are one renderer over the same run evidence.
 - Promote the hygiene/doc-drift pass; it was missing from the tracker and
@@ -168,7 +174,7 @@ scenarios, readable eval views, and package/readiness gates.
 
 ### Upgrade Eval Viewing Before Adding More Eval Modes
 
-- Status: Shipped as read-only `eval list` / `eval report`
+- Shipped as read-only `eval list` / `eval report`
   (`meta-skill/src/meta_skill/report.py`) per
   `.plans/meta-skill/eval-report-command.md`. Winner/next-action framing and
   impact categories land with `baseline-impact-comparison.md`.
@@ -180,12 +186,12 @@ scenarios, readable eval views, and package/readiness gates.
 - Finding: Meta Skill has suite manifests, materialized cases, run files,
   progress, final outputs, App Server events, token usage, and grades, but no
   first-class eval viewer. Users still need manual file drilling.
-- Suggested improvement: Add `meta-skill eval list <project>` and `meta-skill eval view <project> [--run <id>|--last] [--json]`. Show run status, eval status, missing checks, execution errors, final answer previews, turn-evidence links, token totals/availability, tests, review artifacts, human decisions, and manual-review flags.
+- Suggested improvement: Add `meta-skill eval list <project>` and `meta-skill eval view <project> [--run <id>|--last] [--json]`. Show run execution state, missing checks, execution errors, final answer previews, turn-evidence links, token totals/availability, tests, review artifacts, human decisions, and manual-review flags.
 - Verification: Add fixture runs for clean, failed, no-verdict, missing-check, token-unavailable, and turn-evidence-rich evals. Verify Markdown/JSON output remains deterministic.
 
 ### Polish The Skill Lifecycle Report
 
-- Status: Rendering half shipped via `eval report` (runner completion split
+- Rendering half shipped via `eval report` (runner completion separated
   from behavioral grades, evidence pointers, needs-attention list). The
   winner/recommended-next-action half stays with
   `.plans/meta-skill/baseline-impact-comparison.md`.
@@ -193,8 +199,8 @@ scenarios, readable eval views, and package/readiness gates.
 - Evidence: The isolated App Server runner dogfood proved the end-to-end loop, but the useful story was spread across review files, run directories, grade JSON, judge traces, and a hand-authored E2E report.
 - Where: `meta-skill/src/meta_skill/runner.py`, `meta-skill/src/meta_skill/grading.py`, `meta-skill/src/meta_skill/workbench.py`, future lifecycle report rendering, and `.meta-skill/report.md`.
 - Finding: The workflow can now create, review, run, grade, revise, and compare skills, but the user experience still feels like a harness. Review scores, runner completion, rubric grades, validator results, feedback, and candidate comparison are separate artifacts with overlapping score language.
-- Suggested improvement: Add a first-class lifecycle report that leads with the human decision: which candidate won, what failed, what improved, and what to do next. Keep raw artifacts linked, but separate runner completion from behavioral grades, connect failed evals back to review findings, standardize feedback paths, normalize temp paths, and make baseline-vs-revised comparison a table instead of a manual JSON read.
-- Verification: Use the quick exact-token and hefty release-note dogfood fixtures to assert deterministic Markdown/JSON report output, distinct status labels, linked review/eval evidence, and a clear winner/recommended-next-action section.
+- Suggested improvement: Add a first-class lifecycle report that leads with the human decision: which candidate won, what failed, what improved, and what to do next. Keep raw artifacts linked, but separate runner completion from behavioral grades, connect failed evals back to review findings, standardize feedback paths, normalize temp paths, and make baseline-vs-candidate comparison a table instead of a manual JSON read.
+- Verification: Use the quick exact-token and hefty release-note dogfood fixtures to assert deterministic Markdown/JSON report output, distinct runner-completion and behavior-grade fields, linked review/eval evidence, and a clear winner/recommended-next-action section.
 
 ### Make Baseline-Vs-Candidate Impact First-Class
 
@@ -206,13 +212,13 @@ scenarios, readable eval views, and package/readiness gates.
   `meta-skill/src/meta_skill/grading.py`, run artifacts, eval-view rendering,
   and `meta-skill/skills/skill-evaluator/`.
 - Finding: Candidate-scoped runs exist, but users still do manual score
-  comparison across candidates and no-skill or prior-skill baselines.
-- Suggested improvement: Add a future `scripts/meta-skill eval compare --run <id>`
-  or `eval run --compare baseline`. Store baseline and candidate evidence per
-  eval, never pool token usage, and report evals as candidate improves,
-  candidate regresses, both fail, baseline already succeeds, or requires human
-  review.
-- Verification: Add fake-runner tests for baseline/candidate eval execution, source-specific evidence, unavailable source evidence, no pooled tokens, and report status categories.
+  comparison across the no-skill baseline, current skill, and edited candidates.
+- Suggested improvement: Add `source.kind: "none"` for a no-skill baseline and
+  render an Impact section in `eval report`. Store baseline, current-skill, and
+  candidate evidence per eval, never pool token usage, and report evals as
+  candidate improves, candidate regresses, both fail, baseline already succeeds,
+  or requires human review.
+- Verification: Add fake-runner tests for baseline/current/candidate eval execution, source-specific evidence, unavailable source evidence, no pooled tokens, and impact categories.
 
 ### Generate Draft Starter Evals
 
@@ -239,7 +245,7 @@ scenarios, readable eval views, and package/readiness gates.
 ### Add Publish / Package Readiness Gates Instead Of A Registry
 
 - Recommendation: Worth exploring.
-- Evidence: External publish paths bundle skills, run automatic review/evaluation, version the package, and surface registry quality. Meta Skill should not become a registry, but it can provide local readiness gates.
+- Evidence: External publish paths bundle skills, run automatic review/evaluation, revise the package, and surface registry quality. Meta Skill should not become a registry, but it can provide local readiness gates.
 - Where: `meta-skill/src/meta_skill/packaging.py`,
   `meta-skill/src/meta_skill/validation.py`, future review/eval summaries, and
   package docs.
@@ -250,7 +256,7 @@ scenarios, readable eval views, and package/readiness gates.
 ### Add Skill Inventory, Staleness, And Security-Lite Later
 
 - Recommendation: Later.
-- Evidence: Registry and related skill-insights surfaces show quality, impact, security/advisory, files, versioning, staleness, and duplicate/registry-search signals across skill sets.
+- Evidence: Registry and related skill-insights surfaces show quality, impact, security/advisory, files, release history, staleness, and duplicate/registry-search signals across skill sets.
 - Where: future inventory command over local skill roots, package metadata, git history, lint/review summaries, and resource link validation.
 - Finding: Once individual skill review/eval loops work, a multi-skill owner needs to know which skills are stale, duplicate, low quality, broken, or missing evidence.
 - Suggested improvement: Add `meta-skill inventory <root>` and `meta-skill stale <root>` later. Start deterministic: git last touched, broken runtime links, missing review/eval evidence, package metadata, duplicate trigger risk, and security-lite warnings for risky scripts or external-action gates.
@@ -263,6 +269,14 @@ scenarios, readable eval views, and package/readiness gates.
 - The supported command surface is `doctor`, `workbench init`,
   `eval materialize`, `eval run`, `eval progress`, `eval grade`, `eval list`,
   `eval report`, `validate`, and `package`.
+- `skill-evaluator` ships the evaluation methodology layer
+  (`references/methodology.md` plus tightened calibration, validations, and
+  evaluations references): baseline/current/candidate vocabulary, current
+  candidate-backed comparison handling, repetitions only when needed,
+  deterministic-first validator ordering, human spot checks for important judge
+  decisions, coverage statements, and when-not-to-evaluate. True no-skill
+  baseline support and impact reporting are deliberately deferred to
+  `baseline-impact-comparison.md`.
 - `eval list` and `eval report` render deterministic Markdown/JSON run
   summaries from existing run files (read-only), separating runner completion
   from behavioral grades and flagging failed, ungraded, invalid-grader-JSON,
