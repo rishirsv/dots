@@ -1,41 +1,66 @@
 # Calibration
 
-Read when a human will calibrate the judge — the standard way to make
-judge-graded evaluation trustworthy.
+Read when a human will calibrate the judge.
 
 Human grading is not a parallel scoring track. Its job is to calibrate the LLM
-judge: label a little, confirm the judge agrees, then let the judge scale.
+judge: label a small slice, confirm the judge agrees, then let the judge scale.
 
 ## The Loop
 
-1. **Anchor the rubric.** Give each dimension discrete level descriptions (see
-   [evaluations.md](evaluations.md)). Ambiguous criteria are the main cause of an
+1. **Anchor the rubric.** Put discrete level descriptions in
+   `cases/<case-id>/rubric.md`. Ambiguous criteria are the main cause of an
    unreliable judge.
-2. **Label a gold subset.** A human scores a handful of cases with a one-line
-   rationale, stored as `gold` on those `evals.json` cases. This is ground truth,
-   not coverage.
-3. **Check agreement.** Run the judge over the gold subset and compare. Practical
-   signal: exact-match rate plus a ±1 tolerance band. Reach for weighted kappa or
-   correlation only when you want statistical rigor.
-4. **Refine on disagreement.** Every case where judge ≠ human is a defect in the
-   rubric or judge prompt — tighten the anchor, or add a gold case as a few-shot
-   exemplar, then re-run. Loop until agreement clears your threshold.
-5. **Scale and re-audit.** The calibrated judge grades the full set; relabel a
+2. **Select a gold slice.** Mark calibration cases in `evals.json` with a split
+   such as `gold`, or select an explicit set before the run.
+3. **Collect human grades.** Store human labels as `grades.jsonl` rows over trial
+   outputs. Do not put human labels in `task.md`, and do not hide them as front
+   matter in case files.
+4. **Check agreement.** Run the judge on the same trial outputs and compare.
+   Practical signal: exact-match rate plus a +/-1 tolerance band. Reach for
+   weighted kappa or correlation only when statistical rigor is needed.
+5. **Refine on disagreement.** Every material judge/human disagreement is a
+   rubric or judge-prompt defect. Tighten `rubric.md`, then rerun the judge.
+6. **Scale and re-audit.** The calibrated judge grades the full set; relabel a
    fresh slice occasionally to catch drift.
+
+## Grade Rows
+
+Human, model, and code grades share one annotation shape:
+
+```json
+{
+  "run_id": "run-001",
+  "case_id": "natural-trigger",
+  "candidate": "attempt-1",
+  "trial_id": "natural-trigger.attempt-1.t3",
+  "grader": {
+    "kind": "human",
+    "id": "rishi"
+  },
+  "metric": "usefulness",
+  "score": 2,
+  "label": "partial",
+  "rationale": "The answer is usable but misses the approval boundary.",
+  "evidence_refs": ["results.jsonl#natural-trigger.attempt-1.t3"]
+}
+```
+
+Use `candidate`, not `candidate_id`. Use `trial_id`, not `attempt_id`.
 
 ## Surfacing Divergence
 
-Flag every case where `|gold − judge| ≥ 1` for review, and propose the rubric or
-anchor change that would close it. A few well-chosen gold cases beat labeling
+Flag every case where `|human - judge| >= 1` for review, and propose the rubric
+or anchor change that would close it. A few well-chosen gold cases beat labeling
 everything.
 
 ## Judge Bias Controls
 
-LLM judges drift in predictable ways — guard against them:
+LLM judges drift in predictable ways. Guard against them:
 
 - **Verbosity bias** — longer answers scored higher regardless of quality.
 - **Position / order bias** — in pairwise comparisons, randomize order.
 - **Self-preference** — a judge favoring outputs written in its own style.
 
-Reference-guided grading — give the judge the explicit criteria and, where
-possible, a reference answer — reduces all three.
+Reference-guided grading reduces all three. Give the judge the explicit rubric
+and, where possible, hidden expected output or reference material. These hidden
+files remain outside the solver workspace.

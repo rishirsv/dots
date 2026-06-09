@@ -1,35 +1,75 @@
 ---
 name: skill-evaluator
-description: "The measurement specialist within meta-skill: author and run an evaluation suite for a target — judge- or human-graded evaluations plus deterministic validations — to quantify triggering, quality, and variance. Specializes in agent skills with defaults, and generalizes to any artifact via a principled rubric builder. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for authoring a new skill (skill-writer) or reproducing one reported failure (skill-doctor)."
+description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to quantify triggering, quality, candidate performance, and variance. Specializes in agent skills and generalizes through a rubric builder. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, reproducing one failure, or generating candidates autonomously."
 ---
 
 # Skill Evaluator
 
 Author an **evaluation suite** for a target and run the parts that can be
-mechanized. The suite has two pillars — **evaluations** (semantic, judge- or
-human-graded) and **validations** (deterministic). The doctor scores one skill's
-static text and reproduces one case; the evaluator authors and measures many.
+mechanized. The evaluator measures selected candidates; it does not fix the
+target and does not generate new candidate improvements.
+
+The suite has two pillars:
+
+- **Evaluations** — semantic, judge- or human-graded cases.
+- **Validations** — deterministic pass/fail checks.
 
 Master a universal eval craft: anything can be evaluated. This skill
 **specializes in agent skills** with built-in defaults and **generalizes to any
 artifact** by building a rubric from the artifact's job.
 
-**Measure, don't fix.** Report metrics and failing cases; hand fixes to
-`skill-doctor`. Write only to the hidden workbench, never into a target's own repo.
+**Measure, don't fix.** Report metrics, failed cases, and gated outcomes; hand
+fixes to `skill-doctor`. Future autonomous candidate generation belongs to
+`skill-autoresearch`.
 
 ## Route By Target
 
 | Target | Use |
 |---|---|
-| An agent skill | Built-in defaults: output-quality dimensions + the shipped general checks. |
+| An agent skill | Built-in defaults: output-quality dimensions, triggering cases, and shipped general checks. |
 | Any other artifact | The generalist rubric builder — [references/generalist.md](references/generalist.md). |
 
-## The Two Pillars
+## Workbench
 
-| Pillar | What | Graded by | Home |
-|---|---|---|---|
-| **Evaluations** | Semantic quality + triggering, as cases | LLM judge (default) or human (calibration) | `evals.json` (workbench) |
-| **Validations** | Deterministic pass/fail checks | A runner, no judgment | shipped **scripts** + workbench **tests** |
+Artifacts live in the gitignored workbench at the target skill's project root:
+`<project>/.meta-skill/`. The project root already names the skill and contains
+the portable payload at `<project>/skill/`, so do not add another skill-name
+namespace.
+
+```text
+.meta-skill/
+  evals.json
+  cases/
+    <case-id>/
+      task.md
+      fixtures/
+      rubric.md
+      expected.*
+      validate.*
+  runs/
+    <run-id>/
+      run.json
+      progress.jsonl
+      events/
+        <trial-id>.jsonl
+      results.jsonl
+      grades.jsonl
+      candidates/
+        current/
+        attempt-1/
+```
+
+Authority is split cleanly:
+
+- `evals.json` owns all metadata: suite membership, defaults, runner plan,
+  splits, candidate selection, repetition counts, and materialization intent.
+- Case folders own authored content: `task.md`, fixtures, rubric content,
+  expected outputs, and validator code.
+- `runs/<run-id>/` owns what actually ran.
+
+`task.md` contains only visible solver bytes. Never put front matter, hidden
+rubrics, expected outputs, validator hints, split names, grader notes, or harness
+metadata in `task.md`.
 
 ## Reference Map
 
@@ -37,69 +77,98 @@ Read only what the task needs:
 
 | Need | Read |
 |---|---|
-| Author judge cases: `evals.json` schema, the two prompt styles, the anchored rubric | [references/evaluations.md](references/evaluations.md) |
-| Calibrate the judge against a human gold subset | [references/calibration.md](references/calibration.md) |
-| Author deterministic validations: general scripts vs skill-specific tests, the runner contract | [references/validations.md](references/validations.md) |
+| Author `evals.json`, materialize `task.md` cases, and keep hidden files out of the solver workspace | [references/evaluations.md](references/evaluations.md) |
+| Calibrate the judge against human grades | [references/calibration.md](references/calibration.md) |
+| Author deterministic validations and case-local `validate.*` checks | [references/validations.md](references/validations.md) |
 | Evaluate a target that is not an agent skill | [references/generalist.md](references/generalist.md) |
 
-## Workbench
+## Vocabulary
 
-Artifacts live in the gitignored workbench at the target skill's project root:
-`<project>/.meta-skill/` — `evals.json` and the skill-specific deterministic
-tests. The project root already names the skill and contains the portable skill
-payload at `<project>/skill/`, so do not add another skill-name namespace. These
-are scratch: never committed, never written into `meta-skill/` itself or the
-target's own repo.
+| Term | Meaning |
+|---|---|
+| **candidate** | The thing under test: `current`, `attempt-1`, `attempt-2`. Use the field name `candidate`, not `candidate_id`. |
+| **trial** | One execution of one case under one candidate. Repetitions create multiple trials. |
+| **case** | One task folder under `.meta-skill/cases/<case-id>/`. |
+| **run** | One eval batch over selected candidates and cases. |
+| **grade** | Code, model, or human judgment over a trial result. |
+
+"Attempt 1" is user-facing display text for a candidate. Do not use
+`attempt_id` internally; use `trial_id` for one execution.
 
 ## Workflow
 
 ### 1. Scope
 
-Name the target and its job, then pick the route (skill defaults vs generalist).
-For a skill, state the contract its output must satisfy and whether triggering is
-in scope.
+Name the target and its job, then pick the route: skill defaults or generalist
+rubric builder. For a skill, state whether triggering is in scope.
 
-### 2. Author Evaluations
+### 2. Author The Suite Manifest
 
-Write `evals.json` cases — see [references/evaluations.md](references/evaluations.md).
-Match the prompt style to the case type:
+Write or update `.meta-skill/evals.json` — see
+[references/evaluations.md](references/evaluations.md). Keep metadata minimal:
+target, defaults, cases, splits, repetition counts, runner intent, candidate
+selection, and materialization intent.
 
-- **Quality** cases name the skill (`Use the $skill …`) to measure output given
-  invocation.
-- **Triggering** cases use a natural request that never names the skill, run many
-  times to measure fire-rate and variance.
+Do not put hidden metadata in `task.md`. Do not create another metadata file in
+case folders.
 
-Give each judged dimension an anchored 0–3 scale.
+### 3. Materialize Case Folders
 
-### 3. Author Validations
+Create `.meta-skill/cases/<case-id>/task.md` and optional fixtures, rubric,
+expected output, and validator files. `task.md` is the prompt or task shown to
+the solver. Hidden files remain outside the solver workspace.
+
+### 4. Author Validations
 
 Author deterministic checks — see [references/validations.md](references/validations.md).
-General checks (body, frontmatter, length) already ship as scripts; add
-**skill-specific tests** in the workbench for behavior unique to this target.
+General checks already ship with the plugin. Add case-local `validate.*` files
+only when a case needs exact, deterministic checks.
 
-### 4. Calibrate
+### 5. Calibrate
 
-Before trusting the judge at scale, calibrate it against a small human-labeled
-`gold` subset — see [references/calibration.md](references/calibration.md).
-Refine the rubric on disagreements until agreement clears your threshold.
+Before trusting a judge at scale, compare judge grades with human grades on a
+small gold slice — see [references/calibration.md](references/calibration.md).
+Refine the rubric on disagreement.
 
-### 5. Run And Report
+### 6. Run And Report
 
-Run the mechanizable parts — deterministic tests, the judge over its cases, and
-triggering cases across many runs — then report per-dimension scores, pass-rates,
-fire-rate, and variance, with failing cases called out for `skill-doctor`.
+Run selected candidates against selected cases. Default to:
+
+- `codex_thread` with worktree isolation for one-off trials and doctor fixes
+- `codex_exec` for batch evals, A/B comparisons, and future autoresearch
+- `codex_app_server` only for future rich integration
+
+For `codex_exec`, store raw streams as `events/<trial-id>.jsonl`, derive compact
+status into `progress.jsonl`, and capture solver output with
+`--output-last-message`. Use `--output-schema` for judge or editor/control
+children, not for solver trials whose natural output is being graded.
+
+Report per-case results, grades, aggregate performance, failed cases, and gates.
+Hand fixes to `skill-doctor`.
 
 ## Output
 
-Close with the suite location, what was authored, what was run vs skipped, the
-headline metrics, and the failing cases handed to `skill-doctor`. State coverage
-limits plainly; a green suite is not proof of full coverage.
+Close with:
+
+- suite location
+- what metadata and cases were authored
+- what candidates and cases were run
+- what was skipped
+- headline metrics and gated outcome
+- failed cases handed to `skill-doctor`
+- coverage limits
+
+A green suite is not proof of full coverage. Say what was measured and what
+remains untested.
 
 ## Guardrails
 
 - Author and measure; route fixes to `skill-doctor`.
-- Tests stay in the hidden workbench — never committed, never written into a
-  target repo.
-- Match prompt style to case type; never force-invoke a triggering case.
+- Do not generate new candidates autonomously; route that future work to
+  `skill-autoresearch`.
+- Keep all metadata in `evals.json`.
+- Keep `task.md` visible-only.
+- Keep hidden files out of the solver workspace.
+- Use `candidate` for the thing under test and `trial_id` for one execution.
 - Calibrate a judge before trusting its scores at scale.
-- Report coverage limits, not just a pass-rate.
+- Report coverage limits, not just pass rates.

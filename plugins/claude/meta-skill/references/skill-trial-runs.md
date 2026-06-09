@@ -9,6 +9,11 @@ This is not the full evaluation process. Escalate to `skill-evaluator` when the
 user needs multi-scenario measurement, baseline comparison, variance, trigger
 optimization, or publish-readiness.
 
+Terminology: in full evals, a **candidate** is the thing under test (`current`,
+`attempt-1`), and a **trial** is one execution of one case under one candidate.
+"Attempt 1" is user-facing display text for a candidate only. Do not use
+`attempt_id` internally; use `trial_id` for one execution.
+
 ## User Experience
 
 Offer testing in tiers:
@@ -143,8 +148,8 @@ chat:
 ```
 
 `run.json` records the parent thread, target skill, trial type, child thread or
-pending worktree id, prompt labels, and status. `results.jsonl` appends parsed
-`META_SKILL_TRIAL_RESULT` rows.
+pending worktree id, prompt labels, optional candidate, and status.
+`results.jsonl` appends parsed `META_SKILL_TRIAL_RESULT` rows.
 
 Do not copy raw transcripts, full diffs, debug folders, private source packs, or
 large generated outputs by default. The child thread and worktree remain the

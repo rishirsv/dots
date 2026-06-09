@@ -1,44 +1,87 @@
 # Validations
 
-Read when authoring deterministic validations — pass/fail checks with no
-judgment, run against the target.
+Read when authoring deterministic validations: pass/fail checks with no
+judgment.
 
-Validations come in two tiers. Keep them straight, and keep the terminology
-straight: **scripts** are a skill's runtime deterministic code; **tests** are the
-deterministic checks this skill authors. Authored tests never live in a `scripts/`
-directory.
+Validations come in two tiers. Keep the terminology straight:
+
+- **scripts** are a skill's runtime deterministic code, or shipped plugin checks.
+- **validators** are evaluator-owned checks for one case.
+- **tests** are shared deterministic checks in the hidden workbench.
 
 ## Two Tiers
 
 | Tier | Scope | Form | Home | Durability |
 |---|---|---|---|---|
-| **General checks** | Every skill | Shipped **scripts** (`validate_skill.py`, `lint_authoring.py`) run by `run.py` | Plugin tree | Durable, shipped |
-| **Skill-specific tests** | One target | Authored **tests** | Hidden `.meta-skill/` | Scratch — never committed |
+| **General checks** | Every skill | Shipped scripts such as `validate_skill.py` and `lint_authoring.py`, run by `run.py` | Plugin tree | Durable, shipped |
+| **Case-local validators** | One case | `validate.*` beside `task.md` | Hidden case folder | Local eval content |
+| **Shared workbench tests** | One target suite | Authored tests reused across cases | `.meta-skill/tests/` | Local eval content |
 
 General checks already exist and apply to any skill: skill body present, valid
-YAML frontmatter, length bounds, deprecated-surface avoidance. Do not re-author
+front matter, length bounds, and deprecated-surface avoidance. Do not re-author
 them per target.
 
-Skill-specific tests are the craft of a good eval: incremental, deterministic
-checks for behavior unique to *this* target — "run the skill on `fixtures/X`,
-assert the output satisfies Y." They accumulate locally as a regression aid but
-stay in the hidden workbench; they are never committed and never written into the
-target's own repo.
+Case-local validators check behavior unique to one case. They live beside the
+case as `validate.*`, but they are hidden from the solver. They run after solver
+output exists.
 
-## Runner Contract
+## Solver Boundary
 
-A deterministic test is a script that accepts a target path and, with `--json`,
-prints an object with integer `passed` and `total`. The shared `run.py` already
-runs every conforming task in the general-checks folder and sums a combined
-pass-rate; skill-specific tests follow the same contract.
+The solver workspace receives:
 
-> **Not yet wired:** whether `run.py` is extended to also discover the workbench
-> tests (or the evaluator carries its own runner), and how deterministic
-> validations run for non-skill artifacts, are open. Note the gap; do not fake a
-> pass.
+- `task.md`
+- fixtures listed in `evals.json`
+- the candidate payload
+
+The solver workspace does not receive:
+
+- `rubric.md`
+- `expected.*`
+- `validate.*`
+- grader prompts
+- human labels
+
+Validators run outside the solver workspace and may read hidden expected output,
+the solver output file, selected artifacts, event logs, and case metadata from
+`evals.json`.
+
+## Validator Contract
+
+A case-local validator should accept explicit paths rather than discovering
+global state:
+
+```text
+validate.ts \
+  --output runs/<run-id>/candidates/<candidate>/<trial-id>/final.md \
+  --expected cases/<case-id>/expected.json \
+  --events runs/<run-id>/events/<trial-id>.jsonl \
+  --json
+```
+
+It should print a compact JSON object:
+
+```json
+{
+  "passed": 3,
+  "total": 4,
+  "checks": [
+    {
+      "name": "mentions approval gate",
+      "passed": true,
+      "evidence": "final.md includes the approval step"
+    }
+  ]
+}
+```
+
+The runner converts validator output into `grades.jsonl` rows with
+`grader.kind = "code"`.
 
 ## Boundary With skill-doctor
 
-A failure pattern general to *all* skills graduates to a shipped script (the
-`skill-doctor` Verify path). A failure specific to *one* target stays a
-skill-specific test in the workbench. Two accumulation paths, two homes.
+A failure pattern general to *all* skills graduates to a shipped script in the
+`skill-doctor` Verify path. A failure specific to one target stays local to the
+eval suite.
+
+If a validation failure identifies a fix, report the failure and hand it to
+`skill-doctor`. The evaluator does not edit the target.

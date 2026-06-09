@@ -83,7 +83,13 @@ Keep the run files small.
 ```text
 .meta-skill/runs/<run-id>/
   run.json
+  progress.jsonl
+  events/
+    <trial-id>.jsonl
   results.jsonl
+  grades.jsonl
+  candidates/
+    <candidate>/
 ```
 
 `run.json` is the control ledger:
@@ -96,9 +102,10 @@ Keep the run files small.
   "concurrency": 5,
   "control_strategy": "codex-desktop-parent",
   "extraction_strategy": "api-first-sqlite-fallback",
-  "variants": [
+  "candidates": [
     {
-      "variant_id": "current",
+      "candidate": "current",
+      "display": "Current",
       "source_type": "git-ref",
       "source_ref": "HEAD",
       "base_commit": "abc123",
@@ -107,7 +114,8 @@ Keep the run files small.
       "reasoning_effort": "thread-default"
     },
     {
-      "variant_id": "candidate-a",
+      "candidate": "attempt-1",
+      "display": "Attempt 1",
       "source_type": "worktree",
       "source_ref": "/Users/rishi/.codex/worktrees/94f3/agent",
       "base_commit": "abc123",
@@ -116,11 +124,12 @@ Keep the run files small.
       "reasoning_effort": "thread-default"
     }
   ],
-  "tasks": [
+  "trials": [
     {
-      "task_id": "case-a",
-      "attempt_id": "case-a.current.1",
-      "variant_id": "current",
+      "case_id": "case-a",
+      "trial_id": "case-a.current.t1",
+      "candidate": "current",
+      "repetition": 1,
       "status": "completed",
       "thread_id": "019...",
       "pending_worktree_id": null,
@@ -133,9 +142,10 @@ Keep the run files small.
       }
     },
     {
-      "task_id": "case-b",
-      "attempt_id": "case-b.candidate-a.1",
-      "variant_id": "candidate-a",
+      "case_id": "case-b",
+      "trial_id": "case-b.attempt-1.t1",
+      "candidate": "attempt-1",
+      "repetition": 1,
       "status": "pending_worktree",
       "thread_id": null,
       "pending_worktree_id": "local:...",
@@ -149,8 +159,8 @@ Keep the run files small.
 `results.jsonl` is append-only:
 
 ```jsonl
-{"task_id":"case-a","attempt_id":"case-a.current.1","variant_id":"current","thread_id":"019...","status":"completed","decision":"partial","summary":"clear but missing proof"}
-{"task_id":"case-b","attempt_id":"case-b.candidate-a.1","variant_id":"candidate-a","thread_id":"019...","status":"completed","decision":"accepted","summary":"clear and includes proof"}
+{"case_id":"case-a","trial_id":"case-a.current.t1","candidate":"current","thread_id":"019...","status":"completed","decision":"partial","summary":"clear but missing proof"}
+{"case_id":"case-b","trial_id":"case-b.attempt-1.t1","candidate":"attempt-1","thread_id":"019...","status":"completed","decision":"accepted","summary":"clear and includes proof"}
 ```
 
 Optional projections may be generated from the ledger, stable APIs when
@@ -217,7 +227,7 @@ while extraction is degraded or missing nonessential telemetry.
 8. Run API-first extraction to fold child threads into compact evidence.
 9. Parse the child result block from the final answer.
 10. Append a compact row to `results.jsonl`.
-11. Score results against criteria or compare variants.
+11. Score results against criteria or compare candidates.
 12. Continue same child for follow-up, spawn a sibling, or accept/reject a
     candidate worktree.
 
@@ -232,8 +242,8 @@ The parent should not scrape unconstrained prose.
     "schema_version": 1,
     "run_id": "skill-eval-001",
     "task_id": "case-a",
-    "attempt_id": "case-a.current.1",
-    "variant_id": "current",
+    "trial_id": "case-a.current.t1",
+    "candidate": "current",
     "status": "completed",
     "decision": "accepted|rejected|partial|review-required|follow-up",
     "score": "3/3",
@@ -378,21 +388,22 @@ Use a flat comparison model:
 
 ```text
 run
-  variants:
-    no_skill
-    current_payload
-    candidate_a
-    candidate_b
-  tasks:
-    <case> x <variant> x <attempt>
+  candidates:
+    current
+    attempt-1
+    attempt-2
+  trials:
+    <case> x <candidate> x <repetition>
 ```
 
-Variants are metadata, not folders. A variant records `variant_id`,
+Candidates are the things under test. A candidate records `candidate`,
 `source_type`, `source_ref`, `base_commit`, `payload_digest`, optional worktree,
-model, effort, and optional thread id. This prevents accidental comparisons
-between drifting prompts, payloads, models, or source states.
+model, effort, and optional thread id. Use `candidate`, not `candidate_id`.
+Use `trial_id` for one execution of one case under one candidate. This prevents
+accidental comparisons between drifting prompts, payloads, models, or source
+states.
 
-Solver children get exactly one variant and one case. They must not see sibling
+Solver children get exactly one candidate and one case. They must not see sibling
 outputs, parent hypotheses, expected answers, or hidden criteria. Judge children
 score anonymized outputs when practical.
 
@@ -400,7 +411,7 @@ Baseline comparison:
 
 1. Run `no_skill` or plain-prompt baseline when useful.
 2. Run `current_payload` from a pinned git ref or clean snapshot.
-3. Run candidate variants in separate worktrees.
+3. Run candidates in separate worktrees.
 4. Extract results and telemetry.
 5. Score against criteria.
 6. Compare score, evidence quality, regressions, and trigger boundary behavior.
@@ -601,15 +612,15 @@ Agent behavior:
 - label every field with source and confidence when it came from fallback local
   storage
 
-### Compare Attempts
+### Compare Candidates
 
-Use when multiple children answer the same task or variants.
+Use when multiple children answer the same task across candidates.
 
 Agent behavior:
 
 - compare child result rows
 - cite child thread ids
-- compare variant identity fields before comparing scores
+- compare candidate identity fields before comparing scores
 - prefer evidence-backed decisions over score-only decisions
 - choose accepted, rejected, partial, review-required, or follow-up
 
@@ -656,7 +667,7 @@ Agent behavior:
 
 - create a new child from the same case brief
 - optionally use a new worktree
-- link it to the same `task_id` with a new `attempt_id`
+- link it to the same `case_id` with a new `trial_id`
 - compare siblings after completion
 
 ### Close Run
