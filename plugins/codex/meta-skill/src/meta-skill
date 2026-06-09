@@ -58,4 +58,7 @@ PY
   fi
 fi
 
-exec "$PYTHON" "$SCRIPT_DIR/meta_skill.py" "$@"
+PYTHONPATH="$SCRIPT_DIR${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH
+
+exec "$PYTHON" -m meta_skill "$@"

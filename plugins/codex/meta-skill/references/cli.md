@@ -242,11 +242,14 @@ Output:
 
 ### `eval grade`
 
-Use this after `eval run` when the cases include deterministic validators.
+Use this after `eval run` when the cases include deterministic validators,
+rubrics, or both.
 
 What it does:
 
 - Reads `results.jsonl` from the selected run
+- Looks for `rubric.md` inside each case directory and, when present, records a
+  model rubric grade through App Server
 - Looks for `validate.*` files inside each case directory
 - Runs each validator with `--output`, `--events`, and `--json`
 - Optionally passes `--expected <file>` when an `expected.*` file exists
@@ -262,10 +265,14 @@ Output:
 
 Notes:
 
-- If a case has no `validate.*`, the run is marked ungraded for that case and
-  the rationale points the reader to `rubric.md` for human or judge grading.
-- Validators are the supported grading hook. Do not add worker-local grading
-  wrappers outside the case directory.
+- If a case has neither `rubric.md` nor `validate.*`, the run is marked
+  ungraded for that case and the rationale points the reader to `rubric.md` for
+  human or judge grading.
+- Validators and case-local rubrics are the supported grading hooks. Do not add
+  worker-local grading wrappers outside the case directory.
+- Rubric grading writes judge events to
+  `.meta-skill/runs/<run-id>/events/<trial-id>.judge.jsonl` and records model
+  evidence in `grades.jsonl`.
 
 ### `validate`
 
@@ -340,6 +347,38 @@ scripts/meta-skill eval grade --run <run-id> --json
 ```sh
 scripts/meta-skill validate <skill-dir> --json
 ```
+
+### Dogfood the skill lifecycle
+
+Use this flow before claiming the full lifecycle works. Run it in an isolated
+worktree and use the installed plugin launcher, not only source files.
+
+```sh
+PLUGIN=/Users/rishi/.codex/plugins/cache/agent/meta-skill/0.1.0
+CLI="$PLUGIN/src/meta-skill"
+
+git worktree add --detach /tmp/meta-skill-e2e HEAD
+cd /tmp/meta-skill-e2e
+
+# Create two target project folders outside source payloads:
+# quick-skill/skill and hefty-skill/skill.
+"$CLI" workbench init --target quick-skill --json
+"$CLI" workbench init --target hefty-skill --json
+"$CLI" validate quick-skill/skill --json
+"$CLI" validate hefty-skill/skill --json
+"$CLI" package quick-skill/skill --out-dir quick-skill/.meta-skill/dist --json
+"$CLI" package hefty-skill/skill --out-dir hefty-skill/.meta-skill/dist --json
+
+# Author .meta-skill/evals.json, task.md, rubric.md, and validate.* cases.
+"$CLI" eval materialize --suite quick-skill/.meta-skill/evals.json --json
+"$CLI" eval run --suite quick-skill/.meta-skill/evals.json --runner codex_app_server --json
+"$CLI" eval grade --run <quick-run-dir> --json
+"$CLI" eval progress --run <quick-run-dir> --json
+```
+
+The dogfood report should include two skill ideas, review evidence, eval run
+directories, model and deterministic grade summaries, feedback, the revised
+candidate change, and `score-comparison.json`.
 
 ## Boundaries
 

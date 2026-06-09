@@ -461,7 +461,76 @@ Acceptance:
 - `scripts/meta-skill validate <skill-dir> --json` works.
 - `scripts/meta-skill package <skill-dir> --json` works.
 
-### Phase 6: Docs, Sync, Cleanup
+### Phase 6: End-To-End Dogfood
+
+Run the completed skills through the full lifecycle in an isolated worktree.
+This phase proves the consultant-facing loop from the parent agent's point of
+view; it does not add new public CLI commands.
+
+Setup:
+
+- Create an isolated git worktree from the completed refactor branch.
+- Seed the packaged Meta Skill plugin into that worktree using the same
+  `scripts/sync-plugins.sh` path agents will rely on.
+- Use a scratch target directory outside the source skill payloads so generated
+  test skills, runs, reviews, feedback, and revisions cannot pollute the real
+  plugin.
+- Record the worktree path, plugin package path, SDK/runtime versions, and run
+  ids in the E2E report.
+
+The parent agent must complete this sequence:
+
+1. **Skill ideation:** pick a quick skill idea and build it with the completed
+   `skill-writer` flow.
+2. **Heftier skill:** build a second useful skill with at least a couple files
+   and at least one reference, fixture, script, or validation asset.
+3. **Review:** run the review/doctor path against both skills and write review
+   evidence.
+4. **Evals:** create or materialize eval cases for both skills.
+5. **Judge graded:** run at least one judge-graded or model-graded eval path,
+   plus any deterministic validators needed for the case.
+6. **Feedback written:** write feedback from the review/eval evidence into the
+   workbench artifact for the skill.
+7. **Revised iteration:** apply one scoped improvement to at least one skill in
+   an isolated candidate/worktree.
+8. **Score comparison:** rerun the relevant eval slice and compare baseline vs
+   revised candidate scores, including failures and regressions.
+
+Required E2E artifacts:
+
+```text
+.meta-skill/e2e/<run-id>/
+  report.md
+  quick-skill/
+  hefty-skill/
+  baseline/
+  revised/
+  score-comparison.json
+```
+
+`report.md` must include:
+
+- the two skill ideas and why they were selected
+- commands or agent actions used
+- links to run directories
+- judge/model grade summary
+- deterministic validation summary
+- feedback written
+- revision made
+- baseline vs revised score comparison
+- what failed or felt awkward in the agent-facing workflow
+
+Acceptance:
+
+- The E2E run starts from the packaged skills, not only source files.
+- The isolated worktree contains all generated test artifacts.
+- Both generated skills validate.
+- At least one skill receives a revised iteration.
+- Score comparison shows baseline vs revised results with the same selected
+  eval cases.
+- Any failure is captured as a product/workbench defect, not silently waived.
+
+### Phase 7: Docs, Sync, Cleanup
 
 Delete the flat file only after the package path is green.
 
@@ -471,12 +540,16 @@ Delete the flat file only after the package path is green.
 - Update `meta-skill/.meta-skill/docs/ARCHITECTURE.md` to point to this plan
   and the research note.
 - Run `scripts/sync-plugins.sh`.
+- Add or update the CLI reference with the E2E dogfood recipe only if the
+  commands are stable enough for future agents to repeat.
 
 Acceptance:
 
 - No docs instruct agents to call worker-local scripts.
 - Generated Codex and Claude packages include the new source package.
 - Maintainer-only `.meta-skill/docs` still does not ship with the plugin.
+- E2E report exists and is either committed under maintainer docs or explicitly
+  left as ignored local evidence with a summary in this plan.
 
 ## Validation Plan
 
@@ -517,6 +590,10 @@ META_SKILL_SKIP_DEP_UPDATE=1 /Users/rishi/.codex/plugins/cache/agent/meta-skill/
 git diff --check -- .plans meta-skill scripts plugins/codex/meta-skill plugins/claude/meta-skill
 ```
 
+Finally, complete the Phase 6 E2E dogfood in an isolated worktree. The E2E pass
+is required before the refactor is considered shippable, because it proves the
+full skill lifecycle rather than only the CLI's individual commands.
+
 ## Risks And Mitigations
 
 - Risk: The Python SDK is beta and public APIs may shift.
@@ -545,6 +622,12 @@ git diff --check -- .plans meta-skill scripts plugins/codex/meta-skill plugins/c
   plan must add `--concurrency`, bounded scheduling, overload retries, retry
   accounting, atomic JSONL writes, and progress-watch tests.
 
+- Risk: Unit/command checks pass but the actual skill lifecycle is clumsy or
+  incomplete.
+  Mitigation: Phase 6 requires an isolated-worktree E2E dogfood covering
+  ideation, authoring, review, evals, judge grading, feedback, revision, and
+  score comparison.
+
 ## Progress
 
 - [x] Researched official App Server, Python SDK, and thread capability docs.
@@ -553,13 +636,14 @@ git diff --check -- .plans meta-skill scripts plugins/codex/meta-skill plugins/c
 - [x] Ran adversarial architecture reviews across protocol correctness, repo
   simplicity, and enterprise/autoresearch scalability.
 - [x] Trimmed this plan to V1 refactor scope.
-- [ ] Phase 0: characterization harness.
-- [ ] Phase 1: package skeleton and entrypoint.
-- [ ] Phase 2: workbench, manifest, candidate, staging, artifacts.
-- [ ] Phase 3: App Server adapter extraction.
-- [ ] Phase 4: eval run and progress.
-- [ ] Phase 5: grading, validation, packaging.
-- [ ] Phase 6: docs, sync, cleanup.
+- [x] Phase 0: characterization harness.
+- [x] Phase 1: package skeleton and entrypoint.
+- [x] Phase 2: workbench, manifest, candidate, staging, artifacts.
+- [x] Phase 3: App Server adapter extraction.
+- [x] Phase 4: eval run and progress.
+- [x] Phase 5: grading, validation, packaging.
+- [x] Phase 6: end-to-end dogfood.
+- [x] Phase 7: docs, sync, cleanup.
 
 ## Surprises & Discoveries
 
@@ -567,9 +651,10 @@ git diff --check -- .plans meta-skill scripts plugins/codex/meta-skill plugins/c
   Evidence: Reviewers flagged `threads.py`, separate approval/permission
   modules, async concurrency, and future capability tables as likely sprawl.
 
-- Observation: The current runner starts App Server threads as ephemeral.
-  Evidence: `meta-skill/src/meta_skill.py` uses `ephemeral=True`; durable eval
-  evidence needs persistent threads by default.
+- Observation: The original flat runner started App Server threads as
+  ephemeral.
+  Evidence: The refactored App Server adapter now uses persistent threads by
+  default and the E2E run recorded persistent solver and judge thread ids.
 
 - Observation: Current Python SDK support and App Server protocol support are
   not identical.
@@ -580,6 +665,54 @@ git diff --check -- .plans meta-skill scripts plugins/codex/meta-skill plugins/c
 - Observation: Dependency freshness and runtime compatibility are separate.
   Evidence: The launcher can install the latest `openai-codex`, while the SDK
   manages its compatible runtime package. Runs must record exact versions.
+
+- Observation: Command-level verification is not enough for Meta Skill.
+  Evidence: The workflow only proves itself when an agent can create a quick
+  skill, create a heftier skill, review, evaluate, judge grade, write feedback,
+  revise, and compare scores inside an isolated worktree.
+
+- Observation: The flat staging implementation needed an explicit symlink
+  guard before it could satisfy the hidden-boundary contract.
+  Evidence: `meta-skill/src/characterize_meta_skill.py` now checks absolute
+  fixture paths, `..` traversal, symlink fixture escapes, and hidden grader
+  material exclusion.
+
+- Observation: The local default `python3` can be older than the CLI supports.
+  Evidence: The Phase 1 checks needed the Codex runtime Python 3.12 path,
+  matching the launcher's fallback interpreter selection.
+
+- Observation: Phase 2 needed a fake `codex` command to prove eval-run artifact
+  shape without depending on a live model run.
+  Evidence: `meta-skill/src/characterize_meta_skill.py` now checks candidate
+  source fields, trial evidence fields, result final/evidence paths, and
+  folded evidence JSON after `eval run --runner codex_exec --json`.
+
+- Observation: Moving `cli.py` into a package made the doctor validator check
+  look one directory too deep.
+  Evidence: `doctor --json` initially failed `validators_canonical`; the check
+  now resolves the `src/` root from `meta_skill/cli.py`, and the
+  characterization harness asserts that validator source check stays green.
+
+- Observation: A real App Server smoke run works through the extracted adapter
+  and sequential runner.
+  Evidence: A temporary one-case suite at
+  `/private/tmp/meta-skill-app-server-smoke.ob7jSX` produced
+  `run-20260609T045205413765Z-5a229601` with status `passed`, persistent
+  thread id `019eaab9-400f-7e83-988f-5404633c1750`, turn id
+  `019eaab9-40aa-71e1-94f1-8f9c2faa5f95`, SDK version `0.1.0b3`, and final
+  output `app-server-ok`.
+
+- Observation: The remaining Phase 5 command bodies could move without changing
+  validator ownership.
+  Evidence: `grading.py` owns `eval grade`, `validation.py` imports the
+  canonical `validate_skill.py` and `lint_authoring.py` modules, and
+  `packaging.py` creates package ZIPs while reusing the validation bridge.
+
+- Observation: Phase 6 needed a real rubric/model grading path, not only
+  deterministic validators.
+  Evidence: `eval grade` now records model grades when a case has `rubric.md`;
+  the E2E quick-skill run produced model rubric grades plus validator grades
+  for baseline and revised candidates.
 
 ## Decision Log
 
@@ -621,6 +754,53 @@ git diff --check -- .plans meta-skill scripts plugins/codex/meta-skill plugins/c
   `doctor` symbol checks and run-level SDK/runtime version capture.
   Date/Author: 2026-06-09 / Codex
 
+- Decision: Add an E2E dogfood phase before docs cleanup.
+  Rationale: Meta Skill is a lifecycle product, not just a command collection.
+  A real isolated-worktree loop catches UX and orchestration gaps that unit and
+  single-command checks cannot see.
+  Date/Author: 2026-06-09 / Codex
+
+- Decision: Use a stdlib characterization runner for Phase 0.
+  Rationale: The checks need to run from source, launcher venvs, and future
+  package layouts without introducing pytest or repo-global test configuration.
+  Date/Author: 2026-06-09 / Codex
+
+- Decision: Keep a temporary `meta_skill.py` compatibility shim during Phase 1.
+  Rationale: The package entrypoint is now canonical, but the shim lets direct
+  file execution and older import expectations keep working until the flat file
+  deletion phase.
+  Date/Author: 2026-06-09 / Codex
+
+- Decision: Re-export moved helper functions from `meta_skill/__init__.py`.
+  Rationale: The characterization harness and possible downstream callers
+  still import helpers from `meta_skill`; re-exporting keeps that surface stable
+  while the implementation moves into owned modules.
+  Date/Author: 2026-06-09 / Codex
+
+- Decision: Put persistent-thread policy in the App Server adapter, not the
+  runner.
+  Rationale: Persistence is an App Server runtime choice; the sequential runner
+  should record the adapter's thread evidence rather than know SDK call details.
+  Date/Author: 2026-06-09 / Codex
+
+- Decision: Keep progress as file-backed snapshots in `runner.py`.
+  Rationale: Phase 4 only needs deterministic sequential orchestration and
+  `eval progress`; no daemon, UI, websocket, or concurrent writer model is
+  needed for V1.
+  Date/Author: 2026-06-09 / Codex
+
+- Decision: Keep `validate_skill.py` and `lint_authoring.py` as canonical
+  validator modules.
+  Rationale: Phase 5 only moves command ownership; folding validator internals
+  into `validation.py` would duplicate existing behavior and widen the change.
+  Date/Author: 2026-06-09 / Codex
+
+- Decision: Add rubric-backed model grading to `eval grade` without adding a
+  new command.
+  Rationale: The Phase 6 lifecycle needs judge/model grade evidence, and case
+  `rubric.md` is already the hidden grader-side artifact for that purpose.
+  Date/Author: 2026-06-09 / Codex
+
 ## Sources
 
 - OpenAI App Server architecture:
@@ -638,4 +818,43 @@ git diff --check -- .plans meta-skill scripts plugins/codex/meta-skill plugins/c
 
 ## Outcomes & Retrospective
 
-To be completed after implementation.
+The refactor is implemented as a Python package under `meta-skill/src/meta_skill/`.
+The launcher uses `python -m meta_skill`, while `meta_skill.py` remains as a
+temporary compatibility shim until the final deletion window.
+
+The command surface stayed stable. The CLI still exposes `doctor`, `workbench
+init`, `eval materialize`, `eval run`, `eval progress`, `eval grade`,
+`validate`, and `package`.
+
+The App Server path now runs through `meta_skill/app_server/`, starts
+persistent solver threads by default, records thread and turn ids, writes raw
+events, folds final/usage evidence, and stores per-trial evidence JSON. The
+sequential runner lives in `runner.py`, and `codex_exec` is isolated as a
+fallback adapter.
+
+`eval grade` now supports both deterministic `validate.*` graders and
+rubric-backed model grades from case-local `rubric.md` files. Judge events are
+stored as `<trial-id>.judge.jsonl` and grade evidence is written to
+`grades.jsonl`.
+
+The E2E dogfood ran from the installed packaged plugin, not only source files:
+
+- E2E report mirror:
+  `meta-skill/.meta-skill/e2e/e2e-20260609T050300Z-2a553fb9/report.md`
+- Score comparison mirror:
+  `meta-skill/.meta-skill/e2e/e2e-20260609T050300Z-2a553fb9/score-comparison.json`
+- Isolated worktree:
+  `/tmp/agent-meta-skill-e2e-20260609T050300Z-2a553fb9`
+- Quick skill A/B run:
+  `/private/tmp/agent-meta-skill-e2e-20260609T050300Z-2a553fb9/.meta-skill/e2e/e2e-20260609T050300Z-2a553fb9/quick-skill/.meta-skill/runs/run-20260609T050317715186Z-0de9c3c7`
+- Hefty skill run:
+  `/private/tmp/agent-meta-skill-e2e-20260609T050300Z-2a553fb9/.meta-skill/e2e/e2e-20260609T050300Z-2a553fb9/hefty-skill/.meta-skill/runs/run-20260609T050407042006Z-0a5d9c0a`
+
+The quick skill baseline produced `UNKNOWN` and failed deterministic validation;
+the revised candidate produced `STEADY-LEDGER` and passed both model rubric and
+deterministic validation. The heftier release-note skill passed validation,
+packaging, App Server eval, model rubric grading, and deterministic grading.
+
+The main awkwardness exposed by dogfood was the lack of model grading before
+Phase 6. Adding rubric-backed grading made the lifecycle complete without
+expanding the public command surface.

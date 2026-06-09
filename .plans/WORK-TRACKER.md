@@ -42,6 +42,15 @@ These roadmap items came from a 2026-06-05 review of public skill review, regist
 - Suggested improvement: Add `meta-skill eval list <project>` and `meta-skill eval view <project> [--run <id>|--last] [--json]`. Show run status, eval status, missing checks, execution errors, final answer previews, turn-evidence links, token totals/availability, tests, review artifacts, human decisions, and manual-review flags.
 - Verification: Add fixture runs for clean, failed, no-verdict, missing-check, token-unavailable, and turn-evidence-rich evals. Verify Markdown/JSON output remains deterministic.
 
+### Polish The Skill Lifecycle Report
+
+- Recommendation: Strong.
+- Evidence: The isolated App Server runner dogfood proved the end-to-end loop, but the useful story was spread across review files, run directories, grade JSON, judge traces, and a hand-authored E2E report.
+- Where: `meta-skill/src/meta_skill/runner.py`, `meta-skill/src/meta_skill/grading.py`, `meta-skill/src/meta_skill/workbench.py`, future lifecycle report rendering, and `.meta-skill/report.md`.
+- Finding: The workflow can now create, review, run, grade, revise, and compare skills, but the user experience still feels like a harness. Review scores, runner completion, rubric grades, validator results, feedback, and candidate comparison are separate artifacts with overlapping score language.
+- Suggested improvement: Add a first-class lifecycle report that leads with the human decision: which candidate won, what failed, what improved, and what to do next. Keep raw artifacts linked, but separate runner completion from behavioral grades, connect failed evals back to review findings, standardize feedback paths, normalize temp paths, and make baseline-vs-revised comparison a table instead of a manual JSON read.
+- Verification: Use the quick exact-token and hefty release-note dogfood fixtures to assert deterministic Markdown/JSON report output, distinct status labels, linked review/eval evidence, and a clear winner/recommended-next-action section.
+
 ### Make Baseline-Vs-Candidate Impact First-Class
 
 - Recommendation: Strong.

@@ -1,0 +1,98 @@
+"""Run artifact record builders."""
+
+
+def candidate_source(candidate):
+    return {
+        "candidate": candidate.get("candidate"),
+        "display": candidate.get("display"),
+        "source_kind": candidate.get("source_kind"),
+        "source_ref": candidate.get("source_ref"),
+        "worktree": candidate.get("worktree"),
+        "base_commit": candidate.get("base_commit") or candidate.get("commit"),
+        "head_commit": candidate.get("head_commit") or candidate.get("commit"),
+        "dirty": candidate.get("dirty"),
+        "diffstat": candidate.get("diffstat", ""),
+        "payload_path": candidate.get("payload_path"),
+        "payload_digest": candidate.get("payload_digest"),
+    }
+
+
+def trial_record(
+    *,
+    trial_id,
+    case_id,
+    candidate,
+    repetition,
+    status,
+    runner,
+    cwd=None,
+    thread_id=None,
+    turn_id=None,
+    thread_persistence=None,
+    sandbox=None,
+    runtime_approval_policy=None,
+    sdk_version=None,
+    runtime_version=None,
+    event_path=None,
+    evidence_path=None,
+    final_path=None,
+    usage=None,
+    started_at=None,
+    completed_at=None,
+    error=None,
+):
+    return {
+        "trial_id": trial_id,
+        "case_id": case_id,
+        "candidate": candidate,
+        "repetition": repetition,
+        "status": status,
+        "runner": runner,
+        "thread_id": thread_id,
+        "turn_id": turn_id,
+        "thread_persistence": thread_persistence,
+        "cwd": cwd,
+        "sandbox": sandbox,
+        "runtime_approval_policy": runtime_approval_policy,
+        "sdk_version": sdk_version,
+        "runtime_version": runtime_version,
+        "event_path": event_path,
+        "evidence_path": evidence_path,
+        "final_path": final_path,
+        "usage": usage,
+        "started_at": started_at,
+        "completed_at": completed_at,
+        "error": error,
+    }
+
+
+def thread_evidence(
+    *,
+    trial_id,
+    thread_id=None,
+    turn_id=None,
+    thread_persistence=None,
+    final_response=None,
+    final_source="none",
+    items_count=0,
+    usage=None,
+    status=None,
+    warnings=None,
+    sdk_version=None,
+    runtime_version=None,
+):
+    return {
+        "trial_id": trial_id,
+        "thread_id": thread_id,
+        "turn_id": turn_id,
+        "thread_persistence": thread_persistence,
+        "final_response": final_response,
+        "final_source": final_source,
+        "items_count": items_count,
+        "usage": usage,
+        "status": status,
+        "warnings": warnings or [],
+        "sdk_version": sdk_version,
+        "runtime_version": runtime_version,
+    }
+
