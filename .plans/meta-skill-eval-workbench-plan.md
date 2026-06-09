@@ -1,6 +1,6 @@
 # Meta Skill Eval Workbench Authoring Plan
 
-This ExecPlan is a living document. Keep `Progress`, `Surprises & Discoveries`,
+This Plan is a living document. Keep `Progress`, `Surprises & Discoveries`,
 `Decision Log`, and `Outcomes & Retrospective` current as implementation
 proceeds.
 
@@ -40,7 +40,7 @@ The final shape keeps metadata and content separate:
 - [x] 2026-06-08T23:01:00Z Read the handoff in `docs/context.md`, current
   Meta Skill docs, isolated trial guidance, research notes, and ChatGPT Pro
   response.
-- [x] 2026-06-08T23:01:00Z Created the first ExecPlan draft for manifest-first
+- [x] 2026-06-08T23:01:00Z Created the first Plan draft for manifest-first
   authoring and folder-based execution.
 - [x] 2026-06-09T00:00:00Z Locked the visible/hidden boundary: `task.md` contains
   only solver-visible bytes; no hidden or orchestration metadata belongs there.
@@ -99,7 +99,7 @@ The final shape keeps metadata and content separate:
 
 - Observation: The earlier plan used `variants` and `attempt_id`, which conflicts
   with the final vocabulary.
-  Evidence: `.plans/meta-skill-eval-workbench-execplan.md` used
+  Evidence: `.plans/meta-skill-eval-workbench-plan.md` used
   `variant_id` and `attempt_id`; the locked vocabulary is `candidate` and
   `trial_id`.
 

@@ -1,7 +1,7 @@
 interface:
   display_name: "Docs Writer"
   short_description: "Write durable repo docs, PRDs, specs, and plans"
-  default_prompt: "Use $docs-writer to write, update, repair, or distill durable repository documentation such as README.md, AGENTS.md, ARCHITECTURE.md, DESIGN.md, PRDs, project specs, ADRs/decision records, execution plans/ExecPlans, runbooks, API docs, migration notes, or module docs. Match the existing voice, choose the smallest useful depth, and verify behavior against source evidence."
+  default_prompt: "Use $docs-writer to write, update, repair, or distill durable repository documentation such as README.md, AGENTS.md, ARCHITECTURE.md, DESIGN.md, PRDs, project specs, ADRs/decision records, Plans, runbooks, API docs, migration notes, or module docs. Match the existing voice, choose the smallest useful depth, and verify behavior against source evidence."
 
 policy:
   allow_implicit_invocation: false

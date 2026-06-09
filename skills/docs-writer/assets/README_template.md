@@ -43,7 +43,7 @@ List only docs that exist.
 - `DESIGN.md` — <design-system tokens and UI rules>
 - `<PRD path>` — <product scope and acceptance criteria>
 - `<SPEC path>` — <system contract and requirements>
-- `<PLAN path>` — <self-contained execution plan>
+- `<PLAN path>` — <decision-complete implementation plan>
 - `docs/` — <additional docs>
 
 ## Verification

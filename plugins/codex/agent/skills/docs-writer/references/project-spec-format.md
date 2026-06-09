@@ -12,7 +12,7 @@ Use a project spec when a team needs a durable, language-agnostic contract for a
 ## Do Not Use a Project Spec When
 
 - The main question is product scope or user value. Use a PRD.
-- The main question is the step-by-step implementation path. Use an ExecPlan.
+- The main question is the step-by-step implementation path. Use a Plan.
 - The system is simple enough for a README or architecture note.
 
 ## Required Shape

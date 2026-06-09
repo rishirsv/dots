@@ -23,7 +23,7 @@ Run the checks that match the change. Do not claim validation that was not perfo
 | DESIGN | YAML validity, token references, duplicate headings, contrast claims, source evidence for tokens |
 | PRD | correct depth selected, user/job clarity, in/out scope, user stories with agent-verifiable acceptance criteria, essential implementation notes, open questions |
 | Canonical feature/domain doc | simple version, scope, surfaces, how-it-works walkthrough, ownership boundaries, data/state truth, diagrams if helpful, acceptance, verification |
-| ExecPlan | self-containment, living sections, repo-relative paths, concrete commands, expected outputs, validation, recovery |
+| Plan | decision-complete summary, grouped implementation changes, test plan, assumptions, necessary public interfaces or stop rules |
 | Project spec | normative language, goals/non-goals, domain model, lifecycle/state machine, interfaces, observability, recovery, implementation-defined behavior |
 | Runbook | trigger, preconditions, ordered steps, expected signals, rollback, validation, escalation |
 | API docs | generated spec/schema/code source, examples, errors, side effects, versioning, generated-doc build |

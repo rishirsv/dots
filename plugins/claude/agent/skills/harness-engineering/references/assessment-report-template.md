@@ -69,9 +69,9 @@ Why this theme matters in this repo.
 
 **Agent Leverage:** Why this lets agents do more valuable work with less human supervision.
 
-**Implementation Grain:** Whole-codebase refactor / focused ExecPlan / small patch / recurring automation / architecture capture.
+**Implementation Grain:** Whole-codebase refactor / focused Plan / small patch / recurring automation / architecture capture.
 
-**Suggested Downstream Artifact:** ExecPlan / architecture diagram / ARCHITECTURE.md / AGENTS.md patch / tracker item / none.
+**Suggested Downstream Artifact:** Plan / architecture diagram / ARCHITECTURE.md / AGENTS.md patch / tracker item / none.
 
 **Validation Evidence:** What future agents should produce to prove it works.
 ```
@@ -106,7 +106,7 @@ Offer concrete options, not automatic creation:
 - Why it should be next.
 - Estimated implementation grain.
 
-Include an option for a broad harness-engineering ExecPlan only if the repo has enough evidence for that scope.
+Include an option for a broad harness-engineering Plan only if the repo has enough evidence for that scope.
 
 ## Agent Handoff Notes
 

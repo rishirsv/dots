@@ -81,7 +81,7 @@ Add more stories only when each one has its own user outcome and agent-verifiabl
 
 ## Implementation Notes
 
-Record constraints that materially affect delivery: known source-of-truth files, systems to integrate with, compatibility expectations, migration constraints, dependencies, or release sequencing. Keep this section brief; create an ExecPlan when implementation sequencing needs to be self-contained.
+Record constraints that materially affect delivery: known source-of-truth files, systems to integrate with, compatibility expectations, migration constraints, dependencies, or release sequencing. Keep this section brief; create a Plan when implementation sequencing needs to be self-contained.
 
 ## Testing Expectations
 

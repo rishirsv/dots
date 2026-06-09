@@ -122,7 +122,7 @@ Do not extend the judge in that plan.
 - Keep inventory, staleness, security-lite, thread-management, concurrency,
   and broad platform surfaces deferred.
 - Reconcile the tracker reference to
-  `.plans/meta-skill-minimal-eval-generate-exec-plan.md`; that file is cited
+  `.plans/meta-skill-minimal-eval-generate-plan.md`; that file is cited
   below but is not present in this repo.
 - Track failure reproduction guidance as a doctor quality polish item: triggering
   failures should use natural prompts in clean child threads, while behavior
@@ -229,7 +229,7 @@ scenarios, readable eval views, and package/readiness gates.
 
 - Recommendation: Strong.
 - Evidence: Public registry workflows support scenario generation; Meta Skill already has a separate minimal eval-generation plan, but the tracker should keep this product gap visible in the main roadmap.
-- Where: `.plans/meta-skill-minimal-eval-generate-exec-plan.md`,
+- Where: `.plans/meta-skill-minimal-eval-generate-plan.md`,
   `meta-skill/src/meta_skill/workbench.py`,
   `meta-skill/src/meta_skill/manifest.py`, `meta-skill/src/meta_skill/cli.py`,
   and `meta-skill/skills/skill-evaluator/`.

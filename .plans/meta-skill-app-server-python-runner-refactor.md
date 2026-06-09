@@ -1,6 +1,6 @@
 # Meta Skill App Server Python Runner Refactor Plan
 
-This ExecPlan is the final implementation plan for refactoring the current
+This Plan is the final implementation plan for refactoring the current
 Meta Skill Python CLI into a module-based App Server runner. Keep `Progress`,
 `Surprises & Discoveries`, `Decision Log`, and `Outcomes & Retrospective`
 current as implementation proceeds.

@@ -1,6 +1,6 @@
 ---
 name: harness-engineering
-description: "Use when assessing a repository or project for agent-readiness and harness-engineering opportunities such as repo maps, validation harnesses, feedback loops, observability, architecture enforcement, subagent workflows, and progressive-disclosure docs, producing a report-only Markdown assessment with downstream ExecPlan and architecture artifact options; not for ordinary code cleanup or architecture-debt tracking (use $code-quality), PR review (use $gh-review), or directly implementing the changes the assessment proposes."
+description: "Use when assessing a repository or project for agent-readiness and harness-engineering opportunities such as repo maps, validation harnesses, feedback loops, observability, architecture enforcement, subagent workflows, and progressive-disclosure docs. Produces a report-only Markdown assessment with downstream Plan and architecture artifact options; not for ordinary cleanup, PR review, or implementation."
 ---
 
 # Harness Engineering
@@ -68,7 +68,7 @@ Every opportunity should include:
 - Target harness state.
 - Evidence and representative surfaces.
 - Why it matters for agent leverage.
-- Recommended implementation grain: whole-codebase refactor, focused ExecPlan, small patch, recurring automation, or documentation/architecture capture.
+- Recommended implementation grain: whole-codebase refactor, focused Plan, small patch, recurring automation, or documentation/architecture capture.
 - Suggested downstream artifact, if useful.
 - Validation evidence future agents should produce.
 
@@ -76,7 +76,7 @@ Every opportunity should include:
 
 Do not create downstream artifacts by default. At the end of the assessment, offer options such as:
 
-- Minimal ExecPlan for one selected opportunity or a broader harness-engineering refactor.
+- Minimal Plan for one selected opportunity or a broader harness-engineering refactor.
 - Architecture diagram showing current and target harness loops.
 - `ARCHITECTURE.md` or equivalent repo map.
 - `AGENTS.md` update that points future agents to maps, validation commands, plans, and harness rules.
@@ -87,5 +87,5 @@ When the user asks for these follow-ups, read `references/downstream-artifacts.m
 
 - `references/harness-lenses.md`: technology-agnostic evaluation lenses and examples.
 - `references/assessment-report-template.md`: required final report shape.
-- `references/downstream-artifacts.md`: follow-up ExecPlan, architecture doc, and diagram guidance.
+- `references/downstream-artifacts.md`: follow-up Plan, architecture doc, and diagram guidance.
 - `references/source-principles.md`: self-contained harness engineering concepts for agents using this skill.

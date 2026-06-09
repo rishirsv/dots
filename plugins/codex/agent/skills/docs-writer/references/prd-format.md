@@ -62,7 +62,7 @@ Write story acceptance criteria so an agent can prove completion without guessin
 - Include the artifact, UI state, data state, command, metric, or review evidence that proves the story is done.
 - Name edge cases, permissions, empty states, errors, and rollback or recovery behavior when they are part of the user promise.
 - Avoid criteria that depend only on intent, polish, or "works well" unless paired with a visible signal or testable behavior.
-- If the acceptance criteria require implementation sequencing, keep the PRD story-level and move the sequence to an ExecPlan after the PRD is accepted.
+- If the acceptance criteria require implementation sequencing, keep the PRD story-level and move the sequence to a Plan after the PRD is accepted.
 
 When a story is suitable for long-running Codex work, the objective should be expressible as: `Complete <story outcome> without stopping until <verifiable end state>`.
 
@@ -75,4 +75,4 @@ When a story is suitable for long-running Codex work, the objective should be ex
 - Separate settled decisions from recommendations.
 - Mark assumptions explicitly when they are not confirmed.
 - Keep optional unknowns out of `Open Questions`; include only questions that could change implementation or acceptance.
-- Do not turn the PRD into an execution plan. If sequencing dominates, write an ExecPlan after the PRD is accepted.
+- Do not turn the PRD into a Plan. If sequencing dominates, write a Plan after the PRD is accepted.

@@ -9,23 +9,18 @@ Read this only after the assessment exists and the user asks to create follow-up
 - Prefer minimal artifacts that future agents will actually read and maintain.
 - Do not create competing sources of truth when the repo already has a canonical place.
 
-## ExecPlan
+## Plan
 
-Use for broad or multi-step harness implementation. Follow the target repo's ExecPlan convention first. If none exists, include:
+Use for broad or multi-step harness implementation. Follow the target repo's Plan convention first. If none exists, include:
 
-- Purpose: user-visible outcome and why it matters.
-- Scope and non-goals.
-- Current state evidence from the assessment.
-- Phase outcomes in plain language.
-- Implementation checklist with parent tasks and subtasks.
-- Validation: exact checks, expected observations, and acceptance evidence.
-- Decision log.
-- Surprises/discoveries.
-- Completion notes.
+- Summary: user-visible outcome and why it matters.
+- Implementation changes grouped by behavior or subsystem.
+- Test plan with exact checks, expected observations, and acceptance evidence.
+- Assumptions, defaults, and stop rules that future agents must preserve.
 
-Make the plan self-contained: a future agent should be able to continue from the plan plus the working tree.
+Make the plan decision-complete: a future agent should be able to implement from the plan plus the working tree without choosing architecture, behavior, or validation.
 
-Good ExecPlan candidates:
+Good Plan candidates:
 
 - Refactor validation commands into a focused harness.
 - Add architecture boundary enforcement.
@@ -69,7 +64,7 @@ Use when future agents need a better table of contents or harness-routing instru
 Good additions:
 
 - Where architecture docs live.
-- Where ExecPlans live.
+- Where Plans live.
 - Which validation commands to run for common surfaces.
 - Where generated references live.
 - Which docs are canonical versus scratch.

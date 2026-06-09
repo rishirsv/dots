@@ -1,13 +1,7 @@
-# AGENTS.md
-
-## Agent Repo
-
-In `~/Code/agent`:
-
-- `skills/`, `meta-skill/`, `.codex/agents/`, `plugins/codex/agent/assets/`, and `AGENTS.md` are the source files to edit.
-- `skills/` is the source for the `agent` plugin; `meta-skill/` (with `docs/` and `skills/`) is the source for the standalone `meta-skill` plugin.
-- Save all plan documents under `.plans/`; do not leave ExecPlans or planning docs inside plugin, skill, or package directories.
+- Edit source files only: `skills/`, `meta-skill/`, `.codex/agents/`, `plugins/codex/agent/assets/`, and `AGENTS.md`.
+- Agent plugin skills live under `skills/`. Meta Skill plugin skills live under `meta-skill/skills/` alongside the rest of the standalone `meta-skill/` source.
+- Save all plan documents under `.plans/`; do not leave plans or planning docs inside plugin, skill, or package directories.
 - Do not install Agent skills directly under `~/.codex/skills/`; `scripts/sync-plugins.sh` packages them into the Agent plugin and removes old managed direct Desktop skill copies.
-- Do not hand-edit generated plugin package files under `plugins/codex/` or `plugins/claude/` (the `agent` and `meta-skill` packages); editable Codex assets under `plugins/codex/agent/assets/` are the exception.
+- Do not hand-edit generated plugin package files under `plugins/codex/` or `plugins/claude/`; `scripts/sync-plugins.sh` rebuilds the Codex and Claude package copies from the source directories. The only editable package-path exception is `plugins/codex/agent/assets/`.
 - After editing any skill payload, review the changed skill files directly and run any deterministic tests that exist for that skill before syncing or committing.
 - If `AGENTS.md`, `.codex/agents/`, `plugins/codex/agent/assets/`, or anything under `skills/` or `meta-skill/` changes, run `scripts/sync-plugins.sh` before committing.

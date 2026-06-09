@@ -76,7 +76,7 @@ is readable and proven.
 - Confirm `meta-skill/.meta-skill/docs/context.md` is truly superseded before
   deletion.
 - Reconcile the tracker reference to
-  `.plans/meta-skill-minimal-eval-generate-exec-plan.md`; that file was cited
+  `.plans/meta-skill-minimal-eval-generate-plan.md`; that file was cited
   but is not currently present in this repo.
 - If skill payload files under `meta-skill/skills/` are edited later, review
   changed skill files directly, run deterministic validation, then run
