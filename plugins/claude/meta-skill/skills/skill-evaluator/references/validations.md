@@ -13,7 +13,7 @@ Validations come in two tiers. Keep the terminology straight:
 
 | Tier | Scope | Form | Home | Durability |
 |---|---|---|---|---|
-| **General checks** | Every skill | Shipped scripts such as `validate_skill.py` and `lint_authoring.py`, run by `run.py` | Plugin tree | Durable, shipped |
+| **General checks** | Every skill | Canonical CLI validators run by `scripts/meta-skill validate` | Plugin tree | Durable, shipped |
 | **Case-local validators** | One case | `validate.*` beside `task.md` | Hidden case folder | Local eval content |
 | **Shared workbench tests** | One target suite | Authored tests reused across cases | `.meta-skill/tests/` | Local eval content |
 

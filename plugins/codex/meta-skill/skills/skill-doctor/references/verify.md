@@ -7,13 +7,13 @@ case; `skill-evaluator` measures many.
 ## Run the deterministic tests
 
 ```
-python3 scripts/run.py <path-to-SKILL.md>
+scripts/meta-skill validate <skill-dir>
 ```
 
-This runs every deterministic task in `scripts/` (currently the structural
-checks in `validate_skill.py`) and prints a combined **Verify-tests %** — one of
-the three thirds of the Overall Quality Score. Re-running it here refreshes that
-third after an edit; the same runner fills it during a Judge Review (see
+This runs the canonical deterministic checks from the plugin-level CLI source
+tree and prints a combined **Verify-tests %** — one of the three thirds of the
+Overall Quality Score. Re-running it here refreshes that third after an edit;
+the same runner fills it during a Judge Review (see
 [rubric.md](rubric.md)).
 
 ## Confirm the fix
@@ -35,5 +35,5 @@ third after an edit; the same runner fills it during a Judge Review (see
 
 ## TODO
 
-- Add deterministic tasks to `scripts/` as failure patterns recur (any `*.py`
-  that prints `{passed, total}` with `--json` is picked up by `run.py`).
+- Add general deterministic checks to `meta-skill/src/` as failure patterns
+  recur. Keep worker-local script folders out of the public surface.

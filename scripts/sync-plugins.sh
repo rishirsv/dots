@@ -15,6 +15,8 @@ PLUGIN_SKILLS_SRC[agent]="$ROOT/skills"
 PLUGIN_SKILLS_SRC[meta-skill]="$ROOT/meta-skill/skills"
 typeset -A PLUGIN_REFERENCES_SRC
 PLUGIN_REFERENCES_SRC[meta-skill]="$ROOT/meta-skill/references"
+typeset -A PLUGIN_ROOT_SRC
+PLUGIN_ROOT_SRC[meta-skill]="$ROOT/meta-skill/src"
 
 # Subagents are an `agent`-only concern today.
 SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
@@ -59,7 +61,7 @@ for plugin in "${PLUGINS[@]}"; do
   codex_pkg="$ROOT/plugins/codex/$plugin"
   claude_pkg="$ROOT/plugins/claude/$plugin"
   mkdir -p "$codex_pkg/.codex-plugin" "$claude_pkg/.claude-plugin"
-  rm -rf "$codex_pkg/skills" "$claude_pkg/skills" "$codex_pkg/references" "$claude_pkg/references"
+  rm -rf "$codex_pkg/skills" "$claude_pkg/skills" "$codex_pkg/references" "$claude_pkg/references" "$codex_pkg/src" "$claude_pkg/src"
   mkdir -p "$codex_pkg/skills" "$claude_pkg/skills"
 
   src="${PLUGIN_SKILLS_SRC[$plugin]}"
@@ -72,6 +74,12 @@ for plugin in "${PLUGINS[@]}"; do
   if [[ -n "$refs" && -d "$refs" ]]; then
     rsync -a --delete --exclude '.DS_Store' "$refs/" "$codex_pkg/references/"
     rsync -a --delete --exclude '.DS_Store' "$refs/" "$claude_pkg/references/"
+  fi
+
+  root_src="${PLUGIN_ROOT_SRC[$plugin]:-}"
+  if [[ -n "$root_src" && -d "$root_src" ]]; then
+    rsync -a --delete --exclude '.DS_Store' --exclude '__pycache__' "$root_src/" "$codex_pkg/src/"
+    rsync -a --delete --exclude '.DS_Store' --exclude '__pycache__' "$root_src/" "$claude_pkg/src/"
   fi
 done
 

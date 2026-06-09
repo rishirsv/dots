@@ -8,6 +8,10 @@ description: "The improve specialist within meta-skill: make an existing agent s
 Improve an existing agent skill. Two modes — **Judge Review** (default) and
 **Diagnose** — feed a shared **propose → approve → Edit → Verify** back half.
 
+For the central Meta Skill CLI surface, read
+[cli.md](../../references/cli.md). Do not invent doctor-specific command
+interfaces when a plugin-level command exists.
+
 **Human feedback is evidence, not edit authorization.** Never edit the target
 skill, generated packages, docs, or source unless the user asks to *make /
 apply / update / patch / fix*. Writing workbench artifacts (`review.md`,
@@ -34,7 +38,7 @@ Produce a **scored Quality page** (`review.md`) — see
 1. Score **Discovery** (4 dims) and **Implementation** (5 dims), each 0–3 — every
    dimension's reasoning must cite the skill's own text; see
    [references/rubric.md](references/rubric.md) for calibration and a worked example.
-2. Run the **Verify tests** (deterministic): `python3 scripts/run.py <path-to-SKILL.md>`.
+2. Run the **Verify tests** (deterministic): `scripts/meta-skill validate <skill-dir>`.
 3. **Overall Quality Score** = rounded average of Discovery %, Implementation %,
    and Verify-tests %.
 4. Write `review.md` with scores + prioritized findings, then **stop** —
@@ -60,9 +64,9 @@ while the parent applies only approved source edits.
 
 ## Verify
 
-Re-run the **Verify tests** (`python3 scripts/run.py <path-to-SKILL.md>`) to
-confirm the approved fix held and refresh the Verify-tests third of the score,
-plus a quick regression scan — see [references/verify.md](references/verify.md).
+Re-run the **Verify tests** through `scripts/meta-skill validate <skill-dir>`. Confirm
+the approved fix held and refresh the Verify-tests third of the score, plus a
+quick regression scan — see [references/verify.md](references/verify.md).
 Escalate to `skill-evaluator` for systematic, multi-scenario measurement.
 
 ## Workbench

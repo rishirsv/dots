@@ -195,7 +195,7 @@ review, or package the skill but should not be loaded by a future runtime agent.
 | `.meta-skill/docs/research/` | Research reports from web/source review, connector-backed research, sub-agent research, or research skills. Name files by topic, not by tool. |
 | `.meta-skill/plans/` | Local implementation plans for the skill project when the surrounding repo has no stronger planning convention. |
 | `.meta-skill/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Keep this folder flat; do not create nested category folders inside it. |
-| `.meta-skill/dist/` | Package artifacts and package metadata produced by `meta_skill.py package`. |
+| `.meta-skill/dist/` | Package artifacts and package metadata produced by `scripts/meta-skill package`. |
 
 If intake requires outside research, keep it bounded and source-grounded. Use an
 available researcher sub-agent or research skill when that is natural for the

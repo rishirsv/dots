@@ -7,7 +7,7 @@ eval workbench V1. Autoresearch should generate candidate branches, evaluate
 them with the existing suite model, and propose a gated winner for human
 approval.
 
-The user-facing model stays consultant-friendly:
+The consultant-facing model stays natural-language and product-friendly:
 
 ```text
 Try improvements -> watch progress -> see best gated result -> approve
@@ -24,25 +24,31 @@ Autoresearch depends on the eval workbench authoring model:
 - trials are individual case/candidate executions.
 - `runs/<run-id>/` owns progress, events, results, grades, and candidate output
   artifacts.
+- `meta-skill/src/` provides the plugin-level CLI and shared modules for
+  workbench commands, Codex Exec trials, progress, validation, grading, and
+  reporting.
+- `meta-skill/references/cli.md` is the shared command guide used by
+  `skill-autoresearch` and the other worker skills.
 
 ## Workflow
 
-1. Read `evals.json`.
+1. Use the central CLI to read and validate `evals.json`.
 2. Select train/dev cases for editing feedback.
 3. Hold out validation/test cases the editor child does not see.
 4. Create a candidate branch and worktree, such as
    `meta-skill/<suite-id>/attempt-1`.
 5. Ask an editor child to make the smallest candidate edit inside that worktree.
 6. Compute `payload_digest` from the staged `skill/` payload tree.
-7. Run candidate trials with `codex_exec`.
+7. Run candidate trials through `scripts/meta-skill eval run`, backed by
+   `codex_app_server`.
 8. Store raw per-trial streams under `runs/<run-id>/events/<trial-id>.jsonl`.
 9. Derive compact status into `runs/<run-id>/progress.jsonl`.
-10. Grade trial outputs with code validators, model judges, and human labels
-    where available.
+10. Grade trial outputs through `scripts/meta-skill eval grade` with code validators,
+    model judges, and human labels where available.
 11. Evaluate promising candidates on held-out splits.
 12. Reject candidates that fail deterministic gates, regressions, or held-out
     performance.
-13. Present the gated-best candidate as an improvement proposal.
+13. Present the gated-best candidate from the run's results and grades.
 14. Apply or merge only after human approval.
 
 ## Gates
@@ -87,14 +93,30 @@ store source copies.
 
 ## Runner Notes
 
-Default to `codex_exec` for autoresearch trials. Use `docs/codex-exec/README.md`
-and `docs/codex-exec/json-events.md` before implementation.
+Default to the central CLI for autoresearch orchestration. Use
+`codex_app_server` through the Python SDK for the primary run path and normalize
+everything into the same run ledger. The App Server reference lives under
+`docs/codex-app-server/`, and the agent-facing command contract lives in
+`meta-skill/references/cli.md`.
 
-- Use `--json` for per-trial event streams.
-- Use `--output-last-message <file>` for solver outputs.
+Keep `codex_exec` as the fallback for simple fire-and-collect trials, CI-like
+automation, and judge/control children where `--output-schema` is useful.
+
+- For `codex_exec`, use `--json` for per-trial event streams.
+- For `codex_exec`, use `--output-last-message <file>` for solver outputs.
 - Do not use `--output-schema` for solver trials.
 - Use `--output-schema` for judge children and editor/reporting children.
 - Use `--ephemeral` only when resume or check-in history is not needed.
+
+Planned agent-facing command:
+
+```sh
+meta-skill autoresearch run --suite .meta-skill/evals.json --attempts 3
+```
+
+This command is future-only. It is for Codex and future agents, not for
+consultants to run directly. It should compose the same `scripts/meta-skill eval ...`
+subcommands rather than introducing an autoresearch-only runner.
 
 ## Non-Goals
 
@@ -103,3 +125,4 @@ and `docs/codex-exec/json-events.md` before implementation.
 - No automatic source application.
 - No candidate version registry separate from git branches and run records.
 - No metadata outside `evals.json`.
+- No autoresearch-specific command surface that bypasses the central CLI.

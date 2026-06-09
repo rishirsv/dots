@@ -19,6 +19,17 @@ If simplify discovers fallback, compatibility, migration, adapter, coercion, ali
 
 If the user asks for a read-only review, report findings only. If the user asks for fixes or simplification, implement the relevant lane.
 
+## Delegation
+
+After this skill writes code in the simplify or hard-cut lane, delegate a
+focused follow-up reflow by default when the user invoked only Code Quality and
+did not explicitly name another reviewer or workflow. Use the
+`meta-skill:skill-doctor` subagent as the default reflow path: give it the
+changed files, the lane used, the intended behavior, and the validation already
+run, then apply only fixes that are clearly in scope for the Code Quality
+request. Skip this delegation for read-only review and architecture-refinement
+work unless the user explicitly asks for it.
+
 ## Simplify Lane
 
 Use [simplify](references/simplify.md). Review changed or scoped files for clarity, reuse, structural simplicity, AI-generated code slop, quality, and efficiency. Mutate code when the user wants cleanup or fixes; stay read-only when the user asks for review.

@@ -81,6 +81,7 @@ Read only what the task needs:
 | Calibrate the judge against human grades | [references/calibration.md](references/calibration.md) |
 | Author deterministic validations and case-local `validate.*` checks | [references/validations.md](references/validations.md) |
 | Evaluate a target that is not an agent skill | [references/generalist.md](references/generalist.md) |
+| Use the central Meta Skill CLI for materialize, run, progress, grade, validate, and runner selection | [cli.md](../../references/cli.md) |
 
 ## Vocabulary
 
@@ -135,13 +136,19 @@ Refine the rubric on disagreement.
 Run selected candidates against selected cases. Default to:
 
 - `codex_thread` with worktree isolation for one-off trials and doctor fixes
-- `codex_exec` for batch evals, A/B comparisons, and future autoresearch
-- `codex_app_server` only for future rich integration
+- `codex_app_server` through the Python SDK for batch evals, A/B comparisons,
+  and initial autoresearch
+- `codex_exec` for simple fallback or CI-like automation
 
 For `codex_exec`, store raw streams as `events/<trial-id>.jsonl`, derive compact
 status into `progress.jsonl`, and capture solver output with
 `--output-last-message`. Use `--output-schema` for judge or editor/control
 children, not for solver trials whose natural output is being graded.
+
+For `codex_app_server`, use the CLI reference to run through the plugin adapter.
+The worker should consume run artifacts and progress files, not call raw App
+Server JSON-RPC directly. App Server is the primary workbench runner, but live
+control commands should not be added unless a real eval case requires them.
 
 Report per-case results, grades, aggregate performance, failed cases, and gates.
 Hand fixes to `skill-doctor`.

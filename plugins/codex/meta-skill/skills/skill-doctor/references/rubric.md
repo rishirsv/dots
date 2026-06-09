@@ -16,7 +16,7 @@ Judge against concrete house style, not abstract principles.
 |---|---|---|
 | **Quality** (Discovery) | Discovery and task-fit: trigger boundaries, completeness, specificity, conflict risk, user-visible outcome expectations. | LLM-judged, 4 dims × 0–3 |
 | **Implementation** | Runtime guidance: actionability, workflow clarity, progressive disclosure, and directive quality (directives over wisdom, reasons, plain names). | LLM-judged, 5 dims × 0–3 |
-| **Verify tests** | Deterministic checks Verify runs: structural integrity, deprecated-surface avoidance. | Deterministic (`scripts/run.py`, run by Verify) |
+| **Verify tests** | Deterministic checks Verify runs: structural integrity, deprecated-surface avoidance. | Deterministic (`scripts/meta-skill validate`, run by Verify) |
 
 ## Score Calibration
 
@@ -30,7 +30,7 @@ Use strict but fair scoring.
 | **0** | Missing, misleading, or actively unsafe for the dimension. |
 
 **Math.** Discovery % = total / 12 (4 dims). Implementation % = total / 15
-(5 dims). Verify-tests % = checks passed / total (from `scripts/run.py`).
+(5 dims). Verify-tests % = checks passed / total (from `scripts/meta-skill validate`).
 **Overall Quality Score = rounded average of the Discovery, Implementation, and
 Verify-tests percentages.**
 
@@ -88,9 +88,9 @@ would change future agent behavior. Do not restate the table.
 
 ## Verify tests (deterministic)
 
-Verify runs `python3 scripts/run.py <path-to-SKILL.md>`, which executes every
-deterministic task in `scripts/` and prints a combined pass-rate. **Entirely
-deterministic** — no judgment. Two tasks today:
+Verify runs `scripts/meta-skill validate <skill-dir>`, which executes the canonical
+deterministic checks from the plugin-level CLI source tree and prints a combined
+pass-rate. **Entirely deterministic** — no judgment. Two tasks today:
 
 - `validate_skill.py` — structure: `frontmatter_valid`, `name_field`,
   `description_field`, `frontmatter_unknown_keys` (Warning if any),
@@ -103,8 +103,8 @@ deterministic** — no judgment. Two tasks today:
   (stacked MUST/ALL-CAPS), `dead_references` (broken local links).
 
 Verify-tests % = Pass count / total across all tasks. Warning and Fail do not
-count as Pass. Add tasks by dropping a conforming script into `scripts/` (see
-[verify.md](verify.md)). Judgment anti-patterns (wisdom-vs-directive, jargon
+count as Pass. Add general checks to the root CLI validator source, not to a
+worker-local script folder. Judgment anti-patterns (wisdom-vs-directive, jargon
 names, contradictions) stay in the scored dimensions above, not here.
 
 *Future deterministic checks (not yet implemented — note, don't fake-pass):*

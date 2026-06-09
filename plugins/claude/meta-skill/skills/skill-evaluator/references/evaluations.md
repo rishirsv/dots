@@ -6,6 +6,9 @@ Evaluations need a judge — an LLM by default, a human when taste or domain
 knowledge exceeds the model. They live in a gitignored workbench at
 `<project>/.meta-skill/`.
 
+Use the central CLI reference at `../../../references/cli.md` for materialization,
+runner selection, progress, and grading commands.
+
 ## Authoring Model
 
 Use a manifest plus materialized case folders:
@@ -45,7 +48,7 @@ One manifest per target, in `<project>/.meta-skill/evals.json`:
     "ref": "skill/SKILL.md"
   },
   "defaults": {
-    "runner": "codex_exec",
+    "runner": "codex_app_server",
     "repetitions": 1,
     "grader": ["judge"]
   },
@@ -103,7 +106,8 @@ Match the task text to what the case measures:
 
 A trigger task must read like a real user request. Naming the skill defeats the
 test. Trigger cases need the target seeded into a clean environment so it can
-fire; the environment-specific seeding mechanism remains runner-specific.
+fire; the environment-specific seeding mechanism remains behind the central CLI
+runner adapter.
 
 ## Hidden Boundary
 

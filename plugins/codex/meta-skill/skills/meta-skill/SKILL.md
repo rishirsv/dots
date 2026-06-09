@@ -1,6 +1,6 @@
 ---
 name: meta-skill
-description: "Use for ANY work on an agent skill — authoring a new skill, reviewing or improving an existing one, diagnosing why a skill misbehaves, or evaluating how well a skill performs. Read first to understand the skill-lifecycle flow, then route to a specialist (skill-writer, skill-doctor, skill-evaluator) and orchestrate multi-step work across them. Not for non-skill tasks."
+description: "Use for ANY work on an agent skill — authoring a new skill, reviewing or improving an existing one, diagnosing why a skill misbehaves, or evaluating how well a skill performs. Routes ambiguous or multi-step skill-lifecycle requests to skill-writer, skill-doctor, or skill-evaluator and orchestrates work across them. Not for non-skill tasks."
 ---
 
 # Meta-Skill
@@ -10,7 +10,8 @@ description: "Use for ANY work on an agent skill — authoring a new skill, revi
 Skinny, always-read front door for the agent-skill lifecycle. Understand the
 whole flow here, then route to one specialist and orchestrate multi-step work.
 
-Full design: `meta-skill/docs/ARCHITECTURE.md` (source repo).
+Central CLI reference for future agents:
+`../../references/cli.md` (source repo).
 
 ## The Lifecycle
 

@@ -2,16 +2,28 @@
 
 ## Purpose
 
-Meta Skill evals move from an in-process runner to Codex Desktop thread
-orchestration plus a small read-only evidence bridge. The parent Codex thread is
-the visible cockpit: it creates child threads, optionally gives each child a
-fresh worktree, records the batch ledger, and makes accept/reject decisions.
-Supporting APIs and scripts exist only to reduce manual work and keep the parent
-from loading many child conversations into context.
+Meta Skill evals move from an in-process runner to a central plugin-level CLI
+that can orchestrate Codex Desktop threads, Codex Exec trials, optional App
+Server adapter trials, and read-only evidence extraction. The parent Codex
+thread remains the visible cockpit for interactive work: it creates child
+threads, optionally gives each child a fresh worktree, records the batch ledger,
+and makes accept/reject decisions.
 
-This is a skill-orchestrated, Codex Desktop-first design. It has no Meta Skill
-CLI and no local eval runner. A focused read-only extractor/report script is
-allowed as an evidence bridge.
+The agent-facing automation surface is the planned `meta-skill` CLI implemented
+under `meta-skill/src/`. It is not the consultant UI. Consultants see the
+natural-language flow in the parent thread; Codex uses the CLI behind that flow.
+Supporting APIs, runner modules, and extraction modules exist behind the CLI to
+reduce manual work and keep the parent from loading many child conversations
+into context. Worker-local scripts are not durable public interfaces.
+
+`codex_exec` and `codex_app_server` are different adapter shapes:
+
+- `codex_exec` is fire-and-collect: prompt, JSONL stream, final message, exit.
+- `codex_app_server` is a persistent, typed, bidirectional control plane.
+
+Use `codex_app_server` through the official Python SDK as the primary workbench
+runner. Keep `codex_exec` behind the same runner seam as the simple
+fire-and-collect fallback.
 
 ## Why This Replaces The Old Runner
 
@@ -39,6 +51,13 @@ The final design choices are:
 
 - **Desktop cockpit**: the parent Codex Desktop thread remains the user-facing
   control room.
+- **Central CLI**: `meta-skill` commands are the agent-facing command layer for
+  materialization, runs, progress, grading, validation, and packaging helpers.
+- **App Server first**: batch evals, A/B runs, and future autoresearch use
+  `codex_app_server` implemented through the Python SDK, while normalizing to
+  the same run files.
+- **Exec fallback**: simple fire-and-collect jobs and CI-like runs use
+  `codex_exec`.
 - **API-first support**: use official Codex SDK, app thread tools, or App
   Server/control-plane APIs where they are stable enough for the operation.
 - **Read-only fallback extraction**: use SQLite and rollout JSONL only as a
@@ -48,6 +67,17 @@ The final design choices are:
 - **Human-gated promotion**: child worktrees can propose edits, but accepted
   source changes require parent judgment and user approval before merge,
   package, install, or publish.
+
+The CLI is orchestration, not authority. It reads and writes the canonical
+workbench files; it does not replace `evals.json`, case folders, run folders, or
+git/worktrees as sources of truth.
+
+Local App Server protocol references live under `docs/codex-app-server/`. They
+were generated from `codex-cli 0.135.0` with experimental fields included. Treat
+them as a version-pinned snapshot and regenerate before implementation. The
+runtime adapter source belongs under `meta-skill/src/`; worker skills should
+read `meta-skill/references/cli.md` rather than calling the App Server protocol
+directly.
 
 ## Probe Findings
 
@@ -279,20 +309,18 @@ workflow scale without becoming a hidden eval runner.
 
 Control priority:
 
-1. **Codex Desktop parent tools**: the parent thread creates, continues, reads,
-   and compares visible child threads when those tools are available.
-2. **Official Codex SDK or CLI**: use for programmatic thread start/run/resume
-   when it preserves the desired Codex visibility and evidence contract.
-3. **Local App Server/control-plane API**: use only for richer local thread,
-   turn, event, or worktree control when the API is available and appropriately
-   gated.
+1. **Central CLI with App Server Python SDK**: use for repeatable batch evals,
+   A/B runs, and future autoresearch.
+2. **Codex Desktop parent tools**: the parent thread creates, continues, reads,
+   and compares visible child threads when human inspection is the point.
+3. **Codex Exec**: use for simple fire-and-collect fallback jobs.
 4. **Manual parent orchestration**: fallback when no stable programmatic surface
    exists.
 
 Extraction priority:
 
-1. Use official Codex thread read/export APIs where available.
-2. Use App Server read/list/turn/event APIs where available.
+1. Persist App Server SDK turn results and event streams during the run.
+2. Use official Codex thread read/export APIs where available.
 3. Fall back to local SQLite and rollout JSONL as a read-only observer.
 4. Never write to Codex local storage.
 
@@ -366,9 +394,12 @@ Recommended V1:
 - parent reads compact ledgers and reports, then opens full child threads only
   for missing results, close calls, or failures
 
-## Gaps Versus The Old App Server Runner
+## Fallback Gaps Versus App Server
 
-| Old app-server runner had | Codex Threads Runner has | Gap |
+When the CLI falls back to Desktop-only or `codex_exec` orchestration, preserve
+these gaps explicitly in the report instead of pretending the evidence is equal.
+
+| App Server gives | Fallback has | Gap |
 |---|---|---|
 | direct protocol event stream | API/App Server events when available; rollout JSONL fallback | recoverable, but fallback storage schema is private |
 | deterministic transcript normalization | API/export or extractor-folded transcript projection | recoverable if parser is maintained |

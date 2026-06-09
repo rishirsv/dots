@@ -30,7 +30,7 @@ Snippet headings are illustrative. Derive actual section names from the job, fil
 | Approved template, schema, boilerplate, reusable visual, runtime dataset, or example corpus | Runtime folders | Direct folder/file reference and use instruction | Confirm licensing, approval, and whether it belongs in portable payload |
 | First-run config, persistent history, or prior-run deltas | Setup and state | Config/state section with storage location and missing-config behavior | Confirm privacy, upgrade safety, and whether state really changes output |
 | User explicitly asks to preserve future measurement ideas | Future measurement note | Private workbench note outside runtime payload | Confirm it stays out of scaffolded runtime and package output |
-| New skill or user-requested skill project | Scaffold command | `scripts/meta_skill.py create` command with optional `--project` | Confirm target path and project-vs-portable intent |
+| New skill or user-requested skill project | Payload skeleton | Directly authored `SKILL.md`, optional `agents/`, and runtime folders | Confirm target path and project-vs-portable intent |
 | Client-facing delivery, external write, package, install, publish, sync, or send | Human gate | Explicit approval before the action | Confirm who can approve |
 | Explicit-only activation | Metadata invocation policy | `policy.allow_implicit_invocation: false` in `agents/openai.yaml` | Confirm explicit-only is intentional |
 | Fragile inputs, scripts, artifacts, external material, or partial evidence | Failure handling | Short failure section with ask, caveat, stop, or partial-completion behavior | Judge whether recovery behavior protects the workflow |
@@ -296,68 +296,46 @@ Keep measurement ideas out of the portable runtime unless examples are required
 during execution. Put authoring-only notes in `.meta-skill/docs/`, the
 workbench, or final handoff until the measurement process is designed.
 
-### 18. Skill And Project Scaffolds
+### 18. Skill And Project Payloads
 
-Use the scaffold script only when creating a new skill and the target repo has no
-better local initializer. Resolve relative paths from the user's current working
-directory.
+Create skill payloads directly. Resolve relative paths from the user's current
+working directory. The portable payload is the skill directory itself:
+`SKILL.md`, `agents/`, and linked runtime folders.
 
-General portable root-payload skill:
+Minimal root-payload shape:
 
-```bash
-scripts/meta_skill.py create ./my-skill \
-  --slug my-skill \
-  --title "My Skill" \
-  --description "Use when doing one specific recurring job; not for adjacent ordinary work." \
-  --job "do one specific recurring job"
+```text
+my-skill/
+  SKILL.md
+  agents/
+    openai.yaml
+  references/   optional
+  scripts/      optional
+  assets/       optional
 ```
 
 Use project mode only when the user wants durable workbench state, research
-reports, fixtures/check inputs, team reuse material, or a packaged placeholder
-zip:
+reports, fixtures/check inputs, team reuse material, or package output. Create
+that state with the central CLI after the payload exists:
 
 ```bash
-scripts/meta_skill.py create ./my-skill \
-  --slug my-skill \
-  --title "My Skill" \
-  --description "Use when doing one specific recurring job; not for adjacent ordinary work." \
-  --job "do one specific recurring job" \
-  --project
+scripts/meta-skill workbench init --target ./my-skill
 ```
 
-Create additional runtime folders only when the design needs them:
+Validate:
 
 ```bash
-scripts/meta_skill.py create ./my-skill \
-  --slug my-skill \
-  --title "My Skill" \
-  --description "Use when doing one specific recurring job; not for adjacent ordinary work." \
-  --job "do one specific recurring job" \
-  --folders references,scripts,assets,examples,resources
-```
-
-Lint:
-
-```bash
-scripts/meta_skill.py lint ./my-skill
-```
-
-Refresh OpenAI/Codex UI metadata through the same runner:
-
-```bash
-scripts/meta_skill.py openai-yaml ./my-skill \
-  --interface default_prompt='Use $my-skill to do one specific recurring job.'
+scripts/meta-skill validate ./my-skill
 ```
 
 Package only after approval:
 
 ```bash
-scripts/meta_skill.py package ./my-skill
+scripts/meta-skill package ./my-skill
 ```
 
-The portable payload is `./my-skill/` itself: `SKILL.md`, `agents/`, and linked
-runtime folders. `.meta-skill/` is private workbench state and is excluded from
-packages. Package metadata is written next to the zip artifact.
+`.meta-skill/` is private workbench state and is excluded from packages. Package
+metadata is written next to the zip artifact.
 
 ## Worked Mini Examples
 
@@ -390,8 +368,8 @@ Script-backed skill:
 - Setup/config/state rules appear only when they change behavior and name stable storage.
 - Future measurement ideas, when requested, stay in `.meta-skill/` and out of the portable runtime.
 - Scaffolds use the current-working-directory-relative `<skill-dir>` as the root payload; no `skill/` wrapper unless a repo explicitly requires it.
-- `meta_skill.py` is the single public script runner; lower-level OpenAI init,
-  metadata, and validation scripts are implementation commands routed through it.
+- `meta-skill` is the single public CLI; worker-local scripts are not a public
+  interface.
 - OpenAI/Codex metadata includes `default_prompt`, mentions `$skill-name`, and avoids system or implementation-plumbing terms in routing/UI text.
 - `policy.allow_implicit_invocation: false` appears only for explicit-only skills.
 - Artifact checks occur before clean conclusions or delivery language.

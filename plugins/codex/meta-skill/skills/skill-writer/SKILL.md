@@ -34,13 +34,15 @@ Read only what the task needs:
 | Decide whether the workflow should become a skill; classify the skill type; write the trigger contract, frontmatter, runtime body, instruction strength, setup/state, future measurement handoff, evidence boundaries, and voice | [design.md](references/design.md) |
 | Capture an active or prior Codex thread/session into a durable skill | [session-capture.md](references/session-capture.md) |
 | Add compact runtime snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
-| Scaffold, lint, package, initialize through the OpenAI route, generate metadata, or quick-validate a skill | [scripts/meta_skill.py](scripts/meta_skill.py) |
-| Understand OpenAI/Codex UI metadata fields generated through `meta_skill.py openai-yaml` or `create` | [openai_yaml.md](references/openai_yaml.md) |
+| Use the central Meta Skill CLI for validate, package, workbench, eval, progress, and runner workflows | [cli.md](../../references/cli.md) |
+| Understand OpenAI/Codex UI metadata fields when authoring `agents/openai.yaml` | [openai_yaml.md](references/openai_yaml.md) |
 | Run a trial of a draft skill in an isolated Codex thread or worktree | [skill-trial-runs.md](../../references/skill-trial-runs.md) |
 
 Treat [design.md](references/design.md) as the governing principle guide. Treat
 [cookbook.md](references/cookbook.md) as a recipe lookup, not a template to copy
 wholesale.
+Use [cli.md](../../references/cli.md) for the plugin command surface. Worker
+skills do not expose local script interfaces.
 
 ## Workflow
 
@@ -154,16 +156,13 @@ clear. Pick the smallest pattern card that changes runtime behavior.
 Create or edit the source skill files directly. Prefer a lean `SKILL.md` with
 linked references over an overstuffed body.
 
-If creating a new skill and the target repo lacks a better local initializer,
-use `scripts/meta_skill.py create <skill-dir> --slug <slug> --title "<title>"
---description "<Use when ...; not for ...>" --job "<job>"` as the base
-scaffold. `meta_skill.py` is the single script entry point: it routes creation
-through the OpenAI initializer, runs OpenAI metadata generation, and adds any
-extra runtime folders or project workbench orchestration on top. Resolve
-relative `<skill-dir>` from the user's current working directory. The portable
-payload is the project root: `<skill-dir>/SKILL.md`, `agents/`, and any runtime
-folders the design actually needs. Use `--project` only when the user wants
-`.meta-skill/` workbench folders and a packaged placeholder zip.
+When creating a new skill, create the target directory and runtime files
+directly. Resolve relative `<skill-dir>` from the user's current working
+directory. The portable payload is the project root: `<skill-dir>/SKILL.md`,
+`agents/`, and any runtime folders the design actually needs. If the user wants
+project-mode evaluation or packaging state, run
+`scripts/meta-skill workbench init --target <skill-dir>` after the payload
+exists.
 
 In project mode, keep non-runtime authoring material under `.meta-skill/`.
 Use `.meta-skill/docs/research/` for research reports, `.meta-skill/docs/` for
@@ -214,9 +213,9 @@ assets exist. Run any deterministic tests already available for the skill or its
 authoring repo.
 
 For standalone portable skill folders, run
-`scripts/meta_skill.py lint <path-to-skill-folder>` when available. For script
-resources added during authoring, run a smoke test or representative sample and
-report any untested scripts.
+`scripts/meta-skill validate <path-to-skill-folder>`. For script resources added during
+authoring, run a smoke test or representative sample and report any untested
+scripts.
 
 If the user asks for one-off testing, or if one realistic isolated run would
 materially improve confidence in a fragile trigger, resource, script, or output
@@ -228,8 +227,8 @@ multi-scenario measurement to `skill-evaluator`.
 Stop before packaging, installing, publishing, syncing, external writes, or
 final delivery unless the user explicitly approved that action or the current
 repo instructions require it. When packaging is approved, use
-`scripts/meta_skill.py package <skill-dir>`; it exports only the portable payload
-from the project root and excludes `.meta-skill/`.
+`scripts/meta-skill package <skill-dir>`; it exports only the portable payload from the
+project root and excludes `.meta-skill/`.
 
 ## Output
 
