@@ -66,6 +66,38 @@ Accepted constraints:
 | 7 | `.plans/meta-skill/package-readiness-check.md` | Add local package/readiness gates over existing evidence. |
 | 8 | `.plans/meta-skill/skill-autoresearch-v1-lane.md` | Add a guidance-only `skill-autoresearch` worker lane that stops at recommendation. |
 
+### Next Task Scope
+
+Next task: execute `.plans/meta-skill/evaluator-methodology-references.md`.
+
+Why next: `eval list` / `eval report` now makes run evidence readable, but the
+evaluator payload still lacks the methodology language that tells future agents
+how to trust, split, repeat, label, and report that evidence. Baseline impact
+comparison should come after this docs-only methodology pass so the baseline
+feature can reuse settled terms such as `dev`, `held-out`, `gold`,
+`gated best`, scaffold-vs-proof, and model-grade uncertainty.
+
+Scope:
+
+- Add `meta-skill/skills/skill-evaluator/references/methodology.md`.
+- Tighten `calibration.md`, `validations.md`, and `evaluations.md`.
+- Add only a small pointer row/check to `skill-evaluator/SKILL.md`; keep the
+  skill body skinny.
+- Keep the work docs-only. No CLI, runner, grader, manifest, or report code
+  changes.
+- Align failure taxonomy language with `skill-doctor` so failed eval cases can
+  hand off cleanly.
+
+Validation:
+
+- `scripts/meta-skill validate meta-skill/skills/skill-evaluator`
+- `grep -n "methodology.md" meta-skill/skills/skill-evaluator/SKILL.md`
+- `scripts/sync-plugins.sh`
+
+Stop rule: if a methodology concept needs new tooling to be actionable, name
+the future plan item and stop. Do not add speculative workflow prose or code in
+this task.
+
 ### Tracker Reconciliation
 
 - Merge "Upgrade Eval Viewing" and "Polish The Skill Lifecycle Report" into
