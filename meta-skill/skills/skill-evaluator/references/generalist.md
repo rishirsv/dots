@@ -20,17 +20,18 @@ Answer these about the target, then turn the answers into dimensions:
   (format, presence, bounds), and which need judgment (clarity, usefulness,
   taste)?
 - **Failure modes** — how does this kind of artifact usually go wrong? Each
-  recurring failure mode is a candidate dimension.
+  recurring failure mode may become a judged dimension.
 - **Variance tolerance** — must it be identical every time, or is a range
-  acceptable? This sets how many repetitions each case needs.
+  acceptable? This sets how many repetitions each task needs.
 
 ## Map Answers To The Workbench
 
 - **Suite metadata** goes in `.meta-skill/evals.json`: target, defaults, runner
-  plan, candidates, case IDs, and repetitions.
-- **Visible task content** goes in `cases/<case-id>/task.md`. It contains only
+  plan, conditions, task IDs, and repetitions. The current schema stores
+  conditions in `candidates[]`.
+- **Visible task content** goes in `cases/<task-id>/task.md`. It contains only
   bytes the solver may see.
-- **Judged criteria** go in `cases/<case-id>/rubric.md`.
+- **Judged criteria** go in `cases/<task-id>/rubric.md`.
 - **Exact or reference answers** go in `expected.*`.
 - **Deterministic checks** go in `validate.*` or shared `.meta-skill/tests/`.
 - **Run evidence** goes under `.meta-skill/runs/<run-id>/`.
@@ -44,7 +45,8 @@ Triggering is a skill-specialization concept: does the skill fire on a natural
 request? Most non-skill artifacts have no analog, so skip trigger cases unless
 the target genuinely has an activation step.
 
-Candidate comparison also generalizes, but the candidate source changes by
-target. A skill candidate may be a branch/worktree. A prompt candidate may be a
-prompt file. A document candidate may be a revised document path. In all cases,
-use `candidate` in run evidence and `trial_id` for one execution.
+Condition comparison also generalizes, but the condition source changes by
+target. A skill condition may be a branch/worktree. A prompt condition may be a
+prompt file. A document condition may be a revised document path. In all cases,
+use condition/task/trial language in prose, while preserving `candidate` in the
+current run evidence field and `trial_id` for one execution.

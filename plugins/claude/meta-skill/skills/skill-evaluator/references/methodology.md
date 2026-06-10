@@ -2,51 +2,62 @@
 
 Read when choosing the smallest useful eval loop for a skill.
 
-The default model is intentionally simple:
+The default model follows the agent-eval loop: keep the task stable, vary the
+agent-harness condition, grade the outcome, and inspect the transcript only when
+it explains why the outcome happened.
 
-1. **Baseline** — what the model does without the new skill help.
-2. **Skill** — the current skill being measured.
-3. **Candidate** — a changed skill candidate, such as an edited branch,
-   worktree, or future autoresearch attempt.
+1. **Task** — the user work being evaluated.
+2. **Condition** — the agent setup: no skill, current skill, or edited-skill
+   attempt.
+3. **Trial** — one task under one condition.
+4. **Outcome** — the final answer, files, artifacts, or state.
+5. **Grader** — human, model, or code judgment over the outcome.
+6. **Transcript** — event/evidence stream used to debug the outcome, not a
+   substitute for it.
 
-This matches the practical loop: write a few realistic prompts, compare the
-baseline with the skill, make a candidate, compare again, and keep only evidence
-that helps decide the next edit.
+This matches the practical loop: write a few realistic tasks, compare the
+no-skill condition with the current-skill condition, make an edited-skill
+condition, compare again, and keep only evidence that helps decide the next
+edit.
 
-## Current Plugin Terms
+## Current Plugin Terms And Aliases
 
-The plugin uses `candidates` in `.meta-skill/evals.json` for every thing under
-test:
+Use Anthropic-aligned vocabulary in explanations and reports. The current CLI
+schema still uses `candidates` in `.meta-skill/evals.json` for what the
+evaluation literature would call conditions:
 
-- `baseline` will be the no-skill comparison once `source.kind: "none"` lands.
-- `current` is the current skill payload.
-- `attempt-1`, `candidate-1`, or any other slug can point at a branch, git ref,
-  or worktree through `source`.
-- Run evidence records the candidate's branch/ref, commit, payload path, and
+- `no-skill` will be the baseline condition once `source.kind: "none"` lands.
+- `current` is the current-skill condition.
+- `attempt-1`, `candidate-1`, or any other slug can point at an edited-skill
+  branch, git ref, or worktree through `source`.
+- Run evidence records the condition's branch/ref, commit, payload path, and
   `payload_digest`.
 
-Use **candidate** in user-facing explanations and in manifest fields. Do not add
-a separate edited-skill vocabulary.
+Use **condition** in user-facing explanations. Use `candidate` only for the
+current manifest and run-file field. Do not add `candidate_id` or `attempt_id`.
 
 A no-skill baseline is not implemented yet. Track it as the next small platform
-addition: a `source.kind: "none"` candidate that runs the same prompt without
+addition: a `source.kind: "none"` condition that runs the same task without
 staging the skill payload.
 
 ## Default Loop
 
 Use this loop for most skill evaluation:
 
-1. Create 2-3 realistic prompts that represent real user requests.
-2. Run the prompts against the baseline and the skill.
-3. Judge or review the outputs side by side.
-4. Turn a proposed fix into a new candidate.
-5. Run the same prompts against the skill and candidate.
-6. Report which cases improved, regressed, already worked without the skill, or
+1. Create 2-3 realistic tasks that represent real user requests.
+2. Run the tasks under the no-skill and current-skill conditions when no-skill
+   support exists; until then, write the tasks so the comparison can run later.
+3. Judge or review the outcomes side by side.
+4. Inspect transcripts only to explain failures, tool-use mistakes, or missing
+   evidence.
+5. Turn a proposed fix into an edited-skill condition.
+6. Run the same tasks against the current-skill and edited-skill conditions.
+7. Report which tasks improved, regressed, already worked without the skill, or
    still need human judgment.
 
-Prefer side-by-side evidence over abstract scores. A score without a baseline
-mostly measures the model plus the skill; a baseline comparison measures skill
-lift.
+Prefer side-by-side outcome evidence over abstract scores. A score without a
+baseline mostly measures the model plus the skill; a no-skill/current-skill
+comparison measures skill lift.
 
 ## When To Add Rigor
 
@@ -61,8 +72,8 @@ Add more structure only when the default loop is not enough:
   decision.
 
 Do not introduce named split systems or calibration labels for ordinary skill
-work. Keep the report plain: what was compared, what changed, what is still
-uncertain.
+work. Keep the report plain: which tasks ran, which conditions were compared,
+which outcomes changed, and what is still uncertain.
 
 ## When Not To Evaluate
 

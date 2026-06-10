@@ -3,6 +3,10 @@
 Read when authoring deterministic validations: pass/fail checks with no
 judgment.
 
+Validations are code graders over trial outcomes and artifacts. They may read
+transcripts when the check is about process or tool use, but outcome checks
+should judge the produced answer, files, or state first.
+
 Validations come in two tiers. Keep the terminology straight:
 
 - **scripts** are a skill's runtime deterministic code, or shipped plugin checks.
@@ -14,7 +18,7 @@ Validations come in two tiers. Keep the terminology straight:
 | Tier | Scope | Form | Home | Durability |
 |---|---|---|---|---|
 | **General checks** | Every skill | Canonical CLI validators run by `scripts/meta-skill validate` | Plugin tree | Durable, shipped |
-| **Case-local validators** | One case | `validate.*` beside `task.md` | Hidden case folder | Local eval content |
+| **Task-local validators** | One task | `validate.*` beside `task.md` | Hidden task folder | Local eval content |
 | **Shared workbench tests** | One target suite | Authored tests reused across cases | `.meta-skill/tests/` | Local eval content |
 
 General checks already exist and apply to any skill: skill body present, valid
@@ -31,9 +35,9 @@ When authoring a rubric, each judged criterion should state why it cannot be
 deterministic. If no reason survives writing it down, move the check into
 `validate.*`.
 
-Case-local validators check behavior unique to one case. They live beside the
-case as `validate.*`, but they are hidden from the solver. They run after solver
-output exists.
+Task-local validators check behavior unique to one task. They live beside the
+task as `validate.*`, but they are hidden from the solver. They run after the
+trial outcome exists.
 
 ## Solver Boundary
 
@@ -41,7 +45,7 @@ The solver workspace receives:
 
 - `task.md`
 - fixtures listed in `evals.json`
-- the candidate payload
+- the condition payload, when present
 
 The solver workspace does not receive:
 
@@ -52,12 +56,12 @@ The solver workspace does not receive:
 - human labels
 
 Validators run outside the solver workspace and may read hidden expected output,
-the solver output file, selected artifacts, event logs, and case metadata from
+the outcome file, selected artifacts, transcripts, and task metadata from
 `evals.json`.
 
 ## Validator Contract
 
-A case-local validator should accept explicit paths rather than discovering
+A task-local validator should accept explicit paths rather than discovering
 global state:
 
 ```text

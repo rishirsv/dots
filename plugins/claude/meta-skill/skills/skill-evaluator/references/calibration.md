@@ -3,7 +3,8 @@
 Read when a human will calibrate the judge.
 
 Human grading is not a parallel scoring track. Its job is to calibrate the LLM
-judge: label a small slice, confirm the judge agrees, then let the judge scale.
+judge: label a small slice of trial outcomes, confirm the judge agrees, then
+let the judge scale.
 
 ## The Loop
 
@@ -11,11 +12,11 @@ judge: label a small slice, confirm the judge agrees, then let the judge scale.
    `cases/<case-id>/rubric.md`. Ambiguous criteria are the main cause of an
    unreliable judge.
 2. **Select a spot-check slice.** Pick a small set of representative trial
-   outputs before trusting the judge for a decision. For small skill suites, a
+   outcomes before trusting the judge for a decision. For small skill suites, a
    few human-labeled examples are usually enough to reveal obvious rubric or
    judge defects.
 3. **Collect human grades.** Store human labels as `grades.jsonl` rows over trial
-   outputs. Do not put human labels in `task.md`, and do not hide them as front
+   outcomes. Do not put human labels in `task.md`, and do not hide them as front
    matter in case files.
 4. **Check agreement.** Run the judge on the same trial outputs and compare.
    Practical signal: exact-match rate plus a +/-1 tolerance band. Reach for
@@ -48,7 +49,8 @@ Human, model, and code grades share one annotation shape:
 }
 ```
 
-Use `candidate`, not `candidate_id`. Use `trial_id`, not `attempt_id`.
+Use condition/task/trial language in prose. In grade rows, use the current
+schema field `candidate`, not `candidate_id`. Use `trial_id`, not `attempt_id`.
 
 ## Surfacing Divergence
 
@@ -58,7 +60,8 @@ labeling everything.
 
 Do not turn calibration into a separate label system. If a decision depends on
 judge scores, say whether a human spot check was done and summarize any
-disagreements in plain language.
+disagreements in plain language. Use transcripts to diagnose disagreements, but
+grade the outcome unless the rubric explicitly measures process behavior.
 
 ## Judge Bias Controls
 
