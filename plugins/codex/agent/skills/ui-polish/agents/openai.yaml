@@ -1,7 +1,0 @@
-interface:
-  display_name: "UI Polish"
-  short_description: "Iteratively polish an existing UI surface"
-  default_prompt: "Use $ui-polish to inspect the named UI surface, use $design-review findings when needed, make focused hierarchy, spacing, typography, visual craft, interaction, motion, responsive, accessibility, or microcopy edits, then capture visual and build proof."
-
-policy:
-  allow_implicit_invocation: false

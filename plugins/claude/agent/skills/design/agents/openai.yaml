@@ -1,7 +1,0 @@
-interface:
-  display_name: "Design"
-  short_description: "Route product and UI design work"
-  default_prompt: "Use $design to route this product or UI design request to the right focused workflow, confirm the brief when needed, and avoid build work until a visual target or selected direction exists."
-
-policy:
-  allow_implicit_invocation: false

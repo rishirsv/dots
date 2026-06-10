@@ -18,6 +18,40 @@ PLUGIN_REFERENCES_SRC[meta-skill]="$ROOT/meta-skill/references"
 typeset -A PLUGIN_ROOT_SRC
 PLUGIN_ROOT_SRC[meta-skill]="$ROOT/meta-skill/src"
 
+# Source skills listed here stay in the repo but are not packaged into the
+# user-installed Agent plugin.
+AGENT_PLUGIN_SKILL_EXCLUDES=(design design-review ideate ui-polish)
+AGENT_PLUGIN_AGENT_EXCLUDES=(design-reviewer)
+
+should_exclude_skill() {
+  local plugin="$1"
+  local skill="$2"
+  local excluded
+
+  if [[ "$plugin" == "agent" ]]; then
+    for excluded in "${AGENT_PLUGIN_SKILL_EXCLUDES[@]}"; do
+      if [[ "$skill" == "$excluded" ]]; then
+        return 0
+      fi
+    done
+  fi
+
+  return 1
+}
+
+should_exclude_agent() {
+  local agent="$1"
+  local excluded
+
+  for excluded in "${AGENT_PLUGIN_AGENT_EXCLUDES[@]}"; do
+    if [[ "$agent" == "$excluded" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 # Subagents are an `agent`-only concern today.
 SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
 CODEX_AGENT_PLUGIN_AGENTS="$ROOT/plugins/codex/agent/agents"
@@ -66,6 +100,9 @@ for plugin in "${PLUGINS[@]}"; do
 
   src="${PLUGIN_SKILLS_SRC[$plugin]}"
   for skill_dir in "$src"/*(/N); do
+    if should_exclude_skill "$plugin" "${skill_dir:t}"; then
+      continue
+    fi
     rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$codex_pkg/skills/${skill_dir:t}/"
     rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$claude_pkg/skills/${skill_dir:t}/"
   done
@@ -94,21 +131,28 @@ fi
 rm -f "$CODEX_DESKTOP_SKILL_MARKER"
 
 # --- Subagents (agent plugin only) ------------------------------------------
-mkdir -p "$CODEX_AGENT_PLUGIN_AGENTS" "$CLAUDE_AGENT_PLUGIN_AGENTS"
 if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
-  rsync -a --delete --exclude '.DS_Store' "$SOURCE_CODEX_AGENTS/" "$CODEX_AGENT_PLUGIN_AGENTS/"
+  rm -rf "$CODEX_AGENT_PLUGIN_AGENTS"
+  mkdir -p "$CODEX_AGENT_PLUGIN_AGENTS"
+  for agent_file in "$SOURCE_CODEX_AGENTS"/*.toml(N); do
+    if should_exclude_agent "${agent_file:t:r}"; then
+      continue
+    fi
+    cp "$agent_file" "$CODEX_AGENT_PLUGIN_AGENTS/${agent_file:t}"
+  done
 else
   rm -rf "$CODEX_AGENT_PLUGIN_AGENTS"
 fi
 
 if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
-  python3 - "$SOURCE_CODEX_AGENTS" "$CLAUDE_AGENT_PLUGIN_AGENTS" <<'PY'
+  python3 - "$SOURCE_CODEX_AGENTS" "$CLAUDE_AGENT_PLUGIN_AGENTS" "${(j:,:)AGENT_PLUGIN_AGENT_EXCLUDES}" <<'PY'
 import re
 import sys
 from pathlib import Path
 
 source = Path(sys.argv[1])
 target = Path(sys.argv[2])
+excluded = {name for name in sys.argv[3].split(",") if name}
 target.mkdir(parents=True, exist_ok=True)
 for stale in target.glob("*.md"):
     stale.unlink()
@@ -169,6 +213,8 @@ def yaml_frontmatter(data):
 
 
 for path in sorted(source.glob("*.toml")):
+    if path.stem in excluded:
+        continue
     agent = parse_codex_agent(path)
     name = str(agent.get("name", path.stem))
     frontmatter = {
@@ -205,6 +251,9 @@ fi
 : > "$CODEX_USER_AGENT_MARKER"
 if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
   for agent_file in "$SOURCE_CODEX_AGENTS"/*.toml(N); do
+    if should_exclude_agent "${agent_file:t:r}"; then
+      continue
+    fi
     cp "$agent_file" "$CODEX_USER_AGENTS/${agent_file:t}"
     print -r -- "${agent_file:t}" >> "$CODEX_USER_AGENT_MARKER"
   done
