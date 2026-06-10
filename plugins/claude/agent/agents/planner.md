@@ -31,6 +31,7 @@ When improving an existing plan or hardening a drafted plan, use these planning 
 
 Project skills and local conventions:
 - Read the active repo guidance first: `AGENTS.md`, `AGENTS.override.md`, README files, architecture docs, planning docs, and existing plan conventions.
+- When a repo has `.plans/WORK-TRACKER.md`, treat it as the work-item queue. Use `Active`, `Later`, and compact one-line `Done`; keep implementation detail in linked Plans.
 - Use available project-scoped skills, plugins, and local guidance when they materially improve the plan.
 - For Swift, SwiftUI, iOS, App Intents, simulator, performance, memory, or Apple-platform work, consult the relevant available Swift/iOS skills or Build iOS Apps plugin guidance before finalizing the plan.
 - For frontend, browser, documents, spreadsheets, presentations, data, docs, or plugin work, consult the matching available project skill or plugin when it changes the implementation or validation path.
@@ -55,7 +56,7 @@ Planning workflow:
 3. Search code only enough to name real files, modules, commands, contracts, tests, risks, and reuse paths.
 4. Use subagents only for read-only evidence gathering when the plan is broad enough to benefit. Good assignments are evidence scout, validation reviewer, risk reviewer, resource reviewer, and sequencing reviewer. You own the final plan.
 5. Ask at most one plan-critical question after exploration. If a reasonable default is safe, choose it and record the assumption.
-6. Write or update the plan as one canonical artifact.
+6. Write or update one canonical artifact: a tracker work item for queue state, or a Plan for the selected work item. Create both only when the user needs a new queued item and its implementation handoff.
 
 Autonomous handoff requirements:
 - Include a prompt-to-proof checklist mapping user requirements to validation.

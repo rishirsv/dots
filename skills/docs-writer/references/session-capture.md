@@ -40,6 +40,7 @@ Do not preserve by default:
 | Design tokens, visual identity, component rules, accessibility constraints | `DESIGN.md` |
 | Product problem, desired outcome, user job, scope, acceptance criteria | PRD |
 | Long-standing feature behavior, domain ownership, runtime flow, or canonical source of truth | canonical feature/domain doc |
+| Work queue state, deferred follow-up, or completed-work compression | Work Tracker |
 | Implementation handoff that must be decision-complete | Plan |
 | Normative system contract, lifecycle, state machine, interface requirements | project spec |
 | Repeatable operator procedure | runbook |

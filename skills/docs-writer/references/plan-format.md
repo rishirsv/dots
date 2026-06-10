@@ -5,12 +5,17 @@ saved under the repo's planning directory, usually `.plans/`. Use the smallest
 Plan that lets another engineer or agent implement the work without making
 product, architecture, interface, or validation decisions.
 
+When a repo has a Work Tracker, one saved Plan should belong to one work item.
+The tracker chooses and sequences work; the Plan explains how to implement the
+selected item.
+
 ## Use A Saved Plan When
 
 - The work is multi-step, risky, or likely to cross sessions.
 - Another engineer or agent will implement from the artifact.
 - The user wants to review the approach before code changes.
 - The plan needs durable assumptions, test expectations, or stop rules.
+- A Work Tracker item needs implementation detail.
 
 ## Do Not Save A Plan When
 
@@ -59,6 +64,8 @@ Add optional sections only when they prevent likely mistakes:
 - Keep bullets short and avoid explanatory sub-bullets unless needed for safety.
 - Do not include progress logs, decision logs, discovery journals, recovery
   essays, or long artifact transcripts by default.
+- Do not include queue state, roadmap narrative, or unrelated deferred ideas.
+  Put those in the Work Tracker.
 
 ## Template
 

@@ -8,7 +8,7 @@ Use the smallest documentation depth that lets the next reader act safely.
 |---|---|---:|---|
 | **S — Tiny patch** | Existing owner doc exists; one stale command/path/link/term; narrow user request; no new concept. | 1-10 changed lines. | Verify touched command, path, link, or source fact only. Preserve style exactly. |
 | **M — Durable update** | Existing doc needs a new workflow, section, runbook, migration note, API behavior, module explanation, or session-derived decision. | 10-80 changed lines. | Verify relevant source files, tests/config/scripts, direct links, and at least one example or command when applicable. |
-| **L — Comprehensive doc/scaffold** | No owner doc exists; onboarding is blocked; architecture/session decisions cross modules; public API, PRD, project spec, Plan, or migration is material. | 80-250 lines unless the doc type requires more detail. | Verify representative commands, links, paths, examples, schemas/specs, source-of-truth files, and uncertainty. Update indexes. |
+| **L — Comprehensive doc/scaffold** | No owner doc exists; onboarding is blocked; architecture/session decisions cross modules; public API, PRD, Work Tracker, project spec, Plan, or migration is material. | 80-250 lines unless the doc type requires more detail. | Verify representative commands, links, paths, examples, schemas/specs, source-of-truth files, and uncertainty. Update indexes. |
 
 ## Promotion Rules
 
@@ -43,6 +43,7 @@ Demote whenever:
 | Reader integrating | API docs; contract, examples, errors, side effects, versioning. |
 | Reader deciding product scope | PRD; problem, outcome, users/jobs, scope, acceptance criteria, risks. |
 | Reader understanding a long-standing feature | Canonical feature/domain doc; simple version, surfaces, how it works, ownership, data/state, acceptance, verification. |
+| Reader choosing work | Work Tracker; Active, Later, one-line Done, links to Plans. |
 | Reader implementing planned work | Plan; summary, grouped implementation changes, tests, and assumptions. |
 | Reader implementing a system contract | Project spec; normative requirements, domain model, lifecycle, interfaces, safety, recovery. |
 | Reader understanding a decision | ADR / decision record; decision, context, options considered, consequences, validation. |

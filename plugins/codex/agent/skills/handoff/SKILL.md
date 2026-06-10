@@ -38,7 +38,8 @@ After a successful `create_thread`, report the created thread using the required
 
 1. Identify what the next session is supposed to accomplish.
 2. Summarize completed work, current state, important decisions, and active constraints.
-3. Reference artifacts by path or URL instead of duplicating them.
+3. Reference artifacts by path or URL instead of duplicating them. If a Work
+   Tracker item or Plan exists, link it and summarize only the delta.
 4. List the next concrete actions in execution order.
 5. Name validation already run and validation still needed.
 6. Call out blockers, assumptions, risks, and unknowns.
@@ -89,6 +90,8 @@ Continue this task from the handoff below. Start by reading the referenced files
 
 - Do not paste secrets, tokens, private keys, or unnecessary personal data.
 - Do not duplicate long content already captured in plans, PRs, commits, docs, or diffs.
+- Do not duplicate Work Tracker or Plan content; point the next agent at the
+  existing artifact and name what changed since it was written.
 - Do not hide uncertainty.
 - Keep it useful to a fresh agent who will not replay the conversation.
 - Do not create, fork, move, archive, pin, rename, or message Codex threads unless the user explicitly asks for thread management.

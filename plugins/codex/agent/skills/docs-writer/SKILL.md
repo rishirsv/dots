@@ -17,6 +17,7 @@ Write durable repository documentation that future maintainers, operators, users
 | Distill a Codex interview/design session into durable docs | [references/session-capture.md](references/session-capture.md) |
 | Scaffold or refine `DESIGN.md` format | [references/design-md-format.md](references/design-md-format.md) |
 | Write a product requirements document | [references/prd-format.md](references/prd-format.md) |
+| Write or update a Work Tracker | [references/work-tracker-format.md](references/work-tracker-format.md) |
 | Write a Plan | [references/plan-format.md](references/plan-format.md) |
 | Write a language-agnostic project or service specification | [references/project-spec-format.md](references/project-spec-format.md) |
 | Write an ADR or decision record | [references/adr-format.md](references/adr-format.md) |
@@ -32,6 +33,7 @@ Write durable repository documentation that future maintainers, operators, users
 | Seed a concise/default PRD | [assets/PRD_template.md](assets/PRD_template.md) |
 | Seed a canonical feature/domain doc | [assets/FEATURE_SPEC_template.md](assets/FEATURE_SPEC_template.md) |
 | Seed a full/detailed PRD | [assets/PRD_FULL_template.md](assets/PRD_FULL_template.md) |
+| Seed a new Work Tracker | [assets/WORK_TRACKER_template.md](assets/WORK_TRACKER_template.md) |
 | Seed a new Plan | [assets/PLAN_template.md](assets/PLAN_template.md) |
 | Seed a new project spec | [assets/PROJECT_SPEC_template.md](assets/PROJECT_SPEC_template.md) |
 | Seed a new ADR or decision record | [assets/ADR_template.md](assets/ADR_template.md) |
@@ -45,7 +47,7 @@ Write durable repository documentation that future maintainers, operators, users
 In scope:
 
 - durable repository docs: `README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `DESIGN.md`, runbooks, API docs, migration notes, and module-level docs
-- durable product and planning docs: PRDs, project specs, ADRs/decision records, and Plans when they are intended to be checked in or handed off as the source of truth for future work
+- durable product and planning docs: PRDs, project specs, ADRs/decision records, Work Trackers, and Plans when they are intended to be checked in or handed off as the source of truth for future work
 - style-preserving doc updates that match an existing document's voice, density, headings, and examples
 - repairing drift in touched docs: stale commands, paths, links, snippets, module names, configuration, and validation steps
 - choosing the right durable owner doc for knowledge created during a Codex design, interview, or implementation session
@@ -82,6 +84,7 @@ Not in scope:
 | Coding agents need visual identity, tokens, components, or design-system rules | `DESIGN.md` | token-precise, concrete, accessibility-aware |
 | Product owner needs the why, user problem, scope, acceptance criteria, and open decisions | PRD | concise by default, outcome-first, implementation-light |
 | Long-standing feature or main app domain needs one durable explainer for how it works | canonical feature/domain doc | simple walkthrough, ownership-aware, diagram-friendly |
+| Maintainer needs to choose and sequence work items | Work Tracker | queue-shaped, concise, proof-oriented |
 | Implementer needs a decision-complete implementation handoff | Plan | compact, evidence-backed, testable |
 | Team needs a normative language-agnostic contract for a system, service, workflow, or application | project spec | RFC-style, requirement-heavy, boundary-explicit |
 | Maintainers need durable rationale for a hard-to-reverse or surprising decision | ADR / decision record | concise, decision-first, trade-off-aware |
@@ -166,6 +169,7 @@ For read-only reviews, lead with findings ordered by severity and include exact 
 - For PRDs, use the concise template by default. Promote only for canonical feature/domain docs or explicit full/detailed PRDs.
 - For PRDs, include user stories whose acceptance criteria are agent-verifiable: each story needs one user outcome and concrete evidence that would let Codex know the story is done.
 - For PRDs, separate product decisions from implementation tactics. If implementation detail dominates, route to a Plan or project spec instead.
+- For Work Trackers, use `Active`, `Later`, and one-line `Done`; keep implementation detail in linked Plans.
 - For project specs, use normative language for requirements and label implementation-defined behavior instead of hiding choices in prose.
 - For ADRs or decision records, prefer existing repo convention; if none exists, `docs/ADRs/<number>-<slug>.md` is the default new path.
 - For Plans, include a summary, implementation changes, test plan, and assumptions by default; add public interfaces, scope, stop rules, or notes only when needed.
