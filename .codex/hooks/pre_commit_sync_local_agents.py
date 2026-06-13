@@ -76,7 +76,13 @@ def changed_paths(root, include_unstaged):
 
 
 def is_relevant(path):
-    return path == "global_instructions.md" or path.startswith(".codex/agents/")
+    return (
+        path == "global_instructions.md"
+        or path == ".codex/config.toml"
+        or path == ".codex/hooks.json"
+        or path.startswith(".codex/agents/")
+        or path.startswith(".codex/hooks/")
+    )
 
 
 def emit(message):

@@ -71,6 +71,7 @@ agent/
 - `agent/assets/`: canonical Agent Codex plugin assets, packaged into `plugins/codex/agent/assets/`.
 - `meta-skill/`: standalone Meta-Skill plugin source. The sync script packages `skills/`, `references/`, and `src/` into `plugins/{codex,claude}/meta-skill/`.
 - `.codex/agents/`: canonical local Codex agent definitions. `scripts/sync-local-agents.sh` copies these to `~/.codex/agents/` and generates Claude agent Markdown under `~/.claude/agents/`.
+- `.codex/config.toml`: canonical user-level Codex config for this machine, copied to `~/.codex/config.toml`.
 - `.codex/hooks.json` and `.codex/hooks/`: source for project-local and user-level Codex hooks. The pre-commit sync hook runs before Codex executes relevant `git commit` commands.
 - `global_instructions.md`: copied to `~/.codex/AGENTS.md` and symlinked from `~/.claude/CLAUDE.md`.
 - `plugins/`: generated plugin packages. Do not hand-edit these files.
@@ -93,6 +94,7 @@ scripts/sync-local-agents.sh
 
 This updates:
 
+- `~/.codex/config.toml`
 - `~/.codex/AGENTS.md`
 - `~/.claude/CLAUDE.md`
 - `~/.codex/agents/`
@@ -100,12 +102,12 @@ This updates:
 - `~/.codex/hooks.json`
 - `~/.codex/hooks/`
 
-When Codex runs a `git commit` command, the Codex hook checks whether the commit touches `global_instructions.md` or `.codex/agents/`. If it does, the hook runs `scripts/sync-local-agents.sh` before the commit proceeds. The user-level copy no-ops inside this repo when the project-local hook is present, so both hook sources can exist without double-syncing. Review and trust changed hooks from Codex with `/hooks`.
+When Codex runs a `git commit` command, the Codex hook checks whether the commit touches `.codex/config.toml`, `global_instructions.md`, `.codex/agents/`, `.codex/hooks.json`, or `.codex/hooks/`. If it does, the hook runs `scripts/sync-local-agents.sh` before the commit proceeds. The user-level copy no-ops inside this repo when the project-local hook is present, so both hook sources can exist without double-syncing. Review and trust changed hooks from Codex with `/hooks`.
 
 ## Repo Codex Config
 
 This repo keeps its Codex config in `.codex/config.toml`.
 
-User-specific secrets, auth, and machine-wide defaults should stay in `~/.codex/config.toml`.
+The repo config is the canonical source for `~/.codex/config.toml`; `scripts/sync-local-agents.sh` backs up any existing user config before copying the repo version into place.
 
 Codex repo instructions stay in root `AGENTS.md`; they do not move into `.codex/`. Codex project subagents use `.codex/agents/*.toml`, not `.agents/`.
