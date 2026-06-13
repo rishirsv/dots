@@ -1,7 +1,0 @@
-interface:
-  display_name: "Design Review"
-  short_description: "Review product surfaces and target fidelity"
-  default_prompt: "Use $design-review to inspect rendered, screenshot, target, and repo evidence for an existing product surface. Stay read-only, critique UX clarity, hierarchy, accessibility, platform fit, product fit, resilience states, fidelity, and craft, then return prioritized actionable findings with proof limits."
-
-policy:
-  allow_implicit_invocation: false

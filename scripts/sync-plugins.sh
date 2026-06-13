@@ -6,74 +6,25 @@ MARKETPLACE_NAME="agent"
 MARKETPLACE_VERSION="0.1.0"
 MARKETPLACE_SOURCE="${AGENT_MARKETPLACE_SOURCE:-rishirsv/agent}"
 
-# Plugins packaged from this repo. Each plugin has its own source skills
-# directory; only `agent` ships Codex/Claude subagents. Per-plugin manifest
-# metadata lives in the Python generator block below, keyed by plugin name.
+# Plugins packaged from this repo. Each plugin has its own source folder.
+# Per-plugin manifest metadata lives in the Python generator block below, keyed
+# by plugin name.
 PLUGINS=(agent meta-skill)
 typeset -A PLUGIN_SKILLS_SRC
-PLUGIN_SKILLS_SRC[agent]="$ROOT/skills"
+PLUGIN_SKILLS_SRC[agent]="$ROOT/agent/skills"
 PLUGIN_SKILLS_SRC[meta-skill]="$ROOT/meta-skill/skills"
+typeset -A PLUGIN_ASSETS_SRC
+PLUGIN_ASSETS_SRC[agent]="$ROOT/agent/assets"
 typeset -A PLUGIN_REFERENCES_SRC
 PLUGIN_REFERENCES_SRC[meta-skill]="$ROOT/meta-skill/references"
 typeset -A PLUGIN_ROOT_SRC
 PLUGIN_ROOT_SRC[meta-skill]="$ROOT/meta-skill/src"
-
-# Source skills listed here stay in the repo but are not packaged into the
-# user-installed Agent plugin.
-AGENT_PLUGIN_SKILL_EXCLUDES=(design design-review ideate ui-polish)
-AGENT_PLUGIN_AGENT_EXCLUDES=(design-reviewer)
-
-should_exclude_skill() {
-  local plugin="$1"
-  local skill="$2"
-  local excluded
-
-  if [[ "$plugin" == "agent" ]]; then
-    for excluded in "${AGENT_PLUGIN_SKILL_EXCLUDES[@]}"; do
-      if [[ "$skill" == "$excluded" ]]; then
-        return 0
-      fi
-    done
-  fi
-
-  return 1
-}
-
-should_exclude_agent() {
-  local agent="$1"
-  local excluded
-
-  for excluded in "${AGENT_PLUGIN_AGENT_EXCLUDES[@]}"; do
-    if [[ "$agent" == "$excluded" ]]; then
-      return 0
-    fi
-  done
-
-  return 1
-}
-
-# Subagents are an `agent`-only concern today.
-SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
-CODEX_AGENT_PLUGIN_AGENTS="$ROOT/plugins/codex/agent/agents"
-CLAUDE_AGENT_PLUGIN_AGENTS="$ROOT/plugins/claude/agent/agents"
 
 CODEX_DESKTOP_SKILLS="$HOME/.codex/skills"
 CODEX_DESKTOP_SKILL_MARKER="$CODEX_DESKTOP_SKILLS/.agent-managed-skills"
 CODEX_MARKETPLACE_DIR="$ROOT/.agents/plugins"
 CODEX_MARKETPLACE="$CODEX_MARKETPLACE_DIR/marketplace.json"
 CLAUDE_MARKETPLACE="$ROOT/.claude-plugin/marketplace.json"
-SYSTEM_AGENTS_SOURCE="$ROOT/system_agents.md"
-CODEX_SYSTEM_AGENTS="$HOME/.codex/AGENTS.md"
-CODEX_USER_AGENTS="$HOME/.codex/agents"
-CODEX_USER_AGENT_MARKER="$CODEX_USER_AGENTS/.agent-managed-agents"
-CLAUDE_SYSTEM_AGENTS="$HOME/.claude/CLAUDE.md"
-CLAUDE_USER_AGENTS="$HOME/.claude/agents"
-CLAUDE_USER_AGENT_MARKER="$CLAUDE_USER_AGENTS/.agent-managed-agents"
-
-if [[ ! -f "$SYSTEM_AGENTS_SOURCE" ]]; then
-  echo "Missing system agents source: $SYSTEM_AGENTS_SOURCE" >&2
-  exit 1
-fi
 
 for plugin in "${PLUGINS[@]}"; do
   src="${PLUGIN_SKILLS_SRC[$plugin]:-}"
@@ -95,14 +46,11 @@ for plugin in "${PLUGINS[@]}"; do
   codex_pkg="$ROOT/plugins/codex/$plugin"
   claude_pkg="$ROOT/plugins/claude/$plugin"
   mkdir -p "$codex_pkg/.codex-plugin" "$claude_pkg/.claude-plugin"
-  rm -rf "$codex_pkg/skills" "$claude_pkg/skills" "$codex_pkg/references" "$claude_pkg/references" "$codex_pkg/src" "$claude_pkg/src"
+  rm -rf "$codex_pkg/skills" "$claude_pkg/skills" "$codex_pkg/references" "$claude_pkg/references" "$codex_pkg/src" "$claude_pkg/src" "$codex_pkg/agents" "$claude_pkg/agents"
   mkdir -p "$codex_pkg/skills" "$claude_pkg/skills"
 
   src="${PLUGIN_SKILLS_SRC[$plugin]}"
   for skill_dir in "$src"/*(/N); do
-    if should_exclude_skill "$plugin" "${skill_dir:t}"; then
-      continue
-    fi
     rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$codex_pkg/skills/${skill_dir:t}/"
     rsync -a --delete --exclude '.DS_Store' "$skill_dir/" "$claude_pkg/skills/${skill_dir:t}/"
   done
@@ -118,9 +66,15 @@ for plugin in "${PLUGINS[@]}"; do
     rsync -a --delete --exclude '.DS_Store' --exclude '__pycache__' "$root_src/" "$codex_pkg/src/"
     rsync -a --delete --exclude '.DS_Store' --exclude '__pycache__' "$root_src/" "$claude_pkg/src/"
   fi
+
+  assets="${PLUGIN_ASSETS_SRC[$plugin]:-}"
+  if [[ -n "$assets" && -d "$assets" ]]; then
+    rm -rf "$codex_pkg/assets"
+    rsync -a --delete --exclude '.DS_Store' "$assets/" "$codex_pkg/assets/"
+  fi
 done
 
-# --- Clean up the legacy direct Desktop skill installs ----------------------
+# --- Clean up managed direct Codex Desktop skill installs -------------------
 mkdir -p "$CODEX_DESKTOP_SKILLS"
 if [[ -f "$CODEX_DESKTOP_SKILL_MARKER" ]]; then
   while IFS= read -r managed_skill; do
@@ -130,158 +84,8 @@ if [[ -f "$CODEX_DESKTOP_SKILL_MARKER" ]]; then
 fi
 rm -f "$CODEX_DESKTOP_SKILL_MARKER"
 
-# --- Subagents (agent plugin only) ------------------------------------------
-if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
-  rm -rf "$CODEX_AGENT_PLUGIN_AGENTS"
-  mkdir -p "$CODEX_AGENT_PLUGIN_AGENTS"
-  for agent_file in "$SOURCE_CODEX_AGENTS"/*.toml(N); do
-    if should_exclude_agent "${agent_file:t:r}"; then
-      continue
-    fi
-    cp "$agent_file" "$CODEX_AGENT_PLUGIN_AGENTS/${agent_file:t}"
-  done
-else
-  rm -rf "$CODEX_AGENT_PLUGIN_AGENTS"
-fi
-
-if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
-  python3 - "$SOURCE_CODEX_AGENTS" "$CLAUDE_AGENT_PLUGIN_AGENTS" "${(j:,:)AGENT_PLUGIN_AGENT_EXCLUDES}" <<'PY'
-import re
-import sys
-from pathlib import Path
-
-source = Path(sys.argv[1])
-target = Path(sys.argv[2])
-excluded = {name for name in sys.argv[3].split(",") if name}
-target.mkdir(parents=True, exist_ok=True)
-for stale in target.glob("*.md"):
-    stale.unlink()
-
-
-def parse_codex_agent(path: Path) -> dict:
-    text = path.read_text()
-    data = {}
-
-    for key in ["name", "description", "model", "model_reasoning_effort", "sandbox_mode"]:
-        match = re.search(rf'^{key}\s*=\s*"([^"]*)"', text, re.MULTILINE)
-        if match:
-            data[key] = match.group(1)
-
-    instruction_match = re.search(r'developer_instructions\s*=\s*"""(.*?)"""', text, re.DOTALL)
-    data["developer_instructions"] = instruction_match.group(1).strip() if instruction_match else ""
-
-    return data
-
-
-def claude_model(codex_model):
-    if codex_model and codex_model.endswith("-mini"):
-        return "haiku"
-    return "sonnet"
-
-
-def claude_effort(codex_effort):
-    if codex_effort in {"low", "medium", "high", "xhigh", "max"}:
-        return codex_effort
-    return "medium"
-
-
-def tools_for(sandbox_mode):
-    if sandbox_mode == "read-only":
-        return ["Read", "Grep", "Glob", "Bash", "Skill"]
-    return ["Read", "Grep", "Glob", "Bash", "Write", "Edit", "MultiEdit", "Skill"]
-
-
-def yaml_scalar(value):
-    text = str(value)
-    if not text:
-        return '""'
-    if re.search(r"[:#\[\]{}&*!|>'\"%@`]", text) or text.strip() != text:
-        return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
-    return text
-
-
-def yaml_frontmatter(data):
-    lines = []
-    for key, value in data.items():
-        if isinstance(value, list):
-            lines.append(f"{key}:")
-            for item in value:
-                lines.append(f"- {yaml_scalar(item)}")
-        else:
-            lines.append(f"{key}: {yaml_scalar(value)}")
-    return "\n".join(lines) + "\n"
-
-
-for path in sorted(source.glob("*.toml")):
-    if path.stem in excluded:
-        continue
-    agent = parse_codex_agent(path)
-    name = str(agent.get("name", path.stem))
-    frontmatter = {
-        "name": name,
-        "description": str(agent.get("description", "")),
-        "model": claude_model(agent.get("model") if isinstance(agent.get("model"), str) else None),
-        "effort": claude_effort(agent.get("model_reasoning_effort") if isinstance(agent.get("model_reasoning_effort"), str) else None),
-        "tools": tools_for(agent.get("sandbox_mode") if isinstance(agent.get("sandbox_mode"), str) else None),
-    }
-
-    body = str(agent.get("developer_instructions", "")).strip()
-    output = "---\n"
-    output += yaml_frontmatter(frontmatter)
-    output += "---\n\n"
-    output += body
-    output += "\n"
-    (target / f"{name}.md").write_text(output)
-PY
-else
-  rm -rf "$CLAUDE_AGENT_PLUGIN_AGENTS"
-fi
-
-# --- System + user agent instructions ---------------------------------------
-mkdir -p "$HOME/.codex" "$HOME/.claude" "$CODEX_USER_AGENTS" "$CLAUDE_USER_AGENTS"
-cp "$SYSTEM_AGENTS_SOURCE" "$CODEX_SYSTEM_AGENTS"
-
-if [[ -f "$CODEX_USER_AGENT_MARKER" ]]; then
-  while IFS= read -r managed_agent; do
-    [[ -n "$managed_agent" ]] || continue
-    rm -f "$CODEX_USER_AGENTS/$managed_agent"
-  done < "$CODEX_USER_AGENT_MARKER"
-fi
-
-: > "$CODEX_USER_AGENT_MARKER"
-if [[ -d "$SOURCE_CODEX_AGENTS" ]]; then
-  for agent_file in "$SOURCE_CODEX_AGENTS"/*.toml(N); do
-    if should_exclude_agent "${agent_file:t:r}"; then
-      continue
-    fi
-    cp "$agent_file" "$CODEX_USER_AGENTS/${agent_file:t}"
-    print -r -- "${agent_file:t}" >> "$CODEX_USER_AGENT_MARKER"
-  done
-fi
-
-if [[ -f "$CLAUDE_USER_AGENT_MARKER" ]]; then
-  while IFS= read -r managed_agent; do
-    [[ -n "$managed_agent" ]] || continue
-    rm -f "$CLAUDE_USER_AGENTS/$managed_agent"
-  done < "$CLAUDE_USER_AGENT_MARKER"
-fi
-
-: > "$CLAUDE_USER_AGENT_MARKER"
-if [[ -d "$CLAUDE_AGENT_PLUGIN_AGENTS" ]]; then
-  for agent_file in "$CLAUDE_AGENT_PLUGIN_AGENTS"/*.md(N); do
-    target_agent="$CLAUDE_USER_AGENTS/${agent_file:t}"
-    if [[ -e "$target_agent" ]]; then
-      mv "$target_agent" "$target_agent.bak.$(date +%Y%m%d%H%M%S)"
-    fi
-    cp "$agent_file" "$target_agent"
-    print -r -- "${agent_file:t}" >> "$CLAUDE_USER_AGENT_MARKER"
-  done
-fi
-
-if [[ -e "$CLAUDE_SYSTEM_AGENTS" && ! -L "$CLAUDE_SYSTEM_AGENTS" ]]; then
-  mv "$CLAUDE_SYSTEM_AGENTS" "$CLAUDE_SYSTEM_AGENTS.bak.$(date +%Y%m%d%H%M%S)"
-fi
-ln -sfn "$SYSTEM_AGENTS_SOURCE" "$CLAUDE_SYSTEM_AGENTS"
+# --- Local system + user agent instructions ---------------------------------
+"$ROOT/scripts/sync-local-agents.sh"
 
 # --- Which plugins actually carry skills ------------------------------------
 # A plugin with no skills is scaffolded on disk but held out of the
@@ -443,12 +247,12 @@ for plugin in "${REGISTERED_PLUGINS[@]}"; do
   if [[ -f "$CODEX_VALIDATOR" ]]; then
     python3 "$CODEX_VALIDATOR" "$ROOT/plugins/codex/$plugin"
   fi
-  if command -v claude >/dev/null 2>&1; then
+  if command -v claude >/dev/null 2>&1 && claude --version >/dev/null 2>&1; then
     claude plugin validate "$ROOT/plugins/claude/$plugin"
   fi
 done
 
-if command -v codex >/dev/null 2>&1; then
+if command -v codex >/dev/null 2>&1 && codex --version >/dev/null 2>&1; then
   codex plugin marketplace remove "$MARKETPLACE_NAME" >/dev/null 2>&1 || true
   if [[ -d "$MARKETPLACE_SOURCE" ]]; then
     codex plugin marketplace add "$MARKETPLACE_SOURCE"
@@ -459,9 +263,11 @@ if command -v codex >/dev/null 2>&1; then
     codex plugin remove "$plugin@$MARKETPLACE_NAME" >/dev/null 2>&1 || true
     codex plugin add "$plugin@$MARKETPLACE_NAME"
   done
+else
+  echo "Skipping Codex plugin CLI registration; codex is not available or not healthy." >&2
 fi
 
-if command -v claude >/dev/null 2>&1; then
+if command -v claude >/dev/null 2>&1 && claude --version >/dev/null 2>&1; then
   claude plugin marketplace remove "$MARKETPLACE_NAME" >/dev/null 2>&1 || true
   if [[ -d "$MARKETPLACE_SOURCE" ]]; then
     claude plugin marketplace add "$MARKETPLACE_SOURCE"
@@ -472,6 +278,8 @@ if command -v claude >/dev/null 2>&1; then
     claude plugin uninstall "$plugin@$MARKETPLACE_NAME" >/dev/null 2>&1 || true
     claude plugin install "$plugin@$MARKETPLACE_NAME" --scope user || claude plugin update "$plugin@$MARKETPLACE_NAME" --scope user
   done
+else
+  echo "Skipping Claude plugin CLI registration; claude is not available or not healthy." >&2
 fi
 
 for plugin in "${REGISTERED_PLUGINS[@]}"; do
@@ -484,13 +292,15 @@ for plugin in "${REGISTERED_PLUGINS[@]}"; do
 done
 
 AGENT_CODEX_CACHE="$HOME/.codex/plugins/cache/$MARKETPLACE_NAME/agent/$MARKETPLACE_VERSION"
-if [[ ! -f "$AGENT_CODEX_CACHE/skills/commit/SKILL.md" ]]; then
-  echo "Expected agent plugin skills in Codex cache, but none were found: $AGENT_CODEX_CACHE/skills" >&2
+if [[ ! -f "$AGENT_CODEX_CACHE/skills/yeet/SKILL.md" ]]; then
+  echo "Expected yeet in the Agent plugin Codex cache, but it was not found: $AGENT_CODEX_CACHE/skills" >&2
   exit 1
 fi
 
 echo "Packaged plugins: ${PLUGINS[*]}"
 echo "Registered (skill-carrying) plugins: ${REGISTERED_PLUGINS[*]:-none}"
+echo "Removed managed direct Codex Desktop skill installs, if any:"
+echo "  $CODEX_DESKTOP_SKILLS"
 scaffold_only=()
 for plugin in "${PLUGINS[@]}"; do
   if [[ " ${REGISTERED_PLUGINS[*]} " != *" $plugin "* ]]; then
@@ -500,10 +310,4 @@ done
 if (( ${#scaffold_only[@]} )); then
   echo "Scaffolded but not yet registered (no skills): ${scaffold_only[*]}"
 fi
-echo "Synced system agent instructions:"
-echo "  $CODEX_SYSTEM_AGENTS"
-echo "  $CLAUDE_SYSTEM_AGENTS -> $SYSTEM_AGENTS_SOURCE"
-echo "Synced Codex custom agents:"
-echo "  $CODEX_USER_AGENTS"
-echo "Synced Claude custom agents:"
-echo "  $CLAUDE_USER_AGENTS"
+echo "Synced local system and custom agents via scripts/sync-local-agents.sh"

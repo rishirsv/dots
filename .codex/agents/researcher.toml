@@ -71,5 +71,5 @@ Return:
 """
 
 [[skills.config]]
-path = "/Users/rishi/Code/agent/skills/research/SKILL.md"
+path = "/Users/rishi/Desktop/agent-skills-review/research/SKILL.md"
 enabled = true

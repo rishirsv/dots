@@ -95,7 +95,7 @@ Run:
     cd ~/Code/agent
     scripts/sync-plugins.sh
 
-This rebuilds the Codex and Claude plugin folders from `skills/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, refreshes local plugin caches, copies repo `AGENTS.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `AGENTS.md`.
+This rebuilds the Codex and Claude plugin folders from `agent/` and `meta-skill/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, refreshes local plugin caches, copies repo `global_instructions.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `global_instructions.md`.
 
 7. Open Codex once so it initializes plugin/cache state.
 
@@ -116,7 +116,7 @@ Check:
 
     test -f ~/Code/agent/README.md
     test -f ~/Code/agent/.codex/config.toml
-    test -d ~/Code/agent/skills
+    test -d ~/Code/agent/agent/skills
     test -d ~/Code/agent/plugins/codex/agent/skills
     test -d ~/Code/agent/plugins/claude/agent/skills
     test -f ~/Code/agent/.agents/plugins/marketplace.json

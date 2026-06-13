@@ -132,7 +132,7 @@ branch, or evidence row causing the risk.
 ## Surgical Update Rules
 
 - Edit the skill's **source-of-truth**, never a generated copy a build would
-  overwrite. In *this* repo: source under `skills/<name>/` or
+  overwrite. In *this* repo: source under `agent/skills/<name>/` or
   `meta-skill/skills/<name>/`; never hand-edit `plugins/codex/**` or
   `plugins/claude/**`, and flag that an edit isn't live until
   `scripts/sync-plugins.sh` runs (per AGENTS.md). Other projects: find the

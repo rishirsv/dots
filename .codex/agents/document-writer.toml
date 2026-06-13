@@ -27,5 +27,5 @@ Final response:
 """
 
 [[skills.config]]
-path = "/Users/rishi/.codex/skills/docs-writer/SKILL.md"
+path = "/Users/rishi/Desktop/agent-skills-review/docs-writer/SKILL.md"
 enabled = true

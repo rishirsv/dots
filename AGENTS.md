@@ -1,7 +1,9 @@
-- Edit source files only: `skills/`, `meta-skill/`, `.codex/agents/`, `plugins/codex/agent/assets/`, `AGENTS.md`, and `system_agents.md`.
-- Agent plugin skills live under `skills/`. Meta Skill plugin skills live under `meta-skill/skills/` alongside the rest of the standalone `meta-skill/` source.
+- Edit source files only: `agent/`, `meta-skill/`, `.codex/agents/`, `AGENTS.md`, `global_instructions.md`, `README.md`, and `scripts/`.
+- Agent plugin source lives under `agent/`. Meta Skill plugin source lives under `meta-skill/`.
+- Agent plugin skills live under `agent/skills/`. Non-plugin Agent skill drafts are parked outside the repo on the macOS Desktop when they are being rethought.
 - Save all plan documents under `.plans/`; do not leave plans or planning docs inside plugin, skill, or package directories.
-- Do not install Agent skills directly under `~/.codex/skills/`; `scripts/sync-plugins.sh` packages them into the Agent plugin and removes old managed direct Desktop skill copies.
-- Do not hand-edit generated plugin package files under `plugins/codex/` or `plugins/claude/`; `scripts/sync-plugins.sh` rebuilds the Codex and Claude package copies from the source directories. The only editable package-path exception is `plugins/codex/agent/assets/`.
+- `scripts/sync-plugins.sh` packages Agent plugin skills and removes old managed direct Desktop skill copies under `~/.codex/skills/`.
+- Do not hand-edit generated plugin package files under `plugins/codex/` or `plugins/claude/`; `scripts/sync-plugins.sh` rebuilds the Codex and Claude package copies from the source directories.
 - After editing any skill payload, review the changed skill files directly and run any deterministic tests that exist for that skill before syncing or committing.
-- Before committing this repo, run `scripts/sync-plugins.sh` if `AGENTS.md`, `system_agents.md`, `.codex/agents/`, `plugins/codex/agent/assets/`, or anything under `skills/` or `meta-skill/` changed; the script rebuilds every repo-managed plugin into `plugins/codex/` and `plugins/claude/` and syncs the installed Codex and Claude system copies from `system_agents.md`.
+- Before committing this repo, run `scripts/sync-plugins.sh` if anything under `agent/` or `meta-skill/` changed; the script rebuilds every repo-managed plugin into `plugins/codex/` and `plugins/claude/`.
+- Run `scripts/sync-local-agents.sh` after changing `global_instructions.md` or `.codex/agents/`; the Codex pre-commit hook in `.codex/hooks.json` does this automatically before Codex-run commits that include those files.

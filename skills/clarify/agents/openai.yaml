@@ -1,7 +1,0 @@
-interface:
-  display_name: "Clarify"
-  short_description: "Clarify requirements and route the next workflow"
-  default_prompt: "Use $clarify to inspect the relevant context, ask only must-have questions or play back an already-sufficient brief, summarize common understanding, and recommend the next skill, artifact, or workflow."
-
-policy:
-  allow_implicit_invocation: true

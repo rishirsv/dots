@@ -1,122 +1,104 @@
 # Agent
 
-Source repo for Rishi's personal Desktop skills and Codex/Claude plugin builds.
+Source repo for Rishi's personal Agent and Meta-Skill plugin builds, plus repo-managed local Codex and Claude agent instructions.
 
-## Edit Surface
+## Source Map
 
-Day to day, only edit:
+Day to day, edit these source surfaces:
 
-- `skills/`: active agent skills (source for the `agent` plugin).
-- `meta-skill/`: source for the standalone `meta-skill` plugin — `docs/` and `skills/`.
-- `.codex/agents/`: source Codex custom agents; the sync script also converts these into Claude agents.
-- `plugins/codex/agent/assets/`: editable Codex plugin icon assets.
-- `AGENTS.md`: compact system guidance shared by this repo, Codex, and Claude.
+- `agent/`: source for Agent plugin assets and skills.
+- `meta-skill/`: source for the `meta-skill` plugin.
+- `.codex/agents/`: source Codex custom agents for this machine.
+- `AGENTS.md`: repo/workspace instructions for working in this checkout.
+- `global_instructions.md`: global assistant instructions installed into Codex and Claude.
+- `scripts/`: build, sync, and hook utilities.
 
-Then run:
+Generated output lives here:
 
-```sh
-scripts/sync-plugins.sh
-```
+- `plugins/codex/`
+- `plugins/claude/`
+- `.agents/plugins/marketplace.json`
+- `.claude-plugin/marketplace.json`
 
-Everything else exists to install, package, sync, or stage those surfaces.
+Local installed output lives under `~/.codex/` and `~/.claude/`.
 
 ## Structure
-
-This repo keeps editable skills out of plugin packages. Skills install as
-managed Codex Desktop skills under `~/.codex/skills/`; plugin packages only
-carry host-specific agent and plugin metadata.
-Do not collapse the generated packages into a single `plugins/<plugin-name>/`
-folder: Codex and Claude use different plugin manifests, marketplace shapes, and
-agent formats. Codex plugin assets are the exception: they live directly in the
-Codex plugin package because the Codex manifest references them from that root.
 
 ```text
 agent/
 ├─ AGENTS.md
 ├─ README.md
 ├─ INSTALL.md
+├─ global_instructions.md
 ├─ .agents/
 │  └─ plugins/
 │     └─ marketplace.json
-│
 ├─ .claude-plugin/
 │  └─ marketplace.json
-│
 ├─ .codex/
 │  ├─ config.toml
+│  ├─ hooks.json
+│  ├─ hooks/
+│  │  └─ pre_commit_sync_local_agents.py
 │  └─ agents/
 │     └─ <agent>.toml
-│
-├─ skills/
-│  └─ <skill-name>/
-│     ├─ SKILL.md
-│     └─ ...
-│
-├─ meta-skill/
-│  ├─ docs/
-│  │  └─ ARCHITECTURE.md
+├─ agent/
+│  ├─ assets/
+│  │  ├─ icon.png
+│  │  └─ logo.png
 │  └─ skills/
 │     └─ <skill-name>/
-│
+│        ├─ SKILL.md
+│        └─ ...
+├─ meta-skill/
+│  ├─ references/
+│  ├─ skills/
+│  │  └─ <skill-name>/
+│  └─ src/
 ├─ plugins/
 │  ├─ codex/
 │  │  ├─ agent/
-│  │  │  ├─ .codex-plugin/
-│  │  │  │  └─ plugin.json
-│  │  │  ├─ agents/
-│  │  │  └─ assets/
 │  │  └─ meta-skill/
-│  │     ├─ .codex-plugin/
-│  │     │  └─ plugin.json
-│  │     └─ skills/
-│  │
-│  ├─ claude/
-│  │  ├─ agent/
-│  │  │  ├─ .claude-plugin/
-│  │  │  │  └─ plugin.json
-│  │  │  └─ agents/
-│  │  └─ meta-skill/
-│  │     ├─ .claude-plugin/
-│  │     │  └─ plugin.json
-│  │     └─ skills/
-│  │
+│  └─ claude/
+│     ├─ agent/
+│     └─ meta-skill/
 └─ scripts/
+   ├─ sync-local-agents.sh
    └─ sync-plugins.sh
 ```
 
-- `skills/`: canonical Agent skills, packaged into the `agent` plugin.
-- `meta-skill/`: source for the standalone `meta-skill` plugin (`docs/ARCHITECTURE.md` plus `skills/`, one directory per skill). The sync script packages it into `plugins/{codex,claude}/meta-skill/`. A plugin with no skills yet is scaffolded on disk but held out of the marketplaces until it gains its first skill.
-- `.codex/agents/`: canonical Codex custom agent definitions. The sync script converts these into Claude agent files.
-- `plugins/codex/agent/assets/`: editable Codex plugin icon assets.
-- `plugins/codex/agent/`: Codex plugin package with `.codex-plugin/plugin.json`; `agents/` is refreshed from `.codex/agents/`.
-- `plugins/claude/agent/`: generated Claude plugin package with `.claude-plugin/plugin.json`.
-- `plugins/{codex,claude}/meta-skill/`: generated `meta-skill` plugin packages (skills only; no subagents).
-- `.agents/plugins/marketplace.json`: Codex marketplace index (lists every registered plugin).
-- `.claude-plugin/marketplace.json`: Claude marketplace index (lists every registered plugin).
-- `AGENTS.md`: compact system guidance shared by this repo, Codex, and Claude.
-- `.codex/config.toml`: repo-local Codex config for working in this repo.
-- `scripts/sync-plugins.sh`: installs Desktop skills, refreshes plugin agent folders, validates manifests, registers/install plugins, and refreshes local caches.
+- `agent/skills/`: Agent plugin skills, packaged into `plugins/{codex,claude}/agent/skills/`. This is intentionally narrow; today it contains `yeet`.
+- `agent/assets/`: canonical Agent Codex plugin assets, packaged into `plugins/codex/agent/assets/`.
+- `meta-skill/`: standalone Meta-Skill plugin source. The sync script packages `skills/`, `references/`, and `src/` into `plugins/{codex,claude}/meta-skill/`.
+- `.codex/agents/`: canonical local Codex agent definitions. `scripts/sync-local-agents.sh` copies these to `~/.codex/agents/` and generates Claude agent Markdown under `~/.claude/agents/`.
+- `.codex/hooks.json` and `.codex/hooks/`: project-local Codex hooks. The pre-commit sync hook runs before Codex executes relevant `git commit` commands.
+- `global_instructions.md`: copied to `~/.codex/AGENTS.md` and symlinked from `~/.claude/CLAUDE.md`.
+- `plugins/`: generated plugin packages. Do not hand-edit these files.
 
 ## Sync
 
-After any change under `skills/`, `meta-skill/`, `.codex/agents/`, `plugins/codex/agent/assets/`, or `AGENTS.md`, run:
+After plugin source changes, run:
 
 ```sh
 scripts/sync-plugins.sh
 ```
 
-The script updates:
+This rebuilds generated plugin packages, manifests, marketplace files, plugin installs, and local plugin caches. It also removes any old managed direct Desktop skill copies under `~/.codex/skills/`. It calls `scripts/sync-local-agents.sh` so local instructions stay current.
 
-- Managed Desktop skills under `~/.codex/skills/`
-- `plugins/codex/agent/agents/`
-- `plugins/claude/agent/agents/`
-- Codex marketplace/install state
-- Claude marketplace/install state
-- `~/.codex/AGENTS.md` by copying repo `AGENTS.md`
-- `~/.codex/agents/` with repo-managed Codex agents
-- `~/.claude/CLAUDE.md` by symlinking to repo `AGENTS.md`
-- `~/.claude/agents/` with generated Claude agents
-- Local plugin caches under `~/.codex/plugins/cache/agent/agent/0.1.0` and `~/.claude/plugins/cache/agent/agent/0.1.0`
+After local instruction or agent changes, run:
+
+```sh
+scripts/sync-local-agents.sh
+```
+
+This updates:
+
+- `~/.codex/AGENTS.md`
+- `~/.claude/CLAUDE.md`
+- `~/.codex/agents/`
+- `~/.claude/agents/`
+
+When Codex runs a `git commit` command, the project-local Codex hook checks whether the commit touches `global_instructions.md` or `.codex/agents/`. If it does, the hook runs `scripts/sync-local-agents.sh` before the commit proceeds. Review and trust the hook from Codex with `/hooks` after changing this repo's hooks.
 
 ## Repo Codex Config
 
@@ -124,6 +106,4 @@ This repo keeps its Codex config in `.codex/config.toml`.
 
 User-specific secrets, auth, and machine-wide defaults should stay in `~/.codex/config.toml`.
 
-Codex instructions stay in root `AGENTS.md`; they do not move into `.codex/`. Codex project subagents use `.codex/agents/*.toml`, not `.agents/`.
-
-Claude project subagents use `.claude/agents/*.md`. Claude plugin subagents should live under `agents/` at the plugin root.
+Codex repo instructions stay in root `AGENTS.md`; they do not move into `.codex/`. Codex project subagents use `.codex/agents/*.toml`, not `.agents/`.

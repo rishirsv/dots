@@ -134,7 +134,7 @@ Output:
 Example:
 
 ```sh
-scripts/meta-skill workbench init --target skills/my-skill --json
+scripts/meta-skill workbench init --target agent/skills/my-skill --json
 ```
 
 ### `eval materialize`
