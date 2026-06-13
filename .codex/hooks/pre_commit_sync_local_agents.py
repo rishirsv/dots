@@ -98,6 +98,11 @@ def main():
     if root is None:
         return 0
 
+    if os.environ.get("AGENT_CODEX_HOOK_SCOPE") == "system":
+        project_hook = root / ".codex" / "hooks" / Path(__file__).name
+        if project_hook.exists() and project_hook.resolve() != Path(__file__).resolve():
+            return 0
+
     sync_script = root / "scripts" / "sync-local-agents.sh"
     if not sync_script.exists():
         return 0

@@ -71,7 +71,7 @@ agent/
 - `agent/assets/`: canonical Agent Codex plugin assets, packaged into `plugins/codex/agent/assets/`.
 - `meta-skill/`: standalone Meta-Skill plugin source. The sync script packages `skills/`, `references/`, and `src/` into `plugins/{codex,claude}/meta-skill/`.
 - `.codex/agents/`: canonical local Codex agent definitions. `scripts/sync-local-agents.sh` copies these to `~/.codex/agents/` and generates Claude agent Markdown under `~/.claude/agents/`.
-- `.codex/hooks.json` and `.codex/hooks/`: project-local Codex hooks. The pre-commit sync hook runs before Codex executes relevant `git commit` commands.
+- `.codex/hooks.json` and `.codex/hooks/`: source for project-local and user-level Codex hooks. The pre-commit sync hook runs before Codex executes relevant `git commit` commands.
 - `global_instructions.md`: copied to `~/.codex/AGENTS.md` and symlinked from `~/.claude/CLAUDE.md`.
 - `plugins/`: generated plugin packages. Do not hand-edit these files.
 
@@ -97,8 +97,10 @@ This updates:
 - `~/.claude/CLAUDE.md`
 - `~/.codex/agents/`
 - `~/.claude/agents/`
+- `~/.codex/hooks.json`
+- `~/.codex/hooks/`
 
-When Codex runs a `git commit` command, the project-local Codex hook checks whether the commit touches `global_instructions.md` or `.codex/agents/`. If it does, the hook runs `scripts/sync-local-agents.sh` before the commit proceeds. Review and trust the hook from Codex with `/hooks` after changing this repo's hooks.
+When Codex runs a `git commit` command, the Codex hook checks whether the commit touches `global_instructions.md` or `.codex/agents/`. If it does, the hook runs `scripts/sync-local-agents.sh` before the commit proceeds. The user-level copy no-ops inside this repo when the project-local hook is present, so both hook sources can exist without double-syncing. Review and trust changed hooks from Codex with `/hooks`.
 
 ## Repo Codex Config
 

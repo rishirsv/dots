@@ -4,10 +4,14 @@ set -euo pipefail
 ROOT="${0:A:h:h}"
 GLOBAL_INSTRUCTIONS_SOURCE="$ROOT/global_instructions.md"
 SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
+SOURCE_CODEX_HOOKS_CONFIG="$ROOT/.codex/hooks.json"
+SOURCE_CODEX_HOOKS="$ROOT/.codex/hooks"
 
 CODEX_SYSTEM_AGENTS="$HOME/.codex/AGENTS.md"
 CODEX_USER_AGENTS="$HOME/.codex/agents"
 CODEX_USER_AGENT_MARKER="$CODEX_USER_AGENTS/.agent-managed-agents"
+CODEX_USER_HOOKS_CONFIG="$HOME/.codex/hooks.json"
+CODEX_USER_HOOKS="$HOME/.codex/hooks"
 
 CLAUDE_SYSTEM_AGENTS="$HOME/.claude/CLAUDE.md"
 CLAUDE_USER_AGENTS="$HOME/.claude/agents"
@@ -18,9 +22,52 @@ if [[ ! -f "$GLOBAL_INSTRUCTIONS_SOURCE" ]]; then
   exit 1
 fi
 
-mkdir -p "$HOME/.codex" "$HOME/.claude" "$CODEX_USER_AGENTS" "$CLAUDE_USER_AGENTS"
+mkdir -p "$HOME/.codex" "$HOME/.claude" "$CODEX_USER_AGENTS" "$CODEX_USER_HOOKS" "$CLAUDE_USER_AGENTS"
 
 cp "$GLOBAL_INSTRUCTIONS_SOURCE" "$CODEX_SYSTEM_AGENTS"
+
+if [[ -f "$SOURCE_CODEX_HOOKS_CONFIG" ]]; then
+  if [[ -e "$CODEX_USER_HOOKS_CONFIG" && ! -L "$CODEX_USER_HOOKS_CONFIG" ]]; then
+    mv "$CODEX_USER_HOOKS_CONFIG" "$CODEX_USER_HOOKS_CONFIG.bak.$(date +%Y%m%d%H%M%S)"
+  fi
+  python3 - "$CODEX_USER_HOOKS_CONFIG" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+target = Path(sys.argv[1])
+target.write_text(json.dumps({
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "if [ -f \"$HOME/.codex/hooks/pre_commit_sync_local_agents.py\" ]; then AGENT_CODEX_HOOK_SCOPE=system /usr/bin/python3 \"$HOME/.codex/hooks/pre_commit_sync_local_agents.py\"; fi",
+                        "timeout": 30,
+                        "statusMessage": "Checking local agent sync before commit",
+                    }
+                ],
+            }
+        ]
+    }
+}, indent=2) + "\n")
+PY
+fi
+
+if [[ -d "$SOURCE_CODEX_HOOKS" ]]; then
+  mkdir -p "$CODEX_USER_HOOKS"
+  for hook_file in "$SOURCE_CODEX_HOOKS"/*(N); do
+    [[ -f "$hook_file" ]] || continue
+    target_hook="$CODEX_USER_HOOKS/${hook_file:t}"
+    if [[ -e "$target_hook" ]]; then
+      mv "$target_hook" "$target_hook.bak.$(date +%Y%m%d%H%M%S)"
+    fi
+    cp "$hook_file" "$target_hook"
+    chmod +x "$target_hook"
+  done
+fi
 
 if [[ -e "$CLAUDE_SYSTEM_AGENTS" && ! -L "$CLAUDE_SYSTEM_AGENTS" ]]; then
   mv "$CLAUDE_SYSTEM_AGENTS" "$CLAUDE_SYSTEM_AGENTS.bak.$(date +%Y%m%d%H%M%S)"
@@ -153,5 +200,8 @@ echo "  $CODEX_SYSTEM_AGENTS"
 echo "  $CLAUDE_SYSTEM_AGENTS -> $GLOBAL_INSTRUCTIONS_SOURCE"
 echo "Synced Codex custom agents:"
 echo "  $CODEX_USER_AGENTS"
+echo "Synced Codex system hooks:"
+echo "  $CODEX_USER_HOOKS_CONFIG"
+echo "  $CODEX_USER_HOOKS"
 echo "Synced Claude custom agents:"
 echo "  $CLAUDE_USER_AGENTS"

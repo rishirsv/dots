@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || true); if [ -n \"$ROOT\" ] && [ -f \"$ROOT/.codex/hooks/pre_commit_sync_local_agents.py\" ]; then /usr/bin/python3 \"$ROOT/.codex/hooks/pre_commit_sync_local_agents.py\"; fi",
+            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || true); if [ -n \"$ROOT\" ] && [ -f \"$ROOT/.codex/hooks/pre_commit_sync_local_agents.py\" ]; then AGENT_CODEX_HOOK_SCOPE=project /usr/bin/python3 \"$ROOT/.codex/hooks/pre_commit_sync_local_agents.py\"; fi",
             "timeout": 30,
             "statusMessage": "Checking local agent sync before commit"
           }

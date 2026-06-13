@@ -6,4 +6,4 @@
 - Do not hand-edit generated plugin package files under `plugins/codex/` or `plugins/claude/`; `scripts/sync-plugins.sh` rebuilds the Codex and Claude package copies from the source directories.
 - After editing any skill payload, review the changed skill files directly and run any deterministic tests that exist for that skill before syncing or committing.
 - Before committing this repo, run `scripts/sync-plugins.sh` if anything under `agent/` or `meta-skill/` changed; the script rebuilds every repo-managed plugin into `plugins/codex/` and `plugins/claude/`.
-- Run `scripts/sync-local-agents.sh` after changing `global_instructions.md` or `.codex/agents/`; the Codex pre-commit hook in `.codex/hooks.json` does this automatically before Codex-run commits that include those files.
+- Run `scripts/sync-local-agents.sh` after changing `global_instructions.md`, `.codex/agents/`, or `.codex/hooks/`; the Codex pre-commit hook in `.codex/hooks.json` does this automatically before Codex-run commits that include local agent files and also installs the user-level hook copy under `~/.codex/`.
