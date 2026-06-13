@@ -1,0 +1,7 @@
+interface:
+  display_name: "Harness Engineer"
+  short_description: "Build agent-ready task harnesses"
+  default_prompt: "Use $harness-engineer to set up the command map, verification map, progress ledger, and acceptance criteria before implementation."
+
+policy:
+  allow_implicit_invocation: true
