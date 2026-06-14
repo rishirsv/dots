@@ -96,10 +96,12 @@ review pass that would make the edit decision clearer.
    branch, output contract, reference pointer, script contract, or missing gate.
 5. Produce two or three candidate edits that fix the behavior while preserving
    the approved trigger and runtime surface.
-6. Scan each candidate diff for source provenance and negative-only rules.
-   Rename source-derived references to the reusable concept they teach, and
-   remove any `Do not ...` rule unless it protects against a recurring failure
-   and is paired with the positive behavior to perform instead.
+6. Scan each candidate diff for source provenance, stale references, and
+   negative-only rules. Prefer replacing misleading or over-emphasized guidance
+   with the positive behavior the skill should perform. Do not add negative
+   rules that reference removed, absent, or de-emphasized concepts unless that
+   concept is the concrete recurring failure; when a negative guard is needed,
+   pair it with the desired behavior.
 7. Recommend one — the smallest strong fix — and say why.
 8. If the user authorized direct edits, apply it. Otherwise stop with a standard
    clarify-style approval question.

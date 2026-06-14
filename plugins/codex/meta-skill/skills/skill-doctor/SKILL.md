@@ -46,9 +46,11 @@ Produce a **scored Quality page** (`review.md`) — see
 
 ## Diagnose
 
-Reproduce the reported failure before changing anything — see
-[references/diagnose.md](references/diagnose.md): one narrow in-loop run,
-localize the cause, propose the smallest fix.
+Diagnose the reported failure before changing anything — see
+[references/diagnose.md](references/diagnose.md): announce whether you are using
+the guidance-first track or the reproduction/trial track, localize the cause,
+and propose the smallest fix. Diagnose mode is read/propose-only until the user
+explicitly approves an edit.
 
 ## Edit
 
