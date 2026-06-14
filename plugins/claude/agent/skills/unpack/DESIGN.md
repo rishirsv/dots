@@ -1,212 +1,160 @@
----
-name: OpenAI Artifact Explainers
-version: 2026-06-14
-source_basis:
-  - https://openai.com/brand/
-  - https://openai.com/
-  - https://developers.openai.com/apps-sdk/concepts/ui-guidelines
-  - https://thariqs.github.io/html-effectiveness/
-  - https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html
-tokens:
-  colors:
-    canvas: "#f7f7f2"
-    canvas_raised: "#ffffff"
-    panel: "#ffffff"
-    panel_2: "#f0f0eb"
-    ink: "#111111"
-    ink_muted: "#5b5b55"
-    ink_subtle: "#8a8a82"
-    line: "#d8d8cf"
-    line_soft: "rgba(17,17,17,.12)"
-    accent: "#0066cc"
-    accent_green: "#10a37f"
-    warning: "#f6c177"
-    danger: "#ff6b5f"
-    success: "#7bd88f"
-  typography:
-    sans: "\"OpenAI Sans\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
-    mono: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-  radii:
-    xs: "6px"
-    sm: "8px"
-    md: "12px"
-    lg: "18px"
-    pill: "999px"
-  spacing:
-    xs: "6px"
-    sm: "10px"
-    md: "16px"
-    lg: "24px"
-    xl: "36px"
----
+# Explainer Design System
 
-# OpenAI Artifact Explainers
+The visual and interaction contract for `unpack` HTML explainers. `DESIGN.md`
+owns the look, motion, and composition rules; the concrete component markup and
+build workflow live in
+[references/html-explainer-design.md](references/html-explainer-design.md). The
+canonical tokens, base styles, and JS helpers ship inside
+[assets/html-explainer-template.html](assets/html-explainer-template.html) — keep
+that `<style>`/`<script>` kit intact and compose the body from it.
 
-This design file is the visual and interaction contract for `unpack` HTML
-explainers. It is not official OpenAI brand documentation. It is an
-agent-readable extraction from current public OpenAI surfaces plus the HTML
-artifact standard from the Anthropic/Thariq references.
+The aesthetic is warm editorial-technical: an ivory paper canvas, serif display
+headings, system-sans body, monospace for machine voice, one terracotta accent,
+and structure carried by hairline borders and whitespace rather than shadows or
+gradients.
 
 ## Artifact Promise
 
-Every explainer must make one hard technical relationship visible faster than
-Markdown. If the artifact does not expose shape, evidence, selective reading, or
-a useful export action, it has failed even if it looks polished.
+An explainer earns the HTML format only when it makes one hard relationship
+visible faster than Markdown could. Before the reader scrolls, the first viewport
+shows the answer, what was inspected, confidence, and the dominant visual. If the
+page is a styled wall of text, ship Markdown instead.
 
-The reader should understand these within the first viewport:
+Build a bespoke document for the material — never a filled-in template. Pick the
+archetype first, compose only the modules it needs, and delete the rest.
 
-- the answer
-- what evidence was inspected
-- confidence or inference status
-- the primary relationship diagram
-- what to copy or do next
+## Tokens
 
-## Visual Theme & Atmosphere
+Use the semantic CSS variables from the asset's `:root`. Roles, not raw hex:
 
-Use a clean technical editorial canvas with black/white neutrals, restrained
-gray structure, and sparse accent. Prefer a light, document-like surface for the
-default template because it exposes hierarchy and organization better than a
-heavy dashboard. Use a dark surface only when the material itself benefits from
-it, such as terminal output or incident timelines.
+| Role | Token | Use |
+|---|---|---|
+| Canvas | `--ivory` | page background |
+| Surface | `--paper` | cards, panels, code-card chrome |
+| Ink | `--slate` | headings, body, dark panels |
+| Warm grays | `--g100 --g300 --g500 --g700` | fills, borders, muted text |
+| Focus | `--clay` / `--clay-d` | the one thing that matters: active path, hot node, emphasis rail |
+| Good | `--olive` | success, confirmed, added, done |
+| Bad | `--rust` | failure, danger, removed |
+| Alt | `--sky` | a second series or category when clay is taken |
+| Soft fill | `--oat` | secondary bars, avatars, medium severity |
 
-Do:
+Color is the scarcest resource. Most of the page is ink-on-ivory with gray
+structure; clay appears only on the hot path. If position, grouping, or a label
+can carry the meaning, do not spend color on it.
 
-- use black, white, off-white, charcoal, and gray as the default visual language
-- reserve blue/green accents for active paths, confirmed evidence, and controls
-- let diagrams, source chips, and annotations carry meaning
-- keep geometry crisp and purposeful
-- make dense information feel arranged, not crowded
+## Typography
 
-Do not:
+- Display/headings: serif, weight 500. `h1` 34–56px, `h2` 27px, `h3` 18–19px,
+  letter-spacing `-.012em`. Italic in clay for the one emphasized phrase in `h1`.
+- Body: system sans, 16px, line-height 1.6.
+- Machine voice: mono for file paths, line numbers, section indices, metric
+  deltas, axis labels, eyebrows, and code.
+- Small-caps labels: 11–12px, uppercase, letter-spacing `.05–.08em`, gray.
+  Letter-spacing is `0` everywhere else.
 
-- imitate logos, marks, partner lockups, or proprietary brand assets
-- use decorative gradients, blobs, bokeh, or marketing hero tropes
-- turn every idea into a card
-- make a generic dashboard when a composed article, map, timeline, or table
-  would explain better
-- use color when position, grouping, or labels can carry the meaning
+Serif is the human voice (every heading); mono is the machine voice (every exact
+name). Keeping them distinct is most of the visual identity.
 
-## Typography Rules
+## Motion
 
-Use system fallbacks for OpenAI Sans. Use large, confident headings only in the
-top band. Inside the artifact, type should be dense and legible.
+Motion is functional and quiet. Stay inside this budget:
 
-- Page title: 44-64px desktop, 32-40px mobile, weight 600-700.
-- Section headings: 13-18px, weight 650, no negative letter spacing.
-- Body: 14-16px, line-height 1.45-1.6.
-- Metadata chips: 11-12px, weight 650, letter spacing up to `.04em`.
-- Code: 12-13px, line-height 1.5, high-contrast inset block.
+- Entrance: sections fade-and-rise once as they enter view (`.reveal`). Content
+  is fully visible without JS — never gate meaning behind animation.
+- Data: chart bars grow and lines draw on load; this ties motion to the number.
+- Affordance: 120–160ms hover lifts, tab/accordion swaps, the rotating `▸` on
+  `<details>`.
+- Honor `prefers-reduced-motion` (the kit already does).
 
-Letter spacing is `0` except small all-caps metadata labels.
+No parallax, autoplaying loops, decorative bouncing, or motion that delays
+reading. A live control (slider, toggle) is welcome when manipulating it *is* the
+explanation.
 
-## Artifact Archetypes
+## Avoid The Generated-UI Tells
 
-Choose the archetype before writing content. Delete modules that do not serve
-the archetype.
+These patterns mark a page as machine-made. None belong in an explainer:
 
-| Material | Primary Visual | Required Evidence | Useful Interaction |
-|---|---|---|---|
-| Feature flow | boxes/arrows flow canvas | source list + 2-4 snippets | tabs: flow/evidence/failure |
-| Stack trace | frame ladder + cause boundary | frame labels + crash/cause snippets | toggle crash vs root cause |
-| Diff/review | annotated before/after or split diff | file paths + severity tags | severity filter + jump links |
-| Module map | dependency graph or swimlanes | entry points + hot path source | click node to reveal role |
-| State machine | state nodes + allowed transitions | transition conditions | state filter |
-| Config/API | matrix/table + request/response tabs | fields, defaults, source docs | tabbed examples + copy payload |
-| Incident/report | timeline + impact bands | logs + timestamps | filter by phase/severity |
-| Concept simulator | diagram plus small live control | assumptions + formula/snippet | slider/toggle/export values |
+- No gradients as decoration — no gradient text, gradient buttons, gradient
+  "orbs," or repeating-gradient stripes. Surfaces are flat ivory or paper.
+- No glassmorphism, frosted blur, or neon glow. Depth is a hairline border, not
+  a wide diffuse shadow — commit to an edge or an elevation, never both.
+- No one-sided thick colored "side-tab" border on a rounded card — the most
+  recognizable tell. Emphasize with a subtle tint, a leading marker, or a
+  colored number instead.
+- No icon tile stacked above a heading; no icon larger than the text it labels.
+- Hierarchy comes from real size/weight/family contrast (serif/sans/mono), not
+  one font at near-equal sizes. Keep at least a 1.25 ratio between type steps.
+- Cards top out at 16px radius; full-pill is only for tags and buttons. Never
+  nest a card inside a card.
+- SVG is for precise diagrams and charts only — never hand-drawn mascots or
+  decorative doodles. If a real diagram would not help, ship none.
+- Copy is precise and technical: say it once. No hype words, no
+  label+sublabel+hint all repeating the same thing.
+
+The serif headline and mono eyebrow are a deliberate editorial register, not the
+AI-startup hero tell: keep the italic to a single phrase and make the eyebrow
+informational (material type + subject), never a decorative chip.
+
+## Layout Grammar
+
+A single centered column, `min(1080px, 100vw − 40px)`. Top to bottom:
+
+1. **Masthead** — mono eyebrow, serif answer-as-title (not a topic), one-line
+   lead, and a right metadata sidebar (material, sources read, confidence).
+2. **Provenance strip** — compact key/value row of the load-bearing facts.
+3. **Dominant visual** — the archetype's main structure: flow, map, timeline,
+   ladder, diff, matrix, chart, or live demo.
+4. **Evidence & detail** — source-anchored snippets, optional two-column layout
+   with a sticky "on this page" nav or glossary.
+5. **Carry forward** — what this means, what to watch, or what to copy next.
+
+Prefer rules, alignment, and whitespace over boxes. Reach for a card only for
+repeated evidence snippets or genuine tool-like controls; never nest cards.
 
 ## First Viewport Contract
 
-The first viewport should be a composed visual article, not a title page and
-not a dashboard:
+The first screen is a composed article opening, not a title page and not a
+dashboard. The reader should be able to answer "what is the takeaway, what was
+this based on, and how confident is it" before scrolling. Do not spend the first
+viewport on an oversized hero alone.
 
-1. Title and one-sentence answer.
-2. Provenance strip: material type, inspected sources, confidence, next action.
-3. One dominant spatial structure: graph, flow, ladder, timeline, matrix, or
-   simulator.
-4. Compact evidence preview or source list.
+## Archetypes
 
-Do not spend the first viewport only on an oversized hero.
+Choose one before writing content; it decides the dominant visual and which
+modules survive.
 
-## Spatial Grammar
-
-Use a small reusable vocabulary:
-
-- **Node**: a component, state, file, actor, or concept.
-- **Edge**: control flow, data flow, dependency, or causal relationship.
-- **Hot path**: the path that explains the main answer.
-- **Boundary**: a handoff, ownership change, trust boundary, or abstraction line.
-- **Branch**: a decision point or failure path.
-- **Evidence pin**: a source-backed note tied to a node or edge.
-
-Use inline SVG or CSS grid for the canvas. The canvas must show at least one
-relationship that would be weaker in Markdown.
+| Material | Dominant visual | Core modules |
+|---|---|---|
+| Feature / request flow | boxes-and-arrows flow with a hot path | flow diagram, annotated code, evidence rows |
+| Code understanding / module map | dependency graph or swimlanes | flow diagram, numbered walkthrough with per-step source |
+| Stack trace / debugging | frame ladder to a cause boundary | steps, dark code, watch list |
+| Diff / review | annotated diff + margin notes | diff, review-note callouts, risk tags |
+| State machine / lifecycle | state nodes + allowed transitions | flow diagram, decision diamonds, comparison table |
+| Config / API | matrix + request/response | tabbed code, table, copy buttons |
+| Incident / report | timeline + impact bands | timeline, stat band, chart, action checklist |
+| Implementation plan | milestone timeline + data flow | milestones, flow diagram, risk table, code |
+| Concept explainer | one diagram + a small live control | live demo, comparison table, glossary |
+| Status / metrics | chart + metric tiles | stat band, bar/line chart, table |
 
 ## Evidence Grammar
 
-Evidence is an interface, not a paragraph. Each important claim should have:
-
-- source chip: path, doc, log, frame, or URL
-- status: confirmed, inferred, assumption, or unresolved
-- short excerpt: only the smallest useful snippet
-- annotation: why this evidence changes the explanation
-
-Never dump a whole file. Never include secrets or irrelevant private source.
-
-## Interaction Rules
-
-Default interactions should be tiny and useful:
-
-- tabs switch between views of the same explanation
-- `<details>` reveals optional evidence or glossary detail
-- copy buttons export summary, next prompt, source checklist, or payload
-- filters reduce severity, component, frame, or phase when there are many items
-
-Every interaction must either reveal evidence, change the visual model, compare
-alternatives, or export something useful. Decoration-only interaction is worse
-than static HTML.
-
-## Layout Principles
-
-Use a three-zone structure:
-
-- **Top band**: answer, provenance, controls, with minimal chrome.
-- **Main structure**: one dominant visual plus a secondary evidence/control
-  column when useful.
-- **Article body**: selective detail modules, watch list, glossary, carry
-  forward.
-
-The default desktop grid is 12 columns. Let the dominant visual span 7-9
-columns and the evidence/control column span 3-5. On mobile, preserve the answer
-first, then make the visual horizontally scrollable only when labels would
-otherwise become illegible.
-
-## Components
-
-- `topbar`: title, answer, status chips, copy/export controls.
-- `source-strip`: compact provenance row; never omit for repo-specific claims.
-- `canvas`: diagram surface with nodes, edges, hot path, and evidence pins.
-- `view-tabs`: native buttons controlling panels with `aria-selected`.
-- `evidence-row`: source chip, status badge, excerpt, annotation.
-- `details`: optional proof, glossary, assumptions, or unresolved questions.
-- `export-box`: copy summary, copy next prompt, copy checklist.
-
-## Responsive Behavior
-
-- The top band stays readable without oversized type.
-- The canvas uses `overflow:auto` rather than shrinking labels below legibility.
-- Evidence rows become stacked accordions under 760px.
-- Copy/export controls wrap into a compact row.
-- No nested page-level scrolling; only diagrams or code panes may scroll.
+When the explainer is grounded in code, logs, errors, or docs, evidence is an
+interface, not a paragraph. Each load-bearing claim carries a source chip (path,
+frame, doc, URL), a status (confirmed, inferred, assumption), the smallest useful
+snippet, and a plain-language note on why it changes the reading. Never paste a
+whole file; never include secrets or unrelated private source.
 
 ## Verification Rubric
 
-Before delivery, check more than “it renders”:
+Open the rendered file and check more than "it loads":
 
-- Does the first viewport answer the question?
-- Is there a real spatial model, not just a list?
-- Are important claims tied to sources or marked as inference?
-- Can the reader switch views or reveal details without reading linearly?
-- Is there a useful export action?
-- Does the page survive desktop and mobile widths without overlap or hidden text?
-- Would a reviewer learn the shape of the system faster than from Markdown?
+- First viewport answers the question and shows provenance.
+- A real spatial model or chart, not a styled list.
+- Load-bearing claims are source-anchored or marked as inference.
+- Interactions reveal evidence, change the model, compare, or export — nothing
+  decorative.
+- No leftover sample content, placeholders, or unused empty sections.
+- Desktop and mobile widths: readable text, no overlap, no horizontal page
+  scroll (diagrams and code may scroll inside their own box).
+- A reader learns the shape of the system faster than from Markdown.

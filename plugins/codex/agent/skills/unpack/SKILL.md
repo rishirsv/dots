@@ -139,45 +139,41 @@ Read [references/explainer-patterns.md](references/explainer-patterns.md) when
 the user asks for an HTML explainer, an image explainer, a diagram-heavy answer,
 or when a Mermaid diagram would materially improve a text answer.
 
-For HTML explainers, also read
-[DESIGN.md](DESIGN.md) and
-[references/html-explainer-design.md](references/html-explainer-design.md).
-Use them as the visual and artifact-writing contract. Keep the artifact focused
-on understanding the user's material, not on showcasing layout.
+### HTML explainers
 
-For HTML explainers, create one standalone plain HTML/CSS file from
-[assets/html-explainer-template.html](assets/html-explainer-template.html).
-Save it to `<repo>/.agents/artifacts/unpack/<topic-slug>.html` unless the user
-provides another path.
+Build a bespoke document designed for this material — not a filled-in template.
+Read [DESIGN.md](DESIGN.md) (the visual system and anti-slop rules) and
+[references/html-explainer-design.md](references/html-explainer-design.md) (the
+component catalog and build steps), then:
 
-Treat the template as an interactive article system, not a form to fill
-mechanically. Pick the material archetype first: feature flow, stack trace,
-diff/review, module map, state machine, config/API, incident/report, or concept
-simulator. Delete unused panels, rename labels to fit the topic, and make the
-primary canvas show the hard relationship. Prefer one strong spatial model plus
-source-backed evidence over many decorative panels.
+1. Pick the archetype from the material (feature flow, module map, stack trace,
+   diff/review, state machine, config/API, incident, implementation plan,
+   concept explainer, status/metrics).
+2. Start from [assets/html-explainer-template.html](assets/html-explainer-template.html).
+   Keep its `<style>`/`<script>` kit verbatim; replace the `<main>` with the
+   masthead plus only the modules the archetype needs, composed from the catalog.
+3. Make the dominant visual carry the hard relationship. Add a chart only for
+   real quantitative data and a diagram for real structure. Surface source
+   evidence: short snippets, exact symbols, confirmed vs inferred.
+4. Save to `<repo>/.agents/artifacts/unpack/<topic-slug>.html` unless the user
+   gives another path.
 
-When the explainer is based on repo files, logs, errors, or docs, surface the
-evidence inside the artifact: quote only short snippets, preserve exact symbols
-that matter, and translate their role in plain language. Separate confirmed
-source facts from inference when the inspected evidence is partial.
+Before writing, verify `.agents/` is gitignored. If it is not and repo
+instructions allow it, say `.agents/` will be added to `.gitignore`, then add it
+first. If repo instructions forbid that edit, ask before writing. If the user
+forbids file writes, do not create the file or edit `.gitignore`; return the
+intended path and a concise module plan instead.
 
-Before writing an HTML explainer, verify `.agents/` is gitignored. If it is not
-ignored and repo instructions allow it, say that `.agents/` will be added to
-`.gitignore`, then add it before creating the artifact. If repo instructions do
-not allow that edit, ask before writing the artifact. If the user says not to
-edit files, do not create the HTML file or update `.gitignore`; instead return
-the intended path and a concise artifact plan.
+Open or render-check the file before delivering. Fix console errors, broken
+layout, unreadable text, leftover sample content, and mobile overflow. Return a
+clickable file link and one sentence describing the explainer. Do not create an
+index, manifest, or history file unless asked.
 
-Open or render-check the HTML before delivering it. Fix console errors, broken
-layout, unreadable text, placeholder text, and mobile overflow before returning
-the file. Return a clickable file link and one sentence describing the
-explainer. Do not create an index, manifest, history file, or extra metadata
-unless asked.
+### Image explainers
 
-For image explainers, generate the image directly when image generation is
-available. If the image tool is unavailable, return the prompt that should be
-used to generate it and say that generation was unavailable.
+Generate the image directly when image generation is available. If the tool is
+unavailable, return the prompt that should be used and say generation was
+unavailable.
 
 ## Gotchas
 
