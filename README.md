@@ -71,7 +71,7 @@ agent/
 - `agent/assets/`: canonical Agent Codex plugin assets, packaged into `plugins/codex/agent/assets/`.
 - `meta-skill/`: standalone Meta-Skill plugin source. The sync script packages `skills/`, `references/`, and `src/` into `plugins/{codex,claude}/meta-skill/`.
 - `.codex/agents/`: canonical local Codex agent definitions. `scripts/sync-local-agents.sh` copies these to `~/.codex/agents/` and generates Claude agent Markdown under `~/.claude/agents/`.
-- `.codex/config.toml`: canonical user-level Codex config for this machine, copied to `~/.codex/config.toml`.
+- `.codex/config.toml`: repo-local Codex config for this trusted repo. Do not copy it over `~/.codex/config.toml`; the user-level config owns installed plugins, marketplaces, model defaults, and other machine state.
 - `.codex/hooks.json` and `.codex/hooks/`: source for project-local and user-level Codex hooks. The pre-commit sync hook runs before Codex executes relevant `git commit` commands.
 - `global_instructions.md`: copied to `~/.codex/AGENTS.md` and symlinked from `~/.claude/CLAUDE.md`.
 - `plugins/`: generated plugin packages. Do not hand-edit these files.
@@ -94,7 +94,6 @@ scripts/sync-local-agents.sh
 
 This updates:
 
-- `~/.codex/config.toml`
 - `~/.codex/AGENTS.md`
 - `~/.claude/CLAUDE.md`
 - `~/.codex/agents/`
@@ -106,8 +105,8 @@ When Codex runs a `git commit` command, the Codex hook checks whether the commit
 
 ## Repo Codex Config
 
-This repo keeps its Codex config in `.codex/config.toml`.
+This repo keeps its repo-local Codex config in `.codex/config.toml`.
 
-The repo config is the canonical source for `~/.codex/config.toml`; `scripts/sync-local-agents.sh` backs up any existing user config before copying the repo version into place.
+The repo config supplements `~/.codex/config.toml` when this trusted repo is open. It is intentionally not the canonical source for the machine-level config, because `~/.codex/config.toml` also stores installed plugin and marketplace state.
 
 Codex repo instructions stay in root `AGENTS.md`; they do not move into `.codex/`. Codex project subagents use `.codex/agents/*.toml`, not `.agents/`.

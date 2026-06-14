@@ -3,12 +3,10 @@ set -euo pipefail
 
 ROOT="${0:A:h:h}"
 GLOBAL_INSTRUCTIONS_SOURCE="$ROOT/global_instructions.md"
-SOURCE_CODEX_CONFIG="$ROOT/.codex/config.toml"
 SOURCE_CODEX_AGENTS="$ROOT/.codex/agents"
 SOURCE_CODEX_HOOKS_CONFIG="$ROOT/.codex/hooks.json"
 SOURCE_CODEX_HOOKS="$ROOT/.codex/hooks"
 
-CODEX_CONFIG="$HOME/.codex/config.toml"
 CODEX_SYSTEM_AGENTS="$HOME/.codex/AGENTS.md"
 CODEX_USER_AGENTS="$HOME/.codex/agents"
 CODEX_USER_AGENT_MARKER="$CODEX_USER_AGENTS/.agent-managed-agents"
@@ -25,13 +23,6 @@ if [[ ! -f "$GLOBAL_INSTRUCTIONS_SOURCE" ]]; then
 fi
 
 mkdir -p "$HOME/.codex" "$HOME/.claude" "$CODEX_USER_AGENTS" "$CODEX_USER_HOOKS" "$CLAUDE_USER_AGENTS"
-
-if [[ -f "$SOURCE_CODEX_CONFIG" ]]; then
-  if [[ -e "$CODEX_CONFIG" && ! -L "$CODEX_CONFIG" ]]; then
-    mv "$CODEX_CONFIG" "$CODEX_CONFIG.bak.$(date +%Y%m%d%H%M%S)"
-  fi
-  cp "$SOURCE_CODEX_CONFIG" "$CODEX_CONFIG"
-fi
 
 cp "$GLOBAL_INSTRUCTIONS_SOURCE" "$CODEX_SYSTEM_AGENTS"
 
@@ -207,8 +198,6 @@ PY
 echo "Synced global instructions:"
 echo "  $CODEX_SYSTEM_AGENTS"
 echo "  $CLAUDE_SYSTEM_AGENTS -> $GLOBAL_INSTRUCTIONS_SOURCE"
-echo "Synced Codex config:"
-echo "  $CODEX_CONFIG"
 echo "Synced Codex custom agents:"
 echo "  $CODEX_USER_AGENTS"
 echo "Synced Codex system hooks:"

@@ -71,22 +71,22 @@ Use:
       cd ~/Code/agent
     fi
 
-5. Install the repo Codex config into the machine config.
+5. Verify the machine Codex config.
 
-Create `~/.codex` and copy the repo config:
+Create `~/.codex` if needed:
 
     mkdir -p ~/.codex
-    cp ~/Code/agent/.codex/config.toml ~/.codex/config.toml
 
-Then inspect it:
+Then inspect the existing machine config:
 
     sed -n '1,220p' ~/.codex/config.toml
 
-Expected important settings:
+Do not copy `~/Code/agent/.codex/config.toml` over `~/.codex/config.toml`. The repo config is project-local; the machine config owns installed plugins, marketplaces, model defaults, and other durable local state.
+
+Expected important repo-local settings in `~/Code/agent/.codex/config.toml`:
 
     approval_policy = "never"
     sandbox_mode = "danger-full-access"
-    web_search = "live"
 
 6. Sync and install the Agent plugins.
 
@@ -95,7 +95,7 @@ Run:
     cd ~/Code/agent
     scripts/sync-plugins.sh
 
-This rebuilds the Codex and Claude plugin folders from `agent/` and `meta-skill/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, refreshes local plugin caches, copies repo `global_instructions.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `global_instructions.md`.
+This rebuilds the Codex and Claude plugin folders from `agent/` and `meta-skill/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, refreshes local plugin caches, copies repo `global_instructions.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `global_instructions.md`. It does not overwrite `~/.codex/config.toml`.
 
 7. Open Codex once so it initializes plugin/cache state.
 

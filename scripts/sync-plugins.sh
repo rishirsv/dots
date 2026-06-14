@@ -243,6 +243,15 @@ PY
 
 # --- Validate, register, install, cache (registered plugins only) -----------
 CODEX_VALIDATOR="/Users/rishi/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py"
+CODEX_BIN="${CODEX_BIN:-}"
+if [[ -z "$CODEX_BIN" ]]; then
+  if command -v codex >/dev/null 2>&1 && codex --version >/dev/null 2>&1; then
+    CODEX_BIN="$(command -v codex)"
+  elif [[ -x "/Applications/Codex.app/Contents/Resources/codex" ]]; then
+    CODEX_BIN="/Applications/Codex.app/Contents/Resources/codex"
+  fi
+fi
+
 for plugin in "${REGISTERED_PLUGINS[@]}"; do
   if [[ -f "$CODEX_VALIDATOR" ]]; then
     python3 "$CODEX_VALIDATOR" "$ROOT/plugins/codex/$plugin"
@@ -252,16 +261,16 @@ for plugin in "${REGISTERED_PLUGINS[@]}"; do
   fi
 done
 
-if command -v codex >/dev/null 2>&1 && codex --version >/dev/null 2>&1; then
-  codex plugin marketplace remove "$MARKETPLACE_NAME" >/dev/null 2>&1 || true
+if [[ -n "$CODEX_BIN" ]]; then
+  "$CODEX_BIN" plugin marketplace remove "$MARKETPLACE_NAME" >/dev/null 2>&1 || true
   if [[ -d "$MARKETPLACE_SOURCE" ]]; then
-    codex plugin marketplace add "$MARKETPLACE_SOURCE"
+    "$CODEX_BIN" plugin marketplace add "$MARKETPLACE_SOURCE"
   else
-    codex plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .agents --sparse plugins/codex
+    "$CODEX_BIN" plugin marketplace add "$MARKETPLACE_SOURCE" --sparse .agents --sparse plugins/codex
   fi
   for plugin in "${REGISTERED_PLUGINS[@]}"; do
-    codex plugin remove "$plugin@$MARKETPLACE_NAME" >/dev/null 2>&1 || true
-    codex plugin add "$plugin@$MARKETPLACE_NAME"
+    "$CODEX_BIN" plugin remove "$plugin@$MARKETPLACE_NAME" >/dev/null 2>&1 || true
+    "$CODEX_BIN" plugin add "$plugin@$MARKETPLACE_NAME"
   done
 else
   echo "Skipping Codex plugin CLI registration; codex is not available or not healthy." >&2
