@@ -7,6 +7,8 @@ description: "Use explicitly via $Align when the user asks to align, stress-test
 
 Align an idea with the codebase, domain model, and existing docs until the important terms, assumptions, trade-offs, and doc updates are clear. Probe hard but productively: inspect the repo first, ask one consequential question at a time, recommend an answer, and capture settled language or decisions in the right place.
 
+When this skill is explicitly invoked, treat tentative creation or implementation language as alignment input, not permission to write files.
+
 ## References
 
 - Read [capture-patterns.md](references/capture-patterns.md) when a term, context note, PRD/spec input, decision record, or unresolved decision needs to be recorded.
