@@ -125,7 +125,32 @@ class AssistPackageTests(unittest.TestCase):
             self.assertIn("- source.txt: primary evidence.", prompt)
             self.assertNotIn("matched source.txt", prompt)
 
-    def test_duplicate_authority_sections_fail(self) -> None:
+    def test_single_heading_task_file_still_gets_context_wrapper(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            task_file = root / "task.md"
+            task_file.write_text("# Review\n\nPlease review this plan.\n", encoding="utf-8")
+            source = root / "source.txt"
+            source.write_text("context\n", encoding="utf-8")
+
+            self.run_package(
+                "--task-file",
+                str(task_file),
+                "--file",
+                "source.txt",
+                "--output-dir",
+                str(root),
+                "--name",
+                "assist-single-heading",
+                cwd=root,
+            )
+
+            prompt = (root / "assist-single-heading" / "prompt.md").read_text(encoding="utf-8")
+            self.assertIn("Provide a focused second opinion.", prompt)
+            self.assertIn("# Review", prompt)
+            self.assertIn("source.txt", prompt)
+
+    def test_repeated_top_level_headings_fail(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             prompt_file = root / "prompt-source.md"

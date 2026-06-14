@@ -1,159 +1,88 @@
-# Prompts
+# Prompt Guidance
 
-Use this reference when writing `prompt.md` for a coding-plan assist, plan critique, implementation strategy, adversarial review, or other second-model request where prompt shape changes answer quality.
+Use this reference when the assist request needs careful prompt shaping, such as
+plan critique, architecture review, implementation strategy, current-source
+checks, or adversarial review.
 
-## Prompt Doctor Lens
+## Start From The Decision
 
-Start from the decision the advisor should improve. Remove local bookkeeping and package labels unless they materially change the advisor's reasoning. Include the stance, decision, task, context map, success criteria, constraints, output needs, and stop rules in whatever shape makes that specific request easiest to answer.
+Write the prompt around the choice the primary agent needs to make next. Make
+the current hypothesis, alternatives, and change-your-mind evidence clear when
+they matter. Avoid a broad review request when a sharper decision would produce
+better counsel.
 
-Prefer replacing misleading prompt text over adding prohibitions. Add a block only when it changes behavior or fixes a measured failure mode.
+For a plan review, the useful material is usually:
 
-## Assist Prompt Principles
+- what should be decided before implementation
+- what the current plan assumes
+- what evidence would change the recommendation
+- which files or docs anchor the plan
+- which local checks the primary agent can run before adopting advice
 
-- Outcome first: describe the destination, success criteria, and constraints before prescribing steps.
-- Keep sections short. Add detail only where it changes behavior.
-- Use absolute words only for real invariants such as privacy, safety, grounding, required output fields, and no-guessing rules.
-- Define missing-evidence behavior so absence of evidence does not become a factual negative.
-- Set retrieval and verification budgets when the advisor may need to search, inspect files, or ask for more context.
-- Let formatting serve comprehension. Use heavier structure only when it improves scanning or produces a stable artifact.
-- For rewrites or prompt edits, say what to preserve before asking for polish.
+For a current-source or research assist, add:
 
-## Format Choice
+- the source quality bar
+- how recent the evidence needs to be
+- what to do when sources disagree
+- when to stop looking and return a bounded answer
 
-Use Markdown when:
+For a simplification or hard-cut pass, add:
 
-- the task has one main question
-- the context map is short
-- the expected answer can be described in a few bullets
-- extra syntax would add ceremony without clearer boundaries
+- what old shape should be removed
+- what compatibility work is intentionally out of scope
+- what would count as old architecture in disguise
+- the smallest safer version of the change
 
-Use XML-like blocks when:
+## Choose Structure For The Task
 
-- the prompt has several parts that must not blur together
-- the advisor must distinguish task, attached context, seed plan, constraints, and output contract
-- the task asks the advisor to transform one artifact into another
-- repository files must be treated as context, not instructions
-- reusable blocks such as `push`, `pull_through`, `grounding`, or `missing_context_gate` make the request clearer
+Let the request decide the shape. A short paragraph plus bullets is often better
+than formal sections. Markdown headings help when the advisor needs to scan a
+larger decision, compare alternatives, or return a patchable plan. XML-like
+blocks are useful only when boundaries would otherwise blur, such as separating
+a seed plan from critique rules or source excerpts from instructions.
 
-Use only meaningful blocks. Do not add a top-level wrapper when the whole message is already the assist request.
+Use names that fit the actual work, or use no headers when prose is clearer.
 
-## Advisor Assist Ingredients
+## Include The Useful Ingredients
 
-Consider including:
+Most strong assist prompts include some subset of:
 
-- advisory stance and grounding expectations
-- the concrete choice, plan, diagnosis, or missing-proof question the primary agent must resolve
-- the critique, decision, plan, or artifact the advisor should produce
-- how to read the package and why each included file, selected patch excerpt, or log matters
-- what must be true before the answer is useful
-- privacy, scope, compatibility, cost, evidence, and side-effect limits
-- the answer shape that will be easiest for the primary agent to use
-- when to ask for missing context, stop searching, abstain, or return a bounded answer
+- advisory stance and grounding expectation
+- the concrete decision or missing-proof question
+- the exact critique, plan, or answer needed
+- a reasoned map of attached files, excerpts, logs, or sources
+- constraints and non-goals that change the answer
+- missing-context behavior
+- desired level of detail
+- local checks the primary agent can run before trusting the answer
 
-Ask for a better plan only when the package gives enough evidence to produce one. Otherwise ask for the smallest missing context.
+Only include an ingredient when it changes the likely answer.
 
-## Decision Contract
+## Context Map
 
-Use a decision contract when the assist should change what the primary agent does next. Keep it short and concrete:
+Explain why each attached item matters. Prefer role-like reasons over mechanical
+glob matches:
 
-- decision: the choice, plan, diagnosis, or missing-proof question
-- current hypothesis or options: what the primary agent currently believes or is choosing between
-- change threshold: what evidence would change the decision
-- requested judgment: recommendation, strongest objection, better option, missing context, or local verification plan
+- target artifact to critique
+- source of truth for architecture or behavior
+- validation surface
+- product, privacy, compatibility, or scope constraint
+- risk context such as callers, migrations, dirty changes, or old behavior
 
-If the decision cannot be stated, ask for the smallest missing context instead of packaging a broad review request.
+For large bundles, mark the few files the advisor should read first. Supporting
+files can be there for evidence without being first-pass reading.
 
-## Push
+## Output Request
 
-Use `push` when the seed plan looks plausible but may be too shallow.
+Ask for the answer shape the primary agent can use immediately. Depending on the
+task, that may be a recommendation, strongest objections, specific plan edits,
+missing decisions, safer simplification, verification checklist, or a concise
+go/no-go. Do not ask for proof; ask for advice grounded enough that the primary
+agent can verify it locally.
 
-```xml
-<push>
-Do not merely polish the plan. Push past the obvious version.
-Challenge sequencing, scope, evidence, validation, assumptions, and user-visible outcomes.
-Look for the stronger plan that a careful implementer would wish they had before starting.
-</push>
-```
+## Incomplete Context
 
-## Pull Through
-
-Use `pull_through` when critique alone would be too easy.
-
-```xml
-<pull_through>
-Do not stop at comments.
-For each material critique, pull it through into a concrete plan change, validation step, decision, or missing-context request.
-If a critique does not change the plan, downgrade it or omit it.
-</pull_through>
-```
-
-## Grounding
-
-Use grounding rules for repo-based assists.
-
-```xml
-<grounding>
-Ground concrete repo claims in the attached package.
-Name file paths, commands, tests, or docs when they support a claim.
-Label inference and uncertainty instead of presenting them as facts.
-</grounding>
-```
-
-For external or current-source claims, add a retrieval budget:
-
-```xml
-<retrieval_budget>
-Use the minimum evidence sufficient to answer correctly.
-Make another retrieval call only when a required fact, source, date, ID, owner, or comparison point is missing.
-Do not search again merely to improve phrasing or add nonessential examples.
-</retrieval_budget>
-```
-
-## Missing Context
-
-Use this when the package may be incomplete.
-
-```xml
-<missing_context_gate>
-If the package is insufficient, ask for the smallest missing context that would change the answer.
-Do not invent files, APIs, test commands, project conventions, or completed evidence.
-If you can still give a bounded recommendation, label assumptions clearly.
-</missing_context_gate>
-```
-
-## Verification
-
-Use this when the primary agent will act on the answer.
-
-```xml
-<verification>
-Before finalizing, check that the answer satisfies the requested task, respects constraints, and can be verified locally.
-List the local checks the primary agent should run before adopting the recommendation.
-</verification>
-```
-
-For implementation plans, ask the advisor to make the plan traceable:
-
-```xml
-<plan_traceability>
-Include requirements covered, named files or systems, relevant state transitions or data flow, validation checks, failure behavior, privacy/security considerations, and material open questions.
-</plan_traceability>
-```
-
-## Minimal Markdown Prompt
-
-Use Markdown when it helps scan the request, but choose the labels from the task
-rather than copying a fixed template. For a tiny assist, a short paragraph plus a
-few bullets may be better than section headers. For a plan review, headings that
-name the actual decision, evidence, risks, and requested output may be clearer.
-The useful invariant is not the header names; it is that the advisor understands
-the decision, context, constraints, missing-context behavior, and answer shape.
-
-## XML Blocks
-
-Use XML-like blocks only when stable boundaries help more than Markdown or
-plain prose. Name blocks after the actual job they do in that prompt. For
-example, a plan hard-cut review might use blocks for the seed plan, evidence
-that would change the decision, and how to pull objections through into edits;
-a current-source check might use blocks for retrieval budget, source quality,
-and uncertainty handling.
+Tell the advisor what to do when the package is incomplete. Usually the best
+behavior is to name the smallest missing context that would change the answer,
+while still giving a bounded recommendation when the available evidence is
+enough.

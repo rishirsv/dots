@@ -176,7 +176,7 @@ def is_authored_prompt(text: str) -> bool:
     if len(headings) >= 2:
         return True
     stripped = text.lstrip()
-    return stripped.startswith(("<", "# "))
+    return stripped.startswith("<")
 
 
 def duplicate_top_level_headings(text: str) -> list[str]:
@@ -187,7 +187,7 @@ def duplicate_top_level_headings(text: str) -> list[str]:
     ]
 
 
-def validate_single_authority(prompt: str) -> None:
+def validate_no_repeated_headings(prompt: str) -> None:
     duplicates = duplicate_top_level_headings(prompt)
     if duplicates:
         raise SystemExit(
@@ -314,14 +314,14 @@ def main() -> int:
     authored_prompt = False
     if args.prompt_file:
         prompt = read_text_file(args.prompt_file)
-        validate_single_authority(prompt)
+        validate_no_repeated_headings(prompt)
         slug_source = prompt
         authored_prompt = True
     else:
         task = read_task(args)
         if is_authored_prompt(task):
             prompt = task
-            validate_single_authority(prompt)
+            validate_no_repeated_headings(prompt)
             slug_source = prompt
             authored_prompt = True
         else:
@@ -382,7 +382,7 @@ def main() -> int:
             notes=args.notes,
             context_map=context_map,
         )
-        validate_single_authority(prompt)
+        validate_no_repeated_headings(prompt)
     prompt_path = package_dir / "prompt.md"
     prompt_path.write_text(prompt, encoding="utf-8")
 
