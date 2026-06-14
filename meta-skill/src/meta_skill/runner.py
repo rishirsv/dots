@@ -81,7 +81,7 @@ def trial_paths(row, run_dir):
     return {
         "event": run_dir / "events" / f"{trial_id}.jsonl",
         "evidence": run_dir / "evidence" / f"{trial_id}.json",
-        "final": run_dir / "candidates" / row["candidate"]["candidate"] / trial_id / "final.md",
+        "response": run_dir / "candidates" / row["candidate"]["candidate"] / trial_id / "response.md",
     }
 
 
@@ -115,7 +115,7 @@ def queued_record(row, runner, workbench, run_dir):
         runtime_approval_policy=runner_approval_policy(runner),
         event_path=str(paths["event"]),
         evidence_path=str(paths["evidence"]),
-        final_path=str(paths["final"]),
+        response_path=str(paths["response"]),
     )
 
 
@@ -124,7 +124,7 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
     case = row["case"]
     candidate = row["candidate"]
     paths = trial_paths(row, run_dir)
-    output_path = paths["final"]
+    output_path = paths["response"]
     event_path = paths["event"]
     evidence_path = paths["evidence"]
     started = time.time()
@@ -154,7 +154,7 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
         thread_id=detail.get("thread_id"),
         turn_id=detail.get("turn_id"),
         thread_persistence=persistence,
-        final_response=final_response or None,
+        response_text=final_response or None,
         final_source="turn_result" if final_response else "none",
         items_count=detail.get("events", 0) or 0,
         usage=detail.get("usage"),
@@ -180,7 +180,7 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
         runtime_version=detail.get("runtime_version"),
         event_path=str(event_path),
         evidence_path=str(evidence_path),
-        final_path=str(output_path),
+        response_path=str(output_path),
         usage=detail.get("usage"),
         started_at=datetime.fromtimestamp(started, timezone.utc).isoformat(),
         completed_at=datetime.fromtimestamp(completed, timezone.utc).isoformat(),
@@ -191,6 +191,7 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
         **record,
         "trial_index": row["index"],
         "duration_ms": int((completed - started) * 1000),
+        "response_path": str(output_path),
         "output_path": str(output_path),
         "event_path": str(event_path),
         "evidence_path": str(evidence_path),

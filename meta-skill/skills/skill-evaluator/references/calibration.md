@@ -15,14 +15,16 @@ let the judge scale.
    outcomes before trusting the judge for a decision. For small skill suites, a
    few human-labeled examples are usually enough to reveal obvious rubric or
    judge defects.
-3. **Collect human grades.** Store human labels as `grades.jsonl` rows over trial
-   outcomes. Do not put human labels in `task.md`, and do not hide them as front
-   matter in case files.
+3. **Collect human grades.** Use [human-grading.md](human-grading.md) to show
+   response and transcript evidence, ask for label/rationale, and store human
+   labels as `grades.jsonl` rows over trial outcomes. Do not put human labels in
+   `task.md`, and do not hide them as front matter in case files.
 4. **Check agreement.** Run the judge on the same trial outcomes and compare.
    Practical signal: exact-match rate plus a +/-1 tolerance band. Reach for
    weighted kappa or correlation only when statistical rigor is needed.
 5. **Refine on disagreement.** Every material judge/human disagreement is a
-   rubric or judge-prompt defect. Tighten `rubric.md`, then rerun the judge.
+   rubric, judge-prompt, task, or evidence-selection defect. Tighten
+   `rubric.md`, add reference examples when needed, then rerun the judge.
 6. **Scale carefully.** Let the judge grade the rest only after disagreements
    look explainable and fixable. Recheck a small slice after any rubric or
    judge-model change — prior agreement does not transfer.
@@ -42,7 +44,7 @@ Human, model, and code grades share one annotation shape:
     "id": "rishi"
   },
   "metric": "usefulness",
-  "score": 2,
+  "score": 0.5,
   "label": "partial",
   "rationale": "The answer is usable but misses the approval boundary.",
   "evidence_refs": ["results.jsonl#natural-trigger.attempt-1.t3"]
@@ -61,7 +63,9 @@ labeling everything.
 Do not turn calibration into a separate label system. If a decision depends on
 judge scores, say whether a human spot check was done and summarize any
 disagreements in plain language. Use transcripts to diagnose disagreements, but
-grade the outcome unless the rubric explicitly measures process behavior.
+grade the outcome unless the rubric explicitly measures process behavior. When
+the human's taste is the standard, rewrite the rubric into observable
+pass/partial/fail indicators before letting the model judge scale.
 
 ## Judge Bias Controls
 

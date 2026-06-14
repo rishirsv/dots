@@ -15,10 +15,11 @@ from pathlib import Path
 
 from .app_server.client import app_server_readiness
 from .errors import CliError
-from .grading import grade_run
+from .grading import grade_run, human_review_packet, record_human_grade
 from .io import emit, fail
+from .linting import lint_suite
 from .packaging import package_skill
-from .report import build_report, list_runs, render_markdown
+from .report import build_report, compare_run, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, terminal_count
 from .validation import validate_report
 from .workbench import init_workbench, materialize_cases
@@ -88,6 +89,11 @@ def command_eval_materialize(args):
     return 0
 
 
+def command_eval_lint(args):
+    emit(lint_suite(args.suite), args.json)
+    return 0
+
+
 def command_eval_run(args):
     result = run_eval(args)
     emit(result, args.json)
@@ -112,6 +118,31 @@ def command_eval_progress(args):
 
 def command_eval_grade(args):
     emit(grade_run(args.run), args.json)
+    return 0
+
+
+def command_eval_human(args):
+    if args.label:
+        if not args.trial:
+            raise CliError("--trial is required when recording a human grade", 2)
+        result = record_human_grade(
+            args.run,
+            trial_id=args.trial,
+            grader_id=args.grader,
+            metric=args.metric,
+            label=args.label,
+            score=args.score,
+            rationale=args.rationale or "",
+            reviewer=args.reviewer,
+        )
+    else:
+        result = human_review_packet(args.run, args.trial)
+    emit(result, args.json)
+    return 0
+
+
+def command_eval_compare(args):
+    emit(compare_run(args.run, args.baseline, args.candidate), args.json)
     return 0
 
 
@@ -165,6 +196,11 @@ def build_parser():
 
     eval_parser = sub.add_parser("eval", help="Evaluation commands")
     eval_sub = eval_parser.add_subparsers(dest="eval_command", required=True)
+    lint = eval_sub.add_parser("lint", help="Check eval manifest task, grader, and coverage shape")
+    lint.add_argument("--suite", default=".meta-skill/evals.json")
+    lint.add_argument("--json", action="store_true")
+    lint.set_defaults(func=command_eval_lint)
+
     materialize = eval_sub.add_parser("materialize", help="Materialize cases from evals.json")
     materialize.add_argument("--suite", default=".meta-skill/evals.json")
     materialize.add_argument("--force", action="store_true")
@@ -175,6 +211,7 @@ def build_parser():
     run.add_argument("--suite", default=".meta-skill/evals.json")
     run.add_argument("--runner", choices=["auto", "codex_app_server", "codex_exec"], default="auto")
     run.add_argument("--candidates")
+    run.add_argument("--conditions", dest="candidates", help="Alias for --candidates using eval vocabulary")
     run.add_argument("--split")
     run.add_argument("--repetitions", type=int)
     run.add_argument("--model")
@@ -191,6 +228,25 @@ def build_parser():
     grade.add_argument("--run", required=True)
     grade.add_argument("--json", action="store_true")
     grade.set_defaults(func=command_eval_grade)
+
+    human = eval_sub.add_parser("human", help="Show or record human grades for one eval run")
+    human.add_argument("--run", required=True)
+    human.add_argument("--trial", help="Restrict to one trial, or required when recording a grade")
+    human.add_argument("--grader", default="human-review")
+    human.add_argument("--metric", default="human-review")
+    human.add_argument("--label", choices=["pass", "partial", "fail", "unknown", "needs_human_review"])
+    human.add_argument("--score", type=float)
+    human.add_argument("--rationale")
+    human.add_argument("--reviewer")
+    human.add_argument("--json", action="store_true")
+    human.set_defaults(func=command_eval_human)
+
+    compare = eval_sub.add_parser("compare", help="Compare baseline and candidate condition outcomes for one run")
+    compare.add_argument("--run", required=True)
+    compare.add_argument("--baseline")
+    compare.add_argument("--candidate")
+    compare.add_argument("--json", action="store_true")
+    compare.set_defaults(func=command_eval_compare)
 
     list_runs_parser = eval_sub.add_parser("list", help="List eval runs in the workbench")
     list_runs_parser.add_argument("--suite", default=".meta-skill/evals.json")

@@ -20,6 +20,7 @@ Use these terms consistently:
 | **Grader** | Code, model, or human logic that scores one aspect of the trial. |
 | **Assertion / check** | One named expectation inside a grader. |
 | **Gate** | A required grader whose failure blocks promotion even when other scores improve. |
+| **Harness** | The runner and workspace machinery that executes trials, records evidence, grades, and aggregates. |
 
 The current Meta Skill schema still stores conditions in `candidates[]` and
 task rows in `cases[]`; keep those field names in JSON and use the vocabulary
@@ -39,15 +40,20 @@ above in prose.
 Do not mix all types into one claim. A suite can contain multiple task types,
 but the report should say which question each group answers.
 
+Capability suites should be hard enough that the current skill has room to
+improve. Regression suites protect known-good behavior and should stay near
+100%. When a capability task saturates near 100%, graduate it into regression
+instead of letting it dilute the improvement signal.
+
 ## Choose The Grader Mix
 
 Use the most exact grader that can fairly judge the requirement:
 
-| Grader | Use for | Avoid when |
-|---|---|---|
-| **Code validator** | Required files, schema shape, exact strings, test results, state checks, tool-call constraints, token/turn counts | Valid outputs vary widely and exact matching would reject reasonable answers |
-| **Model rubric** | Clarity, completeness, judgment, usefulness, tone, groundedness, source quality, instruction following | The expected behavior can be checked exactly by code |
-| **Human grade** | Taste, domain expertise, high-stakes judgment, or calibrating model rubrics | It would become the only evidence for every ordinary run |
+| Grader | Strengths | Weaknesses | Use for |
+|---|---|---|---|
+| **Code validator** | Fast, cheap, reproducible, objective. | Brittle when many valid outputs exist; can reward surface compliance. | Required files, schema shape, exact strings, tests, state checks, forbidden/required tool use, token/turn counts, transcript metrics. |
+| **Model rubric** | Handles nuance, freeform outputs, multiple valid answers, groundedness, usefulness, and source quality. | Nondeterministic, costlier, can drift or inherit rubric ambiguity. | Semantic quality, completeness, instruction following, conversational quality, research coverage, pairwise comparisons. |
+| **Human grade** | Gold standard for taste, domain judgment, subjective UX, and calibrating model judges. | Slow, expensive, inconsistent without guidance. | Calibration, high-judgment accept/reject decisions, ambiguous tasks, systematic human studies, user-specific preference. |
 
 Prefer grading the outcome over the path. Use transcript graders for process
 requirements such as tool choice, unsafe tool use, excessive turns, or whether a
@@ -56,6 +62,11 @@ failure was caused by the harness rather than the skill.
 Give model graders a way out: allow `unknown` or `needs_human_review` when the
 outcome lacks enough evidence. Do not force a confident score from incomplete
 evidence.
+
+Use multiple graders when one requirement is exact and another is semantic. For
+example, a conversational skill may use a code grader to confirm a required tool
+was called, a model grader for helpfulness, and a human grader to calibrate the
+model against Rishi's taste.
 
 Use gates for must-not-break checks: prompt-boundary leaks, package exclusions,
 forbidden file edits, schema validity, safety constraints, or deterministic
@@ -81,6 +92,25 @@ Every task should pass this checklist before it becomes gating evidence:
 
 If many trials score 0%, suspect the task, grader, or harness before concluding
 the agent is incapable.
+
+For trigger and boundary behavior, a task set is incomplete until it includes
+both activation and near-miss non-activation prompts. For tool behavior, pair
+"must use the tool" tasks with "must not use the tool" tasks.
+
+## Agent-Type Patterns
+
+Use these patterns when translating task families into graders:
+
+| Agent type | Primary evidence | Common graders |
+|---|---|---|
+| Coding or editing agent | tests, diffs, changed-file boundaries, response, transcript | code tests, static checks, model rubric for explanation quality, transcript check for skipped validation |
+| Conversational agent | final state, mid-conversation transcript, response quality | model rubric, human calibration, code checks for state/tool calls, transcript checks for process requirements |
+| Research agent | cited sources, coverage, groundedness, answer quality | model groundedness rubric, source-quality checks, exact checks for objective facts, human spot checks |
+| Computer-use agent | UI state, backend state, screenshots, tool calls | state validators, UI element checks, transcript/tool-choice checks, human review for UX quality |
+
+For conversational skills, the final response may be the wrong evidence target.
+Look in the transcript for mid-conversation work, tool calls, approvals,
+validation, and state transitions when those are part of the task contract.
 
 ## Skill Eval Examples
 
@@ -151,6 +181,24 @@ Hidden graders:
 
 Regression tasks should stay close to 100% once the behavior is considered
 working.
+
+### 3b. Transcript-Aware Conversational Task
+
+Goal: measure a skill whose important work happens mid-conversation.
+
+```text
+task.md
+Guide the user through choosing a grader for this ambiguous support-triage
+skill, then recommend the smallest fair eval suite.
+```
+
+Hidden graders:
+
+- model rubric checks whether the final recommendation is understandable and
+  calibrated to the user's goal.
+- transcript validator checks that the agent asked for human judgment only when
+  needed and exposed response/transcript evidence before asking for a grade.
+- human spot check calibrates whether the guided workflow felt clear.
 
 ### 4. Failure / Diagnostic Task
 

@@ -130,7 +130,7 @@ Map the extraction into the required interview answer-set:
 | Invariants and failure shields | User corrections, repeated checks, source-vs-generated boundaries, failure modes. |
 | Fragility | Whether success depended on judgment prose, fixed output shape, deterministic scripts, or strict command order. |
 | Skill category | The primary skill type implied by the successful workflow; narrow or split if the session straddled categories. |
-| Evaluation posture | Capability uplift, encoded preference, or hybrid; include realistic prompt seeds, near misses, objective checks, and the baseline when the session provides them. |
+| Evaluation posture | Capability uplift, encoded preference, or hybrid; include `.meta-skill/evals.json` entries with realistic prompts, near misses, objective checks, grader hints, and the baseline when the session provides them. |
 | Gates | Approval moments before external writes, package/sync/install, destructive edits, or final delivery. |
 | Project mode | Whether durable `.meta-skill/` docs, team reuse material, or portable-only output is needed. |
 
@@ -190,7 +190,7 @@ Draft Skill Outline
 - Fragility: <judgment prose | fixed shape | script-backed | strict sequence>
 - Skill category: <primary type from design.md>
 - Evaluation posture: <capability uplift | encoded preference | hybrid; baseline when available>
-- Eval seeds: <positive prompts, near misses, and objective checks when available>
+- Eval manifest: <`.meta-skill/evals.json` path with positive prompts, near misses, objective checks, and grader hints when available>
 - Gates: <approval gates or none>
 - Project mode: <portable-only | project mode with .meta-skill/...>
 - Still open: <one or two questions, or none>

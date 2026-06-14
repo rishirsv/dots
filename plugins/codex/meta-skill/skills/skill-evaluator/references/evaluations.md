@@ -11,7 +11,7 @@ progress, and grading commands.
 
 ## Authoring Model
 
-Use a manifest plus materialized task folders:
+Use a hidden prompt manifest plus materialized task folders:
 
 ```text
 .meta-skill/
@@ -26,7 +26,8 @@ Use a manifest plus materialized task folders:
 ```
 
 `evals.json` is authoritative for metadata: target, defaults, runner plan,
-repetitions, condition selection, and materialization intent.
+repetitions, condition guidance, realistic prompts, expectations, and
+materialization intent.
 
 Task folders are authoritative for authored content after materialization:
 visible task bytes, fixtures, rubric content, expected outputs, and validator
@@ -49,42 +50,36 @@ Use this vocabulary in prose:
 | **outcome** | The final answer, files, artifacts, or state to grade. |
 | **grader** | A human, model, or code validator judging an outcome. |
 
-## Minimal `evals.json`
+## Writer-Facing `evals.json`
 
-One manifest per target, in `<project>/.meta-skill/evals.json`:
+Skill Writer may create a compact prompt manifest in
+`<project>/.meta-skill/evals.json`. This is the preferred authoring handoff:
 
 ```json
 {
-  "schema_version": 1,
-  "target": {
-    "type": "skill",
-    "ref": "skill/SKILL.md"
-  },
+  "skill_name": "commit-message-normalizer",
   "defaults": {
     "runner": "codex_app_server",
     "repetitions": 1
   },
-  "candidates": [
+  "conditions": [
     {
-      "candidate": "current",
-      "display": "Current skill",
-      "source": { "kind": "git_ref", "ref": "HEAD" }
+      "id": "no-skill",
+      "label": "No skill baseline",
+      "source": { "kind": "none" }
     },
     {
-      "candidate": "attempt-1",
-      "display": "Edited skill attempt 1",
-      "source": { "kind": "branch", "ref": "meta-skill/client-email/attempt-1" }
+      "id": "current",
+      "label": "Current skill",
+      "source": { "kind": "current_worktree", "ref": "." }
     }
   ],
-  "cases": [
+  "evals": [
     {
       "id": "natural-trigger",
       "type": "trigger",
       "repetitions": 5,
-      "task": {
-        "path": "task.md",
-        "seed": "Ask for a skill improvement without naming the skill."
-      },
+      "prompt": "Ask for a skill improvement without naming the skill.",
       "fixtures": ["fixtures/source-skill.md"],
       "expectations": [
         "The response routes to skill-improvement behavior.",
@@ -95,7 +90,8 @@ One manifest per target, in `<project>/.meta-skill/evals.json`:
           "id": "activation-rubric",
           "kind": "model",
           "metric": "activation",
-          "path": "rubric.md"
+          "path": "rubric.md",
+          "uses_transcript": true
         },
         {
           "id": "prompt-boundary",
@@ -104,12 +100,23 @@ One manifest per target, in `<project>/.meta-skill/evals.json`:
           "path": "validate.py",
           "required": true,
           "gate": true
+        },
+        {
+          "id": "rishi-review",
+          "kind": "human",
+          "metric": "usefulness"
         }
       ]
     }
   ]
 }
 ```
+
+The CLI normalizes writer-facing `conditions[].id` to the legacy internal
+`candidate` field. It also continues to read the normalized schema with
+`schema_version`, `cases[]`, and `candidates[]`. Explain `candidates[]` as
+conditions in prose. New writer-authored material should prefer `evals[]` and
+`conditions[]` unless an existing suite already uses `cases[]`.
 
 Keep the manifest small. Use conventional files inside each task folder:
 
@@ -122,9 +129,9 @@ Keep the manifest small. Use conventional files inside each task folder:
 - `expectations[]` — optional hidden expectation checklist in `evals.json`
 - `graders[]` — optional hidden grader declaration in `evals.json`
 
-The `task.seed` value is used only when `task.md` does not exist. A materializer
-must not overwrite existing authored content unless the caller explicitly forces
-it.
+The `prompt` or `task.seed` value is used only when `task.md` does not exist. A
+materializer must not overwrite existing authored content unless the caller
+explicitly forces it.
 
 Although the schema field is currently `candidates`, explain those rows as
 **conditions**. The condition changes the agent harness; the task prompt stays
@@ -170,8 +177,8 @@ Supported grader kinds:
 | Kind | Runtime behavior |
 |---|---|
 | `code` | Runs the named `validate.*` file and writes `grader.kind = "code"` to `grades.jsonl`. |
-| `model` | Runs the rubric/expectation judge and writes `grader.kind = "model"` to `grades.jsonl`. |
-| `human` | Declares that a human grade row is expected; the runner does not fabricate it. |
+| `model` | Runs the rubric/expectation judge and writes `grader.kind = "model"` to `grades.jsonl`. Set `uses_transcript: true` only when the rubric grades process behavior or needs mid-conversation evidence. |
+| `human` | Creates a pending `needs_human_review` row until a reviewer records the label with `eval human`. |
 
 `required` or `gate` means the grader is promotion-blocking. A condition may
 score well on a rubric and still be rejected if a gate fails.
@@ -179,7 +186,8 @@ score well on a rubric and still be rejected if a gate fails.
 `expectations[]` are hidden verifier statements. They are not copied into
 `task.md`; the model judge uses them to emit named checks with evidence. Exact
 expectations should still move into `validate.*` whenever code can check them
-fairly.
+fairly. Run `scripts/meta-skill eval lint --suite .meta-skill/evals.json`
+before running a suite to catch missing grader, reference, and balance issues.
 
 ## Task Types
 
@@ -297,8 +305,9 @@ A no-skill baseline uses `source.kind: "none"`:
 Do not fake a no-skill baseline by staging a different skill payload. The
 no-skill condition runs the same task with no `skill/` payload staged.
 
-`runs/<run-id>/candidates/<condition>/` stores outcome artifacts only. Never
-store source copies there.
+`runs/<run-id>/candidates/<condition>/<trial-id>/response.md` stores the
+captured solver response for compatibility with the current runner. Never store
+source copies there.
 
 When a run contains a no-skill condition and at least one payload condition,
 `eval report` adds per-task impact categories:

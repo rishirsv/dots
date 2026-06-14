@@ -7,24 +7,21 @@ from .ids import require_id
 from .io import read_json
 
 
+SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "none"}
+DEFAULT_CONDITIONS = [
+    {"id": "no-skill", "label": "No skill baseline", "source": {"kind": "none"}},
+    {"id": "current", "label": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
+]
 DEFAULT_EVALS = {
-    "schema_version": 1,
+    "skill_name": "TODO",
     "target": {"type": "skill", "ref": "SKILL.md"},
     "defaults": {
         "runner": "codex_app_server",
         "repetitions": 1,
     },
-    "candidates": [
-        {
-            "candidate": "current",
-            "display": "Current",
-            "source": {"kind": "current_worktree", "ref": "."},
-        }
-    ],
-    "cases": [],
+    "conditions": DEFAULT_CONDITIONS,
+    "evals": [],
 }
-
-SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "none"}
 
 
 def suite_path(raw):
@@ -48,10 +45,68 @@ def case_dir(workbench, case_id):
     return workbench / "cases" / require_id("case id", case_id)
 
 
+def normalize_condition(row):
+    if not isinstance(row, dict):
+        raise CliError("evals.json conditions must be objects", 2)
+    condition = dict(row)
+    if "candidate" not in condition and condition.get("id"):
+        condition["candidate"] = condition["id"]
+    if "display" not in condition and condition.get("label"):
+        condition["display"] = condition["label"]
+    return condition
+
+
+def normalize_prompt_manifest(data):
+    if "evals" not in data:
+        return data
+    evals = data.get("evals")
+    if not isinstance(evals, list):
+        raise CliError("evals.json evals must be a list", 2)
+    defaults = data.get("defaults") or {"runner": "codex_app_server", "repetitions": 1}
+    raw_conditions = [normalize_condition(row) for row in (data.get("conditions") or data.get("candidates") or DEFAULT_CONDITIONS)]
+    cases = []
+    for item in evals:
+        if not isinstance(item, dict):
+            raise CliError("evals.json evals must be objects", 2)
+        prompt = item.get("prompt")
+        task = item.get("task")
+        if isinstance(task, dict):
+            task_info = dict(task)
+            if prompt and not task_info.get("seed"):
+                task_info["seed"] = prompt
+        elif isinstance(task, str):
+            task_info = {"path": "task.md", "seed": task}
+        else:
+            task_info = {"path": "task.md", "seed": prompt or ""}
+        case = {
+            "id": item.get("id"),
+            "type": item.get("type"),
+            "split": item.get("split"),
+            "repetitions": item.get("repetitions"),
+            "task": task_info,
+            "fixtures": item.get("fixtures") or item.get("files") or [],
+            "expectations": item.get("expectations") or [],
+            "graders": item.get("graders") or [],
+        }
+        if item.get("expected_output") and "expected_output" not in case:
+            case["expected_output"] = item.get("expected_output")
+        cases.append({key: value for key, value in case.items() if value not in (None, [], {})})
+    return {
+        "schema_version": 1,
+        "target": data.get("target") or {"type": "skill", "ref": "SKILL.md"},
+        "defaults": defaults,
+        "candidates": raw_conditions,
+        "cases": cases,
+        "_manifest_shape": "prompt",
+        "skill_name": data.get("skill_name"),
+    }
+
+
 def load_manifest(path):
     data = read_json(path)
     if not isinstance(data, dict):
         raise CliError("eval suite must be a JSON object", 2)
+    data = normalize_prompt_manifest(data)
     if data.get("schema_version") != 1:
         raise CliError("only evals.json schema_version 1 is supported", 2)
     if not isinstance(data.get("cases", []), list):
@@ -70,6 +125,8 @@ def load_manifest(path):
             expectations = case.get("expectations")
             if not isinstance(expectations, list) or not all(isinstance(item, str) and item.strip() for item in expectations):
                 raise CliError(f"case {case_id} expectations must be non-empty strings", 2)
+        if "fixtures" in case and (not isinstance(case.get("fixtures"), list) or not all(isinstance(item, str) and item.strip() for item in case.get("fixtures"))):
+            raise CliError(f"case {case_id} fixtures must be non-empty strings", 2)
         graders = case.get("graders", [])
         if not isinstance(graders, list):
             raise CliError(f"case {case_id} graders must be a list", 2)
@@ -78,6 +135,10 @@ def load_manifest(path):
                 raise CliError(f"case {case_id} graders must be objects", 2)
             if grader.get("kind") not in {"code", "model", "human"}:
                 raise CliError(f"case {case_id} grader kind must be code, model, or human", 2)
+            if grader.get("kind") == "human" and grader.get("path"):
+                raise CliError(f"case {case_id} human grader must not set path", 2)
+            if "uses_transcript" in grader and not isinstance(grader.get("uses_transcript"), bool):
+                raise CliError(f"case {case_id} grader uses_transcript must be boolean", 2)
     seen_candidate_ids = set()
     for candidate in data.get("candidates", []):
         if not isinstance(candidate, dict):

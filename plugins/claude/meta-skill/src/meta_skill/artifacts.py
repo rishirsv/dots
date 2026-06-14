@@ -35,6 +35,7 @@ def trial_record(
     runtime_version=None,
     event_path=None,
     evidence_path=None,
+    response_path=None,
     final_path=None,
     usage=None,
     started_at=None,
@@ -58,7 +59,7 @@ def trial_record(
         "runtime_version": runtime_version,
         "event_path": event_path,
         "evidence_path": evidence_path,
-        "final_path": final_path,
+        "response_path": response_path or final_path,
         "usage": usage,
         "started_at": started_at,
         "completed_at": completed_at,
@@ -72,6 +73,7 @@ def thread_evidence(
     thread_id=None,
     turn_id=None,
     thread_persistence=None,
+    response_text=None,
     final_response=None,
     final_source="none",
     items_count=0,
@@ -86,7 +88,7 @@ def thread_evidence(
         "thread_id": thread_id,
         "turn_id": turn_id,
         "thread_persistence": thread_persistence,
-        "final_response": final_response,
+        "response_text": response_text if response_text is not None else final_response,
         "final_source": final_source,
         "items_count": items_count,
         "usage": usage,
@@ -95,4 +97,3 @@ def thread_evidence(
         "sdk_version": sdk_version,
         "runtime_version": runtime_version,
     }
-

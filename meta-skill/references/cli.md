@@ -51,15 +51,16 @@ Use Anthropic-aligned terms when explaining evals to users:
 |---|---|
 | **suite** | `.meta-skill/evals.json` plus its materialized workbench |
 | **task** | one row in `cases[]` and one folder under `.meta-skill/cases/<task-id>/` |
-| **condition** | one row in `candidates[]`; current CLI flags still say `--candidates` |
+| **condition** | one row in `conditions[]` or legacy `candidates[]`; `eval run` accepts `--conditions` and the old `--candidates` alias |
 | **trial** | one task executed once under one condition |
 | **transcript** | `events/<trial-id>.jsonl` plus compact `evidence/<trial-id>.json` |
-| **outcome** | `candidates/<condition>/<trial-id>/final.md` and produced artifacts |
+| **outcome** | `candidates/<condition>/<trial-id>/response.md` and produced artifacts |
 | **grader** | model, human, or code rows in `grades.jsonl` |
 
-Keep current field names in JSON and CLI commands until the code changes. In
-plain English, say condition rather than candidate, and outcome rather than
-final message.
+When explaining evals to a user, prefer the product terms from this table:
+suite, task, condition, trial, transcript, outcome, and grader. Use schema terms
+such as `candidate` only when pointing at a concrete JSON field, file path, or
+legacy CLI flag.
 
 ## Runner Policy
 
@@ -87,10 +88,13 @@ Current top-level commands:
 ```sh
 scripts/meta-skill doctor [--json]
 scripts/meta-skill workbench init [--target <path>] [--dry-run] [--json]
+scripts/meta-skill eval lint [--suite .meta-skill/evals.json] [--json]
 scripts/meta-skill eval materialize [--suite .meta-skill/evals.json] [--force] [--json]
-scripts/meta-skill eval run [--suite .meta-skill/evals.json] [--runner auto|codex_app_server|codex_exec] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
+scripts/meta-skill eval run [--suite .meta-skill/evals.json] [--runner auto|codex_app_server|codex_exec] [--conditions <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
 scripts/meta-skill eval progress --run <run-id-or-path> [--watch] [--json]
 scripts/meta-skill eval grade --run <run-id-or-path> [--json]
+scripts/meta-skill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
+scripts/meta-skill eval compare --run <run-id-or-path> [--baseline <condition>] [--candidate <condition>] [--json]
 scripts/meta-skill eval list [--suite .meta-skill/evals.json] [--json]
 scripts/meta-skill eval report --run <run-id-or-path> [--out <file>] [--json]
 scripts/meta-skill validate <skill-dir> [--json]
@@ -183,6 +187,27 @@ Notes:
 - The seeded task text is visible prompt content. Keep it free of hidden
   control metadata.
 
+### `eval lint`
+
+Use this before running a suite. It is a static manifest check, not a behavioral
+grade.
+
+What it does:
+
+- Reads legacy `cases[]` manifests and writer-facing `evals[]` prompt manifests
+- Counts task types, grader kinds, human graders, and transcript-aware graders
+- Warns on missing task seeds, missing graders, missing reference material for
+  regression/gate tasks, unbalanced trigger suites, and incomplete grader
+  metadata
+- Prints grader-selection recommendations: code where exact, model where
+  semantic, human where judgment or calibration is required
+
+Example:
+
+```sh
+scripts/meta-skill eval lint --suite .meta-skill/evals.json --json
+```
+
 ### `eval run`
 
 Use this to execute a suite or a selected slice of it.
@@ -202,8 +227,8 @@ Inputs:
 
 - `--suite`: suite file; defaults to `.meta-skill/evals.json`
 - `--runner`: `auto`, `codex_app_server`, or `codex_exec`
-- `--candidates <ids>`: restrict to selected conditions; the CLI flag keeps the
-  current schema name
+- `--conditions <ids>`: restrict to selected conditions
+- `--candidates <ids>`: legacy alias for `--conditions`
 - `--split <name>`: restrict to a manifest split
 - `--repetitions <n>`: override task or suite repetition count
 - `--model <id>`: pass a model override to the runner
@@ -225,7 +250,7 @@ Authoritative run files:
   events/<trial-id>.jsonl
   events/<trial-id>.judge.jsonl
   evidence/<trial-id>.json
-  candidates/<condition>/<trial-id>/final.md
+  candidates/<condition>/<trial-id>/response.md
 ```
 
 What each file is for:
@@ -238,7 +263,7 @@ What each file is for:
 - `events/*.jsonl`: raw runner transcript for a trial
 - `events/*.judge.jsonl`: raw judge event stream when rubric grading runs
 - `evidence/*.json`: compact transcript/runtime evidence for a trial
-- `final.md`: captured outcome for that condition/trial
+- `response.md`: captured solver response for that condition/trial
 
 Solver workspaces are staged under
 `.meta-skill/solver-workspaces/<run-id>/<trial-id>/`. They are run-scoped
@@ -309,6 +334,61 @@ Notes:
 - Rubric grading writes judge events to
   `.meta-skill/runs/<run-id>/events/<trial-id>.judge.jsonl` and records model
   evidence in `grades.jsonl`.
+
+### `eval human`
+
+Use this when a run contains declared human graders or when a model/code grade
+needs human calibration.
+
+Packet mode:
+
+```sh
+scripts/meta-skill eval human --run <run-dir> --trial <trial-id> --json
+```
+
+What it returns:
+
+- response path
+- event and compact evidence paths
+- existing human grade rows for the trial
+- short review guidance
+
+Record mode:
+
+```sh
+scripts/meta-skill eval human \
+  --run <run-dir> \
+  --trial <trial-id> \
+  --grader rishi \
+  --metric usefulness \
+  --label partial \
+  --score 0.5 \
+  --rationale "Usable, but misses the approval boundary." \
+  --json
+```
+
+Labels are `pass`, `partial`, `fail`, `unknown`, or `needs_human_review`.
+Scores are optional and must be between 0 and 1. The command writes or replaces
+the matching human row in `grades.jsonl`.
+
+### `eval compare`
+
+Use this after grading a run with a no-skill condition and at least one payload
+condition.
+
+What it does:
+
+- Reads the deterministic report model
+- Filters impact rows by `--baseline` and `--candidate` when supplied
+- Returns per-task impact plus a recommendation such as
+  `promote_for_measured_scope`, `promising_with_failures`,
+  `reject_or_revise`, `no_skill_lift_detected`, or `needs_more_evidence`
+
+Example:
+
+```sh
+scripts/meta-skill eval compare --run <run-dir> --baseline no-skill --candidate current --json
+```
 
 ### `eval list`
 
@@ -425,6 +505,7 @@ scripts/meta-skill workbench init --target <target> --json
 ### Add or refresh tasks from the suite
 
 ```sh
+scripts/meta-skill eval lint --suite .meta-skill/evals.json --json
 scripts/meta-skill eval materialize --json
 ```
 
@@ -436,6 +517,8 @@ Then edit the generated task `task.md` files and any validators or fixtures.
 scripts/meta-skill eval run --json
 scripts/meta-skill eval progress --run <run-id> --watch --json
 scripts/meta-skill eval grade --run <run-id> --json
+scripts/meta-skill eval human --run <run-id> --json
+scripts/meta-skill eval compare --run <run-id> --baseline no-skill --candidate current --json
 scripts/meta-skill eval report --run <run-id>
 ```
 

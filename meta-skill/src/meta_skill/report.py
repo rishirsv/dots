@@ -138,7 +138,7 @@ def build_trial(run_dir, planned, result, grades):
         ],
         "needs_human_review": uncertain,
         "paths": {
-            "final": evidence_pointer(run_dir, merged.get("final_path")),
+            "response": evidence_pointer(run_dir, merged.get("response_path") or merged.get("output_path") or merged.get("final_path")),
             "events": evidence_pointer(run_dir, merged.get("event_path")),
             "judge_events": evidence_pointer(run_dir, run_dir / "events" / f"{trial_id}.judge.jsonl"),
             "evidence": evidence_pointer(run_dir, merged.get("evidence_path") or run_dir / "evidence" / f"{trial_id}.json"),
@@ -265,6 +265,72 @@ def build_report(raw_run):
     }
 
 
+def recommendation_for_impact(rows):
+    impacts = {row.get("impact") for row in rows}
+    if "candidate_regresses" in impacts:
+        return "reject_or_revise"
+    if "needs_human_review" in impacts:
+        return "needs_more_evidence"
+    if "candidate_improves" in impacts and "both_fail" not in impacts:
+        return "promote_for_measured_scope"
+    if "candidate_improves" in impacts:
+        return "promising_with_failures"
+    if impacts == {"baseline_already_succeeds"}:
+        return "no_skill_lift_detected"
+    return "needs_more_evidence"
+
+
+def compare_run(raw_run, baseline=None, candidate=None):
+    run_dir = resolve_run_dir(raw_run)
+    run = read_json(run_dir / "run.json")
+    candidates = sorted(
+        ({key: row.get(key) for key in CANDIDATE_FIELDS} for row in run.get("candidates", [])),
+        key=lambda row: row.get("candidate") or "",
+    )
+    candidate_ids = {row.get("candidate") for row in candidates}
+    if baseline and baseline not in candidate_ids:
+        raise CliError(f"unknown baseline condition: {baseline}", 2)
+    if candidate and candidate not in candidate_ids:
+        raise CliError(f"unknown candidate condition: {candidate}", 2)
+    baseline_ids = [row.get("candidate") for row in candidates if row.get("source_kind") == "none"]
+    selected_baseline = baseline or (sorted(baseline_ids)[0] if baseline_ids else None)
+    if not selected_baseline:
+        raise CliError("compare requires a baseline condition with source_kind none", 2)
+    payload_ids = [row.get("candidate") for row in candidates if row.get("source_kind") != "none"]
+    selected_payloads = [candidate] if candidate else payload_ids
+    if candidate and candidate not in payload_ids:
+        raise CliError(f"candidate condition is not a payload condition: {candidate}", 2)
+    if not selected_payloads:
+        raise CliError("compare requires at least one non-baseline candidate condition", 2)
+    relevant_candidates = [
+        row for row in candidates if row.get("candidate") == selected_baseline or row.get("candidate") in selected_payloads
+    ]
+    relevant_ids = {row.get("candidate") for row in relevant_candidates}
+    results = {row.get("trial_id"): row for row in read_jsonl(run_dir / "results.jsonl")}
+    grades = {}
+    for row in read_jsonl(run_dir / "grades.jsonl"):
+        grades.setdefault(row.get("trial_id"), []).append(row)
+    planned = list(run.get("trials", []))
+    planned_ids = {trial.get("trial_id") for trial in planned}
+    planned.extend(row for trial_id, row in sorted(results.items()) if trial_id not in planned_ids)
+    trials = [
+        build_trial(run_dir, trial, results.get(trial.get("trial_id")), sorted(grades.get(trial.get("trial_id"), []), key=grade_sort_key))
+        for trial in sorted(planned, key=trial_sort_key)
+        if trial.get("candidate") in relevant_ids
+    ]
+    rows = build_impact(relevant_candidates, trials)
+    if not rows:
+        raise CliError("no comparable baseline/candidate trials found for this run", 2)
+    return {
+        "ok": True,
+        "run_id": run.get("run_id") or run_dir.name,
+        "baseline": selected_baseline,
+        "candidate": candidate,
+        "by_task": rows,
+        "recommendation": recommendation_for_impact(rows),
+    }
+
+
 def md_cell(value, limit=96):
     text = " ".join(str(value if value is not None else "-").split()).replace("|", "\\|") or "-"
     return text if len(text) <= limit else text[: limit - 3] + "..."
@@ -309,11 +375,11 @@ def render_markdown(report):
         "",
         "Evidence paths are relative to the run directory; `-` marks a missing file.",
         "",
-        "## Candidates",
+        "## Conditions",
         "",
     ]
     lines += md_table(
-        ["Candidate", "Source", "Head commit", "Dirty", "Payload digest"],
+        ["Condition", "Source", "Head commit", "Dirty", "Payload digest"],
         [
             [
                 md_cell(row.get("candidate")),
@@ -337,7 +403,7 @@ def render_markdown(report):
         "",
     ]
     lines += md_table(
-        ["Case", "Candidate", "Rep", "Status", "Error"],
+        ["Task", "Condition", "Rep", "Status", "Error"],
         [
             [md_cell(t["case_id"]), md_cell(t["candidate"]), md_cell(t["repetition"]), md_cell(t["runner_status"]), md_cell(t["error"])]
             for t in trials
@@ -347,14 +413,14 @@ def render_markdown(report):
         "",
         "## Behavioral Grades",
         "",
-        "Behavioral grades judge output quality. A trial can complete and still produce a bad answer.",
+        "Behavioral grades judge the outcome and selected transcript evidence. A trial can complete and still produce a bad answer.",
         "",
         f"- Graded: {totals['graded']}/{totals['trials']}",
         f"- Ungraded: {totals['ungraded']}/{totals['trials']}",
         "",
     ]
     lines += md_table(
-        ["Case", "Candidate", "Rep", "Model grades", "Validators", "Human grades", "Gate", "Graded", "Tokens"],
+        ["Task", "Condition", "Rep", "Model grades", "Validators", "Human grades", "Gate", "Graded", "Tokens"],
         [
             [
                 md_cell(t["case_id"]),
@@ -373,7 +439,7 @@ def render_markdown(report):
     if report["impact"]:
         lines += ["", "## Impact", ""]
         lines += md_table(
-            ["Case", "Baseline", "Candidate", "Baseline state", "Candidate state", "Impact"],
+            ["Task", "Baseline", "Candidate", "Baseline state", "Candidate state", "Impact"],
             [
                 [
                     md_cell(row["case_id"]),
@@ -388,11 +454,11 @@ def render_markdown(report):
         )
     lines += ["", "## Evidence", ""]
     lines += md_table(
-        ["Trial", "Final output", "Events", "Judge events", "Thread evidence"],
+        ["Trial", "Response", "Events", "Judge events", "Thread evidence"],
         [
             [
                 md_cell(t["trial_id"]),
-                md_cell(t["paths"]["final"]),
+                md_cell(t["paths"]["response"]),
                 md_cell(t["paths"]["events"]),
                 md_cell(t["paths"]["judge_events"]),
                 md_cell(t["paths"]["evidence"]),

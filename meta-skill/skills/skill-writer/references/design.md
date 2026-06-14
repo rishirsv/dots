@@ -149,10 +149,11 @@ preserve. This is an authoring aid, not a frontmatter label.
 | Encoded preference | The base model can do the pieces, but the skill preserves a team process, voice, approval path, rubric, or artifact standard. | Fidelity to the intended workflow, required sections, approval gates, tone, positive-null behavior, and near-miss routing. |
 | Hybrid | The skill combines a capability boost with workflow or style preferences. | Separate capability checks from preference checks so later evaluation can tell which part regressed. |
 
-Use the posture to choose eval seeds, not to bloat runtime. Capability uplift
-seeds need a baseline comparison against no skill. Encoded preference seeds need
-realistic workflow prompts and objective indicators of process fidelity. Hybrid
-seeds should name which checks measure capability and which measure preference.
+Use the posture to choose eval manifest entries, not to bloat runtime.
+Capability uplift evals need a baseline comparison against no skill. Encoded
+preference evals need realistic workflow prompts and objective indicators of
+process fidelity. Hybrid evals should name which checks measure capability and
+which measure preference.
 
 ## Portable Payload And Project State
 
@@ -528,44 +529,48 @@ present in ordinary prompts or when prior runs materially improve the next run.
 Skip this section for ordinary guidance skills. Empty config/state rules create
 maintenance burden without changing behavior.
 
-## Evaluation Seeds And Measurement Boundary
+## Eval Manifest And Measurement Boundary
 
-During new-skill authoring, capture lightweight eval seeds when the context
-provides realistic prompts, source files, expected output shape, or objective
-checks. Eval seeds are a starter handoff: enough realistic prompts, expected
-behavior, and objective checks for a later measurement pass to build real cases
-without reconstructing the authoring context. A seed is not a suite.
+During new-skill authoring, create `.meta-skill/evals.json` when the user asks
+for eval seeds, project-mode eval material, or evaluator handoff. The manifest
+is a starter handoff: enough realistic prompts, expected behavior, grader hints,
+and objective checks for `skill-evaluator` to run trials without reconstructing
+the authoring context. A manifest is not evidence until a run, grades,
+comparison, and report exist.
 
 Include only what is available and useful:
 
 - skill posture: capability uplift, encoded preference, or hybrid
-- two or three should-trigger prompts
-- one or two should-not-trigger prompts or near misses
+- two or three should-trigger prompts as `evals[]`
+- one or two should-not-trigger prompts or near misses as `negative_control` or
+  boundary evals
 - expected behavior or output shape
 - objective checks such as required fields, script exits, citation presence,
   positive-null language, no unsupported claims, or exact artifact paths
+- grader hints: code where exact, model where semantic, human where taste or
+  calibration is required
 - baseline: no skill for new-skill authoring, prior skill for approved
   revisions, or named candidate when the user provides one
 - comparator question: what later measurement should decide
 
-Keep eval seeds out of the portable payload unless they are approved runtime
-examples the future agent should inspect while doing the task. In project mode,
-put seeds in `.meta-skill/docs/` or the final handoff. Put user-provided
-fixtures or sample inputs in the flat `.meta-skill/tests/` folder only when the
-user provided or approved them; do not create that folder when there are no
-fixture files to store.
+Keep eval material out of the portable payload unless it is approved runtime
+example material the future agent should inspect while doing the task. Put the
+prompt manifest in `.meta-skill/evals.json`; put durable authoring notes in
+`.meta-skill/docs/`. Put user-provided fixtures or sample inputs in the flat
+`.meta-skill/tests/` folder only when the user provided or approved them; do not
+create that folder when there are no fixture files to store.
 
-Do not create `.meta-skill/evals.json`, case folders, hidden rubrics, judge
-configuration, benchmark runs, dashboards, or CI wiring during ordinary
-authoring. Route systematic measurement, A/B comparison, model-update checks,
-and pass-rate/time/token tracking to `skill-evaluator`.
+Do not create run folders, grades, comparisons, hidden rubrics, benchmark runs,
+dashboards, or CI wiring during ordinary authoring. Route systematic
+measurement, A/B comparison, model-update checks, pass-rate/time/token tracking,
+and human-judge calibration to `skill-evaluator`.
 
 ## Draft Outline Handoff
 
 Use the scaffolded `SKILL.md` as the authoring outline while the skill is still
 being shaped. The outline should contain the recurring job, trigger boundary,
 inputs and output, invariants, fragility, skill category, evaluation posture,
-eval seeds when available, gates, project-mode choice, and any still-open
+eval manifest path when available, gates, project-mode choice, and any still-open
 uncertainty.
 
 The draft outline is a temporary handoff from intake to build. It shows the

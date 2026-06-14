@@ -3,8 +3,8 @@
 Read when choosing the smallest useful eval loop for a skill.
 
 The default model follows the agent-eval loop: keep the task stable, vary the
-agent-harness condition, grade the outcome, and inspect the transcript only when
-it explains why the outcome happened.
+agent-harness condition, grade the outcome, and read transcripts often enough to
+know whether the graders are fair.
 
 1. **Task** — the user work being evaluated.
 2. **Condition** — the agent setup: no skill, current skill, or edited-skill
@@ -12,8 +12,8 @@ it explains why the outcome happened.
 3. **Trial** — one task under one condition.
 4. **Outcome** — the final answer, files, artifacts, or state.
 5. **Grader** — human, model, or code judgment over the outcome.
-6. **Transcript** — event/evidence stream used to debug the outcome, not a
-   substitute for it.
+6. **Transcript** — event/evidence stream used to judge process requirements,
+   calibrate graders, and debug the outcome.
 
 This matches the practical loop: write a few realistic tasks, compare the
 no-skill condition with the current-skill condition, make an edited-skill
@@ -22,9 +22,9 @@ edit.
 
 ## Current Plugin Terms And Aliases
 
-Use Anthropic-aligned vocabulary in explanations and reports. The current CLI
-schema still uses `candidates` in `.meta-skill/evals.json` for what the
-evaluation literature would call conditions:
+Use Anthropic-aligned vocabulary in explanations and reports. The CLI accepts
+writer-facing `conditions[]` and legacy `candidates[]` in `.meta-skill/evals.json`
+for what the evaluation literature would call conditions:
 
 - `no-skill` is the baseline condition using `source.kind: "none"`.
 - `current` is the current-skill condition.
@@ -52,8 +52,9 @@ Use this loop for most skill evaluation:
 4. Run the tasks under the no-skill and current-skill conditions when skill lift
    is the decision.
 5. Judge or review the outcomes side by side.
-6. Inspect transcripts only to explain failures, tool-use mistakes, or missing
-   evidence.
+6. Inspect failed, surprising, improved, and model/human-disagreed transcripts
+   to catch unfair graders, hidden harness issues, and valid alternate
+   solutions.
 7. Turn a proposed fix into an edited-skill condition.
 8. Run the same tasks against the current-skill and edited-skill conditions.
 9. Report which tasks improved, regressed, already worked without the skill, or
@@ -76,10 +77,36 @@ Add more structure only when the default loop is not enough:
   decision.
 - Add reference solutions when the task should become gating evidence.
 - Balance should-trigger and should-not-trigger tasks for activation behavior.
+- Add transcript-aware graders when the process is part of the contract:
+  required tools, forbidden tools, skipped validation, unsafe edits, approval
+  boundaries, or excessive turns.
+- Use pass@k or pass^k-style repetition analysis when the product question is
+  whether the skill succeeds at least once across retries or succeeds
+  consistently across repeated attempts.
 
 Do not introduce named split systems or calibration labels for ordinary skill
 work. Keep the report plain: which tasks ran, which conditions were compared,
-which outcomes changed, and what is still uncertain.
+which outcomes changed, what transcripts showed, and what is still uncertain.
+
+## Signal Sources
+
+Strong eval suites come from real signal:
+
+- **Automated evals**: repeatable task suites under no-skill, current-skill, and
+  edited-skill conditions.
+- **A/B testing**: production comparison once a candidate is deployable and
+  usage is large enough to measure user outcomes.
+- **User feedback**: sparse and biased, but useful seed material for concrete
+  tasks when paired with transcripts or examples.
+- **Manual transcript review**: frequent qualitative review to find subtle
+  failures, unfair graders, valid alternate solutions, and harness bugs.
+- **Systematic human studies**: structured labels from trained or domain
+  reviewers when subjective quality or user preference is the decision.
+
+Convert external signals into local eval material: bug reports become
+regression tasks, support complaints become capability tasks, A/B drops with
+transcript evidence become new tasks or grader dimensions, and manual review
+surprises become rubric or reference-solution updates.
 
 ## When Not To Evaluate
 

@@ -83,7 +83,7 @@ global state:
 
 ```text
 validate.ts \
-  --output runs/<run-id>/candidates/<condition>/<trial-id>/final.md \
+  --output runs/<run-id>/candidates/<condition>/<trial-id>/response.md \
   --expected cases/<task-id>/expected.json \
   --events runs/<run-id>/events/<trial-id>.jsonl \
   --json
@@ -99,7 +99,7 @@ It should print a compact JSON object:
     {
       "name": "mentions approval gate",
       "passed": true,
-      "evidence": "final.md includes the approval step"
+      "evidence": "response.md includes the approval step"
     }
   ]
 }
@@ -111,6 +111,21 @@ The runner converts validator output into `grades.jsonl` rows with
 
 Code graders should return named checks rather than one opaque pass/fail. Named
 checks make partial credit and failure diagnosis possible.
+
+## Transcript Validators
+
+Use transcript validators only when process behavior is part of the task. Good
+checks include:
+
+- a required tool call happened at least once
+- a forbidden tool or external write did not happen
+- the agent ran validation before claiming success
+- the agent preserved a read-only boundary
+- the run stayed under an agreed turn, tool-call, token, or latency budget
+
+Avoid exact tool-call order checks unless the order itself is the behavior being
+measured. For conversational skills, inspect transcript events for
+mid-conversation work that may not appear in `response.md`.
 
 ## Boundary With skill-doctor
 

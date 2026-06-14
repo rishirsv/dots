@@ -59,13 +59,15 @@ namespace.
         no-skill/
         current/
         attempt-1/
+          <trial-id>/response.md
 ```
 
 Authority is split cleanly:
 
 - `evals.json` owns all metadata: suite membership, defaults, runner plan,
-  condition selection, repetition counts, and materialization intent. The
-  current schema stores conditions in fields named `candidates`.
+  condition guidance, repetition counts, and materialization intent. New
+  prompt manifests may use `conditions[]`; legacy suites store the same concept
+  in `candidates[]`.
 - Task folders own authored content: `task.md`, fixtures, rubric content,
   expected outputs, and validator code.
 - `runs/<run-id>/` owns what actually ran.
@@ -84,6 +86,7 @@ Read only what the task needs:
 | Choose the eval type, grader mix, and example task shape | [references/eval-types.md](references/eval-types.md) |
 | Author `evals.json`, materialize `task.md` task folders, and keep hidden files out of the solver workspace | [references/evaluations.md](references/evaluations.md) |
 | Calibrate the judge against human grades | [references/calibration.md](references/calibration.md) |
+| Run a guided human review, collect labels, and turn taste into a reusable judge rubric | [references/human-grading.md](references/human-grading.md) |
 | Author deterministic validations and task-local `validate.*` checks | [references/validations.md](references/validations.md) |
 | Evaluate a target that is not an agent skill | [references/generalist.md](references/generalist.md) |
 | Use the central Meta Skill CLI for materialize, run, progress, grade, validate, and runner selection | [cli.md](../../references/cli.md) |
@@ -94,7 +97,7 @@ Read only what the task needs:
 |---|---|
 | **suite** | A set of related evaluation tasks, conditions, and grading rules. |
 | **task** | The user work being evaluated. In today's file layout, one task folder lives under `.meta-skill/cases/<task-id>/`. |
-| **condition** | The agent-harness setup for a trial: no skill, current skill, or an edited-skill attempt. The current schema stores this in the `candidate` field. |
+| **condition** | The agent-harness setup for a trial: no skill, current skill, or an edited-skill attempt. Legacy run files store this in the `candidate` field. |
 | **trial** | One execution of one task under one condition. Repetitions create multiple trials. |
 | **transcript** | The event stream and compact evidence captured while the trial ran. |
 | **outcome** | The final answer, files, artifacts, or state the grader should judge. |
@@ -141,10 +144,13 @@ Author deterministic checks — see [references/validations.md](references/valid
 General checks already ship with the plugin. Add task-local `validate.*` files
 only when a task needs exact, deterministic checks.
 
-Use model rubrics for semantic quality, human grades for calibration or domain
-judgment, and code validators for exact outcome, artifact, or transcript checks.
-Prefer outcome graders over process graders unless the process behavior itself
-is the requirement.
+Choose the most exact grader that can fairly judge the requirement. Use code
+validators for exact outcome, artifact, state, and transcript checks. Use model
+rubrics for semantic quality, freeform outputs, source quality, groundedness,
+and multi-valid-answer tasks. Use human grades for taste, domain expertise,
+calibration, and accept/reject decisions where a model judge could drift. Prefer
+outcome graders over process graders unless the process behavior itself is the
+requirement.
 
 Use explicit `graders[]` entries when a task needs named metrics, required gates,
 or stable report fields. Use `expectations[]` for hidden model-judge checks that
@@ -156,7 +162,11 @@ rubric score improves.
 
 Before trusting a judge at scale, compare judge grades with human grades on a
 small spot-check slice — see [references/calibration.md](references/calibration.md).
-Refine the rubric on disagreement.
+If the decision depends on human taste, use
+[references/human-grading.md](references/human-grading.md): show the user the
+task, response, rubric, transcript pointers, and a compact label/rationale
+question; record the answer with `eval human`; then revise the rubric so the
+model judge matches the human standard.
 
 ### 6. Run And Report
 
@@ -174,9 +184,9 @@ The CLI accepts only `codex_app_server` and `codex_exec` as concrete eval
 runners.
 
 For `codex_exec`, store raw transcripts as `events/<trial-id>.jsonl`, derive compact
-status into `progress.jsonl`, and capture the outcome with
-`--output-last-message`. Use `--output-schema` for judge or editor/control
-children, not for solver trials whose natural output is being graded.
+status into `progress.jsonl`, and capture the solver message as
+`response.md`. Use `--output-schema` for judge or editor/control children, not
+for solver trials whose natural output is being graded.
 
 For `codex_app_server`, use the CLI reference to run through the plugin adapter.
 The worker should consume run artifacts and progress files, not call raw App
@@ -187,8 +197,10 @@ After grading, render the run with
 `scripts/meta-skill eval report --run <run-id>` (see
 [cli.md](../../references/cli.md)) instead of hand-assembling a summary from
 run files. The report separates runner completion from behavioral grades and
-lists failed, ungraded, and missing-evidence trials. Use `eval list` to find
-earlier runs in the same workbench.
+lists failed, ungraded, human-review, and missing-evidence trials. Use
+`eval lint` before running, `eval human` for human review packets or labels,
+`eval compare` for baseline/current impact, and `eval list` to find earlier
+runs in the same workbench.
 
 Report per-task outcomes, grades, aggregate performance, failed tasks, and the
 no-skill/current-skill/edited-skill condition comparison. Hand fixes to

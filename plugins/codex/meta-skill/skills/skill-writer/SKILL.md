@@ -34,7 +34,7 @@ Read only what the task needs:
 |---|---|
 | Decide what a skill is, whether the idea is skill-shaped, and what artifact should be created if it is not a skill | [skill-shape.md](references/skill-shape.md) |
 | Distill source packs, example input/output pairs, transcripts plus notes, or prior artifacts into reusable skill rules | [source-distillation.md](references/source-distillation.md) |
-| Decide whether the workflow should become a skill; classify the skill type and evaluation posture; write the trigger contract, frontmatter, runtime body, instruction strength, setup/state, eval seed handoff, evidence boundaries, and voice | [design.md](references/design.md) |
+| Decide whether the workflow should become a skill; classify the skill type and evaluation posture; write the trigger contract, frontmatter, runtime body, instruction strength, setup/state, eval manifest handoff, evidence boundaries, and voice | [design.md](references/design.md) |
 | Capture an active or prior Codex thread/session into a durable skill | [session-capture.md](references/session-capture.md) |
 | Add compact runtime snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Use the central Meta Skill CLI for validate, package, workbench, eval, progress, and runner workflows | [cli.md](../../references/cli.md) |
@@ -74,7 +74,7 @@ conventions, or a question:
 | Invariants and failure shields | What the skill should preserve, prevent, or flag; include common mistakes and user corrections. |
 | Fragility | Whether the work is judgment prose, fixed-shape output, script-backed, or a strict sequence. |
 | Skill category | Primary type from [design.md](references/design.md); narrow or split if the draft straddles categories. |
-| Evaluation posture | Capability uplift, encoded preference, or hybrid; include the baseline and lightweight eval seeds when context provides them. |
+| Evaluation posture | Capability uplift, encoded preference, or hybrid; include the baseline and create `.meta-skill/evals.json` when the user asks for eval seeds or project-mode eval material. |
 | Gates | Approvals required before external writes, destructive actions, publishing, sending, install/sync, or final client-facing delivery. |
 | Project mode | Portable-only, or project mode with `.meta-skill/` docs, fixtures, package artifacts, and team reuse material. |
 
@@ -121,15 +121,16 @@ Draft Skill Outline
 - Fragility: deterministic, script-backed extraction and validation.
 - Skill category: product verification.
 - Evaluation posture: capability uplift; baseline is no skill.
-- Eval seeds: positive prompt about invoice line items; near miss about summarizing invoice prose; checks for required CSV columns, flagged parse failures, and no invented values.
+- Eval manifest: `.meta-skill/evals.json` with a positive invoice-line-item prompt, near miss about summarizing invoice prose, and checks for required CSV columns, flagged parse failures, and no invented values.
 - Gates: none; portable-only.
 - Project mode: portable-only.
 - Still open: none.
 ```
 
 Before scaffolding, pressure-check the trigger by naming one should-trigger
-prompt, one should-not-trigger prompt, and the nearest near miss. Keep those
-prompts as eval seeds when the skill is non-trivial or trigger risk is material.
+prompt, one should-not-trigger prompt, and the nearest near miss. If eval
+material is in scope, keep those prompts as eval manifest entries when the skill
+is non-trivial or trigger risk is material.
 Use [design.md](references/design.md) for trigger-contract quality.
 
 The interview self-bypasses when context is complete, the user says "just build
@@ -153,7 +154,7 @@ Use [design.md](references/design.md) to decide:
 - runtime body shape and section names
 - instruction strength: prose, checklist, template, script, or strict sequence
 - setup, config, state, and memory requirements
-- eval seed handoff for realistic prompts, expected outputs, objective checks, and baseline comparison
+- eval manifest handoff for realistic prompts, expected outputs, objective checks, grader hints, and baseline comparison
 - input and evidence boundaries
 - failure handling, approval gates, output shape, and final checks
 
@@ -182,9 +183,15 @@ Create optional folders only when they will contain files; a blank
 `.meta-skill/tests/`, `/tests`, or nested test-category folder should never
 exist.
 
+When the user asks for eval seeds, project-mode eval material, or evaluator
+handoff, create one `.meta-skill/evals.json` prompt manifest. Do not create a
+top-level `evals/` folder. The writer-authored manifest should contain
+`skill_name`, realistic `evals[]` prompts, `type`, expectations, optional
+files/fixtures, and grader hints. Include no run status, grades, or evidence.
+
 Follow these payload rules:
 
-- Keep build notes, raw source examples, review notes, eval seeds, benchmark material, and
+- Keep build notes, raw source examples, review notes, eval manifest drafts, benchmark material, and
   rejected options out of the portable payload.
 - Put runtime references in `references/`, one level deep. Link every reference
   directly from `SKILL.md`, and start each reference with when to read it.
@@ -235,19 +242,20 @@ materially improve confidence in a fragile trigger, resource, script, or output
 contract, read
 [skill-trial-runs.md](../../references/skill-trial-runs.md) and offer a skill
 trial run. It is optional by default and is not release proof; route systematic
-multi-scenario measurement to `skill-evaluator`. For that handoff, provide 2-3
-realistic user tasks, expected outcomes or reference solutions, known failure
-or near-miss examples, and any must-not-break constraints so the evaluator can
-compare outcomes across no-skill, current-skill, and edited-skill conditions.
+multi-scenario measurement to `skill-evaluator`. For that handoff, provide or
+create `.meta-skill/evals.json` with 2-3 realistic user tasks, expected
+outcomes or reference solutions, known failure or near-miss examples, grader
+hints, and any must-not-break constraints so the evaluator can compare outcomes
+across no-skill, current-skill, and edited-skill conditions.
 
 Stop before packaging, installing, publishing, syncing, external writes, or
 final delivery unless the user explicitly approved that action or the current
 repo instructions require it. When packaging is approved, use
 `scripts/meta-skill package <skill-dir>`; it exports only the portable payload from the
-project root and excludes `.meta-skill/`. In the final handoff, explain eval
-seeds as a small starter set of realistic prompts, expected behavior, and checks
-that another pass can turn into a measurement suite; they are not runtime
-instructions unless explicitly approved as examples.
+project root and excludes `.meta-skill/`. In the final handoff, explain the
+eval manifest as authoring material, not runtime instructions. It is runnable by
+Skill Evaluator, but it is not evidence until a run, grades, comparison, and
+report exist.
 
 ## Output
 
