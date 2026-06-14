@@ -89,25 +89,30 @@ lifecycle routing. Start with one operational skill that has explicit modes:
   surface: `AGENTS.md`, README/docs, skill guidance, script/test/hook, memory,
   or no action.
 
-Split into separate skills only after use shows that these modes trigger
-independently often enough to justify routing separation. A premature stack of
-`harness-init`, `harness-audit`, and `mistake-codifier` would add activation
-complexity before the boundaries are proven.
+After comparing the older Desktop `harness-engineering` skill, the better shape
+is assessment first, execution second. The skill should be able to produce a
+whole-repo harness assessment with strengths, current state, target state,
+priority bands, and downstream artifacts, then execute selected improvements
+through focused modes. A premature split into assessment and execution skills
+would make the handoff weaker than a single skill with explicit modes.
 
 ## Recommended Boundary
 
 Recommend one Agent plugin skill now: `harness-engineer`.
 
-Job: help an agent build, audit, or improve the repo/task harness that makes
-long-running coding work reliable before or alongside implementation.
+Job: assess a repo or task harness for agent-readiness, then help build, audit,
+or improve the controls that make long-running coding work reliable before or
+alongside implementation.
 
 Not for: ordinary implementation, local-only git commits, PR publication, skill
 authoring, broad docs polishing, or one-off command lookup.
 
-Default output should be a concise harness plan or harness diff proposal, not
-immediate source edits unless the user explicitly asks. For this repo, plan
-artifacts go under `.plans/`; future runtime guidance should respect the same
-planning-only gate when invoked for research or setup.
+Default output should be a harness assessment when the prompt is broad, and a
+concise harness plan or diff proposal when the prompt names a specific
+execution goal. Immediate source edits should happen only when the user asks for
+execution. For this repo, plan artifacts go under `.plans/`; future runtime
+guidance should respect local planning conventions instead of hardcoding one
+folder.
 
 ## `agents-md-maintainer`
 

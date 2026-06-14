@@ -1,38 +1,50 @@
 ---
 name: harness-engineer
-description: "Use when the user asks to prepare, audit, or improve the scaffolding for long-running agent work: repo command maps, verification maps, setup/init scripts, progress ledgers, acceptance criteria, browser/dev-server checks, or codifying repeated mistakes into durable controls; not for ordinary implementation, local-only commits, PR publication, skill authoring, or broad docs cleanup."
+description: "Use when assessing a repository or project for agent-readiness and harness-engineering opportunities, then planning or executing improvements such as repo maps, command maps, validation harnesses, progress ledgers, feedback loops, observability, AGENTS.md routing, setup/init scripts, browser/dev-server checks, or codifying repeated mistakes into durable controls; not for ordinary implementation, local-only commits, PR publication, skill authoring, or broad docs cleanup."
 ---
 
 # Harness Engineer
 
-Build or improve the harness around a coding task so agents can work, pause,
-resume, verify, and learn from mistakes without losing the plot.
+Assess the harness around a project, then help improve it when the user wants
+action. A good run identifies where agents still need human handholding, maps
+the target harness state, and turns selected opportunities into plans, docs,
+scripts, tests, or instruction updates.
 
 ## References
 
+- Read [assessment-lenses.md](references/assessment-lenses.md) before broad repo
+  or project assessment.
 - Read [control-taxonomy.md](references/control-taxonomy.md) when deciding
   whether a finding belongs in instructions, docs, scripts, tests, hooks,
   review, or another control surface.
 - Read [long-running-state.md](references/long-running-state.md) for init,
   audit, progress-ledger, resumability, browser/dev-server, and acceptance
   criteria patterns.
+- Read [downstream-artifacts.md](references/downstream-artifacts.md) before
+  creating a follow-up plan, architecture map, command map, AGENTS.md patch, or
+  implementation sequence from an assessment.
 - Read [codify-lessons.md](references/codify-lessons.md) when the user says a
   mistake should be remembered, codified, added to `AGENTS.md`, or prevented for
   future agents.
 
 ## Runtime Assets
 
+- Use [assessment-report-template.md](assets/assessment-report-template.md) as
+  the default report shape for broad assessments when the repo has no stronger
+  local format.
 - Use [harness-plan-template.md](assets/harness-plan-template.md) as the default
-  shape for a harness plan or audit when the repo has no stronger local format.
+  shape for an execution plan or focused audit when the repo has no stronger
+  local format.
 - Use [progress-ledger-template.md](assets/progress-ledger-template.md) when a
   task needs resumable state and the repo has no existing ledger format.
 
 ## Scripts
 
-- Run `python3 scripts/harness_snapshot.py --root <repo>` during init or audit
-  when command, instruction, planning, CI, test, or browser-tooling discovery
-  would reduce guesswork. The script prints a Markdown snapshot; a nonzero exit
-  means the root path was invalid or unreadable.
+- Run `python3 scripts/harness_snapshot.py --root <repo>` during assess, init,
+  or audit when command, instruction, planning, CI, test, language-tooling, or
+  browser-tooling discovery would reduce guesswork. The script prints a
+  Markdown snapshot; a nonzero exit means the root path was invalid or
+  unreadable.
 - Run `python3 scripts/check_harness_links.py <files...>` after editing harness
   docs, plans, ledgers, or instruction files. With no file arguments, it scans
   common Markdown surfaces in the current repo. Exit code `1` means at least one
@@ -47,19 +59,30 @@ misses a repo-specific command or convention, prefer the repo's actual files.
 
 ## Modes
 
-Use the mode that matches the user's intent. If the prompt includes more than
-one mode, sequence them in the order below.
+Default to `assess` when the user asks whether a repo is agent-ready, asks for
+harness engineering generally, or has not named a concrete edit. Use execution
+modes when the user asks to build, apply, implement, repair, or codify a
+specific harness improvement.
 
 | Mode | Use when | Output |
 |---|---|---|
+| `assess` | Reviewing a repo/project for agent-readiness, harness opportunities, strengths, and gaps. | Assessment report with current state, target state, evidence, priority bands, and downstream options. |
 | `init` | Starting a substantial task, setting up a new repo track, or preparing future agents before implementation. | Harness plan, command map, verification map, progress location, acceptance criteria, and open decisions. |
-| `audit` | Reviewing an existing repo or task harness for stale, missing, or weak controls. | Findings ordered by impact, with evidence and recommended control changes. |
+| `audit` | Inspecting an existing harness surface, plan, docs set, command map, or validation loop for stale or weak controls. | Findings ordered by impact, with evidence and recommended control changes. |
+| `execute` | User selected an assessment opportunity or asked to implement harness improvements. | Smallest useful patch or plan-backed change, with validation evidence. |
 | `codify` | A mistake, review comment, repeated failure, or user correction should become durable. | Routing decision: instruction, doc, skill, script/test/hook, memory, plan, or no durable change. |
+
+If a prompt includes multiple modes, sequence them as `assess -> init/audit ->
+execute/codify`. Keep assessment and execution visibly separate so the user can
+approve scope before durable changes.
 
 ## Operating Rules
 
-- Preserve the user's requested mode. If the user asks for planning, audit, or a
-  proposal, do not edit source files unless they explicitly ask.
+- Preserve the user's requested depth. If the user asks for an assessment,
+  report, audit, or proposal, do not edit source files unless they explicitly
+  ask for execution.
+- Start with existing strengths as well as gaps. Future agents need to preserve
+  harnesses that already work.
 - Discover local conventions before choosing artifact paths. Prefer an existing
   plan, docs, progress, or task folder when the repo clearly has one; otherwise
   propose a conventional location such as `.plans/` without treating it as
@@ -75,6 +98,32 @@ one mode, sequence them in the order below.
   services that may affect the user's machine.
 - Do not invent commands, ports, setup steps, CI jobs, or browser checks. Mark
   unknowns as open decisions or verify them from files.
+
+## Assess Workflow
+
+1. Read the repo entry surfaces first: instructions, README, package/workspace
+   files, docs indexes, architecture docs, planning docs, CI config, scripts,
+   tests, and any local agent/skill/plugin guidance.
+2. Run `scripts/harness_snapshot.py` when it would speed up the initial map.
+3. If the assessment is broad and subagents are available and appropriate, split
+   read-mostly slices by repo knowledge, runtime/validation, architecture
+   boundaries, agent workflow, or entropy control. Give each subagent a narrow
+   slice and ask for evidence, opportunities, non-opportunities, and confidence.
+4. Read [assessment-lenses.md](references/assessment-lenses.md). Compare current
+   state to target harness state for each meaningful opportunity.
+5. Produce the assessment using the repo's report convention or the template.
+   Include:
+   - executive summary
+   - repo map
+   - existing harness strengths
+   - current readiness across the main lenses
+   - highest-leverage opportunities with priority bands
+   - future-state harness architecture
+   - recommended next artifacts
+   - agent handoff notes, inspected commands, areas not inspected, and open
+     questions
+6. Stop after the report unless the user asked for execution. Offer the most
+   useful next artifact or implementation grain.
 
 ## Init Workflow
 
@@ -105,21 +154,46 @@ one mode, sequence them in the order below.
 
 ## Audit Workflow
 
-1. Inspect the existing instruction, docs, scripts, tests, CI, plan, and progress
-   surfaces.
+1. Inspect the existing instruction, docs, scripts, tests, CI, plan, progress,
+   runtime evidence, or control surface named by the user.
 2. Run `scripts/harness_snapshot.py` if the command or verification map is not
    obvious. Run `scripts/check_harness_links.py` when stale Markdown links are a
    plausible risk.
-3. Evaluate the harness with [control-taxonomy.md](references/control-taxonomy.md)
-   and [long-running-state.md](references/long-running-state.md).
+3. Evaluate the surface with [assessment-lenses.md](references/assessment-lenses.md),
+   [control-taxonomy.md](references/control-taxonomy.md), and
+   [long-running-state.md](references/long-running-state.md).
 4. Report findings in priority order:
    - evidence: file, command, or observed gap
    - risk: what future agents may get wrong
+   - target harness state
    - recommended control: docs, instructions, plan, script, test, hook, CI,
      review, or no change
    - write gate: whether user approval is needed before applying it
-5. Include a positive-null result when the harness is adequate for the requested
-   task. Do not manufacture findings.
+5. Include existing strengths and a positive-null result when the harness is
+   adequate for the requested task. Do not manufacture findings.
+
+## Execute Workflow
+
+1. Anchor execution to an assessment opportunity, user-selected artifact, or
+   specific harness gap. If none exists, perform a focused assess or init pass
+   before editing.
+2. Read [downstream-artifacts.md](references/downstream-artifacts.md) and choose
+   the smallest useful artifact or patch:
+   - plan or progress ledger
+   - command map or setup/init script
+   - architecture map or docs pointer
+   - AGENTS.md routing update
+   - validation script, test, hook, linter, or CI check
+   - browser/dev-server check documentation
+3. Edit source-of-truth files, not generated copies, unless the repo's build
+   process requires generated outputs after source edits.
+4. Run targeted validation:
+   - link check for Markdown
+   - syntax/smoke test for new scripts
+   - repo-specific validation from the command map
+   - sync/build command required by local instructions
+5. Report changed controls, validation evidence, remaining manual checks, and
+   any follow-up that should become a separate plan or PR.
 
 ## Codify Workflow
 
@@ -146,6 +220,10 @@ one mode, sequence them in the order below.
 Before final delivery, confirm:
 
 - The mode matched the user's request.
+- Assessment findings include strengths, current state, target state, evidence,
+  priority, and downstream options.
+- Execution changes trace back to an assessment finding, user-selected artifact,
+  or specific harness gap.
 - Artifact paths follow discovered repo conventions or are presented as
   proposals.
 - Commands and checks are sourced from files or clearly marked as unknown.
