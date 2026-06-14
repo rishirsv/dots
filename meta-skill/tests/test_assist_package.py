@@ -1,3 +1,11 @@
+"""Deterministic tests for the assist skill's package builder.
+
+Kept under meta-skill/tests/ (not synced into any plugin package) so the
+portable assist skill ships without test code. Run with:
+
+    python3 meta-skill/tests/test_assist_package.py
+"""
+
 from __future__ import annotations
 
 import subprocess
@@ -7,7 +15,8 @@ import unittest
 from pathlib import Path
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "assist_package.py"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SCRIPT = REPO_ROOT / "agent" / "skills" / "assist" / "scripts" / "assist_package.py"
 
 
 class AssistPackageTests(unittest.TestCase):
@@ -149,6 +158,103 @@ class AssistPackageTests(unittest.TestCase):
             self.assertIn("Provide a focused second opinion.", prompt)
             self.assertIn("# Review", prompt)
             self.assertIn("source.txt", prompt)
+
+    def test_dry_run_previews_without_writing_package(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.txt"
+            source.write_text("context\n", encoding="utf-8")
+
+            result = self.run_package(
+                "--task",
+                "Review the plan.",
+                "--file",
+                "source.txt",
+                "--output-dir",
+                str(root),
+                "--name",
+                "assist-dry-run",
+                "--dry-run",
+                cwd=root,
+            )
+
+            self.assertFalse((root / "assist-dry-run").exists())
+            self.assertIn("dry-run: would create", result.stdout)
+            self.assertIn("include: source.txt", result.stdout)
+            self.assertIn("total_estimated_tokens=", result.stdout)
+
+    def test_token_budget_blocks_oversized_package(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "big.txt"
+            source.write_text("x" * 4000, encoding="utf-8")
+
+            blocked = self.run_package(
+                "--task",
+                "Review the plan.",
+                "--file",
+                "big.txt",
+                "--output-dir",
+                str(root),
+                "--name",
+                "assist-oversized",
+                "--token-budget",
+                "100",
+                cwd=root,
+                check=False,
+            )
+
+            self.assertNotEqual(blocked.returncode, 0)
+            self.assertFalse((root / "assist-oversized").exists())
+            self.assertIn("OVER BUDGET", blocked.stdout)
+            self.assertIn("exceed --token-budget", blocked.stderr)
+
+    def test_allow_oversized_writes_over_budget_package(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "big.txt"
+            source.write_text("x" * 4000, encoding="utf-8")
+
+            written = self.run_package(
+                "--task",
+                "Review the plan.",
+                "--file",
+                "big.txt",
+                "--output-dir",
+                str(root),
+                "--name",
+                "assist-allow-oversized",
+                "--token-budget",
+                "100",
+                "--allow-oversized",
+                cwd=root,
+            )
+
+            self.assertTrue((root / "assist-allow-oversized" / "prompt.md").exists())
+            self.assertIn("token_budget=100", written.stdout)
+            self.assertIn("OVER BUDGET", written.stdout)
+
+    def test_token_total_reported_for_normal_package(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.txt"
+            source.write_text("context\n", encoding="utf-8")
+
+            result = self.run_package(
+                "--task",
+                "Review the plan.",
+                "--file",
+                "source.txt",
+                "--output-dir",
+                str(root),
+                "--name",
+                "assist-token-report",
+                cwd=root,
+            )
+
+            self.assertIn("total_estimated_tokens=", result.stdout)
+            self.assertIn("token_budget=270000", result.stdout)
+            self.assertNotIn("OVER BUDGET", result.stdout)
 
     def test_repeated_top_level_headings_fail(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

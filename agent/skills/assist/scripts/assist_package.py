@@ -298,6 +298,9 @@ def main() -> int:
     parser.add_argument("--file-count-warning", type=int, default=20, help="Warn when included file count exceeds this number.")
     parser.add_argument("--large-file-warning-bytes", type=int, default=50_000, help="Warn when an included file exceeds this size.")
     parser.add_argument("--allow-sensitive", action="store_true", help="Allow sensitive-looking filenames.")
+    parser.add_argument("--dry-run", action="store_true", help="Preview selection, size, and token budget without writing the package.")
+    parser.add_argument("--token-budget", type=int, default=270_000, help="Hard limit on estimated input tokens (prompt.md + unzipped context). Default 270000.")
+    parser.add_argument("--allow-oversized", action="store_true", help="Write the package even when it exceeds --token-budget.")
     args = parser.parse_args()
 
     root = Path(args.root).expanduser().resolve()
@@ -329,7 +332,6 @@ def main() -> int:
     timestamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
     package_name = args.name or f"assist-{timestamp}-{slugify(slug_source)}"
     package_dir = Path(args.output_dir).expanduser().resolve() / package_name
-    package_dir.mkdir(parents=True, exist_ok=False)
 
     include_patterns = [p for p in args.file if not p.startswith("!")]
     selected, excludes = expand_patterns(args.file, root)
@@ -368,12 +370,6 @@ def main() -> int:
         )
         total_bytes += size
 
-    context_zip = package_dir / "context.zip"
-    with zipfile.ZipFile(context_zip, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for entry in included:
-            archive.write(root / str(entry["path"]), f"files/{entry['path']}")
-        archive.writestr("file-map.txt", "\n".join(str(entry["path"]) for entry in included) + "\n")
-
     if not authored_prompt:
         prompt = build_prompt(
             task=task,
@@ -383,25 +379,73 @@ def main() -> int:
             context_map=context_map,
         )
         validate_no_repeated_headings(prompt)
-    prompt_path = package_dir / "prompt.md"
-    prompt_path.write_text(prompt, encoding="utf-8")
 
-    print(package_dir)
-    print(f"included_files={len(included)} total_bytes={total_bytes}")
-    if excludes:
-        print("exclude_patterns=" + ", ".join(excludes))
-    if skipped:
-        print(f"skipped_files={len(skipped)}")
-        for entry in skipped:
-            print(f"skipped: {entry['path']} ({entry['bytes']} bytes): {entry['reason']}")
-    for warning in package_warnings(
+    prompt_tokens = len(prompt.encode("utf-8")) // 4
+    context_tokens = total_bytes // 4
+    total_tokens = prompt_tokens + context_tokens
+    over_budget = total_tokens > args.token_budget
+
+    warnings = package_warnings(
         included=included,
         total_bytes=total_bytes,
         file_count_warning=args.file_count_warning,
         large_file_warning_bytes=args.large_file_warning_bytes,
         has_context_map=bool(context_map) or ("attached context" in {heading.lower() for heading in top_level_headings(prompt)}),
-    ):
-        print(f"warning: {warning}", file=sys.stderr)
+    )
+
+    def emit_report(*, written: bool) -> None:
+        if written:
+            print(package_dir)
+        else:
+            print(f"dry-run: would create {package_dir} (no files written)")
+        print(f"included_files={len(included)} total_bytes={total_bytes}")
+        print(
+            f"total_estimated_tokens={total_tokens} "
+            f"(prompt ~{prompt_tokens} + context ~{context_tokens}) token_budget={args.token_budget}"
+        )
+        if over_budget:
+            print(
+                f"OVER BUDGET by ~{total_tokens - args.token_budget} tokens: "
+                "prune files, raise --token-budget, or pass --allow-oversized"
+            )
+        if excludes:
+            print("exclude_patterns=" + ", ".join(excludes))
+        if not written:
+            for entry in included:
+                print(
+                    f"include: {entry['path']} ({entry['bytes']} bytes, "
+                    f"~{entry['estimated_tokens']} tokens): {entry['why_included']}"
+                )
+        if skipped:
+            print(f"skipped_files={len(skipped)}")
+            for entry in skipped:
+                print(f"skipped: {entry['path']} ({entry['bytes']} bytes): {entry['reason']}")
+        for warning in warnings:
+            print(f"warning: {warning}", file=sys.stderr)
+
+    if over_budget and not args.allow_oversized and not args.dry_run:
+        emit_report(written=False)
+        print(
+            f"error: estimated input tokens ({total_tokens}) exceed --token-budget ({args.token_budget}). "
+            "Prune files, raise --token-budget, or pass --allow-oversized.",
+            file=sys.stderr,
+        )
+        return 1
+
+    if args.dry_run:
+        emit_report(written=False)
+        return 0
+
+    package_dir.mkdir(parents=True, exist_ok=False)
+    context_zip = package_dir / "context.zip"
+    with zipfile.ZipFile(context_zip, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for entry in included:
+            archive.write(root / str(entry["path"]), f"files/{entry['path']}")
+        archive.writestr("file-map.txt", "\n".join(str(entry["path"]) for entry in included) + "\n")
+    prompt_path = package_dir / "prompt.md"
+    prompt_path.write_text(prompt, encoding="utf-8")
+
+    emit_report(written=True)
     return 0
 
 
