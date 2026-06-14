@@ -25,6 +25,8 @@ CODEX_DESKTOP_SKILL_MARKER="$CODEX_DESKTOP_SKILLS/.agent-managed-skills"
 CODEX_MARKETPLACE_DIR="$ROOT/.agents/plugins"
 CODEX_MARKETPLACE="$CODEX_MARKETPLACE_DIR/marketplace.json"
 CLAUDE_MARKETPLACE="$ROOT/.claude-plugin/marketplace.json"
+OPENAI_BUNDLED_MARKETPLACE="$HOME/.codex/.tmp/bundled-marketplaces/openai-bundled"
+OPENAI_BUNDLED_PLUGINS=(browser chrome computer-use)
 
 for plugin in "${PLUGINS[@]}"; do
   src="${PLUGIN_SKILLS_SRC[$plugin]:-}"
@@ -262,6 +264,15 @@ for plugin in "${REGISTERED_PLUGINS[@]}"; do
 done
 
 if [[ -n "$CODEX_BIN" ]]; then
+  if [[ -d "$OPENAI_BUNDLED_MARKETPLACE" ]]; then
+    "$CODEX_BIN" plugin marketplace add "$OPENAI_BUNDLED_MARKETPLACE" >/dev/null
+    for plugin in "${OPENAI_BUNDLED_PLUGINS[@]}"; do
+      "$CODEX_BIN" plugin add "$plugin@openai-bundled" >/dev/null
+    done
+  else
+    echo "Skipping OpenAI bundled plugin registration; marketplace not found: $OPENAI_BUNDLED_MARKETPLACE" >&2
+  fi
+
   "$CODEX_BIN" plugin marketplace remove "$MARKETPLACE_NAME" >/dev/null 2>&1 || true
   if [[ -d "$MARKETPLACE_SOURCE" ]]; then
     "$CODEX_BIN" plugin marketplace add "$MARKETPLACE_SOURCE"
@@ -308,6 +319,7 @@ fi
 
 echo "Packaged plugins: ${PLUGINS[*]}"
 echo "Registered (skill-carrying) plugins: ${REGISTERED_PLUGINS[*]:-none}"
+echo "Ensured OpenAI bundled Codex plugins: ${OPENAI_BUNDLED_PLUGINS[*]}"
 echo "Removed managed direct Codex Desktop skill installs, if any:"
 echo "  $CODEX_DESKTOP_SKILLS"
 scaffold_only=()

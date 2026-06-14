@@ -87,6 +87,12 @@ Expected important repo-local settings in `~/Code/agent/.codex/config.toml`:
 
     approval_policy = "never"
     sandbox_mode = "danger-full-access"
+    [plugins."browser@openai-bundled"]
+    enabled = true
+    [plugins."chrome@openai-bundled"]
+    enabled = true
+    [plugins."computer-use@openai-bundled"]
+    enabled = true
 
 6. Sync and install the Agent plugins.
 
@@ -95,7 +101,7 @@ Run:
     cd ~/Code/agent
     scripts/sync-plugins.sh
 
-This rebuilds the Codex and Claude plugin folders from `agent/` and `meta-skill/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, refreshes local plugin caches, copies repo `global_instructions.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `global_instructions.md`. It does not overwrite `~/.codex/config.toml`.
+This rebuilds the Codex and Claude plugin folders from `agent/` and `meta-skill/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, ensures the OpenAI bundled `browser`, `chrome`, and `computer-use` plugins are installed, refreshes local plugin caches, copies repo `global_instructions.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `global_instructions.md`. It does not overwrite `~/.codex/config.toml`.
 
 7. Open Codex once so it initializes plugin/cache state.
 
@@ -128,14 +134,14 @@ Check:
 
 Run:
 
-    rg -n 'github@openai-curated|agent@agent|marketplaces.agent' ~/.codex/config.toml || true
+    rg -n 'github@openai-curated|agent@agent|browser@openai-bundled|chrome@openai-bundled|computer-use@openai-bundled|marketplaces.agent|marketplaces.openai-bundled' ~/.codex/config.toml || true
 
 Expected:
 
     [plugins."github@openai-curated"]
     enabled = false
 
-Expected: `agent@agent` is enabled after `scripts/sync-plugins.sh`. If the GitHub plugin block is missing, that is acceptable. Do not enable it unless intentionally needed.
+Expected: `agent@agent`, `browser@openai-bundled`, `chrome@openai-bundled`, and `computer-use@openai-bundled` are enabled after `scripts/sync-plugins.sh`. If the GitHub plugin block is missing, that is acceptable. Do not enable it unless intentionally needed.
 
 10. Final report.
 

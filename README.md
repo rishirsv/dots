@@ -84,7 +84,7 @@ After plugin source changes, run:
 scripts/sync-plugins.sh
 ```
 
-This rebuilds generated plugin packages, manifests, marketplace files, plugin installs, and local plugin caches. It also removes any old managed direct Desktop skill copies under `~/.codex/skills/`. It calls `scripts/sync-local-agents.sh` so local instructions stay current.
+This rebuilds generated plugin packages, manifests, marketplace files, plugin installs, and local plugin caches. It also ensures the OpenAI bundled `browser`, `chrome`, and `computer-use` Codex plugins remain installed and enabled. It removes any old managed direct Desktop skill copies under `~/.codex/skills/` and calls `scripts/sync-local-agents.sh` so local instructions stay current.
 
 After local instruction or agent changes, run:
 
@@ -107,6 +107,6 @@ When Codex runs a `git commit` command, the Codex hook checks whether the commit
 
 This repo keeps its repo-local Codex config in `.codex/config.toml`.
 
-The repo config supplements `~/.codex/config.toml` when this trusted repo is open. It is intentionally not the canonical source for the machine-level config, because `~/.codex/config.toml` also stores installed plugin and marketplace state.
+The repo config supplements `~/.codex/config.toml` when this trusted repo is open. It records the expected bundled Browser, Chrome, and Computer Use plugin state, while `scripts/sync-plugins.sh` repairs the machine-level plugin installation. Do not copy the repo config over the machine config, because `~/.codex/config.toml` also stores installed plugin and marketplace state.
 
 Codex repo instructions stay in root `AGENTS.md`; they do not move into `.codex/`. Codex project subagents use `.codex/agents/*.toml`, not `.agents/`.
