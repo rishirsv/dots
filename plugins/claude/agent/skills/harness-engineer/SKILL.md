@@ -105,13 +105,20 @@ approve scope before durable changes.
    files, docs indexes, architecture docs, planning docs, CI config, scripts,
    tests, and any local agent/skill/plugin guidance.
 2. Run `scripts/harness_snapshot.py` when it would speed up the initial map.
-3. If the assessment is broad and subagents are available and appropriate, split
+3. For broad or deep assessments, create or choose a scratch findings ledger
+   before scanning deeply. Prefer a repo-ignored or repo-approved scratch path
+   when one exists; otherwise use a temporary path outside the repo. Record the
+   repo path, initial map, scan slices, evidence, candidate themes, confirmed
+   opportunities, subagent returns, non-opportunities, and open questions. Update
+   it after major scan discoveries, after each subagent result, and before final
+   synthesis.
+4. If the assessment is broad and subagents are available and appropriate, split
    read-mostly slices by repo knowledge, runtime/validation, architecture
    boundaries, agent workflow, or entropy control. Give each subagent a narrow
    slice and ask for evidence, opportunities, non-opportunities, and confidence.
-4. Read [assessment-lenses.md](references/assessment-lenses.md). Compare current
+5. Read [assessment-lenses.md](references/assessment-lenses.md). Compare current
    state to target harness state for each meaningful opportunity.
-5. Produce the assessment using the repo's report convention or the template.
+6. Produce the assessment using the repo's report convention or the template.
    Include:
    - executive summary
    - repo map
@@ -120,9 +127,9 @@ approve scope before durable changes.
    - highest-leverage opportunities with priority bands
    - future-state harness architecture
    - recommended next artifacts
-   - agent handoff notes, inspected commands, areas not inspected, and open
-     questions
-6. Stop after the report unless the user asked for execution. Offer the most
+   - agent handoff notes, scratch findings path, inspected commands, areas not
+     inspected, and open questions
+7. Stop after the report unless the user asked for execution. Offer the most
    useful next artifact or implementation grain.
 
 ## Init Workflow
