@@ -15,6 +15,7 @@ build/
 *.tmp
 
 # Local generated runs
+.plans/
 **/.plugin-eval/runs/
 **/.autoresearch/runs/
 **/.agents/screenshots/
