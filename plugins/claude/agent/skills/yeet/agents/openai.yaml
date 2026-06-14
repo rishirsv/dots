@@ -1,7 +1,0 @@
-interface:
-  display_name: "Yeet"
-  short_description: "Alias for publishing or merging PRs"
-  default_prompt: "Use $yeet to publish scoped local work as a pushed branch and PR; use $yeet merge to publish and merge to main."
-
-policy:
-  allow_implicit_invocation: false

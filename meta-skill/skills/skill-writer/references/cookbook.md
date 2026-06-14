@@ -7,7 +7,7 @@ Snippet headings are illustrative. Derive actual section names from the job, fil
 ## Scope
 
 - Covers reusable snippets for `SKILL.md` and linked runtime files.
-- Use [design.md](design.md) for skill-or-not, trigger design, evidence posture, and degree-of-freedom decisions.
+- Use [design.md](design.md) for skill fit, trigger design, evidence posture, and degree-of-freedom decisions.
 - Use the Skill Writer payload rules for shipped files, metadata, file placement, and link rules.
 - Do not copy every card. Pick the smallest snippet that fits the signal.
 
@@ -293,7 +293,7 @@ Eval seed handoff:
 Expected behavior:
 - Positive prompts produce <artifact/output shape>.
 - Objective checks: <field exists>, <script exits 0>, <no unsupported claims>.
-- Baseline: no skill for greenfield; old skill for approved improvements.
+- Baseline: no skill for a new skill; old skill for approved improvements.
 - Comparator question: <what a later A/B or baseline run should decide>.
 - Route to skill-evaluator when: <multi-case suite, judge grading, benchmark, CI, or A/B comparison is needed>.
 ```

@@ -379,7 +379,7 @@ Extract:
 - objective checks such as required fields, source citations, no unsupported
   claims, script exit status, rendered artifact checks, positive-null language,
   or exact paths
-- baseline: no skill for greenfield, prior skill for revisions, or named
+- baseline: no skill for new skills, prior skill for revisions, or named
   candidate when provided
 - comparator question: what later measurement should decide
 
@@ -390,8 +390,9 @@ that would leak into runtime.
 
 Runtime placement: keep eval seeds in `.meta-skill/docs/` or the final handoff.
 Put source fixtures in the flat `.meta-skill/tests/` folder only when the user
-provided or approved them. Do not add `evals.json`, case folders, judge rubrics,
-or benchmark scripts; route those to `skill-evaluator`.
+provided or approved them; do not create that folder when there are no fixture
+files to store. Do not add `evals.json`, case folders, judge rubrics, or
+benchmark scripts; route those to `skill-evaluator`.
 
 Example check: a future evaluator can build a baseline-vs-skill or
 skill-vs-candidate case from the seed without reconstructing authoring context.
@@ -407,7 +408,7 @@ Use this after candidate rules exist.
 | Deterministic transformations, validators, extractors, render checks, tie-outs, converters, or package checks | `scripts/` |
 | Approved reusable templates, schemas, boilerplate, starter files, sample workbooks, or visual materials | `assets/` |
 | Approved runtime datasets or structured maps the skill must consult | `resources/` |
-| Scrubbed examples that future agents should inspect for shape or tone during runtime | `examples/` |
+| Scrubbed examples needed for shape or tone during runtime | `examples/` |
 | Eval seeds, trigger near misses, objective check notes, raw source packs, private examples, authoring provenance, rejected rules, research reports, benchmark notes, and source-specific evidence | `.meta-skill/docs/` or external project docs |
 
 Economy gates:

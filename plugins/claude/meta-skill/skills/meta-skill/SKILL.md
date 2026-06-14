@@ -3,14 +3,12 @@ name: meta-skill
 description: "Use for ANY work on an agent skill — authoring a new skill, reviewing or improving an existing one, diagnosing why a skill misbehaves, or evaluating how well a skill performs. Routes ambiguous or multi-step skill-lifecycle requests to skill-writer, skill-doctor, or skill-evaluator and orchestrates work across them. Not for non-skill tasks."
 ---
 
-# Skill Purpose
-
 Route agent-skill lifecycle requests to the right Meta-Skill specialist. Treat
 any request to create, revise, debug, review, test, evaluate, package, or reason
 about an agent skill as intent to use this plugin.
 
-Central CLI reference for future agents:
-`../../references/cli.md` (source repo).
+Use [cli.md](../../references/cli.md) for Meta-Skill CLI commands and
+validation.
 
 ## Router Only
 
@@ -43,9 +41,9 @@ Pick the smallest specialist route that satisfies the user's request.
 - For a one-prompt trial of a draft or fix, stay with the owning specialist and
   use [skill-trial-runs.md](../../references/skill-trial-runs.md).
 
-Validation, packaging, and install checks use the central CLI reference through
-the specialist already doing the work. Do not create a separate validation lane
-inside this router.
+Validation, packaging, and install checks use [cli.md](../../references/cli.md)
+through the specialist already doing the work. Do not create a separate
+validation lane inside this router.
 
 ## Ambiguity
 

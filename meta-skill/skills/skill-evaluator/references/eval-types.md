@@ -118,7 +118,7 @@ Goal: measure activation without naming the skill.
 ```text
 task.md
 I have a repeated workflow from a few prior threads. Turn it into something
-reusable so future agents do it the same way.
+reusable so later runs do it the same way.
 ```
 
 Hidden graders:

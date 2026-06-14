@@ -8,7 +8,7 @@ This reference covers design decisions and runtime writing after the idea is pla
 
 ## Contents
 
-- Design aim, directive writing, voice and style, the skill-or-not gate, skill type taxonomy, and evaluation posture.
+- Design aim, directive writing, voice and style, the skill fit gate, skill type taxonomy, and evaluation posture.
 - Intake, trigger contract, frontmatter, and description checks.
 - Degree of freedom, failure handling, runtime body shape, examples, setup/state, eval-seed boundaries, and evidence boundaries.
 - Draft outline and authoring-note expectations.
@@ -91,7 +91,7 @@ Skill authors and the people they build for range from non-technical to expert. 
 
 Every line should change behavior; cut what does not (see Write Directives, Not Wisdom). Then read the draft again with fresh eyes, as if meeting it for the first time mid-task: replace any MUST you can explain instead, and confirm each section name says what it does.
 
-## Skill-Or-Not Gate
+## Skill Fit Gate
 
 If the shape is not settled, read [skill-shape.md](skill-shape.md) before using
 this gate. The gate here is the final design check before drafting runtime.
@@ -175,8 +175,9 @@ local convention:
 The portable payload is the project root. `.meta-skill/` is not portable; use it
 for durable authoring docs, research reports, source captures, test fixtures,
 package metadata, temporary reviews, and source-specific or client-specific
-development notes. Keep `.meta-skill/tests/` flat; do not create nested
-category folders inside it.
+development notes. Create optional workbench folders only when they will contain
+files. Keep `.meta-skill/tests/` flat when fixtures exist; do not create a blank
+`.meta-skill/tests/`, `/tests`, or nested test-category folders.
 
 Do not force a `skill/` wrapper unless the current repo explicitly requires one.
 If an existing repo still uses wrappers, follow that repo for maintenance work
@@ -210,7 +211,7 @@ review, or package the skill but should not be loaded by a future runtime agent.
 | `.meta-skill/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, and review context. |
 | `.meta-skill/docs/research/` | Research reports from web/source review, connector-backed research, sub-agent research, or research skills. Name files by topic, not by tool. |
 | `.meta-skill/plans/` | Local implementation plans for the skill project when the surrounding repo has no stronger planning convention. |
-| `.meta-skill/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Keep this folder flat; do not create nested category folders inside it. |
+| `.meta-skill/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
 | `.meta-skill/dist/` | Package artifacts and package metadata produced by `scripts/meta-skill package`. |
 
 If intake requires outside research, keep it bounded and source-grounded. Use an
@@ -479,7 +480,8 @@ Objective checks: <required caveat, required field, no unsupported claim, path e
 Plausible wrong answer: <what the skill should prevent>
 ```
 
-Keep one excellent example in `SKILL.md` when it directly shapes output. Put longer examples in `references/` only when future agents need them during execution.
+Keep one excellent example in `SKILL.md` when it directly shapes output. Put
+longer examples in `references/` only when they are needed during execution.
 
 For non-trivial skills, prefer one or more gotchas over extra explanatory prose. A good gotcha names what goes wrong and what to do instead; it should not repeat a normal workflow step.
 
@@ -527,9 +529,11 @@ maintenance burden without changing behavior.
 
 ## Evaluation Seeds And Measurement Boundary
 
-During greenfield authoring, capture lightweight eval seeds when the context
+During new-skill authoring, capture lightweight eval seeds when the context
 provides realistic prompts, source files, expected output shape, or objective
-checks. A seed is not a suite; it is a compact handoff for `skill-evaluator`.
+checks. Eval seeds are a starter handoff: enough realistic prompts, expected
+behavior, and objective checks for a later measurement pass to build real cases
+without reconstructing the authoring context. A seed is not a suite.
 
 Include only what is available and useful:
 
@@ -539,7 +543,7 @@ Include only what is available and useful:
 - expected behavior or output shape
 - objective checks such as required fields, script exits, citation presence,
   positive-null language, no unsupported claims, or exact artifact paths
-- baseline: no skill for greenfield authoring, prior skill for approved
+- baseline: no skill for new-skill authoring, prior skill for approved
   revisions, or named candidate when the user provides one
 - comparator question: what later measurement should decide
 
@@ -547,7 +551,8 @@ Keep eval seeds out of the portable payload unless they are approved runtime
 examples the future agent should inspect while doing the task. In project mode,
 put seeds in `.meta-skill/docs/` or the final handoff. Put user-provided
 fixtures or sample inputs in the flat `.meta-skill/tests/` folder only when the
-user provided or approved them.
+user provided or approved them; do not create that folder when there are no
+fixture files to store.
 
 Do not create `.meta-skill/evals.json`, case folders, hidden rubrics, judge
 configuration, benchmark runs, dashboards, or CI wiring during ordinary
@@ -561,6 +566,10 @@ being shaped. The outline should contain the recurring job, trigger boundary,
 inputs and output, invariants, fragility, skill category, evaluation posture,
 eval seeds when available, gates, project-mode choice, and any still-open
 uncertainty.
+
+The draft outline is a temporary handoff from intake to build. It shows the
+user, reviewer, or future author what assumptions the skill is being built
+from before those assumptions become runtime instructions.
 
 Finalize by rewriting that same `SKILL.md` into runtime guidance and removing
 stale intake notes. In project mode, keep durable non-runtime notes under

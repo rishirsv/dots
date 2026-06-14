@@ -6,8 +6,8 @@ Evaluations need a judge — an LLM by default, a human when taste or domain
 knowledge exceeds the model. They live in a gitignored workbench at
 `<project>/.meta-skill/`.
 
-Use the central CLI reference at `../../../references/cli.md` for materialization,
-runner selection, progress, and grading commands.
+Use `../../../references/cli.md` for materialization, runner selection,
+progress, and grading commands.
 
 ## Authoring Model
 

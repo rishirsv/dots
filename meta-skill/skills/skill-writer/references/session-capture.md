@@ -16,7 +16,7 @@ explicitly asks.
 
 Treat session capture as one context source for ordinary skill authoring. It
 feeds Skill Writer's main workflow answer-set, but it does not
-replace the skill-or-not gate, trigger design, payload rules, or final
+replace the skill fit gate, trigger design, payload rules, or final
 validation. Draft the extracted decisions into `SKILL.md` itself rather than a
 separate planning document.
 

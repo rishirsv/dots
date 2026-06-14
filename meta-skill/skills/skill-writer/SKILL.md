@@ -1,6 +1,6 @@
 ---
 name: skill-writer
-description: "The greenfield-authoring specialist within meta-skill: create a new reusable agent skill from an intent, repeated workflow, example output, Codex thread/session, or source material by designing the trigger contract, runtime guidance, resources, metadata, and validation. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for improving, diagnosing, or evaluating an existing skill, and not for packaging, installing, publishing, or syncing skills."
+description: "The new-skill authoring specialist within meta-skill: create a reusable agent skill from an intent, repeated workflow, example output, Codex thread/session, or source material by designing the trigger contract, runtime guidance, resources, metadata, and validation. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for improving, diagnosing, or evaluating an existing skill, and not for packaging, installing, publishing, or syncing skills."
 ---
 
 # Skill Writer
@@ -19,7 +19,10 @@ examples/        optional when examples are runtime material
 .meta-skill/     optional private workbench, excluded from packages
 ```
 
-This skill owns greenfield authoring. Route existing-skill fixes to
+Treat this list as a menu, not scaffolding. Create a folder only when the skill
+has files to put in it.
+
+This skill owns new-skill authoring. Route existing-skill fixes to
 `skill-doctor`, measurement to `skill-evaluator`, and lifecycle orchestration to
 `meta-skill`.
 
@@ -173,8 +176,10 @@ exists.
 In project mode, keep non-runtime authoring material under `.meta-skill/`.
 Use `.meta-skill/docs/research/` for research reports, `.meta-skill/docs/` for
 other durable authoring notes, and `.meta-skill/tests/` as a flat folder for
-test fixtures or check inputs when the user provides them. Keep
-`.meta-skill/tests/` flat; do not create nested test-category folders inside it.
+test fixtures or check inputs only when the user provides or approves concrete
+test material. Create optional folders only when they will contain files; a
+blank `.meta-skill/tests/`, `/tests`, or nested test-category folder should
+never exist.
 
 Follow these payload rules:
 
@@ -237,7 +242,10 @@ Stop before packaging, installing, publishing, syncing, external writes, or
 final delivery unless the user explicitly approved that action or the current
 repo instructions require it. When packaging is approved, use
 `scripts/meta-skill package <skill-dir>`; it exports only the portable payload from the
-project root and excludes `.meta-skill/`.
+project root and excludes `.meta-skill/`. In the final handoff, explain eval
+seeds as a small starter set of realistic prompts, expected behavior, and checks
+that another pass can turn into a measurement suite; they are not runtime
+instructions unless explicitly approved as examples.
 
 ## Output
 
