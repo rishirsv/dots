@@ -79,7 +79,12 @@ Do not include a file just because it is nearby. Include it when it plays a clea
 
 Prefer one-hop expansion from anchors. Expand farther only when a concrete claim depends on it. For dirty repos, include relevant changed files or explicit patch excerpts, name unrelated dirty files as excluded, and do not let broad working-tree state accidentally reintroduce pruned context.
 
-When using `assist_package.py`, pass explicit `--decision` and `--file` patterns unless intentionally packaging a tiny repo. Treat whole-repo selection and selected patch excerpts as deliberate choices, not defaults. The generated `file-map.txt` is a mechanical path list; put the reasoned context map in the task text, `--notes`, or a task file until the package helper has first-class authored context-map support.
+When using `assist_package.py`, pass explicit `--decision` and `--file`
+patterns unless intentionally packaging a tiny repo. Treat whole-repo selection
+and selected patch excerpts as deliberate choices, not defaults. The generated
+`file-map.txt` is a mechanical path list; put the reasoned context map in
+`--context-map-file` so the advisor sees one curated explanation instead of a
+second mechanical attached-context list.
 
 For richer context-selection archetypes, use [references/context-development.md](references/context-development.md).
 
@@ -93,6 +98,7 @@ Use [scripts/assist_package.py](scripts/assist_package.py):
 python3 agent/skills/assist/scripts/assist_package.py \
   --decision "Decide whether the proposed parser refactor is ready to implement." \
   --task-file /tmp/assist-task.md \
+  --context-map-file /tmp/assist-context-map.md \
   --file "src/**/*.ts" \
   --file "!**/*.test.ts"
 ```
@@ -101,6 +107,25 @@ The script writes `~/Desktop/assist-<slug>/` with:
 
 - `prompt.md`: the standalone request to send
 - `context.zip`: selected files plus `file-map.txt`
+
+`--task` and `--task-file` are for the task body only. Do not pass a complete
+prompt with top-level `# Role`, `# Decision To Improve`, `# Attached Context`,
+`# Success Criteria`, or `# Output` sections as the task; that nests one prompt
+inside another and creates conflicting instruction hierarchy. When you have
+already authored the whole prompt, use `--prompt-file` instead:
+
+```bash
+python3 agent/skills/assist/scripts/assist_package.py \
+  --prompt-file /tmp/assist-prompt.md \
+  --file "src/**/*.ts"
+```
+
+Use one authoritative context map and one authoritative output contract. If
+`prompt.md` contains duplicate top-level `# Role`, `# Decision To Improve`,
+`# Task`, `# Attached Context`, `# Success Criteria`, `# Constraints`,
+`# Output`, or `# Stop Rules` sections, rebuild it rather than sending it.
+For larger packages, mark files in the context map as `primary`, `supporting`,
+or `reference only` so the advisor knows what to read first.
 
 Use that script contract as the default package shape. Do not invent additional top-level artifacts or a stricter schema unless the user asks for a redesigned package format. Do not attach separate git-context files by default; include patch excerpts only when they are explicitly selected, scoped, and named in the decision contract or context map.
 

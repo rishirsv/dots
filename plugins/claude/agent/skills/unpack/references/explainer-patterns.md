@@ -45,20 +45,47 @@ Create a standalone HTML/CSS file when the user asks for an HTML explainer,
 visual explainer page, interactive-looking explainer, or local explainer
 artifact.
 
-Use `assets/html-explainer-template.html` as the starting point. Replace all
-placeholder content with the current explanation. Keep the final file plain
-HTML/CSS with no JavaScript.
+Read `../DESIGN.md` and `references/html-explainer-design.md`, then use
+`assets/html-explainer-template.html` as the starting point. Replace all sample
+content with the current explanation. Keep the final file self-contained:
+inline CSS, no external fonts, no trackers, no network assets, and no build
+step. JavaScript is optional and should stay tiny; use it only for a local
+reader control such as copy, tabs, filters, or a live toggle that materially
+improves comprehension.
 
 Good HTML explainers usually include:
 
-- a title and one-sentence gist
-- one compact visual map or flow
-- two to four sections that explain the moving parts
-- a term map only when terminology is blocking comprehension
-- a final "why it matters" or "what to watch" note
+- a direct answer or one-sentence gist in the first viewport
+- a provenance strip with sources inspected and confidence/inference status
+- one compact spatial canvas: map, flow, timeline, state diagram, stack ladder,
+  diff, matrix, or simulator
+- source/evidence snippets with source chips and status badges when the
+  explainer is grounded in code, logs, docs, or errors
+- tabs, details, filters, or copy/export controls only when they change
+  understanding or carry the result forward
+- a final "what to watch", "why this matters", or "carry forward" note
 
-Do not include teaching exercises, quizzes, expandable lessons, scripts,
-external fonts, trackers, network assets, or project secrets.
+Strong module patterns:
+
+- **Flow rail**: numbered path through request, data, event, or lifecycle.
+- **Spatial canvas**: boxes/arrows, swimlanes, stack ladder, state graph, diff,
+  or matrix with hot path highlighted.
+- **Annotated evidence**: short code/log/doc snippets with margin notes.
+- **Contrast board**: two similar concepts, modes, errors, or choices.
+- **Term decoder**: exact names from the source mapped to plain roles.
+- **Watch list**: failure modes, edge cases, or decision points.
+
+Avoid:
+
+- generic dashboard cards that do not explain relationships
+- giant copied source blocks
+- decorative gradients, stock imagery, or brand mimicry
+- hidden teaching exercises, quizzes, or knowledge checks
+- placeholders, lorem ipsum, or unused template sections
+
+Before delivery, open or render-check the artifact. Confirm it has no console
+errors, no placeholder markers, readable contrast, no horizontal overflow on
+mobile width, and a clear first-screen answer.
 
 ## Image Explainer Mode
 

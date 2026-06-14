@@ -46,6 +46,17 @@ SENSITIVE_PATTERNS = [
     "*credential*",
 ]
 
+AUTHORITY_HEADINGS = {
+    "role",
+    "decision to improve",
+    "task",
+    "attached context",
+    "success criteria",
+    "constraints",
+    "output",
+    "stop rules",
+}
+
 
 def run_git(args: list[str], cwd: Path) -> str:
     try:
@@ -151,14 +162,68 @@ def read_task(args: argparse.Namespace) -> str:
     raise SystemExit("Provide --task, --task-file, or pipe task text on stdin.")
 
 
-def build_prompt(*, task: str, decision: str, files: list[dict[str, object]], notes: str) -> str:
-    file_lines = (
+def read_text_file(path: str) -> str:
+    return Path(path).expanduser().read_text(encoding="utf-8").strip()
+
+
+def top_level_headings(text: str) -> list[str]:
+    headings: list[str] = []
+    for line in text.splitlines():
+        match = re.match(r"^# ([^#].*?)\s*$", line)
+        if match:
+            headings.append(match.group(1).strip())
+    return headings
+
+
+def heading_counts(text: str) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for heading in top_level_headings(text):
+        key = heading.lower()
+        counts[key] = counts.get(key, 0) + 1
+    return counts
+
+
+def validate_task_body(task: str) -> None:
+    validate_single_authority(task)
+
+
+def is_authored_prompt(text: str) -> bool:
+    headings = {heading.lower() for heading in top_level_headings(text)}
+    return "role" in headings and bool(headings & {"task", "decision to improve", "attached context", "output"})
+
+
+def validate_single_authority(prompt: str) -> None:
+    duplicates = [
+        f"{heading} ({count})"
+        for heading, count in sorted(heading_counts(prompt).items())
+        if heading in AUTHORITY_HEADINGS and count > 1
+    ]
+    if duplicates:
+        raise SystemExit(
+            "Prompt contains duplicate top-level authority sections: "
+            f"{', '.join(duplicates)}. Keep exactly one authoritative section of each type."
+        )
+
+
+def mechanical_file_lines(files: list[dict[str, object]]) -> str:
+    return (
         "\n".join(
             f"- {entry['path']} ({entry['bytes']} bytes, ~{entry['estimated_tokens']} tokens): {entry['why_included']}"
             for entry in files
         )
         or "- No files attached."
     )
+
+
+def build_prompt(
+    *,
+    task: str,
+    decision: str,
+    files: list[dict[str, object]],
+    notes: str,
+    context_map: str,
+) -> str:
+    file_lines = context_map.strip() or mechanical_file_lines(files)
     sections = [
         "# Role",
         "You are an expert model asked for a focused second opinion. Work autonomously from the attached context, but treat your answer as advisory. Tie important claims to the provided files, logs, or external sources.",
@@ -203,26 +268,85 @@ def build_prompt(*, task: str, decision: str, files: list[dict[str, object]], no
     return "\n".join(sections)
 
 
+def package_warnings(
+    *,
+    included: list[dict[str, object]],
+    total_bytes: int,
+    file_count_warning: int,
+    large_file_warning_bytes: int,
+    has_context_map: bool,
+) -> list[str]:
+    warnings: list[str] = []
+    if len(included) > file_count_warning:
+        warnings.append(
+            f"package includes {len(included)} files; consider excerpts or primary/supporting/reference priorities"
+        )
+    large_files = [
+        f"{entry['path']} ({entry['bytes']} bytes)"
+        for entry in included
+        if int(entry["bytes"]) > large_file_warning_bytes
+    ]
+    if large_files:
+        warnings.append(
+            "large files included; justify whole-file context or use excerpts: "
+            + "; ".join(large_files)
+        )
+    if total_bytes > 0 and included and not has_context_map:
+        warnings.append(
+            "no reading priorities detected; use a context map to mark primary, supporting, or reference-only files"
+        )
+    return warnings
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build a focused Assist package.")
+    parser.add_argument("--prompt-file", help="Fully authored prompt.md text. Suppresses generated prompt scaffolding.")
     parser.add_argument("--task", help="Task text for the assist model.")
     parser.add_argument("--task-file", help="File containing task text.")
     parser.add_argument("--mode", default=None, help=argparse.SUPPRESS)
     parser.add_argument("--decision", default="", help="Decision, choice, or hypothesis the assist should improve.")
     parser.add_argument("--file", action="append", default=[], help="File, directory, glob, or !exclude glob. Repeatable.")
+    parser.add_argument("--context-map-file", help="Curated Attached Context bullet list. Suppresses mechanical file reasons in prompt.md.")
     parser.add_argument("--notes", default="", help="Extra constraints or context notes.")
     parser.add_argument("--root", default=".", help="Repository/project root.")
     parser.add_argument("--output-dir", default=str(Path.home() / "Desktop"), help="Directory where package folder is created.")
     parser.add_argument("--name", help="Package folder name. Defaults to assist-<timestamp>-<task-slug>.")
     parser.add_argument("--max-file-bytes", type=int, default=1_000_000, help="Reject individual files above this size.")
     parser.add_argument("--max-total-bytes", type=int, default=12_000_000, help="Reject bundle above this total size.")
+    parser.add_argument("--file-count-warning", type=int, default=20, help="Warn when included file count exceeds this number.")
+    parser.add_argument("--large-file-warning-bytes", type=int, default=50_000, help="Warn when an included file exceeds this size.")
     parser.add_argument("--allow-sensitive", action="store_true", help="Allow sensitive-looking filenames.")
     args = parser.parse_args()
 
     root = Path(args.root).expanduser().resolve()
-    task = read_task(args)
+    if args.prompt_file and (args.task or args.task_file):
+        raise SystemExit("Use either --prompt-file or --task/--task-file, not both.")
+    if args.prompt_file and (args.decision or args.notes or args.context_map_file):
+        raise SystemExit("--prompt-file is already fully authored; do not combine it with --decision, --notes, or --context-map-file.")
+    if args.context_map_file:
+        context_map = read_text_file(args.context_map_file)
+        if any(heading.lower() == "attached context" for heading in top_level_headings(context_map)):
+            raise SystemExit("--context-map-file should contain the context-map body only, not a # Attached Context heading.")
+    else:
+        context_map = ""
+    authored_prompt = False
+    if args.prompt_file:
+        prompt = read_text_file(args.prompt_file)
+        validate_single_authority(prompt)
+        slug_source = prompt
+        authored_prompt = True
+    else:
+        task = read_task(args)
+        if is_authored_prompt(task):
+            prompt = task
+            validate_single_authority(prompt)
+            slug_source = prompt
+            authored_prompt = True
+        else:
+            validate_task_body(task)
+            slug_source = task
     timestamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-    package_name = args.name or f"assist-{timestamp}-{slugify(task)}"
+    package_name = args.name or f"assist-{timestamp}-{slugify(slug_source)}"
     package_dir = Path(args.output_dir).expanduser().resolve() / package_name
     package_dir.mkdir(parents=True, exist_ok=False)
 
@@ -269,12 +393,15 @@ def main() -> int:
             archive.write(root / str(entry["path"]), f"files/{entry['path']}")
         archive.writestr("file-map.txt", "\n".join(str(entry["path"]) for entry in included) + "\n")
 
-    prompt = build_prompt(
-        task=task,
-        decision=args.decision,
-        files=included,
-        notes=args.notes,
-    )
+    if not authored_prompt:
+        prompt = build_prompt(
+            task=task,
+            decision=args.decision,
+            files=included,
+            notes=args.notes,
+            context_map=context_map,
+        )
+        validate_single_authority(prompt)
     prompt_path = package_dir / "prompt.md"
     prompt_path.write_text(prompt, encoding="utf-8")
 
@@ -286,6 +413,14 @@ def main() -> int:
         print(f"skipped_files={len(skipped)}")
         for entry in skipped:
             print(f"skipped: {entry['path']} ({entry['bytes']} bytes): {entry['reason']}")
+    for warning in package_warnings(
+        included=included,
+        total_bytes=total_bytes,
+        file_count_warning=args.file_count_warning,
+        large_file_warning_bytes=args.large_file_warning_bytes,
+        has_context_map=bool(context_map) or ("attached context" in {heading.lower() for heading in top_level_headings(prompt)}),
+    ):
+        print(f"warning: {warning}", file=sys.stderr)
     return 0
 
 

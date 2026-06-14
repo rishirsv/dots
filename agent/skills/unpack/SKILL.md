@@ -139,10 +139,28 @@ Read [references/explainer-patterns.md](references/explainer-patterns.md) when
 the user asks for an HTML explainer, an image explainer, a diagram-heavy answer,
 or when a Mermaid diagram would materially improve a text answer.
 
+For HTML explainers, also read
+[DESIGN.md](DESIGN.md) and
+[references/html-explainer-design.md](references/html-explainer-design.md).
+Use them as the visual and artifact-writing contract. Keep the artifact focused
+on understanding the user's material, not on showcasing layout.
+
 For HTML explainers, create one standalone plain HTML/CSS file from
 [assets/html-explainer-template.html](assets/html-explainer-template.html).
 Save it to `<repo>/.agents/artifacts/unpack/<topic-slug>.html` unless the user
 provides another path.
+
+Treat the template as an interactive article system, not a form to fill
+mechanically. Pick the material archetype first: feature flow, stack trace,
+diff/review, module map, state machine, config/API, incident/report, or concept
+simulator. Delete unused panels, rename labels to fit the topic, and make the
+primary canvas show the hard relationship. Prefer one strong spatial model plus
+source-backed evidence over many decorative panels.
+
+When the explainer is based on repo files, logs, errors, or docs, surface the
+evidence inside the artifact: quote only short snippets, preserve exact symbols
+that matter, and translate their role in plain language. Separate confirmed
+source facts from inference when the inspected evidence is partial.
 
 Before writing an HTML explainer, verify `.agents/` is gitignored. If it is not
 ignored and repo instructions allow it, say that `.agents/` will be added to
@@ -151,8 +169,11 @@ not allow that edit, ask before writing the artifact. If the user says not to
 edit files, do not create the HTML file or update `.gitignore`; instead return
 the intended path and a concise artifact plan.
 
-Return a clickable file link and one sentence describing the explainer. Do not
-create an index, manifest, history file, or extra metadata unless asked.
+Open or render-check the HTML before delivering it. Fix console errors, broken
+layout, unreadable text, placeholder text, and mobile overflow before returning
+the file. Return a clickable file link and one sentence describing the
+explainer. Do not create an index, manifest, history file, or extra metadata
+unless asked.
 
 For image explainers, generate the image directly when image generation is
 available. If the image tool is unavailable, return the prompt that should be

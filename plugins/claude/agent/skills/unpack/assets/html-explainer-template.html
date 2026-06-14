@@ -1,241 +1,98 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{TITLE}}</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --ink: #18212f;
-      --muted: #5f6b7a;
-      --line: #d8dee8;
-      --paper: #ffffff;
-      --wash: #f5f7fa;
-      --accent: #0f766e;
-      --accent-soft: #dff5f1;
-      --warn: #9a3412;
-      --warn-soft: #fff1e7;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: var(--wash);
-      color: var(--ink);
-      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    main {
-      width: min(1040px, calc(100vw - 32px));
-      margin: 0 auto;
-      padding: 40px 0 56px;
-    }
-
-    header {
-      margin-bottom: 28px;
-    }
-
-    h1,
-    h2,
-    h3,
-    p {
-      margin-top: 0;
-    }
-
-    h1 {
-      max-width: 840px;
-      margin-bottom: 12px;
-      font-size: clamp(2rem, 5vw, 4rem);
-      line-height: 1.03;
-      letter-spacing: 0;
-    }
-
-    h2 {
-      margin-bottom: 14px;
-      font-size: 1.15rem;
-    }
-
-    h3 {
-      margin-bottom: 6px;
-      font-size: 1rem;
-    }
-
-    p {
-      color: var(--muted);
-    }
-
-    .gist {
-      max-width: 760px;
-      font-size: 1.18rem;
-      color: #334155;
-    }
-
-    .section {
-      margin-top: 18px;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--paper);
-    }
-
-    .map {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .node {
-      min-height: 118px;
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-top: 4px solid var(--accent);
-      border-radius: 8px;
-      background: #fbfcfe;
-    }
-
-    .node p {
-      margin-bottom: 0;
-      font-size: .95rem;
-    }
-
-    .flow {
-      display: grid;
-      gap: 10px;
-      margin: 18px 0 4px;
-    }
-
-    .step {
-      display: grid;
-      grid-template-columns: 40px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-
-    .badge {
-      display: grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    .term-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-    }
-
-    .term {
-      padding: 14px 16px;
-      border-radius: 8px;
-      background: var(--wash);
-    }
-
-    .callout {
-      border-color: #fed7aa;
-      background: var(--warn-soft);
-    }
-
-    .callout h2,
-    .callout strong {
-      color: var(--warn);
-    }
-
-    @media (max-width: 640px) {
-      main {
-        width: min(100vw - 20px, 1040px);
-        padding-top: 24px;
-      }
-
-      .section {
-        padding: 18px;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+:root{--bg:#fbfaf7;--paper:#fff;--ink:#171717;--muted:#5d5a53;--soft:#8b877d;--line:#dedbd2;--line2:#c9c4b8;--blue:#0b63ce;--blue-bg:#eaf3ff;--green:#0b8f6a;--green-bg:#e7f5ef;--red:#c43c32;--red-bg:#fff0ed;--gold:#9b6a00;--gold-bg:#fff5d9;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--sans:"OpenAI Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans)}button{font:inherit}main{width:min(1120px,calc(100vw - 36px));margin:auto;padding:34px 0 58px}.mast{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:56px;align-items:end;border-bottom:1.5px solid var(--ink);padding-bottom:24px}.eyebrow{margin:0 0 12px;color:var(--soft);font-size:.72rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}h1{max-width:720px;margin:0;font-size:clamp(2.6rem,5.6vw,4.9rem);line-height:.94;letter-spacing:0}.summary{margin:0 0 18px;color:var(--muted);font-size:1rem}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn,.tab{border:1px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);padding:7px 12px;cursor:pointer}.btn:hover,.tab[aria-selected=true]{background:var(--ink);color:var(--paper)}.meta{display:grid;grid-template-columns:1.1fr 1.5fr 1fr 1.2fr;border-bottom:1px solid var(--line2)}.meta div{padding:13px 16px 13px 0;border-right:1px solid var(--line)}.meta div:last-child{border-right:0}.meta b{display:block;color:var(--soft);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}.meta span{display:block;margin-top:3px;font-weight:680;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.layout{display:grid;grid-template-columns:260px minmax(0,1fr) 290px;gap:30px;margin-top:32px;align-items:start}.label{margin:0 0 12px;color:var(--soft);font-size:.7rem;font-weight:850;letter-spacing:.1em;text-transform:uppercase}.answer{border-top:3px solid var(--ink);padding-top:12px}.answer p{margin:0;color:var(--muted)}.answer strong{display:block;margin-bottom:8px;color:var(--ink);font-size:1.25rem;line-height:1.15}.spine{border-top:3px solid var(--ink);padding-top:10px}.timeline{position:relative;margin-top:18px}.timeline:before{content:"";position:absolute;left:17px;top:4px;bottom:4px;width:2px;background:linear-gradient(var(--blue),var(--green))}.step{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;margin:0 0 20px;position:relative}.num{z-index:1;width:36px;height:36px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:var(--bg);font:700 .78rem/1 var(--mono)}.step h2{margin:1px 0 5px;font-size:1.12rem;line-height:1.18}.step p{margin:0;color:var(--muted)}.step[data-state=hot] .num{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}.step[data-state=done] .num{background:var(--green-bg);border-color:var(--green);color:var(--green)}.map{margin-top:26px;border:1px solid var(--ink);background:var(--paper)}.map-head{display:grid;grid-template-columns:1fr auto;gap:16px;padding:12px 14px;border-bottom:1px solid var(--ink)}.map-head b{font-size:.92rem}.map-head span{color:var(--soft);font-size:.8rem}.map-grid{display:grid;grid-template-columns:repeat(3,1fr)}.cell{min-height:126px;padding:14px;border-right:1px solid var(--line);position:relative}.cell:last-child{border-right:0}.cell small{display:block;color:var(--blue);font:700 .72rem/1 var(--mono);margin-bottom:16px}.cell b{display:block;margin-bottom:7px}.cell p{margin:0;color:var(--muted);font-size:.92rem}.cell.mark{background:var(--blue-bg)}.rail{border-top:3px solid var(--ink);padding-top:10px}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}.panel[hidden]{display:none}.proof{display:grid;gap:0;border-top:1px solid var(--line2)}.proof-row{padding:12px 0;border-bottom:1px solid var(--line);display:grid;gap:7px}.src{color:var(--blue);font-family:var(--mono);font-size:.76rem}.status{width:max-content;border:1px solid var(--line2);border-radius:999px;padding:1px 7px;color:var(--green);font-size:.72rem;font-weight:750}.status.warn{color:var(--gold)}.proof-row p,.panel p{margin:0;color:var(--muted)}details{border-top:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-weight:750}.code{margin:10px 0 0;padding:11px;background:#171717;color:#f7f7f2;overflow:auto;font:12px/1.5 var(--mono)}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px;border-top:1.5px solid var(--ink);padding-top:18px}.keep,.cut{padding-left:13px}.keep{border-left:4px solid var(--green)}.cut{border-left:4px solid var(--red)}.bottom h2{margin:0 0 6px;font-size:1rem}.bottom p{margin:0;color:var(--muted)}.export{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;margin-top:30px;padding:14px 0;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}.export p{margin:0;color:var(--muted)}@media(max-width:980px){main{width:min(100vw - 24px,1120px)}.mast,.layout,.bottom,.export{grid-template-columns:1fr}.mast{gap:18px}.meta{grid-template-columns:1fr 1fr}.meta div:nth-child(2){border-right:0}.rail{border-top:1.5px solid var(--ink);padding-top:16px}.map-grid{overflow:auto;display:flex}.cell{min-width:220px}.actions{justify-content:flex-start}}@media(max-width:560px){h1{font-size:2.75rem}.meta{grid-template-columns:1fr}.meta div{border-right:0}.layout{gap:22px}.step{grid-template-columns:42px 1fr}.map-head{grid-template-columns:1fr}.cell{min-width:235px}}
+</style>
 </head>
 <body>
-  <main>
-    <header>
+<!-- Replace every {{TOKEN}} before delivering an explainer. Do not leave this
+     asset's slot names visible in a user-facing artifact. -->
+<main>
+  <header class="mast">
+    <div>
+      <p class="eyebrow">{{ARTIFACT_TYPE}}</p>
       <h1>{{TITLE}}</h1>
-      <p class="gist">{{GIST}}</p>
-    </header>
-
-    <section class="section">
-      <h2>{{MAP_TITLE}}</h2>
-      <p>{{MAP_INTRO}}</p>
-      <div class="map">
-        <article class="node">
-          <h3>{{NODE_1_TITLE}}</h3>
-          <p>{{NODE_1_BODY}}</p>
-        </article>
-        <article class="node">
-          <h3>{{NODE_2_TITLE}}</h3>
-          <p>{{NODE_2_BODY}}</p>
-        </article>
-        <article class="node">
-          <h3>{{NODE_3_TITLE}}</h3>
-          <p>{{NODE_3_BODY}}</p>
-        </article>
+    </div>
+    <div>
+      <p class="summary" id="summary">{{ANSWER_SUMMARY}}</p>
+      <div class="actions">
+        <button class="btn" data-copy="#summary">Copy summary</button>
+        <button class="btn" data-copy="#next">Copy prompt</button>
       </div>
-    </section>
+    </div>
+  </header>
 
-    <section class="section">
-      <h2>{{FLOW_TITLE}}</h2>
-      <div class="flow">
-        <div class="step">
-          <div class="badge">1</div>
-          <div>
-            <h3>{{STEP_1_TITLE}}</h3>
-            <p>{{STEP_1_BODY}}</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="badge">2</div>
-          <div>
-            <h3>{{STEP_2_TITLE}}</h3>
-            <p>{{STEP_2_BODY}}</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="badge">3</div>
-          <div>
-            <h3>{{STEP_3_TITLE}}</h3>
-            <p>{{STEP_3_BODY}}</p>
-          </div>
-        </div>
+  <section class="meta" aria-label="Provenance">
+    <div><b>Material</b><span>{{MATERIAL_TYPE}}</span></div>
+    <div><b>Sources</b><span>{{SOURCE_LIST}}</span></div>
+    <div><b>Status</b><span>{{CONFIDENCE_STATUS}}</span></div>
+    <div><b>Use next</b><span>{{NEXT_ACTION_SHORT}}</span></div>
+  </section>
+
+  <section class="layout">
+    <aside class="answer">
+      <p class="label">{{LEFT_RAIL_LABEL}}</p>
+      <p><strong>{{KEY_TAKEAWAY}}</strong> {{TAKEAWAY_DETAIL}}</p>
+    </aside>
+
+    <article class="spine">
+      <p class="label">{{PRIMARY_VISUAL_LABEL}}</p>
+      <div class="timeline">
+        <section class="step" data-state="hot"><span class="num">01</span><div><h2>{{STEP_1_TITLE}}</h2><p>{{STEP_1_BODY}}</p></div></section>
+        <section class="step"><span class="num">02</span><div><h2>{{STEP_2_TITLE}}</h2><p>{{STEP_2_BODY}}</p></div></section>
+        <section class="step"><span class="num">03</span><div><h2>{{STEP_3_TITLE}}</h2><p>{{STEP_3_BODY}}</p></div></section>
+        <section class="step" data-state="done"><span class="num">04</span><div><h2>{{STEP_4_TITLE}}</h2><p>{{STEP_4_BODY}}</p></div></section>
       </div>
-    </section>
 
-    <section class="section">
-      <h2>{{TERMS_TITLE}}</h2>
-      <div class="term-grid">
-        <div class="term">
-          <h3>{{TERM_1}}</h3>
-          <p>{{TERM_1_MEANING}}</p>
+      <section class="map" aria-label="Dominant visual options">
+        <div class="map-head"><b>{{SECONDARY_VISUAL_TITLE}}</b><span>{{SECONDARY_VISUAL_NOTE}}</span></div>
+        <div class="map-grid">
+          <div class="cell mark"><small>{{CARD_1_LABEL}}</small><b>{{CARD_1_TITLE}}</b><p>{{CARD_1_BODY}}</p></div>
+          <div class="cell"><small>{{CARD_2_LABEL}}</small><b>{{CARD_2_TITLE}}</b><p>{{CARD_2_BODY}}</p></div>
+          <div class="cell"><small>{{CARD_3_LABEL}}</small><b>{{CARD_3_TITLE}}</b><p>{{CARD_3_BODY}}</p></div>
         </div>
-        <div class="term">
-          <h3>{{TERM_2}}</h3>
-          <p>{{TERM_2_MEANING}}</p>
-        </div>
-        <div class="term">
-          <h3>{{TERM_3}}</h3>
-          <p>{{TERM_3_MEANING}}</p>
-        </div>
+      </section>
+    </article>
+
+    <aside class="rail">
+      <p class="label">{{RIGHT_RAIL_LABEL}}</p>
+      <div class="tabs" role="tablist" aria-label="Evidence views">
+        <button class="tab" role="tab" aria-selected="true" data-tab="proof">{{TAB_1_LABEL}}</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="risk">{{TAB_2_LABEL}}</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="adapt">{{TAB_3_LABEL}}</button>
       </div>
-    </section>
+      <section class="panel proof" data-panel="proof">
+        <div class="proof-row"><span class="src">{{EVIDENCE_1_SOURCE}}</span><p>{{EVIDENCE_1_CLAIM}}</p><span class="status">{{EVIDENCE_1_STATUS}}</span></div>
+        <div class="proof-row"><span class="src">{{EVIDENCE_2_SOURCE}}</span><p>{{EVIDENCE_2_CLAIM}}</p><span class="status warn">{{EVIDENCE_2_STATUS}}</span></div>
+      </section>
+      <section class="panel" data-panel="risk" hidden>
+        <details open><summary>{{DETAILS_TITLE}}</summary><p>{{DETAILS_BODY}}</p></details>
+      </section>
+      <section class="panel" data-panel="adapt" hidden>
+        <p>{{ALT_VIEW_BODY}}</p>
+        <pre class="code"><code>{{CODE_OR_PROMPT_SNIPPET}}</code></pre>
+      </section>
+    </aside>
+  </section>
 
-    <section class="section callout">
-      <h2>{{WHY_TITLE}}</h2>
-      <p>{{WHY_BODY}}</p>
-    </section>
-  </main>
+  <section class="bottom">
+    <article class="keep"><h2>{{NOTE_1_TITLE}}</h2><p>{{NOTE_1_BODY}}</p></article>
+    <article class="cut"><h2>{{NOTE_2_TITLE}}</h2><p>{{NOTE_2_BODY}}</p></article>
+  </section>
+
+  <section class="export">
+    <p id="next">{{COPYABLE_NEXT_ACTION}}</p>
+    <button class="btn" data-copy="#next">Copy prompt</button>
+  </section>
+</main>
+<script>
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.setAttribute("aria-selected",x===b));document.querySelectorAll("[data-panel]").forEach(p=>p.hidden=p.dataset.panel!==b.dataset.tab)});
+document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{let old=b.textContent,t=document.querySelector(b.dataset.copy)?.innerText||"";try{await navigator.clipboard.writeText(t);b.textContent="Copied"}catch{b.textContent="Copy failed"}setTimeout(()=>b.textContent=old,1200)});
+</script>
 </body>
 </html>
