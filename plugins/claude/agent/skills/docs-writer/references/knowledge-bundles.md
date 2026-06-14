@@ -56,7 +56,7 @@ Fields:
   describes.
 - `tags`: short categorization terms.
 - Extra fields are allowed when the repo benefits from them, such as `owner`,
-  `status`, `source_files`, `verified_by`, or `verified_at`.
+  `status`, `source_files`, or `verified_by`.
 
 Do not use `timestamp`. Do not create or maintain `log.md`.
 
@@ -119,6 +119,3 @@ from multiple external sources.
 - Preserve unknown frontmatter fields when editing an existing concept.
 - Do not reject partially complete knowledge docs solely because a link or
   optional field is missing; fix what is in scope and report the rest.
-
-Source basis for future refresh: Open Knowledge Format draft spec in
-`GoogleCloudPlatform/knowledge-catalog/okf/SPEC.md`.

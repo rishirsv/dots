@@ -77,7 +77,3 @@ For a rewrite, preserve the document's technical contract first:
 3. Cut repetition, unsupported claims, and meta-commentary.
 4. Tighten sentences and headings.
 5. Re-check that no required technical detail was dropped.
-
-Source basis for future refresh: Google Technical Writing Courses
-`https://developers.google.com/tech-writing` and Google developer
-documentation style guide `https://developers.google.com/style`.

@@ -1,6 +1,6 @@
 ---
 name: docs-writer
-description: "Use when writing, rewriting, or updating durable repository documentation or agent-readable Markdown knowledge docs, including READMEs, concepts, how-tos, tutorials, references, runbooks, ADR/design notes, troubleshooting docs, changelogs, release notes, and OKF-style knowledge concepts; not for AGENTS.md/project instruction maintenance, code comments only, one-off chat explanations, or broad implementation work."
+description: "Use when writing, rewriting, or updating durable repo docs or agent-readable Markdown knowledge docs, including READMEs, concepts, how-tos, tutorials, references, runbooks, ADR/design notes, troubleshooting, changelogs, release notes, and OKF-style concepts; not for AGENTS.md/project instruction maintenance, code comments only, one-off chat explanations, release execution, generated changelogs from commit history, PR/publish workflows, or broad implementation work."
 ---
 
 # Docs Writer
@@ -48,6 +48,18 @@ part of this skill; do not route prose cleanup to a separate writing skill.
 7. Validate the result with the checks in
    [validation.md](references/validation.md). Fix defects found by validation
    when they are in scope; otherwise report the limitation clearly.
+
+## Output Modes
+
+- File edit: patch the requested docs, then report changed files, doc types,
+  validation, and any evidence gaps.
+- Draft: return the proposed document body with a short note naming the intended
+  path and document type.
+- Proposal: return target docs, recommended changes, source evidence to inspect,
+  and validation that should run after editing.
+- Review: report findings first with severity, location, evidence, issue, and
+  recommended fix. If no issues are found, state the reviewed scope and say no
+  material issues were found in that scope.
 
 ## Writing Rules
 
