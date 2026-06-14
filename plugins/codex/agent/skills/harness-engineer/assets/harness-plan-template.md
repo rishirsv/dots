@@ -25,7 +25,7 @@
 
 ## Verification Map
 
-| Acceptance criterion | Check | When to run | Status |
+| Acceptance criterion | Check | When to run | Result |
 |---|---|---|---|
 |  |  |  |  |
 

@@ -10,7 +10,7 @@ without reconstructing the task from chat history.
 Capture these surfaces before implementation:
 
 - Objective, non-goals, constraints, and user approval gates.
-- Relevant instruction files and ownership boundaries.
+- Relevant instruction files and responsibility boundaries.
 - Command map for setup, lint, test, build, typecheck, dev server, database, and
   CI where applicable.
 - Verification map with cheap checks, targeted checks, full checks, and manual
@@ -27,7 +27,7 @@ Use a ledger when the task may span more than one turn, thread, day, or agent.
 
 Keep it compact and append-friendly:
 
-- current status
+- current state
 - decisions made
 - commands run and results
 - files changed or expected to change

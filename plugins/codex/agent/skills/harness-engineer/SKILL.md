@@ -141,7 +141,7 @@ approve scope before durable changes.
    unclear commands.
 3. Identify the artifact location by convention:
    - existing `.plans/`, `plans/`, `docs/plans/`, or task docs
-   - existing progress or status files near the task
+   - existing progress or state files near the task
    - user-specified path
    - otherwise propose a lightweight plan path and ask only if writing there
      would matter

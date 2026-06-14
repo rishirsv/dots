@@ -1,10 +1,10 @@
 # Progress Ledger
 
-## Current Status
+## Current State
 
 - State:
 - Last updated:
-- Current owner/thread:
+- Current thread:
 
 ## Decisions
 
