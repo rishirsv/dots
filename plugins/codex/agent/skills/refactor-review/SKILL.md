@@ -61,6 +61,7 @@ Default to a ranked candidate report in chat unless the user asks for a file or 
 - `Files`: files or modules involved
 - `Problem`: why the current architecture is causing friction
 - `Ownership`: runtime owner, first-fix owner, canonical long-term owner, and wrong competing owners when relevant
+- `Seam`: where the current interface lives and where the deeper module's interface should live
 - `Solution`: what would change, in plain English
 - `Benefits`: how locality, leverage, testability, or AI-navigability improves
 - `Tests`: where the owning invariant should be tested and what weaker coverage can be removed

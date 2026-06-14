@@ -44,7 +44,7 @@ Keep only guidance that changes the review: required skills or domain passes, re
 2. Read the quality rubric. Read the hard-cut policy when its trigger conditions apply.
 3. Inspect the changed files and nearby code. Search for existing utilities, helpers, canonical modules, tests, and patterns before recommending new abstractions.
 4. Default to fresh review-only subagents for any non-trivial diff. Launch three parallel lenses over the same diff: code reuse, code quality, and efficiency. Each prompt should include the full diff, changed-file contents when needed, repo review guidance, and any required domain skills.
-5. Skip subagents only when they are unavailable or the diff is very small; then run the three lenses yourself. Subagents do not edit files. The parent verifies their findings, resolves conflicts, and owns any same-scope edits.
+5. Skip subagents only when they are unavailable or the diff is very small; then run the three lenses yourself and briefly say why review agents were skipped. Subagents do not edit files. The parent verifies their findings, resolves conflicts, and owns any same-scope edits.
 6. Verify every finding against the actual files before editing or reporting it. Drop false positives without turning the review into an argument.
 7. Apply same-scope fixes when the user asked for cleanup or simplification. Stop and report when the fix would expand scope, change product behavior, require architecture judgment, or conflict with repo guidance.
 8. Run the narrowest useful validation for changed code. Prefer existing targeted tests, typechecks, lint, or build checks named by repo guidance.
@@ -71,7 +71,7 @@ When fixes were made, report:
 - `Validation`: commands run and result
 - `Residual risk`: anything not proven
 
-When the user asked for review-only output, lead with prioritized findings. For each finding, include file and line evidence, impact, and the proposed fix. If no material issues are found, state the reviewed scope and say the code already meets the quality bar.
+When the user asked for review-only output, lead with prioritized findings. For each finding, include file and line evidence, impact, and the proposed fix. End with validation: commands to run, commands already run, or why validation was not run. If review agents were skipped, note the small-diff or unavailable-tool reason without adding a separate plan section. If no material issues are found, state the reviewed scope and say the code already meets the quality bar.
 
 ## Boundaries
 
