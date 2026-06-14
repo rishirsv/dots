@@ -24,7 +24,7 @@ class AssistPackageTests(unittest.TestCase):
             self.fail(f"assist_package.py failed\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}")
         return result
 
-    def test_task_file_rejects_complete_prompt_sections(self) -> None:
+    def test_task_file_complete_prompt_becomes_base_prompt(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             task_file = root / "task.md"
@@ -33,20 +33,19 @@ class AssistPackageTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            result = self.run_package(
+            self.run_package(
                 "--task-file",
                 str(task_file),
                 "--output-dir",
                 str(root),
                 "--name",
-                "assist-bad-task",
+                "assist-authored-task",
                 cwd=root,
-                check=False,
             )
 
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("Use --prompt-file", result.stderr)
-            self.assertFalse((root / "assist-bad-task").exists())
+            prompt = (root / "assist-authored-task" / "prompt.md").read_text(encoding="utf-8")
+            self.assertEqual(prompt, task_file.read_text(encoding="utf-8").strip())
+            self.assertFalse(prompt.startswith("Provide a focused second opinion"))
 
     def test_prompt_file_preserves_authored_prompt_without_generated_wrapper(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -75,6 +74,30 @@ class AssistPackageTests(unittest.TestCase):
             self.assertEqual(prompt, prompt_file.read_text(encoding="utf-8").strip())
             self.assertEqual(prompt.count("# Role"), 1)
             self.assertEqual(prompt.count("# Output"), 1)
+
+    def test_generated_prompt_uses_task_shaped_default_labels(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            self.run_package(
+                "--task",
+                "Review the plan.",
+                "--output-dir",
+                str(root),
+                "--name",
+                "assist-generated",
+                cwd=root,
+            )
+
+            prompt = (root / "assist-generated" / "prompt.md").read_text(encoding="utf-8")
+            self.assertIn("Provide a focused second opinion.", prompt)
+            self.assertIn("Request:", prompt)
+            self.assertNotIn("# Advisory Frame", prompt)
+            self.assertNotIn("# Request", prompt)
+            self.assertNotIn("# Role", prompt)
+            self.assertNotIn("# Decision To Improve", prompt)
+            self.assertNotIn("# Success Criteria", prompt)
+            self.assertNotIn("# Output", prompt)
 
     def test_context_map_suppresses_mechanical_file_reasons(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -123,7 +146,7 @@ class AssistPackageTests(unittest.TestCase):
             )
 
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("duplicate top-level authority sections", result.stderr)
+            self.assertIn("repeated top-level headings", result.stderr)
 
 
 if __name__ == "__main__":
