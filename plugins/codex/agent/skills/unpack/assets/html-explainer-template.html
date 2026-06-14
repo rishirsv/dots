@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITLE}}</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18212f;
+      --muted: #5f6b7a;
+      --line: #d8dee8;
+      --paper: #ffffff;
+      --wash: #f5f7fa;
+      --accent: #0f766e;
+      --accent-soft: #dff5f1;
+      --warn: #9a3412;
+      --warn-soft: #fff1e7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--wash);
+      color: var(--ink);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(1040px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+
+    header {
+      margin-bottom: 28px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 840px;
+      margin-bottom: 12px;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.03;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: 1.15rem;
+    }
+
+    h3 {
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    p {
+      color: var(--muted);
+    }
+
+    .gist {
+      max-width: 760px;
+      font-size: 1.18rem;
+      color: #334155;
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .node {
+      min-height: 118px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--accent);
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+
+    .node p {
+      margin-bottom: 0;
+      font-size: .95rem;
+    }
+
+    .flow {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 4px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .badge {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .term {
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--wash);
+    }
+
+    .callout {
+      border-color: #fed7aa;
+      background: var(--warn-soft);
+    }
+
+    .callout h2,
+    .callout strong {
+      color: var(--warn);
+    }
+
+    @media (max-width: 640px) {
+      main {
+        width: min(100vw - 20px, 1040px);
+        padding-top: 24px;
+      }
+
+      .section {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>{{TITLE}}</h1>
+      <p class="gist">{{GIST}}</p>
+    </header>
+
+    <section class="section">
+      <h2>{{MAP_TITLE}}</h2>
+      <p>{{MAP_INTRO}}</p>
+      <div class="map">
+        <article class="node">
+          <h3>{{NODE_1_TITLE}}</h3>
+          <p>{{NODE_1_BODY}}</p>
+        </article>
+        <article class="node">
+          <h3>{{NODE_2_TITLE}}</h3>
+          <p>{{NODE_2_BODY}}</p>
+        </article>
+        <article class="node">
+          <h3>{{NODE_3_TITLE}}</h3>
+          <p>{{NODE_3_BODY}}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>{{FLOW_TITLE}}</h2>
+      <div class="flow">
+        <div class="step">
+          <div class="badge">1</div>
+          <div>
+            <h3>{{STEP_1_TITLE}}</h3>
+            <p>{{STEP_1_BODY}}</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="badge">2</div>
+          <div>
+            <h3>{{STEP_2_TITLE}}</h3>
+            <p>{{STEP_2_BODY}}</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="badge">3</div>
+          <div>
+            <h3>{{STEP_3_TITLE}}</h3>
+            <p>{{STEP_3_BODY}}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>{{TERMS_TITLE}}</h2>
+      <div class="term-grid">
+        <div class="term">
+          <h3>{{TERM_1}}</h3>
+          <p>{{TERM_1_MEANING}}</p>
+        </div>
+        <div class="term">
+          <h3>{{TERM_2}}</h3>
+          <p>{{TERM_2_MEANING}}</p>
+        </div>
+        <div class="term">
+          <h3>{{TERM_3}}</h3>
+          <p>{{TERM_3_MEANING}}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section callout">
+      <h2>{{WHY_TITLE}}</h2>
+      <p>{{WHY_BODY}}</p>
+    </section>
+  </main>
+</body>
+</html>
