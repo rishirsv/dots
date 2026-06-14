@@ -142,7 +142,7 @@ or when a Mermaid diagram would materially improve a text answer.
 ### HTML explainers
 
 Build a bespoke document designed for this material — not a filled-in template.
-Read [DESIGN.md](DESIGN.md) (the visual system and anti-slop rules) and
+Read [references/DESIGN.md](references/DESIGN.md) (the visual system and anti-slop rules) and
 [references/html-explainer-design.md](references/html-explainer-design.md) (the
 component catalog and build steps), then:
 

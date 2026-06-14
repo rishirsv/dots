@@ -3,7 +3,7 @@
 Read this to decide *whether* and *which* visual reduces comprehension load.
 Choose a visual that removes effort; never add one for decoration. For building a
 standalone HTML explainer, this file routes you to
-[html-explainer-design.md](html-explainer-design.md) and [../DESIGN.md](../DESIGN.md).
+[html-explainer-design.md](html-explainer-design.md) and [DESIGN.md](DESIGN.md).
 
 ## When A Diagram Helps
 
@@ -21,7 +21,7 @@ well; decorative illustration; a visual that just restates the prose.
 ## Picking The Visual
 
 Match the relationship to the form, then build it from the archetype table in
-[../DESIGN.md](../DESIGN.md):
+[DESIGN.md](DESIGN.md):
 
 - order / lifecycle / handoff → flow rail, sequence, or timeline
 - ownership / dependency / hot path → boxes-and-arrows map or swimlanes
@@ -46,7 +46,7 @@ an HTML explainer instead.
 
 When the user asks for an HTML explainer, visual explainer page, or local
 explainer artifact, build it per [html-explainer-design.md](html-explainer-design.md)
-and [../DESIGN.md](../DESIGN.md): pick the archetype, start from the asset, keep
+and [DESIGN.md](DESIGN.md): pick the archetype, start from the asset, keep
 the style/script kit, compose only the needed modules, and render-check before
 delivering.
 

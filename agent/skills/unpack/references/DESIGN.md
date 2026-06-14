@@ -3,9 +3,9 @@
 The visual and interaction contract for `unpack` HTML explainers. `DESIGN.md`
 owns the look, motion, and composition rules; the concrete component markup and
 build workflow live in
-[references/html-explainer-design.md](references/html-explainer-design.md). The
+[html-explainer-design.md](html-explainer-design.md). The
 canonical tokens, base styles, and JS helpers ship inside
-[assets/html-explainer-template.html](assets/html-explainer-template.html) — keep
+[../assets/html-explainer-template.html](../assets/html-explainer-template.html) — keep
 that `<style>`/`<script>` kit intact and compose the body from it.
 
 The aesthetic is warm editorial-technical: an ivory paper canvas, serif display
@@ -70,6 +70,14 @@ Motion is functional and quiet. Stay inside this budget:
 No parallax, autoplaying loops, decorative bouncing, or motion that delays
 reading. A live control (slider, toggle) is welcome when manipulating it *is* the
 explanation.
+
+The kit ships a fixed set of interaction primitives (step-through player, node
+detail, scroll-spy, reading-level toggle, glossary, tooltip, live control,
+collapsible diff, filter/sort table) wired from `data-*` attributes — see the
+build guide. Two rules keep them clean: motion animates only transform/opacity,
+never width/height/padding; and any floating layer (tooltip, detail panel) is
+appended to `<body>` so an `overflow:auto` box never clips it. Each must reveal,
+change the model, compare, or navigate — never decorate.
 
 ## Avoid The Generated-UI Tells
 
