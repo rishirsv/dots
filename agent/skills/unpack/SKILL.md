@@ -14,10 +14,12 @@ the answer turns into tutoring.
 Read `~/.codex/skill-state/unpack/MEMORY.md` when it exists before choosing the
 explanation level or style.
 
-When the user gives a durable explanation preference or correction, briefly
-state what will be recorded, then update that memory file. Create the parent
-directory and file if needed. Do not store one-off formatting requests, secrets,
-private source excerpts, project facts, credentials, or topic conclusions.
+When the user gives an explicit durable explanation-style preference or
+correction, briefly state the short preference or correction that will be
+recorded, then update that memory file. Create the parent directory and file if
+needed. Do not update memory when the user prohibits file writes. Do not store
+one-off formatting requests, secrets, private source excerpts, project facts,
+credentials, or topic conclusions.
 
 Use this starter shape for a new file:
 
@@ -52,6 +54,23 @@ unless the user asks for that work.
 When the user names repo-specific code, files, symbols, app behavior, or
 architecture, inspect the relevant local source before explaining. For general
 technical concepts, answer from available context without repo exploration.
+
+For hybrid requests like `explain why this fails` or `walk me through this bug`,
+explain the visible cause, implication, and likely next place to inspect. Do not
+switch into fixing, broad debugging, or code edits unless the user asks for that
+work.
+
+## Runtime Loop
+
+Follow a compact loop without forcing a fixed answer template:
+
+1. Read memory if it exists and applies.
+2. Identify the material type: concept, code, error, command, log, doc, diagram,
+   prior answer, or repo-specific behavior.
+3. Inspect only the source needed for repo-specific claims.
+4. Choose the knowledge level and format that best reduce hidden assumptions.
+5. Answer the real question first, add the missing bridge, and stop when the
+   user can act on the explanation.
 
 ## Knowledge Dial
 
@@ -128,7 +147,9 @@ provides another path.
 Before writing an HTML explainer, verify `.agents/` is gitignored. If it is not
 ignored and repo instructions allow it, say that `.agents/` will be added to
 `.gitignore`, then add it before creating the artifact. If repo instructions do
-not allow that edit, ask before writing the artifact.
+not allow that edit, ask before writing the artifact. If the user says not to
+edit files, do not create the HTML file or update `.gitignore`; instead return
+the intended path and a concise artifact plan.
 
 Return a clickable file link and one sentence describing the explainer. Do not
 create an index, manifest, history file, or extra metadata unless asked.
