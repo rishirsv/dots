@@ -19,6 +19,8 @@ typeset -A PLUGIN_REFERENCES_SRC
 PLUGIN_REFERENCES_SRC[meta-skill]="$ROOT/meta-skill/references"
 typeset -A PLUGIN_ROOT_SRC
 PLUGIN_ROOT_SRC[meta-skill]="$ROOT/meta-skill/src"
+typeset -A PLUGIN_AGENTS_SRC
+PLUGIN_AGENTS_SRC[meta-skill]="$ROOT/meta-skill/agents"
 
 CODEX_DESKTOP_SKILLS="$HOME/.codex/skills"
 CODEX_DESKTOP_SKILL_MARKER="$CODEX_DESKTOP_SKILLS/.agent-managed-skills"
@@ -65,6 +67,102 @@ for plugin in "${PLUGINS[@]}"; do
   if [[ -n "$root_src" && -d "$root_src" ]]; then
     rsync -a --delete --exclude '.DS_Store' --exclude '__pycache__' "$root_src/" "$codex_pkg/src/"
     rsync -a --delete --exclude '.DS_Store' --exclude '__pycache__' "$root_src/" "$claude_pkg/src/"
+  fi
+
+  agents_src="${PLUGIN_AGENTS_SRC[$plugin]:-}"
+  if [[ -n "$agents_src" && -d "$agents_src" ]]; then
+    mkdir -p "$codex_pkg/agents" "$claude_pkg/agents"
+    rsync -a --delete --exclude '.DS_Store' "$agents_src/" "$codex_pkg/agents/"
+    python3 - "$agents_src" "$claude_pkg/agents" <<'PY'
+import datetime
+import re
+import sys
+from pathlib import Path
+
+source = Path(sys.argv[1])
+target = Path(sys.argv[2])
+target.mkdir(parents=True, exist_ok=True)
+
+
+def parse_codex_agent(path: Path) -> dict:
+    text = path.read_text()
+    data = {}
+    for key in ["name", "description", "model", "model_reasoning_effort", "sandbox_mode"]:
+        match = re.search(rf'^{key}\s*=\s*"([^"]*)"', text, re.MULTILINE)
+        if match:
+            data[key] = match.group(1)
+    instruction_match = re.search(r'developer_instructions\s*=\s*"""(.*?)"""', text, re.DOTALL)
+    data["developer_instructions"] = instruction_match.group(1).strip() if instruction_match else ""
+    return data
+
+
+def claude_model(codex_model):
+    if codex_model and codex_model.endswith("-mini"):
+        return "haiku"
+    return "sonnet"
+
+
+def claude_effort(codex_effort):
+    if codex_effort in {"low", "medium", "high", "xhigh", "max"}:
+        return codex_effort
+    return "medium"
+
+
+def tools_for(sandbox_mode):
+    if sandbox_mode == "read-only":
+        return ["Read", "Grep", "Glob", "Bash", "Skill"]
+    return ["Read", "Grep", "Glob", "Bash", "Write", "Edit", "MultiEdit", "Skill"]
+
+
+def yaml_scalar(value):
+    text = str(value)
+    if not text:
+        return '""'
+    if re.search(r"[:#\[\]{}&*!|>'\"%@`]", text) or text.strip() != text:
+        return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    return text
+
+
+def yaml_frontmatter(data):
+    lines = []
+    for key, value in data.items():
+        if isinstance(value, list):
+            lines.append(f"{key}:")
+            for item in value:
+                lines.append(f"- {yaml_scalar(item)}")
+        else:
+            lines.append(f"{key}: {yaml_scalar(value)}")
+    return "\n".join(lines) + "\n"
+
+
+managed = []
+for path in sorted(source.glob("*.toml")):
+    agent = parse_codex_agent(path)
+    name = str(agent.get("name", path.stem))
+    frontmatter = {
+        "name": name,
+        "description": str(agent.get("description", "")),
+        "model": claude_model(agent.get("model") if isinstance(agent.get("model"), str) else None),
+        "effort": claude_effort(agent.get("model_reasoning_effort") if isinstance(agent.get("model_reasoning_effort"), str) else None),
+        "tools": tools_for(agent.get("sandbox_mode") if isinstance(agent.get("sandbox_mode"), str) else None),
+    }
+    body = str(agent.get("developer_instructions", "")).strip()
+    output = "---\n"
+    output += yaml_frontmatter(frontmatter)
+    output += "---\n\n"
+    output += body
+    output += "\n"
+    output_path = target / f"{name}.md"
+    if output_path.exists():
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        output_path.rename(output_path.with_name(f"{output_path.name}.bak.{timestamp}"))
+    output_path.write_text(output)
+    managed.append(output_path.name)
+
+for stale in target.glob("*.md"):
+    if stale.name not in managed:
+        stale.unlink()
+PY
   fi
 
   assets="${PLUGIN_ASSETS_SRC[$plugin]:-}"
