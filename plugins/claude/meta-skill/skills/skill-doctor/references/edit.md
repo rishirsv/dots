@@ -96,11 +96,15 @@ review pass that would make the edit decision clearer.
    branch, output contract, reference pointer, script contract, or missing gate.
 5. Produce two or three candidate edits that fix the behavior while preserving
    the approved trigger and runtime surface.
-6. Recommend one — the smallest strong fix — and say why.
-7. If the user authorized direct edits, apply it. Otherwise stop with a standard
+6. Scan each candidate diff for source provenance and negative-only rules.
+   Rename source-derived references to the reusable concept they teach, and
+   remove any `Do not ...` rule unless it protects against a recurring failure
+   and is paired with the positive behavior to perform instead.
+7. Recommend one — the smallest strong fix — and say why.
+8. If the user authorized direct edits, apply it. Otherwise stop with a standard
    clarify-style approval question.
-8. Add a broad rule only when the agent would likely repeat the mistake without it.
-9. Record changed behavior, evidence, rejected tempting edits, and residual risk
+9. Add a broad rule only when the agent would likely repeat the mistake without it.
+10. Record changed behavior, evidence, rejected tempting edits, and residual risk
    in `spec.md` when durable notes are needed.
 
 Prefer replacing a misleading sentence over adding a prohibition. Preserve

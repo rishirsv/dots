@@ -118,7 +118,7 @@ feeds the dimension scores above.
 - **Activation** — trigger clarity, realistic phrasing, near misses, non-trigger boundary.
 - **Runtime clarity** — default path, output contract, stop/ask points, final checks.
 - **Resources** — linked references/scripts/assets, dependency clarity, source leakage, stale files.
-- **Runtime contamination** — copied user prompt text, model/provider names, raw research links, author/source provenance, thread IDs, one-off file paths, or source notes living in the payload instead of reusable behavior.
+- **Runtime contamination** — copied user prompt text, model/provider names, raw research links, author/source provenance, source-specific reference titles, thread IDs, one-off file paths or artifact names, and source-note prohibitions living in the payload instead of reusable behavior.
 - **Controls** — user files as data, approval gates, external writes, package/publish gates.
 - **Eval evidence** — captured deterministic test/validation results and any saved failure evidence.
 - **Review score** — the `review.md` Quality Score, Discovery, Implementation, Verify-tests, and combined findings.
