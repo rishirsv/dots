@@ -1,0 +1,7 @@
+interface:
+  display_name: "Alignment"
+  short_description: "Align plans with code and docs"
+  default_prompt: "Use $Align to align this plan with the codebase and existing docs before implementation."
+
+policy:
+  allow_implicit_invocation: false
