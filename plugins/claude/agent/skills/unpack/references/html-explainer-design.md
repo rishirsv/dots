@@ -45,6 +45,13 @@ coordinates.
 axis ceiling. `data-series2` (line) draws a second dashed comparison line. Use a
 chart only for real quantitative data; for relationships use a diagram.
 
+Make a chart narrate, not just plot. Two optional attributes work on bar and line:
+
+- `data-threshold="100"` draws a dashed rust reference line (SLA, budget, limit);
+  `data-threshold-label="SLA ceiling"` labels it. The axis grows to include it.
+- `data-annotate="4:deploy"` marks point/bar index 4 with a thin clay guide and a
+  label. Separate multiple with `;` — `data-annotate="3:retry storm;6:rollback"`.
+
 ## Flow / architecture diagram
 
 Inline SVG inside `.diagram`. Boxes use `.box` (`.box.hot` = the focus node,
@@ -171,30 +178,117 @@ Status values: `confirmed` (olive), `inferred`/`assumption` (oat/clay). Pills:
 
 Wrap a section in `class="reveal"` to give it the gentle fade-in entrance.
 
-## Optional interactions (add inline JS)
+## Interaction primitives (markup only — the kit wires them)
 
-The base kit handles tabs, accordion (`[data-accordion]` closes siblings), copy,
-charts, and reveal. For these archetype-specific interactions, add a small
-`<script>` and matching markup:
+The kit's `<script>` auto-wires every primitive below from `data-*` attributes on
+load, exactly like the chart helper. You write semantic markup; you never write
+JS. Each one degrades to readable content with JS off, is keyboard-operable, and
+honors `prefers-reduced-motion`. Reach for one only when it removes reading
+effort — an interaction that just decorates is slop.
 
-- **Click-to-reveal diagram node** — give each `<g class="node" data-k="x">` a
-  key, keep a `DETAIL` object, and write its fields into a sticky side panel on
-  click; toggle an `.active` class for the clay outline.
-- **Live control** — a `<input type="range">` or button whose handler recomputes
-  a readout or redraws an SVG, when manipulating it *is* the explanation. Use a
-  deterministic hash for stable layout. Add `transition` on the SVG attributes so
-  nodes glide.
-- **Glossary hover-link** — dotted `.term` spans (`border-bottom:1.5px dotted`)
-  whose `mouseenter` highlights the matching `<dt>` in a sticky aside.
+**Step-through player** — walk a flow one hop at a time. Put `data-stepper` on a
+`.diagram`; give each node a `data-step="N"` and a `data-note` (HTML allowed). The
+kit injects Prev/Next + a counter, dims the off-step nodes, and outlines the
+active one. Notes render into an optional `<div class="step-note" data-step-note></div>`
+(else into the control bar). Arrow keys step when the diagram is focused.
 
-Keep every interaction deletable without breaking the explanation, no
-dependencies, no network calls.
+```html
+<div class="diagram" id="flow" data-stepper>
+  <svg …>
+    <g data-step="1" data-note="<strong>Request arrives.</strong> Reads the API key.">…</g>
+    <g data-step="2" data-note="Looks up the bucket.">…</g>
+  </svg>
+  <div class="step-note" data-step-note></div>
+</div>
+```
+
+**Click-to-reveal node detail** — click a node to load depth into a panel that
+sits *outside* the diagram (so it escapes the diagram's `overflow-x:auto`). Nodes
+carry `data-detail="key"`; detail bodies live in `<template data-detail="key">`;
+the `<aside class="detail-panel" data-detail-panel>` shows the first by default.
+
+```html
+<div class="diagram"><svg …><g data-detail="store">…</g></svg></div>
+<aside class="detail-panel" data-detail-panel data-empty="Pick a component."></aside>
+<template data-detail="store"><h4>token store</h4><p>Redis hash keyed by API key.</p></template>
+```
+
+**Scroll-spy nav** — add `data-scrollspy` to a `.side` nav; the link whose section
+is in view gets the clay marker. Links stay plain anchors without JS.
+
+```html
+<nav data-scrollspy><a href="#flow">The path</a><a href="#proof" class="sub">Evidence</a></nav>
+```
+
+**Reading-level toggle** — one control that flips the page between brief and
+detailed, making the knowledge dial something the reader holds. Drop an empty
+`<span data-level-toggle></span>` for the injected Brief/Detailed switch; mark
+extra depth with `data-level="detail"` (hidden until Detailed; visible with JS off).
+
+```html
+<span data-level-toggle></span>
+<p>The bucket refills at a fixed rate.</p>
+<p data-level="detail">Refill is lazy: each request adds elapsed×rate, capped at burst.</p>
+```
+
+**Glossary** — dotted `.term[data-term="key"]` spans show their definition on
+hover/focus and light the matching row in `<dl data-glossary>` (pairs wrapped in
+`<div><dt data-term="key">…</dt><dd>…</dd></div>`). The `<dl>` reads fine alone.
+
+```html
+A <span class="term" data-term="token-bucket">token bucket</span> refills steadily.
+<dl data-glossary><div><dt data-term="token-bucket">Token bucket</dt><dd>A refilling counter.</dd></div></dl>
+```
+
+**Tooltip** — `data-tip="…"` on any element. The kit renders one floating node on
+`<body>`, so it is never clipped by an overflow container; shows on hover and
+keyboard focus, hides on Escape.
+
+```html
+<span class="src" data-tip="Returned when the bucket is empty.">HTTP 429</span>
+```
+
+**Live control** — a slider whose readout *is* the explanation. `data-control` on
+an `<input type="range">`; `data-bind="#out"` writes a formatted value to an
+`<output>`; `data-template="{v} tokens"` (or `data-unit`) formats it; `data-bar="#fill"`
+drives a `.barwrap > i` fill. Optional `data-scale` / `data-round="int"`. No `eval`.
+
+```html
+<div class="control">
+  <label for="b">Burst</label>
+  <input id="b" type="range" min="1" max="200" value="60" data-control data-bind="#bo" data-bar="#bf" data-template="{v} tokens">
+  <output id="bo"></output>
+  <div class="barwrap"><i id="bf"></i></div>
+</div>
+```
+
+**Collapsible diff context** — `data-collapse-context="2"` on a `.diff` folds runs
+of unchanged `.ctx` rows longer than the number behind a clickable "⋯ N unchanged
+lines" bar. Without JS the full diff shows.
+
+**Filter / sort table** — `data-filter` adds a search box that hides non-matching
+rows with a live count; `data-sort` makes headers click-to-sort. Mark numeric
+columns `data-sort="num"` and opt a column out with `data-sort="none"`.
+
+```html
+<table data-filter="Filter tiers…" data-sort>
+  <thead><tr><th>Tier</th><th data-sort="num">Burst</th><th data-sort="none">Notes</th></tr></thead>
+  <tbody><tr><td class="mono">free</td><td>20</td><td>per key</td></tr></tbody>
+</table>
+```
+
+The base kit also wires tabs, accordion (`[data-accordion]` closes siblings),
+copy buttons, charts, and reveal-on-scroll. Every primitive is deletable without
+breaking the explanation; none use dependencies or network calls.
 
 ## Before delivery
 
 - Replaced all sample content; no placeholders or empty modules.
 - First viewport answers the question and shows provenance.
 - Charts/diagrams render; no console errors.
+- Every primitive used actually fires: step the stepper, toggle the level, sort
+  and filter the table, expand the diff, hover a term. A tooltip or detail panel
+  near a diagram must not be clipped by its scroll box.
 - Desktop and mobile: readable, no horizontal page scroll (only diagrams/code
   scroll inside their box).
 - Re-read the anti-slop list in `../DESIGN.md`: no gradients, glassmorphism,
