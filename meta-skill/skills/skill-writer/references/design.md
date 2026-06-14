@@ -208,18 +208,19 @@ review, or package the skill but should not be loaded by a future runtime agent.
 
 | Folder | Use for |
 |---|---|
-| `.meta-skill/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, and review context. |
-| `.meta-skill/docs/research/` | Research reports from web/source review, connector-backed research, sub-agent research, or research skills. Name files by topic, not by tool. |
-| `.meta-skill/plans/` | Local implementation plans for the skill project when the surrounding repo has no stronger planning convention. |
+| `.meta-skill/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Name research files by topic; use a `-research.md` suffix when the docs folder would otherwise contain only research. |
 | `.meta-skill/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
 | `.meta-skill/dist/` | Package artifacts and package metadata produced by `scripts/meta-skill package`. |
+
+For temporary plans, use the surrounding repo's planning convention instead of
+creating `.meta-skill/plans/`. Plans usually are not durable skill knowledge.
 
 If intake requires outside research, keep it bounded and source-grounded. Use an
 available researcher sub-agent or research skill when that is natural for the
 environment, especially when the research can run in parallel with other intake
 work. Do not make that a hard dependency: a normal source review is enough for
-small or obvious questions. Store the report under `.meta-skill/docs/research/`
-and move only reusable operational rules into the portable payload.
+small or obvious questions. Store the report under `.meta-skill/docs/` and move
+only reusable operational rules into the portable payload.
 
 ## Intake
 

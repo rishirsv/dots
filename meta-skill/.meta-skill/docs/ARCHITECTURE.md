@@ -349,5 +349,5 @@ tree. Worker-local script folders are not part of the public surface.
 ## Open questions
 
 - How non-skill deterministic validations receive target artifacts and outputs.
-- Which committed project docs should eventually supersede `.plans/` once the
-  eval workbench is implemented.
+- Which durable project docs should capture decisions that outgrow temporary
+  plans once the eval workbench is implemented.

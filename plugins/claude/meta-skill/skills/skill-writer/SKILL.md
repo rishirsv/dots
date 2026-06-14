@@ -76,7 +76,7 @@ conventions, or a question:
 | Skill category | Primary type from [design.md](references/design.md); narrow or split if the draft straddles categories. |
 | Evaluation posture | Capability uplift, encoded preference, or hybrid; include the baseline and lightweight eval seeds when context provides them. |
 | Gates | Approvals required before external writes, destructive actions, publishing, sending, install/sync, or final client-facing delivery. |
-| Project mode | Portable-only, or project mode with `.meta-skill/` docs, research, fixtures, package artifacts, and team reuse material. |
+| Project mode | Portable-only, or project mode with `.meta-skill/` docs, fixtures, package artifacts, and team reuse material. |
 
 Fill every answer from context first. Resolve answers before asking by mining
 the current conversation, provided files, source packs, user corrections,
@@ -97,7 +97,7 @@ c) Not sure - use default
 
 2. Set up a workbench?
 a) Portable-only, no workbench (recommended)
-b) Project mode with `.meta-skill/` authoring docs, research, fixtures, and package output
+b) Project mode with `.meta-skill/` authoring docs, fixtures, and package output
 c) Not sure - use default
 
 Reply with: `defaults`, or a compact answer like `1a 2b`.
@@ -174,12 +174,13 @@ project-mode evaluation or packaging state, run
 exists.
 
 In project mode, keep non-runtime authoring material under `.meta-skill/`.
-Use `.meta-skill/docs/research/` for research reports, `.meta-skill/docs/` for
-other durable authoring notes, and `.meta-skill/tests/` as a flat folder for
-test fixtures or check inputs only when the user provides or approves concrete
-test material. Create optional folders only when they will contain files; a
-blank `.meta-skill/tests/`, `/tests`, or nested test-category folder should
-never exist.
+Use `.meta-skill/docs/` for durable authoring notes, decisions, research
+reports, and review context. Put temporary plans wherever the surrounding repo
+keeps plans. Use `.meta-skill/tests/` as a flat folder for test fixtures or
+check inputs only when the user provides or approves concrete test material.
+Create optional folders only when they will contain files; a blank
+`.meta-skill/tests/`, `/tests`, or nested test-category folder should never
+exist.
 
 Follow these payload rules:
 
@@ -213,9 +214,10 @@ runtime dependencies.
 When the intake requires research, prefer a bounded research pass before
 runtime drafting. Use an available researcher sub-agent or research-oriented
 skill when the environment provides one and the research can run independently;
-otherwise do the smallest reliable source review yourself. Save concise research
-reports in `.meta-skill/docs/research/` for project-mode skills, and copy only
-the operational conclusions into runtime guidance.
+otherwise do the smallest reliable source review yourself. Save concise
+research reports in `.meta-skill/docs/` for project-mode skills, using a
+`-research.md` suffix when the docs folder is otherwise just research, and copy
+only the operational conclusions into runtime guidance.
 
 ### 4. Validate And Stop
 
