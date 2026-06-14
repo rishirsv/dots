@@ -1,0 +1,7 @@
+interface:
+  display_name: "Harness Engineer"
+  short_description: "Assess and build agent-ready harnesses"
+  default_prompt: "Use $harness-engineer to assess this repo's agent-readiness, then plan or execute the highest-leverage harness improvements."
+
+policy:
+  allow_implicit_invocation: true
