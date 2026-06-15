@@ -15,9 +15,10 @@ this skill whenever front-end work changes what a user sees.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
 - Read [imagegen-concepts.md](references/imagegen-concepts.md) when concepting
-  with Image Gen, generating assets, implementing from an accepted concept,
-  translating a screenshot/mockup/reference image into code, or doing fidelity
-  QA.
+  with Image Gen or generating visual assets.
+- Read [image-to-code.md](references/image-to-code.md) when implementing a
+  selected screenshot, mockup, reference image, or accepted Image Gen concept
+  as a faithful responsive frontend.
 - Read [surface-gates.md](references/surface-gates.md) when the UI type has
   specific preservation rules such as dashboards, games, media surfaces, forms,
   canvas tools, or landing pages.
@@ -80,11 +81,13 @@ for design approval when it exists. Otherwise ask directly in chat and stop.
 Once the user accepts a concept, treat it as the production design spec. Do not
 reinterpret layout, visible copy, hierarchy, styling, imagery, density, sections,
 or component model unless the user approves the deviation or a concrete blocker
-requires it.
+requires it. Use [image-to-code.md](references/image-to-code.md) for the
+implementation workflow.
 
 ### 3. Extract The Design System
 
-Before coding from an accepted concept, extract a small design system:
+Before coding from an accepted concept or selected visual target, extract a
+small design system:
 
 - tokens: background, surface, text, muted text, borders, shadows, accents,
   semantic colors, radii, elevation, spacing, and motion timing
@@ -157,11 +160,12 @@ and the latest rendered screenshot with `view_image` in the same QA pass. This
 cannot be replaced by browser inspection alone. If `view_image` or screenshots
 are unavailable, report the blocker and do not claim agency-signoff fidelity.
 
-Use [imagegen-concepts.md](references/imagegen-concepts.md) for the fidelity
-ledger, copy diff, icon audit, asset audit, state verification, native-size
-check, and final handoff requirements. Keep fixing visual, interaction,
-responsive, asset, and typography mismatches until the implementation would pass
-agency sign-off or a concrete blocker remains.
+Use [image-to-code.md](references/image-to-code.md) for selected visual target
+recreation, the fidelity ledger, copy diff, icon audit, asset audit, state
+verification, native-size check, final handoff requirements, and blocking design
+QA. Keep fixing visual, interaction, responsive, asset, and typography
+mismatches until the implementation would pass agency sign-off or a concrete
+blocker remains.
 
 Remove temporary QA screenshots, reports, scratch notes, and unused generated
 assets before handoff unless the user or task explicitly asks to keep them.
