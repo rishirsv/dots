@@ -155,7 +155,7 @@ component catalog and build steps), then:
 3. Make the dominant visual carry the hard relationship. Add a chart only for
    real quantitative data and a diagram for real structure. Surface source
    evidence: short snippets, exact symbols, confirmed vs inferred.
-4. Save to `<repo>/.agents/artifacts/unpack/<topic-slug>.html` unless the user
+4. Save to `<repo>/.agents/artifacts/<topic-slug>.html` unless the user
    gives another path.
 
 Before writing, verify `.agents/` is gitignored. If it is not and repo
