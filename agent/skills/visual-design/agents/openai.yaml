@@ -1,0 +1,7 @@
+interface:
+  display_name: "Visual Design"
+  short_description: "Design and polish visible UI"
+  default_prompt: "Use $visual-design to ground, concept, implement, and validate this UI surface."
+
+policy:
+  allow_implicit_invocation: true
