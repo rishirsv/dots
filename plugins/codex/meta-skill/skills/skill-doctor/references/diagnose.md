@@ -1,8 +1,8 @@
-# Diagnose
+# Diagnose/Edit
 
-Diagnose a specific reported failure before changing anything. The doctor uses
-one of two tracks, and must tell the user which track it is taking before doing
-the work.
+Diagnose a specific reported failure and handle any approved source edit as one
+workflow. The doctor uses one of two tracks, and must tell the user which track
+it is taking before doing the work.
 
 - Guidance-first proposal: inspect the report, current skill guidance, linked
   references, and existing evidence; localize the likely source and propose a
@@ -12,10 +12,11 @@ the work.
   behavior must be observed, or the proposed edit would be risky without a live
   check.
 
-Diagnosis then feeds the **Prompt Doctor Loop** in [edit.md](edit.md)
-(classify -> locate source -> candidate edits -> recommend -> apply only if
-authorized). Diagnose mode is read/propose-only: do not edit the target skill,
-generated packages, docs, or source until the user explicitly approves the edit.
+The **Prompt Doctor Loop** in [edit.md](edit.md) is part of this workflow, not a
+separate phase. Use it before proposing candidate text and before applying any
+approved edit. Diagnose/Edit mode is read/propose-only until the user explicitly
+approves the edit; approval may come before the turn ("fix this") or after a
+proposal ("apply that").
 
 ## Method
 
@@ -27,8 +28,12 @@ generated packages, docs, or source until the user explicitly approves the edit.
    reproduction/trial track, run exactly one narrow check and confirm it matches
    the reported failure.
 5. Localize the cause (description vs body vs reference vs structure).
-6. Propose the smallest fix — do **not** apply it without approval (see
-   [edit.md](edit.md)).
+6. Apply the Prompt Doctor Loop in [edit.md](edit.md), including the
+   stale-reference and positive-behavior scan. Proposed runtime guidance must use
+   concepts that should remain in the target skill, not debugging labels, removed
+   section names, or behavior the edit is deleting.
+7. Propose the smallest fix. If the user already approved editing, apply that
+   smallest source edit; otherwise stop and ask for approval.
 
 ## Evidence
 

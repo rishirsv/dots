@@ -1,12 +1,12 @@
 ---
 name: skill-doctor
-description: "The improve specialist within meta-skill: make an existing agent skill better. Run a Judge Review against best practices (default, produces a scored Quality page) or diagnose a specific reported failure, then propose edits for human approval and verify the fix. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for authoring a new skill (skill-writer) or formal performance measurement (skill-evaluator)."
+description: "The improve specialist within meta-skill: make an existing agent skill better. Run a Judge Review against best practices (default, produces a scored Quality page) or Diagnose/Edit a reported failure, then verify any approved fix. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for authoring a new skill (skill-writer) or formal performance measurement (skill-evaluator)."
 ---
 
 # Skill Doctor
 
 Improve an existing agent skill. Two modes — **Judge Review** (default) and
-**Diagnose** — feed a shared **propose → approve → Edit → Verify** back half.
+**Diagnose/Edit** — feed into **Verify** after any approved source edit.
 
 For the central Meta Skill CLI surface, read
 [cli.md](../../references/cli.md). Do not invent doctor-specific command
@@ -24,10 +24,11 @@ cage — solve the user's problem whichever way works.
 
 - **Judge Review** (default) — proactive audit / prompt-optimization: "make my
   skill better," "is my triggering solid?" No specific failure in hand.
-- **Diagnose** — a reproducible failure walked in: "my skill keeps failing on
-  prompt X." A specific case you can re-run.
+- **Diagnose/Edit** — a reported failure walked in: "my skill keeps failing on
+  prompt X." Work from the failure report to candidate text, then apply only if
+  the user explicitly approved editing.
 
-Tiebreaker: a specific, reproducible failing case → **Diagnose**; otherwise →
+Tiebreaker: a specific reported failure → **Diagnose/Edit**; otherwise →
 **Judge Review** (including static complaints like an over-long description).
 
 ## Judge Review (default)
@@ -44,20 +45,15 @@ Produce a **scored Quality page** (`review.md`) — see
 4. Write `review.md` with scores + prioritized findings, then **stop** —
    it proposes; it does not edit.
 
-## Diagnose
+## Diagnose/Edit
 
-Diagnose the reported failure before changing anything — see
-[references/diagnose.md](references/diagnose.md): announce whether you are using
-the guidance-first track or the reproduction/trial track, localize the cause,
-and propose the smallest fix. Diagnose mode is read/propose-only until the user
-explicitly approves an edit.
-
-## Edit
-
-Route, evidence, the Prompt Doctor Loop, and surgical update rules live in
-[references/edit.md](references/edit.md). Apply only the
-edits the user approved; smallest correct change; edit the **source** skill,
-never a generated package copy.
+Diagnose the reported failure and handle any approved edit as one workflow — read
+[references/diagnose.md](references/diagnose.md) and
+[references/edit.md](references/edit.md). Announce whether you are using the
+guidance-first track or the reproduction/trial track, localize the cause, scan
+candidate text for stale or negative-only guidance, and propose the smallest
+fix. Apply only the edits the user approved; edit the **source** skill, never a
+generated package copy.
 
 For one-off improvement testing, use the shared skill trial run workflow in
 [skill-trial-runs.md](../../references/skill-trial-runs.md). Prefer a child
@@ -85,7 +81,8 @@ namespace. Never write workbench files into `meta-skill/` itself.
 
 - **Feedback ≠ authorization** — both modes propose first; edit only on an
   explicit make/apply/update/patch/fix.
-- Reproduce *one* case; don't measure many tasks/conditions — that's `skill-evaluator`.
+- Reproduce *one* case only when using the reproduction/trial track; don't
+  measure many tasks/conditions — that's `skill-evaluator`.
 - Smallest correct change; edit source, never generated packages.
 - Child worktree edits are evidence, not promotion; parent-side source edits
   still require authorization.

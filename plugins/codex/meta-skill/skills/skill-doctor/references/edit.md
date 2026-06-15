@@ -1,6 +1,7 @@
-# Edit
+# Diagnose/Edit Candidate And Source Updates
 
-Read this when translating skill evidence into the smallest useful improvement.
+Read this as part of the Diagnose/Edit workflow when translating skill evidence
+into the smallest useful improvement.
 
 Workbench paths below are shorthand for the target project root's
 `<project>/.meta-skill/` dir (e.g. `review.md` = that dir's `review.md`). The
@@ -13,24 +14,24 @@ live in [rubric.md](rubric.md#review-lanes); the scoring rubric is
 
 | User asks for | Default route |
 |---|---|
-| "improve this skill", "review this skill", "diagnose this fail state", "what would you change", "is this good" | Clarify and diagnose |
+| "improve this skill", "review this skill", "diagnose this fail state", "what would you change", "is this good" | Clarify and Diagnose/Edit |
 | "update", "patch", "fix", "apply your changes", "make the edit" | Apply a surgical edit |
 | "run evals", "use this trace", "use a subagent", "iterate", "autonomously improve" | Evidence loop |
 | "test one prompt", "try the candidate in another thread", "use a worktree", "trial this improvement" | Skill trial run |
-| Ambiguous improvement request | Clarify and diagnose |
+| Ambiguous improvement request | Clarify and Diagnose/Edit |
 
-Clarify and diagnose is the default. **Do not silently rewrite the target skill
-payload, generated plugin packages, docs, or source files just because the user
-gave feedback or asked what should change.** Human feedback is *evidence*; it is
-not edit authorization unless the user asks to **make, apply, update, patch, or
-fix** now.
+Clarify and Diagnose/Edit is the default. **Do not silently rewrite the target
+skill payload, generated plugin packages, docs, or source files just because the
+user gave feedback or asked what should change.** Human feedback is *evidence*;
+it is not edit authorization unless the user asks to **make, apply, update,
+patch, or fix** now.
 
 Writing `review.md` (and `spec.md`) is allowed and expected during
 diagnosis/review — they are review artifacts, not payload edits.
 
 ## First Read
 
-Before diagnosing or changing anything, identify:
+Before diagnosing or changing anything in the Diagnose/Edit workflow, identify:
 
 - skill name and folder
 - current description and trigger contract
