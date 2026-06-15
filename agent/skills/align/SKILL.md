@@ -40,11 +40,22 @@ Ask one important question at a time. Wait for the user's answer before moving t
 
 ## Depth And Delegation
 
-Right-size the ceremony to the risk and breadth:
+Right-size the research effort, not the alignment standard. Even for a narrow
+idea, do enough work to prove the next action is ready: inspect the relevant
+source of truth, name the main decision, test the nearest boundary or failure
+mode, and state what remains unresolved.
 
-- `Light`: one local surface, low ambiguity, or a narrow naming/terminology question. Do a quick repo/doc check, ask one to three questions, and stop with a recommendation.
-- `Standard`: normal feature, plan, PRD, spec, or architecture alignment. Inspect the relevant code and docs, identify the origin document if any, test the main flows, and ask the next highest-leverage question.
-- `Deep`: cross-cutting system behavior, multiple modules, security/privacy/payment/migration risk, unclear ownership, or a broad codebase question. Use parallel subagents when the environment and instructions allow delegation.
+- `Standard`: normal feature, plan, PRD, spec, skill, or architecture
+  alignment. Inspect the relevant code and docs, identify the origin document if
+  any, map the core decision, test the nearest lifecycle branch or failure mode,
+  ask the next highest-leverage question, and name the approval gate before any
+  implementation or file writes.
+- `Deep`: cross-cutting system behavior, multiple modules,
+  security/privacy/payment/migration risk, unclear ownership, or a broad
+  codebase question. Split the work into bounded evidence tracks, usually repo
+  surface, origin/document surface, and external/framework surface; use parallel
+  subagents when the environment allows delegation; reconcile contradictions
+  before recommending the next action.
 
 For codebase questions, inspect the relevant code/docs before asking the user. If the surface is broad, split research into bounded read-only tracks such as:
 
@@ -87,6 +98,10 @@ Work the decision tree in dependency order:
 6. After the user answers, reflect the settled decision in precise language.
 7. Add settled language to the running state. Propose doc updates only when the documentation gate says a durable artifact is warranted.
 8. Move to the next dependent branch.
+
+Do not offer to scaffold, implement, or write files until the ready next action
+is supported by settled decisions, unresolved questions, and an explicit user
+approval gate.
 
 Prefer concrete scenarios over abstract debate. Invent edge cases that test boundaries between concepts, lifecycle states, permissions, ownership, failure recovery, migration paths, and surprising user behavior.
 
@@ -185,6 +200,20 @@ During the session, keep the running state compact:
 - `Current question:` one question, why it matters, and the recommended answer
 - `Evidence:` code/docs consulted when relevant
 - `Next branch:` the next dependent issue, not a full question dump
+
+When the user asks for a status or progress update, return an estimated progress
+view instead of advancing the alignment loop:
+
+```text
+Progress: [#####-----] 50%
+Covered: intake, source-of-truth check, core decision
+Current branch: trigger boundary
+Remaining branches: failure modes, approval gate, doc/update destination
+Confidence: medium - based on current evidence, not a formal metric
+```
+
+Use the bar and percentage as an estimate. Name the covered and remaining
+branches in the terms of the current alignment, not as a generic checklist.
 
 When stopping, report:
 
