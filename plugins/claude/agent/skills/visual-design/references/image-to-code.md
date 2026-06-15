@@ -8,8 +8,8 @@ interactive website or web app.
 
 ## User Context
 
-Use saved product URLs, Figma files, screenshots, reference images, codebase
-paths, Storybook, tokens, design systems, brand assets, component refs, browser
+Use saved product URLs, screenshots, reference images, codebase paths,
+Storybook, tokens, design systems, brand assets, component refs, browser
 preferences, and share targets as grounding material when relevant.
 
 Do not inspect every saved reference. Inspect only what the current task needs.
@@ -111,25 +111,16 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
     when Browser/IAB is unavailable or unreliable, and state the fallback
     reason.
 
-11. Run design QA as the blocking build gate.
+11. Run [design-qa](../../design-qa/SKILL.md) as the blocking build gate.
 
     Steps:
 
-    - Open the reference image and the latest prototype screenshot before
-      writing the QA report.
+    - Open the reference image and the latest prototype screenshot before QA.
     - Compare the same viewport and the same interaction state. If they do not
       match, capture the missing view first.
-    - Save the QA report as `design-qa.md` in the project root when a temporary
-      QA artifact is useful; remove it before handoff unless the user or task
-      explicitly asks to keep it.
-    - Fix P0/P1/P2 issues, capture the app again, and repeat until the QA report
-      or fidelity ledger says `final result: passed`.
-    - Do not keep looping on P3 polish. Include any remaining P3s as follow-up
-      iteration notes.
-    - If source capture, prototype capture, or visual comparison is blocked,
-      stop. The QA report or fidelity ledger must say `final result: blocked`.
-    - Do not hand off unless the QA report or fidelity ledger says
-      `final result: passed`.
+    - Fix P0/P1/P2 issues, capture the app again, and repeat until
+      `design-qa.md` says `final result: passed`.
+    - Do not hand off when `design-qa.md` says `final result: blocked`.
 
 12. Handoff the app or website.
 

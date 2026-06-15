@@ -10,8 +10,8 @@ Start with repo and product anchors when they exist:
 - `PRODUCT.md`, product briefs, tickets, plans, and existing user flows
 - repo design guidance, design-system docs, component docs, tokens, and
   existing UI conventions
-- screenshots, URLs, Figma files, image references, nearby UI code, and prior
-  accepted designs
+- screenshots, URLs, image references, nearby UI code, and prior accepted
+  designs
 
 These anchors reduce repeated questions, but they do not replace task-specific
 shape. Shape is the brief for this exact surface.
@@ -45,8 +45,8 @@ For a sparse build request, adapt these three questions to the surface and ask
 only the unknowns:
 
 1. What should the thing do?
-2. What existing product, design system, Figma file, screenshot, URL, image, or
-   visual source should it match? If none, what look is the user going for?
+2. What existing product, design system, screenshot, URL, image, or visual
+   source should it match? If none, what look is the user going for?
 3. What level of interactivity should it have: full working controls and states,
    or a faster mostly-static mock?
 
