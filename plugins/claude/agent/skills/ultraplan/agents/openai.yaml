@@ -1,0 +1,7 @@
+interface:
+  display_name: "Ultraplan"
+  short_description: "Deeply upgrade code-grounded plans"
+  default_prompt: "Use $ultraplan to deeply stress-test and upgrade this existing plan against the repository before implementation."
+
+policy:
+  allow_implicit_invocation: false
