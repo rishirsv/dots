@@ -87,7 +87,7 @@ def write_manifest(project, *, fixtures=None):
     manifest = {
         "schema_version": 1,
         "target": {"type": "skill", "ref": "skill/SKILL.md"},
-        "defaults": {"runner": "codex_exec", "repetitions": 1},
+        "defaults": {"runner": "codex_app_server", "repetitions": 1},
         "candidates": [
             {
                 "candidate": "current",
@@ -154,7 +154,7 @@ def test_json_shapes_and_materialize(tmp):
     suite = write_manifest(project)
 
     _, doctor = run_json([CLI, "doctor", "--json"], project, expect=(0, 1))
-    check({"ok", "checks", "optional_capabilities"} <= doctor.keys(), "doctor JSON shape changed")
+    check({"ok", "checks"} <= doctor.keys(), "doctor JSON shape changed")
     checks = {row["name"]: row for row in doctor["checks"]}
     check(checks["validators_canonical"]["ok"] is True, "doctor validator source path check changed")
 
@@ -164,8 +164,9 @@ def test_json_shapes_and_materialize(tmp):
     write_skill(fresh_project / "skill")
     run_json([CLI, "workbench", "init", "--target", str(fresh_project), "--json"], fresh_project)
     fresh_manifest = json.loads((fresh_project / ".meta-skill" / "evals.json").read_text())
-    check("evals" in fresh_manifest and "conditions" in fresh_manifest, "workbench init should write prompt manifest shape")
+    check("evals" in fresh_manifest and "candidates" in fresh_manifest, "workbench init should write prompt manifest shape")
     check("schema_version" not in fresh_manifest and "cases" not in fresh_manifest, "workbench init should not write legacy manifest shape")
+    check(not (fresh_project / ".meta-skill" / "tests").exists(), "workbench init should not create empty tests folder")
 
     _, materialized = run_json([CLI, "eval", "materialize", "--suite", str(suite), "--json"], project)
     check({"ok", "suite", "changes"} <= materialized.keys(), "materialize JSON shape changed")
@@ -185,9 +186,9 @@ def test_json_shapes_and_materialize(tmp):
         json.dumps(
             {
                 "skill_name": "sample-skill",
-                "conditions": [
-                    {"id": "no-skill", "label": "No skill baseline", "source": {"kind": "none"}},
-                    {"id": "current", "label": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
+                "candidates": [
+                    {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
+                    {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
                 ],
                 "evals": [
                     {
@@ -215,7 +216,7 @@ def test_json_shapes_and_materialize(tmp):
                 "run_id": "run-shape",
                 "suite": str(suite),
                 "project": str(project),
-                "runner": "codex_exec",
+                "runner": "codex_app_server",
                 "trials": [{"trial_id": "case-a.current.t1"}],
             }
         )
@@ -293,7 +294,7 @@ def test_candidate_digest_and_package_exclusions(tmp):
     check(not any(name.startswith("dist/") for name in names), "package included dist")
 
 
-def test_solver_staging_hidden_boundaries(tmp):
+def test_workspace_staging_hidden_boundaries(tmp):
     project = tmp / "project"
     write_skill(project / "skill")
     suite = write_manifest(project, fixtures=["fixtures/visible.txt"])
@@ -301,13 +302,13 @@ def test_solver_staging_hidden_boundaries(tmp):
     case_root = project / ".meta-skill" / "cases" / "case-a"
     (case_root / "fixtures").mkdir(exist_ok=True)
     (case_root / "fixtures" / "visible.txt").write_text("visible")
-    (case_root / "rubric.md").write_text("hidden")
+    (case_root / "judge.md").write_text("hidden")
     (case_root / "expected.txt").write_text("hidden")
     (case_root / "validate.py").write_text("hidden")
 
     meta_skill = import_flat_module()
     candidate = {"candidate": "current", "payload_path": str(project / "skill")}
-    staged = meta_skill.stage_solver_workspace(
+    staged = meta_skill.stage_workspace(
         project / ".meta-skill",
         project / ".meta-skill" / "runs" / "run-stage",
         "case-a.current.t1",
@@ -315,14 +316,14 @@ def test_solver_staging_hidden_boundaries(tmp):
         "visible task",
         candidate,
     )
-    workspace = Path(staged["solver_workspace"])
+    workspace = Path(staged["workspace"])
     check((workspace / "task.md").read_text() == "visible task\n", "staged task changed")
     check((workspace / "fixtures" / "fixtures" / "visible.txt").read_text() == "visible", "fixture not staged")
-    for hidden in ("rubric.md", "expected.txt", "validate.py"):
+    for hidden in ("judge.md", "expected.txt", "validate.py"):
         check(not (workspace / hidden).exists(), f"hidden case material staged: {hidden}")
-    check(not (workspace / "skill" / ".meta-skill").exists(), "candidate .meta-skill copied into solver workspace")
+    check(not (workspace / "skill" / ".meta-skill").exists(), "candidate .meta-skill copied into workspace")
 
-    baseline = meta_skill.stage_solver_workspace(
+    baseline = meta_skill.stage_workspace(
         project / ".meta-skill",
         project / ".meta-skill" / "runs" / "run-stage",
         "case-a.baseline.t1",
@@ -330,13 +331,13 @@ def test_solver_staging_hidden_boundaries(tmp):
         "visible task",
         {"candidate": "baseline", "payload_path": None},
     )
-    baseline_workspace = Path(baseline["solver_workspace"])
+    baseline_workspace = Path(baseline["workspace"])
     check(not (baseline_workspace / "skill").exists(), "no-skill candidate staged a skill payload")
     check(baseline["staged_payload_digest"] is None, "no-skill candidate should have null staged payload digest")
 
     for fixture in ("/tmp/escape.txt", "../escape.txt"):
         try:
-            meta_skill.stage_solver_workspace(
+            meta_skill.stage_workspace(
                 project / ".meta-skill",
                 project / ".meta-skill" / "runs" / "run-stage",
                 f"case-a.current.{abs(hash(fixture))}",
@@ -357,7 +358,7 @@ def test_solver_staging_hidden_boundaries(tmp):
     except OSError:
         return
     try:
-        meta_skill.stage_solver_workspace(
+        meta_skill.stage_workspace(
             project / ".meta-skill",
             project / ".meta-skill" / "runs" / "run-stage",
             "case-a.current.symlink",
@@ -543,10 +544,10 @@ def test_eval_list_and_report(tmp):
         {**trials[4], "status": "passed", "usage": {"input_tokens": 7, "output_tokens": 11}},
     ]
     grades = [
-        grade("case-a.current.t1", "rubric", {"kind": "model", "id": "rubric"}, 1.0, "pass", "meets rubric"),
+        grade("case-a.current.t1", "judge", {"kind": "model", "id": "judge"}, 1.0, "pass", "meets judge"),
         grade("case-a.current.t1", "validator", {"kind": "code", "id": "validate.py"}, 1.0, "pass", "1/1 validator checks passed"),
         grade("case-a.attempt-1.t1", "validator", {"kind": "code", "id": "validate.py"}, 0.0, "fail", "0/1 validator checks passed"),
-        grade("case-a.attempt-1.t2", "rubric", {"kind": "model", "id": "rubric"}, None, "fail", "judge emitted invalid JSON: nonsense"),
+        grade("case-a.attempt-1.t2", "judge", {"kind": "model", "id": "judge"}, None, "fail", "judge emitted invalid JSON: nonsense"),
     ]
     run_dir.mkdir(parents=True)
     (run_dir / "run.json").write_text(
@@ -554,7 +555,7 @@ def test_eval_list_and_report(tmp):
             {
                 "run_id": "run-report-fixture",
                 "suite": str(suite),
-                "runner": "codex_exec",
+                "runner": "codex_app_server",
                 "created_at": "2026-01-02T03:04:05+00:00",
                 "candidates": [
                     {
@@ -617,7 +618,7 @@ def test_eval_list_and_report(tmp):
     check(attention == expected_attention, f"needs-attention items changed: {sorted(attention)}")
     clean = next(item for item in report["trials"] if item["trial_id"] == "case-a.current.t1")
     check(clean["paths"]["response"] == "candidates/current/case-a.current.t1/response.md", "evidence paths are not run-relative")
-    check(clean["rubric"] == {"score": 1.0, "label": "pass"} and clean["validators"] == {"passed": 1, "total": 1}, "clean trial grades changed")
+    check(clean["judge"] == {"score": 1.0, "label": "pass"} and clean["validators"] == {"passed": 1, "total": 1}, "clean trial grades changed")
     check(
         all(not (path or "").startswith("/") for item in report["trials"] for path in item["paths"].values()),
         "report leaked absolute evidence paths",
@@ -700,7 +701,7 @@ def test_report_impact_and_gates(tmp):
             {
                 "run_id": "run-impact",
                 "suite": str(suite),
-                "runner": "codex_exec",
+                "runner": "codex_app_server",
                 "created_at": "2026-01-02T03:04:05+00:00",
                 "candidates": [
                     {"candidate": "baseline", "display": "No skill", "source_kind": "none", "source_ref": None, "payload_digest": None},
@@ -779,7 +780,7 @@ def test_report_uses_all_grader_kinds(tmp):
             {
                 "run_id": "run-grader-kinds",
                 "suite": str(suite),
-                "runner": "codex_exec",
+                "runner": "codex_app_server",
                 "created_at": "2026-01-02T03:04:05+00:00",
                 "candidates": [
                     {"candidate": "baseline", "display": "No skill", "source_kind": "none", "source_ref": None, "payload_digest": None},
@@ -811,34 +812,11 @@ def test_eval_run_artifact_records(tmp):
     run_json([CLI, "eval", "materialize", "--suite", str(suite), "--json"], project)
     init_git_project(project)
 
-    bin_dir = tmp / "bin"
-    bin_dir.mkdir()
-    fake_codex = bin_dir / "codex"
-    fake_codex.write_text(
-        textwrap.dedent(
-            """\
-            #!/usr/bin/env python3
-            import sys
-            from pathlib import Path
+    fake_root = tmp / "fake-sdk"
+    write_fake_sdk(fake_root, mode="success")
+    env = {"PYTHONPATH": f"{fake_root}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"}
 
-            if len(sys.argv) > 1 and sys.argv[1] == "--version":
-                print("codex fake")
-                raise SystemExit(0)
-            if "exec" in sys.argv and "--help" in sys.argv:
-                print("usage: codex exec")
-                raise SystemExit(0)
-            output = Path(sys.argv[sys.argv.index("--output-last-message") + 1])
-            output.parent.mkdir(parents=True, exist_ok=True)
-            _prompt = sys.stdin.read()
-            output.write_text("fake final\\n")
-            print('{"event":"fake"}')
-            """
-        )
-    )
-    fake_codex.chmod(0o755)
-    env = {"PATH": f"{bin_dir}{os.pathsep}{os.environ.get('PATH', '')}"}
-
-    _, run_result = run_json([CLI, "eval", "run", "--suite", str(suite), "--runner", "codex_exec", "--json"], project, env=env)
+    _, run_result = run_json([CLI, "eval", "run", "--suite", str(suite), "--json"], project, env=env)
     run_dir = Path(run_result["run_dir"])
     run_record = json.loads((run_dir / "run.json").read_text())
     result = json.loads((run_dir / "results.jsonl").read_text().splitlines()[0])
@@ -849,8 +827,8 @@ def test_eval_run_artifact_records(tmp):
     trial = run_record["trials"][0]
     check({"thread_id", "turn_id", "evidence_path", "response_path", "sandbox"} <= trial.keys(), "trial record evidence fields missing")
     check(result["response_path"] == result["output_path"], "result response/output paths diverged")
-    check(Path(result["response_path"]).read_text() == "fake final\n", "fake runner response output changed")
-    check(evidence["trial_id"] == result["trial_id"] and evidence["response_text"] == "fake final\n", "thread evidence record changed")
+    check(Path(result["response_path"]).read_text() == "final text", "fake runner response output changed")
+    check(evidence["trial_id"] == result["trial_id"] and evidence["response_text"] == "final text", "thread evidence record changed")
 
 
 def write_fake_sdk(root, *, mode):
@@ -1031,7 +1009,7 @@ TESTS = [
     test_help_surfaces,
     test_json_shapes_and_materialize,
     test_candidate_digest_and_package_exclusions,
-    test_solver_staging_hidden_boundaries,
+    test_workspace_staging_hidden_boundaries,
     test_grade_expected_validator_behavior,
     test_eval_list_and_report,
     test_report_impact_and_gates,

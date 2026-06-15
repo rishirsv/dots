@@ -16,7 +16,6 @@ from .candidates import (
 )
 from .cli import *  # noqa: F401,F403
 from .errors import CliError
-from .exec_fallback import exec_run
 from .grading import grade_run, human_review_packet, record_human_grade, validator_command
 from .ids import require_id, run_id, slug, utc_now
 from .io import append_jsonl, emit, fail, normalize_usage, read_json, read_jsonl, resolve_run_dir, to_jsonable, write_json, write_jsonl
@@ -36,6 +35,6 @@ from .manifest import (
 from .packaging import package_skill
 from .report import build_report, compare_run, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, run_trial, terminal_count
-from .staging import copy_payload, safe_case_file, stage_solver_workspace
+from .staging import copy_payload, safe_case_file, stage_workspace
 from .validation import validate_report
 from .workbench import init_workbench, materialize_cases

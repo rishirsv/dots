@@ -66,7 +66,7 @@ def lint_suite(raw_suite):
     recommendations = [
         "Choose the most exact fair grader: code for exact checks, model for semantic quality, human for judgment or calibration.",
         "Use transcript-aware graders only when process behavior is part of the requirement.",
-        "Run no-skill and current-skill conditions before claiming skill lift.",
+        "Run no-skill and current-skill candidates before claiming skill lift.",
         "Inspect failed, surprising, or model/human-disagreed transcripts before editing the skill.",
     ]
     return {

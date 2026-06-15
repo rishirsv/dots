@@ -7,7 +7,7 @@ from .manifest import DEFAULT_EVALS, case_dir, case_task_info, load_manifest, su
 
 def init_workbench(target, dry_run=False):
     workbench = target / ".meta-skill"
-    paths = [workbench, workbench / "cases", workbench / "runs", workbench / "tests"]
+    paths = [workbench, workbench / "cases", workbench / "runs"]
     evals_path = workbench / "evals.json"
     changes = []
     for path in paths:

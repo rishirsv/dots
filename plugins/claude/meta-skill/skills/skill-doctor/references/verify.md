@@ -2,7 +2,7 @@
 
 After approved edits are applied, confirm the targeted problem is resolved
 without regressing the skill, then refresh the score. The doctor confirms *one*
-case; `skill-evaluator` measures many tasks across conditions.
+case; `skill-evaluator` measures many tasks across candidates.
 
 ## Run the deterministic tests
 

@@ -35,7 +35,7 @@ Pick the smallest specialist route that satisfies the user's request.
   portable skill.
 - Use `skill-doctor` for existing skills: reviews, fixes, diagnosis, prompt
   cleanup, trigger tuning, implementation improvements, or reported failures.
-- Use `skill-evaluator` when the user needs task evidence across conditions,
+- Use `skill-evaluator` when the user needs task evidence across candidates,
   such as no-skill vs current-skill vs edited-skill comparisons, trial suites,
   scoring, or outcome measurement.
 - For a one-prompt trial of a draft or fix, stay with the owning specialist and

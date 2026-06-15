@@ -8,12 +8,12 @@ let the judge scale.
 
 ## The Loop
 
-1. **Anchor the rubric.** Put discrete level descriptions in
-   `cases/<task-id>/rubric.md`. Ambiguous criteria are the main cause of an
+1. **Anchor the judge guidance.** Put discrete level descriptions in
+   `cases/<task-id>/judge.md`. Ambiguous criteria are the main cause of an
    unreliable judge.
 2. **Select a spot-check slice.** Pick a small set of representative trial
    outcomes before trusting the judge for a decision. For small skill suites, a
-   few human-labeled examples are usually enough to reveal obvious rubric or
+   few human-labeled examples are usually enough to reveal obvious judge guidance or
    judge defects.
 3. **Collect human grades.** Use [human-grading.md](human-grading.md) to show
    response and transcript evidence, ask for label/rationale, and store human
@@ -23,10 +23,10 @@ let the judge scale.
    Practical signal: exact-match rate plus a +/-1 tolerance band. Reach for
    weighted kappa or correlation only when statistical rigor is needed.
 5. **Refine on disagreement.** Every material judge/human disagreement is a
-   rubric, judge-prompt, task, or evidence-selection defect. Tighten
-   `rubric.md`, add reference examples when needed, then rerun the judge.
+   judge guidance, judge prompt, task, or evidence-selection defect. Tighten
+   `judge.md`, add reference examples when needed, then rerun the judge.
 6. **Scale carefully.** Let the judge grade the rest only after disagreements
-   look explainable and fixable. Recheck a small slice after any rubric or
+   look explainable and fixable. Recheck a small slice after any judge guidance or
    judge-model change — prior agreement does not transfer.
 
 ## Grade Rows
@@ -51,20 +51,20 @@ Human, model, and code grades share one annotation shape:
 }
 ```
 
-Use condition/task/trial language in prose. In grade rows, use the current
+Use candidate/task/trial language in prose. In grade rows, use the current
 schema field `candidate`, not `candidate_id`. Use `trial_id`, not `attempt_id`.
 
 ## Surfacing Divergence
 
-Flag every task where `|human - judge| >= 1` for review, and propose the rubric
+Flag every task where `|human - judge| >= 1` for review, and propose the judge guidance
 or anchor change that would close it. A few well-chosen spot checks beat
 labeling everything.
 
 Do not turn calibration into a separate label system. If a decision depends on
 judge scores, say whether a human spot check was done and summarize any
 disagreements in plain language. Use transcripts to diagnose disagreements, but
-grade the outcome unless the rubric explicitly measures process behavior. When
-the human's taste is the standard, rewrite the rubric into observable
+grade the outcome unless the judge guidance explicitly measures process behavior. When
+the human's taste is the standard, rewrite the judge guidance into observable
 pass/partial/fail indicators before letting the model judge scale.
 
 ## Judge Bias Controls
@@ -75,9 +75,9 @@ LLM judges drift in predictable ways. Guard against them:
 - **Position / order bias** — in pairwise comparisons, randomize order.
 - **Self-preference** — a judge favoring outputs written in its own style.
 
-Reference-guided grading reduces all three. Give the judge the explicit rubric
+Reference-guided grading reduces all three. Give the judge explicit judge guidance
 and, where possible, hidden expected output or reference material. These hidden
-files remain outside the solver workspace.
+files remain outside the workspace.
 
 If the judge cannot decide from the outcome and allowed transcript evidence,
 prefer `unknown` or `needs_human_review` over a confident invented score.

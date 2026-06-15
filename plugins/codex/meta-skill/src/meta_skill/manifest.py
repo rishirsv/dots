@@ -8,9 +8,9 @@ from .io import read_json
 
 
 SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "none"}
-DEFAULT_CONDITIONS = [
-    {"id": "no-skill", "label": "No skill baseline", "source": {"kind": "none"}},
-    {"id": "current", "label": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
+DEFAULT_CANDIDATES = [
+    {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
+    {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
 ]
 DEFAULT_EVALS = {
     "skill_name": "TODO",
@@ -19,7 +19,7 @@ DEFAULT_EVALS = {
         "runner": "codex_app_server",
         "repetitions": 1,
     },
-    "conditions": DEFAULT_CONDITIONS,
+    "candidates": DEFAULT_CANDIDATES,
     "evals": [],
 }
 
@@ -45,17 +45,6 @@ def case_dir(workbench, case_id):
     return workbench / "cases" / require_id("case id", case_id)
 
 
-def normalize_condition(row):
-    if not isinstance(row, dict):
-        raise CliError("evals.json conditions must be objects", 2)
-    condition = dict(row)
-    if "candidate" not in condition and condition.get("id"):
-        condition["candidate"] = condition["id"]
-    if "display" not in condition and condition.get("label"):
-        condition["display"] = condition["label"]
-    return condition
-
-
 def normalize_prompt_manifest(data):
     if "evals" not in data:
         return data
@@ -63,7 +52,7 @@ def normalize_prompt_manifest(data):
     if not isinstance(evals, list):
         raise CliError("evals.json evals must be a list", 2)
     defaults = data.get("defaults") or {"runner": "codex_app_server", "repetitions": 1}
-    raw_conditions = [normalize_condition(row) for row in (data.get("conditions") or data.get("candidates") or DEFAULT_CONDITIONS)]
+    raw_candidates = data.get("candidates") or DEFAULT_CANDIDATES
     cases = []
     for item in evals:
         if not isinstance(item, dict):
@@ -95,7 +84,7 @@ def normalize_prompt_manifest(data):
         "schema_version": 1,
         "target": data.get("target") or {"type": "skill", "ref": "SKILL.md"},
         "defaults": defaults,
-        "candidates": raw_conditions,
+        "candidates": raw_candidates,
         "cases": cases,
         "_manifest_shape": "prompt",
         "skill_name": data.get("skill_name"),

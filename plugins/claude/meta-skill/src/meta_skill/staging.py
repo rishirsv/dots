@@ -1,4 +1,4 @@
-"""Solver workspace staging and hidden-boundary enforcement."""
+"""Workspace staging and hidden-boundary enforcement."""
 
 import shutil
 from pathlib import Path
@@ -33,9 +33,9 @@ def copy_payload(src, dest):
         shutil.copytree(src, dest, ignore=ignore)
 
 
-def stage_solver_workspace(workbench, run_dir, trial_id, case, task_text, candidate):
+def stage_workspace(workbench, run_dir, trial_id, case, task_text, candidate):
     case_root = case_dir(workbench, case["id"])
-    workspace = workbench / "solver-workspaces" / run_dir.name / trial_id
+    workspace = workbench / "workspaces" / run_dir.name / trial_id
     if workspace.exists():
         shutil.rmtree(workspace)
     workspace.mkdir(parents=True)
@@ -58,7 +58,7 @@ def stage_solver_workspace(workbench, run_dir, trial_id, case, task_text, candid
             shutil.copy2(source, target)
 
     staged_candidate = dict(candidate)
-    staged_candidate["solver_workspace"] = str(workspace)
+    staged_candidate["workspace"] = str(workspace)
     staged_candidate["cwd"] = str(workspace)
     if candidate.get("payload_path"):
         staged_payload = workspace / "skill"

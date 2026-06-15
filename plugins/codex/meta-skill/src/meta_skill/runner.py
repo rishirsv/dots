@@ -9,7 +9,6 @@ from .app_server.trial import app_server_run
 from .artifacts import candidate_source, thread_evidence, trial_record
 from .candidates import resolve_candidate
 from .errors import CliError
-from .exec_fallback import exec_run
 from .ids import run_id, utc_now
 from .io import append_jsonl, read_json, read_jsonl, resolve_run_dir, write_json
 from .manifest import (
@@ -23,7 +22,7 @@ from .manifest import (
     trial_prompt,
     workbench_from_suite,
 )
-from .staging import safe_case_file, stage_solver_workspace
+from .staging import safe_case_file, stage_workspace
 
 
 PROGRESS_STATES = {
@@ -44,7 +43,7 @@ def resolve_runner(raw_runner, defaults):
     runner = raw_runner
     if runner == "auto":
         runner = defaults.get("runner") or "codex_app_server"
-    if runner not in {"codex_app_server", "codex_exec"}:
+    if runner != "codex_app_server":
         raise CliError(f"unknown runner: {runner}", 2)
     return runner
 
@@ -61,16 +60,14 @@ def plan_trials(cases, candidates, repetitions):
 
 
 def runner_sandbox(runner):
-    return APP_SERVER_SANDBOX if runner == "codex_app_server" else "workspace-write"
+    return APP_SERVER_SANDBOX
 
 
 def runner_approval_policy(runner):
-    return APP_SERVER_APPROVAL_POLICY if runner == "codex_app_server" else None
+    return APP_SERVER_APPROVAL_POLICY
 
 
 def runner_thread_persistence(runner, detail=None):
-    if runner != "codex_app_server":
-        return None
     if detail and detail.get("thread_persistence"):
         return detail["thread_persistence"]
     return "persistent"
@@ -109,7 +106,7 @@ def queued_record(row, runner, workbench, run_dir):
         repetition=row["index"],
         status="queued",
         runner=runner,
-        cwd=str(workbench / "solver-workspaces" / run_dir.name / trial_id),
+        cwd=str(workbench / "workspaces" / run_dir.name / trial_id),
         thread_persistence=runner_thread_persistence(runner),
         sandbox=runner_sandbox(runner),
         runtime_approval_policy=runner_approval_policy(runner),
@@ -129,13 +126,10 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
     evidence_path = paths["evidence"]
     started = time.time()
     try:
-        staged_candidate = stage_solver_workspace(workbench, run_dir, trial_id, case, task_texts[case["id"]], candidate)
+        staged_candidate = stage_workspace(workbench, run_dir, trial_id, case, task_texts[case["id"]], candidate)
         prompt = trial_prompt(task_texts[case["id"]])
-        if runner == "codex_app_server":
-            detail = app_server_run(row, prompt, staged_candidate, event_path, output_path, model)
-        elif runner == "codex_exec":
-            detail = exec_run(row, prompt, staged_candidate, event_path, output_path, model)
-        detail["solver_workspace"] = staged_candidate["solver_workspace"]
+        detail = app_server_run(row, prompt, staged_candidate, event_path, output_path, model)
+        detail["workspace"] = staged_candidate["workspace"]
         detail["staged_payload_digest"] = staged_candidate["staged_payload_digest"]
         status = "passed" if detail.get("status") in {"completed", "succeeded"} else "failed"
         error = None if status == "passed" else detail.get("status", "runner failed")
@@ -173,7 +167,7 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
         thread_id=detail.get("thread_id"),
         turn_id=detail.get("turn_id"),
         thread_persistence=persistence,
-        cwd=detail.get("solver_workspace"),
+        cwd=detail.get("workspace"),
         sandbox=detail.get("sandbox") or runner_sandbox(runner),
         runtime_approval_policy=detail.get("runtime_approval_policy") or runner_approval_policy(runner),
         sdk_version=detail.get("sdk_version"),

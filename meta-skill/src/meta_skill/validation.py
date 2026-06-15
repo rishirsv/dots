@@ -1,7 +1,6 @@
 """Skill validation bridge."""
 
-import lint_authoring
-import validate_skill
+from . import lint_authoring, validate_skill
 
 from .candidates import resolve_skill_md
 from .errors import CliError
@@ -34,4 +33,3 @@ def validate_report(skill_dir):
         "total": total,
         "validation_percent": round(100 * passed / total) if total else 0,
     }
-

@@ -113,7 +113,7 @@ def build_trial(run_dir, planned, result, grades):
         "runner_status": (result or {}).get("status") or "no_result",
         "error": (result or {}).get("error"),
         "usage": (result or {}).get("usage"),
-        "rubric": {"score": model_rows[0].get("score"), "label": model_rows[0].get("label")} if model_rows else None,
+        "judge": {"score": model_rows[0].get("score"), "label": model_rows[0].get("label")} if model_rows else None,
         "model_grades": [grade_summary(row) for row in model_rows],
         "validators": {
             "passed": sum(1 for row in validators if row.get("label") == "pass"),

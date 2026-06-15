@@ -20,22 +20,22 @@ Use a hidden prompt manifest plus materialized task folders:
     <task-id>/
       task.md
       fixtures/
-      rubric.md
+      judge.md
       expected.*
       validate.*
 ```
 
 `evals.json` is authoritative for metadata: target, defaults, runner plan,
-repetitions, condition guidance, realistic prompts, expectations, and
+repetitions, candidate guidance, realistic prompts, expectations, and
 materialization intent.
 
 Task folders are authoritative for authored content after materialization:
-visible task bytes, fixtures, rubric content, expected outputs, and validator
+visible task bytes, fixtures, judge guidance, expected outputs, and validator
 code. The directory is still named `cases/` in today's file layout, but the
 user-facing concept is an evaluation task.
 
-`task.md` contains only bytes the solver may see. Do not put YAML front matter,
-expected output, rubric text, validator hints, grader notes, target metadata, or
+`task.md` contains only bytes the agent may see. Do not put YAML front matter,
+expected output, judge guidance, validator hints, grader notes, target metadata, or
 harness instructions in `task.md`.
 
 Use this vocabulary in prose:
@@ -44,8 +44,8 @@ Use this vocabulary in prose:
 |---|---|
 | **suite** | A group of related evaluation tasks and grading rules. |
 | **task** | The user work being evaluated; stored today as `cases/<task-id>/task.md`. |
-| **condition** | The agent-harness setup: no skill, current skill, or edited-skill attempt. Stored today in manifest/run fields named `candidate`. |
-| **trial** | One task executed once under one condition. |
+| **candidate** | The agent-harness setup: no skill, current skill, or edited-skill attempt. |
+| **trial** | One task executed once under one candidate. |
 | **transcript** | The event stream and compact evidence from the trial. |
 | **outcome** | The final answer, files, artifacts, or state to grade. |
 | **grader** | A human, model, or code validator judging an outcome. |
@@ -62,7 +62,7 @@ Skill Writer may create a compact prompt manifest in
     "runner": "codex_app_server",
     "repetitions": 1
   },
-  "conditions": [
+  "candidates": [
     {
       "id": "no-skill",
       "label": "No skill baseline",
@@ -87,10 +87,10 @@ Skill Writer may create a compact prompt manifest in
       ],
       "graders": [
         {
-          "id": "activation-rubric",
+          "id": "activation-judge",
           "kind": "model",
           "metric": "activation",
-          "path": "rubric.md",
+          "path": "judge.md",
           "uses_transcript": true
         },
         {
@@ -112,18 +112,15 @@ Skill Writer may create a compact prompt manifest in
 }
 ```
 
-The CLI normalizes writer-facing `conditions[].id` to the legacy internal
-`candidate` field. It also continues to read the normalized schema with
-`schema_version`, `cases[]`, and `candidates[]`. Explain `candidates[]` as
-conditions in prose. New writer-authored material should prefer `evals[]` and
-`conditions[]` unless an existing suite already uses `cases[]`.
+The CLI uses `candidates[]` for agent-harness setups and `evals[]` for
+writer-authored tasks.
 
 Keep the manifest small. Use conventional files inside each task folder:
 
-- `task.md` — visible solver task
-- `fixtures/` — visible files copied into the solver workspace when listed in
+- `task.md` — visible task
+- `fixtures/` — visible files copied into the workspace when listed in
   `evals.json`
-- `rubric.md` — hidden judge rubric
+- `judge.md` — hidden judge guidance
 - `expected.*` — hidden oracle or reference output
 - `validate.*` — hidden deterministic validator
 - `expectations[]` — optional hidden expectation checklist in `evals.json`
@@ -133,17 +130,15 @@ The `prompt` or `task.seed` value is used only when `task.md` does not exist. A
 materializer must not overwrite existing authored content unless the caller
 explicitly forces it.
 
-Although the schema field is currently `candidates`, explain those rows as
-**conditions**. The condition changes the agent harness; the task prompt stays
-the same. A no-skill condition uses `source.kind: "none"` and stages no skill
-payload.
+Candidates change the agent harness while the task prompt stays the same. A
+no-skill candidate uses `source.kind: "none"` and stages no skill payload.
 
 ## Grader Declaration
 
 Graders may be implicit or explicit.
 
-Implicit discovery keeps small suites cheap: if `rubric.md` exists, the grader
-runs a model rubric; if `validate.*` exists, each validator runs as a code
+Implicit discovery keeps small suites cheap: if `judge.md` exists, the grader
+runs a model judge; if `validate.*` exists, each validator runs as a code
 grader. Use explicit `graders[]` when a task needs named metrics, required
 gates, or a stable report contract.
 
@@ -155,10 +150,10 @@ gates, or a stable report contract.
   ],
   "graders": [
     {
-      "id": "quality-rubric",
+      "id": "quality-judge",
       "kind": "model",
       "metric": "quality",
-      "path": "rubric.md"
+      "path": "judge.md"
     },
     {
       "id": "exact-structure",
@@ -177,11 +172,11 @@ Supported grader kinds:
 | Kind | Runtime behavior |
 |---|---|
 | `code` | Runs the named `validate.*` file and writes `grader.kind = "code"` to `grades.jsonl`. |
-| `model` | Runs the rubric/expectation judge and writes `grader.kind = "model"` to `grades.jsonl`. Set `uses_transcript: true` only when the rubric grades process behavior or needs mid-conversation evidence. |
+| `model` | Runs the judge guidance or expectation judge and writes `grader.kind = "model"` to `grades.jsonl`. Set `uses_transcript: true` only when the judge guidance grades process behavior or needs mid-conversation evidence. |
 | `human` | Creates a pending `needs_human_review` row until a reviewer records the label with `eval human`. |
 
-`required` or `gate` means the grader is promotion-blocking. A condition may
-score well on a rubric and still be rejected if a gate fails.
+`required` or `gate` means the grader is promotion-blocking. A candidate may
+score well against judge guidance and still be rejected if a gate fails.
 
 `expectations[]` are hidden verifier statements. They are not copied into
 `task.md`; the model judge uses them to emit named checks with evidence. Exact
@@ -197,7 +192,7 @@ Match the task text to what the task measures:
 |---|---|---|---|
 | **Quality** | Names the skill when invocation should be forced. | once / few | Output quality given the skill fired. |
 | **Trigger** | Natural request; never names the skill. | many | Fire / no-fire rate and variance. |
-| **Failure** | Reproduces a known failure or regression. | few | Whether the edited-skill condition fixed the failure. |
+| **Failure** | Reproduces a known failure or regression. | few | Whether the edited-skill candidate fixed the failure. |
 | **Gate** | Exercises a must-not-break requirement. | one / few | Promotion safety. |
 
 For a fuller set of eval types, grader choices, and task examples, read
@@ -208,33 +203,33 @@ test. Trigger tasks need the target seeded into a clean environment so it can
 fire; the environment-specific seeding mechanism remains behind the central CLI
 runner adapter.
 
-For impact comparison, keep `task.md` stable across conditions. Do not write
+For impact comparison, keep `task.md` stable across candidates. Do not write
 "use the skill" into the task. The same visible task should run under no-skill,
-current-skill, and edited-skill conditions.
+current-skill, and edited-skill candidates.
 
 ## Hidden Boundary
 
-Hidden means not staged into the solver workspace and not included in the prompt.
+Hidden means not staged into the workspace and not included in the prompt.
 It does not mean hidden files need a separate top-level directory.
 
 ```text
 task folder
 -> materializer
--> solver workspace containing task.md, listed fixtures, and condition payload when present
+-> workspace containing task.md, listed fixtures, and candidate payload when present
 -> transcript and outcome
--> evaluator reads rubric.md, expected.*, validate.*, outcome, and transcript
+-> evaluator reads judge.md, expected.*, validate.*, outcome, and transcript
 -> grades.jsonl
 ```
 
-The solver sees `task.md`, listed fixtures, and the condition payload when the
-condition supplies one. A no-skill condition supplies no payload. The solver
-does not see `rubric.md`, `expected.*`, `validate.*`, judge prompts, or human
+The agent sees `task.md`, listed fixtures, and the candidate payload when the
+candidate supplies one. A no-skill candidate supplies no payload. The agent
+does not see `judge.md`, `expected.*`, `validate.*`, judge prompts, or human
 labels.
 
-## Anchored Rubric
+## Anchored Judge Guidance
 
-A judge is only as reliable as its rubric. Put semantic criteria in
-`rubric.md`, not in `task.md`.
+A judge is only as reliable as its judge guidance. Put semantic criteria in
+`judge.md`, not in `task.md`.
 
 For each dimension give discrete level descriptions, not a bare 0-3:
 
@@ -253,7 +248,7 @@ guarantees. Adjust per target; a non-skill target derives dimensions from
 
 Prefer multiple focused grader dimensions over one vague score. A task may have
 several graders or assertions: exact outcome checks, transcript metrics,
-tool-call checks, and a rubric for the quality that cannot be checked by code.
+tool-call checks, and judge guidance for the quality that cannot be checked by code.
 
 ## Coverage Statement
 
@@ -264,32 +259,31 @@ overclaims. State:
 - which behaviors of the target the tasks actually exercised
 - known behaviors not yet tested, and why
 
-Keep it to a few bullets. No-skill/current-skill/edited-skill condition
+Keep it to a few bullets. No-skill/current-skill/edited-skill candidate
 comparison guidance lives in [methodology.md](methodology.md).
 
-## Conditions And Trials
+## Candidates And Trials
 
-Use **condition** in user-facing prose for the agent-harness setup:
+Use **candidate** in user-facing prose and schema fields for the agent-harness setup:
 
 ```json
 { "candidate": "attempt-1", "display": "Edited skill attempt 1" }
 ```
 
-Use `candidate` only for the current manifest and run-file field. Do not add
-`candidate_id`.
+Do not add `condition_id`, `candidate_id`, or `attempt_id`.
 
-Use `trial_id` for one execution of one task under one condition:
+Use `trial_id` for one execution of one task under one candidate:
 
 ```text
 natural-trigger.attempt-1.t3
 ```
 
-Do not use `attempt_id` internally. "Attempt 1" is display text for a condition.
+Use "Attempt 1" only as display text for a candidate.
 
-Condition source lives in git branches, worktrees, or `source.kind: "none"` for
+Candidate source lives in git branches, worktrees, or `source.kind: "none"` for
 the no-skill baseline. Run evidence records the branch, commit, worktree path
 when active, and `payload_digest`. The digest is computed from the staged
-`skill/` payload tree, not from the commit. For no-skill conditions, payload
+`skill/` payload tree, not from the commit. For no-skill candidates, payload
 path and digest are null.
 
 A no-skill baseline uses `source.kind: "none"`:
@@ -303,13 +297,13 @@ A no-skill baseline uses `source.kind: "none"`:
 ```
 
 Do not fake a no-skill baseline by staging a different skill payload. The
-no-skill condition runs the same task with no `skill/` payload staged.
+no-skill candidate runs the same task with no `skill/` payload staged.
 
-`runs/<run-id>/candidates/<condition>/<trial-id>/response.md` stores the
-captured solver response for compatibility with the current runner. Never store
+`runs/<run-id>/candidates/<candidate>/<trial-id>/response.md` stores the
+captured agent response. Never store
 source copies there.
 
-When a run contains a no-skill condition and at least one payload condition,
+When a run contains a no-skill candidate and at least one payload candidate,
 `eval report` adds per-task impact categories:
 
 - `candidate_improves`
@@ -324,5 +318,5 @@ Add a reference solution or expected output when the task is deterministic,
 artifact-heavy, or intended to gate promotion. The reference proves the task is
 solvable and that the graders can pass a known-good result.
 
-Do not make the solver see the reference solution. Keep it in `expected.*` or a
+Do not make the agent see the reference solution. Keep it in `expected.*` or a
 hidden fixture used by validators and graders.

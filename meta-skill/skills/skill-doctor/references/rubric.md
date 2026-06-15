@@ -88,16 +88,17 @@ would change future agent behavior. Do not restate the table.
 
 ## Verify tests (deterministic)
 
-Verify runs `scripts/meta-skill validate <skill-dir>`, which executes the canonical
-deterministic checks from the plugin-level CLI source tree and prints a combined
-pass-rate. **Entirely deterministic** — no judgment. Two tasks today:
+Verify runs `scripts/meta-skill validate <skill-dir>`, which executes the
+canonical deterministic checks from the Meta Skill package modules and prints a
+combined pass-rate. **Entirely deterministic** — no judgment. Two task groups
+today:
 
-- `validate_skill.py` — structure: `frontmatter_valid`, `name_field`,
+- skill structure validation — `frontmatter_valid`, `name_field`,
   `description_field`, `frontmatter_unknown_keys` (Warning if any),
   `skill_md_line_count` (≤ 500), `compatibility_field`, `allowed_tools_field`,
   `metadata_field`, `metadata_version`, `license_field` (optional — absent =
   Pass), `body_present`.
-- `lint_authoring.py` — the *mechanical* authoring anti-patterns:
+- authoring lint — the *mechanical* authoring anti-patterns:
   `description_length` (≤ 500 Pass / ≤ 1024 Warning), `description_third_person`,
   `description_no_workflow_steps` (the "dangerous shortcut"), `hard_command_density`
   (stacked MUST/ALL-CAPS), `dead_references` (broken local links).

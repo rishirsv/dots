@@ -1,11 +1,11 @@
-# Generalist Rubric Builder
+# Generalist Judge Guidance Builder
 
 Read when the target is not an agent skill. Anything can be evaluated; the craft
-is building a rubric that represents the artifact's *job*, rather than reaching
+is building judge guidance that represents the artifact's *job*, rather than reaching
 for a generic checklist.
 
 A skill gets built-in defaults. Any other artifact — a prompt, a document, a
-model output, a product surface, a workflow — earns its rubric from the questions
+model output, a product surface, a workflow — earns its judge guidance from the questions
 below.
 
 ## Derive Dimensions From The Job
@@ -30,33 +30,32 @@ Answer these about the target, then turn the answers into dimensions:
 ## Map Answers To The Workbench
 
 - **Suite metadata** goes in `.meta-skill/evals.json`: target, defaults, runner
-  plan, conditions, task IDs, and repetitions. The current schema stores
-  conditions in `candidates[]`.
+  plan, candidates, task IDs, and repetitions. The schema stores candidates in
+  `candidates[]`.
 - **Visible task content** goes in `cases/<task-id>/task.md`. It contains only
-  bytes the solver may see.
-- **Judged criteria** go in `cases/<task-id>/rubric.md`.
+  bytes the agent may see.
+- **Judged criteria** go in `cases/<task-id>/judge.md`.
 - **Exact or reference answers** go in `expected.*`.
 - **Deterministic checks** go in `validate.*` or shared `.meta-skill/tests/`.
 - **Run evidence** goes under `.meta-skill/runs/<run-id>/`.
 
 ## What Carries Over, What Does Not
 
-The anchored-rubric and judge-calibration craft is universal. Apply it unchanged
+Anchored judge guidance and judge-calibration craft are universal. Apply them unchanged
 to non-skill targets.
 
 Triggering is a skill-specialization concept: does the skill fire on a natural
 request? Most non-skill artifacts have no analog, so skip trigger cases unless
 the target genuinely has an activation step.
 
-Condition comparison also generalizes, but the condition source changes by
-target. A skill condition may be a branch/worktree. A prompt condition may be a
-prompt file. A document condition may be a revised document path. In all cases,
-use condition/task/trial language in prose, while preserving `candidate` in the
-current run evidence field and `trial_id` for one execution.
+Candidate comparison also generalizes, but the candidate source changes by
+target. A skill candidate may be a branch/worktree. A prompt candidate may be a
+prompt file. A document candidate may be a revised document path. In all cases,
+use candidate/task/trial language in prose and run evidence.
 
 For non-skill targets, start from concrete examples:
 
-- prompt eval: same task under old-prompt and edited-prompt conditions
+- prompt eval: same task under old-prompt and edited-prompt candidates
 - document eval: same review task against current and revised document
 - workflow eval: same operational task with different runbook or agent setup
 - UI/product eval: same user goal with state checks, screenshots, or artifact

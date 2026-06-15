@@ -13,8 +13,8 @@ Use these terms consistently:
 | Term | Meaning |
 |---|---|
 | **Task** | One unit of work with defined inputs and success criteria. |
-| **Condition** | The agent-harness setup: no skill, current skill, or edited-skill attempt. |
-| **Trial** | One attempt at one task under one condition. |
+| **Candidate** | The agent-harness setup: no skill, current skill, or edited-skill attempt. |
+| **Trial** | One attempt at one task under one candidate. |
 | **Outcome** | The final answer, files, artifacts, or state at the end of the trial. |
 | **Transcript** | The full event record: messages, tool calls, reasoning summaries, intermediate results, and errors. |
 | **Grader** | Code, model, or human logic that scores one aspect of the trial. |
@@ -22,20 +22,19 @@ Use these terms consistently:
 | **Gate** | A required grader whose failure blocks promotion even when other scores improve. |
 | **Harness** | The runner and workspace machinery that executes trials, records evidence, grades, and aggregates. |
 
-The current Meta Skill schema still stores conditions in `candidates[]` and
-task rows in `cases[]`; keep those field names in JSON and use the vocabulary
-above in prose.
+Meta Skill stores candidates in `candidates[]` and task rows in `cases[]`; use
+candidate/task/trial language in prose and JSON.
 
 ## Choose The Eval Type
 
 | Type | Question it answers | Good starting size | Typical graders |
 |---|---|---:|---|
-| **Capability / quality** | What can this skill do well, and where does it still struggle? | 3-10 tasks for a local loop; 20-50 for a serious first suite | Model rubric, reference output, deterministic checks where possible |
-| **Regression** | Does behavior that already worked still work? | Any known-good task bank | Deterministic validators first; model rubric only for semantic quality |
-| **Trigger / boundary** | Does the right skill activate, and does it stay quiet on near misses? | Balanced should-trigger and should-not-trigger tasks | Transcript/tool-use checks, model rubric, repeated trials |
-| **Failure / diagnostic** | Did a known failure get fixed? | 1-3 focused tasks | Reproduction task plus exact validator or anchored rubric |
-| **Gate / readiness** | Is this safe enough to package, publish, or use as a promotion gate? | Small must-not-break set | Required deterministic checks, calibrated rubric, human spot check when high judgment |
-| **Cost / latency / efficiency** | Did the condition get slower, more expensive, or noisier? | Same tasks as capability/regression | Transcript metrics: turns, tool calls, tokens, latency |
+| **Capability / quality** | What can this skill do well, and where does it still struggle? | 3-10 tasks for a local loop; 20-50 for a serious first suite | Model judge, reference output, deterministic checks where possible |
+| **Regression** | Does behavior that already worked still work? | Any known-good task bank | Deterministic validators first; model judge only for semantic quality |
+| **Trigger / boundary** | Does the right skill activate, and does it stay quiet on near misses? | Balanced should-trigger and should-not-trigger tasks | Transcript/tool-use checks, model judge, repeated trials |
+| **Failure / diagnostic** | Did a known failure get fixed? | 1-3 focused tasks | Reproduction task plus exact validator or anchored judge guidance |
+| **Gate / readiness** | Is this safe enough to package, publish, or use as a promotion gate? | Small must-not-break set | Required deterministic checks, calibrated judge guidance, human spot check when high judgment |
+| **Cost / latency / efficiency** | Did the candidate get slower, more expensive, or noisier? | Same tasks as capability/regression | Transcript metrics: turns, tool calls, tokens, latency |
 
 Do not mix all types into one claim. A suite can contain multiple task types,
 but the report should say which question each group answers.
@@ -52,7 +51,7 @@ Use the most exact grader that can fairly judge the requirement:
 | Grader | Strengths | Weaknesses | Use for |
 |---|---|---|---|
 | **Code validator** | Fast, cheap, reproducible, objective. | Brittle when many valid outputs exist; can reward surface compliance. | Required files, schema shape, exact strings, tests, state checks, forbidden/required tool use, token/turn counts, transcript metrics. |
-| **Model rubric** | Handles nuance, freeform outputs, multiple valid answers, groundedness, usefulness, and source quality. | Nondeterministic, costlier, can drift or inherit rubric ambiguity. | Semantic quality, completeness, instruction following, conversational quality, research coverage, pairwise comparisons. |
+| **Model judge** | Handles nuance, freeform outputs, multiple valid answers, groundedness, usefulness, and source quality. | Nondeterministic, costlier, can drift or inherit judge guidance ambiguity. | Semantic quality, completeness, instruction following, conversational quality, research coverage, pairwise comparisons. |
 | **Human grade** | Gold standard for taste, domain judgment, subjective UX, and calibrating model judges. | Slow, expensive, inconsistent without guidance. | Calibration, high-judgment accept/reject decisions, ambiguous tasks, systematic human studies, user-specific preference. |
 
 Prefer grading the outcome over the path. Use transcript graders for process
@@ -71,7 +70,7 @@ model against Rishi's taste.
 Use gates for must-not-break checks: prompt-boundary leaks, package exclusions,
 forbidden file edits, schema validity, safety constraints, or deterministic
 regressions. Gates should usually be code validators. A candidate that fails a
-gate is not selectable even when its rubric score is higher.
+gate is not selectable even when its judge score is higher.
 
 ## Write Good Tasks
 
@@ -103,9 +102,9 @@ Use these patterns when translating task families into graders:
 
 | Agent type | Primary evidence | Common graders |
 |---|---|---|
-| Coding or editing agent | tests, diffs, changed-file boundaries, response, transcript | code tests, static checks, model rubric for explanation quality, transcript check for skipped validation |
-| Conversational agent | final state, mid-conversation transcript, response quality | model rubric, human calibration, code checks for state/tool calls, transcript checks for process requirements |
-| Research agent | cited sources, coverage, groundedness, answer quality | model groundedness rubric, source-quality checks, exact checks for objective facts, human spot checks |
+| Coding or editing agent | tests, diffs, changed-file boundaries, response, transcript | code tests, static checks, model judge for explanation quality, transcript check for skipped validation |
+| Conversational agent | final state, mid-conversation transcript, response quality | model judge, human calibration, code checks for state/tool calls, transcript checks for process requirements |
+| Research agent | cited sources, coverage, groundedness, answer quality | model groundedness judge guidance, source-quality checks, exact checks for objective facts, human spot checks |
 | Computer-use agent | UI state, backend state, screenshots, tool calls | state validators, UI element checks, transcript/tool-choice checks, human review for UX quality |
 
 For conversational skills, the final response may be the wrong evidence target.
@@ -130,12 +129,12 @@ invariants, and validation guidance.
 
 Hidden graders:
 
-- `rubric.md`: scores trigger specificity, output contract, runtime usefulness,
+- `judge.md`: scores trigger specificity, output contract, runtime usefulness,
   and contamination avoidance.
 - `expected.md`: reference outline showing the required sections.
 - optional `validate.*`: checks that the output contains the required headings.
 
-Run under these conditions when supported:
+Run under these candidates when supported:
 
 - no skill
 - current skill
@@ -153,7 +152,7 @@ reusable so later runs do it the same way.
 
 Hidden graders:
 
-- model rubric checks whether the response routes to skill-writing behavior.
+- model judge checks whether the response routes to skill-writing behavior.
 - transcript check may verify that the target skill or lane was invoked.
 
 Pair it with a near-miss:
@@ -177,7 +176,7 @@ Review this existing skill and produce findings only. Do not edit the payload.
 Hidden graders:
 
 - validator checks no payload file changed.
-- rubric checks that findings include evidence, impact, and recommended action.
+- judge checks that findings include evidence, impact, and recommended action.
 
 Regression tasks should stay close to 100% once the behavior is considered
 working.
@@ -194,7 +193,7 @@ skill, then recommend the smallest fair eval suite.
 
 Hidden graders:
 
-- model rubric checks whether the final recommendation is understandable and
+- model judge checks whether the final recommendation is understandable and
   calibrated to the user's goal.
 - transcript validator checks that the agent asked for human judgment only when
   needed and exposed response/transcript evidence before asking for a grade.
@@ -214,7 +213,7 @@ Hidden graders:
 
 - validator scans the outcome for copied source URLs, provider names, and raw
   provenance markers.
-- rubric checks whether the reusable behavior survived source distillation.
+- judge checks whether the reusable behavior survived source distillation.
 
 ### 5. Gate / Readiness Task
 
@@ -229,7 +228,7 @@ Name any missing review, validation, eval, or reference evidence.
 Hidden graders:
 
 - validator checks links and package exclusions.
-- rubric checks that missing evidence is reported as a gap, not invented.
+- judge checks that missing evidence is reported as a gap, not invented.
 - human spot check if the readiness decision depends on subjective judgment.
 
 ## Report Guidance
@@ -238,7 +237,7 @@ When closing an eval run, report:
 
 - what decision the suite was meant to answer
 - task count by type
-- conditions compared
+- candidates compared
 - grader mix used
 - outcome summary by task
 - transcript notes only where they explain failures or unfair grading

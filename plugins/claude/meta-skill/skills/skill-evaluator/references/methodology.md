@@ -3,40 +3,37 @@
 Read when choosing the smallest useful eval loop for a skill.
 
 The default model follows the agent-eval loop: keep the task stable, vary the
-agent-harness condition, grade the outcome, and read transcripts often enough to
+agent-harness candidate, grade the outcome, and read transcripts often enough to
 know whether the graders are fair.
 
 1. **Task** — the user work being evaluated.
-2. **Condition** — the agent setup: no skill, current skill, or edited-skill
+2. **Candidate** — the agent setup: no skill, current skill, or edited-skill
    attempt.
-3. **Trial** — one task under one condition.
+3. **Trial** — one task under one candidate.
 4. **Outcome** — the final answer, files, artifacts, or state.
 5. **Grader** — human, model, or code judgment over the outcome.
 6. **Transcript** — event/evidence stream used to judge process requirements,
    calibrate graders, and debug the outcome.
 
 This matches the practical loop: write a few realistic tasks, compare the
-no-skill condition with the current-skill condition, make an edited-skill
-condition, compare again, and keep only evidence that helps decide the next
+no-skill candidate with the current-skill candidate, make an edited-skill
+candidate, compare again, and keep only evidence that helps decide the next
 edit.
 
-## Current Plugin Terms And Aliases
+## Current Plugin Terms
 
-Use Anthropic-aligned vocabulary in explanations and reports. The CLI accepts
-writer-facing `conditions[]` and legacy `candidates[]` in `.meta-skill/evals.json`
-for what the evaluation literature would call conditions:
+Use `candidate` in explanations, reports, manifests, run rows, and paths:
 
-- `no-skill` is the baseline condition using `source.kind: "none"`.
-- `current` is the current-skill condition.
+- `no-skill` is the baseline candidate using `source.kind: "none"`.
+- `current` is the current-skill candidate.
 - `attempt-1`, `candidate-1`, or any other slug can point at an edited-skill
   branch, git ref, or worktree through `source`.
-- Run evidence records the condition's branch/ref, commit, payload path, and
+- Run evidence records the candidate's branch/ref, commit, payload path, and
   `payload_digest`.
 
-Use **condition** in user-facing explanations. Use `candidate` only for the
-current manifest and run-file field. Do not add `candidate_id` or `attempt_id`.
+Do not add `condition_id` or `attempt_id`.
 
-A no-skill baseline is a `source.kind: "none"` condition that runs the same task
+A no-skill baseline is a `source.kind: "none"` candidate that runs the same task
 without staging the skill payload.
 
 ## Default Loop
@@ -48,15 +45,15 @@ Use this loop for most skill evaluation:
 2. Create 2-3 realistic tasks for a local loop, or 20-50 tasks for a serious
    first suite when the target is mature enough to justify it.
 3. For each task, write success criteria that are clear in `task.md`, then add
-   hidden graders for the exact checks, rubric dimensions, or human labels.
-4. Run the tasks under the no-skill and current-skill conditions when skill lift
+   hidden graders for the exact checks, judge dimensions, or human labels.
+4. Run the tasks under the no-skill and current-skill candidates when skill lift
    is the decision.
 5. Judge or review the outcomes side by side.
 6. Inspect failed, surprising, improved, and model/human-disagreed transcripts
    to catch unfair graders, hidden harness issues, and valid alternate
    solutions.
-7. Turn a proposed fix into an edited-skill condition.
-8. Run the same tasks against the current-skill and edited-skill conditions.
+7. Turn a proposed fix into an edited-skill candidate.
+8. Run the same tasks against the current-skill and edited-skill candidates.
 9. Report which tasks improved, regressed, already worked without the skill, or
    still need human judgment.
 
@@ -85,7 +82,7 @@ Add more structure only when the default loop is not enough:
   consistently across repeated attempts.
 
 Do not introduce named split systems or calibration labels for ordinary skill
-work. Keep the report plain: which tasks ran, which conditions were compared,
+work. Keep the report plain: which tasks ran, which candidates were compared,
 which outcomes changed, what transcripts showed, and what is still uncertain.
 
 ## Signal Sources
@@ -93,7 +90,7 @@ which outcomes changed, what transcripts showed, and what is still uncertain.
 Strong eval suites come from real signal:
 
 - **Automated evals**: repeatable task suites under no-skill, current-skill, and
-  edited-skill conditions.
+  edited-skill candidates.
 - **A/B testing**: production comparison once a candidate is deployable and
   usage is large enough to measure user outcomes.
 - **User feedback**: sparse and biased, but useful seed material for concrete
@@ -106,7 +103,7 @@ Strong eval suites come from real signal:
 Convert external signals into local eval material: bug reports become
 regression tasks, support complaints become capability tasks, A/B drops with
 transcript evidence become new tasks or grader dimensions, and manual review
-surprises become rubric or reference-solution updates.
+surprises become judge guidance or reference-solution updates.
 
 ## When Not To Evaluate
 
@@ -126,7 +123,7 @@ stop.
 
 Review the suite when any of these happen:
 
-- A task has repeated 0% pass rates across capable conditions.
+- A task has repeated 0% pass rates across capable candidates.
 - The transcript shows the agent solved the user need but the grader rejected
   it.
 - The outcome passes, but the transcript reveals unsafe, wasteful, or brittle

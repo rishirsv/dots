@@ -246,7 +246,7 @@ multi-scenario measurement to `skill-evaluator`. For that handoff, provide or
 create `.meta-skill/evals.json` with 2-3 realistic user tasks, expected
 outcomes or reference solutions, known failure or near-miss examples, grader
 hints, and any must-not-break constraints so the evaluator can compare outcomes
-across no-skill, current-skill, and edited-skill conditions.
+across no-skill, current-skill, and edited-skill candidates.
 
 Stop before packaging, installing, publishing, syncing, external writes, or
 final delivery unless the user explicitly approved that action or the current

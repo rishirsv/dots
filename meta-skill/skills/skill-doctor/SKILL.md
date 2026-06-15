@@ -65,7 +65,7 @@ while the parent applies only approved source edits.
 Re-run the **Verify tests** through `scripts/meta-skill validate <skill-dir>`. Confirm
 the approved fix held and refresh the Verify-tests third of the score, plus a
 quick regression scan — see [references/verify.md](references/verify.md).
-Escalate to `skill-evaluator` when the decision needs task/condition evidence:
+Escalate to `skill-evaluator` when the decision needs task/candidate evidence:
 for example, whether the fix improves outcomes over the current skill or a
 no-skill baseline.
 
@@ -82,7 +82,7 @@ namespace. Never write workbench files into `meta-skill/` itself.
 - **Feedback ≠ authorization** — both modes propose first; edit only on an
   explicit make/apply/update/patch/fix.
 - Reproduce *one* case only when using the reproduction/trial track; don't
-  measure many tasks/conditions — that's `skill-evaluator`.
+  measure many tasks/candidates — that's `skill-evaluator`.
 - Smallest correct change; edit source, never generated packages.
 - Child worktree edits are evidence, not promotion; parent-side source edits
   still require authorization.

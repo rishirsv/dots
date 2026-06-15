@@ -32,15 +32,15 @@ be made exact: required strings, file presence, schema shape, exit codes,
 state checks, exact outcome checks, and transcript metrics such as turns, tool
 calls, or token use. Judges are for semantic quality a script cannot decide.
 
-When authoring a rubric, each judged criterion should state why it cannot be
+When authoring judge guidance, each judged criterion should state why it cannot be
 deterministic. If no reason survives writing it down, move the check into
 `validate.*`.
 
 Task-local validators check behavior unique to one task. They live beside the
-task as `validate.*`, but they are hidden from the solver. They run after the
+task as `validate.*`, but they are hidden from the agent. They run after the
 trial outcome exists.
 
-When a validator protects a must-not-break condition, declare it as a gate in
+When a validator protects a must-not-break candidate, declare it as a gate in
 `evals.json`:
 
 ```json
@@ -54,25 +54,25 @@ When a validator protects a must-not-break condition, declare it as a gate in
 }
 ```
 
-A gate failure blocks promotion even if model-rubric quality improves.
+A gate failure blocks promotion even if model-judge guidance quality improves.
 
-## Solver Boundary
+## Agent Boundary
 
-The solver workspace receives:
+The workspace receives:
 
 - `task.md`
 - fixtures listed in `evals.json`
-- the condition payload, when present
+- the candidate payload, when present
 
-The solver workspace does not receive:
+The workspace does not receive:
 
-- `rubric.md`
+- `judge.md`
 - `expected.*`
 - `validate.*`
 - grader prompts
 - human labels
 
-Validators run outside the solver workspace and may read hidden expected output,
+Validators run outside the workspace and may read hidden expected output,
 the outcome file, selected artifacts, transcripts, and task metadata from
 `evals.json`.
 
@@ -83,7 +83,7 @@ global state:
 
 ```text
 validate.ts \
-  --output runs/<run-id>/candidates/<condition>/<trial-id>/response.md \
+  --output runs/<run-id>/candidates/<candidate>/<trial-id>/response.md \
   --expected cases/<task-id>/expected.json \
   --events runs/<run-id>/events/<trial-id>.jsonl \
   --json

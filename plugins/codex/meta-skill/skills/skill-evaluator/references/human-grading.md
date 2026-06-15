@@ -6,7 +6,7 @@ before a model judge can be trusted.
 Human grading is an interactive workflow over trial evidence. It is not a
 separate report format and it is not a hidden answer key. The evaluator shows
 the user the evidence, asks for a compact judgment, records that judgment as a
-`grades.jsonl` row, then uses disagreements to improve the rubric or judge.
+`grades.jsonl` row, then uses disagreements to improve the judge guidance or judge.
 
 ## When To Use It
 
@@ -27,7 +27,7 @@ script can fairly check the requirement, write a code grader.
 For each selected trial:
 
 1. Show the visible task and the response artifact.
-2. Show any rubric, expected output, validator failures, and compact transcript
+2. Show any judge guidance, expected output, validator failures, and compact transcript
    pointers that explain the outcome.
 3. Ask for one label: `pass`, `partial`, `fail`, `unknown`, or
    `needs_human_review`.
@@ -40,7 +40,7 @@ For each selected trial:
 scripts/meta-skill eval human \
   --run <run-dir> \
   --trial <trial-id> \
-  --grader <reviewer-or-rubric-name> \
+  --grader <reviewer-or-judge-name> \
   --metric <metric> \
   --label pass|partial|fail|unknown|needs_human_review \
   --score <0-to-1> \
@@ -75,7 +75,7 @@ trials, or a one-off judgment?
 ```
 
 If the user gives freeform feedback, translate it into label, metric, rationale,
-and any rubric change. Do not hide uncertainty; `unknown` is a valid label when
+and any judge guidance change. Do not hide uncertainty; `unknown` is a valid label when
 the available evidence is insufficient.
 
 ## Turning Human Taste Into A Judge
@@ -83,15 +83,15 @@ the available evidence is insufficient.
 After collecting human labels:
 
 1. Compare human rows with model rows for the same trial and metric.
-2. For every material disagreement, identify whether the task, rubric, model
+2. For every material disagreement, identify whether the task, judge guidance, model
    prompt, or transcript evidence was unclear.
-3. Rewrite `rubric.md` as concrete criteria and level descriptions. Preserve
+3. Rewrite `judge.md` as concrete criteria and level descriptions. Preserve
    the user's taste as observable indicators, not vague adjectives.
 4. Add reference examples only when they help the judge distinguish pass from
    partial or fail.
 5. Rerun `eval grade` and check whether the model now matches the human labels.
 
-Good rubric language names the evidence:
+Good judge guidance language names the evidence:
 
 ```text
 Pass: the response names the approval boundary, gives the exact next command,

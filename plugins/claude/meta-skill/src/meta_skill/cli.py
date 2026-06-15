@@ -7,8 +7,6 @@ materialization, App Server-backed trial runs, progress, and grading.
 from __future__ import annotations
 
 import argparse
-import shutil
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -27,13 +25,9 @@ from .workbench import init_workbench, materialize_cases
 
 def command_doctor(args):
     checks = []
-    optional_capabilities = []
 
     def add(name, ok, message, detail=None):
         checks.append({"name": name, "ok": bool(ok), "message": message, "detail": detail})
-
-    def add_optional(name, ok, message, detail=None):
-        optional_capabilities.append({"name": name, "ok": bool(ok), "message": message, "detail": detail})
 
     add(
         "python_version",
@@ -41,11 +35,12 @@ def command_doctor(args):
         f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
     )
     cli_path = Path(__file__).resolve()
+    package_root = cli_path.parent
     src_root = cli_path.parents[1]
     plugin_root = src_root.parent
     add("cli_source", cli_path.exists(), str(cli_path))
-    validator_paths = [src_root / name for name in ("validate_skill.py", "lint_authoring.py")]
-    add("validators_canonical", all(path.exists() for path in validator_paths), "root src validators")
+    validator_paths = [package_root / name for name in ("validate_skill.py", "lint_authoring.py")]
+    add("validators_canonical", all(path.exists() for path in validator_paths), "package validators")
     add(
         "legacy_worker_scripts_absent",
         not (plugin_root / "skills" / "skill-doctor" / "scripts").exists()
@@ -60,20 +55,8 @@ def command_doctor(args):
         add("openai_codex_sdk", False, str(exc))
     ok_sdk, message, detail = app_server_readiness()
     add("codex_app_server_sdk", ok_sdk, message, detail)
-    codex_path = shutil.which("codex")
-    if codex_path:
-        version = subprocess.run(["codex", "--version"], capture_output=True, text=True)
-        exec_help = subprocess.run(["codex", "exec", "--help"], capture_output=True, text=True)
-        add_optional(
-            "codex_exec",
-            version.returncode == 0 and exec_help.returncode == 0,
-            codex_path,
-            {"version": (version.stdout or version.stderr).strip(), "exec_help": exec_help.returncode == 0},
-        )
-    else:
-        add_optional("codex_exec", False, "codex not on PATH")
     ok = all(item["ok"] for item in checks)
-    result = {"ok": ok, "checks": checks, "optional_capabilities": optional_capabilities}
+    result = {"ok": ok, "checks": checks}
     emit(result, args.json)
     return 0 if ok else 1
 
@@ -209,9 +192,8 @@ def build_parser():
 
     run = eval_sub.add_parser("run", help="Run selected eval trials")
     run.add_argument("--suite", default=".meta-skill/evals.json")
-    run.add_argument("--runner", choices=["auto", "codex_app_server", "codex_exec"], default="auto")
+    run.add_argument("--runner", choices=["auto", "codex_app_server"], default="auto")
     run.add_argument("--candidates")
-    run.add_argument("--conditions", dest="candidates", help="Alias for --candidates using eval vocabulary")
     run.add_argument("--split")
     run.add_argument("--repetitions", type=int)
     run.add_argument("--model")
