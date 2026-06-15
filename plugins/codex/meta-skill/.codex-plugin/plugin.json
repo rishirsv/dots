@@ -23,7 +23,8 @@
       "Write"
     ],
     "defaultPrompt": "Use Meta-Skill to work on an agent skill.",
-    "brandColor": "#006DFF",
+    "brandColor": "#7C4DFF",
+    "composerIcon": "./assets/icon.png",
     "screenshots": []
   }
 }

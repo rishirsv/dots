@@ -178,6 +178,17 @@ Supported grader kinds:
 `required` or `gate` means the grader is promotion-blocking. A candidate may
 score well against judge guidance and still be rejected if a gate fails.
 
+Model judge rows use the same label scale as human rows: `pass`, `partial`,
+`fail`, `unknown`, or `needs_human_review`. They also include `score` when a
+0-to-1 numeric value is meaningful. The judge prompt should make the burden of
+proof explicit: `pass` requires specific evidence for every required criterion,
+`partial` is for useful outcomes with localized or non-gating defects, `fail`
+is for wrong, incomplete, unsafe, or required-criterion misses, `unknown` is for
+insufficient or contradictory evidence, and `needs_human_review` is for domain
+taste, underspecified criteria, or fairness concerns. The judge should grade
+the outcome by default and use transcript evidence only for process criteria,
+tool use, skill activation, or missing-evidence diagnosis.
+
 `expectations[]` are hidden verifier statements. They are not copied into
 `task.md`; the model judge uses them to emit named checks with evidence. Exact
 expectations should still move into `validate.*` whenever code can check them

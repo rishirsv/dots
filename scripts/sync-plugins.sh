@@ -15,6 +15,7 @@ PLUGIN_SKILLS_SRC[agent]="$ROOT/agent/skills"
 PLUGIN_SKILLS_SRC[meta-skill]="$ROOT/meta-skill/skills"
 typeset -A PLUGIN_ASSETS_SRC
 PLUGIN_ASSETS_SRC[agent]="$ROOT/agent/assets"
+PLUGIN_ASSETS_SRC[meta-skill]="$ROOT/meta-skill/assets"
 typeset -A PLUGIN_REFERENCES_SRC
 PLUGIN_REFERENCES_SRC[meta-skill]="$ROOT/meta-skill/references"
 typeset -A PLUGIN_ROOT_SRC
@@ -158,7 +159,8 @@ PLUGIN_META = {
             "category": "Productivity",
             "capabilities": ["Read", "Write"],
             "defaultPrompt": "Use Meta-Skill to work on an agent skill.",
-            "brandColor": "#006DFF",
+            "brandColor": "#7C4DFF",
+            "composerIcon": "./assets/icon.png",
             "screenshots": [],
         },
     },

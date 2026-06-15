@@ -2,6 +2,7 @@
 
 from .app_server.trial import app_server_run
 from .artifacts import candidate_source, thread_evidence, trial_record
+from .calibration import calibrate_run
 from .candidates import (
     DEFAULT_EXCLUDES,
     current_branch,

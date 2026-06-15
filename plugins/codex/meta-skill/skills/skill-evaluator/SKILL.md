@@ -149,6 +149,13 @@ calibration, and accept/reject decisions where a model judge could drift. Prefer
 outcome graders over process graders unless the process behavior itself is the
 requirement.
 
+Model judges return one of `pass`, `partial`, `fail`, `unknown`, or
+`needs_human_review`, plus a numeric score from 0 to 1 when the evidence
+supports one. `unknown` means the available evidence is insufficient or
+contradictory. `needs_human_review` means the judge found domain taste,
+underspecified criteria, or fairness concerns that should not be resolved by an
+invented score.
+
 Use explicit `graders[]` entries when a task needs named metrics, required gates,
 or stable report fields. Use `expectations[]` for hidden model-judge checks that
 are visible to the grader but not to the agent. Mark must-not-break code
@@ -165,18 +172,20 @@ task, response, judge guidance, transcript pointers, and a compact label/rationa
 question; record the answer with `eval human`; then revise the judge guidance so the
 model judge matches the human standard.
 
+Use `scripts/meta-skill eval calibrate --run <run-id-or-path>` to compare model
+judge grades against human grades. The command writes a calibration artifact
+under `.meta-skill/calibrations/`; keep it with the workbench as evidence for
+whether the judge can scale beyond the human spot-check slice.
+
 ### 6. Run And Report
 
-Run selected candidates against selected tasks. Default to:
+Run selected candidates against selected tasks with `codex_app_server` through
+the Python SDK. The CLI accepts only `codex_app_server` as a concrete eval
+runner.
 
-- `codex_thread` with worktree isolation for one-off trials and doctor fixes.
-  This is the Desktop child-thread route in
-  [skill-trial-runs.md](../../references/skill-trial-runs.md), not an
-  `eval run --runner` value.
-- `codex_app_server` through the Python SDK for batch evals, A/B comparisons,
-  and initial autoresearch
-
-The CLI accepts only `codex_app_server` as a concrete eval runner.
+Use the child-thread workflow in [skill-trial-runs.md](../../references/skill-trial-runs.md)
+only when the user explicitly asks for one-off trial evidence outside a formal
+suite. Route doctor fixes and failure reproduction to `skill-doctor`.
 
 For `codex_app_server`, use the CLI reference to run through the plugin adapter.
 The worker should consume run artifacts and progress files, not call raw App
@@ -187,10 +196,11 @@ After grading, render the run with
 `scripts/meta-skill eval report --run <run-id>` (see
 [cli.md](../../references/cli.md)) instead of hand-assembling a summary from
 run files. The report separates runner completion from behavioral grades and
-lists failed, ungraded, human-review, and missing-evidence trials. Use
-`eval lint` before running, `eval human` for human review packets or labels,
-`eval compare` for baseline/current impact, and `eval list` to find earlier
-runs in the same workbench.
+lists failed, ungraded, human-review, and missing-evidence trials.
+Use `eval lint` before running, `eval human` for human review packets or
+labels, `eval calibrate` for judge/human agreement artifacts, `eval compare`
+for baseline/current impact, and `eval list` to find earlier runs in the same
+workbench.
 
 Report per-task outcomes, grades, aggregate performance, failed tasks, and the
 no-skill/current-skill/edited-skill candidate comparison. Hand fixes to
@@ -205,6 +215,7 @@ Close with:
 - what candidates and tasks were run
 - what was skipped
 - headline metrics and comparison outcome
+- calibration status and artifact path, or why calibration was skipped
 - failed tasks handed to `skill-doctor`
 - coverage limits
 

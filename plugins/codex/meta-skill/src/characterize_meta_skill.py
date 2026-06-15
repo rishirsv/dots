@@ -136,6 +136,7 @@ def test_help_surfaces(tmp):
         [CLI, "eval", "run", "--help"],
         [CLI, "eval", "progress", "--help"],
         [CLI, "eval", "grade", "--help"],
+        [CLI, "eval", "calibrate", "--help"],
         [CLI, "eval", "human", "--help"],
         [CLI, "eval", "compare", "--help"],
         [CLI, "eval", "list", "--help"],
@@ -545,6 +546,7 @@ def test_eval_list_and_report(tmp):
     ]
     grades = [
         grade("case-a.current.t1", "judge", {"kind": "model", "id": "judge"}, 1.0, "pass", "meets judge"),
+        grade("case-a.current.t1", "judge", {"kind": "human", "id": "human-review"}, 1.0, "pass", "human agrees"),
         grade("case-a.current.t1", "validator", {"kind": "code", "id": "validate.py"}, 1.0, "pass", "1/1 validator checks passed"),
         grade("case-a.attempt-1.t1", "validator", {"kind": "code", "id": "validate.py"}, 0.0, "fail", "0/1 validator checks passed"),
         grade("case-a.attempt-1.t2", "judge", {"kind": "model", "id": "judge"}, None, "fail", "judge emitted invalid JSON: nonsense"),
@@ -591,7 +593,12 @@ def test_eval_list_and_report(tmp):
     check(listed["ok"] is True and len(listed["runs"]) == 1, "eval list run enumeration changed")
     row = listed["runs"][0]
     check(row["run_id"] == "run-report-fixture" and row["candidates"] == ["current", "attempt-1"], "eval list run row changed")
-    check(row["trial_status"] == {"passed": 3, "failed": 1, "no_result": 1} and row["grades"] == 4, "eval list status counts changed")
+    check(row["trial_status"] == {"passed": 3, "failed": 1, "no_result": 1} and row["grades"] == 5, "eval list status counts changed")
+
+    _, calibration = run_json([CLI, "eval", "calibrate", "--run", str(run_dir), "--metric", "judge", "--json"], project)
+    check(calibration["summary"]["paired"] == 1 and calibration["summary"]["exact_agreement_rate"] == 1.0, "calibration summary changed")
+    check(calibration["summary"]["tolerance_agreement_rate"] == 1.0, "calibration tolerance summary changed")
+    check(Path(calibration["calibration_path"]).exists(), "calibration artifact was not written")
 
     first, report = run_json([CLI, "eval", "report", "--run", str(run_dir), "--json"], project)
     second, _ = run_json([CLI, "eval", "report", "--run", str(run_dir), "--json"], project)

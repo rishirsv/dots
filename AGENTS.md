@@ -1,5 +1,6 @@
 - Edit source files only: `agent/`, `meta-skill/`, `.codex/agents/`, `AGENTS.md`, `global_instructions.md`, `README.md`, and `scripts/`.
 - Agent plugin source lives under `agent/`. Meta Skill plugin source lives under `meta-skill/`.
+- Always edit source first. Do not modify installed plugin caches, generated package copies, or local synced agent/skill copies directly; update the source tree and regenerate/sync those outputs with the repo scripts.
 - Agent plugin skills live under `agent/skills/`. Non-plugin Agent skill drafts are parked outside the repo on the macOS Desktop when they are being rethought.
 - Save all plan documents under `.plans/`; do not leave plans or planning docs inside plugin, skill, or package directories.
 - `scripts/sync-plugins.sh` packages Agent plugin skills and removes old managed direct Desktop skill copies under `~/.codex/skills/`.

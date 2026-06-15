@@ -7,6 +7,66 @@ from .evidence import fold_events
 from .policy import APP_SERVER_APPROVAL_POLICY, APP_SERVER_SANDBOX, sdk_policy
 
 
+GRADE_LABELS = {"pass", "partial", "fail", "unknown", "needs_human_review"}
+CHECK_LABELS = {"pass", "fail", "unknown"}
+
+
+def _number_or_none(value):
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return min(1.0, max(0.0, float(value)))
+    return None
+
+
+def _normalize_checks(raw):
+    if not isinstance(raw, list):
+        return []
+    checks = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        label = item.get("label")
+        if label not in CHECK_LABELS:
+            label = "unknown"
+        check = {
+            "name": str(item.get("name") or "criterion"),
+            "label": label,
+            "level": item.get("level"),
+            "evidence": str(item.get("evidence") or ""),
+        }
+        if item.get("note"):
+            check["note"] = str(item.get("note"))
+        checks.append(check)
+    return checks
+
+
+def _normalize_detail(parsed, raw):
+    if not isinstance(parsed, dict):
+        return {
+            "score": None,
+            "label": "fail",
+            "rationale": f"model grader emitted invalid JSON: {raw[:500]}",
+            "checks": [],
+            "eval_feedback": [],
+        }
+    label = parsed.get("label")
+    if label not in GRADE_LABELS:
+        label = "unknown"
+    feedback = parsed.get("eval_feedback")
+    if not isinstance(feedback, list):
+        feedback = []
+    return {
+        "score": _number_or_none(parsed.get("score")),
+        "label": label,
+        "rationale": str(parsed.get("rationale") or ""),
+        "checks": _normalize_checks(parsed.get("checks")),
+        "eval_feedback": [str(item) for item in feedback if str(item).strip()],
+    }
+
+
 def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, expectations=None, expected_text=None, events_text=None, model=None):
     openai_codex, generated = load_sdk()
     sandbox, approval_mode = sdk_policy(openai_codex)
@@ -17,20 +77,26 @@ def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, exp
     if expectations:
         expectations_block = "\n\nEXPECTATIONS TO CHECK:\n" + "\n".join(f"- {item}" for item in expectations)
     prompt = (
-        "You are grading one agent-eval trial. Judge the outcome first: the final answer, files, artifacts, or state. "
-        "Use transcript/events only when the judge guidance or expectation is about process, tool use, activation, or explaining missing evidence. "
-        "Do not reward surface compliance when the underlying task is wrong. The burden of proof is on a pass.\n\n"
-        "Return only JSON with keys: score, label, rationale, checks, eval_feedback. "
-        "score must be a number from 0 to 1 or null when evidence is insufficient. "
-        "label must be pass, partial, fail, unknown, or needs_human_review. "
-        "checks must be a list of objects with name, passed, evidence, and optional note. "
-        "eval_feedback must be a list of concise notes about weak, unverifiable, missing, always-pass, or unfair checks; use [] when there is nothing material to flag.\n\n"
-        "For every check, cite specific evidence from the agent output, expected/reference material, or transcript. "
-        "If an expectation cannot be verified from available evidence, mark that check failed or unknown and explain why. "
-        "If the task is ambiguous or the grader seems to require behavior not visible in the task, use needs_human_review.\n\n"
+        "You are grading one agent-eval trial. Grade only the trial outcome: the final answer, files, artifacts, "
+        "or observable state. Use transcript/events only for criteria about process, tool use, skill activation, "
+        "or explaining why outcome evidence is missing. Do not infer root cause, diagnose the skill, or reward "
+        "surface compliance when the underlying task is wrong. The burden of proof is on a pass.\n\n"
+        "Return only JSON with this exact shape:\n"
+        "{\"label\":\"pass|partial|fail|unknown|needs_human_review\",\"score\":0.0,"
+        "\"rationale\":\"...\",\"checks\":[{\"name\":\"criterion\",\"label\":\"pass|fail|unknown\","
+        "\"level\":0,\"evidence\":\"...\",\"note\":\"optional\"}],\"eval_feedback\":[]}\n\n"
+        "Rules:\n"
+        "- label must be pass only when the outcome satisfies every required criterion with specific evidence.\n"
+        "- label may be partial when the outcome materially helps but misses non-gating criteria or has localized defects.\n"
+        "- label must be fail when the outcome is wrong, incomplete, unsafe, or misses a required criterion.\n"
+        "- label must be unknown when available evidence is insufficient or contradictory.\n"
+        "- label must be needs_human_review for domain taste, underspecified criteria, or fairness concerns.\n"
+        "- score is 0 to 1 when meaningful; use null when evidence is insufficient.\n"
+        "- cite concrete evidence in every check from the outcome, reference material, or allowed transcript.\n"
+        "- eval_feedback lists concise notes about weak, unverifiable, missing, always-pass, or unfair criteria.\n\n"
         f"JUDGE GUIDANCE:\n{judge_guidance}\n\n"
         f"TASK SHOWN TO AGENT:\n{task_text}\n\n"
-        f"AGENT OUTPUT:\n{output_text}"
+        f"AGENT OUTCOME:\n{output_text}"
         f"{expectations_block}"
         f"{expected_block}"
         f"{events_block}\n"
@@ -50,19 +116,10 @@ def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, exp
     try:
         parsed = json.loads(raw)
     except json.JSONDecodeError:
-        parsed = {
-            "score": None,
-            "label": "fail",
-            "rationale": f"judge emitted invalid JSON: {raw[:500]}",
-            "checks": [],
-            "eval_feedback": [],
-        }
+        parsed = None
+    detail = _normalize_detail(parsed, raw)
     return {
-        "score": parsed.get("score"),
-        "label": parsed.get("label") or "fail",
-        "rationale": parsed.get("rationale") or "",
-        "checks": parsed.get("checks", []),
-        "eval_feedback": parsed.get("eval_feedback", []),
+        **detail,
         "thread_id": thread.id,
         "turn_id": turn.id,
         "thread_persistence": "persistent",

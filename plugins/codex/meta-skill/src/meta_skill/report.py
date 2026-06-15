@@ -289,19 +289,19 @@ def compare_run(raw_run, baseline=None, candidate=None):
     )
     candidate_ids = {row.get("candidate") for row in candidates}
     if baseline and baseline not in candidate_ids:
-        raise CliError(f"unknown baseline condition: {baseline}", 2)
+        raise CliError(f"unknown baseline candidate: {baseline}", 2)
     if candidate and candidate not in candidate_ids:
-        raise CliError(f"unknown candidate condition: {candidate}", 2)
+        raise CliError(f"unknown candidate: {candidate}", 2)
     baseline_ids = [row.get("candidate") for row in candidates if row.get("source_kind") == "none"]
     selected_baseline = baseline or (sorted(baseline_ids)[0] if baseline_ids else None)
     if not selected_baseline:
-        raise CliError("compare requires a baseline condition with source_kind none", 2)
+        raise CliError("compare requires a baseline candidate with source_kind none", 2)
     payload_ids = [row.get("candidate") for row in candidates if row.get("source_kind") != "none"]
     selected_payloads = [candidate] if candidate else payload_ids
     if candidate and candidate not in payload_ids:
-        raise CliError(f"candidate condition is not a payload condition: {candidate}", 2)
+        raise CliError(f"candidate is not a payload candidate: {candidate}", 2)
     if not selected_payloads:
-        raise CliError("compare requires at least one non-baseline candidate condition", 2)
+        raise CliError("compare requires at least one non-baseline candidate", 2)
     relevant_candidates = [
         row for row in candidates if row.get("candidate") == selected_baseline or row.get("candidate") in selected_payloads
     ]
@@ -375,11 +375,11 @@ def render_markdown(report):
         "",
         "Evidence paths are relative to the run directory; `-` marks a missing file.",
         "",
-        "## Conditions",
+        "## Candidates",
         "",
     ]
     lines += md_table(
-        ["Condition", "Source", "Head commit", "Dirty", "Payload digest"],
+        ["Candidate", "Source", "Head commit", "Dirty", "Payload digest"],
         [
             [
                 md_cell(row.get("candidate")),
@@ -403,7 +403,7 @@ def render_markdown(report):
         "",
     ]
     lines += md_table(
-        ["Task", "Condition", "Rep", "Status", "Error"],
+        ["Task", "Candidate", "Rep", "Status", "Error"],
         [
             [md_cell(t["case_id"]), md_cell(t["candidate"]), md_cell(t["repetition"]), md_cell(t["runner_status"]), md_cell(t["error"])]
             for t in trials
@@ -420,7 +420,7 @@ def render_markdown(report):
         "",
     ]
     lines += md_table(
-        ["Task", "Condition", "Rep", "Model grades", "Validators", "Human grades", "Gate", "Graded", "Tokens"],
+        ["Task", "Candidate", "Rep", "Model grades", "Validators", "Human grades", "Gate", "Graded", "Tokens"],
         [
             [
                 md_cell(t["case_id"]),

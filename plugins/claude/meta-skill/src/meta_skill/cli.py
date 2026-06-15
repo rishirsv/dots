@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 
 from .app_server.client import app_server_readiness
+from .calibration import calibrate_run
 from .errors import CliError
 from .grading import grade_run, human_review_packet, record_human_grade
 from .io import emit, fail
@@ -101,6 +102,11 @@ def command_eval_progress(args):
 
 def command_eval_grade(args):
     emit(grade_run(args.run), args.json)
+    return 0
+
+
+def command_eval_calibrate(args):
+    emit(calibrate_run(args.run, args.metric), args.json)
     return 0
 
 
@@ -211,6 +217,12 @@ def build_parser():
     grade.add_argument("--json", action="store_true")
     grade.set_defaults(func=command_eval_grade)
 
+    calibrate = eval_sub.add_parser("calibrate", help="Compare model judge grades against human grades")
+    calibrate.add_argument("--run", required=True)
+    calibrate.add_argument("--metric", help="Restrict calibration to one shared grade metric")
+    calibrate.add_argument("--json", action="store_true")
+    calibrate.set_defaults(func=command_eval_calibrate)
+
     human = eval_sub.add_parser("human", help="Show or record human grades for one eval run")
     human.add_argument("--run", required=True)
     human.add_argument("--trial", help="Restrict to one trial, or required when recording a grade")
@@ -223,7 +235,7 @@ def build_parser():
     human.add_argument("--json", action="store_true")
     human.set_defaults(func=command_eval_human)
 
-    compare = eval_sub.add_parser("compare", help="Compare baseline and candidate condition outcomes for one run")
+    compare = eval_sub.add_parser("compare", help="Compare baseline and candidate outcomes for one run")
     compare.add_argument("--run", required=True)
     compare.add_argument("--baseline")
     compare.add_argument("--candidate")

@@ -86,6 +86,7 @@ scripts/meta-skill eval run [--suite .meta-skill/evals.json] [--runner auto|code
 scripts/meta-skill eval progress --run <run-id-or-path> [--watch] [--json]
 scripts/meta-skill eval grade --run <run-id-or-path> [--json]
 scripts/meta-skill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
+scripts/meta-skill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
 scripts/meta-skill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
 scripts/meta-skill eval list [--suite .meta-skill/evals.json] [--json]
 scripts/meta-skill eval report --run <run-id-or-path> [--out <file>] [--json]
@@ -358,6 +359,36 @@ Labels are `pass`, `partial`, `fail`, `unknown`, or `needs_human_review`.
 Scores are optional and must be between 0 and 1. The command writes or replaces
 the matching human row in `grades.jsonl`.
 
+### `eval calibrate`
+
+Use this after human and model grades exist for the same run. It compares model
+judge grades with human grades and records whether the judge is calibrated well
+enough to scale beyond the human spot-check slice.
+
+What it does:
+
+- Reads paired human and model grade rows from `.meta-skill/runs/<run-id>/grades.jsonl`
+- Optionally restricts comparison to one shared metric
+- Computes exact agreement, tolerance agreement, false pass/fail examples,
+  human escalation rate, and non-binary examples
+- Writes a calibration artifact under `.meta-skill/calibrations/`
+
+Inputs:
+
+- `--run <run-id-or-path>`: either a run id under `.meta-skill/runs/` or a full
+  run directory path
+- `--metric <name>`: restrict calibration to one shared grade metric
+
+Output:
+
+- Calibration summary and `calibration_path`
+
+Example:
+
+```sh
+scripts/meta-skill eval calibrate --run <run-dir> --metric usefulness --json
+```
+
 ### `eval compare`
 
 Use this after grading a run with a no-skill candidate and at least one payload
@@ -505,6 +536,7 @@ scripts/meta-skill eval run --json
 scripts/meta-skill eval progress --run <run-id> --watch --json
 scripts/meta-skill eval grade --run <run-id> --json
 scripts/meta-skill eval human --run <run-id> --json
+scripts/meta-skill eval calibrate --run <run-id> --json
 scripts/meta-skill eval compare --run <run-id> --baseline no-skill --candidate current --json
 scripts/meta-skill eval report --run <run-id>
 ```

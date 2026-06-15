@@ -19,9 +19,12 @@ let the judge scale.
    response and transcript evidence, ask for label/rationale, and store human
    labels as `grades.jsonl` rows over trial outcomes. Do not put human labels in
    `task.md`, and do not hide them as front matter in case files.
-4. **Check agreement.** Run the judge on the same trial outcomes and compare.
-   Practical signal: exact-match rate plus a +/-1 tolerance band. Reach for
-   weighted kappa or correlation only when statistical rigor is needed.
+4. **Check agreement.** Run `scripts/meta-skill eval calibrate --run
+   <run-id-or-path>` on the same trial outcomes to compare model judge grades
+   with human grades. Add `--metric <name>` when only one shared grade metric
+   should be compared. Practical signal: exact-match rate plus a +/-1 tolerance
+   band. Reach for weighted kappa or correlation only when statistical rigor is
+   needed.
 5. **Refine on disagreement.** Every material judge/human disagreement is a
    judge guidance, judge prompt, task, or evidence-selection defect. Tighten
    `judge.md`, add reference examples when needed, then rerun the judge.
@@ -66,6 +69,11 @@ disagreements in plain language. Use transcripts to diagnose disagreements, but
 grade the outcome unless the judge guidance explicitly measures process behavior. When
 the human's taste is the standard, rewrite the judge guidance into observable
 pass/partial/fail indicators before letting the model judge scale.
+
+`eval calibrate` writes a JSON artifact under `.meta-skill/calibrations/`. Treat
+that file as the workbench evidence for judge agreement. It records the run,
+optional metric filter, agreement summary, escalation rates, false pass/fail
+examples, disagreements, and non-binary examples.
 
 ## Judge Bias Controls
 
