@@ -1,6 +1,5 @@
-# Portable user-level Codex preferences.
-# Do not add machine-local cache paths, trust hashes, marketplace timestamps, or
-# per-project scratch directories here.
+# Repo-local Codex config for maximum local autonomy in this trusted repo.
+# Supplements ~/.codex/config.toml when this trusted repository is open.
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
@@ -24,18 +23,6 @@ js_repl = false
 open_world_enabled = true
 destructive_enabled = true
 
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
-[plugins."agent@agent"]
-enabled = true
-
-[plugins."meta-skill@agent"]
-enabled = true
-
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
@@ -54,8 +41,17 @@ enabled = false
 [plugins."presentations@openai-primary-runtime"]
 enabled = false
 
-[projects."/Users/rishi/Code/dots"]
-trust_level = "trusted"
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."agent@agent"]
+enabled = true
+
+[plugins."meta-skill@agent"]
+enabled = true
 
 [projects."/Users/rishi/Code/agent"]
 trust_level = "trusted"
@@ -63,9 +59,80 @@ trust_level = "trusted"
 [projects."/Users/rishi/Code/steady-app"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-06-14/in-app-browser-the-user-has"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-14/there-are-some-hidden-ios-skills"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-14/check-out-codex-hooks-they-seem"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-14/remove-playwright-from-my-computer-all"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-14/right-how-can-i-get-a"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-14/for-split-finder-i-m-having"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-15/files-mentioned-by-the-user-codex"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/dots"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-15/i-hate-the-way-my-ghostty"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-06-15/https-code-claude-com-docs-en"]
+trust_level = "trusted"
+
+[hooks.state]
+
+[hooks.state."/Users/rishi/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:fd8c09f389b8127009b0a2f4ff4f97584e70ddfbb140cb84831ba567fda96d1e"
+
+[hooks.state."/Users/rishi/Code/agent/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:31a990d314a2077c46ae6d1550daf4607288f79aaa023d41516d38c2bdf759b6"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-06-15T23:11:04Z"
+source_type = "local"
+source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-06-15T01:31:42Z"
+source_type = "local"
+source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
 [marketplaces.agent]
+last_updated = "2026-06-16T00:17:59Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots/dist/codex"
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
+CODEX_HOME = "/Users/rishi/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "98ab8dad29094c0d4ee0d14abd4799bab88c56ef203f4ab5aca0eaeeaf0273b6"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.609.71144"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
@@ -96,3 +163,6 @@ code = "CommitMono"
 diffAdded = "#40c977"
 diffRemoved = "#fa423e"
 skill = "#ad7bf9"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 2
