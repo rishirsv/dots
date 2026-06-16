@@ -130,9 +130,9 @@ def codex_manifest(name: str, meta: dict) -> dict:
         "capabilities": ["Read", "Write"],
         "defaultPrompt": f"Use {name} for this workflow.",
     }
-    if name == "agent":
+    if name == "dots":
         interface.update({
-            "brandColor": "#006DFF",
+            "brandColor": "#36C5A7",
             "composerIcon": "./assets/icon.png",
             "logo": "./assets/logo.png",
             "screenshots": [],

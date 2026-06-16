@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-SCRIPT = REPO_ROOT / "plugins" / "agent" / "skills" / "assist" / "scripts" / "assist_package.py"
+SCRIPT = REPO_ROOT / "plugins" / "dots" / "skills" / "assist" / "scripts" / "assist_package.py"
 
 
 class AssistPackageTests(unittest.TestCase):

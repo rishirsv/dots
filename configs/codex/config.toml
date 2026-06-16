@@ -47,10 +47,10 @@ enabled = true
 [plugins."chrome@openai-bundled"]
 enabled = true
 
-[plugins."agent@agent"]
+[plugins."dots@dots"]
 enabled = true
 
-[plugins."meta-skill@agent"]
+[plugins."meta-skill@dots"]
 enabled = true
 
 [projects."/Users/rishi/Code/agent"]

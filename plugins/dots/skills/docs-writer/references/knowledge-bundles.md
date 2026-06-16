@@ -40,7 +40,7 @@ Use frontmatter when it helps agents or humans navigate the corpus:
 type: Runbook
 title: Publish PR workflow
 description: How the agent publishes a scoped branch and draft pull request.
-resource: plugins/agent/skills/publish-pr/SKILL.md
+resource: plugins/dots/skills/publish-pr/SKILL.md
 tags: [git, pr, workflow]
 ---
 ```

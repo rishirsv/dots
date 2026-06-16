@@ -1,6 +1,6 @@
 {
-  "name": "agent",
-  "displayName": "Agent",
+  "name": "dots",
+  "displayName": "Dots",
   "version": "0.1.0",
   "owner": {
     "name": "Rishi"
@@ -8,7 +8,7 @@
   "repository": "https://github.com/rishirsv/dots",
   "plugins": [
     {
-      "name": "agent",
+      "name": "dots",
       "category": "Productivity"
     },
     {

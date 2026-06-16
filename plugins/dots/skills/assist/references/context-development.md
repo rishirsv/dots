@@ -64,9 +64,9 @@ source and only duplicate tokens. Exclude unrelated sibling skills.
 **Worked context map:**
 
 ```
-- plugins/agent/skills/assist/SKILL.md (target): the skill contract being improved.
-- plugins/agent/skills/assist/references/*.md (source): runtime depth the SKILL links to; advice must stay consistent.
-- plugins/agent/skills/assist/scripts/assist_package.py (source): the deterministic helper the guidance describes.
+- plugins/dots/skills/assist/SKILL.md (target): the skill contract being improved.
+- plugins/dots/skills/assist/references/*.md (source): runtime depth the SKILL links to; advice must stay consistent.
+- plugins/dots/skills/assist/scripts/assist_package.py (source): the deterministic helper the guidance describes.
 - plugins/meta-skill/tests/test_assist_package.py (validation): pins helper behavior; kept outside the skill folder so it is not shipped in the portable package.
 - .plans/<skill>-design.md (constraint): why the skill is shaped this way and its non-goals.
 - plugins/meta-skill/skills/skill-writer/SKILL.md (constraint): house authoring standard the skill must satisfy.

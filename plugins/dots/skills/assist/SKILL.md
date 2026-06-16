@@ -33,7 +33,7 @@ Start from the decision the other model should improve. Select the smallest cont
 
 Prefer a tight bundle over a whole-project dump. Include the whole project only when it is small enough to inspect without crowding out the task and it does not contain secrets or bulky generated output. Exclude dependency folders, build artifacts, caches, snapshots, credentials, private keys, and `.env`-style files unless the user explicitly approves a narrow redacted excerpt.
 
-When the request is code-quality-shaped, include the relevant lane vocabulary from `plugins/agent/skills/code-quality-review/SKILL.md`, `plugins/agent/skills/refactor-review/SKILL.md`, or their references: simplification, hard-cutting old shapes, or architecture-refinement. Do not make the assist model infer those local standards from scratch.
+When the request is code-quality-shaped, include the relevant lane vocabulary from `plugins/dots/skills/code-quality-review/SKILL.md`, `plugins/dots/skills/refactor-review/SKILL.md`, or their references: simplification, hard-cutting old shapes, or architecture-refinement. Do not make the assist model infer those local standards from scratch.
 
 For coding-plan assists or any prompt where the response shape matters, use
 [references/prompts.md](references/prompts.md) for situation-based guidance.
@@ -103,7 +103,7 @@ Create a Desktop package when the user wants a sendable assist bundle, when a pr
 Use [scripts/assist_package.py](scripts/assist_package.py):
 
 ```bash
-python3 plugins/agent/skills/assist/scripts/assist_package.py \
+python3 plugins/dots/skills/assist/scripts/assist_package.py \
   --decision "Decide whether the proposed parser refactor is ready to implement." \
   --task-file /tmp/assist-task.md \
   --context-map-file /tmp/assist-context-map.md \
@@ -132,7 +132,7 @@ prompt, pass it with `--prompt-file`; a complete prompt in `--task-file` is also
 treated as the base prompt so the script does not add another wrapper above it:
 
 ```bash
-python3 plugins/agent/skills/assist/scripts/assist_package.py \
+python3 plugins/dots/skills/assist/scripts/assist_package.py \
   --prompt-file /tmp/assist-prompt.md \
   --file "src/**/*.ts"
 ```

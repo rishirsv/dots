@@ -139,7 +139,7 @@ branch, or evidence row causing the risk.
 ## Surgical Update Rules
 
 - Edit the skill's **source-of-truth**, never a generated copy a build would
-  overwrite. In *this* repo: source under `plugins/agent/skills/<name>/` or
+  overwrite. In *this* repo: source under `plugins/dots/skills/<name>/` or
   `plugins/meta-skill/skills/<name>/`; never hand-edit generated packages under
   `dist/**`. Other projects: find the equivalent source-vs-build split first.
 - Preserve name and folder unless rename is in scope.

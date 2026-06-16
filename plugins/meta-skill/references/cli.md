@@ -145,7 +145,7 @@ Output:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill workbench init --target plugins/agent/skills/my-skill --json
+plugins/meta-skill/scripts/metaskill workbench init --target plugins/dots/skills/my-skill --json
 ```
 
 ### `eval materialize`

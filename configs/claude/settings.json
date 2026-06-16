@@ -1,10 +1,10 @@
 {
   "enabledPlugins": {
-    "agent@agent": true,
-    "meta-skill@agent": true
+    "dots@dots": true,
+    "meta-skill@dots": true
   },
   "extraKnownMarketplaces": {
-    "agent": {
+    "dots": {
       "source": {
         "source": "directory",
         "path": "/Users/rishi/Code/dots/dist/claude"
