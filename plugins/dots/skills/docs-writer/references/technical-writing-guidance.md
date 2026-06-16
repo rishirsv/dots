@@ -1,8 +1,7 @@
-# Google Technical Writing Guidance
+# Technical Writing Guidance
 
-Read this when drafting or revising reader-facing documentation. It distills
-Google's technical writing courses and developer documentation style guide into
-runtime rules for this skill.
+Read this when drafting or revising reader-facing documentation. It defines the
+technical writing rules this skill should apply at runtime.
 
 ## Core Moves
 
@@ -60,7 +59,10 @@ runtime rules for this skill.
 
 - Use second person sparingly and directly when instructing a reader. "Run" is
   usually better than "You should run".
-- Avoid hype, apology, filler, and AI-flavored transition prose.
+- Avoid hype, apologies, filler, and self-referential setup. Cut openings such
+  as "Let's dive in," "In this comprehensive guide," "It is important to note
+  that," "We'll explore," "I'll walk you through," and "This document aims to."
+  Start with the subject, task, decision, or constraint instead.
 - Avoid excessive claims such as "simple", "easy", "just", "obviously", or
   "seamless" unless the source proves the claim and the word helps the reader.
 - Use inclusive language and avoid idioms that may be hard to translate.
@@ -77,3 +79,15 @@ For a rewrite, preserve the document's technical contract first:
 3. Cut repetition, unsupported claims, and meta-commentary.
 4. Tighten sentences and headings.
 5. Re-check that no required technical detail was dropped.
+
+## Rewrite Examples
+
+Use examples like these to turn vague cleanup advice into concrete edits:
+
+| Avoid | Use Instead |
+|---|---|
+| "Let's dive into how the sync process works." | "The sync process copies config sources into local tool directories." |
+| "In this comprehensive guide, we'll explore the release workflow." | "This runbook describes the release workflow." |
+| "It is important to note that the cache is generated." | "The cache is generated." |
+| "You can simply run the validation command." | "Run the validation command." |
+| "This document aims to help contributors understand routing." | "This document explains routing for contributors." |

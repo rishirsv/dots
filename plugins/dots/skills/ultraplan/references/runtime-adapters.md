@@ -1,22 +1,24 @@
 # Runtime Adapters
 
-Read this when the current runtime does not provide Claude Code's Workflow
-primitive or schema-enforced subagents.
+Read this when the current runtime does not provide a Workflow primitive,
+schema-enforced subagents, or cheap parallel fan-out.
 
 ## Required Behavior
 
 Replicate observable behavior, not provider internals:
 
 - deterministic phase order
-- parallel critics when available
-- independent verification for every finding
-- schemas or strict output checks
-- journaled prompts/results when the pass is long
+- repo-grounded critique before plan edits
+- fresh verification for plan-changing findings
+- schemas or strict output checks when using subagents
+- journaled prompts/results for Focused or Full passes
 - resumable or at least restartable state
 - explicit approval before execution
 
-If the runtime cannot provide true parallelism, run the roles sequentially and
-label the pass `sequential Ultraplan`. Do not claim a multi-agent pass happened.
+Lean mode is expected to run locally or sequentially. Do not label it degraded.
+If Focused or Full mode cannot provide true parallelism, run roles sequentially
+and label the pass `sequential Focused Ultraplan` or `sequential Full
+Ultraplan`. Do not claim a multi-agent pass happened.
 
 ## Tool Mapping
 
@@ -30,20 +32,31 @@ label the pass `sequential Ultraplan`. Do not claim a multi-agent pass happened.
 | `AskUserQuestion` | ask one concise structured approval question in chat |
 | `EnterPlanMode` / `ExitPlanMode` | read-only planning posture plus explicit user approval before edits |
 
-## Degraded Mode
+## Lean Local Mode
 
-Use degraded mode for medium tasks when multi-agent tools are unavailable:
+Use this as the normal daily path:
 
 1. Map locally.
-2. Run the six lenses as separate labeled passes.
+2. Run one bundled six-lens critique.
 3. Create a finding table.
-4. Run a separate refutation pass over every finding.
-5. Draft three designs.
-6. Judge them with an explicit score table.
-7. Synthesize and validate.
+4. Select the top 3-5 plan-changing findings.
+5. Run a separate refutation pass over selected findings.
+6. Choose one re-scope, usually minimal-correct with reuse-maximal pressure.
+7. Synthesize the upgraded plan and changelog.
+8. Validate structure, evidence, and diff.
 
-Report the degradation honestly. The upgraded plan can still be useful, but the
-validation boundary is weaker than a true independent multi-agent run.
+Report the mode honestly. The upgraded plan can still be strong because the key
+control is fresh verification, not the number of agents.
+
+## Focused Or Full Mode
+
+Use subagents or external calls for Focused and Full modes when independence
+matters. Keep prompts and results restartable:
+
+- save each role's prompt, result, and validation status
+- validate structured outputs before synthesis
+- rerun only invalid or stale role outputs when possible
+- keep raw transcripts out of the final plan; summarize them in the changelog
 
 ## State Files
 

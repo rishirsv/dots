@@ -103,7 +103,7 @@ or mirrored sources:
 ```markdown
 # Citations
 
-[1] [Open Knowledge Format spec](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+[1] [External source title](https://example.com/source)
 ```
 
 For repo-internal docs, inline links to source files are often enough. Use a

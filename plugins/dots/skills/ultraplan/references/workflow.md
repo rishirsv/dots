@@ -1,7 +1,7 @@
 # Ultraplan Workflow
 
-Read this for the exact phase topology, role prompts, schemas, and state
-machine. Keep the roles read-only until synthesis writes the plan artifacts.
+Read this for the phase topology, role prompts, schemas, and state machine.
+Keep analysis roles read-only until synthesis writes the plan artifacts.
 
 ## State Machine
 
@@ -10,18 +10,18 @@ IDLE
   -> SCOPE_CONFIRM
 SCOPE_CONFIRM
   -> GROUND
-  -> SINGLE_PASS when the user declines heavy depth
+  -> DRY_RUN_MAP when the user wants only scope/fan-out
 GROUND
   -> MAP
 MAP
   -> CRITIQUE
 CRITIQUE
-  -> VERIFY, pipelined per finding
+  -> SELECT_FINDINGS
+SELECT_FINDINGS
+  -> VERIFY
 VERIFY
-  -> DESIGN after confirmed findings are collected
-DESIGN
-  -> JUDGE
-JUDGE
+  -> RESCOPE
+RESCOPE
   -> SYNTHESIZE
 SYNTHESIZE
   -> POST_VALIDATE
@@ -30,14 +30,44 @@ POST_VALIDATE
 HANDOFF
   -> APPLY only after explicit user approval
   -> DONE when the user keeps the artifacts separate
-  -> DESIGN when the user rejects the plan with new constraints
+  -> RESCOPE when the user rejects the plan with new constraints
 ```
 
-User approvals happen before the heavy pass and after synthesis. Internal
+User approvals happen before any non-lean fan-out and after synthesis. Internal
 phases do not pause for approval unless a product, privacy, destructive, or
 irreversible decision cannot be answered from source.
 
 ## Topology
+
+### Lean Ultraplan (Default)
+
+```text
+Ground -> Map -> Bundled six-lens Critique -> Select top findings
+  -> Fresh refutation pass over selected findings
+  -> Choose one re-scope
+  -> Synthesize upgraded plan + changelog
+  -> Validate diff/evidence
+```
+
+Lean mode may run entirely in the parent agent. Keep the refutation pass
+separate in time and evidence: re-read files and re-run commands instead of
+trusting the critique. Verify only the top 3-5 findings unless the budget rules
+justify more.
+
+### Focused Ultraplan
+
+```text
+Parent ground/map
+  -> Mapper/Critic role across all lenses
+  -> Verifier role over selected findings
+  -> Optional Designer role
+  -> Parent synthesis + validation
+```
+
+Use Focused mode when a second or third reader materially improves confidence
+but full fan-out would be wasteful.
+
+### Full Ultraplan
 
 ```text
 Map
@@ -48,8 +78,8 @@ Map
   -> Synthesize: upgraded plan author + changelog author
 ```
 
-The Critique -> Verify transition is a pipeline: verify findings as soon as a
-lens returns. Design is a barrier: it needs the full confirmed set.
+The Full Critique -> Verify transition is a pipeline: verify findings as soon
+as a lens returns. Design is a barrier: it needs the full confirmed set.
 
 ## Seed Grounding
 
@@ -92,29 +122,36 @@ Produce a faithful structured map as plain text:
 Be specific with section/step ids and file paths. This map seeds the downstream critics.
 ```
 
-### Critics
+### Lean Critic
 
-Mission: one lens, strongest 3-5 grounded findings.
+Mission: one bundled critique across all six lenses, strongest plan-changing
+findings only.
 
 Prompt core:
 
 ```text
-You are an adversarial plan critic. Lens: <LENS_TITLE>.
-Read the plan: <PLAN>. Repo root: <REPO> (ground every claim with rg/Read/git).
+You are doing a Lean Ultraplan critique. Read the plan: <PLAN>.
+Repo root: <REPO> (ground claims with rg/Read/git).
 
 <SEED>
 
 MAP of the plan (from a prior pass):
 <MAP>
 
-Find real, specific problems through the lens of "<LENS_TITLE>".
-Focus: <LENS_FOCUS>
+Find the strongest real, specific problems across these lenses:
+- premise integrity
+- sequencing and dependencies
+- reuse before build
+- ownership and boundaries
+- testability and proof
+- risk and failure modes
 
 Rules:
 - Ground each finding in the COMMITTED repo. Put exact file paths / symbols / commands in evidence. If you could not verify, say "unverified-needs-check" and lower severity.
 - Be concrete: name the section/step and give a concrete proposedChange.
-- Quality over quantity: return your strongest 3-5 findings, not filler. Do not invent problems.
+- Quality over quantity: return at most 8 findings, ranked by implementation impact. Do not invent problems.
 - "blocking" = the plan cannot correctly start or will produce wrong work as written.
+- Favor findings that reduce or re-own scope: false done-states, reuse traps, hidden coupling, unneeded version/toolchain moves, and unprovable verification.
 ```
 
 Default lenses:
@@ -128,9 +165,17 @@ Default lenses:
 | `testability` | Testability & proof | Whether each step is provable in the current environment, has producer and consumer, and names runnable verification commands. |
 | `risk` | Risk & failure modes | Concrete failure modes with evidence: shipping, CI, schema/version, environment mismatch, silent breakage, or irreversible actions. |
 
+### Full Critics
+
+Mission: one lens per role, strongest 3-5 grounded findings.
+
+Use the Lean Critic prompt, but replace the bundled lens list with one
+`<LENS_TITLE>` and `<LENS_FOCUS>` from the default lenses table.
+
 ### Verifiers
 
-Mission: independently try to refute one finding.
+Mission: try to refute one finding. In Lean mode this can be a fresh parent pass;
+in Focused or Full mode use an independent role when available.
 
 Critical bias: default `real=false` unless the evidence clearly holds.
 
@@ -154,7 +199,13 @@ Return: real (does the problem genuinely hold?), confidence, the evidence you ga
 
 ### Designers
 
-Run three alternatives after verification:
+Lean mode normally chooses one re-scope directly:
+
+- `minimal-correct` with `reuse-maximal` pressure: smallest change that fixes the
+  confirmed blocking/high findings while reusing existing owners where possible.
+
+Run three alternatives only in Focused or Full mode, or when the verified
+findings imply genuinely competing architectures:
 
 - `minimal-correct`: smallest change to the existing structure that fixes every
   confirmed blocking/high finding; add a step only when a precondition truly
@@ -179,6 +230,8 @@ Return a concrete step sequence (each: step id, title, scope, rationale), an exp
 ```
 
 ### Judge
+
+Use a separate judge only when there are multiple candidate designs.
 
 Prompt core:
 
