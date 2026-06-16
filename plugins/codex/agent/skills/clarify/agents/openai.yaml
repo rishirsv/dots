@@ -1,7 +1,0 @@
-interface:
-  display_name: "Clarify"
-  short_description: "Ask only blocking questions"
-  default_prompt: "Use $clarify to ask only the minimum blocking questions before implementing this."
-
-policy:
-  allow_implicit_invocation: true

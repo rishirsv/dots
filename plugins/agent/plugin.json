@@ -1,0 +1,12 @@
+{
+  "name": "agent",
+  "version": "0.1.0",
+  "description": "Rishi's personal agent workflows and reusable skills.",
+  "author": {
+    "name": "Rishi"
+  },
+  "keywords": ["personal", "workflow"],
+  "category": "Productivity",
+  "assets": "./assets",
+  "skills": "./skills"
+}

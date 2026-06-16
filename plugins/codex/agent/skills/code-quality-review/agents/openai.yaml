@@ -1,7 +1,0 @@
-interface:
-  display_name: "Code Quality Review"
-  short_description: "Simplify and tighten changed code"
-  default_prompt: "Use $code-quality-review to review the changed code for simplicity, reuse, efficiency, and maintainability."
-
-policy:
-  allow_implicit_invocation: false

@@ -1,7 +1,0 @@
-interface:
-  display_name: "Refactor Review"
-  short_description: "Find architecture refactor candidates"
-  default_prompt: "Use $refactor-review to scan this codebase area for architecture and refactoring opportunities."
-
-policy:
-  allow_implicit_invocation: false

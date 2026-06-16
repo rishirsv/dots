@@ -1,4 +1,0 @@
-interface:
-  display_name: "Docs Writer"
-  short_description: "Write durable repo and knowledge docs"
-  default_prompt: "Use $docs-writer to write or update durable repository documentation."

@@ -1,0 +1,19 @@
+{
+  "name": "agent",
+  "displayName": "Agent",
+  "version": "0.1.0",
+  "owner": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/dots",
+  "plugins": [
+    {
+      "name": "agent",
+      "category": "Productivity"
+    },
+    {
+      "name": "meta-skill",
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,155 +1,42 @@
 # INSTALL.md
 
-Copy the prompt below into Claude on the target Mac.
+This repo is being reorganized into a source-first dotfiles and plugin repo.
+The old install flow that ran `scripts/sync-plugins.sh` no longer applies.
 
----
+## Current Manual Bootstrap
 
-You are helping me fully reset and reinstall OpenAI Codex on this Mac using my `agent` repo as reference material.
+1. Clone the repo.
 
-Goal: delete the existing Codex app, Codex CLI, Codex configs, Codex caches, Codex plugins, and Codex skills; reinstall the Codex CLI fresh; clone my `agent` repo; install its Codex config; and run the Agent plugin sync.
+```sh
+mkdir -p ~/Code
+git clone https://github.com/rishirsv/dots.git ~/Code/dots
+```
 
-Repo:
+2. Review source config snapshots.
 
-    https://github.com/rishirsv/agent.git
+```sh
+cd ~/Code/dots
+find configs -maxdepth 3 -type f | sort
+```
 
-Important behavior:
+3. Review plugin source.
 
-- You are allowed to delete existing Codex app/config/cache/plugin/skill files.
-- Do not delete unrelated OpenAI API keys, shell profiles, project repos, or non-Codex application data.
-- Do not edit secrets into any repo file.
-- Use macOS commands.
-- Prefer explicit commands and explain what each destructive command will remove before running it.
-- If a path does not exist, continue.
+```sh
+find plugins -maxdepth 3 -type f | sort
+```
 
-## Steps
+4. Do not run the removed sync scripts.
 
-1. Inspect current Codex state.
+The next install flow should be designed around:
 
-Run:
+- packaging `plugins/<name>` into ignored `dist/codex` and `dist/claude`
+- validating vendor packages
+- installing local marketplaces from generated `dist`
+- syncing selected config files from `configs/` to machine targets
+- keeping shell secrets in local files such as `~/.zshrc.local`
 
-    which codex || true
-    codex --version || true
-    ls -la ~/.codex 2>/dev/null || true
-    ls -la ~/.codex/plugins 2>/dev/null || true
-    ls -la ~/.codex/skills 2>/dev/null || true
-    ls -ld /Applications/Codex.app 2>/dev/null || true
+## Open Question
 
-2. Remove Codex app, CLI, and all Codex home data.
-
-Remove only Codex-specific paths:
-
-    rm -rf ~/.codex
-    rm -rf /Applications/Codex.app
-    rm -f /opt/homebrew/bin/codex
-    rm -f /usr/local/bin/codex
-    rm -rf /opt/homebrew/lib/node_modules/@openai/codex
-    rm -rf /usr/local/lib/node_modules/@openai/codex
-
-If `which codex` showed another path, inspect it first. Remove it only if it is clearly the Codex CLI.
-
-3. Install Codex CLI fresh.
-
-Use the current official install path. If Homebrew has a current Codex package, prefer it. Otherwise use npm:
-
-    npm install -g @openai/codex
-
-Then verify:
-
-    which codex
-    codex --version
-
-4. Clone or update `agent`.
-
-Use:
-
-    mkdir -p ~/Code
-    if [ -d ~/Code/agent/.git ]; then
-      cd ~/Code/agent
-      git pull --ff-only
-    else
-      git clone https://github.com/rishirsv/agent.git ~/Code/agent
-      cd ~/Code/agent
-    fi
-
-5. Verify the machine Codex config.
-
-Create `~/.codex` if needed:
-
-    mkdir -p ~/.codex
-
-Then inspect the existing machine config:
-
-    sed -n '1,220p' ~/.codex/config.toml
-
-Do not copy `~/Code/agent/.codex/config.toml` over `~/.codex/config.toml`. The repo config is project-local; the machine config owns installed plugins, marketplaces, model defaults, and other durable local state.
-
-Expected important repo-local settings in `~/Code/agent/.codex/config.toml`:
-
-    approval_policy = "never"
-    sandbox_mode = "danger-full-access"
-    [plugins."browser@openai-bundled"]
-    enabled = true
-    [plugins."chrome@openai-bundled"]
-    enabled = true
-    [plugins."computer-use@openai-bundled"]
-    enabled = true
-
-6. Sync and install the Agent plugins.
-
-Run:
-
-    cd ~/Code/agent
-    scripts/sync-plugins.sh
-
-This rebuilds the Codex and Claude plugin folders from `agent/` and `meta-skill/`, registers the public Agent marketplace from GitHub, installs `agent@agent`, ensures the OpenAI bundled `browser`, `chrome`, and `computer-use` plugins are installed, refreshes local plugin caches, copies repo `global_instructions.md` to `~/.codex/AGENTS.md`, and symlinks `~/.claude/CLAUDE.md` to repo `global_instructions.md`. It does not overwrite `~/.codex/config.toml`.
-
-7. Open Codex once so it initializes plugin/cache state.
-
-Run:
-
-    cd ~/Code/agent
-    codex --help
-
-If Codex requires login, run:
-
-    codex login
-
-Then restart Codex after login.
-
-8. Verify the Agent repo state.
-
-Check:
-
-    test -f ~/Code/agent/README.md
-    test -f ~/Code/agent/.codex/config.toml
-    test -d ~/Code/agent/agent/skills
-    test -d ~/Code/agent/plugins/codex/agent/skills
-    test -d ~/Code/agent/plugins/claude/agent/skills
-    test -f ~/Code/agent/.agents/plugins/marketplace.json
-    test -f ~/Code/agent/.claude-plugin/marketplace.json
-    test -f ~/.codex/AGENTS.md
-    test -L ~/.claude/CLAUDE.md
-
-9. Verify Codex config no longer enables the OpenAI-curated GitHub plugin.
-
-Run:
-
-    rg -n 'github@openai-curated|agent@agent|browser@openai-bundled|chrome@openai-bundled|computer-use@openai-bundled|marketplaces.agent|marketplaces.openai-bundled' ~/.codex/config.toml || true
-
-Expected:
-
-    [plugins."github@openai-curated"]
-    enabled = false
-
-Expected: `agent@agent`, `browser@openai-bundled`, `chrome@openai-bundled`, and `computer-use@openai-bundled` are enabled after `scripts/sync-plugins.sh`. If the GitHub plugin block is missing, that is acceptable. Do not enable it unless intentionally needed.
-
-10. Final report.
-
-Report:
-
-- Codex CLI path and version.
-- Whether `~/.codex/config.toml` was installed.
-- Whether `agent` was cloned or updated.
-- Confirm that the `agent` marketplace is registered.
-- Confirm that `agent@agent` is enabled.
-- Any login or restart still required.
+The repo now has the source layout, but the new sync/install contract is still
+deliberately undecided. Decide which config files should be copied, symlinked,
+or kept machine-local before using this repo to update another computer.

@@ -1,7 +1,0 @@
-interface:
-  display_name: "Publish PR"
-  short_description: "Publish scoped work as a PR"
-  default_prompt: "$yeet publish the scoped local change as a pushed branch and PR; ask to publish and merge to mark it ready and merge or enable auto-merge."
-
-policy:
-  allow_implicit_invocation: false

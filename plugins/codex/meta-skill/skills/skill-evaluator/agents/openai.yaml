@@ -1,7 +1,0 @@
-interface:
-  display_name: "Skill Evaluator"
-  short_description: "Measure agent skill performance"
-  default_prompt: "Use $skill-evaluator to author and run an evaluation suite for this target."
-
-policy:
-  allow_implicit_invocation: false

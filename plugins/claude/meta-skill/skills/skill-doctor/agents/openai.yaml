@@ -1,7 +1,0 @@
-interface:
-  display_name: "Skill Doctor"
-  short_description: "Improve or diagnose agent skills"
-  default_prompt: "Use $skill-doctor to review, diagnose, propose, and verify improvements to this agent skill."
-
-policy:
-  allow_implicit_invocation: false

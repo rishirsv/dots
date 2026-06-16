@@ -1,7 +1,0 @@
-interface:
-  display_name: "Meta Skill"
-  short_description: "Route agent skill lifecycle work"
-  default_prompt: "Use $meta-skill to route this agent skill work to the right specialist and orchestrate the lifecycle."
-
-policy:
-  allow_implicit_invocation: true

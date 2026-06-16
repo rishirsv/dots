@@ -1,0 +1,14 @@
+[
+  {
+    "command": "globalDictationHold",
+    "key": "Ctrl+M"
+  },
+  {
+    "command": "globalDictationToggle",
+    "key": "Ctrl+."
+  },
+  {
+    "command": "hotkeyWindow",
+    "key": "Ctrl+`"
+  }
+]

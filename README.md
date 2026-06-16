@@ -1,112 +1,93 @@
-# Agent
+# Dots
 
-Source repo for Rishi's personal Agent and Meta-Skill plugin builds, plus repo-managed local Codex and Claude agent instructions.
+Source repo for Rishi's personal plugins, agent workflows, and machine
+configuration.
 
 ## Source Map
 
-Day to day, edit these source surfaces:
+Edit durable source here:
 
-- `agent/`: source for Agent plugin assets and skills.
-- `meta-skill/`: source for the `meta-skill` plugin.
-- `.codex/agents/`: source Codex custom agents for this machine.
-- `AGENTS.md`: repo/workspace instructions for working in this checkout.
-- `global_instructions.md`: global assistant instructions installed into Codex and Claude.
-- `scripts/`: build, sync, and hook utilities.
+- `plugins/`: source for each maintained plugin.
+- `configs/`: source copies of Codex, Claude, VS Code, Ghostty, and Zsh configs.
+- `AGENTS.md`: repo instructions for agents working in this checkout.
+- `scripts/`: small helper entrypoints that are still source-owned.
 
-Generated output lives here:
+Generated output should live under `dist/` and stay out of Git.
 
-- `plugins/codex/`
-- `plugins/claude/`
-- `.agents/plugins/marketplace.json`
-- `.claude-plugin/marketplace.json`
+## Plugin Source
 
-Local installed output lives under `~/.codex/` and `~/.claude/`.
-
-## Structure
+Each plugin lives under `plugins/<plugin-name>/`.
 
 ```text
-agent/
-├─ AGENTS.md
-├─ README.md
-├─ INSTALL.md
-├─ global_instructions.md
-├─ .agents/
-│  └─ plugins/
-│     └─ marketplace.json
-├─ .claude-plugin/
-│  └─ marketplace.json
-├─ .codex/
-│  ├─ config.toml
-│  ├─ hooks.json
-│  ├─ hooks/
-│  │  └─ pre_commit_sync_local_agents.py
-│  └─ agents/
-│     └─ <agent>.toml
+plugins/
+├─ catalog.json
 ├─ agent/
+│  ├─ plugin.json
+│  ├─ package.ignore
 │  ├─ assets/
-│  │  ├─ icon.png
-│  │  └─ logo.png
 │  └─ skills/
-│     └─ <skill-name>/
-│        ├─ SKILL.md
-│        └─ ...
-├─ meta-skill/
-│  ├─ references/
-│  ├─ skills/
-│  │  └─ <skill-name>/
-│  └─ src/
-├─ plugins/
-│  ├─ codex/
-│  │  ├─ agent/
-│  │  └─ meta-skill/
-│  └─ claude/
-│     ├─ agent/
-│     └─ meta-skill/
-└─ scripts/
-   ├─ sync-local-agents.sh
-   └─ sync-plugins.sh
+└─ meta-skill/
+   ├─ plugin.json
+   ├─ package.ignore
+   ├─ assets/
+   ├─ references/
+   ├─ skills/
+   ├─ src/
+   └─ tests/
 ```
 
-- `agent/skills/`: Agent plugin skills, packaged into `plugins/{codex,claude}/agent/skills/`. This is intentionally narrow; today it contains `commit`, `publish-pr`, and the `yeet` alias.
-- `agent/assets/`: canonical Agent Codex plugin assets, packaged into `plugins/codex/agent/assets/`.
-- `meta-skill/`: standalone Meta-Skill plugin source. The sync script packages `skills/`, `references/`, and `src/` into `plugins/{codex,claude}/meta-skill/`.
-- `.codex/agents/`: canonical local Codex agent definitions. `scripts/sync-local-agents.sh` copies these to `~/.codex/agents/` and generates Claude agent Markdown under `~/.claude/agents/`.
-- `.codex/config.toml`: repo-local Codex config for this trusted repo. Do not copy it over `~/.codex/config.toml`; the user-level config owns installed plugins, marketplaces, model defaults, and other machine state.
-- `.codex/hooks.json` and `.codex/hooks/`: source for project-local and user-level Codex hooks. The pre-commit sync hook runs before Codex executes relevant `git commit` commands.
-- `global_instructions.md`: copied to `~/.codex/AGENTS.md` and symlinked from `~/.claude/CLAUDE.md`.
-- `plugins/`: generated plugin packages. Do not hand-edit these files.
+`plugins/catalog.json` is the source catalog. A future packaging script should
+use it to generate vendor-specific marketplace files rather than hand-editing
+marketplace output.
 
-## Sync
+Expected generated output:
 
-After plugin source changes, run:
-
-```sh
-scripts/sync-plugins.sh
+```text
+dist/
+├─ codex/
+│  ├─ .agents/plugins/marketplace.json
+│  └─ plugins/<plugin>/.codex-plugin/plugin.json
+└─ claude/
+   ├─ .claude-plugin/marketplace.json
+   └─ plugins/<plugin>/.claude-plugin/plugin.json
 ```
 
-This rebuilds generated plugin packages, manifests, marketplace files, plugin installs, and local plugin caches. It also ensures the OpenAI bundled `browser`, `chrome`, and `computer-use` Codex plugins remain installed and enabled. It removes any old managed direct Desktop skill copies under `~/.codex/skills/` and calls `scripts/sync-local-agents.sh` so local instructions stay current.
+Codex and Claude use different package conventions, so generated manifests and
+marketplaces should remain vendor-specific:
 
-After local instruction or agent changes, run:
+- Codex plugin packages use `.codex-plugin/plugin.json`.
+- Claude plugin packages use `.claude-plugin/plugin.json`.
+- Codex repo marketplaces use `.agents/plugins/marketplace.json`.
+- Claude marketplaces use `.claude-plugin/marketplace.json`.
 
-```sh
-scripts/sync-local-agents.sh
+## Config Source
+
+Machine config source copies live under `configs/`.
+
+```text
+configs/
+├─ claude/
+├─ codex/
+├─ ghostty/
+├─ vscode/
+└─ zsh/
 ```
 
-This updates:
+These are currently snapshots, not automatically installed outputs. Some
+captured files include machine-local state, especially `configs/codex/config.toml`.
+Before reintroducing sync automation, split portable config from runtime state
+such as timestamps, cache paths, trust hashes, and per-machine project entries.
+Secrets belong in local files outside Git, such as `~/.zshrc.local`.
 
-- `~/.codex/AGENTS.md`
-- `~/.claude/CLAUDE.md`
-- `~/.codex/agents/`
-- `~/.claude/agents/`
-- `~/.codex/hooks.json`
-- `~/.codex/hooks/`
+## Current Sync Status
 
-When Codex runs a `git commit` command, the Codex hook checks whether the commit touches `.codex/config.toml`, `global_instructions.md`, `.codex/agents/`, `.codex/hooks.json`, or `.codex/hooks/`. If it does, the hook runs `scripts/sync-local-agents.sh` before the commit proceeds. The user-level copy no-ops inside this repo when the project-local hook is present, so both hook sources can exist without double-syncing. Review and trust changed hooks from Codex with `/hooks`.
+The previous sync scripts were removed during the repo restructure. For now:
 
-## Repo Codex Config
+- Edit plugin source under `plugins/`.
+- Do not edit generated vendor packages by hand.
+- Keep generated packages under ignored `dist/`.
+- Treat `configs/` as source snapshots until a new sync contract is designed.
 
-This repo keeps its repo-local Codex config in `.codex/config.toml`.
-
-The repo config supplements `~/.codex/config.toml` when this trusted repo is open. It records the expected bundled Browser, Chrome, and Computer Use plugin state, while `scripts/sync-plugins.sh` repairs the machine-level plugin installation. Do not copy the repo config over the machine config, because `~/.codex/config.toml` also stores installed plugin and marketplace state.
-
-Codex repo instructions stay in root `AGENTS.md`; they do not move into `.codex/`. Codex project subagents use `.codex/agents/*.toml`, not `.agents/`.
+Before adding new sync automation, decide which files are portable source,
+which files are machine-local state, and which targets should be copied versus
+symlinked.

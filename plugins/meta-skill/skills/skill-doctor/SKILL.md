@@ -1,0 +1,89 @@
+---
+name: skill-doctor
+description: "The improve specialist within meta-skill: make an existing agent skill better. Run a Judge Review against best practices (default, produces a scored Quality page) or Diagnose/Edit a reported failure, then verify any approved fix. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for authoring a new skill (skill-writer) or formal performance measurement (skill-evaluator)."
+---
+
+# Skill Doctor
+
+Improve an existing agent skill. Two modes — **Judge Review** (default) and
+**Diagnose/Edit** — feed into **Verify** after any approved source edit.
+
+For the central Meta Skill CLI surface, read
+[cli.md](../../references/cli.md). Do not invent doctor-specific command
+interfaces when a plugin-level command exists.
+
+**Human feedback is evidence, not edit authorization.** Never edit the target
+skill, generated packages, docs, or source unless the user asks to *make /
+apply / update / patch / fix*. Writing workbench artifacts (`review.md`,
+`spec.md`) is always allowed — they are evidence, not payload edits.
+
+## Mode Selection
+
+Pick the starting mode from what the user brought; it is a starting point, not a
+cage — solve the user's problem whichever way works.
+
+- **Judge Review** (default) — proactive audit / prompt-optimization: "make my
+  skill better," "is my triggering solid?" No specific failure in hand.
+- **Diagnose/Edit** — a reported failure walked in: "my skill keeps failing on
+  prompt X." Work from the failure report to candidate text, then apply only if
+  the user explicitly approved editing.
+
+Tiebreaker: a specific reported failure → **Diagnose/Edit**; otherwise →
+**Judge Review** (including static complaints like an over-long description).
+
+## Judge Review (default)
+
+Produce a **scored Quality page** (`review.md`) — see
+[references/rubric.md](references/rubric.md).
+
+1. Score **Discovery** (4 dims) and **Implementation** (5 dims), each 0–3 — every
+   dimension's reasoning must cite the skill's own text; see
+   [references/rubric.md](references/rubric.md) for calibration and a worked example.
+2. Run the **Verify tests** (deterministic): `plugins/meta-skill/scripts/metaskill validate <skill-dir>`.
+3. **Overall Quality Score** = rounded average of Discovery %, Implementation %,
+   and Verify-tests %.
+4. Write `review.md` with scores + prioritized findings, then **stop** —
+   it proposes; it does not edit.
+
+## Diagnose/Edit
+
+Diagnose the reported failure and handle any approved edit as one workflow — read
+[references/diagnose.md](references/diagnose.md) and
+[references/edit.md](references/edit.md). Announce whether you are using the
+guidance-first track or the reproduction/trial track, localize the cause, scan
+candidate text for stale or negative-only guidance, and propose the smallest
+fix. Apply only the edits the user approved; edit the **source** skill, never a
+generated package copy.
+
+For one-off improvement testing, use the shared skill trial run workflow in
+[skill-trial-runs.md](../../references/skill-trial-runs.md). Prefer a child
+worktree for candidate edits; the child demonstrates or revises in isolation,
+while the parent applies only approved source edits.
+
+## Verify
+
+Re-run the **Verify tests** through `plugins/meta-skill/scripts/metaskill validate <skill-dir>`. Confirm
+the approved fix held and refresh the Verify-tests third of the score, plus a
+quick regression scan — see [references/verify.md](references/verify.md).
+Escalate to `skill-evaluator` when the decision needs task/candidate evidence:
+for example, whether the fix improves outcomes over the current skill or a
+no-skill baseline.
+
+## Workbench
+
+Iteration artifacts live in a gitignored, plugin-wide workbench at the target
+skill's project root: `<project>/.meta-skill/` — `review.md` (Quality page) and
+`spec.md` (durable notes). The project root already names the skill and contains
+the portable skill payload at `<project>/skill/`; do not add another skill-name
+namespace. Never write workbench files into `plugins/meta-skill/` itself.
+
+## Guardrails
+
+- **Feedback ≠ authorization** — both modes propose first; edit only on an
+  explicit make/apply/update/patch/fix.
+- Reproduce *one* case only when using the reproduction/trial track; don't
+  measure many tasks/candidates — that's `skill-evaluator`.
+- Smallest correct change; edit source, never generated packages.
+- Child worktree edits are evidence, not promotion; parent-side source edits
+  still require authorization.
+- A `description` change alters triggering/routing — call it out explicitly.

@@ -1,7 +1,0 @@
-interface:
-  display_name: "Unpack"
-  short_description: "Make dense technical material click"
-  default_prompt: "Use $unpack to make this technical explanation easier to understand without turning it into a tutorial."
-
-policy:
-  allow_implicit_invocation: true

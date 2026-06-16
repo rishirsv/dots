@@ -1,6 +1,0 @@
-interface:
-  display_name: "Product Design"
-  short_description: "Route UI design, QA, and audits"
-  default_prompt: "Use $product-design to route this product design request."
-policy:
-  allow_implicit_invocation: false

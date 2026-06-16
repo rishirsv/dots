@@ -23,7 +23,7 @@ build/
 **/.agents/tmp/
 **/outputs/
 **/.meta-skill/
-!meta-skill/.meta-skill/
-meta-skill/.meta-skill/*
-!meta-skill/.meta-skill/docs/
-!meta-skill/.meta-skill/docs/**
+!plugins/meta-skill/.meta-skill/
+plugins/meta-skill/.meta-skill/*
+!plugins/meta-skill/.meta-skill/docs/
+!plugins/meta-skill/.meta-skill/docs/**

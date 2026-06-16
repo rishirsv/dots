@@ -1,0 +1,65 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+SRC_DIR="$SCRIPT_DIR/../src"
+REQ="$SRC_DIR/requirements.txt"
+CACHE_ROOT="${META_SKILL_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/meta-skill}"
+VENV="${META_SKILL_VENV:-$CACHE_ROOT/venv}"
+
+find_python() {
+  if [ -n "${META_SKILL_PYTHON:-}" ]; then
+    printf '%s\n' "$META_SKILL_PYTHON"
+    return 0
+  fi
+  for name in python3.12 python3.11 python3.10; do
+    if command -v "$name" >/dev/null 2>&1; then
+      command -v "$name"
+      return 0
+    fi
+  done
+  codex_python="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+  if [ -x "$codex_python" ]; then
+    printf '%s\n' "$codex_python"
+    return 0
+  fi
+  return 1
+}
+
+BASE_PYTHON=$(find_python) || {
+  echo "error: Meta Skill CLI requires Python 3.10+; set META_SKILL_PYTHON to a compatible interpreter." >&2
+  exit 2
+}
+
+"$BASE_PYTHON" - <<'PY' >/dev/null || {
+import sys
+raise SystemExit(0 if sys.version_info >= (3, 10) else 1)
+PY
+  echo "error: Meta Skill CLI requires Python 3.10+; selected interpreter is $BASE_PYTHON." >&2
+  exit 2
+}
+
+if [ ! -x "$VENV/bin/python" ]; then
+  mkdir -p "$CACHE_ROOT"
+  "$BASE_PYTHON" -m venv "$VENV"
+fi
+
+PYTHON="$VENV/bin/python"
+
+if [ "${META_SKILL_SKIP_DEP_UPDATE:-0}" != "1" ]; then
+  "$PYTHON" -m pip install --upgrade pip >/dev/null
+  if ! "$PYTHON" -m pip install --upgrade -r "$REQ" >&2; then
+    if ! "$PYTHON" - <<'PY' >/dev/null 2>&1; then
+import openai_codex
+PY
+      echo "error: failed to install Meta Skill dependencies from $REQ." >&2
+      exit 2
+    fi
+    echo "warning: dependency update failed; using the already installed Meta Skill environment." >&2
+  fi
+fi
+
+PYTHONPATH="$SRC_DIR${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH
+
+exec "$PYTHON" -m meta_skill "$@"

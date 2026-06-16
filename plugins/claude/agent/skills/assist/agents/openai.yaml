@@ -1,6 +1,0 @@
-interface:
-  display_name: "Assist"
-  short_description: "Package a focused request and local context so another model or CLI agent can provide an advisory second opinion."
-  default_prompt: "Use $assist to run this workflow."
-policy:
-  allow_implicit_invocation: true

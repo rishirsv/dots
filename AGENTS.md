@@ -1,10 +1,38 @@
-- Edit source files only: `agent/`, `meta-skill/`, `.codex/agents/`, `AGENTS.md`, `global_instructions.md`, `README.md`, and `scripts/`.
-- Agent plugin source lives under `agent/`. Meta Skill plugin source lives under `meta-skill/`.
-- Always edit source first. Do not modify installed plugin caches, generated package copies, or local synced agent/skill copies directly; update the source tree and regenerate/sync those outputs with the repo scripts.
-- Agent plugin skills live under `agent/skills/`. Non-plugin Agent skill drafts are parked outside the repo on the macOS Desktop when they are being rethought.
-- Save all plan documents under `.plans/`; do not leave plans or planning docs inside plugin, skill, or package directories.
-- `scripts/sync-plugins.sh` packages Agent plugin skills and removes old managed direct Desktop skill copies under `~/.codex/skills/`.
-- Do not hand-edit generated plugin package files under `plugins/codex/` or `plugins/claude/`; `scripts/sync-plugins.sh` rebuilds the Codex and Claude package copies from the source directories.
-- After editing any skill payload, review the changed skill files directly and run any deterministic tests that exist for that skill before syncing or committing.
-- Before committing this repo, run `scripts/sync-plugins.sh` if anything under `agent/` or `meta-skill/` changed; the script rebuilds every repo-managed plugin into `plugins/codex/` and `plugins/claude/`.
-- Run `scripts/sync-local-agents.sh` after changing `global_instructions.md`, `.codex/agents/`, or `.codex/hooks/`; the Codex pre-commit hook in `.codex/hooks.json` does this automatically before Codex-run commits that include local agent files and also installs the user-level hook copy under `~/.codex/`.
+# AGENTS.md
+
+Ignore uncommitted changes made by other agents working in this repo. Do not
+mention them.
+
+## Workflow
+
+- Edit source only.
+- Plugin source lives under `plugins/<plugin-name>/`.
+- Config source lives under `configs/<tool>/`.
+- Generated plugin packages belong under ignored `dist/`.
+- Machine installs, caches, auth, sessions, and generated packages are outputs,
+  not source.
+
+## Boundaries
+
+- Do not edit installed plugin caches, generated vendor packages, or local
+  synced config targets directly.
+- Do not commit secrets. Zsh secrets and machine-local shell overrides belong in
+  `~/.zshrc.local`, not `configs/zsh/`.
+- Do not reintroduce `global_instructions.md`.
+- Do not use the removed `scripts/sync-plugins.sh` or
+  `scripts/sync-local-agents.sh`.
+
+## Commands
+
+- Sync config sources with `scripts/sync-configs.sh --dry-run --all` first.
+- Apply scoped config syncs only after reviewing dry-run output, for example
+  `scripts/sync-configs.sh --zsh` or `scripts/sync-configs.sh --vscode`.
+- Meta-Skill CLI lives inside the plugin:
+  `plugins/meta-skill/scripts/metaskill`.
+
+## Validation
+
+- After editing a skill, review the changed skill files directly.
+- Run deterministic tests that exist for the touched skill or helper.
+- For Meta-Skill validation, prefer:
+  `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`.
