@@ -26,7 +26,7 @@ part of this skill; do not route prose cleanup to a separate writing skill.
 ## Workflow
 
 1. Establish the documentation job: the target reader, artifact type, source
-   evidence, destination path, and whether to edit files or return a draft. If
+   material, destination path, and whether to edit files or return a draft. If
    the repo and user request make this clear, proceed without asking.
 2. Gather evidence from the user request, changed files, source code, tests,
    config, CLI help, existing docs, and relevant generated outputs. Treat
@@ -51,15 +51,15 @@ part of this skill; do not route prose cleanup to a separate writing skill.
    [validation.md](references/validation.md). Fix defects found by validation
    when they are in scope; otherwise report the limitation clearly. Final
    reports must name files changed, doc types, validation performed, validation
-   skipped with reasons, and open source-evidence gaps.
+   skipped with reasons, and open verification gaps when relevant.
 
 ## Output Modes
 
 - File edit: patch the requested docs, then report changed files, doc types,
-  validation, and any evidence gaps.
+  validation, and any relevant verification gaps.
 - Draft: return the proposed document body with a short note naming the intended
   path and document type.
-- Proposal: return target docs, recommended changes, source evidence to inspect,
+- Proposal: return target docs, recommended changes, source material to inspect,
   and validation that should run after editing.
 - Review: report findings first with severity, location, evidence, issue, and
   recommended fix. State the reviewed scope and evidence inspected. If no issues
@@ -80,9 +80,13 @@ part of this skill; do not route prose cleanup to a separate writing skill.
   to the reader's trust.
 - When durable docs depend on facts that cannot be verified from available
   sources, ask for the missing source or write only a clearly labeled proposal.
-- Cite or link source evidence for claims that a future reader or agent would
+- Cite or link supporting material for claims that a future reader or agent would
   need to verify, especially externally sourced facts, API behavior, data
   definitions, and operational procedures.
+- For PRDs, never add a `Source Evidence`, citations, provenance log, reviewed
+  scope, or evidence-audit section. Gather evidence internally, then write the
+  PRD as product intent: problem, users, jobs, requirements, non-goals, success
+  criteria, risks, and open questions.
 
 ## Knowledge Docs
 

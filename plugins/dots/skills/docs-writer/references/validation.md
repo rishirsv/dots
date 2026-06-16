@@ -47,4 +47,4 @@ Report:
 - The doc types written or updated.
 - Validation performed.
 - Validation skipped and why.
-- Any open source-evidence gaps or follow-up work.
+- Any open verification gaps or follow-up work.
