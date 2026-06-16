@@ -15,6 +15,7 @@ source "$ZSH/oh-my-zsh.sh"
 # ==============================================
 # Custom Aliases
 # ==============================================
+alias claude='CLAUDE_CODE_NO_FLICKER=1 CLAUDE_CODE_DISABLE_MOUSE=1 command claude'
 alias cc='CLAUDE_CODE_NO_FLICKER=1 CLAUDE_CODE_DISABLE_MOUSE=1 claude --dangerously-skip-permissions'
 
 # ==============================================
@@ -83,6 +84,10 @@ autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 bindkey '^[[Z' reverse-menu-complete
 bindkey '^[[A' up-line-or-beginning-search
 bindkey '^[[B' down-line-or-beginning-search
+
+# Ghostty sends standard Mac text-field shortcuts directly:
+# Cmd-Left/Cmd-Right jump to line start/end, Cmd-Backspace clears the line,
+# and Option-Left/Option-Right move by word.
 
 # ==============================================
 # Autocomplete & Shell Enhancements

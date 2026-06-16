@@ -164,10 +164,25 @@ first. If repo instructions forbid that edit, ask before writing. If the user
 forbids file writes, do not create the file or edit `.gitignore`; return the
 intended path and a concise module plan instead.
 
-Open or render-check the file before delivering. Fix console errors, broken
-layout, unreadable text, leftover sample content, and mobile overflow. Return a
-clickable file link and one sentence describing the explainer. Do not create an
-index, manifest, or history file unless asked.
+Before delivering, open the saved artifact in a real browser. Prefer Codex
+Browser when available; otherwise use the available browser tool that can render
+the local file or served URL. Inspect the rendered page at desktop width and a
+mobile width before handoff. Use screenshots plus DOM/layout checks, not just a
+load event. Fix console errors, broken layout, unreadable text, leftover sample
+content, and these regression classes:
+
+- no horizontal page scroll; only intentional code or diagram panes may scroll
+  inside their own box
+- wide SVGs, tables, diagrams, and comparison boards stay contained or become
+  intentionally internally scrollable; they must not create repeated/offscreen
+  columns or bleed out of the article
+- labels, badges, arrows, captions, and controls remain legible and are not
+  clipped, overlapped, or pushed outside their container
+- first viewport, anchored sections, and mobile views do not show duplicated
+  side-by-side content caused by overflow
+
+Return a clickable file link and one sentence describing the explainer. Do not
+create an index, manifest, or history file unless asked.
 
 ### Image explainers
 

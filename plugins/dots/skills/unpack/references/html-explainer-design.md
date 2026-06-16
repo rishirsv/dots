@@ -14,7 +14,8 @@ build workflow. Read both before writing an artifact.
    modules the archetype needs, composed from the catalog below.
 4. Delete the sample sections and every word of sample content. No leftover
    placeholder text, no unused empty modules.
-5. Open the rendered file and run the `../DESIGN.md` verification rubric.
+5. Open the rendered file in a browser and run the `../DESIGN.md` verification
+   rubric at desktop and mobile widths. Prefer Codex Browser when available.
 
 The kit classes already carry the visual language — write semantic HTML with
 these classes; do not add one-off CSS unless a module genuinely needs it. Unused
@@ -291,5 +292,12 @@ breaking the explanation; none use dependencies or network calls.
   near a diagram must not be clipped by its scroll box.
 - Desktop and mobile: readable, no horizontal page scroll (only diagrams/code
   scroll inside their box).
+- Browser geometry checks pass: page `scrollWidth` fits the viewport, visible
+  content does not bleed past the viewport edge, and any wider-than-screen SVG,
+  table, code block, or comparison board scrolls only inside its own framed
+  container.
+- Screenshot inspection shows no duplicated side-by-side sections, offscreen
+  option panels, clipped labels, overlapping annotations, or table columns
+  escaping the article on desktop or mobile.
 - Re-read the anti-slop list in `../DESIGN.md`: no gradients, glassmorphism,
   side-tab borders, icon tiles, or hype copy.

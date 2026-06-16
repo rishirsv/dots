@@ -165,4 +165,14 @@ Open the rendered file and check more than "it loads":
 - No leftover sample content, placeholders, or unused empty sections.
 - Desktop and mobile widths: readable text, no overlap, no horizontal page
   scroll (diagrams and code may scroll inside their own box).
+- Browser-rendered geometry is clean: `documentElement.scrollWidth` does not
+  exceed the viewport except for intentional internal scrollers; no visible
+  element's bounding box bleeds past the viewport edge.
+- Wide SVGs, comparison boards, and tables are contained: they scale down when
+  legible, switch to internal horizontal scroll when needed, or collapse into a
+  mobile-friendly layout. They must not show repeated side-by-side content,
+  clipped labels, offscreen panels, or overlapping annotations.
+- Screenshots at desktop and mobile widths confirm headings, cards, tables,
+  diagrams, captions, controls, and anchored sections are readable and do not
+  collide.
 - A reader learns the shape of the system faster than from Markdown.
