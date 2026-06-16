@@ -30,6 +30,12 @@ enabled = true
 [plugins."chrome@openai-bundled"]
 enabled = true
 
+[plugins."agent@agent"]
+enabled = true
+
+[plugins."meta-skill@agent"]
+enabled = true
+
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
@@ -56,6 +62,10 @@ trust_level = "trusted"
 
 [projects."/Users/rishi/Code/steady-app"]
 trust_level = "trusted"
+
+[marketplaces.agent]
+source_type = "local"
+source = "/Users/rishi/Code/dots/dist/codex"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"

@@ -24,6 +24,7 @@ mention them.
 
 ## Commands
 
+- Generate vendor plugin packages with `scripts/package-plugins.sh`.
 - Sync config sources with `scripts/sync-configs.sh --dry-run --all` first.
 - Apply scoped config syncs only after reviewing dry-run output, for example
   `scripts/sync-configs.sh --zsh` or `scripts/sync-configs.sh --vscode`.

@@ -30,6 +30,7 @@ find plugins -maxdepth 3 -type f | sort
 The next install flow should be designed around:
 
 - packaging `plugins/<name>` into ignored `dist/codex` and `dist/claude`
+- running `scripts/package-plugins.sh` before local plugin install tests
 - validating vendor packages
 - installing local marketplaces from generated `dist`
 - syncing selected config files from `configs/` to machine targets

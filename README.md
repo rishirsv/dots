@@ -85,6 +85,7 @@ The previous sync scripts were removed during the repo restructure. For now:
 
 - Edit plugin source under `plugins/`.
 - Do not edit generated vendor packages by hand.
+- Generate vendor packages with `scripts/package-plugins.sh`.
 - Keep generated packages under ignored `dist/`.
 - Treat `configs/` as source snapshots until a new sync contract is designed.
 

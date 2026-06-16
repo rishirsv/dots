@@ -1,4 +1,16 @@
 {
+  "enabledPlugins": {
+    "agent@agent": true,
+    "meta-skill@agent": true
+  },
+  "extraKnownMarketplaces": {
+    "agent": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/rishi/Code/dots/dist/claude"
+      }
+    }
+  },
   "effortLevel": "xhigh",
   "skipDangerousModePermissionPrompt": true
 }
