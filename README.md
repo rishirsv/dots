@@ -12,7 +12,7 @@ Edit durable source here:
 - `AGENTS.md`: repo instructions for agents working in this checkout.
 - `scripts/`: small helper entrypoints that are still source-owned.
 
-Generated output should live under `dist/` and stay out of Git.
+Generated output lives under ignored `dist/`.
 
 ## Plugin Source
 
@@ -21,7 +21,7 @@ Each plugin lives under `plugins/<plugin-name>/`.
 ```text
 plugins/
 ├─ catalog.json
-├─ agent/
+├─ dots/
 │  ├─ plugin.json
 │  ├─ package.ignore
 │  ├─ assets/
@@ -36,11 +36,13 @@ plugins/
    └─ tests/
 ```
 
-`plugins/catalog.json` is the source catalog. A future packaging script should
-use it to generate vendor-specific marketplace files rather than hand-editing
-marketplace output.
+`plugins/catalog.json` is the source catalog. Generate vendor packages with:
 
-Expected generated output:
+```sh
+scripts/package-plugins.sh
+```
+
+The script rebuilds:
 
 ```text
 dist/
@@ -60,6 +62,14 @@ marketplaces should remain vendor-specific:
 - Codex repo marketplaces use `.agents/plugins/marketplace.json`.
 - Claude marketplaces use `.claude-plugin/marketplace.json`.
 
+Install or refresh Codex plugins from the generated `dots` marketplace with the
+Codex plugin CLI:
+
+```sh
+codex plugin add dots@dots
+codex plugin add meta-skill@dots
+```
+
 ## Config Source
 
 Machine config source copies live under `configs/`.
@@ -73,22 +83,33 @@ configs/
 └─ zsh/
 ```
 
-These are currently snapshots, not automatically installed outputs. Some
-captured files include machine-local state, especially `configs/codex/config.toml`.
-Before reintroducing sync automation, split portable config from runtime state
-such as timestamps, cache paths, trust hashes, and per-machine project entries.
-Secrets belong in local files outside Git, such as `~/.zshrc.local`.
+Sync selected config sources with:
 
-## Current Sync Status
+```sh
+scripts/sync-configs.sh --dry-run --all
+scripts/sync-configs.sh --codex
+scripts/sync-configs.sh --claude
+```
 
-The previous sync scripts were removed during the repo restructure. For now:
+Review the dry-run before applying a scoped sync. The script backs up existing
+targets before replacing them.
 
-- Edit plugin source under `plugins/`.
-- Do not edit generated vendor packages by hand.
-- Generate vendor packages with `scripts/package-plugins.sh`.
-- Keep generated packages under ignored `dist/`.
-- Treat `configs/` as source snapshots until a new sync contract is designed.
+Keep source config portable. Stable project roots may live in
+`configs/codex/config.toml`; dated throwaway workspaces, caches, auth, session
+state, and machine-local shell secrets should stay out of Git. Zsh secrets and
+local shell overrides belong in `~/.zshrc.local`, not `configs/zsh/`.
 
-Before adding new sync automation, decide which files are portable source,
-which files are machine-local state, and which targets should be copied versus
-symlinked.
+## Validation
+
+Before committing plugin or config changes:
+
+```sh
+scripts/package-plugins.sh
+scripts/sync-configs.sh --dry-run --codex --claude
+```
+
+For Meta-Skill changes, also run:
+
+```sh
+plugins/meta-skill/scripts/metaskill validate <skill-dir> --json
+```

@@ -59,37 +59,10 @@ trust_level = "trusted"
 [projects."/Users/rishi/Code/steady-app"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-06-14/in-app-browser-the-user-has"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-06-14/there-are-some-hidden-ios-skills"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-06-14/check-out-codex-hooks-they-seem"]
-trust_level = "trusted"
-
 [projects."/Users/rishi/Code/X"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-06-14/remove-playwright-from-my-computer-all"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-06-14/right-how-can-i-get-a"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-06-14/for-split-finder-i-m-having"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-06-15/files-mentioned-by-the-user-codex"]
-trust_level = "trusted"
-
 [projects."/Users/rishi/Code/dots"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-06-15/i-hate-the-way-my-ghostty"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-06-15/https-code-claude-com-docs-en"]
 trust_level = "trusted"
 
 [hooks.state]

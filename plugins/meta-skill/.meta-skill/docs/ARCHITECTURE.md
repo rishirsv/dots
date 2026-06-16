@@ -1402,30 +1402,29 @@ Package archives exclude:
 That exclusion keeps private workbench material, generated artifacts, and local
 state out of portable skill payloads.
 
-## Sync And Generated Packages
+## Packaging And Generated Packages
 
-The repo uses `scripts/sync-plugins.sh` to package source plugins into Codex and
-Claude plugin directories.
+The repo uses `scripts/package-plugins.sh` to package source plugins into
+ignored Codex and Claude package directories under `dist/`.
 
-For Meta-Skill, the sync script copies:
+For Meta-Skill, the package script copies:
 
-- `meta-skill/skills/` to `plugins/codex/meta-skill/skills/` and
-  `plugins/claude/meta-skill/skills/`
-- `meta-skill/references/` to generated `references/`
-- `meta-skill/src/` to generated `src/`
+- `plugins/meta-skill/skills/` to generated `skills/`
+- `plugins/meta-skill/references/` to generated `references/`
+- `plugins/meta-skill/scripts/` to generated `scripts/`
+- `plugins/meta-skill/src/` to generated `src/`
 
-It also regenerates plugin manifests, marketplace entries, local plugin
-installations, and local agent instructions through `scripts/sync-local-agents.sh`.
+It also regenerates vendor-specific plugin manifests and marketplace entries.
+Install or refresh local plugins with the Codex plugin CLI after packaging.
 
 When editing anything under `meta-skill/`, run:
 
 ```sh
-scripts/sync-plugins.sh
+scripts/package-plugins.sh
 ```
 
-Do not hand-edit generated plugin package files under `plugins/codex/` or
-`plugins/claude/`. If generated files differ from source, regenerate them from
-source.
+Do not hand-edit generated plugin package files under `dist/`. If generated
+files differ from source, regenerate them from source.
 
 ## End-To-End Evaluation Flow
 
@@ -1489,14 +1488,14 @@ plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-evaluator 
 Before committing changes under `meta-skill/`, run:
 
 ```sh
-scripts/sync-plugins.sh
+scripts/package-plugins.sh
 ```
 
 Then inspect generated Meta-Skill package diffs under:
 
 ```text
-plugins/codex/meta-skill/
-plugins/claude/meta-skill/
+dist/codex/plugins/meta-skill/
+dist/claude/plugins/meta-skill/
 ```
 
 ## Source Map
@@ -1530,4 +1529,4 @@ Use these files when refreshing this document:
 - `meta-skill/src/meta_skill/linting.py`: static eval manifest lint.
 - `meta-skill/src/meta_skill/validation.py`: skill validation bridge.
 - `meta-skill/src/meta_skill/packaging.py`: portable payload packaging.
-- `scripts/sync-plugins.sh`: source-to-generated plugin packaging.
+- `scripts/package-plugins.sh`: source-to-generated plugin packaging.
