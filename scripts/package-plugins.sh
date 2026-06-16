@@ -141,6 +141,7 @@ def codex_manifest(name: str, meta: dict) -> dict:
         interface.update({
             "brandColor": "#7C4DFF",
             "composerIcon": "./assets/icon.png",
+            "logo": "./assets/logo.png",
             "screenshots": [],
         })
     manifest["interface"] = interface
