@@ -104,8 +104,7 @@ local shell overrides belong in `~/.zshrc.local`, not `configs/zsh/`.
 Before committing plugin or config changes:
 
 ```sh
-scripts/package-plugins.sh
-scripts/sync-configs.sh --dry-run --codex --claude
+scripts/verify.sh
 ```
 
 For Meta-Skill changes, also run:

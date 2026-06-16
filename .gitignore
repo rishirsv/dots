@@ -10,6 +10,7 @@ build/
 .env
 .env.*
 .claude/settings.local.json
+.codex/
 
 # Generated sync state
 *.tmp
@@ -21,6 +22,7 @@ build/
 **/.agents/screenshots/
 **/.agents/oracle/
 **/.agents/tmp/
+**/.agents/artifacts/
 **/outputs/
 **/.meta-skill/
 !plugins/meta-skill/.meta-skill/

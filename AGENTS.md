@@ -33,6 +33,7 @@ mention them.
 
 ## Validation
 
+- Run the baseline repo verification with `scripts/verify.sh`.
 - After editing a skill, review the changed skill files directly.
 - Run deterministic tests that exist for the touched skill or helper.
 - For Meta-Skill validation, prefer:
