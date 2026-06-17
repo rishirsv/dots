@@ -15,7 +15,7 @@ build/
 # Generated sync state
 *.tmp
 
-# Local generated runs
+# Local generated runs and non-durable plans
 .plans/
 **/.plugin-eval/runs/
 **/.autoresearch/runs/

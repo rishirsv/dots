@@ -9,6 +9,8 @@ mention them.
 - Plugin source lives under `plugins/<plugin-name>/`.
 - Config source lives under `configs/<tool>/`.
 - Generated plugin packages belong under ignored `dist/`.
+- Non-durable plans, trackers, and working notes belong under the ignored
+  top-level `.plans/` directory.
 - Machine installs, caches, auth, sessions, and generated packages are outputs,
   not source.
 
@@ -16,6 +18,9 @@ mention them.
 
 - Do not edit installed plugin caches, generated vendor packages, or local
   synced config targets directly.
+- Do not put non-durable plans in a skill's hidden workbench folder. Hidden
+  skill folders, such as `plugins/meta-skill/.meta-skill/docs/`, are only for
+  durable documents and evidence that should live with that skill.
 - Do not commit secrets. Zsh secrets and machine-local shell overrides belong in
   `~/.zshrc.local`, not `configs/zsh/`.
 - Do not reintroduce `global_instructions.md`.

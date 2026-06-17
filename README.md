@@ -88,11 +88,16 @@ Sync selected config sources with:
 ```sh
 scripts/sync-configs.sh --dry-run --all
 scripts/sync-configs.sh --codex
+scripts/sync-configs.sh --codex-personal
 scripts/sync-configs.sh --claude
 ```
 
 Review the dry-run before applying a scoped sync. The script backs up existing
 targets before replacing them.
+
+`--codex-personal` installs the Codex source config as
+`~/.codex/personal.config.toml`, which Codex can load with
+`codex --profile personal`.
 
 Keep source config portable. Stable project roots may live in
 `configs/codex/config.toml`; dated throwaway workspaces, caches, auth, session

@@ -7,7 +7,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--claude|--vscode|--ghostty|--zsh ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--claude|--vscode|--ghostty|--zsh ...]
 
 Copies repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -35,6 +35,9 @@ while (( $# )); do
       ;;
     --codex)
       add_target codex
+      ;;
+    --codex-personal)
+      add_target codex-personal
       ;;
     --claude)
       add_target claude
@@ -148,6 +151,10 @@ sync_codex() {
   install_dir "$ROOT/configs/codex/agents" "$HOME/.codex/agents"
 }
 
+sync_codex_personal() {
+  install_file "$ROOT/configs/codex/config.toml" "$HOME/.codex/personal.config.toml"
+}
+
 sync_claude() {
   install_file "$ROOT/configs/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
   install_file "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
@@ -172,6 +179,7 @@ sync_zsh() {
 for target in "${TARGETS[@]}"; do
   case "$target" in
     codex) sync_codex ;;
+    codex-personal) sync_codex_personal ;;
     claude) sync_claude ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
