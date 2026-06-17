@@ -31,7 +31,7 @@ you already know the area you need.
 | The meaning of suite, task, candidate, trial, transcript, outcome, and grader | [Vocabulary](#vocabulary) |
 | Which CLI command owns which file or behavior | [Shared CLI](#shared-cli) |
 | What each current command group does technically | [Command Groups And Instructions](#command-groups-and-instructions) |
-| Why `.meta-skill/` exists and what each workbench file is for | [Hidden Workbench](#hidden-workbench) |
+| Why `.<skill-name>/` exists and what each workbench file is for | [Hidden Workbench](#hidden-workbench) |
 | How Writer-authored eval prompts become Evaluator-runnable tasks | [Eval Manifest](#eval-manifest) |
 | How an agent writes evals and chooses graders | [How Agents Write Evals](#how-agents-write-evals) |
 | How task folders are created from the manifest | [Workbench Initialization And Materialization](#workbench-initialization-and-materialization) |
@@ -122,10 +122,11 @@ meta-skill/
 ```
 
 The hidden `meta-skill/.meta-skill/docs/` directory is committed project
-knowledge for the Meta-Skill plugin itself. It is not the same as a target
-skill's generated eval workbench. Temporary planning artifacts should not live
-there; keep durable docs such as this architecture reference and source-grounded
-research reports.
+knowledge for the Meta-Skill plugin itself. The name still follows the same
+rule: the target skill is `meta-skill`, so its hidden workbench is
+`.meta-skill/`. It is not the same as another target skill's generated eval
+workbench. Temporary planning artifacts should not live there; keep durable docs
+such as this architecture reference and source-grounded research reports.
 
 There are three important source/generated boundaries:
 
@@ -133,7 +134,7 @@ There are three important source/generated boundaries:
   when changing Meta-Skill behavior.
 - Do not hand-edit `plugins/codex/meta-skill/` or `plugins/claude/meta-skill/`;
   those directories are regenerated package copies.
-- Do not package `.meta-skill/` workbench state into portable skills. Workbench
+- Do not package `.<skill-name>/` workbench state into portable skills. Workbench
   files are for authoring, evaluation, reports, and local evidence.
 
 ## Plugin Lifecycle Model
@@ -154,7 +155,7 @@ Typical flows:
 
 - New skill: `meta-skill` routes to `skill-writer`.
 - New skill with eval handoff: `skill-writer` authors payload and
-  `.meta-skill/evals.json`; `skill-evaluator` later materializes and runs it.
+  `.<skill-name>/evals.json`; `skill-evaluator` later materializes and runs it.
 - Existing skill bug: `skill-doctor` reviews or diagnoses, proposes, edits only
   after explicit approval, then verifies.
 - Outcome measurement: `skill-evaluator` compares no-skill, current-skill, and
@@ -198,10 +199,10 @@ Writer produces files such as:
   references/
   scripts/
   assets/
-  .meta-skill/evals.json
+  .<skill-name>/evals.json
 ```
 
-Only the runtime payload is meant to ship. `.meta-skill/evals.json` is optional
+Only the runtime payload is meant to ship. `.<skill-name>/evals.json` is optional
 authoring handoff material when the user asks for eval seeds, project-mode eval
 material, or evaluator handoff. It should not contain grades, run state, or
 claims that measurement happened.
@@ -224,7 +225,7 @@ apply or make the change.
 
 ### Evaluator
 
-Evaluator owns measurement. It authors or uses `.meta-skill/evals.json`,
+Evaluator owns measurement. It authors or uses `.<skill-name>/evals.json`,
 materializes task folders, runs tasks under candidates, records grades, and
 reports the result.
 
@@ -239,8 +240,8 @@ test.
 
 | Product term | Current file or schema surface |
 |---|---|
-| Suite | `.meta-skill/evals.json` plus its materialized workbench |
-| Task | One evaluation row and one folder under `.meta-skill/cases/<task-id>/` |
+| Suite | `.<skill-name>/evals.json` plus its materialized workbench |
+| Task | One evaluation row and one folder under `.<skill-name>/cases/<task-id>/` |
 | Candidate | One harness setup, such as `no-skill`, `current`, or an edited attempt; stored as `candidates[]` in manifests and `candidate` in run rows |
 | Trial | One task executed once under one candidate |
 | Transcript | `events/<trial-id>.jsonl` plus compact `evidence/<trial-id>.json` |
@@ -256,7 +257,7 @@ Suppose the target skill normalizes commit messages. An eval suite might ask the
 agent to turn messy notes into a Conventional Commit subject.
 
 ```text
-suite:      .meta-skill/evals.json
+suite:      .<skill-name>/evals.json
 task:       implicit-auth-fix
 candidate: current
 trial:      implicit-auth-fix.current.t1
@@ -308,14 +309,14 @@ Current command groups:
 ```sh
 plugins/meta-skill/scripts/metaskill doctor [--json]
 plugins/meta-skill/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
-plugins/meta-skill/scripts/metaskill eval lint [--suite .meta-skill/evals.json] [--json]
-plugins/meta-skill/scripts/metaskill eval materialize [--suite .meta-skill/evals.json] [--force] [--json]
-plugins/meta-skill/scripts/metaskill eval run [--suite .meta-skill/evals.json] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
+plugins/meta-skill/scripts/metaskill eval lint [--suite <suite>] [--json]
+plugins/meta-skill/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
+plugins/meta-skill/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
 plugins/meta-skill/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
 plugins/meta-skill/scripts/metaskill eval grade --run <run-id-or-path> [--json]
 plugins/meta-skill/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
 plugins/meta-skill/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
-plugins/meta-skill/scripts/metaskill eval list [--suite .meta-skill/evals.json] [--json]
+plugins/meta-skill/scripts/metaskill eval list [--suite <suite>] [--json]
 plugins/meta-skill/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
 plugins/meta-skill/scripts/metaskill validate <skill-dir> [--json]
 plugins/meta-skill/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
@@ -332,10 +333,10 @@ Each command reads or writes a specific part of the system.
 | Command | Main module | Reads | Writes | Purpose |
 |---|---|---|---|---|
 | `doctor` | `cli.py`, `app_server/client.py` | Python environment, SDK imports, source paths | Nothing | Check whether the local Meta-Skill runtime can operate |
-| `workbench init` | `workbench.py` | Target path | `.meta-skill/` folders, starter `evals.json` | Create a place for eval authoring and run evidence |
+| `workbench init` | `workbench.py` | Target path | `.<skill-name>/` folders, starter `evals.json` | Create a place for eval authoring and run evidence |
 | `eval lint` | `linting.py`, `manifest.py` | `evals.json` | Nothing | Find static manifest and grader-shape problems |
-| `eval materialize` | `workbench.py`, `manifest.py` | `evals.json` | `.meta-skill/cases/<task-id>/` | Turn manifest task seeds into editable task folders |
-| `eval run` | `runner.py` | manifest, materialized tasks, candidate payloads | `.meta-skill/runs/<run-id>/` | Execute trials and capture transcripts/outcomes |
+| `eval materialize` | `workbench.py`, `manifest.py` | `evals.json` | `.<skill-name>/cases/<task-id>/` | Turn manifest task seeds into editable task folders |
+| `eval run` | `runner.py` | manifest, materialized tasks, candidate payloads | `.<skill-name>/runs/<run-id>/` | Execute trials and capture transcripts/outcomes |
 | `eval progress` | `runner.py`, `io.py` | run files | Nothing | Show runner status counts |
 | `eval grade` | `grading.py` | run results, task judge guidance, expected files, validators | `grades.jsonl`, judge event files | Judge trial outcomes |
 | `eval human` | `grading.py` | run results, grades | `grades.jsonl` in record mode | Show human review packets or record human labels |
@@ -393,10 +394,10 @@ Server.
 
 #### `workbench init`
 
-`workbench init` creates the hidden `.meta-skill/` workbench for a target skill
+`workbench init` creates the hidden `.<skill-name>/` workbench for a target skill
 or project.
 
-It creates the expected workbench folders and seeds `.meta-skill/evals.json` if
+It creates the expected workbench folders and seeds `.<skill-name>/evals.json` if
 one does not exist. The command accepts `--target` to initialize a target other
 than the current directory and `--dry-run` to report planned changes without
 writing them.
@@ -421,11 +422,11 @@ a behavioral grade and does not prove that the skill works.
 
 `eval materialize` turns manifest-defined tasks into concrete case folders.
 
-It creates `.meta-skill/cases/<task-id>/`, writes the visible task file, and
+It creates `.<skill-name>/cases/<task-id>/`, writes the visible task file, and
 creates parent directories for declared fixtures. By default it does not
 overwrite edited task files. `--force` permits overwriting seeded task files.
 
-Use `eval materialize` after editing `.meta-skill/evals.json` or when task
+Use `eval materialize` after editing `.<skill-name>/evals.json` or when task
 folders are missing. Keep hidden expectations, judge guidance, validators, and answer
 keys out of the visible task prompt.
 
@@ -435,7 +436,7 @@ keys out of the visible task prompt.
 
 Technically, it:
 
-- loads tasks and candidates from `.meta-skill/evals.json`,
+- loads tasks and candidates from `.<skill-name>/evals.json`,
 - verifies selected task files exist,
 - resolves the runner,
 - creates a run directory,
@@ -508,7 +509,7 @@ passes.
 
 `eval list` enumerates historical runs in a workbench.
 
-It scans `.meta-skill/runs/<run-id>/run.json` and summarizes run id, creation
+It scans `.<skill-name>/runs/<run-id>/run.json` and summarizes run id, creation
 time, runner, candidates, trial status counts, and grade count. If one run is
 unreadable, the command reports that run as an error row instead of failing the
 whole listing.
@@ -543,7 +544,7 @@ behavioral evaluation.
 `package` validates a skill payload and then emits a portable package artifact.
 
 It stops if validation fails. Package output excludes private and generated
-material such as `.meta-skill/`, `.git`, `__pycache__`, `dist`, and `.DS_Store`.
+material such as `.<skill-name>/`, `.git`, `__pycache__`, `dist`, and `.DS_Store`.
 
 Use this only when the payload is ready to export. Packaging is downstream of
 validation and does not prove behavioral lift.
@@ -551,15 +552,17 @@ validation and does not prove behavioral lift.
 ## Hidden Workbench
 
 Each target skill or project can have a hidden workbench at
-`<project>/.meta-skill/`. For ordinary target projects, that workbench stores
-authoring notes, eval manifests, materialized tasks, runs, workspaces,
-package artifacts, and reports. For the Meta-Skill plugin itself,
-`meta-skill/.meta-skill/docs/` is committed durable project documentation.
+`<project>/.<skill-name>/`, where `<skill-name>` comes from the target
+payload's `SKILL.md` frontmatter when available. For ordinary target projects,
+that workbench stores authoring notes, eval manifests, materialized tasks, runs,
+workspaces, package artifacts, and reports. For the Meta-Skill plugin itself,
+the resolved path is `meta-skill/.meta-skill/docs/`, which stores committed
+durable project documentation.
 
 The evaluator workbench shape is:
 
 ```text
-.meta-skill/
+.<skill-name>/
   evals.json
   cases/
     <task-id>/
@@ -593,12 +596,12 @@ The evaluator workbench shape is:
 
 Authority is split by artifact:
 
-- `.meta-skill/evals.json` owns suite metadata: target, defaults, candidates,
+- `.<skill-name>/evals.json` owns suite metadata: target, defaults, candidates,
   tasks, splits, repetitions, fixtures, expectations, and grader declarations.
-- `.meta-skill/cases/<task-id>/` owns authored task material after
+- `.<skill-name>/cases/<task-id>/` owns authored task material after
   materialization.
-- `.meta-skill/runs/<run-id>/` owns what actually ran and what was graded.
-- `.meta-skill/workspaces/` stores temporary workspaces staged as input for a
+- `.<skill-name>/runs/<run-id>/` owns what actually ran and what was graded.
+- `.<skill-name>/workspaces/` stores temporary workspaces staged as input for a
   trial. It is not the authoritative result.
 
 `task.md` is visible agent input. Do not put hidden judge guidance, expected output,
@@ -617,14 +620,14 @@ be part of the portable runtime skill:
 - human labels and reports.
 
 That material is valuable for development, but it should not change how the
-skill behaves when installed. Packaging excludes `.meta-skill/` for this reason.
+skill behaves when installed. Packaging excludes `.<skill-name>/` for this reason.
 
 ### Workbench Files By Lifecycle Stage
 
 | Stage | Primary files | What they answer |
 |---|---|---|
-| Authoring | `.meta-skill/evals.json` | What should be tested later? |
-| Materialization | `.meta-skill/cases/<task-id>/task.md` | What visible prompt will the agent see? |
+| Authoring | `.<skill-name>/evals.json` | What should be tested later? |
+| Materialization | `.<skill-name>/cases/<task-id>/task.md` | What visible prompt will the agent see? |
 | Hidden grading setup | `judge.md`, `expected.*`, `validate.*` | How should the result be judged? |
 | Execution | `runs/<run-id>/run.json`, `progress.jsonl`, `results.jsonl` | What was selected, what ran, and what completed? |
 | Transcript capture | `events/<trial-id>.jsonl`, `evidence/<trial-id>.json` | What happened during the run? |
@@ -730,7 +733,7 @@ Example manifest task:
 After materialization:
 
 ```text
-.meta-skill/cases/implicit-auth-fix/
+.<skill-name>/cases/implicit-auth-fix/
   task.md
 ```
 
@@ -765,7 +768,7 @@ The authoring decision flow is:
    - transcript-aware tasks only when mid-conversation behavior matters.
 6. Add default candidates, usually `no-skill` and `current`.
 7. Choose graders that match the task's evidence.
-8. Write `.meta-skill/evals.json` with prompts, expectations, optional
+8. Write `.<skill-name>/evals.json` with prompts, expectations, optional
    fixtures, and grader hints.
 
 The writer should start small. Two to five strong tasks usually teach the
@@ -819,7 +822,7 @@ Bad rows contain:
 The current design is complete enough for a useful first loop:
 
 ```text
-Writer creates .meta-skill/evals.json
+Writer creates .<skill-name>/evals.json
 Evaluator lints and materializes it
 Evaluator runs no-skill and current-skill candidates
 Evaluator grades outcomes
@@ -846,10 +849,10 @@ optimization layers operate on top of recorded runs rather than replacing them.
 ## Workbench Initialization And Materialization
 
 `workbench init` creates the minimum workbench directories and seeds
-`.meta-skill/evals.json` when it is missing:
+`.<skill-name>/evals.json` when it is missing:
 
 ```text
-.meta-skill/
+.<skill-name>/
   cases/
   runs/
   tests/
@@ -861,7 +864,7 @@ the default target ref is `skill/SKILL.md`, which supports projects that keep
 portable skill payloads under a `skill/` folder.
 
 `eval materialize` reads the normalized manifest and creates
-`.meta-skill/cases/<task-id>/`. It writes the seeded task file, usually
+`.<skill-name>/cases/<task-id>/`. It writes the seeded task file, usually
 `task.md`, and creates parent directories for declared fixtures. It does not
 overwrite an edited task file unless `--force` is supplied.
 
@@ -891,7 +894,7 @@ target payload from the current project. For `branch` and `git_ref` candidates,
 it creates a detached worktree under:
 
 ```text
-.meta-skill/worktrees/<run-id>/<candidate-id>/
+.<skill-name>/worktrees/<run-id>/<candidate-id>/
 ```
 
 Each payload receives a digest. The digest excludes generated and private
@@ -899,7 +902,7 @@ material:
 
 - `.DS_Store`
 - `.git`
-- `.meta-skill`
+- `.<skill-name>`
 - `__pycache__`
 - `dist`
 
@@ -925,7 +928,7 @@ adds measured value.
 Before a trial runs, `staging.py` creates a workspace:
 
 ```text
-.meta-skill/workspaces/<run-id>/<trial-id>/
+.<skill-name>/workspaces/<run-id>/<trial-id>/
   task.md
   fixtures/
   skill/
@@ -1053,8 +1056,8 @@ They are not duplicates. They represent two levels of detail.
 For a trial such as `implicit-auth-fix.current.t1`, the files are:
 
 ```text
-.meta-skill/runs/<run-id>/events/implicit-auth-fix.current.t1.jsonl
-.meta-skill/runs/<run-id>/evidence/implicit-auth-fix.current.t1.json
+.<skill-name>/runs/<run-id>/events/implicit-auth-fix.current.t1.jsonl
+.<skill-name>/runs/<run-id>/evidence/implicit-auth-fix.current.t1.json
 ```
 
 The raw event file is intentionally detailed and can be noisy. It is the place
@@ -1165,7 +1168,7 @@ Each grade row has the same core shape:
   "rationale": "The response contains exactly one valid Conventional Commit subject.",
   "gate": false,
   "evidence_refs": [
-    ".meta-skill/runs/<run-id>/candidates/current/implicit-auth-fix.current.t1/response.md"
+    ".<skill-name>/runs/<run-id>/candidates/current/implicit-auth-fix.current.t1/response.md"
   ]
 }
 ```
@@ -1286,7 +1289,7 @@ future model judge without pretending the model already knew that standard.
 
 ## Eval Lint
 
-`eval lint` performs static checks on `.meta-skill/evals.json`; it does not
+`eval lint` performs static checks on `.<skill-name>/evals.json`; it does not
 execute an agent or grade behavior.
 
 It reports:
@@ -1388,14 +1391,14 @@ It checks:
 zip artifact and package metadata. Package output defaults to:
 
 ```text
-<skill-dir>/.meta-skill/dist/
+<skill-dir>/.<skill-name>/dist/
 ```
 
 Package archives exclude:
 
 - `.DS_Store`
 - `.git`
-- `.meta-skill`
+- `.<skill-name>`
 - `__pycache__`
 - `dist`
 
@@ -1433,7 +1436,7 @@ decision.
 
 1. `skill-writer` creates or updates the skill payload.
 2. If eval material is in scope, `skill-writer` creates
-   `.meta-skill/evals.json` as a prompt manifest with realistic prompts,
+   `.<skill-name>/evals.json` as a prompt manifest with realistic prompts,
    expectations, grader hints, and baseline/current candidates.
 3. `skill-evaluator` runs `eval lint` to check manifest shape and grader
    coverage.

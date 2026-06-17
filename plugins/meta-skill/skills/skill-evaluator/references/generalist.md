@@ -29,15 +29,15 @@ Answer these about the target, then turn the answers into dimensions:
 
 ## Map Answers To The Workbench
 
-- **Suite metadata** goes in `.meta-skill/evals.json`: target, defaults, runner
+- **Suite metadata** goes in `.<skill-name>/evals.json`: target, defaults, runner
   plan, candidates, task IDs, and repetitions. The schema stores candidates in
   `candidates[]`.
 - **Visible task content** goes in `cases/<task-id>/task.md`. It contains only
   bytes the agent may see.
 - **Judged criteria** go in `cases/<task-id>/judge.md`.
 - **Exact or reference answers** go in `expected.*`.
-- **Deterministic checks** go in `validate.*` or shared `.meta-skill/tests/`.
-- **Run evidence** goes under `.meta-skill/runs/<run-id>/`.
+- **Deterministic checks** go in `validate.*` or shared `.<skill-name>/tests/`.
+- **Run evidence** goes under `.<skill-name>/runs/<run-id>/`.
 
 ## What Carries Over, What Does Not
 

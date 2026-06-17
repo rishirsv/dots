@@ -7,12 +7,13 @@ import sys
 from pathlib import Path
 
 from .errors import CliError
+from .workbench_paths import workbench_path
 
 
 def resolve_run_dir(raw_run):
     run_dir = Path(raw_run).expanduser().resolve()
     if not (run_dir / "run.json").exists():
-        candidate = (Path(".meta-skill/runs") / raw_run).resolve()
+        candidate = (workbench_path(Path.cwd()) / "runs" / raw_run).resolve()
         if candidate.exists():
             return candidate
     return run_dir
@@ -93,4 +94,3 @@ def to_jsonable(value):
 
 def normalize_usage(usage):
     return to_jsonable(usage) if usage is not None else None
-

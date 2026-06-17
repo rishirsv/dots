@@ -55,7 +55,7 @@ Prefer another artifact when:
 - The request is a full product, app, managed agent system, or workflow platform:
   create an app, project plan, or system document, not one skill.
 - The material is primarily source evidence, research notes, or measurement output: keep
-  it in `.meta-skill/`, project docs, or a benchmark folder.
+  it in `.<skill-name>/`, project docs, or a benchmark folder.
 - The trigger would steal too much from adjacent skills and cannot be narrowed.
 
 ## Capture Intent

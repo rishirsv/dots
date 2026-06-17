@@ -142,7 +142,7 @@ Use durable evidence files only when the parent needs tracking across more than
 chat:
 
 ```text
-.meta-skill/runs/<run-id>/
+.<skill-name>/runs/<run-id>/
   run.json
   results.jsonl
 ```

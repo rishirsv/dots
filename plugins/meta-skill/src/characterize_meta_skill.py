@@ -80,9 +80,13 @@ def write_skill(path, *, name="sample-skill"):
     )
 
 
+def wb(project):
+    return project / ".sample-skill"
+
+
 def write_manifest(project, *, fixtures=None):
     fixtures = fixtures or []
-    workbench = project / ".meta-skill"
+    workbench = wb(project)
     workbench.mkdir(parents=True, exist_ok=True)
     manifest = {
         "schema_version": 1,
@@ -164,14 +168,14 @@ def test_json_shapes_and_materialize(tmp):
     fresh_project = tmp / "fresh-project"
     write_skill(fresh_project / "skill")
     run_json([CLI, "workbench", "init", "--target", str(fresh_project), "--json"], fresh_project)
-    fresh_manifest = json.loads((fresh_project / ".meta-skill" / "evals.json").read_text())
+    fresh_manifest = json.loads((wb(fresh_project) / "evals.json").read_text())
     check("evals" in fresh_manifest and "candidates" in fresh_manifest, "workbench init should write prompt manifest shape")
     check("schema_version" not in fresh_manifest and "cases" not in fresh_manifest, "workbench init should not write legacy manifest shape")
-    check(not (fresh_project / ".meta-skill" / "tests").exists(), "workbench init should not create empty tests folder")
+    check(not (wb(fresh_project) / "tests").exists(), "workbench init should not create empty tests folder")
 
     _, materialized = run_json([CLI, "eval", "materialize", "--suite", str(suite), "--json"], project)
     check({"ok", "suite", "changes"} <= materialized.keys(), "materialize JSON shape changed")
-    task = project / ".meta-skill" / "cases" / "case-a" / "task.md"
+    task = wb(project) / "cases" / "case-a" / "task.md"
     task.write_text("local edit\n")
 
     _, skipped = run_json([CLI, "eval", "materialize", "--suite", str(suite), "--json"], project)
@@ -182,7 +186,7 @@ def test_json_shapes_and_materialize(tmp):
     check(any(row["action"] == "overwrite" for row in forced["changes"]), "materialize --force should overwrite")
     check(task.read_text() == "Answer with the fixture value.\n", "materialize --force did not restore seed")
 
-    prompt_suite = project / ".meta-skill" / "prompt-evals.json"
+    prompt_suite = wb(project) / "prompt-evals.json"
     prompt_suite.write_text(
         json.dumps(
             {
@@ -209,7 +213,7 @@ def test_json_shapes_and_materialize(tmp):
     _, prompt_materialized = run_json([CLI, "eval", "materialize", "--suite", str(prompt_suite), "--json"], project)
     check(any("prompt-shape" in row["path"] for row in prompt_materialized["changes"]), "prompt manifest did not materialize")
 
-    run_dir = project / ".meta-skill" / "runs" / "run-shape"
+    run_dir = wb(project) / "runs" / "run-shape"
     run_dir.mkdir(parents=True)
     (run_dir / "run.json").write_text(
         json.dumps(
@@ -240,8 +244,8 @@ def test_json_shapes_and_materialize(tmp):
 def test_candidate_digest_and_package_exclusions(tmp):
     project = tmp / "project"
     write_skill(project / "skill")
-    (project / "skill" / ".meta-skill").mkdir()
-    (project / "skill" / ".meta-skill" / "secret.txt").write_text("hidden")
+    (wb(project / "skill")).mkdir()
+    (wb(project / "skill") / "secret.txt").write_text("hidden")
     (project / "skill" / "dist").mkdir()
     (project / "skill" / "dist" / "old.zip").write_text("generated")
     suite = write_manifest(project)
@@ -251,14 +255,14 @@ def test_candidate_digest_and_package_exclusions(tmp):
     manifest = meta_skill.load_manifest(suite)
     candidate = meta_skill.resolve_candidate(
         project,
-        project / ".meta-skill",
+        wb(project),
         "run-characterize",
         manifest,
         manifest["candidates"][0],
     )
     digest_before = candidate["payload_digest"]
-    (project / "skill" / ".meta-skill" / "secret.txt").write_text("changed hidden")
-    check(meta_skill.payload_digest(project / "skill") == digest_before, "payload digest included .meta-skill")
+    (wb(project / "skill") / "secret.txt").write_text("changed hidden")
+    check(meta_skill.payload_digest(project / "skill") == digest_before, "payload digest included .sample-skill")
     (project / "skill" / "references").mkdir()
     (project / "skill" / "references" / "guide.md").write_text("guide")
     check(meta_skill.payload_digest(project / "skill") != digest_before, "payload digest ignored visible payload change")
@@ -267,7 +271,7 @@ def test_candidate_digest_and_package_exclusions(tmp):
     check(candidate["payload_path"].endswith("/skill"), "candidate payload path changed")
     baseline = meta_skill.resolve_candidate(
         project,
-        project / ".meta-skill",
+        wb(project),
         "run-characterize",
         manifest,
         {"candidate": "baseline", "display": "No skill", "source": {"kind": "none"}},
@@ -278,7 +282,7 @@ def test_candidate_digest_and_package_exclusions(tmp):
     check(baseline["payload_digest"] is None, "baseline payload digest should be null")
     bad_manifest = json.loads(suite.read_text())
     bad_manifest["candidates"][0]["source"] = {"kind": "no_skill"}
-    bad_suite = project / ".meta-skill" / "bad-evals.json"
+    bad_suite = wb(project) / "bad-evals.json"
     bad_suite.write_text(json.dumps(bad_manifest, indent=2) + "\n")
     try:
         meta_skill.load_manifest(bad_suite)
@@ -291,7 +295,7 @@ def test_candidate_digest_and_package_exclusions(tmp):
     with zipfile.ZipFile(packaged["artifact"]) as zf:
         names = set(zf.namelist())
     check("SKILL.md" in names, "package omitted SKILL.md")
-    check(not any(name.startswith(".meta-skill/") for name in names), "package included .meta-skill")
+    check(not any(name.startswith(".sample-skill/") for name in names), "package included .sample-skill")
     check(not any(name.startswith("dist/") for name in names), "package included dist")
 
 
@@ -300,7 +304,7 @@ def test_workspace_staging_hidden_boundaries(tmp):
     write_skill(project / "skill")
     suite = write_manifest(project, fixtures=["fixtures/visible.txt"])
     run_json([CLI, "eval", "materialize", "--suite", str(suite), "--json"], project)
-    case_root = project / ".meta-skill" / "cases" / "case-a"
+    case_root = wb(project) / "cases" / "case-a"
     (case_root / "fixtures").mkdir(exist_ok=True)
     (case_root / "fixtures" / "visible.txt").write_text("visible")
     (case_root / "judge.md").write_text("hidden")
@@ -310,8 +314,8 @@ def test_workspace_staging_hidden_boundaries(tmp):
     meta_skill = import_flat_module()
     candidate = {"candidate": "current", "payload_path": str(project / "skill")}
     staged = meta_skill.stage_workspace(
-        project / ".meta-skill",
-        project / ".meta-skill" / "runs" / "run-stage",
+        wb(project),
+        wb(project) / "runs" / "run-stage",
         "case-a.current.t1",
         {"id": "case-a", "fixtures": ["fixtures/visible.txt"]},
         "visible task",
@@ -322,11 +326,11 @@ def test_workspace_staging_hidden_boundaries(tmp):
     check((workspace / "fixtures" / "fixtures" / "visible.txt").read_text() == "visible", "fixture not staged")
     for hidden in ("judge.md", "expected.txt", "validate.py"):
         check(not (workspace / hidden).exists(), f"hidden case material staged: {hidden}")
-    check(not (workspace / "skill" / ".meta-skill").exists(), "candidate .meta-skill copied into workspace")
+    check(not (workspace / "skill" / ".sample-skill").exists(), "candidate .sample-skill copied into workspace")
 
     baseline = meta_skill.stage_workspace(
-        project / ".meta-skill",
-        project / ".meta-skill" / "runs" / "run-stage",
+        wb(project),
+        wb(project) / "runs" / "run-stage",
         "case-a.baseline.t1",
         {"id": "case-a", "fixtures": ["fixtures/visible.txt"]},
         "visible task",
@@ -339,8 +343,8 @@ def test_workspace_staging_hidden_boundaries(tmp):
     for fixture in ("/tmp/escape.txt", "../escape.txt"):
         try:
             meta_skill.stage_workspace(
-                project / ".meta-skill",
-                project / ".meta-skill" / "runs" / "run-stage",
+                wb(project),
+                wb(project) / "runs" / "run-stage",
                 f"case-a.current.{abs(hash(fixture))}",
                 {"id": "case-a", "fixtures": [fixture]},
                 "visible task",
@@ -360,8 +364,8 @@ def test_workspace_staging_hidden_boundaries(tmp):
         return
     try:
         meta_skill.stage_workspace(
-            project / ".meta-skill",
-            project / ".meta-skill" / "runs" / "run-stage",
+            wb(project),
+            wb(project) / "runs" / "run-stage",
             "case-a.current.symlink",
             {"id": "case-a", "fixtures": ["fixtures/link.txt"]},
             "visible task",
@@ -391,7 +395,7 @@ def test_grade_expected_validator_behavior(tmp):
     ]
     suite.write_text(json.dumps(manifest, indent=2) + "\n")
     run_json([CLI, "eval", "materialize", "--suite", str(suite), "--json"], project)
-    case_root = project / ".meta-skill" / "cases" / "case-a"
+    case_root = wb(project) / "cases" / "case-a"
     (case_root / "expected.txt").write_text("expected answer\n")
     (case_root / "validate.py").write_text(
         textwrap.dedent(
@@ -411,7 +415,7 @@ def test_grade_expected_validator_behavior(tmp):
             """
         )
     )
-    run_dir = project / ".meta-skill" / "runs" / "run-grade"
+    run_dir = wb(project) / "runs" / "run-grade"
     output_path = run_dir / "candidates" / "current" / "case-a.current.t1" / "response.md"
     event_path = run_dir / "events" / "case-a.current.t1.jsonl"
     output_path.parent.mkdir(parents=True)
@@ -504,7 +508,7 @@ def test_eval_list_and_report(tmp):
     project = tmp / "project"
     write_skill(project / "skill")
     suite = write_manifest(project)
-    run_dir = project / ".meta-skill" / "runs" / "run-report-fixture"
+    run_dir = wb(project) / "runs" / "run-report-fixture"
 
     def trial(case_id, candidate, repetition):
         trial_id = f"{case_id}.{candidate}.t{repetition}"
@@ -664,7 +668,7 @@ def test_report_impact_and_gates(tmp):
         {"id": "case-b", "task": {"path": "task.md", "seed": "B"}},
     ]
     suite.write_text(json.dumps(manifest, indent=2) + "\n")
-    run_dir = project / ".meta-skill" / "runs" / "run-impact"
+    run_dir = wb(project) / "runs" / "run-impact"
 
     def trial(case_id, candidate):
         trial_id = f"{case_id}.{candidate}.t1"
@@ -745,7 +749,7 @@ def test_report_uses_all_grader_kinds(tmp):
         {"id": "case-b", "task": {"path": "task.md", "seed": "B"}},
     ]
     suite.write_text(json.dumps(manifest, indent=2) + "\n")
-    run_dir = project / ".meta-skill" / "runs" / "run-grader-kinds"
+    run_dir = wb(project) / "runs" / "run-grader-kinds"
 
     def trial(case_id, candidate):
         trial_id = f"{case_id}.{candidate}.t1"

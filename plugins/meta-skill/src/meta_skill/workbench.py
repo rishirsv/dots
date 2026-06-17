@@ -3,10 +3,11 @@
 from .errors import CliError
 from .io import write_json
 from .manifest import DEFAULT_EVALS, case_dir, case_task_info, load_manifest, suite_path, workbench_from_suite
+from .workbench_paths import skill_name_for_target, workbench_path
 
 
 def init_workbench(target, dry_run=False):
-    workbench = target / ".meta-skill"
+    workbench = workbench_path(target)
     paths = [workbench, workbench / "cases", workbench / "runs"]
     evals_path = workbench / "evals.json"
     changes = []
@@ -16,6 +17,7 @@ def init_workbench(target, dry_run=False):
             if not dry_run:
                 path.mkdir(parents=True, exist_ok=True)
     manifest = dict(DEFAULT_EVALS)
+    manifest["skill_name"] = skill_name_for_target(target)
     if not (target / "SKILL.md").exists():
         manifest["target"] = {"type": "skill", "ref": "skill/SKILL.md"}
     if not evals_path.exists():

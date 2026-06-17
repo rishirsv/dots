@@ -44,7 +44,7 @@ finding, an eval row, or a user-observed failure. See
 ## Output
 
 Root cause + chosen track + a re-runnable failing case when the reproduction
-track was used, captured in the workbench as `<project>/.meta-skill/spec.md`
+track was used, captured in the workbench as `<project>/.<skill-name>/spec.md`
 (durable notes: changed behavior, evidence, rejected edits, residual risk) so
 Verify can re-run it.
 

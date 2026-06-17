@@ -33,12 +33,12 @@ hand fixes to `skill-doctor`. Future autonomous candidate generation belongs to
 ## Workbench
 
 Artifacts live in the gitignored workbench at the target skill's project root:
-`<project>/.meta-skill/`. The project root already names the skill and contains
-the portable payload at `<project>/skill/`, so do not add another skill-name
-namespace.
+`<project>/.<skill-name>/`, where `<skill-name>` comes from the target
+payload's `SKILL.md` frontmatter when available. The portable payload remains at
+`<project>/skill/`; the hidden workbench is development state beside it.
 
 ```text
-.meta-skill/
+.<skill-name>/
   evals.json
   cases/
     <task-id>/
@@ -94,7 +94,7 @@ Read only what the task needs:
 | Term | Meaning |
 |---|---|
 | **suite** | A set of related evaluation tasks, candidates, and grading rules. |
-| **task** | The user work being evaluated. In today's file layout, one task folder lives under `.meta-skill/cases/<task-id>/`. |
+| **task** | The user work being evaluated. In today's file layout, one task folder lives under `.<skill-name>/cases/<task-id>/`. |
 | **candidate** | The agent-harness setup for a trial: no skill, current skill, or an edited-skill attempt. |
 | **trial** | One execution of one task under one candidate. Repetitions create multiple trials. |
 | **transcript** | The event stream and compact evidence captured while the trial ran. |
@@ -119,7 +119,7 @@ unstable draft, or a purely deterministic question does not need a suite.
 
 ### 2. Author The Suite Manifest
 
-Write or update `.meta-skill/evals.json` — see
+Write or update `.<skill-name>/evals.json` — see
 [references/evaluations.md](references/evaluations.md). Keep metadata minimal:
 target, defaults, tasks, repetition counts, runner intent, candidate selection,
 materialization intent, optional expectations, and optional grader declarations.
@@ -129,7 +129,7 @@ task folders.
 
 ### 3. Materialize Task Folders
 
-Create `.meta-skill/cases/<task-id>/task.md` and optional fixtures, `judge.md`,
+Create `.<skill-name>/cases/<task-id>/task.md` and optional fixtures, `judge.md`,
 expected output, and validator files. `task.md` is the prompt or task shown to
 the agent. Hidden files remain outside the workspace. For each task,
 make the success criteria clear enough that a domain reviewer could tell
@@ -174,7 +174,7 @@ model judge matches the human standard.
 
 Use `plugins/meta-skill/scripts/metaskill eval calibrate --run <run-id-or-path>` to compare model
 judge grades against human grades. The command writes a calibration artifact
-under `.meta-skill/calibrations/`; keep it with the workbench as evidence for
+under `.<skill-name>/calibrations/`; keep it with the workbench as evidence for
 whether the judge can scale beyond the human spot-check slice.
 
 ### 6. Run And Report

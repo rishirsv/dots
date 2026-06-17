@@ -19,7 +19,7 @@ Validations come in two tiers. Keep the terminology straight:
 |---|---|---|---|---|
 | **General checks** | Every skill | Canonical CLI validators run by `plugins/meta-skill/scripts/metaskill validate` | Plugin tree | Durable, shipped |
 | **Task-local validators** | One task | `validate.*` beside `task.md` | Hidden task folder | Local eval content |
-| **Shared workbench tests** | One target suite | Authored tests reused across cases | `.meta-skill/tests/` | Local eval content |
+| **Shared workbench tests** | One target suite | Authored tests reused across cases | `.<skill-name>/tests/` | Local eval content |
 
 General checks already exist and apply to any skill: skill body present, valid
 front matter, length bounds, and deprecated-surface avoidance. Do not re-author

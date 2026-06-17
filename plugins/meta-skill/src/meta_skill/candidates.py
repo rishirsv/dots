@@ -5,9 +5,14 @@ import subprocess
 from pathlib import Path
 
 from .errors import CliError
+from .workbench_paths import LEGACY_WORKBENCH_NAME, workbench_dir_name
 
 
-DEFAULT_EXCLUDES = {".DS_Store", ".git", ".meta-skill", "__pycache__", "dist"}
+DEFAULT_EXCLUDES = {".DS_Store", ".git", LEGACY_WORKBENCH_NAME, "__pycache__", "dist"}
+
+
+def exclude_names_for_target(target):
+    return DEFAULT_EXCLUDES | {workbench_dir_name(target)}
 
 
 def parse_frontmatter(skill_md):
@@ -66,7 +71,7 @@ def payload_digest(path):
             if not file_path.is_file():
                 continue
             parts = set(file_path.relative_to(root).parts)
-            if parts & DEFAULT_EXCLUDES:
+            if parts & exclude_names_for_target(root):
                 continue
             files.append(file_path)
     h = hashlib.sha256()

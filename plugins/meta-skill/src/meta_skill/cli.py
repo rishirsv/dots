@@ -177,7 +177,7 @@ def build_parser():
 
     workbench = sub.add_parser("workbench", help="Workbench commands")
     workbench_sub = workbench.add_subparsers(dest="workbench_command", required=True)
-    init = workbench_sub.add_parser("init", help="Create .meta-skill workbench folders and evals.json")
+    init = workbench_sub.add_parser("init", help="Create .<skill-name> workbench folders and evals.json")
     init.add_argument("--target", default=".")
     init.add_argument("--dry-run", action="store_true")
     init.add_argument("--json", action="store_true")
@@ -186,18 +186,18 @@ def build_parser():
     eval_parser = sub.add_parser("eval", help="Evaluation commands")
     eval_sub = eval_parser.add_subparsers(dest="eval_command", required=True)
     lint = eval_sub.add_parser("lint", help="Check eval manifest task, grader, and coverage shape")
-    lint.add_argument("--suite", default=".meta-skill/evals.json")
+    lint.add_argument("--suite")
     lint.add_argument("--json", action="store_true")
     lint.set_defaults(func=command_eval_lint)
 
     materialize = eval_sub.add_parser("materialize", help="Materialize cases from evals.json")
-    materialize.add_argument("--suite", default=".meta-skill/evals.json")
+    materialize.add_argument("--suite")
     materialize.add_argument("--force", action="store_true")
     materialize.add_argument("--json", action="store_true")
     materialize.set_defaults(func=command_eval_materialize)
 
     run = eval_sub.add_parser("run", help="Run selected eval trials")
-    run.add_argument("--suite", default=".meta-skill/evals.json")
+    run.add_argument("--suite")
     run.add_argument("--runner", choices=["auto", "codex_app_server"], default="auto")
     run.add_argument("--candidates")
     run.add_argument("--split")
@@ -243,7 +243,7 @@ def build_parser():
     compare.set_defaults(func=command_eval_compare)
 
     list_runs_parser = eval_sub.add_parser("list", help="List eval runs in the workbench")
-    list_runs_parser.add_argument("--suite", default=".meta-skill/evals.json")
+    list_runs_parser.add_argument("--suite")
     list_runs_parser.add_argument("--json", action="store_true")
     list_runs_parser.set_defaults(func=command_eval_list)
 

@@ -39,3 +39,4 @@ from .runner import progress_snapshot, run_eval, run_trial, terminal_count
 from .staging import copy_payload, safe_case_file, stage_workspace
 from .validation import validate_report
 from .workbench import init_workbench, materialize_cases
+from .workbench_paths import skill_name_for_target, workbench_dir_name, workbench_path

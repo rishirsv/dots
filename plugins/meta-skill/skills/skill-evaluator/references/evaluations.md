@@ -4,7 +4,7 @@ Read when authoring semantic evaluation tasks for a target.
 
 Evaluations need a judge — an LLM by default, a human when taste or domain
 knowledge exceeds the model. They live in a gitignored workbench at
-`<project>/.meta-skill/`.
+`<project>/.<skill-name>/`.
 
 Use `../../../references/cli.md` for materialization, runner selection,
 progress, and grading commands.
@@ -14,7 +14,7 @@ progress, and grading commands.
 Use a hidden prompt manifest plus materialized task folders:
 
 ```text
-.meta-skill/
+.<skill-name>/
   evals.json
   cases/
     <task-id>/
@@ -53,7 +53,7 @@ Use this vocabulary in prose:
 ## Writer-Facing `evals.json`
 
 Skill Writer may create a compact prompt manifest in
-`<project>/.meta-skill/evals.json`. This is the preferred authoring handoff:
+`<project>/.<skill-name>/evals.json`. This is the preferred authoring handoff:
 
 ```json
 {
@@ -192,7 +192,7 @@ tool use, skill activation, or missing-evidence diagnosis.
 `expectations[]` are hidden verifier statements. They are not copied into
 `task.md`; the model judge uses them to emit named checks with evidence. Exact
 expectations should still move into `validate.*` whenever code can check them
-fairly. Run `plugins/meta-skill/scripts/metaskill eval lint --suite .meta-skill/evals.json`
+fairly. Run `plugins/meta-skill/scripts/metaskill eval lint --suite .<skill-name>/evals.json`
 before running a suite to catch missing grader, reference, and balance issues.
 
 ## Task Types

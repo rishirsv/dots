@@ -5,6 +5,7 @@ from pathlib import Path
 from .errors import CliError
 from .ids import require_id
 from .io import read_json
+from .workbench_paths import workbench_path
 
 
 SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "none"}
@@ -25,9 +26,9 @@ DEFAULT_EVALS = {
 
 
 def suite_path(raw):
-    path = Path(raw or ".meta-skill/evals.json").expanduser()
+    path = Path(raw).expanduser() if raw else workbench_path(Path.cwd()) / "evals.json"
     if path.is_dir():
-        path = path / ".meta-skill" / "evals.json"
+        path = workbench_path(path) / "evals.json"
     return path.resolve()
 
 
@@ -36,7 +37,7 @@ def workbench_from_suite(path):
 
 
 def project_from_suite(path):
-    if path.parent.name == ".meta-skill":
+    if path.parent.name.startswith("."):
         return path.parent.parent
     return path.parent
 

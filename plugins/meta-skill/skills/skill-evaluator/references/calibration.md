@@ -70,7 +70,7 @@ grade the outcome unless the judge guidance explicitly measures process behavior
 the human's taste is the standard, rewrite the judge guidance into observable
 pass/partial/fail indicators before letting the model judge scale.
 
-`eval calibrate` writes a JSON artifact under `.meta-skill/calibrations/`. Treat
+`eval calibrate` writes a JSON artifact under `.<skill-name>/calibrations/`. Treat
 that file as the workbench evidence for judge agreement. It records the run,
 optional metric filter, agreement summary, escalation rates, false pass/fail
 examples, disagreements, and non-binary examples.

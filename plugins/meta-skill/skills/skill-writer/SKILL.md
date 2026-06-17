@@ -16,7 +16,7 @@ scripts/         optional
 assets/          optional
 resources/       optional
 examples/        optional when examples are runtime material
-.meta-skill/     optional private workbench, excluded from packages
+.<skill-name>/   optional private workbench, excluded from packages
 ```
 
 Treat this list as a menu, not scaffolding. Create a folder only when the skill
@@ -74,9 +74,9 @@ conventions, or a question:
 | Invariants and failure shields | What the skill should preserve, prevent, or flag; include common mistakes and user corrections. |
 | Fragility | Whether the work is judgment prose, fixed-shape output, script-backed, or a strict sequence. |
 | Skill category | Primary type from [design.md](references/design.md); narrow or split if the draft straddles categories. |
-| Evaluation posture | Capability uplift, encoded preference, or hybrid; include the baseline and create `.meta-skill/evals.json` when the user asks for eval seeds or project-mode eval material. |
+| Evaluation posture | Capability uplift, encoded preference, or hybrid; include the baseline and create `.<skill-name>/evals.json` when the user asks for eval seeds or project-mode eval material. |
 | Gates | Approvals required before external writes, destructive actions, publishing, sending, install/sync, or final client-facing delivery. |
-| Project mode | Portable-only, or project mode with `.meta-skill/` docs, fixtures, package artifacts, and team reuse material. |
+| Project mode | Portable-only, or project mode with a hidden `.<skill-name>/` workbench for docs, fixtures, package artifacts, and team reuse material. |
 
 Fill every answer from context first. Resolve answers before asking by mining
 the current conversation, provided files, source packs, user corrections,
@@ -97,7 +97,7 @@ c) Not sure - use default
 
 2. Set up a workbench?
 a) Portable-only, no workbench (recommended)
-b) Project mode with `.meta-skill/` authoring docs, fixtures, and package output
+b) Project mode with a hidden `.<skill-name>/` workbench for authoring docs, fixtures, and package output
 c) Not sure - use default
 
 Reply with: `defaults`, or a compact answer like `1a 2b`.
@@ -121,7 +121,7 @@ Draft Skill Outline
 - Fragility: deterministic, script-backed extraction and validation.
 - Skill category: product verification.
 - Evaluation posture: capability uplift; baseline is no skill.
-- Eval manifest: `.meta-skill/evals.json` with a positive invoice-line-item prompt, near miss about summarizing invoice prose, and checks for required CSV columns, flagged parse failures, and no invented values.
+- Eval manifest: `.<skill-name>/evals.json` with a positive invoice-line-item prompt, near miss about summarizing invoice prose, and checks for required CSV columns, flagged parse failures, and no invented values.
 - Gates: none; portable-only.
 - Project mode: portable-only.
 - Still open: none.
@@ -174,17 +174,17 @@ project-mode evaluation or packaging state, run
 `plugins/meta-skill/scripts/metaskill workbench init --target <skill-dir>` after the payload
 exists.
 
-In project mode, keep non-runtime authoring material under `.meta-skill/`.
-Use `.meta-skill/docs/` for durable authoring notes, decisions, research
+In project mode, keep non-runtime authoring material under `.<skill-name>/`.
+Use `.<skill-name>/docs/` for durable authoring notes, decisions, research
 reports, and review context. Put temporary plans wherever the surrounding repo
-keeps plans. Use `.meta-skill/tests/` as a flat folder for test fixtures or
+keeps plans. Use `.<skill-name>/tests/` as a flat folder for test fixtures or
 check inputs only when the user provides or approves concrete test material.
 Create optional folders only when they will contain files; a blank
-`.meta-skill/tests/`, `/tests`, or nested test-category folder should never
+`.<skill-name>/tests/`, `/tests`, or nested test-category folder should never
 exist.
 
 When the user asks for eval seeds, project-mode eval material, or evaluator
-handoff, create one `.meta-skill/evals.json` prompt manifest. Do not create a
+handoff, create one `.<skill-name>/evals.json` prompt manifest. Do not create a
 top-level `evals/` folder. The writer-authored manifest should contain
 `skill_name`, realistic `evals[]` prompts, `type`, expectations, optional
 files/fixtures, and grader hints. Include no run status, grades, or evidence.
@@ -202,7 +202,7 @@ Follow these payload rules:
   templates, schemas, starter files, icons, or boilerplate.
 - Use `resources/`, `examples/`, or another folder only when the runtime skill
   needs that material. Link it directly from `SKILL.md`, name when to read or use
-  it, and keep source-specific or build-only material in `.meta-skill/docs/`
+  it, and keep source-specific or build-only material in `.<skill-name>/docs/`
   unless the skill is intentionally organization-specific.
 - Include `agents/openai.yaml` for generated skills when the surrounding runtime
   expects UI metadata. Keep `display_name`, `short_description`, and
@@ -222,7 +222,7 @@ When the intake requires research, prefer a bounded research pass before
 runtime drafting. Use an available researcher sub-agent or research-oriented
 skill when the environment provides one and the research can run independently;
 otherwise do the smallest reliable source review yourself. Save concise
-research reports in `.meta-skill/docs/` for project-mode skills, using a
+research reports in `.<skill-name>/docs/` for project-mode skills, using a
 `-research.md` suffix when the docs folder is otherwise just research, and copy
 only the operational conclusions into runtime guidance.
 
@@ -243,7 +243,7 @@ contract, read
 [skill-trial-runs.md](../../references/skill-trial-runs.md) and offer a skill
 trial run. It is optional by default and is not release proof; route systematic
 multi-scenario measurement to `skill-evaluator`. For that handoff, provide or
-create `.meta-skill/evals.json` with 2-3 realistic user tasks, expected
+create `.<skill-name>/evals.json` with 2-3 realistic user tasks, expected
 outcomes or reference solutions, known failure or near-miss examples, grader
 hints, and any must-not-break constraints so the evaluator can compare outcomes
 across no-skill, current-skill, and edited-skill candidates.
@@ -252,7 +252,7 @@ Stop before packaging, installing, publishing, syncing, external writes, or
 final delivery unless the user explicitly approved that action or the current
 repo instructions require it. When packaging is approved, use
 `plugins/meta-skill/scripts/metaskill package <skill-dir>`; it exports only the portable payload from the
-project root and excludes `.meta-skill/`. In the final handoff, explain the
+project root and excludes `.<skill-name>/`. In the final handoff, explain the
 eval manifest as authoring material, not runtime instructions. It is runnable by
 Skill Evaluator, but it is not evidence until a run, grades, comparison, and
 report exist.

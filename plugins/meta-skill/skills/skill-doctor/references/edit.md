@@ -4,7 +4,7 @@ Read this as part of the Diagnose/Edit workflow when translating skill evidence
 into the smallest useful improvement.
 
 Workbench paths below are shorthand for the target project root's
-`<project>/.meta-skill/` dir (e.g. `review.md` = that dir's `review.md`). The
+`<project>/.<skill-name>/` dir (e.g. `review.md` = that dir's `review.md`). The
 project root already names the skill and contains the portable skill payload at
 `<project>/skill/`, so do not add another skill-name namespace. Review *lenses*
 live in [rubric.md](rubric.md#review-lanes); the scoring rubric is
@@ -37,7 +37,7 @@ Before diagnosing or changing anything in the Diagnose/Edit workflow, identify:
 - current description and trigger contract
 - core job
 - linked references, scripts, assets, and metadata
-- `review.md` and other `.meta-skill/` evidence available
+- `review.md` and other `.<skill-name>/` evidence available
 - the user's requested scope
 - whether the user authorized edits or only requested diagnosis
 

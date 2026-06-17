@@ -72,10 +72,10 @@ no-skill baseline.
 ## Workbench
 
 Iteration artifacts live in a gitignored, plugin-wide workbench at the target
-skill's project root: `<project>/.meta-skill/` — `review.md` (Quality page) and
-`spec.md` (durable notes). The project root already names the skill and contains
-the portable skill payload at `<project>/skill/`; do not add another skill-name
-namespace. Never write workbench files into `plugins/meta-skill/` itself.
+skill's project root: `<project>/.<skill-name>/` — `review.md` (Quality page) and
+`spec.md` (durable notes). The hidden folder is named for the target skill, and
+the portable skill payload stays at `<project>/skill/`. Never write workbench
+files into `plugins/meta-skill/` itself.
 
 ## Guardrails
 

@@ -3,7 +3,7 @@
 import shutil
 from pathlib import Path
 
-from .candidates import DEFAULT_EXCLUDES, payload_digest
+from .candidates import exclude_names_for_target, payload_digest
 from .errors import CliError
 from .manifest import case_dir
 
@@ -24,7 +24,8 @@ def copy_payload(src, dest):
         shutil.rmtree(dest)
 
     def ignore(_dir, names):
-        return [name for name in names if name in DEFAULT_EXCLUDES]
+        excludes = exclude_names_for_target(src)
+        return [name for name in names if name in excludes]
 
     if src.is_file():
         dest.mkdir(parents=True, exist_ok=True)

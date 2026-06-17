@@ -35,13 +35,18 @@ Both launchers are self-bootstrapping:
 
 The CLI is an orchestration layer. The workbench is authoritative.
 
-- `.meta-skill/evals.json` defines the suite, defaults, candidates, and tasks.
-- `.meta-skill/cases/<task-id>/` owns authored task content: visible `task.md`,
+- `.<skill-name>/evals.json` defines the suite, defaults, candidates, and tasks.
+- `.<skill-name>/cases/<task-id>/` owns authored task content: visible `task.md`,
   fixtures, hidden validators, hidden expected outputs, and judge guidance.
-- `.meta-skill/runs/<run-id>/` owns run plans, progress, events, outputs, and
+- `.<skill-name>/runs/<run-id>/` owns run plans, progress, events, outputs, and
   grades.
 
 Do not treat CLI stdout as the system of record once files have been written.
+
+The default workbench folder is named after the target skill: `.<skill-name>/`.
+For a project root with `skill/SKILL.md`, the name comes from that payload's
+frontmatter. For the Meta-Skill plugin itself, the resolved folder is
+`.meta-skill/`.
 
 ## Eval Vocabulary
 
@@ -49,8 +54,8 @@ Use Anthropic-aligned terms when explaining evals to users:
 
 | Term | Current file/schema surface |
 |---|---|
-| **suite** | `.meta-skill/evals.json` plus its materialized workbench |
-| **task** | one row in `cases[]` and one folder under `.meta-skill/cases/<task-id>/` |
+| **suite** | `.<skill-name>/evals.json` plus its materialized workbench |
+| **task** | one row in `cases[]` and one folder under `.<skill-name>/cases/<task-id>/` |
 | **candidate** | one row in `candidates[]`, such as `no-skill`, `current`, or an edited attempt |
 | **trial** | one task executed once under one candidate |
 | **transcript** | `events/<trial-id>.jsonl` plus compact `evidence/<trial-id>.json` |
@@ -68,7 +73,7 @@ to `codex_app_server`.
 ## Task Authoring Rules
 
 - `task.md` is for the visible task only. Do not hide metadata in it.
-- Put metadata in `.meta-skill/evals.json`, not in extra task-local metadata
+- Put metadata in `.<skill-name>/evals.json`, not in extra task-local metadata
   files.
 - Do not add worker-local script surfaces under lane skills. Shared behavior
   belongs behind this CLI.
@@ -80,15 +85,15 @@ Current top-level commands:
 ```sh
 plugins/meta-skill/scripts/metaskill doctor [--json]
 plugins/meta-skill/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
-plugins/meta-skill/scripts/metaskill eval lint [--suite .meta-skill/evals.json] [--json]
-plugins/meta-skill/scripts/metaskill eval materialize [--suite .meta-skill/evals.json] [--force] [--json]
-plugins/meta-skill/scripts/metaskill eval run [--suite .meta-skill/evals.json] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
+plugins/meta-skill/scripts/metaskill eval lint [--suite <suite>] [--json]
+plugins/meta-skill/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
+plugins/meta-skill/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
 plugins/meta-skill/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
 plugins/meta-skill/scripts/metaskill eval grade --run <run-id-or-path> [--json]
 plugins/meta-skill/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
 plugins/meta-skill/scripts/metaskill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
 plugins/meta-skill/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
-plugins/meta-skill/scripts/metaskill eval list [--suite .meta-skill/evals.json] [--json]
+plugins/meta-skill/scripts/metaskill eval list [--suite <suite>] [--json]
 plugins/meta-skill/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
 plugins/meta-skill/scripts/metaskill validate <skill-dir> [--json]
 plugins/meta-skill/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
@@ -128,9 +133,9 @@ layout.
 
 What it does:
 
-- Creates `.meta-skill/`
-- Creates `.meta-skill/cases/` and `.meta-skill/runs/`
-- Seeds `.meta-skill/evals.json` if it does not exist
+- Creates `.<skill-name>/`
+- Creates `.<skill-name>/cases/` and `.<skill-name>/runs/`
+- Seeds `.<skill-name>/evals.json` if it does not exist
 
 Inputs:
 
@@ -150,19 +155,20 @@ plugins/meta-skill/scripts/metaskill workbench init --target plugins/dots/skills
 
 ### `eval materialize`
 
-Use this after editing `.meta-skill/evals.json` or when a task directory has
+Use this after editing `.<skill-name>/evals.json` or when a task directory has
 not been created yet.
 
 What it does:
 
 - Reads the suite manifest from `--suite`
-- Creates `.meta-skill/cases/<task-id>/`
+- Creates `.<skill-name>/cases/<task-id>/`
 - Writes the seeded task file for each task, usually `task.md`
 - Creates parent directories for declared fixtures
 
 Inputs:
 
-- `--suite`: suite file; defaults to `.meta-skill/evals.json`
+- `--suite`: suite file; defaults to the current target's
+  `.<skill-name>/evals.json`
 - `--force`: overwrite existing seeded task files
 
 Output:
@@ -194,7 +200,7 @@ What it does:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval lint --suite .meta-skill/evals.json --json
+plugins/meta-skill/scripts/metaskill eval lint --suite .<skill-name>/evals.json --json
 ```
 
 ### `eval run`
@@ -203,18 +209,19 @@ Use this to execute a suite or a selected slice of it.
 
 What it does:
 
-- Loads tasks and candidates from `.meta-skill/evals.json`
+- Loads tasks and candidates from `.<skill-name>/evals.json`
 - Verifies each selected task already has a materialized task file
 - Chooses the App Server runner
 - Stages a workspace with only `task.md`, declared fixtures, and the
   candidate payload when present
-- Creates a new run directory under `.meta-skill/runs/<run-id>/`
+- Creates a new run directory under `.<skill-name>/runs/<run-id>/`
 - Executes each task/candidate/trial combination
 - Writes progress, events, and output artifact paths
 
 Inputs:
 
-- `--suite`: suite file; defaults to `.meta-skill/evals.json`
+- `--suite`: suite file; defaults to the current target's
+  `.<skill-name>/evals.json`
 - `--runner`: `auto` or `codex_app_server`
 - `--candidates <ids>`: restrict to selected candidates
 - `--split <name>`: restrict to a manifest split
@@ -230,7 +237,7 @@ Output:
 Authoritative run files:
 
 ```text
-.meta-skill/runs/<run-id>/
+.<skill-name>/runs/<run-id>/
   run.json
   progress.jsonl
   results.jsonl
@@ -254,7 +261,7 @@ What each file is for:
 - `response.md`: captured agent response for that candidate/trial
 
 Workspaces are staged under
-`.meta-skill/workspaces/<run-id>/<trial-id>/`. They are run-scoped
+`.<skill-name>/workspaces/<run-id>/<trial-id>/`. They are run-scoped
 working directories for visible task bytes, listed fixtures, and the candidate
 payload when present, not authoritative result artifacts.
 
@@ -272,7 +279,7 @@ What it does:
 
 Inputs:
 
-- `--run <run-id-or-path>`: either a run id under `.meta-skill/runs/` or a full
+- `--run <run-id-or-path>`: either a run id under `.<skill-name>/runs/` or a full
   run directory path
 - `--watch`: refresh until all trials reach a terminal state
 
@@ -297,7 +304,7 @@ What it does:
 - Looks for `validate.*` files inside each task directory
 - Runs each validator with `--output`, `--events`, and `--json`
 - Optionally passes `--expected <file>` when an `expected.*` file exists
-- Writes or updates `.meta-skill/runs/<run-id>/grades.jsonl`
+- Writes or updates `.<skill-name>/runs/<run-id>/grades.jsonl`
 
 Inputs:
 
@@ -320,7 +327,7 @@ Notes:
 - Validators and task-local judge guidance are the supported grading hooks. Do not add
   worker-local grading wrappers outside the task directory.
 - Judge grading writes judge events to
-  `.meta-skill/runs/<run-id>/events/<trial-id>.judge.jsonl` and records model
+  `.<skill-name>/runs/<run-id>/events/<trial-id>.judge.jsonl` and records model
   evidence in `grades.jsonl`.
 
 ### `eval human`
@@ -367,15 +374,15 @@ enough to scale beyond the human spot-check slice.
 
 What it does:
 
-- Reads paired human and model grade rows from `.meta-skill/runs/<run-id>/grades.jsonl`
+- Reads paired human and model grade rows from `.<skill-name>/runs/<run-id>/grades.jsonl`
 - Optionally restricts comparison to one shared metric
 - Computes exact agreement, tolerance agreement, false pass/fail examples,
   human escalation rate, and non-binary examples
-- Writes a calibration artifact under `.meta-skill/calibrations/`
+- Writes a calibration artifact under `.<skill-name>/calibrations/`
 
 Inputs:
 
-- `--run <run-id-or-path>`: either a run id under `.meta-skill/runs/` or a full
+- `--run <run-id-or-path>`: either a run id under `.<skill-name>/runs/` or a full
   run directory path
 - `--metric <name>`: restrict calibration to one shared grade metric
 
@@ -421,8 +428,8 @@ What it does:
 
 Inputs:
 
-- `--suite`: suite file used to locate the workbench; defaults to
-  `.meta-skill/evals.json`
+- `--suite`: suite file used to locate the workbench; defaults to the current
+  target's `.<skill-name>/evals.json`
 
 Output:
 
@@ -459,7 +466,7 @@ Inputs:
 
 - `--run <run-id-or-path>`
 - `--out <file>`: write the Markdown report to a caller-named file, for example
-  `.meta-skill/runs/<run-id>/report.md`
+  `.<skill-name>/runs/<run-id>/report.md`
 - `--json`: emit the structured report instead of Markdown
 
 Output:
@@ -523,7 +530,7 @@ plugins/meta-skill/scripts/metaskill workbench init --target <target> --json
 ### Add or refresh tasks from the suite
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval lint --suite .meta-skill/evals.json --json
+plugins/meta-skill/scripts/metaskill eval lint --json
 plugins/meta-skill/scripts/metaskill eval materialize --json
 ```
 
@@ -567,12 +574,12 @@ cd /tmp/meta-skill-e2e
 "$CLI" workbench init --target hefty-skill --json
 "$CLI" validate quick-skill/skill --json
 "$CLI" validate hefty-skill/skill --json
-"$CLI" package quick-skill/skill --out-dir quick-skill/.meta-skill/dist --json
-"$CLI" package hefty-skill/skill --out-dir hefty-skill/.meta-skill/dist --json
+"$CLI" package quick-skill/skill --json
+"$CLI" package hefty-skill/skill --json
 
-# Author .meta-skill/evals.json, task.md, judge.md, and validate.* tasks.
-"$CLI" eval materialize --suite quick-skill/.meta-skill/evals.json --json
-"$CLI" eval run --suite quick-skill/.meta-skill/evals.json --runner codex_app_server --json
+# Author each target's .<skill-name>/evals.json, task.md, judge.md, and validate.* tasks.
+"$CLI" eval materialize --suite quick-skill/.<quick-skill-name>/evals.json --json
+"$CLI" eval run --suite quick-skill/.<quick-skill-name>/evals.json --runner codex_app_server --json
 "$CLI" eval grade --run <quick-run-dir> --json
 "$CLI" eval progress --run <quick-run-dir> --json
 "$CLI" eval report --run <quick-run-dir> --out <quick-run-dir>/report.md

@@ -170,15 +170,15 @@ local convention:
 ├── resources/       optional
 ├── examples/        optional when examples are runtime material
 ├── <other runtime files or folders>
-└── .meta-skill/     private workbench, excluded from packages
+└── .<skill-name>/     private workbench, excluded from packages
 ```
 
-The portable payload is the project root. `.meta-skill/` is not portable; use it
+The portable payload is the project root. `.<skill-name>/` is not portable; use it
 for durable authoring docs, research reports, source captures, test fixtures,
 package metadata, temporary reviews, and source-specific or client-specific
 development notes. Create optional workbench folders only when they will contain
-files. Keep `.meta-skill/tests/` flat when fixtures exist; do not create a blank
-`.meta-skill/tests/`, `/tests`, or nested test-category folders.
+files. Keep `.<skill-name>/tests/` flat when fixtures exist; do not create a blank
+`.<skill-name>/tests/`, `/tests`, or nested test-category folders.
 
 Do not force a `skill/` wrapper unless the current repo explicitly requires one.
 If an existing repo still uses wrappers, follow that repo for maintenance work
@@ -191,11 +191,11 @@ and `assets/` are defaults, not the full vocabulary.
 
 | Folder | Include when | Avoid when |
 |---|---|---|
-| `references/` | A future agent should read conditional runtime guidance, API details, schemas, policies, gotchas, or long examples only when needed. | The material is source-specific, client-specific, build-only, or better kept in `.meta-skill/docs/`. |
+| `references/` | A future agent should read conditional runtime guidance, API details, schemas, policies, gotchas, or long examples only when needed. | The material is source-specific, client-specific, build-only, or better kept in `.<skill-name>/docs/`. |
 | `scripts/` | Deterministic code is safer, cheaper, or more reliable than prose; the shipped skill should run it at runtime. | The code is a repo-only build helper, benchmark helper, or one-off migration. |
 | `assets/` | Approved reusable runtime files are used in outputs: templates, schemas, starter workbooks, icons, fonts, boilerplate, sample forms. | The file is a raw user upload, sensitive material, licensed content without approval, or research evidence. |
 | `resources/` | The skill needs runtime data or structured resources that are not naturally references, scripts, or assets. | The content is private workbench state or generated package metadata. |
-| `examples/` | Examples are themselves runtime material the future agent should inspect or copy patterns from. | Examples are source captures, authoring evidence, or benchmark material; keep those in `.meta-skill/`. |
+| `examples/` | Examples are themselves runtime material the future agent should inspect or copy patterns from. | Examples are source captures, authoring evidence, or benchmark material; keep those in `.<skill-name>/`. |
 | Other runtime folder | A domain convention makes the folder clearer than forcing material into a default bucket. | The folder exists only because the authoring process produced it. |
 
 Link every runtime folder from `SKILL.md` and state when to read, run, copy, or
@@ -204,23 +204,23 @@ standard explicitly supports deeper discovery.
 
 ## Workbench Folder Choices
 
-Use `.meta-skill/` only in project mode. It is for work that helps author,
+Use `.<skill-name>/` only in project mode. It is for work that helps author,
 review, or package the skill but should not be loaded by a future runtime agent.
 
 | Folder | Use for |
 |---|---|
-| `.meta-skill/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Name research files by topic; use a `-research.md` suffix when the docs folder would otherwise contain only research. |
-| `.meta-skill/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
-| `.meta-skill/dist/` | Package artifacts and package metadata produced by `plugins/meta-skill/scripts/metaskill package`. |
+| `.<skill-name>/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Name research files by topic; use a `-research.md` suffix when the docs folder would otherwise contain only research. |
+| `.<skill-name>/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
+| `.<skill-name>/dist/` | Package artifacts and package metadata produced by `plugins/meta-skill/scripts/metaskill package`. |
 
 For temporary plans, use the surrounding repo's planning convention instead of
-creating `.meta-skill/plans/`. Plans usually are not durable skill knowledge.
+creating `.<skill-name>/plans/`. Plans usually are not durable skill knowledge.
 
 If intake requires outside research, keep it bounded and source-grounded. Use an
 available researcher sub-agent or research skill when that is natural for the
 environment, especially when the research can run in parallel with other intake
 work. Do not make that a hard dependency: a normal source review is enough for
-small or obvious questions. Store the report under `.meta-skill/docs/` and move
+small or obvious questions. Store the report under `.<skill-name>/docs/` and move
 only reusable operational rules into the portable payload.
 
 ## Intake
@@ -520,7 +520,7 @@ present in ordinary prompts or when prior runs materially improve the next run.
   runtime guidance or validation.
 - Upgrade safety: assume files inside an installed skill directory may be
   replaced during upgrades. Put mutable state in the stable data/workbench
-  location provided by the project or runtime, usually `.meta-skill/` for
+  location provided by the project or runtime, usually `.<skill-name>/` for
   project-mode authoring, not inside the portable payload.
 - Privacy and approvals: do not persist secrets, credentials, private messages,
   or external-write targets unless the user explicitly approves the storage
@@ -531,7 +531,7 @@ maintenance burden without changing behavior.
 
 ## Eval Manifest And Measurement Boundary
 
-During new-skill authoring, create `.meta-skill/evals.json` when the user asks
+During new-skill authoring, create `.<skill-name>/evals.json` when the user asks
 for eval seeds, project-mode eval material, or evaluator handoff. The manifest
 is a starter handoff: enough realistic prompts, expected behavior, grader hints,
 and objective checks for `skill-evaluator` to run trials without reconstructing
@@ -555,9 +555,9 @@ Include only what is available and useful:
 
 Keep eval material out of the portable payload unless it is approved runtime
 example material the future agent should inspect while doing the task. Put the
-prompt manifest in `.meta-skill/evals.json`; put durable authoring notes in
-`.meta-skill/docs/`. Put user-provided fixtures or sample inputs in the flat
-`.meta-skill/tests/` folder only when the user provided or approved them; do not
+prompt manifest in `.<skill-name>/evals.json`; put durable authoring notes in
+`.<skill-name>/docs/`. Put user-provided fixtures or sample inputs in the flat
+`.<skill-name>/tests/` folder only when the user provided or approved them; do not
 create that folder when there are no fixture files to store.
 
 Do not create run folders, grades, comparisons, hidden rubrics, benchmark runs,
@@ -579,4 +579,4 @@ from before those assumptions become runtime instructions.
 
 Finalize by rewriting that same `SKILL.md` into runtime guidance and removing
 stale intake notes. In project mode, keep durable non-runtime notes under
-`.meta-skill/docs/`; they are review support, not the source of runtime truth.
+`.<skill-name>/docs/`; they are review support, not the source of runtime truth.
