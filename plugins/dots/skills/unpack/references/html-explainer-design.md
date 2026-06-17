@@ -161,6 +161,67 @@ Highlight spans: `.kw` keyword, `.str` string, `.fn` function, `.num` number,
 
 Status values: `confirmed` (olive), `inferred`/`assumption` (oat/clay). Pills:
 `.pill.sev`, `.pill.ok`, `.pill.neutral`. Severity badges: `.badge.high/.med/.low`.
+Use `.status.gap` for source that was not inspected or an open question that
+must not be presented as fact.
+
+## Investigative primitives
+
+Use these for issue traces, change pressure, ownership maps, failure paths, and
+concept-to-code bridges. They are semantic structures, not decoration. Prefer
+them only when they make causality, ownership, evidence, or uncertainty easier
+to read.
+
+```html
+<!-- cause ladder: symptom -> trigger -> mechanism -> boundary -> implication -->
+<div class="cause-ladder">
+  <div class="cause-hop"><span class="k">Symptom</span><p>Settings save appears to work.</p></div>
+  <div class="cause-hop"><span class="k">Trigger</span><p>The optimistic path updates local state.</p></div>
+  <div class="cause-hop hot"><span class="k">Cause boundary</span><p>The service write is skipped when the account id is missing.</p></div>
+  <div class="cause-hop gap"><span class="k">Gap</span><p>Retry behavior was not inspected.</p></div>
+</div>
+
+<!-- claim board: keep facts, inferences, and gaps visibly separate -->
+<div class="claim-board">
+  <div class="claim confirmed"><span class="status confirmed">confirmed</span><p>View model owns the submit action.</p><span class="src">SettingsViewModel.swift:42</span></div>
+  <div class="claim inferred"><span class="status inferred">inferred</span><p>Service likely owns persistence policy.</p><span class="src">SettingsService.swift</span></div>
+  <div class="claim gap"><span class="status gap">gap</span><p>No retry tests were inspected.</p></div>
+</div>
+
+<!-- source stack: what was read and why it mattered -->
+<div class="source-stack">
+  <div><span class="src">SettingsView.swift</span><p>Entry point for the failing interaction.</p></div>
+  <div><span class="src">SettingsService.swift</span><p>Persistence boundary and error handling.</p></div>
+</div>
+
+<!-- pressure ledger: table + static meter, not a chart -->
+<div class="table-scroll">
+  <table class="pressure" data-sort>
+    <thead><tr><th>Force</th><th>Evidence</th><th data-sort="num">Pressure</th></tr></thead>
+    <tbody><tr><td>Call-site spread</td><td class="mono">8 files</td><td><span class="meter bad" role="img" aria-label="high pressure"><i style="width:82%"></i></span> high</td></tr></tbody>
+  </table>
+</div>
+```
+
+For SVG diagrams, use `.box.cause` for the single cause boundary and `.lane`
+with `.lane-label` for ownership bands:
+
+```html
+<rect class="lane" x="16" y="20" width="320" height="160" rx="12"/>
+<text class="lane-label" x="30" y="44">Runtime owner</text>
+<rect class="box cause" x="72" y="82" width="180" height="56" rx="10"/>
+<text x="162" y="114" text-anchor="middle" font-size="12" font-weight="600">missing account id</text>
+```
+
+Compose higher-level patterns from these primitives:
+
+- Issue Trace: cause ladder, `.box.cause`, code card, evidence rows.
+- Change Pressure: pressure ledger, current/proposed tabs, source stack.
+- Ownership Map: lanes, detail panel, ownership evidence rows.
+- Failure Path: stepper diagram with `.edge.bad`, `.box.cause`, claim board.
+- Concept-To-Code Bridge: mapping table, glossary, source stack, code card.
+
+Do not use a meter without a number or label, a lane without a real owner, a
+claim board without source chips, or a cause ladder that merely restates prose.
 
 ## Layout, nav, carry-forward
 
@@ -290,8 +351,8 @@ breaking the explanation; none use dependencies or network calls.
 - Every primitive used actually fires: step the stepper, toggle the level, sort
   and filter the table, expand the diff, hover a term. A tooltip or detail panel
   near a diagram must not be clipped by its scroll box.
-- Desktop and mobile: readable, no horizontal page scroll (only diagrams/code
-  scroll inside their box).
+- Desktop and mobile: readable, no horizontal page scroll (only diagrams, code,
+  and table wrappers scroll inside their own box).
 - Browser geometry checks pass: page `scrollWidth` fits the viewport, visible
   content does not bleed past the viewport edge, and any wider-than-screen SVG,
   table, code block, or comparison board scrolls only inside its own framed

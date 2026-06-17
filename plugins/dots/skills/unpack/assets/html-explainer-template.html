@@ -229,8 +229,12 @@ details .inner>:first-child{margin-top:0}
 .diagram .sub{fill:var(--g500)}
 .diagram .box{fill:var(--paper);stroke:var(--g300);stroke-width:1.5}
 .diagram .box.hot{fill:var(--clay-soft);stroke:var(--clay)}
+.diagram .box.cause{fill:var(--rust-soft);stroke:var(--rust);stroke-width:2}
 .diagram .box.dark{fill:var(--slate);stroke:var(--slate)}
 .diagram .box.dark+text,.diagram text.on-dark{fill:var(--ivory)}
+.diagram text.on-cause{fill:var(--rust)}
+.diagram .lane{fill:var(--g100);stroke:var(--g200);stroke-width:1.5}
+.diagram .lane-label{fill:var(--g500);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 .diagram .edge{stroke:var(--g500);stroke-width:1.5;fill:none}
 .diagram .edge.alt{stroke:var(--clay);stroke-dasharray:5 4}
 .diagram .edge.good{stroke:var(--olive)}.diagram .edge.bad{stroke:var(--rust);stroke-dasharray:4 4}
@@ -267,10 +271,43 @@ td.good{color:var(--olive)}td.bad{color:var(--rust)}td.mono{font-family:var(--mo
 .ev .row{padding:13px 0;border-bottom:1px solid var(--g100);display:grid;gap:6px}
 .ev .src{font-family:var(--mono);font-size:12px;color:var(--clay-d)}
 .ev .ann{margin:0;color:var(--g700);font-size:14px}
-.ev .status{width:max-content;font-family:var(--mono);font-size:11px;border-radius:6px;padding:2px 8px;font-weight:600}
-.ev .status.confirmed{background:var(--olive-soft);color:#4B5C39}
-.ev .status.inferred{background:var(--oat);color:var(--slate)}
-.ev .status.assumption{background:var(--clay-soft);color:var(--clay-d)}
+.ev .status,.status{width:max-content;font-family:var(--mono);font-size:11px;border-radius:6px;padding:2px 8px;font-weight:600}
+.ev .status.confirmed,.status.confirmed{background:var(--olive-soft);color:#4B5C39}
+.ev .status.inferred,.status.inferred{background:var(--oat);color:var(--slate)}
+.ev .status.assumption,.status.assumption{background:var(--clay-soft);color:var(--clay-d)}
+.ev .status.gap,.status.gap{background:var(--g100);color:var(--g500);border:1px dashed var(--g300)}
+
+/* ── investigative primitives ── */
+.cause-ladder{border:1.5px solid var(--g300);border-radius:var(--r-md);background:var(--paper);overflow:hidden}
+.cause-hop{display:grid;grid-template-columns:128px minmax(0,1fr);gap:18px;padding:15px 18px;border-bottom:1px solid var(--g100)}
+.cause-hop:last-child{border-bottom:none}
+.cause-hop .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--g500);padding-top:2px}
+.cause-hop p{margin:0;color:var(--g700);font-size:14.5px}
+.cause-hop.hot{background:var(--rust-soft)}.cause-hop.hot .k,.cause-hop.hot p{color:var(--rust)}
+.cause-hop.gap{background:rgba(240,238,230,.55)}.cause-hop.gap .k{color:var(--g500)}
+@media (max-width:620px){.cause-hop{grid-template-columns:1fr;gap:4px}}
+
+.claim-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.claim{border:1.5px solid var(--g300);border-radius:var(--r-md);background:var(--paper);padding:15px 16px}
+.claim.confirmed{background:var(--olive-soft);border-color:rgba(120,140,93,.35)}
+.claim.inferred{background:rgba(227,218,204,.38);border-color:var(--oat)}
+.claim.gap{background:var(--g100);border-style:dashed}
+.claim p{margin:8px 0 8px;color:var(--g700);font-size:14.5px}
+.claim .src{font-family:var(--mono);font-size:11.5px;color:var(--clay-d)}
+
+.source-stack{border-top:1.5px solid var(--g200)}
+.source-stack>div{display:grid;grid-template-columns:minmax(120px,210px) minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid var(--g100)}
+.source-stack .src{font-family:var(--mono);font-size:12px;color:var(--clay-d)}
+.source-stack p{margin:0;color:var(--g700);font-size:14px}
+@media (max-width:620px){.source-stack>div{grid-template-columns:1fr;gap:3px}}
+
+.meter{display:inline-block;width:84px;height:7px;background:var(--g100);border:1px solid var(--g300);
+  border-radius:999px;overflow:hidden;vertical-align:middle;margin-right:7px}
+.meter>i{display:block;height:100%;background:var(--clay)}
+.meter.good>i{background:var(--olive)}.meter.bad>i{background:var(--rust)}
+table.pressure td:last-child{white-space:nowrap}
+.table-scroll{max-width:100%;overflow-x:auto;border-radius:var(--r-md)}
+.table-scroll table{min-width:520px}
 
 /* ── copy button ── */
 .copy{font-family:var(--mono);font-size:11.5px;border:1.5px solid var(--g300);background:var(--paper);

@@ -30,6 +30,15 @@ Match the relationship to the form, then build it from the archetype table in
 - quantities over time or category → bar or line chart
 - a parameter the reader should feel → one small live control
 
+For investigation-heavy prompts, choose the recipe in [DESIGN.md](DESIGN.md)
+before choosing components:
+
+- repo bug / issue / "why does this fail" → Issue Trace
+- enhancement pressure / coupling / blast radius → Change Pressure
+- owner / source of truth / split responsibility → Ownership Map
+- bad state, fallback, guard, or cascade → Failure Path
+- abstract concept in this repo → Concept-To-Code Bridge
+
 ## Mermaid In Text Answers
 
 When the user did not ask for a standalone artifact, use Mermaid for a

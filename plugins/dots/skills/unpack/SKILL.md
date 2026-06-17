@@ -1,13 +1,14 @@
 ---
 name: unpack
-description: "Use when the user asks to understand, unpack, translate, or make sense of dense technical material such as code, errors, commands, logs, docs, architecture explanations, jargon-heavy prose, or prior assistant answers; also for technical explain-how, explain-why, walk-through, missing-background, and confusing-jargon prompts. Supports optional HTML and image explainers when requested; not for tutoring, quizzes, full tutorials, summarization-only, code fixing, or durable documentation."
+description: "Use when the user asks to understand, unpack, translate, investigate, or make sense of dense technical material such as repo behavior, bugs/issues, enhancement ideas, architecture ownership, code, errors, commands, logs, docs, diagrams, jargon-heavy prose, or prior assistant answers; also for explain-how/why, walkthroughs, missing background, and optional HTML/image explainers; not for tutoring, quizzes, full tutorials, summarization-only, code fixing, broad audits, or durable docs."
 ---
 
 # Unpack
 
 Make dense technical material understandable quickly. Preserve meaning, add the
 missing context, choose the clearest format for the material, and stop before
-the answer turns into tutoring.
+the answer turns into tutoring. For investigative prompts, close with explicit
+`Confidence:` and `Next move:` lines so uncertainty and action stay visible.
 
 ## Memory
 
@@ -39,26 +40,26 @@ Use this starter shape for a new file:
 
 ## Route
 
-Use this skill for dense technical material, jargon-heavy prose, architecture
-explanations, commands, logs, errors, code snippets, docs, APIs, diagrams, or
-prior assistant answers.
+Use this skill for dense technical material, jargon-heavy prose, repo behavior,
+bugs or issues, enhancement ideas, architecture ownership, commands, logs,
+errors, code snippets, docs, APIs, diagrams, or prior assistant answers.
 
 Also use it for technical prompts like `explain how`, `explain why`, `walk me
 through`, `what am I missing`, `translate this`, `explain the jargon`, or `make
 this make sense`, even when the user does not explicitly say they are confused.
 
 Do not turn an explanation request into tutoring, a quiz, a full tutorial,
-general summarization, code fixing, broad debugging, or durable documentation
-unless the user asks for that work.
+general summarization, code fixing, a broad codebase audit, or durable
+documentation unless the user asks for that work.
 
 When the user names repo-specific code, files, symbols, app behavior, or
 architecture, inspect the relevant local source before explaining. For general
 technical concepts, answer from available context without repo exploration.
 
-For hybrid requests like `explain why this fails` or `walk me through this bug`,
-explain the visible cause, implication, and likely next place to inspect. Do not
-switch into fixing, broad debugging, or code edits unless the user asks for that
-work.
+For hybrid requests like `explain why this fails`, `walk me through this bug`,
+`unpack this issue`, or `who owns this behavior`, use Investigative Unpack
+below. Do not switch into fixing, broad debugging, refactor review, or code
+edits unless the user asks for that work.
 
 ## Runtime Loop
 
@@ -66,11 +67,51 @@ Follow a compact loop without forcing a fixed answer template:
 
 1. Read memory if it exists and applies.
 2. Identify the material type: concept, code, error, command, log, doc, diagram,
-   prior answer, or repo-specific behavior.
+   prior answer, repo behavior, issue, enhancement, or ownership question.
 3. Inspect only the source needed for repo-specific claims.
 4. Choose the knowledge level and format that best reduce hidden assumptions.
 5. Answer the real question first, add the missing bridge, and stop when the
    user can act on the explanation.
+
+## Investigative Unpack
+
+Use this mode when the user asks to unpack a bug, issue, enhancement idea,
+architecture ownership question, ambiguous behavior, failure path, or "what is
+going on here" repo question.
+
+Keep the investigation bounded:
+
+1. Restate the question as the behavior, causality, or ownership question being
+   investigated.
+2. Inspect only the source, docs, tests, logs, or plans needed to explain it.
+3. Build a short evidence map: confirmed facts, relevant owners or boundaries,
+   likely inferences, and gaps.
+4. Explain the causal flow, ownership model, or pressure point in plain
+   technical language.
+5. End with implication, confidence, and the next useful investigative move.
+   For issue, failure, or ownership prompts, make the final confidence and next
+   move explicit.
+
+Use this shape when it helps the user scan the answer:
+
+- Short answer
+- Evidence
+- How it works
+- Why this is happening, or where the pressure is
+- Ownership or boundary map
+- What this means
+- `Confidence:` <high/medium/low, with why>
+- `Next move:` <one source, check, or decision to inspect next>
+
+The next move is where to inspect, what to confirm, or which decision this
+unblocks. It is not a patch plan unless the user asks to implement.
+
+Do not let a likely fix be the final note in an investigative answer. If a fix
+direction is useful, label it as unconfirmed and still close with explicit
+`Confidence:` and `Next move:` lines.
+
+When concrete source was missing or only partly inspected, the answer closes
+with those two labeled lines exactly. This keeps uncertainty visible.
 
 ## Knowledge Dial
 
@@ -146,17 +187,24 @@ Read [references/DESIGN.md](references/DESIGN.md) (the visual system and anti-sl
 [references/html-explainer-design.md](references/html-explainer-design.md) (the
 component catalog and build steps), then:
 
-1. Pick the archetype from the material (feature flow, module map, stack trace,
-   diff/review, state machine, config/API, incident, implementation plan,
-   concept explainer, status/metrics).
+1. Pick the recipe or archetype from the material. Use the investigative recipes
+   in [references/DESIGN.md](references/DESIGN.md) for issue traces, change
+   pressure, ownership maps, failure paths, or concept-to-code bridges; otherwise
+   use the general archetypes.
 2. Start from [assets/html-explainer-template.html](assets/html-explainer-template.html).
    Keep its `<style>`/`<script>` kit verbatim; replace the `<main>` with the
    masthead plus only the modules the archetype needs, composed from the catalog.
 3. Make the dominant visual carry the hard relationship. Add a chart only for
    real quantitative data and a diagram for real structure. Surface source
-   evidence: short snippets, exact symbols, confirmed vs inferred.
+   evidence: short snippets, exact symbols, confirmed vs inferred vs gap.
 4. Save to `<repo>/.agents/artifacts/<topic-slug>.html` unless the user
    gives another path.
+
+When the user asks for the HTML structure before writing a file, answer with the
+recipe, first viewport, dominant visual, primitives, optional interactions,
+rejected non-fits, and carry-forward. Explicitly reject decorative dashboards,
+giant hero pages, unnecessary alternate themes, and interactions that do not
+reduce reading effort.
 
 Before writing, verify `.agents/` is gitignored. If it is not and repo
 instructions allow it, say `.agents/` will be added to `.gitignore`, then add it
@@ -171,8 +219,8 @@ mobile width before handoff. Use screenshots plus DOM/layout checks, not just a
 load event. Fix console errors, broken layout, unreadable text, leftover sample
 content, and these regression classes:
 
-- no horizontal page scroll; only intentional code or diagram panes may scroll
-  inside their own box
+- no horizontal page scroll; only intentional code, diagram, or table panes may
+  scroll inside their own box
 - wide SVGs, tables, diagrams, and comparison boards stay contained or become
   intentionally internally scrollable; they must not create repeated/offscreen
   columns or bleed out of the article

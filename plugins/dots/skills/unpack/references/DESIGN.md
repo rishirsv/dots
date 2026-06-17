@@ -23,6 +23,27 @@ page is a styled wall of text, ship Markdown instead.
 Build a bespoke document for the material — never a filled-in template. Pick the
 archetype first, compose only the modules it needs, and delete the rest.
 
+## Design Decision Loop
+
+Start from the reader's comprehension problem, not from the component catalog.
+
+1. Classify the intent: concept, flow, ownership, issue trace, change pressure,
+   failure path, concept-to-code bridge, or status.
+2. Earn the format: if one hard relationship does not become clearer than it
+   would in Markdown, ship Markdown.
+3. Pick the recipe or archetype, then build its dominant visual first.
+4. Add a primitive only when it reduces effort around evidence, causality,
+   ownership, comparison, navigation, or uncertainty.
+5. Mark load-bearing claims as confirmed, inferred, assumption, or gap. Put
+   confidence and inspected sources in the first viewport.
+6. Make carry-forward an investigative next move unless the user asked for an
+   implementation plan.
+7. Delete unused modules and run the verification rubric.
+
+Avoid overfitting tells: one hot path only; no meter without a number or label;
+no lane without a real owner; no stepper that merely repeats a static diagram;
+and no rust everywhere just because the subject is failure-flavored.
+
 ## Tokens
 
 Use the semantic CSS variables from the asset's `:root`. Roles, not raw hex:
@@ -42,6 +63,15 @@ Use the semantic CSS variables from the asset's `:root`. Roles, not raw hex:
 Color is the scarcest resource. Most of the page is ink-on-ivory with gray
 structure; clay appears only on the hot path. If position, grouping, or a label
 can carry the meaning, do not spend color on it.
+
+## Investigative Mode
+
+Do not add a separate "lab" theme for debugging or issue explainers. The existing
+tokens already carry the needed semantics: clay for the hot path, rust for the
+cause boundary or failure edge, olive for confirmed/success, mono for exact
+source names, and gap chips for uninspected evidence. Signal investigation with
+the recipe, eyebrow, provenance, evidence states, and carry-forward wording, not
+with a second visual system.
 
 ## Typography
 
@@ -144,6 +174,25 @@ modules survive.
 | Implementation plan | milestone timeline + data flow | milestones, flow diagram, risk table, code |
 | Concept explainer | one diagram + a small live control | live demo, comparison table, glossary |
 | Status / metrics | chart + metric tiles | stat band, bar/line chart, table |
+
+## Investigative Recipes
+
+Recipes compose the archetypes above for investigation-heavy requests. They do
+not replace archetypes; they name the intent, dominant relationship, evidence
+mode, and carry-forward.
+
+| Recipe | Use when | Dominant visual | Evidence mode | Carry-forward |
+|---|---|---|---|---|
+| Issue Trace | A bug, issue, or "why does this fail" question walked in | frame ladder or flow to a cause boundary | high: evidence rows, exact code/log snippets, confirmed/inferred/gap status | next place to inspect or fact to confirm |
+| Change Pressure | An enhancement idea raises blast-radius, coupling, or "what makes this hard" questions | pressure ledger plus dependency or current/proposed map | medium-high: each force cites a source, count, or concrete file | lowest-risk seam or decision to investigate |
+| Ownership Map | The user asks who owns behavior, where responsibility belongs, or why boundaries feel split | swimlanes, ownership lanes, or module map | medium: each owner or boundary cites defining files | leaked or split responsibility to resolve |
+| Failure Path | The user wants the path a bad state follows through guards, fallbacks, or user-visible failure | decision flow, bad edge cascade, or failure timeline | medium: cite branches, guards, and inferred hops separately | earlier guard, observation point, or confirming check |
+| Concept-To-Code Bridge | The user asks what an abstract pattern means in this repo | mapping table plus code cards/glossary | medium: every concept facet maps to a source anchor | one file or symbol to open next |
+
+For all investigative recipes, the first viewport must show the answer,
+material inspected, confidence, and the dominant visual. The title should be an
+answer, not a topic. The carry-forward should point to the next investigative
+move unless implementation was explicitly requested.
 
 ## Evidence Grammar
 
