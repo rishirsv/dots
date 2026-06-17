@@ -34,7 +34,7 @@ Read only what the task needs:
 |---|---|
 | Decide what a skill is, whether the idea is skill-shaped, and what artifact should be created if it is not a skill | [skill-shape.md](references/skill-shape.md) |
 | Distill source packs, example input/output pairs, transcripts plus notes, or prior artifacts into reusable skill rules | [source-distillation.md](references/source-distillation.md) |
-| Decide whether the workflow should become a skill; classify the skill type and evaluation posture; write the trigger contract, frontmatter, runtime body, instruction strength, setup/state, eval manifest handoff, evidence boundaries, and voice | [design.md](references/design.md) |
+| Decide whether the workflow should become a skill; classify the skill type, invocation posture, information hierarchy, evaluation posture, runtime body, completion criteria, pruning pass, evidence boundaries, and voice | [design.md](references/design.md) |
 | Capture an active or prior Codex thread/session into a durable skill | [session-capture.md](references/session-capture.md) |
 | Add compact runtime snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Use the central Meta Skill CLI for validate, package, workbench, eval, progress, and runner workflows | [cli.md](../../references/cli.md) |
@@ -150,13 +150,15 @@ Use [design.md](references/design.md) to decide:
 
 - the recurring job and ownership boundary
 - the skill type, evaluation posture, and resource/test shape it implies
+- invocation posture: model-discoverable by default, or explicit-only when the user should be the index
 - frontmatter name and description
 - runtime body shape and section names
 - instruction strength: prose, checklist, template, script, or strict sequence
+- information hierarchy: what must stay in `SKILL.md`, what belongs behind a context pointer, and what should stay out of runtime
 - setup, config, state, and memory requirements
 - eval manifest handoff for realistic prompts, expected outputs, objective checks, grader hints, and baseline comparison
 - input and evidence boundaries
-- failure handling, approval gates, output shape, and final checks
+- failure handling, approval gates, output shape, checkable completion criteria, final checks, and pruning pass
 
 Use [cookbook.md](references/cookbook.md) only after the design decision is
 clear. Pick the smallest pattern card that changes runtime behavior.
@@ -194,7 +196,9 @@ Follow these payload rules:
 - Keep build notes, raw source examples, review notes, eval manifest drafts, benchmark material, and
   rejected options out of the portable payload.
 - Put runtime references in `references/`, one level deep. Link every reference
-  directly from `SKILL.md`, and start each reference with when to read it.
+  directly from `SKILL.md`, and make the link wording say when to read it. A
+  weak pointer to necessary material is a behavior bug; sharpen the condition
+  before inlining the whole file.
 - Put scripts in `scripts/` only when deterministic code is safer or cheaper
   than prose. Link every script directly from `SKILL.md`, state when to run it,
   what inputs it accepts, what output means, and what nonzero exit means.
@@ -229,8 +233,9 @@ only the operational conclusions into runtime guidance.
 ### 4. Validate And Stop
 
 Review changed skill files directly. Check that linked references, scripts, and
-assets exist. Run any deterministic tests already available for the skill or its
-authoring repo.
+assets exist. Re-read the runtime for single source of truth, no-op lines,
+stale sediment, duplicated branches, and missing completion criteria. Run any
+deterministic tests already available for the skill or its authoring repo.
 
 For standalone portable skill folders, run
 `plugins/meta-skill/scripts/metaskill validate <path-to-skill-folder>`. For script resources added during

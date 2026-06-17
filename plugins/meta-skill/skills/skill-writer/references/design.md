@@ -8,14 +8,20 @@ This reference covers design decisions and runtime writing after the idea is pla
 
 ## Contents
 
-- Design aim, directive writing, voice and style, the skill fit gate, skill type taxonomy, and evaluation posture.
+- Design aim, predictability, directive writing, voice and style, the skill fit gate, skill type taxonomy, invocation posture, information hierarchy, and evaluation posture.
 - Intake, trigger contract, frontmatter, and description checks.
 - Degree of freedom, failure handling, runtime body shape, examples, setup/state, eval-seed boundaries, and evidence boundaries.
-- Draft outline and authoring-note expectations.
+- Completion criteria, pruning, draft outline, and authoring-note expectations.
 
 ## Design Aim
 
 A good skill is a reusable behavior harness. It gives a future agent the extra context, judgment pattern, file structure, or deterministic script it needs to handle a recurring task better than it would from the user prompt alone.
+
+The root aim is predictability: the skill should make the agent take the same
+process each time the same kind of task appears, even when the output itself is
+creative, judgment-heavy, or input-dependent. Every structure choice should
+serve that aim: invocation, trigger wording, step order, context pointers,
+completion criteria, and pruning.
 
 Skills should be practical, not encyclopedic. Treat every runtime `SKILL.md` as scarce attention budget: include what changes future behavior, omit background the base model already knows, and move detailed or conditional material behind progressive disclosure.
 
@@ -41,6 +47,11 @@ If a warning takes a paragraph to explain, convert it into a directive in the re
 Lead with the outcome, not the procedure. Define what a good result looks like — the target output, the constraints that matter, the evidence available — and let the agent choose the steps. Capable models need less step-by-step scripting than older ones, and a long, rigid process often constrains the model more than it helps. Spell out steps only where order genuinely changes the result or a mistake is costly.
 
 Start with the simplest correct default path. Put advanced branches after the default and state the prerequisite that makes the advanced path valid.
+
+When the skill has ordered steps, end each step on a completion criterion: the
+observable condition that tells the agent the step is done. Make it checkable,
+and make it demanding enough for the risk. "List changed files" is weaker than
+"account for every modified source file and every generated artifact."
 
 ## Voice and Style
 
@@ -70,6 +81,19 @@ You usually write from one or two examples, but the skill runs on inputs it has 
 
 - Before: `Remove the $1.2M PPP forgiveness and add back $450K of management fees.`
 - After: `Remove one-time pandemic subsidies; add back related-party fees only if they will not continue post-close.`
+
+### Use Leading Words
+
+A leading word is a compact, familiar concept that anchors behavior in fewer
+tokens than a repeated explanation. Prefer a strong existing word over a
+homegrown label when the word already carries useful priors: "audit,"
+"handoff," "triage," "calibrate," "gate," "source of truth." Use it in the
+description when users, docs, or files naturally use the same word; use it in
+the body when it helps the agent reach for the same behavior each run.
+
+Do not coin cute labels to sound distinctive. A made-up term spends tokens on
+definition. A good leading word retires duplicated explanation; a weak one is a
+no-op.
 
 ### Plain names, no house jargon
 
@@ -265,6 +289,9 @@ Building without questions does not change quality discipline. Frontmatter still
 
 The frontmatter description is the primary routing surface. The body is not loaded until the skill triggers, so the description must answer: “Should the runtime read this skill now?”
 
+For model-discoverable skills, every description word spends context and
+attention on every turn. Make it earn that cost.
+
 Every skill needs an ownership boundary. The description and early route language should make clear what the skill owns and which adjacent work belongs elsewhere, so broad skills do not steal activation from narrower ones.
 
 Optimize for substantive, recurring, specialized, or failure-prone tasks. Do not tune the description around trivial one-step prompts that the base agent can handle without runtime guidance.
@@ -272,7 +299,9 @@ Optimize for substantive, recurring, specialized, or failure-prone tasks. Do not
 A strong description:
 
 - names the task object, not just the domain
+- front-loads the strongest leading word when one naturally names the task
 - uses real user phrases, symptoms, file types, handoff moments, or messy wording
+- includes one trigger per branch; collapse synonyms that rename the same branch
 - includes the closest adjacent boundary with `not for ...` when there is a realistic overtrigger risk
 - is strong enough to avoid undertriggering
 - avoids internal workflow steps
@@ -368,6 +397,34 @@ Add runtime-specific fields only when the target runtime requires them. Decorati
 
 For description content (task object, real user phrasing, adjacent boundary, no workflow summary, third person, keyword coverage), see Trigger Contract above. Do not restate those rules here.
 
+## Invocation And Granularity
+
+Default to model-discoverable skills when the agent needs to notice the work
+without the user naming the skill, or when another skill should be able to route
+to it. This spends description context every turn, so the trigger must be worth
+that always-loaded cost.
+
+Use explicit-only invocation only when the user should be the index: the skill
+is niche, personal, sensitive, rarely used, or too broad to trigger safely. In
+Codex metadata, set `policy.allow_implicit_invocation: false` when the runtime
+supports that policy. Keep the required `SKILL.md` description concise and
+human-facing in runtimes that still require it for validation.
+
+If explicit-only skills multiply beyond what a user can remember, write or
+update a router skill instead of making each skill model-discoverable. A router
+should name the explicit skills and when the human should invoke each; it should
+not pretend it can automatically fire skills hidden from model invocation.
+
+Split skills only when the split earns its load:
+
+- Split by invocation when a distinct leading word or work object should trigger
+  independently.
+- Split by sequence when visible later steps repeatedly pull the agent into
+  premature completion. Sharpen the current step's completion criterion first;
+  split only when the criterion remains fuzzy and the rush is observed.
+- Keep related reference material disclosed behind context pointers when one
+  skill can still own the job.
+
 ## Instruction Strength
 
 Match instruction strength to the task's fragility. A single skill usually mixes strengths at different points — judgment-heavy intake, a fixed output shape, and a deterministic final check is a common pattern. Do not feel forced to pick one level for the whole skill.
@@ -437,7 +494,9 @@ Runtime guidance should cover the behavior somewhere, without forcing headings:
 - output: headings, fields, artifact paths, caveats, blanks, citations, and exclusions
 - edits: for a revision skill, name what to preserve before what to change, so an improvement pass does not quietly drop working parts
 - finish checks: observable checks the agent can actually perform
-- completion: when the job is done and the agent should stop — an explicit "can I answer the core request now?" check prevents over- and under-running
+- completion: checkable criteria for each ordered step and for the whole job;
+  an explicit "can I answer the core request now?" check prevents over- and
+  under-running
 - anti-patterns: one-line workflow-specific mistakes when they prevent likely failure
 - gotchas: experience-derived failure modes for non-trivial skills, especially mistakes that sound reasonable in the moment
 
@@ -447,6 +506,57 @@ For non-trivial skills, include a compact `Gotchas` section when evidence shows
 recurring or high-cost failures. If no evidence-backed gotchas exist, do not
 invent generic ones; keep that absence in authoring notes or the final handoff
 rather than shipping a filler section.
+
+## Information Hierarchy And Context Pointers
+
+Treat runtime material as a ladder:
+
+1. `SKILL.md` steps: ordered actions the agent must perform now.
+2. `SKILL.md` reference: compact rules every branch is likely to need.
+3. Disclosed reference files: conditional detail loaded through a context
+   pointer.
+
+Inline what every branch needs. Disclose what only some branches need. Keep a
+concept's definition, rules, and caveats together once disclosed, so one read
+brings the neighboring material with it.
+
+A context pointer is the sentence or bullet that sends the agent to another
+file. Its wording decides whether the agent reaches the material reliably. If
+must-have material is hidden behind a weak pointer, first sharpen the pointer's
+condition. Inline the material only when the sharpened pointer still fails or
+the material truly applies to every run.
+
+## Completion Criteria And Premature Completion
+
+Premature completion happens when the agent moves on before the current unit of
+work is genuinely done. Defend against it in this order:
+
+1. Sharpen the completion criterion. Make it observable and demanding enough
+   for the risk.
+2. Increase legwork through the criterion, not through vague exhortations.
+   Prefer "verify every changed file is represented in the summary" over "be
+   thorough."
+3. Split the sequence only when the completion criterion is irreducibly fuzzy
+   and later visible steps are causing the rush.
+
+Flat reference skills need completion criteria too. Use a final check like
+"apply every rubric lane before concluding no findings," not just "review the
+artifact."
+
+## Pruning Pass
+
+Before finalizing, prune the runtime as a behavior surface, not as prose.
+
+- Single source of truth: each meaning lives in one authoritative place.
+- Relevance: each line still bears on the skill's job or a live branch.
+- No-op test: sentence by sentence, ask whether the model would behave
+  differently if the sentence disappeared. Delete no-op sentences; do not polish
+  them.
+- Duplication: collapse repeated explanations into one rule, one branch, or one
+  strong leading word.
+- Sediment: remove stale authoring residue, old examples, and outdated caveats.
+- Sprawl: if every line is live but the top is too long, disclose conditional
+  reference or split a real branch.
 
 ## Rules That Earn Their Place
 

@@ -32,7 +32,7 @@ Snippet headings are illustrative. Derive actual section names from the job, fil
 | New non-trivial skill, trigger-risky skill, or source material with realistic prompts and expected behavior | Eval manifest handoff | `.<skill-name>/evals.json` prompt manifest outside runtime payload | Confirm prompts are realistic, objective enough, and routed to `skill-evaluator` for runs |
 | New skill or user-requested skill project | Payload skeleton | Directly authored `SKILL.md`, optional `agents/`, and runtime folders | Confirm target path and project-vs-portable intent |
 | Client-facing delivery, external write, package, install, publish, sync, or send | Human gate | Explicit approval before the action | Confirm who can approve |
-| Explicit-only activation | Metadata invocation policy | `policy.allow_implicit_invocation: false` in `agents/openai.yaml` | Confirm explicit-only is intentional |
+| Explicit-only activation, many related explicit skills, or risky auto-triggering | Metadata invocation policy or router skill | `policy.allow_implicit_invocation: false` in `agents/openai.yaml`, or a router skill that names when humans should invoke related explicit skills | Confirm who should pay the load: model context or human memory |
 | Fragile inputs, scripts, artifacts, external material, or partial evidence | Failure handling | Short failure section with ask, caveat, stop, or partial-completion behavior | Judge whether recovery behavior protects the workflow |
 
 ## Recipe Use
@@ -68,6 +68,17 @@ For overlapping workflows, add an early route section:
 ### 2. Metadata And Invocation Policy
 
 Use when writing OpenAI/Codex metadata in `agents/openai.yaml`. Include this file for generated skills, and always include `interface.default_prompt`. The skill name and description live in `SKILL.md` frontmatter, not here. Supported sections are `interface`, `policy`, and `dependencies`.
+
+Decide invocation before polishing metadata:
+
+- Model-discoverable: use when the agent must notice the task without the user
+  naming the skill, or another skill should route to it. The description spends
+  context every turn, so keep it pruned to distinct trigger branches.
+- Explicit-only: use when the user should choose the skill by name because it is
+  niche, sensitive, personal, or unsafe to auto-trigger. This spends human
+  memory instead of model context.
+- Router skill: use when explicit-only skills multiply and the user needs one
+  remembered entry point that names when to invoke each related skill.
 
 ```yaml
 interface:
@@ -369,11 +380,18 @@ Script-backed skill:
 ## Conversion Checklist
 
 - The description names the task object, trigger moment, and adjacent boundary.
+- The invocation posture is intentional: model-discoverable, explicit-only, or
+  routed through another skill.
+- Distinct branches are distinct; repeated synonyms for one branch are collapsed.
+- Strong leading words replace repeated explanation when they naturally fit the
+  task language.
 - Input material boundaries are present when user files, web pages, or pasted content are in scope.
 - Missing inputs say ask, caveat, stop, or continue with labeled limits.
 - Source authority is present only when source order changes behavior.
 - Output shape, tone, and review posture are explicit where they matter.
-- Runtime references, scripts, assets, resources, examples, or other folders are direct, flat where discovery matters, linked, and implemented.
+- Runtime references, scripts, assets, resources, examples, or other folders are direct, flat where discovery matters, linked, and implemented; each pointer says when to read or run the target.
+- Ordered steps have checkable completion criteria, and the whole job has a
+  stopping condition.
 - Setup/config/state rules appear only when they change behavior and name stable storage.
 - Eval material stays in `.<skill-name>/evals.json` or `.<skill-name>/docs/` and out of the portable runtime unless it is approved runtime example material.
 - Generated starters use the current-working-directory-relative `<skill-dir>` as the root payload; no `skill/` wrapper unless a repo explicitly requires it.
@@ -383,3 +401,5 @@ Script-backed skill:
 - `policy.allow_implicit_invocation: false` appears only for explicit-only skills.
 - Artifact checks occur before clean conclusions or delivery language.
 - Human approval gates appear before consequential actions.
+- Final pruning removed no-op sentences, duplicated meanings, stale authoring
+  residue, and branch detail that belongs behind a context pointer.
