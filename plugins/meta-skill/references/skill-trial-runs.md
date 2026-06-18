@@ -42,7 +42,7 @@ iteration, a child thread, or a worktree-backed trial.
 Use when one realistic prompt can catch likely activation, resource, or
 runtime-contract failures.
 
-- Best for a new skill after deterministic checks pass.
+- Best for a new skill after validation checks pass.
 - Best for `skill-doctor` when a candidate fix should be tried before parent-side
   edits are applied.
 - Not release proof.
@@ -116,7 +116,7 @@ become readable before treating the trial as complete.
    and result contract below.
 6. Read the child result with `read_thread`.
 7. Classify the result: keep, revise, reject, or needs full evaluation.
-8. Apply source edits in the parent checkout only when the user authorized
+8. Make source edits in the parent checkout only when the user authorized
    payload changes.
 9. Rerun the affected trial when the revision changes the behavior under test.
 
@@ -128,18 +128,33 @@ Ask the child to put this block first in its final answer:
 
 ```md
 META_SKILL_TRIAL_RESULT
+trial_id: <stable short id for this execution>
 status: pass|partial|fail|blocked
 target_skill: <path>
+candidate_source: <current|child_edit|approved_edit|other>
 prompt_tested: <short label>
 trial_type: quick|trial_set_item|source_example|doctor_fix
+expected_behavior: <what should happen>
+observed_behavior: <what happened>
 decision: keep|revise|reject|needs_eval
 evidence: <one or two sentences>
 recommended_next_action: <smallest useful next step>
 END_META_SKILL_TRIAL_RESULT
 ```
 
-After the block, the child may add concise reasoning, changed files in its
-worktree, example-matching notes, or notable caveats.
+Include these fields when they apply:
+
+```md
+child_thread_id: <thread id>
+worktree_id: <worktree id>
+evidence_refs: <paths, command outputs, or line refs>
+changed_files_in_child: <paths>
+rerun_command_or_route: <command or child route>
+```
+
+After the block, the child may add concise reasoning, example-matching notes, or
+notable caveats. Keep changed files, evidence refs, and rerun details in the
+structured fields when they apply.
 
 ## Evidence Files
 
@@ -153,12 +168,14 @@ chat:
 ```
 
 `run.json` records the parent thread, target skill, trial type, child thread or
-pending worktree id, prompt labels, optional candidate, and status.
-`results.jsonl` appends parsed `META_SKILL_TRIAL_RESULT` rows.
+pending worktree id, prompt labels, expected behavior, optional candidate, and
+status. `results.jsonl` appends parsed `META_SKILL_TRIAL_RESULT` rows,
+including observed behavior, evidence refs, child changed files, and rerun
+route.
 
 Do not copy raw transcripts, full diffs, debug folders, private source packs, or
 large generated outputs by default. The child thread and worktree remain the
-heavy evidence surface.
+durable evidence source.
 
 ## Iteration Loop
 

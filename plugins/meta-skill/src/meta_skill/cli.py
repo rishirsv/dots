@@ -21,6 +21,7 @@ from .linting import lint_suite
 from .packaging import package_skill
 from .report import build_report, compare_run, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, terminal_count
+from .sessions import list_threads, render_thread_list, show_thread
 from .validation import validate_report
 from .workbench import init_workbench, materialize_cases
 
@@ -66,6 +67,30 @@ def command_doctor(args):
 def command_workbench_init(args):
     target = Path(args.target or ".").expanduser().resolve()
     emit(init_workbench(target, args.dry_run), args.json)
+    return 0
+
+
+def command_sessions_list(args):
+    rows = list_threads(
+        limit=args.limit,
+        archived=args.archived,
+        days=args.days,
+        query=args.query,
+        cwd=args.cwd,
+    )
+    if args.json:
+        emit({"ok": True, "threads": [row.as_dict() for row in rows]}, True)
+    else:
+        print(render_thread_list(rows))
+    return 0
+
+
+def command_sessions_show(args):
+    result = show_thread(args.thread_id, max_chars=args.max_chars)
+    if args.json:
+        emit(result, True)
+    else:
+        print(result["transcript_markdown"], end="")
     return 0
 
 
@@ -214,6 +239,23 @@ def build_parser():
     init.add_argument("--dry-run", action="store_true")
     init.add_argument("--json", action="store_true")
     init.set_defaults(func=command_workbench_init)
+
+    sessions = sub.add_parser("sessions", help="Codex local session evidence commands")
+    sessions_sub = sessions.add_subparsers(dest="sessions_command", required=True)
+    sessions_list = sessions_sub.add_parser("list", help="List Codex sessions from state_5.sqlite")
+    sessions_list.add_argument("--limit", type=int, default=25)
+    sessions_list.add_argument("--archived", choices=["active", "archived", "all"], default="active")
+    sessions_list.add_argument("--days", type=int)
+    sessions_list.add_argument("--query")
+    sessions_list.add_argument("--cwd")
+    sessions_list.add_argument("--json", action="store_true")
+    sessions_list.set_defaults(func=command_sessions_list)
+
+    sessions_show = sessions_sub.add_parser("show", help="Render one Codex session transcript")
+    sessions_show.add_argument("thread_id")
+    sessions_show.add_argument("--max-chars", type=int, default=12000)
+    sessions_show.add_argument("--json", action="store_true")
+    sessions_show.set_defaults(func=command_sessions_show)
 
     eval_parser = sub.add_parser("eval", help="Evaluation commands")
     eval_sub = eval_parser.add_subparsers(dest="eval_command", required=True)

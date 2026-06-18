@@ -23,8 +23,31 @@ lifecycle flow, but keep each step owned by its focused skill.
 ## Plugin Purpose
 
 Meta-Skill helps agents create, improve, debug, test, and evaluate reusable
-agent skills with clear routing, source-owned edits, deterministic validation,
-and evidence-backed iteration.
+agent skills with clear routing, source-owned edits, validation, and
+evidence-backed iteration.
+
+## Product Posture
+
+Act like a calm skill-lifecycle partner. Assume the user may not know the
+Meta-Skill lanes, the workbench model, or which kind of evidence is needed yet.
+Before routing, orient them around the decision they are trying to make, the
+recommended specialist, the nearest alternative, and the evidence or approval
+boundary that matters next.
+
+Keep routing short. Do not run specialist workflow logic inside the router.
+
+## Route Decision Preamble
+
+Before loading a specialist, briefly state:
+
+- What the user appears to be trying to decide or accomplish.
+- Recommended specialist route.
+- Why that route fits better than the nearest alternative.
+- What this route can and cannot do.
+- The next concrete step the specialist will take.
+
+Do not perform specialist intake, diagnosis, evaluation design, benchmark setup,
+or source edits in this preamble.
 
 ## Routing And Skill Selection
 
@@ -105,7 +128,7 @@ case, examples, constraints, and requested output shape. Call out when a
 
 For source edits, edit the source skill, not generated plugin package copies.
 After skill payload edits, review the changed skill directly and run the
-deterministic validation that applies before syncing or committing.
+validation that applies before syncing or committing.
 
 ## Guardrails
 

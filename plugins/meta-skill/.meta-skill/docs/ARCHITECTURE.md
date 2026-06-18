@@ -544,8 +544,8 @@ It verifies `SKILL.md`, frontmatter parsing, required fields, unknown keys,
 body content, file length, and authoring lint through package modules under
 `meta_skill/`.
 
-Use this after changing a skill payload. It is deterministic validation, not a
-behavioral evaluation.
+Use this after changing a skill payload. It is validation, not a behavioral
+evaluation.
 
 #### `package`
 
@@ -1494,11 +1494,11 @@ optimization needs that history.
 After editing Meta-Skill source, run the focused checks first:
 
 ```sh
-python3 meta-skill/src/characterize_meta_skill.py
-plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-writer --json
-plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-doctor --json
-plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-evaluator --json
-plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-benchmarker --json
+python3 plugins/meta-skill/src/characterize_meta_skill.py
+plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-writer --json
+plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-doctor --json
+plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-evaluator --json
+plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-benchmarker --json
 ```
 
 Before committing changes under `meta-skill/`, run:

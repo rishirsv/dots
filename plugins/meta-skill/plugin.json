@@ -11,5 +11,5 @@
   "references": "./references",
   "skills": "./skills",
   "scripts": "./scripts",
-  "source": "./src"
+  "src": "./src"
 }

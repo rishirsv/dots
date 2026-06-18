@@ -88,6 +88,8 @@ Current top-level commands:
 ```sh
 plugins/meta-skill/scripts/metaskill doctor [--json]
 plugins/meta-skill/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
+plugins/meta-skill/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
+plugins/meta-skill/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
 plugins/meta-skill/scripts/metaskill eval lint [--suite <suite>] [--json]
 plugins/meta-skill/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
 plugins/meta-skill/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
@@ -158,6 +160,64 @@ Example:
 
 ```sh
 plugins/meta-skill/scripts/metaskill workbench init --target plugins/dots/skills/my-skill --json
+```
+
+### `sessions list`
+
+Use this when Skill Doctor, Skill Writer, or another Meta-Skill lane needs to
+locate prior Codex thread evidence.
+
+What it does:
+
+- Reads `~/.codex/state_5.sqlite`, the authoritative local Codex session index
+- Lists matching threads newest-first
+- Returns each thread id, title, cwd, timestamps, and rollout path
+
+Inputs:
+
+- `--limit <n>`: maximum rows to return; default `25`
+- `--archived active|archived|all`: include active, archived, or all sessions;
+  default `active`
+- `--days <n>`: restrict to sessions updated in the last `n` days
+- `--query <text>`: match title or first user message
+- `--cwd <path>`: restrict to sessions whose cwd starts with this path
+
+Output:
+
+- Markdown table by default
+- JSON object with `threads[]` when `--json` is set
+
+Example:
+
+```sh
+plugins/meta-skill/scripts/metaskill sessions list --limit 25 --archived all --query "skill doctor" --json
+```
+
+### `sessions show`
+
+Use this after `sessions list` to render one Codex thread as readable evidence.
+
+What it does:
+
+- Resolves the thread id from `~/.codex/state_5.sqlite`
+- Reads the thread row's `rollout_path`
+- Renders user and assistant messages from the rollout JSONL
+
+Inputs:
+
+- `<thread-id>`: exact id, or a unique id prefix
+- `--max-chars <n>`: maximum characters per rendered message; default `12000`
+
+Output:
+
+- Markdown transcript by default
+- JSON object with thread metadata, message count, rollout path, and transcript
+  when `--json` is set
+
+Example:
+
+```sh
+plugins/meta-skill/scripts/metaskill sessions show 019ed74b-e8d8 --max-chars 12000
 ```
 
 ### `eval materialize`
@@ -579,8 +639,7 @@ Inputs:
 
 ### `validate`
 
-Use this for deterministic validation of a skill payload before review,
-packaging, or sync.
+Use this for validation of a skill payload before review, packaging, or sync.
 
 What it checks:
 

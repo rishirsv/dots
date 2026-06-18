@@ -60,14 +60,22 @@ recurring job in the draft outline.
 
 ## Locate Thread Evidence
 
+For Codex local session evidence, read
+[codex-session-evidence.md](../../../references/codex-session-evidence.md). Use
+the shared Meta-Skill CLI rather than worker-local scripts:
+
+```sh
+plugins/meta-skill/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
+plugins/meta-skill/scripts/metaskill sessions show <thread-id> --max-chars 12000
+```
+
 Prefer the highest-level thread surface available:
 
 - If thread tools are available, use the current thread context or read the
   user-identified thread by title, id, or URL.
 - If local session files are the only source, inspect only the matching
-  `~/.codex/sessions/**/rollout-*.jsonl` or archived session file. Use
-  `session_meta.payload.id`, `turn_context`, `event_msg`, and `response_item` to
-  orient the read.
+  Codex session located through `metaskill sessions list/show`; use the
+  transcript's thread id, cwd, timestamp, and rollout path as provenance.
 - If the target thread is ambiguous, ask one question for the thread identifier
   or title before reading broadly.
 

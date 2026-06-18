@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Deterministic authoring anti-pattern checks for a skill's SKILL.md.
+"""Authoring anti-pattern checks for a skill's SKILL.md.
 
-A Verify-tests task used by `plugins/meta-skill/scripts/metaskill validate` covering the *mechanical*
-anti-patterns from the authoring standard — the ones that belong in validation
+A validation task used by `plugins/meta-skill/scripts/metaskill validate` covering the *mechanical*
+anti-patterns from the authoring standard - the ones that belong in validation
 code rather than human judgment. Judgment anti-patterns (wisdom-vs-directive,
 jargon section names, contradictions) stay in the Judge Review's scored
 dimensions, not here.

@@ -1,8 +1,8 @@
 # Judge
 
-The house-style scoring rubric. A Judge review produces a **Quality page**
-(`judge-review.md` in the workbench) with an **Overall Quality Score** plus per-phase
-and per-dimension scores, so "improve my skill" gets a number, not just prose.
+The house-style scoring rubric. A Judge review produces `judge-review.md` in the
+workbench with an **Overall Judge Review Score** plus per-phase and
+per-dimension scores, so "improve my skill" gets a number, not just prose.
 
 Judge against concrete house style, not abstract principles.
 
@@ -12,11 +12,11 @@ Judge against concrete house style, not abstract principles.
 
 ## Phases
 
-| Eval phase | Review lens | How scored |
+| Review phase | Review focus | How scored |
 |---|---|---|
-| **Quality** (Discovery) | Discovery and task-fit: trigger boundaries, completeness, specificity, conflict risk, user-visible outcome expectations. | LLM-judged, 4 dims × 0–3 |
+| **Discovery** | Discovery and task-fit: trigger boundaries, completeness, specificity, conflict risk, user-visible outcome expectations. | LLM-judged, 4 dims × 0–3 |
 | **Implementation** | Runtime guidance: actionability, workflow clarity, progressive disclosure, and directive quality (directives over wisdom, reasons, plain names). | LLM-judged, 5 dims × 0–3 |
-| **Verify tests** | Deterministic checks Verify runs: structural integrity, deprecated-surface avoidance. | Deterministic (`plugins/meta-skill/scripts/metaskill validate`, run by Verify) |
+| **Validation** | CLI checks from `metaskill validate`: structural integrity and authoring lint. | Validation command output |
 
 ## Score Calibration
 
@@ -30,9 +30,9 @@ Use strict but fair scoring.
 | **0** | Missing, misleading, or actively unsafe for the dimension. |
 
 **Math.** Discovery % = total / 12 (4 dims). Implementation % = total / 15
-(5 dims). Verify-tests % = checks passed / total (from `plugins/meta-skill/scripts/metaskill validate`).
-**Overall Quality Score = rounded average of the Discovery, Implementation, and
-Verify-tests percentages.**
+(5 dims). Validation % = checks passed / total (from `plugins/meta-skill/scripts/metaskill validate --json`).
+**Overall Judge Review Score = rounded average of the Discovery,
+Implementation, and Validation percentages.**
 
 ## Scoring notes
 
@@ -40,6 +40,9 @@ Verify-tests percentages.**
   specific content — the exact description phrase for Discovery, the exact
   section/example for Implementation. Name the weak phrase; never settle for
   "make it clearer."
+- **Flag awkward product language.** Penalize lane names used as verbs, category
+  arguments, metaphors, prompt-policy phrasing, and duplicated cautions when
+  plain workflow guidance would be clearer.
 - **Lead with the verdict.** Each phase assessment opens with the overall
   judgment, then names the *single* main weakness.
 - **Judge relative to skill type.** A reference/pattern skill earns Workflow
@@ -50,7 +53,7 @@ Verify-tests percentages.**
 - **Conciseness assumes competence.** Reward skills that skip basics (what React
   or TypeScript *are*) and get straight to actionable patterns; penalize bloat
   that re-explains what the agent already knows.
-- **Verify tests are a precondition.** A hard structural *Fail* (invalid
+- **Validation is a precondition.** A hard structural *Fail* (invalid
   frontmatter, missing body) makes the judged scores unreliable — resolve it
   before trusting Discovery/Implementation. Warnings don't block.
 
@@ -84,14 +87,13 @@ would change future agent behavior. Do not restate the table.
 | **Actionability** | Tells the agent what to do or produce next? | 3 concrete steps/outputs/examples/checks/commands; 2 usable but abstract; 1 mostly principles; 0 no operational guidance. | bare command with no output shape or pass/fail; "be clear / comprehensive" |
 | **Workflow Clarity** | Main path and important branching clear? | 3 clear default path + checkpoints; 2 mostly clear with gaps; 1 ambiguous sequencing; 0 no workflow. | over-rigid long process; branches that don't change behavior; opening line describes the doc, not the job |
 | **Progressive Disclosure** | Optional details linked, not bloating the body? | 3 well-signaled local references; 2 acceptable but uneven; 1 details hidden or overstuffed; 0 broken/missing structure. | long examples inline; everything stuffed into SKILL.md |
-| **Directive Quality** | Directive over wisdom; *why* for non-obvious rules; generalized; plainly named? | 3 directive, reasoned, generalized, plain section names; 2 mostly, with some wisdom/shouting/overfit; 1 heavy motivation, stacked ALL-CAPS, or overfit to instances; 0 teaching-prose or contradictory rules. | wisdom-not-directives; stacked MUST/ALL-CAPS shouting; overfit to specific values; house-jargon section names; rules that don't earn their place |
+| **Directive Quality** | Directive over wisdom; *why* for non-obvious rules; generalized; plainly named? | 3 directive, reasoned, generalized, plain section names; 2 mostly, with some wisdom/shouting/overfit; 1 heavy motivation, stacked ALL-CAPS, or overfit to instances; 0 teaching-prose or contradictory rules. | wisdom-not-directives; stacked MUST/ALL-CAPS shouting; overfit to specific values; house-jargon section names; awkward lane-as-verb phrasing; system or policy text instead of workflow guidance; rules that don't earn their place |
 
-## Verify tests (deterministic)
+## Validation
 
-Verify runs `plugins/meta-skill/scripts/metaskill validate <skill-dir>`, which executes the
-canonical deterministic checks from the Meta Skill package modules and prints a
-combined pass-rate. **Entirely deterministic** — no judgment. Two task groups
-today:
+Run `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`, which executes the
+canonical validation checks from the Meta Skill package modules and prints a
+combined pass-rate. Two task groups today:
 
 - skill structure validation — `frontmatter_valid`, `name_field`,
   `description_field`, `frontmatter_unknown_keys` (Warning if any),
@@ -103,26 +105,29 @@ today:
   `description_no_workflow_steps` (the "dangerous shortcut"), `hard_command_density`
   (stacked MUST/ALL-CAPS), `dead_references` (broken local links).
 
-Verify-tests % = Pass count / total across all tasks. Warning and Fail do not
+Validation % = Pass count / total across all tasks. Warning and Fail do not
 count as Pass. Add general checks to the root CLI validator source, not to a
 worker-local script folder. Judgment anti-patterns (wisdom-vs-directive, jargon
 names, contradictions) stay in the scored dimensions above, not here.
 
-*Future deterministic checks (not yet implemented — note, don't fake-pass):*
+*Future validation checks (not yet implemented — note, don't fake-pass):*
 artifact integrity, deprecated-surface avoidance.
 
-## Review Lanes
+## Review Focus Areas
 
-Use only the lanes relevant to the request; they focus the examination that
-feeds the dimension scores above.
+Use the relevant focus areas while producing a Judge review or diagnosing a
+reported failure.
 
 - **Activation** — trigger clarity, realistic phrasing, near misses, non-trigger boundary.
 - **Runtime clarity** — default path, output contract, stop/ask points, final checks.
 - **Resources** — linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - **Runtime contamination** — copied user prompt text, model/provider names, raw research links, author/source provenance, source-specific reference titles, thread IDs, one-off file paths or artifact names, and source-note prohibitions living in the payload instead of reusable behavior.
+- **Language polish** — awkward product phrases, lane names used as verbs,
+  metaphorical wording, duplicated cautions, and meta/category arguments that
+  make the workflow harder to follow.
 - **Controls** — user files as data, user gates, external writes, package/publish gates.
-- **Eval evidence** — captured deterministic test/validation results and any saved failure evidence.
-- **Review score** — the `judge-review.md` Quality Score, Discovery, Implementation, Verify-tests, and combined findings.
+- **Eval evidence** — captured validation results and any saved failure evidence.
+- **Review score** — the `judge-review.md` Judge Review Score, Discovery, Implementation, Validation, and combined findings.
 
 ## Worked example
 
@@ -147,16 +152,19 @@ same shape with 5 dimensions (**Total / 15**).
 
 ## Output
 
-Write to `<project>/.<skill-name>/judge-review.md`:
+Return the review in chat unless artifact writes are allowed. When saved
+artifacts are allowed, write the same content to
+`<project>/.<skill-name>/judge-review.md`:
 
-- **Overall Quality Score** + the three phase percentages.
+- **Overall Judge Review Score** + the three phase percentages.
 - Discovery: the 2–4 sentence assessment, then the scored table (a **Reasoning**
   + **Score** row per dimension, ending in **Total X / 12**).
 - Implementation: the same assessment + scored-table shape (5 dimensions,
   **Total X / 15**).
-- Verify tests: the deterministic results table + Verify-tests %.
+- Validation: the validation results table + Validation %.
 - **Combined findings:** prioritized gaps, each with the rule it violates and a
   suggested fix, highest-impact first.
 
-**Propose only** — the completed `judge-review.md` is evidence, not a source
-edit request. Source edits land only through Apply (see [edit.md](edit.md)).
+**Propose only** — the completed chat review or saved `judge-review.md` is
+evidence, not a source edit request. Source edits require explicit approval for
+a concrete change (see [doctor.md](doctor.md#approval-gated-edits)).
