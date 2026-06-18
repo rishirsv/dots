@@ -247,8 +247,9 @@ materially improve confidence in a fragile trigger, resource, script, or output
 contract, read
 [skill-trial-runs.md](../../references/skill-trial-runs.md) and offer a skill
 trial run. It is optional by default and is not release proof; route systematic
-multi-scenario measurement to `skill-evaluator`. For that handoff, provide or
-create `.<skill-name>/evals.json` with 2-3 realistic user tasks, expected
+multi-scenario measurement to `skill-evaluator` and recurring release or
+quality scorecards to `skill-benchmarker`. For the evaluator handoff, provide
+or create `.<skill-name>/evals.json` with 2-3 realistic user tasks, expected
 outcomes or reference solutions, known failure or near-miss examples, grader
 hints, and any must-not-break constraints so the evaluator can compare outcomes
 across no-skill, current-skill, and edited-skill candidates.

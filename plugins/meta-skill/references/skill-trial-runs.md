@@ -6,8 +6,9 @@ realistic behavior. It may use a Codex child thread, a worktree-backed child
 thread, or a local/manual run.
 
 This is not the full evaluation process. Escalate to `skill-evaluator` when the
-user needs multi-scenario measurement, baseline comparison, variance, trigger
-optimization, or publish-readiness.
+user needs multi-scenario measurement, baseline comparison, variance, or trigger
+optimization. Escalate to `skill-benchmarker` when the user asks for recurring
+benchmark profiles, history, gates, or publish-readiness scorecards.
 
 Terminology: in full evals, a **candidate** is the thing under test (`current`,
 `attempt-1`), and a **trial** is one execution of one case under one candidate.
@@ -23,7 +24,9 @@ Offer testing in tiers:
 | "Just make the skill" | Build, lint, and validate locally. Offer a trial only when the skill is fragile or source-derived. |
 | "Try it once", "test this prompt", or "run a sanity check" | Run one skill trial. |
 | "Try these few examples" or "iterate until this feels right" | Run a small trial set and revise between iterations. |
-| "Make sure this is good", "benchmark it", or "optimize triggering" | Route to `skill-evaluator`. |
+| "Make sure this is good" or "optimize triggering" | Route to `skill-evaluator`. |
+| "Benchmark it", "track this over time", or "is this release-ready with our existing suite?" | Route to `skill-benchmarker`. |
+| "Is this release-ready?" with no suite/profile context | Ask whether an eval suite or benchmark profile already exists; route to `skill-evaluator` when it does not. |
 
 Explain the lightweight path in user-facing language: "I can run a trial on one
 realistic prompt in a separate worktree, then use the result as evidence before
@@ -58,7 +61,9 @@ Use when the user wants a small improvement loop but not a full evaluation.
 ### Full Evaluation
 
 Route to `skill-evaluator` when the work needs multiple scenarios, baselines,
-held-out prompts, variance, scoring, or description optimization.
+held-out prompts, variance, scoring, or description optimization. Route to
+`skill-benchmarker` when those runs need a stable recurring profile or
+decision-level history.
 
 ## Prompt Selection
 
@@ -93,7 +98,7 @@ evidence.
 | Parent needs to steer a child after creation | `send_message_to_thread`. |
 
 Use worktree isolation by default for skill tests that may edit files. The child
-may propose, test, or edit inside its worktree, but it does not promote changes
+may propose, test, or edit inside its worktree, but it does not adopt changes
 to the parent checkout.
 
 If `create_thread` returns a pending worktree id, report it using the required
@@ -205,4 +210,7 @@ for one prompt or a tiny prompt set. `skill-evaluator` owns:
 - repeated runs and variance
 - scoring rubrics
 - trigger optimization
-- publish-readiness claims
+- first-pass release-readiness evidence
+
+`skill-benchmarker` owns recurring release gates, publish-readiness scorecards,
+and benchmark history over stable evaluator artifacts.

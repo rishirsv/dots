@@ -8,7 +8,7 @@ from .workbench_paths import skill_name_for_target, workbench_path
 
 def init_workbench(target, dry_run=False):
     workbench = workbench_path(target)
-    paths = [workbench, workbench / "cases", workbench / "runs"]
+    paths = [workbench, workbench / "cases", workbench / "benchmarks", workbench / "runs"]
     evals_path = workbench / "evals.json"
     changes = []
     for path in paths:

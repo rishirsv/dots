@@ -133,6 +133,19 @@ explicitly forces it.
 Candidates change the agent harness while the task prompt stays the same. A
 no-skill candidate uses `source.kind: "none"` and stages no skill payload.
 
+## Fixture And Example Lifecycle
+
+Prefer real failures, traces, or common workflows as task seeds. Synthetic
+fixtures are allowed for coverage, but label them as synthetic in suite notes or
+task comments and do not make them blocking gates until a human has reviewed
+the expected behavior.
+
+Keep fixtures small and inspectable. When a generated fixture exposes a real
+failure, turn the failure into a realistic reproduction task with visible
+inputs, hidden expected output, and the smallest validator or judge guidance
+that proves the issue. Preserve original real examples when possible; they are
+better regression seeds than polished invented tasks.
+
 ## Grader Declaration
 
 Graders may be implicit or explicit.
@@ -175,7 +188,7 @@ Supported grader kinds:
 | `model` | Runs the judge guidance or expectation judge and writes `grader.kind = "model"` to `grades.jsonl`. Set `uses_transcript: true` only when the judge guidance grades process behavior or needs mid-conversation evidence. |
 | `human` | Creates a pending `unknown` row until a reviewer records the label with `eval human`. |
 
-`required` or `gate` means the grader is promotion-blocking. A candidate may
+`required` or `gate` means the grader is blocking. A candidate may
 score well against judge guidance and still be rejected if a gate fails.
 
 Model judge rows use the same label scale as human rows: `pass`, `partial`,
@@ -203,7 +216,7 @@ Match the task text to what the task measures:
 | **Quality** | Names the skill when invocation should be forced. | once / few | Output quality given the skill fired. |
 | **Trigger** | Natural request; never names the skill. | many | Fire / no-fire rate and variance. |
 | **Failure** | Reproduces a known failure or regression. | few | Whether the candidate skill fixed the failure. |
-| **Gate** | Exercises a must-not-break requirement. | one / few | Promotion safety. |
+| **Gate** | Exercises a must-not-break requirement. | one / few | Selection safety. |
 
 For a fuller set of eval types, grader choices, and task examples, read
 [eval-types.md](eval-types.md).
@@ -325,7 +338,7 @@ When a run contains a no-skill candidate and at least one payload candidate,
 ## Reference Solutions
 
 Add a reference solution or expected output when the task is deterministic,
-artifact-heavy, or intended to gate promotion. The reference proves the task is
+artifact-heavy, or intended to act as a gate. The reference proves the task is
 solvable and that the graders can pass a known-good result.
 
 Do not make the agent see the reference solution. Keep it in `expected.*` or a

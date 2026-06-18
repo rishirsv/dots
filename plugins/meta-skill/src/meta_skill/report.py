@@ -255,6 +255,8 @@ def build_report(raw_run):
         "run_id": run.get("run_id") or run_dir.name,
         "run_dir": str(run_dir),
         "suite": run.get("suite"),
+        "benchmark_id": run.get("benchmark_id"),
+        "benchmark_profile": run.get("benchmark_profile"),
         "runner": run.get("runner"),
         "created_at": run.get("created_at"),
         "candidates": candidates,
@@ -272,7 +274,7 @@ def recommendation_for_impact(rows):
     if "needs_more_evidence" in impacts:
         return "needs_more_evidence"
     if "candidate_improves" in impacts and "both_fail" not in impacts:
-        return "promote_for_measured_scope"
+        return "candidate_wins_measured_scope"
     if "candidate_improves" in impacts:
         return "promising_with_failures"
     if impacts == {"baseline_already_succeeds"}:

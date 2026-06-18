@@ -14,13 +14,31 @@ Use a human grader when:
 
 - the right answer depends on taste, product judgment, domain expertise, or
   user-specific preference
-- model grades will decide whether a skill is accepted, promoted, or rejected
+- model grades will decide whether a skill is accepted, selected, or rejected
 - the model grader returns `unknown`
 - outputs are conversational, creative, advisory, or have many valid forms
 - the transcript suggests the outcome grade may be unfair
 
 Do not use human grading as the only evidence for ordinary exact checks. If a
 script can fairly check the requirement, write a code grader.
+
+## Review Queue
+
+For small suites, one domain reviewer is usually enough. Do not ask the user to
+grade everything unless the decision requires a human study. The agent
+assembles the review queue from `eval report` and trial artifacts,
+then pulls individual packets with `eval human --run <run-dir> --trial
+<trial-id> --json`. Prioritize:
+
+1. failed trials that would drive a skill-doctor handoff
+2. `unknown` model grades or `needs_review` report items
+3. model/human disagreements from calibration
+4. suspicious passes where the transcript shows skipped work, tool misuse, or
+   missing evidence
+5. ambiguous tasks that may need clearer success criteria
+
+Show an evidence packet first, then ask for the label. A reviewer should not
+need to reopen the whole run unless the compact packet is insufficient.
 
 ## Guided Review Flow
 

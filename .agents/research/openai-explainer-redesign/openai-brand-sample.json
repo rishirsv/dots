@@ -1,0 +1,83 @@
+{
+  "body": {
+    "background": "rgb(0, 0, 0)",
+    "borderRadius": "0px",
+    "color": "rgb(255, 255, 255)",
+    "fontFamily": "\"OpenAI Sans\", \"OpenAI Sans Arabic\", \"OpenAI Sans Hebrew\", \"OpenAI Sans Devanagari\", \"OpenAI Sans Hangul\", sans-serif",
+    "fontSize": "17px",
+    "fontWeight": "400",
+    "lineHeight": "27.999px",
+    "margin": "0px",
+    "padding": "0px"
+  },
+  "commonColors": [
+    [
+      "rgb(229, 231, 235)",
+      798
+    ],
+    [
+      "rgb(255, 255, 255)",
+      752
+    ],
+    [
+      "rgb(0, 0, 0)",
+      20
+    ],
+    [
+      "rgba(255, 255, 255, 0.6)",
+      16
+    ],
+    [
+      "rgba(255, 255, 255, 0.12)",
+      6
+    ],
+    [
+      "rgba(255, 255, 255, 0.2)",
+      1
+    ],
+    [
+      "rgba(0, 0, 0, 0.6)",
+      1
+    ],
+    [
+      "rgba(255, 255, 255, 0.44)",
+      1
+    ]
+  ],
+  "h1": {
+    "background": "rgba(0, 0, 0, 0)",
+    "borderRadius": "0px",
+    "color": "rgb(255, 255, 255)",
+    "fontFamily": "\"OpenAI Sans\", \"OpenAI Sans Arabic\", \"OpenAI Sans Hebrew\", \"OpenAI Sans Devanagari\", \"OpenAI Sans Hangul\", sans-serif",
+    "fontSize": "64px",
+    "fontWeight": "500",
+    "lineHeight": "64px",
+    "margin": "0px",
+    "padding": "0px"
+  },
+  "h2": {
+    "background": "rgba(0, 0, 0, 0)",
+    "borderRadius": "0px",
+    "color": "rgb(255, 255, 255)",
+    "fontFamily": "\"OpenAI Sans\", \"OpenAI Sans Arabic\", \"OpenAI Sans Hebrew\", \"OpenAI Sans Devanagari\", \"OpenAI Sans Hangul\", sans-serif",
+    "fontSize": "48px",
+    "fontWeight": "500",
+    "lineHeight": "55.68px",
+    "margin": "0px",
+    "padding": "0px"
+  },
+  "paragraph": {
+    "background": "rgba(0, 0, 0, 0)",
+    "borderRadius": "0px",
+    "color": "rgb(255, 255, 255)",
+    "fontFamily": "\"OpenAI Sans\", \"OpenAI Sans Arabic\", \"OpenAI Sans Hebrew\", \"OpenAI Sans Devanagari\", \"OpenAI Sans Hangul\", sans-serif",
+    "fontSize": "14px",
+    "fontWeight": "500",
+    "lineHeight": "14px",
+    "margin": "0px",
+    "padding": "0px"
+  },
+  "text": "Skip to main content\nResearch\nProducts\nBusiness\nDevelopers\nCompany\nFoundation\n(opens in a new window)\nLog in\nTry ChatGPT\n(opens in a new window)\nOpenAI Design | OpenAI\nDesign Guidelines\nContact\n\n00:00\n\nIntroduction\n\nThe \"OpenAI\" name, the OpenAI logo, the \"ChatGPT\" and “GPT” brands, and other OpenAI trademarks, are property of OpenAI. These guidelines are intended to help our partners, resellers, customers, developers, consultants, publishers, and any other third parties understand how to use and display our trademarks and copyrighted work in their own assets and materials.\n\nLogo\nWordmark\n\nOur wordmark is the most direct distillation of our visual philosophy. It is crafted with OpenAI Sans, with the 'O' formed as a perfect circle.\n\nWhile it can freely scale in size, the balance and proportions are fixed to give consistency across our range of products, services and departments. It can also appear in different forms depending on context and degree of recognition our branding has at a gi",
+  "title": "OpenAI Design | OpenAI",
+  "url": "https://openai.com/brand/"
+}

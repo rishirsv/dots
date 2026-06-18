@@ -1,6 +1,6 @@
 # Judge Alignment
 
-Read when model-judge scores will influence acceptance, promotion, or broad
+Read when model-judge scores will influence acceptance, selection, or broad
 claims about skill quality.
 
 An LLM judge is useful only where it agrees with human subject-matter judgment.
@@ -68,6 +68,22 @@ Accuracy is not enough when most examples pass. Track both:
 High TPR means the judge finds real problems. High TNR means it does not reject
 good outcomes too aggressively. Also report exact agreement, ordinal tolerance
 for `partial`, unknown-label rate, and examples of false pass / false fail.
+
+## Trust Bands
+
+Translate agreement metrics into a decision recommendation. Use conservative
+bands unless the user provides a stricter domain standard:
+
+| Band | When to use it | Decision |
+|---|---|---|
+| Spot-check only | Fewer than about 20 human labels, no held-out split, or labels are mostly one class. | Useful for local debugging, not for broad claims. |
+| Local-decision usable | Balanced human labels, reviewed disagreements, and high enough TPR/TNR for the user's low-risk choice. | Can support a small scoped decision with coverage limits. |
+| Gate-ready | Held-out test split, strong TPR and TNR, low unknown rate, and false pass / false fail examples reviewed by a human. | Can gate selection for the measured domain. |
+| Not trustworthy | Poor TPR or TNR, high unknown rate, unstable criteria, or unresolved model/human disagreements. | Do not scale the judge; use human review or rewrite the rubric. |
+
+For high-risk or user-facing gates, decide the numeric threshold with
+the user before tuning. Report the actual TPR, TNR, unknown rate, sample size,
+and whether the result came from a spot-check or held-out test set.
 
 ## Critique Shadowing
 

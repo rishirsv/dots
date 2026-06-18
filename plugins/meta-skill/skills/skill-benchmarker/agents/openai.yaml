@@ -1,0 +1,10 @@
+interface:
+  display_name: "Skill Benchmarker"
+  short_description: "Create and run recurring benchmark scorecards for skills"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#8B5CF6"
+  default_prompt: "Use $skill-benchmarker to create, run, or report a recurring benchmark profile for this skill."
+
+policy:
+  allow_implicit_invocation: false

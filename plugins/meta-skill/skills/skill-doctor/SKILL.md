@@ -7,6 +7,8 @@ description: "The improve specialist within meta-skill: make an existing agent s
 
 Improve an existing agent skill. Two modes — **Judge Review** (default) and
 **Diagnose/Edit** — feed into **Verify** after any approved source edit.
+`skill-doctor` owns static design review, diagnosis, and fixes for one skill;
+`skill-evaluator` owns behavioral evidence across candidates.
 
 For the central Meta Skill CLI surface, read
 [cli.md](../../references/cli.md). Do not invent doctor-specific command
@@ -84,6 +86,6 @@ files into `plugins/meta-skill/` itself.
 - Reproduce *one* case only when using the reproduction/trial track; don't
   measure many tasks/candidates — that's `skill-evaluator`.
 - Smallest correct change; edit source, never generated packages.
-- Child worktree edits are evidence, not promotion; parent-side source edits
+- Child worktree edits are evidence, not adoption; parent-side source edits
   still require authorization.
 - A `description` change alters triggering/routing — call it out explicitly.

@@ -59,6 +59,19 @@ def plan_trials(cases, candidates, repetitions):
     return plan
 
 
+def repetition_count(case, args, defaults):
+    reps_by_type = getattr(args, "repetitions_by_type", None) or {}
+    benchmark_default = getattr(args, "benchmark_default_repetitions", None)
+    return (
+        args.repetitions
+        or reps_by_type.get(case.get("type") or "unspecified")
+        or case.get("repetitions")
+        or benchmark_default
+        or defaults.get("repetitions")
+        or 1
+    )
+
+
 def runner_sandbox(runner):
     return APP_SERVER_SANDBOX
 
@@ -200,6 +213,12 @@ def run_eval(args):
     workbench = workbench_from_suite(suite)
     project = project_from_suite(suite)
     cases = select_cases(manifest, args.split)
+    case_ids = set(getattr(args, "case_ids", None) or [])
+    case_types = set(getattr(args, "case_types", None) or [])
+    if case_ids:
+        cases = [case for case in cases if case.get("id") in case_ids]
+    if case_types:
+        cases = [case for case in cases if (case.get("type") or "unspecified") in case_types]
     if not cases:
         raise CliError("no cases selected", 2)
     candidates = select_candidates(manifest, args.candidates)
@@ -210,7 +229,8 @@ def run_eval(args):
     run_dir = workbench / "runs" / rid
     run_dir.mkdir(parents=True, exist_ok=False)
     candidate_infos = [resolve_candidate(project, workbench, rid, manifest, candidate) for candidate in candidates]
-    plan = plan_trials(cases, candidate_infos, lambda case: args.repetitions or case.get("repetitions") or defaults.get("repetitions") or 1)
+    plan = plan_trials(cases, candidate_infos, lambda case: repetition_count(case, args, defaults))
+    benchmark = getattr(args, "benchmark", None) or {}
     write_json(
         run_dir / "run.json",
         {
@@ -219,6 +239,7 @@ def run_eval(args):
             "project": str(project),
             "runner": runner,
             "created_at": utc_now(),
+            **({"benchmark_id": benchmark.get("id"), "benchmark_profile": benchmark.get("profile")} if benchmark else {}),
             "candidates": [candidate_source(candidate) for candidate in candidate_infos],
             "trials": [queued_record(row, runner, workbench, run_dir) for row in plan],
         },

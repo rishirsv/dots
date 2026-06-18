@@ -109,6 +109,10 @@ meta-skill/
       SKILL.md
       references/
       agents/openai.yaml
+    skill-benchmarker/
+      SKILL.md
+      references/
+      agents/openai.yaml
   src/
     meta-skill
     meta_skill/
@@ -147,6 +151,7 @@ Meta-Skill models skill work as a lifecycle with clear ownership boundaries.
 | Writer | `skills/skill-writer/SKILL.md` | New skill authoring, trigger contracts, runtime payload shape, optional eval manifest handoff | Existing-skill fixes, measurement, packaging/sync |
 | Doctor | `skills/skill-doctor/SKILL.md` | Existing-skill review, diagnosis, approved edits, focused verification | Greenfield authoring, formal evaluation suites |
 | Evaluator | `skills/skill-evaluator/SKILL.md` | Evaluation suites, candidates, trials, grading, human review, reports | Fixing the target or generating autonomous candidate improvements |
+| Benchmarker | `skills/skill-benchmarker/SKILL.md` | Recurring benchmark profiles, benchmark runs, scorecards, gates, and history over existing suites | First-pass suite authoring, grading design, target fixes |
 
 The router is the only broad trigger. Worker skills have narrow descriptions and
 should defer when the request belongs to another lifecycle stage.
@@ -160,6 +165,9 @@ Typical flows:
   after explicit approval, then verifies.
 - Outcome measurement: `skill-evaluator` compares no-skill, current-skill, and
   edited-skill candidates.
+- Recurring benchmark decision: `skill-benchmarker` selects a stable task bank
+  from an existing suite, runs the benchmark profile, and reports scorecard
+  history.
 - Evaluation reveals a defect: `skill-evaluator` reports the failing tasks and
   hands repair back to `skill-doctor`.
 
@@ -1452,8 +1460,11 @@ decision.
    review packets and record labels with rationales.
 10. `skill-evaluator` runs `eval compare` or `eval report` to summarize the
     evidence.
-11. If the result shows a fixable defect, the issue routes to `skill-doctor`.
-12. After approved source edits, validation and, if needed, evaluation rerun
+11. When a recurring release, trigger, regression, or quality decision needs
+    history, `skill-benchmarker` creates or runs a benchmark profile and renders
+    a scorecard over the eval artifacts.
+12. If the result shows a fixable defect, the issue routes to `skill-doctor`.
+13. After approved source edits, validation and, if needed, evaluation rerun
     before packaging or sync.
 
 ## Current Boundaries And Future Work
@@ -1469,12 +1480,14 @@ Current boundaries:
   Evaluator.
 - Evaluator measures selected candidates; it does not autonomously create new
   candidate improvements.
+- Benchmarker owns recurring benchmark profiles and scorecards over evaluator
+  artifacts; it does not author the first-pass suite or fix the target.
 
 Future work can add an optimization or autoresearch layer, but it should sit on
-top of the existing evaluator instead of collapsing the lifecycle split. A
-future experiment ledger should link multiple runs, candidate edits, rejected
-attempts, and promotion decisions only when repeated optimization needs that
-history.
+top of the existing evaluator and benchmarker boundaries instead of collapsing
+the lifecycle split. A future experiment ledger should link multiple runs,
+candidate edits, rejected attempts, and promotion decisions only when repeated
+optimization needs that history.
 
 ## Validation Commands For Contributors
 
@@ -1485,6 +1498,7 @@ python3 meta-skill/src/characterize_meta_skill.py
 plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-writer --json
 plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-doctor --json
 plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-evaluator --json
+plugins/meta-skill/scripts/metaskill validate meta-skill/skills/skill-benchmarker --json
 ```
 
 Before committing changes under `meta-skill/`, run:
@@ -1510,6 +1524,8 @@ Use these files when refreshing this document:
 - `meta-skill/skills/skill-doctor/SKILL.md`: review, diagnose, edit, verify.
 - `meta-skill/skills/skill-evaluator/SKILL.md`: suite, candidate, trial,
   grading, and reporting workflow.
+- `meta-skill/skills/skill-benchmarker/SKILL.md`: recurring benchmark profiles,
+  runs, scorecards, gates, and history.
 - `meta-skill/references/cli.md`: command reference and authoritative run file
   descriptions.
 - `meta-skill/src/meta_skill/cli.py`: command parser and dispatch.

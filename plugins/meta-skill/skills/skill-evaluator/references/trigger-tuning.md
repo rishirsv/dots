@@ -13,9 +13,14 @@ Use trigger tuning when:
 - a `description` change is proposed
 - users report the skill fires too often or not often enough
 - the skill overlaps with another skill
-- packaging or promotion depends on reliable routing
+- packaging or selection depends on reliable routing
 
 Skip trigger tuning for a one-off content fix that does not affect discovery.
+
+Before tuning a frontmatter or description change, run
+`plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`. Fix
+frontmatter shape, unknown keys, missing body, or package validation failures
+before measuring activation.
 
 ## Task Set
 
@@ -34,7 +39,7 @@ For quick local work, use one reviewed set. For repeated optimization, split:
 
 - **train**: examples used to draft description candidates
 - **validation**: examples used to choose among candidates
-- **test**: held-out examples used once before promotion
+- **test**: held-out examples used once before a selection decision
 
 Save at least a few near misses as held-out checks when a description is tuned
 multiple times.
@@ -57,7 +62,7 @@ correctly and still produce a weak answer.
 3. Compare should-trigger hit rate, should-not-trigger quiet rate, and unknowns.
 4. Inspect false activations and missed activations.
 5. Revise the `description` only when the evidence points to a routing defect.
-6. Re-run the same validation prompts; use held-out prompts before promotion.
+6. Re-run the same validation prompts; use held-out prompts before selection.
 
 Do not optimize the description against the exact phrasing of the validation set.
 The goal is a clearer boundary, not memorized examples.

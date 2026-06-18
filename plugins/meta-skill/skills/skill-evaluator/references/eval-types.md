@@ -19,7 +19,7 @@ Use these terms consistently:
 | **Transcript** | The full event record: messages, tool calls, reasoning summaries, intermediate results, and errors. |
 | **Grader** | Code, model, or human logic that scores one aspect of the trial. |
 | **Assertion / check** | One named expectation inside a grader. |
-| **Gate** | A required grader whose failure blocks promotion even when other scores improve. |
+| **Gate** | A required grader whose failure rejects a candidate for the measured scope even when other scores improve. |
 | **Harness** | The runner and workspace machinery that executes trials, records evidence, grades, and aggregates. |
 
 Meta Skill stores candidates in `candidates[]` and task rows in `cases[]`; use
@@ -33,7 +33,7 @@ candidate/task/trial language in prose and JSON.
 | **Regression** | Does behavior that already worked still work? | Any known-good task bank | Deterministic validators first; model judge only for semantic quality |
 | **Trigger / boundary** | Does the right skill activate, and does it stay quiet on near misses? | Balanced should-trigger and should-not-trigger tasks | Transcript/tool-use checks, model judge, repeated trials |
 | **Failure / diagnostic** | Did a known failure get fixed? | 1-3 focused tasks | Reproduction task plus exact validator or anchored judge guidance |
-| **Gate / readiness** | Is this safe enough to package, publish, or use as a promotion gate? | Small must-not-break set | Required deterministic checks, calibrated judge guidance, human spot check when high judgment |
+| **Gate / readiness** | Is this safe enough to package, publish, or use as a selection gate? | Small must-not-break set | Required deterministic checks, calibrated judge guidance, human spot check when high judgment |
 | **Cost / latency / efficiency** | Did the candidate get slower, more expensive, or noisier? | Same tasks as capability/regression | Transcript metrics: turns, tool calls, tokens, latency |
 
 Do not mix all types into one claim. A suite can contain multiple task types,
@@ -67,6 +67,17 @@ Use gates for must-not-break checks: prompt-boundary leaks, package exclusions,
 forbidden file edits, schema validity, safety constraints, or deterministic
 regressions. Gates should usually be code validators. A candidate that fails a
 gate is not selectable even when its judge score is higher.
+
+## Binary Check Bias
+
+Start with pass/fail checks. A good eval should usually be answerable as "did
+the outcome satisfy this observable requirement?" Binary checks are easier for
+humans, model judges, and validators to agree on.
+
+Use `partial` only when a non-gating defect is important to track. Use `unknown`
+when the evidence does not support a fair decision. Avoid 1-5 or 0-100 scoring
+unless the product decision genuinely needs a continuous metric; otherwise
+numeric scores hide disagreement and make weak rubrics look precise.
 
 ## Write Good Tasks
 
@@ -213,7 +224,7 @@ Hidden graders:
 
 ### 5. Gate / Readiness Task
 
-Goal: decide whether a skill can be packaged or promoted.
+Goal: decide whether a skill is ready to package or select for the measured scope.
 
 ```text
 task.md

@@ -40,6 +40,12 @@ Task-local validators check behavior unique to one task. They live beside the
 task as `validate.*`, but they are hidden from the agent. They run after the
 trial outcome exists.
 
+Supported task-local validators are:
+
+- `validate.py` — run with the Meta-Skill Python interpreter
+- `validate.sh` — run with `sh`
+- any executable `validate.*` file
+
 When a validator protects a must-not-break candidate, declare it as a gate in
 `evals.json`:
 
@@ -54,7 +60,8 @@ When a validator protects a must-not-break candidate, declare it as a gate in
 }
 ```
 
-A gate failure blocks promotion even if model-judge guidance quality improves.
+A gate failure rejects a candidate for the measured scope even if model-judge
+guidance quality improves.
 
 ## Agent Boundary
 
@@ -111,6 +118,69 @@ The runner converts validator output into `grades.jsonl` rows with
 
 Code graders should return named checks rather than one opaque pass/fail. Named
 checks make partial credit and failure diagnosis possible.
+
+## Minimal `validate.py`
+
+Use this as a starter for exact response checks. It reads the captured response
+from `--output`, optionally reads `--expected`, and prints the JSON shape the
+runner expects:
+
+```python
+#!/usr/bin/env python3
+import argparse
+import json
+from pathlib import Path
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--output", required=True)
+parser.add_argument("--events", required=True)
+parser.add_argument("--expected")
+parser.add_argument("--json", action="store_true")
+args = parser.parse_args()
+
+response = Path(args.output).read_text()
+expected = Path(args.expected).read_text() if args.expected else ""
+
+checks = [
+    {
+        "name": "mentions approval boundary",
+        "passed": "approval" in response.lower(),
+        "evidence": "looked for approval language in response.md"
+    }
+]
+
+if expected:
+    checks.append(
+        {
+            "name": "mentions expected keyword",
+            "passed": expected.strip().lower() in response.lower(),
+            "evidence": "looked for expected text in response.md"
+        }
+    )
+
+passed = sum(1 for check in checks if check["passed"])
+print(json.dumps({
+    "passed": passed,
+    "total": len(checks),
+    "checks": checks,
+    "rationale": f"{passed}/{len(checks)} validator checks passed"
+}))
+```
+
+Declare the validator as a gate in `evals.json` when the check must reject a
+candidate for the measured scope:
+
+```json
+{
+  "id": "approval-boundary",
+  "kind": "code",
+  "metric": "approval-boundary",
+  "path": "validate.py",
+  "required": true,
+  "gate": true
+}
+```
 
 ## Transcript Validators
 

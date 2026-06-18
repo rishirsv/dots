@@ -1,51 +1,50 @@
 # Ideate Conversation Patterns
 
-Use these examples when the right Ideate behavior is ambiguous. Do not copy the
-wording verbatim. Mirror the moves: sharpen vocabulary, offer forms, recommend a
-read, ask one branch-unlocking question, test the plan when it becomes
-plan-shaped, and stop before implementation.
+Use these examples only when behavior is ambiguous. Mirror the move, not the
+wording. The important invariant is one active multiple-choice question per
+turn:
 
-## Example 1: Fuzzy Artifact Word
+```md
+**Question:** <one branch-unlocking question>
 
-Demonstrates: vocabulary sharpening, possible forms, one branch question.
+A. <option>
+B. **<recommended option> (Recommended)** - <why this is the best default>
+C. <option>
+D. <option, hybrid, or "something else">
+```
 
-Avoids: accepting "dashboard" and "agents" as settled terms.
+## Fuzzy Artifact Word
+
+Demonstrates: sharpening vocabulary before accepting the user's artifact word.
 
 ```text
 User:
 $ideate I want a dashboard for my agents.
 
 Agent:
-My read: "dashboard" may be a placeholder for visibility, control, or shared
-language, and "agents" could mean active workers, reusable workflows, or named
-responsibilities.
+My read: "dashboard" may mean visibility, control, or shared language. "Agents"
+could mean active workers, reusable workflows, or named responsibilities.
 
 This could be:
-1. Agent status surface - shows what is running, blocked, or complete.
-2. Control room - lets you inspect, pause, redirect, or resume active work.
-3. Shared vocabulary map - clarifies what each agent owns and when handoffs
-   happen.
+1. Agent status surface - what is running, blocked, or complete.
+2. Control room - inspect, pause, redirect, or resume active work.
+3. Vocabulary map - what each agent owns and when handoffs happen.
 
-My instinct: control room, because the phrase sounds less like metrics and more
-like "I need to know what is happening and intervene when needed."
+My instinct: control room, because the ask sounds less like metrics and more
+like "I need to know what is happening and intervene."
 
-Question: When you say "dashboard," do you mainly want to observe agents, steer
-them, or understand their boundaries?
-Guess: steer them, because visibility without control probably will not solve
-the anxiety underneath the ask.
+**Question:** When you say "dashboard," do you mainly want to observe agents,
+steer them, or understand their boundaries?
+
+A. Observe agents - see status, blockers, and completions.
+B. **Steer agents (Recommended)** - inspect, redirect, pause, or resume work.
+C. Understand boundaries - clarify what each agent owns and when handoffs happen.
+D. Hybrid - visibility first, with limited steering where it matters.
 ```
 
-Why this works:
+## Plan Sharpening
 
-- It does not accept artifact words literally.
-- It turns fuzzy vocabulary into branch choices.
-- It recommends a read while staying easy to correct.
-
-## Example 2: Sharpening A Plan Without Implementing
-
-Demonstrates: dynamic plan pressure, reversibility, no task list.
-
-Avoids: jumping from a plan-shaped idea into implementation planning.
+Demonstrates: pressure without implementation planning.
 
 ```text
 User:
@@ -53,34 +52,29 @@ $ideate I think Ideate should always produce a PRD at the end.
 
 Agent:
 My read: the real desire is not "always write a PRD"; it is "do not let good
-thinking evaporate." The plan-shaped decision is what artifact, if any, should
-become durable.
+thinking evaporate." The expensive decision is capture policy.
 
-The branch that gets expensive first is capture policy:
-1. Always PRD - strongest handoff, but makes weak ideas feel settled.
+This could be:
+1. Always PRD - strong handoff, but weak ideas feel too settled.
 2. Concept brief by default - preserves thinking without pretending we are
    ready to build.
-3. No artifact unless requested - lightest, but risks losing decisions.
+3. No artifact unless requested - light, but risks losing decisions.
 
 My instinct: concept brief by default, durable docs only on request.
 
-Question: Is the bigger failure mode losing useful thinking, or accidentally
-making unfinished thinking feel official?
-Guess: the second one, because Ideate is supposed to keep the idea alive before
-commitment.
+**Question:** Is the bigger failure mode losing useful thinking, or making
+unfinished thinking feel official?
+
+A. Losing useful thinking - capture more aggressively.
+B. **Making unfinished thinking feel official (Recommended)** - keep ideas alive
+   before commitment.
+C. Overhead - avoid any artifact unless explicitly requested.
+D. Handoff quality - write only when another skill or person needs it.
 ```
 
-Why this works:
+## Term Drift
 
-- It sharpens the plan by identifying the expensive decision.
-- It separates "capture" from "PRD."
-- It refuses to turn the answer into implementation tasks.
-
-## Example 3: Shared Vocabulary From Term Drift
-
-Demonstrates: catching the same word doing two jobs.
-
-Avoids: letting vocabulary drift quietly.
+Demonstrates: splitting one word that is doing two jobs.
 
 ```text
 User:
@@ -88,35 +82,30 @@ $ideate The context should include repo docs, but also the model should remember
 the context from the conversation.
 
 Agent:
-Small vocabulary snag: "context" is doing two jobs here.
+Small vocabulary snag: "context" is doing two jobs.
 
 I would split it:
 1. Repo context - durable facts from docs, code, conventions, and product
    language.
-2. Conversation context - what the user and agent have established in this
-   session.
+2. Session context - what the user and agent establish in this conversation.
 
-My instinct: use "repo context" and "session context" as the canonical terms.
-That keeps the plan from mixing durable source-of-truth material with temporary
-working memory.
+My instinct: use "repo context" and "session context" as canonical terms so the
+plan does not mix source-of-truth material with temporary working memory.
 
-Question: Should Ideate's final brief preserve both, or only the session-level
-decisions?
-Guess: both, but with repo context cited separately so the brief does not blur
-evidence with interpretation.
+**Question:** Should the final brief preserve both repo context and session
+context, or only the session-level decisions?
+
+A. **Preserve both, separately labeled (Recommended)** - evidence and
+   interpretation stay distinct.
+B. Session decisions only - keep the brief lightweight.
+C. Repo context only - make it mostly evidence-backed.
+D. Defer capture - keep both in conversation until the terms settle.
 ```
 
-Why this works:
+## Codebase Grounding
 
-- It turns fuzzy language into shared vocabulary.
-- It proposes canonical terms.
-- It asks only where the term split changes the plan.
-
-## Example 4: Codebase Grounding Through Subagents
-
-Demonstrates: read-only subagent grounding.
-
-Avoids: parent-agent code inspection.
+Demonstrates: parent does not inspect code; subagent returns vocabulary and
+constraints.
 
 ```text
 User:
@@ -124,179 +113,68 @@ $ideate This should fit our existing onboarding flow. Check the repo and push
 against the idea.
 
 Agent:
-I can ground the concept against the repo, but I will keep Ideate's boundary:
-the codebase pass needs to be delegated read-only. I will ask a bounded
-subagent question and use the findings only to sharpen the concept.
+I can ground this against the repo, but the codebase pass needs to be delegated
+read-only. I will use the findings only to sharpen the concept.
 
 Subagent prompt:
-Question: What terms, existing onboarding surfaces, and product-flow constraints
-would change this concept?
-Scope: onboarding-related docs, UI surfaces, route names, and tests.
+Question: What existing onboarding terms, surfaces, and product-flow
+constraints would change this concept?
+Scope: onboarding docs, UI surfaces, route names, and tests.
 Mode: read-only exploration; do not edit files or propose implementation tasks.
-Return: repo terms, overloaded terminology, current onboarding flow, conflicts,
-and confidence.
+Return: repo terms, overloaded terminology, current flow, conflicts, and
+confidence.
 
 Agent after subagent returns:
 The repo evidence changes the vocabulary. What we were calling "checklist" maps
-more closely to the repo's existing "activation steps." I would use that term
-unless you want a deliberately separate concept.
+more closely to the repo's "activation steps." I would use that term unless we
+want a deliberately separate concept.
 
-Question: Is this idea an extension of activation steps, or a new layer above
+**Question:** Is this an extension of activation steps, or a new layer above
 them?
-Guess: extension, because a new layer would duplicate the existing product
-language.
+
+A. **Extension of activation steps (Recommended)** - reuse existing product
+   language.
+B. New layer above activation steps - useful only if the concept is broader.
+C. Rename the concept - keep the behavior, but find a clearer repo-native term.
+D. Split it - activation steps for product, checklist language for internal docs.
 ```
 
-Why this works:
+## Follow-Up Correction
 
-- Parent does not inspect code directly.
-- The subagent returns vocabulary and constraints, not implementation tasks.
-- Evidence sharpens the concept instead of shrinking it prematurely.
-
-## Example 5: Push Against Implementation
-
-Demonstrates: feasibility pressure without code edits.
-
-Avoids: treating "implementation" as permission to build.
+Demonstrates: a useful correction still ends with a question block, not a memo.
 
 ```text
 User:
-$ideate Push against implementation here. I do not want to build yet.
+Eval - let's also use normal names for the vocabulary.
 
 Agent:
-Got it. I will treat this as feasibility pressure, not implementation.
+Good correction. Eval should be the spine, and the visible vocabulary should be
+plain-spoken rather than internally precious.
 
-The plan risk I see: if this becomes a persistent workflow, the hard part is not
-the UI. It is deciding what state is canonical: user intent, agent progress,
-handoff brief, or implementation approval.
+I would move away from "Workbench", "Arena", and "Atlas". The product gets
+stronger if the navigation sounds like software people already trust:
 
-Concrete scenario: a user changes their mind after the concept brief but before
-the build gate. Which state wins?
+- Runs - every evaluation run, status, pass rate, candidate, and notes.
+- Run Detail - case rows, outputs, grades, notes, and diffs.
+- Cases - prompts or tasks used to judge behavior.
+- Candidates - versions being compared.
+- Review - human judgment queue.
+- Compare - baseline vs candidate outcomes.
 
-My instinct: user intent wins, and the concept brief becomes a snapshot, not a
-source of truth.
+My read: the signature surface should be Run Detail, not a map. The ambitious
+part is making subjective agent behavior reviewable, comparable, and debuggable.
 
-Question: Should Ideate preserve prior decisions as history, or overwrite the
-working concept as the user refines it?
-Guess: preserve history only in durable docs; in chat, keep the working concept
-current.
+**Question:** Should the first version optimize for Runs, Run Detail, or Compare?
+
+A. **Runs (Recommended)** - gives the product a stable entry point.
+B. Run Detail - makes inspection the signature experience immediately.
+C. Compare - strongest if baseline-vs-candidate is the whole promise.
+D. Cases - start from authoring/evaluating the test set itself.
 ```
 
-Why this works:
+## Stop Condition
 
-- It pressures the plan.
-- It tests with a concrete scenario.
-- It does not edit files or create implementation tasks.
-
-## Example 6: Broad Discovery Without A Named Mode
-
-Demonstrates: dynamic candidate discovery.
-
-Avoids: asking the user to choose "candidate discovery mode."
-
-```text
-User:
-$ideate What should I improve in onboarding?
-
-Agent:
-My read: this is broader than refining one idea. I should first surface strong
-candidate directions, then we can sharpen one.
-
-I would look for candidates across:
-1. friction - where users stall or repeat work
-2. language - where labels or expectations are unclear
-3. leverage - where one change improves many future steps
-4. removal - what onboarding might not need at all
-
-My instinct: start with friction and language, because onboarding usually fails
-when users cannot tell what matters next.
-
-Question: Should I ground this in an existing product/repo, or treat it as a
-general concept exercise?
-Guess: existing product/repo, because "onboarding" usually means a specific
-flow with existing terms.
-```
-
-Why this works:
-
-- It adapts to broad discovery without exposing a mode switch.
-- It generates candidate directions before choosing one.
-- It still asks only one branch-unlocking question.
-
-## Example 7: Non-Code Idea
-
-Demonstrates: Ideate outside software.
-
-Avoids: forcing a PRD or implementation frame.
-
-```text
-User:
-$ideate I want a Sunday ritual that helps me stop carrying all my projects in
-my head.
-
-Agent:
-My read: you want a weekly decompression ritual that turns mental clutter into
-trusted external shape.
-
-This could be:
-1. Reset ritual - clears open loops and chooses next actions.
-2. Project weather report - names what is alive, blocked, stale, or complete.
-3. Personal operating review - connects projects to energy, time, and values.
-
-My instinct: project weather report, because the phrase "carrying all my
-projects in my head" sounds like you need status and emotional relief before
-planning.
-
-Question: Should the ritual end with a plan for the week, or just a clear map of
-what exists?
-Guess: clear map first. A plan too early may recreate the pressure you are
-trying to escape.
-```
-
-Why this works:
-
-- It treats a ritual as a valid artifact.
-- It sharpens the core desire.
-- It avoids software assumptions.
-
-## Example 8: Visual Exploration
-
-Demonstrates: offering a visual aid only when seeing beats reading.
-
-Avoids: jumping to UI implementation.
-
-```text
-User:
-$ideate I cannot tell if this should be a timeline, a board, or a map.
-
-Agent:
-This is a good visual decision because the difference is spatial, not just
-conceptual. I can sketch lightweight layout options or keep it text-only.
-
-My read:
-1. Timeline - best if sequence and aging matter.
-2. Board - best if state and ownership matter.
-3. Map - best if relationships and dependencies matter.
-
-My instinct: board, unless dependencies are the whole point.
-
-Question: Would seeing three rough layouts help you choose, or should we decide
-from the trade-offs in text?
-Guess: seeing them would help, because "timeline vs board vs map" is hard to
-feel from words alone.
-```
-
-Why this works:
-
-- It offers visuals only when useful.
-- It keeps visual exploration separate from implementation.
-- It still gives a conceptual read first.
-
-## Example 9: Stop Condition
-
-Demonstrates: stopping instead of over-interviewing.
-
-Avoids: asking more questions after the shape is clear enough.
+Demonstrates: stop instead of asking another polishing question.
 
 ```text
 User:
@@ -304,9 +182,9 @@ Yes, that feels right. It is a concept brief, not a PRD, and "activation steps"
 is the right term.
 
 Agent:
-I think we can stop exploring. I can predict the next few branch answers well
-enough: you want this to preserve thinking, avoid premature durability, and use
-repo language where it exists.
+I think we can stop exploring. The next branch answers are predictable enough:
+preserve thinking, avoid premature durability, and use repo language where it
+exists.
 
 Synthesis before capture:
 - Core direction: Ideate shapes a loose idea into a concept brief.
@@ -316,20 +194,12 @@ Synthesis before capture:
   feel official.
 - Rejected branch: always writing a PRD.
 - Non-goal: implementation tasks during Ideate.
-- Next artifact: concept brief in chat unless you ask to persist it.
+- Next artifact: concept brief in chat unless the user asks to persist it.
 ```
 
-Why this works:
+## Build Gate
 
-- It names the stop condition.
-- It does not keep asking questions for polish.
-- It synthesizes before capture.
-
-## Example 10: Build Gate
-
-Demonstrates: separate implementation confirmation.
-
-Avoids: treating momentum as approval.
+Demonstrates: implementation is a separate confirmed transition.
 
 ```text
 User:
@@ -343,17 +213,3 @@ I can switch from ideation to implementation. Confirm this scope:
 
 Reply with "confirm build" to proceed, or revise the scope.
 ```
-
-If the user replies "sounds good":
-
-```text
-Agent:
-I need the explicit build confirmation before leaving Ideate. Reply with
-"confirm build" to proceed, or revise the scope.
-```
-
-Why this works:
-
-- It treats implementation as a separate mode.
-- It preserves the user's explicit approval boundary.
-- It does not confuse "sounds good" with permission to edit.

@@ -38,6 +38,9 @@ The CLI is an orchestration layer. The workbench is authoritative.
 - `.<skill-name>/evals.json` defines the suite, defaults, candidates, and tasks.
 - `.<skill-name>/cases/<task-id>/` owns authored task content: visible `task.md`,
   fixtures, hidden validators, hidden expected outputs, and judge guidance.
+- `.<skill-name>/benchmarks/<benchmark-id>.json` owns recurring benchmark
+  decision profiles over stable task banks, candidates, gates, metrics, and
+  report policy.
 - `.<skill-name>/runs/<run-id>/` owns run plans, progress, events, outputs, and
   grades.
 
@@ -95,6 +98,10 @@ plugins/meta-skill/scripts/metaskill eval calibrate --run <run-id-or-path> [--me
 plugins/meta-skill/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
 plugins/meta-skill/scripts/metaskill eval list [--suite <suite>] [--json]
 plugins/meta-skill/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
+plugins/meta-skill/scripts/metaskill benchmark lint --benchmark <profile> [--json]
+plugins/meta-skill/scripts/metaskill benchmark run --benchmark <profile> [--runner auto|codex_app_server] [--model <id>] [--json]
+plugins/meta-skill/scripts/metaskill benchmark report --run <run-id-or-path> [--benchmark <profile>] [--out <file>] [--json]
+plugins/meta-skill/scripts/metaskill benchmark history --benchmark <profile> [--json]
 plugins/meta-skill/scripts/metaskill validate <skill-dir> [--json]
 plugins/meta-skill/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
 ```
@@ -407,7 +414,7 @@ What it does:
 - Reads the deterministic report model
 - Filters impact rows by `--baseline` and `--candidate` when supplied
 - Returns per-task impact plus a recommendation such as
-  `promote_for_measured_scope`, `promising_with_failures`,
+  `candidate_wins_measured_scope`, `promising_with_failures`,
   `reject_or_revise`, `no_skill_lift_detected`, or `needs_more_evidence`
 
 Example:
@@ -475,6 +482,100 @@ Output:
 - Markdown to stdout by default
 - With `--out`, the report file plus a confirmation that includes the path
 - With `--json` and no `--out`, the full structured report
+
+### `benchmark lint`
+
+Use this before running a benchmark profile. A benchmark is a named, stable
+profile over an eval suite for one recurring decision, such as core quality,
+trigger boundary behavior, release readiness, or efficiency smoke.
+
+What it does:
+
+- Reads `.<skill-name>/benchmarks/<benchmark-id>.json`
+- Resolves the referenced suite, selected cases, selected candidates, metrics,
+  repetition policy, gates, and report policy
+- Warns on unknown cases or candidates, no selected cases, one-sided trigger
+  profiles, selected tasks without graders, release profiles without gates, and
+  missing unknown-rate tracking
+
+Inputs:
+
+- `--benchmark <profile>`: path to a benchmark JSON file, or a directory
+  containing `benchmark.json`
+
+Example:
+
+```sh
+plugins/meta-skill/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
+```
+
+### `benchmark run`
+
+Use this to execute the task and candidate slice selected by a benchmark
+profile. The command reuses `eval run`; it does not introduce a separate runner
+or grading system.
+
+What it does:
+
+- Reads the benchmark profile and suite
+- Selects cases by `case_ids`, `types`, and/or `split`
+- Selects candidates from the benchmark baseline and payload list
+- Applies default and task-type repetition overrides
+- Runs selected trials through the existing App Server runner
+- Records `benchmark_id` and `benchmark_profile` in `run.json`
+
+Inputs:
+
+- `--benchmark <profile>`
+- `--runner auto|codex_app_server`: defaults to `auto`
+- `--model <id>`: optional runner model override
+
+Output:
+
+- Same run summary as `eval run`, plus the benchmark id and profile path
+
+### `benchmark report`
+
+Use this after `benchmark run` and `eval grade` to render the
+decision-level benchmark scorecard. Use `eval report` when you need the full
+trial table.
+
+What it renders:
+
+- benchmark decision, profile path, suite path, run id, and candidates
+- the metric families requested by the benchmark profile, such as behavior
+  rates, unknown rate, gate failures, impact rows, reliability rows, or token
+  usage
+- matching benchmark history rows when `report.include_history` is true
+- calibration artifacts for the run when present
+- needs-attention rows
+- coverage limits and non-claims
+
+Inputs:
+
+- `--run <run-id-or-path>`
+- `--benchmark <profile>`: optional when `run.json` already records the profile
+- `--out <file>`: write Markdown to a file
+- `--json`: emit the structured benchmark report
+
+### `benchmark history`
+
+Use this to list prior runs associated with a benchmark profile.
+
+This command lists matching runs; it does not compute trend deltas or decide
+whether the benchmark improved. Compare scorecards from the listed runs before
+making a trend claim.
+
+What it does:
+
+- Locates the suite's workbench
+- Reads `runs/<run-id>/run.json`
+- Returns runs whose `benchmark_id` or `benchmark_profile` matches the selected
+  benchmark profile
+
+Inputs:
+
+- `--benchmark <profile>`
 
 ### `validate`
 

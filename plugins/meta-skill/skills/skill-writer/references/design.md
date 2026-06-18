@@ -287,7 +287,14 @@ Building without questions does not change quality discipline. Frontmatter still
 
 ## Trigger Contract
 
-The frontmatter description is the primary routing surface. The body is not loaded until the skill triggers, so the description must answer: “Should the runtime read this skill now?”
+For model-discoverable skills, the frontmatter description is the primary
+routing surface. The body is not loaded until the skill triggers, so the
+description must answer: “Should the runtime read this skill now?”
+
+For explicit-only skills, do not optimize the description as an activation
+surface. Keep it as concise human-facing metadata that names what the skill does
+and how a user should recognize it; avoid forced `Use when ...; not for ...`
+phrasing unless it is naturally useful to the human index.
 
 For model-discoverable skills, every description word spends context and
 attention on every turn. Make it earn that cost.
@@ -312,7 +319,7 @@ A strong description:
 
 Lean slightly assertive. Skills more often fail by *under*-triggering than over-triggering, so cover implicit prompts too: phrasings where the user describes the problem or names the file type without naming the skill. Let the `not for` boundary do the opposite job, fencing out adjacent work, so assertiveness does not become overreach.
 
-Pattern:
+Model-discoverable pattern:
 
 ```yaml
 description: Use when <real user intent + task object + context>; not for <closest adjacent boundary>.
@@ -370,7 +377,7 @@ Prompts should be realistic and substantive enough that the skill should improve
 
 ## Frontmatter
 
-Use only:
+For model-discoverable skills, use:
 
 ```yaml
 ---
@@ -378,6 +385,9 @@ name: lowercase-hyphen-name
 description: Use when ...; not for ...
 ---
 ```
+
+For explicit-only skills, use the same `name` field and a concise human-facing
+`description` without forcing the `Use when ...; not for ...` pattern.
 
 Add runtime-specific fields only when the target runtime requires them. Decorative metadata belongs in project docs, not frontmatter.
 
@@ -673,7 +683,8 @@ create that folder when there are no fixture files to store.
 Do not create run folders, grades, comparisons, hidden rubrics, benchmark runs,
 dashboards, or CI wiring during ordinary authoring. Route systematic
 measurement, A/B comparison, model-update checks, pass-rate/time/token tracking,
-and human-judge calibration to `skill-evaluator`.
+and human-judge calibration to `skill-evaluator`; route recurring benchmark
+profiles, benchmark runs, and history scorecards to `skill-benchmarker`.
 
 ## Draft Outline Handoff
 

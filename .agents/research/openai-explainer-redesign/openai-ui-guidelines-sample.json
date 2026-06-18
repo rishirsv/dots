@@ -1,0 +1,119 @@
+{
+  "body": {
+    "background": "rgb(255, 255, 255)",
+    "borderColor": "oklab(0 0 0 / 0.9)",
+    "borderRadius": "0px",
+    "color": "oklab(0 0 0 / 0.9)",
+    "fontFamily": "\"OpenAI Sans\", sans-serif",
+    "fontSize": "16px",
+    "fontWeight": "400",
+    "lineHeight": "24px",
+    "margin": "0px",
+    "padding": "0px"
+  },
+  "button": {
+    "background": "rgba(0, 0, 0, 0)",
+    "borderColor": "oklab(0 0 0 / 0.9)",
+    "borderRadius": "0px",
+    "color": "oklab(0 0 0 / 0.9)",
+    "fontFamily": "\"OpenAI Sans\", sans-serif",
+    "fontSize": "16px",
+    "fontWeight": "600",
+    "lineHeight": "24px",
+    "margin": "0px 0px 0px -8px",
+    "padding": "0px"
+  },
+  "commonColors": [
+    [
+      "rgb(40, 40, 40)",
+      1712
+    ],
+    [
+      "oklab(0 0 0 / 0.9)",
+      310
+    ],
+    [
+      "rgb(93, 93, 93)",
+      304
+    ],
+    [
+      "rgb(143, 143, 143)",
+      28
+    ],
+    [
+      "oklab(0.159065 0.00000723451 0.00000317395 / 0.05)",
+      21
+    ],
+    [
+      "rgb(255, 255, 255)",
+      20
+    ],
+    [
+      "rgb(13, 13, 13)",
+      8
+    ],
+    [
+      "rgb(65, 65, 65)",
+      4
+    ],
+    [
+      "oklab(0.159065 0.00000723451 0.00000317395 / 0.12)",
+      3
+    ],
+    [
+      "rgb(237, 237, 237)",
+      2
+    ],
+    [
+      "rgb(24, 24, 24)",
+      2
+    ],
+    [
+      "oklab(0 0 0 / 0.35)",
+      1
+    ],
+    [
+      "oklab(0.159065 0.00000723451 0.00000317395 / 0.08)",
+      1
+    ]
+  ],
+  "h1": {
+    "background": "rgba(0, 0, 0, 0)",
+    "borderColor": "rgb(24, 24, 24)",
+    "borderRadius": "0px",
+    "color": "rgb(24, 24, 24)",
+    "fontFamily": "\"OpenAI Sans\", sans-serif",
+    "fontSize": "30px",
+    "fontWeight": "600",
+    "lineHeight": "42px",
+    "margin": "0px",
+    "padding": "0px"
+  },
+  "h2": {
+    "background": "rgba(0, 0, 0, 0)",
+    "borderColor": "rgb(24, 24, 24)",
+    "borderRadius": "0px",
+    "color": "rgb(24, 24, 24)",
+    "fontFamily": "\"OpenAI Sans\", sans-serif",
+    "fontSize": "16px",
+    "fontWeight": "400",
+    "lineHeight": "24px",
+    "margin": "-1px",
+    "padding": "0px"
+  },
+  "paragraph": {
+    "background": "rgba(0, 0, 0, 0)",
+    "borderColor": "rgb(93, 93, 93)",
+    "borderRadius": "0px",
+    "color": "rgb(93, 93, 93)",
+    "fontFamily": "\"OpenAI Sans\", sans-serif",
+    "fontSize": "18px",
+    "fontWeight": "400",
+    "lineHeight": "29px",
+    "margin": "0px",
+    "padding": "0px"
+  },
+  "text": "Home\nAPI\nCodex\nChatGPT\nResources\nStart searching\nAPI Dashboard\nHome\nQuickstart\nCore Concepts\nMCP Apps in ChatGPT\nMCP Server\nUX principles\nUI guidelines\nPlan\nResearch use cases\nDefine tools\nDesign components\nBuild\nSet up your server\nBuild your ChatGPT UI\nAuthenticate users\nManage state\nMonetize your app\nExamples\nDeploy\nDeploy your app\nConnect from ChatGPT\nTest your integration\nSubmit your app\nConversion apps\nRestaurant reservation spec\nProduct checkout spec\nGuides\nOptimize Metadata\nSecurity & Privacy\nTroubleshooting\nResources\nChangelog\nApp submission guidelines\nReference\nOverview\nDesign system\nDisplay modes\nVisual design guidelines\nCopy Page\nUI guidelines\n\nGuidelines for designing beautiful ChatGPT apps.\n\nCopy Page\nOverview\n\nApps are developer-built experiences that are available in ChatGPT. They extend what users can do without breaking the flow of conversation, appearing through lightweight cards, carousels, fullscreen views, and other display modes that integrate seamlessly into ChatGPT’s interface.\n\nBefore you start designing your app visually, make sure you have reviewed our recommended UX principles.\n\nDesign system\n\nTo help you design high quality apps that feel native to Chat",
+  "title": "UI guidelines – Apps SDK | OpenAI Developers",
+  "url": "https://developers.openai.com/apps-sdk/concepts/ui-guidelines"
+}

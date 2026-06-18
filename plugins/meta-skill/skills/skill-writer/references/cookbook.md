@@ -306,15 +306,18 @@ Expected behavior:
 - Objective checks: <field exists>, <script exits 0>, <no unsupported claims>.
 - Baseline: no skill for a new skill; old skill for approved improvements.
 - Comparator question: <what a later A/B or baseline run should decide>.
-- Route to skill-evaluator when: <multi-case suite, judge grading, benchmark, CI, or A/B comparison is needed>.
+- Route to skill-evaluator when: <multi-case suite, judge grading, CI, or A/B comparison is needed>.
+- Route to skill-benchmarker when: <stable recurring profile, release gate, benchmark history, or decision scorecard is needed>.
 ```
 
 Keep eval material out of the portable runtime unless examples are required
 during execution and approved as runtime material. Put runnable handoff material
 in `.<skill-name>/evals.json`; put non-runnable authoring notes in
 `.<skill-name>/docs/`, the workbench, or final handoff. Route systematic
-multi-case measurement, benchmark runs, pass-rate/time/token tracking, judge
-grading, human calibration, and A/B comparisons to `skill-evaluator`.
+multi-case measurement, pass-rate/time/token tracking, judge grading, human
+calibration, and A/B comparisons to `skill-evaluator`; route recurring
+benchmark profiles, benchmark runs, and history scorecards to
+`skill-benchmarker`.
 
 ### 18. Skill And Project Payloads
 

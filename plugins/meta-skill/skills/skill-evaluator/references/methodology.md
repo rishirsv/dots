@@ -60,6 +60,22 @@ Prefer side-by-side outcome evidence over abstract scores. A score without a
 baseline mostly measures the model plus the skill; a no-skill/current-skill
 comparison measures skill lift.
 
+## Error Analysis First
+
+Do not start by inventing infrastructure. First ask what evidence already
+exists:
+
+- real task transcripts or outputs
+- user-reported failures or repeated support complaints
+- manual review notes
+- release checks or expected behavior examples
+- common workflows the skill must handle
+
+If there are no real traces yet, run a tiny exploratory loop before creating a
+formal suite. Synthetic examples are useful for coverage hypotheses, but mark
+them as synthetic and do not let them become blocking gates until a human has
+reviewed them.
+
 ## When To Add Rigor
 
 Add more structure only when the default loop is not enough:
@@ -135,3 +151,21 @@ Review the suite when any of these happen:
 Failures should feel fair: a reviewer should be able to name what the agent got
 wrong, what evidence supports that judgment, and whether the task or grader
 needs repair.
+
+## Failure Triage
+
+Before handing a failure to `skill-doctor`, classify the first upstream cause:
+
+| Cause | Meaning |
+|---|---|
+| `skill_failure` | The target skill failed a fair task. |
+| `grader_failure` | The judge, validator, rubric, or reference solution rejected a valid outcome. |
+| `case_ambiguous` | The task or expected behavior was underspecified. |
+| `harness_failure` | Runner setup, hidden files, candidate staging, or artifact capture broke the trial. |
+| `model_variance` | Repetitions show unstable behavior without a clear skill defect. |
+| `environment_failure` | Local tools, network, credentials, or machine state blocked a fair attempt. |
+| `expected_change` | The candidate intentionally changed behavior and the suite needs an updated claim. |
+
+Report the classification with the evidence path. Fix grader, case, harness, or
+environment problems in the suite before treating the result as a target-skill
+defect.
