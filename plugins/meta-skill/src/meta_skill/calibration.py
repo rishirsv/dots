@@ -6,7 +6,7 @@ from .io import read_json, read_jsonl, resolve_run_dir, write_json
 
 
 BINARY_LABELS = {"pass", "fail"}
-ESCALATION_LABELS = {"unknown", "needs_human_review"}
+ESCALATION_LABELS = {"unknown"}
 ORDINAL_LABEL_VALUES = {"fail": 0, "partial": 1, "pass": 2}
 
 
@@ -90,8 +90,8 @@ def calibrate_run(raw_run, metric=None):
     binary_pairs = [pair for pair in pairs if pair["model"].get("label") in BINARY_LABELS and pair["human"].get("label") in BINARY_LABELS]
     human_pass = [pair for pair in binary_pairs if pair["human"].get("label") == "pass"]
     human_fail = [pair for pair in binary_pairs if pair["human"].get("label") == "fail"]
-    true_positive = sum(1 for pair in human_pass if pair["model"].get("label") == "pass")
-    true_negative = sum(1 for pair in human_fail if pair["model"].get("label") == "fail")
+    true_positive = sum(1 for pair in human_fail if pair["model"].get("label") == "fail")
+    true_negative = sum(1 for pair in human_pass if pair["model"].get("label") == "pass")
     false_pass = [pair for pair in human_fail if pair["model"].get("label") == "pass"]
     false_fail = [pair for pair in human_pass if pair["model"].get("label") == "fail"]
     model_escalations = [pair for pair in pairs if pair["model"].get("label") in ESCALATION_LABELS]
@@ -114,10 +114,14 @@ def calibrate_run(raw_run, metric=None):
         "true_negative": true_negative,
         "false_pass": len(false_pass),
         "false_fail": len(false_fail),
-        "true_positive_rate": _safe_rate(true_positive, len(human_pass)),
-        "true_negative_rate": _safe_rate(true_negative, len(human_fail)),
+        "true_positive_rate": _safe_rate(true_positive, len(human_fail)),
+        "true_negative_rate": _safe_rate(true_negative, len(human_pass)),
         "false_pass_rate": _safe_rate(len(false_pass), len(human_fail)),
         "false_fail_rate": _safe_rate(len(false_fail), len(human_pass)),
+        "model_unknown": len(model_escalations),
+        "human_unknown": len(human_escalations),
+        "model_unknown_rate": _safe_rate(len(model_escalations), len(pairs)),
+        "human_unknown_rate": _safe_rate(len(human_escalations), len(pairs)),
         "model_escalation_rate": _safe_rate(len(model_escalations), len(pairs)),
         "human_escalation_rate": _safe_rate(len(human_escalations), len(pairs)),
         "non_binary": len(non_binary),

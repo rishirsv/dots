@@ -104,7 +104,7 @@ def build_trial(run_dir, planned, result, grades):
         if row.get("gate") is True and row.get("label") not in {"pass"}
     ]
     has_gate = any(row.get("gate") is True for row in behavioral_rows)
-    uncertain = any(row.get("label") in {"unknown", "needs_human_review"} for row in behavioral_rows)
+    uncertain = any(row.get("label") not in {"pass", "partial", "fail"} for row in behavioral_rows)
     return {
         "trial_id": trial_id,
         "case_id": merged.get("case_id"),
@@ -136,7 +136,7 @@ def build_trial(run_dir, planned, result, grades):
             }
             for row in gate_failures
         ],
-        "needs_human_review": uncertain,
+        "needs_review": uncertain,
         "paths": {
             "response": evidence_pointer(run_dir, merged.get("response_path") or merged.get("output_path") or merged.get("final_path")),
             "events": evidence_pointer(run_dir, merged.get("event_path")),
@@ -159,20 +159,20 @@ def trial_attention(trial):
         items.append({"kind": "invalid_grader_json", "trial_id": trial_id, "detail": "a grader emitted invalid JSON; see grades.jsonl rationale"})
     if trial["gate_failed"]:
         items.append({"kind": "gate_failed", "trial_id": trial_id, "detail": "one or more required grader gates failed"})
-    if trial["needs_human_review"]:
-        items.append({"kind": "needs_human_review", "trial_id": trial_id, "detail": "a grader returned unknown or needs_human_review"})
+    if trial["needs_review"]:
+        items.append({"kind": "needs_review", "trial_id": trial_id, "detail": "a grader returned unknown or another non-decisive label"})
     if trial["runner_status"] != "no_result" and not trial.get("usage"):
         items.append({"kind": "missing_usage", "trial_id": trial_id, "detail": "no token usage recorded for this trial"})
     return items
 
 
 def trial_behavior_state(trial):
-    if trial["runner_status"] == "no_result" or trial["invalid_grader_json"] or trial["needs_human_review"] or not trial["graded"]:
+    if trial["runner_status"] == "no_result" or trial["invalid_grader_json"] or trial["needs_review"] or not trial["graded"]:
         return "unknown"
     if trial["runner_status"] != "passed" or trial["gate_failed"]:
         return "fail"
     labels = trial.get("grade_labels") or []
-    if any(label in {None, "partial", "unknown", "needs_human_review", "ungraded"} for label in labels):
+    if any(label in {None, "partial", "unknown", "ungraded"} for label in labels):
         return "unknown"
     if any(label != "pass" for label in labels):
         return "fail"
@@ -201,7 +201,7 @@ def build_impact(candidates, trials):
         for candidate_id in sorted(payload_ids):
             candidate_state = aggregate_case_candidate_state(by_case_candidate.get((case_id, candidate_id), []))
             if baseline_state == "unknown" or candidate_state == "unknown":
-                impact = "needs_human_review"
+                impact = "needs_more_evidence"
             elif baseline_state == "fail" and candidate_state == "pass":
                 impact = "candidate_improves"
             elif baseline_state == "pass" and candidate_state == "fail":
@@ -269,7 +269,7 @@ def recommendation_for_impact(rows):
     impacts = {row.get("impact") for row in rows}
     if "candidate_regresses" in impacts:
         return "reject_or_revise"
-    if "needs_human_review" in impacts:
+    if "needs_more_evidence" in impacts:
         return "needs_more_evidence"
     if "candidate_improves" in impacts and "both_fail" not in impacts:
         return "promote_for_measured_scope"

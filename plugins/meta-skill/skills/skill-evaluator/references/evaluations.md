@@ -44,7 +44,7 @@ Use this vocabulary in prose:
 |---|---|
 | **suite** | A group of related evaluation tasks and grading rules. |
 | **task** | The user work being evaluated; stored today as `cases/<task-id>/task.md`. |
-| **candidate** | The agent-harness setup: no skill, current skill, or edited-skill attempt. |
+| **candidate** | The agent-harness setup: no skill, current skill, or candidate skill. |
 | **trial** | One task executed once under one candidate. |
 | **transcript** | The event stream and compact evidence from the trial. |
 | **outcome** | The final answer, files, artifacts, or state to grade. |
@@ -102,7 +102,7 @@ Skill Writer may create a compact prompt manifest in
           "gate": true
         },
         {
-          "id": "rishi-review",
+          "id": "human-review",
           "kind": "human",
           "metric": "usefulness"
         }
@@ -173,21 +173,20 @@ Supported grader kinds:
 |---|---|
 | `code` | Runs the named `validate.*` file and writes `grader.kind = "code"` to `grades.jsonl`. |
 | `model` | Runs the judge guidance or expectation judge and writes `grader.kind = "model"` to `grades.jsonl`. Set `uses_transcript: true` only when the judge guidance grades process behavior or needs mid-conversation evidence. |
-| `human` | Creates a pending `needs_human_review` row until a reviewer records the label with `eval human`. |
+| `human` | Creates a pending `unknown` row until a reviewer records the label with `eval human`. |
 
 `required` or `gate` means the grader is promotion-blocking. A candidate may
 score well against judge guidance and still be rejected if a gate fails.
 
 Model judge rows use the same label scale as human rows: `pass`, `partial`,
-`fail`, `unknown`, or `needs_human_review`. They also include `score` when a
-0-to-1 numeric value is meaningful. The judge prompt should make the burden of
-proof explicit: `pass` requires specific evidence for every required criterion,
-`partial` is for useful outcomes with localized or non-gating defects, `fail`
-is for wrong, incomplete, unsafe, or required-criterion misses, `unknown` is for
-insufficient or contradictory evidence, and `needs_human_review` is for domain
-taste, underspecified criteria, or fairness concerns. The judge should grade
-the outcome by default and use transcript evidence only for process criteria,
-tool use, skill activation, or missing-evidence diagnosis.
+`fail`, or `unknown`. They also include `score` when a 0-to-1 numeric value is
+meaningful. The judge prompt should make the burden of proof explicit: `pass`
+requires specific evidence for every required criterion, `partial` is for useful
+outcomes with localized or non-gating defects, `fail` is for wrong, incomplete,
+unsafe, or required-criterion misses, and `unknown` is for insufficient,
+contradictory, too-subjective, or underspecified evidence. The judge should
+grade the outcome by default and use transcript evidence only for process
+criteria, tool use, skill activation, or missing-evidence diagnosis.
 
 `expectations[]` are hidden verifier statements. They are not copied into
 `task.md`; the model judge uses them to emit named checks with evidence. Exact
@@ -203,7 +202,7 @@ Match the task text to what the task measures:
 |---|---|---|---|
 | **Quality** | Names the skill when invocation should be forced. | once / few | Output quality given the skill fired. |
 | **Trigger** | Natural request; never names the skill. | many | Fire / no-fire rate and variance. |
-| **Failure** | Reproduces a known failure or regression. | few | Whether the edited-skill candidate fixed the failure. |
+| **Failure** | Reproduces a known failure or regression. | few | Whether the candidate skill fixed the failure. |
 | **Gate** | Exercises a must-not-break requirement. | one / few | Promotion safety. |
 
 For a fuller set of eval types, grader choices, and task examples, read
@@ -216,7 +215,7 @@ runner adapter.
 
 For impact comparison, keep `task.md` stable across candidates. Do not write
 "use the skill" into the task. The same visible task should run under no-skill,
-current-skill, and edited-skill candidates.
+current-skill, and candidate-skill variants.
 
 ## Hidden Boundary
 
@@ -270,7 +269,7 @@ overclaims. State:
 - which behaviors of the target the tasks actually exercised
 - known behaviors not yet tested, and why
 
-Keep it to a few bullets. No-skill/current-skill/edited-skill candidate
+Keep it to a few bullets. No-skill/current-skill/candidate skill
 comparison guidance lives in [methodology.md](methodology.md).
 
 ## Candidates And Trials
@@ -278,7 +277,7 @@ comparison guidance lives in [methodology.md](methodology.md).
 Use **candidate** in user-facing prose and schema fields for the agent-harness setup:
 
 ```json
-{ "candidate": "attempt-1", "display": "Edited skill attempt 1" }
+{ "candidate": "candidate-1", "display": "Candidate skill 1" }
 ```
 
 Do not add `condition_id`, `candidate_id`, or `attempt_id`.
@@ -286,10 +285,10 @@ Do not add `condition_id`, `candidate_id`, or `attempt_id`.
 Use `trial_id` for one execution of one task under one candidate:
 
 ```text
-natural-trigger.attempt-1.t3
+natural-trigger.candidate-1.t3
 ```
 
-Use "Attempt 1" only as display text for a candidate.
+Use display text only when it clarifies the candidate for the reviewer.
 
 Candidate source lives in git branches, worktrees, or `source.kind: "none"` for
 the no-skill baseline. Run evidence records the branch, commit, worktree path
@@ -321,7 +320,7 @@ When a run contains a no-skill candidate and at least one payload candidate,
 - `candidate_regresses`
 - `both_fail`
 - `baseline_already_succeeds`
-- `needs_human_review`
+- `needs_more_evidence`
 
 ## Reference Solutions
 

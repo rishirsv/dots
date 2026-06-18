@@ -15,7 +15,7 @@ Use a human grader when:
 - the right answer depends on taste, product judgment, domain expertise, or
   user-specific preference
 - model grades will decide whether a skill is accepted, promoted, or rejected
-- the model grader returns `unknown` or `needs_human_review`
+- the model grader returns `unknown`
 - outputs are conversational, creative, advisory, or have many valid forms
 - the transcript suggests the outcome grade may be unfair
 
@@ -29,8 +29,7 @@ For each selected trial:
 1. Show the visible task and the response artifact.
 2. Show any judge guidance, expected output, validator failures, and compact transcript
    pointers that explain the outcome.
-3. Ask for one label: `pass`, `partial`, `fail`, `unknown`, or
-   `needs_human_review`.
+3. Ask for one label: `pass`, `partial`, `fail`, or `unknown`.
 4. Ask for a 0-1 score only when the metric needs a continuous value.
 5. Ask for a one- or two-sentence rationale grounded in response or transcript
    evidence.
@@ -42,7 +41,7 @@ plugins/meta-skill/scripts/metaskill eval human \
   --trial <trial-id> \
   --grader <reviewer-or-judge-name> \
   --metric <metric> \
-  --label pass|partial|fail|unknown|needs_human_review \
+  --label pass|partial|fail|unknown \
   --score <0-to-1> \
   --rationale "<evidence-backed rationale>" \
   --json
@@ -66,7 +65,6 @@ a) pass
 b) partial
 c) fail
 d) unknown
-e) needs_human_review
 
 2. What evidence drives that judgment?
 
@@ -75,8 +73,9 @@ trials, or a one-off judgment?
 ```
 
 If the user gives freeform feedback, translate it into label, metric, rationale,
-and any judge guidance change. Do not hide uncertainty; `unknown` is a valid label when
-the available evidence is insufficient.
+and any judge guidance change. Do not hide uncertainty; `unknown` is a valid
+label when the available evidence is insufficient, contradictory, too
+subjective, or underspecified.
 
 ## Turning Human Taste Into A Judge
 

@@ -228,7 +228,7 @@ def build_parser():
     human.add_argument("--trial", help="Restrict to one trial, or required when recording a grade")
     human.add_argument("--grader", default="human-review")
     human.add_argument("--metric", default="human-review")
-    human.add_argument("--label", choices=["pass", "partial", "fail", "unknown", "needs_human_review"])
+    human.add_argument("--label", choices=["pass", "partial", "fail", "unknown"])
     human.add_argument("--score", type=float)
     human.add_argument("--rationale")
     human.add_argument("--reviewer")

@@ -12,7 +12,7 @@ from .io import read_json, read_jsonl, resolve_run_dir, write_jsonl
 from .manifest import case_dir, case_task_info, load_manifest, workbench_from_suite
 from .staging import safe_case_file
 
-GRADE_LABELS = {"pass", "partial", "fail", "unknown", "needs_human_review"}
+GRADE_LABELS = {"pass", "partial", "fail", "unknown"}
 
 
 def validator_command(path, output_path, expected_path, events_path):
@@ -110,7 +110,7 @@ def generated_expectation_judge_guidance(expectations):
     return (
         "Grade the agent output against the listed expectations. "
         "Each expectation should pass only when specific evidence shows genuine task completion. "
-        "Treat unverifiable expectations as unknown or needs_human_review."
+        "Treat unverifiable expectations as unknown."
     )
 
 
@@ -166,7 +166,7 @@ def pending_human_grade(run, result, grader):
         "grader": {"kind": "human", "id": grader.get("id") or "human-review"},
         "metric": grader.get("metric") or grader.get("id") or "human-review",
         "score": None,
-        "label": "needs_human_review",
+        "label": "unknown",
         "rationale": "Human grader declared; record a human grade after reviewing the response, task, judge guidance, and transcript evidence.",
         "gate": bool(grader.get("gate") or grader.get("required")),
         "evidence_refs": [item for item in [result_response_path(result), result.get("event_path"), result.get("evidence_path")] if item],
@@ -336,7 +336,7 @@ def human_review_packet(raw_run, trial_id=None):
             continue
         result = {**planned_trial, **{key: value for key, value in (results.get(tid) or {}).items() if value is not None}}
         grades = grades_by_trial.get(tid, [])
-        needs_human = any((row.get("grader") or {}).get("kind") == "human" and row.get("label") in {"needs_human_review", "unknown"} for row in grades)
+        needs_human = any((row.get("grader") or {}).get("kind") == "human" and row.get("label") == "unknown" for row in grades)
         if trial_id or needs_human:
             trials.append(
                 {
@@ -349,7 +349,7 @@ def human_review_packet(raw_run, trial_id=None):
                     "human_grades": [row for row in grades if (row.get("grader") or {}).get("kind") == "human"],
                     "guidance": [
                         "Read the visible task, response, and any judge guidance or expected output before grading.",
-                        "Use pass, partial, fail, unknown, or needs_human_review.",
+                        "Use pass, partial, fail, or unknown.",
                         "Ground the rationale in specific response or transcript evidence.",
                     ],
                 }

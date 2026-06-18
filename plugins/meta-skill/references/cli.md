@@ -354,7 +354,7 @@ Record mode:
 plugins/meta-skill/scripts/metaskill eval human \
   --run <run-dir> \
   --trial <trial-id> \
-  --grader rishi \
+  --grader human-reviewer \
   --metric usefulness \
   --label partial \
   --score 0.5 \
@@ -362,9 +362,9 @@ plugins/meta-skill/scripts/metaskill eval human \
   --json
 ```
 
-Labels are `pass`, `partial`, `fail`, `unknown`, or `needs_human_review`.
-Scores are optional and must be between 0 and 1. The command writes or replaces
-the matching human row in `grades.jsonl`.
+Labels are `pass`, `partial`, `fail`, or `unknown`. Scores are optional and must
+be between 0 and 1. The command writes or replaces the matching human row in
+`grades.jsonl`.
 
 ### `eval calibrate`
 
@@ -376,8 +376,9 @@ What it does:
 
 - Reads paired human and model grade rows from `.<skill-name>/runs/<run-id>/grades.jsonl`
 - Optionally restricts comparison to one shared metric
-- Computes exact agreement, tolerance agreement, false pass/fail examples,
-  human escalation rate, and non-binary examples
+- Computes true positive rate for finding failures, true negative rate for
+  recognizing passes, exact agreement, tolerance agreement, false pass/fail
+  examples, unknown-label rates, and non-binary examples
 - Writes a calibration artifact under `.<skill-name>/calibrations/`
 
 Inputs:
@@ -455,12 +456,12 @@ What it renders:
 - Impact: when a run contains a no-skill candidate and at least one payload
   candidate, per-task categories show `candidate_improves`,
   `candidate_regresses`, `both_fail`, `baseline_already_succeeds`, or
-  `needs_human_review`
+  `needs_more_evidence`
 - Evidence pointers relative to the run directory: outcome, runner transcripts,
   judge events, and folded thread evidence; `-` marks a missing file
 - A needs-attention list: failed trials, planned trials with no result,
   ungraded trials, gate failures, graders that emitted invalid JSON,
-  `needs_human_review` trials, and missing token usage
+  `needs_review` trials, and missing token usage
 
 Inputs:
 

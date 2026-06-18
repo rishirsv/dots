@@ -13,7 +13,7 @@ Use these terms consistently:
 | Term | Meaning |
 |---|---|
 | **Task** | One unit of work with defined inputs and success criteria. |
-| **Candidate** | The agent-harness setup: no skill, current skill, or edited-skill attempt. |
+| **Candidate** | The agent-harness setup: no skill, current skill, or candidate skill. |
 | **Trial** | One attempt at one task under one candidate. |
 | **Outcome** | The final answer, files, artifacts, or state at the end of the trial. |
 | **Transcript** | The full event record: messages, tool calls, reasoning summaries, intermediate results, and errors. |
@@ -58,14 +58,10 @@ Prefer grading the outcome over the path. Use transcript graders for process
 requirements such as tool choice, unsafe tool use, excessive turns, or whether a
 failure was caused by the harness rather than the skill.
 
-Give model graders a way out: allow `unknown` or `needs_human_review` when the
-outcome lacks enough evidence. Do not force a confident score from incomplete
-evidence.
-
 Use multiple graders when one requirement is exact and another is semantic. For
 example, a conversational skill may use a code grader to confirm a required tool
 was called, a model grader for helpfulness, and a human grader to calibrate the
-model against Rishi's taste.
+model against human review.
 
 Use gates for must-not-break checks: prompt-boundary leaks, package exclusions,
 forbidden file edits, schema validity, safety constraints, or deterministic
@@ -138,7 +134,7 @@ Run under these candidates when supported:
 
 - no skill
 - current skill
-- edited-skill attempt
+- candidate skill
 
 ### 2. Trigger / Boundary Task
 

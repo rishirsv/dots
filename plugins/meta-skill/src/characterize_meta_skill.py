@@ -458,7 +458,7 @@ def test_grade_expected_validator_behavior(tmp):
             "--trial",
             "case-a.current.t1",
             "--grader",
-            "rishi",
+            "human-reviewer",
             "--metric",
             "taste",
             "--label",
@@ -471,9 +471,9 @@ def test_grade_expected_validator_behavior(tmp):
         ],
         project,
     )
-    check(human_grade["grade"]["grader"] == {"kind": "human", "id": "rishi"}, "human grade row changed")
+    check(human_grade["grade"]["grader"] == {"kind": "human", "id": "human-reviewer"}, "human grade row changed")
 
-    manifest["cases"][0]["graders"] = [{"id": "rishi", "kind": "human", "metric": "taste", "required": True}]
+    manifest["cases"][0]["graders"] = [{"id": "human-reviewer", "kind": "human", "metric": "taste", "required": True}]
     suite.write_text(json.dumps(manifest, indent=2) + "\n")
     run_json([CLI, "eval", "grade", "--run", str(run_dir), "--json"], project)
     run_json(
@@ -486,7 +486,7 @@ def test_grade_expected_validator_behavior(tmp):
             "--trial",
             "case-a.current.t1",
             "--grader",
-            "rishi",
+            "human-reviewer",
             "--metric",
             "taste",
             "--label",

@@ -1235,7 +1235,6 @@ Labels are:
 - `partial`
 - `fail`
 - `unknown`
-- `needs_human_review`
 
 Judge events are written to `events/<trial-id>.judge.jsonl`.
 
@@ -1258,7 +1257,7 @@ code. If a validator can prove the candidate, prefer the validator.
 ### Human Graders
 
 Human graders are first-class. A declared human grader creates a pending grade
-with label `needs_human_review`. `eval human` has two modes:
+with label `unknown`. `eval human` has two modes:
 
 - Packet mode shows the response path, event path, evidence path, existing human
   grade rows, and review guidance.
@@ -1354,8 +1353,8 @@ impact category.
 | `pass` | `fail` | `candidate_regresses` | The skill or attempt made this task worse |
 | `fail` | `fail` | `both_fail` | Neither candidate solved the task |
 | `pass` | `pass` | `baseline_already_succeeds` | The task does not show skill lift because baseline already passes |
-| `unknown` | any | `needs_human_review` | Baseline evidence is not decisive |
-| any | `unknown` | `needs_human_review` | Candidate evidence is not decisive |
+| `unknown` | any | `needs_more_evidence` | Baseline evidence is not decisive |
+| any | `unknown` | `needs_more_evidence` | Candidate evidence is not decisive |
 
 This is why reports separate runner status from behavior. A completed trial with
 an ungraded or partial outcome becomes `unknown` for comparison, not a clean
@@ -1371,7 +1370,7 @@ pass.
 | `promising_with_failures` | Candidate improves at least one task but still has failing tasks |
 | `reject_or_revise` | Candidate regresses on at least one task |
 | `no_skill_lift_detected` | Baseline already succeeds on the measured tasks |
-| `needs_more_evidence` | Missing grades, human-review labels, unknowns, or absent comparable rows block a decision |
+| `needs_more_evidence` | Missing grades, unknowns, or absent comparable rows block a decision |
 
 ## Validation And Packaging
 

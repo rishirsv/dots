@@ -7,7 +7,7 @@ from .evidence import fold_events
 from .policy import APP_SERVER_APPROVAL_POLICY, APP_SERVER_SANDBOX, sdk_policy
 
 
-GRADE_LABELS = {"pass", "partial", "fail", "unknown", "needs_human_review"}
+GRADE_LABELS = {"pass", "partial", "fail", "unknown"}
 CHECK_LABELS = {"pass", "fail", "unknown"}
 
 
@@ -82,15 +82,14 @@ def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, exp
         "or explaining why outcome evidence is missing. Do not infer root cause, diagnose the skill, or reward "
         "surface compliance when the underlying task is wrong. The burden of proof is on a pass.\n\n"
         "Return only JSON with this exact shape:\n"
-        "{\"label\":\"pass|partial|fail|unknown|needs_human_review\",\"score\":0.0,"
+        "{\"label\":\"pass|partial|fail|unknown\",\"score\":0.0,"
         "\"rationale\":\"...\",\"checks\":[{\"name\":\"criterion\",\"label\":\"pass|fail|unknown\","
         "\"level\":0,\"evidence\":\"...\",\"note\":\"optional\"}],\"eval_feedback\":[]}\n\n"
         "Rules:\n"
         "- label must be pass only when the outcome satisfies every required criterion with specific evidence.\n"
         "- label may be partial when the outcome materially helps but misses non-gating criteria or has localized defects.\n"
         "- label must be fail when the outcome is wrong, incomplete, unsafe, or misses a required criterion.\n"
-        "- label must be unknown when available evidence is insufficient or contradictory.\n"
-        "- label must be needs_human_review for domain taste, underspecified criteria, or fairness concerns.\n"
+        "- label must be unknown when available evidence is insufficient, contradictory, too subjective, or underspecified.\n"
         "- score is 0 to 1 when meaningful; use null when evidence is insufficient.\n"
         "- cite concrete evidence in every check from the outcome, reference material, or allowed transcript.\n"
         "- eval_feedback lists concise notes about weak, unverifiable, missing, always-pass, or unfair criteria.\n\n"

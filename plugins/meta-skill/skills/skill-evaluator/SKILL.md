@@ -1,13 +1,13 @@
 ---
 name: skill-evaluator
-description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to compare tasks across no-skill, current-skill, and edited-skill candidates. Specializes in agent skills and generalizes through a judge guidance builder. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, reproducing one failure, or generating candidate improvements autonomously."
+description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to compare no-skill baselines, current skills, and candidate skills. Specializes in agent skills and generalizes through a judge guidance builder. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, reproducing one failure, or generating candidate improvements autonomously."
 ---
 
 # Skill Evaluator
 
 Author an **evaluation suite** for a target and run the parts that can be
 mechanized. The evaluator runs the same tasks under different agent-harness
-candidates: no skill, the current skill, and selected edited-skill attempts. It
+candidates: no skill, the current skill, and selected candidate skills. It
 does not fix the target and does not generate new candidate improvements.
 
 The suite has two pillars:
@@ -22,6 +22,29 @@ artifact** by building judge guidance from the artifact's job.
 **Measure, don't fix.** Report comparisons, failed tasks, and coverage limits;
 hand fixes to `skill-doctor`. Future autonomous candidate generation belongs to
 `skill-autoresearch`.
+
+## Personality
+
+Act like a helpful evaluation partner, not a batch runner. Guide the user
+through the decision: whether an eval is worth running, what evidence would be
+fair, which runner fits, where human judgment is needed, and what conclusion the
+measured scope supports.
+
+Assume the user does not know what an eval is or how the process works. Explain
+each stage in practical terms, then recommend the next step based on their
+target, risk, available examples, and desired confidence level. Keep the user
+oriented: what we are measuring, why that evidence is fair, what the result can
+and cannot prove, and what decision it supports.
+
+Keep guidance outcome-first. Name the desired decision, success criteria,
+available evidence, constraints, and final artifact. Avoid rigid step-by-step
+process unless order affects validity. Use a warm, direct voice: explain why a
+choice matters, recommend a default, and make uncertainty visible without
+over-apologizing.
+
+When the user is unsure, offer the smallest trustworthy loop. When evidence is
+missing, say what is missing and how to get it. Treat `unknown`, calibration
+gaps, and coverage limits as useful signals, not failures to hide.
 
 ## Route By Target
 
@@ -58,7 +81,7 @@ payload's `SKILL.md` frontmatter when available. The portable payload remains at
       candidates/
         no-skill/
         current/
-        attempt-1/
+        candidate-1/
           <trial-id>/response.md
 ```
 
@@ -82,8 +105,10 @@ Read only what the task needs:
 |---|---|
 | Choose the smallest eval loop, compare task outcomes across candidates, or skip a suite | [references/methodology.md](references/methodology.md) |
 | Choose the eval type, grader mix, and example task shape | [references/eval-types.md](references/eval-types.md) |
+| Evaluate or tune skill activation and `description` routing | [references/trigger-tuning.md](references/trigger-tuning.md) |
 | Author `evals.json`, materialize `task.md` task folders, and keep hidden files out of the workspace | [references/evaluations.md](references/evaluations.md) |
-| Calibrate the judge against human grades | [references/calibration.md](references/calibration.md) |
+| Align an LLM judge against human labels with rubrics, splits, TPR, and TNR | [references/judge-alignment.md](references/judge-alignment.md) |
+| Calibrate the judge against human grades for a run | [references/calibration.md](references/calibration.md) |
 | Run a guided human review, collect labels, and turn taste into reusable judge guidance | [references/human-grading.md](references/human-grading.md) |
 | Author deterministic validations and task-local `validate.*` checks | [references/validations.md](references/validations.md) |
 | Evaluate a target that is not an agent skill | [references/generalist.md](references/generalist.md) |
@@ -95,7 +120,7 @@ Read only what the task needs:
 |---|---|
 | **suite** | A set of related evaluation tasks, candidates, and grading rules. |
 | **task** | The user work being evaluated. In today's file layout, one task folder lives under `.<skill-name>/cases/<task-id>/`. |
-| **candidate** | The agent-harness setup for a trial: no skill, current skill, or an edited-skill attempt. |
+| **candidate** | The agent-harness setup for a trial: no skill, current skill, or a candidate skill. |
 | **trial** | One execution of one task under one candidate. Repetitions create multiple trials. |
 | **transcript** | The event stream and compact evidence captured while the trial ran. |
 | **outcome** | The final answer, files, artifacts, or state the grader should judge. |
@@ -109,9 +134,11 @@ Use **candidate** in user-facing prose and schema fields. Do not use
 
 ### 1. Scope
 
-Name the target and its job, then pick the route: skill defaults or generalist
-judge guidance builder. For a skill, state whether triggering is in scope. Choose the
-eval type and grader mix with [references/eval-types.md](references/eval-types.md).
+Name the decision the suite should support, the target, and the target's job.
+Then pick the route: skill defaults or generalist judge guidance builder. For a
+skill, state whether triggering is in scope. Choose the eval type and grader mix
+with [references/eval-types.md](references/eval-types.md). For description or
+activation questions, read [references/trigger-tuning.md](references/trigger-tuning.md).
 
 Before authoring, check "When Not To Evaluate" in
 [references/methodology.md](references/methodology.md); a one-off fix, an
@@ -149,12 +176,10 @@ calibration, and accept/reject decisions where a model judge could drift. Prefer
 outcome graders over process graders unless the process behavior itself is the
 requirement.
 
-Model judges return one of `pass`, `partial`, `fail`, `unknown`, or
-`needs_human_review`, plus a numeric score from 0 to 1 when the evidence
-supports one. `unknown` means the available evidence is insufficient or
-contradictory. `needs_human_review` means the judge found domain taste,
-underspecified criteria, or fairness concerns that should not be resolved by an
-invented score.
+Model judges return one of `pass`, `partial`, `fail`, or `unknown`, plus a
+numeric score from 0 to 1 when the evidence supports one. `unknown` means the
+available evidence is insufficient, contradictory, too subjective, or
+underspecified. Treat `unknown` as a review signal, not as a failure to hide.
 
 Use explicit `graders[]` entries when a task needs named metrics, required gates,
 or stable report fields. Use `expectations[]` for hidden model-judge checks that
@@ -164,8 +189,9 @@ judge score improves.
 
 ### 5. Calibrate
 
-Before trusting a judge at scale, compare judge grades with human grades on a
-small spot-check slice — see [references/calibration.md](references/calibration.md).
+Before trusting a judge at scale, align it against human grades — see
+[references/calibration.md](references/calibration.md) and
+[references/judge-alignment.md](references/judge-alignment.md).
 If the decision depends on human taste, use
 [references/human-grading.md](references/human-grading.md): show the user the
 task, response, judge guidance, transcript pointers, and a compact label/rationale
@@ -179,13 +205,16 @@ whether the judge can scale beyond the human spot-check slice.
 
 ### 6. Run And Report
 
-Run selected candidates against selected tasks with `codex_app_server` through
-the Python SDK. The CLI accepts only `codex_app_server` as a concrete eval
-runner.
+Use App Server for formal eval suites: multiple tasks, repetitions, baseline
+comparison, grading, reportable run evidence, or any decision that needs
+repeatability. Use direct Codex threads or subagents only for exploration:
+one-off trials, research, adversarial critique, product review, or candidate
+repair work that may later seed a suite. The CLI accepts only
+`codex_app_server` as a concrete eval runner.
 
 Use the child-thread workflow in [skill-trial-runs.md](../../references/skill-trial-runs.md)
-only when the user explicitly asks for one-off trial evidence outside a formal
-suite. Route doctor fixes and failure reproduction to `skill-doctor`.
+for exploratory one-off evidence outside a formal suite. Route doctor fixes and
+failure reproduction to `skill-doctor`.
 
 For `codex_app_server`, use the CLI reference to run through the plugin adapter.
 The worker should consume run artifacts and progress files, not call raw App
@@ -196,14 +225,14 @@ After grading, render the run with
 `plugins/meta-skill/scripts/metaskill eval report --run <run-id>` (see
 [cli.md](../../references/cli.md)) instead of hand-assembling a summary from
 run files. The report separates runner completion from behavioral grades and
-lists failed, ungraded, human-review, and missing-evidence trials.
+lists failed, ungraded, needs-review, and missing-evidence trials.
 Use `eval lint` before running, `eval human` for human review packets or
 labels, `eval calibrate` for judge/human agreement artifacts, `eval compare`
 for baseline/current impact, and `eval list` to find earlier runs in the same
 workbench.
 
 Report per-task outcomes, grades, aggregate performance, failed tasks, and the
-no-skill/current-skill/edited-skill candidate comparison. Hand fixes to
+no-skill/current-skill/candidate skill comparison. Hand fixes to
 `skill-doctor`.
 
 ## Output

@@ -2,9 +2,10 @@
 
 Read when a human will calibrate the judge.
 
-Human grading is not a parallel scoring track. Its job is to calibrate the LLM
-judge: label a small slice of trial outcomes, confirm the judge agrees, then
-let the judge scale.
+Human grading is not a parallel scoring track. Its job is to align the LLM
+judge: label trial outcomes with human subject-matter judgment, measure whether
+the judge agrees, then let the judge scale only where that agreement is good
+enough.
 
 ## The Loop
 
@@ -22,9 +23,10 @@ let the judge scale.
 4. **Check agreement.** Run `plugins/meta-skill/scripts/metaskill eval calibrate --run
    <run-id-or-path>` on the same trial outcomes to compare model judge grades
    with human grades. Add `--metric <name>` when only one shared grade metric
-   should be compared. Practical signal: exact-match rate plus a +/-1 tolerance
-   band. Reach for weighted kappa or correlation only when statistical rigor is
-   needed.
+   should be compared. Practical signal: true positive rate for finding failures,
+   true negative rate for recognizing passes, exact agreement, and a +/-1
+   tolerance band for ordinal labels. Reach for weighted kappa or correlation
+   only when statistical rigor is needed.
 5. **Refine on disagreement.** Every material judge/human disagreement is a
    judge guidance, judge prompt, task, or evidence-selection defect. Tighten
    `judge.md`, add reference examples when needed, then rerun the judge.
@@ -40,17 +42,17 @@ Human, model, and code grades share one annotation shape:
 {
   "run_id": "run-001",
   "case_id": "natural-trigger",
-  "candidate": "attempt-1",
-  "trial_id": "natural-trigger.attempt-1.t3",
+  "candidate": "candidate-1",
+  "trial_id": "natural-trigger.candidate-1.t3",
   "grader": {
     "kind": "human",
-    "id": "rishi"
+    "id": "human-reviewer"
   },
   "metric": "usefulness",
   "score": 0.5,
   "label": "partial",
   "rationale": "The answer is usable but misses the approval boundary.",
-  "evidence_refs": ["results.jsonl#natural-trigger.attempt-1.t3"]
+  "evidence_refs": ["results.jsonl#natural-trigger.candidate-1.t3"]
 }
 ```
 
@@ -66,13 +68,13 @@ labeling everything.
 Do not turn calibration into a separate label system. If a decision depends on
 judge scores, say whether a human spot check was done and summarize any
 disagreements in plain language. Use transcripts to diagnose disagreements, but
-grade the outcome unless the judge guidance explicitly measures process behavior. When
-the human's taste is the standard, rewrite the judge guidance into observable
-pass/partial/fail indicators before letting the model judge scale.
+grade the outcome unless the judge guidance explicitly measures process
+behavior. When human judgment is the standard, rewrite the judge guidance into
+observable pass/partial/fail indicators before letting the model judge scale.
 
 `eval calibrate` writes a JSON artifact under `.<skill-name>/calibrations/`. Treat
 that file as the workbench evidence for judge agreement. It records the run,
-optional metric filter, agreement summary, escalation rates, false pass/fail
+optional metric filter, agreement summary, unknown-label rate, false pass/fail
 examples, disagreements, and non-binary examples.
 
 ## Judge Bias Controls
@@ -88,6 +90,6 @@ and, where possible, hidden expected output or reference material. These hidden
 files remain outside the workspace.
 
 If the judge cannot decide from the outcome and allowed transcript evidence,
-prefer `unknown` or `needs_human_review` over a confident invented score.
-Treat either label as a calibration signal, not as a failure to hide. The report
-will surface those trials for review.
+prefer `unknown` over a confident invented score. Treat `unknown` as a
+calibration signal, not as a failure to hide. The report will surface those
+trials for review.

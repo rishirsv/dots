@@ -7,8 +7,7 @@ agent-harness candidate, grade the outcome, and read transcripts often enough to
 know whether the graders are fair.
 
 1. **Task** — the user work being evaluated.
-2. **Candidate** — the agent setup: no skill, current skill, or edited-skill
-   attempt.
+2. **Candidate** — the agent setup: no skill, current skill, or candidate skill.
 3. **Trial** — one task under one candidate.
 4. **Outcome** — the final answer, files, artifacts, or state.
 5. **Grader** — human, model, or code judgment over the outcome.
@@ -16,7 +15,7 @@ know whether the graders are fair.
    calibrate graders, and debug the outcome.
 
 This matches the practical loop: write a few realistic tasks, compare the
-no-skill candidate with the current-skill candidate, make an edited-skill
+no-skill candidate with the current-skill candidate, make a candidate skill
 candidate, compare again, and keep only evidence that helps decide the next
 edit.
 
@@ -26,7 +25,7 @@ Use `candidate` in explanations, reports, manifests, run rows, and paths:
 
 - `no-skill` is the baseline candidate using `source.kind: "none"`.
 - `current` is the current-skill candidate.
-- `attempt-1`, `candidate-1`, or any other slug can point at an edited-skill
+- `candidate-1` or any other slug can point at a candidate skill
   branch, git ref, or worktree through `source`.
 - Run evidence records the candidate's branch/ref, commit, payload path, and
   `payload_digest`.
@@ -52,8 +51,8 @@ Use this loop for most skill evaluation:
 6. Inspect failed, surprising, improved, and model/human-disagreed transcripts
    to catch unfair graders, hidden harness issues, and valid alternate
    solutions.
-7. Turn a proposed fix into an edited-skill candidate.
-8. Run the same tasks against the current-skill and edited-skill candidates.
+7. Turn a proposed fix into a candidate skill.
+8. Run the same tasks against the current skill and candidate skill.
 9. Report which tasks improved, regressed, already worked without the skill, or
    still need human judgment.
 
@@ -89,8 +88,8 @@ which outcomes changed, what transcripts showed, and what is still uncertain.
 
 Strong eval suites come from real signal:
 
-- **Automated evals**: repeatable task suites under no-skill, current-skill, and
-  edited-skill candidates.
+- **Automated evals**: repeatable task suites under no-skill baselines, current
+  skills, and candidate skills.
 - **A/B testing**: production comparison once a candidate is deployable and
   usage is large enough to measure user outcomes.
 - **User feedback**: sparse and biased, but useful seed material for concrete
