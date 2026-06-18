@@ -25,16 +25,16 @@ patterns unless the user asks for broader pattern analysis.
 Use the shared Meta-Skill CLI surface:
 
 ```sh
-plugins/meta-skill/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
-plugins/meta-skill/scripts/metaskill sessions show <thread-id> --max-chars 12000
+<meta-skill-root>/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
+<meta-skill-root>/scripts/metaskill sessions show <thread-id> --max-chars 12000
 ```
 
 Useful filters:
 
 ```sh
-plugins/meta-skill/scripts/metaskill sessions list --cwd "<project-root>" --days 30 --archived all
-plugins/meta-skill/scripts/metaskill sessions list --query "<skill name or failure phrase>" --json
-plugins/meta-skill/scripts/metaskill sessions show <thread-id> --json
+<meta-skill-root>/scripts/metaskill sessions list --cwd "<project-root>" --days 30 --archived all
+<meta-skill-root>/scripts/metaskill sessions list --query "<skill name or failure phrase>" --json
+<meta-skill-root>/scripts/metaskill sessions show <thread-id> --json
 ```
 
 ## Source Of Truth

@@ -181,7 +181,7 @@ Route common requests this way:
 |---|---|
 | "Is this skill good enough?" | Choose between static `skill-doctor` review, 2-3 task quality loop, or formal suite based on risk and existing evidence. |
 | "Did this change break anything?" | Regression or failure suite from known-good behavior. |
-| "I changed the description/frontmatter." | Run `metaskill validate <skill-dir>` first, then trigger tuning with should-trigger and near-miss prompts. |
+| "I changed the description/frontmatter." | Run `<meta-skill-root>/scripts/metaskill validate <skill-dir>` first, then trigger tuning with should-trigger and near-miss prompts. |
 | "Can I trust this judge?" | Judge alignment with human labels and TPR/TNR. |
 | "Try this one prompt." | Exploratory one-off trial if the user wants a signal; route diagnosis/fix reproduction to `skill-doctor`. Convert useful findings into suite tasks later. |
 | "Give me durable evidence." | Ask for confirmation, then build a formal suite with run artifacts, grades, and report. |
@@ -270,7 +270,7 @@ train/validation/test alignment split when judge scores will support a broad or
 repeatable quality claim. Use critique shadowing when human rationales reveal
 the rubric is still vague.
 
-Use `plugins/meta-skill/scripts/metaskill eval calibrate --run <run-id-or-path>` to compare model
+Use `<meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path>` to compare model
 judge grades against human grades. The command writes a calibration artifact
 under `.<skill-name>/calibrations/`; keep it with the workbench as evidence for
 whether the judge can scale beyond the human spot-check slice.
@@ -298,10 +298,10 @@ real eval task, record a harness capability gap and route it as an explicit
 Meta-Skill implementation follow-up; do not add worker commands, raw App Server
 calls, or runner controls from the evaluator lane.
 Before the first formal App Server suite on a machine, or when runner readiness
-is uncertain, run `plugins/meta-skill/scripts/metaskill doctor --json`.
+is uncertain, run `<meta-skill-root>/scripts/metaskill doctor --json`.
 
 After grading, render the run with
-`plugins/meta-skill/scripts/metaskill eval report --run <run-id>` (see
+`<meta-skill-root>/scripts/metaskill eval report --run <run-id>` (see
 [cli.md](../../references/cli.md)) instead of hand-assembling a summary from
 run files. The report separates runner completion from behavioral grades and
 lists failed, ungraded, `needs_review`, and missing-evidence trials.

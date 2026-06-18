@@ -54,7 +54,7 @@ For each selected trial:
 6. Record the grade with:
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval human \
+<meta-skill-root>/scripts/metaskill eval human \
   --run <run-dir> \
   --trial <trial-id> \
   --grader <reviewer-or-judge-name> \
@@ -65,7 +65,7 @@ plugins/meta-skill/scripts/metaskill eval human \
   --json
 ```
 
-Use `plugins/meta-skill/scripts/metaskill eval human --run <run-dir> --trial <trial-id> --json`
+Use `<meta-skill-root>/scripts/metaskill eval human --run <run-dir> --trial <trial-id> --json`
 to print the review packet before asking the user.
 
 ## Q&A Script

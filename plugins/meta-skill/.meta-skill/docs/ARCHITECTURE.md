@@ -52,10 +52,10 @@ you already know the area you need.
 
 Meta-Skill has two layers:
 
-1. **Skill lifecycle guidance**: the four skills under `meta-skill/skills/`
+1. **Skill lifecycle guidance**: the four skills under `<meta-skill-root>/skills/`
    tell an agent how to route skill work, write new skills, improve existing
    skills, and evaluate behavior.
-2. **Workbench automation**: the Python CLI under `meta-skill/src/` creates
+2. **Workbench automation**: the Python CLI under `<meta-skill-root>/src/` creates
    workbench folders, runs eval trials, captures transcripts, grades outcomes,
    renders reports, validates skills, and packages portable payloads.
 
@@ -83,6 +83,8 @@ creates a run and records results.
 The source plugin lives under `plugins/meta-skill/`. Generated package copies
 live under `dist/codex/plugins/meta-skill/` and
 `dist/claude/plugins/meta-skill/`; do not edit those generated copies by hand.
+In this document, `<repo-root>` means the repository checkout and
+`<meta-skill-root>` means the Meta-Skill plugin root.
 
 ```text
 plugins/meta-skill/
@@ -285,10 +287,10 @@ criteria.
 ## Shared CLI
 
 The Meta-Skill CLI is the shared automation surface for every specialist. It
-lives in `meta-skill/src/` and is launched from the repo as:
+lives in `<meta-skill-root>/src/` and is launched from the repo as:
 
 ```sh
-plugins/meta-skill/scripts/metaskill <command>
+<meta-skill-root>/scripts/metaskill <command>
 ```
 
 Installed plugin packages expose the same CLI at:
@@ -298,7 +300,7 @@ Installed plugin packages expose the same CLI at:
 ```
 
 The launcher bootstraps a Python environment and dependencies from
-`meta-skill/src/requirements.txt`. The relevant environment variables are:
+`<meta-skill-root>/src/requirements.txt`. The relevant environment variables are:
 
 - `META_SKILL_PYTHON`: use a specific Python interpreter.
 - `META_SKILL_CACHE_DIR`: override the cache root.
@@ -316,19 +318,19 @@ CLI output rules:
 Current command groups:
 
 ```sh
-plugins/meta-skill/scripts/metaskill doctor [--json]
-plugins/meta-skill/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
-plugins/meta-skill/scripts/metaskill eval lint [--suite <suite>] [--json]
-plugins/meta-skill/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
-plugins/meta-skill/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
-plugins/meta-skill/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
-plugins/meta-skill/scripts/metaskill eval grade --run <run-id-or-path> [--json]
-plugins/meta-skill/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
-plugins/meta-skill/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
-plugins/meta-skill/scripts/metaskill eval list [--suite <suite>] [--json]
-plugins/meta-skill/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
-plugins/meta-skill/scripts/metaskill validate <skill-dir> [--json]
-plugins/meta-skill/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
+<meta-skill-root>/scripts/metaskill doctor [--json]
+<meta-skill-root>/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
+<meta-skill-root>/scripts/metaskill eval lint [--suite <suite>] [--json]
+<meta-skill-root>/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
+<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
+<meta-skill-root>/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
+<meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
+<meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
+<meta-skill-root>/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
+<meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--json]
+<meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
+<meta-skill-root>/scripts/metaskill validate <skill-dir> [--json]
+<meta-skill-root>/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
 ```
 
 The implementation entrypoint is `meta_skill/cli.py`. It dispatches to modules
@@ -1415,7 +1417,7 @@ state out of portable skill payloads.
 
 ## Packaging And Generated Packages
 
-The repo uses `scripts/package-plugins.sh` to package source plugins into
+The repo uses `<repo-root>/scripts/package-plugins.sh` to package source plugins into
 ignored Codex and Claude package directories under `dist/`.
 
 For Meta-Skill, the package script copies:
@@ -1433,7 +1435,7 @@ install or sync; otherwise report the install command as a follow-up.
 When editing anything under `plugins/meta-skill/`, run:
 
 ```sh
-scripts/package-plugins.sh
+<repo-root>/scripts/package-plugins.sh
 ```
 
 Do not hand-edit generated plugin package files under `dist/`. If generated
@@ -1497,17 +1499,17 @@ optimization needs that history.
 After editing Meta-Skill source, run the focused checks first:
 
 ```sh
-python3 plugins/meta-skill/src/characterize_meta_skill.py
-plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-writer --json
-plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-doctor --json
-plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-evaluator --json
-plugins/meta-skill/scripts/metaskill validate plugins/meta-skill/skills/skill-benchmarker --json
+python3 <meta-skill-root>/src/characterize_meta_skill.py
+<meta-skill-root>/scripts/metaskill validate <meta-skill-root>/skills/skill-writer --json
+<meta-skill-root>/scripts/metaskill validate <meta-skill-root>/skills/skill-doctor --json
+<meta-skill-root>/scripts/metaskill validate <meta-skill-root>/skills/skill-evaluator --json
+<meta-skill-root>/scripts/metaskill validate <meta-skill-root>/skills/skill-benchmarker --json
 ```
 
-Before committing changes under `meta-skill/`, run:
+Before committing changes under `plugins/meta-skill/`, run:
 
 ```sh
-scripts/package-plugins.sh
+<repo-root>/scripts/package-plugins.sh
 ```
 
 Then inspect generated Meta-Skill package diffs under:
@@ -1521,33 +1523,33 @@ dist/claude/plugins/meta-skill/
 
 Use these files when refreshing this document:
 
-- `meta-skill/skills/meta-skill/SKILL.md`: router and lifecycle sequencing.
-- `meta-skill/skills/skill-writer/SKILL.md`: authoring workflow and eval
+- `<meta-skill-root>/skills/meta-skill/SKILL.md`: router and lifecycle sequencing.
+- `<meta-skill-root>/skills/skill-writer/SKILL.md`: authoring workflow and eval
   manifest handoff.
-- `meta-skill/skills/skill-doctor/SKILL.md`: review, diagnose, edit, verify.
-- `meta-skill/skills/skill-evaluator/SKILL.md`: suite, candidate, trial,
+- `<meta-skill-root>/skills/skill-doctor/SKILL.md`: review, diagnose, edit, verify.
+- `<meta-skill-root>/skills/skill-evaluator/SKILL.md`: suite, candidate, trial,
   grading, and reporting workflow.
-- `meta-skill/skills/skill-benchmarker/SKILL.md`: recurring benchmark profiles,
+- `<meta-skill-root>/skills/skill-benchmarker/SKILL.md`: recurring benchmark profiles,
   runs, scorecards, gates, and history.
-- `meta-skill/references/cli.md`: command reference and authoritative run file
+- `<meta-skill-root>/references/cli.md`: command reference and authoritative run file
   descriptions.
-- `meta-skill/src/meta_skill/cli.py`: command parser and dispatch.
-- `meta-skill/src/meta_skill/manifest.py`: prompt manifest normalization and
+- `<meta-skill-root>/src/meta_skill/cli.py`: command parser and dispatch.
+- `<meta-skill-root>/src/meta_skill/manifest.py`: prompt manifest normalization and
   suite validation.
-- `meta-skill/src/meta_skill/workbench.py`: workbench initialization and case
+- `<meta-skill-root>/src/meta_skill/workbench.py`: workbench initialization and case
   materialization.
-- `meta-skill/src/meta_skill/candidates.py`: candidate source resolution and
+- `<meta-skill-root>/src/meta_skill/candidates.py`: candidate source resolution and
   payload digesting.
-- `meta-skill/src/meta_skill/staging.py`: workspace staging and hidden
+- `<meta-skill-root>/src/meta_skill/staging.py`: workspace staging and hidden
   boundary enforcement.
-- `meta-skill/src/meta_skill/runner.py`: trial planning, runner invocation, run
+- `<meta-skill-root>/src/meta_skill/runner.py`: trial planning, runner invocation, run
   files, progress, and results.
-- `meta-skill/src/meta_skill/app_server/`: App Server SDK boundary, event
+- `<meta-skill-root>/src/meta_skill/app_server/`: App Server SDK boundary, event
   folding, judge calls, sandbox, and approval policy.
-- `meta-skill/src/meta_skill/grading.py`: code, model, and human graders.
-- `meta-skill/src/meta_skill/report.py`: run listing, reports, impact, and
+- `<meta-skill-root>/src/meta_skill/grading.py`: code, model, and human graders.
+- `<meta-skill-root>/src/meta_skill/report.py`: run listing, reports, impact, and
   comparison recommendations.
-- `meta-skill/src/meta_skill/linting.py`: static eval manifest lint.
-- `meta-skill/src/meta_skill/validation.py`: skill validation bridge.
-- `meta-skill/src/meta_skill/packaging.py`: portable payload packaging.
-- `scripts/package-plugins.sh`: source-to-generated plugin packaging.
+- `<meta-skill-root>/src/meta_skill/linting.py`: static eval manifest lint.
+- `<meta-skill-root>/src/meta_skill/validation.py`: skill validation bridge.
+- `<meta-skill-root>/src/meta_skill/packaging.py`: portable payload packaging.
+- `<repo-root>/scripts/package-plugins.sh`: source-to-generated plugin packaging.

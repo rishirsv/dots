@@ -20,7 +20,7 @@ enough.
    response and transcript evidence, ask for label/rationale, and store human
    labels as `grades.jsonl` rows over trial outcomes. Do not put human labels in
    `task.md`, and do not hide them as front matter in case files.
-4. **Check agreement.** Run `plugins/meta-skill/scripts/metaskill eval calibrate --run
+4. **Check agreement.** Run `<meta-skill-root>/scripts/metaskill eval calibrate --run
    <run-id-or-path>` on the same trial outcomes to compare model judge grades
    with human grades. Add `--metric <name>` when only one shared grade metric
    should be compared. Practical signal: true positive rate for finding failures,

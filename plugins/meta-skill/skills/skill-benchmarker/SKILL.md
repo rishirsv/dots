@@ -95,7 +95,7 @@ Use `references/benchmarking.md` for the schema, task-bank policy, repetition
 policy, gate policy, and integrity checks. Run:
 
 ```sh
-plugins/meta-skill/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/<benchmark-id>.json --json
+<meta-skill-root>/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/<benchmark-id>.json --json
 ```
 
 Fix unknown cases, unknown candidates, empty selections, one-sided trigger
@@ -108,8 +108,8 @@ Run the benchmark only after the profile lints cleanly or the remaining warnings
 are intentional and reported:
 
 ```sh
-plugins/meta-skill/scripts/metaskill benchmark run --benchmark .<skill-name>/benchmarks/<benchmark-id>.json --json
-plugins/meta-skill/scripts/metaskill eval grade --run <run-id-or-path> --json
+<meta-skill-root>/scripts/metaskill benchmark run --benchmark .<skill-name>/benchmarks/<benchmark-id>.json --json
+<meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> --json
 ```
 
 Use `skill-evaluator` when the run needs new graders, human review packets,
@@ -121,8 +121,8 @@ artifacts; it does not replace them.
 Render the decision-level report:
 
 ```sh
-plugins/meta-skill/scripts/metaskill benchmark report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
-plugins/meta-skill/scripts/metaskill benchmark history --benchmark .<skill-name>/benchmarks/<benchmark-id>.json --json
+<meta-skill-root>/scripts/metaskill benchmark report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
+<meta-skill-root>/scripts/metaskill benchmark history --benchmark .<skill-name>/benchmarks/<benchmark-id>.json --json
 ```
 
 Report behavior pass rate, unknown rate, gate failures, profile gate failures,

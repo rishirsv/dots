@@ -235,7 +235,7 @@ review, or package the skill but should not be loaded by a future runtime agent.
 |---|---|
 | `.<skill-name>/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Name research files by topic; use a `-research.md` suffix when the docs folder would otherwise contain only research. |
 | `.<skill-name>/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
-| `.<skill-name>/dist/` | Package artifacts and package metadata produced by `plugins/meta-skill/scripts/metaskill package`. |
+| `.<skill-name>/dist/` | Package artifacts and package metadata produced by `<meta-skill-root>/scripts/metaskill package`. |
 
 For temporary plans, use the surrounding repo's planning convention instead of
 creating `.<skill-name>/plans/`. Plans usually are not durable skill knowledge.

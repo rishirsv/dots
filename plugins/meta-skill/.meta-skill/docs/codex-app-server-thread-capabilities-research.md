@@ -160,7 +160,7 @@ all ship in the refactor:
 The plugin should contain a clear module boundary:
 
 ```text
-meta-skill/src/meta_skill/app_server/
+<meta-skill-root>/src/meta_skill/app_server/
   client.py       # Codex / AsyncCodex construction, version, auth, metadata
   trial.py        # one persistent thread and turn for one eval trial
   evidence.py     # raw event writing and compact evidence writing

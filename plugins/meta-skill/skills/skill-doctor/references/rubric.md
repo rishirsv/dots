@@ -16,7 +16,7 @@ Judge against concrete house style, not abstract principles.
 |---|---|---|
 | **Discovery** | Discovery and task-fit: trigger boundaries, completeness, specificity, conflict risk, user-visible outcome expectations. | LLM-judged, 4 dims × 0–3 |
 | **Implementation** | Runtime guidance: actionability, workflow clarity, progressive disclosure, and directive quality (directives over wisdom, reasons, plain names). | LLM-judged, 5 dims × 0–3 |
-| **Validation** | CLI checks from `metaskill validate`: structural integrity and authoring lint. | Validation command output |
+| **Validation** | CLI checks from `<meta-skill-root>/scripts/metaskill validate`: structural integrity and authoring lint. | Validation command output |
 
 ## Score Calibration
 
@@ -30,7 +30,7 @@ Use strict but fair scoring.
 | **0** | Missing, misleading, or actively unsafe for the dimension. |
 
 **Math.** Discovery % = total / 12 (4 dims). Implementation % = total / 15
-(5 dims). Validation % = checks passed / total (from `plugins/meta-skill/scripts/metaskill validate --json`).
+(5 dims). Validation % = checks passed / total (from `<meta-skill-root>/scripts/metaskill validate --json`).
 **Overall Judge Review Score = rounded average of the Discovery,
 Implementation, and Validation percentages.**
 
@@ -91,7 +91,7 @@ would change future agent behavior. Do not restate the table.
 
 ## Validation
 
-Run `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`, which executes the
+Run `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`, which executes the
 canonical validation checks from the Meta Skill package modules and prints a
 combined pass-rate. Two task groups today:
 

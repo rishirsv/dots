@@ -54,7 +54,7 @@ When proposing a change, record the diagnosis basis explicitly:
 | Actual behavior | What happened instead. |
 | Trigger input | The user prompt, failure scenario, or session reference. |
 | Files inspected | Skill payload and references that were actually read. |
-| Validation output | Current `metaskill validate` command/result when available. |
+| Validation output | Current validation command and result when available. |
 | Alternate causes rejected | Plausible causes inspected and ruled out. |
 | Confidence | High, medium, or low, with low for user-report-only proposals. |
 | Falsifier | What evidence would prove the diagnosis wrong. |
@@ -82,8 +82,8 @@ to a thread id/title as evidence, read
 Use the Meta-Skill session commands to locate and render the relevant transcript:
 
 ```sh
-plugins/meta-skill/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
-plugins/meta-skill/scripts/metaskill sessions show <thread-id> --max-chars 12000
+<meta-skill-root>/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
+<meta-skill-root>/scripts/metaskill sessions show <thread-id> --max-chars 12000
 ```
 
 Use targeted session evidence for diagnosis, not broad pattern mining. Prefer

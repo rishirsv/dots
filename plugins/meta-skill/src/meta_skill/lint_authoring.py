@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Authoring anti-pattern checks for a skill's SKILL.md.
 
-A validation task used by `plugins/meta-skill/scripts/metaskill validate` covering the *mechanical*
+A validation task used by `<meta-skill-root>/scripts/metaskill validate` covering the *mechanical*
 anti-patterns from the authoring standard - the ones that belong in validation
 code rather than human judgment. Judgment anti-patterns (wisdom-vs-directive,
 jargon section names, contradictions) stay in the Judge Review's scored
@@ -143,7 +143,7 @@ def validate(skill_md):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Internal linter. Agent-facing usage: plugins/meta-skill/scripts/metaskill validate <skill-dir>.")
+    ap = argparse.ArgumentParser(description="Internal linter. Agent-facing usage: <meta-skill-root>/scripts/metaskill validate <skill-dir>.")
     ap.add_argument("target", help="Path to SKILL.md or a skill directory")
     ap.add_argument("--json", action="store_true", help="Emit JSON instead of a table")
     args = ap.parse_args(argv)

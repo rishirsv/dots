@@ -342,19 +342,19 @@ reports, fixtures/check inputs, team reuse material, or package output. Create
 that state with the central CLI after the payload exists:
 
 ```bash
-plugins/meta-skill/scripts/metaskill workbench init --target ./my-skill
+<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir>
 ```
 
 Validate:
 
 ```bash
-plugins/meta-skill/scripts/metaskill validate ./my-skill
+<meta-skill-root>/scripts/metaskill validate <skill-dir>
 ```
 
 Package only after approval:
 
 ```bash
-plugins/meta-skill/scripts/metaskill package ./my-skill
+<meta-skill-root>/scripts/metaskill package <skill-dir>
 ```
 
 `.<skill-name>/` is private workbench state and is excluded from packages. Package

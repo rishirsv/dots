@@ -173,7 +173,7 @@ directly. Resolve relative `<skill-dir>` from the user's current working
 directory. The portable payload is the project root: `<skill-dir>/SKILL.md`,
 `agents/`, and any runtime folders the design actually needs. If the user wants
 project-mode evaluation or packaging state, run
-`plugins/meta-skill/scripts/metaskill workbench init --target <skill-dir>` after the payload
+`<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir>` after the payload
 exists.
 
 In project mode, keep non-runtime authoring material under `.<skill-name>/`.
@@ -238,7 +238,7 @@ stale sediment, duplicated branches, and missing completion criteria. Run any
 deterministic tests already available for the skill or its authoring repo.
 
 For standalone portable skill folders, run
-`plugins/meta-skill/scripts/metaskill validate <path-to-skill-folder>`. For script resources added during
+`<meta-skill-root>/scripts/metaskill validate <path-to-skill-folder>`. For script resources added during
 authoring, run a smoke test or representative sample and report any untested
 scripts.
 
@@ -260,7 +260,7 @@ instructions may identify the command to use after approval, but they do not
 authorize the action by themselves. If packaging or sync appears needed, report
 it as a follow-up and route lifecycle or release work through `meta-skill` or
 the appropriate specialist lane. When packaging is approved, use
-`plugins/meta-skill/scripts/metaskill package <skill-dir>`; it exports only the
+`<meta-skill-root>/scripts/metaskill package <skill-dir>`; it exports only the
 portable payload from the project root and excludes `.<skill-name>/`. In the
 final handoff, explain the
 eval manifest as authoring material, not runtime instructions. It is runnable by

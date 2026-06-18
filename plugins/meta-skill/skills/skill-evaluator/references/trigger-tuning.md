@@ -18,7 +18,7 @@ Use trigger tuning when:
 Skip trigger tuning for a one-off content fix that does not affect discovery.
 
 Before tuning a frontmatter or description change, run
-`plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`. If
+`<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`. If
 validation fails, stop trigger tuning and hand the failures to `skill-doctor`,
 or ask the user for explicit approval before any implementation work. Evaluator
 may propose candidate wording, but it does not edit frontmatter, descriptions,

@@ -36,7 +36,7 @@ fix is verified.
 Run the canonical validator for the touched skill:
 
 ```sh
-plugins/meta-skill/scripts/metaskill validate <skill-dir> --json
+<meta-skill-root>/scripts/metaskill validate <skill-dir> --json
 ```
 
 This runs package structure checks and authoring lint from the plugin-level CLI

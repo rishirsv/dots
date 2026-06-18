@@ -46,7 +46,7 @@ Produce a **scored Judge review** (`judge-review.md`) — see
 1. Score **Discovery** (4 dims) and **Implementation** (5 dims), each 0–3 — every
    dimension's reasoning must cite the skill's own text; see
    [references/rubric.md](references/rubric.md) for calibration and a worked example.
-2. Run **Validation**: `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`.
+2. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
 3. **Overall Judge Review Score** = rounded average of Discovery %,
    Implementation %, and Validation %.
 4. If artifact writes are allowed, write `judge-review.md` with scores and
@@ -79,7 +79,7 @@ instead of improvising edits.
 
 ## Verify
 
-Run validation through `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`. Confirm
+Run validation through `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`. Confirm
 the requested fix held, report validation results, and refresh the Validation
 third of the Judge review only when a current `judge-review.md` exists, plus a
 quick regression scan — see [references/verify.md](references/verify.md).
@@ -90,7 +90,7 @@ no-skill baseline.
 ## Workbench
 
 When artifact writes are allowed, resolve the workbench path before writing:
-`plugins/meta-skill/scripts/metaskill workbench init --target <skill-dir> --dry-run --json`,
+`<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir> --dry-run --json`,
 then use the resolved path as the source of truth. Use `judge-review.md` for the
 Judge scorecard. Do not create workbench folders elsewhere.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic structural validation for an agent skill's SKILL.md.
 
-A deterministic structural task used by `plugins/meta-skill/scripts/metaskill validate`. These checks
+A deterministic structural task used by `<meta-skill-root>/scripts/metaskill validate`. These checks
 need no judge, so the LLM scores only Discovery and Implementation while
 structure is verified deterministically here. Pure stdlib — no third-party deps
 (PyYAML is used when present, with a line-based fallback otherwise).
@@ -158,7 +158,7 @@ def validate(skill_md_path: str):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Internal validator. Agent-facing usage: plugins/meta-skill/scripts/metaskill validate <skill-dir>.")
+    ap = argparse.ArgumentParser(description="Internal validator. Agent-facing usage: <meta-skill-root>/scripts/metaskill validate <skill-dir>.")
     ap.add_argument("target", help="Path to SKILL.md or a skill directory")
     ap.add_argument("--json", action="store_true", help="Emit JSON instead of a table")
     args = ap.parse_args(argv)

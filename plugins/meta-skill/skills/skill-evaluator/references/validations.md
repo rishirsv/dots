@@ -17,7 +17,7 @@ Validations come in two tiers. Keep the terminology straight:
 
 | Tier | Scope | Form | Home | Durability |
 |---|---|---|---|---|
-| **General checks** | Every skill | Canonical CLI validators run by `plugins/meta-skill/scripts/metaskill validate` | Plugin tree | Durable, shipped |
+| **General checks** | Every skill | Canonical CLI validators run by `<meta-skill-root>/scripts/metaskill validate` | Plugin tree | Durable, shipped |
 | **Task-local validators** | One task | `validate.*` beside `task.md` | Hidden task folder | Local eval content |
 | **Shared workbench tests** | One target suite | Authored tests reused across cases | `.<skill-name>/tests/` | Local eval content |
 

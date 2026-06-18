@@ -8,17 +8,19 @@ command, and which files are authoritative.
 
 Use one of these launchers:
 
-- Repo checkout: `plugins/meta-skill/scripts/metaskill`
+- Repo checkout: `<meta-skill-root>/scripts/metaskill`
 - Installed plugin package: `<plugin-root>/scripts/metaskill`
 
 Do not assume a global `meta-skill` binary is on `PATH`.
+`<meta-skill-root>` means the Meta-Skill plugin root in the current checkout or
+installed package.
 
 Both launchers are self-bootstrapping:
 
 - They create a per-user virtual environment under
   `${XDG_CACHE_HOME:-~/.cache}/meta-skill/venv` by default.
 - They install or upgrade dependencies from
-  `plugins/meta-skill/src/requirements.txt` before running.
+  `<meta-skill-root>/src/requirements.txt` before running.
 - `META_SKILL_PYTHON`, `META_SKILL_CACHE_DIR`, and `META_SKILL_VENV` override
   interpreter and cache locations.
 - `META_SKILL_SKIP_DEP_UPDATE=1` skips dependency updates and uses the existing
@@ -86,26 +88,26 @@ to `codex_app_server`.
 Current top-level commands:
 
 ```sh
-plugins/meta-skill/scripts/metaskill doctor [--json]
-plugins/meta-skill/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
-plugins/meta-skill/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
-plugins/meta-skill/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
-plugins/meta-skill/scripts/metaskill eval lint [--suite <suite>] [--json]
-plugins/meta-skill/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
-plugins/meta-skill/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
-plugins/meta-skill/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
-plugins/meta-skill/scripts/metaskill eval grade --run <run-id-or-path> [--json]
-plugins/meta-skill/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
-plugins/meta-skill/scripts/metaskill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
-plugins/meta-skill/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
-plugins/meta-skill/scripts/metaskill eval list [--suite <suite>] [--json]
-plugins/meta-skill/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
-plugins/meta-skill/scripts/metaskill benchmark lint --benchmark <profile> [--json]
-plugins/meta-skill/scripts/metaskill benchmark run --benchmark <profile> [--runner auto|codex_app_server] [--model <id>] [--json]
-plugins/meta-skill/scripts/metaskill benchmark report --run <run-id-or-path> [--benchmark <profile>] [--out <file>] [--json]
-plugins/meta-skill/scripts/metaskill benchmark history --benchmark <profile> [--json]
-plugins/meta-skill/scripts/metaskill validate <skill-dir> [--json]
-plugins/meta-skill/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
+<meta-skill-root>/scripts/metaskill doctor [--json]
+<meta-skill-root>/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
+<meta-skill-root>/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
+<meta-skill-root>/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
+<meta-skill-root>/scripts/metaskill eval lint [--suite <suite>] [--json]
+<meta-skill-root>/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
+<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
+<meta-skill-root>/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
+<meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
+<meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
+<meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
+<meta-skill-root>/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
+<meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--json]
+<meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
+<meta-skill-root>/scripts/metaskill benchmark lint --benchmark <profile> [--json]
+<meta-skill-root>/scripts/metaskill benchmark run --benchmark <profile> [--runner auto|codex_app_server] [--model <id>] [--json]
+<meta-skill-root>/scripts/metaskill benchmark report --run <run-id-or-path> [--benchmark <profile>] [--out <file>] [--json]
+<meta-skill-root>/scripts/metaskill benchmark history --benchmark <profile> [--json]
+<meta-skill-root>/scripts/metaskill validate <skill-dir> [--json]
+<meta-skill-root>/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
 ```
 
 ## Commands
@@ -132,7 +134,7 @@ Output:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill doctor --json
+<meta-skill-root>/scripts/metaskill doctor --json
 ```
 
 ### `workbench init`
@@ -159,7 +161,7 @@ Output:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill workbench init --target plugins/dots/skills/my-skill --json
+<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir> --json
 ```
 
 ### `sessions list`
@@ -190,7 +192,7 @@ Output:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill sessions list --limit 25 --archived all --query "skill doctor" --json
+<meta-skill-root>/scripts/metaskill sessions list --limit 25 --archived all --query "skill doctor" --json
 ```
 
 ### `sessions show`
@@ -217,7 +219,7 @@ Output:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill sessions show 019ed74b-e8d8 --max-chars 12000
+<meta-skill-root>/scripts/metaskill sessions show 019ed74b-e8d8 --max-chars 12000
 ```
 
 ### `eval materialize`
@@ -267,7 +269,7 @@ What it does:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval lint --suite .<skill-name>/evals.json --json
+<meta-skill-root>/scripts/metaskill eval lint --suite .<skill-name>/evals.json --json
 ```
 
 ### `eval run`
@@ -405,7 +407,7 @@ needs human calibration.
 Packet mode:
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval human --run <run-dir> --trial <trial-id> --json
+<meta-skill-root>/scripts/metaskill eval human --run <run-dir> --trial <trial-id> --json
 ```
 
 What it returns:
@@ -418,7 +420,7 @@ What it returns:
 Record mode:
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval human \
+<meta-skill-root>/scripts/metaskill eval human \
   --run <run-dir> \
   --trial <trial-id> \
   --grader human-reviewer \
@@ -461,7 +463,7 @@ Output:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval calibrate --run <run-dir> --metric usefulness --json
+<meta-skill-root>/scripts/metaskill eval calibrate --run <run-dir> --metric usefulness --json
 ```
 
 ### `eval compare`
@@ -480,7 +482,7 @@ What it does:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval compare --run <run-dir> --baseline no-skill --candidate current --json
+<meta-skill-root>/scripts/metaskill eval compare --run <run-dir> --baseline no-skill --candidate current --json
 ```
 
 ### `eval list`
@@ -566,7 +568,7 @@ Inputs:
 Example:
 
 ```sh
-plugins/meta-skill/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
+<meta-skill-root>/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
 ```
 
 ### `benchmark run`
@@ -684,15 +686,15 @@ Output:
 ### First-time setup for a target
 
 ```sh
-plugins/meta-skill/scripts/metaskill doctor --json
-plugins/meta-skill/scripts/metaskill workbench init --target <target> --json
+<meta-skill-root>/scripts/metaskill doctor --json
+<meta-skill-root>/scripts/metaskill workbench init --target <target> --json
 ```
 
 ### Add or refresh tasks from the suite
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval lint --json
-plugins/meta-skill/scripts/metaskill eval materialize --json
+<meta-skill-root>/scripts/metaskill eval lint --json
+<meta-skill-root>/scripts/metaskill eval materialize --json
 ```
 
 Then edit the generated task `task.md` files and any validators or fixtures.
@@ -700,13 +702,13 @@ Then edit the generated task `task.md` files and any validators or fixtures.
 ### Run and inspect a suite
 
 ```sh
-plugins/meta-skill/scripts/metaskill eval run --json
-plugins/meta-skill/scripts/metaskill eval progress --run <run-id> --watch --json
-plugins/meta-skill/scripts/metaskill eval grade --run <run-id> --json
-plugins/meta-skill/scripts/metaskill eval human --run <run-id> --json
-plugins/meta-skill/scripts/metaskill eval calibrate --run <run-id> --json
-plugins/meta-skill/scripts/metaskill eval compare --run <run-id> --baseline no-skill --candidate current --json
-plugins/meta-skill/scripts/metaskill eval report --run <run-id>
+<meta-skill-root>/scripts/metaskill eval run --json
+<meta-skill-root>/scripts/metaskill eval progress --run <run-id> --watch --json
+<meta-skill-root>/scripts/metaskill eval grade --run <run-id> --json
+<meta-skill-root>/scripts/metaskill eval human --run <run-id> --json
+<meta-skill-root>/scripts/metaskill eval calibrate --run <run-id> --json
+<meta-skill-root>/scripts/metaskill eval compare --run <run-id> --baseline no-skill --candidate current --json
+<meta-skill-root>/scripts/metaskill eval report --run <run-id>
 ```
 
 Use `eval list --json` to find earlier run ids in the same workbench.
@@ -714,7 +716,7 @@ Use `eval list --json` to find earlier run ids in the same workbench.
 ### Validate a skill payload
 
 ```sh
-plugins/meta-skill/scripts/metaskill validate <skill-dir> --json
+<meta-skill-root>/scripts/metaskill validate <skill-dir> --json
 ```
 
 ### Dogfood the skill lifecycle
@@ -753,7 +755,7 @@ per-run summaries instead of hand-authoring them.
 
 ## Boundaries
 
-- Prefer the CLI over calling helper code under `plugins/meta-skill/src/` directly.
+- Prefer the CLI over calling helper code under `<meta-skill-root>/src/` directly.
 - Use App Server as the eval runner.
 - Keep task text visible and literal; no hidden task metadata.
 - Keep shared behavior at the plugin CLI layer; do not recreate worker-local

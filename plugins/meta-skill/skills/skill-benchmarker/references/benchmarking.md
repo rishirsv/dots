@@ -262,11 +262,11 @@ Watch for:
 Use the central CLI:
 
 ```sh
-plugins/meta-skill/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
-plugins/meta-skill/scripts/metaskill benchmark run --benchmark .<skill-name>/benchmarks/core.json --json
-plugins/meta-skill/scripts/metaskill eval grade --run <run-id-or-path> --json
-plugins/meta-skill/scripts/metaskill benchmark report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
-plugins/meta-skill/scripts/metaskill benchmark history --benchmark .<skill-name>/benchmarks/core.json --json
+<meta-skill-root>/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
+<meta-skill-root>/scripts/metaskill benchmark run --benchmark .<skill-name>/benchmarks/core.json --json
+<meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> --json
+<meta-skill-root>/scripts/metaskill benchmark report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
+<meta-skill-root>/scripts/metaskill benchmark history --benchmark .<skill-name>/benchmarks/core.json --json
 ```
 
 Run `eval report` when you need the full trial table. Run `benchmark report`
