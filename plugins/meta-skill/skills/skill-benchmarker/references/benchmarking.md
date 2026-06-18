@@ -40,9 +40,9 @@ that a quality loop, trigger tuning run, or formal suite run instead.
 |---|---|
 | **benchmark profile** | A JSON file under `.<skill-name>/benchmarks/` selecting tasks, candidates, repetitions, gates, metrics, and report policy. |
 | **task bank** | The stable set of suite cases selected by the profile. |
-| **baseline** | The comparison candidate, usually `no-skill` for skill lift or `current` for promotion. |
+| **baseline** | The comparison candidate, usually `no-skill` for skill lift or `current` for release-readiness checks. |
 | **payload candidate** | The skill-bearing candidate being compared with the baseline. |
-| **gate** | A required grader result that blocks promotion when it fails. |
+| **gate** | A required grader result that rejects the candidate for the measured scope when it fails. |
 | **scorecard** | The benchmark-level summary derived from run artifacts. |
 | **history** | Prior runs associated with the same benchmark profile. |
 
@@ -105,7 +105,7 @@ Use this shape:
     }
   ],
   "calibration": {
-    "human_spot_check": "when promotion depends on subjective quality"
+    "human_spot_check": "when selection depends on subjective quality"
   },
   "integrity": {
     "run_null_candidate_when_possible": true,
@@ -146,8 +146,9 @@ they must not require unstated task behavior.
 
 ## Candidate And Baseline Policy
 
-Use `no-skill` as the baseline when the decision is skill lift. Use `current` as
-the baseline when the decision is whether an edited candidate is promotable.
+Use `no-skill` as the baseline when the decision is skill lift. Use `current`
+as the baseline when the decision is whether an edited candidate is
+release-ready for the measured scope.
 
 Keep the visible task bytes stable across candidates. Do not write "use the
 skill" into `task.md`; candidate setup supplies the skill payload.
@@ -160,15 +161,15 @@ Choose the most exact fair grader:
   behavior
 - model judges for semantic quality, completeness, groundedness, and multiple
   valid answers
-- human grades for taste, domain judgment, promotion decisions, and model-judge
-  calibration
+- human grades for taste, domain judgment, release-readiness decisions, and
+  model-judge calibration
 
-Use gates for must-not-break checks. A candidate with a failed gate is not
-promotable even when its average score improves.
+Use gates for must-not-break checks. A candidate with a failed gate is rejected
+for the measured scope even when its average score improves.
 
 Calibrate model judges against human labels before using judge scores for
-high-judgment promotion. Give judges an `unknown` escape when evidence is
-insufficient or contradictory.
+high-judgment release or selection decisions. Give judges an `unknown` escape
+when evidence is insufficient or contradictory.
 
 ## Repeated Trials And Reliability
 
@@ -191,7 +192,8 @@ Do not trust a benchmark until basic integrity checks pass:
 - null or trivial submissions fail when a task has deterministic validators
 - expected behavior in the grader is visible in `task.md`
 - runner environment, candidate ref, dirty flag, and payload digest are recorded
-- failed or surprising transcripts are inspected before promotion
+- failed or surprising transcripts are inspected before a release or selection
+  recommendation
 
 For web-enabled or public benchmark material, treat contamination as a live
 risk. Avoid publishing answer keys or worked solutions where future agents can
@@ -241,8 +243,8 @@ report the benchmark result as a recommendation with conditions:
 - grader gate failures, profile gate failures, and profile gate unknowns are 0
 - release-critical unknown rate is 0 or explicitly accepted
 - candidate regressions on must-not-break tasks are 0
-- model-judge promotion claims have a calibration artifact or a stated human
-  spot-check decision
+- model-judge release or selection claims have a calibration artifact or a
+  stated human spot-check decision
 - coverage limits name the unmeasured task families
 
 ## Failure Modes

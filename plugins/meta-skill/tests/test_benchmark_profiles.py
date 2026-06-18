@@ -135,7 +135,7 @@ description: "Use for testing."
                     "candidates": {"baseline": "no-skill", "payloads": ["current"]},
                     "metrics": ["behavior_pass_rate", "unknown_rate", "pass_at_k", "pass_caret_k", "tokens"],
                     "gates": [{"metric": "quality", "required_label": "pass"}],
-                    "calibration": {"human_spot_check": "before promotion"},
+                    "calibration": {"human_spot_check": "before release selection"},
                     "report": {"include_history": True, "include_coverage_limits": True},
                 },
             )

@@ -39,8 +39,6 @@ Route away when the request is not benchmark-shaped:
   verification of one skill.
 - Use `skill-writer` when the target skill does not exist or needs eval seed
   handoff material.
-- Use `skill-evaluator` when the skill exists but needs first-pass suite intake,
-  materialization, grading design, human review, or calibration.
 
 Do not call a single ad hoc run a benchmark. Call it a quality loop, trigger
 tuning run, one-off trial, or formal suite run unless it uses a stable profile
@@ -128,7 +126,7 @@ Render the decision-level report:
 Report behavior pass rate, unknown rate, gate failures, profile gate failures,
 impact rows, reliability rows, token usage when recorded, and coverage limits.
 Read failed, surprising, improved, regressed, ungraded, and model/human-disagreed
-trials before recommending promotion.
+trials before making a release or selection recommendation.
 
 For release-readiness decisions, treat the scorecard as evidence, not an
 automatic approval. A conservative release recommendation needs: payload
@@ -136,7 +134,7 @@ validation passed, suite lint and benchmark lint reviewed, all selected trials
 completed, all selected trials graded or intentionally human-reviewed, zero
 grader gate failures, zero profile gate failures or unknowns, no release-critical
 unknowns, no candidate regressions on must-not-break tasks, and calibration
-artifacts when model-judge scores affect promotion.
+artifacts when model-judge scores affect release or selection decisions.
 
 ### 5. Maintain History
 
@@ -171,6 +169,7 @@ Close with:
 - Benchmark stable profiles, not ad hoc runs.
 - Keep task and grader authority in `evals.json` and case folders.
 - Keep benchmark profiles in `.<skill-name>/benchmarks/`.
-- Report gates, unknowns, and coverage limits before promotion claims.
+- Report gates, unknowns, and coverage limits before release or selection
+  recommendations.
 - Route suite authoring, grading design, human calibration, and target fixes to
   the owning specialist.

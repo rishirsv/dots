@@ -21,14 +21,11 @@ Evaluator:
 What we are deciding: whether the skill produces useful results on realistic
 tasks.
 Recommended path: quality loop.
-Definition: a quality loop is a small capability eval over realistic tasks that
-shows whether the skill helps and where it struggles.
-Why this fits: you need behavioral signal, but not durable evidence yet.
-Starting signal: common workflows and any review notes we already have.
-Evidence we need: realistic prompts, expected qualities, and a judge rubric.
-What this can prove: whether the skill helps on the measured examples.
-What it cannot prove yet: broad reliability or trigger behavior.
-Next step: I will sketch a small prompt set and grading standard for review.
+Definition: a quality loop is a small check over realistic tasks that shows
+whether the skill helps and where it struggles.
+Why this fits: you need behavioral signal, not durable release evidence.
+Evidence we need: a few realistic prompts and what good looks like.
+Next step: I will sketch three examples for review.
 ```
 
 ## Route Example: Trigger Tuning
@@ -48,14 +45,9 @@ Recommended path: trigger tuning.
 Definition: trigger tuning checks should-trigger prompts, should-not-trigger
 near misses, and ambiguous prompts so the skill fires in the right lane.
 Why this fits: description changes affect routing, not just answer quality.
-Starting signal: changed frontmatter.
-Evidence we need: should-trigger prompts, near-miss should-not-trigger prompts,
-and repeated trials if activation varies.
-What this can prove: whether the candidate description improves activation on
-the measured prompt set.
-What it cannot prove yet: output quality after the skill activates.
-Next step: I will sketch a balanced prompt set, then we can test activation
-before judging output quality.
+Evidence we need: a few should-trigger, should-not-trigger, and ambiguous
+prompts; repeat only if activation looks inconsistent.
+Next step: I will validate the skill first, then test whether routing improved.
 ```
 
 ## Route Example: Judge Alignment
@@ -74,14 +66,9 @@ Recommended path: judge alignment.
 Definition: judge alignment compares model-judge labels against human labels so
 we know when judge scores are trustworthy.
 Why this fits: judge scores will influence a quality decision.
-Starting signal: model judge grades that need a human standard.
-Evidence we need: human-labeled pass and fail examples, model grades on the same
-trials, and disagreement analysis.
-What this can prove: whether the judge finds failures and recognizes passes on
-the checked examples.
-What it cannot prove yet: future performance outside the labeled distribution.
-Next step: I will collect a small labeled set, compare model and human labels,
-and call out false passes, false fails, unknowns, and the judge trust band.
+Evidence we need: a few human-labeled pass and fail examples.
+Next step: compare those labels with the judge's labels, then say where the
+judge is and is not trustworthy.
 ```
 
 ## Multi-Turn Clarification
@@ -109,12 +96,12 @@ Just try one prompt first.
 Evaluator:
 
 ```text
-Recommended path: one-off trial through the owning specialist.
+Recommended path: one-off trial.
 Definition: a one-off trial is one exploratory run; it can expose a useful
 signal but cannot prove repeatability or baseline lift.
 Why this fits: you asked for one prompt, not a suite with baselines and grades.
-Next step: use the shared trial-run workflow with the skill's current owner;
-come back to `skill-evaluator` if the result should become a multi-case suite.
+Next step: run the one prompt as an exploratory trial; if it reveals a pattern,
+turn that pattern into a small suite later.
 ```
 
 ## Redirect To No Suite Yet
@@ -131,8 +118,7 @@ Evaluator:
 Recommended path: no suite yet.
 Definition: no suite yet means the target is too unstable or underspecified for
 a useful eval suite.
-Why this fits: a formal suite would chase a moving target before the skill's job
-is stable.
+Why this fits: the skill's job is not stable enough for fair evaluation yet.
 Next step: use `skill-writer` or `skill-doctor` to stabilize the skill first;
 then return for a quality loop or formal suite.
 ```
