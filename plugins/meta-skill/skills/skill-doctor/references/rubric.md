@@ -1,7 +1,7 @@
-# Judge Review
+# Judge
 
-The house-style scoring rubric. A Judge Review produces a **Quality page**
-(`review.md` in the workbench) with an **Overall Quality Score** plus per-phase
+The house-style scoring rubric. A Judge review produces a **Quality page**
+(`judge-review.md` in the workbench) with an **Overall Quality Score** plus per-phase
 and per-dimension scores, so "improve my skill" gets a number, not just prose.
 
 Judge against concrete house style, not abstract principles.
@@ -120,9 +120,9 @@ feeds the dimension scores above.
 - **Runtime clarity** — default path, output contract, stop/ask points, final checks.
 - **Resources** — linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - **Runtime contamination** — copied user prompt text, model/provider names, raw research links, author/source provenance, source-specific reference titles, thread IDs, one-off file paths or artifact names, and source-note prohibitions living in the payload instead of reusable behavior.
-- **Controls** — user files as data, approval gates, external writes, package/publish gates.
+- **Controls** — user files as data, user gates, external writes, package/publish gates.
 - **Eval evidence** — captured deterministic test/validation results and any saved failure evidence.
-- **Review score** — the `review.md` Quality Score, Discovery, Implementation, Verify-tests, and combined findings.
+- **Review score** — the `judge-review.md` Quality Score, Discovery, Implementation, Verify-tests, and combined findings.
 
 ## Worked example
 
@@ -147,7 +147,7 @@ same shape with 5 dimensions (**Total / 15**).
 
 ## Output
 
-Write to `<project>/.<skill-name>/review.md`:
+Write to `<project>/.<skill-name>/judge-review.md`:
 
 - **Overall Quality Score** + the three phase percentages.
 - Discovery: the 2–4 sentence assessment, then the scored table (a **Reasoning**
@@ -158,6 +158,5 @@ Write to `<project>/.<skill-name>/review.md`:
 - **Combined findings:** prioritized gaps, each with the rule it violates and a
   suggested fix, highest-impact first.
 
-**Propose only** — the completed `review.md` is *evidence*, not authorization.
-Edits land only when the user asks to make/apply/update/patch/fix (see
-[edit.md](edit.md)).
+**Propose only** — the completed `judge-review.md` is evidence, not a source
+edit request. Source edits land only through Apply (see [edit.md](edit.md)).

@@ -1,6 +1,6 @@
 # Verify
 
-After approved edits are applied, confirm the targeted problem is resolved
+After Apply edits are made, confirm the targeted problem is resolved
 without regressing the skill, then refresh the score. The doctor confirms *one*
 case; `skill-evaluator` measures many tasks across candidates.
 
@@ -13,13 +13,13 @@ plugins/meta-skill/scripts/metaskill validate <skill-dir>
 This runs the canonical deterministic checks from the plugin-level CLI source
 tree and prints a combined **Verify-tests %** — one of the three thirds of the
 Overall Quality Score. Re-running it here refreshes that third after an edit;
-the same runner fills it during a Judge Review (see
+the same runner fills it during Judge (see
 [rubric.md](rubric.md)).
 
 ## Confirm the fix
 
-- **After Diagnose:** re-run the reproduced failing case; confirm it no longer occurs.
-- **After a Judge Review:** re-check that each addressed gap is now closed.
+- **After Doctor:** re-run the reproduced failing case; confirm it no longer occurs.
+- **After Judge:** re-check that each addressed gap is now closed.
 
 ## Regression scan (quick, static)
 

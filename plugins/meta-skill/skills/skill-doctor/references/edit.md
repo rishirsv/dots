@@ -1,10 +1,12 @@
-# Diagnose/Edit Candidate And Source Updates
+# Doctor Candidate And Source Updates
 
-Read this as part of the Diagnose/Edit workflow when translating skill evidence
-into the smallest useful improvement.
+Read this as part of the Doctor workflow when translating skill
+evidence into the smallest useful proposal. Source updates are handled only in
+Apply after the user asks for a specific source change.
 
 Workbench paths below are shorthand for the target project root's
-`<project>/.<skill-name>/` dir (e.g. `review.md` = that dir's `review.md`). The
+`<project>/.<skill-name>/` dir (e.g. `judge-review.md` = that dir's
+`judge-review.md`). The
 project root already names the skill and contains the portable skill payload at
 `<project>/skill/`, so do not add another skill-name namespace. Review *lenses*
 live in [rubric.md](rubric.md#review-lanes); the scoring rubric is
@@ -14,32 +16,35 @@ live in [rubric.md](rubric.md#review-lanes); the scoring rubric is
 
 | User asks for | Default route |
 |---|---|
-| "improve this skill", "review this skill", "diagnose this fail state", "what would you change", "is this good" | Clarify and Diagnose/Edit |
-| "update", "patch", "fix", "apply your changes", "make the edit" | Apply a surgical edit |
+| "improve this skill", "review this skill", "diagnose this fail state", "what would you change", "is this good" | Clarify and Doctor |
+| "apply proposal 1", "make that exact change", "update SKILL.md with the proposed routing change" | Apply |
 | "run evals", "use this trace", "use a subagent", "iterate", "autonomously improve" | Evidence loop |
 | "test one prompt", "try the candidate in another thread", "use a worktree", "trial this improvement" | Skill trial run |
-| Ambiguous improvement request | Clarify and Diagnose/Edit |
+| Ambiguous improvement request | Clarify and Doctor |
 
-Clarify and Diagnose/Edit is the default. **Do not silently rewrite the target
+Clarify and Doctor is the default. **Do not silently rewrite the target
 skill payload, generated plugin packages, docs, or source files just because the
 user gave feedback or asked what should change.** Human feedback is *evidence*;
-it is not edit authorization unless the user asks to **make, apply, update,
-patch, or fix** now.
+it is not source-edit permission. Tentative or mixed wording such as "could
+implement," "maybe update," "I think we should," or "implement and propose" is
+still a proposal request. Apply only when the user clearly asks for a specific
+source change.
 
-Writing `review.md` (and `spec.md`) is allowed and expected during
-diagnosis/review — they are review artifacts, not payload edits.
+Writing review notes, proposals, failure notes, scorecards, and other
+supporting docs is allowed and expected during diagnosis/review — they are
+evidence artifacts, not payload edits.
 
 ## First Read
 
-Before diagnosing or changing anything in the Diagnose/Edit workflow, identify:
+Before diagnosing or proposing anything in the Doctor workflow, identify:
 
 - skill name and folder
 - current description and trigger contract
 - core job
 - linked references, scripts, assets, and metadata
-- `review.md` and other `.<skill-name>/` evidence available
+- `judge-review.md` and other `.<skill-name>/` evidence available
 - the user's requested scope
-- whether the user authorized edits or only requested diagnosis
+- whether the current turn is propose-only or Apply
 
 Do not let a broad improvement request become an unbounded rewrite.
 
@@ -48,7 +53,7 @@ Do not let a broad improvement request become an unbounded rewrite.
 Valid improvement evidence:
 
 - file/link review failures or warnings
-- a completed `review.md` with a concrete finding heading
+- a completed `judge-review.md` with a concrete finding heading
 - explicitly captured deterministic test or validation output
 - a subagent's review findings (as evidence support)
 - saved artifacts tied to a user-observed failure
@@ -60,18 +65,18 @@ different concrete source. If evidence is missing, ask the user to provide
 concrete feedback, run available deterministic tests, inspect saved failure
 evidence, or authorize a manual review path.
 
-For read-only review requests, complete `review.md` as a Quality page using
+For read-only review requests, complete `judge-review.md` as a Quality page using
 [rubric.md](rubric.md) when artifact writes are allowed. Treat broad "do not
 edit files" instructions as forbidding *payload, package, docs, and source*
-edits, not the review-artifact write — unless the user explicitly forbids
-artifact writes too. If zero writes are required, say the full review artifact
-cannot be produced under that constraint, then do a manual read-only review or
-ask permission to write `review.md`. The completed report is the evidence
-artifact; for later edit requests, cite `review.md` and the finding heading
-before changing the portable payload.
+edits, not supporting-doc writes — unless the user explicitly forbids artifact
+writes too. If zero writes are required, say the full review artifact cannot be
+produced under that constraint, then do a manual read-only review or ask whether
+to write supporting docs. The completed report is the evidence artifact; for
+later edit requests, cite `judge-review.md` and the finding heading before
+changing the portable payload.
 
 For subagent review, the subagent is evidence support only. The parent owns
-diagnosis, candidate edits, final editing, validation, and the recommendation.
+diagnosis, candidate proposals, Apply, validation, and the recommendation.
 
 ## Skill Trial Run
 
@@ -80,8 +85,8 @@ For one-off prompt-doctor improvements, read
 worktree child thread when the candidate edit should be tested without mutating
 the parent checkout. The child may apply or inspect the candidate in its
 worktree and return the structured trial result; the parent decides whether to
-apply the source edit, refresh review/verify evidence, or escalate to
-`skill-evaluator`.
+ask the user to apply the source edit, refresh review/verify evidence after
+Apply, or escalate to `skill-evaluator`.
 
 This route is not a full evaluation suite. Use it for one realistic prompt or
 review pass that would make the edit decision clearer.
@@ -90,8 +95,8 @@ review pass that would make the edit decision clearer.
 
 1. Name the observed fail state in plain language.
 2. Classify: activation, runtime clarity, output contract, resource, runtime
-   contamination, evidence, cross-skill boundary, approval/control, or
-   validation gap.
+   contamination, evidence, cross-skill boundary, user control, or validation
+   gap.
 3. Separate a recurring failure pattern from a one-off edge eval.
 4. Find the smallest likely source: description, boundary, example, workflow
    branch, output contract, reference pointer, script contract, or missing gate.
@@ -104,11 +109,11 @@ review pass that would make the edit decision clearer.
    concept is the concrete recurring failure; when a negative guard is needed,
    pair it with the desired behavior.
 7. Recommend one — the smallest strong fix — and say why.
-8. If the user authorized direct edits, apply it. Otherwise stop with a standard
-   clarify-style approval question.
+8. Stop with a standard clarify-style question unless the top-level workflow has
+   entered Apply.
 9. Add a broad rule only when the agent would likely repeat the mistake without it.
-10. Record changed behavior, evidence, rejected tempting edits, and residual risk
-   in `spec.md` when durable notes are needed.
+10. Record changed behavior, evidence, rejected tempting edits, and residual
+   risk in a supporting doc when durable notes are needed.
 
 Prefer replacing a misleading sentence over adding a prohibition. Preserve
 unrelated behavior.
@@ -143,9 +148,12 @@ branch, or evidence row causing the risk.
   `plugins/meta-skill/skills/<name>/`; never hand-edit generated packages under
   `dist/**`. Other projects: find the equivalent source-vs-build split first.
 - Preserve name and folder unless rename is in scope.
-- Preserve the user-approved trigger meaning.
+- Preserve the intended trigger meaning.
 - Preserve output contract, tone, and runtime surface unless they are the problem.
-- For direct edit requests, still state the diagnosis briefly before patching.
+- For Apply, briefly restate the requested change and files in scope before
+  patching.
+- For direct, specific edit requests, still state the diagnosis briefly before
+  patching. If the request is broad or exploratory, propose first.
 - Keep unrelated resources unchanged.
 - Prefer smaller changes when two edits protect behavior equally well.
 - Reject edits that restate existing guidance or trade one ambiguity for another.
