@@ -115,7 +115,7 @@ Use this routing table:
 | No-skill/current/candidate comparison, held-out tasks, repeated runs, variance, scoring, or release-readiness evidence | Route to `skill-evaluator`. |
 | Recurring gates, publish-readiness history, or benchmark trend reporting with an existing stable suite/profile | Route to `skill-benchmarker`. |
 | Recurring gates, publish-readiness history, or benchmark trend reporting without an existing stable suite/profile | Route to `skill-evaluator` first. |
-| A recurring validation failure that should apply to every skill | Add or update shared checks under `plugins/meta-skill/src/`; do not create worker-local scripts. |
+| A recurring validation failure that should apply to every skill | Record a Meta-Skill validation follow-up with the failing pattern and proposed shared check; implement validator code only when the user explicitly asks for Meta-Skill validation changes. |
 
 When escalating, pass the useful Doctor evidence forward: changed files,
 approved proposal, failing prompt or finding, trial result if any, validation

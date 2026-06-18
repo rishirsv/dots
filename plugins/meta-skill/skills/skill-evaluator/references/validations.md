@@ -199,8 +199,10 @@ mid-conversation work that may not appear in `response.md`.
 
 ## Boundary With skill-doctor
 
-A failure pattern general to *all* skills graduates to a shipped script in the
-`skill-doctor` Verify path. A failure specific to one target stays local to the
+A failure pattern general to *all* skills should be reported as a proposed
+shared-check follow-up for `skill-doctor` Verify. Keep the current check
+task-local until an explicit implementation lane approves adding or changing
+shipped validation scripts. A failure specific to one target stays local to the
 eval suite.
 
 If a validation failure identifies a fix, report the failure and hand it to

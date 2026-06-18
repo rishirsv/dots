@@ -293,8 +293,10 @@ failure reproduction to `skill-doctor`.
 
 For `codex_app_server`, use the CLI reference to run through the plugin adapter.
 The worker should consume run artifacts and progress files, not call raw App
-Server JSON-RPC directly. App Server is the primary workbench runner, but live
-control commands should not be added unless a real eval task requires them.
+Server JSON-RPC directly. If run artifacts or progress files cannot support a
+real eval task, record a harness capability gap and route it as an explicit
+Meta-Skill implementation follow-up; do not add worker commands, raw App Server
+calls, or runner controls from the evaluator lane.
 Before the first formal App Server suite on a machine, or when runner readiness
 is uncertain, run `plugins/meta-skill/scripts/metaskill doctor --json`.
 

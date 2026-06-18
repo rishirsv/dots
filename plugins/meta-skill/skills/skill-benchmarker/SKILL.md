@@ -141,9 +141,11 @@ artifacts when model-judge scores affect promotion.
 ### 5. Maintain History
 
 Treat the benchmark profile as a living measurement artifact. Keep it stable
-enough for history to matter, but repair it when tasks saturate, validators
-reject valid solutions, judges drift, profile gates become stale, or missing
-usage/transcript evidence makes the scorecard misleading.
+enough for history to matter, but maintain the profile when selectors, gates,
+metrics, or report policy become misleading. If tasks, graders, validators, or
+calibration need changes, route to `skill-evaluator`; if harness or runner
+behavior is unfair, record an implementation follow-up requiring explicit
+approval.
 
 Prefer explicit `case_ids` for benchmark profiles that are meant to support
 history. Type or split selectors are useful while shaping a task bank, but they

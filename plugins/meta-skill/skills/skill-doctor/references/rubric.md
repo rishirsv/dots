@@ -106,9 +106,11 @@ combined pass-rate. Two task groups today:
   (stacked MUST/ALL-CAPS), `dead_references` (broken local links).
 
 Validation % = Pass count / total across all tasks. Warning and Fail do not
-count as Pass. Add general checks to the root CLI validator source, not to a
-worker-local script folder. Judgment anti-patterns (wisdom-vs-directive, jargon
-names, contradictions) stay in the scored dimensions above, not here.
+count as Pass. If a recurring check seems missing, record a Meta-Skill
+validation follow-up with the failing pattern and proposed shared check; do not
+change validator, CLI, or package code from a Judge review. Judgment
+anti-patterns (wisdom-vs-directive, jargon names, contradictions) stay in the
+scored dimensions above, not here.
 
 *Future validation checks (not yet implemented — note, don't fake-pass):*
 artifact integrity, deprecated-surface avoidance.

@@ -80,12 +80,12 @@ creates a run and records results.
 
 ## Source Layout
 
-The source plugin lives under `meta-skill/`. Generated package copies live under
-`plugins/codex/meta-skill/` and `plugins/claude/meta-skill/`; do not edit those
-generated copies by hand.
+The source plugin lives under `plugins/meta-skill/`. Generated package copies
+live under `dist/codex/plugins/meta-skill/` and
+`dist/claude/plugins/meta-skill/`; do not edit those generated copies by hand.
 
 ```text
-meta-skill/
+plugins/meta-skill/
   .meta-skill/
     docs/
       ARCHITECTURE.md
@@ -134,10 +134,11 @@ such as this architecture reference and source-grounded research reports.
 
 There are three important source/generated boundaries:
 
-- Edit `meta-skill/skills/`, `meta-skill/references/`, and `meta-skill/src/`
-  when changing Meta-Skill behavior.
-- Do not hand-edit `plugins/codex/meta-skill/` or `plugins/claude/meta-skill/`;
-  those directories are regenerated package copies.
+- Edit `plugins/meta-skill/skills/`, `plugins/meta-skill/references/`, and
+  `plugins/meta-skill/src/` when changing Meta-Skill behavior.
+- Do not hand-edit `dist/codex/plugins/meta-skill/` or
+  `dist/claude/plugins/meta-skill/`; those directories are regenerated package
+  copies.
 - Do not package `.<skill-name>/` workbench state into portable skills. Workbench
   files are for authoring, evaluation, reports, and local evidence.
 
@@ -1425,9 +1426,11 @@ For Meta-Skill, the package script copies:
 - `plugins/meta-skill/src/` to generated `src/`
 
 It also regenerates vendor-specific plugin manifests and marketplace entries.
-Install or refresh local plugins with the Codex plugin CLI after packaging.
+After packaging, inspect generated package diffs. Install or refresh local
+plugins with the Codex plugin CLI only when the user explicitly asks for local
+install or sync; otherwise report the install command as a follow-up.
 
-When editing anything under `meta-skill/`, run:
+When editing anything under `plugins/meta-skill/`, run:
 
 ```sh
 scripts/package-plugins.sh

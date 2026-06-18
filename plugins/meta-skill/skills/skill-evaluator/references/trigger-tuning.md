@@ -18,9 +18,11 @@ Use trigger tuning when:
 Skip trigger tuning for a one-off content fix that does not affect discovery.
 
 Before tuning a frontmatter or description change, run
-`plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`. Fix
-frontmatter shape, unknown keys, missing body, or package validation failures
-before measuring activation.
+`plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`. If
+validation fails, stop trigger tuning and hand the failures to `skill-doctor`,
+or ask the user for explicit approval before any implementation work. Evaluator
+may propose candidate wording, but it does not edit frontmatter, descriptions,
+or package-validation code.
 
 ## Task Set
 
@@ -61,7 +63,8 @@ correctly and still produce a weak answer.
 2. Run current skill and candidate skill with repetitions.
 3. Compare should-trigger hit rate, should-not-trigger quiet rate, and unknowns.
 4. Inspect false activations and missed activations.
-5. Revise the `description` only when the evidence points to a routing defect.
+5. Propose a `description` revision only when the evidence points to a routing
+   defect; do not apply it from the evaluator lane.
 6. Re-run the same validation prompts; use held-out prompts before selection.
 
 Do not optimize the description against the exact phrasing of the validation set.

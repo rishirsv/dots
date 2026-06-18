@@ -181,12 +181,16 @@ durable evidence source.
 
 Use this loop for a small trial set:
 
-1. Draft or patch the skill in the parent.
+1. Start from the current approved draft or candidate. If parent-side source
+   changes are explicitly authorized, patch only that approved scope; otherwise
+   record candidate wording as a proposal and test it in an isolated child or
+   worktree.
 2. Run the selected prompt or prompt set in isolated children.
 3. Read trial results and inspect only the evidence needed to classify failures.
-4. Revise the skill only for transferable failures: missing trigger boundary,
-   missing input requirement, unclear output contract, missing evidence rule,
-   weak style/register guidance, missing process/tool step, or overfit rule.
+4. Change parent source only when authorized; otherwise recommend changes only
+   for transferable failures: missing trigger boundary, missing input
+   requirement, unclear output contract, missing evidence rule, weak
+   style/register guidance, missing process/tool step, or overfit rule.
 5. Do not revise for exact wording differences, one-off facts, local paths,
    client names, or source-specific quirks.
 6. Rerun only affected prompts unless the change touches triggering or a shared

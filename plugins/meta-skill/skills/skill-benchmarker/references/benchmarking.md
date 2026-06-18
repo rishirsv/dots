@@ -224,8 +224,10 @@ model and human grades disagree, validators reject valid solutions, or reports
 depend on missing usage or transcript evidence.
 
 Benchmark profiles are living measurement artifacts. Keep them stable enough
-for history to matter, but repair them when the task, grader, or harness is
-unfair.
+for history to matter, but maintain only the selector, gates, metrics, and
+report policy. Route task, grader, validator, or calibration changes to
+`skill-evaluator`; record unfair harness or runner behavior as an implementation
+follow-up requiring explicit approval.
 
 ## Release Readiness
 

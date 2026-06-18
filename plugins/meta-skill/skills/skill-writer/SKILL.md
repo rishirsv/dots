@@ -255,10 +255,14 @@ hints, and any must-not-break constraints so the evaluator can compare outcomes
 across no-skill, current-skill, and edited-skill candidates.
 
 Stop before packaging, installing, publishing, syncing, external writes, or
-final delivery unless the user explicitly approved that action or the current
-repo instructions require it. When packaging is approved, use
-`plugins/meta-skill/scripts/metaskill package <skill-dir>`; it exports only the portable payload from the
-project root and excludes `.<skill-name>/`. In the final handoff, explain the
+final delivery unless the user explicitly approved that specific action. Repo
+instructions may identify the command to use after approval, but they do not
+authorize the action by themselves. If packaging or sync appears needed, report
+it as a follow-up and route lifecycle or release work through `meta-skill` or
+the appropriate specialist lane. When packaging is approved, use
+`plugins/meta-skill/scripts/metaskill package <skill-dir>`; it exports only the
+portable payload from the project root and excludes `.<skill-name>/`. In the
+final handoff, explain the
 eval manifest as authoring material, not runtime instructions. It is runnable by
 Skill Evaluator, but it is not evidence until a run, grades, comparison, and
 report exist.
