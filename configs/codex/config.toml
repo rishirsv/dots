@@ -65,14 +65,6 @@ trust_level = "trusted"
 [projects."/Users/rishi/Code/dots"]
 trust_level = "trusted"
 
-[hooks.state]
-
-[hooks.state."/Users/rishi/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:fd8c09f389b8127009b0a2f4ff4f97584e70ddfbb140cb84831ba567fda96d1e"
-
-[hooks.state."/Users/rishi/Code/agent/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:31a990d314a2077c46ae6d1550daf4607288f79aaa023d41516d38c2bdf759b6"
-
 [marketplaces.openai-bundled]
 last_updated = "2026-06-15T23:11:04Z"
 source_type = "local"
