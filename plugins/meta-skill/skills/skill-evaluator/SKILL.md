@@ -1,28 +1,28 @@
 ---
 name: skill-evaluator
-description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to show baseline and candidate state rows. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, one-off diagnosis/fixes, candidate generation, or recurring benchmark profiles."
+description: "Use when creating or running an eval suite for a skill or other target. Builds tasks, graders, validations, and reports that show baseline and candidate state rows. Not for authoring new skills, one-off diagnosis or fixes, generating candidate changes, or recurring benchmark profiles."
 ---
 
 # Skill Evaluator
 
-Author an **evaluation suite** for a target and run the parts that can be
-mechanized. The evaluator runs the same tasks under different agent-harness
-candidates: no skill, the current skill, and selected candidate skills. It
-does not fix the target and does not generate candidate changes.
+Build evaluation suites for a target and run the parts the harness can execute.
+A suite runs the same tasks against one or more agent-harness candidates, such
+as no skill, the current skill, or a named candidate skill. The evaluator
+records what happened; it does not edit the target or generate candidate
+changes.
 
-The suite has two pillars:
+Use two kinds of checks:
 
 - **Evaluations** — semantic, judge- or human-graded task outcomes.
 - **Validations** — deterministic pass/fail checks.
 
-Master a universal eval craft: judge guidance can be designed for any artifact
-with a clear job and observable outcomes. This skill **specializes in agent
-skills** with built-in defaults. For other artifacts, design the artifact entry
-mode first: what artifact is supplied, what task is run, what outcome is graded,
-and what runner or manual path can produce that outcome.
+For agent skills, use the built-in defaults for quality, triggering, and shared
+validation checks. For other artifacts, first define the artifact entry mode:
+what artifact is supplied, what task runs, what outcome is graded, and what
+runner or manual path can produce that evidence.
 
-**Measure, don't fix.** Report state rows, failed tasks, unknown evidence, and
-coverage limits; hand fixes to `skill-doctor`.
+Keep the lane narrow: measure behavior, report state rows, failed tasks,
+unknown evidence, and coverage limits, then route fixes to `skill-doctor`.
 
 ## Personality
 
@@ -44,7 +44,7 @@ process unless order affects validity. Use a warm, direct voice: explain why a
 choice matters, name a reasonable default when setup requires one, and make
 uncertainty visible without over-apologizing.
 
-When the user is unsure, offer the smallest trustworthy loop. When evidence is
+When the user is unsure, offer the smallest useful next step. When evidence is
 missing, say what is missing and how to get it. Treat `unknown`, calibration
 gaps, and coverage limits as useful signals, not failures to hide.
 
@@ -162,7 +162,7 @@ the user may not know it, then use the standard term consistently.
 
 ```text
 What we are deciding: <decision in the user's words>
-Evidence path: <one-off check | eval suite | benchmark profile | no suite yet>
+Evidence plan: <one-off check | eval suite | benchmark profile | no suite yet>
 Definition: <one-sentence definition of the selected path when useful>
 Why this fits: <context-specific reason>
 Starting signal: <real traces | known failure | manual check | synthetic hypothesis | none yet>
@@ -172,7 +172,7 @@ What it cannot prove yet: <coverage limit>
 Next step: <one concrete action>
 ```
 
-Name the smallest evidence path, then act on lightweight inspection, one-off
+Name the smallest evidence plan, then act on lightweight inspection, one-off
 review, deterministic validation, or drafting tasks. Before eval suites, runner
 setup, human review collection, or durable artifact creation, ask for
 confirmation with plain options such as "one-off check" or "eval suite." Ask
@@ -181,7 +181,7 @@ writes, or human-review standard.
 
 Route common requests this way:
 
-| User intent | Evidence path |
+| User intent | Evidence plan |
 |---|---|
 | "Is this skill good enough?" | Choose between static `skill-doctor` review, a 2-3 task eval suite, or no suite yet based on risk and existing evidence. |
 | "Did this change break anything?" | Regression or failure suite from known-good behavior. |
@@ -284,7 +284,7 @@ review. Do not broaden that claim beyond the checked slice.
 
 ### 7. Run And Report
 
-Use App Server for formal eval suites: multiple tasks, repetitions, baseline
+Use App Server for eval suites: multiple tasks, repetitions, baseline
 comparison, grading, reportable run evidence, or any decision that needs
 repeatability. Use direct Codex threads or subagents only for exploration:
 one-off checks, research, adversarial critique, product review, or repair work
@@ -292,7 +292,7 @@ that may later seed a suite. The CLI accepts only
 `codex_app_server` as a concrete eval runner.
 
 Use the child-thread workflow in [skill-trial-runs.md](../../references/skill-trial-runs.md)
-for exploratory one-off evidence outside a formal suite. Route doctor fixes and
+for exploratory one-off evidence outside an eval suite. Route doctor fixes and
 failure reproduction to `skill-doctor`.
 
 For `codex_app_server`, use the CLI reference to run through the plugin adapter.

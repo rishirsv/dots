@@ -1,6 +1,6 @@
 ---
 name: skill-benchmarker
-description: "The recurring measurement specialist within meta-skill: create, lint, run, report, and maintain benchmark profiles over existing evaluation suites for release readiness, trigger reliability, regression protection, and historical scorecards. Reached through meta-skill's routing; invoke directly only when named. Not for authoring first-pass eval suites, one-off checks, or fixing target skills."
+description: "Use when a stable eval suite needs a recurring benchmark profile for release readiness, trigger reliability, regression protection, history, or scorecards. Creates, lints, runs, reports, and maintains benchmark profiles. Not for first-pass eval suite authoring, one-off checks, or target-skill fixes."
 ---
 
 # Skill Benchmarker

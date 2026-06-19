@@ -40,9 +40,16 @@ Implementation, and Validation percentages.**
   specific content — the exact description phrase for Discovery, the exact
   section/example for Implementation. Name the weak phrase; never settle for
   "make it clearer."
-- **Flag awkward product language.** Penalize lane names used as verbs, category
-  arguments, metaphors, prompt-policy phrasing, and duplicated cautions when
-  plain workflow guidance would be clearer.
+- **Review runtime language end to end.** Penalize awkward product language,
+  lane names used as verbs, category arguments, metaphors, prompt-policy
+  phrasing, stale terms, and duplicated cautions when plain workflow guidance
+  would be clearer. Check the main body, examples, and linked references that
+  define the same behavior; do not stop at the description or title.
+- **Check the opening contract first.** The first prose block after the title
+  should tell the agent what this skill helps it do, the default operating path,
+  and the main boundary in plain language. Penalize intro blocks that stitch
+  together purpose, mechanics, philosophy, slogans, and lane boundaries without
+  a clear runtime contract.
 - **Lead with the verdict.** Each phase assessment opens with the overall
   judgment, then names the *single* main weakness.
 - **Judge relative to skill type.** A reference/pattern skill earns Workflow
@@ -85,9 +92,9 @@ would change future agent behavior. Do not restate the table.
 |---|---|---|---|
 | **Conciseness** | Lean enough to read during work? | 3 tight and purposeful; 2 somewhat redundant/verbose; 1 hard to scan; 0 bloated/confusing. | motivation, framework tours, citations; paragraph-long warnings |
 | **Actionability** | Tells the agent what to do or produce next? | 3 concrete steps/outputs/examples/checks/commands; 2 usable but abstract; 1 mostly principles; 0 no operational guidance. | bare command with no output shape or pass/fail; "be clear / comprehensive" |
-| **Workflow Clarity** | Main path and important branching clear? | 3 clear default path + checkpoints; 2 mostly clear with gaps; 1 ambiguous sequencing; 0 no workflow. | over-rigid long process; branches that don't change behavior; opening line describes the doc, not the job |
+| **Workflow Clarity** | Main path and important branching clear? | 3 clear default path + checkpoints; 2 mostly clear with gaps; 1 ambiguous sequencing; 0 no workflow. Cap at 2 when the opening contract is indirect, stitched together, or contradicted by later terms; cap at 1 when the runtime job, default path, or lane boundary remains unclear. | over-rigid long process; branches that don't change behavior; opening block describes the doc, debates taxonomy, or mixes purpose/mechanics/philosophy instead of stating the job; route names drift between body, examples, and references |
 | **Progressive Disclosure** | Optional details linked, not bloating the body? | 3 well-signaled local references; 2 acceptable but uneven; 1 details hidden or overstuffed; 0 broken/missing structure. | long examples inline; everything stuffed into SKILL.md |
-| **Directive Quality** | Directive over wisdom; *why* for non-obvious rules; generalized; plainly named? | 3 directive, reasoned, generalized, plain section names; 2 mostly, with some wisdom/shouting/overfit; 1 heavy motivation, stacked ALL-CAPS, or overfit to instances; 0 teaching-prose or contradictory rules. | wisdom-not-directives; stacked MUST/ALL-CAPS shouting; overfit to specific values; house-jargon section names; awkward lane-as-verb phrasing; system or policy text instead of workflow guidance; rules that don't earn their place |
+| **Directive Quality** | Directive over wisdom; *why* for non-obvious rules; generalized; plainly named? | 3 directive, reasoned, generalized, plain section names; 2 mostly, with some wisdom/shouting/overfit; 1 heavy motivation, stacked ALL-CAPS, or overfit to instances; 0 teaching-prose or contradictory rules. | wisdom-not-directives; stacked MUST/ALL-CAPS shouting; overfit to specific values; house-jargon section names; cute or metaphorical phrasing where a plain term would work; awkward lane-as-verb phrasing; system or policy text instead of workflow guidance; rules that don't earn their place |
 
 ## Validation
 
@@ -122,11 +129,16 @@ reported failure.
 
 - **Activation** — trigger clarity, realistic phrasing, near misses, non-trigger boundary.
 - **Runtime clarity** — default path, output contract, stop/ask points, final checks.
+- **Opening contract** — first runtime block states the job, default path, and
+  boundary plainly before deeper mechanics or philosophy.
+- **Terminology consistency** — route names, output labels, examples, and linked
+  references use the same plain vocabulary; stale names and near-synonyms are
+  called out as review findings.
 - **Resources** — linked references/scripts/assets, dependency clarity, source leakage, stale files.
 - **Runtime contamination** — copied user prompt text, model/provider names, raw research links, author/source provenance, source-specific reference titles, thread IDs, one-off file paths or artifact names, and source-note prohibitions living in the payload instead of reusable behavior.
 - **Language polish** — awkward product phrases, lane names used as verbs,
-  metaphorical wording, duplicated cautions, and meta/category arguments that
-  make the workflow harder to follow.
+  metaphorical wording, duplicated cautions, stale terms, and taxonomy debates
+  that make the workflow harder to follow.
 - **Controls** — user files as data, user gates, external writes, package/publish gates.
 - **Eval evidence** — captured validation results and any saved failure evidence.
 - **Review score** — the `judge-review.md` Judge Review Score, Discovery, Implementation, Validation, and combined findings.

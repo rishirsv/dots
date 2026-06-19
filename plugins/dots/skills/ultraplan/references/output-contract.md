@@ -2,6 +2,59 @@
 
 Read this before synthesis and before reviewing the upgraded plan.
 
+## Created Plan
+
+For a fresh plan, follow Codex Plan Mode format. The final official plan must be
+plan-only, concise by default, decision-complete, and wrapped in exactly one
+`<proposed_plan>` block.
+
+Tag rules:
+
+1. put `<proposed_plan>` on its own line
+2. start Markdown plan content on the next line
+3. put `</proposed_plan>` on its own line
+4. keep the tag names exactly as written
+5. produce at most one proposed-plan block per turn
+
+Default structure:
+
+```md
+<proposed_plan>
+# <Clear Title>
+
+## Summary
+- <goal, desired outcome, and chosen approach>
+
+## Implementation Changes
+- <grouped by subsystem or behavior>
+
+## Test Plan
+- <automated checks and manual scenarios>
+
+## Assumptions
+- <explicit defaults chosen where needed>
+</proposed_plan>
+```
+
+Include important public API, interface, type, data, migration, compatibility,
+or rollout notes inside `Implementation Changes` when they matter. Add a
+separate `Scope` section only when scope boundaries are genuinely needed to
+avoid implementation mistakes.
+
+Prefer behavior-level bullets over file-by-file inventories. Mention files only
+when needed to disambiguate a non-obvious change, and avoid naming more than
+three paths unless extra specificity is necessary to prevent mistakes. Keep
+bullets short and avoid explanatory sub-bullets unless they prevent ambiguity.
+
+For v1 feature-addition plans, do not invent detailed schema, validation,
+precedence, fallback, or wire-shape policy unless the request establishes it or
+it is needed to prevent a concrete implementation mistake. For straightforward
+refactors, keep the plan to summary, key edits, tests, and assumptions.
+
+Do not leave unresolved open questions in the plan body. If a decision blocks a
+complete plan, ask before writing or record the recommended default only after
+the user accepts it. Do not ask whether to proceed in the final output.
+
 ## Upgraded Plan
 
 Return the complete upgraded document in the same format as the input.

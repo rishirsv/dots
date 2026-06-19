@@ -21,7 +21,7 @@ Evaluator:
 ```text
 What we are deciding: whether the skill produces useful results on realistic
 tasks.
-Evidence path: eval suite.
+Evidence plan: eval suite.
 Definition: a small eval suite checks realistic tasks and shows behavior and
 failure modes.
 Why this fits: you need behavioral signal, not durable release evidence.
@@ -42,9 +42,9 @@ Evaluator:
 ```text
 What we are deciding: whether the new description activates the skill at the
 right times.
-Evidence path: eval suite.
+Evidence plan: eval suite.
 Definition: trigger tuning checks should-trigger prompts, should-not-trigger
-near misses, and ambiguous prompts so the skill fires in the right lane.
+near misses, and ambiguous prompts so the skill activates for the right requests.
 Why this fits: description changes affect routing, not just answer quality.
 Evidence we need: a few should-trigger, should-not-trigger, and ambiguous
 prompts; repeat only if activation looks inconsistent.
@@ -64,7 +64,7 @@ Evaluator:
 
 ```text
 What we are deciding: whether model grades match human judgment.
-Evidence path: eval suite.
+Evidence plan: eval suite.
 Definition: judge alignment compares model-judge labels against human labels so
 we know when judge scores are trustworthy.
 Why this fits: judge scores will influence a quality decision.
@@ -98,7 +98,7 @@ Just try one prompt first.
 Evaluator:
 
 ```text
-Evidence path: one-off check.
+Evidence plan: one-off check.
 Definition: a one-off check is one exploratory run; it can expose a useful
 signal but cannot prove repeatability.
 Why this fits: you asked for one prompt, not a suite with baselines and grades.
@@ -111,13 +111,13 @@ turn that pattern into a small suite later.
 User:
 
 ```text
-The skill has no draft yet, but can we make a formal suite?
+The skill has no draft yet, but can we make an eval suite?
 ```
 
 Evaluator:
 
 ```text
-Evidence path: no suite yet.
+Evidence plan: no suite yet.
 Definition: no suite yet means the target is too unstable or underspecified for
 a useful eval suite.
 Why this fits: the skill's job is not stable enough for fair evaluation yet.

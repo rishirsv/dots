@@ -1,6 +1,6 @@
 ---
 name: skill-doctor
-description: "The improve specialist within meta-skill: make an existing agent skill better. Review existing skills with a Judge review, diagnose reported failures into precise proposals, edit only explicitly approved source changes, then verify. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for authoring a new skill (skill-writer) or formal performance measurement (skill-evaluator)."
+description: "Use when improving an existing agent skill: review its design, diagnose a reported failure, propose precise source changes, apply explicitly approved edits, and verify the result. Not for authoring a new skill or measuring behavior across eval suites."
 ---
 
 # Skill Doctor

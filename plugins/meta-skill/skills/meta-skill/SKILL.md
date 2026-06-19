@@ -1,6 +1,6 @@
 ---
 name: meta-skill
-description: "Use for ANY work on an agent skill — authoring a new skill, reviewing or improving one, diagnosing failures, evaluating outcomes, or benchmarking recurring release and quality decisions. Routes ambiguous or multi-step skill-lifecycle requests to skill-writer, skill-doctor, skill-evaluator, or skill-benchmarker. Not for non-skill tasks."
+description: "Use when working on an agent skill: creating one, improving or diagnosing one, measuring behavior, or setting up recurring benchmarks. Routes ambiguous or multi-step skill-lifecycle requests to skill-writer, skill-doctor, skill-evaluator, or skill-benchmarker. Not for non-skill tasks."
 ---
 
 Route agent-skill lifecycle requests to the right Meta-Skill specialist. Treat

@@ -15,7 +15,7 @@ know whether the graders are fair.
    calibrate graders, and debug the outcome.
 
 This matches the practical loop: write a few realistic tasks, compare the
-no-skill candidate with the current-skill candidate, make a candidate skill
+no-skill candidate with the current-skill candidate, prepare an edited skill
 candidate, compare again, and keep only evidence that helps decide the next
 edit.
 
@@ -70,8 +70,8 @@ exists:
 - release checks or expected behavior examples
 - common workflows the skill must handle
 
-If there are no real traces yet, run a tiny exploratory loop before creating a
-formal suite. Synthetic examples are useful for coverage hypotheses, but mark
+If there are no real traces yet, run a tiny exploratory loop before creating an
+eval suite. Synthetic examples are useful for coverage hypotheses, but mark
 them as synthetic and do not let them become blocking gates until a human has
 reviewed them.
 
@@ -119,7 +119,7 @@ surprises become judge guidance or reference-solution updates.
 
 Do not build a suite when:
 
-- The question is a one-off fix — use `skill-doctor`'s single trial-run route.
+- The question is a one-off fix — use `skill-doctor`'s one-off check route.
 - The target is an unstable draft still changing shape; a suite would chase a
   moving target.
 - A deterministic validator alone fully answers the question; run it and skip
@@ -161,6 +161,6 @@ Before handing a failure to `skill-doctor`, classify the first upstream cause:
 | `environment_failure` | Local tools, network, credentials, or machine state blocked a fair attempt. |
 | `expected_change` | The candidate intentionally changed behavior and the suite needs an updated claim. |
 
-Report the classification with the evidence path. Fix grader, case, harness, or
-environment problems in the suite before treating the result as a target-skill
-defect.
+Report the classification with the relevant evidence reference. Fix grader,
+case, harness, or environment problems in the suite before treating the result
+as a target-skill defect.

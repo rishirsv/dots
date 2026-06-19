@@ -98,7 +98,12 @@ plugin directory plus its planning docs, not a single file.
 
 ## Package
 
-Create a Desktop package when the user wants a sendable assist bundle, when a provider CLI needs file context, or when the context is too large to paste comfortably.
+Create a Desktop package when the user wants a sendable assist bundle, when the
+context is too large to pass cleanly to the chosen route, or when a durable local
+package is useful for the specific task. Do not create a package just because
+the route is a command-line agent; for CLI routes, pass the prompt directly and
+point the agent at the relevant repo files or directories unless a package is
+specifically preferred.
 
 Use [scripts/assist_package.py](scripts/assist_package.py):
 
@@ -147,9 +152,17 @@ Before sending, inspect `prompt.md`, the script output, and the `context.zip` fi
 
 ## End-To-End Assist
 
-For longer or uncertain work, package an assist after lightweight orientation and before committing to a substantive approach, and again before declaring done when the user wanted delegated review. Also package one when stuck, when changing approach, or when an assist answer conflicts with local evidence in a way that would change the decision. Short reactive tasks driven by tool output do not need repeated assists.
+For longer or uncertain work, request an assist after lightweight orientation
+and before committing to a substantive approach, and again before declaring done
+when the user wanted delegated review. Package one when the user wants a
+sendable bundle, when stuck, when changing approach, or when an assist answer
+conflicts with local evidence in a way that would change the decision. Short
+reactive tasks driven by tool output do not need repeated assists.
 
-The Desktop package is the deliverable. The skill's job is to build a clean, safe, ready-to-send `prompt.md` plus `context.zip` on the Desktop and hand it back; it does not drive a provider browser. Default flow:
+For package-only assists, the Desktop package is the deliverable. The skill's
+job is to build a clean, safe, ready-to-send `prompt.md` plus `context.zip` on
+the Desktop and hand it back; it does not drive a provider browser.
+Package-only flow:
 
 1. Develop the context, then build the package on the Desktop. Use `--dry-run` to right-size the bundle first.
 2. Inspect `prompt.md`, the `context.zip` file list, the reported token total, and any skipped-file lines printed by the package script.
@@ -157,28 +170,55 @@ The Desktop package is the deliverable. The skill's job is to build a clean, saf
 4. Report the package path, the exact `prompt.md` to send, the included files, the token estimate, and the local verification boundary. Tell the user the package is ready to upload to the model of their choice.
 5. When the user returns an answer, run After The Assist against the package record.
 
-If the user explicitly approves a CLI route, run it against the same package record, save the answer in the package folder as `answer.<provider>.md`, then report. Do not spend API money or send broader private context than the user approved.
+If the user explicitly approves a CLI route, pass the prompt directly to the
+agent and provide direct file or directory references for the context it needs.
+Save the answer only when that route or task needs a local record. Do not spend
+API money or send broader private context than the user approved.
 
 ## Provider Routes
 
-The default route is `package-only`: build the package on the Desktop and hand the user the path and the exact `prompt.md` to send. Saving the package to the Desktop is the intended end state. Use another route only when the user explicitly asks for and approves it.
+The default route is `package-only`: build the package on the Desktop and hand
+the user the path and the exact `prompt.md` to send. Saving the package to the
+Desktop is the intended end state only for package-only assists. Use another
+route only when the user explicitly asks for and approves it.
 
 Safe sequence for any non-default route:
 
-1. Build and inspect the local package first.
-2. Get explicit approval naming the provider, account or CLI, the files or prompt to send, likely cost, and the answer save path. If the package includes private, proprietary, customer, unpublished, or credential-like context, do not send it anywhere external without that approval.
+1. Author a standalone prompt and context map, naming the exact repo files,
+   directories, excerpts, commands, or logs the advisor should use.
+2. Get explicit approval naming the provider, account or CLI, the prompt and
+   file references to send, likely cost, and whether to save the answer. If the
+   context includes private, proprietary, customer, unpublished, or
+   credential-like material, do not send it anywhere external without that
+   approval.
 3. Run the provider CLI's local `--help` before relying on exact flags.
-4. Invoke the provider only when the approved route and current CLI help both support the planned command shape, then save the answer to the package folder.
+4. Invoke the provider only when the approved route and current CLI help both
+   support the planned command shape. Pass the prompt text directly and grant
+   read access to the approved files or directories.
+5. Package first only when the chosen CLI requires a package-like input, the
+   context is too large or scattered to reference directly, or a durable
+   package is preferred for the task.
 
 Optional routes when the user approves one:
 
 - `package-only` (default): give the user the Desktop package path and the exact `prompt.md` to paste or upload. This is sufficient on its own.
-- `claude-code`: run `prompt.md` through the `claude` CLI with a per-task `--effort` and a chosen `--model`, saving the answer as `answer.claude.md`. `-p` / `--print` is the documented non-interactive path and may have account or billing implications; state that gate before running it. See [references/cli.md](references/cli.md).
-- `codex`: run `prompt.md` through `codex exec` on extra-high GPT-5.5 (`-m gpt-5.5 -c model_reasoning_effort="xhigh"`), read-only, saving the answer as `answer.codex.md`. See [references/cli.md](references/cli.md).
-- `openai-api`: a Responses API or provider CLI only after confirming credentials and cost approval. Write the answer to the package folder, for example `answer.openai.md`.
+- `claude-code`: pass the prompt directly to the `claude` CLI with a per-task
+  `--effort`, a chosen `--model`, and approved file or directory references.
+  `-p` / `--print` is the documented non-interactive path and may have account
+  or billing implications; state that gate before running it. See
+  [references/cli.md](references/cli.md).
+- `codex`: pass the prompt directly to `codex exec` on extra-high GPT-5.5
+  (`-m gpt-5.5 -c model_reasoning_effort="xhigh"`), read-only, with `-C`
+  pointing at the approved repo or context directory. See
+  [references/cli.md](references/cli.md).
+- `openai-api`: a Responses API or provider CLI only after confirming credentials and cost approval. Write the answer to the agreed output path when a local record is useful.
 - `oracle`: if `oracle` or `npx -y @steipete/oracle` is installed and the user wants that path, it can handle prompt/file bundling directly. Run a dry preview first (`--dry-run summary --files-report`) and capture output with `--write-output` when spending tokens.
 
-For the `claude-code` and `codex` CLI routes, follow [references/cli.md](references/cli.md): build the package, pick the model and (for Claude) a per-task effort, run read-only, save the answer as `answer.<provider>.md`, then verify it locally.
+For the `claude-code` and `codex` CLI routes, follow
+[references/cli.md](references/cli.md): pick the model and (for Claude) a
+per-task effort, pass the prompt directly, provide approved file references or a
+read-only context root, save the answer only when useful, then verify it
+locally.
 
 ## Prompt Shape
 

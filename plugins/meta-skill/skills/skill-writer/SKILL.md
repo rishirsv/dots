@@ -1,6 +1,6 @@
 ---
 name: skill-writer
-description: "The new-skill authoring specialist within meta-skill: create a reusable agent skill from an intent, repeated workflow, example output, Codex thread/session, or source material by designing the trigger contract, runtime guidance, resources, metadata, and validation. Reached through meta-skill's routing; invoke directly only when explicitly named. Not for improving, diagnosing, or evaluating an existing skill, and not for packaging, installing, publishing, or syncing skills."
+description: "Use when creating a reusable agent skill from an idea, repeated workflow, example output, Codex thread, or source material. Designs the trigger contract, runtime guidance, resources, metadata, and validation handoff. Not for improving, diagnosing, or evaluating an existing skill, or for packaging, installing, publishing, or syncing skills."
 ---
 
 # Skill Writer
