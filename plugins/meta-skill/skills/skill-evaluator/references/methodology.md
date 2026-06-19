@@ -45,20 +45,19 @@ Use this loop for most skill evaluation:
    first suite when the target is mature enough to justify it.
 3. For each task, write success criteria that are clear in `task.md`, then add
    hidden graders for the exact checks, judge dimensions, or human labels.
-4. Run the tasks under the no-skill and current-skill candidates when skill lift
-   is the decision.
+4. Run the tasks under the no-skill and current-skill candidates when the
+   question is whether the skill changes outcomes.
 5. Judge or review the outcomes side by side.
-6. Inspect failed, surprising, improved, and model/human-disagreed transcripts
-   to catch unfair graders, hidden harness issues, and valid alternate
-   solutions.
+6. Inspect failed, surprising, and model/human-disagreed transcripts to catch
+   unfair graders, hidden harness issues, and valid alternate solutions.
 7. Turn a proposed fix into a candidate skill.
 8. Run the same tasks against the current skill and candidate skill.
-9. Report which tasks improved, regressed, already worked without the skill, or
-   still need human judgment.
+9. Report which tasks passed under one candidate but not another, which already
+   worked without the skill, and which still need human judgment.
 
 Prefer side-by-side outcome evidence over abstract scores. A score without a
 baseline mostly measures the model plus the skill; a no-skill/current-skill
-comparison measures skill lift.
+comparison shows what changes when the skill is present.
 
 ## Error Analysis First
 
@@ -92,10 +91,6 @@ Add more structure only when the default loop is not enough:
 - Add transcript-aware graders when the process is part of the contract:
   required tools, forbidden tools, skipped validation, unsafe edits, approval
   boundaries, or excessive turns.
-- Use pass@k or pass^k-style repetition analysis when the product question is
-  whether the skill succeeds at least once across retries or succeeds
-  consistently across repeated attempts.
-
 Do not introduce named split systems or calibration labels for ordinary skill
 work. Keep the report plain: which tasks ran, which candidates were compared,
 which outcomes changed, what transcripts showed, and what is still uncertain.

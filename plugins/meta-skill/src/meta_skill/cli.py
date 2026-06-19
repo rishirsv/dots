@@ -19,7 +19,7 @@ from .grading import grade_run, human_review_packet, record_human_grade
 from .io import emit, fail
 from .linting import lint_suite
 from .packaging import package_skill
-from .report import build_report, compare_run, list_runs, render_markdown
+from .report import build_report, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, terminal_count
 from .sessions import list_threads, render_thread_list, show_thread
 from .validation import validate_report
@@ -153,11 +153,6 @@ def command_eval_human(args):
     else:
         result = human_review_packet(args.run, args.trial)
     emit(result, args.json)
-    return 0
-
-
-def command_eval_compare(args):
-    emit(compare_run(args.run, args.baseline, args.candidate), args.json)
     return 0
 
 
@@ -308,13 +303,6 @@ def build_parser():
     human.add_argument("--reviewer")
     human.add_argument("--json", action="store_true")
     human.set_defaults(func=command_eval_human)
-
-    compare = eval_sub.add_parser("compare", help="Compare baseline and candidate outcomes for one run")
-    compare.add_argument("--run", required=True)
-    compare.add_argument("--baseline")
-    compare.add_argument("--candidate")
-    compare.add_argument("--json", action="store_true")
-    compare.set_defaults(func=command_eval_compare)
 
     list_runs_parser = eval_sub.add_parser("list", help="List eval runs in the workbench")
     list_runs_parser.add_argument("--suite")

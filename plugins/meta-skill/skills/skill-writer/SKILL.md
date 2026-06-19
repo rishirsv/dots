@@ -246,7 +246,7 @@ If the user asks for one-off testing, or if one realistic isolated run would
 materially improve confidence in a fragile trigger, resource, script, or output
 contract, read
 [skill-trial-runs.md](../../references/skill-trial-runs.md) and offer a skill
-trial run. It is optional by default and is not release proof; route systematic
+one-off check. It is optional by default and is not release proof; route systematic
 multi-scenario measurement to `skill-evaluator` and recurring release or
 quality scorecards to `skill-benchmarker`. For the evaluator handoff, provide
 or create `.<skill-name>/evals.json` with 2-3 realistic user tasks, expected

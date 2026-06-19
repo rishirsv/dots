@@ -90,12 +90,9 @@ Use this shape:
   },
   "metrics": [
     "behavior_pass_rate",
-    "skill_lift",
-    "candidate_regressions",
+    "comparison_counts",
     "gate_failures",
     "unknown_rate",
-    "pass_at_k",
-    "pass_caret_k",
     "tokens"
   ],
   "gates": [
@@ -164,21 +161,17 @@ Choose the most exact fair grader:
 - human grades for taste, domain judgment, release-readiness decisions, and
   model-judge calibration
 
-Use gates for must-not-break checks. A candidate with a failed gate is rejected
-for the measured scope even when its average score improves.
+Use gates for must-not-break checks. A gate failure records a failed state for
+the measured check even when average scores are high.
 
 Calibrate model judges against human labels before using judge scores for
 high-judgment release or selection decisions. Give judges an `unknown` escape
 when evidence is insufficient or contradictory.
 
-## Repeated Trials And Reliability
+## Repeated Trials
 
 Use repetitions when behavior is variable, especially trigger routing,
 long-horizon tasks, model-judged outcomes, and user-simulator tasks.
-
-Use `pass_at_k` when the product question is whether at least one retry can
-succeed. Use `pass_caret_k` when consistency matters and every repeated trial
-should succeed.
 
 Do not compare repeated and single-shot results as if they measure the same
 thing. Report the repetition count with the metric.
@@ -192,8 +185,7 @@ Do not trust a benchmark until basic integrity checks pass:
 - null or trivial submissions fail when a task has deterministic validators
 - expected behavior in the grader is visible in `task.md`
 - runner environment, candidate ref, dirty flag, and payload digest are recorded
-- failed or surprising transcripts are inspected before a release or selection
-  recommendation
+- failed or surprising transcripts are inspected before release or selection
 
 For web-enabled or public benchmark material, treat contamination as a live
 risk. Avoid publishing answer keys or worked solutions where future agents can
@@ -207,9 +199,9 @@ Include:
 - benchmark id, profile path, suite path, run id, and candidates
 - task count by type or split
 - behavior pass rate, unknown rate, and gate failures
-- impact rows: improves, regresses, both fail, baseline already succeeds, or
-  needs more evidence
-- pass@k and pass^k-style rows when repetitions exist
+- comparison counts: `baseline_fail_candidate_pass`,
+  `baseline_pass_candidate_fail`, `both_fail`, `both_pass`, and
+  `unknown_state_pairs`
 - token metrics only when the runner recorded usage
 - calibration artifacts for the run, or why calibration was skipped
 - history rows when `report.include_history` is true, with the caveat that
@@ -234,7 +226,7 @@ follow-up requiring explicit approval.
 ## Release Readiness
 
 Do not equate a green benchmark with release approval. For release decisions,
-report the benchmark result as a recommendation with conditions:
+report the benchmark result as evidence with conditions:
 
 - skill validation passed
 - suite lint and benchmark lint warnings were reviewed
@@ -242,7 +234,7 @@ report the benchmark result as a recommendation with conditions:
 - all selected trials are graded or intentionally human-reviewed
 - grader gate failures, profile gate failures, and profile gate unknowns are 0
 - release-critical unknown rate is 0 or explicitly accepted
-- candidate regressions on must-not-break tasks are 0
+- baseline-pass/candidate-fail state pairs on must-not-break tasks are 0
 - model-judge release or selection claims have a calibration artifact or a
   stated human spot-check decision
 - coverage limits name the unmeasured task families

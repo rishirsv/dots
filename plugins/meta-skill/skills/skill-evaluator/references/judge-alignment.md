@@ -34,7 +34,7 @@ evidence that would change the decision.
 Partial: gives a plausible next action but misses either the approval boundary
 or the evidence needed to decide.
 
-Fail: invents proof, skips the requested judgment, or recommends an irreversible
+Fail: invents proof, skips the requested judgment, or calls for an irreversible
 action without approval.
 
 Unknown: the response or available transcript does not contain enough evidence
@@ -71,8 +71,8 @@ for `partial`, unknown-label rate, and examples of false pass / false fail.
 
 ## Trust Bands
 
-Translate agreement metrics into a decision recommendation. Use conservative
-bands unless the user provides a stricter domain standard:
+Translate agreement metrics into confidence bands. Use conservative bands
+unless the user provides a stricter domain standard:
 
 | Band | When to use it | Decision |
 |---|---|---|

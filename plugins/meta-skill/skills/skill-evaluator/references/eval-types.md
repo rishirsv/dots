@@ -19,7 +19,7 @@ Use these terms consistently:
 | **Transcript** | The full event record: messages, tool calls, reasoning summaries, intermediate results, and errors. |
 | **Grader** | Code, model, or human logic that scores one aspect of the trial. |
 | **Assertion / check** | One named expectation inside a grader. |
-| **Gate** | A required grader whose failure rejects a candidate for the measured scope even when other scores improve. |
+| **Gate** | A required grader whose failure records a failed state for the measured check even when other scores are high. |
 | **Harness** | The runner and workspace machinery that executes trials, records evidence, grades, and aggregates. |
 
 Meta Skill stores candidates in `candidates[]` and task rows in `cases[]`; use
@@ -65,8 +65,8 @@ model against human review.
 
 Use gates for must-not-break checks: prompt-boundary leaks, package exclusions,
 forbidden file edits, schema validity, safety constraints, or deterministic
-regressions. Gates should usually be code validators. A candidate that fails a
-gate is not selectable even when its judge score is higher.
+regressions. Gates should usually be code validators. A gate failure should be
+visible in the state rows and triage notes even when judge scores are high.
 
 ## Binary Check Bias
 
@@ -183,7 +183,7 @@ Review this existing skill and produce findings only. Do not edit the payload.
 Hidden graders:
 
 - validator checks no payload file changed.
-- judge checks that findings include evidence, impact, and recommended action.
+- judge checks that findings include evidence, impact, and concrete next action.
 
 Regression tasks should stay close to 100% once the behavior is considered
 working.
@@ -195,12 +195,12 @@ Goal: measure a skill whose important work happens mid-conversation.
 ```text
 task.md
 Guide the user through choosing a grader for this ambiguous support-triage
-skill, then recommend the smallest fair eval suite.
+skill, then identify the smallest fair eval suite.
 ```
 
 Hidden graders:
 
-- model judge checks whether the final recommendation is understandable and
+- model judge checks whether the final evidence summary is understandable and
   calibrated to the user's goal.
 - transcript validator checks that the agent asked for human judgment only when
   needed and exposed response/transcript evidence before asking for a grade.
@@ -224,7 +224,7 @@ Hidden graders:
 
 ### 5. Gate / Readiness Task
 
-Goal: decide whether a skill is ready to package or select for the measured scope.
+Goal: collect evidence about whether a skill is ready to package or select.
 
 ```text
 task.md

@@ -188,8 +188,9 @@ Supported grader kinds:
 | `model` | Runs the judge guidance or expectation judge and writes `grader.kind = "model"` to `grades.jsonl`. Set `uses_transcript: true` only when the judge guidance grades process behavior or needs mid-conversation evidence. |
 | `human` | Creates a pending `unknown` row until a reviewer records the label with `eval human`. |
 
-`required` or `gate` means the grader is blocking. A candidate may
-score well against judge guidance and still be rejected if a gate fails.
+`required` or `gate` means the grader is blocking. A candidate may score well
+against judge guidance and still record a failed state for that measured check
+if a gate fails.
 
 Model judge rows use the same label scale as human rows: `pass`, `partial`,
 `fail`, or `unknown`. They also include `score` when a 0-to-1 numeric value is
@@ -226,9 +227,9 @@ test. Trigger tasks need the target seeded into a clean environment so it can
 fire; the environment-specific seeding mechanism remains behind the central CLI
 runner adapter.
 
-For impact comparison, keep `task.md` stable across candidates. Do not write
-"use the skill" into the task. The same visible task should run under no-skill,
-current-skill, and candidate-skill variants.
+For baseline/candidate state rows, keep `task.md` stable across candidates. Do
+not write "use the skill" into the task. The same visible task should run under
+no-skill, current-skill, and candidate-skill variants.
 
 ## Hidden Boundary
 
@@ -327,13 +328,13 @@ captured agent response. Never store
 source copies there.
 
 When a run contains a no-skill candidate and at least one payload candidate,
-`eval report` adds per-task impact categories:
+`eval report` adds per-task comparison rows:
 
-- `candidate_improves`
-- `candidate_regresses`
-- `both_fail`
-- `baseline_already_succeeds`
-- `needs_more_evidence`
+- `baseline_state`
+- `candidate_state`
+
+Each state is `pass`, `fail`, or `unknown`. Interpret the rows as evidence, not
+as an instruction.
 
 ## Reference Solutions
 

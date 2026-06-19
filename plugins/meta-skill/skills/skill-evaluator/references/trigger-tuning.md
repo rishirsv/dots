@@ -78,5 +78,6 @@ Close with:
 - should-not-trigger quiet rate
 - ambiguous or unknown cases
 - false activations and missed activations
-- whether the candidate description improved, regressed, or needs more evidence
+- whether the candidate description changed the observed activation boundary,
+  plus any evidence still missing
 - held-out coverage limits

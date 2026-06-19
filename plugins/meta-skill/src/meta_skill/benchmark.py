@@ -9,18 +9,15 @@ from .errors import CliError
 from .ids import require_id
 from .io import read_json, read_jsonl
 from .manifest import load_manifest, suite_path, workbench_from_suite
-from .report import build_impact, build_report, list_runs, md_cell, md_table, trial_behavior_state
+from .report import build_comparisons, build_report, list_runs, md_cell, md_table, trial_behavior_state
 from .runner import run_eval
 
 
 ALLOWED_METRICS = {
     "behavior_pass_rate",
-    "skill_lift",
-    "candidate_regressions",
+    "comparison_counts",
     "gate_failures",
     "unknown_rate",
-    "pass_at_k",
-    "pass_caret_k",
     "tokens",
 }
 ALLOWED_GATE_KEYS = {"metric", "required_label", "grader", "scope", "candidate", "candidates"}
@@ -258,12 +255,6 @@ def benchmark_lint(raw_benchmark):
         "selected_candidates": candidate_ids,
         "metrics": profile.get("metrics") or [],
         "warnings": warnings,
-        "recommendations": [
-            "Keep capability, regression, trigger, and gate claims separate.",
-            "Use repetitions for trigger or reliability benchmarks.",
-            "Read failed, surprising, improved, regressed, and model/human-disagreed transcripts before selection.",
-            "Do not trust benchmark scores until hidden grader files are protected and null submissions fail when applicable.",
-        ],
     }
 
 
@@ -325,7 +316,7 @@ def _filter_report(report, manifest, profile):
     filtered = dict(report)
     filtered["trials"] = trials
     filtered["candidates"] = candidates
-    filtered["impact"] = build_impact(candidates, trials)
+    filtered["comparisons"] = build_comparisons(candidates, trials)
     filtered["needs_attention"] = [
         item for item in report["needs_attention"] if item.get("trial_id") in trial_ids
     ]
@@ -339,34 +330,6 @@ def _filter_report(report, manifest, profile):
         "gate_failed": sum(1 for trial in trials if trial["gate_failed"]),
     }
     return filtered
-
-
-def _pass_k_rows(report):
-    by_case_candidate = {}
-    for trial in report["trials"]:
-        by_case_candidate.setdefault((trial["case_id"], trial["candidate"]), []).append(trial)
-    rows = []
-    for (case_id, candidate), trials in sorted(by_case_candidate.items()):
-        states = [trial_behavior_state(trial) for trial in trials]
-        if len(states) < 2:
-            continue
-        decisive = [state for state in states if state in {"pass", "fail"}]
-        if not decisive:
-            pass_at_k = None
-            pass_caret_k = None
-        else:
-            pass_at_k = "pass" if "pass" in decisive else "fail"
-            pass_caret_k = "pass" if len(decisive) == len(states) and all(state == "pass" for state in decisive) else "fail"
-        rows.append(
-            {
-                "case_id": case_id,
-                "candidate": candidate,
-                "trials": len(trials),
-                "pass_at_k": pass_at_k or "unknown",
-                "pass_caret_k": pass_caret_k or "unknown",
-            }
-        )
-    return rows
 
 
 def _usage_scorecard(report):
@@ -388,14 +351,14 @@ def _usage_scorecard(report):
     }
 
 
-def _impact_scorecard(report):
-    impacts = [row.get("impact") for row in report["impact"]]
+def _comparison_scorecard(report):
+    state_pairs = [(row.get("baseline_state"), row.get("candidate_state")) for row in report["comparisons"]]
     return {
-        "candidate_improves": impacts.count("candidate_improves"),
-        "candidate_regresses": impacts.count("candidate_regresses"),
-        "both_fail": impacts.count("both_fail"),
-        "baseline_already_succeeds": impacts.count("baseline_already_succeeds"),
-        "needs_more_evidence": impacts.count("needs_more_evidence"),
+        "baseline_fail_candidate_pass": state_pairs.count(("fail", "pass")),
+        "baseline_pass_candidate_fail": state_pairs.count(("pass", "fail")),
+        "both_fail": state_pairs.count(("fail", "fail")),
+        "both_pass": state_pairs.count(("pass", "pass")),
+        "unknown_state_pairs": sum(1 for baseline, candidate in state_pairs if "unknown" in {baseline, candidate}),
     }
 
 
@@ -520,7 +483,7 @@ def build_benchmark_report(raw_run, raw_benchmark=None):
     failed = counts.get("fail", 0)
     unknown = counts.get("unknown", 0)
     usage = _usage_scorecard(report)
-    impact = _impact_scorecard(report)
+    comparison = _comparison_scorecard(report)
     profile_gates = _profile_gate_rows(report, profile)
     profile_gate_failures = [row for row in profile_gates if row.get("status") == "fail"]
     profile_gate_unknown = [row for row in profile_gates if row.get("status") in {"unknown", "invalid"}]
@@ -540,11 +503,10 @@ def build_benchmark_report(raw_run, raw_benchmark=None):
             "gate_failures": report["totals"]["gate_failed"],
             "trials": total,
             **usage,
-            **impact,
+            **comparison,
             "profile_gate_failures": len(profile_gate_failures),
             "profile_gate_unknown": len(profile_gate_unknown),
         },
-        "reliability": _pass_k_rows(report),
         "profile_gates": profile_gates,
         "history": _history_rows(loaded) if report_policy.get("include_history") else [],
         "calibration": calibration,
@@ -579,10 +541,16 @@ def render_benchmark_markdown(model):
                 ["Profile gate unknown", md_cell(score["profile_gate_unknown"])],
             ]
         )
-    if "skill_lift" in metrics:
-        score_rows.append(["Candidate improves", md_cell(score["candidate_improves"])])
-    if "candidate_regressions" in metrics:
-        score_rows.append(["Candidate regresses", md_cell(score["candidate_regresses"])])
+    if "comparison_counts" in metrics:
+        score_rows.extend(
+            [
+                ["Baseline fail / candidate pass", md_cell(score["baseline_fail_candidate_pass"])],
+                ["Baseline pass / candidate fail", md_cell(score["baseline_pass_candidate_fail"])],
+                ["Both pass", md_cell(score["both_pass"])],
+                ["Both fail", md_cell(score["both_fail"])],
+                ["Unknown state pairs", md_cell(score["unknown_state_pairs"])],
+            ]
+        )
     if "tokens" in metrics:
         score_rows.append(["Total tokens", md_cell(score["total_tokens"])])
     score_rows.append(["Trials", md_cell(score["trials"])])
@@ -601,19 +569,19 @@ def render_benchmark_markdown(model):
         ["Metric", "Value"],
         score_rows,
     )
-    if run["impact"] and {"skill_lift", "candidate_regressions"} & metrics:
-        lines += ["", "## Impact", ""]
+    if run["comparisons"] and "comparison_counts" in metrics:
+        lines += ["", "## Comparisons", ""]
         lines += md_table(
-            ["Task", "Baseline", "Candidate", "Impact"],
-            [[md_cell(row["case_id"]), md_cell(row["baseline"]), md_cell(row["candidate"]), md_cell(row["impact"])] for row in run["impact"]],
-        )
-    if model["reliability"] and {"pass_at_k", "pass_caret_k"} & metrics:
-        lines += ["", "## Reliability", ""]
-        lines += md_table(
-            ["Task", "Candidate", "Trials", "pass@k", "pass^k"],
+            ["Task", "Baseline", "Candidate", "Baseline state", "Candidate state"],
             [
-                [md_cell(row["case_id"]), md_cell(row["candidate"]), md_cell(row["trials"]), md_cell(row["pass_at_k"]), md_cell(row["pass_caret_k"])]
-                for row in model["reliability"]
+                [
+                    md_cell(row["case_id"]),
+                    md_cell(row["baseline"]),
+                    md_cell(row["candidate"]),
+                    md_cell(row["baseline_state"]),
+                    md_cell(row["candidate_state"]),
+                ]
+                for row in run["comparisons"]
             ],
         )
     if model["profile_gates"]:

@@ -71,11 +71,11 @@ Use the smallest evidence path that matches the original work:
 |---|---|
 | Doctor used guidance-first diagnosis only | Re-check the exact wording, branch, or reference that caused the failure. |
 | Doctor reproduced one failure locally | Re-run that same case or prompt and compare expected vs actual behavior. |
-| Doctor used a child/worktree trial | Read [skill-trial-runs.md](../../../references/skill-trial-runs.md), rerun the affected prompt through the same isolation route when practical and requested, and require the `META_SKILL_TRIAL_RESULT` block. |
+| Doctor used a child/worktree check | Read [skill-trial-runs.md](../../../references/skill-trial-runs.md), rerun the affected prompt through the same isolation route when practical and requested, and require the `META_SKILL_CHECK_RESULT` block. |
 | Judge finding was a static design gap | Re-check only the addressed finding heading and cite the changed text. |
 | `description` or trigger behavior changed | Run validation, then recommend `skill-evaluator` trigger tuning for any confidence claim beyond the single checked prompt. |
 
-For trial reruns, classify the result:
+For check reruns, classify the result:
 
 - `pass` — the affected case now behaves as intended; continue to regression
   scan.

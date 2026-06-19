@@ -63,12 +63,6 @@ def lint_suite(raw_suite):
     if has_trigger and not has_negative:
         warnings.append({"kind": "unbalanced_trigger_suite", "detail": "Trigger suites need should-trigger and should-not-trigger or near-miss tasks."})
 
-    recommendations = [
-        "Choose the most exact fair grader: code for exact checks, model for semantic quality, human for judgment or calibration.",
-        "Use transcript-aware graders only when process behavior is part of the requirement.",
-        "Run no-skill and current-skill candidates before claiming skill lift.",
-        "Inspect failed, surprising, or model/human-disagreed transcripts before editing the skill.",
-    ]
     return {
         "ok": True,
         "suite": str(suite),
@@ -81,5 +75,4 @@ def lint_suite(raw_suite):
             "transcript_aware_graders": stats["transcript_aware_graders"],
         },
         "warnings": warnings,
-        "recommendations": recommendations,
     }

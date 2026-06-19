@@ -133,7 +133,7 @@ description: "Use for testing."
                     "suite": "../evals.json",
                     "task_selection": {"case_ids": ["case-a"]},
                     "candidates": {"baseline": "no-skill", "payloads": ["current"]},
-                    "metrics": ["behavior_pass_rate", "unknown_rate", "pass_at_k", "pass_caret_k", "tokens"],
+                    "metrics": ["behavior_pass_rate", "unknown_rate", "comparison_counts", "tokens"],
                     "gates": [{"metric": "quality", "required_label": "pass"}],
                     "calibration": {"human_spot_check": "before release selection"},
                     "report": {"include_history": True, "include_coverage_limits": True},
@@ -210,16 +210,15 @@ description: "Use for testing."
             self.assertEqual(report["scorecard"]["unknown_rate"], 0.0)
             self.assertEqual(report["scorecard"]["trials"], 3)
             self.assertEqual(report["scorecard"]["total_tokens"], 90)
-            self.assertEqual(report["scorecard"]["candidate_improves"], 1)
-            self.assertEqual(report["scorecard"]["candidate_regresses"], 0)
+            self.assertEqual(report["scorecard"]["baseline_fail_candidate_pass"], 1)
+            self.assertEqual(report["scorecard"]["baseline_pass_candidate_fail"], 0)
             self.assertEqual(report["scorecard"]["profile_gate_failures"], 0)
             self.assertEqual({row["candidate"] for row in report["profile_gates"]}, {"current"})
             self.assertEqual([row["run_id"] for row in report["history"]], ["run-001"])
             self.assertEqual(report["calibration"][0]["paired"], 2)
             self.assertIn("## History", markdown)
             self.assertIn("## Calibration", markdown)
-            self.assertEqual(report["reliability"][0]["pass_at_k"], "pass")
-            self.assertEqual(report["reliability"][0]["pass_caret_k"], "pass")
+            self.assertNotIn("reliability", report)
             self.assertEqual([row["run_id"] for row in history["runs"]], ["run-001"])
 
     def test_benchmark_report_requires_profile_for_plain_eval_run(self):

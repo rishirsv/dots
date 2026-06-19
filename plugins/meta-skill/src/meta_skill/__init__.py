@@ -34,7 +34,7 @@ from .manifest import (
     workbench_from_suite,
 )
 from .packaging import package_skill
-from .report import build_report, compare_run, list_runs, render_markdown
+from .report import build_report, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, run_trial, terminal_count
 from .staging import copy_payload, safe_case_file, stage_workspace
 from .validation import validate_report

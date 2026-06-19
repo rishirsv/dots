@@ -1,6 +1,6 @@
 ---
 name: skill-benchmarker
-description: "The recurring measurement specialist within meta-skill: create, lint, run, report, and maintain benchmark profiles over existing evaluation suites for release readiness, trigger reliability, regression protection, and historical scorecards. Reached through meta-skill's routing; invoke directly only when named. Not for authoring first-pass eval suites, one-off trials, or fixing target skills."
+description: "The recurring measurement specialist within meta-skill: create, lint, run, report, and maintain benchmark profiles over existing evaluation suites for release readiness, trigger reliability, regression protection, and historical scorecards. Reached through meta-skill's routing; invoke directly only when named. Not for authoring first-pass eval suites, one-off checks, or fixing target skills."
 ---
 
 # Skill Benchmarker
@@ -40,9 +40,8 @@ Route away when the request is not benchmark-shaped:
 - Use `skill-writer` when the target skill does not exist or needs eval seed
   handoff material.
 
-Do not call a single ad hoc run a benchmark. Call it a quality loop, trigger
-tuning run, one-off trial, or formal suite run unless it uses a stable profile
-under `.<skill-name>/benchmarks/`.
+Do not call a single ad hoc run a benchmark. Call it a one-off check or eval
+suite run unless it uses a stable profile under `.<skill-name>/benchmarks/`.
 
 ## Reference Map
 
@@ -70,7 +69,7 @@ Coverage limit: <what this profile cannot prove>
 ```
 
 If no suite exists, stop and route to `skill-evaluator` to author a suite before
-benchmarking. If the decision is a one-off quality question, recommend the
+benchmarking. If the decision is a one-off quality question, use the
 smaller evaluator path instead of creating benchmark state.
 
 Use this ladder before creating files:
@@ -124,16 +123,16 @@ Render the decision-level report:
 ```
 
 Report behavior pass rate, unknown rate, gate failures, profile gate failures,
-impact rows, reliability rows, token usage when recorded, and coverage limits.
-Read failed, surprising, improved, regressed, ungraded, and model/human-disagreed
-trials before making a release or selection recommendation.
+comparison counts, token usage when recorded, and coverage limits. Read failed,
+surprising, ungraded, and model/human-disagreed trials before release or
+selection.
 
 For release-readiness decisions, treat the scorecard as evidence, not an
-automatic approval. A conservative release recommendation needs: payload
-validation passed, suite lint and benchmark lint reviewed, all selected trials
-completed, all selected trials graded or intentionally human-reviewed, zero
-grader gate failures, zero profile gate failures or unknowns, no release-critical
-unknowns, no candidate regressions on must-not-break tasks, and calibration
+automatic approval. Conservative release evidence needs: payload validation
+passed, suite lint and benchmark lint reviewed, all selected trials completed,
+all selected trials graded or intentionally human-reviewed, zero grader gate
+failures, zero profile gate failures or unknowns, no release-critical
+unknowns, no baseline-pass/candidate-fail state pairs on must-not-break tasks, and calibration
 artifacts when model-judge scores affect release or selection decisions.
 
 ### 5. Maintain History
@@ -161,15 +160,14 @@ Close with:
 - run id and grade status when executed
 - headline scorecard and gate status
 - benchmark history trend when requested
-- coverage limits and recommended next owner (`skill-evaluator` or
-  `skill-doctor`) for anything outside the benchmarker scope
+- coverage limits and next owner (`skill-evaluator` or `skill-doctor`) for
+  anything outside the benchmarker scope
 
 ## Guardrails
 
 - Benchmark stable profiles, not ad hoc runs.
 - Keep task and grader authority in `evals.json` and case folders.
 - Keep benchmark profiles in `.<skill-name>/benchmarks/`.
-- Report gates, unknowns, and coverage limits before release or selection
-  recommendations.
+- Report gates, unknowns, and coverage limits before release or selection.
 - Route suite authoring, grading design, human calibration, and target fixes to
   the owning specialist.

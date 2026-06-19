@@ -61,7 +61,7 @@ guidance-first track or the reproduction/trial track, localize the cause, run
 the Proposal Loop, and propose the smallest fix. Stop there unless the user
 explicitly approves the specific source change.
 
-For one-off improvement testing, use the shared skill trial run workflow in
+For one-off improvement testing, use the shared one-off skill check workflow in
 [skill-trial-runs.md](../../references/skill-trial-runs.md). Prefer a child
 worktree for candidate edits; the child demonstrates or revises in isolation,
 while the parent edits source only after explicit approval for that specific

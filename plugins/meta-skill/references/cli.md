@@ -99,7 +99,6 @@ Current top-level commands:
 <meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
 <meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
-<meta-skill-root>/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
 <meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--json]
 <meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
 <meta-skill-root>/scripts/metaskill benchmark lint --benchmark <profile> [--json]
@@ -263,8 +262,7 @@ What it does:
 - Warns on missing task seeds, missing graders, missing reference material for
   regression/gate tasks, unbalanced trigger suites, and incomplete grader
   metadata
-- Prints grader-selection recommendations: code where exact, model where
-  semantic, human where judgment or calibration is required
+- Prints grader-selection warnings for missing or weak suite metadata
 
 Example:
 
@@ -466,25 +464,6 @@ Example:
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-dir> --metric usefulness --json
 ```
 
-### `eval compare`
-
-Use this after grading a run with a no-skill candidate and at least one payload
-candidate.
-
-What it does:
-
-- Reads the deterministic report model
-- Filters impact rows by `--baseline` and `--candidate` when supplied
-- Returns per-task impact plus a recommendation such as
-  `candidate_wins_measured_scope`, `promising_with_failures`,
-  `reject_or_revise`, `no_skill_lift_detected`, or `needs_more_evidence`
-
-Example:
-
-```sh
-<meta-skill-root>/scripts/metaskill eval compare --run <run-dir> --baseline no-skill --candidate current --json
-```
-
 ### `eval list`
 
 Use this to enumerate the runs in a workbench without listing run directories
@@ -522,15 +501,13 @@ What it renders:
 - Behavioral grades: judge score/label, validator pass counts, graded/ungraded
   flags, gate failures, and token usage (`unavailable` when the runner recorded
   none)
-- Impact: when a run contains a no-skill candidate and at least one payload
-  candidate, per-task categories show `candidate_improves`,
-  `candidate_regresses`, `both_fail`, `baseline_already_succeeds`, or
-  `needs_more_evidence`
+- Comparisons: when a run contains a no-skill candidate and at least one payload
+  candidate, per-task rows show `baseline_state` and `candidate_state`
 - Evidence pointers relative to the run directory: outcome, runner transcripts,
   judge events, and folded thread evidence; `-` marks a missing file
 - A needs-attention list: failed trials, planned trials with no result,
   ungraded trials, gate failures, graders that emitted invalid JSON,
-  `needs_review` trials, and missing token usage
+  `unknown_evidence` trials, and missing token usage
 
 Inputs:
 
@@ -606,8 +583,7 @@ What it renders:
 
 - benchmark decision, profile path, suite path, run id, and candidates
 - the metric families requested by the benchmark profile, such as behavior
-  rates, unknown rate, gate failures, impact rows, reliability rows, or token
-  usage
+  rates, unknown rate, gate failures, comparison counts, or token usage
 - matching benchmark history rows when `report.include_history` is true
 - calibration artifacts for the run when present
 - needs-attention rows
@@ -707,7 +683,6 @@ Then edit the generated task `task.md` files and any validators or fixtures.
 <meta-skill-root>/scripts/metaskill eval grade --run <run-id> --json
 <meta-skill-root>/scripts/metaskill eval human --run <run-id> --json
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-id> --json
-<meta-skill-root>/scripts/metaskill eval compare --run <run-id> --baseline no-skill --candidate current --json
 <meta-skill-root>/scripts/metaskill eval report --run <run-id>
 ```
 

@@ -142,7 +142,6 @@ def test_help_surfaces(tmp):
         [CLI, "eval", "grade", "--help"],
         [CLI, "eval", "calibrate", "--help"],
         [CLI, "eval", "human", "--help"],
-        [CLI, "eval", "compare", "--help"],
         [CLI, "eval", "list", "--help"],
         [CLI, "eval", "report", "--help"],
         [CLI, "validate", "--help"],
@@ -654,7 +653,7 @@ def test_eval_list_and_report(tmp):
     check(out_file.read_text() == md_first.stdout, "report --out content diverged from stdout")
 
 
-def test_report_impact_and_gates(tmp):
+def test_report_comparisons_and_gates(tmp):
     project = tmp / "project"
     write_skill(project / "skill")
     suite = write_manifest(project)
@@ -668,7 +667,7 @@ def test_report_impact_and_gates(tmp):
         {"id": "case-b", "task": {"path": "task.md", "seed": "B"}},
     ]
     suite.write_text(json.dumps(manifest, indent=2) + "\n")
-    run_dir = wb(project) / "runs" / "run-impact"
+    run_dir = wb(project) / "runs" / "run-comparisons"
 
     def trial(case_id, candidate):
         trial_id = f"{case_id}.{candidate}.t1"
@@ -688,7 +687,7 @@ def test_report_impact_and_gates(tmp):
     def gate_grade(trial_id, label):
         score = 1.0 if label == "pass" else 0.0
         return {
-            "run_id": "run-impact",
+            "run_id": "run-comparisons",
             "trial_id": trial_id,
             "case_id": trial_id.split(".")[0],
             "candidate": trial_id.split(".")[1],
@@ -710,7 +709,7 @@ def test_report_impact_and_gates(tmp):
     (run_dir / "run.json").write_text(
         json.dumps(
             {
-                "run_id": "run-impact",
+                "run_id": "run-comparisons",
                 "suite": str(suite),
                 "runner": "codex_app_server",
                 "created_at": "2026-01-02T03:04:05+00:00",
@@ -726,13 +725,13 @@ def test_report_impact_and_gates(tmp):
     (run_dir / "results.jsonl").write_text("".join(json.dumps(row) + "\n" for row in results))
     (run_dir / "grades.jsonl").write_text("".join(json.dumps(row) + "\n" for row in grades))
     _, report = run_json([CLI, "eval", "report", "--run", str(run_dir), "--json"], project)
-    impacts = {(row["case_id"], row["impact"]) for row in report["impact"]}
-    check(impacts == {("case-a", "candidate_improves"), ("case-b", "candidate_regresses")}, f"impact categories changed: {impacts}")
+    comparisons = {(row["case_id"], row["baseline_state"], row["candidate_state"]) for row in report["comparisons"]}
+    check(comparisons == {("case-a", "fail", "pass"), ("case-b", "pass", "fail")}, f"comparison states changed: {comparisons}")
     check(report["totals"]["gate_failed"] == 2, "gate failure total changed")
     attention = {(item["kind"], item["trial_id"]) for item in report["needs_attention"]}
     check(("gate_failed", "case-a.baseline.t1") in attention and ("gate_failed", "case-b.current.t1") in attention, "gate failures not surfaced")
     md = run([CLI, "eval", "report", "--run", str(run_dir)], project).stdout
-    check("## Impact" in md and "candidate_improves" in md and "candidate_regresses" in md, "impact Markdown missing")
+    check("## Comparisons" in md and "| case-a | baseline | current | fail | pass |" in md, "comparison Markdown missing")
 
 
 def test_report_uses_all_grader_kinds(tmp):
@@ -805,15 +804,13 @@ def test_report_uses_all_grader_kinds(tmp):
     (run_dir / "results.jsonl").write_text("".join(json.dumps(row) + "\n" for row in results))
     (run_dir / "grades.jsonl").write_text("".join(json.dumps(row) + "\n" for row in grades))
     _, report = run_json([CLI, "eval", "report", "--run", str(run_dir), "--json"], project)
-    impacts = {(row["case_id"], row["impact"]) for row in report["impact"]}
-    check(impacts == {("case-a", "both_fail"), ("case-b", "candidate_improves")}, f"grader-kind impact changed: {impacts}")
+    comparisons = {(row["case_id"], row["baseline_state"], row["candidate_state"]) for row in report["comparisons"]}
+    check(comparisons == {("case-a", "fail", "fail"), ("case-b", "fail", "pass")}, f"grader-kind comparisons changed: {comparisons}")
     current_a = next(row for row in report["trials"] if row["trial_id"] == "case-a.current.t1")
     current_b = next(row for row in report["trials"] if row["trial_id"] == "case-b.current.t1")
     check([row["label"] for row in current_a["model_grades"]] == ["fail", "pass"], "all model grades should be reported")
     check(current_b["graded"] is True and current_b["human_grades"][0]["label"] == "pass", "human grade should count as graded")
-    _, compared = run_json([CLI, "eval", "compare", "--run", str(run_dir), "--baseline", "baseline", "--candidate", "current", "--json"], project)
-    check(compared["recommendation"] == "promising_with_failures" and len(compared["by_task"]) == 2, "eval compare output changed")
-    run([CLI, "eval", "compare", "--run", str(run_dir), "--candidate", "curent", "--json"], project, expect=(2,))
+    run([CLI, "eval", "compare", "--run", str(run_dir), "--baseline", "baseline", "--candidate", "current", "--json"], project, expect=(2,))
 
 
 def test_eval_run_artifact_records(tmp):
@@ -1023,7 +1020,7 @@ TESTS = [
     test_workspace_staging_hidden_boundaries,
     test_grade_expected_validator_behavior,
     test_eval_list_and_report,
-    test_report_impact_and_gates,
+    test_report_comparisons_and_gates,
     test_report_uses_all_grader_kinds,
     test_eval_run_artifact_records,
     test_fake_app_server_runner,

@@ -60,8 +60,8 @@ When a validator protects a must-not-break candidate, declare it as a gate in
 }
 ```
 
-A gate failure rejects a candidate for the measured scope even if model-judge
-guidance quality improves.
+A gate failure records a failed state for the measured check even if model-judge
+guidance quality is high.
 
 ## Agent Boundary
 
@@ -168,8 +168,8 @@ print(json.dumps({
 }))
 ```
 
-Declare the validator as a gate in `evals.json` when the check must reject a
-candidate for the measured scope:
+Declare the validator as a gate in `evals.json` when the check must record a
+failed state for the candidate when it does not hold:
 
 ```json
 {

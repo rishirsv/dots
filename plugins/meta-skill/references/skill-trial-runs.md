@@ -1,8 +1,8 @@
-# Skill Trial Runs
+# One-Off Skill Checks
 
-Read this when a Meta-Skill lane needs an inspectable trial of a skill draft,
-source-derived skill, or candidate improvement. A trial run is a bounded test of
-realistic behavior. It may use a Codex child thread, a worktree-backed child
+Read this when a Meta-Skill lane needs an inspectable one-off check of a skill
+draft, source-derived skill, or proposed edit. A one-off check is a bounded test
+of realistic behavior. It may use a Codex child thread, a worktree-backed child
 thread, or a local/manual run.
 
 This is not the full evaluation process. Escalate to `skill-evaluator` when the
@@ -21,33 +21,33 @@ Offer testing in tiers:
 
 | User intent | Use |
 |---|---|
-| "Just make the skill" | Build, lint, and validate locally. Offer a trial only when the skill is fragile or source-derived. |
-| "Try it once", "test this prompt", or "run a sanity check" | Run one skill trial. |
-| "Try these few examples" or "iterate until this feels right" | Run a small trial set and revise between iterations. |
+| "Just make the skill" | Build, lint, and validate locally. Offer a one-off check only when the skill is fragile or source-derived. |
+| "Try it once", "test this prompt", or "run a sanity check" | Run one skill check. |
+| "Try these few examples" or "iterate until this feels right" | Run a small check set and revise between iterations. |
 | "Make sure this is good" or "optimize triggering" | Route to `skill-evaluator`. |
 | "Benchmark it", "track this over time", or "is this release-ready with our existing suite?" | Route to `skill-benchmarker`. |
 | "Is this release-ready?" with no suite/profile context | Ask whether an eval suite or benchmark profile already exists; route to `skill-evaluator` when it does not. |
 
-Explain the lightweight path in user-facing language: "I can run a trial on one
+Explain the lightweight path in user-facing language: "I can run a check on one
 realistic prompt in a separate worktree, then use the result as evidence before
 changing the source skill."
 
 Do not create, fork, or message Codex threads unless the user asked for testing,
-iteration, a child thread, or a worktree-backed trial.
+iteration, a child thread, or a worktree-backed check.
 
-## Trial Types
+## Check Types
 
-### Quick Trial
+### Quick Check
 
 Use when one realistic prompt can catch likely activation, resource, or
 runtime-contract failures.
 
 - Best for a new skill after validation checks pass.
-- Best for `skill-doctor` when a candidate fix should be tried before parent-side
+- Best for `skill-doctor` when a proposed fix should be tried before parent-side
   edits are applied.
 - Not release proof.
 
-### Trial Set
+### Check Set
 
 Use when the user wants a small improvement loop but not a full evaluation.
 
@@ -107,18 +107,18 @@ become readable before treating the trial as complete.
 
 ## Parent Flow
 
-1. Pick the trial type: quick trial, trial set, or full evaluation.
+1. Pick the check type: quick check, check set, or full evaluation.
 2. Choose realistic prompts and expected behavior.
 3. Decide the isolation route: worktree child, forked worktree child, local child,
    projectless child, or parent-local/manual run.
-4. Create or fork the child only after the user has asked for trial work.
+4. Create or fork the child only after the user has asked for check work.
 5. Prompt the child with the target skill path, trial prompt, expected behavior,
    and result contract below.
 6. Read the child result with `read_thread`.
-7. Classify the result: keep, revise, reject, or needs full evaluation.
+7. Classify the result in the parent: passes, fails, blocked, or needs full evaluation.
 8. Make source edits in the parent checkout only when the user authorized
    payload changes.
-9. Rerun the affected trial when the revision changes the behavior under test.
+9. Rerun the affected check when the revision changes the behavior under test.
 
 Keep the parent as the decision-maker. Child output is evidence, not authority.
 
@@ -127,19 +127,19 @@ Keep the parent as the decision-maker. Child output is evidence, not authority.
 Ask the child to put this block first in its final answer:
 
 ```md
-META_SKILL_TRIAL_RESULT
-trial_id: <stable short id for this execution>
+META_SKILL_CHECK_RESULT
+check_id: <stable short id for this execution>
 status: pass|partial|fail|blocked
 target_skill: <path>
 candidate_source: <current|child_edit|approved_edit|other>
 prompt_tested: <short label>
-trial_type: quick|trial_set_item|source_example|doctor_fix
+check_type: quick|check_set_item|source_example|doctor_fix
 expected_behavior: <what should happen>
 observed_behavior: <what happened>
-decision: keep|revise|reject|needs_eval
 evidence: <one or two sentences>
-recommended_next_action: <smallest useful next step>
-END_META_SKILL_TRIAL_RESULT
+limits: <what this one check cannot prove>
+possible_follow_up: <smallest useful next evidence step, if any>
+END_META_SKILL_CHECK_RESULT
 ```
 
 Include these fields when they apply:
@@ -162,16 +162,17 @@ Use durable evidence files only when the parent needs tracking across more than
 chat:
 
 ```text
-.<skill-name>/runs/<run-id>/
-  run.json
-  results.jsonl
+.<skill-name>/checks/<check-id>/
+  check.json
+  result.md
+  evidence.json
 ```
 
-`run.json` records the parent thread, target skill, trial type, child thread or
-pending worktree id, prompt labels, expected behavior, optional candidate, and
-status. `results.jsonl` appends parsed `META_SKILL_TRIAL_RESULT` rows,
-including observed behavior, evidence refs, child changed files, and rerun
-route.
+`check.json` records the parent thread, target skill, check type, child thread
+or pending worktree id, prompt labels, expected behavior, optional candidate,
+and status. `result.md` stores the parsed `META_SKILL_CHECK_RESULT` block and
+short parent summary. `evidence.json` stores evidence refs, child changed files,
+and rerun route.
 
 Do not copy raw transcripts, full diffs, debug folders, private source packs, or
 large generated outputs by default. The child thread and worktree remain the
@@ -179,14 +180,14 @@ durable evidence source.
 
 ## Iteration Loop
 
-Use this loop for a small trial set:
+Use this loop for a small check set:
 
 1. Start from the current approved draft or candidate. If parent-side source
    changes are explicitly authorized, patch only that approved scope; otherwise
    record candidate wording as a proposal and test it in an isolated child or
    worktree.
 2. Run the selected prompt or prompt set in isolated children.
-3. Read trial results and inspect only the evidence needed to classify failures.
+3. Read check results and inspect only the evidence needed to classify failures.
 4. Change parent source only when authorized; otherwise recommend changes only
    for transferable failures: missing trigger boundary, missing input
    requirement, unclear output contract, missing evidence rule, weak
@@ -200,31 +201,31 @@ Use this loop for a small trial set:
 
 ## Skill Writer Use
 
-After building and validating a new skill, offer a quick trial when the user asks
+After building and validating a new skill, offer a quick check when the user asks
 for one-off testing or when the skill is fragile enough that one run would catch
 likely activation, resource, or runtime-contract failures.
 
-For source-derived skills, pair trial runs with Source Distillation's
-example-matching loop. The trial should check reusable behavior, not copy the
+For source-derived skills, pair one-off checks with Source Distillation's
+example-matching loop. The check should inspect reusable behavior, not copy the
 exemplar's wording.
 
-The trial is optional by default. It should not block ordinary skill creation
-unless the user explicitly asks for mandatory trial testing.
+The check is optional by default. It should not block ordinary skill creation
+unless the user explicitly asks for mandatory testing.
 
 ## Skill Doctor Use
 
-Use a worktree child to test a candidate edit without mutating the parent
-checkout. The child may apply the candidate edit inside its worktree, run one
-trial prompt, and report whether the edit improved the observed failure.
+Use a worktree child to test a proposed edit without mutating the parent
+checkout. The child may apply the proposed edit inside its worktree, run one
+check prompt, and report the observed behavior.
 
 The parent then decides whether to apply the approved edit to the source skill,
-refresh review/verify evidence, rerun the affected trial, or escalate to
+refresh review/verify evidence, rerun the affected check, or escalate to
 `skill-evaluator`.
 
 ## Skill Evaluator Boundary
 
-Do not rebuild `skill-evaluator` inside trial runs. A trial is useful evidence
-for one prompt or a tiny prompt set. `skill-evaluator` owns:
+Do not rebuild `skill-evaluator` inside one-off checks. A check is useful
+evidence for one prompt or a tiny prompt set. `skill-evaluator` owns:
 
 - multi-scenario suites
 - with-skill vs without-skill baselines

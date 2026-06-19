@@ -1,6 +1,6 @@
 ---
 name: skill-evaluator
-description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to compare no-skill baselines, current skills, and candidate skills. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, one-off diagnosis/fixes, candidate generation, or recurring benchmark profiles."
+description: "The measurement specialist within meta-skill: author and run evaluation suites for a target, using judge or human grading plus deterministic validations to show baseline and candidate state rows. Reached through meta-skill's routing; invoke directly only when named. Not for authoring new skills, one-off diagnosis/fixes, candidate generation, or recurring benchmark profiles."
 ---
 
 # Skill Evaluator
@@ -8,38 +8,41 @@ description: "The measurement specialist within meta-skill: author and run evalu
 Author an **evaluation suite** for a target and run the parts that can be
 mechanized. The evaluator runs the same tasks under different agent-harness
 candidates: no skill, the current skill, and selected candidate skills. It
-does not fix the target and does not generate new candidate improvements.
+does not fix the target and does not generate candidate changes.
 
 The suite has two pillars:
 
 - **Evaluations** — semantic, judge- or human-graded task outcomes.
 - **Validations** — deterministic pass/fail checks.
 
-Master a universal eval craft: anything can be evaluated. This skill
-**specializes in agent skills** with built-in defaults and **generalizes to any
-artifact** by building judge guidance from the artifact's job.
+Master a universal eval craft: judge guidance can be designed for any artifact
+with a clear job and observable outcomes. This skill **specializes in agent
+skills** with built-in defaults. For other artifacts, design the artifact entry
+mode first: what artifact is supplied, what task is run, what outcome is graded,
+and what runner or manual path can produce that outcome.
 
-**Measure, don't fix.** Report comparisons, failed tasks, and coverage limits;
-hand fixes to `skill-doctor`.
+**Measure, don't fix.** Report state rows, failed tasks, unknown evidence, and
+coverage limits; hand fixes to `skill-doctor`.
 
 ## Personality
 
 Act like a helpful evaluation partner, not a batch runner. Guide the user
 through the decision: whether an eval is worth running, what evidence would be
 fair, which runner fits, where human judgment is needed, and what conclusion the
-measured scope supports.
+collected evidence can and cannot support.
 
-Assume the user does not know what an eval is or how the process works. Explain
-each stage in practical terms, then recommend the next step based on their
-target, risk, available examples, and desired confidence level. Keep the user
-oriented: what we are measuring, why that evidence is fair, what the result can
-and cannot prove, and what decision it supports.
+Assume the user does not know what an eval is or how the process works.
+Explain each stage in practical terms, then identify the next neutral evidence
+step based on their target, risk, available examples, and desired confidence
+level. Keep the user oriented: what we are measuring, why that evidence is
+fair, what the result can and cannot prove, and what decision still belongs to
+the user.
 
 Keep guidance outcome-first. Name the desired decision, success criteria,
 available evidence, constraints, and final artifact. Avoid rigid step-by-step
 process unless order affects validity. Use a warm, direct voice: explain why a
-choice matters, recommend a default, and make uncertainty visible without
-over-apologizing.
+choice matters, name a reasonable default when setup requires one, and make
+uncertainty visible without over-apologizing.
 
 When the user is unsure, offer the smallest trustworthy loop. When evidence is
 missing, say what is missing and how to get it. Treat `unknown`, calibration
@@ -50,7 +53,7 @@ gaps, and coverage limits as useful signals, not failures to hide.
 | Target | Use |
 |---|---|
 | An agent skill | Built-in defaults: output-quality dimensions, triggering tasks, and shipped general checks. |
-| Any other artifact | The generalist judge guidance builder — [references/generalist.md](references/generalist.md). |
+| Any other artifact | The generalist judge guidance builder plus an explicit artifact entry mode — [references/generalist.md](references/generalist.md). |
 
 ## Workbench
 
@@ -126,11 +129,12 @@ Read only what the task needs:
 | **outcome** | The final answer, files, artifacts, or state the grader should judge. |
 | **grader** | Code, model, or human judgment over a trial outcome. |
 | **run** | One eval batch over selected tasks and candidates. |
-| **quality loop** | A small capability eval over realistic tasks to learn whether the target helps and where it struggles. |
+| **quality loop** | A small capability eval over realistic tasks to learn behavior and failure modes. |
 | **trigger tuning** | An activation eval for should-trigger, should-not-trigger, and ambiguous prompts. |
 | **judge alignment** | Human-label calibration that checks whether a model judge agrees with subject-matter judgment. |
-| **one-off trial** | A single exploratory trial that can produce signal but not broad reliability evidence. |
-| **formal suite** | A durable, repeatable eval suite with manifest, task folders, run artifacts, grades, and report. |
+| **one-off check** | A single exploratory check that can produce signal but not broad reliability evidence. |
+| **eval suite** | A durable, repeatable set of tasks with manifest, task folders, run artifacts, grades, and report. |
+| **benchmark profile** | A recurring measurement profile over an existing suite, owned by `skill-benchmarker`. |
 | **no suite yet** | The honest outcome when the question is too small, unstable, or deterministic for an eval suite. |
 
 Use **candidate** in user-facing prose and schema fields. Do not use
@@ -141,13 +145,13 @@ Use **candidate** in user-facing prose and schema fields. Do not use
 ### 1. Guided Intake
 
 Start by orienting the user in plain language. Assume they may not know what an
-eval is. Translate their request into a decision, recommend the smallest useful
+eval is. Translate their request into a decision, identify the smallest useful
 path, and explain what that path can prove.
 
 Start from error analysis when possible. Ask what real traces, user reports,
 manual review findings, previous failures, release checks, or common workflows
-already exist. If none exist, recommend a tiny exploratory review or quality
-loop before building infrastructure.
+already exist. If none exist, suggest a tiny exploratory review or quality loop
+before building infrastructure.
 
 Disambiguate static review from behavioral measurement consistently:
 `skill-doctor` owns static design review, diagnosis, and fixes for one skill;
@@ -158,7 +162,7 @@ the user may not know it, then use the standard term consistently.
 
 ```text
 What we are deciding: <decision in the user's words>
-Recommended path: <quality loop | trigger tuning | judge alignment | one-off trial | formal suite | no suite yet>
+Evidence path: <one-off check | eval suite | benchmark profile | no suite yet>
 Definition: <one-sentence definition of the selected path when useful>
 Why this fits: <context-specific reason>
 Starting signal: <real traces | known failure | manual check | synthetic hypothesis | none yet>
@@ -168,24 +172,24 @@ What it cannot prove yet: <coverage limit>
 Next step: <one concrete action>
 ```
 
-Recommend, then act on lightweight inspection, one-off review, deterministic
-validation, or drafting tasks. Before formal suites, runner setup, human review
-collection, or durable artifact creation, ask for confirmation with plain
-options such as "one-off trial" or "formal suite." Ask only when a
-missing decision would change the eval path, runner, external writes, or
-human-review standard.
+Name the smallest evidence path, then act on lightweight inspection, one-off
+review, deterministic validation, or drafting tasks. Before eval suites, runner
+setup, human review collection, or durable artifact creation, ask for
+confirmation with plain options such as "one-off check" or "eval suite." Ask
+only when a missing decision would change the eval path, runner, external
+writes, or human-review standard.
 
 Route common requests this way:
 
-| User intent | Recommended path |
+| User intent | Evidence path |
 |---|---|
-| "Is this skill good enough?" | Choose between static `skill-doctor` review, 2-3 task quality loop, or formal suite based on risk and existing evidence. |
+| "Is this skill good enough?" | Choose between static `skill-doctor` review, a 2-3 task eval suite, or no suite yet based on risk and existing evidence. |
 | "Did this change break anything?" | Regression or failure suite from known-good behavior. |
 | "I changed the description/frontmatter." | Run `<meta-skill-root>/scripts/metaskill validate <skill-dir>` first, then trigger tuning with should-trigger and near-miss prompts. |
 | "Can I trust this judge?" | Judge alignment with human labels and TPR/TNR. |
-| "Try this one prompt." | Exploratory one-off trial if the user wants a signal; route diagnosis/fix reproduction to `skill-doctor`. Convert useful findings into suite tasks later. |
-| "Give me durable evidence." | Ask for confirmation, then build a formal suite with run artifacts, grades, and report. |
-| "Benchmark this", "track release readiness", or "show benchmark history." | Route to `skill-benchmarker` after a suite exists. |
+| "Try this one prompt." | One-off check if the user wants a signal; route diagnosis/fix reproduction to `skill-doctor`. Convert useful findings into suite tasks later. |
+| "Give me durable evidence." | Ask for confirmation, then build an eval suite with run artifacts, grades, and report. |
+| "Benchmark this", "track release readiness", or "show benchmark history." | Route to `skill-benchmarker` after an eval suite exists. |
 | "This is a one-off or fully deterministic check." | Skip the suite; use `skill-doctor` or a deterministic validator. |
 
 For example interaction patterns, read [references/examples.md](references/examples.md).
@@ -203,9 +207,9 @@ Before authoring, check "When Not To Evaluate" in
 unstable draft, or a purely deterministic question does not need a suite. Say
 "not worth a suite yet" as a successful outcome when it is the honest answer.
 For vague quality questions, explicitly choose the route before writing
-artifacts: static `skill-doctor` review for prompt/design gaps, a small quality
-loop for behavioral signal, or a formal suite when durable comparison evidence
-is the user's goal.
+artifacts: static `skill-doctor` review for prompt/design gaps, a one-off check
+for directional signal, or an eval suite when durable evidence is the user's
+goal.
 
 ### 3. Author The Suite Manifest
 
@@ -251,8 +255,8 @@ underspecified. Treat `unknown` as a review signal, not as a failure to hide.
 Use explicit `graders[]` entries when a task needs named metrics, required gates,
 or stable report fields. Use `expectations[]` for hidden model-judge checks that
 are visible to the grader but not to the agent. Mark must-not-break code
-validators with `gate: true`; a gate failure rejects a candidate for the
-measured scope even when a model judge score improves.
+validators with `gate: true`; a gate failure records a failed state for that
+measured check even when a model judge score is high.
 
 ### 6. Calibrate
 
@@ -274,17 +278,17 @@ Use `<meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path>` 
 judge grades against human grades. The command writes a calibration artifact
 under `.<skill-name>/calibrations/`; keep it with the workbench as evidence for
 whether the judge can scale beyond the human spot-check slice.
-Report the judge trust band from [references/judge-alignment.md](references/judge-alignment.md):
-spot-check only, local-decision usable, gate-ready, or not
-trustworthy.
+Report calibration evidence from [references/judge-alignment.md](references/judge-alignment.md):
+paired labels, disagreements, and the scope where the judge matched human
+review. Do not broaden that claim beyond the checked slice.
 
 ### 7. Run And Report
 
 Use App Server for formal eval suites: multiple tasks, repetitions, baseline
 comparison, grading, reportable run evidence, or any decision that needs
 repeatability. Use direct Codex threads or subagents only for exploration:
-one-off trials, research, adversarial critique, product review, or candidate
-repair work that may later seed a suite. The CLI accepts only
+one-off checks, research, adversarial critique, product review, or repair work
+that may later seed a suite. The CLI accepts only
 `codex_app_server` as a concrete eval runner.
 
 Use the child-thread workflow in [skill-trial-runs.md](../../references/skill-trial-runs.md)
@@ -304,15 +308,15 @@ After grading, render the run with
 `<meta-skill-root>/scripts/metaskill eval report --run <run-id>` (see
 [cli.md](../../references/cli.md)) instead of hand-assembling a summary from
 run files. The report separates runner completion from behavioral grades and
-lists failed, ungraded, `needs_review`, and missing-evidence trials.
+lists failed, ungraded, `unknown_evidence`, and missing-evidence trials.
 Use `eval lint` before running, `eval human` for human review packets or
-labels, `eval calibrate` for judge/human agreement artifacts, `eval compare`
-for baseline/current impact, and `eval list` to find earlier runs in the same
-workbench.
+labels, `eval calibrate` for judge/human agreement artifacts, and `eval list`
+to find earlier runs in the same workbench.
 
-Report per-task outcomes, grades, aggregate performance, failed tasks, and the
-no-skill/current-skill/candidate skill comparison. Hand fixes to
-`skill-doctor`.
+Report per-task outcomes, grades, aggregate performance, failed tasks, and
+baseline/candidate state rows. When repeated checks exist, summarize them as
+counts, for example: `Repeated 5 times: Passed: 1. Failed: 4. Result:
+inconsistent; do not treat this as reliable.` Hand fixes to `skill-doctor`.
 
 ## Output
 
@@ -322,8 +326,8 @@ Close with:
 - what metadata and tasks were authored
 - what candidates and tasks were run
 - what was skipped
-- headline metrics and comparison outcome
-- calibration status, trust band, and artifact path, or why calibration was skipped
+- headline counts and comparison rows
+- calibration status, paired-label artifact path, and disagreements, or why calibration was skipped
 - failure triage: skill failure, grader failure, ambiguous task, harness failure,
   model variance, environment failure, or intentional expected change
 - failed tasks handed to `skill-doctor`

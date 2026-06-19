@@ -326,7 +326,6 @@ Current command groups:
 <meta-skill-root>/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
 <meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
 <meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
-<meta-skill-root>/scripts/metaskill eval compare --run <run-id-or-path> [--baseline <candidate>] [--candidate <candidate>] [--json]
 <meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--json]
 <meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
 <meta-skill-root>/scripts/metaskill validate <skill-dir> [--json]
@@ -351,7 +350,6 @@ Each command reads or writes a specific part of the system.
 | `eval progress` | `runner.py`, `io.py` | run files | Nothing | Show runner status counts |
 | `eval grade` | `grading.py` | run results, task judge guidance, expected files, validators | `grades.jsonl`, judge event files | Judge trial outcomes |
 | `eval human` | `grading.py` | run results, grades | `grades.jsonl` in record mode | Show human review packets or record human labels |
-| `eval compare` | `report.py` | run results, grades | Nothing | Compute baseline-vs-candidate impact |
 | `eval report` | `report.py` | run results, grades, evidence paths | Optional report file | Render a deterministic human-readable report |
 | `validate` | `validation.py` | skill payload | Nothing | Check skill structure and authoring quality |
 | `package` | `packaging.py` | skill payload | zip and metadata | Export a portable skill package |
@@ -378,7 +376,6 @@ doctor
   -> eval progress
   -> eval grade
   -> eval human, if needed
-  -> eval compare
   -> eval report
 ```
 
@@ -502,20 +499,6 @@ needs calibration. A good human judgment should later become a clearer judge gui
 reference example, validator, or model judge instruction when the standard is
 reusable.
 
-#### `eval compare`
-
-`eval compare` compares graded candidates inside one run.
-
-It reads the run, results, and grades, groups behavior by task and candidate,
-and decides whether a candidate improved over a baseline candidate.
-The recommendation can be `promote_for_measured_scope`,
-`promising_with_failures`, `reject_or_revise`, `no_skill_lift_detected`, or
-`needs_more_evidence`.
-
-Use this command when the product question is "did the skill add measured
-value?" A passing current-skill run is not enough if the no-skill baseline also
-passes.
-
 #### `eval list`
 
 `eval list` enumerates historical runs in a workbench.
@@ -532,12 +515,11 @@ Use this to orient before comparing or reporting older runs.
 `eval report` renders a deterministic report from existing run files.
 
 It does not rerun trials and does not regrade outcomes. It reads run metadata,
-results, grades, impact rows, evidence pointers, and attention items, then emits
+results, grades, comparison rows, evidence pointers, and attention items, then emits
 Markdown or JSON.
 
 Use this as the human-readable evidence artifact. The report should explain
-what ran, what was measured, what evidence exists, which candidate performed
-better, and what still needs review.
+what ran, what was measured, what evidence exists, and what still needs review.
 
 #### `validate`
 
@@ -644,7 +626,7 @@ skill behaves when installed. Packaging excludes `.<skill-name>/` for this reaso
 | Transcript capture | `events/<trial-id>.jsonl`, `evidence/<trial-id>.json` | What happened during the run? |
 | Outcome capture | `candidates/<candidate>/<trial-id>/response.md` | What did the agent produce? |
 | Grading | `grades.jsonl`, `events/<trial-id>.judge.jsonl` | How did graders judge the outcome? |
-| Reporting | report output from `eval report`, compare JSON from `eval compare` | What decision does the evidence support? |
+| Reporting | report output from `eval report` | What evidence did the measured slice produce? |
 
 ## Eval Manifest
 
@@ -931,8 +913,8 @@ from the git commit. A dirty worktree can still have a payload digest.
 
 The no-skill candidate is essential for capability evals. Without it, a passing
 current-skill run may only prove that the base model already succeeds. The
-comparison layer needs a `source_kind: none` baseline to answer whether the skill
-adds measured value.
+comparison layer needs a `source_kind: none` baseline to record baseline state
+alongside candidate state.
 
 ## Trial Staging
 
@@ -1313,15 +1295,6 @@ It reports:
   material, incomplete human metrics, code graders without paths, and
   unbalanced trigger suites
 
-It also emits general recommendations:
-
-- code where exact
-- model where semantic
-- human where judgment or calibration is required
-- transcript-aware only when process behavior matters
-- compare no-skill and current-skill before claiming lift
-- inspect failed or surprising transcripts before editing
-
 Static lint is intentionally pre-run. It can warn that a suite is probably weak,
 but it cannot say whether a skill works. That requires execution and grading.
 
@@ -1336,52 +1309,21 @@ The report model distinguishes:
 - behavioral grades: whether the outcome passed the checks
 - gates: whether required checks failed
 - missing evidence: ungraded trials, missing results, missing usage, invalid
-  judge JSON, or human-review labels
-- impact: whether a payload candidate improves, regresses, both fails, baseline
-  already succeeds, or needs human review
-
-`eval compare` is the lightweight decision command. It validates requested
-baseline and candidate names, loads the relevant run files, computes
-per-task impact, and returns one recommendation:
-
-- `promote_for_measured_scope`
-- `promising_with_failures`
-- `reject_or_revise`
-- `no_skill_lift_detected`
-- `needs_more_evidence`
+  judge JSON, or unknown labels
+- comparisons: baseline/candidate behavior state pairs, or missing evidence
 
 Comparison requires a baseline candidate with `source_kind: none` and at least
 one non-baseline payload candidate.
 
-### Impact Categories
+### Comparison Rows
 
-The comparison layer reduces baseline and candidate behavior states into a task
-impact category.
-
-| Baseline state | Candidate state | Impact | Meaning |
-|---|---|---|---|
-| `fail` | `pass` | `candidate_improves` | The skill or attempt appears to add measured value |
-| `pass` | `fail` | `candidate_regresses` | The skill or attempt made this task worse |
-| `fail` | `fail` | `both_fail` | Neither candidate solved the task |
-| `pass` | `pass` | `baseline_already_succeeds` | The task does not show skill lift because baseline already passes |
-| `unknown` | any | `needs_more_evidence` | Baseline evidence is not decisive |
-| any | `unknown` | `needs_more_evidence` | Candidate evidence is not decisive |
+The comparison layer reports baseline and candidate behavior states for each
+task. Each state is `pass`, `fail`, or `unknown`; interpretation belongs to the
+reader or the benchmarker layer.
 
 This is why reports separate runner status from behavior. A completed trial with
 an ungraded or partial outcome becomes `unknown` for comparison, not a clean
 pass.
-
-### Recommendation Categories
-
-`eval compare` converts the impact rows into a recommendation:
-
-| Recommendation | Meaning |
-|---|---|
-| `promote_for_measured_scope` | Candidate improves the measured tasks without observed failures in that scope |
-| `promising_with_failures` | Candidate improves at least one task but still has failing tasks |
-| `reject_or_revise` | Candidate regresses on at least one task |
-| `no_skill_lift_detected` | Baseline already succeeds on the measured tasks |
-| `needs_more_evidence` | Missing grades, unknowns, or absent comparable rows block a decision |
 
 ## Validation And Packaging
 
@@ -1463,8 +1405,7 @@ decision.
    and pending human grader rows.
 9. If human judgment is needed, `skill-evaluator` uses `eval human` to present
    review packets and record labels with rationales.
-10. `skill-evaluator` runs `eval compare` or `eval report` to summarize the
-    evidence.
+10. `skill-evaluator` runs `eval report` to summarize the evidence.
 11. When a recurring release, trigger, regression, or quality decision needs
     history, `skill-benchmarker` creates or runs a benchmark profile and renders
     a scorecard over the eval artifacts.
@@ -1547,8 +1488,8 @@ Use these files when refreshing this document:
 - `<meta-skill-root>/src/meta_skill/app_server/`: App Server SDK boundary, event
   folding, judge calls, sandbox, and approval policy.
 - `<meta-skill-root>/src/meta_skill/grading.py`: code, model, and human graders.
-- `<meta-skill-root>/src/meta_skill/report.py`: run listing, reports, impact, and
-  comparison recommendations.
+- `<meta-skill-root>/src/meta_skill/report.py`: run listing, reports, impact,
+  and neutral comparison rows.
 - `<meta-skill-root>/src/meta_skill/linting.py`: static eval manifest lint.
 - `<meta-skill-root>/src/meta_skill/validation.py`: skill validation bridge.
 - `<meta-skill-root>/src/meta_skill/packaging.py`: portable payload packaging.
