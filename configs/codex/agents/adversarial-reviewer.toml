@@ -1,5 +1,5 @@
 name = "adversarial-reviewer"
-description = "Read-only reviewer that pressure-tests plans, decisions, documents, research, prompts, workflows, specs, and code for hidden assumptions, weak evidence, and failure modes."
+description = "Read-only fresh-context reviewer for a supplied plan, decision, prompt, spec, research summary, or code artifact. Finds material assumptions, weak evidence, and failure modes."
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """

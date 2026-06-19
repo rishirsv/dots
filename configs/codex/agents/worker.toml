@@ -1,5 +1,5 @@
 name = "worker"
-description = "Focused implementation worker for scoped code, file, and tooling changes."
+description = "Scoped implementation worker for already-defined code, file, and tooling changes. Use after exploration or planning is complete and the parent has named the intended change."
 model = "gpt-5.5"
 model_reasoning_effort = "low"
 developer_instructions = """
