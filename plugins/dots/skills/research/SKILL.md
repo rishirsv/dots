@@ -87,7 +87,7 @@ Workflow:
 4. Use fast search and targeted reads. Prefer `rg`, dependency manifests, tests,
    call sites, and local docs over broad file dumps.
 5. For broad or parallel codebase research, dispatch the `researcher` subagent
-   with one bounded question, source boundary, budget, output path when needed,
+   with a focused prompt that names the outcome, source boundary, evidence bar,
    and stop condition. Do not create separate codebase specialist roles inside
    this skill.
 6. Trace actual code paths before making claims. Include files, symbols,
@@ -216,27 +216,50 @@ write files, the parent must save its report before synthesizing.
 
 ### Subagent Prompt Shape
 
-Use the `researcher` custom agent when available. Keep prompts portable: tell it
-to follow repository conventions, local instructions, and documented workflows
-rather than naming local directories unless the current run requires a concrete
-path.
+Use the `researcher` custom agent when available. Write the prompt dynamically
+for the slice of research you need; the examples below are shapes, not forms to
+fill in. Prefer a clear brief over a rigid field list.
+
+A good subagent prompt usually includes:
+
+- The specific question or decision the subagent should help answer.
+- The source boundary: repo area, files, docs, web sources, product version, date
+  range, or already-collected reports.
+- The evidence bar: what counts as support, what to cite, and whether to separate
+  facts from inferences.
+- The output you need for synthesis: answer, key evidence, commands/searches,
+  contradictions, confidence, gaps, risks, or a durability recommendation.
+- The operating constraints: follow repository conventions and local
+  instructions; do not edit code; do not edit durable docs except an assigned
+  research report path.
+- A budget or stop condition when the work could sprawl.
+
+Good prompt shapes:
 
 ```text
-Research question: <one bounded question>
-Scope: <source class, repo area, product version, or date constraint>
-Budget: <source count, file count, time box, or token budget>
-Output path: <path to qNN-topic.md, when file writes are required>
-Constraints: Follow repository conventions, local instructions, and documented
-workflows. Do not edit code. Do not edit durable docs except the assigned
-research report path.
-Evidence standard: Use only sources retrieved in this workflow. Never fabricate
-citations, URLs, file paths, source IDs, or quote spans. Separate facts from
-inferences.
-Output: Markdown report with question, scope, answer, key evidence, commands or
-searches run, sources consulted, sources not consulted, contradictions,
-confidence, gaps, and durability recommendation.
-Stop condition: <source count, time budget, or enough evidence to answer>
+Trace how <behavior> works in <repo area>. Read the smallest set of source files
+needed to identify the path, owners, tests, and missing proof. Return the answer,
+key file/symbol evidence, commands run, caveats, confidence, and next checks.
+Do not edit code.
 ```
+
+```text
+Verify the current external guidance for <API/product/standard> as of <date>.
+Prefer primary sources and release notes. Return the supported behavior,
+version/date constraints, source URLs, conflicts, confidence, and practical
+implications for the parent synthesis.
+```
+
+```text
+Review the attached subreports for contradictions and unsupported claims. Use
+only those reports and their source lists. Return convergence, disagreements,
+claims that need stronger evidence, and a confidence readout.
+```
+
+When a saved subreport is required, include the exact output path and the
+headings the parent needs. Keep reusable prompt bodies portable: tell the
+subagent to follow repository conventions rather than hard-coding local
+directories unless the current run requires a concrete path.
 
 If the prompt is too broad, the subagent should return `Scope too broad` with a
 recommended split instead of wandering.

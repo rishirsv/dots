@@ -49,21 +49,45 @@ Use these as starting points and adapt them to the research contract:
 
 ## Subagent Prompt Shape
 
-Use this compact shape:
+Give each subagent a purpose-built brief. The prompt should make the research
+slice obvious without forcing every run into the same fields.
+
+Good prompts usually name:
+
+- the question, decision, or claim to investigate
+- the source boundary and any date/version constraint
+- the evidence standard and citation expectations
+- the output the parent needs for synthesis
+- no-edit constraints and any assigned report path
+- the budget or stop condition when the slice could sprawl
+
+Use concise shapes like these and adapt them:
 
 ```text
-Research question: <one bounded question>
-Scope: <source class, repo area, product version, or date constraint>
-Budget: <source count, file count, time box, or token budget>
-Constraints: Follow repository conventions, local instructions, and documented workflows. Do not edit code or durable docs.
-Evidence standard: Use only sources retrieved in this workflow. Never fabricate citations, URLs, file paths, source IDs, or quote spans. Separate facts from inferences.
-Output: Answer, key evidence, commands run, sources consulted, contradictions, confidence, gaps, and whether anything should become durable.
-Stop condition: <source count, time budget, or enough evidence to answer>
+Trace <behavior> through <repo area>. Identify the relevant files, symbols,
+tests, and missing proof. Return answer, evidence, commands run, caveats,
+confidence, and next checks. Do not edit code.
 ```
 
-Do not hard-code local directory names into a reusable subagent body. Put repo-specific paths only in the parent prompt for a specific run when the repository conventions name those paths.
+```text
+Verify current guidance for <external API/product/standard>. Prefer primary
+sources. Return supported claims, version/date constraints, source URLs,
+conflicts, confidence, and practical implications.
+```
 
-If a requested subagent scope is too broad, split it before dispatch. If a subagent receives an unbounded prompt anyway, it should return `Scope too broad` with a recommended split instead of wandering.
+```text
+Compare these subreports for contradictions and unsupported claims. Use only the
+provided reports and source lists. Return convergence, disagreements, evidence
+gaps, and confidence.
+```
+
+Do not hard-code local directory names into reusable prompt bodies. Put
+repo-specific paths only in the parent prompt for a specific run when the
+repository conventions or assigned report path require them.
+
+If a requested subagent scope is too broad, split it before dispatch. If a
+subagent receives an unbounded prompt anyway, it should return `Scope too broad`
+with a recommended split instead of wandering.
 
 ## Synthesis
 
