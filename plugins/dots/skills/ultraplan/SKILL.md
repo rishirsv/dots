@@ -104,12 +104,16 @@ native.
    alternatives. Prefer incremental, reusable, testable changes and name what is
    explicitly out of scope.
 6. **Write the plan.** Use [output-contract.md](references/output-contract.md)
-   for the Codex Plan Mode structure. For chat finalization, output exactly one
-   `<proposed_plan>` block. Save a durable plan artifact only when the user asks
-   for one or the repo workflow clearly needs it.
+   for the Codex Plan Mode structure, but keep the format human-scale: start
+   with the outcome, approach, and concrete steps, and add current-state,
+   target-standard, scope, read-gate, owner, progress, recovery, or artifact
+   sections only when the task earns them. For chat finalization, output
+   exactly one `<proposed_plan>` block. Save a durable plan artifact only when
+   the user asks for one or the repo workflow clearly needs it.
 7. **Post-validate.** Check that the plan has no unresolved open questions, cites
    concrete files/symbols/commands for load-bearing claims, separates automated
-   and manual verification, and stays implementation-ready without executing it.
+   and manual verification, avoids ceremonial scaffolding before the actual
+   plan, and stays implementation-ready without executing it.
 8. **Handoff.** Report research performed, validation performed, assumptions
    chosen, and any artifact path if a durable plan was saved. Do not ask
    whether to proceed after a final `<proposed_plan>`.

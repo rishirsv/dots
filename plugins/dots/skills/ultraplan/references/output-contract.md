@@ -22,24 +22,60 @@ Default structure:
 <proposed_plan>
 # <Clear Title>
 
-## Summary
-- <goal, desired outcome, and chosen approach>
+## Outcome
+- <what will be true when this is done>
 
-## Implementation Changes
-- <grouped by subsystem or behavior>
+## Approach
+- <chosen implementation path and key sequencing dependency>
 
-## Test Plan
-- <automated checks and manual scenarios>
+## Steps
+1. <first concrete slice>
+   - Change: <what to change>
+   - Verify: <how to prove this slice>
 
-## Assumptions
-- <explicit defaults chosen where needed>
+2. <next concrete slice>
+   - Change: <what to change>
+   - Verify: <how to prove this slice>
+
+## Validation
+- Automated: <commands/checks>
+- Manual: <screens, workflows, review, or proof limits>
+
+## Assumptions / Deferrals
+- <explicit defaults chosen, or tempting work intentionally deferred>
 </proposed_plan>
 ```
 
+Start with the executable plan, not the audit trail. Do not add masthead
+sections such as `Ultraplan Run`, `Grounded Current State`, `Target Standard`,
+or `Scope` by default. The implementing agent should reach the outcome,
+approach, and first step quickly.
+
+Use extra sections only when they materially prevent mistakes:
+
+| Add this section | When to include it |
+| --- | --- |
+| `Current State` | The implementation would otherwise start from a false premise, stale artifact, or confusing repo state. Keep it to the facts that change the plan. |
+| `Target Standard` | The task changes a design-system rule, architecture contract, naming vocabulary, policy, or reusable primitive. |
+| `Scope` | Adjacent work is tempting enough that excluding it changes implementation behavior. |
+| `Read Gates` | Specific repo instructions, skills, docs, or external references must be loaded before implementation. |
+| `Owners` | Ownership is cross-module, non-obvious, or needed to prevent duplicate work. |
+| `Decision Log`, `Progress`, `Recovery`, or `Artifacts` | The plan is long-running, persisted, resumed across sessions, or intentionally ExecPlan-style. |
+
+When a section is needed, place it where it supports execution. Prefer:
+
+1. `Outcome`
+2. `Approach`
+3. optional `Current State` or `Target Standard`
+4. optional `Scope` or `Read Gates`
+5. `Steps`
+6. `Validation`
+7. `Assumptions / Deferrals`
+
 Include important public API, interface, type, data, migration, compatibility,
-or rollout notes inside `Implementation Changes` when they matter. Add a
-separate `Scope` section only when scope boundaries are genuinely needed to
-avoid implementation mistakes.
+or rollout notes inside the relevant step unless they cut across the whole
+plan. Keep audit evidence out of the opening; cite it inline where it changes a
+step or put it in a short appendix for persisted plans.
 
 Prefer behavior-level bullets over file-by-file inventories. Mention files only
 when needed to disambiguate a non-obvious change, and avoid naming more than
@@ -49,7 +85,8 @@ bullets short and avoid explanatory sub-bullets unless they prevent ambiguity.
 For v1 feature-addition plans, do not invent detailed schema, validation,
 precedence, fallback, or wire-shape policy unless the request establishes it or
 it is needed to prevent a concrete implementation mistake. For straightforward
-refactors, keep the plan to summary, key edits, tests, and assumptions.
+refactors, keep the plan to outcome, approach, steps, validation, and
+assumptions/deferrals.
 
 Do not leave unresolved open questions in the plan body. If a decision blocks a
 complete plan, ask before writing or record the recommended default only after
