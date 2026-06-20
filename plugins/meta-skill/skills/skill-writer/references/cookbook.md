@@ -2,7 +2,9 @@
 
 Read this after the design decision is clear and a compact, reusable runtime snippet would make the skill clearer. This is a recipe lookup, not a template or principle guide. Add only snippets that change runtime behavior.
 
-Snippet headings are illustrative. Derive actual section names from the job, file type, or workflow moment.
+Snippet headings are illustrative. Derive actual section names from the job,
+file type, or workflow moment. Prefer headings that name the reader's question,
+decision, or next action over house shorthand, metaphor, or internal taxonomy.
 
 ## Scope
 
