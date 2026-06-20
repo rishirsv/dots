@@ -1,106 +1,71 @@
 ---
 name: explain
-description: "Use when the user asks to explain, understand, unpack, translate, investigate, or make sense of dense technical material such as repo behavior, bugs/issues, enhancement ideas, architecture ownership, code, errors, commands, logs, docs, diagrams, jargon-heavy prose, or prior assistant answers; also for walkthroughs, missing background, and optional HTML/image explainers; not for tutoring, quizzes, full tutorials, summarization-only, code fixing, broad audits, or durable docs."
+description: "Explains dense material by grounding claims, bridging hidden context, and choosing the smallest clear format. Use when the user asks to explain, unpack, translate, or make sense of a concept, text, decision, error, log, document, diagram, policy, process, system behavior, or prior answer; not for tutorials, quizzes, code fixing, broad audits, durable docs, or saved visual artifacts."
 ---
 
 # Explain
 
-Make dense technical material understandable quickly. Preserve meaning, add the
-missing context, choose the clearest format for the material, and stop before
-the answer turns into tutoring. For investigative prompts, close with explicit
-`Confidence:` and `Next move:` lines so uncertainty and action stay visible.
-
-## Memory
-
-Read `~/.codex/skill-state/explain/MEMORY.md` when it exists before choosing the
-explanation level or style. If only the legacy
-`~/.codex/skill-state/unpack/MEMORY.md` exists, read it as a migration hint but
-write new durable preferences to the `explain` memory path.
-
-When the user gives an explicit durable explanation-style preference or
-correction, briefly state the short preference or correction that will be
-recorded, then update that memory file. Create the parent directory and file if
-needed. Do not update memory when the user prohibits file writes. Do not store
-one-off formatting requests, secrets, private source excerpts, project facts,
-credentials, or topic conclusions.
-
-Use this starter shape for a new file:
-
-```md
-# Explain Memory
-
-## Durable Preferences
-
-- Prefer fast comprehension over tutoring.
-- Do not use Socratic questions, quizzes, or knowledge checks.
-- Add missing context when technical terms are likely assumed.
-- Use simple adult prose, not ELI5 tone.
-- Use HTML or image explainers only when requested.
-
-## Corrections
-```
+Be the bridge between the material and the user's mental model. Preserve the
+meaning, add only the missing context that makes it understandable, and stop
+before the answer becomes a lesson.
 
 ## Route
 
-Use this skill for dense technical material, jargon-heavy prose, repo behavior,
-bugs or issues, enhancement ideas, architecture ownership, commands, logs,
-errors, code snippets, docs, APIs, diagrams, or prior assistant answers.
+Use this skill when the user asks to explain, unpack, translate, walk through,
+or make sense of dense material.
 
-Also use it for technical prompts like `explain how`, `explain why`, `walk me
-through`, `what am I missing`, `translate this`, `explain the jargon`, or `make
-this make sense`, even when the user does not explicitly say they are confused.
+Good fits include:
 
-Do not turn an explanation request into tutoring, a quiz, a full tutorial,
-general summarization, code fixing, a broad codebase audit, or durable
-documentation unless the user asks for that work.
+- concepts, terms, frameworks, policies, arguments, or decisions
+- code, errors, logs, commands, docs, APIs, diagrams, or system behavior
+- product, process, architecture, ownership, or causality questions
+- a prior assistant answer that needs clearer wording
 
-When the user names repo-specific code, files, symbols, app behavior, or
-architecture, inspect the relevant local source before explaining. For general
-technical concepts, answer from available context without repo exploration.
+Do not use this skill for full tutorials, quizzes, broad audits, code fixing,
+implementation, durable documentation, or saved visual artifacts. Mermaid in
+chat is allowed when it makes a relationship easier to see.
 
-For hybrid requests like `explain why this fails`, `walk me through this bug`,
-`unpack this issue`, or `who owns this behavior`, use Investigative Explain
-below. Do not switch into fixing, broad debugging, refactor review, or code
-edits unless the user asks for that work.
+## Path
 
-## Runtime Loop
+Follow this compact loop:
 
-Follow a compact loop without forcing a fixed answer template:
+1. Identify the material type and the real question.
+2. Ground claims in the available source of truth.
+3. Answer the real question first.
+4. Add one missing bridge: background, relationship, implication, or causal link.
+5. Choose the smallest format that makes the idea click.
+6. Stop once the user can act on the explanation.
 
-1. Read memory if it exists and applies.
-2. Identify the material type: concept, code, error, command, log, doc, diagram,
-   prior answer, repo behavior, issue, enhancement, or ownership question.
-3. Inspect only the source needed for repo-specific claims.
-4. Choose the knowledge level and format that best reduce hidden assumptions.
-5. Answer the real question first, add the missing bridge, and stop when the
-   user can act on the explanation.
+For named repo code, files, symbols, app behavior, docs, logs, or plans, inspect
+the relevant local source before explaining. For user-provided text or general
+concepts, work from the given context unless a current or source-specific claim
+needs verification.
 
-## Investigative Explain
+Ask only when missing information would make the explanation materially wrong.
+Otherwise add one compact bridge concept and continue.
 
-Use this mode when the user asks to unpack a bug, issue, enhancement idea,
-architecture ownership question, ambiguous behavior, failure path, or "what is
-going on here" repo question.
+## Causal Questions
 
-Keep the investigation bounded:
+Use this shape when the user asks why something happened, how one idea follows
+from another, who or what is responsible, where a process breaks down, or how a
+state moves through a system.
 
-1. Restate the question as the behavior, causality, or ownership question being
-   investigated.
-2. Inspect only the source, docs, tests, logs, or plans needed to explain it.
-3. Build a short evidence map: confirmed facts, relevant owners or boundaries,
-   likely inferences, and gaps.
-4. Explain the causal flow, ownership model, or pressure point in plain
-   technical language.
-5. End with implication, confidence, and the next useful investigative move.
-   For issue, failure, or ownership prompts, make the final confidence and next
-   move explicit.
+Keep it bounded:
 
-Use this shape when it helps the user scan the answer:
+1. Restate the causality, ownership, responsibility, or meaning question.
+2. Inspect only the material or source needed to explain it.
+3. Separate confirmed facts, inferences, and gaps.
+4. Explain the flow, boundary, or pressure point in plain prose; use technical
+   language only when the material is technical.
+5. End with `Confidence:` and `Next move:` only when the user needs to verify,
+   continue investigating, or make a decision.
+
+Use this shape when it helps the user scan:
 
 - Short answer
 - Evidence
 - How it works
-- Why this is happening, or where the pressure is
-- Ownership or boundary map
+- Where the pressure or ambiguity is
 - What this means
 - `Confidence:` <high/medium/low, with why>
 - `Next move:` <one source, check, or decision to inspect next>
@@ -108,142 +73,41 @@ Use this shape when it helps the user scan the answer:
 The next move is where to inspect, what to confirm, or which decision this
 unblocks. It is not a patch plan unless the user asks to implement.
 
-Do not let a likely fix be the final note in an investigative answer. If a fix
-direction is useful, label it as unconfirmed and still close with explicit
-`Confidence:` and `Next move:` lines.
+## Shapes
 
-When concrete source was missing or only partly inspected, the answer closes
-with those two labeled lines exactly. This keeps uncertainty visible.
+Choose the smallest shape that reduces comprehension effort:
 
-## Knowledge Dial
+- Prose for one concept, implication, distinction, or short causal account.
+- Bullets for several facts that need scanning.
+- A flow for order, lifecycle, data movement, process, or ownership.
+- A mapping table for terms, roles, fields, frames, files, claims, or meanings.
+- A comparison table when two things are easy to confuse.
+- Mermaid for relationships, pipelines, lifecycles, state transitions, or
+  branching rules that are easier to see than read.
 
-Use the user's wording, artifact type, prior context, and memory to decide how
-much background to assume.
+Skip sections that would be empty or obvious. Prefer one strong flow, mapping,
+or contrast over a long inventory.
 
-Decrease assumed knowledge when the user asks broad what/why questions, mixes
-terms, asks what they are missing, names an unfamiliar artifact, or the concept
-depends on hidden prerequisites.
-
-Increase density when the user uses precise domain terms correctly, asks about
-trade-offs, provides implementation context, or requests brevity. Increase
-density, not jargon.
-
-If the level is uncertain, add one compact bridge concept rather than asking a
-calibration question. Ask only when the answer would otherwise be materially
-wrong or misleading.
-
-## Format Selection
-
-Choose the smallest format that makes the idea click. Do not force a fixed
-answer template; let the material decide the shape.
-
-- Use prose for a concept, distinction, implication, or short causal account.
-- Use bullets when several facts need scanning.
-- Use a flow when order, ownership, lifecycle, or data movement matters.
-- Use a mapping table for terms, components, flags, stack frames, config fields,
-  API fields, responsibilities, or before/after meanings.
-- Use a comparison table when the user is likely confusing two similar concepts.
-- Use Mermaid when relationships, pipelines, lifecycles, state transitions, or
-  branching rules are easier to see than read.
-- Use HTML only when the user asks for an HTML explainer.
-- Use image generation only when the user asks for an image explainer.
-
-Skip sections that would be empty or obvious. Prefer one strong flow or mapping
-over a long list of components.
-
-## Explanation Rules
+## Rules
 
 Start from the thing the user is trying to understand, not from a textbook
 definition.
 
-Answer the user's real question first. Then add the missing bridge: the
-background, relationship, or causal link that makes the answer usable.
+Keep the user's source names visible when they matter, but translate their role
+into plain language.
 
-Prefer concrete flows over component inventories. A list of files, classes,
-flags, or services is not an explanation unless it shows how the pieces connect.
+Separate fact from inference when evidence is partial. If source was not
+inspected for a source-specific claim, say what the explanation is based on.
 
-Define only the terms needed to follow the answer. Keep names from the source
-visible when they matter, but translate their role into plain language.
+Use simple adult prose. Do not use ELI5 tone, Socratic questions, quizzes,
+knowledge checks, broad prerequisite ladders, or decorative framing.
 
-Separate fact from inference when source evidence is partial. If source files
-were not inspected for a repo-specific claim, say that the explanation is based
-on visible context.
+Do not create HTML files, image explainers, generated visuals, templates,
+indexes, manifests, or design-system artifacts from this skill. If the user
+explicitly asks for a saved visual artifact, stop using `explain` and route only
+if another installed skill clearly owns that artifact request.
 
-Keep the prose simple, adult, and technically faithful. Do not use ELI5 tone,
-Socratic questions, quizzes, knowledge checks, broad prerequisite ladders, or
-decorative framing.
+Do not write memory entries, hidden workbench notes, or other persistent state
+from this skill.
 
-End when the user can act on the explanation: what this means, what to watch
-for, or why the distinction matters.
-
-## Visual Explainers
-
-Read [references/explainer-patterns.md](references/explainer-patterns.md) when
-the user asks for an HTML explainer, an image explainer, a diagram-heavy answer,
-or when a Mermaid diagram would materially improve a text answer.
-
-### HTML explainers
-
-Build a bespoke document designed for this material — not a filled-in template.
-Read [references/DESIGN.md](references/DESIGN.md) (the visual system and anti-slop rules) and
-[references/html-explainer-design.md](references/html-explainer-design.md) (the
-component catalog and build steps), then:
-
-1. Pick the recipe or archetype from the material. Use the investigative recipes
-   in [references/DESIGN.md](references/DESIGN.md) for issue traces, change
-   pressure, ownership maps, failure paths, or concept-to-code bridges; otherwise
-   use the general archetypes.
-2. Start from [assets/html-explainer-template.html](assets/html-explainer-template.html).
-   Keep its `<style>`/`<script>` kit verbatim; replace the `<main>` with the
-   masthead plus only the modules the archetype needs, composed from the catalog.
-3. Make the dominant visual carry the hard relationship. Add a chart only for
-   real quantitative data and a diagram for real structure. Surface source
-   evidence: short snippets, exact symbols, confirmed vs inferred vs gap.
-4. Save to `<repo>/.agents/artifacts/<topic-slug>.html` unless the user
-   gives another path.
-
-When the user asks for the HTML structure before writing a file, answer with the
-recipe, first viewport, dominant visual, primitives, optional interactions,
-rejected non-fits, and carry-forward. Explicitly reject decorative dashboards,
-giant hero pages, unnecessary alternate themes, and interactions that do not
-reduce reading effort.
-
-Before writing, verify `.agents/` is gitignored. If it is not and repo
-instructions allow it, say `.agents/` will be added to `.gitignore`, then add it
-first. If repo instructions forbid that edit, ask before writing. If the user
-forbids file writes, do not create the file or edit `.gitignore`; return the
-intended path and a concise module plan instead.
-
-Before delivering, open the saved artifact in a real browser. Prefer Codex
-Browser when available; otherwise use the available browser tool that can render
-the local file or served URL. Inspect the rendered page at desktop width and a
-mobile width before handoff. Use screenshots plus DOM/layout checks, not just a
-load event. Fix console errors, broken layout, unreadable text, leftover sample
-content, and these regression classes:
-
-- no horizontal page scroll; only intentional code, diagram, or table panes may
-  scroll inside their own box
-- wide SVGs, tables, diagrams, and comparison boards stay contained or become
-  intentionally internally scrollable; they must not create repeated/offscreen
-  columns or bleed out of the article
-- labels, badges, arrows, captions, and controls remain legible and are not
-  clipped, overlapped, or pushed outside their container
-- first viewport, anchored sections, and mobile views do not show duplicated
-  side-by-side content caused by overflow
-
-Return a clickable file link and one sentence describing the explainer. Do not
-create an index, manifest, or history file unless asked.
-
-### Image explainers
-
-Generate the image directly when image generation is available. If the tool is
-unavailable, return the prompt that should be used and say generation was
-unavailable.
-
-## Gotchas
-
-- Simpler prose is not lower expertise.
-- Extra context is useful only when it removes a hidden assumption.
-- Do not over-explain just because the skill triggered.
-- Do not create visual artifacts unless the user requested them.
-- Do not fix code or debug beyond the explanation unless the user asks.
+End when the user can say what it means, why it matters, or what to inspect next.
