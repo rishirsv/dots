@@ -57,7 +57,8 @@ Good prompts usually name:
 - the question, decision, or claim to investigate
 - the source boundary and any date/version constraint
 - the evidence standard and citation expectations
-- the output the parent needs for synthesis
+- the output the parent needs for synthesis, with the answer and implications
+  before source inventory
 - no-edit constraints and any assigned report path
 - the budget or stop condition when the slice could sprawl
 
@@ -65,14 +66,15 @@ Use concise shapes like these and adapt them:
 
 ```text
 Trace <behavior> through <repo area>. Identify the relevant files, symbols,
-tests, and missing proof. Return answer, evidence, commands run, caveats,
-confidence, and next checks. Do not edit code.
+tests, and missing proof. Return answer, what it means, supporting evidence
+grouped by claim, caveats, confidence, next checks, and a compact audit trail.
+Do not edit code.
 ```
 
 ```text
 Verify current guidance for <external API/product/standard>. Prefer primary
 sources. Return supported claims, version/date constraints, source URLs,
-conflicts, confidence, and practical implications.
+practical implications, conflicts, confidence, and a compact source audit trail.
 ```
 
 ```text

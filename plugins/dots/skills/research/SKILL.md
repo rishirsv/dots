@@ -186,19 +186,23 @@ Recommended run shape:
   summary.md
 ```
 
+Each subreport must be reader-first. It should answer the assigned question
+before listing sources, and it should group evidence by claim instead of making
+the report primarily a source inventory.
+
 Each subreport must include:
 
 - Research question
 - Scope
 - Answer
-- Key evidence
-- Commands or searches run
-- Sources consulted
-- Sources not consulted
+- Why it matters or recommended direction
+- Supporting evidence, grouped by claim
 - Contradictions or caveats
 - Confidence
 - Gaps or next checks
 - Durability recommendation
+- Audit trail: commands/searches run, sources consulted, and important sources
+  not consulted
 
 The parent writes `summary.md` as an index and synthesis:
 
@@ -208,8 +212,8 @@ The parent writes `summary.md` as an index and synthesis:
 - Tie each major claim to the subreport evidence.
 - Surface contradictions and gaps.
 - Preserve important detail by pointing to the relevant subreport section.
-- Put sources once at the bottom if the summary itself relies on external
-  sources beyond the subreports.
+- Keep commands and source inventories out of the main answer unless they are
+  needed to support a claim. Put them in a compact audit trail or source section.
 
 Do not treat raw subagent chat as the research artifact. If a subagent cannot
 write files, the parent must save its report before synthesizing.
@@ -227,8 +231,9 @@ A good subagent prompt usually includes:
   range, or already-collected reports.
 - The evidence bar: what counts as support, what to cite, and whether to separate
   facts from inferences.
-- The output you need for synthesis: answer, key evidence, commands/searches,
-  contradictions, confidence, gaps, risks, or a durability recommendation.
+- The output you need for synthesis: answer, implication or recommendation,
+  supporting evidence grouped by claim, contradictions, confidence, gaps, risks,
+  durability recommendation, and compact audit trail.
 - The operating constraints: follow repository conventions and local
   instructions; do not edit code; do not edit durable docs except an assigned
   research report path.
@@ -239,15 +244,15 @@ Good prompt shapes:
 ```text
 Trace how <behavior> works in <repo area>. Read the smallest set of source files
 needed to identify the path, owners, tests, and missing proof. Return the answer,
-key file/symbol evidence, commands run, caveats, confidence, and next checks.
-Do not edit code.
+what it means, supporting evidence grouped by claim, caveats, confidence, next
+checks, and a compact audit trail. Do not edit code.
 ```
 
 ```text
 Verify the current external guidance for <API/product/standard> as of <date>.
 Prefer primary sources and release notes. Return the supported behavior,
-version/date constraints, source URLs, conflicts, confidence, and practical
-implications for the parent synthesis.
+version/date constraints, practical implications, conflicts, confidence, and a
+compact source audit trail for the parent synthesis.
 ```
 
 ```text

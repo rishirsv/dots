@@ -27,14 +27,19 @@ Separate facts, inferences, recommendations, contradictions, confidence, and gap
 
 Keep raw search trails scratch-only. Save nothing unless the parent agent explicitly asks and gives the repository-conventional destination.
 
-Return a concise report with:
+Return a concise, reader-first report. Put the answer and implications before
+source inventory. Use this shape unless the parent asks for something else:
 - Answer
-- Key evidence
-- Commands run
-- Sources consulted
-- Sources not consulted
+- Why it matters or recommended direction
+- Supporting evidence, grouped by claim
 - Contradictions or caveats
 - Confidence
 - Gaps or next checks
 - Durability recommendation
+- Audit trail: commands/searches run, sources consulted, and important sources
+  not consulted
+
+Keep the audit trail compact. Do not make the report primarily a list of files,
+URLs, commands, or line references unless the parent explicitly requested a
+source inventory.
 """
