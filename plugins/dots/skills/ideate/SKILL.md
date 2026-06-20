@@ -14,17 +14,32 @@ sharp boundaries, and cleaner options when an idea is muddy.
 
 ## Core Contract
 
-Ask one branch-unlocking question at a time. During active exploration, end each
-response with this block:
+Ask one branch-unlocking question at a time. During active exploration, use a
+fixed rhythm with variable lead-in labels:
 
 ```md
+**<moment-fit label>:** <short interpretation, tension, correction, or recommendation>
+**<moment-fit label>:** <optional second short line when useful>
+
 **Question:** <one branch-unlocking question>
 
-A. <option>
-B. **<recommended option> (Recommended)** - <why this is the best default>
-C. <option>
-D. <option, hybrid, or "something else">
+| Choice | Direction |
+|---|---|
+| A | <option> |
+| B | **<recommended option> (Recommended)** - <why this is the best default> |
+| C | <option> |
+| D | <option, hybrid, or "something else"> |
 ```
+
+The stable architecture is: compact lead-in, exactly one bold `Question`, then
+one A/B/C/D table with one inline recommended option. The lead-in may use 1-3
+short bold labels, short bullets, or a tiny 2-3 row table, but only when that
+local shape helps the current thinking move.
+
+Use labels that fit the moment, such as `Read`, `Tension`, `Best default`,
+`Naming issue`, `Trade-off`, `Correction absorbed`, or `Where this points`. Do
+not default to `Read / Pressure / My instinct`; use those labels only when they
+are the natural fit.
 
 Use A/B/C/D choices every active turn. If there are only two or three real
 branches, use D for hybrid/something else rather than fake choices. Bold one
@@ -33,10 +48,14 @@ options. Do not add a separate recommendation paragraph after the options.
 After a correction to vocabulary, names, direction, or taste, absorb it briefly
 and still end with the question block unless stopping.
 
-Exceptions: final concept brief; stop-condition synthesis; final handoff after
-the user asks to stop or switch modes; build gate confirmation; bare subagent
-prompt while launching read-only grounding. If Ideate continues after a handoff
-recommendation or subagent result, return to the question block.
+Keep the shape crisp. Do not freestyle the architecture: no extra headings, no
+long prose blocks, no second question, and no recommendation paragraph after the
+table during active exploration.
+
+Exceptions: final capture artifact; final handoff after the user asks to stop
+or switch modes; build gate confirmation; bare subagent prompt while launching
+read-only grounding. If Ideate continues after a handoff recommendation or
+subagent result, return to the question block.
 
 Read [conversation-patterns.md](references/conversation-patterns.md) when the
 right behavior is ambiguous. Mirror the moves, not the wording.
@@ -47,21 +66,24 @@ Start by naming the core desire, then offer likely forms before the first
 question.
 
 ```md
-My read: <one-sentence interpretation of the underlying idea>
+**Read:** <one-sentence interpretation of the underlying idea>
 
-This could be:
-1. <form A> - <what it optimizes for>
-2. <form B> - <what it optimizes for>
-3. <form C> - <what it optimizes for>
+| Form | Optimizes for |
+|---|---|
+| <form A> | <what it optimizes for> |
+| <form B> | <what it optimizes for> |
+| <form C> | <what it optimizes for> |
 
-My instinct: <recommended starting form and why>
+**Best default:** <recommended starting form and why>
 
 **Question:** <one branch-unlocking question>
 
-A. <option>
-B. **<recommended option> (Recommended)** - <why this is the best default>
-C. <option>
-D. <option, hybrid, or "something else">
+| Choice | Direction |
+|---|---|
+| A | <option> |
+| B | **<recommended option> (Recommended)** - <why this is the best default> |
+| C | <option> |
+| D | <option, hybrid, or "something else"> |
 ```
 
 Keep the opening concise. It should feel like a sharp thinking partner, not a
@@ -78,7 +100,9 @@ report.
 - Separate user-facing behavior from build approach.
 - Test claims with concrete scenarios and edge cases.
 - Surface hidden non-goals, rejected branches, and contradictions.
-- Stop when more questions are unlikely to change the direction.
+- Ask only while the next answer could change the idea's fitness for use. If
+  the next answers are predictable or merely polish the same direction, stop and
+  capture one artifact.
 
 ## Grounding
 
@@ -89,6 +113,18 @@ the user's request.
 When repo reality matters, delegate one bounded read-only pass. The parent agent
 must not inspect repo code, tests, git history, or local build docs for Ideate's
 grounding.
+
+Use a read-only repo subagent only when either:
+
+- the user explicitly asks to inspect repo docs, source, flows, terms, or
+  constraints
+- repo reality could invalidate the A/B/C/D option set or reverse the
+  recommended option
+
+When the user mentions repo reality casually, briefly name any vocabulary or
+constraint uncertainty, then keep the conversation moving unless that hard test
+is met. Do not pause merely because repo context might improve wording, add
+confidence, or be interesting.
 
 ```text
 Question: <one bounded codebase or docs question>
@@ -103,32 +139,48 @@ Use the findings to sharpen the concept, not to create tasks.
 
 ## Capture
 
-Before capture, synthesize:
+When stopping, produce exactly one capture artifact by default. Default to
+`Decision Snapshot`. Use `Quick Capture` only for very small ideas, `Concept
+Brief` only when the result needs to travel outside the chat, and `Handoff
+Prompt` only when the next mode is obvious. Do not produce both a synthesis and
+a concept brief unless the user asks.
 
 ```md
-Synthesis before capture:
-- Core direction:
-- Shared vocabulary:
-- Key trade-off:
-- Rejected branch:
-- Non-goal:
-- Carry-forward shape:
+**Decision Snapshot**
+
+| Field | Decision |
+|---|---|
+| Direction | <where the idea now points> |
+| Settled vocabulary | <terms that now have stable meanings> |
+| Key trade-off | <the trade-off that shaped the direction> |
+| Rejected branch | <important path not chosen> |
+| Non-goal | <what this should not become> |
+| Next move | <stop, concept brief, handoff, research, design, docs, or build confirmation> |
 ```
 
-If useful, return a compact concept brief:
+Use `Quick Capture` for tiny ideas:
 
 ```md
-Concept Brief
+**Quick Capture:** <one compact paragraph with the decision, why, and next move>
+```
 
-Core desire:
-Shared vocabulary:
-Recommended form:
-Direction sharpened:
-Branches chosen:
-Branches rejected:
-Open questions:
-Carry-forward shape:
-Build boundary:
+Use `Concept Brief` when another skill, future session, or person needs to pick
+up the result:
+
+```md
+**Concept Brief**
+
+| Field | Decision |
+|---|---|
+| Core desire | <underlying user desire> |
+| Shared vocabulary | <settled terms and meanings> |
+| Recommended form | <best product shape> |
+| Direction sharpened | <how the idea changed> |
+| Branches chosen | <chosen branches> |
+| Branches rejected | <rejected branches> |
+| Open questions | <remaining uncertainties> |
+| Carry-forward shape | <brief, handoff, next skill, or intentionally deferred> |
+| Build boundary | <what must be confirmed before building> |
 ```
 
 Do not expand this into a downstream artifact or durable doc unless the user
@@ -164,6 +216,9 @@ Reply with "confirm build" to proceed, or revise the scope.
 
 - Active exploration ended with exactly one `**Question:**` block, A/B/C/D
   choices, and one inline recommended option.
+- Active exploration used the fixed rhythm and did not add prose after the
+  choices table.
+- Stopping produced one capture artifact by default.
 - Fuzzy terms were sharpened or explicitly left open.
 - No repo grounding happened outside read-only subagents.
 - No file write, durable doc, external action, or build happened without its
