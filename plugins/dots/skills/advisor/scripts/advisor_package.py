@@ -46,6 +46,11 @@ SENSITIVE_PATTERNS = [
     "*credential*",
 ]
 
+
+def default_task_dir(root: Path, slug: str) -> Path:
+    return root / ".agents" / "advisor" / slug
+
+
 def run_git(args: list[str], cwd: Path) -> str:
     try:
         result = subprocess.run(
@@ -291,8 +296,20 @@ def main() -> int:
     parser.add_argument("--context-map-file", help="Curated Attached Context bullet list. Suppresses mechanical file reasons in prompt.md.")
     parser.add_argument("--notes", default="", help="Extra constraints or context notes.")
     parser.add_argument("--root", default=".", help="Repository/project root.")
-    parser.add_argument("--output-dir", default=str(Path.home() / "Desktop"), help="Directory where package folder is created.")
-    parser.add_argument("--name", help="Package folder name. Defaults to advisor-<timestamp>-<task-slug>.")
+    parser.add_argument(
+        "--output-dir",
+        help=(
+            "Directory where package folder is created. Defaults to "
+            "<root>/.agents/advisor/<task>. Keep package prep files in that same task directory."
+        ),
+    )
+    parser.add_argument(
+        "--name",
+        help=(
+            "Package folder name when --output-dir is explicit. "
+            "Defaults to advisor-<timestamp>-<task-slug>."
+        ),
+    )
     parser.add_argument("--max-file-bytes", type=int, default=1_000_000, help="Reject individual files above this size.")
     parser.add_argument("--max-total-bytes", type=int, default=12_000_000, help="Reject bundle above this total size.")
     parser.add_argument("--file-count-warning", type=int, default=20, help="Warn when included file count exceeds this number.")
@@ -330,8 +347,14 @@ def main() -> int:
         else:
             slug_source = task
     timestamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-    package_name = args.name or f"advisor-{timestamp}-{slugify(slug_source)}"
-    package_dir = Path(args.output_dir).expanduser().resolve() / package_name
+    task_slug = slugify(slug_source)
+    package_name = args.name or f"advisor-{timestamp}-{task_slug}"
+    output_dir = (
+        Path(args.output_dir).expanduser().resolve()
+        if args.output_dir
+        else default_task_dir(root, task_slug)
+    )
+    package_dir = output_dir / package_name if args.output_dir else output_dir
 
     include_patterns = [p for p in args.file if not p.startswith("!")]
     selected, excludes = expand_patterns(args.file, root)
@@ -436,7 +459,7 @@ def main() -> int:
         emit_report(written=False)
         return 0
 
-    package_dir.mkdir(parents=True, exist_ok=False)
+    package_dir.mkdir(parents=True, exist_ok=not args.output_dir)
     context_zip = package_dir / "context.zip"
     with zipfile.ZipFile(context_zip, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for entry in included:

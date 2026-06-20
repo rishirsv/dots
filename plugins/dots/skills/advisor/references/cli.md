@@ -1,12 +1,12 @@
 # Running The Advisor Through a Provider CLI
 
 Use this when the user explicitly approves a CLI route and wants another model to
-produce the advisor answer locally. A CLI route does not need a saved Desktop
-package: pass the prompt directly to the agent and give it the approved repo
-files or directories as context. Build a package first only when the user wants
-a sendable bundle, the context is too large or scattered to reference directly,
-the CLI requires package-like input, or a durable package is preferred for the
-specific task.
+produce the advisor answer locally. A CLI route does not need a saved
+`.agents/advisor/<task>` package: pass the prompt directly to the agent and give
+it the approved repo files or directories as context. Build a package first only
+when the user wants a sendable bundle, the context is too large or scattered to
+reference directly, the CLI requires package-like input, or a durable package is
+preferred for the specific task.
 
 Two baseline routes are documented here: **Claude** via the `claude` CLI and
 **Codex** via `codex exec`. Both are advisory: read-only, no external writes, and
@@ -28,9 +28,10 @@ adoption.
 5. Save the answer only when the task needs a local record; otherwise report the
    answer and verification boundary directly.
 
-If you intentionally build a Desktop package first, inspect `prompt.md`, the
-`context.zip` file list, and the token total before running the CLI. Then run
-the CLI against that package record and save the answer next to it.
+If you intentionally build a `.agents/advisor/<task>` package first, inspect
+`prompt.md`, the `context.zip` file list, and the token total before running the
+CLI. Then run the CLI against that package record and save the answer next to
+it.
 
 ## Claude (`claude` CLI)
 

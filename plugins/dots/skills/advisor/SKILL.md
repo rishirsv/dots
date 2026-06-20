@@ -98,7 +98,7 @@ plugin directory plus its planning docs, not a single file.
 
 ## Package
 
-Create a Desktop package when the user wants a sendable advisor bundle, when the
+Create a local package when the user wants a sendable advisor bundle, when the
 context is too large to pass cleanly to the chosen route, or when a durable local
 package is useful for the specific task. Do not create a package just because
 the route is a command-line agent; for CLI routes, pass the prompt directly and
@@ -110,13 +110,32 @@ Use [scripts/advisor_package.py](scripts/advisor_package.py):
 ```bash
 python3 plugins/dots/skills/advisor/scripts/advisor_package.py \
   --decision "Decide whether the proposed parser refactor is ready to implement." \
-  --task-file /tmp/advisor-task.md \
-  --context-map-file /tmp/advisor-context-map.md \
+  --task-file .agents/advisor/parser-refactor/task.md \
+  --context-map-file .agents/advisor/parser-refactor/context-map.md \
   --file "src/**/*.ts" \
   --file "!**/*.test.ts"
 ```
 
-The script writes `~/Desktop/advisor-<slug>/` with:
+By default, the script writes directly into `.agents/advisor/<task>/` under the
+project root, where `<task>` is the generated task slug. Always use that single
+`.agents/advisor/<task>` directory for Advisor work unless the user explicitly
+asks for another output location. If the user asks for a Desktop package, pass
+an explicit `--output-dir ~/Desktop`; do not make Desktop the default.
+
+### Task Workspace
+
+Use one task workspace for all Advisor prep and package output:
+
+- `.agents/advisor/<task>/` for `task.md`, `context-map.md`, selected patch
+  excerpts, compressed/review images, logs, `prompt.md`, `context.zip`, and any
+  other task-local Advisor files.
+
+Do not create Advisor staging folders in the repo root, such as
+`advisor-package-input/`, and do not use `.agents/tmp` for package inputs. If a
+derived file should be included, write or move it under
+`.agents/advisor/<task>/` and pass that path explicitly with `--file`.
+
+The package contains:
 
 - `prompt.md`: the standalone request to send
 - `context.zip`: selected files plus `file-map.txt`
@@ -138,7 +157,7 @@ treated as the base prompt so the script does not add another wrapper above it:
 
 ```bash
 python3 plugins/dots/skills/advisor/scripts/advisor_package.py \
-  --prompt-file /tmp/advisor-prompt.md \
+  --prompt-file .agents/advisor/parser-refactor/prompt-source.md \
   --file "src/**/*.ts"
 ```
 
@@ -159,12 +178,13 @@ sendable bundle, when stuck, when changing approach, or when an advisor answer
 conflicts with local evidence in a way that would change the decision. Short
 reactive tasks driven by tool output do not need repeated advisor runs.
 
-For package-only advisor runs, the Desktop package is the deliverable. The skill's
-job is to build a clean, safe, ready-to-send `prompt.md` plus `context.zip` on
-the Desktop and hand it back; it does not drive a provider browser.
+For package-only advisor runs, the `.agents/advisor/<task>` workspace is the
+deliverable. The skill's job is to keep prep inputs and the ready-to-send
+`prompt.md` plus `context.zip` there and hand it back; it does not drive a
+provider browser.
 Package-only flow:
 
-1. Develop the context, then build the package on the Desktop. Use `--dry-run` to right-size the bundle first.
+1. Develop the context and build the package inside `.agents/advisor/<task>`. Use `--dry-run` to right-size the bundle first.
 2. Inspect `prompt.md`, the `context.zip` file list, the reported token total, and any skipped-file lines printed by the package script.
 3. If anything is sensitive or broader than intended, rebuild; do not patch the zip by hand.
 4. Report the package path, the exact `prompt.md` to send, the included files, the token estimate, and the local verification boundary. Tell the user the package is ready to upload to the model of their choice.
@@ -177,9 +197,9 @@ API money or send broader private context than the user approved.
 
 ## Provider Routes
 
-The default route is `package-only`: build the package on the Desktop and hand
-the user the path and the exact `prompt.md` to send. Saving the package to the
-Desktop is the intended end state only for package-only advisor runs. Use another
+The default route is `package-only`: build the package in `.agents/advisor/<task>`
+and hand the user the path and the exact `prompt.md` to send. Saving the package
+there is the intended end state only for package-only advisor runs. Use another
 route only when the user explicitly asks for and approves it.
 
 Safe sequence for any non-default route:
@@ -201,7 +221,7 @@ Safe sequence for any non-default route:
 
 Optional routes when the user approves one:
 
-- `package-only` (default): give the user the Desktop package path and the exact `prompt.md` to paste or upload. This is sufficient on its own.
+- `package-only` (default): give the user the `.agents/advisor/<task>` package path and the exact `prompt.md` to paste or upload. This is sufficient on its own.
 - `claude-code`: pass the prompt directly to the `claude` CLI with a per-task
   `--effort`, a chosen `--model`, and approved file or directory references.
   `-p` / `--print` is the documented non-interactive path and may have account

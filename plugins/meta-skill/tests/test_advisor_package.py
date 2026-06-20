@@ -56,6 +56,47 @@ class AssistPackageTests(unittest.TestCase):
             self.assertEqual(prompt, task_file.read_text(encoding="utf-8").strip())
             self.assertFalse(prompt.startswith("Provide a focused second opinion"))
 
+    def test_default_output_dir_uses_agents_advisor_task_slug(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            result = self.run_package(
+                "--task",
+                "Review the parser plan.",
+                cwd=root,
+            )
+
+            package_dir = root / ".agents" / "advisor" / "review-the-parser-plan"
+            self.assertTrue((package_dir / "prompt.md").exists())
+            self.assertTrue((package_dir / "context.zip").exists())
+            self.assertIn(str(package_dir), result.stdout)
+
+    def test_agents_advisor_task_files_can_be_packaged_explicitly(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            task_dir = root / ".agents" / "advisor" / "review-the-parser-plan"
+            task_dir.mkdir(parents=True)
+            source = task_dir / "review-image.txt"
+            source.write_text("derived package input\n", encoding="utf-8")
+
+            self.run_package(
+                "--task",
+                "Review the parser plan.",
+                "--file",
+                ".agents/advisor/review-the-parser-plan/review-image.txt",
+                cwd=root,
+            )
+
+            package_dir = root / ".agents" / "advisor" / "review-the-parser-plan"
+            context_map = subprocess.run(
+                ["unzip", "-p", str(package_dir / "context.zip"), "file-map.txt"],
+                check=True,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            ).stdout
+            self.assertIn(".agents/advisor/review-the-parser-plan/review-image.txt", context_map)
+
     def test_prompt_file_preserves_authored_prompt_without_generated_wrapper(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
