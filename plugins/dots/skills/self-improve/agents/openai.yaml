@@ -1,5 +1,5 @@
 interface:
-  display_name: "Self Improve"
+  display_name: "Self-Improve"
   short_description: "Mine Codex sessions for instruction improvements"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"

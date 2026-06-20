@@ -1,5 +1,5 @@
 interface:
-  display_name: "Meta Skill"
+  display_name: "Meta-Skill"
   short_description: "Route agent skill lifecycle work"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
