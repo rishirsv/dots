@@ -4,7 +4,7 @@ interface:
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#3B82F6"
-  default_prompt: "Use $ideate to explore and sharpen this idea, turn fuzzy terms into shared vocabulary, map branches, pressure the plan, and produce a concept brief before deciding whether to write or build."
+  default_prompt: "Use $ideate to explore and sharpen this idea one question at a time, turn fuzzy terms into shared vocabulary, improve names, map branches, pressure the direction, and stop with a compact synthesis or concept brief only when useful. Do not write or build unless explicitly gated."
 
 policy:
   allow_implicit_invocation: false

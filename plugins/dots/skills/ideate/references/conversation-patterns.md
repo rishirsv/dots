@@ -42,9 +42,9 @@ C. Understand boundaries - clarify what each agent owns and when handoffs happen
 D. Hybrid - visibility first, with limited steering where it matters.
 ```
 
-## Plan Sharpening
+## Direction Sharpening
 
-Demonstrates: pressure without implementation planning.
+Demonstrates: pressure without build planning.
 
 ```text
 User:
@@ -90,7 +90,7 @@ I would split it:
 2. Session context - what the user and agent establish in this conversation.
 
 My instinct: use "repo context" and "session context" as canonical terms so the
-plan does not mix source-of-truth material with temporary working memory.
+direction does not mix source-of-truth material with temporary working memory.
 
 **Question:** Should the final brief preserve both repo context and session
 context, or only the session-level decisions?
@@ -120,7 +120,7 @@ Subagent prompt:
 Question: What existing onboarding terms, surfaces, and product-flow
 constraints would change this concept?
 Scope: onboarding docs, UI surfaces, route names, and tests.
-Mode: read-only exploration; do not edit files or propose implementation tasks.
+Mode: read-only exploration; do not edit files or propose build tasks.
 Return: repo terms, overloaded terminology, current flow, conflicts, and
 confidence.
 
@@ -193,23 +193,23 @@ Synthesis before capture:
 - Key trade-off: preserve useful thinking without making unfinished thinking
   feel official.
 - Rejected branch: always writing a PRD.
-- Non-goal: implementation tasks during Ideate.
-- Next artifact: concept brief in chat unless the user asks to persist it.
+- Non-goal: build tasks during Ideate.
+- Carry-forward shape: concept brief in chat unless the user asks to persist it.
 ```
 
 ## Build Gate
 
-Demonstrates: implementation is a separate confirmed transition.
+Demonstrates: building is a separate confirmed transition.
 
 ```text
 User:
 Looks great. Build it.
 
 Agent:
-I can switch from ideation to implementation. Confirm this scope:
+I can switch from ideation to building. Confirm this scope:
 - Build: <specific thing from the concept brief>
 - Do not build: <non-goals from the brief>
-- Evidence/handoff I will use: <concept brief and any subagent findings>
+- Evidence I will use: <concept brief and any subagent findings>
 
 Reply with "confirm build" to proceed, or revise the scope.
 ```
