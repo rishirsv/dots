@@ -107,9 +107,9 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
 
 9. Run the local app.
 
-10. Capture the local app using Browser/IAB first. Use Playwright Chromium only
-    when Browser/IAB is unavailable or unreliable, and state the fallback
-    reason.
+10. Capture the local app using Codex in-app browser first. If it is
+    unavailable or unreliable, use another available browser and state the
+    fallback reason.
 
 11. Run [design-qa](../../design-qa/SKILL.md) as the blocking build gate.
 
@@ -299,7 +299,7 @@ For concept-driven implementation, include:
 
 - accepted concept path
 - rendered screenshot method
-- Browser/IAB verification method or Playwright fallback reason
+- Codex in-app browser verification method or browser fallback reason
 - `view_image` inspection of the accepted concept and latest screenshot
 - native-size viewport checked or blocker
 - at least five inspected comparison points

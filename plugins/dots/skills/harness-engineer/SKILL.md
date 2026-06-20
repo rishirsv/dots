@@ -1,6 +1,6 @@
 ---
 name: harness-engineer
-description: "Use when assessing a repository or project for agent-readiness and harness-engineering opportunities, then planning or executing improvements such as repo maps, command maps, validation harnesses, progress ledgers, feedback loops, observability, AGENTS.md routing, setup/init scripts, browser/dev-server checks, or codifying repeated mistakes into durable controls; not for ordinary implementation, local-only commits, PR publication, skill authoring, or broad docs cleanup."
+description: "Assesses how agent-ready a repository is, then improves the harness: repo and command maps, validation harnesses, progress ledgers, feedback loops, observability, AGENTS.md routing, setup/init scripts, and codifying repeated mistakes into durable controls. Use when the user wants to evaluate or reduce the human handholding agents still need in a project; not for ordinary implementation, local-only commits, PR publication, skill authoring, or broad docs cleanup."
 ---
 
 # Harness Engineer

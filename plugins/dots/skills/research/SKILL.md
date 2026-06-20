@@ -1,6 +1,6 @@
 ---
 name: research
-description: "Use only when the user explicitly invokes $research, asks to use the Research workflow, requests a research report, or asks for deep research across codebase, web, documentation, or technical options; not for ordinary implementation, code review findings, local commits, publishing pull requests, or casual investigation."
+description: "Investigates code, docs, web sources, and technical options with enough evidence to trust the answer while keeping scratch research out of durable project history. Explicit-only skill invoked via $research, the Research workflow, or a request for a research report or deep research."
 ---
 
 # Research

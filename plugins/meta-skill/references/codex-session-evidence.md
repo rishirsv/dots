@@ -27,6 +27,7 @@ Use the shared Meta-Skill CLI surface:
 ```sh
 <meta-skill-root>/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> --max-chars 12000
+<meta-skill-root>/scripts/metaskill sessions extract <thread-id> --target <skill-dir>
 ```
 
 Useful filters:
@@ -35,6 +36,7 @@ Useful filters:
 <meta-skill-root>/scripts/metaskill sessions list --cwd "<project-root>" --days 30 --archived all
 <meta-skill-root>/scripts/metaskill sessions list --query "<skill name or failure phrase>" --json
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> --json
+<meta-skill-root>/scripts/metaskill sessions extract <thread-id> --target <skill-dir> --json
 ```
 
 ## Source Of Truth
@@ -42,6 +44,8 @@ Useful filters:
 - Treat `~/.codex/state_5.sqlite` as the authoritative session index.
 - Use each thread row's `rollout_path` to inspect the full rollout JSONL
   transcript.
+- Use `sessions extract` for existing-skill improvement handoffs; it is a
+  read-only packet generator, not a diagnosis or edit command.
 - Treat `~/.codex/session_index.jsonl` as an incomplete convenience index, not
   the source of truth.
 - Memory summaries may support orientation, but they are not primary evidence
@@ -75,6 +79,16 @@ For a Skill Doctor diagnosis, extract:
 - the prompt or turn where the failure appeared
 - relevant tool calls, files, approvals, or validation output
 - the smallest likely source of the skill failure
+
+For a thread-to-skill improvement handoff, read
+[thread-skill-improvement.md](thread-skill-improvement.md) and extract:
+
+- the target skill path or the blocking ambiguity about which skill is in scope
+- the thread facts needed for evidence provenance
+- observed user request and assistant behavior
+- the expected-vs-actual behavior a specialist can inspect
+- prompts or failure cases that could become eval seeds
+- approval boundary and coverage limits
 
 For Skill Writer session capture, extract:
 

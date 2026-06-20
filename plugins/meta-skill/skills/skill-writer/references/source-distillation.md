@@ -35,7 +35,7 @@ interview and design flow:
 6. Check against examples by dimension, not wording.
 7. Map promoted rules and eval manifest handoff into the main workflow
    answer-set in `SKILL.md`.
-8. Return to [design.md](design.md) for trigger, body shape, and runtime
+8. Return to [skill-design.md](skill-design.md) for trigger, body shape, and runtime
    placement.
 
 Do not run every lens by default. A two-file source pack may need only source
@@ -558,6 +558,6 @@ Source Distillation Notes
 ```
 
 Then map the promoted rules into the required answer-set in
-the main workflow answer-set, return to [design.md](design.md) for trigger and
+the main workflow answer-set, return to [skill-design.md](skill-design.md) for trigger and
 runtime shape, and use [cookbook.md](cookbook.md) only for the smallest snippets
 that make the distilled behavior executable.

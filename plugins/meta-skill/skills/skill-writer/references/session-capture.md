@@ -196,7 +196,7 @@ Draft Skill Outline
 - Inputs and output: <thread-derived input and output shape>
 - Invariants and failure shields: <corrections, gates, failure modes>
 - Fragility: <judgment prose | fixed shape | script-backed | strict sequence>
-- Skill category: <primary type from design.md>
+- Skill category: <primary type from skill-design.md>
 - Evaluation posture: <capability uplift | encoded preference | hybrid; baseline when available>
 - Eval manifest: <`.<skill-name>/evals.json` path with positive prompts, near misses, objective checks, and grader hints when available>
 - Gates: <approval gates or none>
@@ -205,6 +205,6 @@ Draft Skill Outline
 ```
 
 When `Still open` is `none`, create the skill. Use
-[design.md](design.md) for the trigger/body design and
+[skill-design.md](skill-design.md) for the trigger/body design and
 [cookbook.md](cookbook.md) only for the smallest useful runtime snippet.
 Author the payload from the draft outline, not from the raw transcript.

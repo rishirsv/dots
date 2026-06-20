@@ -13,7 +13,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.sessions import list_threads, render_thread_list, show_thread  # noqa: E402
+from meta_skill.sessions import extract_thread_improvement, list_threads, render_thread_list, show_thread  # noqa: E402
 
 
 class SessionEvidenceTests(unittest.TestCase):
@@ -41,9 +41,45 @@ class SessionEvidenceTests(unittest.TestCase):
                             "payload": {"type": "agent_message", "message": "I will inspect the skill."},
                         }
                     ),
+                    json.dumps(
+                        {
+                            "timestamp": "2026-01-01T00:00:02Z",
+                            "type": "event_msg",
+                            "payload": {
+                                "type": "user_message",
+                                "message": "Use MetaSkill to evaluate this thread and improve this skill.",
+                            },
+                        }
+                    ),
+                    json.dumps(
+                        {
+                            "timestamp": "2026-01-01T00:00:03Z",
+                            "type": "event_msg",
+                            "payload": {
+                                "type": "agent_message",
+                                "message": "I found a missing handoff and will propose a source update.",
+                            },
+                        }
+                    ),
                 ]
             )
             + "\n",
+            encoding="utf-8",
+        )
+        self.skill_dir = self.home / "skills" / "meta-skill"
+        self.skill_dir.mkdir(parents=True)
+        (self.skill_dir / "SKILL.md").write_text(
+            "\n".join(
+                [
+                    "---",
+                    "name: meta-skill",
+                    'description: "Route skill lifecycle work to the right specialist."',
+                    "---",
+                    "",
+                    "Route skill work.",
+                    "",
+                ]
+            ),
             encoding="utf-8",
         )
         with sqlite3.connect(self.home / "state_5.sqlite") as conn:
@@ -103,7 +139,7 @@ class SessionEvidenceTests(unittest.TestCase):
 
         self.assertTrue(result["ok"])
         self.assertEqual(result["thread"]["id"], "thread-abc")
-        self.assertEqual(result["message_count"], 2)
+        self.assertEqual(result["message_count"], 4)
         self.assertIn("## User", result["transcript_markdown"])
         self.assertIn("Please diagnose this skill.", result["transcript_markdown"])
         self.assertIn("## Assistant", result["transcript_markdown"])
@@ -113,6 +149,30 @@ class SessionEvidenceTests(unittest.TestCase):
         result = show_thread("thread-a", max_chars=200)
 
         self.assertEqual(result["thread"]["id"], "thread-abc")
+
+    def test_extract_thread_improvement_builds_happy_path_handoff(self) -> None:
+        result = extract_thread_improvement("thread-abc", target=str(self.skill_dir), max_chars=500)
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["target"]["name"], "meta-skill")
+        self.assertEqual(Path(result["packet"]["target_skill"]["skill_md"]), (self.skill_dir / "SKILL.md").resolve())
+        self.assertEqual(result["packet"]["thread_facts"]["message_count"], 4)
+        handoff = result["packet"]["extracted_handoff"]
+        self.assertIn("Use MetaSkill to evaluate this thread", handoff["expected_behavior"])
+        self.assertIn("missing handoff", handoff["actual_behavior"])
+        self.assertIn("skill-doctor", handoff["suggested_route"])
+        self.assertIn("current-vs-candidate", handoff["suggested_route"])
+        self.assertIn("Failure or capability seed for meta-skill", handoff["task_seeds"][0])
+        self.assertIn("## Extracted Handoff", result["handoff_markdown"])
+        self.assertIn("Approval Boundary", result["handoff_markdown"])
+
+    def test_extract_thread_improvement_marks_missing_target_as_coverage_limit(self) -> None:
+        result = extract_thread_improvement("thread-abc", target=str(self.home / "missing-skill"), max_chars=500)
+
+        self.assertTrue(result["ok"])
+        self.assertFalse(result["target"]["found"])
+        self.assertIn("identify the target skill", result["packet"]["extracted_handoff"]["suggested_route"])
+        self.assertIn("No target skill was resolved", "\n".join(result["packet"]["coverage_limits"]))
 
 
 if __name__ == "__main__":

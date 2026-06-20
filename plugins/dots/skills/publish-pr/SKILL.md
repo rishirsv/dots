@@ -1,6 +1,6 @@
 ---
-name: yeet
-description: "Use when the user asks to yeet, publish this, open a PR, push this branch, create a draft PR, send this for review, yeet merge, or turn already scoped local work into a reviewer-friendly GitHub pull request with a pushed branch; not for local-only commits, broad implementation work, existing PR review-thread handling, or standalone CI repair."
+name: publish-pr
+description: "Turns already-scoped local work into a pushed branch and reviewer-friendly GitHub pull request, defaulting to a draft unless asked to merge. Explicit-only skill invoked via publish-pr, yeet, publish, or open a PR; not for local-only commits or existing PR review threads."
 ---
 
 # Publish PR

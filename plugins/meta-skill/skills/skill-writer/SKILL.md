@@ -34,18 +34,18 @@ Read only what the task needs:
 |---|---|
 | Decide what a skill is, whether the idea is skill-shaped, and what artifact should be created if it is not a skill | [skill-shape.md](references/skill-shape.md) |
 | Distill source packs, example input/output pairs, transcripts plus notes, or prior artifacts into reusable skill rules | [source-distillation.md](references/source-distillation.md) |
-| Decide whether the workflow should become a skill; classify the skill type, invocation posture, information hierarchy, evaluation posture, runtime body, completion criteria, pruning pass, evidence boundaries, and voice | [design.md](references/design.md) |
+| Decide whether the workflow should become a skill; classify the skill type, invocation posture, information hierarchy, evaluation posture, runtime body, completion criteria, pruning pass, evidence boundaries, and voice | [skill-design.md](references/skill-design.md) |
 | Capture an active or prior Codex thread/session into a durable skill | [session-capture.md](references/session-capture.md) |
 | Add compact runtime snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Use the central Meta Skill CLI for validate, package, workbench, eval, progress, and runner workflows | [cli.md](../../references/cli.md) |
-| Understand OpenAI/Codex UI metadata fields when authoring `agents/openai.yaml` | [openai_yaml.md](references/openai_yaml.md) |
+| Understand UI metadata fields when authoring `agents/openai.yaml` | [openai_yaml.md](references/openai_yaml.md) |
 | Run a trial of a draft skill in an isolated Codex thread or worktree | [skill-trial-runs.md](../../references/skill-trial-runs.md) |
 
-Treat [design.md](references/design.md) as the governing principle guide. Treat
+Treat [skill-design.md](references/skill-design.md) as the governing principle guide. Treat
 [cookbook.md](references/cookbook.md) as a recipe lookup, not a template to copy
 wholesale.
 Use [cli.md](../../references/cli.md) for the plugin command surface. Worker
-skills do not expose local script interfaces.
+skills use that shared command surface.
 
 ## Workflow
 
@@ -73,7 +73,7 @@ conventions, or a question:
 | Inputs and output | What the skill consumes and the expected output shape or artifact. |
 | Invariants and failure shields | What the skill should preserve, prevent, or flag; include common mistakes and user corrections. |
 | Fragility | Whether the work is judgment prose, fixed-shape output, script-backed, or a strict sequence. |
-| Skill category | Primary type from [design.md](references/design.md); narrow or split if the draft straddles categories. |
+| Skill category | Primary type from [skill-design.md](references/skill-design.md); narrow or split if the draft straddles categories. |
 | Evaluation posture | Capability uplift, encoded preference, or hybrid; include the baseline and create `.<skill-name>/evals.json` when the user asks for eval seeds or project-mode eval material. |
 | Gates | Approvals required before external writes, destructive actions, publishing, sending, install/sync, or final client-facing delivery. |
 | Project mode | Portable-only, or project mode with a hidden `.<skill-name>/` workbench for docs, fixtures, package artifacts, and team reuse material. |
@@ -81,7 +81,7 @@ conventions, or a question:
 Fill every answer from context first. Resolve answers before asking by mining
 the current conversation, provided files, source packs, user corrections,
 session-capture output, comparable skills, and the skill type in
-[design.md](references/design.md). Ask only for decisions that change routing,
+[skill-design.md](references/skill-design.md). Ask only for decisions that change routing,
 runtime behavior, resources, approval gates, or project mode.
 
 When a question is needed, ask in one screen with numbered questions, lettered
@@ -103,8 +103,8 @@ c) Not sure - use default
 Reply with: `defaults`, or a compact answer like `1a 2b`.
 ```
 
-Always recommend an answer. Do not ask open-ended questions when tight choices
-would resolve the ambiguity faster. If a required answer is thin but not
+Always recommend an answer. Use tight choices when they would resolve ambiguity
+faster than open-ended questions. If a required answer is thin but not
 blocking, record the best defensible default and mark the uncertainty in
 `Still open`.
 
@@ -131,7 +131,7 @@ Before scaffolding, pressure-check the trigger by naming one should-trigger
 prompt, one should-not-trigger prompt, and the nearest near miss. If eval
 material is in scope, keep those prompts as eval manifest entries when the skill
 is non-trivial or trigger risk is material.
-Use [design.md](references/design.md) for trigger-contract quality.
+Use [skill-design.md](references/skill-design.md) for trigger-contract quality.
 
 The interview self-bypasses when context is complete, the user says "just build
 it" or "no questions," or the idea is not skill-shaped. Skipping changes the
@@ -146,7 +146,7 @@ from one-off answers, project docs, memory, utilities, validators, apps, or
 managed agent systems; route to the better artifact when the idea is not
 skill-shaped.
 
-Use [design.md](references/design.md) to decide:
+Use [skill-design.md](references/skill-design.md) to decide:
 
 - the recurring job and ownership boundary
 - the skill type, evaluation posture, and resource/test shape it implies
@@ -186,10 +186,12 @@ Create optional folders only when they will contain files; a blank
 exist.
 
 When the user asks for eval seeds, project-mode eval material, or evaluator
-handoff, create one `.<skill-name>/evals.json` prompt manifest. Do not create a
-top-level `evals/` folder. The writer-authored manifest should contain
-`skill_name`, realistic `evals[]` prompts, `type`, expectations, optional
-files/fixtures, and grader hints. Include no run status, grades, or evidence.
+handoff, create one `.<skill-name>/evals.json` prompt manifest. Keep evaluator
+handoff material there rather than in a top-level `evals/` folder. The
+writer-authored manifest should contain `skill_name`, realistic `evals[]`
+prompts, `type`, expectations, optional files/fixtures, and grader hints. Limit
+it to authored task material; run status, grades, and evidence belong to later
+evaluation runs.
 
 Follow these payload rules:
 
@@ -211,16 +213,17 @@ Follow these payload rules:
 - Include `agents/openai.yaml` for generated skills when the surrounding runtime
   expects UI metadata. Keep `display_name`, `short_description`, and
   `default_prompt` user-facing; `default_prompt` should mention
-  `$<skill-name>`. Read [openai_yaml.md](references/openai_yaml.md) before
+  `$<skill-name>`. Use double-quoted YAML string values, unquoted keys, and
+  unquoted booleans. Read [openai_yaml.md](references/openai_yaml.md) before
   generating optional metadata fields.
 - Add human gates before external writes, destructive edits, packaging,
   installing, syncing, publishing, posting, sending, submitting, or final
   client-facing delivery.
 
-Generalize source material into reusable behavior. Do not copy user prompts,
-model names, provider docs, raw research links, author provenance, thread IDs,
-one-off file paths, or local build notes into runtime unless they are direct
-runtime dependencies.
+Generalize source material into reusable behavior. Copy user prompts, model
+names, provider docs, raw research links, author provenance, thread IDs, one-off
+file paths, or local build notes into runtime only when they are direct runtime
+dependencies.
 
 When the intake requires research, prefer a bounded research pass before
 runtime drafting. Use an available researcher sub-agent or research-oriented
@@ -256,16 +259,15 @@ across no-skill, current-skill, and edited-skill candidates.
 
 Stop before packaging, installing, publishing, syncing, external writes, or
 final delivery unless the user explicitly approved that specific action. Repo
-instructions may identify the command to use after approval, but they do not
-authorize the action by themselves. If packaging or sync appears needed, report
-it as a follow-up and route lifecycle or release work through `meta-skill` or
-the appropriate specialist lane. When packaging is approved, use
+instructions may identify the command to use after approval; user approval
+authorizes the action. If packaging or sync appears needed, report it as a
+follow-up and route lifecycle or release work through `meta-skill` or the
+appropriate specialist lane. When packaging is approved, use
 `<meta-skill-root>/scripts/metaskill package <skill-dir>`; it exports only the
 portable payload from the project root and excludes `.<skill-name>/`. In the
 final handoff, explain the
-eval manifest as authoring material, not runtime instructions. It is runnable by
-Skill Evaluator, but it is not evidence until a run, grades, comparison, and
-report exist.
+eval manifest as authoring material, not runtime instructions. It becomes
+evidence only after a run, grades, comparison, and report exist.
 
 ## Output
 

@@ -92,6 +92,7 @@ Current top-level commands:
 <meta-skill-root>/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
 <meta-skill-root>/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
+<meta-skill-root>/scripts/metaskill sessions extract <thread-id> [--target <skill-dir>] [--mode improve] [--max-chars <n>] [--out <file>] [--json]
 <meta-skill-root>/scripts/metaskill eval lint [--suite <suite>] [--json]
 <meta-skill-root>/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
 <meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
@@ -219,6 +220,42 @@ Example:
 
 ```sh
 <meta-skill-root>/scripts/metaskill sessions show 019ed74b-e8d8 --max-chars 12000
+```
+
+### `sessions extract`
+
+Use this after `sessions list` or `sessions show` when a user asks to evaluate a
+thread and improve an existing skill. The command builds a read-only
+thread-to-skill improvement handoff; it does not grade the thread or edit source.
+
+What it does:
+
+- resolves the thread id from `~/.codex/state_5.sqlite`
+- reads the rollout transcript
+- reads target skill metadata when `--target` is provided
+- summarizes visible user requests and assistant responses
+- emits a Doctor/Evaluator handoff with `extracted_handoff`, eval seed prompts,
+  approval boundary, and coverage limits
+
+Inputs:
+
+- `<thread-id>`: exact id, or a unique id prefix
+- `--target <skill-dir>`: target skill directory or `SKILL.md`
+- `--mode improve`: build the existing-skill improvement packet
+- `--max-chars <n>`: maximum transcript-read budget; handoff excerpts are capped
+  for readability; default `12000`
+- `--out <file>`: write the Markdown handoff to a file
+
+Output:
+
+- Markdown handoff by default
+- JSON object with `packet.extracted_handoff` and `handoff_markdown` when
+  `--json` is set
+
+Example:
+
+```sh
+<meta-skill-root>/scripts/metaskill sessions extract 019ed74b-e8d8 --target plugins/dots/skills/ideate
 ```
 
 ### `eval materialize`

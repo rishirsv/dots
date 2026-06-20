@@ -1,12 +1,12 @@
 ---
 name: product-design
-description: "Use as an explicit router for product design work when the user wants one entry point for creating or polishing UI, implementing a selected visual target, running pre-handoff design QA, or auditing an existing product flow; routes to visual-design, design-qa, or audit rather than duplicating their workflows."
+description: "Thin router that sends product design work to the skill that owns it: visual-design to build or polish UI, design-qa for pre-handoff checks, or ux-audit to evaluate an existing flow. Explicit-only single entry point for product design; does not duplicate those workflows."
 ---
 
 # Product Design
 
 Route product design work to the focused skill that owns the job. This skill is
-a thin router; it does not replace the implementation, QA, or audit workflows.
+a thin router; it does not replace the implementation, QA, or ux-audit workflows.
 
 ## Routes
 
@@ -26,7 +26,7 @@ Use [design-qa](../design-qa/SKILL.md) for:
 - producing `design-qa.md` with `final result: passed` or `final result:
   blocked`
 
-Use [audit](../audit/SKILL.md) for:
+Use [ux-audit](../ux-audit/SKILL.md) for:
 
 - auditing, critiquing, reviewing, inspecting, assessing, or evaluating an
   existing product flow, journey, funnel, onboarding path, checkout path,
@@ -41,8 +41,8 @@ If the user asks whether an implementation matches an accepted image, mockup, or
 screenshot before handoff, route to `design-qa`.
 
 If the user asks to critique or evaluate an existing experience, route to
-`audit`.
+`ux-audit`.
 
 When several apply, sequence them in the product design lifecycle:
-`visual-design` first, `design-qa` before handoff, and `audit` only for a
+`visual-design` first, `design-qa` before handoff, and `ux-audit` only for a
 separate evaluation of an existing experience.

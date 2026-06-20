@@ -1,6 +1,6 @@
 ---
 name: visual-design
-description: "Use when creating, revising, critiquing, polishing, or validating visible UI for web, HTML/CSS, React, iOS, SwiftUI, app screens, dashboards, landing pages, games, or interactive tools, especially when visual judgment, layout, styling, assets, interaction polish, or rendered validation matters; not for backend-only work, CLI tools, documentation-only writing, or bug fixes with no visible UI surface."
+description: "Creates, critiques, revises, and faithfully implements distinctive visible UI for web, HTML/CSS, React, iOS, SwiftUI, app screens, dashboards, landing pages, games, and interactive tools. Use whenever front-end work changes what a user sees and layout, styling, assets, interaction polish, or rendered validation matters; not for backend-only work, CLI tools, documentation-only writing, or bug fixes with no visible UI surface."
 ---
 
 # Visual Design
@@ -148,8 +148,8 @@ decoration that does not serve the brief.
 
 Validate the rendered product, not just the build.
 
-Use Browser/IAB first for web verification. Use Playwright Chromium only when
-Browser/IAB is unavailable or unreliable, and state the fallback reason.
+Use Codex in-app browser first for web verification. If it is unavailable or
+unreliable, use another available browser and state the fallback reason.
 
 For web, inspect desktop and mobile widths, scroll, and click through the core
 workflow. For iOS, use the available simulator, previews, or screenshots and

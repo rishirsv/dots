@@ -37,6 +37,8 @@ done < <(
   find . \
     -path './.git' -prune -o \
     -path './dist' -prune -o \
+    -path '*/.*/runs' -prune -o \
+    -path '*/.*/workspaces' -prune -o \
     -type f -name '*.md' -print0
 )
 

@@ -1,13 +1,13 @@
 ---
 name: design-qa
-description: "Internal prototype QA helper. Use only after a visual-design or image-to-code build has a source visual target and a rendered implementation to compare before handoff. Do not use for broad UX critique, design critique, product audits, or flow reviews; route those user-facing requests to audit."
+description: "Compares a prototype's source visual target against its rendered implementation before handoff and reports fidelity gaps. Internal pre-handoff QA helper for visual-design builds, not broad UX critique or product audits (use ux-audit for those)."
 ---
 
 # Design QA
 
 Use this internal helper to compare a prototype's source design against the rendered implementation before handoff.
 
-Do not use this skill for broad UX critique, design critique, product audits, or flow reviews. Use [audit](../audit/SKILL.md) for those user-facing requests.
+Do not use this skill for broad UX critique, design critique, product audits, or flow reviews. Use [ux-audit](../ux-audit/SKILL.md) for those user-facing requests.
 
 Use this skill before every visual-design build handoff.
 

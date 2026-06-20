@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Use when creating a concise continuation handoff for another agent or future session after the user asks for a handoff, session summary, continuation brief, context transfer, next-agent instructions, a new Codex thread, or a worktree-backed continuation thread. Not for general thread management unless the user asks to hand off or continue work."
+description: "Creates a concise continuation brief for the current task, branch, PR, plan, or conversation so another agent or future session can pick it up, inline by default or as a file or new Codex thread on request. Explicit-only skill for handing off or continuing work."
 ---
 
 # Handoff

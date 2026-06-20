@@ -44,3 +44,4 @@ configuration.
 - Run deterministic tests that exist for the touched skill or helper.
 - For Meta-Skill validation, prefer
   `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`.
+**bold text**

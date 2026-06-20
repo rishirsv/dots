@@ -116,6 +116,10 @@ Sequence specialists only when one focused skill cannot own the full journey.
 - Fix then verify outcomes: `skill-doctor` → `skill-evaluator`.
 - Suite then recurring benchmark: `skill-evaluator` → `skill-benchmarker`.
 - Evaluation reveals a concrete defect: `skill-evaluator` → `skill-doctor`.
+- Evaluate a thread then improve an existing skill: use
+  [thread-skill-improvement.md](../../references/thread-skill-improvement.md),
+  then route to `skill-doctor` for the proposal or `skill-evaluator` when the
+  improvement claim needs candidate evidence.
 
 Stop the loop when the user's goal gate is met, validation blocks, or the next
 decision belongs to the user.

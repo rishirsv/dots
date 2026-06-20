@@ -1,6 +1,6 @@
 ---
 name: ultraplan
-description: "Use when the user explicitly asks to ultraplan, ultra-plan, create a repo-grounded implementation plan, or deeply stress-test/upgrade an existing code-grounded plan/spec with critique and refutation; not for ordinary implementation, quick planning, greenfield brainstorming, code review, or plans with no repository to verify."
+description: "Creates or upgrades an implementation plan by grounding it against the real repository, checking actual code paths, separating automated from manual verification, and stopping before execution. Explicit-only skill invoked to ultraplan or stress-test an existing code-grounded plan."
 ---
 
 # Ultraplan

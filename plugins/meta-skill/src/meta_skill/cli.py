@@ -21,7 +21,7 @@ from .linting import lint_suite
 from .packaging import package_skill
 from .report import build_report, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, terminal_count
-from .sessions import list_threads, render_thread_list, show_thread
+from .sessions import extract_thread_improvement, list_threads, render_thread_list, show_thread
 from .validation import validate_report
 from .workbench import init_workbench, materialize_cases
 
@@ -92,6 +92,27 @@ def command_sessions_show(args):
     else:
         print(result["transcript_markdown"], end="")
     return 0
+
+
+def command_sessions_extract(args):
+    result = extract_thread_improvement(
+        args.thread_id,
+        target=args.target,
+        mode=args.mode,
+        max_chars=args.max_chars,
+    )
+    if args.out:
+        out_path = Path(args.out).expanduser()
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(result["handoff_markdown"])
+        result = {**result, "out": str(out_path)}
+    if args.json:
+        emit(result, True)
+    elif args.out:
+        print(f"Wrote {result['out']}")
+    else:
+        print(result["handoff_markdown"], end="")
+    return 0 if result["ok"] else 1
 
 
 def command_eval_materialize(args):
@@ -251,6 +272,15 @@ def build_parser():
     sessions_show.add_argument("--max-chars", type=int, default=12000)
     sessions_show.add_argument("--json", action="store_true")
     sessions_show.set_defaults(func=command_sessions_show)
+
+    sessions_extract = sessions_sub.add_parser("extract", help="Build a read-only thread-to-skill improvement handoff")
+    sessions_extract.add_argument("thread_id")
+    sessions_extract.add_argument("--target", help="Target skill directory or SKILL.md")
+    sessions_extract.add_argument("--mode", choices=["improve"], default="improve")
+    sessions_extract.add_argument("--max-chars", type=int, default=12000)
+    sessions_extract.add_argument("--out", help="Write the Markdown handoff to this file instead of stdout")
+    sessions_extract.add_argument("--json", action="store_true")
+    sessions_extract.set_defaults(func=command_sessions_extract)
 
     eval_parser = sub.add_parser("eval", help="Evaluation commands")
     eval_sub = eval_parser.add_subparsers(dest="eval_command", required=True)

@@ -72,7 +72,7 @@ Recommended shape:
 
 * Publish PR workflow (`publish-pr.md`) - How the agent publishes a scoped
   branch and draft pull request.
-* Commit workflow (`commit.md`) - How the agent creates scoped local commits.
+* Commit workflow (`gc.md`) - How the agent creates scoped local commits.
 ```
 
 Rules:

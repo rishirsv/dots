@@ -86,6 +86,15 @@ Use the Meta-Skill session commands to locate and render the relevant transcript
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> --max-chars 12000
 ```
 
+When the request is to evaluate a thread and improve an existing skill, also
+read
+[thread-skill-improvement.md](../../../references/thread-skill-improvement.md)
+and build the read-only handoff:
+
+```sh
+<meta-skill-root>/scripts/metaskill sessions extract <thread-id> --target <skill-dir>
+```
+
 Use targeted session evidence for diagnosis, not broad pattern mining. Prefer
 `sessions list` and `sessions show` for a single reported failure. Do not scan
 unrelated sessions unless the user asks for repeated-pattern analysis.
@@ -94,6 +103,8 @@ Session evidence must cite concrete thread ids, timestamps, cwd values, and
 rollout paths when possible. Separate transcript facts from inference. Do not
 copy raw prompts, thread ids, local paths, model/provider names, or transient
 errors into runtime guidance unless they are direct runtime dependencies.
+The extractor output is not edit approval; it only packages evidence for the
+Doctor proposal or an Evaluator handoff.
 
 ## Diagnosis Method
 

@@ -1,9 +1,0 @@
-interface:
-  display_name: "Audit"
-  short_description: "Audit or critique product UX and design from captured screenshots"
-  icon_small: "../../assets/icon.png"
-  icon_large: "../../assets/logo.png"
-  brand_color: "#3B82F6"
-  default_prompt: "Use $audit to capture and audit this product flow."
-policy:
-  allow_implicit_invocation: true

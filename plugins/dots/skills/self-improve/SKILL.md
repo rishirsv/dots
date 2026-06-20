@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: "Use when the user asks to inspect prior Codex sessions, run a dream pass over past interactions, mine repeated corrections or preferences, improve or draft skills, update repo/project AGENTS.md guidance, or propose durable edits to global ~/.codex/AGENTS.md; not for applying instruction edits without explicit approval."
+description: "Inspects prior Codex sessions to mine repeated corrections and preferences, then proposes evidence-backed edits to skills, project AGENTS.md, global ~/.codex/AGENTS.md, or broader system-improvement bundles. Explicit-only self-improvement, dream pass, or deep improvement pass; never applies instruction edits without approval."
 ---
 
 # Self Improve
@@ -56,6 +56,49 @@ runtimes.
    with `show` and look for repeated `continue`, `keep going`, `don't stop`,
    `Come on`, and "can't you just..." messages before proposing global behavior
    rules.
+
+## Deep Improvement
+
+Use this mode when the user asks for deep improvement, "everything", a full
+self-improvement pass, a dream pass across the whole agent system, or broad
+workflow improvement.
+
+In this mode, inspect prior sessions for durable lessons across:
+
+- repeated user corrections and preferences;
+- agent stopping or continuation failures;
+- tool-selection mistakes;
+- missing skill or automation opportunities;
+- project-specific workflow friction;
+- global behavior rules;
+- contradictions between skills, `AGENTS.md` files, memories, and observed
+  usage;
+- validation, harness, or script gaps that would prevent recurrence.
+
+Expand proposal buckets beyond the default three when evidence supports it:
+
+- `Skills`
+- `New Skills`
+- `Project AGENTS.md`
+- `Global AGENTS.md`
+- `Memory Update Notes`
+- `Repo Docs`
+- `Scripts Or Harnesses`
+- `Validation Checks`
+- `Conflicts Or Deletions`
+
+Still default to propose-first. Do not edit skills, `AGENTS.md` files, memory
+update notes, docs, scripts, validators, or harnesses without explicit user
+approval.
+
+Rank proposals by impact, confidence, support, and blast radius. Separate:
+
+- `Recommended Now`
+- `Needs Human Judgment`
+- `Speculative / Watchlist`
+
+Every proposal must cite concrete session evidence or be explicitly labeled as
+an inference.
 
 ## Source Of Truth
 

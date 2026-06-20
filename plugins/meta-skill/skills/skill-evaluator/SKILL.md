@@ -115,6 +115,7 @@ Read only what the task needs:
 | Author deterministic validations and task-local `validate.*` checks | [references/validations.md](references/validations.md) |
 | See concrete guided-user interaction patterns | [references/examples.md](references/examples.md) |
 | Evaluate a target that is not an agent skill | [references/generalist.md](references/generalist.md) |
+| Turn a Codex thread into existing-skill improvement evidence | [thread-skill-improvement.md](../../references/thread-skill-improvement.md) |
 | Use the central Meta Skill CLI for materialize, run, progress, grade, validate, and runner selection | [cli.md](../../references/cli.md) |
 
 ## Vocabulary
@@ -152,6 +153,13 @@ Start from error analysis when possible. Ask what real traces, user reports,
 manual review findings, previous failures, release checks, or common workflows
 already exist. If none exist, suggest a tiny exploratory review or quality loop
 before building infrastructure.
+
+When the real trace is a Codex thread and the user wants an existing skill
+improved from it, read
+[thread-skill-improvement.md](../../references/thread-skill-improvement.md).
+Use `sessions extract` to build the handoff packet, then turn only realistic
+thread prompts into eval seeds when measured candidate evidence is needed.
+If the packet shows one concrete source defect instead, route to `skill-doctor`.
 
 Disambiguate static review from behavioral measurement consistently:
 `skill-doctor` owns static design review, diagnosis, and fixes for one skill;

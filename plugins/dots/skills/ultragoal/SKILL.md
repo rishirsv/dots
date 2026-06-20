@@ -1,6 +1,6 @@
 ---
 name: ultragoal
-description: "Use when the user asks to design, critique, set, start, activate, run, or manage a durable Codex goal for a persistent or long-running objective with verifiers, durable state, approval gates, completion proof, or parent/child goal decomposition; not for ordinary one-turn tasks, casual planning, or goals with no observable verifier."
+description: "Designs and runs durable Codex goals for long-running objectives that need persistence, recovery, verifiers, approval gates, and completion proof. Explicit-only skill for setting, starting, activating, or managing a goal; never activated from vague planning language."
 ---
 
 # Ultragoal

@@ -4,7 +4,7 @@ interface:
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#3B82F6"
-  default_prompt: "$yeet publish the scoped local change as a pushed branch and PR; ask to publish and merge to mark it ready and merge or enable auto-merge."
+  default_prompt: "$publish-pr publish the scoped local change as a pushed branch and PR; ask to publish and merge to mark it ready and merge or enable auto-merge."
 
 policy:
   allow_implicit_invocation: false

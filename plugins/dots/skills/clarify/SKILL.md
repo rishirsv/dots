@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Use when the user asks to clarify requirements, ask what is needed, identify missing decisions before coding, or when an implementation request is underspecified in ways that could change scope, user-facing behavior, destructive actions, publishing, credentials, validation standards, domain meaning, or irreversible decisions; not for deep product discovery, broad domain interrogation, ordinary implementation with low-risk assumptions, or skill authoring unless the user asks what is missing."
+description: "Asks the minimum blocking questions needed to make an underspecified request safe to build, then proceeds or returns a compact decision set. Use when a request is ambiguous in ways that affect scope, user-facing behavior, destructive or irreversible actions, publishing, credentials, validation standards, or domain meaning, or when the user asks what is needed before coding; not for deep product discovery, broad domain interrogation, or routine low-risk assumptions."
 ---
 
 # Clarify

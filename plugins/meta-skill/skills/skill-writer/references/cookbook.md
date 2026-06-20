@@ -9,7 +9,7 @@ decision, or next action over house shorthand, metaphor, or internal taxonomy.
 ## Scope
 
 - Covers reusable snippets for `SKILL.md` and linked runtime files.
-- Use [design.md](design.md) for skill fit, trigger design, evidence posture, and degree-of-freedom decisions.
+- Use [skill-design.md](skill-design.md) for skill fit, trigger design, evidence posture, and degree-of-freedom decisions.
 - Use the Skill Writer payload rules for shipped files, metadata, file placement, and link rules.
 - Do not copy every card. Pick the smallest snippet that fits the signal.
 
@@ -48,7 +48,7 @@ decision, or next action over house shorthand, metaphor, or internal taxonomy.
 
 ### 1. Trigger Contract And Adjacent Boundary
 
-See [design.md](design.md) Trigger Contract for the principles (what the description must contain, what to avoid, the pressure-check format). Use this snippet shape:
+See [skill-design.md](skill-design.md) Trigger Contract for the principles (what the description must contain, what to avoid, the pressure-check format). Use this snippet shape:
 
 ```yaml
 ---
@@ -57,10 +57,10 @@ description: Use when reviewing a PowerPoint deck for source support, number con
 ---
 ```
 
-For overlapping workflows, add an early route section:
+For overlapping workflows, add an early routing section with a plain heading:
 
 ```md
-## Route First
+## When to use
 
 - Deck QC: use when the user asks to find defects in an existing deck.
 - Deck drafting: use when the user asks to create or rewrite slides.
