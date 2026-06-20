@@ -291,6 +291,13 @@ one-off checks, research, adversarial critique, product review, or repair work
 that may later seed a suite. The CLI accepts only
 `codex_app_server` as a concrete eval runner.
 
+Do not turn direct child threads into formal eval trials by sending
+eval-labeled, candidate-labeled, or artifact-writing prompts. A thread-pair run
+is exploratory unless the measured first prompt is the natural task only and
+candidate/setup metadata stays outside the user-visible prompt. When metadata
+has to be embedded in the prompt, mark the result as a forced harness run with a
+prompt-contamination coverage limit.
+
 Use the child-thread workflow in [skill-trial-runs.md](../../references/skill-trial-runs.md)
 for exploratory one-off evidence outside an eval suite. Route doctor fixes and
 failure reproduction to `skill-doctor`.

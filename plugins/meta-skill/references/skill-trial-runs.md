@@ -83,6 +83,28 @@ For source-derived skills, use the example-matching dimensions in
 structure/output contract, evidence discipline, domain judgment, and
 process/tool fidelity.
 
+## Natural Prompt Boundary
+
+When a child thread is measuring agent behavior, the first user-visible prompt
+must be only the realistic task. Do not wrap it in delegation XML, candidate
+labels, eval-trial language, local file paths, credential setup, report
+requirements, grader hints, or parent bookkeeping.
+
+Keep harness metadata outside the measured prompt:
+
+- store candidate ids, expected behavior, artifact paths, and grader notes in
+  parent-owned check files or run records
+- attach or stage the candidate payload through the thread/worktree mechanism
+  when the tool supports it
+- let the parent read the child output and write durable evidence
+- ask for a structured check block only after the child has already answered the
+  natural task, unless the behavior being tested is the check/report format
+
+If the child cannot access the target candidate without operational
+instructions in the first prompt, do not call the result a natural behavior
+check. Label it as a forced harness run or integration smoke and record the
+prompt contamination as a coverage limit.
+
 ## Codex Thread And Worktree Mechanics
 
 Choose the smallest isolation that protects the parent checkout and gives useful
@@ -112,13 +134,17 @@ become readable before treating the trial as complete.
 3. Decide the isolation route: worktree child, forked worktree child, local child,
    projectless child, or parent-local/manual run.
 4. Create or fork the child only after the user has asked for check work.
-5. Prompt the child with the target skill path, trial prompt, expected behavior,
-   and result contract below.
+5. Prompt the child with the natural task only. Use a user-style skill
+   invocation only when explicit invocation is the behavior under test.
 6. Read the child result with `read_thread`.
-7. Classify the result in the parent: passes, fails, blocked, or needs full evaluation.
-8. Make source edits in the parent checkout only when the user authorized
+7. If the parent needs a structured check result, send a follow-up asking the
+   child to summarize the completed run using the result contract below. Do not
+   use this follow-up to change or complete the measured task.
+8. Classify the result in the parent: passes, fails, blocked, contaminated, or
+   needs full evaluation.
+9. Make source edits in the parent checkout only when the user authorized
    payload changes.
-9. Rerun the affected check when the revision changes the behavior under test.
+10. Rerun the affected check when the revision changes the behavior under test.
 
 Keep the parent as the decision-maker. Child output is evidence, not authority.
 
