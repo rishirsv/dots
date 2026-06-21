@@ -80,6 +80,11 @@ missing decisions, safer simplification, verification checklist, or a concise
 go/no-go. Do not ask for proof; ask for advice grounded enough that the primary
 agent can verify it locally.
 
+Keep the main prose readable: mention symbols, filenames, or short artifact
+names in the body, and put exact paths, line ranges, and source URLs in a final
+`Sources` or `Evidence Notes` section. Do not use inline `path:line` citations
+inside paragraphs unless the task explicitly asks for line-level annotation.
+
 ## Incomplete Context
 
 Tell the advisor what to do when the package is incomplete. Usually the best

@@ -123,10 +123,10 @@ define a blocked handoff with the exact manual test and evidence required.
 Keep the active goal objective short and put durable operating state under the
 current workspace or project root:
 
-- `.codex/<request>/goal.md`: stable finish line, baseline, constraints,
+- `.agents/goals/<request>/goal.md`: stable finish line, baseline, constraints,
   non-goals, primary verifier, completion proof, blocker criteria, and link to
   the companion plan.
-- `.codex/<request>/plan.md`: living route, ordered phases, implementation
+- `.agents/goals/<request>/plan.md`: living route, ordered phases, implementation
   checklists, phase-level testing criteria, evidence, status, and next action.
 
 Derive `<request>` once as a short kebab-case slug. Reuse that directory when
@@ -185,8 +185,8 @@ should be set.
 Use a compact objective:
 
 ```text
-Complete and verify the objective in <workspace>/.codex/<request>/goal.md by
-executing and maintaining <workspace>/.codex/<request>/plan.md. Read and
+Complete and verify the objective in <workspace>/.agents/goals/<request>/goal.md by
+executing and maintaining <workspace>/.agents/goals/<request>/plan.md. Read and
 maintain both files throughout the work.
 ```
 
@@ -203,9 +203,9 @@ Return:
    verification surface and capabilities, loop, review pressure, blocker
    standard, and completion proof.
 4. **Durable artifacts:** request slug, absolute paths, and proposed contents
-   for `.codex/<request>/goal.md` and `.codex/<request>/plan.md`; write them
-   before activation, but only when activation or durable artifacts were
-   requested.
+   for `.agents/goals/<request>/goal.md` and
+   `.agents/goals/<request>/plan.md`; write them before activation, but only
+   when activation or durable artifacts were requested.
 5. **Delegation map:** parent ownership and child lanes, only when useful and
    authorized.
 6. **Exact objective:** concise text suitable for goal activation.
@@ -218,8 +218,8 @@ created.
 
 When operating an active goal:
 
-- inspect the active goal plus `.codex/<request>/goal.md` and
-  `.codex/<request>/plan.md` when resuming;
+- inspect the active goal plus `.agents/goals/<request>/goal.md` and
+  `.agents/goals/<request>/plan.md` when resuming;
 - update `plan.md` after user steering or material new evidence before
   continuing;
 - update `goal.md` when outcome, constraints, verifier, completion proof, or

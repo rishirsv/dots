@@ -1,53 +1,50 @@
 # Ultraplan Budget Rules
 
-Use the smallest mode that preserves the core promise: upgrade the plan only
-after repo-grounded critique and refutation.
+Use the smallest mode that preserves the core promise: repo-grounded planning
+for new plans, and independent critique plus refutation for existing plans.
 
 ## Modes
 
-| Mode | Agents | Use when | Default caps |
+| Mode | Subagents | Use when | Default caps |
 |---|---:|---|---|
-| `Lean Ultraplan` | 0-1 | Most explicit Ultraplan requests, normal repo plans, medium changes where one context can hold the plan and evidence. | Raise up to 8 findings, verify top 3-5, synthesize one re-scope. |
-| `Focused Ultraplan` | 2-3 | Cross-module or risky plans where independent challenge is useful but full fan-out is too expensive. | Mapper/critic, verifier, optional designer; verify up to 5 findings. |
-| `Full Ultraplan` | many | Broad architecture refactors, high-risk backend/API/infra migrations, toolchain/SDK shifts, or expensive plans with many independent facts. | Full six-lens critique, per-finding verify, three designs, judge. |
-| `Dry-run map` | 0 | The user wants likely risk/fan-out before upgrading. | Map assumptions and recommended mode only. |
+| `Standard Plan` | 0 | There is no existing plan to upgrade. | Main agent grounds, checks reuse, checks overengineering, and writes one plan. |
+| `Standard Plan + Explorer` | 1 | No existing plan, but repo exploration is large enough that a separate read-only mapper will materially improve quality. | One read-only exploration brief; parent writes the plan. |
+| `Capped Ultra Plan` | 2 | Existing plan needs upgrade, stress test, or deep review. | Mapper + adversarial reviewer; parent verifies and synthesizes. |
+| `Capped Ultra Plan Plus` | 3 | Existing plan has verified findings that imply competing plan shapes or major overengineering risk. | Add one rescope designer; parent still validates and writes final artifacts. |
+| `Dry Map` | 0-1 | The user wants likely risk/fan-out before upgrading. | Map assumptions, risks, and recommended route only. |
+
+Do not use more than three subagents. The parent/orchestrator does not count as
+a subagent.
 
 ## Scaling Heuristics
 
-- The number of independent facts to check sets the budget, not plan length.
-- If one context can hold the plan and repo evidence, stay Lean.
-- If the plan touches 1-2 files and the answer is obvious, explain that
-  Ultraplan is overkill and either run a dry map or act outside this skill.
-- Escalate to Focused when a second reader would likely catch a real blind spot:
-  module boundary changes, unfamiliar ownership, toolchain changes, persisted
-  data, or unclear testability.
-- Escalate to Full only when a bad plan would waste substantial implementation
-  time or create release, data, API, or architecture risk.
+- Existing-plan upgrades default to two subagents because independence is the
+  point of Ultra Plan.
+- New-plan creation defaults to no subagents because there is no base artifact
+  to adversarially compare.
+- The number of independent facts and competing plan shapes sets the budget,
+  not plan length.
+- If the plan touches one or two files and the answer is obvious, explain that
+  Ultraplan is overkill and either do a standard plan or a dry map.
+- Add the third subagent only when verified findings point to genuinely
+  competing designs, cross-module ownership, or a serious overengineering
+  collapse/re-scope decision.
+- If no subagent mechanism exists, run the same roles sequentially and state
+  that independence was reduced. Do not invent a multi-agent run.
 
-## Lean Defaults
+## Required Review Pressure
 
-1. Ground the plan with targeted `rg`, file reads, git, tests, and docs.
-2. Run one bundled critique across all six lenses.
-3. Select only the strongest plan-changing findings before verification.
-4. Verify blocking/high findings first; skip low findings unless they change the
-   plan materially.
-5. Use a fresh verification pass: re-read files and re-run commands instead of
-   trusting the critique notes.
-6. Default to `minimal-correct` with `reuse-maximal` pressure.
-7. Produce one upgraded plan and one changelog. Do not include raw transcripts or
-   losing alternatives in the plan body.
+Every route should look for:
 
-## Escalation Signals
-
-Escalate when the Lean pass finds:
-
-- multiple plausible blockers from different repo areas
-- a false done-state that changes the first implementation step
-- a version, SDK, migration, schema, or dependency posture that must be settled
-- a proposed move across layers with transitive references to trace
-- several "implement X" steps where existing owners may already exist
-- verification commands that fail before testing the actual behavior
-- product, privacy, release, or ownership decisions that the repo cannot answer
+- false or stale premises
+- missing preconditions and sequencing gaps
+- reuse traps where the plan builds what already exists
+- ownership or layering violations
+- missing producer/consumer pairs
+- verification commands that do not prove behavior
+- unneeded version, SDK, dependency, schema, or toolchain changes
+- overengineering: abstractions, shims, frameworks, or broad refactors not
+  required by the current goal
 
 ## Black-Box Checks
 
@@ -61,9 +58,12 @@ Use these as smoke tests for future changes to the skill:
   check both availability and whether the feature truly requires it.
 - Hidden coupling: a plan moves a file down a layer. The pass must trace
   transitive references, not only imports in the moved file.
+- Overengineering: a plan adds an abstraction, compatibility shim, generic
+  schema, or broad refactor without a current producer, consumer, and proof
+  path. The upgraded plan must remove, defer, or narrow it.
 - Refutable finding: a plausible critique is wrong. Verification must exclude
   it from plan edits and record it as refuted.
-- Answerable-by-code question: if `rg`, file reads, git, tests, or docs can
+- Answerable-by-code question: if search, file reads, git, tests, or docs can
   answer it, the pass must not ask the user.
 - No-op honesty: a mostly correct plan should produce few or no confirmed
   findings instead of manufactured work.

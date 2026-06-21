@@ -12,6 +12,7 @@ Use this repo as the master source for:
 - VS Code config.
 - Ghostty config.
 - Zsh config.
+- Karabiner-Elements config.
 - Source plugins packaged for Codex and Claude.
 
 Generated packages live under ignored `dist/`. Machine caches, auth, sessions,
@@ -66,6 +67,7 @@ configs/vscode/extensions.json       -> ~/Library/Application Support/Code/User/
 configs/ghostty/config               -> ~/.config/ghostty/config
 configs/zsh/.zprofile                -> ~/.zprofile
 configs/zsh/.zshrc                   -> ~/.zshrc
+configs/karabiner/karabiner.json     -> ~/.config/karabiner/karabiner.json
 ```
 
 Useful comparison commands:
@@ -111,7 +113,12 @@ cp "$HOME/Library/Application Support/Code/User/extensions.json" configs/vscode/
 cp ~/.config/ghostty/config configs/ghostty/config
 cp ~/.zprofile configs/zsh/.zprofile
 cp ~/.zshrc configs/zsh/.zshrc
+cp ~/.config/karabiner/karabiner.json configs/karabiner/karabiner.json
 ```
+
+Karabiner-Elements rewrites `~/.config/karabiner/karabiner.json` whenever you
+change settings in its GUI, so copy the system file back to the repo after GUI
+edits to keep this source current.
 
 After copying system to repo, inspect the diff before committing:
 
@@ -205,6 +212,9 @@ scripts/sync-configs.sh --ghostty
 
 scripts/sync-configs.sh --dry-run --zsh
 scripts/sync-configs.sh --zsh
+
+scripts/sync-configs.sh --dry-run --karabiner
+scripts/sync-configs.sh --karabiner
 ```
 
 The sync script backs up existing targets before replacing them.

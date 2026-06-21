@@ -8,7 +8,8 @@ configuration.
 Edit durable source here:
 
 - `plugins/`: source for each maintained plugin.
-- `configs/`: source copies of Codex, Claude, VS Code, Ghostty, and Zsh configs.
+- `configs/`: source copies of Codex, Claude, VS Code, Ghostty, Zsh, and
+  Karabiner configs.
 - `AGENTS.md`: repo instructions for agents working in this checkout.
 - `scripts/`: small helper entrypoints that are still source-owned.
 
@@ -79,6 +80,7 @@ configs/
 ├─ claude/
 ├─ codex/
 ├─ ghostty/
+├─ karabiner/
 ├─ vscode/
 └─ zsh/
 ```

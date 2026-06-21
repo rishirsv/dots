@@ -221,7 +221,7 @@ def build_prompt(
 ) -> str:
     file_lines = context_map.strip() or mechanical_file_lines(files)
     sections = [
-        "Provide a focused second opinion. Work autonomously from the attached context, treat the answer as advisory, and tie important claims to the provided files, logs, or external sources.",
+        "Provide a focused second opinion. Work autonomously from the attached context, treat the answer as advisory, and ground important claims in the provided files, logs, or external sources. Keep the main prose readable: mention symbols, filenames, or short artifact names in the body, and put exact paths, line ranges, and source URLs in a final Sources section instead of inline path:line citations.",
         "",
     ]
     if decision.strip():
@@ -244,7 +244,7 @@ def build_prompt(
         [
             "A useful answer should:",
             "- Answer the task directly from the attached context.",
-            "- Ground important claims in attached files, logs, or external sources.",
+            "- Ground important claims, but keep exact paths, line ranges, and URLs in a final Sources section rather than inline prose.",
             "- Explain how the recommendation should change the primary agent's decision.",
             "- If context is insufficient, name the smallest missing context instead of guessing.",
             "",

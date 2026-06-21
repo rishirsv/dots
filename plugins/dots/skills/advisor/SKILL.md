@@ -181,13 +181,14 @@ reactive tasks driven by tool output do not need repeated advisor runs.
 For package-only advisor runs, the `.agents/advisor/<task>` workspace is the
 deliverable. The skill's job is to keep prep inputs and the ready-to-send
 `prompt.md` plus `context.zip` there and hand it back; it does not drive a
-provider browser.
+provider browser or upload the package anywhere. If the user wants the package
+on the Desktop, rebuild or write it with `--output-dir ~/Desktop`.
 Package-only flow:
 
 1. Develop the context and build the package inside `.agents/advisor/<task>`. Use `--dry-run` to right-size the bundle first.
 2. Inspect `prompt.md`, the `context.zip` file list, the reported token total, and any skipped-file lines printed by the package script.
 3. If anything is sensitive or broader than intended, rebuild; do not patch the zip by hand.
-4. Report the package path, the exact `prompt.md` to send, the included files, the token estimate, and the local verification boundary. Tell the user the package is ready to upload to the model of their choice.
+4. Report the saved package path, the exact `prompt.md`, the included files, the token estimate, and the local verification boundary.
 5. When the user returns an answer, run After The Advisor against the package record.
 
 If the user explicitly approves a CLI route, pass the prompt directly to the
@@ -198,9 +199,14 @@ API money or send broader private context than the user approved.
 ## Provider Routes
 
 The default route is `package-only`: build the package in `.agents/advisor/<task>`
-and hand the user the path and the exact `prompt.md` to send. Saving the package
-there is the intended end state only for package-only advisor runs. Use another
-route only when the user explicitly asks for and approves it.
+and hand the user the path and the exact `prompt.md`. Saving the package there,
+or on the Desktop when the user asks for Desktop output, is the intended end
+state for package-only advisor runs. Use another route only when the user
+explicitly asks for and approves it.
+
+Do not open ChatGPT, operate a ChatGPT browser session, or upload Advisor
+packages to ChatGPT. The supported ChatGPT-facing handoff is local saving only:
+create the package and report its path.
 
 Safe sequence for any non-default route:
 
@@ -221,7 +227,9 @@ Safe sequence for any non-default route:
 
 Optional routes when the user approves one:
 
-- `package-only` (default): give the user the `.agents/advisor/<task>` package path and the exact `prompt.md` to paste or upload. This is sufficient on its own.
+- `package-only` (default): give the user the saved package path and the exact
+  `prompt.md`. Use `--output-dir ~/Desktop` only when the user asks for a
+  Desktop package.
 - `claude-code`: pass the prompt directly to the `claude` CLI with a per-task
   `--effort`, a chosen `--model`, and approved file or directory references.
   `-p` / `--print` is the documented non-interactive path and may have account
@@ -232,11 +240,6 @@ Optional routes when the user approves one:
   pointing at the approved repo or context directory. See
   [references/cli.md](references/cli.md).
 - `openai-api`: a Responses API or provider CLI only after confirming credentials and cost approval. Write the answer to the agreed output path when a local record is useful.
-- `chatgpt-browser`: when the user explicitly approves ChatGPT or ChatGPT Pro
-  and already has a `prompt.md` + `context.zip` package to send, use the browser
-  handoff in [references/chatgpt.md](references/chatgpt.md). Prefer Codex's
-  in-app browser first; use another available browser only when needed and state
-  the fallback reason.
 - `oracle`: if `oracle` or `npx -y @steipete/oracle` is installed and the user wants that path, it can handle prompt/file bundling directly. Run a dry preview first (`--dry-run summary --files-report`) and capture output with `--write-output` when spending tokens.
 
 For the `claude-code` and `codex` CLI routes, follow
@@ -268,6 +271,18 @@ the answer request around what the primary agent needs next: a recommendation,
 strongest objections, missing context, plan edits, counterarguments, local
 verification, or a bounded next step. Avoid fixed section headers unless they
 make that specific advisor prompt easier to answer.
+
+### Citation Style
+
+Keep the main answer readable. In body prose, refer to artifacts by
+human-readable names, symbols, or filenames, such as `WorkoutSessionController`,
+`workout-player-full-loop.jpg`, or "the docs/screens audit." Do not place
+`path:line` citations in the middle of paragraphs.
+
+Ask the advisor to put exact paths, line ranges, and source URLs in a final
+`Sources` or `Evidence Notes` section, grouped by recommendation or claim. Use
+inline links only for external web sources when the source itself is the object
+of the sentence.
 
 ## After The Advisor
 

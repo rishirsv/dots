@@ -7,7 +7,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--claude|--vscode|--ghostty|--zsh ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--claude|--vscode|--ghostty|--zsh|--karabiner ...]
 
 Copies repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -19,7 +19,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex claude vscode ghostty zsh)
+    TARGETS=(codex claude vscode ghostty zsh karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -50,6 +50,9 @@ while (( $# )); do
       ;;
     --zsh)
       add_target zsh
+      ;;
+    --karabiner)
+      add_target karabiner
       ;;
     -h|--help)
       usage
@@ -176,6 +179,10 @@ sync_zsh() {
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
 }
 
+sync_karabiner() {
+  install_file "$ROOT/configs/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
+}
+
 for target in "${TARGETS[@]}"; do
   case "$target" in
     codex) sync_codex ;;
@@ -184,6 +191,7 @@ for target in "${TARGETS[@]}"; do
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
     zsh) sync_zsh ;;
+    karabiner) sync_karabiner ;;
     *)
       echo "Unknown target: $target" >&2
       exit 2

@@ -1,13 +1,20 @@
 {
   "enabledPlugins": {
     "dots@dots": true,
-    "meta-skill@dots": true
+    "meta-skill@dots": true,
+    "build-ios-apps@steady-app": true
   },
   "extraKnownMarketplaces": {
     "dots": {
       "source": {
         "source": "directory",
         "path": "/Users/rishi/Code/dots/dist/claude"
+      }
+    },
+    "steady-app": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/rishi/.claude/plugins/local-marketplaces/steady-app"
       }
     }
   },
