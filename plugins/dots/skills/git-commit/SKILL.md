@@ -1,9 +1,9 @@
 ---
-name: gc
-description: "Creates clean, logically split git commits from intended changes with well-written messages, pushing only when explicitly asked. Explicit-only GC skill invoked via gc, not for opening or publishing pull requests."
+name: git-commit
+description: "Creates clean, logically split git commits from intended changes with well-written messages, pushing only when explicitly asked. Explicit-only git-commit skill invoked via git-commit, not for opening or publishing pull requests."
 ---
 
-# GC
+# Git Commit
 
 Create clean git commits from intended changes without sweeping unrelated work into history. Push only when the user explicitly asks for the push modifier.
 
@@ -81,7 +81,7 @@ Do not add AI attribution trailers such as generated-by or co-authored-by unless
 
 ## Push Modifier
 
-Treat `gc push`, `$gc push`, `commit and push`, and `save and push` as explicit push requests. Do not infer push intent from plain `gc`, `commit`, `save`, or `checkpoint`.
+Treat `git-commit push`, `$git-commit push`, `commit and push`, and `save and push` as explicit push requests. Do not infer push intent from plain `git-commit`, `commit`, `save`, or `checkpoint`.
 
 Push only after the intended local commit exists. If there is nothing to commit but the user explicitly asked to push existing local commits, inspect the branch and push only if the branch/upstream state is clear.
 
