@@ -1,1 +1,0 @@
-Create a self-contained HTML postmortem for a settings write-loss incident. Include impact and severity metadata, an ordered timeline, measured impact, a named root cause, corrective actions with owners and status, and how each action will be confirmed.

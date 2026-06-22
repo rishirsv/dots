@@ -46,6 +46,13 @@ def clean_target(raw: str) -> str:
 
 def default_markdown_files(root: Path) -> list[Path]:
     files: list[Path] = []
+    if (root / "SKILL.md").is_file():
+        files.append(root / "SKILL.md")
+        for folder in (root / "references", root / "assets"):
+            if folder.is_dir():
+                files.extend(sorted(folder.glob("*.md")))
+        return sorted(set(files))
+
     roots = [root / "AGENTS.md", root / "README.md"]
     files.extend(path for path in roots if path.is_file())
     for folder in (root / ".plans", root / "plans", root / "docs"):

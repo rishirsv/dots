@@ -1,1 +1,0 @@
-Create a self-contained HTML migration plan for moving settings writes from inline retries to a queue-backed worker. Include scope boundary, phased slices, risks, an owner matrix, a verification matrix, and explicit cutover and rollback gates.

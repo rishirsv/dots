@@ -3,14 +3,16 @@
 Recipes for the artifacts this skill produces. Each recipe is a fixed
 `data-artifact` value plus a required set of primitives from
 [primitives.md](primitives.md) and the section order the artifact should follow.
-Compose only catalog primitives; author per [authoring.md](authoring.md); style
+Prefer catalog primitives; author per [authoring.md](authoring.md); style
 from [DESIGN.md](DESIGN.md); verify per
 [browser-checks.md](browser-checks.md).
 
 Pick the recipe that matches the reader job, set its `data-artifact` on the
 `artifact-shell`, and build the top-level slots in the order listed. The shell
-must also carry `data-primitive="artifact-shell"`. Omit a section only when its
-content genuinely does not exist — and say so rather than padding it.
+must also carry `data-primitive="artifact-shell"`. Treat each recipe as the
+**minimum contract** for its artifact type: omit or adapt a section when the
+source genuinely does not support it — and say so rather than padding — and add
+a section when the source needs one.
 
 The core five — `explainer`, `implementation-plan`, `code-review`,
 `research-report`, and `design-qa` — cover most reader jobs. The extended set
@@ -56,7 +58,7 @@ Turn a goal into a reviewable plan an implementer can follow as-is.
 - **`data-artifact`:** `implementation-plan`
 - **Required source inputs:** the goal and constraints; the affected files,
   packages, and data model; known risks; anything already decided.
-- **Top-level slots / sections, in order — create exactly these:**
+- **Top-level slots / sections, in order:**
   1. **summary** — `hero-summary` plus a `meta-strip` of effort, surfaces, flags
   2. **milestones** — `milestone-strip` of phased, status-marked slices
   3. **dependency / flow view** — a contained SVG/CSS `step-flow` data flow diagram
@@ -82,7 +84,7 @@ Review a change so a human can understand and act on it.
 - **`data-artifact`:** `code-review`
 - **Required source inputs:** the actual diff/PR; the changed files and their
   roles; the behavior at risk; tests touched.
-- **Top-level slots / sections, in order — create exactly these:**
+- **Top-level slots / sections, in order:**
   1. **summary** — `hero-summary` plus a `meta-strip` (files, +/- delta, verdict)
   2. **file map** — the changed files and their role, with risk tags
   3. **findings** — `finding-card` per issue, ordered by severity
@@ -108,7 +110,7 @@ Answer a question and show the work behind the answer.
 - **`data-artifact`:** `research-report`
 - **Required source inputs:** the question; the sources actually consulted with
   their claims; contradictions found; what could not be confirmed.
-- **Top-level slots / sections, in order — create exactly these:**
+- **Top-level slots / sections, in order:**
   1. **answer** — `hero-summary` plus `tldr` with the conclusion and confidence
   2. **claim / evidence matrix** — `claim-evidence-matrix` mapping claims to sources
   3. **contradictions** — conflicts between sources, in `callout`s or a section

@@ -1,27 +1,28 @@
 ---
 name: ultrareview
-description: "Reviews changed code right after implementation for correctness, reuse, simplicity, maintainability, and efficiency, then fixes same-scope quality issues or reports correctness and cleanup findings. Explicit-only after-implementation review that catches bugs and edge cases across three reviewer lenses; not for broad architecture scans or security audits."
+description: "Reviews changed code after implementation for correctness bugs and reuse, simplification, efficiency, altitude, and code-quality cleanups. Scales review rigor from quick to max based on task risk or explicit user request, then reports findings or applies same-scope fixes while preserving behavior. Not for broad architecture scans, security audits, PR publication, or CI repair workflows."
 ---
 
 # Ultrareview
 
-Review changed code across three lenses — code reuse, correctness and code
-quality, and efficiency. Each lens also catches bugs in its own domain. Catch
-correctness problems and edge cases first, then tighten structure.
+Review changed code after implementation. Preserve behavior, delete unnecessary
+complexity, reuse canonical code, and fix same-scope quality issues when fixing
+is allowed. Scale review rigor when the task, risk, or user request calls for
+deeper bug hunting.
 
-Correctness findings are report-first: surface them with evidence, do not
-silently edit logic to "fix" them. Apply same-scope cleanup fixes (reuse,
-simplicity, efficiency, maintainability) when the user asked for cleanup;
-otherwise produce findings. Produce findings only when the user asked for
-review-only output or a fix would broaden scope.
+Correctness comes first. Report correctness findings with evidence and a
+concrete failure scenario before changing behavior. Apply reuse,
+simplification, efficiency, altitude, and maintainability fixes directly when
+the user asked for cleanup or fixes and the fix stays inside the reviewed scope.
 
-Behavior working is necessary but not sufficient. Confirm the change is correct,
-then prefer deleting complexity, reusing canonical helpers, and keeping one
-canonical codepath.
+If the invocation is read-only, or a fix would change product behavior, broaden
+architecture, require user judgment, or conflict with repo guidance, report the
+finding instead of editing.
 
-## Scope
+## Phase 1: Identify Scope
 
-Read `AGENTS.md`, `REVIEW.md`, or other repo guidance named.
+Read `AGENTS.md`, `REVIEW.md`, or other repo guidance named by the user or found
+near the changed files.
 
 Start from the current repository state:
 
@@ -33,176 +34,350 @@ git diff --name-only
 git diff --staged --name-only
 ```
 
-Capture one review diff before launching reviewers. Use `git diff HEAD` when
-staged changes exist; otherwise use `git diff`. If the user names a base branch
-or commit range, review that range. If there are no git changes, review the
-mentioned files or files edited earlier in the thread.
+Capture one review diff before launching reviewers:
+
+- If the user names a PR, branch, commit range, or file path, review that target.
+- If there are staged changes, use `git diff HEAD`.
+- If there are unstaged changes, use `git diff`.
+- If the working tree diff is empty, try `git diff @{upstream}...HEAD`, then
+  `git diff main...HEAD`, then `git diff HEAD~1`.
+- If there are no git changes, review the mentioned files or files edited
+  earlier in the thread.
 
 Ask one concise scope question only when several unrelated changes are present
 and the intended review target is ambiguous.
 
-## Required Workflow
+## Phase 2: Choose Rigor
 
-1. Inspect the changed files and nearby code before judging the diff.
-2. Search for existing utilities, helpers, canonical modules, tests, and local
-   patterns before recommending new abstractions.
-3. When a multi-agent tool is available, launch exactly three fresh review-only
-   agents concurrently in one tool message. Do this for every changed-code
-   review, even when the diff looks straightforward.
-4. Give all three agents the same captured diff, changed-file list, compact repo
-   guidance, applicable paths, required domain skills, additional user focus,
-   and changed-file contents when the diff alone is insufficient.
-5. Assign one lens per agent: Code Reuse, Correctness & Code Quality, and
-   Efficiency.
-6. Wait for all three agents before fixing. Aggregate their findings, verify
-   each against the actual files, and drop false positives without debate.
-7. Apply only same-scope quality fixes (reuse, simplicity, efficiency,
-   maintainability). Treat correctness findings as report-first: surface them
-   with evidence and a proposed fix, and apply a fix only when the user asked or
-   after surfacing it. Stop and report when a fix would change product behavior,
-   expand architecture, require user judgment, or conflict with repo guidance.
-8. Run the narrowest useful validation: targeted tests, typechecks, lint, build
-   checks, or commands named by repo guidance.
+Use the user's requested rigor when they name it. Otherwise choose the smallest
+rigor that fits the risk.
 
-Skip review agents only when the tool is unavailable or there is no diff and
-only one tiny mentioned file. If skipped, run all three lenses yourself and say
-why agents were skipped.
+| Rigor | Use when | Fan-out | Verify | Sweep | Cap | Stance |
+|---|---|---:|---|---|---:|---|
+| `quick` | tiny change, narrow ask, or user wants a fast pass | no subagents unless already available cheaply | none | no | 4 | hunk-only, high confidence |
+| `standard` | normal after-implementation review | 3 agents | local verification | no | 8 | precision, actionable findings |
+| `deep` | risky change, public behavior, data/state, concurrency, contracts, tests, or user asks for careful review | 8 finder angles | 1 verifier per candidate | no | 10 | recall-biased |
+| `max` | user asks for ultra/max/exhaustive, high-risk release, migrations, auth, billing, security-adjacent, persisted data, or repeated review misses | 10 finder angles | 1 verifier per candidate | yes | 15 | maximum recall |
 
-## Three Review Agents
+Default to `standard`. Escalate to `deep` when changed code touches schemas,
+contracts, persisted state, routing, configuration, feature flags,
+enum/value sets, migrations, adapters, compatibility paths, concurrency, or
+cross-process boundaries. Escalate to `max` when the user asks for maximum rigor
+or when a missed bug would be expensive.
 
-Use the `${AGENT_TOOL_NAME}` tool to launch all three agents concurrently in a
-single message. Pass each agent the full diff so it has the complete context.
-Every lens catches bugs in its own domain — correctness is shared work, not one
-agent's job.
+## Phase 3: Behavior Lock
 
-### Agent 1: Code Reuse Review
+Activate this phase before cleanup edits when the user asks to deslop, clean up
+AI output, apply fixes, or perform behavior-adjacent refactoring.
+
+1. Identify the behavior that must not change in the target files.
+2. Check whether existing tests cover that behavior, and run the narrowest useful
+   tests when they exist.
+3. If critical behavior is untested and the planned cleanup is behavior-adjacent,
+   add the narrowest regression test first or report that the fix should wait.
+4. Skip this phase for review-only work and for tiny cleanups already covered by
+   targeted validation.
+
+## Phase 4: Find Candidates
+
+For `quick`, do one direct pass yourself. Skip test and fixture hunks unless the
+change is specifically about tests or fixtures. Flag only runtime correctness
+bugs visible from the hunk, obvious helper duplication, obvious dead code, and
+small same-scope cleanup.
+
+For `standard`, launch three fresh review-only agents concurrently in one tool
+message when a multi-agent tool is available. Give each agent the same captured
+diff, changed-file list, compact repo guidance, applicable paths, user focus,
+and changed-file contents when the diff alone is insufficient. If subagents are
+unavailable, run the same three passes yourself.
+
+For `deep` and `max`, launch the finder angles as independent review-only
+agents. Do not let one angle suppress another. Pass every candidate with a
+nameable failure scenario into verification.
+
+Give every deep/max finder the same scope packet as standard review: captured
+diff, changed-file list, compact repo guidance, applicable paths, user focus,
+and changed-file contents when the diff alone is insufficient. Require each
+finder to return the final finding fields from the Output section, or "no
+findings" when clean.
+
+## Standard Review Agents
+
+### Agent 1: Reuse and Structural Simplification Review
 
 For each change:
 
-1. **Search for existing utilities and helpers** that could replace newly written code. Look for similar patterns elsewhere in the codebase — common locations are utility directories, shared modules, and files adjacent to the changed ones.
-2. **Flag any new function that duplicates existing functionality.** Suggest the existing function to use instead.
-3. **Flag any inline logic that could use an existing utility** — hand-rolled string manipulation, manual path handling, custom environment checks, ad-hoc type guards, and similar patterns are common candidates.
-4. **Divergent duplicates (correctness)**: when logic is copied instead of reused, flag that the copies can drift out of sync and cause bugs, and flag any reused helper called with the wrong contract, arguments, or assumptions.
+1. **Search for existing utilities and helpers** that could replace newly written
+   code. Use `rg` to find similar patterns in utility directories, shared
+   modules, and files adjacent to the change.
+2. **Flag new functions that duplicate existing functionality.** Name the
+   existing function or module to use instead.
+3. **Flag inline logic that could use an existing utility** such as hand-rolled
+   string manipulation, manual path handling, custom environment checks, ad-hoc
+   type guards, or bespoke parsing.
+4. **Look for structural simplifications** that preserve behavior while deleting
+   branches, modes, helper layers, special cases, wrappers, or concepts.
+5. **Ask whether a clearer reframing would delete the problem instead of
+   polishing it.** Prefer changing the model, ownership boundary, or default
+   flow when that removes code.
+6. **Flag refactors that move complexity around without reducing it.**
+7. **Flag feature-specific logic added to shared or unrelated paths.** Push logic
+   toward the canonical package, module, helper, or abstraction that owns the
+   concept.
+8. **Flag new ad-hoc conditionals and one-off flags** that make the existing flow
+   harder to reason about.
+9. **Notice changed source files that are becoming hard to navigate.** When a
+   source file becomes mixed-purpose, crosses a locally unusual size threshold,
+   or nears roughly 1,000 lines without a strong reason, consider a focused
+   module with a descriptive name.
 
-### Agent 2: Correctness & Code Quality Review
+### Agent 2: Correctness, AI Slop, and Code Quality Review
 
-Review correctness first — it outranks every other concern. Behavior must be
-right before structure matters:
+Review correctness first:
 
-1. **Logic errors and edge cases**: off-by-one, inverted or wrong conditions, bad operator choice, and boundary or empty/null/zero/overflow inputs
-2. **Regressions**: behavior changes that break an existing caller, invariant, contract, or test
-3. **Error handling**: missing, swallowed, or over-broad handling; unhandled promise rejections; resources or locks not released on the failure path
-4. **Tests and docs gaps the change introduces**: an invariant left untested, or a doc/comment now stale because of this change
+1. **Logic errors and edge cases**: off-by-one, inverted or wrong conditions,
+   bad operator choice, and boundary or empty/null/zero/overflow inputs.
+2. **Regressions**: behavior changes that break an existing caller, invariant,
+   contract, or test.
+3. **Error handling**: missing, swallowed, or over-broad handling; unhandled
+   promise rejections; resources or locks not released on failure.
+4. **Tests and docs gaps the change introduces**: an invariant left untested, or
+   a doc/comment now stale because of this change.
 
-Then review the same changes for hacky quality patterns:
+Then review for quality and AI-generated slop:
 
-5. **Redundant state**: state that duplicates existing state, cached values that could be derived, observers/effects that could be direct calls
-6. **Parameter sprawl**: adding new parameters to a function instead of generalizing or restructuring existing ones
-7. **Copy-paste with slight variation**: near-duplicate code blocks that should be unified with a shared abstraction
-8. **Leaky abstractions**: exposing internal details that should be encapsulated, or breaking existing abstraction boundaries
-9. **Stringly-typed code**: using raw strings where constants, enums (string unions), or branded types already exist in the codebase
-10. **Unnecessary JSX nesting**: wrapper Boxes/elements that add no layout value — check if inner component props (flexShrink, alignItems, etc.) already provide the needed behavior
-11. **Unnecessary comments**: comments explaining WHAT the code does (well-named identifiers already do that), narrating the change, or referencing the task/caller — delete; keep only non-obvious WHY (hidden constraints, subtle invariants, workarounds)
+5. **Redundant state**: state that duplicates existing state, cached values that
+   could be derived, observers/effects that could be direct calls.
+6. **Parameter sprawl**: new parameters or booleans instead of clearer ownership
+   or a generalized existing shape.
+7. **Copy-paste with slight variation**: near-duplicate blocks that should be a
+   shared abstraction or one simpler flow.
+8. **Leaky abstractions**: exposed internals or broken ownership boundaries.
+9. **Stringly-typed code**: raw strings where constants, enums, string unions, or
+   branded types already exist.
+10. **Needless abstraction**: pass-through wrappers, single-use helper layers,
+    identity helpers, speculative indirection, or generic mechanisms hiding a
+    simple data shape.
+11. **Over-defensive code**: try/catch around code that cannot throw, null checks
+    on non-null values, impossible fallback defaults, or broad guards that hide
+    invariants.
+12. **Dead code and debug leftovers**: unused imports, unreachable branches,
+    stale feature flags, console logging, commented-out code, and abandoned
+    scaffolding.
+13. **Unnecessary comments and narration**: comments that restate obvious code,
+    explain what changed instead of why it must exist, or sound like task notes.
+14. **Cast-heavy or loose contracts**: `any`, `unknown`, forced casts,
+    unnecessary optionality, or ad-hoc object shapes used to bypass clear types.
+15. **Inconsistent local style**: naming, error handling, imports, testing, or
+    module shape that ignores the surrounding code.
 
-### Agent 3: Efficiency Review
+### Agent 3: Efficiency and Atomicity Review
 
 Review the same changes for efficiency:
 
-1. **Unnecessary work**: redundant computations, repeated file reads, duplicate network/API calls, N+1 patterns
-2. **Missed concurrency**: independent operations run sequentially when they could run in parallel
-3. **Hot-path bloat**: new blocking work added to startup or per-request/per-render hot paths
-4. **Recurring no-op updates**: state/store updates inside polling loops, intervals, or event handlers that fire unconditionally — add a change-detection guard so downstream consumers aren't notified when nothing changed. Also: if a wrapper function takes an updater/reducer callback, verify it honors same-reference returns (or whatever the "no change" signal is) — otherwise callers' early-return no-ops are silently defeated
-5. **Unnecessary existence checks**: pre-checking file/resource existence before operating (TOCTOU anti-pattern) — operate directly and handle the error
-6. **Memory**: unbounded data structures, missing cleanup, event listener leaks
-7. **Overly broad operations**: reading entire files when only a portion is needed, loading all items when filtering for one
-8. **Concurrency correctness**: when independent operations are parallelized, confirm they are truly independent — flag races on shared state, missing `await`, ordering assumptions, or non-atomic read-modify-write introduced by the change.
+1. **Unnecessary work**: redundant computations, repeated file reads, duplicate
+   network/API calls, or N+1 patterns.
+2. **Missed concurrency**: independent operations run sequentially.
+3. **Hot-path bloat**: new blocking work added to startup or per-request,
+   per-render, polling, or event-handler paths.
+4. **Recurring no-op updates**: state/store updates inside loops, intervals, or
+   handlers that fire unconditionally. Add a change-detection guard when nothing
+   changed.
+5. **Updater no-op contracts**: if a wrapper takes an updater/reducer callback,
+   verify it honors same-reference returns or the local no-change signal.
+6. **Unnecessary existence checks**: pre-checking file/resource existence before
+   operating. Operate directly and handle the error.
+7. **Memory**: unbounded data structures, missing cleanup, event listener leaks,
+   and long-lived closures that retain large enclosing scopes.
+8. **Overly broad operations**: reading whole files when only a portion is
+   needed, or loading all items when filtering for one.
+9. **Concurrency correctness**: when work is parallelized, confirm the operations
+   are independent. Flag shared-state races, missing `await`, ordering
+   assumptions, or non-atomic read-modify-write sequences.
 
-Use this prompt shape for each reviewer:
+Use this prompt shape for each standard reviewer:
 
 ```text
 You are a review-only agent. Do not edit files.
 
 Scope:
 - Changed files: <paths>
+- Review rigor: <quick | standard | deep | max>
 - Repo guidance: <compact guidance summary>
 - Additional user focus: <focus or none>
 
 Full diff:
 <diff>
 
-Apply only this lens: <Code Reuse | Correctness & Code Quality | Efficiency>.
-Search the repository as needed before flagging duplication, missed helpers, or
+Apply only this lens: <Reuse and Structural Simplification | Correctness, AI Slop, and Code Quality | Efficiency and Atomicity>.
+Check the changed code against every item below:
+
+<full numbered checklist for the assigned lens>
+
+Use applicable skills, plugins, and repo review guidance for this code. Search
+the repository as needed before flagging duplication, missed helpers, or
 local-pattern violations.
 
-Return concrete findings only. For each finding include a severity tag (P0
-blocker, P1 high, P2 medium, P3 low), file/line evidence, impact, and proposed
-fix. If clean, return "no findings".
+Return concrete findings only. For each finding include severity, file/line
+evidence, summary, failure scenario or concrete maintainability cost, impact,
+and proposed fix. If clean, return "no findings".
 ```
 
-## Strict Bar
+## Deep and Max Finder Angles
 
-Correctness comes first: never wave through a likely bug or unhandled edge case,
-and never silently rewrite logic to fix one — surface it with evidence. Once the
-change is correct, do not approve it merely because behavior works. Push for the
-cleaner structure when behavior can stay the same.
+For `deep`, run angles A-H. For `max`, run angles A-J.
 
-- Prefer the simplification that removes branches, modes, wrappers, helpers,
-  compatibility paths, or concepts entirely.
-- Treat scattered special cases, fallback chains, thin pass-through abstractions,
-  magic data shapes, and "just this one weird branch" as design problems.
-- Keep logic in the canonical layer and reuse the canonical helper, service,
-  component, type, or policy object.
-- Prefer explicit current contracts over `any`, `unknown`, unnecessary
-  optionality, casts, aliases, or ad-hoc object shapes.
-- Do not let a changed file sprawl past roughly 1,000 lines without a strong
-  reason; prefer extracting a real helper, component, or module.
-- Prefer parallel or atomic structure when independent sequential work or
-  half-applied updates make the implementation brittle.
-- Tests should cover the owning invariant without duplicating weaker coverage.
+A. **Line-by-line diff scan.** Read every hunk line by line, then read the
+enclosing function for each hunk. Ask what input, state, timing, or platform
+makes each line wrong.
+
+B. **Removed-behavior auditor.** For every deleted or replaced line, name the
+invariant or behavior it enforced, then find where the new code re-establishes
+it.
+
+C. **Cross-file tracer.** For each changed function, find callers and important
+callees. Check changed preconditions, return shapes, exceptions, timing,
+ordering, and parallel changes in the same diff.
+
+D. **Language and framework pitfalls.** Scan for pitfalls in the language or
+framework being changed: falsy-zero checks, missing awaits, closure capture,
+mutable defaults, timezone drift, nil-map writes, float equality, regex escaping,
+SQL injection, or equivalent local hazards.
+
+E. **Wrapper/proxy correctness.** For caches, decorators, adapters, providers,
+or proxies, confirm every method routes to the wrapped instance, forwards the
+methods callers use, and does not re-enter a registry/session/global by mistake.
+
+F. **Reuse.** Search for existing helpers, services, components, constants,
+types, policies, or tests that the change should reuse.
+
+G. **Simplification and AI slop.** Use the standard simplification and quality
+checklists to find complexity that can be deleted without changing behavior.
+
+H. **Efficiency and atomicity.** Use the standard efficiency checklist to find
+wasted work, missed concurrency, memory retention, and half-applied updates.
+
+I. **Altitude and ownership.** Check that each change is implemented at the right
+depth. Prefer fixing or generalizing the owning mechanism over layering a
+feature-specific special case onto shared infrastructure.
+
+J. **Repo conventions.** Read applicable repo guidance files and flag only clear
+violations that quote the exact rule and name the line that breaks it.
+
+## Phase 5: Verify Candidates
+
+For `standard`, verify every agent finding against the actual files yourself.
+Drop false positives and merge duplicates.
+
+For `deep` and `max`, deduplicate candidates that point at the same line or
+mechanism, keeping the most concrete failure scenario. For each remaining
+candidate, run one verifier or verify directly when a subagent is unavailable.
+Use this verdict ladder:
+
+- **CONFIRMED**: the finding names the reachable input/state and wrong output,
+  crash, data loss, or maintainability cost. Quote the relevant line.
+- **PLAUSIBLE**: the mechanism is real but the trigger depends on realistic
+  timing, environment, configuration, or data shape. State what would confirm it.
+- **REFUTED**: the finding is factually wrong, provably impossible, already
+  handled in this diff, or pure style with no observable cost. Quote the proof.
+
+For `deep` and `max`, keep CONFIRMED and PLAUSIBLE findings. Drop REFUTED. In
+recall-biased review, uncertainty is not a reason to drop a realistic bug.
+
+For `max`, run one more fresh gap sweep after verification. Give the reviewer the
+verified list and ask only for defects not already listed. Focus on moved or
+extracted code that dropped a guard, second-tier language footguns, test
+setup/teardown asymmetry, config defaults, and lock or transaction boundaries.
+Verify swept candidates with the same verdict ladder.
+
+## Phase 6: Fix Or Report
+
+Correctness findings are report-first. Apply a correctness fix only when the
+user asked for fixes or after surfacing the finding, and only when the intended
+behavior is clear.
+
+Apply same-scope quality fixes directly when fixing is allowed:
+
+- Reuse canonical helpers and modules.
+- Delete redundant branches, modes, wrappers, compatibility paths, and concepts.
+- Remove needless abstraction, over-defensive code, dead code, debug leftovers,
+  stale comments, and task narration.
+- Tighten loose contracts, casts, unnecessary optionality, and ad-hoc shapes.
+- Improve efficiency without introducing races or hidden ordering assumptions.
 
 When schemas, contracts, persisted state, routing, configuration, feature flags,
 enum/value sets, migrations, adapters, or compatibility paths are touched, use a
 hard cut by default: keep one canonical shape and remove old-shape handling.
-Mere existence of old code is not proof of a compatibility obligation. Do not
-add fallbacks, compatibility branches, shims, coercions, aliases, dual-shape
-support, or tests that memorialize abandoned draft formats unless there is
+Do not add fallbacks, compatibility branches, shims, coercions, aliases,
+dual-shape support, or tests for abandoned draft formats unless there is
 concrete evidence of a real external boundary such as persisted user data,
 database/on-disk state, a cross-process wire format, or a public contract. If
 that boundary exists, name the exact file/function and limit compatibility to
 that boundary.
 
+Skip a fix and report it when it would change behavior, expand architecture,
+require product judgment, conflict with repo guidance, or take more scope than
+the current review should own.
+
+## Phase 7: Validate
+
+Run the narrowest useful validation after edits or before closing a high-risk
+review:
+
+- Targeted tests for changed files or owning invariants.
+- Typecheck when types or contracts changed.
+- Lint when style, imports, or dead code changed.
+- Build checks when packaging, routing, or runtime entrypoints changed.
+- Commands named by repo guidance.
+
+Verify the final diff is minimal and scoped.
+
 ## Output
 
-Order all findings by severity (P0 blocker, P1 high, P2 medium, P3 low). At equal
-severity, correctness findings outrank reuse, quality, and efficiency findings.
-Lead with the highest-severity findings and keep the set high-signal — omit nits
-that do not change correctness, safety, or maintainability.
+Order findings by severity: P0 blocker, P1 high, P2 medium, P3 low. At equal
+severity, correctness outranks reuse, simplification, quality, efficiency,
+altitude, and conventions. Keep the set high-signal and respect the chosen cap.
+
+Each finding should include:
+
+```json
+{
+  "severity": "P1",
+  "file": "path/to/file.ext",
+  "line": 123,
+  "summary": "one-sentence statement of the issue",
+  "failure_scenario": "concrete input/state -> wrong output/crash, or concrete maintainability cost",
+  "proposed_fix": "smallest safe fix"
+}
+```
 
 When fixes were made, report:
 
-- `Fixed`: material same-scope quality cleanup that was applied
-- `Findings`: correctness findings (report-first), each with severity, file/line evidence, impact, and proposed fix
+- `Fixed`: material same-scope fixes applied
+- `Findings`: report-first correctness issues or deferred high-signal findings
 - `Skipped or deferred`: false positives, out-of-scope issues, or judgment calls
 - `Validation`: commands run and results
 - `Residual risk`: anything not proven
 
-For review-only output, lead with prioritized findings. Each finding needs a
-severity tag, file/line evidence, impact, and proposed fix. End with validation
-status. If no material issues are found, state the reviewed scope and say the
-code meets the bar.
+For review-only output, lead with prioritized findings and end with validation
+status. If no material issues survive verification, state the reviewed scope and
+say the code meets the selected rigor.
 
-### Inline comments
+Explain cleanup work in plain English: what was messy, what changed, and why it
+matters practically. Use concrete file references instead of dense review
+jargon.
+
+### Inline Comments
 
 When the user asks for inline comments, or the review targets an open pull
 request, post each finding as a comment anchored to its exact file and line
 instead of, or in addition to, a report block:
 
-- For a GitHub PR, use the available PR review tooling to attach line comments,
-  one per finding, anchored to the changed range.
+- For a GitHub PR, use available PR review tooling to attach one line comment per
+  finding.
 - In an editor or IDE session with a comment tool, attach each finding to its
   file URI and line range.
-- Keep one comment per finding anchored to the precise range — never a single
-  summary comment per file. Prefer fewer, higher-signal comments.
+- Prefer fewer, higher-signal comments. Do not post one summary comment per file.
 
 Do not rewrite unrelated code, silently edit during review-only work, or hand
 off to PR publication, CI repair, security-only audits, or existing

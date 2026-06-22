@@ -1,14 +1,73 @@
 ---
 name: product-design
-description: "Thin router that sends product design work to the skill that owns it: visual-design to build or polish UI, design-qa for pre-handoff checks, or ux-audit to evaluate an existing flow. Explicit-only single entry point for product design; does not duplicate those workflows."
+description: "Use to route Product Design work when product-design is invoked directly or when the user asks for UI/UX design, app or interface design, redesign, prototyping, visual polish, implementation from a visual target, pre-handoff design QA, or UX/product-flow audit. Thin router only; sends work to visual-design, design-qa, or ux-audit."
 ---
 
 # Product Design
 
-Route product design work to the focused skill that owns the job. This skill is
-a thin router; it does not replace the implementation, QA, or ux-audit workflows.
+## Skill Purpose
 
-## Routes
+Route Product Design requests to the focused skill that owns the job. Treat a
+direct Product Design invocation or broad request like "design this app", "build
+a prototype", "polish this interface", "audit this flow", or "check whether this
+matches the mock" as intent to use this router.
+
+This skill is a thin router. It does not replace implementation, QA, or audit
+workflows.
+
+## Plugin Purpose
+
+Product Design helps turn product ideas, product surfaces, and visual targets
+into usable software and practical design feedback.
+
+Product Design equips the agent to:
+
+- frame product UI work before building
+- create, redesign, polish, or implement visible UI
+- compare rendered UI against accepted visual targets before handoff
+- audit existing product flows with evidence from screenshots
+
+## Communication Protocol
+
+Speak as a world-class product UI/UX design partner: clear-eyed, concrete,
+collaborative, and focused on the user's product outcome. Prioritize visible
+results, design decisions, trade-offs, and next steps over internal tooling
+details.
+
+Follow [communication-protocol](references/communication-protocol.md) for
+Product Design progress updates, handoff, blocked states, and final responses.
+
+## Router Only
+
+This router does not satisfy focused workflows itself. When a request matches
+`visual-design`, `design-qa`, or `ux-audit`, load the focused skill and follow
+it.
+
+If several focused skills apply, sequence them in the order that creates the
+most useful design workflow: `visual-design` first, `design-qa` before handoff,
+and `ux-audit` only for a separate evaluation of an existing experience.
+
+## No Visual Target, No Build
+
+For new app, prototype, redesign, or substantial UI build requests without a
+URL, screenshot, Figma frame, mockup, source image, accepted Image Gen concept,
+or existing code target:
+
+- route to [visual-design](../visual-design/SKILL.md)
+- run its grounding and brief gate
+- generate or obtain visual concepts when the focused workflow requires them
+- wait for the user to approve the brief and visual direction before coding
+
+`Full working version`, `no refs`, `go for it`, `make an assumption`, or a
+confirmed brief do not waive the need for visual grounding when the focused
+workflow requires it.
+
+## Skills
+
+Use this as the root routing guidance for Product Design work. Keep this router
+thin; do not perform focused workflow logic here.
+
+### `visual-design`
 
 Use [visual-design](../visual-design/SKILL.md) for:
 
@@ -18,6 +77,8 @@ Use [visual-design](../visual-design/SKILL.md) for:
 - grounding a design brief, generating Image Gen concepts, or implementing an
   accepted visual target through its Image To Code reference
 
+### `design-qa`
+
 Use [design-qa](../design-qa/SKILL.md) for:
 
 - pre-handoff comparison between a source visual target and a rendered
@@ -26,6 +87,11 @@ Use [design-qa](../design-qa/SKILL.md) for:
 - producing `design-qa.md` with `final result: passed` or `final result:
   blocked`
 
+Do not route broad UX critiques, product audits, or flow reviews here. Use
+`ux-audit` instead.
+
+### `ux-audit`
+
 Use [ux-audit](../ux-audit/SKILL.md) for:
 
 - auditing, critiquing, reviewing, inspecting, assessing, or evaluating an
@@ -33,7 +99,7 @@ Use [ux-audit](../ux-audit/SKILL.md) for:
   settings path, screen, or multi-step experience
 - UX, design, and accessibility findings grounded in newly captured screenshots
 
-## Boundary
+## Route Boundary
 
 If the user asks to build, redesign, or polish, route to `visual-design`.
 
@@ -43,6 +109,6 @@ screenshot before handoff, route to `design-qa`.
 If the user asks to critique or evaluate an existing experience, route to
 `ux-audit`.
 
-When several apply, sequence them in the product design lifecycle:
-`visual-design` first, `design-qa` before handoff, and `ux-audit` only for a
-separate evaluation of an existing experience.
+If the user asks for a shareable, reader-facing design report or packet rather
+than product UI work itself, route through the focused owner first and then use
+the document/artifact skill that the focused owner names.

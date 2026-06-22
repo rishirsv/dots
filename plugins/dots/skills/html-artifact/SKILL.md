@@ -1,6 +1,6 @@
 ---
 name: html-artifact
-description: "Produces high-fidelity, self-contained HTML artifacts from source material: explainers, plans, code reviews, research reports, design-QA and UX-audit packets, comparison workbenches, Image Gen concept packets, handoff specs, architecture maps, migrations, release-readiness, eval reports, decision briefs, and postmortems. Use when a human needs to read, navigate, compare, or share a rich static document; not for short chat answers, durable Markdown docs, product/app UI, or backend work."
+description: "Produces a high-fidelity, self-contained HTML artifact from grounded source material when a human needs to read, navigate, compare, or share a rich static document with in-page navigation, comparison, inline diagrams or screenshots, disclosure, or copy/export. Covers recipes like explainers, plans, code reviews, research reports, and QA packets (full list in references/recipes.md); not for chat answers, durable Markdown docs, product or app UI (use visual-design), or backend work."
 ---
 
 # HTML Artifact
@@ -12,6 +12,21 @@ UI, not a renderer, not a JSON intermediate representation, and not a general
 test platform. Author it in semantic HTML, style it from
 [references/DESIGN.md](references/DESIGN.md), give every block a predictable
 anatomy, verify it in a browser, and hand off a single static file.
+
+## Default Path
+
+1. Decide whether HTML is warranted (otherwise answer in chat or Markdown).
+2. Pick one recipe from [references/recipes.md](references/recipes.md).
+3. Read only the relevant recipe, the primitives it uses in
+   [references/primitives.md](references/primitives.md), the design tokens in
+   [references/DESIGN.md](references/DESIGN.md), and
+   [references/browser-checks.md](references/browser-checks.md).
+4. Author one static, self-contained HTML file, including the standardized
+   dark-mode tokens and anchored `theme-toggle` (see
+   [references/DESIGN.md](references/DESIGN.md#dark-mode)).
+5. Check it in a browser at desktop, ~375px mobile, and a 320px reflow width.
+6. Hand off the recipe, primitives, sources, QA widths, overflow result, and any
+   unknowns.
 
 ## Job and trigger boundary
 
@@ -72,8 +87,9 @@ placeholder metrics.
    `migration-plan`, `release-readiness`, `eval-report`, `decision-brief`, or
    `postmortem`. Set its `data-artifact` value on the shell.
 3. Assemble the artifact from primitives in
-   [references/primitives.md](references/primitives.md). Compose
-   approved primitives; do not improvise one-off layouts when a primitive fits.
+   [references/primitives.md](references/primitives.md). Prefer a catalog
+   primitive over a one-off layout when one fits, and adapt or extend a
+   primitive when the source needs it.
 4. Author per [references/authoring.md](references/authoring.md): semantic HTML,
    predictable anatomy, static runtime rules, and contamination controls.
 5. Apply [references/DESIGN.md](references/DESIGN.md) as the single design-token
@@ -115,12 +131,11 @@ page-level horizontal overflow and with tables, code, and screenshots contained.
 Run the checks in [references/browser-checks.md](references/browser-checks.md)
 and fix the artifact before final handoff.
 
-Use the Codex in-app Browser first for every rendered check. Fall back to the
-Chrome extension only when the Codex Browser is unavailable or cannot inspect
-the file, and record the fallback reason in the handoff. Do not add Playwright
-or any other browser-automation dependency. If a `file://` preview is blocked,
-use a temporary static preview route or data URL to inspect — but the delivered
-artifact stays a single static file.
+Inspect the rendered artifact in an available browser tool for every rendered
+check, and record which tool you used — plus any fallback reason — in the
+handoff. Do not add a browser-automation dependency just to run these checks. If
+a `file://` preview is blocked, use a temporary static preview route or data URL
+to inspect — but the delivered artifact stays a single static file.
 
 ## Portable payload rule
 

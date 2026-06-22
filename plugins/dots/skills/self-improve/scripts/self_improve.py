@@ -14,12 +14,17 @@ from typing import Any, Iterable
 
 
 CODEX_HOME = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")).expanduser()
+SOURCE_SKILLS_ROOT = Path(__file__).resolve().parents[2]
 STATE_DB = CODEX_HOME / "state_5.sqlite"
+SESSION_INDEX = CODEX_HOME / "session_index.jsonl"
 GLOBAL_AGENTS = CODEX_HOME / "AGENTS.md"
+MEMORIES_DIR = CODEX_HOME / "memories"
+MEMORY_MD = MEMORIES_DIR / "MEMORY.md"
+MEMORIES_DB = CODEX_HOME / "memories_1.sqlite"
 SKILL_ROOTS = (
     CODEX_HOME / "skills",
     Path.home() / ".agents" / "skills",
-    Path.cwd() / "plugins" / "dots" / "skills",
+    SOURCE_SKILLS_ROOT,
 )
 
 PREFERENCE_MARKERS = (
@@ -74,6 +79,16 @@ COMMON_WORDS = {
     "your",
 }
 
+TRIAGE_MARKERS = {
+    "correction": ("not what i asked", "wrong", "instead", "don't", "do not", "never"),
+    "preference": ("prefer", "always", "default to", "i want you to", "make sure"),
+    "persistence": ("continue", "keep going", "don't stop", "come on", "can't you just"),
+    "skill": ("skill", "skill.md", "$", "plugin"),
+    "tooling": ("tool", "script", "harness", "cli", "validation", "test", "verify"),
+    "memory": ("memory", "remember", "forget", "chronicle"),
+    "workflow": ("workflow", "process", "mode", "handoff", "pr", "commit", "review"),
+}
+
 
 @dataclass(frozen=True)
 class Thread:
@@ -101,6 +116,17 @@ class Evidence:
 def require_db() -> None:
     if not STATE_DB.exists():
         raise SystemExit(f"Missing Codex state DB: {STATE_DB}")
+
+
+def sqlite_count(path: Path, table: str) -> int | None:
+    if not path.exists():
+        return None
+    try:
+        with sqlite3.connect(path) as conn:
+            row = conn.execute(f"SELECT count(*) FROM {table}").fetchone()
+    except sqlite3.Error:
+        return None
+    return int(row[0]) if row else None
 
 
 def utc(ts: int) -> str:
@@ -201,6 +227,11 @@ def thread_by_id(thread_id: str) -> Thread | None:
     )
 
 
+def recent_thread() -> Thread | None:
+    rows = threads(limit=1, archived="all")
+    return rows[0] if rows else None
+
+
 def iter_events(path: Path) -> Iterable[dict[str, Any]]:
     with path.open("r", encoding="utf-8") as handle:
         for line_no, line in enumerate(handle, start=1):
@@ -228,6 +259,29 @@ def user_messages(thread: Thread) -> list[str]:
         if message:
             out.append(message)
     return out
+
+
+def all_messages(thread: Thread, *, max_chars: int = 20000) -> str:
+    path = Path(thread.rollout_path)
+    if not path.exists():
+        return ""
+    chunks: list[str] = [thread.title]
+    total = len(thread.title)
+    for event in iter_events(path):
+        if event.get("type") != "event_msg":
+            continue
+        payload = event.get("payload") or {}
+        kind = payload.get("type")
+        if kind not in {"user_message", "agent_message"}:
+            continue
+        message = (payload.get("message") or "").strip()
+        if not message:
+            continue
+        chunks.append(message)
+        total += len(message)
+        if total >= max_chars:
+            break
+    return "\n".join(chunks)
 
 
 def split_sentences(message: str) -> Iterable[str]:
@@ -323,8 +377,20 @@ def infer_skill_target(sentence: str, cwd: str) -> str:
 
 def classify(sentence: str, thread: Thread) -> tuple[str, str]:
     lowered = sentence.lower()
+    if "new skill" in lowered or "create skill" in lowered:
+        return "New Skills", str(CODEX_HOME / "skills" / "<new-skill>" / "SKILL.md")
     if "skill" in lowered or "skill.md" in lowered or "/skills/" in lowered:
         return "Skills", infer_skill_target(sentence, thread.cwd)
+    if any(token in lowered for token in ("memory", "remember", "forget", "chronicle")):
+        return "Memory Notes", str(MEMORY_MD)
+    if any(token in lowered for token in ("script", "harness", "tool", "cli")):
+        return "Scripts Or Harnesses", str(Path(thread.cwd or Path.cwd()) / "<script-or-harness>")
+    if any(token in lowered for token in ("validation", "test", "verify", "check")):
+        return "Validation Checks", str(Path(thread.cwd or Path.cwd()) / "<validation>")
+    if any(token in lowered for token in ("readme", "docs", "documentation", "runbook")):
+        return "Repo Docs", str(Path(thread.cwd or Path.cwd()) / "<doc>")
+    if any(token in lowered for token in ("conflict", "contradict", "delete", "remove")):
+        return "Conflicts Or Deletions", "<resolve-conflict-or-delete-stale-guidance>"
     if any(token in lowered for token in ("globally", "all repos", "across repos", "for any repo")):
         return "Global AGENTS.md", str(GLOBAL_AGENTS)
     if thread.cwd and thread.cwd != str(Path.home()):
@@ -375,6 +441,35 @@ def collect(rows: list[Thread], min_support: int, min_confidence: float) -> list
     return sorted(proposals, key=lambda x: (x["bucket"], -x["confidence"], x["target"]))
 
 
+def triage_thread(thread: Thread) -> dict[str, Any]:
+    text = all_messages(thread).lower()
+    reasons: list[str] = []
+    score = 0
+    for reason, markers in TRIAGE_MARKERS.items():
+        hits = sum(1 for marker in markers if marker in text)
+        if hits:
+            reasons.append(reason)
+            score += min(3, hits)
+    if "subagent" in thread.source.lower():
+        score -= 2
+        reasons.append("subagent")
+    if thread.cwd and str(Path.cwd()) in thread.cwd:
+        score += 2
+        reasons.append("current-repo")
+    return {
+        "thread": thread,
+        "score": max(0, score),
+        "reasons": sorted(set(reasons)),
+    }
+
+
+def memory_files(limit: int = 12) -> list[Path]:
+    if not MEMORIES_DIR.exists():
+        return []
+    files = [path for path in MEMORIES_DIR.rglob("*.md") if path.is_file()]
+    return sorted(files, key=lambda path: path.stat().st_mtime, reverse=True)[:limit]
+
+
 def print_thread_table(rows: list[Thread]) -> None:
     print("Updated UTC         St Source       Model           CWD                              Title                            Thread")
     print("------------------- -- ------------ --------------- -------------------------------- -------------------------------- ------------------------------------")
@@ -385,6 +480,59 @@ def print_thread_table(rows: list[Thread]) -> None:
             f"{shorten(row.model, 15):<15} {shorten(row.cwd, 32):<32} "
             f"{shorten(row.title, 32):<32} {row.id}"
         )
+
+
+def cmd_inventory(args: argparse.Namespace) -> None:
+    print("## Self-Improve Sources\n")
+    session_count = sqlite_count(STATE_DB, "threads")
+    print(f"- Codex state DB: `{STATE_DB}` ({session_count if session_count is not None else 'unreadable'} threads)")
+    print(f"- Sessions dir: `{CODEX_HOME / 'sessions'}` ({'present' if (CODEX_HOME / 'sessions').exists() else 'missing'})")
+    print(f"- Archived sessions dir: `{CODEX_HOME / 'archived_sessions'}` ({'present' if (CODEX_HOME / 'archived_sessions').exists() else 'missing'})")
+    print(f"- Session index: `{SESSION_INDEX}` ({'present' if SESSION_INDEX.exists() else 'missing'}; convenience only)")
+    print(f"- Global instructions: `{GLOBAL_AGENTS}` ({'present' if GLOBAL_AGENTS.exists() else 'missing'})")
+    print(f"- Memory file: `{MEMORY_MD}` ({'present' if MEMORY_MD.exists() else 'missing'})")
+    memory_count = sqlite_count(MEMORIES_DB, "stage1_outputs")
+    print(f"- Memory DB: `{MEMORIES_DB}` ({memory_count if memory_count is not None else 'unreadable or missing'} rollup rows)")
+    print("- Skill roots:")
+    for root in SKILL_ROOTS:
+        count = len(list(root.glob("*/SKILL.md"))) if root.exists() else 0
+        print(f"  - `{root}` ({count} skills)")
+    if args.memories:
+        print("\n## Recent Memory Files\n")
+        for path in memory_files(args.memories):
+            print(f"- `{path}`")
+
+
+def cmd_triage(args: argparse.Namespace) -> None:
+    rows = threads(
+        limit=args.limit,
+        archived=args.archived,
+        days=args.days,
+        query=args.query,
+        cwd=args.cwd,
+    )
+    ranked = [item for item in (triage_thread(thread) for thread in rows) if item["score"] >= args.min_score]
+    ranked.sort(key=lambda item: (-item["score"], -item["thread"].updated_at))
+    print("Score Updated UTC         Reasons                         CWD                              Title                            Thread")
+    print("----- ------------------- ------------------------------- -------------------------------- -------------------------------- ------------------------------------")
+    for item in ranked[: args.top]:
+        thread = item["thread"]
+        print(
+            f"{item['score']:<5} {utc(thread.updated_at):<19} "
+            f"{shorten(','.join(item['reasons']), 31):<31} {shorten(thread.cwd, 32):<32} "
+            f"{shorten(thread.title, 32):<32} {thread.id}"
+        )
+
+
+def cmd_memory_audit(args: argparse.Namespace) -> None:
+    print("## Memory Audit\n")
+    print(f"- Memory file: `{MEMORY_MD}` ({'present' if MEMORY_MD.exists() else 'missing'})")
+    print(f"- Memory DB: `{MEMORIES_DB}` ({'present' if MEMORIES_DB.exists() else 'missing'})")
+    print(f"- Raw memories: `{MEMORIES_DIR / 'raw_memories.md'}` ({'present' if (MEMORIES_DIR / 'raw_memories.md').exists() else 'missing'})")
+    print("\nUse memories as supporting context. Verify proposed instruction changes against session transcripts before patching.\n")
+    print("## Recent Memory Files\n")
+    for path in memory_files(args.limit):
+        print(f"- `{path}`")
 
 
 def cmd_list(args: argparse.Namespace) -> None:
@@ -400,7 +548,7 @@ def cmd_list(args: argparse.Namespace) -> None:
 
 
 def cmd_show(args: argparse.Namespace) -> None:
-    thread = thread_by_id(args.thread_id)
+    thread = recent_thread() if args.thread_id == "latest" else thread_by_id(args.thread_id)
     if not thread:
         raise SystemExit(f"No thread found for {args.thread_id}")
     path = Path(thread.rollout_path)
@@ -438,7 +586,18 @@ def print_proposals(proposals: list[dict[str, Any]], *, emit_patch: bool) -> Non
         print("No proposals met the support/confidence thresholds.")
         return
     print("## Self-Improve Proposals\n")
-    for bucket in ("Skills", "Project AGENTS.md", "Global AGENTS.md"):
+    buckets = (
+        "Skills",
+        "New Skills",
+        "Project AGENTS.md",
+        "Global AGENTS.md",
+        "Memory Notes",
+        "Repo Docs",
+        "Scripts Or Harnesses",
+        "Validation Checks",
+        "Conflicts Or Deletions",
+    )
+    for bucket in buckets:
         bucket_items = [item for item in proposals if item["bucket"] == bucket]
         if not bucket_items:
             continue
@@ -470,7 +629,7 @@ def cmd_skill_audit(args: argparse.Namespace) -> None:
     proposals = [
         proposal
         for proposal in collect(rows, args.min_support, args.min_confidence)
-        if proposal["bucket"] == "Skills"
+        if proposal["bucket"] in {"Skills", "New Skills"}
     ]
     print_proposals(proposals, emit_patch=args.emit_patch)
 
@@ -478,6 +637,10 @@ def cmd_skill_audit(args: argparse.Namespace) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Mine Codex sessions for durable improvement proposals.")
     sub = parser.add_subparsers(dest="cmd", required=True)
+
+    inventory_p = sub.add_parser("inventory", help="List available session, memory, instruction, and skill sources")
+    inventory_p.add_argument("--memories", type=int, default=0, help="also list this many recent memory files")
+    inventory_p.set_defaults(func=cmd_inventory)
 
     list_p = sub.add_parser("list", help="List Codex threads from state_5.sqlite")
     list_p.add_argument("--limit", type=int, default=25)
@@ -487,10 +650,24 @@ def build_parser() -> argparse.ArgumentParser:
     list_p.add_argument("--cwd")
     list_p.set_defaults(func=cmd_list)
 
+    triage_p = sub.add_parser("triage", help="Rank threads likely to contain self-improvement evidence")
+    triage_p.add_argument("--limit", type=int, default=100)
+    triage_p.add_argument("--top", type=int, default=25)
+    triage_p.add_argument("--archived", choices=("active", "archived", "all"), default="all")
+    triage_p.add_argument("--days", type=int, default=30)
+    triage_p.add_argument("--query")
+    triage_p.add_argument("--cwd")
+    triage_p.add_argument("--min-score", type=int, default=2)
+    triage_p.set_defaults(func=cmd_triage)
+
     show_p = sub.add_parser("show", help="Render a thread transcript")
-    show_p.add_argument("thread_id")
+    show_p.add_argument("thread_id", help="exact thread id, or 'latest'")
     show_p.add_argument("--max-chars", type=int, default=6000)
     show_p.set_defaults(func=cmd_show)
+
+    memory_p = sub.add_parser("memory-audit", help="List memory sources for supporting context")
+    memory_p.add_argument("--limit", type=int, default=20)
+    memory_p.set_defaults(func=cmd_memory_audit)
 
     for name, func in (("dream", cmd_dream), ("skill-audit", cmd_skill_audit)):
         p = sub.add_parser(name, help="Mine sessions for improvement proposals")

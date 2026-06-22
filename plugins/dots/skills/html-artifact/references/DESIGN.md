@@ -256,6 +256,48 @@ For generated artifacts, emit CSS custom properties from the token values and
 compose primitive selectors from those variables. Do not hardcode the same
 values repeatedly across multiple references.
 
+## Dark mode
+
+Every artifact ships a dark theme and an anchored toggle, implemented the same
+way everywhere. Dark mode is driven by `prefers-color-scheme`, so it works with
+JavaScript disabled; the `theme-toggle` button lets the reader override the OS
+preference, and a tiny inline script persists the choice.
+
+Emit the light tokens on `:root`, then the **same** dark values in both the media
+query (OS-driven) and a manual `[data-theme="dark"]` override. Keep code surfaces
+dark in both themes via `--code-surface`/`--code-text` — never key a code or panel
+background off `--ink`, which flips light in dark mode.
+
+```css
+:root { color-scheme: light dark; /* + the light tokens */ }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:#17191A; --ink:#F1F3F1; --body:#C9CECB; --muted:#939B98;
+    --surface:#1F2426; --surface-muted:#282D30; --border-color:#3A4145;
+    --accent:#82B3BF; --accent-soft:#20363B; --success-strong:#9DBE86;
+    --danger:#E59A90; --code-surface:#0F1314;
+  }
+}
+:root[data-theme="dark"] { /* the identical dark values */ }
+```
+
+The toggle is the `theme-toggle` primitive — a fixed top-right moon button — plus
+one inline script that reads a saved theme, flips `data-theme` on `<html>`, and
+writes it back to `localStorage`. With JS off the button is inert and the OS
+preference still drives dark mode:
+
+```html
+<button data-primitive="theme-toggle" data-slot="action" type="button"
+        aria-label="Toggle dark mode" aria-pressed="false">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+```
+
+Both themes must hold contrast. Re-check badges, pills, and warning/amber text,
+which often carry hard-coded colors that need a lighter value in dark.
+
 ## Do's and Don'ts
 
 - Do use semantic HTML for meaning and this file for styling decisions.

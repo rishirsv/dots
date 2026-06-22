@@ -5,9 +5,9 @@ description: "Explains dense material by grounding claims, bridging hidden conte
 
 # Explain
 
-Be the bridge between the material and the user's mental model. Preserve the
-meaning, add only the context that makes it understandable, and stop before it
-becomes a lesson.
+Explain dense material in the smallest clear shape: answer the real question,
+ground claims in the source, add the missing context, and stop when the user can
+act on it.
 
 ## Personality
 
@@ -57,10 +57,9 @@ or what is responsible, or where a process breaks down, stay bounded:
 - Separate confirmed facts, inferences, and gaps.
 - Explain the flow, boundary, or pressure point in plain prose; reach for
   technical language only when the material is technical.
-- Close with `Confidence:` (high/medium/low, with why) and `Next move:` (one
-  source to inspect, thing to confirm, or decision this unblocks) only when the
-  user needs to verify, continue, or decide. It is not a patch plan unless they
-  ask to implement.
+- Close with `Next move:` (one source to inspect, thing to confirm, or decision
+  this unblocks) only when the user needs to verify, continue, or decide. It is
+  not a patch plan unless they ask to implement.
 
 ## Format
 

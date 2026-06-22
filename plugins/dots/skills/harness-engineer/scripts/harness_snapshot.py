@@ -30,7 +30,6 @@ SKIP_DIRS = {
     ".next",
     ".nuxt",
     ".cache",
-    "plugins",
 }
 
 PLAN_DIR_NAMES = {".plans", "plans", "plan", "planning"}
@@ -64,12 +63,17 @@ def rel(path: Path, root: Path) -> str:
         return path.as_posix()
 
 
-def walk_limited(root: Path, max_depth: int = 4):
+ACTIVE_SKIP_DIRS = set(SKIP_DIRS)
+ACTIVE_MAX_DEPTH = 4
+
+
+def walk_limited(root: Path, max_depth: int | None = None):
+    max_depth = ACTIVE_MAX_DEPTH if max_depth is None else max_depth
     root_depth = len(root.parts)
     for current, dirs, files in os.walk(root):
         current_path = Path(current)
         depth = len(current_path.parts) - root_depth
-        dirs[:] = [d for d in dirs if d not in SKIP_DIRS and depth < max_depth]
+        dirs[:] = [d for d in dirs if d not in ACTIVE_SKIP_DIRS and depth < max_depth]
         yield current_path, dirs, files
 
 
@@ -351,15 +355,32 @@ def build_snapshot(root: Path) -> dict[str, Any]:
 
 
 def main() -> int:
+    global ACTIVE_MAX_DEPTH, ACTIVE_SKIP_DIRS
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".", help="repository root to inspect")
     parser.add_argument("--json", action="store_true", help="emit JSON instead of Markdown")
+    parser.add_argument("--max-depth", type=int, default=4, help="maximum directory depth to scan")
+    parser.add_argument(
+        "--skip-dir",
+        action="append",
+        default=[],
+        help="additional directory basename to skip; repeatable",
+    )
+    parser.add_argument(
+        "--include-dir",
+        action="append",
+        default=[],
+        help="directory basename to remove from the default skip list; repeatable",
+    )
     args = parser.parse_args()
 
     root = Path(args.root).expanduser().resolve()
     if not root.is_dir():
         parser.error(f"not a directory: {root}")
 
+    ACTIVE_MAX_DEPTH = args.max_depth
+    ACTIVE_SKIP_DIRS = (set(SKIP_DIRS) - set(args.include_dir)) | set(args.skip_dir)
     snapshot = build_snapshot(root)
     if args.json:
         print(json.dumps(snapshot, indent=2, sort_keys=True))

@@ -1,1 +1,0 @@
-Create a self-contained HTML detailed design-QA packet for a settings panel. Include matched run conditions, a source/render/revised-mockup triptych with at least one focused-region comparison, a mismatch ledger, fidelity coverage, evidence limits, an implementation checklist, and a pass/blocked/evidence-limited verdict.

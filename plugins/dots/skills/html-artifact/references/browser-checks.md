@@ -7,13 +7,16 @@ preview never changes what you deliver.
 
 ## Browser tool order
 
-- **Codex in-app Browser first.** Open and inspect every artifact here by
-  default.
-- **Chrome extension fallback second.** Use it only when the Codex Browser is
-  unavailable or cannot inspect the file, and record the fallback reason in the
-  handoff.
-- **No Playwright.** Do not add Playwright or any other browser-automation
-  dependency to run these checks. They are manual or tool-assisted inspections.
+- **Use an available browser tool.** Open and inspect every artifact in the
+  rendered-browser tool the runtime provides, by default.
+- **Record the tool and any fallback.** If you fall back to another tool because
+  the first is unavailable or cannot inspect the file, record the tool used and
+  the fallback reason in the handoff.
+- **No automation dependency.** Do not add a browser-automation dependency to
+  run these checks. They are manual or tool-assisted inspections.
+
+Runtime-specific browser preferences belong in the runtime's agent metadata, not
+in this reusable rule.
 
 ## Proof expectation
 
@@ -68,7 +71,7 @@ preview never changes what you deliver.
 Run this concrete pass on the atlas and on at least one fixture from each recipe
 family before handoff:
 
-1. Open the artifact in the Codex in-app Browser.
+1. Open the artifact in an available browser tool.
 2. Check the desktop first viewport and a full scroll to the footer.
 3. Check a typical phone width around 375px.
 4. Check 320px reflow with no page-level horizontal overflow.
@@ -77,8 +80,8 @@ family before handoff:
    focus, and before/after/triptych controls.
 7. Check reduced motion when a `motion-proof` or any animation is present.
 8. Check screenshot loading, dimensions, captions, and containment.
-9. Use the Chrome extension only if the Codex Browser is unavailable or blocked,
-   and record the fallback reason in the handoff.
+9. If you fall back to another browser tool because the first is unavailable or
+   blocked, record the tool used and the fallback reason in the handoff.
 
 ## Preview fallback
 

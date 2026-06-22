@@ -929,9 +929,32 @@ rendered and measured.
 - **Semantic base:** a `section` or `footer` list of rendered checks.
 - **Root attributes:** `data-primitive="render-proof"`.
 - **Required slots:** `check` (repeated; each a `check-label` and a `result`).
-- **Optional slots:** `tool` (Codex Browser, or Chrome fallback with the reason).
+- **Optional slots:** `tool` (the browser tool used, with any fallback reason).
 - **Supported variants:** none.
 - **Supported states:** `data-state` of `pass` or `fail` on a check.
 - **Mobile/overflow rule:** entries wrap; widths and tools stay in mono.
 - **Common failure:** a render-proof that lists widths never actually opened. Record
   only the checks performed, and which browser tool ran them.
+
+## theme-toggle
+
+- **Purpose:** let the reader switch between light and dark, and mark the artifact
+  as dark-mode capable. Implemented identically in every artifact.
+- **Use when:** every artifact — it is standard shell furniture, not optional.
+- **Avoid when:** never omit it; dark mode is a baseline.
+- **Semantic base:** a `button` holding an inline-SVG moon, anchored fixed to the
+  top-right corner.
+- **Root attributes:** `data-primitive="theme-toggle"`.
+- **Required slots:** `action` (the button itself; carries `aria-label` and
+  `aria-pressed`).
+- **Optional slots:** none.
+- **Supported variants:** none — one implementation everywhere.
+- **Supported states:** the theme lives on the document root as
+  `data-theme="dark"` or `data-theme="light"`; the button mirrors it via
+  `aria-pressed`.
+- **Mobile/overflow rule:** a fixed ~40px target in the top-right; it never
+  overlaps the mid-right section index and is hidden in print.
+- **Common failure:** keying code or panel backgrounds off `--ink` (which flips
+  light in dark mode), or requiring JavaScript for dark mode. Dark mode must work
+  from `prefers-color-scheme` alone; the button only adds manual override and
+  persistence. See [DESIGN.md](DESIGN.md#dark-mode).

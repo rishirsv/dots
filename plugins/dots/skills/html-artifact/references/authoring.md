@@ -120,6 +120,24 @@ If a term appears only because it is the user's source material for a generated
 artifact, it may appear in that artifact. It should not appear in the portable
 skill payload or generic atlas examples.
 
+## Dark mode
+
+Every artifact ships dark mode and the `theme-toggle` moon button, implemented
+identically (see [DESIGN.md](DESIGN.md#dark-mode) for the canonical tokens,
+button, and script):
+
+- Emit the light tokens on `:root` and the same dark values in both
+  `@media (prefers-color-scheme: dark) :root:not([data-theme="light"])` and
+  `:root[data-theme="dark"]`. Dark mode must render with **JS disabled** from the
+  media query alone.
+- Include the anchored `theme-toggle` button and its tiny inline script; the
+  script only adds manual override (`data-theme` on `<html>`) and `localStorage`
+  persistence. With JS off the button is inert and the OS preference wins.
+- Keep code and panel surfaces dark in both themes via
+  `--code-surface`/`--code-text`; never key them off `--ink`.
+- Verify contrast in both themes; watch hard-coded badge, pill, and warning
+  colors that need a lighter value in dark.
+
 ## Anti-patterns
 
 - Decorative gradient blobs or orbs that carry no information.
@@ -147,6 +165,6 @@ Pico, missing.css, Open Props, Every Layout, Tailwind, and shadcn are research
 references only. The runtime authoring model is semantic HTML, the local
 primitive catalog, and the design tokens in [DESIGN.md](DESIGN.md).
 
-Rendered QA uses the Codex in-app Browser first and the Chrome extension only as
-a recorded fallback (see [browser-checks.md](browser-checks.md)). Do not add
-Playwright or any other browser-automation dependency to verify an artifact.
+Rendered QA uses an available browser tool, recording the tool used and any
+fallback reason (see [browser-checks.md](browser-checks.md)). Do not add a
+browser-automation dependency to verify an artifact.

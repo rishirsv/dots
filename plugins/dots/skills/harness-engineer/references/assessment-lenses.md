@@ -1,106 +1,89 @@
 # Assessment Lenses
 
-Read this before assessing a repo or project for harness-engineering
-opportunities. Adapt the lenses to the project's stack, maturity, risk, and
-existing conventions; do not treat every lens as equally important for every
-project.
+Use these lenses for broad or deep repo readiness assessment. Report strengths
+before gaps.
 
-## Repository Map And Source Of Truth
+## 1. Repo Map And Source Of Truth
 
-Ask whether agents can quickly answer:
+Check whether a fresh agent can identify:
 
-- What are the main domains, packages, apps, services, or deliverables?
-- Where are architecture rules, product rules, plans, validation commands, and
-  generated artifacts documented?
-- Is the instruction entrypoint a compact map, or a stale manual?
-- Are deeper docs indexed, current, and linked to the code they describe?
-- Are active plans, completed plans, trackers, and architecture docs versioned
-  in predictable locations?
+- what code is source vs generated;
+- where durable docs live;
+- where task-local plans/state live;
+- which files should not be edited;
+- where architecture, ownership, or domain context is documented.
 
-Good harness state: short entrypoint instructions, deeper source-of-truth docs,
-current architecture map, clear plan/tracker conventions, and checks for
-drift-prone docs.
+Good signal: root instructions route to exact docs and paths instead of
+duplicating them.
 
-## Runtime Legibility And Local Reproducibility
+## 2. Runtime Legibility
 
-Ask whether agents can boot, inspect, and validate the system without human
-handholding:
+Check whether a fresh agent can set up and run the repo without guessing:
 
-- Is there a single local setup path?
-- Can branches or worktrees run isolated app instances?
-- Are seed data, fixtures, test accounts, or local services documented?
-- Are UI, API, CLI, simulator, logs, screenshots, traces, or metrics accessible
-  through text or tool interfaces?
-- Can agents capture before/after evidence for a bug or feature?
+- package manager and language versions;
+- bootstrap command;
+- dev server command and expected URL;
+- environment variables and secret boundaries;
+- migrations, fixtures, sample data, or external services.
 
-Good harness state: repo-local setup/boot/test commands, deterministic fixtures,
-runtime evidence artifacts, and minimal manual copying from external tools.
+Good signal: setup commands are non-interactive or clearly documented, with
+concise failure modes.
 
-## Feedback Loops And Validation
+## 3. Feedback Loops
 
-Ask whether the repo can tell an agent when work is correct:
+Check whether agents can validate changes cheaply and reliably:
 
-- Are there fast focused checks and slower comprehensive checks?
-- Are tests discoverable by feature or domain?
-- Are lints, typechecks, and structural tests enforcing high-value rules?
-- Are manual QA steps captured as scripts, ledgers, screenshots, videos, or
-  acceptance checks?
-- Does CI output help agents fix failures quickly?
-- Are flaky tests tracked instead of normalized?
+- format, lint, typecheck, unit, integration, build;
+- targeted vs full-suite checks;
+- browser/E2E checks when UI behavior matters;
+- CI parity and generated-file checks.
 
-Good harness state: clear command menu, focused verification modes, concise
-failure output, evidence artifacts, and validation expectations embedded in
-plans and PR workflows.
+Good signal: the repo tells agents which checks to run after which kinds of
+changes.
 
-## Architecture Boundaries And Enforceable Invariants
+## 4. Architecture Boundaries
 
-Ask whether architecture is merely described or mechanically guarded:
+Check whether the repo makes important boundaries visible:
 
-- Are dependency directions clear and enforced?
-- Are generated artifacts separated from source-of-truth files?
-- Are data boundaries parsed or typed at ingress and egress?
-- Are cross-cutting concerns routed through explicit interfaces?
-- Are naming, logging, telemetry, schema, security, reliability, and migration
-  conventions enforceable?
+- module ownership;
+- API boundaries;
+- generated artifacts;
+- public vs internal interfaces;
+- data/schema migration rules;
+- cross-cutting invariants.
 
-Good harness state: structural tests, custom lints, type rules, schema checks,
-or CI gates with remediation guidance.
+Good signal: important boundaries are backed by tests, lint rules, schemas, or
+CI where practical.
 
-## Agent Workflow And Tool Ergonomics
+## 5. Agent Workflow Ergonomics
 
-Ask whether agents can perform normal engineering loops end to end:
+Check whether future agents can resume and hand off:
 
-- Can agents inspect issues, PRs, reviews, and CI through tools or CLIs?
-- Are commands stable, documented, and token-efficient?
-- Do scripts suppress passing noise and surface actionable failures?
-- Are common tasks encoded as skills, scripts, prompts, or repo-local
-  instructions?
-- Are escalation points for human judgment explicit?
+- existing plan/ledger convention;
+- current task state;
+- command history and results;
+- known blockers and approval gates;
+- acceptance criteria and next step.
 
-Good harness state: stable CLI surfaces, agent-friendly help output, review and
-feedback loops agents can consume, and low-copy handoffs.
+Good signal: a fresh agent can continue without chat history.
 
-## Entropy Control And Garbage Collection
+## 6. Entropy Control
 
-Ask whether the repo prevents agent-generated drift from compounding:
+Check whether harness surfaces stay clean:
 
-- Are repeated review comments promoted into docs, lints, tests, or scripts?
-- Is there recurring cleanup or doc-gardening?
-- Are stale plans, stale docs, and known debt tracked?
-- Are bad patterns detected before they spread?
-- Is there a quality/readiness tracker that reflects real code behavior?
+- no duplicate command maps;
+- no stale generated files;
+- no conflicting instructions;
+- no long root instruction manuals;
+- no abandoned plans masquerading as durable docs.
 
-Good harness state: continuous small cleanup, drift detection, evidence-backed
-debt items, and durable rules promoted only when recurrence is likely.
+Good signal: validation or review catches stale links, stale commands, and
+generated/source drift.
 
 ## Priority Bands
 
-Use priority bands instead of numeric maturity scores:
-
-- `Highest leverage`: materially increases agent autonomy, validation quality,
-  architectural coherence, or human attention savings across the repo.
-- `Near-term`: valuable and bounded; likely to fit a focused plan or PR.
-- `Later`: useful after foundational harnesses exist, lower risk, or blocked by
-  missing context.
-- `Already strong`: preserve and route future agents through this existing
-  harness.
+- `Highest leverage`: likely to prevent repeated failure or unblock many future
+  tasks.
+- `Near-term`: useful and bounded, but not the next bottleneck.
+- `Later`: valuable after higher-risk gaps are fixed.
+- `Already strong`: preserve; do not rewrite without need.

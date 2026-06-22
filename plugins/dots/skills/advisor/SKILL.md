@@ -33,7 +33,39 @@ Start from the decision the other model should improve. Select the smallest cont
 
 Prefer a tight bundle over a whole-project dump. Include the whole project only when it is small enough to inspect without crowding out the task and it does not contain secrets or bulky generated output. Exclude dependency folders, build artifacts, caches, snapshots, credentials, private keys, and `.env`-style files unless the user explicitly approves a narrow redacted excerpt.
 
-When the request is code-quality-shaped, include the relevant lane vocabulary from `plugins/dots/skills/ultrareview/SKILL.md`, `plugins/dots/skills/refactor/SKILL.md`, or their references: simplification, hard-cutting old shapes, or architecture-refinement. Do not make the advisor model infer those local standards from scratch.
+When the request is code-quality-shaped, include the local standards directly in
+the advisor prompt instead of referencing other skills. Pick only the standards
+that fit the decision:
+
+- Changed-code review: ask for correctness first, then code reuse, code quality,
+  and efficiency. Findings need severity, file/line evidence, impact, and a
+  proposed fix. Correctness issues are report-first; same-scope cleanup can be
+  recommended when behavior stays the same.
+- Reuse and simplification: prefer deleting branches, modes, wrappers,
+  pass-through helpers, fallback chains, duplicated policy, and ad-hoc data
+  shapes. Keep logic in the canonical layer and reuse existing helpers,
+  services, components, types, policy objects, and tests.
+- Quality smells: flag redundant state, parameter sprawl, copy-paste variation,
+  leaky abstractions, stringly-typed code where stronger local types exist,
+  unnecessary wrapper UI, and comments that narrate obvious code instead of
+  explaining non-obvious constraints.
+- Efficiency: look for redundant work, repeated file/API reads, N+1 behavior,
+  missed safe concurrency, hot-path bloat, unconditional no-op updates, memory
+  leaks, broad operations, and races introduced by parallelization.
+- Hard cuts: when schemas, contracts, persisted state, routing, configuration,
+  feature flags, enum/value sets, migrations, adapters, or compatibility paths
+  are in scope, default to one canonical current shape. Do not preserve old
+  shapes, shims, aliases, fallbacks, coercions, or dual-shape tests unless a
+  concrete persisted-data, wire-format, cross-process, or public-contract
+  boundary is identified and limited to that boundary.
+- Architecture/refactor review: ask for ranked candidates only when the decision
+  is broader than a diff cleanup. A candidate needs visible friction in the
+  code, tests, docs, or change pattern and should improve locality, leverage,
+  testability, or AI-navigability. Prefer candidates that delete concepts,
+  concentrate ownership, deepen shallow modules, move policy to the owning
+  layer, or make one interface the stronger test surface. Ask for files,
+  problem, ownership, current and proposed interface, solution, benefits, tests,
+  hard-cut impact, and recommendation strength.
 
 For coding-plan advisor prompts or any prompt where the response shape matters, use
 [references/prompts.md](references/prompts.md) for situation-based guidance.

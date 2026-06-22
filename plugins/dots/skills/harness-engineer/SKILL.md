@@ -1,240 +1,162 @@
 ---
 name: harness-engineer
-description: "Assesses how agent-ready a repository is, then improves the harness: repo and command maps, validation harnesses, progress ledgers, feedback loops, observability, AGENTS.md routing, setup/init scripts, and codifying repeated mistakes into durable controls. Use when the user wants to evaluate or reduce the human handholding agents still need in a project; not for ordinary implementation, local-only commits, PR publication, skill authoring, or broad docs cleanup."
+description: "Assess or improve repo-scoped controls that let future agents understand, run, validate, resume, and safely finish work with less human handholding. Use for AGENTS.md maps, command maps, task state, setup scripts, validation checks, CI/test hooks, source/generated routing, and repo harness audits. Do not use for ordinary feature work, broad docs cleanup, PR publication, global memory mining, or skill authoring."
 ---
 
 # Harness Engineer
 
-Assess the harness around a project, then help improve it when the user wants
-action. A good run identifies where agents still need human handholding, maps
-the target harness state, and turns selected opportunities into plans, docs,
-scripts, tests, or instruction updates.
+Make one repository easier for future agents to operate. Choose the smallest
+durable repo control that reduces guesswork, preserves existing strengths, or
+gives agents better feedback.
 
-## References
+## Boundary
 
-- Read [assessment-lenses.md](references/assessment-lenses.md) before broad repo
-  or project assessment.
-- Read [control-taxonomy.md](references/control-taxonomy.md) when deciding
-  whether a finding belongs in instructions, docs, scripts, tests, hooks,
-  review, or another control surface.
-- Read [long-running-state.md](references/long-running-state.md) for init,
-  audit, progress-ledger, resumability, browser/dev-server, and acceptance
-  criteria patterns.
-- Read [downstream-artifacts.md](references/downstream-artifacts.md) before
-  creating a follow-up plan, architecture map, command map, AGENTS.md patch, or
-  implementation sequence from an assessment.
-- Read [codify-lessons.md](references/codify-lessons.md) when the user says a
-  mistake should be remembered, codified, added to `AGENTS.md`, or prevented for
-  future agents.
+Use this skill for repo-scoped controls.
 
-## Runtime Assets
+Use `self-improve` instead when the job is to mine sessions, memories, prior
+conversations, global instructions, or repeated personal patterns. This skill
+may implement a repo-scoped control after `self-improve` identifies one.
 
-- Use [assessment-report-template.md](assets/assessment-report-template.md) as
-  the default report shape for broad assessments when the repo has no stronger
-  local format.
-- Use [harness-plan-template.md](assets/harness-plan-template.md) as the default
-  shape for an execution plan or focused audit when the repo has no stronger
-  local format.
-- Use [progress-ledger-template.md](assets/progress-ledger-template.md) when a
-  task needs resumable state and the repo has no existing ledger format.
+## Load Only As Needed
+
+- Read [assessment-lenses.md](references/assessment-lenses.md) for broad or deep
+  repo readiness assessment.
+- Read [control-matrix.md](references/control-matrix.md) before deciding where a
+  finding, repeated failure, or requested rule belongs.
+- Read [task-state.md](references/task-state.md) for long-running task
+  preparation, progress ledgers, command maps, verification maps,
+  browser/runtime checks, and resume handoffs.
+- Read [codex-thread-evidence.md](references/codex-thread-evidence.md) when a
+  repo-scoped control depends on evidence from prior Codex threads or memories.
+- Use [assessment-template.md](assets/assessment-template.md) only when a formal
+  saved assessment is needed and the repo has no format.
+- Use [task-state-template.md](assets/task-state-template.md) only when preparing
+  a resumable task and the repo has no plan or ledger format.
 
 ## Scripts
 
-- Run `python3 scripts/harness_snapshot.py --root <repo>` during assess, init,
-  or audit when command, instruction, planning, CI, test, language-tooling, or
-  browser-tooling discovery would reduce guesswork. The script prints a
-  Markdown snapshot; a nonzero exit means the root path was invalid or
-  unreadable.
-- Run `python3 scripts/check_harness_links.py <files...>` after editing harness
-  docs, plans, ledgers, or instruction files. With no file arguments, it scans
-  common Markdown surfaces in the current repo. Exit code `1` means at least one
-  local link target is missing.
+Resolve scripts relative to this skill directory.
 
-Resolve `scripts/...` paths relative to this skill directory, not the target
-repository. If the runtime exposes the installed skill path differently, locate
-the script in the `harness-engineer/scripts/` payload and run it from there.
+- Run `python3 scripts/harness_snapshot.py --root <repo>` when instruction,
+  command, CI, test, setup, or browser-tool discovery would reduce guesswork.
+  Use `--json` when structured output helps. Nonzero means the root is invalid
+  or unreadable.
+- Run `python3 scripts/check_harness_links.py --root <repo> <files...>` after
+  editing Markdown instructions, docs, plans, or ledgers. Exit `1` means at
+  least one local link target is missing.
 
-Treat script output as evidence to inspect, not as the final answer. If a script
-misses a repo-specific command or convention, prefer the repo's actual files.
+Script output is evidence, not a substitute for reading source-of-truth files.
 
 ## Modes
 
-Default to `assess` when the user asks whether a repo is agent-ready, asks for
-harness engineering generally, or has not named a concrete edit. Use execution
-modes when the user asks to build, apply, implement, repair, or codify a
-specific harness improvement.
+### assess
 
-| Mode | Use when | Output |
-|---|---|---|
-| `assess` | Reviewing a repo/project for agent-readiness, harness opportunities, strengths, and gaps. | Assessment report with current state, target state, evidence, priority bands, and downstream options. |
-| `init` | Starting a substantial task, setting up a new repo track, or preparing future agents before implementation. | Harness plan, command map, verification map, progress location, acceptance criteria, and open decisions. |
-| `audit` | Inspecting an existing harness surface, plan, docs set, command map, or validation loop for stale or weak controls. | Findings ordered by impact, with evidence and recommended control changes. |
-| `execute` | User selected an assessment opportunity or asked to implement harness improvements. | Smallest useful patch or plan-backed change, with validation evidence. |
-| `codify` | A mistake, review comment, repeated failure, or user correction should become durable. | Routing decision: instruction, doc, skill, script/test/hook, memory, plan, or no durable change. |
+Default for requests like "is this repo agent-ready?", "review the harness",
+"what would reduce handholding?", or "audit future-agent usability."
 
-If a prompt includes multiple modes, sequence them as `assess -> init/audit ->
-execute/codify`. Keep assessment and execution visibly separate so the user can
-approve scope before durable changes.
+Do not edit files unless explicitly asked.
+
+Steps:
+
+1. Read the repo entrypoints and local instructions.
+2. Discover command, setup, test, CI, docs, plan, and generated-file surfaces.
+3. Run `harness_snapshot.py` if it will reduce manual discovery.
+4. Read [assessment-lenses.md](references/assessment-lenses.md).
+5. Report strengths first, then prioritized gaps.
+
+Output:
+
+- Repo operating map.
+- Existing strengths.
+- Findings by priority.
+- For each finding: evidence, risk, recommended control surface, smallest useful
+  change, and validation signal.
+- Open questions only when they block safe action.
+
+### prepare
+
+Use when starting or structuring a long, multi-step, multi-agent,
+browser-facing, or resumable task.
+
+Steps:
+
+1. Read the user objective, repo instructions, existing plans, command surfaces,
+   validation surfaces, and relevant source maps.
+2. Read [task-state.md](references/task-state.md).
+3. Reuse the repo's existing plan or ledger location. If none exists, propose a
+   non-durable task file under `.plans/`.
+4. Create or update task state with objective, constraints, non-goals, approval
+   gates, command map, verification map, acceptance criteria, progress,
+   blockers, and next step.
+5. If implementation is also requested, summarize the prepared state before
+   making code or control changes.
+
+Output:
+
+- Task-state path or proposed path.
+- Objective and acceptance criteria.
+- Command and verification maps.
+- Current progress and next step.
+- Known risks, blockers, and approval gates.
+
+### control
+
+Use when the user selects a harness improvement, asks to codify a repo lesson,
+requests an `AGENTS.md` patch, wants a command map/setup script/check, or asks
+to fix a harness gap.
+
+Steps:
+
+1. Anchor to the selected finding, lesson, or requested control.
+2. Read [codex-thread-evidence.md](references/codex-thread-evidence.md) first
+   if the control depends on prior thread or memory evidence.
+3. Read [control-matrix.md](references/control-matrix.md).
+4. Choose the narrowest durable surface that reaches future agents.
+5. Prefer mechanical controls for repeated or checkable failures.
+6. Propose first unless the user already asked for edits.
+7. Edit the source-of-truth surface, not generated copies.
+8. Run the cheapest reliable deterministic validation.
+9. Report changed files, validation, remaining risk, and any follow-up control
+   that should stay separate.
+
+Output:
+
+- Control chosen and why.
+- Files changed or exact patch proposed.
+- Validation run and result.
+- Remaining unguarded failure modes.
+- Clear stop point.
 
 ## Operating Rules
 
-- Preserve the user's requested depth. If the user asks for an assessment,
-  report, audit, or proposal, do not edit source files unless they explicitly
-  ask for execution.
-- Start with existing strengths as well as gaps. Future agents need to preserve
-  harnesses that already work.
-- Discover local conventions before choosing artifact paths. Prefer an existing
-  plan, docs, progress, or task folder when the repo clearly has one; otherwise
-  propose a conventional location such as `.plans/` without treating it as
-  universal.
-- Keep `AGENTS.md` and similar entrypoint instruction files map-like. Put detail
-  in the closest durable source of truth when detail would make the entrypoint
-  stale or noisy.
-- Prefer mechanical controls for repeatable failures. If a rule can be enforced
-  by a test, hook, linter, script, typecheck, CI job, or link check, recommend
-  that before adding more prose.
-- Ask before external writes, destructive edits, publishing, installing,
-  syncing, changing global/user-level instructions, or starting long-running
-  services that may affect the user's machine.
-- Do not invent commands, ports, setup steps, CI jobs, or browser checks. Mark
-  unknowns as open decisions or verify them from files.
-
-## Assess Workflow
-
-1. Read the repo entry surfaces first: instructions, README, package/workspace
-   files, docs indexes, architecture docs, planning docs, CI config, scripts,
-   tests, and any local agent/skill/plugin guidance.
-2. Run `scripts/harness_snapshot.py` when it would speed up the initial map.
-3. For broad or deep assessments, create or choose a scratch findings ledger
-   before scanning deeply. Prefer a repo-ignored or repo-approved scratch path
-   when one exists; otherwise use a temporary path outside the repo. Record the
-   repo path, initial map, scan slices, evidence, candidate themes, confirmed
-   opportunities, subagent returns, non-opportunities, and open questions. Update
-   it after major scan discoveries, after each subagent result, and before final
-   synthesis.
-4. If the assessment is broad and subagents are available and appropriate, split
-   read-mostly slices by repo knowledge, runtime/validation, architecture
-   boundaries, agent workflow, or entropy control. Give each subagent a narrow
-   slice and ask for evidence, opportunities, non-opportunities, and confidence.
-5. Read [assessment-lenses.md](references/assessment-lenses.md). Compare current
-   state to target harness state for each meaningful opportunity.
-6. Produce the assessment using the repo's report convention or the template.
-   Include:
-   - executive summary
-   - repo map
-   - existing harness strengths
-   - current readiness across the main lenses
-   - highest-leverage opportunities with priority bands
-   - future-state harness architecture
-   - recommended next artifacts
-   - agent handoff notes, scratch findings path, inspected commands, areas not
-     inspected, and open questions
-7. Stop after the report unless the user asked for execution. Offer the most
-   useful next artifact or implementation grain.
-
-## Init Workflow
-
-1. Read the user's goal, repo instructions, README or equivalent entry docs,
-   existing plans, package/tool config, CI config, and any task-specific files
-   the user named.
-2. Run `scripts/harness_snapshot.py` when the repo is large, unfamiliar, or has
-   unclear commands.
-3. Identify the artifact location by convention:
-   - existing `.plans/`, `plans/`, `docs/plans/`, or task docs
-   - existing progress or state files near the task
-   - user-specified path
-   - otherwise propose a lightweight plan path and ask only if writing there
-     would matter
-4. Produce a harness plan using the template or the repo's format. Include:
-   - task objective and non-goals
-   - repo constraints and instruction surfaces
-   - command map for setup, lint, test, build, typecheck, dev server, and CI
-   - verification map with cheap checks first and deeper checks for risky paths
-   - browser/dev-server checks for UI work, including how to confirm a rendered
-     screen is nonblank and correctly framed
-   - acceptance criteria stated as observable outcomes
-   - progress ledger location and update cadence
-   - handoff notes for future agents
-   - open decisions and missing evidence
-5. If implementation will start in the same turn, tell the user the harness
-   summary first, then proceed only within the requested scope.
-
-## Audit Workflow
-
-1. Inspect the existing instruction, docs, scripts, tests, CI, plan, progress,
-   runtime evidence, or control surface named by the user.
-2. Run `scripts/harness_snapshot.py` if the command or verification map is not
-   obvious. Run `scripts/check_harness_links.py` when stale Markdown links are a
-   plausible risk.
-3. Evaluate the surface with [assessment-lenses.md](references/assessment-lenses.md),
-   [control-taxonomy.md](references/control-taxonomy.md), and
-   [long-running-state.md](references/long-running-state.md).
-4. Report findings in priority order:
-   - evidence: file, command, or observed gap
-   - risk: what future agents may get wrong
-   - target harness state
-   - recommended control: docs, instructions, plan, script, test, hook, CI,
-     review, or no change
-   - write gate: whether user approval is needed before applying it
-5. Include existing strengths and a positive-null result when the harness is
-   adequate for the requested task. Do not manufacture findings.
-
-## Execute Workflow
-
-1. Anchor execution to an assessment opportunity, user-selected artifact, or
-   specific harness gap. If none exists, perform a focused assess or init pass
-   before editing.
-2. Read [downstream-artifacts.md](references/downstream-artifacts.md) and choose
-   the smallest useful artifact or patch:
-   - plan or progress ledger
-   - command map or setup/init script
-   - architecture map or docs pointer
-   - AGENTS.md routing update
-   - validation script, test, hook, linter, or CI check
-   - browser/dev-server check documentation
-3. Edit source-of-truth files, not generated copies, unless the repo's build
-   process requires generated outputs after source edits.
-4. Run targeted validation:
-   - link check for Markdown
-   - syntax/smoke test for new scripts
-   - repo-specific validation from the command map
-   - sync/build command required by local instructions
-5. Report changed controls, validation evidence, remaining manual checks, and
-   any follow-up that should become a separate plan or PR.
-
-## Codify Workflow
-
-1. Restate the lesson narrowly: what failed, when it applies, and what future
-   behavior should change.
-2. Read [codify-lessons.md](references/codify-lessons.md) and choose the least
-   noisy durable surface:
-   - instruction entrypoint for repo-wide agent behavior
-   - nested instruction file for a subtree-local rule
-   - README or docs for human-facing setup and workflow knowledge
-   - skill guidance for portable recurring agent behavior
-   - script, test, hook, linter, typecheck, or CI for enforceable checks
-   - plan or progress ledger for task-local state
-   - memory only for stable user preference or cross-repo personal context
-   - no durable change for one-off, obsolete, or already-covered failures
-3. Check for conflicts, stale instructions, and overbroad wording before
-   proposing text.
-4. If editing is approved, make the smallest durable change and run any relevant
-   deterministic checks, including link checks for Markdown.
-5. Report what changed, why that surface was chosen, and what remains unguarded.
+- Preserve requested depth: assessment and proposal are not approval to edit.
+- Start from local repo conventions; do not impose a generic structure.
+- Keep root `AGENTS.md` map-like: source/generated boundaries, required
+  commands, approval gates, and links to deeper truth.
+- Put subtree-specific instructions in the closest applicable instruction file.
+- Put human setup and workflow detail in README, CONTRIBUTING, docs, or
+  runbooks.
+- Put task-local state in the repo's existing plan/ledger location, or in
+  ignored `.plans/` if no convention exists.
+- Put deterministic failures in tests, linters, hooks, scripts, schema checks,
+  generated-file checks, or CI.
+- Do not invent commands, ports, package managers, CI jobs, browser routes, or
+  generated-file workflows. Mark unverified guesses as candidates.
+- Use Codex session evidence only to support repo-scoped controls. For broad
+  pattern mining, personal preferences, memory updates, global instructions, or
+  skill changes, route to `self-improve`.
+- Ask before external writes, destructive edits, publishing, installing
+  dependencies, syncing config targets, editing global/user instructions, or
+  leaving long-running services active.
+- If validation is skipped, state why and what exact check should be run later.
 
 ## Completion Check
 
-Before final delivery, confirm:
+Before finishing, confirm:
 
-- The mode matched the user's request.
-- Assessment findings include strengths, current state, target state, evidence,
-  priority, and downstream options.
-- Execution changes trace back to an assessment finding, user-selected artifact,
-  or specific harness gap.
-- Artifact paths follow discovered repo conventions or are presented as
-  proposals.
-- Commands and checks are sourced from files or clearly marked as unknown.
-- Durable lessons are routed to the right control surface.
-- Any scripts run are reported with their outcome.
-- External writes, destructive actions, syncs, installs, publishes, and commits
-  were not performed without explicit approval.
+- The chosen control is repo-scoped.
+- The control has one source of truth.
+- Root instructions remain short and navigational.
+- Repeated or checkable failures have a mechanical guard when practical.
+- Links and referenced paths are valid or clearly marked proposed.
+- Validation evidence is reported.

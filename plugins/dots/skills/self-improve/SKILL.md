@@ -1,176 +1,182 @@
 ---
 name: self-improve
-description: "Inspects prior Codex sessions to mine repeated corrections and preferences, then proposes evidence-backed edits to skills, project AGENTS.md, global ~/.codex/AGENTS.md, or broader system-improvement bundles. Explicit-only self-improvement, dream pass, or deep improvement pass; never applies instruction edits without approval."
+description: "Explicit-only skill for mining Codex sessions, memories, and instruction state to propose evidence-backed improvements to skills, AGENTS.md files, memories, docs, scripts, harnesses, or validation checks. Never edits without approval."
 ---
 
 # Self Improve
 
-Inspect prior Codex threads and generate evidence-backed improvement proposals
-for skills, project-local `AGENTS.md`, and global `~/.codex/AGENTS.md`.
+Find durable ways to make future agent runs better. Mine prior Codex threads,
+memory summaries, and instruction files; qualify the evidence; then propose
+specific changes. Do not patch anything until the user approves a concrete
+change.
 
-This skill depends on Codex local session state:
+## Sources
 
-- `~/.codex/state_5.sqlite`
-- rollout JSONL files under `~/.codex/sessions`
-- rollout JSONL files under `~/.codex/archived_sessions`
+Use available sources in this order:
 
-It is Codex-specific and is not intended to work unchanged in non-Codex agent
-runtimes.
+1. Current user request and current conversation.
+2. Codex thread index: `~/.codex/state_5.sqlite`.
+3. Rollout transcripts from each thread row's `rollout_path`.
+4. Memory summaries: `~/.codex/memories/MEMORY.md`,
+   `~/.codex/memories/rollout_summaries/`, and `~/.codex/memories_1.sqlite`.
+5. Current repo instructions, global `~/.codex/AGENTS.md`, and installed/source
+   skill files.
 
-## Workflow
+Treat memories as supporting context. Verify proposed instruction or skill
+changes against thread evidence before patching. Treat `~/.codex/session_index.jsonl`
+as a convenience index only.
 
-1. Run the session browser to identify candidate threads:
+## Modes
 
-   ```bash
-   python3 scripts/self_improve.py list --limit 25 --archived all
-   ```
+- **Inventory**: list available session, memory, instruction, and skill sources.
+- **Triage**: rank threads likely to contain improvement evidence before reading
+  deeply.
+- **Thread review**: inspect one thread and extract expected behavior, actual
+  behavior, likely fix target, and limits.
+- **Dream pass**: mine many sessions for repeated preferences, corrections, and
+  workflow failures.
+- **Skill audit**: restrict proposals to existing or new skills.
+- **Memory audit**: compare memory state to session evidence and propose memory
+  update notes, not direct memory edits.
+- **Deep improvement**: combine all modes for broad system improvement.
 
-2. Render specific sessions as readable transcripts when direct evidence is
-   needed:
+## Commands
 
-   ```bash
-   python3 scripts/self_improve.py show <thread-id>
-   ```
+Run from the skill directory unless paths are adjusted:
 
-3. Run a dream pass to mine repeated user corrections and workflow preferences:
+```bash
+python3 scripts/self_improve.py inventory --memories 10
+python3 scripts/self_improve.py triage --limit 100 --days 30 --archived all
+python3 scripts/self_improve.py list --limit 25 --archived all
+python3 scripts/self_improve.py show <thread-id>
+python3 scripts/self_improve.py show latest
+python3 scripts/self_improve.py dream --limit 250 --days 365 --min-support 2 --min-confidence 0.6 --emit-patch
+python3 scripts/self_improve.py skill-audit --limit 500 --days 365 --min-support 1 --min-confidence 0.6 --emit-patch
+python3 scripts/self_improve.py memory-audit --limit 20
+```
 
-   ```bash
-   python3 scripts/self_improve.py dream --limit 250 --days 365 --min-support 2 --min-confidence 0.6 --emit-patch
-   ```
+Use live Codex thread tools when they are available and the user points to a
+current app thread. Otherwise use the local state and rollout files above.
 
-4. Run a skill audit when the question is which existing skills should improve:
+## Evidence Triage
 
-   ```bash
-   python3 scripts/self_improve.py skill-audit --limit 500 --days 365 --min-support 1 --min-confidence 0.6 --emit-patch
-   ```
+Before a broad pass, rank candidate threads. Prefer threads with:
 
-5. Read the proposal buckets and decide what to patch:
+- explicit corrections or preferences;
+- frustration cues such as `Come on`, `can't you just`, `continue`, `keep
+  going`, or `don't stop`;
+- skill, plugin, instruction, memory, validation, harness, commit, PR, review,
+  or tool-selection discussion;
+- failed validation, repeated retries, or a final successful workflow after
+  dead ends;
+- recent work in the current repository.
 
-   - `Skills`: tighten existing `SKILL.md`, add scripts/references, or create a
-     new skill.
-   - `Project AGENTS.md`: update the nearest repo instruction file for a
-     project-specific preference.
-   - `Global AGENTS.md`: add durable defaults that should apply across repos.
+Read only the highest-signal threads deeply. Do not expose local transcript
+paths, secrets, private content, or raw memory text in portable guidance unless
+it is required evidence for the user's review.
 
-6. When the user asks about frustration or persistence, inspect cited examples
-   with `show` and look for repeated `continue`, `keep going`, `don't stop`,
-   `Come on`, and "can't you just..." messages before proposing global behavior
-   rules.
+## Extract Evidence
 
-## Deep Improvement
+For each useful thread, extract:
 
-Use this mode when the user asks for deep improvement, "everything", a full
-self-improvement pass, a dream pass across the whole agent system, or broad
-workflow improvement.
+- trigger: what the user asked for;
+- expected behavior: what should have happened;
+- actual behavior: what the agent did;
+- correction or signal: what makes this durable;
+- likely target: skill, instruction file, memory note, doc, script, harness,
+  validation check, or deletion;
+- confidence: strong, medium, weak, contradicted;
+- evidence: thread id, update time, cwd, and rollout path.
 
-In this mode, inspect prior sessions for durable lessons across:
+Use strong confidence for explicit user preferences, repeated corrections, or
+accepted workflows across multiple threads. Use medium confidence for repeated
+agent choices that the user accepted. Use weak confidence for one ambiguous
+thread. Mark contradictions instead of smoothing them over.
 
-- repeated user corrections and preferences;
-- agent stopping or continuation failures;
-- tool-selection mistakes;
-- missing skill or automation opportunities;
-- project-specific workflow friction;
-- global behavior rules;
-- contradictions between skills, `AGENTS.md` files, memories, and observed
-  usage;
-- validation, harness, or script gaps that would prevent recurrence.
+## Proposal Destinations
 
-Expand proposal buckets beyond the default three when evidence supports it:
+Choose exactly one destination per proposal:
 
 - `Skills`
 - `New Skills`
 - `Project AGENTS.md`
 - `Global AGENTS.md`
-- `Memory Update Notes`
+- `Memory Notes`
 - `Repo Docs`
 - `Scripts Or Harnesses`
 - `Validation Checks`
 - `Conflicts Or Deletions`
 
-Still default to propose-first. Do not edit skills, `AGENTS.md` files, memory
-update notes, docs, scripts, validators, or harnesses without explicit user
-approval.
+Keep project-specific preferences out of global files. Keep memory facts out of
+skills unless they define runtime behavior. Use scripts, validators, or harnesses
+when repeated prose would be weaker than a check.
 
-Rank proposals by impact, confidence, support, and blast radius. Separate:
+## Updating AGENTS.md
 
-- `Recommended Now`
-- `Needs Human Judgment`
-- `Speculative / Watchlist`
+Update `AGENTS.md` only for guidance that should load every relevant session.
+Prefer concise, specific rules for repo layout, commands, conventions, review
+expectations, constraints, and done checks.
 
-Every proposal must cite concrete session evidence or be explicitly labeled as
-an inference.
-
-## Source Of Truth
-
-- Treat `~/.codex/state_5.sqlite` as the authoritative session index.
-- Use each row's `threads.rollout_path` to load full rollout JSONL transcripts.
-- Treat `~/.codex/session_index.jsonl` as an incomplete convenience index, not
-  the source of truth.
-- Use `~/.codex/memories/MEMORY.md` and memory summaries as supporting context
-  only. Do not write them by default.
+- Add rules after repeated mistakes, repeated review feedback, or context the
+  user keeps re-explaining.
+- Put guidance in the closest `AGENTS.md` whose scope matches the rule; use
+  global guidance only for personal defaults across repos.
+- Replace or delete stale/conflicting text instead of appending another patch.
+- Move long procedures to docs or skills, and use scripts, hooks, linters, or
+  tests when enforcement is more reliable than prose.
+- Include exact commands, paths, and verification signals when possible.
 
 ## Proposal Rules
 
-- Default to propose-first. Do not patch `SKILL.md`, project `AGENTS.md`, or
-  global `~/.codex/AGENTS.md` until the user explicitly approves edits.
-- Separate facts from inference. Every proposal should cite concrete thread IDs
-  plus timestamps and rollout paths when possible.
-- Do not overfit one-off phrasing. Prefer repeated corrections, repeated
-  style/tooling requests, and instructions likely to recur.
-- Treat `Support` as deduped thread clusters, not raw thread IDs.
-- Use `Confidence` to suppress one-off task noise. If a proposal reads like a
-  transient implementation ask, inspect cited sessions with `show` before
-  patching.
-- Keep proposal buckets disjoint. If a preference belongs in a project
-  `AGENTS.md`, do not also copy it into global `~/.codex/AGENTS.md` unless it
-  clearly applies across repos.
-- For project proposals, infer the nearest target `AGENTS.md` from the session
-  `cwd`; prefer the closest existing `AGENTS.md` or repo-root `AGENTS.md`.
-- For skill proposals, map edits to an existing skill folder under
-  `~/.codex/skills`, `~/.agents/skills`, or the current repo's plugin skills
-  when the transcript or cwd makes that unambiguous. Otherwise propose a new
-  skill path.
-- Use `skill-audit` when the question is "which existing skills should be
-  improved?" because it suppresses suggestions already present in each target
-  `SKILL.md`.
+- Propose first. Do not edit skills, instructions, memories, docs, scripts,
+  validators, or harnesses without approval.
+- Cite concrete evidence. Separate transcript facts from inference.
+- Deduplicate support by thread cluster, not raw message count.
+- Filter one-off implementation requests.
+- Inspect cited transcripts before applying any proposal.
+- Keep proposal buckets disjoint.
+- Prefer the smallest durable change that prevents recurrence.
 
-## Output Shape
+## Output
 
-Default output is a proposal report, not an applied patch:
+Return a proposal report:
 
 ```md
-## Self-Improve Proposals
+## Self-Improve Review
 
-### Skills
-- Target: `<path>`
-  Suggestion: <durable rule or edit>
-  Support: <deduped support count>
-  Confidence: <0.0-1.0>
+### Evidence Sources
+- Sessions: <available/missing, count or gap>
+- Memories: <available/missing, role used>
+- Instructions: <files inspected>
+- Skills: <roots inspected>
+
+### Recommended Now
+- Target: `<path or destination>`
+  Change: <specific proposed change>
+  Destination: <one bucket>
+  Support: <deduped count>
+  Confidence: <strong|medium|weak|contradicted>
   Evidence:
   - `<thread-id>` updated <timestamp> at `<rollout-path>`
+  Approval needed: <yes/no and why>
 
-### Project AGENTS.md
+### Needs Human Judgment
 ...
 
-### Global AGENTS.md
+### Watchlist
 ...
 ```
 
-When `--emit-patch` output is available, treat it as a draft patch. Read it,
-inspect its evidence, and apply only the edits the user approves.
+When patch drafts are emitted, treat them as proposals. Apply only the approved
+subset, then validate the touched skill, doc, script, or instruction file.
 
 ## Final Check
 
-Before proposing or applying self-improvement edits, confirm:
+Before finishing, confirm:
 
-- every proposal has evidence from current session records;
-- one-off implementation requests were filtered out;
-- proposed destinations are disjoint;
-- project-specific preferences did not leak into global defaults;
-- no memory files were edited directly;
-- no instruction file or skill was patched without explicit user approval.
-
-### scripts/
-
-- `scripts/self_improve.py` provides `list`, `show`, `dream`, and `skill-audit`
-  subcommands.
+- every recommendation has evidence or is labeled as inference;
+- one-off task noise was filtered out;
+- memories were not edited directly;
+- source edits had explicit approval;
+- destinations are disjoint;
+- validation ran for any approved source edit, or the skip reason is stated.

@@ -1,1 +1,0 @@
-Create a self-contained HTML Image Gen concept packet for an empty-state illustration. Include the grounding sources, a concept gallery with a selected direction, reusable image-generation prompt cards, an asset inventory, and the approved copy.
