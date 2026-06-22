@@ -46,10 +46,15 @@ Produce a **scored Judge review** (`judge-review.md`) — see
 1. Score **Discovery** (4 dims) and **Implementation** (5 dims), each 0–3 — every
    dimension's reasoning must cite the skill's own text; see
    [references/rubric.md](references/rubric.md) for calibration and a worked example.
-2. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
-3. **Overall Judge Review Score** = rounded average of Discovery %,
+2. Run the **Payload Hygiene Sweep** from
+   [references/rubric.md](references/rubric.md#payload-hygiene-sweep) across the
+   full shipped skill payload before final scoring. This includes `SKILL.md`,
+   linked references, agents, scripts, assets, examples, templates, and any
+   user-visible text inside HTML or other fixtures.
+3. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
+4. **Overall Judge Review Score** = rounded average of Discovery %,
    Implementation %, and Validation %.
-4. If artifact writes are allowed, write `judge-review.md` with scores and
+5. If artifact writes are allowed, write `judge-review.md` with scores and
    prioritized findings, then **stop**. If artifact writes are not allowed,
    return the review in chat. Review proposes; it does not edit source.
 

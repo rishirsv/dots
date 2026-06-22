@@ -15,6 +15,11 @@ The output is not a loose opinion. The output is:
 - Accessibility risks tied to steps or screenshots
 - Clear limits on what could not be checked from screenshots alone
 
+When the audit should be saved as a shareable rich document, hand the step
+screenshots and findings to [html-artifact](../html-artifact/SKILL.md) (its
+`ux-audit-report` recipe). This skill owns the capture and the findings;
+html-artifact only owns the saved document format.
+
 ## Grounding
 
 Use saved product URLs, screenshots, reference images, codebase paths,

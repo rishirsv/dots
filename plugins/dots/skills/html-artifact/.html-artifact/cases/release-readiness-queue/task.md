@@ -1,0 +1,1 @@
+Create a self-contained HTML release-readiness packet for a queue-worker release. Include release gates, a verification matrix, open risks, owners, a size/performance budget, and a clear go/no-go decision.

@@ -1,0 +1,1 @@
+Create a self-contained HTML eval report on whether static single-file HTML is enough for shareable agent artifacts. Include a conclusion with confidence, a scorecard of cases and criteria, a claim/evidence matrix, evidence limits, and an audit trail.

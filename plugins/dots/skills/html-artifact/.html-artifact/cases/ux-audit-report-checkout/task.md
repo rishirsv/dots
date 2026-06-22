@@ -1,0 +1,1 @@
+Create a self-contained HTML UX-audit report for a multi-step checkout flow from ordered step screenshots. Include capture conditions, per-step health, UX and design findings tied to steps, accessibility risks, evidence limits for what screenshots cannot show, and prioritized recommendations.

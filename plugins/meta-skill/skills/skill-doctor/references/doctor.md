@@ -136,16 +136,20 @@ workflow branch, or evidence row causing the risk.
    branch, output contract, reference pointer, script contract, or missing gate.
 5. Produce two or three candidate edits that fix the behavior while preserving
    the approved trigger and runtime surface.
-6. Scan each candidate for source provenance, stale references, and negative-only
+6. Run a generalization check on each candidate: convert the incident evidence
+   into the reusable failure class, keep one-off names and values in the
+   evidence section only, and remove any source wording that would make the
+   skill solve only the reported example.
+7. Scan each candidate for source provenance, stale references, and negative-only
    rules. Prefer replacing misleading or over-emphasized guidance with the
    positive behavior the skill should perform. Do not add negative rules that
    reference removed, absent, or de-emphasized concepts unless that concept is the
    concrete recurring failure; when a negative guard is needed, pair it with the
    desired behavior.
-7. Recommend one smallest strong fix and say why.
-8. Add a broad rule only when the agent would likely repeat the mistake without
+8. Recommend one smallest strong fix and say why.
+9. Add a broad rule only when the agent would likely repeat the mistake without
    it.
-9. Record changed behavior, evidence, rejected tempting edits, and residual risk
+10. Record changed behavior, evidence, rejected tempting edits, and residual risk
    in a supporting doc when durable notes are needed.
 
 Prefer replacing a misleading sentence over adding a prohibition. Preserve
@@ -212,10 +216,12 @@ installed copies by default. It edits source only when the user explicitly
 approves a concrete proposal or directly requests a specific edit.
 
 Before patching, briefly restate the approved write scope and name the
-source-of-truth files that will change. Never edit a generated copy that a build
-would overwrite. If the source-vs-generated boundary is unclear, inspect repo
-instructions, package manifests, build scripts, or generated-package markers
-before patching.
+source-of-truth files that will change. Re-run the generalization check against
+the concrete patch: incident names, exact values, and one-off evidence belong in
+diagnosis or review output, not portable runtime guidance, unless they are direct
+runtime dependencies. Never edit a generated copy that a build would overwrite.
+If the source-vs-generated boundary is unclear, inspect repo instructions,
+package manifests, build scripts, or generated-package markers before patching.
 
 If the requested write scope is broader than the proposal, stay in Doctor mode
 and diagnose the expanded scope before editing. Do not treat broad agreement,

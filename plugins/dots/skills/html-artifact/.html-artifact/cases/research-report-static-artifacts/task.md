@@ -1,0 +1,1 @@
+Create a self-contained HTML research report answering whether static HTML is enough for shareable agent artifacts. Include an answer, claim/evidence matrix, contradictions, gaps, source inventory, and audit trail.

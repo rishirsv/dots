@@ -1,0 +1,1 @@
+Create a self-contained HTML explainer for how an offline comment queue reconciles temporary IDs with server IDs. The result should be readable on mobile and should not mention any implementation source that was not provided.

@@ -26,8 +26,10 @@ processes; code, errors, logs, commands, docs, APIs, diagrams, or system
 behavior; or a prior answer that needs clearer wording.
 
 Not for tutorials, quizzes, audits, code fixing, implementation, durable docs,
-or saved visual artifacts. Mermaid in chat is fine when a relationship is easier
-to see than read.
+or saved visual artifacts. For a saved, shareable rich document (an explainer
+page a reader will navigate or pass along), use
+[html-artifact](../html-artifact/SKILL.md) instead. Mermaid in chat is fine when
+a relationship is easier to see than read.
 
 ## How to explain
 

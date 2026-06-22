@@ -45,6 +45,10 @@ Implementation, and Validation percentages.**
   phrasing, stale terms, and duplicated cautions when plain workflow guidance
   would be clearer. Check the main body, examples, and linked references that
   define the same behavior; do not stop at the description or title.
+- **Treat every shipped file as runtime surface.** Review assets, examples,
+  templates, agent prompts, and HTML fixture text as future user- or
+  agent-facing payload, not as harmless scratch evidence. Source-specific demo
+  text in a shipped fixture is still runtime contamination.
 - **Check the opening contract first.** The first prose block after the title
   should tell the agent what this skill helps it do, the default operating path,
   and the main boundary in plain language. Penalize intro blocks that stitch
@@ -63,6 +67,53 @@ Implementation, and Validation percentages.**
 - **Validation is a precondition.** A hard structural *Fail* (invalid
   frontmatter, missing body) makes the judged scores unreliable — resolve it
   before trusting Discovery/Implementation. Warnings don't block.
+
+## Payload Hygiene Sweep
+
+Before assigning final Judge scores, inspect the full shipped skill payload:
+
+- `SKILL.md`
+- linked references
+- `agents/` prompts or metadata
+- scripts, examples, templates, assets, and fixtures
+- user-visible text inside HTML, Markdown examples, screenshots-as-code, or
+  other bundled artifacts
+
+Build a task-local contamination query from the evidence you are reviewing, then
+run it across the skill directory with `rg -n --hidden -S`. Do not bake incident
+names, provider names, author names, source URLs, or one-off project terms into
+this rubric; derive them from the current review packet and keep them in the
+review output only.
+
+The scan must cover these classes:
+
+- provider or model names that are not direct runtime dependencies
+- copied user prompt text, prompt-policy text, or tool transcript language
+- raw research URLs, commands, and source-provenance notes
+- one-off report paths, workbench paths, thread IDs, rollout IDs, or task IDs
+- named people, articles, companies, or source titles preserved from research
+  when the shipped skill should be reusable
+- version labels or scratch artifact names that imply a draft/research lineage
+
+Record the sweep in the review output with:
+
+- `Payload hygiene: pass` or `Payload hygiene: fail`
+- terms or classes scanned
+- allowed hits, with why they are real runtime dependencies or harmless examples
+- findings, with file paths and the smallest cleanup
+
+Score caps:
+
+- If shipped payload contains provider names, research-session provenance, raw
+  commands, thread/workbench paths, or source-specific copy that future users or
+  agents could see, cap **Directive Quality** at 1 until cleaned.
+- If bundled demos, fixtures, templates, or assets contain contaminated example
+  text, cap **Progressive Disclosure** at 2 until cleaned.
+- If contamination appears in the description or opening contract, cap
+  **Trigger Term Quality** at 2 and **Workflow Clarity** at 2 until cleaned.
+- A review with unresolved payload contamination should not score above 90
+  overall unless the findings are explicitly classified as allowed runtime
+  dependencies.
 
 ## Discovery
 
@@ -175,6 +226,8 @@ artifacts are allowed, write the same content to
   + **Score** row per dimension, ending in **Total X / 12**).
 - Implementation: the same assessment + scored-table shape (5 dimensions,
   **Total X / 15**).
+- Payload hygiene: pass/fail, terms or classes scanned, allowed hits, and
+  findings with file paths and the smallest cleanup.
 - Validation: the validation results table + Validation %.
 - **Combined findings:** prioritized gaps, each with the rule it violates and a
   suggested fix, highest-impact first.

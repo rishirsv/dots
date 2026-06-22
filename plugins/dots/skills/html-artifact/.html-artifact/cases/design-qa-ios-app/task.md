@@ -1,0 +1,1 @@
+Create a self-contained HTML detailed design-QA packet for an iOS app screen. Compare the source design against rendered simulator captures with focused regions, a mismatch ledger, token deltas, fidelity coverage, and explicit evidence limits for states not captured.

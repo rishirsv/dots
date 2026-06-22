@@ -4,7 +4,9 @@ Read this before creating or renaming a branch.
 
 ## Default Pattern
 
-Use `{type}/{short-outcome}` when starting from the default branch or an unsuitable branch and the scope is obvious.
+Use `{type}/{short-outcome}` when starting from the default branch or an
+unsuitable branch and the scope is obvious. This is the default publish branch
+shape; do not use an agent/tool namespace such as `codex/`.
 
 Types:
 
@@ -31,7 +33,8 @@ Avoid:
 
 ## Existing Repo Policy
 
-If the repo already uses an obvious branch naming policy, follow it. Do not use `codex/` as the default namespace unless the repo requires it or the user asks.
+If the repo already uses an obvious branch naming policy, follow it. Use
+`codex/` only when the repo requires it or the user asks for it.
 
 ## Rename Rules
 

@@ -11,13 +11,21 @@ Do not use this skill for broad UX critique, design critique, product audits, or
 
 Use this skill before every visual-design build handoff.
 
-A passing QA run requires both:
+When a shareable, in-depth QA document is worth saving, hand the comparison and
+verdict to [html-artifact](../html-artifact/SKILL.md) (its `design-qa-detailed`
+recipe) for the saved packet. This skill still owns the source-vs-render
+comparison and the pass/blocked verdict; html-artifact only owns the saved
+document format.
+
+A complete QA comparison requires both:
 
 - a source visual target: image, screenshot, mockup, design board, or source
   capture
 - a rendered implementation: local URL, deployed URL, app screen, component, or screenshot
 
-If either artifact cannot be opened, captured, or compared, write `design-qa.md` with `final result: blocked` and name the blocker. Do not let the build skill hand off as done.
+If either artifact cannot be opened, captured, or compared, write `design-qa.md`
+with an evidence-limits section that names the missing evidence. Do not claim a
+complete source-vs-render comparison when required evidence is missing.
 
 ## Grounding
 
@@ -57,7 +65,7 @@ Do not pretend separate image views are side-by-side comparison. Put the source 
    - Use focused region comparisons when important details are too small to judge in the full-view comparison.
    - Choose focused regions from the actual source and implementation. Use them where fidelity depends on precise typography, alignment, imagery, assets, icons, logos, controls, forms, navigation, tables, dense UI, or visible interaction states.
    - If no focused region is needed, say why in `design-qa.md`.
-   - Do not pass QA from a full-view comparison alone when important details are not clearly readable.
+   - Do not treat QA as complete from a full-view comparison alone when important details are not clearly readable.
 
 5. Review systematically.
    - Read [qa-rubric](./references/qa-rubric.md) when the QA pass spans more than a quick visual check.
@@ -67,13 +75,18 @@ Do not pretend separate image views are side-by-side comparison. Put the source 
    - Your other goal is to decide whether the implementation "looks as good" as the mock. If there are stylistic problems, call them out. If the user's prompt is leaking into the implementation (vs letting the app stand on its own), call that out as well.
    - Distinguish design drift from intentional product/code constraints. If a deviation may be intentional, phrase it as a question or assumption.
 
-6. Produce a fix-oriented QA report.
-   - Lead with findings, ordered by severity and user impact.
-   - For each finding include: severity, location, what differs, evidence, why it matters, and the concrete fix.
+6. Produce a reader-first, fix-oriented QA report.
+   - Start with a short overview that states what was compared, the overall
+     fidelity read, and the highest-impact issue.
+   - Lead the body with findings, ordered by severity and user impact.
+   - For each finding include: severity, location, affected fidelity surface,
+     what differs, evidence, why it matters, and the concrete recommendation.
    - Include exact CSS/component/token suggestions when the implementation context is available.
+   - Keep each finding's recommendation with that finding; do not make readers
+     hunt for the fix in a separate section.
    - Separate objective mismatches from subjective polish recommendations.
    - Do not say a design matches, is done, or is as good as it can get until the required fidelity surfaces have been checked and any remaining differences are explicitly classified as acceptable, expected, or still actionable.
-   - End with a concise implementation checklist.
+   - Include a separate concise implementation checklist after the findings.
 
 ## Required Fidelity Surfaces
 
@@ -97,21 +110,55 @@ Every QA report must explicitly evaluate these surfaces:
 Use this structure unless the user asks otherwise:
 
 ```markdown
+# Design QA Report
+
+**Overview**
+Briefly state what was compared, the overall fidelity read, and the main issue
+or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
+
 **Findings**
 - [P1] Short issue title
   Location: screen/component/selector/file if known.
+  Surface: typography|spacing/layout|colors/tokens|image/assets|copy/content|icons|states/interactions|responsiveness|accessibility|shortcut artifacts.
   Evidence: design does X, implementation does Y.
   Impact: why this matters.
-  Fix: concrete change.
+  Recommendation: concrete design correction.
+  Implementation notes: optional component/token/CSS/file guidance when known.
+  Acceptance check: what must be true in the next render for this finding to be resolved.
 
 **Open Questions**
 - Any ambiguity about intentional deviations, unavailable states, or missing artifacts.
 
 **Implementation Checklist**
-- Ordered fixes that can be executed directly.
+- Ordered fixes derived from the findings that can be executed directly.
 
 **Follow-up Polish**
 - P3 refinements that can improve fidelity after handoff.
+
+**QA Metadata**
+- Source visual truth path:
+- Implementation screenshot path:
+- Viewport:
+- State:
+- Theme/device/density:
+- Full-view comparison evidence:
+- Focused region comparison evidence, or why it was not needed:
+- Patches made since the previous QA pass:
+
+**Fidelity Surface Coverage**
+- Fonts and typography:
+- Spacing and layout rhythm:
+- Colors and visual tokens:
+- Image quality and asset fidelity:
+- Copy and content:
+- Icons:
+- States and interactions:
+- Responsiveness:
+- Accessibility:
+- Shortcut artifacts:
+
+**Evidence Limits**
+- Any evidence gaps that prevented a complete source-vs-render comparison.
 ```
 
 If there are no substantive mismatches, say that clearly and list any residual test gaps.
@@ -120,19 +167,19 @@ When this skill is used before handoff, save the latest QA report as project-roo
 
 `design-qa.md` must include:
 
+- overview
+- findings with severity, affected fidelity surface, recommendation, and acceptance check
+- open questions
+- implementation checklist
+- follow-up polish, when useful
 - source visual truth path
 - implementation screenshot path
 - viewport
 - state
 - full-view comparison evidence
 - focused region comparison evidence, or why it was not needed
-- findings
 - patches made since the previous QA pass
-- final result
-
-`final result` must be exactly `passed` or `blocked`.
-
-Use `passed` when there are no actionable P0/P1/P2 findings. P3 findings may remain as follow-up polish.
-Use `blocked` when actionable P0/P1/P2 findings remain and name the blocker.
+- fidelity surface coverage
+- evidence limits
 
 Return the file path with the QA report.

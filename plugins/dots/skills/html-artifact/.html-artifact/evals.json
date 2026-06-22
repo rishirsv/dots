@@ -1,0 +1,291 @@
+{
+  "candidates": [
+    {
+      "candidate": "no-skill",
+      "display": "No skill baseline",
+      "source": {
+        "kind": "none"
+      }
+    },
+    {
+      "candidate": "current",
+      "display": "Current skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "defaults": {
+    "repetitions": 1,
+    "runner": "codex_app_server"
+  },
+  "evals": [
+    {
+      "id": "explainer-offline-queue",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML explainer for how an offline comment queue reconciles temporary IDs with server IDs. The result should be readable on mobile and should not mention any implementation source that was not provided.",
+      "expectations": [
+        "Uses the explainer recipe and artifact-shell anatomy.",
+        "Uses DESIGN.md-derived styling and no external runtime dependencies.",
+        "Avoids provider names, raw research links, scratch paths, and stale version labels.",
+        "Contains a clear first-viewport takeaway, a TL;DR, a step flow, and a code panel."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "implementation-plan-settings-sync",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML implementation plan for replacing a settings sync retry loop with a queue-backed worker. Include milestones, flow, risks, verification gates, open questions, and handoff.",
+      "expectations": [
+        "Uses the implementation-plan recipe and required sections.",
+        "Includes milestone-strip, step-flow, risk-table, and contained code/table surfaces.",
+        "Stays as one static HTML file with inline CSS and tiny optional JS only."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "code-review-cache-diff",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML code-review packet for a cache invalidation diff. Include summary, file map, findings, diff notes, risk list, and fix checklist.",
+      "expectations": [
+        "Uses the code-review recipe.",
+        "Includes finding-card, diff-review, risk-table, and a fix checklist.",
+        "Diff states are not color-only."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "research-report-static-artifacts",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML research report answering whether static HTML is enough for shareable agent artifacts. Include an answer, claim/evidence matrix, contradictions, gaps, source inventory, and audit trail.",
+      "expectations": [
+        "Uses the research-report recipe.",
+        "Includes claim-evidence-matrix and audit-trail.",
+        "Marks uncertainty instead of fabricating citations."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "design-qa-settings-panel",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML design-QA packet comparing a source mockup against a rendered settings panel. Include screenshots, mismatch findings, token swatches, and a pass/blocked verdict.",
+      "expectations": [
+        "Uses the design-qa recipe.",
+        "Includes screenshot-gallery, finding-card, token-swatch, and a final verdict.",
+        "Images and comparisons stay contained on mobile."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "design-qa-detailed-triptych",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML detailed design-QA packet for a settings panel. Include matched run conditions, a source/render/revised-mockup triptych with at least one focused-region comparison, a mismatch ledger, fidelity coverage, evidence limits, an implementation checklist, and a pass/blocked/evidence-limited verdict.",
+      "expectations": [
+        "Uses the design-qa-detailed recipe with qa-metadata, screenshot-triptych, mismatch-ledger, finding-card, fidelity-coverage, and evidence-limits.",
+        "Screenshots carry explicit dimensions and stay contained at 320px; the triptych stacks on mobile.",
+        "States coverage and evidence limits honestly; the verdict is pass, blocked, or evidence-limited."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "design-qa-ios-app",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML detailed design-QA packet for an iOS app screen. Compare the source design against rendered simulator captures with focused regions, a mismatch ledger, token deltas, fidelity coverage, and explicit evidence limits for states not captured.",
+      "expectations": [
+        "Uses the design-qa-detailed recipe with focused-compare and token-delta for precise fidelity.",
+        "Captures are real screenshots with dimensions and lazy loading below the fold, contained on mobile.",
+        "Names the device, viewport, and states not captured in evidence-limits."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "ux-audit-report-checkout",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML UX-audit report for a multi-step checkout flow from ordered step screenshots. Include capture conditions, per-step health, UX and design findings tied to steps, accessibility risks, evidence limits for what screenshots cannot show, and prioritized recommendations.",
+      "expectations": [
+        "Uses the ux-audit-report recipe with qa-metadata, screenshot-gallery, finding-card, and evidence-limits.",
+        "Findings and accessibility risks are tied to specific steps.",
+        "Evidence-limits names what screenshots alone cannot verify (keyboard, screen reader)."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "imagegen-concept-packet-empty-state",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML Image Gen concept packet for an empty-state illustration. Include the grounding sources, a concept gallery with a selected direction, reusable image-generation prompt cards, an asset inventory, and the approved copy.",
+      "expectations": [
+        "Uses the imagegen-concept-packet recipe with source-manifest, concept-gallery, and imagegen-prompt-card.",
+        "The concept gallery marks exactly one selected direction; concept images stay contained.",
+        "Prompt cards state intent and constraints and read with JS disabled."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "migration-plan-queue",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML migration plan for moving settings writes from inline retries to a queue-backed worker. Include scope boundary, phased slices, risks, an owner matrix, a verification matrix, and explicit cutover and rollback gates.",
+      "expectations": [
+        "Uses the migration-plan recipe with scope-boundary, milestone-strip, risk-table, owner-matrix, verification-matrix, and acceptance-gate.",
+        "Cutover and rollback gates are explicit and grounded.",
+        "Tables and matrices stay contained and collapse on mobile."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "release-readiness-queue",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML release-readiness packet for a queue-worker release. Include release gates, a verification matrix, open risks, owners, a size/performance budget, and a clear go/no-go decision.",
+      "expectations": [
+        "Uses the release-readiness recipe with acceptance-gate, verification-matrix, risk-table, and a callout verdict.",
+        "The go/no-go read is visible in the first viewport.",
+        "Any performance-budget actuals are real or marked unknown, never fabricated."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "eval-report-static-html",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML eval report on whether static single-file HTML is enough for shareable agent artifacts. Include a conclusion with confidence, a scorecard of cases and criteria, a claim/evidence matrix, evidence limits, and an audit trail.",
+      "expectations": [
+        "Uses the eval-report recipe with tldr, a scorecard, claim-evidence-matrix, evidence-limits, and audit-trail.",
+        "Conclusions map to evidence; uncertainty is marked rather than hidden.",
+        "The audit trail lists the actual cases and checks run."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    },
+    {
+      "id": "postmortem-write-loss",
+      "type": "quality",
+      "prompt": "Create a self-contained HTML postmortem for a settings write-loss incident. Include impact and severity metadata, an ordered timeline, measured impact, a named root cause, corrective actions with owners and status, and how each action will be confirmed.",
+      "expectations": [
+        "Uses the postmortem recipe with meta-strip, a step-flow timeline, decision-log, and a callout for the root cause.",
+        "The timeline reads in order and impact numbers are grounded.",
+        "Corrective actions carry owners and a confirmation path."
+      ],
+      "graders": [
+        {
+          "id": "artifact-structure",
+          "kind": "code",
+          "metric": "structure",
+          "path": "validate-artifacts.mjs",
+          "required": true,
+          "gate": true
+        }
+      ]
+    }
+  ],
+  "skill_name": "html-artifact",
+  "target": {
+    "ref": "SKILL.md",
+    "type": "skill"
+  }
+}
