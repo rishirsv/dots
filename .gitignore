@@ -21,6 +21,7 @@ build/
 **/.autoresearch/runs/
 **/.agents/screenshots/
 **/.agents/oracle/
+**/.agents/
 **/.agents/tmp/
 **/.agents/artifacts/
 **/outputs/
