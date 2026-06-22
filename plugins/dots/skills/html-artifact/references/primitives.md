@@ -5,10 +5,26 @@ these instead of improvising one-off layouts. Each primitive is plain semantic
 HTML plus a predictable anatomy of data attributes — no framework, no runtime.
 
 Read [authoring.md](authoring.md) for semantic, runtime, and hygiene rules,
-[DESIGN.md](DESIGN.md) for styling tokens, and [recipes.md](recipes.md) for
-which primitives each recipe requires. The
+[../assets/theme.css](../assets/theme.css) for canonical primitive styling, and
+[recipes.md](recipes.md) for recipe defaults and conditional choices. The
 [../assets/primitive-atlas.html](../assets/primitive-atlas.html) file shows every
 primitive below rendered with its anatomy visible.
+
+## Primitive Chooser
+
+Use this before scanning the full catalog. Pick primitives for the reader job,
+then keep only the ones supported by the source material.
+
+| Reader job | Prefer | Add when |
+|---|---|---|
+| Orient the reader | `hero-summary`, `meta-strip`, `section-nav` | Use `section-nav` only for four or more major sections. |
+| Give the answer | `tldr`, `callout` | Use `callout` for one emphasized point only. |
+| Compare choices/states | `comparison-grid`, `focused-compare`, `screenshot-gallery` | Use tables or ledgers when axes matter more than visuals. |
+| Show evidence | `claim-evidence-matrix`, `audit-trail`, `evidence-limits` | Use the cards variant for fewer claims or narrow screens. |
+| Review defects | `finding-card`, `diff-review`, `mismatch-ledger` | Use `mismatch-ledger` for many similar issues. |
+| Plan work | `milestone-strip`, `dependency-map`, `risk-table`, `verification-matrix`, `acceptance-gate` | Add owners or handoff only when known. |
+| Present visual QA | `qa-metadata`, `screenshot-gallery`, `screenshot-triptych`, `token-delta` | Use `screenshot-triptych` only when a revised mockup exists. |
+| Enable reuse | `copy-export`, `handoff-packet`, `action-list` | Never make export the only readable path. |
 
 ## Primitive Anatomy Contract
 
@@ -408,12 +424,34 @@ as primitives, and never give a layout helper a `data-primitive` value.
 - **Common failure:** a vague trail ("researched the web"). List the actual
   searches, sources, and files so a reader can verify.
 
+## action-list
+
+- **Purpose:** ordered actions the reader can execute, with optional owner,
+  status, proof, and rationale.
+- **Use when:** a review, QA packet, plan, release check, or postmortem ends in
+  concrete follow-up.
+- **Avoid when:** the content is just findings or evidence — use `finding-card`
+  or `claim-evidence-matrix` instead.
+- **Semantic base:** `ol` or `ul` of action items.
+- **Root attributes:** `data-primitive="action-list"`.
+- **Required slots:** `action` (repeated).
+- **Optional slots:** `owner`, `status`, `proof`, `due`, `rationale`.
+- **Supported variants:** `data-variant="checklist"` or
+  `data-variant="ordered"`.
+- **Supported states:** `data-state` of `pending`, `blocked`, `done`, or
+  `recommended` on an action.
+- **Mobile/overflow rule:** actions stack; long paths or proof strings wrap or
+  sit in mono.
+- **Common failure:** vague actions with no verb, or missing owner/status when
+  the source provides one.
+
 ---
 
 ## Planning & document primitives
 
 These extend the catalog for plans, specs, decision records, and handoffs. They
 follow the same anatomy contract; slot names remain CSS/inspection hooks only.
+`theme-toggle` remains global shell furniture, not a recipe primitive.
 
 ## scope-boundary
 
@@ -863,6 +901,8 @@ primitives present the selected concepts, sources, and handoff details.
 These extend the catalog for motion proofs, viewport proofs, and performance
 budgets. They keep animation honest and document that the artifact was actually
 rendered and measured.
+Use `motion-proof`, `viewport-matrix`, `performance-budget`, and `render-proof`
+only when real measured or rendered evidence exists.
 
 ## motion-proof
 
@@ -954,7 +994,7 @@ rendered and measured.
   `aria-pressed`.
 - **Mobile/overflow rule:** a fixed ~40px target in the top-right; it never
   overlaps the mid-right section index and is hidden in print.
-- **Common failure:** keying code or panel backgrounds off `--ink` (which flips
-  light in dark mode), or requiring JavaScript for dark mode. Dark mode must work
-  from `prefers-color-scheme` alone; the button only adds manual override and
-  persistence. See [DESIGN.md](DESIGN.md#dark-mode).
+- **Common failure:** keying code or panel backgrounds off text color variables,
+  or requiring JavaScript for dark mode. Dark mode must work from
+  `prefers-color-scheme` alone; the button only adds manual override and
+  persistence. See [../assets/theme.css](../assets/theme.css).

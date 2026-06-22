@@ -95,6 +95,12 @@ with a recommended split instead of wandering.
 
 The parent agent owns synthesis and writes the durable deep research report. Subagents gather evidence; they do not make final product decisions or write the report.
 
+Use `research.md` for the parent synthesis. Use numbered subreport names that
+describe the source class and question, such as
+`01-codebase-routing-patterns.md`, `02-official-docs-current-api.md`, or
+`03-risks-and-gaps.md`. Add `99-source-audit.md` only when the source inventory
+or command trail is large enough to distract from the subreports.
+
 After subagents report:
 
 1. Group findings by claim, not by subagent.

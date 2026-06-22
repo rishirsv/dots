@@ -180,11 +180,21 @@ Recommended run shape:
 
 ```text
 .agents/research/<topic-slug>/
-  q01-codebase.md
-  q02-web.md
-  q03-risk.md
-  summary.md
+  00-research-contract.md
+  01-local-behavior.md
+  02-current-docs.md
+  03-prior-art.md
+  04-risks-and-gaps.md
+  research.md
+  99-source-audit.md
 ```
+
+Name subreports as `NN-<source-class>-<question-slug>.md` when a run needs a
+more specific split, for example `01-codebase-routing-patterns.md` or
+`02-official-docs-current-api.md`. Keep the parent synthesis named
+`research.md`. Use `99-source-audit.md` only when source inventories, searches,
+or command trails need a separate file instead of fitting cleanly in the
+subreports.
 
 Each subreport must be reader-first. It should answer the assigned question
 before listing sources, and it should group evidence by claim instead of making
@@ -204,7 +214,7 @@ Each subreport must include:
 - Audit trail: commands/searches run, sources consulted, and important sources
   not consulted
 
-The parent writes `summary.md` as an index and synthesis:
+The parent writes `research.md` as an index and synthesis:
 
 - Answer the original research contract.
 - Link to every subreport.

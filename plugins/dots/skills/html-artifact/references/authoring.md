@@ -1,8 +1,10 @@
 # Authoring Rules
 
 Use this file for runtime behavior: semantic HTML, primitive anatomy, static
-output rules, and content hygiene. Use [DESIGN.md](DESIGN.md) for all visual
-tokens, component styling, palette, type, spacing, radius, and design rationale.
+output rules, and content hygiene. Use [../assets/theme.css](../assets/theme.css)
+for exact runtime CSS values and primitive styling, and use
+[style-rationale.md](style-rationale.md) for the visual rationale behind those
+rules.
 
 ## Semantic-first HTML
 
@@ -36,8 +38,12 @@ it is reference material, not a reader artifact.
 ## Static Output Rules
 
 - Deliver one `.html` file with inline CSS in a `<style>` block.
-- Use [DESIGN.md](DESIGN.md) as the token source; emit CSS variables from its
-  YAML values rather than duplicating hardcoded values throughout references.
+- Inline the canonical block from [../assets/theme.css](../assets/theme.css)
+  verbatim, including its `html-artifact:theme.css` marker comments.
+- Artifact-local CSS may follow the canonical block only for content-specific
+  layout, diagrams, or evidence sizing. It must not redefine `:root` tokens or
+  target canonical `[data-primitive=...]` selectors; primitive changes belong in
+  `theme.css`.
 - Use tiny inline JS only when interaction changes the reader job: copy/export,
   tabs/filtering, simple calculators, or scroll-spy.
 - The artifact must read fully with JS disabled.
@@ -53,10 +59,9 @@ relationship or a state change — never as continuous decoration.
 - Animate state and disclosure transitions (a copy confirmation, a reveal, a
   before/after wipe), not idle ambient motion. No looping orbs, drifting
   gradients, or perpetual shimmer.
-- Keep durations short and easings standard. Use the motion tokens in
-  [DESIGN.md](DESIGN.md): `motion-fast` (~120ms) for taps and toggles,
-  `motion-base` (~200ms) for reveals, `motion-slow` (~320ms) for larger
-  before/after transitions; ease-out for entrances, ease-in-out for toggles.
+- Keep durations short and easings standard. Use the motion values in
+  [../assets/theme.css](../assets/theme.css); do not invent one-off animation
+  timings inside local artifact CSS.
 - When any animation is present, honor reduced motion. Wrap motion in
   `@media (prefers-reduced-motion: no-preference) { … }` or neutralize it inside
   `@media (prefers-reduced-motion: reduce)`, so the artifact is fully usable and
@@ -96,6 +101,38 @@ Long artifacts stay readable through structure first, not heavy tooling.
   optimization, never a substitute for chunking.
 - Keep the single-file contract: no pagination server, no lazy-loaded routes.
 
+## Polish And Tightness Pass
+
+Before browser QA, run an editorial pass for density, containment, and honest
+structure:
+
+- **First viewport:** title, artifact type, and the answer, verdict, or
+  recommendation are visible without scrolling.
+- **Section economy:** every major section changes what the reader understands
+  or can do; remove any section that exists only because the recipe listed it.
+- **Panel economy:** panels are for grouped data, code, evidence, screenshots,
+  gates, or findings; do not wrap ordinary prose in cards.
+- **Density:** prefer compact rows, lists, and tables over giant cards when the
+  reader is scanning.
+- **State clarity:** every status is conveyed by text or a glyph, not color
+  alone.
+- **Mobile containment:** tables, code, diffs, screenshots, and diagrams scroll
+  internally or collapse; they never force page-level horizontal scroll.
+- **Callout discipline:** merge adjacent callouts or promote them to a real
+  section.
+- **Primitive test:** every primitive should answer why it is easier than prose.
+- **Evidence gaps:** mark unknowns and evidence limits instead of filling empty
+  cells.
+
+## Adapting Primitives
+
+- Preserve the primitive root and required slots.
+- Use documented variants only.
+- If the content needs a one-off structure, use semantic HTML first.
+- Add a new primitive only when the pattern recurs across recipes or is central
+  to a reader job.
+- Never create one-off visual components that only make the page prettier.
+
 ## Source Grounding
 
 - Read the named source material before authoring.
@@ -123,8 +160,7 @@ skill payload or generic atlas examples.
 ## Dark mode
 
 Every artifact ships dark mode and the `theme-toggle` moon button, implemented
-identically (see [DESIGN.md](DESIGN.md#dark-mode) for the canonical tokens,
-button, and script):
+identically from [../assets/theme.css](../assets/theme.css):
 
 - Emit the light tokens on `:root` and the same dark values in both
   `@media (prefers-color-scheme: dark) :root:not([data-theme="light"])` and
@@ -134,7 +170,7 @@ button, and script):
   script only adds manual override (`data-theme` on `<html>`) and `localStorage`
   persistence. With JS off the button is inert and the OS preference wins.
 - Keep code and panel surfaces dark in both themes via
-  `--code-surface`/`--code-text`; never key them off `--ink`.
+  `--code-surface`/`--code-text`; never key them off text color variables.
 - Verify contrast in both themes; watch hard-coded badge, pill, and warning
   colors that need a lighter value in dark.
 
@@ -163,7 +199,8 @@ button, and script):
 
 Pico, missing.css, Open Props, Every Layout, Tailwind, and shadcn are research
 references only. The runtime authoring model is semantic HTML, the local
-primitive catalog, and the design tokens in [DESIGN.md](DESIGN.md).
+primitive catalog, and the canonical CSS in
+[../assets/theme.css](../assets/theme.css).
 
 Rendered QA uses an available browser tool, recording the tool used and any
 fallback reason (see [browser-checks.md](browser-checks.md)). Do not add a

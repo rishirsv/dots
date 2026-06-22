@@ -25,7 +25,7 @@ in this reusable rule.
 - When a check fails, fix the artifact and re-inspect. Do not hand off a file
   with a known failing check.
 - Report which widths were checked, the result of the overflow check, and which
-  browser tool was used (and the fallback reason if Chrome was used).
+  browser tool was used, with any fallback reason.
 
 ## Required checks
 
@@ -60,11 +60,20 @@ in this reusable rule.
 - **`source-check`** — provenance is visible and honest: sources, file paths,
   commands, and an audit trail where the recipe calls for one; nothing fabricated;
   unknowns marked as unknown.
+- **`recipe-fit-check`** — recipe defaults appear only where supported by source
+  material. Any omitted default is unnecessary or disclosed as an evidence limit.
+  No section is padded with placeholder prose.
+- **`polish-check`** — the first viewport states the value; sections are not
+  wrapped in decorative cards; status text does not rely on color; dense content
+  uses compact rows, tables, or lists; no visible template machinery leaks.
 - **`a11y-structure-check`** — one `h1`, a sensible heading order, real landmarks
   (`main`, `nav`, `header`, `footer`), status conveyed by text/glyph as well as
   color, and adequate contrast. Confirm anatomy coverage where relevant: each
   major block has a `data-primitive` and its required `data-slot` parts, and no
   slot or primitive name leaks into reader text.
+- **`dark-mode-check`** — OS dark mode works with JS disabled, the manual toggle
+  works with JS enabled, and status pills, warning callouts, code panels, and
+  links hold contrast in both themes.
 
 ## Rendered proof procedure
 
@@ -80,7 +89,8 @@ family before handoff:
    focus, and before/after/triptych controls.
 7. Check reduced motion when a `motion-proof` or any animation is present.
 8. Check screenshot loading, dimensions, captions, and containment.
-9. If you fall back to another browser tool because the first is unavailable or
+9. Check recipe fit, polish, and dark mode.
+10. If you fall back to another browser tool because the first is unavailable or
    blocked, record the tool used and the fallback reason in the handoff.
 
 ## Preview fallback
