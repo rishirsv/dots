@@ -19,8 +19,9 @@ configuration.
 - Generated evidence belongs under ignored root `.agents/`.
 - Tool-local state such as `.claude/`, `.codex/`, and root `.meta-skill/` is not
   a durable documentation home.
-- Skill-owned hidden docs may be durable when they are intentionally tracked;
-  Meta-Skill docs live in `plugins/meta-skill/.meta-skill/docs/`.
+- Skill-owned hidden workbench files may be durable when intentionally tracked;
+  Meta-Skill hidden guidance lives in `plugins/meta-skill/.meta-skill/AGENTS.md`
+  and durable docs live in `plugins/meta-skill/.meta-skill/docs/`.
 
 ## Boundaries
 

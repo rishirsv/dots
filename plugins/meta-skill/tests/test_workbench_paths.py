@@ -9,7 +9,6 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.candidates import payload_digest  # noqa: E402
-from meta_skill.io import read_json  # noqa: E402
 from meta_skill.staging import copy_payload  # noqa: E402
 from meta_skill.workbench import init_workbench  # noqa: E402
 from meta_skill.workbench_paths import workbench_path  # noqa: E402
@@ -40,9 +39,12 @@ class WorkbenchPathTests(unittest.TestCase):
 
             expected = skill_dir / ".unpack"
             self.assertEqual(Path(result["workbench"]), expected)
-            self.assertTrue((expected / "cases").is_dir())
-            self.assertTrue((expected / "runs").is_dir())
-            self.assertEqual(read_json(expected / "evals.json")["skill_name"], "unpack")
+            self.assertTrue((expected / "AGENTS.md").is_file())
+            self.assertIn("private workbench for `unpack`", (expected / "AGENTS.md").read_text())
+            self.assertFalse((expected / "cases").exists())
+            self.assertFalse((expected / "runs").exists())
+            self.assertFalse((expected / "benchmarks").exists())
+            self.assertFalse((expected / "evals.json").exists())
 
     def test_project_mode_uses_skill_payload_name(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -53,9 +55,19 @@ class WorkbenchPathTests(unittest.TestCase):
 
             expected = project / ".invoice-reader"
             self.assertEqual(Path(result["workbench"]), expected)
-            manifest = read_json(expected / "evals.json")
-            self.assertEqual(manifest["skill_name"], "invoice-reader")
-            self.assertEqual(manifest["target"], {"type": "skill", "ref": "skill/SKILL.md"})
+            self.assertTrue((expected / "AGENTS.md").is_file())
+            self.assertIn("private workbench for `invoice-reader`", (expected / "AGENTS.md").read_text())
+
+    def test_file_target_uses_skill_name_for_guidance(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            skill_dir = Path(tmp) / "named-skill"
+            write_skill(skill_dir, "file-target")
+
+            result = init_workbench(skill_dir / "SKILL.md")
+
+            expected = skill_dir / ".file-target"
+            self.assertEqual(Path(result["workbench"]), expected)
+            self.assertIn("private workbench for `file-target`", (expected / "AGENTS.md").read_text())
 
     def test_copy_payload_excludes_skill_named_workbench(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

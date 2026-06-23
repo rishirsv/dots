@@ -250,7 +250,7 @@ def build_parser():
 
     workbench = sub.add_parser("workbench", help="Workbench commands")
     workbench_sub = workbench.add_subparsers(dest="workbench_command", required=True)
-    init = workbench_sub.add_parser("init", help="Create .<skill-name> workbench folders and evals.json")
+    init = workbench_sub.add_parser("init", help="Create .<skill-name> workbench guidance")
     init.add_argument("--target", default=".")
     init.add_argument("--dry-run", action="store_true")
     init.add_argument("--json", action="store_true")

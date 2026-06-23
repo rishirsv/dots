@@ -51,10 +51,14 @@ Produce a **scored Judge review** (`judge-review.md`) — see
    full shipped skill payload before final scoring. This includes `SKILL.md`,
    linked references, agents, scripts, assets, examples, templates, and any
    user-visible text inside HTML or other fixtures.
-3. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
-4. **Overall Judge Review Score** = rounded average of Discovery %,
+3. Run the **Runtime vs Maintainer Placement Audit** in the same rubric before
+   final scoring. Every heading in `SKILL.md` and linked runtime references must
+   be checked for whether a future agent needs it while using the skill on a
+   user's task.
+4. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
+5. **Overall Judge Review Score** = rounded average of Discovery %,
    Implementation %, and Validation %.
-5. If artifact writes are allowed, write `judge-review.md` with scores and
+6. If artifact writes are allowed, write `judge-review.md` with scores and
    prioritized findings, then **stop**. If artifact writes are not allowed,
    return the review in chat. Review proposes; it does not edit source.
 

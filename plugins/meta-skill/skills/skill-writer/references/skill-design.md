@@ -198,11 +198,12 @@ local convention:
 ```
 
 The portable payload is the project root. `.<skill-name>/` is not portable; use it
-for durable authoring docs, research reports, source captures, test fixtures,
-package metadata, temporary reviews, and source-specific or client-specific
-development notes. Create optional workbench folders only when they will contain
-files. Keep `.<skill-name>/tests/` flat when fixtures exist; do not create a blank
-`.<skill-name>/tests/`, `/tests`, or nested test-category folders.
+for nested agent guidance, durable specs, roadmap files, research reports, source
+captures, authored eval inputs, package metadata, temporary reviews, and
+source-specific or client-specific development notes. Create optional workbench
+folders only when writing their first real file. Keep `.<skill-name>/tests/`
+flat when fixtures exist; do not create a blank `docs/`, `tests/`, `/tests`,
+`cases/`, `benchmarks/`, or nested test-category folder.
 
 Do not force a `skill/` wrapper unless the current repo explicitly requires one.
 If an existing repo still uses wrappers, follow that repo for maintenance work
@@ -233,9 +234,13 @@ review, or package the skill but should not be loaded by a future runtime agent.
 
 | Folder | Use for |
 |---|---|
-| `.<skill-name>/docs/` | Durable authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Name research files by topic; use a `-research.md` suffix when the docs folder would otherwise contain only research. |
+| `.<skill-name>/AGENTS.md` | Hidden-folder operating guidance, doc conventions, and user-approved skill-specific invariants such as "do not update this way." Seed it when project mode is initialized. |
+| `.<skill-name>/docs/` | Durable specs, roadmap files, authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Research can live directly in `docs/`; use `docs/research/` only when volume needs nesting. |
+| `.<skill-name>/evals.json` | Authored prompt manifest for future evaluator runs. Create it only when there is real eval content or an evaluator handoff. |
+| `.<skill-name>/cases/` | Materialized task content and hidden grader-side files created from `evals.json`. Create it through eval materialization, not as an empty placeholder. |
+| `.<skill-name>/benchmarks/` | Recurring benchmark profiles. Create it only when writing a concrete profile. |
 | `.<skill-name>/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
-| `.<skill-name>/dist/` | Package artifacts and package metadata produced by `<meta-skill-root>/scripts/metaskill package`. |
+| `.<skill-name>/runs/`, `workspaces/`, `worktrees/`, `dist/`, `calibrations/` | Generated output from eval, packaging, and calibration commands. Treat these as replaceable artifacts, not durable source. |
 
 For temporary plans, use the surrounding repo's planning convention instead of
 creating `.<skill-name>/plans/`. Plans usually are not durable skill knowledge.
@@ -682,7 +687,8 @@ example material the future agent should inspect while doing the task. Put the
 prompt manifest in `.<skill-name>/evals.json`; put durable authoring notes in
 `.<skill-name>/docs/`. Put user-provided fixtures or sample inputs in the flat
 `.<skill-name>/tests/` folder only when the user provided or approved them; do not
-create that folder when there are no fixture files to store.
+create that folder when there are no fixture files to store. Keep hidden-folder
+operating rules and skill-specific update guidance in `.<skill-name>/AGENTS.md`.
 
 Do not create run folders, grades, comparisons, hidden rubrics, benchmark runs,
 dashboards, or CI wiring during ordinary authoring. Route systematic

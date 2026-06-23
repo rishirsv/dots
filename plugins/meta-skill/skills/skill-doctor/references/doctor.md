@@ -119,11 +119,13 @@ Doctor proposal or an Evaluator handoff.
 4. Localize the cause: description, body, reference, structure, workflow branch,
    output contract, script contract, or missing gate.
 5. If the failure is about leaked vocabulary, meta text, provenance, examples,
-   or visible fixture copy, run the Payload Hygiene Sweep in
+   visible fixture copy, or maintainer/developer guidance in the runtime
+   payload, run the Payload Hygiene Sweep and Runtime vs Maintainer Placement
+   Audit in
    [rubric.md](rubric.md#payload-hygiene-sweep) before choosing a fix. Build the
-   scan terms from the user's complaint and inspected evidence; include visible
-   HTML text, labels, alt/copy/button strings, and export payloads, not only
-   Markdown prose.
+   scan terms from the user's complaint and inspected evidence; include section
+   headings in linked runtime references, visible HTML text, labels,
+   alt/copy/button strings, and export payloads, not only Markdown prose.
 6. Run the Proposal Loop below.
 7. Propose the smallest fix with target files, intended behavior, validation,
    and residual risk. Stop there unless a specific source edit has already been
@@ -136,8 +138,8 @@ workflow branch, or evidence row causing the risk.
 
 1. Name the observed fail state in plain language.
 2. Classify the failure: activation, runtime clarity, output contract, resource,
-   runtime contamination, evidence, cross-skill boundary, user control, or
-   validation gap.
+   runtime contamination, maintainer leakage, evidence, cross-skill boundary,
+   user control, or validation gap.
 3. Separate a recurring failure pattern from a one-off edge case.
 4. Find the smallest likely source: description, boundary, example, workflow
    branch, output contract, reference pointer, script contract, or missing gate.

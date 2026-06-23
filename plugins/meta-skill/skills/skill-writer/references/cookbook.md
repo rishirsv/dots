@@ -341,7 +341,7 @@ my-skill/
 
 Use project mode only when the user wants durable workbench state, research
 reports, fixtures/check inputs, team reuse material, or package output. Create
-that state with the central CLI after the payload exists:
+the hidden workbench guidance with the central CLI after the payload exists:
 
 ```bash
 <meta-skill-root>/scripts/metaskill workbench init --target <skill-dir>
@@ -360,7 +360,9 @@ Package only after approval:
 ```
 
 `.<skill-name>/` is private workbench state and is excluded from packages. Package
-metadata is written next to the zip artifact.
+metadata is written next to the zip artifact. Put specs, roadmap files, research,
+and skill-specific update guidance under `AGENTS.md` or `docs/`; create other
+workbench folders only when writing their first real file.
 
 ## Worked Mini Examples
 
@@ -399,6 +401,7 @@ Script-backed skill:
   stopping condition.
 - Setup/config/state rules appear only when they change behavior and name stable storage.
 - Eval material stays in `.<skill-name>/evals.json` or `.<skill-name>/docs/` and out of the portable runtime unless it is approved runtime example material.
+- Hidden-folder usage and user-approved skill-specific invariants live in `.<skill-name>/AGENTS.md`.
 - Generated starters use the current-working-directory-relative `<skill-dir>` as the root payload; no `skill/` wrapper unless a repo explicitly requires it.
 - `meta-skill` is the single public CLI; worker-local scripts are not a public
   interface.

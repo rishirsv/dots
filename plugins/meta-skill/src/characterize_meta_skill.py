@@ -167,9 +167,13 @@ def test_json_shapes_and_materialize(tmp):
     fresh_project = tmp / "fresh-project"
     write_skill(fresh_project / "skill")
     run_json([CLI, "workbench", "init", "--target", str(fresh_project), "--json"], fresh_project)
-    fresh_manifest = json.loads((wb(fresh_project) / "evals.json").read_text())
-    check("evals" in fresh_manifest and "candidates" in fresh_manifest, "workbench init should write prompt manifest shape")
-    check("schema_version" not in fresh_manifest and "cases" not in fresh_manifest, "workbench init should not write legacy manifest shape")
+    fresh_agents = wb(fresh_project) / "AGENTS.md"
+    check(fresh_agents.exists(), "workbench init should seed nested AGENTS.md guidance")
+    check("private workbench" in fresh_agents.read_text(), "workbench AGENTS.md should explain hidden folder usage")
+    check(not (wb(fresh_project) / "evals.json").exists(), "workbench init should not create evals.json until needed")
+    check(not (wb(fresh_project) / "cases").exists(), "workbench init should not create empty cases folder")
+    check(not (wb(fresh_project) / "benchmarks").exists(), "workbench init should not create empty benchmarks folder")
+    check(not (wb(fresh_project) / "runs").exists(), "workbench init should not create empty runs folder")
     check(not (wb(fresh_project) / "tests").exists(), "workbench init should not create empty tests folder")
 
     _, materialized = run_json([CLI, "eval", "materialize", "--suite", str(suite), "--json"], project)

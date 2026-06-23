@@ -119,6 +119,32 @@ Record the sweep in the review output with:
 - visible/copyable surfaces checked, including any HTML fixtures and export
   payloads
 
+### Runtime vs Maintainer Placement Audit
+
+Before final scoring, audit every heading in `SKILL.md` and every linked runtime
+reference. For each section, ask: "Would a future agent need this while using
+the skill on a user's task?"
+
+Flag sections whose primary audience is the skill maintainer, package author,
+validator author, or future skill editor. Examples include adding new primitives
+or recipes, package hygiene, release or dist rules, validator internals, hidden
+workbench management, roadmap planning, developer maintenance, migration notes,
+and external-system implementation boundaries.
+
+Those sections belong in `.<skill-name>/docs/`, validators, package docs,
+maintainer notes, or another non-runtime surface. They belong in the portable
+runtime payload only when the target skill's actual user-facing job is skill
+maintenance.
+
+Record this audit in the review output with:
+
+- `Placement audit: pass` or `Placement audit: fail`
+- headings or linked references checked
+- allowed maintainer-facing hits, with why the target skill needs them at
+  runtime
+- findings, with file paths, section headings, and whether to move, remove, or
+  rewrite the material
+
 Score caps:
 
 - If shipped payload contains provider names, research-session provenance, raw
@@ -129,11 +155,18 @@ Score caps:
 - If visible HTML, fixture labels, or copy/export payloads expose internal
   anatomy, prompt roles, local paths, or skill-maintainer vocabulary, cap
   **Directive Quality** at 1 and **Progressive Disclosure** at 2 until cleaned.
+- If maintainer, package-author, validator-author, roadmap, migration, or
+  developer-maintenance sections appear in the runtime payload for a
+  non-maintenance skill, cap **Directive Quality** at 1 and **Progressive
+  Disclosure** at 2 until moved, removed, or rewritten.
 - If contamination appears in the description or opening contract, cap
   **Trigger Term Quality** at 2 and **Workflow Clarity** at 2 until cleaned.
 - A review with unresolved payload contamination should not score above 90
   overall unless the findings are explicitly classified as allowed runtime
   dependencies.
+- A review with unresolved maintainer/developer placement failures should not
+  score above 90 overall unless the target skill's actual runtime job is skill
+  maintenance and the review explains why the section belongs there.
 
 ## Discovery
 

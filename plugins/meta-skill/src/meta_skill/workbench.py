@@ -1,29 +1,67 @@
 """Workbench initialization and case materialization."""
 
 from .errors import CliError
-from .io import write_json
-from .manifest import DEFAULT_EVALS, case_dir, case_task_info, load_manifest, suite_path, workbench_from_suite
+from .manifest import case_dir, case_task_info, load_manifest, suite_path, workbench_from_suite
 from .workbench_paths import skill_name_for_target, workbench_path
+
+
+AGENTS_TEMPLATE = """# Workbench Guidance
+
+This hidden folder is the private workbench for `{skill_name}`. It stores durable
+skill-development knowledge and authored evaluation inputs; it is not the
+runtime skill payload.
+
+## Source Boundary
+
+- Runtime behavior belongs in `SKILL.md` and shipped references, scripts,
+  assets, examples, or templates.
+- Workbench material supports skill improvement, evaluation, and packaging, but
+  should not be copied into runtime files unless it is reusable, trigger-relevant,
+  and safe to ship.
+- Keep raw transcripts, client facts, hidden grader answers, rejected drafts, and
+  source-specific notes out of runtime files.
+
+## Folder Conventions
+
+- Put durable specs, roadmap files, decisions, review context, and research in
+  `docs/`; use `docs/research/` only when the research volume needs nesting.
+- Put authored eval suites in `evals.json` and materialized task content in
+  `cases/`.
+- Put recurring benchmark profiles in `benchmarks/` only when creating a real
+  profile.
+- Do not create empty folders. Create a folder only when writing its first real
+  file.
+
+## Generated State
+
+- `runs/`, `workspaces/`, `worktrees/`, `dist/`, and `calibrations/` are generated
+  output. Treat them as replaceable evidence or build artifacts.
+- `task.md` is visible agent input. Keep hidden expectations, validators, judge
+  guidance, and answer keys outside the visible task.
+
+## Skill-Specific Updates
+
+- Add user-approved invariants and update guidance here when they apply only to
+  this skill or workbench.
+- Prefer precise "do this / do not do this" guidance over broad process notes.
+- If guidance becomes generally reusable across skills, promote it to the
+  Meta-Skill source docs instead of duplicating it here.
+"""
 
 
 def init_workbench(target, dry_run=False):
     workbench = workbench_path(target)
-    paths = [workbench, workbench / "cases", workbench / "benchmarks", workbench / "runs"]
-    evals_path = workbench / "evals.json"
+    agents_path = workbench / "AGENTS.md"
     changes = []
-    for path in paths:
-        if not path.exists():
-            changes.append({"action": "mkdir", "path": str(path)})
-            if not dry_run:
-                path.mkdir(parents=True, exist_ok=True)
-    manifest = dict(DEFAULT_EVALS)
-    manifest["skill_name"] = skill_name_for_target(target)
-    if not (target / "SKILL.md").exists():
-        manifest["target"] = {"type": "skill", "ref": "skill/SKILL.md"}
-    if not evals_path.exists():
-        changes.append({"action": "write", "path": str(evals_path)})
+    if not workbench.exists():
+        changes.append({"action": "mkdir", "path": str(workbench)})
         if not dry_run:
-            write_json(evals_path, manifest)
+            workbench.mkdir(parents=True, exist_ok=True)
+    if not agents_path.exists():
+        changes.append({"action": "write", "path": str(agents_path)})
+        if not dry_run:
+            agents_path.parent.mkdir(parents=True, exist_ok=True)
+            agents_path.write_text(AGENTS_TEMPLATE.format(skill_name=skill_name_for_target(target)))
     return {"ok": True, "target": str(target), "workbench": str(workbench), "changes": changes}
 
 

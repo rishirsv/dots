@@ -177,13 +177,15 @@ project-mode evaluation or packaging state, run
 exists.
 
 In project mode, keep non-runtime authoring material under `.<skill-name>/`.
-Use `.<skill-name>/docs/` for durable authoring notes, decisions, research
+Use `.<skill-name>/AGENTS.md` to document how agents should use the hidden
+folder and to record skill-specific invariants or update guidance. Use
+`.<skill-name>/docs/` for durable specs, roadmap files, decisions, research
 reports, and review context. Put temporary plans wherever the surrounding repo
 keeps plans. Use `.<skill-name>/tests/` as a flat folder for test fixtures or
 check inputs only when the user provides or approves concrete test material.
-Create optional folders only when they will contain files; a blank
-`.<skill-name>/tests/`, `/tests`, or nested test-category folder should never
-exist.
+Create optional folders only when writing their first real file; blank
+`docs/`, `tests/`, `cases/`, `benchmarks/`, or nested test-category folders
+should never exist.
 
 When the user asks for eval seeds, project-mode eval material, or evaluator
 handoff, create one `.<skill-name>/evals.json` prompt manifest. Keep evaluator
@@ -229,9 +231,9 @@ When the intake requires research, prefer a bounded research pass before
 runtime drafting. Use an available researcher sub-agent or research-oriented
 skill when the environment provides one and the research can run independently;
 otherwise do the smallest reliable source review yourself. Save concise
-research reports in `.<skill-name>/docs/` for project-mode skills, using a
-`-research.md` suffix when the docs folder is otherwise just research, and copy
-only the operational conclusions into runtime guidance.
+  research reports in `.<skill-name>/docs/` for project-mode skills; nest under
+  `docs/research/` only when the research volume needs it. Copy only the
+  operational conclusions into runtime guidance.
 
 ### 4. Validate And Stop
 

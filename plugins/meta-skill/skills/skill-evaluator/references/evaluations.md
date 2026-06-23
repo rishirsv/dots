@@ -3,8 +3,9 @@
 Read when authoring semantic evaluation tasks for a target.
 
 Evaluations need a judge — an LLM by default, a human when taste or domain
-knowledge exceeds the model. They live in a gitignored workbench at
-`<project>/.<skill-name>/`.
+knowledge exceeds the model. They live in the hidden workbench at
+`<project>/.<skill-name>/`. Authored suite files can be tracked; generated runs,
+workspaces, and calibration artifacts are replaceable output.
 
 Use `../../../references/cli.md` for materialization, runner selection,
 progress, and grading commands.

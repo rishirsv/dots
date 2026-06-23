@@ -15,7 +15,6 @@ sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 from meta_skill.benchmark import benchmark_history, benchmark_lint, build_benchmark_report, render_benchmark_markdown  # noqa: E402
 from meta_skill.cli import build_parser  # noqa: E402
 from meta_skill.errors import CliError  # noqa: E402
-from meta_skill.io import read_json  # noqa: E402
 from meta_skill.runner import repetition_count  # noqa: E402
 from meta_skill.workbench import init_workbench  # noqa: E402
 
@@ -31,7 +30,7 @@ def write_jsonl(path, rows):
 
 
 class BenchmarkProfileTests(unittest.TestCase):
-    def test_workbench_init_creates_benchmarks_dir(self):
+    def test_workbench_init_defers_benchmark_files_until_needed(self):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "skill"
             target.mkdir()
@@ -48,8 +47,9 @@ description: "Use for testing."
             result = init_workbench(target)
 
             workbench = Path(result["workbench"])
-            self.assertTrue((workbench / "benchmarks").is_dir())
-            self.assertEqual(read_json(workbench / "evals.json")["skill_name"], "demo")
+            self.assertTrue((workbench / "AGENTS.md").is_file())
+            self.assertFalse((workbench / "benchmarks").exists())
+            self.assertFalse((workbench / "evals.json").exists())
 
     def test_benchmark_lint_resolves_selection(self):
         with tempfile.TemporaryDirectory() as tmp:

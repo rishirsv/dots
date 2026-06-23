@@ -37,6 +37,10 @@ Both launchers are self-bootstrapping:
 
 The CLI is an orchestration layer. The workbench is authoritative.
 
+- `.<skill-name>/AGENTS.md` explains how agents should use the hidden folder and
+  records skill-specific invariants or update guidance.
+- `.<skill-name>/docs/` stores durable specs, roadmap files, decisions, review
+  context, and research.
 - `.<skill-name>/evals.json` defines the suite, defaults, candidates, and tasks.
 - `.<skill-name>/cases/<task-id>/` owns authored task content: visible `task.md`,
   fixtures, hidden validators, hidden expected outputs, and judge guidance.
@@ -139,14 +143,16 @@ Example:
 
 ### `workbench init`
 
-Use this once per target skill or project to create the standard workbench
-layout.
+Use this once per target skill or project to create the standard hidden
+workbench and nested agent guidance.
 
 What it does:
 
 - Creates `.<skill-name>/`
-- Creates `.<skill-name>/cases/` and `.<skill-name>/runs/`
-- Seeds `.<skill-name>/evals.json` if it does not exist
+- Seeds `.<skill-name>/AGENTS.md` if it does not exist
+- Does not create empty folders or starter eval files; create `docs/`,
+  `evals.json`, `cases/`, `benchmarks/`, and generated output folders only when
+  writing real content
 
 Inputs:
 

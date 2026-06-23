@@ -57,10 +57,12 @@ gaps, and coverage limits as useful signals, not failures to hide.
 
 ## Workbench
 
-Artifacts live in the gitignored workbench at the target skill's project root:
+Artifacts live in the hidden workbench at the target skill's project root:
 `<project>/.<skill-name>/`, where `<skill-name>` comes from the target
 payload's `SKILL.md` frontmatter when available. The portable payload remains at
-`<project>/skill/`; the hidden workbench is development state beside it.
+`<project>/skill/`; the hidden workbench is development state beside it. Authored
+inputs such as `AGENTS.md`, `docs/`, `evals.json`, `cases/`, and benchmark
+profiles may be tracked; generated run output remains replaceable.
 
 ```text
 .<skill-name>/

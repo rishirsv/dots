@@ -89,6 +89,7 @@ In this document, `<repo-root>` means the repository checkout and
 ```text
 plugins/meta-skill/
   .meta-skill/
+    AGENTS.md
     docs/
       ARCHITECTURE.md
       *-research.md
@@ -127,12 +128,12 @@ plugins/meta-skill/
       ...
 ```
 
-The hidden `meta-skill/.meta-skill/docs/` directory is committed project
-knowledge for the Meta-Skill plugin itself. The name still follows the same
-rule: the target skill is `meta-skill`, so its hidden workbench is
-`.meta-skill/`. It is not the same as another target skill's generated eval
-workbench. Temporary planning artifacts should not live there; keep durable docs
-such as this architecture reference and source-grounded research reports.
+The hidden `meta-skill/.meta-skill/` directory is committed project knowledge
+for the Meta-Skill plugin itself. The name still follows the same rule: the
+target skill is `meta-skill`, so its hidden workbench is `.meta-skill/`.
+`AGENTS.md` explains how agents should use the folder, and `docs/` stores
+durable specs, roadmap files, and source-grounded research. Temporary planning
+artifacts should not live there.
 
 There are three important source/generated boundaries:
 
@@ -547,15 +548,17 @@ validation and does not prove behavioral lift.
 Each target skill or project can have a hidden workbench at
 `<project>/.<skill-name>/`, where `<skill-name>` comes from the target
 payload's `SKILL.md` frontmatter when available. For ordinary target projects,
-that workbench stores authoring notes, eval manifests, materialized tasks, runs,
-workspaces, package artifacts, and reports. For the Meta-Skill plugin itself,
-the resolved path is `meta-skill/.meta-skill/docs/`, which stores committed
-durable project documentation.
+that workbench stores durable guidance, docs, eval manifests, materialized
+tasks, runs, workspaces, package artifacts, and reports. For the Meta-Skill
+plugin itself, the resolved folder is `meta-skill/.meta-skill/`, with durable
+project documentation under `meta-skill/.meta-skill/docs/`.
 
 The evaluator workbench shape is:
 
 ```text
 .<skill-name>/
+  AGENTS.md
+  docs/
   evals.json
   cases/
     <task-id>/
@@ -589,6 +592,11 @@ The evaluator workbench shape is:
 
 Authority is split by artifact:
 
+- `.<skill-name>/AGENTS.md` explains how agents should use the hidden folder and
+  records skill-specific invariants or update guidance.
+- `.<skill-name>/docs/` stores durable specs, roadmap files, decisions, review
+  context, and research; use `docs/research/` only when research volume needs
+  nesting.
 - `.<skill-name>/evals.json` owns suite metadata: target, defaults, candidates,
   tasks, splits, repetitions, fixtures, expectations, and grader declarations.
 - `.<skill-name>/cases/<task-id>/` owns authored task material after
@@ -606,6 +614,8 @@ The workbench is hidden because it mixes several kinds of state that should not
 be part of the portable runtime skill:
 
 - authoring notes and eval manifests,
+- durable specs, roadmap files, decisions, and research,
+- nested agent guidance for this workbench,
 - hidden task judge guidance and expected outputs,
 - run transcripts and generated responses,
 - workspaces,
@@ -619,6 +629,8 @@ skill behaves when installed. Packaging excludes `.<skill-name>/` for this reaso
 
 | Stage | Primary files | What they answer |
 |---|---|---|
+| Workbench guidance | `.<skill-name>/AGENTS.md` | How should agents use this hidden folder? |
+| Durable context | `.<skill-name>/docs/` | What specs, roadmap decisions, research, or review context should persist? |
 | Authoring | `.<skill-name>/evals.json` | What should be tested later? |
 | Materialization | `.<skill-name>/cases/<task-id>/task.md` | What visible prompt will the agent see? |
 | Hidden grading setup | `judge.md`, `expected.*`, `validate.*` | How should the result be judged? |
@@ -841,20 +853,19 @@ optimization layers operate on top of recorded runs rather than replacing them.
 
 ## Workbench Initialization And Materialization
 
-`workbench init` creates the minimum workbench directories and seeds
-`.<skill-name>/evals.json` when it is missing:
+`workbench init` creates the minimum workbench and seeds nested agent guidance:
 
 ```text
 .<skill-name>/
-  cases/
-  runs/
-  tests/
-  evals.json
+  AGENTS.md
 ```
 
-If the target contains `SKILL.md`, the default target ref is `SKILL.md`. If not,
-the default target ref is `skill/SKILL.md`, which supports projects that keep
-portable skill payloads under a `skill/` folder.
+It does not create empty `docs/`, `cases/`, `benchmarks/`, `runs/`, `tests/`, or
+`evals.json`. Create folders on demand when writing the first real file. When
+authoring eval material, use `.<skill-name>/evals.json`; if the target contains
+`SKILL.md`, the default target ref is `SKILL.md`. If not, the default target ref
+is `skill/SKILL.md`, which supports projects that keep portable skill payloads
+under a `skill/` folder.
 
 `eval materialize` reads the normalized manifest and creates
 `.<skill-name>/cases/<task-id>/`. It writes the seeded task file, usually
