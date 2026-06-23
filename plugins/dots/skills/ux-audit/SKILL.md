@@ -1,19 +1,24 @@
 ---
 name: ux-audit
-description: "Audits a product flow from newly captured screenshots, producing a numbered step list and UX, design, and accessibility findings tied to each step. Use when the user asks to audit, critique, review, inspect, assess, or evaluate a product flow, journey, funnel, onboarding, checkout, settings path, screen, or multi-step experience; not for code review or pre-handoff prototype QA."
+description: "Audits existing product flows, bounded screens, or supplied product artifacts from evidence captured or inspected in the current run, producing step health and UX, design, and accessibility findings. Use for audit, critique, inspect, assess, or evaluate a live/current journey, funnel, onboarding, checkout, settings path, screen, or product screenshot; not for code review, pre-handoff prototype QA, redesign ideation, or implementation critique."
 ---
 
 # Audit
 
-Use this skill when the user wants to audit or critique a product flow, journey, funnel, onboarding path, checkout path, settings path, screen, or other product experience.
+Use this skill when the user wants to audit or critique a product flow, journey,
+funnel, onboarding path, checkout path, settings path, screen, or other product
+experience.
 
-The output is not a loose opinion. The output is:
+The output is not a loose opinion. It is current evidence plus product-quality
+judgment:
 
-- Screenshots of the flow saved to a local audit folder
-- A numbered step list
-- UX and design findings tied to steps or screenshots
-- Accessibility risks tied to steps or screenshots
-- Clear limits on what could not be checked from screenshots alone
+- captured screenshots or supplied artifacts saved or cited as evidence
+- a numbered step list with a health label for each step
+- UX, design, and accessibility findings tied to steps or screenshots
+- severity, evidence tier, affected surface, impact, recommendation, and
+  acceptance check for each substantive finding
+- system-quality themes across the flow
+- clear limits on what could not be checked from the captured evidence
 
 When the audit should be saved as a shareable rich document, hand the step
 screenshots and findings to [html-artifact](../html-artifact/SKILL.md) (its
@@ -27,31 +32,91 @@ Storybook, tokens, design systems, brand assets, component refs, browser
 preferences, and share targets as grounding material when relevant.
 
 Do not inspect every saved reference. Inspect only what the current task needs.
+Use references to calibrate product type, user context, personality, and system
+constraints; do not copy competitors or turn references into generic taste
+claims.
+
+For this skill, current-run evidence includes references, code, tokens,
+analytics, user-provided artifacts, or other materials only after they are
+explicitly opened, inspected, and recorded during this audit run.
+
+## Mode Selection
+
+Choose one base audit mode before routing:
+
+- `Live flow`: capture the requested journey or interaction path.
+- `Bounded screen`: audit one visible screen, modal, state, or component surface.
+- `Provided artifact`: audit a supplied screenshot, mockup, generated image, or
+  static artifact without requiring a live browser flow.
+- `Generated comparison`: compare generated alternatives only when the generated
+  artifacts are themselves the product surface being audited.
+
+Then add any relevant modifiers:
+
+- `Accessibility-heavy`: the user asks for accessibility or a `P0`/`P1`
+  accessibility risk is likely.
+- `Visual craft`: the user asks for visual quality, taste, polish, hierarchy,
+  or why a screen feels generic, sterile, or template-like.
+- `AI/agent product`: the surface includes an assistant, copilot, automation, or
+  agent workflow.
+- `Dense information`: the surface is a dashboard, table, report, chart, or
+  metrics-heavy workflow.
+
+For a single supplied screenshot, provided mockup, generated alternative
+comparison, or static artifact, do not require a live flow or browser capture.
+Record unknown product or flow fields as `unknown`, cite the provided artifact
+as evidence, and scope findings to the visible surface or comparison criteria.
+
+Use [design-qa](../design-qa/SKILL.md) for source-target versus implementation
+fidelity checks. Use [visual-design](../visual-design/SKILL.md) for redesign
+ideation, design direction, or front-end implementation critique. Keep generated
+artifact handling here only when the artifact itself is the product surface
+being audited.
 
 ## Route
 
 Before auditing:
 
-1. Identify the product or surface.
-2. Identify the flow or task.
-3. Identify the local audit folder.
-4. Choose the capture tool.
-5. Capture the flow.
-6. Save, inspect, and annotate each screenshot.
+1. Identify the base audit mode and any modifiers.
+2. Identify the product or surface.
+3. Identify the flow or task, or mark it `unknown` for static artifacts.
+4. Identify the core user task.
+5. Identify the smallest useful outcome for that task.
+6. Identify the product type and primary user role or context when known.
+7. Identify whether saved output is required.
+8. Choose the capture or inspection tool.
+9. Capture or inspect the evidence.
+10. Save or cite, inspect, and annotate each accepted artifact.
 
 Destination rules:
 
-- If the user names a local folder, use that folder.
-- If the destination is missing, create a local audit folder under the project
-  or artifact workspace.
+- If the user names a local folder or asks for a saved audit, use that folder
+  or create a local audit folder under the project or artifact workspace.
+- For live-flow audits that require newly captured screenshots, save screenshots
+  and notes to a local audit folder.
+- For quick critiques or provided-artifact audits where the user did not ask for
+  saved output, answer in chat and name the evidence limits instead of creating
+  files by default.
 
 Capture rules:
 
-- Use the Codex in-app Browser first.
-- If Browser cannot access, control, or screenshot the target, use the installed
-  Chrome skill.
-- If Browser and Chrome cannot complete the capture, ask for another approved validation surface.
+- Use the in-app browser when available for web flows.
+- Use Chrome when existing logged-in browser state, cookies, or extensions are
+  required.
+- Use Computer Use for native apps or app UI that cannot be captured through a
+  browser.
+- For provided artifacts, inspect the supplied file or image directly.
+- If none of those can complete the capture, ask for another approved validation surface.
 - If none of those can capture valid screenshots or control the flow, stop and report the blocker.
+
+Side-effect gates:
+
+- Stop before login, credential entry, payment, purchase, PII entry, account
+  changes, destructive settings, consent changes, sends/posts, external writes,
+  or any irreversible action unless the user already approved that exact action
+  or the target is clearly a test environment.
+- If a blocked side-effect step is required, capture the state before the action
+  and report the blocker, expected next evidence, and safe way to continue.
 
 Browser capture order:
 
@@ -65,55 +130,121 @@ Browser capture order:
 
 Evidence rules:
 
-- Use only evidence captured in the current audit run.
+- Use only evidence captured or explicitly inspected in the current audit run.
 - Do not use memory, prior chats, old traces, cached screenshots, or prior generated artifacts as audit evidence unless the user explicitly provides them.
-- Do not audit until the product, flow, destination, and capture tool are known.
+- Do not audit a live flow until the product, flow, destination, and capture
+  tool are known. For static artifacts, record unknown fields and proceed only
+  within the visible evidence.
 - Do not claim full accessibility compliance from screenshots alone.
 
-## Capture And Audit The Flow
+## Capture Or Inspect The Evidence
 
-You are an expert design, UX, and accessibility auditor. For each step in the flow, capture what the user sees, observe how the screen behaves, inspect the screenshot, and write audit notes before moving on.
+For each live-flow step, capture what the user sees, observe how the screen
+behaves, inspect the screenshot, and write audit notes before moving on. For
+each provided artifact or static state, inspect the supplied evidence directly
+and write bounded notes without inventing a missing flow.
 
 Follow [references/design-audit-framework.md](references/design-audit-framework.md) when deciding what to inspect and how to describe strengths, UX issues, accessibility risks, limits, and recommendations.
 
-Screenshot source rule:
+Audit structure before style:
 
-- Use the screenshot you actually saw.
-- Save that exact screenshot to the local audit folder.
-- Open or inspect the saved file before accepting it.
-- If the saved file shows the wrong window, wrong state, blank page, crop, or loading screen, reject it and capture again.
-- Do not replace a Browser, Chrome, or Computer Use screenshot with an OS screenshot unless you first prove the saved file shows the same window and state.
+1. First evaluate task flow, orientation, hierarchy, grouping, spacing,
+   contrast, readability, feedback, and state clarity.
+2. Then evaluate color, imagery, depth, decoration, personality, polish, and
+   distinctiveness.
+3. Keep design findings criterion-specific. Name the evaluated dimension rather
+   than saying only that the design is weak.
 
-For every step:
+For every live-flow step or static artifact state:
 
-1. Move to the next step in the requested flow.
-2. Wait until the screen is loaded and visually stable.
-3. Check for loading spinners, blank areas, login walls, error pages, blocked states, cookie dialogs, and half-rendered content.
-4. Capture the screenshot.
-5. Inspect the screenshot before accepting it.
-6. Reject the screenshot if it is blank, loading, cropped, blocked, or showing the wrong state.
-7. Observe behavior that matters for the audit, such as navigation, focus, loading, validation, error handling, empty states, motion, and whether the next action is clear.
+1. Move to the next step in the requested flow, or select the supplied artifact
+   or visible state being audited.
+2. Wait until any live screen is loaded and visually stable.
+3. Check for loading spinners, blank areas, login walls, error pages, blocked states, cookie dialogs, and half-rendered content when those states can apply.
+4. Capture the live screenshot, or inspect the provided artifact directly.
+5. Inspect the screenshot or artifact before accepting it as evidence. Use the
+   screenshot you actually saw; if a saved file shows the wrong window, wrong
+   state, blank page, crop, or loading screen, reject it and capture again.
+6. Save the exact accepted screenshot to the local audit folder when live
+   capture or saved output is required.
+7. Observe behavior that matters for the audit when interaction evidence is
+   available, such as navigation, focus, loading, validation, error handling,
+   empty states, motion, and whether the next action is clear.
 8. Write notes for that step.
-9. In the notes, report strengths, UX issues, accessibility risks, and any limits that made the step difficult to audit.
-10. Save accepted screenshots with numbered names, such as `01-start.png`, `02-form-filled.png`, and `03-confirmation.png`.
-11. Inspect the saved screenshot file before upload or handoff.
-12. Add notes for that step to the local audit notes immediately.
+9. In the notes, include:
+   - step health: `good`, `mixed`, `poor`, or `blocked`
+   - primary action or main user decision
+   - visible strengths worth preserving
+   - findings with `severity`, `surface`, `evidence tier`, `principle`,
+     `impact`, `recommendation`, `acceptance check`, and `verification needed`
+   - confidence when the judgment is aesthetic, generated, soft, or
+     evidence-limited
+   - evidence limits that made the step difficult to audit
+10. Use numbered screenshot names, such as `01-start.png`,
+   `02-form-filled.png`, and `03-confirmation.png`, when files are saved.
+11. Add notes for that step or artifact state to the local audit notes, saved
+    report, or working answer immediately.
+
+Classify each finding with the most specific relevant surface from the framework
+reference. Do not print the whole lens inventory in notes; use it to ensure the
+audit does not miss important UX, design, accessibility, state, responsive,
+trust, or generated-design issues.
+
+For generated screens, mockups, or graphics that are in scope, check prompt or
+brief fidelity, spatial accuracy, color accuracy, text and typography rendering
+accuracy, and hallucination severity. When comparing generated alternatives,
+evaluate one criterion at a time using a brief, criterion, rubric, question,
+short reasoning, and structured verdict. When auditing one product surface,
+adapt the same criterion/rubric pattern into findings instead of forcing an A/B
+verdict.
+
+For accessibility-heavy audits or suspected `P0`/`P1` accessibility risks,
+attempt DOM/accessibility-tree inspection and keyboard interaction probes when
+the capture tool supports them. At minimum, test visible focus, tab order
+through the critical path, form labels/errors, modal escape and focus
+containment, target size, text zoom/reflow where feasible, and contrast by
+sampling or code when making contrast claims. If those probes cannot be run,
+downgrade the claim to `Likely` or `Needs testing` and name the missing probe.
 
 If the destination is a local folder:
 
-- Save screenshots in that folder.
+- Save screenshots or provided-artifact copies in that folder.
 - Save the notes in a file that can be shared at the end.
+
+After step notes, add a system-quality pass that summarizes cross-step
+patterns:
+
+- hierarchy and density
+- interaction and state feedback
+- typography and content
+- color, tokens, and materials
+- responsiveness and performance feel
+- accessibility
+- product fit and system consistency
+- product idea, visual unity, and template-like output risk when evidenced
+
+Split recommendations into `Ship-now fixes` and `Later polish` when both are
+present. Do not invent speculative features unless they directly unblock the
+core user task. Preserve strong non-obvious interface decisions in a `Strong
+decisions to preserve` section when useful.
 
 Acceptance checks:
 
-- Every important step in the requested flow has a valid screenshot or a named blocker.
-- Screenshots are saved in order.
-- Screenshots are saved as they are captured.
-- Notes are written as screenshots are accepted.
-- Every note points to the screenshot or step it describes.
-- Notes explain strengths, UX issues, accessibility risks, and evidence limits when those apply.
-- Accessibility risks say what can be seen from screenshots and what still needs testing.
-- The final screenshot set and notes are enough to support the requested audit.
+- Every important step or artifact state has valid evidence or a named blocker.
+- Screenshots or artifacts are saved or cited in order.
+- Live screenshots are the exact captured state and are inspected before use.
+- Notes point to the screenshot, step, or artifact state they describe.
+- Substantive findings follow the anatomy in the framework reference, including
+  confidence for generated-design, aesthetic, mood/tone, brand-fit, and
+  evidence-limited claims.
+- Every `P0` or `P1` has a stronger verification plan, including the available
+  `T1`/`T2` probe or the reason that probe could not be performed.
+- Likely accessibility, color, contrast, keyboard, semantic, or token claims are
+  marked as likely unless measured through DOM, code, color sampling, or live
+  interaction evidence.
+- System or design-token claims say whether they are screenshot-visible or need
+  source inspection.
+- The final evidence set and notes are enough to support the requested audit.
 
 Blockers:
 
@@ -123,17 +254,28 @@ Blockers:
 - Screenshots cannot be saved.
 - Notes cannot be written.
 - The requested claim would require evidence that screenshots cannot provide.
+- A side-effect gate is required and the user has not approved it.
 
 ## Final Response
 
-After the flow is captured and notes are written, list every step in the final response.
+After evidence is captured or inspected and notes are written, list every step
+or artifact state in the final response.
 
-The final step list MUST include:
+The final step or artifact-state list must include:
 
 - step number
 - short description of the step
 - general health of that step
+- strongest `P0`, `P1`, or `P2` theme when present
 
-Also include where the full output was saved.
+Also include:
+
+- the highest-impact `P0`, `P1`, and `P2` findings, if any
+- the top ship-now fixes
+- the strongest system-quality themes, including product-idea or template-like
+  output risk when those are among the highest-impact issues
+- the most important evidence limits or verification gaps
+- where the full output was saved, or that the audit was chat-only because no
+  saved output was requested
 
 Keep the language direct. Do not use broad design jargon when a plain phrase works.
