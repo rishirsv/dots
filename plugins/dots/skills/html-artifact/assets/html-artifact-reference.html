@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Primitive Atlas — html-artifact skill</title>
+<title>HTML Artifact Reference Sheet</title>
 <style>
 /* html-artifact:theme.css:start */
 /* html-artifact:region:core:start */
@@ -159,6 +159,8 @@ header[data-primitive="hero-summary"] [data-slot="summary"] { font-size: 17px; c
 [data-slot="item"] [data-slot="value"] { font-size: 15px; font-weight: 600; color: var(--text); }
 [data-primitive="meta-strip"][data-variant="inline"] { display: flex; flex-wrap: wrap; gap: 10px 22px; }
 [data-variant="inline"] [data-slot="item"] [data-slot="value"] { font-size: 14px; margin-left: 5px; }
+[data-primitive="meta-strip"][data-variant="metric"] { display: flex; flex-wrap: wrap; gap: 14px 44px; }
+[data-variant="metric"] [data-slot="item"] [data-slot="value"] { display: block; font-family: var(--serif); font-size: 26px; font-weight: 520; color: var(--text); line-height: 1.1; }
 
 /* ============ section-nav · side ============ */
 nav[data-primitive="section-nav"][data-variant="side"] { font-size: 13px; }
@@ -170,7 +172,7 @@ nav[data-variant="side"] a[data-state="active"] { color: var(--accent); border-b
 
 /* html-artifact:region:tldr:start */
 /* ============ tldr ============ */
-[data-primitive="tldr"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: 15px 17px; box-shadow: inset 0 1px 0 var(--accent-soft); }
+[data-primitive="tldr"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: 15px 17px; box-shadow: inset 0 1px 0 var(--accent-soft); max-width: none; }
 [data-primitive="tldr"] [data-slot="body"] b { color: var(--text); }
 
 /* html-artifact:region:tldr:end */
@@ -214,6 +216,7 @@ nav[data-variant="side"] a[data-state="active"] { color: var(--accent); border-b
 [data-slot="recommended"] { font-family: var(--mono); font-size: 10.5px; color: var(--success-strong); background: var(--success-soft); border-radius: var(--radius-tag); padding: 2px 7px; }
 [data-primitive="comparison-grid"][data-variant="split"] { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
 @media (max-width: 720px) { [data-primitive="comparison-grid"][data-variant="split"] { grid-template-columns: 1fr; } }
+[data-primitive="comparison-grid"][data-variant="matrix"] { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
 
 /* html-artifact:region:comparison-grid:end */
 
@@ -288,7 +291,7 @@ figure[data-primitive="diff-review"] { border: var(--line); border-radius: var(-
 .diff-row[data-state="add"] .mark { color: var(--success-strong); }
 .diff-row[data-state="del"] { background: color-mix(in srgb, var(--danger-strong) 20%, transparent); }
 .diff-row[data-state="del"] .mark { color: var(--code-del-text); }
-[data-primitive="diff-review"] [data-slot="comment"] { font-size: 13px; color: var(--text-body); background: var(--surface-muted); border-top: var(--line); padding: 10px 15px; }
+[data-primitive="diff-review"] [data-slot="comment"] { font-size: 13px; color: var(--text-body); background: var(--surface-muted); border-top: var(--line); padding: 10px 15px; max-width: none; }
 [data-slot="comment"]::before { content: "review note"; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0; color: var(--accent); display: block; margin-bottom: 3px; }
 
 /* html-artifact:region:diff-review:end */
@@ -500,8 +503,8 @@ footer[data-primitive="audit-trail"], section[data-primitive="audit-trail"] { bo
 [data-primitive="render-proof"] [data-slot="check"] { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; padding: 9px 14px; border-top: var(--line); font-family: var(--mono); font-size: 12px; }
 [data-primitive="render-proof"] [data-slot="check"]:first-child { border-top: none; }
 /* motion runs only when the reader allows it; the final state is the default */
-@keyframes atlasReveal { from { opacity: .4; } to { opacity: 1; } }
-@media (prefers-reduced-motion: no-preference) { [data-primitive="motion-proof"]:not([data-state="reduced-motion"]) [data-slot="demo"][data-anim] { animation: atlasReveal 320ms cubic-bezier(0.16,1,0.3,1) infinite alternate; } }
+@keyframes referenceReveal { from { opacity: .4; } to { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) { [data-primitive="motion-proof"]:not([data-state="reduced-motion"]) [data-slot="demo"][data-anim] { animation: referenceReveal 320ms cubic-bezier(0.16,1,0.3,1) infinite alternate; } }
 @media (prefers-reduced-motion: reduce) { [data-primitive="motion-proof"] [data-slot="demo"][data-anim] { animation: none; } }
 /* html-artifact:region:motion-performance:end */
 
@@ -522,9 +525,9 @@ footer[data-primitive="audit-trail"], section[data-primitive="audit-trail"] { bo
 
 </style>
 <style>
-/* html-artifact:atlas-chrome:start */
-/* ============ atlas reference chrome ============ */
-.atlas-note {
+/* html-artifact:reference-chrome:start */
+/* ============ reference sheet reference chrome ============ */
+.reference-note {
   border: var(--line);
   background: var(--surface);
   border-radius: var(--radius-row);
@@ -532,14 +535,14 @@ footer[data-primitive="audit-trail"], section[data-primitive="audit-trail"] { bo
   font-size: 14px;
   color: var(--text-body);
 }
-.atlas-section { margin-top: 55px; }
-.atlas-section > .sec-head { margin-bottom: 5px; }
+.reference-section { margin-top: 55px; }
+.reference-section > .sec-head { margin-bottom: 5px; }
 .sec-head .num {
   font-family: var(--mono); font-size: 12px;
   color: var(--text-muted);
   padding-right: 10px; margin-right: 2px;
 }
-.atlas-section > .sec-intro { color: var(--text-muted); font-size: 14px; margin: 5px 0 22px; }
+.reference-section > .sec-intro { color: var(--text-muted); font-size: 14px; margin: 5px 0 22px; }
 
 .specimen { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); margin-bottom: 22px; overflow: hidden; }
 .specimen-head { padding: 12px 16px; border-bottom: var(--line); background: var(--surface-muted); display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: baseline; }
@@ -550,6 +553,20 @@ footer[data-primitive="audit-trail"], section[data-primitive="audit-trail"] { bo
 .chip.var { color: var(--accent); }
 .chip.state { color: var(--success-strong); }
 .specimen-body { padding: 22px; }
+.composite-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; align-items: start; }
+.composite-card { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: 15px; display: grid; gap: 12px; align-content: start; }
+.composite-card h3 { font-size: 18px; }
+.composite-card .lede { color: var(--text-muted); font-size: 13.5px; max-width: none; }
+.mini-hero { border-bottom: var(--line); padding-bottom: 11px; }
+.mini-hero .eyebrow { margin-bottom: 5px; }
+.mini-stack { display: grid; gap: 9px; }
+.mini-row { display: flex; justify-content: space-between; gap: 12px; border-top: var(--line); padding-top: 8px; font-size: 13px; }
+.mini-row:first-child { border-top: 0; padding-top: 0; }
+.mini-row b { color: var(--text); }
+.mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mini-cell { border: var(--line); border-radius: var(--radius-row); padding: 8px 10px; font-size: 13px; background: var(--surface-muted); }
+.mini-cell b { display: block; color: var(--text); }
+@media (max-width: 760px) { .composite-grid, .mini-grid { grid-template-columns: 1fr; } }
 
 
 /* ============ section-nav · side (demo) ============ */
@@ -562,58 +579,59 @@ figure[data-primitive="artifact-shell"] { border: var(--line); border-radius: va
 .shell-region:last-child { margin-bottom: 0; }
 .shell-region .label { display: block; margin-bottom: 4px; }
 figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var(--text-muted); margin-top: 10px; }
-/* html-artifact:atlas-chrome:end */
+/* html-artifact:reference-chrome:end */
 </style>
 </head>
 <body>
 <button data-primitive="theme-toggle" data-slot="action" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
-<main data-artifact="primitive-atlas" data-primitive="artifact-shell">
+<main data-artifact="html-artifact-reference" data-base="visual-specimen" data-primitive="artifact-shell">
 
   <!-- ===== artifact-shell live anatomy: nav / header / body / footer ===== -->
-  <nav data-primitive="section-nav" data-variant="map" data-slot="nav" aria-label="Atlas sections">
+  <nav data-primitive="section-nav" data-variant="map" data-slot="nav" aria-label="Reference sheet sections">
     <a data-slot="link" href="#shell" data-state="active"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Shell &amp; nav</span></a>
     <a data-slot="link" href="#hero"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Hero &amp; meta</span></a>
+    <a data-slot="link" href="#composites"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Composite specimens</span></a>
     <a data-slot="link" href="#explain"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Explanation</span></a>
     <a data-slot="link" href="#plan"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Planning</span></a>
-    <a data-slot="link" href="#planning"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Plan / document</span></a>
     <a data-slot="link" href="#code"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Code &amp; review</span></a>
     <a data-slot="link" href="#evidence"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Evidence</span></a>
     <a data-slot="link" href="#design"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Design / QA &amp; export</span></a>
-    <a data-slot="link" href="#qa"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">QA &amp; audit</span></a>
+    <a data-slot="link" href="#planning"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Plan &amp; document</span></a>
+    <a data-slot="link" href="#qa"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Design QA &amp; audit</span></a>
     <a data-slot="link" href="#imagegen"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Image Gen</span></a>
     <a data-slot="link" href="#motion"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Motion / perf</span></a>
+    <a data-slot="link" href="#roadmap-patterns"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Roadmap patterns</span></a>
     <a data-slot="link" href="#states"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Validation states</span></a>
   </nav>
 
   <header data-primitive="hero-summary" data-slot="header">
-    <div data-slot="eyebrow" class="eyebrow">Reference material · html-artifact skill</div>
-    <h1 data-slot="title">Primitive Atlas</h1>
-    <p data-slot="summary">Every primitive in the catalog, rendered once with its anatomy exposed.
-      This page is a reference contact sheet, not a reader artifact — each specimen is labelled
-      with its <code>data-primitive</code> name and its supported variants and states. Author real
-      artifacts from <code>references/primitives.md</code>; use this to see the shapes.</p>
+    <div data-slot="eyebrow" class="eyebrow">60+ patterns · 14 sections · light + dark</div>
+    <h1 data-slot="title">HTML Artifact Reference Sheet</h1>
+    <p data-slot="summary">Reusable page patterns rendered as compact specimens.
+      Use this sheet to check layout, states, responsive behavior, and visual
+      coverage before shipping a self-contained HTML document.</p>
   </header>
 
   <div data-slot="body" class="stack">
 
   <!-- ============================ SHELL & NAV ============================ -->
-  <section class="atlas-section" id="shell">
+  <section class="reference-section" id="shell">
     <div class="sec-head"><h2><span class="num">01</span>Shell &amp; navigation</h2></div>
     <p class="sec-intro">The frame every artifact lives in, and the in-page navigation for long ones.</p>
 
     <div class="specimen">
       <div class="specimen-head">
         <span class="pname">artifact-shell</span>
-        <span class="pnote">The self-contained page frame. Carries <code>data-artifact</code> and <code>data-primitive="artifact-shell"</code>; holds nav / header / body / footer slots.</span>
+        <span class="pnote">The self-contained page frame: navigation, header, body, and footer regions.</span>
         <span class="chip var">variant: side</span>
       </div>
       <div class="specimen-body">
         <figure data-primitive="artifact-shell">
-          <div class="shell-region"><span class="label" data-slot="nav">data-slot="nav"</span> optional section-nav</div>
-          <div class="shell-region"><span class="label" data-slot="header">data-slot="header"</span> hero-summary + meta-strip</div>
-          <div class="shell-region"><span class="label" data-slot="body">data-slot="body"</span> the main content flow of primitives</div>
-          <div class="shell-region"><span class="label" data-slot="footer">data-slot="footer"</span> optional audit-trail / provenance</div>
-          <figcaption>This atlas page is itself an artifact-shell: <code>&lt;main data-artifact="primitive-atlas" data-primitive="artifact-shell"&gt;</code> with the slot regions above. Never nest a shell inside a card.</figcaption>
+          <div class="shell-region"><span class="label" data-slot="nav">Navigation region</span> optional section index</div>
+          <div class="shell-region"><span class="label" data-slot="header">Header region</span> title, summary, and key facts</div>
+          <div class="shell-region"><span class="label" data-slot="body">Main content</span> the document's evidence and actions</div>
+          <div class="shell-region"><span class="label" data-slot="footer">Footer region</span> provenance or final notes</div>
+          <figcaption>The shell keeps the page readable as a document, not a nested card layout.</figcaption>
         </figure>
       </div>
     </div>
@@ -646,7 +664,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </section>
 
   <!-- ============================ HERO & META ============================ -->
-  <section class="atlas-section" id="hero">
+  <section class="reference-section" id="hero">
     <div class="sec-head"><h2><span class="num">02</span>Hero &amp; meta</h2></div>
     <p class="sec-intro">First-viewport identity and the scannable facts that establish provenance.</p>
 
@@ -657,11 +675,11 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
       </div>
       <div class="specimen-body">
         <header data-primitive="hero-summary">
-          <div class="eyebrow" data-slot="eyebrow">Implementation plan · html-artifact skill</div>
-          <h3 data-slot="title">Ship the primitive kit and atlas</h3>
-          <p data-slot="summary">A single-file HTML skill that turns grounded source into high-fidelity artifacts — built from a portable primitive catalog, verified in a browser before handoff.</p>
-          <div class="prompt-box" data-slot="prompt"><span class="label">Prompt</span><br>
-            Build an implementation-plan artifact for the html-artifact skill. Skimmable on a phone, ready to hand to the implementer as-is.</div>
+          <div class="eyebrow" data-slot="eyebrow">Implementation plan · Queue migration</div>
+          <h3 data-slot="title">Move background writes to the durable queue</h3>
+          <p data-slot="summary">A phased rollout with explicit scope, cutover gates, recovery checks, and owner-ready actions.</p>
+          <div class="prompt-box" data-slot="prompt"><span class="label">Source request</span><br>
+            Build a queue migration plan from the attached rollout notes. Make it skimmable on a phone and ready for implementation review.</div>
         </header>
       </div>
     </div>
@@ -672,12 +690,13 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
         <span class="pnote">Compact facts: scope, source, status, confidence.</span>
         <span class="chip var">variant: cells</span>
         <span class="chip var">variant: inline</span>
+        <span class="chip var">variant: metric</span>
       </div>
       <div class="specimen-body stack">
         <div data-primitive="meta-strip" data-variant="cells">
-          <div data-slot="item"><span class="label" data-slot="key">Recipe</span><span data-slot="value">implementation-plan</span></div>
-          <div data-slot="item"><span class="label" data-slot="key">Primitive set</span><span data-slot="value">Portable catalog</span></div>
-          <div data-slot="item"><span class="label" data-slot="key">Runtime</span><span data-slot="value">static HTML</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Document</span><span data-slot="value">implementation plan</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Evidence</span><span data-slot="value">rollout notes</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Format</span><span data-slot="value">static HTML</span></div>
           <div data-slot="item"><span class="label" data-slot="key">Status</span><span data-slot="value">in review</span></div>
         </div>
         <dl data-primitive="meta-strip" data-variant="inline">
@@ -685,12 +704,16 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
           <div data-slot="item"><span class="label" data-slot="key">Widths checked</span><span data-slot="value">1280 · 375</span></div>
           <div data-slot="item"><span class="label" data-slot="key">Confidence</span><span data-slot="value">high</span></div>
         </dl>
+        <div data-primitive="meta-strip" data-variant="metric">
+          <div data-slot="item"><span class="label" data-slot="key">Specimens</span><span data-slot="value">64</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Checks</span><span data-slot="value">passing</span></div>
+        </div>
       </div>
     </div>
 
     <div class="specimen">
       <div class="specimen-head">
-        <span class="pname">primitive chooser</span>
+        <span class="pname">pattern chooser</span>
         <span class="pnote">Reader job first; defaults only where source evidence supports them.</span>
         <span class="chip var">recipe-fit</span>
       </div>
@@ -710,10 +733,141 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     </div>
   </section>
 
+  <!-- ============================ COMPOSITE SPECIMENS ============================ -->
+  <section class="reference-section" id="composites">
+    <div class="sec-head"><h2><span class="num">03</span>Composite specimens</h2></div>
+    <p class="sec-intro">Full document shapes assembled from the same blocks. These teach first viewport rhythm, evidence density, and handoff structure without adding separate templates.</p>
+
+    <div class="composite-grid">
+      <article class="composite-card" data-composite="executive-brief" data-base="executive-brief">
+        <div class="mini-hero">
+          <div class="eyebrow">Executive brief</div>
+          <h3>Approve queue cutover after parity pass</h3>
+          <p class="lede">Recommendation, decision needed, evidence state, and next action fit in the first screen.</p>
+        </div>
+        <div data-primitive="meta-strip" data-variant="inline">
+          <div data-slot="item"><span data-slot="key" class="label">Decision</span><span data-slot="value">cut over</span></div>
+          <div data-slot="item"><span data-slot="key" class="label">Evidence</span><span data-slot="value">partial</span></div>
+        </div>
+        <div class="mini-stack">
+          <div class="mini-row"><b>Condition</b><span>24h parity pass</span></div>
+          <div class="mini-row"><b>Risk</b><span>retry grouping still open</span></div>
+          <div class="mini-row"><b>Next action</b><span>run shadow drain</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="diligence-report" data-base="diligence-pack">
+        <div class="mini-hero">
+          <div class="eyebrow">Diligence report</div>
+          <h3>Separation risk is concentrated in retry operations</h3>
+          <p class="lede">Thesis, red flags, evidence quality, and follow-up questions are visible together.</p>
+        </div>
+        <div data-primitive="red-flag-ledger" class="table-wrap"><table><thead><tr><th>Flag</th><th>Impact</th><th>Next step</th></tr></thead><tbody><tr><td data-slot="flag">Unpriced support load</td><td data-slot="deal-impact">service cost may move</td><td data-slot="next-step">request queue incident history</td></tr></tbody></table></div>
+      </article>
+
+      <article class="composite-card" data-composite="integration-plan" data-base="plan-roadmap">
+        <div class="mini-hero">
+          <div class="eyebrow">Integration plan</div>
+          <h3>Move writes through the worker in three gated phases</h3>
+          <p class="lede">Scope, workstreams, dependencies, and acceptance gates share one planning surface.</p>
+        </div>
+        <div data-primitive="workstream-map" class="table-wrap"><table><thead><tr><th>Workstream</th><th>Phase</th><th>Gate</th></tr></thead><tbody><tr><td data-slot="workstream">Queue path</td><td data-slot="phase">shadow</td><td data-slot="gate">parity pass</td></tr><tr><td data-slot="workstream">Runbook</td><td data-slot="phase">cutover</td><td data-slot="gate">owner signoff</td></tr></tbody></table></div>
+      </article>
+
+      <article class="composite-card" data-composite="product-spec" data-base="plan-roadmap">
+        <div class="mini-hero">
+          <div class="eyebrow">Product spec</div>
+          <h3>Expose retry grouping before queue launch</h3>
+          <p class="lede">Problem, scope boundary, states, acceptance criteria, and launch risk stay separate.</p>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-cell"><b>In scope</b><span>grouped retry rows</span></div>
+          <div class="mini-cell"><b>Out of scope</b><span>new incident workflow</span></div>
+          <div class="mini-cell"><b>Acceptance</b><span>failed retry has customer id</span></div>
+          <div class="mini-cell"><b>Launch risk</b><span>missing historical backfill</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="code-review" data-base="review-annotation">
+        <div class="mini-hero">
+          <div class="eyebrow">Code review</div>
+          <h3>Idempotency guard is missing from retry reconciliation</h3>
+          <p class="lede">File map, concrete finding, and fix action sit in one annotated review shape.</p>
+        </div>
+        <article data-primitive="finding-card" data-state="high">
+          <div class="fhead"><span data-slot="severity" class="badge" data-state="high">HIGH</span><span data-slot="location">src/queue.ts</span></div>
+          <div class="fbody"><div data-slot="finding">Retries can append duplicate rows.</div><div data-slot="recommendation">Check idempotency key before dispatch.</div></div>
+        </article>
+      </article>
+
+      <article class="composite-card" data-composite="design-qa" data-base="review-annotation">
+        <div class="mini-hero">
+          <div class="eyebrow">Design QA</div>
+          <h3>Toolbar density matches, action color is blocked</h3>
+          <p class="lede">Source, render, revised state, mismatch ledger, and implementation checklist align inline.</p>
+        </div>
+        <div data-primitive="screenshot-triptych" data-state="blocked">
+          <figure data-slot="source"><div class="frame"><svg viewBox="0 0 180 90" role="img" aria-label="Source"><rect width="180" height="90" fill="var(--surface-muted)"/><rect x="24" y="34" width="70" height="20" rx="5" fill="var(--text)"/></svg></div><figcaption>Source</figcaption></figure>
+          <figure data-slot="render"><div class="frame"><svg viewBox="0 0 180 90" role="img" aria-label="Render"><rect width="180" height="90" fill="var(--surface-muted)"/><rect x="24" y="34" width="70" height="20" rx="5" fill="var(--accent)"/></svg></div><figcaption>Render</figcaption></figure>
+          <figure data-slot="revised"><div class="frame"><svg viewBox="0 0 180 90" role="img" aria-label="Revised"><rect width="180" height="90" fill="var(--surface-muted)"/><rect x="24" y="34" width="70" height="20" rx="5" fill="var(--text)"/></svg></div><figcaption>Revised</figcaption></figure>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="design-system-reference" data-base="visual-specimen">
+        <div class="mini-hero">
+          <div class="eyebrow">Design system reference</div>
+          <h3>Editorial tokens and component states</h3>
+          <p class="lede">Tokens, approved copy, assets, and component states are collected for handoff.</p>
+        </div>
+        <div data-primitive="state-grid">
+          <div data-slot="cell" data-state="pass"><span data-slot="state-label">Default</span><span data-slot="state-body">document surface</span></div>
+          <div data-slot="cell" data-state="blocked"><span data-slot="state-label">Blocked</span><span data-slot="state-body">visual QA state</span></div>
+          <div data-slot="cell" data-state="empty"><span data-slot="state-label">Empty</span><span data-slot="state-body">no evidence yet</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="architecture-map" data-base="system-map">
+        <div class="mini-hero">
+          <div class="eyebrow">Architecture map</div>
+          <h3>Write flow boundary and retry dependency</h3>
+          <p class="lede">Schematic, dependency list, and constraint ledger show structure without a graph library.</p>
+        </div>
+        <figure data-primitive="inline-schematic">
+          <h3 data-slot="heading">Boundary map</h3>
+          <div data-slot="diagram" class="frame"><svg viewBox="0 0 300 120" role="img" aria-label="Architecture schematic"><rect x="22" y="36" width="72" height="36" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="116" y="36" width="72" height="36" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="210" y="36" width="72" height="36" rx="6" fill="var(--surface)" stroke="var(--border)"/><path d="M96 54h18M190 54h18" stroke="var(--accent)" stroke-width="3"/></svg></div>
+          <ul data-slot="legend"><li>Queue depends on retry telemetry.</li></ul>
+          <figcaption data-slot="caption">Contained schematic.</figcaption>
+          <p data-slot="fallback">Fallback: client to queue to worker, with retry telemetry as a dependency.</p>
+        </figure>
+      </article>
+
+      <article class="composite-card" data-composite="system-card-eval-report" data-base="eval-safety">
+        <div class="mini-hero">
+          <div class="eyebrow">System card / eval report</div>
+          <h3>Static export capability passes; heavy image risk remains</h3>
+          <p class="lede">Capabilities, eval suite, limitations, and mitigations are separated for review.</p>
+        </div>
+        <div data-primitive="capability-matrix" class="table-wrap"><table><thead><tr><th>Capability</th><th>Evidence</th><th>Mitigation</th></tr></thead><tbody><tr><td data-slot="capability">Static export</td><td data-slot="evidence">opens with no server</td><td data-slot="mitigation">inline only needed assets</td></tr></tbody></table></div>
+      </article>
+
+      <article class="composite-card" data-composite="bounded-workbench" data-base="bounded-workbench">
+        <div class="mini-hero">
+          <div class="eyebrow">Bounded workbench</div>
+          <h3>Review blockers and copy the triage payload</h3>
+          <p class="lede">The board is fully readable without script; controls only filter or copy visible content.</p>
+        </div>
+        <div data-primitive="workbench-board" class="mini-stack">
+          <div class="cluster"><button type="button" data-slot="filter">Blocked only</button><span data-slot="export" data-primitive="copy-export" data-variant="markdown"><button type="button" data-slot="action">Copy triage</button><template data-slot="payload">Blocked: retry telemetry</template></span></div>
+          <section data-slot="column"><h3>Blocked</h3><article data-slot="card">Retry telemetry <span data-slot="status"><span class="pill" data-state="blocked">blocked</span></span></article></section>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <!-- ============================ EXPLANATION ============================ -->
-  <section class="atlas-section" id="explain">
-    <div class="sec-head"><h2><span class="num">03</span>Explanation</h2></div>
-    <p class="sec-intro">Primitives that make dense material legible: the bottom line, emphasis, ordered flow, and side-by-side options.</p>
+  <section class="reference-section" id="explain">
+    <div class="sec-head"><h2><span class="num">04</span>Explanation</h2></div>
+    <p class="sec-intro">Patterns that make dense material legible: the bottom line, emphasis, ordered flow, and side-by-side options.</p>
 
     <div class="specimen">
       <div class="specimen-head"><span class="pname">tldr</span><span class="pnote">The short answer before any detail.</span></div>
@@ -743,13 +897,13 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
       </div>
       <div class="specimen-body stack">
         <ol data-primitive="step-flow" data-variant="numbered">
-          <li data-slot="step"><span data-slot="index">1</span><div><div data-slot="step-title">Ground the source</div><div data-slot="step-body">Read the files, diff, or article in full before authoring.</div></div></li>
-          <li data-slot="step"><span data-slot="index">2</span><div><div data-slot="step-title">Pick a recipe</div><div data-slot="step-body">Set <code>data-artifact</code> on the shell from the five recipes.</div></div></li>
-          <li data-slot="step"><span data-slot="index">3</span><div><div data-slot="step-title">Verify in a browser</div><div data-slot="step-body">Check desktop and mobile, then fix before handoff.</div></div></li>
+          <li data-slot="step"><span data-slot="index">1</span><div><div data-slot="step-title">Confirm the source</div><div data-slot="step-body">Read the rollout notes and identify the systems at risk.</div></div></li>
+          <li data-slot="step"><span data-slot="index">2</span><div><div data-slot="step-title">Map the cutover</div><div data-slot="step-body">Sequence build, shadow, drain, and recovery checks.</div></div></li>
+          <li data-slot="step"><span data-slot="index">3</span><div><div data-slot="step-title">Verify the plan</div><div data-slot="step-body">Check ownership, proof, and rollback conditions before handoff.</div></div></li>
         </ol>
         <ol data-primitive="step-flow" data-variant="timeline">
-          <li data-slot="step"><span data-slot="index"></span><div><div data-slot="step-title">Request in</div><div data-slot="step-body">User asks for a rich, shareable document.</div></div></li>
-          <li data-slot="step"><span data-slot="index"></span><div><div data-slot="step-title">Artifact out</div><div data-slot="step-body">One self-contained <code>.html</code> file.</div></div></li>
+          <li data-slot="step"><span data-slot="index"></span><div><div data-slot="step-title">Shadow writes</div><div data-slot="step-body">Dual-write without changing the serving path.</div></div></li>
+          <li data-slot="step"><span data-slot="index"></span><div><div data-slot="step-title">Drain queue</div><div data-slot="step-body">Move pending writes through the worker and watch parity.</div></div></li>
         </ol>
       </div>
     </div>
@@ -757,7 +911,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     <div class="specimen">
       <div class="specimen-head">
         <span class="pname">comparison-grid</span><span class="pnote">Alternatives or before/after, side by side.</span>
-        <span class="chip var">cards</span><span class="chip var">split</span><span class="chip state">recommended</span>
+        <span class="chip var">cards</span><span class="chip var">split</span><span class="chip var">matrix</span><span class="chip state">recommended</span>
       </div>
       <div class="specimen-body stack">
         <div data-primitive="comparison-grid" data-variant="cards">
@@ -769,36 +923,41 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
           <article data-slot="option"><div data-slot="option-title">Before</div><div data-slot="option-body">A wall of Markdown the reader scrolls past.</div></article>
           <article data-slot="option"><div data-slot="option-title">After</div><div data-slot="option-body">A skimmable page with a first-viewport conclusion.</div></article>
         </div>
+        <div data-primitive="comparison-grid" data-variant="matrix">
+          <article data-slot="option"><div data-slot="option-title">Option A</div><div data-slot="option-body">Lowest setup cost, weaker inspection path.</div></article>
+          <article data-slot="option" data-state="recommended"><div data-slot="option-title">Option B <span data-slot="recommended">recommended</span></div><div data-slot="option-body">Slightly more structure, stronger browser proof and handoff.</div></article>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ============================ PLANNING ============================ -->
-  <section class="atlas-section" id="plan">
-    <div class="sec-head"><h2><span class="num">04</span>Planning</h2></div>
+  <section class="reference-section" id="plan">
+    <div class="sec-head"><h2><span class="num">05</span>Planning</h2></div>
     <p class="sec-intro">Phased work on a timeline and the risks that could change the plan.</p>
 
     <div class="specimen">
       <div class="specimen-head">
-        <span class="pname">milestone-strip</span><span class="pnote">Phases with goal, time, status.</span>
+        <span class="pname">milestone-strip</span><span class="pnote">Phases with timing, status, and scope.</span>
+        <span class="chip var">variant: dated</span>
         <span class="chip state">done</span><span class="chip state">current</span><span class="chip state">upcoming</span>
       </div>
       <div class="specimen-body">
-        <ol data-primitive="milestone-strip">
+        <ol data-primitive="milestone-strip" data-variant="dated">
           <li data-slot="milestone">
             <div data-slot="when">Week 1</div>
             <div class="marker-col"><span data-slot="marker" class="dot" data-state="done"></span><span class="line"></span></div>
-            <div data-slot="milestone-body"><div data-slot="milestone-title">Catalog &amp; design source</div><p class="muted">Define the primitives, recipes, browser checks, and design tokens.</p><div data-slot="tags"><span class="tag">primitives.md</span><span class="tag">style-rationale.md</span></div></div>
+            <div data-slot="milestone-body"><div data-slot="milestone-title">Prepare shadow writes</div><p class="muted">Add the queue path behind a flag and confirm retry behavior.</p><div data-slot="tags"><span class="tag">queue</span><span class="tag">retry</span></div></div>
           </li>
           <li data-slot="milestone">
             <div data-slot="when">Week 2</div>
             <div class="marker-col"><span data-slot="marker" class="dot" data-state="current"></span><span class="line"></span></div>
-            <div data-slot="milestone-body"><div data-slot="milestone-title">Build the atlas</div><p class="muted">Render every primitive with visible anatomy; verify in a browser.</p><div data-slot="tags"><span class="tag">primitive-atlas.html</span></div></div>
+            <div data-slot="milestone-body"><div data-slot="milestone-title">Run parity checks</div><p class="muted">Compare direct writes with queued writes before cutover.</p><div data-slot="tags"><span class="tag">shadow</span><span class="tag">parity</span></div></div>
           </li>
           <li data-slot="milestone">
             <div data-slot="when">Week 3</div>
             <div class="marker-col"><span data-slot="marker" class="dot" data-state="upcoming"></span><span class="line"></span></div>
-            <div data-slot="milestone-body"><div data-slot="milestone-title">Evaluate on real tasks</div><p class="muted">Run one of each recipe against a real source.</p><div data-slot="tags"><span class="tag">deferred</span></div></div>
+            <div data-slot="milestone-body"><div data-slot="milestone-title">Cut over and monitor</div><p class="muted">Route writes through the worker and keep rollback ready.</p><div data-slot="tags"><span class="tag">cutover</span></div></div>
           </li>
         </ol>
       </div>
@@ -817,7 +976,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
               <tbody>
                 <tr data-slot="row"><td>Tables overflow the page on mobile.</td><td><span class="badge" data-slot="severity" data-state="high">HIGH</span></td><td>Wrap every table in <code>table-wrap</code> with <code>overflow-x: auto</code>.</td></tr>
                 <tr data-slot="row"><td>Code reflows and loses indentation.</td><td><span class="badge" data-slot="severity" data-state="med">MED</span></td><td>Keep <code>white-space: pre</code> and scroll the panel, not the page.</td></tr>
-                <tr data-slot="row"><td>Slot names leak into reader text.</td><td><span class="badge" data-slot="severity" data-state="low">LOW</span></td><td>Treat <code>data-slot</code> as a CSS hook only; never render it.</td></tr>
+                <tr data-slot="row"><td>Authoring labels leak into reader text.</td><td><span class="badge" data-slot="severity" data-state="low">LOW</span></td><td>Keep structural labels invisible in the finished document.</td></tr>
               </tbody>
             </table>
           </div>
@@ -845,8 +1004,8 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </section>
 
   <!-- ============================ CODE & REVIEW ============================ -->
-  <section class="atlas-section" id="code">
-    <div class="sec-head"><h2><span class="num">05</span>Code &amp; review</h2></div>
+  <section class="reference-section" id="code">
+    <div class="sec-head"><h2><span class="num">06</span>Code &amp; review</h2></div>
     <p class="sec-intro">Readable code, annotations, rendered diffs, and discrete findings.</p>
 
     <div class="specimen">
@@ -856,8 +1015,8 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
       </div>
       <div class="specimen-body split">
         <figure data-primitive="code-panel" data-variant="dark">
-          <figcaption data-slot="label">assets/primitive-atlas.html</figcaption>
-          <div data-slot="code"><pre><span class="kw">&lt;main</span> data-artifact=<span class="str">"primitive-atlas"</span><span class="kw">&gt;</span>
+          <figcaption data-slot="label">assets/html-artifact-reference.html</figcaption>
+          <div data-slot="code"><pre><span class="kw">&lt;main</span> data-artifact=<span class="str">"html-artifact-reference"</span> data-base=<span class="str">"visual-specimen"</span><span class="kw">&gt;</span>
   <span class="cm">&lt;!-- one primitive per block --&gt;</span>
   <span class="kw">&lt;section</span> data-primitive=<span class="str">"risk-table"</span><span class="kw">&gt;</span>…<span class="kw">&lt;/section&gt;</span>
 <span class="kw">&lt;/main&gt;</span></pre></div>
@@ -896,7 +1055,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
       </div>
       <div class="specimen-body">
         <figure data-primitive="diff-review">
-          <div data-slot="file"><span>assets/primitive-atlas.html</span><span class="delta"><span class="add">+18</span> <span class="del">−4</span></span></div>
+          <div data-slot="file"><span>assets/html-artifact-reference.html</span><span class="delta"><span class="add">+18</span> <span class="del">−4</span></span></div>
           <div data-slot="hunk">
             <div class="diff-row" data-state="ctx"><span class="ln">41</span><span class="mark"> </span><span class="ccode">.table-wrap {</span></div>
             <div class="diff-row" data-state="del"><span class="ln">42</span><span class="mark">-</span><span class="ccode">  overflow: visible;</span></div>
@@ -927,8 +1086,8 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </section>
 
   <!-- ============================ EVIDENCE ============================ -->
-  <section class="atlas-section" id="evidence">
-    <div class="sec-head"><h2><span class="num">06</span>Evidence</h2></div>
+  <section class="reference-section" id="evidence">
+    <div class="sec-head"><h2><span class="num">07</span>Evidence</h2></div>
     <p class="sec-intro">Show the work: claims mapped to sources, and an honest record of what was checked.</p>
 
     <div class="specimen">
@@ -949,15 +1108,15 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
           </div>
         </div>
         <div data-primitive="claim-evidence-matrix" data-variant="cards">
-          <div data-slot="row"><div data-slot="claim">Semantic HTML plus primitives is enough for most reader artifacts.</div><div data-slot="evidence">Native elements provide headings, landmarks, tables, disclosure, buttons, and forms before enhancement.</div><div class="row-foot"><span class="label">source review</span><span class="badge" data-slot="confidence" data-state="high">HIGH</span></div></div>
+          <div data-slot="row"><div data-slot="claim">Semantic HTML is enough for most reader documents.</div><div data-slot="evidence">Native elements provide headings, landmarks, tables, disclosure, buttons, and forms before enhancement.</div><div class="row-foot"><span class="label">source review</span><span class="badge" data-slot="confidence" data-state="high">HIGH</span></div></div>
         </div>
       </div>
     </div>
 
     <div class="specimen">
-      <div class="specimen-head"><span class="pname">audit-trail</span><span class="pnote">Commands, sources, and files actually checked.</span></div>
+      <div class="specimen-head"><span class="pname">audit-trail</span><span class="pnote">Commands, sources, and files actually checked.</span><span class="chip var">variant: references</span></div>
       <div class="specimen-body">
-        <section data-primitive="audit-trail">
+        <section data-primitive="audit-trail" data-variant="references">
           <div data-slot="group"><span class="label">Searched</span>
             <div data-slot="entry">Inspect the source material named by the user.</div>
             <div data-slot="entry">Check current documentation when a claim may have changed.</div>
@@ -972,8 +1131,8 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </section>
 
   <!-- ============================ DESIGN / QA & EXPORT ============================ -->
-  <section class="atlas-section" id="design">
-    <div class="sec-head"><h2><span class="num">07</span>Design / QA &amp; export</h2></div>
+  <section class="reference-section" id="design">
+    <div class="sec-head"><h2><span class="num">08</span>Design / QA &amp; export</h2></div>
     <p class="sec-intro">Source-versus-render evidence, design tokens, and copy/export back into the workflow.</p>
 
     <div class="specimen">
@@ -1018,24 +1177,28 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     <div class="specimen">
       <div class="specimen-head">
         <span class="pname">copy-export</span><span class="pnote">Copy a result back into the workflow. Never the only path to the content.</span>
-        <span class="chip var">markdown</span><span class="chip var">prompt</span><span class="chip state">copied</span>
+        <span class="chip var">markdown</span><span class="chip var">prompt</span><span class="chip var">table</span><span class="chip state">copied</span>
       </div>
       <div class="specimen-body cluster">
         <span data-primitive="copy-export" data-variant="markdown">
           <button type="button" data-slot="action">Copy as Markdown</button>
-          <template data-slot="payload"># Primitive Atlas\nEvery catalog primitive rendered once.</template>
+          <template data-slot="payload"># Queue Migration Plan\nPhases, risks, and verification gates.</template>
         </span>
         <span data-primitive="copy-export" data-variant="prompt">
-          <button type="button" data-slot="action">Copy as prompt</button>
-          <template data-slot="payload">Build an implementation-plan HTML artifact from this source…</template>
+          <button type="button" data-slot="action">Copy action list</button>
+          <template data-slot="payload">1. Confirm retry coverage.\n2. Run shadow parity for 24h.\n3. Keep rollback owner on call.</template>
+        </span>
+        <span data-primitive="copy-export" data-variant="table">
+          <button type="button" data-slot="action">Copy table</button>
+          <template data-slot="payload">Check | Status\nMobile reflow | pass\nCopy fallback | pass</template>
         </span>
       </div>
     </div>
   </section>
 
   <!-- ============================ PLANNING & DOCUMENT ============================ -->
-  <section class="atlas-section" id="planning">
-    <div class="sec-head"><h2><span class="num">08</span>Planning &amp; document</h2></div>
+  <section class="reference-section" id="planning">
+    <div class="sec-head"><h2><span class="num">09</span>Planning &amp; document</h2></div>
     <p class="sec-intro">Scope, gates, decisions, owners, dependencies, and handoff — the structure plans, specs, and migrations are built from.</p>
 
     <div class="specimen">
@@ -1061,9 +1224,10 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     </div>
 
     <div class="specimen">
-      <div class="specimen-head"><span class="pname">verification-matrix</span><span class="pnote">Check / method / expected proof / status.</span><span class="chip var">table</span><span class="chip var">cards</span><span class="chip state">pass</span><span class="chip state">pending</span></div>
-      <div class="specimen-body">
+      <div class="specimen-head"><span class="pname">verification-matrix</span><span class="pnote">Check / method / expected proof / status.</span><span class="chip var">table</span><span class="chip var">cards</span><span class="chip var">test-suite</span><span class="chip state">pass</span><span class="chip state">pending</span></div>
+      <div class="specimen-body stack">
         <div data-primitive="verification-matrix" data-variant="table"><div class="table-wrap"><table><thead><tr><th data-slot="head">Check</th><th data-slot="head">Method</th><th data-slot="head">Expected proof</th><th data-slot="head">Status</th></tr></thead><tbody><tr data-slot="row"><td data-slot="check">Ordered writes</td><td data-slot="method">offline burst</td><td data-slot="expected">FIFO commit log</td><td><span class="pill" data-slot="status" data-state="pass">pass</span></td></tr><tr data-slot="row"><td data-slot="check">Shadow parity</td><td data-slot="method">dual-write diff</td><td data-slot="expected">zero diffs / 24h</td><td><span class="pill" data-slot="status" data-state="pending">pending</span></td></tr></tbody></table></div></div>
+        <div data-primitive="verification-matrix" data-variant="test-suite"><div class="table-wrap"><table><thead><tr><th data-slot="head">Check</th><th data-slot="head">Method</th><th data-slot="head">Expected proof</th></tr></thead><tbody><tr data-slot="row"><td data-slot="check">Mobile reflow</td><td data-slot="method">320px render</td><td data-slot="expected">no horizontal page scroll</td></tr></tbody></table></div></div>
       </div>
     </div>
 
@@ -1077,7 +1241,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     <div class="specimen">
       <div class="specimen-head"><span class="pname">constraint-ledger</span><span class="pnote">Constraint / source / implication.</span><span class="chip var">table</span><span class="chip var">cards</span><span class="chip state">hard</span></div>
       <div class="specimen-body">
-        <div data-primitive="constraint-ledger" data-variant="table"><div class="table-wrap"><table><thead><tr><th data-slot="head">Constraint</th><th data-slot="head">Source</th><th data-slot="head">Implication</th></tr></thead><tbody><tr data-slot="row" data-state="hard"><td data-slot="constraint">Opens with no server</td><td data-slot="source">portability goal</td><td data-slot="implication">rules out app frameworks</td></tr></tbody></table></div></div>
+        <div data-primitive="constraint-ledger" data-variant="table"><div class="table-wrap"><table><thead><tr><th data-slot="head">Constraint</th><th data-slot="head">Source</th><th data-slot="head">Implication</th></tr></thead><tbody><tr data-slot="row" data-state="hard"><td data-slot="constraint">Opens with no server</td><td data-slot="source">portability requirement</td><td data-slot="implication">rules out app frameworks</td></tr></tbody></table></div></div>
       </div>
     </div>
 
@@ -1085,8 +1249,8 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
       <div class="specimen-head"><span class="pname">decision-log</span><span class="pnote">Decisions, rationale, and status.</span><span class="chip state">accepted</span><span class="chip state">proposed</span></div>
       <div class="specimen-body">
         <ol data-primitive="decision-log">
-          <li data-slot="decision" data-state="accepted"><div data-slot="decision-title">No external runtime in artifacts</div><span data-slot="when">accepted</span><p class="muted">Keeps the file portable and reviewable.</p></li>
-          <li data-slot="decision" data-state="proposed"><div data-slot="decision-title">Revisit a renderer if multi-target lands</div><span data-slot="when">proposed</span><p class="muted">Only worth the layer for more than one output target.</p></li>
+          <li data-slot="decision" data-state="accepted"><div data-slot="decision-title">Single-file delivery</div><span data-slot="when">accepted</span><p data-slot="rationale" class="muted">Keeps the file portable and reviewable.</p></li>
+          <li data-slot="decision" data-state="proposed"><div data-slot="decision-title">Revisit a renderer if multi-target lands</div><span data-slot="when">proposed</span><p data-slot="rationale" class="muted">Only worth the layer for more than one output target.</p></li>
         </ol>
       </div>
     </div>
@@ -1102,9 +1266,9 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     </div>
 
     <div class="specimen">
-      <div class="specimen-head"><span class="pname">state-grid</span><span class="pnote">A set of states side by side.</span><span class="chip state">empty</span><span class="chip state">loading</span><span class="chip state">error</span></div>
+      <div class="specimen-head"><span class="pname">state-grid</span><span class="pnote">A set of states side by side.</span><span class="chip var">variant: component-matrix</span><span class="chip state">empty</span><span class="chip state">loading</span><span class="chip state">error</span></div>
       <div class="specimen-body">
-        <div data-primitive="state-grid">
+        <div data-primitive="state-grid" data-variant="component-matrix">
           <div data-slot="cell" data-state="empty"><span data-slot="state-label">Empty</span><p data-slot="state-body" class="muted">No channels configured.</p></div>
           <div data-slot="cell" data-state="loading"><span data-slot="state-label">Loading</span><p data-slot="state-body" class="muted">Skeleton rows, no shift.</p></div>
           <div data-slot="cell" data-state="error"><span data-slot="state-label">Error</span><p data-slot="state-body" class="muted">Inline retry preserves input.</p></div>
@@ -1113,7 +1277,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     </div>
 
     <div class="specimen">
-      <div class="specimen-head"><span class="pname">handoff-packet</span><span class="pnote">What the next agent needs, and the first step.</span></div>
+      <div class="specimen-head"><span class="pname">handoff-packet</span><span class="pnote">What the handoff recipient needs, and the first step.</span></div>
       <div class="specimen-body">
         <div data-primitive="handoff-packet">
           <div data-slot="item"><span data-slot="key">Branch</span><span>feature/queue-worker</span></div>
@@ -1125,8 +1289,8 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </section>
 
   <!-- ============================ DESIGN QA & UX AUDIT ============================ -->
-  <section class="atlas-section" id="qa">
-    <div class="sec-head"><h2><span class="num">09</span>Design QA &amp; UX audit</h2></div>
+  <section class="reference-section" id="qa">
+    <div class="sec-head"><h2><span class="num">10</span>Design QA &amp; UX audit</h2></div>
     <p class="sec-intro">Matched run conditions, source/render/revised comparison, located mismatches, coverage, and honest evidence limits. UX-audit reports reuse screenshot-gallery and finding-card alongside these. Schematic SVGs stand in for real captures here.</p>
 
     <div class="specimen">
@@ -1177,7 +1341,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     <div class="specimen">
       <div class="specimen-head"><span class="pname">token-delta</span><span class="pnote">Expected vs actual token values.</span><span class="chip state">match</span><span class="chip state">mismatch</span></div>
       <div class="specimen-body">
-        <div data-primitive="token-delta"><div class="table-wrap"><table><thead><tr><th data-slot="head">Token</th><th data-slot="head">Expected</th><th data-slot="head">Actual</th><th data-slot="head">Match</th></tr></thead><tbody><tr data-slot="row" data-state="match"><td data-slot="token-name">background</td><td><span class="tk-chip" style="background:var(--bg)"></span>var(--bg)</td><td><span class="tk-chip" style="background:var(--bg)"></span>var(--bg)</td><td><span class="pill" data-slot="match" data-state="match">match</span></td></tr><tr data-slot="row" data-state="mismatch"><td data-slot="token-name">action</td><td><span class="tk-chip" style="background:var(--text)"></span>var(--text)</td><td><span class="tk-chip" style="background:var(--accent)"></span>var(--accent)</td><td><span class="pill" data-slot="match" data-state="mismatch">mismatch</span></td></tr></tbody></table></div></div>
+        <div data-primitive="token-delta"><div class="table-wrap"><table><thead><tr><th data-slot="head">Token</th><th data-slot="head">Expected</th><th data-slot="head">Actual</th><th data-slot="head">Match</th></tr></thead><tbody><tr data-slot="row" data-state="match"><td data-slot="token-name">background</td><td data-slot="expected"><span class="tk-chip" style="background:var(--bg)"></span>var(--bg)</td><td data-slot="actual"><span class="tk-chip" style="background:var(--bg)"></span>var(--bg)</td><td><span class="pill" data-slot="match" data-state="match">match</span></td></tr><tr data-slot="row" data-state="mismatch"><td data-slot="token-name">action</td><td data-slot="expected"><span class="tk-chip" style="background:var(--text)"></span>var(--text)</td><td data-slot="actual"><span class="tk-chip" style="background:var(--accent)"></span>var(--accent)</td><td><span class="pill" data-slot="match" data-state="mismatch">mismatch</span></td></tr></tbody></table></div></div>
       </div>
     </div>
 
@@ -1196,11 +1360,11 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
       <div class="specimen-head"><span class="pname">revision-strip</span><span class="pnote">Before → after → revised; recommended marked.</span><span class="chip state">recommended</span></div>
       <div class="specimen-body">
         <div data-primitive="revision-strip">
-          <div data-slot="step"><div class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Before"><rect width="200" height="110" fill="#F2DDDF"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--accent)"/></svg></div><div data-slot="step-label">Before</div></div>
+          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Before"><rect width="200" height="110" fill="#F2DDDF"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--accent)"/></svg></div><div data-slot="step-label">Before</div></div>
           <span data-slot="connector">→</span>
-          <div data-slot="step"><div class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="After"><rect width="200" height="110" fill="#F3E7D5"/><rect x="40" y="46" width="80" height="22" rx="5" fill="#1d2a2c"/></svg></div><div data-slot="step-label">After</div></div>
+          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="After"><rect width="200" height="110" fill="#F3E7D5"/><rect x="40" y="46" width="80" height="22" rx="5" fill="#1d2a2c"/></svg></div><div data-slot="step-label">After</div></div>
           <span data-slot="connector">→</span>
-          <div data-slot="step" data-state="recommended"><div class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Revised"><rect width="200" height="110" fill="#E3ECD9"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--text)"/></svg></div><div data-slot="step-label">Revised ✓</div></div>
+          <div data-slot="step" data-state="recommended"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Revised"><rect width="200" height="110" fill="#E3ECD9"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--text)"/></svg></div><div data-slot="step-label">Revised ✓</div></div>
         </div>
       </div>
     </div>
@@ -1217,17 +1381,17 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </section>
 
   <!-- ============================ IMAGE GEN HANDOFF ============================ -->
-  <section class="atlas-section" id="imagegen">
-    <div class="sec-head"><h2><span class="num">10</span>Image Gen &amp; design handoff</h2></div>
+  <section class="reference-section" id="imagegen">
+    <div class="sec-head"><h2><span class="num">11</span>Image Gen &amp; design handoff</h2></div>
     <p class="sec-intro">Selected concepts, the sources they were grounded in, reusable prompts, assets, approved copy, and an extracted design system to build to.</p>
 
     <div class="specimen">
       <div class="specimen-head"><span class="pname">concept-gallery</span><span class="pnote">Candidate directions with a selection state.</span><span class="chip state">selected</span><span class="chip state">rejected</span></div>
       <div class="specimen-body">
         <div data-primitive="concept-gallery">
-          <figure data-slot="concept" data-state="selected"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Calm line-art concept"><rect width="320" height="150" fill="var(--bg)"/><circle cx="160" cy="75" r="34" fill="none" stroke="var(--accent)" stroke-width="3"/></svg></div><div data-slot="concept-label">Calm line-art <span class="pill" data-slot="selected" data-state="selected">selected</span></div><p data-slot="rationale">Quiet, editorial, pairs with the serif headings.</p></figure>
-          <figure data-slot="concept" data-state="rejected"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Bold flat concept"><rect width="320" height="150" fill="#DCE8E7"/><rect x="120" y="40" width="80" height="70" rx="8" fill="var(--accent)"/></svg></div><div data-slot="concept-label">Bold flat</div><p data-slot="rationale">High energy, but fights the restrained palette.</p></figure>
-          <figure data-slot="concept" data-state="rejected"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Photo collage concept"><rect width="320" height="150" fill="#ECEFED"/><rect x="60" y="36" width="90" height="78" fill="#C9CECB"/><rect x="170" y="36" width="90" height="78" fill="#687174"/></svg></div><div data-slot="concept-label">Photo collage</div><p data-slot="rationale">Too heavy to inline as a self-contained asset.</p></figure>
+          <figure data-slot="concept" data-state="selected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Calm line-art concept"><rect width="320" height="150" fill="var(--bg)"/><circle cx="160" cy="75" r="34" fill="none" stroke="var(--accent)" stroke-width="3"/></svg></div><div data-slot="concept-label">Calm line-art <span class="pill" data-slot="selected" data-state="selected">selected</span></div><p data-slot="rationale">Quiet, editorial, pairs with the serif headings.</p></figure>
+          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Bold flat concept"><rect width="320" height="150" fill="#DCE8E7"/><rect x="120" y="40" width="80" height="70" rx="8" fill="var(--accent)"/></svg></div><div data-slot="concept-label">Bold flat</div><p data-slot="rationale">High energy, but fights the restrained palette.</p></figure>
+          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Photo collage concept"><rect width="320" height="150" fill="#ECEFED"/><rect x="60" y="36" width="90" height="78" fill="#C9CECB"/><rect x="170" y="36" width="90" height="78" fill="#687174"/></svg></div><div data-slot="concept-label">Photo collage</div><p data-slot="rationale">Too heavy to inline as a self-contained asset.</p></figure>
         </div>
       </div>
     </div>
@@ -1282,14 +1446,14 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </section>
 
   <!-- ============================ MOTION & PERFORMANCE ============================ -->
-  <section class="atlas-section" id="motion">
-    <div class="sec-head"><h2><span class="num">11</span>Motion &amp; performance</h2></div>
+  <section class="reference-section" id="motion">
+    <div class="sec-head"><h2><span class="num">12</span>Motion &amp; performance</h2></div>
     <p class="sec-intro">Motion that degrades safely, responsive proof at multiple widths, a size budget, and the record of rendered checks.</p>
 
     <div class="specimen">
-      <div class="specimen-head"><span class="pname">motion-proof</span><span class="pnote">An animated element with its reduced-motion behavior. The demo animates only when motion is allowed.</span><span class="chip state">reduced-motion</span></div>
+      <div class="specimen-head"><span class="pname">motion-proof</span><span class="pnote">An animated element with its reduced-motion behavior. The demo animates only when motion is allowed.</span><span class="chip var">variant: parameter-comparison</span><span class="chip state">reduced-motion</span></div>
       <div class="specimen-body stack">
-        <div data-primitive="motion-proof">
+        <div data-primitive="motion-proof" data-variant="parameter-comparison">
           <div data-slot="demo" data-anim>reveal · 320ms ease-out</div>
           <p data-slot="reduced">Reduced motion: the element appears in its final state with no animation.</p>
           <p data-slot="tokens">motion-base 200ms · ease-out</p>
@@ -1305,9 +1469,9 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
       <div class="specimen-head"><span class="pname">viewport-matrix</span><span class="pnote">The same content rendered at several widths.</span></div>
       <div class="specimen-body">
         <div data-primitive="viewport-matrix">
-          <figure data-slot="viewport"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Desktop"><rect width="320" height="150" fill="#ECEFED"/><rect x="16" y="16" width="180" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="208" y="16" width="96" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Desktop · 1280px</div></figure>
-          <figure data-slot="viewport"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Tablet"><rect width="320" height="150" fill="#ECEFED"/><rect x="70" y="16" width="180" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Tablet · 768px</div></figure>
-          <figure data-slot="viewport"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Mobile"><rect width="320" height="150" fill="#ECEFED"/><rect x="120" y="16" width="80" height="118" rx="8" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Mobile · 375px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Desktop"><rect width="320" height="150" fill="#ECEFED"/><rect x="16" y="16" width="180" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="208" y="16" width="96" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Desktop · 1280px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Tablet"><rect width="320" height="150" fill="#ECEFED"/><rect x="70" y="16" width="180" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Tablet · 768px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Mobile"><rect width="320" height="150" fill="#ECEFED"/><rect x="120" y="16" width="80" height="118" rx="8" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Mobile · 375px</div></figure>
         </div>
       </div>
     </div>
@@ -1331,10 +1495,119 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
     </div>
   </section>
 
+  <!-- ============================ ROADMAP PATTERNS ============================ -->
+  <section class="reference-section" id="roadmap-patterns">
+    <div class="sec-head"><h2><span class="num">13</span>Roadmap patterns</h2></div>
+    <p class="sec-intro">Additional document blocks for diligence, specs, evals, system cards, and bounded review surfaces.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">inline-schematic</span><span class="pnote">Contained diagram with legend and text fallback.</span></div>
+      <div class="specimen-body">
+        <figure data-primitive="inline-schematic">
+          <h3 data-slot="heading">Queued write path</h3>
+          <div data-slot="diagram" class="frame"><svg viewBox="0 0 520 92" role="img" aria-label="Queued write path schematic"><rect x="20" y="24" width="110" height="44" rx="7" fill="var(--surface)" stroke="var(--border)"/><text x="75" y="51" text-anchor="middle" fill="var(--text)" font-size="13">Client</text><path d="M138 46h70" stroke="var(--accent)" stroke-width="3"/><rect x="215" y="24" width="110" height="44" rx="7" fill="var(--surface)" stroke="var(--border)"/><text x="270" y="51" text-anchor="middle" fill="var(--text)" font-size="13">Queue</text><path d="M333 46h70" stroke="var(--accent)" stroke-width="3"/><rect x="410" y="24" width="90" height="44" rx="7" fill="var(--surface)" stroke="var(--border)"/><text x="455" y="51" text-anchor="middle" fill="var(--text)" font-size="13">Worker</text></svg></div>
+          <ul data-slot="legend"><li>Solid arrows show the normal write path.</li><li>Each node is independently retryable.</li></ul>
+          <figcaption data-slot="caption">Use when a small diagram is clearer than prose.</figcaption>
+          <p data-slot="fallback">Fallback: client writes enqueue a job; the worker drains queued jobs and reports retry status.</p>
+        </figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">inline-chart</span><span class="pnote">Simple chart with backing values visible.</span></div>
+      <div class="specimen-body">
+        <figure data-primitive="inline-chart">
+          <h3 data-slot="heading">Retest pass rate</h3>
+          <div data-slot="chart" class="frame"><svg viewBox="0 0 1000 226" role="img" aria-label="Pass rate chart"><line x1="150" y1="190" x2="850" y2="190" stroke="var(--border)"/><rect x="200" y="93" width="110" height="97" fill="var(--accent)"/><rect x="445" y="66" width="110" height="124" fill="var(--accent)"/><rect x="690" y="40" width="110" height="150" fill="var(--accent)"/></svg></div>
+          <div data-slot="data-table" class="table-wrap"><table><thead><tr><th>Run</th><th>Pass rate</th></tr></thead><tbody><tr><td>R1</td><td>61%</td></tr><tr><td>R2</td><td>78%</td></tr><tr><td>R3</td><td>94%</td></tr></tbody></table></div>
+          <figcaption data-slot="caption">Chart values must be readable without canvas or JS.</figcaption>
+          <p data-slot="source">Source: latest QA packet.</p>
+        </figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">file-map</span><span class="pnote">Changed files mapped to role, change, risk, and finding.</span></div>
+      <div class="specimen-body"><div data-primitive="file-map" class="table-wrap"><table><thead><tr><th>Path</th><th>Role</th><th>Change</th><th>Risk</th><th>Finding</th></tr></thead><tbody><tr><td data-slot="path">src/queue.ts</td><td data-slot="role">write path</td><td data-slot="change">adds retry envelope</td><td data-slot="risk">duplicate dispatch</td><td data-slot="finding">needs idempotency check</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">issue-ledger</span><span class="pnote">Issue register for QA, diligence, and triage.</span></div>
+      <div class="specimen-body"><div data-primitive="issue-ledger" class="table-wrap"><table><thead><tr><th>Issue</th><th>Severity</th><th>Evidence</th><th>Implication</th><th>Owner</th><th>Status</th></tr></thead><tbody><tr><td data-slot="issue">Retry failures not grouped</td><td data-slot="severity"><span class="badge" data-state="med">MED</span></td><td data-slot="evidence">three duplicate rows in retest</td><td data-slot="implication">harder incident triage</td><td data-slot="owner">Platform</td><td data-slot="status"><span class="pill" data-state="pending">pending</span></td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">red-flag-ledger</span><span class="pnote">High-impact diligence flags with deal effect and next step.</span></div>
+      <div class="specimen-body"><div data-primitive="red-flag-ledger" class="table-wrap"><table><thead><tr><th>Flag</th><th>Basis</th><th>Deal impact</th><th>Confidence</th><th>Next step</th></tr></thead><tbody><tr><td data-slot="flag">Unpriced migration liability</td><td data-slot="basis">open carve-out dependency</td><td data-slot="deal-impact">separation cost may move</td><td data-slot="confidence"><span class="badge" data-state="med">MED</span></td><td data-slot="next-step">request service schedule</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">assumption-register</span><span class="pnote">Assumptions with source, sensitivity, confidence, and owner.</span></div>
+      <div class="specimen-body"><div data-primitive="assumption-register" class="table-wrap"><table><thead><tr><th>Assumption</th><th>Source</th><th>Sensitivity</th><th>Confidence</th><th>Owner</th></tr></thead><tbody><tr><td data-slot="assumption">Worker can drain backlog overnight</td><td data-slot="source">load-test note</td><td data-slot="sensitivity">changes cutover window</td><td data-slot="confidence"><span class="badge" data-state="high">HIGH</span></td><td data-slot="owner">Infra</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">value-bridge</span><span class="pnote">Baseline, bridge items, values, sources, and caveats.</span></div>
+      <div class="specimen-body">
+        <figure data-primitive="value-bridge" class="table-wrap"><table><thead><tr><th>Item</th><th>Value</th><th>Source</th><th>Caveat</th></tr></thead><tbody><tr><td data-slot="baseline">Current run cost</td><td data-slot="value">100</td><td data-slot="source">finance extract</td><td data-slot="caveat">rounded</td></tr><tr><td data-slot="bridge-item">Queue batching</td><td data-slot="value">-18</td><td data-slot="source">pilot</td><td data-slot="caveat">depends on volume</td></tr></tbody></table></figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">workstream-map</span><span class="pnote">Workstreams tied to owner, phase, dependency, and gate.</span></div>
+      <div class="specimen-body"><div data-primitive="workstream-map" class="table-wrap"><table><thead><tr><th>Workstream</th><th>Owner</th><th>Phase</th><th>Dependency</th><th>Gate</th></tr></thead><tbody><tr><td data-slot="workstream">Queue migration</td><td data-slot="owner">Platform</td><td data-slot="phase">shadow</td><td data-slot="dependency">retry telemetry</td><td data-slot="gate">parity pass</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">operating-model-map</span><span class="pnote">Layered capability, owner, dependency, and gap map.</span></div>
+      <div class="specimen-body"><figure data-primitive="operating-model-map" class="table-wrap"><table><thead><tr><th>Layer</th><th>Capability</th><th>Owner</th><th>Dependency</th><th>Gap</th></tr></thead><tbody><tr><td data-slot="layer">Process</td><td data-slot="capability">Incident triage</td><td data-slot="owner">Support</td><td data-slot="dependency">retry grouping</td><td data-slot="gap">runbook missing</td></tr></tbody></table></figure></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">quote-board</span><span class="pnote">Voice evidence with segment, theme, source, and confidence.</span></div>
+      <div class="specimen-body"><div data-primitive="quote-board" data-variant="cards"><article data-slot="quote">"Retries are visible, but I cannot tell which customer was affected."<div class="row-foot"><span data-slot="speaker-segment">support lead</span><span data-slot="theme">triage clarity</span><span data-slot="source">interview note</span><span data-slot="confidence"><span class="badge" data-state="high">HIGH</span></span></div></article></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">scenario-pair</span><span class="pnote">Ideal and non-ideal examples with rationale.</span></div>
+      <div class="specimen-body"><div data-primitive="scenario-pair" class="split"><article data-slot="scenario"><b data-slot="input">User asks for release proof</b><p data-slot="ideal">Show commands, browser widths, and overflow result.</p><p data-slot="non-ideal">Say "looks good" without rendered evidence.</p><p data-slot="rationale">The reader needs proof, not confidence language.</p></article></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">evaluation-suite</span><span class="pnote">Suite thresholds, samples, results, and caveats.</span></div>
+      <div class="specimen-body"><div data-primitive="evaluation-suite" class="table-wrap"><table><thead><tr><th>Suite</th><th>Metric</th><th>Threshold</th><th>Result</th><th>Sample</th><th>Date</th></tr></thead><tbody><tr><td data-slot="suite">artifact QA</td><td data-slot="metric">overflow pass</td><td data-slot="threshold">100%</td><td data-slot="result"><span class="pill" data-state="pass">pass</span></td><td data-slot="sample">3 widths</td><td data-slot="date">current run</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">capability-matrix</span><span class="pnote">Capability, evidence, risk, limitation, and mitigation.</span></div>
+      <div class="specimen-body"><div data-primitive="capability-matrix" class="table-wrap"><table><thead><tr><th>Capability</th><th>Evidence</th><th>Risk</th><th>Limitation</th><th>Mitigation</th></tr></thead><tbody><tr><td data-slot="capability">Static export</td><td data-slot="evidence">opens from file</td><td data-slot="risk">large images</td><td data-slot="limitation">no server paging</td><td data-slot="mitigation">downscale captures</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">workbench-board</span><span class="pnote">Small visible board with filters and export.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="workbench-board" class="grid">
+          <div class="cluster"><button type="button" data-slot="filter">Show blockers</button><span data-slot="export" data-primitive="copy-export" data-variant="markdown"><button type="button" data-slot="action">Copy board</button><template data-slot="payload">Blockers: retry telemetry</template></span></div>
+          <div class="split"><section data-slot="column"><h3>Blocked</h3><article data-slot="card"><b>Retry telemetry</b><span data-slot="status"><span class="pill" data-state="blocked">blocked</span></span></article></section><section data-slot="column"><h3>Ready</h3><article data-slot="card"><b>Copy payload</b><span data-slot="status"><span class="pill" data-state="pass">ready</span></span></article></section></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">configuration-diff</span><span class="pnote">Before/after config values with risk and owner.</span></div>
+      <div class="specimen-body"><div data-primitive="configuration-diff" class="table-wrap"><table><thead><tr><th>Key</th><th>Before</th><th>After</th><th>Risk</th><th>Owner</th></tr></thead><tbody><tr><td data-slot="key">queue.enabled</td><td data-slot="before">false</td><td data-slot="after">true</td><td data-slot="risk">cutover blast radius</td><td data-slot="owner">Platform</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">prompt-preview</span><span class="pnote">Prompt, variables, case, preview, and copy action.</span></div>
+      <div class="specimen-body"><div data-primitive="prompt-preview" class="stack"><pre data-slot="prompt">Summarize {{case}} with risks and next action.</pre><div data-slot="variable">case = "queue cutover"</div><div data-slot="case">Input: cutover has one failed retry group.</div><div data-slot="preview">Preview: Queue cutover is close, but retry grouping remains unresolved.</div><span data-slot="copy" data-primitive="copy-export" data-variant="prompt"><button type="button" data-slot="action">Copy prompt</button><template data-slot="payload">Summarize queue cutover with risks and next action.</template></span></div></div>
+    </div>
+  </section>
+
   <!-- ============================ VALIDATION STATES ============================ -->
-  <section class="atlas-section" id="states">
-    <div class="sec-head"><h2><span class="num">12</span>Validation states</h2></div>
-    <p class="sec-intro">The state vocabulary shared across primitives. Every state names itself in text — color is never the only signal.</p>
+  <section class="reference-section" id="states">
+    <div class="sec-head"><h2><span class="num">14</span>Validation states</h2></div>
+    <p class="sec-intro">The shared state vocabulary. Every state names itself in text — color is never the only signal.</p>
 
     <div class="specimen">
       <div class="specimen-head"><span class="pname">severity &amp; confidence</span><span class="pnote">finding-card, risk-table, mismatch-ledger, claim-evidence-matrix.</span></div>
@@ -1369,9 +1642,9 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: 13px; color: var
   </div><!-- /data-slot=body -->
 
   <footer data-primitive="audit-trail" data-slot="footer">
-    <div data-slot="group"><span class="label">Atlas provenance</span>
-      <div data-slot="entry">Runtime styles are centralized in assets/theme.css; rationale lives in references/style-rationale.md.</div>
-      <div data-slot="entry">Every primitive shown matches references/primitives.md. This page is reference material, not a reader artifact.</div>
+    <div data-slot="group"><span class="label">Reference notes</span>
+      <div data-slot="entry">The examples use neutral queue migration and QA scenarios.</div>
+      <div data-slot="entry">Each specimen is checked for responsive containment and state coverage.</div>
     </div>
   </footer>
 

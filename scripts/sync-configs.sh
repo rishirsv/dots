@@ -7,7 +7,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--claude|--vscode|--ghostty|--zsh|--karabiner ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--claude|--vscode|--ghostty|--cmux|--zsh|--karabiner ...]
 
 Copies repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -19,7 +19,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex claude vscode ghostty zsh karabiner)
+    TARGETS=(codex claude vscode ghostty cmux zsh karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -47,6 +47,9 @@ while (( $# )); do
       ;;
     --ghostty)
       add_target ghostty
+      ;;
+    --cmux)
+      add_target cmux
       ;;
     --zsh)
       add_target zsh
@@ -174,6 +177,10 @@ sync_ghostty() {
   install_file "$ROOT/configs/ghostty/config" "$HOME/.config/ghostty/config"
 }
 
+sync_cmux() {
+  install_file "$ROOT/configs/cmux/cmux.json" "$HOME/.config/cmux/cmux.json"
+}
+
 sync_zsh() {
   install_file "$ROOT/configs/zsh/.zprofile" "$HOME/.zprofile"
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
@@ -190,6 +197,7 @@ for target in "${TARGETS[@]}"; do
     claude) sync_claude ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
+    cmux) sync_cmux ;;
     zsh) sync_zsh ;;
     karabiner) sync_karabiner ;;
     *)

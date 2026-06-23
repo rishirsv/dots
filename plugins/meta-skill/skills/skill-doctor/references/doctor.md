@@ -27,6 +27,7 @@ Before diagnosing or proposing anything, identify:
 - current description and trigger contract
 - core job
 - linked references, scripts, assets, and metadata
+- visible fixture/demo/copy-export surfaces that ship with the skill
 - `judge-review.md` and other `.<skill-name>/` evidence available
 - the user's requested scope
 - whether prior Codex session evidence is needed or available
@@ -117,8 +118,14 @@ Doctor proposal or an Evaluator handoff.
    the reported failure.
 4. Localize the cause: description, body, reference, structure, workflow branch,
    output contract, script contract, or missing gate.
-5. Run the Proposal Loop below.
-6. Propose the smallest fix with target files, intended behavior, validation,
+5. If the failure is about leaked vocabulary, meta text, provenance, examples,
+   or visible fixture copy, run the Payload Hygiene Sweep in
+   [rubric.md](rubric.md#payload-hygiene-sweep) before choosing a fix. Build the
+   scan terms from the user's complaint and inspected evidence; include visible
+   HTML text, labels, alt/copy/button strings, and export payloads, not only
+   Markdown prose.
+6. Run the Proposal Loop below.
+7. Propose the smallest fix with target files, intended behavior, validation,
    and residual risk. Stop there unless a specific source edit has already been
    explicitly approved.
 
@@ -146,10 +153,15 @@ workflow branch, or evidence row causing the risk.
    reference removed, absent, or de-emphasized concepts unless that concept is the
    concrete recurring failure; when a negative guard is needed, pair it with the
    desired behavior.
-8. Recommend one smallest strong fix and say why.
-9. Add a broad rule only when the agent would likely repeat the mistake without
+8. For cleanup or contamination failures, check that the candidate removes the
+   reusable failure class everywhere it can surface, not just the exact phrase
+   reported by the user. Include renamed files/titles, visible fixture text,
+   copyable payloads, examples, and validator/lint coverage when the target
+   skill owns such a validator.
+9. Recommend one smallest strong fix and say why.
+10. Add a broad rule only when the agent would likely repeat the mistake without
    it.
-10. Record changed behavior, evidence, rejected tempting edits, and residual risk
+11. Record changed behavior, evidence, rejected tempting edits, and residual risk
    in a supporting doc when durable notes are needed.
 
 Prefer replacing a misleading sentence over adding a prohibition. Preserve

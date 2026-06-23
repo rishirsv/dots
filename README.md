@@ -78,6 +78,7 @@ Machine config source copies live under `configs/`.
 ```text
 configs/
 ├─ claude/
+├─ cmux/
 ├─ codex/
 ├─ ghostty/
 ├─ karabiner/

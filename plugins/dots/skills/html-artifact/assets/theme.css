@@ -152,6 +152,8 @@ header[data-primitive="hero-summary"] [data-slot="summary"] { font-size: 17px; c
 [data-slot="item"] [data-slot="value"] { font-size: 15px; font-weight: 600; color: var(--text); }
 [data-primitive="meta-strip"][data-variant="inline"] { display: flex; flex-wrap: wrap; gap: 10px 22px; }
 [data-variant="inline"] [data-slot="item"] [data-slot="value"] { font-size: 14px; margin-left: 5px; }
+[data-primitive="meta-strip"][data-variant="metric"] { display: flex; flex-wrap: wrap; gap: 14px 44px; }
+[data-variant="metric"] [data-slot="item"] [data-slot="value"] { display: block; font-family: var(--serif); font-size: 26px; font-weight: 520; color: var(--text); line-height: 1.1; }
 
 /* ============ section-nav · side ============ */
 nav[data-primitive="section-nav"][data-variant="side"] { font-size: 13px; }
@@ -163,7 +165,7 @@ nav[data-variant="side"] a[data-state="active"] { color: var(--accent); border-b
 
 /* html-artifact:region:tldr:start */
 /* ============ tldr ============ */
-[data-primitive="tldr"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: 15px 17px; box-shadow: inset 0 1px 0 var(--accent-soft); }
+[data-primitive="tldr"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: 15px 17px; box-shadow: inset 0 1px 0 var(--accent-soft); max-width: none; }
 [data-primitive="tldr"] [data-slot="body"] b { color: var(--text); }
 
 /* html-artifact:region:tldr:end */
@@ -207,6 +209,7 @@ nav[data-variant="side"] a[data-state="active"] { color: var(--accent); border-b
 [data-slot="recommended"] { font-family: var(--mono); font-size: 10.5px; color: var(--success-strong); background: var(--success-soft); border-radius: var(--radius-tag); padding: 2px 7px; }
 [data-primitive="comparison-grid"][data-variant="split"] { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
 @media (max-width: 720px) { [data-primitive="comparison-grid"][data-variant="split"] { grid-template-columns: 1fr; } }
+[data-primitive="comparison-grid"][data-variant="matrix"] { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
 
 /* html-artifact:region:comparison-grid:end */
 
@@ -281,7 +284,7 @@ figure[data-primitive="diff-review"] { border: var(--line); border-radius: var(-
 .diff-row[data-state="add"] .mark { color: var(--success-strong); }
 .diff-row[data-state="del"] { background: color-mix(in srgb, var(--danger-strong) 20%, transparent); }
 .diff-row[data-state="del"] .mark { color: var(--code-del-text); }
-[data-primitive="diff-review"] [data-slot="comment"] { font-size: 13px; color: var(--text-body); background: var(--surface-muted); border-top: var(--line); padding: 10px 15px; }
+[data-primitive="diff-review"] [data-slot="comment"] { font-size: 13px; color: var(--text-body); background: var(--surface-muted); border-top: var(--line); padding: 10px 15px; max-width: none; }
 [data-slot="comment"]::before { content: "review note"; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0; color: var(--accent); display: block; margin-bottom: 3px; }
 
 /* html-artifact:region:diff-review:end */
@@ -493,8 +496,8 @@ footer[data-primitive="audit-trail"], section[data-primitive="audit-trail"] { bo
 [data-primitive="render-proof"] [data-slot="check"] { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; padding: 9px 14px; border-top: var(--line); font-family: var(--mono); font-size: 12px; }
 [data-primitive="render-proof"] [data-slot="check"]:first-child { border-top: none; }
 /* motion runs only when the reader allows it; the final state is the default */
-@keyframes atlasReveal { from { opacity: .4; } to { opacity: 1; } }
-@media (prefers-reduced-motion: no-preference) { [data-primitive="motion-proof"]:not([data-state="reduced-motion"]) [data-slot="demo"][data-anim] { animation: atlasReveal 320ms cubic-bezier(0.16,1,0.3,1) infinite alternate; } }
+@keyframes referenceReveal { from { opacity: .4; } to { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) { [data-primitive="motion-proof"]:not([data-state="reduced-motion"]) [data-slot="demo"][data-anim] { animation: referenceReveal 320ms cubic-bezier(0.16,1,0.3,1) infinite alternate; } }
 @media (prefers-reduced-motion: reduce) { [data-primitive="motion-proof"] [data-slot="demo"][data-anim] { animation: none; } }
 /* html-artifact:region:motion-performance:end */
 

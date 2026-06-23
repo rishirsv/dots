@@ -3,7 +3,7 @@
 Use this file for runtime behavior: semantic HTML, primitive anatomy, static
 output rules, and content hygiene. Use [../assets/theme.css](../assets/theme.css)
 for exact runtime CSS values and primitive styling, and use
-[style-rationale.md](style-rationale.md) for the visual rationale behind those
+[design.md](design.md) for the visual rationale behind those
 rules.
 
 ## Semantic-first HTML
@@ -30,10 +30,11 @@ Borrow shadcn's component-anatomy discipline as plain HTML, not as a dependency:
   recommended, copied, pass, blocked, add, delete, or context.
 - CSS selectors may target these data attributes.
 - Reader-facing copy must not expose primitive names, slot labels, variant
-  labels, `data-*` values, or template machinery.
+  labels, `data-*` values, or authoring scaffolding.
 
-The primitive atlas is the only exception: it may display anatomy labels because
-it is reference material, not a reader artifact.
+The reference sheet may show anatomy only where it is clearly part of a code
+specimen or compact reference label. Its explanatory prose and copy/export
+payloads must stay reader-safe.
 
 ## Static Output Rules
 
@@ -143,19 +144,19 @@ structure:
 
 ## Portable Payload Hygiene
 
-The skill's own reusable files must stay generic. Before handoff or commit, scan
-the skill payload for runtime contamination:
+The reusable source files must stay generic. Before handoff or commit, scan the
+payload for source contamination:
 
 - provider or model names that are not part of the reusable contract
 - raw research URLs, research commands, or web-fetch transcripts
 - `.agents/`, scratch paths, thread IDs, local plan filenames, or session notes
 - one-off user wording copied into runtime examples
 - source-specific author names or article titles in generic demos
-- stale version labels when the skill contract is not versioned
+- stale version labels when the contract is not versioned
 
 If a term appears only because it is the user's source material for a generated
-artifact, it may appear in that artifact. It should not appear in the portable
-skill payload or generic atlas examples.
+artifact, it may appear in that artifact. It should not appear in the reusable
+source payload or generic reference sheet examples.
 
 ## Dark mode
 
@@ -187,13 +188,13 @@ identically from [../assets/theme.css](../assets/theme.css):
 - Dense uncontained tables or code blocks that force page-level horizontal
   scroll.
 - Low-contrast text.
-- Visible template machinery in reader artifacts.
+- Visible authoring scaffolding in reader artifacts.
 - Continuous decorative motion, or animation with no `prefers-reduced-motion`
   fallback so the final state is unreachable with motion disabled.
 - Images with no dimensions (layout shift on load), uncaptioned evidence
   screenshots, or placeholder/abstract mockups in an artifact claiming visual QA.
-- Source-generic atlas copy that preserves the research trail used to build the
-  skill.
+- Source-generic reference sheet copy that preserves project-specific research
+  trail, scratch paths, or session notes.
 
 ## External Systems
 
@@ -203,5 +204,5 @@ primitive catalog, and the canonical CSS in
 [../assets/theme.css](../assets/theme.css).
 
 Rendered QA uses an available browser tool, recording the tool used and any
-fallback reason (see [browser-checks.md](browser-checks.md)). Do not add a
+fallback reason (see [validation.md](validation.md)). Do not add a
 browser-automation dependency to verify an artifact.

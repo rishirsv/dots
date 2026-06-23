@@ -65,6 +65,7 @@ configs/vscode/settings.json         -> ~/Library/Application Support/Code/User/
 configs/vscode/keybindings.json      -> ~/Library/Application Support/Code/User/keybindings.json
 configs/vscode/extensions.json       -> ~/Library/Application Support/Code/User/extensions.json
 configs/ghostty/config               -> ~/.config/ghostty/config
+configs/cmux/cmux.json               -> ~/.config/cmux/cmux.json
 configs/zsh/.zprofile                -> ~/.zprofile
 configs/zsh/.zshrc                   -> ~/.zshrc
 configs/karabiner/karabiner.json     -> ~/.config/karabiner/karabiner.json
@@ -76,6 +77,7 @@ Useful comparison commands:
 diff -u configs/codex/config.toml ~/.codex/config.toml || true
 diff -u configs/claude/settings.json ~/.claude/settings.json || true
 diff -u configs/ghostty/config ~/.config/ghostty/config || true
+diff -u configs/cmux/cmux.json ~/.config/cmux/cmux.json || true
 diff -u configs/zsh/.zshrc ~/.zshrc || true
 diff -ru configs/codex/agents ~/.codex/agents || true
 ```
@@ -111,6 +113,7 @@ cp "$HOME/Library/Application Support/Code/User/settings.json" configs/vscode/se
 cp "$HOME/Library/Application Support/Code/User/keybindings.json" configs/vscode/keybindings.json
 cp "$HOME/Library/Application Support/Code/User/extensions.json" configs/vscode/extensions.json
 cp ~/.config/ghostty/config configs/ghostty/config
+cp ~/.config/cmux/cmux.json configs/cmux/cmux.json
 cp ~/.zprofile configs/zsh/.zprofile
 cp ~/.zshrc configs/zsh/.zshrc
 cp ~/.config/karabiner/karabiner.json configs/karabiner/karabiner.json
@@ -209,6 +212,9 @@ scripts/sync-configs.sh --vscode
 
 scripts/sync-configs.sh --dry-run --ghostty
 scripts/sync-configs.sh --ghostty
+
+scripts/sync-configs.sh --dry-run --cmux
+scripts/sync-configs.sh --cmux
 
 scripts/sync-configs.sh --dry-run --zsh
 scripts/sync-configs.sh --zsh

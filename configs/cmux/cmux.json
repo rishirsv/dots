@@ -1,0 +1,194 @@
+{
+  "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "schemaVersion": 1,
+
+  "app": {
+    "appearance": "system",
+    "minimalMode": false,
+    "focusPaneOnFirstClick": false,
+    "warnBeforeClosingTab": true,
+    "warnBeforeClosingTabXButton": false,
+    "confirmQuit": "always",
+    "newWorkspacePlacement": "afterCurrent",
+    "workspaceInheritWorkingDirectory": true,
+    "keepWorkspaceOpenWhenClosingLastSurface": false,
+    "openMarkdownInCmuxViewer": true,
+    "openSupportedFilesInCmux": true,
+    "commandPaletteSearchesAllSurfaces": false,
+    "renameSelectsExistingName": true,
+    "forkConversationDefaultDestination": "right",
+    "reorderOnNotification": true,
+    "sendAnonymousTelemetry": false
+  },
+
+  "workspaceGroups": {
+    "newWorkspacePlacement": "afterCurrent"
+  },
+
+  "terminal": {
+    "showScrollBar": true,
+    "copyOnSelect": false,
+    "autoResumeAgentSessions": false,
+    "showTextBoxOnNewTerminals": false,
+    "focusTextBoxOnNewTerminals": false,
+    "textBoxMaxLines": 10,
+    "agentHibernation": {
+      "enabled": false,
+      "idleSeconds": 5,
+      "maxLiveTerminals": 12
+    },
+    "rendererRealization": {
+      "enabled": true,
+      "idleSeconds": 30,
+      "maxWarmRenderers": 12
+    }
+  },
+
+  "notifications": {
+    "sound": "default",
+    "unreadPaneRing": true,
+    "paneFlash": true,
+    "dockBadge": true,
+    "showInMenuBar": true,
+    "hooksMode": "append"
+  },
+
+  "sidebar": {
+    "showCustomMetadata": true,
+    "wrapWorkspaceTitles": false,
+    "showSSH": true,
+    "hideAllDetails": false,
+    "openPortLinksInCmuxBrowser": true,
+    "showPorts": true,
+    "showNotificationMessage": true,
+    "showBranchDirectory": true,
+    "showProgress": true,
+    "makePullRequestsClickable": true,
+    "watchGitStatus": true,
+    "openPullRequestLinksInCmuxBrowser": true,
+    "showLog": true,
+    "showPullRequests": true,
+    "branchLayout": "vertical",
+    "showWorkspaceDescription": true
+  },
+
+  "workspaceColors": {
+    "indicatorStyle": "leftRail",
+    "colors": {
+      "Red": "#fa423e",
+      "Green": "#40c977",
+      "Amber": "#e5b454",
+      "Blue": "#339cff",
+      "Purple": "#ad7bf9",
+      "Teal": "#4ec9b0",
+      "Charcoal": "#26384d",
+      "Gray": "#6e6e6e",
+      "Bright Red": "#ff6965",
+      "Bright Green": "#63d990",
+      "Bright Amber": "#f0c66a",
+      "Bright Blue": "#66b8ff",
+      "Bright Purple": "#c79cff",
+      "Bright Teal": "#6bd7c3"
+    }
+  },
+
+  "sidebarAppearance": {
+    "matchTerminalBackground": true,
+    "tintColor": "#181818",
+    "tintOpacity": 0.18,
+    "darkModeTintColor": "#181818",
+    "lightModeTintColor": null
+  },
+
+  "automation": {
+    "portBase": 9100,
+    "portRange": 10,
+    "socketControlMode": "cmuxOnly",
+    "suppressSubagentNotifications": true,
+    "claudeCodeIntegration": true,
+    "ampIntegration": true,
+    "geminiIntegration": true,
+    "kiroIntegration": true,
+    "kiroNotificationLevel": "standard",
+    "cursorIntegration": true,
+    "ripgrepBinaryPath": "",
+    "claudeBinaryPath": ""
+  },
+
+  "browser": {
+    "theme": "system",
+    "openTerminalLinksInCmuxBrowser": true,
+    "interceptTerminalOpenCommandInCmuxBrowser": true,
+    "showSearchSuggestions": true,
+    "defaultSearchEngine": "google",
+    "customSearchEngineName": "",
+    "customSearchEngineURLTemplate": "https://www.google.com/search?q={query}",
+    "discardHiddenWebViews": true,
+    "hiddenWebViewDiscardDelaySeconds": 300,
+    "showImportHintOnBlankTabs": true,
+    "reactGrabVersion": "0.1.29",
+    "hostsToOpenInEmbeddedBrowser": [],
+    "urlsToAlwaysOpenExternally": [],
+    "insecureHttpHostsAllowedInEmbeddedBrowser": [
+      "localhost",
+      "*.localhost",
+      "127.0.0.1",
+      "::1",
+      "0.0.0.0",
+      "*.localtest.me"
+    ]
+  },
+
+  "markdown": {
+    "fontFamily": "CommitMono",
+    "fontSize": 15,
+    "maxWidth": 980
+  },
+
+  "fileEditor": {
+    "wordWrap": false
+  },
+
+  "fileExplorer": {
+    "doubleClickAction": "preview"
+  },
+
+  "diffViewer": {
+    "defaultLayout": "unified"
+  },
+
+  "shortcuts": {
+    "bindings": {
+      "reloadConfiguration": "cmd+shift+,",
+      "commandPalette": "cmd+shift+p",
+      "toggleTerminalCopyMode": "cmd+shift+m",
+      "splitRight": "cmd+d",
+      "splitDown": "cmd+shift+d",
+      "focusHistoryBack": "cmd+[",
+      "focusHistoryForward": "cmd+]",
+      "prevSurface": "cmd+shift+[",
+      "nextSurface": "cmd+shift+]",
+      "equalizeSplits": "cmd+ctrl+=",
+      "newTab": "cmd+n",
+      "newSurface": "cmd+t",
+      "closeTab": "cmd+w",
+      "closeWorkspace": "cmd+shift+w",
+      "openSettings": "cmd+,",
+      "toggleSidebar": "cmd+b",
+      "openBrowser": "cmd+shift+l",
+      "splitBrowserRight": "cmd+opt+d",
+      "splitBrowserDown": "cmd+shift+opt+d",
+      "focusLeft": "cmd+opt+left",
+      "focusRight": "cmd+opt+right",
+      "focusUp": "cmd+opt+up",
+      "focusDown": "cmd+opt+down",
+      "browserBack": "cmd+[",
+      "browserForward": "cmd+]",
+      "browserReload": "cmd+r",
+      "find": "cmd+f",
+      "findNext": "cmd+g",
+      "findPrevious": "cmd+opt+g",
+      "quit": "cmd+q"
+    }
+  }
+}

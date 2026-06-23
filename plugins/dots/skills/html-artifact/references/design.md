@@ -1,4 +1,4 @@
-# Style Rationale
+# Design
 
 Use this file for the visual judgment behind HTML Artifact Editorial: why the
 documents look restrained, how to avoid generic dashboard chrome, and what to
@@ -120,6 +120,6 @@ fills.
 - Uncontained tables, diffs, code, diagrams, or screenshots that force
   page-level horizontal scroll.
 - Low-contrast text, color-only state, and status labels without words.
-- Visible template machinery in reader artifacts.
+- Visible authoring scaffolding in reader artifacts.
 - Long design rationale or source-specific provenance copied into generated
   artifacts.

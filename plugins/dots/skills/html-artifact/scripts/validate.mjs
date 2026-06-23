@@ -12,8 +12,8 @@ import {
   themePath,
 } from "./theme-regions.mjs";
 
-// Development-only guardrail for the html-artifact skill payload. This script
-// runs from repo verification to keep theme.css, atlas examples, and docs from
+// Development-only guardrail for this payload. This script
+// runs from repo verification to keep theme.css, reference sheet examples, and docs from
 // drifting; it is not bundled into generated reader artifacts.
 const failures = [];
 
@@ -27,6 +27,66 @@ function rel(filePath) {
 
 function stripSvg(text) {
   return text.replace(/<svg\b[\s\S]*?<\/svg>/gi, "");
+}
+
+function decodeHtmlEntities(text) {
+  return text
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+function visibleReferenceText(html) {
+  return decodeHtmlEntities(
+    html
+      .replace(/<!--[\s\S]*?-->/g, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<template[\s\S]*?<\/template>/gi, " ")
+      .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
+      .replace(/<pre[\s\S]*?<\/pre>/gi, " ")
+      .replace(/<code[\s\S]*?<\/code>/gi, " ")
+      .replace(/<[^>]+>/g, " "),
+  ).replace(/\s+/g, " ").trim();
+}
+
+function templatePayloadText(html) {
+  return [...html.matchAll(/<template\b[^>]*>([\s\S]*?)<\/template>/gi)]
+    .map((match) => decodeHtmlEntities(match[1].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
+function checkReferenceCopy(referenceText) {
+  const forbidden = [
+    ["old reference name", new RegExp(["Primitive", "Atlas"].join("\\s+"), "i")],
+    ["skill label", new RegExp(`\\b${["html-artifact", "skill"].join("\\s+")}\\b|\\bskill\\b`, "i")],
+    ["agent label", /\bagent\b/i],
+    ["goal wording", /\bgoals?\b/i],
+    ["runtime label", /\bruntime\b/i],
+    ["primitive label", /\bprimitives?\b/i],
+    ["data attribute label", /\bdata-(?:artifact|primitive|slot|variant|state)\b/i],
+    ["source path prose", /references\//i],
+    ["handoff actor leak", new RegExp(`\\b${["next", "agent"].join("\\s+")}\\b`, "i")],
+    ["style-source leak", /\bruntime styles\b/i],
+    ["template wording", /\btemplate machinery\b/i],
+    ["negative-scope wording", new RegExp("\\bnon-" + "goals?\\b", "i")],
+    ["prompt-role wording", new RegExp("\\b(system\\s+" + "developer|developer\\s+meta|meta\\s+text)\\b", "i")],
+  ];
+
+  const visibleText = visibleReferenceText(referenceText);
+  const payloadText = templatePayloadText(referenceText);
+  for (const [label, pattern] of forbidden) {
+    if (pattern.test(visibleText)) {
+      fail(`html-artifact-reference.html visible text contains ${label}.`);
+    }
+    if (pattern.test(payloadText)) {
+      fail(`html-artifact-reference.html copy/export payload contains ${label}.`);
+    }
+  }
 }
 
 function hexMatches(text) {
@@ -76,6 +136,415 @@ function tokenBlock(css, selector) {
     throw new Error(`Missing token block for ${selector}`);
   }
   return match[1];
+}
+
+function extractDataPrimitiveIds(text) {
+  return new Set(
+    [...text.matchAll(/data-primitive=(?:"([^"]+)"|'([^']+)'|([A-Za-z0-9-]+))/g)]
+      .map((match) => match[1] || match[2] || match[3])
+      .filter(Boolean),
+  );
+}
+
+function extractDataBaseIds(text) {
+  return new Set(
+    [...text.matchAll(/data-base=(?:"([^"]+)"|'([^']+)'|([A-Za-z0-9-]+))/g)]
+      .map((match) => match[1] || match[2] || match[3])
+      .filter(Boolean),
+  );
+}
+
+function extractDataCompositeIds(text) {
+  return new Set(
+    [...text.matchAll(/data-composite=(?:"([^"]+)"|'([^']+)'|([A-Za-z0-9-]+))/g)]
+      .map((match) => match[1] || match[2] || match[3])
+      .filter(Boolean),
+  );
+}
+
+function extractThemeRegions(themeCss) {
+  return new Set(
+    [...themeCss.matchAll(/\/\* html-artifact:region:([A-Za-z0-9-]+):start \*\//g)]
+      .map((match) => match[1]),
+  );
+}
+
+function extractMarkdownSections(text) {
+  return new Set(
+    [...text.matchAll(/^## ([A-Za-z0-9-]+)$/gm)]
+      .map((match) => match[1]),
+  );
+}
+
+function extractArchetypeSections(text) {
+  return new Set(
+    [...text.matchAll(/^## Archetype: ([a-z][a-z0-9-]+)$/gm)]
+      .map((match) => match[1]),
+  );
+}
+
+function parsePrimitiveRegistry(text) {
+  const rows = [];
+  let inRegistry = false;
+  for (const line of text.split("\n")) {
+    if (line.trim() === "## Primitive Registry") {
+      inRegistry = true;
+      continue;
+    }
+    if (inRegistry && /^## /.test(line)) break;
+    if (!inRegistry || !line.startsWith("|")) continue;
+    if (/^\|\s*-+/.test(line) || /\|\s*Primitive\s*\|/.test(line)) continue;
+    const cells = line.split("|").slice(1, -1).map((cell) => cell.trim());
+    if (cells.length < 6) {
+      fail(`primitives.md registry row has ${cells.length} cells, expected 6: ${line}`);
+      continue;
+    }
+    const primitiveMatch = cells[0].match(/^`([^`]+)`$/);
+    if (!primitiveMatch) {
+      fail(`primitives.md registry primitive must be a single backticked id: ${cells[0]}`);
+      continue;
+    }
+    rows.push({
+      id: primitiveMatch[1],
+      archetype: cells[1],
+      slots: [...cells[2].matchAll(/`([^`]+)`/g)].map((match) => match[1]),
+      variants: extractRegistryTokens(cells[3], "variants?"),
+      states: extractRegistryTokens(cells[3], "states?").filter((state) => state !== "data-theme"),
+      cssOwner: cells[4].replace(/^`|`$/g, ""),
+      recipes: cells[5],
+    });
+  }
+  return rows;
+}
+
+function extractRegistryTokens(text, labelPattern) {
+  const tokens = [];
+  for (const match of text.matchAll(new RegExp(`${labelPattern} ([^;]+)`, "g"))) {
+    for (const token of match[1].matchAll(/`([^`]+)`/g)) {
+      tokens.push(token[1]);
+    }
+  }
+  return tokens;
+}
+
+function extractBacktickedIds(text) {
+  return new Set([...text.matchAll(/`([a-z][a-z0-9-]+)`/g)].map((match) => match[1]));
+}
+
+function markdownSection(text, heading) {
+  const marker = `## ${heading}\n`;
+  const start = text.indexOf(marker);
+  if (start === -1) return "";
+  const bodyStart = start + marker.length;
+  const next = text.indexOf("\n## ", bodyStart);
+  return text.slice(bodyStart, next === -1 ? text.length : next);
+}
+
+function parseMarkdownTableRows(sectionText) {
+  const rows = [];
+  for (const line of sectionText.split("\n")) {
+    if (!line.startsWith("|")) continue;
+    if (/^\|\s*-+/.test(line)) continue;
+    const cells = line.split("|").slice(1, -1).map((cell) => cell.trim());
+    if (cells.length) rows.push(cells);
+  }
+  return rows;
+}
+
+function parseSingleBacktickedCell(cell) {
+  const match = cell.match(/^`([a-z][a-z0-9-]+)`$/);
+  return match ? match[1] : "";
+}
+
+function parseBaseRegistry(compositionText) {
+  const rows = parseMarkdownTableRows(markdownSection(compositionText, "Visual Base Registry"));
+  const bases = new Set();
+  for (const cells of rows.slice(1)) {
+    const id = parseSingleBacktickedCell(cells[0] || "");
+    if (!id) {
+      fail(`composition.md Visual Base Registry base must be a single backticked id: ${cells[0] || ""}`);
+      continue;
+    }
+    if (bases.has(id)) fail(`composition.md repeats base ${id}.`);
+    bases.add(id);
+  }
+  return bases;
+}
+
+function parseRecipeBaseDefaults(compositionText) {
+  const rows = parseMarkdownTableRows(markdownSection(compositionText, "Recipe Base Defaults"));
+  return rows.slice(1).map((cells) => ({
+    recipe: parseSingleBacktickedCell(cells[0] || ""),
+    base: parseSingleBacktickedCell(cells[1] || ""),
+    raw: cells.join(" | "),
+  }));
+}
+
+function parseAliasRows(compositionText) {
+  const rows = parseMarkdownTableRows(markdownSection(compositionText, "Document Alias Map"));
+  return rows.slice(1).map((cells) => ({
+    wording: cells[0] || "",
+    recipe: parseSingleBacktickedCell(cells[1] || ""),
+    base: parseSingleBacktickedCell(cells[2] || ""),
+    raw: cells.join(" | "),
+  }));
+}
+
+function recipeBlock(text, recipe) {
+  const heading = `## ${recipe}\n`;
+  const start = text.indexOf(heading);
+  if (start === -1) return "";
+  const bodyStart = start + heading.length;
+  const next = text.indexOf("\n## ", bodyStart);
+  return text.slice(bodyStart, next === -1 ? text.length : next);
+}
+
+function referenceSpecimenText(referenceHtml, primitive) {
+  const parts = referenceHtml.split(/(?=<div class="specimen">)/g);
+  const named = parts.find((part) => part.includes(`<span class="pname">${primitive}</span>`));
+  if (named) return named;
+
+  const bodyHtml = referenceHtml
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[\s\S]*?<\/script>/gi, "");
+  const primitivePattern = new RegExp(`data-primitive=(?:"${primitive}"|'${primitive}'|${primitive})`);
+  const match = bodyHtml.match(primitivePattern);
+  if (!match) return "";
+  return bodyHtml.slice(Math.max(0, match.index - 200), Math.min(bodyHtml.length, match.index + 2200));
+}
+
+function checkReferenceAnatomy({ referenceText, registry }) {
+  for (const row of registry.values()) {
+    const specimen = referenceSpecimenText(referenceText, row.id);
+    if (!specimen) {
+      fail(`html-artifact-reference.html has no inspectable specimen for registered primitive ${row.id}.`);
+      continue;
+    }
+    for (const slot of row.slots) {
+      if (!new RegExp(`data-slot=(?:"${slot}"|'${slot}'|${slot})`).test(specimen)) {
+        fail(`html-artifact-reference.html specimen ${row.id} is missing required slot ${slot}.`);
+      }
+    }
+    if (row.variants.length && !row.variants.some((variant) => specimen.includes(`data-variant="${variant}"`) || specimen.includes(`variant: ${variant}`) || specimen.includes(`>${variant}<`))) {
+      fail(`html-artifact-reference.html specimen ${row.id} does not show any documented variant.`);
+    }
+    if (row.states.length && !row.states.some((state) => specimen.includes(`data-state="${state}"`) || specimen.includes(`state: ${state}`) || specimen.includes(`>${state}<`))) {
+      fail(`html-artifact-reference.html specimen ${row.id} does not show any documented state.`);
+    }
+  }
+}
+
+function checkReferenceCompositeSpecimens(referenceText) {
+  const expected = [
+    "executive-brief",
+    "diligence-report",
+    "integration-plan",
+    "product-spec",
+    "code-review",
+    "design-qa",
+    "design-system-reference",
+    "architecture-map",
+    "system-card-eval-report",
+    "bounded-workbench",
+  ];
+  const seen = extractDataCompositeIds(referenceText);
+  for (const id of expected) {
+    if (!seen.has(id)) {
+      fail(`html-artifact-reference.html is missing composite specimen ${id}.`);
+    }
+  }
+}
+
+function checkInlineChartBackingData(referenceText) {
+  for (const match of referenceText.matchAll(/<figure\b[^>]*data-primitive="inline-chart"[\s\S]*?<\/figure>/g)) {
+    const specimen = match[0];
+    if (!/data-slot="chart"/.test(specimen)) {
+      fail("html-artifact-reference.html inline-chart specimen is missing data-slot=\"chart\".");
+    }
+    if (!/data-slot="data-table"[\s\S]*?<table\b/.test(specimen)) {
+      fail("html-artifact-reference.html inline-chart specimen must include a visible data-table with table values.");
+    }
+  }
+}
+
+function checkWorkbenchFallback(referenceText) {
+  const workbenchBoard = referenceSpecimenText(referenceText, "workbench-board");
+  if (!/data-slot="column"/.test(workbenchBoard) || !/data-slot="card"/.test(workbenchBoard)) {
+    fail("html-artifact-reference.html workbench-board specimen must include visible columns and cards for JS-disabled reading.");
+  }
+  if (!/data-slot="export"[\s\S]*data-primitive="copy-export"/.test(workbenchBoard)) {
+    fail("html-artifact-reference.html workbench-board specimen must include a copy-export control.");
+  }
+
+  const promptPreview = referenceSpecimenText(referenceText, "prompt-preview");
+  for (const slot of ["prompt", "variable", "case", "preview", "copy"]) {
+    if (!new RegExp(`data-slot="${slot}"`).test(promptPreview)) {
+      fail(`html-artifact-reference.html prompt-preview specimen is missing visible slot ${slot}.`);
+    }
+  }
+
+  const bounded = referenceText.match(/data-composite="bounded-workbench"[\s\S]*?<\/article>/);
+  if (!bounded || !/data-slot="column"/.test(bounded[0]) || !/data-slot="card"/.test(bounded[0])) {
+    fail("html-artifact-reference.html bounded-workbench composite must keep board content visible without JS.");
+  }
+}
+
+function checkRegistryClosure({ themeCss }) {
+  const primitivesPath = path.join(skillRoot, "references/primitives.md");
+  const recipesPath = path.join(skillRoot, "references/recipes.md");
+  const compositionPath = path.join(skillRoot, "references/composition.md");
+  const referencePath = path.join(skillRoot, "assets/html-artifact-reference.html");
+
+  const primitivesText = readText(primitivesPath);
+  const recipesText = readText(recipesPath);
+  const compositionText = readText(compositionPath);
+  const referenceText = readText(referencePath);
+  checkReferenceCopy(referenceText);
+
+  const registryRows = parsePrimitiveRegistry(primitivesText);
+  const registry = new Map();
+  const archetypeSections = extractArchetypeSections(primitivesText);
+  for (const row of registryRows) {
+    if (registry.has(row.id)) fail(`primitives.md registry repeats primitive ${row.id}.`);
+    registry.set(row.id, row);
+    if (!row.archetype) fail(`primitives.md registry ${row.id} is missing an archetype.`);
+    if (!archetypeSections.has(row.archetype)) {
+      fail(`primitives.md registry ${row.id} uses unknown archetype ${row.archetype}.`);
+    }
+    if (!row.slots.length) fail(`primitives.md registry ${row.id} has no required slots.`);
+    if (!row.cssOwner) fail(`primitives.md registry ${row.id} is missing a CSS owner.`);
+  }
+  if (!registry.size) fail("primitives.md must contain a non-empty Primitive Registry table.");
+
+  const themeRegions = extractThemeRegions(themeCss);
+  for (const row of registry.values()) {
+    if (row.cssOwner !== "none" && !themeRegions.has(row.cssOwner)) {
+      fail(`primitives.md registry ${row.id} uses unknown CSS owner ${row.cssOwner}.`);
+    }
+  }
+
+  const recipeSections = extractMarkdownSections(recipesText);
+  const baseIds = parseBaseRegistry(compositionText);
+  if (!baseIds.size) fail("composition.md must contain a non-empty Visual Base Registry table.");
+
+  const recipeChooser = markdownSection(compositionText, "Recipe Chooser");
+  const compositionIds = new Set(
+    recipeChooser
+      ? [...recipeChooser.matchAll(/\|\s*[^|\n]+\|\s*`([a-z][a-z0-9-]+)`\s*\|/g)]
+        .map((match) => match[1])
+      : [],
+  );
+  if (!recipeChooser) fail("composition.md must contain a Recipe Chooser section.");
+  for (const recipe of compositionIds) {
+    if (!recipeSections.has(recipe)) {
+      fail(`composition.md references recipe ${recipe}, but recipes.md has no matching section.`);
+    }
+  }
+  for (const recipe of recipeSections) {
+    if (!compositionIds.has(recipe)) {
+      fail(`recipes.md section ${recipe} is missing from composition.md Recipe Chooser.`);
+    }
+    const block = recipeBlock(recipesText, recipe);
+    for (const label of ["Use for:", "Source gates:", "Default skeleton:", "Add only when evidenced:", "Avoid:"]) {
+      if (!block.includes(label)) {
+      fail(`recipes.md section ${recipe} is missing required card label "${label}".`);
+      }
+    }
+  }
+
+  const defaultRows = parseRecipeBaseDefaults(compositionText);
+  if (!defaultRows.length) fail("composition.md must contain Recipe Base Defaults.");
+  const defaultRecipes = new Set();
+  for (const row of defaultRows) {
+    if (!row.recipe || !row.base) {
+      fail(`composition.md Recipe Base Defaults row must use backticked recipe and base ids: ${row.raw}`);
+      continue;
+    }
+    if (!recipeSections.has(row.recipe)) {
+      fail(`composition.md Recipe Base Defaults maps unknown recipe ${row.recipe}.`);
+    }
+    if (!baseIds.has(row.base)) {
+      fail(`composition.md Recipe Base Defaults maps ${row.recipe} to unknown base ${row.base}.`);
+    }
+    if (defaultRecipes.has(row.recipe)) fail(`composition.md repeats Recipe Base Defaults for ${row.recipe}.`);
+    defaultRecipes.add(row.recipe);
+  }
+  for (const recipe of recipeSections) {
+    if (!defaultRecipes.has(recipe)) {
+      fail(`recipes.md section ${recipe} is missing from composition.md Recipe Base Defaults.`);
+    }
+  }
+  for (const recipe of compositionIds) {
+    if (!defaultRecipes.has(recipe)) {
+      fail(`composition.md Recipe Chooser recipe ${recipe} has no default base.`);
+    }
+  }
+
+  const aliasRows = parseAliasRows(compositionText);
+  if (!aliasRows.length) fail("composition.md must contain Document Alias Map rows.");
+  for (const row of aliasRows) {
+    if (!row.wording) fail(`composition.md Document Alias Map row is missing document wording: ${row.raw}`);
+    if (!row.recipe || !row.base) {
+      fail(`composition.md Document Alias Map row must use backticked recipe and base ids: ${row.raw}`);
+      continue;
+    }
+    if (!recipeSections.has(row.recipe)) {
+      fail(`composition.md Document Alias Map maps unknown recipe ${row.recipe}.`);
+    }
+    if (!baseIds.has(row.base)) {
+      fail(`composition.md Document Alias Map maps ${row.wording} to unknown base ${row.base}.`);
+    }
+  }
+
+  const compositionRefs = extractBacktickedIds(compositionText);
+  const allowedCompositionRefs = new Set([
+    ...registry.keys(),
+    ...recipeSections,
+    ...archetypeSections,
+    ...baseIds,
+    "data-artifact",
+    "data-base",
+  ]);
+  for (const ref of compositionRefs) {
+    if (!allowedCompositionRefs.has(ref)) {
+      fail(`composition.md references unknown recipe, base, archetype, or primitive ${ref}.`);
+    }
+  }
+
+  const recipeRefs = extractBacktickedIds(recipesText);
+  const allowedRecipeRefs = new Set([...registry.keys(), ...recipeSections]);
+  for (const ref of recipeRefs) {
+    if (!allowedRecipeRefs.has(ref)) {
+      fail(`recipes.md references unknown primitive or recipe ${ref}.`);
+    }
+  }
+
+  const docsPrimitiveIds = new Set(
+    [...primitivesText.matchAll(/^\| `([^`]+)` \|/gm)].map((match) => match[1]),
+  );
+  for (const id of docsPrimitiveIds) {
+    if (!registry.has(id)) fail(`primitives.md table row ${id} was not parsed into the registry.`);
+  }
+
+  const referenceIds = extractDataPrimitiveIds(referenceText);
+  const referenceBases = extractDataBaseIds(referenceText);
+  const themeIds = extractDataPrimitiveIds(themeCss);
+  for (const id of referenceIds) {
+    if (!registry.has(id)) fail(`html-artifact-reference.html uses unregistered primitive ${id}.`);
+  }
+  for (const id of referenceBases) {
+    if (!baseIds.has(id)) fail(`html-artifact-reference.html uses unregistered base ${id}.`);
+  }
+  for (const id of themeIds) {
+    if (!registry.has(id)) fail(`theme.css styles unregistered primitive ${id}.`);
+  }
+  for (const id of registry.keys()) {
+    if (!referenceIds.has(id)) fail(`html-artifact-reference.html is missing a specimen for registered primitive ${id}.`);
+  }
+  checkReferenceAnatomy({ referenceText, registry });
+  checkReferenceCompositeSpecimens(referenceText);
+  checkInlineChartBackingData(referenceText);
+  checkWorkbenchFallback(referenceText);
 }
 
 function checkThemeCss(themeCss) {
@@ -163,7 +632,7 @@ function checkHtmlFile(filePath, themeCss) {
     fail(`${file}: embedded theme.css region differs from assets/theme.css.`);
   }
 
-  // The atlas is standalone HTML, so it must carry one real toggle example, but
+  // The reference sheet is standalone HTML, so it must carry one real toggle example, but
   // generated artifacts should not grow multiple competing theme controls.
   const themeToggleButtons = [...html.matchAll(/<button\b[^>]*data-primitive="theme-toggle"[^>]*>/g)];
   if (themeToggleButtons.length !== 1) {
@@ -178,12 +647,12 @@ function checkHtmlFile(filePath, themeCss) {
   if (/:root\s*\{/.test(cssBlocks)) {
     fail(`${file}: local CSS must not redefine :root tokens.`);
   }
-  // Local atlas chrome can frame specimens, but primitive styling remains owned
+  // Local reference sheet chrome can frame specimens, but primitive styling remains owned
   // by theme.css. The shell schematic is the one documented exception because
   // it labels regions of the artifact shell rather than restyling a primitive.
   for (const match of cssBlocks.matchAll(/\[data-primitive=(?:"([^"]+)"|'([^']+)'|([^\]\s]+))/g)) {
     const primitive = match[1] || match[2] || match[3];
-    if (!(file === "assets/primitive-atlas.html" && primitive === "artifact-shell")) {
+    if (!(file === "assets/html-artifact-reference.html" && primitive === "artifact-shell")) {
       fail(`${file}: local CSS targets canonical primitive ${primitive}.`);
     }
   }
@@ -215,6 +684,7 @@ function main() {
     fail("Missing assets/theme.css.");
   }
   checkThemeCss(themeCss);
+  checkRegistryClosure({ themeCss });
   for (const htmlFile of listFiles(path.join(skillRoot, "assets"), (file) => file.endsWith(".html"))) {
     checkHtmlFile(htmlFile, themeCss);
   }

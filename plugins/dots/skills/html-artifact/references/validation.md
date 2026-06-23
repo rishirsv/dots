@@ -1,4 +1,4 @@
-# Browser QA
+# Validation
 
 An artifact is not done until it has been opened and inspected in a real browser.
 The output is a single static file; the QA below proves it renders and behaves
@@ -15,8 +15,8 @@ preview never changes what you deliver.
 - **No automation dependency.** Do not add a browser-automation dependency to
   run these checks. They are manual or tool-assisted inspections.
 
-Runtime-specific browser preferences belong in the runtime's agent metadata, not
-in this reusable rule.
+Runtime-specific browser preferences belong in runtime metadata, not in this
+reusable rule.
 
 ## Proof expectation
 
@@ -65,7 +65,7 @@ in this reusable rule.
   No section is padded with placeholder prose.
 - **`polish-check`** — the first viewport states the value; sections are not
   wrapped in decorative cards; status text does not rely on color; dense content
-  uses compact rows, tables, or lists; no visible template machinery leaks.
+  uses compact rows, tables, or lists; no visible authoring scaffolding leaks.
 - **`a11y-structure-check`** — one `h1`, a sensible heading order, real landmarks
   (`main`, `nav`, `header`, `footer`), status conveyed by text/glyph as well as
   color, and adequate contrast. Confirm anatomy coverage where relevant: each
@@ -75,10 +75,9 @@ in this reusable rule.
   works with JS enabled, and status pills, warning callouts, code panels, and
   links hold contrast in both themes.
 
-## Rendered proof procedure
+## Generated Artifact Proof Procedure
 
-Run this concrete pass on the atlas and on at least one fixture from each recipe
-family before handoff:
+Run this concrete pass on the delivered artifact before handoff:
 
 1. Open the artifact in an available browser tool.
 2. Check the desktop first viewport and a full scroll to the footer.
@@ -92,6 +91,14 @@ family before handoff:
 9. Check recipe fit, polish, and dark mode.
 10. If you fall back to another browser tool because the first is unavailable or
    blocked, record the tool used and the fallback reason in the handoff.
+
+## Reference Fixture Regression
+
+When changing this source, run the rendered proof procedure on
+[../assets/html-artifact-reference.html](../assets/html-artifact-reference.html). For broad
+recipe, primitive, or theme changes, also inspect at least one fixture or sample
+from each affected recipe family when such a fixture exists. This is maintainer
+regression work, not a requirement for every generated user artifact.
 
 ## Preview fallback
 

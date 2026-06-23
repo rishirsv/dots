@@ -1,39 +1,17 @@
 # Rishi's focused Ghostty profile.
 # Built for Codex, long build logs, git-heavy work, and dense agent sessions.
 
-# Appearance: neutral, sharp, and close to Codex's dark chrome.
-background = #181818
-foreground = #f4f4f5
-cursor-color = #339cff
-selection-background = #26384d
-selection-foreground = #ffffff
+# Appearance: system-aware, translucent, and still tuned for dense agent work.
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
 
-background-opacity = 0.995
-background-blur = false
+background-opacity = 0.88
+background-blur = true
 window-padding-x = 12
 window-padding-y = 10
 window-padding-balance = true
 macos-titlebar-style = transparent
 macos-window-shadow = true
 macos-window-buttons = visible
-
-# ANSI palette: restrained base colors with strong status/error contrast.
-palette = 0=#1f1f1f
-palette = 1=#fa423e
-palette = 2=#40c977
-palette = 3=#e5b454
-palette = 4=#339cff
-palette = 5=#ad7bf9
-palette = 6=#4ec9b0
-palette = 7=#d4d4d4
-palette = 8=#6e6e6e
-palette = 9=#ff6965
-palette = 10=#63d990
-palette = 11=#f0c66a
-palette = 12=#66b8ff
-palette = 13=#c79cff
-palette = 14=#6bd7c3
-palette = 15=#ffffff
 
 # Typography: keep your cross-app CommitMono identity, but make it crisper.
 font-family = "CommitMono"

@@ -1,718 +1,573 @@
 # Artifact Recipes
 
-Recipes are profiles: a reader job, default composition, evidence-based
-primitive choices, and hard guardrails. They are not validation checklists. Pick
-the profile that matches the reader job, set its `data-artifact` on the
-`artifact-shell`, and use only the defaults the source can support.
+Recipes capture the reader job. They are compact profiles, not rigid templates:
+use the default skeleton only where the source supports it, then omit or mark
+evidence limits honestly. Every artifact starts with `artifact-shell`,
+`hero-summary`, and `theme-toggle`; body primitives come from the skeleton plus
+the registry in [primitives.md](primitives.md).
 
-Every artifact uses the global shell furniture: `artifact-shell`,
-`hero-summary`, and `theme-toggle`. Body primitives come from the recipe defaults
-and the chooser in [primitives.md](primitives.md). Default primitives are
-recommendations; hard guardrails are obligations. Omit unsupported default
-sections, or state the evidence limit, instead of padding the artifact.
-
-The capture and concepting work behind QA, audit, and Image Gen artifacts is
-owned by adjacent skills (`design-qa`, `ux-audit`, `visual-design`); these
-recipes define only the saved static document.
-
----
+The capture and concepting work behind QA, audit, and Image Gen artifacts stays
+with adjacent skills. These recipes define only the saved static document.
 
 ## explainer
 
-Reader job: make a dense concept, code path, policy, bug, architecture, or
-article legible.
+Use for:
+A dense concept, code path, policy, article, bug, or architecture that needs to
+be understood.
 
-Use when: the reader needs understanding, not a work plan or verdict.
+Source gates:
+material being explained; reader question or confusion; source files, article,
+logs, or notes read in full where relevant.
 
-Do not use when: the output is a short linear answer that belongs in chat or
-Markdown.
+Default skeleton:
+`hero-summary` -> optional `tldr` -> `step-flow` or prose sections -> optional
+`code-panel`/`code-note`/`comparison-grid` -> optional `audit-trail`.
 
-Required source inputs:
-- The material being explained, read in full.
-- The reader's actual question or confusion.
+Add only when evidenced:
+`section-nav` for four or more major sections; `callout` for one real caveat;
+`audit-trail` when external, disputed, or source-sensitive claims matter.
 
-Default story:
-1. State what this explains and the answer in the first viewport.
-2. Give a short answer only if it adds clarity beyond the hero.
-3. Walk through the body in the smallest useful sequence of sections.
-4. Surface real gotchas or caveats only when they matter.
-
-Default primitives:
-- `tldr` when the short answer needs its own block.
-- `code-panel`, `code-note`, `step-flow`, or `comparison-grid` when the source
-  needs them.
-
-Choose primitives by evidence:
-- Use `section-nav` only for four or more major sections.
-- Use `callout` for one real caveat, gotcha, or framing note.
-- Use `audit-trail` only when external or disputed sources matter.
-- Omit risk tables, milestones, findings, and exports; an explainer should be
-  the lightest recipe and should aggressively avoid overbuilding.
-
-Hard guardrails:
-- Do not invent caveats for symmetry.
-- Do not turn a simple explanation into a dashboard or plan.
-
-Browser QA focus:
-- First-viewport clarity, readable measure, contained code, working disclosure,
-  and no page overflow.
-
-Final handoff:
-- One static file whose first screen states the concept and takeaway, with each
-  section grounded in the source.
+Avoid:
+risk tables, milestone plans, fake caveats, decorative dashboards, or turning a
+short answer into a page.
 
 ## implementation-plan
 
-Reader job: turn a goal into a reviewable plan an implementer can follow.
+Use for:
+An objective that needs reviewable phases, dependencies, risks, verification,
+and next actions.
 
-Use when: the reader needs phases, dependencies, risks, verification, and next
-actions.
+Source gates:
+objective; constraints; affected systems/files; known risks; validation
+expectations.
 
-Do not use when: the artifact is reviewing an existing diff or deciding between
-options.
+Default skeleton:
+`hero-summary` -> `meta-strip` -> `scope-boundary` -> `milestone-strip` or
+`step-flow` -> `risk-table` -> `verification-matrix` -> `action-list`.
 
-Required source inputs:
-- The goal and constraints.
-- Affected files, packages, systems, or data model.
-- Known risks, decisions, and validation expectations.
+Add only when evidenced:
+`dependency-map` when ordering depends on dependencies; `acceptance-gate` when a
+real gate exists; `handoff-packet` for another implementer or team; `copy-export` for
+downstream paste.
 
-Default story:
-1. Summarize the goal, scope, and implementation surface.
-2. Show phases or an ordered flow.
-3. Explain dependencies only when ordering is non-trivial.
-4. List plan-changing risks and verification.
-5. End with concrete next actions.
-
-Default primitives:
-- `meta-strip`, `milestone-strip`, `step-flow`, `risk-table`,
-  `verification-matrix`, `action-list`.
-
-Choose primitives by evidence:
-- Use `dependency-map` when dependencies change ordering; otherwise `step-flow`
-  is enough.
-- Use `acceptance-gate` when there is a real gate.
-- Use `handoff-packet` only when another agent needs to pick it up.
-- Use `copy-export` only when the reader will paste the plan downstream.
-- Omit owner or handoff details when unknown; mark the limit instead.
-
-Hard guardrails:
-- Do not fabricate risks, owners, dates, or verification proof.
-- Keep diagrams contained; prefer a list over a decorative graph.
-
-Browser QA focus:
-- Milestone status legibility, diagram containment, risk/verification table
-  mobile behavior, and code containment.
-
-Final handoff:
-- One static file with the plan, defaults omitted and why, validation path, and
-  next actions.
+Avoid:
+owners, dates, risks, gates, or proof not present in source.
 
 ## code-review
 
-Reader job: help a human understand and act on a change.
+Use for:
+A concrete diff, PR, patch, or changed file set that needs a verdict and fixes.
 
-Use when: there is an actual diff, PR, patch, or changed file set to review.
+Source gates:
+actual diff or changed files; behavior at risk; tests touched or missing.
 
-Do not use when: there is no concrete change; use an explainer or plan.
+Default skeleton:
+`hero-summary` -> `meta-strip` -> `finding-card` list -> optional `diff-review`
+or `code-note` -> `action-list`.
 
-Required source inputs:
-- The actual diff or changed files.
-- The behavior at risk.
-- Tests touched or missing.
+Add only when evidenced:
+`risk-table` for structured behavioral risk; `callout` for one overall verdict
+or caveat; `copy-export` for a pasteable fix list.
 
-Default story:
-1. Lead with verdict, scope, and risk.
-2. Map the changed files if file roles matter.
-3. List findings ordered by severity.
-4. Show diff excerpts only where they clarify the issue.
-5. End with concrete fixes.
-
-Default primitives:
-- `meta-strip`, `finding-card`, `action-list`.
-
-Choose primitives by evidence:
-- Use `diff-review` when the diff itself makes the issue clearer.
-- Use `risk-table` when risks are structured across behaviors or surfaces.
-- Use `code-note` for line-specific reasoning.
-- Use `callout` for one overall verdict or caveat.
-- Use a compact table or prose for file mapping unless a future file-map
-  primitive is added.
-
-Hard guardrails:
-- Every finding needs a location, impact, and recommendation.
-- Do not invent a risk list when the finding itself carries the risk.
-
-Browser QA focus:
-- Severity labels not color-only, diff/code internal scrolling, and complete
-  finding anatomy.
-
-Final handoff:
-- One static file with verdict, grounded findings, relevant diff notes, and a
-  fix list.
+Avoid:
+findings without location, impact, and recommendation; invented risk lists when
+the finding already carries the risk.
 
 ## research-report
 
-Reader job: answer a question and show the evidence behind the answer.
+Use for:
+A question that needs an answer, evidence, confidence, contradictions, and gaps.
 
-Use when: the reader needs confidence, sources, contradictions, or gaps.
+Source gates:
+question; consulted sources; source claims; contradictions; unconfirmed points.
 
-Do not use when: the content is a single unsourced explanation.
+Default skeleton:
+`hero-summary` -> `tldr` -> `claim-evidence-matrix` -> `evidence-limits` ->
+`audit-trail`.
 
-Required source inputs:
-- The question.
-- Sources actually consulted and their claims.
-- Contradictions, gaps, and unconfirmed points.
+Add only when evidenced:
+`comparison-grid` when comparing options or sources; `callout` for final answer,
+one caveat, or real contradiction; `source-manifest` when input provenance matters.
 
-Default story:
-1. Lead with answer and confidence.
-2. Map claims to evidence.
-3. Show contradictions only when found.
-4. Name gaps and what they change.
-5. Include source inventory or audit trail when trust matters.
-
-Default primitives:
-- `tldr`, `claim-evidence-matrix`, `audit-trail`.
-
-Choose primitives by evidence:
-- Use the cards variant of `claim-evidence-matrix` for short reports.
-- Use `callout` for the final answer, one caveat, or real contradictions.
-- Use `evidence-limits` when missing evidence changes confidence.
-- Use `comparison-grid` only when comparing options or sources.
-- Omit a contradictions block when no contradictions were found; do not invent
-  symmetry.
-
-Hard guardrails:
-- Evidentiary honesty is mandatory: no fabricated citations, claims, searches,
-  or source inventories.
-- Unknowns must be visible when they affect the answer.
-
-Browser QA focus:
-- Matrix/card containment, source links, confidence legibility, and honest audit
-  trail.
-
-Final handoff:
-- One static file with answer, evidence, gaps or limits, and provenance.
+Avoid:
+fabricated citations, searches, source inventories, or symmetry blocks for
+contradictions that were not found.
 
 ## design-qa
 
-Reader job: compare a visual source against a rendered build and report pass,
-blocked, or evidence-limited.
+Use for:
+Source-vs-render fidelity comparison with a pass, blocked, or evidence-limited
+verdict.
 
-Use when: source and rendered captures exist.
+Source gates:
+source design/mock/screenshot/token spec; rendered captures; viewport/state
+tested.
 
-Do not use when: the work is a UX critique of an existing flow; use
-`ux-audit-report`.
+Default skeleton:
+`hero-summary` -> `meta-strip` -> `qa-metadata` -> `screenshot-gallery` ->
+`finding-card` list -> `action-list`.
 
-Required source inputs:
-- Source design, mockup, screenshot, or token spec.
-- Rendered build captures.
-- Widths and state tested.
+Add only when evidenced:
+`token-swatch` or `token-delta` for token fidelity; `evidence-limits` when state,
+theme, or viewport gaps change the verdict; `copy-export` for a pasteable fix
+list.
 
-Default story:
-1. State scope, run conditions, and verdict.
-2. Show source and render side by side.
-3. List located mismatches.
-4. Show design-specific tokens only when token fidelity is in scope.
-5. End with verdict and fixes.
-
-Default primitives:
-- `meta-strip`, `qa-metadata`, `screenshot-gallery`, `finding-card`, `callout`,
-  `action-list`.
-
-Choose primitives by evidence:
-- Use `token-swatch` or `token-delta` only for token fidelity.
-- Use `risk-table` only for regression risks, not ordinary mismatches.
-- Use `evidence-limits` when missing viewport, theme, or state changes the
-  verdict.
-- Use `copy-export` only for a fix list the reader will paste.
-
-Hard guardrails:
-- Use real captures; no placeholder screenshots.
-- Every mismatch needs a location and expected-vs-actual evidence.
-
-Browser QA focus:
-- Image containment, compare alignment, stacking on mobile, and verdict clarity.
-
-Final handoff:
-- One static file pairing source and render with located findings and a clear
-  verdict.
+Avoid:
+placeholder screenshots, mismatches without expected-vs-actual evidence, or UX
+flow critique that belongs in `ux-audit-report`.
 
 ## design-qa-detailed
 
-Reader job: assemble a richer design-QA packet with explicit coverage, evidence,
-and proposed fixes when available.
+Use for:
+A shareable, in-depth design QA packet with explicit coverage, evidence, and
+implementation actions.
 
-Use when: a basic visual QA result needs a shareable, in-depth artifact.
+Source gates:
+source design; rendered build captures; route, viewport, theme, density, and
+state; proposed revision if one exists.
 
-Do not use when: there is only a quick pass/fail with no meaningful evidence
-detail.
+Default skeleton:
+`hero-summary` -> `qa-metadata` -> `screenshot-gallery` or
+`screenshot-triptych` -> `focused-compare` -> `mismatch-ledger` ->
+`fidelity-coverage` -> `evidence-limits` -> `action-list`.
 
-Required source inputs:
-- Source design.
-- Rendered build captures.
-- Run conditions: viewport, theme, route, density, and state.
-- Proposed revision, if one exists.
+Add only when evidenced:
+`screenshot-triptych` only when source, render, and revision all exist;
+`annotation-pin` when several findings sit on one capture; `token-delta` for
+token fidelity; `revision-strip` for a concrete before/after/revised sequence.
 
-Default story:
-1. State scope, matched run conditions, and verdict.
-2. Show source/render comparison, or triptych when a revision exists.
-3. Detail mismatches at the right density.
-4. Record coverage and evidence limits.
-5. End with concrete implementation actions and final verdict.
-
-Default primitives:
-- `meta-strip`, `qa-metadata`, `screenshot-gallery`, `finding-card`,
-  `fidelity-coverage`, `evidence-limits`, `action-list`, `callout`.
-
-Choose primitives by evidence:
-- Use `screenshot-triptych` only when source, render, and revised mockup all
-  exist.
-- Use `focused-compare` when the whole screen is too coarse.
-- Use `mismatch-ledger` for many similar mismatches; use `finding-card` alone
-  for one to three high-signal findings.
-- Use `annotation-pin` when several findings sit on one screenshot.
-- Use `token-delta` only when token fidelity is in scope.
-- Omit `evidence-limits` only when missing evidence does not change the verdict.
-
-Hard guardrails:
-- Always record `qa-metadata` when comparing captures.
-- Do not imply a revised mockup exists when it does not.
-
-Browser QA focus:
-- Triptych/compare alignment, pin anchoring, image containment, state text, and
-  320px overflow.
-
-Final handoff:
-- One static file with run conditions, comparison evidence, coverage, limits,
-  actions, and verdict.
+Avoid:
+implying a revised mockup exists when it does not; claiming full coverage while
+key states or dimensions are unchecked.
 
 ## ux-audit-report
 
-Reader job: audit a product flow from ordered screenshots, with findings tied to
+Use for:
+An existing product flow audited from ordered screenshots, with findings tied to
 steps.
 
-Use when: an existing flow needs critique and prioritized recommendations.
+Source gates:
+ordered step screenshots; audited task; widths, states, and limits.
 
-Do not use when: the job is source-vs-render design fidelity QA.
+Default skeleton:
+`hero-summary` -> `qa-metadata` -> ordered `screenshot-gallery` ->
+step-tied `finding-card` list -> `evidence-limits` -> `action-list`.
 
-Required source inputs:
-- Ordered step screenshots.
-- Flow/task being audited.
-- Widths, states, and what could not be checked.
+Add only when evidenced:
+`annotation-pin` for multiple findings on one screenshot; `state-grid` for real
+state coverage; `mismatch-ledger` for repeated structured issues; `copy-export`
+for pasteable recommendations.
 
-Default story:
-1. State flow, task, surface, and capture conditions.
-2. Walk through ordered screenshots.
-3. Tie UX, design, and accessibility findings to steps.
-4. State evidence limits.
-5. End with prioritized recommendations.
-
-Default primitives:
-- `meta-strip`, `qa-metadata`, `screenshot-gallery`, `finding-card`,
-  `evidence-limits`, `action-list`.
-
-Choose primitives by evidence:
-- Use `annotation-pin` when several findings sit on one screenshot.
-- Use `state-grid` only when meaningful state coverage exists.
-- Use `mismatch-ledger` only for repeated structured issues.
-- Use `copy-export` only when recommendations need to be pasted elsewhere.
-
-Hard guardrails:
-- Findings must tie to steps or screenshots.
-- Screenshot-only limits must be stated when interaction, copy, or a11y cannot
-  be verified.
-
-Browser QA focus:
-- Ordered screenshots contained, findings tied to steps, state labels readable,
-  and no overflow.
-
-Final handoff:
-- One static file with step walkthrough, findings, limits, and recommendations.
+Avoid:
+findings not tied to a step or screenshot; claims of full accessibility
+compliance from screenshots alone.
 
 ## comparison-workbench
 
-Reader job: lay options, approaches, or before/after states side by side for a
-decision.
+Use for:
+Options, approaches, sources, or before/after states that need side-by-side
+decision support.
 
-Use when: the reader must choose or understand tradeoffs across options.
+Source gates:
+options or states; axes that matter; recommendation and rationale if known.
 
-Do not use when: there is only one option or a linear explanation.
+Default skeleton:
+`hero-summary` -> `meta-strip` -> `comparison-grid` -> optional `risk-table` or
+`constraint-ledger` -> `callout`.
 
-Required source inputs:
-- Options or states being compared.
-- Axes that matter.
-- Recommendation and rationale, if known.
+Add only when evidenced:
+`focused-compare` or `screenshot-gallery` for visual states; `audit-trail` for
+source-sensitive comparisons; `decision-log` when prior decisions matter.
 
-Default story:
-1. State the decision and recommendation.
-2. Compare options with the fewest useful axes.
-3. Add structured tables or visuals only when they clarify the comparison.
-4. End with change conditions.
-
-Default primitives:
-- `meta-strip`, `comparison-grid`, `callout`.
-
-Choose primitives by evidence:
-- Use `risk-table`, `constraint-ledger`, or `mismatch-ledger` when axes are
-  structured and more important than visuals.
-- Use `screenshot-gallery` or `focused-compare` only for visual states.
-- Use `audit-trail` only when the comparison rests on external sources.
-- Omit screenshots when they do not carry evidence.
-
-Hard guardrails:
-- Do not force a recommendation if the evidence does not support one.
-- Cap comparison columns and wrap before readability suffers.
-
-Browser QA focus:
-- Column wrapping, marked recommendation, mobile stacking, and contained visuals.
-
-Final handoff:
-- One static file with options, recommendation or stated uncertainty, and
-  rationale.
+Avoid:
+forcing a recommendation beyond the evidence or using too many side-by-side
+columns to remain readable.
 
 ## imagegen-concept-packet
 
-Reader job: present generated concept directions for a visual, with sources and
+Use for:
+Generated concept directions that need source grounding, selection state, and
 reusable prompts.
 
-Use when: concept images already exist and need a shareable packet.
+Source gates:
+concept images; brief; source references; prompts used; selected direction if
+known.
 
-Do not use when: the task is to create the concepts; that belongs to
-`visual-design`.
+Default skeleton:
+`hero-summary` -> `source-manifest` -> `concept-gallery` ->
+`imagegen-prompt-card`.
 
-Required source inputs:
-- Generated concept images.
-- Brief and source references.
-- Selected direction, if known.
-- Prompts used.
+Add only when evidenced:
+`allowed-copy-list` for approved copy; `asset-inventory` for deliverables;
+`copy-export` for reusable prompts; `handoff-packet` for accepted direction handoff.
 
-Default story:
-1. State brief and selected direction.
-2. Show source grounding.
-3. Present concepts and selection state.
-4. Provide reusable prompts.
-5. Include approved copy only when it exists.
-
-Default primitives:
-- `meta-strip`, `source-manifest`, `concept-gallery`, `imagegen-prompt-card`.
-
-Choose primitives by evidence:
-- Use `allowed-copy-list` only when copy ships with the concept.
-- Use `design-system-extract` only when real system notes were provided.
-- Use `copy-export` for prompts the reader will reuse.
-- Omit risk tables and milestones.
-
-Hard guardrails:
-- Generated concepts and assets are source material here; this recipe does not
-  generate them.
-- Do not invent source references or selected directions.
-
-Browser QA focus:
-- Concept image containment, selected state clarity, prompt cards readable with
-  JS off, and copy controls if present.
-
-Final handoff:
-- One static file with grounded sources, concepts, selection state, and prompts.
+Avoid:
+generating concepts inside this recipe, inventing sources, or inventing selected
+directions.
 
 ## design-handoff-spec
 
-Reader job: hand an accepted design to an implementer faithfully.
+Use for:
+An accepted design that needs faithful implementation.
 
-Use when: the design, assets, copy, tokens, or acceptance bar are known.
+Source gates:
+accepted design; tokens/design system if any; assets; finalized copy; required
+states; acceptance bar.
 
-Do not use when: the artifact is still exploring concepts or reviewing a render.
+Default skeleton:
+`hero-summary` -> `source-manifest` -> optional `design-system-extract` ->
+`asset-inventory` -> `allowed-copy-list` -> `state-grid` -> `acceptance-gate`
+-> `handoff-packet`.
 
-Required source inputs:
-- Accepted design.
-- Design system/tokens to match, if any.
-- Assets, finalized copy, states, and acceptance bar when known.
+Add only when evidenced:
+`token-delta` for source-vs-build token comparisons; `screenshot-gallery` for
+visual evidence; `copy-export` for implementation payloads.
 
-Default story:
-1. State surface and target.
-2. Extract design system or token notes when they exist.
-3. List assets and approved copy only when provided.
-4. State required states and acceptance criteria.
-5. End with handoff details.
-
-Default primitives:
-- `meta-strip`, `acceptance-gate`, `handoff-packet`.
-
-Choose primitives by evidence:
-- Use `design-system-extract` only when design-system inputs exist.
-- Use `asset-inventory` only for real deliverable assets.
-- Use `allowed-copy-list` only for finalized copy.
-- Use `state-grid` only for required states or breakpoints.
-- Use `token-delta` or `screenshot-gallery` only when source evidence supports
-  them.
-
-Hard guardrails:
-- Do not fabricate assets, copy, tokens, or states.
-- Acceptance criteria must be testable.
-
-Browser QA focus:
-- Token/asset tables contained, exact copy strings, state coverage, and
-  acceptance criteria readability.
-
-Final handoff:
-- One static file with known design inputs, omitted defaults and why, and an
-  explicit acceptance bar.
+Avoid:
+fabricated assets, copy, states, tokens, or non-testable acceptance criteria.
 
 ## architecture-map
 
-Reader job: make a system's structure, boundaries, and flow legible.
+Use for:
+System structure, boundaries, components, dependencies, and flow.
 
-Use when: the reader needs components, dependencies, and data/control flow.
+Source gates:
+components and roles; flow between components; dependencies; scope boundaries.
 
-Do not use when: the output is a build plan or migration plan.
+Default skeleton:
+`hero-summary` -> `meta-strip` -> `scope-boundary` -> `step-flow` ->
+`dependency-map`.
 
-Required source inputs:
-- Components and roles.
-- Flow between components.
-- Dependencies and boundaries.
+Add only when evidenced:
+`comparison-grid` for component alternatives; `code-panel` for code that
+clarifies architecture; `constraint-ledger` for binding architecture constraints.
 
-Default story:
-1. State system and scope.
-2. Show the primary flow with the lightest useful structure.
-3. Show dependencies only when they matter.
-4. Detail components as needed.
-5. Draw the boundary.
-
-Default primitives:
-- `meta-strip`, `step-flow`, `scope-boundary`.
-
-Choose primitives by evidence:
-- Use `dependency-map` when dependencies affect understanding.
-- Use a contained diagram only when it is clearer than a list.
-- Use `comparison-grid` for component alternatives or roles.
-- Use `code-panel` only for code that clarifies the architecture.
-- Omit graph-like diagrams when they become hairballs.
-
-Hard guardrails:
-- Boundaries must be explicit.
-- Do not create fake graph structure for visual polish.
-
-Browser QA focus:
-- Diagram/list containment, top-to-bottom flow, boundary clarity, and no
-  overflow.
-
-Final handoff:
-- One static file showing components, flow/dependencies where useful, and scope
-  boundaries.
+Avoid:
+fake graph structure, hairball diagrams, or unclear boundaries.
 
 ## migration-plan
 
-Reader job: plan a migration with phases, dependencies, risks, gates, and
-rollback.
+Use for:
+Moving from one state, system, process, or data shape to another.
 
-Use when: the work moves from one state/system/process to another.
+Source gates:
+from/to states; affected systems and data; cutover or rollback strategy; risks,
+owners, and verification where known.
 
-Do not use when: the work is a generic implementation plan with no migration
-state.
+Default skeleton:
+`hero-summary` -> `scope-boundary` -> `state-grid` -> `milestone-strip` ->
+`dependency-map` -> `risk-table` -> `verification-matrix` ->
+`acceptance-gate`.
 
-Required source inputs:
-- From/to states.
-- Affected systems and data.
-- Cutover/rollback strategy when known.
-- Risks, owners, and verification evidence when known.
+Add only when evidenced:
+`owner-matrix` for named owners; `handoff-packet` for continuation; `step-flow`
+when phases are better read as procedure; `action-list` for follow-up.
 
-Default story:
-1. State from/to state, scope, and blast radius.
-2. Show phases and dependencies.
-3. List migration and rollback risks.
-4. Show gates and verification where known.
-5. Include owners and handoff only when supported.
-
-Default primitives:
-- `meta-strip`, `scope-boundary`, `milestone-strip`, `dependency-map`,
-  `risk-table`, `verification-matrix`, `acceptance-gate`.
-
-Choose primitives by evidence:
-- Use `owner-matrix` when named owners are known; mark unknowns otherwise.
-- Use `handoff-packet` only when another agent needs to continue.
-- Use `step-flow` when phases are better read as procedure.
-- Use `action-list` for migration follow-up actions.
-- Omit or mark limited any owner, verification, or gate detail not supported by
-  source.
-
-Hard guardrails:
-- Do not fabricate named owners, rollback proof, dates, or verification.
-- Cutover/rollback uncertainty must be visible.
-
-Browser QA focus:
-- Phase status, contained matrices, gate/rollback clarity, and mobile collapse.
-
-Final handoff:
-- One static file with scope, phases, dependencies, risks, known gates,
-  verification, and unknowns.
+Avoid:
+invented rollback proof, dates, owners, or cutover certainty.
 
 ## release-readiness
 
-Reader job: show whether a release is ready to ship.
+Use for:
+A release boundary with gates, verification status, risks, and go/no-go.
 
-Use when: there are release gates, verification status, risks, and a go/no-go
-decision.
+Source gates:
+release scope; verification status and proof; open risks; owners when known;
+measured budgets when relevant.
 
-Do not use when: there is no verification or release boundary.
+Default skeleton:
+`hero-summary` -> `acceptance-gate` -> `verification-matrix` -> `risk-table`
+-> `action-list`.
 
-Required source inputs:
-- Release scope.
-- Verification status and proof.
-- Open risks and owners when known.
-- Measured performance/size budgets when relevant.
+Add only when evidenced:
+`owner-matrix` for release owners; `performance-budget` for measured metrics;
+`render-proof` for actual browser/render evidence; `copy-export` for release
+notes or action payload.
 
-Default story:
-1. State scope and go/no-go read in the first viewport.
-2. Show gates and verification.
-3. Show open risks.
-4. Add measured budgets or render proof only when real.
-5. End with decision and required actions.
-
-Default primitives:
-- `meta-strip`, `acceptance-gate`, `verification-matrix`, `risk-table`,
-  `callout`, `action-list`.
-
-Choose primitives by evidence:
-- Use `owner-matrix` only when release owners are known.
-- Use `performance-budget` only for measured metrics.
-- Use `render-proof` only when actual browser/render checks are release
-  evidence.
-- Use `copy-export` only for a downstream release note or action list.
-
-Hard guardrails:
-- Go/no-go must be visible and grounded.
-- Do not invent measured budgets, owners, or proof.
-
-Browser QA focus:
-- Gate states, contained matrices, first-viewport go/no-go, and contrast.
-
-Final handoff:
-- One static file with release decision, gates, verification, risks, and
-  evidence limits.
+Avoid:
+hidden go/no-go, invented budgets, invented owners, or unverifiable proof.
 
 ## eval-report
 
-Reader job: report what was evaluated, how it scored, and what conclusion follows.
+Use for:
+Evaluation results with cases, criteria, scores, evidence, limits, and a
+conclusion.
 
-Use when: cases, criteria, scores, and evidence exist.
+Source gates:
+evaluation question; cases; criteria; scores; evidence; inconclusive or
+out-of-scope areas.
 
-Do not use when: the output is just an implementation plan for an eval.
+Default skeleton:
+`hero-summary` -> `tldr` -> `verification-matrix` ->
+`claim-evidence-matrix` -> `evidence-limits` -> `audit-trail`.
 
-Required source inputs:
-- Evaluation question.
-- Cases, criteria, and scores.
-- Evidence behind scores.
-- Inconclusive or out-of-scope areas.
+Add only when evidenced:
+`comparison-grid` for candidate comparisons; `risk-table` when risk is the
+scoring dimension; `copy-export` for reusable result summaries.
 
-Default story:
-1. State conclusion and confidence.
-2. Show scorecard.
-3. Map conclusions to evidence.
-4. State limits.
-5. Include run/audit trail.
-
-Default primitives:
-- `tldr`, `verification-matrix`, `claim-evidence-matrix`, `evidence-limits`,
-  `audit-trail`.
-
-Choose primitives by evidence:
-- Use a plain table or `verification-matrix` for case x criterion scorecards.
-- Use `risk-table` only when risk is the real scoring dimension.
-- Use `comparison-grid` when comparing candidates.
-- Use `copy-export` only for reusable result summaries.
-
-Hard guardrails:
-- Do not hide inconclusive results.
-- Scores must map to evidence.
-
-Browser QA focus:
-- Scorecard containment, evidence mapping, limits, and audit trail specificity.
-
-Final handoff:
-- One static file with conclusion, scored results, evidence, limits, and audit
-  trail.
+Avoid:
+hidden inconclusive results or scores that do not map to evidence.
 
 ## decision-brief
 
-Reader job: frame a decision, options, constraints, recommendation, and change
-conditions.
+Use for:
+A decision, options, constraints, recommendation, and change conditions.
 
-Use when: the reader needs to choose or ratify a recommendation.
+Source gates:
+decision to make; options; constraints; recommendation and reasoning if known;
+prior decisions if any.
 
-Do not use when: the artifact is simply comparing states with no decision.
+Default skeleton:
+`hero-summary` -> `tldr` -> `constraint-ledger` -> `comparison-grid` ->
+`callout`.
 
-Required source inputs:
-- Decision to be made.
-- Options and constraints.
-- Recommendation and reasoning, if known.
-- Prior decisions, if any.
+Add only when evidenced:
+`decision-log` for actual prior decisions; `risk-table` for structured change
+conditions; `copy-export` for downstream decision payloads.
 
-Default story:
-1. Lead with recommendation or stated uncertainty.
-2. Show constraints.
-3. Compare options.
-4. Record prior decisions only when they exist.
-5. State what would change the recommendation.
-
-Default primitives:
-- `tldr`, `constraint-ledger`, `comparison-grid`, `callout`.
-
-Choose primitives by evidence:
-- Use `decision-log` only when prior decisions exist.
-- Use `risk-table` for structured change conditions or tradeoffs.
-- Use `copy-export` only when the brief will be pasted downstream.
-
-Hard guardrails:
-- Do not force a recommendation beyond the evidence.
-- Constraints must have implications.
-
-Browser QA focus:
-- Recommendation visibility, option wrapping, and contained tables.
-
-Final handoff:
-- One static file with recommendation or uncertainty, options, constraints, and
-  decision history when present.
+Avoid:
+forcing a recommendation beyond the evidence or listing constraints without
+implications.
 
 ## postmortem
 
-Reader job: reconstruct an incident with timeline, impact, root cause, and
-corrective actions.
+Use for:
+An incident timeline, impact, root cause, contributing factors, and corrective
+actions.
 
-Use when: timeline, impact, causes, and actions are grounded in incident
-evidence.
+Source gates:
+incident timeline; measured impact or explicit unknown; root cause; contributing
+factors; corrective actions; owners when known.
 
-Do not use when: there is no incident evidence; use a plan or explainer.
+Default skeleton:
+`hero-summary` -> `meta-strip` -> `step-flow` -> `callout` -> `action-list`.
 
-Required source inputs:
-- Incident timeline.
-- Measured impact.
-- Root cause and contributing factors.
-- Corrective actions and owners when known.
+Add only when evidenced:
+`risk-table` for impact or recurring risk patterns; `verification-matrix` for
+action confirmation; `owner-matrix` for known ownership; `audit-trail` for
+traceability; `decision-log` for real incident decisions.
 
-Default story:
-1. State impact, duration, severity, and root cause.
-2. Show timeline.
-3. Explain impact and contributing factors.
-4. List corrective actions.
-5. Show verification for actions when known.
+Avoid:
+unmeasured impact presented as fact, invented owners, or corrective action proof
+not present in source.
 
-Default primitives:
-- `meta-strip`, `step-flow`, `callout`, `action-list`.
+## status-report
 
-Choose primitives by evidence:
-- Use `risk-table` for impact details or recurring risk patterns.
-- Use `verification-matrix` when corrective actions have confirmation paths.
-- Use `owner-matrix` when action ownership is known.
-- Use `audit-trail` when incident evidence needs traceability.
-- Use `decision-log` only for actual decisions with rationale, not ordinary
-  action items.
+Use for:
+Progress, blockers, decisions needed, recent movement, and next actions.
 
-Hard guardrails:
-- Impact must be measured or explicitly marked unknown.
-- Do not assign owners or verification proof without source support.
+Source gates:
+reporting period; current status; completed work; blockers; decisions needed;
+next actions; dates or owners only when known.
 
-Browser QA focus:
-- Timeline order, grounded impact, action status text, and containment.
+Default skeleton:
+`hero-summary` -> `meta-strip` -> `milestone-strip` -> `risk-table` ->
+`decision-log` -> `action-list`.
 
-Final handoff:
-- One static file with timeline, impact, cause, actions, owners when known, and
-  verification limits.
+Add only when evidenced:
+`owner-matrix` for named ownership; `verification-matrix` for objective proof;
+`copy-export` for a pasteable update.
+
+Avoid:
+invented dates, percent-complete theater, generic morale copy, or fake status
+metrics.
+
+## qa-packet
+
+Use for:
+Test evidence, failures, retest status, acceptance proof, and unresolved
+verification limits.
+
+Source gates:
+tested scope; commands or test surfaces; pass/fail results; failures; retest
+state; acceptance criteria where known.
+
+Default skeleton:
+`hero-summary` -> `qa-metadata` -> `verification-matrix` -> `render-proof` ->
+`evidence-limits` -> `action-list`.
+
+Add only when evidenced:
+`screenshot-gallery` for visual proof; `mismatch-ledger` for structured
+failures; `performance-budget` for measured budgets; `copy-export` for a test
+handoff.
+
+Avoid:
+claiming coverage from a narrow check, hiding failed retests, or using mock
+proof as release proof.
+
+## briefing-deck
+
+Use for:
+A static client or internal narrative that should read like a short deck while
+remaining one accessible page.
+
+Source gates:
+audience; narrative arc; key recommendation or update; sections; evidence or
+examples for each section.
+
+Default skeleton:
+`hero-summary` -> optional `section-nav` -> `meta-strip` -> `step-flow` or
+prose sections -> `comparison-grid` -> `callout`.
+
+Add only when evidenced:
+`screenshot-gallery` or `concept-gallery` for visual material;
+`claim-evidence-matrix` for source-sensitive claims; `copy-export` for a
+speaker-note payload.
+
+Avoid:
+slide-app behavior, auto-advancing motion, decorative section cards, or claims
+that lack supporting material.
+
+## product-spec
+
+Use for:
+A PRD, RFC, or feature spec with problem, scope, design, acceptance criteria,
+launch risk, and rollout notes.
+
+Source gates:
+problem; users; scope; non-scope; design or behavior; acceptance criteria;
+risks; launch or validation expectations.
+
+Default skeleton:
+`hero-summary` -> `scope-boundary` -> `state-grid` -> `acceptance-gate` ->
+`risk-table` -> `verification-matrix`.
+
+Add only when evidenced:
+`design-system-extract` for design requirements; `dependency-map` for sequencing;
+`owner-matrix` for real ownership; `handoff-packet` for implementation.
+
+Avoid:
+invented user research, fake success metrics, or acceptance criteria that cannot
+be checked.
+
+## proposal-pack
+
+Use for:
+A proposal, scope summary, approach, timeline, assumptions, and decision path.
+
+Source gates:
+client or stakeholder need; proposed scope; approach; timeline or phases;
+assumptions; exclusions; next decision.
+
+Default skeleton:
+`hero-summary` -> `tldr` -> `scope-boundary` -> `step-flow` ->
+`constraint-ledger` -> `handoff-packet`.
+
+Add only when evidenced:
+`milestone-strip` for dated phases; `owner-matrix` for delivery roles;
+`comparison-grid` for options; `copy-export` for reusable proposal copy.
+
+Avoid:
+over-promising scope, invented staffing, unsupported dates, or sales copy that
+obscures constraints.
+
+## diligence-report
+
+Use for:
+Diligence thesis, red flags, evidence quality, issue implications, and follow-up
+questions.
+
+Source gates:
+diligence scope; reviewed evidence; thesis or answer; issues; confidence;
+unknowns; follow-up needs.
+
+Default skeleton:
+`hero-summary` -> `tldr` -> `claim-evidence-matrix` -> `risk-table` ->
+`constraint-ledger` -> `evidence-limits` -> `audit-trail`.
+
+Add only when evidenced:
+`source-manifest` for input provenance; `comparison-grid` for options or peer
+sets; `owner-matrix` for diligence follow-ups; `copy-export` for question lists.
+
+Avoid:
+deal conclusions beyond the source, invented financial values, or treating
+absence of evidence as proof.
+
+## value-creation-plan
+
+Use for:
+Value levers, synergy thesis, margin opportunities, scenarios, dependencies,
+and initiative roadmap.
+
+Source gates:
+baseline or explicit unknown; value levers; assumptions; dependencies; risks;
+implementation path.
+
+Default skeleton:
+`hero-summary` -> `comparison-grid` -> `constraint-ledger` ->
+`milestone-strip` -> `risk-table` -> `verification-matrix`.
+
+Add only when evidenced:
+`claim-evidence-matrix` for sourced levers; `owner-matrix` for initiative
+ownership; `dependency-map` for sequencing; `copy-export` for initiative briefs.
+
+Avoid:
+fabricated synergy numbers, unsupported savings claims, or treating a scenario
+as committed plan.
+
+## design-system-reference
+
+Use for:
+Tokens, components, variants, states, assets, accepted copy, and implementation
+handoff for a visual system.
+
+Source gates:
+accepted design or product surface; tokens; components; states; assets;
+approved copy; acceptance expectations.
+
+Default skeleton:
+`hero-summary` -> `source-manifest` -> `design-system-extract` ->
+`token-swatch` -> `state-grid` -> `asset-inventory` -> `allowed-copy-list`.
+
+Add only when evidenced:
+`screenshot-gallery` for rendered examples; `acceptance-gate` for handoff;
+`copy-export` for implementation payloads; `fidelity-coverage` for QA status.
+
+Avoid:
+inventing tokens, components, states, or copy not present in the accepted design.
+
+## system-card
+
+Use for:
+System behavior, intended use, capabilities, limitations, risks, eval evidence,
+and mitigations.
+
+Source gates:
+system description; intended users or uses; capabilities; limitations; evals or
+tests; risks; mitigations; evidence gaps.
+
+Default skeleton:
+`hero-summary` -> `tldr` -> `verification-matrix` ->
+`claim-evidence-matrix` -> `risk-table` -> `evidence-limits`.
+
+Add only when evidenced:
+`comparison-grid` for candidates or versions; `render-proof` for live behavior
+proof; `audit-trail` for source-sensitive claims; `copy-export` for review
+payloads.
+
+Avoid:
+model-card theater without evidence, hidden limitations, or risk mitigations
+that were not actually evaluated.
+
+## bounded-workbench
+
+Use for:
+A tiny single-purpose review, prioritization, tuning, or export surface embedded
+in a static document.
+
+Source gates:
+visible dataset; task-specific controls; export payload; fallback content; clear
+review or editing purpose.
+
+Default skeleton:
+`hero-summary` -> `state-grid` -> `comparison-grid` -> `action-list` ->
+`copy-export`.
+
+Add only when evidenced:
+`verification-matrix` for acceptance checks; `callout` for constraints;
+`evidence-limits` for data or interaction limits; `render-proof` for behavior
+proof.
+
+Avoid:
+persistence, hidden state, backend assumptions, rich app behavior, or controls
+whose content disappears with JS disabled.

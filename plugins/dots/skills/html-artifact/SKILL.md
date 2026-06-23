@@ -11,7 +11,7 @@ layer** — the rich, shareable artifact other work hands off to. It is not app
 UI, not a renderer, not a JSON intermediate representation, and not a general
 test platform. Author it in semantic HTML, style it from
 [assets/theme.css](assets/theme.css), use
-[references/style-rationale.md](references/style-rationale.md) for visual
+[references/design.md](references/design.md) for visual
 judgment, give every block a predictable anatomy, verify it in a browser, and
 hand off a single static file.
 
@@ -20,19 +20,18 @@ hand off a single static file.
 1. Decide whether HTML is warranted (otherwise answer in chat or Markdown).
 2. Identify the reader job and the one decision, understanding, or action the
    artifact should produce.
-3. Pick a recipe profile from [references/recipes.md](references/recipes.md),
-   not a rigid template.
+3. Load [references/composition.md](references/composition.md), map the user's
+   document wording to a recipe when needed, pick a visual base, and choose the
+   smallest primitive set that serves the reader job.
 4. Use the global shell every time: `artifact-shell`, `hero-summary`, and
    `theme-toggle`.
-5. Choose body primitives from the recipe defaults and the primitive chooser in
-   [references/primitives.md](references/primitives.md), reading only the
-   relevant primitive entries plus the canonical CSS in
-   [assets/theme.css](assets/theme.css) and the browser checks in
-   [references/browser-checks.md](references/browser-checks.md).
+5. Read the chosen recipe card in [references/recipes.md](references/recipes.md)
+   and use the archetype grammar plus primitive registry in
+   [references/primitives.md](references/primitives.md).
 6. Omit unsupported default sections and mark gaps honestly; run the polish and
    tightness pass from [references/authoring.md](references/authoring.md).
 7. Check it in a browser at desktop, ~375px mobile, and a 320px reflow width.
-8. Hand off the recipe, primitives used, defaults omitted and why, source
+8. Hand off the recipe, base, primitives used, defaults omitted and why, source
    grounding, browser QA widths and overflow result, and any unknowns or
    evidence limits.
 
@@ -85,31 +84,29 @@ worse in HTML because it looks authoritative. If a value is unknown, say so in
 the artifact rather than inventing it. Never fill space with lorem ipsum or
 placeholder metrics.
 
-## Artifact selection workflow
+## Selection Details
 
-1. Name the reader job and the one decision, understanding, or action it should
-   produce.
-2. Pick a recipe profile from [references/recipes.md](references/recipes.md) — from
-   `explainer`, `implementation-plan`, `code-review`, `research-report`,
-   `design-qa`, `design-qa-detailed`, `ux-audit-report`, `comparison-workbench`,
-   `imagegen-concept-packet`, `design-handoff-spec`, `architecture-map`,
-   `migration-plan`, `release-readiness`, `eval-report`, `decision-brief`, or
-   `postmortem`. Set its `data-artifact` value on the shell.
-3. Start with the global shell primitives, then assemble the body from recipe
-   defaults and the chooser in [references/primitives.md](references/primitives.md).
-   Prefer a catalog primitive over a one-off layout when one fits, and adapt or
-   extend a primitive when the source needs it.
-4. Author per [references/authoring.md](references/authoring.md): semantic HTML,
-   predictable anatomy, static runtime rules, the polish and tightness pass, and
-   contamination controls.
-5. Apply [assets/theme.css](assets/theme.css) as the single runtime style source:
-   inline the marked canonical CSS block verbatim, then add only
-   artifact-specific local CSS that does not redefine root tokens or target
-   canonical `[data-primitive=...]` selectors. Use
-   [references/style-rationale.md](references/style-rationale.md) for design
-   judgment; do not copy style rationale into the reader body.
-6. Verify in a browser per [references/browser-checks.md](references/browser-checks.md)
-   at desktop and mobile widths, then fix before handoff.
+Set the shell's `data-artifact` value to the chosen recipe ID from
+[references/recipes.md](references/recipes.md) and its `data-base` value to the
+chosen base from [references/composition.md](references/composition.md). The
+selection path is:
+
+```text
+document type -> recipe -> base -> primitives
+```
+
+Start with the global shell primitives, then assemble the body from supported
+recipe defaults, base rhythm, and the archetype registry in
+[references/primitives.md](references/primitives.md). Prefer a catalog
+primitive over a one-off layout when one fits, and extend a primitive only when
+the source needs a recurring structure the registry does not cover.
+
+Apply [assets/theme.css](assets/theme.css) as the single runtime style source:
+inline the marked canonical CSS block verbatim, then add only artifact-specific
+local CSS that does not redefine root tokens or target canonical
+`[data-primitive=...]` selectors. Use
+[references/design.md](references/design.md) for design
+judgment; do not copy design guidance into the reader body.
 
 ## Composition rule
 
@@ -130,25 +127,26 @@ owns appearance; the document must still read top-to-bottom if CSS and JS fail.
 
 Borrow shadcn's discipline as plain HTML structure, not as a dependency: no
 React, no Tailwind runtime, no shadcn CLI, no component package. Every artifact
-exposes a predictable anatomy through data attributes so a later agent can
+exposes a predictable anatomy through data attributes so a future editor can
 inspect, revise, and extend it without guessing:
 
 - `data-artifact` — the recipe on the page shell, e.g. `implementation-plan`
+- `data-base` — the visual base on the page shell, e.g. `plan-roadmap`
 - `data-primitive` — one per reusable block, e.g. `risk-table`
 - `data-slot` — a named part inside a primitive, e.g. `heading`, `summary`, `evidence`
 - `data-variant` — a documented visual or density variant, only when one exists
 - `data-state` — a meaningful UI or review state, only when state changes the read
 
-CSS selectors may target these attributes, but the reader text the agent writes
-must never expose template machinery (no visible slot names, type labels, or
-"primitive" chrome).
+CSS selectors may target these attributes, but reader-facing text must never
+expose authoring scaffolding (no visible slot names, type labels, or
+implementation chrome).
 
-## Browser QA requirement
+## Validation requirement
 
 An artifact is not done until it has been opened and inspected in a browser at a
 desktop and a ~375px mobile width, plus a 320px reflow check, with no accidental
 page-level horizontal overflow and with tables, code, and screenshots contained.
-Run the checks in [references/browser-checks.md](references/browser-checks.md)
+Run the checks in [references/validation.md](references/validation.md)
 and fix the artifact before final handoff.
 
 Inspect the rendered artifact in an available browser tool for every rendered
@@ -159,26 +157,25 @@ to inspect — but the delivered artifact stays a single static file.
 
 ## Portable payload rule
 
-The shipped skill payload must stay reusable. Runtime references and atlas copy
-must not include provider names, raw research links, scratch paths, one-off plan
-filenames, session notes, thread IDs, or source-specific provenance unless they
-are the user's source material for the artifact being generated. Demo content in
-the atlas must be generic to artifact work.
+The shipped source must stay reusable. Reference copy must not include provider
+names, raw research links, scratch paths, one-off plan filenames, session notes,
+thread IDs, or source-specific provenance unless they are the user's source
+material for the artifact being generated. Demo content in the reference sheet
+must use neutral artifact scenarios.
 
 ## Handoff shape
 
 Deliver one self-contained `.html` file: inline CSS, no required CDN, no build
-step, no server, optional tiny inline JS only. State the recipe used, primitives
-used, defaults omitted and why, source grounding, browser QA performed (widths
-checked and overflow result), and unknowns or evidence limits.
+step, no server, optional tiny inline JS only. State the recipe and base used,
+primitives used, defaults omitted and why, source grounding, browser QA
+performed (widths checked and overflow result), and unknowns or evidence limits.
 
-## Non-goals
+## What This Does Not Produce
 
-This skill does not build a runtime renderer or JSON IR, a Tailwind or shadcn
-component library, a React app, a general eval platform, theme packs, or a rich
-custom editor. The skill-owned validation helpers under `scripts/` are allowed:
-they check the contract this skill ships, are run by development verification,
-and are not bundled into generated reader artifacts. It does not vendor Pico,
-missing.css, Open Props, Tailwind, shadcn, Web Awesome, Prism, Mermaid, or
+This skill does not build a renderer or JSON IR, a Tailwind or shadcn component
+library, a React app, a general eval platform, theme packs, or a rich custom
+editor. Development validation helpers under `scripts/` check the shipped
+contract and are not bundled into generated reader artifacts. It does not vendor
+Pico, missing.css, Open Props, Tailwind, shadcn, Web Awesome, Prism, Mermaid, or
 Chart.js — those are inspiration and research references only. It produces
 grounded, static, single-file HTML documents and nothing heavier.

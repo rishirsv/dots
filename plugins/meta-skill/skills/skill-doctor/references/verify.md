@@ -100,6 +100,9 @@ Use inspectable checks, not taste labels:
 - No generated packages, installed plugin caches, synced config targets, or
   child worktree copies were promoted accidentally.
 - New guidance is tied to the approved finding or reported failure.
+- For cleanup or contamination fixes, the same task-local hygiene query was
+  rerun across shipped payload, visible fixture text, and copy/export payloads;
+  any allowed hits are named with the reason they remain.
 - Verify did not copy evaluator suite mechanics into Skill Doctor; broader
   measurement remains owned by `skill-evaluator`.
 

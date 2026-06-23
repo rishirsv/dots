@@ -49,6 +49,10 @@ Implementation, and Validation percentages.**
   templates, agent prompts, and HTML fixture text as future user- or
   agent-facing payload, not as harmless scratch evidence. Source-specific demo
   text in a shipped fixture is still runtime contamination.
+- **Separate maintainer scaffolding from shipped copy.** Visible examples,
+  reference fixtures, copy/export payloads, and reader-facing docs should not
+  expose system/developer/meta prompt language, skill-building terminology, or
+  internal validation machinery unless that language is the user's real output.
 - **Check the opening contract first.** The first prose block after the title
   should tell the agent what this skill helps it do, the default operating path,
   and the main boundary in plain language. Penalize intro blocks that stitch
@@ -78,6 +82,8 @@ Before assigning final Judge scores, inspect the full shipped skill payload:
 - scripts, examples, templates, assets, and fixtures
 - user-visible text inside HTML, Markdown examples, screenshots-as-code, or
   other bundled artifacts
+- copy/export payloads, fixture labels, first-viewport text, alt text, button
+  text, and other strings a future reader could see or copy
 
 Build a task-local contamination query from the evidence you are reviewing, then
 run it across the skill directory with `rg -n --hidden -S`. Do not bake incident
@@ -94,6 +100,15 @@ The scan must cover these classes:
 - named people, articles, companies, or source titles preserved from research
   when the shipped skill should be reusable
 - version labels or scratch artifact names that imply a draft/research lineage
+- system/developer/user prompt-role terms, "meta" language, or policy phrasing
+  that is not part of the target skill's actual user-facing job
+- skill-authoring or maintainer terms leaking into reusable reader examples,
+  such as "skill", "agent", "runtime", "template machinery", internal data
+  attributes, validator names, fixture names, or local reference paths, when the
+  example should read like a normal user artifact
+- planning scaffolding labels such as "goals", "non-goals", "roadmap",
+  "migration plan", or "big bet" when they are inherited from a source prompt
+  or design discussion instead of being the artifact's natural reader contract
 
 Record the sweep in the review output with:
 
@@ -101,6 +116,8 @@ Record the sweep in the review output with:
 - terms or classes scanned
 - allowed hits, with why they are real runtime dependencies or harmless examples
 - findings, with file paths and the smallest cleanup
+- visible/copyable surfaces checked, including any HTML fixtures and export
+  payloads
 
 Score caps:
 
@@ -109,6 +126,9 @@ Score caps:
   agents could see, cap **Directive Quality** at 1 until cleaned.
 - If bundled demos, fixtures, templates, or assets contain contaminated example
   text, cap **Progressive Disclosure** at 2 until cleaned.
+- If visible HTML, fixture labels, or copy/export payloads expose internal
+  anatomy, prompt roles, local paths, or skill-maintainer vocabulary, cap
+  **Directive Quality** at 1 and **Progressive Disclosure** at 2 until cleaned.
 - If contamination appears in the description or opening contract, cap
   **Trigger Term Quality** at 2 and **Workflow Clarity** at 2 until cleaned.
 - A review with unresolved payload contamination should not score above 90
