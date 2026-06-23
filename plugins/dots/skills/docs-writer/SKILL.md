@@ -1,6 +1,6 @@
 ---
 name: docs-writer
-description: "Writes and updates durable repository documentation that is clear for humans and structured for agents to discover and maintain: READMEs, concepts, how-tos, tutorials, references, runbooks, ADR/design notes, troubleshooting, and changelog or release-note prose. Use when creating or revising reader-facing Markdown docs; not for AGENTS.md/project instruction maintenance, code comments only, one-off chat explanations, git-derived changelogs, PR/publish workflows, or broad implementation."
+description: "Use when writing, revising, or reviewing durable repository documentation such as README files, Markdown docs, concept docs, how-tos, tutorials, runbooks, ADRs/design notes, troubleshooting guides, release notes, changelogs, PRDs, or agent-readable knowledge bundles; not for AGENTS.md/project instructions, code comments only, one-off chat explanations, git-derived changelogs, PR/publish workflows, or broad implementation."
 ---
 
 # Docs Writer

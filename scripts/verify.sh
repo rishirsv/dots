@@ -39,7 +39,9 @@ while IFS= read -r -d '' file; do
 done < <(
   find . \
     -path './.git' -prune -o \
+    -path './.agents' -prune -o \
     -path './dist' -prune -o \
+    -path '*/node_modules' -prune -o \
     -path '*/.*/runs' -prune -o \
     -path '*/.*/workspaces' -prune -o \
     -type f -name '*.md' -print0

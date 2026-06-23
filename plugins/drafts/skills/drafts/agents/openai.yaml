@@ -1,0 +1,8 @@
+interface:
+  display_name: "Drafts"
+  short_description: "Route stateful writing work"
+  brand_color: "#2563EB"
+  default_prompt: "Use $drafts to write, revise, review, or transform a durable draft with stateful writing context."
+
+policy:
+  allow_implicit_invocation: true

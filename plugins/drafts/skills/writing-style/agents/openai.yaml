@@ -1,0 +1,8 @@
+interface:
+  display_name: "Writing Style"
+  short_description: "Build and inspect writing styles"
+  brand_color: "#2563EB"
+  default_prompt: "Use $writing-style to create, update, or inspect a writing style and its sample evidence."
+
+policy:
+  allow_implicit_invocation: true
