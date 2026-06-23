@@ -52,6 +52,9 @@ enabled = true
 [plugins."meta-skill@dots"]
 enabled = true
 
+[plugins."drafts@dots"]
+enabled = true
+
 [projects."/Users/rishi/Code/agent"]
 trust_level = "trusted"
 

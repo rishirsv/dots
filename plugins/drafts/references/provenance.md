@@ -3,49 +3,75 @@
 Use this reference before reporting generated, revised, transformed, styled, or
 reviewed work.
 
-## Required Provenance
+## Purpose
 
-Every substantial Drafts result should expose:
+Drafts v1 provenance optimizes for revision traceability. It should answer:
 
-- `style_mode`: `no_style`, `pinned_style`, `auto_style`, or
-  `channel_recipe_only`.
-- `style_provenance`: selected style, candidate styles, workspace samples,
-  selected examples, freshness, sample count, evidence quality, and confidence
-  warnings.
-- `rules_provenance`: active rules, overlays, conflicts, deterministic checks,
-  and generative cleanup passes.
-- `source_provenance`: source packs, knowledge items, attached files, cited
-  claims, and persistence policy.
-- `draft_provenance`: source draft, source version, target version, edit intent,
-  and whether the result creates a new draft or updates an existing one.
-- `review_provenance`: reviewed version, rubric, reviewer mode, findings, and
-  follow-up revision link.
+- What artifact changed?
+- What version did it come from?
+- Which concrete style was used?
+- Which draft-level source pack was used?
+- Which AGENTS.md guidance and explicit instructions were applied?
+- Which review, if any, drove the change?
 
-## Style Modes
+Prefer small frontmatter plus a compact report. Do not build a separate
+provenance database in v1.
 
-Use explicit style modes:
+## Frontmatter
 
-- `no_style`: user or surface requested no voice profile.
-- `pinned_style`: user selected a named style.
-- `auto_style`: system selected relevant style evidence.
-- `channel_recipe_only`: channel structure applied without voice evidence.
+Use frontmatter for stable identity and version lineage:
 
-Auto Style must distinguish:
+```yaml
+---
+schema: drafts/v1
+kind: section
+id: sec_intro
+title: Introduction
+draft: client-memo
+version: v001
+style: report
+order: 10
+---
+```
 
-- `auto_none`.
-- `auto_workspace_samples`.
-- `auto_named_style`.
-- `auto_combined`.
+Do not store rules in frontmatter. Rules come from AGENTS.md and explicit user
+instructions.
 
-## Source Persistence
+Sources are draft-level by default. Record them once in the draft's source pack
+instead of repeating source lists in every section.
 
-Do not assume every attachment becomes durable knowledge. Label source context
-as:
+## Style Provenance
 
-- `session_only`.
-- `persisted_knowledge`.
-- `workspace_reference`.
-- `unknown_persistence`.
+The durable value is the concrete selected style ID, such as `style: default` or
+`style: report`.
+
+Auto Style is a selection behavior, not a stored style value. When Auto Style
+chooses a style for new durable work, report:
+
+- selected style ID
+- one-line reason
+- notable alternatives when useful
+- whether workspace-local overrides were considered
+
+Changing an existing style value requires user confirmation.
+
+## Rules Provenance
+
+Report the AGENTS.md guidance and explicit instructions that affected the
+output. If deterministic or hybrid checks were possible, say what was checked.
+If a rule was applied only as a writing pass, say so.
+
+## Source Provenance
+
+Use draft-level source packs under the draft folder. Do not promote attachments
+to durable source state unless the user asks or a `.drafts/` source pack exists.
+
+For source context, report:
+
+- source pack used, if any
+- attached files or links used in the current session
+- claims cited or checked when relevant
+- whether the source context is durable or session-only
 
 ## Reporting Pattern
 
@@ -53,10 +79,11 @@ Use a compact provenance block when useful:
 
 ```text
 Provenance
-- Style: auto_style, auto_workspace_samples, low confidence
-- Rules: global banned phrases checked; no conflicts found
-- Sources: session_only source pack, 3 files
-- Draft: revised version v3 from v2
+- Draft: client-memo v002 from v001
+- Style: report, selected from user styles
+- Rules: AGENTS.md applied; length cap checked
+- Sources: draft source pack used
+- Review: applied 3 findings from review-v001-quality
 ```
 
 For small tasks, prose is enough if it names the same facts.

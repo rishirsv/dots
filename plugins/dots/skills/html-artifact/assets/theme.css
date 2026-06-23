@@ -392,13 +392,13 @@ figure[data-primitive="diff-review"] { border: var(--line); border-radius: var(-
 /* html-artifact:region:copy-export:start */
 /* ============ copy-export ============ */
 [data-primitive="copy-export"] { display: inline-flex; }
-[data-slot="action"] {
+[data-primitive="copy-export"] [data-slot="action"] {
   font-family: var(--sans); font-size: var(--type-small); font-weight: var(--weight-strong);
   background: var(--accent); color: var(--surface);
   border: none; border-radius: var(--radius-row);
   padding: var(--space-sm) var(--space-lg); cursor: pointer; min-height: 40px;
 }
-[data-slot="action"]:hover { background: var(--button-hover); }
+[data-primitive="copy-export"] [data-slot="action"]:hover { background: var(--button-hover); }
 [data-primitive="copy-export"][data-state="copied"] [data-slot="action"] { background: var(--success-strong); }
 
 /* html-artifact:region:copy-export:end */
@@ -422,6 +422,11 @@ footer[data-primitive="audit-trail"], section[data-primitive="audit-trail"] { bo
 [data-primitive="action-list"][data-variant="checklist"] [data-slot="action"] { display: grid; grid-template-columns: 22px 1fr; gap: var(--space-sm); }
 [data-primitive="action-list"][data-variant="checklist"] [data-slot="action"]::before { content: "□"; font-family: var(--mono); color: var(--text-muted); }
 [data-primitive="action-list"][data-variant="checklist"] [data-slot="action"][data-state="done"]::before { content: "✓"; color: var(--success-strong); }
+/* keep the counter/checkbox marker in column one; stack all content in column two */
+[data-primitive="action-list"][data-variant="ordered"] [data-slot="action"]::before,
+[data-primitive="action-list"][data-variant="checklist"] [data-slot="action"]::before { grid-column: 1; grid-row: 1; }
+[data-primitive="action-list"][data-variant="ordered"] [data-slot="action"] > *,
+[data-primitive="action-list"][data-variant="checklist"] [data-slot="action"] > * { grid-column: 2; min-width: 0; }
 [data-primitive="action-list"] [data-slot="rationale"], [data-primitive="action-list"] [data-slot="proof"] { display: block; margin-top: var(--space-2xs); font-size: var(--type-small); color: var(--text-muted); }
 [data-primitive="action-list"] [data-slot="owner"], [data-primitive="action-list"] [data-slot="due"], [data-primitive="action-list"] [data-slot="status"] { display: inline-block; margin-top: var(--space-xs); margin-right: var(--space-xs); font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); }
 [data-primitive="action-list"] [data-slot="action"][data-state="recommended"] { border-color: var(--success-strong); box-shadow: inset 0 0 0 1px var(--success-strong); }

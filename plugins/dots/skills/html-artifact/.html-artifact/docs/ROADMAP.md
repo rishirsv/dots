@@ -83,31 +83,76 @@ page shell:
 `data-artifact` identifies the reader job. `data-base` identifies the visual
 composition pattern. `data-primitive` identifies reusable semantic sections.
 
-## Next Steps
+## Completed Since Previous Roadmap
 
-### 1. Harden The Expanded Contract
+The previous roadmap was directionally right, but much of it has now shipped:
+the alias map, visual base registry, recipe expansion, `data-base`, new
+primitive rows, composite specimens, dark-mode parity, print behavior, chart
+support, type tokens, spacing tokens, reference-theme parity checks, and many
+validator checks already exist in the current skill source.
 
-The highest-value next work is not more recipes. It is making the expanded
-recipe/base/primitive system easier to maintain and harder to drift.
+Future work should therefore not re-plan the whole system. It should tighten the
+remaining drift points, improve rendered evidence, and prove the newer recipes
+with grounded examples.
 
-- Add a short maintainer note to `composition.md` explaining when to add an
-  alias, when to add a recipe, and when to use an existing recipe with a
-  different base.
-- Tighten validator failures around duplicate or conflicting alias intent, such
-  as two rows that route nearly identical wording to different recipes.
-- Add a validator check that every base in `Visual Base Registry` appears in at
-  least one recipe default and at least one reference composite.
-- Add a validator check that each `Base Primitive Defaults` primitive exists in
-  the registry.
-- Keep validator checks as local source coherence only. They should not become a
-  required build step for generated user artifacts.
+## Remaining Roadmap
 
-### 2. Stress-Test The New Recipes
+### 1. Close Raw-Value And Token Enforcement Gaps
 
-The recipe set now covers 26 reader jobs. The next pass should prove that the
-newer recipes are useful without encouraging padding.
+The current validator enforces the main theme contract, but a few escape hatches
+remain for practical reasons. The next source-quality pass should decide which
+exceptions are truly needed and shrink the rest.
 
-Use small grounded fixtures or one-off manual dry runs for:
+- Replace raw inline-SVG demo colors in `assets/html-artifact-reference.html`
+  with theme tokens or documented neutral demo tokens so the raw-hex rule matches
+  the shipped-file policy.
+- Review the current raw spacing exceptions in `scripts/validate.mjs` and either
+  convert them to role tokens (`--space-page-y`, `--space-wide-gap`,
+  `--space-marker-nudge`) or keep them as clearly named geometry exceptions.
+- Decide whether reference-sheet chrome should be checked by the same raw
+  spacing/type policy as canonical theme CSS. If yes, extend validation to local
+  chrome while still permitting media-query breakpoints and fixed specimen
+  geometry.
+- Keep token enforcement scoped to shipped skill files. Do not police arbitrary
+  user-authored artifact changes beyond the guidance and rendered QA checks.
+
+### 2. Add Contract-Drift Checks
+
+The highest-value structural work is making the expanded recipe/base/primitive
+system easier to maintain.
+
+- Add a maintainer note to `composition.md` explaining when to add an alias, when
+  to add a recipe, and when to use an existing recipe with a different base.
+- Tighten validator failures around duplicate or conflicting alias intent.
+- Check that every base in `Visual Base Registry` appears in at least one recipe
+  default and at least one reference composite.
+- Check that each `Base Primitive Defaults` primitive exists in the registry.
+- Consider checking that recipe default skeletons use only known primitives
+  while allowing ordinary prose outside backticks.
+
+### 3. Improve Rendered Reference Evidence
+
+The reference sheet now proves coverage; the next pass should make it better at
+teaching visual rhythm and catching layout regressions.
+
+- Inspect `assets/html-artifact-reference.html` at desktop, about 375px, 320px,
+  dark mode, print preview, and JS-disabled reading.
+- Record a short maintainer handoff note after broad visual changes: viewport
+  widths checked, overflow result, dark-mode result, print/JS-disabled result,
+  and any fixture-family gaps.
+- Deepen the composite specimens for `executive-brief`, `diligence-report`,
+  `product-spec`, `design-qa`, `system-card-eval-report`, and
+  `bounded-workbench`.
+- Keep visible copy generic and reader-safe: no provider names, scratch paths,
+  session IDs, stale research URLs, or authoring scaffolding in visible copy or
+  copy/export payloads.
+
+### 4. Stress-Test Newer Recipes With Grounded Examples
+
+The recipe set now covers many reader jobs. The next content pass should prove
+that newer recipes are useful without encouraging padding.
+
+Use small grounded fixtures or manual dry runs for:
 
 | Recipe family | Stress-test question |
 |---|---|
@@ -119,20 +164,19 @@ Use small grounded fixtures or one-off manual dry runs for:
 | `diligence-report` | Can it surface thesis, red flags, evidence quality, and follow-up needs? |
 | `value-creation-plan` | Can it handle value levers without inventing synergy numbers? |
 | `design-system-reference` | Can it show tokens, components, states, and accepted copy from real source? |
-| `system-card` | Can it separate capabilities, limits, eval evidence, and mitigations? |
 | `bounded-workbench` | Can it stay readable and useful with JavaScript disabled? |
 
 When a dry run exposes repeated structure that the current registry cannot
 express, prefer a documented variant or shared archetype styling before adding a
 new primitive.
 
-### 3. Promote Or Retire `none` CSS Owners
+### 5. Promote Or Retire `none` CSS Owners
 
 Several newer primitives are registered with CSS owner `none`. That is useful
 while their shape is still mostly table/list/card semantics, but it should not
 hide repeated styling needs.
 
-Review these primitives after the recipe stress tests:
+Review these primitives after recipe stress tests:
 
 ```text
 file-map
@@ -148,8 +192,6 @@ inline-chart
 value-bridge
 operating-model-map
 configuration-diff
-evaluation-suite
-capability-matrix
 workstream-map
 ```
 
@@ -157,37 +199,15 @@ Decision rule:
 
 - Keep `none` when the primitive reads well with generic table, figure, card,
   code, or layout helper styling.
-- Move to an existing CSS owner when the primitive is just a specialized use of
-  a current region.
+- Move to an existing CSS owner when the primitive is a specialized use of a
+  current region.
 - Add a new CSS region only when the primitive has a recurring visual shape that
   cannot be expressed through existing regions without muddying them.
 
 If `theme.css` changes, sync the embedded theme block in
 `assets/html-artifact-reference.html` and rerun validation.
 
-### 4. Deepen Composite Specimens
-
-The reference sheet now has composite specimens. The next pass should make those
-specimens better at teaching visual rhythm, not merely proving coverage.
-
-Focus on:
-
-- `executive-brief`: first viewport recommendation, decision needed, evidence
-  state, and next action.
-- `diligence-report`: thesis, red flags, evidence quality, implications, and
-  follow-up questions.
-- `product-spec`: problem, scope boundary, acceptance criteria, and launch risk.
-- `design-qa`: source/render/fix comparison without dashboard chrome.
-- `system-card-eval-report`: capabilities, limits, eval evidence, mitigations,
-  and unknowns.
-- `bounded-workbench`: visible dataset, controls, export, and JS-disabled
-  fallback.
-
-Composite specimens should use neutral scenarios, real-looking compact data,
-honest caveats, and no provider names, scratch paths, session IDs, or authoring
-scaffolding in visible copy or copy/export payloads.
-
-### 5. Strengthen Bounded Workbench Guardrails
+### 6. Strengthen Bounded Workbench Guardrails
 
 `bounded-workbench` is allowed only as a constrained static artifact.
 
@@ -198,83 +218,71 @@ scaffolding in visible copy or copy/export payloads.
 - Validation must include a JS-disabled readable fallback and a browser check of
   the interactive controls.
 
-Next work should add at least one richer reference specimen that demonstrates
-filtering or preview while keeping the complete content readable as static HTML.
+Next work should add one richer reference specimen that demonstrates filtering
+or preview while keeping the complete content readable as static HTML.
 
-### 6. Improve Maintainer Regression Evidence
+### 7. Polish The Reader Surface
+
+These are high-leverage visual improvements, but they should follow the
+raw-value cleanup so the token contract remains honest.
+
+- Add scroll affordances to contained scrollers: thin styled scrollbars plus
+  subtle edge shadows/fades for tables, code, diffs, chart areas, and reels.
+- Add a sidenote or margin-note primitive only if grounded dry runs show a real
+  editorial use case; collapse inline on mobile and preserve JS-disabled
+  reading.
+- Strengthen first-class print/PDF behavior: running header only if it stays
+  simple, link URL disclosure where appropriate, break-inside rules, and
+  ink-friendly code.
+- Wire the existing `performance-budget` primitive to real byte measurements in
+  validation only after fixture outputs provide useful calibration.
+- Use `content-visibility: auto` only for heavy below-the-fold specimens after
+  browser inspection confirms no scroll or find-in-page regressions.
+
+### 8. Evals And Regression Evidence
+
+Group eval work here so it can be tackled later as one focused lane instead of
+leaking into every polish task.
+
+#### Eval Scope
+
+- Treat hidden eval fixtures as maintainer evidence, not runtime instructions
+  for ordinary artifact generation.
+- Keep evals tied to the skill's static-document contract: self-contained HTML,
+  readable with JS disabled, source-grounded content, contained overflow, and no
+  external runtime.
+- Do not build a general eval platform, dashboard, or browser automation suite.
+
+#### Eval Tasks
+
+- Refresh `.html-artifact/evals.json` around the current recipe/base system:
+  design QA, UX audit, Image Gen concept packet, migration plan,
+  release-readiness, eval report, postmortem, status report, and system card.
+- Add or refresh fixture artifacts for the newer recipes that need proof.
+- Add structural checks only when they catch real drift: required anatomy,
+  backed `inline-chart` data tables, workbench JS-disabled fallback, screenshot
+  dimensions/lazy loading, and source/evidence limits.
+- Add an evaluation report fixture that demonstrates `evaluation-suite`,
+  `capability-matrix`, `claim-evidence-matrix`, and evidence-limit handling.
+- Consider a lightweight visual-regression/eval triad later: curated cases,
+  rendered screenshot review, and score rubric. Keep it manual or
+  tool-assisted; do not add Playwright as a roadmap dependency.
+
+## Maintainer Closeout
 
 For broad recipe, primitive, or theme changes, use a predictable maintainer
 closeout:
 
 ```text
 node plugins/dots/skills/html-artifact/scripts/validate.mjs
+plugins/meta-skill/scripts/metaskill validate plugins/dots/skills/html-artifact --json
 scripts/verify.sh
 ```
 
 When a change affects rendered layout, also inspect
 `assets/html-artifact-reference.html` in a browser at desktop, about 375px, and
-320px. Record any overflow, dark-mode, JS-disabled, or fixture-family gaps in
-the handoff.
+320px. Record any overflow, dark-mode, JS-disabled, print, or fixture-family
+gaps in the handoff.
 
 Do not add a new browser automation dependency just to satisfy this roadmap.
 Rendered inspection with the available browser tool remains the contract.
-
-## Backlog
-
-### Contract Coherence
-
-- Add duplicate or conflicting alias detection.
-- Check that every base has at least one default recipe and one composite
-  specimen.
-- Check that every primitive in `Base Primitive Defaults` exists in the
-  registry.
-- Consider checking that recipe default skeletons use only known primitives
-  while allowing prose words outside backticks.
-
-### Recipe And Alias Refinement
-
-- Review whether `Red-flag report` should route to `diligence-report` with
-  `executive-brief`, or whether a `decision-brief` route should remain explicit.
-- Review whether `Roadmap, cycle plan, launch plan` should sometimes route to
-  `status-report` when the user's wording is reporting current state rather than
-  planning future work.
-- Add aliases only after seeing real user wording that does not map cleanly.
-
-### Primitive Refinement
-
-- Decide whether `red-flag-ledger` should remain distinct from `issue-ledger` or
-  become a diligence-specific use of it.
-- Decide whether `capability-matrix` should remain distinct from
-  `claim-evidence-matrix` plus `risk-table`.
-- Decide whether `operating-model-map` needs a dedicated visual treatment or can
-  stay a structured `inline-schematic` pattern.
-- Add CSS owners only after repeated specimens prove the need.
-
-### Reference Sheet
-
-- Keep the reference sheet as a visual coverage surface, not the source of
-  runtime selection rules.
-- Prefer composite specimens that show recipe/base rhythm over dozens of
-  isolated micro-examples.
-- Keep visible copy generic and reader-safe.
-- Preserve dark-mode parity and embedded theme parity.
-
-## Review Notes
-
-The previous roadmap was directionally right, but several items are now shipped:
-the alias map, visual base registry, recipe expansion, `data-base`, new
-primitive rows, composite specimens, and many validator checks already exist in
-the current skill source.
-
-Future implementation should therefore prioritize:
-
-1. contract drift detection;
-2. recipe stress tests with grounded examples;
-3. selective CSS ownership decisions;
-4. stronger composite specimens;
-5. bounded workbench fallback proof.
-
-Do not reintroduce older names, external example vendors, generated dashboard
-chrome, or source-specific research trails. The roadmap should stay grounded in
-the local skill source unless the user explicitly asks for refreshed external
-research.

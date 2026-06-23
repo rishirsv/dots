@@ -25,9 +25,9 @@ Before reviewing, identify:
 - Relevant `writing_brief`.
 - Relevant `document_contract`.
 - Channel recipe or intended destination.
-- Active writing rules.
-- Style provenance.
-- Source pack or knowledge items.
+- Applicable AGENTS.md guidance and explicit instructions.
+- Selected style ID and style guide.
+- Draft-level source pack.
 - Requested review mode and rubric, if any.
 
 If the target version is unavailable, ask for it or label the review as
@@ -42,7 +42,7 @@ non-durable advice.
 - `rule_review`: check writing rules and deterministic constraints.
 - `style_review`: check whether style usage is appropriate and supported by
   evidence.
-- `rubric_scorecard`: score named criteria and explain each score.
+- `scorecard`: score named criteria inside the `review_pass`.
 - `fix_plan`: turn findings into ordered revision instructions for `writer`.
 
 ## Style Review
@@ -83,6 +83,6 @@ Return:
 - Reviewed draft and version.
 - Review mode and rubric.
 - Findings ordered by severity.
-- Scorecard when requested.
+- Scorecard when requested, stored or reported as part of the review pass.
 - Fix plan or next revision target.
 - Provenance gaps that limit confidence.

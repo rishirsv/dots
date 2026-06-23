@@ -1,40 +1,38 @@
 ---
 name: writing-style
-description: "Use for Drafts style work: creating writing styles, ingesting samples, cleaning references, generating style guides, checking readiness or freshness, and explaining style provenance. Not for drafting content, standalone review, generic tone advice, or hidden Auto Style selection."
+description: "Use for Drafts style work: creating user writing styles, ingesting samples, cleaning references, generating style guides, checking freshness or evidence limits, and explaining style provenance. Not for drafting content, standalone review, generic tone advice, or hidden Auto Style selection."
 ---
 
 # Writing Style
 
-Build and maintain writing styles as inspectable evidence, not as uninspectable
-style inference. Use this skill after `drafts` routes style-profile, sample, or
-voice readiness work here, or when the user explicitly invokes `writing-style`
-for style setup, sample intake, or style readiness work.
+Build and maintain reusable user writing styles as inspectable evidence, not as
+uninspectable style inference. Use this skill after `drafts` routes writing
+style, sample, or voice work here, or when the user explicitly invokes
+`writing-style` for style setup or sample intake.
 
 Read [style-intake.md](../../references/style-intake.md) before accepting
 samples or generating a guide. Read [provenance.md](../../references/provenance.md)
 before reporting style usage or Auto Style behavior. Read
 [state-model.md](../../references/state-model.md), especially its State
-Authority section, for the difference between `style_reference`,
-`workspace_sample`, `style_guide`, and `style_provenance`.
+Authority and User Style Library sections, for style storage and lookup.
 
 ## Style Lifecycle
 
-1. Create or select a `style`.
-2. Ingest samples as `style_reference` or `workspace_sample`; do not blur the
-   two.
+1. Create or select a user-global `style`.
+2. Ingest samples as `style_reference` evidence for that named style.
 3. Preserve raw source and cleaned text when possible.
 4. Run quality checks for length, duplication, boilerplate, author consistency,
    source noise, and distinctiveness.
 5. Record a few observable style patterns, such as sentence cadence,
    punctuation habits, opener repetition, paragraph shape, and avoidances.
-6. Generate or update the `style_guide` only after recording sample quality.
-7. Mark readiness, freshness, confidence, and warnings separately.
+6. Update `style.md` sections in place after recording sample quality.
+7. Keep confidence, freshness, and warnings in the style guide body.
 8. Surface warnings at runtime when style evidence is weak, stale,
    contaminated, duplicated, noisy, or too small.
 
 ## Observable Patterns
 
-Use measurements as supporting evidence, not as a new profile object or scoring
+Use measurements as supporting evidence, not as a new style object or scoring
 system. The goal is to make the style guide less impressionistic.
 
 Record only patterns that will change drafting or review:
@@ -51,16 +49,18 @@ format may be leaking into the guide.
 
 ## Auto Style
 
-Auto Style must expose what it loaded. Use these provenance states:
+Auto Style chooses a concrete style ID. It never writes an auto placeholder as
+the style value.
 
-- `auto_none`: no usable style evidence was selected.
-- `auto_workspace_samples`: workspace-level samples influenced the draft.
-- `auto_named_style`: a named style guide influenced the draft.
-- `auto_combined`: named style and workspace samples both influenced the draft.
-- `pinned_style`: the user explicitly selected a named style.
+For a new draft or section with no pinned style, choose from user-global styles
+plus shipped `default`, then write the selected ID, such as `style: default` or
+`style: report`, when durable frontmatter is being created.
 
-Do not report `style_used: null` or an equivalent vague placeholder when style
-evidence affected output.
+Workspace-local styles are considered only when the user explicitly asks to use
+or consider project-specific style overrides. Changing an existing style value
+requires user confirmation.
+
+Report the selected style, one-line reason, and useful alternatives.
 
 ## Style Guide Requirements
 
@@ -71,12 +71,12 @@ A useful style guide should contain:
 - Evidence list.
 - Sample count and total word count.
 - Observable style patterns.
-- Freshness state.
-- Confidence state.
+- Freshness notes.
+- Confidence notes.
 - Warnings and invalidation reasons.
 
 If the guide is based on insufficient evidence, report the limitation instead
-of normalizing the style as ready.
+of hiding it. Do not use a lifecycle field.
 
 ## Output
 
@@ -85,6 +85,6 @@ Return:
 - Style object created or updated.
 - Samples accepted, rejected, or warned on.
 - Observable style patterns recorded.
-- Guide freshness and readiness.
+- Guide freshness and evidence limits.
 - Confidence and contamination warnings.
 - Runtime usage guidance for `writer`.

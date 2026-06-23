@@ -17,9 +17,9 @@ Load or identify:
 - `writing_brief`.
 - `document_contract`.
 - `channel_recipe`.
-- `writing_rules`.
-- `style_provenance`.
-- `source_pack` or `knowledge_item`.
+- applicable AGENTS.md guidance and explicit instructions.
+- selected concrete style ID and style guide.
+- draft-level `source_pack`, if one exists.
 - Requested review mode.
 
 ## Findings
@@ -37,6 +37,7 @@ Order findings by impact on the next revision.
 
 ## Scorecards
 
+Scorecards are a review mode inside `review_pass`, not a separate state object.
 When scoring, name:
 
 - Rubric.
@@ -78,3 +79,7 @@ draft_version reviewed
 ```
 
 Do not overwrite the reviewed version.
+
+When fixes are applied, writer should create or describe a new version with
+minimal frontmatter and report the reviewed version, selected findings, and new
+version boundary.

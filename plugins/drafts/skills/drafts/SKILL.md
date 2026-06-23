@@ -7,8 +7,8 @@ description: "Use when the user asks to write, revise, continue, review, transfo
 
 Route stateful writing work through the smallest useful Drafts surface. Drafts
 is the user-invoked front door for writing moments that need briefs, document
-contracts, draft versions, style provenance, source context, writing rules, or
-review.
+contracts, sections, draft versions, style selection, source context, AGENTS.md
+guidance, or review.
 
 Read [router.md](../../references/router.md) for routing decisions. Read
 [state-model.md](../../references/state-model.md) when creating or updating
@@ -23,15 +23,16 @@ Before acting, identify:
 - User intent and writing moment.
 - Current workspace or project context.
 - Current session, draft, and draft version when available.
-- Style mode, channel recipe, writing rules, and source context.
+- Selected style or Auto Style context, channel recipe, AGENTS.md guidance, and
+  source context.
 - Whether the user wants a file edit, a returned draft, a review, or a plan.
 
 Route to:
 
 - `writer` for briefs, document contracts, new drafts, continuations,
   revisions, transformations, personalization, humanization, and variants.
-- `writing-style` for style profiles, samples, style guides, readiness,
-  freshness, and sample-quality warnings.
+- `writing-style` for user styles, samples, style guides, freshness, and
+  sample-quality warnings.
 - `writing-review` for critique, scorecards, adversarial review, and
   review-to-revision handoff.
 
@@ -53,11 +54,12 @@ current `draft_version` first, then hand selected fixes to `writer`.
 
 - Do not perform external publishing, posting, sending, or sync without explicit
   approval.
-- Do not invent durable state. If a session, draft, style, rule, source, or
+- Do not invent durable state. If a session, draft, style, source, or
   version is inferred rather than observed, label it as an assumption.
 - Do not treat chat-only advice as a durable review. Durable review must point
   to a specific `draft_version`.
-- Do not hide Auto Style behavior behind `style_used: null`-style ambiguity.
+- Do not hide Auto Style behavior. It must choose and report a concrete style
+  ID, such as `default` or `report`.
 
 ## Output
 
@@ -65,6 +67,6 @@ When Drafts routes work, report:
 
 - Chosen route and why.
 - Files or state objects created or changed.
-- Style, rules, and source provenance.
+- Style, AGENTS.md guidance, and source provenance.
 - Validation or review performed.
 - Any assumptions or unresolved decisions.

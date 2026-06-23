@@ -1,6 +1,6 @@
 ---
 name: writer
-description: "Use for Drafts writing work: creating briefs, document contracts, drafts, continuations, targeted revisions, personalized rewrites, humanized cleanups, and channel variants. Not for style-profile setup, standalone critique, generic answers, code changes, or external publishing."
+description: "Use for Drafts writing work: creating briefs, document contracts, drafts, continuations, targeted revisions, personalized rewrites, humanized cleanups, and channel variants. Not for writing-style setup, standalone critique, generic answers, code changes, or external publishing."
 ---
 
 # Writer
@@ -38,7 +38,8 @@ Choose the narrowest matching action:
 3. If the user wants speed, proceed with `draft_anyway` and record assumptions.
 4. Create a `document_contract` with thesis, outline, section goals, length
    target, source plan, quality bar, review criteria, and section status.
-5. Draft or revise one bounded section at a time.
+5. Draft or revise one bounded Markdown section at a time when the artifact has
+   chapters or sections.
 6. Preserve unrelated sections unless the user asks for a whole-document pass.
 7. Save material changes as new `draft_version` records when the surrounding
    system supports durable state; otherwise describe the version boundary in the
@@ -53,16 +54,21 @@ Choose the narrowest matching action:
 4. Apply only the requested scope.
 5. Record the source version, target version, assumptions, and changed sections.
 
-## Rules And Sources
+## Style, Rules, And Sources
 
 - Apply writing rules according to
   [writing-rules.md](../../references/writing-rules.md).
-- When `personalize` uses a style, retrieve relevant examples and style-guide
-  rules before drafting, then run humanize-style cleanup for style-specific and
-  global automated-writing patterns.
-- When `humanize` runs without a style profile, apply global and channel rules
+- If frontmatter already has `style: <id>`, treat that style as pinned.
+- If no style is pinned for new durable work, use Auto Style to choose a
+  concrete style ID from user-global styles plus shipped `default`, write that
+  concrete ID when creating frontmatter, and report the choice.
+- Change an existing `style` value only after user confirmation.
+- When `personalize` uses a style, retrieve the selected `style.md` and
+  relevant references before drafting, then run humanize-style cleanup for
+  style-specific and global automated-writing patterns.
+- When `humanize` runs without a selected style, apply global and channel rules
   without inventing voice evidence.
-- Distinguish source packs from durable knowledge items.
+- Use draft-level source packs; do not repeat source lists in every section.
 - Preserve source constraints in the `writing_brief` and `document_contract`.
 - Do not cite or rely on a source unless it was provided, retrieved, or already
   present in the working context.
@@ -74,7 +80,7 @@ Return the draft or revision with:
 - Writing moment and action taken.
 - Brief or contract changes.
 - Draft and version boundary.
-- Style mode and style provenance.
-- Rules applied and any conflicts.
+- Selected style and style provenance.
+- AGENTS.md guidance applied and any conflicts.
 - Sources used and persistence assumptions.
 - Recommended next action, usually review, revise, continue, or create variant.

@@ -11,10 +11,10 @@ Collect the smallest available set:
 - Current workspace or project.
 - Current session.
 - Selected draft and draft version.
-- Style mode and selected style.
+- Style request context and selected style.
 - Channel recipe.
-- Writing rules.
-- Source pack, attachments, or knowledge items.
+- Applicable AGENTS.md guidance.
+- Draft-level source pack or current attachments.
 - User's requested output form.
 
 If an input is missing but not blocking, proceed with an explicit assumption.
@@ -28,18 +28,21 @@ source basis, or review target.
 | `new_short_write` | Clear bounded artifact | `writer` |
 | `substantial_work` | Report, essay, launch plan, memo series, long guide | `writer` brief then contract |
 | `existing_draft_revision` | User asks to edit selected/provided draft | `writer` |
-| `create_writing_style` | User asks for style profile, samples, voice guide | `writing-style` |
+| `create_writing_style` | User asks for writing style, samples, voice guide | `writing-style` |
 | `review` | User asks for critique, score, adversarial read, QA | `writing-review` |
 | `transform` | User asks for another format, channel, or audience | `writer` |
-| `rules_or_sources` | User updates policies, files, facts, knowledge | Update state, then resume route |
+| `source_update` | User adds or changes draft sources | Update source pack, then resume route |
+
+Reusable writing guidance is handled by `update_writing_rules` in
+[writing-rules.md](writing-rules.md), not as a separate writing moment.
 
 ## Default Decisions
 
 - Prefer a brief and contract for substantial work.
 - Prefer drafting for clear short requests.
 - Prefer version-tied review when a draft exists.
-- Prefer `no_style` only when the user explicitly asks for no voice profile or
-  the surface says style is off.
+- Prefer Auto Style for a new durable draft when no style is pinned. Auto Style
+  chooses a concrete style ID from user styles plus shipped `default`.
 - Prefer explicit provenance over silent Auto Style.
 
 ## Router Response
