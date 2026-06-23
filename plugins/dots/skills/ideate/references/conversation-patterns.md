@@ -163,6 +163,32 @@ Candidates, Review, and Compare.
 | D | Cases - start from authoring/evaluating the test set itself. |
 ```
 
+## Settled Context
+
+Demonstrates: do not ask about a branch that existing context already settles.
+
+```text
+User:
+That is already decided by the docs. The naming is the only thing left.
+
+Agent:
+**Correction absorbed:** The docs settle the behavior; the only live issue is
+the label.
+**Recommendation:** Use "activation steps" because it matches the existing
+vocabulary and does not create a second concept.
+
+**Decision Snapshot**
+
+| Field | Decision |
+|---|---|
+| Direction | Follow the existing behavior and settle only the remaining vocabulary. |
+| Settled vocabulary | "Activation steps" names the existing behavior; no new concept is introduced. |
+| Key trade-off | Avoid inventing a new decision where context already decides it. |
+| Rejected branch | Re-opening behavior that is already governed by source context. |
+| Non-goal | Turning factual constraints into preference choices. |
+| Next move | Continue only if a remaining branch changes behavior or handoff shape. |
+```
+
 ## Stop Condition
 
 Demonstrates: stop instead of asking another polishing question.

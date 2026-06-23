@@ -48,6 +48,19 @@ options. Do not add a separate recommendation paragraph after the options.
 After a correction to vocabulary, names, direction, or taste, absorb it briefly
 and still end with the question block unless stopping.
 
+Every question must pass the decision-liveness test: would the user's answer
+change the concept's direction, vocabulary, trade-off, non-goal, or
+carry-forward shape? If not, do not ask it.
+
+When an answer is settled by existing context, source material, current
+capabilities, prior decisions, or the user's correction, absorb it as settled
+context and move to the next live decision. Do not turn settled facts into
+preference menus.
+
+When the remaining difference is only naming polish, taste, or minor semantics,
+recommend the best wording and capture the decision instead of asking another
+question.
+
 Keep the shape crisp. Do not freestyle the architecture: no extra headings, no
 long prose blocks, no second question, and no recommendation paragraph after the
 table during active exploration.
@@ -100,9 +113,37 @@ report.
 - Separate user-facing behavior from build approach.
 - Test claims with concrete scenarios and edge cases.
 - Surface hidden non-goals, rejected branches, and contradictions.
-- Ask only while the next answer could change the idea's fitness for use. If
-  the next answers are predictable or merely polish the same direction, stop and
-  capture one artifact.
+- Ask only while the next answer could change the idea's direction, vocabulary,
+  trade-off, non-goal, or carry-forward shape.
+- If the next answers are predictable, merely polish the same direction, or
+  argue over semantics that do not change behavior, stop and capture one
+  artifact.
+
+## Closure Mode
+
+When the user says `lock it in`, `close all decision trees`, `short ideation`,
+`we already decided this`, or otherwise signals convergence, switch to closure
+mode. Keep a tiny mental ledger of:
+
+- settled decisions
+- genuinely open branches
+- deferred implementation details
+- minor semantic polish
+
+Ask at most one closure question at a time, and ask only when the answer would
+change the carry-forward shape. If all remaining items are settled, deferred, or
+minor wording polish, do not ask another A/B/C/D question. Produce the smallest
+useful capture artifact instead.
+
+In closure mode, prefer these moves:
+
+- state the settled decision plainly
+- name any remaining open branch only if it affects downstream work
+- recommend defaults for minor semantics instead of turning them into a new
+  decision tree
+- defer implementation details to the next mode
+- stop when the next question would only make the user re-confirm what is
+  already locked
 
 ## Grounding
 
