@@ -5,15 +5,17 @@ description: "Use for Drafts style work: creating writing styles, ingesting samp
 
 # Writing Style
 
-Build and maintain writing styles as inspectable evidence, not as hidden voice
-magic. Use this skill after `drafts` routes style-profile, sample, or voice
-readiness work here.
+Build and maintain writing styles as inspectable evidence, not as uninspectable
+style inference. Use this skill after `drafts` routes style-profile, sample, or
+voice readiness work here, or when the user explicitly invokes `writing-style`
+for style setup, sample intake, or style readiness work.
 
 Read [style-intake.md](../../references/style-intake.md) before accepting
 samples or generating a guide. Read [provenance.md](../../references/provenance.md)
 before reporting style usage or Auto Style behavior. Read
-[state-model.md](../../references/state-model.md) for the difference between
-`style_reference`, `workspace_sample`, `style_guide`, and `style_provenance`.
+[state-model.md](../../references/state-model.md), especially its State
+Authority section, for the difference between `style_reference`,
+`workspace_sample`, `style_guide`, and `style_provenance`.
 
 ## Style Lifecycle
 
@@ -33,7 +35,7 @@ before reporting style usage or Auto Style behavior. Read
 ## Observable Patterns
 
 Use measurements as supporting evidence, not as a new profile object or scoring
-system. The goal is to make the style guide less vibe-based.
+system. The goal is to make the style guide less impressionistic.
 
 Record only patterns that will change drafting or review:
 

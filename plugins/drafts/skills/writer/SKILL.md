@@ -6,10 +6,11 @@ description: "Use for Drafts writing work: creating briefs, document contracts, 
 # Writer
 
 Create and revise durable writing artifacts. Use this skill after `drafts`
-routes a writing moment to the main writing engine.
+routes a writing moment to the main writing engine, or when the user explicitly
+invokes `writer` for a writing, revision, or transformation task.
 
 Read [state-model.md](../../references/state-model.md) before creating briefs,
-contracts, drafts, or versions. Read
+contracts, drafts, or versions, especially its State Authority section. Read
 [writing-rules.md](../../references/writing-rules.md) when rules affect output.
 Read [provenance.md](../../references/provenance.md) before reporting generated
 or revised work.
@@ -25,7 +26,8 @@ Choose the narrowest matching action:
 - `continue_draft`: extend the draft without rewriting unrelated sections.
 - `channel_variant`: create a separate draft for a channel or audience.
 - `personalize`: rewrite in a selected or inferred style.
-- `humanize`: clean up generic, stiff, or model-sounding prose using rules.
+- `humanize`: clean up generic, stiff, or automated-writing patterns using
+  rules.
 
 ## Substantial Writing Flow
 
@@ -57,7 +59,7 @@ Choose the narrowest matching action:
   [writing-rules.md](../../references/writing-rules.md).
 - When `personalize` uses a style, retrieve relevant examples and style-guide
   rules before drafting, then run humanize-style cleanup for style-specific and
-  global AI tells.
+  global automated-writing patterns.
 - When `humanize` runs without a style profile, apply global and channel rules
   without inventing voice evidence.
 - Distinguish source packs from durable knowledge items.

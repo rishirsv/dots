@@ -7,12 +7,14 @@ description: "Use for Drafts review work: critiquing a specific draft version, p
 
 Review a specific draft version against its brief, contract, rules, channel,
 sources, and quality bar. Use this skill after `drafts` routes critique,
-scorecard, adversarial review, or fix-planning work here.
+scorecard, adversarial review, or fix-planning work here, or when the user
+explicitly invokes `writing-review` for version-tied critique.
 
 Read [review-versioning.md](../../references/review-versioning.md) before
 reviewing. Read [state-model.md](../../references/state-model.md) to resolve
-the reviewed `draft_version`. Read [provenance.md](../../references/provenance.md)
-before reporting review evidence.
+the reviewed `draft_version`, especially its State Authority section. Read
+[provenance.md](../../references/provenance.md) before reporting review
+evidence.
 
 ## Review Contract
 

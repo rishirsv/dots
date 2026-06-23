@@ -28,7 +28,7 @@ source basis, or review target.
 | `new_short_write` | Clear bounded artifact | `writer` |
 | `substantial_work` | Report, essay, launch plan, memo series, long guide | `writer` brief then contract |
 | `existing_draft_revision` | User asks to edit selected/provided draft | `writer` |
-| `style_build` | User asks for style profile, samples, voice guide | `writing-style` |
+| `create_writing_style` | User asks for style profile, samples, voice guide | `writing-style` |
 | `review` | User asks for critique, score, adversarial read, QA | `writing-review` |
 | `transform` | User asks for another format, channel, or audience | `writer` |
 | `rules_or_sources` | User updates policies, files, facts, knowledge | Update state, then resume route |

@@ -2,6 +2,21 @@
 
 Use this reference when creating, updating, or naming Drafts state.
 
+## State Authority
+
+Before reading or writing state, detect whether the current surface exposes an
+existing Drafts state backend, workspace store, mounted project file, or
+explicit file path. Use that observed location and its existing naming
+conventions.
+
+Do not invent persistence paths, object IDs, or saved versions. When no durable
+state backend is available, return the artifact in chat or in the requested
+file and describe the version boundary, provenance, and assumptions instead of
+claiming that state was saved.
+
+If the user asks for durable state and no backend is visible, ask where it
+should live or create only the explicitly requested file.
+
 ## Core Objects
 
 | Object | Purpose |

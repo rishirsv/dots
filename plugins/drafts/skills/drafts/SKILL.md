@@ -12,8 +12,9 @@ review.
 
 Read [router.md](../../references/router.md) for routing decisions. Read
 [state-model.md](../../references/state-model.md) when creating or updating
-durable writing state. Read [provenance.md](../../references/provenance.md)
-before reporting a generated, revised, transformed, or reviewed result.
+durable writing state, especially its State Authority section. Read
+[provenance.md](../../references/provenance.md) before reporting a generated,
+revised, transformed, or reviewed result.
 
 ## Router Contract
 
