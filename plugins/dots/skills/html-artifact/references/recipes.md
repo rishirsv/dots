@@ -87,7 +87,8 @@ Default skeleton:
 
 Add only when evidenced:
 `comparison-grid` when comparing options or sources; `callout` for final answer,
-one caveat, or real contradiction; `source-manifest` when input provenance matters.
+one caveat, or real contradiction; `source-manifest` when input provenance matters;
+`inline-chart` when a ranking or trend in the evidence reads faster as a chart than a table.
 
 Avoid:
 fabricated citations, searches, source inventories, or symmetry blocks for
@@ -303,7 +304,8 @@ Default skeleton:
 
 Add only when evidenced:
 `comparison-grid` for candidate comparisons; `risk-table` when risk is the
-scoring dimension; `copy-export` for reusable result summaries.
+scoring dimension; `copy-export` for reusable result summaries; `inline-chart`
+when score movement or a pass-rate ranking is clearer as a chart.
 
 Avoid:
 hidden inconclusive results or scores that do not map to evidence.
@@ -477,7 +479,8 @@ Default skeleton:
 
 Add only when evidenced:
 `source-manifest` for input provenance; `comparison-grid` for options or peer
-sets; `owner-matrix` for diligence follow-ups; `copy-export` for question lists.
+sets; `owner-matrix` for diligence follow-ups; `copy-export` for question lists;
+`inline-chart` when a benchmark gap or peer-set ranking is clearer as a chart.
 
 Avoid:
 deal conclusions beyond the source, invented financial values, or treating

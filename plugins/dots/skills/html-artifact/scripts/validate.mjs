@@ -25,6 +25,37 @@ function rel(filePath) {
   return path.relative(skillRoot, filePath);
 }
 
+function patternToRegex(pattern) {
+  let source = "^";
+  for (const char of pattern) {
+    if (char === "*") {
+      source += ".*";
+    } else if ("\\.[]{}()+-?^$|".includes(char)) {
+      source += `\\${char}`;
+    } else {
+      source += char;
+    }
+  }
+  return new RegExp(`${source}$`);
+}
+
+function ignored(relPath, patterns) {
+  const rel = relPath.replace(/^\/+|\/+$/g, "");
+  const relDir = rel && !rel.endsWith("/") ? `${rel}/` : rel;
+  for (const rawPattern of patterns) {
+    const pattern = rawPattern.trim().replace(/^\/+|\/+$/g, "");
+    if (!pattern) continue;
+    if (rawPattern.trim().endsWith("/")) {
+      if (relDir === `${pattern}/` || relDir.startsWith(`${pattern}/`)) return true;
+      continue;
+    }
+    if (patternToRegex(pattern).test(rel) || patternToRegex(pattern).test(path.basename(rel))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function stripSvg(text) {
   return text.replace(/<svg\b[\s\S]*?<\/svg>/gi, "");
 }
@@ -618,6 +649,85 @@ function checkThemeCss(themeCss) {
   }
 }
 
+function checkTypeSystem(themeCss) {
+  // The type scale is centralized so component rules consume role tokens rather
+  // than drifting hard-coded sizes. Require the role tokens to exist on :root.
+  const required = [
+    "--type-caption", "--type-label", "--type-code", "--type-small",
+    "--type-table", "--type-ui", "--type-body", "--type-lead",
+    "--type-h3", "--type-h2", "--type-h1", "--type-metric",
+    "--leading-tight", "--leading-heading", "--leading-body", "--leading-code",
+    "--weight-heading", "--weight-subheading", "--weight-strong",
+  ];
+  const rootMap = declarationMap(tokenBlock(themeCss, ":root"));
+  for (const token of required) {
+    if (!rootMap.has(token.slice(2))) {
+      fail(`theme.css :root is missing type token ${token}.`);
+    }
+  }
+
+  // Component rules must size text from the role tokens. Raw px font-sizes are
+  // drift; the only allowed exceptions are decorative chrome glyphs (not type).
+  const allowedPxFontSizes = new Set(["18px"]); // revision-strip connector arrow glyph
+  for (const match of themeCss.matchAll(/font-size:\s*([\d.]+px)/g)) {
+    if (!allowedPxFontSizes.has(match[1])) {
+      fail(`theme.css has untokenized font-size ${match[1]}; use a --type-* token.`);
+    }
+  }
+
+  // Literal technical surfaces must disable mono ligatures so sequences like
+  // == -> => render character-exact for code and diff fidelity.
+  if (!/font-variant-ligatures:\s*none/.test(themeCss)) {
+    fail("theme.css must disable ligatures on code/diff/pre surfaces (font-variant-ligatures: none).");
+  }
+}
+
+function checkSpacingSystem(themeCss) {
+  // Spacing is centralized the same way type is: one quiet scale plus role
+  // aliases on :root, and component rules consume those tokens rather than
+  // sprinkling magic pixels. Require the contract tokens to exist.
+  const required = [
+    "--space-2xs", "--space-xs", "--space-sm", "--space-md", "--space-lg", "--space-xl",
+    "--space-stack", "--space-panel-x", "--space-panel-y",
+    "--space-table-x", "--space-table-y", "--space-page-x",
+  ];
+  const rootMap = declarationMap(tokenBlock(themeCss, ":root"));
+  for (const token of required) {
+    if (!rootMap.has(token.slice(2))) {
+      fail(`theme.css :root is missing spacing token ${token}.`);
+    }
+  }
+
+  // Component rules must take gap/margin/padding from the spacing tokens. Raw px
+  // there is rhythm drift. The exceptions below are true geometry or page-edge
+  // values that are not part of the reusable rhythm: page padding, the nav's
+  // negative edge-bleed, intentionally wide layout gaps, fixed-dot positioning,
+  // sub-pixel glyph/baseline nudges, and list indents. This check is scoped to
+  // gap/margin/padding only — it does not touch width, height, top/left,
+  // grid-template tracks, or media-query breakpoints.
+  const allowedSpacingDeclarations = new Set([
+    "padding: 47px 24px 120px", // body: page rhythm (top / gutter / bottom)
+    "margin: 0 -24px 0",        // section-nav bar: negative bleed to the page gutter
+    "gap: 10px 22px",           // meta-strip inline: intentionally wide column gap
+    "gap: 14px 44px",           // meta-strip metric: intentionally wide column gap
+    "margin: 4px 5px",          // step-flow timeline: fixed-dot centering geometry
+    "padding-top: 2px",         // milestone when-label: baseline nudge
+    "margin-top: 1px",          // action-list ordered marker: glyph baseline nudge
+    "padding-left: 18px",       // scope-boundary list indent
+    "padding-left: 20px",       // annotation-pin list indent
+  ]);
+  const spacingDeclaration = /[;{]\s*(margin|padding|gap)(-(?:top|right|bottom|left))?\s*:\s*([^;}]*)/g;
+  for (const match of themeCss.matchAll(spacingDeclaration)) {
+    const prop = `${match[1]}${match[2] || ""}`;
+    const value = match[3].replace(/\s+/g, " ").trim();
+    if (!/-?\d*\.?\d+px/.test(value)) continue; // already tokenized (var/0/auto)
+    const normalized = `${prop}: ${value}`;
+    if (!allowedSpacingDeclarations.has(normalized)) {
+      fail(`theme.css has untokenized spacing ${normalized}; use a --space-* token.`);
+    }
+  }
+}
+
 function checkHtmlFile(filePath, themeCss) {
   const html = readText(filePath);
   const file = rel(filePath);
@@ -678,17 +788,49 @@ function checkMarkdownAndYaml() {
   }
 }
 
+function checkWorkbenchPackageBoundary() {
+  const pluginRoot = path.resolve(skillRoot, "../..");
+  const packageIgnorePath = path.join(pluginRoot, "package.ignore");
+  if (!fs.existsSync(packageIgnorePath)) {
+    fail("plugins/dots/package.ignore must exclude hidden skill workbenches from packaged payloads.");
+    return;
+  }
+
+  const patterns = readText(packageIgnorePath)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith("#"));
+  const workbenchRel = "html-artifact/.html-artifact";
+  const roadmapRel = "html-artifact/.html-artifact/docs/ROADMAP.md";
+  if (!ignored(workbenchRel, patterns) || !ignored(roadmapRel, patterns)) {
+    fail("plugins/dots/package.ignore must match html-artifact/.html-artifact and its docs.");
+  }
+
+  const repoRoot = path.resolve(pluginRoot, "../..");
+  for (const packageRoot of [
+    path.join(repoRoot, "dist/codex/plugins/dots/skills/html-artifact/.html-artifact"),
+    path.join(repoRoot, "dist/claude/plugins/dots/skills/html-artifact/.html-artifact"),
+  ]) {
+    if (fs.existsSync(packageRoot)) {
+      fail(`${path.relative(repoRoot, packageRoot)} must not be present in packaged payloads.`);
+    }
+  }
+}
+
 function main() {
   const themeCss = readThemeCss();
   if (!fs.existsSync(themePath)) {
     fail("Missing assets/theme.css.");
   }
   checkThemeCss(themeCss);
+  checkTypeSystem(themeCss);
+  checkSpacingSystem(themeCss);
   checkRegistryClosure({ themeCss });
   for (const htmlFile of listFiles(path.join(skillRoot, "assets"), (file) => file.endsWith(".html"))) {
     checkHtmlFile(htmlFile, themeCss);
   }
   checkMarkdownAndYaml();
+  checkWorkbenchPackageBoundary();
 
   if (failures.length) {
     console.error("html-artifact validation failed:");

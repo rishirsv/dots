@@ -1,19 +1,25 @@
 ---
 name: html-artifact
-description: "Produces a high-fidelity, self-contained HTML artifact from grounded source material when a human needs to read, navigate, compare, or share a rich static document with in-page navigation, comparison, inline diagrams or screenshots, disclosure, or copy/export. Covers recipes like explainers, plans, code reviews, research reports, and QA packets (full list in references/recipes.md); not for chat answers, durable Markdown docs, product or app UI (use visual-design), or backend work."
+description: "Creates grounded HTML artifacts for reports, plans, reviews, QA, and workbenches."
 ---
 
 # HTML Artifact
 
 Turn grounded source material into one self-contained `.html` file a human can
-read, navigate, compare, and share. This skill owns the **saved static-document
-layer** — the rich, shareable artifact other work hands off to. It is not app
-UI, not a renderer, not a JSON intermediate representation, and not a general
-test platform. Author it in semantic HTML, style it from
-[assets/theme.css](assets/theme.css), use
-[references/design.md](references/design.md) for visual
-judgment, give every block a predictable anatomy, verify it in a browser, and
-hand off a single static file.
+read, navigate, compare, and share.
+
+This skill owns the **saved static-document layer**: the rich, shareable
+artifact other work hands off to. It is not app UI, a renderer, a JSON
+intermediate representation, or a general test platform.
+
+Authoring contract:
+
+- Author semantic HTML.
+- Style from [assets/theme.css](assets/theme.css).
+- Use [references/design.md](references/design.md) for visual judgment.
+- Give every block a predictable anatomy.
+- Verify it in a browser.
+- Hand off a single static file.
 
 ## Default Path
 
@@ -146,22 +152,10 @@ implementation chrome).
 An artifact is not done until it has been opened and inspected in a browser at a
 desktop and a ~375px mobile width, plus a 320px reflow check, with no accidental
 page-level horizontal overflow and with tables, code, and screenshots contained.
-Run the checks in [references/validation.md](references/validation.md)
-and fix the artifact before final handoff.
-
-Inspect the rendered artifact in an available browser tool for every rendered
-check, and record which tool you used — plus any fallback reason — in the
-handoff. Do not add a browser-automation dependency just to run these checks. If
-a `file://` preview is blocked, use a temporary static preview route or data URL
-to inspect — but the delivered artifact stays a single static file.
-
-## Portable payload rule
-
-The shipped source must stay reusable. Reference copy must not include provider
-names, raw research links, scratch paths, one-off plan filenames, session notes,
-thread IDs, or source-specific provenance unless they are the user's source
-material for the artifact being generated. Demo content in the reference sheet
-must use neutral artifact scenarios.
+Run the checks in [references/validation.md](references/validation.md), fix the
+artifact before final handoff, and record the browser tool used plus any
+fallback reason. Do not add a browser-automation dependency just to run these
+checks.
 
 ## Handoff shape
 

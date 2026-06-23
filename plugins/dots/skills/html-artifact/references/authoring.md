@@ -45,6 +45,17 @@ payloads must stay reader-safe.
   layout, diagrams, or evidence sizing. It must not redefine `:root` tokens or
   target canonical `[data-primitive=...]` selectors; primitive changes belong in
   `theme.css`.
+- Do not override the type role tokens (`--type-*`, `--leading-*`,
+  `--weight-*`) or set raw `font-size` on primitives in local CSS. Size text by
+  consuming the existing role tokens so the bounded editorial scale holds; a
+  genuinely new size belongs in `theme.css`, not in one artifact.
+- Space artifact-local layout from the spacing tokens (`--space-*` scale and the
+  `--space-stack`/`--space-panel-*`/`--space-table-*`/`--space-page-x` role
+  aliases) rather than one-off pixel `gap`, `margin`, or `padding`. Keeping local
+  layout on the same rhythm avoids a second, drifting spacing system. Reserve raw
+  pixels for genuine geometry — fixed icon/dot sizes, line-number columns, touch
+  targets, content-specific diagram or evidence sizing — not for the spacing
+  rhythm; a genuinely new rhythm step belongs in `theme.css`.
 - Use tiny inline JS only when interaction changes the reader job: copy/export,
   tabs/filtering, simple calculators, or scroll-spy.
 - The artifact must read fully with JS disabled.
@@ -89,6 +100,26 @@ Treat them as figures, not decoration.
   ship placeholder photos or abstract mockups in an artifact that claims visual
   QA. Watch the self-contained file size — prefer right-sized captures over
   full-resolution dumps, and note when a capture was downscaled.
+
+## Charts
+
+Charts are authored at **development time** and shipped as static inline SVG —
+there is no runtime chart library and no runtime JS, so the single-file, JS-off
+contract holds.
+
+- Generate the SVG with [../scripts/plot.mjs](../scripts/plot.mjs) and paste the
+  returned string into the `inline-chart` primitive's `chart` slot. Presets:
+  `barRanking`, `divergingBar`, `lollipop`, `slope`; drop to `plot({ marks })`
+  with the `bar`/`dot`/`rule`/`text` helpers for an off-recipe chart.
+- The `data-table` slot is **mandatory** and is the accessible source of record.
+  The `<svg>` is `aria-hidden="true"` (no `role="img"`/`aria-label`) so a screen
+  reader announces the table once, not a weak image summary plus the table. Use
+  the module's `dataTable()` helper so chart and table come from the same data.
+- Colors must be chart tokens (`var(--chart-text|axis|primary|muted|pos|neg)`)
+  or `currentColor` — **never raw hex** — so charts track light and dark with no
+  per-chart theming.
+- Long tick labels are the main failure mode: the presets estimate label margins,
+  but verify in a browser and pass an explicit `margin` when a label still clips.
 
 ## Large Documents
 
@@ -142,22 +173,6 @@ structure:
 - Mark unknowns as unknown instead of fabricating metrics or provenance.
 - Use `audit-trail` for research, review, and QA artifacts that need trust.
 
-## Portable Payload Hygiene
-
-The reusable source files must stay generic. Before handoff or commit, scan the
-payload for source contamination:
-
-- provider or model names that are not part of the reusable contract
-- raw research URLs, research commands, or web-fetch transcripts
-- `.agents/`, scratch paths, thread IDs, local plan filenames, or session notes
-- one-off user wording copied into runtime examples
-- source-specific author names or article titles in generic demos
-- stale version labels when the contract is not versioned
-
-If a term appears only because it is the user's source material for a generated
-artifact, it may appear in that artifact. It should not appear in the reusable
-source payload or generic reference sheet examples.
-
 ## Dark mode
 
 Every artifact ships dark mode and the `theme-toggle` moon button, implemented
@@ -193,16 +208,3 @@ identically from [../assets/theme.css](../assets/theme.css):
   fallback so the final state is unreachable with motion disabled.
 - Images with no dimensions (layout shift on load), uncaptioned evidence
   screenshots, or placeholder/abstract mockups in an artifact claiming visual QA.
-- Source-generic reference sheet copy that preserves project-specific research
-  trail, scratch paths, or session notes.
-
-## External Systems
-
-Pico, missing.css, Open Props, Every Layout, Tailwind, and shadcn are research
-references only. The runtime authoring model is semantic HTML, the local
-primitive catalog, and the canonical CSS in
-[../assets/theme.css](../assets/theme.css).
-
-Rendered QA uses an available browser tool, recording the tool used and any
-fallback reason (see [validation.md](validation.md)). Do not add a
-browser-automation dependency to verify an artifact.

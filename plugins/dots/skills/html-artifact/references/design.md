@@ -41,6 +41,18 @@ Reserve large type for the document title and major section hierarchy. Compact
 surfaces such as findings, tables, badges, and side navigation should stay
 tight, legible, and workmanlike.
 
+The scale is a small, bounded set of role tokens in `theme.css`
+(`--type-caption` through `--type-h1`, plus `--type-metric`, leading, and
+weight roles). Compact surfaces are fixed sizes so dense tables, code, and
+metadata never drift; only the headline roles (`--type-h1`/`-h2`/`-h3`,
+`--type-lead`, `--type-metric`) flex within a tight `clamp` so titles settle
+on small screens without making the body fluid. The intent is refinement, not
+larger or more decorative type: the editorial density of the first viewport,
+tables, and ledgers is preserved. Headings and hero summaries balance their
+wrapping; numeric surfaces use tabular figures so columns align; literal
+technical surfaces (code, diffs, file paths, prompts) disable ligatures so
+character sequences read exactly.
+
 ## Layout
 
 Artifacts use a centered shell with generous page padding and a readable prose
@@ -51,6 +63,18 @@ Tables, code, diffs, diagrams, and screenshot rows must scroll inside their own
 wrappers or collapse. The page itself must not acquire horizontal overflow on
 mobile. Keep cards for repeated items, modals, evidence frames, and genuinely
 framed tools; do not wrap every page section in a card.
+
+Spacing follows the same discipline as type: a small, bounded rhythm rather than
+ad-hoc pixels. `theme.css` holds one quiet step scale (`--space-2xs` through
+`--space-xl`) plus role aliases for the surfaces that recur — stacked-block
+rhythm, panel padding, table cell padding, and the page gutter. Panels, lists,
+rows, and gaps share that beat so density reads as deliberate, not noisy. The
+intent is a consistent, compact rhythm, not more air: the editorial tightness of
+the first viewport, tables, and ledgers is preserved. True geometry — icon and
+dot sizes, fixed nav rails, line-number columns, list indents, touch targets,
+and the page's own edge padding — is sized for its job and sits outside the
+rhythm scale. Reach for a new spacing step only when an existing one genuinely
+cannot carry the layout; one more magic number is rarely the fix.
 
 ## Polish And Density
 

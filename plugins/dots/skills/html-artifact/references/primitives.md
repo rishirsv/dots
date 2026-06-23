@@ -148,6 +148,12 @@ inside their own container. Backing values stay visible as text or table rows.
 Common primitives:
 `inline-schematic`, `inline-chart`, `value-bridge`, `operating-model-map`.
 
+`inline-chart` SVG is generated at development time by
+[../scripts/plot.mjs](../scripts/plot.mjs) (presets `barRanking`, `divergingBar`,
+`lollipop`, `slope`) and pasted as a static, `aria-hidden` SVG into the `chart`
+slot; the `data-table` slot is mandatory and is the accessible source. See the
+Charts section in [authoring.md](authoring.md).
+
 ## Archetype: media-proof
 
 Use for screenshots, source/render comparisons, triptychs, annotation pins,
@@ -278,7 +284,7 @@ Common primitives:
 | `workbench-board` | card-set | `column`, `card`, `status`, `filter`, `export` | none | `none` | `bounded-workbench`, `status-report` |
 | `prompt-preview` | card-set | `prompt`, `variable`, `case`, `preview`, `copy` | none | `none` | `bounded-workbench`, `imagegen-concept-packet` |
 | `inline-schematic` | figure | `heading`, `diagram`, `legend`, `caption`, `fallback` | none | `none` | `architecture-map`, `explainer`, `diligence-report` |
-| `inline-chart` | figure | `heading`, `chart`, `data-table`, `caption`, `source` | none | `none` | `research-report`, `diligence-report`, `eval-report` |
+| `inline-chart` | figure | `heading`, `chart`, `data-table`, `caption`, `source` | none | `inline-chart` | `research-report`, `diligence-report`, `eval-report` |
 | `value-bridge` | figure | `baseline`, `bridge-item`, `value`, `source`, `caveat` | none | `none` | `value-creation-plan`, `diligence-report` |
 | `operating-model-map` | figure | `layer`, `capability`, `owner`, `dependency`, `gap` | none | `none` | `architecture-map`, `diligence-report` |
 | `screenshot-gallery` | media-proof | `shot`, `frame`, `caption` | variants `grid`, `compare`; states `pass`, `blocked` | `screenshot-gallery` | `design-qa`, `ux-audit-report`, `comparison-workbench` |
@@ -306,19 +312,3 @@ Common primitives:
 | `workstream-map` | ledger | `workstream`, `owner`, `phase`, `dependency`, `gate` | none | `none` | `implementation-plan`, `migration-plan`, `status-report` |
 | `audit-trail` | shell | `entry` | variant `references` | `audit-trail` | `explainer`, `research-report`, `eval-report`, `postmortem` |
 | `motion-proof` | motion | `demo`, `reduced` | variant `parameter-comparison`; state `reduced-motion` | `motion-performance` | motion-sensitive artifacts |
-
-## Adding A Primitive
-
-Add a new primitive only when the pattern recurs across recipes or is central to
-a reader job. A new primitive needs:
-
-- a stable `data-primitive` ID;
-- an archetype;
-- required slots;
-- variants or states if any;
-- a CSS owner region from `theme.css`, or `none`;
-- at least one consuming recipe or clear cross-recipe use;
-- reference sheet coverage.
-
-Most additions should be one registry row. Add a new archetype only when the
-primitive introduces a genuinely new structural grammar.

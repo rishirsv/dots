@@ -63,6 +63,19 @@ reusable rule.
 - **`recipe-fit-check`** — recipe defaults appear only where supported by source
   material. Any omitted default is unnecessary or disclosed as an evidence limit.
   No section is padded with placeholder prose.
+- **`type-check`** — the bounded editorial scale holds under stress: the first
+  viewport stays dense (title and value visible, not inflated), the 320px reflow
+  and high zoom (~200%) keep headings and body readable without clipping, tables
+  and code stay contained and compact, numeric columns (tables, metrics, dates,
+  line numbers, badges) align on tabular figures, and code/diff/path text reads
+  character-exact with ligatures off. Type should feel more refined, not larger.
+- **`spacing-check`** — the bounded spacing rhythm holds: the first viewport
+  stays compact (not padded out with air), panel and cell padding is consistent
+  across like surfaces, gaps and stack rhythm read as one beat rather than
+  scattered magic numbers, internal scrollers (tables, code, diffs, reels) keep
+  their padding while containing their own overflow, and nothing introduces
+  accidental page-level horizontal scroll at any tested width. Artifact-local
+  layout should spend the `--space-*` tokens, not invent one-off pixel gaps.
 - **`polish-check`** — the first viewport states the value; sections are not
   wrapped in decorative cards; status text does not rely on color; dense content
   uses compact rows, tables, or lists; no visible authoring scaffolding leaks.
@@ -74,6 +87,11 @@ reusable rule.
 - **`dark-mode-check`** — OS dark mode works with JS disabled, the manual toggle
   works with JS enabled, and status pills, warning callouts, code panels, and
   links hold contrast in both themes.
+- **`chart-check`** — every `inline-chart` is static SVG with a visible
+  `data-table`: with JS disabled the chart still renders and the table reads, no
+  tick label is clipped, the chart scales without forcing page-level horizontal
+  scroll, and its colors hold in both themes (chart-token / `currentColor` only,
+  no raw hex).
 
 ## Generated Artifact Proof Procedure
 
@@ -99,6 +117,12 @@ When changing this source, run the rendered proof procedure on
 recipe, primitive, or theme changes, also inspect at least one fixture or sample
 from each affected recipe family when such a fixture exists. This is maintainer
 regression work, not a requirement for every generated user artifact.
+
+`scripts/validate.mjs` proves local source coherence and the reference sheet's
+specimen coverage (for example, that each `inline-chart` specimen ships a
+`data-table`); it does not and cannot inspect arbitrary generated artifacts.
+Generated artifacts are held to the checks above through this guidance and a
+per-artifact browser pass, not by the validator.
 
 ## Preview fallback
 
