@@ -118,11 +118,10 @@ recipe, primitive, or theme changes, also inspect at least one fixture or sample
 from each affected recipe family when such a fixture exists. This is maintainer
 regression work, not a requirement for every generated user artifact.
 
-`scripts/validate.mjs` proves local source coherence and the reference sheet's
-specimen coverage (for example, that each `inline-chart` specimen ships a
-`data-table`); it does not and cannot inspect arbitrary generated artifacts.
 Generated artifacts are held to the checks above through this guidance and a
-per-artifact browser pass, not by the validator.
+per-artifact browser pass. Keep regression proof focused on what a reader sees:
+load, layout, containment, interactions, evidence honesty, dark mode, and print
+behavior where relevant.
 
 ## Preview fallback
 

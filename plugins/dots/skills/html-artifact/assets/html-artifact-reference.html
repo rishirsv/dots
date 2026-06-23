@@ -73,6 +73,10 @@
   --space-table-x: 15px;   /* table cell horizontal padding */
   --space-table-y: 10px;   /* table cell vertical padding */
   --space-page-x: 24px;    /* page gutter and edge-bleed reference */
+  --space-page-top: 47px;        /* page rhythm: top padding */
+  --space-page-bottom: 120px;    /* page rhythm: bottom padding */
+  --space-meta-gap: 10px 22px;   /* meta-strip inline: row / wide column gap */
+  --space-metric-gap: 14px 44px; /* meta-strip metric: row / wide column gap */
   --radius-panel: 10px;
   --radius-row: 7px;
   --radius-tag: 5px;
@@ -90,7 +94,7 @@ body {
   font-size: var(--type-body);
   line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
-  padding: 47px 24px 120px;
+  padding: var(--space-page-top) var(--space-page-x) var(--space-page-bottom);
 }
 
 main { max-width: 1080px; margin: 0 auto; }
@@ -163,7 +167,7 @@ nav[data-primitive="section-nav"][data-variant="bar"] {
   background: color-mix(in srgb, var(--bg) 92%, transparent);
   backdrop-filter: blur(5px);
   border-bottom: var(--line);
-  margin: 0 -24px 0; padding: var(--space-md) var(--space-page-x);
+  margin: 0 calc(var(--space-page-x) * -1) 0; padding: var(--space-md) var(--space-page-x);
   display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-lg);
 }
 nav[data-variant="bar"] a { font-family: var(--mono); font-size: var(--type-label); color: var(--text-body); text-decoration: none; padding: var(--space-2xs) var(--space-xs); border-radius: var(--radius-tag); }
@@ -210,9 +214,9 @@ header[data-primitive="hero-summary"] [data-slot="summary"] { font-size: var(--t
 [data-variant="cells"] [data-slot="item"] { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-panel-y) var(--space-panel-x); }
 [data-slot="item"] [data-slot="key"] { display: block; margin-bottom: var(--space-xs); }
 [data-slot="item"] [data-slot="value"] { font-size: var(--type-body); font-weight: var(--weight-strong); color: var(--text); }
-[data-primitive="meta-strip"][data-variant="inline"] { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+[data-primitive="meta-strip"][data-variant="inline"] { display: flex; flex-wrap: wrap; gap: var(--space-meta-gap); }
 [data-variant="inline"] [data-slot="item"] [data-slot="value"] { font-size: var(--type-ui); margin-left: var(--space-xs); }
-[data-primitive="meta-strip"][data-variant="metric"] { display: flex; flex-wrap: wrap; gap: 14px 44px; }
+[data-primitive="meta-strip"][data-variant="metric"] { display: flex; flex-wrap: wrap; gap: var(--space-metric-gap); }
 [data-variant="metric"] [data-slot="item"] [data-slot="value"] { display: block; font-family: var(--serif); font-size: var(--type-metric); font-weight: var(--weight-heading); color: var(--text); line-height: var(--leading-tight); }
 
 /* ============ section-nav · side ============ */
@@ -617,7 +621,7 @@ figure[data-primitive="inline-chart"] [data-slot="source"] { font-family: var(--
   font-size: var(--type-ui);
   color: var(--text-body);
 }
-.reference-section { margin-top: 48px; padding-top: var(--space-xl); border-top: var(--line); }
+.reference-section { margin-top: calc(var(--space-xl) * 2); padding-top: var(--space-xl); border-top: var(--line); }
 .reference-section > .sec-head { margin-bottom: 0; }
 .sec-head .num {
   display: block;
@@ -836,6 +840,41 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
           <div class="mini-row"><b>Condition</b><span>24h parity pass</span></div>
           <div class="mini-row"><b>Risk</b><span>retry grouping still open</span></div>
           <div class="mini-row"><b>Next action</b><span>run shadow drain</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="research-report" data-base="evidence-dossier">
+        <div class="mini-hero">
+          <div class="eyebrow">Research report</div>
+          <h3>Evidence supports migration, with one unresolved operating risk</h3>
+          <p class="lede">Claims, proof, confidence, and limits stay close enough to audit.</p>
+        </div>
+        <div data-primitive="claim-evidence-matrix" data-variant="cards">
+          <div data-slot="row" data-state="med"><b data-slot="claim">Shadow traffic is stable.</b><span data-slot="evidence">Seven-day sample shows no failed drain.</span><span data-slot="source">cutover log</span><span data-slot="confidence">medium</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="comparison-workbench" data-base="decision-workbench">
+        <div class="mini-hero">
+          <div class="eyebrow">Comparison workbench</div>
+          <h3>Choose phased cutover over big-bang migration</h3>
+          <p class="lede">Options, criteria, recommendation, and change condition are visible together.</p>
+        </div>
+        <div data-primitive="comparison-grid" data-variant="cards">
+          <article data-slot="option" data-state="recommended"><div data-slot="option-title">Phased</div><p>Lower rollback risk.</p><span data-slot="recommended">recommended</span></article>
+          <article data-slot="option"><div data-slot="option-title">Big bang</div><p>Faster, but harder to audit.</p></article>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="briefing-deck" data-base="briefing-deck">
+        <div class="mini-hero">
+          <div class="eyebrow">Briefing deck</div>
+          <h3>Three-part update for the launch review</h3>
+          <p class="lede">Slide-like sections remain readable as one static page.</p>
+        </div>
+        <div data-primitive="step-flow">
+          <div data-slot="step"><span data-slot="index">1</span><div><b data-slot="title">What changed</b><p>Queue writes now shadow the worker path.</p></div></div>
+          <div data-slot="step"><span data-slot="index">2</span><div><b data-slot="title">What remains</b><p>Retry grouping needs owner signoff.</p></div></div>
         </div>
       </article>
 
@@ -1225,12 +1264,12 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
       </div>
       <div class="specimen-body stack">
         <div data-primitive="screenshot-gallery" data-variant="grid">
-          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 180" role="img" aria-label="Desktop layout schematic"><rect width="320" height="180" fill="#ECEFED"/><rect x="16" y="16" width="288" height="20" rx="4" fill="#C9CECB"/><rect x="16" y="48" width="180" height="116" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="208" y="48" width="96" height="116" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="24" y="56" width="60" height="8" rx="3" fill="var(--accent)"/></svg></div><figcaption data-slot="caption">01 · Desktop · 1280px</figcaption></figure>
-          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 180" role="img" aria-label="Mobile layout schematic"><rect width="320" height="180" fill="#ECEFED"/><rect x="116" y="16" width="88" height="148" rx="8" fill="#FFFFFF" stroke="#C9CECB"/><rect x="124" y="26" width="50" height="7" rx="3" fill="var(--accent)"/><rect x="124" y="42" width="72" height="6" rx="3" fill="#C9CECB"/></svg></div><figcaption data-slot="caption">02 · Mobile · 375px</figcaption></figure>
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 180" role="img" aria-label="Desktop layout schematic"><rect width="320" height="180" fill="var(--surface-muted)"/><rect x="16" y="16" width="288" height="20" rx="4" fill="var(--border)"/><rect x="16" y="48" width="180" height="116" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="208" y="48" width="96" height="116" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="24" y="56" width="60" height="8" rx="3" fill="var(--accent)"/></svg></div><figcaption data-slot="caption">01 · Desktop · 1280px</figcaption></figure>
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 180" role="img" aria-label="Mobile layout schematic"><rect width="320" height="180" fill="var(--surface-muted)"/><rect x="116" y="16" width="88" height="148" rx="8" fill="var(--surface)" stroke="var(--border)"/><rect x="124" y="26" width="50" height="7" rx="3" fill="var(--accent)"/><rect x="124" y="42" width="72" height="6" rx="3" fill="var(--border)"/></svg></div><figcaption data-slot="caption">02 · Mobile · 375px</figcaption></figure>
         </div>
         <div data-primitive="screenshot-gallery" data-variant="compare" data-state="pass">
-          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 160" role="img" aria-label="Source mockup"><rect width="320" height="160" fill="#DCE8E7"/><rect x="20" y="24" width="160" height="14" rx="4" fill="var(--text)"/><rect x="20" y="52" width="280" height="8" rx="3" fill="#687174"/></svg></div><figcaption data-slot="caption">Source mockup</figcaption></figure>
-          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 160" role="img" aria-label="Rendered build"><rect width="320" height="160" fill="var(--bg)"/><rect x="20" y="24" width="160" height="14" rx="4" fill="var(--text)"/><rect x="20" y="52" width="280" height="8" rx="3" fill="#687174"/></svg></div><figcaption data-slot="caption">Rendered build — pass</figcaption></figure>
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 160" role="img" aria-label="Source mockup"><rect width="320" height="160" fill="var(--accent-soft)"/><rect x="20" y="24" width="160" height="14" rx="4" fill="var(--text)"/><rect x="20" y="52" width="280" height="8" rx="3" fill="var(--text-muted)"/></svg></div><figcaption data-slot="caption">Source mockup</figcaption></figure>
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 160" role="img" aria-label="Rendered build"><rect width="320" height="160" fill="var(--bg)"/><rect x="20" y="24" width="160" height="14" rx="4" fill="var(--text)"/><rect x="20" y="52" width="280" height="8" rx="3" fill="var(--text-muted)"/></svg></div><figcaption data-slot="caption">Rendered build — pass</figcaption></figure>
         </div>
       </div>
     </div>
@@ -1387,9 +1426,9 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
       <div class="specimen-head"><span class="pname">screenshot-triptych</span><span class="pnote">Source / render / revised, three-up.</span><span class="chip state">pass</span><span class="chip state">blocked</span><span class="chip state">evidence-limited</span></div>
       <div class="specimen-body">
         <div data-primitive="screenshot-triptych" data-state="blocked">
-          <figure data-slot="source"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Source mockup"><rect width="320" height="150" fill="#DCE8E7"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="#687174"/><rect x="18" y="72" width="284" height="58" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--text)"/></svg></div><figcaption>Source mockup</figcaption></figure>
-          <figure data-slot="render"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Rendered build"><rect width="320" height="150" fill="var(--bg)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="#687174"/><rect x="18" y="72" width="284" height="58" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--accent)"/></svg></div><figcaption>Rendered build</figcaption></figure>
-          <figure data-slot="revised"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Proposed revision"><rect width="320" height="150" fill="#ECEFED"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="#687174"/><rect x="18" y="72" width="284" height="58" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--text)"/></svg></div><figcaption>Proposed revision</figcaption></figure>
+          <figure data-slot="source"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Source mockup"><rect width="320" height="150" fill="var(--accent-soft)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="var(--text-muted)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--text)"/></svg></div><figcaption>Source mockup</figcaption></figure>
+          <figure data-slot="render"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Rendered build"><rect width="320" height="150" fill="var(--bg)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="var(--text-muted)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--accent)"/></svg></div><figcaption>Rendered build</figcaption></figure>
+          <figure data-slot="revised"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Proposed revision"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="var(--text-muted)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--text)"/></svg></div><figcaption>Proposed revision</figcaption></figure>
         </div>
       </div>
     </div>
@@ -1398,7 +1437,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
       <div class="specimen-head"><span class="pname">focused-compare</span><span class="pnote">Zoomed before/after of one region.</span><span class="chip state">blocked</span></div>
       <div class="specimen-body">
         <div data-primitive="focused-compare" data-state="blocked">
-          <figure data-slot="before"><span class="label" data-slot="region-label">Primary action · source</span><div class="frame"><svg viewBox="0 0 320 110" role="img" aria-label="Source crop"><rect width="320" height="110" fill="#DCE8E7"/><rect x="40" y="44" width="120" height="30" rx="6" fill="var(--text)"/></svg></div><figcaption>Source crop</figcaption></figure>
+          <figure data-slot="before"><span class="label" data-slot="region-label">Primary action · source</span><div class="frame"><svg viewBox="0 0 320 110" role="img" aria-label="Source crop"><rect width="320" height="110" fill="var(--accent-soft)"/><rect x="40" y="44" width="120" height="30" rx="6" fill="var(--text)"/></svg></div><figcaption>Source crop</figcaption></figure>
           <figure data-slot="after"><div class="frame"><svg viewBox="0 0 320 110" role="img" aria-label="Render crop"><rect width="320" height="110" fill="var(--bg)"/><rect x="40" y="44" width="120" height="30" rx="6" fill="var(--accent)"/></svg></div><figcaption>Render crop</figcaption></figure>
         </div>
       </div>
@@ -1408,7 +1447,7 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
       <div class="specimen-head"><span class="pname">annotation-pin</span><span class="pnote">Numbered pins over a capture, tied to notes.</span><span class="chip state">high</span><span class="chip state">med</span><span class="chip state">low</span></div>
       <div class="specimen-body">
         <div data-primitive="annotation-pin">
-          <div data-slot="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Annotated render"><rect width="320" height="150" fill="var(--bg)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--accent)"/></svg><span data-slot="pin" data-state="med" style="left:14%;top:70%">1</span></div>
+          <div data-slot="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Annotated render"><rect width="320" height="150" fill="var(--bg)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--accent)"/></svg><span data-slot="pin" data-state="med" style="left:14%;top:70%">1</span></div>
           <ol><li data-slot="pin-note">Primary action fill is the accent, not the source ink.</li></ol>
         </div>
       </div>
@@ -1443,11 +1482,11 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
       <div class="specimen-head"><span class="pname">revision-strip</span><span class="pnote">Before → after → revised; recommended marked.</span><span class="chip state">recommended</span></div>
       <div class="specimen-body">
         <div data-primitive="revision-strip">
-          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Before"><rect width="200" height="110" fill="#F2DDDF"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--accent)"/></svg></div><div data-slot="step-label">Before</div></div>
+          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Before"><rect width="200" height="110" fill="var(--danger-soft)"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--accent)"/></svg></div><div data-slot="step-label">Before</div></div>
           <span data-slot="connector">→</span>
-          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="After"><rect width="200" height="110" fill="#F3E7D5"/><rect x="40" y="46" width="80" height="22" rx="5" fill="#1d2a2c"/></svg></div><div data-slot="step-label">After</div></div>
+          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="After"><rect width="200" height="110" fill="var(--warning-soft)"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--text)"/></svg></div><div data-slot="step-label">After</div></div>
           <span data-slot="connector">→</span>
-          <div data-slot="step" data-state="recommended"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Revised"><rect width="200" height="110" fill="#E3ECD9"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--text)"/></svg></div><div data-slot="step-label">Revised ✓</div></div>
+          <div data-slot="step" data-state="recommended"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Revised"><rect width="200" height="110" fill="var(--success-soft)"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--text)"/></svg></div><div data-slot="step-label">Revised ✓</div></div>
         </div>
       </div>
     </div>
@@ -1473,8 +1512,8 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
       <div class="specimen-body">
         <div data-primitive="concept-gallery">
           <figure data-slot="concept" data-state="selected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Calm line-art concept"><rect width="320" height="150" fill="var(--bg)"/><circle cx="160" cy="75" r="34" fill="none" stroke="var(--accent)" stroke-width="3"/></svg></div><div data-slot="concept-label">Calm line-art <span class="pill" data-slot="selected" data-state="selected">selected</span></div><p data-slot="rationale">Quiet, editorial, pairs with the serif headings.</p></figure>
-          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Bold flat concept"><rect width="320" height="150" fill="#DCE8E7"/><rect x="120" y="40" width="80" height="70" rx="8" fill="var(--accent)"/></svg></div><div data-slot="concept-label">Bold flat</div><p data-slot="rationale">High energy, but fights the restrained palette.</p></figure>
-          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Photo collage concept"><rect width="320" height="150" fill="#ECEFED"/><rect x="60" y="36" width="90" height="78" fill="#C9CECB"/><rect x="170" y="36" width="90" height="78" fill="#687174"/></svg></div><div data-slot="concept-label">Photo collage</div><p data-slot="rationale">Too heavy to inline as a self-contained asset.</p></figure>
+          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Bold flat concept"><rect width="320" height="150" fill="var(--accent-soft)"/><rect x="120" y="40" width="80" height="70" rx="8" fill="var(--accent)"/></svg></div><div data-slot="concept-label">Bold flat</div><p data-slot="rationale">High energy, but fights the restrained palette.</p></figure>
+          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Photo collage concept"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="60" y="36" width="90" height="78" fill="var(--border)"/><rect x="170" y="36" width="90" height="78" fill="var(--text-muted)"/></svg></div><div data-slot="concept-label">Photo collage</div><p data-slot="rationale">Too heavy to inline as a self-contained asset.</p></figure>
         </div>
       </div>
     </div>
@@ -1552,9 +1591,9 @@ figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small
       <div class="specimen-head"><span class="pname">viewport-matrix</span><span class="pnote">The same content rendered at several widths.</span></div>
       <div class="specimen-body">
         <div data-primitive="viewport-matrix">
-          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Desktop"><rect width="320" height="150" fill="#ECEFED"/><rect x="16" y="16" width="180" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/><rect x="208" y="16" width="96" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Desktop · 1280px</div></figure>
-          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Tablet"><rect width="320" height="150" fill="#ECEFED"/><rect x="70" y="16" width="180" height="118" rx="6" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Tablet · 768px</div></figure>
-          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Mobile"><rect width="320" height="150" fill="#ECEFED"/><rect x="120" y="16" width="80" height="118" rx="8" fill="#FFFFFF" stroke="#C9CECB"/></svg></div><div data-slot="width-label">Mobile · 375px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Desktop"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="16" y="16" width="180" height="118" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="208" y="16" width="96" height="118" rx="6" fill="var(--surface)" stroke="var(--border)"/></svg></div><div data-slot="width-label">Desktop · 1280px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Tablet"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="70" y="16" width="180" height="118" rx="6" fill="var(--surface)" stroke="var(--border)"/></svg></div><div data-slot="width-label">Tablet · 768px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Mobile"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="120" y="16" width="80" height="118" rx="8" fill="var(--surface)" stroke="var(--border)"/></svg></div><div data-slot="width-label">Mobile · 375px</div></figure>
         </div>
       </div>
     </div>

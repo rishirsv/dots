@@ -23,9 +23,6 @@ do
   plugins/meta-skill/scripts/metaskill validate "$skill" --json >/dev/null
 done
 
-echo "==> HTML Artifact validation"
-node plugins/dots/skills/html-artifact/scripts/validate.mjs >/dev/null
-
 echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --claude
 

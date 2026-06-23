@@ -153,13 +153,13 @@ Use aliases for user wording, not as extra recipes.
 | Red-flag report, risk memo, price-adjustment issue summary | `diligence-report` | `executive-brief` |
 | Data-room request list, Q&A tracker, diligence evidence pack | `qa-packet` | `evidence-dossier` |
 | Synergy thesis, value creation plan, margin lever plan | `value-creation-plan` | `decision-workbench` |
-| Day 1 plan, 100-day plan, integration roadmap, launch plan | `migration-plan` | `plan-roadmap` |
+| Day 1 plan, 100-day plan, integration roadmap, migration launch plan | `migration-plan` | `plan-roadmap` |
 | Carve-out perimeter, separation plan, TSA schedule, entanglement log | `migration-plan` | `plan-roadmap` |
 | Operating model, governance model, process map | `architecture-map` | `system-map` |
 | Market study, commercial assessment, competitive landscape | `research-report` | `evidence-dossier` |
 | Growth strategy, pricing memo, GTM options, customer segmentation | `decision-brief` | `decision-workbench` |
 | PRD, RFC, product spec, feature spec | `product-spec` | `plan-roadmap` |
-| Roadmap, cycle plan, launch plan | `implementation-plan` | `plan-roadmap` |
+| Roadmap, cycle plan, feature launch plan | `implementation-plan` | `plan-roadmap` |
 | Code review, annotated PR, PR writeup | `code-review` | `review-annotation` |
 | Module map, system map, data flow, deployment flow | `architecture-map` | `system-map` |
 | Design QA, visual QA, source-vs-render review | `design-qa-detailed` | `review-annotation` |
