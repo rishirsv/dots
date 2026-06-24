@@ -1,11 +1,11 @@
 {
   "name": "drafts",
   "version": "0.1.0",
-  "description": "Stateful writing workflows for briefs, drafts, style, review, and revision.",
+  "description": "Context-first drafting, fast rewrite and humanize, style, review, and revision workflows.",
   "author": {
     "name": "Rishi"
   },
-  "keywords": ["writing", "drafts", "style", "review"],
+  "keywords": ["writing", "drafts", "rewrite", "humanize", "style", "review"],
   "category": "Productivity",
   "assets": "./assets",
   "references": "./references",

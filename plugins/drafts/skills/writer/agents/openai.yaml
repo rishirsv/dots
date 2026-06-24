@@ -5,4 +5,4 @@ interface:
   default_prompt: "Use $writer to create a brief, document contract, draft, revision, or channel variant."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

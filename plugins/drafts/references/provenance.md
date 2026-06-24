@@ -45,8 +45,8 @@ instead of repeating source lists in every section.
 The durable value is the concrete selected style ID, such as `style: default` or
 `style: report`.
 
-Auto Style is a selection behavior, not a stored style value. When Auto Style
-chooses a style for new durable work, report:
+Automatic style selection is a selection behavior, not a stored style value. When
+the agent chooses a style for new durable work, report:
 
 - selected style ID
 - one-line reason
@@ -74,6 +74,16 @@ For source context, report:
 - whether the source context is durable or session-only
 
 ## Reporting Pattern
+
+Keep provenance light while the user is drafting or rewriting. Do not interrupt
+the writing flow with a full provenance block unless durable state changed,
+sources are high-stakes, style provenance affects trust, or the user asks.
+
+For Draft lane work, mention the lane, whether the output is chat-only or saved,
+the selected rhetorical direction when applicable, and unresolved assumptions.
+
+For Rewrite lane work, mention whether the rewrite was personalized from a
+concrete style guide or was a non-personalized humanize/rewrite pass.
 
 Use a compact provenance block when useful:
 

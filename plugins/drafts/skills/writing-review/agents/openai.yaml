@@ -2,7 +2,7 @@ interface:
   display_name: "Writing Review"
   short_description: "Review draft versions and plan fixes"
   brand_color: "#2563EB"
-  default_prompt: "Use $writing-review to critique a specific draft version and produce findings or a scorecard."
+  default_prompt: "Use $writing-review to critique a draft version, or to give clearly labeled non-durable advice when no version exists."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

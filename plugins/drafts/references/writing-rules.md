@@ -40,6 +40,35 @@ Classify each rule:
 
 Do not promise deterministic enforcement for a generative-only rule.
 
+## Humanize Rules
+
+Treat `humanize` as a rewrite mode that restores author intent and texture. It
+is not a request to make the writing casual, emotional, or less professional by
+default.
+
+When humanizing, preserve:
+
+- factual claims
+- genre and channel
+- level of formality unless the user asks to change it
+- the user's apparent intent
+- important structure that serves the reader
+
+Clean up common AI tells:
+
+- generic setup phrases
+- symmetrical paragraph scaffolding
+- over-explaining obvious stakes
+- empty intensifiers and hype language
+- corporate transitions
+- unsupported claims or vague examples
+- repetitive sentence starts or transitions
+
+Add specificity only when supported by provided text, durable source context,
+selected style evidence, or the current session. If the user asks to "sound
+like me" without a usable style guide or samples, run a non-personalized
+humanize pass or ask for style evidence.
+
 ## Conflict Handling
 
 When rules conflict:

@@ -1,14 +1,16 @@
 ---
 name: writing-review
-description: "Use for Drafts review work: critiquing a specific draft version, producing findings, rubric scorecards, adversarial reviews, and fix plans tied to versioned writing state. Not for general brainstorming, style setup, drafting from scratch, or review that cannot identify the target draft."
+description: "Use for Drafts review work: critiquing draft versions, producing findings, rubric scorecards, adversarial reviews, and fix plans tied to writing state. Versioned reviews are durable; pasted-text or versionless reviews are non-durable advice unless a draft version is created or selected. Not for general brainstorming, style setup, drafting from scratch, or silent durable review without a target version."
 ---
 
 # Writing Review
 
-Review a specific draft version against its brief, contract, rules, channel,
-sources, and quality bar. Use this skill after `drafts` routes critique,
+Review writing against its brief, contract, rules, channel, sources, and quality
+bar. Durable reviews must target a specific `draft_version`; versionless or
+pasted-text reviews are allowed only as non-durable advice until the user
+creates or selects a version. Use this skill after `drafts` routes critique,
 scorecard, adversarial review, or fix-planning work here, or when the user
-explicitly invokes `writing-review` for version-tied critique.
+explicitly invokes `writing-review`.
 
 Read [review-versioning.md](../../references/review-versioning.md) before
 reviewing. Read [state-model.md](../../references/state-model.md) to resolve
@@ -30,8 +32,10 @@ Before reviewing, identify:
 - Draft-level source pack.
 - Requested review mode and rubric, if any.
 
-If the target version is unavailable, ask for it or label the review as
-non-durable advice.
+If the target version is unavailable, ask for it when durable review matters.
+When the user wants immediate critique of provided text, label the result as
+non-durable advice and offer to create or select a `draft_version` before any
+review-to-revision handoff.
 
 ## Review Modes
 
@@ -80,7 +84,8 @@ When the user asks to apply fixes:
 
 Return:
 
-- Reviewed draft and version.
+- Reviewed draft and version, or `non-durable advice` when no version was
+  available.
 - Review mode and rubric.
 - Findings ordered by severity.
 - Scorecard when requested, stored or reported as part of the review pass.

@@ -8,6 +8,12 @@ A durable review must target a specific `draft_version`. If no version is
 available, label the result as non-durable advice and ask whether to create or
 select a version.
 
+Non-durable advice can critique pasted text, a session-only draft, or an
+unversioned file, but it must not claim to create a `review_pass`. Before
+applying fixes from non-durable advice, create or select the source
+`draft_version`, then carry the selected findings into a normal
+review-to-revision handoff.
+
 ## Review Inputs
 
 Load or identify:
