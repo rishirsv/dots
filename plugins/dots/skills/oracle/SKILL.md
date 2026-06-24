@@ -1,26 +1,26 @@
 ---
-name: advisor
+name: oracle
 description: "Packages a focused task, selected context, and verification bar so a stronger or specialized external model or CLI agent can return an advisory second opinion. Use when the user asks to delegate, send, or get a second opinion on a plan, review, or hard problem from another model; not for ordinary implementation, local-only or subagent review, or publishing work externally."
 ---
 
-# Advisor
+# Oracle
 
 Package a focused task, selected context, and verification expectations so another model or local CLI agent can provide an advisory answer. Treat the answer as counsel, not authority: integrate only what survives local source checks, tests, and user constraints.
 
 ## Route
 
-Use Advisor when the useful move is to consult a stronger, different, or specialized model rather than continuing solo. Good fits include:
+Use Oracle when the useful move is to consult a stronger, different, or specialized model rather than continuing solo. Good fits include:
 
 - improving or challenging a plan
-- adversarial review or red-team critique only when the user explicitly wants that review delegated to another model, provider, CLI, or Advisor package
+- adversarial review or red-team critique only when the user explicitly wants that review delegated to another model, provider, CLI, or Oracle package
 - simplification, hard-cut, or over-engineering passes
 - science, literature, or current-source checks
 - implementation plans, design options, architecture critiques, and naming debates
 - targeted "what am I missing?" Hail Mary questions after local work has stalled
 
-Do not use Advisor for routine local implementation, ordinary code review that the current agent can complete directly, standalone adversarial review, or anything that would expose private context without user approval.
+Do not use Oracle for routine local implementation, ordinary code review that the current agent can complete directly, standalone adversarial review, or anything that would expose private context without user approval.
 
-Adversarial review is a common workflow outside Advisor. A request like "have two subagents adversarially review this spec" should use the available subagent/review workflow directly, not Advisor, unless the user also asks to build an Advisor package, call a provider, or get another-model counsel.
+Adversarial review is a common workflow outside Oracle. A request like "have two subagents adversarially review this spec" should use the available subagent/review workflow directly, not Oracle, unless the user also asks to build an Oracle package, call a provider, or get another-model counsel.
 
 ## Context Selection
 
@@ -34,7 +34,7 @@ Start from the decision the other model should improve. Select the smallest cont
 Prefer a tight bundle over a whole-project dump. Include the whole project only when it is small enough to inspect without crowding out the task and it does not contain secrets or bulky generated output. Exclude dependency folders, build artifacts, caches, snapshots, credentials, private keys, and `.env`-style files unless the user explicitly approves a narrow redacted excerpt.
 
 When the request is code-quality-shaped, include the local standards directly in
-the advisor prompt instead of referencing other skills. Pick only the standards
+the oracle prompt instead of referencing other skills. Pick only the standards
 that fit the decision:
 
 - Changed-code review: ask for correctness first, then code reuse, code quality,
@@ -67,23 +67,23 @@ that fit the decision:
   problem, ownership, current and proposed interface, solution, benefits, tests,
   hard-cut impact, and recommendation strength.
 
-For coding-plan advisor prompts or any prompt where the response shape matters, use
+For coding-plan oracle prompts or any prompt where the response shape matters, use
 [references/prompts.md](references/prompts.md) for situation-based guidance.
 Let the request determine whether concise prose, bullets, Markdown, or XML-like
 blocks are useful.
 
 ## Decision To Improve
 
-Before collecting files or calling the package script, write the decision the advisor should improve. Do not ask for open-ended review when the real need is a decision, such as whether to proceed with a plan, choose between options, trust a diagnosis, simplify an approach, or request more evidence.
+Before collecting files or calling the package script, write the decision the oracle should improve. Do not ask for open-ended review when the real need is a decision, such as whether to proceed with a plan, choose between options, trust a diagnosis, simplify an approach, or request more evidence.
 
 A useful decision statement names:
 
 - the decision or choice the primary agent must make
 - the current hypothesis, plan, or options under consideration
 - what evidence would change the decision
-- the advisor output needed: recommendation, strongest objection, missing proof, better option, or local verification plan
+- the oracle output needed: recommendation, strongest objection, missing proof, better option, or local verification plan
 
-If the decision is still vague, either sharpen it before packaging or ask the advisor for the smallest missing context needed to make the decision. Give the advisor a clear choice to attack, not a miscellaneous review bundle.
+If the decision is still vague, either sharpen it before packaging or ask the oracle for the smallest missing context needed to make the decision. Give the oracle a clear choice to attack, not a miscellaneous review bundle.
 
 ## Context Development
 
@@ -95,16 +95,16 @@ Work in passes:
 2. Extract anchors from the request: explicit paths, symbols, plan files, selected patch excerpts, errors, commands, logs, failing tests, user constraints, and named concepts.
 3. Find local source-of-truth files with normal repo exploration: `rg` for symbols and phrases, read nearby package scripts, inspect repo instructions, and check docs/specs that define the intended behavior.
 4. Expand only to adjacent context that changes the answer: callers and callees, owning config, route or entrypoint files, tests and fixtures for the same behavior, existing examples to imitate, relevant changed files, and explicit patch excerpts.
-5. Add verification surfaces: exact commands, test files, failing output, logs, or manual checks the primary agent will use before adopting the advisor answer.
+5. Add verification surfaces: exact commands, test files, failing output, logs, or manual checks the primary agent will use before adopting the oracle answer.
 6. Prune aggressively. Remove unrelated dirty files, generated output, dependency folders, caches, large artifacts, screenshots unless directly relevant, secrets, and context that merely makes the package look complete.
-7. Write a context map. Every included file or selected patch excerpt needs a one-line reason tied to the advisor decision. If a file cannot be justified, exclude it.
-8. Name missing context. If a fresh model would still have to guess about a material fact, either add the smallest missing file or ask the advisor model to return that missing-context request instead of guessing.
+7. Write a context map. Every included file or selected patch excerpt needs a one-line reason tied to the oracle decision. If a file cannot be justified, exclude it.
+8. Name missing context. If a fresh model would still have to guess about a material fact, either add the smallest missing file or ask the oracle model to return that missing-context request instead of guessing.
 
 Use the smallest bundle that lets the other model answer correctly. A good package has enough source to challenge the plan or advice, enough tests/docs to verify claims, and enough constraints to avoid locally wrong recommendations.
 
 ### File Inclusion Rules
 
-Do not include a file just because it is nearby. Include it when it plays a clear role in the advisor decision:
+Do not include a file just because it is nearby. Include it when it plays a clear role in the oracle decision:
 
 - `target`: the artifact, file, plan, spec, or selected patch excerpt being critiqued or produced
 - `source`: the implementation, entrypoint, route, config, schema, or pattern that controls the answer
@@ -114,58 +114,58 @@ Do not include a file just because it is nearby. Include it when it plays a clea
 
 Prefer one-hop expansion from anchors. Expand farther only when a concrete claim depends on it. For dirty repos, include relevant changed files or explicit patch excerpts, name unrelated dirty files as excluded, and do not let broad working-tree state accidentally reintroduce pruned context.
 
-When using `advisor_package.py`, pass explicit `--decision` and `--file`
+When using `oracle_package.py`, pass explicit `--decision` and `--file`
 patterns unless intentionally packaging a tiny repo. Treat whole-repo selection
 and selected patch excerpts as deliberate choices, not defaults. The generated
 `file-map.txt` is a mechanical path list; put the curated context map in
-`--context-map-file` so the advisor sees one curated explanation instead of a
+`--context-map-file` so the oracle sees one curated explanation instead of a
 second mechanical attached-context list.
 
 Before selecting files, match the request to an archetype and set the context
 altitude with [references/context-development.md](references/context-development.md):
 it gives task-typed guidance — the right altitude, the files to include by role,
-what to exclude, and a worked context map for each advisor task type. For
-example, a skill- or plugin-improvement advisor run should ship the whole skill or
+what to exclude, and a worked context map for each oracle task type. For
+example, a skill- or plugin-improvement oracle run should ship the whole skill or
 plugin directory plus its planning docs, not a single file.
 
 ## Package
 
-Create a local package when the user wants a sendable advisor bundle, when the
+Create a local package when the user wants a sendable oracle bundle, when the
 context is too large to pass cleanly to the chosen route, or when a durable local
 package is useful for the specific task. Do not create a package just because
 the route is a command-line agent; for CLI routes, pass the prompt directly and
 point the agent at the relevant repo files or directories unless a package is
 specifically preferred.
 
-Use [scripts/advisor_package.py](scripts/advisor_package.py):
+Use [scripts/oracle_package.py](scripts/oracle_package.py):
 
 ```bash
-python3 plugins/dots/skills/advisor/scripts/advisor_package.py \
+python3 plugins/dots/skills/oracle/scripts/oracle_package.py \
   --decision "Decide whether the proposed parser refactor is ready to implement." \
-  --task-file .agents/advisor/parser-refactor/task.md \
-  --context-map-file .agents/advisor/parser-refactor/context-map.md \
+  --task-file .agents/oracle/parser-refactor/task.md \
+  --context-map-file .agents/oracle/parser-refactor/context-map.md \
   --file "src/**/*.ts" \
   --file "!**/*.test.ts"
 ```
 
-By default, the script writes directly into `.agents/advisor/<task>/` under the
+By default, the script writes directly into `.agents/oracle/<task>/` under the
 project root, where `<task>` is the generated task slug. Always use that single
-`.agents/advisor/<task>` directory for Advisor work unless the user explicitly
+`.agents/oracle/<task>` directory for Oracle work unless the user explicitly
 asks for another output location. If the user asks for a Desktop package, pass
 an explicit `--output-dir ~/Desktop`; do not make Desktop the default.
 
 ### Task Workspace
 
-Use one task workspace for all Advisor prep and package output:
+Use one task workspace for all Oracle prep and package output:
 
-- `.agents/advisor/<task>/` for `task.md`, `context-map.md`, selected patch
+- `.agents/oracle/<task>/` for `task.md`, `context-map.md`, selected patch
   excerpts, compressed/review images, logs, `prompt.md`, `context.zip`, and any
-  other task-local Advisor files.
+  other task-local Oracle files.
 
-Do not create Advisor staging folders in the repo root, such as
-`advisor-package-input/`, and do not use `.agents/tmp` for package inputs. If a
+Do not create Oracle staging folders in the repo root, such as
+`oracle-package-input/`, and do not use `.agents/tmp` for package inputs. If a
 derived file should be included, write or move it under
-`.agents/advisor/<task>/` and pass that path explicitly with `--file`.
+`.agents/oracle/<task>/` and pass that path explicitly with `--file`.
 
 The package contains:
 
@@ -178,50 +178,50 @@ package, then tighten the `--file` globs and rerun. The script enforces a hard
 `--token-budget` (default 270000 estimated input tokens, counting `prompt.md`
 plus the unzipped context) and refuses to write a package that exceeds it. Treat
 an over-budget result as a signal to drop to a smaller context altitude, switch
-to selected patch excerpts, or split the advisor run; raise `--token-budget` or pass
+to selected patch excerpts, or split the oracle run; raise `--token-budget` or pass
 `--allow-oversized` only as a deliberate, justified choice.
 
 Use the smallest prompt input that matches what you have authored. If you have
 only the task body, pass it with `--task` or `--task-file` and let the script
-build the standard Advisor wrapper. If you have already authored the whole
+build the standard Oracle wrapper. If you have already authored the whole
 prompt, pass it with `--prompt-file`; a complete prompt in `--task-file` is also
 treated as the base prompt so the script does not add another wrapper above it:
 
 ```bash
-python3 plugins/dots/skills/advisor/scripts/advisor_package.py \
-  --prompt-file .agents/advisor/parser-refactor/prompt-source.md \
+python3 plugins/dots/skills/oracle/scripts/oracle_package.py \
+  --prompt-file .agents/oracle/parser-refactor/prompt-source.md \
   --file "src/**/*.ts"
 ```
 
 Keep the generated package focused on one request. For larger packages, mark
 files in the context map as first-pass, supporting, or reference-only so the
-advisor knows what to read first.
+oracle knows what to read first.
 
 Use that script contract as the default package shape. Do not invent additional top-level artifacts or a stricter schema unless the user asks for a redesigned package format. Do not attach separate git-context files by default; include patch excerpts only when they are explicitly selected, scoped, and named in the decision contract or context map.
 
 Before sending, inspect `prompt.md`, the script output, and the `context.zip` file list when the context is sensitive or broad. If the package is missing essential context, rebuild it; do not patch the zip by hand.
 
-## End-To-End Advisor Run
+## End-To-End Oracle Run
 
-For longer or uncertain work, request an advisor run after lightweight orientation
+For longer or uncertain work, request an oracle run after lightweight orientation
 and before committing to a substantive approach, and again before declaring done
 when the user wanted delegated review. Package one when the user wants a
-sendable bundle, when stuck, when changing approach, or when an advisor answer
+sendable bundle, when stuck, when changing approach, or when an oracle answer
 conflicts with local evidence in a way that would change the decision. Short
-reactive tasks driven by tool output do not need repeated advisor runs.
+reactive tasks driven by tool output do not need repeated oracle runs.
 
-For package-only advisor runs, the `.agents/advisor/<task>` workspace is the
+For package-only oracle runs, the `.agents/oracle/<task>` workspace is the
 deliverable. The skill's job is to keep prep inputs and the ready-to-send
 `prompt.md` plus `context.zip` there and hand it back; it does not drive a
 provider browser or upload the package anywhere. If the user wants the package
 on the Desktop, rebuild or write it with `--output-dir ~/Desktop`.
 Package-only flow:
 
-1. Develop the context and build the package inside `.agents/advisor/<task>`. Use `--dry-run` to right-size the bundle first.
+1. Develop the context and build the package inside `.agents/oracle/<task>`. Use `--dry-run` to right-size the bundle first.
 2. Inspect `prompt.md`, the `context.zip` file list, the reported token total, and any skipped-file lines printed by the package script.
 3. If anything is sensitive or broader than intended, rebuild; do not patch the zip by hand.
 4. Report the saved package path, the exact `prompt.md`, the included files, the token estimate, and the local verification boundary.
-5. When the user returns an answer, run After The Advisor against the package record.
+5. When the user returns an answer, run After The Oracle against the package record.
 
 If the user explicitly approves a CLI route, pass the prompt directly to the
 agent and provide direct file or directory references for the context it needs.
@@ -230,20 +230,20 @@ API money or send broader private context than the user approved.
 
 ## Provider Routes
 
-The default route is `package-only`: build the package in `.agents/advisor/<task>`
+The default route is `package-only`: build the package in `.agents/oracle/<task>`
 and hand the user the path and the exact `prompt.md`. Saving the package there,
 or on the Desktop when the user asks for Desktop output, is the intended end
-state for package-only advisor runs. Use another route only when the user
+state for package-only oracle runs. Use another route only when the user
 explicitly asks for and approves it.
 
-Do not open ChatGPT, operate a ChatGPT browser session, or upload Advisor
+Do not open ChatGPT, operate a ChatGPT browser session, or upload Oracle
 packages to ChatGPT. The supported ChatGPT-facing handoff is local saving only:
 create the package and report its path.
 
 Safe sequence for any non-default route:
 
 1. Author a standalone prompt and context map, naming the exact repo files,
-   directories, excerpts, commands, or logs the advisor should use.
+   directories, excerpts, commands, or logs the oracle should use.
 2. Get explicit approval naming the provider, account or CLI, the prompt and
    file references to send, likely cost, and whether to save the answer. If the
    context includes private, proprietary, customer, unpublished, or
@@ -282,10 +282,10 @@ locally.
 
 ## Prompt Shape
 
-The advisor prompt should stand alone and paste cleanly. Let the task determine
+The oracle prompt should stand alone and paste cleanly. Let the task determine
 the shape: use concise prose, bullets, Markdown sections, or XML-like blocks
 only when that structure makes the request clearer. Include only content that
-changes the advisor's reasoning:
+changes the oracle's reasoning:
 
 - advisory stance and grounding expectation
 - concrete choice, plan, diagnosis, or missing-proof question
@@ -302,7 +302,7 @@ Ask the other model to return advisory output, not to claim final proof. Shape
 the answer request around what the primary agent needs next: a recommendation,
 strongest objections, missing context, plan edits, counterarguments, local
 verification, or a bounded next step. Avoid fixed section headers unless they
-make that specific advisor prompt easier to answer.
+make that specific oracle prompt easier to answer.
 
 ### Citation Style
 
@@ -311,14 +311,14 @@ human-readable names, symbols, or filenames, such as `WorkoutSessionController`,
 `workout-player-full-loop.jpg`, or "the docs/screens audit." Do not place
 `path:line` citations in the middle of paragraphs.
 
-Ask the advisor to put exact paths, line ranges, and source URLs in a final
+Ask the oracle to put exact paths, line ranges, and source URLs in a final
 `Sources` or `Evidence Notes` section, grouped by recommendation or claim. Use
 inline links only for external web sources when the source itself is the object
 of the sentence.
 
-## After The Advisor
+## After The Oracle
 
-Read the answer critically before using it. If the advisor answer is pasted, quoted, summarized, or included inline in the user's request, treat that as the answer to review; ask for more only when the answer or original task is genuinely absent.
+Read the answer critically before using it. If the oracle answer is pasted, quoted, summarized, or included inline in the user's request, treat that as the answer to review; ask for more only when the answer or original task is genuinely absent.
 
 Before adopting advice:
 
@@ -330,9 +330,9 @@ Before adopting advice:
    - verify first: plausible but not yet proven
    - reject: hallucinated, stale, unsafe, or contrary to constraints
    - missing context: the smallest fact needed before deciding
-5. If local evidence and the advisor answer point in different directions, do not silently switch. Reconcile the conflict with local source checks or one focused follow-up advisor question before making the decision.
+5. If local evidence and the oracle answer point in different directions, do not silently switch. Reconcile the conflict with local source checks or one focused follow-up oracle question before making the decision.
 
-Do not restate unverified advisor claims as true; write "the advisor claims..." until local evidence supports them.
+Do not restate unverified oracle claims as true; write "the oracle claims..." until local evidence supports them.
 
 Verify file claims against the repo, rerun relevant tests or searches, and separate:
 
@@ -340,7 +340,7 @@ Verify file claims against the repo, rerun relevant tests or searches, and separ
 - plausible ideas that need local proof
 - hallucinated paths, stale facts, or advice that violates user constraints
 
-Report both the advisor outcome and the verification boundary. If you used only a package and did not call a provider, say that no model answer has been retrieved yet.
+Report both the oracle outcome and the verification boundary. If you used only a package and did not call a provider, say that no model answer has been retrieved yet.
 
 ## Boundaries
 

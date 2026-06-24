@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a focused Advisor package with prompt.md and context.zip."""
+"""Build a focused Oracle package with prompt.md and context.zip."""
 
 from __future__ import annotations
 
@@ -48,7 +48,7 @@ SENSITIVE_PATTERNS = [
 
 
 def default_task_dir(root: Path, slug: str) -> Path:
-    return root / ".agents" / "advisor" / slug
+    return root / ".agents" / "oracle" / slug
 
 
 def run_git(args: list[str], cwd: Path) -> str:
@@ -70,7 +70,7 @@ def run_git(args: list[str], cwd: Path) -> str:
 
 def slugify(text: str) -> str:
     words = re.findall(r"[a-zA-Z0-9]+", text.lower())
-    return "-".join(words[:6]) or "advisor"
+    return "-".join(words[:6]) or "oracle"
 
 
 def is_sensitive(rel: str) -> bool:
@@ -286,12 +286,12 @@ def package_warnings(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build a focused Advisor package.")
+    parser = argparse.ArgumentParser(description="Build a focused Oracle package.")
     parser.add_argument("--prompt-file", help="Fully authored prompt.md text. Suppresses generated prompt scaffolding.")
-    parser.add_argument("--task", help="Task text for the advisor model.")
+    parser.add_argument("--task", help="Task text for the oracle model.")
     parser.add_argument("--task-file", help="File containing task text.")
     parser.add_argument("--mode", default=None, help=argparse.SUPPRESS)
-    parser.add_argument("--decision", default="", help="Decision, choice, or hypothesis the advisor should improve.")
+    parser.add_argument("--decision", default="", help="Decision, choice, or hypothesis the oracle should improve.")
     parser.add_argument("--file", action="append", default=[], help="File, directory, glob, or !exclude glob. Repeatable.")
     parser.add_argument("--context-map-file", help="Curated Attached Context bullet list. Suppresses mechanical file reasons in prompt.md.")
     parser.add_argument("--notes", default="", help="Extra constraints or context notes.")
@@ -300,14 +300,14 @@ def main() -> int:
         "--output-dir",
         help=(
             "Directory where package folder is created. Defaults to "
-            "<root>/.agents/advisor/<task>. Keep package prep files in that same task directory."
+            "<root>/.agents/oracle/<task>. Keep package prep files in that same task directory."
         ),
     )
     parser.add_argument(
         "--name",
         help=(
             "Package folder name when --output-dir is explicit. "
-            "Defaults to advisor-<timestamp>-<task-slug>."
+            "Defaults to oracle-<timestamp>-<task-slug>."
         ),
     )
     parser.add_argument("--max-file-bytes", type=int, default=1_000_000, help="Reject individual files above this size.")
@@ -348,7 +348,7 @@ def main() -> int:
             slug_source = task
     timestamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
     task_slug = slugify(slug_source)
-    package_name = args.name or f"advisor-{timestamp}-{task_slug}"
+    package_name = args.name or f"oracle-{timestamp}-{task_slug}"
     output_dir = (
         Path(args.output_dir).expanduser().resolve()
         if args.output_dir

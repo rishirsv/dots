@@ -1,6 +1,6 @@
 # Prompt Guidance
 
-Use this reference when the advisor request needs careful prompt shaping, such as
+Use this reference when the oracle request needs careful prompt shaping, such as
 plan critique, architecture review, implementation strategy, current-source
 checks, or adversarial review.
 
@@ -19,7 +19,7 @@ For a plan review, the useful material is usually:
 - which files or docs anchor the plan
 - which local checks the primary agent can run before adopting advice
 
-For a current-source or research advisor prompt, add:
+For a current-source or research oracle prompt, add:
 
 - the source quality bar
 - how recent the evidence needs to be
@@ -36,7 +36,7 @@ For a simplification or hard-cut pass, add:
 ## Choose Structure For The Task
 
 Let the request decide the shape. A short paragraph plus bullets is often better
-than formal sections. Markdown headings help when the advisor needs to scan a
+than formal sections. Markdown headings help when the oracle needs to scan a
 larger decision, compare alternatives, or return a patchable plan. XML-like
 blocks are useful only when boundaries would otherwise blur, such as separating
 a seed plan from critique rules or source excerpts from instructions.
@@ -45,7 +45,7 @@ Use names that fit the actual work, or use no headers when prose is clearer.
 
 ## Include The Useful Ingredients
 
-Most strong advisor prompts include some subset of:
+Most strong oracle prompts include some subset of:
 
 - advisory stance and grounding expectation
 - the concrete decision or missing-proof question
@@ -69,7 +69,7 @@ glob matches:
 - product, privacy, compatibility, or scope constraint
 - risk context such as callers, migrations, dirty changes, or old behavior
 
-For large bundles, mark the few files the advisor should read first. Supporting
+For large bundles, mark the few files the oracle should read first. Supporting
 files can be there for evidence without being first-pass reading.
 
 ## Output Request
@@ -87,7 +87,7 @@ inside paragraphs unless the task explicitly asks for line-level annotation.
 
 ## Incomplete Context
 
-Tell the advisor what to do when the package is incomplete. Usually the best
+Tell the oracle what to do when the package is incomplete. Usually the best
 behavior is to name the smallest missing context that would change the answer,
 while still giving a bounded recommendation when the available evidence is
 enough.

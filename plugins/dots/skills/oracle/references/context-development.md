@@ -1,9 +1,9 @@
 # Context Development Archetypes
 
-First-class guidance for choosing what to put in an Advisor package. The package
+First-class guidance for choosing what to put in an Oracle package. The package
 script selects and zips the files you name; it does not decide which files are
 relevant or at what *altitude* to include them. Pick the archetype that matches
-the advisor task, set the altitude, then tune.
+the oracle task, set the altitude, then tune.
 
 Two rules apply to every archetype:
 
@@ -28,7 +28,7 @@ nearby.
 
 When unsure, start one altitude **smaller** and use `--dry-run` to preview the
 manifest and token total before committing. Raise altitude only when a concrete
-claim the advisor must make depends on context you left out.
+claim the oracle must make depends on context you left out.
 
 ## Archetypes
 
@@ -37,7 +37,7 @@ to exclude, and a worked context map you can adapt for `--context-map-file`.
 
 ### Skill Or Plugin Improvement
 
-**When:** the advisor task is to improve, review, or diagnose an agent skill or
+**When:** the oracle task is to improve, review, or diagnose an agent skill or
 plugin (for example, using the assistant's own skill to better itself).
 
 **Altitude:** the **entire** skill or plugin directory plus its planning docs. A
@@ -64,10 +64,10 @@ source and only duplicate tokens. Exclude unrelated sibling skills.
 **Worked context map:**
 
 ```
-- plugins/dots/skills/advisor/SKILL.md (target): the skill contract being improved.
-- plugins/dots/skills/advisor/references/*.md (source): runtime depth the SKILL links to; advice must stay consistent.
-- plugins/dots/skills/advisor/scripts/advisor_package.py (source): the deterministic helper the guidance describes.
-- plugins/meta-skill/tests/test_advisor_package.py (validation): pins helper behavior; kept outside the skill folder so it is not shipped in the portable package.
+- plugins/dots/skills/oracle/SKILL.md (target): the skill contract being improved.
+- plugins/dots/skills/oracle/references/*.md (source): runtime depth the SKILL links to; advice must stay consistent.
+- plugins/dots/skills/oracle/scripts/oracle_package.py (source): the deterministic helper the guidance describes.
+- plugins/meta-skill/tests/test_oracle_package.py (validation): pins helper behavior; kept outside the skill folder so it is not shipped in the portable package.
 - .plans/<skill>-design.md (constraint): why the skill is shaped this way and its non-goals.
 - plugins/meta-skill/skills/skill-writer/SKILL.md (constraint): house authoring standard the skill must satisfy.
 - excluded: dist/** — generated packages, rebuilt from source.
@@ -131,13 +131,13 @@ output is the highest-value item — never paraphrase it.
 
 **Include by role:** the precise question and local assumptions (`target`); the
 specific claims to verify and the freshness/source-quality bar (`constraint`);
-local docs only as background (`source`). Ask the advisor to separate
+local docs only as background (`source`). Ask the oracle to separate
 external/current-source claims from local repo claims, and to name when to stop
 looking and return a bounded answer.
 
-### Post-Advisor Adoption Review
+### Post-Oracle Adoption Review
 
-**When:** an advisor answer is back and you must decide what to adopt.
+**When:** an oracle answer is back and you must decide what to adopt.
 
 **Altitude:** the answer plus what proves or disproves it.
 
@@ -152,7 +152,7 @@ hypotheses until local evidence supports them.
 The package enforces a hard `--token-budget` (default 270000 estimated input
 tokens, counting `prompt.md` plus the unzipped context). If a chosen altitude
 exceeds it, the package is refused — that is the signal to drop to a smaller
-altitude, switch to selected patch excerpts, or split the advisor run, not to raise
+altitude, switch to selected patch excerpts, or split the oracle run, not to raise
 the budget reflexively. Run `--dry-run` first to right-size the bundle: it prints
 the selected/skipped manifest, per-file token estimates, and the total against
 the budget without writing anything.
