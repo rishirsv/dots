@@ -1,6 +1,6 @@
 ---
 name: writer
-description: "Use for Drafts writing work: Draft lane context interviews, standing pads, three rhetorical directions, working drafts, continuations, targeted revisions, and Rewrite lane rewrites, humanized cleanups, personalization, and channel variants. Not for writing-style setup, standalone critique, generic answers, code changes, or external publishing."
+description: "Use after drafts routes a writing task to the main writing engine, or when the user explicitly invokes writer, for Draft lane drafting, continuations, revisions, Rewrite lane transformations, humanized cleanups, personalization, and channel variants. Not for writing-style setup, standalone critique, generic answers, code changes, or external publishing."
 ---
 
 # Writer
@@ -9,11 +9,11 @@ Create and revise writing artifacts. Use this skill after `drafts` routes a
 writing moment to the main writing engine, or when the user explicitly invokes
 `writer` for a writing, revision, or transformation task.
 
-Read [draft-rewrite-ux.md](../../references/draft-rewrite-ux.md) before
-Draft or Rewrite lane work. Read [state-model.md](../../references/state-model.md)
-before creating briefs, contracts, drafts, pads, or versions, especially its
-State Authority section. Read [writing-rules.md](../../references/writing-rules.md)
-when rules affect output.
+The `drafts` front door owns Draft and Rewrite lane routing. Read
+[state-model.md](../../references/state-model.md) before creating briefs,
+contracts, drafts, pads, or versions, especially its State Authority section.
+Read [writing-rules.md](../../references/writing-rules.md) when rules affect
+output.
 Read [channel-recipes.md](../../references/channel-recipes.md) when the user
 names a destination, platform, format, slash command, or channel variant. Read
 [provenance.md](../../references/provenance.md) before reporting generated or
@@ -39,8 +39,8 @@ Choose the narrowest matching action:
 
 ## Draft Lane
 
-Use the Draft lane for new or recurring writing. Default to a Spiral-like
-context interview rather than immediate drafting.
+Use the Draft lane for new or recurring writing. Default to context gathering
+rather than immediate drafting when the outline is not ready.
 
 1. Resolve the standing pad or current draft when available.
 2. Keep the visible pad to `Ideas bank`, `Outline`, and `Draft`.
@@ -67,9 +67,9 @@ bounded useful artifact with explicit assumptions.
 
 ## Substantial Writing Flow
 
-Use this internal flow when Draft lane work is substantial enough to need
-durable planning or section-by-section execution. Keep the visible pad simple
-even when these internal objects exist.
+Use this flow when Draft lane work is substantial enough to need durable
+planning or section-by-section execution. Keep the visible pad simple even when
+brief or contract records exist.
 
 1. Create or update a `writing_brief` with audience, purpose, format, scope,
    voice mode, source constraints, success criteria, call to action,

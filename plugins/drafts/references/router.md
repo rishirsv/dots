@@ -1,8 +1,11 @@
 # Router
 
 Use this reference when `drafts` needs to classify a writing request before
-acting. Read [draft-rewrite-ux.md](draft-rewrite-ux.md) for the product-level
-Draft and Rewrite behavior.
+acting. The main `drafts` skill owns the user-facing Draft and Rewrite lane
+behavior.
+
+For Draft and Rewrite lane behavior, follow `drafts/SKILL.md`; this reference
+only chooses the route and identifies missing inputs.
 
 ## Inputs
 
@@ -55,16 +58,9 @@ Reusable writing guidance is handled by `update_writing_rules` in
 
 ## Default Decisions
 
-- Prefer the `Draft` lane for new writing. Gather context before drafting,
-  using one high-leverage question at a time unless the user asks for a
-  structured brief.
-- Prefer the `Rewrite` lane for existing text. Return one best version by
-  default, and offer alternate rhetorical directions only when they materially
-  matter.
-- Prefer three rhetorical directions for new Draft lane writing once enough
-  context exists.
-- Prefer turning interview answers into `Outline`, not a visible brief.
-- Prefer a brief and contract internally for substantial durable work.
+- Prefer the `Draft` lane for new writing.
+- Prefer the `Rewrite` lane for existing text.
+- Prefer a brief and contract for substantial durable work.
 - Prefer drafting for clear short requests when the brief is already sufficient.
 - Prefer version-tied review when a draft exists.
 - Prefer automatic style selection for a new durable draft when no style is
@@ -77,18 +73,14 @@ Reusable writing guidance is handled by `update_writing_rules` in
 - Prefer non-personalized humanize when the user asks to "sound like me" but no
   usable style guide or samples exist.
 
-## Clarification
+## Missing Inputs
 
-For Draft lane work, ask questions based on the Spiral-style interview model:
+For Draft lane work, missing inputs usually come from these core writing
+variables:
 
 - What is it about?
 - Who is it for?
 - What is the main argument?
-
-For uncertain substantial writing, first ask about the observation,
-frustration, or change in thinking that made the user want to write. Ask only
-the next missing question. If the user says `draft anyway`, draft with explicit
-assumptions.
 
 For Rewrite lane work, do not ask context questions unless the source text is
 missing, style evidence is required for personalization, or the edit intent is
