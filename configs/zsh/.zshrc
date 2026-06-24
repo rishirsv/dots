@@ -17,6 +17,7 @@ source "$ZSH/oh-my-zsh.sh"
 # ==============================================
 export CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
 export CLAUDE_CODE_DISABLE_MOUSE=1
+export DRAFTS_STYLE_HOME="${DRAFTS_STYLE_HOME:-$HOME/Code/dots/configs/drafts/styles}"
 
 alias claude='command claude'
 alias cc='claude --dangerously-skip-permissions'

@@ -8,8 +8,8 @@ configuration.
 Edit durable source here:
 
 - `plugins/`: source for each maintained plugin.
-- `configs/`: source copies of Codex, Claude, VS Code, Ghostty, Zsh, and
-  Karabiner configs.
+- `configs/`: source copies of Codex, Drafts styles, Claude, VS Code, Ghostty,
+  Zsh, and Karabiner configs.
 - `AGENTS.md`: repo instructions for agents working in this checkout.
 - `scripts/`: small helper entrypoints that are still source-owned.
 
@@ -80,6 +80,7 @@ configs/
 ├─ claude/
 ├─ cmux/
 ├─ codex/
+├─ drafts/
 ├─ ghostty/
 ├─ karabiner/
 ├─ vscode/
@@ -92,6 +93,7 @@ Sync selected config sources with:
 scripts/sync-configs.sh --dry-run --all
 scripts/sync-configs.sh --codex
 scripts/sync-configs.sh --codex-personal
+scripts/sync-configs.sh --drafts-styles
 scripts/sync-configs.sh --claude
 ```
 
@@ -101,6 +103,15 @@ targets before replacing them.
 `--codex-personal` installs the Codex source config as
 `~/.codex/personal.config.toml`, which Codex can load with
 `codex --profile personal`.
+
+`--drafts-styles` installs the repo-managed Drafts style library into both
+`~/.codex/skill-state/drafts/styles` and
+`~/.codex-personal/skill-state/drafts/styles`. Shell-launched Codex and Claude
+also get `DRAFTS_STYLE_HOME=$HOME/Code/dots/configs/drafts/styles` from the
+repo-managed Zsh config, so the repo copy is the normal source of truth.
+Generated style guides may reflect private writing patterns. Keep sync mode at
+`guides_only` and do not commit raw Outlook, iMessage, Slack, or client
+references.
 
 Keep source config portable. Stable project roots may live in
 `configs/codex/config.toml`; dated throwaway workspaces, caches, auth, session

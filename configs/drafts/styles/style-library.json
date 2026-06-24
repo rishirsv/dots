@@ -1,0 +1,63 @@
+{
+  "schema": "drafts/v1",
+  "kind": "style_library",
+  "updated_at": "2026-06-24T16:05:52Z",
+  "sync_mode": "guides_only",
+  "styles": [
+    {
+      "id": "email-base-rishi",
+      "title": "Rishi Email Base",
+      "guide_status": "ready",
+      "channels": ["email"],
+      "audiences": ["internal", "client", "external"],
+      "privacy": "private",
+      "reference_policy": "local_only",
+      "updated_at": "2026-06-24T16:05:52Z",
+      "source_hash": "session-only-outlook-sent-sample-not-retained"
+    },
+    {
+      "id": "email-client-advisory",
+      "title": "Client Advisory Email",
+      "guide_status": "ready",
+      "channels": ["email"],
+      "audiences": ["client", "external", "vendor", "prospect"],
+      "privacy": "client",
+      "reference_policy": "local_only",
+      "updated_at": "2026-06-24T16:05:52Z",
+      "source_hash": "session-only-outlook-sent-sample-not-retained"
+    },
+    {
+      "id": "email-internal-peer",
+      "title": "Internal Peer Email",
+      "guide_status": "ready",
+      "channels": ["email"],
+      "audiences": ["peer", "manager", "partner", "internal"],
+      "privacy": "private",
+      "reference_policy": "local_only",
+      "updated_at": "2026-06-24T16:05:52Z",
+      "source_hash": "session-only-outlook-sent-sample-not-retained"
+    },
+    {
+      "id": "email-delegation-review",
+      "title": "Delegation And Review Email",
+      "guide_status": "ready",
+      "channels": ["email"],
+      "audiences": ["junior", "team", "delivery-network", "project-team"],
+      "privacy": "client",
+      "reference_policy": "local_only",
+      "updated_at": "2026-06-24T16:05:52Z",
+      "source_hash": "session-only-outlook-sent-sample-not-retained"
+    },
+    {
+      "id": "email-document-commentary",
+      "title": "Document Commentary Email",
+      "guide_status": "ready",
+      "channels": ["email", "document-comment"],
+      "audiences": ["collaborator", "internal", "editor"],
+      "privacy": "client",
+      "reference_policy": "local_only",
+      "updated_at": "2026-06-24T16:05:52Z",
+      "source_hash": "session-only-outlook-sent-sample-not-retained"
+    }
+  ]
+}

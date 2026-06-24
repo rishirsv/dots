@@ -8,6 +8,7 @@ file is also the runbook to give an agent when moving setup between computers.
 Use this repo as the master source for:
 
 - Codex config and local agents.
+- Drafts style guides.
 - Claude config.
 - VS Code config.
 - Ghostty config.
@@ -59,6 +60,8 @@ configs/codex/AGENTS.md              -> ~/.codex/AGENTS.md
 configs/codex/config.toml            -> ~/.codex/config.toml
 configs/codex/keybindings.json       -> ~/.codex/keybindings.json
 configs/codex/agents/                -> ~/.codex/agents/
+configs/drafts/styles/               -> ~/.codex/skill-state/drafts/styles/
+configs/drafts/styles/               -> ~/.codex-personal/skill-state/drafts/styles/
 configs/claude/CLAUDE.md             -> ~/.claude/CLAUDE.md
 configs/claude/settings.json         -> ~/.claude/settings.json
 configs/vscode/settings.json         -> ~/Library/Application Support/Code/User/settings.json
@@ -107,6 +110,7 @@ cp ~/.codex/AGENTS.md configs/codex/AGENTS.md
 cp ~/.codex/config.toml configs/codex/config.toml
 cp ~/.codex/keybindings.json configs/codex/keybindings.json
 rsync -a --delete --exclude '.DS_Store' ~/.codex/agents/ configs/codex/agents/
+rsync -a --delete --exclude '.DS_Store' --exclude '*/references/' ~/.codex/skill-state/drafts/styles/ configs/drafts/styles/
 cp ~/.claude/CLAUDE.md configs/claude/CLAUDE.md
 cp ~/.claude/settings.json configs/claude/settings.json
 cp "$HOME/Library/Application Support/Code/User/settings.json" configs/vscode/settings.json
@@ -204,6 +208,9 @@ Prefer scoped syncs when testing one tool:
 scripts/sync-configs.sh --dry-run --codex
 scripts/sync-configs.sh --codex
 
+scripts/sync-configs.sh --dry-run --drafts-styles
+scripts/sync-configs.sh --drafts-styles
+
 scripts/sync-configs.sh --dry-run --claude
 scripts/sync-configs.sh --claude
 
@@ -229,6 +236,9 @@ The sync script backs up existing targets before replacing them.
 
 - Edit plugin source under `plugins/`; do not edit generated `dist/` packages.
 - Edit config source under `configs/`; do not commit app caches or runtime state.
+- Keep Drafts styles in `guides_only` mode unless a private repo explicitly
+  owns redacted or raw references. Do not commit raw personal, Outlook, Slack,
+  iMessage, or client corpus samples here.
 - Keep generated vendor packages under ignored `dist/`.
 - Keep secrets and machine-local shell overrides in `~/.zshrc.local`.
 - Keep local Claude settings such as `.claude/settings.local.json` out of Git.

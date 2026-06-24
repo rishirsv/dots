@@ -7,7 +7,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--claude|--vscode|--ghostty|--cmux|--zsh|--karabiner ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--zsh|--karabiner ...]
 
 Copies repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -19,7 +19,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex claude vscode ghostty cmux zsh karabiner)
+    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux zsh karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -38,6 +38,9 @@ while (( $# )); do
       ;;
     --codex-personal)
       add_target codex-personal
+      ;;
+    --drafts-styles)
+      add_target drafts-styles
       ;;
     --claude)
       add_target claude
@@ -161,6 +164,11 @@ sync_codex_personal() {
   install_file "$ROOT/configs/codex/config.toml" "$HOME/.codex/personal.config.toml"
 }
 
+sync_drafts_styles() {
+  install_dir "$ROOT/configs/drafts/styles" "$HOME/.codex/skill-state/drafts/styles"
+  install_dir "$ROOT/configs/drafts/styles" "$HOME/.codex-personal/skill-state/drafts/styles"
+}
+
 sync_claude() {
   install_file "$ROOT/configs/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
   install_file "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
@@ -194,6 +202,7 @@ for target in "${TARGETS[@]}"; do
   case "$target" in
     codex) sync_codex ;;
     codex-personal) sync_codex_personal ;;
+    drafts-styles) sync_drafts_styles ;;
     claude) sync_claude ;;
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
