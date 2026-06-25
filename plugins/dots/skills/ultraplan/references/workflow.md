@@ -1,209 +1,154 @@
 # Ultraplan Workflow
 
-Read this for the pipeline, the feedback loop, role contracts, and review
-lenses. Keep analysis roles read-only until synthesis writes plan artifacts.
+Use this when the task needs more than a small inline plan, or when an existing
+plan/spec/design doc must be upgraded. Keep analysis read-only until synthesis
+writes plan artifacts.
 
-## One Pipeline, Two Entry Points
+## Context Plan
 
-Every Ultraplan run is the same pipeline. The entry shape only decides what
-`Draft` means; the rung decides how much independence and iteration the loop
-gets.
+Before drafting, decide what the plan must know. Keep this lightweight and
+task-specific; it is an internal planning move, not a separate user-facing
+output.
+
+Common context lanes:
+
+| Lane | Inspect when |
+| --- | --- |
+| Repo conventions | The task touches code, docs, tests, release, or local workflow. |
+| Feature-building docs | The repo owns a how-to-build-features process or local plugin guidance. |
+| Existing owners | The plan might duplicate existing UI, services, repositories, routes, or tests. |
+| Data and contracts | Persistence, sync, API, state, schema, model, or interface boundaries matter. |
+| Current screens | UI changes affect app surfaces, visual quality, accessibility, or user flow. |
+| Design system | The task changes visible UI, interaction, layout, copy, or component choices. |
+| External guidance | Platform APIs, framework behavior, legal/policy, or current best practice may have drifted. |
+| Verification | The plan needs build, test, simulator, screenshot, browser, migration, or release proof. |
+
+For code work, read repo instructions and the smallest set of source files,
+docs, tests, screenshots, and scripts needed to avoid false premises. For an
+existing plan, read the plan in full and preserve a diffable original before
+rewriting.
+
+## Planning Flow
+
+Use one flow for new plans and plan upgrades:
+
+1. **Ground.** Gather the context that changes the plan. Capture load-bearing
+   observations with paths, symbols, commands, screenshots, or source links.
+2. **Draft.** Write the implementation path. For an existing plan, treat the
+   user's artifact as the draft and preserve any working sections.
+3. **Challenge.** Look for the strongest plan-changing problems across the
+   active pressure points:
+   - false or stale premises
+   - missing prerequisites or sequencing gaps
+   - reuse opportunities
+   - unclear ownership, layering, contracts, or data flow
+   - UI, accessibility, design-system, or current-screen mismatches
+   - weak verification or proof that does not test behavior
+   - risky version, SDK, dependency, schema, or release assumptions
+   - overengineering without a current producer, consumer, and proof path
+4. **Verify.** Re-check findings that would change the plan. Default to leaving
+   a critique out unless a fresh read, command, screenshot, or focused subagent
+   result shows it is real.
+5. **Tighten.** Turn confirmed findings into plan changes. Convert false
+   premises into preconditions, "build X" into reuse when an owner exists, and
+   broad abstractions into narrower slices when the current goal does not need
+   them.
+6. **Validate.** Check the finished plan against
+   [validation.md](validation.md), then stop before implementation.
+
+## Feature Planning Recipe
+
+For meaningful feature work, develop the missing steps between "build the
+feature" and "ship a correct implementation."
+
+Plan through:
+
+1. **User moment and surface.** What user action, flow, or product state changes?
+   Is the surface emotional, operational, utility, backend-only, or mixed?
+2. **Local process.** What repo docs, skills, or playbooks define how this kind
+   of feature should be built?
+3. **Ownership.** Which module owns data truth, platform behavior, state,
+   navigation, UI, tests, and release or migration proof?
+4. **Contracts.** What interfaces, models, persistence rows, API shapes,
+   state machines, or view contracts must exist before UI polish is meaningful?
+5. **Current experience.** Which current screens, screenshots, docs, or routes
+   show the surrounding product reality?
+6. **Visual target.** If the feature changes visible UI and the target is not
+   already chosen, plan concept generation, mockup comparison, or target
+   selection before implementation steps become too detailed.
+7. **Implementation sequence.** Usually build durable data/contract behavior,
+   then feature state and routing, then UI with local primitives, then
+   accessibility and previews.
+8. **Proof.** Name focused automated checks, manual checks, simulator or browser
+   checks, visual comparison, and any proof limits.
+
+## Subagent Briefs
+
+Use dynamic briefs. Give the subagent the decision you need, the source
+boundary, the evidence bar, and the output shape. Do not hand them a rigid form
+when a focused question would work.
+
+### Research
+
+Use for broad current-state discovery or external guidance.
 
 ```text
-Frame -> Draft -> Critique -> Verify -> Revise -> Validate
-                      ^___________________________|
-                       feedback loop
+You are grounding an implementation plan before it is drafted or revised.
+Repo/root or source boundary: <BOUNDARY>
+Task: <TASK>
+Decision the parent needs: <QUESTION>
+
+Return a concise sourced map:
+- facts that change the plan, with paths, commands, screenshots, or links
+- existing owners or patterns to reuse
+- contradictions, gaps, or risks
+- remaining uncertainty
+
+Do not modify files. Do not write the plan.
 ```
 
-- `New plan`: the parent authors the draft, then critiques it.
-- `Existing plan`: the user's plan/spec/design doc is the draft. Preserve a
-  diffable original and emit a changelog. Critique begins immediately.
+### Adversarial Review
 
-At `L0` the parent plays every role itself (self-critique). At `L1`+ independent
-subagents take the Researcher and Critic roles. See
-[budget-rules.md](budget-rules.md) for which roles each rung adds.
-
-### Grounding during Frame
-
-Framing always includes a small read-only grounding pass: read repo instructions
-(and, for an existing plan, the plan in full), search for artifacts the task
-asserts are done/moved/required/absent, check toolchain or version claims that
-matter, and capture commands and paths rather than impressions.
-
-When the run uses subagents, hand them those facts to verify rather than trust —
-this is what keeps critique independent:
+Use after a draft exists and the plan would benefit from independent pressure.
 
 ```text
-Seed observations (VERIFY against the repo with search/file reads/git; do not trust blindly):
-<facts with commands or paths>
+You are adversarially reviewing an implementation plan.
+Plan: <PLAN>
+Source boundary: <REPO_OR_CONTEXT>
+Focus: <lenses or risk areas>
+
+Find the strongest real problems that would change the plan. Ground each in
+evidence. Prefer findings that reduce scope, reuse existing owners, fix
+sequencing, clarify contracts, improve verification, or remove overengineering.
+Return at most 8 findings, ranked by implementation impact. Do not invent issues
+to justify the pass. Do not modify files.
 ```
 
-## The Feedback Loop
+### Visual Target
 
-Critique -> Verify -> Revise is a loop:
-
-1. **Critique** produces ranked, plan-changing findings.
-2. **Verify** refutes by default; only clearly-evidenced findings survive.
-3. **Revise** applies confirmed findings; refuted ones go to the changelog.
-4. **Converge**: at `L3`, re-critique the revised plan (changed sections plus
-   uncovered areas) and repeat. Stop when a round yields **zero new confirmed
-   findings**, or at the round cap. At `L0`-`L2` the loop runs once.
-
-If the loop hits the cap with a confirmed blocking finding unresolved, do not
-ship silently: revise to address it or name the unresolved tension as an open
-decision.
-
-## Lens Sets
-
-Pick the lens set at `Frame`:
-
-- **Code/source-grounded** (default when code or source truth matters): all seven
-  lenses below.
-- **Non-code / universal**: premise, sequencing, risk, and overengineering only.
-  The reuse, ownership, and testability lenses assume a codebase; drop them when
-  there is no code or source surface to ground against.
-
-| Key | Focus |
-|---|---|
-| `premise` | False or stale assumptions vs current reality. Flag anything asserted as done, landed, or already present without ownership. |
-| `sequencing` | Step order, prerequisites, missing owners for assumed preconditions, dependency on out-of-scope work, and blast radius. |
-| `reuse` | Work that already exists. For every "implement X", search for a working owner and recommend reuse or surfacing. |
-| `ownership` | One canonical owner, target/module edges, transitive references, dependency cycles, and lower layers staying free of upper-layer types. |
-| `testability` | Whether each step is provable in the current environment, has producer and consumer, and names runnable verification commands. |
-| `risk` | Concrete failure modes with evidence: shipping, CI, schema/version, environment mismatch, silent breakage, or irreversible actions. |
-| `overengineering` | Abstractions, adapters, compatibility shims, generic schemas, framework work, or broad refactors that exceed the current goal. |
-
-## Roles
-
-### Researcher
-
-Added at `L1`+. Mission: independent grounding the parent context cannot carry
-cleanly. Returns facts, likely owners, and current-state claims with commands or
-paths. The parent still drafts and decides.
-
-Prompt shape:
+Use when UI direction matters and the repo has not already selected a target.
 
 ```text
-You are grounding facts before an implementation plan is drafted or critiqued.
-Repo root: <REPO>. Task / plan: <CONTEXT>.
-
-<SEED>
-
-Return a concise, sourced map:
-1. Concrete current-state claims relevant to the task, each with a file path,
-   symbol, or command.
-2. Existing owners or implementations that should be reused.
-3. Contradictions between the task/plan and the current repo.
-Be specific. Do not propose style edits. Do not modify files.
-```
-
-### Critic
-
-Added at `L2`+ (multiple, diverse-lens, at `L3`). Mission: strongest
-plan-changing findings across the active lens set, including overengineering.
-
-Input: the draft plan, repo root, seed observations, Researcher output.
-
-Prompt shape:
-
-```text
-You are adversarially reviewing an implementation plan. Read the plan:
-<PLAN>. Repo root: <REPO>. Ground findings with search, file reads, git, tests,
-or docs.
-
-<SEED>
-
-RESEARCHER OUTPUT:
-<RESEARCH>
-
-Find the strongest real, specific problems across these lenses:
-<ACTIVE_LENSES>
-
-Rules:
-- Ground each finding in evidence. If you could not verify, say so and lower
-  severity.
-- Be concrete: name the section/step and give a plan change.
-- Quality over quantity: return at most 8 findings, ranked by implementation
-  impact.
-- Prefer findings that reduce or re-own scope: false done-states, reuse traps,
-  hidden coupling, unneeded dependency/toolchain moves, verification gaps, and
-  abstractions or shims without current producers and consumers.
-- Do not invent problems to justify the pass.
-```
-
-At `L3`, assign each Critic a lens family (e.g. premise+sequencing,
-reuse+ownership, testability+risk, overengineering) so breadth comes from
-diverse perspectives rather than redundant identical reviews.
-
-### Verifier
-
-Run in the parent by default so the final author owns the evidence. At `L3`,
-high-severity findings may get multi-vote refutation (several independent
-verifiers, majority refutes -> drop).
-
-Verification rule:
-
-```text
-Default to real=false unless evidence clearly holds.
-For each selected finding, re-read or re-run the evidence yourself. Record:
-- finding id
-- real: true/false
-- confidence
-- evidence gathered
-- refined plan change, or why no change is warranted
-```
-
-Verify blocking/high findings first. Skip low findings unless they materially
-change the plan.
-
-### Rescope Designer
-
-Optional, added only when verified findings imply genuinely competing plan
-shapes (an auto-promotion gate). Otherwise the parent chooses the re-scope
-directly.
-
-Prompt shape:
-
-```text
-Propose the smallest correct re-scope for this plan.
-Plan: <PLAN>. Repo root: <REPO>.
-
-CONFIRMED findings:
-<CONFIRMED_BRIEF>
+You are planning visual direction before implementation.
+Product context: <PRODUCT_OR_REPO_DOCS>
+Current screens/references: <SCREENSHOTS_OR_PATHS>
+Feature: <FEATURE>
 
 Return:
-- recommended step sequence
-- which steps collapse, defer, or reuse existing owners
-- what overengineering is removed
-- version/dependency/toolchain posture justified by what is provable today
-- tradeoffs and open human decisions
+- what current product reality must be preserved
+- concept directions worth generating or comparing
+- states/screens that need mockups
+- constraints from product semantics, data, platform behavior, and design system
+- selection criteria for the target to build toward
 ```
 
-## Synthesis Rules
+## Plan Upgrade Notes
 
-- For `New plan`, produce a clean plan in the output contract's format. For
-  `Existing plan`, produce the upgraded plan in the original format.
-- Preserve unchanged working sections. Do not rewrite for style alone.
-- Convert false premises into owned precondition steps.
-- Convert "implement X" to "reuse/surface existing X" when a working owner
-  exists.
-- Remove, defer, or narrow overengineered work that lacks a current producer,
-  consumer, or proof path.
-- Split risky version, SDK, dependency, schema, or toolchain changes into an
-  isolated gate unless the plan proves the feature truly requires them.
-- Replace naive moves across layers with wrap, adapter, or projection designs
-  when transitive references would create cycles.
-- Keep refuted findings out of the plan body.
-- For upgrades, put rejected claims, losing alternatives, and refutations in the
-  changelog.
+For an existing-plan upgrade:
 
-## Changelog Shape
-
-For `Existing plan` upgrades, write a sibling Markdown changelog with:
-
-1. `Verdict`: two or three sentences on the plan's health after the pass
-2. `Confirmed changes applied`: grouped by lens with problem, evidence, change
-3. `Refuted / not changed`: raised findings deliberately excluded and why
-4. `Chosen re-scoping`: only when a re-scope was needed
-5. `Open decisions for the human`: product, privacy, release, or ownership calls
-   the repo could not settle
+- preserve unchanged working sections
+- rewrite only where confirmed findings or a chosen simplification require it
+- keep refuted findings, losing alternatives, and rejected claims out of the
+  plan body
+- put confirmed changes, refutations, and open human decisions in the changelog
+- follow the input format unless it is broken or the user asks for another one
