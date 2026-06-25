@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: "Explicit-only skill for creating focused local git commits from intended changes, with optional modes for message-only, split commits, amend, checkpoint, and push. Not for opening PRs, merging, rebasing shared history, or force-pushing."
+description: "Create focused local git commits when the user wants to commit, save, checkpoint, stage-and-commit, split, amend, or prepare a commit message. Push is explicit-only. Not for opening PRs, merging, rebasing shared history, or force-pushing."
 ---
 
 # Git Commit
@@ -11,8 +11,13 @@ scope and staging as the core job. Push only in explicit push mode.
 
 ## Trigger
 
-Use only when the user asks to create, prepare, split, amend, checkpoint, or
-push a git commit, or invokes `git-commit` / `$git-commit`.
+Use when the user asks to do commit work, including ordinary wording such as
+`commit this`, `make a commit`, `save these changes`, `checkpoint this`, `stage
+and commit`, `write a commit message`, `split this into commits`, or invokes
+`git-commit` / `$git-commit`.
+
+Push mode remains explicit-only. Do not infer push intent from a plain commit,
+save, or checkpoint request.
 
 Do not use for opening pull requests, publishing review branches, merging,
 rebasing shared history, CI babysitting, or PR review threads. If the user asks
