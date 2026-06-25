@@ -7,7 +7,7 @@
   },
   "keywords": ["writing", "drafts", "rewrite", "humanize", "style", "review"],
   "category": "Productivity",
-  "assets": "./assets",
+  "styles": "./styles",
   "references": "./references",
   "skills": "./skills"
 }

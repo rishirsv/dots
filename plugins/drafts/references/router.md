@@ -40,8 +40,8 @@ mention it in one short sentence after the writing.
 Keep `$drafts` as the front door. Do not require users to name the kind of help
 when their verb or supplied text makes it clear.
 
-Reusable writing guidance is handled by `update_writing_rules` in
-[writing-rules.md](writing-rules.md), not as a separate writing moment.
+Reusable writing guidance uses the approval-gated rule update flow in
+[writing-rules.md](writing-rules.md), not a separate writing moment.
 
 ## Good Defaults
 

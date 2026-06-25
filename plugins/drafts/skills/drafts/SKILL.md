@@ -140,6 +140,9 @@ standing draft.
   decision.
 - Do not claim to personalize or "sound like me" without a usable style guide
   or provided samples. Fall back to non-personalized humanize when needed.
+- When the user wants a reusable style guide, let the guide depth scale with
+  evidence. Thin samples can produce a starter guide; repeated samples,
+  corrections, and review history can support a working or compound guide.
 
 ## Personality
 

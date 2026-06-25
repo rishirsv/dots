@@ -87,6 +87,7 @@ def copy_declared_surfaces(name: str, meta: dict, package_root: Path) -> None:
     patterns = ignore_patterns(source_root)
     surfaces = [
         "assets",
+        "styles",
         "references",
         "skills",
         "scripts",

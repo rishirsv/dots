@@ -82,8 +82,8 @@ When rules conflict:
 
 ## Reusable Rule Updates
 
-Use `update_writing_rules` when the user provides reusable writing guidance
-that should apply beyond the current draft or session.
+Use the reusable-rule update flow when the user provides writing guidance that
+should apply beyond the current draft or session.
 
 When the user gives reusable writing guidance:
 

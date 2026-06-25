@@ -14,6 +14,10 @@ explicitly invokes `writing-review`.
 
 Read [state.md](../../references/state.md) before reviewing, especially its
 saved-review, version, and user-facing state note guidance.
+Read [style-guide.md](../../references/style-guide.md), starting with its Fast
+Path for `writing-review`, before voice-fit reviews, especially when the review
+checks personalization, anti-patterns, repeated-choice patterns, or evidence
+limits.
 
 ## Before Reviewing
 
@@ -56,6 +60,23 @@ evidence and observable patterns. Check sample sufficiency, obvious style
 misses, repeated openers, avoided terms, channel fit, close-copying risk, and
 whether the draft still says what the user intended. Do not turn a style review
 into scoring unless the user asks for a scored rubric.
+
+For repeatable voice review, use the same pattern families used to build the
+guide:
+
+- Evidence level and whether it supports the claimed personalization.
+- Voice tensions and boundaries.
+- Structure, opening, movement, and ending.
+- Sentence-level preferences: cadence, punctuation, pronouns, function words,
+  hedges, qualifiers, transitions, abstraction level, and repeated openers.
+- Signature moves and whether they are useful rather than ornamental.
+- Anti-patterns and blacklist fixes.
+- Examples, misses, and fixes as principles, not phrases to copy.
+- Channel recipe conflicts or overrides.
+- Whether the draft still preserves source truth and user intent.
+
+If a miss recurs, recommend a correction-ledger entry or style-guide update
+instead of treating it as a one-off edit.
 
 ## Issues
 

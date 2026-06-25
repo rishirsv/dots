@@ -22,6 +22,9 @@ Read [writing-rules.md](../../references/writing-rules.md) when rules affect
 output.
 Read [channel-recipes.md](../../references/channel-recipes.md) when the user
 names a destination, platform, format, slash command, or channel variant.
+Read [style-guide.md](../../references/style-guide.md), starting with its Fast
+Path for `compose`, when personalization depends on a style guide's evidence
+level, revision checklist, or observable repeated-choice patterns.
 
 ## Starting Or Continuing A Piece
 
@@ -121,10 +124,18 @@ non-personalized humanize pass and say so in one short sentence.
   it for trust or future edits.
 - Change an existing `style` value only after user confirmation.
 - When `personalize` uses a style, retrieve the selected `style.md` and
-  relevant references before drafting, then run humanize-style cleanup for
-  style-specific and global automated-writing patterns.
+  relevant references before drafting, then apply the guide in this order:
+  evidence boundary, voice tensions, structure, sentence-level preferences,
+  signature moves, anti-patterns, targeted examples, modes, and revision
+  checklist. Treat examples as principles, not phrases to copy. Run
+  humanize-style cleanup for style-specific and global automated-writing
+  patterns before returning.
 - When `humanize` runs without a selected style, apply global and channel rules
   without inventing voice evidence. Treat it as non-personalized cleanup.
+- Preserve variation. Do not repeat a guide's examples, overuse one signature
+  move, or force every sentence to display the same pattern.
+- When a style guide is Level 1 or otherwise evidence-thin, use it as a gentle
+  steering guide and avoid claiming a close personal voice match.
 - When a channel, platform, slash command, or requested output form is present,
   resolve the relevant `channel_recipe` and let it control structure, length,
   CTA, and platform conventions.

@@ -92,9 +92,25 @@ Reusable user styles live in the resolved user style library root:
   style-library.json
   <style-id>/
     style.md
-    notes.md
     references/
 ```
+
+`style.md` is the runtime voice manual. `references/` holds accepted
+`style_reference` records when the user explicitly creates a reusable style
+library and wants the underlying evidence preserved. Each reference record is a
+self-contained Markdown file, not a required companion to `style.md`:
+
+```text
+references/
+  <yyyymmdd>-<short-title>.md
+```
+
+Use each reference record for cleaned sample text, source quality, reusable voice
+evidence, stylometric observations, caveats, and correction history tied to that
+sample or correction. Do not create generic auxiliary files, aggregate evidence
+files, corpus maps, holdout ledgers, or other maintenance surfaces unless the
+product model explicitly defines them. Do not sync or export references unless
+the user explicitly asks.
 
 Resolve the root in this order:
 
@@ -106,9 +122,8 @@ If `DRAFTS_STYLE_HOME` is set, treat it as the style library root itself, not as
 a parent folder. Do not recommend syncing all of `CODEX_HOME` just to move
 Drafts styles.
 
-The shipped `default` style is the read-only fallback asset at
-`assets/styles/default/style.md`. A user-customized `default` style, if any,
-lives in the user style library.
+The shipped `default` style is the read-only fallback at `styles/default.md`. A
+user-customized `default` style, if any, lives in the user style library.
 
 Maintain `style-library.json` when the style library exists or changes. Keep it
 minimal and inspectable:
@@ -123,18 +138,17 @@ minimal and inspectable:
       "id": "email-rishi",
       "title": "Rishi Email Style",
       "channel": "email",
-      "path": "email-rishi/style.md",
-      "modes": ["client", "internal_peer"],
-      "aliases": ["email-base-rishi"],
-      "notes_path": "email-rishi/notes.md"
+      "path": "email-rishi/style.md"
     }
   ]
 }
 ```
 
 Do not put lifecycle fields, model settings, counts, source hashes, generated
-timestamps, or sample corpora in the runtime guide. Add registry fields only
-when they help lookup, sync, aliasing, or migration.
+timestamps, or sample corpora in the runtime guide. Keep the registry to lookup
+fields unless routing behavior explicitly needs more. Modes belong inside the
+runtime style guide. Aliases require an explicit resolution or migration contract
+before they belong in the registry.
 
 Style lookup order:
 
@@ -152,7 +166,6 @@ Ordinary style sync, backup, export, or import copies:
 
 - `style-library.json`
 - each selected `style.md`
-- `notes.md` when present
 
 Do not infer approval to sync sample corpora from a general request to "sync my
 styles." If the user explicitly asks to export or move references, treat that as
@@ -167,13 +180,12 @@ drafts-style-library/
   styles/
     <style-id>/
       style.md
-      notes.md
 ```
 
 Before importing, read `manifest.json` and `style-library.json` when present.
-List style IDs, titles, channels, modes, aliases, and notes paths. Ask before
-overwriting any existing style ID. Import unknown styles directly. For
-conflicts, keep both versions unless the user explicitly chooses an overwrite.
+List style IDs, titles, channels, and style paths. Ask before
+overwriting any existing style ID. Import unknown styles directly. For conflicts,
+keep both versions unless the user explicitly chooses an overwrite.
 
 Conflict-safe names may use:
 
@@ -182,8 +194,8 @@ Conflict-safe names may use:
 ```
 
 After sync, export, import, or root changes, report only what matters:
-resolved library root, styles included, notes included or excluded, references
-included only when explicitly requested, and conflicts created or resolved.
+resolved library root, styles included, reference records included only when
+explicitly requested, and conflicts created or resolved.
 
 ## Frontmatter
 
@@ -234,11 +246,29 @@ instructions. Sources are draft-level by default. Record them once in
 | `section` | One Markdown section or chapter that can be compiled into a draft |
 | `draft_version` | Saved revision of a draft |
 | `style` | Concrete selected voice guide ID |
-| `style_reference` | Sample attached to a named style |
+| `style_reference` | Self-contained sample or correction record attached to a named style |
 | `style_guide` | Generated voice manual with instructions, modes, examples, and guardrails |
+| `stylometric_evidence` | Repeated-choice evidence captured in reference records or promoted into a style guide |
 | `channel_recipe` | Reusable destination or format recipe |
 | `review_pass` | Saved review tied to a draft version |
 | `rewrite_run` | Fast transformation of existing text, durable only when tied to a draft version |
+
+The style terms intentionally describe different layers:
+
+- `style` is the selected identifier, such as `default` or a user style ID. It
+  is the pointer saved in frontmatter or state.
+- `style_reference` is source evidence for a named style: user-authored samples,
+  corrections, or explicitly aspirational examples. It lives as a
+  self-contained record under `references/` only when the user wants durable
+  evidence preserved. It is input to guide creation, not a voice guide by itself.
+- `style_guide` is the standalone runtime `style.md` voice manual generated
+  from accepted references and corrections. It tells Compose and Review how to
+  write or judge voice.
+- `stylometric_evidence` is the observed repeated-choice analysis behind the
+  guide: cadence, punctuation, pronouns, openers, transitions, structures,
+  anti-patterns, and drafting implications. Capture it inside the relevant
+  `style_reference` record or promote the drafting implication into `style.md`;
+  do not create a separate evidence surface by default.
 
 Writing rules are resolved from AGENTS.md plus explicit session or draft
 instructions. They are not a `.drafts/` state object.
