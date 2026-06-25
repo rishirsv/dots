@@ -27,52 +27,43 @@ workspace.
 
 ## Workspace Layout
 
-Use a draft-centered layout. Recurring writing projects expose a simple standing
-pad to the writing lane:
+Use a draft-centered layout with as few durable files as the work needs:
 
 ```text
 .drafts/
   sessions/
   drafts/
     <draft-id>/
+      context.md
+      plan.md
       draft.md
-      pad.md
-      brief.md
-      contract.md
-      sections/
-        010-introduction.md
       versions/
         v001.md
       reviews/
         review-v001-quality.md
-      sources/
-        source-pack.md
+      sections/
+        010-introduction.md
   channel-recipes/
     <recipe-id>.md
 ```
 
-`pad.md` is the visible standing pad when a recurring writing project needs
-one. It should contain only:
+`context.md` is the raw pile and working memory for the piece. It can hold raw
+fragments, notes, links, transcript excerpts, source notes, examples, reader
+assumptions, unanswered questions, and unresolved choices. Treat this as the
+place to close the gap between what the user knows and what Drafts knows. Do
+not force early material into an outline.
 
-```text
-# Ideas bank
+`plan.md` is the promoted shape once the piece has a recognizable angle,
+reader, and argument. It can include working title options, the core argument,
+assumptions, proposed structure, source/example slots, format and length, and
+next decisions.
 
-# Outline
+`draft.md` is the current working prose. For short and medium pieces, keep the
+draft in one file. Use `sections/` only when the piece is too large to revise
+comfortably as one document or the user explicitly wants section files.
 
-# Draft
-```
-
-Raw fragments, messy notes, links, and voice transcripts belong in
-`Ideas bank`. Usable clusters, argument order, claims, examples, and marked
-assumptions belong in `Outline`. The selected working prose belongs in `Draft`.
-
-Each draft owns its visible pad plus any internal brief, contract, sections,
-versions, reviews, and source packs. Shared user styles do not live here by
-default.
-
-Do not add visible pad sections for style, archive context, questions,
-decisions, source packs, versions, reviews, or provenance. Use side records for
-those when durable state exists.
+Each draft owns its context, plan, draft, versions, reviews, and optional
+sections. Shared user styles do not live here by default.
 
 Workspace-local style overrides are allowed only when the user explicitly asks
 for a project-specific override:
@@ -169,9 +160,8 @@ specific section truly has separate source constraints.
 | --- | --- |
 | `workspace` | Current project folder that may contain `.drafts/` |
 | `session` | Continuing writing conversation and decision history |
-| `standing_pad` | Visible three-section project surface: Ideas bank, Outline, Draft |
-| `writing_brief` | Structured user intent before planning |
-| `document_contract` | Executable plan for substantial writing |
+| `context` | Raw pile: fragments, notes, sources, reader assumptions, open questions, and unresolved choices |
+| `plan` | Promoted shape: title options, core argument, structure, source/example slots, and next decisions |
 | `draft` | User-facing writing artifact |
 | `section` | One Markdown section or chapter that can be compiled into a draft |
 | `draft_version` | Saved revision of a draft |
@@ -179,7 +169,6 @@ specific section truly has separate source constraints.
 | `style_reference` | Sample attached to a named style |
 | `style_guide` | Generated voice manual with instructions, modes, examples, and guardrails |
 | `channel_recipe` | Reusable destination or format recipe |
-| `source_pack` | Draft-level source context |
 | `review_pass` | Version-tied critique and findings |
 | `rewrite_run` | Fast transformation of existing text, durable only when tied to a draft version |
 
@@ -193,41 +182,32 @@ recurring project, an existing draft, persistence, or a file edit. Otherwise,
 return chat-only output without claiming a saved state object.
 
 Rewriting is chat-only by default when the user pastes text. It becomes
-durable when it revises a selected `draft_version`, updates `pad.md`, creates a
+durable when it revises a selected `draft_version`, updates `draft.md`, creates a
 new version, or the user explicitly asks to save the rewrite.
 
-When `Draft` asks context questions, store useful answers in `Outline` when a
-standing pad exists. Do not create a visible `Brief` section. Internal
-`writing_brief`, `document_contract`, or `clarification_state` records are
-allowed only when the state location exists or the user has approved durable
-Drafts state.
+When Drafts asks context questions, store useful answers in `context.md` when
+durable state exists. Promote material into `plan.md` only when the angle,
+reader, and core argument are clear enough to shape the piece.
 
 ## Plan Before Section Work
 
-Use `writing_brief` for intent:
+Use `context.md` to preserve:
 
-- Audience.
-- Purpose.
-- Format.
-- Scope.
-- Voice mode.
-- Source constraints.
-- Success criteria.
-- Call to action.
-- Open questions.
-- Assumptions.
+- Raw fragments and sharp sentences.
+- Notes, transcripts, links, and source leads.
+- Reader, purpose, format, and voice assumptions.
+- Source constraints, unsupported claims, and examples needed.
+- Open questions and unresolved choices.
 
-Use `document_contract` for execution:
+Use `plan.md` to commit to:
 
-- Title or working thesis.
-- Outline.
-- Section goals.
-- Length target.
-- Source plan.
-- Quality bar.
-- Review criteria.
-- Section status.
-- Decisions and unresolved assumptions.
+- Working title or title options.
+- Core argument or thesis.
+- Reader and desired reader change.
+- Proposed structure and section goals.
+- Source/example slots.
+- Format, length, and quality bar.
+- Next decisions before drafting.
 
 ## Draft Versions
 
@@ -240,8 +220,8 @@ Create or describe a new `draft_version` for material changes:
 - Restore.
 - Channel variant source update.
 
-A `channel_variant` should usually be a separate `draft` linked to its source
-draft and source version.
+A channel variant should usually be a separate draft linked to its source draft
+and source version.
 
 ## Style Guides And Evidence
 

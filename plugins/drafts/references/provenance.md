@@ -11,7 +11,7 @@ know:
 - What artifact changed?
 - What version did it come from?
 - Which concrete style was used?
-- Which draft-level source pack was used?
+- Which draft context or source material was used?
 - Which AGENTS.md guidance and explicit instructions were applied?
 - Which review, if any, drove the change?
 
@@ -39,8 +39,8 @@ order: 10
 Do not store rules in frontmatter. Rules come from AGENTS.md and explicit user
 instructions.
 
-Sources are draft-level by default. Record them once in the draft's source pack
-instead of repeating source lists in every section.
+Sources are draft-level by default. Record them once in `context.md` instead of
+repeating source lists in every section.
 
 ## Style Provenance
 
@@ -64,12 +64,13 @@ decision.
 
 ## Source Provenance
 
-Use draft-level source packs under the draft folder. Do not promote attachments
-to durable source state unless the user asks or a `.drafts/` source pack exists.
+Use `context.md` under the draft folder for durable source context. Do not
+promote attachments to durable source state unless the user asks or draft
+context already exists.
 
 For source context, track:
 
-- source pack used, if any
+- draft context used, if any
 - attached files or links used in the current session
 - claims cited or checked when relevant
 - whether the source context is durable or session-only

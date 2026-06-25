@@ -5,7 +5,7 @@ description: "Use for Drafts review work: critiquing draft versions, producing f
 
 # Writing Review
 
-Review writing against its brief, contract, rules, channel, sources, and quality
+Review writing against its context, plan, rules, channel, sources, and quality
 bar. Durable reviews must target a specific `draft_version`; versionless or
 pasted-text reviews are allowed only as non-durable advice until the user
 creates or selects a version. Use this skill after `drafts` routes critique,
@@ -25,12 +25,12 @@ Before reviewing, identify:
 
 - Target `draft`.
 - Exact `draft_version`.
-- Relevant `writing_brief`.
-- Relevant `document_contract`.
+- Relevant context, if available.
+- Relevant plan, if available.
 - Channel recipe or intended destination.
 - Applicable AGENTS.md guidance and explicit instructions.
 - Selected style ID and style guide.
-- Draft-level source pack.
+- Draft-level source material.
 - Requested review mode and rubric, if any.
 
 If the target version is unavailable, ask for it when durable review matters.
@@ -40,8 +40,8 @@ review-to-revision handoff.
 
 ## Ways To Review
 
-- `quality_review`: find the highest-impact issues against the brief and
-  contract.
+- `quality_review`: find the highest-impact issues against the context, plan,
+  and reader need.
 - `adversarial_review`: pressure-test claims, structure, reader value, source
   use, and hidden assumptions.
 - `rule_review`: check writing rules and deterministic constraints.
@@ -65,7 +65,7 @@ Each finding should include:
 - Severity.
 - Location or section.
 - Evidence from the draft.
-- Why it matters for the brief, contract, reader, rule, source, or channel.
+- Why it matters for the context, plan, reader, rule, source, or channel.
 - Recommended fix.
 
 Do not bury findings behind a long summary. Lead with the issues that would

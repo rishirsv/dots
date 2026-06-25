@@ -23,7 +23,7 @@ Authority and User Style Library sections, for style storage and lookup.
 
 1. Create or select a user-global `style`.
 2. Classify incoming material as style reference, workspace sample, Knowledge,
-   source pack, or session-only context.
+   draft context, or session-only context.
 3. Extract authorship, channel, audience, relationship, thread context, intent,
    and cleaned user-authored text before deciding what guide the material can
    support.

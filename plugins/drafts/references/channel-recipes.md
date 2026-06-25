@@ -14,7 +14,7 @@ Keep these layers separate:
 - `channel_recipe`: what shape the artifact must take.
 - `style_guide`: how the user's voice should sound inside that shape.
 - `writing_rules`: durable policy and avoidances.
-- `source_pack` and `knowledge`: factual support.
+- draft context and `knowledge`: factual support.
 
 When a style guide and channel recipe conflict, preserve the channel format and
 adapt the selected style inside that format. A long-form style can be used for
@@ -229,7 +229,7 @@ When transforming an existing draft into a channel variant:
 
 1. Resolve the source draft and version.
 2. Resolve the target recipe and selected concrete style.
-3. Preserve source-backed facts, constraints, and claims from the source pack.
+3. Preserve source-backed facts, constraints, and claims from draft context.
 4. Change structure, length, opening, CTA, and formatting to match the recipe.
 5. Keep voice patterns from the style guide only where they fit the target
    format.

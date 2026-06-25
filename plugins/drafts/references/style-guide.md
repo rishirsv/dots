@@ -30,7 +30,7 @@ Keep these concepts separate:
 - `style_guide`: `style.md`, generated or updated from selected references and
   user corrections.
 - `writing_rules`: durable wording policies, not voice evidence.
-- `knowledge` and `source_pack`: factual/source context, not style evidence.
+- `knowledge` and draft context: factual/source context, not style evidence.
 
 If the user provides text or files and does not say where they belong, ask only
 when the choice changes persistence or runtime behavior. Never silently save
@@ -75,7 +75,7 @@ sync, import, and export styles without reading every `style.md` file.
 5. Load existing `style.md`, references, user corrections, and maintenance
    notes.
 6. Classify incoming material as style reference, workspace sample, Knowledge,
-   source pack, or session-only context.
+   draft context, or session-only context.
 7. Extract authorship, channel, audience, relationship, thread context, intent,
    and cleaned user-authored text before deciding what guide the material can
    support.

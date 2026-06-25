@@ -24,7 +24,7 @@ AGENTS.md guidance
 -> user instructions
 -> style guidance
 -> channel recipe
--> document_contract constraints
+-> plan constraints
 -> session or draft-specific instructions
 ```
 

@@ -20,12 +20,12 @@ Load or identify:
 
 - `draft`.
 - `draft_version`.
-- `writing_brief`.
-- `document_contract`.
+- `context`, when available.
+- `plan`, when available.
 - `channel_recipe`.
 - applicable AGENTS.md guidance and explicit instructions.
 - selected concrete style ID and style guide.
-- draft-level `source_pack`, if one exists.
+- draft-level source material from `context.md`, if it exists.
 - Requested review mode.
 
 ## Findings

@@ -16,8 +16,8 @@ assumption.
 
 The `drafts` front door decides whether the user needs new writing or a pass on
 existing text. Read
-[state-model.md](../../references/state-model.md) before creating briefs,
-contracts, drafts, pads, or versions, especially its Where Saved Work Lives
+[state-model.md](../../references/state-model.md) before creating context,
+plans, drafts, sections, or versions, especially its Where Saved Work Lives
 section.
 Read [writing-rules.md](../../references/writing-rules.md) when rules affect
 output.
@@ -26,50 +26,36 @@ names a destination, platform, format, slash command, or channel variant. Read
 [provenance.md](../../references/provenance.md) before mentioning style,
 sources, versions, reviews, or saved state.
 
-## The Editing Move
-
-Quietly choose the narrowest matching action so the writing gets the right
-treatment:
-
-- `draft_lane`: context-first new, recurring, substantial, or continuing
-  writing.
-- `rewrite_lane`: fast transformation of existing text, including rewrite,
-  humanize, personalize, polish, tighten, shorten, expand, or adapt.
-- `new_short_write`: draft a bounded artifact when the prompt is clear.
-- `substantial_work`: create a `writing_brief`, then a `document_contract`,
-  before drafting sections.
-- `existing_draft_revision`: revise the selected `draft_version`.
-- `continue_draft`: extend the draft without rewriting unrelated sections.
-- `channel_variant`: create a separate draft for a channel or audience.
-- `personalize`: rewrite in a selected or inferred style.
-- `humanize`: clean up generic, stiff, or automated-writing patterns using
-  rules.
-
 ## Starting Or Continuing A Piece
 
-Use this path for new or recurring writing. Help the user move from raw
-intent to usable prose. When the outline is not ready, gather just enough
-context to make the next draft better.
+Use this path for new or recurring writing. Help the user move from raw intent
+to usable prose without forcing structure too early.
 
-1. Resolve the standing pad or current draft when available.
-2. Keep the visible pad to `Ideas bank`, `Outline`, and `Draft`.
-3. Triage messy notes, links, or voice transcripts by preserving raw fragments
-   in `Ideas bank` and promoting usable clusters, argument order, claims,
-   examples, and assumptions into `Outline`.
-4. Ask one high-leverage context question when the outline is not ready. Start
-   from "What is it about?", "Who is it for?", and "What is the main argument?",
-   but ask the next missing question rather than running a form.
-5. For fuzzy substantial writing, prefer the first question about the
-   observation, frustration, or change in thinking that made the user want to
-   write.
-6. Convert answers into `Outline` quickly; do not create a visible `Brief`
-   section.
-7. Once context is sufficient, generate three rhetorical directions side by
-   side. Labels should be generated from the piece's argument move, such as
-   `Direct`, `Narrative`, `Contrarian`, `Analytical`, `Personal`, or
-   `Executive`.
-8. After the user chooses a direction, make it the working draft in `Draft` and
-   continue with an editor-style revision loop.
+When the prompt is clear enough to write, write. When it is clear enough to
+plan, make the plan. When the user is still finding the piece, close the gap
+between what they know and what you know before drafting.
+
+For fuzzy or substantial writing:
+
+1. Resolve existing `context.md`, `plan.md`, or `draft.md` when available.
+2. Ask for the spark: the observation, frustration, contradiction, or change in
+   thinking that made the user want to write.
+3. Invite an unstructured dump. The user can answer in shorthand, paste notes,
+   point to source material, or keep talking.
+4. Preserve raw fragments in the context pile. A fragment can be a sharp
+   sentence, claim, vignette, quote, phrase, example, objection, or source lead.
+5. Ask clarifying questions based on gaps in the context. Favor questions about
+   audience, intended reader change, prerequisites, stakes, defensible claims,
+   missing examples, and source constraints.
+6. Once the pile is strong enough, offer 2-3 candidate angles or openings. Each
+   option should imply a different thesis, reader journey, or emotional stance.
+7. Build a plan only after the angle, reader, and core argument are clear
+   enough. A useful plan includes working titles, core argument, assumptions,
+   unresolved choices, proposed structure, example/source slots, format and
+   length, and next decisions.
+8. Draft from the accepted plan. For longer work, fill one section at a time,
+   starting with the section that has the most unknowns or carries the core
+   argument.
 
 If the user says `draft anyway`, stop interviewing and draft the smallest
 bounded useful artifact with explicit assumptions.
@@ -77,20 +63,18 @@ bounded useful artifact with explicit assumptions.
 ## Longer Pieces
 
 Use this approach when the piece is substantial enough to need durable planning
-or section-by-section execution. Keep the visible work surface simple even when
-brief or contract records exist.
+or section-by-section execution.
 
-1. Create or update a `writing_brief` with audience, purpose, format, scope,
-   voice mode, source constraints, success criteria, call to action,
-   assumptions, and open questions.
-2. Ask focused clarification questions only when the answer changes the plan.
+1. Keep the context pile current: raw fragments, source notes, assumptions,
+   reader prerequisites, open questions, and unresolved choices.
+2. Create or update the plan only when the shape is ready: title options, core
+   argument, proposed structure, example/source slots, length and format, and
+   next decisions.
 3. If the user wants speed, proceed with `draft_anyway` and record assumptions.
-4. Create a `document_contract` with thesis, outline, section goals, length
-   target, source plan, quality bar, review criteria, and section status.
-5. Draft or revise one bounded Markdown section at a time when the artifact has
+4. Draft or revise one bounded Markdown section at a time when the artifact has
    chapters or sections.
-6. Preserve unrelated sections unless the user asks for a whole-document pass.
-7. Save material changes as new `draft_version` records when the surrounding
+5. Preserve unrelated sections unless the user asks for a whole-document pass.
+6. Save material changes as new `draft_version` records when the surrounding
    system supports durable state. If state is unavailable or unsaved, say that
    briefly after the writing only when it matters.
 
@@ -147,8 +131,9 @@ non-personalized humanize pass and say so in one short sentence.
 - When a channel, platform, slash command, or requested output form is present,
   resolve the relevant `channel_recipe` and let it control structure, length,
   CTA, and platform conventions.
-- Use draft-level source packs; do not repeat source lists in every section.
-- Preserve source constraints in the `writing_brief` and `document_contract`.
+- Keep source material in the context pile; do not repeat source lists in every
+  section unless the section truly has separate source constraints.
+- Preserve source constraints in the context and plan.
 - Do not cite or rely on a source unless it was provided, retrieved, or already
   present in the working context.
 

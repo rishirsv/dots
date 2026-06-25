@@ -18,7 +18,7 @@ Notice the smallest available set:
 - Style request context and selected style.
 - Channel recipe.
 - Applicable AGENTS.md guidance.
-- Draft-level source pack or current attachments.
+- Draft context, plan, or current attachments.
 - User's requested output form.
 - Whether the request is new/recurring writing or transformation of existing
   text.
@@ -40,20 +40,6 @@ mention it in one short sentence after the writing.
 Keep `$drafts` as the front door. Do not require users to name the kind of help
 when their verb or supplied text makes it clear.
 
-## Private Names For Common Work
-
-| Private name | When it appears | Use |
-| --- | --- | --- |
-| `draft_lane` | New, recurring, or continuing writing | `compose` |
-| `rewrite_lane` | Existing text transformation | `compose` |
-| `new_short_write` | Clear bounded artifact | `compose` |
-| `substantial_work` | Report, essay, launch plan, memo series, long guide | `compose` brief then contract |
-| `existing_draft_revision` | User asks to edit selected/provided draft | `compose` |
-| `create_writing_style` | User asks for writing style, samples, voice guide | `writing-voice` |
-| `review` | User asks for critique, score, adversarial read, QA | `writing-review` |
-| `transform` | User asks for another format, channel, or audience | `compose` |
-| `source_update` | User adds or changes draft sources | Update source pack, then resume route |
-
 Reusable writing guidance is handled by `update_writing_rules` in
 [writing-rules.md](writing-rules.md), not as a separate writing moment.
 
@@ -62,8 +48,12 @@ Reusable writing guidance is handled by `update_writing_rules` in
 - Prefer new-writing help when the user is starting, continuing, outlining, or
   shaping rough material.
 - Prefer rewrite help when the user provides text to improve.
-- Prefer a brief and contract for substantial durable work.
-- Prefer drafting for clear short requests when the brief is already sufficient.
+- Prefer context gathering before planning when the piece is fuzzy,
+  substantial, or source-heavy.
+- Prefer a plan before drafting when the user needs structure, assumptions,
+  source slots, or section work.
+- Prefer drafting for clear short requests when the prompt is already
+  sufficient.
 - Prefer version-tied review when a draft exists.
 - Prefer automatic style selection for a new durable draft when no style is
   pinned. Choose a concrete style ID from user style guides plus shipped
@@ -80,9 +70,11 @@ Reusable writing guidance is handled by `update_writing_rules` in
 
 For new writing, missing inputs usually come from these core writing variables:
 
-- What is it about?
+- What sparked the piece?
 - Who is it for?
+- What should change after the reader reads it?
 - What is the main argument?
+- What source material or examples exist?
 
 For existing text, do not ask context questions unless the source text is
 missing, style evidence is required for personalization, or the edit intent is
