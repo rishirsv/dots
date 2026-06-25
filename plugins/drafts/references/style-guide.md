@@ -166,7 +166,7 @@ Check:
   example, channel context, Knowledge, or noise.
 - Channel and genre.
 - Audience and relationship.
-- Intent and stakes.
+- Intent and sensitivity.
 - Cleaned word count.
 - Duplicate or near-duplicate risk.
 - Boilerplate, quoted text, signatures, footers, navigation, or UI noise.
@@ -245,7 +245,7 @@ patterns across a channel family.
 
 Add:
 
-- Corpus map with channel, audience, relationship, intent, register, and stakes,
+- Corpus map with channel, audience, relationship, intent, register, and context,
   kept in working context or relevant reference records unless the product model
   explicitly defines an aggregate evidence artifact.
 - Named structural templates or arcs.
@@ -306,7 +306,7 @@ Useful interview questions are concrete:
 
 Large corpora must be mapped before guide generation. Do not collapse all of a
 person's writing into one global voice when the evidence contains separable
-relationships, channels, or stakes.
+relationships, channels, or pressure.
 
 Build candidate modes or guides from:
 
@@ -319,8 +319,8 @@ Build candidate modes or guides from:
   summarize, announce, persuade, update, or request a decision.
 - Register: casual, intimate, polished, executive, instructional, editorial,
   social-native, terse, expansive, or ceremonial.
-- Stakes: low-friction coordination, high-stakes client work, public argument,
-  internal decision, coaching, repair, or escalation.
+- Context: low-friction coordination, client work with real risk, public
+  argument, internal decision, coaching, repair, or escalation.
 
 Prefer a single channel guide with modes when the voice is recognizably the
 same. Split only when the modes start contradicting each other. For example,

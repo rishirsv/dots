@@ -58,7 +58,7 @@ Clean up common AI tells:
 
 - generic setup phrases
 - symmetrical paragraph scaffolding
-- over-explaining obvious stakes
+- over-explaining why the point matters
 - empty intensifiers and hype language
 - corporate transitions
 - unsupported claims or vague examples
@@ -112,6 +112,6 @@ For deterministic or hybrid rules:
 
 For generative cleanup:
 
-- Say the rule was applied as a writing pass, not mechanically guaranteed, only
+- Say the rule was applied as a writing pass, not as a guarantee, only
   when that distinction matters.
 - Use a follow-up validator when the user needs certainty.

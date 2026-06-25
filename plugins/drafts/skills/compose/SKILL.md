@@ -9,10 +9,11 @@ Create and revise writing. Use this skill after `drafts` routes a writing
 moment here, or when the user explicitly invokes `compose` for drafting,
 revision, or transformation.
 
-Write like an editor. The user should see the artifact first: the draft,
-rewrite, outline, revision, or variant they asked for. Keep bookkeeping in the
-background unless a short note is needed for trust, persistence, or a material
-assumption.
+Write like an editor. For existing prose or a piece that is ready to write, the
+user should see the artifact first: the draft, rewrite, outline, revision, or
+variant they asked for. For a new piece that is still becoming an idea, the
+useful output is not an artifact yet. Stay with context gathering until the
+piece has enough living context to draft without flattening the thought.
 
 The `drafts` front door decides whether the user needs new writing or a pass on
 existing text. Read
@@ -33,29 +34,40 @@ writing, rewrites, continuations, channel variants, or personalized drafts.
 Use this path for new or recurring writing. Help the user move from raw intent
 to usable prose without forcing structure too early.
 
-When the prompt is clear enough to write, write. When it is clear enough to
-plan, make the plan. When the user is still finding the piece, close the gap
-between what they know and what you know before drafting.
+For new writing, context comes before drafting. A prompt can be clear as a
+request and still too thin as writing context. Draft only when the context shows
+what prompted the piece, who it is for, what should shift for the reader, what
+examples or sources can support it, and which direction feels worth pursuing;
+when the user accepts a direction or plan; or when the user explicitly says
+`draft anyway`.
+
+When the user is still finding the piece, close the gap between what they know
+and what you know before drafting.
 
 For fuzzy or substantial writing:
 
 1. Resolve existing `context.md`, `plan.md`, or `draft.md` when available.
-2. Ask for the spark: the observation, frustration, contradiction, or change in
-   thinking that made the user want to write.
+2. Ask what made the user want to write: the observation, frustration,
+   contradiction, question, or change in thinking.
 3. Invite an unstructured dump. The user can answer in shorthand, paste notes,
    point to source material, or keep talking.
 4. Preserve raw fragments in the context pile. A fragment can be a sharp
    sentence, claim, vignette, quote, phrase, example, objection, or source lead.
 5. Ask clarifying questions based on gaps in the context. Favor questions about
-   audience, intended reader change, prerequisites, stakes, defensible claims,
-   missing examples, and source constraints.
-6. Once the pile is strong enough, offer 2-3 candidate angles or openings. Each
-   option should imply a different thesis, reader journey, or emotional stance.
-7. Build a plan only after the angle, reader, and core argument are clear
+   the reader, the change the piece should create, what the reader needs to
+   understand first, claims that need support, missing examples, and source
+   limits.
+6. If the user is still searching for the idea, respond with reflection, useful
+   fragments, possible tensions, and one live question. Do not create
+   `draft.md`, a full outline, or polished prose from a topic alone.
+7. Once the pile is strong enough, offer 2-3 candidate directions or openings.
+   Each option should imply a different thesis, reader journey, or emotional
+   stance.
+8. Build a plan only after the reader, core argument, and likely shape are clear
    enough. A useful plan includes the reader spine, grounding path, working
    titles, core argument, assumptions, unresolved choices, proposed structure,
    example/source slots, format and length, and next decisions.
-8. Draft from the accepted plan. For longer work, fill one section at a time,
+9. Draft from the accepted plan. For longer work, fill one section at a time,
    starting with the section that has the most unknowns or carries the core
    argument.
 
@@ -72,7 +84,8 @@ or section-by-section execution.
 2. Create or update the plan only when the shape is ready: title options, core
    argument, reader spine, grounding path, proposed structure, example/source
    slots, length and format, and next decisions.
-3. If the user wants speed, proceed with `draft_anyway` and record assumptions.
+3. If the user wants speed, proceed only when they explicitly say
+   `draft anyway`, and record assumptions.
 4. Draft or revise one bounded Markdown section at a time when the artifact has
    chapters or sections.
 5. Run the quality loop on each section and again at the whole-piece level when
@@ -170,7 +183,13 @@ language.
 
 ## What The User Sees
 
-Return the artifact first.
+Return the artifact first when the user provided existing prose or the new piece
+has enough context to draft.
+
+When the user is developing an idea, return the thinking turn instead: what
+seems alive in the material, the possible tensions or directions, the fragments
+worth keeping, and one question that would unlock the next pass. Do not label
+this as a mode or append route details.
 
 For ordinary chat-only drafting and rewriting, the whole response can be just
 the writing. Do not append lane names, route names, state details, or AGENTS.md

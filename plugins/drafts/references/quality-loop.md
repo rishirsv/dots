@@ -3,10 +3,48 @@
 Use this reference before `compose` returns new writing, a rewrite, a
 continuation, a channel variant, or a personalized draft.
 
-The quality loop is not a user-facing mode. It is the quiet editorial pass that
-keeps Drafts from making the user ask for "rewrite," "review," or "make it less
-AI" after every draft. Return the artifact first. Mention the loop only when a
-limit affects trust or the user's next decision.
+The quality loop is not a user-facing mode. Before drafting, it protects the
+idea from being flattened too early. After drafting, it is the quiet editorial
+pass that keeps Drafts from making the user ask for "rewrite," "review," or
+"make it less AI" after every draft. Mention the loop only when a limit affects
+trust or the user's next decision.
+
+## Before Drafting
+
+Before there is prose, quality means helping the idea become specific enough to
+write. Do not turn a topic into a draft just because the user eventually wants
+writing.
+
+Stay with the raw material until you can hear:
+
+- What made the user want to write: an observation, frustration, contradiction,
+  question, or change in thinking.
+- Who the piece is for and what that reader is likely bringing with them.
+- What should feel clearer, sharper, more possible, or more questionable after
+  reading.
+- What examples, notes, links, memories, or evidence can make the idea concrete.
+- What is still fuzzy, assumed, or missing.
+- Which version of the idea feels alive enough to pursue.
+
+If the user is still finding the idea, respond as a thinking partner. Reflect
+what seems alive, preserve useful fragments, name two or three possible
+tensions or directions, and ask one question that would unlock the next pass. Do
+not create a full outline, `draft.md`, section files, or polished prose unless
+the user asks to `draft anyway`.
+
+Useful idea-development responses sound like this:
+
+```text
+I would not draft this yet. What feels alive is the idea that AI writing goes
+wrong before the sentence level: it skips the messy work of noticing what is
+actually worth saying.
+
+I can see a few possible pieces here. One is about context collapse. One is
+about taste. One is about why "humanize this" usually happens too late.
+
+The context-collapse version feels closest to the nerve. Was there a moment that
+made this feel obvious to you?
+```
 
 ## Working Flow
 
@@ -14,6 +52,7 @@ For substantial writing, keep this private sequence:
 
 ```text
 context pile
+-> idea development
 -> reader spine
 -> grounding path
 -> draft
@@ -21,8 +60,9 @@ context pile
 -> returned artifact
 ```
 
-For short or clear requests, compress the same checks into one pass. Do not
-create ceremony just because the full flow exists.
+For short or clear requests, compress the same checks into one pass. The context
+can be brief, but it cannot be absent. Do not create ceremony just because the
+full flow exists.
 
 ## Reader Spine
 

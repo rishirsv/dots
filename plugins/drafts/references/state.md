@@ -57,16 +57,19 @@ Use a draft-centered layout with as few durable files as the work needs:
 notes, links, transcript excerpts, source notes, examples, reader assumptions,
 unanswered questions, and unresolved choices. Use it to close the gap between
 what the user knows and what Drafts knows. Do not force early material into an
-outline.
+outline or draft. A new writing project may have only `context.md` for a while.
 
-`plan.md` is the promoted shape once the piece has a recognizable angle,
-reader, and argument. It can include working titles, the core argument, reader
-spine, grounding path, assumptions, proposed structure, source or example slots,
-format, length, and next decisions.
+`plan.md` is the promoted shape once the piece has a recognizable reader, core
+argument, and likely structure. It can include working titles, the core
+argument, reader spine, grounding path, assumptions, proposed structure, source
+or example slots, format, length, and next decisions.
 
-`draft.md` is the current working prose. For short and medium pieces, keep the
-draft in one file. Use `sections/` only when the piece is too large to revise
-comfortably as one document or the user explicitly wants section files.
+`draft.md` is the current working prose. Create it only after the context pass
+has produced enough context to write without guessing at the point, reader, or
+supporting material, or after the user explicitly asks to `draft anyway`. For
+short and medium pieces, keep the draft in one file. Use `sections/` only when
+the piece is too large to revise comfortably as one document or the user
+explicitly wants section files.
 
 Each draft owns its context, plan, draft, versions, reviews, and optional
 sections. Shared user styles do not live in a draft folder by default.
@@ -287,8 +290,9 @@ when it revises a selected `draft_version`, updates `draft.md`, creates a new
 version, or the user explicitly asks to save the rewrite.
 
 When durable state exists, store useful context answers in `context.md`.
-Promote material into `plan.md` only when the angle, reader, and core argument
-are clear enough to shape the piece.
+Promote material into `plan.md` only when the reader, core argument, and likely
+shape are clear enough to guide the piece. Create `draft.md` only after the user
+has asked for prose, accepted a direction, or explicitly chosen `draft anyway`.
 
 Create or describe a new `draft_version` for material changes:
 

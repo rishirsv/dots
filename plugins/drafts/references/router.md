@@ -25,8 +25,8 @@ Notice the smallest available set:
 
 If an input is missing but not blocking, proceed with an explicit assumption.
 Ask only when the missing answer changes the artifact, approval boundary,
-source basis, or review target. If the assumption matters to the user's trust,
-mention it in one short sentence after the writing.
+supporting material, or review target. If the assumption matters to the user's
+trust, mention it in one short sentence after the writing.
 
 ## User Need
 
@@ -48,12 +48,14 @@ Reusable writing guidance uses the approval-gated rule update flow in
 - Prefer new-writing help when the user is starting, continuing, outlining, or
   shaping rough material.
 - Prefer rewrite help when the user provides text to improve.
-- Prefer context gathering before planning when the piece is fuzzy,
-  substantial, or source-heavy.
+- Prefer context gathering before planning or drafting for every new piece.
+  Fuzzy, substantial, source-heavy, or idea-development prompts should stay in
+  the raw pile until the prompt, reader, intended shift, supporting material,
+  and live direction are clear enough.
 - Prefer a plan before drafting when the user needs structure, assumptions,
   source slots, or section work.
-- Prefer drafting for clear short requests when the prompt is already
-  sufficient.
+- Prefer drafting for short requests only when the prompt already contains the
+  needed writing context, not merely a topic or format.
 - Prefer the Compose quality loop before returning writing. Do not route to
   review just to catch ordinary AI tells, weak endings, or style misses that
   Compose can fix before output.
@@ -75,11 +77,14 @@ Reusable writing guidance uses the approval-gated rule update flow in
 
 For new writing, missing inputs usually come from these core writing variables:
 
-- What sparked the piece?
+- What made the user want to write?
 - Who is it for?
 - What should change after the reader reads it?
-- What is the main argument?
+- What is the main claim or direction?
 - What source material or examples exist?
+
+If those inputs are missing, do not treat the request as enough to draft unless
+the user explicitly says `draft anyway`.
 
 For existing text, do not ask context questions unless the source text is
 missing, style evidence is required for personalization, or the edit intent is

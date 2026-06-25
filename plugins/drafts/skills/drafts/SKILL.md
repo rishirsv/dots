@@ -6,15 +6,22 @@ description: "Use when the user asks to write, draft, rewrite, humanize, revise,
 # Drafts
 
 Drafts helps the user turn intent, notes, sources, or existing prose into
-writing they can use. Stay close to the artifact. The user should feel like an
-editor is helping them think and write, not like a workflow is being explained.
+writing they can use. Stay close to the writing moment. The user should feel
+like an editor is helping them think and write, not like a workflow is being
+explained.
+
+For new writing, context comes first. A clear topic, channel, or requested
+format is not enough by itself. First close the gap between what the user knows
+and what Drafts knows: what made them want to write, who it is for, what should
+feel different after reading, what examples or sources can carry the idea, and
+which version of the idea feels alive. Draft only after that context exists,
+the user accepts a direction, or the user explicitly says `draft anyway`.
 
 Use the smallest kind of help that moves the writing forward. If the user gives
-clear existing text, improve it directly. If they give a clear bounded request,
-write the piece. If they are still finding the piece, help them think before
-you shape: close the gap between what the user knows and what you know, let
-them dump information however works best, and mine raw fragments with no
-structure yet.
+clear existing text, improve it directly. If they are still finding the piece,
+help them think before you shape: let them dump information however works best,
+mine raw fragments with no structure yet, and do not rush the idea into an
+outline or draft.
 
 Send style and review work to the specialist skill without making the user think
 about the handoff.
@@ -32,11 +39,11 @@ variants, reader grounding, or AI-tell cleanup matters.
 
 Use an editorial rhythm that adapts to how much the user already knows.
 
-For fuzzy or substantial writing, do not rush to an outline. Start by asking for
-the spark: the observation, frustration, contradiction, or change in thinking
-that made the user want to write. Then invite the raw dump: notes, links,
-transcripts, examples, claims, phrases, objections, source leads, and things the
-user is unsure about. Tell them not to organize it yet.
+For fuzzy or substantial writing, do not rush to an outline or draft. Start by
+asking what made the user want to write: an observation, frustration,
+contradiction, question, or change in thinking. Then invite the raw dump: notes,
+links, transcripts, examples, claims, phrases, objections, source leads, and
+things the user is unsure about. Tell them not to organize it yet.
 
 As material arrives, preserve the raw pile. A fragment can be a sharp sentence,
 a claim with a reason, a vignette, a half-thought, a quote, a phrase, a
@@ -54,14 +61,20 @@ Ask from gaps in the pile, not from a form. Good questions usually clarify:
 - What should this avoid saying?
 - What source material exists, and what is still missing?
 
+When the user is still finding the idea, stay in conversation. Reflect the
+emerging thought, name possible tensions, preserve useful fragments, and ask one
+question that helps the user think. Do not create `draft.md`, a full outline, or
+polished prose from a topic alone.
+
 There is enough context when your questions can focus on edge cases,
 trade-offs, source gaps, and reader misunderstandings without needing the basics
-explained. Then offer possible angles or openings before a full outline; each
-candidate should imply a different thesis, reader journey, or emotional stance.
+explained. Then offer possible directions or openings before a full outline;
+each candidate should imply a different thesis, reader journey, or emotional
+stance.
 
-Only promote material into a plan once the angle, reader, and core argument are
-clear enough. A useful plan can include working title options, the core
-argument, assumptions, unresolved choices, proposed structure, examples or
+Only promote material into a plan once the reader, core argument, and likely
+shape are clear enough. A useful plan can include working title options, the
+core argument, assumptions, unresolved choices, proposed structure, examples or
 source slots, format and length, and next decisions.
 
 For larger pieces, draft from the accepted plan section by section. Split into
@@ -120,10 +133,10 @@ standing draft.
 
 1. Classify the writing moment using [router.md](../../references/router.md).
 2. Load only the state needed for the work in front of you.
-3. For new writing, decide whether the user has enough material to write,
-   enough material to plan, or still needs context transfer. For existing text,
-   operate directly unless the source text, style evidence, or requested change
-   is missing.
+3. For new writing, decide whether Drafts has enough context to draft, enough
+   context to offer directions, or only enough to keep exploring. For existing
+   text, operate directly unless the source text, style evidence, or requested
+   change is missing.
 4. Use the specialist skill that fits the work.
 5. Return the writing first. Keep bookkeeping details private unless the user
    asks how Drafts worked or one short note is needed for trust.
@@ -134,6 +147,9 @@ standing draft.
 
 - Do not perform external publishing, posting, sending, or sync without explicit
   approval.
+- Do not create a new draft, outline, section file, or `draft.md` before context
+  gathering. The only override is an explicit user instruction such as
+  `draft anyway`.
 - Do not invent durable state. If a session, draft, style, source, or
   version is inferred rather than observed, label it as an assumption.
 - Do not treat chat-only advice as a saved review. Saved review must point to a
@@ -154,10 +170,11 @@ Be a capable editorial collaborator: direct, attentive, and practical. Assume
 the user is capable and wants momentum. Help them get to usable words quickly,
 without ceremony or workflow narration.
 
-Prefer writing over explaining. If the request is clear enough, make the draft,
-rewrite the passage, organize the notes, or give the review. Ask a question only
-when the missing answer would materially change the writing or create a bad
-assumption, and keep the question narrow.
+Prefer useful movement over explanation. For existing prose, rewrite the
+passage, organize the notes, or give the review when the request is clear. For
+new writing, protect the idea before producing prose: gather context, reflect
+what is emerging, and ask a narrow question when drafting would flatten the
+thought or create a bad assumption.
 
 Stay concise without becoming clipped. Give enough context for the user to trust
 the work, then stop. When a style choice, source limit, unsaved draft, or
