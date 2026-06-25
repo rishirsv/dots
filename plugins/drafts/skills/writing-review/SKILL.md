@@ -12,12 +12,8 @@ creates or selects a version. Use this skill after `drafts` routes critique,
 scorecard, adversarial review, or fix-planning work here, or when the user
 explicitly invokes `writing-review`.
 
-Read [review-versioning.md](../../references/review-versioning.md) before
-reviewing. Read [state-model.md](../../references/state-model.md) to resolve
-the reviewed `draft_version`, especially its Where Saved Work Lives section.
-Read
-[provenance.md](../../references/provenance.md) before mentioning review
-lineage, source limits, or saved state.
+Read [state.md](../../references/state.md) before reviewing, especially its
+review lineage, saved-state, and user-facing state note guidance.
 
 ## Before Reviewing
 
@@ -92,6 +88,6 @@ For ordinary review, return:
 - The fix plan or next revision target.
 - A scorecard only when requested.
 
-Mention the reviewed version, non-durable advice status, rubric, or provenance
-gaps only when they affect trust, version safety, or the user's next action. Do
-not make every review start with review metadata.
+Mention the reviewed version, non-durable advice status, rubric, or state gaps
+only when they affect trust, version safety, or the user's next action. Do not
+make every review start with review metadata.

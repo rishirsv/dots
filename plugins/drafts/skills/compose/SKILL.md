@@ -16,15 +16,12 @@ assumption.
 
 The `drafts` front door decides whether the user needs new writing or a pass on
 existing text. Read
-[state-model.md](../../references/state-model.md) before creating context,
-plans, drafts, sections, or versions, especially its Where Saved Work Lives
-section.
+[state.md](../../references/state.md) before creating context, plans, drafts,
+sections, versions, style frontmatter, or state notes.
 Read [writing-rules.md](../../references/writing-rules.md) when rules affect
 output.
 Read [channel-recipes.md](../../references/channel-recipes.md) when the user
-names a destination, platform, format, slash command, or channel variant. Read
-[provenance.md](../../references/provenance.md) before mentioning style,
-sources, versions, reviews, or saved state.
+names a destination, platform, format, slash command, or channel variant.
 
 ## Starting Or Continuing A Piece
 
@@ -142,8 +139,8 @@ non-personalized humanize pass and say so in one short sentence.
 Return the artifact first.
 
 For ordinary chat-only drafting and rewriting, the whole response can be just
-the writing. Do not append lane names, route names, state details, provenance
-details, or AGENTS.md bookkeeping.
+the writing. Do not append lane names, route names, state details, or AGENTS.md
+bookkeeping.
 
 Add one short note after the writing only when it changes trust, persistence, or
 the user's next decision. Good notes are natural prose:

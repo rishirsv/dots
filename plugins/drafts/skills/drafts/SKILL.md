@@ -20,14 +20,11 @@ Send style and review work to the specialist skill without making the user think
 about the handoff.
 
 Read [router.md](../../references/router.md) for routing decisions. Read
-[state-model.md](../../references/state-model.md) when creating or updating
-durable writing state, especially its Where Saved Work Lives section. Read
+[state.md](../../references/state.md) when creating or updating durable writing
+state, resolving style storage, syncing styles, reviewing versions, or
+mentioning saved-state details. Read
 [channel-recipes.md](../../references/channel-recipes.md) when channel,
-platform, slash-command, or variant behavior matters. Read
-[style-library-sync.md](../../references/style-library-sync.md) before routing
-style-library sync, export, import, backup, or root-change requests. Read
-[provenance.md](../../references/provenance.md) before mentioning style,
-sources, versions, reviews, or saved state.
+platform, slash-command, or variant behavior matters.
 
 ## Starting Or Continuing A Piece
 

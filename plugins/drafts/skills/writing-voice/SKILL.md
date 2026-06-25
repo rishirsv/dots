@@ -12,12 +12,9 @@ style, sample, or voice work here, or when the user explicitly invokes
 
 Read [style-guide.md](../../references/style-guide.md) before accepting samples,
 generating a guide, testing a guide, or explaining style limits. Read
-[style-library-sync.md](../../references/style-library-sync.md) before moving,
-syncing, exporting, importing, or backing up a style library. Read
-[provenance.md](../../references/provenance.md) before mentioning style usage or
-automatic style selection. Read
-[state-model.md](../../references/state-model.md), especially its State
-Authority and User Style Library sections, for style storage and lookup.
+[state.md](../../references/state.md) before moving, syncing, exporting,
+importing, or backing up a style library, and before mentioning style storage,
+lookup, automatic style selection, or state changes.
 
 ## Building A Style
 
