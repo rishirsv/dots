@@ -1,0 +1,710 @@
+HOLY GRAIL / KPMG SLIDES – DETAILED CONVERSATION AND APPROVAL RECORD
+Prepared for: Zack Mindel
+Generated: 19 June 2026
+Scope: Microsoft 365 search results covering Teams chats, email threads, meeting records, and related files about Holy Grail / KPMG Slides, especially conversations involving Anthony Hui, Scott Shannon, Andrew Cain, Kev Vadgama, Varun Sharma, Jacques-Yves Gadbois, Risk, Security, NITSO, ITS, and related stakeholders.
+
+IMPORTANT LIMITATION
+This document is compiled from the search results available in this Copilot session. It is intended as a detailed evidence pack, not a legally complete archive. Where a source result only returned a snippet, the quotation below is limited to that returned snippet. Source IDs are included throughout so that the originating Microsoft 365 item can be traced.
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+The Holy Grail / KPMG Slides record shows a product moving from lab/sandbox experimentation into production under significant governance, risk, security, privacy, and operational scrutiny. The recurring issue across the record is not only whether the agent itself was acceptable, but who should own publishing/admin rights, how Workspace Agents should be governed, whether a PIA was required, whether the security/risk review understood the underlying platform correctly, and how quickly enablement could happen in advance of a planned launch and training schedule.
+
+The key facts evidenced in the available messages are:
+
+1. Holy Grail was later positioned as KPMG Slides in production. In the SAR approval email chain, Shripal Doshi wrote: "It will be known as 'KPMG Slides' when in production. Holy Grail was our stealth working title while it was being developed in the lab." [Source: turn3search173]
+
+2. Security approval was granted for firm-wide ChatGPT Enterprise users, but with a condition. Varun Sharma forwarded CISO approval and wrote: "Please see below CISO approval, for firm-wide Chat GPT Enterprise users for Holy Grail ChatGPT workspace agent. You may proceed with enablement." He then added: "Further, wanted to add a keynote condition to this approval – ITS admin to own publishing of this agent, while Business will build." [Source: turn3search173]
+
+3. The security approval request described the product as follows: "The solution automates the end-to-end creation of KPMG consulting presentations, improving efficiency, turnaround time, and consistency in deliverables." It also said the agent operated "within the ChatGPT Enterprise environment," had "constrained scope," did not integrate with "external systems, connectors, plugins, or external GPTs," used "strict role-based access restrictions," and was assessed as "Medium residual risk." [Source: turn3search173]
+
+4. Risk approved after the SAR and privacy review points were addressed. Denease Prinold wrote: "Risk approves also. Rob will follow with his sign-off on the actual document. I’ve made updates to reflect the name change." [Source: turn3search173]
+
+5. OGC Privacy said a PIA was not needed for the Holy Grail Workspace Agent, with conditions/reasons including that it was built on ChatGPT Enterprise, already PIA approved; it did not introduce new sub-processors, data locations, connectors, external GPTs, plugins, or data sources; and the PIA for Workspace would still be conducted. Paul Winton also cautioned: "we are a bit closer to the line on privacy compliance than I would normally like to be... but I am comfortable that we can justify our approach in this case." [Source: turn3search173]
+
+6. A recurring source of friction was the review team's understanding of Workspace Agents. In a chat with Anthony Hui, Anthony wrote after a risk call: "They thought 'Workspace' was its own platform hence the excessive risk review" and later: "I was like no....its workspace agents smh". Zack responded: "we need more education for risk and security" and Anthony replied: "Yeah I gotta do that" and "Going to invest time upfront really helping them understand what we're trying to do". [Source: turn3search124]
+
+7. Anthony Hui repeatedly acted as the coordinator/escalator for security, risk, privacy, launch, training, and governance. He wrote to Zia Shah: "I’m raising the need to expedite security approval for the KPMG Slides / Holy Grail workspace agent ahead of this Thursday's June 18 launch" and asked whether NITSO/security approval could be prioritized by EOD. [Source: turn3search172]
+
+8. UAT sign-off was sent by Zack on 18 June. Zack wrote: "Signing off on UAT for KPMG Slides (Beta) Workspace Agent." Andrew Cain replied: "Thanks Zack." [Source: turn3search182]
+
+9. Access/publishing remained practically painful even after approvals. In chats, Zack and Anthony discussed that enablement/sharing did not work as expected, and Anthony pushed Kev Vadgama to confirm that Workspace Agents had been enabled. Kev replied: "the 'Enable Agents' permission has been enabled for all members of the workspace." Zack replied that other people still could not access it. [Source: turn2search110]
+
+10. Earlier sandbox enablement followed a similar pattern: security review, sandbox-only scope, dev accounts, and an approval/enablement loop. Kev wrote that "All GTA AI Lab accounts have now received approval to use Workspace Agents in our sandbox workspace" and that access had been enabled, with sync delays possible. [Source: turn3search167]
+
+================================================================================
+DETAILED TIMELINE AND EVIDENCE
+================================================================================
+
+--------------------------------------------------------------------------------
+1. Early sandbox enablement and questions about real security concerns
+--------------------------------------------------------------------------------
+
+The earliest relevant enablement thread shows Workspace Agents being requested for sandbox testing and then enabled for GTA AI Lab accounts.
+
+On 24 April 2026, Shripal Doshi asked Kev Vadgama and Nitin Kotak: "ChatGPT released workspace agents - can we please enable in our sandbox asap, as we'd like to test it's capability." [Source: turn3search167]
+
+On 28 April 2026, Kev Vadgama responded that the request was under review by security: "Your request to enable Workspace Agents in our sandbox workspace is currently under review by our security team, I’ll update you as soon as we’re ready to proceed." Kev also asked whether the feature was intended for the AI lab accounts and listed the GTA AI lab user accounts. [Source: turn3search167]
+
+Shripal confirmed the intended sandbox/lab scope: "This is correct as a starting point. So we can test the capabilities of it in the lab and we can rollout to other users post-lab testing." [Source: turn3search167]
+
+On 4 May 2026, Shripal pushed for activation: "Can we please activate in the lab today!" Kev then confirmed: "All GTA AI Lab accounts have now received approval to use Workspace Agents in our sandbox workspace. Access has been enabled. It may take up to 4hrs for the accounts to see this feature in the sandbox workspace." [Source: turn3search167]
+
+After sandbox access was enabled, Ryan MacDonald told the broader team: "FYI - workspace agents enabled on the lab accounts let’s get Raj and Ethan building out workspace agents in the lab this week….probably worth getting holy grail into a workspace agent ASAP." [Source: turn3search167]
+
+Scott Shannon immediately framed the issue as one of production path and security rationale: "Is there a real security concern here preventing broader rollout? (cost notwithstanding) They did the security review for the lab - something they explicitly stated in the lab charter they didn’t need to do. I hope that means we have a clear path for production now?" [Source: turn3search167]
+
+Rishi Sharma then pointed to additional partner demand for Workspace Agent-style use cases, arguing the need extended beyond Holy Grail. Examples he identified included an "Asset Availability and Sourcing Agent" for the Infrastructure Deals Team and an "M&A Niche news" agent for Deal Advisory. He labelled requirements as "Workspace Agents, Pitchbook, Teams, Outlook Connector, 2-3 Skills" and described impact as "HIGH" and complexity as "LOW". [Source: turn3search167]
+
+Interpretation based strictly on the record: early enablement was explicitly sandbox/lab-scoped, subject to security review, and immediately raised the question of how to move from sandbox to production without repeating review bottlenecks for each incremental request.
+
+--------------------------------------------------------------------------------
+2. Approval for sandbox workspace agents and demonstrations of value
+--------------------------------------------------------------------------------
+
+On 27 May 2026, Scott Shannon emailed Kev Vadgama after speaking with Varun Sharma: "We received approval today from Varun and Zia to enable Workspace Agents for some developers on their devcloud accounts. Would we be able to get that enabled? I just got off the phone with Varun. Many thanks!" [Source: turn3search175]
+
+Scott listed the developer accounts to be enabled, including Rishi Sharma, Adnaan Khan, Zack Mindel, Raj Gogia, and Scott Shannon dev accounts. [Source: turn3search175]
+
+Kev replied: "We have enabled access to Workspace Agents for the team members listed below in our sandbox. It may take up to 2hrs for full synchronization of group permissions." [Source: turn3search175]
+
+Scott responded: "Thank you! We already have it running. Most appreciated!" [Source: turn3search175]
+
+Zack then sent a value demonstration to Varun Sharma, Sindhoori Munagala, Kev Vadgama, Shripal Doshi, Ryan MacDonald, Zia Shah, Glen Brookman, Kasia Parent, Rishi Sharma, Safdar Mahmood, Raj Gogia, and Scott Shannon: "Hey everyone - Just wanted to say thanks for getting this setup and share what we were able to produce with this workspace agent. Both of the attached decks were made in under 20 minutes from simple prompts. This should be a major win for the firm when released at scale!" [Source: turn3search175]
+
+Glen Brookman replied: "That’s fantastic! And very cool!" [Source: turn3search175]
+
+Interpretation based strictly on the record: the team used the sandbox enablement to produce proof points and to show that decks could be generated quickly. This was used as evidence for the value of broader release.
+
+--------------------------------------------------------------------------------
+3. OpenAI clarification on technical responsibility and governance
+--------------------------------------------------------------------------------
+
+A thread forwarded by Shripal Doshi on 13 May 2026 included an external clarification from Philip Makings at OpenAI. The context was enterprise uncertainty about generated scripts, code, dependencies, ownership, vulnerability scanning, and maintenance when Codex skills are packaged as Workspace Agents. [Source: turn3search171]
+
+Tal Beno’s question captured the governance concern: "The enterprise technology groups are asking then who owns these generated Python scripts... for continuous vulnerability scanning, and patching/maintenance. That applies for the Codex side first (individual consumption), but even more so when packaged as a workspace agent and published for a large group of people." [Source: turn3search171]
+
+Tal also wrote: "Codex is allowing business people to create skills but those skills carry code, and code must be maintained even when running within a segregated virtual machine. That code can have access to enterprise data through web and sensitive connectors, and someone must maintain it for security purposes." [Source: turn3search171]
+
+OpenAI’s response stated: "OpenAI provides the Workspace Agents/Codex platform and the administrator controls around it. We do not maintain customer-created or agent-generated scripts, code, or dependencies across customer environments after they are created or packaged into an agent or skill." [Source: turn3search171]
+
+OpenAI also stated: "Where [skills] do [include scripts/code], the creator of the skill is the owner of that skill, and the workspace’s Enterprise admins should manage how those skills are used, shared, reviewed, and maintained." [Source: turn3search171]
+
+OpenAI added that ChatGPT Enterprise admins can use the Compliance API "to export an archive of skill source files, understand which skills are installed and used across the workspace, and conduct scanning, patching, and maintenance as they see fit." [Source: turn3search171]
+
+OpenAI further clarified that "A skill referencing an app, connector, or MCP does not by itself grant access to data" and that access remains governed by the underlying app/MCP controls, including authentication, user entitlements, workspace policy, data handling, and action controls. [Source: turn3search171]
+
+OpenAI concluded: "OpenAI provides the tools to govern and review agents/skills; KPMG is responsible for governing and reviewing the agents, skills, code, permissions, and behavior it chooses to deploy. Which function governance sits within KPMG is not something we can comment on." [Source: turn3search171]
+
+Interpretation based strictly on the record: this thread gave KPMG a clear external statement that OpenAI provides the platform/admin tooling, while KPMG retains responsibility for governance, review, code, permissions, and behaviour of the agents/skills it deploys.
+
+--------------------------------------------------------------------------------
+4. Show-and-tell and proposed governance model
+--------------------------------------------------------------------------------
+
+On 9 June 2026, Kev Vadgama shared a deck in the "Agent Workspaces Show and Tell" thread: "Sharing a copy of our deck on Technical & Governance controls as requested." [Source: turn3search181]
+
+The meeting invite stated: "You are already aware of the business request to enable ChatGPT Workspace Agents. The first agent built on this capability is the Holy Grail, expected to go live June 19th. We'd like to offer a show and tell with the objective of making the review process easier." [Source: turn3search181]
+
+The discussion areas listed in the invite were:
+- "ChatGPT workspaces capability"
+- "Intro to first agent: Holy Grail"
+- "Proposed Agent Governance model and its fit with the Copilot Studio Governance model" [Source: turn3search181]
+
+The attached/embedded governance material included Workspace permission roles:
+- "Enable Agents – Allow members to browse and run agents in the workspace"
+- "Enable agent building – Allow members to create, edit & duplicate agents in the workspace"
+- "Enable agent sharing – Allow members to share agents with other users in the workspace" [Source: turn3search181]
+
+The same material also referenced technical/admin capabilities including:
+- "Compliance API"
+- "Unpublish Workspace Agent – Preserves the draft record, removes visibility to other members, disables triggers"
+- "Delete Workspace Agent – Removes agent record from workspace"
+- "Log Files – agent lifecycle activity, runtime usage, trigger changes, connector calls"
+- "Agent Analytics" including "Usage", "Runs", and "Access" [Source: turn3search181]
+
+The governance controls material included risk categories such as "Agent ownership and Lifecycle gaps", "Agent availability & continuity risks", "Lack of Deployment & recovery mechanisms", and "Sharing & Access". Proposed controls included restricting build permissions to an approved builder identity, RBAC to control building and sharing, monitoring ownership via admin console/compliance API, requiring business and technical owner, registering agents in an AI registry, offboarding transition of ownership, periodic recertification, inventory reviews, documented business purpose/rebuild instructions, and testing/validation before production use. [Source: turn3search181]
+
+Interpretation based strictly on the record: before launch, the team attempted to proactively educate/reduce review friction by explaining the Workspace capability, Holy Grail as the first agent, and a control model aligned to governance expectations.
+
+--------------------------------------------------------------------------------
+5. Specific approval request to Security / NITSO for June launch
+--------------------------------------------------------------------------------
+
+On 16 June 2026, Anthony Hui emailed Zia Shah, Varun Sharma, and Victoria Akpore, copying Shripal Doshi, Kasia Parent, Jacques-Yves Gadbois, Andrew Cain, Zack Mindel, and Sabrina Ciardullo. The subject was "Urgent: Security approval required today – KPMG Slides / Holy Grail agent (June 18 launch)". [Source: turn3search172]
+
+Anthony wrote: "Following our discussion yesterday on urgent business priorities, I’m raising the need to expedite security approval for the KPMG Slides / Holy Grail workspace agent ahead of this Thursday's June 18 launch." [Source: turn3search172]
+
+He continued: "I understand your team is still completing internal reviews for this pilot agent. Given we are now <2 days from launch - and need time to enable and test in production - are we able to prioritize NITSO/ security approval by EOD today?" [Source: turn3search172]
+
+Anthony explained why timing mattered: "This is a critical business enablement priority for Shripal ahead of his upcoming leave. With firmwide training and comms set to go out this Thursday, we need to ensure the broader workspace can properly access the agent when we launch." [Source: turn3search172]
+
+Zia Shah replied: "Hi Anthony, the team has prioritized this ask, put in extra efforts to expedite and of today, completed the review. Varun or Victoria will relay the approval shortly, noting one concern that has been identified through this review." [Source: turn3search172]
+
+Shripal replied in the same chain: "Thank you all for moving so quickly on this!!" [Source: turn3search179]
+
+Interpretation based strictly on the record: Anthony escalated the need for same-day NITSO/security approval because the launch was imminent, access testing still had to occur, and firmwide training/comms were planned.
+
+--------------------------------------------------------------------------------
+6. Security approval, medium residual risk, and publishing condition
+--------------------------------------------------------------------------------
+
+The SAR Approved thread contains the detailed approval language and conditions. Victoria Akpore’s request to Zia Shah stated: "I am seeking approval for the Holy Grail ChatGPT workspace agent. The solution automates the end-to-end creation of KPMG consulting presentations, improving efficiency, turnaround time, and consistency in deliverables." [Source: turn3search173]
+
+Victoria described scope and constraints: "The agent operates within the ChatGPT Enterprise environment and is designed with a constrained scope, leveraging predefined skills and publicly available KPMG templates. It does not integrate with external systems, connectors, plugins, or external GPTs." [Source: turn3search173]
+
+Victoria described security controls: "Key security controls include strict role-based access restrictions, single builder model with consumer-only access." [Source: turn3search173]
+
+Victoria described data usage and risk rating: "Data usage is restricted to non-sensitive inputs in alignment with enterprise data classification policies. The solution is assessed as Medium residual risk, primarily due to reliance on third-party LLM processing, where KPMG does not have direct control over inference operations." [Source: turn3search173]
+
+Zia Shah replied simply: "Approved." [Source: turn3search173]
+
+Varun Sharma forwarded the approval to Andrew Cain, Kev Vadgama, and Harris Ghafoor, copying Kasia Parent, Victoria Akpore, and Jacques-Yves Gadbois: "Please see below CISO approval, for firm-wide Chat GPT Enterprise users for Holy Grail ChatGPT workspace agent. You may proceed with enablement." [Source: turn3search173]
+
+Varun then added the condition: "Further, wanted to add a keynote condition to this approval – ITS admin to own publishing of this agent, while Business will build." [Source: turn3search173]
+
+Interpretation based strictly on the record: Security approved the agent for firm-wide ChatGPT Enterprise users, but Business building and ITS owning publishing became the central control condition.
+
+--------------------------------------------------------------------------------
+7. Risk, privacy, and QRMM 16.6.4 review
+--------------------------------------------------------------------------------
+
+After security approval, Kasia Parent forwarded the SAR to Denease Prinold and others: "Hi Denise, please see below security approval. The IT team will be ready to roll when they have the green light on any outstanding Risk Management questions. @Hui, Anthony is there anything outstanding on this front?" [Source: turn3search173]
+
+Denease asked about privacy and terms: "Thanks Kasia. Varun has forwarded the SAR, I have a look. @Hui, Anthony - Any word on Privacy's review and Shripal's review of the product terms for Workspace?" [Source: turn3search173]
+
+Anthony replied: "I connected with Shripal earlier today. He is comfortable with the product terms for the WS agent for this pilot. He responded confirming to proceed in a separate thread." [Source: turn3search173]
+
+Anthony then flagged urgency on Privacy: "In term of privacy - I haven't been across this review. @Ajuwape, Seyi is this on your radar for the Holy Grail workspace agent? We are one day out from launch so if there's any final reviews - we need to iron this out ASAP." He also asked Andrew Cain: "let me know if there's anything I'm missing." [Source: turn3search173]
+
+Kasia proposed a quick touchpoint: "Hi Seyi - maybe we (either Anthony or I) can do a quick tb with you tomorrow just to tie off this end - if you need a formal intake to document that can be done but let's talk to keep the timeline." [Source: turn3search173]
+
+Kasia then clarified for Seyi and Paul Winton: "The agent is a low-risk category agent on OpenAI ChatGPT - which is indeed an approved platform. Reference: The low-risk category is the one where the agent can help generate content but needs human input and action." [Source: turn3search173]
+
+Kasia continued: "The agent was created using a newer feature of ChatGPT called Workspace (which is similar to copilot studio). At this time GPT Agent Workspace is still going through last stage reviews - the holy grail agent is being promoted on an exception basis after rigorous review." [Source: turn3search173]
+
+Kasia described the product’s purpose: "The agent specifically generates branded power point decks with content articulated by the submitter." [Source: turn3search173]
+
+Kasia described data handling: "There are no new or third parties who will gain access to our data by using this agent. Data processing location is unchanged - our data remains in Canada with processing in the U.S. through OpenAi ChatGPT enterprise." [Source: turn3search173]
+
+Kasia added: "The GPT platform has Risk Guidelines for use that platform users are expected to adhere to. Restricted data is not allowed in ChatGPT." [Source: turn3search173]
+
+Paul Winton responded that the agent may fall within the established PIA carveout: "Kasia, I will confer with Seyi tomorrow morning, but based on the below this agent may fall within the established PIA carveout for agents built on PIA approved applications." [Source: turn3search173]
+
+Paul later confirmed: "All, OGC Privacy is comfortable that a PIA is not needed for the Holy Grail Workspace Agent" and listed the basis, including:
+- "it is built off of ChatGPT Enterprise which has already been PIA approved"
+- "will not result in disclosure of KPMG or client CI or PI to any additional sub-processors or in any additional locations beyond our existing use of ChatGPT Enterprise"
+- "it does not introduce any new connectors, external GPTs, plugins, or data sources beyond the existing ChatGPT Enterprise environment"
+- "use guidelines for ChatGPT Enterprise... have been established"
+- "a SAR has been conducted from an information security perspective"
+- "a PIA will be conducted in respect of Workspace" [Source: turn3search173]
+
+Paul added an important caution: "Note that we are a bit closer to the line on privacy compliance than I would normally like to be by virtue of rolling out the Holy Grail Workspace Agent without having already reviewed Workspace itself from a privacy perspective, but I am comfortable that we can justify our approach in this case." [Source: turn3search173]
+
+Ven Adamov wrote: "I have no further comments. @Rowe, Robert (Toronto) W Can you confirm we are good to proceed?" [Source: turn3search173]
+
+Rob Rowe clarified sequence/sign-off: "Denease does the RA, Shripal signs then then I sign it - Denease are we ready?" [Source: turn3search173]
+
+Denease wrote: "I worked on the RA last night. Anthony and I just wrapped up a good conversation to clarify some items regarding the platform/terminology and scope of this review. I shared the draft risk assessment on screen. I’ll circle back with Rob now to finalize and share with Shripal." [Source: turn3search173]
+
+Denease then wrote to Shripal: "I will send you a link to the QRMM 16.6.4 risk assessment for your review and approval. We can tweak the wording afterwards, if needed, but we want to be able to expedite things to allow your team to prepare for the deployment. Risk would be good to approve the deployment of the Holy Grail Agent after your review. I can walk you through the risk assessment, if you prefer. The SAR reported a medium risk. If you have any comments, please share. I understand Anthony is working on updating the guidelines in relation to the agent." [Source: turn3search173]
+
+Shripal responded: "I’ve signed off on it. It will be known as 'KPMG Slides' when in production. Holy Grail was our stealth working title while it was being developed in the lab." [Source: turn3search173]
+
+Denease then confirmed Risk approval: "Risk approves also. Rob will follow with his sign-off on the actual document. I’ve made updates to reflect the name change." [Source: turn3search173]
+
+Shripal forwarded to the broader team: "It’s time to ship KPMG Slides Beta – aka Holy Grail. Great work everyone!" Safdar Mahmood replied: "Amazing - congratulations all! Well done." [Source: turn3search173]
+
+Interpretation based strictly on the record: Security approval was followed by Risk, QRMM, and Privacy review. The record indicates the review required clarification on platform/terminology/scope and ended with risk approval after Shripal’s approval and name-change updates.
+
+--------------------------------------------------------------------------------
+8. Anthony/Zack private chat: risk/security misunderstanding and education need
+--------------------------------------------------------------------------------
+
+In a direct/group chat involving Anthony Hui and Zack Mindel, Anthony asked about costs and the slide. Zack answered: "Raj has a slide on it", "its a couple $ per deck", "$1-$10 depending on size", and noted that image generation and image-to-PPTX skills were harder to quantify and likely where spend would come from, while "the pptx skills are very token efficient." [Source: turn3search124]
+
+Anthony wrote: "Can you send me the slide" and then later: "Just hopped off a 45 min call with risk". [Source: turn3search124]
+
+Zack asked: "we good to go?!?!" [Source: turn3search124]
+
+Anthony replied: "They thought 'Workspace' was its own platform hence the excessive risk review". Zack responded: "hahahaah" and "so dumb". [Source: turn3search124]
+
+Anthony continued: "We are t-minus 1 hr out from full sign off fully" and "Risk was the last piece". [Source: turn3search124]
+
+Anthony wrote: "I'm being hella nice but bro" and "I was like no....its workspace agents smh". [Source: turn3search124]
+
+Zack replied: "we need more education for risk and security" and "thats insane". [Source: turn3search124]
+
+Anthony agreed: "Yeah I gotta do that", "Going to invest time upfront really helping them understand what we're trying to do", and "And then have them go away and do their thing". [Source: turn3search124]
+
+Zack replied: "its needed". Anthony concluded: "This was bumpy but we'll do it better for docs etc." Zack replied: "it will be easier next time fs". [Source: turn3search124]
+
+Interpretation based strictly on the record: this chat is one of the clearest pieces of evidence that part of the risk review delay/friction arose from confusion over the term "Workspace" and whether it referred to a separate platform rather than a feature/capability inside ChatGPT Enterprise.
+
+--------------------------------------------------------------------------------
+9. Admin/build/publish controls and the tension between agility and governance
+--------------------------------------------------------------------------------
+
+A chat involving Anthony Hui, Kev Vadgama, Harris Ghafoor, Zack Mindel, Raj Gogia, and Rishi Sharma captured the admin setup discussion. Anthony wrote: "Hey Vadgama, Kev Ghafoor, Harris - spinning up a quick side bar re: admin access to Holy Grail going forward". [Source: turn2search104]
+
+Anthony stated the objective: "We need to ensure there are admin users from the business who understand how it is works / implement changes". [Source: turn2search104]
+
+Anthony proposed the admin setup for launch: "Can we align on the following admin setup for the Holy Grail launch: Kev Vadgama, Harris Ghafoor, Zack Mindel, Raj Gogja, Rishi Sharma". [Source: turn2search104]
+
+Zack wrote: "It is crucial to the success of the agent that we have admin controls to maintain and update the agent. As it is in beta we will be getting continuous feedback that should be acted on timely to ensure the user experience is as good as possible. If there are issues / errors / updates etc. not having immediate access to making updates will be a bigger risk to users." [Source: turn2search104]
+
+Kev asked for clarification: "Thanks Anthony, just to confirm that this is the list of users that will require an agent builder role in the workspace? Co-editing of a workspace agent is currently limited to the author." [Source: turn2search104]
+
+Anthony clarified two permission concepts: "So for my understanding - there are two things: agent building permissions in the workspace + admin permissions in the Azure security group that is currently being enabled by Global for Holy Grail". [Source: turn2search104]
+
+Anthony then stated the desired outcome: "I just want to make sure that Zack can do this. If it means have both #1 and #2 enabled, we should do that for those users". [Source: turn2search104]
+
+Harris responded: "Zack will be able to make as many updates to the agent as he's a builder, it's effectively dev which he can test. Once the updated agent is ready to be pushed, he will need to inform ITS (Kev and I) and provide the updated agent to share with the users." [Source: turn2search104]
+
+Interpretation based strictly on the record: Zack and Anthony argued that business-side admin/builder control was necessary to maintain and iterate the beta. ITS/Security’s control model separated builder/development ability from production publishing, with ITS owning the final push/share step.
+
+--------------------------------------------------------------------------------
+10. UAT testing, sharing/access issues, and production enablement
+--------------------------------------------------------------------------------
+
+The UAT chat shows practical access/testing friction just before launch. Anthony asked: "How we doing?" and asked whether Zack/Raj were running the call from the Lab, adding that he might join because "Internet is kind of trash on 38". [Source: turn2search105]
+
+Zack wrote: "ive approved UAT with Kev and Andrew" and "once Raj pushes these changes and we test it will be good to og". Zack then flagged: "idk if security has approved workspace agents for everyone tho" and asked Anthony: "can you follow up in that chat". [Source: turn2search105]
+
+Anthony asked: "? Like just for KPMG Slides?" Raj asked whether this was about making agents for testing in prod or separate. Zack clarified: "i can still only share kpmg slides with this group" and "they need to enable it for everyone so when i toggle it on they can access it". Anthony replied: "K got it, let me ping". [Source: turn2search105]
+
+Zack later wrote: "its not working" and "ive sent it to other people and they cant access it". Scott Shannon asked: "if you list the agent would that change anythign?" Zack replied: "i dont want to do that yet" and "people should be able to access it when i add them". [Source: turn2search105]
+
+In another related thread, Anthony asked: "Guys - re: UAT Mindel, Zack are we done? Any other bugs, defects we gotta sort out?" Zack replied: "yes still sorting some stuff out now". Anthony responded: "ITS needs the green light". Raj said fixes were implemented and test before merging to master was needed. Anthony said: "Will ping you on the side". [Source: turn2search106]
+
+In an early-access UAT group, Zack wrote: "Hi all - this is the group that has been granted early access to workspace agents" and shared the agent link, asking: "please let me know if you can access this link to test". Anthony replied: "I can see the Agents view as well. Has KPMG Slides been uploaded?" Zack clarified: "i didn't push it to the whole workspace" and "i just shared it with this group individually". [Source: turn2search107]
+
+Zack directed testers: "if everyone could play around with it - make a deck or 2. ask for images. reimagine a slide. try out different operating mode that would be great. as long as there are no massive errors we should be good to launch." He added: "once everyone gives me a 'looks good' I will approve the UAT with security and they can work to approve it in prod". [Source: turn2search107]
+
+Scott asked: "what is security evaluating?" Zack responded: "nothing - they just want approved UAT sign off". [Source: turn2search107]
+
+Zack later noted improvements: "description and starter prompts updated" and that starter prompts populate the textbox with a full prompt. [Source: turn2search107]
+
+Interpretation based strictly on the record: UAT sign-off was treated as a gating item for security/prod, but access and sharing did not behave as cleanly as expected. Zack expected users to be able to access when he added them; ITS/security enablement and workspace permissions were still actively being resolved.
+
+--------------------------------------------------------------------------------
+11. Formal UAT approval email
+--------------------------------------------------------------------------------
+
+On 18 June 2026, Zack emailed Andrew Cain, Kev Vadgama, Harris Ghafoor, and Anthony Hui with subject "Holy Grail UAT Approval". Zack wrote: "Hi all, Signing off on UAT for KPMG Slides (Beta) Workspace Agent." [Source: turn3search182]
+
+Andrew Cain replied: "Thanks Zack." [Source: turn3search182]
+
+Interpretation based strictly on the record: this was the formal UAT approval communication used to confirm KPMG Slides Beta / Holy Grail was ready from the UAT perspective.
+
+--------------------------------------------------------------------------------
+12. Production access after approval: enablement still not working cleanly
+--------------------------------------------------------------------------------
+
+In a launch/enablement thread, Andrew Cain asked: "good morning folks - any updates on the UAT for HG?" Zack wrote: "We are cleaning up 1 last thing - once you approve it for everyone, I still need to publish it and put it into the KPMG Directory. For times sake, I can send you the approval email, your team can push it to prod and then this afternoon when we launch it I can put it into the KPMG Directory for people to use. does that work?" [Source: turn2search110]
+
+Andrew replied: "sure thing - once we get the email Vadgama, Kev can we make 'rocket ship go' please". Kev replied: "Yes, will connect with Zack after we receive approval. Thanks". [Source: turn2search110]
+
+Zack wrote: "email sent" and noted that he was in a client workshop until 1pm but could message. Anthony then asked Kev: "can you confirm WS agents has been enabled for the workspace? Zack will need that done first so he can then share Holy Grail to the rest of the workspace and folks will have access." [Source: turn2search110]
+
+Kev replied: "Hi Anthony, yes, the 'Enable Agents' permission has been enabled for all members of the workspace." [Source: turn2search110]
+
+Zack then reported that the expected access was not working: "I have sent the link to other people and they are not able to access it" and shared the agent link. He asked Harris: "can you access this?" Harris replied: "Yes". Zack asked whether Harris was enabled in the UAT group and said: "Anthony is able to access it also - but I just sent it to someone with a ChatGPT enterprise license and it didn't work for them". [Source: turn2search110]
+
+Harris replied: "Who else did you share the URL with? Please share their names so Kev can cross-reference." Harris also noted: "I might be an outlier since I'm an Owner of the workspace." [Source: turn2search110]
+
+Interpretation based strictly on the record: even after enablement was confirmed, actual user access was inconsistent; workspace ownership/UAT group membership may have affected who could access, though the record only explicitly states Harris might be an outlier because he was an Owner.
+
+--------------------------------------------------------------------------------
+13. Launch/training pressure and operational fallout
+--------------------------------------------------------------------------------
+
+In another chat, Anthony wrote: "So they're confused why this is so difficult to redeploy the workspace agent" and "Sigh". He added: "Get through this one and we'll figure out a better way after." [Source: turn2search111]
+
+Zack replied: "They are now seeing why it is difficult and tedious lol". [Source: turn2search111]
+
+Anthony asked: "Are you going to miss your intro on the training?" and suggested: "We can also hedge and say that it will be available before EOD today". He asked: "You working with Kev?" and later: "Let us know when you're good and he's enabled - team is on standby for comms until it's actually confirmed in prod and working." [Source: turn2search111]
+
+Zack replied: "Likely won’t launch until tmr" and "They still havnt enabled workspace agents lol". Anthony responded: "Smh" and "Thanks for dealing with this mess" and "at least the training went well lol". [Source: turn2search111]
+
+Zack wrote: "And it didn’t even let Kev build it so Harris did. Spent around 3h on it" and "They now understand why I wanted publishing access". [Source: turn2search111]
+
+Interpretation based strictly on the record: despite security/risk/UAT progress, the operational release process remained painful and time-consuming. Zack specifically tied the difficulty to why he had wanted publishing access.
+
+--------------------------------------------------------------------------------
+14. Anthony/Zack planning for security hold-up and training deck
+--------------------------------------------------------------------------------
+
+On Monday before launch, Anthony told Zack: "Security is the hold up right now. Not sure why. Chatting with Zia today" and "We'll get this done dw". [Source: turn2search119]
+
+Anthony also wrote: "Want to get your eyes on the deck soon for the training / launch call on Thursday" and "I think you and I are co-facilitating this so I want us to be on the same wave length for the vibe / delivery of it". [Source: turn2search119]
+
+Zack asked: "any update on WA?" Anthony provided the latest from Varun: "Security is still the hold up. They’re well aware of our launch date". [Source: turn2search119]
+
+Interpretation based strictly on the record: Anthony was tracking security, launch readiness, and training/storytelling in parallel.
+
+--------------------------------------------------------------------------------
+15. Product naming and training material alignment
+--------------------------------------------------------------------------------
+
+In the training/touchpoint email thread, Anthony wrote: "Can we include Zack / Raj on these prep invites going forward given they’ll be helping with this particular training? Not sure if we need Rishi, might be overkill." [Source: turn2search100]
+
+Anthony added: "Small note - I think we're referring to Holy Grail as 'KPMG Slides' in the short-term. At least for this initial launch. This should be reflected throughout the training materials." [Source: turn2search100]
+
+A related training slides file, "KPMG Training Slides for June 18th", lists Anthony Hui, Zack Mindel, and Raj Gogia as presenters; agenda items include "Building slides", "Building documents", "Building sheets", "Building slides from scratch is slow, hard, and inconsistent", "Video Demonstration", "KPMG Slides", "How the deck engine actually works", "Risk considerations from KPMG’s AI investigation", and "Risk Guidelines". [Source: turn3search150]
+
+Interpretation based strictly on the record: the team deliberately shifted the launch-facing name to KPMG Slides and included risk/governance content in the June 18 training materials.
+
+--------------------------------------------------------------------------------
+16. Scott Shannon’s position on prioritisation and productionising Workspace Agents
+--------------------------------------------------------------------------------
+
+Scott’s communications show a consistent focus on building an enablement path for Workspace Agents and avoiding excessive blockers.
+
+In the SOW Developer thread, Scott wrote: "… ummm I think we should delay this and it should be #2 after holy grail in workspace agents. No idea why / how they got this information to send it. maybe something else is being worked on elsewhere?." [Source: turn3search169]
+
+In the Advisory AI Transformation weekly status chat, Scott asked: "Does holy grail use that many tokens? Using scripts should reduce that by alot right?" Zack answered that slide generation is efficient and scripts do the heavy lifting, while supplementary image-gen and PPTX reconstruction are more token intensive. [Source: turn3search125]
+
+The same status thread captured follow-up topics including: "Align on the framework and process for productionizing workspace agents and present it to risk and security for approval", "Determine next steps and responsibilities for enabling Codex for client work," and "Establish service level agreements (SLAs) with ITS to ensure timely support for Codex and workspace agent enablement." [Source: turn3search125]
+
+In the sandbox/enablement thread, Scott asked directly whether a real security concern existed and whether lab review meant there was now a path to production: "Is there a real security concern here preventing broader rollout?" and "I hope that means we have a clear path for production now?" [Source: turn3search167]
+
+In a later UAT testing discussion, Scott wrote that he was going to tell Monika that "we can't do service line re-engineering like this" and noted that he was "not allowed to engage with ITS other than through Anthony" and would raise through Saf/Monika while keeping Anthony informed. [Source: turn2search106]
+
+Interpretation based strictly on the record: Scott consistently placed Holy Grail/KPMG Slides as a priority Workspace Agent and pushed for a scalable process with clear risk/security approval, ITS SLAs, and a productionisation framework.
+
+--------------------------------------------------------------------------------
+17. Group chat on in-house solution vs vendor / off-the-shelf
+--------------------------------------------------------------------------------
+
+In the KPMG Slides Training Session Final Update touchpoint, Anthony shared a LinkedIn post about Claude Design and wrote: "we should hit on why we built our own solution in-house vs. partnered w/ vendor vs. bought off-the-shelf". [Source: turn2search102]
+
+Anthony added: "I think we have our reasons (access to KPMG-specific branding and requirements, improved token efficiency) but just need to ensure we have answers during the training call". [Source: turn2search102]
+
+Zack responded: "yea all the design stuff is a sham - it looks good in html and react. its made for web designers not ppl stuck in the Microsoft suite" and "its also extremely timely and expensive to create pptx decks from scratch". [Source: turn2search102]
+
+Zack also wrote: "when we spoke with external vendors like templafy they were going down the same path as us of using deterministic template filling as the solutions". [Source: turn2search102]
+
+Raj Gogia added: "Getting this type of stuff over to powerpoint is the actual difficult problem out there" and "most out of box solutions simply just suck, so that's why we had to make something that actually does the job right". [Source: turn2search102]
+
+Interpretation based strictly on the record: the team’s rationale for the in-house build included KPMG-specific branding/requirements, token efficiency, and the difficulty of producing high-quality editable PowerPoint output.
+
+--------------------------------------------------------------------------------
+18. Broader launch communications and promotional push
+--------------------------------------------------------------------------------
+
+In the GTA AI Lab group, Zack shared an updated promo video: "Updated promo video with audio and KPMG font". Scott replied: "lets start sharing more broadly to get some hype. we should get this on Stephanie's digital desk + KPMG today." [Source: turn3search126]
+
+Zack asked: "Do we have a Release Date? Are we close to risk approvals?" Anthony replied: "Met with Kasia and Jacques yesterday. They have a plan to close risk / security concerns specifically for WS agents in the context of KPMG Slides / Holy Grail. They are presenting the plan back to NITSO early next week and if they get sign-off there, we should be good to go. But will keep you guys posted." [Source: turn3search126]
+
+Anthony added: "This looks killer btw." Scott wrote: "it takes time to get on both those. I certainly hope we are live by then." [Source: turn3search126]
+
+Interpretation based strictly on the record: communications planning was ahead of, and dependent on, risk/security sign-off. Anthony indicated that Kasia and Jacques had a plan to close risk/security concerns and present back to NITSO.
+
+--------------------------------------------------------------------------------
+19. Quick chat meeting about Holy Grail
+--------------------------------------------------------------------------------
+
+A meeting titled "Quick chat on Holy Grail" was organised by Andrew Cain for last Thursday at 8:30 AM–8:55 AM. The invitees included Anthony Hui, Zack Mindel, Varun Sharma, and Victoria Akpore. The meeting invitation stated: "Blocking time to sync on Holy Grail and ensure we are aligned on all details". [Source: turn3search140]
+
+Related resources for that meeting included the UAT Approval email, SAR Approved email, and Urgent Security Approval email. [Source: turn3search140]
+
+Interpretation based strictly on the record: Andrew Cain set up a targeted alignment meeting with Anthony, Zack, Varun, and Victoria, tied to the major approval/UAT/security threads.
+
+--------------------------------------------------------------------------------
+20. Cost/governance content in training update meeting
+--------------------------------------------------------------------------------
+
+In the "KPMG Slide Training Session Updates - Touchpoint" meeting transcript, Anthony Hui discussed cost governance. He said people needed to take "some accountability and a closer look at how they're using these tools and what they're using it for, because there's real cost implications to the firm." [Source: turn3search141]
+
+Anthony added: "this translates directly into how we're investing in AI for FY27 and our spend" and "the costs are real in the way that we govern them" at both enterprise and individual levels. [Source: turn3search141]
+
+Anthony connected this to Shripal and Stephanie discussions, saying Shripal was going to Stephanie asking for funding and Stephanie was asking "for what? Like, what am I getting back for it?" and whether people were using the tools properly. [Source: turn3search141]
+
+Anthony framed the training narrative as needing to cover the governance/cost topic before the more exciting parts: "I think we got to do a little bit of the unsexy to get to the fun stuff later." [Source: turn3search141]
+
+Interpretation based strictly on the record: the training story around KPMG Slides was not only product functionality; it included governance, consumption, and financial discipline around AI usage.
+
+================================================================================
+STAKEHOLDER-SPECIFIC QUOTE BANK
+================================================================================
+
+--------------------------------------------------------------------------------
+Anthony Hui
+--------------------------------------------------------------------------------
+
+"we should hit on why we built our own solution in-house vs. partnered w/ vendor vs. bought off-the-shelf" [Source: turn2search102]
+
+"I think we have our reasons (access to KPMG-specific branding and requirements, improved token efficiency) but just need to ensure we have answers during the training call" [Source: turn2search102]
+
+"Security is the hold up right now. Not sure why. Chatting with Zia today" [Source: turn2search119]
+
+"We'll get this done dw" [Source: turn2search119]
+
+"I think you and I are co-facilitating this so I want us to be on the same wave length for the vibe / delivery of it" [Source: turn2search119]
+
+"Security is still the hold up. They’re well aware of our launch date" [Source: turn2search119]
+
+"We need to ensure there are admin users from the business who understand how it is works / implement changes" [Source: turn2search104]
+
+"I just want to make sure that Zack can do this. If it means have both #1 and #2 enabled, we should do that for those users" [Source: turn2search104]
+
+"Following our discussion yesterday on urgent business priorities, I’m raising the need to expedite security approval for the KPMG Slides / Holy Grail workspace agent ahead of this Thursday's June 18 launch." [Source: turn3search172]
+
+"Given we are now <2 days from launch - and need time to enable and test in production - are we able to prioritize NITSO/ security approval by EOD today?" [Source: turn3search172]
+
+"This is a critical business enablement priority for Shripal ahead of his upcoming leave. With firmwide training and comms set to go out this Thursday, we need to ensure the broader workspace can properly access the agent when we launch." [Source: turn3search172]
+
+"In term of privacy - I haven't been across this review... We are one day out from launch so if there's any final reviews - we need to iron this out ASAP." [Source: turn3search173]
+
+"They thought 'Workspace' was its own platform hence the excessive risk review" [Source: turn3search124]
+
+"Risk was the last piece" [Source: turn3search124]
+
+"I was like no....its workspace agents smh" [Source: turn3search124]
+
+"Going to invest time upfront really helping them understand what we're trying to do" [Source: turn3search124]
+
+"This was bumpy but we'll do it better for docs etc." [Source: turn3search124]
+
+"So they're confused why this is so difficult to redeploy the workspace agent" [Source: turn2search111]
+
+"Get through this one and we'll figure out a better way after." [Source: turn2search111]
+
+"Let us know when you're good and he's enabled - team is on standby for comms until it's actually confirmed in prod and working." [Source: turn2search111]
+
+--------------------------------------------------------------------------------
+Zack Mindel
+--------------------------------------------------------------------------------
+
+"It is crucial to the success of the agent that we have admin controls to maintain and update the agent. As it is in beta we will be getting continuous feedback that should be acted on timely to ensure the user experience is as good as possible. If there are issues / errors / updates etc. not having immediate access to making updates will be a bigger risk to users." [Source: turn2search104]
+
+"idk if security has approved workspace agents for everyone tho" [Source: turn2search105]
+
+"i can still only share kpmg slides with this group" [Source: turn2search105]
+
+"they need to enable it for everyone so when i toggle it on they can access it" [Source: turn2search105]
+
+"its not working" / "ive sent it to other people and they cant access it" [Source: turn2search105]
+
+"people should be able to access it when i add them" [Source: turn2search105]
+
+"if everyone could play around with it - make a deck or 2. ask for images. reimagine a slide. try out different operating mode that would be great. as long as there are no massive errors we should be good to launch." [Source: turn2search107]
+
+"once everyone gives me a 'looks good' I will approve the UAT with security and they can work to approve it in prod" [Source: turn2search107]
+
+"nothing - they just want approved UAT sign off" [Source: turn2search107]
+
+"Signing off on UAT for KPMG Slides (Beta) Workspace Agent." [Source: turn3search182]
+
+"we need more education for risk and security" [Source: turn3search124]
+
+"They are now seeing why it is difficult and tedious lol" [Source: turn2search111]
+
+"They now understand why I wanted publishing access" [Source: turn2search111]
+
+--------------------------------------------------------------------------------
+Scott Shannon
+--------------------------------------------------------------------------------
+
+"Is there a real security concern here preventing broader rollout? (cost notwithstanding)" [Source: turn3search167]
+
+"They did the security review for the lab - something they explicitly stated in the lab charter they didn’t need to do. I hope that means we have a clear path for production now?" [Source: turn3search167]
+
+"Does holy grail use that many tokens? Using scripts should reduce that by alot right?" [Source: turn3search125]
+
+"… ummm I think we should delay this and it should be #2 after holy grail in workspace agents." [Source: turn3search169]
+
+"lets start sharing more broadly to get some hype. we should get this on Stephanie's digital desk + KPMG today." [Source: turn3search126]
+
+"Thank you! We already have it running. Most appreciated!" [Source: turn3search175]
+
+"I'm going to basically tell Monika in my next update that we can't do service line re-engineering like this" [Source: turn2search106]
+
+"I'm not allowed to engage with ITS other than through Anthony so I'm going to be just raising through Saf/Monika and I've let Anthony know" [Source: turn2search106]
+
+--------------------------------------------------------------------------------
+Andrew Cain
+--------------------------------------------------------------------------------
+
+"good morning folks - any updates on the UAT for HG?" [Source: turn2search110]
+
+"sure thing - once we get the email Vadgama, Kev can we make 'rocket ship go' please" [Source: turn2search110]
+
+"Thanks Zack." [Source: turn3search182]
+
+Meeting invite: "Blocking time to sync on Holy Grail and ensure we are aligned on all details" [Source: turn3search140]
+
+--------------------------------------------------------------------------------
+Kev Vadgama
+--------------------------------------------------------------------------------
+
+"Your request to enable Workspace Agents in our sandbox workspace is currently under review by our security team, I’ll update you as soon as we’re ready to proceed." [Source: turn3search167]
+
+"All GTA AI Lab accounts have now received approval to use Workspace Agents in our sandbox workspace. Access has been enabled. It may take up to 4hrs for the accounts to see this feature in the sandbox workspace." [Source: turn3search167]
+
+"We have enabled access to Workspace Agents for the team members listed below in our sandbox. It may take up to 2hrs for full synchronization of group permissions." [Source: turn3search175]
+
+"Sharing a copy of our deck on Technical & Governance controls as requested." [Source: turn3search181]
+
+"Hi Anthony, yes, the 'Enable Agents' permission has been enabled for all members of the workspace." [Source: turn2search110]
+
+"Thanks Anthony, just to confirm that this is the list of users that will require an agent builder role in the workspace? Co-editing of a workspace agent is currently limited to the author." [Source: turn2search104]
+
+--------------------------------------------------------------------------------
+Varun Sharma
+--------------------------------------------------------------------------------
+
+"Workspace agents were approved for use within the Sandbox environment, with Public data. The difference in this ask is – use of Branding data/ KPMG Branded templates in Sandbox. Will discuss today." [Source: turn3search177]
+
+"Please see below CISO approval, for firm-wide Chat GPT Enterprise users for Holy Grail ChatGPT workspace agent. You may proceed with enablement." [Source: turn3search173]
+
+"Further, wanted to add a keynote condition to this approval – ITS admin to own publishing of this agent, while Business will build." [Source: turn3search173]
+
+--------------------------------------------------------------------------------
+Jacques-Yves Gadbois
+--------------------------------------------------------------------------------
+
+The available snippets show Jacques-Yves Gadbois copied on security/NITSO approval threads and included in the distribution for the Security approval and Agent Workspaces Show and Tell. [Sources: turn3search172, turn3search173, turn3search181]
+
+Anthony reported in a group chat: "Met with Kasia and Jacques yesterday. They have a plan to close risk / security concerns specifically for WS agents in the context of KPMG Slides / Holy Grail. They are presenting the plan back to NITSO early next week and if they get sign-off there, we should be good to go." [Source: turn3search126]
+
+There was no direct Jacques-Yves quote about Holy Grail/KPMG Slides in the snippets returned, beyond his inclusion on the relevant threads.
+
+--------------------------------------------------------------------------------
+Zia Shah
+--------------------------------------------------------------------------------
+
+"Approved." [Source: turn3search173]
+
+"Hi Anthony, the team has prioritized this ask, put in extra efforts to expedite and of today, completed the review. Varun or Victoria will relay the approval shortly, noting one concern that has been identified through this review." [Source: turn3search172]
+
+--------------------------------------------------------------------------------
+Victoria Akpore
+--------------------------------------------------------------------------------
+
+"I am seeking approval for the Holy Grail ChatGPT workspace agent. The solution automates the end-to-end creation of KPMG consulting presentations, improving efficiency, turnaround time, and consistency in deliverables." [Source: turn3search173]
+
+"The agent operates within the ChatGPT Enterprise environment and is designed with a constrained scope, leveraging predefined skills and publicly available KPMG templates. It does not integrate with external systems, connectors, plugins, or external GPTs." [Source: turn3search173]
+
+"Key security controls include strict role-based access restrictions, single builder model with consumer-only access." [Source: turn3search173]
+
+"Data usage is restricted to non-sensitive inputs in alignment with enterprise data classification policies." [Source: turn3search173]
+
+"The solution is assessed as Medium residual risk, primarily due to reliance on third-party LLM processing, where KPMG does not have direct control over inference operations." [Source: turn3search173]
+
+--------------------------------------------------------------------------------
+Denease Prinold / Risk
+--------------------------------------------------------------------------------
+
+"Any word on Privacy's review and Shripal's review of the product terms for Workspace?" [Source: turn3search173]
+
+"I worked on the RA last night. Anthony and I just wrapped up a good conversation to clarify some items regarding the platform/terminology and scope of this review. I shared the draft risk assessment on screen. I’ll circle back with Rob now to finalize and share with Shripal." [Source: turn3search173]
+
+"Risk would be good to approve the deployment of the Holy Grail Agent after your review." [Source: turn3search173]
+
+"The SAR reported a medium risk." [Source: turn3search173]
+
+"Risk approves also. Rob will follow with his sign-off on the actual document. I’ve made updates to reflect the name change." [Source: turn3search173]
+
+--------------------------------------------------------------------------------
+Paul Winton / OGC Privacy
+--------------------------------------------------------------------------------
+
+"Kasia, I will confer with Seyi tomorrow morning, but based on the below this agent may fall within the established PIA carveout for agents built on PIA approved applications." [Source: turn3search173]
+
+"OGC Privacy is comfortable that a PIA is not needed for the Holy Grail Workspace Agent" [Source: turn3search173]
+
+"it is built off of ChatGPT Enterprise which has already been PIA approved" [Source: turn3search173]
+
+"it does not introduce any new connectors, external GPTs, plugins, or data sources beyond the existing ChatGPT Enterprise environment" [Source: turn3search173]
+
+"we are a bit closer to the line on privacy compliance than I would normally like to be... but I am comfortable that we can justify our approach in this case." [Source: turn3search173]
+
+--------------------------------------------------------------------------------
+Kasia Parent
+--------------------------------------------------------------------------------
+
+"The IT team will be ready to roll when they have the green light on any outstanding Risk Management questions." [Source: turn3search173]
+
+"The agent is a low-risk category agent on OpenAI ChatGPT - which is indeed an approved platform." [Source: turn3search173]
+
+"The agent was created using a newer feature of ChatGPT called Workspace (which is similar to copilot studio)." [Source: turn3search173]
+
+"At this time GPT Agent Workspace is still going through last stage reviews - the holy grail agent is being promoted on an exception basis after rigorous review." [Source: turn3search173]
+
+"There are no new or third parties who will gain access to our data by using this agent." [Source: turn3search173]
+
+"Restricted data is not allowed in ChatGPT." [Source: turn3search173]
+
+--------------------------------------------------------------------------------
+Shripal Doshi
+--------------------------------------------------------------------------------
+
+"Can we please activate in the lab today!" [Source: turn3search167]
+
+"Thank you all for moving so quickly on this!!" [Source: turn3search179]
+
+"I’ve signed off on it. It will be known as 'KPMG Slides' when in production. Holy Grail was our stealth working title while it was being developed in the lab." [Source: turn3search173]
+
+"It’s time to ship KPMG Slides Beta – aka Holy Grail. Great work everyone!" [Source: turn3search173]
+
+================================================================================
+KEY THEMES FOR RISK / SECURITY RETROSPECTIVE
+================================================================================
+
+1. Terminology confusion appears to have been material.
+Anthony explicitly stated after a risk call that Risk "thought 'Workspace' was its own platform hence the excessive risk review" and that he clarified "its workspace agents". Denease later wrote that she and Anthony clarified "platform/terminology and scope" of the review. [Sources: turn3search124, turn3search173]
+
+2. The formal approval basis focused on constrained scope.
+The security request stressed no external systems, connectors, plugins, or external GPTs; strict role-based access; single builder model; consumer-only access; non-sensitive inputs; and medium residual risk due to third-party LLM processing. [Source: turn3search173]
+
+3. The condition that ITS owns publishing while Business builds became a core operational constraint.
+Varun wrote the condition explicitly. Zack’s later chats show why this caused practical difficulty: redeployment and publishing took time, Kev could not build, Harris had to build, and Zack said they now understood why he wanted publishing access. [Sources: turn3search173, turn2search111]
+
+4. Privacy did not require a separate PIA for the Holy Grail agent, but the privacy approval came with caution.
+Paul Winton said OGC Privacy was comfortable a PIA was not needed, but said the rollout was "a bit closer to the line" because Workspace itself had not already been reviewed from a privacy perspective. [Source: turn3search173]
+
+5. UAT sign-off was required even though, in Zack’s words, security was not evaluating anything beyond sign-off.
+Scott asked "what is security evaluating?" and Zack replied: "nothing - they just want approved UAT sign off". Zack later sent the formal UAT approval email. [Sources: turn2search107, turn3search182]
+
+6. The operational process remained fragile after approval.
+Even after approval and enablement, Zack reported that users could not access the link, while Harris could, potentially because he was an Owner. Anthony asked Kev to confirm enablement and Kev confirmed the "Enable Agents" permission was enabled. [Source: turn2search110]
+
+7. There was a recognised need for a repeatable productionisation framework.
+The weekly status thread listed follow-ups to align on the framework/process for productionising workspace agents and present it to risk/security, enable Codex for client work, and establish ITS SLAs. [Source: turn3search125]
+
+================================================================================
+SOURCE INDEX
+================================================================================
+
+turn2search100 – Email: Re: Skills/Project Holygrail Training Session - Touchpoint
+turn2search102 – TeamsMessage: KPMG Slides Training Session Final Update- Touchpoint
+turn2search104 – TeamsMessage: Holy Grail admin access / business admin setup
+turn2search105 – TeamsMessage: UAT Testing - KPMG Slides
+turn2search106 – TeamsMessage: UAT Testing - KPMG Slides / ITS and launch discussion
+turn2search107 – TeamsMessage: UAT Testing - KPMG Slides / early access testing
+turn2search110 – TeamsMessage: UAT / enablement / production sharing thread
+turn2search111 – TeamsMessage: Production launch/redeployment friction
+turn2search119 – TeamsMessage: Anthony/Zack security hold-up and training deck discussion
+turn3search124 – TeamsMessage: Anthony/Zack risk-call recap and terminology misunderstanding
+turn3search125 – TeamsMessage: Advisory AI Transformation – Weekly Status
+turn3search126 – TeamsMessage: GTA AI Lab - Lab Rats / release date and risk approvals
+turn3search140 – Event: Quick chat on Holy Grail
+turn3search141 – Event: KPMG Slide Training Session Updates - Touchpoint transcript excerpt
+turn3search150 – File: KPMG Training Slides for June 18th
+turn3search167 – Email: Re: Enabling Workspace Agents / early sandbox enablement
+turn3search171 – Email: Fw: Workspace Agents Questions / OpenAI clarification
+turn3search172 – Email: RE: Urgent: Security approval required today – KPMG Slides / Holy Grail agent
+turn3search173 – Email: Re: SAR Approved – Holy Grail Workspace Agent
+turn3search175 – Email: Re: Approval for sandbox workspace agents
+turn3search177 – Email: Re: Enabling Workspace Agents / branding data in sandbox issue
+turn3search181 – Email: RE: Agent Workspaces Show and Tell
+turn3search182 – Email: Re: Holy Grail UAT Approval
+turn3search169 – Email: Re: SOW Developer / Scott prioritisation quote
+
+================================================================================
+END OF DOCUMENT
+================================================================================
