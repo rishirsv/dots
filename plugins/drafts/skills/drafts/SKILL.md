@@ -104,8 +104,8 @@ Use:
 - `writing-voice` for user styles, samples, style guides, freshness, and
   sample-quality warnings, plus style-library sync, export, import, backup, and
   root changes.
-- `writing-review` for critique, scorecards, adversarial review, and
-  review-to-revision handoff.
+- `writing-review` for critique, pressure-testing, rubric scoring when asked,
+  and deciding what to revise first.
 
 If several routes apply, preserve the user's current writing momentum. For
 example, a request to "review this and fix the top issues" should review the
@@ -132,8 +132,8 @@ standing draft.
   approval.
 - Do not invent durable state. If a session, draft, style, source, or
   version is inferred rather than observed, label it as an assumption.
-- Do not treat chat-only advice as a durable review. Durable review must point
-  to a specific `draft_version`.
+- Do not treat chat-only advice as a saved review. Saved review must point to a
+  specific `draft_version`.
 - Do not hide style selection when it matters. If no style is pinned for durable
   work, choose a concrete style ID, such as `default` or `report`; mention it
   briefly only when the choice affects trust, persistence, or the user's next

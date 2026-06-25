@@ -25,7 +25,7 @@ an actor and action are available.
 
 ## Shape And Rhythm
 
-Open with the useful answer, finding, or next action. Add context after the
+Open with the useful answer, issue, or next action. Add context after the
 point is clear.
 
 Keep paragraphs compact. Use headings or bullets when they reduce reader
@@ -42,7 +42,7 @@ Bad: "The retry path is definitely broken."
 
 ## Common Moves
 
-Finding: name the behavior and the limit.
+Issue: name the behavior and the limit.
 
 Good: "The button saves the draft, but it does not refresh the preview."
 Bad: "There may be some preview synchronization considerations."
@@ -86,8 +86,8 @@ interrelated layers."
 
 ### Review
 
-Lead with the findings that would change the next revision. Put summary after
-the issues, not before.
+Lead with the issues that would change the next draft. Put summary after the
+issues, not before.
 
 Good: "The template still leaks tool settings into the writing layer."
 Bad: "Overall, the template is strong, but there are a few areas to consider."

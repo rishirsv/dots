@@ -1,19 +1,19 @@
 ---
 name: writing-review
-description: "Use for Drafts review work: critiquing draft versions, producing findings, rubric scorecards, adversarial reads, and fix plans. Reviews tied to a draft version are durable; pasted-text reviews are advice unless a version is created or selected. Not for general brainstorming, style setup, drafting from scratch, or silent durable review without a target version."
+description: "Use for Drafts review work: critiquing drafts, pressure-testing arguments, checking voice or rules, scoring against a rubric when asked, and deciding what to revise first. Reviews tied to a draft version are saved; pasted-text reviews are one-off advice unless a version is created or selected. Not for general brainstorming, style setup, drafting from scratch, or silent saved review without a target version."
 ---
 
 # Writing Review
 
 Review writing against its context, plan, rules, channel, sources, and quality
-bar. Durable reviews must target a specific `draft_version`; versionless or
-pasted-text reviews are allowed only as non-durable advice until the user
-creates or selects a version. Use this skill after `drafts` routes critique,
-scorecard, adversarial review, or fix-planning work here, or when the user
+bar. Saved reviews must target a specific `draft_version`; versionless or
+pasted-text reviews are one-off advice until the user creates or selects a
+version. Use this skill after `drafts` sends critique, pressure-testing,
+voice checks, rubric scoring, or revision-priority work here, or when the user
 explicitly invokes `writing-review`.
 
 Read [state.md](../../references/state.md) before reviewing, especially its
-review lineage, saved-state, and user-facing state note guidance.
+saved-review, version, and user-facing state note guidance.
 
 ## Before Reviewing
 
@@ -27,24 +27,27 @@ Before reviewing, identify:
 - Applicable AGENTS.md guidance and explicit instructions.
 - Selected style ID and style guide.
 - Draft-level source material.
-- Requested review mode and rubric, if any.
+- The kind of review the user asked for, and any rubric.
 
-If the target version is unavailable, ask for it when durable review matters.
+If the target version is unavailable, ask for it when saved review matters.
 When the user wants immediate critique of provided text, label the result as
-non-durable advice and offer to create or select a `draft_version` before any
-review-to-revision handoff.
+one-off advice and offer to create or select a `draft_version` before applying
+the critique as a saved revision.
 
-## Ways To Review
+## Kinds Of Review
 
-- `quality_review`: find the highest-impact issues against the context, plan,
-  and reader need.
-- `adversarial_review`: pressure-test claims, structure, reader value, source
-  use, and hidden assumptions.
-- `rule_review`: check writing rules and deterministic constraints.
-- `style_review`: check whether style usage is appropriate and supported by
+Choose the shape that matches the user's language:
+
+- General critique: find the issues that would most improve the next draft.
+- Pressure test: challenge claims, structure, reader value, source use, and
+  hidden assumptions.
+- Rules check: check the writing against AGENTS.md guidance, explicit
+  instructions, and deterministic constraints.
+- Voice check: decide whether the style choice is appropriate and supported by
   evidence.
-- `scorecard`: score named criteria inside the `review_pass`.
-- `fix_plan`: turn findings into ordered revision instructions for `compose`.
+- Rubric review: score named criteria when the user asks for scoring.
+- Revision priorities: turn the review into a short, ordered list of what to
+  change next.
 
 ## Voice Fit
 
@@ -52,11 +55,11 @@ When reviewing voice match, compare the draft against the style guide's
 evidence and observable patterns. Check sample sufficiency, obvious style
 misses, repeated openers, avoided terms, channel fit, close-copying risk, and
 whether the draft still says what the user intended. Do not turn a style review
-into a scoring exercise unless the user asks for a scorecard.
+into scoring unless the user asks for a scored rubric.
 
-## Findings
+## Issues
 
-Each finding should include:
+Each issue should include:
 
 - Severity.
 - Location or section.
@@ -64,30 +67,30 @@ Each finding should include:
 - Why it matters for the context, plan, reader, rule, source, or channel.
 - Recommended fix.
 
-Do not bury findings behind a long summary. Lead with the issues that would
-change the next revision.
+Do not bury the critique behind a long summary. Lead with the issues that would
+change the next draft.
 
 ## Turning Review Into Revision
 
 When the user asks to apply fixes:
 
-1. Keep the `review_pass` tied to the reviewed version.
-2. Select the findings to apply.
-3. Hand the fix plan to `compose`.
+1. Keep the saved review tied to the reviewed version.
+2. Choose the issues to fix.
+3. Hand the revision priorities to `compose`.
 4. Create or describe a new `draft_version`.
 5. Link the new version back to the review.
 
 ## What The User Sees
 
-Lead with the findings that would change the next revision. Keep the review
-useful before it is procedural.
+Lead with the issues that would change the next draft. Keep the review useful
+before it is procedural.
 
 For ordinary review, return:
 
-- Findings ordered by severity or impact.
-- The fix plan or next revision target.
-- A scorecard only when requested.
+- Issues ordered by severity or impact.
+- The next revision target.
+- Scores only when the user asks for scoring.
 
-Mention the reviewed version, non-durable advice status, rubric, or state gaps
+Mention the reviewed version, one-off advice status, rubric, or missing state
 only when they affect trust, version safety, or the user's next action. Do not
-make every review start with review metadata.
+make every review start with review details.

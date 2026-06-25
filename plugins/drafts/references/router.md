@@ -35,7 +35,7 @@ mention it in one short sentence after the writing.
 | `Draft` | User says write, draft, compose, start, continue, outline, build a piece, create a recurring project, or provides messy notes for a standing pad. | `compose` |
 | `Rewrite` | User says rewrite, humanize, personalize, polish, tighten, shorten, expand, adapt, make this sound like me, make this less AI, or provides existing text to improve. | `compose` |
 | `Style` | User asks to create, inspect, sync, import, export, or update writing style evidence. | `writing-voice` |
-| `Review` | User asks for critique, scorecard, adversarial review, QA, or fix plan. | `writing-review` |
+| `Review` | User asks for critique, a pressure test, QA, rubric scoring, or what to fix first. | `writing-review` |
 
 Keep `$drafts` as the front door. Do not require users to name the kind of help
 when their verb or supplied text makes it clear.

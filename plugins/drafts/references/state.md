@@ -237,7 +237,7 @@ instructions. Sources are draft-level by default. Record them once in
 | `style_reference` | Sample attached to a named style |
 | `style_guide` | Generated voice manual with instructions, modes, examples, and guardrails |
 | `channel_recipe` | Reusable destination or format recipe |
-| `review_pass` | Version-tied critique and findings |
+| `review_pass` | Saved review tied to a draft version |
 | `rewrite_run` | Fast transformation of existing text, durable only when tied to a draft version |
 
 Writing rules are resolved from AGENTS.md plus explicit session or draft
@@ -269,11 +269,11 @@ Create or describe a new `draft_version` for material changes:
 A channel variant should usually be a separate draft linked to its source draft
 and source version.
 
-## Review Lineage
+## Saved Reviews
 
-A durable review must target a specific `draft_version`. If no version is
-available, label the result as non-durable advice and ask whether to create or
-select a version when durable review matters.
+A saved review must target a specific `draft_version`. If no version is
+available, label the result as one-off advice and ask whether to create or
+select a version when saved review matters.
 
 Before reviewing, load or identify:
 
@@ -285,22 +285,22 @@ Before reviewing, load or identify:
 - applicable AGENTS.md guidance and explicit instructions
 - selected concrete style ID and style guide
 - draft-level source material from `context.md`, if it exists
-- requested review mode and rubric
+- the kind of review the user asked for, and any rubric
 
-Each finding should have severity, location, evidence, issue, why it matters,
-and recommended fix. Order findings by impact on the next revision.
+Each issue should have severity, location, evidence, why it matters, and a
+recommended fix. Order issues by impact on the next draft.
 
-Scorecards are a review mode inside `review_pass`, not a separate state object.
-When scoring, name the rubric, criteria, scores, rationale, evidence,
-confidence, and version reviewed.
+If the user asks for scoring, keep it inside the saved review rather than
+creating a separate state object. Name the rubric, criteria, scores, rationale,
+evidence, confidence, and version reviewed.
 
-Review-to-revision handoff should preserve lineage:
+When a review becomes a revision, preserve lineage:
 
 ```text
 draft_version reviewed
--> review_pass
--> selected findings
--> compose fix plan
+-> saved review
+-> selected issues
+-> revision priorities
 -> new draft_version
 ```
 

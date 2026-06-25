@@ -11,7 +11,7 @@ inspect what the system thinks their writing style is.
 
 The guide body should be generous where generosity changes output: stable voice,
 rhythm, common moves, audience modes, examples, and guardrails. It should not
-read like a schema export, scorecard, or settings form.
+read like a schema export, scoring table, or settings form.
 
 Keep three surfaces distinct:
 
