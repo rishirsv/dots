@@ -5,198 +5,251 @@ channel: email
 
 # Rishi Email Style
 
-Use this guide for Rishi's work email. The through-line is practical momentum:
-get close to the work quickly, make the ask visible, and reduce the recipient's
-effort.
+Use this guide for Rishi's work email. The through-line is useful momentum:
+start close to the work, make the next action visible, and give the recipient
+just enough context to move without another round of clarification.
 
-This guide covers normal work email, client-facing asks, internal peer notes,
-delegation and review instructions, and document-commentary emails. Choose the
-mode that matches the audience and task.
+This is not a general personal voice. It is for work email, including client
+coordination, internal peer notes, delegation and review instructions, document
+comments, and quick replies.
 
 ## Stable Voice
 
-Rishi sounds direct without trying to sound blunt. Warmth comes from usefulness:
-concise context, low-friction asks, and a willingness to discuss when a thread
-would be easier live.
+Write with direct professional compression. The email should feel like it came
+from someone already inside the work: the object is named, the judgment or ask
+appears early, and background is limited to what helps the reader act.
 
-The voice usually starts near the work. It does not spend much time warming up
-when the relationship already has context. It names the action, gives the
-minimum reason needed, and makes the next step easy to see.
+Warmth comes from reducing effort, not from ceremony. Use light greetings,
+plain thanks, and practical release valves such as "happy to discuss" or "let
+me know if anything is unclear." Avoid long appreciation, emotional padding,
+or generic business pleasantries.
 
-The writing can be compressed, but it should not feel clipped for its own sake.
-Keep enough connective tissue for the recipient to understand why the ask
-matters and what would make the answer useful.
+Use judgment plainly. If the answer is yes, say yes. If the framing is off,
+name what is off and offer the better shape. If the evidence is incomplete,
+use bounded qualifiers such as "I think," "not sure," "likely," or "for
+context," then state the practical implication.
 
-Use "I" for ownership, "we" for shared project obligations, and direct
-questions for asks. Use plain caveats such as "I think", "not sure", "can
-discuss", or "for context" when the evidence is incomplete.
-
-Warmth is understated. Avoid decorative appreciation, generic enthusiasm, or
-long ceremonial openings. A short "thanks" or "happy to discuss" is enough when
-it fits the thread.
+Do not sand away the useful edge. The voice should be clean and considerate,
+but still willing to say what needs to change.
 
 ## Shape And Rhythm
 
-Most emails should open with the real move: a request, decision, update,
-recommendation, handoff, or the thing that changed. Add background after the
-move is clear.
+Open with the live move: request, answer, decision, update, recommendation,
+handoff, or what changed. Add setup after the move only when it prevents
+confusion.
 
-Use short paragraphs. One idea per paragraph is better than one dense paragraph
-with several obligations hidden inside it. Bullets or numbers are useful when
-there are multiple tasks, checks, or decision points.
+Keep paragraphs short. One idea per paragraph is the default. Use bullets or
+numbers only when the recipient needs to scan, execute, compare, or confirm
+multiple items.
 
-Short replies can be one or two sentences. Longer emails should still feel
-scannable: setup, tasks or rationale, and the requested response.
+The normal shape is:
 
-Good: "The file is updated. Can you please verify the checks before we send it
-out?"
-Bad: "The file has been updated, and it would be appreciated if the checks
-could be reviewed prior to distribution."
+1. Action, answer, or judgment.
+2. Minimal context or rationale.
+3. Specific next step, owner, timing, or check.
 
-Good: "I have notes from the first half and am waiting on the remaining notes
-to consolidate."
-Bad: "I hope this message finds you well. I wanted to provide an update
-regarding the notes."
+Short replies can be fragments when the thread is already clear. Longer emails
+should still feel scannable and operational.
 
 ## Common Moves
 
-Request: name the action and object directly. Add timing only when timing
-matters.
+Request: name the action and object directly. Add the timing, reason, or
+constraint only if it changes how the recipient should respond.
 
-Good: "Can you please send this back when you have a moment."
-Bad: "At your earliest convenience, I would greatly appreciate if you could..."
+Good: "Can you please send the updated file today so we can finalize the
+review pack."
 
-Update: give the current state, then the implication or next action.
+Bad: "I wanted to kindly reach out to see whether you might be able to provide
+the latest materials at your earliest convenience."
 
-Good: "Reviewed the updated schedule and no changes are required on our end."
-Bad: "I have completed my review of the updated schedule and, based on that
-review, I do not believe any further changes are required."
+Update: give the current state, then the implication.
 
-Follow-up: remind the reader of the concrete thread, then ask for the missing
-input.
+Good: "The comments are addressed. I left two items open where we need a final
+view before circulation."
 
-Good: "Following up on the schedule comments below. Can you please confirm if
-we should reflect the revised timing in the deck?"
-Bad: "Just checking in to see whether there are any updates."
+Bad: "I have completed my review and wanted to provide an update on the
+current status."
 
-Recommendation: lead with the judgment, then explain the practical tradeoff.
+Recommendation or pushback: lead with the judgment. Then give the practical
+reason and the narrower next step.
 
-Good: "I think this is better framed as a source-to-deliverable workflow than a
-report-to-slides tool."
-Bad: "There may be an opportunity to refine the positioning."
+Good: "I think this should be framed as an operating issue, not a tooling
+issue. The current version spends too much time on features and not enough on
+what changes for the team."
 
-Review or delegation: give the goal first, then the tasks. Every task should
-name the action, object, and check.
+Bad: "There may be an opportunity to revisit the positioning in a way that
+better aligns to the broader narrative."
 
-Good: "Update the source data, reconcile the totals to the current schedule,
-and flag any variance that does not tie to management support."
-Bad: "Please refresh the analysis and let us know if anything looks off."
+Delegation or review: give the goal, then the work. Strong instructions name
+the action, object, constraint, check, timing, and escalation path.
+
+Good: "Please update the workbook for the latest source file, keep the prior
+reported totals unchanged unless we agree otherwise, and flag anything that
+does not tie before you send it back."
+
+Bad: "Please refresh the analysis and let me know if anything looks off."
+
+Document comment: identify the local writing problem, then give the better
+shape or replacement language. Name whether the issue is framing, sequence,
+claim strength, evidence, repetition, tone, or wording.
+
+Good: "This reads more like a feature description than a workflow. Could we
+reframe it around the inputs, the analysis, and the output?"
+
+Bad: "This section needs work."
+
+Repair or escalation: state the decision or concern early, then explain the
+practical reason. Keep the tone calm, but do not hide the problem under
+apology or vague diplomacy.
+
+Good: "I would pause this for now. The current option adds another process for
+users without enough upside to justify the switch."
+
+Bad: "I completely understand the thinking here and wonder whether there may
+be some potential considerations around timing and user experience."
+
+Quick reply: answer the thread in the fewest words that fully close the loop.
+Do not add structure, gratitude, or context when the thread already supplies
+it.
+
+Good: "Yes, added."
+
+Bad: "Thank you for flagging this. I have now completed the requested update."
 
 ## Modes
 
 ### Client Or External
 
-Be courteous, brief, and relationship-safe. Make the ask clear before the
-rationale unless the ask would otherwise feel abrupt. Use greetings and thanks
-more reliably than in internal notes, but keep them light.
+Be direct, calm, and slightly more padded at the edges than internal email.
+Use a greeting by default. Open with the request or context, then give the
+minimum reason the recipient needs.
 
-For clients, keep confidence and care together. Do not over-apologize. Do not
-bury the ask under gratitude. If the request depends on prior context, give one
-short reminder before the ask.
+External mail is often coordination: agenda items, attachments, availability,
+request lists, confirmations, or follow-ups. It should feel easy to answer.
+Use bullets when there are multiple topics or requested items.
 
-Good: "Hi Sam, can you please send the updated schedule when you have a
-moment."
-Bad: "I hope you are doing well. I am reaching out to kindly request..."
+Good: "Hi [Name], can you please send the updated file by tomorrow morning? We
+need it to finalize the review pack before circulation."
 
-Good: "For context, we need this to reconcile the latest deck to the source
-file before circulation."
-Bad: "This information is required for our internal process."
+Good: "Hi [Name], pleasure to connect. I lead [function] on our side and
+wanted to introduce myself before next week's discussion."
 
-### Internal Peer
+Bad: "Hi [Name], hope all is well. I am reaching out with respect to the
+materials and would be grateful if you could provide them when convenient."
 
-Assume shared context. Lead with the useful judgment, then the consequence.
-Compression is fine when the recipient knows the work. The warmth is in saving
-them time and giving them something they can react to.
+Do not import internal bluntness into client-facing mail. Keep confidence and
+care together: clear ask, brief context, clean signoff.
 
-Good: "I think this is more useful as a source-to-deliverable workflow than a
-report-to-slides tool."
-Bad: "There may be an opportunity to refine the positioning."
+### Internal Peer, Manager, Or Partner
 
-Good: "Not sure this needs a separate page. We could fold it into the workflow
-section and use the appendix for the detail."
-Bad: "This might benefit from some restructuring."
+Assume shared context. Internal email can be much more compressed than client
+mail, but it should still be useful. The main submodes are:
 
-### Delegation Or Review
+Quick operational: approvals, confirmations, redirects, and acknowledgements.
 
-Give the goal first, then the tasks. Use bullets or numbered steps when there
-are multiple workstreams. Avoid mystery verbs like "handle", "look into", or
-"clean up" unless the object and expected finish line are obvious from the
-thread.
+Good: "Looks right. Please send."
+
+Judgment and steer: recommendation first, then a short reason or gating
+question.
+
+Good: "I do not think this needs its own section. We can fold it into the
+overview and keep the detail in the appendix."
+
+Structured ask: a concise setup followed by bullets when several people need
+to execute or decide.
 
 Good:
 
 ```text
-Can you please update the source data and run the following checks:
+Can you please check the following before we circulate:
 
-1. Reconcile the totals to the current schedule.
-2. Flag any variance that does not tie to support.
-3. Send me the updated file before we circulate.
+1. Confirm the totals tie to the latest support.
+2. Flag any open assumptions.
+3. Send me the clean version once the comments are addressed.
 ```
 
-Bad:
+Bad: "It may be helpful to review the file and make any updates you think are
+appropriate before we share it."
 
-```text
-Please refresh the analysis and let us know if anything looks off.
-```
+### Delegation And Review
+
+Delegation should not rely on mystery verbs like "handle," "clean up," or
+"look into" unless the finish line is obvious from the thread. Spell out the
+result and the checks.
+
+For junior or offshore tasking, include:
+
+- what to update or prepare
+- what source to use
+- what should not change
+- what must tie, reconcile, or be flagged
+- when to pause and check in
+- when the output is needed
+
+Good: "Please do the first pass on these comments today, then message me
+before you start the structural changes so we agree on the order."
+
+Bad: "Please work through the comments and send back when done."
 
 ### Document Comment
 
-Be editorial and local. Name the framing problem, then offer the replacement
-shape. Do not make the writer infer the critique. Name whether the issue is
-framing, sequence, claim strength, evidence, repetition, or tone.
+Be local and editorial. Do not make the writer infer the issue. State the
+problem and then offer the replacement shape.
 
-Good: "Could we frame this less as a tool and more as a
-source-to-deliverable workflow?"
-Bad: "This needs to be rewritten."
+Use this pattern:
+
+1. "This reads as..."
+2. "Could we frame it as..."
+3. "Suggested wording..." only when replacement text would save time.
 
 Good: "This point may land better after the process overview, once the reader
-understands what the workflow is solving."
+knows what problem we are solving."
+
+Good: "For the note below, I would cut the general setup and move straight to
+the ask. The context only needs one line."
+
 Bad: "Move this somewhere else."
 
 ### Quick Reply
 
-Use the fewest words that fully answer the thread. Acknowledge only what needs
-acknowledging.
+Use quick replies only when the thread is already clear. Keep the answer
+complete enough to close the loop.
 
-Good: "Yes, added. Let me know if you want this filed somewhere else."
-Bad: "Thank you for flagging. I have now completed the requested update."
+Good: "Approved. Please attach this to the request."
+
+Good: "Yes, works for me."
+
+Good: "Here you go."
+
+Bad: "Certainly, I can confirm that this approach is acceptable from my
+perspective."
 
 ## Vocabulary
 
-Prefer concrete work nouns: task, file, schedule, check, variance, request,
-deck, report, comments, deliverable, support, source, reconciliation.
+Prefer concrete work nouns: file, deck, schedule, comments, request, check,
+support, source, output, review pack, version, timing, owner, variance, issue,
+assumption.
 
-Prefer action verbs: update, verify, flag, send, confirm, discuss, reconcile,
-review, add, remove, consolidate, circulate.
+Prefer action verbs: send, confirm, update, review, add, remove, reconcile,
+tie, flag, circulate, prepare, revise, discuss, pause, fold, cut, frame.
 
-Use plain qualifiers: likely, should, I think, not sure, as discussed, for
-context, happy to discuss.
+Use plain qualifiers: I think, likely, not sure, for context, as discussed,
+happy to discuss, if helpful, if anything is unclear.
 
-Avoid generic consulting filler: leverage, unlock, strategic alignment,
-seamless, robust, transformative, optimize, enable.
-
-Avoid over-politeness that delays the ask. Avoid inflated urgency unless the
-thread actually requires it.
+Avoid generic consulting filler: leverage, unlock, robust, seamless,
+transformative, strategic alignment, optimize, enable, value-add, best-in-class.
 
 ## Guardrails
 
-- Do not invent commitments, availability, approvals, client facts, source
-  claims, or final positions.
-- Do not preserve typos, missing apostrophes, or rushed punctuation as voice.
-  Clean them unless the user explicitly asks for roughness.
-- Do not copy deal, AI, or project terminology as style. Topic vocabulary is
-  context, not voice.
-- Do not smooth away all sharpness. Rishi's useful edge is concrete judgment.
+- Do not invent facts, commitments, approvals, availability, source claims, or
+  final positions.
+- Do not preserve rushed artifacts as voice. Clean typos, missing punctuation,
+  stray capitalization, signatures, quoted history, and notification wrappers.
+- Do not copy client, deal, tool, AI, accounting, or project vocabulary as
+  style. Topic vocabulary is context, not voice.
+- Do not flatten all modes into terse internal mail. Client and external
+  messages need more relationship safety.
+- Do not overfit to one-word replies. They are allowed only when the thread
+  already carries the context.
 - Do not make the email casual merely to make it human. Keep the relationship
   and stakes intact.
-- Do not use this as a universal personal voice. It is a work-email guide.

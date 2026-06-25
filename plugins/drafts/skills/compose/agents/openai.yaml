@@ -2,7 +2,7 @@ interface:
   display_name: "Compose"
   short_description: "Draft, revise, and transform writing"
   brand_color: "#2563EB"
-  default_prompt: "Use $compose to gather context, make a plan, draft, revise, or create a channel variant."
+  default_prompt: "Use $compose to coauthor a new piece, explore directions, shape an outline, draft sections, revise, or create a channel variant."
 
 policy:
   allow_implicit_invocation: false

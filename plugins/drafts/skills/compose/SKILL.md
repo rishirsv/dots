@@ -9,11 +9,11 @@ Create and revise writing. Use this skill after `drafts` routes a writing
 moment here, or when the user explicitly invokes `compose` for drafting,
 revision, or transformation.
 
-Write like an editor. For existing prose or a piece that is ready to write, the
-user should see the artifact first: the draft, rewrite, outline, revision, or
-variant they asked for. For a new piece that is still becoming an idea, the
-useful output is not an artifact yet. Stay with context gathering until the
-piece has enough living context to draft without flattening the thought.
+Write like an editor who is co-authoring with the user. For existing prose, the
+user should see the artifact first: the rewrite, revision, continuation, or
+variant they asked for. For new substantial writing, the useful output may be
+the next co-authoring move: context transfer, fragments, directions, an outline
+revision, a section pass, or a whole-piece read.
 
 The `drafts` front door decides whether the user needs new writing or a pass on
 existing text. Read
@@ -34,52 +34,37 @@ writing, rewrites, continuations, channel variants, or personalized drafts.
 Use this path for new or recurring writing. Help the user move from raw intent
 to usable prose without forcing structure too early.
 
-For new writing, context comes before drafting. A prompt can be clear as a
-request and still too thin as writing context. Draft only when the context shows
-what prompted the piece, who it is for, what should shift for the reader, what
-examples or sources can support it, and which direction feels worth pursuing;
-when the user accepts a direction or plan; or when the user explicitly says
-`draft anyway`.
-Source material is evidence, not editorial intent. Reading a source pack can
-prepare the conversation, but it cannot substitute for the user choosing what
-the piece should do.
+For new substantial writing, coauthor in this order, adapting to what the user
+already has:
 
-When the user is still finding the piece, close the gap between what they know
-and what you know before drafting.
+1. **Gather context.** Close the gap between what the user knows and what Drafts
+   knows. Ask for the document type or writing form, audience, desired impact,
+   format constraints, and any source material. Invite the user to dump context
+   however works best: shorthand, pasted notes, transcripts, links, files,
+   objections, politics, timelines, or half-formed thoughts.
+2. **Explore directions.** Treat this as pure explore. Preserve fragments and
+   widen what could be written without committing to structure. Reflect what is
+   emerging, name competing pieces, and ask clarifying questions in batches when
+   they will improve the conversation.
+3. **Shape the outline together.** Once a direction is promising, propose
+   candidate shapes or openings. Let the user pick, reject, combine, or revise.
+   Establish what the reader knows walking in, what each section does, what each
+   section must ground, and which source slots or examples belong there.
+4. **Iterate section by section.** Start with the section carrying the most
+   unknowns or the core argument. For each section, ask what belongs, brainstorm
+   possible inclusions, let the user curate, draft only that section, then make
+   surgical edits from feedback.
+5. **Review the whole piece.** Near completion, reread the whole artifact for
+   flow, consistency, redundancy, unsupported assumptions, generic filler, and
+   whether every section earns its place.
 
-For fuzzy or substantial writing:
+When shaping from a source pile, treat the raw material as a quarry, not a
+script. Reading a source pack can reveal possible directions, but it does not
+decide the user's intended piece. Do not announce that you will draft after
+reading sources; say you will read for context, possible directions, and gaps.
 
-1. Resolve existing `context.md`, `plan.md`, or `draft.md` when available.
-2. If the user supplied a source pack, inspect enough of it to understand what
-   it can support, then return a thinking turn: the live issue, 2-3 possible
-   directions, the editorial choices still missing, and one question or choice
-   for the user. Do not create a draft, outline, memo, output file, or polished
-   prose yet.
-3. Ask what made the user want to write: the observation, frustration,
-   contradiction, question, or change in thinking.
-4. Invite an unstructured dump. The user can answer in shorthand, paste notes,
-   point to source material, or keep talking.
-5. Preserve raw fragments in the context pile. A fragment can be a sharp
-   sentence, claim, vignette, quote, phrase, example, objection, or source lead.
-6. Ask clarifying questions based on gaps in the context. Favor questions about
-   the reader, the change the piece should create, what the reader needs to
-   understand first, claims that need support, missing examples, and source
-   limits.
-7. If the user is still searching for the idea, respond with reflection, useful
-   fragments, possible tensions, and one live question. Do not create
-   `draft.md`, a full outline, or polished prose from a topic alone.
-8. Once the pile is strong enough, offer 2-3 candidate directions or openings.
-   Each option should imply a different thesis, reader journey, or emotional
-   stance.
-9. Build a plan only after the reader, core argument, and likely shape are clear
-   enough. A useful plan includes the reader spine, grounding path, working
-   titles, core argument, assumptions, unresolved choices, proposed structure,
-   example/source slots, format and length, and next decisions.
-10. Draft from the accepted plan. For longer work, fill one section at a time,
-   starting with the section that has the most unknowns or carries the core
-   argument.
-
-If the user says `draft anyway`, stop interviewing and draft the smallest
+Draft immediately only when the user explicitly asks for direct prose, a fast
+draft, or an override such as `draft anyway`. In that case, draft the smallest
 bounded useful artifact with explicit assumptions.
 
 ## Longer Pieces
@@ -87,15 +72,15 @@ bounded useful artifact with explicit assumptions.
 Use this approach when the piece is substantial enough to need durable planning
 or section-by-section execution.
 
-1. Keep the context pile current: raw fragments, source notes, assumptions,
-   reader prerequisites, open questions, and unresolved choices.
-2. Create or update the plan only when the shape is ready: title options, core
-   argument, reader spine, grounding path, proposed structure, example/source
-   slots, length and format, and next decisions.
-3. If the user wants speed, proceed only when they explicitly say
-   `draft anyway`, and record assumptions.
+1. Keep the context pile current: fragments, source notes, assumptions, reader
+   prerequisites, open questions, candidate directions, and unresolved choices.
+2. Keep the plan current as a collaborative outline: title options, accepted
+   direction, reader spine, grounding path, proposed sections, example/source
+   slots, section status, length and format, and next decisions.
+3. If the user wants speed, proceed only when they explicitly ask for direct
+   prose or say `draft anyway`, and record assumptions.
 4. Draft or revise one bounded Markdown section at a time when the artifact has
-   chapters or sections.
+   chapters or sections. Do not write ahead of the agreed section.
 5. Run the quality loop on each section and again at the whole-piece level when
    the sections need to read as one argument.
 6. Preserve unrelated sections unless the user asks for a whole-document pass.
@@ -180,9 +165,10 @@ non-personalized humanize pass and say so in one short sentence.
 Use variants only when they represent real editorial alternatives: angle,
 opening, structure, audience, channel, voice, or competing revision strategy.
 
-Return one strong draft by default. Offer variants when the user is choosing a
-direction or when showing two options would prevent a premature commitment. If
-the difference is only wording, choose the better wording yourself.
+For direct prose or rewrite requests, return one strong draft by default. Offer
+variants when the user is choosing a direction or when showing two options would
+prevent a premature commitment. If the difference is only wording, choose the
+better wording yourself.
 
 When durable state exists, treat real variants as sibling drafts linked to the
 same context and plan. Treat minor changes to the same candidate as versions.
@@ -191,13 +177,13 @@ language.
 
 ## What The User Sees
 
-Return the artifact first when the user provided existing prose or the new piece
-has enough context to draft.
+Return the artifact first when the user provided existing prose or explicitly
+asked for direct prose.
 
-When the user is developing an idea, return the thinking turn instead: what
-seems alive in the material, the possible tensions or directions, the fragments
-worth keeping, and one question that would unlock the next pass. Do not label
-this as a mode or append route details.
+When the user is developing a piece, return the co-authoring move instead: the
+context gathered, fragments worth keeping, possible directions, outline changes,
+section options, or targeted questions that help the user decide what comes
+next. Do not label this as a mode or append route details.
 
 For ordinary chat-only drafting and rewriting, the whole response can be just
 the writing. Do not append lane names, route names, state details, or AGENTS.md

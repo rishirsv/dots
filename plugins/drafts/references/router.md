@@ -23,10 +23,11 @@ Notice the smallest available set:
 - Whether the request is new/recurring writing or transformation of existing
   text.
 
-If an input is missing but not blocking, proceed with an explicit assumption.
-Ask only when the missing answer changes the artifact, approval boundary,
-supporting material, or review target. If the assumption matters to the user's
-trust, mention it in one short sentence after the writing.
+For new substantial writing, do not treat missing context as an interruption to
+minimize. Context gathering, direction exploration, and outline shaping are the
+writing workflow. For fast direct-prose requests, proceed with explicit
+assumptions only when the missing answer does not change the artifact, approval
+boundary, supporting material, or review target.
 
 ## User Need
 
@@ -45,21 +46,16 @@ Reusable writing guidance uses the approval-gated rule update flow in
 
 ## Good Defaults
 
-- Prefer new-writing help when the user is starting, continuing, outlining, or
+- Prefer co-authoring when the user is starting, continuing, outlining, or
   shaping rough material.
 - Prefer rewrite help when the user provides text to improve.
-- Prefer context gathering before planning or drafting for every new piece.
-  Fuzzy, substantial, source-heavy, or idea-development prompts should stay in
-  the raw pile until the prompt, reader, intended shift, supporting material,
-  and live direction are clear enough.
-- Treat source material as evidence, not editorial intent. When the user brings
-  a source pack for new writing, read enough to understand what it can support,
-  then return possible directions and the missing editorial choice before any
-  draft, outline, memo, output file, or polished prose.
-- Prefer a plan before drafting when the user needs structure, assumptions,
-  source slots, or section work.
+- Prefer exploration before planning or drafting for every new substantial
+  piece. Fuzzy, source-heavy, or idea-development prompts should stay in the raw
+  pile while the user and agent explore possible pieces.
+- Prefer a collaborative outline before drafting when the user needs structure,
+  assumptions, source slots, or section work.
 - Prefer drafting for short requests only when the prompt already contains the
-  needed writing context, not merely a topic or format.
+  needed writing context or the user explicitly asks for direct prose.
 - Prefer the Compose quality loop before returning writing. Do not route to
   review just to catch ordinary AI tells, weak endings, or style misses that
   Compose can fix before output.
@@ -79,20 +75,19 @@ Reusable writing guidance uses the approval-gated rule update flow in
 
 ## Missing Inputs
 
-For new writing, missing inputs usually come from these core writing variables:
+For new writing, gather and refine these inputs through the co-authoring
+conversation:
 
 - What made the user want to write?
 - Who is it for?
 - What should change after the reader reads it?
-- What is the main claim or direction?
+- What possible directions are live?
+- What shape or outline feels right?
 - What source material or examples exist?
 
-If those inputs are missing, do not treat the request as enough to draft unless
-the user explicitly says `draft anyway`.
-
-If the only strong input is source material, treat the next response as source
-synthesis and direction-finding. Do not announce that you will draft after
-reading the sources.
+If those inputs are still moving, keep co-authoring. Do not treat the request as
+enough for polished prose unless the user asks for direct prose, accepts a
+working outline, or explicitly says `draft anyway`.
 
 For existing text, do not ask context questions unless the source text is
 missing, style evidence is required for personalization, or the edit intent is

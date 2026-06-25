@@ -9,37 +9,30 @@ pass that keeps Drafts from making the user ask for "rewrite," "review," or
 "make it less AI" after every draft. Mention the loop only when a limit affects
 trust or the user's next decision.
 
-## Before Drafting
+## Coauthoring Before Prose
 
-Before there is prose, quality means helping the idea become specific enough to
-write. Do not turn a topic into a draft just because the user eventually wants
-writing.
+Before there is prose, quality means helping the user think until the piece has
+a shape they recognize. Do not turn a topic, source pack, or requested format
+into a draft just because the user eventually wants writing.
 
-Stay with the raw material until you can hear:
+Stay with the raw material until the collaboration has covered:
 
-- What made the user want to write: an observation, frustration, contradiction,
-  question, or change in thinking.
+- Why the user wants to write this now.
 - Who the piece is for and what that reader is likely bringing with them.
 - What should feel clearer, sharper, more possible, or more questionable after
   reading.
 - What examples, notes, links, memories, or evidence can make the idea concrete.
-- What is still fuzzy, assumed, or missing.
-- Which version of the idea feels alive enough to pursue.
+- What is still fuzzy, assumed, politically sensitive, or missing.
+- Which directions are possible and what each would ask of the reader.
+- What shape or sequence the user wants to try first.
 
-Source material is evidence, not editorial intent. A transcript, research
-ledger, inbox export, notes folder, or other source pack can show what the piece
-could support, but it does not decide what the user wants the piece to do.
-After reading sources for new writing, return the live issue, possible
-directions, missing editorial choices, and one question or choice for the user
-before drafting.
+For early idea work, widen what could be written without committing to
+structure. Preserve useful fragments, name tensions, offer competing pieces, and
+let the user choose, combine, reject, or keep exploring. For source-heavy work,
+read sources to find live material and gaps; do not treat the source pile as the
+user's chosen angle.
 
-If the user is still finding the idea, respond as a thinking partner. Reflect
-what seems alive, preserve useful fragments, name two or three possible
-tensions or directions, and ask one question that would unlock the next pass. Do
-not create a full outline, `draft.md`, section files, or polished prose unless
-the user asks to `draft anyway`.
-
-Useful idea-development responses sound like this:
+Useful co-authoring responses sound like this:
 
 ```text
 I would not draft this yet. What feels alive is the idea that AI writing goes
@@ -53,16 +46,17 @@ The context-collapse version feels closest to the nerve. Was there a moment that
 made this feel obvious to you?
 ```
 
-For a source-heavy debrief, a useful first turn sounds like this:
+For source-heavy work, the first useful response is usually a synthesis and
+choice point, not a draft promise:
 
 ```text
-I found enough evidence to support a debrief, but I would not draft yet. The
-source pack points to three possible memos: one about the control model, one
-about launch readiness, and one about ownership between product, security, and
-operations.
+The evidence can support a few different debriefs. One is about the control
+model. One is about launch readiness. One is about ownership between product,
+security, and operations.
 
-The control-model version feels strongest from the evidence. Before I shape it,
-what do you want the project team and CTO office to be unable to ignore?
+The control-model version feels strongest from the evidence, but it will land
+harder. The launch-readiness version is safer and more operational. Which piece
+do you actually want this to become?
 ```
 
 ## Working Flow
@@ -72,11 +66,13 @@ For substantial writing, keep this private sequence:
 ```text
 context pile
 -> idea development
+-> direction choice
+-> collaborative outline
 -> reader spine
 -> grounding path
--> draft
--> quality loop
--> returned artifact
+-> section drafting and revision
+-> whole-piece quality loop
+-> returned or saved artifact
 ```
 
 For short or clear requests, compress the same checks into one pass. The context
@@ -93,9 +89,9 @@ Before drafting, know enough about the reader to avoid generic prose:
 - What concepts, claims, or examples must be grounded before the piece works?
 - What would the reader object to, misunderstand, or dismiss?
 
-If the missing answer would materially change the artifact, ask one narrow
-question. If the answer can be assumed safely, draft with the assumption and
-mention it only when trust depends on it.
+If these answers are missing during co-authoring, keep working with the user.
+For fast or direct-prose requests, make assumptions only when they are safe and
+mention them when trust depends on it.
 
 ## Grounding Path
 
@@ -107,8 +103,10 @@ While drafting, track what the reader can safely follow:
 - Jumps where the draft asks the reader to accept a conclusion too early.
 - Examples or concrete nouns that would make an abstract point real.
 
-Do not promote raw context into an outline just to look organized. Grounding is
-about reader comprehension, not document bureaucracy.
+Do not promote raw context into an outline just to look organized. Shape the
+outline with the user, then keep testing whether each section grounds what the
+next section needs. Grounding is about reader comprehension, not document
+bureaucracy.
 
 ## Quiet Quality Loop
 
