@@ -1,0 +1,59 @@
+{
+  "skill_name": "meta-skill",
+  "defaults": {
+    "runner": "codex_app_server",
+    "repetitions": 1
+  },
+  "candidates": [
+    {
+      "candidate": "no-skill",
+      "display": "No skill baseline",
+      "source": {
+        "kind": "none"
+      }
+    },
+    {
+      "candidate": "current",
+      "display": "Current Meta-Skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "evals": [
+    {
+      "id": "payload-hygiene-source-leakage",
+      "type": "regression",
+      "task": {
+        "path": "task.md",
+        "seed": "Use Meta-Skill to clean the proposed writing skill payload in fixtures/fixtures/contaminated-skill.md. Return concise patch guidance: what should stay in runtime, what should move out, and what validation should run. Do not rewrite the entire skill."
+      },
+      "fixtures": [
+        "fixtures/contaminated-skill.md"
+      ],
+      "expectations": [
+        "The response identifies the task as a payload hygiene or Clean-mode cleanup of an existing skill.",
+        "The response preserves reusable draft and rewrite behavior as runtime guidance.",
+        "The response moves source provenance, prompt-role language, local paths, thread ids, rejected names, and research-history notes out of portable runtime.",
+        "The response recommends validation beyond structural lint when semantic payload quality is at risk."
+      ],
+      "graders": [
+        {
+          "id": "payload-hygiene-judge",
+          "kind": "model",
+          "metric": "payload_hygiene",
+          "path": "judge.md"
+        },
+        {
+          "id": "leakage-gate",
+          "kind": "code",
+          "metric": "leakage",
+          "path": "validate.py",
+          "required": true,
+          "gate": true
+        }
+      ]
+    }
+  ]
+}

@@ -26,6 +26,24 @@ Meta-Skill helps agents create, improve, debug, test, and evaluate reusable
 agent skills with clear routing, source-owned edits, validation, and
 evidence-backed iteration.
 
+## Lifecycle Surface
+
+Think in lifecycle modes before naming a specialist:
+
+| Mode | User intent | Owner |
+|---|---|---|
+| `Shape` | Create a skill from an idea, source pack, workflow, or thread. | `skill-writer` |
+| `Clean` | Make an existing skill portable, runtime-ready, and free of source/research/system/maintainer leakage. | `skill-doctor` |
+| `Fix` | Diagnose a concrete reported failure and propose or apply the smallest source change. | `skill-doctor` |
+| `Prove` | Measure behavior across tasks, candidates, graders, or trigger scenarios. | `skill-evaluator` |
+| `Ship` | Validate, package, benchmark, gate, or report release readiness. | `skill-benchmarker` or shared CLI through the active owner |
+
+Use [judge-rubric.md](../../references/judge-rubric.md) as the shared static
+quality standard and [payload-hygiene.md](../../references/payload-hygiene.md)
+for portable-payload cleanup. `Shape` and `Clean` both apply the hygiene
+standard; `Prove` and `Ship` use it when quality tasks or release gates concern
+skill payload quality.
+
 ## Product Posture
 
 Act like a calm skill-lifecycle partner. Assume the user may not know the
@@ -56,11 +74,13 @@ Pick the smallest specialist route that satisfies the user's request.
 - Use `skill-writer` for new skills, blank-page drafting, trigger design,
   authoring guidance, source distillation, or turning a repeated workflow into a
   portable skill.
-- Use `skill-doctor` for existing skills: reviews, fixes, diagnosis, prompt
-  cleanup, trigger tuning, implementation improvements, or reported failures.
+- Use `skill-doctor` for existing skills: static reviews, `Clean` payload
+  hygiene, fixes, diagnosis, prompt cleanup, static description or trigger
+  wording cleanup, implementation improvements, or reported failures.
 - Use `skill-evaluator` when the user needs task evidence across candidates,
   such as no-skill vs current-skill vs edited-skill comparisons, trial suites,
-  scoring, or outcome measurement.
+  scoring, trigger reliability, should-trigger/near-miss behavior, or outcome
+  measurement.
 - Use `skill-benchmarker` when the user needs a recurring benchmark profile,
   release-readiness scorecard, trigger-reliability history, regression
   benchmark, or benchmark report over an existing eval suite.
@@ -85,8 +105,13 @@ clear enough to route, do not pause here.
 Useful tiebreakers:
 
 - A request about a new skill starts with `skill-writer`.
+- A request about source/research/system text, maintainer language, internal
+  decisions, rejected options, or runtime portability starts with
+  `skill-doctor` in `Clean` mode.
 - A request about reviewing or fixing one specific existing skill starts with
   `skill-doctor`.
+- A request asking whether a trigger or description change improves activation
+  starts with `skill-evaluator`.
 - A request asking whether a change improves outcomes starts with
   `skill-evaluator`.
 - A request to benchmark, trend, gate, or report a recurring release/quality

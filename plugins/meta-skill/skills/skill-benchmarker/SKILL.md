@@ -50,6 +50,7 @@ Read only what the task needs:
 | Need | Read |
 |---|---|
 | Design benchmark profiles, choose task banks, set gates, and render scorecards | [references/benchmarking.md](references/benchmarking.md) |
+| Add release gates for static skill quality or payload hygiene | [judge-rubric.md](../../references/judge-rubric.md), [payload-hygiene.md](../../references/payload-hygiene.md) |
 | Use the central Meta Skill CLI for benchmark commands and underlying eval commands | [cli.md](../../references/cli.md) |
 
 ## Workflow
@@ -129,7 +130,8 @@ selection.
 
 For release-readiness decisions, treat the scorecard as evidence, not an
 automatic approval. Conservative release evidence needs: payload validation
-passed, suite lint and benchmark lint reviewed, all selected trials completed,
+passed, shared payload hygiene or skill-quality gates reviewed when the release
+concerns portable skill payloads, suite lint and benchmark lint reviewed, all selected trials completed,
 all selected trials graded or intentionally human-reviewed, zero grader gate
 failures, zero profile gate failures or unknowns, no release-critical
 unknowns, no baseline-pass/candidate-fail state pairs on must-not-break tasks, and calibration

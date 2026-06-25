@@ -9,6 +9,9 @@ Improve an existing agent skill through distinct lanes:
 
 - **Review** — when the user asks to review or improve a skill, produce a
   scored Judge review.
+- **Clean** — when the user asks to polish, tighten, fold, remove internal
+  language, or make a skill portable/runtime-ready, inspect payload hygiene and
+  apply the smallest approved cleanup.
 - **Doctor** — diagnose reported failures and propose precise source changes;
   edit only after explicit approval for a concrete source change.
 - **Verify** — check the changed skill after an approved edit.
@@ -32,11 +35,15 @@ points to another lane.
 
 - **Review** (default) — review or improvement request: "review this skill,"
   "make my skill better," "is my triggering solid?" No specific failure in hand.
+- **Clean** — portable payload cleanup request: "polish this skill," "fold this
+  into the main skill body," "remove internal decisions," "why is source/system
+  text in the payload?", or "make this runtime-ready."
 - **Doctor** — reported failure: "my skill keeps failing on prompt X." Work
   from the failure report to candidate text, then stop with a precise proposal.
 
-Tiebreaker: a specific reported failure → **Doctor**; otherwise → **Review**
-(including static complaints like an over-long description).
+Tiebreaker: source/research/system/maintainer leakage or runtime portability
+concerns → **Clean**; a specific reported failure → **Doctor**; otherwise →
+**Review** (including static complaints like an over-long description).
 
 ## Review (default)
 
@@ -45,22 +52,33 @@ Produce a **scored Judge review** (`judge-review.md`) — see
 
 1. Score **Discovery** (4 dims) and **Implementation** (5 dims), each 0–3 — every
    dimension's reasoning must cite the skill's own text; see
-   [references/rubric.md](references/rubric.md) for calibration and a worked example.
-2. Run the **Payload Hygiene Sweep** from
-   [references/rubric.md](references/rubric.md#payload-hygiene-sweep) across the
-   full shipped skill payload before final scoring. This includes `SKILL.md`,
-   linked references, agents, scripts, assets, examples, templates, and any
-   user-visible text inside HTML or other fixtures.
-3. Run the **Runtime vs Maintainer Placement Audit** in the same rubric before
-   final scoring. Every heading in `SKILL.md` and linked runtime references must
-   be checked for whether a future agent needs it while using the skill on a
-   user's task.
-4. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
-5. **Overall Judge Review Score** = rounded average of Discovery %,
+   [references/rubric.md](references/rubric.md) for calibration and the shared
+   root [judge-rubric.md](../../references/judge-rubric.md).
+2. Run the shared **Payload Hygiene Sweep** and **Runtime vs Maintainer
+   Placement Audit** from
+   [payload-hygiene.md](../../references/payload-hygiene.md) across the full
+   shipped payload before final scoring.
+3. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
+4. **Overall Judge Review Score** = rounded average of Discovery %,
    Implementation %, and Validation %.
-6. If artifact writes are allowed, write `judge-review.md` with scores and
+5. If artifact writes are allowed, write `judge-review.md` with scores and
    prioritized findings, then **stop**. If artifact writes are not allowed,
    return the review in chat. Review proposes; it does not edit source.
+
+## Clean
+
+Clean mode makes an existing skill portable and runtime-ready without turning
+the request into a full scored review or behavioral eval. Read
+[payload-hygiene.md](../../references/payload-hygiene.md), inspect the shipped
+payload, and identify the smallest cleanup for source/research/provenance
+leakage, maintainer placement, duplicated guidance, stale negative rules,
+unclear opening contracts, or runtime reference placement.
+
+If the user directly asked to implement the cleanup or approves a concrete
+cleanup proposal, edit only the source-owned skill payload and then verify. If
+the request is read-only, return the clean findings and proposed patch scope.
+Use [references/rubric.md](references/rubric.md) only when a scored Judge review
+is requested or would materially change the decision.
 
 ## Doctor
 
@@ -78,13 +96,13 @@ change.
 
 ## Approval Boundary
 
-In Review or Doctor follow-up, edit source only when the user explicitly
+In Review, Clean, or Doctor follow-up, edit source only when the user explicitly
 approves a concrete proposal or directly requests a specific edit, such as
-"apply proposal 1" or "make the SKILL.md routing change." Briefly restate the
-approved change and files in scope, then edit only that scope. Edit the
-**source** skill, never a generated package copy. If the requested write scope
-is broader than the proposal, return to **Doctor** with the expanded scope
-instead of improvising edits.
+"apply proposal 1," "clean this payload," or "make the SKILL.md routing
+change." Briefly restate the approved change and files in scope, then edit only
+that scope. Edit the **source** skill, never a generated package copy. If the
+requested write scope is broader than the proposal, return to the relevant
+Doctor lane with the expanded scope instead of improvising edits.
 
 ## Verify
 
@@ -105,9 +123,9 @@ Judge scorecard. Do not create workbench folders elsewhere.
 
 ## Guardrails
 
-- **Feedback ≠ write permission** — Review and Doctor stop with chat output or a
-  permitted artifact. Source edits require explicit approval for a concrete
-  change.
+- **Feedback ≠ write permission** — Review, Clean, and Doctor stop with chat
+  output or a permitted artifact unless the user directly requests an edit or
+  approves a concrete change.
 - Reproduce *one* case only when using the reproduction/trial track; don't
   measure many tasks/candidates — that's `skill-evaluator`.
 - Smallest correct change; edit source, never generated packages.

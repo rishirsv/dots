@@ -23,6 +23,9 @@ do
   plugins/meta-skill/scripts/metaskill validate "$skill" --json >/dev/null
 done
 
+echo "==> Meta-Skill eval suite lint"
+plugins/meta-skill/scripts/metaskill eval lint --suite plugins/meta-skill/.meta-skill/evals.json --json >/dev/null
+
 echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --claude
 

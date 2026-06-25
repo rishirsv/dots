@@ -103,6 +103,56 @@ Recommended shape:
 Runbooks should be conservative. State when to stop for human approval or when a
 command has external effects.
 
+## PRD Or Feature Spec
+
+Use when a feature idea, problem statement, or product request needs a durable
+product contract.
+
+Recommended shape:
+
+- Problem.
+- Target users and jobs.
+- Goals.
+- Non-goals.
+- User stories.
+- Requirements, grouped by priority when useful.
+- Acceptance criteria.
+- Success criteria or metrics.
+- Risks.
+- Open questions.
+- Timeline or phasing when relevant.
+
+Write user stories in the form "As a [user type], I want [capability] so that
+[benefit]" when that format helps. Keep the user type specific, describe the
+capability rather than the implementation, and state the user or business value.
+Include important edge cases, error states, empty states, and boundary
+conditions. Order stories by priority when sequencing matters.
+
+Avoid user stories that are too vague, prescribe a UI widget or technical
+solution, omit the benefit, combine several capabilities, or describe internal
+team work instead of user value. Capture internal work as requirements,
+technical notes, or implementation tasks when the doc type needs them.
+
+Group requirements by priority when the repo has no stronger convention:
+
+- **P0 / Must-have**: required for the feature to solve the core problem.
+- **P1 / Should-have**: important improvement that can follow the core launch.
+- **P2 / Future consideration**: out of scope for the current version, but useful
+  to preserve as design context.
+
+Acceptance criteria should be independently testable. Use Given/When/Then or a
+checklist, cover happy paths and important failure paths, and avoid ambiguous
+words such as "fast", "intuitive", or "easy" unless the doc defines them
+concretely.
+
+Success criteria should name the intended outcome and, when evidence supports
+it, the measurement method, target, and evaluation window. If metrics are
+unknown, label them as hypotheses or open questions instead of inventing
+targets.
+
+For PRDs, gather source evidence internally but do not add source-evidence,
+provenance, reviewed-scope, or audit sections to the document itself.
+
 ## ADR Or Design Note
 
 Use for a durable decision, rejected alternatives, or a design proposal.

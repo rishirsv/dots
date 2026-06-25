@@ -122,7 +122,8 @@ Doctor proposal or an Evaluator handoff.
    visible fixture copy, or maintainer/developer guidance in the runtime
    payload, run the Payload Hygiene Sweep and Runtime vs Maintainer Placement
    Audit in
-   [rubric.md](rubric.md#payload-hygiene-sweep) before choosing a fix. Build the
+   [payload-hygiene.md](../../../references/payload-hygiene.md) before choosing
+   a fix. Build the
    scan terms from the user's complaint and inspected evidence; include section
    headings in linked runtime references, visible HTML text, labels,
    alt/copy/button strings, and export payloads, not only Markdown prose.

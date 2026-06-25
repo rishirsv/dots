@@ -149,11 +149,27 @@ There are three important source/generated boundaries:
 
 Meta-Skill models skill work as a lifecycle with clear ownership boundaries.
 
+The user-facing lifecycle modes are:
+
+| Mode | Meaning | Owner |
+|---|---|---|
+| Shape | Create a new reusable skill from an idea, source pack, workflow, or thread. | Writer |
+| Clean | Make an existing skill portable, runtime-ready, and free of source/research/system/maintainer leakage. | Doctor |
+| Fix | Diagnose a concrete reported failure and propose or apply the smallest source change. | Doctor |
+| Prove | Measure behavior across tasks, candidates, graders, or trigger scenarios. | Evaluator |
+| Ship | Validate, package, benchmark, gate, or report release readiness. | Benchmarker or shared CLI through the active owner |
+
+The shared static quality standard lives in `references/judge-rubric.md`; the
+shared portable payload hygiene standard lives in `references/payload-hygiene.md`.
+Writer uses these before finalizing non-trivial skills, Doctor uses them for
+Clean and Review work, Evaluator uses them for skill-quality tasks, and
+Benchmarker uses them for release gates over portable payload quality.
+
 | Specialist | Source | Owns | Does not own |
 |---|---|---|---|
 | Router | `skills/meta-skill/SKILL.md` | Entry routing, lifecycle sequencing, handoff preservation | Specialist workflow details |
 | Writer | `skills/skill-writer/SKILL.md` | New skill authoring, trigger contracts, runtime payload shape, optional eval manifest handoff | Existing-skill fixes, measurement, packaging/sync |
-| Doctor | `skills/skill-doctor/SKILL.md` | Existing-skill review, diagnosis, approved edits, focused verification | Greenfield authoring, formal evaluation suites |
+| Doctor | `skills/skill-doctor/SKILL.md` | Existing-skill review, Clean payload hygiene, diagnosis, approved edits, focused verification | Greenfield authoring, formal evaluation suites |
 | Evaluator | `skills/skill-evaluator/SKILL.md` | Evaluation suites, candidates, trials, grading, human review, reports | Fixing the target or generating autonomous candidate improvements |
 | Benchmarker | `skills/skill-benchmarker/SKILL.md` | Recurring benchmark profiles, benchmark runs, scorecards, gates, and history over existing suites | First-pass suite authoring, grading design, target fixes |
 
@@ -167,6 +183,8 @@ Typical flows:
   `.<skill-name>/evals.json`; `skill-evaluator` later materializes and runs it.
 - Existing skill bug: `skill-doctor` reviews or diagnoses, proposes, edits only
   after explicit approval, then verifies.
+- Portable cleanup: `skill-doctor` Clean inspects payload hygiene and placement,
+  proposes or applies approved cleanup, then verifies.
 - Outcome measurement: `skill-evaluator` compares no-skill, current-skill, and
   edited-skill candidates.
 - Recurring benchmark decision: `skill-benchmarker` selects a stable task bank
@@ -1456,6 +1474,7 @@ python3 <meta-skill-root>/src/characterize_meta_skill.py
 <meta-skill-root>/scripts/metaskill validate <meta-skill-root>/skills/skill-doctor --json
 <meta-skill-root>/scripts/metaskill validate <meta-skill-root>/skills/skill-evaluator --json
 <meta-skill-root>/scripts/metaskill validate <meta-skill-root>/skills/skill-benchmarker --json
+<meta-skill-root>/scripts/metaskill eval lint --suite <meta-skill-root>/.meta-skill/evals.json --json
 ```
 
 Before committing changes under `plugins/meta-skill/`, run:

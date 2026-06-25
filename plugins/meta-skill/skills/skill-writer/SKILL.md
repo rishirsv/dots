@@ -37,6 +37,8 @@ Read only what the task needs:
 | Decide whether the workflow should become a skill; classify the skill type, invocation posture, information hierarchy, evaluation posture, runtime body, completion criteria, pruning pass, evidence boundaries, and voice | [skill-design.md](references/skill-design.md) |
 | Capture an active or prior Codex thread/session into a durable skill | [session-capture.md](references/session-capture.md) |
 | Add compact runtime snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
+| Apply the shared skill-quality standard before finalizing a non-trivial skill | [judge-rubric.md](../../references/judge-rubric.md) |
+| Keep source evidence, prompt text, research, and maintainer notes out of portable runtime | [payload-hygiene.md](../../references/payload-hygiene.md) |
 | Use the central Meta Skill CLI for validate, package, workbench, eval, progress, and runner workflows | [cli.md](../../references/cli.md) |
 | Understand UI metadata fields when authoring `agents/openai.yaml` | [openai_yaml.md](references/openai_yaml.md) |
 | Run a trial of a draft skill in an isolated Codex thread or worktree | [skill-trial-runs.md](../../references/skill-trial-runs.md) |
@@ -44,6 +46,11 @@ Read only what the task needs:
 Treat [skill-design.md](references/skill-design.md) as the governing principle guide. Treat
 [cookbook.md](references/cookbook.md) as a recipe lookup, not a template to copy
 wholesale.
+Use [payload-hygiene.md](../../references/payload-hygiene.md) whenever source
+material, research, transcripts, prompt text, or user corrections shape runtime
+guidance. Use [judge-rubric.md](../../references/judge-rubric.md) as the shared
+quality standard before finalizing non-trivial skills; do not produce a scored
+Judge review unless the user asks for review evidence.
 Use [cli.md](../../references/cli.md) for the plugin command surface. Worker
 skills use that shared command surface.
 
@@ -226,6 +233,11 @@ Generalize source material into reusable behavior. Copy user prompts, model
 names, provider docs, raw research links, author provenance, thread IDs, one-off
 file paths, or local build notes into runtime only when they are direct runtime
 dependencies.
+Before promoting any source-derived rule into runtime, apply
+[payload-hygiene.md](../../references/payload-hygiene.md): preserve the reusable
+operating rule, and move source provenance, rejected alternatives, prompt-role
+language, local paths, and design-history notes to `.<skill-name>/docs/` or the
+review handoff.
 
 When the intake requires research, prefer a bounded research pass before
 runtime drafting. Use an available researcher sub-agent or research-oriented
@@ -241,6 +253,10 @@ Review changed skill files directly. Check that linked references, scripts, and
 assets exist. Re-read the runtime for single source of truth, no-op lines,
 stale sediment, duplicated branches, and missing completion criteria. Run any
 deterministic tests already available for the skill or its authoring repo.
+For non-trivial skills, run a final payload hygiene and placement check from
+[payload-hygiene.md](../../references/payload-hygiene.md) before reporting the
+skill as done. Treat structural validation as necessary but not sufficient for
+semantic quality.
 
 For standalone portable skill folders, run
 `<meta-skill-root>/scripts/metaskill validate <path-to-skill-folder>`. For script resources added during

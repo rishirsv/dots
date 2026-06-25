@@ -59,7 +59,7 @@ Separate observed facts, user requirements, and inferred choices.
 
 ### 3. Check Goal Fit
 
-Recommend Goal mode only when most are true:
+Recommend a durable goal only when most are true:
 
 - Progress needs repeated attempts, waiting, recovery, or long feedback cycles.
 - Success can be measured by a test, benchmark, workflow, artifact inspection,
@@ -71,7 +71,31 @@ Prefer an ordinary task or plan when the work is one-shot, taste-dependent,
 blocked on repeated human choices, lacks a credible verifier, or risks
 unbounded external action.
 
-### 4. Define The Loop
+### 4. Apply The Quality Bar
+
+Before activation, the goal must be strong enough to survive compaction,
+recovery, and future continuation. The objective and durable state must answer:
+
+- **Done state:** what concrete thing will be true when the goal is complete.
+- **Evidence:** what command, artifact, screenshot, workflow, metric, or
+  readback proves completion.
+- **Threshold:** what binary or quantitative bar separates success from partial
+  progress.
+- **Scope bounds:** what files, systems, surfaces, behaviors, or decisions are
+  in and out.
+- **Stop condition:** when Codex should stop and ask instead of continuing.
+- **Current goal state:** `get_goal` has been checked so Codex does not create a
+  duplicate or conflicting goal.
+
+Reject or rewrite goals like "make progress," "improve X," "keep
+investigating," or "work on Y" unless they are sharpened into a verifiable end
+state.
+
+### 5. Define The Loop
+
+For loop-shaped goals, read [loop-goals](references/loop-goals.md) and record
+the selected loop pattern, iteration policy, wake-up gate, and stop conditions
+in `progress.md`.
 
 Specify:
 
@@ -82,6 +106,10 @@ Specify:
 - **Supporting checks:** regression, quality, safety, or durability checks.
 - **Iteration loop:** inspect, change one meaningful thing, run verifier, record
   evidence, choose next action.
+- **Wake-up gate:** deterministic signal, schedule, queue, event, or user
+  steering that justifies another pass when waiting is part of the loop.
+- **Cost posture:** attempt limit, tiered delegation, or wrap-up rule when the
+  loop is spending time or tokens without new evidence.
 - **Anti-cheating rules:** do not weaken tests, narrow scope, hide failures,
   swap in mocks, or change benchmarks without approval.
 - **Approval gates:** irreversible, public, shared, or costly actions need
@@ -95,7 +123,7 @@ The primary verifier must reliably distinguish success from failure and return
 enough evidence to choose the next repair. Prefer the strongest feasible
 verifier closest to the user's actual experience.
 
-### 5. Verify On The Real Surface
+### 6. Verify On The Real Surface
 
 Require Browser, authenticated Chrome, or Computer Use verification when success
 depends on rendered UI, browser or app state, authentication, permissions,
@@ -118,21 +146,26 @@ If the real-surface verifier is unavailable, do not silently replace it with a
 weaker check. Name the gap and either choose a user-approved equivalent or
 define a blocked handoff with the exact manual test and evidence required.
 
-### 6. Keep State Durable
+### 7. Keep State Durable
 
 Keep the active goal objective short and put durable operating state under the
 current workspace or project root:
 
 - `.agents/goals/<request>/goal.md`: stable finish line, baseline, constraints,
-  non-goals, primary verifier, completion proof, blocker criteria, and link to
-  the companion plan.
-- `.agents/goals/<request>/plan.md`: living route, ordered phases, implementation
+  non-goals, primary verifier, completion proof, and blocker criteria.
+- `.agents/goals/<request>/progress.md`: living route, ordered phases, implementation
   checklists, phase-level testing criteria, evidence, status, and next action.
+
+Keep the split simple: `goal.md` is the stable contract; `progress.md` is the
+mutable execution log. Do not duplicate content between them.
+
+Codex goal state is thread-scoped. These files are recovery aids for that goal,
+not global memory or project instructions.
 
 Derive `<request>` once as a short kebab-case slug. Reuse that directory when
 resuming or steering the same goal.
 
-Structure each phase in `plan.md` like this:
+Structure each phase in `progress.md` like this:
 
 ```text
 ## Phase N: Observable milestone
@@ -151,9 +184,18 @@ Exit criteria
 
 Keep at most one phase `in progress`. Check off work only after it is done, and
 check off verification only after the declared test passes. Record failed checks
-and resulting plan changes without erasing useful evidence.
+and resulting progress changes without erasing useful evidence.
 
-### 7. Delegate Carefully
+Examples:
+
+- Weak: "Improve performance." Stronger: reduce p95 below a named threshold on a
+  named benchmark while keeping correctness tests green.
+- Weak: "Write docs for this feature." Stronger: produce the docs page, build it
+  locally, and verify referenced commands against current behavior.
+- Research: produce an evidence-backed report that separates confirmed findings,
+  approximate support, blocked claims, and remaining uncertainty.
+
+### 8. Delegate Carefully
 
 When subagents are authorized, the parent keeps scope, integration, conflict
 resolution, and final completion. Delegate only separable lanes: environment
@@ -164,7 +206,7 @@ For each lane, name objective, non-goals, ownership boundary, verifier, stop
 condition, and returned evidence. Use child goals only when the user explicitly
 asked for goal-backed subagents.
 
-### 8. Activate Last
+### 9. Activate Last
 
 Before activation, red-team the draft:
 
@@ -178,15 +220,19 @@ Before activation, red-team the draft:
   the exact blocked handoff instead of weakening the verifier?
 
 If activation was requested, or the default activation rule applies, write or
-update the durable state files and then call `create_goal`. This call is the
-final action of activation; do not call it early, and do not merely say a goal
-should be set.
+update the durable state files, call `get_goal`, and then call `create_goal`
+only when no active goal already covers the same objective. If an active goal
+matches the user's intent, continue from that goal instead of creating a
+duplicate. If an active goal conflicts with the new request, ask whether to
+finish the current goal, mark it complete if already done, or start separate
+goal-backed work. `create_goal` is the final action of activation; do not call it
+early, and do not merely say a goal should be set.
 
 Use a compact objective:
 
 ```text
 Complete and verify the objective in <workspace>/.agents/goals/<request>/goal.md by
-executing and maintaining <workspace>/.agents/goals/<request>/plan.md. Read and
+executing and maintaining <workspace>/.agents/goals/<request>/progress.md. Read and
 maintain both files throughout the work.
 ```
 
@@ -197,15 +243,16 @@ created goal.
 
 Return:
 
-1. **Fit:** use Goal mode or a better alternative, with one-sentence rationale.
+1. **Fit:** durable goal recommended or better alternative, with one-sentence rationale.
 2. **Grounding:** current state, assumptions, and evidence gaps.
 3. **Goal brief:** outcome, baseline, constraints, non-goals, verifier,
    verification surface and capabilities, loop, review pressure, blocker
    standard, and completion proof.
 4. **Durable artifacts:** request slug, absolute paths, and proposed contents
    for `.agents/goals/<request>/goal.md` and
-   `.agents/goals/<request>/plan.md`; write them before activation, but only
-   when activation or durable artifacts were requested.
+   `.agents/goals/<request>/progress.md`. In Design, leave them as proposed
+   contents unless durable artifacts were requested; in Activate, write or
+   update them before calling `create_goal`.
 5. **Delegation map:** parent ownership and child lanes, only when useful and
    authorized.
 6. **Exact objective:** concise text suitable for goal activation.
@@ -219,8 +266,8 @@ created.
 When operating an active goal:
 
 - inspect the active goal plus `.agents/goals/<request>/goal.md` and
-  `.agents/goals/<request>/plan.md` when resuming;
-- update `plan.md` after user steering or material new evidence before
+  `.agents/goals/<request>/progress.md` when resuming;
+- update `progress.md` after user steering or material new evidence before
   continuing;
 - update `goal.md` when outcome, constraints, verifier, completion proof, or
   blocker criteria change;
@@ -229,19 +276,23 @@ When operating an active goal:
 - run the primary verifier on the declared surface after material changes;
 - mark phases complete only after implementation and verification exit criteria
   pass;
+- before completion, audit each requirement against concrete evidence in
+  `progress.md`;
+- treat budget limits as wrap-up or blocker states, not completion;
 - mark the goal complete only when the objective and completion proof are both
-  satisfied, every required plan phase is complete, and no required work
+  satisfied, every required progress phase is complete, and no required work
   remains;
 - mark blocked only when the same true external blocking condition persists and
   meaningful progress is impossible.
 
 ## Final Check
 
-Before handoff or activation, confirm:
+Before handoff, and before or after activation as applicable, confirm:
 
 - the goal has an observable finish line;
 - the primary verifier can fail;
 - approval gates are explicit;
 - durable state is written or intentionally left as a draft packet;
-- `create_goal` was called only after grounding and red-team review;
+- if activated, `create_goal` was called only after grounding and red-team
+  review;
 - completion will be proven with external evidence, not a claim.

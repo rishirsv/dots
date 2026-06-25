@@ -65,13 +65,13 @@ Skill Writer may create a compact prompt manifest in
   },
   "candidates": [
     {
-      "id": "no-skill",
-      "label": "No skill baseline",
+      "candidate": "no-skill",
+      "display": "No skill baseline",
       "source": { "kind": "none" }
     },
     {
-      "id": "current",
-      "label": "Current skill",
+      "candidate": "current",
+      "display": "Current skill",
       "source": { "kind": "current_worktree", "ref": "." }
     }
   ],

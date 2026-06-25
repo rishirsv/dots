@@ -15,8 +15,8 @@ part of this skill; do not route prose cleanup to a separate writing skill.
   before substantial rewrites, new reader-facing docs, or style-heavy edits.
 - Read [document-types.md](references/document-types.md) after choosing the
   document type or when the user asks for a README, tutorial, how-to, reference,
-  runbook, ADR/design note, troubleshooting doc, changelog, release notes, or
-  concept doc.
+  runbook, ADR/design note, PRD/feature spec, troubleshooting doc, changelog,
+  release notes, or concept doc.
 - Read [knowledge-bundles.md](references/knowledge-bundles.md) when the doc is
   meant to be agent-readable context, a knowledge bundle, an OKF-style concept,
   or a navigable Markdown corpus.

@@ -118,6 +118,7 @@ Read only what the task needs:
 | See concrete guided-user interaction patterns | [references/examples.md](references/examples.md) |
 | Evaluate a target that is not an agent skill | [references/generalist.md](references/generalist.md) |
 | Turn a Codex thread into existing-skill improvement evidence | [thread-skill-improvement.md](../../references/thread-skill-improvement.md) |
+| Grade static skill quality, payload hygiene, or runtime-vs-maintainer placement | [judge-rubric.md](../../references/judge-rubric.md), [payload-hygiene.md](../../references/payload-hygiene.md) |
 | Use the central Meta Skill CLI for materialize, run, progress, grade, validate, and runner selection | [cli.md](../../references/cli.md) |
 
 ## Vocabulary
@@ -166,6 +167,12 @@ If the packet shows one concrete source defect instead, route to `skill-doctor`.
 Disambiguate static review from behavioral measurement consistently:
 `skill-doctor` owns static design review, diagnosis, and fixes for one skill;
 `skill-evaluator` owns behavioral evidence across candidates.
+When authoring skill-quality eval tasks, use
+[judge-rubric.md](../../references/judge-rubric.md) for grading dimensions and
+[payload-hygiene.md](../../references/payload-hygiene.md) for contamination and
+runtime-vs-maintainer checks. Keep those expectations hidden in `judge.md`,
+`expectations[]`, or validators; never stage hidden grader guidance into
+`task.md`.
 
 Use this shape before authoring or running anything. Define the chosen term when
 the user may not know it, then use the standard term consistently.
