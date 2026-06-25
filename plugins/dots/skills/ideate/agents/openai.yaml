@@ -1,10 +1,10 @@
 interface:
   display_name: "Ideate"
-  short_description: "Sharpen ideas into shared language"
+  short_description: "Think through ideas before commitment"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#3B82F6"
-  default_prompt: "Use $ideate to explore and sharpen this idea one question at a time, turn fuzzy terms into shared vocabulary, improve names, map branches, pressure the direction, and stop with a compact synthesis or concept brief only when useful. Do not write or build unless explicitly gated."
+  default_prompt: "Use $ideate to think through this idea before commitment: act as a sharp thinking partner, open up the option space before narrowing, challenge assumptions, turn fuzzy terms into shared vocabulary, map branches, pressure trade-offs, and keep implementation shape visible without entering build mode. If the idea is not choice-ready, run one compact sparring pass before forcing A/B/C/D; once there is a real branch, ask one branch-unlocking question with flexible presentation around the A/B/C/D choice table so options have room to breathe. Stop with a compact decision snapshot or concept brief only when useful. Do not write or build unless explicitly gated."
 
 policy:
   allow_implicit_invocation: false
