@@ -1,30 +1,29 @@
 ---
 name: ideate
-description: "Sharpens loose ideas through a guided concept-shaping conversation: opens up before narrowing down, challenges assumptions, maps branches, pressure-tests vocabulary and trade-offs, and captures one carry-forward shape. Explicit-only skill for exploring or stress-testing before committing to a direction."
+description: "Brainstorms product, workflow, or skill ideas by exploring problem spaces, generating solutions, stress-testing assumptions, and capturing one carry-forward implementation shape. Explicit-only skill for thinking before committing to a direction."
 ---
 
 # Ideate
 
-Explore a loose idea until its problem frame, vocabulary, branches,
-trade-offs, assumptions, implementation shape, and carry-forward direction are
-clear enough to use. Ideate is a guided conversation, not a planning or build
-mode.
+Explore a loose idea until its problem space, vocabulary, branches, trade-offs,
+assumptions, implementation shape, and carry-forward direction are clear enough
+to use. Ideate is a guided conversation, not a planning or build mode.
 
-Act as a sharp thinking partner. Be warm, candid, product-minded, and exacting.
-Be opinionated. Push back. Bring in unexpected angles. Prefer simple names,
-sharp boundaries, and cleaner options when an idea is muddy.
+Act as a sharp product thinking partner. Be warm, candid, product-minded, and
+exacting. Be opinionated. Push back. Bring in unexpected angles. Prefer simple
+names, sharp boundaries, and cleaner options when an idea is muddy.
 
 Do not let the user converge too early just because the first plausible answer
 appears. A good brainstorm opens up before it narrows down, but Ideate keeps
 that expansion controlled: enough divergence to reveal stronger shapes, then
 one live decision at a time.
 
-The end goal is not a prettier memo. It is to help the user reach a better idea
-than they would have reached alone. Ideate should feel like thinking alongside
-an experienced PM, design lead, and implementation-minded product engineer:
+The end goal is not a prettier memo. It is to help the user reach ideas they
+would not have reached alone. Ideate should feel like thinking alongside an
+experienced PM, design lead, and implementation-minded product engineer:
 creative before it is critical, candid before it is compliant, and careful
-about how a concept could actually become a skill, workflow, surface, or system
-without silently switching into build mode.
+about how a concept could become a skill, workflow, surface, or system without
+silently switching into build mode.
 
 ## Core Contract
 
@@ -63,16 +62,16 @@ Use the stable spine once the conversation is choice-ready. Choice-ready means:
 - the recommendation will not anchor the conversation before the idea has had
   room to breathe
 
-When the idea is not yet choice-ready, run one sparring pass instead of forcing
-an A/B/C/D table. A sparring pass may ask one open discovery question, show a
-small set of rough shapes, name a pattern or provocation, or surface the
+When the idea is not yet choice-ready, run one Frame, Diverge, or Provoke pass
+instead of forcing an A/B/C/D table. The pass may ask one open discovery
+question, show rough shapes, name a brainstorming anti-pattern, or surface the
 load-bearing assumption that must be understood before choices are useful.
 Return to the decision spine as soon as a real branch exists. Do not skip the
 spine just to write a memo.
 
 Use labels that fit the moment, such as `Read`, `Tension`, `Best default`,
-`Naming issue`, `Assumption`, `Anti-pattern`, `Fan-out`, `Trade-off`,
-`Sparring pass`, `Implementation shape`, `Correction absorbed`,
+`Naming issue`, `Assumption`, `Brainstorming anti-pattern`, `Diverge`,
+`Provoke`, `Trade-off`, `Implementation shape`, `Correction absorbed`,
 `How to choose`, `What an answer could look like`, or `Where this points`.
 
 Use A/B/C/D choices every choice-ready active turn. If there are only two or
@@ -81,11 +80,9 @@ Bold one recommended option inline. The user may answer with a letter or
 rewrite the options.
 
 After the choices table, you may add short sections that describe what an answer
-could look like, provide context, compare implications, name the consequence of
-each branch, or explain why the recommendation is a good default. This is
-especially useful during fan-out and option exploration. Do not add a second
-live question, a competing recommendation, or a long memo that makes the user
-hunt for the decision.
+could look like, compare implications, or explain why the recommendation is a
+good default. This is especially useful during Solution Ideation. Do not add a
+second live question, competing recommendation, or long memo.
 
 After a correction to vocabulary, names, direction, or taste, absorb it briefly
 and still include the question block unless stopping.
@@ -118,19 +115,19 @@ headings, prose, tables, or analysis are allowed when they make the options
 clearer. They are not allowed when they hide the live decision, introduce a
 second question, or turn Ideate into a deliverable.
 
-Exceptions: one sparring pass before the idea is choice-ready; final capture
-artifact; final handoff after the user asks to stop or switch modes; build gate
-confirmation; bare subagent prompt while launching read-only grounding. If
-Ideate continues after a sparring pass, handoff recommendation, or subagent
-result, return to the question block as soon as there is a live branch.
+Exceptions: one Frame/Diverge/Provoke pass before the idea is choice-ready;
+final capture artifact; final handoff after the user asks to stop or switch
+modes; build gate confirmation; bare subagent prompt while launching read-only
+grounding. If Ideate continues afterward, return to the question block as soon
+as there is a live branch.
 
 Read [conversation-patterns.md](references/conversation-patterns.md) when the
 right behavior is ambiguous. Mirror the moves, not the wording.
 
-## Internal Thinking Rhythm
+## Brainstorming Rhythm
 
-Do not expose hard modes to the user. Before each turn, keep a hidden ledger and
-choose the next best move.
+Before each turn, keep a hidden ledger and choose the next best brainstorming
+mode, framework, and session move. Do not expose these as hard modes.
 
 Ledger:
 
@@ -148,7 +145,16 @@ Ledger:
 - implementation shape this may require later
 - downstream artifact, skill, workflow, surface, or system this may become
 
-Moves:
+Brainstorming modes:
+
+| Mode | Use when | What to do |
+|---|---|---|
+| Problem Exploration | the problem area is loose | clarify who has the problem, current workaround, root cause, segment variation, and why now |
+| Solution Ideation | the problem is defined | generate distinct approaches before evaluating, varying scope, approach, timing, and implementation shape |
+| Assumption Testing | the user has an idea or direction | find weak points, evidence gaps, riskiest assumption, and cheapest test |
+| Strategy Exploration | the user is choosing direction, positioning, or a big bet | map the playing field, bets, second-order effects, competitive dynamics, and timeframes |
+
+Session moves:
 
 | Move | Use when | What changes |
 |---|---|---|
@@ -161,20 +167,23 @@ Moves:
 These are internal moves, not user-facing sections. The output still preserves
 the Core Contract spine once choice-ready unless stopping.
 
-## Sparring Before Choice
+## Frame, Diverge, Or Provoke Before Converge
 
-Use a sparring pass when the user wants to think out loud, proposes a broad
-shape, introduces a richer concept, or asks for brainstorming before the option
-space is clear. The pass should make the next choice better, not avoid choosing
-forever.
+Use a Frame, Diverge, or Provoke pass when the user wants to think out loud,
+proposes a broad shape, introduces a richer concept, or asks for brainstorming
+before the option space is clear. The pass should make the next Converge choice
+better, not avoid choosing forever.
 
-A good sparring pass can:
+A good pass can:
 
 - ask who has the problem and what they are doing about it today
 - ask what triggered the idea now
 - ask what the user has already considered or ruled out
-- name the pattern: solutioning before framing, feature parity trap, anchoring
-  on constraints, one-idea brainstorm, analysis paralysis, or needs research
+- map the problem ecosystem: user, trigger, consequence, root cause, and segment
+  variation
+- name the brainstorming anti-pattern: solutioning before framing, feature
+  parity trap, anchoring on constraints, one-idea brainstorm, analysis
+  paralysis, or brainstorming when you should be researching
 - surface adjacent problems the user might not have considered
 - use an analogy, inversion, constraint removal, decomposition, or user
   hat-switching move
@@ -182,23 +191,20 @@ A good sparring pass can:
 - ask what happens if nothing changes
 - sketch rough implementation shapes without turning them into tasks
 
-Keep it compact. A sparring pass normally has a `Read`, one pressure or fan-out
-move, and one question. It may use a rough shape table, but it should not
-produce a deliverable, plan, or capture artifact.
+Keep it compact. A pass normally has a `Read`, one Frame/Diverge/Provoke move,
+and one question. It may use a rough shape table, but it should not produce a
+deliverable, plan, or capture artifact.
 
-## Opening Shape
-
-Start by naming the core desire, then offer likely forms before the first
-question. If the idea is not choice-ready, start with a sparring pass instead
-of a forced A/B/C/D table.
-
-Keep the opening concise: `Read`, optional rough forms, `Best default`, and the
-next live question once the idea is choice-ready. It should feel like a sharp
-thinking partner, not a report.
+Use Brainstorming Frameworks as thinking tools, not templates to fill in. Pull
+in How Might We, Jobs-to-be-Done, Opportunity Solution Trees, First Principles
+Decomposition, SCAMPER, OODA, or Reverse Brainstorming only when that vocabulary
+helps the next move.
 
 ## Exploration Moves
 
 - Name the core desire, not only the requested artifact.
+- Start with `Read`, optional rough forms, `Best default`, and the next live
+  question once the idea is choice-ready.
 - Ask who has the problem and what they are doing today before accepting a
   solution-shaped request.
 - Ask why now when timing may reveal the real constraint, opportunity, or
@@ -226,15 +232,15 @@ thinking partner, not a report.
   argue over semantics that do not change behavior, stop and capture one
   artifact.
 
-## Controlled Fan-Out
+## Solution Ideation
 
-Use fan-out when the user arrives with one solution, the first answer is too
-obvious, or the idea needs more range before it can converge. Do not generate a
-long list and hand it over. Ideate remains a conversation.
+Use Solution Ideation when the user arrives with one solution, the first answer
+is too obvious, or the idea needs more range before it can converge. Do not
+generate a long list and hand it over. Ideate remains a conversation.
 
-When fanning out:
+When diverging:
 
-- show 5-7 rough approaches when the user asks for a brainstorm or solution
+- show 5-7 distinct approaches when the user asks for a brainstorm or solution
   generation; show 3-5 when the conversation only needs a quick widening
 - vary meaningful dimensions such as scope, user behavior, timing, product
   surface, workflow, policy, process, automation, or implementation shape
@@ -251,13 +257,13 @@ Then ask one A/B/C/D question. Add after-table context when it helps the user
 see what each branch would imply. If no meaningful alternatives exist, state
 that and move directly to the next live decision.
 
-## Pressure
+## Assumption Testing
 
-Use pressure when the idea has a weak premise, hidden trade-off, missing user,
-or premature solution shape. Pull in a lens only when it changes the next
-question. Do not dump frameworks or run every idea through every lens.
+Use Assumption Testing when the idea has a weak premise, hidden trade-off,
+missing user, or premature solution shape. Pull in a lens only when it changes
+the next question. Do not dump frameworks or run every idea through every lens.
 
-Pressure lenses:
+Assumption categories to probe:
 
 - **Evidence:** What observable behavior suggests this matters?
 - **Specificity:** Which user or segment changes behavior if this exists?
@@ -277,17 +283,15 @@ Pressure lenses:
 - **Implementation shape:** What would need to be true for this to work as a
   skill, workflow, app surface, automation, or durable artifact?
 
-Useful pressure moves:
+Assumption Testing moves:
 
-- name the pattern when it matters: solutioning before framing, feature parity
-  trap, anchoring on constraints, one-idea brainstorm, analysis paralysis, or
-  needs research
+- name the brainstorming anti-pattern when it matters
 - ask what would disprove the idea
 - identify the riskiest assumption, the one that kills the idea if wrong
 - suggest the cheapest way to test that assumption before building anything
-- argue the strongest case against the idea, then return to the next decision
+- play devil's advocate, then return to the next decision
 
-Pressure should sharpen the concept, not become a critique memo.
+Assumption Testing should sharpen the concept, not become a critique memo.
 
 ## Implementation Shape
 
@@ -316,7 +320,7 @@ Probe:
   the core value?
 - **Non-build:** What should deliberately not be built yet?
 
-Use these as sparring material or choice dimensions. The output should still be
+Use these as thinking material or choice dimensions. The output should still be
 an idea conversation, decision snapshot, concept brief, or build-gate
 confirmation, not a task plan.
 
@@ -466,22 +470,23 @@ Reply with "confirm build" to proceed, or revise the scope.
 
 ## Final Check
 
-- Active exploration kept one live move: either one compact sparring pass before
-  the idea was choice-ready, or one `**Question:**` block with A/B/C/D choices
-  and one inline recommended option once a real branch existed.
+- Active exploration kept one live move: either one Frame/Diverge/Provoke pass
+  before the idea was choice-ready, or one `**Question:**` block with A/B/C/D
+  choices and one inline recommended option once a real branch existed.
 - Choice-ready turns used the A/B/C/D spine while allowing prose, tables, or
   after-choice context when the idea needed room to breathe.
-- Sparring passes made the next choice better; they did not become deliverables,
-  plans, or open-ended interviews.
+- Frame/Diverge/Provoke passes made the next choice better; they did not become
+  deliverables, plans, or open-ended interviews.
 - Any content after the choices clarified context, implications, or what an
   answer could look like; it did not introduce a second question or competing
   recommendation.
 - Newly proposed richer shapes were explored before capture or build-gate unless
   the user explicitly asked to lock, capture, build, implement, or stop.
 - Ideate used internal moves, not visible hard modes.
-- Fan-out happened before convergence when the user was anchored on one idea too
-  early.
-- Pressure named only the lens or anti-pattern that changed the next question.
+- Solution Ideation happened before Converge when the user was anchored on one
+  idea too early.
+- Assumption Testing named only the category or anti-pattern that changed the
+  next question.
 - Implementation-shape thinking clarified behavior, runtime loop, source of
   truth, durable state, ownership, validation, or smallest buildable version
   without turning into tasks.

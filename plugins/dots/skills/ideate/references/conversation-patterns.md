@@ -1,10 +1,12 @@
 # Ideate Conversation Patterns
 
 Use these examples only when behavior is ambiguous. Mirror the move, not the
-wording. The important invariant is one live move per turn. When the idea is
-choice-ready, use one active multiple-choice question, moment-fit lead-in,
-A/B/C/D choices, and optional context after the choices when the idea needs
-room to breathe:
+wording. The important invariant is one live move per turn. Use the Product
+Brainstorming vocabulary directly: Problem Exploration, Solution Ideation,
+Assumption Testing, Strategy Exploration, Frame, Diverge, Provoke, Converge,
+and Capture. When the idea is choice-ready, use one active multiple-choice
+question, moment-fit lead-in, A/B/C/D choices, and optional context after the
+choices when the idea needs room to breathe:
 
 ```md
 **<moment-fit label>:** <short interpretation, tension, correction, or recommendation>
@@ -23,22 +25,23 @@ room to breathe:
 or analysis that helps the options breathe>
 ```
 
-When the idea is not choice-ready, one compact sparring pass can come first:
+When the idea is not choice-ready, one compact Frame, Diverge, or Provoke pass
+can come first:
 
 ```md
 **Read:** <what the user is really reaching for>
-**Sparring pass:** <one pattern, provocation, fan-out, or assumption that needs
-air before choices are useful>
+**Frame/Diverge/Provoke:** <one pattern, provocation, rough option set, or
+assumption that needs air before choices are useful>
 
 **Question:** <one open question that would make the next A/B/C/D real>
 ```
 
 Return to the A/B/C/D spine as soon as there is a meaningful branch.
 
-## Sparring Before Choice
+## Problem Exploration Before Choice
 
 Demonstrates: the user is thinking out loud and the concept is not yet
-choice-ready, so Ideate explores the missing shape before offering choices.
+choice-ready, so Ideate uses Problem Exploration before offering choices.
 
 ```text
 User:
@@ -48,9 +51,9 @@ keep track of projects, maybe wake up on a schedule, and help route work.
 Agent:
 **Read:** You are reaching for more than a reminder bot. This sounds like a
 personal operating layer that notices, prioritizes, and routes work.
-**Sparring pass:** The missing distinction is whether "Chief of Staff" means
-calendar/time leverage, project memory, decision support, or delegation control.
-Those imply different first versions and very different durable state.
+**Problem Exploration:** The missing distinction is whether "Chief of Staff"
+means calendar/time leverage, project memory, decision support, or delegation
+control. Those imply different first versions and very different durable state.
 
 **Question:** What failure do you most want this to prevent in the first useful
 version?
@@ -66,7 +69,7 @@ $ideate I want a dashboard for my agents.
 
 Agent:
 **Read:** "Dashboard" may mean visibility, control, or shared language.
-**Term pressure:** "Agents" could mean active workers, reusable workflows, or
+**Problem Exploration:** "Agents" could mean active workers, reusable workflows, or
 named responsibilities.
 **Best default:** Control room, because the ask sounds less like metrics and
 more like "I need to know what is happening and intervene."
@@ -85,7 +88,7 @@ steer them, or understand their boundaries?
 thing happens." Pick C if the pain is "I do not know which agent owns what."
 ```
 
-## Controlled Fan-Out
+## Solution Ideation
 
 Demonstrates: the user is anchored on one solution, so Ideate opens the space
 before narrowing.
@@ -97,8 +100,8 @@ $ideate We should add a dashboard so managers can see agent quality.
 Agent:
 **Read:** The desire is not necessarily "dashboard"; it is confidence that agent
 work is healthy enough to trust.
-**Anti-pattern:** This is close to a one-idea brainstorm, so the next move is to
-show different shapes before choosing.
+**Brainstorming anti-pattern:** This is close to a one-idea brainstorm, so the
+next move is to Diverge before choosing.
 
 | Shape | What it tests |
 |---|---|
@@ -155,7 +158,7 @@ implementation-shaped too late, after the agent has already mixed memory,
 scratch, source evidence, and durable docs.
 ```
 
-## Assumption Pressure
+## Assumption Testing
 
 Demonstrates: challenge one load-bearing assumption, then return to the question
 block.
@@ -167,8 +170,8 @@ $ideate I want Ideate to always produce a PRD at the end.
 Agent:
 **Read:** The real desire is not "always write a PRD"; it is "do not let good
 thinking evaporate."
-**Assumption:** The risky assumption is that durable output always helps. It may
-also make unfinished thinking feel official.
+**Assumption Testing:** The risky assumption is that durable output always
+helps. It may also make unfinished thinking feel official.
 **Best default:** Decision snapshot in chat; durable docs only on request.
 
 **Question:** Is the bigger failure mode losing useful thinking, or making
@@ -297,7 +300,8 @@ I don't know whether users would switch for this. Let's keep brainstorming.
 
 Agent:
 **Read:** The conversation is circling because the adoption question is factual.
-**Anti-pattern:** This is brainstorming when we should be researching.
+**Brainstorming anti-pattern:** This is brainstorming when we should be
+researching.
 **Best default:** Stop Ideate here and hand the adoption question to research.
 
 **Decision Snapshot**
@@ -328,9 +332,9 @@ a durable project guide in `.agents/agents/chief-of-staff/`. Let's go with that.
 Agent:
 **Read:** This is no longer just "router plus playbooks." You are proposing a
 self-bootstrapping skill that creates a project operating guide.
-**Sparring pass:** "Let's go with that" settles the broad direction, but the
-new shape creates a more important implementation question: what should become
-durable state, and what should stay scratch?
+**Provoke:** "Let's go with that" settles the broad direction, but the new shape
+creates a more important implementation question: what should become durable
+state, and what should stay scratch?
 **Best default:** Make the guide an operating contract first, with scratch as a
 separate subfolder.
 

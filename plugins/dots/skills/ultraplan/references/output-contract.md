@@ -2,10 +2,12 @@
 
 Read this before synthesis and before reviewing a created or upgraded plan.
 
-## Standard Plan
+## New Plan
 
-For a fresh plan, output concise Markdown by default. The final plan should be
-plan-only, decision-complete, and implementation-ready.
+For a `New plan` entry, output concise Markdown by default. The final plan should
+be plan-only, decision-complete, and implementation-ready. For the non-code lens
+set, keep the same shape but describe steps and verification in domain terms
+rather than files and commands.
 
 Default structure:
 
@@ -76,7 +78,8 @@ the user accepts it.
 
 ## Upgraded Plan
 
-Return the complete upgraded document in the same format as the input.
+For an `Existing plan` entry, return the complete upgraded document in the same
+format as the input.
 
 For HTML:
 

@@ -1,95 +1,108 @@
 # Ultraplan Workflow
 
-Read this for the route topology, role contracts, review lenses, and synthesis
-rules. Keep analysis roles read-only until synthesis writes plan artifacts.
+Read this for the pipeline, the feedback loop, role contracts, and review
+lenses. Keep analysis roles read-only until synthesis writes plan artifacts.
 
-## Route Topology
+## One Pipeline, Two Entry Points
 
-### Standard Plan
-
-Use when there is no existing plan to upgrade.
-
-```text
-Read context -> Ground repo -> Map current state -> Check plan shape
-  -> Choose approach -> Write plan -> Validate -> Handoff
-```
-
-This route normally uses no subagents. The parent agent does the planning work
-and checks the draft against the same review pressure used by Ultra Plan:
-premise, sequencing, reuse, ownership, testability, risk, and overengineering.
-
-Use one read-only explorer only when repo exploration is too broad for the main
-context to carry cleanly. The explorer returns facts and likely owners; the
-parent still chooses the approach and writes the plan.
-
-### Capped Ultra Plan
-
-Use when an existing plan, spec, or design doc should be upgraded.
+Every Ultraplan run is the same pipeline. The entry shape only decides what
+`Draft` means; the rung decides how much independence and iteration the loop
+gets.
 
 ```text
-Parent seed-grounding
-  -> Subagent 1: Repo mapper
-  -> Subagent 2: Adversarial reviewer
-  -> Parent verification/refutation
-  -> Optional Subagent 3: Rescope designer
-  -> Parent synthesis: upgraded plan + changelog
-  -> Parent validation and handoff
+Frame -> Draft -> Critique -> Verify -> Revise -> Validate
+                      ^___________________________|
+                       feedback loop
 ```
 
-Default to two subagents. Add the third only when verified findings imply
-competing plan shapes, a major ownership shift, or a meaningful simplification
-decision. Never exceed three subagents.
+- `New plan`: the parent authors the draft, then critiques it.
+- `Existing plan`: the user's plan/spec/design doc is the draft. Preserve a
+  diffable original and emit a changelog. Critique begins immediately.
 
-## Seed Grounding
+At `L0` the parent plays every role itself (self-critique). At `L1`+ independent
+subagents take the Researcher and Critic roles. See
+[budget-rules.md](budget-rules.md) for which roles each rung adds.
 
-Before subagents, run a small read-only grounding pass:
+### Grounding during Frame
 
-- read repo instructions and the plan
-- search for artifacts the plan asserts are done, moved, required, or absent
-- check current toolchain/dependency/version claims when they matter
-- capture commands and paths, not impressions
+Framing always includes a small read-only grounding pass: read repo instructions
+(and, for an existing plan, the plan in full), search for artifacts the task
+asserts are done/moved/required/absent, check toolchain or version claims that
+matter, and capture commands and paths rather than impressions.
 
-Pass seeds as:
+When the run uses subagents, hand them those facts to verify rather than trust —
+this is what keeps critique independent:
 
 ```text
 Seed observations (VERIFY against the repo with search/file reads/git; do not trust blindly):
 <facts with commands or paths>
 ```
 
+## The Feedback Loop
+
+Critique -> Verify -> Revise is a loop:
+
+1. **Critique** produces ranked, plan-changing findings.
+2. **Verify** refutes by default; only clearly-evidenced findings survive.
+3. **Revise** applies confirmed findings; refuted ones go to the changelog.
+4. **Converge**: at `L3`, re-critique the revised plan (changed sections plus
+   uncovered areas) and repeat. Stop when a round yields **zero new confirmed
+   findings**, or at the round cap. At `L0`-`L2` the loop runs once.
+
+If the loop hits the cap with a confirmed blocking finding unresolved, do not
+ship silently: revise to address it or name the unresolved tension as an open
+decision.
+
+## Lens Sets
+
+Pick the lens set at `Frame`:
+
+- **Code/source-grounded** (default when code or source truth matters): all seven
+  lenses below.
+- **Non-code / universal**: premise, sequencing, risk, and overengineering only.
+  The reuse, ownership, and testability lenses assume a codebase; drop them when
+  there is no code or source surface to ground against.
+
+| Key | Focus |
+|---|---|
+| `premise` | False or stale assumptions vs current reality. Flag anything asserted as done, landed, or already present without ownership. |
+| `sequencing` | Step order, prerequisites, missing owners for assumed preconditions, dependency on out-of-scope work, and blast radius. |
+| `reuse` | Work that already exists. For every "implement X", search for a working owner and recommend reuse or surfacing. |
+| `ownership` | One canonical owner, target/module edges, transitive references, dependency cycles, and lower layers staying free of upper-layer types. |
+| `testability` | Whether each step is provable in the current environment, has producer and consumer, and names runnable verification commands. |
+| `risk` | Concrete failure modes with evidence: shipping, CI, schema/version, environment mismatch, silent breakage, or irreversible actions. |
+| `overengineering` | Abstractions, adapters, compatibility shims, generic schemas, framework work, or broad refactors that exceed the current goal. |
+
 ## Roles
 
-### Repo Mapper
+### Researcher
 
-Mission: faithful structured map plus first-pass grounding.
-
-Input: plan path, repo root, seed observations.
+Added at `L1`+. Mission: independent grounding the parent context cannot carry
+cleanly. Returns facts, likely owners, and current-state claims with commands or
+paths. The parent still drafts and decides.
 
 Prompt shape:
 
 ```text
-You are mapping a plan/spec/design document before an ultra-planning critique.
-Read it in full: <PLAN>
-Repo root: <REPO>. Ground claims with search, file reads, git, tests, or docs.
+You are grounding facts before an implementation plan is drafted or critiqued.
+Repo root: <REPO>. Task / plan: <CONTEXT>.
 
 <SEED>
 
-Return a concise map:
-1. Step structure: each step id, title, one-line scope.
-2. Load-bearing assumptions the plan states or relies on.
-3. Concrete repo claims and whether they match the current repo.
-4. Existing owners or implementations the plan should reuse.
-5. Internal contradictions or missing preconditions.
-
-Be specific with section ids, file paths, symbols, and commands. Do not propose
-style edits. Do not modify files.
+Return a concise, sourced map:
+1. Concrete current-state claims relevant to the task, each with a file path,
+   symbol, or command.
+2. Existing owners or implementations that should be reused.
+3. Contradictions between the task/plan and the current repo.
+Be specific. Do not propose style edits. Do not modify files.
 ```
 
-### Adversarial Reviewer
+### Critic
 
-Mission: strongest plan-changing findings across all lenses, including
-overengineering.
+Added at `L2`+ (multiple, diverse-lens, at `L3`). Mission: strongest
+plan-changing findings across the active lens set, including overengineering.
 
-Input: plan path, repo root, seed observations, mapper output.
+Input: the draft plan, repo root, seed observations, Researcher output.
 
 Prompt shape:
 
@@ -100,21 +113,15 @@ or docs.
 
 <SEED>
 
-MAPPER OUTPUT:
-<MAP>
+RESEARCHER OUTPUT:
+<RESEARCH>
 
 Find the strongest real, specific problems across these lenses:
-- premise integrity
-- sequencing and dependencies
-- reuse before build
-- ownership and boundaries
-- testability and proof
-- risk and failure modes
-- overengineering and unnecessary complexity
+<ACTIVE_LENSES>
 
 Rules:
-- Ground each finding in repo evidence. If you could not verify, say so and
-  lower severity.
+- Ground each finding in evidence. If you could not verify, say so and lower
+  severity.
 - Be concrete: name the section/step and give a plan change.
 - Quality over quantity: return at most 8 findings, ranked by implementation
   impact.
@@ -124,24 +131,15 @@ Rules:
 - Do not invent problems to justify the pass.
 ```
 
-Default lenses:
+At `L3`, assign each Critic a lens family (e.g. premise+sequencing,
+reuse+ownership, testability+risk, overengineering) so breadth comes from
+diverse perspectives rather than redundant identical reviews.
 
-| Key | Focus |
-|---|---|
-| `premise` | False or stale assumptions vs the current repo. Flag anything asserted as done, landed, or already present without ownership. |
-| `sequencing` | Step order, prerequisites, missing owners for assumed preconditions, dependency on out-of-scope work, and blast radius. |
-| `reuse` | Work that already exists. For every "implement X", search for a working owner and recommend reuse or surfacing. |
-| `ownership` | One canonical owner, target/module edges, transitive references, dependency cycles, and lower layers staying free of upper-layer types. |
-| `testability` | Whether each step is provable in the current environment, has producer and consumer, and names runnable verification commands. |
-| `risk` | Concrete failure modes with evidence: shipping, CI, schema/version, environment mismatch, silent breakage, or irreversible actions. |
-| `overengineering` | Abstractions, adapters, compatibility shims, generic schemas, framework work, or broad refactors that exceed the current goal. |
+### Verifier
 
-### Parent Verifier
-
-Mission: try to refute selected findings before they can change the plan.
-
-Run this in the parent by default so the final author owns the evidence. Use an
-independent verifier subagent only if that is the best use of the third subagent.
+Run in the parent by default so the final author owns the evidence. At `L3`,
+high-severity findings may get multi-vote refutation (several independent
+verifiers, majority refutes -> drop).
 
 Verification rule:
 
@@ -160,10 +158,9 @@ change the plan.
 
 ### Rescope Designer
 
-Mission: propose the smallest correct re-scope after verification.
-
-Use only as the optional third subagent when verified findings imply competing
-plan shapes. Otherwise the parent chooses the re-scope directly.
+Optional, added only when verified findings imply genuinely competing plan
+shapes (an auto-promotion gate). Otherwise the parent chooses the re-scope
+directly.
 
 Prompt shape:
 
@@ -184,7 +181,8 @@ Return:
 
 ## Synthesis Rules
 
-- Produce the upgraded plan in the original format.
+- For `New plan`, produce a clean plan in the output contract's format. For
+  `Existing plan`, produce the upgraded plan in the original format.
 - Preserve unchanged working sections. Do not rewrite for style alone.
 - Convert false premises into owned precondition steps.
 - Convert "implement X" to "reuse/surface existing X" when a working owner
@@ -196,11 +194,12 @@ Return:
 - Replace naive moves across layers with wrap, adapter, or projection designs
   when transitive references would create cycles.
 - Keep refuted findings out of the plan body.
-- Put rejected claims, losing alternatives, and refutations in the changelog.
+- For upgrades, put rejected claims, losing alternatives, and refutations in the
+  changelog.
 
 ## Changelog Shape
 
-Write a sibling Markdown changelog with:
+For `Existing plan` upgrades, write a sibling Markdown changelog with:
 
 1. `Verdict`: two or three sentences on the plan's health after the pass
 2. `Confirmed changes applied`: grouped by lens with problem, evidence, change

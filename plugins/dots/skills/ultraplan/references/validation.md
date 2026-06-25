@@ -2,14 +2,21 @@
 
 Read this after synthesis and before final handoff.
 
-## Route Checks
+## Outcome And Rung Checks
 
-- `Standard Plan`: no subagents were used unless independent repo exploration
-  was justified; the output is a new plan, not an upgraded-plan changelog.
-- `Capped Ultra Plan`: the original plan remains available for diffing; the run
-  used no more than three subagents; confirmed and refuted findings are
-  accounted for.
-- Any route: execution has not started without explicit approval.
+- The outcome is a plan or upgraded plan, not an answer-only reply. Pure
+  research/explanation was redirected to other skills, not reproduced here.
+- The rung matched the invocation verb and task risk, with no downgrade below the
+  explicit signal (an explicit "ultra/stress-test" never ran below `L2`).
+- Every auto-promotion was triggered by a named gate and is reported.
+- The feedback loop converged (a round produced zero new confirmed findings) or
+  hit the cap with the unresolved tension named as an open decision; no confirmed
+  blocking finding was shipped unaddressed.
+- `New plan`: the output is a plan, not an upgraded-plan changelog; subagents
+  appeared only at `L1`+ as the rung justified.
+- `Existing plan`: the original plan remains available for diffing; confirmed and
+  refuted findings are accounted for; the run respected the `L3` caps.
+- Any run: execution has not started without explicit approval.
 
 ## Structural Checks
 
@@ -51,7 +58,7 @@ when possible. Inspect the diff for:
 
 ## Output Checks
 
-- Standard plans start with the executable plan, not audit trail.
+- New plans start with the executable plan, not audit trail.
 - Upgraded plans keep losing alternatives and refuted findings out of the plan
   body.
 - Handoffs use grouped bullets for shipped/proved/manual gates instead of dense
@@ -64,7 +71,7 @@ when possible. Inspect the diff for:
 Report:
 
 - artifact paths written
-- route and subagent count
+- entry shape, rung, and any auto-promotions with their triggering gate
 - counts raised, verified, confirmed, and refuted for upgraded plans
 - chosen re-scope and grafts when applicable
 - validation commands/checks run
