@@ -32,9 +32,9 @@ mention it in one short sentence after the writing.
 
 | Need | When the user says | Use |
 | --- | --- | --- |
-| `Draft` | User says write, draft, compose, start, continue, outline, build a piece, create a recurring project, or provides messy notes for a standing pad. | `writer` |
-| `Rewrite` | User says rewrite, humanize, personalize, polish, tighten, shorten, expand, adapt, make this sound like me, make this less AI, or provides existing text to improve. | `writer` |
-| `Style` | User asks to create, inspect, sync, import, export, or update writing style evidence. | `writing-style` |
+| `Draft` | User says write, draft, compose, start, continue, outline, build a piece, create a recurring project, or provides messy notes for a standing pad. | `compose` |
+| `Rewrite` | User says rewrite, humanize, personalize, polish, tighten, shorten, expand, adapt, make this sound like me, make this less AI, or provides existing text to improve. | `compose` |
+| `Style` | User asks to create, inspect, sync, import, export, or update writing style evidence. | `writing-voice` |
 | `Review` | User asks for critique, scorecard, adversarial review, QA, or fix plan. | `writing-review` |
 
 Keep `$drafts` as the front door. Do not require users to name the kind of help
@@ -44,14 +44,14 @@ when their verb or supplied text makes it clear.
 
 | Private name | When it appears | Use |
 | --- | --- | --- |
-| `draft_lane` | New, recurring, or continuing writing | `writer` |
-| `rewrite_lane` | Existing text transformation | `writer` |
-| `new_short_write` | Clear bounded artifact | `writer` |
-| `substantial_work` | Report, essay, launch plan, memo series, long guide | `writer` brief then contract |
-| `existing_draft_revision` | User asks to edit selected/provided draft | `writer` |
-| `create_writing_style` | User asks for writing style, samples, voice guide | `writing-style` |
+| `draft_lane` | New, recurring, or continuing writing | `compose` |
+| `rewrite_lane` | Existing text transformation | `compose` |
+| `new_short_write` | Clear bounded artifact | `compose` |
+| `substantial_work` | Report, essay, launch plan, memo series, long guide | `compose` brief then contract |
+| `existing_draft_revision` | User asks to edit selected/provided draft | `compose` |
+| `create_writing_style` | User asks for writing style, samples, voice guide | `writing-voice` |
 | `review` | User asks for critique, score, adversarial read, QA | `writing-review` |
-| `transform` | User asks for another format, channel, or audience | `writer` |
+| `transform` | User asks for another format, channel, or audience | `compose` |
 | `source_update` | User adds or changes draft sources | Update source pack, then resume route |
 
 Reusable writing guidance is handled by `update_writing_rules` in

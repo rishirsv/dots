@@ -49,7 +49,7 @@ Bad: "There may be some preview synchronization considerations."
 
 Recommendation: give the next action and the reason it matters.
 
-Good: "Validate the writer handoff with one real style guide before broadening
+Good: "Validate the compose handoff with one real style guide before broadening
 the template."
 Bad: "Further downstream optimization may be beneficial."
 

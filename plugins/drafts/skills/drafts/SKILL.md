@@ -110,10 +110,10 @@ Before acting, get your bearings privately:
 
 Use:
 
-- `writer` for drafting, rewriting, briefs, document contracts,
+- `compose` for drafting, rewriting, briefs, document contracts,
   new drafts, continuations, revisions, transformations, personalization,
   humanization, and variants.
-- `writing-style` for user styles, samples, style guides, freshness, and
+- `writing-voice` for user styles, samples, style guides, freshness, and
   sample-quality warnings, plus style-library sync, export, import, backup, and
   root changes.
 - `writing-review` for critique, scorecards, adversarial review, and
@@ -121,7 +121,7 @@ Use:
 
 If several routes apply, preserve the user's current writing momentum. For
 example, a request to "review this and fix the top issues" should review the
-current `draft_version` first, then hand selected fixes to `writer`. A request
+current `draft_version` first, then hand selected fixes to `compose`. A request
 to "rewrite this" or "humanize this" should not start a full Draft interview
 unless the source text is missing or the user asks to attach the rewrite to a
 standing draft.

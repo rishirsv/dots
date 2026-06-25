@@ -1,14 +1,14 @@
 ---
-name: writing-style
+name: writing-voice
 description: "Use for Drafts style work: creating user writing styles, reading samples, cleaning references, writing voice guides, checking guide limits, and explaining style use. Not for drafting content, standalone review, generic tone advice, or hidden style selection."
 ---
 
-# Writing Style
+# Writing Voice
 
 Build and maintain reusable user writing styles as inspectable evidence, not as
 uninspectable style inference. Use this skill after `drafts` routes writing
 style, sample, or voice work here, or when the user explicitly invokes
-`writing-style` for style guide setup or sample handling.
+`writing-voice` for style guide setup or sample handling.
 
 Read [style-guide.md](../../references/style-guide.md) before accepting samples,
 generating a guide, testing a guide, or explaining style limits. Read
@@ -121,7 +121,7 @@ guide or keep the result as session-only guidance.
 
 Inline examples make the guide usable at drafting time. Prefer short invented
 or redacted examples that demonstrate the style move. Avoid examples so close
-to source samples that the writer may copy them.
+to source samples that the compose skill may copy them.
 
 Write the guide as a compact but complete voice manual, not a filled form.
 Prefer outcome-first guidance: define the writing effect, the observable move,
@@ -140,7 +140,7 @@ After that, add only the notes the user needs to trust or use the guide:
 - Observable patterns that will change drafting.
 - Limits, caveats, contamination warnings, or mixed-author risks.
 - Registry, sync, export, or import changes when those actually happened.
-- The short handoff `writer` needs to use the guide well.
+- The short handoff `compose` needs to use the guide well.
 
 Do not turn style work into a category dump. Evidence and caveats matter here,
 but they should read like practical guidance for future writing.

@@ -1,8 +1,8 @@
 interface:
-  display_name: "Writer"
+  display_name: "Compose"
   short_description: "Draft, revise, and transform writing"
   brand_color: "#2563EB"
-  default_prompt: "Use $writer to create a brief, document contract, draft, revision, or channel variant."
+  default_prompt: "Use $compose to create a brief, document contract, draft, revision, or channel variant."
 
 policy:
   allow_implicit_invocation: false

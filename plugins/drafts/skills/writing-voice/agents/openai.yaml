@@ -1,0 +1,8 @@
+interface:
+  display_name: "Writing Voice"
+  short_description: "Build and inspect writing styles"
+  brand_color: "#2563EB"
+  default_prompt: "Use $writing-voice to create, update, or inspect a writing style guide and its sample references."
+
+policy:
+  allow_implicit_invocation: false

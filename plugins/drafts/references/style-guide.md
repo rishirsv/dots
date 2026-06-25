@@ -5,7 +5,7 @@ writing style guide.
 
 ## What A Style Guide Is
 
-A style guide is a durable, readable voice manual. It should help `writer`
+A style guide is a durable, readable voice manual. It should help `compose`
 produce better prose, help `writing-review` check voice fit, and help the user
 inspect what the system thinks their writing style is.
 
@@ -209,7 +209,7 @@ the stable writing effect>.
 
 <Several paragraphs that explain how the voice behaves. Name the durable
 patterns: directness, warmth, compression, caveats, certainty, structure,
-relationship posture, and how the writer earns trust.>
+relationship posture, and how the writing earns trust.>
 
 ## Shape And Rhythm
 
@@ -271,7 +271,7 @@ Write like an operator who learned the lesson the annoying way and is now
 saving the reader a week. The voice is direct, specific, and slightly dry. It
 trusts the reader and avoids motivational padding.
 
-Warmth comes from accurate diagnosis, not reassurance. The writer can be blunt
+Warmth comes from accurate diagnosis, not reassurance. The prose can be blunt
 about a failure because the next sentence usually gives the reader a cleaner
 way to act.
 
@@ -404,9 +404,9 @@ When the user corrects a style output, treat the correction as evidence:
 
 Do not silently convert every correction into a global style rule.
 
-## Helping Writer Use The Style
+## Helping Compose Use The Style
 
-When handing style context to `writer`, include:
+When handing style context to `compose`, include:
 
 - Selected style ID, or the decision to use `default`.
 - One-line reason the guide fits the task.

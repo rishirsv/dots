@@ -80,12 +80,13 @@ Review-to-revision handoff should preserve lineage:
 draft_version reviewed
 -> review_pass
 -> selected findings
--> writer fix plan
+-> compose fix plan
 -> new draft_version
 ```
 
 Do not overwrite the reviewed version.
 
-When fixes are applied, writer should create or describe a new version with
+When fixes are applied, the compose skill should create or describe a new
+version with
 minimal frontmatter. Mention the reviewed version, selected findings, and new
 version boundary only when version safety or the next action depends on it.

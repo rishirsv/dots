@@ -48,7 +48,7 @@ review-to-revision handoff.
 - `style_review`: check whether style usage is appropriate and supported by
   evidence.
 - `scorecard`: score named criteria inside the `review_pass`.
-- `fix_plan`: turn findings into ordered revision instructions for `writer`.
+- `fix_plan`: turn findings into ordered revision instructions for `compose`.
 
 ## Voice Fit
 
@@ -77,7 +77,7 @@ When the user asks to apply fixes:
 
 1. Keep the `review_pass` tied to the reviewed version.
 2. Select the findings to apply.
-3. Hand the fix plan to `writer`.
+3. Hand the fix plan to `compose`.
 4. Create or describe a new `draft_version`.
 5. Link the new version back to the review.
 

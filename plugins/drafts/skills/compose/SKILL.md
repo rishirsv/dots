@@ -1,12 +1,12 @@
 ---
-name: writer
-description: "Use after drafts sends writing work here, or when the user explicitly invokes writer, for new drafts, continuations, revisions, rewrites, humanized cleanups, personalization, and channel variants. Not for writing-style setup, standalone critique, generic answers, code changes, or external publishing."
+name: compose
+description: "Use after drafts sends writing work here, or when the user explicitly invokes compose, for new drafts, continuations, revisions, rewrites, humanized cleanups, personalization, and channel variants. Not for writing-voice setup, standalone critique, generic answers, code changes, or external publishing."
 ---
 
-# Writer
+# Compose
 
 Create and revise writing. Use this skill after `drafts` routes a writing
-moment here, or when the user explicitly invokes `writer` for drafting,
+moment here, or when the user explicitly invokes `compose` for drafting,
 revision, or transformation.
 
 Write like an editor. The user should see the artifact first: the draft,

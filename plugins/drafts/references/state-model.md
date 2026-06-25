@@ -28,7 +28,7 @@ workspace.
 ## Workspace Layout
 
 Use a draft-centered layout. Recurring writing projects expose a simple standing
-pad to the writer:
+pad to the writing lane:
 
 ```text
 .drafts/
