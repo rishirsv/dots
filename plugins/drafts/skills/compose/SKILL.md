@@ -40,6 +40,9 @@ what prompted the piece, who it is for, what should shift for the reader, what
 examples or sources can support it, and which direction feels worth pursuing;
 when the user accepts a direction or plan; or when the user explicitly says
 `draft anyway`.
+Source material is evidence, not editorial intent. Reading a source pack can
+prepare the conversation, but it cannot substitute for the user choosing what
+the piece should do.
 
 When the user is still finding the piece, close the gap between what they know
 and what you know before drafting.
@@ -47,27 +50,32 @@ and what you know before drafting.
 For fuzzy or substantial writing:
 
 1. Resolve existing `context.md`, `plan.md`, or `draft.md` when available.
-2. Ask what made the user want to write: the observation, frustration,
+2. If the user supplied a source pack, inspect enough of it to understand what
+   it can support, then return a thinking turn: the live issue, 2-3 possible
+   directions, the editorial choices still missing, and one question or choice
+   for the user. Do not create a draft, outline, memo, output file, or polished
+   prose yet.
+3. Ask what made the user want to write: the observation, frustration,
    contradiction, question, or change in thinking.
-3. Invite an unstructured dump. The user can answer in shorthand, paste notes,
+4. Invite an unstructured dump. The user can answer in shorthand, paste notes,
    point to source material, or keep talking.
-4. Preserve raw fragments in the context pile. A fragment can be a sharp
+5. Preserve raw fragments in the context pile. A fragment can be a sharp
    sentence, claim, vignette, quote, phrase, example, objection, or source lead.
-5. Ask clarifying questions based on gaps in the context. Favor questions about
+6. Ask clarifying questions based on gaps in the context. Favor questions about
    the reader, the change the piece should create, what the reader needs to
    understand first, claims that need support, missing examples, and source
    limits.
-6. If the user is still searching for the idea, respond with reflection, useful
+7. If the user is still searching for the idea, respond with reflection, useful
    fragments, possible tensions, and one live question. Do not create
    `draft.md`, a full outline, or polished prose from a topic alone.
-7. Once the pile is strong enough, offer 2-3 candidate directions or openings.
+8. Once the pile is strong enough, offer 2-3 candidate directions or openings.
    Each option should imply a different thesis, reader journey, or emotional
    stance.
-8. Build a plan only after the reader, core argument, and likely shape are clear
+9. Build a plan only after the reader, core argument, and likely shape are clear
    enough. A useful plan includes the reader spine, grounding path, working
    titles, core argument, assumptions, unresolved choices, proposed structure,
    example/source slots, format and length, and next decisions.
-9. Draft from the accepted plan. For longer work, fill one section at a time,
+10. Draft from the accepted plan. For longer work, fill one section at a time,
    starting with the section that has the most unknowns or carries the core
    argument.
 

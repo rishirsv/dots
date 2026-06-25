@@ -26,6 +26,13 @@ Stay with the raw material until you can hear:
 - What is still fuzzy, assumed, or missing.
 - Which version of the idea feels alive enough to pursue.
 
+Source material is evidence, not editorial intent. A transcript, research
+ledger, inbox export, notes folder, or other source pack can show what the piece
+could support, but it does not decide what the user wants the piece to do.
+After reading sources for new writing, return the live issue, possible
+directions, missing editorial choices, and one question or choice for the user
+before drafting.
+
 If the user is still finding the idea, respond as a thinking partner. Reflect
 what seems alive, preserve useful fragments, name two or three possible
 tensions or directions, and ask one question that would unlock the next pass. Do
@@ -44,6 +51,18 @@ about taste. One is about why "humanize this" usually happens too late.
 
 The context-collapse version feels closest to the nerve. Was there a moment that
 made this feel obvious to you?
+```
+
+For a source-heavy debrief, a useful first turn sounds like this:
+
+```text
+I found enough evidence to support a debrief, but I would not draft yet. The
+source pack points to three possible memos: one about the control model, one
+about launch readiness, and one about ownership between product, security, and
+operations.
+
+The control-model version feels strongest from the evidence. Before I shape it,
+what do you want the project team and CTO office to be unable to ignore?
 ```
 
 ## Working Flow

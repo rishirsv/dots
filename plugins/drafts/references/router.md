@@ -52,6 +52,10 @@ Reusable writing guidance uses the approval-gated rule update flow in
   Fuzzy, substantial, source-heavy, or idea-development prompts should stay in
   the raw pile until the prompt, reader, intended shift, supporting material,
   and live direction are clear enough.
+- Treat source material as evidence, not editorial intent. When the user brings
+  a source pack for new writing, read enough to understand what it can support,
+  then return possible directions and the missing editorial choice before any
+  draft, outline, memo, output file, or polished prose.
 - Prefer a plan before drafting when the user needs structure, assumptions,
   source slots, or section work.
 - Prefer drafting for short requests only when the prompt already contains the
@@ -85,6 +89,10 @@ For new writing, missing inputs usually come from these core writing variables:
 
 If those inputs are missing, do not treat the request as enough to draft unless
 the user explicitly says `draft anyway`.
+
+If the only strong input is source material, treat the next response as source
+synthesis and direction-finding. Do not announce that you will draft after
+reading the sources.
 
 For existing text, do not ask context questions unless the source text is
 missing, style evidence is required for personalization, or the edit intent is

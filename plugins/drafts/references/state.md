@@ -71,6 +71,11 @@ short and medium pieces, keep the draft in one file. Use `sections/` only when
 the piece is too large to revise comfortably as one document or the user
 explicitly wants section files.
 
+The same gate applies to any user-facing prose file outside this layout. Do not
+create a memo, debrief, article, outline, or polished output file from source
+material alone. Source packs belong in context until the user has accepted a
+direction or explicitly asked to draft anyway.
+
 Each draft owns its context, plan, draft, versions, reviews, and optional
 sections. Shared user styles do not live in a draft folder by default.
 
@@ -293,6 +298,7 @@ When durable state exists, store useful context answers in `context.md`.
 Promote material into `plan.md` only when the reader, core argument, and likely
 shape are clear enough to guide the piece. Create `draft.md` only after the user
 has asked for prose, accepted a direction, or explicitly chosen `draft anyway`.
+Do not treat a strong source pack as accepted direction by itself.
 
 Create or describe a new `draft_version` for material changes:
 
