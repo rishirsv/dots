@@ -26,6 +26,13 @@ This skill owns new-skill authoring. Route existing-skill fixes to
 `skill-doctor`, measurement to `skill-evaluator`, and lifecycle orchestration to
 `meta-skill`.
 
+Write the skill the way a capable agent should think while using it. Start from
+the job, the natural language a user would use, and the smallest useful
+behavior. Keep authoring categories, evidence plans, gates, workbench choices,
+and other design bookkeeping private unless they directly change runtime
+behavior. A good runtime skill reads like focused guidance for doing the work,
+not like a form about the skill.
+
 ## Reference Map
 
 Read only what the task needs:
@@ -34,7 +41,7 @@ Read only what the task needs:
 |---|---|
 | Decide what a skill is, whether the idea is skill-shaped, and what artifact should be created if it is not a skill | [skill-shape.md](references/skill-shape.md) |
 | Distill source packs, example input/output pairs, transcripts plus notes, or prior artifacts into reusable skill rules | [source-distillation.md](references/source-distillation.md) |
-| Decide whether the workflow should become a skill; classify the skill type, invocation posture, information hierarchy, evaluation posture, runtime body, completion criteria, pruning pass, evidence boundaries, and voice | [skill-design.md](references/skill-design.md) |
+| Decide whether the workflow should become a skill; classify the skill type, invocation posture, information hierarchy, evidence plan, runtime body, completion criteria, pruning pass, evidence boundaries, and voice | [skill-design.md](references/skill-design.md) |
 | Capture an active or prior Codex thread/session into a durable skill | [session-capture.md](references/session-capture.md) |
 | Add compact runtime snippets after the design decision is clear | [cookbook.md](references/cookbook.md) |
 | Apply the shared skill-quality standard before finalizing a non-trivial skill | [judge-rubric.md](../../references/judge-rubric.md) |
@@ -69,9 +76,9 @@ artifacts, or other source-derived skill requests, read
 When the request is still an idea rather than a settled skill, read
 [skill-shape.md](references/skill-shape.md) before drafting.
 
-Complete this answer-set before scaffolding. Answers may come from the
-conversation, a captured session, source material, comparable skills, repo
-conventions, or a question:
+Resolve these working answers before scaffolding. They are authoring notes, not
+the runtime voice. Answers may come from the conversation, a captured session,
+source material, comparable skills, repo conventions, or a question:
 
 | Field | Required answer |
 |---|---|
@@ -79,23 +86,23 @@ conventions, or a question:
 | Trigger | Real user language that should fire the skill, plus the nearest `not for` boundary. |
 | Inputs and output | What the skill consumes and the expected output shape or artifact. |
 | Invariants and failure shields | What the skill should preserve, prevent, or flag; include common mistakes and user corrections. |
-| Fragility | Whether the work is judgment prose, fixed-shape output, script-backed, or a strict sequence. |
+| Instruction shape | Whether the work is judgment prose, fixed-shape output, script-backed, or a strict sequence. |
 | Skill category | Primary type from [skill-design.md](references/skill-design.md); narrow or split if the draft straddles categories. |
-| Evaluation posture | Capability uplift, encoded preference, or hybrid; include the baseline and create `.<skill-name>/evals.json` when the user asks for eval seeds or project-mode eval material. |
+| Evidence plan | Capability uplift, encoded preference, or hybrid; include the baseline, but create `.<skill-name>/evals.json` only when eval seeds or evaluator handoff are in scope. |
 | Gates | Approvals required before external writes, destructive actions, publishing, sending, install/sync, or final client-facing delivery. |
-| Project mode | Portable-only, or project mode with a hidden `.<skill-name>/` workbench for docs, fixtures, package artifacts, and team reuse material. |
+| Workbench plan | Portable-only, or project mode with a hidden `.<skill-name>/` workbench for docs, fixtures, package artifacts, and team reuse material. |
 
 Fill every answer from context first. Resolve answers before asking by mining
 the current conversation, provided files, source packs, user corrections,
 session-capture output, comparable skills, and the skill type in
 [skill-design.md](references/skill-design.md). Ask only for decisions that change routing,
-runtime behavior, resources, approval gates, or project mode.
+runtime behavior, resources, approval gates, or workbench setup.
 
 When a question is needed, ask in one screen with numbered questions, lettered
 options, a recommended default, and a `defaults` fast path:
 
 ```md
-Skill outline - a couple of quick decisions before I scaffold.
+Skill setup - a couple of quick decisions before I scaffold.
 
 1. When should it trigger?
 a) <real user phrasing inferred from context> (recommended)
@@ -104,7 +111,7 @@ c) Not sure - use default
 
 2. Set up a workbench?
 a) Portable-only, no workbench (recommended)
-b) Project mode with a hidden `.<skill-name>/` workbench for authoring docs, fixtures, and package output
+b) Hidden `.<skill-name>/` workbench for authoring docs, fixtures, and package output
 c) Not sure - use default
 
 Reply with: `defaults`, or a compact answer like `1a 2b`.
@@ -115,34 +122,34 @@ faster than open-ended questions. If a required answer is thin but not
 blocking, record the best defensible default and mark the uncertainty in
 `Still open`.
 
-Reflect the settled shape as a compact **Draft Skill Outline** before editing.
-When scaffolding a new skill, put this outline in `SKILL.md` itself, then
-iterate it into final runtime guidance:
+Reflect the settled shape as a compact authoring note before editing. Do not
+paste the outline into `SKILL.md` as runtime content. Use it to make decisions,
+then write the skill body in natural, outcome-first prose:
 
 ```md
-Draft Skill Outline
-- Job: extract tables from supplier PDFs into one normalized CSV.
-- Trigger (+ not for): "pull the line items out of these invoices"; not for summarizing PDF prose.
-- Inputs and output: a folder of PDFs -> one CSV with validated columns.
-- Invariants and failure shields: never invent missing values; flag pages that fail to parse.
-- Fragility: deterministic, script-backed extraction and validation.
-- Skill category: product verification.
-- Evaluation posture: capability uplift; baseline is no skill.
-- Eval manifest: `.<skill-name>/evals.json` with a positive invoice-line-item prompt, near miss about summarizing invoice prose, and checks for required CSV columns, flagged parse failures, and no invented values.
-- Gates: none; portable-only.
-- Project mode: portable-only.
+Authoring note
+- Job: turn recurring product research threads into concise decision briefs.
+- Trigger (+ not for): "turn this research thread into a decision memo"; not for raw transcript archiving.
+- Inputs and output: notes, links, or transcript excerpts -> brief with decision, evidence, tradeoffs, and open questions.
+- Invariants and failure shields: separate evidence from judgment; do not invent consensus; flag unresolved disagreement.
+- Instruction shape: judgment prose with a compact output check.
+- Skill category: business process or team automation.
+- Evidence plan: encoded preference; examples are enough unless the user wants measured comparisons.
+- Evaluation handoff: none by default; add realistic prompts only when the user asks for evaluator handoff.
+- Gates: approval before publishing or sending outside the chat.
+- Workbench plan: portable-only unless reusable examples or research notes should be preserved.
 - Still open: none.
 ```
 
 Before scaffolding, pressure-check the trigger by naming one should-trigger
 prompt, one should-not-trigger prompt, and the nearest near miss. If eval
-material is in scope, keep those prompts as eval manifest entries when the skill
-is non-trivial or trigger risk is material.
+material is in scope, keep those prompts as evaluation handoff entries when the
+skill is non-trivial or trigger risk is material.
 Use [skill-design.md](references/skill-design.md) for trigger-contract quality.
 
 The interview self-bypasses when context is complete, the user says "just build
 it" or "no questions," or the idea is not skill-shaped. Skipping changes the
-clarification budget, not the quality budget: the draft outline still needs a
+clarification budget, not the quality budget: the authoring note still needs a
 real job sentence, trigger contract, and output shape before runtime drafting.
 
 ### 2. Design
@@ -153,17 +160,22 @@ from one-off answers, project docs, memory, utilities, validators, apps, or
 managed agent systems; route to the better artifact when the idea is not
 skill-shaped.
 
+Before choosing folders, evals, or helper files, write the opening contract in
+plain language: what the skill helps the agent do, what good output looks like,
+what must stay private or avoided, and where the work stops. If that contract
+cannot be written cleanly, the design is not ready.
+
 Use [skill-design.md](references/skill-design.md) to decide:
 
 - the recurring job and ownership boundary
-- the skill type, evaluation posture, and resource/test shape it implies
+- the skill type, evidence plan, and resource/test shape it implies
 - invocation posture: model-discoverable by default, or explicit-only when the user should be the index
 - frontmatter name and description
 - runtime body shape and section names
 - instruction strength: prose, checklist, template, script, or strict sequence
 - information hierarchy: what must stay in `SKILL.md`, what belongs behind a context pointer, and what should stay out of runtime
 - setup, config, state, and memory requirements
-- eval manifest handoff for realistic prompts, expected outputs, objective checks, grader hints, and baseline comparison
+- evaluation handoff for realistic prompts, expected outputs, objective checks, grader hints, and baseline comparison
 - input and evidence boundaries
 - failure handling, approval gates, output shape, checkable completion criteria, final checks, and pruning pass
 
@@ -179,7 +191,7 @@ When creating a new skill, create the target directory and runtime files
 directly. Resolve relative `<skill-dir>` from the user's current working
 directory. The portable payload is the project root: `<skill-dir>/SKILL.md`,
 `agents/`, and any runtime folders the design actually needs. If the user wants
-project-mode evaluation or packaging state, run
+workbench-backed evaluation or packaging state, run
 `<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir>` after the payload
 exists.
 
@@ -194,7 +206,7 @@ Create optional folders only when writing their first real file; blank
 `docs/`, `tests/`, `cases/`, `benchmarks/`, or nested test-category folders
 should never exist.
 
-When the user asks for eval seeds, project-mode eval material, or evaluator
+When the user asks for eval seeds, workbench eval material, or evaluator
 handoff, create one `.<skill-name>/evals.json` prompt manifest. Keep evaluator
 handoff material there rather than in a top-level `evals/` folder. The
 writer-authored manifest should contain `skill_name`, realistic `evals[]`
@@ -202,10 +214,16 @@ prompts, `type`, expectations, optional files/fixtures, and grader hints. Limit
 it to authored task material; run status, grades, and evidence belong to later
 evaluation runs.
 
+For judgment-heavy, writing, planning, style, review, or product-guidance skills,
+do not add eval machinery just to look rigorous. Start with realistic examples,
+plain success criteria, and the simplest runtime guidance that would improve the
+next run. Escalate to `skill-evaluator` only when the user wants measured
+candidate evidence or the risk justifies a durable suite.
+
 Follow these payload rules:
 
-- Keep build notes, raw source examples, review notes, eval manifest drafts, benchmark material, and
-  rejected options out of the portable payload.
+- Keep build notes, raw source examples, review notes, evaluation handoff
+  drafts, benchmark material, and rejected options out of the portable payload.
 - Put runtime references in `references/`, one level deep. Link every reference
   directly from `SKILL.md`, and make the link wording say when to read it. A
   weak pointer to necessary material is a behavior bug; sharpen the condition
@@ -284,7 +302,7 @@ appropriate specialist lane. When packaging is approved, use
 `<meta-skill-root>/scripts/metaskill package <skill-dir>`; it exports only the
 portable payload from the project root and excludes `.<skill-name>/`. In the
 final handoff, explain the
-eval manifest as authoring material, not runtime instructions. It becomes
+evaluation handoff as authoring material, not runtime instructions. It becomes
 evidence only after a run, grades, comparison, and report exist.
 
 ## Output

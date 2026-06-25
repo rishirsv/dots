@@ -15,10 +15,10 @@ identified. Do not scan unrelated sessions to hunt for patterns unless the user
 explicitly asks.
 
 Treat session capture as one context source for ordinary skill authoring. It
-feeds Skill Writer's main workflow answer-set, but it does not
+feeds Skill Writer's private authoring note, but it does not
 replace the skill fit gate, trigger design, payload rules, or final
-validation. Draft the extracted decisions into `SKILL.md` itself rather than a
-separate planning document.
+validation. Use the extracted decisions to write natural runtime guidance in
+`SKILL.md`; do not paste the extraction table into the portable skill.
 
 ## Capture Modes
 
@@ -56,7 +56,7 @@ A thread can contain many durable lessons. Do not turn all of them into skills.
 
 Create a skill only for the last case. If the captured workflow appears once and
 the user has not said it should recur, treat it as provisional and confirm the
-recurring job in the draft outline.
+recurring job in the authoring note.
 
 ## Locate Thread Evidence
 
@@ -122,39 +122,39 @@ Capture the parts that change skill behavior:
   or misleading intermediate conclusions the skill should prevent.
 - **Output contract**: final answer shape, created artifact shape, caveats,
   positive-null behavior, and stop condition.
-- **Project mode signal**: whether the workflow needs `.<skill-name>/` state,
+- **Workbench signal**: whether the workflow needs `.<skill-name>/` state,
   durable authoring notes, team reuse material, or should remain portable-only.
 
 Keep provenance for reasoning while drafting, but keep it out of runtime unless
 the skill directly depends on that exact source.
 
-Map the extraction into the required interview answer-set:
+Map the extraction into a private authoring note:
 
-| Answer-set field | Session evidence to use |
+| Authoring question | Session evidence to use |
 |---|---|
 | Job | Recurring workflow spine, not the one-off result. |
 | Trigger (+ not for) | User phrases, symptoms, file types, handoff moments, and adjacent non-trigger tasks. |
 | Inputs and output | Files, tools, source material, created artifacts, final answer shape. |
 | Invariants and failure shields | User corrections, repeated checks, source-vs-generated boundaries, failure modes. |
-| Fragility | Whether success depended on judgment prose, fixed output shape, deterministic scripts, or strict command order. |
+| Instruction shape | Whether success depended on judgment prose, fixed output shape, deterministic scripts, or strict command order. |
 | Skill category | The primary skill type implied by the successful workflow; narrow or split if the session straddled categories. |
-| Evaluation posture | Capability uplift, encoded preference, or hybrid; include `.<skill-name>/evals.json` entries with realistic prompts, near misses, objective checks, grader hints, and the baseline when the session provides them. |
+| Evidence plan | Capability uplift, encoded preference, or hybrid; include `.<skill-name>/evals.json` entries with realistic prompts, near misses, objective checks, grader hints, and the baseline when the session provides them. |
 | Gates | Approval moments before external writes, package/sync/install, destructive edits, or final delivery. |
-| Project mode | Whether durable `.<skill-name>/` docs, team reuse material, or portable-only output is needed. |
+| Workbench plan | Whether durable `.<skill-name>/` docs, team reuse material, or portable-only output is needed. |
 
 ## Clarify Budget
 
 Ask at most one or two tight interview questions before building. Ask only for
-required answer-set decisions the thread cannot answer:
+required authoring decisions the thread cannot answer:
 
 1. The recurring job and nearest `not for` boundary.
 2. Whether to preserve a tool/script/resource as runtime payload or leave it as
    prose guidance.
-3. Project mode: portable-only, or `.<skill-name>/` authoring docs/team reuse
+3. Workbench plan: portable-only, or `.<skill-name>/` authoring docs/team reuse
    material.
 
 If the thread evidence gives a defensible default, state the default in the
-draft outline and build.
+authoring note and build.
 
 ## Distill
 
@@ -187,24 +187,25 @@ Promotion Evidence
 - Excluded detours: <failed or irrelevant attempts not copied into runtime>
 ```
 
-Then produce a compact draft outline:
+Then produce a compact authoring note:
 
 ```md
-Draft Skill Outline
+Authoring note
 - Job: <recurring workflow captured from the thread>
 - Trigger (+ not for): <user phrase>; not for <nearest boundary>
 - Inputs and output: <thread-derived input and output shape>
 - Invariants and failure shields: <corrections, gates, failure modes>
-- Fragility: <judgment prose | fixed shape | script-backed | strict sequence>
+- Instruction shape: <judgment prose | fixed shape | script-backed | strict sequence>
 - Skill category: <primary type from skill-design.md>
-- Evaluation posture: <capability uplift | encoded preference | hybrid; baseline when available>
-- Eval manifest: <`.<skill-name>/evals.json` path with positive prompts, near misses, objective checks, and grader hints when available>
+- Evidence plan: <capability uplift | encoded preference | hybrid; baseline when available>
+- Evaluation handoff: <`.<skill-name>/evals.json` path with positive prompts, near misses, objective checks, and grader hints when available>
 - Gates: <approval gates or none>
-- Project mode: <portable-only | project mode with .<skill-name>/...>
+- Workbench plan: <portable-only | project mode with .<skill-name>/...>
 - Still open: <one or two questions, or none>
 ```
 
 When `Still open` is `none`, create the skill. Use
 [skill-design.md](skill-design.md) for the trigger/body design and
 [cookbook.md](cookbook.md) only for the smallest useful runtime snippet.
-Author the payload from the draft outline, not from the raw transcript.
+Author the payload from the note, not from the raw transcript, and write the
+runtime in the natural voice of the work rather than the shape of this table.

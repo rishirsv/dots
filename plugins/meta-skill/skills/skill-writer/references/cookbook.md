@@ -288,15 +288,15 @@ or dashboard ID. If the file is absent, ask for the minimum missing value and
 continue with a draft instead of guessing.
 ```
 
-### 17. Eval Seed Handoff
+### 17. Evaluation Handoff
 
 Use during ordinary authoring when the context provides realistic prompts,
 expected behavior, objective checks, or trigger near misses. Keep this as a
 handoff, not a benchmark suite.
 
 ```md
-Eval seed handoff:
-- Skill posture: capability uplift | encoded preference | hybrid
+Evaluation handoff:
+- Evidence plan: capability uplift | encoded preference | hybrid
 - Positive prompts:
   - "<realistic messy user prompt>"
   - "<formal prompt with expected file/resource>"

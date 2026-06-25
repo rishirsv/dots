@@ -28,22 +28,33 @@ a saved report or otherwise allows artifact writes. Source edits require
 explicit approval for a concrete change; feedback, diagnosis, review, or
 brainstorming is not approval.
 
+When the complaint is about a skill feeling mechanical, over-specced,
+schema-heavy, too rigid, or written like a state machine, treat that as a runtime
+clarity defect. Inspect the words the future agent reads, compare them with one
+or two strong local examples when useful, and propose a natural-language rewrite
+that preserves the real safeguards. Do not answer that complaint with a scorecard
+unless the user asks for one.
+
 ## Mode Selection
 
 Pick the starting mode from the user's request, then adjust if the evidence
 points to another lane.
 
 - **Review** (default) — review or improvement request: "review this skill,"
-  "make my skill better," "is my triggering solid?" No specific failure in hand.
+  "make my skill better," "is my triggering solid?" No specific failure in hand,
+  and the user wants a scored or broad static review.
 - **Clean** — portable payload cleanup request: "polish this skill," "fold this
   into the main skill body," "remove internal decisions," "why is source/system
-  text in the payload?", or "make this runtime-ready."
+  text in the payload?", "make this runtime-ready," or complaints that the skill
+  reads as mechanical, schema-first, over-structured, or unlike the work it
+  should help perform.
 - **Doctor** — reported failure: "my skill keeps failing on prompt X." Work
   from the failure report to candidate text, then stop with a precise proposal.
 
 Tiebreaker: source/research/system/maintainer leakage or runtime portability
-concerns → **Clean**; a specific reported failure → **Doctor**; otherwise →
-**Review** (including static complaints like an over-long description).
+concerns → **Clean**; self-inflicted mechanical language or over-architecture →
+**Clean** unless there is a specific failure thread to diagnose; a specific
+reported failure → **Doctor**; otherwise → **Review**.
 
 ## Review (default)
 
@@ -72,7 +83,13 @@ the request into a full scored review or behavioral eval. Read
 [payload-hygiene.md](../../references/payload-hygiene.md), inspect the shipped
 payload, and identify the smallest cleanup for source/research/provenance
 leakage, maintainer placement, duplicated guidance, stale negative rules,
-unclear opening contracts, or runtime reference placement.
+unclear opening contracts, self-inflicted mechanical prose, visible route/state
+machinery, over-named modes, or runtime reference placement.
+
+For prose cleanup, preserve the behavior that matters and change the way the
+skill thinks. Replace visible taxonomies with natural decisions, move authoring
+notes out of runtime, and keep strict language only where evidence, approval,
+safety, scripts, or external writes require it.
 
 If the user directly asked to implement the cleanup or approves a concrete
 cleanup proposal, edit only the source-owned skill payload and then verify. If

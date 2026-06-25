@@ -46,6 +46,9 @@ Prefer concrete evidence over intuition. Valid improvement evidence includes:
 - saved artifacts tied to a user-observed failure
 - rendered Codex session transcripts tied to a reported failure
 - a concrete user-observed failure
+- a user-observed prose or architecture failure, such as a skill reading like a
+  schema, route report, escalation ladder, or state machine instead of guidance
+  for the work
 
 When proposing a change, record the diagnosis basis explicitly:
 
@@ -66,10 +69,12 @@ different concrete source. If evidence is missing, ask the user to provide
 concrete feedback, run available validation checks, inspect saved failure
 evidence, or authorize a manual review path.
 
-For read-only review requests, return the Judge review in chat. Save
-`judge-review.md` only when artifact writes are allowed. For later edit
-requests, cite the chat finding or saved `judge-review.md` finding heading
-before changing the portable payload.
+For read-only Review-mode requests that ask for static review evidence, return
+the Judge review in chat. Save `judge-review.md` only when artifact writes are
+allowed. For mechanical-language or prose-cleanup complaints, use the Clean or
+Doctor diagnosis path and skip the scorecard unless the user asks for one. For
+later edit requests, cite the chat finding or saved `judge-review.md` finding
+heading before changing the portable payload.
 
 For subagent review, the subagent is evidence support only. The parent owns
 diagnosis, candidate proposals, approved source edits, validation, and the
@@ -127,6 +132,12 @@ Doctor proposal or an Evaluator handoff.
    scan terms from the user's complaint and inspected evidence; include section
    headings in linked runtime references, visible HTML text, labels,
    alt/copy/button strings, and export payloads, not only Markdown prose.
+   If the failure is about mechanical language or over-architecture, inspect the
+   opening contract, workflow names, output guidance, examples, and linked
+   runtime references for visible machinery. Look for rungs, levels, ladders,
+   modes, state fields, route reports, promotion gates, and schema-shaped
+   language that could make the future agent perform the skill's structure
+   instead of the user's task.
 6. Run the Proposal Loop below.
 7. Propose the smallest fix with target files, intended behavior, validation,
    and residual risk. Stop there unless a specific source edit has already been
@@ -146,6 +157,9 @@ workflow branch, or evidence row causing the risk.
    branch, output contract, reference pointer, script contract, or missing gate.
 5. Produce two or three candidate edits that fix the behavior while preserving
    the approved trigger and runtime surface.
+   For mechanical-language failures, one candidate should usually be a positive
+   prose rewrite: name the natural behavior the skill should cause, then move or
+   delete the visible machinery that competes with it.
 6. Run a generalization check on each candidate: convert the incident evidence
    into the reusable failure class, keep one-off names and values in the
    evidence section only, and remove any source wording that would make the
@@ -169,6 +183,12 @@ workflow branch, or evidence row causing the risk.
 
 Prefer replacing a misleading sentence over adding a prohibition. Preserve
 unrelated behavior.
+
+For prose and architecture complaints, keep the response itself out of the trap.
+Use the proposal template only as a private checklist when it would make the
+chat feel like an incident report. The user should see the diagnosis, the
+intended behavior, the concrete patch scope, and the validation plan in clear
+prose.
 
 ## Trial Run
 

@@ -11,7 +11,8 @@ Turn source material into reusable skill behavior before drafting runtime
 guidance. The output is not a source summary. It is a candidate operating model:
 the recurring job, trigger boundary, input requirements, output contract,
 workflow moves, evidence rules, style constraints, domain judgment, failure
-shields, runtime resources, gotchas, and eval manifest entries.
+shields, runtime resources, gotchas, and eval handoff material when it is truly
+needed.
 
 Keep raw source, provenance, client facts, private examples, rejected drafts,
 research notes, and one-off details out of runtime unless the user explicitly
@@ -33,8 +34,8 @@ interview and design flow:
 4. Extract candidate rules through the selected lenses.
 5. Promote, reject, or park each candidate rule.
 6. Check against examples by dimension, not wording.
-7. Map promoted rules and eval manifest handoff into the main workflow
-   answer-set in `SKILL.md`.
+7. Map promoted rules and any eval handoff into Skill Writer's private
+   authoring note.
 8. Return to [skill-design.md](skill-design.md) for trigger, body shape, and runtime
    placement.
 
@@ -163,7 +164,7 @@ process; the job is narrower than a broad domain and broader than one example;
 and the nearest boundary prevents collision with adjacent skills.
 
 Runtime placement: put trigger language in frontmatter and early route language
-in `SKILL.md`. Keep trigger test prompts in the draft outline or project notes
+in `SKILL.md`. Keep trigger test prompts in the authoring note or project notes
 unless they are useful runtime examples.
 
 Example check: the skill activates for a messy realistic future request and
@@ -389,7 +390,7 @@ prompts, exact exemplar-copying checks, private facts, and hidden answer keys
 that would leak into runtime.
 
 Runtime placement: put runnable eval handoff material in
-`.<skill-name>/evals.json` when the user asks for eval seeds or project-mode eval
+`.<skill-name>/evals.json` when the user asks for eval seeds or workbench eval
 material. Put source fixtures in the flat `.<skill-name>/tests/` folder only when
 the user provided or approved them; do not create that folder when there are no
 fixture files to store. Do not add case folders, judge rubrics, run folders,
@@ -412,7 +413,7 @@ Use this after candidate rules exist.
 | Approved reusable templates, schemas, boilerplate, starter files, sample workbooks, or visual materials | `assets/` |
 | Approved runtime datasets or structured maps the skill must consult | `resources/` |
 | Scrubbed examples needed for shape or tone during runtime | `examples/` |
-| Eval manifest, trigger near misses, objective check notes, raw source packs, private examples, authoring provenance, rejected rules, research reports, benchmark notes, and source-specific evidence | `.<skill-name>/evals.json` for runnable prompt manifest; `.<skill-name>/docs/` or external project docs for non-runnable authoring evidence |
+| Evaluation handoff, trigger near misses, objective check notes, raw source packs, private examples, authoring provenance, rejected rules, research reports, benchmark notes, and source-specific evidence | `.<skill-name>/evals.json` for runnable prompt manifest; `.<skill-name>/docs/` or external project docs for non-runnable authoring evidence |
 
 Economy gates:
 
@@ -551,13 +552,13 @@ Source Distillation Notes
 - Process/tool/script rules:
 - Runtime resources:
 - Gotchas:
-- Eval manifest:
+- Eval handoff:
 - Keep out of runtime:
 - Example-matching checks:
 - Open decisions:
 ```
 
-Then map the promoted rules into the required answer-set in
-the main workflow answer-set, return to [skill-design.md](skill-design.md) for trigger and
-runtime shape, and use [cookbook.md](cookbook.md) only for the smallest snippets
-that make the distilled behavior executable.
+Then map the promoted rules into Skill Writer's private authoring note, return
+to [skill-design.md](skill-design.md) for trigger and runtime shape, and use
+[cookbook.md](cookbook.md) only for the smallest snippets that make the
+distilled behavior executable.

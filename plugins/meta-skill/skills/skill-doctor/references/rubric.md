@@ -9,8 +9,10 @@ references as the authority for scoring, payload hygiene, and runtime vs
 maintainer placement.
 
 A Judge review produces `judge-review.md` in the workbench with an **Overall
-Judge Review Score** plus per-phase and per-dimension scores, so "improve my
-skill" gets a number, not just prose.
+Judge Review Score** plus per-phase and per-dimension scores. Use it when the
+user wants static review evidence or a quality baseline. If the user is asking
+why a skill feels mechanical, rigid, or unlike the work it should support, use
+Doctor/Clean prose diagnosis first; a score can wait.
 
 > **Boundary:** the doctor scores the three *static* phases below and averages
 > them. Averaging across *live eval scenarios* (running the skill many times) is

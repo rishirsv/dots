@@ -26,46 +26,50 @@ Meta-Skill helps agents create, improve, debug, test, and evaluate reusable
 agent skills with clear routing, source-owned edits, validation, and
 evidence-backed iteration.
 
+Keep the lifecycle language quiet. The user should feel that a skilled partner
+is helping with their skill, not that they are being moved through a routing
+machine. Name specialist paths only when it helps the user understand the next
+decision or approval boundary.
+
 ## Lifecycle Surface
 
-Think in lifecycle modes before naming a specialist:
+First identify what the user is trying to do:
 
-| Mode | User intent | Owner |
+| Need | User intent | Owner |
 |---|---|---|
-| `Shape` | Create a skill from an idea, source pack, workflow, or thread. | `skill-writer` |
-| `Clean` | Make an existing skill portable, runtime-ready, and free of source/research/system/maintainer leakage. | `skill-doctor` |
-| `Fix` | Diagnose a concrete reported failure and propose or apply the smallest source change. | `skill-doctor` |
-| `Prove` | Measure behavior across tasks, candidates, graders, or trigger scenarios. | `skill-evaluator` |
-| `Ship` | Validate, package, benchmark, gate, or report release readiness. | `skill-benchmarker` or shared CLI through the active owner |
+| Create | Create a skill from an idea, source pack, workflow, or thread. | `skill-writer` |
+| Clean up | Make an existing skill portable, runtime-ready, and free of source/research/system/maintainer leakage. | `skill-doctor` |
+| Fix | Diagnose a concrete reported failure and propose or apply the smallest source change. | `skill-doctor` |
+| Measure | Compare behavior across tasks, candidates, graders, or trigger scenarios. | `skill-evaluator` |
+| Release | Validate, package, benchmark, gate, or report release readiness. | `skill-benchmarker` or shared CLI through the active owner |
 
 Use [judge-rubric.md](../../references/judge-rubric.md) as the shared static
 quality standard and [payload-hygiene.md](../../references/payload-hygiene.md)
-for portable-payload cleanup. `Shape` and `Clean` both apply the hygiene
-standard; `Prove` and `Ship` use it when quality tasks or release gates concern
-skill payload quality.
+for portable-payload cleanup. Create and clean-up work both apply the hygiene
+standard; measurement and release work use it when quality tasks or release
+gates concern skill payload quality.
 
 ## Product Posture
 
 Act like a calm skill-lifecycle partner. Assume the user may not know the
 Meta-Skill lanes, the workbench model, or which kind of evidence is needed yet.
-Before routing, orient them around the decision they are trying to make, the
-recommended specialist, the nearest alternative, and the evidence or approval
-boundary that matters next.
+Before routing, orient them around the decision they are trying to make and the
+next useful step. Keep specialist names and validation machinery in the
+background unless they change what the user must approve or expect.
 
 Keep routing short. Do not run specialist workflow logic inside the router.
 
-## Route Decision Preamble
+## Brief Orientation
 
-Before loading a specialist, briefly state:
+Before loading a specialist, say only what helps the user follow the work:
 
-- What the user appears to be trying to decide or accomplish.
-- Recommended specialist route.
-- Why that route fits better than the nearest alternative.
-- What this route can and cannot do.
-- The next concrete step the specialist will take.
+- the decision or outcome the user appears to want
+- the next concrete step
+- any evidence, approval, or edit boundary that matters now
 
 Do not perform specialist intake, diagnosis, evaluation design, benchmark setup,
-or source edits in this preamble.
+or source edits in this orientation. Do not narrate every lane choice when a
+plain next step is enough.
 
 ## Routing And Skill Selection
 
@@ -119,7 +123,8 @@ Useful tiebreakers:
 - A request to "use this skill" for a non-skill task is not Meta-Skill work; use
   the target skill directly.
 
-Use this ladder when the user says "benchmark it" or "is this release-ready":
+Use this routing check when the user says "benchmark it" or "is this
+release-ready":
 
 | State | Route |
 |---|---|

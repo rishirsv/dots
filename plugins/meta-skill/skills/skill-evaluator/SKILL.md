@@ -1,6 +1,6 @@
 ---
 name: skill-evaluator
-description: "Use when creating or running an eval suite for a skill or other target. Builds tasks, graders, validations, and reports that show baseline and candidate state rows. Not for authoring new skills, one-off diagnosis or fixes, generating candidate changes, or recurring benchmark profiles."
+description: "Use when creating or running an eval suite for a skill or other target. Builds tasks, graders, validations, and reports that compare baseline and candidate outcomes. Not for authoring new skills, one-off diagnosis or fixes, generating candidate changes, or recurring benchmark profiles."
 ---
 
 # Skill Evaluator
@@ -21,8 +21,10 @@ validation checks. For other artifacts, first define the artifact entry mode:
 what artifact is supplied, what task runs, what outcome is graded, and what
 runner or manual path can produce that evidence.
 
-Keep the lane narrow: measure behavior, report state rows, failed tasks,
-unknown evidence, and coverage limits, then route fixes to `skill-doctor`.
+Keep the lane narrow: measure behavior, explain what passed or failed, make
+unknown evidence and coverage limits visible, then route fixes to `skill-doctor`.
+Use suite, task, candidate, and trial as internal precision terms; user-facing
+answers should lead with the decision the evidence supports.
 
 ## Personality
 
@@ -59,8 +61,9 @@ gaps, and coverage limits as useful signals, not failures to hide.
 
 Artifacts live in the hidden workbench at the target skill's project root:
 `<project>/.<skill-name>/`, where `<skill-name>` comes from the target
-payload's `SKILL.md` frontmatter when available. The portable payload remains at
-`<project>/skill/`; the hidden workbench is development state beside it. Authored
+payload's `SKILL.md` frontmatter when available. The portable payload remains
+the target skill directory itself; the hidden workbench is development state
+inside that project root. Authored
 inputs such as `AGENTS.md`, `docs/`, `evals.json`, `cases/`, and benchmark
 profiles may be tracked; generated run output remains replaceable.
 
@@ -337,8 +340,8 @@ Use `eval lint` before running, `eval human` for human review packets or
 labels, `eval calibrate` for judge/human agreement artifacts, and `eval list`
 to find earlier runs in the same workbench.
 
-Report per-task outcomes, grades, aggregate performance, failed tasks, and
-baseline/candidate state rows. When repeated checks exist, summarize them as
+Report per-task outcomes, grades, aggregate performance, failed tasks, and the
+baseline-vs-candidate result. When repeated checks exist, summarize them as
 counts, for example: `Repeated 5 times: Passed: 1. Failed: 4. Result:
 inconsistent; do not treat this as reliable.` Hand fixes to `skill-doctor`.
 

@@ -228,7 +228,7 @@ test. Trigger tasks need the target seeded into a clean environment so it can
 fire; the environment-specific seeding mechanism remains behind the central CLI
 runner adapter.
 
-For baseline/candidate state rows, keep `task.md` stable across candidates. Do
+For baseline/candidate result rows, keep `task.md` stable across candidates. Do
 not write "use the skill" into the task. The same visible task should run under
 no-skill, current-skill, and candidate-skill variants.
 

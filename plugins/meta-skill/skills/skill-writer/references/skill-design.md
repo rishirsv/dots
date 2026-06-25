@@ -8,10 +8,10 @@ This reference covers design decisions and runtime writing after the idea is pla
 
 ## Contents
 
-- Design aim, predictability, directive writing, voice and style, the skill fit gate, skill type taxonomy, invocation posture, information hierarchy, and evaluation posture.
+- Design aim, predictability, directive writing, voice and style, the skill fit gate, skill type taxonomy, invocation posture, information hierarchy, and evidence planning.
 - Intake, trigger contract, frontmatter, and description checks.
 - Degree of freedom, failure handling, runtime body shape, examples, setup/state, eval-seed boundaries, and evidence boundaries.
-- Completion criteria, pruning, draft outline, and authoring-note expectations.
+- Completion criteria, pruning, and authoring-note expectations.
 
 ## Design Aim
 
@@ -47,6 +47,12 @@ If a warning takes a paragraph to explain, convert it into a directive in the re
 Lead with the outcome, not the procedure. Define what a good result looks like — the target output, the constraints that matter, the evidence available — and let the agent choose the steps. Capable models need less step-by-step scripting than older ones, and a long, rigid process often constrains the model more than it helps. Spell out steps only where order genuinely changes the result or a mistake is costly.
 
 Start with the simplest correct default path. Put advanced branches after the default and state the prerequisite that makes the advanced path valid.
+
+Before adding structure, write the runtime contract in ordinary language. Name
+what the skill helps the agent do, what the user should receive, what evidence
+or constraints matter, and where the work stops. If the first version reads like
+a schema, route report, escalation ladder, or taxonomy of modes, rewrite it as
+guidance before adding files or examples.
 
 When the skill has ordered steps, end each step on a completion criterion: the
 observable condition that tells the agent the step is done. Make it checkable,
@@ -98,6 +104,29 @@ no-op.
 ### Plain names, no house jargon
 
 Section names should sound like the job ("Normalization," "Review Posture," "Failure Handling"), not invented brand terms — `## Flight Phases` should just be `## Workflow`, `## Failure Shields` just `## Guardrails`. If a label needs its own gloss before a reader can act on it, rename it.
+
+### Smell Check: Machinery Becoming The Product
+
+Named machinery is a smell when the task is judgment-heavy. Watch for rungs,
+levels, ladders, modes, route fields, state reports, topology maps, promotion
+gates, or schemas that the user did not ask to see. These can be useful private
+authoring tools, but they should not become the runtime surface unless the
+domain itself is deterministic or the artifact contract truly requires that
+shape.
+
+Prefer the natural move:
+
+- "For simple work, keep the plan compact; for risky work, stress-test it before
+  handoff" instead of `L0/L1/L2/L3`.
+- "Return the writing first; add one short note when trust or persistence
+  matters" instead of a visible trace ladder.
+- "Record the route internally" instead of printing route, state, provenance,
+  and next-action fields for ordinary user output.
+
+If a skill needs strict structure, say why. Evidence checks, approval gates,
+external writes, artifact rendering, deterministic scripts, and safety-critical
+handoffs earn stricter language. Taste, planning, writing, research synthesis,
+and product judgment usually need elegant prose plus a few crisp checks.
 
 ### Match the reader's level
 
@@ -162,18 +191,18 @@ usually carry scripts or assertion guidance; a reference skill may need only
 well-linked gotchas and examples; an automation skill often needs config setup
 and stable state instructions.
 
-## Evaluation Posture
+## Evidence Plan
 
-Classify the draft's evaluation posture before deciding what evidence to
-preserve. This is an authoring aid, not a frontmatter label.
+Decide what evidence, if any, the skill should carry into later validation.
+This is an authoring aid, not a frontmatter label.
 
-| Posture | Use when | Seed checks should emphasize |
+| Evidence need | Use when | Seed checks should emphasize |
 |---|---|---|
 | Capability uplift | The skill helps the agent do something the base model cannot do or does inconsistently. | Skill-vs-no-skill baseline, output quality, fragile steps, deterministic checks, and whether the skill remains necessary as models improve. |
 | Encoded preference | The base model can do the pieces, but the skill preserves a team process, voice, approval path, rubric, or artifact standard. | Fidelity to the intended workflow, required sections, approval gates, tone, positive-null behavior, and near-miss routing. |
 | Hybrid | The skill combines a capability boost with workflow or style preferences. | Separate capability checks from preference checks so later evaluation can tell which part regressed. |
 
-Use the posture to choose eval manifest entries, not to bloat runtime.
+Use the evidence plan to choose evaluation handoff entries, not to bloat runtime.
 Capability uplift evals need a baseline comparison against no skill. Encoded
 preference evals need realistic workflow prompts and objective indicators of
 process fidelity. Hybrid evals should name which checks measure capability and
@@ -270,6 +299,9 @@ Start from existing context. Mine the conversation and files for:
 - likely gotchas, common rationalizations, or counterintuitive failure modes that would not be obvious from the workflow
 
 Before drafting, skim one or two strong, comparable skills in the library. Borrow their section names, default decisions, and trigger phrasing instead of inventing from scratch.
+Borrow their shape and voice, not their private labels. A strong comparable skill
+usually leads with the job, keeps the main path visible, and hides the machinery
+that only maintainers need.
 
 When the user provides a source pack and past outputs, the intake takes a
 different shape. Read [source-distillation.md](source-distillation.md) to
@@ -286,7 +318,7 @@ I can make this a review-facing skill with positive-null findings and no forced 
 
 ### Building Without Questions
 
-When context already answers the items above, proceeding straight to the build is the expected default, not a special mode. Reflect what you inferred back as the draft outline, then build. Treat an explicit "just build it," "no questions," or "one-shot" the same way: take the strongest defensible interpretation, make the material decisions yourself, and note any guesses in the draft outline so the user can redirect afterward.
+When context already answers the items above, proceeding straight to the build is the expected default, not a special mode. Reflect what you inferred back as a compact authoring note, then build. Treat an explicit "just build it," "no questions," or "one-shot" the same way: take the strongest defensible interpretation, make the material decisions yourself, and note any guesses in the authoring note so the user can redirect afterward.
 
 Building without questions does not change quality discipline. Frontmatter still needs a real trigger contract, the runtime still needs a clear job sentence and output shape, and source-derived skills still need source material distilled into reusable rules before runtime drafting. What changes is the *clarification budget*, not the *quality budget*. If the request is too thin to make a confident interpretation, surface that rather than guessing into the runtime.
 
@@ -370,7 +402,7 @@ That last form can cause the agent to follow the description instead of loading 
 
 ## Description Pressure Check
 
-Before accepting a description, record a tiny trigger set in the draft outline:
+Before accepting a description, record a tiny trigger set in the authoring note:
 
 | Prompt type | What it proves |
 |---|---|
@@ -403,7 +435,7 @@ Add runtime-specific fields only when the target runtime requires them. Decorati
 - short enough to type and remember
 - no organization-specific vocabulary in portable names unless the skill is intentionally organization-specific
 
-`description` rules — mechanical:
+`description` rules — format:
 
 - one safe YAML scalar
 - under 1024 characters; usually under 500
@@ -442,7 +474,7 @@ Split skills only when the split earns its load:
 
 ## Instruction Strength
 
-Match instruction strength to the task's fragility. A single skill usually mixes strengths at different points — judgment-heavy intake, a fixed output shape, and a deterministic final check is a common pattern. Do not feel forced to pick one level for the whole skill.
+Match instruction strength to the shape of the work. A single skill usually mixes strengths at different points — judgment-heavy intake, a fixed output shape, and a deterministic final check is a common pattern. Do not feel forced to pick one level for the whole skill.
 
 ### When to use concise prose
 
@@ -528,7 +560,7 @@ rather than shipping a filler section.
 
 ## Information Hierarchy And Context Pointers
 
-Treat runtime material as a ladder:
+Layer runtime material by how often the agent needs it:
 
 1. `SKILL.md` steps: ordered actions the agent must perform now.
 2. `SKILL.md` reference: compact rules every branch is likely to need.
@@ -576,6 +608,10 @@ Before finalizing, prune the runtime as a behavior surface, not as prose.
 - Sediment: remove stale authoring residue, old examples, and outdated caveats.
 - Sprawl: if every line is live but the top is too long, disclose conditional
   reference or split a real branch.
+- Self-inflicted stiffness: read the skill cold as if you were about to use it
+  on a real task. If it makes the agent think about the skill's architecture
+  before the user's work, rewrite the opening and output guidance in plainer
+  prose.
 
 ## Rules That Earn Their Place
 
@@ -696,18 +732,17 @@ measurement, A/B comparison, model-update checks, pass-rate/time/token tracking,
 and human-judge calibration to `skill-evaluator`; route recurring benchmark
 profiles, benchmark runs, and history scorecards to `skill-benchmarker`.
 
-## Draft Outline Handoff
+## Authoring Note Handoff
 
-Use the scaffolded `SKILL.md` as the authoring outline while the skill is still
-being shaped. The outline should contain the recurring job, trigger boundary,
-inputs and output, invariants, fragility, skill category, evaluation posture,
-eval manifest path when available, gates, project-mode choice, and any still-open
-uncertainty.
+Keep a compact authoring note while the skill is still being shaped. The note
+should contain the recurring job, trigger boundary, inputs and output,
+invariants, instruction shape, skill category, evidence plan, evaluation handoff
+path when available, gates, workbench plan, and any still-open uncertainty.
 
-The draft outline is a temporary handoff from intake to build. It shows the
-user, reviewer, or future author what assumptions the skill is being built
-from before those assumptions become runtime instructions.
+The authoring note is a temporary handoff from intake to build. It shows the
+user, reviewer, or future author what assumptions the skill is being built from
+before those assumptions become runtime instructions.
 
-Finalize by rewriting that same `SKILL.md` into runtime guidance and removing
-stale intake notes. In project mode, keep durable non-runtime notes under
+Finalize by writing `SKILL.md` as runtime guidance, not as the note itself. In
+project mode, keep durable non-runtime notes under
 `.<skill-name>/docs/`; they are review support, not the source of runtime truth.

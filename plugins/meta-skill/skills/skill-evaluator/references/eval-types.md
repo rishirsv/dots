@@ -19,7 +19,7 @@ Use these terms consistently:
 | **Transcript** | The full event record: messages, tool calls, reasoning summaries, intermediate results, and errors. |
 | **Grader** | Code, model, or human logic that scores one aspect of the trial. |
 | **Assertion / check** | One named expectation inside a grader. |
-| **Gate** | A required grader whose failure records a failed state for the measured check even when other scores are high. |
+| **Gate** | A required grader whose failure records a failed result for the measured check even when other scores are high. |
 | **Harness** | The runner and workspace machinery that executes trials, records evidence, grades, and aggregates. |
 
 Meta Skill stores candidates in `candidates[]` and task rows in `cases[]`; use
@@ -66,7 +66,7 @@ model against human review.
 Use gates for must-not-break checks: prompt-boundary leaks, package exclusions,
 forbidden file edits, schema validity, safety constraints, or deterministic
 regressions. Gates should usually be code validators. A gate failure should be
-visible in the state rows and triage notes even when judge scores are high.
+visible in the result rows and triage notes even when judge scores are high.
 
 ## Binary Check Bias
 

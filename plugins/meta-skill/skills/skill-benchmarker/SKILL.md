@@ -24,6 +24,10 @@ Do not oversell a green report. Name what the benchmark measured, what it did
 not measure, which gates failed, and which transcripts or grades need human
 review.
 
+Keep the benchmark vocabulary behind the decision. The user should see the
+recurring question, measured scope, result, and coverage limits before profile
+fields, gates, or metric names.
+
 ## Route Boundaries
 
 Use this skill when the user asks to benchmark a skill, create a recurring
@@ -73,7 +77,7 @@ If no suite exists, stop and route to `skill-evaluator` to author a suite before
 benchmarking. If the decision is a one-off quality question, use the
 smaller evaluator path instead of creating benchmark state.
 
-Use this ladder before creating files:
+Use this routing check before creating files:
 
 | State | Next owner |
 |---|---|

@@ -65,7 +65,7 @@ Triggering is a skill-specialization concept: does the skill fire on a natural
 request? Most non-skill artifacts have no analog, so skip trigger cases unless
 the target genuinely has an activation step.
 
-Baseline/candidate state rows also generalize, but the candidate source changes
+Baseline/candidate result rows also generalize, but the candidate source changes
 by target. A skill candidate may be a branch/worktree. A prompt candidate may be
 a prompt file. A document candidate may be a revised document path. In all
 cases, use candidate/task/trial language in prose and run evidence without
