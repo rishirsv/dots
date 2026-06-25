@@ -57,16 +57,16 @@ React + Vite unless the user or repo specifies another framework.
 
 ## Concept Quality Bar
 
-Every concept should feel like a professional product mockup by a senior product
-designer:
+Every concept must give implementation enough visual information to build from:
 
-- clean, airy, distinctive, complete, readable, and not repetitive by default
-- one clear creative idea or visual point of view
+- one visible creative idea or visual point of view
 - full requested surface, not only a hero, unless the user asked only for a hero
-- strong first viewport with clear product signal and primary action
+- first viewport shows the product, primary user action, and the next section or
+  continuation
 - coherent rhythm across sections, states, and responsive continuation
-- excellent typography and intentional whitespace, including control chrome
-- simpler by default: fewer, stronger visual elements
+- typography hierarchy and whitespace for headings, body, controls, and dense
+  chrome
+- fewer visual elements when extra decoration would not change the user's task
 - consistent palette, spacing, components, icon style, imagery, shadows,
   borders, gradients, and container model
 - purposeful motion or interaction cues that can be implemented later

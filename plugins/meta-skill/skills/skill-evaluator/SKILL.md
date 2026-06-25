@@ -26,12 +26,11 @@ unknown evidence and coverage limits visible, then route fixes to `skill-doctor`
 Use suite, task, candidate, and trial as internal precision terms; user-facing
 answers should lead with the decision the evidence supports.
 
-## Personality
+## Evaluation Posture
 
-Act like a helpful evaluation partner, not a batch runner. Guide the user
-through the decision: whether an eval is worth running, what evidence would be
-fair, which runner fits, where human judgment is needed, and what conclusion the
-collected evidence can and cannot support.
+Guide the user through the decision: whether an eval is worth running, what
+evidence would be fair, which runner fits, where human judgment is needed, and
+what conclusion the collected evidence can and cannot support.
 
 Assume the user does not know what an eval is or how the process works.
 Explain each stage in practical terms, then identify the next neutral evidence

@@ -1,10 +1,10 @@
 # Image To Code
 
 Read this when translating a selected image, screenshot, mockup, or Image Gen
-reference into a high-quality, interactive website or web app.
+reference into an interactive website or web app.
 
-You're tasked with translating the visual target image into a high-quality,
-interactive website or web app.
+You're tasked with recreating the selected visual target as an interactive
+website or web app.
 
 ## User Context
 
@@ -66,9 +66,9 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
    - The built-in Image Gen tool does not support transparent images;
      post-process generated assets when transparency is required.
 
-5. Define all sections of the page. For each section, meticulously measure the
-   layout, spacing between elements, and the size and space of the elements
-   themselves.
+5. Define all sections of the page. For each section, record the visible layout,
+   spacing, element sizes, and alignment relationships needed to recreate the
+   target.
 
 6. Find freely available fonts that match the target design.
 
@@ -83,8 +83,8 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
      closest matching icon library for icons.
 
 8. Build the app starting with the repo's local prototype preflight when one
-   exists. Build all interactions, ensuring the app is complete, functional, and
-   interactive: all controls and states activated and functional.
+   exists. Implement every visible control, state, and interaction shown or
+   implied by the target.
 
    Examples include:
 
@@ -94,9 +94,6 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
    - Clickable cards and buttons
    - Animated affordances if implied by the design
    - Newsletter forms, tags, filters, or navigation elements shown in the mockup
-   - Bring the thing to life. Do not deliver a static site; the less you do, the
-     more the designer has to add.
-
    Rules:
 
    - Place every image asset you generated into its position before proceeding.
@@ -219,10 +216,10 @@ Use SVG/icon components for arrows, chevrons, carets, disclosure indicators,
 pagination arrows, and carousel arrows. Do not use plain text glyphs unless the
 concept intentionally does.
 
-Custom SVG icons must be production-quality vector assets: clear `viewBox`,
-clean geometry, consistent stroke widths, aligned joins/caps, balanced negative
-space, optical centering, scalable paths, no jagged placeholder shapes, and
-`currentColor` or explicit fills only when they match the design system.
+Custom SVG icons must have a clear `viewBox`, clean geometry, consistent stroke
+widths, aligned joins/caps, balanced negative space, optical centering, scalable
+paths, no jagged placeholder shapes, and `currentColor` or explicit fills only
+when they match the design system.
 
 Make app interfaces experiential: local state, meaningful selected states,
 working filters/tabs/forms, editable or creatable items, success states,

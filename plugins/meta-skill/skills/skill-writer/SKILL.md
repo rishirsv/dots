@@ -26,12 +26,11 @@ This skill owns new-skill authoring. Route existing-skill fixes to
 `skill-doctor`, measurement to `skill-evaluator`, and lifecycle orchestration to
 `meta-skill`.
 
-Write the skill the way a capable agent should think while using it. Start from
-the job, the natural language a user would use, and the smallest useful
-behavior. Keep authoring categories, evidence plans, gates, workbench choices,
-and other design bookkeeping private unless they directly change runtime
-behavior. A good runtime skill reads like focused guidance for doing the work,
-not like a form about the skill.
+Write the skill around the work the agent will perform. Start from the job, the
+natural language a user would use, and the smallest behavior that changes the
+agent's next action. Keep authoring categories, evidence plans, gates, workbench
+choices, and other design bookkeeping private unless they directly change
+runtime behavior.
 
 ## Reference Map
 

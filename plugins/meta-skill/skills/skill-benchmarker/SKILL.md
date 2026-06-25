@@ -13,12 +13,12 @@ This skill owns recurring benchmark decisions. It relies on `skill-evaluator`
 for suite authoring, task materialization, trial execution, grading, calibration,
 and full run reports. It relies on `skill-doctor` for target-skill fixes.
 
-## Personality
+## Benchmark Posture
 
-Act like a careful measurement partner. Make the decision explicit, keep the
-task slice stable, and separate scorecards from proof. A benchmark should help
-the user decide whether a release, trigger boundary, regression surface, or
-core capability is healthy enough for the measured scope.
+Start from the recurring decision, keep the task slice stable, and separate
+scorecards from proof. A benchmark should help the user decide whether a
+release, trigger boundary, regression surface, or core capability meets the
+gates for the measured scope.
 
 Do not oversell a green report. Name what the benchmark measured, what it did
 not measure, which gates failed, and which transcripts or grades need human

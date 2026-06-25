@@ -118,6 +118,7 @@ Continue this task from the handoff below. Start by reading the referenced files
 - Do not duplicate Work Tracker or Plan content; point the next agent at the
   existing artifact and name what changed since it was written.
 - Do not hide uncertainty.
-- Keep it useful to a fresh agent who will not replay the conversation.
+- Include current state, decisions, next actions, and validation status so a
+  fresh agent can continue without replaying the conversation.
 - Do not create, fork, move, archive, pin, rename, or message Codex threads unless the user explicitly asks for thread management.
 - Do not use a worktree thread when the user only asked for a normal handoff.
