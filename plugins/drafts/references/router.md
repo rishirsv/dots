@@ -1,15 +1,15 @@
-# Router
+# Choosing The Right Drafts Path
 
 Use this reference when `drafts` needs to classify a writing request before
-acting. The main `drafts` skill owns the user-facing Draft and Rewrite lane
-behavior.
+acting. This is private routing guidance, not a response template. The user
+should see the writing outcome unless they ask how Drafts chose the route.
 
-For Draft and Rewrite lane behavior, follow `drafts/SKILL.md`; this reference
-only chooses the route and identifies missing inputs.
+For the visible writing experience, follow `drafts/SKILL.md`; this reference
+only helps choose the right help and notice missing inputs.
 
-## Inputs
+## Signals
 
-Collect the smallest available set:
+Notice the smallest available set:
 
 - User prompt.
 - Current workspace or project.
@@ -25,23 +25,24 @@ Collect the smallest available set:
 
 If an input is missing but not blocking, proceed with an explicit assumption.
 Ask only when the missing answer changes the artifact, approval boundary,
-source basis, or review target.
+source basis, or review target. If the assumption matters to the user's trust,
+mention it in one short sentence after the writing.
 
-## Lanes
+## User Need
 
-| Lane | Trigger | Route |
+| Need | When the user says | Use |
 | --- | --- | --- |
 | `Draft` | User says write, draft, compose, start, continue, outline, build a piece, create a recurring project, or provides messy notes for a standing pad. | `writer` |
 | `Rewrite` | User says rewrite, humanize, personalize, polish, tighten, shorten, expand, adapt, make this sound like me, make this less AI, or provides existing text to improve. | `writer` |
 | `Style` | User asks to create, inspect, sync, import, export, or update writing style evidence. | `writing-style` |
 | `Review` | User asks for critique, scorecard, adversarial review, QA, or fix plan. | `writing-review` |
 
-Keep `$drafts` as the front door. Do not require users to choose a lane when the
-verb or supplied text makes the lane clear.
+Keep `$drafts` as the front door. Do not require users to name the kind of help
+when their verb or supplied text makes it clear.
 
-## Writing Moments
+## Private Names For Common Work
 
-| Moment | Trigger | Route |
+| Private name | When it appears | Use |
 | --- | --- | --- |
 | `draft_lane` | New, recurring, or continuing writing | `writer` |
 | `rewrite_lane` | Existing text transformation | `writer` |
@@ -56,10 +57,11 @@ verb or supplied text makes the lane clear.
 Reusable writing guidance is handled by `update_writing_rules` in
 [writing-rules.md](writing-rules.md), not as a separate writing moment.
 
-## Default Decisions
+## Good Defaults
 
-- Prefer the `Draft` lane for new writing.
-- Prefer the `Rewrite` lane for existing text.
+- Prefer new-writing help when the user is starting, continuing, outlining, or
+  shaping rough material.
+- Prefer rewrite help when the user provides text to improve.
 - Prefer a brief and contract for substantial durable work.
 - Prefer drafting for clear short requests when the brief is already sufficient.
 - Prefer version-tied review when a draft exists.
@@ -69,33 +71,33 @@ Reusable writing guidance is handled by `update_writing_rules` in
 - Prefer a channel recipe when the user names a platform, format, slash command,
   or channel variant target. Style selection does not replace channel recipe
   selection.
-- Prefer explicit provenance over silent style selection.
+- Prefer honest style handling over silent style claims. Mention style only when
+  the choice affects trust, persistence, or the user's next decision.
 - Prefer non-personalized humanize when the user asks to "sound like me" but no
   usable style guide or samples exist.
 
 ## Missing Inputs
 
-For Draft lane work, missing inputs usually come from these core writing
-variables:
+For new writing, missing inputs usually come from these core writing variables:
 
 - What is it about?
 - Who is it for?
 - What is the main argument?
 
-For Rewrite lane work, do not ask context questions unless the source text is
+For existing text, do not ask context questions unless the source text is
 missing, style evidence is required for personalization, or the edit intent is
 materially ambiguous.
 
-## Router Response
+## Private Working Notes
 
-Every route should return:
+Keep route details as working notes for the agent or downstream specialist.
+They are not default user-visible output.
 
-- `route`.
-- `lane`.
-- `state_read`.
-- `state_written`.
-- `assumptions`.
-- `style_provenance`.
-- `rules_provenance`.
-- `source_provenance`.
-- `recommended_next_action`.
+Track only what helps the work: the chosen helper, whether saved state was read
+or changed, material assumptions, style choice, relevant rules, source context,
+and the next useful action.
+
+Use these details to preserve safety around state, style, sources, and review
+lineage. Do not print them in ordinary Draft or Rewrite responses. If the user
+asks how Drafts handled the request, explain the relevant pieces in plain
+language.

@@ -1,8 +1,8 @@
-# Review And Versioning
+# Review And Revision History
 
 Use this reference before producing Drafts review output.
 
-## Version Target
+## Which Draft Was Reviewed
 
 A durable review must target a specific `draft_version`. If no version is
 available, label the result as non-durable advice and ask whether to create or
@@ -14,7 +14,7 @@ applying fixes from non-durable advice, create or select the source
 `draft_version`, then carry the selected findings into a normal
 review-to-revision handoff.
 
-## Review Inputs
+## What To Know Before Reviewing
 
 Load or identify:
 
@@ -57,7 +57,7 @@ When scoring, name:
 Do not average vague impressions into a score without criterion-level
 rationale.
 
-## Voice Match Checks
+## Voice Fit
 
 For style or voice review, use the style guide's evidence and observable
 patterns:
@@ -72,7 +72,7 @@ patterns:
 Also check naturalness, intent fit, publishability, close-copying risk, and
 whether the draft sounds guided by the style rather than pasted from samples.
 
-## Applying Fixes
+## Applying Fixes Safely
 
 Review-to-revision handoff should preserve lineage:
 
@@ -87,5 +87,5 @@ draft_version reviewed
 Do not overwrite the reviewed version.
 
 When fixes are applied, writer should create or describe a new version with
-minimal frontmatter and report the reviewed version, selected findings, and new
-version boundary.
+minimal frontmatter. Mention the reviewed version, selected findings, and new
+version boundary only when version safety or the next action depends on it.

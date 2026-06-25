@@ -1,27 +1,35 @@
 ---
 name: writer
-description: "Use after drafts routes a writing task to the main writing engine, or when the user explicitly invokes writer, for Draft lane drafting, continuations, revisions, Rewrite lane transformations, humanized cleanups, personalization, and channel variants. Not for writing-style setup, standalone critique, generic answers, code changes, or external publishing."
+description: "Use after drafts sends writing work here, or when the user explicitly invokes writer, for new drafts, continuations, revisions, rewrites, humanized cleanups, personalization, and channel variants. Not for writing-style setup, standalone critique, generic answers, code changes, or external publishing."
 ---
 
 # Writer
 
-Create and revise writing artifacts. Use this skill after `drafts` routes a
-writing moment to the main writing engine, or when the user explicitly invokes
-`writer` for a writing, revision, or transformation task.
+Create and revise writing. Use this skill after `drafts` routes a writing
+moment here, or when the user explicitly invokes `writer` for drafting,
+revision, or transformation.
 
-The `drafts` front door owns Draft and Rewrite lane routing. Read
+Write like an editor. The user should see the artifact first: the draft,
+rewrite, outline, revision, or variant they asked for. Keep bookkeeping in the
+background unless a short note is needed for trust, persistence, or a material
+assumption.
+
+The `drafts` front door decides whether the user needs new writing or a pass on
+existing text. Read
 [state-model.md](../../references/state-model.md) before creating briefs,
-contracts, drafts, pads, or versions, especially its State Authority section.
+contracts, drafts, pads, or versions, especially its Where Saved Work Lives
+section.
 Read [writing-rules.md](../../references/writing-rules.md) when rules affect
 output.
 Read [channel-recipes.md](../../references/channel-recipes.md) when the user
 names a destination, platform, format, slash command, or channel variant. Read
-[provenance.md](../../references/provenance.md) before reporting generated or
-revised work.
+[provenance.md](../../references/provenance.md) before mentioning style,
+sources, versions, reviews, or saved state.
 
-## Writing Moment
+## The Editing Move
 
-Choose the narrowest matching action:
+Quietly choose the narrowest matching action so the writing gets the right
+treatment:
 
 - `draft_lane`: context-first new, recurring, substantial, or continuing
   writing.
@@ -37,10 +45,11 @@ Choose the narrowest matching action:
 - `humanize`: clean up generic, stiff, or automated-writing patterns using
   rules.
 
-## Draft Lane
+## Starting Or Continuing A Piece
 
-Use the Draft lane for new or recurring writing. Default to context gathering
-rather than immediate drafting when the outline is not ready.
+Use this path for new or recurring writing. Help the user move from raw
+intent to usable prose. When the outline is not ready, gather just enough
+context to make the next draft better.
 
 1. Resolve the standing pad or current draft when available.
 2. Keep the visible pad to `Ideas bank`, `Outline`, and `Draft`.
@@ -65,10 +74,10 @@ rather than immediate drafting when the outline is not ready.
 If the user says `draft anyway`, stop interviewing and draft the smallest
 bounded useful artifact with explicit assumptions.
 
-## Substantial Writing Flow
+## Longer Pieces
 
-Use this flow when Draft lane work is substantial enough to need durable
-planning or section-by-section execution. Keep the visible pad simple even when
+Use this approach when the piece is substantial enough to need durable planning
+or section-by-section execution. Keep the visible work surface simple even when
 brief or contract records exist.
 
 1. Create or update a `writing_brief` with audience, purpose, format, scope,
@@ -82,14 +91,14 @@ brief or contract records exist.
    chapters or sections.
 6. Preserve unrelated sections unless the user asks for a whole-document pass.
 7. Save material changes as new `draft_version` records when the surrounding
-   system supports durable state; otherwise describe the version boundary in the
-   handoff.
+   system supports durable state. If state is unavailable or unsaved, say that
+   briefly after the writing only when it matters.
 
-## Rewrite Lane
+## Improving Existing Text
 
-Use the Rewrite lane for existing text. Do not start a full Draft interview
-unless the source text is missing, the requested transformation is ambiguous, or
-the user asks to attach the rewrite to a standing pad.
+Use this path for existing text. Do not start a full writing interview unless
+the source text is missing, the requested transformation is ambiguous, or the
+user asks to attach the rewrite to a standing pad.
 
 1. Resolve the provided text, selected `draft_version`, or section.
 2. Identify the edit intent: rewrite, humanize, personalize, tighten, polish,
@@ -107,25 +116,28 @@ because the user said humanize.
 
 When the user asks to "sound like me," use a selected or available style guide.
 If no usable guide or samples are available, ask for style evidence or run a
-non-personalized humanize pass and say so.
+non-personalized humanize pass and say so in one short sentence.
 
-## Revision Flow
+## Revising Existing Drafts
 
 1. Resolve the source `draft` and `draft_version`.
 2. Identify the edit intent: shorten, expand, sharpen, restructure, continue,
    adapt, personalize, humanize, or apply review fixes.
 3. Preserve the previous version.
 4. Apply only the requested scope.
-5. Record the source version, target version, assumptions, and changed sections.
+5. Keep the source version, target version, assumptions, and changed sections as
+   working notes. Mention them to the user only when version safety or the next
+   action depends on them.
 
-## Style, Rules, And Sources
+## Voice, Rules, And Sources
 
 - Apply writing rules according to
   [writing-rules.md](../../references/writing-rules.md).
 - If frontmatter already has `style: <id>`, treat that style as pinned.
 - If no style is pinned for new durable work, choose a concrete style ID from
-  user-global style guides plus shipped `default`, write that concrete ID when
-  creating frontmatter, and report why it fit the content.
+  user-global style guides plus shipped `default`, and write that concrete ID
+  when creating frontmatter. Mention the choice briefly only when the user needs
+  it for trust or future edits.
 - Change an existing `style` value only after user confirmation.
 - When `personalize` uses a style, retrieve the selected `style.md` and
   relevant references before drafting, then run humanize-style cleanup for
@@ -140,17 +152,33 @@ non-personalized humanize pass and say so.
 - Do not cite or rely on a source unless it was provided, retrieved, or already
   present in the working context.
 
-## Output
+## What The User Sees
 
-Return the draft or revision with:
+Return the artifact first.
 
-- Writing moment and action taken.
-- Lane: `Draft` or `Rewrite`.
-- Brief or contract changes.
-- Draft and version boundary.
-- Three rhetorical directions offered or selected direction, when applicable.
-- Selected channel recipe and any assumptions.
-- Selected style and style provenance.
-- AGENTS.md guidance applied and any conflicts.
-- Sources used and persistence assumptions.
-- Recommended next action, usually review, revise, continue, or create variant.
+For ordinary chat-only drafting and rewriting, the whole response can be just
+the writing. Do not append lane names, route names, state details, provenance
+details, or AGENTS.md bookkeeping.
+
+Add one short note after the writing only when it changes trust, persistence, or
+the user's next decision. Good notes are natural prose:
+
+```text
+I treated this as a humanize pass, not a personal voice match.
+```
+
+```text
+I used `email-rishi` and assumed this is for an internal peer.
+```
+
+```text
+I did not save this as Drafts state.
+```
+
+```text
+I revised this from v001 and would save it as a new version before overwriting
+anything.
+```
+
+If the user asks for the route, sources, style choice, rule checks, or version
+history, explain those details directly after answering the writing request.

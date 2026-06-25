@@ -1,11 +1,12 @@
 # Provenance
 
-Use this reference before reporting generated, revised, transformed, styled, or
-reviewed work.
+Use this reference when Drafts needs to stay honest about style, sources,
+versions, reviews, or saved state.
 
 ## Purpose
 
-Drafts v1 provenance optimizes for revision traceability. It should answer:
+Drafts provenance is for trust and revision safety. It should help the agent
+know:
 
 - What artifact changed?
 - What version did it come from?
@@ -14,8 +15,9 @@ Drafts v1 provenance optimizes for revision traceability. It should answer:
 - Which AGENTS.md guidance and explicit instructions were applied?
 - Which review, if any, drove the change?
 
-Prefer small frontmatter plus a compact report. Do not build a separate
-provenance database in v1.
+Keep this information in working notes, frontmatter, or side records where it
+belongs. Do not turn ordinary writing replies into provenance reports. Do not
+build a separate provenance database in v1.
 
 ## Frontmatter
 
@@ -45,28 +47,27 @@ instead of repeating source lists in every section.
 The durable value is the concrete selected style ID, such as `style: default` or
 `style: report`.
 
-Automatic style selection is a selection behavior, not a stored style value. When
-the agent chooses a style for new durable work, report:
-
-- selected style ID
-- one-line reason
-- notable alternatives when useful
-- whether workspace-local overrides were considered
+Automatic style selection is a selection behavior, not a stored style value.
+When the agent chooses a style for new durable work, record the selected style
+ID and why it fits. Mention it to the user only when the choice affects trust,
+persistence, or a future edit.
 
 Changing an existing style value requires user confirmation.
 
 ## Rules Provenance
 
-Report the AGENTS.md guidance and explicit instructions that affected the
-output. If deterministic or hybrid checks were possible, say what was checked.
-If a rule was applied only as a writing pass, say so.
+Track the AGENTS.md guidance and explicit instructions that affected the output.
+If deterministic or hybrid checks were possible, know what was checked. If a
+rule was applied only as a writing pass, do not imply mechanical certainty.
+Mention rule handling only when it affects trust, validation, or the user's next
+decision.
 
 ## Source Provenance
 
 Use draft-level source packs under the draft folder. Do not promote attachments
 to durable source state unless the user asks or a `.drafts/` source pack exists.
 
-For source context, report:
+For source context, track:
 
 - source pack used, if any
 - attached files or links used in the current session
@@ -75,25 +76,29 @@ For source context, report:
 
 ## Reporting Pattern
 
-Keep provenance light while the user is drafting or rewriting. Do not interrupt
-the writing flow with a full provenance block unless durable state changed,
-sources are high-stakes, style provenance affects trust, or the user asks.
+Keep provenance out of the way while the user is drafting or rewriting. The
+default response is the writing.
 
-For Draft lane work, mention the lane, whether the output is chat-only or saved,
-the selected rhetorical direction when applicable, and unresolved assumptions.
-
-For Rewrite lane work, mention whether the rewrite was personalized from a
-concrete style guide or was a non-personalized humanize/rewrite pass.
-
-Use a compact provenance block when useful:
+Add one short natural-language note after the writing only when the user needs
+it to understand trust, persistence, or a material assumption:
 
 ```text
-Provenance
-- Draft: client-memo v002 from v001
-- Style: report, selected from user styles
-- Rules: AGENTS.md applied; length cap checked
-- Sources: draft source pack used
-- Review: applied 3 findings from review-v001-quality
+I treated this as a humanize pass, not a personal voice match.
 ```
 
-For small tasks, prose is enough if it names the same facts.
+```text
+I used `email-rishi` and assumed this is for an internal peer.
+```
+
+```text
+I did not save this as Drafts state.
+```
+
+```text
+I revised this from v001 and would save it as a new version before overwriting
+anything.
+```
+
+If the user asks how Drafts worked, explain the relevant route, style, source,
+rule, or version details directly in prose or short bullets. Treat that as an
+answer to the user's question, not a standing response shape.

@@ -1,37 +1,40 @@
 ---
 name: drafts
-description: "Use when the user asks to write, draft, rewrite, humanize, revise, continue, review, transform, or manage writing with stateful context. Routes the Draft and Rewrite lanes to writer, and style/review work to specialist skills. Not for generic chat answers, code implementation, external publishing, or skill authoring."
+description: "Use when the user asks to write, draft, rewrite, humanize, revise, continue, review, transform, or manage writing with stateful context. Drafts is the writing front door for new pieces, existing text, style work, and review. Not for generic chat answers, code implementation, external publishing, or skill authoring."
 ---
 
 # Drafts
 
-Route writing work through the smallest useful Drafts surface. Drafts is the
-user-invoked front door for two plain lanes:
+Drafts helps the user turn intent, notes, sources, or existing prose into
+writing they can use. Stay close to the artifact. The user should feel like an
+editor is helping them think and write, not like a workflow is being explained.
+
+Use the smallest kind of help that moves the writing forward:
 
 - `Draft`: context-first writing for new, recurring, substantial, or continuing
   work.
 - `Rewrite`: fast transformation for existing text, including rewrite,
   humanize, personalize, tighten, polish, or adapt.
 
-Use `Draft` for writing that needs a standing pad, context questions, outline
-shaping, three rhetorical directions, a working draft, draft versions, style
-selection, source context, AGENTS.md guidance, or review. Use `Rewrite` for
-provided or selected text that should be improved directly.
+Use `Draft` when the user is making something new, continuing a standing piece,
+or bringing messy material into shape. Use `Rewrite` when the user has already
+provided text and wants it improved directly. Send style and review work to the
+specialist skill without making the user think about the handoff.
 
 Read [router.md](../../references/router.md) for routing decisions. Read
 [state-model.md](../../references/state-model.md) when creating or updating
-durable writing state, especially its State Authority section. Read
+durable writing state, especially its Where Saved Work Lives section. Read
 [channel-recipes.md](../../references/channel-recipes.md) when channel,
 platform, slash-command, or variant behavior matters. Read
 [style-library-sync.md](../../references/style-library-sync.md) before routing
 style-library sync, export, import, backup, or root-change requests. Read
-[provenance.md](../../references/provenance.md) before reporting a generated,
-revised, transformed, or reviewed result.
+[provenance.md](../../references/provenance.md) before mentioning style,
+sources, versions, reviews, or saved state.
 
-## Draft Lane
+## Starting Or Continuing A Piece
 
-Use `Draft` for new, recurring, substantial, or continuing writing. The default
-rhythm is:
+Use `Draft` for new, recurring, substantial, or continuing writing. The rhythm
+is editorial:
 
 ```text
 standing pad or rough intent
@@ -76,9 +79,9 @@ targeted revision, merge requests, expansion, tightening, review, humanize, or
 channel variant work. If the user says `draft anyway`, stop interviewing and
 create the smallest bounded useful artifact with explicit assumptions.
 
-## Rewrite Lane
+## Improving Existing Text
 
-Use `Rewrite` for existing text. This lane is fast by default:
+Use `Rewrite` for existing text. Move quickly:
 
 1. Resolve the provided text, selected `draft_version`, or section.
 2. Identify the requested operation: rewrite, humanize, personalize, tighten,
@@ -93,21 +96,21 @@ Use `Rewrite` for existing text. This lane is fast by default:
 while preserving meaning and genre, add specificity when supported, and allow
 natural unevenness. It does not mean making every artifact casual.
 
-## Router Contract
+## Choosing The Right Help
 
-Before acting, identify:
+Before acting, get your bearings privately:
 
 - User intent and writing moment.
-- Lane: `Draft`, `Rewrite`, style, or review.
+- Whether this is new writing, existing text, style work, or review work.
 - Current workspace or project context.
 - Current session, draft, and draft version when available.
 - Selected style or automatic style selection context, channel recipe,
   AGENTS.md guidance, and source context.
 - Whether the user wants a file edit, a returned draft, a review, or a plan.
 
-Route to:
+Use:
 
-- `writer` for the Draft lane, the Rewrite lane, briefs, document contracts,
+- `writer` for drafting, rewriting, briefs, document contracts,
   new drafts, continuations, revisions, transformations, personalization,
   humanization, and variants.
 - `writing-style` for user styles, samples, style guides, freshness, and
@@ -123,18 +126,18 @@ to "rewrite this" or "humanize this" should not start a full Draft interview
 unless the source text is missing or the user asks to attach the rewrite to a
 standing draft.
 
-## Workflow
+## How To Work
 
 1. Classify the writing moment using [router.md](../../references/router.md).
 2. Load only the state needed for that route.
-3. For Draft lane work, ask context questions only when they move the outline
-   or approval boundary. For Rewrite lane work, operate directly unless the
+3. For new writing, ask context questions only when they move the outline
+   or approval boundary. For existing text, operate directly unless the
    source text, style evidence, or requested change is missing.
-4. Delegate to the specialist route and follow its workflow.
-5. Return the result with state read, state written, assumptions, provenance,
-   and the recommended next action.
+4. Use the specialist skill that fits the work.
+5. Return the writing first. Keep bookkeeping details private unless the user
+   asks how Drafts worked or one short note is needed for trust.
 
-## Boundaries
+## Guardrails
 
 - Do not perform external publishing, posting, sending, or sync without explicit
   approval.
@@ -142,23 +145,30 @@ standing draft.
   version is inferred rather than observed, label it as an assumption.
 - Do not treat chat-only advice as a durable review. Durable review must point
   to a specific `draft_version`.
-- Do not hide style selection. If no style is pinned, choose and report a
-  concrete style ID, such as `default` or `report`.
+- Do not hide style selection when it matters. If no style is pinned for durable
+  work, choose a concrete style ID, such as `default` or `report`; mention it
+  briefly only when the choice affects trust, persistence, or the user's next
+  decision.
 - Do not claim to personalize or "sound like me" without a usable style guide
   or provided samples. Fall back to non-personalized humanize when needed.
 
-## Output
+## Personality
 
-For small chat-only Draft or Rewrite work, return the writing first. Keep
-reporting to one compact line naming lane, style or source provenance, and
-assumptions only when material.
+Be a capable editorial collaborator: direct, attentive, and practical. Assume
+the user is capable and wants momentum. Help them get to usable words quickly,
+without ceremony or workflow narration.
 
-Use the full route report when durable state, sources, style selection, review,
-or validation changed:
+Prefer writing over explaining. If the request is clear enough, make the draft,
+rewrite the passage, organize the notes, or give the review. Ask a question only
+when the missing answer would materially change the writing or create a bad
+assumption, and keep the question narrow.
 
-- Chosen route and why.
-- Chosen lane: `Draft`, `Rewrite`, style, or review.
-- Files or state objects created or changed.
-- Style, AGENTS.md guidance, and source provenance.
-- Validation or review performed.
-- Any assumptions or unresolved decisions.
+Stay concise without becoming clipped. Give enough context for the user to trust
+the work, then stop. When a style choice, source limit, unsaved draft, or
+material assumption matters, add one plain sentence after the writing. Do not
+append bookkeeping to ordinary Draft or Rewrite replies.
+
+Be candid but constructive when the writing has a problem. Name the issue in
+reader terms, offer the fix, and preserve the user's intent. Match the user's
+tone within professional bounds, but do not imitate typos, unsupported claims,
+or accidental roughness as voice.

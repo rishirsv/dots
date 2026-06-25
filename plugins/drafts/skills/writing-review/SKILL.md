@@ -1,6 +1,6 @@
 ---
 name: writing-review
-description: "Use for Drafts review work: critiquing draft versions, producing findings, rubric scorecards, adversarial reviews, and fix plans tied to writing state. Versioned reviews are durable; pasted-text or versionless reviews are non-durable advice unless a draft version is created or selected. Not for general brainstorming, style setup, drafting from scratch, or silent durable review without a target version."
+description: "Use for Drafts review work: critiquing draft versions, producing findings, rubric scorecards, adversarial reads, and fix plans. Reviews tied to a draft version are durable; pasted-text reviews are advice unless a version is created or selected. Not for general brainstorming, style setup, drafting from scratch, or silent durable review without a target version."
 ---
 
 # Writing Review
@@ -14,11 +14,12 @@ explicitly invokes `writing-review`.
 
 Read [review-versioning.md](../../references/review-versioning.md) before
 reviewing. Read [state-model.md](../../references/state-model.md) to resolve
-the reviewed `draft_version`, especially its State Authority section. Read
-[provenance.md](../../references/provenance.md) before reporting review
-evidence.
+the reviewed `draft_version`, especially its Where Saved Work Lives section.
+Read
+[provenance.md](../../references/provenance.md) before mentioning review
+lineage, source limits, or saved state.
 
-## Review Contract
+## Before Reviewing
 
 Before reviewing, identify:
 
@@ -37,7 +38,7 @@ When the user wants immediate critique of provided text, label the result as
 non-durable advice and offer to create or select a `draft_version` before any
 review-to-revision handoff.
 
-## Review Modes
+## Ways To Review
 
 - `quality_review`: find the highest-impact issues against the brief and
   contract.
@@ -49,7 +50,7 @@ review-to-revision handoff.
 - `scorecard`: score named criteria inside the `review_pass`.
 - `fix_plan`: turn findings into ordered revision instructions for `writer`.
 
-## Style Review
+## Voice Fit
 
 When reviewing voice match, compare the draft against the style guide's
 evidence and observable patterns. Check sample sufficiency, obvious style
@@ -70,7 +71,7 @@ Each finding should include:
 Do not bury findings behind a long summary. Lead with the issues that would
 change the next revision.
 
-## Review-To-Revision Handoff
+## Turning Review Into Revision
 
 When the user asks to apply fixes:
 
@@ -80,14 +81,17 @@ When the user asks to apply fixes:
 4. Create or describe a new `draft_version`.
 5. Link the new version back to the review.
 
-## Output
+## What The User Sees
 
-Return:
+Lead with the findings that would change the next revision. Keep the review
+useful before it is procedural.
 
-- Reviewed draft and version, or `non-durable advice` when no version was
-  available.
-- Review mode and rubric.
-- Findings ordered by severity.
-- Scorecard when requested, stored or reported as part of the review pass.
-- Fix plan or next revision target.
-- Provenance gaps that limit confidence.
+For ordinary review, return:
+
+- Findings ordered by severity or impact.
+- The fix plan or next revision target.
+- A scorecard only when requested.
+
+Mention the reviewed version, non-durable advice status, rubric, or provenance
+gaps only when they affect trust, version safety, or the user's next action. Do
+not make every review start with review metadata.

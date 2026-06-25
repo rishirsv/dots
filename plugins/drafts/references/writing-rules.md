@@ -2,7 +2,7 @@
 
 Use this reference when writing rules affect a Drafts output.
 
-## Source Of Truth
+## Where Rules Come From
 
 Drafts v1 does not maintain a separate Drafts rule database. Writing rules come
 from:
@@ -15,7 +15,7 @@ from:
 Rule sources are always considered. Apply non-conflicting rules, resolve
 conflicts explicitly, and do not put rule sources in artifact frontmatter.
 
-## Rule Layers
+## How Rules Stack
 
 Apply rules in this order:
 
@@ -30,7 +30,7 @@ AGENTS.md guidance
 
 Later layers can specialize earlier layers, but conflicts must be surfaced.
 
-## Enforcement Types
+## How Certain A Check Can Be
 
 Classify each rule:
 
@@ -80,32 +80,34 @@ When rules conflict:
    guidance.
 4. Record the assumption or ask when the choice changes the artifact.
 
-## update_writing_rules
+## Reusable Rule Updates
 
 Use `update_writing_rules` when the user provides reusable writing guidance
 that should apply beyond the current draft or session.
 
-Flow:
+When the user gives reusable writing guidance:
 
 1. Decide whether the guidance is reusable or only applies to the current
    artifact.
 2. If reusable, propose a concise AGENTS.md addition or edit.
 3. Explain where it should go and why.
 4. Edit AGENTS.md only after explicit user approval.
-5. Report the changed guidance and how it will affect future Drafts work.
+5. Briefly say what changed and how it will affect future Drafts work.
 
 Do not silently update AGENTS.md. Do not create a parallel Drafts rules surface.
 
-## Validation
+## Checking Rules
 
 For deterministic or hybrid rules:
 
 - Check banned phrases, required labels, formatting constraints, length caps,
   and required sections when feasible.
-- Report any rule that could not be checked.
+- Mention any rule that could not be checked when the user needs to trust the
+  result.
 - Fix in-scope failures before handing off.
 
 For generative cleanup:
 
-- Say the rule was applied as a writing pass, not mechanically guaranteed.
+- Say the rule was applied as a writing pass, not mechanically guaranteed, only
+  when that distinction matters.
 - Use a follow-up validator when the user needs certainty.

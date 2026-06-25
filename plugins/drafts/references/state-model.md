@@ -1,8 +1,8 @@
-# State Model
+# Drafts State And Saved Work
 
 Use this reference when creating, updating, or naming Drafts state.
 
-## State Authority
+## Where Saved Work Lives
 
 Drafts v1 uses two durable locations:
 
@@ -17,10 +17,9 @@ its existing naming conventions.
 
 Do not invent persistence paths, object IDs, or saved versions. When no durable
 state location is available, return the artifact in chat or in the requested
-file and describe the version boundary, provenance, and assumptions instead of
-claiming that state was saved. Ask before creating `.drafts/` or the user style
-library unless the user explicitly requests durable Drafts state or style-guide
-work.
+file. Add one short note only when the user needs to know that the work was not
+saved or versioned. Ask before creating `.drafts/` or the user style library
+unless the user explicitly requests durable Drafts state or style-guide work.
 
 Do not edit installed plugin cache files for user state. Shipped defaults are
 runtime payload; user changes belong in the user state root or the current
@@ -110,9 +109,9 @@ The shipped `default` style is the read-only fallback asset at
 `assets/styles/default/style.md`. A user-customized `default` style, if any,
 lives in the user style library.
 
-Maintain `style-library.json` as the inspectable index for user styles, guide
-status, channels, audiences, privacy, reference policy, freshness, and sync
-metadata.
+Maintain `style-library.json` as the inspectable index for user styles. Keep it
+to lookup and routing fields such as ID, title, channel, path, modes, aliases,
+notes path, and optional update time.
 
 Style lookup order:
 
@@ -164,7 +163,7 @@ version: v001
 Rules do not belong in frontmatter. Sources belong at the draft level unless a
 specific section truly has separate source constraints.
 
-## Core Objects
+## Working Pieces
 
 | Object | Purpose |
 | --- | --- |
@@ -176,9 +175,9 @@ specific section truly has separate source constraints.
 | `draft` | User-facing writing artifact |
 | `section` | One Markdown section or chapter that can be compiled into a draft |
 | `draft_version` | Saved revision of a draft |
-| `style` | Named voice profile |
+| `style` | Named voice guide |
 | `style_reference` | Sample attached to a named style |
-| `style_guide` | Generated style instructions, evidence, freshness, and warnings |
+| `style_guide` | Generated voice manual with instructions, modes, examples, and guardrails |
 | `channel_recipe` | Reusable destination or format recipe |
 | `source_pack` | Draft-level source context |
 | `review_pass` | Version-tied critique and findings |
@@ -187,14 +186,13 @@ specific section truly has separate source constraints.
 Writing rules are resolved from AGENTS.md plus explicit session or draft
 instructions; they are not a `.drafts/` state object.
 
-## Draft And Rewrite State
+## Chat-Only Versus Saved Writing
 
-Draft lane work may create or update durable state when the user asks for a
+New writing may create or update durable state when the user asks for a
 recurring project, an existing draft, persistence, or a file edit. Otherwise,
-return chat-only output and describe the version boundary without claiming a
-saved state object.
+return chat-only output without claiming a saved state object.
 
-Rewrite lane work is chat-only by default when the user pastes text. It becomes
+Rewriting is chat-only by default when the user pastes text. It becomes
 durable when it revises a selected `draft_version`, updates `pad.md`, creates a
 new version, or the user explicitly asks to save the rewrite.
 
@@ -204,7 +202,7 @@ standing pad exists. Do not create a visible `Brief` section. Internal
 allowed only when the state location exists or the user has approved durable
 Drafts state.
 
-## Brief Before Contract
+## Plan Before Section Work
 
 Use `writing_brief` for intent:
 
@@ -245,7 +243,7 @@ Create or describe a new `draft_version` for material changes:
 A `channel_variant` should usually be a separate `draft` linked to its source
 draft and source version.
 
-## Style State
+## Style Guides And Evidence
 
 Keep these distinct:
 
@@ -253,18 +251,18 @@ Keep these distinct:
 - `style_reference`: evidence for a named user style.
 - `style_guide`: the `style.md` instructions generated or updated from
   accepted references and user corrections.
-- `style_provenance`: runtime trace of which style was selected and why.
+- `style_provenance`: private working context for which style was selected and
+  why.
 
-Style identity and guide validity are separate. A style can exist while its
-guide is `stale`, `insufficient_evidence`, `contaminated`, or `failed`. Put
-guide status, guide limits, confidence, freshness, test results, and
-contamination warnings in `style.md`.
+Style identity and guide usefulness are separate. A style can exist while the
+evidence is thin, mixed, stale, or noisy. Put limitations in `style.md` only
+when they change drafting behavior; otherwise keep them in maintenance notes or
+a brief handoff note.
 
-For multi-context corpora, prefer multiple concrete style IDs over one blended
-global voice. A base style guide may hold stable cross-context patterns, but
-relationship- or channel-specific behavior should live in separate guides such
-as `text-flirting`, `email-client`, `email-peer`, or
-`email-junior-teammate`.
+For multi-context corpora, prefer one concrete style ID per channel family with
+modes for relationship or task differences. Split into multiple style IDs only
+when one guide would make contradictory voice instructions, such as mixing
+intimate text messages with formal client email.
 
 ## Channel Recipes
 

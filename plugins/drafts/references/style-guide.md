@@ -3,23 +3,30 @@
 Use this reference before generating, updating, testing, or reporting a reusable
 writing style guide.
 
-## Contract
+## What A Style Guide Is
 
-A style guide is the durable, readable voice artifact generated from selected
-style references and user corrections. It should tell `writer` what to do
-differently, tell `writing-review` what can be checked, and tell the user how
-much trust to place in the guide.
+A style guide is a durable, readable voice manual. It should help `writer`
+produce better prose, help `writing-review` check voice fit, and help the user
+inspect what the system thinks their writing style is.
 
-Do not treat sample approval as guide quality. Before a guide is used, separate
-sample scope, sample quality, guide validity, and runtime provenance.
+The guide body should be generous where generosity changes output: stable voice,
+rhythm, common moves, audience modes, examples, and guardrails. It should not
+read like a schema export, scorecard, or settings form.
 
-## Boundaries
+Keep three surfaces distinct:
 
-Keep these surfaces distinct:
+- `style.md`: the runtime voice manual the model reads while writing.
+- `style-library.json`: the minimal lookup record used to find and route styles.
+- maintenance notes: extraction notes, sample caveats, test prompts, and update
+  observations that help improve a guide later.
 
-- `style_reference`: sample reference attached to one named style.
+## Keep The Surfaces Separate
+
+Keep these concepts separate:
+
+- `style_reference`: sample or correction attached to one named style.
 - `workspace_sample`: workspace-level voice/context evidence that can inform
-  automatic style selection but is not a named style reference.
+  style selection but is not a named style reference.
 - `style_guide`: `style.md`, generated or updated from selected references and
   user corrections.
 - `writing_rules`: durable wording policies, not voice evidence.
@@ -29,13 +36,14 @@ If the user provides text or files and does not say where they belong, ask only
 when the choice changes persistence or runtime behavior. Never silently save
 workspace samples as style references or style references as Knowledge.
 
-## Storage
+## Where Guides Live
 
 User styles live in:
 
 ```text
 <style-library-root>/<style-id>/
   style.md
+  notes.md
   references/
 ```
 
@@ -55,400 +63,190 @@ When a persistent user style library exists, create or update
 `style-library.json` in the style library root so the user can inspect, back up,
 sync, import, and export styles without reading every `style.md` file.
 
-## Guide Flow
+## Building Or Updating A Guide
 
 1. Resolve the target style ID and the target channel or channel family.
-2. Confirm durable guide work when no user style library exists. For chat-only
+2. Prefer one guide per channel family. Put relationship, audience, and task
+   differences inside that guide as modes.
+3. Create a separate guide only when a channel or audience has a materially
+   different voice that would make the shared guide confusing.
+4. Confirm durable guide work when no user style library exists. For chat-only
    style reads, do not create or update durable style files.
-3. Load existing `style.md`, references, user corrections, and known warnings.
-4. Classify each incoming item as `style_reference`, `workspace_sample`,
-   `knowledge`, `source_pack`, or session-only context.
-5. Extract source metadata, authorship, relationship context, channel, audience,
-   thread context, and cleaned user-authored text.
-6. For multi-context corpora, build a corpus map before generating prose.
-7. Preserve cleaned or redacted text for accepted references by default.
-   Preserve raw source or extracted text only with explicit user approval or an
-   explicit `local_only` retention policy.
-8. Check sample quality before guide generation.
-9. Set a guide validity state before drafting guide prose.
+5. Load existing `style.md`, references, user corrections, and maintenance
+   notes.
+6. Classify incoming material as style reference, workspace sample, Knowledge,
+   source pack, or session-only context.
+7. Extract authorship, channel, audience, relationship, thread context, intent,
+   and cleaned user-authored text before deciding what guide the material can
+   support.
+8. For large or mixed corpora, build a corpus map before generating prose.
+9. Check sample quality before guide generation.
 10. Generate or update the guide only from accepted references and scoped
     corrections.
 11. Run a guide test when feasible.
-12. Write `style.md` with status, evidence, warnings, and runtime handoff.
-13. Report what changed, what evidence was used, and what should not be trusted.
+12. Write `style.md` as a voice manual, not a field form.
+13. Update `style-library.json` only with lookup and routing fields.
+14. After the guide or update, briefly say what changed, what evidence was used,
+    and what should not be over-trusted.
 
-## Guide Status
+## Good Style Evidence
 
-Use explicit guide status:
+Before using a sample, decide whether it is actually useful voice evidence.
+Record detailed sample notes in `notes.md` or the reference record, not in the
+runtime style guide unless the caveat changes drafting behavior.
 
-- `ready`: enough clean, coherent evidence for normal reuse.
-- `stale`: references or corrections changed since the guide was generated.
-- `insufficient_evidence`: samples are too short, too few, too repetitive, too
-  noisy, or too narrow to support a durable voice guide.
-- `contaminated`: samples likely mix authors, channels, generated text, or
-  source boilerplate in a way that could teach the wrong voice.
-- `failed`: guide generation or testing could not produce a usable result.
+Check:
 
-Do not turn an `insufficient_evidence` or `contaminated` warning into a
-positive-sounding style summary. If the guide is not `ready`, surface that state
-before giving writing instructions.
-
-## Sample Quality
-
-For each style reference, record:
-
-- Source type: paste, URL, site crawl, upload, import, or user correction.
-- Scope: style reference, workspace sample, Knowledge, source pack, or
-  session-only context.
+- Whether the text is user-authored outgoing writing.
 - Channel and genre.
-- Topic or domain.
-- Author and author confidence.
-- Raw source availability and retention policy.
-- Extracted text availability and retention policy.
+- Audience and relationship.
+- Intent and stakes.
 - Cleaned word count.
-- Cleaning performed.
 - Duplicate or near-duplicate risk.
-- Boilerplate, comment, cookie, subscription, navigation, or UI noise.
+- Boilerplate, quoted text, signatures, footers, navigation, or UI noise.
 - Topic vocabulary that should not be copied unless relevant.
 - Channel conventions that should not be mistaken for stable voice.
-- Permission, privacy, or close-copying concerns when relevant.
+- Close-copying risk when examples would be too near the source.
 
 Reject, quarantine, or downweight samples that are too short, duplicate,
 mixed-author, mostly boilerplate, mostly topical, generated by someone else, or
-not actually representative of the user.
-
-## Source Extraction
-
-For each source item or corpus record, extract enough structure to decide which
-style guide it can safely support:
-
-- Container metadata: source type, source path or URL, import timestamp,
-  extractor used, and privacy scope.
-- Authorship: sender or author, whether the text is user-authored, author
-  confidence, and whether the text is quoted, forwarded, generated, or edited by
-  someone else.
-- Audience: recipient, relationship, role, organization, seniority, closeness,
-  and whether the audience is public, private, internal, client, peer, junior, or
-  romantic.
-- Conversation context: thread ID, reply chain, timestamp, channel, genre,
-  intent, stakes, topic, and whether the message was initiating, replying,
-  correcting, selling, teaching, flirting, reconciling, or closing a loop.
-- Text layers: raw text, extracted text, cleaned text, excluded spans, and the
-  reason each span was removed.
-- Style signals: sentence length, paragraph shape, punctuation, emoji, casing,
-  openings, closings, signoffs, address terms, humor, warmth, directness,
-  formality, hedging, assertiveness, affection, deference, authority, teaching
-  posture, disagreement style, ask/CTA patterns, and repair/apology patterns.
+not representative of the user's own writing.
 
 Use only user-authored outgoing text as primary voice evidence. Incoming
 messages, quoted text, signatures, legal footers, news articles, and source
 documents may explain context, but they are not voice evidence for the user's
 style guide unless the user explicitly says they wrote them.
 
-For sensitive personal or enterprise corpora such as iMessage databases, Outlook
-PST/OST files, Slack exports, or CRM/email archives, use a structured extractor
-that preserves authorship, recipient, thread, timestamp, and channel metadata.
-Do not flatten the container into one raw text blob. Ask before saving durable
-style guides from intimate, private, regulated, or third-party-heavy material.
+For structured corpora such as message databases, email archives, Slack exports,
+or CRM/email archives, use an extractor that preserves authorship, recipient,
+thread, timestamp, and channel. Do not flatten the container into one raw text
+blob.
 
-## Corpus Map
+## Mapping A Larger Corpus
 
 Large corpora must be mapped before guide generation. Do not collapse all of a
 person's writing into one global voice when the evidence contains separable
 relationships, channels, or stakes.
 
-Build candidate guide clusters from:
+Build candidate modes or guides from:
 
 - Channel: iMessage, email, Slack, long-form blog, newsletter, LinkedIn, X,
   sales email, client memo, internal memo, review note, or support reply.
-- Audience and relationship: romantic/flirting, close friends, family, client,
-  prospect, executive, manager, peer, junior teammate, public reader, community,
-  or anonymous audience.
-- Intent: joke, flirt, reassure, ask, sell, teach, critique, escalate,
-  apologize, summarize, announce, persuade, update, or request a decision.
+- Audience and relationship: close friends, family, client, prospect,
+  executive, manager, peer, junior teammate, public reader, community, or
+  anonymous audience.
+- Intent: joke, reassure, ask, sell, teach, critique, escalate, apologize,
+  summarize, announce, persuade, update, or request a decision.
 - Register: casual, intimate, polished, executive, instructional, editorial,
   social-native, terse, expansive, or ceremonial.
-- Risk and privacy: personal/private, client-confidential, regulated, public,
-  internal, or source-grounded.
+- Stakes: low-friction coordination, high-stakes client work, public argument,
+  internal decision, coaching, repair, or escalation.
 
-Create a base guide only from patterns that remain stable across contexts. When
-clusters differ materially, create separate concrete style guides such as
-`text-flirting`, `email-client`, `email-junior-teammate`, or
-`linkedin-founder`. Do not blend flirting with client emails, friend chats with
-manager updates, or coaching juniors with selling prospects. If a cluster is
-real but thin, mark its guide `insufficient_evidence` instead of merging it into
-a stronger unrelated guide.
+Prefer a single channel guide with modes when the voice is recognizably the
+same. Split only when the modes start contradicting each other. For example,
+email can usually hold client, peer, delegation, and document-comment modes in
+one guide; iMessage may still need separate guides if intimate, friend, and
+work chat evidence behaves very differently.
 
-Before creating durable guides from a corpus map, report the proposed guide
-clusters, evidence counts, privacy notes, and any clusters that should remain
-session-only.
+Before creating durable guides from a corpus map, show the proposed channel
+guides, modes, evidence strength, and clusters that are too thin to use.
 
-## Guide Writing Shape
+## Writing The Guide
 
-Write `style.md` as a compact voice manual, not as a form. The durable artifact
-should be readable by a human and directly useful to `writer`.
+Write `style.md` as a useful voice manual. It can be detailed, but the detail
+must be prose and examples that improve writing.
 
-Use the same spine for most guides:
+Use this spine for most guides:
 
-1. Use boundaries: when to use the guide, when not to use it, and what evidence
-   it is based on.
-2. Voice thesis: the one-paragraph summary of how this style thinks and sounds.
-3. Model control hints: concise operational settings for verbosity, reasoning,
-   output density, and validation.
-4. Personality and collaboration controls: how the voice feels and how the agent
-   should work with ambiguity.
-5. Writer-native voice sections: sentence architecture, paragraph rhythm, point
-   of view, punctuation, vocabulary, and tone.
-6. Adaptations: relationship and channel-specific behavior.
-7. Worked examples: short examples that show the style move in context.
-8. Evidence, limits, warnings, corrections, and test results.
+1. Minimal frontmatter: `style_id` and `channel`.
+2. Title.
+3. Use boundary: the channel and jobs the guide supports.
+4. Stable voice: a compact but specific explanation of how the writing sounds.
+5. Shape and rhythm: paragraph length, sentence movement, openings, endings,
+   and when structure helps.
+6. Common moves: request, follow-up, recommendation, critique, update, repair,
+   escalation, or whatever moves are common in the channel.
+7. Modes: audience, relationship, or task variants inside the channel.
+8. Examples: good and bad examples that demonstrate the move.
+9. Guardrails: what not to imitate, invent, overfit, or carry across contexts.
+10. Notes or limits only when they change how the guide should be used.
 
-Keep the guide outcome-first. Do not fill it with step-by-step generation
-process unless the process changes the final writing. Put stable guidance before
-dynamic evidence or examples so prompt caches can reuse the stable body.
+Do not include model-control grids, generated timestamps, hashes, counts, or
+machine routing fields in the guide body. Keep lookup keys, aliases, sync roots,
+and maintenance notes outside `style.md` unless a piece of information directly
+helps the model write.
 
-## Model Control Hints
+## Tiny Frontmatter
 
-Style guides can include model-control hints, but they should remain advisory.
-The runtime or application may override them for latency, cost, or task shape.
+Runtime guide frontmatter should stay tiny:
 
-Use these fields:
+```markdown
+---
+style_id: <style-id>
+channel: <channel-family>
+---
+```
 
-- `text.verbosity`: `low`, `medium`, `high`, or `channel_default`. Use `low` for
-  concise replies, `medium` for normal drafting, and `high` only for long-form,
-  teaching, audits, or handoff documents.
-- `reasoning.effort`: `low`, `medium`, `high`, or `xhigh`. Use `low` for direct
-  rewrites and straightforward channel variants; use `medium` for normal style
-  application; use `high` for messy corpus analysis, guide generation, and
-  source-grounded long-form work; reserve `xhigh` for evals or unusually hard
-  asynchronous tasks.
-- `formatting_density`: `plain_prose`, `light_structure`,
-  `structured_sections`, or `template_driven`.
-- `rationale_depth`: `none`, `brief`, `moderate`, or `detailed`.
-- `clarification_threshold`: `ask_when_blocked`, `ask_for_high_risk`,
-  `assume_with_note`, or `draft_with_open_questions`.
-- `validation_rules`: short checks the agent must run before trusting the
-  guide or returning style-sensitive work.
+Do not add lifecycle fields. Do not add model settings, source hashes,
+generated timestamps, counts, aliases, or sync details to guide frontmatter.
 
-These controls are not personality by themselves. Personality controls how the
-writing sounds. Collaboration controls how the agent behaves. Model controls
-shape length, effort, and output form.
-
-## Personality And Collaboration Controls
-
-Record personality and collaboration controls explicitly instead of burying them
-in adjectives:
-
-- `warmth`: low, medium, high, or context-dependent.
-- `directness`: low, medium, high, or context-dependent.
-- `formality`: casual, professional, formal, intimate, or context-dependent.
-- `polish`: raw, conversational, edited, executive, or publication-ready.
-- `humor`: none, dry, playful, self-deprecating, sharp, or context-dependent.
-- `empathy`: low, medium, high, or context-dependent.
-- `intimacy_or_distance`: intimate, peer, professional, public, or
-  context-dependent.
-- `assumption_policy`: ask first, assume with note, or proceed unless risk is
-  high.
-- `uncertainty_style`: plain caveat, confidence label, open question, or no
-  hedge after evidence is sufficient.
-
-Channel recipes own destination and format constraints. Style guides own voice
-and relationship-specific behavior. If they conflict, preserve the channel
-format and adapt the style within that format rather than letting personality
-override the requested artifact.
-
-## Inline And Worked Examples
-
-Inline examples turn style rules into drafting behavior. Worked examples show
-how several rules combine in a small draft fragment. They are not source
-evidence and should not replace accepted references.
-
-Use examples this way:
-
-- Add compact `Use` and `Avoid` examples inside each major voice section.
-- Add at least two worked examples for a `ready` guide when the evidence
-  supports them.
-- Prefer invented, composite, or redacted examples that demonstrate the move
-  without leaking private source text.
-- Quote raw source only when the source is public, already included in the
-  style library, or explicitly approved for reuse.
-- Keep examples short enough to teach a pattern rather than become stock
-  language the writer copies.
-- Make examples channel-aware when the behavior changes by destination, such as
-  email directness versus essay setup.
-
-Good inline examples name the move:
-
-- Claim then concrete consequence:
-  - Use: "The migration worked. The dashboard finally stopped lying to us."
-  - Avoid: "The migration successfully improved operational visibility."
-- Reader objection before answer:
-  - Use: "The obvious objection is cost. Fair. But the expensive part already
-    happened."
-  - Avoid: "Some stakeholders may have concerns about cost."
-
-## Guide Template
+## Channel Guide Template
 
 Use this template for `style.md`:
 
 ```markdown
 ---
-schema: drafts/v1
-kind: style
-id: <style-id>
-title: <Style Name>
-guide_status: ready | stale | insufficient_evidence | contaminated | failed
-guide_version: <number-or-date>
-generated_at: <iso-date-or-blank>
-source_hash: <hash-or-blank>
-source_scope: base | single_context | context_variant
-base_style: <style-id-or-blank>
-context: <context-id-or-blank>
-channels: <comma-separated-list-or-blank>
-audiences: <comma-separated-list-or-blank>
-text_verbosity: low | medium | high | channel_default
-reasoning_effort: low | medium | high | xhigh
-formatting_density: plain_prose | light_structure | structured_sections | template_driven
-rationale_depth: none | brief | moderate | detailed
+style_id: <style-id>
+channel: <channel-family>
 ---
 
 # <Style Name>
 
-## Use When
+Use this guide for <channel> writing. The through-line is <one sentence naming
+the stable writing effect>.
 
-- ...
+## Stable Voice
 
-## Do Not Use When
+<Several paragraphs that explain how the voice behaves. Name the durable
+patterns: directness, warmth, compression, caveats, certainty, structure,
+relationship posture, and how the writer earns trust.>
 
-- ...
+## Shape And Rhythm
 
-## Summary
+<Explain openings, paragraph length, sentence shape, lists, signoffs, and when
+to add or remove structure.>
+
+## Common Moves
+
+Request: <how requests sound in this channel>.
+
+Follow-up: <how reminders or nudges work>.
+
+Recommendation: <how the voice states judgment and rationale>.
+
+Review or critique: <how the voice identifies a problem and offers a fix>.
+
+Update or status: <how the voice reports what changed and what happens next>.
+
+## Modes
+
+### <Audience Or Task Mode>
+
+<Explain what changes and what stays stable.>
+
+Good: "<short example>"
+Bad: "<short counterexample>"
+
+### <Second Mode>
 
 ...
 
-## Model Control Hints
+## Guardrails
 
-- `text.verbosity`:
-- `reasoning.effort`:
-- Formatting density:
-- Rationale depth:
-- Clarification threshold:
-- Validation rules:
-
-## Personality Controls
-
-- Warmth:
-- Directness:
-- Formality:
-- Humor:
-- Empathy:
-- Polish:
-- Intimacy or distance:
-
-## Collaboration Controls
-
-- Clarification threshold:
-- Assumption policy:
-- Uncertainty language:
-- Review or checking behavior:
-
-## Relationship Context
-
-- Audience:
-- Relationship:
-- Stakes:
-- Intent:
-- Do not use outside:
-
-## Sentence Architecture
-
-- Rule:
-  - Evidence:
-  - Use:
-  - Avoid:
-  - Drafting effect:
-
-## Paragraph Rhythm
-
-- Rule:
-  - Evidence:
-  - Use:
-  - Avoid:
-  - Drafting effect:
-
-## Point Of View
-
-- Rule:
-  - Evidence:
-  - Use:
-  - Avoid:
-  - Drafting effect:
-
-## Punctuation
-
-- Rule:
-  - Evidence:
-  - Use:
-  - Avoid:
-  - Drafting effect:
-
-## Vocabulary Instructions
-
-Prefer:
-
-- ...
-
-Avoid:
-
-- ...
-
-## Tone And Emotional Range
-
-- Rule:
-  - Evidence:
-  - Use:
-  - Avoid:
-  - Drafting effect:
-
-## Do Not Do
-
-- Pattern to avoid:
-  - Why:
-  - Safer substitute:
-
-## Channel Adaptations
-
-- Channel:
-  - Keep:
-  - Change:
-  - Use:
-  - Avoid:
-  - Do not infer:
-
-## Worked Examples
-
-- Move:
-  - Use:
-  - Avoid:
-  - Why it works:
-
-## Evidence
-
-- `references/001-sample.md`
-
-## Test Results
-
-- Test:
-- Result:
-- Limits:
-
-## Corrections
-
-- ...
-
-## Warnings
-
-- ...
+- Do not invent facts, commitments, approvals, availability, or source claims.
+- Do not preserve typos, source noise, or rushed-message artifacts as style.
+- Do not copy topic vocabulary as voice unless the topic is relevant.
+- Do not imitate one-off habits that conflict with the stable voice.
 ```
 
 ## Fully Worked Style Guide Example
@@ -457,254 +255,87 @@ Use this as a shape example, not as a default voice.
 
 ```markdown
 ---
-schema: drafts/v1
-kind: style
-id: founder-operator-blog
-title: Founder Operator Blog
-guide_status: ready
-guide_version: 2026-06-23
-generated_at: 2026-06-23T00:00:00Z
-source_hash: example-synthetic
-source_scope: single_context
-base_style:
-context: public-founder-writing
-channels: blog,newsletter,linkedin
-audiences: software-founders,operators
-text_verbosity: medium
-reasoning_effort: medium
-formatting_density: structured_sections
-rationale_depth: brief
+style_id: founder-operator-blog
+channel: long-form
 ---
 
 # Founder Operator Blog
 
-## Use When
+Use this guide for practical founder/operator essays, newsletters, and public
+posts. The through-line is hard-won usefulness: lead with the claim, prove it
+with a concrete operating detail, then name the principle.
 
-- Drafting practical founder/operator essays, newsletters, or LinkedIn posts.
-- Turning a messy operational lesson into a crisp public argument.
-- Explaining a workflow failure with enough specificity that another founder can
-  act on it.
+## Stable Voice
 
-## Do Not Use When
+Write like an operator who learned the lesson the annoying way and is now
+saving the reader a week. The voice is direct, specific, and slightly dry. It
+trusts the reader and avoids motivational padding.
 
-- The task is a legal, financial, medical, or policy explanation that needs a
-  neutral institutional voice.
-- The audience expects personal intimacy, customer support warmth, or sales
-  urgency.
-- The source material is too thin to support a concrete operational example.
+Warmth comes from accurate diagnosis, not reassurance. The writer can be blunt
+about a failure because the next sentence usually gives the reader a cleaner
+way to act.
 
-## Summary
+Use `I` for firsthand lessons, `you` for the reader's decision, and `we` only
+for shared traps. Keep claims proportional to the source material.
 
-Write like an operator who learned the lesson the annoying way and is now saving
-the reader a week. Lead with the claim, prove it with a concrete failure or
-workflow detail, then name the principle. The voice is direct, useful, and
-slightly dry. It trusts the reader and avoids motivational padding.
+## Shape And Rhythm
 
-## Model Control Hints
+Open with the claim or the surprising operating failure. Do not start with a
+generic trend summary.
 
-- `text.verbosity`: medium for essays and newsletters; low for LinkedIn.
-- `reasoning.effort`: medium for normal drafting; high when turning raw source
-  packs into a source-grounded essay.
-- Formatting density: structured sections for long-form, light structure for
-  social.
-- Rationale depth: brief. Explain the practical reason behind recommendations,
-  but do not narrate the whole reasoning process.
-- Clarification threshold: ask only when the audience, claim, or source boundary
-  is missing.
-- Validation rules: check for one concrete example, one named reader problem,
-  and no generic founder platitudes.
+Strong paragraphs often move claim -> concrete scene -> principle. Let short
+verdicts land after longer explanation.
 
-## Personality Controls
+Good: "The dashboard was not wrong because the data was bad. It was wrong
+because every team had a different definition of active."
 
-- Warmth: medium; useful rather than effusive.
-- Directness: high.
-- Formality: professional but conversational.
-- Humor: dry and occasional.
-- Empathy: shown through accurate diagnosis, not reassurance.
-- Polish: edited but not glossy.
-- Intimacy or distance: peer-to-peer public voice.
+Bad: "Dashboards can be challenging when teams are not aligned on metrics."
 
-## Collaboration Controls
+## Common Moves
 
-- Clarification threshold: ask for the missing claim or reader when absent.
-- Assumption policy: assume low-risk channel defaults and name the assumption.
-- Uncertainty language: use plain caveats tied to evidence.
-- Review or checking behavior: flag claims that sound confident without a
-  source, example, or firsthand observation.
+Diagnosis: name the visible failure, then the hidden cause.
 
-## Relationship Context
+Recommendation: state the boring fix plainly. The fix can be simple without
+being easy.
 
-- Audience: software founders, operators, and first marketing or product hires.
-- Relationship: peer slightly ahead on the same road.
-- Stakes: practical judgment, credibility, and usefulness.
-- Intent: teach a hard-won operating lesson.
-- Do not use outside: intimate messages, formal client memos, or broad brand
-  copy.
+Reader objection: name the objection before answering it. Do not pretend the
+tradeoff is smaller than it is.
 
-## Sentence Architecture
+Principle: end with a sentence the reader can reuse without turning it into a
+bumper sticker.
 
-- Rule: Start with the actor and the consequence.
-  - Evidence: Accepted references repeatedly opened with direct claims before
-    explanation.
-  - Use: "The launch failed because nobody owned the handoff."
-  - Avoid: "There were a number of cross-functional issues around launch
-    ownership."
-  - Drafting effect: The reader knows what happened before being asked to care
-    about the analysis.
+## Modes
 
-- Rule: Let short verdicts land after longer explanation.
-  - Evidence: References use compact landing sentences after operational setup.
-  - Use: "That is not process. That is weather."
-  - Avoid: "This suggests the process may not have been sufficiently reliable."
-  - Drafting effect: The rhythm creates authority without needing extra
-    emphasis.
+### Blog Or Newsletter
 
-## Paragraph Rhythm
+Allow fuller setup and a developed example. Keep section openings claim-first.
 
-- Rule: Claim, concrete scene, principle.
-  - Evidence: Strong samples moved from lesson to example to reusable takeaway.
-  - Use: "The dashboard was not wrong because the data was bad. It was wrong
-    because every team had a different definition of active. Sales counted
-    accounts. Product counted users. Finance counted contracts. Alignment
-    failed before the chart loaded."
-  - Avoid: "Dashboards can be challenging when teams are not aligned on metrics."
-  - Drafting effect: The paragraph teaches through a visible operating failure.
+Good: "The launch failed because nobody owned the handoff."
+Bad: "There were a number of cross-functional issues around launch ownership."
 
-## Point Of View
+### LinkedIn
 
-- Rule: Use `I` for firsthand lessons, `you` for the reader's decision, and
-  `we` only for shared traps.
-  - Evidence: References used personal experience to earn claims, then shifted
-    to the reader's action.
-  - Use: "I used to treat kickoff docs as ceremony. You feel the cost two weeks
-    later."
-  - Avoid: "Teams often experience downstream alignment challenges."
-  - Drafting effect: The writer sounds accountable and the reader feels
-    addressed.
+Compress the example and end with a low-friction question or practical
+takeaway. Do not turn the post into a numbered life lesson unless the source
+already has that shape.
 
-## Punctuation
+Good: "The handoff did not need another meeting. It needed an owner."
+Bad: "Cross-functional collaboration is essential for startup success."
 
-- Rule: Use colons to deliver the payload after setup.
-  - Evidence: References used colons for payoff lines and practical lists.
-  - Use: "The fix was boring: one owner, one deadline, one definition of done."
-  - Avoid: "The fix involved one owner, one deadline, and one definition of
-    done."
-  - Drafting effect: The colon makes the sentence feel like a reveal, not a
-    list.
+## Guardrails
 
-## Vocabulary Instructions
-
-Prefer:
-
-- concrete operating nouns: handoff, owner, deadline, chart, queue, kickoff
-- physical verbs: cut, name, ship, miss, stall, break, hand off
-- plain transitions: here is the problem, the fix is, the trap is
-
-Avoid:
-
-- generic consulting verbs: leverage, optimize, enable, unlock
-- soft abstractions: alignment opportunities, stakeholder complexity,
-  operational excellence
-- decorative intensity: game-changing, transformative, revolutionary
-
-## Tone And Emotional Range
-
-- Rule: Be blunt about the failure, then useful about the fix.
-  - Evidence: Samples earned warmth through specificity rather than comfort.
-  - Use: "The meeting was not too long. It was ownerless."
-  - Avoid: "The meeting may have benefited from clearer facilitation."
-  - Drafting effect: The voice respects the reader's time and intelligence.
-
-## Do Not Do
-
-- Pattern to avoid: motivational founder theater.
-  - Why: It weakens the practical operating signal.
-  - Safer substitute: name the specific workflow, failure, or decision.
-
-- Pattern to avoid: abstract diagnosis without a scene.
-  - Why: It makes the style sound generic.
-  - Safer substitute: add one concrete moment, artifact, or consequence.
-
-## Channel Adaptations
-
-- Channel: blog
-  - Keep: claim-first section openings and concrete examples.
-  - Change: allow fuller setup and more paragraph development.
-  - Use: "The first sign was not churn. It was silence in the handoff channel."
-  - Avoid: "There are several indicators that a process may be breaking down."
-  - Do not infer: source claims that are not in the brief or source pack.
-
-- Channel: LinkedIn
-  - Keep: direct claim, short paragraphs, practical takeaway.
-  - Change: compress examples and end with a low-friction question.
-  - Use: "The handoff did not need another meeting. It needed an owner."
-  - Avoid: "Cross-functional collaboration is essential for startup success."
-  - Do not infer: false personal anecdotes.
-
-## Worked Examples
-
-- Move: Turn a vague workflow lesson into a concrete operating claim.
-  - Use: "The roadmap did not slip because the team moved slowly. It slipped
-    because every dependency lived in someone's head."
-  - Avoid: "The roadmap slipped due to insufficient process maturity."
-  - Why it works: The sentence names the failure, the cause, and the operating
-    texture.
-
-- Move: End a paragraph with a short principle.
-  - Use: "If the owner is implied, nobody owns it."
-  - Avoid: "This demonstrates the importance of clear accountability."
-  - Why it works: The line is portable without becoming generic.
-
-- Move: Convert empathy into diagnosis.
-  - Use: "The founder was not confused. The system was asking her to remember
-    six invisible promises."
-  - Avoid: "The founder needed more support and clarity."
-  - Why it works: It respects the person while making the failure concrete.
-
-## Evidence
-
-- `references/001-founder-ops-newsletter.md`
-- `references/002-launch-retro-post.md`
-- `references/003-linkedin-operating-note.md`
-
-## Test Results
-
-- Test: Held-out operating note rewritten as a 180-word LinkedIn post.
-- Result: Matched claim-first openings, concrete nouns, and short principle
-  endings without copying source phrases.
-- Limits: Evidence is public founder/operator writing only; do not use for
-  intimate, client-confidential, or formal institutional contexts.
-
-## Corrections
-
-- User correction: "Less inspirational, more diagnostic."
-- Applied as: avoid motivational framing unless the channel explicitly asks for
-  inspiration.
-
-## Warnings
-
-- Do not treat startup vocabulary as voice. Keep operating texture only when it
-  fits the user's source material and requested audience.
+- Do not add false personal anecdotes.
+- Do not use startup vocabulary as style.
+- Avoid generic consulting verbs such as leverage, optimize, enable, unlock.
+- Avoid motivational founder theater unless explicitly requested.
 ```
 
-Use this template for each reference:
+## Reference Notes
+
+Use this shape for each accepted reference or correction when a notes file is
+useful:
 
 ```markdown
----
-schema: drafts/v1
-kind: style_reference
-id: ref_001
-title: <Sample Title>
-style: <style-id>
-scope: style_reference
-channel: <channel-or-blank>
-author_confidence: high | medium | low
-privacy: public | internal | private | sensitive | client
-reference_policy: local_only | redacted | included
-source_type: paste | url | site_crawl | upload | import | user_correction
-raw_source_policy: not_saved | local_only | included
----
-
 # <Sample Title>
 
 ## Cleaned Text
@@ -715,9 +346,8 @@ raw_source_policy: not_saved | local_only | included
 
 - Source type:
 - Source quality:
-- Privacy:
-- Reference policy:
-- Raw source policy:
+- Channel:
+- Audience:
 - Topic:
 - Cleaning performed:
 - Word count:
@@ -740,13 +370,13 @@ Record only patterns that will change drafting or review:
 - Hedging, compression, transitions, and claim qualification.
 - Terms, phrases, transitions, or structures to prefer or avoid.
 
-For each important pattern, name the evidence behind it and the drafting effect.
-Avoid style adjectives unless the guide also names the observable behavior that
-creates that effect.
+For each important pattern, name the evidence behind it and the drafting
+effect. Avoid style adjectives unless the guide also names the observable
+behavior that creates that effect.
 
 ## Guide Test
 
-When feasible, test the guide before marking it `ready`:
+When feasible, test the guide before normal reuse:
 
 - Hold out at least one accepted reference or user correction when enough
   evidence exists.
@@ -755,9 +385,11 @@ When feasible, test the guide before marking it `ready`:
   sample phrases too closely.
 - Check whether channel conventions, topic vocabulary, and source claims leaked
   into the voice guide.
-- Record the result in `## Test Results`.
+- Record the result in maintenance notes or in a short `## Notes And Limits`
+  section only when it changes use of the guide.
 
-If testing is not feasible, say why and keep confidence lower.
+If testing is not feasible, say why in the notes or in one short handoff
+sentence.
 
 ## Corrections
 
@@ -765,28 +397,26 @@ When the user corrects a style output, treat the correction as evidence:
 
 - If the correction applies broadly, update `style.md`.
 - If it applies only to a channel or artifact type, record that scope.
-- If it contradicts earlier evidence, preserve both and lower confidence until
-  more samples resolve the conflict.
+- If it contradicts earlier evidence, preserve both in notes until more samples
+  resolve the conflict.
 - If it is a one-off preference for the current draft, keep it in draft or
   session instructions instead of the reusable style.
 
 Do not silently convert every correction into a global style rule.
 
-## Style Selection Handoff
+## Helping Writer Use The Style
 
 When handing style context to `writer`, include:
 
 - Selected style ID, or the decision to use `default`.
-- Guide status and confidence.
-- Relevant examples for the requested channel or task.
+- One-line reason the guide fits the task.
+- Relevant mode or examples for the requested channel or audience.
 - Warnings that should affect generation.
 - Whether the guide should influence voice, structure, vocabulary, or content
   selection.
-- Any opaque or inferred style influence that cannot be proven from durable
-  state.
 
 If no style is pinned in frontmatter, choose a concrete style ID from
 user-global style guides plus the shipped `default` style when possible, write
-that selected ID when durable frontmatter is created, and report the choice. If
-no user guide is a clear fit, choose `default` instead of claiming a hidden style
-ID.
+that selected ID when durable frontmatter is created, and mention the choice
+only when it affects trust or future edits. If no user guide is a clear fit,
+choose `default` instead of claiming a hidden style ID.

@@ -17,7 +17,6 @@ That makes shell-launched Drafts use this repo copy directly while the sync
 target keeps default and personal Codex homes populated for tools that do not
 inherit the shell environment.
 
-Privacy rule: this repo may be public. Keep this library in `guides_only` mode.
-Do not commit raw or cleaned Outlook, iMessage, Slack, Teams, or client corpus
-references here unless the repo has been made private and the references were
-explicitly approved for sync.
+Keep this folder to reusable guide files, optional maintenance notes, and the
+minimal `style-library.json` lookup index. Do not commit source corpora or
+message/archive exports here.

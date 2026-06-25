@@ -21,7 +21,7 @@ adapt the selected style inside that format. A long-form style can be used for
 an email, LinkedIn post, or X post, but the result must still obey that channel
 recipe.
 
-## Resolution
+## Choosing A Recipe
 
 Choose the channel recipe from the most specific available signal:
 
@@ -31,8 +31,9 @@ Choose the channel recipe from the most specific available signal:
 4. Built-in recipe with the same ID or alias.
 5. No recipe, with the channel treated as an assumption.
 
-Report the chosen recipe when it materially affects structure, length, CTA, or
-audience posture.
+Mention the chosen recipe only when it materially affects structure, length,
+CTA, audience posture, or a future edit. Otherwise let the channel shape show in
+the writing.
 
 ## Recipe Template
 
@@ -222,7 +223,7 @@ alongside the selected style guide, writing rules, and source constraints.
 - Instructions: Write a YouTube video description. The first 2 lines are critical - they show in search results and above 'Show more,' so lead with what the viewer will learn or experience, not a generic greeting. Include your primary keyword naturally in the first sentence. If a transcript is available, add timestamps for key sections (format: 0:00 Title) with descriptive chapter titles that include relevant keywords. Mention specific resources, tools, or references from the video with links where applicable. Write for humans first - natural language works better than keyword lists. Friendly, direct tone. Do not include subscriber CTAs or social media links - YouTube's UI already handles those and they waste prime description space.
 - Checks: First two lines state viewer value, primary keyword appears naturally, timestamps are included when transcript or chapter data exists, and boilerplate subscriber/social CTAs are omitted.
 
-## Channel Variant Flow
+## Adapting A Draft For Another Channel
 
 When transforming an existing draft into a channel variant:
 

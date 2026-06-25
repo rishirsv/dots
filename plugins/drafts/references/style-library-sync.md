@@ -3,16 +3,16 @@
 Use this reference when creating, moving, exporting, importing, backing up, or
 syncing reusable user style guides.
 
-## Contract
+## What Gets Synced
 
-The user style library is private user state. Sync should make style guides
-available across machines without silently spreading raw personal samples,
-client material, or imported message archives.
+The style library sync surface should make reusable guides available across
+machines without turning the guide system into an overgrown registry. The
+synced unit is the voice manual plus the small lookup record needed to find it.
 
-Default to syncing generated style guides and the style registry. Sync raw
-references only when the user explicitly asks for that mode.
+Default to syncing generated style guides, optional maintenance notes, and the
+style registry. Do not move sample corpora as part of ordinary style sync.
 
-## Library Root
+## Finding The Library
 
 Resolve the user style library root in this order:
 
@@ -26,6 +26,7 @@ The library root contains:
 style-library.json
 <style-id>/
   style.md
+  notes.md
   references/
 ```
 
@@ -33,30 +34,28 @@ If `DRAFTS_STYLE_HOME` is set, treat it as the style library root itself, not as
 a parent folder. Do not set or change environment variables for the user unless
 they explicitly ask.
 
-## Registry
+## Style Lookup Index
 
 Maintain `style-library.json` when the style library exists or changes. The
-registry is the user-facing index for sync, selection, backup, and inspection.
+registry is the user-facing index for selection, sync, backup, and inspection.
+Keep it minimal.
 
 Use this shape:
 
 ```json
 {
-  "schema": "drafts/v1",
+  "schema": "drafts/v2",
   "kind": "style_library",
   "updated_at": "",
-  "sync_mode": "guides_only",
   "styles": [
     {
-      "id": "email-client",
-      "title": "Client Email",
-      "guide_status": "ready",
-      "channels": ["email"],
-      "audiences": ["client"],
-      "privacy": "private",
-      "reference_policy": "local_only",
-      "updated_at": "",
-      "source_hash": ""
+      "id": "email-rishi",
+      "title": "Rishi Email Style",
+      "channel": "email",
+      "path": "email-rishi/style.md",
+      "modes": ["client", "internal_peer", "delegation_review", "document_comment"],
+      "aliases": ["email-base-rishi", "email-client-advisory"],
+      "notes_path": "email-rishi/notes.md"
     }
   ]
 }
@@ -66,30 +65,28 @@ Registry fields:
 
 - `id`: concrete style ID.
 - `title`: human-readable name.
-- `guide_status`: `ready`, `stale`, `insufficient_evidence`, `contaminated`, or
-  `failed`.
-- `channels`: channels the guide is meant to support.
-- `audiences`: relationship or audience contexts.
-- `privacy`: `public`, `internal`, `private`, `sensitive`, or `client`.
-- `reference_policy`: `local_only`, `redacted`, or `included`.
-- `updated_at`: last guide or registry update.
-- `source_hash`: current guide source hash when available.
+- `channel`: primary channel family.
+- `path`: relative path to the runtime guide.
+- `modes`: audience, relationship, or task variants inside the guide.
+- `aliases`: prior IDs or alternate names that should resolve to this guide.
+- `notes_path`: optional relative path to maintenance notes.
+- `updated_at`: optional library update time.
 
-## Sync Modes
+Do not put lifecycle fields, model settings, counts, source hashes, or
+generated timestamps in the runtime guide. Add registry fields only when they
+help lookup, sync, aliasing, or migration.
 
-Use one of these sync modes:
+## What To Copy
 
-- `guides_only`: sync `style.md` files and `style-library.json`; keep
-  `references/` local. This is the default.
-- `redacted_bundle`: sync `style.md`, `style-library.json`, and redacted
-  reference summaries when available.
-- `full_bundle`: sync `style.md`, `style-library.json`, and selected raw or
-  cleaned references. Use only after explicit user approval.
+Ordinary sync copies:
 
-Never infer approval for `full_bundle` from a general request to "sync my
-styles." Treat sensitive personal corpora, client material, iMessage data,
-Outlook archives, and Slack exports as `local_only` unless the user explicitly
-changes that policy.
+- `style-library.json`
+- each selected `style.md`
+- `notes.md` when present
+
+Do not infer approval to sync sample corpora from a general request to "sync my
+styles." If the user explicitly asks to export or move references, treat that
+as a separate operation and state what will be included before copying.
 
 ## Export
 
@@ -102,27 +99,23 @@ drafts-style-library/
   styles/
     <style-id>/
       style.md
-      references/
+      notes.md
 ```
 
 `manifest.json` should record:
 
 - schema and kind.
 - export time.
-- export mode.
 - included style IDs.
-- whether raw references are included.
-- warnings about sensitive material.
-
-For `guides_only`, omit `references/` or include an empty folder with a note that
-references were intentionally excluded.
+- whether notes are included.
+- whether references are included, if the user explicitly asked for them.
 
 ## Import
 
 Before importing:
 
 1. Read `manifest.json` and `style-library.json` when present.
-2. List style IDs, titles, guide status, privacy, reference policy, and warnings.
+2. List style IDs, titles, channels, modes, aliases, and notes paths.
 3. Ask before overwriting any existing style ID.
 4. Import unknown styles directly.
 5. For conflicts, keep both versions unless the user explicitly chooses an
@@ -136,7 +129,7 @@ Conflict-safe names may use:
 
 After import, update `style-library.json`.
 
-## Folder Sync
+## Syncing A Folder
 
 If the user wants ongoing sync through iCloud, Dropbox, Google Drive, Syncthing,
 or another folder sync tool, prefer syncing the library root through
@@ -155,27 +148,28 @@ Do not recommend syncing all of `${CODEX_HOME:-~/.codex}` just to move Drafts
 styles. That is too broad and can mix unrelated credentials, state, or local
 configuration.
 
-## Conflict Handling
+## Handling Conflicts
 
 Before writing synced or imported styles, compare:
 
 - style ID.
-- `source_hash`.
-- `generated_at`.
-- `guide_version`.
-- `guide_status`.
+- guide path.
+- title.
+- channel.
+- modes.
+- aliases.
+- updated time when present.
 
 If both local and incoming versions changed, keep both and report a conflict.
 Do not merge style guide prose automatically. A merged voice guide can blend
 contexts that should remain separate.
 
-## Reporting
+## What To Say After Sync
 
 For any sync, export, import, or root change, report:
 
 - resolved library root.
-- sync mode.
 - styles included.
-- references included or excluded.
+- notes included or excluded.
+- references included only when explicitly requested.
 - conflicts created or resolved.
-- any privacy warnings.
