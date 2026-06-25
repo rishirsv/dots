@@ -54,6 +54,11 @@ Reusable writing guidance uses the approval-gated rule update flow in
   source slots, or section work.
 - Prefer drafting for clear short requests when the prompt is already
   sufficient.
+- Prefer the Compose quality loop before returning writing. Do not route to
+  review just to catch ordinary AI tells, weak endings, or style misses that
+  Compose can fix before output.
+- Prefer variants only when there is a real editorial fork, such as angle,
+  opening, structure, audience, channel, voice, or revision strategy.
 - Prefer version-tied review when a draft exists.
 - Prefer automatic style selection for a new durable draft when no style is
   pinned. Choose a concrete style ID from user style guides plus shipped

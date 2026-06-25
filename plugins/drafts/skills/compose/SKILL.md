@@ -25,6 +25,8 @@ names a destination, platform, format, slash command, or channel variant.
 Read [style-guide.md](../../references/style-guide.md), starting with its Fast
 Path for `compose`, when personalization depends on a style guide's evidence
 level, revision checklist, or observable repeated-choice patterns.
+Read [quality-loop.md](../../references/quality-loop.md) before returning new
+writing, rewrites, continuations, channel variants, or personalized drafts.
 
 ## Starting Or Continuing A Piece
 
@@ -50,9 +52,9 @@ For fuzzy or substantial writing:
 6. Once the pile is strong enough, offer 2-3 candidate angles or openings. Each
    option should imply a different thesis, reader journey, or emotional stance.
 7. Build a plan only after the angle, reader, and core argument are clear
-   enough. A useful plan includes working titles, core argument, assumptions,
-   unresolved choices, proposed structure, example/source slots, format and
-   length, and next decisions.
+   enough. A useful plan includes the reader spine, grounding path, working
+   titles, core argument, assumptions, unresolved choices, proposed structure,
+   example/source slots, format and length, and next decisions.
 8. Draft from the accepted plan. For longer work, fill one section at a time,
    starting with the section that has the most unknowns or carries the core
    argument.
@@ -68,13 +70,15 @@ or section-by-section execution.
 1. Keep the context pile current: raw fragments, source notes, assumptions,
    reader prerequisites, open questions, and unresolved choices.
 2. Create or update the plan only when the shape is ready: title options, core
-   argument, proposed structure, example/source slots, length and format, and
-   next decisions.
+   argument, reader spine, grounding path, proposed structure, example/source
+   slots, length and format, and next decisions.
 3. If the user wants speed, proceed with `draft_anyway` and record assumptions.
 4. Draft or revise one bounded Markdown section at a time when the artifact has
    chapters or sections.
-5. Preserve unrelated sections unless the user asks for a whole-document pass.
-6. Save material changes as new `draft_version` records when the surrounding
+5. Run the quality loop on each section and again at the whole-piece level when
+   the sections need to read as one argument.
+6. Preserve unrelated sections unless the user asks for a whole-document pass.
+7. Save material changes as new `draft_version` records when the surrounding
    system supports durable state. If state is unavailable or unsaved, say that
    briefly after the writing only when it matters.
 
@@ -91,6 +95,8 @@ user asks to attach the rewrite to a standing pad.
 4. Offer alternate rhetorical directions only when the source text supports
    materially different moves.
 5. Preserve meaning, genre, factual claims, and the user's apparent intent.
+6. Run the quiet quality loop before returning. Fix obvious AI tells, unsupported
+   specificity, style misses, and weak endings when they are in scope.
 
 `Humanize` means restoring author intent and texture. Remove obvious AI tells,
 generic setup, over-explaining, symmetrical scaffolding, empty hype, corporate
@@ -144,6 +150,23 @@ non-personalized humanize pass and say so in one short sentence.
 - Preserve source constraints in the context and plan.
 - Do not cite or rely on a source unless it was provided, retrieved, or already
   present in the working context.
+- Before returning important writing, run the quality loop from
+  [quality-loop.md](../../references/quality-loop.md). Fix in-scope misses
+  silently; mention only limits that affect trust or the user's next decision.
+
+## Variants
+
+Use variants only when they represent real editorial alternatives: angle,
+opening, structure, audience, channel, voice, or competing revision strategy.
+
+Return one strong draft by default. Offer variants when the user is choosing a
+direction or when showing two options would prevent a premature commitment. If
+the difference is only wording, choose the better wording yourself.
+
+When durable state exists, treat real variants as sibling drafts linked to the
+same context and plan. Treat minor changes to the same candidate as versions.
+When chat-only, keep variants brief and name the tradeoff in plain editorial
+language.
 
 ## What The User Sees
 

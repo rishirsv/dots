@@ -45,6 +45,8 @@ Use a draft-centered layout with as few durable files as the work needs:
         v001.md
       reviews/
         review-v001-quality.md
+      variants/
+        010-contrarian-opening.md
       sections/
         010-introduction.md
   channel-recipes/
@@ -58,9 +60,9 @@ what the user knows and what Drafts knows. Do not force early material into an
 outline.
 
 `plan.md` is the promoted shape once the piece has a recognizable angle,
-reader, and argument. It can include working titles, the core argument,
-assumptions, proposed structure, source or example slots, format, length, and
-next decisions.
+reader, and argument. It can include working titles, the core argument, reader
+spine, grounding path, assumptions, proposed structure, source or example slots,
+format, length, and next decisions.
 
 `draft.md` is the current working prose. For short and medium pieces, keep the
 draft in one file. Use `sections/` only when the piece is too large to revise
@@ -241,8 +243,9 @@ instructions. Sources are draft-level by default. Record them once in
 | `workspace` | Current project folder that may contain `.drafts/` |
 | `session` | Continuing writing conversation and decision history |
 | `context` | Raw pile: fragments, notes, sources, reader assumptions, open questions, and unresolved choices |
-| `plan` | Promoted shape: title options, core argument, structure, source/example slots, and next decisions |
+| `plan` | Promoted shape: title options, core argument, reader spine, grounding path, structure, source/example slots, and next decisions |
 | `draft` | User-facing writing artifact |
+| `variant` | Sibling candidate with a real editorial difference from the working draft |
 | `section` | One Markdown section or chapter that can be compiled into a draft |
 | `draft_version` | Saved revision of a draft |
 | `style` | Concrete selected voice guide ID |
@@ -297,7 +300,10 @@ Create or describe a new `draft_version` for material changes:
 - Channel variant source update.
 
 A channel variant should usually be a separate draft linked to its source draft
-and source version.
+and source version. Angle, opening, structure, audience, and voice variants may
+live under `variants/` while the user is choosing; the chosen candidate becomes
+the working `draft.md`. Minor wording changes to one candidate are versions,
+not variants.
 
 ## Saved Reviews
 

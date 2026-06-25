@@ -24,7 +24,9 @@ Read [router.md](../../references/router.md) for routing decisions. Read
 state, resolving style storage, syncing styles, reviewing versions, or
 mentioning saved-state details. Read
 [channel-recipes.md](../../references/channel-recipes.md) when channel,
-platform, slash-command, or variant behavior matters.
+platform, slash-command, or variant behavior matters. Read
+[quality-loop.md](../../references/quality-loop.md) when writing quality,
+variants, reader grounding, or AI-tell cleanup matters.
 
 ## Starting Or Continuing A Piece
 
@@ -125,6 +127,8 @@ standing draft.
 4. Use the specialist skill that fits the work.
 5. Return the writing first. Keep bookkeeping details private unless the user
    asks how Drafts worked or one short note is needed for trust.
+6. Expect `compose` to run a quiet quality loop before returning writing; review
+   is an escalation path, not the default route to acceptable prose.
 
 ## Guardrails
 
