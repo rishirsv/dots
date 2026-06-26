@@ -69,9 +69,10 @@ selected style evidence, or the current session. If the user asks to "sound
 like me" without a usable style guide or samples, run a non-personalized
 humanize pass or ask for style evidence.
 
-For the default anti-AI-tell pass in new drafts and rewrites, use
-[quality-loop.md](quality-loop.md). Treat the linter as a heuristic cleanup
-pass, not a detector and not a license to add fake imperfections.
+For the default anti-AI-tell pass in new drafts and rewrites, use the Tell Lint
+in [quality.md](quality.md), which also defines how `compose` and
+`writing-review` apply it. Treat the lint as a deterministic cleanup pass, not a
+detector and not a license to add fake imperfections.
 
 ## Conflict Handling
 

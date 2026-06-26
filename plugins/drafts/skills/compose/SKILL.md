@@ -26,8 +26,9 @@ names a destination, platform, format, slash command, or channel variant.
 Read [style-guide.md](../../references/style-guide.md), starting with its Fast
 Path for `compose`, when personalization depends on a style guide's evidence
 level, revision checklist, or observable repeated-choice patterns.
-Read [quality-loop.md](../../references/quality-loop.md) before returning new
-writing, rewrites, continuations, channel variants, or personalized drafts.
+Read [quality.md](../../references/quality.md) before returning new writing,
+rewrites, continuations, channel variants, or personalized drafts; it holds the
+shared quality bar and how `compose` applies it.
 
 ## Starting Or Continuing A Piece
 
@@ -66,6 +67,44 @@ reading sources; say you will read for context, possible directions, and gaps.
 Draft immediately only when the user explicitly asks for direct prose, a fast
 draft, or an override such as `draft anyway`. In that case, draft the smallest
 bounded useful artifact with explicit assumptions.
+
+## Reader Spine And Grounding
+
+For substantial writing, keep this private working sequence:
+
+```text
+context pile -> idea development -> direction choice -> collaborative outline
+-> reader spine -> grounding path -> section drafting and revision
+-> whole-piece quality pass -> returned or saved artifact
+```
+
+For short or clear requests, compress the same checks into one pass. The context
+can be brief, but it cannot be absent. Do not add ceremony just because the full
+flow exists.
+
+Before drafting, know enough about the reader to avoid generic prose: who is
+reading, what they already know or believe, what should change after reading,
+which claims or examples must be grounded first, and what they would object to,
+misunderstand, or dismiss. If these are missing during co-authoring, keep
+working with the user; for fast or direct-prose requests, assume only what is
+safe and say so when trust depends on it.
+
+While drafting, track what the reader can safely follow: which concepts are
+introduced, which claims are already supported, which still need proof or
+narrowing, where the draft asks the reader to accept a conclusion too early, and
+which concrete examples would make an abstract point real. Grounding is about
+reader comprehension, not document bureaucracy; do not promote raw context into
+an outline just to look organized.
+
+Before there is prose, useful co-authoring sounds like a synthesis and a choice,
+not a draft promise:
+
+```text
+I would not draft this yet. A few different pieces are live here: one about
+context collapse, one about taste, one about why "humanize this" happens too
+late. The context-collapse version feels closest to the nerve. Was there a
+moment that made this obvious to you?
+```
 
 ## Longer Pieces
 
@@ -156,9 +195,10 @@ non-personalized humanize pass and say so in one short sentence.
 - Preserve source constraints in the context and plan.
 - Do not cite or rely on a source unless it was provided, retrieved, or already
   present in the working context.
-- Before returning important writing, run the quality loop from
-  [quality-loop.md](../../references/quality-loop.md). Fix in-scope misses
-  silently; mention only limits that affect trust or the user's next decision.
+- Before returning important writing, run the quality pass from
+  [quality.md](../../references/quality.md), tiered to the work. Fix in-scope
+  misses silently; mention only limits that affect trust or the user's next
+  decision.
 
 ## Variants
 
@@ -189,8 +229,11 @@ For ordinary chat-only drafting and rewriting, the whole response can be just
 the writing. Do not append lane names, route names, state details, or AGENTS.md
 bookkeeping.
 
-Add one short note after the writing only when it changes trust, persistence, or
-the user's next decision. Good notes are natural prose:
+Announce the first time this session makes Drafts state durable, in one plain
+line that includes the path, then stay silent on later saves unless a save is
+risky; follow [state.md](../../references/state.md). Otherwise, add one short
+note after the writing only when it changes trust, persistence, or the user's
+next decision. Good notes are natural prose:
 
 ```text
 I treated this as a humanize pass, not a personal voice match.

@@ -12,6 +12,10 @@ version. Use this skill after `drafts` sends critique, pressure-testing,
 voice checks, rubric scoring, or revision-priority work here, or when the user
 explicitly invokes `writing-review`.
 
+Read [quality.md](../../references/quality.md) for the quality bar. It is the
+same bar `compose` applies silently; review applies it explicitly, attaching
+severity, evidence, a recommended fix, optional scoring, and version lineage.
+Evaluate the full set of checks unless the user scopes the review narrower.
 Read [state.md](../../references/state.md) before reviewing, especially its
 saved-review, version, and user-facing state note guidance.
 Read [style-guide.md](../../references/style-guide.md), starting with its Fast

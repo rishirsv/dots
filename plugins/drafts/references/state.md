@@ -350,9 +350,20 @@ Do not overwrite the reviewed version.
 
 ## User-Facing State Notes
 
-Keep state details out of ordinary writing replies. Add one short
-natural-language note after the writing only when the user needs it to
-understand trust, persistence, or a material assumption:
+Keep state details out of ordinary writing replies, with one exception: announce
+durable state at the first transition. The first time a session makes Drafts
+state durable — creating `.drafts/`, a draft, a version, a section, a style, or
+a style library, or editing a file the user named — say so in one plain line
+that includes the path. This way the user is never silently committed to disk.
+
+After that first announcement, keep later saves in the same session silent
+unless a save is risky: an overwrite, a destructive change, a new durable
+location, or a version-safety concern. Surface those, and otherwise let the
+artifact stand on its own.
+
+Beyond the first-transition announcement, add one short natural-language note
+after the writing only when the user needs it to understand trust, persistence,
+or a material assumption:
 
 ```text
 I treated this as a humanize pass, not a personal voice match.

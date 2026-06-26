@@ -32,8 +32,8 @@ state, resolving style storage, syncing styles, reviewing versions, or
 mentioning saved-state details. Read
 [channel-recipes.md](../../references/channel-recipes.md) when channel,
 platform, slash-command, or variant behavior matters. Read
-[quality-loop.md](../../references/quality-loop.md) when writing quality,
-variants, reader grounding, or AI-tell cleanup matters.
+[quality.md](../../references/quality.md) when writing quality, the shared
+quality bar, or AI-tell cleanup matters.
 
 ## Starting Or Continuing A Piece
 
@@ -141,7 +141,8 @@ standing draft.
 5. Return the useful output first: the co-authoring move, outline revision,
    section draft, rewrite, review, or final prose. Keep bookkeeping details
    private unless the user asks how Drafts worked or one short note is needed
-   for trust.
+   for trust. The one routine exception is announcing durable state at its first
+   transition in a session, per [state.md](../../references/state.md).
 6. Expect `compose` to run a quiet quality loop before returning writing; review
    is an escalation path, not the default route to acceptable prose.
 
