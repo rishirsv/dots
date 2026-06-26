@@ -1,27 +1,13 @@
 {
-  "schema": "drafts/v2",
+  "schema": "drafts/v1",
   "kind": "style_library",
-  "updated_at": "2026-06-25T13:47:32Z",
+  "updated_at": "2026-06-26T14:04:39Z",
   "styles": [
     {
       "id": "email-rishi",
       "title": "Rishi Email Style",
       "channel": "email",
-      "path": "email-rishi/style.md",
-      "modes": [
-        "client",
-        "internal_peer",
-        "delegation_review",
-        "document_comment",
-        "quick_reply"
-      ],
-      "aliases": [
-        "email-base-rishi",
-        "email-client-advisory",
-        "email-internal-peer",
-        "email-delegation-review",
-        "email-document-commentary"
-      ]
+      "path": "email-rishi/style.md"
     }
   ]
 }
