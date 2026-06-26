@@ -10,7 +10,7 @@ trust, persistence, version safety, or the user's next decision.
 
 ## Durable Locations
 
-Drafts v1 uses two durable locations:
+Drafts uses two durable locations:
 
 - Project draft state lives in the current workspace under `.drafts/`.
 - Reusable user styles live under `DRAFTS_STYLE_HOME` when set, otherwise
@@ -25,9 +25,8 @@ or workspace overrides. Ask before creating `.drafts/` or the user style
 library unless the user explicitly requests durable Drafts state, a file edit,
 a reusable style guide, or style-library sync.
 
-Do not edit installed plugin cache files for user state. Shipped defaults are
-runtime payload. User changes belong in the user state root or current
-workspace.
+Do not edit installed plugin cache files for user state. Shipped defaults belong
+to the package. User changes belong in the user state root or current workspace.
 
 ## Project State
 
@@ -101,10 +100,10 @@ Reusable user styles live in the resolved user style library root:
     references/
 ```
 
-`style.md` is the runtime voice manual. `references/` holds accepted
-`style_reference` records for reusable styles: samples, corrections, and source
-evidence that support the guide. Each reference record is a self-contained
-Markdown file, not a required companion to `style.md`:
+`style.md` is the standalone voice manual. `references/` holds accepted
+reference records for reusable styles: samples, corrections, and source evidence
+that support the guide. Each reference record is a self-contained Markdown file,
+not a required companion to `style.md`:
 
 ```text
 references/
@@ -128,17 +127,15 @@ If `DRAFTS_STYLE_HOME` is set, treat it as the style library root itself, not as
 a parent folder. Do not recommend syncing all of `CODEX_HOME` just to move
 Drafts styles.
 
-The shipped `default` style is the read-only fallback at `styles/default.md`. A
-user-customized `default` style, if any, lives in the user style library.
+The shipped `default` style is the read-only general style at
+`styles/default.md`. A user-customized `default` style, if any, lives in the
+user style library.
 
 Maintain `style-library.json` when the style library exists or changes. Keep it
 minimal and inspectable:
 
 ```json
 {
-  "schema": "drafts/v1",
-  "kind": "style_library",
-  "updated_at": "",
   "styles": [
     {
       "id": "email-rishi",
@@ -150,11 +147,10 @@ minimal and inspectable:
 }
 ```
 
-Do not put lifecycle fields, model settings, counts, source hashes, generated
-timestamps, or sample corpora in the runtime guide. Keep the registry to lookup
-fields unless routing behavior explicitly needs more. Modes belong inside the
-runtime style guide. Aliases require an explicit resolution or migration contract
-before they belong in the registry.
+Do not put technical bookkeeping, model settings, counts, sample corpora, or
+maintenance details in the guide. Keep the registry to lookup fields unless
+routing behavior explicitly needs more. Modes belong inside the style guide.
+Aliases need an explicit resolution rule before they belong in the registry.
 
 Style lookup order:
 
@@ -206,21 +202,19 @@ After sync, export, import, or root changes, report only what matters:
 resolved library root, styles included, reference records included, and
 conflicts created or resolved.
 
-## Frontmatter
+## Markdown Metadata
 
-Use small YAML frontmatter on Markdown artifacts. Keep durable metadata
-readable and avoid turning frontmatter into a database.
+Use small YAML metadata blocks on Markdown artifacts. Keep durable metadata
+readable and avoid turning it into a database.
 
 Section example:
 
 ```yaml
 ---
-schema: drafts/v1
-kind: section
 id: sec_intro
 title: Introduction
 draft: client-memo
-version: v001
+version: first-draft
 style: report
 order: 10
 ---
@@ -230,55 +224,53 @@ Review example:
 
 ```yaml
 ---
-schema: drafts/v1
-kind: review_pass
-id: review_v001_quality
+id: quality-review
 title: Quality Review
 draft: client-memo
-version: v001
+version: first-draft
 ---
 ```
 
-Rules do not belong in frontmatter. Rules come from AGENTS.md and explicit user
-instructions. Sources are draft-level by default. Record them once in
+Rules do not belong in artifact metadata. Rules come from AGENTS.md and explicit
+user instructions. Sources are draft-level by default. Record them once in
 `context.md` instead of repeating source lists in every section.
 
 ## Working Pieces
 
-| Object | Purpose |
+| Piece | Purpose |
 | --- | --- |
-| `workspace` | Current project folder that may contain `.drafts/` |
-| `session` | Continuing writing conversation and decision history |
-| `context` | Raw pile: fragments, notes, sources, reader assumptions, open questions, and unresolved choices |
-| `plan` | Promoted shape: title options, core argument, reader spine, grounding path, structure, source/example slots, and next decisions |
-| `draft` | User-facing writing artifact |
-| `variant` | Sibling candidate with a real editorial difference from the working draft |
-| `section` | One Markdown section or chapter that can be compiled into a draft |
-| `draft_version` | Saved revision of a draft |
-| `style` | Concrete selected voice guide ID |
-| `style_reference` | Self-contained sample or correction record attached to a named style |
-| `style_guide` | Generated voice manual with instructions, modes, examples, and guardrails |
-| `stylometric_evidence` | Repeated-choice evidence captured in reference records or promoted into a style guide |
-| `channel_recipe` | Reusable destination or format recipe |
-| `review_pass` | Saved review tied to a draft version |
-| `rewrite_run` | Fast transformation of existing text, durable only when tied to a draft version |
+| Workspace | Current project folder that may contain `.drafts/` |
+| Session | Continuing writing conversation and decision history |
+| Context | Raw pile: fragments, notes, sources, reader assumptions, open questions, and unresolved choices |
+| Plan | Promoted shape: title options, core argument, reader spine, grounding path, structure, source/example slots, and next decisions |
+| Draft | User-facing writing artifact |
+| Variant | Sibling candidate with a real editorial difference from the working draft |
+| Section | One Markdown section or chapter that can be compiled into a draft |
+| Draft version | Saved revision of a draft |
+| Style | Concrete selected voice guide ID |
+| Style reference | Self-contained sample or correction record attached to a named style |
+| Style guide | Voice manual with instructions, modes, examples, and guardrails |
+| Style evidence | Repeated-choice evidence captured in reference records or promoted into a style guide |
+| Channel recipe | Reusable destination or format recipe |
+| Saved review | Review tied to a draft version |
+| Rewrite | Fast transformation of existing text, durable only when tied to a draft version |
 
 The style terms intentionally describe different layers:
 
-- `style` is the selected identifier, such as `default` or a user style ID. It
-  is the pointer saved in frontmatter or state.
-- `style_reference` is source evidence for a named style: user-authored samples,
+- Style is the selected identifier, such as `default` or a user style ID. It is
+  the pointer saved with the draft or section.
+- A style reference is source evidence for a named style: user-authored samples,
   corrections, or explicitly aspirational examples. For reusable styles, it
   lives as a self-contained record under `references/`. It is input to guide
   creation, not a voice guide by itself.
-- `style_guide` is the standalone runtime `style.md` voice manual generated
-  from accepted references and corrections. It tells Compose and Review how to
-  write or judge voice.
-- `stylometric_evidence` is the observed repeated-choice analysis behind the
-  guide: cadence, punctuation, pronouns, openers, transitions, structures,
+- A style guide is the standalone `style.md` voice manual generated from
+  accepted references and corrections. It tells Compose and Review how to write
+  or judge voice.
+- Style evidence is the observed repeated-choice analysis behind the guide:
+  cadence, punctuation, pronouns, openers, transitions, structures,
   anti-patterns, and drafting implications. Capture it inside the relevant
-  `style_reference` record or promote the drafting implication into `style.md`;
-  do not create a separate evidence surface by default.
+  reference record or promote the drafting implication into `style.md`; do not
+  create a separate evidence surface by default.
 
 Writing rules are resolved from AGENTS.md plus explicit session or draft
 instructions. They are not a `.drafts/` state object.
@@ -290,7 +282,7 @@ recurring project, an existing draft, persistence, or a file edit. Otherwise,
 return chat-only output without claiming a saved state object.
 
 Rewriting is chat-only by default when the user pastes text. It becomes durable
-when it revises a selected `draft_version`, updates `draft.md`, creates a new
+when it revises a selected draft version, updates `draft.md`, creates a new
 version, or the user explicitly asks to save the rewrite.
 
 When durable state exists, store useful context answers, fragments, source
@@ -299,7 +291,7 @@ as a working outline once the user and Drafts are shaping a direction together.
 Create `draft.md` only after the user has asked for prose, accepted a working
 outline, or explicitly chosen `draft anyway`.
 
-Create or describe a new `draft_version` for material changes:
+Create or describe a new draft version for material changes:
 
 - New draft.
 - Section expansion.
@@ -316,14 +308,14 @@ not variants.
 
 ## Saved Reviews
 
-A saved review must target a specific `draft_version`. If no version is
+A saved review must target a specific draft version. If no version is
 available, label the result as one-off advice and ask whether to create or
 select a version when saved review matters.
 
 Before reviewing, load or identify:
 
-- `draft`
-- `draft_version`
+- draft
+- draft version
 - `context`, when available
 - `plan`, when available
 - channel recipe or intended destination
@@ -342,11 +334,11 @@ evidence, confidence, and version reviewed.
 When a review becomes a revision, preserve lineage:
 
 ```text
-draft_version reviewed
+reviewed draft version
 -> saved review
 -> selected issues
 -> revision priorities
--> new draft_version
+-> new draft version
 ```
 
 Do not overwrite the reviewed version.

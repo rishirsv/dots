@@ -5,27 +5,20 @@ description: "Use after drafts sends writing work here, or when the user explici
 
 # Compose
 
-Create and revise writing. Use this skill after `drafts` routes a writing
-moment here, or when the user explicitly invokes `compose` for drafting,
-revision, or transformation.
+Create and revise writing.
 
-Write like an editor who is co-authoring with the user. For existing prose, the
-user should see the artifact first: the rewrite, revision, continuation, or
-variant they asked for. For new substantial writing, the useful output may be
-the next co-authoring move: context transfer, fragments, directions, an outline
-revision, a section pass, or a whole-piece read.
+Work like an editor who is co-authoring with the user. When they bring existing
+prose, lead with the rewrite, revision, continuation, or variant they asked for.
+When they are developing something substantial, the best next move may be
+context transfer, fragments, directions, an outline revision, a section pass, or
+a whole-piece read.
 
-The `drafts` front door decides whether the user needs new writing or a pass on
-existing text. Read
-[state.md](../../references/state.md) before creating context, plans, drafts,
-sections, versions, style frontmatter, or state notes.
+Read [state.md](../../references/state.md) before creating context, plans,
+drafts, sections, versions, style metadata, or state notes.
 Read [writing-rules.md](../../references/writing-rules.md) when rules affect
 output.
 Read [channel-recipes.md](../../references/channel-recipes.md) when the user
 names a destination, platform, format, slash command, or channel variant.
-Read [style-guide.md](../../references/style-guide.md), starting with its Fast
-Path for `compose`, when personalization depends on a style guide's evidence
-level, revision checklist, or observable repeated-choice patterns.
 Read [quality.md](../../references/quality.md) before returning new writing,
 rewrites, continuations, channel variants, or personalized drafts; it holds the
 shared quality bar and how `compose` applies it.
@@ -123,7 +116,7 @@ or section-by-section execution.
 5. Run the quality loop on each section and again at the whole-piece level when
    the sections need to read as one argument.
 6. Preserve unrelated sections unless the user asks for a whole-document pass.
-7. Save material changes as new `draft_version` records when the surrounding
+7. Save material changes as new draft versions when the surrounding
    system supports durable state. If state is unavailable or unsaved, say that
    briefly after the writing only when it matters.
 
@@ -133,7 +126,7 @@ Use this path for existing text. Do not start a full writing interview unless
 the source text is missing, the requested transformation is ambiguous, or the
 user asks to attach the rewrite to a standing pad.
 
-1. Resolve the provided text, selected `draft_version`, or section.
+1. Resolve the provided text, selected draft version, or section.
 2. Identify the edit intent: rewrite, humanize, personalize, tighten, polish,
    shorten, expand, adapt, make more direct, or apply review fixes.
 3. Return one best version by default.
@@ -155,7 +148,7 @@ non-personalized humanize pass and say so in one short sentence.
 
 ## Revising Existing Drafts
 
-1. Resolve the source `draft` and `draft_version`.
+1. Resolve the source draft and draft version.
 2. Identify the edit intent: shorten, expand, sharpen, restructure, continue,
    adapt, personalize, humanize, or apply review fixes.
 3. Preserve the previous version.
@@ -168,10 +161,10 @@ non-personalized humanize pass and say so in one short sentence.
 
 - Apply writing rules according to
   [writing-rules.md](../../references/writing-rules.md).
-- If frontmatter already has `style: <id>`, treat that style as pinned.
+- If saved metadata already has `style: <id>`, treat that style as pinned.
 - If no style is pinned for new durable work, choose a concrete style ID from
   user-global style guides plus shipped `default`, and write that concrete ID
-  when creating frontmatter. Mention the choice briefly only when the user needs
+  when creating saved metadata. Mention the choice briefly only when the user needs
   it for trust or future edits.
 - Change an existing `style` value only after user confirmation.
 - When `personalize` uses a style, retrieve the selected `style.md` and
@@ -182,13 +175,14 @@ non-personalized humanize pass and say so in one short sentence.
   humanize-style cleanup for style-specific and global automated-writing
   patterns before returning.
 - When `humanize` runs without a selected style, apply global and channel rules
-  without inventing voice evidence. Treat it as non-personalized cleanup.
+  without pretending the result matches the user's personal voice. Treat it as
+  non-personalized cleanup.
 - Preserve variation. Do not repeat a guide's examples, overuse one signature
   move, or force every sentence to display the same pattern.
-- When a style guide is Level 1 or otherwise evidence-thin, use it as a gentle
-  steering guide and avoid claiming a close personal voice match.
+- When a style guide has only direct signal or otherwise thin evidence, use it
+  as a gentle steering guide and avoid claiming a close personal voice match.
 - When a channel, platform, slash command, or requested output form is present,
-  resolve the relevant `channel_recipe` and let it control structure, length,
+  resolve the relevant channel recipe and let it control structure, length,
   CTA, and platform conventions.
 - Keep source material in the context pile; do not repeat source lists in every
   section unless the section truly has separate source constraints.

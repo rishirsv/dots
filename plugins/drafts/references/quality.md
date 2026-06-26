@@ -1,8 +1,6 @@
 # Writing Quality
 
-Single source of truth for what "good" means in Drafts output. `compose` and
-`writing-review` judge writing against the same bar and differ only in depth and
-visibility, never in the bar itself.
+Single source of truth for what "good" means in Drafts output.
 
 The bar has two parts, matching the `generative` and `deterministic` split in
 [writing-rules.md](writing-rules.md):

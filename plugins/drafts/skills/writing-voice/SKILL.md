@@ -1,21 +1,24 @@
 ---
 name: writing-voice
-description: "Use for Drafts style work: creating user writing styles, reading samples, cleaning references, writing voice guides, checking guide limits, and explaining style use. Not for drafting content, standalone review, generic tone advice, or hidden style selection."
+description: "Use for Drafts style work: creating personal or brand writing styles, reading samples, cleaning references, writing voice guides, checking guide limits, and explaining style use. Not for drafting content, standalone review, generic tone advice, or hidden style selection."
 ---
 
 # Writing Voice
 
-Build and maintain reusable user writing styles as inspectable evidence, not as
-uninspectable style inference. Optimize for accurate voice extraction: a
-reusable style guide should be traceable to accepted samples, corrections, and
-tests. Use this skill after `drafts` routes writing
+Build and maintain reusable personal, aspirational, and brand writing styles as
+inspectable evidence, not as uninspectable style inference. Optimize for
+accurate style extraction: a reusable style guide should be traceable to
+accepted samples, official guidance when applicable, corrections, and tests.
+Use this skill after `drafts` routes writing
 style, sample, or voice work here, or when the user explicitly invokes
 `writing-voice` for style guide setup or sample handling.
 
-Read [style-guide.md](../../references/style-guide.md), starting with its Fast
-Path for `writing-voice`, before accepting samples, generating a guide,
-assigning evidence levels, extracting repeated choices, testing a guide, or
-explaining style limits. Read
+Read [style-guide.md](references/style-guide.md), starting with its Fast Path,
+before accepting samples, generating a guide, describing evidence strength,
+extracting repeated choices, testing a guide, or explaining style limits. Use
+[style.md](templates/style.md) as the guide template and
+[email-style.md](examples/email-style.md) and
+[brand-style.md](examples/brand-style.md) as fully baked examples. Read
 [state.md](../../references/state.md) before moving, syncing, exporting,
 importing, or backing up a style library, and before mentioning style storage,
 lookup, automatic style selection, or state changes.
@@ -25,45 +28,56 @@ lookup, automatic style selection, or state changes.
 1. Create or select a user-global `style`.
 2. Classify incoming material as style reference, workspace sample, Knowledge,
    draft context, or session-only context.
-3. Classify each source as personal evidence, correction evidence,
-   aspirational example, channel context, Knowledge, or noise. Do not treat
-   admired writing as proof of the user's current voice.
-4. Extract authorship, channel, audience, relationship, thread context, intent,
-   and cleaned user-authored text before deciding what guide the material can
-   support.
-5. Assign an evidence level from `style-guide.md`. Level 0 cannot
-   produce a reusable personal guide; Level 1 creates a starter guide; Level 2
-   creates a working guide; Level 3 maintains a compound guide with correction
-   history.
-6. If evidence is thin, interview one question at a time and ask the user to
+3. Decide the style kind: personal, aspirational, brand, or hybrid.
+4. Classify each source as personal evidence, correction evidence,
+   aspirational example, brand voice guidance, editorial convention,
+   terminology or entity rule, channel context, Knowledge, or noise. Do not
+   treat admired writing as proof of the user's current voice.
+5. For brand guides, separate voice principles, message architecture, editorial
+   mechanics, terminology, and claims rules before writing the guide.
+6. For user-authored samples, extract authorship, channel, audience,
+   relationship, thread context, intent, and cleaned text before deciding what
+   guide the material can support.
+7. For brand material, extract scope, locale, audience, source authority,
+   voice principles, editorial conventions, terminology, entity rules, and
+   claims rules before deciding what guide the material can support.
+8. Describe evidence strength in plain language. Official brand guidance can be
+   authoritative within its stated scope, but reviewed correction history still
+   requires actual use and review.
+9. If evidence is thin, interview one question at a time and ask the user to
    react to short alternatives for tone, structure, sentence rhythm, openings,
    anti-patterns, and examples.
-7. For large or multi-context corpora, map the source set in working context.
+10. For large or multi-context corpora, map the source set in working context.
    Prefer one guide per channel family, with relationship and task differences
    expressed as modes. Split only when the modes contradict each other.
-8. Ingest accepted style samples as self-contained `style_reference` records
-   under that style's `references/` directory for reusable styles.
-9. Preserve evidence notes inside the relevant reference record. Do not create
+11. Ingest accepted style samples as self-contained reference records under that
+   style's `references/` directory for reusable styles.
+12. Preserve evidence notes inside the relevant reference record. Do not create
    generic auxiliary files, evidence audits, extraction ledgers, source maps, or
    parallel maintenance summaries.
-10. Run quality checks for length, duplication, boilerplate, author consistency,
+13. Run quality checks for length, duplication, boilerplate, author consistency,
    source noise, distinctiveness, channel coverage, relationship coverage, and
    contamination.
-11. Extract repeated choices across voice tensions, structure, sentence-level
-   preferences, signature moves, anti-patterns, examples, and revision checks.
-12. Generate or update `style.md` from accepted references and scoped user
+14. Extract repeated choices across voice tensions, message architecture,
+   structure, sentence-level preferences, punctuation semantics, editorial
+   conventions, language and terms, claims behavior, signature moves,
+   anti-patterns, examples, and revision checks.
+15. Generate or update `style.md` from accepted references and scoped user
     corrections.
-13. Keep `style.md` as a standalone, fully encapsulated voice manual: voice and
-   tone, structure, sentence-level preferences, signature moves, anti-patterns
-   and fixes, targeted examples, miss/fix examples, modes, revision checklist,
-   and limits. Do not require the guide to be read with notes, samples,
-   provenance, or extraction evidence.
-14. Test the guide when feasible. Record caveats, holdout results, or correction
-   history in the relevant `style_reference` record or current session context,
+16. Keep `style.md` as a standalone, fully encapsulated style manual: voice and
+   tone, message architecture, structure, sentence-level preferences, editorial
+   conventions where they matter, language and claims rules where they matter,
+   signature moves, anti-patterns and fixes, targeted examples, miss/fix
+   examples, modes, revision checklist, and limits. Do not require the guide to
+   be read with notes, samples, source history, or extraction evidence. This is
+   the default guide shape, not a schema: omit, merge, or add sections when the
+   evidence and channel make that the clearer style manual.
+17. Test the guide when feasible. Record caveats, holdout results, or correction
+   history in the relevant reference record or current session context,
    unless the finding changes writing behavior and should be promoted into
    `style.md`.
-15. Update the style library registry when persistent style state exists.
-16. Surface warnings at runtime when a guide is weak, noisy, duplicated, too
+18. Update the style library registry when persistent style state exists.
+19. Surface warnings when a guide is weak, noisy, duplicated, too
    small, mixed-author, or only inferred through automatic selection.
 
 ## Moving Style Guides Between Machines
@@ -89,10 +103,15 @@ Record only patterns that will change drafting or review:
 - Voice tensions and boundaries.
 - Sentence and paragraph cadence.
 - Punctuation density.
+- Punctuation semantics: what commas, periods, colons, semicolons, dashes,
+  parentheses, questions, quotes, slashes, and exclamation marks do in the
+  target style.
 - Repeated opener patterns.
 - Pronoun, function-word, hedge, qualifier, and connector habits.
 - Sentence shape, fragments, parallelism, word order, and abstraction level.
 - Channel layout habits.
+- Brand voice principles and message architecture.
+- Editorial conventions, terminology, entity references, and claims strength.
 - Audience and relationship shifts.
 - Recurring rhetorical moves.
 - Terms, transitions, blacklist patterns, or structures to avoid.
@@ -127,13 +146,24 @@ handoff. Mention them only when they affect trust or future edits.
 
 A useful style guide should contain:
 
-- A compact voice thesis and evidence level.
+- A compact voice thesis and plain-language note on what supports the guide.
+- The style kind: personal, aspirational, brand, or hybrid.
 - Voice and tone tensions: how the writing earns trust, shows warmth, handles
   uncertainty, and carries authority.
+- Voice principles for brand or institutional guides, with the behavior that
+  makes each principle visible.
+- Message architecture: the repeatable reasoning or argument pattern behind the
+  prose.
 - Structure: openings, paragraph movement, argument order, lists, signoffs,
   endings, and when structure helps.
 - Sentence-level preferences: cadence, punctuation, pronouns, function words,
   abstraction level, transitions, and opener patterns when supported.
+- Punctuation semantics: how specific marks shape cadence, emphasis, trust,
+  qualification, and reader effort.
+- Editorial conventions that visibly affect mimicry, such as spelling, casing,
+  numbers, punctuation, abbreviations, bullets, or headings.
+- Language, terminology, entity, and claims rules that affect what the writer
+  may say and how strongly they may say it.
 - Signature moves for the channel, such as requests, follow-ups,
   recommendations, critiques, updates, repairs, contrasts, or escalations.
 - Anti-patterns with fixes.
@@ -148,10 +178,10 @@ If the guide is based on insufficient evidence, say so instead of hiding it. If
 the evidence appears mixed-author or noisy, ask before generating a reusable
 guide or keep the result as session-only guidance.
 
-Do not frame a runtime guide by contrast to an outside writer, publication,
-house style, sample set, or underlying source. Convert any necessary caveat into
-a positive drafting rule. For example: "Use current-task context as content,
-not voice."
+Do not frame a style guide by contrast to an outside writer, publication, house
+style, sample set, or underlying source. Convert any necessary caveat into a
+positive drafting rule. For example: "Use current-task context as content, not
+voice."
 
 Inline examples make the guide usable at drafting time. Prefer representative
 examples grounded in accepted references. Use synthetic examples only after the

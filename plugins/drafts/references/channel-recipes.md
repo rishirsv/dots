@@ -5,16 +5,16 @@ specific destination, format, or platform.
 
 ## Contract
 
-A `channel_recipe` is destination and format guidance. It sets structure,
-length, audience posture, CTA pattern, platform conventions, and validation
-checks. It is not a style guide and it is not factual source context.
+A channel recipe is destination and format guidance. It sets structure, length,
+audience posture, CTA pattern, platform conventions, and validation checks. It
+is not a style guide and it is not factual source context.
 
 Keep these layers separate:
 
-- `channel_recipe`: what shape the artifact must take.
-- `style_guide`: how the user's voice should sound inside that shape.
-- `writing_rules`: durable policy and avoidances.
-- draft context and `knowledge`: factual support.
+- Channel recipe: what shape the artifact must take.
+- Style guide: how the user's voice should sound inside that shape.
+- Writing rules: durable policy and avoidances.
+- Draft context and Knowledge: factual support.
 
 When a style guide and channel recipe conflict, preserve the channel format and
 adapt the selected style inside that format. A long-form style can be used for
@@ -25,7 +25,7 @@ recipe.
 
 Choose the channel recipe from the most specific available signal:
 
-1. Explicit user request, slash command, or frontmatter channel.
+1. Explicit user request, slash command, or saved channel metadata.
 2. Existing draft channel or requested `channel_variant`.
 3. Workspace-local `.drafts/channel-recipes/<id>.md` override.
 4. Built-in recipe with the same ID or alias.
@@ -41,8 +41,6 @@ Use this shape for durable recipes:
 
 ```markdown
 ---
-schema: drafts/v1
-kind: channel_recipe
 id: <recipe-id>
 title: <Recipe Name>
 output_channel: <channel-id>
@@ -107,7 +105,7 @@ aliases: <comma-separated-aliases>
 ## Built-In Recipes
 
 Use these built-in recipes when no workspace-local recipe overrides the target
-channel. The recipe instructions are runtime writing guidance. Apply them
+channel. The recipe instructions are writing guidance. Apply them
 alongside the selected style guide, writing rules, and source constraints.
 
 ### `announcement`

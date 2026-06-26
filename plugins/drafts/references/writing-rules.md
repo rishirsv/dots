@@ -4,8 +4,7 @@ Use this reference when writing rules affect a Drafts output.
 
 ## Where Rules Come From
 
-Drafts v1 does not maintain a separate Drafts rule database. Writing rules come
-from:
+Writing rules come from:
 
 - Applicable `AGENTS.md` files.
 - The user's explicit instructions in the current session.
@@ -13,7 +12,7 @@ from:
   current artifact or selected style.
 
 Rule sources are always considered. Apply non-conflicting rules, resolve
-conflicts explicitly, and do not put rule sources in artifact frontmatter.
+conflicts explicitly, and do not put rule sources in artifact metadata.
 
 ## How Rules Stack
 

@@ -6,7 +6,7 @@ description: "Use for Drafts review work: critiquing drafts, pressure-testing ar
 # Writing Review
 
 Review writing against its context, plan, rules, channel, sources, and quality
-bar. Saved reviews must target a specific `draft_version`; versionless or
+bar. Saved reviews must target a specific draft version; versionless or
 pasted-text reviews are one-off advice until the user creates or selects a
 version. Use this skill after `drafts` sends critique, pressure-testing,
 voice checks, rubric scoring, or revision-priority work here, or when the user
@@ -18,17 +18,13 @@ severity, evidence, a recommended fix, optional scoring, and version lineage.
 Evaluate the full set of checks unless the user scopes the review narrower.
 Read [state.md](../../references/state.md) before reviewing, especially its
 saved-review, version, and user-facing state note guidance.
-Read [style-guide.md](../../references/style-guide.md), starting with its Fast
-Path for `writing-review`, before voice-fit reviews, especially when the review
-checks personalization, anti-patterns, repeated-choice patterns, or evidence
-limits.
 
 ## Before Reviewing
 
 Before reviewing, identify:
 
 - Target `draft`.
-- Exact `draft_version`.
+- Exact draft version.
 - Relevant context, if available.
 - Relevant plan, if available.
 - Channel recipe or intended destination.
@@ -39,7 +35,7 @@ Before reviewing, identify:
 
 If the target version is unavailable, ask for it when saved review matters.
 When the user wants immediate critique of provided text, label the result as
-one-off advice and offer to create or select a `draft_version` before applying
+one-off advice and offer to create or select a draft version before applying
 the critique as a saved revision.
 
 ## Kinds Of Review
@@ -68,7 +64,7 @@ into scoring unless the user asks for a scored rubric.
 For repeatable voice review, use the same pattern families used to build the
 guide:
 
-- Evidence level and whether it supports the claimed personalization.
+- Evidence basis and whether it supports the claimed personalization.
 - Voice tensions and boundaries.
 - Structure, opening, movement, and ending.
 - Sentence-level preferences: cadence, punctuation, pronouns, function words,
@@ -79,7 +75,7 @@ guide:
 - Channel recipe conflicts or overrides.
 - Whether the draft still preserves source truth and user intent.
 
-If a miss recurs, recommend a correction-ledger entry or style-guide update
+If a miss recurs, recommend a style-reference correction or style-guide update
 instead of treating it as a one-off edit.
 
 ## Issues
@@ -102,7 +98,7 @@ When the user asks to apply fixes:
 1. Keep the saved review tied to the reviewed version.
 2. Choose the issues to fix.
 3. Hand the revision priorities to `compose`.
-4. Create or describe a new `draft_version`.
+4. Create or describe a new draft version.
 5. Link the new version back to the review.
 
 ## What The User Sees

@@ -1,8 +1,11 @@
 {
-  "schema": "drafts/v1",
-  "kind": "style_library",
-  "updated_at": "2026-06-26T14:04:39Z",
   "styles": [
+    {
+      "id": "professional",
+      "title": "Rishi Professional Style",
+      "channel": "professional",
+      "path": "professional/style.md"
+    },
     {
       "id": "email-rishi",
       "title": "Rishi Email Style",

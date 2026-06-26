@@ -6,10 +6,9 @@ channel: general
 # Default
 
 Use this style when no user guide is a better fit, or when draft or section
-frontmatter says `style: default`. Source: shipped fallback. This is not a
-personal voice guide.
+metadata says `style: default`. This is not a personal voice guide.
 
-This is our general writing style. It is a clear, idea-forward fallback: plain
+This is our general writing style. It is a clear, idea-forward default: plain
 enough for everyday work, alive enough to carry an argument, and accountable
 about what is known, inferred, or still uncertain.
 
@@ -96,8 +95,9 @@ still lose the thread if the context is thin or noisy."
 
 Name the judgment and the reason it changes action.
 
-Example: "Keep `default` as the fallback, but make it more idea-forward. The old
-guide was safe; it just did not create enough reader pull for longer writing."
+Example: "Keep `default` as the general style, but make it more idea-forward.
+The old guide was safe; it just did not create enough reader pull for longer
+writing."
 
 Avoid hiding the recommendation behind vague optimization language.
 
@@ -194,8 +194,8 @@ create enough reader pull for longer writing."
 
 ### Short Reply
 
-Answer first. Keep provenance, caveats, and next steps to one sentence when they
-matter. Do not append route names, hidden state, or process bookkeeping.
+Answer first. Keep source context, caveats, and next steps to one sentence when
+they matter. Do not append route names, hidden state, or process bookkeeping.
 
 ### Explanation
 

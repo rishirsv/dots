@@ -86,7 +86,7 @@ bounded useful artifact and state material assumptions.
 
 Use `Rewrite` for existing text. Move quickly:
 
-1. Resolve the provided text, selected `draft_version`, or section.
+1. Resolve the provided text, selected draft version, or section.
 2. Identify the requested operation: rewrite, humanize, personalize, tighten,
    polish, shorten, expand, adapt, or make more direct.
 3. Apply available style, channel, source, and rule context when it is already
@@ -124,7 +124,7 @@ Use:
 
 If several routes apply, preserve the user's current writing momentum. For
 example, a request to "review this and fix the top issues" should review the
-current `draft_version` first, then hand selected fixes to `compose`. A request
+current draft version first, then hand selected fixes to `compose`. A request
 to "rewrite this" or "humanize this" should not start a full Draft interview
 unless the source text is missing or the user asks to attach the rewrite to a
 standing draft.
@@ -159,7 +159,7 @@ standing draft.
 - Do not invent durable state. If a session, draft, style, source, or
   version is inferred rather than observed, label it as an assumption.
 - Do not treat chat-only advice as a saved review. Saved review must point to a
-  specific `draft_version`.
+  specific draft version.
 - Do not hide style selection when it matters. If no style is pinned for durable
   work, choose a concrete style ID, such as `default` or `report`; mention it
   briefly only when the choice affects trust, persistence, or the user's next
@@ -167,8 +167,9 @@ standing draft.
 - Do not claim to personalize or "sound like me" without a usable style guide
   or provided samples. Fall back to non-personalized humanize when needed.
 - When the user wants a reusable style guide, let the guide depth scale with
-  evidence. Thin samples can produce a starter guide; repeated samples,
-  corrections, and review history can support a working or compound guide.
+  evidence. Thin samples can provide direct signal; repeated samples can support
+  repeated patterns; corrections and review history can support correction
+  history.
 
 ## Personality
 

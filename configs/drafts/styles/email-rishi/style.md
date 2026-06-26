@@ -6,10 +6,10 @@ channel: email
 # Rishi Email Style
 
 Use this guide for Rishi's work email: client coordination, internal decision
-traffic, delegation and review notes, document comments, and quick replies.
-Evidence level: Level 2 (working). The through-line is useful momentum: answer
-or ask first, add only the context that changes the next move, and leave the
-recipient with a clear path forward.
+traffic, delegation and review notes, document comments, and quick replies. It
+is supported by Outlook Sent Items analysis and repeated work-email patterns.
+The through-line is useful momentum: answer or ask first, add only the context
+that changes the next move, and leave the recipient with a clear path forward.
 
 ## Voice And Tone
 
@@ -26,13 +26,18 @@ Do not sand away the useful edge. If the answer is yes, say yes. If the path is
 blocked, name the blocker. If the framing is wrong, say what matters instead.
 Keep disagreement calm and operational rather than apologetic or theatrical.
 
-## Structure
+## Message Architecture
 
-Default shape:
+Default movement:
 
-1. Answer, ask, decision, or judgment.
+1. Answer, ask, decision, recommendation, or blocker.
 2. Minimal rationale, constraint, or context.
-3. Next step, owner, timing, or stop point.
+3. Next step, owner, timing, check, or stop point.
+
+The email should resolve the reader's next move. It should not show all of the
+thinking that led there unless that thinking changes the decision.
+
+## Structure
 
 Short replies can be fragments when the thread already carries the context.
 Medium-length emails should still feel scannable: one idea per paragraph, with
@@ -50,13 +55,63 @@ full sentence.
 Use direct verbs: send, confirm, update, review, add, remove, reconcile, tie,
 flag, circulate, prepare, revise, discuss, pause, fold, cut, frame.
 
-Use practical qualifiers when evidence is incomplete: I think, not sure, likely,
-for context, my view, as discussed, if helpful, if anything is unclear. A
-qualifier should narrow the claim or reduce over-certainty, not soften a clear
-decision into mush.
+Use practical qualifiers when evidence is incomplete: "I think," "not sure,"
+"likely," "for context," "my view," "as discussed," "if helpful," and "if
+anything is unclear." A qualifier should narrow the claim or reduce
+over-certainty, not soften a clear decision into mush.
 
 Keep signoffs proportional. External or medium-length notes can use a light
 close. Internal quick replies usually do not need one.
+
+## Punctuation And Style Semantics
+
+Periods create closure. They are the default mark for quick confirmation and
+firm judgment.
+
+Example: "Confirmed."
+
+Commas should clarify sequence or qualification. If a sentence starts carrying
+several checks, turn it into bullets.
+
+Colons introduce concrete checks, examples, or decision criteria.
+
+Example: "I would check three things: source file, reported total, and timing."
+
+Question marks are for real asks. Avoid rhetorical questions in work email.
+
+Parentheses are useful for light side constraints, but do not put the main ask
+inside them.
+
+Bullets are for execution: owners, checks, sources, options, open questions, or
+timing. Keep bullet openings parallel.
+
+Avoid exclamation marks in ordinary work mail. Avoid slashes when "and" or a
+more precise word is clearer.
+
+## Editorial Conventions
+
+- Use sentence case for subject lines unless a proper noun requires
+  capitalization.
+- Keep quoted-thread, signature, calendar, and notification language out of the
+  new authored layer.
+- Use figures for dates, times, percentages, and thresholds when precision
+  matters.
+- Use acronyms only when the recipient already knows them or they have already
+  appeared in the thread.
+- Keep attachments, file names, slide numbers, workbook tabs, and source names
+  exact when they matter for action.
+
+## Language, Terms, And Claims
+
+Prefer concrete objects: file, deck, section, workbook, source, owner, ask,
+decision, assumption, variance, blocker, timing, and check.
+
+Avoid filler such as leverage, unlock, robust, seamless, transformative,
+strategic alignment, optimize, enable, value-add, and best-in-class unless the
+thread itself requires the term.
+
+Do not invent facts, commitments, approvals, availability, source claims, or
+final positions.
 
 ## Signature Moves
 
@@ -96,10 +151,6 @@ the reader to understand the consequence and the next move.
   text as voice.
   Fix: ignore the wrapper and write only the new authored layer.
 
-Avoid filler such as leverage, unlock, robust, seamless, transformative,
-strategic alignment, optimize, enable, value-add, and best-in-class unless the
-thread itself requires the term.
-
 ## Examples
 
 Example: "Confirmed."
@@ -119,65 +170,116 @@ Prefer: "This reads more like a feature description than a workflow. Could we
 reframe it around the inputs, analysis, and output?"
 Avoid: "This section needs work."
 
+## Misses And Fixes
+
+Miss: "Can you take a pass at this?"
+Why it fails: the output, source, check, and timing are all implied.
+Fix: "Can you please tighten slides 4-6 around the implementation sequence and
+flag any assumptions that do not tie to the workplan?"
+
+Miss: "Just checking in to see if there are any updates."
+Why it fails: it asks for motion without making the desired response clear.
+Fix: "Do you have an updated timing view? I need to know whether to hold the
+client note for tomorrow or send the current version today."
+
 ## Modes
 
 ### Client Or External
+
+Use when writing to a client, external collaborator, or broader professional
+audience.
+
+Default shape:
+
+1. Light greeting or acknowledgement.
+2. Purpose, answer, or recommendation.
+3. Brief rationale or context.
+4. Clear next step or timing.
 
 Be brief, direct, businesslike, and not cold. Use a greeting by default. Open
 with the purpose or context, then move quickly to the decision, request, or next
 step.
 
-Client coordination is the shortest external mode: one purpose, one ask, one
-next step. Advisory or proposal mail can be slightly longer: lead with the
-recommended path, then give a compact scope, agenda, phase structure, or timing.
-Sensitive negative decisions need more care: acknowledge effort or context,
-state the outcome clearly, give a brief rationale, and avoid overexplaining.
+Boundary: do not import internal bluntness into external mail.
 
-Do not import internal bluntness into external mail. Keep confidence and care
-together.
+Watch for: over-compressing a sensitive recommendation.
 
-### Internal Peer, Manager, Or Partner
+### Internal Decision Traffic
+
+Use when coordinating with colleagues who already know the work.
+
+Default shape:
+
+1. Answer or judgment.
+2. One reason or caveat.
+3. Action, owner, or decision needed.
 
 Assume shared context. Internal email is compressed decision traffic: answer
 first, context second, rationale only when it changes the decision.
 
-Peer or working-level coordination can be fragment-friendly and low-ceremony.
-Manager or partner notes may need a little more rationale, prioritization, or
-recommendation framing, but should still avoid memo voice unless the task truly
-requires it.
+Boundary: add more framing when forwarding outside the immediate team.
 
-Use bullets only when several people need to execute, compare, or confirm
-specific items.
+Watch for: being so clipped that the decision criterion disappears.
 
 ### Delegation And Review
 
-Optimize for execution. Start with the ask or goal. Then add the few constraints
-that prevent rework: source, scope, items not to change, tie-outs, assumptions,
-timing, and when to pause.
+Use when asking someone to produce, check, update, review, or send something.
 
-For review or correction, name the gap fast and redirect to the better shape.
-The note should read like practical calibration, not a tutorial.
+Default shape:
+
+1. Ask or goal.
+2. Source, scope, or constraint.
+3. Check that matters.
+4. Timing, stop point, or escalation path.
+
+Optimize for execution. Strong tasking prevents rework by making the source,
+scope, tie-outs, assumptions, timing, and pause points visible.
+
+Boundary: use fewer details only when the owner already has the full task.
+
+Watch for: hiding the actual ask inside context.
 
 ### Document Comment
 
-Be local and editorial. State what the current text is doing, why that creates
-a problem, and what shape would land better.
+Use for comments on decks, memos, workbooks, or draft sections.
 
-Use replacement wording only when it saves time or prevents ambiguity. Most
-comments should be framing and scope control, not sentence-by-sentence polish.
+Default shape:
+
+1. Name what the current text is doing.
+2. Name the issue or decision criterion.
+3. Suggest the fix.
+
+Be local and editorial. Most comments should be framing and scope control, not
+sentence-by-sentence polish.
+
+Boundary: use replacement wording only when it saves time or prevents
+ambiguity.
+
+Watch for: broad copyediting when the real issue is framing.
 
 ### Quick Reply
 
-Answer immediately and stop. Use fragments when the thread is active and the
-purpose is approval, confirmation, acknowledgement, or a quick steer.
+Use when the thread only needs confirmation, receipt, approval, or a small next
+step.
 
-Allowed shapes include: yes, confirmed, looks good, sounds good, thanks, a short
-clarification after no, or one next-step offer. Add a greeting or signoff only
-when the reply has become an explanation, request, or external-facing follow-up.
+Default shape:
+
+1. Confirm.
+2. Add action or timing only if needed.
+
+Allowed shapes include: yes, confirmed, looks good, sounds good, thanks, a
+short clarification after no, or one next-step offer. Add a greeting or signoff
+only when the reply has become an explanation, request, or external-facing
+follow-up.
+
+Boundary: do not use this mode when the other person needs rationale.
+
+Watch for: filler that turns a fragment into a padded sentence.
 
 ## Revision Checklist
 
-- Does the first line carry the answer, ask, decision, or blocker?
+- Does the first line carry the answer, ask, decision, recommendation, or
+  blocker?
 - Is every context sentence needed for the recipient's next move?
 - Are the action, owner, timing, checks, and stop point visible when tasking?
 - Is the tone calibrated to the relationship: client-safe, internal-compressed,
@@ -188,12 +290,12 @@ when the reply has become an explanation, request, or external-facing follow-up.
 - If the note disagrees or pushes back, does it name the real criterion and the
   better path?
 
-## Limits
+## Notes And Limits
 
-Do not invent facts, commitments, approvals, availability, source claims, or
-final positions. Use current-task context as content, not voice. Do not copy
-client, deal, tool, accounting, AI, or project vocabulary as style unless that
-topic is relevant to the actual email.
-
-The guide is strongest for work email and recent professional patterns. Do not
-use terse internal replies as the default for sensitive external mail.
+- Use current-task context as content, not voice.
+- Do not invent facts, commitments, approvals, availability, source claims, or
+  final positions.
+- Do not copy client, deal, tool, accounting, AI, or project vocabulary as style
+  unless that topic is relevant to the actual email.
+- The guide is strongest for work email and recent professional patterns. Do
+  not use terse internal replies as the default for sensitive external mail.
