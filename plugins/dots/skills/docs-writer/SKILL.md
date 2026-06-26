@@ -1,6 +1,6 @@
 ---
 name: docs-writer
-description: "Use when writing, revising, or reviewing durable repository documentation such as README files, Markdown docs, concept docs, how-tos, tutorials, runbooks, ADRs/design notes, troubleshooting guides, release notes, changelogs, PRDs, or agent-readable knowledge bundles; not for AGENTS.md/project instructions, code comments only, one-off chat explanations, git-derived changelogs, PR/publish workflows, or broad implementation."
+description: "Use when writing, revising, or reviewing durable repository documentation such as README files, Markdown docs, concept docs, how-tos, tutorials, runbooks, design docs, ADRs/design notes, troubleshooting guides, release notes, changelogs, PRDs, or agent-readable knowledge bundles; not for AGENTS.md/project instructions, code comments only, one-off chat explanations, git-derived changelogs, PR/publish workflows, or broad implementation."
 ---
 
 # Docs Writer
@@ -15,8 +15,12 @@ part of this skill; do not route prose cleanup to a separate writing skill.
   before substantial rewrites, new reader-facing docs, or style-heavy edits.
 - Read [document-types.md](references/document-types.md) after choosing the
   document type or when the user asks for a README, tutorial, how-to, reference,
-  runbook, ADR/design note, PRD/feature spec, troubleshooting doc, changelog,
-  release notes, or concept doc.
+  runbook, design doc, ADR/design note, PRD/feature spec, troubleshooting doc,
+  changelog, release notes, or concept doc.
+- Read [design-docs.md](references/design-docs.md) when the user asks for a
+  design doc, technical design, implementation design, architecture proposal, or
+  "how to build it" plan for a feature, service, migration, integration, data
+  system, or other durable engineering change.
 - Read [knowledge-bundles.md](references/knowledge-bundles.md) when the doc is
   meant to be agent-readable context, a knowledge bundle, an OKF-style concept,
   or a navigable Markdown corpus.

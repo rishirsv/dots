@@ -14,9 +14,8 @@ configuration.
 
 - Durable repo docs belong in `README.md`, `INSTALL.md`, or the owning
   plugin/config docs.
-- Non-durable plans, trackers, and working notes belong under ignored root
-  `.plans/`.
-- Generated evidence belongs under ignored root `.agents/`.
+- Non-durable plans, trackers, and working notes: `.agents/plans` 
+- Temp files `.agents/tmp`
 - Tool-local state such as `.claude/`, `.codex/`, and root `.meta-skill/` is not
   a durable documentation home.
 - Skill-owned hidden workbench files may be durable when intentionally tracked;

@@ -153,6 +153,38 @@ targets.
 For PRDs, gather source evidence internally but do not add source-evidence,
 provenance, reviewed-scope, or audit sections to the document itself.
 
+## Design Doc
+
+Use when an engineering change needs technical alignment before implementation,
+especially when choices are expensive to reverse, several people or systems must
+coordinate, requirements are ambiguous, or the work carries security, privacy,
+data, reliability, compatibility, cost, or long-term maintenance risk.
+
+Read [design-docs.md](design-docs.md) before writing, revising, or reviewing a
+design doc.
+
+Recommended shape:
+
+- Metadata.
+- Objective.
+- Background.
+- Goals.
+- Non-goals.
+- Scenarios.
+- Proposed design.
+- How to build it, when implementation order affects risk or coordination.
+- Interfaces, dependencies, data model, or infrastructure.
+- Security, privacy, logging, retention, SLOs, monitoring, and legal
+  considerations when applicable.
+- Timeline or rollout plan.
+- Open issues.
+- Resolved issues.
+- Alternatives considered.
+
+Do not treat this as mandatory boilerplate. Choose sections with the penalty
+filter: document the decisions that would be painful, risky, or costly to get
+wrong, and leave cheap implementation details to the implementation.
+
 ## ADR Or Design Note
 
 Use for a durable decision, rejected alternatives, or a design proposal.
