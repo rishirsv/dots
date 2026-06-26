@@ -11,12 +11,6 @@ Do not use this skill for broad UX critique, design critique, product audits, or
 
 Use this skill before every visual-design build handoff.
 
-When a shareable, in-depth QA document is worth saving, hand the comparison and
-verdict to [html-artifact](../html-artifact/SKILL.md) (its `design-qa-detailed`
-recipe) for the saved packet. This skill still owns the source-vs-render
-comparison and the pass/blocked verdict; html-artifact only owns the saved
-document format.
-
 A complete QA comparison requires both:
 
 - a source visual target: image, screenshot, mockup, design board, or source
@@ -163,7 +157,10 @@ or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
 
 If there are no substantive mismatches, say that clearly and list any residual test gaps.
 
-When this skill is used before handoff, save the latest QA report as project-root `design-qa.md`.
+When this skill is used before handoff, save the latest QA report as
+`design-qa.md`. Follow the repository's convention for generated review
+artifacts when one exists. If no convention is discoverable, save to
+`.agents/design-qa/design-qa.md` rather than the project root.
 
 `design-qa.md` must include:
 
