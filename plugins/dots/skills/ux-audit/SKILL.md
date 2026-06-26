@@ -67,11 +67,18 @@ comparison, or static artifact, do not require a live flow or browser capture.
 Record unknown product or flow fields as `unknown`, cite the provided artifact
 as evidence, and scope findings to the visible surface or comparison criteria.
 
-Use [design-qa](../design-qa/SKILL.md) for source-target versus implementation
-fidelity checks. Use [visual-design](../visual-design/SKILL.md) for redesign
-ideation, design direction, or front-end implementation critique. Keep generated
-artifact handling here only when the artifact itself is the product surface
-being audited.
+Use [design-critique](../design-critique/SKILL.md) when there is an approved
+visual target to compare a build against before handoff — that is a target-bound
+fidelity critique, not a UX audit. ux-audit owns the opposite case: evaluating a
+live or existing experience on its own terms, with no source target. Use
+[visual-design](../visual-design/SKILL.md) for redesign ideation, design
+direction, or front-end implementation. Keep generated artifact handling here
+only when the artifact itself is the product surface being audited.
+
+When this audit's confirmed findings call for a redesign or fix, hand them to
+[visual-design](../visual-design/SKILL.md) to implement, which then re-runs
+[design-critique](../design-critique/SKILL.md) before handoff. ux-audit
+evaluates; it does not implement the fix itself.
 
 ## Route
 

@@ -6,4 +6,4 @@ interface:
   brand_color: "#3B82F6"
   default_prompt: "Audit this product flow or screen using current evidence."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

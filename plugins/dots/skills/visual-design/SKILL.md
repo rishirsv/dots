@@ -50,14 +50,17 @@ static document those outputs are written into.
 
 ### 1. Ground The Work
 
-Start from the target repo and product context before designing. Look for repo
-design guidance, design-system docs, `PRODUCT.md`, existing screenshots, nearby
-UI code, component libraries, tokens, and established conventions.
+Start from the target repo and product context before designing. Load the repo
+design contract — the precedence of design sources and the conflict-resolution
+authority order — from [grounding.md](references/grounding.md): an `AGENTS.md`
+`## Design` section or `DESIGN.md`, then tokens / theme / component library, then
+nearby shipped UI, then `PRODUCT.md` and prior accepted designs.
 
-Repo design guidance is the authority when present. Apply this skill's visual
-principles inside those constraints. If the user asks for something that
-conflicts with repo design guidance, name the conflict and ask before overriding
-the repo.
+When the repo carries design conventions they are the authority for how this
+surface looks; apply this skill's visual principles inside those constraints, and
+build through the repo's existing components and tokens before writing new
+markup. Treat shipped code as evidence, not law — if the user's ask or the task
+conflicts with a repo pattern, name the conflict and ask before overriding.
 
 Use relevant memory or prior context about the human's preferences, product, or
 past designs only as a hint. The subject's own world, materials, instruments,
@@ -118,9 +121,11 @@ and asset conventions. For a new complex app UI without an existing framework
 constraint, default to React + Vite.
 
 Build the real usable surface first, not a marketing wrapper around a future
-app. Make common states visible in the implementation: default, empty, loading,
-error, disabled, selected, success, dense data, responsive collapse, hover,
-focus, and reduced-motion behavior where relevant.
+app. Design every reachable state, not just the happy path: default, empty,
+loading, error, disabled, selected, success, dense data, responsive collapse,
+hover, focus, and reduced-motion. Harden the surface against real-world content —
+text overflow, long strings, localization, and recoverable errors that preserve
+user input — so it does not break outside the ideal case.
 
 Keep real interactive app UI text, navigation, buttons, forms, tables, controls,
 and labels code-native. Use generated raster assets for logos, brand marks,
@@ -153,26 +158,22 @@ decoration that does not serve the brief.
 
 ### 6. Validate Fidelity
 
-Validate the rendered product, not just the build.
+Validate the rendered product, not just the build. Render it first: use Codex
+in-app browser for web (state the fallback reason if unavailable); for iOS use
+the simulator, previews, or screenshots and check platform conventions, safe
+areas, dynamic type, touch targets, and chrome.
 
-Use Codex in-app browser first for web verification. If it is unavailable or
-unreliable, use another available browser and state the fallback reason.
+For concept-driven or target-driven work, run
+[design-critique](../design-critique/SKILL.md) as the blocking gate. It owns the
+comparison method, the fidelity surfaces, the severity scale, and the pass/block
+decision — bring it the accepted target and the latest screenshot together
+(`view_image` for the concept-vs-render pass) and fix what it finds. Functional
+QA cannot replace this. Do not hand off until design-critique passes, or report
+the concrete blocker.
 
-For web, inspect desktop and mobile widths, scroll, and click through the core
-workflow. For iOS, use the available simulator, previews, or screenshots and
-check platform conventions, safe areas, dynamic type, touch targets, and chrome.
-
-Before final handoff for concept-driven work, inspect both the accepted concept
-and the latest rendered screenshot with `view_image` in the same QA pass. This
-cannot be replaced by browser inspection alone. If `view_image` or screenshots
-are unavailable, report the blocker and do not claim agency-signoff fidelity.
-
-Use [image-to-code.md](references/image-to-code.md) for selected visual target
-recreation, the fidelity ledger, copy diff, icon audit, asset audit, state
-verification, native-size check, final handoff requirements, and blocking design
-QA. Keep fixing visual, interaction, responsive, asset, and typography
-mismatches until the implementation would pass agency sign-off or a concrete
-blocker remains.
+Use [image-to-code.md](references/image-to-code.md) for the build-loop details:
+target recreation, design-system extraction, asset and state verification, and
+the build-side inputs to the gate.
 
 Remove temporary QA screenshots, reports, scratch notes, and unused generated
 assets before handoff unless the user or task explicitly asks to keep them.

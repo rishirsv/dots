@@ -5,13 +5,28 @@ visual change.
 
 ## Source Anchors
 
-Start with repo and product anchors when they exist:
+Start with repo and product anchors when they exist. When the repo carries
+design conventions, they are authority for *how* this surface should look — load
+them before reaching for generic taste. Look in this order and treat what you
+find as the repo design contract:
 
-- `PRODUCT.md`, product briefs, tickets, plans, and existing user flows
-- repo design guidance, design-system docs, component docs, tokens, and
-  existing UI conventions
-- screenshots, URLs, image references, nearby UI code, and prior accepted
-  designs
+1. An `AGENTS.md` `## Design`/`## UI` section, or a `DESIGN.md` — explicit,
+   checked-in design rules.
+2. Design tokens, a theme, or a component library — the concrete style system.
+3. Nearby shipped UI for this product — the de facto style reference. Read it as
+   an exemplar: repeat the decisions worth repeating, avoid the mistakes.
+4. `PRODUCT.md`, product briefs, tickets, plans, and existing user flows.
+5. Screenshots, URLs, image references, and prior accepted designs.
+
+Resolve conflicts by this authority order: (1) the user's explicit goal for this
+task, (2) the repo's design system — tokens and components, (3) repo design
+rules in `AGENTS.md`/`DESIGN.md`, (4) the accepted concept for this surface,
+(5) this skill's generic visual principles, (6) general heuristics. Treat shipped
+code as evidence, not law — if an existing pattern is clearly wrong for the task,
+name the conflict and ask before propagating it.
+
+When the repo has none of these, say so and design from the brief; the surface's
+own world drives the distinctive choices.
 
 These anchors reduce repeated questions, but they do not replace task-specific
 shape. Shape is the brief for this exact surface.

@@ -108,20 +108,24 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
     unavailable or unreliable, use another available browser and state the
     fallback reason.
 
-11. Run [design-qa](../../design-qa/SKILL.md) as the blocking build gate.
+11. Run [design-critique](../../design-critique/SKILL.md) as the blocking build
+    gate. `design-critique` owns the comparison method, the fidelity surfaces,
+    and the pass/block decision; this step is the build loop around it, not a
+    second rubric.
 
     Steps:
 
-    - Open the reference image and the latest prototype screenshot before QA.
-    - Compare the same viewport and the same interaction state. If they do not
-      match, capture the missing view first.
-    - Fix P0/P1/P2 issues, capture the app again, and repeat until
-      `design-qa.md` says `final result: passed`.
-    - Do not hand off when `design-qa.md` says `final result: blocked`.
+    - Open the reference target and the latest prototype screenshot before the
+      gate. Compare the same viewport and the same interaction state; if they do
+      not match, capture the missing view first.
+    - Run `design-critique` on the target and screenshot together.
+    - Fix P0/P1/P2 findings, capture the app again, and repeat until
+      `design-critique.md` says `final result: passed`.
+    - Do not hand off when `design-critique.md` says `final result: blocked`.
 
 12. Handoff the app or website.
 
-    - Only hand off after design QA passes.
+    - Only hand off after design-critique passes.
     - Keep the prototype running locally when the task requires a live local
       preview.
     - Provide the clickable local URL.
@@ -197,6 +201,15 @@ Implement through the extracted design system. Similar elements should use the
 same component or shared style primitive; differences should be explicit
 variants, not one-off copied CSS.
 
+When the target repo has an existing design system — a component library,
+tokens, or a theme — build through it first: reuse its components, tokens, and
+primitives before writing new markup or styles, and match its conventions over
+generic defaults. This is the main lever for building in the app's established
+style. Reserve new markup and generated assets for what the system does not
+provide. Treat shipped components as the default, not as law — if an existing
+pattern is clearly wrong for this task, name the conflict rather than
+propagating it.
+
 Do not add new above-the-fold copy, hero eyebrows/kickers, explanatory labels,
 subtitles, category text, proof strings, or unshown major UI components unless
 they appear in the accepted concept, came from the user, or are recorded as an
@@ -232,65 +245,24 @@ supports them.
 
 ## Verification
 
-Before final handoff, inspect the accepted concept and latest browser screenshot
-with `view_image` in the same QA pass. This cannot be skipped or replaced with
-browser inspection, functional testing, or build checks alone.
+`design-critique` owns fidelity verification — the surface-by-surface comparison
+(typography, spacing, color, image assets, icons, copy, states, responsiveness),
+the severity scale, the pass/block decision, and the written findings. Do not
+restate that rubric here; run the gate in step 11 and fix what it finds.
 
-Capture the implementation at the accepted concept's native dimensions when
-practical. If that is not practical, record the blocker and also verify the
-current browser viewport.
+This skill owns only the build-side inputs to that gate:
 
-Write a fidelity ledger before final:
-
-| Mismatch | Concept evidence | Render evidence | Fix made or reason not fixed |
-|---|---|---|---|
-
-Inspect at least five concrete comparison points: copy, layout, typography,
-palette/gradients, asset treatment, spacing/container model, responsive
-behavior, icon treatment, motion, or interaction state.
-
-Run an above-the-fold copy diff against the allowed copy list. Added, removed,
-renamed, or reordered visible copy must be fixed or listed as an intentional
-deviation.
-
-Audit typography everywhere, not just the hero or main canvas. Check headings,
-body, captions, labels, toolbar controls, sidebar rows, tabs, inputs, inspector
-fields, status bars, command palettes, export/share buttons, table cells, chart
-labels, and mobile line breaks. Use computed CSS sizes, weights, and
-line-heights when screenshots suggest drift.
-
-Audit icons wherever they appear: nav, buttons, cards, toolbar controls,
-sidebars, tables, status indicators, empty states, pagination, carousels, and
-mobile controls. Check metaphor, stroke/fill style, size, color, alignment,
-optical weight, spacing, and state changes against the accepted concept.
-
-For canvas/editor apps, audit app chrome separately from canvas or document
-text. Default zoom and pan are part of the spec; persisted local state must not
-hide seed, scale, or typography fixes during verification.
-
-Verify generated assets load, are framed correctly, and do not obscure text or
-controls. Verify the core workflow updates real local UI state. Do not ship
-inert controls, fake media progress, hidden required media, or placeholder
-interactions.
-
-Functional QA does not count as fidelity QA. Passing build checks, clicking
-controls, or verifying local state cannot replace concept-to-screenshot
-comparison, native-size checks, and the written mismatch ledger.
-
-Ask explicitly: is this agency-signoff faithfully implemented, and would a
-great design agency sign off on this exact implementation of the accepted
-design? If the answer is no, keep editing or report the concrete blocker.
-
-Hard stops include clipped primary content, accidental wrapping, prototype-like
-layout, rough seeded data, placeholder boxes, generic assets, unfinished cards,
-code-drawn game placeholders replacing concept art, invented visible copy,
-invented hero eyebrows/kickers/pills/badges, mismatched colors or gradients,
-white backgrounds changed to cream/off-white, unapproved hero image overlays,
-missing or generic substituted icons, mismatched icon style or stroke weight,
-images that do not blend with the background, hidden required media, fake media
-progress, inert controls, unreadable text, type-scale drift, browser-default
-control typography, mobile overflow, unprofessional responsive collapse, stale
-debug artifacts, and any visible drift from the accepted spec.
+- Capture the implementation at the accepted concept's native dimensions when
+  practical; record the blocker if not.
+- Bring the accepted concept and the latest screenshot into the same comparison
+  input with `view_image` so `design-critique` can judge them together.
+  Functional QA — passing the build, clicking controls, verifying local state —
+  is not fidelity QA and cannot replace this.
+- Provide the allowed-copy list and the per-section image inventory from the
+  Extraction Checklist so the gate can run the copy diff and asset audit.
+- Verify generated assets load, are framed correctly, and do not obscure text
+  or controls, and that the core workflow updates real local UI state. Do not
+  ship inert controls, fake media progress, or placeholder interactions.
 
 For concept-driven implementation, include:
 

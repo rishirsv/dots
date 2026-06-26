@@ -1,15 +1,25 @@
 ---
-name: design-qa
-description: "Compares a prototype's source visual target against its rendered implementation before handoff and reports fidelity gaps. Internal pre-handoff QA helper for visual-design builds, not broad UX critique or product audits (use ux-audit for those)."
+name: design-critique
+description: "Critiques a build against its approved visual target before handoff: compares the rendered implementation to the source target, reports fidelity gaps and where the build falls short of the target, and flags defects in the target itself. Internal pre-handoff gate for visual-design builds. Requires an approved target to compare against; not for evaluating a live experience with no target or broad UX/product-flow audits (use ux-audit for those)."
 ---
 
-# Design QA
+# Design Critique
 
-Use this internal helper to compare a prototype's source design against the rendered implementation before handoff.
+Critique a build against its approved visual target before handoff. Compare the
+rendered implementation to the source target, report where the build diverges
+from the target, and flag defects in the target itself.
 
-Do not use this skill for broad UX critique, design critique, product audits, or flow reviews. Use [ux-audit](../ux-audit/SKILL.md) for those user-facing requests.
+This is a target-bound, pre-handoff critique: it always compares against an
+approved source target. The dividing line with [ux-audit](../ux-audit/SKILL.md)
+is the target — if there is an approved visual target to compare the build
+against, critique it here; if you are evaluating a live or existing experience
+on its own terms, with no source target (broad UX, product-flow, or journey
+audits), that is `ux-audit`.
 
-Use this skill before every visual-design build handoff.
+This skill owns the comparison method and the severity scale. Build skills
+invoke it as a gate; they do not restate the rubric.
+
+Use this before every visual-design build handoff.
 
 A complete QA comparison requires both:
 
@@ -17,7 +27,7 @@ A complete QA comparison requires both:
   capture
 - a rendered implementation: local URL, deployed URL, app screen, component, or screenshot
 
-If either artifact cannot be opened, captured, or compared, write `design-qa.md`
+If either artifact cannot be opened, captured, or compared, write `design-critique.md`
 with an evidence-limits section that names the missing evidence. Do not claim a
 complete source-vs-render comparison when required evidence is missing.
 
@@ -58,7 +68,7 @@ Do not pretend separate image views are side-by-side comparison. Put the source 
    - Use a full-view comparison to judge overall composition, hierarchy, layout, density, and responsive structure.
    - Use focused region comparisons when important details are too small to judge in the full-view comparison.
    - Choose focused regions from the actual source and implementation. Use them where fidelity depends on precise typography, alignment, imagery, assets, icons, logos, controls, forms, navigation, tables, dense UI, or visible interaction states.
-   - If no focused region is needed, say why in `design-qa.md`.
+   - If no focused region is needed, say why in `design-critique.md`.
    - Do not treat QA as complete from a full-view comparison alone when important details are not clearly readable.
 
 5. Review systematically.
@@ -104,7 +114,7 @@ Every QA report must explicitly evaluate these surfaces:
 Use this structure unless the user asks otherwise:
 
 ```markdown
-# Design QA Report
+# Design Critique Report
 
 **Overview**
 Briefly state what was compared, the overall fidelity read, and the main issue
@@ -158,11 +168,11 @@ or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
 If there are no substantive mismatches, say that clearly and list any residual test gaps.
 
 When this skill is used before handoff, save the latest QA report as
-`design-qa.md`. Follow the repository's convention for generated review
+`design-critique.md`. Follow the repository's convention for generated review
 artifacts when one exists. If no convention is discoverable, save to
-`.agents/design-qa/design-qa.md` rather than the project root.
+`.agents/design-critique/design-critique.md` rather than the project root.
 
-`design-qa.md` must include:
+`design-critique.md` must include:
 
 - overview
 - findings with severity, affected fidelity surface, recommendation, and acceptance check

@@ -1,6 +1,6 @@
 ---
 name: product-design
-description: "Use to route Product Design work when product-design is invoked directly or when the user asks for UI/UX design, app or interface design, redesign, prototyping, visual polish, implementation from a visual target, pre-handoff design QA, or UX/product-flow audit. Thin router only; sends work to visual-design, design-qa, or ux-audit."
+description: "Use to route Product Design work when product-design is invoked directly or when the user asks for UI/UX design, app or interface design, redesign, prototyping, visual polish, implementation from a visual target, pre-handoff design critique, or UX/product-flow audit. Thin router only; sends work to visual-design, design-critique, or ux-audit."
 ---
 
 # Product Design
@@ -40,12 +40,13 @@ Product Design progress updates, handoff, blocked states, and final responses.
 ## Router Only
 
 This router does not satisfy focused workflows itself. When a request matches
-`visual-design`, `design-qa`, or `ux-audit`, load the focused skill and follow
-it.
+`visual-design`, `design-critique`, or `ux-audit`, load the focused skill and
+follow it.
 
 If several focused skills apply, sequence them in the order that creates the
-most useful design workflow: `visual-design` first, `design-qa` before handoff,
-and `ux-audit` only for a separate evaluation of an existing experience.
+most useful design workflow: `visual-design` first, `design-critique` before
+handoff, and `ux-audit` only for a separate evaluation of an existing
+experience.
 
 ## No Visual Target, No Build
 
@@ -77,18 +78,19 @@ Use [visual-design](../visual-design/SKILL.md) for:
 - grounding a design brief, generating Image Gen concepts, or implementing an
   accepted visual target through its Image To Code reference
 
-### `design-qa`
+### `design-critique`
 
-Use [design-qa](../design-qa/SKILL.md) for:
+Use [design-critique](../design-critique/SKILL.md) for:
 
-- pre-handoff comparison between a source visual target and a rendered
+- pre-handoff comparison between an approved visual target and a rendered
   implementation
-- blocking QA after visual-design or image-to-code work
-- producing `design-qa.md` with `final result: passed` or `final result:
+- blocking the gate after visual-design or image-to-code work
+- producing `design-critique.md` with `final result: passed` or `final result:
   blocked`
 
-Do not route broad UX critiques, product audits, or flow reviews here. Use
-`ux-audit` instead.
+Use it only when there is an approved target to compare against. Route broad UX
+critiques, product audits, or flow reviews — anything judged on its own terms
+with no target — to `ux-audit` instead.
 
 ### `ux-audit`
 
@@ -104,10 +106,13 @@ Use [ux-audit](../ux-audit/SKILL.md) for:
 If the user asks to build, redesign, or polish, route to `visual-design`.
 
 If the user asks whether an implementation matches an accepted image, mockup, or
-screenshot before handoff, route to `design-qa`.
+screenshot before handoff — there is a target — route to `design-critique`.
 
-If the user asks to critique or evaluate an existing experience, route to
-`ux-audit`.
+If the user asks to critique or evaluate an existing experience on its own
+terms, with no target, route to `ux-audit`.
+
+The dividing line between the two is the target: *matches the target?* →
+`design-critique`; *is it good?* → `ux-audit`.
 
 If the user asks for a shareable, reader-facing design report or packet rather
 than product UI work itself, route through the focused owner first and then use

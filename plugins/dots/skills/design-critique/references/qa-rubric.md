@@ -20,7 +20,7 @@ Do not rely on generic "looks close" judgment. For each design QA pass, inspect 
 
 ### Core design and functionality
 
-- Fonts and typography: identify mismatched font family/fallback, weight, scale, line height, letter spacing, antialiasing, text hierarchy, wrapping, truncation, display-vs-body optical treatment, cramped text, and places where text spacing makes the UI feel broken or harder to scan.
+- Fonts and typography: identify mismatched font family/fallback, weight, scale, line height, letter spacing, antialiasing, text hierarchy, wrapping, truncation, display-vs-body optical treatment, cramped text, and places where text spacing makes the UI feel broken or harder to scan. Audit typography everywhere, including UI chrome — toolbars, sidebars, tabs, inputs, table cells, chart labels, status bars, and command palettes — not just headings and hero. Watch for browser-default or inherited control typography.
 - Spacing and layout: compare frame/crop, alignment, margins, padding, gaps, component sizes, radii, elevation, borders, and vertical rhythm. Cite where spacing drift changes hierarchy, density, readability, or causes elements to collide.
 - Viewport resilience: check desktop, tablet, and mobile widths for overlapping elements, clipped content, collapsing sections, broken grids, awkward wrapping, and controls that become unusable.
 - Colors and tokens: compare palette, gradients, opacity, shadows, contrast, semantic status colors, disabled/active states, and whether implementation tokens map to design intent.
