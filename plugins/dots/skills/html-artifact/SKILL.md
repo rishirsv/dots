@@ -1,6 +1,6 @@
 ---
 name: html-artifact
-description: "Creates grounded HTML artifacts for reports, plans, reviews, QA, and workbenches."
+description: "Use when the user needs a saved, self-contained static HTML document from grounded material and HTML-specific structure such as navigation, comparison, diagrams, disclosure, or copy/export is the point. Not for ordinary chat answers, Markdown docs, app UI, or unspecified reports/plans."
 ---
 
 # HTML Artifact

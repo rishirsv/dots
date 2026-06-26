@@ -48,7 +48,7 @@ done < <(
 )
 
 if (( ${#markdown_files[@]} )); then
-  python3 plugins/dots/skills/harness-engineer/scripts/check_harness_links.py "${markdown_files[@]}"
+  python3 scripts/check_markdown_links.py "${markdown_files[@]}"
 fi
 
 echo "Verify passed"

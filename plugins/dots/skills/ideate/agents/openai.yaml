@@ -4,7 +4,7 @@ interface:
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#3B82F6"
-  default_prompt: "Use $ideate for product brainstorming before commitment: act as a sharp product thinking partner, use Problem Exploration, Solution Ideation, Assumption Testing, or Strategy Exploration as the conversation needs, and follow the Frame/Diverge/Provoke/Converge/Capture rhythm. Keep implementation shape visible without entering build mode. If the idea is not choice-ready, run one compact Frame, Diverge, or Provoke pass before forcing A/B/C/D; once there is a real branch, ask one branch-unlocking question with flexible presentation around the A/B/C/D choice table. Stop with a compact Decision Snapshot or Concept Brief only when useful. Do not write or build unless explicitly gated."
+  default_prompt: "Use $ideate for product brainstorming before commitment. Be a sharp product thinking partner and run one move at a time: Frame, Diverge, Pressure-test, Converge, or Capture. When Diverge needs more range, use one creative unlocker such as inversion, analogy, removal, constraint lift, user hats, or scale shift. Once the idea is choice-ready, ask one branch-unlocking question with A/B/C/D choices and exactly one recommended option; add concise recommendation logic below the table only when it helps the user choose. Keep implementation shape visible without entering build mode. Stop with a compact Decision Snapshot when more questions would only polish. Do not write files or build. If asked to build, confirm scope and proceed only after the exact phrase \"confirm build\"."
 
 policy:
   allow_implicit_invocation: false

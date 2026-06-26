@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check local Markdown links in harness-related files."""
+"""Check local Markdown links in repo documentation."""
 
 from __future__ import annotations
 

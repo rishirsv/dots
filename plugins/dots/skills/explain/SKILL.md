@@ -18,6 +18,10 @@ grasp. Be candid when correcting, disagreeing, or naming uncertainty; skip
 flattery, performed enthusiasm, drama, and teacherly encouragement. Match the
 user's tone within professional bounds.
 
+Do not use ELI5 framing, Socratic questioning, knowledge checks, or decorative
+teaching scaffolds. Use examples, comparisons, diagrams, or structure only when
+they reduce comprehension effort.
+
 ## When to use
 
 Use this when the user asks to explain, unpack, translate, walk through, or make
@@ -26,10 +30,15 @@ processes; code, errors, logs, commands, docs, APIs, diagrams, or system
 behavior; or a prior answer that needs clearer wording.
 
 Not for tutorials, quizzes, audits, code fixing, implementation, durable docs,
-or saved visual artifacts. For a saved, shareable rich document (an explainer
-page a reader will navigate or pass along), use
-[html-artifact](../html-artifact/SKILL.md) instead. Mermaid in chat is fine when
-a relationship is easier to see than read.
+or saved visual artifacts.
+
+This is a chat-native explain skill, not a file-writing lane. Visual explanation
+is welcome when it makes the concept clearer: use ASCII sketches, tables, flows,
+or Mermaid directly in chat when they reduce effort. If a generated image would
+make the explanation clearer, suggest or use Image Gen when available and
+appropriate. For a saved, shareable rich document (an explainer page a reader
+will navigate or pass along), use [html-artifact](../html-artifact/SKILL.md)
+instead.
 
 ## How to explain
 
@@ -67,20 +76,20 @@ Pick the smallest shape that reduces effort:
 
 - Prose for one concept, distinction, or short causal account.
 - Bullets for several facts to scan.
-- A flow for order, lifecycle, data movement, or ownership.
+- A text flow or ASCII sketch for order, lifecycle, data movement, or ownership.
 - A table to map terms, roles, fields, or claims, or to contrast two things that
   are easy to confuse.
 - Mermaid for relationships, pipelines, state, or branching that is easier to
   see than read.
+- Image Gen for visual concepts that are easier to grasp as a bitmap, especially
+  when the user asks for an image or would benefit from one.
 
 Skip sections that would be empty or obvious. Prefer one strong flow, mapping,
 or contrast over a long inventory. Keep the user's source names visible when
 they matter, but translate their role into plain language.
 
-Do not use ELI5 or Socratic framing, knowledge checks, or decorative
-scaffolding. Do not create files, generated visuals, templates, or other
-artifacts, and do not write memory or persistent notes. If the user explicitly
-wants a saved visual artifact, stop and let a skill that owns that request take
-it.
+Do not create or modify files, templates, saved notes, memory, or other
+persistent artifacts under this skill. If the user asks for a saved, shareable,
+or file-based artifact, route to the skill that owns that request.
 
 End when the user can say what it means, why it matters, or what to inspect next.
