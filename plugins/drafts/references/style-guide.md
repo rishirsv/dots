@@ -5,7 +5,7 @@ writing style guide.
 
 This is the canonical reference for Drafts style work. It covers evidence
 classes, evidence levels, repeated-choice extraction, runtime guide shape,
-testing, corrections, review handoff, and privacy limits. Do not split
+testing, corrections, review handoff, and reference handling. Do not split
 stylometric evidence into a separate runtime reference; stylometry is the
 evidence method inside style-guide creation and review.
 
@@ -24,14 +24,19 @@ The core principle is simple: style is a set of repeated choices that change
 output. Capture the choices that a future draft can actually use, then test
 whether they improve the writing without turning the result into parody.
 
+Optimize for accuracy. A reusable style guide should preserve enough accepted
+references, source-derived examples, and correction history to verify the claims
+it makes about a user's voice. Storage, sharing, and redaction policy belongs to
+the surrounding workspace or explicit user instruction, not to the style skill
+itself.
+
 Runtime style guides must be standalone, fully encapsulated voice manuals. A
 future writer should be able to use `style.md` without opening reference records,
 source samples, extraction evidence, or the documents that originally inspired
-the guide. Put provenance, source caveats, rejected evidence, sample
-inventories, and comparison details in `style_reference` records or other
-explicitly defined non-runtime evidence, not in the runtime guide. A runtime
-guide should not treat style references as content sources; it should describe
-voice choices only.
+the guide. Put source text, source caveats, rejected evidence, sample
+inventories, and comparison details in `style_reference` records, not in
+separate audit files or ledgers. A runtime guide should not treat style
+references as content sources; it should describe voice choices only.
 
 ## Fast Path
 
@@ -47,16 +52,16 @@ Use the smallest part of this reference that fits the current job:
   Anti-Patterns And Fixes, Example Density And Formats, Guide Test, and
   Corrections to judge whether the draft matches the selected guide.
 - `state` or sync work: use Where Guides Live, Keep The Surfaces Separate, Tiny
-  Frontmatter, and Privacy And Limits.
+  Frontmatter, and Accuracy Limits.
 
 Keep three surfaces distinct:
 
 - `style.md`: the runtime voice manual the model reads while writing.
 - `style-library.json`: the minimal lookup record used to find styles.
-- `references/`: optional accepted `style_reference` records for preserved
-  samples, corrections, caveats, and stylometric evidence. Do not create generic
-  auxiliary files or aggregate maintenance files unless the product model
-  explicitly defines them.
+- `references/`: accepted `style_reference` records for samples, corrections,
+  caveats, and stylometric evidence. Do not create generic auxiliary files,
+  aggregate maintenance files, evidence audits, extraction ledgers, or parallel
+  source summaries.
 
 ## Keep The Surfaces Separate
 
@@ -121,9 +126,9 @@ sync, import, and export styles without reading every `style.md` file.
 9. Extract authorship, channel, audience, relationship, thread context, intent,
    and cleaned user-authored text before deciding what guide the material can
    support.
-10. For large or mixed corpora, build a corpus map in working context before
-    generating prose. Preserve it only inside accepted reference records or
-    another explicitly defined evidence surface.
+10. For large or mixed corpora, map the source set in working context before
+    generating prose. Preserve durable evidence only inside accepted reference
+    records.
 11. Check sample quality before guide generation.
 12. Extract repeated choices using the stylometric pattern families: voice
     tensions, structure, sentence shape, function words and pronouns,
@@ -141,9 +146,9 @@ sync, import, and export styles without reading every `style.md` file.
 ## Evidence Classes
 
 Before using a sample, decide whether it is actually useful voice evidence.
-Record detailed sample notes in the accepted `style_reference` record when the
-user wants durable evidence preserved. Do not put them in the runtime style guide
-unless the caveat changes drafting behavior.
+For reusable style guides, record detailed sample notes in accepted
+`style_reference` records by default. Do not put source notes in the runtime
+style guide unless the caveat changes drafting behavior.
 
 Classify each source:
 
@@ -245,9 +250,9 @@ patterns across a channel family.
 
 Add:
 
-- Corpus map with channel, audience, relationship, intent, register, and context,
-  kept in working context or relevant reference records unless the product model
-  explicitly defines an aggregate evidence artifact.
+- Source-set map with channel, audience, relationship, intent, register, and
+  context, kept in working context while analyzing and promoted into relevant
+  reference records when durable.
 - Named structural templates or arcs.
 - Pattern inventory captured in relevant reference records or promoted into
   `style.md` as drafting rules.
@@ -256,6 +261,9 @@ Add:
 - Blacklist entries with pattern, why it fails, and preferred fix.
 - Holdout test when enough samples exist, recorded in the relevant reference
   record or working context unless it changes how the guide should be used.
+- For multi-mode guides, at least one concrete source-grounded example for each
+  high-use mode. If a mode lacks examples, mark that mode as thin or keep it out
+  of the reusable guide.
 
 This is the default target for high-quality reusable writing style.
 
@@ -266,7 +274,8 @@ meaningfully different tasks or channels.
 
 Add:
 
-- Correction ledger that tracks recurring misses and guide changes.
+- Correction-style reference records that track recurring misses and guide
+  changes.
 - Style-review checklist reused by `writing-review`.
 - Drift notes when recent corrections conflict with older samples.
 - Channel-specific modes that share one stable voice where possible.
@@ -284,13 +293,12 @@ When starting a style guide:
 3. If evidence is thin, interview one question at a time and ask the user to
    react to short alternatives instead of making them fill a form.
 4. Assign an evidence level.
-5. Build a corpus map for mixed or large evidence.
+5. Map the source set for mixed or large evidence.
 6. Extract repeated choices that will change drafting.
 7. Draft the guide at the appropriate level.
 8. Run a guide test when feasible.
 9. Record limits, rejected evidence, and sample caveats in reference records
-   or current working context unless they change how the runtime guide should be
-   used.
+   unless they change how the runtime guide should be used.
 
 Useful interview questions are concrete:
 
@@ -328,8 +336,8 @@ email can usually hold client, peer, delegation, and document-comment modes in
 one guide; iMessage may still need separate guides if intimate, friend, and
 work chat evidence behaves very differently.
 
-Before creating durable guides from a corpus map, show the proposed channel
-guides, modes, evidence strength, and clusters that are too thin to use.
+Before creating durable guides from a large source set, show the proposed
+channel guides, modes, evidence strength, and clusters that are too thin to use.
 
 ## Standalone Runtime Guide Contract
 
@@ -381,8 +389,8 @@ Use this spine for most guides. Scale detail by evidence level:
    evidence supports them.
 7. Signature moves: recurring rhetorical moves that produce the target effect.
 8. Anti-patterns and fixes: what to avoid and what to do instead.
-9. Example set: short invented or redacted examples tied to the highest-leverage
-   patterns.
+9. Example set: short representative examples grounded in accepted references
+   and tied to the highest-leverage patterns.
 10. Misses or contrasts only where they teach a recurring failure; use
     miss/fix, prefer/avoid, pattern/fix, or before/after instead of defaulting
     to repeated contrast pairs.
@@ -414,8 +422,8 @@ Choose the example format by job:
 - `Pattern / Fix`: for anti-patterns and blacklists.
 - `Miss / Why it fails / Fix`: for a recurring failure the model is likely to
   repeat.
-- `Before / After`: for a concrete rewrite pattern, using invented or redacted
-  text unless the user asked to use real source material.
+- `Before / After`: for a concrete rewrite pattern grounded in accepted
+  references or corrections.
 - Direct contrast pairs: only when side-by-side comparison teaches one
   repeatable distinction better than prose would.
 
@@ -423,14 +431,15 @@ Scale examples by evidence level:
 
 - Level 1: one to three examples, mostly positive, plus one high-risk miss if
   needed.
-- Level 2: three to six targeted examples across the strongest patterns and
-  highest-risk misses.
-- Level 3: keep runtime examples compact; move large banks, holdout notes, and
-  correction history to reference records or another explicitly defined
-  non-runtime evidence surface.
+- Level 2: targeted examples across the strongest patterns, high-use modes, and
+  highest-risk misses. Multi-mode guides need at least one concrete example for
+  each high-use mode.
+- Level 3: keep runtime examples compact, but keep larger example banks, holdout
+  notes, and correction history in `references/`.
 
-Do not require every mode or signature move to include an example. If the prose
-instruction is already clear, leave it alone.
+Do not require every signature move to include an example. Do require concrete
+examples for high-use modes in multi-mode guides; if evidence is too thin, mark
+the mode as thin or do not include it as durable guidance.
 
 ## Tiny Frontmatter
 
@@ -497,7 +506,7 @@ reusable principle.>
 
 ## Examples
 
-Example: "<short invented or redacted example>"
+Example: "<short representative example grounded in accepted references>"
 Why it works: <observable reason>
 
 Prefer: "<sentence, structure, transition, or move to use>"
@@ -513,9 +522,26 @@ Fix: "<better version>"
 
 ### <Audience Or Task Mode>
 
+Use when:
+
+- <Situation, relationship, or task.>
+
+Default shape:
+
+1. <Opening move.>
+2. <Middle move.>
+3. <Ending or handoff move.>
+
 <Explain what changes and what stays stable.>
 
-Example: "<short example only if it teaches the mode>"
+Example: "<mode-specific representative example grounded in accepted references>"
+Why it works: <observable reason>
+
+Common miss: "<nearby miss>"
+Fix: "<better version>"
+
+Boundary: <when not to use this mode>
+
 Watch for: <mode-specific miss or overuse pattern>
 
 ### <Second Mode>
@@ -646,9 +672,10 @@ format needs that shape.
 
 ## Style Reference Records
 
-Use this shape for each accepted reference or correction when the user wants the
-source evidence preserved. Store it as a Markdown file under
-`references/<yyyymmdd>-<short-title>.md`:
+Use this shape for each accepted reference or correction for a reusable style.
+Store it as a Markdown file under `references/<yyyymmdd>-<short-title>.md`.
+These records are the durable evidence layer; do not create separate evidence
+audits, extraction ledgers, source maps, or maintenance summaries.
 
 ```markdown
 ---
@@ -672,11 +699,16 @@ created_at: <yyyy-mm-dd>
 - Evidence level impact:
 - Source quality:
 - Audience:
+- Relationship:
+- Intent:
+- Mode:
 - Topic:
 - Cleaning performed:
 - Word count:
 - Reusable voice evidence:
 - Stylometric patterns:
+- Representative examples to promote:
+- Misses or fixes taught by this sample:
 - Channel conventions:
 - Topic vocabulary to ignore:
 - Warnings:
@@ -718,8 +750,8 @@ When feasible, test the guide before normal reuse:
   source documents, accepted/rejected references, or comparison language instead
   of standing alone as a voice manual.
 - Check whether the revision checklist catches the guide's highest-risk misses.
-- Record the result in the relevant reference record, or in a short
-  `## Notes And Limits` section only when it changes use of the guide.
+- Record the result in the relevant reference record, or in `style.md` only when
+  it changes how the guide should be used.
 
 If testing is not feasible, say why in one short handoff sentence.
 
@@ -729,12 +761,12 @@ When the user corrects a style output, treat the correction as evidence:
 
 - If the correction applies broadly, update `style.md`.
 - If it applies only to a channel or artifact type, record that scope.
-- If it contradicts earlier evidence, preserve both outside the runtime guide
-  until more samples resolve the conflict.
+- If it contradicts earlier evidence, preserve both in the relevant reference
+  records until more samples resolve the conflict.
 - If it is a one-off preference for the current draft, keep it in draft or
   session instructions instead of the reusable style.
-- If the same miss recurs, add it to a correction ledger and update the
-  relevant anti-pattern, signature move, or revision checklist.
+- If the same miss recurs, add it to a correction-style reference record and
+  update the relevant anti-pattern, signature move, or revision checklist.
 
 Do not silently convert every correction into a global style rule.
 
@@ -742,7 +774,7 @@ For Level 2 and Level 3 guides, keep repeated corrections in the relevant
 correction-style reference record:
 
 ```markdown
-## Correction Ledger
+## Corrections
 
 - Date:
   Context:
@@ -774,9 +806,12 @@ that selected ID when durable frontmatter is created, and mention the choice
 only when it affects trust or future edits. If no user guide is a clear fit,
 choose `default` instead of claiming a hidden style ID.
 
-## Privacy And Limits
+## Accuracy Limits
 
-A strong style guide can reveal private habits, relationships, professional
-context, and communication patterns. Do not sync references or sample corpora
-unless the user explicitly asks. Do not include sensitive sample text in
-examples when an invented or redacted example can teach the same move.
+A strong style guide should be traceable to accepted references, user
+corrections, or tested outputs. Do not promote an attractive pattern into
+`style.md` unless it is supported by the reference set or the user explicitly
+chooses it as aspirational.
+
+Do not let source topics masquerade as voice. Topic vocabulary belongs in the
+current task unless repeated references show it is a stable stylistic choice.

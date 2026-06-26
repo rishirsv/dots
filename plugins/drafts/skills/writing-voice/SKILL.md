@@ -6,7 +6,9 @@ description: "Use for Drafts style work: creating user writing styles, reading s
 # Writing Voice
 
 Build and maintain reusable user writing styles as inspectable evidence, not as
-uninspectable style inference. Use this skill after `drafts` routes writing
+uninspectable style inference. Optimize for accurate voice extraction: a
+reusable style guide should be traceable to accepted samples, corrections, and
+tests. Use this skill after `drafts` routes writing
 style, sample, or voice work here, or when the user explicitly invokes
 `writing-voice` for style guide setup or sample handling.
 
@@ -36,14 +38,14 @@ lookup, automatic style selection, or state changes.
 6. If evidence is thin, interview one question at a time and ask the user to
    react to short alternatives for tone, structure, sentence rhythm, openings,
    anti-patterns, and examples.
-7. For large or multi-context corpora, build a corpus map. Prefer one guide per
-   channel family, with relationship and task differences expressed as modes.
-   Split only when the modes contradict each other.
+7. For large or multi-context corpora, map the source set in working context.
+   Prefer one guide per channel family, with relationship and task differences
+   expressed as modes. Split only when the modes contradict each other.
 8. Ingest accepted style samples as self-contained `style_reference` records
-   under that style's `references/` directory only when the user wants durable
-   evidence preserved.
-9. Preserve evidence notes inside the relevant reference record only when useful
-   for future maintenance. Do not create generic auxiliary files.
+   under that style's `references/` directory for reusable styles.
+9. Preserve evidence notes inside the relevant reference record. Do not create
+   generic auxiliary files, evidence audits, extraction ledgers, source maps, or
+   parallel maintenance summaries.
 10. Run quality checks for length, duplication, boilerplate, author consistency,
    source noise, distinctiveness, channel coverage, relationship coverage, and
    contamination.
@@ -70,8 +72,9 @@ Use `DRAFTS_STYLE_HOME` as the narrow sync override for reusable styles when the
 user wants the same style library across machines. Do not recommend syncing all
 of `CODEX_HOME` for style guides.
 
-Default to syncing only `style.md` and `style-library.json`. Do not move sample
-corpora or maintenance material as part of ordinary guide sync.
+Default to syncing `style.md`, `style-library.json`, and selected
+`references/`. Do not move unrelated sample corpora or maintenance material as
+part of ordinary guide sync.
 
 For import or sync conflicts, keep both style versions unless the user chooses
 an overwrite. Do not merge style guides automatically.
@@ -135,7 +138,7 @@ A useful style guide should contain:
   recommendations, critiques, updates, repairs, contrasts, or escalations.
 - Anti-patterns with fixes.
 - Modes for audience, relationship, or task differences inside the channel.
-- Targeted examples tied to observable patterns, using miss/fix or
+- Targeted examples grounded in accepted references, using miss/fix or
   prefer/avoid only when contrast teaches a recurring risk.
 - A revision checklist that downstream drafting and review can reuse.
 - Guardrails: what not to imitate, invent, overfit, or carry across contexts.
@@ -150,9 +153,10 @@ house style, sample set, or underlying source. Convert any necessary caveat into
 a positive drafting rule. For example: "Use current-task context as content,
 not voice."
 
-Inline examples make the guide usable at drafting time. Prefer short invented
-or redacted examples that demonstrate the style move. Avoid examples so close
-to source samples that the compose skill may copy them.
+Inline examples make the guide usable at drafting time. Prefer representative
+examples grounded in accepted references. Use synthetic examples only after the
+evidence has been established, and label them as synthetic when that distinction
+matters.
 
 Do not default every section to a contrast pair. Use the lightest example format
 that teaches the move: example/why, prefer/avoid, pattern/fix, miss/fix, or

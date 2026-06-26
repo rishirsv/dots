@@ -139,10 +139,13 @@ standing draft.
    text, style evidence, or requested change is missing.
 4. Use the specialist skill that fits the work.
 5. Return the useful output first: the co-authoring move, outline revision,
-   section draft, rewrite, review, or final prose. Keep bookkeeping details
-   private unless the user asks how Drafts worked or one short note is needed
-   for trust. The one routine exception is announcing durable state at its first
-   transition in a session, per [state.md](../../references/state.md).
+   section draft, rewrite, review, or final prose. For substantial prose, prefer
+   a writing block or draft surface over pasting the full text into chat. For
+   beats and fragments, use indented Markdown when no richer writing surface is
+   needed. Keep bookkeeping details private unless the user asks how Drafts
+   worked or one short note is needed for trust. The one routine exception is
+   announcing durable state at its first transition in a session, per
+   [state.md](../../references/state.md).
 6. Expect `compose` to run a quiet quality loop before returning writing; review
    is an escalation path, not the default route to acceptable prose.
 

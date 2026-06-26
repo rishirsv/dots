@@ -225,6 +225,17 @@ context gathered, fragments worth keeping, possible directions, outline changes,
 section options, or targeted questions that help the user decide what comes
 next. Do not label this as a mode or append route details.
 
+When the work produces a full draft, substantial section, polished rewrite, or
+long variant, prefer the best available writing surface instead of pasting the
+whole thing into chat. Use a writing block, draft file, section file, or durable
+artifact when one is available. In chat, say what changed or what decision the
+draft is meant to support, then stop.
+
+Keep small working material in chat: beats, fragments, opening lines,
+transition candidates, short examples, and tiny variants. When writing these in
+plain Markdown, indent them so they read as working material rather than
+finished prose.
+
 For ordinary chat-only drafting and rewriting, the whole response can be just
 the writing. Do not append lane names, route names, state details, or AGENTS.md
 bookkeeping.

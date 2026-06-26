@@ -102,9 +102,9 @@ Reusable user styles live in the resolved user style library root:
 ```
 
 `style.md` is the runtime voice manual. `references/` holds accepted
-`style_reference` records when the user explicitly creates a reusable style
-library and wants the underlying evidence preserved. Each reference record is a
-self-contained Markdown file, not a required companion to `style.md`:
+`style_reference` records for reusable styles: samples, corrections, and source
+evidence that support the guide. Each reference record is a self-contained
+Markdown file, not a required companion to `style.md`:
 
 ```text
 references/
@@ -112,11 +112,11 @@ references/
 ```
 
 Use each reference record for cleaned sample text, source quality, reusable voice
-evidence, stylometric observations, caveats, and correction history tied to that
-sample or correction. Do not create generic auxiliary files, aggregate evidence
-files, corpus maps, holdout ledgers, or other maintenance surfaces unless the
-product model explicitly defines them. Do not sync or export references unless
-the user explicitly asks.
+evidence, stylometric observations, caveats, representative examples, and
+correction history tied to that sample or correction. Do not create generic
+auxiliary files, aggregate evidence files, evidence audits, extraction ledgers,
+source maps, holdout ledgers, or other maintenance surfaces. The durable style
+library is `style.md`, `references/`, and `style-library.json`.
 
 Resolve the root in this order:
 
@@ -172,10 +172,12 @@ Ordinary style sync, backup, export, or import copies:
 
 - `style-library.json`
 - each selected `style.md`
+- selected `references/` for reusable styles
 
-Do not infer approval to sync sample corpora from a general request to "sync my
-styles." If the user explicitly asks to export or move references, treat that as
-a separate operation and state what will be included before copying.
+Do not infer approval to sync unrelated source corpora from a general request to
+"sync my styles." References that belong to the selected style are part of the
+style library; unrelated archives, message exports, and raw source folders are
+not.
 
 When exporting a style library, create a bundle rather than a loose folder copy:
 
@@ -186,6 +188,7 @@ drafts-style-library/
   styles/
     <style-id>/
       style.md
+      references/
 ```
 
 Before importing, read `manifest.json` and `style-library.json` when present.
@@ -200,8 +203,8 @@ Conflict-safe names may use:
 ```
 
 After sync, export, import, or root changes, report only what matters:
-resolved library root, styles included, reference records included only when
-explicitly requested, and conflicts created or resolved.
+resolved library root, styles included, reference records included, and
+conflicts created or resolved.
 
 ## Frontmatter
 
@@ -265,9 +268,9 @@ The style terms intentionally describe different layers:
 - `style` is the selected identifier, such as `default` or a user style ID. It
   is the pointer saved in frontmatter or state.
 - `style_reference` is source evidence for a named style: user-authored samples,
-  corrections, or explicitly aspirational examples. It lives as a
-  self-contained record under `references/` only when the user wants durable
-  evidence preserved. It is input to guide creation, not a voice guide by itself.
+  corrections, or explicitly aspirational examples. For reusable styles, it
+  lives as a self-contained record under `references/`. It is input to guide
+  creation, not a voice guide by itself.
 - `style_guide` is the standalone runtime `style.md` voice manual generated
   from accepted references and corrections. It tells Compose and Review how to
   write or judge voice.

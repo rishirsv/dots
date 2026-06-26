@@ -17,6 +17,6 @@ That makes shell-launched Drafts use this repo copy directly while the sync
 target keeps default and personal Codex homes populated for tools that do not
 inherit the shell environment.
 
-Keep this folder to reusable guide files, optional maintenance notes, and the
-minimal `style-library.json` lookup index. Do not commit source corpora or
-message/archive exports here.
+Keep this folder to reusable `style.md` guide files, per-style `references/`,
+and the minimal `style-library.json` lookup index. Do not add separate evidence
+audits, extraction ledgers, source corpora, or message/archive exports here.
