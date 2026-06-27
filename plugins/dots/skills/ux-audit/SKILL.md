@@ -173,6 +173,9 @@ For every live-flow step or static artifact state:
 8. Write notes for that step.
 9. In the notes, include:
    - step health: `good`, `mixed`, `poor`, or `blocked`
+   - 3-5 concise sentences of judgment for that step, covering what the user
+     sees, why the state helps or hurts the core task, what should be
+     preserved, and the main risk or next check
    - primary action or main user decision
    - visible strengths worth preserving
    - findings with `severity`, `surface`, `evidence`, `impact`,
@@ -210,6 +213,38 @@ If the destination is a local folder:
 
 - Save screenshots or provided-artifact copies in that folder.
 - Save the notes in a file that can be shared at the end.
+
+## Saved Report Shape
+
+When writing a saved `audit.md`, make it reader-facing. Do not open with
+grounding, source provenance, code anchors, tool logs, screenshot inventories, or
+evidence tiers. Use those details as support, not as the first thing the reader
+has to parse.
+
+Use this order:
+
+1. Title
+2. One-line verdict
+3. Scope and core user task
+4. Top findings, grouped by severity
+5. Step health table or compact numbered step list
+6. Detailed findings
+7. Strong decisions to preserve
+8. Ship-now fixes
+9. Later polish
+10. Verification gaps
+11. Evidence appendix
+
+Each step in the step health table or numbered step list should have enough
+detail to stand on its own: 3-5 concise sentences, not just a health label or a
+single-line note. Lead with the visible user experience, then explain the task
+effect, the strongest preserve/fix point, and any evidence limit that changes
+confidence.
+
+Put product contracts, source anchors, screenshot inventories, evidence tiers,
+tooling used, code/spec references, and detailed provenance in `Evidence
+appendix` at the bottom. Mention evidence inline only where it supports a
+finding or acceptance check.
 
 After step notes, add a system-quality pass that summarizes cross-step
 patterns:

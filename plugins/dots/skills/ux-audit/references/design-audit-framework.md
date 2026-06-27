@@ -9,7 +9,10 @@ component, modal, or static artifact, use
 experience includes a bounded screen or interaction, keep that part of the audit
 scoped to the evidence.
 
-Start each audit by recording:
+Start each audit by recording these fields in working notes before judging the
+flow. In a reader-facing saved report, summarize only the useful scope near the
+top and move detailed grounding, provenance, evidence tiers, and source anchors
+to an `Evidence appendix` at the bottom.
 
 - Product or experience
 - Flow, journey, workflow, or product area
@@ -158,15 +161,16 @@ Each substantive finding should include:
 Recommended shape:
 
 ```markdown
-- [P1] Short issue title
-  Step/screenshot:
-  Surface:
-  Evidence:
-  Impact:
-  Recommendation:
-  Acceptance check:
-  Verification needed:
-  Confidence:
+### [P1] Short issue title
+
+- Step/screenshot:
+- Surface:
+- Impact:
+- Recommendation:
+- Acceptance check:
+- Evidence:
+- Verification needed:
+- Confidence:
 ```
 
 Keep recommendations attached to the finding they solve. Avoid generic advice
