@@ -2,7 +2,9 @@
 
 Read this only after the user selects a refactor candidate and wants alternative interface designs.
 
-Use this parallel subagent pattern when the first plausible interface is unlikely to be the best one.
+Generate alternative interface designs when the first plausible interface is
+unlikely to be the best one. Use subagents for high-impact or non-obvious seams
+when independent designs would improve the decision.
 
 ## Process
 
@@ -17,18 +19,22 @@ Before spawning subagents, write a user-facing explanation of the selected candi
 
 This sketch is not the proposal. It helps the user and subagents reason about the same problem.
 
-### 2. Spawn Subagents
+### 2. Generate Alternative Designs
 
-Spawn three or more subagents in parallel when available. Each should produce a radically different interface for the deepened module.
+Produce two to four meaningfully different interfaces for the deepened module.
+For high-impact seams, spawn parallel subagents when available; otherwise create
+the alternatives yourself.
 
-Give each subagent a separate technical brief: file paths, coupling details, dependency category, what sits behind the seam, repo review guidance, and relevant domain vocabulary. Give each agent a different design constraint:
+Each design should work from the same technical brief: file paths, coupling
+details, dependency category, what sits behind the seam, repo review guidance,
+and relevant domain vocabulary. Give each design a different constraint:
 
-- Agent 1: minimize the interface, aiming for 1-3 entry points and maximum leverage per entry point.
-- Agent 2: maximize flexibility, supporting many use cases and extension points.
-- Agent 3: optimize for the most common caller, making the default case trivial.
-- Agent 4, when applicable: design around ports and adapters for cross-seam dependencies.
+- Minimal: aim for 1-3 entry points and maximum leverage per entry point.
+- Flexible: support many use cases and extension points.
+- Common path: optimize for the most common caller and make the default case trivial.
+- Ports and adapters, when applicable: design around cross-seam dependencies.
 
-Each subagent outputs:
+Each design outputs:
 
 1. Interface: types, methods, params, invariants, ordering, and error modes
 2. Usage example showing how callers use it

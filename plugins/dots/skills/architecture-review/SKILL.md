@@ -1,11 +1,11 @@
 ---
-name: refactor
-description: "Scans a codebase or subsystem for larger refactoring and architecture improvements, surfacing candidates before changing anything. Explicit-only after-the-fact structural review, not post-implementation diff cleanup or direct feature work."
+name: architecture-review
+description: "Reviews a codebase or subsystem for structural refactor candidates, architecture ownership problems, shallow modules, weak seams, duplicated policy, and hard-cut cleanup opportunities. Explicit-only after-the-fact architecture review; not post-implementation diff cleanup, planning-only work, or direct feature work."
 ---
 
-# Refactor
+# Architecture Review
 
-Review a codebase or subsystem for larger refactoring and architecture improvement opportunities. Surface candidates first; do not start a broad refactor until the user chooses a candidate or explicitly asks for implementation.
+Review a codebase or subsystem for structural refactor candidates and architecture improvement opportunities. Surface candidates first; do not start a broad refactor until the user chooses a candidate or explicitly asks for implementation.
 
 ## References
 
@@ -44,6 +44,11 @@ Explore organically and note where the code fights the reader:
 - tests assert the same invariant in several places or test past the interface
 - compatibility, fallback, migration, or dual-shape code persists without a real external boundary
 
+For broad scans, add evidence from recent change patterns when it is cheap to
+inspect: churn around the same modules, repeated edits to the same concept,
+duplicated call patterns, flaky or failing tests, and files accumulating
+unrelated responsibilities.
+
 Use fresh explorer or researcher subagents for large scans when available. Pass each subagent the compact repo guidance summary, relevant architecture docs, required domain skills, and the vocabulary from [architecture-language.md](references/architecture-language.md). Keep the parent agent responsible for the final recommendation.
 
 ## Candidate Bar
@@ -72,15 +77,16 @@ End with `Top recommendation`: the first candidate to explore and why.
 
 Ask which candidate the user wants to explore before designing interfaces or editing code. If the user has already asked to implement, pick the strongest candidate, state the plan, and keep the patch scoped to that candidate.
 
-## Grilling Loop
+## Candidate Loop
 
 After the user chooses a candidate:
 
 1. Restate the problem space, constraints, dependency category, and current seam.
-2. If the interface is not obvious, use [interface-design.md](references/interface-design.md) to generate alternative interface designs.
-3. Compare designs by depth, locality, seam placement, adapter need, and test surface.
-4. Recommend one path. Be opinionated.
-5. Only then implement, and only inside the approved candidate scope.
+2. Identify the behavior that must stay true, the current tests or commands that prove it, and the owning invariant. If the behavior is important and untested, characterize it before making behavior-adjacent edits.
+3. If the interface is not obvious, use [interface-design.md](references/interface-design.md) to generate alternative interface designs.
+4. Compare designs by depth, locality, seam placement, adapter need, and test surface.
+5. Recommend one path. Be opinionated.
+6. Only then implement, and only inside the approved candidate scope.
 
 ## Boundaries
 
