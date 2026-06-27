@@ -1,286 +1,215 @@
 ---
 name: git-commit
-description: "Create focused local git commits when the user wants to commit, save, checkpoint, stage-and-commit, split, amend, or prepare a commit message. Push is explicit-only. Not for opening PRs, merging, rebasing shared history, or force-pushing."
+description: "Create fast, focused local git commits when the user wants to commit, save, checkpoint, stage-and-commit, split, amend, or prepare a commit message. Push is explicit-only; PRs, merges, rebases, and force-pushes belong elsewhere."
 ---
 
 # Git Commit
 
-Create focused git commits from intended work without sweeping unrelated
-changes into history. Git commits record the staged index, so this skill treats
-scope and staging as the core job. Push only in explicit push mode.
+Create one clean local commit from the intended changes. Move quickly when the
+index is already clear; slow down only when Git state, scope, or publication risk
+requires it.
 
-## Trigger
+The staged index is what Git records. Treat it as the source of truth before
+committing, and never sweep unrelated work into history.
 
-Use when the user asks to do commit work, including ordinary wording such as
-`commit this`, `make a commit`, `save these changes`, `checkpoint this`, `stage
-and commit`, `write a commit message`, `split this into commits`, or invokes
-`git-commit` / `$git-commit`.
+## Normal Path
 
-Push mode remains explicit-only. Do not infer push intent from a plain commit,
-save, or checkpoint request.
+For an ordinary "commit this" request, use the shortest safe loop:
 
-Do not use for opening pull requests, publishing review branches, merging,
-rebasing shared history, CI babysitting, or PR review threads. If the user asks
-to publish or open a PR, create any needed local commit first, then route the
-publication step to `publish-pr`.
-
-## Modes
-
-- **Commit**: default. Create one focused local commit from intended changes.
-- **Message-only**: when the user asks for a commit message or staged diff
-  summary. Write the message and stop; do not commit.
-- **Split**: when the diff contains multiple reviewer-visible stories or the
-  user asks for separate commits. Commit the safest independent slice first,
-  then re-check state before the next slice.
-- **Push**: when the invocation includes `push`, `commit and push`, `save and
-  push`, or equivalent wording. Commit first when needed, then push only when
-  branch and remote state are clear.
-- **Amend**: only when the user explicitly asks to amend. Amend local,
-  unpublished history only unless the user explicitly authorizes rewriting a
-  shared branch.
-- **Checkpoint**: when the user asks for a checkpoint/savepoint and the work is
-  coherent enough to preserve locally. Prefer a normal focused commit; if the
-  work is mixed or unclear, ask one concise scope question.
-
-## Preflight
-
-Inspect enough state to answer four questions: what branch is this, what is
-already staged, what changed, and what style does this repo use?
-
-```bash
+```sh
 git status --short
+git diff --staged
+git diff --staged --check
+```
+
+Use `git diff --staged --stat` first when the staged diff is large, then read
+the hunks that decide scope and message. If the staged diff clearly matches the
+user's request, write the commit message and commit. If the repo's commit style
+is not already known, glance at `git log --oneline -5` first.
+
+After the commit, run:
+
+```sh
+git show --stat --oneline --summary HEAD
+```
+
+Then report the SHA, subject, and validation result. If the user did not ask to
+push, stop there.
+
+## When To Inspect More
+
+Most commits never need this. If something looks off while reading the staged
+diff, match the probe to that one question. Do not pre-screen every commit
+against this list.
+
+- Nothing is staged and the intended unstaged work is not obvious.
+- Staged content appears unrelated, mixed with unrelated hunks, or split across
+  multiple reviewer-visible stories.
+- The user asks to split, amend, push, or write a message only.
+- The change touches risky surfaces such as migrations, persistence, auth,
+  release config, generated project files, or broad user-facing behavior.
+- Validation has not run and there is an obvious cheap check for the touched
+  behavior.
+
+Use targeted commands for the question in front of you. Do not run a full Git
+inventory by habit.
+
+Useful probes:
+
+```sh
 git status -sb
 git diff --stat
-git diff --staged --stat
-git diff --name-only
 git diff --staged --name-only
-git branch --show-current
-git remote -v
+git diff --staged -- <path>
+git diff -- <path>
 git log --oneline -10
+git branch --show-current
 ```
 
-Read full diffs only as needed:
-
-```bash
-git diff -- path/to/file
-git diff --staged -- path/to/file
-```
-
-If nothing is staged and no intended unstaged work is clear, ask one concise
-scope question. If the user requested message-only mode and nothing is staged,
-say there is no staged diff to summarize.
-
-## Scope Rules
-
-Make each commit tell one coherent story. File count is not the deciding
-factor; reviewability and reversibility are.
-
-Keep one commit when:
-
-- all changes support the same feature, fix, docs update, refactor, test, or
-  maintenance task
-- tests, fixtures, generated files, config, or docs directly verify or explain
-  the main change
-- multiple files changed because one behavior crosses normal module boundaries
-
-Split or ask before committing when:
-
-- the diff contains unrelated features, fixes, docs, cleanup, or product
-  surfaces
-- one part could be reviewed, reverted, or shipped independently
-- the subject would need vague glue such as `misc`, `updates`, or `cleanup and
-  fixes`
-- the body would need two unrelated explanations
-- only part of a file belongs in the commit and partial staging cannot be done
-  safely non-interactively
-
-Good split order:
-
-1. Generated schema, storage, or API definitions.
-2. Foundational refactors or mechanical moves.
-3. Core behavior changes.
-4. Wiring and integration.
-5. UI or surface behavior.
-6. Tests and docs, included with the behavior they verify unless they stand
-   alone.
-
-## Cleanup Before Commit
-
-When cleanup is in scope, check the intended diff for obvious AI-generated
-slop before staging:
-
-- unnecessary comments or comments inconsistent with local style
-- abnormal defensive checks, broad `try` / `catch`, or fallback paths in trusted
-  code
-- casts such as `any` that bypass type issues
-- deeply nested code that nearby style would express with early returns
-- unrelated formatting churn
-
-Keep behavior unchanged unless fixing a clear bug. Do not turn a commit request
-into a broad refactor.
+Use `git remote -v` or upstream checks only for push/publication decisions.
 
 ## Staging
 
-Preserve an existing staged set when it matches the requested scope. If staged
-files look unrelated to the requested commit, ask before changing the index. If
-a file is clearly staged by accident, unstage only that explicit path and report
-it.
+Preserve a staged set when it already matches the requested scope.
 
-Prefer explicit path staging:
+If staging is needed, stage explicit paths:
 
-```bash
+```sh
 git add -- path/to/file another/path
 ```
 
 Avoid `git add -A` unless the entire dirty worktree clearly belongs to the same
-requested commit. Preserve unrelated untracked files unless they are clearly
-part of the intended commit.
+commit. Preserve unrelated untracked files.
 
-Before each commit, re-check:
+For mixed files, stage only the intended hunks. If partial staging is too risky
+to do non-interactively, ask one concise scope question instead of guessing.
 
-```bash
-git status --short
-git diff --staged --stat
-```
+If clearly unrelated files are staged by accident, unstage only those paths and
+say so. Do not modify their working-tree content.
 
-Review the staged diff, not just the working tree, because the staged index is
-what the commit records.
+## Scope
+
+Make the commit tell one coherent story. Keep tests, fixtures, generated files,
+and docs with the behavior they verify or explain when they are part of the same
+change.
+
+Split or ask before committing when:
+
+- one part could be reviewed, reverted, or shipped independently
+- the subject would need vague glue such as `misc`, `updates`, or `cleanup`
+- the body would need to explain unrelated reasons for change
+- unrelated staged work cannot be safely separated
+
+When splitting, commit the safest independent slice first, then re-check status
+before the next commit.
 
 ## Validation
 
-Run relevant validation when it is obvious, cheap, and not already fresh from
-this session. Prefer targeted tests, type checks, lint, or a focused executable
-check for the touched behavior over broad suites by default.
+Use fresh validation that matches the risk. If relevant checks already ran in
+the same session, reuse that evidence instead of rerunning them.
 
-For bug fixes with a cheap local test path, prefer evidence that fails before
-the fix and passes after. For other work, verify the real artifact when
-practical, not just a proxy. If validation is skipped, say why. Never invent
-validation evidence from the diff or commit message.
+Good defaults:
 
-## Message Style
+- `git diff --staged --check` runs as part of the normal path; do not repeat it.
+- Run focused tests, type checks, linters, formatters, or artifact checks when
+  they are obvious and cheap for the touched behavior.
+- Prefer targeted checks over broad suites.
+- For risky behavior, stale validation, or generated files, verify the owning
+  command or explain what was not run.
 
-Prefer the repo's clear recent style. If history is mixed or unclear, use
-Conventional Commits:
+Never invent validation evidence. Do not bypass hooks with `--no-verify` unless
+the user explicitly asks.
 
-```text
-type(optional-scope): imperative subject
+## Message
 
-Body explaining what changed and why, when useful.
-
-Footer trailers, when applicable.
-```
+Use the repository's recent commit style when it is clear. Otherwise use a plain
+imperative subject, or Conventional Commits when that is the obvious local
+pattern.
 
 Subject rules:
 
-- Aim for about 50 characters; treat 72 as the hard ceiling.
-- Use imperative mood: `fix parser cache miss`, not `fixed parser cache miss`.
-- Do not end the subject with a period.
+- Keep it at or under 50 characters when possible, with 72 as the hard cap.
+- Use imperative mood.
 - Name the outcome, not the implementation diary.
-- Make the subject complete the sentence: "If applied, this commit will ...".
+- Do not end with a period.
 
-Use the dominant reviewer-visible type:
+Add a body only when it helps review: non-trivial behavior, migrations, public
+contracts, compatibility decisions, validation context, or surprising tradeoffs.
+Do not include tool attribution, raw transcripts, or generated-by trailers unless
+the repo requires them.
 
-- `feat`: new user-facing behavior or capability
-- `fix`: bug fix or regression repair
-- `docs`: documentation-only change
-- `refactor`: behavior-preserving structure change
-- `test`: test-only change
-- `perf`: performance improvement
-- `build`: build system, dependency, or packaging change
-- `ci`: CI configuration or automation
-- `chore`: maintenance that does not fit the above
+Use a message file for multi-line commits:
 
-Include a scope only when it names a real package, module, command, or
-user-visible area. Omit vague or invented scopes.
-
-Use a body for non-trivial changes, surprising tradeoffs, migrations, public API
-changes, security-sensitive changes, or validation context. Let the diff explain
-low-level mechanics. Use `BREAKING CHANGE:` in the footer, or `!` after the
-type/scope, only when the change breaks a public contract. Add issue trailers
-only when the issue is known from the request, branch, history, or diff.
-
-Do not include raw test transcripts, generated-by lines, tool provenance, or AI
-attribution trailers unless the repo or user explicitly requires them.
-
-Use a temp file for multi-line messages:
-
-```bash
+```sh
+message_file=$(mktemp)
+printf '%s\n' "Subject" "" "Body when useful." > "$message_file"
 git commit --file "$message_file"
+rm -f "$message_file"
 ```
 
-Use `-m` only for simple one-line commits.
+## Special Requests
 
-## Push Mode
+**Message only**: If the user asks only for a commit message or staged diff
+summary, inspect the staged diff, write the message, and stop. Do not commit.
 
-Push mode is explicit. Treat `git-commit push`, `$git-commit push`, `commit and
-push`, and `save and push` as push requests. Do not infer push intent from plain
-`git-commit`, `commit`, `save`, or `checkpoint`.
+**Checkpoint/savepoint**: Prefer a normal focused commit when the work is
+coherent. If the work is mixed and scope is unclear, ask one concise question.
 
-Push only after the intended local commit exists. If there is nothing to commit
-but the user explicitly asked to push existing local commits, inspect branch and
-upstream state before pushing.
+**Amend**: Amend only when explicitly requested. Inspect the previous commit and
+publication state first:
 
-Before pushing:
+```sh
+git log --oneline -5
+git status -sb
+git rev-parse --abbrev-ref --symbolic-full-name @{u}
+```
 
-```bash
+Amend freely only when the target commit is local and unpublished. If it has
+likely been pushed or reviewed, stop unless the user explicitly approves the
+history rewrite. A missing upstream is a normal local-branch signal, not an
+error to report by itself.
+
+**Push**: Push only when the user explicitly says push, commit-and-push, save
+and push, publish, or equivalent. A plain commit request is local-only.
+
+Before pushing, inspect:
+
+```sh
 git status -sb
 git branch --show-current
 git rev-parse --abbrev-ref --symbolic-full-name @{u}
 git symbolic-ref --short refs/remotes/origin/HEAD
 ```
 
-If the branch has an upstream, push normally:
+If the branch has an upstream, push normally. If it has no upstream and is
+clearly a feature/work branch, set tracking explicitly:
 
-```bash
-git push
-```
-
-If the branch has no upstream and is clearly a feature or work branch, set
-tracking explicitly:
-
-```bash
+```sh
 git push -u origin "$(git branch --show-current)"
 ```
 
-Stop and ask one concise question before pushing when the branch is detached,
-the remote is unclear, the current branch appears to be the default branch, the
-push would be non-fast-forward, or the push would require force.
-
-## Amend Mode
-
-Amend only on explicit request. Before amending, inspect the previous commit and
-branch publication state:
-
-```bash
-git log --oneline -5
-git status -sb
-git rev-parse --abbrev-ref --symbolic-full-name @{u}
-```
-
-Amend freely only when the target commit is local and unpublished. If the commit
-has likely been pushed or reviewed, stop unless the user explicitly approves the
-history rewrite. Never force-push from this skill without explicit force-push
-authorization.
+Ask before pushing when the branch is detached, the remote is unclear, the
+current branch appears to be the default branch, the push would be
+non-fast-forward, or force would be required. A missing upstream is normal for a
+local branch; use it to decide whether tracking should be set, not as a failure.
 
 ## Boundaries
 
 - Do not open a pull request.
 - Do not merge.
-- Do not push without push mode.
-- Do not force-push, rebase shared history, or rewrite published history unless
-  the user explicitly asks.
-- Do not bypass hooks with `--no-verify` unless the user explicitly asks.
-- Do not commit unrelated work.
-- Do not silently discard, revert, delete, or overwrite files.
-- Do not hide behavior changes inside "cleanup".
+- Do not rebase shared history.
+- Do not force-push unless the user explicitly asks for that exact operation.
+- Do not discard, revert, delete, or overwrite working-tree changes.
+- Do not hide behavior changes inside "cleanup."
 
 ## Final Report
 
-For each commit, report:
+Keep the report short:
 
 - commit SHA and subject
-- files included
-- whether the commit was one of several split commits
-- validation run, result, or skipped reason
-- push state when push mode was requested
-- uncommitted or unstaged work intentionally left behind
+- what was included at a high level
+- validation run, reused, skipped, or failed
+- push result only when push was requested
+
+Mention leftover work only when it affects the user's next step. Avoid dumping a
+dirty-worktree inventory.
