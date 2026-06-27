@@ -59,9 +59,10 @@ them on your own.
 | `deep` | user asks for a deep or careful review | 8 finder angles | 1 verifier per candidate | no | 10 | recall-biased |
 | `max` | user asks for a max, ultra, or exhaustive review | 10 finder angles | 1 verifier per candidate | yes | 15 | maximum recall |
 
-Default to `standard`, and drop to `quick` for a tiny change or when the user
-wants a fast pass. Reach for `deep` or `max` only on an explicit request for
-that depth, even when the change looks risky.
+Default to `standard`. An explicit `ultra-review` invocation means standard
+review unless the user asks for a quick or fast pass, says no subagents, or the
+diff is truly a tiny single-hunk cleanup. Reach for `deep` or `max` only on an
+explicit request for that depth, even when the change looks risky.
 
 ## Phase 3: Behavior Lock
 
@@ -84,10 +85,13 @@ bugs visible from the hunk, obvious helper duplication, obvious dead code, and
 small same-scope cleanup.
 
 For `standard`, launch three fresh review-only agents concurrently in one tool
-message when a multi-agent tool is available. Give each agent the same captured
-diff, changed-file list, compact repo guidance, applicable paths, user focus,
-and changed-file contents when the diff alone is insufficient. If subagents are
-unavailable, run the same three passes yourself.
+message when a multi-agent tool is available. If no subagent tool is already
+visible, first search/load multi-agent tools such as `multi_agent_v1.spawn_agent`
+before saying subagents are unavailable. Give each agent the same captured diff,
+changed-file list, compact repo guidance, applicable paths, user focus, and
+changed-file contents when the diff alone is insufficient. If tool discovery is
+unavailable or no subagent tool exists after discovery, run the same three passes
+yourself and briefly say which discovery step failed.
 
 For `deep` and `max`, launch the finder angles as independent review-only
 agents. Do not let one angle suppress another. Pass every candidate with a
