@@ -146,6 +146,17 @@ Stop condition: enough evidence to answer the bounded question
 
 Use findings to sharpen the next choice, not to create tasks.
 
+## Subject Discovery
+
+Use Subject Discovery when the user wants to ideate but has not chosen the
+subject, or asks to be surprised from a repo, document, product area, workflow,
+or vague desire. Read [subject-discovery.md](references/subject-discovery.md).
+
+Subject Discovery is an entry path back into Ideate, not a separate brainstorming
+engine. Find candidate subjects, recommend one, ask one A/B/C/D question, then
+return to the normal `Frame`, `Diverge`, `Pressure-test`, `Converge`, or
+`Capture` flow.
+
 ## Corrections And Closure
 
 Treat a correction to vocabulary, names, direction, or taste as new settled
