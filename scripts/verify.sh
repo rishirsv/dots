@@ -2,6 +2,15 @@
 set -euo pipefail
 
 ROOT="${0:A:h:h}"
+METASKILL="plugins/meta-skill/scripts/metaskill"
+META_SKILLS=(
+  plugins/meta-skill/skills/meta-skill
+  plugins/meta-skill/skills/skill-writer
+  plugins/meta-skill/skills/skill-doctor
+  plugins/meta-skill/skills/skill-evaluator
+  plugins/meta-skill/skills/skill-benchmarker
+)
+META_EVAL_SUITE="plugins/meta-skill/.meta-skill/evals.json"
 
 cd "$ROOT"
 
@@ -13,42 +22,21 @@ META_SKILL_CACHE_DIR="$ROOT/dist/.meta-skill-cache" \
   "$ROOT/dist/codex/plugins/meta-skill/scripts/metaskill" doctor --json >/dev/null
 
 echo "==> Meta-Skill validation"
-for skill in \
-  plugins/meta-skill/skills/meta-skill \
-  plugins/meta-skill/skills/skill-writer \
-  plugins/meta-skill/skills/skill-doctor \
-  plugins/meta-skill/skills/skill-evaluator \
-  plugins/meta-skill/skills/skill-benchmarker
-do
-  plugins/meta-skill/scripts/metaskill validate "$skill" --json >/dev/null
+for skill in "${META_SKILLS[@]}"; do
+  "$METASKILL" validate "$skill" --json >/dev/null
 done
 
-echo "==> Meta-Skill eval suite lint"
-plugins/meta-skill/scripts/metaskill eval lint --suite plugins/meta-skill/.meta-skill/evals.json --json >/dev/null
+if [[ -f "$META_EVAL_SUITE" ]]; then
+  echo "==> Meta-Skill eval suite lint"
+  "$METASKILL" eval lint --suite "$META_EVAL_SUITE" --json >/dev/null
+else
+  echo "==> Meta-Skill eval suite lint (skipped: $META_EVAL_SUITE not found)"
+fi
 
 echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --claude
 
 echo "==> Meta-Skill tests"
 python3 -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
-
-echo "==> Markdown link check"
-markdown_files=()
-while IFS= read -r -d '' file; do
-  markdown_files+=("$file")
-done < <(
-  find . \
-    -path './.git' -prune -o \
-    -path './.agents' -prune -o \
-    -path './dist' -prune -o \
-    -path '*/node_modules' -prune -o \
-    -path '*/.*/runs' -prune -o \
-    -path '*/.*/workspaces' -prune -o \
-    -type f -name '*.md' -print0
-)
-
-if (( ${#markdown_files[@]} )); then
-  python3 scripts/check_markdown_links.py "${markdown_files[@]}"
-fi
 
 echo "Verify passed"

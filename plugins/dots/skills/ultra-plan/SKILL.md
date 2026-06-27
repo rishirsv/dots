@@ -1,16 +1,16 @@
 ---
-name: ultraplan
-description: "Creates or upgrades implementation plans through repo-grounded context gathering, optional subagent research, adversarial critique, verified revisions, and anti-overengineering pressure. Use when the user asks to ultraplan, ultra-plan, stress-test, or deeply plan work; always produces a plan and stops before implementation."
+name: ultra-plan
+description: "Creates or upgrades an implementation plan through repo-grounded context gathering, optional subagent research, adversarial critique, verified revisions, and anti-overengineering pressure; always produces a plan and stops before implementation. Explicit-only skill invoked via ultra-plan or a request to deeply plan, stress-test, or pressure-test an approach before building. Not for pure explanation, research, or ideation."
 ---
 
-# Ultraplan
+# Ultra-Plan
 
-Ultraplan turns a rough request into an implementation plan the next agent can
+Ultra-Plan turns a rough request into an implementation plan the next agent can
 execute end to end with little help from the user. It grounds the plan in real
 source, challenges it, verifies what would change it, and strips overbuilding
 before handing off.
 
-Ultraplan is planning, not execution. Do not edit implementation source, apply
+Ultra-Plan is planning, not execution. Do not edit implementation source, apply
 the plan, publish, or overwrite an original plan without explicit post-plan
 approval. If there is nothing to plan — pure explanation, research, or
 ideation — redirect to the right skill instead of inventing a plan.

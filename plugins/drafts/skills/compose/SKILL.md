@@ -1,6 +1,6 @@
 ---
 name: compose
-description: "Use after drafts sends writing work here, or when the user explicitly invokes compose, for new drafts, continuations, revisions, rewrites, humanized cleanups, personalization, and channel variants. Not for writing-voice setup, standalone critique, generic answers, code changes, or external publishing."
+description: "Use after drafts sends writing work here, or when the user explicitly invokes compose, for new drafts, continuations, revisions, rewrites, feedback on prose, humanized cleanups, personalization, and channel variants. Not for writing-voice setup, generic answers, code changes, or external publishing."
 ---
 
 # Compose
@@ -48,7 +48,7 @@ already has:
    unknowns or the core argument. For each section, ask what belongs, brainstorm
    possible inclusions, let the user curate, draft only that section, then make
    surgical edits from feedback.
-5. **Review the whole piece.** Near completion, reread the whole artifact for
+5. **Check the whole piece.** Near completion, reread the whole artifact for
    flow, consistency, redundancy, unsupported assumptions, generic filler, and
    whether every section earns its place.
 
@@ -128,7 +128,7 @@ user asks to attach the rewrite to a standing pad.
 
 1. Resolve the provided text, selected draft version, or section.
 2. Identify the edit intent: rewrite, humanize, personalize, tighten, polish,
-   shorten, expand, adapt, make more direct, or apply review fixes.
+   shorten, expand, adapt, make more direct, or apply requested fixes.
 3. Return one best version by default.
 4. Offer alternate rhetorical directions only when the source text supports
    materially different moves.
@@ -143,14 +143,15 @@ source, current context, or selected style. Do not make the piece casual merely
 because the user said humanize.
 
 When the user asks to "sound like me," use a selected or available style guide.
-If no usable guide or samples are available, ask for style evidence or run a
-non-personalized humanize pass and say so in one short sentence.
+If no usable guide or samples are available, offer the bounded starter path:
+ask for 2-3 things they wrote in roughly this context for gentle steering, or
+run a non-personalized humanize pass now and say so in one short sentence.
 
 ## Revising Existing Drafts
 
 1. Resolve the source draft and draft version.
 2. Identify the edit intent: shorten, expand, sharpen, restructure, continue,
-   adapt, personalize, humanize, or apply review fixes.
+   adapt, personalize, humanize, or apply requested fixes.
 3. Preserve the previous version.
 4. Apply only the requested scope.
 5. Keep the source version, target version, assumptions, and changed sections as
@@ -164,23 +165,23 @@ non-personalized humanize pass and say so in one short sentence.
 - If saved metadata already has `style: <id>`, treat that style as pinned.
 - If no style is pinned for new durable work, choose a concrete style ID from
   user-global style guides plus shipped `default`, and write that concrete ID
-  when creating saved metadata. Mention the choice briefly only when the user needs
-  it for trust or future edits.
+  when creating saved metadata. Mention the choice briefly only when the user
+  needs it for future edits.
 - Change an existing `style` value only after user confirmation.
 - When `personalize` uses a style, retrieve the selected `style.md` and
-  relevant references before drafting, then apply the guide in this order:
-  evidence boundary, voice tensions, structure, sentence-level preferences,
-  signature moves, anti-patterns, targeted examples, modes, and revision
-  checklist. Treat examples as principles, not phrases to copy. Run
-  humanize-style cleanup for style-specific and global automated-writing
-  patterns before returning.
+  relevant references before drafting. Apply the sections present in the guide.
+  Treat examples as principles, not phrases to copy. Run humanize-style cleanup
+  for style-specific and global automated-writing patterns before returning.
+- Compose owns how strongly to apply a selected style. Use the guide as a close
+  voice target only when the guide, references, corrections, channel, audience,
+  and current task point the same way. When the fit is sparse or indirect, use
+  the guide as light steering and mention that only when the user asked for a
+  personal voice match or it changes their next decision.
 - When `humanize` runs without a selected style, apply global and channel rules
   without pretending the result matches the user's personal voice. Treat it as
   non-personalized cleanup.
 - Preserve variation. Do not repeat a guide's examples, overuse one signature
   move, or force every sentence to display the same pattern.
-- When a style guide has only direct signal or otherwise thin evidence, use it
-  as a gentle steering guide and avoid claiming a close personal voice match.
 - When a channel, platform, slash command, or requested output form is present,
   resolve the relevant channel recipe and let it control structure, length,
   CTA, and platform conventions.
@@ -191,8 +192,8 @@ non-personalized humanize pass and say so in one short sentence.
   present in the working context.
 - Before returning important writing, run the quality pass from
   [quality.md](../../references/quality.md), tiered to the work. Fix in-scope
-  misses silently; mention only limits that affect trust or the user's next
-  decision.
+  misses silently; mention only constraints that affect factual safety or the
+  user's next decision.
 
 ## Variants
 

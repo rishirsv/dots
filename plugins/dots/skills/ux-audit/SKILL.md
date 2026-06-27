@@ -1,29 +1,25 @@
 ---
 name: ux-audit
-description: "Audits existing product flows, bounded screens, or supplied product artifacts from evidence captured or inspected in the current run, producing step health and UX, design, and accessibility findings. Use for audit, critique, inspect, assess, or evaluate a live/current journey, funnel, onboarding, checkout, settings path, screen, or product screenshot; not for code review, pre-handoff prototype QA, redesign ideation, or implementation critique."
+description: "Audits existing product flows, journeys, funnels, product areas, or multi-step experiences from evidence captured or inspected in the current run, producing step health and UX, design, and accessibility findings. Use for audit, critique, inspect, assess, or evaluate a live/current journey, onboarding, checkout, settings path, or workflow; not for code review, single-surface design critique, pre-handoff prototype QA, redesign ideation, or implementation critique."
 ---
 
 # Audit
 
 Use this skill when the user wants to audit or critique a product flow, journey,
-funnel, onboarding path, checkout path, settings path, screen, or other product
-experience.
+funnel, onboarding path, checkout path, settings path, workflow, product area, or
+other multi-step product experience.
 
 The output is not a loose opinion. It is current evidence plus product-quality
 judgment:
 
-- captured screenshots or supplied artifacts saved or cited as evidence
+- captured screenshots or supplied artifacts saved or cited as evidence for the
+  broader experience
 - a numbered step list with a health label for each step
 - UX, design, and accessibility findings tied to steps or screenshots
-- severity, evidence tier, affected surface, impact, recommendation, and
-  acceptance check for each substantive finding
+- severity, affected surface, evidence, impact, recommendation, and acceptance
+  check for each substantive finding
 - system-quality themes across the flow
 - clear limits on what could not be checked from the captured evidence
-
-When the audit should be saved as a shareable rich document, hand the step
-screenshots and findings to [html-artifact](../html-artifact/SKILL.md) (its
-`ux-audit-report` recipe). This skill owns the capture and the findings;
-html-artifact only owns the saved document format.
 
 ## Grounding
 
@@ -40,40 +36,33 @@ For this skill, current-run evidence includes references, code, tokens,
 analytics, user-provided artifacts, or other materials only after they are
 explicitly opened, inspected, and recorded during this audit run.
 
-## Mode Selection
+## Audit Mode
 
-Choose one base audit mode before routing:
+Choose one audit mode before routing:
 
-- `Live flow`: capture the requested journey or interaction path.
-- `Bounded screen`: audit one visible screen, modal, state, or component surface.
-- `Provided artifact`: audit a supplied screenshot, mockup, generated image, or
-  static artifact without requiring a live browser flow.
-- `Generated comparison`: compare generated alternatives only when the generated
-  artifacts are themselves the product surface being audited.
+- `UX audit`: user goal, task entry, information architecture, interaction flow,
+  hierarchy, trust, copy, state coverage, consistency, and product quality.
+- `Accessibility audit`: perceivable content, semantics, keyboard and focus,
+  target size, labels, errors, motion, reflow, and assistive-technology risks.
+- `Combined audit`: both UX and accessibility when the user asks for both, the
+  experience is high-stakes, or accessibility risks are visible during a UX
+  audit.
 
-Then add any relevant modifiers:
+Keep the scope separate from the mode: the evidence may come from a live flow,
+product area, supplied screenshots, or static artifacts, but it must represent a
+broader experience or multi-step flow.
 
-- `Accessibility-heavy`: the user asks for accessibility or a `P0`/`P1`
-  accessibility risk is likely.
-- `Visual craft`: the user asks for visual quality, taste, polish, hierarchy,
-  or why a screen feels generic, sterile, or template-like.
-- `AI/agent product`: the surface includes an assistant, copilot, automation, or
-  agent workflow.
-- `Dense information`: the surface is a dashboard, table, report, chart, or
-  metrics-heavy workflow.
+For a single supplied screenshot, mockup, generated image, component, modal,
+state, or static artifact judged as one visible surface, use
+[design-critique](../design-critique/SKILL.md). Use this skill only when the
+provided artifacts stand in for a broader experience or flow.
 
-For a single supplied screenshot, provided mockup, generated alternative
-comparison, or static artifact, do not require a live flow or browser capture.
-Record unknown product or flow fields as `unknown`, cite the provided artifact
-as evidence, and scope findings to the visible surface or comparison criteria.
-
-Use [design-critique](../design-critique/SKILL.md) when there is an approved
-visual target to compare a build against before handoff — that is a target-bound
-fidelity critique, not a UX audit. ux-audit owns the opposite case: evaluating a
-live or existing experience on its own terms, with no source target. Use
+Use [design-critique](../design-critique/SKILL.md) for agent self-review,
+single-surface design critique, and pre-handoff fidelity critique of a rendered
+artifact, with or without an approved visual target. Use
 [visual-design](../visual-design/SKILL.md) for redesign ideation, design
 direction, or front-end implementation. Keep generated artifact handling here
-only when the artifact itself is the product surface being audited.
+only when the artifacts represent the broader product experience being audited.
 
 When this audit's confirmed findings call for a redesign or fix, hand them to
 [visual-design](../visual-design/SKILL.md) to implement, which then re-runs
@@ -84,9 +73,10 @@ evaluates; it does not implement the fix itself.
 
 Before auditing:
 
-1. Identify the base audit mode and any modifiers.
-2. Identify the product or surface.
-3. Identify the flow or task, or mark it `unknown` for static artifacts.
+1. Identify the audit mode: `UX audit`, `Accessibility audit`, or
+   `Combined audit`.
+2. Identify the product or experience.
+3. Identify the flow, journey, workflow, product area, or task.
 4. Identify the core user task.
 5. Identify the smallest useful outcome for that task.
 6. Identify the product type and primary user role or context when known.
@@ -100,7 +90,10 @@ Destination rules:
 - If the user names a local folder or asks for a saved audit, use that folder
   or create a local audit folder under the project or artifact workspace.
 - For live-flow audits that require newly captured screenshots, save screenshots
-  and notes to a local audit folder.
+  and notes under `.agents/outputs/ux-audit/` when working in a project
+  directory, unless the user gave another destination. If that convention is not
+  available, create a clearly named audit folder in the current working
+  directory.
 - For quick critiques or provided-artifact audits where the user did not ask for
   saved output, answer in chat and name the evidence limits instead of creating
   files by default.
@@ -182,8 +175,8 @@ For every live-flow step or static artifact state:
    - step health: `good`, `mixed`, `poor`, or `blocked`
    - primary action or main user decision
    - visible strengths worth preserving
-   - findings with `severity`, `surface`, `evidence tier`, `principle`,
-     `impact`, `recommendation`, `acceptance check`, and `verification needed`
+   - findings with `severity`, `surface`, `evidence`, `impact`,
+     `recommendation`, `acceptance check`, and `verification needed`
    - confidence when the judgment is aesthetic, generated, soft, or
      evidence-limited
    - evidence limits that made the step difficult to audit
@@ -205,9 +198,9 @@ short reasoning, and structured verdict. When auditing one product surface,
 adapt the same criterion/rubric pattern into findings instead of forcing an A/B
 verdict.
 
-For accessibility-heavy audits or suspected `P0`/`P1` accessibility risks,
-attempt DOM/accessibility-tree inspection and keyboard interaction probes when
-the capture tool supports them. At minimum, test visible focus, tab order
+For accessibility audits, combined audits, or suspected `P0`/`P1` accessibility
+risks, attempt DOM/accessibility-tree inspection and keyboard interaction probes
+when the capture tool supports them. At minimum, test visible focus, tab order
 through the critical path, form labels/errors, modal escape and focus
 containment, target size, text zoom/reflow where feasible, and contrast by
 sampling or code when making contrast claims. If those probes cannot be run,
@@ -245,7 +238,8 @@ Acceptance checks:
   confidence for generated-design, aesthetic, mood/tone, brand-fit, and
   evidence-limited claims.
 - Every `P0` or `P1` has a stronger verification plan, including the available
-  `T1`/`T2` probe or the reason that probe could not be performed.
+  interaction, DOM, accessibility-tree, code, or testing probe, or the reason
+  that probe could not be performed.
 - Likely accessibility, color, contrast, keyboard, semantic, or token claims are
   marked as likely unless measured through DOM, code, color sampling, or live
   interaction evidence.

@@ -36,9 +36,7 @@ This is a chat-native explain skill, not a file-writing lane. Visual explanation
 is welcome when it makes the concept clearer: use ASCII sketches, tables, flows,
 or Mermaid directly in chat when they reduce effort. If a generated image would
 make the explanation clearer, suggest or use Image Gen when available and
-appropriate. For a saved, shareable rich document (an explainer page a reader
-will navigate or pass along), use [html-artifact](../html-artifact/SKILL.md)
-instead.
+appropriate.
 
 ## How to explain
 

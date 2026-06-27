@@ -1,33 +1,32 @@
+/dist
+/.agents
+
+# macOS
 .DS_Store
-**/.DS_Store
-*.log
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+htmlcov/
+
+# Local virtual environments
+.venv/
+venv/
+
+# Local dependencies and build output
 node_modules/
-dist/
 build/
+
+# Local secrets and logs
 .env
 .env.*
-.claude/settings.local.json
+*.log
+
+# Local tool state
 .codex/
-
-# Generated sync state
-*.tmp
-
-# Local generated runs and non-durable plans
-.agents/
-**/.plugin-eval/runs/
-**/.autoresearch/runs/
-**/.agents/screenshots/
-**/.agents/oracle/
-**/.agents/
-**/.agents/tmp/
-**/.agents/artifacts/
-**/outputs/
-**/.*/runs/
-**/.*/workspaces/
-**/.*/worktrees/
-**/.*/dist/
-**/.*/calibrations/
+.claude/settings.local.json

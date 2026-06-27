@@ -39,13 +39,6 @@ fixes with no visible UI surface. For a small UI fix inside an existing design
 system, follow the repo's local conventions first and use only the relevant
 polish and validation parts of this skill.
 
-For a saved, shareable static rich-document artifact — an explainer, plan,
-review, research report, design-QA or UX-audit packet, Image Gen concept packet,
-or design-handoff spec a reader will open and pass along — hand off to
-[html-artifact](../html-artifact/SKILL.md). This skill builds and polishes real
-product and app UI and concepts Image Gen assets; html-artifact owns the saved
-static document those outputs are written into.
-
 ## Workflow
 
 ### 1. Ground The Work

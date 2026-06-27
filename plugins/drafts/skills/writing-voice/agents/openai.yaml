@@ -1,8 +1,8 @@
 interface:
   display_name: "Writing Voice"
-  short_description: "Build and inspect writing styles"
+  short_description: "Build reusable writing voice guides"
   brand_color: "#2563EB"
-  default_prompt: "Use $writing-voice to create, update, or inspect a writing style guide and its sample references."
+  default_prompt: "Build or inspect a reusable personal or brand voice guide from samples, corrections, or brand guidance. For ordinary writing requests, start with Drafts."
 
 policy:
   allow_implicit_invocation: false

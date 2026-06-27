@@ -12,12 +12,15 @@ configuration.
 
 ## Docs And Local State
 
-- Durable repo docs belong in `README.md`, `INSTALL.md`, or the owning
-  plugin/config docs.
-- Non-durable plans, trackers, and working notes: `.agents/plans` 
-- Temp files `.agents/tmp`
-- Tool-local state such as `.claude/`, `.codex/`, and root `.meta-skill/` is not
-  a durable documentation home.
+- Save agent-created plans, research, reports, audits, screenshots, HTML
+  artifacts, and working notes under `.agents/` by default.
+- Treat `.agents/` as local/private unless the user explicitly asks to commit or
+  publish a specific artifact.
+- Promote only stable public contracts into `README.md`, `INSTALL.md`, owning
+  plugin docs, skill references, or config docs.
+- Use only `.agents/plans/`, `.agents/outputs/`, and `.agents/tmp/`.
+- Do not create root `docs/` unless the user explicitly asks for durable public
+  docs.
 - Skill-owned hidden workbench files may be durable when intentionally tracked;
   Meta-Skill hidden guidance lives in `plugins/meta-skill/.meta-skill/AGENTS.md`
   and durable docs live in `plugins/meta-skill/.meta-skill/docs/`.
@@ -44,4 +47,3 @@ configuration.
 - Run deterministic tests that exist for the touched skill or helper.
 - For Meta-Skill validation, prefer
   `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json`.
-**bold text**

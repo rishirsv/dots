@@ -24,8 +24,9 @@ Product Design equips the agent to:
 
 - frame product UI work before building
 - create, redesign, polish, or implement visible UI
-- compare rendered UI against accepted visual targets before handoff
-- audit existing product flows with evidence from screenshots
+- critique rendered UI surfaces before handoff, against accepted visual targets
+  when they exist
+- audit broader product flows with evidence from screenshots
 
 ## Communication Protocol
 
@@ -84,13 +85,18 @@ Use [design-critique](../design-critique/SKILL.md) for:
 
 - pre-handoff comparison between an approved visual target and a rendered
   implementation
+- agent self-review or focused design critique of a single rendered artifact,
+  screen, component, or surface
+- independent second-opinion critique when the surface is high-stakes, the
+  implementation author is self-reviewing, or the user asks for an adversarial
+  reviewer
 - blocking the gate after visual-design or image-to-code work
 - producing `design-critique.md` with `final result: passed` or `final result:
   blocked`
 
-Use it only when there is an approved target to compare against. Route broad UX
-critiques, product audits, or flow reviews — anything judged on its own terms
-with no target — to `ux-audit` instead.
+Use it for one visible artifact or screen. Route broad UX critiques, product
+audits, journey reviews, funnels, or multi-step flow reviews to `ux-audit`
+instead.
 
 ### `ux-audit`
 
@@ -98,7 +104,7 @@ Use [ux-audit](../ux-audit/SKILL.md) for:
 
 - auditing, critiquing, reviewing, inspecting, assessing, or evaluating an
   existing product flow, journey, funnel, onboarding path, checkout path,
-  settings path, screen, or multi-step experience
+  settings path, workflow, product area, or multi-step experience
 - UX, design, and accessibility findings grounded in newly captured screenshots
 
 ## Route Boundary
@@ -108,11 +114,14 @@ If the user asks to build, redesign, or polish, route to `visual-design`.
 If the user asks whether an implementation matches an accepted image, mockup, or
 screenshot before handoff — there is a target — route to `design-critique`.
 
-If the user asks to critique or evaluate an existing experience on its own
-terms, with no target, route to `ux-audit`.
+If the user asks for agent self-review or critique of one rendered artifact,
+screen, component, or surface, route to `design-critique`.
 
-The dividing line between the two is the target: *matches the target?* →
-`design-critique`; *is it good?* → `ux-audit`.
+If the user asks to critique or evaluate an existing journey, funnel, workflow,
+product area, or multi-step experience on its own terms, route to `ux-audit`.
+
+The dividing line between the two is scope: *one visible artifact or screen?* →
+`design-critique`; *broader experience or flow?* → `ux-audit`.
 
 If the user asks for a shareable, reader-facing design report or packet rather
 than product UI work itself, route through the focused owner first and then use

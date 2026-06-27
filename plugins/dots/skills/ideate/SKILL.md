@@ -198,7 +198,6 @@ Recommend the next mode, but do not silently enter it:
 
 - `research`: external evidence, market landscape, current facts, or user proof.
 - `visual-design`: UI concepts, visual exploration, journey maps, or mockups.
-- `html-artifact`: saved HTML explanation, report, plan, or workbench.
 - `docs-writer`: durable PRD, concept doc, ADR, glossary, or spec.
 - build: only after `confirm build`.
 

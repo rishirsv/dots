@@ -1,12 +1,12 @@
 # Drafts State
 
-Use this reference when Drafts creates, updates, syncs, reviews, versions, or
-explains durable writing state.
+Use this reference when Drafts creates, updates, syncs, versions, or explains
+durable writing state.
 
 State exists for continuity, trust, and revision safety. It should stay in the
 background while the user is writing. The default response is the artifact:
-draft, rewrite, plan, review, or style guide. Mention state only when it affects
-trust, persistence, version safety, or the user's next decision.
+draft, rewrite, plan, or style guide. Mention state only when it affects trust,
+persistence, version safety, or the user's next decision.
 
 ## Durable Locations
 
@@ -42,8 +42,6 @@ Use a draft-centered layout with as few durable files as the work needs:
       draft.md
       versions/
         v001.md
-      reviews/
-        review-v001-quality.md
       variants/
         010-contrarian-opening.md
       sections/
@@ -71,7 +69,7 @@ for direct prose, accepted a working outline, or explicitly asked to
 `sections/` when the piece is too large to revise comfortably as one document,
 or when section-by-section co-authoring would make the work easier.
 
-Each draft owns its context, plan, draft, versions, reviews, and optional
+Each draft owns its context, plan, draft, versions, variants, and optional
 sections. Shared user styles do not live in a draft folder by default.
 
 Workspace-local style overrides are allowed only when the user explicitly asks
@@ -100,19 +98,24 @@ Reusable user styles live in the resolved user style library root:
     references/
 ```
 
-`style.md` is the standalone voice manual. `references/` holds accepted
-reference records for reusable styles: samples, corrections, and source evidence
-that support the guide. Each reference record is a self-contained Markdown file,
-not a required companion to `style.md`:
+`style.md` is the standalone voice manual. It contains reusable drafting
+instructions only. It does not contain sample counts, source inventories,
+ratings, storage paths, or notes about how strongly to apply the guide.
+
+`references/` holds reference records for reusable styles: samples,
+corrections, source notes, caveats, and observations used to create or update
+the guide. Each reference record is a self-contained Markdown file, not a
+required companion to `style.md`:
 
 ```text
 references/
   <yyyymmdd>-<short-title>.md
 ```
 
-Use each reference record for cleaned sample text, source quality, reusable voice
-evidence, stylometric observations, caveats, representative examples, and
-correction history tied to that sample or correction. Do not create generic
+Use each reference record for cleaned sample text, source quality, reusable
+voice observations, caveats, representative examples, and correction history
+tied to that sample or correction. `compose` owns how strongly a selected guide
+should shape a draft at use time. Do not create generic
 auxiliary files, aggregate evidence files, evidence audits, extraction ledgers,
 source maps, holdout ledgers, or other maintenance surfaces. The durable style
 library is `style.md`, `references/`, and `style-library.json`.
@@ -220,17 +223,6 @@ order: 10
 ---
 ```
 
-Review example:
-
-```yaml
----
-id: quality-review
-title: Quality Review
-draft: client-memo
-version: first-draft
----
-```
-
 Rules do not belong in artifact metadata. Rules come from AGENTS.md and explicit
 user instructions. Sources are draft-level by default. Record them once in
 `context.md` instead of repeating source lists in every section.
@@ -250,9 +242,8 @@ user instructions. Sources are draft-level by default. Record them once in
 | Style | Concrete selected voice guide ID |
 | Style reference | Self-contained sample or correction record attached to a named style |
 | Style guide | Voice manual with instructions, modes, examples, and guardrails |
-| Style evidence | Repeated-choice evidence captured in reference records or promoted into a style guide |
+| Style observations | Repeated choices captured in reference records or promoted into a style guide |
 | Channel recipe | Reusable destination or format recipe |
-| Saved review | Review tied to a draft version |
 | Rewrite | Fast transformation of existing text, durable only when tied to a draft version |
 
 The style terms intentionally describe different layers:
@@ -264,11 +255,11 @@ The style terms intentionally describe different layers:
   lives as a self-contained record under `references/`. It is input to guide
   creation, not a voice guide by itself.
 - A style guide is the standalone `style.md` voice manual generated from
-  accepted references and corrections. It tells Compose and Review how to write
-  or judge voice.
-- Style evidence is the observed repeated-choice analysis behind the guide:
+  selected samples and corrections. It tells Compose what voice behavior to use,
+  but not how strongly to rely on the guide.
+- Style observations are the repeated-choice analysis behind the guide:
   cadence, punctuation, pronouns, openers, transitions, structures,
-  anti-patterns, and drafting implications. Capture it inside the relevant
+  avoid patterns, and drafting implications. Capture them inside the relevant
   reference record or promote the drafting implication into `style.md`; do not
   create a separate evidence surface by default.
 
@@ -296,7 +287,7 @@ Create or describe a new draft version for material changes:
 - New draft.
 - Section expansion.
 - Targeted revision.
-- Review fixes.
+- Requested fixes.
 - Restore.
 - Channel variant source update.
 
@@ -305,43 +296,6 @@ and source version. Angle, opening, structure, audience, and voice variants may
 live under `variants/` while the user is choosing; the chosen candidate becomes
 the working `draft.md`. Minor wording changes to one candidate are versions,
 not variants.
-
-## Saved Reviews
-
-A saved review must target a specific draft version. If no version is
-available, label the result as one-off advice and ask whether to create or
-select a version when saved review matters.
-
-Before reviewing, load or identify:
-
-- draft
-- draft version
-- `context`, when available
-- `plan`, when available
-- channel recipe or intended destination
-- applicable AGENTS.md guidance and explicit instructions
-- selected concrete style ID and style guide
-- draft-level source material from `context.md`, if it exists
-- the kind of review the user asked for, and any rubric
-
-Each issue should have severity, location, evidence, why it matters, and a
-recommended fix. Order issues by impact on the next draft.
-
-If the user asks for scoring, keep it inside the saved review rather than
-creating a separate state object. Name the rubric, criteria, scores, rationale,
-evidence, confidence, and version reviewed.
-
-When a review becomes a revision, preserve lineage:
-
-```text
-reviewed draft version
--> saved review
--> selected issues
--> revision priorities
--> new draft version
-```
-
-Do not overwrite the reviewed version.
 
 ## User-Facing State Notes
 

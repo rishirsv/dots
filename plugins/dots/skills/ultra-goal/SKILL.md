@@ -1,9 +1,9 @@
 ---
-name: ultragoal
-description: "Designs and runs durable Codex goals for long-running objectives that need persistence, recovery, verifiers, approval gates, and completion proof. Explicit-only skill for setting, starting, activating, or managing a goal; never activated from vague planning language."
+name: ultra-goal
+description: "Designs and runs durable Codex goals for long-running objectives that need persistence, recovery, verifiers, approval gates, and completion proof. Explicit-only skill invoked via ultra-goal or a request to set, start, activate, or manage a goal; not for one-off tasks or ordinary planning, which belong to ultra-plan."
 ---
 
-# Ultragoal
+# Ultra-Goal
 
 Design and run durable Codex goals for objectives that need persistence,
 recovery, iteration, and proof. A good goal has an observable finish line, a

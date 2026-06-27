@@ -64,14 +64,13 @@ Clean up common AI tells:
 - repetitive sentence starts or transitions
 
 Add specificity only when supported by provided text, durable source context,
-selected style evidence, or the current session. If the user asks to "sound
+the selected style guide, or the current session. If the user asks to "sound
 like me" without a usable style guide or samples, run a non-personalized
-humanize pass or ask for style evidence.
+humanize pass or ask for 2-3 things they wrote in roughly this context.
 
 For the default anti-AI-tell pass in new drafts and rewrites, use the Tell Lint
-in [quality.md](quality.md), which also defines how `compose` and
-`writing-review` apply it. Treat the lint as a deterministic cleanup pass, not a
-detector and not a license to add fake imperfections.
+in [quality.md](quality.md). Treat the lint as a deterministic cleanup pass, not
+a detector and not a license to add fake imperfections.
 
 ## Conflict Handling
 

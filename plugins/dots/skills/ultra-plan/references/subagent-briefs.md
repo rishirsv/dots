@@ -1,4 +1,4 @@
-# Ultraplan Subagent Briefs
+# Ultra-Plan Subagent Briefs
 
 Use dynamic briefs. Give the subagent the decision you need, the source
 boundary, the evidence bar, and the output shape — not a rigid form when a

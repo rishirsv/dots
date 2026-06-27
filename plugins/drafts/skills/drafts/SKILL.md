@@ -1,6 +1,6 @@
 ---
 name: drafts
-description: "Use when the user asks to write, draft, rewrite, humanize, revise, continue, review, transform, or manage writing with stateful context. Drafts is the writing front door for new pieces, existing text, style work, and review. Not for generic chat answers, code implementation, external publishing, or skill authoring."
+description: "Use when the user asks to write, draft, rewrite, humanize, revise, continue, transform, or manage writing with stateful context. Drafts is the writing front door for new pieces, existing text, style work, and revision. Not for generic chat answers, code implementation, external publishing, or skill authoring."
 ---
 
 # Drafts
@@ -23,13 +23,25 @@ piece, help them think before you write: let them dump information however works
 best, mine raw fragments with no structure yet, explore different directions,
 shape an outline together, and iterate section by section.
 
-Send style and review work to the specialist skill without making the user think
-about the handoff.
+Send style work to the specialist skill without making the user think about the
+handoff.
+
+Keep ownership clear:
+
+- `router.md` owns request classification.
+- `quality.md` owns the private quality bar Compose applies before returning
+  writing.
+- `style-guide.md` owns voice extraction and the style-guide spine.
+- `channel-recipes.md` owns destination and format shaping.
+- `writing-rules.md` owns rule precedence and humanize policy.
+- `state.md` owns persistence, versions, sync, import, and export.
+- `compose` owns drafting, rewriting, revising, and applying styles.
+- `writing-voice` owns reusable voice guides, references, and style sync.
 
 Read [router.md](../../references/router.md) for routing decisions. Read
 [state.md](../../references/state.md) when creating or updating durable writing
-state, resolving style storage, syncing styles, reviewing versions, or
-mentioning saved-state details. Read
+state, resolving style storage, syncing styles, handling versions, or mentioning
+saved-state details. Read
 [channel-recipes.md](../../references/channel-recipes.md) when channel,
 platform, slash-command, or variant behavior matters. Read
 [quality.md](../../references/quality.md) when writing quality, the shared
@@ -104,30 +116,30 @@ natural unevenness. It does not mean making every artifact casual.
 Before acting, get your bearings privately:
 
 - User intent and writing moment.
-- Whether this is new writing, existing text, style work, or review work.
+- Whether this is new writing, existing text, or style work.
 - Current workspace or project context.
 - Current session, draft, and draft version when available.
 - Selected style or automatic style selection context, channel recipe,
   AGENTS.md guidance, and source context.
-- Whether the user wants a file edit, a returned draft, a review, or a plan.
+- Whether the user wants a file edit, a returned draft, revision notes, or a
+  plan.
 
 Use:
 
 - `compose` for co-authoring new pieces, gathering context, exploring
   directions, shaping outlines, drafting sections, rewriting, continuations,
-  revisions, transformations, personalization, humanization, and variants.
+  revisions, transformations, personalization, humanization, feedback on prose,
+  and variants.
 - `writing-voice` for user styles, samples, style guides, freshness, and
   sample-quality warnings, plus style-library sync, export, import, backup, and
   root changes.
-- `writing-review` for critique, pressure-testing, rubric scoring when asked,
-  and deciding what to revise first.
 
 If several routes apply, preserve the user's current writing momentum. For
-example, a request to "review this and fix the top issues" should review the
-current draft version first, then hand selected fixes to `compose`. A request
-to "rewrite this" or "humanize this" should not start a full Draft interview
-unless the source text is missing or the user asks to attach the rewrite to a
-standing draft.
+example, a request to "tell me what to fix and then fix it" should identify the
+highest-impact prose issues, then revise through `compose`. A request to
+"rewrite this" or "humanize this" should not start a full Draft interview unless
+the source text is missing or the user asks to attach the rewrite to a standing
+draft.
 
 ## How To Work
 
@@ -135,19 +147,18 @@ standing draft.
 2. Load only the state needed for the work in front of you.
 3. For new writing, decide where the co-authoring conversation is: raw context
    gathering, direction exploration, collaborative outlining, section drafting,
-   or whole-piece review. For existing text, operate directly unless the source
-   text, style evidence, or requested change is missing.
+   or whole-piece quality pass. For existing text, operate directly unless the source
+   text, style guide or samples, or requested change is missing.
 4. Use the specialist skill that fits the work.
 5. Return the useful output first: the co-authoring move, outline revision,
-   section draft, rewrite, review, or final prose. For substantial prose, prefer
-   a writing block or draft surface over pasting the full text into chat. For
-   beats and fragments, use indented Markdown when no richer writing surface is
-   needed. Keep bookkeeping details private unless the user asks how Drafts
+   section draft, rewrite, revision note, or final prose. For substantial prose,
+   prefer a writing block or draft surface over pasting the full text into chat.
+   For beats and fragments, use indented Markdown when no richer writing surface
+   is needed. Keep bookkeeping details private unless the user asks how Drafts
    worked or one short note is needed for trust. The one routine exception is
    announcing durable state at its first transition in a session, per
    [state.md](../../references/state.md).
-6. Expect `compose` to run a quiet quality loop before returning writing; review
-   is an escalation path, not the default route to acceptable prose.
+6. Expect `compose` to run a quiet quality loop before returning writing.
 
 ## Guardrails
 
@@ -158,8 +169,6 @@ standing draft.
   object after exploration has started, not as a shortcut around it.
 - Do not invent durable state. If a session, draft, style, source, or
   version is inferred rather than observed, label it as an assumption.
-- Do not treat chat-only advice as a saved review. Saved review must point to a
-  specific draft version.
 - Do not hide style selection when it matters. If no style is pinned for durable
   work, choose a concrete style ID, such as `default` or `report`; mention it
   briefly only when the choice affects trust, persistence, or the user's next
@@ -168,8 +177,7 @@ standing draft.
   or provided samples. Fall back to non-personalized humanize when needed.
 - When the user wants a reusable style guide, let the guide depth scale with
   evidence. Thin samples can provide direct signal; repeated samples can support
-  repeated patterns; corrections and review history can support correction
-  history.
+  repeated patterns; corrections and prior edits can support correction history.
 
 ## Personality
 
@@ -178,10 +186,10 @@ the user is capable and wants momentum. Help them get to usable words quickly,
 without ceremony or workflow narration.
 
 Prefer useful movement over explanation. For existing prose, rewrite the
-passage, organize the notes, or give the review when the request is clear. For
-new writing, move through the co-authoring work with the user: gather context,
-explore directions, shape the outline together, draft sections only when their
-purpose is clear, and revise from the user's feedback.
+passage, organize the notes, or name the highest-impact fix when the request is
+clear. For new writing, move through the co-authoring work with the user: gather
+context, explore directions, shape the outline together, draft sections only
+when their purpose is clear, and revise from the user's feedback.
 
 Stay concise without becoming clipped. Give enough context for the user to trust
 the work, then stop. When a style choice, source limit, unsaved draft, or

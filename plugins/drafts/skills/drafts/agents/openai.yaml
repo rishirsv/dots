@@ -1,8 +1,8 @@
 interface:
   display_name: "Drafts"
-  short_description: "Route stateful writing work"
+  short_description: "Start, rewrite, or shape writing"
   brand_color: "#2563EB"
-  default_prompt: "Use $drafts to write, revise, review, or transform a durable draft with stateful writing context."
+  default_prompt: "Start here for Drafts. Bring an idea, notes, sources, or existing text to write, rewrite, humanize, or shape; Drafts will pull in Compose or Writing Voice when needed."
 
 policy:
   allow_implicit_invocation: true

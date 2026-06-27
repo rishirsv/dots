@@ -1,14 +1,13 @@
 ---
-name: ultrareview
-description: "Reviews changed code after implementation for correctness bugs and reuse, simplification, efficiency, altitude, and code-quality cleanups. Scales review rigor from quick to max based on task risk or explicit user request, then reports findings or applies same-scope fixes while preserving behavior. Not for broad architecture scans, security audits, PR publication, or CI repair workflows."
+name: ultra-review
+description: "Reviews already-implemented code for correctness bugs plus reuse, simplification, efficiency, and code-quality cleanups, then reports findings or applies same-scope fixes while preserving behavior. Explicit-only skill invoked via ultra-review or a request to review or clean up a diff after implementation; runs deep or max rigor only when explicitly asked. Not for broad architecture scans, security audits, PR publication, or CI repair."
 ---
 
-# Ultrareview
+# Ultra-Review
 
 Review changed code after implementation. Preserve behavior, delete unnecessary
 complexity, reuse canonical code, and fix same-scope quality issues when fixing
-is allowed. Scale review rigor when the task, risk, or user request calls for
-deeper bug hunting.
+is allowed. Run a deeper or maximum bug hunt only when the user asks for one.
 
 Correctness comes first. Report correctness findings with evidence and a
 concrete failure scenario before changing behavior. Apply reuse,
@@ -49,21 +48,20 @@ and the intended review target is ambiguous.
 
 ## Phase 2: Choose Rigor
 
-Use the user's requested rigor when they name it. Otherwise choose the smallest
-rigor that fits the risk.
+Choose between `quick` and `standard` yourself based on change size. Use `deep`
+or `max` only when the user explicitly asks for that rigor — never escalate to
+them on your own.
 
 | Rigor | Use when | Fan-out | Verify | Sweep | Cap | Stance |
 |---|---|---:|---|---|---:|---|
-| `quick` | tiny change, narrow ask, or user wants a fast pass | no subagents unless already available cheaply | none | no | 4 | hunk-only, high confidence |
-| `standard` | normal after-implementation review | 3 agents | local verification | no | 8 | precision, actionable findings |
-| `deep` | risky change, public behavior, data/state, concurrency, contracts, tests, or user asks for careful review | 8 finder angles | 1 verifier per candidate | no | 10 | recall-biased |
-| `max` | user asks for ultra/max/exhaustive, high-risk release, migrations, auth, billing, security-adjacent, persisted data, or repeated review misses | 10 finder angles | 1 verifier per candidate | yes | 15 | maximum recall |
+| `quick` | tiny change or a fast pass | no subagents unless already available cheaply | none | no | 4 | hunk-only, high confidence |
+| `standard` | default after-implementation review | 3 agents | local verification | no | 8 | precision, actionable findings |
+| `deep` | user asks for a deep or careful review | 8 finder angles | 1 verifier per candidate | no | 10 | recall-biased |
+| `max` | user asks for a max, ultra, or exhaustive review | 10 finder angles | 1 verifier per candidate | yes | 15 | maximum recall |
 
-Default to `standard`. Escalate to `deep` when changed code touches schemas,
-contracts, persisted state, routing, configuration, feature flags,
-enum/value sets, migrations, adapters, compatibility paths, concurrency, or
-cross-process boundaries. Escalate to `max` when the user asks for maximum rigor
-or when a missed bug would be expensive.
+Default to `standard`, and drop to `quick` for a tiny change or when the user
+wants a fast pass. Reach for `deep` or `max` only on an explicit request for
+that depth, even when the change looks risky.
 
 ## Phase 3: Behavior Lock
 

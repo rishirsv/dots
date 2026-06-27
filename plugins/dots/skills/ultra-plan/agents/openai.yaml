@@ -1,10 +1,10 @@
 interface:
-  display_name: "Ultraplan"
+  display_name: "Ultra-Plan"
   short_description: "Plan implementation end to end, stress-tested before build"
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#3B82F6"
-  default_prompt: "Use $ultraplan to create or upgrade an implementation plan with repo-grounded research, adversarial critique, verified revisions, and a stop before implementation."
+  default_prompt: "Use $ultra-plan to create or upgrade an implementation plan with repo-grounded research, adversarial critique, verified revisions, and a stop before implementation."
 
 policy:
   allow_implicit_invocation: false

@@ -8,29 +8,25 @@ The bar has two parts, matching the `generative` and `deterministic` split in
 - **Judgment rubric** — generative checks that need a reader's judgment.
 - **Tell lint** — deterministic rules with concrete triggers, no judgment call.
 
-## How Each Skill Applies It
+## How Compose Applies It
 
-- `compose` runs the bar privately before returning writing and fixes what is in
-  scope. It is not user-facing. Scale the pass to the work:
-  - **Every return** runs the tell lint plus the freshness, ending, and channel
-    checks. A fast rewrite, a short direct-prose reply, or a small revision needs
-    only this.
-  - **Substantial or durable writing** runs the full rubric, adding reader fit,
-    grounding, source truth, specificity, and style fit. Treat new substantial
-    pieces, section and whole-piece passes, personalized drafts, and durable
-    drafts or versions as full-pass work.
-- `writing-review` applies the same checks explicitly, attaching severity,
-  location, evidence, why it matters, a recommended fix, optional scoring when
-  asked, and version lineage. It evaluates the full set unless the user scopes
-  the review narrower.
+`compose` runs the bar privately before returning writing and fixes what is in
+scope. It is not a separate user-facing lane. Scale the pass to the work:
+
+- **Every return** runs the tell lint plus the freshness, ending, and channel
+  checks. A fast rewrite, a short direct-prose reply, or a small revision needs
+  only this.
+- **Substantial or durable writing** runs the full rubric, adding reader fit,
+  grounding, source truth, specificity, and style fit. Treat new substantial
+  pieces, section and whole-piece passes, personalized drafts, and durable
+  drafts or versions as full-pass work.
 
 Fix in-scope misses silently; do not fake a check. If a check cannot be met
 safely, leave it unmet and say the limit in one plain sentence only when it
 affects trust or the user's next decision — for example, do not invent a
 specific customer example when no source supplied one. The `compose` loop is not
-a substitute for `writing-review`: review is the explicit escalation that adds
-severity, scoring, and lineage over this same bar, not where ordinary tells get
-caught.
+an excuse to skip requested feedback; when the user asks what to fix, answer in
+plain editorial terms and then revise through `compose`.
 
 ## Judgment Rubric
 

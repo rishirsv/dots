@@ -1,11 +1,11 @@
 {
   "name": "drafts",
   "version": "0.1.0",
-  "description": "Context-first drafting, fast rewrite and humanize, style, review, and revision workflows.",
+  "description": "Editorial drafting, rewrite, voice-guide, and revision support with durable context.",
   "author": {
     "name": "Rishi"
   },
-  "keywords": ["writing", "drafts", "rewrite", "humanize", "style", "review"],
+  "keywords": ["writing", "drafts", "rewrite", "humanize", "style"],
   "category": "Productivity",
   "styles": "./styles",
   "references": "./references",
