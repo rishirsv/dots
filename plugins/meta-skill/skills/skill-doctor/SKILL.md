@@ -84,7 +84,8 @@ the request into a full scored review or behavioral eval. Read
 payload, and identify the smallest cleanup for source/research/provenance
 leakage, maintainer placement, duplicated guidance, stale negative rules,
 unclear opening contracts, self-inflicted mechanical prose, visible route/state
-machinery, over-named modes, or runtime reference placement.
+machinery, over-named modes, runtime reference placement, or the shared static
+failure modes in [judge-rubric.md](../../references/judge-rubric.md).
 
 For prose cleanup, preserve the behavior that matters and change the way the
 skill thinks. Replace visible taxonomies with natural decisions, move authoring

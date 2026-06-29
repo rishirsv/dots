@@ -389,9 +389,8 @@ Script-backed skill:
 - The description names the task object, trigger moment, and adjacent boundary.
 - The invocation posture is intentional: model-discoverable, explicit-only, or
   routed through another skill.
-- Distinct branches are distinct; repeated synonyms for one branch are collapsed.
-- Strong leading words replace repeated explanation when they naturally fit the
-  task language.
+- Structure, steering, branch-map, and pruning decisions are resolved through
+  [skill-design.md](skill-design.md) before adding recipe snippets.
 - Input material boundaries are present when user files, web pages, or pasted content are in scope.
 - Missing inputs say ask, caveat, stop, or continue with labeled limits.
 - Source authority is present only when source order changes behavior.

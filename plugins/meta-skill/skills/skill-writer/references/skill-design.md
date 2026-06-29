@@ -97,6 +97,13 @@ homegrown label when the word already carries useful priors: "audit,"
 description when users, docs, or files naturally use the same word; use it in
 the body when it helps the agent reach for the same behavior each run.
 
+Use leading words to compress a behavior the skill keeps explaining in several
+places. Pick one familiar term and use it consistently instead of scattering
+near-synonyms across the description, workflow, output contract, and references.
+If the term needs a paragraph of local definition, it is probably not leading
+enough; use plainer wording or keep the specific rule near the behavior it
+affects.
+
 Do not coin cute labels to sound distinctive. A made-up term spends tokens on
 definition. A good leading word retires duplicated explanation; a weak one is a
 no-op.
@@ -466,9 +473,11 @@ Split skills only when the split earns its load:
 
 - Split by invocation when a distinct leading word or work object should trigger
   independently.
-- Split by sequence when visible later steps repeatedly pull the agent into
-  premature completion. Sharpen the current step's completion criterion first;
-  split only when the criterion remains fuzzy and the rush is observed.
+- Split by sequence only when the agent repeatedly under-invests in the current
+  phase because a later visible goal pulls it forward. Sharpen the current
+  phase's completion criterion first; if the agent still rushes, split the phase
+  into a separate skill or explicit handoff so the current skill sees only the
+  work it must complete now.
 - Keep related reference material disclosed behind context pointers when one
   skill can still own the job.
 
@@ -567,6 +576,17 @@ Layer runtime material by how often the agent needs it:
 3. Disclosed reference files: conditional detail loaded through a context
    pointer.
 
+Before moving material behind a context pointer, make a quick branch map:
+
+| Branch | Steps needed now | Reference needed every run | Conditional reference |
+|---|---|---|---|
+| `<default path>` | `<ordered actions>` | `<small rules/templates>` | `<branch-only files>` |
+
+If a skill has one path and a template or definition is needed every time,
+inline it or keep it close in `SKILL.md`. If different branches need different
+templates, rubrics, or examples, move those materials to direct reference files
+and point to them only from the branch that needs them.
+
 Inline what every branch needs. Disclose what only some branches need. Keep a
 concept's definition, rules, and caveats together once disclosed, so one read
 brings the neighboring material with it.
@@ -588,7 +608,9 @@ work is genuinely done. Defend against it in this order:
    Prefer "verify every changed file is represented in the summary" over "be
    thorough."
 3. Split the sequence only when the completion criterion is irreducibly fuzzy
-   and later visible steps are causing the rush.
+   and later visible steps are causing the rush. The split should hide the
+   future goal that is stealing effort from the current phase, not merely make a
+   long workflow look tidier.
 
 Flat reference skills need completion criteria too. Use a final check like
 "apply every rubric lane before concluding no findings," not just "review the

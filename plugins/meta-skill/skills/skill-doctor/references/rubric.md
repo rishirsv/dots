@@ -46,6 +46,9 @@ Use these lenses while applying the shared rubric:
   boundary plainly before deeper mechanics.
 - **Terminology consistency** — route names, output labels, examples, and linked
   references use the same plain vocabulary.
+- **Shared failure-mode sweep** — apply the static sweep in
+  [judge-rubric.md](../../../references/judge-rubric.md) before final
+  Implementation scoring.
 - **Resources** — linked references, scripts, assets, dependency clarity, source
   leakage, and stale files.
 - **Runtime contamination** — copied prompt text, provider names, raw research,

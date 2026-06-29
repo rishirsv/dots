@@ -138,6 +138,10 @@ Doctor proposal or an Evaluator handoff.
    modes, state fields, route reports, promotion gates, and schema-shaped
    language that could make the future agent perform the skill's structure
    instead of the user's task.
+   For any reported skill-design failure, apply the static failure-mode sweep in
+   [judge-rubric.md](../../../references/judge-rubric.md). Localize the fix to
+   the smallest description, workflow, branch, reference pointer, completion
+   criterion, or pruning change.
 6. Run the Proposal Loop below.
 7. Propose the smallest fix with target files, intended behavior, validation,
    and residual risk. Stop there unless a specific source edit has already been
@@ -149,9 +153,10 @@ workflow branch, or evidence row causing the risk.
 ## Proposal Loop
 
 1. Name the observed fail state in plain language.
-2. Classify the failure: activation, runtime clarity, output contract, resource,
-   runtime contamination, maintainer leakage, evidence, cross-skill boundary,
-   user control, or validation gap.
+2. Classify the failure: activation, trigger load, structure,
+   branching/context pointer, runtime clarity, output contract, resource,
+   steering, legwork-driven split, pruning, runtime contamination, maintainer
+   leakage, evidence, cross-skill boundary, user control, or validation gap.
 3. Separate a recurring failure pattern from a one-off edge case.
 4. Find the smallest likely source: description, boundary, example, workflow
    branch, output contract, reference pointer, script contract, or missing gate.

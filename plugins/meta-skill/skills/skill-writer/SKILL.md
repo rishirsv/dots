@@ -170,6 +170,7 @@ Use [skill-design.md](references/skill-design.md) to decide:
 - the skill type, evidence plan, and resource/test shape it implies
 - invocation posture: model-discoverable by default, or explicit-only when the user should be the index
 - frontmatter name and description
+- structure and steering choices from [skill-design.md](references/skill-design.md)
 - runtime body shape and section names
 - instruction strength: prose, checklist, template, script, or strict sequence
 - information hierarchy: what must stay in `SKILL.md`, what belongs behind a context pointer, and what should stay out of runtime

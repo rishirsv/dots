@@ -44,8 +44,29 @@ three percentages.
   state the job, default path, and main boundary in plain language.
 - Judge relative to skill type. Pattern/reference skills need clear
   organization; procedural or destructive skills need ordered steps and gates.
+- Apply the static failure-mode sweep below before final Implementation scoring.
 - Treat validation as structural evidence. Passing validation does not prove the
   semantic quality of the skill.
+
+## Static Failure-Mode Sweep
+
+Use this sweep to catch common skill defects before assigning final scores:
+
+- **Trigger load**: the invocation posture is intentional. Model-discoverable
+  skills spend description context every turn and need a strong natural trigger;
+  explicit-only skills spend user memory and need concise human-facing metadata.
+- **Structure**: the skill separates steps from reference. Actions the agent
+  must perform now are in the workflow; supporting definitions, templates,
+  rubrics, and examples are inline only when every branch needs them.
+- **Branching**: branch-specific reference material sits behind a direct context
+  pointer from the branch that needs it. Distinct branches are not repeated
+  synonyms, and conditional references are not hidden behind vague links.
+- **Steering**: repeated explanations collapse into one clear rule or plain
+  term. Phase splits are justified by trigger boundaries or observed legwork
+  failure, not by a tidy taxonomy.
+- **Pruning**: the runtime has one source of truth for each behavior, no stale
+  sediment, no duplicated rules, and no no-op sentences that would not change
+  agent behavior if deleted.
 
 ## Discovery
 
@@ -68,8 +89,8 @@ Question: does the skill give agents clear, useful runtime guidance?
 | **Conciseness** | Lean enough to read during work? | 3 tight and purposeful; 2 somewhat redundant; 1 hard to scan; 0 bloated/confusing. | motivation, framework tours, citations, paragraph-long warnings |
 | **Actionability** | Tells the agent what to do or produce next? | 3 concrete steps/outputs/examples/checks; 2 usable but abstract; 1 mostly principles; 0 no operational guidance. | bare command with no output shape; "be clear/comprehensive" |
 | **Workflow Clarity** | Main path and important branching clear? | 3 clear default path and checkpoints; 2 mostly clear; 1 ambiguous; 0 no workflow. | taxonomy debates, contradicted route names, branches that do not change behavior |
-| **Progressive Disclosure** | Optional details linked, not bloating the body? | 3 well-signaled references; 2 acceptable but uneven; 1 details hidden or overstuffed; 0 broken/missing structure. | long examples inline; weak references to necessary material |
-| **Directive Quality** | Directive over wisdom, generalized, plainly named? | 3 directive, reasoned, generalized; 2 mostly; 1 heavy motivation or overfit; 0 teaching prose or contradictions. | cute labels, system/policy text, overfit examples, stale negative rules |
+| **Progressive Disclosure** | Optional details linked, not bloating the body? | 3 well-signaled references; 2 acceptable but uneven; 1 details hidden or overstuffed; 0 broken/missing structure. | long examples inline; weak references to necessary material; branch-specific reference in the main body |
+| **Directive Quality** | Directive over wisdom, generalized, plainly named? | 3 directive, reasoned, generalized; 2 mostly; 1 heavy motivation or overfit; 0 teaching prose or contradictions. | cute labels, system/policy text, overfit examples, stale negative rules, duplicated steering terms |
 
 ## Payload Hygiene Score Caps
 

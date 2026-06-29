@@ -50,6 +50,7 @@ Always apply:
 |---|---|
 | Source Role And Provenance | Decide what each source is allowed to teach and where provenance stays. |
 | Reusable Job And Trigger | Recover the future skill's recurring job, trigger phrases, and nearest boundary. |
+| Steps And Reference | Separate the actions a future agent must perform from supporting definitions, templates, rubrics, examples, and facts. |
 | Runtime Placement And Economy | Put each surviving rule in the smallest runtime surface that changes behavior. |
 
 Add conditional lenses when the source pack shows the signal:
@@ -169,6 +170,24 @@ unless they are useful runtime examples.
 
 Example check: the skill activates for a messy realistic future request and
 stays silent for the nearest non-trigger.
+
+### Steps And Reference
+
+Use this for every source-derived skill.
+
+Extract:
+
+- ordered actions the future agent must perform
+- supporting definitions, templates, rubrics, examples, or facts
+- supporting material needed every run
+- supporting material that belongs only to a branch
+
+Promote when the action or reference changes future behavior. Use the split to
+build the branch map in [skill-design.md](skill-design.md), then place surviving
+material through Runtime Placement And Economy below.
+
+Example check: the runtime reads like a usable procedure with supporting
+materials, not like a summary of the source pack.
 
 ### Input-Output Transformation
 
@@ -546,6 +565,7 @@ Source Distillation Notes
 - Promoted rules:
 - Provisional rules:
 - Rejected source observations:
+- Steps/reference split:
 - Evidence/caveat rules:
 - Style/register rules:
 - Domain judgment/rubric rules:
