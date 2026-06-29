@@ -4,7 +4,11 @@ Read this when a research question is broad, ambiguous, high-impact, cross-cutti
 
 ## When To Fan Out
 
-Single-threaded research is the default. Use a deeper subagent-led flow only when the user explicitly asks for deep research or confirms a proposed dispatch, and at least two are true:
+For ordinary `$research` requests, single-threaded research is the default. When
+the Research workflow is invoked mid-conversation, default to assigning the
+bounded research task to a `researcher` subagent when one is available, with the
+parent retaining context and synthesis. Use multiple researchers only when at
+least two are true:
 
 - The question spans multiple source classes, such as local code, official docs, ecosystem practice, issue trackers, and design tradeoffs.
 - Several hypotheses need independent checking.
@@ -12,9 +16,14 @@ Single-threaded research is the default. Use a deeper subagent-led flow only whe
 - Current web facts or product behavior materially affect the result.
 - One agent's context would get crowded with raw evidence before synthesis.
 
-Stay single-threaded when the question is narrow, the answer is already in a few local files, fan-out would mostly duplicate work, or the user has not approved a multi-agent research pass.
+Stay with direct parent-agent research when the user asks for a quick/simple
+answer, forbids subagents, no subagent tool is available, the answer is already
+in a few local files, or delegation would mostly duplicate a two-minute lookup.
 
-Before dispatch, tell the user the planned source classes, approximate number of subagents, and stop condition. In headless or non-interactive contexts, fan out only when the original request clearly asks for deep research.
+Before dispatch, tell the user the planned source classes, approximate number
+of subagents, and stop condition. In headless or non-interactive contexts, fan
+out only when the original request clearly asks for deep research or the
+Research workflow invocation itself supplies the research task.
 
 ## Decomposition
 

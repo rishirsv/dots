@@ -34,8 +34,8 @@ outputs, or app runtime state.
 Preview and apply only the targets you want. For example:
 
 ```sh
-scripts/sync-configs.sh --dry-run --codex --claude --vscode --ghostty --cmux --zsh --karabiner
-scripts/sync-configs.sh --codex --claude --vscode --ghostty --cmux --zsh --karabiner
+scripts/sync-configs.sh --dry-run --codex --claude --vscode --ghostty --cmux --zsh --launchagents --karabiner
+scripts/sync-configs.sh --codex --claude --vscode --ghostty --cmux --zsh --launchagents --karabiner
 ```
 
 Apply one target at a time:
@@ -61,6 +61,9 @@ scripts/sync-configs.sh --cmux
 
 scripts/sync-configs.sh --dry-run --zsh
 scripts/sync-configs.sh --zsh
+
+scripts/sync-configs.sh --dry-run --launchagents
+scripts/sync-configs.sh --launchagents
 
 scripts/sync-configs.sh --dry-run --karabiner
 scripts/sync-configs.sh --karabiner

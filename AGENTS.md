@@ -8,7 +8,7 @@ configuration.
 - Plugin source lives under `plugins/<plugin-name>/`.
 - Config source lives under `configs/<tool>/`.
 - Repo-owned helper entrypoints live under `scripts/`.
-- Generated vendor plugin packages belong under ignored `dist/`.
+- Generated plugin packages live under ignored `dist/`.
 
 ## Docs And Local State
 
@@ -21,20 +21,22 @@ configuration.
 - Use only `.agents/plans/`, `.agents/outputs/`, and `.agents/tmp/`.
 - Do not create root `docs/` unless the user explicitly asks for durable public
   docs.
-- Skill-owned hidden workbench files may be durable when intentionally tracked;
-  Meta-Skill hidden guidance lives in `plugins/meta-skill/.meta-skill/AGENTS.md`
-  and durable docs live in `plugins/meta-skill/.meta-skill/docs/`.
 
 ## Boundaries
 
-- Do not edit installed plugin caches, generated vendor packages, local synced
-  config targets, or generated `dist/` contents directly.
+- Edit plugin source under `plugins/`, not installed plugin caches or generated
+  `dist/` packages.
+- Edit config source under `configs/`, not local synced config targets.
 - Do not commit secrets. Zsh secrets and machine-local shell overrides belong in
   `~/.zshrc.local`, not `configs/zsh/`.
 
 ## Commands
 
-- Generate vendor plugin packages with `scripts/package-plugins.sh`.
+- Sync plugin packages and installed local plugin caches with
+  `scripts/sync-plugins.sh`.
+- After any commit made directly on `main`, run `scripts/sync-plugins.sh` before
+  final handoff so local plugin caches match the committed source.
+- Generate plugin packages only with `scripts/package-plugins.sh`.
 - Sync config sources with `scripts/sync-configs.sh --dry-run --all` first.
 - Apply scoped config syncs only after reviewing dry-run output, for example
   `scripts/sync-configs.sh --zsh` or `scripts/sync-configs.sh --vscode`.

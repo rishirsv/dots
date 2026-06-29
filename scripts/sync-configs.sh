@@ -7,7 +7,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--zsh|--karabiner ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--zsh|--launchagents|--karabiner ...]
 
 Copies repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -19,7 +19,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux zsh karabiner)
+    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux zsh launchagents karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -56,6 +56,9 @@ while (( $# )); do
       ;;
     --zsh)
       add_target zsh
+      ;;
+    --launchagents)
+      add_target launchagents
       ;;
     --karabiner)
       add_target karabiner
@@ -194,6 +197,10 @@ sync_zsh() {
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
 }
 
+sync_launchagents() {
+  install_file "$ROOT/configs/launchagents/com.rishi.cmux.disable-session-restore.plist" "$HOME/Library/LaunchAgents/com.rishi.cmux.disable-session-restore.plist"
+}
+
 sync_karabiner() {
   install_file "$ROOT/configs/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 }
@@ -208,6 +215,7 @@ for target in "${TARGETS[@]}"; do
     ghostty) sync_ghostty ;;
     cmux) sync_cmux ;;
     zsh) sync_zsh ;;
+    launchagents) sync_launchagents ;;
     karabiner) sync_karabiner ;;
     *)
       echo "Unknown target: $target" >&2

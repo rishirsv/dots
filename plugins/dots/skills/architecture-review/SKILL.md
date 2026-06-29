@@ -7,13 +7,17 @@ description: "Reviews a codebase or subsystem for structural refactor candidates
 
 Review a codebase or subsystem for structural refactor candidates and architecture improvement opportunities. Surface candidates first; do not start a broad refactor until the user chooses a candidate or explicitly asks for implementation.
 
+Default to hard-cut architecture. For refactors or behavior changes that touch schemas, persisted state, contracts, routing, configuration, feature flags, enum/value sets, runtime ownership, repositories, UI-flow ownership, or tests, assume previous shapes are internal drafts. Keep one canonical owner and one current path.
+
+Do not preserve fallback behavior, compatibility branches, aliases, adapters, dual-shape support, legacy fixtures, migration ladders, rejection tests, or old-shape docs unless a real external boundary requires it. Old code existing is not evidence. If such a boundary exists, name the exact file, function, dependency, and reason it cannot be removed yet.
+
 ## References
 
 - Read [architecture-language.md](references/architecture-language.md) before naming architecture problems. Use its vocabulary exactly.
 - Read [deepening.md](references/deepening.md) when proposing a module-deepening candidate or test strategy.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
-- Read [hard-cut-policy.md](references/hard-cut-policy.md) when the review finds compatibility branches, migration residue, fallback code, dual-shape support, or draft/legacy contracts.
+- Read [hard-cut-policy.md](references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
 - Read [interface-design.md](references/interface-design.md) only after the user selects a candidate and wants alternative interface designs.
 
 ## Scope

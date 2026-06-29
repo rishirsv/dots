@@ -1,10 +1,12 @@
 # Hard-Cut Policy
 
-Read this when a refactor scan finds old-shape handling, fallbacks, compatibility branches, shims, adapters, coercions, aliases, dual-shape support, or migration residue.
+Read this for architecture reviews and refactors. Hard-cut is the default posture, not a special mode the user has to request.
 
 Apply a hard-cut policy by default for refactors or behavior changes that alter schemas, contracts, persisted state, routing, configuration, feature flags, enum/value sets, or architecture where old-state preservation might otherwise be retained.
 
 Keep one canonical codepath. Remove old-shape handling. Do not preserve draft or legacy behavior unless there is concrete evidence of a real external compatibility boundary.
+
+Tests, fixtures, docs, migrations, generated files, aliases, previews, helper names, and comments are architecture surface. Keeping old-shape vocabulary there preserves the old architecture unless the hit is explicitly tied to a current external boundary.
 
 ## Default Assumption
 
@@ -45,6 +47,7 @@ Apply these rules in order:
 - Reject tests added only to memorialize abandoned draft formats.
 - Remove dead helpers and comments that describe removed draft formats.
 - Keep one owner for the canonical contract.
+- Search for retired names across code, tests, docs, fixtures, generated project files, and specs before calling the cleanup complete.
 
 ## Exception Rule
 

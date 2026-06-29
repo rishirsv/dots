@@ -4,7 +4,7 @@ interface:
   icon_small: "../../assets/icon.png"
   icon_large: "../../assets/logo.png"
   brand_color: "#3B82F6"
-  default_prompt: "Use $research to investigate this question, gather evidence, and recommend the right next step."
+  default_prompt: "Use $research to investigate this question, gather evidence, and recommend the right next step. If invoked mid-conversation, delegate the bounded research task to a researcher subagent when available, then synthesize the result."
 
 policy:
   allow_implicit_invocation: false

@@ -42,7 +42,10 @@ part of this skill; do not route prose cleanup to a separate writing skill.
    none exist, choose the closest recipe from
    [document-types.md](references/document-types.md). Use
    [knowledge-bundles.md](references/knowledge-bundles.md) for agent-readable
-   concept pages or Markdown bundles.
+   concept pages or Markdown bundles. Prefer deletion and consolidation over
+   new docs, indexes, proof matrices, changelogs, registers, or status fields.
+   When a repo already has a minimal docs convention, preserve that shape unless
+   the user explicitly asks for a new documentation system.
 4. Write from the reader's job. Lead with what the reader can do or understand
    after reading. Keep background short, make prerequisites explicit, and use
    headings, lists, tables, and code blocks when structure helps scanning.
@@ -82,6 +85,11 @@ part of this skill; do not route prose cleanup to a separate writing skill.
   doc. Do not include fake output unless it is labeled as illustrative.
 - Separate facts, assumptions, and recommendations when the distinction matters
   to the reader's trust.
+- For work trackers, keep a builder queue shape by default: current focus, now,
+  next, blocked, later. Do not add success metrics, kill criteria, owners,
+  review dates, status columns, roadmap lanes, active-plan registers, or proof
+  parking lots unless the repo already requires them or the user explicitly
+  asks.
 - When durable docs depend on facts that cannot be verified from available
   sources, ask for the missing source or write only a clearly labeled proposal.
 - Cite or link supporting material for claims that a future reader or agent would

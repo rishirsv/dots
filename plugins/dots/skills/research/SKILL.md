@@ -29,6 +29,16 @@ Keep prompts outcome-first: state the question, constraints, evidence standard,
 output shape, and stop condition. Do not turn the skill into a rigid checklist
 when a direct answer would be enough.
 
+When the Research workflow is invoked mid-conversation, default to giving the
+bounded research task to a `researcher` subagent when one is available. The
+parent agent should write the contract, keep conversational context and final
+synthesis, and give the subagent the specific research question, source
+boundary, evidence bar, and stop condition. A single researcher is enough for a
+focused question; use multiple researchers only when the task needs distinct
+source lanes. Stay direct only when the user asks for a quick/simple answer,
+forbids subagents, no subagent tool is available, or delegation would mostly
+duplicate a two-minute local lookup.
+
 ## Preamble And Contract
 
 Before tool calls or subagent dispatch, emit a concise visible preamble that
@@ -139,8 +149,11 @@ question. Then compare the two evidence sets explicitly:
 
 ## Deep Research
 
-Use deep research only when the user explicitly asks for deep research or
-confirms a proposed fan-out. Single-threaded research is the default.
+Use deep research when the user explicitly asks for deep research, confirms a
+proposed fan-out, or invokes the Research workflow mid-conversation for a task
+that should be delegated to one or more researchers. For ordinary `$research`
+requests, single-threaded research remains the default unless delegation would
+materially improve evidence gathering.
 
 When fan-out is justified, prefer multiple `researcher` subagents with distinct
 questions and source boundaries over one broad researcher. Each subagent should

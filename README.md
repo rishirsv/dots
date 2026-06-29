@@ -83,6 +83,7 @@ configs/
 ├─ drafts/
 ├─ ghostty/
 ├─ karabiner/
+├─ launchagents/
 ├─ vscode/
 └─ zsh/
 ```
