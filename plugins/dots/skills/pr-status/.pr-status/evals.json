@@ -1,0 +1,63 @@
+{
+  "skill_name": "pr-status",
+  "defaults": {
+    "runner": "codex_app_server",
+    "repetitions": 1
+  },
+  "candidates": [
+    {
+      "candidate": "current",
+      "display": "Current skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "evals": [
+    {
+      "id": "current-branch-readiness",
+      "type": "quality",
+      "prompt": "Use $pr-status on the current branch and tell me if it can land.",
+      "expectations": [
+        "Resolves the PR from the current branch without creating or editing a PR.",
+        "Reads draft state, merge state, review decision, checks, and head/base.",
+        "Returns one readiness status with blockers and evidence.",
+        "Names the smallest next command without mutating local or remote state."
+      ]
+    },
+    {
+      "id": "repair-blockers",
+      "type": "quality",
+      "prompt": "This PR has failing checks and requested changes. Use $pr-status to tell me what is blocking it.",
+      "expectations": [
+        "Classifies the PR as needing repair instead of ready to land.",
+        "Separates failing checks from review-request blockers.",
+        "Does not patch code, comment, resolve threads, or merge.",
+        "Recommends $repair-pr for actionable same-PR failures or comments."
+      ]
+    },
+    {
+      "id": "conversation-state",
+      "type": "quality",
+      "prompt": "Use $pr-status for PR #42 and include whether unresolved conversations may block merge.",
+      "expectations": [
+        "Uses PR metadata and GraphQL thread state when conversation resolution matters.",
+        "Marks thread state unknown if GitHub does not expose enough information.",
+        "Does not resolve conversations.",
+        "Explains whether conversation state is a known blocker or an uncertainty."
+      ]
+    },
+    {
+      "id": "diff-scope-before-land",
+      "type": "quality",
+      "prompt": "Use $pr-status to check whether the PR diff still matches the base branch before landing.",
+      "expectations": [
+        "Compares PR files and local merge-base diff when scope or base matters.",
+        "Reports any head/base ambiguity.",
+        "Keeps the workflow read-only apart from metadata fetches.",
+        "Routes ready PRs to $land-pr and scope problems to a user decision or $send-it."
+      ]
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 ---
-name: git-commit
-description: "Create fast, focused local git commits when the user wants to commit, save, checkpoint, stage-and-commit, split, amend, or prepare a commit message. Push is explicit-only; PRs, merges, rebases, and force-pushes belong elsewhere."
+name: commit
+description: "Create fast, focused local git commits when the user wants to commit, save, checkpoint, stage-and-commit, split, amend, or prepare a commit message. Push is explicit-only; PRs, PR publication, merges, rebases, and force-pushes belong elsewhere."
 ---
 
-# Git Commit
+# Commit
 
 Create one clean local commit from the intended changes. Move quickly when the
 index is already clear; slow down only when Git state, scope, or publication risk
@@ -78,14 +78,16 @@ If staging is needed, stage explicit paths:
 git add -- path/to/file another/path
 ```
 
-Avoid `git add -A` unless the entire dirty worktree clearly belongs to the same
-commit. Preserve unrelated untracked files.
+Prefer explicit paths even when most of the worktree belongs to the commit. Use
+`git add -A` only when the user clearly asked for all dirty work, or when every
+dirty path has been inspected and belongs to the same commit. Preserve unrelated
+untracked files.
 
 For mixed files, stage only the intended hunks. If partial staging is too risky
 to do non-interactively, ask one concise scope question instead of guessing.
 
-If clearly unrelated files are staged by accident, unstage only those paths and
-say so. Do not modify their working-tree content.
+If clearly unrelated files are staged by accident, say what you are unstaging,
+then unstage only those paths. Do not modify their working-tree content.
 
 ## Scope
 
@@ -161,16 +163,20 @@ publication state first:
 ```sh
 git log --oneline -5
 git status -sb
+git diff --staged
 git rev-parse --abbrev-ref --symbolic-full-name @{u}
 ```
 
-Amend freely only when the target commit is local and unpublished. If it has
-likely been pushed or reviewed, stop unless the user explicitly approves the
-history rewrite. A missing upstream is a normal local-branch signal, not an
-error to report by itself.
+Amend freely only when the target commit is local and unpublished, and the
+staged diff is exactly what should be amended. If it has likely been pushed or
+reviewed, stop unless the user explicitly approves the history rewrite. A
+missing upstream is a normal local-branch signal, not an error to report by
+itself.
 
 **Push**: Push only when the user explicitly says push, commit-and-push, save
-and push, publish, or equivalent. A plain commit request is local-only.
+and push, or equivalent. A plain commit request is local-only. Treat bare
+"publish" as PR-publication language unless the user clearly asks only to push
+the branch.
 
 Before pushing, inspect:
 
@@ -179,6 +185,7 @@ git status -sb
 git branch --show-current
 git rev-parse --abbrev-ref --symbolic-full-name @{u}
 git symbolic-ref --short refs/remotes/origin/HEAD
+git remote -v
 ```
 
 If the branch has an upstream, push normally. If it has no upstream and is
@@ -189,7 +196,8 @@ git push -u origin "$(git branch --show-current)"
 ```
 
 Ask before pushing when the branch is detached, the remote is unclear, the
-current branch appears to be the default branch, the push would be
+default branch cannot be determined, the repo uses a non-`origin` publication
+remote, the current branch appears to be the default branch, the push would be
 non-fast-forward, or force would be required. A missing upstream is normal for a
 local branch; use it to decide whether tracking should be set, not as a failure.
 
@@ -211,5 +219,5 @@ Keep the report short:
 - validation run, reused, skipped, or failed
 - push result only when push was requested
 
-Mention leftover work only when it affects the user's next step. Avoid dumping a
-dirty-worktree inventory.
+Mention leftover work only when it affects validation, push safety, or the
+user's next step. Avoid dumping a dirty-worktree inventory.

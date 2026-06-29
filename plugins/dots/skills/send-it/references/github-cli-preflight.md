@@ -44,7 +44,11 @@ Before creating a PR, check whether the current branch already has one:
 gh pr view --json number,url,state,isDraft,headRefName,baseRefName,title,body
 ```
 
-If it exists, reuse it. Preserve its draft or ready state unless the user asks to change it. Update title/body only when they are stale or generic.
+If it exists, reuse it. Normal `$send-it`, `send-it ready`, and `send-it review`
+all mean the PR should be a normal non-draft PR; convert an existing draft PR to
+ready when needed. Preserve or create draft state only for `send-it draft` or an
+explicit user request to keep the PR drafted. Update title/body only when they
+are stale or generic.
 
 ## Tracking
 
