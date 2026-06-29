@@ -1,5 +1,5 @@
 {
-  "skill_name": "pr-status",
+  "skill_name": "triage",
   "defaults": {
     "runner": "codex_app_server",
     "repetitions": 1
@@ -18,7 +18,7 @@
     {
       "id": "current-branch-readiness",
       "type": "quality",
-      "prompt": "Use $pr-status on the current branch and tell me if it can land.",
+      "prompt": "Use $triage on the current branch and tell me if it can land.",
       "expectations": [
         "Resolves the PR from the current branch without creating or editing a PR.",
         "Reads draft state, merge state, review decision, checks, and head/base.",
@@ -29,7 +29,7 @@
     {
       "id": "repair-blockers",
       "type": "quality",
-      "prompt": "This PR has failing checks and requested changes. Use $pr-status to tell me what is blocking it.",
+      "prompt": "This PR has failing checks and requested changes. Use $triage to tell me what is blocking it.",
       "expectations": [
         "Classifies the PR as needing repair instead of ready to land.",
         "Separates failing checks from review-request blockers.",
@@ -40,7 +40,7 @@
     {
       "id": "conversation-state",
       "type": "quality",
-      "prompt": "Use $pr-status for PR #42 and include whether unresolved conversations may block merge.",
+      "prompt": "Use $triage for PR #42 and include whether unresolved conversations may block merge.",
       "expectations": [
         "Uses PR metadata and GraphQL thread state when conversation resolution matters.",
         "Marks thread state unknown if GitHub does not expose enough information.",
@@ -51,12 +51,23 @@
     {
       "id": "diff-scope-before-land",
       "type": "quality",
-      "prompt": "Use $pr-status to check whether the PR diff still matches the base branch before landing.",
+      "prompt": "Use $triage to check whether the PR diff still matches the base branch before landing.",
       "expectations": [
         "Compares PR files and local merge-base diff when scope or base matters.",
         "Reports any head/base ambiguity.",
         "Keeps the workflow read-only apart from metadata fetches.",
-        "Routes ready PRs to $land-pr and scope problems to a user decision or $send-it."
+        "Routes ready PRs to $land-pr and scope problems to a user decision or $ship."
+      ]
+    },
+    {
+      "id": "open-pr-queue",
+      "type": "quality",
+      "prompt": "Use $triage to review the open PR queue and tell me what needs attention.",
+      "expectations": [
+        "Lists open PRs without mutating files, branches, comments, labels, or merge state.",
+        "Groups PRs by action such as ready to land, needs repair, needs review, pending, blocked, or unknown.",
+        "Uses plain language instead of raw GitHub enums or command output.",
+        "Recommends the smallest next command for each actionable group."
       ]
     }
   ]

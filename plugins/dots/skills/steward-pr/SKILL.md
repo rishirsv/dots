@@ -37,7 +37,7 @@ indefinitely.
 
 Use the sibling workflows rather than reinventing their details:
 
-- `$pr-status` for read-only readiness and blockers
+- `$triage` for read-only readiness and blockers
 - `$repair-pr` for actionable same-PR comments or CI fallout
 - `$land-pr` for merge or auto-merge after landing gates are clean
 

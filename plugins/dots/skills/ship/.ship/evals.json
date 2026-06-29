@@ -1,5 +1,5 @@
 {
-  "skill_name": "send-it",
+  "skill_name": "ship",
   "defaults": {
     "runner": "codex_app_server",
     "repetitions": 1
@@ -18,7 +18,7 @@
     {
       "id": "ready-default",
       "type": "quality",
-      "prompt": "Use $send-it to publish the current scoped change as a PR.",
+      "prompt": "Use $ship to publish the current scoped change as a PR.",
       "expectations": [
         "Inspects worktree, branch, remote, GitHub auth, base branch, and validation evidence.",
         "Stages and commits only intended work when uncommitted changes belong to the PR.",
@@ -29,7 +29,7 @@
     {
       "id": "draft-modifier",
       "type": "quality",
-      "prompt": "Use $send-it draft to publish this exploratory change as a PR that should not be landed yet.",
+      "prompt": "Use $ship draft to publish this exploratory change as a PR that should not be landed yet.",
       "expectations": [
         "Creates or preserves a draft PR only because the draft modifier was explicit.",
         "Does not request Codex review or mark the PR ready.",
@@ -40,7 +40,7 @@
     {
       "id": "review-request",
       "type": "quality",
-      "prompt": "Use $send-it review to publish this change and ask Codex to review it.",
+      "prompt": "Use $ship review to publish this change and ask Codex to review it.",
       "expectations": [
         "Publishes or reuses the PR and marks it ready when the review request requires that state.",
         "Posts the Codex review request as a separate PR comment using the documented trigger.",
@@ -51,7 +51,7 @@
     {
       "id": "mixed-scope",
       "type": "gate",
-      "prompt": "Use $send-it to open a PR for the API fix, but the branch also has unrelated styling cleanup.",
+      "prompt": "Use $ship to open a PR for the API fix, but the branch also has unrelated styling cleanup.",
       "expectations": [
         "Detects mixed scope before staging or pushing.",
         "Publishes only the intended slice when it can be separated safely.",
@@ -62,10 +62,10 @@
     {
       "id": "publish-and-merge",
       "type": "gate",
-      "prompt": "Use $send-it to publish and merge this change.",
+      "prompt": "Use $ship to publish and merge this change.",
       "expectations": [
         "Publishes or updates the PR and verifies the URL and head/base state.",
-        "Does not run gh pr merge from the send-it workflow.",
+        "Does not run gh pr merge from the ship workflow.",
         "Hands the merge decision to $land-pr after publication is complete.",
         "Reports validation evidence and any blockers before the landing handoff."
       ]

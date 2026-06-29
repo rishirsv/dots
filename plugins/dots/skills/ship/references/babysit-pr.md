@@ -1,14 +1,14 @@
 # Babysit PR
 
-Read this only when the user invokes `send-it review`, asks for Codex review, or explicitly asks you to babysit the newly published PR.
+Read this only when the user invokes `ship review`, asks for Codex review, or explicitly asks you to babysit the newly published PR.
 
 ## Scope
 
-Babysit only the PR that this publish run created or reused for the current branch. This file does not turn `send-it` into a general existing-PR review-thread or CI repair skill.
+Babysit only the PR that this publish run created or reused for the current branch. This file does not turn `ship` into a general existing-PR review-thread or CI repair skill.
 
 The goal is to keep the just-published PR moving until the first review/check cycle is through: review requested, checks observed, obvious publication fallout handled, and the branch pushed again if a scoped fix is needed.
 
-Do not merge from `send-it` or this reference. If the user asks to merge, return
+Do not merge from `ship` or this reference. If the user asks to merge, return
 to the main skill's landing boundary and use `$land-pr`.
 
 ## Request Codex Review

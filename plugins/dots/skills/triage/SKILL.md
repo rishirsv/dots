@@ -1,14 +1,18 @@
 ---
-name: pr-status
-description: "Read GitHub pull request readiness and blockers through git and gh without changing files, branches, commits, PR metadata, comments, or merge state. Use for check PR status, what is blocking this PR, is it ready, or status before repair/land; not for publishing, fixing, resolving comments, or merging."
+name: triage
+description: "Triage one or more GitHub pull requests through git and gh without changing files, branches, commits, PR metadata, comments, or merge state. Use for triage PRs, check PR status, what is blocking this PR, which open PRs need attention, or status before repair/land; not for publishing, fixing, resolving comments, or merging."
 ---
 
-# PR Status
+# Triage
 
-Read the target pull request and return a short readiness report. This skill is
-read-only over user-authored state: it may query GitHub metadata and inspect
-existing local refs, but it does not refresh branches, stage, commit, push,
-comment, resolve threads, edit PRs, or merge.
+Read pull request readiness and blockers, then explain what needs attention in
+plain language. This skill is read-only over user-authored state: it may query
+GitHub metadata and inspect existing local refs, but it does not refresh
+branches, stage, commit, push, comment, resolve threads, edit PRs, or merge.
+
+Default to the current branch PR or the explicit PR the user names. When the
+user asks to triage open PRs, find open PRs for the repository, sort them by
+attention needed, and give a concise queue readback.
 
 ## Resolve The PR
 
@@ -26,7 +30,40 @@ gh pr view --json number,url,title,state,isDraft,headRefName,baseRefName,headRef
 ```
 
 If no PR resolves from the branch, or the explicit target is ambiguous, report
-that clearly and stop. Do not create a PR; that belongs to `$send-it`.
+that clearly and stop. Do not create a PR; that belongs to `$ship`.
+
+## Triage Open PRs
+
+Use this path when the user asks to triage open PRs, review the PR queue, find
+what needs attention, or summarize open PR status.
+
+Read the open PR list first:
+
+```bash
+gh pr list --state open --limit 50 --json number,url,title,isDraft,headRefName,baseRefName,updatedAt,reviewDecision,statusCheckRollup,mergeStateStatus,author
+```
+
+If there are more than 50 open PRs or the user asks for a team-wide queue,
+either page deliberately or report that the readback is limited to the first 50.
+Do not edit labels, request reviews, comment, close, or merge.
+
+Classify each PR into the first matching bucket:
+
+- `Needs repair`: failing checks, requested changes, or actionable review
+  comments are visible.
+- `Needs review`: review is required, requested, or absent and no stronger
+  blocker is visible.
+- `Pending`: checks, deployments, merge queue, or review are still running.
+- `Ready to land`: non-draft PR with clean required checks, acceptable review
+  state, no known unresolved required conversations, and clean merge state.
+- `Blocked`: draft, conflicts, policy uncertainty, stacked-order ambiguity,
+  missing permissions, or GitHub state prevents a safe next action.
+- `Unknown`: GitHub did not expose enough state to classify confidently.
+
+For PRs that appear close to landing or blocked by conversations, drill into
+the individual PR using the readiness checks below. Do not deep-inspect every
+open PR by habit; optimize for the smallest extra reads that make the queue
+useful.
 
 For GraphQL or REST calls, derive stable identifiers once:
 
@@ -96,7 +133,46 @@ head and `origin/$base_branch` already exists locally. Omit `"$pr_ref"` in the
 this read-only workflow; if refreshing remote-tracking refs would change the
 answer, report that freshness gap or ask whether to refresh.
 
-## Report Shape
+## Plain Readback
+
+Write for a busy human, not for a machine. Avoid raw JSON, long command
+transcripts, and GitHub enum dumps. Translate fields into ordinary language:
+"checks are still running", "review is missing", "requested changes are
+blocking", "mergeability is unknown", or "ready for `$land-pr`".
+
+For a single PR, lead with one sentence:
+
+```text
+PR #123 is pending: tests are still running, and no reviewer has approved it yet.
+```
+
+Then give:
+
+- `What I checked`: the few signals that matter, such as draft state, checks,
+  review, conversations, merge state, and head/base.
+- `Blockers`: only real blockers or important unknowns.
+- `Next move`: the smallest useful command, such as `$repair-pr`, `$land-pr`,
+  `$ship`, or a question for the user.
+
+For open PR triage, lead with a compact queue summary:
+
+```text
+I found 6 open PRs: 1 ready to land, 2 needing review, 2 pending checks, and 1 needing repair.
+```
+
+Then list PRs grouped by action, with one plain sentence each. Put urgent or
+actionable PRs first; ready-to-land PRs before passive waiting. Keep each entry
+short:
+
+```text
+Ready to land
+- #123 Add billing export: checks and review are clean. Next: $land-pr.
+
+Needs repair
+- #118 Fix webhook retry: unit tests are failing. Next: $repair-pr.
+```
+
+## Status Labels
 
 Lead with one status:
 
@@ -112,7 +188,7 @@ Lead with one status:
 - `Unknown`: GitHub did not expose enough state; name the missing signal.
 
 Then give the blockers, the evidence command or field that showed each blocker,
-and the smallest recommended next command: `$repair-pr`, `$land-pr`, `$send-it`,
+and the smallest recommended next command: `$repair-pr`, `$land-pr`, `$ship`,
 or a question for the user. Do not take that next action from this skill.
 
 ## Guardrails

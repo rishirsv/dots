@@ -51,7 +51,7 @@ auto-merge only after every non-pending gate is clean. Failures, requested
 changes, unresolved conversations, conflicts, draft state, stacked-order
 ambiguity, and unknown policy still block auto-merge.
 
-Use `$pr-status` when the user only wants the blocker report.
+Use `$triage` when the user only wants the blocker report.
 Use `$repair-pr` when comments or same-PR CI need code changes.
 
 Treat a PR as stacked when its base is not the default branch, its base branch
@@ -59,8 +59,8 @@ matches another open PR head, dependency links mention another PR, or commit
 ancestry shows it depends on unmerged work. Stop unless the landing order is
 clear.
 
-When conversation resolution can block merging, use the `$pr-status` GraphQL
-thread check first. If `$pr-status` is unavailable, run the same GraphQL thread
+When conversation resolution can block merging, use the `$triage` GraphQL
+thread check first. If `$triage` is unavailable, run the same GraphQL thread
 check directly or stop. If thread state or policy cannot be verified, stop
 instead of assuming the PR is clean.
 
@@ -120,7 +120,7 @@ unmerged local branch.
 
 Report the PR URL, merge method or auto-merge state, head SHA matched, cleanup
 performed, and any blocker that prevented landing. If the PR was not ready, say
-that no merge was attempted and name the next command: `$pr-status`,
+that no merge was attempted and name the next command: `$triage`,
 `$repair-pr`, or a user decision.
 
 ## Guardrails

@@ -1,9 +1,9 @@
 ---
-name: send-it
-description: "Turns already-scoped local work into a pushed branch and ready-to-go GitHub pull request through the portable command-line workflow, using draft only when explicitly requested. Explicit-only skill invoked via send-it, send this, publish PR, or open a PR; not for local-only commits, existing PR repair, existing-PR stewardship, or merging."
+name: ship
+description: "Turns already-scoped local work into a pushed branch and ready-to-go GitHub pull request through the portable command-line workflow, using draft only when explicitly requested. Explicit-only skill invoked via ship, Ship PR, send-it, send this, publish PR, or open a PR; not for local-only commits, existing PR repair, existing-PR stewardship, or merging."
 ---
 
-# Send It
+# Ship PR
 
 Turn an already scoped local change into a pushed branch and ready-to-go PR without sweeping unrelated work into it. This is the canonical portable PR publisher for work and personal repos, even when a GitHub connector is also available. Default to a normal non-draft PR; use draft only when the invocation explicitly asks for a draft.
 
@@ -12,21 +12,21 @@ Turn an already scoped local change into a pushed branch and ready-to-go PR with
 - Read [github-cli-preflight.md](references/github-cli-preflight.md) before publishing. Use it to verify GitHub auth, remotes, branch tracking, base branch, and existing PR state.
 - Read [branch-naming.md](references/branch-naming.md) before creating or renaming a branch.
 - Read [pr-body-template.md](references/pr-body-template.md) before drafting the PR title or body.
-- Read [babysit-pr.md](references/babysit-pr.md) only when the user invokes `send-it review`, asks for Codex review, or explicitly asks for a bounded first review/check watch on the newly published PR. Phrases like "send this for review" mean publish a reviewer-ready PR; they do not by themselves request a Codex review comment.
+- Read [babysit-pr.md](references/babysit-pr.md) only when the user invokes `ship review`, asks for Codex review, or explicitly asks for a bounded first review/check watch on the newly published PR. Phrases like "send this for review" mean publish a reviewer-ready PR; they do not by themselves request a Codex review comment.
 
 ## Invocation Meaning
 
-- `send-it`, `send this`, `open a PR`, or `publish PR`: publish or update a
+- `ship`, `Ship PR`, `send-it`, `send this`, `open a PR`, or `publish PR`: publish or update a
   normal non-draft PR by default.
-- `send-it draft`: publish or update a draft PR when the user explicitly wants
+- `ship draft`: publish or update a draft PR when the user explicitly wants
   a parked or exploratory PR that should not be landed yet.
-- `send-it ready`: publish or update the PR as a normal non-draft PR. If an
+- `ship ready`: publish or update the PR as a normal non-draft PR. If an
   existing PR is draft, mark it ready.
 - `send this for review`: publish a reviewer-ready PR; do not post `@codex
   review` unless the user explicitly asks for Codex review.
-- `send-it review`: publish or update the PR, mark it ready when needed, and
+- `ship review`: publish or update the PR, mark it ready when needed, and
   post the Codex review comment.
-- `send-it merge`, `publish and merge`, or `send and land`: publish first, then
+- `ship merge`, `publish and merge`, or `send and land`: publish first, then
   hand landing to `$land-pr`.
 
 The bounded first review/check watch in `babysit-pr.md` handles only immediate
@@ -44,9 +44,9 @@ belongs to `$steward-pr`.
 7. Commit only when there are intended uncommitted changes. If the intended work is already committed, do not amend or create a cosmetic commit.
 8. Run relevant local validation when an obvious command exists and no fresh evidence is already available.
 9. Push with upstream tracking.
-10. Create a new PR or reuse an existing PR with an explicit title, body file, base branch, and head branch. Create a normal non-draft PR by default. Use draft only for `send-it draft`; for `send-it ready` or `send-it review`, convert an existing draft PR to ready.
+10. Create a new PR or reuse an existing PR with an explicit title, body file, base branch, and head branch. Create a normal non-draft PR by default. Use draft only for `ship draft`; for `ship ready` or `ship review`, convert an existing draft PR to ready.
 11. Verify publication with the validation harness.
-12. If the invocation is `send-it review` or the user explicitly asks for Codex review/babysitting, post the Codex review request and follow [babysit-pr.md](references/babysit-pr.md).
+12. If the invocation is `ship review` or the user explicitly asks for Codex review/babysitting, post the Codex review request and follow [babysit-pr.md](references/babysit-pr.md).
 13. If the invocation asks to merge or land the PR, stop after publication and hand off to `$land-pr`; do not merge from this skill.
 14. Report branch, commit range, PR URL, validation evidence, review-request state, and any remaining blockers.
 
@@ -101,7 +101,7 @@ Create a normal non-draft PR by default:
 gh pr create --base "$base_branch" --head "$(git branch --show-current)" --title "$title" --body-file "$body_file"
 ```
 
-Create a draft PR only for `send-it draft`:
+Create a draft PR only for `ship draft`:
 
 ```bash
 gh pr create --draft --base "$base_branch" --head "$(git branch --show-current)" --title "$title" --body-file "$body_file"
@@ -113,7 +113,7 @@ If an open PR already exists for the current branch, reuse it:
 gh pr view --json number,url,state,isDraft,headRefName,baseRefName
 ```
 
-Use `gh pr edit` only when the existing PR title, body, or base branch needs to match the publication request. If an existing PR is draft, preserve that draft state unless the user invokes `send-it ready`, `send-it review`, or otherwise asks to make it ready. For `send-it ready` or `send-it review`, convert a draft PR to ready before posting a review request:
+Use `gh pr edit` only when the existing PR title, body, or base branch needs to match the publication request. If an existing PR is draft, convert it to ready for normal `ship`, `ship ready`, or `ship review`. Preserve or create draft state only for `ship draft` or an explicit user request to keep the PR drafted. For `ship ready` or `ship review`, convert a draft PR to ready before posting a review request:
 
 ```bash
 gh pr ready "$pr_url_or_number"
@@ -144,7 +144,7 @@ Treat `gh pr checks` exit code 8 as pending, not failure. After a freshly opened
 
 ## Review Request Modifier
 
-For `send-it review` or an explicit Codex-review request, post the current documented Codex review trigger as a separate PR comment:
+For `ship review` or an explicit Codex-review request, post the current documented Codex review trigger as a separate PR comment:
 
 ```bash
 gh pr comment "$pr_url_or_number" --body "@codex review"
@@ -154,7 +154,7 @@ Use exactly `@codex review` unless the user adds focus text after that prefix. D
 
 ## Landing Boundary
 
-Do not merge from this skill. If the user says `send-it merge`, `publish and
+Do not merge from this skill. If the user says `ship merge`, `publish and
 merge`, `send and land`, or equivalent, publish or update the PR first, verify
 the PR URL and head SHA, then say that landing belongs to `$land-pr`.
 

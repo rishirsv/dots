@@ -1,0 +1,10 @@
+interface:
+  display_name: "Triage"
+  short_description: "Triage PR readiness and blockers"
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $triage to inspect the current branch PR or open PR queue and explain readiness, blockers, and next moves without changing anything."
+
+policy:
+  allow_implicit_invocation: false
