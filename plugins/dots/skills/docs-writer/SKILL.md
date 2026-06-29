@@ -108,9 +108,9 @@ structured Markdown concept instead of ordinary prose alone:
 ```markdown
 ---
 type: Runbook
-title: Publish PR workflow
+title: Send It workflow
 description: How the agent publishes a scoped branch and draft pull request.
-resource: plugins/dots/skills/publish-pr/SKILL.md
+resource: plugins/dots/skills/send-it/SKILL.md
 tags: [git, pr, workflow]
 ---
 ```

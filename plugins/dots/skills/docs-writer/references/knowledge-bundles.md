@@ -22,7 +22,7 @@ docs/knowledge/
 │   └── routing.md
 ├── runbooks/
 │   ├── index.md
-│   └── publish-pr.md
+│   └── send-it.md
 └── references/
     ├── index.md
     └── git-scope.md
@@ -38,9 +38,9 @@ Use frontmatter when it helps agents or humans navigate the corpus:
 ```yaml
 ---
 type: Runbook
-title: Publish PR workflow
+title: Send It workflow
 description: How the agent publishes a scoped branch and draft pull request.
-resource: plugins/dots/skills/publish-pr/SKILL.md
+resource: plugins/dots/skills/send-it/SKILL.md
 tags: [git, pr, workflow]
 ---
 ```
@@ -70,9 +70,9 @@ Recommended shape:
 ```markdown
 # Runbooks
 
-* Publish PR workflow (`publish-pr.md`) - How the agent publishes a scoped
+* Send It workflow (`send-it.md`) - How the agent publishes a scoped
   branch and draft pull request.
-* Commit workflow (`git-commit.md`) - How the agent creates scoped local commits.
+* Commit workflow (`commit.md`) - How the agent creates scoped local commits.
 ```
 
 Rules:
