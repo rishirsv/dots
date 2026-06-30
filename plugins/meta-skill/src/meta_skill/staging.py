@@ -3,9 +3,8 @@
 import shutil
 from pathlib import Path
 
-from .candidates import exclude_names_for_target, payload_digest
+from .candidates import copy_candidate_payload, reject_symlink_escapes
 from .errors import CliError
-from .manifest import case_dir
 
 
 def safe_case_file(case_root, rel_path, label):
@@ -19,38 +18,26 @@ def safe_case_file(case_root, rel_path, label):
 
 
 def copy_payload(src, dest):
-    src = Path(src)
-    if dest.exists():
-        shutil.rmtree(dest)
-
-    def ignore(_dir, names):
-        excludes = exclude_names_for_target(src)
-        return [name for name in names if name in excludes]
-
-    if src.is_file():
-        dest.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dest / src.name)
-    else:
-        shutil.copytree(src, dest, ignore=ignore)
+    return copy_candidate_payload(src, dest, extra_excludes={"snapshot.json"})
 
 
-def stage_workspace(workbench, run_dir, trial_id, case, task_text, candidate):
-    case_root = case_dir(workbench, case["id"])
-    workspace = workbench / "workspaces" / run_dir.name / trial_id
+def stage_workspace(run_dir, trial_id, frozen_case, candidate):
+    case_root = Path(frozen_case["case_root"])
+    workspace = run_dir / "trials" / trial_id / "workspace"
     if workspace.exists():
         shutil.rmtree(workspace)
     workspace.mkdir(parents=True)
 
     task_path = workspace / "task.md"
+    task_text = frozen_case.get("task_text") or ""
     task_path.write_text(task_text if task_text.endswith("\n") else task_text + "\n")
 
     fixtures_root = workspace / "fixtures"
-    for fixture in case.get("fixtures", []):
+    for fixture in frozen_case.get("fixtures", []):
         source = safe_case_file(case_root, fixture, "fixture")
         if not source.exists():
             raise CliError(f"fixture missing: {source}", 2)
-        if source.is_symlink():
-            raise CliError(f"fixture path must not be a symlink: {fixture}", 2)
+        reject_symlink_escapes(source.resolve() if source.is_dir() else source.parent.resolve())
         target = fixtures_root / Path(fixture)
         target.parent.mkdir(parents=True, exist_ok=True)
         if source.is_dir():
@@ -63,9 +50,9 @@ def stage_workspace(workbench, run_dir, trial_id, case, task_text, candidate):
     staged_candidate["cwd"] = str(workspace)
     if candidate.get("payload_path"):
         staged_payload = workspace / "skill"
-        copy_payload(candidate["payload_path"], staged_payload)
+        copy_candidate_payload(candidate["payload_path"], staged_payload, extra_excludes={"snapshot.json"}, compute_digest=False)
         staged_candidate["payload_path"] = str(staged_payload)
-        staged_candidate["staged_payload_digest"] = payload_digest(staged_payload)
+        staged_candidate["staged_payload_digest"] = candidate.get("payload_digest")
     else:
         staged_candidate["payload_path"] = None
         staged_candidate["staged_payload_digest"] = None

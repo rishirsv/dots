@@ -14,7 +14,7 @@ from meta_skill.calibration import calibrate_run  # noqa: E402
 from meta_skill.grading import GRADE_LABELS as HUMAN_GRADE_LABELS  # noqa: E402
 
 
-def grade(trial_id, kind, label, metric="quality"):
+def grade(trial_id, kind, grade_status, metric="quality"):
     return {
         "run_id": "run-001",
         "case_id": trial_id.split(".")[0],
@@ -23,8 +23,8 @@ def grade(trial_id, kind, label, metric="quality"):
         "grader": {"kind": kind, "id": kind},
         "metric": metric,
         "score": None,
-        "label": label,
-        "rationale": f"{kind} says {label}",
+        "grade_status": grade_status,
+        "rationale": f"{kind} says {grade_status}",
     }
 
 

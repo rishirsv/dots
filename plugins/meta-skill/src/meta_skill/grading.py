@@ -8,9 +8,11 @@ from pathlib import Path
 
 from .app_server.judge import judge_output
 from .errors import CliError
-from .io import read_json, read_jsonl, resolve_run_dir, write_jsonl
-from .manifest import case_dir, case_task_info, load_manifest, workbench_from_suite
+from .ids import run_id, utc_now
+from .io import append_jsonl, append_jsonl_many, read_json, read_jsonl, resolve_run_dir
 from .staging import safe_case_file
+from .summary import build_summary, summary_exit_code
+from .verdicts import normalize_grade_status, normalize_runtime_status, verdict_contribution
 
 GRADE_LABELS = {"pass", "partial", "fail", "unknown"}
 
@@ -31,38 +33,53 @@ def validator_command(path, output_path, expected_path, events_path):
     return cmd
 
 
-def grade_key(row):
-    grader = row.get("grader") or {}
-    return (
-        row.get("trial_id"),
-        row.get("metric"),
-        grader.get("kind"),
-        grader.get("id"),
-    )
-
-
 def result_response_path(result):
-    return result.get("response_path") or result.get("output_path") or result.get("final_path")
+    return result.get("response_path")
 
 
-def ungraded_grade(run, result, rationale=None):
-    return {
+def _grade_row(run, result, *, generation_id, grader, metric, grade_status, score=None, checks=None, rationale="", evidence_refs=None, gate=False, detail=None):
+    status = normalize_grade_status(grade_status)
+    row = {
         "run_id": run["run_id"],
         "case_id": result["case_id"],
         "candidate": result["candidate"],
         "trial_id": result["trial_id"],
-        "grader": {"kind": "none", "id": "meta-skill"},
-        "metric": "grade_status",
+        "grade_generation_id": generation_id,
+        "grader_id": (grader or {}).get("id"),
+        "grader": grader or {"kind": "none", "id": "meta-skill"},
+        "grade_status": status,
+        "verdict_contribution": verdict_contribution(status),
+        "metric": metric,
         "score": None,
-        "label": "ungraded",
-        "rationale": rationale or "No validate.* file exists; use judge.md for model or human grading.",
-        "evidence_refs": [result_response_path(result)],
+        "rationale": rationale,
+        "checks": checks or [],
+        "evidence_refs": evidence_refs or [result_response_path(result)],
+        "gate": bool(gate),
+        "timestamp": utc_now(),
     }
+    if score is not None:
+        row["score"] = score
+    if detail is not None:
+        row["detail"] = detail
+    return row
+
+
+def ungraded_grade(run, result, generation_id, rationale=None):
+    return _grade_row(
+        run,
+        result,
+        generation_id=generation_id,
+        grader={"kind": "none", "id": "meta-skill"},
+        metric="grade_status",
+        grade_status="ungraded",
+        rationale=rationale or "No runnable grader exists.",
+        evidence_refs=[result_response_path(result)],
+    )
 
 
 def run_validator(validator, result, expected, root):
     proc = subprocess.run(
-        validator_command(validator, result_response_path(result), expected, result["event_path"]),
+        validator_command(validator, result_response_path(result), expected, result["events_path"]),
         capture_output=True,
         text=True,
         cwd=root,
@@ -81,23 +98,22 @@ def run_validator(validator, result, expected, root):
         return 0, 1, [], "fail", f"validator emitted invalid JSON: {exc}"
 
 
-def code_validator_grade(run, result, validator, expected, root, grader=None):
+def code_validator_grade(run, result, validator, expected, root, generation_id, grader=None):
     grader = grader or {}
     passed, total, checks, label, rationale = run_validator(validator, result, expected, root)
-    return {
-        "run_id": run["run_id"],
-        "case_id": result["case_id"],
-        "candidate": result["candidate"],
-        "trial_id": result["trial_id"],
-        "grader": {"kind": "code", "id": grader.get("id") or validator.name},
-        "metric": grader.get("metric") or "validator",
-        "score": passed / total if total else None,
-        "label": label,
-        "rationale": rationale,
-        "checks": checks,
-        "gate": bool(grader.get("gate") or grader.get("required")),
-        "evidence_refs": [result_response_path(result), result["event_path"]],
-    }
+    return _grade_row(
+        run,
+        result,
+        generation_id=generation_id,
+        grader={"kind": "code", "id": grader.get("id") or validator.name},
+        metric=grader.get("metric") or "validator",
+        grade_status=label,
+        score=passed / total if total else None,
+        rationale=rationale,
+        checks=checks,
+        gate=bool(grader.get("gate") or grader.get("required")),
+        evidence_refs=[result_response_path(result), result.get("events_path")],
+    )
 
 
 def read_if_exists(path, limit=20000):
@@ -114,20 +130,16 @@ def generated_expectation_judge_guidance(expectations):
     )
 
 
-def model_judge_grade(run_dir, run, result, root, judge_path=None, model=None, grader=None, expectations=None, expected=None, case=None):
+def model_judge_grade(run_dir, run, result, root, generation_id, judge_path=None, model=None, grader=None, expectations=None, expected=None, case=None):
     grader = grader or {}
     expectations = expectations or []
-    suite = Path(run["suite"]).resolve()
-    workbench = workbench_from_suite(suite)
-    task_path = safe_case_file(root, case_task_info(case or {})["path"], "task")
+    task_path = root / "task.md"
     response_path = result_response_path(result)
     output_text = Path(response_path).read_text() if response_path and Path(response_path).exists() else ""
-    event_path = run_dir / "events" / f"{result['trial_id']}.judge.jsonl"
-    events_text = read_if_exists(result.get("event_path"), limit=12000)
+    event_path = run_dir / "trials" / result["trial_id"] / f"judge-{generation_id}.jsonl"
+    events_text = read_if_exists(result.get("events_path"), limit=12000)
     judge_guidance = judge_path.read_text() if judge_path and judge_path.exists() else generated_expectation_judge_guidance(expectations)
     expected_text = read_if_exists(expected)
-    if expected_text is None and case and case.get("expected_output"):
-        expected_text = str(case.get("expected_output"))
     detail = judge_output(
         judge_guidance=judge_guidance,
         task_text=task_path.read_text() if task_path.exists() else "",
@@ -135,42 +147,40 @@ def model_judge_grade(run_dir, run, result, root, judge_path=None, model=None, g
         expectations=expectations,
         expected_text=expected_text,
         events_text=events_text,
-        cwd=workbench.parent,
+        cwd=run_dir,
         event_path=event_path,
         model=model,
     )
-    return {
-        "run_id": run["run_id"],
-        "case_id": result["case_id"],
-        "candidate": result["candidate"],
-        "trial_id": result["trial_id"],
-        "grader": {"kind": "model", "id": grader.get("id") or ("judge" if judge_path else "expectations")},
-        "metric": grader.get("metric") or ("judge" if judge_path else "expectations"),
-        "score": detail["score"],
-        "label": detail["label"],
-        "rationale": detail["rationale"],
-        "checks": detail["checks"],
-        "gate": bool(grader.get("gate") or grader.get("required")),
-        "eval_feedback": detail.get("eval_feedback", []),
-        "evidence_refs": [item for item in [response_path, str(judge_path) if judge_path else None, str(event_path)] if item],
-        "detail": detail,
-    }
+    row = _grade_row(
+        run,
+        result,
+        generation_id=generation_id,
+        grader={"kind": "model", "id": grader.get("id") or ("judge" if judge_path else "expectations")},
+        metric=grader.get("metric") or ("judge" if judge_path else "expectations"),
+        grade_status=detail["label"],
+        score=detail["score"],
+        rationale=detail["rationale"],
+        checks=detail["checks"],
+        gate=bool(grader.get("gate") or grader.get("required")),
+        evidence_refs=[item for item in [response_path, str(judge_path) if judge_path else None, str(event_path)] if item],
+        detail=detail,
+    )
+    row["eval_feedback"] = detail.get("eval_feedback", [])
+    return row
 
 
-def pending_human_grade(run, result, grader):
-    return {
-        "run_id": run["run_id"],
-        "case_id": result["case_id"],
-        "candidate": result["candidate"],
-        "trial_id": result["trial_id"],
-        "grader": {"kind": "human", "id": grader.get("id") or "human-review"},
-        "metric": grader.get("metric") or grader.get("id") or "human-review",
-        "score": None,
-        "label": "unknown",
-        "rationale": "Human grader declared; record a human grade after reviewing the response, task, judge guidance, and transcript evidence.",
-        "gate": bool(grader.get("gate") or grader.get("required")),
-        "evidence_refs": [item for item in [result_response_path(result), result.get("event_path"), result.get("evidence_path")] if item],
-    }
+def pending_human_grade(run, result, generation_id, grader):
+    return _grade_row(
+        run,
+        result,
+        generation_id=generation_id,
+        grader={"kind": "human", "id": grader.get("id") or "human-review"},
+        metric=grader.get("metric") or grader.get("id") or "human-review",
+        grade_status="unknown",
+        rationale="Human grader declared; record a human grade after reviewing the response, task, judge guidance, and transcript evidence.",
+        gate=bool(grader.get("gate") or grader.get("required")),
+        evidence_refs=[item for item in [result_response_path(result), result.get("events_path"), result.get("evidence_path")] if item],
+    )
 
 
 def normalize_graders(case, root):
@@ -208,18 +218,30 @@ def grader_path(root, grader, label):
     return path
 
 
-def grade_run(raw_run):
+def grade_run(raw_run, *, rebuild_summary=True):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
-    suite = Path(run["suite"]).resolve()
-    workbench = workbench_from_suite(suite)
-    manifest = load_manifest(suite)
-    cases_by_id = {case.get("id"): case for case in manifest.get("cases", [])}
+    frozen_suite = read_json(run_dir / "eval-spec" / "suite.json")
+    cases_by_id = {case.get("id"): case for case in frozen_suite.get("cases", [])}
     rows = []
-    existing = read_jsonl(run_dir / "grades.jsonl")
-    existing_keys = {grade_key(row) for row in existing}
+    generation_id = f"grade-{run_id()}"
     for result in read_jsonl(run_dir / "results.jsonl"):
-        root = case_dir(workbench, result["case_id"])
+        runtime_status = normalize_runtime_status(result.get("runtime_status"))
+        if runtime_status != "completed":
+            rows.append(
+                _grade_row(
+                    run,
+                    result,
+                    generation_id=generation_id,
+                    grader={"kind": "runtime", "id": "runtime-status"},
+                    metric="runtime",
+                    grade_status="fail",
+                    rationale=f"Runtime did not complete: {runtime_status}",
+                    evidence_refs=[result.get("evidence_path")],
+                )
+            )
+            continue
+        root = run_dir / "eval-spec" / "cases" / result["case_id"]
         case = cases_by_id.get(result["case_id"], {})
         graders = normalize_graders(case, root)
         expected = next(iter(sorted(root.glob("expected.*"))), None)
@@ -229,7 +251,7 @@ def grade_run(raw_run):
                 validator = grader_path(root, grader, "validator")
                 if validator is None:
                     raise CliError(f"code grader {grader.get('id')} missing path for case {case.get('id')}", 2)
-                rows.append(code_validator_grade(run, result, validator, expected, root, grader))
+                rows.append(code_validator_grade(run, result, validator, expected, root, generation_id, grader))
                 runnable = True
             elif grader.get("kind") == "model":
                 judge_path = grader_path(root, grader, "judge") if grader.get("path") else next((path for path in (root / "judge.md",) if path.exists()), None)
@@ -239,6 +261,7 @@ def grade_run(raw_run):
                         run,
                         result,
                         root,
+                        generation_id,
                         judge_path,
                         grader=grader,
                         expectations=case.get("expectations") or [],
@@ -248,18 +271,16 @@ def grade_run(raw_run):
                 )
                 runnable = True
             elif grader.get("kind") == "human":
-                pending = pending_human_grade(run, result, grader)
-                if grade_key(pending) not in existing_keys:
-                    rows.append(pending)
+                rows.append(pending_human_grade(run, result, generation_id, grader))
                 runnable = True
                 continue
         if not runnable:
-            rows.append(ungraded_grade(run, result, "No runnable code or model grader exists; add judge.md, validate.*, or a human grade row."))
+            rows.append(ungraded_grade(run, result, generation_id, "No runnable code, model, or human grader exists."))
     grades_path = run_dir / "grades.jsonl"
-    new_keys = {grade_key(row) for row in rows}
-    preserved = [row for row in existing if grade_key(row) not in new_keys]
-    write_jsonl(grades_path, [*preserved, *rows])
-    return {"ok": True, "run_id": run["run_id"], "grades": len(rows), "grades_path": str(grades_path)}
+    append_jsonl_many(grades_path, rows)
+    summary = build_summary(str(run_dir)) if rebuild_summary else None
+    ok = True if summary is None else summary_exit_code(summary) == 0
+    return {"ok": ok, "run_id": run["run_id"], "grade_generation_id": generation_id, "grades": len(rows), "grades_path": str(grades_path), "summary_path": str(run_dir / "summary.json")}
 
 
 def record_human_grade(raw_run, *, trial_id, grader_id, metric, label, score=None, rationale="", reviewer=None):
@@ -278,45 +299,42 @@ def record_human_grade(raw_run, *, trial_id, grader_id, metric, label, score=Non
         raise CliError(f"trial not found in run: {trial_id}", 2)
     if score is not None and not (0 <= score <= 1):
         raise CliError("human grade score must be between 0 and 1", 2)
-    grades_path = run_dir / "grades.jsonl"
-    existing = read_jsonl(grades_path)
-    row = {
-        "run_id": run.get("run_id") or run_dir.name,
-        "case_id": result.get("case_id"),
-        "candidate": result.get("candidate"),
-        "trial_id": trial_id,
-        "grader": {"kind": "human", "id": grader_id},
-        "metric": metric or grader_id,
-        "score": score,
-        "label": label,
-        "rationale": rationale,
-        "reviewer": reviewer,
-        "evidence_refs": [item for item in [result_response_path(result), result.get("event_path"), result.get("evidence_path")] if item],
-    }
-    base = next((existing_row for existing_row in existing if grade_key(existing_row) == grade_key(row)), None)
+    generation_id = f"grade-{run_id()}"
     declared = None
-    if run.get("suite"):
-        suite = Path(run["suite"]).resolve()
-        manifest = load_manifest(suite)
-        case = next((item for item in manifest.get("cases", []) if item.get("id") == result.get("case_id")), {})
+    frozen_path = run_dir / "eval-spec" / "suite.json"
+    if frozen_path.exists():
+        frozen_suite = read_json(frozen_path)
+        case = next((item for item in frozen_suite.get("cases", []) if item.get("id") == result.get("case_id")), {})
         for grader in case.get("graders") or []:
             if grader.get("kind") == "human" and (grader.get("id") == grader_id or grader.get("metric") == metric):
-                declared = {
-                    "gate": bool(grader.get("gate") or grader.get("required")),
-                    "evidence_refs": row["evidence_refs"],
-                }
+                declared = {"gate": bool(grader.get("gate") or grader.get("required"))}
                 break
-    if base or declared:
-        row = {
-            **(base or {}),
-            **row,
-            **(declared or {}),
-            "evidence_refs": (base or {}).get("evidence_refs") or row["evidence_refs"],
-        }
-    rows = [existing_row for existing_row in existing if grade_key(existing_row) != grade_key(row)]
-    rows.append(row)
-    write_jsonl(grades_path, rows)
-    return {"ok": True, "run_id": row["run_id"], "trial_id": trial_id, "grade": row, "grades_path": str(grades_path)}
+    row = _grade_row(
+        run,
+        result,
+        generation_id=generation_id,
+        grader={"kind": "human", "id": grader_id},
+        metric=metric or grader_id,
+        grade_status=label,
+        score=score,
+        rationale=rationale,
+        gate=bool((declared or {}).get("gate")),
+        evidence_refs=[item for item in [result_response_path(result), result.get("events_path"), result.get("evidence_path")] if item],
+    )
+    if reviewer:
+        row["reviewer"] = reviewer
+    grades_path = run_dir / "grades.jsonl"
+    append_jsonl(grades_path, row)
+    summary = build_summary(str(run_dir))
+    return {
+        "ok": summary_exit_code(summary) == 0,
+        "run_id": row["run_id"],
+        "trial_id": trial_id,
+        "grade_generation_id": generation_id,
+        "grade": row,
+        "grades_path": str(grades_path),
+        "summary_path": str(run_dir / "summary.json"),
+    }
 
 
 def human_review_packet(raw_run, trial_id=None):
@@ -336,7 +354,7 @@ def human_review_packet(raw_run, trial_id=None):
             continue
         result = {**planned_trial, **{key: value for key, value in (results.get(tid) or {}).items() if value is not None}}
         grades = grades_by_trial.get(tid, [])
-        needs_human = any((row.get("grader") or {}).get("kind") == "human" and row.get("label") == "unknown" for row in grades)
+        needs_human = any((row.get("grader") or {}).get("kind") == "human" and row.get("grade_status") == "unknown" for row in grades)
         if trial_id or needs_human:
             trials.append(
                 {
@@ -344,7 +362,7 @@ def human_review_packet(raw_run, trial_id=None):
                     "case_id": result.get("case_id"),
                     "candidate": result.get("candidate"),
                     "response_path": result_response_path(result),
-                    "event_path": result.get("event_path"),
+                    "events_path": result.get("events_path"),
                     "evidence_path": result.get("evidence_path"),
                     "human_grades": [row for row in grades if (row.get("grader") or {}).get("kind") == "human"],
                     "guidance": [

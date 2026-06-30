@@ -1,26 +1,10 @@
-"""Read-only run listing and report rendering.
-
-`eval list` and `eval report` render existing run files; they never mutate the
-workbench. Output is deterministic: stable ordering, no generated timestamps,
-and evidence paths relative to the run directory.
-"""
+"""Summary-only run listing and report rendering."""
 
 from pathlib import Path
 
-from .errors import CliError
 from .io import read_json, read_jsonl, resolve_run_dir
 from .manifest import suite_path, workbench_from_suite
-
-CANDIDATE_FIELDS = (
-    "candidate",
-    "display",
-    "source_kind",
-    "source_ref",
-    "base_commit",
-    "head_commit",
-    "dirty",
-    "payload_digest",
-)
+from .summary import build_summary
 
 
 def list_runs(raw_suite):
@@ -28,155 +12,67 @@ def list_runs(raw_suite):
     rows = []
     run_dirs = sorted(path for path in runs_root.iterdir() if (path / "run.json").exists()) if runs_root.is_dir() else []
     for run_dir in run_dirs:
+        summary_path = run_dir / "summary.json"
+        if not summary_path.exists():
+            rows.append({"run_id": run_dir.name, "summary_status": "missing"})
+            continue
         try:
-            run = read_json(run_dir / "run.json")
+            summary = read_json(summary_path)
         except CliError as exc:
             rows.append({"run_id": run_dir.name, "error": exc.message})
             continue
-        result_status = {row.get("trial_id"): row.get("status", "unknown") for row in read_jsonl(run_dir / "results.jsonl")}
-        trial_status = {}
-        for trial in run.get("trials", []):
-            status = result_status.get(trial.get("trial_id"), "no_result")
-            trial_status[status] = trial_status.get(status, 0) + 1
         rows.append(
             {
-                "run_id": run.get("run_id") or run_dir.name,
-                "created_at": run.get("created_at"),
-                "runner": run.get("runner"),
-                "trials": len(run.get("trials", [])),
-                "trial_status": trial_status,
-                "grades": len(read_jsonl(run_dir / "grades.jsonl")),
-                "candidates": [row.get("candidate") for row in run.get("candidates", [])],
+                "run_id": summary.get("run_id") or run_dir.name,
+                "created_at": summary.get("created_at"),
+                "trials": summary.get("total_trials"),
+                "runtime_status_totals": summary.get("runtime_status_totals") or {},
+                "grade_status_totals": summary.get("grade_status_totals") or {},
+                "final_verdict_totals": summary.get("final_verdict_totals") or {},
+                "summary_path": str(summary_path),
             }
         )
     return {"ok": True, "runs_dir": str(runs_root), "runs": rows}
 
 
-def trial_sort_key(trial):
-    return (
-        trial.get("case_id") or "",
-        trial.get("candidate") or "",
-        trial.get("repetition") or 0,
-        trial.get("trial_id") or "",
-    )
-
-
-def grade_sort_key(row):
-    grader = row.get("grader") or {}
-    return (row.get("metric") or "", grader.get("kind") or "", grader.get("id") or "")
-
-
-def grade_summary(row):
+def build_report(raw_run):
+    run_dir = resolve_run_dir(raw_run)
+    summary_path = run_dir / "summary.json"
+    if not summary_path.exists():
+        build_summary(str(run_dir))
+    summary = read_json(summary_path)
+    run = read_json(run_dir / "run.json")
+    results_by_trial = {row.get("trial_id"): row for row in read_jsonl(run_dir / "results.jsonl")}
+    trials = summary.get("trials", [])
+    candidates = run.get("candidates", [])
     return {
-        "metric": row.get("metric"),
-        "grader": row.get("grader"),
-        "score": row.get("score"),
-        "label": row.get("label"),
-        "rationale": row.get("rationale"),
-    }
-
-
-def evidence_pointer(run_dir, raw):
-    """Run-relative path when the evidence file exists, else None."""
-    if not raw:
-        return None
-    path = Path(raw).expanduser()
-    if not path.is_absolute():
-        path = run_dir / path
-    if not path.exists():
-        return None
-    try:
-        return path.resolve().relative_to(run_dir).as_posix()
-    except ValueError:
-        return str(path)
-
-
-def build_trial(run_dir, planned, result, grades):
-    merged = {**planned, **{key: value for key, value in (result or {}).items() if value is not None}}
-    trial_id = merged.get("trial_id")
-    model_rows = [row for row in grades if (row.get("grader") or {}).get("kind") == "model"]
-    validators = [row for row in grades if (row.get("grader") or {}).get("kind") == "code"]
-    human_rows = [row for row in grades if (row.get("grader") or {}).get("kind") == "human"]
-    behavioral_rows = [*model_rows, *validators, *human_rows]
-    gate_failures = [
-        row
-        for row in behavioral_rows
-        if row.get("gate") is True and row.get("label") not in {"pass"}
-    ]
-    has_gate = any(row.get("gate") is True for row in behavioral_rows)
-    unknown_evidence = any(row.get("label") not in {"pass", "partial", "fail"} for row in behavioral_rows)
-    return {
-        "trial_id": trial_id,
-        "case_id": merged.get("case_id"),
-        "candidate": merged.get("candidate"),
-        "repetition": merged.get("repetition"),
-        "runner_status": (result or {}).get("status") or "no_result",
-        "error": (result or {}).get("error"),
-        "usage": (result or {}).get("usage"),
-        "judge": {"score": model_rows[0].get("score"), "label": model_rows[0].get("label")} if model_rows else None,
-        "model_grades": [grade_summary(row) for row in model_rows],
-        "validators": {
-            "passed": sum(1 for row in validators if row.get("label") == "pass"),
-            "total": len(validators),
-        }
-        if validators
-        else None,
-        "human_grades": [grade_summary(row) for row in human_rows],
-        "grade_labels": [row.get("label") for row in behavioral_rows],
-        "graded": bool(behavioral_rows),
-        "invalid_grader_json": any("emitted invalid JSON" in (row.get("rationale") or "") for row in grades),
-        "has_gate": has_gate,
-        "gate_failed": bool(gate_failures),
-        "failed_gates": [
-            {
-                "metric": row.get("metric"),
-                "grader": row.get("grader"),
-                "label": row.get("label"),
-                "rationale": row.get("rationale"),
-            }
-            for row in gate_failures
+        **summary,
+        "candidates": candidates,
+        "comparisons": build_comparisons(candidates, trials),
+        "needs_attention": [
+            {"trial_id": row.get("trial_id"), "kind": row.get("verdict"), "detail": row.get("error") or row.get("verdict")}
+            for row in trials
+            if row.get("verdict") in {"failed", "inconclusive", "ungraded"}
         ],
-        "unknown_evidence": unknown_evidence,
-        "paths": {
-            "response": evidence_pointer(run_dir, merged.get("response_path") or merged.get("output_path") or merged.get("final_path")),
-            "events": evidence_pointer(run_dir, merged.get("event_path")),
-            "judge_events": evidence_pointer(run_dir, run_dir / "events" / f"{trial_id}.judge.jsonl"),
-            "evidence": evidence_pointer(run_dir, merged.get("evidence_path") or run_dir / "evidence" / f"{trial_id}.json"),
+        "totals": {
+            "trials": summary.get("total_trials", 0),
+            "passed": (summary.get("final_verdict_totals") or {}).get("passed", 0),
+            "failed": (summary.get("final_verdict_totals") or {}).get("failed", 0),
+            "inconclusive": (summary.get("final_verdict_totals") or {}).get("inconclusive", 0),
+            "ungraded": (summary.get("final_verdict_totals") or {}).get("ungraded", 0),
+            "gate_failed": 0,
         },
+        "results_by_trial": results_by_trial,
     }
-
-
-def trial_attention(trial):
-    items = []
-    trial_id = trial["trial_id"]
-    if trial["runner_status"] == "no_result":
-        items.append({"kind": "missing_result", "trial_id": trial_id, "detail": "planned trial has no row in results.jsonl"})
-    elif trial["runner_status"] != "passed":
-        items.append({"kind": "failed_trial", "trial_id": trial_id, "detail": trial.get("error") or trial["runner_status"]})
-    if not trial["graded"]:
-        items.append({"kind": "ungraded_trial", "trial_id": trial_id, "detail": "no model, code, or human grade recorded"})
-    if trial["invalid_grader_json"]:
-        items.append({"kind": "invalid_grader_json", "trial_id": trial_id, "detail": "a grader emitted invalid JSON; see grades.jsonl rationale"})
-    if trial["gate_failed"]:
-        items.append({"kind": "gate_failed", "trial_id": trial_id, "detail": "one or more required grader gates failed"})
-    if trial["unknown_evidence"]:
-        items.append({"kind": "unknown_evidence", "trial_id": trial_id, "detail": "a grader returned unknown or another non-decisive label"})
-    if trial["runner_status"] != "no_result" and not trial.get("usage"):
-        items.append({"kind": "missing_usage", "trial_id": trial_id, "detail": "no token usage recorded for this trial"})
-    return items
 
 
 def trial_behavior_state(trial):
-    if trial["runner_status"] == "no_result" or trial["invalid_grader_json"] or trial["unknown_evidence"] or not trial["graded"]:
-        return "unknown"
-    if trial["runner_status"] != "passed" or trial["gate_failed"]:
+    verdict = trial.get("verdict")
+    if verdict == "passed":
+        return "pass"
+    if verdict == "failed":
         return "fail"
-    labels = trial.get("grade_labels") or []
-    if any(label in {None, "partial", "unknown", "ungraded"} for label in labels):
-        return "unknown"
-    if any(label != "pass" for label in labels):
-        return "fail"
-    return "pass"
+    return "unknown"
 
 
 def aggregate_case_candidate_state(trials):
@@ -212,50 +108,6 @@ def build_comparisons(candidates, trials):
     return rows
 
 
-def build_report(raw_run):
-    run_dir = resolve_run_dir(raw_run)
-    run = read_json(run_dir / "run.json")
-    results = {row.get("trial_id"): row for row in read_jsonl(run_dir / "results.jsonl")}
-    grades = {}
-    for row in read_jsonl(run_dir / "grades.jsonl"):
-        grades.setdefault(row.get("trial_id"), []).append(row)
-    planned = list(run.get("trials", []))
-    planned_ids = {trial.get("trial_id") for trial in planned}
-    planned.extend(row for trial_id, row in sorted(results.items()) if trial_id not in planned_ids)
-    trials = [
-        build_trial(run_dir, trial, results.get(trial.get("trial_id")), sorted(grades.get(trial.get("trial_id"), []), key=grade_sort_key))
-        for trial in sorted(planned, key=trial_sort_key)
-    ]
-    totals = {
-        "trials": len(trials),
-        "passed": sum(1 for trial in trials if trial["runner_status"] == "passed"),
-        "failed": sum(1 for trial in trials if trial["runner_status"] not in {"passed", "no_result"}),
-        "no_result": sum(1 for trial in trials if trial["runner_status"] == "no_result"),
-        "graded": sum(1 for trial in trials if trial["graded"]),
-        "ungraded": sum(1 for trial in trials if not trial["graded"]),
-        "gate_failed": sum(1 for trial in trials if trial["gate_failed"]),
-    }
-    candidates = sorted(
-        ({key: row.get(key) for key in CANDIDATE_FIELDS} for row in run.get("candidates", [])),
-        key=lambda row: row.get("candidate") or "",
-    )
-    return {
-        "ok": True,
-        "run_id": run.get("run_id") or run_dir.name,
-        "run_dir": str(run_dir),
-        "suite": run.get("suite"),
-        "benchmark_id": run.get("benchmark_id"),
-        "benchmark_profile": run.get("benchmark_profile"),
-        "runner": run.get("runner"),
-        "created_at": run.get("created_at"),
-        "candidates": candidates,
-        "totals": totals,
-        "trials": trials,
-        "comparisons": build_comparisons(candidates, trials),
-        "needs_attention": [item for trial in trials for item in trial_attention(trial)],
-    }
-
-
 def md_cell(value, limit=96):
     text = " ".join(str(value if value is not None else "-").split()).replace("|", "\\|") or "-"
     return text if len(text) <= limit else text[: limit - 3] + "..."
@@ -267,132 +119,37 @@ def md_table(headers, rows):
     return lines
 
 
-def usage_cell(usage):
-    if not usage:
-        return "unavailable"
-    parts = [f"{usage[key]} {label}" for key, label in (("input_tokens", "in"), ("output_tokens", "out")) if usage.get(key) is not None]
-    return md_cell(" / ".join(parts)) if parts else "recorded"
-
-
-def grades_cell(grades):
-    if not grades:
-        return "-"
-    parts = []
-    for grade in grades:
-        label = grade.get("label") or "-"
-        score = grade.get("score")
-        metric = grade.get("metric") or ((grade.get("grader") or {}).get("id")) or "grade"
-        value = label if score is None else f"{score} {label}".strip()
-        parts.append(f"{metric}: {value}")
-    return md_cell("; ".join(parts))
-
-
-def render_markdown(report):
-    trials = report["trials"]
-    totals = report["totals"]
+def render_markdown(summary):
     lines = [
-        f"# Eval Report: {report['run_id']}",
+        f"# Eval Summary: {summary['run_id']}",
         "",
-        f"- Suite: `{report['suite'] or 'unknown'}`",
-        f"- Runner: `{report['runner'] or 'unknown'}`",
-        f"- Created: {report['created_at'] or 'unknown'}",
-        f"- Run dir: `{report['run_dir']}`",
+        f"- Run dir: `{summary['run_dir']}`",
+        f"- Created: {summary.get('created_at') or 'unknown'}",
+        f"- Grading mode: `{summary.get('grading_mode') or 'unknown'}`",
+        f"- Trials: {summary.get('total_trials', 0)}",
         "",
-        "Evidence paths are relative to the run directory; `-` marks a missing file.",
-        "",
-        "## Candidates",
+        "## Verdict Totals",
         "",
     ]
+    verdicts = summary.get("final_verdict_totals") or {}
+    lines += md_table(["Verdict", "Count"], [[md_cell(key), md_cell(value)] for key, value in sorted(verdicts.items())])
+    lines += ["", "## Runtime Status", ""]
+    lines += md_table(["Runtime status", "Count"], [[md_cell(key), md_cell(value)] for key, value in sorted((summary.get("runtime_status_totals") or {}).items())])
+    lines += ["", "## Grade Status", ""]
+    lines += md_table(["Grade status", "Count"], [[md_cell(key), md_cell(value)] for key, value in sorted((summary.get("grade_status_totals") or {}).items())])
+    lines += ["", "## Trials", ""]
     lines += md_table(
-        ["Candidate", "Source", "Head commit", "Dirty", "Payload digest"],
+        ["Trial", "Case", "Candidate", "Runtime", "Grades", "Verdict"],
         [
             [
+                md_cell(row.get("trial_id")),
+                md_cell(row.get("case_id")),
                 md_cell(row.get("candidate")),
-                md_cell(f"{row.get('source_kind') or '-'}:{row.get('source_ref') or '-'}"),
-                md_cell((row.get("head_commit") or "")[:12] or None),
-                "-" if row.get("dirty") is None else ("yes" if row.get("dirty") else "no"),
-                md_cell((row.get("payload_digest") or "")[:12] or None),
+                md_cell(row.get("runtime_status")),
+                md_cell(", ".join(row.get("grade_statuses") or []) or "-"),
+                md_cell(row.get("verdict")),
             ]
-            for row in report["candidates"]
+            for row in summary.get("trials", [])
         ],
     )
-    lines += [
-        "",
-        "## Runner Completion",
-        "",
-        "Runner completion records whether each trial process finished. It says nothing about answer quality.",
-        "",
-        f"- Passed: {totals['passed']}/{totals['trials']}",
-        f"- Failed: {totals['failed']}/{totals['trials']}",
-        f"- No result: {totals['no_result']}/{totals['trials']}",
-        "",
-    ]
-    lines += md_table(
-        ["Task", "Candidate", "Rep", "Status", "Error"],
-        [
-            [md_cell(t["case_id"]), md_cell(t["candidate"]), md_cell(t["repetition"]), md_cell(t["runner_status"]), md_cell(t["error"])]
-            for t in trials
-        ],
-    )
-    lines += [
-        "",
-        "## Behavioral Grades",
-        "",
-        "Behavioral grades judge the outcome and selected transcript evidence. A trial can complete and still produce a bad answer.",
-        "",
-        f"- Graded: {totals['graded']}/{totals['trials']}",
-        f"- Ungraded: {totals['ungraded']}/{totals['trials']}",
-        "",
-    ]
-    lines += md_table(
-        ["Task", "Candidate", "Rep", "Model grades", "Validators", "Human grades", "Gate", "Graded", "Tokens"],
-        [
-            [
-                md_cell(t["case_id"]),
-                md_cell(t["candidate"]),
-                md_cell(t["repetition"]),
-                grades_cell(t["model_grades"]),
-                f"{t['validators']['passed']}/{t['validators']['total']} pass" if t["validators"] else "-",
-                grades_cell(t["human_grades"]),
-                "failed" if t["gate_failed"] else ("pass" if t["has_gate"] else "-"),
-                "yes" if t["graded"] else "ungraded",
-                usage_cell(t["usage"]),
-            ]
-            for t in trials
-        ],
-    )
-    if report["comparisons"]:
-        lines += ["", "## Comparisons", ""]
-        lines += md_table(
-            ["Task", "Baseline", "Candidate", "Baseline state", "Candidate state"],
-            [
-                [
-                    md_cell(row["case_id"]),
-                    md_cell(row["baseline"]),
-                    md_cell(row["candidate"]),
-                    md_cell(row["baseline_state"]),
-                    md_cell(row["candidate_state"]),
-                ]
-                for row in report["comparisons"]
-            ],
-        )
-    lines += ["", "## Evidence", ""]
-    lines += md_table(
-        ["Trial", "Response", "Events", "Judge events", "Thread evidence"],
-        [
-            [
-                md_cell(t["trial_id"]),
-                md_cell(t["paths"]["response"]),
-                md_cell(t["paths"]["events"]),
-                md_cell(t["paths"]["judge_events"]),
-                md_cell(t["paths"]["evidence"]),
-            ]
-            for t in trials
-        ],
-    )
-    lines += ["", "## Needs Attention", ""]
-    if report["needs_attention"]:
-        lines += [f"- `{item['trial_id']}` {item['kind']}: {md_cell(item['detail'])}" for item in report["needs_attention"]]
-    else:
-        lines.append("Nothing needs attention.")
     return "\n".join(lines) + "\n"

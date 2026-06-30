@@ -30,6 +30,13 @@ def append_jsonl(path, row):
         fh.write(json.dumps(row, sort_keys=True) + "\n")
 
 
+def append_jsonl_many(path, rows):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(row, sort_keys=True) + "\n")
+
+
 def write_jsonl(path, rows):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in rows))

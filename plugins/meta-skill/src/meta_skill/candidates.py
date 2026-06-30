@@ -1,14 +1,17 @@
 """Candidate source identity and payload helpers."""
 
 import hashlib
+import shutil
 import subprocess
 from pathlib import Path
 
 from .errors import CliError
-from .workbench_paths import LEGACY_WORKBENCH_NAME, workbench_dir_name
+from .ids import utc_now
+from .io import write_json
+from .workbench_paths import workbench_dir_name
 
 
-DEFAULT_EXCLUDES = {".DS_Store", ".git", LEGACY_WORKBENCH_NAME, "__pycache__", "dist"}
+DEFAULT_EXCLUDES = {".DS_Store", ".git", "__pycache__", "dist"}
 
 
 def exclude_names_for_target(target):
@@ -43,7 +46,7 @@ def resolve_skill_md(target):
     return path / "SKILL.md" if path.is_dir() else path
 
 
-def resolve_target_payload(project, manifest, candidate_cwd):
+def resolve_target_payload(manifest, candidate_cwd):
     target = manifest.get("target") or {}
     ref = target.get("ref") or "SKILL.md"
     path = (candidate_cwd / ref).resolve()
@@ -51,12 +54,7 @@ def resolve_target_payload(project, manifest, candidate_cwd):
         return path.parent
     if path.is_dir():
         return path
-    fallback = (project / ref).resolve()
-    if fallback.is_file():
-        return fallback.parent
-    if fallback.is_dir():
-        return fallback
-    raise CliError(f"target payload not found for ref {ref!r}", 2)
+    raise CliError(f"target payload not found for ref {ref!r} under {candidate_cwd}", 2)
 
 
 def payload_digest(path):
@@ -82,6 +80,42 @@ def payload_digest(path):
         h.update(file_path.read_bytes())
         h.update(b"\0")
     return h.hexdigest()
+
+
+def reject_symlink_escapes(root):
+    root = Path(root).resolve()
+    for item in root.rglob("*"):
+        if not item.is_symlink():
+            continue
+        resolved = item.resolve()
+        try:
+            resolved.relative_to(root)
+        except ValueError:
+            raise CliError(f"symlink escapes candidate root: {item}", 2)
+
+
+def copy_candidate_payload(src, dest, *, extra_excludes=None, compute_digest=True):
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if src is None:
+        dest.mkdir(parents=True, exist_ok=True)
+        return None
+    src = Path(src).resolve()
+    reject_symlink_escapes(src)
+    extra_excludes = set(extra_excludes or [])
+
+    def ignore(_dir, names):
+        excludes = exclude_names_for_target(src)
+        return [name for name in names if name in excludes or name in extra_excludes]
+
+    if src.is_file():
+        dest.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dest / src.name)
+    else:
+        shutil.copytree(src, dest, ignore=ignore)
+    reject_symlink_escapes(dest)
+    return payload_digest(dest) if compute_digest else None
 
 
 def git(project, args, check=False):
@@ -126,13 +160,29 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
         branch = current_branch(project)
         worktree = None
         payload = None
-    elif kind == "current_worktree" or ref == ".":
+    elif kind == "current_worktree":
         cwd = project
         base_commit = git_ref(project, "HEAD")
         head_commit = base_commit
         branch = current_branch(project)
         worktree = None
-        payload = resolve_target_payload(project, manifest, cwd)
+        payload = resolve_target_payload(manifest, cwd)
+    elif kind == "local_path":
+        raw_path = source.get("path") or ref
+        path = Path(raw_path).expanduser()
+        if not path.is_absolute():
+            path = (project / path).resolve()
+        else:
+            path = path.resolve()
+        if not path.exists():
+            raise CliError(f"candidate {candidate_id} local_path not found: {path}", 2)
+        cwd = path if path.is_dir() else path.parent
+        base_commit = git_ref(cwd, "HEAD")
+        head_commit = base_commit
+        branch = current_branch(cwd)
+        worktree = None
+        payload = resolve_target_payload(manifest, cwd)
+        ref = str(path)
     else:
         base_commit = git_ref(project, ref)
         if not base_commit:
@@ -144,7 +194,9 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
         cwd = worktree
         head_commit = git_ref(cwd, "HEAD")
         branch = ref if kind == "branch" else None
-        payload = resolve_target_payload(project, manifest, cwd)
+        payload = resolve_target_payload(manifest, cwd)
+    if payload:
+        reject_symlink_escapes(payload)
     return {
         "candidate": candidate_id,
         "display": candidate.get("display") or candidate_id,
@@ -159,7 +211,49 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
         "worktree": str(worktree) if worktree else None,
         "cwd": str(cwd),
         "payload_path": str(payload) if payload else None,
-        "payload_digest": payload_digest(payload) if payload else None,
+        "payload_digest": None,
+    }
+
+
+def snapshot_candidate(run_dir, candidate_info):
+    candidate_id = candidate_info["candidate"]
+    snapshot_root = run_dir / "candidates" / candidate_id / "snapshot"
+    snapshot_json_path = snapshot_root / "snapshot.json"
+    payload = candidate_info.get("payload_path")
+    digest = copy_candidate_payload(Path(payload) if payload else None, snapshot_root)
+    validation = None
+    if payload:
+        try:
+            from .validation import validate_report
+
+            validation = validate_report(str(snapshot_root))
+        except Exception as exc:
+            validation = {"ok": False, "error": str(exc)}
+    snapshot = {
+        "candidate": candidate_id,
+        "display": candidate_info.get("display"),
+        "source_kind": candidate_info.get("source_kind"),
+        "source_ref": candidate_info.get("source_ref"),
+        "resolved_source_path": candidate_info.get("payload_path"),
+        "source_cwd": candidate_info.get("cwd"),
+        "worktree": candidate_info.get("worktree"),
+        "branch": candidate_info.get("branch"),
+        "commit": candidate_info.get("commit"),
+        "base_commit": candidate_info.get("base_commit"),
+        "head_commit": candidate_info.get("head_commit"),
+        "dirty": candidate_info.get("dirty"),
+        "diffstat": candidate_info.get("diffstat", ""),
+        "payload_digest": digest,
+        "validation_result": validation,
+        "snapshot_timestamp": utc_now(),
+    }
+    write_json(snapshot_json_path, snapshot)
+    return {
+        **candidate_info,
+        **snapshot,
+        "snapshot_path": str(snapshot_root),
+        "snapshot_json_path": str(snapshot_json_path),
+        "payload_path": str(snapshot_root) if payload else None,
     }
 
 

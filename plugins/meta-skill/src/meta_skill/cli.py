@@ -39,17 +39,9 @@ def command_doctor(args):
     )
     cli_path = Path(__file__).resolve()
     package_root = cli_path.parent
-    src_root = cli_path.parents[1]
-    plugin_root = src_root.parent
     add("cli_source", cli_path.exists(), str(cli_path))
     validator_paths = [package_root / name for name in ("validate_skill.py", "lint_authoring.py")]
     add("validators_canonical", all(path.exists() for path in validator_paths), "package validators")
-    add(
-        "legacy_worker_scripts_absent",
-        not (plugin_root / "skills" / "skill-doctor" / "scripts").exists()
-        and not (plugin_root / "skills" / "skill-writer" / "scripts").exists(),
-        "worker-local script surfaces are removed",
-    )
     try:
         import openai_codex
 
@@ -148,8 +140,9 @@ def command_eval_progress(args):
 
 
 def command_eval_grade(args):
-    emit(grade_run(args.run), args.json)
-    return 0
+    result = grade_run(args.run)
+    emit(result, args.json)
+    return 0 if result["ok"] else 1
 
 
 def command_eval_calibrate(args):
@@ -300,8 +293,11 @@ def build_parser():
     run.add_argument("--runner", choices=["auto", "codex_app_server"], default="auto")
     run.add_argument("--candidates")
     run.add_argument("--split")
+    run.add_argument("--case", action="append", help="Run only this case id; repeat or comma-separate for several")
+    run.add_argument("--type", action="append", help="Run only this case type; repeat or comma-separate for several")
     run.add_argument("--repetitions", type=int)
     run.add_argument("--model")
+    run.add_argument("--no-grade", action="store_true", help="Run trials without grading; intended only for runtime debugging")
     run.add_argument("--json", action="store_true")
     run.set_defaults(func=command_eval_run)
 

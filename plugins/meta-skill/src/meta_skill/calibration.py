@@ -34,20 +34,6 @@ def _pair_by_trial_metric(model_rows, human_rows, metric=None):
     pairs = []
     for key in sorted(set(model_by_trial) & set(human_by_trial)):
         pairs.append({"trial_id": key[0], "metric": key[1], "model": model_by_trial[key][0], "human": human_by_trial[key][0]})
-    if pairs or metric:
-        return pairs
-
-    model_by_trial_only = {}
-    human_by_trial_only = {}
-    for row in model_rows:
-        model_by_trial_only.setdefault(row.get("trial_id"), []).append(row)
-    for row in human_rows:
-        human_by_trial_only.setdefault(row.get("trial_id"), []).append(row)
-    for trial_id in sorted(set(model_by_trial_only) & set(human_by_trial_only)):
-        models = model_by_trial_only[trial_id]
-        humans = human_by_trial_only[trial_id]
-        if len(models) == 1 and len(humans) == 1:
-            pairs.append({"trial_id": trial_id, "metric": models[0].get("metric"), "model": models[0], "human": humans[0]})
     return pairs
 
 
@@ -59,8 +45,8 @@ def _example(pair):
     return {
         "trial_id": pair["trial_id"],
         "metric": pair["metric"],
-        "model_label": pair["model"].get("label"),
-        "human_label": pair["human"].get("label"),
+        "model_label": pair["model"].get("grade_status"),
+        "human_label": pair["human"].get("grade_status"),
         "model_rationale": pair["model"].get("rationale"),
         "human_rationale": pair["human"].get("rationale"),
     }
@@ -76,31 +62,31 @@ def calibrate_run(raw_run, metric=None):
         scope = f" for metric {metric!r}" if metric else ""
         raise CliError(f"no paired model and human grades found{scope}", 2)
 
-    exact = sum(1 for pair in pairs if pair["model"].get("label") == pair["human"].get("label"))
+    exact = sum(1 for pair in pairs if pair["model"].get("grade_status") == pair["human"].get("grade_status"))
     ordinal_pairs = [
         pair
         for pair in pairs
-        if pair["model"].get("label") in ORDINAL_LABEL_VALUES and pair["human"].get("label") in ORDINAL_LABEL_VALUES
+        if pair["model"].get("grade_status") in ORDINAL_LABEL_VALUES and pair["human"].get("grade_status") in ORDINAL_LABEL_VALUES
     ]
     tolerance_agreement = sum(
         1
         for pair in ordinal_pairs
-        if abs(ORDINAL_LABEL_VALUES[pair["model"].get("label")] - ORDINAL_LABEL_VALUES[pair["human"].get("label")]) <= 1
+        if abs(ORDINAL_LABEL_VALUES[pair["model"].get("grade_status")] - ORDINAL_LABEL_VALUES[pair["human"].get("grade_status")]) <= 1
     )
-    binary_pairs = [pair for pair in pairs if pair["model"].get("label") in BINARY_LABELS and pair["human"].get("label") in BINARY_LABELS]
-    human_pass = [pair for pair in binary_pairs if pair["human"].get("label") == "pass"]
-    human_fail = [pair for pair in binary_pairs if pair["human"].get("label") == "fail"]
-    true_positive = sum(1 for pair in human_fail if pair["model"].get("label") == "fail")
-    true_negative = sum(1 for pair in human_pass if pair["model"].get("label") == "pass")
-    false_pass = [pair for pair in human_fail if pair["model"].get("label") == "pass"]
-    false_fail = [pair for pair in human_pass if pair["model"].get("label") == "fail"]
-    model_escalations = [pair for pair in pairs if pair["model"].get("label") in ESCALATION_LABELS]
-    human_escalations = [pair for pair in pairs if pair["human"].get("label") in ESCALATION_LABELS]
-    disagreements = [pair for pair in pairs if pair["model"].get("label") != pair["human"].get("label")]
+    binary_pairs = [pair for pair in pairs if pair["model"].get("grade_status") in BINARY_LABELS and pair["human"].get("grade_status") in BINARY_LABELS]
+    human_pass = [pair for pair in binary_pairs if pair["human"].get("grade_status") == "pass"]
+    human_fail = [pair for pair in binary_pairs if pair["human"].get("grade_status") == "fail"]
+    true_positive = sum(1 for pair in human_fail if pair["model"].get("grade_status") == "fail")
+    true_negative = sum(1 for pair in human_pass if pair["model"].get("grade_status") == "pass")
+    false_pass = [pair for pair in human_fail if pair["model"].get("grade_status") == "pass"]
+    false_fail = [pair for pair in human_pass if pair["model"].get("grade_status") == "fail"]
+    model_escalations = [pair for pair in pairs if pair["model"].get("grade_status") in ESCALATION_LABELS]
+    human_escalations = [pair for pair in pairs if pair["human"].get("grade_status") in ESCALATION_LABELS]
+    disagreements = [pair for pair in pairs if pair["model"].get("grade_status") != pair["human"].get("grade_status")]
     non_binary = [
         pair
         for pair in pairs
-        if pair["model"].get("label") not in BINARY_LABELS or pair["human"].get("label") not in BINARY_LABELS
+        if pair["model"].get("grade_status") not in BINARY_LABELS or pair["human"].get("grade_status") not in BINARY_LABELS
     ]
     summary = {
         "paired": len(pairs),

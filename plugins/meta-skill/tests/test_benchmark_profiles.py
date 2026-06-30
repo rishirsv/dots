@@ -1,11 +1,9 @@
 """Tests for benchmark profiles over evaluator suites."""
 
 import json
-import io
 import sys
 import tempfile
 import unittest
-from contextlib import redirect_stderr
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -69,13 +67,13 @@ description: "Use for testing."
                         {
                             "id": "natural-trigger",
                             "type": "trigger",
-                            "task": {"path": "task.md", "seed": "Use the skill."},
+                            "task": {"prompt": "Use the skill."},
                             "expectations": ["Activates the right behavior."],
                         },
                         {
                             "id": "near-miss",
                             "type": "negative_control",
-                            "task": {"path": "task.md", "seed": "Do not use the skill."},
+                            "task": {"prompt": "Do not use the skill."},
                             "expectations": ["Does not activate."],
                         },
                     ],
@@ -118,8 +116,8 @@ description: "Use for testing."
                         {"candidate": "experimental", "source": {"kind": "current_worktree", "ref": "."}},
                     ],
                     "cases": [
-                        {"id": "case-a", "type": "capability", "task": {"path": "task.md", "seed": "Task"}},
-                        {"id": "case-b", "type": "capability", "task": {"path": "task.md", "seed": "Extra task"}},
+                        {"id": "case-a", "type": "capability", "task": {"prompt": "Task"}},
+                        {"id": "case-b", "type": "capability", "task": {"prompt": "Extra task"}},
                     ],
                 },
             )
@@ -145,7 +143,7 @@ description: "Use for testing."
                 {
                     "run_id": "run-001",
                     "suite": str(suite),
-                    "runner": "codex_app_server",
+                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
                     "created_at": "2026-01-01T00:00:00Z",
                     "benchmark_id": "core",
                     "benchmark_profile": str(profile),
@@ -167,24 +165,45 @@ description: "Use for testing."
             write_jsonl(
                 run_dir / "results.jsonl",
                 [
-                    {"trial_id": "case-a.no-skill.t1", "status": "passed", "usage": {"input_tokens": 10, "output_tokens": 5}},
-                    {"trial_id": "case-a.current.t1", "status": "passed", "usage": {"input_tokens": 20, "output_tokens": 10}},
-                    {"trial_id": "case-a.current.t2", "status": "passed", "usage": {"input_tokens": 30, "output_tokens": 15}},
-                    {"trial_id": "case-b.no-skill.t1", "status": "passed", "usage": {"input_tokens": 1000, "output_tokens": 1000}},
-                    {"trial_id": "case-b.current.t1", "status": "passed", "usage": {"input_tokens": 1000, "output_tokens": 1000}},
-                    {"trial_id": "case-a.experimental.t1", "status": "passed", "usage": {"input_tokens": 1000, "output_tokens": 1000}},
+                    {"trial_id": "case-a.no-skill.t1", "runtime_status": "completed", "usage": {"input_tokens": 10, "output_tokens": 5}, "events_path": str(run_dir / "trials" / "case-a.no-skill.t1" / "events.jsonl")},
+                    {"trial_id": "case-a.current.t1", "runtime_status": "completed", "usage": {"input_tokens": 20, "output_tokens": 10}, "events_path": str(run_dir / "trials" / "case-a.current.t1" / "events.jsonl")},
+                    {"trial_id": "case-a.current.t2", "runtime_status": "completed", "usage": {"input_tokens": 30, "output_tokens": 15}, "events_path": str(run_dir / "trials" / "case-a.current.t2" / "events.jsonl")},
+                    {"trial_id": "case-b.no-skill.t1", "runtime_status": "completed", "usage": {"input_tokens": 1000, "output_tokens": 1000}, "events_path": str(run_dir / "trials" / "case-b.no-skill.t1" / "events.jsonl")},
+                    {"trial_id": "case-b.current.t1", "runtime_status": "completed", "usage": {"input_tokens": 1000, "output_tokens": 1000}, "events_path": str(run_dir / "trials" / "case-b.current.t1" / "events.jsonl")},
+                    {"trial_id": "case-a.experimental.t1", "runtime_status": "completed", "usage": {"input_tokens": 1000, "output_tokens": 1000}, "events_path": str(run_dir / "trials" / "case-a.experimental.t1" / "events.jsonl")},
                 ],
             )
             write_jsonl(
                 run_dir / "grades.jsonl",
                 [
-                    {"trial_id": "case-a.no-skill.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "label": "fail"},
-                    {"trial_id": "case-a.current.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "label": "pass"},
-                    {"trial_id": "case-a.current.t2", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "label": "pass"},
-                    {"trial_id": "case-b.no-skill.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "label": "pass"},
-                    {"trial_id": "case-b.current.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "label": "fail"},
-                    {"trial_id": "case-a.experimental.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "label": "fail"},
+                    {"trial_id": "case-a.no-skill.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "grade_status": "fail"},
+                    {"trial_id": "case-a.current.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "grade_status": "pass"},
+                    {"trial_id": "case-a.current.t2", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "grade_status": "pass"},
+                    {"trial_id": "case-b.no-skill.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "grade_status": "pass"},
+                    {"trial_id": "case-b.current.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "grade_status": "fail"},
+                    {"trial_id": "case-a.experimental.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "grade_status": "fail"},
                 ],
+            )
+            write_json(
+                run_dir / "summary.json",
+                {
+                    "ok": True,
+                    "run_id": "run-001",
+                    "run_dir": str(run_dir),
+                    "created_at": "2026-01-01T00:00:00Z",
+                    "total_trials": 6,
+                    "trials": [
+                        {"trial_id": "case-a.no-skill.t1", "case_id": "case-a", "candidate": "no-skill", "repetition": 1, "runtime_status": "completed", "grade_statuses": ["fail"], "verdict": "failed"},
+                        {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1, "runtime_status": "completed", "grade_statuses": ["pass"], "verdict": "passed"},
+                        {"trial_id": "case-a.current.t2", "case_id": "case-a", "candidate": "current", "repetition": 2, "runtime_status": "completed", "grade_statuses": ["pass"], "verdict": "passed"},
+                        {"trial_id": "case-b.no-skill.t1", "case_id": "case-b", "candidate": "no-skill", "repetition": 1, "runtime_status": "completed", "grade_statuses": ["pass"], "verdict": "passed"},
+                        {"trial_id": "case-b.current.t1", "case_id": "case-b", "candidate": "current", "repetition": 1, "runtime_status": "completed", "grade_statuses": ["fail"], "verdict": "failed"},
+                        {"trial_id": "case-a.experimental.t1", "case_id": "case-a", "candidate": "experimental", "repetition": 1, "runtime_status": "completed", "grade_statuses": ["fail"], "verdict": "failed"},
+                    ],
+                    "runtime_status_totals": {"completed": 6},
+                    "grade_status_totals": {"fail": 3, "pass": 3},
+                    "final_verdict_totals": {"failed": 3, "passed": 3},
+                },
             )
             write_json(
                 workbench / "calibrations" / "run-001-all.json",
@@ -230,14 +249,27 @@ description: "Use for testing."
                 {
                     "run_id": "run-plain",
                     "suite": str(suite),
-                    "runner": "codex_app_server",
+                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
                     "created_at": "2026-01-01T00:00:00Z",
                     "candidates": [{"candidate": "current", "source_kind": "current_worktree"}],
                     "trials": [{"trial_id": "case.current.t1", "case_id": "case", "candidate": "current", "repetition": 1}],
                 },
             )
-            write_jsonl(run_dir / "results.jsonl", [{"trial_id": "case.current.t1", "status": "passed"}])
-            write_jsonl(run_dir / "grades.jsonl", [{"trial_id": "case.current.t1", "metric": "quality", "label": "pass"}])
+            write_jsonl(run_dir / "results.jsonl", [{"trial_id": "case.current.t1", "runtime_status": "completed", "events_path": str(run_dir / "trials" / "case.current.t1" / "events.jsonl")}])
+            write_jsonl(run_dir / "grades.jsonl", [{"trial_id": "case.current.t1", "metric": "quality", "grade_status": "pass"}])
+            write_json(
+                run_dir / "summary.json",
+                {
+                    "ok": True,
+                    "run_id": "run-plain",
+                    "run_dir": str(run_dir),
+                    "total_trials": 1,
+                    "trials": [{"trial_id": "case.current.t1", "case_id": "case", "candidate": "current", "runtime_status": "completed", "grade_statuses": ["pass"], "verdict": "passed"}],
+                    "runtime_status_totals": {"completed": 1},
+                    "grade_status_totals": {"pass": 1},
+                    "final_verdict_totals": {"passed": 1},
+                },
+            )
 
             with self.assertRaises(CliError) as ctx:
                 build_benchmark_report(str(run_dir))
@@ -258,7 +290,7 @@ description: "Use for testing."
                         {"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}},
                     ],
                     "cases": [
-                        {"id": "case-a", "type": "capability", "task": {"path": "task.md", "seed": "Task"}, "expectations": ["Pass."]}
+                        {"id": "case-a", "type": "capability", "task": {"prompt": "Task"}, "expectations": ["Pass."]}
                     ],
                 },
             )
@@ -307,10 +339,6 @@ description: "Use for testing."
 
         args = parser.parse_args(["benchmark", "lint", "--benchmark", "profile.json", "--json"])
         self.assertEqual(args.func.__name__, "command_benchmark_lint")
-
-        with redirect_stderr(io.StringIO()):
-            with self.assertRaises(SystemExit):
-                parser.parse_args(["eval", "benchmark", "lint", "--benchmark", "profile.json"])
 
 
 if __name__ == "__main__":
