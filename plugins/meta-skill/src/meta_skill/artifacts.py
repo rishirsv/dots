@@ -7,13 +7,22 @@ def candidate_source(candidate):
         "display": candidate.get("display"),
         "source_kind": candidate.get("source_kind"),
         "source_ref": candidate.get("source_ref"),
+        "resolved_source_path": candidate.get("resolved_source_path"),
         "worktree": candidate.get("worktree"),
         "base_commit": candidate.get("base_commit") or candidate.get("commit"),
         "head_commit": candidate.get("head_commit") or candidate.get("commit"),
         "dirty": candidate.get("dirty"),
         "diffstat": candidate.get("diffstat", ""),
-        "payload_path": candidate.get("payload_path"),
         "payload_digest": candidate.get("payload_digest"),
+        "validation_result": candidate.get("validation_result"),
+    }
+
+
+def artifact_capture_stub():
+    return {
+        "artifact_capture_status": "not_enabled",
+        "artifact_manifest_path": None,
+        "artifact_refs": [],
     }
 
 
@@ -24,7 +33,6 @@ def trial_record(
     candidate,
     repetition,
     status,
-    runner,
     cwd=None,
     thread_id=None,
     turn_id=None,
@@ -33,13 +41,10 @@ def trial_record(
     runtime_approval_policy=None,
     sdk_version=None,
     runtime_version=None,
-    event_path=None,
+    events_path=None,
     evidence_path=None,
     response_path=None,
-    final_path=None,
     usage=None,
-    started_at=None,
-    completed_at=None,
     error=None,
 ):
     return {
@@ -47,8 +52,7 @@ def trial_record(
         "case_id": case_id,
         "candidate": candidate,
         "repetition": repetition,
-        "status": status,
-        "runner": runner,
+        "runtime_status": status,
         "thread_id": thread_id,
         "turn_id": turn_id,
         "thread_persistence": thread_persistence,
@@ -57,13 +61,12 @@ def trial_record(
         "runtime_approval_policy": runtime_approval_policy,
         "sdk_version": sdk_version,
         "runtime_version": runtime_version,
-        "event_path": event_path,
+        "events_path": events_path,
         "evidence_path": evidence_path,
-        "response_path": response_path or final_path,
+        "response_path": response_path,
         "usage": usage,
-        "started_at": started_at,
-        "completed_at": completed_at,
         "error": error,
+        **artifact_capture_stub(),
     }
 
 

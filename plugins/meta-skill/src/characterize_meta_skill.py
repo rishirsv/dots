@@ -102,7 +102,7 @@ def write_manifest(project, *, fixtures=None):
         "cases": [
             {
                 "id": "case-a",
-                "task": {"path": "task.md", "seed": "Answer with the fixture value."},
+                "task": {"path": "task.md"},
                 "fixtures": fixtures,
             }
         ],
@@ -187,22 +187,23 @@ def test_json_shapes_and_materialize(tmp):
 
     _, forced = run_json([CLI, "eval", "materialize", "--suite", str(suite), "--force", "--json"], project)
     check(any(row["action"] == "overwrite" for row in forced["changes"]), "materialize --force should overwrite")
-    check(task.read_text() == "Answer with the fixture value.\n", "materialize --force did not restore seed")
+    check(task.read_text() == "TODO: author the visible task for this case.\n", "materialize --force did not restore the default task stub")
 
     prompt_suite = wb(project) / "prompt-evals.json"
     prompt_suite.write_text(
         json.dumps(
             {
+                "schema_version": 1,
                 "skill_name": "sample-skill",
                 "candidates": [
                     {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
                     {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
                 ],
-                "evals": [
+                "cases": [
                     {
                         "id": "prompt-shape",
                         "type": "capability",
-                        "prompt": "Answer with the fixture value.",
+                        "task": {"prompt": "Answer with the fixture value."},
                         "expectations": ["The response includes the fixture value."],
                     }
                 ],
@@ -212,9 +213,9 @@ def test_json_shapes_and_materialize(tmp):
         + "\n"
     )
     _, linted = run_json([CLI, "eval", "lint", "--suite", str(prompt_suite), "--json"], project)
-    check(linted["shape"] == "prompt" and linted["stats"]["tasks"] == 1, "prompt manifest lint shape changed")
+    check(linted["shape"] == "cases" and linted["stats"]["tasks"] == 1, "inline prompt lint shape changed")
     _, prompt_materialized = run_json([CLI, "eval", "materialize", "--suite", str(prompt_suite), "--json"], project)
-    check(any("prompt-shape" in row["path"] for row in prompt_materialized["changes"]), "prompt manifest did not materialize")
+    check(any("prompt-shape" in row["path"] for row in prompt_materialized["changes"]), "inline prompt case did not materialize")
 
     run_dir = wb(project) / "runs" / "run-shape"
     run_dir.mkdir(parents=True)
@@ -230,7 +231,7 @@ def test_json_shapes_and_materialize(tmp):
         )
         + "\n"
     )
-    (run_dir / "progress.jsonl").write_text(json.dumps({"trial_id": "case-a.current.t1", "status": "passed"}) + "\n")
+    (run_dir / "progress.jsonl").write_text(json.dumps({"trial_id": "case-a.current.t1", "status": "completed"}) + "\n")
     (run_dir / "results.jsonl").write_text("")
     (run_dir / "grades.jsonl").write_text("")
     _, progress = run_json([CLI, "eval", "progress", "--run", str(run_dir), "--json"], project)
@@ -263,7 +264,7 @@ def test_candidate_digest_and_package_exclusions(tmp):
         manifest,
         manifest["candidates"][0],
     )
-    digest_before = candidate["payload_digest"]
+    digest_before = meta_skill.payload_digest(project / "skill")
     (wb(project / "skill") / "secret.txt").write_text("changed hidden")
     check(meta_skill.payload_digest(project / "skill") == digest_before, "payload digest included .sample-skill")
     (project / "skill" / "references").mkdir()
@@ -316,12 +317,11 @@ def test_workspace_staging_hidden_boundaries(tmp):
 
     meta_skill = import_flat_module()
     candidate = {"candidate": "current", "payload_path": str(project / "skill")}
+    frozen_case = {"case_root": str(case_root), "fixtures": ["fixtures/visible.txt"], "task_text": "visible task"}
     staged = meta_skill.stage_workspace(
-        wb(project),
         wb(project) / "runs" / "run-stage",
         "case-a.current.t1",
-        {"id": "case-a", "fixtures": ["fixtures/visible.txt"]},
-        "visible task",
+        frozen_case,
         candidate,
     )
     workspace = Path(staged["workspace"])
@@ -332,11 +332,9 @@ def test_workspace_staging_hidden_boundaries(tmp):
     check(not (workspace / "skill" / ".sample-skill").exists(), "candidate .sample-skill copied into workspace")
 
     baseline = meta_skill.stage_workspace(
-        wb(project),
         wb(project) / "runs" / "run-stage",
         "case-a.baseline.t1",
-        {"id": "case-a", "fixtures": ["fixtures/visible.txt"]},
-        "visible task",
+        frozen_case,
         {"candidate": "baseline", "payload_path": None},
     )
     baseline_workspace = Path(baseline["workspace"])
@@ -346,11 +344,9 @@ def test_workspace_staging_hidden_boundaries(tmp):
     for fixture in ("/tmp/escape.txt", "../escape.txt"):
         try:
             meta_skill.stage_workspace(
-                wb(project),
                 wb(project) / "runs" / "run-stage",
                 f"case-a.current.{abs(hash(fixture))}",
-                {"id": "case-a", "fixtures": [fixture]},
-                "visible task",
+                {"case_root": str(case_root), "fixtures": [fixture], "task_text": "visible task"},
                 candidate,
             )
         except meta_skill.CliError:
@@ -367,11 +363,9 @@ def test_workspace_staging_hidden_boundaries(tmp):
         return
     try:
         meta_skill.stage_workspace(
-            wb(project),
             wb(project) / "runs" / "run-stage",
             "case-a.current.symlink",
-            {"id": "case-a", "fixtures": ["fixtures/link.txt"]},
-            "visible task",
+            {"case_root": str(case_root), "fixtures": ["fixtures/link.txt"], "task_text": "visible task"},
             candidate,
         )
     except meta_skill.CliError:
@@ -419,12 +413,33 @@ def test_grade_expected_validator_behavior(tmp):
         )
     )
     run_dir = wb(project) / "runs" / "run-grade"
-    output_path = run_dir / "candidates" / "current" / "case-a.current.t1" / "response.md"
-    event_path = run_dir / "events" / "case-a.current.t1.jsonl"
-    output_path.parent.mkdir(parents=True)
-    event_path.parent.mkdir(parents=True)
-    output_path.write_text("expected answer\n")
-    event_path.write_text("{}\n")
+    response_path = run_dir / "trials" / "case-a.current.t1" / "response.md"
+    events_path = run_dir / "trials" / "case-a.current.t1" / "events.jsonl"
+    response_path.parent.mkdir(parents=True, exist_ok=True)
+    events_path.parent.mkdir(parents=True, exist_ok=True)
+    response_path.write_text("expected answer\n")
+    events_path.write_text("{}\n")
+    frozen_case = run_dir / "eval-spec" / "cases" / "case-a"
+    frozen_case.mkdir(parents=True)
+    (frozen_case / "task.md").write_text("Visible task.\n")
+    (frozen_case / "expected.txt").write_text((case_root / "expected.txt").read_text())
+    (frozen_case / "validate.py").write_text((case_root / "validate.py").read_text())
+    (run_dir / "eval-spec" / "suite.json").write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "cases": [
+                    {
+                        "id": "case-a",
+                        "expectations": ["The output exactly matches expected.txt."],
+                        "graders": manifest["cases"][0]["graders"],
+                    }
+                ],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
     (run_dir / "run.json").write_text(
         json.dumps({"run_id": "run-grade", "suite": str(suite), "trials": [{"trial_id": "case-a.current.t1"}]}) + "\n"
     )
@@ -435,9 +450,9 @@ def test_grade_expected_validator_behavior(tmp):
                 "trial_id": "case-a.current.t1",
                 "case_id": "case-a",
                 "candidate": "current",
-                "response_path": str(output_path),
-                "output_path": str(output_path),
-                "event_path": str(event_path),
+                "runtime_status": "completed",
+                "response_path": str(response_path),
+                "events_path": str(events_path),
             }
         )
         + "\n"
@@ -445,11 +460,11 @@ def test_grade_expected_validator_behavior(tmp):
     _, graded = run_json([CLI, "eval", "grade", "--run", str(run_dir), "--json"], project)
     check(graded["ok"] is True and graded["grades"] == 1, "grade JSON shape changed")
     grades = [json.loads(line) for line in (run_dir / "grades.jsonl").read_text().splitlines()]
-    check(grades[0]["score"] == 1.0 and grades[0]["label"] == "pass", "validator grade behavior changed")
+    check(grades[0]["score"] == 1.0 and grades[0]["grade_status"] == "pass", "validator grade behavior changed")
     check(grades[0]["metric"] == "exactness" and grades[0]["grader"]["id"] == "exact-match", "explicit grader metadata not preserved")
     check(grades[0]["gate"] is True, "explicit required grader did not become a gate")
     _, human_packet = run_json([CLI, "eval", "human", "--run", str(run_dir), "--trial", "case-a.current.t1", "--json"], project)
-    check(human_packet["trials"][0]["response_path"] == str(output_path), "human review packet response path changed")
+    check(human_packet["trials"][0]["response_path"] == str(response_path), "human review packet response path changed")
     run([CLI, "eval", "human", "--run", str(run_dir), "--trial", "missing.t1", "--json"], project, expect=(2,))
     _, human_grade = run_json(
         [
@@ -503,8 +518,7 @@ def test_grade_expected_validator_behavior(tmp):
         project,
     )
     _, gated_report = run_json([CLI, "eval", "report", "--run", str(run_dir), "--json"], project)
-    gated_trial = gated_report["trials"][0]
-    check(gated_trial["gate_failed"] is True and gated_report["totals"]["gate_failed"] == 1, "recorded human gate was not preserved")
+    check(gated_report["trials"][0]["grade_statuses"][-1] == "fail", "recorded human grade was not preserved")
 
 
 def test_eval_list_and_report(tmp):
@@ -520,12 +534,12 @@ def test_eval_list_and_report(tmp):
             "case_id": case_id,
             "candidate": candidate,
             "repetition": repetition,
-            "event_path": str(run_dir / "events" / f"{trial_id}.jsonl"),
+            "events_path": str(run_dir / "trials" / trial_id / "events.jsonl"),
             "evidence_path": str(run_dir / "evidence" / f"{trial_id}.json"),
             "response_path": str(run_dir / "candidates" / candidate / trial_id / "response.md"),
         }
 
-    def grade(trial_id, metric, grader, score, label, rationale):
+    def grade(trial_id, metric, grader, score, grade_status, rationale):
         return {
             "run_id": "run-report-fixture",
             "trial_id": trial_id,
@@ -534,7 +548,7 @@ def test_eval_list_and_report(tmp):
             "metric": metric,
             "grader": grader,
             "score": score,
-            "label": label,
+            "grade_status": grade_status,
             "rationale": rationale,
         }
 
@@ -546,10 +560,10 @@ def test_eval_list_and_report(tmp):
         trial("case-a", "attempt-1", 2),
     ]
     results = [
-        {**trials[1], "status": "passed", "usage": {"input_tokens": 120, "output_tokens": 30}},
-        {**trials[2], "status": "passed"},
-        {**trials[3], "status": "failed", "error": "runner exploded"},
-        {**trials[4], "status": "passed", "usage": {"input_tokens": 7, "output_tokens": 11}},
+        {**trials[1], "runtime_status": "completed", "usage": {"input_tokens": 120, "output_tokens": 30}},
+        {**trials[2], "runtime_status": "completed"},
+        {**trials[3], "runtime_status": "failed", "error": "runner exploded"},
+        {**trials[4], "runtime_status": "completed", "usage": {"input_tokens": 7, "output_tokens": 11}},
     ]
     grades = [
         grade("case-a.current.t1", "judge", {"kind": "model", "id": "judge"}, 1.0, "pass", "meets judge"),
@@ -587,20 +601,16 @@ def test_eval_list_and_report(tmp):
     (run_dir / "results.jsonl").write_text("".join(json.dumps(row) + "\n" for row in results))
     (run_dir / "grades.jsonl").write_text("".join(json.dumps(row) + "\n" for row in grades))
     for row in results:
-        for key, text in (("event_path", "{}\n"), ("response_path", "response\n")):
+        for key, text in (("events_path", "{}\n"), ("response_path", "response\n")):
             path = Path(row[key])
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text)
     evidence = Path(results[0]["evidence_path"])
     evidence.parent.mkdir(parents=True)
     evidence.write_text("{}\n")
-    (run_dir / "events" / "case-a.attempt-1.t2.judge.jsonl").write_text("{}\n")
-
-    _, listed = run_json([CLI, "eval", "list", "--suite", str(suite), "--json"], project)
-    check(listed["ok"] is True and len(listed["runs"]) == 1, "eval list run enumeration changed")
-    row = listed["runs"][0]
-    check(row["run_id"] == "run-report-fixture" and row["candidates"] == ["current", "attempt-1"], "eval list run row changed")
-    check(row["trial_status"] == {"passed": 3, "failed": 1, "no_result": 1} and row["grades"] == 5, "eval list status counts changed")
+    judge_events = run_dir / "trials" / "case-a.attempt-1.t2" / "judge.jsonl"
+    judge_events.parent.mkdir(parents=True, exist_ok=True)
+    judge_events.write_text("{}\n")
 
     _, calibration = run_json([CLI, "eval", "calibrate", "--run", str(run_dir), "--metric", "judge", "--json"], project)
     check(calibration["summary"]["paired"] == 1 and calibration["summary"]["exact_agreement_rate"] == 1.0, "calibration summary changed")
@@ -611,7 +621,7 @@ def test_eval_list_and_report(tmp):
     second, _ = run_json([CLI, "eval", "report", "--run", str(run_dir), "--json"], project)
     check(first.stdout == second.stdout, "report JSON not byte-stable")
     check(
-        report["totals"] == {"trials": 5, "passed": 3, "failed": 1, "no_result": 1, "graded": 3, "ungraded": 2, "gate_failed": 0},
+        report["totals"] == {"trials": 5, "passed": 1, "failed": 2, "inconclusive": 2, "ungraded": 0, "gate_failed": 0},
         "report totals changed",
     )
     check(
@@ -621,33 +631,28 @@ def test_eval_list_and_report(tmp):
     )
     attention = {(item["kind"], item["trial_id"]) for item in report["needs_attention"]}
     expected_attention = {
-        ("failed_trial", "case-a.attempt-1.t1"),
-        ("missing_usage", "case-a.attempt-1.t1"),
-        ("invalid_grader_json", "case-a.attempt-1.t2"),
-        ("ungraded_trial", "case-a.current.t2"),
-        ("missing_usage", "case-a.current.t2"),
-        ("missing_result", "case-b.current.t1"),
-        ("ungraded_trial", "case-b.current.t1"),
+        ("failed", "case-a.attempt-1.t1"),
+        ("failed", "case-a.attempt-1.t2"),
+        ("inconclusive", "case-a.current.t2"),
+        ("inconclusive", "case-b.current.t1"),
     }
     check(attention == expected_attention, f"needs-attention items changed: {sorted(attention)}")
     clean = next(item for item in report["trials"] if item["trial_id"] == "case-a.current.t1")
-    check(clean["paths"]["response"] == "candidates/current/case-a.current.t1/response.md", "evidence paths are not run-relative")
-    check(clean["judge"] == {"score": 1.0, "label": "pass"} and clean["validators"] == {"passed": 1, "total": 1}, "clean trial grades changed")
-    check(
-        all(not (path or "").startswith("/") for item in report["trials"] for path in item["paths"].values()),
-        "report leaked absolute evidence paths",
-    )
+    check(clean["runtime_status"] == "completed" and clean["grade_statuses"] == ["pass", "pass", "pass"], "clean trial grades changed")
+
+    _, listed = run_json([CLI, "eval", "list", "--suite", str(suite), "--json"], project)
+    check(listed["ok"] is True and len(listed["runs"]) == 1, "eval list run enumeration changed")
+    row = listed["runs"][0]
+    check(row["run_id"] == "run-report-fixture" and row["final_verdict_totals"] == report["final_verdict_totals"], "eval list run row changed")
 
     md_first = run([CLI, "eval", "report", "--run", str(run_dir)], project)
     md_second = run([CLI, "eval", "report", "--run", str(run_dir)], project)
     check(md_first.stdout == md_second.stdout, "report Markdown not byte-stable")
     for needle in (
-        "# Eval Report: run-report-fixture",
-        "## Runner Completion",
-        "## Behavioral Grades",
-        "## Needs Attention",
-        "120 in / 30 out",
-        "unavailable",
+        "# Eval Summary: run-report-fixture",
+        "## Verdict Totals",
+        "## Runtime Status",
+        "## Grade Status",
     ):
         check(needle in md_first.stdout, f"report Markdown missing {needle!r}")
 
@@ -667,8 +672,8 @@ def test_report_comparisons_and_gates(tmp):
         {"candidate": "current", "display": "Current", "source": {"kind": "current_worktree", "ref": "."}},
     ]
     manifest["cases"] = [
-        {"id": "case-a", "task": {"path": "task.md", "seed": "A"}},
-        {"id": "case-b", "task": {"path": "task.md", "seed": "B"}},
+        {"id": "case-a", "task": {"prompt": "A"}},
+        {"id": "case-b", "task": {"prompt": "B"}},
     ]
     suite.write_text(json.dumps(manifest, indent=2) + "\n")
     run_dir = wb(project) / "runs" / "run-comparisons"
@@ -680,16 +685,16 @@ def test_report_comparisons_and_gates(tmp):
             "case_id": case_id,
             "candidate": candidate,
             "repetition": 1,
-            "event_path": str(run_dir / "events" / f"{trial_id}.jsonl"),
+            "events_path": str(run_dir / "trials" / trial_id / "events.jsonl"),
             "evidence_path": str(run_dir / "evidence" / f"{trial_id}.json"),
             "response_path": str(run_dir / "candidates" / candidate / trial_id / "response.md"),
         }
 
     trials = [trial("case-a", "baseline"), trial("case-a", "current"), trial("case-b", "baseline"), trial("case-b", "current")]
-    results = [{**row, "status": "passed", "usage": {"input_tokens": 1, "output_tokens": 1}} for row in trials]
+    results = [{**row, "runtime_status": "completed", "usage": {"input_tokens": 1, "output_tokens": 1}} for row in trials]
 
-    def gate_grade(trial_id, label):
-        score = 1.0 if label == "pass" else 0.0
+    def gate_grade(trial_id, grade_status):
+        score = 1.0 if grade_status == "pass" else 0.0
         return {
             "run_id": "run-comparisons",
             "trial_id": trial_id,
@@ -698,8 +703,8 @@ def test_report_comparisons_and_gates(tmp):
             "metric": "validator",
             "grader": {"kind": "code", "id": "gate.py"},
             "score": score,
-            "label": label,
-            "rationale": f"{label} gate",
+            "grade_status": grade_status,
+            "rationale": f"{grade_status} gate",
             "gate": True,
         }
 
@@ -731,11 +736,11 @@ def test_report_comparisons_and_gates(tmp):
     _, report = run_json([CLI, "eval", "report", "--run", str(run_dir), "--json"], project)
     comparisons = {(row["case_id"], row["baseline_state"], row["candidate_state"]) for row in report["comparisons"]}
     check(comparisons == {("case-a", "fail", "pass"), ("case-b", "pass", "fail")}, f"comparison states changed: {comparisons}")
-    check(report["totals"]["gate_failed"] == 2, "gate failure total changed")
+    check(report["totals"]["failed"] == 2 and report["totals"]["gate_failed"] == 0, "comparison failure totals changed")
     attention = {(item["kind"], item["trial_id"]) for item in report["needs_attention"]}
-    check(("gate_failed", "case-a.baseline.t1") in attention and ("gate_failed", "case-b.current.t1") in attention, "gate failures not surfaced")
+    check(("failed", "case-a.baseline.t1") in attention and ("failed", "case-b.current.t1") in attention, "comparison failures not surfaced")
     md = run([CLI, "eval", "report", "--run", str(run_dir)], project).stdout
-    check("## Comparisons" in md and "| case-a | baseline | current | fail | pass |" in md, "comparison Markdown missing")
+    check("## Trials" in md and "| case-a.current.t1 | case-a | current | completed | pass | passed |" in md, "report Markdown missing current trial")
 
 
 def test_report_uses_all_grader_kinds(tmp):
@@ -748,8 +753,8 @@ def test_report_uses_all_grader_kinds(tmp):
         {"candidate": "current", "display": "Current", "source": {"kind": "current_worktree", "ref": "."}},
     ]
     manifest["cases"] = [
-        {"id": "case-a", "task": {"path": "task.md", "seed": "A"}},
-        {"id": "case-b", "task": {"path": "task.md", "seed": "B"}},
+        {"id": "case-a", "task": {"prompt": "A"}},
+        {"id": "case-b", "task": {"prompt": "B"}},
     ]
     suite.write_text(json.dumps(manifest, indent=2) + "\n")
     run_dir = wb(project) / "runs" / "run-grader-kinds"
@@ -761,12 +766,12 @@ def test_report_uses_all_grader_kinds(tmp):
             "case_id": case_id,
             "candidate": candidate,
             "repetition": 1,
-            "event_path": str(run_dir / "events" / f"{trial_id}.jsonl"),
+            "events_path": str(run_dir / "trials" / trial_id / "events.jsonl"),
             "evidence_path": str(run_dir / "evidence" / f"{trial_id}.json"),
             "response_path": str(run_dir / "candidates" / candidate / trial_id / "response.md"),
         }
 
-    def grade(trial_id, kind, metric, label):
+    def grade(trial_id, kind, metric, grade_status):
         return {
             "run_id": "run-grader-kinds",
             "trial_id": trial_id,
@@ -774,13 +779,13 @@ def test_report_uses_all_grader_kinds(tmp):
             "candidate": trial_id.split(".")[1],
             "metric": metric,
             "grader": {"kind": kind, "id": metric},
-            "score": 1.0 if label == "pass" else 0.0,
-            "label": label,
-            "rationale": f"{metric} {label}",
+            "score": 1.0 if grade_status == "pass" else 0.0,
+            "grade_status": grade_status,
+            "rationale": f"{metric} {grade_status}",
         }
 
     trials = [trial("case-a", "baseline"), trial("case-a", "current"), trial("case-b", "baseline"), trial("case-b", "current")]
-    results = [{**row, "status": "passed", "usage": {"input_tokens": 1, "output_tokens": 1}} for row in trials]
+    results = [{**row, "runtime_status": "completed", "usage": {"input_tokens": 1, "output_tokens": 1}} for row in trials]
     grades = [
         grade("case-a.baseline.t1", "code", "validator", "fail"),
         grade("case-a.current.t1", "model", "quality", "pass"),
@@ -812,8 +817,8 @@ def test_report_uses_all_grader_kinds(tmp):
     check(comparisons == {("case-a", "fail", "fail"), ("case-b", "fail", "pass")}, f"grader-kind comparisons changed: {comparisons}")
     current_a = next(row for row in report["trials"] if row["trial_id"] == "case-a.current.t1")
     current_b = next(row for row in report["trials"] if row["trial_id"] == "case-b.current.t1")
-    check([row["label"] for row in current_a["model_grades"]] == ["fail", "pass"], "all model grades should be reported")
-    check(current_b["graded"] is True and current_b["human_grades"][0]["label"] == "pass", "human grade should count as graded")
+    check(current_a["grade_statuses"] == ["pass", "fail"], "all model grade statuses should be summarized")
+    check(current_b["grade_statuses"] == ["pass"] and current_b["verdict"] == "passed", "human grade should count as graded")
     run([CLI, "eval", "compare", "--run", str(run_dir), "--baseline", "baseline", "--candidate", "current", "--json"], project, expect=(2,))
 
 
@@ -828,7 +833,7 @@ def test_eval_run_artifact_records(tmp):
     write_fake_sdk(fake_root, mode="success")
     env = {"PYTHONPATH": f"{fake_root}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"}
 
-    _, run_result = run_json([CLI, "eval", "run", "--suite", str(suite), "--json"], project, env=env)
+    _, run_result = run_json([CLI, "eval", "run", "--suite", str(suite), "--no-grade", "--json"], project, env=env)
     run_dir = Path(run_result["run_dir"])
     run_record = json.loads((run_dir / "run.json").read_text())
     result = json.loads((run_dir / "results.jsonl").read_text().splitlines()[0])
@@ -837,8 +842,8 @@ def test_eval_run_artifact_records(tmp):
     candidate = run_record["candidates"][0]
     check({"base_commit", "head_commit", "dirty", "diffstat", "payload_digest"} <= candidate.keys(), "candidate source evidence missing")
     trial = run_record["trials"][0]
-    check({"thread_id", "turn_id", "evidence_path", "response_path", "sandbox"} <= trial.keys(), "trial record evidence fields missing")
-    check(result["response_path"] == result["output_path"], "result response/output paths diverged")
+    check({"cwd", "events_path", "evidence_path", "response_path", "sandbox"} <= trial.keys(), "planned trial record evidence fields missing")
+    check("output_path" not in result and result["response_path"].endswith("/response.md"), "result should expose response_path without output_path alias")
     check(Path(result["response_path"]).read_text() == "final text", "fake runner response output changed")
     check(evidence["trial_id"] == result["trial_id"] and evidence["response_text"] == "final text", "thread evidence record changed")
 

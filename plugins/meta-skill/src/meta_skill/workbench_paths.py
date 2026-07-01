@@ -3,9 +3,6 @@
 from pathlib import Path
 
 
-LEGACY_WORKBENCH_NAME = ".meta-skill"
-
-
 def _parse_frontmatter(skill_md):
     text = skill_md.read_text()
     if not text.startswith("---"):
@@ -61,6 +58,4 @@ def workbench_path(target):
 
 
 def is_workbench_dir_name(name, target=None):
-    if name == LEGACY_WORKBENCH_NAME:
-        return True
     return target is not None and name == workbench_dir_name(target)

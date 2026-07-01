@@ -8,9 +8,10 @@ from types import SimpleNamespace
 from .errors import CliError
 from .ids import require_id
 from .io import read_json, read_jsonl
-from .manifest import load_manifest, suite_path, workbench_from_suite
+from .manifest import filter_cases, load_manifest, select_cases, suite_path, workbench_from_suite
 from .report import build_comparisons, build_report, list_runs, md_cell, md_table, trial_behavior_state
 from .runner import run_eval
+from .verdicts import latest_grade_rows, require_grade_status
 
 
 ALLOWED_METRICS = {
@@ -75,18 +76,11 @@ def load_benchmark(raw_benchmark):
 
 def selected_case_ids(manifest, profile):
     selection = profile.get("task_selection") or {}
-    wanted_ids = set(selection.get("case_ids") or [])
-    wanted_types = set(selection.get("types") or [])
-    split = selection.get("split")
-    cases = []
-    for case in manifest.get("cases", []):
-        if wanted_ids and case.get("id") not in wanted_ids:
-            continue
-        if wanted_types and (case.get("type") or "unspecified") not in wanted_types:
-            continue
-        if split and case.get("split") != split:
-            continue
-        cases.append(case)
+    cases = filter_cases(
+        select_cases(manifest, selection.get("split")),
+        case_ids=selection.get("case_ids"),
+        case_types=selection.get("types"),
+    )
     return [case.get("id") for case in cases]
 
 
@@ -281,13 +275,14 @@ def benchmark_run(raw_benchmark, *, runner="auto", model=None):
         runner=runner,
         candidates=",".join(candidate_ids),
         split=None,
-        case_ids=case_ids,
-        case_types=None,
+        case=case_ids,
+        type=None,
         repetitions=None,
         repetitions_by_type=repetitions_by_type(profile),
         benchmark_default_repetitions=default_repetitions(profile),
         benchmark={"id": loaded["id"], "profile": str(loaded["path"])},
         model=model,
+        no_grade=False,
     )
     result = run_eval(args)
     result["benchmark"] = loaded["id"]
@@ -322,12 +317,11 @@ def _filter_report(report, manifest, profile):
     ]
     filtered["totals"] = {
         "trials": len(trials),
-        "passed": sum(1 for trial in trials if trial["runner_status"] == "passed"),
-        "failed": sum(1 for trial in trials if trial["runner_status"] not in {"passed", "no_result"}),
-        "no_result": sum(1 for trial in trials if trial["runner_status"] == "no_result"),
-        "graded": sum(1 for trial in trials if trial["graded"]),
-        "ungraded": sum(1 for trial in trials if not trial["graded"]),
-        "gate_failed": sum(1 for trial in trials if trial["gate_failed"]),
+        "passed": sum(1 for trial in trials if trial.get("verdict") == "passed"),
+        "failed": sum(1 for trial in trials if trial.get("verdict") == "failed"),
+        "inconclusive": sum(1 for trial in trials if trial.get("verdict") == "inconclusive"),
+        "ungraded": sum(1 for trial in trials if trial.get("verdict") == "ungraded"),
+        "gate_failed": 0,
     }
     return filtered
 
@@ -336,8 +330,9 @@ def _usage_scorecard(report):
     input_tokens = 0
     output_tokens = 0
     usage_trials = 0
+    results_by_trial = report.get("results_by_trial") or {}
     for trial in report["trials"]:
-        usage = trial.get("usage") or {}
+        usage = (results_by_trial.get(trial.get("trial_id")) or {}).get("usage") or {}
         if not usage:
             continue
         usage_trials += 1
@@ -410,7 +405,7 @@ def _profile_gate_rows(report, profile):
     trial_ids = {trial.get("trial_id") for trial in report["trials"]}
     grades_by_trial = {}
     run_dir = Path(report["run_dir"])
-    for row in read_jsonl(run_dir / "grades.jsonl"):
+    for row in latest_grade_rows(read_jsonl(run_dir / "grades.jsonl")):
         if row.get("trial_id") in trial_ids:
             grades_by_trial.setdefault(row.get("trial_id"), []).append(row)
     rows = []
@@ -438,7 +433,7 @@ def _profile_gate_rows(report, profile):
                 rows.append({"trial_id": trial_id, "metric": metric, "required_label": required, "status": "unknown", "detail": "no matching grade"})
                 continue
             for grade in matches:
-                label = grade.get("label")
+                label = require_grade_status(grade)
                 rows.append(
                     {
                         "trial_id": trial_id,
@@ -470,7 +465,8 @@ def _load_profile_for_report(raw_benchmark, run):
 
 def build_benchmark_report(raw_run, raw_benchmark=None):
     report = build_report(raw_run)
-    run = read_json(Path(report["run_dir"]) / "run.json")
+    run_dir = Path(report["run_dir"])
+    run = read_json(run_dir / "run.json")
     loaded = _load_profile_for_report(raw_benchmark, run)
     profile = loaded["profile"] if loaded else None
     profile_path = str(loaded["path"]) if loaded else raw_benchmark

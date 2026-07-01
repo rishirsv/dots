@@ -41,13 +41,13 @@ def lint_suite(raw_suite):
         if case_type == "unspecified":
             warnings.append({"case_id": case_id, "kind": "missing_type", "detail": "Set type to capability, regression, trigger, negative_control, failure, or gate."})
         task = case.get("task") or {}
-        seed = task if isinstance(task, str) else task.get("seed")
-        if not seed:
-            warnings.append({"case_id": case_id, "kind": "missing_task_seed", "detail": "Add a visible prompt seed or materialized task.md before treating this as runnable."})
+        has_task = bool(task.get("prompt") is not None or task.get("path"))
+        if not has_task:
+            warnings.append({"case_id": case_id, "kind": "missing_task_source", "detail": "Add exactly one visible task source: inline prompt or task path."})
         if not case.get("expectations") and not case.get("graders"):
             warnings.append({"case_id": case_id, "kind": "missing_grader", "detail": "Add code, model, or human grading guidance."})
-        if case_type in {"regression", "gate"} and not (case.get("expected_output") or case.get("expectations")):
-            warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression and gate tasks should have expected output, reference solution, or exact expectations."})
+        if case_type in {"regression", "gate"} and not case.get("expectations"):
+            warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression and gate tasks should have exact expectations."})
         kinds = case_grader_kinds(case)
         stats["grader_kinds"].update(kinds)
         for grader in case.get("graders") or []:
@@ -66,7 +66,7 @@ def lint_suite(raw_suite):
     return {
         "ok": True,
         "suite": str(suite),
-        "shape": manifest.get("_manifest_shape") or "suite",
+        "shape": "cases",
         "stats": {
             "tasks": stats["tasks"],
             "task_types": dict(sorted(stats["task_types"].items())),

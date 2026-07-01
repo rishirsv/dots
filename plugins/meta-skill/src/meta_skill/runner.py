@@ -2,41 +2,29 @@
 
 import time
 from datetime import datetime, timezone
-from pathlib import Path
 
 from .app_server.policy import APP_SERVER_APPROVAL_POLICY, APP_SERVER_SANDBOX
 from .app_server.trial import app_server_run
-from .artifacts import candidate_source, thread_evidence, trial_record
-from .candidates import resolve_candidate
+from .artifacts import artifact_capture_stub, candidate_source, thread_evidence, trial_record
+from .candidates import resolve_candidate, snapshot_candidate
 from .errors import CliError
 from .ids import run_id, utc_now
 from .io import append_jsonl, read_json, read_jsonl, resolve_run_dir, write_json
 from .manifest import (
-    case_dir,
-    case_task_info,
+    filter_cases,
     load_manifest,
     project_from_suite,
     select_candidates,
     select_cases,
+    split_csv_or_repeat,
     suite_path,
     trial_prompt,
     workbench_from_suite,
 )
-from .staging import safe_case_file, stage_workspace
-
-
-PROGRESS_STATES = {
-    "queued",
-    "running",
-    "awaiting_approval",
-    "blocked",
-    "timed_out",
-    "interrupted",
-    "failed",
-    "passed",
-    "graded",
-    "degraded",
-}
+from .resolved_suite import freeze_eval_spec, validate_grading_inputs
+from .staging import stage_workspace
+from .summary import build_summary, summary_exit_code
+from .verdicts import normalize_runtime_status
 
 
 def resolve_runner(raw_runner, defaults):
@@ -86,73 +74,67 @@ def runner_thread_persistence(runner, detail=None):
     return "persistent"
 
 
-def trial_paths(row, run_dir):
-    trial_id = row["trial_id"]
+def trial_paths(trial_id, run_dir):
+    trial_dir = run_dir / "trials" / trial_id
     return {
-        "event": run_dir / "events" / f"{trial_id}.jsonl",
-        "evidence": run_dir / "evidence" / f"{trial_id}.json",
-        "response": run_dir / "candidates" / row["candidate"]["candidate"] / trial_id / "response.md",
+        "trial": trial_dir,
+        "workspace": trial_dir / "workspace",
+        "event": trial_dir / "events.jsonl",
+        "evidence": trial_dir / "evidence.json",
+        "response": trial_dir / "response.md",
     }
 
 
-def load_task_texts(workbench, cases):
-    task_texts = {}
-    for case in cases:
-        task_path = safe_case_file(case_dir(workbench, case["id"]), case_task_info(case)["path"], "task")
-        if not task_path.exists():
-            raise CliError(f"task.md missing; run eval materialize first: {task_path}", 2)
-        task_texts[case["id"]] = task_path.read_text()
-        for fixture in case.get("fixtures", []):
-            fixture_path = safe_case_file(case_dir(workbench, case["id"]), fixture, "fixture")
-            if not fixture_path.exists():
-                raise CliError(f"fixture missing: {fixture_path}", 2)
-    return task_texts
-
-
-def queued_record(row, runner, workbench, run_dir):
+def queued_record(row, runner, run_dir):
     trial_id = row["trial_id"]
-    paths = trial_paths(row, run_dir)
-    return trial_record(
-        trial_id=trial_id,
-        case_id=row["case"]["id"],
-        candidate=row["candidate"]["candidate"],
-        repetition=row["index"],
-        status="queued",
-        runner=runner,
-        cwd=str(workbench / "workspaces" / run_dir.name / trial_id),
-        thread_persistence=runner_thread_persistence(runner),
-        sandbox=runner_sandbox(runner),
-        runtime_approval_policy=runner_approval_policy(runner),
-        event_path=str(paths["event"]),
-        evidence_path=str(paths["evidence"]),
-        response_path=str(paths["response"]),
-    )
+    paths = trial_paths(trial_id, run_dir)
+    return {
+        "trial_id": trial_id,
+        "case_id": row["case"]["id"],
+        "candidate": row["candidate"]["candidate"],
+        "repetition": row["index"],
+        "planned_status": "skipped" if row.get("skip") else "queued",
+        "cwd": str(paths["workspace"]),
+        "thread_persistence": runner_thread_persistence(runner),
+        "sandbox": runner_sandbox(runner),
+        "runtime_approval_policy": runner_approval_policy(runner),
+        "events_path": str(paths["event"]),
+        "evidence_path": str(paths["evidence"]),
+        "response_path": str(paths["response"]),
+        **artifact_capture_stub(),
+    }
 
 
-def run_trial(row, runner, workbench, run_dir, task_texts, model):
+def run_trial(row, runner, run_dir, frozen_cases, model):
     trial_id = row["trial_id"]
     case = row["case"]
     candidate = row["candidate"]
-    paths = trial_paths(row, run_dir)
+    frozen_case = dict(frozen_cases[case["id"]])
+    paths = trial_paths(trial_id, run_dir)
     output_path = paths["response"]
     event_path = paths["event"]
     evidence_path = paths["evidence"]
     started = time.time()
+    detail = {}
+    error = None
     try:
-        staged_candidate = stage_workspace(workbench, run_dir, trial_id, case, task_texts[case["id"]], candidate)
-        prompt = trial_prompt(task_texts[case["id"]])
+        staged_candidate = stage_workspace(run_dir, trial_id, frozen_case, candidate)
+        prompt = trial_prompt(frozen_case["task_text"])
         detail = app_server_run(row, prompt, staged_candidate, event_path, output_path, model)
         detail["workspace"] = staged_candidate["workspace"]
         detail["staged_payload_digest"] = staged_candidate["staged_payload_digest"]
-        status = "passed" if detail.get("status") in {"completed", "succeeded"} else "failed"
-        error = None if status == "passed" else detail.get("status", "runner failed")
-    except Exception as exc:
-        status = "failed"
+        runtime_status = normalize_runtime_status(detail.get("status"))
+        if runtime_status != "completed":
+            error = detail.get("status", "runner failed")
+    except TimeoutError as exc:
+        runtime_status = "timed_out"
         error = str(exc)
-        detail = {}
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        if not output_path.exists():
-            output_path.write_text("")
+    except Exception as exc:
+        runtime_status = "failed"
+        error = str(exc)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    if not output_path.exists():
+        output_path.write_text("")
     completed = time.time()
     final_response = output_path.read_text() if output_path.exists() else ""
     persistence = runner_thread_persistence(runner, detail)
@@ -165,7 +147,7 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
         final_source="turn_result" if final_response else "none",
         items_count=detail.get("events", 0) or 0,
         usage=detail.get("usage"),
-        status="completed" if status == "passed" else "failed",
+        status=runtime_status,
         sdk_version=detail.get("sdk_version"),
         runtime_version=detail.get("runtime_version"),
     )
@@ -175,36 +157,40 @@ def run_trial(row, runner, workbench, run_dir, task_texts, model):
         case_id=case["id"],
         candidate=candidate["candidate"],
         repetition=row["index"],
-        status=status,
-        runner=runner,
+        status=runtime_status,
         thread_id=detail.get("thread_id"),
         turn_id=detail.get("turn_id"),
         thread_persistence=persistence,
-        cwd=detail.get("workspace"),
+        cwd=detail.get("workspace") or str(paths["workspace"]),
         sandbox=detail.get("sandbox") or runner_sandbox(runner),
         runtime_approval_policy=detail.get("runtime_approval_policy") or runner_approval_policy(runner),
         sdk_version=detail.get("sdk_version"),
         runtime_version=detail.get("runtime_version"),
-        event_path=str(event_path),
+        events_path=str(event_path),
         evidence_path=str(evidence_path),
         response_path=str(output_path),
         usage=detail.get("usage"),
-        started_at=datetime.fromtimestamp(started, timezone.utc).isoformat(),
-        completed_at=datetime.fromtimestamp(completed, timezone.utc).isoformat(),
         error=error,
     )
-    result = {
+    started_at = datetime.fromtimestamp(started, timezone.utc).isoformat()
+    completed_at = datetime.fromtimestamp(completed, timezone.utc).isoformat()
+    return {
         "run_id": run_dir.name,
         **record,
-        "trial_index": row["index"],
-        "duration_ms": int((completed - started) * 1000),
-        "response_path": str(output_path),
-        "output_path": str(output_path),
-        "event_path": str(event_path),
-        "evidence_path": str(evidence_path),
-        "detail": detail,
+        "timing": {
+            "started_at": started_at,
+            "completed_at": completed_at,
+            "duration_ms": int((completed - started) * 1000),
+        },
     }
-    return result
+
+
+def selected_case_args(args):
+    return split_csv_or_repeat(getattr(args, "case", None))
+
+
+def selected_type_args(args):
+    return split_csv_or_repeat(getattr(args, "type", None))
 
 
 def run_eval(args):
@@ -212,55 +198,91 @@ def run_eval(args):
     manifest = load_manifest(suite)
     workbench = workbench_from_suite(suite)
     project = project_from_suite(suite)
-    cases = select_cases(manifest, args.split)
-    case_ids = set(getattr(args, "case_ids", None) or [])
-    case_types = set(getattr(args, "case_types", None) or [])
-    if case_ids:
-        cases = [case for case in cases if case.get("id") in case_ids]
-    if case_types:
-        cases = [case for case in cases if (case.get("type") or "unspecified") in case_types]
-    if not cases:
-        raise CliError("no cases selected", 2)
-    candidates = select_candidates(manifest, args.candidates)
     defaults = manifest.get("defaults") or {}
     runner = resolve_runner(args.runner, defaults)
-    task_texts = load_task_texts(workbench, cases)
+    cases = select_cases(manifest, args.split)
+    cases = filter_cases(cases, case_ids=selected_case_args(args), case_types=selected_type_args(args))
+    if not cases:
+        raise CliError("no cases selected", 2)
+    selected_candidate_defs = select_candidates(manifest, args.candidates)
+    grading_enabled = not getattr(args, "no_grade", False)
+    validate_grading_inputs(cases, grading_enabled=grading_enabled)
     rid = run_id()
     run_dir = workbench / "runs" / rid
     run_dir.mkdir(parents=True, exist_ok=False)
-    candidate_infos = [resolve_candidate(project, workbench, rid, manifest, candidate) for candidate in candidates]
+    candidate_infos = [
+        snapshot_candidate(run_dir, resolve_candidate(project, workbench, rid, manifest, candidate))
+        for candidate in selected_candidate_defs
+    ]
+    frozen_suite = freeze_eval_spec(
+        manifest,
+        suite,
+        workbench,
+        run_dir,
+        cases,
+        selected_candidate_defs,
+        grading_enabled=grading_enabled,
+    )
+    frozen_cases = {}
+    for case in frozen_suite["cases"]:
+        frozen_case = dict(case)
+        frozen_case["case_root"] = str(run_dir / "eval-spec" / "cases" / case["id"])
+        frozen_cases[case["id"]] = frozen_case
     plan = plan_trials(cases, candidate_infos, lambda case: repetition_count(case, args, defaults))
     benchmark = getattr(args, "benchmark", None) or {}
-    write_json(
-        run_dir / "run.json",
-        {
-            "run_id": rid,
-            "suite": str(suite),
-            "project": str(project),
-            "runner": runner,
-            "created_at": utc_now(),
-            **({"benchmark_id": benchmark.get("id"), "benchmark_profile": benchmark.get("profile")} if benchmark else {}),
-            "candidates": [candidate_source(candidate) for candidate in candidate_infos],
-            "trials": [queued_record(row, runner, workbench, run_dir) for row in plan],
+    runner_config = {
+        "runner": runner,
+        "sandbox": runner_sandbox(runner),
+        "runtime_approval_policy": runner_approval_policy(runner),
+        "grading_mode": "expectations" if grading_enabled else "none",
+    }
+    model_config = {"model": args.model}
+    run_model = {
+        "run_id": rid,
+        "created_at": utc_now(),
+        "suite": str(suite),
+        "project": str(project),
+        "runner_config": runner_config,
+        "model_config": model_config,
+        "selected_cases": [case["id"] for case in cases],
+        "selected_candidates": [candidate["candidate"] for candidate in selected_candidate_defs],
+        "repetitions": {case["id"]: repetition_count(case, args, defaults) for case in cases},
+        "suite_digest": frozen_suite["suite_digest"],
+        "eval_spec_path": str(run_dir / "eval-spec" / "suite.json"),
+        "candidate_snapshot_paths": {
+            candidate["candidate"]: candidate.get("snapshot_json_path") for candidate in candidate_infos
         },
-    )
+        **({"benchmark_id": benchmark.get("id"), "benchmark_profile": benchmark.get("profile")} if benchmark else {}),
+        "candidates": [candidate_source(candidate) for candidate in candidate_infos],
+        "trials": [queued_record(row, runner, run_dir) for row in plan],
+    }
+    write_json(run_dir / "run.json", run_model)
+    append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "run_id": rid, "status": "created"})
     for row in plan:
         append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "queued"})
     for row in plan:
         append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "running"})
-        result = run_trial(row, runner, workbench, run_dir, task_texts, args.model)
+        result = run_trial(row, runner, run_dir, frozen_cases, args.model)
         append_jsonl(run_dir / "results.jsonl", result)
-        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": result["status"]})
-    results = read_jsonl(run_dir / "results.jsonl")
-    failures = [row for row in results if row.get("status") != "passed"]
+        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": result["runtime_status"]})
+    grade_result = None
+    if grading_enabled:
+        from .grading import grade_run
+
+        grade_result = grade_run(str(run_dir), rebuild_summary=False)
+    summary = build_summary(str(run_dir))
+    exit_code = summary_exit_code(summary, runtime_only=not grading_enabled)
     return {
-        "ok": not failures,
+        "ok": exit_code == 0,
         "run_id": rid,
         "run_dir": str(run_dir),
-        "runner": runner,
+        "runner_config": runner_config,
+        "model_config": model_config,
+        "selected_cases": run_model["selected_cases"],
+        "selected_candidates": run_model["selected_candidates"],
         "trials": len(plan),
-        "passed": len(results) - len(failures),
-        "failed": len(failures),
+        "grading": grade_result or {"ok": True, "mode": "none"},
+        "summary": summary,
     }
 
 
@@ -286,9 +308,10 @@ def progress_snapshot(raw_run):
         "results": len(results),
         "grades": len(grades),
         "trials": len(run.get("trials", [])),
+        "summary_path": str(run_dir / "summary.json") if (run_dir / "summary.json").exists() else None,
     }
 
 
 def terminal_count(snapshot):
     progress = snapshot["progress"]
-    return progress.get("passed", 0) + progress.get("failed", 0) + progress.get("degraded", 0)
+    return sum(progress.get(status, 0) for status in ("completed", "failed", "timed_out", "skipped"))

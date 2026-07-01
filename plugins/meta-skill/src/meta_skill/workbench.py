@@ -79,9 +79,12 @@ def materialize_cases(raw_suite, force=False):
             changes.append({"action": "mkdir", "path": str(root)})
             root.mkdir(parents=True, exist_ok=True)
         task = case_task_info(case)
+        if task["source"] == "prompt":
+            changes.append({"action": "skip", "path": str(root / "task.md"), "reason": "inline prompt stays in evals.json until run snapshot"})
+            continue
         task_path = root / task["path"]
         if force or not task_path.exists():
-            text = task["seed"] or "TODO: author the visible task for this case.\n"
+            text = "TODO: author the visible task for this case.\n"
             if not text.endswith("\n"):
                 text += "\n"
             changes.append({"action": "write" if not task_path.exists() else "overwrite", "path": str(task_path)})

@@ -8,7 +8,7 @@ from .io import read_json
 from .workbench_paths import workbench_path
 
 
-SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "none"}
+SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "local_path", "none"}
 DEFAULT_CANDIDATES = [
     {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
     {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
@@ -21,7 +21,7 @@ DEFAULT_EVALS = {
         "repetitions": 1,
     },
     "candidates": DEFAULT_CANDIDATES,
-    "evals": [],
+    "cases": [],
 }
 
 
@@ -46,57 +46,26 @@ def case_dir(workbench, case_id):
     return workbench / "cases" / require_id("case id", case_id)
 
 
-def normalize_prompt_manifest(data):
-    if "evals" not in data:
-        return data
-    evals = data.get("evals")
-    if not isinstance(evals, list):
-        raise CliError("evals.json evals must be a list", 2)
-    defaults = data.get("defaults") or {"runner": "codex_app_server", "repetitions": 1}
-    raw_candidates = data.get("candidates") or DEFAULT_CANDIDATES
-    cases = []
-    for item in evals:
-        if not isinstance(item, dict):
-            raise CliError("evals.json evals must be objects", 2)
-        prompt = item.get("prompt")
-        task = item.get("task")
-        if isinstance(task, dict):
-            task_info = dict(task)
-            if prompt and not task_info.get("seed"):
-                task_info["seed"] = prompt
-        elif isinstance(task, str):
-            task_info = {"path": "task.md", "seed": task}
-        else:
-            task_info = {"path": "task.md", "seed": prompt or ""}
-        case = {
-            "id": item.get("id"),
-            "type": item.get("type"),
-            "split": item.get("split"),
-            "repetitions": item.get("repetitions"),
-            "task": task_info,
-            "fixtures": item.get("fixtures") or item.get("files") or [],
-            "expectations": item.get("expectations") or [],
-            "graders": item.get("graders") or [],
-        }
-        if item.get("expected_output") and "expected_output" not in case:
-            case["expected_output"] = item.get("expected_output")
-        cases.append({key: value for key, value in case.items() if value not in (None, [], {})})
-    return {
-        "schema_version": 1,
-        "target": data.get("target") or {"type": "skill", "ref": "SKILL.md"},
-        "defaults": defaults,
-        "candidates": raw_candidates,
-        "cases": cases,
-        "_manifest_shape": "prompt",
-        "skill_name": data.get("skill_name"),
-    }
+def task_sources(case):
+    task = case.get("task") or {}
+    sources = []
+    if task.get("prompt") is not None:
+        sources.append("prompt")
+    if task.get("path"):
+        sources.append("path")
+    return sources
+
+
+def is_prompt_case(case):
+    return task_sources(case) == ["prompt"]
 
 
 def load_manifest(path):
     data = read_json(path)
     if not isinstance(data, dict):
         raise CliError("eval suite must be a JSON object", 2)
-    data = normalize_prompt_manifest(data)
+    if "evals" in data:
+        raise CliError("evals.json must use cases[]; legacy evals[] manifests are no longer supported", 2)
     if data.get("schema_version") != 1:
         raise CliError("only evals.json schema_version 1 is supported", 2)
     if not isinstance(data.get("cases", []), list):
@@ -111,6 +80,16 @@ def load_manifest(path):
         if case_id in seen_case_ids:
             raise CliError(f"duplicate case id: {case_id}", 2)
         seen_case_ids.add(case_id)
+        task = case.get("task") or {}
+        if not isinstance(task, dict):
+            raise CliError(f"case {case_id} task must be an object", 2)
+        if "seed" in task:
+            raise CliError(f"case {case_id} task.seed is no longer supported; use task.prompt or cases/{case_id}/task.md", 2)
+        if "file" in task:
+            raise CliError(f"case {case_id} task.file is no longer supported; use task.path", 2)
+        sources = task_sources(case)
+        if len(sources) != 1:
+            raise CliError(f"case {case_id} must set exactly one task source: inline prompt or task path", 2)
         if "expectations" in case:
             expectations = case.get("expectations")
             if not isinstance(expectations, list) or not all(isinstance(item, str) and item.strip() for item in expectations):
@@ -141,7 +120,7 @@ def load_manifest(path):
         kind = source.get("kind", "current_worktree")
         ref = source.get("ref")
         if kind not in SOURCE_KINDS:
-            raise CliError(f"candidate {candidate_id} source.kind must be one of branch, current_worktree, git_ref, or none", 2)
+            raise CliError(f"candidate {candidate_id} source.kind must be one of branch, current_worktree, git_ref, local_path, or none", 2)
         if kind == "none" and ref:
             raise CliError(f"candidate {candidate_id} source.kind none must not set ref", 2)
         if kind == "current_worktree" and ref not in (None, "."):
@@ -150,14 +129,16 @@ def load_manifest(path):
             raise CliError(f"candidate {candidate_id} source.kind {kind} must set ref", 2)
         if kind in {"branch", "git_ref"} and ref == ".":
             raise CliError(f"candidate {candidate_id} source.kind {kind} must use a git ref, not .", 2)
+        if kind == "local_path" and not (source.get("path") or ref):
+            raise CliError(f"candidate {candidate_id} source.kind local_path must set path", 2)
     return data
 
 
 def case_task_info(case):
     task = case.get("task") or {}
-    if isinstance(task, str):
-        return {"path": task, "seed": ""}
-    return {"path": task.get("path") or "task.md", "seed": task.get("seed") or ""}
+    if task.get("prompt") is not None:
+        return {"source": "prompt", "path": None, "prompt": task.get("prompt") or ""}
+    return {"source": "path", "path": task.get("path") or "task.md", "prompt": None}
 
 
 def select_cases(manifest, split):
@@ -165,6 +146,24 @@ def select_cases(manifest, split):
     if split:
         cases = [case for case in cases if case.get("split") == split]
     return cases
+
+
+def filter_cases(cases, *, case_ids=None, case_types=None):
+    selected = list(cases)
+    wanted_ids = set(case_ids or [])
+    wanted_types = set(case_types or [])
+    if wanted_ids:
+        selected = [case for case in selected if case.get("id") in wanted_ids]
+    if wanted_types:
+        selected = [case for case in selected if (case.get("type") or "unspecified") in wanted_types]
+    return selected
+
+
+def split_csv_or_repeat(values):
+    out = []
+    for value in values or []:
+        out.extend(item.strip() for item in str(value).split(",") if item.strip())
+    return out
 
 
 def select_candidates(manifest, raw):

@@ -1,10 +1,4 @@
-"""Deterministic tests for the oracle skill's package builder.
-
-Kept under plugins/meta-skill/tests/ (not packaged into the oracle skill) so the
-portable oracle skill ships without test code. Run with:
-
-    python3 plugins/meta-skill/tests/test_oracle_package.py
-"""
+"""Deterministic tests for the oracle skill's package builder."""
 
 from __future__ import annotations
 

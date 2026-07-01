@@ -3,7 +3,9 @@
 import dataclasses
 import enum
 import json
+import os
 import sys
+import uuid
 from pathlib import Path
 
 from .errors import CliError
@@ -28,6 +30,23 @@ def append_jsonl(path, row):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(row, sort_keys=True) + "\n")
+
+
+def append_jsonl_many(path, rows):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    rows = list(rows)
+    if not rows:
+        return
+    existing = path.read_text() if path.exists() else ""
+    if existing and not existing.endswith("\n"):
+        existing += "\n"
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
+    try:
+        tmp.write_text(existing + "".join(json.dumps(row, sort_keys=True) + "\n" for row in rows))
+        os.replace(tmp, path)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
 
 
 def write_jsonl(path, rows):

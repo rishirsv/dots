@@ -273,14 +273,14 @@ What it does:
 
 - Reads the suite manifest from `--suite`
 - Creates `.<skill-name>/cases/<task-id>/`
-- Writes the seeded task file for each task, usually `task.md`
+- Writes the default visible task stub for each path-backed task, usually `task.md`
 - Creates parent directories for declared fixtures
 
 Inputs:
 
 - `--suite`: suite file; defaults to the current target's
   `.<skill-name>/evals.json`
-- `--force`: overwrite existing seeded task files
+- `--force`: overwrite existing materialized task files
 
 Output:
 
@@ -290,8 +290,8 @@ Notes:
 
 - If a task uses a custom task path in the manifest, that file is materialized
   instead of `task.md`.
-- The seeded task text is visible prompt content. Keep it free of hidden
-  control metadata.
+- Materialized task files are visible prompt content. Keep them free of hidden
+  control metadata, then edit them with the real task text before running.
 
 ### `eval lint`
 
@@ -300,9 +300,9 @@ grade.
 
 What it does:
 
-- Reads `cases[]` manifests and writer-facing `evals[]` prompt manifests
+- Reads `cases[]` suite manifests
 - Counts task types, grader kinds, human graders, and transcript-aware graders
-- Warns on missing task seeds, missing graders, missing reference material for
+- Warns on missing task sources, missing graders, missing reference material for
   regression/gate tasks, unbalanced trigger suites, and incomplete grader
   metadata
 - Prints grader-selection warnings for missing or weak suite metadata

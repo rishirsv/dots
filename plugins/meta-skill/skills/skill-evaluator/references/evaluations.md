@@ -12,7 +12,7 @@ progress, and grading commands.
 
 ## Authoring Model
 
-Use a hidden prompt manifest plus materialized task folders:
+Use a hidden suite manifest plus materialized task folders:
 
 ```text
 .<skill-name>/
@@ -53,7 +53,7 @@ Use this vocabulary in prose:
 
 ## Writer-Facing `evals.json`
 
-Skill Writer may create a compact prompt manifest in
+Skill Writer may create a compact suite manifest in
 `<project>/.<skill-name>/evals.json`. This is the preferred authoring handoff:
 
 ```json
@@ -75,12 +75,14 @@ Skill Writer may create a compact prompt manifest in
       "source": { "kind": "current_worktree", "ref": "." }
     }
   ],
-  "evals": [
+  "cases": [
     {
       "id": "natural-trigger",
       "type": "trigger",
       "repetitions": 5,
-      "prompt": "Ask for a skill improvement without naming the skill.",
+      "task": {
+        "prompt": "Ask for a skill improvement without naming the skill."
+      },
       "fixtures": ["fixtures/source-skill.md"],
       "expectations": [
         "The response routes to skill-improvement behavior.",
@@ -113,7 +115,7 @@ Skill Writer may create a compact prompt manifest in
 }
 ```
 
-The CLI uses `candidates[]` for agent-harness setups and `evals[]` for
+The CLI uses `candidates[]` for agent-harness setups and `cases[]` for
 writer-authored tasks.
 
 Keep the manifest small. Use conventional files inside each task folder:
@@ -127,16 +129,17 @@ Keep the manifest small. Use conventional files inside each task folder:
 - `expectations[]` — optional hidden expectation checklist in `evals.json`
 - `graders[]` — optional hidden grader declaration in `evals.json`
 
-The `prompt` or `task.seed` value is used only when `task.md` does not exist. A
-materializer must not overwrite existing authored content unless the caller
-explicitly forces it.
+Inline task text belongs in `task.prompt`. File-backed tasks use
+`task.path` and require the referenced task file, usually
+`cases/<task-id>/task.md`. A materializer must not overwrite existing authored
+content unless the caller explicitly forces it.
 
 Candidates change the agent harness while the task prompt stays the same. A
 no-skill candidate uses `source.kind: "none"` and stages no skill payload.
 
 ## Fixture And Example Lifecycle
 
-Prefer real failures, traces, or common workflows as task seeds. Synthetic
+Prefer real failures, traces, or common workflows as task sources. Synthetic
 fixtures are allowed for coverage, but label them as synthetic in suite notes or
 task comments and do not make them blocking gates until a human has reviewed
 the expected behavior.
