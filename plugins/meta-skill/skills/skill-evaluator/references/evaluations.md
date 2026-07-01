@@ -209,8 +209,9 @@ criteria, tool use, skill activation, or missing-evidence diagnosis.
 `expectations[]` are hidden verifier statements. They are not copied into
 `task.md`; the model judge uses them to emit named checks with evidence. Exact
 expectations should still move into `validate.*` whenever code can check them
-fairly. Run `<meta-skill-root>/scripts/metaskill eval lint --suite .<skill-name>/evals.json`
-before running a suite to catch missing grader, reference, and balance issues.
+fairly. `eval run` preflight-lints the suite automatically; run
+`<meta-skill-root>/scripts/metaskill eval run --check --suite .<skill-name>/evals.json`
+to catch missing grader, reference, and balance issues before running trials.
 
 ## Task Types
 

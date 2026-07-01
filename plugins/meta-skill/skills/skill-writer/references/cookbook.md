@@ -344,7 +344,7 @@ reports, fixtures/check inputs, team reuse material, or package output. Create
 the hidden workbench guidance with the central CLI after the payload exists:
 
 ```bash
-<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir>
+<meta-skill-root>/scripts/metaskill init <skill-dir>
 ```
 
 Validate:

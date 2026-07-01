@@ -172,7 +172,7 @@ no-skill baseline.
 ## Workbench
 
 When artifact writes are allowed, resolve the workbench path before writing:
-`<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir> --dry-run --json`,
+`<meta-skill-root>/scripts/metaskill init <skill-dir> --dry-run --json`,
 then use the resolved path as the source of truth. Use `judge-review.md` for the
 Judge scorecard. Do not create workbench folders elsewhere.
 
