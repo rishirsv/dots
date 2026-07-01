@@ -1,6 +1,6 @@
 ---
 name: research
-description: "Investigates code, docs, web sources, and technical options with enough evidence to trust the answer while keeping scratch research out of durable project history. Explicit-only skill invoked via $research, the Research workflow, or a request for a research report or deep research."
+description: "Investigates code, docs, web sources, and technical options with enough evidence to trust the answer while keeping scratch research out of durable project history. Explicit-only skill invoked via $research, the Research workflow, or a request for a research report or deep research; not for casual lookups, ordinary implementation, or turning findings into durable docs."
 ---
 
 # Research

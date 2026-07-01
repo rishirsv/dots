@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Creates a concise continuation brief for the current task, branch, PR, plan, or conversation so another agent or future session can pick it up, inline by default or as a saved artifact or platform continuation on request. Explicit-only skill for handing off or continuing work."
+description: "Creates a concise continuation brief for the current task, branch, PR, plan, or conversation so another agent or future session can pick it up, inline by default or as a saved artifact or platform continuation on request. Explicit-only skill for handing off or continuing work; not for PR publication, research scratch output, or sending work to another model for review."
 ---
 
 # Handoff

@@ -72,6 +72,8 @@ Do not use it for:
 - durable Markdown docs (`README`, `AGENTS.md`, repo guides) — those stay Markdown
 - shipped product or app UI, or design-system code that lives in a repo — that is
   the `visual-design` skill's job
+- chat-native, unsaved diagrams, mockups, or visual explanations — that is the
+  `dots:visualize` skill's job
 - backend, CLI, or bug-fix work with no reader-facing document
 
 ## When HTML is worth it

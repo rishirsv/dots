@@ -50,9 +50,11 @@ PROMPT
   > /tmp/answer.claude.md
 ```
 
-**Model** — `--model` takes an alias (`opus`, `sonnet`, `haiku`, `fable`) that
-resolves to the latest model in that family, or a full ID (`claude-opus-4-8`,
-`claude-sonnet-4-6`, `claude-haiku-4-5`, `claude-fable-5`). Default to `opus` for
+**Model** — `--model` takes a stable alias (`opus`, `sonnet`, `haiku`, `fable`)
+that resolves to the latest model in that family; prefer an alias over a full
+model ID so the run does not depend on a version-pinned name. If a full ID is
+needed, confirm the exact current one at run time via the CLI's `--help` or
+model list rather than trusting any ID written here. Default to `opus` for
 advisory work; use `fable` only when the user asks for the most capable model,
 `sonnet`/`haiku` when they want a faster, cheaper opinion.
 
@@ -78,8 +80,9 @@ skips hooks and plugins for a clean advisory run.
 
 ## Codex (`codex exec`)
 
-Run Codex oracle runs on extra-high GPT-5.5: model `gpt-5.5` with reasoning effort
-`xhigh` (extra-high). Keep it read-only so the run stays advisory.
+Run Codex oracle runs on the provider's current flagship model (confirm the
+exact ID at run time) with reasoning effort `xhigh` (extra-high). Keep it
+read-only so the run stays advisory.
 
 ```bash
 codex exec \
@@ -87,7 +90,7 @@ codex exec \
   --ephemeral \
   --skip-git-repo-check \
   -C /path/to/repo-or-approved-context \
-  -m gpt-5.5 \
+  -m <current-flagship-model-id> \
   -c model_reasoning_effort="xhigh" \
   --output-last-message /tmp/answer.codex.md \
   "$(cat <<'PROMPT'
@@ -96,7 +99,9 @@ PROMPT
 )"
 ```
 
-**Model and effort** — `-m gpt-5.5` selects the model; `-c model_reasoning_effort="xhigh"`
+**Model and effort** — `-m <model-id>` selects the model; confirm the exact
+current flagship model ID via `codex exec --help` or provider docs rather than
+trusting any ID written here. `-c model_reasoning_effort="xhigh"`
 sets extra-high (`xhigh`) reasoning. `model_reasoning_effort` accepts
 `minimal | low | medium | high | xhigh`; use `xhigh` for oracle runs. The same
 pair can live in a `--profile` config file if you prefer not to pass them each

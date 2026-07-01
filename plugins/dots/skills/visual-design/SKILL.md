@@ -35,8 +35,10 @@ Use this skill for:
   references need faithful translation into code
 
 Do not use it for backend-only changes, CLI tools, pure docs/prose work, or bug
-fixes with no visible UI surface. For a small UI fix inside an existing design
-system, follow the repo's local conventions first and use only the relevant
+fixes with no visible UI surface. Chat-native throwaway diagrams or mockup
+sketches belong to the `dots:visualize` skill, not this one. For a small UI
+fix inside an existing design system, follow the repo's local conventions
+first and use only the relevant
 polish and validation parts of this skill.
 
 ## Workflow

@@ -54,6 +54,9 @@ Work through this order; do not narrate the machinery unless it helps the user.
 1. **Understand the job.** New plan or upgrade? Name the user moment, target
    behavior, affected surface, and implementation boundary. Ask one concise
    question only when a missing decision would materially change the plan.
+   Follow [clarify](../clarify/SKILL.md) for the question's shape and for
+   triaging which decisions are actually blocking; ultra-plan still caps
+   itself at that one question.
 2. **Ground.** Decide what the plan must know, then read it: named docs and
    source first, then nearby conventions, owners, tests, screens, schema,
    contracts, local skills, and external guidance as the task needs. Capture

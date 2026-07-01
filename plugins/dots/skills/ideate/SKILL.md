@@ -185,7 +185,7 @@ Snapshot`; use `Concept Brief` only when the result needs to travel.
 | Rejected branch | <important path not chosen, plus why> |
 | Assumption to test | <riskiest assumption or "none surfaced"> |
 | Non-goal | <what this should not become> |
-| Next move | <stop, handoff, research, design, docs, or build confirmation> |
+| Next move | <stop, handoff, research, design, docs, plan, or build confirmation> |
 ```
 
 Do not write files, durable docs, external actions, or code while Ideate is
@@ -210,6 +210,8 @@ Recommend the next mode, but do not silently enter it:
 - `research`: external evidence, market landscape, current facts, or user proof.
 - `visual-design`: UI concepts, visual exploration, journey maps, or mockups.
 - `docs-writer`: durable PRD, concept doc, ADR, glossary, or spec.
+- [`ultra-plan`](../ultra-plan/SKILL.md): deep implementation planning after
+  the shape is chosen.
 - build: only after `confirm build`.
 
 If the conversation circles because no one knows the answer, stop ideating and
