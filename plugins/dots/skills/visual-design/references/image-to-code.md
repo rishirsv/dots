@@ -108,24 +108,25 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
     unavailable or unreliable, use another available browser and state the
     fallback reason.
 
-11. Run [design-critique](../../design-critique/SKILL.md) as the blocking build
-    gate. `design-critique` owns the comparison method, the fidelity surfaces,
-    and the pass/block decision; this step is the build loop around it, not a
-    second rubric.
+11. Run the surface critique path of
+    [design-review](../../design-review/SKILL.md) as the blocking build gate.
+    `design-review` owns the comparison method, the fidelity surfaces, and the
+    pass/block decision; this step is the build loop around it, not a second
+    rubric.
 
     Steps:
 
     - Open the reference target and the latest prototype screenshot before the
       gate. Compare the same viewport and the same interaction state; if they do
       not match, capture the missing view first.
-    - Run `design-critique` on the target and screenshot together.
+    - Run `design-review` on the target and screenshot together.
     - Fix P0/P1/P2 findings, capture the app again, and repeat until
-      `design-critique.md` says `final result: passed`.
-    - Do not hand off when `design-critique.md` says `final result: blocked`.
+      `design-review.md` says `final result: passed`.
+    - Do not hand off when `design-review.md` says `final result: blocked`.
 
 12. Handoff the app or website.
 
-    - Only hand off after design-critique passes.
+    - Only hand off after the design-review gate passes.
     - Keep the prototype running locally when the task requires a live local
       preview.
     - Provide the clickable local URL.
@@ -245,7 +246,7 @@ supports them.
 
 ## Verification
 
-`design-critique` owns fidelity verification — the surface-by-surface comparison
+`design-review` owns fidelity verification — the surface-by-surface comparison
 (typography, spacing, color, image assets, icons, copy, states, responsiveness),
 the severity scale, the pass/block decision, and the written findings. Do not
 restate that rubric here; run the gate in step 11 and fix what it finds.
@@ -255,7 +256,7 @@ This skill owns only the build-side inputs to that gate:
 - Capture the implementation at the accepted concept's native dimensions when
   practical; record the blocker if not.
 - Bring the accepted concept and the latest screenshot into the same comparison
-  input with `view_image` so `design-critique` can judge them together.
+  input with `view_image` so `design-review` can judge them together.
   Functional QA — passing the build, clicking controls, verifying local state —
   is not fidelity QA and cannot replace this.
 - Provide the allowed-copy list and the per-section image inventory from the

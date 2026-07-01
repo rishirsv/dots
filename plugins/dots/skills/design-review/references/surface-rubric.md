@@ -1,6 +1,7 @@
-# QA Rubric
+# Surface Critique Rubric
 
-Use this rubric for comprehensive design-to-implementation QA.
+Use this rubric for the surface critique path: design-to-implementation QA and
+single-surface critique.
 
 ## Fidelity
 
@@ -14,9 +15,35 @@ Use this rubric for comprehensive design-to-implementation QA.
 - Responsiveness: elements do not overlap, collapse into adjacent sections, clip, wrap awkwardly, or break hierarchy across desktop, tablet, and mobile viewports.
 - Implementation shortcuts: custom CSS art, inline SVG substitutes, placeholder avatars, decorative blobs, and fake product imagery are flagged when they drift from the target design.
 
+## Required Fidelity Surfaces
+
+Every surface critique explicitly evaluates these five surfaces, even when the
+user did not name them:
+
+- Fonts and typography: family, fallback, weight, size, line height, letter
+  spacing, antialiasing, hierarchy, wrapping, truncation, and whether display
+  text and small UI text use appropriate optical weights. Check fonts closely
+  for fidelity, using typeface lookup or image analysis to isolate differences.
+- Spacing and layout rhythm: frame size, crop, alignment, margins, padding,
+  grid tracks, section gaps, component spacing, radii, shadows/elevation, and
+  vertical rhythm.
+- Colors and visual tokens: sampled or inferred palette, gradients, opacity,
+  contrast, semantic state colors, foreground/background balance, and whether
+  CSS tokens map to the source design.
+- Image quality and asset fidelity: subject correctness, crop, scale,
+  sharpness, compression, transparency halos, masking, background treatment,
+  raster-vs-vector appropriateness, and whether generated assets match the
+  source art direction. Fail the critique if logos, illustrations, decorative
+  marks, product imagery, non-standard icons, or other visible image assets
+  from the visual target were replaced with custom inline SVG, handcrafted SVG,
+  HTML elements, div/span shapes, CSS drawings, gradients, emoji, text glyphs,
+  placeholder shapes, or code-native approximations.
+- Copy and content of app-specific text.
+
 ## Mandatory Comparison Passes
 
-Do not rely on generic "looks close" judgment. For each design QA pass, inspect and report on these areas:
+Do not rely on generic "looks close" judgment. For each QA pass, inspect and
+report on these areas:
 
 ### Core design and functionality
 
@@ -59,3 +86,72 @@ Avoid:
 - Criticizing known placeholder content unless it affects the design goal.
 - Treating every pixel difference as a bug when the design intent is preserved.
 - Mixing multiple unrelated flaws into one finding.
+
+## Report Template
+
+Use this structure for the surface critique report unless the user asks
+otherwise. When the critique is saved, this is the full content contract for
+`design-review.md`; there is no separate required-contents list.
+
+```markdown
+# Surface Critique Report
+
+**Final Result**
+final result: passed|blocked
+
+**Overview**
+Briefly state what was compared, the overall fidelity read, and the main issue
+or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
+
+**Findings**
+- [P1] Short issue title
+  Location: screen/component/selector/file if known.
+  Surface: typography|spacing/layout|colors/tokens|image/assets|copy/content|icons|states/interactions|responsiveness|accessibility|shortcut artifacts.
+  Evidence: design does X, implementation does Y.
+  Impact: why this matters.
+  Recommendation: concrete design correction.
+  Implementation notes: optional component/token/CSS/file guidance when known.
+  Acceptance check: what must be true in the next render for this finding to be resolved.
+
+**Open Questions**
+- Any ambiguity about intentional deviations, unavailable states, or missing artifacts.
+
+**Implementation Checklist**
+- Ordered fixes derived from the findings that can be executed directly.
+
+**Follow-up Polish**
+- P3 refinements that can improve fidelity after handoff.
+
+**Review Metadata**
+- Mode: target comparison|single-surface critique
+- Adversarial reviewer: used|not used
+- Reviewer trigger or omitted reason:
+- Reviewer evidence checked:
+- Reviewer finding disposition:
+- Source visual truth path, or none:
+- Implementation screenshot path:
+- Viewport:
+- State:
+- Theme/device/density:
+- Full-view comparison evidence:
+- Focused region comparison evidence, or why it was not needed:
+- Patches made since the previous QA pass:
+
+**Fidelity Surface Coverage**
+- Fonts and typography:
+- Spacing and layout rhythm:
+- Colors and visual tokens:
+- Image quality and asset fidelity:
+- Copy and content:
+- Icons:
+- States and interactions:
+- Responsiveness:
+- Accessibility:
+- Shortcut artifacts:
+
+**Evidence Limits**
+- Any evidence gaps that prevented a complete source-vs-render comparison.
+```
+
+If there are no substantive mismatches, say that clearly and list any residual
+test gaps.
