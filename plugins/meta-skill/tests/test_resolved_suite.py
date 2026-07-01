@@ -9,6 +9,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
+from meta_skill.errors import CliError  # noqa: E402
 from meta_skill.resolved_suite import freeze_eval_spec  # noqa: E402
 from meta_skill.staging import stage_workspace  # noqa: E402
 
@@ -59,6 +60,128 @@ class ResolvedSuiteTests(unittest.TestCase):
             self.assertTrue((workspace / "fixtures" / "input.txt").exists())
             self.assertFalse((workspace / "judge.md").exists())
             self.assertFalse((workspace / "expected.txt").exists())
+
+    def test_symlinked_fixture_is_rejected_before_freezing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            workbench = project / ".demo"
+            case_root = workbench / "cases" / "case-a"
+            case_root.mkdir(parents=True)
+            (case_root / "task.md").write_text("Visible task.\n")
+            (case_root / "judge.md").write_text("Hidden judge guidance.\n")
+            (case_root / "leak.txt").symlink_to("judge.md")
+            suite = workbench / "evals.json"
+            write_json(suite, {"schema_version": 1})
+
+            case = {
+                "id": "case-a",
+                "type": "capability",
+                "task": {"path": "task.md"},
+                "fixtures": ["leak.txt"],
+                "expectations": ["Do the task."],
+            }
+
+            with self.assertRaises(CliError) as ctx:
+                freeze_eval_spec(
+                    {"target": {"type": "skill", "ref": "SKILL.md"}},
+                    suite,
+                    workbench,
+                    workbench / "runs" / "run-001",
+                    [case],
+                    [{"candidate": "current"}],
+                )
+
+            self.assertIn("support file path must not be a symlink", ctx.exception.message)
+
+    def test_fixture_directory_symlink_is_rejected_before_freezing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            workbench = project / ".demo"
+            case_root = workbench / "cases" / "case-a"
+            fixture_root = case_root / "fixtures"
+            fixture_root.mkdir(parents=True)
+            (case_root / "task.md").write_text("Visible task.\n")
+            (case_root / "judge.md").write_text("Hidden judge guidance.\n")
+            (fixture_root / "leak.txt").symlink_to("../judge.md")
+            suite = workbench / "evals.json"
+            write_json(suite, {"schema_version": 1})
+            case = {
+                "id": "case-a",
+                "type": "capability",
+                "task": {"path": "task.md"},
+                "fixtures": ["fixtures"],
+                "expectations": ["Do the task."],
+            }
+
+            with self.assertRaises(CliError) as ctx:
+                freeze_eval_spec(
+                    {"target": {"type": "skill", "ref": "SKILL.md"}},
+                    suite,
+                    workbench,
+                    workbench / "runs" / "run-001",
+                    [case],
+                    [{"candidate": "current"}],
+                )
+
+            self.assertIn("support file path must not contain symlinks", ctx.exception.message)
+
+    def test_symlinked_fixture_directory_path_is_rejected_before_freezing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            workbench = project / ".demo"
+            case_root = workbench / "cases" / "case-a"
+            real_fixture_root = case_root / "visible-fixtures"
+            real_fixture_root.mkdir(parents=True)
+            (real_fixture_root / "input.txt").write_text("visible\n")
+            (case_root / "task.md").write_text("Visible task.\n")
+            (case_root / "fixture-link").symlink_to("visible-fixtures")
+            suite = workbench / "evals.json"
+            write_json(suite, {"schema_version": 1})
+            case = {
+                "id": "case-a",
+                "type": "capability",
+                "task": {"path": "task.md"},
+                "fixtures": ["fixture-link"],
+                "expectations": ["Do the task."],
+            }
+
+            with self.assertRaises(CliError) as ctx:
+                freeze_eval_spec(
+                    {"target": {"type": "skill", "ref": "SKILL.md"}},
+                    suite,
+                    workbench,
+                    workbench / "runs" / "run-001",
+                    [case],
+                    [{"candidate": "current"}],
+                )
+
+            self.assertIn("support file path must not be a symlink", ctx.exception.message)
+
+    def test_missing_path_task_errors_when_freezing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            workbench = project / ".demo"
+            (workbench / "cases" / "case-a").mkdir(parents=True)
+            suite = workbench / "evals.json"
+            write_json(suite, {"schema_version": 1})
+            case = {
+                "id": "case-a",
+                "type": "capability",
+                "task": {"path": "task.md"},
+                "expectations": ["Do the task."],
+            }
+
+            with self.assertRaises(CliError) as ctx:
+                freeze_eval_spec(
+                    {"target": {"type": "skill", "ref": "SKILL.md"}},
+                    suite,
+                    workbench,
+                    workbench / "runs" / "run-001",
+                    [case],
+                    [{"candidate": "current"}],
+                )
+
+            self.assertIn("task file missing for case case-a", ctx.exception.message)
 
 
 if __name__ == "__main__":

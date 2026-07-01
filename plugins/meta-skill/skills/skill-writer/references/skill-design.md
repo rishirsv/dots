@@ -272,7 +272,7 @@ review, or package the skill but should not be loaded by a future runtime agent.
 |---|---|
 | `.<skill-name>/AGENTS.md` | Hidden-folder operating guidance, doc conventions, and user-approved skill-specific invariants such as "do not update this way." Seed it when project mode is initialized. |
 | `.<skill-name>/docs/` | Durable specs, roadmap files, authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Research can live directly in `docs/`; use `docs/research/` only when volume needs nesting. |
-| `.<skill-name>/evals.json` | Authored prompt manifest for future evaluator runs. Create it only when there is real eval content or an evaluator handoff. |
+| `.<skill-name>/evals.json` | Authored suite manifest for future evaluator runs. Create it only when there is real eval content or an evaluator handoff. |
 | `.<skill-name>/cases/` | Materialized task content and hidden grader-side files created from `evals.json`. Create it through eval materialization, not as an empty placeholder. |
 | `.<skill-name>/benchmarks/` | Recurring benchmark profiles. Create it only when writing a concrete profile. |
 | `.<skill-name>/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
@@ -728,7 +728,7 @@ comparison, and report exist.
 Include only what is available and useful:
 
 - skill posture: capability uplift, encoded preference, or hybrid
-- two or three should-trigger prompts as `evals[]`
+- two or three should-trigger prompts as `cases[]` entries with `task.prompt`
 - one or two should-not-trigger prompts or near misses as `negative_control` or
   boundary evals
 - expected behavior or output shape
@@ -742,7 +742,7 @@ Include only what is available and useful:
 
 Keep eval material out of the portable payload unless it is approved runtime
 example material the future agent should inspect while doing the task. Put the
-prompt manifest in `.<skill-name>/evals.json`; put durable authoring notes in
+suite manifest in `.<skill-name>/evals.json`; put durable authoring notes in
 `.<skill-name>/docs/`. Put user-provided fixtures or sample inputs in the flat
 `.<skill-name>/tests/` folder only when the user provided or approved them; do not
 create that folder when there are no fixture files to store. Keep hidden-folder

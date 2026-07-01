@@ -1,6 +1,8 @@
 """Verdict rules for eval runs."""
 
-RUNTIME_STATUSES = {"completed", "failed", "timed_out", "skipped"}
+from .errors import CliError
+
+RUNTIME_STATUSES = {"completed", "failed", "timed_out", "skipped", "no_result"}
 GRADE_STATUSES = {"pass", "fail", "partial", "unknown", "ungraded"}
 VERDICTS = {"passed", "failed", "inconclusive", "skipped", "ungraded"}
 
@@ -8,13 +10,35 @@ VERDICTS = {"passed", "failed", "inconclusive", "skipped", "ungraded"}
 def normalize_runtime_status(value):
     if value in RUNTIME_STATUSES:
         return value
-    return "failed" if value else "failed"
+    return "failed"
 
 
 def normalize_grade_status(value):
     if value in GRADE_STATUSES:
         return value
     return "unknown" if value else "unknown"
+
+
+def require_runtime_status(row):
+    if "runtime_status" not in row:
+        trial_id = row.get("trial_id") or "<unknown>"
+        raise CliError(f"result row missing runtime_status for trial {trial_id}", 2)
+    status = row.get("runtime_status")
+    if status not in RUNTIME_STATUSES or status == "no_result":
+        trial_id = row.get("trial_id") or "<unknown>"
+        raise CliError(f"result row has invalid runtime_status for trial {trial_id}: {status}", 2)
+    return status
+
+
+def require_grade_status(row):
+    if "grade_status" not in row:
+        trial_id = row.get("trial_id") or "<unknown>"
+        raise CliError(f"grade row missing grade_status for trial {trial_id}", 2)
+    status = row.get("grade_status")
+    if status not in GRADE_STATUSES:
+        trial_id = row.get("trial_id") or "<unknown>"
+        raise CliError(f"grade row has invalid grade_status for trial {trial_id}: {status}", 2)
+    return status
 
 
 def latest_grade_rows(grades):
@@ -35,13 +59,15 @@ def verdict_for_trial(result, grades, *, grading_mode):
     runtime_status = normalize_runtime_status(result.get("runtime_status"))
     if runtime_status == "skipped":
         return "skipped"
+    if runtime_status == "no_result":
+        return "inconclusive"
     if runtime_status in {"failed", "timed_out"}:
         return "failed"
     if grading_mode == "none":
         return "ungraded"
     if not grades:
         return "inconclusive"
-    statuses = [normalize_grade_status(row.get("grade_status")) for row in grades]
+    statuses = [require_grade_status(row) for row in grades]
     if any(status == "fail" for status in statuses):
         return "failed"
     if any(status in {"partial", "unknown", "ungraded"} for status in statuses):

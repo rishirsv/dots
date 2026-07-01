@@ -66,7 +66,7 @@ def lint_suite(raw_suite):
     return {
         "ok": True,
         "suite": str(suite),
-        "shape": manifest.get("_manifest_shape") or "suite",
+        "shape": "cases",
         "stats": {
             "tasks": stats["tasks"],
             "task_types": dict(sorted(stats["task_types"].items())),

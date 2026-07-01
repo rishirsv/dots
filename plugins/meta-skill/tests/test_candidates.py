@@ -63,6 +63,24 @@ class CandidateTests(unittest.TestCase):
 
             self.assertIn("symlink escapes candidate root", ctx.exception.message)
 
+    def test_target_ref_symlink_escape_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            candidate_root = Path(tmp) / "candidate"
+            outside = Path(tmp) / "outside"
+            write_skill(project)
+            write_skill(candidate_root)
+            write_skill(outside, body="Outside skill.")
+            (candidate_root / "SKILL.md").unlink()
+            (candidate_root / "SKILL.md").symlink_to(outside / "SKILL.md")
+            manifest = {"target": {"type": "skill", "ref": "SKILL.md"}}
+            candidate = {"candidate": "local", "source": {"kind": "local_path", "path": str(candidate_root)}}
+
+            with self.assertRaises(CliError) as ctx:
+                resolve_candidate(project, project / ".demo", "run-001", manifest, candidate)
+
+            self.assertIn("target ref must not traverse a symlink", ctx.exception.message)
+
 
 if __name__ == "__main__":
     unittest.main()

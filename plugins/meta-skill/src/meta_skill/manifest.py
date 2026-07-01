@@ -21,7 +21,7 @@ DEFAULT_EVALS = {
         "repetitions": 1,
     },
     "candidates": DEFAULT_CANDIDATES,
-    "evals": [],
+    "cases": [],
 }
 
 
@@ -46,51 +46,6 @@ def case_dir(workbench, case_id):
     return workbench / "cases" / require_id("case id", case_id)
 
 
-def normalize_prompt_manifest(data):
-    if "evals" not in data:
-        return data
-    evals = data.get("evals")
-    if not isinstance(evals, list):
-        raise CliError("evals.json evals must be a list", 2)
-    defaults = data.get("defaults") or {"runner": "codex_app_server", "repetitions": 1}
-    raw_candidates = data.get("candidates") or DEFAULT_CANDIDATES
-    cases = []
-    for item in evals:
-        if not isinstance(item, dict):
-            raise CliError("evals.json evals must be objects", 2)
-        prompt = item.get("prompt")
-        task = item.get("task")
-        if isinstance(task, dict):
-            task_info = dict(task)
-            if prompt:
-                if any(task_info.get(key) for key in ("path", "file", "prompt", "seed")):
-                    raise CliError(f"case {item.get('id')} must set exactly one task source", 2)
-                task_info["prompt"] = prompt
-        elif task is not None:
-            raise CliError(f"case {item.get('id')} task must be an object", 2)
-        else:
-            task_info = {"prompt": prompt} if prompt is not None else {}
-        case = {
-            "id": item.get("id"),
-            "type": item.get("type"),
-            "split": item.get("split"),
-            "repetitions": item.get("repetitions"),
-            "task": task_info,
-            "fixtures": item.get("fixtures") or [],
-            "expectations": item.get("expectations") or [],
-            "graders": item.get("graders") or [],
-        }
-        cases.append({key: value for key, value in case.items() if value not in (None, [], {})})
-    return {
-        "schema_version": 1,
-        "target": data.get("target") or {"type": "skill", "ref": "SKILL.md"},
-        "defaults": defaults,
-        "candidates": raw_candidates,
-        "cases": cases,
-        "_manifest_shape": "prompt",
-        "skill_name": data.get("skill_name"),
-    }
-
 def task_sources(case):
     task = case.get("task") or {}
     sources = []
@@ -109,7 +64,8 @@ def load_manifest(path):
     data = read_json(path)
     if not isinstance(data, dict):
         raise CliError("eval suite must be a JSON object", 2)
-    data = normalize_prompt_manifest(data)
+    if "evals" in data:
+        raise CliError("evals.json must use cases[]; legacy evals[] manifests are no longer supported", 2)
     if data.get("schema_version") != 1:
         raise CliError("only evals.json schema_version 1 is supported", 2)
     if not isinstance(data.get("cases", []), list):
@@ -124,6 +80,13 @@ def load_manifest(path):
         if case_id in seen_case_ids:
             raise CliError(f"duplicate case id: {case_id}", 2)
         seen_case_ids.add(case_id)
+        task = case.get("task") or {}
+        if not isinstance(task, dict):
+            raise CliError(f"case {case_id} task must be an object", 2)
+        if "seed" in task:
+            raise CliError(f"case {case_id} task.seed is no longer supported; use task.prompt or cases/{case_id}/task.md", 2)
+        if "file" in task:
+            raise CliError(f"case {case_id} task.file is no longer supported; use task.path", 2)
         sources = task_sources(case)
         if len(sources) != 1:
             raise CliError(f"case {case_id} must set exactly one task source: inline prompt or task path", 2)

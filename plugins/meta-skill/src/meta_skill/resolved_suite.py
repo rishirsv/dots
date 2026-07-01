@@ -44,10 +44,21 @@ def _copy_file(src, dest):
     return {"path": dest.name, "digest": file_digest(dest), "source_path": str(src)}
 
 
+def _reject_support_symlinks(src, raw_path, label):
+    if src.is_symlink():
+        raise CliError(f"{label} path must not be a symlink: {raw_path}", 2)
+    if src.is_dir():
+        for item in src.rglob("*"):
+            if item.is_symlink():
+                rel = Path(raw_path) / item.relative_to(src)
+                raise CliError(f"{label} path must not contain symlinks: {rel.as_posix()}", 2)
+
+
 def _copy_support_file(case_root, frozen_case_root, raw_path, label):
     src = safe_case_file(case_root, raw_path, label)
     if not src.exists():
         raise CliError(f"{label} missing: {src}", 2)
+    _reject_support_symlinks(src, raw_path, label)
     dest = frozen_case_root / raw_path
     if src.is_dir():
         shutil.copytree(src, dest, dirs_exist_ok=True)

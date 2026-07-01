@@ -12,7 +12,7 @@ from .ids import run_id, utc_now
 from .io import append_jsonl, append_jsonl_many, read_json, read_jsonl, resolve_run_dir
 from .staging import safe_case_file
 from .summary import build_summary, summary_exit_code
-from .verdicts import normalize_grade_status, normalize_runtime_status, verdict_contribution
+from .verdicts import latest_grade_rows, normalize_grade_status, require_grade_status, require_runtime_status, verdict_contribution
 
 GRADE_LABELS = {"pass", "partial", "fail", "unknown"}
 
@@ -35,6 +35,22 @@ def validator_command(path, output_path, expected_path, events_path):
 
 def result_response_path(result):
     return result.get("response_path")
+
+
+def grade_key(row):
+    grader = row.get("grader") or {}
+    return (
+        row.get("trial_id"),
+        row.get("metric"),
+        grader.get("kind"),
+        grader.get("id"),
+    )
+
+
+def declared_human_grade_key(result, grader):
+    grader_id = grader.get("id") or "human-review"
+    metric = grader.get("metric") or grader_id
+    return (result.get("trial_id"), metric, "human", grader_id)
 
 
 def _grade_row(run, result, *, generation_id, grader, metric, grade_status, score=None, checks=None, rationale="", evidence_refs=None, gate=False, detail=None):
@@ -224,9 +240,18 @@ def grade_run(raw_run, *, rebuild_summary=True):
     frozen_suite = read_json(run_dir / "eval-spec" / "suite.json")
     cases_by_id = {case.get("id"): case for case in frozen_suite.get("cases", [])}
     rows = []
+    all_existing_grades = read_jsonl(run_dir / "grades.jsonl")
+    for row in all_existing_grades:
+        require_grade_status(row)
+    existing_grades = latest_grade_rows(all_existing_grades)
+    existing_human_keys = {
+        grade_key(row)
+        for row in existing_grades
+        if (row.get("grader") or {}).get("kind") == "human"
+    }
     generation_id = f"grade-{run_id()}"
     for result in read_jsonl(run_dir / "results.jsonl"):
-        runtime_status = normalize_runtime_status(result.get("runtime_status"))
+        runtime_status = require_runtime_status(result)
         if runtime_status != "completed":
             rows.append(
                 _grade_row(
@@ -271,7 +296,10 @@ def grade_run(raw_run, *, rebuild_summary=True):
                 )
                 runnable = True
             elif grader.get("kind") == "human":
-                rows.append(pending_human_grade(run, result, generation_id, grader))
+                key = declared_human_grade_key(result, grader)
+                if key not in existing_human_keys:
+                    rows.append(pending_human_grade(run, result, generation_id, grader))
+                    existing_human_keys.add(key)
                 runnable = True
                 continue
         if not runnable:
@@ -343,6 +371,7 @@ def human_review_packet(raw_run, trial_id=None):
     results = {row.get("trial_id"): row for row in read_jsonl(run_dir / "results.jsonl")}
     grades_by_trial = {}
     for grade in read_jsonl(run_dir / "grades.jsonl"):
+        require_grade_status(grade)
         grades_by_trial.setdefault(grade.get("trial_id"), []).append(grade)
     planned = list(run.get("trials", []))
     planned_ids = {trial.get("trial_id") for trial in planned}

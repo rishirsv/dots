@@ -46,14 +46,38 @@ def resolve_skill_md(target):
     return path / "SKILL.md" if path.is_dir() else path
 
 
+def _target_ref_path(ref):
+    rel = Path(ref)
+    if rel.is_absolute() or ".." in rel.parts:
+        raise CliError(f"target ref must stay inside the candidate root: {ref!r}", 2)
+    return rel
+
+
+def _reject_symlink_target_path(path, root, ref):
+    root = Path(root).resolve()
+    rel = Path(path).relative_to(root)
+    current = root
+    for part in rel.parts:
+        current = current / part
+        if current.is_symlink():
+            raise CliError(f"target ref must not traverse a symlink: {ref!r}", 2)
+
+
 def resolve_target_payload(manifest, candidate_cwd):
     target = manifest.get("target") or {}
     ref = target.get("ref") or "SKILL.md"
-    path = (candidate_cwd / ref).resolve()
-    if path.is_file():
-        return path.parent
-    if path.is_dir():
-        return path
+    root = Path(candidate_cwd).resolve()
+    path = root / _target_ref_path(ref)
+    _reject_symlink_target_path(path, root, ref)
+    resolved = path.resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError:
+        raise CliError(f"target ref must stay inside the candidate root: {ref!r}", 2)
+    if resolved.is_file():
+        return resolved.parent
+    if resolved.is_dir():
+        return resolved
     raise CliError(f"target payload not found for ref {ref!r} under {candidate_cwd}", 2)
 
 
@@ -83,7 +107,10 @@ def payload_digest(path):
 
 
 def reject_symlink_escapes(root):
-    root = Path(root).resolve()
+    raw_root = Path(root)
+    if raw_root.is_symlink():
+        raise CliError(f"symlink escapes candidate root: {raw_root}", 2)
+    root = raw_root.resolve()
     for item in root.rglob("*"):
         if not item.is_symlink():
             continue

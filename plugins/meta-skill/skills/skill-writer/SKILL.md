@@ -207,10 +207,11 @@ Create optional folders only when writing their first real file; blank
 should never exist.
 
 When the user asks for eval seeds, workbench eval material, or evaluator
-handoff, create one `.<skill-name>/evals.json` prompt manifest. Keep evaluator
+handoff, create one `.<skill-name>/evals.json` suite manifest. Keep evaluator
 handoff material there rather than in a top-level `evals/` folder. The
-writer-authored manifest should contain `skill_name`, realistic `evals[]`
-prompts, `type`, expectations, optional files/fixtures, and grader hints. Limit
+writer-authored manifest should contain `skill_name`, realistic `cases[]`
+with `task.prompt` or `task.path`, `type`, expectations, optional
+files/fixtures, and grader hints. Limit
 it to authored task material; run status, grades, and evidence belong to later
 evaluation runs.
 

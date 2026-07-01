@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from .errors import CliError
 from .io import read_json, read_jsonl, resolve_run_dir
 from .manifest import suite_path, workbench_from_suite
 from .summary import build_summary
@@ -37,10 +38,7 @@ def list_runs(raw_suite):
 
 def build_report(raw_run):
     run_dir = resolve_run_dir(raw_run)
-    summary_path = run_dir / "summary.json"
-    if not summary_path.exists():
-        build_summary(str(run_dir))
-    summary = read_json(summary_path)
+    summary = build_summary(str(run_dir))
     run = read_json(run_dir / "run.json")
     results_by_trial = {row.get("trial_id"): row for row in read_jsonl(run_dir / "results.jsonl")}
     trials = summary.get("trials", [])

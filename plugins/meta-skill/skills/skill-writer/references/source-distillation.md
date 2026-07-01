@@ -432,7 +432,7 @@ Use this after candidate rules exist.
 | Approved reusable templates, schemas, boilerplate, starter files, sample workbooks, or visual materials | `assets/` |
 | Approved runtime datasets or structured maps the skill must consult | `resources/` |
 | Scrubbed examples needed for shape or tone during runtime | `examples/` |
-| Evaluation handoff, trigger near misses, objective check notes, raw source packs, private examples, authoring provenance, rejected rules, research reports, benchmark notes, and source-specific evidence | `.<skill-name>/evals.json` for runnable prompt manifest; `.<skill-name>/docs/` or external project docs for non-runnable authoring evidence |
+| Evaluation handoff, trigger near misses, objective check notes, raw source packs, private examples, authoring provenance, rejected rules, research reports, benchmark notes, and source-specific evidence | `.<skill-name>/evals.json` for runnable suite manifest; `.<skill-name>/docs/` or external project docs for non-runnable authoring evidence |
 
 Economy gates:
 

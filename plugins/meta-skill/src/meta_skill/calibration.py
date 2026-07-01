@@ -3,6 +3,7 @@
 from .errors import CliError
 from .ids import slug, utc_now
 from .io import read_json, read_jsonl, resolve_run_dir, write_json
+from .verdicts import require_grade_status
 
 
 BINARY_LABELS = {"pass", "fail"}
@@ -13,6 +14,7 @@ ORDINAL_LABEL_VALUES = {"fail": 0, "partial": 1, "pass": 2}
 def _grade_rows(run_dir, kind, metric=None):
     rows = []
     for row in read_jsonl(run_dir / "grades.jsonl"):
+        require_grade_status(row)
         grader = row.get("grader") or {}
         if grader.get("kind") != kind:
             continue

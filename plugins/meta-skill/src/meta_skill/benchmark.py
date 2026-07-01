@@ -11,7 +11,7 @@ from .io import read_json, read_jsonl
 from .manifest import filter_cases, load_manifest, select_cases, suite_path, workbench_from_suite
 from .report import build_comparisons, build_report, list_runs, md_cell, md_table, trial_behavior_state
 from .runner import run_eval
-from .verdicts import latest_grade_rows
+from .verdicts import latest_grade_rows, require_grade_status
 
 
 ALLOWED_METRICS = {
@@ -433,7 +433,7 @@ def _profile_gate_rows(report, profile):
                 rows.append({"trial_id": trial_id, "metric": metric, "required_label": required, "status": "unknown", "detail": "no matching grade"})
                 continue
             for grade in matches:
-                label = grade.get("grade_status")
+                label = require_grade_status(grade)
                 rows.append(
                     {
                         "trial_id": trial_id,
