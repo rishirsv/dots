@@ -148,11 +148,9 @@ python3 plugins/dots/skills/oracle/scripts/oracle_package.py \
   --file "!**/*.test.ts"
 ```
 
-By default, the script writes directly into `.agents/oracle/<task>/` under the
-project root, where `<task>` is the generated task slug. Always use that single
-`.agents/oracle/<task>` directory for Oracle work unless the user explicitly
-asks for another output location. If the user asks for a Desktop package, pass
-an explicit `--output-dir ~/Desktop`; do not make Desktop the default.
+By default, the script writes directly into the task workspace described in
+"Task Workspace" below. If the user asks for a Desktop package, pass an
+explicit `--output-dir ~/Desktop`; do not make Desktop the default.
 
 ### Task Workspace
 
@@ -210,8 +208,8 @@ sendable bundle, when stuck, when changing approach, or when an oracle answer
 conflicts with local evidence in a way that would change the decision. Short
 reactive tasks driven by tool output do not need repeated oracle runs.
 
-For package-only oracle runs, the `.agents/oracle/<task>` workspace is the
-deliverable. The skill's job is to keep prep inputs and the ready-to-send
+For package-only oracle runs, the task workspace from "Task Workspace" above is
+the deliverable. The skill's job is to keep prep inputs and the ready-to-send
 `prompt.md` plus `context.zip` there and hand it back; it does not drive a
 provider browser or upload the package anywhere. If the user wants the package
 on the Desktop, rebuild or write it with `--output-dir ~/Desktop`.
@@ -230,11 +228,11 @@ API money or send broader private context than the user approved.
 
 ## Provider Routes
 
-The default route is `package-only`: build the package in `.agents/oracle/<task>`
-and hand the user the path and the exact `prompt.md`. Saving the package there,
-or on the Desktop when the user asks for Desktop output, is the intended end
-state for package-only oracle runs. Use another route only when the user
-explicitly asks for and approves it.
+The default route is `package-only`: build the package in the task workspace
+from "Task Workspace" above and hand the user the path and the exact
+`prompt.md`. Saving the package there, or on the Desktop when the user asks for
+Desktop output, is the intended end state for package-only oracle runs. Use
+another route only when the user explicitly asks for and approves it.
 
 Do not open ChatGPT, operate a ChatGPT browser session, or upload Oracle
 packages to ChatGPT. The supported ChatGPT-facing handoff is local saving only:

@@ -4,11 +4,9 @@ Read this when a research question is broad, ambiguous, high-impact, cross-cutti
 
 ## When To Fan Out
 
-For ordinary `$research` requests, single-threaded research is the default. When
-the Research workflow is invoked mid-conversation, default to assigning the
-bounded research task to a `researcher` subagent when one is available, with the
-parent retaining context and synthesis. Use multiple researchers only when at
-least two are true:
+See SKILL.md's "Runtime Flow" section for the default invocation and
+subagent-delegation framing. Use multiple researchers only when at least two
+are true:
 
 - The question spans multiple source classes, such as local code, official docs, ecosystem practice, issue trackers, and design tradeoffs.
 - Several hypotheses need independent checking.

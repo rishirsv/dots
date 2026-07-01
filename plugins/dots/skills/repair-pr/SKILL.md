@@ -41,26 +41,12 @@ name_with_owner="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
 owner="${name_with_owner%%/*}"
 repo="${name_with_owner#*/}"
 gh api "repos/:owner/:repo/pulls/$pr_number/comments"
-gh api graphql -f query='
-query($owner:String!, $repo:String!, $number:Int!) {
-  repository(owner:$owner, name:$repo) {
-    pullRequest(number:$number) {
-      reviewThreads(first:100) {
-        nodes {
-          id
-          isResolved
-          isOutdated
-          path
-          line
-          comments(first:20) {
-            nodes { id body author { login } path line diffHunk url }
-          }
-        }
-      }
-    }
-  }
-}' -F owner="$owner" -F repo="$repo" -F number="$pr_number"
 ```
+
+Fetch review-thread state with the query in
+[../triage/references/review-threads-query.md](../triage/references/review-threads-query.md),
+including thread IDs, resolution state, and file/line mapping, so each comment
+can be matched to the fix it belongs to.
 
 For CI failures, inspect the failing job enough to identify whether the failure
 belongs to this PR. Use `gh pr checks`, linked logs, and repo-owned test commands

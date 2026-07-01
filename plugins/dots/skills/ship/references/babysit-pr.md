@@ -27,31 +27,27 @@ gh pr comment "$pr_url_or_number" --body "@codex review for security regressions
 
 ## Watch Loop
 
-Use short polling windows and report progress. Prefer a bounded loop over waiting silently: make 3 to 5 polls over roughly 5 to 10 minutes, then stop and report the current state.
+This is a bounded first-review watch scoped only to immediate
+post-publication fallout on the PR this run just created or reused. It is
+not a general status, repair, or stewardship loop.
 
-1. Confirm the comment exists or the command returned success.
-2. Poll PR state:
+For loop cadence, poll budget, and the `gh pr view` / `gh pr checks` status
+field semantics, use the canonical loop in
+[`../../steward-pr/SKILL.md`](../../steward-pr/SKILL.md). Confirm the review
+comment landed, then run that loop once to observe the first check/review
+cycle.
 
-```bash
-gh pr view "$pr_url_or_number" --json number,url,state,isDraft,reviewDecision,comments,reviews,headRefName,baseRefName
-```
-
-Also inspect inline pull request review comments before deciding there are no actionable findings:
+While watching, also inspect inline pull request review comments before
+deciding there are no actionable findings:
 
 ```bash
 pr_number="$(gh pr view "$pr_url_or_number" --json number --jq .number)"
 gh api "repos/:owner/:repo/pulls/$pr_number/comments"
 ```
 
-3. Poll checks:
-
-```bash
-gh pr checks "$pr_url_or_number" --json name,state,bucket,startedAt,completedAt,link
-```
-
-Treat pending checks as normal. Treat the `gh pr checks` pending exit code as a watch state, not a failure. Immediately after PR creation, retry briefly if GitHub reports no checks.
-
-4. If Codex posts no reaction or review by the bounded wait, verify that the repository has Codex code review enabled if that context is available. Otherwise report that Codex did not respond yet and leave the PR published.
+If Codex posts no reaction or review by the bounded wait, verify that the
+repository has Codex code review enabled if that context is available.
+Otherwise report that Codex did not respond yet and leave the PR published.
 
 ## Fix And Push Policy
 

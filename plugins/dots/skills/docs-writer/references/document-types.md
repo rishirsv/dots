@@ -247,4 +247,5 @@ Recommended shape:
 - Bundle-relative links to related concepts where a future agent should
   traverse context.
 
-Do not add timestamps. Do not create `log.md`.
+See SKILL.md's Knowledge Docs section for the `timestamp` and `log.md`
+restriction.

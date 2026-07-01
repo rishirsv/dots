@@ -58,7 +58,8 @@ Fields:
 - Extra fields are allowed when the repo benefits from them, such as `owner`,
   `status`, `source_files`, or `verified_by`.
 
-Do not use `timestamp`. Do not create or maintain `log.md`.
+See SKILL.md's Knowledge Docs section for the `timestamp` and `log.md`
+restriction, which applies to knowledge bundles as well.
 
 ## Index Files
 

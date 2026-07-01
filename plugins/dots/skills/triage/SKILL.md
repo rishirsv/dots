@@ -47,18 +47,9 @@ If there are more than 50 open PRs or the user asks for a team-wide queue,
 either page deliberately or report that the readback is limited to the first 50.
 Do not edit labels, request reviews, comment, close, or merge.
 
-Classify each PR into the first matching bucket:
-
-- `Needs repair`: failing checks, requested changes, or actionable review
-  comments are visible.
-- `Needs review`: review is required, requested, or absent and no stronger
-  blocker is visible.
-- `Pending`: checks, deployments, merge queue, or review are still running.
-- `Ready to land`: non-draft PR with clean required checks, acceptable review
-  state, no known unresolved required conversations, and clean merge state.
-- `Blocked`: draft, conflicts, policy uncertainty, stacked-order ambiguity,
-  missing permissions, or GitHub state prevents a safe next action.
-- `Unknown`: GitHub did not expose enough state to classify confidently.
+Classify each PR into the first matching Status Label from the definitions in
+[Status Labels](#status-labels) below, in this priority order: `Needs repair`,
+`Needs review`, `Pending`, `Ready to land`, `Blocked`, `Unknown`.
 
 For PRs that appear close to landing or blocked by conversations, drill into
 the individual PR using the readiness checks below. Do not deep-inspect every
@@ -96,27 +87,9 @@ Treat the `gh pr checks` pending exit code as a pending state, not as a command
 failure. If checks have not appeared yet on a fresh PR, say that checks may not
 have started.
 
-When conversation resolution could block the merge, read review-thread state
-with GraphQL:
-
-```bash
-gh api graphql -f query='
-query($owner:String!, $repo:String!, $number:Int!) {
-  repository(owner:$owner, name:$repo) {
-    pullRequest(number:$number) {
-      reviewThreads(first:100) {
-        pageInfo { hasNextPage endCursor }
-        nodes { id isResolved isOutdated path line }
-      }
-    }
-  }
-}' -F owner="$owner" -F repo="$repo" -F number="$pr_number"
-```
-
-If more than 100 review threads exist, paginate with `pageInfo.endCursor` or
-mark conversation state `Unknown`. If repo policy for required conversation
-resolution is not visible, do not call the PR ready because conversations look
-quiet; report the policy signal as unknown.
+When conversation resolution could block the merge, run the review-thread
+check in
+[references/review-threads-query.md](references/review-threads-query.md).
 
 Use diff comparison when the user asks whether the PR contains the intended
 scope or when branch/base ambiguity affects readiness:

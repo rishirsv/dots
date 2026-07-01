@@ -99,10 +99,8 @@ when the content is already known.
 - Cite or link supporting material for claims that a future reader or agent would
   need to verify, especially externally sourced facts, API behavior, data
   definitions, and operational procedures.
-- For PRDs, never add a `Source Evidence`, citations, provenance log, reviewed
-  scope, or evidence-audit section. Gather evidence internally, then write the
-  PRD as product intent: problem, users, jobs, requirements, non-goals, success
-  criteria, risks, and open questions.
+- For PRDs, see the PRD recipe in `references/document-types.md` for the
+  evidence-section restriction.
 
 ## Knowledge Docs
 

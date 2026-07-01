@@ -60,9 +60,10 @@ ancestry shows it depends on unmerged work. Stop unless the landing order is
 clear.
 
 When conversation resolution can block merging, use the `$triage` GraphQL
-thread check first. If `$triage` is unavailable, run the same GraphQL thread
-check directly or stop. If thread state or policy cannot be verified, stop
-instead of assuming the PR is clean.
+thread check first. If `$triage` is unavailable, run the query in
+[../triage/references/review-threads-query.md](../triage/references/review-threads-query.md)
+directly or stop. If thread state or policy cannot be verified, stop instead of
+assuming the PR is clean.
 
 ## Merge Method
 
