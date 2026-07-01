@@ -27,8 +27,8 @@ runtime skill payload.
   `docs/`; use `docs/research/` only when the research volume needs nesting.
 - Put authored eval suites in `evals.json` and materialized task content in
   `cases/`.
-- Put recurring benchmark profiles in `benchmarks/` only when creating a real
-  profile.
+- Put recurring eval presets in `presets/` only when creating a real
+  preset.
 - Do not create empty folders. Create a folder only when writing its first real
   file.
 

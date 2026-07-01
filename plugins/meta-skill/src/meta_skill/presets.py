@@ -1,16 +1,14 @@
-"""Benchmark profile loading, linting, running, and reporting."""
+"""Eval preset loading, linting, running, and reporting."""
 
 from __future__ import annotations
 
 from pathlib import Path
-from types import SimpleNamespace
 
 from .errors import CliError
 from .ids import require_id
 from .io import read_json, read_jsonl
 from .manifest import filter_cases, load_manifest, select_cases, suite_path, workbench_from_suite
 from .report import build_comparisons, build_report, list_runs, md_cell, md_table, trial_behavior_state
-from .runner import run_eval
 from .verdicts import latest_grade_rows, require_grade_status
 
 
@@ -28,50 +26,59 @@ ALLOWED_INTEGRITY_KEYS = {"run_null_candidate_when_possible", "hidden_files_must
 ALLOWED_REPORT_KEYS = {"include_history"}
 
 
-def benchmark_path(raw):
+def preset_path(raw):
     if not raw:
-        raise CliError("--benchmark is required", 2)
+        raise CliError("--preset is required", 2)
     path = Path(raw).expanduser()
     if path.is_dir():
-        path = path / "benchmark.json"
+        path = path / "preset.json"
     return path.resolve()
 
 
-def suite_from_profile(profile_path, profile):
-    raw = profile.get("suite")
+def suite_from_preset(preset_path_, preset):
+    raw = preset.get("suite")
     if raw:
         path = Path(raw).expanduser()
         if not path.is_absolute():
-            path = profile_path.parent / path
+            path = preset_path_.parent / path
         return suite_path(str(path))
-    parent = profile_path.parent
-    if parent.name == "benchmarks":
+    parent = preset_path_.parent
+    if parent.name == "presets":
         return (parent.parent / "evals.json").resolve()
     return suite_path(None)
 
 
-def load_benchmark(raw_benchmark):
-    path = benchmark_path(raw_benchmark)
+def resolve_preset_ref(raw_preset, suite=None):
+    """Resolve a bare preset name or path to a preset file path."""
+    path = Path(raw_preset).expanduser()
+    if path.suffix == ".json" or path.exists() or "/" in raw_preset or "\\" in raw_preset:
+        return preset_path(raw_preset)
+    workbench = workbench_from_suite(suite_path(suite))
+    return preset_path(str(workbench / "presets" / f"{raw_preset}.json"))
+
+
+def load_preset(raw_preset):
+    path = preset_path(raw_preset)
     data = read_json(path)
     if not isinstance(data, dict):
-        raise CliError("benchmark profile must be a JSON object", 2)
+        raise CliError("preset must be a JSON object", 2)
     if data.get("schema_version") != 1:
-        raise CliError("only benchmark schema_version 1 is supported", 2)
-    profile_id = require_id("benchmark id", data.get("id"))
+        raise CliError("only preset schema_version 1 is supported", 2)
+    preset_id = require_id("preset id", data.get("id"))
     selection = data.get("task_selection") or {}
     if not isinstance(selection, dict):
-        raise CliError("benchmark task_selection must be an object", 2)
+        raise CliError("preset task_selection must be an object", 2)
     candidate_policy = data.get("candidates") or {}
     if not isinstance(candidate_policy, dict):
-        raise CliError("benchmark candidates must be an object", 2)
+        raise CliError("preset candidates must be an object", 2)
     metrics = data.get("metrics") or []
     if not isinstance(metrics, list) or not all(isinstance(item, str) and item.strip() for item in metrics):
-        raise CliError("benchmark metrics must be a list of strings", 2)
+        raise CliError("preset metrics must be a list of strings", 2)
     unknown_metrics = sorted(set(metrics) - ALLOWED_METRICS)
     if unknown_metrics:
-        raise CliError(f"unknown benchmark metrics: {', '.join(unknown_metrics)}", 2)
-    suite = suite_from_profile(path, data)
-    return {"path": path, "profile": data, "id": profile_id, "suite": suite}
+        raise CliError(f"unknown preset metrics: {', '.join(unknown_metrics)}", 2)
+    suite = suite_from_preset(path, data)
+    return {"path": path, "profile": data, "id": preset_id, "suite": suite}
 
 
 def selected_case_ids(manifest, profile):
@@ -136,7 +143,7 @@ def _profile_policy_warnings(profile, selected_candidate_ids_):
     warnings = []
     gates = profile.get("gates") or []
     if gates and not isinstance(gates, list):
-        return [{"kind": "invalid_gates", "detail": "benchmark gates must be a list"}]
+        return [{"kind": "invalid_gates", "detail": "preset gates must be a list"}]
     selected_candidates = set(selected_candidate_ids_)
     for index, gate in enumerate(gates):
         if not isinstance(gate, dict):
@@ -153,26 +160,26 @@ def _profile_policy_warnings(profile, selected_candidate_ids_):
         if gate.get("scope") and gate.get("scope") not in ALLOWED_GATE_SCOPES:
             warnings.append({"kind": "invalid_gate_scope", "gate_index": index, "scope": gate.get("scope"), "detail": "scope must be payloads, baseline, or all"})
         if gate.get("candidate") and gate.get("candidate") not in selected_candidates:
-            warnings.append({"kind": "unknown_gate_candidate", "gate_index": index, "candidate": gate.get("candidate"), "detail": "gate candidate is not selected by this profile"})
+            warnings.append({"kind": "unknown_gate_candidate", "gate_index": index, "candidate": gate.get("candidate"), "detail": "gate candidate is not selected by this preset"})
         if gate.get("candidates"):
             if not isinstance(gate.get("candidates"), list):
                 warnings.append({"kind": "invalid_gate_candidates", "gate_index": index, "detail": "gate candidates must be a list"})
             else:
                 for candidate_id in gate.get("candidates"):
                     if candidate_id not in selected_candidates:
-                        warnings.append({"kind": "unknown_gate_candidate", "gate_index": index, "candidate": candidate_id, "detail": "gate candidate is not selected by this profile"})
+                        warnings.append({"kind": "unknown_gate_candidate", "gate_index": index, "candidate": candidate_id, "detail": "gate candidate is not selected by this preset"})
     integrity = profile.get("integrity")
     if integrity is None:
-        warnings.append({"kind": "missing_integrity_policy", "detail": "Benchmark profiles should declare integrity checks before their scores are trusted."})
+        warnings.append({"kind": "missing_integrity_policy", "detail": "Presets should declare integrity checks before their scores are trusted."})
     elif not isinstance(integrity, dict):
-        warnings.append({"kind": "invalid_integrity_policy", "detail": "benchmark integrity must be an object"})
+        warnings.append({"kind": "invalid_integrity_policy", "detail": "preset integrity must be an object"})
     else:
         unknown_keys = sorted(set(integrity) - ALLOWED_INTEGRITY_KEYS)
         if unknown_keys:
             warnings.append({"kind": "unknown_integrity_key", "keys": unknown_keys, "detail": "integrity has unsupported keys"})
     report_policy = profile.get("report")
     if report_policy is not None and not isinstance(report_policy, dict):
-        warnings.append({"kind": "invalid_report_policy", "detail": "benchmark report must be an object"})
+        warnings.append({"kind": "invalid_report_policy", "detail": "preset report must be an object"})
     elif isinstance(report_policy, dict):
         unknown_keys = sorted(set(report_policy) - ALLOWED_REPORT_KEYS)
         if unknown_keys:
@@ -183,7 +190,7 @@ def _profile_policy_warnings(profile, selected_candidate_ids_):
 def repetitions_by_type(profile):
     raw = profile.get("repetitions") or {}
     if not isinstance(raw, dict):
-        raise CliError("benchmark repetitions must be an object", 2)
+        raise CliError("preset repetitions must be an object", 2)
     result = {}
     for key, value in raw.items():
         if key == "default":
@@ -191,9 +198,9 @@ def repetitions_by_type(profile):
         try:
             count = int(value)
         except (TypeError, ValueError):
-            raise CliError(f"benchmark repetition for {key} must be an integer", 2)
+            raise CliError(f"preset repetition for {key} must be an integer", 2)
         if count < 1:
-            raise CliError(f"benchmark repetition for {key} must be at least 1", 2)
+            raise CliError(f"preset repetition for {key} must be at least 1", 2)
         result[key] = count
     return result
 
@@ -205,14 +212,14 @@ def default_repetitions(profile):
     try:
         count = int(raw)
     except (TypeError, ValueError):
-        raise CliError("benchmark repetitions.default must be an integer", 2)
+        raise CliError("preset repetitions.default must be an integer", 2)
     if count < 1:
-        raise CliError("benchmark repetitions.default must be at least 1", 2)
+        raise CliError("preset repetitions.default must be at least 1", 2)
     return count
 
 
-def benchmark_lint(raw_benchmark):
-    loaded = load_benchmark(raw_benchmark)
+def preset_lint(raw_preset):
+    loaded = load_preset(raw_preset)
     manifest = load_manifest(loaded["suite"])
     profile = loaded["profile"]
     case_ids = selected_case_ids(manifest, profile)
@@ -221,7 +228,7 @@ def benchmark_lint(raw_benchmark):
     manifest_candidate_ids = {candidate.get("candidate") for candidate in manifest.get("candidates", [])}
     warnings = []
     if not case_ids:
-        warnings.append({"kind": "no_cases_selected", "detail": "Benchmark profile selects no cases from the suite."})
+        warnings.append({"kind": "no_cases_selected", "detail": "Preset selects no cases from the suite."})
     missing_cases = [case_id for case_id in (profile.get("task_selection") or {}).get("case_ids", []) if case_id not in manifest_case_ids]
     for case_id in missing_cases:
         warnings.append({"kind": "unknown_case", "case_id": case_id, "detail": "Case id is not present in the suite."})
@@ -231,18 +238,18 @@ def benchmark_lint(raw_benchmark):
     selected_cases = [case for case in manifest.get("cases", []) if case.get("id") in set(case_ids)]
     if any((case.get("type") or "") in {"trigger", "implicit_trigger", "activation"} for case in selected_cases):
         if not any((case.get("type") or "") in {"negative_control", "boundary", "should_not_trigger", "near_miss"} for case in selected_cases):
-            warnings.append({"kind": "unbalanced_trigger_benchmark", "detail": "Trigger benchmarks need should-trigger and should-not-trigger or near-miss tasks."})
+            warnings.append({"kind": "unbalanced_trigger_preset", "detail": "Trigger presets need should-trigger and should-not-trigger or near-miss tasks."})
     for case in selected_cases:
         if not case.get("expectations") and not case.get("graders"):
             warnings.append({"kind": "missing_grader", "case_id": case.get("id"), "detail": "Selected case has no declared grader or expectations."})
     if "release" in loaded["id"] and not profile.get("gates"):
-        warnings.append({"kind": "release_without_gates", "detail": "Release benchmarks should declare selection gates."})
+        warnings.append({"kind": "release_without_gates", "detail": "Release presets should declare selection gates."})
     if "unknown_rate" not in (profile.get("metrics") or []):
-        warnings.append({"kind": "missing_unknown_rate", "detail": "Benchmark reports should track unknown or ungraded evidence."})
+        warnings.append({"kind": "missing_unknown_rate", "detail": "Preset reports should track unknown or ungraded evidence."})
     warnings.extend(_profile_policy_warnings(profile, candidate_ids))
     return {
         "ok": True,
-        "benchmark": loaded["id"],
+        "preset": loaded["id"],
         "profile": str(loaded["path"]),
         "suite": str(loaded["suite"]),
         "selected_cases": case_ids,
@@ -252,8 +259,8 @@ def benchmark_lint(raw_benchmark):
     }
 
 
-def benchmark_run(raw_benchmark, *, model=None):
-    loaded = load_benchmark(raw_benchmark)
+def apply_preset(args, loaded):
+    """Fill preset-derived selection fields onto an eval-run args namespace."""
     manifest = load_manifest(loaded["suite"])
     profile = loaded["profile"]
     case_ids = selected_case_ids(manifest, profile)
@@ -261,32 +268,25 @@ def benchmark_run(raw_benchmark, *, model=None):
     manifest_case_ids = {case.get("id") for case in manifest.get("cases", [])}
     missing_cases = [case_id for case_id in (profile.get("task_selection") or {}).get("case_ids", []) if case_id not in manifest_case_ids]
     if missing_cases:
-        raise CliError(f"benchmark references unknown cases: {', '.join(missing_cases)}", 2)
+        raise CliError(f"preset references unknown cases: {', '.join(missing_cases)}", 2)
     manifest_candidate_ids = {candidate.get("candidate") for candidate in manifest.get("candidates", [])}
     missing_candidates = [candidate_id for candidate_id in candidate_ids if candidate_id not in manifest_candidate_ids]
     if missing_candidates:
-        raise CliError(f"benchmark references unknown candidates: {', '.join(missing_candidates)}", 2)
+        raise CliError(f"preset references unknown candidates: {', '.join(missing_candidates)}", 2)
     if not case_ids:
-        raise CliError("benchmark selected no cases", 2)
+        raise CliError("preset selected no cases", 2)
     if not candidate_ids:
-        raise CliError("benchmark selected no candidates", 2)
-    args = SimpleNamespace(
-        suite=str(loaded["suite"]),
-        candidates=",".join(candidate_ids),
-        split=None,
-        case=case_ids,
-        type=None,
-        repetitions=None,
-        repetitions_by_type=repetitions_by_type(profile),
-        benchmark_default_repetitions=default_repetitions(profile),
-        benchmark={"id": loaded["id"], "profile": str(loaded["path"])},
-        model=model,
-        no_grade=False,
-    )
-    result = run_eval(args)
-    result["benchmark"] = loaded["id"]
-    result["benchmark_profile"] = str(loaded["path"])
-    return result
+        raise CliError("preset selected no candidates", 2)
+    args.suite = str(loaded["suite"])
+    args.candidates = ",".join(candidate_ids)
+    args.split = None
+    args.case = case_ids
+    args.type = None
+    args.repetitions = None
+    args.repetitions_by_type = repetitions_by_type(profile)
+    args.preset_default_repetitions = default_repetitions(profile)
+    args.preset = {"id": loaded["id"], "path": str(loaded["path"])}
+    return args
 
 
 def _behavior_counts(report):
@@ -356,7 +356,7 @@ def _comparison_scorecard(report):
 
 
 def _history_rows(loaded):
-    runs = benchmark_history(str(loaded["path"]))["runs"]
+    runs = preset_history(str(loaded["path"]))["runs"]
     return [
         {
             "run_id": row.get("run_id"),
@@ -446,26 +446,26 @@ def _profile_gate_rows(report, profile):
     return rows
 
 
-def _load_profile_for_report(raw_benchmark, run):
-    if raw_benchmark:
-        loaded = load_benchmark(raw_benchmark)
-        run_benchmark_id = run.get("benchmark_id")
-        if run_benchmark_id and run_benchmark_id != loaded["id"]:
-            raise CliError(f"run benchmark_id {run_benchmark_id} does not match profile {loaded['id']}", 2)
-        run_profile = run.get("benchmark_profile")
-        if run_profile and Path(run_profile).expanduser().resolve() != loaded["path"]:
-            raise CliError("run benchmark_profile does not match supplied profile", 2)
+def _load_profile_for_report(raw_preset, run):
+    if raw_preset:
+        loaded = load_preset(raw_preset)
+        run_preset_id = run.get("preset_id")
+        if run_preset_id and run_preset_id != loaded["id"]:
+            raise CliError(f"run preset_id {run_preset_id} does not match preset {loaded['id']}", 2)
+        run_preset_path = run.get("preset_path")
+        if run_preset_path and Path(run_preset_path).expanduser().resolve() != loaded["path"]:
+            raise CliError("run preset_path does not match supplied preset", 2)
         return loaded
-    if run.get("benchmark_profile"):
-        return load_benchmark(run["benchmark_profile"])
-    raise CliError("benchmark report requires a benchmark profile; pass --benchmark or use eval report for plain eval runs", 2)
+    if run.get("preset_path"):
+        return load_preset(run["preset_path"])
+    raise CliError("preset report requires a preset; pass --preset or use eval report for plain eval runs", 2)
 
 
-def build_benchmark_report(raw_run, raw_benchmark=None):
+def build_preset_report(raw_run, raw_preset=None):
     report = build_report(raw_run)
     run_dir = Path(report["run_dir"])
     run = read_json(run_dir / "run.json")
-    loaded = _load_profile_for_report(raw_benchmark, run)
+    loaded = _load_profile_for_report(raw_preset, run)
     profile = loaded["profile"]
     profile_path = str(loaded["path"])
     manifest = load_manifest(loaded["suite"])
@@ -484,8 +484,8 @@ def build_benchmark_report(raw_run, raw_benchmark=None):
     calibration = _calibration_rows(report)
     return {
         "ok": True,
-        "benchmark": profile.get("id") or run.get("benchmark_id"),
-        "benchmark_profile": profile_path,
+        "preset": profile.get("id") or run.get("preset_id"),
+        "preset_path": profile_path,
         "decision": profile.get("decision"),
         "metrics": profile.get("metrics") or sorted(ALLOWED_METRICS),
         "run": report,
@@ -504,14 +504,14 @@ def build_benchmark_report(raw_run, raw_benchmark=None):
         "calibration": calibration,
         "calibration_policy": profile.get("calibration"),
         "coverage_limits": [
-            "Benchmark scores describe only the selected tasks, candidates, graders, and runner environment.",
+            "Preset scores describe only the selected tasks, candidates, graders, and runner environment.",
             "Runner completion is not answer quality.",
             "Model-judge scores require calibration before high-judgment selection decisions.",
         ],
     }
 
 
-def render_benchmark_markdown(model):
+def render_preset_markdown(model):
     run = model["run"]
     score = model["scorecard"]
     metrics = set(model.get("metrics") or [])
@@ -546,11 +546,11 @@ def render_benchmark_markdown(model):
         score_rows.append(["Total tokens", md_cell(score["total_tokens"])])
     score_rows.append(["Trials", md_cell(score["trials"])])
     lines = [
-        f"# Benchmark Report: {model.get('benchmark') or run['run_id']}",
+        f"# Preset Report: {model.get('preset') or run['run_id']}",
         "",
         f"- Decision: {model.get('decision') or 'unknown'}",
         f"- Run: `{run['run_id']}`",
-        f"- Profile: `{model.get('benchmark_profile') or '-'}`",
+        f"- Preset: `{model.get('preset_path') or '-'}`",
         f"- Suite: `{run.get('suite') or 'unknown'}`",
         "",
         "## Scorecard",
@@ -576,7 +576,7 @@ def render_benchmark_markdown(model):
             ],
         )
     if model["profile_gates"]:
-        lines += ["", "## Profile Gates", ""]
+        lines += ["", "## Preset Gates", ""]
         lines += md_table(
             ["Trial", "Metric", "Required", "Actual", "Status"],
             [
@@ -634,8 +634,8 @@ def render_benchmark_markdown(model):
     return "\n".join(lines) + "\n"
 
 
-def benchmark_history(raw_benchmark):
-    loaded = load_benchmark(raw_benchmark)
+def preset_history(raw_preset):
+    loaded = load_preset(raw_preset)
     runs = list_runs(str(loaded["suite"]))["runs"]
     matching = []
     for row in runs:
@@ -644,11 +644,11 @@ def benchmark_history(raw_benchmark):
             run = read_json(run_dir / "run.json")
         except CliError:
             continue
-        if run.get("benchmark_id") == loaded["id"] or run.get("benchmark_profile") == str(loaded["path"]):
+        if run.get("preset_id") == loaded["id"] or run.get("preset_path") == str(loaded["path"]):
             matching.append(row)
     return {
         "ok": True,
-        "benchmark": loaded["id"],
+        "preset": loaded["id"],
         "profile": str(loaded["path"]),
         "suite": str(loaded["suite"]),
         "runs": matching,

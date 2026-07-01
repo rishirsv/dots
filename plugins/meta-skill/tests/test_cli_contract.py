@@ -218,13 +218,16 @@ class CliContractTests(unittest.TestCase):
 
     def test_help_surfaces(self):
         run_cli("--help")
-        for group in ("doctor", "workbench", "sessions", "eval", "benchmark", "validate", "package"):
+        for group in ("doctor", "workbench", "sessions", "eval", "validate", "package"):
             run_cli(group, "--help")
+        run_cli("benchmark", "--help", expect=(2,))
         eval_run_help = run_cli("eval", "run", "--help").stdout
-        for flag in ("--no-grade", "--case", "--type", "--candidates", "--split"):
+        for flag in ("--no-grade", "--case", "--type", "--candidates", "--split", "--preset"):
             self.assertIn(flag, eval_run_help)
         self.assertNotIn("--runner", eval_run_help)
-        self.assertNotIn("--runner", run_cli("benchmark", "run", "--help").stdout)
+        self.assertIn("--preset", run_cli("eval", "list", "--help").stdout)
+        self.assertIn("--preset", run_cli("eval", "lint", "--help").stdout)
+        self.assertIn("--preset", run_cli("eval", "report", "--help").stdout)
         self.assertNotIn("--mode", run_cli("sessions", "extract", "--help").stdout)
         human_help = run_cli("eval", "human", "--help").stdout
         self.assertIn("--reviewer", human_help)

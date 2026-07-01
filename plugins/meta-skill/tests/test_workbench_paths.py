@@ -42,7 +42,7 @@ class WorkbenchPathTests(unittest.TestCase):
             self.assertIn("private workbench for `unpack`", (expected / "AGENTS.md").read_text())
             self.assertFalse((expected / "cases").exists())
             self.assertFalse((expected / "runs").exists())
-            self.assertFalse((expected / "benchmarks").exists())
+            self.assertFalse((expected / "presets").exists())
             self.assertFalse((expected / "evals.json").exists())
 
     def test_project_mode_uses_skill_payload_name(self) -> None:

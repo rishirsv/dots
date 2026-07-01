@@ -40,12 +40,12 @@ def plan_trials(cases, candidates, repetitions):
 
 def repetition_count(case, args, defaults):
     reps_by_type = getattr(args, "repetitions_by_type", None) or {}
-    benchmark_default = getattr(args, "benchmark_default_repetitions", None)
+    preset_default = getattr(args, "preset_default_repetitions", None)
     return (
         args.repetitions
         or reps_by_type.get(case.get("type") or "unspecified")
         or case.get("repetitions")
-        or benchmark_default
+        or preset_default
         or defaults.get("repetitions")
         or 1
     )
@@ -204,7 +204,7 @@ def run_eval(args):
         frozen_case["case_root"] = str(run_dir / "inputs" / "cases" / case["id"])
         frozen_cases[case["id"]] = frozen_case
     plan = plan_trials(cases, candidate_infos, lambda case: repetition_count(case, args, defaults))
-    benchmark = getattr(args, "benchmark", None) or {}
+    preset = getattr(args, "preset", None) or {}
     runner_config = {
         "runner": "codex_app_server",
         "sandbox": APP_SERVER_SANDBOX,
@@ -227,7 +227,7 @@ def run_eval(args):
         "candidate_snapshot_paths": {
             candidate["candidate"]: candidate.get("snapshot_json_path") for candidate in candidate_infos
         },
-        **({"benchmark_id": benchmark.get("id"), "benchmark_profile": benchmark.get("profile")} if benchmark else {}),
+        **({"preset_id": preset.get("id"), "preset_path": preset.get("path")} if preset else {}),
         "candidates": [candidate_source(candidate) for candidate in candidate_infos],
         "trials": [queued_record(row, run_dir) for row in plan],
     }

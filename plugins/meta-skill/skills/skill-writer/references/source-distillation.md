@@ -414,7 +414,7 @@ material. Put source fixtures in the flat `.<skill-name>/tests/` folder only whe
 the user provided or approved them; do not create that folder when there are no
 fixture files to store. Do not add case folders, judge rubrics, run folders,
 grades, comparisons, or benchmark scripts; route first-pass measurement to
-`skill-evaluator` and recurring benchmark profiles or scripts to
+`skill-evaluator` and recurring eval presets or scripts to
 `skill-benchmarker`.
 
 Example check: a future evaluator can build a baseline-vs-skill or

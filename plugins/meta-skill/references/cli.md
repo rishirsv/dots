@@ -39,9 +39,9 @@ The CLI is an orchestration layer. The workbench is authoritative.
 - `.<skill-name>/evals.json` defines the suite, defaults, candidates, and tasks.
 - `.<skill-name>/cases/<task-id>/` owns authored task content: visible `task.md`,
   fixtures, hidden validators, hidden expected outputs, and judge guidance.
-- `.<skill-name>/benchmarks/<benchmark-id>.json` owns recurring benchmark
-  decision profiles over stable task banks, candidates, gates, metrics, and
-  report policy.
+- `.<skill-name>/presets/<preset-name>.json` owns recurring eval presets: saved
+  task selection, candidate policy, repetitions, metrics, gates, and report
+  policy over a stable task bank.
 - `.<skill-name>/runs/<run-id>/` owns run plans, progress, results, grades,
   the run input snapshot, candidate snapshots, and per-trial artifacts.
 
@@ -91,19 +91,15 @@ Current top-level commands:
 <meta-skill-root>/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
 <meta-skill-root>/scripts/metaskill sessions extract <thread-id> [--target <skill-dir>] [--max-chars <n>] [--out <file>] [--json]
-<meta-skill-root>/scripts/metaskill eval lint [--suite <suite>] [--json]
+<meta-skill-root>/scripts/metaskill eval lint [--suite <suite>] [--preset <name-or-path>] [--json]
 <meta-skill-root>/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
-<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--candidates <ids>] [--split <name>] [--case <id>] [--type <type>] [--repetitions <n>] [--model <id>] [--no-grade] [--json]
+<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--candidates <ids>] [--split <name>] [--case <id>] [--type <type>] [--repetitions <n>] [--preset <name-or-path>] [--model <id>] [--no-grade] [--json]
 <meta-skill-root>/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
 <meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
 <meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--reviewer <name>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
-<meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--json]
-<meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
-<meta-skill-root>/scripts/metaskill benchmark lint --benchmark <profile> [--json]
-<meta-skill-root>/scripts/metaskill benchmark run --benchmark <profile> [--model <id>] [--json]
-<meta-skill-root>/scripts/metaskill benchmark report --run <run-id-or-path> [--benchmark <profile>] [--out <file>] [--json]
-<meta-skill-root>/scripts/metaskill benchmark history --benchmark <profile> [--json]
+<meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--preset <name-or-path>] [--json]
+<meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--preset <path>] [--out <file>] [--json]
 <meta-skill-root>/scripts/metaskill validate <skill-dir> [--json]
 <meta-skill-root>/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
 ```
@@ -209,8 +205,16 @@ Reads `cases[]`; warns on missing task sources, missing graders, missing
 reference material for regression/gate tasks, unbalanced trigger suites, and
 incomplete grader metadata.
 
+Pass `--preset <name-or-path>` to also lint a preset (task selection,
+candidate policy, gates, integrity, and report policy). A bare name resolves
+to `.<skill-name>/presets/<name>.json`; a path is used directly. Preset
+linting warns on unknown cases/candidates, no selected cases, one-sided
+trigger presets, selected tasks without graders, release presets without
+gates, and missing unknown-rate tracking.
+
 ```sh
 <meta-skill-root>/scripts/metaskill eval lint --suite .<skill-name>/evals.json --json
+<meta-skill-root>/scripts/metaskill eval lint --preset release --json
 ```
 
 ### `eval run`
@@ -221,8 +225,8 @@ debugging.
 
 Flags: `--suite` (defaults to `.<skill-name>/evals.json`), `--candidates
 <ids>`, `--split <name>`, `--case <id>` (repeatable/comma-sep), `--type
-<type>` (repeatable/comma-sep), `--repetitions <n>`, `--model <id>`,
-`--no-grade`.
+<type>` (repeatable/comma-sep), `--repetitions <n>`, `--preset
+<name-or-path>`, `--model <id>`, `--no-grade`.
 
 What it does: loads tasks and candidates, verifies each selected task already
 has a materialized task file, freezes the suite and each candidate's source
@@ -231,8 +235,21 @@ with only `task.md`, declared fixtures, and the candidate payload when
 present, executes each task/candidate/trial combination through Codex App
 Server, then grades (unless `--no-grade`).
 
+Pass `--preset <name-or-path>` to run the task and candidate slice selected by
+a saved preset instead of `--suite`/`--candidates`/`--case`/`--type`. A bare
+name resolves to `.<skill-name>/presets/<name>.json`; a path is used
+directly. Preflight-lints the preset first and hard-fails on unknown
+cases/candidates or no selection. Selects cases by `case_ids`, `types`,
+and/or `split`; selects candidates from the preset baseline and payload list;
+applies repetition overrides; records `preset_id` and `preset_path` in
+`run.json`.
+
 Output: summary with `run_id`, `run_dir`, trial count, and pass/fail counts.
 Exit `0` when all trials pass, `1` when one or more trials fail.
+
+```sh
+<meta-skill-root>/scripts/metaskill eval run --preset release --json
+```
 
 Run layout — the only layout that exists:
 
@@ -376,12 +393,18 @@ and non-binary examples. Writes a calibration artifact under
 Use to enumerate the runs in a workbench without listing run directories by
 hand.
 
-Flags: `--suite` (defaults to the current target's `.<skill-name>/evals.json`).
+Flags: `--suite` (defaults to the current target's `.<skill-name>/evals.json`),
+`--preset <name-or-path>` (filter to runs whose `run.json` records this
+preset's id or path).
 
 Finds every `runs/<run-id>/run.json` in the suite's workbench; summarizes run
 id, created time, trial counts by result status, grade count, and candidates.
 A run with an unreadable `run.json` is reported with an `error` field instead
 of failing the whole listing.
+
+```sh
+<meta-skill-root>/scripts/metaskill eval list --preset release --json
+```
 
 ### `eval report`
 
@@ -389,7 +412,7 @@ Use after `eval run` (which already grades) to read one run without manual
 file archaeology. The report is read-only and deterministic: it renders what
 the run files already contain and never re-runs or re-grades anything.
 
-Flags: `--run <run-id-or-path>`, `--out <file>`, `--json`.
+Flags: `--run <run-id-or-path>`, `--preset <path>`, `--out <file>`, `--json`.
 
 Renders: header (run id, suite, creation time, candidate sources with commit,
 dirty flag, and payload digest); runner completion per trial; behavioral
@@ -399,65 +422,21 @@ evidence pointers relative to the run directory; a needs-attention list
 (failed trials, planned trials with no result, ungraded trials, gate failures,
 invalid-JSON graders, `unknown_evidence` trials, missing token usage).
 
+When the run has a `preset_path` (or `--preset` overrides it), renders the
+preset scorecard instead: preset decision, preset path, suite path, run id,
+candidates; the metric families requested by the preset (behavior rates,
+unknown rate, `profile_gate_failures`/`profile_gate_unknown`, comparison
+counts, token usage); matching history rows when `report.include_history` is
+true; calibration artifacts when present; needs-attention rows; coverage
+limits and non-claims. `--preset <path>` is optional when `run.json` already
+records the preset.
+
 Output: Markdown to stdout by default; with `--out`, the report file plus a
 confirmation; with `--json` and no `--out`, the full structured report.
 
-### `benchmark lint`
-
-Use before running a benchmark profile.
-
-Flags: `--benchmark <profile>` (path to a benchmark JSON file, or a directory
-containing `benchmark.json`).
-
-Reads the profile; resolves the referenced suite, selected cases, candidates,
-metrics, repetition policy, gates, and report policy. Warns on unknown
-cases/candidates, no selected cases, one-sided trigger profiles, selected
-tasks without graders, release profiles without gates, and missing
-unknown-rate tracking.
-
 ```sh
-<meta-skill-root>/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
+<meta-skill-root>/scripts/metaskill eval report --run <run-dir> --preset .<skill-name>/presets/release.json
 ```
-
-### `benchmark run`
-
-Use to execute the task and candidate slice selected by a benchmark profile.
-Reuses `eval run`; it does not introduce a separate runner or grading system,
-and it **also grades by default**.
-
-Flags: `--benchmark <profile>`, `--model <id>`.
-
-Selects cases by `case_ids`, `types`, and/or `split`; selects candidates from
-the benchmark baseline and payload list; applies repetition overrides; records
-`benchmark_id` and `benchmark_profile` in `run.json`.
-
-Output: same run summary as `eval run`, plus the benchmark id and profile
-path.
-
-### `benchmark report`
-
-Use after `benchmark run` to render the decision-level benchmark scorecard.
-Use `eval report` when you need the full trial table.
-
-Flags: `--run <run-id-or-path>`, `--benchmark <profile>` (optional when
-`run.json` already records the profile), `--out <file>`, `--json`.
-
-Renders: benchmark decision, profile path, suite path, run id, candidates; the
-metric families requested by the profile (behavior rates, unknown rate,
-`profile_gate_failures`/`profile_gate_unknown`, comparison counts, token
-usage); matching benchmark history rows when `report.include_history` is
-true; calibration artifacts when present; needs-attention rows; coverage
-limits and non-claims.
-
-### `benchmark history`
-
-Use to list prior runs associated with a benchmark profile. This command
-lists matching runs; it does not compute trend deltas.
-
-Flags: `--benchmark <profile>`.
-
-Reads `runs/<run-id>/run.json`; returns runs whose `benchmark_id` or
-`benchmark_profile` matches the selected profile.
 
 ### `validate`
 
