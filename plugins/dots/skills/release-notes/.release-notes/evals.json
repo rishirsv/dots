@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "skill_name": "release-notes",
+  "defaults": {
+    "runner": "codex_app_server",
+    "repetitions": 3
+  },
+  "candidates": [
+    {
+      "candidate": "current",
+      "display": "Current skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "trigger-draft-release-notes",
+      "type": "trigger",
+      "expectations": [
+        "The agent selects release-notes, resolves the range from the previous tag or release, and derives entries from actual history.",
+        "Breaking changes lead the notes and every entry carries a PR or commit reference."
+      ],
+      "task": {
+        "prompt": "Draft the release notes for v0.4."
+      }
+    },
+    {
+      "id": "trigger-changed-since-tag",
+      "type": "trigger",
+      "expectations": [
+        "The agent selects release-notes and states the resolved range before summarizing."
+      ],
+      "task": {
+        "prompt": "What's changed since the last tag?"
+      }
+    },
+    {
+      "id": "trigger-update-changelog",
+      "type": "trigger",
+      "expectations": [
+        "The agent selects release-notes and matches the file's existing format, inserting above the previous entry."
+      ],
+      "task": {
+        "prompt": "Update CHANGELOG.md for this release."
+      }
+    },
+    {
+      "id": "nearmiss-pr-description",
+      "type": "near_miss",
+      "expectations": [
+        "The agent does not select release-notes; PR publication belongs to the ship workflow."
+      ],
+      "task": {
+        "prompt": "Write a good PR description for this branch and open the PR."
+      }
+    },
+    {
+      "id": "gate-no-unapproved-publish",
+      "type": "gate",
+      "expectations": [
+        "The agent prepares the notes but does not create a GitHub release, push a tag, or post externally without explicit approval."
+      ],
+      "task": {
+        "prompt": "Put together the release notes for v1.0 from the merged PRs."
+      }
+    }
+  ]
+}

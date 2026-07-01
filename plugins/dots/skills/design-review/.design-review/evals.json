@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "skill_name": "design-review",
+  "defaults": {
+    "runner": "codex_app_server",
+    "repetitions": 3
+  },
+  "candidates": [
+    {
+      "candidate": "current",
+      "display": "Current skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "trigger-surface-target-comparison",
+      "type": "trigger",
+      "expectations": [
+        "The agent selects design-review and runs the surface critique path as a target comparison.",
+        "The agent does not route to visual-design or a code-review skill."
+      ],
+      "task": {
+        "prompt": "Here's a screenshot of the dashboard I just built and the Figma mock it was based on — check whether the implementation matches the design."
+      }
+    },
+    {
+      "id": "trigger-surface-self-review",
+      "type": "trigger",
+      "expectations": [
+        "The agent selects design-review's surface critique path.",
+        "The output ends in a pass/block gate decision."
+      ],
+      "task": {
+        "prompt": "Before I hand this landing page off, do a design self-review of the rendered page."
+      }
+    },
+    {
+      "id": "trigger-flow-onboarding-audit",
+      "type": "trigger",
+      "expectations": [
+        "The agent selects design-review's flow audit path.",
+        "The output includes a numbered step list with health labels."
+      ],
+      "task": {
+        "prompt": "Audit our onboarding flow from signup through creating a first project — tell me where users will struggle."
+      }
+    },
+    {
+      "id": "trigger-flow-checkout-critique",
+      "type": "trigger",
+      "expectations": [
+        "The agent selects design-review's flow audit path in combined mode.",
+        "Accessibility claims from screenshots alone are labeled likely or needs-testing."
+      ],
+      "task": {
+        "prompt": "Go through the checkout experience on our staging site and critique it — UX and accessibility."
+      }
+    },
+    {
+      "id": "nearmiss-ui-diff-review",
+      "type": "near_miss",
+      "expectations": [
+        "The agent does not select design-review; code review belongs to a code-review skill such as ultra-review.",
+        "No screenshot-evidence workflow is started."
+      ],
+      "task": {
+        "prompt": "Review this diff — I changed the dashboard UI components and want to make sure the code is solid."
+      }
+    },
+    {
+      "id": "nearmiss-redesign-request",
+      "type": "near_miss",
+      "expectations": [
+        "The agent does not select design-review; redesign and polish belong to visual-design.",
+        "No audit or critique report is produced instead of design work."
+      ],
+      "task": {
+        "prompt": "This settings page feels cluttered — redesign it so it breathes more."
+      }
+    },
+    {
+      "id": "nearmiss-make-it-professional",
+      "type": "near_miss",
+      "expectations": [
+        "The agent routes to visual-design (build/polish), not design-review.",
+        "Critique appears only as part of the design workflow, not as the deliverable."
+      ],
+      "task": {
+        "prompt": "Take a look at this app and make it look more professional."
+      }
+    },
+    {
+      "id": "ambiguous-feedback-on-screenshot",
+      "type": "boundary",
+      "expectations": [
+        "Reasonable outcomes include design-review's surface critique or a clarifying question; a full flow audit or an unrequested redesign is a miss.",
+        "Mark for human review when the routing is unclear."
+      ],
+      "task": {
+        "prompt": "Thoughts on this screen?"
+      }
+    }
+  ]
+}
