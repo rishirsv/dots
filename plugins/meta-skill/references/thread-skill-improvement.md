@@ -17,6 +17,51 @@ Turn one thread into disciplined improvement evidence:
 The thread is evidence, not authority. A specialist still has to inspect the
 skill source and decide whether the thread shows a real skill defect.
 
+## When To Use Session Evidence
+
+Use Codex session evidence for:
+
+- reconstructing a specific Skill Doctor failure from a prior Codex thread
+- capturing a successful Codex workflow as source material for Skill Writer
+- checking repeated corrections only when the user asks for pattern mining
+- finding the exact prompt, tool sequence, approval point, or validation proof
+  that a later skill change depends on
+
+Do not use session mining for ordinary static reviews when the current files
+and user report are already enough. Do not browse unrelated sessions to hunt
+for patterns unless the user asks for broader pattern analysis.
+
+## Source Of Truth
+
+- Treat `~/.codex/state_5.sqlite` as the authoritative session index.
+- Use each thread row's `rollout_path` to inspect the full rollout JSONL
+  transcript.
+- Use `sessions extract` for existing-skill improvement handoffs; it is a
+  read-only packet generator, not a diagnosis or edit command.
+- Treat `~/.codex/session_index.jsonl` as an incomplete convenience index, not
+  the source of truth.
+- Memory summaries may support orientation, but they are not primary evidence
+  for a reported failure or reusable workflow.
+
+## Evidence Discipline
+
+When using session evidence:
+
+- cite concrete thread ids, timestamps, cwd values, and rollout paths when
+  possible
+- separate facts visible in the transcript from inferences about what caused
+  the behavior
+- inspect the rendered transcript before proposing a source edit or new skill
+  rule
+- prefer a concrete failure transcript, successful final slice, or repeated
+  correction over a one-off phrase
+- do not copy raw prompts, thread ids, local paths, model/provider names, or
+  transient errors into portable runtime guidance unless they are direct
+  runtime dependencies
+- do not edit memory files from this workflow
+- do not patch skill source, instruction files, or project docs from session
+  evidence unless the user explicitly approves a concrete source change
+
 ## Locate Evidence
 
 Prefer a live thread tool when the user gave a current app thread, title, or URL.
@@ -27,10 +72,19 @@ When local session files are the available source, use the shared CLI:
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> --max-chars 12000
 ```
 
+Useful filters:
+
+```sh
+<meta-skill-root>/scripts/metaskill sessions list --cwd "<project-root>" --days 30 --archived all
+<meta-skill-root>/scripts/metaskill sessions list --query "<skill name or failure phrase>" --json
+<meta-skill-root>/scripts/metaskill sessions show <thread-id> --json
+```
+
 For the specific improvement handoff, use:
 
 ```sh
 <meta-skill-root>/scripts/metaskill sessions extract <thread-id> --target <skill-dir>
+<meta-skill-root>/scripts/metaskill sessions extract <thread-id> --target <skill-dir> --json
 ```
 
 The extractor is read-only. It produces a handoff packet with thread metadata,
@@ -111,6 +165,38 @@ Turn thread prompts into visible `task.md` text only when they are realistic use
 tasks. Keep expected behavior, judge guidance, validators, and handoff metadata
 hidden in the suite. Mark single-thread seeds as directional until a human
 accepts them as fair gating tasks.
+
+## Extract Only What Matters
+
+For a Skill Doctor diagnosis, extract:
+
+- the user's expected behavior
+- the actual agent behavior
+- the prompt or turn where the failure appeared
+- relevant tool calls, files, approvals, or validation output
+- the smallest likely source of the skill failure
+
+For a thread-to-skill improvement handoff, extract:
+
+- the target skill path or the blocking ambiguity about which skill is in
+  scope
+- the thread facts needed for evidence provenance
+- observed user request and assistant behavior
+- the expected-vs-actual behavior a specialist can inspect
+- prompts or failure cases that could become eval seeds
+- approval boundary and coverage limits
+
+For Skill Writer session capture, extract:
+
+- the recurring job, not just the one-off result
+- real trigger language and nearest non-trigger boundary
+- the workflow spine that succeeded
+- user corrections, gates, and failure shields
+- essential tools, commands, resources, and validation proof
+- output shape and stop condition
+
+Keep heavy provenance in the workbench or diagnosis notes. Put only
+generalized runtime behavior into portable skill payloads.
 
 ## Closeout
 

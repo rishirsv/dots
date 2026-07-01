@@ -25,7 +25,7 @@ ALLOWED_GATE_KEYS = {"metric", "required_label", "grader", "scope", "candidate",
 ALLOWED_GATE_LABELS = {"pass", "partial", "fail", "unknown"}
 ALLOWED_GATE_SCOPES = {"payloads", "baseline", "all"}
 ALLOWED_INTEGRITY_KEYS = {"run_null_candidate_when_possible", "hidden_files_must_not_be_staged"}
-ALLOWED_REPORT_KEYS = {"include_history", "include_coverage_limits"}
+ALLOWED_REPORT_KEYS = {"include_history"}
 
 
 def benchmark_path(raw):
@@ -252,7 +252,7 @@ def benchmark_lint(raw_benchmark):
     }
 
 
-def benchmark_run(raw_benchmark, *, runner="auto", model=None):
+def benchmark_run(raw_benchmark, *, model=None):
     loaded = load_benchmark(raw_benchmark)
     manifest = load_manifest(loaded["suite"])
     profile = loaded["profile"]
@@ -272,7 +272,6 @@ def benchmark_run(raw_benchmark, *, runner="auto", model=None):
         raise CliError("benchmark selected no candidates", 2)
     args = SimpleNamespace(
         suite=str(loaded["suite"]),
-        runner=runner,
         candidates=",".join(candidate_ids),
         split=None,
         case=case_ids,
@@ -321,7 +320,6 @@ def _filter_report(report, manifest, profile):
         "failed": sum(1 for trial in trials if trial.get("verdict") == "failed"),
         "inconclusive": sum(1 for trial in trials if trial.get("verdict") == "inconclusive"),
         "ungraded": sum(1 for trial in trials if trial.get("verdict") == "ungraded"),
-        "gate_failed": 0,
     }
     return filtered
 
@@ -468,11 +466,10 @@ def build_benchmark_report(raw_run, raw_benchmark=None):
     run_dir = Path(report["run_dir"])
     run = read_json(run_dir / "run.json")
     loaded = _load_profile_for_report(raw_benchmark, run)
-    profile = loaded["profile"] if loaded else None
-    profile_path = str(loaded["path"]) if loaded else raw_benchmark
-    if loaded:
-        manifest = load_manifest(loaded["suite"])
-        report = _filter_report(report, manifest, profile)
+    profile = loaded["profile"]
+    profile_path = str(loaded["path"])
+    manifest = load_manifest(loaded["suite"])
+    report = _filter_report(report, manifest, profile)
     counts = _behavior_counts(report)
     total = len(report["trials"])
     passed = counts.get("pass", 0)
@@ -483,20 +480,19 @@ def build_benchmark_report(raw_run, raw_benchmark=None):
     profile_gates = _profile_gate_rows(report, profile)
     profile_gate_failures = [row for row in profile_gates if row.get("status") == "fail"]
     profile_gate_unknown = [row for row in profile_gates if row.get("status") in {"unknown", "invalid"}]
-    report_policy = (profile or {}).get("report") or {}
+    report_policy = profile.get("report") or {}
     calibration = _calibration_rows(report)
     return {
         "ok": True,
-        "benchmark": (profile or {}).get("id") or run.get("benchmark_id"),
+        "benchmark": profile.get("id") or run.get("benchmark_id"),
         "benchmark_profile": profile_path,
-        "decision": (profile or {}).get("decision"),
-        "metrics": (profile or {}).get("metrics") or sorted(ALLOWED_METRICS),
+        "decision": profile.get("decision"),
+        "metrics": profile.get("metrics") or sorted(ALLOWED_METRICS),
         "run": report,
         "scorecard": {
             "behavior_pass_rate": round(passed / total, 4) if total else None,
             "behavior_fail_rate": round(failed / total, 4) if total else None,
             "unknown_rate": round(unknown / total, 4) if total else None,
-            "gate_failures": report["totals"]["gate_failed"],
             "trials": total,
             **usage,
             **comparison,
@@ -506,7 +502,7 @@ def build_benchmark_report(raw_run, raw_benchmark=None):
         "profile_gates": profile_gates,
         "history": _history_rows(loaded) if report_policy.get("include_history") else [],
         "calibration": calibration,
-        "calibration_policy": (profile or {}).get("calibration"),
+        "calibration_policy": profile.get("calibration"),
         "coverage_limits": [
             "Benchmark scores describe only the selected tasks, candidates, graders, and runner environment.",
             "Runner completion is not answer quality.",
@@ -532,7 +528,6 @@ def render_benchmark_markdown(model):
     if "gate_failures" in metrics:
         score_rows.extend(
             [
-                ["Gate failures", md_cell(score["gate_failures"])],
                 ["Profile gate failures", md_cell(score["profile_gate_failures"])],
                 ["Profile gate unknown", md_cell(score["profile_gate_unknown"])],
             ]

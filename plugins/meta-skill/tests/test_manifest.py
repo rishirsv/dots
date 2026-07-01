@@ -20,7 +20,7 @@ def write_json(path, data):
 
 
 class ManifestTests(unittest.TestCase):
-    def test_legacy_eval_rows_are_rejected(self):
+    def test_legacy_eval_rows_are_ignored(self):
         with tempfile.TemporaryDirectory() as tmp:
             suite = Path(tmp) / ".demo" / "evals.json"
             write_json(
@@ -41,12 +41,11 @@ class ManifestTests(unittest.TestCase):
                 },
             )
 
-            with self.assertRaises(CliError) as ctx:
-                load_manifest(suite)
+            manifest = load_manifest(suite)
 
-            self.assertIn("legacy evals[]", ctx.exception.message)
+            self.assertEqual(manifest.get("cases", []), [])
 
-    def test_path_task_seed_is_rejected(self):
+    def test_path_task_seed_is_ignored_alongside_path(self):
         case = {"id": "case-a", "task": {"path": "task.md", "seed": "Seed text."}}
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -61,10 +60,9 @@ class ManifestTests(unittest.TestCase):
                 },
             )
 
-            with self.assertRaises(CliError) as ctx:
-                load_manifest(suite)
+            manifest = load_manifest(suite)
 
-            self.assertIn("task.seed is no longer supported", ctx.exception.message)
+            self.assertEqual(manifest["cases"][0]["task"]["path"], "task.md")
 
     def test_case_task_info_has_no_seed_field(self):
         case = {"id": "case-a", "task": {"path": "task.md"}}

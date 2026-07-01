@@ -79,7 +79,7 @@ Good trial prompts are:
 - narrow enough that the child can finish and report a clear result
 
 For source-derived skills, use the example-matching dimensions in
-`skill-writer/references/source-distillation.md`: writing/register,
+[../skills/skill-writer/references/source-distillation.md](../skills/skill-writer/references/source-distillation.md): writing/register,
 structure/output contract, evidence discipline, domain judgment, and
 process/tool fidelity.
 

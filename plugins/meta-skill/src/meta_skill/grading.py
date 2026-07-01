@@ -138,7 +138,7 @@ def read_if_exists(path, limit=20000):
     return None
 
 
-def generated_expectation_judge_guidance(expectations):
+def generated_expectation_judge_guidance():
     return (
         "Grade the agent output against the listed expectations. "
         "Each expectation should pass only when specific evidence shows genuine task completion. "
@@ -146,7 +146,7 @@ def generated_expectation_judge_guidance(expectations):
     )
 
 
-def model_judge_grade(run_dir, run, result, root, generation_id, judge_path=None, model=None, grader=None, expectations=None, expected=None, case=None):
+def model_judge_grade(run_dir, run, result, root, generation_id, judge_path=None, model=None, grader=None, expectations=None, expected=None):
     grader = grader or {}
     expectations = expectations or []
     task_path = root / "task.md"
@@ -154,7 +154,7 @@ def model_judge_grade(run_dir, run, result, root, generation_id, judge_path=None
     output_text = Path(response_path).read_text() if response_path and Path(response_path).exists() else ""
     event_path = run_dir / "trials" / result["trial_id"] / f"judge-{generation_id}.jsonl"
     events_text = read_if_exists(result.get("events_path"), limit=12000)
-    judge_guidance = judge_path.read_text() if judge_path and judge_path.exists() else generated_expectation_judge_guidance(expectations)
+    judge_guidance = judge_path.read_text() if judge_path and judge_path.exists() else generated_expectation_judge_guidance()
     expected_text = read_if_exists(expected)
     detail = judge_output(
         judge_guidance=judge_guidance,
@@ -279,7 +279,8 @@ def grade_run(raw_run, *, rebuild_summary=True):
                 rows.append(code_validator_grade(run, result, validator, expected, root, generation_id, grader))
                 runnable = True
             elif grader.get("kind") == "model":
-                judge_path = grader_path(root, grader, "judge") if grader.get("path") else next((path for path in (root / "judge.md",) if path.exists()), None)
+                default_judge = root / "judge.md"
+                judge_path = grader_path(root, grader, "judge") if grader.get("path") else (default_judge if default_judge.exists() else None)
                 rows.append(
                     model_judge_grade(
                         run_dir,
@@ -291,7 +292,6 @@ def grade_run(raw_run, *, rebuild_summary=True):
                         grader=grader,
                         expectations=case.get("expectations") or [],
                         expected=expected,
-                        case=case,
                     )
                 )
                 runnable = True

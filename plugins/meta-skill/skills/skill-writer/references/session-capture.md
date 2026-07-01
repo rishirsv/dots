@@ -61,7 +61,7 @@ recurring job in the authoring note.
 ## Locate Thread Evidence
 
 For Codex local session evidence, read
-[codex-session-evidence.md](../../../references/codex-session-evidence.md). Use
+[thread-skill-improvement.md](../../../references/thread-skill-improvement.md). Use
 the shared Meta-Skill CLI rather than worker-local scripts:
 
 ```sh

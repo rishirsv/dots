@@ -110,8 +110,6 @@ def calibrate_run(raw_run, metric=None):
         "human_unknown": len(human_escalations),
         "model_unknown_rate": _safe_rate(len(model_escalations), len(pairs)),
         "human_unknown_rate": _safe_rate(len(human_escalations), len(pairs)),
-        "model_escalation_rate": _safe_rate(len(model_escalations), len(pairs)),
-        "human_escalation_rate": _safe_rate(len(human_escalations), len(pairs)),
         "non_binary": len(non_binary),
     }
     artifact = {

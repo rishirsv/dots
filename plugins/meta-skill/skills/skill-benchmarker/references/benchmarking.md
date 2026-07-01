@@ -258,10 +258,11 @@ Use the central CLI:
 ```sh
 <meta-skill-root>/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
 <meta-skill-root>/scripts/metaskill benchmark run --benchmark .<skill-name>/benchmarks/core.json --json
-<meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> --json
 <meta-skill-root>/scripts/metaskill benchmark report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
 <meta-skill-root>/scripts/metaskill benchmark history --benchmark .<skill-name>/benchmarks/core.json --json
 ```
 
-Run `eval report` when you need the full trial table. Run `benchmark report`
-when you need the decision-level scorecard for a benchmark profile.
+`benchmark run` grades automatically; do not run a separate `eval grade` step
+after it (that would double-grade the run). Run `eval report` when you need
+the full trial table. Run `benchmark report` when you need the decision-level
+scorecard for a benchmark profile.

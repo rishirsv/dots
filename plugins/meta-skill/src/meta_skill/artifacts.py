@@ -18,14 +18,6 @@ def candidate_source(candidate):
     }
 
 
-def artifact_capture_stub():
-    return {
-        "artifact_capture_status": "not_enabled",
-        "artifact_manifest_path": None,
-        "artifact_refs": [],
-    }
-
-
 def trial_record(
     *,
     trial_id,
@@ -66,7 +58,6 @@ def trial_record(
         "response_path": response_path,
         "usage": usage,
         "error": error,
-        **artifact_capture_stub(),
     }
 
 
@@ -77,7 +68,6 @@ def thread_evidence(
     turn_id=None,
     thread_persistence=None,
     response_text=None,
-    final_response=None,
     final_source="none",
     items_count=0,
     usage=None,
@@ -91,7 +81,7 @@ def thread_evidence(
         "thread_id": thread_id,
         "turn_id": turn_id,
         "thread_persistence": thread_persistence,
-        "response_text": response_text if response_text is not None else final_response,
+        "response_text": response_text,
         "final_source": final_source,
         "items_count": items_count,
         "usage": usage,

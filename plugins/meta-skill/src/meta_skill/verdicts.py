@@ -14,9 +14,7 @@ def normalize_runtime_status(value):
 
 
 def normalize_grade_status(value):
-    if value in GRADE_STATUSES:
-        return value
-    return "unknown" if value else "unknown"
+    return value if value in GRADE_STATUSES else "unknown"
 
 
 def require_runtime_status(row):

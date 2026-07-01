@@ -84,7 +84,7 @@ recommendation.
 
 When the reported failure happened in a prior Codex thread, or the user points
 to a thread id/title as evidence, read
-[codex-session-evidence.md](../../../references/codex-session-evidence.md).
+[thread-skill-improvement.md](../../../references/thread-skill-improvement.md).
 Use the Meta-Skill session commands to locate and render the relevant transcript:
 
 ```sh
