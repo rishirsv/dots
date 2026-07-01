@@ -1,4 +1,4 @@
-"""Freeze selected eval inputs into a run-local spec."""
+"""Freeze selected eval inputs into a run-local input snapshot."""
 
 import hashlib
 import json
@@ -109,9 +109,9 @@ def validate_grading_inputs(cases, *, grading_enabled):
         raise CliError(f"graded prompt evals require expectations or graders: {', '.join(missing)}", 2)
 
 
-def freeze_eval_spec(manifest, suite, workbench, run_dir, cases, candidates, *, grading_enabled=True):
+def freeze_run_inputs(manifest, suite, workbench, run_dir, cases, candidates, *, grading_enabled=True):
     validate_grading_inputs(cases, grading_enabled=grading_enabled)
-    spec_dir = run_dir / "eval-spec"
+    spec_dir = run_dir / "inputs"
     cases_dir = spec_dir / "cases"
     selected_case_ids = [case["id"] for case in cases]
     selected_candidate_ids = [candidate["candidate"] for candidate in candidates]

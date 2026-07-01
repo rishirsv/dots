@@ -21,7 +21,7 @@ from .manifest import (
     trial_prompt,
     workbench_from_suite,
 )
-from .resolved_suite import freeze_eval_spec, validate_grading_inputs
+from .run_inputs import freeze_run_inputs, validate_grading_inputs
 from .staging import stage_workspace
 from .summary import build_summary, summary_exit_code
 from .verdicts import normalize_runtime_status
@@ -189,7 +189,7 @@ def run_eval(args):
         snapshot_candidate(run_dir, resolve_candidate(project, workbench, rid, manifest, candidate))
         for candidate in selected_candidate_defs
     ]
-    frozen_suite = freeze_eval_spec(
+    frozen_suite = freeze_run_inputs(
         manifest,
         suite,
         workbench,
@@ -201,7 +201,7 @@ def run_eval(args):
     frozen_cases = {}
     for case in frozen_suite["cases"]:
         frozen_case = dict(case)
-        frozen_case["case_root"] = str(run_dir / "eval-spec" / "cases" / case["id"])
+        frozen_case["case_root"] = str(run_dir / "inputs" / "cases" / case["id"])
         frozen_cases[case["id"]] = frozen_case
     plan = plan_trials(cases, candidate_infos, lambda case: repetition_count(case, args, defaults))
     benchmark = getattr(args, "benchmark", None) or {}
@@ -223,7 +223,7 @@ def run_eval(args):
         "selected_candidates": [candidate["candidate"] for candidate in selected_candidate_defs],
         "repetitions": {case["id"]: repetition_count(case, args, defaults) for case in cases},
         "suite_digest": frozen_suite["suite_digest"],
-        "eval_spec_path": str(run_dir / "eval-spec" / "suite.json"),
+        "inputs_path": str(run_dir / "inputs" / "suite.json"),
         "candidate_snapshot_paths": {
             candidate["candidate"]: candidate.get("snapshot_json_path") for candidate in candidate_infos
         },
