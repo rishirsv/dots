@@ -218,8 +218,10 @@ class CliContractTests(unittest.TestCase):
 
     def test_help_surfaces(self):
         run_cli("--help")
-        for group in ("doctor", "init", "status", "case", "sessions", "eval", "validate", "package"):
+        for group in ("doctor", "init", "status", "case", "sessions", "eval", "docs", "validate", "package"):
             run_cli(group, "--help")
+        self.assertIn("--check", run_cli("docs", "emit-cli", "--help").stdout)
+        self.assertIn("--run", run_cli("eval", "verify-run", "--help").stdout)
         run_cli("benchmark", "--help", expect=(2,))
         run_cli("workbench", "--help", expect=(2,))
         eval_run_help = run_cli("eval", "run", "--help").stdout
