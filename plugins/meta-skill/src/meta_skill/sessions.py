@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .errors import CliError
+from .workbench_paths import parse_frontmatter
 
 
 @dataclass(frozen=True)
@@ -142,9 +143,7 @@ def show_thread(thread_id: str, *, max_chars: int) -> dict[str, Any]:
     }
 
 
-def extract_thread_improvement(thread_id: str, *, target: str | None = None, mode: str = "improve", max_chars: int = 12000) -> dict[str, Any]:
-    if mode != "improve":
-        raise CliError("--mode currently supports only improve", 2)
+def extract_thread_improvement(thread_id: str, *, target: str | None = None, max_chars: int = 12000) -> dict[str, Any]:
     thread = find_thread(thread_id)
     path = Path(thread.rollout_path).expanduser()
     missing_rollout = not path.exists()
@@ -183,7 +182,6 @@ def extract_thread_improvement(thread_id: str, *, target: str | None = None, mod
     markdown = render_thread_improvement_handoff(packet)
     return {
         "ok": not missing_rollout,
-        "mode": mode,
         "thread": thread.as_dict(),
         "rollout_path": str(path),
         "target": target_info,
@@ -435,7 +433,7 @@ def skill_target_info(raw_target: str | None) -> dict[str, Any]:
     skill_md = path / "SKILL.md" if path.is_dir() else path
     if not skill_md.exists():
         return {"path": str(path), "skill_md": str(skill_md), "found": False, "name": None, "description": None}
-    frontmatter = parse_skill_frontmatter(skill_md)
+    frontmatter = parse_frontmatter(skill_md)
     return {
         "path": str(skill_md.parent),
         "skill_md": str(skill_md),
@@ -443,29 +441,6 @@ def skill_target_info(raw_target: str | None) -> dict[str, Any]:
         "name": frontmatter.get("name"),
         "description": frontmatter.get("description"),
     }
-
-
-def parse_skill_frontmatter(skill_md: Path) -> dict[str, Any]:
-    text = skill_md.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return {}
-    parts = text.split("---", 2)
-    if len(parts) < 3:
-        return {}
-    raw = parts[1]
-    try:
-        import yaml
-
-        parsed = yaml.safe_load(raw)
-        return parsed if isinstance(parsed, dict) else {}
-    except Exception:
-        out = {}
-        for line in raw.splitlines():
-            if ":" not in line or line[:1].isspace():
-                continue
-            key, value = line.split(":", 1)
-            out[key.strip()] = value.strip().strip("\"'")
-        return out
 
 
 def _thread_from_row(row: tuple[Any, ...]) -> SessionThread:

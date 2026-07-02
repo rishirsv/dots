@@ -90,7 +90,6 @@ def command_sessions_extract(args):
     result = extract_thread_improvement(
         args.thread_id,
         target=args.target,
-        mode=args.mode,
         max_chars=args.max_chars,
     )
     if args.out:
@@ -196,7 +195,7 @@ def command_benchmark_lint(args):
 
 
 def command_benchmark_run(args):
-    result = benchmark_run(args.benchmark, runner=args.runner, model=args.model)
+    result = benchmark_run(args.benchmark, model=args.model)
     emit(result, args.json)
     return 0 if result["ok"] else 1
 
@@ -269,7 +268,6 @@ def build_parser():
     sessions_extract = sessions_sub.add_parser("extract", help="Build a read-only thread-to-skill improvement handoff")
     sessions_extract.add_argument("thread_id")
     sessions_extract.add_argument("--target", help="Target skill directory or SKILL.md")
-    sessions_extract.add_argument("--mode", choices=["improve"], default="improve")
     sessions_extract.add_argument("--max-chars", type=int, default=12000)
     sessions_extract.add_argument("--out", help="Write the Markdown handoff to this file instead of stdout")
     sessions_extract.add_argument("--json", action="store_true")
@@ -290,7 +288,6 @@ def build_parser():
 
     run = eval_sub.add_parser("run", help="Run selected eval trials")
     run.add_argument("--suite")
-    run.add_argument("--runner", choices=["auto", "codex_app_server"], default="auto")
     run.add_argument("--candidates")
     run.add_argument("--split")
     run.add_argument("--case", action="append", help="Run only this case id; repeat or comma-separate for several")
@@ -351,7 +348,6 @@ def build_parser():
 
     benchmark_run_parser = benchmark_sub.add_parser("run", help="Run trials selected by a benchmark profile")
     benchmark_run_parser.add_argument("--benchmark", required=True)
-    benchmark_run_parser.add_argument("--runner", choices=["auto", "codex_app_server"], default="auto")
     benchmark_run_parser.add_argument("--model")
     benchmark_run_parser.add_argument("--json", action="store_true")
     benchmark_run_parser.set_defaults(func=command_benchmark_run)

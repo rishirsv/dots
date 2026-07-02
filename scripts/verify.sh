@@ -18,7 +18,7 @@ echo "==> Package plugins"
 scripts/package-plugins.sh
 
 echo "==> Generated Meta-Skill CLI smoke test"
-META_SKILL_CACHE_DIR="$ROOT/dist/.meta-skill-cache" \
+PYTHONDONTWRITEBYTECODE=1 META_SKILL_CACHE_DIR="$ROOT/dist/.meta-skill-cache" \
   "$ROOT/dist/codex/plugins/meta-skill/scripts/metaskill" doctor --json >/dev/null
 
 echo "==> Meta-Skill validation"
@@ -37,6 +37,34 @@ echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --claude
 
 echo "==> Meta-Skill tests"
-python3 -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
+find_verify_python() {
+  if [[ -n "${META_SKILL_PYTHON:-}" ]]; then
+    printf '%s\n' "$META_SKILL_PYTHON"
+    return 0
+  fi
+  local name candidate
+  for name in python3.13 python3.12 python3.11 python3.10 python3; do
+    if command -v "$name" >/dev/null 2>&1; then
+      candidate=$(command -v "$name")
+      if "$candidate" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' 2>/dev/null; then
+        printf '%s\n' "$candidate"
+        return 0
+      fi
+    fi
+  done
+  local codex_python="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+  if [[ -x "$codex_python" ]] && "$codex_python" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' 2>/dev/null; then
+    printf '%s\n' "$codex_python"
+    return 0
+  fi
+  return 1
+}
+
+VERIFY_PYTHON=$(find_verify_python) || {
+  echo "error: unittest step requires Python 3.10+; set META_SKILL_PYTHON to a compatible interpreter." >&2
+  exit 2
+}
+
+"$VERIFY_PYTHON" -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
 
 echo "Verify passed"

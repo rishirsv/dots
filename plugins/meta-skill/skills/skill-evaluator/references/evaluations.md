@@ -259,14 +259,16 @@ labels.
 A judge is only as reliable as its judge guidance. Put semantic criteria in
 `judge.md`, not in `task.md`.
 
-For each dimension give discrete level descriptions, not a bare 0-3:
+For each dimension give discrete, label-anchored level descriptions, not a
+bare numeric scale. The judge emits one of `pass`, `partial`, `fail`, or
+`unknown`, plus an optional 0-to-1 score:
 
-| Score | Meaning |
+| Label | Meaning |
 |---|---|
-| 3 | Meets the criterion fully; usable as-is. |
-| 2 | Usable with a concrete, named weakness. |
-| 1 | Weak or risky; a real gap an agent would hit. |
-| 0 | Missing, wrong, or unsafe for the dimension. |
+| `pass` | Meets the criterion fully, with concrete evidence; usable as-is. |
+| `partial` | Useful but has a localized, non-gating weakness or gap. |
+| `fail` | Wrong, incomplete, unsafe, or misses a required criterion. |
+| `unknown` | Evidence is insufficient, contradictory, too subjective, or underspecified to judge fairly. |
 
 Have the judge write reasoning before the score and cite the outcome it graded.
 For a skill, default quality dimensions cover correctness, completeness against
@@ -327,9 +329,10 @@ A no-skill baseline uses `source.kind: "none"`:
 Do not fake a no-skill baseline by staging a different skill payload. The
 no-skill candidate runs the same task with no `skill/` payload staged.
 
-`runs/<run-id>/candidates/<candidate>/<trial-id>/response.md` stores the
-captured agent response. Never store
-source copies there.
+`runs/<run-id>/trials/<trial-id>/response.md` stores the captured agent
+response. `runs/<run-id>/candidates/<candidate>/snapshot/` holds the frozen
+copy of the candidate source payload used by the run. Never store response
+copies in the snapshot folder.
 
 When a run contains a no-skill candidate and at least one payload candidate,
 `eval report` adds per-task comparison rows:

@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 from .app_server.policy import APP_SERVER_APPROVAL_POLICY, APP_SERVER_SANDBOX
 from .app_server.trial import app_server_run
-from .artifacts import artifact_capture_stub, candidate_source, thread_evidence, trial_record
+from .artifacts import candidate_source, thread_evidence, trial_record
 from .candidates import resolve_candidate, snapshot_candidate
 from .errors import CliError
 from .ids import run_id, utc_now
@@ -25,15 +25,6 @@ from .resolved_suite import freeze_eval_spec, validate_grading_inputs
 from .staging import stage_workspace
 from .summary import build_summary, summary_exit_code
 from .verdicts import normalize_runtime_status
-
-
-def resolve_runner(raw_runner, defaults):
-    runner = raw_runner
-    if runner == "auto":
-        runner = defaults.get("runner") or "codex_app_server"
-    if runner != "codex_app_server":
-        raise CliError(f"unknown runner: {runner}", 2)
-    return runner
 
 
 def plan_trials(cases, candidates, repetitions):
@@ -60,20 +51,6 @@ def repetition_count(case, args, defaults):
     )
 
 
-def runner_sandbox(runner):
-    return APP_SERVER_SANDBOX
-
-
-def runner_approval_policy(runner):
-    return APP_SERVER_APPROVAL_POLICY
-
-
-def runner_thread_persistence(runner, detail=None):
-    if detail and detail.get("thread_persistence"):
-        return detail["thread_persistence"]
-    return "persistent"
-
-
 def trial_paths(trial_id, run_dir):
     trial_dir = run_dir / "trials" / trial_id
     return {
@@ -85,7 +62,7 @@ def trial_paths(trial_id, run_dir):
     }
 
 
-def queued_record(row, runner, run_dir):
+def queued_record(row, run_dir):
     trial_id = row["trial_id"]
     paths = trial_paths(trial_id, run_dir)
     return {
@@ -95,17 +72,16 @@ def queued_record(row, runner, run_dir):
         "repetition": row["index"],
         "planned_status": "skipped" if row.get("skip") else "queued",
         "cwd": str(paths["workspace"]),
-        "thread_persistence": runner_thread_persistence(runner),
-        "sandbox": runner_sandbox(runner),
-        "runtime_approval_policy": runner_approval_policy(runner),
+        "thread_persistence": "persistent",
+        "sandbox": APP_SERVER_SANDBOX,
+        "runtime_approval_policy": APP_SERVER_APPROVAL_POLICY,
         "events_path": str(paths["event"]),
         "evidence_path": str(paths["evidence"]),
         "response_path": str(paths["response"]),
-        **artifact_capture_stub(),
     }
 
 
-def run_trial(row, runner, run_dir, frozen_cases, model):
+def run_trial(row, run_dir, frozen_cases, model):
     trial_id = row["trial_id"]
     case = row["case"]
     candidate = row["candidate"]
@@ -137,7 +113,7 @@ def run_trial(row, runner, run_dir, frozen_cases, model):
         output_path.write_text("")
     completed = time.time()
     final_response = output_path.read_text() if output_path.exists() else ""
-    persistence = runner_thread_persistence(runner, detail)
+    persistence = detail.get("thread_persistence") or "persistent"
     evidence = thread_evidence(
         trial_id=trial_id,
         thread_id=detail.get("thread_id"),
@@ -162,8 +138,8 @@ def run_trial(row, runner, run_dir, frozen_cases, model):
         turn_id=detail.get("turn_id"),
         thread_persistence=persistence,
         cwd=detail.get("workspace") or str(paths["workspace"]),
-        sandbox=detail.get("sandbox") or runner_sandbox(runner),
-        runtime_approval_policy=detail.get("runtime_approval_policy") or runner_approval_policy(runner),
+        sandbox=detail.get("sandbox") or APP_SERVER_SANDBOX,
+        runtime_approval_policy=detail.get("runtime_approval_policy") or APP_SERVER_APPROVAL_POLICY,
         sdk_version=detail.get("sdk_version"),
         runtime_version=detail.get("runtime_version"),
         events_path=str(event_path),
@@ -199,7 +175,6 @@ def run_eval(args):
     workbench = workbench_from_suite(suite)
     project = project_from_suite(suite)
     defaults = manifest.get("defaults") or {}
-    runner = resolve_runner(args.runner, defaults)
     cases = select_cases(manifest, args.split)
     cases = filter_cases(cases, case_ids=selected_case_args(args), case_types=selected_type_args(args))
     if not cases:
@@ -231,9 +206,9 @@ def run_eval(args):
     plan = plan_trials(cases, candidate_infos, lambda case: repetition_count(case, args, defaults))
     benchmark = getattr(args, "benchmark", None) or {}
     runner_config = {
-        "runner": runner,
-        "sandbox": runner_sandbox(runner),
-        "runtime_approval_policy": runner_approval_policy(runner),
+        "runner": "codex_app_server",
+        "sandbox": APP_SERVER_SANDBOX,
+        "runtime_approval_policy": APP_SERVER_APPROVAL_POLICY,
         "grading_mode": "expectations" if grading_enabled else "none",
     }
     model_config = {"model": args.model}
@@ -254,7 +229,7 @@ def run_eval(args):
         },
         **({"benchmark_id": benchmark.get("id"), "benchmark_profile": benchmark.get("profile")} if benchmark else {}),
         "candidates": [candidate_source(candidate) for candidate in candidate_infos],
-        "trials": [queued_record(row, runner, run_dir) for row in plan],
+        "trials": [queued_record(row, run_dir) for row in plan],
     }
     write_json(run_dir / "run.json", run_model)
     append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "run_id": rid, "status": "created"})
@@ -262,7 +237,7 @@ def run_eval(args):
         append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "queued"})
     for row in plan:
         append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "running"})
-        result = run_trial(row, runner, run_dir, frozen_cases, args.model)
+        result = run_trial(row, run_dir, frozen_cases, args.model)
         append_jsonl(run_dir / "results.jsonl", result)
         append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": result["runtime_status"]})
     grade_result = None

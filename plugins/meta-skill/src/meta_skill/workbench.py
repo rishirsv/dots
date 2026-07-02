@@ -85,8 +85,6 @@ def materialize_cases(raw_suite, force=False):
         task_path = root / task["path"]
         if force or not task_path.exists():
             text = "TODO: author the visible task for this case.\n"
-            if not text.endswith("\n"):
-                text += "\n"
             changes.append({"action": "write" if not task_path.exists() else "overwrite", "path": str(task_path)})
             task_path.parent.mkdir(parents=True, exist_ok=True)
             task_path.write_text(text)

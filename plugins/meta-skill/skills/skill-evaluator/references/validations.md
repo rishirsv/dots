@@ -90,11 +90,15 @@ global state:
 
 ```text
 validate.ts \
-  --output runs/<run-id>/candidates/<candidate>/<trial-id>/response.md \
-  --expected cases/<task-id>/expected.json \
-  --events runs/<run-id>/events/<trial-id>.jsonl \
+  --output runs/<run-id>/trials/<trial-id>/response.md \
+  --events runs/<run-id>/trials/<trial-id>/events.jsonl \
+  --expected runs/<run-id>/eval-spec/cases/<task-id>/expected.json \
   --json
 ```
+
+Validators run against the frozen `eval-spec/` copy of the case, not the
+authored `cases/<task-id>/` source, so grading always matches the suite
+version the trial actually ran against.
 
 It should print a compact JSON object:
 

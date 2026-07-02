@@ -1,6 +1,6 @@
 ---
 name: skill-writer
-description: "Use when creating a reusable agent skill from an idea, repeated workflow, example output, Codex thread, or source material. Designs the trigger contract, runtime guidance, resources, metadata, and validation handoff. Not for improving, diagnosing, or evaluating an existing skill, or for packaging, installing, publishing, or syncing skills."
+description: "Use when creating a reusable agent skill from an idea, repeated workflow, example output, Codex thread, or source material. Designs the trigger contract, runtime guidance, resources, metadata, and validation handoff. Not for improving, diagnosing, or evaluating an existing skill, or for installing, publishing, or syncing skills."
 ---
 
 # Skill Writer

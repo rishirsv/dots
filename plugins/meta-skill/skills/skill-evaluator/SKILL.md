@@ -80,15 +80,17 @@ profiles may be tracked; generated run output remains replaceable.
     <run-id>/
       run.json
       progress.jsonl
-      events/
-        <trial-id>.jsonl
       results.jsonl
       grades.jsonl
-      candidates/
-        no-skill/
-        current/
-        candidate-1/
-          <trial-id>/response.md
+      summary.json
+      eval-spec/
+        cases/<task-id>/
+      candidates/<candidate>/snapshot/
+      trials/<trial-id>/
+        workspace/
+        events.jsonl
+        evidence.json
+        response.md
 ```
 
 Authority is split cleanly:
@@ -113,8 +115,7 @@ Read only what the task needs:
 | Choose the eval type, grader mix, and example task shape | [references/eval-types.md](references/eval-types.md) |
 | Evaluate or tune skill activation and `description` routing | [references/trigger-tuning.md](references/trigger-tuning.md) |
 | Author `evals.json`, materialize `task.md` task folders, and keep hidden files out of the workspace | [references/evaluations.md](references/evaluations.md) |
-| Align an LLM judge against human labels with rubrics, splits, TPR, and TNR | [references/judge-alignment.md](references/judge-alignment.md) |
-| Calibrate the judge against human grades for a run | [references/calibration.md](references/calibration.md) |
+| Align and calibrate an LLM judge against human labels with rubrics, splits, TPR, and TNR | [references/judge-calibration.md](references/judge-calibration.md) |
 | Run a guided human review, collect labels, and turn taste into reusable judge guidance | [references/human-grading.md](references/human-grading.md) |
 | Author deterministic validations and task-local `validate.*` checks | [references/validations.md](references/validations.md) |
 | See concrete guided-user interaction patterns | [references/examples.md](references/examples.md) |
@@ -280,8 +281,7 @@ measured check even when a model judge score is high.
 ### 6. Calibrate
 
 Before trusting a judge at scale, align it against human grades — see
-[references/calibration.md](references/calibration.md) and
-[references/judge-alignment.md](references/judge-alignment.md).
+[references/judge-calibration.md](references/judge-calibration.md).
 If the decision depends on human taste, use
 [references/human-grading.md](references/human-grading.md): show the user the
 task, response, judge guidance, transcript pointers, and a compact label/rationale
@@ -297,7 +297,7 @@ Use `<meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path>` 
 judge grades against human grades. The command writes a calibration artifact
 under `.<skill-name>/calibrations/`; keep it with the workbench as evidence for
 whether the judge can scale beyond the human spot-check slice.
-Report calibration evidence from [references/judge-alignment.md](references/judge-alignment.md):
+Report calibration evidence from [references/judge-calibration.md](references/judge-calibration.md):
 paired labels, disagreements, and the scope where the judge matched human
 review. Do not broaden that claim beyond the checked slice.
 

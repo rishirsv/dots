@@ -41,7 +41,8 @@ First identify what the user is trying to do:
 | Clean up | Make an existing skill portable, runtime-ready, and free of source/research/system/maintainer leakage. | `skill-doctor` |
 | Fix | Diagnose a concrete reported failure and propose or apply the smallest source change. | `skill-doctor` |
 | Measure | Compare behavior across tasks, candidates, graders, or trigger scenarios. | `skill-evaluator` |
-| Release | Validate, package, benchmark, gate, or report release readiness. | `skill-benchmarker` or shared CLI through the active owner |
+| Release | Validate or package. | `skill-writer`, after user approval |
+| Release | Benchmark, gate, or report release readiness. | `skill-benchmarker` |
 
 Use [judge-rubric.md](../../references/judge-rubric.md) as the shared static
 quality standard and [payload-hygiene.md](../../references/payload-hygiene.md)

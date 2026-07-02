@@ -39,7 +39,6 @@ description: "Use for eval runner tests."
 def args_for(suite, **overrides):
     defaults = {
         "suite": str(suite),
-        "runner": "auto",
         "candidates": None,
         "split": None,
         "case": None,

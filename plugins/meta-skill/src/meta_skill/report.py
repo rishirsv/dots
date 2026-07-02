@@ -58,7 +58,6 @@ def build_report(raw_run):
             "failed": (summary.get("final_verdict_totals") or {}).get("failed", 0),
             "inconclusive": (summary.get("final_verdict_totals") or {}).get("inconclusive", 0),
             "ungraded": (summary.get("final_verdict_totals") or {}).get("ungraded", 0),
-            "gate_failed": 0,
         },
         "results_by_trial": results_by_trial,
     }

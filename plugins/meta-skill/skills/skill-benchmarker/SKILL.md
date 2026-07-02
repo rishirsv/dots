@@ -111,12 +111,12 @@ are intentional and reported:
 
 ```sh
 <meta-skill-root>/scripts/metaskill benchmark run --benchmark .<skill-name>/benchmarks/<benchmark-id>.json --json
-<meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> --json
 ```
 
-Use `skill-evaluator` when the run needs new graders, human review packets,
-judge calibration, or a full per-trial report. This skill consumes those
-artifacts; it does not replace them.
+`benchmark run` grades automatically; do not run a separate `eval grade` step
+after it. Use `skill-evaluator` when the run needs new graders, human review
+packets, judge calibration, or a full per-trial report. This skill consumes
+those artifacts; it does not replace them.
 
 ### 4. Report The Scorecard
 

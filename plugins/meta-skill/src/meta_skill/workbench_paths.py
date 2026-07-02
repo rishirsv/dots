@@ -3,7 +3,7 @@
 from pathlib import Path
 
 
-def _parse_frontmatter(skill_md):
+def parse_frontmatter(skill_md):
     text = skill_md.read_text()
     if not text.startswith("---"):
         return {}
@@ -38,7 +38,7 @@ def skill_name_for_target(target):
     for skill_md in _skill_md_candidates(target):
         if not skill_md.exists():
             continue
-        name = _parse_frontmatter(skill_md).get("name")
+        name = parse_frontmatter(skill_md).get("name")
         if isinstance(name, str) and name.strip():
             return name.strip()
         return skill_md.parent.name
@@ -55,7 +55,3 @@ def workbench_path(target):
     if target.is_file():
         target = target.parent
     return target / workbench_dir_name(target)
-
-
-def is_workbench_dir_name(name, target=None):
-    return target is not None and name == workbench_dir_name(target)

@@ -4,23 +4,18 @@ This reference is for agents using Meta Skill from this repo or from an
 installed plugin package. It describes the command surface, when to use each
 command, and which files are authoritative.
 
-## Launchers
+## Launcher
 
-Use one of these launchers:
+The launcher is `<meta-skill-root>/scripts/metaskill`, where `<meta-skill-root>`
+is the Meta-Skill plugin root in the current checkout or installed plugin
+package. Do not assume a global `meta-skill` binary is on `PATH`.
 
-- Repo checkout: `<meta-skill-root>/scripts/metaskill`
-- Installed plugin package: `<plugin-root>/scripts/metaskill`
+The launcher is self-bootstrapping:
 
-Do not assume a global `meta-skill` binary is on `PATH`.
-`<meta-skill-root>` means the Meta-Skill plugin root in the current checkout or
-installed package.
-
-Both launchers are self-bootstrapping:
-
-- They create a per-user virtual environment under
+- It creates a per-user virtual environment under
   `${XDG_CACHE_HOME:-~/.cache}/meta-skill/venv` by default.
-- They install or upgrade dependencies from
-  `<meta-skill-root>/src/requirements.txt` before running.
+- It installs dependencies from `<meta-skill-root>/src/requirements.txt` when
+  they change (a checksum stamp skips reinstalls on later runs).
 - `META_SKILL_PYTHON`, `META_SKILL_CACHE_DIR`, and `META_SKILL_VENV` override
   interpreter and cache locations.
 - `META_SKILL_SKIP_DEP_UPDATE=1` skips dependency updates and uses the existing
@@ -47,8 +42,8 @@ The CLI is an orchestration layer. The workbench is authoritative.
 - `.<skill-name>/benchmarks/<benchmark-id>.json` owns recurring benchmark
   decision profiles over stable task banks, candidates, gates, metrics, and
   report policy.
-- `.<skill-name>/runs/<run-id>/` owns run plans, progress, events, outputs, and
-  grades.
+- `.<skill-name>/runs/<run-id>/` owns run plans, progress, results, grades,
+  the frozen eval-spec copy, candidate snapshots, and per-trial artifacts.
 
 Do not treat CLI stdout as the system of record once files have been written.
 
@@ -67,8 +62,8 @@ Use Anthropic-aligned terms when explaining evals to users:
 | **task** | one row in `cases[]` and one folder under `.<skill-name>/cases/<task-id>/` |
 | **candidate** | one row in `candidates[]`, such as `no-skill`, `current`, or an edited attempt |
 | **trial** | one task executed once under one candidate |
-| **transcript** | `events/<trial-id>.jsonl` plus compact `evidence/<trial-id>.json` |
-| **outcome** | `candidates/<candidate>/<trial-id>/response.md` and produced artifacts |
+| **transcript** | `runs/<run-id>/trials/<trial-id>/events.jsonl` plus compact `runs/<run-id>/trials/<trial-id>/evidence.json` |
+| **outcome** | `runs/<run-id>/trials/<trial-id>/response.md` and produced artifacts |
 | **grader** | model, human, or code rows in `grades.jsonl` |
 
 When explaining evals to a user, prefer the product terms from this table:
@@ -76,8 +71,7 @@ suite, task, candidate, trial, transcript, outcome, and grader.
 
 ## Runner Policy
 
-App Server is the only supported eval runner. `eval run --runner auto` resolves
-to `codex_app_server`.
+Codex App Server is the only supported eval runner.
 
 ## Task Authoring Rules
 
@@ -96,46 +90,38 @@ Current top-level commands:
 <meta-skill-root>/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
 <meta-skill-root>/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
-<meta-skill-root>/scripts/metaskill sessions extract <thread-id> [--target <skill-dir>] [--mode improve] [--max-chars <n>] [--out <file>] [--json]
+<meta-skill-root>/scripts/metaskill sessions extract <thread-id> [--target <skill-dir>] [--max-chars <n>] [--out <file>] [--json]
 <meta-skill-root>/scripts/metaskill eval lint [--suite <suite>] [--json]
 <meta-skill-root>/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
-<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--runner auto|codex_app_server] [--candidates <ids>] [--split <name>] [--repetitions <n>] [--model <id>] [--json]
+<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--candidates <ids>] [--split <name>] [--case <id>] [--type <type>] [--repetitions <n>] [--model <id>] [--no-grade] [--json]
 <meta-skill-root>/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
 <meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
-<meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
+<meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--reviewer <name>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
 <meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--json]
 <meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--out <file>] [--json]
 <meta-skill-root>/scripts/metaskill benchmark lint --benchmark <profile> [--json]
-<meta-skill-root>/scripts/metaskill benchmark run --benchmark <profile> [--runner auto|codex_app_server] [--model <id>] [--json]
+<meta-skill-root>/scripts/metaskill benchmark run --benchmark <profile> [--model <id>] [--json]
 <meta-skill-root>/scripts/metaskill benchmark report --run <run-id-or-path> [--benchmark <profile>] [--out <file>] [--json]
 <meta-skill-root>/scripts/metaskill benchmark history --benchmark <profile> [--json]
 <meta-skill-root>/scripts/metaskill validate <skill-dir> [--json]
 <meta-skill-root>/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
 ```
 
+`--case` and `--type` accept a repeatable flag or a comma-separated list.
+
 ## Commands
 
 ### `doctor`
 
-Use `doctor` before first use on a machine or when the runner environment looks
+Use before first use on a machine or when the runner environment looks
 suspect.
 
-What it checks:
+Checks: `python_version`, `cli_source`, `validators_canonical`,
+`openai_codex_sdk`, `codex_app_server_sdk`.
 
-- Python version
-- CLI source and package validation module presence
-- Legacy worker-local scripts are absent
-- `openai_codex` SDK availability
-- App Server SDK symbols needed by the primary runner
-
-Output:
-
-- Exit code `0` when primary App Server checks pass
-- Exit code `1` when one or more primary checks fail
-- JSON or human-readable check list
-
-Example:
+Exit codes: `0` when primary App Server checks pass, `1` when one or more
+primary checks fail.
 
 ```sh
 <meta-skill-root>/scripts/metaskill doctor --json
@@ -143,28 +129,14 @@ Example:
 
 ### `workbench init`
 
-Use this once per target skill or project to create the standard hidden
-workbench and nested agent guidance.
+Use once per target skill or project to create the standard hidden workbench
+and nested agent guidance.
 
-What it does:
+Flags: `--target <path>` (defaults to the current directory), `--dry-run`
+(report planned changes without writing them).
 
-- Creates `.<skill-name>/`
-- Seeds `.<skill-name>/AGENTS.md` if it does not exist
-- Does not create empty folders or starter eval files; create `docs/`,
-  `evals.json`, `cases/`, `benchmarks/`, and generated output folders only when
-  writing real content
-
-Inputs:
-
-- `--target <path>`: target repo or skill directory; defaults to the current
-  directory
-- `--dry-run`: report planned changes without writing them
-
-Output:
-
-- Reports the target, workbench path, and created files/directories
-
-Example:
+Writes: `.<skill-name>/`, seeding `.<skill-name>/AGENTS.md` if missing. Does
+not create empty folders or starter eval files.
 
 ```sh
 <meta-skill-root>/scripts/metaskill workbench init --target <skill-dir> --json
@@ -172,30 +144,14 @@ Example:
 
 ### `sessions list`
 
-Use this when Skill Doctor, Skill Writer, or another Meta-Skill lane needs to
-locate prior Codex thread evidence.
+Use to locate prior Codex thread evidence.
 
-What it does:
+Reads `~/.codex/state_5.sqlite`, the authoritative local Codex session index.
 
-- Reads `~/.codex/state_5.sqlite`, the authoritative local Codex session index
-- Lists matching threads newest-first
-- Returns each thread id, title, cwd, timestamps, and rollout path
+Flags: `--limit <n>` (default `25`), `--archived active|archived|all` (default
+`active`), `--days <n>`, `--query <text>`, `--cwd <path>`.
 
-Inputs:
-
-- `--limit <n>`: maximum rows to return; default `25`
-- `--archived active|archived|all`: include active, archived, or all sessions;
-  default `active`
-- `--days <n>`: restrict to sessions updated in the last `n` days
-- `--query <text>`: match title or first user message
-- `--cwd <path>`: restrict to sessions whose cwd starts with this path
-
-Output:
-
-- Markdown table by default
-- JSON object with `threads[]` when `--json` is set
-
-Example:
+Output: Markdown table by default, or `{ threads[] }` with `--json`.
 
 ```sh
 <meta-skill-root>/scripts/metaskill sessions list --limit 25 --archived all --query "skill doctor" --json
@@ -203,26 +159,13 @@ Example:
 
 ### `sessions show`
 
-Use this after `sessions list` to render one Codex thread as readable evidence.
+Use after `sessions list` to render one Codex thread as readable evidence.
 
-What it does:
+Flags: `<thread-id>` (exact id or unique prefix), `--max-chars <n>` (default
+`12000`).
 
-- Resolves the thread id from `~/.codex/state_5.sqlite`
-- Reads the thread row's `rollout_path`
-- Renders user and assistant messages from the rollout JSONL
-
-Inputs:
-
-- `<thread-id>`: exact id, or a unique id prefix
-- `--max-chars <n>`: maximum characters per rendered message; default `12000`
-
-Output:
-
-- Markdown transcript by default
-- JSON object with thread metadata, message count, rollout path, and transcript
-  when `--json` is set
-
-Example:
+Output: Markdown transcript by default, or thread metadata plus transcript
+with `--json`.
 
 ```sh
 <meta-skill-root>/scripts/metaskill sessions show 019ed74b-e8d8 --max-chars 12000
@@ -230,35 +173,15 @@ Example:
 
 ### `sessions extract`
 
-Use this after `sessions list` or `sessions show` when a user asks to evaluate a
-thread and improve an existing skill. The command builds a read-only
-thread-to-skill improvement handoff; it does not grade the thread or edit source.
+Use after `sessions list` or `sessions show` to build a read-only
+thread-to-skill improvement handoff. It does not grade the thread or edit
+source.
 
-What it does:
+Flags: `<thread-id>`, `--target <skill-dir>` (target skill directory or
+`SKILL.md`), `--max-chars <n>` (default `12000`), `--out <file>`.
 
-- resolves the thread id from `~/.codex/state_5.sqlite`
-- reads the rollout transcript
-- reads target skill metadata when `--target` is provided
-- summarizes visible user requests and assistant responses
-- emits a Doctor/Evaluator handoff with `extracted_handoff`, eval seed prompts,
-  approval boundary, and coverage limits
-
-Inputs:
-
-- `<thread-id>`: exact id, or a unique id prefix
-- `--target <skill-dir>`: target skill directory or `SKILL.md`
-- `--mode improve`: build the existing-skill improvement packet
-- `--max-chars <n>`: maximum transcript-read budget; handoff excerpts are capped
-  for readability; default `12000`
-- `--out <file>`: write the Markdown handoff to a file
-
-Output:
-
-- Markdown handoff by default
-- JSON object with `packet.extracted_handoff` and `handoff_markdown` when
-  `--json` is set
-
-Example:
+Output: Markdown handoff by default, or `{ packet.extracted_handoff,
+handoff_markdown }` with `--json`.
 
 ```sh
 <meta-skill-root>/scripts/metaskill sessions extract 019ed74b-e8d8 --target plugins/dots/skills/ideate
@@ -266,48 +189,25 @@ Example:
 
 ### `eval materialize`
 
-Use this after editing `.<skill-name>/evals.json` or when a task directory has
-not been created yet.
+Use after editing `.<skill-name>/evals.json` or when a task directory has not
+been created yet.
 
-What it does:
+Flags: `--suite` (defaults to the current target's `.<skill-name>/evals.json`),
+`--force` (overwrite existing materialized task files).
 
-- Reads the suite manifest from `--suite`
-- Creates `.<skill-name>/cases/<task-id>/`
-- Writes the default visible task stub for each path-backed task, usually `task.md`
-- Creates parent directories for declared fixtures
-
-Inputs:
-
-- `--suite`: suite file; defaults to the current target's
-  `.<skill-name>/evals.json`
-- `--force`: overwrite existing materialized task files
-
-Output:
-
-- A change list showing which task files were created, overwritten, or skipped
-
-Notes:
-
-- If a task uses a custom task path in the manifest, that file is materialized
-  instead of `task.md`.
-- Materialized task files are visible prompt content. Keep them free of hidden
-  control metadata, then edit them with the real task text before running.
+Writes: `.<skill-name>/cases/<task-id>/` with the default visible task stub
+(usually `task.md`) and parent directories for declared fixtures. A task using
+a custom task path materializes that file instead. Keep materialized task
+files free of hidden control metadata.
 
 ### `eval lint`
 
-Use this before running a suite. It is a static manifest check, not a behavioral
+Use before running a suite. This is a static manifest check, not a behavioral
 grade.
 
-What it does:
-
-- Reads `cases[]` suite manifests
-- Counts task types, grader kinds, human graders, and transcript-aware graders
-- Warns on missing task sources, missing graders, missing reference material for
-  regression/gate tasks, unbalanced trigger suites, and incomplete grader
-  metadata
-- Prints grader-selection warnings for missing or weak suite metadata
-
-Example:
+Reads `cases[]`; warns on missing task sources, missing graders, missing
+reference material for regression/gate tasks, unbalanced trigger suites, and
+incomplete grader metadata.
 
 ```sh
 <meta-skill-root>/scripts/metaskill eval lint --suite .<skill-name>/evals.json --json
@@ -315,134 +215,113 @@ Example:
 
 ### `eval run`
 
-Use this to execute a suite or a selected slice of it.
+Use to execute a suite or a selected slice of it. Runs trials **and grades
+them by default**; pass `--no-grade` to skip grading for runtime-only
+debugging.
 
-What it does:
+Flags: `--suite` (defaults to `.<skill-name>/evals.json`), `--candidates
+<ids>`, `--split <name>`, `--case <id>` (repeatable/comma-sep), `--type
+<type>` (repeatable/comma-sep), `--repetitions <n>`, `--model <id>`,
+`--no-grade`.
 
-- Loads tasks and candidates from `.<skill-name>/evals.json`
-- Verifies each selected task already has a materialized task file
-- Chooses the App Server runner
-- Stages a workspace with only `task.md`, declared fixtures, and the
-  candidate payload when present
-- Creates a new run directory under `.<skill-name>/runs/<run-id>/`
-- Executes each task/candidate/trial combination
-- Writes progress, events, and output artifact paths
+What it does: loads tasks and candidates, verifies each selected task already
+has a materialized task file, freezes the suite into `eval-spec/` and each
+candidate's source payload into `candidates/<candidate>/snapshot/`, stages a
+trial workspace with only `task.md`, declared fixtures, and the candidate
+payload when present, executes each task/candidate/trial combination through
+Codex App Server, then grades (unless `--no-grade`).
 
-Inputs:
+Output: summary with `run_id`, `run_dir`, trial count, and pass/fail counts.
+Exit `0` when all trials pass, `1` when one or more trials fail.
 
-- `--suite`: suite file; defaults to the current target's
-  `.<skill-name>/evals.json`
-- `--runner`: `auto` or `codex_app_server`
-- `--candidates <ids>`: restrict to selected candidates
-- `--split <name>`: restrict to a manifest split
-- `--repetitions <n>`: override task or suite repetition count
-- `--model <id>`: pass a model override to the runner
-
-Output:
-
-- Summary with `run_id`, `run_dir`, runner, trial count, and pass/fail counts
-- Exit code `0` when all trials pass
-- Exit code `1` when one or more trials fail
-
-Authoritative run files:
+Run layout — the only layout that exists:
 
 ```text
 .<skill-name>/runs/<run-id>/
-  run.json
-  progress.jsonl
-  results.jsonl
-  grades.jsonl
-  events/<trial-id>.jsonl
-  events/<trial-id>.judge.jsonl
-  evidence/<trial-id>.json
-  candidates/<candidate>/<trial-id>/response.md
+  run.json                        # run plan: selected cases/candidates, runner config, planned trials
+  progress.jsonl                  # queued/running/terminal status events
+  results.jsonl                   # one row per executed trial (status, paths, usage, timing)
+  grades.jsonl                    # grader rows; each grading pass appends a new grade generation
+  summary.json                    # aggregate verdicts; rebuilt by grading and report commands
+  eval-spec/                      # frozen suite copy: suite.json + cases/<case-id>/
+                                  #   (task.md, expectations.json, judge.md, expected.*, validate.*)
+  candidates/<candidate>/snapshot/  # frozen copy of the candidate source payload (+ snapshot.json)
+  trials/<trial-id>/
+    workspace/                    # staged working dir: task.md, fixtures/, skill/ payload
+    events.jsonl                  # raw runner transcript
+    evidence.json                 # compact runtime/transcript evidence
+    response.md                   # captured final agent response
+    judge-<generation-id>.jsonl   # raw judge event stream, one per grading generation
 ```
+
+Trial id format: `<case-id>.<candidate>.t<n>`.
 
 What each file is for:
 
-- `run.json`: run plan, selected runner, candidates, and trial list
-- `progress.jsonl`: queued/running/passed/failed status changes
-- `results.jsonl`: per-trial summary, timestamps, output path, event path, and
-  runner detail
-- `grades.jsonl`: grader results after `eval grade`
-- `events/*.jsonl`: raw runner transcript for a trial
-- `events/*.judge.jsonl`: raw judge event stream when judge grading runs
-- `evidence/*.json`: compact transcript/runtime evidence for a trial
-- `response.md`: captured agent response for that candidate/trial
+- `run.json`: run plan, candidates, and trial list
+- `progress.jsonl`: queued/running/terminal status changes
+- `results.jsonl`: per-trial summary, timestamps, and artifact paths
+- `grades.jsonl`: grader results; each grading generation appends new rows,
+  latest per trial/metric/grader wins
+- `summary.json`: aggregate verdicts rebuilt by grading and report commands
+- `eval-spec/`: frozen suite copy the run graded against, including hidden
+  grader files (`judge.md`, `expected.*`, `validate.*`) under
+  `eval-spec/cases/<case-id>/`
+- `candidates/<candidate>/snapshot/`: frozen copy of the candidate source
+  payload used by the run
+- `trials/<trial-id>/workspace/`: the run-scoped staged working directory for
+  visible task bytes, listed fixtures, and the candidate payload when present;
+  not an authoritative result artifact
+- `trials/<trial-id>/events.jsonl`: raw runner transcript for that trial
+- `trials/<trial-id>/evidence.json`: compact transcript/runtime evidence
+- `trials/<trial-id>/response.md`: captured agent response for that trial
+- `trials/<trial-id>/judge-<generation-id>.jsonl`: raw judge event stream for
+  one grading generation
 
-Workspaces are staged under
-`.<skill-name>/workspaces/<run-id>/<trial-id>/`. They are run-scoped
-working directories for visible task bytes, listed fixtures, and the candidate
-payload when present, not authoritative result artifacts.
-
-Hidden task files stay grader-side. `judge.md`, `expected.*`, `validate.*`,
-grader prompts, and human labels are never copied into the workspace.
+Hidden task files (`judge.md`, `expected.*`, `validate.*`) live under
+`eval-spec/cases/<case-id>/` and are never staged into the workspace.
 
 ### `eval progress`
 
-Use this to inspect a run without reopening all result files manually.
+Use to inspect a run without reopening all result files manually.
 
-What it does:
+Flags: `--run <run-id-or-path>`, `--watch` (refresh until all trials reach a
+terminal state).
 
-- Reads `run.json`, `progress.jsonl`, `results.jsonl`, and `grades.jsonl`
-- Summarizes per-status counts and how many results and grades exist
-
-Inputs:
-
-- `--run <run-id-or-path>`: either a run id under `.<skill-name>/runs/` or a full
-  run directory path
-- `--watch`: refresh until all trials reach a terminal state
-
-Output:
-
-- Current progress counts
-- Result count
-- Grade count
-- Trial count
+Reads `run.json`, `progress.jsonl`, `results.jsonl`, and `grades.jsonl`.
+Output: per-status counts, result count, grade count, trial count.
 
 ### `eval grade`
 
-Use this after `eval run` when the tasks include deterministic validators,
-judge guidance, or both.
+Use to **re-grade** a run after adding or changing graders. `eval run` already
+grades by default, so this is not a required post-run step — reach for it when
+`judge.md`, `expectations[]`, or `validate.*` change and you need fresh grades
+without re-running trials.
 
-What it does:
+Flags: `--run <run-id-or-path>`.
 
-- Reads `results.jsonl` from the selected run
-- Reads optional `graders[]` and `expectations[]` from `evals.json`
-- Looks for `judge.md` inside each task directory and, when present, records a
-  model judge grade through App Server
-- Looks for `validate.*` files inside each task directory
-- Runs each validator with `--output`, `--events`, and `--json`
-- Optionally passes `--expected <file>` when an `expected.*` file exists
-- Writes or updates `.<skill-name>/runs/<run-id>/grades.jsonl`
-
-Inputs:
-
-- `--run <run-id-or-path>`
-
-Output:
-
-- Grade summary and `grades_path`
+What it does: reads `results.jsonl`, reads optional `graders[]` and
+`expectations[]` from `evals.json`, looks for `judge.md` inside each frozen
+`eval-spec/cases/<case-id>/` and records a model judge grade through App
+Server when present, looks for `validate.*` and runs each validator with
+`--output`, `--events`, and `--json` (plus `--expected` when an `expected.*`
+file exists), then appends a new grade generation to
+`.<skill-name>/runs/<run-id>/grades.jsonl`.
 
 Notes:
 
 - If a task has neither `judge.md` nor `validate.*`, the run is marked
-  ungraded for that task and the rationale points the reader to `judge.md` for
-  human or judge grading.
-- Implicit discovery keeps old suites working. Explicit `graders[]` entries
-  preserve named `id`, `metric`, `required`, and `gate` semantics in
-  `grades.jsonl`.
-- `expectations[]` are hidden model-judge checks. They are never staged into the
+  ungraded for that task.
+- Explicit `graders[]` entries preserve named `id`, `metric`, `required`, and
+  `gate` semantics in `grades.jsonl`.
+- `expectations[]` are hidden model-judge checks; never staged into the
   workspace.
-- Validators and task-local judge guidance are the supported grading hooks. Do not add
-  worker-local grading wrappers outside the task directory.
 - Judge grading writes judge events to
-  `.<skill-name>/runs/<run-id>/events/<trial-id>.judge.jsonl` and records model
-  evidence in `grades.jsonl`.
+  `.<skill-name>/runs/<run-id>/trials/<trial-id>/judge-<generation-id>.jsonl`.
 
 ### `eval human`
 
-Use this when a run contains declared human graders or when a model/code grade
+Use when a run contains declared human graders or when a model/code grade
 needs human calibration.
 
 Packet mode:
@@ -451,12 +330,8 @@ Packet mode:
 <meta-skill-root>/scripts/metaskill eval human --run <run-dir> --trial <trial-id> --json
 ```
 
-What it returns:
-
-- response path
-- event and compact evidence paths
-- existing human grade rows for the trial
-- short review guidance
+Returns: response path, event and compact evidence paths, existing human grade
+rows for the trial, short review guidance.
 
 Record mode:
 
@@ -465,6 +340,7 @@ Record mode:
   --run <run-dir> \
   --trial <trial-id> \
   --grader human-reviewer \
+  --reviewer <name> \
   --metric usefulness \
   --label partial \
   --score 0.5 \
@@ -472,36 +348,23 @@ Record mode:
   --json
 ```
 
-Labels are `pass`, `partial`, `fail`, or `unknown`. Scores are optional and must
-be between 0 and 1. The command writes or replaces the matching human row in
-`grades.jsonl`.
+Labels are `pass`, `partial`, `fail`, or `unknown`. Scores are optional and
+must be between 0 and 1. `--reviewer <name>` attributes the recorded grade.
+Writes or replaces the matching human row in `grades.jsonl`.
 
 ### `eval calibrate`
 
-Use this after human and model grades exist for the same run. It compares model
-judge grades with human grades and records whether the judge is calibrated well
+Use after human and model grades exist for the same run. Compares model judge
+grades with human grades and records whether the judge is calibrated well
 enough to scale beyond the human spot-check slice.
 
-What it does:
+Flags: `--run <run-id-or-path>`, `--metric <name>` (restrict to one shared
+metric).
 
-- Reads paired human and model grade rows from `.<skill-name>/runs/<run-id>/grades.jsonl`
-- Optionally restricts comparison to one shared metric
-- Computes true positive rate for finding failures, true negative rate for
-  recognizing passes, exact agreement, tolerance agreement, false pass/fail
-  examples, unknown-label rates, and non-binary examples
-- Writes a calibration artifact under `.<skill-name>/calibrations/`
-
-Inputs:
-
-- `--run <run-id-or-path>`: either a run id under `.<skill-name>/runs/` or a full
-  run directory path
-- `--metric <name>`: restrict calibration to one shared grade metric
-
-Output:
-
-- Calibration summary and `calibration_path`
-
-Example:
+Reads paired human/model rows from `grades.jsonl`; computes TPR, TNR, exact
+agreement, tolerance agreement, false pass/fail examples, unknown-label rates,
+and non-binary examples. Writes a calibration artifact under
+`.<skill-name>/calibrations/`.
 
 ```sh
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-dir> --metric usefulness --json
@@ -509,83 +372,47 @@ Example:
 
 ### `eval list`
 
-Use this to enumerate the runs in a workbench without listing run directories
-by hand.
+Use to enumerate the runs in a workbench without listing run directories by
+hand.
 
-What it does:
+Flags: `--suite` (defaults to the current target's `.<skill-name>/evals.json`).
 
-- Finds every `runs/<run-id>/run.json` in the suite's workbench
-- Summarizes each run: run id, created time, runner, trial counts by result
-  status, grade count, and candidates
-
-Inputs:
-
-- `--suite`: suite file used to locate the workbench; defaults to the current
-  target's `.<skill-name>/evals.json`
-
-Output:
-
-- One row per run, ordered by run directory name
-- A run with an unreadable `run.json` is reported with an `error` field instead
-  of failing the whole listing
+Finds every `runs/<run-id>/run.json` in the suite's workbench; summarizes run
+id, created time, trial counts by result status, grade count, and candidates.
+A run with an unreadable `run.json` is reported with an `error` field instead
+of failing the whole listing.
 
 ### `eval report`
 
-Use this after `eval run` and `eval grade` to read one run without manual file
-archaeology. The report is read-only and deterministic: it renders what the run
-files already contain and never re-runs or re-grades anything.
+Use after `eval run` (which already grades) to read one run without manual
+file archaeology. The report is read-only and deterministic: it renders what
+the run files already contain and never re-runs or re-grades anything.
 
-What it renders:
+Flags: `--run <run-id-or-path>`, `--out <file>`, `--json`.
 
-- Header: run id, suite, runner, creation time, and candidate sources with
-  commit, dirty flag, and payload digest
-- Runner completion: per-trial process status. Completion means the trial
-  process finished; it says nothing about answer quality.
-- Behavioral grades: judge score/label, validator pass counts, graded/ungraded
-  flags, gate failures, and token usage (`unavailable` when the runner recorded
-  none)
-- Comparisons: when a run contains a no-skill candidate and at least one payload
-  candidate, per-task rows show `baseline_state` and `candidate_state`
-- Evidence pointers relative to the run directory: outcome, runner transcripts,
-  judge events, and folded thread evidence; `-` marks a missing file
-- A needs-attention list: failed trials, planned trials with no result,
-  ungraded trials, gate failures, graders that emitted invalid JSON,
-  `unknown_evidence` trials, and missing token usage
+Renders: header (run id, suite, creation time, candidate sources with commit,
+dirty flag, and payload digest); runner completion per trial; behavioral
+grades (judge score/label, validator pass counts, graded/ungraded flags, gate
+failures, token usage); baseline/candidate comparison rows when applicable;
+evidence pointers relative to the run directory; a needs-attention list
+(failed trials, planned trials with no result, ungraded trials, gate failures,
+invalid-JSON graders, `unknown_evidence` trials, missing token usage).
 
-Inputs:
-
-- `--run <run-id-or-path>`
-- `--out <file>`: write the Markdown report to a caller-named file, for example
-  `.<skill-name>/runs/<run-id>/report.md`
-- `--json`: emit the structured report instead of Markdown
-
-Output:
-
-- Markdown to stdout by default
-- With `--out`, the report file plus a confirmation that includes the path
-- With `--json` and no `--out`, the full structured report
+Output: Markdown to stdout by default; with `--out`, the report file plus a
+confirmation; with `--json` and no `--out`, the full structured report.
 
 ### `benchmark lint`
 
-Use this before running a benchmark profile. A benchmark is a named, stable
-profile over an eval suite for one recurring decision, such as core quality,
-trigger boundary behavior, release readiness, or efficiency smoke.
+Use before running a benchmark profile.
 
-What it does:
+Flags: `--benchmark <profile>` (path to a benchmark JSON file, or a directory
+containing `benchmark.json`).
 
-- Reads `.<skill-name>/benchmarks/<benchmark-id>.json`
-- Resolves the referenced suite, selected cases, selected candidates, metrics,
-  repetition policy, gates, and report policy
-- Warns on unknown cases or candidates, no selected cases, one-sided trigger
-  profiles, selected tasks without graders, release profiles without gates, and
-  missing unknown-rate tracking
-
-Inputs:
-
-- `--benchmark <profile>`: path to a benchmark JSON file, or a directory
-  containing `benchmark.json`
-
-Example:
+Reads the profile; resolves the referenced suite, selected cases, candidates,
+metrics, repetition policy, gates, and report policy. Warns on unknown
+cases/candidates, no selected cases, one-sided trigger profiles, selected
+tasks without graders, release profiles without gates, and missing
+unknown-rate tracking.
 
 ```sh
 <meta-skill-root>/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
@@ -593,112 +420,68 @@ Example:
 
 ### `benchmark run`
 
-Use this to execute the task and candidate slice selected by a benchmark
-profile. The command reuses `eval run`; it does not introduce a separate runner
-or grading system.
+Use to execute the task and candidate slice selected by a benchmark profile.
+Reuses `eval run`; it does not introduce a separate runner or grading system,
+and it **also grades by default**.
 
-What it does:
+Flags: `--benchmark <profile>`, `--model <id>`.
 
-- Reads the benchmark profile and suite
-- Selects cases by `case_ids`, `types`, and/or `split`
-- Selects candidates from the benchmark baseline and payload list
-- Applies default and task-type repetition overrides
-- Runs selected trials through the existing App Server runner
-- Records `benchmark_id` and `benchmark_profile` in `run.json`
+Selects cases by `case_ids`, `types`, and/or `split`; selects candidates from
+the benchmark baseline and payload list; applies repetition overrides; records
+`benchmark_id` and `benchmark_profile` in `run.json`.
 
-Inputs:
-
-- `--benchmark <profile>`
-- `--runner auto|codex_app_server`: defaults to `auto`
-- `--model <id>`: optional runner model override
-
-Output:
-
-- Same run summary as `eval run`, plus the benchmark id and profile path
+Output: same run summary as `eval run`, plus the benchmark id and profile
+path.
 
 ### `benchmark report`
 
-Use this after `benchmark run` and `eval grade` to render the
-decision-level benchmark scorecard. Use `eval report` when you need the full
-trial table.
+Use after `benchmark run` to render the decision-level benchmark scorecard.
+Use `eval report` when you need the full trial table.
 
-What it renders:
+Flags: `--run <run-id-or-path>`, `--benchmark <profile>` (optional when
+`run.json` already records the profile), `--out <file>`, `--json`.
 
-- benchmark decision, profile path, suite path, run id, and candidates
-- the metric families requested by the benchmark profile, such as behavior
-  rates, unknown rate, gate failures, comparison counts, or token usage
-- matching benchmark history rows when `report.include_history` is true
-- calibration artifacts for the run when present
-- needs-attention rows
-- coverage limits and non-claims
-
-Inputs:
-
-- `--run <run-id-or-path>`
-- `--benchmark <profile>`: optional when `run.json` already records the profile
-- `--out <file>`: write Markdown to a file
-- `--json`: emit the structured benchmark report
+Renders: benchmark decision, profile path, suite path, run id, candidates; the
+metric families requested by the profile (behavior rates, unknown rate,
+`profile_gate_failures`/`profile_gate_unknown`, comparison counts, token
+usage); matching benchmark history rows when `report.include_history` is
+true; calibration artifacts when present; needs-attention rows; coverage
+limits and non-claims.
 
 ### `benchmark history`
 
-Use this to list prior runs associated with a benchmark profile.
+Use to list prior runs associated with a benchmark profile. This command
+lists matching runs; it does not compute trend deltas.
 
-This command lists matching runs; it does not compute trend deltas or decide
-whether the benchmark improved. Compare scorecards from the listed runs before
-making a trend claim.
+Flags: `--benchmark <profile>`.
 
-What it does:
-
-- Locates the suite's workbench
-- Reads `runs/<run-id>/run.json`
-- Returns runs whose `benchmark_id` or `benchmark_profile` matches the selected
-  benchmark profile
-
-Inputs:
-
-- `--benchmark <profile>`
+Reads `runs/<run-id>/run.json`; returns runs whose `benchmark_id` or
+`benchmark_profile` matches the selected profile.
 
 ### `validate`
 
-Use this for validation of a skill payload before review, packaging, or sync.
+Use for validation of a skill payload before review, packaging, or sync.
 
-What it checks:
+Flags: `<skill-dir>` (skill directory or direct path to `SKILL.md`).
 
-- `SKILL.md` exists
-- Frontmatter parses
-- Required fields such as `name` and `description` exist
-- Unknown frontmatter keys are flagged
-- File length stays within the current limit
-- Body content exists
-- Authoring lint checks from the canonical shared validator path
+Checks: `SKILL.md` exists, frontmatter parses, required fields exist, unknown
+frontmatter keys are flagged, file length stays within the current limit, body
+content exists, and authoring lint checks from the canonical shared validator
+path.
 
-Inputs:
-
-- `<skill-dir>`: skill directory or direct path to `SKILL.md`
-
-Output:
-
-- JSON or human-readable validation report with per-check results and a pass
-  rate
-
-Notes:
-
-- `validate` combines the package validation and authoring lint modules.
-- The command exits non-zero when the combined report contains failures.
+Output: JSON or human-readable report with per-check results and a pass rate.
+`validate` combines the package validation and authoring lint modules. Exits
+non-zero when the combined report contains failures.
 
 ### `package`
 
-Use this when you need a packaged skill payload emitted to an output directory.
+Use when a packaged skill payload should be emitted to an output directory.
 Packaging validates first and stops if validation fails.
 
-Inputs:
+Flags: `<skill-dir>`, `--out-dir <dir>`.
 
-- `<skill-dir>`: skill directory or direct path to `SKILL.md`
-- `--out-dir <dir>`: destination directory for packaged output
-
-Output:
-
-- Zip artifact path and sidecar package metadata JSON path, optionally in JSON
+Output: zip artifact path and sidecar package metadata JSON path, optionally
+in JSON.
 
 ## Common Flows
 
@@ -723,13 +506,14 @@ Then edit the generated task `task.md` files and any validators or fixtures.
 ```sh
 <meta-skill-root>/scripts/metaskill eval run --json
 <meta-skill-root>/scripts/metaskill eval progress --run <run-id> --watch --json
-<meta-skill-root>/scripts/metaskill eval grade --run <run-id> --json
 <meta-skill-root>/scripts/metaskill eval human --run <run-id> --json
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-id> --json
 <meta-skill-root>/scripts/metaskill eval report --run <run-id>
 ```
 
-Use `eval list --json` to find earlier run ids in the same workbench.
+`eval run` already grades by default. Use `eval grade --run <run-id>` only to
+re-grade after adding or changing graders. Use `eval list --json` to find
+earlier run ids in the same workbench.
 
 ### Validate a skill payload
 
@@ -743,7 +527,7 @@ Use this flow before claiming the full lifecycle works. Run it in an isolated
 worktree and use the installed plugin launcher, not only source files.
 
 ```sh
-PLUGIN=<plugin-cache-root>/agent/meta-skill/0.1.0
+PLUGIN=<plugin-cache-root>/agent/meta-skill/<version>
 CLI="$PLUGIN/scripts/metaskill"
 
 git worktree add --detach /tmp/meta-skill-e2e HEAD
@@ -760,8 +544,7 @@ cd /tmp/meta-skill-e2e
 
 # Author each target's .<skill-name>/evals.json, task.md, judge.md, and validate.* tasks.
 "$CLI" eval materialize --suite quick-skill/.<quick-skill-name>/evals.json --json
-"$CLI" eval run --suite quick-skill/.<quick-skill-name>/evals.json --runner codex_app_server --json
-"$CLI" eval grade --run <quick-run-dir> --json
+"$CLI" eval run --suite quick-skill/.<quick-skill-name>/evals.json --json
 "$CLI" eval progress --run <quick-run-dir> --json
 "$CLI" eval report --run <quick-run-dir> --out <quick-run-dir>/report.md
 ```
@@ -774,7 +557,7 @@ per-run summaries instead of hand-authoring them.
 ## Boundaries
 
 - Prefer the CLI over calling helper code under `<meta-skill-root>/src/` directly.
-- Use App Server as the eval runner.
+- Use Codex App Server as the eval runner.
 - Keep task text visible and literal; no hidden task metadata.
 - Keep shared behavior at the plugin CLI layer; do not recreate worker-local
   script surfaces.
