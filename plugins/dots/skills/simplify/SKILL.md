@@ -9,9 +9,14 @@ Clean up changed code after implementation, or simplify an existing implementati
 
 Review all changed files or plan text for reuse, structural simplicity, AI-generated slop, quality, hard-cut posture, and efficiency. Fix any issues found while preserving the intended outcome unless the user explicitly asks for behavior changes.
 
-For plans, default to hard-cut simplification. Prefer one canonical current path. Remove legacy compatibility, fallbacks, shims, adapters, aliases, migration ladders, dual-shape support, and "just in case" branches unless the plan names a real external boundary: persisted user data, public API, wire format, third-party dependency, or live customer contract.
+For plans, default to hard-cut simplification: keep one canonical current path and remove legacy compatibility, fallbacks, shims, adapters, aliases, migration ladders, dual-shape support, and "just in case" branches unless the plan names a real external boundary.
 
 Planning a new approach belongs to planning work; simplifying an existing plan belongs here.
+
+## References
+
+- Read [../ultra-review/references/finder-checklists.md](../ultra-review/references/finder-checklists.md) for the shared reuse and structural-simplification checklist used by Agent 1 below.
+- Read [../architecture-review/references/hard-cut-policy.md](../architecture-review/references/hard-cut-policy.md) for the canonical hard-cut policy, hard rules, and exception rule.
 
 ## Phase 1: Identify Changes
 
@@ -21,12 +26,17 @@ Otherwise, run `git diff` (or `git diff HEAD` if there are staged changes) to se
 
 ### Behavior Lock (optional deep cleanup only)
 
-Activate this phase when the user explicitly asks to "deslop", "clean up AI output", or passes a scoped file list.
+Activate this phase before cleanup edits when the user asks to deslop, clean up
+AI output, apply fixes, pass a scoped file list, or perform behavior-adjacent
+refactoring.
 
-1. Identify behavior that must not change in the target files
-2. Check if existing tests cover that behavior - run them
-3. If critical behavior is untested, add the narrowest regression test needed before editing
-4. Skip this phase for routine simplify runs where changes are small and well-tested
+1. Identify the behavior that must not change in the target files.
+2. Check whether existing tests cover that behavior, and run the narrowest useful
+   tests when they exist.
+3. If critical behavior is untested and the planned cleanup is behavior-adjacent,
+   add the narrowest regression test first or report that the fix should wait.
+4. Skip this phase for review-only work and for tiny cleanups already covered by
+   targeted validation.
 
 ## Phase 2: Launch Three Review Agents in Parallel
 
@@ -38,22 +48,11 @@ Do not begin fixing until all review agents have returned and their findings hav
 
 ### Agent 1: Reuse and Structural Simplification Review
 
-For each change:
-
-**Reuse**
-
-1. **Search for existing utilities and helpers** that could replace newly written code. Use `rg` to find similar patterns elsewhere in the codebase - common locations are utility directories, shared modules, and files adjacent to the changed ones.
-2. **Flag any new function that duplicates existing functionality.** Suggest the existing function to use instead.
-3. **Flag any inline logic that could use an existing utility** - hand-rolled string manipulation, manual path handling, custom environment checks, ad-hoc type guards, and similar patterns are common candidates.
-
-**Structural simplification**
-
-1. **Look for structural simplifications** that preserve behavior while deleting branches, modes, helper layers, special cases, or concepts.
-2. **Ask whether a clearer reframing would delete the problem instead of polishing it.** Prefer changing the model, ownership boundary, or default flow when that removes whole concepts, branches, modes, or helper layers.
-3. **Flag refactors that move complexity around without reducing it.** Prefer reframing the model, ownership boundary, or default flow so less code is needed.
-4. **Flag feature-specific logic added to shared or unrelated paths.** Push logic toward the canonical package, module, helper, or abstraction that already owns the concept.
-5. **Flag new ad-hoc conditionals and one-off flags** that make an existing flow harder to reason about. Prefer a clearer model, dispatcher, policy object, or focused helper.
-6. **Notice changed files that are becoming hard to navigate.** Large files are not automatically wrong, especially generated outputs, data files, JSON layouts, or codebases where the format is inherently bulky. When a source file becomes mixed-purpose, crosses a locally unusual size threshold, or nears roughly 1,000 lines without a clear reason, consider whether focused modules with descriptive names would make future changes easier.
+For each change, read the shared reuse and structural-simplification checklist
+in
+[../ultra-review/references/finder-checklists.md](../ultra-review/references/finder-checklists.md)
+before flagging duplication, missed helpers, or a reframing that would delete
+branches, modes, or concepts instead of moving them around.
 
 **Plan simplification and hard cut**
 
