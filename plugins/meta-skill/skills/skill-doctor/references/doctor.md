@@ -84,22 +84,9 @@ recommendation.
 
 When the reported failure happened in a prior Codex thread, or the user points
 to a thread id/title as evidence, read
-[thread-skill-improvement.md](../../../references/thread-skill-improvement.md).
-Use the Meta-Skill session commands to locate and render the relevant transcript:
-
-```sh
-<meta-skill-root>/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
-<meta-skill-root>/scripts/metaskill sessions show <thread-id> --max-chars 12000
-```
-
-When the request is to evaluate a thread and improve an existing skill, also
-read
 [thread-skill-improvement.md](../../../references/thread-skill-improvement.md)
-and build the read-only handoff:
-
-```sh
-<meta-skill-root>/scripts/metaskill sessions extract <thread-id> --target <skill-dir>
-```
+for the `sessions list`/`show`/`extract` commands, locate/render workflow, and
+read-only handoff-packet shape.
 
 Use targeted session evidence for diagnosis, not broad pattern mining. Prefer
 `sessions list` and `sessions show` for a single reported failure. Do not scan

@@ -78,15 +78,9 @@ If no suite exists, stop and route to `skill-evaluator` to author a suite before
 benchmarking. If the decision is a one-off quality question, use the
 smaller evaluator path instead of creating preset state.
 
-Use this routing check before creating files:
-
-| State | Next owner |
-|---|---|
-| No target skill or unstable draft | `skill-writer` |
-| Skill exists but no realistic eval tasks or seeds | `skill-writer` for seeds, or `skill-evaluator` for suite intake |
-| Eval seeds exist but no materialized suite or run evidence | `skill-evaluator` |
-| Suite exists but no recurring decision preset | `skill-benchmarker` |
-| Preset exists and the user wants a run/report/history | `skill-benchmarker` |
+Use the lifecycle routing check in
+[meta-skill/SKILL.md](../meta-skill/SKILL.md#ambiguity) before creating
+files.
 
 ### 2. Create Or Update The Preset
 
