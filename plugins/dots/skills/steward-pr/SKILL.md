@@ -79,7 +79,8 @@ Stop before acting when the next move needs judgment beyond the envelope:
 - unrelated, flaky, or infrastructure CI
 - force-push, rebase, admin bypass, or branch deletion beyond normal cleanup
 - changing the PR base branch
-- stacked dependency order is unclear
+- stacked dependency order is unclear (see [land-pr](../land-pr/SKILL.md) for
+  the stacked-PR heuristic)
 - heartbeat budget is exhausted without a decisive state
 
 The mandate covers only this PR, same-story fixes, comments, commits, pushes,

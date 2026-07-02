@@ -265,8 +265,9 @@ Optional routes when the user approves one:
   `-p` / `--print` is the documented non-interactive path and may have account
   or billing implications; state that gate before running it. See
   [references/cli.md](references/cli.md).
-- `codex`: pass the prompt directly to `codex exec` on extra-high GPT-5.5
-  (`-m gpt-5.5 -c model_reasoning_effort="xhigh"`), read-only, with `-C`
+- `codex`: pass the prompt directly to `codex exec` on the provider's current
+  flagship model at extra-high reasoning effort (confirm the exact model ID at
+  run time; `-c model_reasoning_effort="xhigh"`), read-only, with `-C`
   pointing at the approved repo or context directory. See
   [references/cli.md](references/cli.md).
 - `openai-api`: a Responses API or provider CLI only after confirming credentials and cost approval. Write the answer to the agreed output path when a local record is useful.

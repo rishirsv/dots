@@ -108,6 +108,9 @@ When a blocker appears after work starts, pause and ask only the new blocking qu
 
 ## Boundaries
 
-This is not a deep grilling workflow. Do not expand into product strategy, exhaustive domain discovery, stakeholder interviews, or long requirement workshops. If the user wants that, hand off to the appropriate deeper discovery skill when one exists.
+This is not a deep grilling workflow. Do not expand into product strategy, exhaustive domain discovery, stakeholder interviews, or long requirement workshops. If the user wants that,
+hand off to the appropriate deeper discovery skill when one exists, such as
+[ideate](../ideate/SKILL.md) for opening the option space before committing to
+a direction.
 
 This is not a substitute for normal implementation judgment. Prefer local conventions and safe assumptions whenever they are enough.

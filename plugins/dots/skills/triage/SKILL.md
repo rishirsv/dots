@@ -157,7 +157,8 @@ Lead with one status:
 - `Needs repair`: checks failed, requested changes exist, or actionable review
   comments remain.
 - `Blocked`: policy, branch state, merge conflicts, stacked dependencies, auth,
-  missing PR, or ambiguous target prevents a safe next action.
+  missing PR, or ambiguous target prevents a safe next action. See
+  [land-pr](../land-pr/SKILL.md) for the stacked-PR heuristic.
 - `Unknown`: GitHub did not expose enough state; name the missing signal.
 
 Then give the blockers, the evidence command or field that showed each blocker,

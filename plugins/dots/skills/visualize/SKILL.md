@@ -38,8 +38,6 @@ Route adjacent work to the owning skill:
 
 - Use `dots:visual-design` for product UI, web/app screens, dashboards,
   front-end implementation, redesign, or design QA.
-- Use `dots:html-artifact` when the user wants a polished saved document with
-  navigation, sections, copy/export, or shareable report structure.
 - Use `imagegen` when the user wants a bitmap image, photo-like scene,
   illustration, texture, sprite, or visual concept that should be generated as
   raster art.

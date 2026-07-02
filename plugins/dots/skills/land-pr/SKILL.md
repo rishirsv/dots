@@ -10,6 +10,10 @@ checks readiness, uses GitHub's merge controls, and cleans local branch state
 only after the remote state is clear. It does not repair code or shepherd a
 review loop.
 
+`$ship` hands off to this skill for "ship merge", "publish and merge", or
+"send and land" chains — landing is the second half of that chain, after the
+PR is published.
+
 ## Resolve The Target
 
 Use an explicit URL or number when provided; otherwise resolve the PR for the

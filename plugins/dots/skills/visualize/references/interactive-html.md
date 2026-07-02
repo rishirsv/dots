@@ -7,8 +7,7 @@ simulation-like behavior, or a visual explanation that needs interaction.
 
 Codex does not have a special inline HTML widget API. Create a self-contained
 HTML file under `.agents/outputs/`, open it with Codex Browser, inspect it, and
-give the user the absolute file path. If the user wants a polished saved document
-with navigation or report structure, use `dots:html-artifact` instead.
+give the user the absolute file path.
 
 Keep interactive explainers small: one concept, one visual region, and a few
 controls that change the displayed state.

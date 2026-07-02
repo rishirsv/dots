@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: "Explicit-only skill that mines Codex sessions, memories, skill usage, and instruction state to propose evidence-backed improvements — AGENTS.md rules, skill fixes, new skills, memories, docs, scripts, validation checks — and to recommend repo scaffolding and Codex automations. Surfaces and packages proposals; never edits without approval."
+description: "Explicit-only skill that mines Codex sessions, memories, skill usage, and instruction state to propose evidence-backed improvements — AGENTS.md rules, skill fixes, new skills, memories, docs, scripts, validation checks — and to recommend repo scaffolding and Codex automations. Surfaces and packages proposals; never edits without approval; not for one-off bug fixes or changes the user already specified."
 ---
 
 # Self Improve

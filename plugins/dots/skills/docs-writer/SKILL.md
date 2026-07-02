@@ -9,10 +9,6 @@ Write durable documentation that is clear for humans and structured enough for
 agents to discover, traverse, and update later. Technical-writing quality is
 part of this skill; do not route prose cleanup to a separate writing skill.
 
-For changelog entries or release notes derived from git history and merged PRs,
-use [release-notes](../release-notes/SKILL.md); this skill owns the document
-when the content is already known.
-
 ## References
 
 - Read [technical-writing-guidance.md](references/technical-writing-guidance.md)
