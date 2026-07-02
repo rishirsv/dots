@@ -246,6 +246,3 @@ Recommended shape:
   `# Steps`, `# Relationships`, `# Failure Handling`, or `# Citations`.
 - Bundle-relative links to related concepts where a future agent should
   traverse context.
-
-See SKILL.md's Knowledge Docs section for the `timestamp` and `log.md`
-restriction.

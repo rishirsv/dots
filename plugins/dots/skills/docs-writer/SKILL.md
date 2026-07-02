@@ -117,10 +117,6 @@ tags: [git, pr, workflow]
 ---
 ```
 
-Do not add `timestamp`. Use git history, review evidence, explicit
-verification fields, or the surrounding automation to establish freshness.
-Do not create or maintain `log.md`.
-
 ## Boundaries
 
 - Do not maintain `AGENTS.md` or other project instruction files from this

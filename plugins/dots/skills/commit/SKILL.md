@@ -178,10 +178,21 @@ and push, or equivalent. A plain commit request is local-only. Treat bare
 "publish" as PR-publication language unless the user clearly asks only to push
 the branch.
 
-Before pushing, run the upstream/tracking preflight in
-[`../ship/references/github-cli-preflight.md`](../ship/references/github-cli-preflight.md)
-("Tracking" section) to decide whether the branch already has an upstream
-or needs one set explicitly:
+Before pushing, inspect the current branch and upstream directly:
+
+```sh
+git branch --show-current
+git rev-parse --abbrev-ref --symbolic-full-name @{u}
+```
+
+If the branch already has an upstream, use a normal push:
+
+```sh
+git push
+```
+
+If the branch has no upstream and `origin` is the clear publication remote, set
+tracking explicitly:
 
 ```sh
 git push -u origin "$(git branch --show-current)"
