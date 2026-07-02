@@ -1,17 +1,17 @@
 # Benchmarking
 
 Read when the benchmarker needs to design, lint, run, or report a recurring
-benchmark profile for a skill: release readiness, core quality, trigger
+eval preset for a skill: release readiness, core quality, trigger
 reliability, regression protection, efficiency smoke, or historical comparison
 across runs.
 
-A benchmark is not a new eval type. It is a named, stable profile over an eval
+A benchmark is not a new eval type. It is a named, stable preset over an eval
 suite that fixes the task slice, candidates, repetitions, gates, metric views,
 comparison baseline, and reporting standard for one recurring decision.
 
 ## When To Use A Benchmark
 
-Use a benchmark when the same decision will be asked repeatedly:
+Use a benchmark preset when the same decision will be asked repeatedly:
 
 - whether a skill candidate is better than `current`
 - whether a release candidate preserves must-not-break behavior
@@ -25,46 +25,46 @@ saturated to answer the decision.
 
 ## When Not To Benchmark
 
-Skip a benchmark when the question is a one-off fix, the target skill is still
-being shaped, a deterministic validator fully answers the question, or the
-benchmark would cost more to maintain than the skill's usage justifies. Say "no
-benchmark yet" and route to `skill-evaluator` for a smaller quality loop or to
-`skill-doctor` for static review and repairs.
+Skip a benchmark preset when the question is a one-off fix, the target skill is
+still being shaped, a deterministic validator fully answers the question, or
+the preset would cost more to maintain than the skill's usage justifies. Say
+"no benchmark yet" and route to `skill-evaluator` for a smaller quality loop or
+to `skill-doctor` for static review and repairs.
 
-Do not use benchmark language for a single run without a stable profile. Call
+Do not use benchmark language for a single run without a stable preset. Call
 that a quality loop, trigger tuning run, or formal suite run instead.
 
 ## Benchmark Vocabulary
 
 | Term | Meaning |
 |---|---|
-| **benchmark profile** | A JSON file under `.<skill-name>/benchmarks/` selecting tasks, candidates, repetitions, gates, metrics, and report policy. |
-| **task bank** | The stable set of suite cases selected by the profile. |
+| **eval preset** | A JSON file under `.<skill-name>/presets/` selecting tasks, candidates, repetitions, gates, metrics, and report policy. |
+| **task bank** | The stable set of suite cases selected by the preset. |
 | **baseline** | The comparison candidate, usually `no-skill` for skill lift or `current` for release-readiness checks. |
 | **payload candidate** | The skill-bearing candidate being compared with the baseline. |
 | **gate** | A required grader result that rejects the candidate for the measured scope when it fails. |
-| **scorecard** | The benchmark-level summary derived from run artifacts. |
-| **history** | Prior runs associated with the same benchmark profile. |
+| **scorecard** | The preset-level summary derived from run artifacts. |
+| **history** | Prior runs associated with the same eval preset. |
 
 Keep using evaluator vocabulary for the underlying evidence: suite, task,
 candidate, trial, transcript, outcome, grader, and run.
 
-## Benchmark Profile
+## Eval Preset
 
-Profiles live beside the suite workbench, not inside the portable skill payload:
+Presets live beside the suite workbench, not inside the portable skill payload:
 
 ```text
 .<skill-name>/
   evals.json
   cases/
-  benchmarks/
+  presets/
     core.json
     trigger-boundary.json
   runs/
 ```
 
-Use explicit `case_ids` for profiles that should support history. `types` and
-`split` selectors are useful for broad smoke profiles, but they can change the
+Use explicit `case_ids` for presets that should support history. `types` and
+`split` selectors are useful for broad smoke presets, but they can change the
 measured task bank when the suite grows.
 
 Use this shape:
@@ -116,26 +116,26 @@ Use this shape:
 ```
 
 Treat `evals.json` as authoritative for tasks, candidates, graders, fixtures,
-and runner defaults. The benchmark profile only selects and names a recurring
+and runner defaults. The eval preset only selects and names a recurring
 decision.
 
 The `metrics` list controls the decision-level report view. The implementation
 may compute additional structured fields for automation, but the Markdown
-scorecard should foreground only the metric families named by the profile.
+scorecard should foreground only the metric families named by the preset.
 Custom grader names such as `activation` or `boundary` belong in task graders
-and profile gates; they are not benchmark metric names.
+and preset gates; they are not preset metric names.
 
 ## Task Bank Design
 
 Keep capability, regression, trigger, and gate claims separate. A single
-benchmark profile may include several task types, but the report must not turn
+eval preset may include several task types, but the report must not turn
 them into one vague score.
 
 For trigger benchmarks, include should-trigger and should-not-trigger or
 near-miss tasks. For release benchmarks, include at least one gate. For
 capability benchmarks, keep tasks hard enough that the current skill has room to
 improve. When a capability task saturates, graduate it into a regression or
-release-gate benchmark.
+release-gate preset.
 
 Every selected task should expose the behavior the grader checks. Hidden
 graders may hold expected outputs, reference solutions, or rubric detail, but
@@ -196,7 +196,7 @@ retrieve them.
 A benchmark report should start from the decision and only then show scores.
 Include:
 
-- benchmark id, profile path, suite path, run id, and candidates
+- preset id, preset path, suite path, run id, and candidates
 - task count by type or split
 - behavior pass rate, unknown rate, and gate failures
 - comparison counts: `baseline_fail_candidate_pass`,
@@ -205,7 +205,7 @@ Include:
 - token metrics only when the runner recorded usage
 - calibration artifacts for the run, or why calibration was skipped
 - history rows when `report.include_history` is true, with the caveat that
-  history lists matching benchmark runs rather than computing trend deltas
+  history lists matching preset runs rather than computing trend deltas
 - coverage limits and non-claims
 
 A green benchmark is not proof of broad reliability. Say what was measured and
@@ -213,11 +213,11 @@ what remains outside the task bank.
 
 ## Maintenance
 
-Review benchmark profiles when tasks saturate, repeated 0% pass rates appear,
+Review eval presets when tasks saturate, repeated 0% pass rates appear,
 model and human grades disagree, validators reject valid solutions, or reports
 depend on missing usage or transcript evidence.
 
-Benchmark profiles are living measurement artifacts. Keep them stable enough
+Eval presets are living measurement artifacts. Keep them stable enough
 for history to matter, but maintain only the selector, gates, metrics, and
 report policy. Route task, grader, validator, or calibration changes to
 `skill-evaluator`; record unfair harness or runner behavior as an implementation
@@ -229,10 +229,10 @@ Do not equate a green benchmark with release approval. For release decisions,
 report the benchmark result as evidence with conditions:
 
 - skill validation passed
-- suite lint and benchmark lint warnings were reviewed
+- suite lint and preset lint warnings were reviewed
 - all selected trials completed
 - all selected trials are graded or intentionally human-reviewed
-- grader gate failures, profile gate failures, and profile gate unknowns are 0
+- grader gate failures, preset gate failures, and preset gate unknowns are 0
 - release-critical unknown rate is 0 or explicitly accepted
 - baseline-pass/candidate-fail state pairs on must-not-break tasks are 0
 - model-judge release or selection claims have a calibration artifact or a
@@ -256,13 +256,13 @@ Watch for:
 Use the central CLI:
 
 ```sh
-<meta-skill-root>/scripts/metaskill benchmark lint --benchmark .<skill-name>/benchmarks/core.json --json
-<meta-skill-root>/scripts/metaskill benchmark run --benchmark .<skill-name>/benchmarks/core.json --json
-<meta-skill-root>/scripts/metaskill benchmark report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
-<meta-skill-root>/scripts/metaskill benchmark history --benchmark .<skill-name>/benchmarks/core.json --json
+<meta-skill-root>/scripts/metaskill eval lint --preset .<skill-name>/presets/core.json --json
+<meta-skill-root>/scripts/metaskill eval run --preset .<skill-name>/presets/core.json --json
+<meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
+<meta-skill-root>/scripts/metaskill eval list --preset .<skill-name>/presets/core.json --json
 ```
 
-`benchmark run` grades automatically; do not run a separate `eval grade` step
-after it (that would double-grade the run). Run `eval report` when you need
-the full trial table. Run `benchmark report` when you need the decision-level
-scorecard for a benchmark profile.
+`eval run --preset` grades automatically; do not run a separate `eval grade`
+step after it (that would double-grade the run). `eval report` renders the
+full trial table for a plain run, and the decision-level preset scorecard
+automatically when the run recorded a preset (or `--preset` is passed).

@@ -47,8 +47,8 @@ def args_for(suite, **overrides):
         "model": None,
         "no_grade": False,
         "repetitions_by_type": {},
-        "benchmark_default_repetitions": None,
-        "benchmark": {},
+        "preset_default_repetitions": None,
+        "preset": {},
     }
     defaults.update(overrides)
     return SimpleNamespace(**defaults)

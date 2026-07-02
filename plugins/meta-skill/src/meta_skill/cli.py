@@ -12,13 +12,13 @@ import time
 from pathlib import Path
 
 from .app_server.client import app_server_readiness
-from .benchmark import benchmark_history, benchmark_lint, benchmark_run, build_benchmark_report, render_benchmark_markdown
 from .calibration import calibrate_run
 from .errors import CliError
 from .grading import grade_run, human_review_packet, record_human_grade
-from .io import emit, fail
+from .io import emit, fail, read_json, resolve_run_dir
 from .linting import lint_suite
 from .packaging import package_skill
+from .presets import apply_preset, build_preset_report, load_preset, preset_lint, render_preset_markdown, resolve_preset_ref
 from .report import build_report, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, terminal_count
 from .sessions import extract_thread_improvement, list_threads, render_thread_list, show_thread
@@ -112,11 +112,18 @@ def command_eval_materialize(args):
 
 
 def command_eval_lint(args):
-    emit(lint_suite(args.suite), args.json)
+    result = lint_suite(args.suite)
+    if getattr(args, "preset", None):
+        resolved = resolve_preset_ref(args.preset, args.suite)
+        result = {"suite": result, "preset": preset_lint(str(resolved))}
+    emit(result, args.json)
     return 0
 
 
 def command_eval_run(args):
+    if getattr(args, "preset", None):
+        resolved = resolve_preset_ref(args.preset, args.suite)
+        apply_preset(args, load_preset(str(resolved)))
     result = run_eval(args)
     emit(result, args.json)
     return 0 if result["ok"] else 1
@@ -170,53 +177,53 @@ def command_eval_human(args):
 
 
 def command_eval_list(args):
-    emit(list_runs(args.suite), args.json)
+    result = list_runs(args.suite)
+    preset = getattr(args, "preset", None)
+    if preset:
+        loaded = load_preset(str(resolve_preset_ref(preset, args.suite)))
+        preset_id = loaded["id"]
+        preset_path = str(loaded["path"])
+        matching = []
+        for row in result["runs"]:
+            run_dir = Path(result["runs_dir"]) / row["run_id"]
+            try:
+                run = read_json(run_dir / "run.json")
+            except CliError:
+                continue
+            if run.get("preset_id") == preset_id or run.get("preset_path") == preset_path:
+                matching.append(row)
+        result = dict(result)
+        result["runs"] = matching
+    emit(result, args.json)
     return 0
 
 
 def command_eval_report(args):
-    report = build_report(args.run)
-    markdown = render_markdown(report)
+    preset = getattr(args, "preset", None)
+    run = None
+    if not preset:
+        try:
+            run = read_json(resolve_run_dir(args.run) / "run.json")
+        except CliError:
+            run = None
+    use_preset = bool(preset) or bool(run and run.get("preset_path"))
+    if use_preset:
+        report = build_preset_report(args.run, preset)
+        markdown = render_preset_markdown(report)
+        run_id = report["run"]["run_id"]
+    else:
+        report = build_report(args.run)
+        markdown = render_markdown(report)
+        run_id = report["run_id"]
     if args.out:
         out_path = Path(args.out).expanduser()
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(markdown)
-        emit({"ok": True, "run_id": report["run_id"], "out": str(out_path)}, args.json)
+        emit({"ok": True, "run_id": run_id, "out": str(out_path)}, args.json)
     elif args.json:
         emit(report, True)
     else:
         print(markdown, end="")
-    return 0
-
-
-def command_benchmark_lint(args):
-    emit(benchmark_lint(args.benchmark), args.json)
-    return 0
-
-
-def command_benchmark_run(args):
-    result = benchmark_run(args.benchmark, model=args.model)
-    emit(result, args.json)
-    return 0 if result["ok"] else 1
-
-
-def command_benchmark_report(args):
-    report = build_benchmark_report(args.run, args.benchmark)
-    markdown = render_benchmark_markdown(report)
-    if args.out:
-        out_path = Path(args.out).expanduser()
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(markdown)
-        emit({"ok": True, "run_id": report["run"]["run_id"], "out": str(out_path)}, args.json)
-    elif args.json:
-        emit(report, True)
-    else:
-        print(markdown, end="")
-    return 0
-
-
-def command_benchmark_history(args):
-    emit(benchmark_history(args.benchmark), args.json)
     return 0
 
 
@@ -277,6 +284,7 @@ def build_parser():
     eval_sub = eval_parser.add_subparsers(dest="eval_command", required=True)
     lint = eval_sub.add_parser("lint", help="Check eval manifest task, grader, and coverage shape")
     lint.add_argument("--suite")
+    lint.add_argument("--preset", help="Also lint this preset (name or path)")
     lint.add_argument("--json", action="store_true")
     lint.set_defaults(func=command_eval_lint)
 
@@ -293,6 +301,7 @@ def build_parser():
     run.add_argument("--case", action="append", help="Run only this case id; repeat or comma-separate for several")
     run.add_argument("--type", action="append", help="Run only this case type; repeat or comma-separate for several")
     run.add_argument("--repetitions", type=int)
+    run.add_argument("--preset", help="Run the task and candidate slice selected by this preset (name or path)")
     run.add_argument("--model")
     run.add_argument("--no-grade", action="store_true", help="Run trials without grading; intended only for runtime debugging")
     run.add_argument("--json", action="store_true")
@@ -329,40 +338,16 @@ def build_parser():
 
     list_runs_parser = eval_sub.add_parser("list", help="List eval runs in the workbench")
     list_runs_parser.add_argument("--suite")
+    list_runs_parser.add_argument("--preset", help="List only runs associated with this preset (name or path)")
     list_runs_parser.add_argument("--json", action="store_true")
     list_runs_parser.set_defaults(func=command_eval_list)
 
     report = eval_sub.add_parser("report", help="Render a readable report for one run")
     report.add_argument("--run", required=True)
+    report.add_argument("--preset", help="Render the preset scorecard report using this preset (name or path)")
     report.add_argument("--out", help="Write the Markdown report to this file instead of stdout")
     report.add_argument("--json", action="store_true")
     report.set_defaults(func=command_eval_report)
-
-    benchmark = sub.add_parser("benchmark", help="Benchmark profile commands")
-    benchmark_sub = benchmark.add_subparsers(dest="benchmark_command", required=True)
-
-    benchmark_lint_parser = benchmark_sub.add_parser("lint", help="Check benchmark profile shape")
-    benchmark_lint_parser.add_argument("--benchmark", required=True)
-    benchmark_lint_parser.add_argument("--json", action="store_true")
-    benchmark_lint_parser.set_defaults(func=command_benchmark_lint)
-
-    benchmark_run_parser = benchmark_sub.add_parser("run", help="Run trials selected by a benchmark profile")
-    benchmark_run_parser.add_argument("--benchmark", required=True)
-    benchmark_run_parser.add_argument("--model")
-    benchmark_run_parser.add_argument("--json", action="store_true")
-    benchmark_run_parser.set_defaults(func=command_benchmark_run)
-
-    benchmark_report_parser = benchmark_sub.add_parser("report", help="Render a benchmark scorecard for one run")
-    benchmark_report_parser.add_argument("--run", required=True)
-    benchmark_report_parser.add_argument("--benchmark")
-    benchmark_report_parser.add_argument("--out", help="Write the Markdown report to this file instead of stdout")
-    benchmark_report_parser.add_argument("--json", action="store_true")
-    benchmark_report_parser.set_defaults(func=command_benchmark_report)
-
-    benchmark_history_parser = benchmark_sub.add_parser("history", help="List runs associated with a benchmark profile")
-    benchmark_history_parser.add_argument("--benchmark", required=True)
-    benchmark_history_parser.add_argument("--json", action="store_true")
-    benchmark_history_parser.set_defaults(func=command_benchmark_history)
 
     validate = sub.add_parser("validate", help="Validate a skill payload")
     validate.add_argument("skill_dir")

@@ -1,6 +1,6 @@
 ---
 name: skill-evaluator
-description: "Use when creating or running an eval suite for a skill or other target. Builds tasks, graders, validations, and reports that compare baseline and candidate outcomes. Not for authoring new skills, one-off diagnosis or fixes, generating candidate changes, or recurring benchmark profiles."
+description: "Use when creating or running an eval suite for a skill or other target. Builds tasks, graders, validations, and reports that compare baseline and candidate outcomes. Not for authoring new skills, one-off diagnosis or fixes, generating candidate changes, or recurring eval presets."
 ---
 
 # Skill Evaluator
@@ -63,8 +63,8 @@ Artifacts live in the hidden workbench at the target skill's project root:
 payload's `SKILL.md` frontmatter when available. The portable payload remains
 the target skill directory itself; the hidden workbench is development state
 inside that project root. Authored
-inputs such as `AGENTS.md`, `docs/`, `evals.json`, `cases/`, and benchmark
-profiles may be tracked; generated run output remains replaceable.
+inputs such as `AGENTS.md`, `docs/`, `evals.json`, `cases/`, and eval
+presets may be tracked; generated run output remains replaceable.
 
 ```text
 .<skill-name>/
@@ -142,7 +142,7 @@ Read only what the task needs:
 | **judge alignment** | Human-label calibration that checks whether a model judge agrees with subject-matter judgment. |
 | **one-off check** | A single exploratory check that can produce signal but not broad reliability evidence. |
 | **eval suite** | A durable, repeatable set of tasks with manifest, task folders, run artifacts, grades, and report. |
-| **benchmark profile** | A recurring measurement profile over an existing suite, owned by `skill-benchmarker`. |
+| **eval preset** | A recurring measurement preset over an existing suite, owned by `skill-benchmarker`. |
 | **no suite yet** | The honest outcome when the question is too small, unstable, or deterministic for an eval suite. |
 
 Use **candidate** in user-facing prose and schema fields. Do not use
@@ -183,7 +183,7 @@ the user may not know it, then use the standard term consistently.
 
 ```text
 What we are deciding: <decision in the user's words>
-Evidence plan: <one-off check | eval suite | benchmark profile | no suite yet>
+Evidence plan: <one-off check | eval suite | eval preset | no suite yet>
 Definition: <one-sentence definition of the selected path when useful>
 Why this fits: <context-specific reason>
 Starting signal: <real traces | known failure | manual check | synthetic hypothesis | none yet>

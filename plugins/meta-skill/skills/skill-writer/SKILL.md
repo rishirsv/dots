@@ -203,7 +203,7 @@ reports, and review context. Put temporary plans wherever the surrounding repo
 keeps plans. Use `.<skill-name>/tests/` as a flat folder for test fixtures or
 check inputs only when the user provides or approves concrete test material.
 Create optional folders only when writing their first real file; blank
-`docs/`, `tests/`, `cases/`, `benchmarks/`, or nested test-category folders
+`docs/`, `tests/`, `cases/`, `presets/`, or nested test-category folders
 should never exist.
 
 When the user asks for eval seeds, workbench eval material, or evaluator

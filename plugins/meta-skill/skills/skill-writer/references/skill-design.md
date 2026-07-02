@@ -239,7 +239,7 @@ captures, authored eval inputs, package metadata, temporary reviews, and
 source-specific or client-specific development notes. Create optional workbench
 folders only when writing their first real file. Keep `.<skill-name>/tests/`
 flat when fixtures exist; do not create a blank `docs/`, `tests/`, `/tests`,
-`cases/`, `benchmarks/`, or nested test-category folder.
+`cases/`, `presets/`, or nested test-category folder.
 
 Do not force a `skill/` wrapper unless the current repo explicitly requires one.
 If an existing repo still uses wrappers, follow that repo for maintenance work
@@ -274,7 +274,7 @@ review, or package the skill but should not be loaded by a future runtime agent.
 | `.<skill-name>/docs/` | Durable specs, roadmap files, authoring notes, decisions, source-pack summaries, rejected approaches, review context, and research reports. Research can live directly in `docs/`; use `docs/research/` only when volume needs nesting. |
 | `.<skill-name>/evals.json` | Authored suite manifest for future evaluator runs. Create it only when there is real eval content or an evaluator handoff. |
 | `.<skill-name>/cases/` | Materialized task content and hidden grader-side files created from `evals.json`. Create it through eval materialization, not as an empty placeholder. |
-| `.<skill-name>/benchmarks/` | Recurring benchmark profiles. Create it only when writing a concrete profile. |
+| `.<skill-name>/presets/` | Recurring eval presets. Create it only when writing a concrete preset. |
 | `.<skill-name>/tests/` | Flat storage for user-provided fixtures, sample inputs, expected-output notes, or check inputs. Create it only when those files exist; do not create blank test folders or nested category folders. |
 | `.<skill-name>/runs/`, `workspaces/`, `worktrees/`, `dist/`, `calibrations/` | Generated output from eval, packaging, and calibration commands. Treat these as replaceable artifacts, not durable source. |
 
@@ -751,8 +751,8 @@ operating rules and skill-specific update guidance in `.<skill-name>/AGENTS.md`.
 Do not create run folders, grades, comparisons, hidden rubrics, benchmark runs,
 dashboards, or CI wiring during ordinary authoring. Route systematic
 measurement, A/B comparison, model-update checks, pass-rate/time/token tracking,
-and human-judge calibration to `skill-evaluator`; route recurring benchmark
-profiles, benchmark runs, and history scorecards to `skill-benchmarker`.
+and human-judge calibration to `skill-evaluator`; route recurring eval
+presets, benchmark runs, and history scorecards to `skill-benchmarker`.
 
 ## Authoring Note Handoff
 

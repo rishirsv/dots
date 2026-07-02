@@ -4,7 +4,7 @@ Read when the user needs help choosing an eval path or when standard evaluator
 terms need to be introduced clearly.
 
 Use the canonical path names consistently: **one-off check**, **eval suite**,
-**benchmark profile**, and **no suite yet**. Name the concrete eval subtype
+**eval preset**, and **no suite yet**. Name the concrete eval subtype
 when useful: quality, trigger, regression, gate, or judge alignment.
 Define the selected term once when the user may not know it, then keep using it.
 
