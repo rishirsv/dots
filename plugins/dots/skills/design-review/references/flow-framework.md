@@ -1,43 +1,20 @@
-# Design Audit Framework
+# Flow Audit Framework
 
-Use this structure for `ux-audit`.
+Use this framework for the flow audit path: systematic assessment across a
+broader experience. If the request is only about one rendered screen,
+component, modal, or static artifact, use the surface critique path in
+[SKILL.md](../SKILL.md) instead. If a broader experience includes a bounded
+screen or interaction, keep that part of the audit scoped to the evidence.
 
-Use audit for systematic assessment across a broader experience, not for
-feedback on a single artifact. If the request is only about one rendered screen,
-component, modal, or static artifact, use
-[design-critique](../../design-critique/SKILL.md) instead. If a broader
-experience includes a bounded screen or interaction, keep that part of the audit
-scoped to the evidence.
-
-Start each audit by recording these fields in working notes before judging the
-flow. In a reader-facing saved report, summarize only the useful scope near the
-top and move detailed grounding, provenance, evidence tiers, and source anchors
-to an `Evidence appendix` at the bottom.
-
-- Product or experience
-- Flow, journey, workflow, or product area
-- Core user task
-- Smallest useful outcome
-- User role or context, when known
-- Product type
-- Evidence inspected
-- Evidence limits
+Record the scope fields from the skill workflow in working notes before judging
+the flow, including the evidence inspected and the evidence limits. In a
+reader-facing saved report, summarize only the useful scope near the top and
+move detailed grounding, provenance, evidence tiers, and source anchors to an
+`Evidence appendix` at the bottom.
 
 Product type matters. A dense operations tool, AI workbench, dashboard,
 consumer landing page, game, portfolio, and checkout flow should not be judged
 with the same density, expression, or interaction expectations.
-
-## Audit Modes
-
-Choose one audit mode:
-
-- `UX audit`
-- `Accessibility audit`
-- `Combined audit`
-
-Use `Combined audit` when the user asks for both UX/design quality and
-accessibility, when the experience is high-stakes, or when accessibility risks
-are visible during a UX audit.
 
 ## UX Audit Lenses
 
@@ -110,26 +87,10 @@ Use these lenses as coverage prompts, not required report headings:
 - Responsive reflow and zoom resilience
 - Assistive-technology clarity and robustness
 
-Do not imply full WCAG compliance unless the user has provided the
-implementation details and testing evidence needed to support that claim. From
-screenshots alone, report accessibility issues as likely risks or verification
-gaps.
+## Severity Calibration
 
-## Severity
-
-- `P0`: task completion blocked, severe accessibility barrier, destructive
-  mistake risk, privacy/security trust break, or unusable responsive state.
-- `P1`: major task, comprehension, hierarchy, feedback, accessibility, or
-  wrong-action risk likely to affect many users or high-value users.
-- `P2`: moderate friction, unclear state, weak craft, inconsistent system,
-  responsive issue, or accessibility risk that degrades confidence.
-- `P3`: polish or consistency improvement that does not block use.
-
-Separate structural issues from polish issues. Craft issues can be `P1` when
-they hide primary content, make destructive action too easy, make text
-unreadable, break responsive use, or prevent users from understanding state.
-
-Use these examples to keep craft findings from being mislabeled as mere polish:
+The severity scale is defined in [SKILL.md](../SKILL.md). Use these examples to
+keep craft findings from being mislabeled as mere polish:
 
 - `P1`: primary content or action is unclear; ambiguous grouping can cause
   wrong-field or wrong-action errors; key text or media is unreadable; state,
@@ -142,23 +103,10 @@ Use these examples to keep craft findings from being mislabeled as mere polish:
   border/shadow polish, or component-expression opportunities that improve
   quality without blocking use.
 
-## Finding Anatomy
+## Finding Shape
 
-Each substantive finding should include:
-
-- Severity
-- Step, screenshot, or artifact
-- Surface
-- Evidence
-- Impact
-- Recommendation
-- Acceptance check
-- Verification needed, when the claim requires interaction, code, assistive
-  technology, analytics, or user testing
-- Confidence, when the judgment is aesthetic, generated, soft, or
-  evidence-limited
-
-Recommended shape:
+Findings use the shared anatomy in [SKILL.md](../SKILL.md). Recommended
+markdown shape:
 
 ```markdown
 ### [P1] Short issue title
@@ -302,6 +250,45 @@ For any `P0` or `P1` accessibility, keyboard, focus, destructive-action, or
 state-feedback claim, perform the available interaction, DOM,
 accessibility-tree, source, or testing probe, or explicitly state why it could
 not be performed.
+
+## Saved Report Order
+
+When writing a saved `audit.md`, use this order:
+
+1. Title
+2. One-line verdict
+3. Scope and core user task
+4. Top findings, grouped by severity
+5. Step health table or compact numbered step list
+6. Detailed findings
+7. Strong decisions to preserve
+8. Ship-now fixes
+9. Later polish
+10. Verification gaps
+11. Evidence appendix
+
+Each step in the step health table or numbered step list should have enough
+detail to stand on its own: 3-5 concise sentences, not just a health label or a
+single-line note. Lead with the visible user experience, then explain the task
+effect, the strongest preserve/fix point, and any evidence limit that changes
+confidence.
+
+After step notes, add a system-quality pass that summarizes cross-step
+patterns:
+
+- hierarchy and density
+- interaction and state feedback
+- typography and content
+- color, tokens, and materials
+- responsiveness and performance feel
+- accessibility
+- product fit and system consistency
+- product idea, visual unity, and template-like output risk when evidenced
+
+Split recommendations into `Ship-now fixes` and `Later polish` when both are
+present. Do not invent speculative features unless they directly unblock the
+core user task. Preserve strong non-obvious interface decisions in a `Strong
+decisions to preserve` section when useful.
 
 ## UX Audit Output Structure
 

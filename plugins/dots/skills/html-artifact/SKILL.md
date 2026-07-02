@@ -63,7 +63,7 @@ Use it for:
   decision briefs, and postmortems
 
 The capture work behind QA, audit, and Image Gen artifacts is owned by the
-adjacent skills (`design-qa`, `ux-audit`, `visual-design`); this skill owns the
+adjacent skills (`design-review`, `visual-design`); this skill owns the
 saved document those captures are assembled into.
 
 Do not use it for:

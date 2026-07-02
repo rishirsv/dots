@@ -156,13 +156,13 @@ in-app browser for web (state the fallback reason if unavailable); for iOS use
 the simulator, previews, or screenshots and check platform conventions, safe
 areas, dynamic type, touch targets, and chrome.
 
-For concept-driven or target-driven work, run
-[design-critique](../design-critique/SKILL.md) as the blocking gate. It owns the
+For concept-driven or target-driven work, run the surface critique path of
+[design-review](../design-review/SKILL.md) as the blocking gate. It owns the
 comparison method, the fidelity surfaces, the severity scale, and the pass/block
 decision — bring it the accepted target and the latest screenshot together
 (`view_image` for the concept-vs-render pass) and fix what it finds. Functional
-QA cannot replace this. Do not hand off until design-critique passes, or report
-the concrete blocker.
+QA cannot replace this. Do not hand off until the design-review gate passes, or
+report the concrete blocker.
 
 Use [image-to-code.md](references/image-to-code.md) for the build-loop details:
 target recreation, design-system extraction, asset and state verification, and
