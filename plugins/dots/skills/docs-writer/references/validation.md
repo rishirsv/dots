@@ -29,7 +29,6 @@ For OKF-style or agent-readable knowledge docs:
 
 - Every concept file has parseable YAML frontmatter.
 - Every concept file has a non-empty `type`.
-- Frontmatter omits `timestamp`.
 - `index.md` entries match added, removed, or renamed concept files.
 - Frontmatter descriptions are one sentence and useful for search or index
   snippets.

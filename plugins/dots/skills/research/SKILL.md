@@ -151,22 +151,15 @@ question. Then compare the two evidence sets explicitly:
 
 Use deep research when the user explicitly asks for deep research, confirms a
 proposed fan-out, or invokes the Research workflow mid-conversation for a task
-that should be delegated to one or more researchers. For ordinary `$research`
-requests, single-threaded research remains the default unless delegation would
-materially improve evidence gathering.
+that should be delegated to one or more researchers. See "Runtime Flow" above
+for the default subagent-delegation framing.
 
 When fan-out is justified, prefer multiple `researcher` subagents with distinct
 questions and source boundaries over one broad researcher. Each subagent should
 own one reportable slice of the investigation.
 
-Fan out only when at least two are true:
-
-- The question spans multiple source classes, such as local code, official docs,
-  ecosystem practice, issue trackers, and design tradeoffs.
-- Several hypotheses need independent checking.
-- The user needs a recommendation with evidence, not just a quick answer.
-- Current web facts or product behavior materially affect the result.
-- One agent's context would get crowded with raw evidence before synthesis.
+Before fanning out, read the fan-out gate in `references/deep-research.md`
+("When To Fan Out") and confirm at least two of its criteria are true.
 
 ### Deep Research Contract
 

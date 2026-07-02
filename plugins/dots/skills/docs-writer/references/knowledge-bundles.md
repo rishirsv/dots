@@ -58,8 +58,6 @@ Fields:
 - Extra fields are allowed when the repo benefits from them, such as `owner`,
   `status`, `source_files`, or `verified_by`.
 
-Do not use `timestamp`. Do not create or maintain `log.md`.
-
 ## Index Files
 
 Use `index.md` for progressive disclosure: it lets a human or agent see what is

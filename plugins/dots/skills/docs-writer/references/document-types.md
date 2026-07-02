@@ -246,5 +246,3 @@ Recommended shape:
   `# Steps`, `# Relationships`, `# Failure Handling`, or `# Citations`.
 - Bundle-relative links to related concepts where a future agent should
   traverse context.
-
-Do not add timestamps. Do not create `log.md`.
