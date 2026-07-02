@@ -1,4 +1,4 @@
-# Knowledge Bundles
+# Knowledge bundles
 
 Read this when writing docs intended to serve as durable agent context, a
 Markdown knowledge base, or an OKF-inspired bundle.
@@ -10,7 +10,7 @@ without tooling, parseable by agents, diffable in git, and portable across
 projects. Use them when ordinary prose is not enough because future agents need
 to discover concepts, follow relationships, filter by type, or verify sources.
 
-## Bundle Shape
+## Bundle shape
 
 Use a directory tree of Markdown files:
 
@@ -31,7 +31,7 @@ docs/knowledge/
 `docs/knowledge/` is a default suggestion, not a requirement. Follow the repo's
 existing docs layout when it has one.
 
-## Concept Frontmatter
+## Concept frontmatter
 
 Use frontmatter when it helps agents or humans navigate the corpus:
 
@@ -58,7 +58,7 @@ Fields:
 - Extra fields are allowed when the repo benefits from them, such as `owner`,
   `status`, `source_files`, or `verified_by`.
 
-## Index Files
+## Index files
 
 Use `index.md` for progressive disclosure: it lets a human or agent see what is
 available before opening every file.
@@ -81,7 +81,7 @@ Rules:
 - Do not add YAML frontmatter to `index.md` unless the target format requires
   bundle-level metadata.
 
-## Links And Relationships
+## Links and relationships
 
 - Prefer bundle-root-relative links in knowledge bundles when the repo renderer
   supports them. Use normal relative links when that is more portable in the
@@ -108,7 +108,7 @@ For repo-internal docs, inline links to source files are often enough. Use a
 dedicated citations section when source authority matters or when claims draw
 from multiple external sources.
 
-## Writing For Agents And Humans
+## Writing for agents and humans
 
 - Put structured metadata in frontmatter and readable explanation in the body.
 - Use stable headings and tables for information that agents may extract later.

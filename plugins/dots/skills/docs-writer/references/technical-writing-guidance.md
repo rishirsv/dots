@@ -1,9 +1,9 @@
-# Technical Writing Guidance
+# Technical writing guidance
 
 Read this when drafting or revising reader-facing documentation. It defines the
 technical writing rules this skill should apply at runtime.
 
-## Core Moves
+## Core moves
 
 - Identify the audience before writing. Name what the reader already knows,
   what they are trying to do, and what decision or task the doc must support.
@@ -27,8 +27,8 @@ technical writing rules this skill should apply at runtime.
 
 - Use descriptive headings that tell the reader what the section is for.
 - Keep heading levels nested logically. Do not skip from `##` to `####`.
-- Prefer task or artifact names over abstract labels. "Run Validation" is more
-  useful than "Additional Considerations".
+- Prefer task or artifact names over abstract labels. "Run validation" is more
+  useful than "Additional considerations".
 - Avoid repeating the document title as the first section heading.
 
 ## Procedures
@@ -44,7 +44,7 @@ technical writing rules this skill should apply at runtime.
 - Avoid hidden dependencies. If a command assumes a directory, branch, config,
   env var, or service account, state it before the command.
 
-## Examples And Code
+## Examples and code
 
 - Make examples realistic and minimal. A small correct example beats a broad
   example with unsupported details.
@@ -55,7 +55,7 @@ technical writing rules this skill should apply at runtime.
 - Prefer fenced code blocks with language tags. Use inline code for filenames,
   commands, flags, functions, fields, and literal values.
 
-## Style Defaults
+## Style defaults
 
 - Use second person sparingly and directly when instructing a reader. "Run" is
   usually better than "You should run".
@@ -65,11 +65,18 @@ technical writing rules this skill should apply at runtime.
   Start with the subject, task, decision, or constraint instead.
 - Avoid excessive claims such as "simple", "easy", "just", "obviously", or
   "seamless" unless the source proves the claim and the word helps the reader.
-- Use inclusive language and avoid idioms that may be hard to translate.
+- Use inclusive language. Avoid idioms, colloquialisms, culture-specific
+  examples, seasonal references, and humor that may be hard to translate.
+- Use US English unless repo or product style requires another variant.
+- Prefer simple verbs. Avoid phrasal verbs when a single precise verb works.
+- Put conditions before instructions when the condition changes what the reader
+  should do.
+- Avoid directional language such as "above", "below", "left", or "right" when
+  referring to locations in a document or UI.
 - Prefer present tense and timeless phrasing for durable docs. Use dated
   phrasing only when the date is part of the fact.
 
-## Editing Pass
+## Editing pass
 
 For a rewrite, preserve the document's technical contract first:
 
@@ -80,7 +87,7 @@ For a rewrite, preserve the document's technical contract first:
 4. Tighten sentences and headings.
 5. Re-check that no required technical detail was dropped.
 
-## Rewrite Examples
+## Rewrite examples
 
 Use examples like these to turn vague cleanup advice into concrete edits:
 

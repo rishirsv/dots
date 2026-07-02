@@ -3,7 +3,7 @@ name: docs-writer
 description: "Use when writing, revising, or reviewing durable repository documentation such as README files, Markdown docs, concept docs, how-tos, tutorials, runbooks, design docs, ADRs/design notes, troubleshooting guides, release notes, changelogs, PRDs, or agent-readable knowledge bundles; not for AGENTS.md/project instructions, code comments only, one-off chat explanations, git-derived changelogs, PR/publish workflows, or broad implementation."
 ---
 
-# Docs Writer
+# Docs writer
 
 Write durable documentation that is clear for humans and structured enough for
 agents to discover, traverse, and update later. Technical-writing quality is
@@ -26,6 +26,13 @@ part of this skill; do not route prose cleanup to a separate writing skill.
   or a navigable Markdown corpus.
 - Read [validation.md](references/validation.md) before finalizing docs or
   reporting completion.
+
+## Style guide hierarchy
+
+When the user asks for a named style guide, follow project-specific style first.
+For Google style, use the Google Developer Documentation Style Guide for
+editorial decisions and Google's Markdown style guide for Markdown source
+mechanics.
 
 ## Workflow
 
@@ -60,7 +67,7 @@ part of this skill; do not route prose cleanup to a separate writing skill.
    reports must name files changed, doc types, validation performed, validation
    skipped with reasons, and open verification gaps when relevant.
 
-## Output Modes
+## Output modes
 
 - File edit: patch the requested docs, then report changed files, doc types,
   validation, and any relevant verification gaps.
@@ -72,7 +79,7 @@ part of this skill; do not route prose cleanup to a separate writing skill.
   recommended fix. State the reviewed scope and evidence inspected. If no issues
   are found, say no material issues were found in that scope.
 
-## Writing Rules
+## Writing rules
 
 - Prefer concise, direct prose over marketing language, apologies, and
   self-referential setup such as "I'll walk you through" or "let's dive in."
@@ -81,6 +88,9 @@ part of this skill; do not route prose cleanup to a separate writing skill.
 - Use consistent names for commands, files, concepts, UI labels, and domain
   terms. If the code and docs disagree, verify the current source before
   choosing.
+- For prescriptive docs, avoid ambiguous `should`. Use imperatives or `must`
+  for required actions, `can` for optional actions, and `might` or `can` for
+  possible outcomes.
 - Keep examples realistic, runnable when possible, and scoped to the current
   doc. Do not include fake output unless it is labeled as illustrative.
 - Separate facts, assumptions, and recommendations when the distinction matters
@@ -92,13 +102,13 @@ part of this skill; do not route prose cleanup to a separate writing skill.
   asks.
 - When durable docs depend on facts that cannot be verified from available
   sources, ask for the missing source or write only a clearly labeled proposal.
-- Cite or link supporting material for claims that a future reader or agent would
-  need to verify, especially externally sourced facts, API behavior, data
+- Cite or link supporting material for claims that a future reader or agent
+  would need to verify, especially externally sourced facts, API behavior, data
   definitions, and operational procedures.
 - For PRDs, see the PRD recipe in `references/document-types.md` for the
   evidence-section restriction.
 
-## Knowledge Docs
+## Knowledge docs
 
 When documentation is meant to become reusable agent context, make it a
 structured Markdown concept instead of ordinary prose alone:

@@ -2,7 +2,7 @@
 
 Read this before finalizing documentation work.
 
-## Evidence Checks
+## Evidence checks
 
 - Verify behavior against source code, config, CLI help, tests, schemas, or
   authoritative docs when the claim depends on them.
@@ -13,17 +13,43 @@ Read this before finalizing documentation work.
 - Do not claim a command, example, link, render, or test was verified unless it
   was actually checked in the current run or provided as fresh evidence.
 
-## Markdown Checks
+## Markdown checks
 
 - Headings are nested logically and describe the section.
 - Links point to the intended files or URLs. Report links that could not be
   checked.
+- Link text is meaningful without surrounding prose; avoid link text such as
+  "here", "link", or a bare URL unless the URL itself is the subject.
 - Code fences have language tags when a language is known.
 - Tables are readable in plain Markdown and do not hide long prose.
+- Tables are introduced before they appear, especially when the table carries
+  important information.
 - Inline code is used for commands, file paths, flags, field names, and literal
   values.
+- Images have alt text or an equivalent text explanation. Decorative images use
+  empty alt text when the target renderer supports it.
+- Images do not contain text, code samples, or terminal output that should be
+  available as real text.
+- Important meaning is not conveyed only by color, icon shape, size, position,
+  or other visual cues.
+- Procedures and UI instructions avoid directional language such as "above",
+  "below", "left", or "right" when a label, heading, or preceding/following
+  reference would be clearer.
 
-## Knowledge Bundle Checks
+## Global audience checks
+
+- Terms, abbreviations, and acronyms are defined at first use when the audience
+  might not know them.
+- Terminology, phrasing, formatting, and capitalization are consistent within
+  the doc or doc set.
+- Sentences are short enough to translate and do not rely on idioms,
+  colloquialisms, culture-specific examples, seasonal references, or humor.
+- Conditions appear before instructions when the condition changes what the
+  reader should do.
+- Prescriptive wording distinguishes required actions, optional actions,
+  expected outcomes, and possible outcomes. Avoid ambiguous `should`.
+
+## Knowledge bundle checks
 
 For OKF-style or agent-readable knowledge docs:
 
@@ -38,7 +64,7 @@ For OKF-style or agent-readable knowledge docs:
 - External claims have inline source links or a `# Citations` section when
   source authority matters.
 
-## Design Doc Checks
+## Design doc checks
 
 For design docs, technical designs, architecture proposals, or implementation
 designs:
@@ -62,7 +88,7 @@ designs:
 - Alternatives considered answer the obvious "why not this?" questions without
   becoming an exhaustive diary.
 
-## Final Report
+## Final report
 
 Report:
 

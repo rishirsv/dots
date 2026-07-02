@@ -1,15 +1,15 @@
-# Design Docs
+# Design docs
 
 Use this reference when writing, revising, or reviewing a design doc, technical
 design, implementation design, architecture proposal, or durable "how to build
 it" plan.
 
-A design doc helps reviewers find expensive mistakes before implementation. It
-is not a transcript of every possible implementation detail. Spend the document's
-attention on decisions that are hard to reverse, risky to misunderstand, or
-important for several people or systems to coordinate around.
+A design doc helps reviewers find expensive mistakes before implementation.
+It is not a transcript of every possible implementation detail. Spend the
+document's attention on decisions that are hard to reverse, risky to
+misunderstand, or important for several people or systems to coordinate around.
 
-## When To Use A Design Doc
+## When to use a design doc
 
 Prefer a design doc when one or more of these are true:
 
@@ -21,8 +21,8 @@ Prefer a design doc when one or more of these are true:
   ambiguous.
 - The work crosses a trust boundary, data boundary, service boundary, repo
   boundary, deployment boundary, or user-facing workflow.
-- A wrong decision could create security, privacy, legal, data-loss, reliability,
-  migration, compatibility, cost, or long-term maintenance risk.
+- A wrong decision could create security, privacy, legal, data-loss,
+  reliability, migration, compatibility, cost, or long-term maintenance risk.
 
 Use a different document type when the job is narrower:
 
@@ -34,7 +34,7 @@ Use a different document type when the job is narrower:
 - Use a concept doc when the reader needs to understand a model but no design is
   being proposed.
 
-## Penalty Filter
+## Penalty filter
 
 Before choosing sections, identify the expensive decisions:
 
@@ -52,7 +52,7 @@ rule, or migration strategy often belongs in the design doc. Button copy,
 minor layout choices, small helper functions, and easily swapped libraries
 usually do not unless they create meaningful risk.
 
-## Core Shape
+## Core shape
 
 Start with the smallest useful structure, then add sections based on the risk
 profile.
@@ -71,22 +71,22 @@ Recommended default shape:
   expectations.
 - **Scenarios**: concrete user, system, migration, failure, or operational
   flows that reveal the required behavior.
-- **Proposed Design**: the architecture, interfaces, data model, dependencies,
+- **Proposed design**: the architecture, interfaces, data model, dependencies,
   ownership, and important mechanisms.
-- **How To Build It**: the implementation path when build order, integration,
+- **How to build it**: the implementation path when build order, integration,
   rollout, test strategy, or migration safety affects the design.
-- **Risks And Constraints**: security, privacy, reliability, legal, cost,
+- **Risks and constraints**: security, privacy, reliability, legal, cost,
   compatibility, performance, staffing, timeline, or platform constraints.
-- **Open Issues**: unresolved decisions with options and immediate next steps.
-- **Resolved Issues**: decisions made during review, preserving the original
+- **Open issues**: unresolved decisions with options and immediate next steps.
+- **Resolved issues**: decisions made during review, preserving the original
   question and the chosen resolution.
-- **Alternatives Considered**: strong alternatives reviewers would naturally ask
+- **Alternatives considered**: strong alternatives reviewers would naturally ask
   about, with concise reasons they were rejected.
 
 Do not force every section into every design doc. If a section does not change
 the reader's ability to review the design, omit it.
 
-## Section Selection
+## Section selection
 
 Choose sections by project shape.
 
@@ -100,7 +100,8 @@ For user-facing apps and workflows, consider:
 
 For services, backends, and integrations, consider:
 
-- Service boundaries, APIs, events, jobs, queues, CLI semantics, or file formats.
+- Service boundaries, APIs, events, jobs, queues, CLI semantics, or file
+  formats.
 - Data flow, persistence, schema, migrations, idempotency, and retry behavior.
 - SLOs for availability, latency, throughput, scale, freshness, and error rates.
 - Monitoring, alerting, logging, dashboards, and operational ownership.
@@ -117,8 +118,8 @@ For data-sensitive systems, consider:
 
 For migrations, imports, and compatibility work, consider:
 
-- Source and target formats, mapping rules, validation, partial-failure handling,
-  backfill order, cutover, rollback, and reconciliation.
+- Source and target formats, mapping rules, validation, partial-failure
+  handling, backfill order, cutover, rollback, and reconciliation.
 - Versioning, old-client behavior, deprecation, and data repair strategy.
 
 For libraries, tools, and repo-internal platforms, consider:
@@ -126,9 +127,9 @@ For libraries, tools, and repo-internal platforms, consider:
 - Public API or CLI contract, extension points, config surface, defaults,
   compatibility promise, packaging, install/update path, and test harness.
 
-## How To Build It
+## How to build it
 
-Include a "How To Build It", "Implementation Plan", or "Build Plan" section
+Include a "How to build it", "Implementation plan", or "Build plan" section
 when implementation order is part of the design. This is common when the work
 needs staged rollout, migration safety, early feedback, cross-team coordination,
 or proof that the design can be built without a large risky launch.
@@ -172,7 +173,7 @@ Weak milestones only describe isolated implementation chores:
 Those tasks can be part of an issue tracker, but a design doc should explain why
 the sequence reduces risk.
 
-## Design Detail Guidance
+## Design detail guidance
 
 Use enough detail for reviewers to assess the design without reading the future
 code.
@@ -202,7 +203,7 @@ Avoid:
 - Invented precision. If a target or requirement is unknown, label it as an open
   issue.
 
-## Open And Resolved Issues
+## Open and resolved issues
 
 Use open issues when the design has a real unresolved decision, not as a parking
 lot for miscellaneous thoughts.
@@ -218,7 +219,7 @@ Each open issue should include:
 When the issue is resolved, move or copy it into resolved issues. Preserve the
 original question and add the decision, rationale, and follow-up implications.
 
-## Alternatives Considered
+## Alternatives considered
 
 Include alternatives that reviewers are likely to ask about or that consumed
 meaningful investigation time.
@@ -232,7 +233,7 @@ Keep each alternative concise:
 Do not document every rejected thought. The alternatives section should prevent
 repeat debate, not prove that the author explored every possibility.
 
-## Review Checklist
+## Review checklist
 
 Before finalizing or reviewing a design doc, check:
 
@@ -242,7 +243,7 @@ Before finalizing or reviewing a design doc, check:
 - Non-goals are specific enough to stop scope creep.
 - The doc spends the most detail on expensive or risky decisions.
 - Scenarios reveal behavior, permissions, failures, and edge cases.
-- "How To Build It" explains risk-reducing build order when implementation
+- "How to build it" explains risk-reducing build order when implementation
   sequence matters.
 - Interfaces and data shapes are concrete enough for dependent systems.
 - Security, privacy, logging, retention, and legal sections exist when the

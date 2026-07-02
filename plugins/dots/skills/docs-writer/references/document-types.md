@@ -1,4 +1,4 @@
-# Document Types
+# Document types
 
 Read this after choosing the documentation job. Prefer the repo's existing
 structure when it is clear; use these recipes when the repo has no stronger
@@ -38,7 +38,7 @@ Recommended shape:
 Concept docs should not read like procedures. Include examples only when they
 clarify the model.
 
-## How-To
+## How-to
 
 Use for a task with a concrete outcome and a flexible path.
 
@@ -103,7 +103,7 @@ Recommended shape:
 Runbooks should be conservative. State when to stop for human approval or when a
 command has external effects.
 
-## PRD Or Feature Spec
+## PRD or feature spec
 
 Use when a feature idea, problem statement, or product request needs a durable
 product contract.
@@ -137,8 +137,8 @@ Group requirements by priority when the repo has no stronger convention:
 
 - **P0 / Must-have**: required for the feature to solve the core problem.
 - **P1 / Should-have**: important improvement that can follow the core launch.
-- **P2 / Future consideration**: out of scope for the current version, but useful
-  to preserve as design context.
+- **P2 / Future consideration**: out of scope for the current version, but
+  useful to preserve as design context.
 
 Acceptance criteria should be independently testable. Use Given/When/Then or a
 checklist, cover happy paths and important failure paths, and avoid ambiguous
@@ -153,7 +153,7 @@ targets.
 For PRDs, gather source evidence internally but do not add source-evidence,
 provenance, reviewed-scope, or audit sections to the document itself.
 
-## Design Doc
+## Design doc
 
 Use when an engineering change needs technical alignment before implementation,
 especially when choices are expensive to reverse, several people or systems must
@@ -185,7 +185,7 @@ Do not treat this as mandatory boilerplate. Choose sections with the penalty
 filter: document the decisions that would be painful, risky, or costly to get
 wrong, and leave cheap implementation details to the implementation.
 
-## ADR Or Design Note
+## ADR or design note
 
 Use for a durable decision, rejected alternatives, or a design proposal.
 
@@ -217,7 +217,7 @@ Recommended shape:
 Use exact error text when available. Do not bury the most common fix behind a
 long explanation.
 
-## Changelog And Release Notes
+## Changelog and release notes
 
 Use for a reader-facing account of changes over versions, releases, or dates.
 
@@ -233,7 +233,7 @@ Recommended shape:
 Prefer reader impact over commit-log summaries. Avoid internal implementation
 details unless they change behavior, compatibility, or operations.
 
-## Knowledge Concept
+## Knowledge concept
 
 Use for an agent-readable unit of knowledge in a Markdown corpus or OKF-style
 bundle.
