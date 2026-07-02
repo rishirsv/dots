@@ -221,7 +221,7 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
 
 def snapshot_candidate(run_dir, candidate_info):
     candidate_id = candidate_info["candidate"]
-    snapshot_root = run_dir / "candidates" / candidate_id / "snapshot"
+    snapshot_root = run_dir / "inputs" / "candidates" / candidate_id
     snapshot_json_path = snapshot_root / "snapshot.json"
     payload = candidate_info.get("payload_path")
     digest = copy_candidate_payload(Path(payload) if payload else None, snapshot_root)

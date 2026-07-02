@@ -237,7 +237,7 @@ def grader_path(root, grader, label):
 def grade_run(raw_run, *, rebuild_summary=True):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
-    frozen_suite = read_json(run_dir / "eval-spec" / "suite.json")
+    frozen_suite = read_json(run_dir / "inputs" / "suite.json")
     cases_by_id = {case.get("id"): case for case in frozen_suite.get("cases", [])}
     rows = []
     all_existing_grades = read_jsonl(run_dir / "grades.jsonl")
@@ -266,7 +266,7 @@ def grade_run(raw_run, *, rebuild_summary=True):
                 )
             )
             continue
-        root = run_dir / "eval-spec" / "cases" / result["case_id"]
+        root = run_dir / "inputs" / "cases" / result["case_id"]
         case = cases_by_id.get(result["case_id"], {})
         graders = normalize_graders(case, root)
         expected = next(iter(sorted(root.glob("expected.*"))), None)
@@ -329,7 +329,7 @@ def record_human_grade(raw_run, *, trial_id, grader_id, metric, label, score=Non
         raise CliError("human grade score must be between 0 and 1", 2)
     generation_id = f"grade-{run_id()}"
     declared = None
-    frozen_path = run_dir / "eval-spec" / "suite.json"
+    frozen_path = run_dir / "inputs" / "suite.json"
     if frozen_path.exists():
         frozen_suite = read_json(frozen_path)
         case = next((item for item in frozen_suite.get("cases", []) if item.get("id") == result.get("case_id")), {})

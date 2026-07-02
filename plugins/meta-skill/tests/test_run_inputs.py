@@ -1,4 +1,4 @@
-"""Tests for frozen eval specs and trial workspace staging."""
+"""Tests for frozen run inputs and trial workspace staging."""
 
 import json
 import sys
@@ -10,7 +10,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.errors import CliError  # noqa: E402
-from meta_skill.resolved_suite import freeze_eval_spec  # noqa: E402
+from meta_skill.run_inputs import freeze_run_inputs  # noqa: E402
 from meta_skill.staging import stage_workspace  # noqa: E402
 
 
@@ -41,7 +41,7 @@ class ResolvedSuiteTests(unittest.TestCase):
                 "expectations": ["Do the task."],
             }
 
-            frozen = freeze_eval_spec(
+            frozen = freeze_run_inputs(
                 {"target": {"type": "skill", "ref": "SKILL.md"}},
                 suite,
                 workbench,
@@ -50,12 +50,12 @@ class ResolvedSuiteTests(unittest.TestCase):
                 [{"candidate": "current"}],
             )
             frozen_case = dict(frozen["cases"][0])
-            frozen_case["case_root"] = str(run_dir / "eval-spec" / "cases" / "case-a")
+            frozen_case["case_root"] = str(run_dir / "inputs" / "cases" / "case-a")
             staged = stage_workspace(run_dir, "case-a.current.t1", frozen_case, {"candidate": "current"})
             workspace = Path(staged["workspace"])
 
-            self.assertTrue((run_dir / "eval-spec" / "cases" / "case-a" / "judge.md").exists())
-            self.assertTrue((run_dir / "eval-spec" / "cases" / "case-a" / "expected.txt").exists())
+            self.assertTrue((run_dir / "inputs" / "cases" / "case-a" / "judge.md").exists())
+            self.assertTrue((run_dir / "inputs" / "cases" / "case-a" / "expected.txt").exists())
             self.assertTrue((workspace / "task.md").exists())
             self.assertTrue((workspace / "fixtures" / "input.txt").exists())
             self.assertFalse((workspace / "judge.md").exists())
@@ -82,7 +82,7 @@ class ResolvedSuiteTests(unittest.TestCase):
             }
 
             with self.assertRaises(CliError) as ctx:
-                freeze_eval_spec(
+                freeze_run_inputs(
                     {"target": {"type": "skill", "ref": "SKILL.md"}},
                     suite,
                     workbench,
@@ -114,7 +114,7 @@ class ResolvedSuiteTests(unittest.TestCase):
             }
 
             with self.assertRaises(CliError) as ctx:
-                freeze_eval_spec(
+                freeze_run_inputs(
                     {"target": {"type": "skill", "ref": "SKILL.md"}},
                     suite,
                     workbench,
@@ -146,7 +146,7 @@ class ResolvedSuiteTests(unittest.TestCase):
             }
 
             with self.assertRaises(CliError) as ctx:
-                freeze_eval_spec(
+                freeze_run_inputs(
                     {"target": {"type": "skill", "ref": "SKILL.md"}},
                     suite,
                     workbench,
@@ -172,7 +172,7 @@ class ResolvedSuiteTests(unittest.TestCase):
             }
 
             with self.assertRaises(CliError) as ctx:
-                freeze_eval_spec(
+                freeze_run_inputs(
                     {"target": {"type": "skill", "ref": "SKILL.md"}},
                     suite,
                     workbench,

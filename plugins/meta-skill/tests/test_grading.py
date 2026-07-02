@@ -29,12 +29,12 @@ class GradingTests(unittest.TestCase):
     def test_regrade_appends_new_grade_generation(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            case_root = run_dir / "eval-spec" / "cases" / "case-a"
+            case_root = run_dir / "inputs" / "cases" / "case-a"
             case_root.mkdir(parents=True)
             (case_root / "task.md").write_text("Say done.\n")
             write_json(case_root / "expectations.json", ["The response says done."])
             write_json(
-                run_dir / "eval-spec" / "suite.json",
+                run_dir / "inputs" / "suite.json",
                 {
                     "schema_version": 1,
                     "cases": [
@@ -98,11 +98,11 @@ class GradingTests(unittest.TestCase):
     def test_regrade_preserves_recorded_human_grade(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            case_root = run_dir / "eval-spec" / "cases" / "case-a"
+            case_root = run_dir / "inputs" / "cases" / "case-a"
             case_root.mkdir(parents=True)
             (case_root / "task.md").write_text("Say done.\n")
             write_json(
-                run_dir / "eval-spec" / "suite.json",
+                run_dir / "inputs" / "suite.json",
                 {
                     "schema_version": 1,
                     "cases": [
