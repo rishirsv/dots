@@ -192,7 +192,7 @@ directly. Resolve relative `<skill-dir>` from the user's current working
 directory. The portable payload is the project root: `<skill-dir>/SKILL.md`,
 `agents/`, and any runtime folders the design actually needs. If the user wants
 workbench-backed evaluation or packaging state, run
-`<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir>` after the payload
+`<meta-skill-root>/scripts/metaskill init <skill-dir>` after the payload
 exists.
 
 In project mode, keep non-runtime authoring material under `.<skill-name>/`.

@@ -87,13 +87,13 @@ Current top-level commands:
 
 ```sh
 <meta-skill-root>/scripts/metaskill doctor [--json]
-<meta-skill-root>/scripts/metaskill workbench init [--target <path>] [--dry-run] [--json]
+<meta-skill-root>/scripts/metaskill init [<target>] [--dry-run] [--json]
+<meta-skill-root>/scripts/metaskill status [<target>] [--json]
+<meta-skill-root>/scripts/metaskill case new <case-id> [--suite <suite>] [--json]
 <meta-skill-root>/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
 <meta-skill-root>/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
 <meta-skill-root>/scripts/metaskill sessions extract <thread-id> [--target <skill-dir>] [--max-chars <n>] [--out <file>] [--json]
-<meta-skill-root>/scripts/metaskill eval lint [--suite <suite>] [--preset <name-or-path>] [--json]
-<meta-skill-root>/scripts/metaskill eval materialize [--suite <suite>] [--force] [--json]
-<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--candidates <ids>] [--split <name>] [--case <id>] [--type <type>] [--repetitions <n>] [--preset <name-or-path>] [--model <id>] [--no-grade] [--json]
+<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--candidates <ids>] [--split <name>] [--case <id>] [--type <type>] [--repetitions <n>] [--preset <name-or-path>] [--model <id>] [--no-grade] [--check] [--json]
 <meta-skill-root>/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
 <meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
 <meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--reviewer <name>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
@@ -123,19 +123,49 @@ primary checks fail.
 <meta-skill-root>/scripts/metaskill doctor --json
 ```
 
-### `workbench init`
+### `init`
 
-Use once per target skill or project to create the standard hidden workbench
-and nested agent guidance.
+Use once per target skill or project to create the standard hidden workbench,
+nested agent guidance, and a starter eval suite.
 
-Flags: `--target <path>` (defaults to the current directory), `--dry-run`
-(report planned changes without writing them).
+Flags: `<target>` (defaults to the current directory), `--dry-run` (report
+planned changes without writing them).
 
-Writes: `.<skill-name>/`, seeding `.<skill-name>/AGENTS.md` if missing. Does
-not create empty folders or starter eval files.
+Writes: `.<skill-name>/`, seeding `.<skill-name>/AGENTS.md` if missing, and
+`.<skill-name>/evals.json` (from the default suite skeleton, with
+`skill_name` filled from the target's `SKILL.md`) if missing. Does not create
+empty folders.
 
 ```sh
-<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir> --json
+<meta-skill-root>/scripts/metaskill init <skill-dir> --json
+```
+
+### `status`
+
+Use for a one-glance read of a target's workbench state: whether the
+workbench and suite exist, case counts and types, lint warning count, known
+presets, and the latest run.
+
+Flags: `<target>` (defaults to the current directory), `--json`.
+
+```sh
+<meta-skill-root>/scripts/metaskill status <skill-dir>
+```
+
+### `case new`
+
+Use to scaffold a new eval case's visible task before wiring it into
+`evals.json`.
+
+Flags: `<case-id>`, `--suite <suite>` (defaults to the current target's
+`.<skill-name>/evals.json`).
+
+Writes: `.<skill-name>/cases/<case-id>/task.md` with a TODO stub. If the case
+id is not yet in `evals.json`, the result includes a ready-to-paste manifest
+snippet; it does not edit `evals.json` for you.
+
+```sh
+<meta-skill-root>/scripts/metaskill case new <case-id> --suite .<skill-name>/evals.json --json
 ```
 
 ### `sessions list`
@@ -183,57 +213,28 @@ handoff_markdown }` with `--json`.
 <meta-skill-root>/scripts/metaskill sessions extract 019ed74b-e8d8 --target plugins/dots/skills/ideate
 ```
 
-### `eval materialize`
-
-Use after editing `.<skill-name>/evals.json` or when a task directory has not
-been created yet.
-
-Flags: `--suite` (defaults to the current target's `.<skill-name>/evals.json`),
-`--force` (overwrite existing materialized task files).
-
-Writes: `.<skill-name>/cases/<task-id>/` with the default visible task stub
-(usually `task.md`) and parent directories for declared fixtures. A task using
-a custom task path materializes that file instead. Keep materialized task
-files free of hidden control metadata.
-
-### `eval lint`
-
-Use before running a suite. This is a static manifest check, not a behavioral
-grade.
-
-Reads `cases[]`; warns on missing task sources, missing graders, missing
-reference material for regression/gate tasks, unbalanced trigger suites, and
-incomplete grader metadata.
-
-Pass `--preset <name-or-path>` to also lint a preset (task selection,
-candidate policy, gates, integrity, and report policy). A bare name resolves
-to `.<skill-name>/presets/<name>.json`; a path is used directly. Preset
-linting warns on unknown cases/candidates, no selected cases, one-sided
-trigger presets, selected tasks without graders, release presets without
-gates, and missing unknown-rate tracking.
-
-```sh
-<meta-skill-root>/scripts/metaskill eval lint --suite .<skill-name>/evals.json --json
-<meta-skill-root>/scripts/metaskill eval lint --preset release --json
-```
-
 ### `eval run`
 
-Use to execute a suite or a selected slice of it. Runs trials **and grades
-them by default**; pass `--no-grade` to skip grading for runtime-only
-debugging.
+Use to execute a suite or a selected slice of it. `eval run` always
+preflight-lints the suite (and the preset, when `--preset` is given) and
+prints warnings to stderr; JSON runs include `lint_warnings` in the result.
+Pass `--check` to run only the preflight lint (no planning, no trials, exit
+`0`). Runs trials **and grades them by default**; pass `--no-grade` to skip
+grading for runtime-only debugging.
 
 Flags: `--suite` (defaults to `.<skill-name>/evals.json`), `--candidates
 <ids>`, `--split <name>`, `--case <id>` (repeatable/comma-sep), `--type
 <type>` (repeatable/comma-sep), `--repetitions <n>`, `--preset
-<name-or-path>`, `--model <id>`, `--no-grade`.
+<name-or-path>`, `--model <id>`, `--no-grade`, `--check`.
 
-What it does: loads tasks and candidates, verifies each selected task already
-has a materialized task file, freezes the suite and each candidate's source
+What it does: preflight-lints the suite (and preset), loads tasks and
+candidates, verifies each selected task already has a task file (create it
+first with `case new`), freezes the suite and each candidate's source
 payload into `inputs/` (the run input snapshot), stages a trial workspace
 with only `task.md`, declared fixtures, and the candidate payload when
 present, executes each task/candidate/trial combination through Codex App
-Server, then grades (unless `--no-grade`).
+Server, printing live per-trial progress lines to stderr, then grades
+(unless `--no-grade`) and auto-renders `report.md` into the run directory.
 
 Pass `--preset <name-or-path>` to run the task and candidate slice selected by
 a saved preset instead of `--suite`/`--candidates`/`--case`/`--type`. A bare
@@ -260,6 +261,7 @@ Run layout — the only layout that exists:
   results.jsonl                   # one row per executed trial (status, paths, usage, timing)
   grades.jsonl                    # grader rows; each grading pass appends a new grade generation
   summary.json                    # aggregate verdicts; rebuilt by grading and report commands
+  report.md                       # rendered run report (auto-written)
   inputs/                         # run input snapshot: everything the run consumed, frozen
     suite.json                    # frozen suite copy
     cases/<case-id>/              # task.md, expectations.json, judge.md, expected.*, validate.*
@@ -282,6 +284,8 @@ What each file is for:
 - `grades.jsonl`: grader results; each grading generation appends new rows,
   latest per trial/metric/grader wins
 - `summary.json`: aggregate verdicts rebuilt by grading and report commands
+- `report.md`: the rendered run report, auto-written after grading (preset
+  scorecard when the run has a preset, plain summary otherwise)
 - `inputs/`: the run input snapshot — everything the run consumed, frozen. The
   frozen suite copy the run graded against, including hidden grader files
   (`judge.md`, `expected.*`, `validate.*`) under `inputs/cases/<case-id>/`,
@@ -469,27 +473,33 @@ in JSON.
 
 ```sh
 <meta-skill-root>/scripts/metaskill doctor --json
-<meta-skill-root>/scripts/metaskill workbench init --target <target> --json
+<meta-skill-root>/scripts/metaskill init <target> --json
 ```
 
-### Add or refresh tasks from the suite
+### Add a task and run the suite
 
 ```sh
-<meta-skill-root>/scripts/metaskill eval lint --json
-<meta-skill-root>/scripts/metaskill eval materialize --json
+<meta-skill-root>/scripts/metaskill case new <case-id> --json
 ```
 
-Then edit the generated task `task.md` files and any validators or fixtures.
-
-### Run and inspect a suite
+Paste the returned manifest snippet into `evals.json`, author `task.md` and
+any validators or fixtures, then:
 
 ```sh
 <meta-skill-root>/scripts/metaskill eval run --json
+<meta-skill-root>/scripts/metaskill status --json
+```
+
+Read `.<skill-name>/runs/<run-id>/report.md` for the rendered result, then:
+
+```sh
 <meta-skill-root>/scripts/metaskill eval progress --run <run-id> --watch --json
 <meta-skill-root>/scripts/metaskill eval human --run <run-id> --json
 <meta-skill-root>/scripts/metaskill eval calibrate --run <run-id> --json
 <meta-skill-root>/scripts/metaskill eval report --run <run-id>
 ```
+
+Re-run `eval run` after editing tasks or graders.
 
 `eval run` already grades by default. Use `eval grade --run <run-id>` only to
 re-grade after adding or changing graders. Use `eval list --json` to find
@@ -515,15 +525,15 @@ cd /tmp/meta-skill-e2e
 
 # Create two target project folders outside source payloads:
 # quick-skill/skill and hefty-skill/skill.
-"$CLI" workbench init --target quick-skill --json
-"$CLI" workbench init --target hefty-skill --json
+"$CLI" init quick-skill --json
+"$CLI" init hefty-skill --json
 "$CLI" validate quick-skill/skill --json
 "$CLI" validate hefty-skill/skill --json
 "$CLI" package quick-skill/skill --json
 "$CLI" package hefty-skill/skill --json
 
 # Author each target's .<skill-name>/evals.json, task.md, judge.md, and validate.* tasks.
-"$CLI" eval materialize --suite quick-skill/.<quick-skill-name>/evals.json --json
+"$CLI" case new <case-id> --suite quick-skill/.<quick-skill-name>/evals.json --json
 "$CLI" eval run --suite quick-skill/.<quick-skill-name>/evals.json --json
 "$CLI" eval progress --run <quick-run-dir> --json
 "$CLI" eval report --run <quick-run-dir> --out <quick-run-dir>/report.md

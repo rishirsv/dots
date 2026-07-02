@@ -336,9 +336,10 @@ After grading, render the run with
 [cli.md](../../references/cli.md)) instead of hand-assembling a summary from
 run files. The report separates runner completion from behavioral grades and
 lists failed, ungraded, `unknown_evidence`, and missing-evidence trials.
-Use `eval lint` before running, `eval human` for human review packets or
-labels, `eval calibrate` for judge/human agreement artifacts, and `eval list`
-to find earlier runs in the same workbench.
+`eval run` always preflight-lints before running (use `eval run --check` to
+lint only); use `eval human` for human review packets or labels, `eval
+calibrate` for judge/human agreement artifacts, and `eval list` to find
+earlier runs in the same workbench.
 
 Report per-task outcomes, grades, aggregate performance, failed tasks, and the
 baseline-vs-candidate result. When repeated checks exist, summarize them as

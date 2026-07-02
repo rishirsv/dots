@@ -483,8 +483,9 @@ description: "Use for testing."
         list_args = parser.parse_args(["eval", "list", "--preset", "release"])
         self.assertEqual(list_args.preset, "release")
 
-        lint_args = parser.parse_args(["eval", "lint", "--preset", "release"])
-        self.assertEqual(lint_args.preset, "release")
+        check_args = parser.parse_args(["eval", "run", "--preset", "release", "--check", "--json"])
+        self.assertEqual(check_args.preset, "release")
+        self.assertTrue(check_args.check)
 
         report_args = parser.parse_args(["eval", "report", "--run", "run-001", "--preset", "presets/release.json"])
         self.assertEqual(report_args.preset, "presets/release.json")

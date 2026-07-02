@@ -256,7 +256,7 @@ Watch for:
 Use the central CLI:
 
 ```sh
-<meta-skill-root>/scripts/metaskill eval lint --preset .<skill-name>/presets/core.json --json
+<meta-skill-root>/scripts/metaskill eval run --check --preset .<skill-name>/presets/core.json --json
 <meta-skill-root>/scripts/metaskill eval run --preset .<skill-name>/presets/core.json --json
 <meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> --out .<skill-name>/runs/<run-id>/benchmark.md
 <meta-skill-root>/scripts/metaskill eval list --preset .<skill-name>/presets/core.json --json
