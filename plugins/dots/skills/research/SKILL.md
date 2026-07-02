@@ -29,19 +29,19 @@ Keep prompts outcome-first: state the question, constraints, evidence standard,
 output shape, and stop condition. Do not turn the skill into a rigid checklist
 when a direct answer would be enough.
 
-When the Research workflow is invoked mid-conversation, default to giving the
-bounded research task to a `researcher` subagent when one is available. The
+When the Research workflow is invoked mid-conversation, default to delegating
+the bounded research task when the harness provides an appropriate worker. The
 parent agent should write the contract, keep conversational context and final
-synthesis, and give the subagent the specific research question, source
-boundary, evidence bar, and stop condition. A single researcher is enough for a
-focused question; use multiple researchers only when the task needs distinct
-source lanes. Stay direct only when the user asks for a quick/simple answer,
-forbids subagents, no subagent tool is available, or delegation would mostly
-duplicate a two-minute local lookup.
+synthesis, and give the worker the specific research question, source boundary,
+evidence bar, and stop condition. One worker is enough for a focused question;
+use multiple workers only when the task needs distinct source lanes. Stay direct
+only when the user asks for a quick/simple answer, forbids delegation, no
+delegation mechanism is available, or delegation would mostly duplicate a
+two-minute local lookup.
 
 ## Preamble And Contract
 
-Before tool calls or subagent dispatch, emit a concise visible preamble that
+Before tool calls or delegation, emit a concise visible preamble that
 acknowledges the work and states the research contract. Keep it short enough to
 be useful while the agent is still getting oriented, and make it easy to scan in
 the chat UI.
@@ -67,7 +67,7 @@ Include durability and budget only when they matter:
 ```md
 - **Durability:** <scratch, saved evidence, durable summary, durable decision,
   or temporary plan>
-- **Budget:** <search, file, source, subagent, or time limit>
+- **Budget:** <search, file, source, worker, or time limit>
 ```
 
 Keep status prose separate from the contract. If you need to mention the
@@ -96,7 +96,7 @@ Workflow:
    flows work, what patterns already exist, and what tests or docs prove.
 4. Use fast search and targeted reads. Prefer `rg`, dependency manifests, tests,
    call sites, and local docs over broad file dumps.
-5. For broad or parallel codebase research, dispatch the `researcher` subagent
+5. For broad or parallel codebase research, delegate bounded source-lane work
    with a focused prompt that names the outcome, source boundary, evidence bar,
    and stop condition. Do not create separate codebase specialist roles inside
    this skill.
@@ -151,12 +151,29 @@ question. Then compare the two evidence sets explicitly:
 
 Use deep research when the user explicitly asks for deep research, confirms a
 proposed fan-out, or invokes the Research workflow mid-conversation for a task
-that should be delegated to one or more researchers. See "Runtime Flow" above
-for the default subagent-delegation framing.
+that should be delegated to one or more workers. See "Runtime Flow" above for
+the default delegation framing.
 
-When fan-out is justified, prefer multiple `researcher` subagents with distinct
-questions and source boundaries over one broad researcher. Each subagent should
-own one reportable slice of the investigation.
+Treat deep research as dynamic orchestration, not a fixed checklist. The parent
+agent is the conductor: it scopes the question, chooses source lanes, dispatches
+bounded workers when explicitly authorized, collects their reports at meaningful
+barriers, verifies load-bearing claims when needed, and owns the final
+synthesis.
+
+When fan-out is justified, prefer multiple delegated workers with distinct
+questions and source boundaries over one broad worker. Choose the available role
+or prompt shape that fits each slice:
+
+- research worker for bounded codebase, documentation, web, or option research
+- exploration worker for narrow codebase discovery and symbol tracing
+- adversarial reviewer for claim checks, contradiction review, weak evidence,
+  and failure-mode pressure
+- implementation worker only after the research result becomes an approved
+  implementation task with a disjoint write scope
+
+Each worker should own one reportable slice of the investigation. Do not ask
+multiple workers to answer the same broad prompt unless the explicit point is
+independent adversarial verification.
 
 Before fanning out, read the fan-out gate in `references/deep-research.md`
 ("When To Fan Out") and confirm at least two of its criteria are true.
@@ -167,25 +184,49 @@ Before dispatch, announce:
 
 - The subquestions.
 - The source class for each subquestion.
-- The per-agent budget and stop condition.
+- The per-worker budget and stop condition.
+- The intended barrier points, such as source collection, claim extraction, or
+  verification review.
 - Where subreports will be written.
 - The final synthesis path.
 
 Use the repository's scratch or evidence convention for the run directory. If
 the repository defines ignored generated evidence, prefer that. In this repo,
-use `.agents/research/<topic-slug>/` for deep research run artifacts unless the
-user requests another path.
+use `.agents/outputs/research/<topic-slug>/` for deep research run artifacts
+unless the user requests another path.
+
+### Deep Orchestration Shape
+
+Adapt the workflow to the question:
+
+1. Scope the research into 3-6 source lanes, hypotheses, or claim classes.
+2. Dispatch independent lanes in parallel when the user authorized delegation and
+   the source boundaries are genuinely distinct.
+3. Collect subreports before deduping evidence or making recommendations.
+4. Extract the load-bearing claims: factual statements, local behavior,
+   current-source guidance, risks, assumptions, or option tradeoffs that the
+   final answer depends on.
+5. Run an adversarial or verification pass for claims that are disputed,
+   surprising, current, high-impact, or weakly supported.
+6. Synthesize by claim, not by worker transcript.
+
+For web-heavy deep research, a workflow-harness pattern is a useful default:
+distinct search angles, source dedupe before fetch, falsifiable claim
+extraction, adversarial verification, then cited synthesis. Implement that
+pattern with whatever delegation, scripting, or workflow primitives the active
+harness provides. Treat workflow output as evidence and still apply this skill's
+synthesis and artifact rules.
 
 ### Deep Research Artifact Model
 
-Deep research must preserve subagent detail. Each researcher writes a markdown
-subreport; the parent synthesis links to those reports instead of replacing
-them with a compressed retelling.
+Deep research must preserve worker detail. Each delegated worker writes or
+returns a markdown subreport; the parent synthesis links to saved reports
+instead of replacing them with a compressed retelling.
 
 Recommended run shape:
 
 ```text
-.agents/research/<topic-slug>/
+.agents/outputs/research/<topic-slug>/
   00-research-contract.md
   01-local-behavior.md
   02-current-docs.md
@@ -231,18 +272,18 @@ The parent writes `research.md` as an index and synthesis:
 - Keep commands and source inventories out of the main answer unless they are
   needed to support a claim. Put them in a compact audit trail or source section.
 
-Do not treat raw subagent chat as the research artifact. If a subagent cannot
-write files, the parent must save its report before synthesizing.
+Do not treat raw worker chat as the research artifact. If a worker cannot write
+files, the parent must save its report before synthesizing.
 
-### Subagent Prompt Shape
+### Worker Prompt Shape
 
-Use the `researcher` custom agent when available. Write the prompt dynamically
-for the slice of research you need; the examples below are shapes, not forms to
-fill in. Prefer a clear brief over a rigid field list.
+Use an appropriate research-capable worker when available. Write the prompt
+dynamically for the slice of research you need; the examples below are shapes,
+not forms to fill in. Prefer a clear brief over a rigid field list.
 
-A good subagent prompt usually includes:
+A good worker prompt usually includes:
 
-- The specific question or decision the subagent should help answer.
+- The specific question or decision the worker should help answer.
 - The source boundary: repo area, files, docs, web sources, product version, date
   range, or already-collected reports.
 - The evidence bar: what counts as support, what to cite, and whether to separate
@@ -279,10 +320,10 @@ claims that need stronger evidence, and a confidence readout.
 
 When a saved subreport is required, include the exact output path and the
 headings the parent needs. Keep reusable prompt bodies portable: tell the
-subagent to follow repository conventions rather than hard-coding local
+worker to follow repository conventions rather than hard-coding local
 directories unless the current run requires a concrete path.
 
-If the prompt is too broad, the subagent should return `Scope too broad` with a
+If the prompt is too broad, the worker should return `Scope too broad` with a
 recommended split instead of wandering.
 
 ## Evidence Standard
@@ -320,7 +361,7 @@ file just to preserve raw exploration.
 Promote only curated conclusions that change durable thinking:
 
 - Scratch research: raw notes, source dumps, search trails, excerpts, one-off
-  hypotheses, and subagent working notes. Keep ignored.
+  hypotheses, and delegated-worker notes. Keep ignored.
 - Saved evidence: deep research subreports, screenshots, logs, command output,
   and reproducible proof. Keep where future agents can inspect it without
   confusing it for product docs.
