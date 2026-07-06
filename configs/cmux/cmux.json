@@ -140,7 +140,7 @@
   },
 
   "markdown": {
-    "fontFamily": "CommitMono",
+    "fontFamily": "",
     "fontSize": 15,
     "maxWidth": 980
   },
