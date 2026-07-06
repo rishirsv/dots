@@ -145,9 +145,9 @@ Unambiguous plain-language confirmation of the stated scope counts the same as t
 Recommend the next mode, but do not silently enter it:
 
 - `research`: external evidence, market landscape, current facts, or user proof.
-- `visual-design`: UI concepts, visual exploration, journey maps, or mockups.
+- `design`: UI concepts, visual exploration, journey maps, or mockups.
 - `docs-writer`: durable PRD, concept doc, ADR, glossary, or spec.
-- [`ultra-plan`](../ultra-plan/SKILL.md): deep planning once the shape is chosen.
+- [`ultraplan`](../ultraplan/SKILL.md): deep planning once the shape is chosen.
 - [`clarify`](../clarify/SKILL.md): direction is settled and only scope, safety, or done-criteria questions remain before build.
 - build: only after confirmed scope, above.
 

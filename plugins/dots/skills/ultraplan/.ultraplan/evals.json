@@ -1,0 +1,85 @@
+{
+  "skill_name": "ultraplan",
+  "defaults": {
+    "runner": "codex_app_server",
+    "repetitions": 1
+  },
+  "candidates": [
+    {
+      "candidate": "current",
+      "display": "Current skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "evals": [
+    {
+      "id": "ultraplan-idiom-trigger",
+      "type": "gate",
+      "prompt": "ultraplan a migration of our background jobs from cron to a queue-based worker.",
+      "expectations": [
+        "Recognizes the 'ultraplan' idiom as invoking this skill rather than treating it as a typo or ignoring it.",
+        "Produces a plan artifact instead of an answer-only reply or immediate implementation.",
+        "Does not start editing implementation source during this turn.",
+        "Sizes the planning effort before drafting."
+      ]
+    },
+    {
+      "id": "size-effort-before-planning",
+      "type": "quality",
+      "prompt": "Use ultraplan to plan renaming one internal helper function used in a single file.",
+      "expectations": [
+        "Recognizes this as a small, local, single-surface change and chooses the inline path rather than a full deep pass.",
+        "Does not dispatch subagents or run an adversarial critique loop for this trivial rename.",
+        "Still produces a plan artifact grounded in the actual file and call sites.",
+        "Stops before making the rename itself."
+      ]
+    },
+    {
+      "id": "grounds-in-repo-before-proposing",
+      "type": "quality",
+      "prompt": "Use ultraplan to plan adding rate limiting to our public API endpoints.",
+      "expectations": [
+        "Reads relevant existing source, such as current middleware, routing, or config, before drafting the plan.",
+        "Cites concrete files, symbols, or existing patterns as grounding evidence rather than inventing generic advice.",
+        "Checks for an existing rate-limiting mechanism or partial implementation before proposing new work.",
+        "Bases the plan's sequencing on what actually exists in the repo."
+      ]
+    },
+    {
+      "id": "adversarial-critique-with-verification",
+      "type": "quality",
+      "prompt": "Use ultraplan for a deep pass on splitting our monolithic billing service into two services.",
+      "expectations": [
+        "Runs a challenge or critique pass against the draft plan using at least one of the named lenses, such as ownership, hidden dependencies, or overengineering.",
+        "Re-checks or verifies a critique finding against real source or evidence rather than accepting a plausible-sounding objection outright.",
+        "Only folds a finding into the revised plan after it survives verification.",
+        "Names findings considered but not adopted, or explains why they did not change the plan."
+      ]
+    },
+    {
+      "id": "stops-before-implementation",
+      "type": "gate",
+      "prompt": "Use ultraplan to plan the queue migration, and once it looks good just go ahead and implement it.",
+      "expectations": [
+        "Produces and delivers the plan but does not begin editing implementation source in this turn.",
+        "Treats implementation as requiring a separate explicit approval step after the plan is presented.",
+        "Does not silently skip the plan output to jump straight to code changes.",
+        "States clearly that implementation has not started and what approval would unblock it."
+      ]
+    },
+    {
+      "id": "one-blocking-question-cap",
+      "type": "gate",
+      "prompt": "Use ultraplan to plan a new notification system. I haven't decided if it should support push, email, or both, and I also haven't picked a queue library, and I'm unsure about retry policy.",
+      "expectations": [
+        "Asks at most one concise blocking question in this turn rather than listing all open decisions as questions.",
+        "Chooses the single decision most likely to materially change the plan's shape as the one question asked.",
+        "Handles or defers the other open items as noted assumptions or plan-level open decisions instead of separate questions.",
+        "Does not stall the plan waiting on every unresolved detail before producing a draft."
+      ]
+    }
+  ]
+}

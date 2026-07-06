@@ -1,189 +1,106 @@
 ---
 name: skill-doctor
-description: "Use when improving an existing agent skill: review its design, diagnose a reported failure, propose precise source changes, apply explicitly approved edits, and verify the result. Not for authoring a new skill or measuring behavior across eval suites."
+description: "Reviews, diagnoses, and improves existing agent skills — or a whole plugin's skill system — using the skill's text, usage history, and eval evidence. Use for review this skill, a skill keeps failing, tighten this skill, or audit these skills. Not for authoring new skills (skill-writer) or building eval suites (skill-evaluator)."
 ---
 
 # Skill Doctor
 
-Improve an existing agent skill through distinct lanes:
+Make an existing skill better, with evidence. One flow, whatever the entry
+point: gather evidence, diagnose in named terms, propose the smallest fix,
+edit only after approval, verify. A scored review is an output format the
+user can ask for, not the default deliverable.
 
-- **Review** — when the user asks to review or improve a skill, produce a
-  scored Judge review.
-- **Clean** — when the user asks to polish, tighten, fold, remove internal
-  language, or make a skill portable/runtime-ready, inspect payload hygiene and
-  apply the smallest approved cleanup.
-- **Doctor** — diagnose reported failures and propose precise source changes;
-  edit only after explicit approval for a concrete source change.
-- **Verify** — check the changed skill after an approved edit.
+For the plugin-level CLI surface, read [cli.md](../../references/cli.md); do
+not invent doctor-specific commands.
 
-See the lane-ownership split in
-[meta-skill/SKILL.md](../meta-skill/SKILL.md#routing-and-skill-selection).
+## Evidence
 
-For the central Meta Skill CLI surface, read
-[cli.md](../../references/cli.md). Do not invent doctor-specific command
-interfaces when a plugin-level command exists.
+Use whichever of the three sources exist; say which ones you used.
 
-Default to read/propose. Write workbench artifacts only when the user asks for
-a saved report or otherwise allows artifact writes. Source edits require
-explicit approval for a concrete change; feedback, diagnosis, review, or
-brainstorming is not approval.
+1. **The text** — SKILL.md, frontmatter, references, scripts: the exact words
+   a future agent reads. Read the full shipped payload, not a summary.
+2. **Usage history** — when the platform exposes it (Codex:
+   `~/.codex/state_5.sqlite` `threads`; see
+   [references/diagnosis.md](references/diagnosis.md) for queries). Count
+   organic invocations separately from dev-on-the-skill threads, and search
+   idiom variants and old names, not just the current name. Zero organic use
+   is a first-class finding; so is an invocation idiom the description
+   doesn't carry.
+3. **Eval evidence** — existing suites and their last results; run the
+   relevant evals when the diagnosis needs behavioral proof.
 
-When the complaint is about a skill feeling mechanical, over-specced,
-schema-heavy, too rigid, or written like a state machine, treat that as a runtime
-clarity defect. Inspect the words the future agent reads, compare them with one
-or two strong local examples when useful, and propose a natural-language rewrite
-that preserves the real safeguards. Do not answer that complaint with a scorecard
-unless the user asks for one.
+For clarity and trigger complaints, add a **fresh-read test**: hand the
+skill text to a fresh subagent with the artifact only — never your own
+conclusion or the user's complaint — and ask what it would do for a given
+request. Starving the reader of your hypothesis prevents agreement bias.
 
-## Mode Selection
+## Diagnose
 
-Pick the starting mode from the user's request, then adjust if the evidence
-points to another lane.
+Name every finding with the taxonomy in
+[references/failure-modes.md](references/failure-modes.md) and check
+frontmatter against the
+[description standard](../../references/description-standard.md). Always run
+two checks that catch what per-line reading misses:
 
-- **Review** (default) — review or improvement request: "review this skill,"
-  "make my skill better," "is my triggering solid?" No specific failure in hand,
-  and the user wants a scored or broad static review.
-- **Clean** — portable payload cleanup request: "polish this skill," "fold this
-  into the main skill body," "remove internal decisions," "why is source/system
-  text in the payload?", "make this runtime-ready," or complaints that the skill
-  reads as mechanical, schema-first, over-structured, or unlike the work it
-  should help perform.
-- **Doctor** — reported failure: "my skill keeps failing on prompt X." Work
-  from the failure report to candidate text, then stop with a precise proposal.
+- **Contradiction scan** — the same rule stated twice with different
+  strength or wording, in the body, across body and references, or across
+  sibling skills claiming one job. Literal models pay for every conflict.
+- **Calibration** — compare the skill against one strong local exemplar of
+  the same kind (in this repo: `debug` and `explain` for judgment-teaching
+  altitude) and say where it sits, so "too long" and "too thin" mean the
+  same thing across reviews.
 
-Tiebreaker: source/research/system/maintainer leakage or runtime portability
-concerns → **Clean**; self-inflicted mechanical language or over-architecture →
-**Clean** unless there is a specific failure thread to diagnose; a specific
-reported failure → **Doctor**; otherwise → **Review**.
+Propose the remedy, not the smell: name the exact edit — the sentence to
+delete, the rule's one surviving home, the reference to extract — not "this
+is bloated". Rank findings by user impact, weighted by usage evidence: a
+defect in a daily skill outranks a worse defect in a dormant one.
 
-## Review (default)
+## Plugin Scope
 
-Produce a **scored Judge review** (`judge-review.md`) using the shared house
-rubric at [judge-rubric.md](../../references/judge-rubric.md) as the authority
-for scoring, payload hygiene, and runtime vs maintainer placement.
+When asked to review a plugin or several skills together, diagnose the
+system, not just each file:
 
-> **Boundary:** the doctor scores the three *static* phases below and
-> averages them. Averaging across *live eval scenarios* (running the skill
-> many times) is out of scope here — this is a static review.
+- **Routing collisions** — description pairs (including platform built-ins)
+  that both plausibly claim one request without mutual boundaries.
+- **Duplicated policy** — near-identical guidance in ≥2 skills; propose one
+  shared reference and links.
+- **Dangling ownership** — every "route X to Y" must resolve; check what a
+  recent deletion or rename orphaned.
+- **Investment inversion** — compare line counts and eval coverage against
+  usage; recommend moving rigor to where the usage is.
+- **Lane decomposition** — ≥3 skills sharing one lifecycle: evaluate the
+  one-skill-with-modes shape before recommending edits to each.
 
-1. Score **Discovery** (4 dims) and **Implementation** (5 dims), each 0–3 — every
-   dimension's reasoning must cite the skill's own text; see
-   [judge-rubric.md](../../references/judge-rubric.md) for calibration.
-2. Run the shared **Payload Hygiene Sweep** and **Runtime vs Maintainer
-   Placement Audit** from
-   [payload-hygiene.md](../../references/payload-hygiene.md) across the full
-   shipped payload before final scoring.
-3. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
-4. **Overall Judge Review Score** = rounded average of Discovery %,
-   Implementation %, and Validation %.
-5. Render Discovery and Implementation as short assessments followed by
-   tables with `Dimension`, `Reasoning`, and `Score`. Each reasoning cell
-   must cite the skill's own text, linked references, or visible payload
-   surface.
-6. If artifact writes are allowed, write `judge-review.md` with scores and
-   prioritized findings, then **stop**. If artifact writes are not allowed,
-   return the review in chat. Review proposes; it does not edit source.
+## Output
 
-### Doctor-Specific Focus
+Findings ranked by impact. Each: defect name (taxonomy term), evidence
+(quote, count, or eval result), and the exact proposed edit. State what
+evidence was not available. Produce the scored Judge review
+([judge-rubric.md](../../references/judge-rubric.md), with the payload
+sweeps in [payload-hygiene.md](../../references/payload-hygiene.md)) only
+when the user asks for scores.
 
-Use these lenses while applying the shared rubric:
+Write saved artifacts only when the user allows them; resolve the workbench
+path with `<meta-skill-root>/scripts/metaskill init <skill-dir> --dry-run
+--json` first.
 
-- **Activation** — trigger clarity, realistic phrasing, near misses, and
-  non-trigger boundary. Escalate trigger reliability evidence to
-  `skill-evaluator`.
-- **Runtime clarity** — default path, output contract, stop/ask points, and
-  final checks.
-- **Opening contract** — first runtime block states the job, default path,
-  and boundary plainly before deeper mechanics.
-- **Terminology consistency** — route names, output labels, examples, and
-  linked references use the same plain vocabulary.
-- **Shared failure-mode sweep** — apply the static sweep in
-  [judge-rubric.md](../../references/judge-rubric.md) before final
-  Implementation scoring.
-- **Resources** — linked references, scripts, assets, dependency clarity,
-  source leakage, and stale files.
-- **Runtime contamination** — copied prompt text, provider names, raw
-  research, author/source provenance, thread IDs, local paths,
-  source-specific artifact names, and source-note prohibitions living in
-  runtime instead of reusable behavior.
-- **Controls** — user files as data, user gates, external writes, and
-  package/publish gates.
+## Edit
 
-The completed chat review or saved `judge-review.md` is evidence, not a
-source edit request. Source edits require explicit approval for a concrete
-change; see [doctor.md](references/doctor.md#approval-gated-edits).
-
-## Clean
-
-Clean mode makes an existing skill portable and runtime-ready without turning
-the request into a full scored review or behavioral eval. Read
-[payload-hygiene.md](../../references/payload-hygiene.md), inspect the shipped
-payload, and identify the smallest cleanup for source/research/provenance
-leakage, maintainer placement, duplicated guidance, stale negative rules,
-unclear opening contracts, self-inflicted mechanical prose, visible route/state
-machinery, over-named modes, runtime reference placement, or the shared static
-failure modes in [judge-rubric.md](../../references/judge-rubric.md).
-
-For prose cleanup, preserve the behavior that matters and change the way the
-skill thinks. Replace visible taxonomies with natural decisions, move authoring
-notes out of runtime, and keep strict language only where evidence, approval,
-safety, scripts, or external writes require it.
-
-If the user directly asked to implement the cleanup or approves a concrete
-cleanup proposal, edit only the source-owned skill payload and then verify. If
-the request is read-only, return the clean findings and proposed patch scope.
-Use the scored Judge review from the [Review](#review-default) section only
-when a scored review is requested or would materially change the decision.
-
-## Doctor
-
-Diagnose the reported failure and produce a precise proposal — read
-[references/doctor.md](references/doctor.md). Announce whether you are using the
-guidance-first track or the reproduction/trial track, localize the cause, run
-the Proposal Loop, and propose the smallest fix. Stop there unless the user
-explicitly approves the specific source change.
-
-For one-off improvement testing, use the shared one-off skill check workflow in
-[skill-trial-runs.md](../../references/skill-trial-runs.md). Prefer a child
-worktree for candidate edits; the child demonstrates or revises in isolation,
-while the parent edits source only after explicit approval for that specific
-change.
-
-## Approval Boundary
-
-In Review, Clean, or Doctor follow-up, edit source only when the user explicitly
-approves a concrete proposal or directly requests a specific edit, such as
-"apply proposal 1," "clean this payload," or "make the SKILL.md routing
-change." Briefly restate the approved change and files in scope, then edit only
-that scope. Edit the **source** skill, never a generated package copy. If the
-requested write scope is broader than the proposal, return to the relevant
-Doctor lane with the expanded scope instead of improvising edits.
+Edit source only when the user approves a concrete proposal or directly
+requests a specific change ("apply proposal 1", "make that routing change").
+Feedback, diagnosis, or brainstorming is not approval. Restate the approved
+change and files, edit exactly that scope, and edit the source skill — never
+a generated package copy. A description change alters routing; call that out
+when proposing it. For candidate testing before approval, use the trial-run
+workflow in [skill-trial-runs.md](../../references/skill-trial-runs.md) in a
+child worktree; trial edits are evidence, not promotion.
 
 ## Verify
 
-Run validation through `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`. Confirm
-the requested fix held, report validation results, and refresh the Validation
-third of the Judge review only when a current `judge-review.md` exists, plus a
-quick regression scan — see [references/verify.md](references/verify.md).
-Escalate to `skill-evaluator` when the decision needs task/candidate evidence:
-for example, whether the fix improves outcomes over the current skill or a
-no-skill baseline.
-
-## Workbench
-
-When artifact writes are allowed, resolve the workbench path before writing:
-`<meta-skill-root>/scripts/metaskill init <skill-dir> --dry-run --json`,
-then use the resolved path as the source of truth. Use `judge-review.md` for the
-Judge scorecard. Do not create workbench folders elsewhere.
-
-## Guardrails
-
-- **Feedback ≠ write permission** — Review, Clean, and Doctor stop with chat
-  output or a permitted artifact unless the user directly requests an edit or
-  approves a concrete change.
-- Reproduce *one* case only when using the reproduction/trial track; don't
-  measure many tasks/candidates — that's `skill-evaluator`.
-- Smallest correct change; edit source, never generated packages.
-- Child worktree edits are evidence, not promotion; parent-side source edits
-  still require explicit approval for a concrete change.
-- A `description` change alters triggering/routing — call it out explicitly.
+After an approved edit: run
+`<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`, re-run
+the originally failing case or the relevant evals, and scan the payload for
+regressions the edit could have introduced (broken links, orphaned terms,
+contradiction with an untouched section). Report what the verification can
+and cannot prove. Escalate to `skill-evaluator` when the decision needs
+multi-scenario measurement rather than a single reproduced case.

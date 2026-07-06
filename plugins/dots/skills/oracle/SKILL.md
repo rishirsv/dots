@@ -1,6 +1,6 @@
 ---
 name: oracle
-description: "Packages a task, context, and verification bar so another model or CLI agent can return an advisory second opinion. Use to delegate a plan, review, or hard problem to another model; not for routine local implementation or review the current agent can finish directly."
+description: "Packages a task, context, and verification bar so another model or CLI agent returns an advisory opinion. Use to delegate a plan, review, or hard problem — e.g. \"oracle this to codex\"; not for routine local implementation or review the agent can finish directly."
 ---
 
 # Oracle
@@ -78,6 +78,8 @@ Keep the generated package focused on one request. For larger packages, mark fil
 
 Before sending, inspect `prompt.md`, the script output, and the `context.zip` file list when the context is sensitive or broad. If the package is missing essential context, rebuild it — do not patch the zip by hand.
 
+Every written package includes a one-line summary (file count, total bytes, largest file) confirming the zip re-opened cleanly, plus a `HOW-TO-USE.md` with numbered ChatGPT Pro upload steps and what to bring back for After The Oracle. The script warns (does not fail) past `--max-zip-mb` (default 25) or the file-count warning — tighten `--file` patterns rather than ignoring the warning.
+
 ### Task Workspace
 
 Use one task workspace for all Oracle prep and package output: `.agents/oracle/<task>/` for `task.md`, `context-map.md`, selected patch excerpts, logs, `prompt.md`, `context.zip`, and any other task-local Oracle files.
@@ -101,6 +103,16 @@ Package-only flow (see Provider Routes for the default-route policy):
 If the user explicitly approves a CLI route, pass the prompt directly to the agent with direct file or directory references instead of building a package. Save the answer only when that route or task needs a local record. Do not spend API money or send broader private context than the user approved.
 
 ## Provider Routes
+
+Quick lookup — match the user's phrasing to a route, then jump to the exact command below:
+
+| route | trigger phrasing | exact command/action |
+| --- | --- | --- |
+| `package-only` (default) | no route named, or "package this", "chatgpt" without a CLI, "oracle this for chatgpt" | Build with `oracle_package.py` (see Package); hand the user `prompt.md` + `context.zip` + `HOW-TO-USE.md` path for manual ChatGPT Pro upload. |
+| `codex` | "oracle this to codex", "ask codex", "get a second opinion from codex" | `codex exec -c model_reasoning_effort="xhigh" -C <approved-dir-or-repo> "<prompt text>"` (confirm current flagship model ID first; read-only unless approved otherwise) |
+| `claude-code` | "oracle this to claude", "ask claude", "oracle this for claude" | `claude -p "<prompt text>" --model <chosen-model> --effort <per-task-effort>` (state the non-interactive billing/account gate before running) |
+| `openai-api` | "oracle this via the API", explicit API/cost approval given | Responses API or provider CLI call after confirming credentials and cost; write the answer to the agreed path. |
+| `oracle` (third-party CLI) | user names the installed `oracle`/`npx @steipete/oracle` tool | `oracle --dry-run summary --files-report` first, then run with `--write-output` when spending tokens. |
 
 The default route is `package-only`: build the package in the task workspace above and hand the user the path and the exact `prompt.md`. Saving it there, or on the Desktop when the user asks for Desktop output, is the intended end state for package-only runs. Use another route only when the user explicitly asks for and approves it.
 
@@ -134,6 +146,8 @@ Keep the main answer readable: refer to artifacts by human-readable names, symbo
 ## After The Oracle
 
 Read the answer critically before using it. If the oracle answer is pasted, quoted, summarized, or included inline in the user's request, treat that as the answer to review; ask for more only when the answer or original task is genuinely absent.
+
+First, explain the answer in plain language before classifying anything: in 3-6 sentences, tell the user what the oracle concluded and why, translating jargon into plain terms a smart colleague would understand. Name any point where the oracle's conclusion disagrees with local evidence, tests, or the current plan. This explanation comes before the adopt/verify/reject pass below, not instead of it.
 
 Before adopting advice:
 

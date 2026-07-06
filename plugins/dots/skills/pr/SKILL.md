@@ -46,20 +46,20 @@ guardrails together.
 
 ## Mode: Status
 
-Read-only. May query GitHub metadata and inspect existing local refs; never
-refreshes branches, stages, commits, pushes, comments, resolves threads, edits
-the PR, or merges.
+May query GitHub metadata and inspect existing local refs; never `git fetch`
+in this mode.
 
-For a single PR, read what's needed to explain the blocker — draft state,
-checks (`gh pr checks "$pr_ref" --json name,state,bucket,startedAt,completedAt,link`,
-add `--required` when a land decision is in play), review decision, and merge
-state. Pull review-thread state via
+For a single PR, read what's needed to explain it — draft state, checks
+(`gh pr checks "$pr_ref" --json name,state,bucket,startedAt,completedAt,link`,
+add `--required` when a land decision is in play), review decision, merge
+state, and enough of the diff/description to describe what changed and why.
+Pull review-thread state via
 [../../references/review-threads-query.md](../../references/review-threads-query.md)
-whenever conversation resolution could block the merge. Use
-`gh pr diff "$pr_ref" --name-only` plus a local `git diff --name-status`
-against `git merge-base` only when scope or base ambiguity matters, and only
-when the current branch is the PR head and `origin/$base_branch` already
-exists locally — never `git fetch` in this mode.
+whenever conversation resolution could block the merge or a comment needs
+summarizing. Use `gh pr diff "$pr_ref" --name-only` plus a local
+`git diff --name-status` against `git merge-base` only when scope or base
+ambiguity matters, and only when the current branch is the PR head and
+`origin/$base_branch` already exists locally.
 
 For an open-PR queue, list with
 `gh pr list --state open --limit 50 --json number,url,title,isDraft,headRefName,baseRefName,updatedAt,reviewDecision,statusCheckRollup,mergeStateStatus,author`,
@@ -78,19 +78,40 @@ Classify each PR into the first matching label, in this priority order:
    ambiguous target. See [Stacked-PR Heuristic](#stacked-pr-heuristic).
 6. `Unknown` — GitHub didn't expose enough state; name the missing signal.
 
-Write for a busy human: no raw JSON, no command transcripts, no GitHub enum
-dumps. Lead with one plain sentence ("PR #123 is pending: tests are still
-running, and no reviewer has approved it yet."), then `What I checked`,
-`Blockers` (only real ones), and `Next move` (`$pr repair`, `$pr land`,
-`$ship`, or a question). For a queue, lead with a compact count summary, then
-group by action with one sentence per PR, urgent/ready-to-land first. Never
-recommend admin bypass as a default next step, and never infer readiness from
-a green-looking summary when a required signal was actually unavailable.
+### Single-PR Readback
+
+This is a review workflow for the user, not a status dump: write like a sharp
+colleague walking them through someone else's PR, not a status bot. No raw
+JSON, command transcripts, or GitHub enum dumps. Use this template, and
+calibrate depth to the PR — a one-line docs fix earns three sentences total,
+a schema migration or multi-service change earns the full structure:
+
+1. **One-sentence plain answer** — the classification in a sentence a busy
+   human can act on ("PR #123 is pending: tests are still running, and no
+   reviewer has approved it yet.").
+2. **What this PR is** — 2-4 sentences at the level of a smart reader who
+   hasn't seen the code: what it changes, why, and the user-visible impact.
+   Translate jargon (framework names, internal terms) instead of repeating
+   it. Include a small Mermaid diagram or text flow only when the change's
+   structure (data flow, before/after architecture, multi-service touch) is
+   genuinely easier to see than read — skip it for simple PRs.
+3. **Review so far** — when review comments or threads exist, summarize each
+   actionable one: what the reviewer flagged in plain words, and its state
+   (open, resolved, or outdated). Skip this section when there are no
+   comments worth surfacing.
+4. **State** — real blockers only (checks, review, merge state); omit
+   anything that isn't actually blocking.
+5. **Next move** — `$pr repair`, `$pr land`, `$ship`, or a question.
+
+For a queue, lead with a compact count summary, then group by action with one
+sentence per PR, urgent/ready-to-land first. Never recommend admin bypass as a
+default next step, and never infer readiness from a green-looking summary
+when a required signal was actually unavailable.
 
 ## Mode: Repair
 
-Never publishes a new PR and never merges. Patches only actionable,
-same-story problems; leaves product judgment and unrelated failures alone.
+Patches only actionable, same-story problems; leaves product judgment and
+unrelated failures alone.
 
 Resolve the target, then read comments and thread state before editing:
 `gh api "repos/:owner/:repo/pulls/$pr_number/comments"` plus the query in
@@ -109,6 +130,15 @@ broadening the PR, force-pushing, or resolving a thread that doesn't clearly
 map to a fix made in this run. If the user only asked to inspect or plan, stop
 after the clustered findings — do not comment, resolve, commit, or push.
 
+### Worktree Fan-Out
+
+A single trivial comment on the current checkout stays a direct fix — no
+worktree needed. Fan out into disposable worktrees when actioning multiple
+comment-clusters in parallel, or multiple PRs at once; see
+[references/worktree-repair.md](references/worktree-repair.md), which builds
+on the lane rules in
+[../../references/subagent-lanes.md](../../references/subagent-lanes.md).
+
 Commit small and append-only: `git status --short`, `git diff --stat`, stage
 only intended paths, `git diff --staged --check`, terse commit subject,
 `git push`. Do not amend or rebase a reviewed branch without an explicit
@@ -123,15 +153,14 @@ proves it.
 
 Re-read PR status after pushing. Report the PR URL, repair commits,
 validation run, comments/threads addressed, threads intentionally left open,
-and the next command (`$pr land` as a recommendation only — this mode never
-merges).
+and the next command (`$pr land` as a recommendation).
 
 ## Mode: Land
 
-The safe merge button. Checks readiness, uses GitHub's merge controls, cleans
-local branch state only after the remote is confirmed merged. Does not repair
-code or shepherd review. `$ship`'s merge chain ("ship merge", "send and land")
-hands off to this mode for the second half, after the PR is published.
+Checks readiness, uses GitHub's merge controls, cleans local branch state
+only after the remote is confirmed merged. `$ship`'s merge chain ("ship
+merge", "send and land") hands off to this mode for the second half, after
+the PR is published.
 
 Require a clean worktree before switching, pulling, or touching local branch
 state — never hide dirty work to force a merge. Stop before merging if any

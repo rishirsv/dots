@@ -1,13 +1,23 @@
 # Finder Checklists
 
-Read this when running `standard`, `deep`, or `max` rigor. The `quick` tier does
-a single direct pass over the hunk instead and does not need these checklists.
+Read this when running `standard` or `max` rigor. The `quick` tier does a
+single direct pass over the hunk instead and does not need these checklists.
 
-## Agent 1: Reuse and Structural Simplification Checklist
+## 1. Correctness Checklist
 
-This checklist is the shared reuse/structural-simplification pass. The
-`simplify` skill links here for the same checklist instead of duplicating it;
-see [../skills/simplify/SKILL.md](../skills/simplify/SKILL.md).
+This checklist is the correctness pass used by
+[../skills/ultrareview/SKILL.md](../skills/ultrareview/SKILL.md).
+
+1. **Logic errors and edge cases**: off-by-one, inverted or wrong conditions,
+   bad operator choice, and boundary or empty/null/zero/overflow inputs.
+2. **Regressions**: behavior changes that break an existing caller, invariant,
+   contract, or test.
+3. **Error handling**: missing, swallowed, or over-broad handling; unhandled
+   promise rejections; resources or locks not released on failure.
+4. **Tests and docs gaps the change introduces**: an invariant left untested, or
+   a doc/comment now stale because of this change.
+
+## 2. Reuse and Structural Simplification Checklist
 
 For each change:
 
@@ -41,49 +51,34 @@ For each change:
     threshold, or nears roughly 1,000 lines without a strong reason, consider a
     focused module with a descriptive name.
 
-## Agent 2: Correctness, AI Slop, and Code Quality Checklist
+## 3. Code Quality and AI Slop Checklist
 
-Review correctness first:
-
-1. **Logic errors and edge cases**: off-by-one, inverted or wrong conditions,
-   bad operator choice, and boundary or empty/null/zero/overflow inputs.
-2. **Regressions**: behavior changes that break an existing caller, invariant,
-   contract, or test.
-3. **Error handling**: missing, swallowed, or over-broad handling; unhandled
-   promise rejections; resources or locks not released on failure.
-4. **Tests and docs gaps the change introduces**: an invariant left untested, or
-   a doc/comment now stale because of this change.
-
-Then review for quality and AI-generated slop:
-
-5. **Redundant state**: state that duplicates existing state, cached values that
+1. **Redundant state**: state that duplicates existing state, cached values that
    could be derived, observers/effects that could be direct calls.
-6. **Parameter sprawl**: new parameters or booleans instead of clearer ownership
+2. **Parameter sprawl**: new parameters or booleans instead of clearer ownership
    or a generalized existing shape.
-7. **Copy-paste with slight variation**: near-duplicate blocks that should be a
+3. **Copy-paste with slight variation**: near-duplicate blocks that should be a
    shared abstraction or one simpler flow.
-8. **Leaky abstractions**: exposed internals or broken ownership boundaries.
-9. **Stringly-typed code**: raw strings where constants, enums, string unions, or
+4. **Leaky abstractions**: exposed internals or broken ownership boundaries.
+5. **Stringly-typed code**: raw strings where constants, enums, string unions, or
    branded types already exist.
-10. **Needless abstraction**: pass-through wrappers, single-use helper layers,
-    identity helpers, speculative indirection, or generic mechanisms hiding a
-    simple data shape.
-11. **Over-defensive code**: try/catch around code that cannot throw, null checks
-    on non-null values, impossible fallback defaults, or broad guards that hide
-    invariants.
-12. **Dead code and debug leftovers**: unused imports, unreachable branches,
-    stale feature flags, console logging, commented-out code, and abandoned
-    scaffolding.
-13. **Unnecessary comments and narration**: comments that restate obvious code,
-    explain what changed instead of why it must exist, or sound like task notes.
-14. **Cast-heavy or loose contracts**: `any`, `unknown`, forced casts,
+6. **Needless abstraction**: pass-through wrappers, single-use helper layers,
+   identity helpers, speculative indirection, or generic mechanisms hiding a
+   simple data shape.
+7. **Over-defensive code**: try/catch around code that cannot throw, null checks
+   on non-null values, impossible fallback defaults, or broad guards that hide
+   invariants.
+8. **Dead code and debug leftovers**: unused imports, unreachable branches,
+   stale feature flags, console logging, commented-out code, and abandoned
+   scaffolding.
+9. **Unnecessary comments and narration**: comments that restate obvious code,
+   explain what changed instead of why it must exist, or sound like task notes.
+10. **Cast-heavy or loose contracts**: `any`, `unknown`, forced casts,
     unnecessary optionality, or ad-hoc object shapes used to bypass clear types.
-15. **Inconsistent local style**: naming, error handling, imports, testing, or
+11. **Inconsistent local style**: naming, error handling, imports, testing, or
     module shape that ignores the surrounding code.
 
-## Agent 3: Efficiency and Atomicity Checklist
-
-Review the same changes for efficiency:
+## 4. Efficiency and Atomicity Checklist
 
 1. **Unnecessary work**: redundant computations, repeated file reads, duplicate
    network/API calls, or N+1 patterns.
@@ -107,21 +102,21 @@ Review the same changes for efficiency:
 
 ## Reviewer Prompt Shape
 
-Use this prompt shape for each standard reviewer:
+Use this prompt shape for each reviewer:
 
 ```text
 You are a review-only agent. Do not edit files.
 
 Scope:
 - Changed files: <paths>
-- Review rigor: <quick | standard | deep | max>
+- Review rigor: <quick | standard | max>
 - Repo guidance: <compact guidance summary>
 - Additional user focus: <focus or none>
 
 Full diff:
 <diff>
 
-Apply only this lens: <Reuse and Structural Simplification | Correctness, AI Slop, and Code Quality | Efficiency and Atomicity>.
+Apply only this lens: <Correctness | Reuse and Structural Simplification | Code Quality and AI Slop | Efficiency and Atomicity | one of the max-tier extra angles>.
 Check the changed code against every item below:
 
 <full numbered checklist for the assigned lens>
@@ -135,9 +130,9 @@ evidence, summary, failure scenario or concrete maintainability cost, impact,
 and proposed fix. If clean, return "no findings".
 ```
 
-## Deep and Max Finder Angles
+## Max-Tier Extra Angles
 
-For `deep`, run angles A-H. For `max`, run angles A-J.
+For `max`, run the four standard lenses above plus these four extra angles.
 
 A. **Line-by-line diff scan.** Read every hunk line by line, then read the
 enclosing function for each hunk. Ask what input, state, timing, or platform
@@ -156,35 +151,13 @@ framework being changed: falsy-zero checks, missing awaits, closure capture,
 mutable defaults, timezone drift, nil-map writes, float equality, regex escaping,
 SQL injection, or equivalent local hazards.
 
-E. **Wrapper/proxy correctness.** For caches, decorators, adapters, providers,
-or proxies, confirm every method routes to the wrapped instance, forwards the
-methods callers use, and does not re-enter a registry/session/global by mistake.
+## Final Pass: Big Simplifications
 
-F. **Reuse.** Search for existing helpers, services, components, constants,
-types, policies, or tests that the change should reuse.
-
-G. **Simplification and AI slop.** Use the standard simplification and quality
-checklists above to find complexity that can be deleted without changing
-behavior. Explicitly ask for behavior-preserving structural simplifications
-that make the implementation dramatically smaller, more direct, or more
-natural in the surrounding architecture.
-
-H. **Efficiency and atomicity.** Use the standard efficiency checklist above to
-find wasted work, missed concurrency, memory retention, and half-applied
-updates.
-
-I. **Altitude and ownership.** Check that each change is implemented at the right
-depth. Prefer fixing or generalizing the owning mechanism over layering a
-feature-specific special case onto shared infrastructure.
-
-J. **Repo conventions.** Read applicable repo guidance files and flag only clear
-violations that quote the exact rule and name the line that breaks it.
-
-## Maximum Maintainability Sweep
-
-In `max`, add one harsh maintainability pass after angles A-J and before
-verification. Treat these as presumptive findings when the evidence is visible
-in the diff:
+In `max`, add one final pass after the finder agents and before verification.
+This pass hunts specifically for a simpler model or ownership boundary that
+would delete whole branches, modes, wrappers, or compatibility paths — not
+line-level cleanup. Treat these as presumptive findings when the evidence is
+visible in the diff:
 
 - A simpler model or ownership boundary would delete whole branches, modes,
   wrappers, compatibility paths, or concepts.
@@ -196,3 +169,4 @@ in the diff:
   optionality, or fallback behavior that obscures the real contract.
 - Feature-specific behavior leaks into shared infrastructure or bypasses a
   canonical helper, type, service, module, or package.
+</content>

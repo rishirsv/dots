@@ -32,6 +32,21 @@ DEFAULT_IGNORES = {
     "vendor",
 }
 
+# File names that should never be swept into a package even when they slip
+# past directory-level ignores (e.g. a stray .DS_Store inside an included dir).
+DEFAULT_IGNORE_FILENAMES = {".DS_Store"}
+
+
+HOW_TO_USE_TEMPLATE = """# How To Use This Oracle Package (ChatGPT Pro)
+
+1. Open a ChatGPT Pro chat and choose the model you want to consult (a reasoning-tier model for hard problems).
+2. Open `prompt.md` in this folder and paste its full contents as your message.
+3. Attach `context.zip` from this folder as a file attachment on the same message — do not unzip and paste individual files.
+4. Confirm the attachment shows as uploaded before sending; large zips can take a moment to finish uploading.
+5. Send the message and let the model work from the attached context.
+6. Bring the full answer back to the primary agent for the After The Oracle step: paste or summarize what the model concluded, and note any recommendations, objections, or missing-context requests it raised.
+"""
+
 SENSITIVE_PATTERNS = [
     ".env",
     ".env.*",
@@ -84,6 +99,8 @@ def ignored_by_default(path: Path, root: Path) -> bool:
         rel_parts = path.relative_to(root).parts
     except ValueError:
         rel_parts = path.parts
+    if path.name in DEFAULT_IGNORE_FILENAMES:
+        return True
     return any(part in DEFAULT_IGNORES for part in rel_parts)
 
 
@@ -285,6 +302,38 @@ def package_warnings(
     return warnings
 
 
+def verify_and_summarize_zip(zip_path: Path, *, max_zip_mb: float) -> tuple[str, str]:
+    """Open the produced zip to confirm it is valid, and build a summary line.
+
+    Returns (summary_line, warning_or_empty_string).
+    """
+    with zipfile.ZipFile(zip_path, "r") as archive:
+        bad_entry = archive.testzip()
+        if bad_entry is not None:
+            raise SystemExit(f"error: context.zip failed integrity check at {bad_entry}")
+        infos = archive.infolist()
+
+    file_count = len(infos)
+    total_bytes = sum(info.file_size for info in infos)
+    zip_bytes = zip_path.stat().st_size
+    largest = max(infos, key=lambda info: info.file_size, default=None)
+    largest_desc = f"{largest.filename} ({largest.file_size} bytes)" if largest else "none"
+
+    summary = (
+        f"zip_verified=ok files={file_count} uncompressed_bytes={total_bytes} "
+        f"zip_bytes={zip_bytes} largest_file={largest_desc}"
+    )
+
+    warning = ""
+    max_zip_bytes = int(max_zip_mb * 1_000_000)
+    if zip_bytes > max_zip_bytes:
+        warning = (
+            f"context.zip is {zip_bytes / 1_000_000:.1f}MB, over the {max_zip_mb:g}MB guidance for "
+            "ChatGPT uploads; tighten --file filters or split the package"
+        )
+    return summary, warning
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build a focused Oracle package.")
     parser.add_argument("--prompt-file", help="Fully authored prompt.md text. Suppresses generated prompt scaffolding.")
@@ -318,6 +367,12 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Preview selection, size, and token budget without writing the package.")
     parser.add_argument("--token-budget", type=int, default=270_000, help="Hard limit on estimated input tokens (prompt.md + unzipped context). Default 270000.")
     parser.add_argument("--allow-oversized", action="store_true", help="Write the package even when it exceeds --token-budget.")
+    parser.add_argument(
+        "--max-zip-mb",
+        type=float,
+        default=25.0,
+        help="Warn (not fail) when context.zip exceeds this size in megabytes. Default 25.",
+    )
     args = parser.parse_args()
 
     root = Path(args.root).expanduser().resolve()
@@ -467,6 +522,13 @@ def main() -> int:
         archive.writestr("file-map.txt", "\n".join(str(entry["path"]) for entry in included) + "\n")
     prompt_path = package_dir / "prompt.md"
     prompt_path.write_text(prompt, encoding="utf-8")
+    how_to_use_path = package_dir / "HOW-TO-USE.md"
+    how_to_use_path.write_text(HOW_TO_USE_TEMPLATE, encoding="utf-8")
+
+    zip_summary, zip_warning = verify_and_summarize_zip(context_zip, max_zip_mb=args.max_zip_mb)
+    print(zip_summary)
+    if zip_warning:
+        print(f"warning: {zip_warning}", file=sys.stderr)
 
     emit_report(written=True)
     return 0

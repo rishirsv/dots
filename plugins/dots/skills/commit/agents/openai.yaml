@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $commit to stage the intended local changes and create a clean git commit; push only when I explicitly say to push."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

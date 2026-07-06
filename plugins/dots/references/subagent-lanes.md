@@ -17,8 +17,9 @@ Match the lane to the job; use the closest role the harness provides.
   Prompt it to refute, not to agree.
 - **Worker**: scoped implementation with a disjoint write scope. Never give two
   workers overlapping files.
-- **Skill doctor**: diagnosis and edits to an existing skill through the
-  Meta-Skill workflow.
+- **Skill work**: for diagnosis or edits to an existing skill, spawn a
+  general worker dynamically with instructions to load the Meta-Skill
+  skill-doctor workflow; there is no standing skill-doctor agent.
 
 ## Fan-Out Rules
 

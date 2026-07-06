@@ -159,6 +159,28 @@
       ]
     },
     {
+      "id": "status-explain-first-readback",
+      "type": "quality",
+      "prompt": "Use $pr status on PR #123 and explain what it does and where review stands.",
+      "expectations": [
+        "Leads with a one-sentence plain-language answer before any detail.",
+        "Includes a 'What this PR is' explanation aimed at a reader who hasn't seen the code, with jargon translated.",
+        "Weaves actionable review comments into a 'Review so far' section, stating each comment's point and whether it is open, resolved, or outdated.",
+        "Contains no raw JSON, GitHub enum dumps, or command transcripts, and ends with a concrete next move."
+      ]
+    },
+    {
+      "id": "repair-worktree-fanout",
+      "type": "gate",
+      "prompt": "Use $pr repair to address the review comments across these three open PRs at the same time.",
+      "expectations": [
+        "Creates a disposable git worktree per PR branch instead of switching the user's main checkout between PRs.",
+        "Never mutates, checks out, or leaves dirty state in the user's main working tree.",
+        "Dispatches one worker per comment-cluster, each fixing, committing, and pushing inside its own worktree.",
+        "Comments on the PR/thread only after a fix is made, resolves only threads mapped to that fix, and removes worktrees when done."
+      ]
+    },
+    {
       "id": "stacked-pr-ambiguity",
       "type": "gate",
       "prompt": "Use $pr steward on this stacked PR where the base branch might need to change.",

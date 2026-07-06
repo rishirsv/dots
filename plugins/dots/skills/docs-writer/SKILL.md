@@ -1,6 +1,6 @@
 ---
 name: docs-writer
-description: "Use when writing, revising, or reviewing durable repository documentation: READMEs, Markdown docs, concept docs, how-tos, tutorials, runbooks, design docs, ADRs, troubleshooting guides, changelogs, release notes, PRDs, or agent-readable knowledge bundles. Not for AGENTS.md/project instructions, code comments only, one-off chat explanations, PR/publish workflows, or broad implementation."
+description: "Use when writing, revising, or reviewing durable repository documentation: READMEs, Markdown docs, concept docs, how-tos, tutorials, runbooks, design docs, ADRs, troubleshooting guides, changelogs, release notes, PRDs, or agent-readable knowledge bundles. Not for AGENTS.md/project instructions, code comments, one-off chat explanations, PR/publish workflows, or broad implementation."
 ---
 
 # Docs writer
