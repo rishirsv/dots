@@ -6,6 +6,12 @@ theme = light:Catppuccin Latte,dark:Catppuccin Mocha
 
 background-opacity = 0.88
 background-blur = true
+selection-foreground = #f8fafc
+selection-background = #5f6f89
+search-foreground = #1f2937
+search-background = #f0c66a
+search-selected-foreground = #f8fafc
+search-selected-background = #6f91c7
 window-padding-x = 12
 window-padding-y = 10
 window-padding-balance = true
