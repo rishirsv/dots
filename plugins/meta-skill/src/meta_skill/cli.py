@@ -145,11 +145,12 @@ def command_sessions_extract(args):
     return 0 if result["ok"] else 1
 
 
-def preflight_lint(args):
+def preflight_lint(args, preset_ref=None):
     lint_result = lint_suite(args.suite)
     result = {"suite": lint_result}
-    if getattr(args, "preset", None):
-        resolved = resolve_preset_ref(args.preset, args.suite)
+    preset = preset_ref or getattr(args, "preset", None)
+    if preset:
+        resolved = resolve_preset_ref(preset, args.suite)
         result["preset"] = preset_lint(str(resolved))
     return result
 
@@ -167,10 +168,11 @@ def print_lint_warnings(lint_result):
 
 
 def command_eval_run(args):
+    preset_ref = getattr(args, "preset", None)
     if getattr(args, "preset", None):
-        resolved = resolve_preset_ref(args.preset, args.suite)
+        resolved = resolve_preset_ref(preset_ref, args.suite)
         apply_preset(args, load_preset(str(resolved)))
-    lint_result = preflight_lint(args)
+    lint_result = preflight_lint(args, preset_ref=preset_ref)
     if not args.json:
         print_lint_warnings(lint_result)
     if getattr(args, "check", False):
@@ -231,10 +233,10 @@ def command_eval_human(args):
 
 
 def command_eval_list(args):
-    result = list_runs(args.suite)
     preset = getattr(args, "preset", None)
     if preset:
         loaded = load_preset(str(resolve_preset_ref(preset, args.suite)))
+        result = list_runs(str(loaded["suite"]))
         preset_id = loaded["id"]
         preset_path = str(loaded["path"])
         matching = []
@@ -248,6 +250,8 @@ def command_eval_list(args):
                 matching.append(row)
         result = dict(result)
         result["runs"] = matching
+    else:
+        result = list_runs(args.suite)
     emit(result, args.json)
     return 0
 

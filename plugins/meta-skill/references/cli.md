@@ -222,13 +222,13 @@ without re-running trials.
 Flags: `--run <run-id-or-path>`.
 
 What it does: reads `results.jsonl`, reads optional `graders[]` and
-`expectations[]` from `evals.json`, looks for `judge.md` inside each frozen
-`inputs/cases/<case-id>/` and records a model judge grade through App
-Server when present, looks for `validate.*` and runs each validator with
-`--output`, `--events`, and `--json` (plus `--expected` when an `expected.*`
-file exists), then appends a new grade generation to
-`.<skill-name>/runs/<run-id>/grades.jsonl`. A task with neither `judge.md` nor
-`validate.*` is marked ungraded. Explicit `graders[]` entries preserve named
+`expectations[]` from `evals.json`, runs declared model graders with their
+named `judge.md` path or expectation guidance, and runs declared code graders
+with their named `validate.*` path plus `--output`, `--events`, and `--json`
+(plus `--expected` when an `expected.*` file exists). It then appends a new
+grade generation to `.<skill-name>/runs/<run-id>/grades.jsonl`. Undeclared
+`judge.md` or `validate.*` files are ignored; a task with no runnable declared
+grader or expectations is marked ungraded. `graders[]` entries preserve named
 `id`, `metric`, `required`, and `gate` semantics. `expectations[]` are hidden
 model-judge checks, never staged into the workspace. Judge grading writes
 events to `trials/<trial-id>/judge-<generation-id>.jsonl`.

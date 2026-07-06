@@ -116,9 +116,10 @@ It should print a compact JSON object:
 }
 ```
 
-The runner converts validator output into `grades.jsonl` rows with
-`grader.kind = "code"`. Explicit `graders[]` entries preserve their `id`,
-`metric`, and `gate` fields in the grade row.
+Declare each validator in `graders[]` with `grader.kind = "code"` and a
+`path` pointing at the `validate.*` file. The runner converts validator output
+into `grades.jsonl` rows and preserves the declared `id`, `metric`, and `gate`
+fields.
 
 Code graders should return named checks rather than one opaque pass/fail. Named
 checks make partial credit and failure diagnosis possible.

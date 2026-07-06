@@ -151,11 +151,12 @@ only when a task needs exact, deterministic checks. Choose the grader mix with
 prefer binary pass/fail checks first and use the label scale in
 [eval-vocabulary.md](../../references/eval-vocabulary.md).
 
-Use explicit `graders[]` entries when a task needs named metrics, required gates,
-or stable report fields. Use `expectations[]` for hidden model-judge checks that
-are visible to the grader but not to the agent. Mark must-not-break code
-validators with `gate: true`; a gate failure records a failed state for that
-measured check even when a model judge score is high.
+Declare task-local `judge.md` and `validate.*` files in `graders[]`; undeclared
+hidden grader files are ignored. Use explicit `graders[]` entries for named
+metrics, required gates, and stable report fields. Use `expectations[]` for
+hidden model-judge checks that are visible to the grader but not to the agent.
+Mark must-not-break code validators with `gate: true`; a gate failure records a
+failed state for that measured check even when a model judge score is high.
 
 ### 5. Calibrate
 

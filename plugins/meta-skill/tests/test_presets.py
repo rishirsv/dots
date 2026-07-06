@@ -134,7 +134,7 @@ description: "Use for testing."
                     "metrics": ["behavior_pass_rate", "unknown_rate", "comparison_counts", "tokens"],
                     "gates": [{"metric": "quality", "required_label": "pass"}],
                     "calibration": {"human_spot_check": "before release selection"},
-                    "report": {"include_history": True, "include_coverage_limits": True},
+                    "report": {"include_history": True},
                 },
             )
             run_dir = workbench / "runs" / "run-001"

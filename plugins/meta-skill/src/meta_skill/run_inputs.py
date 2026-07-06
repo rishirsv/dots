@@ -80,12 +80,9 @@ def tree_digest(path):
     return h.hexdigest()
 
 
-def _implicit_support(case_root):
+def _expected_support(case_root):
     support = []
-    if (case_root / "judge.md").exists():
-        support.append("judge.md")
     support.extend(path.name for path in sorted(case_root.glob("expected.*")) if path.is_file())
-    support.extend(path.name for path in sorted(case_root.glob("validate.*")) if path.is_file())
     return support
 
 
@@ -145,7 +142,7 @@ def freeze_run_inputs(manifest, suite, workbench, run_dir, cases, candidates, *,
         expectations = list(case.get("expectations") or [])
         write_json(expectations_path, expectations)
         support_refs = []
-        for ref in [*(case.get("fixtures") or []), *_grader_support(case), *_implicit_support(source_case_root)]:
+        for ref in [*(case.get("fixtures") or []), *_grader_support(case), *_expected_support(source_case_root)]:
             if ref in support_refs:
                 continue
             support_refs.append(ref)

@@ -64,6 +64,8 @@ def load_manifest(path):
     data = read_json(path)
     if not isinstance(data, dict):
         raise CliError("eval suite must be a JSON object", 2)
+    if "evals" in data:
+        raise CliError("evals.json must use cases[]; legacy evals[] manifests are no longer supported", 2)
     if data.get("schema_version") != 1:
         raise CliError("only evals.json schema_version 1 is supported", 2)
     if not isinstance(data.get("cases", []), list):
@@ -81,9 +83,15 @@ def load_manifest(path):
         task = case.get("task") or {}
         if not isinstance(task, dict):
             raise CliError(f"case {case_id} task must be an object", 2)
+        if "seed" in task:
+            raise CliError(f"case {case_id} task.seed is no longer supported; use task.prompt or cases/{case_id}/task.md", 2)
+        if "file" in task:
+            raise CliError(f"case {case_id} task.file is no longer supported; use task.path", 2)
         sources = task_sources(case)
         if len(sources) != 1:
             raise CliError(f"case {case_id} must set exactly one task source: inline prompt or task path", 2)
+        if task.get("path") and task.get("path") != "task.md":
+            raise CliError(f"case {case_id} task.path must be task.md; file-backed tasks use cases/{case_id}/task.md", 2)
         if "expectations" in case:
             expectations = case.get("expectations")
             if not isinstance(expectations, list) or not all(isinstance(item, str) and item.strip() for item in expectations):
@@ -132,7 +140,7 @@ def case_task_info(case):
     task = case.get("task") or {}
     if task.get("prompt") is not None:
         return {"source": "prompt", "path": None, "prompt": task.get("prompt") or ""}
-    return {"source": "path", "path": task.get("path") or "task.md", "prompt": None}
+    return {"source": "path", "path": "task.md", "prompt": None}
 
 
 def select_cases(manifest, split):
