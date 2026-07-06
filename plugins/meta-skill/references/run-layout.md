@@ -13,7 +13,7 @@ should link here instead of restating this tree.
   report.md                       # rendered run report (auto-written)
   inputs/                         # run input snapshot: everything the run consumed, frozen
     suite.json                    # frozen suite copy
-    cases/<case-id>/              # task.md, expectations.json, judge.md, expected.*, validate.*
+    cases/<case-id>/              # task.md, expectations.json, declared judge/validator files, expected.*
     candidates/<candidate>/       # frozen copy of the candidate source payload (+ snapshot.json)
   trials/<trial-id>/
     workspace/                    # staged working dir: task.md, fixtures/, skill/ payload
@@ -36,9 +36,9 @@ Trial id format: `<case-id>.<candidate>.t<n>`.
 - `report.md`: the rendered run report, auto-written after grading (preset
   scorecard when the run has a preset, plain summary otherwise)
 - `inputs/`: the run input snapshot — everything the run consumed, frozen. The
-  frozen suite copy the run graded against, including hidden grader files
-  (`judge.md`, `expected.*`, `validate.*`) under `inputs/cases/<case-id>/`,
-  plus each candidate's frozen source payload under
+  frozen suite copy the run graded against, including declared hidden grader
+  files (`judge.md`, `validate.*`) and expected outputs under
+  `inputs/cases/<case-id>/`, plus each candidate's frozen source payload under
   `inputs/candidates/<candidate>/`
 - `trials/<trial-id>/workspace/`: the run-scoped staged working directory for
   visible task bytes, listed fixtures, and the candidate payload when present;
@@ -51,7 +51,7 @@ Trial id format: `<case-id>.<candidate>.t<n>`.
 
 ## Hidden-Grader Boundary
 
-Hidden task files (`judge.md`, `expected.*`, `validate.*`) live under
-`inputs/cases/<case-id>/` and are never staged into
+Hidden task files declared by the suite live under `inputs/cases/<case-id>/`
+and are never staged into
 `trials/<trial-id>/workspace/`. The agent only ever sees `task.md`, listed
 fixtures, and the candidate payload when one is present.

@@ -109,8 +109,7 @@ Use this shape:
     "hidden_files_must_not_be_staged": true
   },
   "report": {
-    "include_history": true,
-    "include_coverage_limits": true
+    "include_history": true
   }
 }
 ```

@@ -63,26 +63,33 @@ Codex App Server is the only supported eval runner.
 
 ## Command Surface
 
-Current top-level commands:
+The block below is generated from the argument parser by
+`metaskill docs emit-cli --write` and checked in verify; edit the parser, not
+this block.
 
+<!-- BEGIN GENERATED: cli-surface (metaskill docs emit-cli --write) -->
 ```sh
 <meta-skill-root>/scripts/metaskill doctor [--json]
-<meta-skill-root>/scripts/metaskill init [<target>] [--dry-run] [--json]
-<meta-skill-root>/scripts/metaskill status [<target>] [--json]
+<meta-skill-root>/scripts/metaskill init <target> [--dry-run] [--json]
+<meta-skill-root>/scripts/metaskill status <target> [--json]
 <meta-skill-root>/scripts/metaskill case new <case-id> [--suite <suite>] [--json]
-<meta-skill-root>/scripts/metaskill sessions list [--limit <n>] [--archived active|archived|all] [--days <n>] [--query <text>] [--cwd <path>] [--json]
-<meta-skill-root>/scripts/metaskill sessions show <thread-id> [--max-chars <n>] [--json]
-<meta-skill-root>/scripts/metaskill sessions extract <thread-id> [--target <skill-dir>] [--max-chars <n>] [--out <file>] [--json]
-<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--candidates <ids>] [--split <name>] [--case <id>] [--type <type>] [--repetitions <n>] [--preset <name-or-path>] [--model <id>] [--no-grade] [--check] [--json]
-<meta-skill-root>/scripts/metaskill eval progress --run <run-id-or-path> [--watch] [--json]
-<meta-skill-root>/scripts/metaskill eval grade --run <run-id-or-path> [--json]
-<meta-skill-root>/scripts/metaskill eval human --run <run-id-or-path> [--trial <trial-id>] [--grader <id>] [--reviewer <name>] [--metric <name>] [--label <label>] [--score <0-to-1>] [--rationale <text>] [--json]
-<meta-skill-root>/scripts/metaskill eval calibrate --run <run-id-or-path> [--metric <name>] [--json]
-<meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--preset <name-or-path>] [--json]
-<meta-skill-root>/scripts/metaskill eval report --run <run-id-or-path> [--preset <path>] [--out <file>] [--json]
+<meta-skill-root>/scripts/metaskill sessions list [--limit <limit>] [--archived active|archived|all] [--days <days>] [--query <query>] [--cwd <cwd>] [--json]
+<meta-skill-root>/scripts/metaskill sessions show <thread-id> [--max-chars <max-chars>] [--json]
+<meta-skill-root>/scripts/metaskill sessions extract <thread-id> [--target <target>] [--max-chars <max-chars>] [--out <out>] [--json]
+<meta-skill-root>/scripts/metaskill eval run [--suite <suite>] [--candidates <candidates>] [--split <split>] [--case <case>] [--type <type>] [--repetitions <repetitions>] [--preset <preset>] [--model <model>] [--no-grade] [--check] [--json]
+<meta-skill-root>/scripts/metaskill eval progress --run <run> [--watch] [--json]
+<meta-skill-root>/scripts/metaskill eval grade --run <run> [--json]
+<meta-skill-root>/scripts/metaskill eval calibrate --run <run> [--metric <metric>] [--json]
+<meta-skill-root>/scripts/metaskill eval human --run <run> [--trial <trial>] [--grader <grader>] [--metric <metric>] [--label pass|partial|fail|unknown] [--score <score>] [--rationale <rationale>] [--reviewer <reviewer>] [--json]
+<meta-skill-root>/scripts/metaskill eval list [--suite <suite>] [--preset <preset>] [--json]
+<meta-skill-root>/scripts/metaskill eval report --run <run> [--preset <preset>] [--out <out>] [--json]
+<meta-skill-root>/scripts/metaskill eval verify-run --run <run> [--json]
+<meta-skill-root>/scripts/metaskill docs emit-cli [--write] [--check] [--json]
+<meta-skill-root>/scripts/metaskill docs lint [--json]
 <meta-skill-root>/scripts/metaskill validate <skill-dir> [--json]
-<meta-skill-root>/scripts/metaskill package <skill-dir> [--out-dir <dir>] [--json]
+<meta-skill-root>/scripts/metaskill package <skill-dir> [--out-dir <out-dir>] [--json]
 ```
+<!-- END GENERATED: cli-surface -->
 
 `--case` and `--type` accept a repeatable flag or a comma-separated list.
 
@@ -215,13 +222,13 @@ without re-running trials.
 Flags: `--run <run-id-or-path>`.
 
 What it does: reads `results.jsonl`, reads optional `graders[]` and
-`expectations[]` from `evals.json`, looks for `judge.md` inside each frozen
-`inputs/cases/<case-id>/` and records a model judge grade through App
-Server when present, looks for `validate.*` and runs each validator with
-`--output`, `--events`, and `--json` (plus `--expected` when an `expected.*`
-file exists), then appends a new grade generation to
-`.<skill-name>/runs/<run-id>/grades.jsonl`. A task with neither `judge.md` nor
-`validate.*` is marked ungraded. Explicit `graders[]` entries preserve named
+`expectations[]` from `evals.json`, runs declared model graders with their
+named `judge.md` path or expectation guidance, and runs declared code graders
+with their named `validate.*` path plus `--output`, `--events`, and `--json`
+(plus `--expected` when an `expected.*` file exists). It then appends a new
+grade generation to `.<skill-name>/runs/<run-id>/grades.jsonl`. Undeclared
+`judge.md` or `validate.*` files are ignored; a task with no runnable declared
+grader or expectations is marked ungraded. `graders[]` entries preserve named
 `id`, `metric`, `required`, and `gate` semantics. `expectations[]` are hidden
 model-judge checks, never staged into the workspace. Judge grading writes
 events to `trials/<trial-id>/judge-<generation-id>.jsonl`.
@@ -313,6 +320,22 @@ confirmation; with `--json` and no `--out`, the full structured report.
 <meta-skill-root>/scripts/metaskill eval report --run <run-dir> --preset .<skill-name>/presets/release.json
 ```
 
+### `eval verify-run`
+
+Rechecks a completed run's input snapshot against its recorded digests: the
+frozen `task.md` and support files per case, each candidate snapshot against
+`payload_digest`, the recorded suite digest, and summary/trial totals. Use it
+to prove a scorecard came from exactly the inputs it claims. Exits non-zero on
+any mismatch.
+
+### `docs emit-cli` / `docs lint`
+
+Documentation gates, run by `scripts/verify.sh`. `docs emit-cli --write`
+regenerates the Command Surface block above from the argument parser
+(`--check` exits 1 when the committed file is out of sync). `docs lint` fails
+on any passage repeated verbatim across two documentation files and enforces
+the plugin's total docs line budget.
+
 ### `validate`
 
 Use before review, packaging, or sync. Flags: `<skill-dir>` (skill directory
@@ -354,6 +377,19 @@ Read `.<skill-name>/runs/<run-id>/report.md` for the rendered result. Re-run
 `eval run` after editing tasks or graders; use `eval grade --run <run-id>`
 only to re-grade without re-running trials; use `eval list --json` to find
 earlier run ids in the same workbench.
+
+### CI gate
+
+Every command exits non-zero on failure and emits machine-readable output
+with `--json`, so a CI job needs only:
+
+```sh
+<meta-skill-root>/scripts/metaskill eval run --suite <suite> --json > run.json || exit 1
+<meta-skill-root>/scripts/metaskill eval verify-run --run "$(python3 -c 'import json;print(json.load(open("run.json"))["run_dir"])')" --json
+```
+
+Archive the run directory as the build artifact: it contains the frozen
+inputs, per-trial evidence, grades, and the rendered `report.md`.
 
 ### Dogfood the skill lifecycle
 

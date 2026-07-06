@@ -111,11 +111,11 @@ writer-authored tasks. Keep the manifest small: `task.md` (visible task),
 `fixtures/` (visible files copied into the workspace when listed),
 `judge.md` (hidden judge guidance), `expected.*` (hidden oracle/reference
 output), `validate.*` (hidden deterministic validator), `expectations[]`
-(optional hidden checklist), `graders[]` (optional hidden declaration).
+(optional hidden checklist), `graders[]` (explicit grader declaration).
 
 Inline task text belongs in `task.prompt`. File-backed tasks use
-`task.path` and require the referenced task file, usually
-`cases/<task-id>/task.md`. A materializer must not overwrite existing authored
+`task.path: "task.md"` and require `cases/<task-id>/task.md`. Custom task file
+paths are not supported. A materializer must not overwrite existing authored
 content unless the caller explicitly forces it.
 
 Candidates change the agent harness while the task prompt stays the same. A
@@ -131,10 +131,10 @@ possible — they are better regression seeds than polished invented tasks.
 
 ## Grader Declaration
 
-Graders may be implicit or explicit. Implicit discovery keeps small suites
-cheap: if `judge.md` exists, the grader runs a model judge; if `validate.*`
-exists, each validator runs as a code grader. Use explicit `graders[]` when a
-task needs named metrics, required gates, or a stable report contract:
+Declare graders in `graders[]`. Hidden `judge.md` and `validate.*` files are
+available only when a grader entry names them with `path`; undeclared files are
+ignored. Use explicit grader ids and metrics for every task that contributes to
+a stable report contract:
 
 ```json
 {
@@ -162,7 +162,7 @@ task needs named metrics, required gates, or a stable report contract:
 ```
 
 Supported grader `kind` values: `code` (runs the named `validate.*` file),
-`model` (runs the judge guidance or expectation judge; set
+`model` (runs the named judge guidance or expectation judge; set
 `uses_transcript: true` only when grading process behavior or needing
 mid-conversation evidence), and `human` (creates a pending `unknown` row
 until a reviewer records the label with `eval human`) — see

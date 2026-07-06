@@ -26,11 +26,15 @@ for skill in "${META_SKILLS[@]}"; do
   "$METASKILL" validate "$skill" --json >/dev/null
 done
 
+echo "==> Meta-Skill docs gates"
+"$METASKILL" docs emit-cli --check >/dev/null
+"$METASKILL" docs lint --json >/dev/null
+
 if [[ -f "$META_EVAL_SUITE" ]]; then
-  echo "==> Meta-Skill eval suite lint"
-  "$METASKILL" eval lint --suite "$META_EVAL_SUITE" --json >/dev/null
+  echo "==> Meta-Skill eval suite check"
+  "$METASKILL" eval run --check --suite "$META_EVAL_SUITE" --json >/dev/null
 else
-  echo "==> Meta-Skill eval suite lint (skipped: $META_EVAL_SUITE not found)"
+  echo "==> Meta-Skill eval suite check (skipped: $META_EVAL_SUITE not found)"
 fi
 
 echo "==> Dry-run config sync"
