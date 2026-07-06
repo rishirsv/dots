@@ -33,7 +33,7 @@ not a general status, repair, or stewardship loop.
 
 For loop cadence, poll budget, and the `gh pr view` / `gh pr checks` status
 field semantics, use the canonical loop in
-[`../../pr/SKILL.md`](../../pr/SKILL.md) steward mode (`$pr steward`). Confirm
+[`../../pr/references/landing.md`](../../pr/references/landing.md) steward section (`$pr steward`). Confirm
 the review comment landed, then run that loop once to observe the first
 check/review cycle.
 

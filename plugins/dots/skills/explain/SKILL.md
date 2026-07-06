@@ -91,7 +91,6 @@ repo document routes to $docs-writer).
 ## Boundaries
 
 Durable repository documentation → `$docs-writer`. Building or restyling
-product UI → `$design`. Diagnosing an unknown-cause failure → `$debug`
-(explaining an already-understood failure belongs here). Deep multi-source
-investigation → `$research`; this skill explains what's already knowable
-from sources at hand.
+product UI → `$design`. Deep multi-source investigation → `$research`; this
+skill explains what's already knowable from sources at hand (explaining an
+already-understood failure belongs here).
