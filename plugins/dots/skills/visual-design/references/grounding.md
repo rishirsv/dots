@@ -126,6 +126,13 @@ After the interview and required probes, present a brief and end the response.
 The user must confirm before any implementation runs. Do not present a brief and
 then continue to code in the same response.
 
+No visual target, no build: for a new app, prototype, redesign, or substantial
+UI build request without a URL, screenshot, Figma frame, mockup, source image,
+accepted Image Gen concept, or existing code target, run this gate before
+writing any code. `Full working version`, `no refs`, `go for it`, `make an
+assumption`, or a confirmed brief do not waive it when the request still lacks
+a visual target.
+
 Choose the brief shape based on clarity.
 
 Use compact form for typical craft requests with a clear prompt and anchors:

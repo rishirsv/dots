@@ -1,6 +1,6 @@
 ---
 name: ship
-description: "Turns already-scoped local work into a pushed branch and ready-to-go GitHub pull request through the portable command-line workflow, using draft only when explicitly requested. Explicit-only skill invoked via ship, Ship PR, send-it, send this, publish PR, or open a PR; not for local-only commits, existing PR repair, existing-PR stewardship, or merging."
+description: "Turns already-scoped local work into a pushed branch and ready-to-go GitHub pull request; ship review also requests and watches a first review pass. Explicit-only skill invoked via ship, ship draft, or ship review; not for local-only commits, existing PR repair, stewardship, status checks, or merging."
 ---
 
 # Ship PR
@@ -12,26 +12,25 @@ Turn an already scoped local change into a pushed branch and ready-to-go PR with
 - Read [github-cli-preflight.md](references/github-cli-preflight.md) before publishing. Use it to verify GitHub auth, remotes, branch tracking, base branch, and existing PR state.
 - Read [branch-naming.md](references/branch-naming.md) before creating or renaming a branch.
 - Read [pr-body-template.md](references/pr-body-template.md) before drafting the PR title or body.
-- Read [babysit-pr.md](references/babysit-pr.md) only when the user invokes `ship review`, asks for Codex review, or explicitly asks for a bounded first review/check watch on the newly published PR. Phrases like "send this for review" mean publish a reviewer-ready PR; they do not by themselves request a Codex review comment.
+- Read [babysit-pr.md](references/babysit-pr.md) only for `ship review`, an
+  explicit Codex-review request, or a bounded first review/check watch on the
+  newly published PR.
 
 ## Invocation Meaning
 
-- `ship`, `Ship PR`, `send-it`, `send this`, `open a PR`, or `publish PR`: publish or update a
-  normal non-draft PR by default.
-- `ship draft`: publish or update a draft PR when the user explicitly wants
-  a parked or exploratory PR that should not be landed yet.
-- `ship ready`: publish or update the PR as a normal non-draft PR. If an
-  existing PR is draft, mark it ready.
-- `send this for review`: publish a reviewer-ready PR; do not post `@codex
-  review` unless the user explicitly asks for Codex review.
-- `ship review`: publish or update the PR, mark it ready when needed, and
-  post the Codex review comment.
+- `ship` (default): publish or update a ready-for-review, non-draft PR.
+  Plain language — "send this", "send-it", "publish PR", "open a PR", "send
+  this for review" — maps here; there is no separate token for review intent
+  unless the user says `ship review` or explicitly asks for Codex review.
+- `ship draft`: publish or update a draft PR.
+- `ship review`: do everything `ship` does, then request and watch a first
+  Codex review pass.
 - `ship merge`, `publish and merge`, or `send and land`: publish first, then
-  hand landing to `$land-pr`.
+  hand landing to `$pr land`.
 
 The bounded first review/check watch in `babysit-pr.md` handles only immediate
 publication fallout on the PR just created or reused. Existing-PR stewardship
-belongs to `$steward-pr`.
+belongs to `$pr steward`.
 
 ## Core Workflow
 
@@ -44,10 +43,10 @@ belongs to `$steward-pr`.
 7. Commit only when there are intended uncommitted changes. If the intended work is already committed, do not amend or create a cosmetic commit.
 8. Run relevant local validation when an obvious command exists and no fresh evidence is already available.
 9. Push with upstream tracking.
-10. Create a new PR or reuse an existing PR with an explicit title, body file, base branch, and head branch. Create a normal non-draft PR by default. Use draft only for `ship draft`; for `ship ready` or `ship review`, convert an existing draft PR to ready.
+10. Create a new PR or reuse an existing PR with an explicit title, body file, base branch, and head branch. Create a normal non-draft PR by default; use draft only for `ship draft`. Convert an existing draft PR to ready for any other invocation.
 11. Verify publication with the validation harness.
 12. If the invocation is `ship review` or the user explicitly asks for Codex review/babysitting, post the Codex review request and follow [babysit-pr.md](references/babysit-pr.md).
-13. If the invocation asks to merge or land the PR, stop after publication and hand off to `$land-pr`; do not merge from this skill.
+13. If the invocation asks to merge or land the PR, stop after publication and hand off to `$pr land`; do not merge from this skill.
 14. Report branch, commit range, PR URL, validation evidence, review-request state, and any remaining blockers.
 
 ## Scope Discipline
@@ -113,7 +112,7 @@ If an open PR already exists for the current branch, reuse it:
 gh pr view --json number,url,state,isDraft,headRefName,baseRefName
 ```
 
-Use `gh pr edit` only when the existing PR title, body, or base branch needs to match the publication request. If an existing PR is draft, convert it to ready for normal `ship`, `ship ready`, or `ship review`. Preserve or create draft state only for `ship draft` or an explicit user request to keep the PR drafted. For `ship ready` or `ship review`, convert a draft PR to ready before posting a review request:
+Use `gh pr edit` only when the existing PR title, body, or base branch needs to match the publication request. If an existing PR is draft, convert it to ready for `ship` or `ship review`. Preserve or create draft state only for `ship draft` or an explicit user request to keep the PR drafted. For `ship review`, convert a draft PR to ready before posting a review request:
 
 ```bash
 gh pr ready "$pr_url_or_number"
@@ -156,11 +155,11 @@ Use exactly `@codex review` unless the user adds focus text after that prefix. D
 
 Do not merge from this skill. If the user says `ship merge`, `publish and
 merge`, `send and land`, or equivalent, publish or update the PR first, verify
-the PR URL and head SHA, then say that landing belongs to `$land-pr`.
+the PR URL and head SHA, then say that landing belongs to `$pr land`.
 
 If the user explicitly invoked both skills in one request, continue with the
-`$land-pr` workflow only after the publication report is complete. The merge
-approval belongs to `$land-pr`, not to the publication step.
+`$pr land` workflow only after the publication report is complete. The merge
+approval belongs to `$pr land`, not to the publication step.
 
 ## Safety Rules
 

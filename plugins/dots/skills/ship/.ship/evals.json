@@ -66,7 +66,7 @@
       "expectations": [
         "Publishes or updates the PR and verifies the URL and head/base state.",
         "Does not run gh pr merge from the ship workflow.",
-        "Hands the merge decision to $land-pr after publication is complete.",
+        "Hands the merge decision to $pr land after publication is complete.",
         "Reports validation evidence and any blockers before the landing handoff."
       ]
     }

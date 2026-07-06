@@ -1,6 +1,6 @@
 ---
 name: visual-design
-description: "Creates, critiques, revises, and faithfully implements distinctive visible UI for web, HTML/CSS, React, iOS, SwiftUI, app screens, dashboards, landing pages, games, and interactive tools. Use whenever front-end work changes what a user sees and layout, styling, assets, interaction polish, or rendered validation matters; not for backend-only work, CLI tools, documentation-only writing, or bug fixes with no visible UI surface."
+description: "Builds, redesigns, and faithfully implements distinctive visible UI — web, HTML/CSS, React, iOS/SwiftUI, app screens, dashboards, landing pages, games, and prototypes. Use for product design, UI/UX design, redesign, prototyping, or any front-end work changing what a user sees. Not for backend-only, CLI, docs-only, or invisible-UI bug fixes."
 ---
 
 # Visual Design
@@ -36,10 +36,10 @@ Use this skill for:
 
 Do not use it for backend-only changes, CLI tools, pure docs/prose work, or bug
 fixes with no visible UI surface. Chat-native throwaway diagrams or mockup
-sketches belong to the `dots:visualize` skill, not this one. For a small UI
-fix inside an existing design system, follow the repo's local conventions
-first and use only the relevant
-polish and validation parts of this skill.
+sketches belong to lightweight chat explanation (`dots:explain`), not this
+skill. For a small UI fix inside an existing design system, follow the repo's
+local conventions first and use only the relevant polish and validation parts
+of this skill.
 
 ## Workflow
 
@@ -65,6 +65,11 @@ If the task is a new surface, vague feature, redesign, substantial visual
 change, or design-from-scratch request, run the discovery and brief gate in
 [grounding.md](references/grounding.md). Present the brief, then stop and wait
 for explicit user confirmation. Do not continue to code in the same response.
+
+No visual target, no build: without a URL, screenshot, Figma frame, mockup,
+source image, accepted Image Gen concept, or existing code target, this gate
+applies even to `full working version`, `no refs`, `go for it`, or `make an
+assumption` requests — those phrases waive polish, not grounding.
 
 ### 2. Ideate Before Coding
 

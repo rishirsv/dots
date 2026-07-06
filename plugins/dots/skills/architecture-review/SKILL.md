@@ -17,7 +17,7 @@ Do not preserve fallback behavior, compatibility branches, aliases, adapters, du
 - Read [deepening.md](references/deepening.md) when proposing a module-deepening candidate or test strategy.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
-- Read [hard-cut-policy.md](references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
+- Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
 - Read [interface-design.md](references/interface-design.md) only after the user selects a candidate and wants alternative interface designs.
 
 ## Scope

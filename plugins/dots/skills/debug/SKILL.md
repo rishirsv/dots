@@ -1,6 +1,6 @@
 ---
 name: debug
-description: "Diagnoses a failure whose cause is unknown — a bug, failing test, error, crash, wrong output, or regression — by reproducing it, isolating one variable at a time, and demonstrating the root-cause mechanism before any fix. Use for debug, diagnose, find the root cause, or why is this failing/broken/it worked before; not for implementing an already-diagnosed fix, code review, or rerunning known-flaky tests."
+description: "Diagnoses an unknown-cause failure — bug, failing test, error, crash, or regression — by reproducing and verifying the root-cause mechanism before fixing. Use for debug, root cause, or why is this failing/broken/it worked before; not for an already-diagnosed fix, code review, or flaky-test reruns."
 ---
 
 # Debug

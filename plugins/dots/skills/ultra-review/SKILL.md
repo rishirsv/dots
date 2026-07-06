@@ -1,14 +1,15 @@
 ---
 name: ultra-review
-description: "Reviews changed code after implementation for correctness bugs and reuse, simplification, efficiency, altitude, and code-quality cleanups. Scales review rigor from quick to max based on task risk or explicit user request, then reports findings or applies same-scope fixes while preserving behavior. Not for broad architecture scans, security audits, PR publication, or CI repair workflows."
+description: "Reviews changed code or an existing implementation plan for correctness bugs, reuse, simplification, efficiency, and maintainability. Scales rigor from quick to max, then reports or applies same-scope fixes while preserving behavior. Not for new plan authoring, architecture scans, security audits, PR publication, or CI repair."
 ---
 
 # Ultra-Review
 
-Review changed code after implementation. Preserve behavior, delete unnecessary
-complexity, reuse canonical code, and fix same-scope quality issues when fixing
-is allowed. Scale review rigor when the task, risk, or user request calls for
-deeper bug hunting.
+Review changed code after implementation, or an existing implementation plan,
+spec, or roadmap. Preserve behavior, delete unnecessary complexity, reuse
+canonical code, and fix same-scope quality issues when fixing is allowed.
+Scale review rigor when the task, risk, or user request calls for deeper bug
+hunting.
 
 Correctness comes first. Report correctness findings with evidence and a
 concrete failure scenario before changing behavior. Apply reuse,
@@ -21,22 +22,35 @@ finding instead of editing.
 
 ## References
 
-- Read [references/finder-checklists.md](references/finder-checklists.md) when
+- Read [../../references/finder-checklists.md](../../references/finder-checklists.md) when
   running `standard`, `deep`, or `max` rigor. It holds the Agent 1-3
   checklists, the reviewer prompt shape, the deep/max finder angles, and the
   maximum maintainability sweep. `quick` rigor does not need it.
 - Read
-  [../architecture-review/references/hard-cut-policy.md](../architecture-review/references/hard-cut-policy.md)
+  [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
   for the canonical hard-cut policy when a fix touches schemas, contracts,
   persisted state, routing, configuration, feature flags, enum/value sets,
-  migrations, adapters, or compatibility paths.
+  migrations, adapters, or compatibility paths, or when reviewing a plan.
+- Read
+  [../../references/subagent-lanes.md](../../references/subagent-lanes.md)
+  for lane definitions and fan-out rules before launching the three standard
+  agents or the deep/max finder angles.
 
 ## Phase 1: Identify Scope
 
 Read `AGENTS.md`, `REVIEW.md`, or other repo guidance named by the user or found
 near the changed files.
 
-Start from the current repository state:
+If the user supplies, pastes, or names an existing implementation plan, spec,
+or roadmap, review that text instead of a git diff: rewrite the file directly
+when asked, or return the reviewed plan in chat when it was pasted. Default to
+hard-cut simplification for plans (see
+[../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)):
+cut speculative future-proofing, redundant phases, and compatibility ladders
+unless the plan names a real external boundary. Planning a new approach
+belongs to planning work; reviewing an existing plan belongs here.
+
+Otherwise, start from the current repository state:
 
 ```sh
 git status --short
@@ -64,12 +78,15 @@ and the intended review target is ambiguous.
 Use the user's requested rigor when they name it. Otherwise choose the smallest
 rigor that fits the risk.
 
-| Rigor | Use when | Fan-out | Verify | Sweep | Cap | Stance |
+| Rigor | Use when | Fan-out | Verify | Sweep | Target | Stance |
 |---|---|---:|---|---|---:|---|
-| `quick` | tiny change, narrow ask, or user wants a fast pass | no subagents unless already available cheaply | none | no | 4 | hunk-only, high confidence |
-| `standard` | normal after-implementation review | 3 agents | local verification | no | 8 | precision, actionable findings |
-| `deep` | risky change, public behavior, data/state, concurrency, contracts, tests, or user asks for careful review | 8 finder angles | 1 verifier per candidate | no | 10 | recall-biased |
-| `max` | user asks for ultra/max/exhaustive, high-risk release, migrations, auth, billing, security-adjacent, persisted data, or repeated review misses | 10 finder angles | 1 verifier per candidate | yes | 15 | maximum recall |
+| `quick` | tiny change, narrow ask, or user wants a fast pass | no subagents unless already available cheaply | none | no | ~4 | hunk-only, high confidence |
+| `standard` | normal after-implementation review | 3 agents | local verification | no | ~8 | precision, actionable findings |
+| `deep` | risky change, public behavior, data/state, concurrency, contracts, tests, or user asks for careful review | 8 finder angles | 1 verifier per candidate | no | ~10 | recall-biased |
+| `max` | user asks for ultra/max/exhaustive, high-risk release, migrations, auth, billing, security-adjacent, persisted data, or repeated review misses | 10 finder angles | 1 verifier per candidate | yes | ~15 | maximum recall |
+
+Targets are aims, not hard caps: exceed a target only when each extra finding
+carries a named failure scenario or concrete maintainability cost.
 
 Default to `standard`. Escalate to `deep` when changed code touches schemas,
 contracts, persisted state, routing, configuration, feature flags,
@@ -104,19 +121,22 @@ bugs visible from the hunk, obvious helper duplication, obvious dead code, and
 small same-scope cleanup.
 
 For `standard`, launch three fresh review-only agents concurrently in one tool
-message when a multi-agent tool is available: Reuse and Structural
-Simplification, Correctness/AI Slop/Code Quality, and Efficiency and
-Atomicity. Give each agent the same captured diff, changed-file list, compact
-repo guidance, applicable paths, user focus, and changed-file contents when
-the diff alone is insufficient. If subagents are unavailable, run the same
-three passes yourself. Read
-[references/finder-checklists.md](references/finder-checklists.md) for the
+message when a multi-agent tool is available (see
+[../../references/subagent-lanes.md](../../references/subagent-lanes.md) for
+lane roles and fan-out rules): Reuse and Structural Simplification,
+Correctness/AI Slop/Code Quality, and Efficiency and Atomicity. Give each
+agent the same captured diff, changed-file list, compact repo guidance,
+applicable paths, user focus, and changed-file contents when the diff alone is
+insufficient. If subagents are unavailable, run the same three passes
+yourself. Read
+[../../references/finder-checklists.md](../../references/finder-checklists.md) for the
 full numbered checklist and reviewer prompt shape for each lens.
 
 For `deep` and `max`, launch the finder angles from
-[references/finder-checklists.md](references/finder-checklists.md) as
-independent review-only agents. Do not let one angle suppress another. Pass
-every candidate with a nameable failure scenario into verification.
+[../../references/finder-checklists.md](../../references/finder-checklists.md) as
+independent review-only agents, using the same fan-out rules. Do not let one
+angle suppress another. Pass every candidate with a nameable failure scenario
+into verification.
 
 Give every deep/max finder the same scope packet as standard review: captured
 diff, changed-file list, compact repo guidance, applicable paths, user focus,
@@ -177,7 +197,7 @@ When schemas, contracts, persisted state, routing, configuration, feature flags,
 enum/value sets, migrations, adapters, or compatibility paths are touched,
 default to a hard cut: keep one canonical shape and remove old-shape handling
 unless a named external boundary requires an exception. Read
-[../architecture-review/references/hard-cut-policy.md](../architecture-review/references/hard-cut-policy.md)
+[../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
 for the canonical policy, hard rules, and exception rule.
 
 Skip a fix and report it when it would change behavior, expand architecture,
@@ -220,7 +240,10 @@ cleaner path.
 
 Order findings by severity: P0 blocker, P1 high, P2 medium, P3 low. At equal
 severity, correctness outranks reuse, simplification, quality, efficiency,
-altitude, and conventions. Keep the set high-signal and respect the chosen cap.
+altitude, and conventions. Keep the set high-signal and stay near the chosen
+target (Phase 2); go over it only when each extra finding carries a named
+failure scenario or concrete maintainability cost.
+
 Within maintainability findings, order structural regressions first, then missed
 dramatic simplifications, spaghetti or branching growth, boundary and type
 contract issues, file-size or decomposition issues, modularity issues, and
@@ -253,7 +276,9 @@ say the code meets the selected rigor.
 
 Explain cleanup work in plain English: what was messy, what changed, and why it
 matters practically. Use concrete file references instead of dense review
-jargon.
+jargon. On request, explain the result for a smart non-engineer: skip code
+snippets and jargon, and define any necessary term in one short everyday
+sentence.
 
 ### Inline Comments
 

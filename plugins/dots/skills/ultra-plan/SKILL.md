@@ -1,6 +1,6 @@
 ---
 name: ultra-plan
-description: "Creates or upgrades an implementation plan through repo-grounded context gathering, optional subagent research, adversarial critique, verified revisions, and anti-overengineering pressure; always produces a plan and stops before implementation. Explicit-only skill invoked via ultra-plan or a request to deeply plan, stress-test, or pressure-test an approach before building. Not for pure explanation, research, or ideation."
+description: "Creates or upgrades an implementation plan through repo-grounded context gathering, optional subagent research, adversarial critique, verified revisions, and anti-overengineering pressure; always produces a plan and stops before implementation. Explicit-only skill invoked via ultra-plan, ultraplan, or a request to deeply plan, stress-test, or pressure-test an approach before building. Not for pure explanation, research, or ideation."
 ---
 
 # Ultra-Plan
@@ -92,8 +92,10 @@ Look for the strongest plan-changing problems, ranked by implementation impact:
 
 Use subagents as planning tools, not ceremony — most useful when they keep broad
 exploration, logs, screenshots, or critique out of the main context and return a
-concise, sourced answer. Use [subagent-briefs.md](references/subagent-briefs.md)
-for the brief shapes.
+concise, sourced answer. Read
+[subagent-lanes.md](../../references/subagent-lanes.md) first; it owns lane
+definitions and fan-out rules. Use
+[subagent-briefs.md](references/subagent-briefs.md) for the brief shapes.
 
 - **Research subagents** when the plan depends on broad or unfamiliar context:
   repo conventions, current app state, data ownership, external best practice,

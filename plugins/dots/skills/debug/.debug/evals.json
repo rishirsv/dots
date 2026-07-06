@@ -1,0 +1,85 @@
+{
+  "skill_name": "debug",
+  "defaults": {
+    "runner": "codex_app_server",
+    "repetitions": 1
+  },
+  "candidates": [
+    {
+      "candidate": "current",
+      "display": "Current skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "evals": [
+    {
+      "id": "reproduce-before-fixing",
+      "type": "gate",
+      "prompt": "Use $debug: our CSV export sometimes produces a file with a truncated last row. Fix it.",
+      "expectations": [
+        "Reproduces the failure, via a test, script, or command, before proposing or applying any fix.",
+        "Captures the exact failing output or behavior as a baseline before making changes.",
+        "Does not jump straight to editing code based on a guess about the cause.",
+        "If it cannot reproduce the issue, says so explicitly instead of silently fixing a guessed cause."
+      ]
+    },
+    {
+      "id": "isolate-one-variable-at-a-time",
+      "type": "quality",
+      "prompt": "Use $debug to find out why our search endpoint returns different results on staging versus production.",
+      "expectations": [
+        "Forms explicit candidate hypotheses and tests them one at a time rather than changing multiple variables in one probe.",
+        "Each probe has a stated prediction of what would happen if the hypothesis is true versus false.",
+        "Prefers observation probes, such as logs or inspecting state, before resorting to mutating code to see what happens.",
+        "Keeps a short trail of what was tried and ruled out when more than a couple of probes are needed."
+      ]
+    },
+    {
+      "id": "demonstrates-mechanism-before-fix",
+      "type": "gate",
+      "prompt": "Use $debug on this failing test: test_order_total_calculation. Find the root cause and fix it.",
+      "expectations": [
+        "Does not label a cause as confirmed root cause until it demonstrates the mechanism, such as toggling the cause toggles the failure.",
+        "Traces the causal chain concretely through code or data rather than presenting a plausible story as proof.",
+        "Applies the fix only after the mechanism is verified, not right after the first plausible hypothesis.",
+        "Re-runs the original failing test after the fix to confirm the baseline failure is gone."
+      ]
+    },
+    {
+      "id": "diagnosis-only-no-fix",
+      "type": "gate",
+      "prompt": "Use $debug to figure out why the nightly job is failing. Just tell me what's wrong, don't change anything yet.",
+      "expectations": [
+        "Reproduces and diagnoses the failure but does not modify any source files.",
+        "Reports the root cause and a proposed fix without applying it.",
+        "Does not run destructive diagnostic steps, such as resetting state or deleting data, given the read-only framing.",
+        "Clearly signals that implementing the fix is a separate step awaiting the user's go-ahead."
+      ]
+    },
+    {
+      "id": "honest-about-unreproduced-diagnosis",
+      "type": "quality",
+      "prompt": "Use $debug: users are reporting the app crashes on their phones sometimes, but we can't reproduce it locally. What's going on?",
+      "expectations": [
+        "States plainly that the failure could not be reproduced rather than presenting a guess as confirmed.",
+        "Diagnoses from whatever evidence is available, such as crash reports or logs, and labels conclusions 'Likely' or 'Needs testing'.",
+        "Names the specific evidence or probe that would confirm or rule out the leading hypothesis.",
+        "Does not apply a speculative fix as if the cause were verified."
+      ]
+    },
+    {
+      "id": "smallest-fix-not-symptom-suppression",
+      "type": "quality",
+      "prompt": "Use $debug to fix the intermittent 500 error on our /upload endpoint caused by a race condition writing to a shared temp file.",
+      "expectations": [
+        "Identifies the smallest change that removes the actual race condition cause rather than just catching or guarding the resulting exception.",
+        "Calls out explicitly if only a symptom-level guard is possible given constraints, rather than presenting it as a full fix.",
+        "Adds or updates a test that fails without the fix and passes with it, when the repo has a test surface for this code.",
+        "Avoids bundling unrelated refactors or cleanups into the fix."
+      ]
+    }
+  ]
+}

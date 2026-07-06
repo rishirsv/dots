@@ -220,6 +220,8 @@ long explanation.
 ## Changelog and release notes
 
 Use for a reader-facing account of changes over versions, releases, or dates.
+Derive the content from git history and merged PRs since the last release
+(`git log`, merge commits, PR titles/descriptions); do not invent entries.
 
 Recommended shape:
 

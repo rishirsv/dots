@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Reviews existing or rendered product UI from current-run evidence along two paths: surface critique of one rendered artifact, screen, or component (self-review, pre-handoff QA, comparison against an approved visual target) and flow audit of a multi-step journey, funnel, onboarding, or settings path (step health plus UX, design, and accessibility findings). Use for design critique, UX audit, or inspect/assess/evaluate requests; not for code review, redesign ideation, or implementation."
+description: "Reviews existing or rendered product UI: surface critique of one artifact against an approved target or self/QA review, and flow audit of a multi-step journey with UX, design, and accessibility findings. Use for design critique, UX audit, or product-design QA; not for code review, redesign, or implementation."
 ---
 
 # Design Review

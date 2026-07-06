@@ -1,6 +1,6 @@
 {
   "name": "dots",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Rishi's personal dotfiles, agent workflows, and reusable skills.",
   "author": {
     "name": "Rishi"
@@ -8,5 +8,6 @@
   "keywords": ["personal", "workflow", "dotfiles"],
   "category": "Productivity",
   "assets": "./assets",
+  "references": "./references",
   "skills": "./skills"
 }

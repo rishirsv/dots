@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Creates a concise continuation brief for the current task, branch, PR, plan, or conversation so another agent or future session can pick it up, inline by default or as a saved artifact or platform continuation on request. Explicit-only skill for handing off or continuing work; not for PR publication, research scratch output, or sending work to another model for review."
+description: "Creates a concise continuation brief for the current task, branch, PR, plan, or conversation so another agent or future session can pick it up, inline by default or saved on request. Explicit-only; not for PR publication or sending work to another model for review."
 ---
 
 # Handoff
@@ -164,13 +164,8 @@ Continue this task from the handoff below. Start by reading the referenced files
 ## Guardrails
 
 - Do not paste secrets, tokens, private keys, or unnecessary personal data.
-- Do not duplicate long content already captured in plans, PRs, commits, docs, or diffs.
-- Do not duplicate Work Tracker or Plan content; point the next agent at the
+- Do not duplicate long content already captured in plans, PRs, commits, docs,
+  or diffs — including Work Tracker or Plan items; point the next agent at the
   existing artifact and name what changed since it was written.
-- Do not hide uncertainty.
-- Include current state, decisions, next actions, and validation status so a
-  fresh agent can continue without replaying the conversation.
 - Do not create, fork, move, archive, pin, rename, or message platform threads
   or sessions unless the user explicitly asks for thread/session management.
-- Do not use an isolated workspace when the user only asked for a normal
-  handoff.

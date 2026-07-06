@@ -157,8 +157,9 @@ summary, inspect the staged diff, write the message, and stop. Do not commit.
 **Checkpoint/savepoint**: Prefer a normal focused commit when the work is
 coherent. If the work is mixed and scope is unclear, ask one concise question.
 
-**Amend**: Amend only when explicitly requested. Inspect the previous commit and
-publication state first:
+**Amend**: Amend only when the user explicitly requests it, the target commit
+is local and unpublished, and the staged diff is exactly what should be
+amended. Inspect the previous commit and publication state first:
 
 ```sh
 git log --oneline -5
@@ -167,16 +168,13 @@ git diff --staged
 git rev-parse --abbrev-ref --symbolic-full-name @{u}
 ```
 
-Amend freely only when the target commit is local and unpublished, and the
-staged diff is exactly what should be amended. If it has likely been pushed or
-reviewed, stop unless the user explicitly approves the history rewrite. A
-missing upstream is a normal local-branch signal, not an error to report by
-itself.
+If it has likely been pushed or reviewed, stop unless the user explicitly
+approves the history rewrite.
 
 **Push**: Push only when the user explicitly says push, commit-and-push, save
-and push, or equivalent. A plain commit request is local-only. Treat bare
-"publish" as PR-publication language unless the user clearly asks only to push
-the branch.
+and push, or equivalent — a plain commit request is local-only, and bare
+"publish" means PR-publication language unless the user clearly asks only to
+push the branch.
 
 Before pushing, inspect the current branch and upstream directly:
 

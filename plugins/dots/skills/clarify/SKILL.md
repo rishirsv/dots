@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Asks the minimum blocking questions needed to make an underspecified request safe to build, then proceeds or returns a compact decision set. Use when a request is ambiguous in ways that affect scope, user-facing behavior, destructive or irreversible actions, publishing, credentials, validation standards, or domain meaning, or when the user asks what is needed before coding; not for deep product discovery, broad domain interrogation, or routine low-risk assumptions."
+description: "Asks the minimum blocking questions needed to make an underspecified request safe to build, then proceeds or returns a compact decision set. Triggers: clarify this, before coding ask questions, this is underspecified. Not for deep product discovery — use ideate instead."
 ---
 
 # Clarify
@@ -57,6 +57,8 @@ For each question:
 - Mark the recommended default.
 - State what assumption you will use if the user replies `use defaults`.
 
+When the platform provides a structured-question tool, prefer it over hand-rolled numbered-option markdown; otherwise use this skill's markdown shape below.
+
 Use this shape:
 
 ```md
@@ -107,6 +109,8 @@ If the user says `use defaults`, apply the recommended defaults you already stat
 When a blocker appears after work starts, pause and ask only the new blocking question. Include what you already learned from the code so the user is not asked to rediscover it.
 
 ## Boundaries
+
+Discriminator: the user knows what they want and the questions are about scope, safety, or done-criteria → clarify. The user is still deciding what they want → ideate.
 
 This is not a deep grilling workflow. Do not expand into product strategy, exhaustive domain discovery, stakeholder interviews, or long requirement workshops. If the user wants that,
 hand off to the appropriate deeper discovery skill when one exists, such as

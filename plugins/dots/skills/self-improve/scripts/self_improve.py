@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Mine Codex sessions, memories, and instruction state for durable, evidence-backed
-improvement proposals.
+"""Mine Codex sessions, memories, goal state, and instruction state for durable,
+evidence-backed improvement proposals.
 
 Division of labor (keep this honest):
 - This script SURFACES candidates: it scans sessions for preference and correction
   sentences, scores evidence strength, ranks threads, detects skill usage and
-  friction, and inspects a repo for missing scaffolding.
+  friction, flags unconsolidated memory summaries, flags stale durable goals, and
+  inspects a repo for missing scaffolding.
 - The AGENT extracts the real evidence (expected vs actual behavior, the durable
   correction) by reading the cited threads, and proposes the smallest change.
 
@@ -36,6 +37,7 @@ GLOBAL_AGENTS = CODEX_HOME / "AGENTS.md"
 MEMORIES_DIR = CODEX_HOME / "memories"
 MEMORY_MD = MEMORIES_DIR / "MEMORY.md"
 MEMORIES_DB = CODEX_HOME / "memories_1.sqlite"
+GOALS_DB = CODEX_HOME / "goals_1.sqlite"
 # Durable record of proposal decisions so weekly runs don't resurface settled items.
 DECISIONS_FILE = CODEX_HOME / "self_improve_decisions.json"
 SKILL_ROOTS = (
@@ -760,6 +762,33 @@ def cmd_triage(args: argparse.Namespace) -> None:
         )
 
 
+def stage1_status(limit: int) -> tuple[int | None, int | None, list[sqlite3.Row]]:
+    """Return (total summaries, unconsolidated count, unconsolidated rows).
+
+    A `stage1_outputs` row is unconsolidated when `selected_for_phase2 = 0` —
+    Codex generated a per-thread rollout summary but never promoted it into
+    `MEMORY.md`. These are candidates for a proposed Memory Notes entry.
+    """
+    if not MEMORIES_DB.exists():
+        return None, None, []
+    try:
+        with sqlite3.connect(MEMORIES_DB) as conn:
+            conn.row_factory = sqlite3.Row
+            total = conn.execute("SELECT count(*) FROM stage1_outputs").fetchone()[0]
+            unconsolidated = conn.execute(
+                "SELECT count(*) FROM stage1_outputs WHERE selected_for_phase2 = 0"
+            ).fetchone()[0]
+            rows = conn.execute(
+                "SELECT thread_id, rollout_slug, source_updated_at, usage_count "
+                "FROM stage1_outputs WHERE selected_for_phase2 = 0 "
+                "ORDER BY source_updated_at DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+    except sqlite3.Error:
+        return None, None, []
+    return total, unconsolidated, rows
+
+
 def cmd_memory_audit(args: argparse.Namespace) -> None:
     print("## Memory Audit\n")
     print(f"- Memory file: `{MEMORY_MD}` ({'present' if MEMORY_MD.exists() else 'missing'})")
@@ -770,9 +799,78 @@ def cmd_memory_audit(args: argparse.Namespace) -> None:
         "session evidence — read the recent memory files below, then verify each "
         "claim against the cited transcripts before proposing a memory note.\n"
     )
+    total, unconsolidated, rows = stage1_status(args.limit)
+    if total is not None:
+        print(
+            f"- Stage1 summaries: {total} total, {unconsolidated} not yet consolidated "
+            f"into `{MEMORY_MD}` (`selected_for_phase2 = 0`)\n"
+        )
+        if rows:
+            print("## Unconsolidated Summaries (memory-promotion candidates)\n")
+            for row in rows:
+                print(
+                    f"- `{row['thread_id']}` ({row['rollout_slug'] or 'no-slug'}) "
+                    f"updated {utc(row['source_updated_at'])}, used {row['usage_count'] or 0}x — "
+                    "read its rollout_summary in the DB, verify it against the transcript, then "
+                    "propose a promoted Memory Notes entry if it is durable."
+                )
+            print()
     print("## Recent Memory Files\n")
     for path in memory_files(args.limit):
         print(f"- `{path}`")
+
+
+def goal_health_rows(stale_days: int) -> list[dict[str, Any]]:
+    """Flag durable goals stuck in a non-terminal, non-active state."""
+    if not GOALS_DB.exists():
+        return []
+    cutoff_ms = int((datetime.now(tz=timezone.utc) - timedelta(days=stale_days)).timestamp() * 1000)
+    try:
+        with sqlite3.connect(GOALS_DB) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                "SELECT thread_id, goal_id, objective, status, updated_at_ms FROM thread_goals "
+                "WHERE status IN ('blocked', 'paused', 'usage_limited', 'budget_limited') "
+                "ORDER BY updated_at_ms ASC"
+            ).fetchall()
+    except sqlite3.Error:
+        return []
+    return [{**dict(row), "stale": row["updated_at_ms"] < cutoff_ms} for row in rows]
+
+
+def cmd_goal_health(args: argparse.Namespace) -> None:
+    print("## Goal Health\n")
+    print(f"- Goals DB: `{GOALS_DB}` ({'present' if GOALS_DB.exists() else 'missing'})")
+    if not GOALS_DB.exists():
+        return
+    try:
+        with sqlite3.connect(GOALS_DB) as conn:
+            counts = conn.execute(
+                "SELECT status, count(*) FROM thread_goals GROUP BY status"
+            ).fetchall()
+    except sqlite3.Error:
+        print("Goals DB is unreadable.")
+        return
+    print("\n## Status Counts\n")
+    for status, count in counts:
+        print(f"- {status}: {count}")
+    rows = goal_health_rows(args.stale_days)
+    if not rows:
+        print("\nNo blocked, paused, or limited goals found.")
+        return
+    print(f"\n## Needs Attention (stale threshold {args.stale_days}d)\n")
+    for row in rows:
+        flag = "STALE" if row["stale"] else "recent"
+        print(
+            f"- [{flag}] `{row['goal_id']}` ({row['status']}) — {shorten(row['objective'], 90)}\n"
+            f"  thread `{row['thread_id']}`, last updated {utc(row['updated_at_ms'] // 1000)}"
+        )
+    print(
+        "\nThis command only surfaces status; it does not revive, resume, or close "
+        "goals. For each stale entry, read the thread (`show <thread_id>`) and propose "
+        "revive (unblock, resume) or close (mark complete, abandon) — ultra-goal owns "
+        "applying the goal-execution change."
+    )
 
 
 def cmd_list(args: argparse.Namespace) -> None:
@@ -1028,6 +1126,9 @@ def cmd_deep(args: argparse.Namespace) -> None:
     print("\n---\n")
     cmd_memory_audit(argparse.Namespace(limit=args.memories or 12))
 
+    print("\n---\n")
+    cmd_goal_health(argparse.Namespace(stale_days=7))
+
 
 def cmd_decide(args: argparse.Namespace) -> None:
     decided = load_decisions()
@@ -1096,9 +1197,13 @@ def build_parser() -> argparse.ArgumentParser:
     show_p.add_argument("--max-chars", type=int, default=6000)
     show_p.set_defaults(func=cmd_show)
 
-    memory_p = sub.add_parser("memory-audit", help="List memory sources for supporting context")
+    memory_p = sub.add_parser("memory-audit", help="List memory sources and flag unconsolidated summaries")
     memory_p.add_argument("--limit", type=int, default=20)
     memory_p.set_defaults(func=cmd_memory_audit)
+
+    goal_p = sub.add_parser("goal-health", help="Flag blocked/paused/stale durable goals for revive-or-close review")
+    goal_p.add_argument("--stale-days", type=int, default=7)
+    goal_p.set_defaults(func=cmd_goal_health)
 
     usage_p = sub.add_parser("skill-usage", help="Report which skills ran, how often, and where they hit friction")
     usage_p.add_argument("--limit", type=int, default=250)

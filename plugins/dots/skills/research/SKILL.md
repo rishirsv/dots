@@ -1,6 +1,6 @@
 ---
 name: research
-description: "Investigates code, docs, web sources, and technical options with enough evidence to trust the answer while keeping scratch research out of durable project history. Explicit-only skill invoked via $research, the Research workflow, or a request for a research report or deep research; not for casual lookups, ordinary implementation, or turning findings into durable docs."
+description: "Investigates code, docs, and web sources with enough evidence to trust the answer, keeping scratch out of durable history. Explicit-only: invoke via $research, the Research workflow, or a request for a research report or deep research; not for casual lookups, ordinary implementation, or durable-doc writing."
 ---
 
 # Research
@@ -16,38 +16,43 @@ commits, PR publishing, or casual investigation.
 
 ## Runtime Flow
 
-Use the smallest workflow that can answer the research question:
+For a small, direct question with an obvious answer, skip the ceremony: answer
+immediately, evidence attached inline. No preamble, no contract block, no
+delegation.
 
-1. Emit a short preamble with the research contract.
-2. Choose the research mode: codebase, web, mixed, or deep research.
+For deep research, a fan-out or delegated run, or an explicit request for a
+research report, use the fuller workflow:
+
+1. Emit the preamble and research contract (below).
+2. Choose the mode: codebase, web, mixed, or deep research.
 3. Gather evidence using the mode-specific workflow.
 4. Separate facts, inferences, recommendations, contradictions, and gaps.
-5. Deliver the requested output and route any saved artifacts according to the
-   repository's documentation conventions.
+5. Deliver the requested output and route saved artifacts per repository
+   convention.
 
-Keep prompts outcome-first: state the question, constraints, evidence standard,
-output shape, and stop condition. Do not turn the skill into a rigid checklist
-when a direct answer would be enough.
+Keep prompts outcome-first even without the visible contract block: hold the
+question, evidence standard, and stop condition in mind.
 
-When the Research workflow is invoked mid-conversation, default to delegating
-the bounded research task when the harness provides an appropriate worker. The
-parent agent should write the contract, keep conversational context and final
-synthesis, and give the worker the specific research question, source boundary,
-evidence bar, and stop condition. One worker is enough for a focused question;
-use multiple workers only when the task needs distinct source lanes. Stay direct
-only when the user asks for a quick/simple answer, forbids delegation, no
-delegation mechanism is available, or delegation would mostly duplicate a
-two-minute local lookup.
+Default to delegating the bounded research task when the harness provides an
+appropriate worker and the work is more than a quick local lookup. The parent
+keeps conversational context and final synthesis; give the worker the specific
+question, source boundary, evidence bar, and stop condition. One worker is
+enough for a focused question — use more only for genuinely distinct source
+lanes. See `../../references/subagent-lanes.md` for lane roles and fan-out
+rules.
+
+Stay direct when the user asks for a quick/simple answer, forbids delegation,
+no delegation mechanism is available, or delegation would mostly duplicate a
+two-minute lookup.
 
 ## Preamble And Contract
 
-Before tool calls or delegation, emit a concise visible preamble that
-acknowledges the work and states the research contract. Keep it short enough to
-be useful while the agent is still getting oriented, and make it easy to scan in
-the chat UI.
+Required for deep research, a fan-out or delegated run, or an explicit report
+request — skip it on the small-question path above.
 
-Do not compress the contract into one semicolon-heavy sentence. Use a small
-Markdown block with labels and short values:
+Before tool calls or delegation, emit a concise visible preamble that
+acknowledges the work and states the research contract. Use a small Markdown
+block with labels and short values, not a semicolon-heavy sentence:
 
 ```md
 I will treat this as <codebase|web|mixed|deep> research and start by <first
@@ -70,9 +75,8 @@ Include durability and budget only when they matter:
 - **Budget:** <search, file, source, worker, or time limit>
 ```
 
-Keep status prose separate from the contract. If you need to mention the
-workflow choice, say it before the block in a normal sentence instead of
-stuffing it into the contract line.
+Keep status prose out of the contract block — say the workflow choice in a
+normal sentence before it.
 
 Ask one concise clarification only when the contract changes source access,
 artifact location, durability, or implementation risk. Otherwise choose the
@@ -149,78 +153,42 @@ question. Then compare the two evidence sets explicitly:
 
 ## Deep Research
 
-Use deep research when the user explicitly asks for deep research, confirms a
-proposed fan-out, or invokes the Research workflow mid-conversation for a task
-that should be delegated to one or more workers. See "Runtime Flow" above for
-the default delegation framing.
+Use deep research for broad, ambiguous, high-impact, or cross-cutting
+questions that justify multiple bounded investigations — including a
+confirmed fan-out or a mid-conversation Research workflow invocation that
+should be delegated. See "Runtime Flow" above for the default delegation
+framing.
 
-Treat deep research as dynamic orchestration, not a fixed checklist. The parent
-agent is the conductor: it scopes the question, chooses source lanes, dispatches
-bounded workers when explicitly authorized, collects their reports at meaningful
-barriers, verifies load-bearing claims when needed, and owns the final
-synthesis.
+Read `references/deep-research.md` first — it owns the fan-out gate,
+decomposition passes, claim verification, and dispatch patterns. This section
+covers only what's specific to this skill: the research contract and the
+artifact model.
 
-When fan-out is justified, prefer multiple delegated workers with distinct
-questions and source boundaries over one broad worker. Choose the available role
-or prompt shape that fits each slice:
+Treat deep research as dynamic orchestration, not a fixed checklist. The
+parent agent is the conductor: it scopes the question, chooses source lanes,
+dispatches bounded workers when explicitly authorized, collects reports at
+meaningful barriers, verifies load-bearing claims when needed, and owns the
+final synthesis. See `../../references/subagent-lanes.md` for lane roles,
+fan-out rules, and verification lanes.
 
-- research worker for bounded codebase, documentation, web, or option research
-- exploration worker for narrow codebase discovery and symbol tracing
-- adversarial reviewer for claim checks, contradiction review, weak evidence,
-  and failure-mode pressure
-- implementation worker only after the research result becomes an approved
-  implementation task with a disjoint write scope
-
-Each worker should own one reportable slice of the investigation. Do not ask
-multiple workers to answer the same broad prompt unless the explicit point is
-independent adversarial verification.
-
-Before fanning out, read the fan-out gate in `references/deep-research.md`
-("When To Fan Out") and confirm at least two of its criteria are true.
+Before fanning out, confirm at least two criteria from
+`references/deep-research.md`'s "When To Fan Out" are true.
 
 ### Deep Research Contract
 
-Before dispatch, announce:
+Before dispatch, announce: the subquestions, the source class per
+subquestion, the per-worker budget and stop condition, the intended barrier
+points (source collection, claim extraction, verification review), where
+subreports will be written, and the final synthesis path.
 
-- The subquestions.
-- The source class for each subquestion.
-- The per-worker budget and stop condition.
-- The intended barrier points, such as source collection, claim extraction, or
-  verification review.
-- Where subreports will be written.
-- The final synthesis path.
-
-Use the repository's scratch or evidence convention for the run directory. If
-the repository defines ignored generated evidence, prefer that. In this repo,
-use `.agents/outputs/research/<topic-slug>/` for deep research run artifacts
-unless the user requests another path.
-
-### Deep Orchestration Shape
-
-Adapt the workflow to the question:
-
-1. Scope the research into 3-6 source lanes, hypotheses, or claim classes.
-2. Dispatch independent lanes in parallel when the user authorized delegation and
-   the source boundaries are genuinely distinct.
-3. Collect subreports before deduping evidence or making recommendations.
-4. Extract the load-bearing claims: factual statements, local behavior,
-   current-source guidance, risks, assumptions, or option tradeoffs that the
-   final answer depends on.
-5. Run an adversarial or verification pass for claims that are disputed,
-   surprising, current, high-impact, or weakly supported.
-6. Synthesize by claim, not by worker transcript.
-
-For web-heavy deep research, a workflow-harness pattern is a useful default:
-distinct search angles, source dedupe before fetch, falsifiable claim
-extraction, adversarial verification, then cited synthesis. Implement that
-pattern with whatever delegation, scripting, or workflow primitives the active
-harness provides. Treat workflow output as evidence and still apply this skill's
-synthesis and artifact rules.
+Use the repository's scratch or evidence convention for the run directory. In
+this repo, that's `.agents/outputs/research/<topic-slug>/` unless the user
+requests another path.
 
 ### Deep Research Artifact Model
 
-Deep research must preserve worker detail. Each delegated worker writes or
-returns a markdown subreport; the parent synthesis links to saved reports
+Deep research must preserve worker detail: each delegated worker writes or
+returns a markdown subreport, and the parent synthesis links to saved reports
 instead of replacing them with a compressed retelling.
 
 Recommended run shape:
@@ -236,95 +204,26 @@ Recommended run shape:
   99-source-audit.md
 ```
 
-Name subreports as `NN-<source-class>-<question-slug>.md` when a run needs a
-more specific split, for example `01-codebase-routing-patterns.md` or
-`02-official-docs-current-api.md`. Keep the parent synthesis named
-`research.md`. Use `99-source-audit.md` only when source inventories, searches,
-or command trails need a separate file instead of fitting cleanly in the
-subreports.
+Name subreports `NN-<source-class>-<question-slug>.md` for a more specific
+split, e.g. `01-codebase-routing-patterns.md`. Keep the parent synthesis named
+`research.md`; use `99-source-audit.md` only when the source trail needs its
+own file.
 
-Each subreport must be reader-first. It should answer the assigned question
-before listing sources, and it should group evidence by claim instead of making
-the report primarily a source inventory.
+Each subreport is reader-first — it answers the assigned question before
+listing sources, grouped by claim — and includes: research question, scope,
+answer, why it matters or recommended direction, supporting evidence grouped
+by claim, contradictions or caveats, confidence, gaps or next checks,
+durability recommendation, and an audit trail (commands/searches run, sources
+consulted, and important sources not consulted).
 
-Each subreport must include:
+The parent writes `research.md` as index and synthesis: answer the original
+contract, link every subreport, dedupe overlapping findings, tie each major
+claim to its subreport evidence, surface contradictions and gaps, and keep
+commands/source inventories out of the main answer unless needed to support a
+claim.
 
-- Research question
-- Scope
-- Answer
-- Why it matters or recommended direction
-- Supporting evidence, grouped by claim
-- Contradictions or caveats
-- Confidence
-- Gaps or next checks
-- Durability recommendation
-- Audit trail: commands/searches run, sources consulted, and important sources
-  not consulted
-
-The parent writes `research.md` as an index and synthesis:
-
-- Answer the original research contract.
-- Link to every subreport.
-- Deduplicate overlapping findings.
-- Tie each major claim to the subreport evidence.
-- Surface contradictions and gaps.
-- Preserve important detail by pointing to the relevant subreport section.
-- Keep commands and source inventories out of the main answer unless they are
-  needed to support a claim. Put them in a compact audit trail or source section.
-
-Do not treat raw worker chat as the research artifact. If a worker cannot write
-files, the parent must save its report before synthesizing.
-
-### Worker Prompt Shape
-
-Use an appropriate research-capable worker when available. Write the prompt
-dynamically for the slice of research you need; the examples below are shapes,
-not forms to fill in. Prefer a clear brief over a rigid field list.
-
-A good worker prompt usually includes:
-
-- The specific question or decision the worker should help answer.
-- The source boundary: repo area, files, docs, web sources, product version, date
-  range, or already-collected reports.
-- The evidence bar: what counts as support, what to cite, and whether to separate
-  facts from inferences.
-- The output you need for synthesis: answer, implication or recommendation,
-  supporting evidence grouped by claim, contradictions, confidence, gaps, risks,
-  durability recommendation, and compact audit trail.
-- The operating constraints: follow repository conventions and local
-  instructions; do not edit code; do not edit durable docs except an assigned
-  research report path.
-- A budget or stop condition when the work could sprawl.
-
-Good prompt shapes:
-
-```text
-Trace how <behavior> works in <repo area>. Read the smallest set of source files
-needed to identify the path, owners, tests, and missing proof. Return the answer,
-what it means, supporting evidence grouped by claim, caveats, confidence, next
-checks, and a compact audit trail. Do not edit code.
-```
-
-```text
-Verify the current external guidance for <API/product/standard> as of <date>.
-Prefer primary sources and release notes. Return the supported behavior,
-version/date constraints, practical implications, conflicts, confidence, and a
-compact source audit trail for the parent synthesis.
-```
-
-```text
-Review the attached subreports for contradictions and unsupported claims. Use
-only those reports and their source lists. Return convergence, disagreements,
-claims that need stronger evidence, and a confidence readout.
-```
-
-When a saved subreport is required, include the exact output path and the
-headings the parent needs. Keep reusable prompt bodies portable: tell the
-worker to follow repository conventions rather than hard-coding local
-directories unless the current run requires a concrete path.
-
-If the prompt is too broad, the worker should return `Scope too broad` with a
-recommended split instead of wandering.
+Do not treat raw worker chat as the research artifact. If a worker cannot
+write files, the parent saves its report before synthesizing.
 
 ## Evidence Standard
 
@@ -351,31 +250,18 @@ instruction and flag the conflict when it matters.
 
 ## Durability And Artifact Routing
 
-Use the repository's documented conventions first.
+Use the repository's documented conventions first, and read
+`references/documentation-boundaries.md` for the full artifact-type table and
+promotion test.
 
-Default raw searches, source dumps, transcripts, and temporary notes to ignored
-scratch or evidence space when the repository defines one. If it does not, keep
-scratch in the thread or a temporary location and do not create a durable repo
-file just to preserve raw exploration.
-
-Promote only curated conclusions that change durable thinking:
-
-- Scratch research: raw notes, source dumps, search trails, excerpts, one-off
-  hypotheses, and delegated-worker notes. Keep ignored.
-- Saved evidence: deep research subreports, screenshots, logs, command output,
-  and reproducible proof. Keep where future agents can inspect it without
-  confusing it for product docs.
-- Durable research summary: stable synthesis that changes future product,
-  architecture, market, API, or workflow thinking. Save only when the repo has a
-  durable docs convention or the user requests it.
-- Decision document: save only after a real decision was made or the user asks
-  for a decision record.
-- Temporary plan: save under the repo's active plan convention and treat it as
-  temporary until shipped.
-
-Before creating or updating a durable artifact, state why it is durable and
-choose the path from repository conventions. If conventions are missing or
-contradictory, ask before writing.
+Default raw searches, source dumps, transcripts, and delegated-worker notes to
+ignored scratch space when the repository defines one; otherwise keep them in
+the thread instead of creating a durable file. Promote only curated
+conclusions that change durable thinking — a research summary, a decision
+document, or a temporary plan — and only when the repo has a matching
+convention or the user asks for it. Before writing a durable artifact, state
+why it is durable and choose the path from repository conventions; ask first
+if conventions are missing or contradictory.
 
 ## Output Shapes
 

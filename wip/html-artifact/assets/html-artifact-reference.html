@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Artifact Reference Sheet</title>
+<style>
+/* html-artifact:theme.css:start */
+/* html-artifact:region:core:start */
+:root {
+  --bg: #F7F7F2;
+  --text: #151719;
+  --text-body: #2F3638;
+  --text-muted: #687174;
+  --surface: #FFFFFF;
+  --surface-muted: #ECEFED;
+  --border: #C9CECB;
+  --accent: #315E68;
+  --accent-soft: #DCE8E7;
+  --success-soft: #E3ECD9;
+  --success-strong: #536F45;
+  --warning-soft: #F3E7D5;
+  --warning-strong: #704915;
+  --danger-soft: #F2DDDF;
+  --danger-strong: #9A3E46;
+  --info-soft: #DCE8E7;
+  --info-strong: #315E68;
+  --pending-soft: #EEE7D2;
+  --pending-strong: #6A5A2B;
+  --focus-ring: #315E68;
+  --button-hover: #254B54;
+  --pin-text: #FFFFFF;
+  --code-surface: #121719;
+  --code-text: #E6EAE8;
+  --code-line: #E8E6DE;
+  --code-muted: #B8B6AC;
+  --code-function: #B9C7C9;
+  --code-light-function: #8A6D2F;
+  --code-del-text: #E79A8C;
+  --serif: ui-serif, Georgia, 'Times New Roman', serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
+  --type-caption: 0.6875rem;   /* 11px — eyebrows, labels, badges, pills, tags, mono metadata */
+  --type-label: 0.75rem;       /* 12px — nav, locations, file rows, dates, render/audit chrome */
+  --type-code: 0.78125rem;     /* 12.5px — code, diff hunks, prompt text, captions */
+  --type-small: 0.8125rem;     /* 13px — secondary notes, rationale, side nav */
+  --type-table: 0.84375rem;    /* 13.5px — tables, impact/recommendation/evidence */
+  --type-ui: 0.875rem;         /* 14px — supporting UI copy, list bodies */
+  --type-body: 0.9375rem;      /* 15px — body and primary values */
+  --type-lead: clamp(1rem, 0.98rem + 0.2vw, 1.0625rem);   /* hero summary */
+  --type-h3: clamp(1rem, 0.98rem + 0.2vw, 1.0625rem);     /* h3, milestone titles */
+  --type-h2: clamp(1.35rem, 1.25rem + 0.45vw, 1.5rem);    /* section headings */
+  --type-h1: clamp(1.9rem, 1.62rem + 1vw, 2.125rem);      /* document title */
+  --type-metric: clamp(1.45rem, 1.3rem + 0.5vw, 1.625rem);/* headline metric values */
+  --leading-tight: 1.1;
+  --leading-heading: 1.16;
+  --leading-body: 1.6;
+  --leading-code: 1.7;
+  --weight-heading: 520;
+  --weight-subheading: 500;
+  --weight-strong: 600;
+  /* spacing rhythm — one quiet scale so panels, stacks, and gaps share a beat */
+  --space-2xs: 3px;   /* hairline chrome: tag/pill/badge insets, micro margins */
+  --space-xs: 6px;    /* tight gaps: clusters, tag rows, inline separators */
+  --space-sm: 9px;    /* small gaps, compact row insets */
+  --space-md: 12px;   /* medium gaps, compact card padding */
+  --space-lg: 15px;   /* default panel padding, grid gaps, section rhythm */
+  --space-xl: 24px;   /* page gutter, large block separation */
+  /* role aliases — intent over raw scale; tuned to the dense editorial surfaces */
+  --space-stack: 14px;     /* vertical rhythm between stacked blocks */
+  --space-panel-x: 15px;   /* panel/card horizontal padding */
+  --space-panel-y: 14px;   /* panel/card vertical padding */
+  --space-table-x: 15px;   /* table cell horizontal padding */
+  --space-table-y: 10px;   /* table cell vertical padding */
+  --space-page-x: 24px;    /* page gutter and edge-bleed reference */
+  --space-page-top: 47px;        /* page rhythm: top padding */
+  --space-page-bottom: 120px;    /* page rhythm: bottom padding */
+  --space-meta-gap: 10px 22px;   /* meta-strip inline: row / wide column gap */
+  --space-metric-gap: 14px 44px; /* meta-strip metric: row / wide column gap */
+  --radius-panel: 10px;
+  --radius-row: 7px;
+  --radius-tag: 5px;
+  --line: 1.5px solid var(--border);
+  /* motion — brief, purposeful state-change timing; neutralized under reduced motion */
+  --motion-fast: 120ms;   /* hovers, focus, small state flips */
+  --motion-base: 220ms;   /* reveals, disclosure, confirmations */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* scroll affordance — pure-CSS edge shadows for contained horizontal scrollers.
+     Covers ride with the content (local) and uncover an edge shadow when there is
+     more to scroll that way. --_cover/--_shadow are set per scroller; both shadow
+     tokens reference theme tokens so they track light/dark with no dark override. */
+  --scroll-shadow: color-mix(in srgb, var(--text) 14%, transparent);
+  --scroll-shadow-code: color-mix(in srgb, var(--code-line) 26%, transparent);
+  --scroll-x:
+    linear-gradient(to right, var(--_cover, var(--surface)), transparent) left center / 34px 100% no-repeat local,
+    linear-gradient(to left, var(--_cover, var(--surface)), transparent) right center / 34px 100% no-repeat local,
+    radial-gradient(farthest-side at left center, var(--_shadow, var(--scroll-shadow)), transparent) left center / 16px 100% no-repeat,
+    radial-gradient(farthest-side at right center, var(--_shadow, var(--scroll-shadow)), transparent) right center / 16px 100% no-repeat;
+  color-scheme: light dark;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text-body);
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  padding: var(--space-page-top) var(--space-page-x) var(--space-page-bottom);
+}
+
+main { max-width: 1080px; margin: 0 auto; }
+
+/* html-artifact:region:core:end */
+
+/* html-artifact:region:typography:start */
+/* ---- typography ---- */
+h1 { font-family: var(--serif); font-weight: var(--weight-heading); font-size: var(--type-h1); line-height: var(--leading-heading); color: var(--text); letter-spacing: 0; }
+h2 { font-family: var(--serif); font-weight: var(--weight-heading); font-size: var(--type-h2); color: var(--text); letter-spacing: 0; }
+h3 { font-family: var(--serif); font-weight: var(--weight-subheading); font-size: var(--type-h3); color: var(--text); }
+p  { max-width: 760px; }
+a  { color: var(--accent); transition: color var(--motion-fast) var(--ease-out), background-color var(--motion-fast) var(--ease-out), border-color var(--motion-fast) var(--ease-out); }
+code { font-family: var(--mono); font-size: 0.92em; }
+a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex="0"]:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--type-caption);
+  letter-spacing: 0;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+}
+.label {
+  font-family: var(--mono);
+  font-size: var(--type-caption);
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+.muted { color: var(--text-muted); }
+
+
+/* ---- type polish: balanced headings, tabular numerals, literal code ---- */
+h1, h2, header[data-primitive="hero-summary"] [data-slot="summary"] { text-wrap: balance; }
+table, thead th, tbody td,
+[data-variant="metric"] [data-slot="item"] [data-slot="value"],
+[data-variant="cells"] [data-slot="item"] [data-slot="value"],
+.badge, .pill, [data-slot="tags"] .tag,
+[data-primitive="audit-trail"] [data-slot="entry"],
+[data-primitive="render-proof"] [data-slot="check"],
+[data-primitive="qa-metadata"] [data-slot="value"],
+[data-slot="when"], [data-slot="location"], [data-slot="due"],
+[data-primitive="acceptance-gate"] [data-slot="proof"],
+[data-primitive="step-flow"] [data-slot="index"],
+[data-primitive="action-list"][data-variant="ordered"] [data-slot="action"]::before,
+.diff-row .ln { font-variant-numeric: tabular-nums; }
+code, pre, [data-slot="code"], [data-slot="hunk"],
+[data-primitive="diff-review"] [data-slot="file"], .diff-row,
+[data-slot="location"],
+[data-primitive="imagegen-prompt-card"] [data-slot="prompt-text"] { font-variant-ligatures: none; }
+
+/* html-artifact:region:typography:end */
+
+/* html-artifact:region:layout-helpers:start */
+/* ---- internal layout helpers (private to the artifact) ---- */
+.stack > * + * { margin-top: var(--space-stack); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--space-xs); align-items: center; }
+.grid { display: grid; gap: var(--space-lg); }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+.frame { border-radius: var(--radius-row); overflow: hidden; background: var(--surface-muted); }
+.frame img, .frame svg { display: block; width: 100%; height: auto; }
+.table-wrap { overflow-x: auto; border: var(--line); border-radius: var(--radius-panel); background: var(--scroll-x); background-color: var(--surface); --_cover: var(--surface); }
+@media (max-width: 720px) { .split { grid-template-columns: 1fr; } }
+
+/* html-artifact:region:layout-helpers:end */
+
+/* html-artifact:region:section-nav:start */
+/* ============ top nav (section-nav · bar) ============ */
+nav[data-primitive="section-nav"][data-variant="bar"] {
+  position: sticky; top: 0; z-index: 5;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(5px);
+  border-bottom: var(--line);
+  margin: 0 calc(var(--space-page-x) * -1) 0; padding: var(--space-md) var(--space-page-x);
+  display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-lg);
+}
+nav[data-variant="bar"] a { font-family: var(--mono); font-size: var(--type-label); color: var(--text-body); text-decoration: none; padding: var(--space-2xs) var(--space-xs); border-radius: var(--radius-tag); }
+nav[data-variant="bar"] a:hover { color: var(--text); background: var(--surface-muted); }
+
+/* ============ section-nav · map (anchored right-edge index) ============ */
+nav[data-primitive="section-nav"][data-variant="map"] {
+  position: fixed; right: 14px; top: 50%; transform: translateY(-50%);
+  z-index: 20; max-width: 18px;
+  display: flex; flex-direction: column; gap: var(--space-xs); align-items: flex-end;
+  padding: var(--space-sm); border: 1px solid transparent; border-radius: var(--radius-panel);
+  background: transparent; transition: max-width var(--motion-base) var(--ease-out), background var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out);
+}
+nav[data-variant="map"] a { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-sm); text-decoration: none; border-radius: var(--radius-tag); }
+nav[data-variant="map"] [data-slot="tick"] { display: block; width: 16px; height: 2px; border-radius: 2px; background: var(--border); transition: width var(--motion-base) var(--ease-out), background var(--motion-base) var(--ease-out); flex-shrink: 0; }
+nav[data-variant="map"] a[data-state="active"] [data-slot="tick"] { width: 26px; background: var(--accent); }
+nav[data-variant="map"] [data-slot="label"] { display: none; font-family: var(--mono); font-size: var(--type-label); color: var(--text-body); white-space: nowrap; max-width: 232px; overflow: hidden; text-overflow: ellipsis; }
+nav[data-variant="map"]:hover, nav[data-variant="map"]:focus-within {
+  max-width: 280px; background: color-mix(in srgb, var(--bg) 96%, transparent);
+  border-color: var(--border); backdrop-filter: blur(6px);
+}
+nav[data-variant="map"]:hover [data-slot="tick"], nav[data-variant="map"]:focus-within [data-slot="tick"] { display: none; }
+nav[data-variant="map"]:hover a, nav[data-variant="map"]:focus-within a { justify-content: flex-start; padding: var(--space-xs) var(--space-sm); }
+nav[data-variant="map"]:hover [data-slot="label"], nav[data-variant="map"]:focus-within [data-slot="label"] { display: block; }
+nav[data-variant="map"]:hover a:hover, nav[data-variant="map"]:focus-within a:focus { color: var(--text); background: var(--surface-muted); }
+nav[data-variant="map"]:hover a[data-state="active"], nav[data-variant="map"]:focus-within a[data-state="active"] { color: var(--text); background: var(--surface-muted); }
+@media (max-width: 960px) { nav[data-primitive="section-nav"][data-variant="map"] { display: none; } }
+@media (prefers-reduced-motion: reduce) { nav[data-primitive="section-nav"][data-variant="map"], nav[data-primitive="section-nav"][data-variant="map"] [data-slot="tick"] { transition: none; } }
+
+/* html-artifact:region:section-nav:end */
+
+/* html-artifact:region:hero-summary:start */
+/* ============ hero-summary ============ */
+header[data-primitive="hero-summary"] { margin: var(--space-xl) 0 var(--space-xs); max-width: 840px; }
+header[data-primitive="hero-summary"] [data-slot="summary"] { font-size: var(--type-lead); color: var(--text-body); margin-top: var(--space-stack); }
+.prompt-box { background: var(--surface-muted); border: var(--line); border-radius: var(--radius-panel); padding: var(--space-panel-y) var(--space-panel-x); font-size: var(--type-ui); margin-top: var(--space-lg); }
+
+/* html-artifact:region:hero-summary:end */
+
+/* html-artifact:region:meta-strip:start */
+/* ============ meta-strip ============ */
+[data-primitive="meta-strip"][data-variant="cells"] { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-lg); }
+@media (max-width: 760px) { [data-primitive="meta-strip"][data-variant="cells"] { grid-template-columns: repeat(2, 1fr); } }
+[data-variant="cells"] [data-slot="item"] { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-panel-y) var(--space-panel-x); }
+[data-slot="item"] [data-slot="key"] { display: block; margin-bottom: var(--space-xs); }
+[data-slot="item"] [data-slot="value"] { font-size: var(--type-body); font-weight: var(--weight-strong); color: var(--text); }
+[data-primitive="meta-strip"][data-variant="inline"] { display: flex; flex-wrap: wrap; gap: var(--space-meta-gap); }
+[data-variant="inline"] [data-slot="item"] [data-slot="value"] { font-size: var(--type-ui); margin-left: var(--space-xs); }
+[data-primitive="meta-strip"][data-variant="metric"] { display: flex; flex-wrap: wrap; gap: var(--space-metric-gap); }
+[data-variant="metric"] [data-slot="item"] [data-slot="value"] { display: block; font-family: var(--serif); font-size: var(--type-metric); font-weight: var(--weight-heading); color: var(--text); line-height: var(--leading-tight); }
+
+/* ============ section-nav · side ============ */
+nav[data-primitive="section-nav"][data-variant="side"] { font-size: var(--type-small); }
+nav[data-variant="side"] a { display: block; padding: var(--space-xs) 0; border-bottom: 1px solid transparent; color: var(--text-body); text-decoration: none; }
+nav[data-variant="side"] a:hover { color: var(--text); border-bottom-color: var(--border); }
+nav[data-variant="side"] a[data-state="active"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: var(--weight-strong); }
+
+/* html-artifact:region:meta-strip:end */
+
+/* html-artifact:region:tldr:start */
+/* ============ tldr ============ */
+[data-primitive="tldr"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-panel-y) var(--space-panel-x); box-shadow: inset 0 1px 0 var(--accent-soft); max-width: none; }
+[data-primitive="tldr"] [data-slot="body"] b { color: var(--text); }
+
+/* html-artifact:region:tldr:end */
+
+/* html-artifact:region:callout:start */
+/* ============ callout ============ */
+[data-primitive="callout"] { display: flex; gap: var(--space-sm); border: 1.5px solid var(--info-soft); background: color-mix(in srgb, var(--info-soft) 42%, transparent); border-radius: var(--radius-row); padding: var(--space-panel-y) var(--space-panel-x); }
+[data-primitive="callout"] + [data-primitive="callout"] { margin-top: var(--space-sm); }
+[data-primitive="callout"] [data-slot="marker"] { font-weight: 700; flex-shrink: 0; }
+[data-primitive="callout"][data-variant="note"] [data-slot="marker"] { color: var(--info-strong); }
+[data-primitive="callout"][data-variant="warning"] { border-color: var(--warning-strong); background: color-mix(in srgb, var(--warning-soft) 62%, transparent); }
+[data-primitive="callout"][data-variant="warning"] [data-slot="marker"] { color: var(--warning-strong); }
+[data-primitive="callout"][data-variant="success"] { border-color: var(--success-strong); background: color-mix(in srgb, var(--success-soft) 68%, transparent); }
+[data-primitive="callout"][data-variant="success"] [data-slot="marker"] { color: var(--success-strong); }
+[data-primitive="callout"][data-variant="danger"] { border-color: var(--danger-strong); background: color-mix(in srgb, var(--danger-soft) 72%, transparent); }
+[data-primitive="callout"][data-variant="danger"] [data-slot="marker"] { color: var(--danger-strong); }
+
+/* html-artifact:region:callout:end */
+
+/* html-artifact:region:step-flow:start */
+/* ============ step-flow ============ */
+[data-primitive="step-flow"] { counter-reset: step; }
+[data-primitive="step-flow"] [data-slot="step"] { display: grid; grid-template-columns: 32px 1fr; gap: var(--space-lg); }
+[data-primitive="step-flow"] [data-slot="step"] + [data-slot="step"] { margin-top: var(--space-stack); }
+[data-primitive="step-flow"] [data-slot="index"] { width: 27px; height: 27px; border-radius: 50%; background: var(--accent-soft); color: var(--text); font-family: var(--mono); font-size: var(--type-small); display: flex; align-items: center; justify-content: center; }
+[data-slot="step-title"] { font-weight: var(--weight-strong); color: var(--text); }
+[data-slot="step-body"] { font-size: var(--type-ui); color: var(--text-muted); }
+[data-variant="timeline"] [data-slot="step"] { position: relative; }
+[data-variant="timeline"] [data-slot="index"] { background: var(--surface); border: 3px solid var(--accent); width: 15px; height: 15px; margin: 4px 5px; }
+
+/* html-artifact:region:step-flow:end */
+
+/* html-artifact:region:comparison-grid:start */
+/* ============ comparison-grid ============ */
+[data-primitive="comparison-grid"][data-variant="cards"] { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); }
+@media (max-width: 780px) { [data-primitive="comparison-grid"][data-variant="cards"] { grid-template-columns: 1fr; } }
+[data-primitive="comparison-grid"] [data-slot="option"] { border: var(--line); border-radius: var(--radius-panel); padding: var(--space-lg); background: var(--surface); }
+[data-primitive="comparison-grid"] [data-slot="option"][data-state="recommended"] { border-color: var(--success-strong); box-shadow: inset 0 0 0 1px var(--success-strong); }
+[data-slot="option-title"] { font-weight: var(--weight-strong); color: var(--text); margin-bottom: var(--space-xs); }
+[data-slot="option-body"] { font-size: var(--type-ui); color: var(--text-muted); }
+[data-slot="recommended"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--success-strong); background: var(--success-soft); border-radius: var(--radius-tag); padding: var(--space-2xs) var(--space-xs); }
+[data-primitive="comparison-grid"][data-variant="split"] { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+@media (max-width: 720px) { [data-primitive="comparison-grid"][data-variant="split"] { grid-template-columns: 1fr; } }
+[data-primitive="comparison-grid"][data-variant="matrix"] { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); }
+
+/* html-artifact:region:comparison-grid:end */
+
+/* html-artifact:region:risk-table:start */
+/* ============ risk-table ============ */
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: var(--type-table); }
+thead th { background: var(--surface-muted); color: var(--text); text-align: left; font-size: var(--type-caption); letter-spacing: 0; padding: var(--space-table-y) var(--space-table-x); }
+tbody td { padding: var(--space-table-y) var(--space-table-x); border-top: var(--line); vertical-align: top; }
+.badge { display: inline-block; font-family: var(--mono); font-size: var(--type-caption); font-weight: var(--weight-strong); padding: var(--space-2xs) var(--space-xs); border-radius: var(--radius-tag); }
+.badge[data-state="high"] { background: var(--danger-soft); color: var(--danger-strong); }
+.badge[data-state="med"]  { background: var(--warning-soft); color: var(--warning-strong); }
+.badge[data-state="low"]  { background: var(--success-soft); color: var(--success-strong); }
+.badge[data-state="info"] { background: var(--info-soft); color: var(--info-strong); }
+
+/* html-artifact:region:risk-table:end */
+
+/* html-artifact:region:milestone-strip:start */
+/* ============ milestone-strip ============ */
+[data-primitive="milestone-strip"] [data-slot="milestone"] { display: grid; grid-template-columns: 120px 24px 1fr; gap: 0 var(--space-lg); }
+@media (max-width: 640px) { [data-primitive="milestone-strip"] [data-slot="milestone"] { grid-template-columns: 84px 24px 1fr; } }
+[data-slot="when"] { text-align: right; font-family: var(--mono); font-size: var(--type-label); color: var(--text-muted); padding-top: 2px; }
+[data-slot="milestone"] .marker-col { display: flex; flex-direction: column; align-items: center; }
+[data-slot="marker"].dot { width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); margin-top: var(--space-2xs); flex-shrink: 0; }
+[data-slot="marker"].dot[data-state="done"] { background: var(--success-strong); border-color: var(--success-strong); }
+[data-slot="marker"].dot[data-state="upcoming"] { border-color: var(--border); }
+[data-slot="milestone"] .line { width: 2px; flex: 1; background: var(--border); margin: var(--space-2xs) 0; }
+[data-slot="milestone"]:last-child .line { display: none; }
+[data-slot="milestone-body"] { padding-bottom: var(--space-xl); }
+[data-slot="milestone-title"] { font-family: var(--serif); font-weight: var(--weight-subheading); font-size: var(--type-h3); color: var(--text); }
+[data-slot="tags"] { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-xs); }
+[data-slot="tags"] .tag { font-family: var(--mono); font-size: var(--type-caption); background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-tag); padding: var(--space-2xs) var(--space-xs); }
+
+/* html-artifact:region:milestone-strip:end */
+
+/* html-artifact:region:code-panel:start */
+/* ============ code-panel ============ */
+figure[data-primitive="code-panel"] { border-radius: var(--radius-panel); overflow: hidden; border: var(--line); }
+figure[data-primitive="code-panel"] figcaption[data-slot="label"] { font-family: var(--mono); font-size: var(--type-label); color: var(--text-muted); background: var(--surface-muted); padding: var(--space-sm) var(--space-lg); border-bottom: var(--line); }
+[data-slot="code"] { overflow-x: auto; }
+[data-primitive="code-panel"][data-variant="dark"] [data-slot="code"] { background: var(--scroll-x); background-color: var(--code-surface); --_cover: var(--code-surface); --_shadow: var(--scroll-shadow-code); }
+[data-primitive="code-panel"][data-variant="dark"] pre { color: var(--code-line); }
+[data-primitive="code-panel"][data-variant="light"] [data-slot="code"] { background: var(--scroll-x); background-color: var(--surface-muted); --_cover: var(--surface-muted); }
+[data-primitive="code-panel"][data-variant="light"] pre { color: var(--text-body); }
+pre { font-family: var(--mono); font-size: var(--type-code); line-height: var(--leading-code); padding: var(--space-lg) var(--space-lg); white-space: pre; }
+.kw { color: var(--accent); } .str { color: var(--success-strong); } .cm { color: var(--text-muted); } .fn { color: var(--code-function); }
+[data-variant="light"] .kw { color: var(--danger-strong); } [data-variant="light"] .str { color: var(--success-strong); } [data-variant="light"] .fn { color: var(--code-light-function); }
+
+/* html-artifact:region:code-panel:end */
+
+/* html-artifact:region:code-note:start */
+/* ============ code-note ============ */
+[data-primitive="code-note"][data-variant="margin"] { display: grid; grid-template-columns: 1fr 220px; gap: var(--space-lg); align-items: start; }
+@media (max-width: 720px) { [data-primitive="code-note"][data-variant="margin"] { grid-template-columns: 1fr; } }
+[data-primitive="code-note"] [data-slot="note"] { font-size: var(--type-small); color: var(--text-body); border: var(--line); border-radius: var(--radius-row); padding: var(--space-sm); background: var(--surface); }
+[data-primitive="code-note"] mark[data-slot="anchor"] { background: color-mix(in srgb, var(--accent-soft) 85%, transparent); color: inherit; border-radius: 3px; padding: 0 var(--space-2xs); }
+
+/* html-artifact:region:code-note:end */
+
+/* html-artifact:region:diff-review:start */
+/* ============ diff-review ============ */
+figure[data-primitive="diff-review"] { border: var(--line); border-radius: var(--radius-panel); overflow: hidden; }
+[data-primitive="diff-review"] [data-slot="file"] { display: flex; flex-wrap: wrap; gap: var(--space-sm) var(--space-lg); justify-content: space-between; align-items: center; padding: var(--space-md) var(--space-lg); border-bottom: var(--line); background: var(--surface-muted); font-family: var(--mono); font-size: var(--type-label); }
+[data-slot="file"] .delta .add { color: var(--success-strong); font-weight: var(--weight-strong); }
+[data-slot="file"] .delta .del { color: var(--danger-strong); font-weight: var(--weight-strong); }
+[data-slot="hunk"] { background: var(--scroll-x); background-color: var(--code-surface); --_cover: var(--code-surface); --_shadow: var(--scroll-shadow-code); overflow-x: auto; font-family: var(--mono); font-size: var(--type-code); line-height: var(--leading-code); }
+.diff-row { display: grid; grid-template-columns: 44px 17px 1fr; align-items: baseline; padding: 0 var(--space-lg) 0 0; white-space: pre; }
+.diff-row .ln { color: var(--text-muted); text-align: right; padding-right: var(--space-sm); }
+.diff-row .mark { text-align: center; }
+.diff-row .ccode { color: var(--code-line); }
+.diff-row[data-state="ctx"] .ccode { color: var(--code-muted); }
+.diff-row[data-state="add"] { background: color-mix(in srgb, var(--success-strong) 18%, transparent); }
+.diff-row[data-state="add"] .mark { color: var(--success-strong); }
+.diff-row[data-state="del"] { background: color-mix(in srgb, var(--danger-strong) 20%, transparent); }
+.diff-row[data-state="del"] .mark { color: var(--code-del-text); }
+[data-primitive="diff-review"] [data-slot="comment"] { font-size: var(--type-small); color: var(--text-body); background: var(--surface-muted); border-top: var(--line); padding: var(--space-sm) var(--space-lg); max-width: none; }
+[data-slot="comment"]::before { content: "review note"; font-family: var(--mono); font-size: var(--type-caption); letter-spacing: 0; color: var(--accent); display: block; margin-bottom: var(--space-2xs); }
+
+/* html-artifact:region:diff-review:end */
+
+/* html-artifact:region:finding-card:start */
+/* ============ finding-card ============ */
+[data-primitive="finding-card"] { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); overflow: hidden; }
+[data-primitive="finding-card"] + [data-primitive="finding-card"] { margin-top: var(--space-stack); }
+[data-primitive="finding-card"] .fhead { display: flex; flex-wrap: wrap; gap: var(--space-sm) var(--space-md); align-items: center; padding: var(--space-md) var(--space-lg); border-bottom: var(--line); }
+[data-slot="location"] { font-family: var(--mono); font-size: var(--type-label); color: var(--text-muted); }
+[data-primitive="finding-card"] .fbody { padding: var(--space-panel-y) var(--space-panel-x); }
+[data-slot="finding"] { color: var(--text); font-weight: var(--weight-strong); }
+[data-slot="impact"] { font-size: var(--type-table); color: var(--text-muted); margin-top: var(--space-2xs); }
+[data-slot="recommendation"] { font-size: var(--type-table); margin-top: var(--space-sm); border: var(--line); border-radius: var(--radius-row); padding: var(--space-sm) var(--space-md); background: var(--surface-muted); }
+[data-primitive="finding-card"][data-state="high"] .fhead { border-bottom-color: var(--danger-strong); }
+
+/* html-artifact:region:finding-card:end */
+
+/* html-artifact:region:claim-evidence-matrix:start */
+/* ============ claim-evidence-matrix ============ */
+[data-primitive="claim-evidence-matrix"][data-variant="cards"] { display: grid; gap: var(--space-sm); }
+[data-variant="cards"] [data-slot="row"] { border: var(--line); border-radius: var(--radius-panel); padding: var(--space-panel-y) var(--space-panel-x); background: var(--surface); }
+[data-variant="cards"] [data-slot="row"] [data-slot="claim"] { font-weight: var(--weight-strong); color: var(--text); }
+[data-variant="cards"] [data-slot="row"] [data-slot="evidence"] { font-size: var(--type-table); color: var(--text-muted); margin-top: var(--space-2xs); }
+[data-variant="cards"] [data-slot="row"] .row-foot { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-lg); margin-top: var(--space-xs); align-items: center; }
+
+/* html-artifact:region:claim-evidence-matrix:end */
+
+/* html-artifact:region:screenshot-gallery:start */
+/* ============ screenshot-gallery ============ */
+[data-primitive="screenshot-gallery"][data-variant="grid"] { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
+@media (max-width: 640px) { [data-primitive="screenshot-gallery"][data-variant="grid"] { grid-template-columns: 1fr; } }
+[data-primitive="screenshot-gallery"] figure { border: var(--line); border-radius: var(--radius-panel); overflow: hidden; background: var(--surface); }
+[data-primitive="screenshot-gallery"] figcaption[data-slot="caption"] { font-size: var(--type-code); color: var(--text-muted); padding: var(--space-sm) var(--space-lg); }
+[data-primitive="screenshot-gallery"][data-variant="compare"] { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+@media (max-width: 640px) { [data-primitive="screenshot-gallery"][data-variant="compare"] { grid-template-columns: 1fr; } }
+[data-primitive="screenshot-gallery"][data-state="pass"] figure { box-shadow: inset 0 0 0 1.5px var(--success-strong); }
+
+/* html-artifact:region:screenshot-gallery:end */
+
+/* html-artifact:region:token-swatch:start */
+/* ============ token-swatch ============ */
+[data-primitive="token-swatch"] { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: var(--space-lg); }
+[data-primitive="token-swatch"] [data-slot="swatch"] { text-align: left; }
+[data-slot="swatch"] [data-slot="chip"] { height: 60px; border-radius: var(--radius-row); border: var(--line); margin-bottom: var(--space-xs); }
+[data-slot="swatch"] [data-slot="value"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-body); }
+[data-slot="swatch"] [data-slot="token-name"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); display: block; }
+[data-primitive="token-swatch"][data-variant="radius"] [data-slot="chip"] { background: var(--accent-soft); }
+
+/* html-artifact:region:token-swatch:end */
+
+/* html-artifact:region:copy-export:start */
+/* ============ copy-export ============ */
+[data-primitive="copy-export"] { display: inline-flex; }
+[data-primitive="copy-export"] [data-slot="action"] {
+  font-family: var(--sans); font-size: var(--type-small); font-weight: var(--weight-strong);
+  background: var(--accent); color: var(--surface);
+  border: none; border-radius: var(--radius-row);
+  padding: var(--space-sm) var(--space-lg); cursor: pointer; min-height: 40px;
+  transition: background-color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
+}
+[data-primitive="copy-export"] [data-slot="action"]:hover { background: var(--button-hover); }
+[data-primitive="copy-export"] [data-slot="action"]:active { transform: translateY(1px); }
+[data-primitive="copy-export"][data-state="copied"] [data-slot="action"] { background: var(--success-strong); animation: copyPulse var(--motion-base) var(--ease-out); }
+
+/* html-artifact:region:copy-export:end */
+
+/* html-artifact:region:audit-trail:start */
+/* ============ audit-trail ============ */
+footer[data-primitive="audit-trail"], section[data-primitive="audit-trail"] { border-top: var(--line); padding-top: var(--space-lg); margin-top: var(--space-xs); }
+[data-primitive="audit-trail"] [data-slot="group"] { margin-bottom: var(--space-sm); }
+[data-primitive="audit-trail"] [data-slot="entry"] { font-family: var(--mono); font-size: var(--type-label); color: var(--text-body); padding: var(--space-2xs) 0; }
+[data-primitive="audit-trail"] [data-slot="group"] > .label { display: block; margin-bottom: var(--space-2xs); }
+
+/* html-artifact:region:audit-trail:end */
+
+/* html-artifact:region:action-list:start */
+/* ============ action-list ============ */
+[data-primitive="action-list"] { list-style: none; display: grid; gap: var(--space-sm); }
+[data-primitive="action-list"] [data-slot="action"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-sm) var(--space-md); }
+[data-primitive="action-list"][data-variant="ordered"] { counter-reset: action; }
+[data-primitive="action-list"][data-variant="ordered"] [data-slot="action"] { counter-increment: action; display: grid; grid-template-columns: 28px 1fr; gap: var(--space-sm); }
+[data-primitive="action-list"][data-variant="ordered"] [data-slot="action"]::before { content: counter(action); width: 22px; height: 22px; border-radius: 50%; background: var(--surface-muted); color: var(--text); font-family: var(--mono); font-size: var(--type-caption); display: inline-grid; place-items: center; margin-top: 1px; }
+[data-primitive="action-list"][data-variant="checklist"] [data-slot="action"] { display: grid; grid-template-columns: 22px 1fr; gap: var(--space-sm); }
+[data-primitive="action-list"][data-variant="checklist"] [data-slot="action"]::before { content: "□"; font-family: var(--mono); color: var(--text-muted); }
+[data-primitive="action-list"][data-variant="checklist"] [data-slot="action"][data-state="done"]::before { content: "✓"; color: var(--success-strong); }
+/* keep the counter/checkbox marker in column one; stack all content in column two */
+[data-primitive="action-list"][data-variant="ordered"] [data-slot="action"]::before,
+[data-primitive="action-list"][data-variant="checklist"] [data-slot="action"]::before { grid-column: 1; grid-row: 1; }
+[data-primitive="action-list"][data-variant="ordered"] [data-slot="action"] > *,
+[data-primitive="action-list"][data-variant="checklist"] [data-slot="action"] > * { grid-column: 2; min-width: 0; }
+[data-primitive="action-list"] [data-slot="rationale"], [data-primitive="action-list"] [data-slot="proof"] { display: block; margin-top: var(--space-2xs); font-size: var(--type-small); color: var(--text-muted); }
+[data-primitive="action-list"] [data-slot="owner"], [data-primitive="action-list"] [data-slot="due"], [data-primitive="action-list"] [data-slot="status"] { display: inline-block; margin-top: var(--space-xs); margin-right: var(--space-xs); font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); }
+[data-primitive="action-list"] [data-slot="action"][data-state="recommended"] { border-color: var(--success-strong); box-shadow: inset 0 0 0 1px var(--success-strong); }
+[data-primitive="action-list"] [data-slot="action"][data-state="blocked"] { background: color-mix(in srgb, var(--danger-soft) 55%, var(--surface)); }
+[data-primitive="action-list"] [data-slot="action"][data-state="pending"] { background: color-mix(in srgb, var(--pending-soft) 55%, var(--surface)); }
+
+/* html-artifact:region:action-list:end */
+
+/* html-artifact:region:state-pills:start */
+/* ============ expanded families: shared state pills ============ */
+.pill { display: inline-block; font-family: var(--mono); font-size: var(--type-caption); font-weight: var(--weight-strong); padding: var(--space-2xs) var(--space-sm); border-radius: var(--radius-tag); }
+.pill[data-state="pass"], .pill[data-state="within"], .pill[data-state="match"], .pill[data-state="checked"], .pill[data-state="delivered"], .pill[data-state="accepted"], .pill[data-state="selected"], .pill[data-state="go"] { background: var(--success-soft); color: var(--success-strong); }
+.pill[data-state="blocked"], .pill[data-state="over"], .pill[data-state="mismatch"], .pill[data-state="fail"], .pill[data-state="not-checked"], .pill[data-state="rejected"], .pill[data-state="no-go"] { background: var(--danger-soft); color: var(--danger-strong); }
+.pill[data-state="pending"], .pill[data-state="partial"], .pill[data-state="proposed"] { background: var(--pending-soft); color: var(--pending-strong); }
+.pill[data-state="evidence-limited"], .pill[data-state="hard"] { background: var(--warning-soft); color: var(--warning-strong); }
+
+/* html-artifact:region:state-pills:end */
+
+/* html-artifact:region:planning-document:start */
+/* ============ planning & document ============ */
+[data-primitive="scope-boundary"] { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+[data-primitive="scope-boundary"] > [data-slot] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-md) var(--space-lg); }
+[data-primitive="scope-boundary"] [data-slot="out-scope"] { background: var(--surface-muted); }
+[data-primitive="scope-boundary"] ul { margin: var(--space-xs) 0 0; padding-left: 18px; font-size: var(--type-ui); }
+@media (max-width: 720px) { [data-primitive="scope-boundary"] { grid-template-columns: 1fr; } }
+[data-primitive="acceptance-gate"] { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-2xs) var(--space-lg) var(--space-lg); }
+[data-primitive="acceptance-gate"] [data-slot="gate-status"] { display: flex; gap: var(--space-sm); align-items: center; padding: var(--space-md) 0; }
+[data-primitive="acceptance-gate"] [data-slot="criterion"] { display: grid; grid-template-columns: 20px 1fr; gap: var(--space-sm); padding: var(--space-sm) 0; border-top: var(--line); }
+[data-primitive="acceptance-gate"] [data-slot="proof"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); }
+[data-primitive="decision-log"] { list-style: none; }
+[data-primitive="decision-log"] [data-slot="decision"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-md) var(--space-lg); }
+[data-primitive="decision-log"] [data-slot="decision"] + [data-slot="decision"] { margin-top: var(--space-sm); }
+[data-primitive="decision-log"] [data-slot="decision-title"] { font-weight: var(--weight-strong); color: var(--text); }
+[data-primitive="decision-log"] [data-slot="when"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); }
+[data-primitive="handoff-packet"] { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-lg); }
+[data-primitive="handoff-packet"] [data-slot="item"] { display: flex; gap: var(--space-sm); padding: var(--space-2xs) 0; font-size: var(--type-ui); }
+[data-primitive="handoff-packet"] [data-slot="item"] [data-slot="key"] { min-width: 110px; color: var(--text-muted); }
+[data-primitive="handoff-packet"] [data-slot="next-step"] { margin-top: var(--space-sm); border-top: var(--line); padding-top: var(--space-sm); font-weight: var(--weight-strong); color: var(--text); }
+[data-primitive="state-grid"] { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+[data-primitive="state-grid"] [data-slot="cell"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-md) var(--space-lg); }
+[data-primitive="state-grid"] [data-slot="state-label"] { font-weight: var(--weight-strong); color: var(--text); display: block; margin-bottom: var(--space-xs); }
+@media (max-width: 720px) { [data-primitive="state-grid"] { grid-template-columns: 1fr; } }
+[data-primitive="dependency-map"] { list-style: none; }
+[data-primitive="dependency-map"] [data-slot="node"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-sm) var(--space-md); }
+[data-primitive="dependency-map"] [data-slot="node"] + [data-slot="node"] { margin-top: var(--space-sm); }
+[data-primitive="dependency-map"] [data-slot="node"][data-state="blocked"] { background: var(--danger-soft); }
+[data-primitive="dependency-map"] [data-slot="depends-on"] { font-family: var(--mono); font-size: var(--type-label); color: var(--text-muted); }
+[data-primitive="constraint-ledger"] [data-slot="constraint"] { font-weight: var(--weight-strong); }
+
+/* html-artifact:region:planning-document:end */
+
+/* html-artifact:region:qa-comparison:start */
+/* ============ QA & comparison ============ */
+[data-primitive="qa-metadata"] { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-panel-y) var(--space-panel-x); }
+[data-primitive="qa-metadata"] [data-slot="key"] { display: block; font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); }
+[data-primitive="qa-metadata"] [data-slot="value"] { font-weight: var(--weight-strong); color: var(--text); }
+@media (max-width: 720px) { [data-primitive="qa-metadata"] { grid-template-columns: repeat(2, 1fr); } }
+[data-primitive="fidelity-coverage"] { display: grid; gap: var(--space-sm); }
+[data-primitive="fidelity-coverage"] [data-slot="dimension"] { display: flex; flex-wrap: wrap; gap: var(--space-sm) var(--space-md); align-items: center; border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-sm) var(--space-md); }
+[data-primitive="fidelity-coverage"] [data-slot="dimension-label"] { font-weight: var(--weight-strong); color: var(--text); min-width: 150px; }
+[data-primitive="evidence-limits"] { border: var(--line); border-radius: var(--radius-row); background: color-mix(in srgb, var(--warning-soft) 62%, transparent); padding: var(--space-md) var(--space-lg); }
+[data-primitive="evidence-limits"] [data-slot="limit"] { padding: var(--space-2xs) 0; }
+[data-primitive="evidence-limits"] [data-slot="impact"] { color: var(--warning-strong); font-size: var(--type-small); }
+[data-primitive="screenshot-triptych"] { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+[data-primitive="screenshot-triptych"] figure { margin: 0; border: var(--line); border-radius: var(--radius-panel); overflow: hidden; background: var(--surface); }
+[data-primitive="screenshot-triptych"] figcaption { font-size: var(--type-label); color: var(--text-muted); padding: var(--space-sm) var(--space-md); }
+@media (max-width: 720px) { [data-primitive="screenshot-triptych"] { grid-template-columns: 1fr; } }
+[data-primitive="focused-compare"] { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+[data-primitive="focused-compare"] figure { margin: 0; border: var(--line); border-radius: var(--radius-row); overflow: hidden; background: var(--surface); }
+[data-primitive="focused-compare"] figcaption { font-size: var(--type-label); color: var(--text-muted); padding: var(--space-sm) var(--space-md); }
+@media (max-width: 720px) { [data-primitive="focused-compare"] { grid-template-columns: 1fr; } }
+[data-primitive="annotation-pin"] { position: relative; display: inline-block; max-width: 100%; }
+[data-primitive="annotation-pin"] [data-slot="frame"] { position: relative; border: var(--line); border-radius: var(--radius-panel); overflow: hidden; line-height: 0; }
+[data-primitive="annotation-pin"] [data-slot="pin"] { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--danger-strong); color: var(--pin-text); font-family: var(--mono); font-size: var(--type-label); display: grid; place-items: center; border: 2px solid var(--pin-text); line-height: 1; }
+[data-primitive="annotation-pin"] [data-slot="pin"][data-state="med"] { background: var(--warning-strong); }
+[data-primitive="annotation-pin"] [data-slot="pin"][data-state="low"] { background: var(--info-strong); }
+[data-primitive="annotation-pin"] ol { margin: var(--space-md) 0 0; padding-left: 20px; font-size: var(--type-ui); line-height: 1.5; }
+[data-primitive="revision-strip"] { display: flex; gap: 0; overflow-x: auto; align-items: stretch; padding-bottom: var(--space-2xs); background: var(--scroll-x); --_cover: var(--surface); }
+[data-primitive="revision-strip"] [data-slot="step"] { min-width: 165px; border: var(--line); border-radius: var(--radius-row); background: var(--surface); overflow: hidden; }
+[data-primitive="revision-strip"] [data-slot="step"][data-state="recommended"] { box-shadow: inset 0 0 0 2px var(--success-strong); }
+[data-primitive="revision-strip"] [data-slot="connector"] { align-self: center; color: var(--text-muted); padding: 0 var(--space-sm); font-size: 18px; }
+[data-primitive="revision-strip"] [data-slot="step-label"] { font-size: var(--type-label); color: var(--text-muted); padding: var(--space-sm); }
+.tk-chip { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: var(--line); vertical-align: middle; margin-right: var(--space-xs); }
+
+/* html-artifact:region:qa-comparison:end */
+
+/* html-artifact:region:imagegen-design-handoff:start */
+/* ============ Image Gen & design handoff ============ */
+[data-primitive="concept-gallery"] { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+[data-primitive="concept-gallery"] figure { margin: 0; border: var(--line); border-radius: var(--radius-panel); overflow: hidden; background: var(--surface); }
+[data-primitive="concept-gallery"] figure[data-state="selected"] { box-shadow: inset 0 0 0 2px var(--success-strong); }
+[data-primitive="concept-gallery"] [data-slot="concept-label"] { font-weight: var(--weight-strong); padding: var(--space-sm) var(--space-md) 0; }
+[data-primitive="concept-gallery"] [data-slot="rationale"] { font-size: var(--type-small); color: var(--text-muted); padding: var(--space-2xs) var(--space-md) var(--space-md); }
+@media (max-width: 720px) { [data-primitive="concept-gallery"] { grid-template-columns: 1fr; } }
+[data-primitive="source-manifest"] { list-style: none; border: var(--line); border-radius: var(--radius-panel); background: var(--surface); }
+[data-primitive="source-manifest"] [data-slot="source"] { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-md); padding: var(--space-sm) var(--space-lg); border-top: var(--line); font-size: var(--type-ui); }
+[data-primitive="source-manifest"] [data-slot="source"]:first-child { border-top: none; }
+[data-primitive="source-manifest"] [data-slot="source-kind"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); }
+[data-primitive="allowed-copy-list"] { list-style: none; }
+[data-primitive="allowed-copy-list"] [data-slot="copy"] { border: var(--line); border-radius: var(--radius-row); background: var(--surface); padding: var(--space-sm) var(--space-md); }
+[data-primitive="allowed-copy-list"] [data-slot="copy"] + [data-slot="copy"] { margin-top: var(--space-sm); }
+[data-primitive="allowed-copy-list"] [data-slot="placement"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); display: block; margin-top: var(--space-2xs); }
+[data-primitive="imagegen-prompt-card"] { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-panel-y) var(--space-panel-x); }
+[data-primitive="imagegen-prompt-card"] + [data-primitive="imagegen-prompt-card"] { margin-top: var(--space-md); }
+[data-primitive="imagegen-prompt-card"] [data-slot="intent"] { font-weight: var(--weight-strong); color: var(--text); }
+[data-primitive="imagegen-prompt-card"] [data-slot="prompt-text"] { font-family: var(--mono); font-size: var(--type-code); background: var(--surface-muted); border-radius: var(--radius-row); padding: var(--space-sm) var(--space-md); margin-top: var(--space-sm); white-space: pre-wrap; }
+[data-primitive="imagegen-prompt-card"] [data-slot="constraints"] { font-size: var(--type-small); color: var(--text-muted); margin-top: var(--space-sm); }
+[data-primitive="design-system-extract"] [data-slot="group"] + [data-slot="group"] { margin-top: var(--space-lg); }
+[data-primitive="design-system-extract"] [data-slot="group-label"] { font-weight: var(--weight-strong); color: var(--text); margin-bottom: var(--space-sm); }
+
+/* html-artifact:region:imagegen-design-handoff:end */
+
+/* html-artifact:region:motion-performance:start */
+/* ============ motion & performance ============ */
+[data-primitive="motion-proof"] { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-lg); }
+[data-primitive="motion-proof"] [data-slot="demo"] { height: 56px; border-radius: var(--radius-row); background: var(--accent-soft); display: grid; place-items: center; color: var(--accent); font-family: var(--mono); font-size: var(--type-label); }
+[data-primitive="motion-proof"] [data-slot="reduced"] { font-size: var(--type-small); color: var(--text-muted); margin-top: var(--space-sm); }
+[data-primitive="motion-proof"] [data-slot="tokens"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); margin-top: var(--space-2xs); }
+[data-primitive="motion-proof"][data-state="reduced-motion"] [data-slot="demo"] { animation: none; }
+[data-primitive="viewport-matrix"] { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+[data-primitive="viewport-matrix"] figure { margin: 0; border: var(--line); border-radius: var(--radius-row); overflow: hidden; background: var(--surface); }
+[data-primitive="viewport-matrix"] [data-slot="width-label"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); padding: var(--space-sm); }
+@media (max-width: 720px) { [data-primitive="viewport-matrix"] { grid-template-columns: 1fr; } }
+[data-primitive="render-proof"] { list-style: none; border: var(--line); border-radius: var(--radius-panel); background: var(--surface); }
+[data-primitive="render-proof"] [data-slot="check"] { display: flex; flex-wrap: wrap; gap: var(--space-sm) var(--space-md); align-items: center; padding: var(--space-sm) var(--space-lg); border-top: var(--line); font-family: var(--mono); font-size: var(--type-label); }
+[data-primitive="render-proof"] [data-slot="check"]:first-child { border-top: none; }
+/* motion runs only when the reader allows it; the final state is the default */
+@keyframes referenceReveal { from { opacity: .4; } to { opacity: 1; } }
+@keyframes copyPulse { 0% { transform: scale(1); } 45% { transform: scale(1.04); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: no-preference) { [data-primitive="motion-proof"]:not([data-state="reduced-motion"]) [data-slot="demo"][data-anim] { animation: referenceReveal 320ms var(--ease-out) infinite alternate; } }
+@media (prefers-reduced-motion: reduce) { [data-primitive="motion-proof"] [data-slot="demo"][data-anim] { animation: none; } }
+/* reduced motion: neutralize every transition, animation, and smooth scroll so the
+   final state is reached instantly and no affordance depends on movement */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+/* html-artifact:region:motion-performance:end */
+
+/* html-artifact:region:inline-chart:start */
+/* ============ inline-chart (author-time baked SVG; see scripts/plot.mjs) ============ */
+/* Chart color roles. Defined as references to base tokens so a chart tracks
+   light/dark automatically: when a dark block overrides --accent etc. on :root,
+   these resolve to the dark value at use time. Charts must use only these
+   roles or currentColor — never raw hex — so they theme without per-chart work. */
+:root {
+  --chart-text: var(--text-muted);
+  --chart-axis: var(--border);
+  --chart-primary: var(--accent);
+  --chart-muted: var(--text-muted);
+  --chart-pos: var(--success-strong);
+  --chart-neg: var(--danger-strong);
+}
+figure[data-primitive="inline-chart"] [data-slot="heading"] { margin-bottom: var(--space-sm); }
+figure[data-primitive="inline-chart"] [data-slot="chart"] { color: var(--chart-text); overflow-x: auto; padding: var(--space-2xs) 0; background: var(--scroll-x); --_cover: var(--surface); }
+figure[data-primitive="inline-chart"] [data-slot="chart"] svg { display: block; width: 100%; height: auto; }
+figure[data-primitive="inline-chart"] [data-slot="chart"] svg text { font-family: var(--sans); }
+figure[data-primitive="inline-chart"] [data-slot="data-table"] { margin-top: var(--space-md); }
+figure[data-primitive="inline-chart"] figcaption[data-slot="caption"] { font-size: var(--type-code); color: var(--text-muted); margin-top: var(--space-sm); }
+figure[data-primitive="inline-chart"] [data-slot="source"] { font-family: var(--mono); font-size: var(--type-caption); color: var(--text-muted); margin-top: var(--space-2xs); }
+/* html-artifact:region:inline-chart:end */
+
+/* html-artifact:region:dark-theme:start */
+/* ============ dark theme: OS-driven (JS-off safe) + manual override ============ */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#17191A; --text:#F1F3F1; --text-body:#C9CECB; --text-muted:#AAB2AF; --surface:#1F2426; --surface-muted:#282D30; --border:#3A4145; --accent:#82B3BF; --accent-soft:#20363B; --success-soft:#26351F; --success-strong:#C3E4A5; --warning-soft:#3B2D1F; --warning-strong:#FFD89B; --danger-soft:#44272B; --danger-strong:#FFB4AA; --info-soft:#20363B; --info-strong:#9ED8E4; --pending-soft:#353226; --pending-strong:#E1CF8B; --focus-ring:#9ECDD8; --button-hover:#9ECDD8; --pin-text:#FFFFFF; --code-surface:#0F1314; --code-text:#E6EAE8; --code-line:#E8E6DE; --code-muted:#B8B6AC; --code-function:#B9C7C9; --code-light-function:#D6B16C; --code-del-text:#FFB4AA; } }
+:root[data-theme="dark"] { --bg:#17191A; --text:#F1F3F1; --text-body:#C9CECB; --text-muted:#AAB2AF; --surface:#1F2426; --surface-muted:#282D30; --border:#3A4145; --accent:#82B3BF; --accent-soft:#20363B; --success-soft:#26351F; --success-strong:#C3E4A5; --warning-soft:#3B2D1F; --warning-strong:#FFD89B; --danger-soft:#44272B; --danger-strong:#FFB4AA; --info-soft:#20363B; --info-strong:#9ED8E4; --pending-soft:#353226; --pending-strong:#E1CF8B; --focus-ring:#9ECDD8; --button-hover:#9ECDD8; --pin-text:#FFFFFF; --code-surface:#0F1314; --code-text:#E6EAE8; --code-line:#E8E6DE; --code-muted:#B8B6AC; --code-function:#B9C7C9; --code-light-function:#D6B16C; --code-del-text:#FFB4AA; }
+/* html-artifact:region:dark-theme:end */
+
+/* html-artifact:region:theme-toggle:start */
+/* ============ theme-toggle (anchored moon) ============ */
+[data-primitive="theme-toggle"] { position: fixed; top: 16px; right: 16px; z-index: 50; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: var(--line); border-radius: 50%; background: var(--surface); color: var(--text); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--motion-fast) var(--ease-out), border-color var(--motion-fast) var(--ease-out); }
+[data-primitive="theme-toggle"]:hover { background: var(--surface-muted); }
+[data-primitive="theme-toggle"]:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+@media print { [data-primitive="theme-toggle"] { display: none; } }
+/* html-artifact:region:theme-toggle:end */
+/* html-artifact:theme.css:end */
+
+</style>
+<style>
+/* html-artifact:reference-chrome:start */
+/* ============ reference sheet reference chrome ============ */
+/* the reference chrome rides the same spacing and type tokens it documents */
+.reference-note {
+  border: var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-row);
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--type-ui);
+  color: var(--text-body);
+}
+.reference-section { margin-top: calc(var(--space-xl) * 2); padding-top: var(--space-xl); border-top: var(--line); }
+.reference-section > .sec-head { margin-bottom: 0; }
+.sec-head .num {
+  display: block;
+  font-family: var(--mono); font-size: var(--type-caption); font-weight: 600;
+  color: var(--accent); letter-spacing: 0.08em;
+  margin-bottom: var(--space-xs);
+}
+.reference-section > .sec-intro { color: var(--text-muted); font-size: var(--type-ui); margin: var(--space-xs) 0 var(--space-xl); max-width: 720px; }
+
+.specimen { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); margin-bottom: var(--space-lg); overflow: hidden; }
+.specimen-head { padding: var(--space-sm) var(--space-lg); border-bottom: var(--line); background: color-mix(in srgb, var(--surface-muted) 55%, var(--surface)); display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-md); align-items: center; }
+.specimen-head .pname { font-family: var(--mono); font-size: var(--type-small); color: var(--text); font-weight: 600; }
+.specimen-head .pnote { font-size: var(--type-small); color: var(--text-muted); flex: 1; min-width: 180px; }
+.chip { font-family: var(--mono); font-size: var(--type-caption); line-height: 1.4; padding: 1px var(--space-xs); color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-tag); }
+.chip.var { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 32%, var(--border)); }
+.chip.state { color: var(--success-strong); border-color: color-mix(in srgb, var(--success-strong) 30%, var(--border)); }
+.specimen-body { padding: var(--space-lg); }
+.composite-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-lg); align-items: start; }
+.composite-card { border: var(--line); border-radius: var(--radius-panel); background: var(--surface); padding: var(--space-lg); display: grid; gap: var(--space-md); align-content: start; }
+.composite-card h3 { font-size: var(--type-h3); }
+.composite-card .lede { color: var(--text-muted); font-size: var(--type-table); max-width: none; }
+.mini-hero { border-bottom: var(--line); padding-bottom: var(--space-sm); }
+.mini-hero .eyebrow { margin-bottom: var(--space-xs); color: var(--accent); font-weight: 600; letter-spacing: 0.06em; }
+.composite-card .lede { margin-top: var(--space-2xs); }
+.mini-stack { display: grid; gap: var(--space-sm); }
+.mini-row { display: flex; justify-content: space-between; gap: var(--space-md); border-top: var(--line); padding-top: var(--space-sm); font-size: var(--type-small); }
+.mini-row:first-child { border-top: 0; padding-top: 0; }
+.mini-row b { color: var(--text); }
+.mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-sm); }
+.mini-cell { border: var(--line); border-radius: var(--radius-row); padding: var(--space-sm) var(--space-md); font-size: var(--type-small); background: var(--surface-muted); }
+.mini-cell b { display: block; color: var(--text); }
+@media (max-width: 760px) { .composite-grid, .mini-grid { grid-template-columns: 1fr; } }
+
+
+/* ============ section-nav · side (demo) ============ */
+.side-demo { display: grid; grid-template-columns: 160px 1fr; gap: var(--space-xl); }
+@media (max-width: 600px) { .side-demo { grid-template-columns: 1fr; } }
+
+/* ============ artifact-shell schematic ============ */
+figure[data-primitive="artifact-shell"] { border: var(--line); border-radius: var(--radius-panel); padding: var(--space-md); background: var(--surface-muted); }
+.shell-region { border: 1.5px dashed var(--border); border-radius: var(--radius-row); padding: var(--space-sm); background: var(--surface); margin-bottom: var(--space-sm); }
+.shell-region:last-child { margin-bottom: 0; }
+.shell-region .label { display: block; margin-bottom: var(--space-2xs); }
+figure[data-primitive="artifact-shell"] figcaption { font-size: var(--type-small); color: var(--text-muted); margin-top: var(--space-sm); }
+/* html-artifact:reference-chrome:end */
+</style>
+</head>
+<body>
+<button data-primitive="theme-toggle" data-slot="action" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+<main data-artifact="html-artifact-reference" data-base="visual-specimen" data-primitive="artifact-shell">
+
+  <!-- ===== artifact-shell live anatomy: nav / header / body / footer ===== -->
+  <nav data-primitive="section-nav" data-variant="map" data-slot="nav" aria-label="Reference sheet sections">
+    <a data-slot="link" href="#shell" data-state="active"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Shell &amp; nav</span></a>
+    <a data-slot="link" href="#hero"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Hero &amp; meta</span></a>
+    <a data-slot="link" href="#composites"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Composite specimens</span></a>
+    <a data-slot="link" href="#explain"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Explanation</span></a>
+    <a data-slot="link" href="#plan"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Planning</span></a>
+    <a data-slot="link" href="#code"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Code &amp; review</span></a>
+    <a data-slot="link" href="#evidence"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Evidence</span></a>
+    <a data-slot="link" href="#design"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Design / QA &amp; export</span></a>
+    <a data-slot="link" href="#planning"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Plan &amp; document</span></a>
+    <a data-slot="link" href="#qa"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Design QA &amp; audit</span></a>
+    <a data-slot="link" href="#imagegen"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Image Gen</span></a>
+    <a data-slot="link" href="#motion"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Motion / perf</span></a>
+    <a data-slot="link" href="#roadmap-patterns"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Roadmap patterns</span></a>
+    <a data-slot="link" href="#states"><span data-slot="tick" class="toc-tick" aria-hidden="true"></span><span data-slot="label" class="toc-label">Validation states</span></a>
+  </nav>
+
+  <header data-primitive="hero-summary" data-slot="header">
+    <div data-slot="eyebrow" class="eyebrow">60+ patterns · 14 sections · light + dark</div>
+    <h1 data-slot="title">HTML Artifact Reference Sheet</h1>
+    <p data-slot="summary">Reusable page patterns rendered as compact specimens.
+      Use this sheet to check layout, states, responsive behavior, and visual
+      coverage before shipping a self-contained HTML document.</p>
+  </header>
+
+  <div data-slot="body" class="stack">
+
+  <!-- ============================ SHELL & NAV ============================ -->
+  <section class="reference-section" id="shell">
+    <div class="sec-head"><h2><span class="num">01</span>Shell &amp; navigation</h2></div>
+    <p class="sec-intro">The frame every artifact lives in, and the in-page navigation for long ones.</p>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">artifact-shell</span>
+        <span class="pnote">The self-contained page frame: navigation, header, body, and footer regions.</span>
+        <span class="chip var">variant: side</span>
+      </div>
+      <div class="specimen-body">
+        <figure data-primitive="artifact-shell">
+          <div class="shell-region"><span class="label" data-slot="nav">Navigation region</span> optional section index</div>
+          <div class="shell-region"><span class="label" data-slot="header">Header region</span> title, summary, and key facts</div>
+          <div class="shell-region"><span class="label" data-slot="body">Main content</span> the document's evidence and actions</div>
+          <div class="shell-region"><span class="label" data-slot="footer">Footer region</span> provenance or final notes</div>
+          <figcaption>The shell keeps the page readable as a document, not a nested card layout.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">section-nav</span>
+        <span class="pnote">Slim jump nav for 4+ sections. The anchored index on the right edge of this page is the <code>map</code> variant — collapsed tick marks that expand to labeled links on hover or focus.</span>
+        <span class="chip var">variant: map</span>
+        <span class="chip var">variant: side</span>
+        <span class="chip var">variant: bar</span>
+        <span class="chip state">state: active</span>
+      </div>
+      <div class="specimen-body">
+        <div class="side-demo">
+          <nav data-primitive="section-nav" data-variant="side" aria-label="Side demo">
+            <a data-slot="link" href="#shell" data-state="active">Overview</a>
+            <a data-slot="link" href="#plan">Milestones</a>
+            <a data-slot="link" href="#code">Key code</a>
+            <a data-slot="link" href="#evidence">Risks</a>
+          </nav>
+          <p class="muted">The <code>map</code> variant (live on the right edge of this page) keeps the index
+            off the first viewport: it shows tick marks anchored to the side and expands to a labeled
+            jump list on hover or keyboard focus, with the current section carrying
+            <code>data-state="active"</code>. The <code>side</code> variant shown here pins to a sticky
+            column instead; both are hidden below ~960px where the shell collapses to one column.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ HERO & META ============================ -->
+  <section class="reference-section" id="hero">
+    <div class="sec-head"><h2><span class="num">02</span>Hero &amp; meta</h2></div>
+    <p class="sec-intro">First-viewport identity and the scannable facts that establish provenance.</p>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">hero-summary</span>
+        <span class="pnote">Eyebrow, title, one-line read; optional prompt box and meta.</span>
+      </div>
+      <div class="specimen-body">
+        <header data-primitive="hero-summary">
+          <div class="eyebrow" data-slot="eyebrow">Implementation plan · Queue migration</div>
+          <h3 data-slot="title">Move background writes to the durable queue</h3>
+          <p data-slot="summary">A phased rollout with explicit scope, cutover gates, recovery checks, and owner-ready actions.</p>
+          <div class="prompt-box" data-slot="prompt"><span class="label">Source request</span><br>
+            Build a queue migration plan from the attached rollout notes. Make it skimmable on a phone and ready for implementation review.</div>
+        </header>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">meta-strip</span>
+        <span class="pnote">Compact facts: scope, source, status, confidence.</span>
+        <span class="chip var">variant: cells</span>
+        <span class="chip var">variant: inline</span>
+        <span class="chip var">variant: metric</span>
+      </div>
+      <div class="specimen-body stack">
+        <div data-primitive="meta-strip" data-variant="cells">
+          <div data-slot="item"><span class="label" data-slot="key">Document</span><span data-slot="value">implementation plan</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Evidence</span><span data-slot="value">rollout notes</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Format</span><span data-slot="value">static HTML</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Status</span><span data-slot="value">in review</span></div>
+        </div>
+        <dl data-primitive="meta-strip" data-variant="inline">
+          <div data-slot="item"><span class="label" data-slot="key">Source</span><span data-slot="value">repo diff</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Widths checked</span><span data-slot="value">1280 · 375</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Confidence</span><span data-slot="value">high</span></div>
+        </dl>
+        <div data-primitive="meta-strip" data-variant="metric">
+          <div data-slot="item"><span class="label" data-slot="key">Specimens</span><span data-slot="value">64</span></div>
+          <div data-slot="item"><span class="label" data-slot="key">Checks</span><span data-slot="value">passing</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">pattern chooser</span>
+        <span class="pnote">Reader job first; defaults only where source evidence supports them.</span>
+        <span class="chip var">recipe-fit</span>
+      </div>
+      <div class="specimen-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Reader job</th><th>Prefer</th><th>Add only when</th></tr></thead>
+            <tbody>
+              <tr><td>Plan work</td><td><code>milestone-strip</code>, <code>risk-table</code>, <code>action-list</code></td><td>Use <code>owner-matrix</code> only when owners are known.</td></tr>
+              <tr><td>Review defects</td><td><code>finding-card</code>, <code>action-list</code></td><td>Use <code>diff-review</code> only when the diff clarifies the issue.</td></tr>
+              <tr><td>Visual QA</td><td><code>qa-metadata</code>, <code>screenshot-gallery</code>, <code>finding-card</code></td><td>Use <code>screenshot-triptych</code> only when a revised mockup exists.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside data-primitive="callout" data-variant="note"><span data-slot="marker">›</span><span data-slot="body">Example omission: a migration plan with no named owners omits <code>owner-matrix</code> and states "owners unknown" in evidence limits instead of inventing a governance section.</span></aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ COMPOSITE SPECIMENS ============================ -->
+  <section class="reference-section" id="composites">
+    <div class="sec-head"><h2><span class="num">03</span>Composite specimens</h2></div>
+    <p class="sec-intro">Full document shapes assembled from the same blocks. These teach first viewport rhythm, evidence density, and handoff structure without adding separate templates.</p>
+
+    <div class="composite-grid">
+      <article class="composite-card" data-composite="executive-brief" data-base="executive-brief">
+        <div class="mini-hero">
+          <div class="eyebrow">Executive brief</div>
+          <h3>Approve queue cutover after parity pass</h3>
+          <p class="lede">Recommendation, decision needed, evidence state, and next action fit in the first screen.</p>
+        </div>
+        <div data-primitive="meta-strip" data-variant="inline">
+          <div data-slot="item"><span data-slot="key" class="label">Decision</span><span data-slot="value">cut over</span></div>
+          <div data-slot="item"><span data-slot="key" class="label">Evidence</span><span data-slot="value">partial</span></div>
+        </div>
+        <div class="mini-stack">
+          <div class="mini-row"><b>Condition</b><span>24h parity pass</span></div>
+          <div class="mini-row"><b>Risk</b><span>retry grouping still open</span></div>
+          <div class="mini-row"><b>Next action</b><span>run shadow drain</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="research-report" data-base="evidence-dossier">
+        <div class="mini-hero">
+          <div class="eyebrow">Research report</div>
+          <h3>Evidence supports migration, with one unresolved operating risk</h3>
+          <p class="lede">Claims, proof, confidence, and limits stay close enough to audit.</p>
+        </div>
+        <div data-primitive="claim-evidence-matrix" data-variant="cards">
+          <div data-slot="row" data-state="med"><b data-slot="claim">Shadow traffic is stable.</b><span data-slot="evidence">Seven-day sample shows no failed drain.</span><span data-slot="source">cutover log</span><span data-slot="confidence">medium</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="comparison-workbench" data-base="decision-workbench">
+        <div class="mini-hero">
+          <div class="eyebrow">Comparison workbench</div>
+          <h3>Choose phased cutover over big-bang migration</h3>
+          <p class="lede">Options, criteria, recommendation, and change condition are visible together.</p>
+        </div>
+        <div data-primitive="comparison-grid" data-variant="cards">
+          <article data-slot="option" data-state="recommended"><div data-slot="option-title">Phased</div><p>Lower rollback risk.</p><span data-slot="recommended">recommended</span></article>
+          <article data-slot="option"><div data-slot="option-title">Big bang</div><p>Faster, but harder to audit.</p></article>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="briefing-deck" data-base="briefing-deck">
+        <div class="mini-hero">
+          <div class="eyebrow">Briefing deck</div>
+          <h3>Three-part update for the launch review</h3>
+          <p class="lede">Slide-like sections remain readable as one static page.</p>
+        </div>
+        <div data-primitive="step-flow">
+          <div data-slot="step"><span data-slot="index">1</span><div><b data-slot="title">What changed</b><p>Queue writes now shadow the worker path.</p></div></div>
+          <div data-slot="step"><span data-slot="index">2</span><div><b data-slot="title">What remains</b><p>Retry grouping needs owner signoff.</p></div></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="diligence-report" data-base="diligence-pack">
+        <div class="mini-hero">
+          <div class="eyebrow">Diligence report</div>
+          <h3>Separation risk is concentrated in retry operations</h3>
+          <p class="lede">Thesis, red flags, evidence quality, and follow-up questions are visible together.</p>
+        </div>
+        <div data-primitive="red-flag-ledger" class="table-wrap"><table><thead><tr><th>Flag</th><th>Impact</th><th>Next step</th></tr></thead><tbody><tr><td data-slot="flag">Unpriced support load</td><td data-slot="deal-impact">service cost may move</td><td data-slot="next-step">request queue incident history</td></tr></tbody></table></div>
+      </article>
+
+      <article class="composite-card" data-composite="integration-plan" data-base="plan-roadmap">
+        <div class="mini-hero">
+          <div class="eyebrow">Integration plan</div>
+          <h3>Move writes through the worker in three gated phases</h3>
+          <p class="lede">Scope, workstreams, dependencies, and acceptance gates share one planning surface.</p>
+        </div>
+        <div data-primitive="workstream-map" class="table-wrap"><table><thead><tr><th>Workstream</th><th>Phase</th><th>Gate</th></tr></thead><tbody><tr><td data-slot="workstream">Queue path</td><td data-slot="phase">shadow</td><td data-slot="gate">parity pass</td></tr><tr><td data-slot="workstream">Runbook</td><td data-slot="phase">cutover</td><td data-slot="gate">owner signoff</td></tr></tbody></table></div>
+      </article>
+
+      <article class="composite-card" data-composite="product-spec" data-base="plan-roadmap">
+        <div class="mini-hero">
+          <div class="eyebrow">Product spec</div>
+          <h3>Expose retry grouping before queue launch</h3>
+          <p class="lede">Problem, scope boundary, states, acceptance criteria, and launch risk stay separate.</p>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-cell"><b>In scope</b><span>grouped retry rows</span></div>
+          <div class="mini-cell"><b>Out of scope</b><span>new incident workflow</span></div>
+          <div class="mini-cell"><b>Acceptance</b><span>failed retry has customer id</span></div>
+          <div class="mini-cell"><b>Launch risk</b><span>missing historical backfill</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="code-review" data-base="review-annotation">
+        <div class="mini-hero">
+          <div class="eyebrow">Code review</div>
+          <h3>Idempotency guard is missing from retry reconciliation</h3>
+          <p class="lede">File map, concrete finding, and fix action sit in one annotated review shape.</p>
+        </div>
+        <article data-primitive="finding-card" data-state="high">
+          <div class="fhead"><span data-slot="severity" class="badge" data-state="high">HIGH</span><span data-slot="location">src/queue.ts</span></div>
+          <div class="fbody"><div data-slot="finding">Retries can append duplicate rows.</div><div data-slot="recommendation">Check idempotency key before dispatch.</div></div>
+        </article>
+      </article>
+
+      <article class="composite-card" data-composite="design-qa" data-base="review-annotation">
+        <div class="mini-hero">
+          <div class="eyebrow">Design QA</div>
+          <h3>Toolbar density matches, action color is blocked</h3>
+          <p class="lede">Source, render, revised state, mismatch ledger, and implementation checklist align inline.</p>
+        </div>
+        <div data-primitive="screenshot-triptych" data-state="blocked">
+          <figure data-slot="source"><div class="frame"><svg viewBox="0 0 180 90" role="img" aria-label="Source"><rect width="180" height="90" fill="var(--surface-muted)"/><rect x="24" y="34" width="70" height="20" rx="5" fill="var(--text)"/></svg></div><figcaption>Source</figcaption></figure>
+          <figure data-slot="render"><div class="frame"><svg viewBox="0 0 180 90" role="img" aria-label="Render"><rect width="180" height="90" fill="var(--surface-muted)"/><rect x="24" y="34" width="70" height="20" rx="5" fill="var(--accent)"/></svg></div><figcaption>Render</figcaption></figure>
+          <figure data-slot="revised"><div class="frame"><svg viewBox="0 0 180 90" role="img" aria-label="Revised"><rect width="180" height="90" fill="var(--surface-muted)"/><rect x="24" y="34" width="70" height="20" rx="5" fill="var(--text)"/></svg></div><figcaption>Revised</figcaption></figure>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="design-system-reference" data-base="visual-specimen">
+        <div class="mini-hero">
+          <div class="eyebrow">Design system reference</div>
+          <h3>Editorial tokens and component states</h3>
+          <p class="lede">Tokens, approved copy, assets, and component states are collected for handoff.</p>
+        </div>
+        <div data-primitive="state-grid">
+          <div data-slot="cell" data-state="pass"><span data-slot="state-label">Default</span><span data-slot="state-body">document surface</span></div>
+          <div data-slot="cell" data-state="blocked"><span data-slot="state-label">Blocked</span><span data-slot="state-body">visual QA state</span></div>
+          <div data-slot="cell" data-state="empty"><span data-slot="state-label">Empty</span><span data-slot="state-body">no evidence yet</span></div>
+        </div>
+      </article>
+
+      <article class="composite-card" data-composite="architecture-map" data-base="system-map">
+        <div class="mini-hero">
+          <div class="eyebrow">Architecture map</div>
+          <h3>Write flow boundary and retry dependency</h3>
+          <p class="lede">Schematic, dependency list, and constraint ledger show structure without a graph library.</p>
+        </div>
+        <figure data-primitive="inline-schematic">
+          <h3 data-slot="heading">Boundary map</h3>
+          <div data-slot="diagram" class="frame"><svg viewBox="0 0 300 120" role="img" aria-label="Architecture schematic"><rect x="22" y="36" width="72" height="36" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="116" y="36" width="72" height="36" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="210" y="36" width="72" height="36" rx="6" fill="var(--surface)" stroke="var(--border)"/><path d="M96 54h18M190 54h18" stroke="var(--accent)" stroke-width="3"/></svg></div>
+          <ul data-slot="legend"><li>Queue depends on retry telemetry.</li></ul>
+          <figcaption data-slot="caption">Contained schematic.</figcaption>
+          <p data-slot="fallback">Fallback: client to queue to worker, with retry telemetry as a dependency.</p>
+        </figure>
+      </article>
+
+      <article class="composite-card" data-composite="system-card-eval-report" data-base="eval-safety">
+        <div class="mini-hero">
+          <div class="eyebrow">System card / eval report</div>
+          <h3>Static export capability passes; heavy image risk remains</h3>
+          <p class="lede">Capabilities, eval suite, limitations, and mitigations are separated for review.</p>
+        </div>
+        <div data-primitive="capability-matrix" class="table-wrap"><table><thead><tr><th>Capability</th><th>Evidence</th><th>Mitigation</th></tr></thead><tbody><tr><td data-slot="capability">Static export</td><td data-slot="evidence">opens with no server</td><td data-slot="mitigation">inline only needed assets</td></tr></tbody></table></div>
+      </article>
+
+      <article class="composite-card" data-composite="bounded-workbench" data-base="bounded-workbench">
+        <div class="mini-hero">
+          <div class="eyebrow">Bounded workbench</div>
+          <h3>Review blockers and copy the triage payload</h3>
+          <p class="lede">The board is fully readable without script; controls only filter or copy visible content.</p>
+        </div>
+        <div data-primitive="workbench-board" class="mini-stack">
+          <div class="cluster"><button type="button" data-slot="filter">Blocked only</button><span data-slot="export" data-primitive="copy-export" data-variant="markdown"><button type="button" data-slot="action">Copy triage</button><template data-slot="payload">Blocked: retry telemetry</template></span></div>
+          <section data-slot="column"><h3>Blocked</h3><article data-slot="card">Retry telemetry <span data-slot="status"><span class="pill" data-state="blocked">blocked</span></span></article></section>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================ EXPLANATION ============================ -->
+  <section class="reference-section" id="explain">
+    <div class="sec-head"><h2><span class="num">04</span>Explanation</h2></div>
+    <p class="sec-intro">Patterns that make dense material legible: the bottom line, emphasis, ordered flow, and side-by-side options.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">tldr</span><span class="pnote">The short answer before any detail.</span></div>
+      <div class="specimen-body">
+        <p data-primitive="tldr"><span class="label" data-slot="label">TL;DR</span><br>
+          <span data-slot="body"><b>HTML beats Markdown</b> when a human needs to navigate, compare, or share the output. For a single linear thought, stay in prose — don't dress a paragraph up as a page.</span></p>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">callout</span><span class="pnote">One point set apart from the flow.</span>
+        <span class="chip var">note</span><span class="chip var">warning</span><span class="chip var">success</span><span class="chip var">danger</span>
+      </div>
+      <div class="specimen-body stack">
+        <aside data-primitive="callout" data-variant="note"><span data-slot="marker">›</span><span data-slot="body">Native <code>&lt;details&gt;</code> handles disclosure with zero JavaScript.</span></aside>
+        <aside data-primitive="callout" data-variant="warning"><span data-slot="marker">▲</span><span data-slot="body">A dense table without a wrapper will force page-level horizontal scroll on mobile.</span></aside>
+        <aside data-primitive="callout" data-variant="success"><span data-slot="marker">✓</span><span data-slot="body">The artifact opens from <code>file://</code> with no server and no build step.</span></aside>
+        <aside data-primitive="callout" data-variant="danger"><span data-slot="marker">✕</span><span data-slot="body">Fabricated metrics look authoritative in HTML — mark unknowns instead of inventing them.</span></aside>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">step-flow</span><span class="pnote">Ordered flow with inputs and operations.</span>
+        <span class="chip var">numbered</span><span class="chip var">timeline</span>
+      </div>
+      <div class="specimen-body stack">
+        <ol data-primitive="step-flow" data-variant="numbered">
+          <li data-slot="step"><span data-slot="index">1</span><div><div data-slot="step-title">Confirm the source</div><div data-slot="step-body">Read the rollout notes and identify the systems at risk.</div></div></li>
+          <li data-slot="step"><span data-slot="index">2</span><div><div data-slot="step-title">Map the cutover</div><div data-slot="step-body">Sequence build, shadow, drain, and recovery checks.</div></div></li>
+          <li data-slot="step"><span data-slot="index">3</span><div><div data-slot="step-title">Verify the plan</div><div data-slot="step-body">Check ownership, proof, and rollback conditions before handoff.</div></div></li>
+        </ol>
+        <ol data-primitive="step-flow" data-variant="timeline">
+          <li data-slot="step"><span data-slot="index"></span><div><div data-slot="step-title">Shadow writes</div><div data-slot="step-body">Dual-write without changing the serving path.</div></div></li>
+          <li data-slot="step"><span data-slot="index"></span><div><div data-slot="step-title">Drain queue</div><div data-slot="step-body">Move pending writes through the worker and watch parity.</div></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">comparison-grid</span><span class="pnote">Alternatives or before/after, side by side.</span>
+        <span class="chip var">cards</span><span class="chip var">split</span><span class="chip var">matrix</span><span class="chip state">recommended</span>
+      </div>
+      <div class="specimen-body stack">
+        <div data-primitive="comparison-grid" data-variant="cards">
+          <article data-slot="option"><div data-slot="option-title">Markdown</div><div data-slot="option-body">Cheap, portable, great for durable docs. Flat once it gets long.</div></article>
+          <article data-slot="option" data-state="recommended"><div data-slot="option-title">Self-contained HTML <span data-slot="recommended">recommended</span></div><div data-slot="option-body">Navigation, comparison, diagrams inline. One static file.</div></article>
+          <article data-slot="option"><div data-slot="option-title">JSON + renderer</div><div data-slot="option-body">Multi-target, machine-transformable. Extra layer, worse to read.</div></article>
+        </div>
+        <div data-primitive="comparison-grid" data-variant="split">
+          <article data-slot="option"><div data-slot="option-title">Before</div><div data-slot="option-body">A wall of Markdown the reader scrolls past.</div></article>
+          <article data-slot="option"><div data-slot="option-title">After</div><div data-slot="option-body">A skimmable page with a first-viewport conclusion.</div></article>
+        </div>
+        <div data-primitive="comparison-grid" data-variant="matrix">
+          <article data-slot="option"><div data-slot="option-title">Option A</div><div data-slot="option-body">Lowest setup cost, weaker inspection path.</div></article>
+          <article data-slot="option" data-state="recommended"><div data-slot="option-title">Option B <span data-slot="recommended">recommended</span></div><div data-slot="option-body">Slightly more structure, stronger browser proof and handoff.</div></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ PLANNING ============================ -->
+  <section class="reference-section" id="plan">
+    <div class="sec-head"><h2><span class="num">05</span>Planning</h2></div>
+    <p class="sec-intro">Phased work on a timeline and the risks that could change the plan.</p>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">milestone-strip</span><span class="pnote">Phases with timing, status, and scope.</span>
+        <span class="chip var">variant: dated</span>
+        <span class="chip state">done</span><span class="chip state">current</span><span class="chip state">upcoming</span>
+      </div>
+      <div class="specimen-body">
+        <ol data-primitive="milestone-strip" data-variant="dated">
+          <li data-slot="milestone">
+            <div data-slot="when">Week 1</div>
+            <div class="marker-col"><span data-slot="marker" class="dot" data-state="done"></span><span class="line"></span></div>
+            <div data-slot="milestone-body"><div data-slot="milestone-title">Prepare shadow writes</div><p class="muted">Add the queue path behind a flag and confirm retry behavior.</p><div data-slot="tags"><span class="tag">queue</span><span class="tag">retry</span></div></div>
+          </li>
+          <li data-slot="milestone">
+            <div data-slot="when">Week 2</div>
+            <div class="marker-col"><span data-slot="marker" class="dot" data-state="current"></span><span class="line"></span></div>
+            <div data-slot="milestone-body"><div data-slot="milestone-title">Run parity checks</div><p class="muted">Compare direct writes with queued writes before cutover.</p><div data-slot="tags"><span class="tag">shadow</span><span class="tag">parity</span></div></div>
+          </li>
+          <li data-slot="milestone">
+            <div data-slot="when">Week 3</div>
+            <div class="marker-col"><span data-slot="marker" class="dot" data-state="upcoming"></span><span class="line"></span></div>
+            <div data-slot="milestone-body"><div data-slot="milestone-title">Cut over and monitor</div><p class="muted">Route writes through the worker and keep rollback ready.</p><div data-slot="tags"><span class="tag">cutover</span></div></div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">risk-table</span><span class="pnote">Risk / severity / mitigation. Scrolls inside its wrapper on mobile.</span>
+        <span class="chip state">high</span><span class="chip state">med</span><span class="chip state">low</span>
+      </div>
+      <div class="specimen-body">
+        <div data-primitive="risk-table">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th data-slot="head">Risk</th><th data-slot="head">Sev</th><th data-slot="head">Mitigation</th></tr></thead>
+              <tbody>
+                <tr data-slot="row"><td>Tables overflow the page on mobile.</td><td><span class="badge" data-slot="severity" data-state="high">HIGH</span></td><td>Wrap every table in <code>table-wrap</code> with <code>overflow-x: auto</code>.</td></tr>
+                <tr data-slot="row"><td>Code reflows and loses indentation.</td><td><span class="badge" data-slot="severity" data-state="med">MED</span></td><td>Keep <code>white-space: pre</code> and scroll the panel, not the page.</td></tr>
+                <tr data-slot="row"><td>Authoring labels leak into reader text.</td><td><span class="badge" data-slot="severity" data-state="low">LOW</span></td><td>Keep structural labels invisible in the finished document.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">action-list</span><span class="pnote">Concrete follow-up actions with optional owner, status, proof, due date, and rationale.</span>
+        <span class="chip var">checklist</span><span class="chip var">ordered</span>
+        <span class="chip state">pending</span><span class="chip state">blocked</span><span class="chip state">done</span><span class="chip state">recommended</span>
+      </div>
+      <div class="specimen-body split">
+        <ol data-primitive="action-list" data-variant="ordered">
+          <li data-slot="action" data-state="recommended"><b>Replace fabricated owner rows with evidence limits.</b><span data-slot="rationale">The source names no owners; a plan should not invent governance.</span><span data-slot="status">recommended</span></li>
+          <li data-slot="action" data-state="pending"><b>Run 320px reflow after adding the table.</b><span data-slot="proof">browser QA overflow result</span><span data-slot="status">pending</span></li>
+        </ol>
+        <ul data-primitive="action-list" data-variant="checklist">
+          <li data-slot="action" data-state="done"><b>Ground every finding in a source line or capture.</b><span data-slot="status">done</span></li>
+          <li data-slot="action" data-state="blocked"><b>Confirm release owner before assigning follow-up.</b><span data-slot="owner">owner unknown</span><span data-slot="status">blocked</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ CODE & REVIEW ============================ -->
+  <section class="reference-section" id="code">
+    <div class="sec-head"><h2><span class="num">06</span>Code &amp; review</h2></div>
+    <p class="sec-intro">Readable code, annotations, rendered diffs, and discrete findings.</p>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">code-panel</span><span class="pnote">Labeled code block; scrolls internally.</span>
+        <span class="chip var">dark</span><span class="chip var">light</span>
+      </div>
+      <div class="specimen-body split">
+        <figure data-primitive="code-panel" data-variant="dark">
+          <figcaption data-slot="label">assets/html-artifact-reference.html</figcaption>
+          <div data-slot="code"><pre><span class="kw">&lt;main</span> data-artifact=<span class="str">"html-artifact-reference"</span> data-base=<span class="str">"visual-specimen"</span><span class="kw">&gt;</span>
+  <span class="cm">&lt;!-- one primitive per block --&gt;</span>
+  <span class="kw">&lt;section</span> data-primitive=<span class="str">"risk-table"</span><span class="kw">&gt;</span>…<span class="kw">&lt;/section&gt;</span>
+<span class="kw">&lt;/main&gt;</span></pre></div>
+        </figure>
+        <figure data-primitive="code-panel" data-variant="light">
+          <figcaption data-slot="label">tokens.css</figcaption>
+          <div data-slot="code"><pre><span class="kw">:root</span> {
+  --accent: <span class="str">var(--accent)</span>;
+  --serif: <span class="fn">ui-serif</span>, Georgia, serif;
+}</pre></div>
+        </figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">code-note</span><span class="pnote">Annotation on a code span — the why, not the what.</span>
+        <span class="chip var">inline</span><span class="chip var">margin</span>
+      </div>
+      <div class="specimen-body">
+        <div data-primitive="code-note" data-variant="margin">
+          <figure data-primitive="code-panel" data-variant="dark">
+            <figcaption data-slot="label">hooks/useAddComment.ts</figcaption>
+            <div data-slot="code"><pre>qc.<span class="fn">setQueryData</span>(key, (prev) =&gt;
+  prev.map((c) =&gt; c.id === <mark data-slot="anchor">ctx.tempId</mark> ? row : c));</pre></div>
+          </figure>
+          <p data-slot="note">Reconcile the temp id to the server id so the realtime append does not duplicate the row.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">diff-review</span><span class="pnote">Added / removed / context rows, with a marker glyph — not color alone.</span>
+        <span class="chip state">add</span><span class="chip state">del</span><span class="chip state">ctx</span>
+      </div>
+      <div class="specimen-body">
+        <figure data-primitive="diff-review">
+          <div data-slot="file"><span>assets/html-artifact-reference.html</span><span class="delta"><span class="add">+18</span> <span class="del">−4</span></span></div>
+          <div data-slot="hunk">
+            <div class="diff-row" data-state="ctx"><span class="ln">41</span><span class="mark"> </span><span class="ccode">.table-wrap {</span></div>
+            <div class="diff-row" data-state="del"><span class="ln">42</span><span class="mark">-</span><span class="ccode">  overflow: visible;</span></div>
+            <div class="diff-row" data-state="add"><span class="ln">42</span><span class="mark">+</span><span class="ccode">  overflow-x: auto;</span></div>
+            <div class="diff-row" data-state="ctx"><span class="ln">43</span><span class="mark"> </span><span class="ccode">}</span></div>
+          </div>
+          <p data-slot="comment">Without internal scroll, a wide table escapes the column and the whole page scrolls sideways on a phone.</p>
+        </figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">finding-card</span><span class="pnote">Severity, location, finding, recommendation.</span>
+        <span class="chip state">high</span><span class="chip state">med</span><span class="chip state">low</span><span class="chip state">info</span>
+      </div>
+      <div class="specimen-body stack">
+        <article data-primitive="finding-card" data-state="high">
+          <div class="fhead"><span class="badge" data-slot="severity" data-state="high">HIGH</span><span data-slot="location">styles.css:88</span></div>
+          <div class="fbody"><div data-slot="finding">Add/remove rows are distinguished by background color only.</div><div data-slot="impact">Fails for low-vision and grayscale readers.</div><div data-slot="recommendation">Keep the <code>+</code>/<code>−</code> marker in the gutter so state never relies on color.</div></div>
+        </article>
+        <article data-primitive="finding-card" data-state="low">
+          <div class="fhead"><span class="badge" data-slot="severity" data-state="low">LOW</span><span data-slot="location">index.html:12</span></div>
+          <div class="fbody"><div data-slot="finding">Eyebrow uses sans instead of the mono label style.</div><div data-slot="recommendation">Switch the eyebrow to <code>var(--mono)</code> for consistency with the encoded style.</div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ EVIDENCE ============================ -->
+  <section class="reference-section" id="evidence">
+    <div class="sec-head"><h2><span class="num">07</span>Evidence</h2></div>
+    <p class="sec-intro">Show the work: claims mapped to sources, and an honest record of what was checked.</p>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">claim-evidence-matrix</span><span class="pnote">Claim / evidence / source / confidence.</span>
+        <span class="chip var">table</span><span class="chip var">cards</span><span class="chip state">high</span><span class="chip state">low</span>
+      </div>
+      <div class="specimen-body stack">
+        <div data-primitive="claim-evidence-matrix" data-variant="table">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th data-slot="head">Claim</th><th data-slot="head">Evidence</th><th data-slot="head">Source</th><th data-slot="head">Conf.</th></tr></thead>
+              <tbody>
+                <tr data-slot="row"><td data-slot="claim">The artifact should be useful as a single file.</td><td data-slot="evidence">All styling and interaction needed for reading are embedded inline.</td><td data-slot="source">artifact file</td><td data-slot="confidence"><span class="badge" data-state="high">HIGH</span></td></tr>
+                <tr data-slot="row"><td data-slot="claim">A wide evidence table remains mobile-safe.</td><td data-slot="evidence">The table scrolls inside <code>table-wrap</code> while the page width stays fixed.</td><td data-slot="source">browser check</td><td data-slot="confidence"><span class="badge" data-state="high">HIGH</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div data-primitive="claim-evidence-matrix" data-variant="cards">
+          <div data-slot="row"><div data-slot="claim">Semantic HTML is enough for most reader documents.</div><div data-slot="evidence">Native elements provide headings, landmarks, tables, disclosure, buttons, and forms before enhancement.</div><div class="row-foot"><span class="label">source review</span><span class="badge" data-slot="confidence" data-state="high">HIGH</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">audit-trail</span><span class="pnote">Commands, sources, and files actually checked.</span><span class="chip var">variant: references</span></div>
+      <div class="specimen-body">
+        <section data-primitive="audit-trail" data-variant="references">
+          <div data-slot="group"><span class="label">Searched</span>
+            <div data-slot="entry">Inspect the source material named by the user.</div>
+            <div data-slot="entry">Check current documentation when a claim may have changed.</div>
+          </div>
+          <div data-slot="group"><span class="label">Consulted</span>
+            <div data-slot="entry">Record consulted files, docs, screenshots, and commands.</div>
+            <div data-slot="entry">Mark unknown values instead of filling placeholders.</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ DESIGN / QA & EXPORT ============================ -->
+  <section class="reference-section" id="design">
+    <div class="sec-head"><h2><span class="num">08</span>Design / QA &amp; export</h2></div>
+    <p class="sec-intro">Source-versus-render evidence, design tokens, and copy/export back into the workflow.</p>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">screenshot-gallery</span><span class="pnote">Ordered captures with captions. Schematic SVGs stand in for real renders here.</span>
+        <span class="chip var">grid</span><span class="chip var">compare</span><span class="chip state">pass</span>
+      </div>
+      <div class="specimen-body stack">
+        <div data-primitive="screenshot-gallery" data-variant="grid">
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 180" role="img" aria-label="Desktop layout schematic"><rect width="320" height="180" fill="var(--surface-muted)"/><rect x="16" y="16" width="288" height="20" rx="4" fill="var(--border)"/><rect x="16" y="48" width="180" height="116" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="208" y="48" width="96" height="116" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="24" y="56" width="60" height="8" rx="3" fill="var(--accent)"/></svg></div><figcaption data-slot="caption">01 · Desktop · 1280px</figcaption></figure>
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 180" role="img" aria-label="Mobile layout schematic"><rect width="320" height="180" fill="var(--surface-muted)"/><rect x="116" y="16" width="88" height="148" rx="8" fill="var(--surface)" stroke="var(--border)"/><rect x="124" y="26" width="50" height="7" rx="3" fill="var(--accent)"/><rect x="124" y="42" width="72" height="6" rx="3" fill="var(--border)"/></svg></div><figcaption data-slot="caption">02 · Mobile · 375px</figcaption></figure>
+        </div>
+        <div data-primitive="screenshot-gallery" data-variant="compare" data-state="pass">
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 160" role="img" aria-label="Source mockup"><rect width="320" height="160" fill="var(--accent-soft)"/><rect x="20" y="24" width="160" height="14" rx="4" fill="var(--text)"/><rect x="20" y="52" width="280" height="8" rx="3" fill="var(--text-muted)"/></svg></div><figcaption data-slot="caption">Source mockup</figcaption></figure>
+          <figure data-slot="shot"><div class="frame" data-slot="frame"><svg viewBox="0 0 320 160" role="img" aria-label="Rendered build"><rect width="320" height="160" fill="var(--bg)"/><rect x="20" y="24" width="160" height="14" rx="4" fill="var(--text)"/><rect x="20" y="52" width="280" height="8" rx="3" fill="var(--text-muted)"/></svg></div><figcaption data-slot="caption">Rendered build — pass</figcaption></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">token-swatch</span><span class="pnote">The encoded palette as a contact sheet.</span>
+        <span class="chip var">color</span><span class="chip var">radius</span>
+      </div>
+      <div class="specimen-body stack">
+        <div data-primitive="token-swatch" data-variant="color">
+          <figure data-slot="swatch"><div data-slot="chip" style="background:var(--bg)"></div><span data-slot="value">var(--bg)</span><span data-slot="token-name">--bg</span></figure>
+          <figure data-slot="swatch"><div data-slot="chip" style="background:var(--text)"></div><span data-slot="value">var(--text)</span><span data-slot="token-name">--text</span></figure>
+          <figure data-slot="swatch"><div data-slot="chip" style="background:var(--accent)"></div><span data-slot="value">var(--accent)</span><span data-slot="token-name">--accent</span></figure>
+          <figure data-slot="swatch"><div data-slot="chip" style="background:var(--accent-soft)"></div><span data-slot="value">var(--accent-soft)</span><span data-slot="token-name">--accent-soft</span></figure>
+          <figure data-slot="swatch"><div data-slot="chip" style="background:var(--success-strong)"></div><span data-slot="value">var(--success-strong)</span><span data-slot="token-name">--success-strong</span></figure>
+          <figure data-slot="swatch"><div data-slot="chip" style="background:var(--danger-strong)"></div><span data-slot="value">var(--danger-strong)</span><span data-slot="token-name">--danger-strong</span></figure>
+        </div>
+        <div data-primitive="token-swatch" data-variant="radius">
+          <figure data-slot="swatch"><div data-slot="chip" style="border-radius:5px"></div><span data-slot="value">5px</span><span data-slot="token-name">--radius-tag</span></figure>
+          <figure data-slot="swatch"><div data-slot="chip" style="border-radius:7px"></div><span data-slot="value">7px</span><span data-slot="token-name">--radius-row</span></figure>
+          <figure data-slot="swatch"><div data-slot="chip" style="border-radius:10px"></div><span data-slot="value">10px</span><span data-slot="token-name">--radius-panel</span></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head">
+        <span class="pname">copy-export</span><span class="pnote">Copy a result back into the workflow. Never the only path to the content.</span>
+        <span class="chip var">markdown</span><span class="chip var">prompt</span><span class="chip var">table</span><span class="chip state">copied</span>
+      </div>
+      <div class="specimen-body cluster">
+        <span data-primitive="copy-export" data-variant="markdown">
+          <button type="button" data-slot="action">Copy as Markdown</button>
+          <template data-slot="payload"># Queue Migration Plan\nPhases, risks, and verification gates.</template>
+        </span>
+        <span data-primitive="copy-export" data-variant="prompt">
+          <button type="button" data-slot="action">Copy action list</button>
+          <template data-slot="payload">1. Confirm retry coverage.\n2. Run shadow parity for 24h.\n3. Keep rollback owner on call.</template>
+        </span>
+        <span data-primitive="copy-export" data-variant="table">
+          <button type="button" data-slot="action">Copy table</button>
+          <template data-slot="payload">Check | Status\nMobile reflow | pass\nCopy fallback | pass</template>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ PLANNING & DOCUMENT ============================ -->
+  <section class="reference-section" id="planning">
+    <div class="sec-head"><h2><span class="num">09</span>Planning &amp; document</h2></div>
+    <p class="sec-intro">Scope, gates, decisions, owners, dependencies, and handoff — the structure plans, specs, and migrations are built from.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">scope-boundary</span><span class="pnote">In scope vs out of scope, side by side.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="scope-boundary">
+          <div data-slot="in-scope"><span class="label">In scope</span><ul><li>Client write path and retries.</li><li>Drain and reconciliation.</li></ul></div>
+          <div data-slot="out-scope"><span class="label">Out of scope</span><ul><li>Server-side conflict resolution.</li><li>Cross-device merge.</li></ul></div>
+          <p data-slot="boundary-note" class="muted">The boundary keeps the plan to the client write path only.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">acceptance-gate</span><span class="pnote">Pass conditions with the gate's state.</span><span class="chip state">pass</span><span class="chip state">blocked</span><span class="chip state">pending</span></div>
+      <div class="specimen-body">
+        <div data-primitive="acceptance-gate">
+          <div data-slot="gate-status"><span class="pill" data-state="pending">pending</span><b>Cutover gate</b></div>
+          <div data-slot="criterion"><span>✓</span><div>Offline and recovery paths verified.<span data-slot="proof"> e2e green</span></div></div>
+          <div data-slot="criterion"><span>☐</span><div>Shadow parity clean for 24h.<span data-slot="proof"> pending</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">verification-matrix</span><span class="pnote">Check / method / expected proof / status.</span><span class="chip var">table</span><span class="chip var">cards</span><span class="chip var">test-suite</span><span class="chip state">pass</span><span class="chip state">pending</span></div>
+      <div class="specimen-body stack">
+        <div data-primitive="verification-matrix" data-variant="table"><div class="table-wrap"><table><thead><tr><th data-slot="head">Check</th><th data-slot="head">Method</th><th data-slot="head">Expected proof</th><th data-slot="head">Status</th></tr></thead><tbody><tr data-slot="row"><td data-slot="check">Ordered writes</td><td data-slot="method">offline burst</td><td data-slot="expected">FIFO commit log</td><td><span class="pill" data-slot="status" data-state="pass">pass</span></td></tr><tr data-slot="row"><td data-slot="check">Shadow parity</td><td data-slot="method">dual-write diff</td><td data-slot="expected">zero diffs / 24h</td><td><span class="pill" data-slot="status" data-state="pending">pending</span></td></tr></tbody></table></div></div>
+        <div data-primitive="verification-matrix" data-variant="test-suite"><div class="table-wrap"><table><thead><tr><th data-slot="head">Check</th><th data-slot="head">Method</th><th data-slot="head">Expected proof</th></tr></thead><tbody><tr data-slot="row"><td data-slot="check">Mobile reflow</td><td data-slot="method">320px render</td><td data-slot="expected">no horizontal page scroll</td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">owner-matrix</span><span class="pnote">Area / owner / role / backup.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="owner-matrix"><div class="table-wrap"><table><thead><tr><th data-slot="head">Area</th><th data-slot="head">Owner</th><th data-slot="head">Role</th><th data-slot="head">Backup</th></tr></thead><tbody><tr data-slot="row"><td data-slot="area">Queue + worker</td><td data-slot="owner">Sync team</td><td data-slot="role">build</td><td data-slot="backup">Platform</td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">constraint-ledger</span><span class="pnote">Constraint / source / implication.</span><span class="chip var">table</span><span class="chip var">cards</span><span class="chip state">hard</span></div>
+      <div class="specimen-body">
+        <div data-primitive="constraint-ledger" data-variant="table"><div class="table-wrap"><table><thead><tr><th data-slot="head">Constraint</th><th data-slot="head">Source</th><th data-slot="head">Implication</th></tr></thead><tbody><tr data-slot="row" data-state="hard"><td data-slot="constraint">Opens with no server</td><td data-slot="source">portability requirement</td><td data-slot="implication">rules out app frameworks</td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">decision-log</span><span class="pnote">Decisions, rationale, and status.</span><span class="chip state">accepted</span><span class="chip state">proposed</span></div>
+      <div class="specimen-body">
+        <ol data-primitive="decision-log">
+          <li data-slot="decision" data-state="accepted"><div data-slot="decision-title">Single-file delivery</div><span data-slot="when">accepted</span><p data-slot="rationale" class="muted">Keeps the file portable and reviewable.</p></li>
+          <li data-slot="decision" data-state="proposed"><div data-slot="decision-title">Revisit a renderer if multi-target lands</div><span data-slot="when">proposed</span><p data-slot="rationale" class="muted">Only worth the layer for more than one output target.</p></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">dependency-map</span><span class="pnote">What depends on what; blocked nodes marked.</span><span class="chip var">list</span><span class="chip var">graph</span><span class="chip state">blocked</span></div>
+      <div class="specimen-body">
+        <ul data-primitive="dependency-map" data-variant="list">
+          <li data-slot="node"><b data-slot="node-title">Drain worker</b><div data-slot="depends-on">depends on: local queue, network monitor</div></li>
+          <li data-slot="node" data-state="blocked"><b data-slot="node-title">Reconciler</b><div data-slot="depends-on">depends on: subscription stream (not wired)</div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">state-grid</span><span class="pnote">A set of states side by side.</span><span class="chip var">variant: component-matrix</span><span class="chip state">empty</span><span class="chip state">loading</span><span class="chip state">error</span></div>
+      <div class="specimen-body">
+        <div data-primitive="state-grid" data-variant="component-matrix">
+          <div data-slot="cell" data-state="empty"><span data-slot="state-label">Empty</span><p data-slot="state-body" class="muted">No channels configured.</p></div>
+          <div data-slot="cell" data-state="loading"><span data-slot="state-label">Loading</span><p data-slot="state-body" class="muted">Skeleton rows, no shift.</p></div>
+          <div data-slot="cell" data-state="error"><span data-slot="state-label">Error</span><p data-slot="state-body" class="muted">Inline retry preserves input.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">handoff-packet</span><span class="pnote">What the handoff recipient needs, and the first step.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="handoff-packet">
+          <div data-slot="item"><span data-slot="key">Branch</span><span>feature/queue-worker</span></div>
+          <div data-slot="item"><span data-slot="key">Open</span><span data-slot="open">shadow parity still pending</span></div>
+          <p data-slot="next-step">Route flagged writes through the worker and watch shadow parity.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ DESIGN QA & UX AUDIT ============================ -->
+  <section class="reference-section" id="qa">
+    <div class="sec-head"><h2><span class="num">10</span>Design QA &amp; UX audit</h2></div>
+    <p class="sec-intro">Matched run conditions, source/render/revised comparison, located mismatches, coverage, and honest evidence limits. UX-audit reports reuse screenshot-gallery and finding-card alongside these. Schematic SVGs stand in for real captures here.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">qa-metadata</span><span class="pnote">The run conditions a comparison depends on.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="qa-metadata"><div data-slot="item"><span data-slot="key">Viewport</span><span data-slot="value">1280×800</span></div><div data-slot="item"><span data-slot="key">Theme</span><span data-slot="value">light</span></div><div data-slot="item"><span data-slot="key">Route</span><span data-slot="value">/settings</span></div><div data-slot="item"><span data-slot="key">State</span><span data-slot="value">signed in</span></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">screenshot-triptych</span><span class="pnote">Source / render / revised, three-up.</span><span class="chip state">pass</span><span class="chip state">blocked</span><span class="chip state">evidence-limited</span></div>
+      <div class="specimen-body">
+        <div data-primitive="screenshot-triptych" data-state="blocked">
+          <figure data-slot="source"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Source mockup"><rect width="320" height="150" fill="var(--accent-soft)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="var(--text-muted)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--text)"/></svg></div><figcaption>Source mockup</figcaption></figure>
+          <figure data-slot="render"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Rendered build"><rect width="320" height="150" fill="var(--bg)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="var(--text-muted)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--accent)"/></svg></div><figcaption>Rendered build</figcaption></figure>
+          <figure data-slot="revised"><div class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Proposed revision"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="42" width="284" height="7" rx="3" fill="var(--text-muted)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--text)"/></svg></div><figcaption>Proposed revision</figcaption></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">focused-compare</span><span class="pnote">Zoomed before/after of one region.</span><span class="chip state">blocked</span></div>
+      <div class="specimen-body">
+        <div data-primitive="focused-compare" data-state="blocked">
+          <figure data-slot="before"><span class="label" data-slot="region-label">Primary action · source</span><div class="frame"><svg viewBox="0 0 320 110" role="img" aria-label="Source crop"><rect width="320" height="110" fill="var(--accent-soft)"/><rect x="40" y="44" width="120" height="30" rx="6" fill="var(--text)"/></svg></div><figcaption>Source crop</figcaption></figure>
+          <figure data-slot="after"><div class="frame"><svg viewBox="0 0 320 110" role="img" aria-label="Render crop"><rect width="320" height="110" fill="var(--bg)"/><rect x="40" y="44" width="120" height="30" rx="6" fill="var(--accent)"/></svg></div><figcaption>Render crop</figcaption></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">annotation-pin</span><span class="pnote">Numbered pins over a capture, tied to notes.</span><span class="chip state">high</span><span class="chip state">med</span><span class="chip state">low</span></div>
+      <div class="specimen-body">
+        <div data-primitive="annotation-pin">
+          <div data-slot="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Annotated render"><rect width="320" height="150" fill="var(--bg)"/><rect x="18" y="18" width="140" height="12" rx="4" fill="var(--text)"/><rect x="18" y="72" width="284" height="58" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="30" y="100" width="60" height="16" rx="4" fill="var(--accent)"/></svg><span data-slot="pin" data-state="med" style="left:14%;top:70%">1</span></div>
+          <ol><li data-slot="pin-note">Primary action fill is the accent, not the source ink.</li></ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">mismatch-ledger</span><span class="pnote">Region / expected / actual / severity.</span><span class="chip var">table</span><span class="chip var">cards</span><span class="chip state">med</span></div>
+      <div class="specimen-body">
+        <div data-primitive="mismatch-ledger" data-variant="table"><div class="table-wrap"><table><thead><tr><th data-slot="head">Region</th><th data-slot="head">Expected</th><th data-slot="head">Actual</th><th data-slot="head">Sev</th></tr></thead><tbody><tr data-slot="row"><td data-slot="region">Action fill</td><td data-slot="expected">text role</td><td data-slot="actual">accent role</td><td><span class="badge" data-slot="severity" data-state="med">MED</span></td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">token-delta</span><span class="pnote">Expected vs actual token values.</span><span class="chip state">match</span><span class="chip state">mismatch</span></div>
+      <div class="specimen-body">
+        <div data-primitive="token-delta"><div class="table-wrap"><table><thead><tr><th data-slot="head">Token</th><th data-slot="head">Expected</th><th data-slot="head">Actual</th><th data-slot="head">Match</th></tr></thead><tbody><tr data-slot="row" data-state="match"><td data-slot="token-name">background</td><td data-slot="expected"><span class="tk-chip" style="background:var(--bg)"></span>var(--bg)</td><td data-slot="actual"><span class="tk-chip" style="background:var(--bg)"></span>var(--bg)</td><td><span class="pill" data-slot="match" data-state="match">match</span></td></tr><tr data-slot="row" data-state="mismatch"><td data-slot="token-name">action</td><td data-slot="expected"><span class="tk-chip" style="background:var(--text)"></span>var(--text)</td><td data-slot="actual"><span class="tk-chip" style="background:var(--accent)"></span>var(--accent)</td><td><span class="pill" data-slot="match" data-state="mismatch">mismatch</span></td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">fidelity-coverage</span><span class="pnote">Dimensions checked vs not.</span><span class="chip state">checked</span><span class="chip state">partial</span><span class="chip state">not-checked</span></div>
+      <div class="specimen-body">
+        <div data-primitive="fidelity-coverage">
+          <div data-slot="dimension" data-state="checked"><span data-slot="dimension-label">Layout &amp; spacing</span><span class="pill" data-slot="coverage" data-state="checked">checked</span></div>
+          <div data-slot="dimension" data-state="partial"><span data-slot="dimension-label">Color tokens</span><span class="pill" data-slot="coverage" data-state="partial">partial</span></div>
+          <div data-slot="dimension" data-state="not-checked"><span data-slot="dimension-label">Motion</span><span class="pill" data-slot="coverage" data-state="not-checked">not checked</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">revision-strip</span><span class="pnote">Before → after → revised; recommended marked.</span><span class="chip state">recommended</span></div>
+      <div class="specimen-body">
+        <div data-primitive="revision-strip">
+          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Before"><rect width="200" height="110" fill="var(--danger-soft)"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--accent)"/></svg></div><div data-slot="step-label">Before</div></div>
+          <span data-slot="connector">→</span>
+          <div data-slot="step"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="After"><rect width="200" height="110" fill="var(--warning-soft)"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--text)"/></svg></div><div data-slot="step-label">After</div></div>
+          <span data-slot="connector">→</span>
+          <div data-slot="step" data-state="recommended"><div data-slot="frame" class="frame"><svg viewBox="0 0 200 110" role="img" aria-label="Revised"><rect width="200" height="110" fill="var(--success-soft)"/><rect x="40" y="46" width="80" height="22" rx="5" fill="var(--text)"/></svg></div><div data-slot="step-label">Revised ✓</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">evidence-limits</span><span class="pnote">What could not be verified.</span><span class="chip state">evidence-limited</span></div>
+      <div class="specimen-body">
+        <section data-primitive="evidence-limits" data-state="evidence-limited">
+          <p data-slot="limit">Dark theme was not captured; this verdict covers the light theme only.</p>
+          <p data-slot="impact">Color findings may differ under dark mode.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ IMAGE GEN HANDOFF ============================ -->
+  <section class="reference-section" id="imagegen">
+    <div class="sec-head"><h2><span class="num">11</span>Image Gen &amp; design handoff</h2></div>
+    <p class="sec-intro">Selected concepts, the sources they were grounded in, reusable prompts, assets, approved copy, and an extracted design system to build to.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">concept-gallery</span><span class="pnote">Candidate directions with a selection state.</span><span class="chip state">selected</span><span class="chip state">rejected</span></div>
+      <div class="specimen-body">
+        <div data-primitive="concept-gallery">
+          <figure data-slot="concept" data-state="selected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Calm line-art concept"><rect width="320" height="150" fill="var(--bg)"/><circle cx="160" cy="75" r="34" fill="none" stroke="var(--accent)" stroke-width="3"/></svg></div><div data-slot="concept-label">Calm line-art <span class="pill" data-slot="selected" data-state="selected">selected</span></div><p data-slot="rationale">Quiet, editorial, pairs with the serif headings.</p></figure>
+          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Bold flat concept"><rect width="320" height="150" fill="var(--accent-soft)"/><rect x="120" y="40" width="80" height="70" rx="8" fill="var(--accent)"/></svg></div><div data-slot="concept-label">Bold flat</div><p data-slot="rationale">High energy, but fights the restrained palette.</p></figure>
+          <figure data-slot="concept" data-state="rejected"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Photo collage concept"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="60" y="36" width="90" height="78" fill="var(--border)"/><rect x="170" y="36" width="90" height="78" fill="var(--text-muted)"/></svg></div><div data-slot="concept-label">Photo collage</div><p data-slot="rationale">Too heavy to inline as a self-contained asset.</p></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">source-manifest</span><span class="pnote">The source inputs a concept was grounded in.</span></div>
+      <div class="specimen-body">
+        <ul data-primitive="source-manifest">
+          <li data-slot="source"><b data-slot="source-name">Brand type spec</b><span data-slot="source-kind">provided</span></li>
+          <li data-slot="source"><b data-slot="source-name">Existing illustration set</b><span data-slot="source-kind">screenshot</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">imagegen-prompt-card</span><span class="pnote">Reusable generation prompt with intent and constraints.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="imagegen-prompt-card">
+          <div data-slot="intent">Inbox empty-state line illustration</div>
+          <div data-slot="prompt-text">Minimal single-weight line illustration of an empty inbox tray, warm background, deep-teal accent, generous negative space, no text.</div>
+          <div data-slot="constraints">Square, transparent background, under 40KB when inlined.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">asset-inventory</span><span class="pnote">Assets to produce, with spec and status.</span><span class="chip state">delivered</span><span class="chip state">pending</span></div>
+      <div class="specimen-body">
+        <div data-primitive="asset-inventory"><div class="table-wrap"><table><thead><tr><th data-slot="head">Asset</th><th data-slot="head">Spec</th><th data-slot="head">Format</th><th data-slot="head">Status</th></tr></thead><tbody><tr data-slot="row"><td data-slot="asset">Toggle icons</td><td data-slot="spec">20px, ink</td><td data-slot="format">inline SVG</td><td><span class="pill" data-state="delivered">delivered</span></td></tr><tr data-slot="row"><td data-slot="asset">Empty-state art</td><td data-slot="spec">square, &lt;40KB</td><td data-slot="format">inline SVG</td><td><span class="pill" data-state="pending">pending</span></td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">allowed-copy-list</span><span class="pnote">Exact approved strings and their placement.</span></div>
+      <div class="specimen-body">
+        <ul data-primitive="allowed-copy-list">
+          <li data-slot="copy">Nothing here yet<span data-slot="placement">empty-state heading</span></li>
+          <li data-slot="copy">New messages will land here.<span data-slot="placement">empty-state subtext</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">design-system-extract</span><span class="pnote">Tokens and component notes to build to.</span><span class="chip var">tokens</span><span class="chip var">components</span></div>
+      <div class="specimen-body">
+        <div data-primitive="design-system-extract" data-variant="tokens">
+          <div data-slot="group"><div data-slot="group-label">Color</div><div data-slot="tokens"><div data-primitive="token-swatch" data-variant="color"><figure data-slot="swatch"><div data-slot="chip" style="background:var(--bg)"></div><span data-slot="value">var(--bg)</span><span data-slot="token-name">--bg</span></figure><figure data-slot="swatch"><div data-slot="chip" style="background:var(--text)"></div><span data-slot="value">var(--text)</span><span data-slot="token-name">--text</span></figure><figure data-slot="swatch"><div data-slot="chip" style="background:var(--accent)"></div><span data-slot="value">var(--accent)</span><span data-slot="token-name">--accent</span></figure></div></div></div>
+          <div data-slot="group"><div data-slot="group-label">Radius</div><div data-slot="tokens"><span class="muted">sm 5px · md 7px · lg 10px. Cards use lg; inline controls use sm.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ MOTION & PERFORMANCE ============================ -->
+  <section class="reference-section" id="motion">
+    <div class="sec-head"><h2><span class="num">12</span>Motion &amp; performance</h2></div>
+    <p class="sec-intro">Motion that degrades safely, responsive proof at multiple widths, a size budget, and the record of rendered checks.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">motion-proof</span><span class="pnote">An animated element with its reduced-motion behavior. The demo animates only when motion is allowed.</span><span class="chip var">variant: parameter-comparison</span><span class="chip state">reduced-motion</span></div>
+      <div class="specimen-body stack">
+        <div data-primitive="motion-proof" data-variant="parameter-comparison">
+          <div data-slot="demo" data-anim>reveal · 320ms ease-out</div>
+          <p data-slot="reduced">Reduced motion: the element appears in its final state with no animation.</p>
+          <p data-slot="tokens">motion-base 200ms · ease-out</p>
+        </div>
+        <div data-primitive="motion-proof" data-state="reduced-motion">
+          <div data-slot="demo" data-anim>final state · no motion</div>
+          <p data-slot="reduced">This specimen forces the reduced-motion state: the animation is off and the content is fully readable.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">viewport-matrix</span><span class="pnote">The same content rendered at several widths.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="viewport-matrix">
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Desktop"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="16" y="16" width="180" height="118" rx="6" fill="var(--surface)" stroke="var(--border)"/><rect x="208" y="16" width="96" height="118" rx="6" fill="var(--surface)" stroke="var(--border)"/></svg></div><div data-slot="width-label">Desktop · 1280px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Tablet"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="70" y="16" width="180" height="118" rx="6" fill="var(--surface)" stroke="var(--border)"/></svg></div><div data-slot="width-label">Tablet · 768px</div></figure>
+          <figure data-slot="viewport"><div data-slot="frame" class="frame"><svg viewBox="0 0 320 150" role="img" aria-label="Mobile"><rect width="320" height="150" fill="var(--surface-muted)"/><rect x="120" y="16" width="80" height="118" rx="8" fill="var(--surface)" stroke="var(--border)"/></svg></div><div data-slot="width-label">Mobile · 375px</div></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">performance-budget</span><span class="pnote">Metric / budget / actual / status.</span><span class="chip state">within</span><span class="chip state">over</span></div>
+      <div class="specimen-body">
+        <div data-primitive="performance-budget"><div class="table-wrap"><table><thead><tr><th data-slot="head">Metric</th><th data-slot="head">Budget</th><th data-slot="head">Actual</th><th data-slot="head">Status</th></tr></thead><tbody><tr data-slot="row"><td data-slot="metric">File size</td><td data-slot="budget">1MB</td><td data-slot="actual">29KB</td><td><span class="pill" data-slot="status" data-state="within">within</span></td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">render-proof</span><span class="pnote">The record of rendered checks, with the available browser tool used.</span><span class="chip state">pass</span><span class="chip state">fail</span></div>
+      <div class="specimen-body">
+        <ul data-primitive="render-proof">
+          <li data-slot="check"><b data-slot="check-label">Desktop 1280px</b><span data-slot="result"><span class="pill" data-state="pass">pass</span></span><span data-slot="tool">available browser tool</span></li>
+          <li data-slot="check"><b data-slot="check-label">Mobile 375px</b><span data-slot="result"><span class="pill" data-state="pass">pass</span></span><span data-slot="tool">available browser tool</span></li>
+          <li data-slot="check"><b data-slot="check-label">Reflow 320px</b><span data-slot="result"><span class="pill" data-state="pass">pass</span></span><span data-slot="tool">available browser tool</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ROADMAP PATTERNS ============================ -->
+  <section class="reference-section" id="roadmap-patterns">
+    <div class="sec-head"><h2><span class="num">13</span>Roadmap patterns</h2></div>
+    <p class="sec-intro">Additional document blocks for diligence, specs, evals, system cards, and bounded review surfaces.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">inline-schematic</span><span class="pnote">Contained diagram with legend and text fallback.</span></div>
+      <div class="specimen-body">
+        <figure data-primitive="inline-schematic">
+          <h3 data-slot="heading">Queued write path</h3>
+          <div data-slot="diagram" class="frame"><svg viewBox="0 0 520 92" role="img" aria-label="Queued write path schematic"><rect x="20" y="24" width="110" height="44" rx="7" fill="var(--surface)" stroke="var(--border)"/><text x="75" y="51" text-anchor="middle" fill="var(--text)" font-size="13">Client</text><path d="M138 46h70" stroke="var(--accent)" stroke-width="3"/><rect x="215" y="24" width="110" height="44" rx="7" fill="var(--surface)" stroke="var(--border)"/><text x="270" y="51" text-anchor="middle" fill="var(--text)" font-size="13">Queue</text><path d="M333 46h70" stroke="var(--accent)" stroke-width="3"/><rect x="410" y="24" width="90" height="44" rx="7" fill="var(--surface)" stroke="var(--border)"/><text x="455" y="51" text-anchor="middle" fill="var(--text)" font-size="13">Worker</text></svg></div>
+          <ul data-slot="legend"><li>Solid arrows show the normal write path.</li><li>Each node is independently retryable.</li></ul>
+          <figcaption data-slot="caption">Use when a small diagram is clearer than prose.</figcaption>
+          <p data-slot="fallback">Fallback: client writes enqueue a job; the worker drains queued jobs and reports retry status.</p>
+        </figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">inline-chart</span><span class="pnote">Charts generated by scripts/plot.mjs as static SVG; the data-table is the source of record.</span></div>
+      <div class="specimen-body">
+        <figure data-primitive="inline-chart">
+          <h3 data-slot="heading">Retest pass rate by run</h3>
+          <div data-slot="chart"><svg viewBox="0 0 720 114" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><line x1="48" y1="25" x2="668" y2="25" stroke="var(--chart-axis)" stroke-width="0.75"/><rect x="48" y="12" width="620" height="26" rx="3" fill="var(--chart-primary)"/><text x="40" y="25" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">Run 3</text><text x="674" y="25" dominant-baseline="middle" fill="currentColor" font-size="12">94%</text><line x1="48" y1="63" x2="668" y2="63" stroke="var(--chart-axis)" stroke-width="0.75"/><rect x="48" y="50" width="514.47" height="26" rx="3" fill="var(--chart-primary)"/><text x="40" y="63" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">Run 2</text><text x="568.47" y="63" dominant-baseline="middle" fill="currentColor" font-size="12">78%</text><line x1="48" y1="101" x2="668" y2="101" stroke="var(--chart-axis)" stroke-width="0.75"/><rect x="48" y="88" width="402.34" height="26" rx="3" fill="var(--chart-primary)"/><text x="40" y="101" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">Run 1</text><text x="456.34" y="101" dominant-baseline="middle" fill="currentColor" font-size="12">61%</text></svg></div>
+          <div data-slot="data-table" class="table-wrap"><table><thead><tr><th>Run</th><th>Pass rate</th></tr></thead><tbody><tr><td>Run 3</td><td>94%</td></tr><tr><td>Run 2</td><td>78%</td></tr><tr><td>Run 1</td><td>61%</td></tr></tbody></table></div>
+          <figcaption data-slot="caption">Ranked bars; the table is the source of record. Chart is baked, static SVG.</figcaption>
+          <p data-slot="source">Source: latest QA packet.</p>
+        </figure>
+        <figure data-primitive="inline-chart">
+          <h3 data-slot="heading">Change vs. baseline</h3>
+          <div data-slot="chart"><svg viewBox="0 0 720 152" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><line x1="316.88" y1="6" x2="316.88" y2="146" stroke="var(--chart-axis)" stroke-width="1"/><rect x="131" y="12" width="185.88" height="26" rx="3" fill="var(--chart-neg)"/><text x="79" y="25" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">p95 latency</text><text x="125" y="25" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">-18%</text><rect x="316.88" y="50" width="351.12" height="26" rx="3" fill="var(--chart-pos)"/><text x="79" y="63" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">Throughput</text><text x="674" y="63" text-anchor="start" dominant-baseline="middle" fill="currentColor" font-size="12">+34%</text><rect x="223.94" y="88" width="92.94" height="26" rx="3" fill="var(--chart-neg)"/><text x="79" y="101" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">Error rate</text><text x="217.94" y="101" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">-9%</text><rect x="316.88" y="126" width="61.97" height="26" rx="3" fill="var(--chart-pos)"/><text x="79" y="139" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">Cost</text><text x="384.85" y="139" text-anchor="start" dominant-baseline="middle" fill="currentColor" font-size="12">+6%</text></svg></div>
+          <div data-slot="data-table" class="table-wrap"><table><thead><tr><th>Metric</th><th>Change vs. baseline</th></tr></thead><tbody><tr><td>p95 latency</td><td>-18%</td></tr><tr><td>Throughput</td><td>+34%</td></tr><tr><td>Error rate</td><td>-9%</td></tr><tr><td>Cost</td><td>+6%</td></tr></tbody></table></div>
+          <figcaption data-slot="caption">Diverging bars read positive and negative against a zero baseline.</figcaption>
+          <p data-slot="source">Source: release benchmark run.</p>
+        </figure>
+        <figure data-primitive="inline-chart">
+          <h3 data-slot="heading">Activation by cohort</h3>
+          <div data-slot="chart"><svg viewBox="0 0 480 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><line x1="95" y1="22" x2="95" y2="286" stroke="var(--chart-axis)" stroke-width="1"/><line x1="442" y1="22" x2="442" y2="286" stroke="var(--chart-axis)" stroke-width="1"/><text x="95" y="16" text-anchor="middle" fill="currentColor" font-size="11">Week 1</text><text x="442" y="16" text-anchor="middle" fill="currentColor" font-size="11">Week 6</text><line x1="95" y1="200.32" x2="442" y2="34" stroke="var(--chart-primary)" stroke-width="1.5"/><circle cx="95" cy="200.32" r="4" fill="var(--chart-primary)"/><circle cx="442" cy="34" r="4" fill="var(--chart-primary)"/><text x="85" y="200.32" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="11">Cohort A 61%</text><text x="452" y="34" dominant-baseline="middle" fill="currentColor" font-size="11">94%</text><line x1="95" y1="114.64" x2="442" y2="149.92" stroke="var(--chart-primary)" stroke-width="1.5"/><circle cx="95" cy="114.64" r="4" fill="var(--chart-primary)"/><circle cx="442" cy="149.92" r="4" fill="var(--chart-primary)"/><text x="85" y="114.64" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="11">Cohort B 78%</text><text x="452" y="149.92" dominant-baseline="middle" fill="currentColor" font-size="11">71%</text><line x1="95" y1="286" x2="442" y2="160" stroke="var(--chart-primary)" stroke-width="1.5"/><circle cx="95" cy="286" r="4" fill="var(--chart-primary)"/><circle cx="442" cy="160" r="4" fill="var(--chart-primary)"/><text x="85" y="286" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="11">Cohort C 44%</text><text x="452" y="160" dominant-baseline="middle" fill="currentColor" font-size="11">69%</text></svg></div>
+          <div data-slot="data-table" class="table-wrap"><table><thead><tr><th>Cohort</th><th>Week 1</th><th>Week 6</th></tr></thead><tbody><tr><td>Cohort A</td><td>61%</td><td>94%</td></tr><tr><td>Cohort B</td><td>78%</td><td>71%</td></tr><tr><td>Cohort C</td><td>44%</td><td>69%</td></tr></tbody></table></div>
+          <figcaption data-slot="caption">Slope chart shows movement between two points without a time axis.</figcaption>
+          <p data-slot="source">Source: cohort analytics export.</p>
+        </figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">file-map</span><span class="pnote">Changed files mapped to role, change, risk, and finding.</span></div>
+      <div class="specimen-body"><div data-primitive="file-map" class="table-wrap"><table><thead><tr><th>Path</th><th>Role</th><th>Change</th><th>Risk</th><th>Finding</th></tr></thead><tbody><tr><td data-slot="path">src/queue.ts</td><td data-slot="role">write path</td><td data-slot="change">adds retry envelope</td><td data-slot="risk">duplicate dispatch</td><td data-slot="finding">needs idempotency check</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">issue-ledger</span><span class="pnote">Issue register for QA, diligence, and triage.</span></div>
+      <div class="specimen-body"><div data-primitive="issue-ledger" class="table-wrap"><table><thead><tr><th>Issue</th><th>Severity</th><th>Evidence</th><th>Implication</th><th>Owner</th><th>Status</th></tr></thead><tbody><tr><td data-slot="issue">Retry failures not grouped</td><td data-slot="severity"><span class="badge" data-state="med">MED</span></td><td data-slot="evidence">three duplicate rows in retest</td><td data-slot="implication">harder incident triage</td><td data-slot="owner">Platform</td><td data-slot="status"><span class="pill" data-state="pending">pending</span></td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">red-flag-ledger</span><span class="pnote">High-impact diligence flags with deal effect and next step.</span></div>
+      <div class="specimen-body"><div data-primitive="red-flag-ledger" class="table-wrap"><table><thead><tr><th>Flag</th><th>Basis</th><th>Deal impact</th><th>Confidence</th><th>Next step</th></tr></thead><tbody><tr><td data-slot="flag">Unpriced migration liability</td><td data-slot="basis">open carve-out dependency</td><td data-slot="deal-impact">separation cost may move</td><td data-slot="confidence"><span class="badge" data-state="med">MED</span></td><td data-slot="next-step">request service schedule</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">assumption-register</span><span class="pnote">Assumptions with source, sensitivity, confidence, and owner.</span></div>
+      <div class="specimen-body"><div data-primitive="assumption-register" class="table-wrap"><table><thead><tr><th>Assumption</th><th>Source</th><th>Sensitivity</th><th>Confidence</th><th>Owner</th></tr></thead><tbody><tr><td data-slot="assumption">Worker can drain backlog overnight</td><td data-slot="source">load-test note</td><td data-slot="sensitivity">changes cutover window</td><td data-slot="confidence"><span class="badge" data-state="high">HIGH</span></td><td data-slot="owner">Infra</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">value-bridge</span><span class="pnote">Baseline, bridge items, values, sources, and caveats.</span></div>
+      <div class="specimen-body">
+        <figure data-primitive="value-bridge" class="table-wrap"><table><thead><tr><th>Item</th><th>Value</th><th>Source</th><th>Caveat</th></tr></thead><tbody><tr><td data-slot="baseline">Current run cost</td><td data-slot="value">100</td><td data-slot="source">finance extract</td><td data-slot="caveat">rounded</td></tr><tr><td data-slot="bridge-item">Queue batching</td><td data-slot="value">-18</td><td data-slot="source">pilot</td><td data-slot="caveat">depends on volume</td></tr></tbody></table></figure>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">workstream-map</span><span class="pnote">Workstreams tied to owner, phase, dependency, and gate.</span></div>
+      <div class="specimen-body"><div data-primitive="workstream-map" class="table-wrap"><table><thead><tr><th>Workstream</th><th>Owner</th><th>Phase</th><th>Dependency</th><th>Gate</th></tr></thead><tbody><tr><td data-slot="workstream">Queue migration</td><td data-slot="owner">Platform</td><td data-slot="phase">shadow</td><td data-slot="dependency">retry telemetry</td><td data-slot="gate">parity pass</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">operating-model-map</span><span class="pnote">Layered capability, owner, dependency, and gap map.</span></div>
+      <div class="specimen-body"><figure data-primitive="operating-model-map" class="table-wrap"><table><thead><tr><th>Layer</th><th>Capability</th><th>Owner</th><th>Dependency</th><th>Gap</th></tr></thead><tbody><tr><td data-slot="layer">Process</td><td data-slot="capability">Incident triage</td><td data-slot="owner">Support</td><td data-slot="dependency">retry grouping</td><td data-slot="gap">runbook missing</td></tr></tbody></table></figure></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">quote-board</span><span class="pnote">Voice evidence with segment, theme, source, and confidence.</span></div>
+      <div class="specimen-body"><div data-primitive="quote-board" data-variant="cards"><article data-slot="quote">"Retries are visible, but I cannot tell which customer was affected."<div class="row-foot"><span data-slot="speaker-segment">support lead</span><span data-slot="theme">triage clarity</span><span data-slot="source">interview note</span><span data-slot="confidence"><span class="badge" data-state="high">HIGH</span></span></div></article></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">scenario-pair</span><span class="pnote">Ideal and non-ideal examples with rationale.</span></div>
+      <div class="specimen-body"><div data-primitive="scenario-pair" class="split"><article data-slot="scenario"><b data-slot="input">User asks for release proof</b><p data-slot="ideal">Show commands, browser widths, and overflow result.</p><p data-slot="non-ideal">Say "looks good" without rendered evidence.</p><p data-slot="rationale">The reader needs proof, not confidence language.</p></article></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">evaluation-suite</span><span class="pnote">Suite thresholds, samples, results, and caveats.</span></div>
+      <div class="specimen-body"><div data-primitive="evaluation-suite" class="table-wrap"><table><thead><tr><th>Suite</th><th>Metric</th><th>Threshold</th><th>Result</th><th>Sample</th><th>Date</th></tr></thead><tbody><tr><td data-slot="suite">artifact QA</td><td data-slot="metric">overflow pass</td><td data-slot="threshold">100%</td><td data-slot="result"><span class="pill" data-state="pass">pass</span></td><td data-slot="sample">3 widths</td><td data-slot="date">current run</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">capability-matrix</span><span class="pnote">Capability, evidence, risk, limitation, and mitigation.</span></div>
+      <div class="specimen-body"><div data-primitive="capability-matrix" class="table-wrap"><table><thead><tr><th>Capability</th><th>Evidence</th><th>Risk</th><th>Limitation</th><th>Mitigation</th></tr></thead><tbody><tr><td data-slot="capability">Static export</td><td data-slot="evidence">opens from file</td><td data-slot="risk">large images</td><td data-slot="limitation">no server paging</td><td data-slot="mitigation">downscale captures</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">workbench-board</span><span class="pnote">Small visible board with filters and export.</span></div>
+      <div class="specimen-body">
+        <div data-primitive="workbench-board" class="grid">
+          <div class="cluster"><button type="button" data-slot="filter">Show blockers</button><span data-slot="export" data-primitive="copy-export" data-variant="markdown"><button type="button" data-slot="action">Copy board</button><template data-slot="payload">Blockers: retry telemetry</template></span></div>
+          <div class="split"><section data-slot="column"><h3>Blocked</h3><article data-slot="card"><b>Retry telemetry</b><span data-slot="status"><span class="pill" data-state="blocked">blocked</span></span></article></section><section data-slot="column"><h3>Ready</h3><article data-slot="card"><b>Copy payload</b><span data-slot="status"><span class="pill" data-state="pass">ready</span></span></article></section></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">configuration-diff</span><span class="pnote">Before/after config values with risk and owner.</span></div>
+      <div class="specimen-body"><div data-primitive="configuration-diff" class="table-wrap"><table><thead><tr><th>Key</th><th>Before</th><th>After</th><th>Risk</th><th>Owner</th></tr></thead><tbody><tr><td data-slot="key">queue.enabled</td><td data-slot="before">false</td><td data-slot="after">true</td><td data-slot="risk">cutover blast radius</td><td data-slot="owner">Platform</td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">prompt-preview</span><span class="pnote">Prompt, variables, case, preview, and copy action.</span></div>
+      <div class="specimen-body"><div data-primitive="prompt-preview" class="stack"><pre data-slot="prompt">Summarize {{case}} with risks and next action.</pre><div data-slot="variable">case = "queue cutover"</div><div data-slot="case">Input: cutover has one failed retry group.</div><div data-slot="preview">Preview: Queue cutover is close, but retry grouping remains unresolved.</div><span data-slot="copy" data-primitive="copy-export" data-variant="prompt"><button type="button" data-slot="action">Copy prompt</button><template data-slot="payload">Summarize queue cutover with risks and next action.</template></span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================ VALIDATION STATES ============================ -->
+  <section class="reference-section" id="states">
+    <div class="sec-head"><h2><span class="num">14</span>Validation states</h2></div>
+    <p class="sec-intro">The shared state vocabulary. Every state names itself in text — color is never the only signal.</p>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">severity &amp; confidence</span><span class="pnote">finding-card, risk-table, mismatch-ledger, claim-evidence-matrix.</span></div>
+      <div class="specimen-body cluster">
+        <span class="badge" data-state="high">HIGH</span><span class="badge" data-state="med">MED</span><span class="badge" data-state="low">LOW</span><span class="badge" data-state="info">INFO</span>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">gate &amp; verdict</span><span class="pnote">acceptance-gate, verification-matrix, state-grid, screenshot-triptych, evidence-limits.</span></div>
+      <div class="specimen-body cluster">
+        <span class="pill" data-state="pass">pass</span><span class="pill" data-state="blocked">blocked</span><span class="pill" data-state="evidence-limited">evidence-limited</span><span class="pill" data-state="pending">pending</span>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">coverage, match &amp; budget</span><span class="pnote">fidelity-coverage, token-delta, performance-budget, asset-inventory.</span></div>
+      <div class="specimen-body cluster">
+        <span class="pill" data-state="checked">checked</span><span class="pill" data-state="partial">partial</span><span class="pill" data-state="not-checked">not checked</span><span class="pill" data-state="match">match</span><span class="pill" data-state="mismatch">mismatch</span><span class="pill" data-state="within">within</span><span class="pill" data-state="over">over</span><span class="pill" data-state="delivered">delivered</span>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-head"><span class="pname">selection &amp; copied</span><span class="pnote">comparison-grid, concept-gallery, revision-strip, copy-export.</span><span class="chip state">selected</span><span class="chip state">recommended</span><span class="chip state">copied</span></div>
+      <div class="specimen-body cluster">
+        <span class="pill" data-state="selected">selected</span><span data-slot="recommended">recommended</span>
+        <span data-primitive="copy-export" data-state="copied"><button type="button" data-slot="action">Copied ✓</button><template data-slot="payload">demo</template></span>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /data-slot=body -->
+
+  <footer data-primitive="audit-trail" data-slot="footer">
+    <div data-slot="group"><span class="label">Reference notes</span>
+      <div data-slot="entry">The examples use neutral queue migration and QA scenarios.</div>
+      <div data-slot="entry">Each specimen is checked for responsive containment and state coverage.</div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // Minimal, degradation-safe enhancement: copy-export buttons.
+  document.querySelectorAll('[data-primitive="copy-export"]').forEach(function (ex) {
+    var btn = ex.querySelector('[data-slot="action"]');
+    var payload = ex.querySelector('[data-slot="payload"]');
+    if (!btn || !payload) return;
+    btn.addEventListener('click', function () {
+      var text = (payload.content ? payload.content.textContent : payload.textContent) || '';
+      var done = function () {
+        var prev = btn.textContent;
+        ex.setAttribute('data-state', 'copied');
+        btn.textContent = 'Copied ✓';
+        setTimeout(function () { ex.removeAttribute('data-state'); btn.textContent = prev; }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, done);
+      } else { done(); }
+    });
+  });
+
+  // Scroll-spy for the anchored section-nav map: mark the current section's link
+  // active. Degradation-safe — without JS the links still jump and one stays
+  // statically active.
+  (function () {
+    var map = document.querySelector('nav[data-primitive="section-nav"][data-variant="map"]');
+    if (!map) return;
+    var links = Array.prototype.slice.call(map.querySelectorAll('a[data-slot="link"]'));
+    var byId = {}, sections = [];
+    links.forEach(function (a) {
+      var id = (a.getAttribute('href') || '').slice(1);
+      var el = id && document.getElementById(id);
+      if (el) { byId[id] = a; sections.push(el); }
+    });
+    function sync() {
+      var current = null, bestTop = -Infinity;
+      sections.forEach(function (s) {
+        var top = s.getBoundingClientRect().top;
+        if (top <= 140 && top > bestTop) { bestTop = top; current = s; }
+      });
+      if (!current && sections.length) current = sections[0];
+      links.forEach(function (a) { a.removeAttribute('data-state'); });
+      if (current && byId[current.id]) byId[current.id].setAttribute('data-state', 'active');
+    }
+    document.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync, { passive: true });
+    sync();
+  })();
+</script>
+<script>(function(){var r=document.documentElement,K="ha-theme";try{var s=localStorage.getItem(K);if(s)r.setAttribute("data-theme",s);}catch(e){}var b=document.querySelector('[data-primitive="theme-toggle"]');if(!b)return;function d(){var t=r.getAttribute("data-theme");return t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches;}function sy(){b.setAttribute("aria-pressed",String(d()));}sy();b.addEventListener("click",function(){var n=d()?"light":"dark";r.setAttribute("data-theme",n);try{localStorage.setItem(K,n);}catch(e){}sy();});})();</script>
+</body>
+</html>

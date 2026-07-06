@@ -44,11 +44,11 @@ Before creating a PR, check whether the current branch already has one:
 gh pr view --json number,url,state,isDraft,headRefName,baseRefName,title,body
 ```
 
-If it exists, reuse it. Normal `$ship`, `ship ready`, and `ship review`
-all mean the PR should be a normal non-draft PR; convert an existing draft PR to
-ready when needed. Preserve or create draft state only for `ship draft` or an
-explicit user request to keep the PR drafted. Update title/body only when they
-are stale or generic.
+If it exists, reuse it. `$ship` and `ship review` both mean the PR should be a
+normal non-draft PR; convert an existing draft PR to ready when needed.
+Preserve or create draft state only for `ship draft` or an explicit user
+request to keep the PR drafted. Update title/body only when they are stale or
+generic.
 
 ## Tracking
 
