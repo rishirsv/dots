@@ -5,9 +5,9 @@ description: "Publishes local changes to GitHub by confirming scope, committing 
 
 # PR
 
-Use this skill only when the user explicitly wants a GitHub pull request flow
-from the local checkout: branch setup if needed, staging, commit, push, and PR
-creation. For review-comment repair on an existing PR, read
+Use this skill when the user wants a GitHub pull request flow from the local
+checkout: branch setup if needed, staging, commit, push, and PR creation. For
+review-comment repair on an existing PR, read
 [addressing-comments.md](references/addressing-comments.md) first.
 
 ## Prerequisites

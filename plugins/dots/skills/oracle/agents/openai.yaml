@@ -6,4 +6,4 @@ interface:
   brand_color: "#3B82F6"
   default_prompt: "Use $oracle to run this workflow."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

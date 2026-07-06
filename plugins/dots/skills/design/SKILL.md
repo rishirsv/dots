@@ -70,7 +70,7 @@ source image, accepted Image Gen concept, or existing code target, this gate
 applies even to `full working version`, `no refs`, `go for it`, or `make an
 assumption` requests — those phrases waive polish, not grounding.
 
-### 2. Ideate Before Coding
+### 2. Scout Before Coding
 
 For new full pages, apps, dashboards, games, product interfaces, and substantial
 redesigns, create Image Gen design concepts before coding unless the user

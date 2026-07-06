@@ -38,7 +38,7 @@ else
 fi
 
 echo "==> Dry-run config sync"
-scripts/sync-configs.sh --dry-run --codex --claude
+scripts/sync-configs.sh --dry-run --codex --codex-personal --claude
 
 echo "==> Meta-Skill tests"
 find_verify_python() {

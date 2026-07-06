@@ -7,10 +7,11 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--zsh|--launchagents|--karabiner ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--zsh|--launchagents|--karabiner ...]
 
 Copies repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
+Global agent instructions are installed as symlinks back to configs/agents/.
 
 This script does not manage secrets. Keep shell secrets in ~/.zshrc.local.
 EOF
@@ -32,6 +33,9 @@ while (( $# )); do
       ;;
     --all)
       add_target all
+      ;;
+    --agent-instructions)
+      add_target agent-instructions
       ;;
     --codex)
       add_target codex
@@ -156,8 +160,53 @@ install_dir() {
   log "Synced directory $target"
 }
 
+install_symlink() {
+  local source="$1"
+  local target="$2"
+  ensure_source "$source"
+
+  if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$source" ]]; then
+    log "Unchanged symlink $target"
+    return
+  fi
+
+  if (( DRY_RUN )); then
+    log "Would install symlink $target -> $source"
+    if [[ -e "$target" || -L "$target" ]]; then
+      backup_path "$target"
+    fi
+    return
+  fi
+
+  mkdir -p "${target:h}"
+  if [[ -e "$target" || -L "$target" ]]; then
+    backup_path "$target"
+    rm -rf "$target"
+  fi
+  ln -s "$source" "$target"
+  log "Installed symlink $target -> $source"
+}
+
+sync_codex_agents() {
+  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
+}
+
+sync_codex_personal_agents() {
+  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.codex-personal/AGENTS.md"
+}
+
+sync_claude_agents() {
+  install_symlink "$ROOT/configs/agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+}
+
+sync_agent_instructions() {
+  sync_codex_agents
+  sync_codex_personal_agents
+  sync_claude_agents
+}
+
 sync_codex() {
-  install_file "$ROOT/configs/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+  sync_codex_agents
   install_file "$ROOT/configs/codex/config.toml" "$HOME/.codex/config.toml"
   install_file "$ROOT/configs/codex/keybindings.json" "$HOME/.codex/keybindings.json"
   install_dir "$ROOT/configs/codex/agents" "$HOME/.codex/agents"
@@ -165,6 +214,7 @@ sync_codex() {
 
 sync_codex_personal() {
   log "Codex personal uses independent home $HOME/.codex-personal; not overwriting its config.toml"
+  sync_codex_personal_agents
 }
 
 sync_drafts_styles() {
@@ -173,7 +223,7 @@ sync_drafts_styles() {
 }
 
 sync_claude() {
-  install_file "$ROOT/configs/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+  sync_claude_agents
   install_file "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
 }
 
@@ -207,6 +257,7 @@ sync_karabiner() {
 
 for target in "${TARGETS[@]}"; do
   case "$target" in
+    agent-instructions) sync_agent_instructions ;;
     codex) sync_codex ;;
     codex-personal) sync_codex_personal ;;
     drafts-styles) sync_drafts_styles ;;

@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $pr to confirm scope, commit local changes, push the branch, open a draft GitHub PR, or address actionable review comments."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

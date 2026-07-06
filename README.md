@@ -80,6 +80,7 @@ Machine config source copies live under `configs/`.
 
 ```text
 configs/
+├─ agents/
 ├─ claude/
 ├─ cmux/
 ├─ codex/
@@ -95,6 +96,7 @@ Sync selected config sources with:
 
 ```sh
 scripts/sync-configs.sh --dry-run --all
+scripts/sync-configs.sh --agent-instructions
 scripts/sync-configs.sh --codex
 scripts/sync-configs.sh --codex-personal
 scripts/sync-configs.sh --drafts-styles
@@ -103,6 +105,10 @@ scripts/sync-configs.sh --claude
 
 Review the dry-run before applying a scoped sync. The script backs up existing
 targets before replacing them.
+
+Global agent behavior lives in `configs/agents/AGENTS.md`. Keep it handwritten
+and short; `scripts/sync-configs.sh` links it into `~/.codex/AGENTS.md`,
+`~/.codex-personal/AGENTS.md`, and `~/.claude/CLAUDE.md`.
 
 `codex p` is a shell shortcut for launching Codex with
 `CODEX_HOME=$HOME/.codex-personal`; it uses the independent personal Codex home,
