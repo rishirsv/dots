@@ -112,11 +112,10 @@ and short; `scripts/sync-configs.sh` links it into `~/.codex/AGENTS.md`,
 
 `codex p` is a shell shortcut for launching Codex with
 `CODEX_HOME=$HOME/.codex-personal`; it uses the independent personal Codex home,
-not a `--profile personal` layer under `~/.codex`.
-
-`--codex-personal` intentionally does not overwrite
-`~/.codex-personal/config.toml`; that home has its own auth, state, memories,
-plugins, marketplaces, and trusted projects.
+not a `--profile personal` layer under `~/.codex`. `--codex` and
+`--codex-personal` symlink both homes to the same repo-owned Codex config,
+keybindings, global instructions, and agent definitions so they differ only by
+home/account state.
 
 `--drafts-styles` installs the repo-managed Drafts style library into both
 `~/.codex/skill-state/drafts/styles` and

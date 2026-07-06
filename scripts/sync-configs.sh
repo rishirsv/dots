@@ -207,14 +207,16 @@ sync_agent_instructions() {
 
 sync_codex() {
   sync_codex_agents
-  install_file "$ROOT/configs/codex/config.toml" "$HOME/.codex/config.toml"
-  install_file "$ROOT/configs/codex/keybindings.json" "$HOME/.codex/keybindings.json"
-  install_dir "$ROOT/configs/codex/agents" "$HOME/.codex/agents"
+  install_symlink "$ROOT/configs/codex/config.toml" "$HOME/.codex/config.toml"
+  install_symlink "$ROOT/configs/codex/keybindings.json" "$HOME/.codex/keybindings.json"
+  install_symlink "$ROOT/configs/codex/agents" "$HOME/.codex/agents"
 }
 
 sync_codex_personal() {
-  log "Codex personal uses independent home $HOME/.codex-personal; not overwriting its config.toml"
   sync_codex_personal_agents
+  install_symlink "$ROOT/configs/codex/config.toml" "$HOME/.codex-personal/config.toml"
+  install_symlink "$ROOT/configs/codex/keybindings.json" "$HOME/.codex-personal/keybindings.json"
+  install_symlink "$ROOT/configs/codex/agents" "$HOME/.codex-personal/agents"
 }
 
 sync_drafts_styles() {
