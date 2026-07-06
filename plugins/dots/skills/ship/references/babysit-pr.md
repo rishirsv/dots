@@ -9,7 +9,7 @@ Babysit only the PR that this publish run created or reused for the current bran
 The goal is to keep the just-published PR moving until the first review/check cycle is through: review requested, checks observed, obvious publication fallout handled, and the branch pushed again if a scoped fix is needed.
 
 Do not merge from `ship` or this reference. If the user asks to merge, return
-to the main skill's landing boundary and use `$land-pr`.
+to the main skill's landing boundary and use `$pr land`.
 
 ## Request Codex Review
 
@@ -33,9 +33,9 @@ not a general status, repair, or stewardship loop.
 
 For loop cadence, poll budget, and the `gh pr view` / `gh pr checks` status
 field semantics, use the canonical loop in
-[`../../steward-pr/SKILL.md`](../../steward-pr/SKILL.md). Confirm the review
-comment landed, then run that loop once to observe the first check/review
-cycle.
+[`../../pr/references/landing.md`](../../pr/references/landing.md) steward section (`$pr steward`). Confirm
+the review comment landed, then run that loop once to observe the first
+check/review cycle.
 
 While watching, also inspect inline pull request review comments before
 deciding there are no actionable findings:

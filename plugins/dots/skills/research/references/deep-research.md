@@ -11,7 +11,7 @@ they do not own the final decision.
 
 ## When To Fan Out
 
-See SKILL.md's "Runtime Flow" section for the default invocation and delegation
+See SKILL.md's "Workflow" section for the default invocation and delegation
 framing. Use multiple workers only when at least two are true:
 
 - The question spans multiple source classes, such as local code, official docs, ecosystem practice, issue trackers, and design tradeoffs.
@@ -55,16 +55,8 @@ same source class and question, tighten the split or use one worker.
 ## Orchestration
 
 Use the active harness's delegation mechanism when one is available and
-explicitly authorized. Choose the worker role or prompt shape from the slice:
-
-- Research worker: bounded codebase, documentation, web, or technical-option
-  research.
-- Exploration worker: narrow codebase discovery, file finding, symbol tracing,
-  and quick local orientation.
-- Adversarial reviewer: pressure-test a research summary, candidate
-  recommendation, prompt, workflow, or individual high-impact claim.
-- Implementation worker: implement only after research has produced a concrete
-  approved change with a disjoint write scope.
+explicitly authorized. See `../../../references/subagent-lanes.md` for lane
+roles and fan-out rules; pick the lane that fits each slice.
 
 Use barriers deliberately:
 

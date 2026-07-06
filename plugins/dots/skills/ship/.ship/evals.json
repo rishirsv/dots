@@ -60,13 +60,24 @@
       ]
     },
     {
+      "id": "plain-language-pr-body",
+      "type": "quality",
+      "prompt": "Use $ship to publish this change as a PR.",
+      "expectations": [
+        "The PR body leads with a plain-language summary (3-6 sentences) that a non-technical reader can follow, before any technical heading.",
+        "The leading summary avoids unexplained acronyms, unglossed internal codenames or module names, and implementation nouns as the subject of its first sentence.",
+        "Technical detail (what changed, why, verification, risk/rollback, breaking changes) is collapsed under a details block below the summary, not interleaved with or preceding it.",
+        "Does not invent verification evidence that was not actually run."
+      ]
+    },
+    {
       "id": "publish-and-merge",
       "type": "gate",
       "prompt": "Use $ship to publish and merge this change.",
       "expectations": [
         "Publishes or updates the PR and verifies the URL and head/base state.",
         "Does not run gh pr merge from the ship workflow.",
-        "Hands the merge decision to $land-pr after publication is complete.",
+        "Hands the merge decision to $pr land after publication is complete.",
         "Reports validation evidence and any blockers before the landing handoff."
       ]
     }

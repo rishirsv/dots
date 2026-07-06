@@ -417,7 +417,9 @@ A context pointer is the sentence or bullet that sends the agent to another
 file; its wording decides whether the agent reaches the material reliably.
 If must-have material is hidden behind a weak pointer, sharpen the
 condition first — inline only when the sharpened pointer still fails or the
-material truly applies to every run.
+material truly applies to every run. Never restate material a pointer
+already covers — point, don't paraphrase: a restated reference doubles the
+context cost and drifts from its source.
 
 ## Completion Criteria And Premature Completion
 
@@ -457,7 +459,10 @@ tone preferences, ordinary sequencing, "be clear/concise/comprehensive," and
 generic "validate your work" language. Prefer explaining why a behavior
 matters over heavy-handed blanket commands — a stack of rigid prohibitions
 usually means a better section name, example, or output shape would remove
-the ambiguity more cleanly. Treat `Operating Rules` as a stable surface;
+the ambiguity more cleanly. A negative instruction earns its place only when
+it gates an irreversible or external action or encodes an observed failure;
+do not write prohibitions for problems that haven't happened — boundaries
+are earned, not preemptive, in the body as much as in the description. Treat `Operating Rules` as a stable surface;
 touch it only when the user explicitly authorizes a rule change, so
 hard-won rules aren't silently overwritten by routine improvements.
 

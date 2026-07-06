@@ -8,7 +8,7 @@ the oracle task, set the altitude, then tune.
 Two rules apply to every archetype:
 
 - **Every file keeps a role.** `target`, `source`, `validation`, `constraint`,
-  or `risk` (see the SKILL's File Inclusion Rules). A file with no role is noise.
+  or `risk` (see the SKILL's Context section). A file with no role is noise.
 - **Right altitude beats more files.** Use the smallest context at which a fresh
   model can reason correctly. Too little forces guessing; too much buries the
   decision and burns the token budget.
@@ -67,7 +67,7 @@ source and only duplicate tokens. Exclude unrelated sibling skills.
 - plugins/dots/skills/oracle/SKILL.md (target): the skill contract being improved.
 - plugins/dots/skills/oracle/references/*.md (source): runtime depth the SKILL links to; advice must stay consistent.
 - plugins/dots/skills/oracle/scripts/oracle_package.py (source): the deterministic helper the guidance describes.
-- plugins/meta-skill/tests/test_oracle_package.py (validation): pins helper behavior; kept outside the skill folder so it is not shipped in the portable package.
+- plugins/dots/tests/test_oracle_package.py (validation): pins helper behavior; kept outside the skill folder so it is not shipped in the portable package.
 - .plans/<skill>-design.md (constraint): why the skill is shaped this way and its non-goals.
 - plugins/meta-skill/skills/skill-writer/SKILL.md (constraint): house authoring standard the skill must satisfy.
 - excluded: dist/** — generated packages, rebuilt from source.
@@ -147,15 +147,10 @@ verify those claims (`validation`); the user constraints the advice must respect
 (`constraint`); missing context the answer assumed (`risk`). Treat the answer as
 hypotheses until local evidence supports them.
 
-## Token Budget And Preview
-
-The package enforces a hard `--token-budget` (default 270000 estimated input
-tokens, counting `prompt.md` plus the unzipped context). If a chosen altitude
-exceeds it, the package is refused — that is the signal to drop to a smaller
-altitude, switch to selected patch excerpts, or split the oracle run, not to raise
-the budget reflexively. Run `--dry-run` first to right-size the bundle: it prints
-the selected/skipped manifest, per-file token estimates, and the total against
-the budget without writing anything.
+If a chosen altitude pushes a package over the SKILL's `--token-budget`, that is
+the signal to drop to a smaller altitude, switch to selected patch excerpts, or
+split the oracle run — see the SKILL's Package section for the budget and
+`--dry-run` preview.
 
 ## Deterministic Helper Boundaries
 

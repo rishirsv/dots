@@ -1,0 +1,47 @@
+# Description Standard
+
+The checklist for skill `name` and `description` frontmatter, distilled from
+Anthropic's Agent Skills authoring guidance. Descriptions are the only text
+the router sees for every skill on every turn — they carry the whole
+discovery contract.
+
+## Hard rules
+
+- Third person, always. "Reviews changed code…" — never "I can help…" or
+  "Use me to…".
+- State both what the skill does and when to use it. Include the words a
+  user would actually type (trigger phrases), drawn from real usage when
+  history is available.
+- Front-load the key use case: listings truncate, and routers weight early
+  tokens. The first clause should carry the strongest trigger.
+- Boundaries are earned, not preemptive: add a "not for" clause
+  (`not for X — use $y`) only when a real mis-route has been observed or two
+  live descriptions genuinely collide on one request. Speculative boundary
+  clauses add reconciliation cost and can make routing worse. An
+  explicit-only skill needs no boundary against an auto skill — invocation
+  mode already separates them.
+- Name: lowercase letters/numbers/hyphens, ≤64 chars, no reserved words
+  ("anthropic", "claude"), no vague nouns (`helper`, `utils`, `tools`).
+  Prefer short verbs or noun phrases users actually type.
+- Description ≤1024 chars by spec; target ≤45 words in this repo. No XML
+  tags.
+
+## Quality tests
+
+- **Routing test**: could a router pick this skill over its nearest sibling
+  from the descriptions alone? If two descriptions both plausibly claim a
+  request, both need boundary clauses.
+- **Idiom test**: do the trigger tokens match how the user actually invokes
+  it (check session history — e.g. "ultraplan", not just "ultra-plan")?
+- **Vagueness test**: "Helps with documents", "Processes data" and any
+  description that names a category instead of an action fails.
+- **Invocation-mode legibility**: explicit-only skills say so and name the
+  invocation tokens; auto skills lead with "Use when…" conditions.
+
+## Anti-patterns
+
+- Adjective padding ("thorough", "careful", "powerful") — no-op words.
+- Listing every synonym of one trigger — one strong token per branch.
+- Burying the trigger phrases after 20 words of job narration.
+- First-person voice, workflow steps, or implementation detail in the
+  description.

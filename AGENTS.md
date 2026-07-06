@@ -9,6 +9,8 @@ configuration.
 - Config source lives under `configs/<tool>/`.
 - Repo-owned helper entrypoints live under `scripts/`.
 - Generated plugin packages live under ignored `dist/`.
+- Work-in-progress skills that must not ship in any plugin live under `wip/`;
+  see `wip/README.md`.
 
 ## Docs And Local State
 
@@ -34,8 +36,10 @@ configuration.
 
 - Sync plugin packages and installed local plugin caches with
   `scripts/sync-plugins.sh`.
-- After any commit made directly on `main`, run `scripts/sync-plugins.sh` before
-  final handoff so local plugin caches match the committed source.
+- After any commit made directly on `main`, and after any plugin PR merges into
+  `main`, run `scripts/sync-plugins.sh` before final handoff so local plugin
+  caches match the committed source. Bump the owning `plugin.json` version when
+  a release changes skill behavior.
 - Generate plugin packages only with `scripts/package-plugins.sh`.
 - Sync config sources with `scripts/sync-configs.sh --dry-run --all` first.
 - Apply scoped config syncs only after reviewing dry-run output, for example

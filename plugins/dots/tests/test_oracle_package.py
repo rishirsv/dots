@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import tempfile
@@ -313,6 +314,89 @@ class OraclePackageTests(unittest.TestCase):
 
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("repeated top-level headings", result.stderr)
+
+
+    def test_package_writes_how_to_use_and_zip_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.txt"
+            source.write_text("context\n", encoding="utf-8")
+
+            result = self.run_package(
+                "--task",
+                "Review the plan.",
+                "--file",
+                "source.txt",
+                "--output-dir",
+                str(root),
+                "--name",
+                "oracle-how-to-use",
+                cwd=root,
+            )
+
+            package_dir = root / "oracle-how-to-use"
+            how_to_use = (package_dir / "HOW-TO-USE.md").read_text(encoding="utf-8")
+            self.assertIn("ChatGPT Pro", how_to_use)
+            self.assertIn("prompt.md", how_to_use)
+            self.assertIn("context.zip", how_to_use)
+            self.assertIn("After The Oracle", how_to_use)
+
+            self.assertIn("zip_verified=ok", result.stdout)
+            self.assertIn("files=", result.stdout)
+            self.assertIn("largest_file=", result.stdout)
+
+    def test_zip_exceeding_max_size_warns_but_still_writes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "big.bin"
+            source.write_bytes(os.urandom(2_000_000))
+
+            result = self.run_package(
+                "--task",
+                "Review the plan.",
+                "--file",
+                "big.bin",
+                "--output-dir",
+                str(root),
+                "--name",
+                "oracle-zip-warning",
+                "--max-zip-mb",
+                "0.001",
+                "--max-file-bytes",
+                "5000000",
+                "--allow-oversized",
+                cwd=root,
+            )
+
+            package_dir = root / "oracle-zip-warning"
+            self.assertTrue((package_dir / "context.zip").exists())
+            self.assertTrue((package_dir / "HOW-TO-USE.md").exists())
+            self.assertIn("over the 0.001MB guidance", result.stderr)
+            self.assertIn("tighten --file filters", result.stderr)
+
+    def test_ds_store_excluded_even_when_explicitly_listed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            junk = root / ".DS_Store"
+            junk.write_text("junk", encoding="utf-8")
+            source = root / "source.txt"
+            source.write_text("context\n", encoding="utf-8")
+
+            result = self.run_package(
+                "--task",
+                "Review the plan.",
+                "--file",
+                ".DS_Store",
+                "--file",
+                "source.txt",
+                "--output-dir",
+                str(root),
+                "--name",
+                "oracle-ds-store",
+                cwd=root,
+            )
+
+            self.assertIn("skipped: .DS_Store", result.stdout)
 
 
 if __name__ == "__main__":

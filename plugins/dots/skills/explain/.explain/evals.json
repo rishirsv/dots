@@ -1,0 +1,85 @@
+{
+  "skill_name": "explain",
+  "defaults": {
+    "runner": "codex_app_server",
+    "repetitions": 1
+  },
+  "candidates": [
+    {
+      "candidate": "current",
+      "display": "Current skill",
+      "source": {
+        "kind": "current_worktree",
+        "ref": "."
+      }
+    }
+  ],
+  "evals": [
+    {
+      "id": "grounds-claims-in-actual-material",
+      "type": "quality",
+      "prompt": "Use $explain to explain what this error means and why it's happening: [stack trace from our payment service pointing at a null customer_id field].",
+      "expectations": [
+        "Reads or references the actual stack trace and, where named, the local source it points to rather than giving a generic explanation of the error class.",
+        "Ties the explanation to the specific field, function, or call site named in the material.",
+        "Separates confirmed fact from inference when the exact cause isn't fully visible from the given material.",
+        "Does not substitute textbook knowledge of the error type for grounding in the provided material."
+      ]
+    },
+    {
+      "id": "bridges-hidden-context",
+      "type": "quality",
+      "prompt": "Use $explain to explain why our team decided to use event sourcing instead of a plain CRUD model for the orders service.",
+      "expectations": [
+        "Answers the real question of why this decision was made rather than giving a textbook definition of event sourcing.",
+        "Adds at least one missing bridge, such as background, a relationship, or a causal link that connects the decision to the orders service's actual needs.",
+        "Grounds the explanation in the repo's decision context or code when it is available rather than pure abstraction.",
+        "Stops once the user has enough to act on or understand the decision, without padding."
+      ]
+    },
+    {
+      "id": "smallest-clear-format-simple-question",
+      "type": "quality",
+      "prompt": "Use $explain: what does the --dry-run flag do on our deploy script?",
+      "expectations": [
+        "Answers in prose for this single, simple concept rather than defaulting to headers, tables, or bulleted sections.",
+        "Leads with the direct answer instead of a lengthy preamble.",
+        "Does not add unnecessary structure, such as an ELI5 breakdown or knowledge-check questions.",
+        "Stops once the flag's behavior is clear without padding into unrelated flags."
+      ]
+    },
+    {
+      "id": "route-durable-doc-request",
+      "type": "gate",
+      "prompt": "Use $explain to explain our authentication architecture, and then save that as a permanent doc in our docs folder.",
+      "expectations": [
+        "Answers the explanation request in chat directly.",
+        "Recognizes the save-as-durable-doc request as outside this skill's scope and does not write or modify a file itself.",
+        "Recommends routing the durable-doc creation to docs-writer or an equivalent documentation skill.",
+        "Does not silently create the doc file under this skill."
+      ]
+    },
+    {
+      "id": "causal-why-question-bounded",
+      "type": "quality",
+      "prompt": "Use $explain: why did our checkout conversion rate drop after last week's deploy?",
+      "expectations": [
+        "Leads with a short answer rather than an extended investigation narrative.",
+        "Separates confirmed facts from inferences and names any real gaps in the available evidence.",
+        "Explains the causal flow or pressure point in plain prose rather than a purely technical dump.",
+        "Includes a 'Next move' only if the user needs to verify, continue, or decide something, not as an unsolicited implementation plan."
+      ]
+    },
+    {
+      "id": "no-eli5-or-teaching-scaffolds",
+      "type": "gate",
+      "prompt": "Use $explain to explain what a race condition is, in the context of the bug we just found in our cache invalidation code.",
+      "expectations": [
+        "Explains using the actual cache invalidation code as the anchor rather than a generic textbook definition detached from the code.",
+        "Does not use ELI5 framing, Socratic questions, or knowledge-check quizzes.",
+        "Uses an example or diagram only if it reduces comprehension effort, not as decorative scaffolding.",
+        "Ends once the user can see what the race condition is and why it matters here."
+      ]
+    }
+  ]
+}

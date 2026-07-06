@@ -79,9 +79,9 @@ Pick the smallest specialist route that satisfies the user's request.
 - Use `skill-writer` for new skills, blank-page drafting, trigger design,
   authoring guidance, source distillation, or turning a repeated workflow into a
   portable skill.
-- Use `skill-doctor` for existing skills: static reviews, `Clean` payload
-  hygiene, fixes, diagnosis, prompt cleanup, static description or trigger
-  wording cleanup, implementation improvements, or reported failures.
+- Use `skill-doctor` for existing skills: reviews, payload hygiene, fixes,
+  diagnosis, prompt cleanup, description or trigger wording cleanup,
+  implementation improvements, or reported failures.
 - Use `skill-evaluator` when the user needs task evidence across candidates,
   such as no-skill vs current-skill vs edited-skill comparisons, trial suites,
   scoring, trigger reliability, should-trigger/near-miss behavior, or outcome
@@ -112,7 +112,7 @@ Useful tiebreakers:
 - A request about a new skill starts with `skill-writer`.
 - A request about source/research/system text, maintainer language, internal
   decisions, rejected options, or runtime portability starts with
-  `skill-doctor` in `Clean` mode.
+  `skill-doctor` (payload hygiene).
 - A request about reviewing or fixing one specific existing skill starts with
   `skill-doctor`.
 - A request asking whether a trigger or description change improves activation

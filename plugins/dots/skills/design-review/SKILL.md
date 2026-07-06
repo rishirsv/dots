@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Reviews existing or rendered product UI from current-run evidence along two paths: surface critique of one rendered artifact, screen, or component (self-review, pre-handoff QA, comparison against an approved visual target) and flow audit of a multi-step journey, funnel, onboarding, or settings path (step health plus UX, design, and accessibility findings). Use for design critique, UX audit, or inspect/assess/evaluate requests; not for code review, redesign ideation, or implementation."
+description: "Reviews existing or rendered product UI: critique of one artifact against an approved target or self/QA review, and flow audit of a multi-step journey covering UX, design, and accessibility. Use for design critique, UX audit, or product-design QA; not for code review, redesign, or implementation."
 ---
 
 # Design Review
@@ -16,13 +16,13 @@ and reviewer protocol:
 - **Surface critique**: one rendered artifact, screen, component, or surface.
   Agent self-review, pre-handoff QA, and focused design critique, compared
   against an approved visual target when one exists. Ends in a pass/block gate
-  decision. Use this before every visual-design build handoff.
+  decision. Use this before every design build handoff.
 - **Flow audit**: a multi-step journey, funnel, onboarding path, checkout path,
   settings path, workflow, or product area. Ends in a numbered step list with
   health labels plus UX, design, and accessibility findings.
 
 This skill evaluates; it does not implement fixes. Route build, redesign, or
-polish work to [visual-design](../visual-design/SKILL.md), which re-enters this
+polish work to [design](../design/SKILL.md), which re-enters this
 skill's surface path as its blocking pre-handoff gate. This skill owns the
 comparison method, the fidelity surfaces, the severity scale, and the
 pass/block decision; build skills invoke it as a gate and do not restate the
@@ -54,6 +54,10 @@ work against the intended design, the accepted brief, and the quality bar for
 its scope.
 
 ## Evidence Rules
+
+Capture evidence per the shared
+[visual-proof checklist](../../references/visual-proof.md) (tool order,
+`file://` fallback, wrong-tab check, viewports).
 
 - Use only evidence captured or explicitly opened, inspected, and recorded in
   the current run. Do not use memory, prior chats, old traces, cached

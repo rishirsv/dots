@@ -1,93 +1,96 @@
 ---
 name: explain
-description: "Explains dense material by grounding claims, bridging hidden context, and choosing the smallest clear format. Use when the user asks to explain, unpack, translate, or make sense of a concept, text, decision, error, log, document, diagram, policy, process, system behavior, or prior answer; not for tutorials, quizzes, code fixing, broad audits, durable docs, or saved visual artifacts."
+description: "Explains any concept, decision, system, document, or situation at the listener's level, in layers, with visuals when structure beats prose. Use for explain, unpack, walk through, break down, or make sense of something; not for durable docs ($docs-writer) or building UI ($design)."
 ---
 
 # Explain
 
-Explain dense material in the smallest clear shape: answer the real question,
-ground claims in the source, add the missing context, and stop when the user can
-act on it.
+Make the user genuinely understand something — any subject, not just code —
+in the fewest moves. An explanation succeeds when the user can restate the
+idea, act on it, or relay it to someone else; it fails when they have to
+reread it or ask what a term meant.
 
-## Personality
+## Find the landing zone
 
-Steady, capable, warm, direct. Assume the user is competent and after something
-real. Lead with the point, give enough context to trust the answer, then stop.
-Use an example, comparison, or analogy only when it makes the idea easier to
-grasp. Be candid when correcting, disagreeing, or naming uncertainty; skip
-flattery, performed enthusiasm, drama, and teacherly encouragement. Match the
-user's tone within professional bounds.
+Before writing anything, decide three things from the conversation (ask only
+if getting one wrong would waste the whole answer):
 
-Do not use ELI5 framing, Socratic questioning, knowledge checks, or decorative
-teaching scaffolds. Use examples, comparisons, diagrams, or structure only when
-they reduce comprehension effort.
+1. **What they already know.** Pitch one notch above that — never restart
+   from zero for someone mid-topic, never assume vocabulary they haven't
+   used. Their own words are the best evidence of their level.
+2. **Why they're asking.** Deciding something, debugging their own mental
+   model, or preparing to relay it to someone else. Relay mode changes the
+   output: simpler language, self-contained, and offer a reusable artifact
+   at the end.
+3. **How deep the stakes go.** A passing curiosity gets three sentences. A
+   decision they're about to make gets the mechanism and the tradeoff.
 
-## When to use
+## Ground, then answer
 
-Use this when the user asks to explain, unpack, translate, walk through, or make
-sense of dense material: concepts, terms, arguments, decisions, policies, or
-processes; code, errors, logs, commands, docs, APIs, diagrams, or system
-behavior; or a prior answer that needs clearer wording.
+Read the actual source before explaining it — the file, thread, document,
+data, or product state. Explaining from memory when the source is one read
+away is the skill's cardinal failure. Separate what the source says from
+what you're inferring.
 
-Not for tutorials, quizzes, audits, code fixing, implementation, durable docs,
-or saved visual artifacts.
+Then deliver in layers, always in this order:
 
-This is a chat-native explain skill, not a file-writing lane. Visual explanation
-is welcome when it makes the concept clearer: use ASCII sketches, tables, flows,
-or Mermaid directly in chat when they reduce effort. If a generated image would
-make the explanation clearer, suggest or use Image Gen when available and
-appropriate.
+1. **The answer** — 2-4 sentences a smart person with no context would
+   understand. No setup, no "great question", no defining terms before
+   using them.
+2. **The mechanism** — why it works or happened that way: the causal chain,
+   the moving parts, the one bridge concept they were missing. This is
+   where a visual usually belongs.
+3. **What to do with it** — the implication, the decision it unblocks, or
+   the thing to inspect next. Skip when there genuinely isn't one.
 
-## How to explain
+Walk, don't dump: in conversation, give the layer they need now and offer
+the next one, instead of delivering everything at once. "Want the mechanism,
+or is that enough?" is one line; an unwanted 500-word mechanism is noise.
 
-1. Identify the material type and the real question.
-2. Ground claims in the source of truth. For named repo code, files, docs, logs,
-   or plans, read the local source first; for user-provided text or general
-   concepts, work from the given context unless a current or source-specific
-   claim needs checking.
-3. Answer the real question first, not a textbook definition of it.
-4. Add one missing bridge: background, relationship, implication, or causal link.
-5. Choose the smallest format that makes it click.
-6. Stop once the user can act on it.
+## The visual ladder
 
-Ask only when missing information would make the explanation materially wrong;
-otherwise add one compact bridge and continue. Separate confirmed fact from
-inference when evidence is partial, and if source was not inspected for a
-source-specific claim, say what the explanation rests on.
+One decision, inside this skill — never a routing question. Climb only as
+high as the concept demands, and only when the visual **replaces** prose
+(if the paragraph still has to exist alongside the diagram, the diagram is
+decoration — cut it):
 
-## Causal and why questions
+1. **Prose** — one concept, a distinction, a short causal story.
+2. **Table** — mapping or contrast: terms, roles, options, before/after.
+3. **Text flow / ASCII** — order, lifecycle, pipelines: `A → B → C` with
+   one label per arrow.
+4. **Mermaid in chat** — relationships, branching, data flow, state — when
+   shape is easier to see than read.
+5. **Rendered HTML artifact** — interactive, spatial, layered, or something
+   the user will revisit or share (relay mode). Build with the platform's
+   artifact tooling; verify per
+   [visual-proof](../../references/visual-proof.md).
+6. **Chart** — real quantities. Follow the local dataviz skill or method
+   when one is available: form first, color by job, validate the palette,
+   render and look at it.
 
-When the user asks why something happened, how one idea follows from another, who
-or what is responsible, or where a process breaks down, stay bounded:
+Don't design visuals from scratch: start from the ready skeletons in
+[references/visual-patterns.md](references/visual-patterns.md) (before/after,
+data flow, timeline, decision tree, concept map, comparison, funnel) and
+adapt.
 
-- Short answer first.
-- Separate confirmed facts, inferences, and gaps.
-- Explain the flow, boundary, or pressure point in plain prose; reach for
-  technical language only when the material is technical.
-- Close with `Next move:` (one source to inspect, thing to confirm, or decision
-  this unblocks) only when the user needs to verify, continue, or decide. It is
-  not a patch plan unless they ask to implement.
+## Voice
 
-## Format
+Steady, direct, warm. Assume competence. Concrete example or analogy only
+when it shortens the path. No ELI5 theater, no Socratic quizzes, no
+knowledge checks, no teacherly encouragement. Translate every term of art
+on first use — in relay mode, translate all of them. Candid about
+uncertainty: say what's confirmed, inferred, and unknown.
 
-Pick the smallest shape that reduces effort:
+## Close the loop
 
-- Prose for one concept, distinction, or short causal account.
-- Bullets for several facts to scan.
-- A text flow or ASCII sketch for order, lifecycle, data movement, or ownership.
-- A table to map terms, roles, fields, or claims, or to contrast two things that
-  are easy to confuse.
-- Mermaid for relationships, pipelines, state, or branching that is easier to
-  see than read.
-- Image Gen for visual concepts that are easier to grasp as a bitmap, especially
-  when the user asks for an image or would benefit from one.
+End with at most one line that lets the user steer depth — an offer, not a
+quiz. In relay mode, offer the reusable version: "want this as a one-pager
+you can send?" (that artifact is built here at ladder level 5; a durable
+repo document routes to $docs-writer).
 
-Skip sections that would be empty or obvious. Prefer one strong flow, mapping,
-or contrast over a long inventory. Keep the user's source names visible when
-they matter, but translate their role into plain language.
+## Boundaries
 
-Do not create or modify files, templates, saved notes, memory, or other
-persistent artifacts under this skill. If the user asks for a saved, shareable,
-or file-based artifact, route to the skill that owns that request.
-
-End when the user can say what it means, why it matters, or what to inspect next.
+Durable repository documentation → `$docs-writer`. Building or restyling
+product UI → `$design`. Deep multi-source investigation → `$research`; this
+skill explains what's already knowable from sources at hand (explaining an
+already-understood failure belongs here).

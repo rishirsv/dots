@@ -1,36 +1,39 @@
 ---
 name: self-improve
-description: "Explicit-only skill that mines Codex sessions, memories, skill usage, and instruction state to propose evidence-backed improvements — AGENTS.md rules, skill fixes, new skills, memories, docs, scripts, validation checks — and to recommend repo scaffolding and Codex automations. Surfaces and packages proposals; never edits without approval; not for one-off bug fixes or changes the user already specified."
+description: "Explicit-only skill that mines Codex sessions, memories, skill usage, and goal state to surface evidence-backed proposals — skill fixes, new skills, memory promotions, docs, scripts, validation checks — and to propose and, after approval, apply AGENTS.md/instruction-file changes. Not for one-off bug fixes or user-specified changes."
 ---
 
 # Self Improve
 
 Find durable ways to make future agent runs better. Mine prior Codex threads,
-memory summaries, skill usage, and instruction files; qualify the evidence; then
-propose specific changes. Do not patch anything until the user approves a
-concrete change.
+memory summaries, skill usage, goal state, and instruction files; qualify the
+evidence; then propose specific changes. Do not patch anything until the user
+approves a concrete change — the one exception is AGENTS.md/instruction-file
+edits, which this skill applies itself once approved.
 
 ## The Loop
 
-Every mode feeds one pipeline with one approval gate:
+Every mode feeds one pipeline with one approval gate, and the script and the
+agent do different jobs within it:
 
 **intake** (surface candidates) → **judge** (verify evidence, score strength) →
-**human approves** → **route** to the owner that applies the change.
-
-Self-Improve owns finding and packaging. It does not own applying: skill source
-edits route to `skill-doctor`; AGENTS.md edits go to the closest-scope file after
-approval; memories are proposed as notes, never edited directly.
-
-## Division Of Labor
-
-Keep this honest. The script and the agent do different jobs:
+**human approves** → **apply or route**: AGENTS.md/instruction-file changes are
+applied by this skill; every other change routes to the owner that applies it.
 
 - **The script surfaces candidates**: it scans sessions for preference and
   correction sentences, scores evidence strength, ranks threads, detects skill
-  usage and friction, and inspects a repo for missing scaffolding.
+  usage and friction, flags unconsolidated memory summaries, flags stale
+  durable goals, and inspects a repo for missing scaffolding.
 - **You (the agent) extract the real evidence**: read the cited threads, derive
   expected vs actual behavior and the durable correction, and propose the
   smallest change. The script's buckets and scores are hints, not verdicts.
+
+Self-Improve owns finding and packaging every proposal, plus one applying job:
+`Project AGENTS.md` and `Global AGENTS.md` changes. For those, propose the
+observable rule per [references/agents-md.md](references/agents-md.md), then,
+once approved, write it to the closest-scope file yourself. Everything else
+routes elsewhere to apply: skill source edits go to `skill-doctor`; memory
+promotions are proposed as new `Memory Notes` entries, never edited in place.
 
 ## Sources
 
@@ -40,8 +43,14 @@ Use available sources in this order:
 2. Codex thread index: `~/.codex/state_5.sqlite`.
 3. Rollout transcripts from each thread row's `rollout_path`.
 4. Memory summaries: `~/.codex/memories/MEMORY.md`,
-   `~/.codex/memories/rollout_summaries/`, and `~/.codex/memories_1.sqlite`.
-5. Current repo instructions, global `~/.codex/AGENTS.md`, and installed/source
+   `~/.codex/memories/rollout_summaries/`, and `~/.codex/memories_1.sqlite`
+   (table `stage1_outputs`, one row per consolidated thread summary). A row
+   with `selected_for_phase2 = 0` never made it into `MEMORY.md` — `memory-audit`
+   surfaces these as memory-promotion candidates.
+5. Durable goals: `~/.codex/goals_1.sqlite` (table `thread_goals`) —
+   `goal-health` flags goals stuck `blocked`/`paused`/`usage_limited`/
+   `budget_limited` with no recent `updated_at_ms`.
+6. Current repo instructions, global `~/.codex/AGENTS.md`, and installed/source
    skill files.
 
 Treat memories as supporting context. Verify proposed instruction or skill
@@ -59,7 +68,8 @@ changes against thread evidence before patching. Treat
 | Skill audit | `skill-audit` | restrict proposals to existing or new skills |
 | Skill usage | `skill-usage` | which skills ran, how often, where they hit friction |
 | Scaffold | `scaffold` | inspect a repo for missing scaffolding + research handoff |
-| Memory audit | `memory-audit` | list memory sources to compare against evidence |
+| Memory audit | `memory-audit` | list memory sources and flag unconsolidated summaries for promotion |
+| Goal health | `goal-health` | flag blocked/paused/stale durable goals for revive-or-close review |
 | Decide | `decide` | record accept/reject/apply so proposals stop resurfacing |
 | **Deep improvement** | `deep` | flagship pass: orchestrate all modes into one report |
 
@@ -77,6 +87,7 @@ python3 scripts/self_improve.py skill-audit --limit 500 --days 365 --min-support
 python3 scripts/self_improve.py skill-usage --days 7 --limit 250
 python3 scripts/self_improve.py scaffold --path .
 python3 scripts/self_improve.py memory-audit --limit 20
+python3 scripts/self_improve.py goal-health --stale-days 7
 python3 scripts/self_improve.py deep --days 30 --min-strength medium --path .
 python3 scripts/self_improve.py decide accept <proposal-key> --note "approved"
 python3 scripts/self_improve.py decide status
@@ -90,8 +101,8 @@ current app thread. Otherwise use the local state and rollout files above.
 Before a broad pass, rank candidate threads (`triage`). Prefer threads with:
 
 - explicit corrections or preferences;
-- frustration cues such as `come on`, `can't you just`, `keep going`, or
-  `don't stop`;
+- frustration cues (the script owns the list; see
+  [references/skill-analytics.md](references/skill-analytics.md));
 - skill, plugin, instruction, memory, validation, harness, commit, PR, review,
   or tool-selection discussion;
 - failed validation, repeated retries, or a final successful workflow after
@@ -156,8 +167,9 @@ Load the matching reference when a proposal or request enters its area:
 - **[references/agents-md.md](references/agents-md.md)** — how Codex loads
   AGENTS.md, what belongs in it, observable-rule writing, structure, the
   decision-authority order, and editing discipline. Use it for any
-  `Project AGENTS.md` or `Global AGENTS.md` proposal, or when the user asks to
-  structure, write, or clean up an agent instruction file.
+  `Project AGENTS.md` or `Global AGENTS.md` proposal, when the user asks to
+  structure, write, or clean up an agent instruction file, and when applying an
+  approved AGENTS.md change.
 - **[references/skill-analytics.md](references/skill-analytics.md)** — how to read
   `skill-usage` output and turn it into per-skill, workflow, and big-lever
   improvement proposals.
@@ -175,8 +187,11 @@ Load the matching reference when a proposal or request enters its area:
 - Inspect cited transcripts before applying any proposal.
 - Keep proposal buckets disjoint.
 - Prefer the smallest durable change that prevents recurrence.
+- Never edit memories directly; propose them as new `Memory Notes` entries.
 - After the user decides, record it with `decide accept|reject|apply <key>` so
   the proposal does not resurface on the next pass.
+- Validate the touched skill, doc, script, or instruction file after any
+  approved source edit, or state the reason validation was skipped.
 
 ## Output
 
@@ -187,7 +202,8 @@ Return a proposal report:
 
 ### Evidence Sources
 - Sessions: <available/missing, count or gap>
-- Memories: <available/missing, role used>
+- Memories: <available/missing, role used, unconsolidated summary count>
+- Goals: <available/missing, blocked/paused/stale count>
 - Instructions: <files inspected>
 - Skills: <roots inspected>
 
@@ -210,17 +226,7 @@ Return a proposal report:
 ```
 
 When patch drafts are emitted, treat them as proposals. Apply only the approved
-subset, then validate the touched skill, doc, script, or instruction file. Route
-skill source edits through `skill-doctor`.
-
-## Final Check
-
-Before finishing, confirm:
-
-- every recommendation has evidence or is labeled as inference;
-- one-off task noise was filtered out;
-- memories were not edited directly;
-- source edits had explicit approval and were routed to their owner;
-- destinations are disjoint;
-- approved/rejected proposals were recorded with `decide`;
-- validation ran for any approved source edit, or the skip reason is stated.
+subset: write `Project AGENTS.md`/`Global AGENTS.md` changes yourself; route
+skill source edits through `skill-doctor`; propose (never directly edit)
+memory notes and goal actions. Validate the touched skill, doc, script, or
+instruction file after applying.

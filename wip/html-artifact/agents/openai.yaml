@@ -1,0 +1,13 @@
+interface:
+  display_name: "HTML Artifact"
+  short_description: "Turn grounded source into a self-contained, high-fidelity HTML artifact."
+  icon_small: "../../assets/icon.png"
+  icon_large: "../../assets/logo.png"
+  default_prompt: "Use $html-artifact to build a self-contained HTML artifact from this material."
+policy:
+  allow_implicit_invocation: true
+validation:
+  browser_order:
+    - "Use Codex in-app Browser first for rendered artifact inspection."
+    - "Use Chrome extension fallback only when Browser cannot open, inspect, or screenshot the artifact; record the fallback reason."
+    - "Do not recommend Playwright for this skill's artifact validation."

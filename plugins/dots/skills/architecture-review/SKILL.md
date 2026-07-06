@@ -7,9 +7,7 @@ description: "Reviews a codebase or subsystem for structural refactor candidates
 
 Review a codebase or subsystem for structural refactor candidates and architecture improvement opportunities. Surface candidates first; do not start a broad refactor until the user chooses a candidate or explicitly asks for implementation.
 
-Default to hard-cut architecture. For refactors or behavior changes that touch schemas, persisted state, contracts, routing, configuration, feature flags, enum/value sets, runtime ownership, repositories, UI-flow ownership, or tests, assume previous shapes are internal drafts. Keep one canonical owner and one current path.
-
-Do not preserve fallback behavior, compatibility branches, aliases, adapters, dual-shape support, legacy fixtures, migration ladders, rejection tests, or old-shape docs unless a real external boundary requires it. Old code existing is not evidence. If such a boundary exists, name the exact file, function, dependency, and reason it cannot be removed yet.
+Default to hard-cut architecture: one canonical owner, one current path — hard-cut-policy.md defines the posture, exception rule, and cleanup checklist.
 
 ## References
 
@@ -17,7 +15,7 @@ Do not preserve fallback behavior, compatibility branches, aliases, adapters, du
 - Read [deepening.md](references/deepening.md) when proposing a module-deepening candidate or test strategy.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
-- Read [hard-cut-policy.md](references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
+- Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
 - Read [interface-design.md](references/interface-design.md) only after the user selects a candidate and wants alternative interface designs.
 
 ## Scope
@@ -40,7 +38,7 @@ If docs are incomplete, infer the current layer model from the code and state th
 Explore organically and note where the code fights the reader:
 
 - understanding one concept requires bouncing between many small modules
-- a module is shallow: its interface is nearly as complex as its implementation
+- watch for shallow modules
 - pure functions were extracted for testability, but the real bugs hide in how callers coordinate them
 - tightly coupled modules leak across their seams
 - duplicate policy exists in more than one layer
@@ -61,23 +59,17 @@ A good candidate should improve locality, leverage, testability, or AI-navigabil
 
 Do not list speculative refactors just because they are imaginable. A candidate needs visible friction in the code, tests, docs, or change pattern.
 
-Apply the deletion test to suspected shallow modules: if deleting the module makes complexity vanish, it was pass-through; if complexity reappears across callers, it was earning its keep.
+Apply the deletion test (architecture-language.md).
 
 ## Output
 
-Default to a ranked candidate report in chat unless the user asks for a file or the candidate set needs diagrams. For each candidate, include:
+Default to a ranked candidate report in chat unless the user asks for a file or the candidate set needs diagrams. Shape the report however best serves the candidates found; a useful report covers three things per candidate:
 
-- `Files`: files or modules involved
-- `Problem`: why the current architecture is causing friction
-- `Ownership`: runtime owner, first-fix owner, canonical long-term owner, and wrong competing owners when relevant
-- `Seam`: where the current interface lives and where the deeper module's interface should live
-- `Solution`: what would change, in plain English
-- `Benefits`: how locality, leverage, testability, or AI-navigability improves
-- `Tests`: where the owning invariant should be tested and what weaker coverage can be removed
-- `Hard-cut`: old shapes, fallback paths, compatibility branches, or none
-- `Recommendation strength`: `Strong`, `Worth exploring`, or `Speculative`
+1. **The problem** — what friction the current architecture causes, where it lives (files, seams, competing owners), and the evidence.
+2. **The change** — what would move, merge, deepen, or disappear, in plain English, including any hard cuts and where the owning invariant should be tested.
+3. **The payoff and confidence** — how locality, leverage, testability, or navigability improves, and whether this is strongly recommended, worth exploring, or speculative.
 
-End with `Top recommendation`: the first candidate to explore and why.
+Write for the repo owner deciding what to do next: lead with the strongest candidate and why, keep candidates scannable, and skip dimensions that don't apply rather than filling in every field.
 
 Ask which candidate the user wants to explore before designing interfaces or editing code. If the user has already asked to implement, pick the strongest candidate, state the plan, and keep the patch scoped to that candidate.
 
