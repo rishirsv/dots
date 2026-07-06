@@ -1,27 +1,22 @@
 ---
 name: research
-description: "Investigates code, docs, and web sources with enough evidence to trust the answer, keeping scratch out of durable history. Explicit-only: invoke via $research, the Research workflow, or a request for a research report or deep research; not for casual lookups, ordinary implementation, or durable-doc writing."
+description: "Investigates code, docs, web sources, and technical options, and returns an evidence-backed answer or research report with cited sources. Explicit-only: runs when the user asks for research, a research report, or deep research."
 ---
 
 # Research
 
-Investigate code, docs, web sources, and technical options with enough evidence
-for the user to trust the answer and enough restraint to keep scratch research
-out of durable project history.
+Answer research questions with evidence the user can check: real sources,
+current facts, and a clear line between what is known, inferred, and unknown.
 
-This skill is explicit-only. Use it when the user names `$research`, asks for
-the Research workflow, requests a research report, or asks for deep research. Do
-not auto-invoke it for ordinary implementation, code review findings, local
-commits, PR publishing, or casual investigation.
+This skill is explicit-only: it runs when the user asks for research, a
+research report, or deep research.
 
-## Runtime Flow
+## Workflow
 
-For a small, direct question with an obvious answer, skip the ceremony: answer
-immediately, evidence attached inline. No preamble, no contract block, no
-delegation.
+For a small, direct question, answer immediately with the evidence inline —
+no preamble, no contract block, no delegation.
 
-For deep research, a fan-out or delegated run, or an explicit request for a
-research report, use the fuller workflow:
+For deep research, a fan-out or delegated run, or an explicit report request:
 
 1. Emit the preamble and research contract (below).
 2. Choose the mode: codebase, web, mixed, or deep research.
@@ -30,29 +25,22 @@ research report, use the fuller workflow:
 5. Deliver the requested output and route saved artifacts per repository
    convention.
 
-Keep prompts outcome-first even without the visible contract block: hold the
-question, evidence standard, and stop condition in mind.
-
-Default to delegating the bounded research task when the harness provides an
-appropriate worker and the work is more than a quick local lookup. The parent
-keeps conversational context and final synthesis; give the worker the specific
-question, source boundary, evidence bar, and stop condition. One worker is
-enough for a focused question — use more only for genuinely distinct source
-lanes. See `../../references/subagent-lanes.md` for lane roles and fan-out
-rules.
-
-Stay direct when the user asks for a quick/simple answer, forbids delegation,
-no delegation mechanism is available, or delegation would mostly duplicate a
-two-minute lookup.
+Delegate bounded research to a worker when the harness provides one and the
+work is more than a quick lookup: the parent keeps conversational context and
+final synthesis; the worker gets the specific question, source boundary,
+evidence bar, and stop condition. One worker per focused question; more only
+for genuinely distinct source lanes
+(see `../../references/subagent-lanes.md`). Stay direct when the user wants a
+quick answer, forbids delegation, or delegation would duplicate a two-minute
+lookup.
 
 ## Preamble And Contract
 
 Required for deep research, a fan-out or delegated run, or an explicit report
 request — skip it on the small-question path above.
 
-Before tool calls or delegation, emit a concise visible preamble that
-acknowledges the work and states the research contract. Use a small Markdown
-block with labels and short values, not a semicolon-heavy sentence:
+Before tool calls or delegation, state the research contract in a small
+Markdown block with labels and short values:
 
 ```md
 I will treat this as <codebase|web|mixed|deep> research and start by <first
@@ -75,10 +63,7 @@ Include durability and budget only when they matter:
 - **Budget:** <search, file, source, worker, or time limit>
 ```
 
-Keep status prose out of the contract block — say the workflow choice in a
-normal sentence before it.
-
-Ask one concise clarification only when the contract changes source access,
+Ask one clarification only when the answer would change source access,
 artifact location, durability, or implementation risk. Otherwise choose the
 smallest defensible scope and state the assumption.
 
@@ -156,7 +141,7 @@ question. Then compare the two evidence sets explicitly:
 Use deep research for broad, ambiguous, high-impact, or cross-cutting
 questions that justify multiple bounded investigations — including a
 confirmed fan-out or a mid-conversation Research workflow invocation that
-should be delegated. See "Runtime Flow" above for the default delegation
+should be delegated. See "Workflow" above for the default delegation
 framing.
 
 Read `references/deep-research.md` first — it owns the fan-out gate,

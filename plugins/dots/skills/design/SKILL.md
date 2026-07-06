@@ -49,7 +49,7 @@ Start from the target repo and product context before designing. Load the repo
 design contract — the precedence of design sources and the conflict-resolution
 authority order — from [grounding.md](references/grounding.md): an `AGENTS.md`
 `## Design` section or `DESIGN.md`, then tokens / theme / component library, then
-nearby shipped UI, then `PRODUCT.md` and prior accepted designs.
+nearby shipped UI, then product briefs and prior accepted designs.
 
 When the repo carries design conventions they are the authority for how this
 surface looks; apply this skill's visual principles inside those constraints, and

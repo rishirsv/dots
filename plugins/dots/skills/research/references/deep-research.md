@@ -11,7 +11,7 @@ they do not own the final decision.
 
 ## When To Fan Out
 
-See SKILL.md's "Runtime Flow" section for the default invocation and delegation
+See SKILL.md's "Workflow" section for the default invocation and delegation
 framing. Use multiple workers only when at least two are true:
 
 - The question spans multiple source classes, such as local code, official docs, ecosystem practice, issue trackers, and design tradeoffs.

@@ -65,19 +65,13 @@ Apply the deletion test to suspected shallow modules: if deleting the module mak
 
 ## Output
 
-Default to a ranked candidate report in chat unless the user asks for a file or the candidate set needs diagrams. For each candidate, include:
+Default to a ranked candidate report in chat unless the user asks for a file or the candidate set needs diagrams. Shape the report however best serves the candidates found; a useful report covers three things per candidate:
 
-- `Files`: files or modules involved
-- `Problem`: why the current architecture is causing friction
-- `Ownership`: runtime owner, first-fix owner, canonical long-term owner, and wrong competing owners when relevant
-- `Seam`: where the current interface lives and where the deeper module's interface should live
-- `Solution`: what would change, in plain English
-- `Benefits`: how locality, leverage, testability, or AI-navigability improves
-- `Tests`: where the owning invariant should be tested and what weaker coverage can be removed
-- `Hard-cut`: old shapes, fallback paths, compatibility branches, or none
-- `Recommendation strength`: `Strong`, `Worth exploring`, or `Speculative`
+1. **The problem** — what friction the current architecture causes, where it lives (files, seams, competing owners), and the evidence.
+2. **The change** — what would move, merge, deepen, or disappear, in plain English, including any hard cuts and where the owning invariant should be tested.
+3. **The payoff and confidence** — how locality, leverage, testability, or navigability improves, and whether this is strongly recommended, worth exploring, or speculative.
 
-End with `Top recommendation`: the first candidate to explore and why.
+Write for the repo owner deciding what to do next: lead with the strongest candidate and why, keep candidates scannable, and skip dimensions that don't apply rather than filling in every field.
 
 Ask which candidate the user wants to explore before designing interfaces or editing code. If the user has already asked to implement, pick the strongest candidate, state the plan, and keep the patch scoped to that candidate.
 

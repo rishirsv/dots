@@ -103,8 +103,7 @@ visual-proof before sharing.
 
 ## Charts
 
-Quantities always follow the dataviz method
-([../../dataviz/SKILL.md](../../dataviz/SKILL.md)) — form first, color by
-job, validate the palette, render and look. Reach for a chart only when the
+Quantities follow the local dataviz skill or method when one is available —
+form first, color by job, validate the palette, render and look. Reach for a chart only when the
 *magnitude or trend* is the point; if the point is a single number, a stat
 line in prose beats a chart.

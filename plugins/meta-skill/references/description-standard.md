@@ -14,8 +14,12 @@ discovery contract.
   history is available.
 - Front-load the key use case: listings truncate, and routers weight early
   tokens. The first clause should carry the strongest trigger.
-- One "not for" clause naming the owning sibling for the nearest confusable
-  job (`not for X — use $y`).
+- Boundaries are earned, not preemptive: add a "not for" clause
+  (`not for X — use $y`) only when a real mis-route has been observed or two
+  live descriptions genuinely collide on one request. Speculative boundary
+  clauses add reconciliation cost and can make routing worse. An
+  explicit-only skill needs no boundary against an auto skill — invocation
+  mode already separates them.
 - Name: lowercase letters/numbers/hyphens, ≤64 chars, no reserved words
   ("anthropic", "claude"), no vague nouns (`helper`, `utils`, `tools`).
   Prefer short verbs or noun phrases users actually type.

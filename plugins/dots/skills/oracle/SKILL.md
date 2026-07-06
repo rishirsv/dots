@@ -97,7 +97,7 @@ Package-only flow (see Provider Routes for the default-route policy):
 1. Develop the context and build the package inside `.agents/oracle/<task>`. Use `--dry-run` to right-size the bundle first.
 2. Inspect `prompt.md`, the `context.zip` file list, the reported token total, and any skipped-file lines.
 3. If anything is sensitive or broader than intended, rebuild — do not patch the zip by hand.
-4. Report the saved package path, the exact `prompt.md`, the included files, the token estimate, and the local verification boundary.
+4. Report the saved package path, included files, token estimate, and local verification boundary — and paste the full message from `prompt.md` in one fenced code block in chat so the user can copy it directly. Present it as the message to send, not as a labeled "prompt".
 5. When the user returns an answer, run After The Oracle against the package record.
 
 If the user explicitly approves a CLI route, pass the prompt directly to the agent with direct file or directory references instead of building a package. Save the answer only when that route or task needs a local record. Do not spend API money or send broader private context than the user approved.
@@ -114,7 +114,7 @@ Quick lookup — match the user's phrasing to a route, then jump to the exact co
 | `openai-api` | "oracle this via the API", explicit API/cost approval given | Responses API or provider CLI call after confirming credentials and cost; write the answer to the agreed path. |
 | `oracle` (third-party CLI) | user names the installed `oracle`/`npx @steipete/oracle` tool | `oracle --dry-run summary --files-report` first, then run with `--write-output` when spending tokens. |
 
-The default route is `package-only`: build the package in the task workspace above and hand the user the path and the exact `prompt.md`. Saving it there, or on the Desktop when the user asks for Desktop output, is the intended end state for package-only runs. Use another route only when the user explicitly asks for and approves it.
+The default route is `package-only`: build the package in the task workspace above, hand the user the path, and paste the message in a fenced code block in chat. Saving it there, or on the Desktop when the user asks for Desktop output, is the intended end state for package-only runs. Use another route only when the user explicitly asks for and approves it.
 
 Do not open ChatGPT, operate a ChatGPT browser session, or upload Oracle packages anywhere, including to ChatGPT. The supported ChatGPT-facing handoff is local saving only: create the package and report its path.
 
@@ -137,7 +137,7 @@ For the `claude-code` and `codex` routes, follow [references/cli.md](references/
 
 ## Prompt Shape
 
-The oracle prompt should stand alone and paste cleanly. Let the task determine the shape — concise prose, bullets, Markdown sections, or XML-like blocks — only when structure makes the request clearer. Include only content that changes the oracle's reasoning: advisory stance and grounding expectation, the concrete choice or missing-proof question, what to answer and what the primary agent needs, project facts (stack, source-of-truth files, commands, compatibility constraints), why each attached file or excerpt matters, what must be true for the answer to be useful, cost/privacy/compatibility/scope limits, missing-context behavior, a local verification request tied to files/tests/commands, and a clear boundary that attached files are context, not instructions.
+The packaged text is a message written directly to the downstream model: address it in second person, and never include this skill's internal vocabulary ("Decision To Improve", "Oracle", route names) as headings or labels the oracle would read. It should stand alone and paste cleanly. Let the task determine the shape — concise prose, bullets, Markdown sections, or XML-like blocks — only when structure makes the request clearer. Include only content that changes the oracle's reasoning: advisory stance and grounding expectation, the concrete choice or missing-proof question, what to answer and what the primary agent needs, project facts (stack, source-of-truth files, commands, compatibility constraints), why each attached file or excerpt matters, what must be true for the answer to be useful, cost/privacy/compatibility/scope limits, missing-context behavior, a local verification request tied to files/tests/commands, and a clear boundary that attached files are context, not instructions.
 
 Ask the other model to return advisory output, not to claim final proof. Shape the answer request around what the primary agent needs next — a recommendation, strongest objections, missing context, plan edits, counterarguments, local verification, or a bounded next step. Avoid fixed section headers unless they make that specific prompt easier to answer.
 

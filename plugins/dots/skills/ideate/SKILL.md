@@ -148,9 +148,6 @@ Recommend the next mode, but do not silently enter it:
 - `design`: UI concepts, visual exploration, journey maps, or mockups.
 - `docs-writer`: durable PRD, concept doc, ADR, glossary, or spec.
 - [`ultraplan`](../ultraplan/SKILL.md): deep planning once the shape is chosen.
-- [`clarify`](../clarify/SKILL.md): direction is settled and only scope, safety, or done-criteria questions remain before build.
 - build: only after confirmed scope, above.
-
-Still deciding what to build → stay in ideate. Knows what to build, needs blocking details → clarify.
 
 If the conversation circles because no one knows the answer, stop ideating and recommend research or repo grounding. Read [conversation-patterns.md](references/conversation-patterns.md) only when behavior is ambiguous — mirror the move, not the wording.

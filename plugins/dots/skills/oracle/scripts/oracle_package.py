@@ -242,7 +242,7 @@ def build_prompt(
         "",
     ]
     if decision.strip():
-        sections.extend(["Decision to improve:", decision.strip(), ""])
+        sections.extend(["The decision your answer should inform:", decision.strip(), ""])
     sections.extend(
         [
             "Request:",

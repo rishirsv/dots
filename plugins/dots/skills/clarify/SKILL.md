@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Asks the minimum blocking questions needed to make an underspecified request safe to build, then proceeds or returns a compact decision set. Triggers: clarify this, before coding ask questions, this is underspecified. Not for deep product discovery — use ideate instead."
+description: "Asks the minimum blocking questions needed to make an underspecified request safe to build, then proceeds or returns a compact decision set. Triggers: clarify this, before coding ask questions, this is underspecified."
 ---
 
 # Clarify
@@ -110,11 +110,6 @@ When a blocker appears after work starts, pause and ask only the new blocking qu
 
 ## Boundaries
 
-Discriminator: the user knows what they want and the questions are about scope, safety, or done-criteria → clarify. The user is still deciding what they want → ideate.
-
-This is not a deep grilling workflow. Do not expand into product strategy, exhaustive domain discovery, stakeholder interviews, or long requirement workshops. If the user wants that,
-hand off to the appropriate deeper discovery skill when one exists, such as
-[ideate](../ideate/SKILL.md) for opening the option space before committing to
-a direction.
+This is not a deep grilling workflow. Do not expand into product strategy, exhaustive domain discovery, stakeholder interviews, or long requirement workshops.
 
 This is not a substitute for normal implementation judgment. Prefer local conventions and safe assumptions whenever they are enough.
