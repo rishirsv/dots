@@ -1,4 +1,4 @@
-# Surface Critique Rubric
+# Design Rubric
 
 Use this rubric for the surface critique path: design-to-implementation QA and
 single-surface critique.

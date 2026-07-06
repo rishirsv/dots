@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Reviews existing or rendered product UI: critique of one artifact against an approved target or self/QA review, and flow audit of a multi-step journey covering UX, design, and accessibility. Use for design critique, UX audit, or product-design QA; not for code review, redesign, or implementation."
+description: "Reviews existing or rendered product UI: critique of one artifact against an approved target or self/QA review, and experience audit of a multi-step journey covering UX, design, and accessibility. Use for design critique, UX audit, or product-design QA; not for code review, redesign, or implementation."
 ---
 
 # Design Review
@@ -17,7 +17,7 @@ and reviewer protocol:
   Agent self-review, pre-handoff QA, and focused design critique, compared
   against an approved visual target when one exists. Ends in a pass/block gate
   decision. Use this before every design build handoff.
-- **Flow audit**: a multi-step journey, funnel, onboarding path, checkout path,
+- **Experience audit**: a multi-step journey, funnel, onboarding path, checkout path,
   settings path, workflow, or product area. Ends in a numbered step list with
   health labels plus UX, design, and accessibility findings.
 
@@ -32,9 +32,9 @@ rubric.
 
 - One rendered artifact, screen, component, modal, state, or static mockup
   judged as one visible surface → surface critique.
-- A journey, funnel, product area, or any multi-step experience → flow audit.
+- A journey, funnel, product area, or any multi-step experience → experience audit.
 - Supplied screenshots or artifacts that stand in for a broader experience →
-  flow audit.
+  experience audit.
 - A single supplied screenshot judged on its own terms → surface critique.
 - A pre-handoff fidelity check against an accepted target → surface critique.
 - Both requested (audit a flow and gate one screen) → run each path on its own
@@ -218,7 +218,7 @@ and report `blocked`; do not claim a complete comparison.
    complete from a full-view pass alone when important details are not clearly
    readable.
 5. Review systematically with
-   [references/surface-rubric.md](references/surface-rubric.md) when the pass
+   [references/design-rubric.md](references/design-rubric.md) when the pass
    spans more than a quick visual check. Always cover the five required
    fidelity surfaces — fonts/typography, spacing/layout rhythm, colors/tokens,
    image quality/asset fidelity, and copy/content — even when the user did not
@@ -227,7 +227,7 @@ and report `blocked`; do not claim a complete comparison.
    If the target itself has a gap (for example a missing null state), record it
    as a separate finding against the target.
 6. Write the report using the template in
-   [references/surface-rubric.md](references/surface-rubric.md): overview,
+   [references/design-rubric.md](references/design-rubric.md): overview,
    `final result` near the top, findings ordered by severity with the full
    anatomy, open questions, an implementation checklist, follow-up polish,
    review metadata, fidelity surface coverage, and evidence limits. Include
@@ -250,7 +250,7 @@ Pass / block:
 Do not say a design matches or is done until the required fidelity surfaces
 have been checked and remaining differences are classified.
 
-## Flow Audit
+## Experience Audit
 
 Choose one audit mode before capturing:
 
@@ -268,7 +268,7 @@ role when known, whether saved output is required, and the capture tool. Do not
 audit a live flow until those are known; for static artifacts, record unknown
 fields and stay within the visible evidence.
 
-Follow [references/flow-framework.md](references/flow-framework.md) for
+Follow [references/experience-audit.md](references/experience-audit.md) for
 product-type calibration, coverage lenses, craft heuristics, confidence
 language, generated-design fidelity checks, and the report structures.
 
@@ -307,7 +307,7 @@ missing probe.
 Saved `audit.md` reports are reader-facing. Open with the verdict, scope, and
 top findings — not grounding, provenance, tool logs, or screenshot inventories;
 those belong in an evidence appendix at the bottom. Use the report order and
-structures in [references/flow-framework.md](references/flow-framework.md),
+structures in [references/experience-audit.md](references/experience-audit.md),
 including the cross-step system-quality pass and the `Ship-now fixes` /
 `Later polish` split.
 

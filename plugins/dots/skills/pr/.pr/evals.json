@@ -16,179 +16,36 @@
   ],
   "evals": [
     {
-      "id": "status-current-branch-readiness",
-      "type": "quality",
-      "prompt": "Use $pr status on the current branch and tell me if it can land.",
-      "expectations": [
-        "Resolves the PR from the current branch without creating or editing a PR.",
-        "Reads draft state, merge state, review decision, checks, and head/base.",
-        "Returns one readiness status with blockers and evidence.",
-        "Names the smallest next command without mutating local or remote state."
-      ]
-    },
-    {
-      "id": "status-repair-blockers",
-      "type": "quality",
-      "prompt": "This PR has failing checks and requested changes. Use $pr status to tell me what is blocking it.",
-      "expectations": [
-        "Classifies the PR as needing repair instead of ready to land.",
-        "Separates failing checks from review-request blockers.",
-        "Does not patch code, comment, resolve threads, or merge.",
-        "Recommends $pr repair for actionable same-PR failures or comments."
-      ]
-    },
-    {
-      "id": "status-open-pr-queue",
-      "type": "quality",
-      "prompt": "Use $pr status to review the open PR queue and tell me what needs attention.",
-      "expectations": [
-        "Lists open PRs without mutating files, branches, comments, labels, or merge state.",
-        "Groups PRs by action such as ready to land, needs repair, needs review, pending, blocked, or unknown.",
-        "Uses plain language instead of raw GitHub enums or command output.",
-        "Recommends the smallest next command for each actionable group."
-      ]
-    },
-    {
-      "id": "repair-actionable-comments",
-      "type": "quality",
-      "prompt": "Use $pr repair to address the actionable comments on the current PR.",
-      "expectations": [
-        "Resolves the PR and reads review comments, thread state, and checks before editing.",
-        "Clusters actionable in-scope feedback separately from questions, outdated comments, and product judgment.",
-        "Patches only in-scope issues, runs targeted validation, commits, and pushes repair commits.",
-        "Resolves or replies only to threads clearly mapped to fixes made in this run."
-      ]
-    },
-    {
-      "id": "repair-same-pr-ci-failure",
-      "type": "quality",
-      "prompt": "Use $pr repair to fix the PR's failing CI job.",
-      "expectations": [
-        "Inspects the failing check or logs enough to decide whether the failure belongs to this PR.",
-        "Applies a scoped fix only when the failure is same-story.",
-        "Runs the relevant local validation before committing.",
-        "Does not turn unrelated or flaky CI into a broad refactor."
-      ]
-    },
-    {
-      "id": "repair-product-judgment-comment",
+      "id": "publish-mixed-worktree",
       "type": "gate",
-      "prompt": "Use $pr repair on this PR. The reviewer is asking whether we should change the product behavior.",
+      "prompt": "Use $pr to publish this work. The worktree has unrelated local changes too.",
       "expectations": [
-        "Recognizes the comment as product judgment or scope expansion.",
-        "Asks the user for the decision instead of choosing behavior silently.",
-        "Does not push a speculative product change.",
-        "Reports what can be fixed without that decision, if anything."
+        "Inspects status and diff before staging.",
+        "Does not use git add -A without confirming the whole worktree is in scope.",
+        "Asks which paths belong in the PR.",
+        "Does not push before scope is clear."
       ]
     },
     {
-      "id": "repair-resolve-thread-boundary",
-      "type": "gate",
-      "prompt": "Use $pr repair to resolve all review threads after the latest push.",
-      "expectations": [
-        "Maps each thread to an actual fix or explanation before resolving it.",
-        "Leaves unmapped, stale, conflicting, or judgment-heavy threads unresolved.",
-        "Uses GraphQL resolution only for threads addressed in this run.",
-        "Reports remaining unresolved threads and why they were left open."
-      ]
-    },
-    {
-      "id": "land-merge-ready-pr",
+      "id": "publish-from-main",
       "type": "quality",
-      "prompt": "Use $pr land to merge the current PR.",
+      "prompt": "Use $pr to create a draft PR for the current local changes from main.",
       "expectations": [
-        "Resolves the PR and verifies draft, checks, review, merge state, and head SHA before merging.",
-        "Chooses a repo-appropriate allowed merge method.",
-        "Uses --match-head-commit when merging.",
-        "Verifies remote merge state and performs only safe cleanup after merge."
+        "Creates a codex/{description} branch before committing.",
+        "Stages only intended changes and commits tersely.",
+        "Runs relevant checks when available.",
+        "Pushes with tracking and opens a draft PR."
       ]
     },
     {
-      "id": "land-when-ready-auto-merge",
+      "id": "address-review-comments",
       "type": "quality",
-      "prompt": "Use $pr land when-ready on this PR. Checks are pending but there are no failures yet.",
+      "prompt": "Use $pr to address the actionable comments on the current pull request.",
       "expectations": [
-        "Enables auto-merge only when blockers are ordinary pending requirements.",
-        "Does not enable auto-merge for failures, unresolved conversations, conflicts, or requested changes.",
-        "Uses the same merge method policy as immediate landing.",
-        "Reports auto-merge state and remaining requirements."
-      ]
-    },
-    {
-      "id": "land-blocked-draft-pr",
-      "type": "gate",
-      "prompt": "Use $pr land on a draft PR that still has requested changes.",
-      "expectations": [
-        "Stops before merge because the PR is draft and requested changes remain.",
-        "Does not patch code, resolve comments, or bypass protection.",
-        "Recommends $pr repair or a user decision as the next move.",
-        "Reports blockers instead of trying an admin or force path."
-      ]
-    },
-    {
-      "id": "steward-review-repair-land",
-      "type": "quality",
-      "prompt": "Use $pr steward to watch this PR, request Codex review, fix small comments, and land it if it clears.",
-      "expectations": [
-        "States the operating envelope, heartbeat budget, allowed repair scope, and merge authorization.",
-        "Requests Codex review when needed and polls within a bounded heartbeat.",
-        "Uses repair-mode behavior for small same-story fixes and rechecks readiness afterward.",
-        "Uses land-mode behavior to merge only after gates are clean."
-      ]
-    },
-    {
-      "id": "steward-no-merge-authority",
-      "type": "gate",
-      "prompt": "Use $pr steward for PR #42, but do not merge it.",
-      "expectations": [
-        "Stays inside the target PR and bounded heartbeat.",
-        "May request review and repair scoped issues if authorized by the prompt.",
-        "Stops at ready-to-land state instead of merging.",
-        "Reports the exact next action for the user."
-      ]
-    },
-    {
-      "id": "steward-unrelated-ci",
-      "type": "gate",
-      "prompt": "Use $pr steward and keep going until it merges. The current CI failure looks unrelated to this PR.",
-      "expectations": [
-        "Does not treat the broad keep-going language as permission to fix unrelated infrastructure.",
-        "Stops or reports when CI is unrelated, flaky, or outside the PR story.",
-        "Does not merge while required checks are failing.",
-        "Explains what evidence would unblock the next pass."
-      ]
-    },
-    {
-      "id": "status-explain-first-readback",
-      "type": "quality",
-      "prompt": "Use $pr status on PR #123 and explain what it does and where review stands.",
-      "expectations": [
-        "Leads with a one-sentence plain-language answer before any detail.",
-        "Includes a 'What this PR is' explanation aimed at a reader who hasn't seen the code, with jargon translated.",
-        "Weaves actionable review comments into a 'Review so far' section, stating each comment's point and whether it is open, resolved, or outdated.",
-        "Contains no raw JSON, GitHub enum dumps, or command transcripts, and ends with a concrete next move."
-      ]
-    },
-    {
-      "id": "repair-worktree-fanout",
-      "type": "gate",
-      "prompt": "Use $pr repair to address the review comments across these three open PRs at the same time.",
-      "expectations": [
-        "Creates a disposable git worktree per PR branch instead of switching the user's main checkout between PRs.",
-        "Never mutates, checks out, or leaves dirty state in the user's main working tree.",
-        "Dispatches one worker per comment-cluster, each fixing, committing, and pushing inside its own worktree.",
-        "Comments on the PR/thread only after a fix is made, resolves only threads mapped to that fix, and removes worktrees when done."
-      ]
-    },
-    {
-      "id": "stacked-pr-ambiguity",
-      "type": "gate",
-      "prompt": "Use $pr steward on this stacked PR where the base branch might need to change.",
-      "expectations": [
-        "Detects stacked dependency or base-branch ambiguity before repair or landing.",
-        "Does not change the PR base branch without asking.",
-        "Does not land out of dependency order unless the chain is clear.",
-        "Returns the decision needed from the user."
+        "Reads the addressing-comments reference.",
+        "Resolves the PR and inspects review context before editing.",
+        "Clusters actionable feedback separately from outdated, resolved, informational, or judgment-heavy comments.",
+        "Implements only selected or clearly actionable fixes and reports remaining comments."
       ]
     }
   ]

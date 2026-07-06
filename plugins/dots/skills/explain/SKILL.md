@@ -28,9 +28,15 @@ if getting one wrong would waste the whole answer):
 ## Ground, then answer
 
 Read the actual source before explaining it — the file, thread, document,
-data, or product state. Explaining from memory when the source is one read
-away is the skill's cardinal failure. Separate what the source says from
-what you're inferring.
+data, product state, or relevant codebase surface. Explaining from memory when
+the source is one read away is the skill's cardinal failure. Separate what the
+source says from what you're inferring.
+
+When the explanation depends on repo behavior that is not obvious from one or
+two files, use read-only subagents when available to explore the relevant
+surfaces in parallel. Give each subagent a bounded question, paths or symbols to
+inspect, and the return shape needed to explain the concept; synthesize the
+answer yourself.
 
 Then deliver in layers, always in this order:
 
@@ -91,6 +97,4 @@ repo document routes to $docs-writer).
 ## Boundaries
 
 Durable repository documentation → `$docs-writer`. Building or restyling
-product UI → `$design`. Deep multi-source investigation → `$research`; this
-skill explains what's already knowable from sources at hand (explaining an
-already-understood failure belongs here).
+product UI → `$design`.

@@ -72,6 +72,5 @@ unless the next step needs approval.
 If a new blocker appears mid-work, pause and ask only that question,
 including what the code already told you. When an answer reveals a durable
 preference — a naming convention, deploy target, risk tolerance, validation
-bar — flag it in the final report as a candidate for the project's
-instruction file or memory (route through `$self-improve` where available);
-the same question should never survive into a future session.
+bar — flag it in the final report as a candidate for the project's instruction
+file or memory; the same question should never survive into a future session.

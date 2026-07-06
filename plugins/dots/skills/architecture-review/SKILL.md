@@ -12,7 +12,6 @@ Default to hard-cut architecture: one canonical owner, one current path — hard
 ## References
 
 - Read [architecture-language.md](references/architecture-language.md) before naming architecture problems. Use its vocabulary exactly.
-- Read [deepening.md](references/deepening.md) when proposing a module-deepening candidate or test strategy.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
 - Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
@@ -22,14 +21,9 @@ Default to hard-cut architecture: one canonical owner, one current path — hard
 
 Start by clarifying the review target from the user request, current branch, touched subsystem, or named files. If the user asks for a broad scan, map the top-level repository structure before drilling into a subsystem.
 
-Read architecture sources that exist in the repo before recommending changes:
+Read applicable `AGENTS.md` and other review guidance before recommending changes: architecture docs, ADRs/design docs, ownership docs, module READMEs, and relevant tests.
 
-- applicable `AGENTS.md` files
-- review or architecture guidance named by `AGENTS.md`, plus a quick search for likely review docs such as `REVIEW.md`, `review.md`, `*review*.md`, and `.github/*.md`
-- `CONTEXT.md`, architecture docs, ADRs, design docs, package/module READMEs, or ownership docs
-- tests around the candidate modules
-
-Keep only repo guidance that changes the recommendation: required skills or domain passes, ownership rules, architecture constraints, validation commands, candidate format, or rollout/compatibility policy. Higher-priority instructions still win.
+Keep only repo guidance that changes the recommendation; higher-priority instructions still win.
 
 If docs are incomplete, infer the current layer model from the code and state the assumption.
 
@@ -88,5 +82,3 @@ After the user chooses a candidate:
 
 - Do not turn a broad scan into a drive-by refactor.
 - Do not propose interfaces before the user chooses a candidate unless the user explicitly asks.
-- Do not preserve compatibility residue unless there is a concrete persisted, wire-format, or public-contract boundary.
-- Do not add a higher-layer test to compensate for uncertainty; identify the owning invariant and test at the owning interface.

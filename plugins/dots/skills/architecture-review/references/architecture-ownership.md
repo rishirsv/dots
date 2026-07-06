@@ -20,15 +20,16 @@ When docs are incomplete:
 
 ## Required Output
 
-When answering an ownership or placement question, explicitly separate:
+When answering an ownership or placement question, name the single correct
+long-term owner. Explicitly separate:
 
-- `Runtime owner`
-- `First fix owner`
-- `Canonical long-term owner`
+- `Current owner`
+- `Canonical owner`
 - `Competing owners that are wrong`
 - `Cleanup direction`
 
-Do not collapse these into a single answer.
+Do not recommend a temporary first owner. If the current owner is wrong, the
+recommendation is the canonical owner and the cleanup path to get there.
 
 ## Decision Order
 
@@ -40,8 +41,8 @@ Do not collapse these into a single answer.
    - pure shared logic
    - concrete adapter or integration behavior
 2. Name the layer where the wrong behavior currently happens.
-3. Decide whether that layer is only the `First fix owner` or also the `Canonical long-term owner`.
-4. If the behavior is reusable product or business policy, move the long-term owner out of the runtime orchestration layer.
+3. Decide the single canonical owner for the behavior.
+4. If the behavior is reusable product or business policy, move ownership out of the runtime orchestration layer.
 5. Remove duplicate policy, fallback logic, or dual paths once the canonical owner is clear.
 
 ## Layer Map
@@ -52,8 +53,7 @@ Do not collapse these into a single answer.
   - owns native shell concerns, OS bridges, local device integrations, filesystem or permission bridges, process or session plumbing, and platform-local persistence helpers
 - `Runtime orchestration layer`
   - owns runtime composition, request dispatch, background coordination, worker management, event publication, and process-level orchestration
-  - this is often the `First fix owner`
-  - this is not automatically the `Canonical long-term owner`
+  - this is not automatically the `Canonical owner`
 - `Domain or application layer`
   - owns canonical product workflow, business rules, reusable application services, and cross-interface behavior
 - `Shared core layer`
@@ -75,6 +75,6 @@ Translate these generic layers into the repo's actual module, package, crate, or
 ## Common Judgments
 
 - If the question is "who should decide this for all future interfaces?" the answer is usually the domain or application layer, a narrow domain package, or shared core, not the runtime orchestration layer.
-- If the question is "where do I patch this bug first so the product stops doing the wrong thing?" the answer may still be the runtime orchestration layer.
+- If the question is "where should this behavior live after the fix?" answer with the canonical owner, not the easiest patch point.
 - If the question is "who owns the wire shape or payload type?" the answer is usually the shared API or core type layer, not the runtime orchestration layer.
 - If the question is "who owns vendor-specific behavior?" the answer is the relevant adapter or integration layer, but only for adapter behavior, not canonical product policy.

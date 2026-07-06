@@ -11,10 +11,10 @@ looking at the real rendered surface, not reasoning about the code.
 - **iOS**: the user's simulator via XcodeBuildMCP (`build_run_sim`,
   `screenshot`, `snapshot_ui`). Check `session_show_defaults` before the first
   build in a session.
-- **Charts/dataviz**: render and screenshot; the palette validator checks
-  color, not layout — geometry and label collisions need eyes.
+- **Charts**: render and inspect the real output; automated checks rarely catch
+  geometry, scales, labels, legends, or collision problems.
 
-## The Three Recurring Failures (check every run)
+## Recurring Failures To Check When Relevant
 
 1. **`file://` blocked.** Browser policy often blocks local file previews.
    Fall back to a throwaway localhost server (`python3 -m http.server` in the

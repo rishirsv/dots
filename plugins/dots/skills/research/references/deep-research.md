@@ -4,15 +4,15 @@ Read this when a research question is broad, ambiguous, high-impact,
 cross-cutting, or likely to benefit from multiple bounded investigations.
 
 Deep research is a parent-led orchestration pattern. The parent scopes the
-question, dispatches bounded workers only when the user has authorized parallel
-agent work, collects evidence at barrier points, pressure-tests important
-claims, and writes the synthesis. Delegated workers gather and verify evidence;
-they do not own the final decision.
+question, dispatches bounded workers, collects evidence at barrier points,
+pressure-tests important claims, iterates on newly discovered questions, and
+writes the synthesis. Delegated workers gather and verify evidence; they do not
+own the final decision.
 
 ## When To Fan Out
 
-See SKILL.md's "Workflow" section for the default invocation and delegation
-framing. Use multiple workers only when at least two are true:
+See SKILL.md's "Subagents" section for the default invocation and delegation
+framing. Use multiple workers when at least two are true:
 
 - The question spans multiple source classes, such as local code, official docs, ecosystem practice, issue trackers, and design tradeoffs.
 - Several hypotheses need independent checking.
@@ -64,6 +64,11 @@ Use barriers deliberately:
 - Collect local and external facts before deciding whether they align.
 - Collect adversarial reviews before promoting a contested claim.
 - Collect implementation-worker results before final integration.
+
+After each barrier, decide what is done, what needs another pass, and which new
+questions matter. Send a worker back to dig deeper when its lane is promising
+but incomplete. Launch new workers when the first pass reveals a distinct open
+question, source class, contradiction, or risk that could change the synthesis.
 
 Do not block the main thread on a worker unless the next critical-path action
 needs that result. While workers run, continue non-overlapping local work such
@@ -166,6 +171,7 @@ After workers report:
 3. Mark contradictions and decide whether they block the answer.
 4. Preserve verification results for load-bearing claims: supported, refuted,
    downgraded, contradicted, or unresolved.
-5. Write a durable deep research report in the repository-conventional location.
+5. Run follow-up lanes for open questions that could change the answer.
+6. Write a durable deep research report in the repository-conventional location.
 
 If the evidence does not support a confident recommendation, return the best-supported partial answer and the specific research needed next.

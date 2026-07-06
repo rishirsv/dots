@@ -36,10 +36,9 @@ Use this skill for:
 
 Do not use it for backend-only changes, CLI tools, pure docs/prose work, or bug
 fixes with no visible UI surface. Chat-native throwaway diagrams or mockup
-sketches belong to lightweight chat explanation (`dots:explain`), not this
-skill. For a small UI fix inside an existing design system, follow the repo's
-local conventions first and use only the relevant polish and validation parts
-of this skill.
+sketches are outside this skill. For a small UI fix inside an existing design
+system, follow the repo's local conventions first and use only the relevant
+polish and validation parts of this skill.
 
 ## Workflow
 

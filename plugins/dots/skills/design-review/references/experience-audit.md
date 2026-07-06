@@ -1,13 +1,13 @@
-# Flow Audit Framework
+# Experience Audit
 
-Use this framework for the flow audit path: systematic assessment across a
+Use this framework for the experience audit path: systematic assessment across a
 broader experience. If the request is only about one rendered screen,
 component, modal, or static artifact, use the surface critique path in
 [SKILL.md](../SKILL.md) instead. If a broader experience includes a bounded
 screen or interaction, keep that part of the audit scoped to the evidence.
 
 Record the scope fields from the skill workflow in working notes before judging
-the flow, including the evidence inspected and the evidence limits. In a
+the experience, including the evidence inspected and the evidence limits. In a
 reader-facing saved report, summarize only the useful scope near the top and
 move detailed grounding, provenance, evidence tiers, and source anchors to an
 `Evidence appendix` at the bottom.

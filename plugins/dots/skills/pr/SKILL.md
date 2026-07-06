@@ -1,93 +1,75 @@
 ---
 name: pr
-description: "Triage, repair, land, or steward GitHub pull requests through git and gh. Use for review the open PRs, what's blocking this PR, fix the review comments, land this PR, or steward this PR to merge; not for publishing new PRs (use $ship) or local-only commits (use $commit)."
+description: "Publishes local changes to GitHub by confirming scope, committing intentionally, pushing the branch, and opening a draft pull request. Also handles actionable PR review comments when the user asks."
 ---
 
 # PR
 
-Three modes over existing pull requests: triage (read-only), repair (scoped
-fix commits), and land (merge and cleanup — read
-[references/landing.md](references/landing.md) first). Creating a PR belongs
-to `$ship`. For a mixed request ("fix it and merge"), run the modes in
-sequence and report each stage.
+Use this skill only when the user explicitly wants a GitHub pull request flow
+from the local checkout: branch setup if needed, staging, commit, push, and PR
+creation. For review-comment repair on an existing PR, read
+[addressing-comments.md](references/addressing-comments.md) first.
 
-## Resolve The Target
+## Prerequisites
 
-Use an explicit URL or number when given; otherwise the current branch:
+- Require a local git repository and a clear intended scope.
+- Require GitHub CLI `gh`; run `gh --version`.
+- Require authenticated `gh`; run `gh auth status` and stop if the user needs to
+  authenticate.
+
+## Naming
+
+- Branch: `codex/{description}` when starting from `main`, `master`, or the
+  remote default branch.
+- Commit: terse description of the scoped change.
+- PR title: `[codex] {description}`.
+
+## Workflow
+
+1. Confirm scope.
+   - Run `git status -sb` and inspect the diff before staging.
+   - If the worktree contains unrelated changes, ask which paths belong in the
+     PR.
+2. Choose the branch strategy.
+   - Create `codex/{description}` from the default branch.
+   - Otherwise stay on the current branch unless the user asks for a new one.
+3. Stage only intended changes.
+   - Prefer explicit paths.
+   - Use `git add -A` only when the whole worktree is in scope.
+4. Commit with the confirmed description.
+5. Run the most relevant checks available if they have not already run.
+6. Push with tracking:
 
 ```bash
-gh pr view "$pr_ref" --json number,url,title,state,isDraft,headRefName,baseRefName,headRefOid,mergeStateStatus,mergeable,reviewDecision,statusCheckRollup
+git push -u origin "$(git branch --show-current)"
 ```
 
-Omit `"$pr_ref"` for the current branch. Stop and report if no PR resolves
-or more than one target is plausible. When a mode needs REST or GraphQL
-identifiers, derive them once:
+7. Open a draft PR.
+   - Derive the repository from `git remote get-url origin` or
+     `gh repo view --json nameWithOwner`.
+   - Derive the current branch from `git branch --show-current`.
+   - Use the requested base branch, or the remote default branch.
+   - Prefer any available GitHub connector/app for PR creation after push; use
+     `gh pr create --draft --fill --head "$(git branch --show-current)"` when
+     connector coverage is unavailable or ambiguous.
+   - Write the PR body to a temp file when using CLI fallback so Markdown
+     renders cleanly.
+8. Summarize the branch, commit, PR URL, validation, and anything still needing
+   user confirmation.
 
-```bash
-pr_number="$(gh pr view "$pr_ref" --json number --jq .number)"
-name_with_owner="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
-owner="${name_with_owner%%/*}"; repo="${name_with_owner#*/}"
-```
+## Write Safety
 
-## Triage
+- Never stage unrelated changes silently.
+- Never push without confirming scope when the worktree is mixed.
+- Default to a draft PR unless the user explicitly asks for ready-for-review.
+- Stop if the repository is not connected to an accessible GitHub remote.
 
-Read-only — no comments, reviews, thread resolution, or fetches that change
-local state.
+## PR Body
 
-**Single PR** — explain it like a sharp colleague walking the user through
-someone else's PR, not a status bot: a one-sentence plain answer, what the
-PR is (2-4 sentences for a reader who hasn't seen the code), actionable
-review comments in plain words with their state, real blockers only, and
-the next move. Pull checks with `gh pr checks` and review-thread state via
-[../../references/review-threads-query.md](../../references/review-threads-query.md)
-when conversation resolution could block the merge. Calibrate depth: a docs
-fix earns three sentences, a schema migration earns the full structure.
+The PR description should use real Markdown prose and cover:
 
-**Queue** ("review the open PRs") — list them
-(`gh pr list --state open --limit 50 --json number,url,title,isDraft,headRefName,baseRefName,updatedAt,reviewDecision,statusCheckRollup,mergeStateStatus,author`),
-then fan out one read-only reviewer lane per PR — per
-[../../references/subagent-lanes.md](../../references/subagent-lanes.md) —
-so each verdict rests on the actual diff and discussion, not metadata.
-Sort every PR into one bucket:
-
-- **Ready to merge** — checks green, review clean, no unresolved required
-  conversations, merge state clean.
-- **Needs touch-ups** — mostly good; a rebase or small fixes would land it.
-- **Trumped** — superseded by a better PR or by work already merged; close
-  candidate.
-- **Scrap and rewrite** — the idea is good, the implementation isn't; close
-  and restart.
-- **Pending / blocked** — checks or review still in flight, conflicts,
-  policy, or stacked dependencies.
-
-Lead with counts, then one sentence per PR, ready-first.
-
-## Repair
-
-Patch only actionable, same-story problems; leave product judgment and
-unrelated failures alone.
-
-Read comments and thread state before editing:
-`gh api "repos/:owner/:repo/pulls/$pr_number/comments"` plus the
-review-threads query above. For CI, confirm the failure belongs to this PR
-(`gh pr checks`, then `gh run view "$run_id" --log-failed`). Cluster the
-findings — actionable in-scope, question-only, resolved or outdated,
-conflicting, product judgment, unrelated or flaky CI — and patch only the
-first cluster; ask before changing product behavior, picking a side of
-conflicting feedback, or force-pushing. For multiple clusters or PRs in
-parallel, fan out disposable worktrees per
-[references/worktree-repair.md](references/worktree-repair.md).
-
-Commit small and append-only, staging only intended paths, then push. Reply
-to and resolve only threads mapped to a fix made in this run; name the rest
-as left open. Report the PR URL, commits, validation, and threads handled.
-
-## Land
-
-Read [references/landing.md](references/landing.md) for readiness gates,
-merge method, auto-merge, stewarding to merge, stacked-PR handling, and
-cleanup. The gates that always hold: a clean worktree before touching local
-branch state; never merge drafts, failing or unverifiable required checks,
-or unresolved required conversations; never `--admin` without an explicit
-request; stop on stacked-PR ambiguity; delete branches only after the
-remote confirms the merge.
+- what changed
+- why it changed
+- user or developer impact
+- root cause when the PR is a fix
+- checks used to validate it

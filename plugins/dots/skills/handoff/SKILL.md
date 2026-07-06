@@ -31,8 +31,7 @@ platform provides the tool.
 
 ## Codex
 
-Codex-specific; other platforms use their own history and continuation
-tools. For prior-session context, prefer the packaged helper over manual
+For prior-session context in Codex, prefer the packaged helper over manual
 scraping of `~/.codex/state_5.sqlite` and `~/.codex/sessions`:
 
 ```sh
@@ -45,6 +44,13 @@ For an explicit new-thread handoff, use `create_thread` (environment
 `local` for the current checkout, `worktree` for isolation) or
 `fork_thread` for a child of this thread's history, then report the created
 or pending thread id with the required Codex thread directive.
+
+## Claude
+
+For Claude-style handoffs, keep the brief self-contained and file/path based.
+Reference repo instructions such as `CLAUDE.md` or `AGENTS.md` when they exist,
+but do not rely on Codex thread ids, rollout files, or Codex-only continuation
+tools.
 
 ## Output
 

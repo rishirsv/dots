@@ -1,4 +1,4 @@
-# Documentation Boundaries
+# Report Standards
 
 Read this before saving research, plans, decisions, or proof artifacts.
 

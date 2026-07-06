@@ -1,38 +1,48 @@
 ---
 name: research
-description: "Investigates code, docs, web sources, and technical options, and returns an evidence-backed answer or research report with cited sources. Explicit-only: runs when the user asks for research, a research report, or deep research."
+description: "Investigates code, docs, web sources, and technical options, and returns an evidence-backed answer or research report with cited sources. Use when the user asks for research, a research report, or deep research."
 ---
 
 # Research
 
-Answer research questions with evidence the user can check: real sources,
-current facts, and a clear line between what is known, inferred, and unknown.
-
-This skill is explicit-only: it runs when the user asks for research, a
-research report, or deep research.
+Produce evidence-backed answers or research reports from code, docs, web
+sources, and technical options. Keep a clear line between what is known,
+inferred, recommended, and still unknown.
 
 ## Workflow
 
 For a small, direct question, answer immediately with the evidence inline —
 no preamble, no contract block, no delegation.
 
-For deep research, a fan-out or delegated run, or an explicit report request:
+For substantial research, deep research, or an explicit report request:
 
 1. Emit the preamble and research contract (below).
 2. Choose the mode: codebase, web, mixed, or deep research.
-3. Gather evidence using the mode-specific workflow.
-4. Separate facts, inferences, recommendations, contradictions, and gaps.
-5. Deliver the requested output and route saved artifacts per repository
+3. Use subagents as the default for broad or multi-source work when the harness
+   provides them.
+4. Gather evidence using the mode-specific workflow.
+5. Separate facts, inferences, recommendations, contradictions, and gaps.
+6. Deliver the requested output and route saved artifacts per repository
    convention.
 
-Delegate bounded research to a worker when the harness provides one and the
-work is more than a quick lookup: the parent keeps conversational context and
-final synthesis; the worker gets the specific question, source boundary,
-evidence bar, and stop condition. One worker per focused question; more only
-for genuinely distinct source lanes
-(see `../../references/subagent-lanes.md`). Stay direct when the user wants a
-quick answer, forbids delegation, or delegation would duplicate a two-minute
-lookup.
+## Subagents
+
+For broad, multi-source, or deep research, use subagents as the primary
+workflow when available. The parent owns the research contract, user context,
+iteration decisions, and final synthesis; subagents own bounded evidence
+gathering.
+
+Start with the smallest useful fan-out: one subagent per distinct source lane,
+claim, or open question. Give each lane the question, source boundary, evidence
+bar, output shape, and stop condition. After the first reports return, decide
+what is complete, what needs deeper follow-up, and what new questions emerged.
+Send a subagent back to dig deeper or launch additional bounded lanes when new
+evidence would change the answer.
+
+Stay direct when the user wants a quick answer, forbids delegation, no
+delegation mechanism is available, or subagents would duplicate a short lookup.
+Use `../../references/subagent-lanes.md` for general lane guidance and
+`references/deep-research.md` for iterative deep-research orchestration.
 
 ## Preamble And Contract
 
@@ -85,9 +95,7 @@ Workflow:
    flows work, what patterns already exist, and what tests or docs prove.
 4. Use fast search and targeted reads. Prefer `rg`, dependency manifests, tests,
    call sites, and local docs over broad file dumps.
-5. For broad or parallel codebase research, delegate bounded source-lane work
-   per `../../references/subagent-lanes.md`. Do not create separate codebase
-   specialist roles inside this skill.
+5. For broad or parallel codebase research, use the Subagents section above.
 6. Trace actual code paths before making claims. Include files, symbols,
    commands, and observed behavior precisely enough for verification.
 7. Document what exists before recommending what should change.
@@ -137,26 +145,10 @@ question. Then compare the two evidence sets explicitly:
 
 ## Deep Research
 
-Use deep research for broad, ambiguous, high-impact, or cross-cutting
-questions that justify multiple bounded investigations — including a
-confirmed fan-out or a mid-conversation Research workflow invocation that
-should be delegated. See "Workflow" above for the default delegation
-framing.
-
-Read `references/deep-research.md` first — it owns the fan-out gate,
-decomposition passes, claim verification, and dispatch patterns. This section
-covers only what's specific to this skill: the research contract and the
-artifact model.
-
-Treat deep research as dynamic orchestration, not a fixed checklist. The
-parent agent is the conductor: it scopes the question, chooses source lanes,
-dispatches bounded workers when explicitly authorized, collects reports at
-meaningful barriers, verifies load-bearing claims when needed, and owns the
-final synthesis. See `../../references/subagent-lanes.md` for lane roles,
-fan-out rules, and verification lanes.
-
-Before fanning out, confirm at least two criteria from
-`references/deep-research.md`'s "When To Fan Out" are true.
+Use deep research for broad, ambiguous, high-impact, or cross-cutting questions
+that justify iterative bounded investigations. Read
+`references/deep-research.md` first; it owns the fan-out gate, decomposition,
+iteration loop, claim verification, dispatch patterns, and synthesis model.
 
 ### Deep Research Contract
 
@@ -171,15 +163,8 @@ requests another path.
 
 ### Deep Research Artifact Model
 
-See `references/deep-research.md`'s Synthesis section for the run shape,
-naming convention, and parent-synthesis responsibilities. The one thing
-specific to this skill: each subreport is reader-first — it answers the
-assigned question before listing sources, grouped by claim — and includes
-research question, scope, answer, why it matters or recommended direction,
-supporting evidence grouped by claim, contradictions or caveats, confidence,
-gaps or next checks, durability recommendation, and an audit trail
-(commands/searches run, sources consulted, and important sources not
-consulted).
+See `references/deep-research.md` for the run shape, subreport expectations,
+naming convention, and parent-synthesis responsibilities.
 
 ## Evidence Standard
 
@@ -207,7 +192,7 @@ instruction and flag the conflict when it matters.
 ## Durability And Artifact Routing
 
 Use the repository's documented conventions first, and read
-`references/documentation-boundaries.md` for the full artifact-type table and
+`references/report-standards.md` for artifact routing, report shape, and the
 promotion test.
 
 ## Output Shapes
@@ -221,7 +206,7 @@ For chat answers, prefer:
 - Sources: one final list when the answer relies on web or external sources.
 
 For saved research reports (option comparison, codebase behavior, external/API
-research, or decision memo), see `references/documentation-boundaries.md` for
+research, or decision memo), see `references/report-standards.md` for
 structure and writing-style conventions.
 
 For scratch handoffs, stay brief: question, what was checked, strongest
