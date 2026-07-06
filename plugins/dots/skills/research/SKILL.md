@@ -86,9 +86,8 @@ Workflow:
 4. Use fast search and targeted reads. Prefer `rg`, dependency manifests, tests,
    call sites, and local docs over broad file dumps.
 5. For broad or parallel codebase research, delegate bounded source-lane work
-   with a focused prompt that names the outcome, source boundary, evidence bar,
-   and stop condition. Do not create separate codebase specialist roles inside
-   this skill.
+   per `../../references/subagent-lanes.md`. Do not create separate codebase
+   specialist roles inside this skill.
 6. Trace actual code paths before making claims. Include files, symbols,
    commands, and observed behavior precisely enough for verification.
 7. Document what exists before recommending what should change.
@@ -172,43 +171,15 @@ requests another path.
 
 ### Deep Research Artifact Model
 
-Deep research must preserve worker detail: each delegated worker writes or
-returns a markdown subreport, and the parent synthesis links to saved reports
-instead of replacing them with a compressed retelling.
-
-Recommended run shape:
-
-```text
-.agents/outputs/research/<topic-slug>/
-  00-research-contract.md
-  01-local-behavior.md
-  02-current-docs.md
-  03-prior-art.md
-  04-risks-and-gaps.md
-  research.md
-  99-source-audit.md
-```
-
-Name subreports `NN-<source-class>-<question-slug>.md` for a more specific
-split, e.g. `01-codebase-routing-patterns.md`. Keep the parent synthesis named
-`research.md`; use `99-source-audit.md` only when the source trail needs its
-own file.
-
-Each subreport is reader-first — it answers the assigned question before
-listing sources, grouped by claim — and includes: research question, scope,
-answer, why it matters or recommended direction, supporting evidence grouped
-by claim, contradictions or caveats, confidence, gaps or next checks,
-durability recommendation, and an audit trail (commands/searches run, sources
-consulted, and important sources not consulted).
-
-The parent writes `research.md` as index and synthesis: answer the original
-contract, link every subreport, dedupe overlapping findings, tie each major
-claim to its subreport evidence, surface contradictions and gaps, and keep
-commands/source inventories out of the main answer unless needed to support a
-claim.
-
-Do not treat raw worker chat as the research artifact. If a worker cannot
-write files, the parent saves its report before synthesizing.
+See `references/deep-research.md`'s Synthesis section for the run shape,
+naming convention, and parent-synthesis responsibilities. The one thing
+specific to this skill: each subreport is reader-first — it answers the
+assigned question before listing sources, grouped by claim — and includes
+research question, scope, answer, why it matters or recommended direction,
+supporting evidence grouped by claim, contradictions or caveats, confidence,
+gaps or next checks, durability recommendation, and an audit trail
+(commands/searches run, sources consulted, and important sources not
+consulted).
 
 ## Evidence Standard
 
@@ -239,15 +210,6 @@ Use the repository's documented conventions first, and read
 `references/documentation-boundaries.md` for the full artifact-type table and
 promotion test.
 
-Default raw searches, source dumps, transcripts, and delegated-worker notes to
-ignored scratch space when the repository defines one; otherwise keep them in
-the thread instead of creating a durable file. Promote only curated
-conclusions that change durable thinking — a research summary, a decision
-document, or a temporary plan — and only when the repo has a matching
-convention or the user asks for it. Before writing a durable artifact, state
-why it is durable and choose the path from repository conventions; ask first
-if conventions are missing or contradictory.
-
 ## Output Shapes
 
 For chat answers, prefer:
@@ -258,11 +220,9 @@ For chat answers, prefer:
 - Gaps: only uncertainties that could change the answer.
 - Sources: one final list when the answer relies on web or external sources.
 
-For saved research reports, choose headings that fit the topic. Start with the
-reader's job: what decision, implementation, product direction, or future
-research should the report support? Separate supported findings from
-speculation. Put sources once at the bottom of the report, not inline or per
-section.
+For saved research reports (option comparison, codebase behavior, external/API
+research, or decision memo), see `references/documentation-boundaries.md` for
+structure and writing-style conventions.
 
 For scratch handoffs, stay brief: question, what was checked, strongest
 evidence, unresolved gaps, and why the notes should not become durable.

@@ -417,7 +417,9 @@ A context pointer is the sentence or bullet that sends the agent to another
 file; its wording decides whether the agent reaches the material reliably.
 If must-have material is hidden behind a weak pointer, sharpen the
 condition first — inline only when the sharpened pointer still fails or the
-material truly applies to every run.
+material truly applies to every run. Never restate material a pointer
+already covers — point, don't paraphrase: a restated reference doubles the
+context cost and drifts from its source.
 
 ## Completion Criteria And Premature Completion
 

@@ -90,9 +90,7 @@ configuration, feature flags, enum/value sets, migrations, adapters,
 compatibility paths, concurrency, cross-process boundaries, auth, billing, or
 other cases where a missed bug would be expensive.
 
-In `max`, always end with a final pass for big simplifications: after the
-finders, look specifically for a simpler model or ownership boundary that
-would delete whole branches, modes, wrappers, or compatibility paths.
+In `max`, end with the final big-simplification pass (Phase 5).
 
 ## Phase 3: Behavior Lock
 
@@ -153,11 +151,11 @@ recall-biased review, uncertainty is not a reason to drop a realistic bug):
 - **REFUTED**: the finding is factually wrong, provably impossible, already
   handled in this diff, or pure style with no observable cost. Quote the proof.
 
-For `max`, run the final pass for big simplifications after verification.
+For `max`, run the final pass for big simplifications after verification,
+using the "Final Pass: Big Simplifications" criteria in
+[../../references/finder-checklists.md](../../references/finder-checklists.md).
 Give the reviewer the verified list and ask only for structural wins not
-already listed: a simpler model or ownership boundary that would delete whole
-branches, modes, wrappers, or compatibility paths. Verify swept candidates
-with the same verdict ladder.
+already listed. Verify swept candidates with the same verdict ladder.
 
 ## Phase 6: Fix Or Report
 
@@ -165,19 +163,10 @@ Correctness findings are report-first. Apply a correctness fix only when the
 user asked for fixes or after surfacing the finding, and only when the intended
 behavior is clear.
 
-Apply same-scope quality fixes directly when fixing is allowed:
-
-- Reuse canonical helpers and modules; delete redundant branches, modes,
-  wrappers, compatibility paths, and concepts.
-- Reframe state or ownership so conditionals disappear instead of merely
-  moving into a new helper; collapse duplicate branches into one clearer flow.
-- Move feature behavior to the package, module, layer, or policy that owns
-  the concept; separate orchestration from business logic when mixed.
-- Remove needless abstraction, over-defensive code, dead code, debug
-  leftovers, stale comments, and task narration.
-- Tighten loose contracts, casts, unnecessary optionality, and ad-hoc shapes;
-  make type boundaries explicit when that simplifies control flow.
-- Improve efficiency without introducing races or hidden ordering assumptions.
+Apply same-scope quality fixes directly when fixing is allowed: reuse,
+simplification, and hard-cut fixes per the finder-checklist categories in
+[../../references/finder-checklists.md](../../references/finder-checklists.md)
+(structural simplification, code quality/AI slop, and efficiency/atomicity).
 
 When schemas, contracts, persisted state, routing, configuration, feature flags,
 enum/value sets, migrations, adapters, or compatibility paths are touched,
@@ -200,13 +189,10 @@ guidance. Verify the final diff is minimal and scoped.
 
 ## Approval Bar
 
-Do not treat review as clean when any of these remain visible in the reviewed
-scope: a clear structural regression even if behavior still works, an obvious
-behavior-preserving simplification that would delete meaningful complexity,
-unjustified file-size growth (especially crossing roughly 1,000 lines),
-ad-hoc branching that tangles an existing flow, unnecessary wrapper/cast/
-optionality/fallback churn, feature logic leaking across the wrong boundary,
-or duplication of a canonical helper, type, service, module, or policy.
+Do not treat review as clean when any of the "Final Pass: Big
+Simplifications" criteria in
+[../../references/finder-checklists.md](../../references/finder-checklists.md)
+remain visible in the reviewed scope.
 
 Be direct and demanding about maintainability findings. Do not be rude, and do
 not soften structural problems into cosmetic suggestions. If the code makes the
@@ -220,9 +206,7 @@ severity, correctness outranks reuse, simplification, quality, efficiency, and
 conventions; within maintainability findings, order structural regressions
 first, then missed dramatic simplifications, branching growth, boundary and
 type contract issues, file-size or decomposition issues, and legibility
-concerns. Keep the set high-signal and stay near the chosen target (Phase 2);
-go over it only when each extra finding carries a named failure scenario or
-concrete maintainability cost.
+concerns. Keep the set high-signal and stay near the chosen target (Phase 2).
 
 Each finding should include:
 
@@ -249,11 +233,7 @@ For review-only output, lead with prioritized findings and end with validation
 status. If no material issues survive verification, state the reviewed scope and
 say the code meets the selected rigor.
 
-Explain cleanup work in plain English: what was messy, what changed, and why it
-matters practically. Use concrete file references instead of dense review
-jargon. On request, explain the result for a smart non-engineer: skip code
-snippets and jargon, and define any necessary term in one short everyday
-sentence.
+On request, explain the result in plain English for a smart non-engineer.
 
 ### Inline Comments
 

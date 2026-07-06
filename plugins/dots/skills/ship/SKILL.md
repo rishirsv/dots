@@ -56,7 +56,7 @@ to `$pr steward`.
     existing draft to ready otherwise.
 11. Verify publication with the validation harness.
 12. If the invocation is `ship review` or the user explicitly asks for Codex review/babysitting, post the Codex review request and follow [babysit-pr.md](references/babysit-pr.md).
-13. If the invocation asks to merge or land the PR, stop after publication and hand off to `$pr land`; do not merge from this skill.
+13. If the invocation asks to merge or land the PR, hand off to `$pr land` (see Landing Boundary).
 14. Report branch, commit range, PR URL, validation evidence, review-request state, and any remaining blockers.
 
 ## Scope Discipline
@@ -76,10 +76,6 @@ question when the diff mixes unrelated product surfaces, unrelated bug
 fixes, or cleanup with feature work — or when a branch name would need vague
 glue like `misc` or `cleanup-and-feature`. If only part of a file should be
 included and there is no safe non-interactive split, stop and ask.
-
-Do not use `git add -A` or `git add .` unless the user explicitly asked to
-publish every dirty path and the split-scope check confirms it all belongs
-in one PR.
 
 ## Publication Commands
 
@@ -116,13 +112,7 @@ Before final reporting, verify:
 
 ## Review Request Modifier
 
-For `ship review` or an explicit Codex-review request, post the current documented Codex review trigger as a separate PR comment:
-
-```bash
-gh pr comment "$pr_url_or_number" --body "@codex review"
-```
-
-Use exactly `@codex review` unless the user adds focus text after that prefix. Do not put the review request in the PR body. If posting the comment fails, keep the PR published and report the comment failure clearly.
+For `ship review` or an explicit Codex-review request, post the review request as documented in [babysit-pr.md](references/babysit-pr.md#request-codex-review).
 
 ## Landing Boundary
 
@@ -137,4 +127,4 @@ after the publication report is complete — the merge approval belongs there.
 - Do not push unrelated work or silently create a broad PR from a mixed worktree.
 - Do not use destructive cleanup commands or broad staging commands unless the full dirty worktree is the explicit publication scope.
 - Do not amend, rebase a shared branch, or force-push unless the user or repo policy clearly asks for it.
-- Do not merge, request non-Codex human reviewers unless asked, or dump raw terminal transcripts or commit logs into the PR body.
+- Do not request non-Codex human reviewers unless asked, or dump raw terminal transcripts or commit logs into the PR body.

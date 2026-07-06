@@ -7,9 +7,7 @@ description: "Reviews a codebase or subsystem for structural refactor candidates
 
 Review a codebase or subsystem for structural refactor candidates and architecture improvement opportunities. Surface candidates first; do not start a broad refactor until the user chooses a candidate or explicitly asks for implementation.
 
-Default to hard-cut architecture. For refactors or behavior changes that touch schemas, persisted state, contracts, routing, configuration, feature flags, enum/value sets, runtime ownership, repositories, UI-flow ownership, or tests, assume previous shapes are internal drafts. Keep one canonical owner and one current path.
-
-Do not preserve fallback behavior, compatibility branches, aliases, adapters, dual-shape support, legacy fixtures, migration ladders, rejection tests, or old-shape docs unless a real external boundary requires it. Old code existing is not evidence. If such a boundary exists, name the exact file, function, dependency, and reason it cannot be removed yet.
+Default to hard-cut architecture: one canonical owner, one current path — hard-cut-policy.md defines the posture, exception rule, and cleanup checklist.
 
 ## References
 
@@ -40,7 +38,7 @@ If docs are incomplete, infer the current layer model from the code and state th
 Explore organically and note where the code fights the reader:
 
 - understanding one concept requires bouncing between many small modules
-- a module is shallow: its interface is nearly as complex as its implementation
+- watch for shallow modules
 - pure functions were extracted for testability, but the real bugs hide in how callers coordinate them
 - tightly coupled modules leak across their seams
 - duplicate policy exists in more than one layer
@@ -61,7 +59,7 @@ A good candidate should improve locality, leverage, testability, or AI-navigabil
 
 Do not list speculative refactors just because they are imaginable. A candidate needs visible friction in the code, tests, docs, or change pattern.
 
-Apply the deletion test to suspected shallow modules: if deleting the module makes complexity vanish, it was pass-through; if complexity reappears across callers, it was earning its keep.
+Apply the deletion test (architecture-language.md).
 
 ## Output
 

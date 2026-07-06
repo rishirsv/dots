@@ -13,22 +13,12 @@ edits, which this skill applies itself once approved.
 
 ## The Loop
 
-Every mode feeds one pipeline with one approval gate:
+Every mode feeds one pipeline with one approval gate, and the script and the
+agent do different jobs within it:
 
 **intake** (surface candidates) → **judge** (verify evidence, score strength) →
 **human approves** → **apply or route**: AGENTS.md/instruction-file changes are
 applied by this skill; every other change routes to the owner that applies it.
-
-Self-Improve owns finding and packaging every proposal, plus one applying job:
-`Project AGENTS.md` and `Global AGENTS.md` changes. For those, propose the
-observable rule per [references/agents-md.md](references/agents-md.md), then,
-once approved, write it to the closest-scope file yourself. Everything else
-routes elsewhere to apply: skill source edits go to `skill-doctor`; memory
-promotions are proposed as new `Memory Notes` entries, never edited in place.
-
-## Division Of Labor
-
-Keep this honest. The script and the agent do different jobs:
 
 - **The script surfaces candidates**: it scans sessions for preference and
   correction sentences, scores evidence strength, ranks threads, detects skill
@@ -37,6 +27,13 @@ Keep this honest. The script and the agent do different jobs:
 - **You (the agent) extract the real evidence**: read the cited threads, derive
   expected vs actual behavior and the durable correction, and propose the
   smallest change. The script's buckets and scores are hints, not verdicts.
+
+Self-Improve owns finding and packaging every proposal, plus one applying job:
+`Project AGENTS.md` and `Global AGENTS.md` changes. For those, propose the
+observable rule per [references/agents-md.md](references/agents-md.md), then,
+once approved, write it to the closest-scope file yourself. Everything else
+routes elsewhere to apply: skill source edits go to `skill-doctor`; memory
+promotions are proposed as new `Memory Notes` entries, never edited in place.
 
 ## Sources
 
@@ -104,8 +101,8 @@ current app thread. Otherwise use the local state and rollout files above.
 Before a broad pass, rank candidate threads (`triage`). Prefer threads with:
 
 - explicit corrections or preferences;
-- frustration cues such as `come on`, `can't you just`, `keep going`, or
-  `don't stop`;
+- frustration cues (the script owns the list; see
+  [references/skill-analytics.md](references/skill-analytics.md));
 - skill, plugin, instruction, memory, validation, harness, commit, PR, review,
   or tool-selection discussion;
 - failed validation, repeated retries, or a final successful workflow after
@@ -190,8 +187,11 @@ Load the matching reference when a proposal or request enters its area:
 - Inspect cited transcripts before applying any proposal.
 - Keep proposal buckets disjoint.
 - Prefer the smallest durable change that prevents recurrence.
+- Never edit memories directly; propose them as new `Memory Notes` entries.
 - After the user decides, record it with `decide accept|reject|apply <key>` so
   the proposal does not resurface on the next pass.
+- Validate the touched skill, doc, script, or instruction file after any
+  approved source edit, or state the reason validation was skipped.
 
 ## Output
 
@@ -230,16 +230,3 @@ subset: write `Project AGENTS.md`/`Global AGENTS.md` changes yourself; route
 skill source edits through `skill-doctor`; propose (never directly edit)
 memory notes and goal actions. Validate the touched skill, doc, script, or
 instruction file after applying.
-
-## Final Check
-
-Before finishing, confirm:
-
-- every recommendation has evidence or is labeled as inference;
-- one-off task noise was filtered out;
-- memories were not edited directly;
-- source edits had explicit approval, and each was applied by the right owner
-  (this skill for AGENTS.md/instruction files, `skill-doctor` for skill source);
-- destinations are disjoint;
-- approved/rejected proposals were recorded with `decide`;
-- validation ran for any approved source edit, or the skip reason is stated.
