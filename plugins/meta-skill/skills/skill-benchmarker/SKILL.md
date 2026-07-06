@@ -98,7 +98,7 @@ Use `references/benchmarking.md` for the schema, task-bank policy, repetition
 policy, gate policy, and integrity checks. Run:
 
 ```sh
-<meta-skill-root>/scripts/metaskill eval lint --preset .<skill-name>/presets/<preset-name>.json --json
+<meta-skill-root>/scripts/metaskill eval run --check --preset .<skill-name>/presets/<preset-name>.json --json
 ```
 
 Fix unknown cases, unknown candidates, empty selections, one-sided trigger

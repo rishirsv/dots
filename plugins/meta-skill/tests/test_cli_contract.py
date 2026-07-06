@@ -218,16 +218,18 @@ class CliContractTests(unittest.TestCase):
 
     def test_help_surfaces(self):
         run_cli("--help")
-        for group in ("doctor", "workbench", "sessions", "eval", "validate", "package"):
+        for group in ("doctor", "init", "status", "case", "sessions", "eval", "validate", "package"):
             run_cli(group, "--help")
         run_cli("benchmark", "--help", expect=(2,))
+        run_cli("workbench", "--help", expect=(2,))
         eval_run_help = run_cli("eval", "run", "--help").stdout
-        for flag in ("--no-grade", "--case", "--type", "--candidates", "--split", "--preset"):
+        for flag in ("--no-grade", "--case", "--type", "--candidates", "--split", "--preset", "--check"):
             self.assertIn(flag, eval_run_help)
         self.assertNotIn("--runner", eval_run_help)
         self.assertIn("--preset", run_cli("eval", "list", "--help").stdout)
-        self.assertIn("--preset", run_cli("eval", "lint", "--help").stdout)
         self.assertIn("--preset", run_cli("eval", "report", "--help").stdout)
+        run_cli("eval", "lint", "--help", expect=(2,))
+        run_cli("eval", "materialize", "--help", expect=(2,))
         self.assertNotIn("--mode", run_cli("sessions", "extract", "--help").stdout)
         human_help = run_cli("eval", "human", "--help").stdout
         self.assertIn("--reviewer", human_help)
@@ -241,13 +243,42 @@ class CliContractTests(unittest.TestCase):
         )
         self.assertIsInstance(data["ok"], bool)
 
-    def test_workbench_init_creates_named_workbench(self):
+    def test_init_creates_named_workbench_and_evals(self):
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "proj"
             write_skill(project)
-            data, _ = run_json("workbench", "init", "--target", str(project), "--json")
+            data, _ = run_json("init", str(project), "--json")
             self.assertTrue(data["ok"])
             self.assertTrue((project / ".demo" / "AGENTS.md").is_file())
+            evals_path = project / ".demo" / "evals.json"
+            self.assertTrue(evals_path.is_file())
+            evals = json.loads(evals_path.read_text())
+            self.assertEqual(evals["skill_name"], "demo")
+            self.assertEqual(evals["cases"], [])
+
+    def test_status_json_shape_on_scaffolded_project(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "proj"
+            write_skill(project)
+            run_cli("init", str(project), "--json")
+            data, _ = run_json("status", str(project), "--json")
+            self.assertTrue(data["ok"])
+            self.assertTrue(data["workbench"]["exists"])
+            self.assertTrue(data["suite"]["exists"])
+            self.assertEqual(data["suite"]["case_count"], 0)
+            self.assertEqual(data["runs"]["count"], 0)
+
+    def test_case_new_creates_task_and_snippet(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "proj"
+            write_skill(project)
+            run_cli("init", str(project), "--json")
+            suite = project / ".demo" / "evals.json"
+            data, _ = run_json("case", "new", "demo-case", "--suite", str(suite), "--json")
+            self.assertTrue(data["ok"])
+            self.assertTrue((project / ".demo" / "cases" / "demo-case" / "task.md").is_file())
+            self.assertFalse(data["manifest_updated"])
+            self.assertEqual(data["manifest_snippet"]["id"], "demo-case")
 
     def test_validate_json_contract(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -278,7 +309,7 @@ class CliContractTests(unittest.TestCase):
             self.assertIn("reference.md", names)
             self.assertFalse([name for name in names if ".demo" in name or "__pycache__" in name])
 
-    def test_eval_lint_and_materialize(self):
+    def test_eval_run_check_lints_without_running(self):
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "proj"
             write_skill(project)
@@ -293,11 +324,9 @@ class CliContractTests(unittest.TestCase):
                     }
                 ],
             )
-            data, _ = run_json("eval", "lint", "--suite", str(suite), "--json")
+            data, _ = run_json("eval", "run", "--suite", str(suite), "--check", "--json")
             self.assertTrue(data["ok"])
-            self.assertEqual(data["stats"]["tasks"], 1)
-            data, _ = run_json("eval", "materialize", "--suite", str(suite), "--json")
-            self.assertTrue(data["ok"])
+            self.assertEqual(data["lint_warnings"]["suite"]["stats"]["tasks"], 1)
 
     def test_eval_run_with_fake_sdk_writes_trial_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -321,6 +350,8 @@ class CliContractTests(unittest.TestCase):
             self.assertTrue((run_dir / "summary.json").is_file())
             self.assertTrue((run_dir / "inputs" / "suite.json").is_file())
             self.assertTrue((run_dir / "inputs" / "candidates" / "current" / "SKILL.md").is_file())
+            self.assertTrue((run_dir / "report.md").is_file())
+            self.assertEqual(data["report_path"], str(run_dir / "report.md"))
             summary = json.loads((run_dir / "summary.json").read_text())
             self.assertEqual(summary["final_verdict_totals"], {"ungraded": 1})
             progress, _ = run_json("eval", "progress", "--run", str(run_dir), "--json", env=env)

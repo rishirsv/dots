@@ -23,7 +23,7 @@ from .report import build_report, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, terminal_count
 from .sessions import extract_thread_improvement, list_threads, render_thread_list, show_thread
 from .validation import validate_report
-from .workbench import init_workbench, materialize_cases
+from .workbench import init_target, new_case, status_snapshot
 
 
 def command_doctor(args):
@@ -56,9 +56,46 @@ def command_doctor(args):
     return 0 if ok else 1
 
 
-def command_workbench_init(args):
+def command_init(args):
     target = Path(args.target or ".").expanduser().resolve()
-    emit(init_workbench(target, args.dry_run), args.json)
+    emit(init_target(target, args.dry_run), args.json)
+    return 0
+
+
+def render_status_text(status):
+    lines = [
+        f"target:    {status['target']}",
+        f"workbench: {status['workbench']['path']} ({'exists' if status['workbench']['exists'] else 'missing'})",
+        f"suite:     {status['suite']['path']} ({'exists' if status['suite']['exists'] else 'missing'})",
+    ]
+    if status["suite"]["exists"]:
+        suite = status["suite"]
+        lines.append(f"  cases:   {suite.get('case_count', 0)} {suite.get('case_types', {})}")
+        lines.append(f"  lint:    {suite.get('lint_warning_count', 0)} warning(s)")
+    lines.append(f"presets:   {', '.join(status['presets']) if status['presets'] else 'none'}")
+    runs = status["runs"]
+    lines.append(f"runs:      {runs['count']}")
+    latest = runs.get("latest")
+    if latest:
+        lines.append(
+            f"  latest:  {latest.get('run_id')} created {latest.get('created_at')} "
+            f"verdicts {latest.get('final_verdict_totals')}"
+        )
+    return "\n".join(lines)
+
+
+def command_status(args):
+    status = status_snapshot(args.target)
+    if args.json:
+        emit(status, True)
+    else:
+        print(render_status_text(status))
+    return 0
+
+
+def command_case_new(args):
+    result = new_case(args.case_id, args.suite)
+    emit(result, args.json)
     return 0
 
 
@@ -106,25 +143,40 @@ def command_sessions_extract(args):
     return 0 if result["ok"] else 1
 
 
-def command_eval_materialize(args):
-    emit(materialize_cases(args.suite, args.force), args.json)
-    return 0
-
-
-def command_eval_lint(args):
-    result = lint_suite(args.suite)
+def preflight_lint(args):
+    lint_result = lint_suite(args.suite)
+    result = {"suite": lint_result}
     if getattr(args, "preset", None):
         resolved = resolve_preset_ref(args.preset, args.suite)
-        result = {"suite": result, "preset": preset_lint(str(resolved))}
-    emit(result, args.json)
-    return 0
+        result["preset"] = preset_lint(str(resolved))
+    return result
+
+
+def print_lint_warnings(lint_result):
+    for scope in ("suite", "preset"):
+        scoped = lint_result.get(scope)
+        if not scoped:
+            continue
+        for warning in scoped.get("warnings", []):
+            detail = warning.get("detail") or warning.get("kind")
+            case_id = warning.get("case_id")
+            prefix = f"[{scope}:{case_id}]" if case_id else f"[{scope}]"
+            print(f"lint: {prefix} {warning.get('kind')}: {detail}", file=sys.stderr)
 
 
 def command_eval_run(args):
     if getattr(args, "preset", None):
         resolved = resolve_preset_ref(args.preset, args.suite)
         apply_preset(args, load_preset(str(resolved)))
+    lint_result = preflight_lint(args)
+    if not args.json:
+        print_lint_warnings(lint_result)
+    if getattr(args, "check", False):
+        result = {"ok": True, "lint_warnings": lint_result}
+        emit(result, args.json)
+        return 0
     result = run_eval(args)
+    result["lint_warnings"] = lint_result
     emit(result, args.json)
     return 0 if result["ok"] else 1
 
@@ -247,13 +299,24 @@ def build_parser():
     doctor.add_argument("--json", action="store_true")
     doctor.set_defaults(func=command_doctor)
 
-    workbench = sub.add_parser("workbench", help="Workbench commands")
-    workbench_sub = workbench.add_subparsers(dest="workbench_command", required=True)
-    init = workbench_sub.add_parser("init", help="Create .<skill-name> workbench guidance")
-    init.add_argument("--target", default=".")
+    init = sub.add_parser("init", help="Create the workbench and a starter eval suite for a target")
+    init.add_argument("target", nargs="?", default=".")
     init.add_argument("--dry-run", action="store_true")
     init.add_argument("--json", action="store_true")
-    init.set_defaults(func=command_workbench_init)
+    init.set_defaults(func=command_init)
+
+    status = sub.add_parser("status", help="Show workbench, suite, presets, and run history at a glance")
+    status.add_argument("target", nargs="?", default=".")
+    status.add_argument("--json", action="store_true")
+    status.set_defaults(func=command_status)
+
+    case_parser = sub.add_parser("case", help="Eval case commands")
+    case_sub = case_parser.add_subparsers(dest="case_command", required=True)
+    case_new = case_sub.add_parser("new", help="Scaffold a new eval case's task.md")
+    case_new.add_argument("case_id")
+    case_new.add_argument("--suite")
+    case_new.add_argument("--json", action="store_true")
+    case_new.set_defaults(func=command_case_new)
 
     sessions = sub.add_parser("sessions", help="Codex local session evidence commands")
     sessions_sub = sessions.add_subparsers(dest="sessions_command", required=True)
@@ -282,17 +345,6 @@ def build_parser():
 
     eval_parser = sub.add_parser("eval", help="Evaluation commands")
     eval_sub = eval_parser.add_subparsers(dest="eval_command", required=True)
-    lint = eval_sub.add_parser("lint", help="Check eval manifest task, grader, and coverage shape")
-    lint.add_argument("--suite")
-    lint.add_argument("--preset", help="Also lint this preset (name or path)")
-    lint.add_argument("--json", action="store_true")
-    lint.set_defaults(func=command_eval_lint)
-
-    materialize = eval_sub.add_parser("materialize", help="Materialize cases from evals.json")
-    materialize.add_argument("--suite")
-    materialize.add_argument("--force", action="store_true")
-    materialize.add_argument("--json", action="store_true")
-    materialize.set_defaults(func=command_eval_materialize)
 
     run = eval_sub.add_parser("run", help="Run selected eval trials")
     run.add_argument("--suite")
@@ -304,6 +356,7 @@ def build_parser():
     run.add_argument("--preset", help="Run the task and candidate slice selected by this preset (name or path)")
     run.add_argument("--model")
     run.add_argument("--no-grade", action="store_true", help="Run trials without grading; intended only for runtime debugging")
+    run.add_argument("--check", action="store_true", help="Lint the suite (and preset) only; do not plan or run trials")
     run.add_argument("--json", action="store_true")
     run.set_defaults(func=command_eval_run)
 

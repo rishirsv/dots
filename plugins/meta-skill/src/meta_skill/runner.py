@@ -1,5 +1,6 @@
 """Sequential eval planning, execution, and progress snapshots."""
 
+import sys
 import time
 from datetime import datetime, timezone
 
@@ -235,11 +236,16 @@ def run_eval(args):
     append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "run_id": rid, "status": "created"})
     for row in plan:
         append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "queued"})
-    for row in plan:
-        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "running"})
+    total = len(plan)
+    for position, row in enumerate(plan, start=1):
+        trial_id = row["trial_id"]
+        print(f"[{position}/{total}] {trial_id} running", file=sys.stderr)
+        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": "running"})
         result = run_trial(row, run_dir, frozen_cases, args.model)
         append_jsonl(run_dir / "results.jsonl", result)
-        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": result["runtime_status"]})
+        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": result["runtime_status"]})
+        duration_s = round((result.get("timing") or {}).get("duration_ms", 0) / 1000, 1)
+        print(f"[{position}/{total}] {trial_id} {result['runtime_status']} ({duration_s}s)", file=sys.stderr)
     grade_result = None
     if grading_enabled:
         from .grading import grade_run
@@ -247,6 +253,7 @@ def run_eval(args):
         grade_result = grade_run(str(run_dir), rebuild_summary=False)
     summary = build_summary(str(run_dir))
     exit_code = summary_exit_code(summary, runtime_only=not grading_enabled)
+    report_path = _write_run_report(run_dir, preset)
     return {
         "ok": exit_code == 0,
         "run_id": rid,
@@ -258,7 +265,29 @@ def run_eval(args):
         "trials": len(plan),
         "grading": grade_result or {"ok": True, "mode": "none"},
         "summary": summary,
+        "report_path": str(report_path) if report_path else None,
     }
+
+
+def _write_run_report(run_dir, preset):
+    """Render and write the run's Markdown report, preferring the preset scorecard."""
+    report_path = run_dir / "report.md"
+    try:
+        if preset:
+            from .presets import build_preset_report, render_preset_markdown
+
+            report = build_preset_report(str(run_dir))
+            markdown = render_preset_markdown(report)
+        else:
+            from .report import build_report, render_markdown
+
+            report = build_report(str(run_dir))
+            markdown = render_markdown(report)
+        report_path.write_text(markdown)
+        return report_path
+    except Exception as exc:
+        print(f"warning: could not render run report: {exc}", file=sys.stderr)
+        return None
 
 
 def progress_snapshot(raw_run):
