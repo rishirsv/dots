@@ -4,9 +4,44 @@ Read when the user needs help choosing an eval path or when standard evaluator
 terms need to be introduced clearly.
 
 Use the canonical path names consistently: **one-off check**, **eval suite**,
-**benchmark profile**, and **no suite yet**. Name the concrete eval subtype
+**eval preset**, and **no suite yet**. Name the concrete eval subtype
 when useful: quality, trigger, regression, gate, or judge alignment.
 Define the selected term once when the user may not know it, then keep using it.
+
+## Intake Shape
+
+Use this shape before authoring or running anything:
+
+```text
+What we are deciding: <decision in the user's words>
+Evidence plan: <one-off check | eval suite | eval preset | no suite yet>
+Definition: <one-sentence definition of the selected path when useful>
+Why this fits: <context-specific reason>
+Starting signal: <real traces | known failure | manual check | synthetic hypothesis | none yet>
+Evidence we need: <tasks, examples, labels, validators, transcripts, or fixtures>
+What this can prove: <measured claim>
+What it cannot prove yet: <coverage limit>
+Next step: <one concrete action>
+```
+
+Name the smallest evidence plan, then act on lightweight inspection, one-off
+review, deterministic validation, or drafting tasks. Ask for confirmation
+before eval suites, runner setup, human review collection, or durable
+artifact creation, only when a missing decision would change the eval path,
+runner, external writes, or human-review standard.
+
+## Route Common Requests
+
+| User intent | Evidence plan |
+|---|---|
+| "Is this skill good enough?" | Choose between static `skill-doctor` review, a 2-3 task eval suite, or no suite yet based on risk and existing evidence. |
+| "Did this change break anything?" | Regression or failure suite from known-good behavior. |
+| "I changed the description/frontmatter." | Run `<meta-skill-root>/scripts/metaskill validate <skill-dir>` first, then trigger tuning with should-trigger and near-miss prompts. |
+| "Can I trust this judge?" | Judge alignment with human labels and TPR/TNR. |
+| "Try this one prompt." | One-off check if the user wants a signal; route diagnosis/fix reproduction to `skill-doctor`. Convert useful findings into suite tasks later. |
+| "Give me durable evidence." | Ask for confirmation, then build an eval suite with run artifacts, grades, and report. |
+| "Benchmark this", "track release readiness", or "show benchmark history." | Route to `skill-benchmarker` after an eval suite exists. |
+| "This is a one-off or fully deterministic check." | Skip the suite; use `skill-doctor` or a deterministic validator. |
 
 ## Route Example: Quality Loop
 
