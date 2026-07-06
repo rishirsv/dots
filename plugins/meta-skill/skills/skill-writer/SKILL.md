@@ -85,7 +85,7 @@ question:
 | Job | The one recurring job the skill does, not what happened once. |
 | Trigger | Real user language that should fire the skill, plus the nearest `not for` boundary. |
 | Inputs and output | What the skill consumes and the expected output shape or artifact. |
-| Invariants and failure shields | What the skill should preserve, prevent, or flag; include common mistakes and user corrections. |
+| Invariants and observed failure modes | What the skill should preserve, plus gates for irreversible or external actions and failures actually observed (user corrections, real mistakes). Do not invent prohibitions for problems that haven't happened. |
 | Instruction shape | Whether the work is judgment prose, fixed-shape output, script-backed, or a strict sequence. |
 | Skill category | Primary type from [skill-design.md](references/skill-design.md); narrow or split if the draft straddles categories. |
 | Evidence plan | Capability uplift, encoded preference, or hybrid; include the baseline, but create `.<skill-name>/evals.json` only when eval seeds or evaluator handoff are in scope. |

@@ -457,7 +457,10 @@ tone preferences, ordinary sequencing, "be clear/concise/comprehensive," and
 generic "validate your work" language. Prefer explaining why a behavior
 matters over heavy-handed blanket commands — a stack of rigid prohibitions
 usually means a better section name, example, or output shape would remove
-the ambiguity more cleanly. Treat `Operating Rules` as a stable surface;
+the ambiguity more cleanly. A negative instruction earns its place only when
+it gates an irreversible or external action or encodes an observed failure;
+do not write prohibitions for problems that haven't happened — boundaries
+are earned, not preemptive, in the body as much as in the description. Treat `Operating Rules` as a stable surface;
 touch it only when the user explicitly authorizes a rule change, so
 hard-won rules aren't silently overwritten by routine improvements.
 

@@ -46,9 +46,9 @@ two checks that catch what per-line reading misses:
   strength or wording, in the body, across body and references, or across
   sibling skills claiming one job. Literal models pay for every conflict.
 - **Calibration** — compare the skill against one strong local exemplar of
-  the same kind (in this repo: `debug` and `explain` for judgment-teaching
-  altitude) and say where it sits, so "too long" and "too thin" mean the
-  same thing across reviews.
+  the same kind (in this repo: `explain` for judgment-teaching altitude) and
+  say where it sits, so "too long" and "too thin" mean the same thing across
+  reviews.
 
 Propose the remedy, not the smell: name the exact edit — the sentence to
 delete, the rule's one surviving home, the reference to extract — not "this
