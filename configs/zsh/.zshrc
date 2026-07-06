@@ -22,6 +22,16 @@ export DRAFTS_STYLE_HOME="${DRAFTS_STYLE_HOME:-$HOME/Code/dots/configs/drafts/st
 
 alias claude='command claude'
 alias cc='claude --dangerously-skip-permissions'
+alias zrsch='source "$HOME/.zshrc"'
+
+codex() {
+  if [[ "${1:-}" == "p" ]]; then
+    shift
+    command codex --profile personal "$@"
+  else
+    command codex "$@"
+  fi
+}
 
 # ==============================================
 # PATH Additions
