@@ -31,31 +31,37 @@ Separate missing information into three buckets:
 
 Stop clarifying once implementation is safe enough. Do not keep interviewing to make the request perfect.
 
-## Blocking Questions
+## The Stakes Ladder
 
-Ask only questions that change one of these decisions:
+The question budget scales with blast radius, not with how much is unknown:
 
-- Scope: what is included, excluded, or sequenced.
-- Destructive action: deleting, overwriting, resetting, migrating, or force-updating.
-- External publishing: pushing, posting, emailing, deploying, opening PRs, or changing live systems.
-- User-facing behavior: copy, UX, APIs, data shape, permissions, or compatibility.
-- Domain model meaning: terms, statuses, calculations, ownership, identity, or business rules.
-- Validation standard: what counts as done, correct, accepted, or tested.
-- Credentials or access: accounts, secrets, environments, permissions, or connectors.
-- Irreversible decisions: anything costly to undo or likely to surprise the user.
+- **Must ask** — the action reaches beyond the working tree or is costly to
+  undo: destructive changes (delete, overwrite, reset, migrate,
+  force-update), external publishing (push, post, email, deploy, open PRs,
+  live systems), credentials or access, and anything irreversible or likely
+  to surprise the user. Never assume through these.
+- **Ask only if the answer changes the work** — scope (included, excluded,
+  sequenced), user-facing behavior (copy, UX, APIs, data shape,
+  permissions), domain meaning (terms, statuses, calculations, ownership,
+  business rules), and the validation standard (what counts as done).
+- **Never ask** — taste, naming, formatting, or minor implementation style:
+  choose the best local convention and continue.
 
-If a question would only improve taste, naming, formatting, or minor implementation style, choose the best local convention and continue.
+A request with no top-rung decisions and clear middle-rung answers gets zero
+questions.
 
 ## Question Shape
 
-Keep the question set short. Prefer one to three questions; ask more only when each one independently blocks safe implementation.
+Ask everything in one round: batch all blocking questions into a single
+turn. Serial interrogation — question, answer, new question — is the failure
+mode this skill exists to prevent; a second round is justified only by a new
+blocker that the first answers created. Prefer one to three questions; ask
+more only when each one independently blocks safe implementation.
 
-For each question:
-
-- Number it.
-- Give tight options when possible.
-- Mark the recommended default.
-- State what assumption you will use if the user replies `use defaults`.
+Every question carries a recommended default, so `use defaults` is always a
+complete answer and the fastest path through the gate is one word. For each
+question: number it, give tight options when possible, mark the recommended
+default first, and state the assumption `use defaults` selects.
 
 When the platform provides a structured-question tool, prefer it over hand-rolled numbered-option markdown; otherwise use this skill's markdown shape below.
 
@@ -107,6 +113,8 @@ Proceed without asking when the remaining uncertainty is low risk, reversible, o
 If the user says `use defaults`, apply the recommended defaults you already stated. Do not ask follow-up questions unless a new blocker appears during implementation.
 
 When a blocker appears after work starts, pause and ask only the new blocking question. Include what you already learned from the code so the user is not asked to rediscover it.
+
+When an answer reveals a durable preference rather than a one-off decision — a naming convention, deploy target, risk tolerance, validation bar — say so in the final report and flag it as a candidate for the project's instruction file or memory (route the update through `$self-improve` where available). The same question should never survive into a future session.
 
 ## Boundaries
 
