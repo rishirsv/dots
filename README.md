@@ -101,9 +101,13 @@ scripts/sync-configs.sh --claude
 Review the dry-run before applying a scoped sync. The script backs up existing
 targets before replacing them.
 
-`--codex-personal` installs the Codex source config as
-`~/.codex/personal.config.toml`, which Codex can load with
-`codex --profile personal`.
+`codex p` is a shell shortcut for launching Codex with
+`CODEX_HOME=$HOME/.codex-personal`; it uses the independent personal Codex home,
+not a `--profile personal` layer under `~/.codex`.
+
+`--codex-personal` intentionally does not overwrite
+`~/.codex-personal/config.toml`; that home has its own auth, state, memories,
+plugins, marketplaces, and trusted projects.
 
 `--drafts-styles` installs the repo-managed Drafts style library into both
 `~/.codex/skill-state/drafts/styles` and

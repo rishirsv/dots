@@ -27,7 +27,7 @@ alias zrsch='source "$HOME/.zshrc"'
 codex() {
   if [[ "${1:-}" == "p" ]]; then
     shift
-    command codex --profile personal "$@"
+    CODEX_HOME="$HOME/.codex-personal" command codex "$@"
   else
     command codex "$@"
   fi

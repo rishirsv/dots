@@ -164,7 +164,7 @@ sync_codex() {
 }
 
 sync_codex_personal() {
-  install_file "$ROOT/configs/codex/config.toml" "$HOME/.codex/personal.config.toml"
+  log "Codex personal uses independent home $HOME/.codex-personal; not overwriting its config.toml"
 }
 
 sync_drafts_styles() {
