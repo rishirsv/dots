@@ -4,7 +4,7 @@
 
   "app": {
     "appearance": "system",
-    "minimalMode": false,
+    "minimalMode": true,
     "focusPaneOnFirstClick": false,
     "warnBeforeClosingTab": true,
     "warnBeforeClosingTabXButton": false,
@@ -26,7 +26,7 @@
   },
 
   "terminal": {
-    "showScrollBar": true,
+    "showScrollBar": false,
     "copyOnSelect": false,
     "autoResumeAgentSessions": false,
     "showTextBoxOnNewTerminals": false,
@@ -45,59 +45,60 @@
   },
 
   "notifications": {
-    "sound": "default",
+    "sound": "none",
     "unreadPaneRing": true,
-    "paneFlash": true,
+    "paneFlash": false,
     "dockBadge": true,
-    "showInMenuBar": true,
+    "showInMenuBar": false,
     "hooksMode": "append"
   },
 
   "sidebar": {
-    "showCustomMetadata": true,
+    "showCustomMetadata": false,
     "wrapWorkspaceTitles": false,
-    "showSSH": true,
+    "showSSH": false,
     "hideAllDetails": false,
     "openPortLinksInCmuxBrowser": true,
-    "showPorts": true,
-    "showNotificationMessage": true,
+    "showPorts": false,
+    "showNotificationMessage": false,
     "showBranchDirectory": true,
     "showProgress": true,
     "makePullRequestsClickable": true,
     "watchGitStatus": true,
     "openPullRequestLinksInCmuxBrowser": true,
-    "showLog": true,
+    "showLog": false,
     "showPullRequests": true,
-    "branchLayout": "vertical",
-    "showWorkspaceDescription": true
+    "branchLayout": "inline",
+    "showWorkspaceDescription": false
   },
 
   "workspaceColors": {
-    "indicatorStyle": "leftRail",
+    "indicatorStyle": "washRail",
+    "selectionColor": "#242424",
+    "notificationBadgeColor": "#9fb7ff",
     "colors": {
-      "Red": "#fa423e",
-      "Green": "#40c977",
-      "Amber": "#e5b454",
-      "Blue": "#339cff",
-      "Purple": "#ad7bf9",
-      "Teal": "#4ec9b0",
-      "Charcoal": "#26384d",
-      "Gray": "#6e6e6e",
-      "Bright Red": "#ff6965",
-      "Bright Green": "#63d990",
-      "Bright Amber": "#f0c66a",
-      "Bright Blue": "#66b8ff",
-      "Bright Purple": "#c79cff",
-      "Bright Teal": "#6bd7c3"
+      "Slate": "#5f6f89",
+      "Blue": "#6f91c7",
+      "Teal": "#6fae9f",
+      "Sage": "#8aa37b",
+      "Amber": "#b89a5e",
+      "Rose": "#b47a86",
+      "Violet": "#9a87bd",
+      "Charcoal": "#414753"
     }
   },
 
   "sidebarAppearance": {
     "matchTerminalBackground": true,
-    "tintColor": "#181818",
-    "tintOpacity": 0.18,
-    "darkModeTintColor": "#181818",
+    "tintColor": "#111111",
+    "tintOpacity": 0.06,
+    "darkModeTintColor": "#111111",
     "lightModeTintColor": null
+  },
+
+  "canvas": {
+    "paneGap": 12,
+    "snappingEnabled": true
   },
 
   "automation": {
