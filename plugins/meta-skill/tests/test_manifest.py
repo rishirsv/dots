@@ -19,7 +19,7 @@ def write_json(path, data):
 
 
 class ManifestTests(unittest.TestCase):
-    def test_legacy_eval_rows_are_ignored(self):
+    def test_legacy_eval_rows_are_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             suite = Path(tmp) / ".demo" / "evals.json"
             write_json(
@@ -40,11 +40,12 @@ class ManifestTests(unittest.TestCase):
                 },
             )
 
-            manifest = load_manifest(suite)
+            with self.assertRaises(CliError) as ctx:
+                load_manifest(suite)
 
-            self.assertEqual(manifest.get("cases", []), [])
+            self.assertIn("legacy evals[]", ctx.exception.message)
 
-    def test_path_task_seed_is_ignored_alongside_path(self):
+    def test_path_task_seed_is_rejected(self):
         case = {"id": "case-a", "task": {"path": "task.md", "seed": "Seed text."}}
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -59,9 +60,50 @@ class ManifestTests(unittest.TestCase):
                 },
             )
 
-            manifest = load_manifest(suite)
+            with self.assertRaises(CliError) as ctx:
+                load_manifest(suite)
 
-            self.assertEqual(manifest["cases"][0]["task"]["path"], "task.md")
+            self.assertIn("task.seed is no longer supported", ctx.exception.message)
+
+    def test_task_file_is_rejected(self):
+        case = {"id": "case-a", "task": {"file": "task.md"}}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            suite = Path(tmp) / ".demo" / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+                    "cases": [case],
+                },
+            )
+
+            with self.assertRaises(CliError) as ctx:
+                load_manifest(suite)
+
+            self.assertIn("task.file is no longer supported", ctx.exception.message)
+
+    def test_custom_task_path_is_rejected(self):
+        case = {"id": "case-a", "task": {"path": "tasks/foo.md"}}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            suite = Path(tmp) / ".demo" / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+                    "cases": [case],
+                },
+            )
+
+            with self.assertRaises(CliError) as ctx:
+                load_manifest(suite)
+
+            self.assertIn("task.path must be task.md", ctx.exception.message)
 
     def test_case_task_info_has_no_seed_field(self):
         case = {"id": "case-a", "task": {"path": "task.md"}}

@@ -109,8 +109,7 @@ Use this shape:
     "hidden_files_must_not_be_staged": true
   },
   "report": {
-    "include_history": true,
-    "include_coverage_limits": true
+    "include_history": true
   }
 }
 ```
@@ -152,21 +151,13 @@ skill" into `task.md`; candidate setup supplies the skill payload.
 
 ## Grader And Calibration Policy
 
-Choose the most exact fair grader:
-
-- code validators for exact files, schemas, state, command results, or forbidden
-  behavior
-- model judges for semantic quality, completeness, groundedness, and multiple
-  valid answers
-- human grades for taste, domain judgment, release-readiness decisions, and
-  model-judge calibration
-
-Use gates for must-not-break checks. A gate failure records a failed state for
-the measured check even when average scores are high.
-
-Calibrate model judges against human labels before using judge scores for
-high-judgment release or selection decisions. Give judges an `unknown` escape
-when evidence is insufficient or contradictory.
+Choose the grader mix with
+[skill-evaluator/references/eval-types.md](../../skill-evaluator/references/eval-types.md#choose-the-grader-mix).
+Use gates for must-not-break checks; a gate failure records a failed state
+for the measured check even when average scores are high. Calibrate model
+judges against human labels before using judge scores for high-judgment
+release or selection decisions, and give judges an `unknown` escape when
+evidence is insufficient or contradictory.
 
 ## Repeated Trials
 
@@ -225,19 +216,9 @@ follow-up requiring explicit approval.
 
 ## Release Readiness
 
-Do not equate a green benchmark with release approval. For release decisions,
-report the benchmark result as evidence with conditions:
-
-- skill validation passed
-- suite lint and preset lint warnings were reviewed
-- all selected trials completed
-- all selected trials are graded or intentionally human-reviewed
-- grader gate failures, preset gate failures, and preset gate unknowns are 0
-- release-critical unknown rate is 0 or explicitly accepted
-- baseline-pass/candidate-fail state pairs on must-not-break tasks are 0
-- model-judge release or selection claims have a calibration artifact or a
-  stated human spot-check decision
-- coverage limits name the unmeasured task families
+Do not equate a green benchmark with release approval. Report the benchmark
+result as evidence against the release-readiness checklist in
+[SKILL.md](../SKILL.md#4-report-the-scorecard).
 
 ## Failure Modes
 

@@ -12,14 +12,8 @@ agreement, then recheck after material changes.
 
 ## Labels
 
-Use one label scale for model and human rows:
-
-| Label | Meaning |
-|---|---|
-| `pass` | The outcome satisfies the required criteria with concrete evidence. |
-| `partial` | The outcome is useful but misses a non-gating criterion or has a localized defect. |
-| `fail` | The outcome is wrong, incomplete, unsafe, or misses a required criterion. |
-| `unknown` | Evidence is insufficient, contradictory, too subjective, or underspecified. |
+Model and human rows share one label scale — see
+[eval-vocabulary.md](../../../references/eval-vocabulary.md).
 
 Do not add a separate human-review label. Human review is a workflow state;
 `unknown` is the grade label for non-decisive evidence. Scores, when present,
@@ -108,8 +102,9 @@ Human, model, and code grades share one annotation shape:
 }
 ```
 
-Use candidate/task/trial language in prose. In grade rows, use the current
-schema field `candidate`, not `candidate_id`. Use `trial_id`, not `attempt_id`.
+Use candidate/task/trial language in prose; see
+[eval-vocabulary.md](../../../references/eval-vocabulary.md) for schema field
+naming rules.
 
 ## Trust Bands
 

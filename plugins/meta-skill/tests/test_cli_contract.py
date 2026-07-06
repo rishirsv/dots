@@ -218,8 +218,10 @@ class CliContractTests(unittest.TestCase):
 
     def test_help_surfaces(self):
         run_cli("--help")
-        for group in ("doctor", "init", "status", "case", "sessions", "eval", "validate", "package"):
+        for group in ("doctor", "init", "status", "case", "sessions", "eval", "docs", "validate", "package"):
             run_cli(group, "--help")
+        self.assertIn("--check", run_cli("docs", "emit-cli", "--help").stdout)
+        self.assertIn("--run", run_cli("eval", "verify-run", "--help").stdout)
         run_cli("benchmark", "--help", expect=(2,))
         run_cli("workbench", "--help", expect=(2,))
         eval_run_help = run_cli("eval", "run", "--help").stdout
@@ -327,6 +329,47 @@ class CliContractTests(unittest.TestCase):
             data, _ = run_json("eval", "run", "--suite", str(suite), "--check", "--json")
             self.assertTrue(data["ok"])
             self.assertEqual(data["lint_warnings"]["suite"]["stats"]["tasks"], 1)
+
+    def test_eval_run_check_with_bare_preset_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "proj"
+            write_skill(project)
+            suite = write_suite(
+                project,
+                [
+                    {
+                        "id": "answer",
+                        "type": "capability",
+                        "task": {"prompt": "Say final text."},
+                        "expectations": ["Contains final text."],
+                    }
+                ],
+            )
+            preset = suite.parent / "presets" / "release.json"
+            preset.parent.mkdir(parents=True)
+            preset.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "id": "release",
+                        "suite": "../evals.json",
+                        "task_selection": {"case_ids": ["answer"]},
+                        "candidates": {"ids": ["current"]},
+                        "metrics": ["unknown_rate"],
+                        "integrity": {
+                            "run_null_candidate_when_possible": True,
+                            "hidden_files_must_not_be_staged": True,
+                        },
+                    },
+                    indent=2,
+                )
+                + "\n"
+            )
+
+            data, _ = run_json("eval", "run", "--suite", str(suite), "--preset", "release", "--check", "--json")
+
+            self.assertTrue(data["ok"])
+            self.assertEqual(data["lint_warnings"]["preset"]["preset"], "release")
 
     def test_eval_run_with_fake_sdk_writes_trial_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:

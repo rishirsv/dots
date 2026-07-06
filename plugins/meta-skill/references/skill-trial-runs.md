@@ -12,8 +12,8 @@ benchmark profiles, history, gates, or publish-readiness scorecards.
 
 Terminology: in full evals, a **candidate** is the thing under test (`current`,
 `attempt-1`), and a **trial** is one execution of one case under one candidate.
-"Attempt 1" is user-facing display text for a candidate only. Do not use
-`attempt_id` internally; use `trial_id` for one execution.
+"Attempt 1" is user-facing display text for a candidate only; see
+[eval-vocabulary.md](eval-vocabulary.md) for schema field naming rules.
 
 ## User Experience
 

@@ -50,6 +50,9 @@ def suite_from_preset(preset_path_, preset):
 
 def resolve_preset_ref(raw_preset, suite=None):
     """Resolve a bare preset name or path to a preset file path."""
+    if isinstance(raw_preset, dict):
+        raw_preset = raw_preset.get("path")
+    raw_preset = str(raw_preset)
     path = Path(raw_preset).expanduser()
     if path.suffix == ".json" or path.exists() or "/" in raw_preset or "\\" in raw_preset:
         return preset_path(raw_preset)
@@ -448,7 +451,7 @@ def _profile_gate_rows(report, profile):
 
 def _load_profile_for_report(raw_preset, run):
     if raw_preset:
-        loaded = load_preset(raw_preset)
+        loaded = load_preset(str(resolve_preset_ref(raw_preset, run.get("suite"))))
         run_preset_id = run.get("preset_id")
         if run_preset_id and run_preset_id != loaded["id"]:
             raise CliError(f"run preset_id {run_preset_id} does not match preset {loaded['id']}", 2)

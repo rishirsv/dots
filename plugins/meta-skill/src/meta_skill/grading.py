@@ -214,13 +214,8 @@ def normalize_graders(case, root):
             graders.append(item)
         return graders
 
-    judge = root / "judge.md"
-    if judge.exists():
-        graders.append({"kind": "model", "id": "judge", "metric": "judge", "path": "judge.md"})
-    elif case.get("expectations"):
+    if case.get("expectations"):
         graders.append({"kind": "model", "id": "expectations", "metric": "expectations"})
-    for validator in sorted(root.glob("validate.*")):
-        graders.append({"kind": "code", "id": validator.name, "metric": "validator", "path": validator.name})
     return graders
 
 
@@ -279,8 +274,7 @@ def grade_run(raw_run, *, rebuild_summary=True):
                 rows.append(code_validator_grade(run, result, validator, expected, root, generation_id, grader))
                 runnable = True
             elif grader.get("kind") == "model":
-                default_judge = root / "judge.md"
-                judge_path = grader_path(root, grader, "judge") if grader.get("path") else (default_judge if default_judge.exists() else None)
+                judge_path = grader_path(root, grader, "judge") if grader.get("path") else None
                 rows.append(
                     model_judge_grade(
                         run_dir,

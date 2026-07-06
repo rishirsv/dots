@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Meta Skill CLI.
 
-One agent-facing command surface for skill validation, packaging, eval
-materialization, App Server-backed trial runs, progress, and grading.
+One agent-facing command surface for skill validation, packaging,
+App Server-backed eval runs, grading, reporting, and docs gates.
 """
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from pathlib import Path
 
 from .app_server.client import app_server_readiness
 from .calibration import calibrate_run
+from .docs_tools import docs_lint, emit_cli
 from .errors import CliError
 from .grading import grade_run, human_review_packet, record_human_grade
 from .io import emit, fail, read_json, resolve_run_dir
@@ -23,6 +24,7 @@ from .report import build_report, list_runs, render_markdown
 from .runner import progress_snapshot, run_eval, terminal_count
 from .sessions import extract_thread_improvement, list_threads, render_thread_list, show_thread
 from .validation import validate_report
+from .verify_run import verify_run
 from .workbench import init_target, new_case, status_snapshot
 
 
@@ -143,11 +145,12 @@ def command_sessions_extract(args):
     return 0 if result["ok"] else 1
 
 
-def preflight_lint(args):
+def preflight_lint(args, preset_ref=None):
     lint_result = lint_suite(args.suite)
     result = {"suite": lint_result}
-    if getattr(args, "preset", None):
-        resolved = resolve_preset_ref(args.preset, args.suite)
+    preset = preset_ref or getattr(args, "preset", None)
+    if preset:
+        resolved = resolve_preset_ref(preset, args.suite)
         result["preset"] = preset_lint(str(resolved))
     return result
 
@@ -165,10 +168,11 @@ def print_lint_warnings(lint_result):
 
 
 def command_eval_run(args):
+    preset_ref = getattr(args, "preset", None)
     if getattr(args, "preset", None):
-        resolved = resolve_preset_ref(args.preset, args.suite)
+        resolved = resolve_preset_ref(preset_ref, args.suite)
         apply_preset(args, load_preset(str(resolved)))
-    lint_result = preflight_lint(args)
+    lint_result = preflight_lint(args, preset_ref=preset_ref)
     if not args.json:
         print_lint_warnings(lint_result)
     if getattr(args, "check", False):
@@ -229,10 +233,10 @@ def command_eval_human(args):
 
 
 def command_eval_list(args):
-    result = list_runs(args.suite)
     preset = getattr(args, "preset", None)
     if preset:
         loaded = load_preset(str(resolve_preset_ref(preset, args.suite)))
+        result = list_runs(str(loaded["suite"]))
         preset_id = loaded["id"]
         preset_path = str(loaded["path"])
         matching = []
@@ -246,6 +250,8 @@ def command_eval_list(args):
                 matching.append(row)
         result = dict(result)
         result["runs"] = matching
+    else:
+        result = list_runs(args.suite)
     emit(result, args.json)
     return 0
 
@@ -277,6 +283,35 @@ def command_eval_report(args):
     else:
         print(markdown, end="")
     return 0
+
+
+def command_eval_verify_run(args):
+    result = verify_run(args.run)
+    emit(result, args.json)
+    return 0 if result["ok"] else 1
+
+
+def command_docs_emit_cli(args):
+    result = emit_cli(write=args.write, check=args.check)
+    if args.json:
+        emit(result, True)
+    elif args.write or args.check:
+        state = "in sync" if result["in_sync"] else ("updated" if result["written"] else "OUT OF SYNC")
+        print(f"cli-surface: {state} ({result['path']})")
+    else:
+        print(result["surface"])
+    return 0 if result["ok"] else 1
+
+
+def command_docs_lint(args):
+    result = docs_lint()
+    if args.json:
+        emit(result, True)
+    else:
+        print(f"docs: {result['files']} files, {result['total_lines']} lines (budget {result['budget']['status']})")
+        for row in result["duplicates"]:
+            print(f"duplicate passage in {row['files'][0]} and {row['files'][1]}: {row['excerpt']}", file=sys.stderr)
+    return 0 if result["ok"] else 1
 
 
 def command_validate(args):
@@ -401,6 +436,23 @@ def build_parser():
     report.add_argument("--out", help="Write the Markdown report to this file instead of stdout")
     report.add_argument("--json", action="store_true")
     report.set_defaults(func=command_eval_report)
+
+    verify = eval_sub.add_parser("verify-run", help="Recheck a run's input snapshot against its recorded digests")
+    verify.add_argument("--run", required=True)
+    verify.add_argument("--json", action="store_true")
+    verify.set_defaults(func=command_eval_verify_run)
+
+    docs = sub.add_parser("docs", help="Documentation gates")
+    docs_sub = docs.add_subparsers(dest="docs_command", required=True)
+    emit_cli_parser = docs_sub.add_parser("emit-cli", help="Generate the cli.md command surface from the parser")
+    emit_cli_parser.add_argument("--write", action="store_true", help="Rewrite the generated block in references/cli.md")
+    emit_cli_parser.add_argument("--check", action="store_true", help="Exit 1 when references/cli.md is out of sync")
+    emit_cli_parser.add_argument("--json", action="store_true")
+    emit_cli_parser.set_defaults(func=command_docs_emit_cli)
+
+    docs_lint_parser = docs_sub.add_parser("lint", help="Fail on duplicated passages or a blown docs line budget")
+    docs_lint_parser.add_argument("--json", action="store_true")
+    docs_lint_parser.set_defaults(func=command_docs_lint)
 
     validate = sub.add_parser("validate", help="Validate a skill payload")
     validate.add_argument("skill_dir")
