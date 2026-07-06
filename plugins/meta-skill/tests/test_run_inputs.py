@@ -39,6 +39,7 @@ class ResolvedSuiteTests(unittest.TestCase):
                 "task": {"path": "task.md"},
                 "fixtures": ["input.txt"],
                 "expectations": ["Do the task."],
+                "graders": [{"kind": "model", "id": "judge", "path": "judge.md"}],
             }
 
             frozen = freeze_run_inputs(
@@ -60,6 +61,35 @@ class ResolvedSuiteTests(unittest.TestCase):
             self.assertTrue((workspace / "fixtures" / "input.txt").exists())
             self.assertFalse((workspace / "judge.md").exists())
             self.assertFalse((workspace / "expected.txt").exists())
+
+    def test_undeclared_judge_file_is_not_frozen(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            workbench = project / ".demo"
+            case_root = workbench / "cases" / "case-a"
+            case_root.mkdir(parents=True)
+            (case_root / "task.md").write_text("Visible task.\n")
+            (case_root / "judge.md").write_text("Hidden judge guidance.\n")
+            suite = workbench / "evals.json"
+            write_json(suite, {"schema_version": 1})
+            run_dir = workbench / "runs" / "run-001"
+            case = {
+                "id": "case-a",
+                "type": "capability",
+                "task": {"path": "task.md"},
+                "expectations": ["Do the task."],
+            }
+
+            freeze_run_inputs(
+                {"target": {"type": "skill", "ref": "SKILL.md"}},
+                suite,
+                workbench,
+                run_dir,
+                [case],
+                [{"candidate": "current"}],
+            )
+
+            self.assertFalse((run_dir / "inputs" / "cases" / "case-a" / "judge.md").exists())
 
     def test_symlinked_fixture_is_rejected_before_freezing(self):
         with tempfile.TemporaryDirectory() as tmp:

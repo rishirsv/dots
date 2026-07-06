@@ -61,13 +61,9 @@ recurring job in the authoring note.
 ## Locate Thread Evidence
 
 For Codex local session evidence, read
-[thread-skill-improvement.md](../../../references/thread-skill-improvement.md). Use
-the shared Meta-Skill CLI rather than worker-local scripts:
-
-```sh
-<meta-skill-root>/scripts/metaskill sessions list --limit 25 --archived all --query "<terms>"
-<meta-skill-root>/scripts/metaskill sessions show <thread-id> --max-chars 12000
-```
+[thread-skill-improvement.md](../../../references/thread-skill-improvement.md)
+for the `sessions list`/`show` commands and the shared Meta-Skill CLI rather
+than worker-local scripts.
 
 Prefer the highest-level thread surface available:
 

@@ -8,16 +8,14 @@ the smallest task set and grader mix that can answer it.
 
 ## Vocabulary
 
-Use these terms consistently:
+Use [eval-vocabulary.md](../../../references/eval-vocabulary.md) for
+suite/task/candidate/trial/transcript/outcome/grader terms, schema field
+rules, recognized task types, and the grade label scale.
+
+Two extra terms used only in this file:
 
 | Term | Meaning |
 |---|---|
-| **Task** | One unit of work with defined inputs and success criteria. |
-| **Candidate** | The agent-harness setup: no skill, current skill, or candidate skill. |
-| **Trial** | One attempt at one task under one candidate. |
-| **Outcome** | The final answer, files, artifacts, or state at the end of the trial. |
-| **Transcript** | The full event record: messages, tool calls, reasoning summaries, intermediate results, and errors. |
-| **Grader** | Code, model, or human logic that scores one aspect of the trial. |
 | **Assertion / check** | One named expectation inside a grader. |
 | **Gate** | A required grader whose failure records a failed result for the measured check even when other scores are high. |
 | **Harness** | The runner and workspace machinery that executes trials, records evidence, grades, and aggregates. |
