@@ -9,6 +9,7 @@ usage() {
 Usage: scripts/sync-plugins.sh [--all|--codex|--claude]
 
 Packages repo-owned plugins and refreshes installed local plugin caches.
+The --codex target also refreshes ~/.codex-personal when that home exists.
 Defaults to --all.
 EOF
 }
@@ -52,15 +53,52 @@ fi
 
 "$ROOT/scripts/package-plugins.sh"
 
+CODEX_MARKETPLACE="$ROOT/dist/codex"
+PLUGIN_NAMES=("${(@f)$(
+  python3 - "$ROOT/plugins/catalog.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+catalog = json.loads(Path(sys.argv[1]).read_text())
+for plugin in catalog.get("plugins", []):
+    print(plugin["name"])
+PY
+)}")
+
+sync_codex_home() {
+  local label="$1"
+  local home="$2"
+
+  if [[ -n "$home" && ! -d "$home" ]]; then
+    echo "Skipping $label: $home does not exist"
+    return
+  fi
+
+  echo "Syncing Codex plugins for $label"
+  if [[ -n "$home" ]]; then
+    CODEX_HOME="$home" codex plugin marketplace add "$CODEX_MARKETPLACE"
+    for plugin in "${PLUGIN_NAMES[@]}"; do
+      CODEX_HOME="$home" codex plugin add "$plugin@dots"
+    done
+  else
+    codex plugin marketplace add "$CODEX_MARKETPLACE"
+    for plugin in "${PLUGIN_NAMES[@]}"; do
+      codex plugin add "$plugin@dots"
+    done
+  fi
+}
+
 for target in "${TARGETS[@]}"; do
   case "$target" in
     codex)
-      codex plugin add dots@dots
-      codex plugin add meta-skill@dots
+      sync_codex_home "default Codex" ""
+      sync_codex_home "Codex personal" "$HOME/.codex-personal"
       ;;
     claude)
-      claude plugin install dots@dots --scope user
-      claude plugin install meta-skill@dots --scope user
+      for plugin in "${PLUGIN_NAMES[@]}"; do
+        claude plugin install "$plugin@dots" --scope user
+      done
       ;;
     *)
       echo "Unknown target: $target" >&2

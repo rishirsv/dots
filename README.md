@@ -63,13 +63,16 @@ marketplaces should remain vendor-specific:
 - Codex repo marketplaces use `.agents/plugins/marketplace.json`.
 - Claude marketplaces use `.claude-plugin/marketplace.json`.
 
-Install or refresh Codex plugins from the generated `dots` marketplace with the
-Codex plugin CLI:
+Install or refresh repo-owned plugins from the generated `dots` marketplace with
+the sync helper:
 
 ```sh
-codex plugin add dots@dots
-codex plugin add meta-skill@dots
+scripts/sync-plugins.sh
 ```
+
+The helper packages all plugins in `plugins/catalog.json`, refreshes the default
+Codex home, refreshes `~/.codex-personal` when that independent home exists, and
+refreshes Claude.
 
 ## Config Source
 
