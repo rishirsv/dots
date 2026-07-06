@@ -21,3 +21,8 @@ Current contents:
 - `dataviz/` — imported from `~/Desktop/dataviz`; chart-method candidate for
   promotion (the live `explain` skill defers to a local dataviz skill when one
   is available).
+- `scout/` — grilling-campaign skill (grill/ideate/wayfinder + map-vs-
+  territory synthesis), slated to absorb `ideate`; v5 passed two simulation
+  rounds (3 scenarios, full PASS, zero frustration events) and two
+  skill-doctor reviews; needs an eval suite, ideate deprecation sequencing,
+  and one real session before promotion — see `scout/.scout/docs/`.
