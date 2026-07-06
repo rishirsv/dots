@@ -7,4 +7,4 @@ interface:
   default_prompt: "Use $ship to publish the scoped local change as a pushed branch and PR; request review only when I explicitly ask."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

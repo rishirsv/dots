@@ -1,6 +1,6 @@
 ---
 name: ship
-description: "Turns already-scoped local work into a pushed branch and ready-to-go GitHub pull request; ship review also requests and watches a first review pass. Explicit-only skill invoked via ship, ship draft, or ship review; not for local-only commits, existing PR repair, stewardship, status checks, or merging."
+description: "Turns already-scoped local work into a pushed branch and ready-to-go GitHub pull request; ship review also requests and watches a first review pass. Use when the user says ship it, ship, ship draft, or ship review; not for local-only commits, existing PR repair, stewardship, status checks, or merging."
 ---
 
 # Ship PR
@@ -22,10 +22,10 @@ PR for the branch is found via `gh pr view --json number,url,state,isDraft,headR
 
 ## Invocation Meaning
 
-- `ship` (default): publish or update a ready-for-review, non-draft PR.
-  Plain language — "send this", "publish PR", "open a PR", "send this for
-  review" — maps here unless the user says `ship review` or asks for Codex
-  review.
+- `ship` / `ship it` (default): publish or update a ready-for-review,
+  non-draft PR. Plain language — "send this", "publish PR", "open a PR",
+  "send this for review" — maps here unless the user says `ship review` or
+  asks for Codex review.
 - `ship draft`: publish or update a draft PR.
 - `ship review`: do everything `ship` does, then request and watch a first
   Codex review pass.
