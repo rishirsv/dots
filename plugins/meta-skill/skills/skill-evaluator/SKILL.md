@@ -83,9 +83,10 @@ profiles may be tracked; generated run output remains replaceable.
       results.jsonl
       grades.jsonl
       summary.json
-      eval-spec/
+      inputs/
+        suite.json
         cases/<task-id>/
-      candidates/<candidate>/snapshot/
+        candidates/<candidate>/
       trials/<trial-id>/
         workspace/
         events.jsonl

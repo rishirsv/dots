@@ -330,7 +330,7 @@ Do not fake a no-skill baseline by staging a different skill payload. The
 no-skill candidate runs the same task with no `skill/` payload staged.
 
 `runs/<run-id>/trials/<trial-id>/response.md` stores the captured agent
-response. `runs/<run-id>/candidates/<candidate>/snapshot/` holds the frozen
+response. `runs/<run-id>/inputs/candidates/<candidate>/` holds the frozen
 copy of the candidate source payload used by the run. Never store response
 copies in the snapshot folder.
 

@@ -92,11 +92,11 @@ global state:
 validate.ts \
   --output runs/<run-id>/trials/<trial-id>/response.md \
   --events runs/<run-id>/trials/<trial-id>/events.jsonl \
-  --expected runs/<run-id>/eval-spec/cases/<task-id>/expected.json \
+  --expected runs/<run-id>/inputs/cases/<task-id>/expected.json \
   --json
 ```
 
-Validators run against the frozen `eval-spec/` copy of the case, not the
+Validators run against the frozen `inputs/` copy of the case, not the
 authored `cases/<task-id>/` source, so grading always matches the suite
 version the trial actually ran against.
 

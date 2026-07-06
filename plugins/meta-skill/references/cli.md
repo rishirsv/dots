@@ -43,7 +43,7 @@ The CLI is an orchestration layer. The workbench is authoritative.
   decision profiles over stable task banks, candidates, gates, metrics, and
   report policy.
 - `.<skill-name>/runs/<run-id>/` owns run plans, progress, results, grades,
-  the frozen eval-spec copy, candidate snapshots, and per-trial artifacts.
+  the run input snapshot, candidate snapshots, and per-trial artifacts.
 
 Do not treat CLI stdout as the system of record once files have been written.
 
@@ -225,11 +225,11 @@ Flags: `--suite` (defaults to `.<skill-name>/evals.json`), `--candidates
 `--no-grade`.
 
 What it does: loads tasks and candidates, verifies each selected task already
-has a materialized task file, freezes the suite into `eval-spec/` and each
-candidate's source payload into `candidates/<candidate>/snapshot/`, stages a
-trial workspace with only `task.md`, declared fixtures, and the candidate
-payload when present, executes each task/candidate/trial combination through
-Codex App Server, then grades (unless `--no-grade`).
+has a materialized task file, freezes the suite and each candidate's source
+payload into `inputs/` (the run input snapshot), stages a trial workspace
+with only `task.md`, declared fixtures, and the candidate payload when
+present, executes each task/candidate/trial combination through Codex App
+Server, then grades (unless `--no-grade`).
 
 Output: summary with `run_id`, `run_dir`, trial count, and pass/fail counts.
 Exit `0` when all trials pass, `1` when one or more trials fail.
@@ -243,9 +243,10 @@ Run layout — the only layout that exists:
   results.jsonl                   # one row per executed trial (status, paths, usage, timing)
   grades.jsonl                    # grader rows; each grading pass appends a new grade generation
   summary.json                    # aggregate verdicts; rebuilt by grading and report commands
-  eval-spec/                      # frozen suite copy: suite.json + cases/<case-id>/
-                                  #   (task.md, expectations.json, judge.md, expected.*, validate.*)
-  candidates/<candidate>/snapshot/  # frozen copy of the candidate source payload (+ snapshot.json)
+  inputs/                         # run input snapshot: everything the run consumed, frozen
+    suite.json                    # frozen suite copy
+    cases/<case-id>/              # task.md, expectations.json, judge.md, expected.*, validate.*
+    candidates/<candidate>/       # frozen copy of the candidate source payload (+ snapshot.json)
   trials/<trial-id>/
     workspace/                    # staged working dir: task.md, fixtures/, skill/ payload
     events.jsonl                  # raw runner transcript
@@ -264,11 +265,11 @@ What each file is for:
 - `grades.jsonl`: grader results; each grading generation appends new rows,
   latest per trial/metric/grader wins
 - `summary.json`: aggregate verdicts rebuilt by grading and report commands
-- `eval-spec/`: frozen suite copy the run graded against, including hidden
-  grader files (`judge.md`, `expected.*`, `validate.*`) under
-  `eval-spec/cases/<case-id>/`
-- `candidates/<candidate>/snapshot/`: frozen copy of the candidate source
-  payload used by the run
+- `inputs/`: the run input snapshot — everything the run consumed, frozen. The
+  frozen suite copy the run graded against, including hidden grader files
+  (`judge.md`, `expected.*`, `validate.*`) under `inputs/cases/<case-id>/`,
+  plus each candidate's frozen source payload under
+  `inputs/candidates/<candidate>/`
 - `trials/<trial-id>/workspace/`: the run-scoped staged working directory for
   visible task bytes, listed fixtures, and the candidate payload when present;
   not an authoritative result artifact
@@ -279,7 +280,7 @@ What each file is for:
   one grading generation
 
 Hidden task files (`judge.md`, `expected.*`, `validate.*`) live under
-`eval-spec/cases/<case-id>/` and are never staged into the workspace.
+`inputs/cases/<case-id>/` and are never staged into the workspace.
 
 ### `eval progress`
 
@@ -302,7 +303,7 @@ Flags: `--run <run-id-or-path>`.
 
 What it does: reads `results.jsonl`, reads optional `graders[]` and
 `expectations[]` from `evals.json`, looks for `judge.md` inside each frozen
-`eval-spec/cases/<case-id>/` and records a model judge grade through App
+`inputs/cases/<case-id>/` and records a model judge grade through App
 Server when present, looks for `validate.*` and runs each validator with
 `--output`, `--events`, and `--json` (plus `--expected` when an `expected.*`
 file exists), then appends a new grade generation to
