@@ -27,13 +27,27 @@ terms and propose the specific remedy, never just the smell.
   gate it by task size or mode; state the small path first.
 - **Terminology drift** — one concept, several names across body and
   references. Remedy: one term everywhere.
+- **Maintainer leakage** — maintainer, package-author, validator-author,
+  roadmap, migration, source-provenance, or prompt-role language appears in
+  the runtime payload without being part of the user's real task. Remedy: move
+  it to hidden workbench/docs, rewrite it as a reusable runtime rule, or name
+  why it is an allowed dependency.
+- **Opening-contract gap** — the first prose block does not state the job,
+  default path, and main boundary in plain language. Remedy: rewrite the
+  opening so a future agent knows what to do before reading deeper mechanics.
 
 ## Behavior defects (visible when the skill runs)
 
 - **Premature completion** — declares done before the contract is met.
+- **Output contract gap** — the skill never makes clear what the user should
+  receive: findings, proposal, artifact, patch, verification report, or
+  handoff. Remedy: state the default output and the branches that change it.
 - **Embargo** — withholds an early finding to honor step choreography.
 - **Lucky pass** — validation passed only because the world volunteered a
   critical input; the skill didn't cause the success.
+- **Validation gap** — the skill asks for, passes, or reports validation that
+  cannot prove the behavior claim being made. Remedy: separate structural
+  validation from behavioral evidence and name the missing check or escalation.
 - **Stage compression** — several steps' worth of work landing in one
   message, or narrating a later step as done without opening it. This is
   the real test for whether a skill needs splitting — not conceptual tidiness.

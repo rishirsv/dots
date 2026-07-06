@@ -1,0 +1,44 @@
+<!-- component: toc-rail
+title: TOC rail
+type: ui
+when: The document has 4+ sections a reader may want to jump between. Always a
+  margin rail: sticky and docked beside the article column at wide viewports,
+  a plain inline list above the first section on narrow ones.
+deps: page-shell (its script provides the scroll-spy)
+variants: right-docked (default) | left-docked (swap `right` for `left` in
+  .toc-rail's positioning and margin direction).
+gotchas: Active state is weight + ink color only — never an accent bar or
+  moving indicator line. Link hrefs must match real section ids. Keep labels
+  short (2-4 words); the rail is a map, not a summary.
+-->
+<style>
+  .toc-rail {
+    font-size: 13px;
+    margin: 0 0 48px;
+  }
+  .toc-rail .toc-label {
+    font-size: 11px; letter-spacing: 0.02em; color: var(--a40);
+    margin: 0 0 8px;
+  }
+  .toc-rail a { display: block; color: var(--a55); padding: 3px 0; }
+  .toc-rail a:hover { color: var(--foreground); text-decoration: none; }
+  .toc-rail a.active { color: var(--foreground); font-weight: 600; }
+
+  @media (min-width: 1160px) {
+    .toc-rail {
+      position: sticky;
+      top: 64px;
+      float: right;
+      width: 200px;
+      margin: 8px calc(-200px - 48px) 0 0; /* dock in the right margin */
+    }
+  }
+</style>
+
+<nav data-component="toc-rail" class="toc-rail" aria-label="On this page">
+  <p class="toc-label">On this page</p>
+  <a href="#section-one">Section one</a>
+  <a href="#section-two">Section two</a>
+  <a href="#section-three">Section three</a>
+  <a href="#section-four">Section four</a>
+</nav>

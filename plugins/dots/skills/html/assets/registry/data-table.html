@@ -1,0 +1,83 @@
+<!-- component: data-table
+title: Data table
+type: ui
+when: Structured rows a reader compares line by line — decisions, inventories,
+  risk registers. Builds on the base table styles already in theme.css;
+  reach for this only when you need labeled first columns, right-aligned
+  numeric columns, or a horizontal scroll wrapper for wide content.
+deps: theme.css
+variants: plain (default — theme.css table styles, no extra classes) |
+  first-column-labeled (.cell-label on the first <td> in each row) | numeric
+  columns (.col-num on the numeric <th>/<td> pair).
+gotchas: Horizontal dividers only — never a full grid, never zebra striping,
+  never a left accent stripe on any row. Wrap wide tables in .table-scroll so
+  the page itself never scrolls sideways. Numeric columns get tabular-nums via
+  .col-num; only decorate a value with --accent when it is the single point
+  the reader must land on, not a whole column.
+-->
+<style>
+  .table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--section);
+  }
+  .cell-label {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
+  .col-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+
+<div data-component="data-table" class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th>Risk</th>
+        <th>Owner</th>
+        <th>Likelihood</th>
+        <th class="col-num">Exposure</th>
+        <th>Mitigation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-label">Vendor SSO deprecation</td>
+        <td>Priya N.</td>
+        <td>High</td>
+        <td class="col-num">$180k</td>
+        <td>Migrate to OIDC before Sept 30 shutdown.</td>
+      </tr>
+      <tr>
+        <td class="cell-label">Single on-call for billing</td>
+        <td>Marcus T.</td>
+        <td>Medium</td>
+        <td class="col-num">$40k</td>
+        <td>Cross-train two engineers this quarter.</td>
+      </tr>
+      <tr>
+        <td class="cell-label">Unpinned build image</td>
+        <td>Release eng.</td>
+        <td>Medium</td>
+        <td class="col-num">$15k</td>
+        <td>Pin digest, add drift alert.</td>
+      </tr>
+      <tr>
+        <td class="cell-label">Data export lacks audit log</td>
+        <td>Priya N.</td>
+        <td>Low</td>
+        <td class="col-num">$25k</td>
+        <td>Ship logging with v2.4, tracked in DATA-118.</td>
+      </tr>
+      <tr>
+        <td class="cell-label">Regional failover untested</td>
+        <td>SRE</td>
+        <td>High</td>
+        <td class="col-num">$210k</td>
+        <td>Run game day before next release freeze.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

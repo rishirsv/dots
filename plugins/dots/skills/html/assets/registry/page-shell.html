@@ -1,0 +1,118 @@
+<!-- component: page-shell
+title: Page shell
+type: block
+when: Every artifact starts here. The document skeleton: header (context line,
+  title, optional single status chip, dek), staggered load, article column,
+  footer slot, and the standard behavior script (motion opt-in, scroll-spy,
+  reveals, theme toggle wiring).
+deps: theme.css (inline verbatim in <style> before component CSS)
+variants: none — the shell is invariant; vary the content, not the frame.
+gotchas: The status chip is the page's ONE allowed chip; omit it when there is
+  no real status. The context line is a quiet breadcrumb, never an uppercase
+  eyebrow. html starts without js-motion so a no-JS page renders complete and
+  static. Replace slot comments with real content; keep section ids stable —
+  the TOC rail targets them.
+-->
+<style>
+  .page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .context-line { font-size: 13px; color: var(--a55); margin: 0 0 20px; }
+  .title-row {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .title-row h1 { min-width: 0; } /* let long titles wrap inside the flex row */
+  .status {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+    border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap; border: 1px solid var(--a12);
+  }
+  .dek { font-size: 16px; color: var(--a55); margin: 0 0 40px; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--a40); line-height: 1.7;
+  }
+  footer.sources a { color: var(--a55); }
+</style>
+
+<div data-component="page-shell" class="page">
+  <header class="stagger">
+    <p class="context-line">project / area</p>
+    <div class="title-row">
+      <h1>Document title</h1>
+      <span class="status">draft</span>
+    </div>
+    <p class="dek">One-or-two-sentence dek: what this document is and the single decision or understanding it exists to drive.</p>
+  </header>
+
+  <!-- slot: toc-rail (optional, for 4+ sections) -->
+  <!-- slot: sections — each <section id="..."> with an <h2> -->
+
+  <footer class="sources">
+    Sources: <!-- where this content came from — files read, sessions, tools. Honest and specific. -->
+  </footer>
+</div>
+
+<script>
+  /* Standard artifact behavior: motion opt-in, one-time reveals, TOC
+     scroll-spy, theme toggle. Everything works without this script. */
+  (function () {
+    var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced) document.documentElement.classList.add("js-motion");
+
+    // One-time scroll reveals for .reveal figures
+    if (!reduced && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.25 });
+      document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+      // Fail-safe: never leave content hidden if the observer doesn't fire
+      // (headless capture, odd embedders). One-shot, complements reduced-motion.
+      setTimeout(function () {
+        document.querySelectorAll(".reveal:not(.is-in)").forEach(function (el) { el.classList.add("is-in"); });
+      }, 1500);
+    } else {
+      document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("is-in"); });
+    }
+
+    // TOC scroll-spy (no-op when no .toc-rail present)
+    var links = Array.prototype.slice.call(document.querySelectorAll(".toc-rail a[href^='#']"));
+    if (links.length) {
+      var targets = links
+        .map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); })
+        .filter(Boolean);
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            links.forEach(function (a) {
+              a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id);
+            });
+          }
+        });
+      }, { rootMargin: "-15% 0px -70% 0px" });
+      targets.forEach(function (t) { spy.observe(t); });
+    }
+
+    // Theme toggle (no-op when no .theme-toggle present)
+    var toggle = document.querySelector(".theme-toggle");
+    if (toggle) {
+      var root = document.documentElement;
+      var stored = null;
+      try { stored = localStorage.getItem("theme"); } catch (e) {}
+      if (stored) root.setAttribute("data-theme", stored);
+      toggle.addEventListener("click", function () {
+        var dark = root.getAttribute("data-theme") === "dark" ||
+          (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+        var next = dark ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+      });
+    }
+  })();
+</script>

@@ -3,7 +3,7 @@
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-service_tier = "priority"
+service_tier = "fast"
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 
@@ -78,7 +78,7 @@ source_type = "local"
 source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.dots]
-last_updated = "2026-06-16T00:17:59Z"
+last_updated = "2026-07-06T15:18:18Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots/dist/codex"
 
@@ -132,4 +132,9 @@ diffRemoved = "#fa423e"
 skill = "#ad7bf9"
 
 [tui.model_availability_nux]
-"gpt-5.5" = 2
+"gpt-5.5" = 4
+
+[hooks.state]
+
+[hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"

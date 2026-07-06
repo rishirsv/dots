@@ -14,10 +14,4 @@ Rules:
 
 Current contents:
 
-- `visualize/` — pulled from `dots` pending a platform-neutral rewrite and
-  evidence of real usage; its diagram/chart guidance may be absorbed elsewhere.
-- `html-artifact/` — removed from `dots` on main (`8c477923`); restored here as
-  the working copy for a future rebuild.
-- `dataviz/` — imported from `~/Desktop/dataviz`; chart-method candidate for
-  promotion (the live `explain` skill defers to a local dataviz skill when one
-  is available).
+- None.

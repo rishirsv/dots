@@ -1,0 +1,33 @@
+<!-- component: recommendation
+title: Recommendation
+type: ui
+when: The document's committing conclusion — the moment it stops presenting
+  options and states what to do. Place it once, near the end, after the
+  evidence that supports it.
+deps: theme.css
+variants: single (default — one bold run-in opening plus 1-2 supporting
+  paragraphs).
+gotchas: One per document — if you need a second, the document has two
+  conclusions and should probably be two documents. No tint, no left stripe,
+  no chip; it is a plain hairline-bordered card, distinguished by conviction
+  in the copy, not by decoration. It must commit — write "Ship X." or "Cut
+  Y.", never "consider possibly" or "it might be worth exploring."
+-->
+<style>
+  .recommendation {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 20px 22px;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: var(--section);
+  }
+  .recommendation p { margin: 0; }
+  .recommendation p + p { margin-top: 10px; }
+  .recommendation strong { font-weight: 700; }
+</style>
+
+<div data-component="recommendation" class="recommendation">
+  <p><strong>Ship the OIDC migration in Q3, ahead of the vendor's September shutdown.</strong> The current SSO integration has no fallback once the vendor deprecates its legacy auth endpoint, and the two-week buffer we'd have if we start in Q4 isn't enough to catch a failed rollout before the cutoff.</p>
+  <p>Assign it to Priya's team, who already own the auth service and scoped the OIDC client work last sprint. Freeze unrelated auth changes for the two weeks around cutover.</p>
+</div>

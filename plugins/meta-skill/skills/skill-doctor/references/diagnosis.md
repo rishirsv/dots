@@ -1,8 +1,8 @@
 # Diagnosis Depth
 
 Detail for the Evidence and Diagnose steps in SKILL.md. Read this when a
-diagnosis needs usage history, a reported-failure reconstruction, or a
-candidate-edit loop — not for quick text reviews.
+diagnosis needs usage history, reported-failure reconstruction, or a concrete
+proposal set — not for quick text reviews.
 
 ## Usage Evidence (Codex)
 
@@ -30,30 +30,58 @@ for pattern mining. Cite thread ids and timestamps; separate transcript fact
 from inference; never copy raw prompts, thread ids, paths, or provider names
 into runtime guidance.
 
-## Reported-Failure Reconstruction
+## Diagnosis Packet
 
-1. Capture expected vs actual.
-2. Reconstruct the triggering input; render the transcript when the failure
-   happened in a prior session.
-3. Localize the cause to the smallest surface: description, body section,
-   reference, workflow branch, output contract, script contract, or missing
-   gate. For contamination or leaked-vocabulary complaints, run the sweeps in
-   [payload-hygiene.md](../../../references/payload-hygiene.md) across the
-   full shipped payload, including headings, labels, and copyable text.
-4. Never diagnose "make it clearer" — name the phrase, section, or evidence
-   row causing the risk.
+Before proposing updates, capture only the fields that change the decision:
 
-## Candidate-Edit Loop
+| Field | What to capture |
+|---|---|
+| Expected behavior | What the skill should have caused. |
+| Actual behavior | What happened, or what the text would likely cause. |
+| Trigger input | The user prompt, failure scenario, review request, or thread evidence. |
+| Files inspected | The full shipped payload and references actually read. |
+| Validation output | Current validation command and result, when relevant. |
+| Likely source | The smallest source surface: description, body section, reference, workflow branch, output contract, script contract, or missing gate. |
+| Alternate causes rejected | Plausible causes checked and ruled out. |
+| Confidence | High, medium, or low; use low when the proposal rests only on user report or static inference. |
+| Falsifier | Evidence that would prove the diagnosis wrong. |
 
-- Produce two or three candidate edits that fix the behavior while
-  preserving the trigger contract. For mechanical-language complaints, one
-  candidate should be a positive prose rewrite: name the natural behavior
-  the skill should cause, then delete the machinery competing with it.
-- Generalize: convert incident evidence into the reusable failure class;
-  keep one-off names in the evidence section only.
-- Prefer replacing a misleading sentence over adding a prohibition; when a
-  negative guard is genuinely needed, pair it with the desired behavior.
-- Recommend one smallest strong fix and say why the others lost.
+For failures in a prior session, render the relevant transcript before
+diagnosing. For contamination or leaked-vocabulary complaints, run the sweeps
+in [payload-hygiene.md](../../../references/payload-hygiene.md) across the full
+shipped payload, including headings, labels, and copyable text.
+
+Never diagnose "make it clearer." Name the phrase, section, or evidence row
+causing the risk.
+
+## Proposed Updates
+
+Return two or three concrete updates unless there is only one safe fix. Each
+update should include:
+
+- exact source scope
+- intended behavior change
+- benefits
+- trade-offs or residual risk
+- validation to run
+
+For mechanical-language complaints, include at least one positive prose rewrite:
+name the natural behavior the skill should cause, then delete the machinery
+competing with it.
+
+Before recommending, run these checks:
+
+- **Generalization** — convert incident evidence into the reusable failure
+  class; keep one-off names in the evidence section only.
+- **Trigger preservation** — preserve the existing trigger contract unless the
+  trigger is the defect; call out any description change because it affects
+  routing.
+- **Source hygiene** — scan candidates for source provenance, stale references,
+  and negative-only rules. Prefer replacing a misleading sentence over adding a
+  prohibition; when a negative guard is needed, pair it with the desired
+  behavior.
+
+Recommend the smallest strong update and say why the alternatives lost.
 
 ## Trial Runs
 

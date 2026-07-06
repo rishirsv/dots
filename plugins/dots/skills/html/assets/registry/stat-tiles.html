@@ -1,0 +1,55 @@
+<!-- component: stat-tiles
+title: Stat tiles
+type: ui
+when: 2-5 headline numbers the reader should absorb before any prose — counts,
+  deltas, budgets, scores. Put them right after the dek; they are the
+  document's instrument panel.
+deps: theme.css
+variants: 4-up (default, collapses 2x2 on narrow) | 3-up | 2-up (set
+  grid-template-columns accordingly).
+gotchas: Values are figures, not sentences — keep them under ~8 characters and
+  let the label carry the words. tabular-nums is on the value. A third quieter
+  line (.kpi-note) is allowed for a source or comparison; never a chip. Every
+  number must be real and traceable — no fake KPIs.
+-->
+<style>
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--a12);
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  @media (max-width: 620px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-tile { padding: 18px 16px; background: var(--background); }
+  .kpi-value {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.6px;
+    font-variant-numeric: tabular-nums; margin-bottom: 4px;
+  }
+  .kpi-label { font-size: 12px; color: var(--a55); line-height: 1.5; }
+  .kpi-note { font-size: 11px; color: var(--a40); margin-top: 2px; font-variant-numeric: tabular-nums; }
+</style>
+
+<div data-component="stat-tiles" class="kpi-grid">
+  <div class="kpi-tile">
+    <div class="kpi-value">14</div>
+    <div class="kpi-label">PRs merged</div>
+    <div class="kpi-note">+3 vs last week</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-value">6</div>
+    <div class="kpi-label">deploys</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-value">1</div>
+    <div class="kpi-label">incident</div>
+    <div class="kpi-note">SEV-2 · 47m</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-value">99.1%</div>
+    <div class="kpi-label">suite pass rate</div>
+  </div>
+</div>

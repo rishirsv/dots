@@ -7,11 +7,31 @@ description: "Reviews, diagnoses, and improves existing agent skills — or a wh
 
 Make an existing skill better, with evidence. One flow, whatever the entry
 point: gather evidence, diagnose in named terms, propose the smallest fix,
-edit only after approval, verify. A scored review is an output format the
-user can ask for, not the default deliverable.
+edit only after approval, verify. For review or broad improvement requests,
+produce a scored Judge review by default unless the user asks for a lighter
+pass.
 
 For the plugin-level CLI surface, read [cli.md](../../references/cli.md); do
 not invent doctor-specific commands.
+
+## Response Contract
+
+Skill Doctor is read-only unless the user directly requests a specific source
+change or approves a concrete proposal. When edit intent is unclear, produce
+the read-only proposal first; ask before applying only after you have named the
+recommended update and exact source scope.
+
+For read-only review, diagnosis, cleanup, or broad improvement requests:
+
+1. Gather evidence and name the defect with the taxonomy.
+2. Return findings ranked by user impact.
+3. Propose two or three concrete updates, each with benefits and trade-offs.
+4. Recommend one update and explain why.
+5. Stop before editing source.
+
+If the user approves an update or directly requests a specific edit, restate
+the files and exact scope before applying it. Do not treat feedback,
+brainstorming, or diagnosis as edit approval.
 
 ## Evidence
 
@@ -75,10 +95,12 @@ system, not just each file:
 
 Findings ranked by impact. Each: defect name (taxonomy term), evidence
 (quote, count, or eval result), and the exact proposed edit. State what
-evidence was not available. Produce the scored Judge review
+evidence was not available. Include two or three proposed updates with
+benefits, trade-offs, and a recommendation. Produce the scored Judge review
 ([judge-rubric.md](../../references/judge-rubric.md), with the payload
-sweeps in [payload-hygiene.md](../../references/payload-hygiene.md)) only
-when the user asks for scores.
+sweeps in [payload-hygiene.md](../../references/payload-hygiene.md)) by
+default for review or broad improvement requests; skip scores only when the
+user asks for a lighter pass or the task is a narrow diagnosis.
 
 Write saved artifacts only when the user allows them; resolve the workbench
 path with `<meta-skill-root>/scripts/metaskill init <skill-dir> --dry-run
