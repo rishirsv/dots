@@ -78,7 +78,7 @@ source_type = "local"
 source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.dots]
-last_updated = "2026-07-06T15:18:18Z"
+last_updated = "2026-07-06T20:28:33Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots/dist/codex"
 
