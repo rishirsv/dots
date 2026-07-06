@@ -1,4 +1,4 @@
-"""Tests for benchmark profiles over evaluator suites."""
+"""Tests for eval presets over evaluator suites."""
 
 import json
 import sys
@@ -10,9 +10,9 @@ from types import SimpleNamespace
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.benchmark import benchmark_history, benchmark_lint, build_benchmark_report, render_benchmark_markdown  # noqa: E402
 from meta_skill.cli import build_parser  # noqa: E402
 from meta_skill.errors import CliError  # noqa: E402
+from meta_skill.presets import apply_preset, build_preset_report, load_preset, preset_history, preset_lint, render_preset_markdown  # noqa: E402
 from meta_skill.runner import repetition_count  # noqa: E402
 from meta_skill.workbench import init_workbench  # noqa: E402
 
@@ -27,8 +27,8 @@ def write_jsonl(path, rows):
     path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in rows))
 
 
-class BenchmarkProfileTests(unittest.TestCase):
-    def test_workbench_init_defers_benchmark_files_until_needed(self):
+class PresetTests(unittest.TestCase):
+    def test_workbench_init_defers_preset_files_until_needed(self):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "skill"
             target.mkdir()
@@ -46,10 +46,10 @@ description: "Use for testing."
 
             workbench = Path(result["workbench"])
             self.assertTrue((workbench / "AGENTS.md").is_file())
-            self.assertFalse((workbench / "benchmarks").exists())
+            self.assertFalse((workbench / "presets").exists())
             self.assertFalse((workbench / "evals.json").exists())
 
-    def test_benchmark_lint_resolves_selection(self):
+    def test_preset_lint_resolves_selection(self):
         with tempfile.TemporaryDirectory() as tmp:
             workbench = Path(tmp) / ".demo"
             suite = workbench / "evals.json"
@@ -79,9 +79,9 @@ description: "Use for testing."
                     ],
                 },
             )
-            profile = workbench / "benchmarks" / "core.json"
+            preset = workbench / "presets" / "core.json"
             write_json(
-                profile,
+                preset,
                 {
                     "schema_version": 1,
                     "id": "core",
@@ -94,13 +94,13 @@ description: "Use for testing."
                 },
             )
 
-            result = benchmark_lint(str(profile))
+            result = preset_lint(str(preset))
 
             self.assertEqual(result["selected_cases"], ["natural-trigger", "near-miss"])
             self.assertEqual(result["selected_candidates"], ["no-skill", "current"])
             self.assertEqual(result["warnings"], [])
 
-    def test_benchmark_report_and_history_score_selected_profile_slice(self):
+    def test_preset_report_and_history_score_selected_slice(self):
         with tempfile.TemporaryDirectory() as tmp:
             workbench = Path(tmp) / ".demo"
             suite = workbench / "evals.json"
@@ -121,9 +121,9 @@ description: "Use for testing."
                     ],
                 },
             )
-            profile = workbench / "benchmarks" / "core.json"
+            preset = workbench / "presets" / "core.json"
             write_json(
-                profile,
+                preset,
                 {
                     "schema_version": 1,
                     "id": "core",
@@ -134,7 +134,7 @@ description: "Use for testing."
                     "metrics": ["behavior_pass_rate", "unknown_rate", "comparison_counts", "tokens"],
                     "gates": [{"metric": "quality", "required_label": "pass"}],
                     "calibration": {"human_spot_check": "before release selection"},
-                    "report": {"include_history": True, "include_coverage_limits": True},
+                    "report": {"include_history": True},
                 },
             )
             run_dir = workbench / "runs" / "run-001"
@@ -145,8 +145,8 @@ description: "Use for testing."
                     "suite": str(suite),
                     "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
                     "created_at": "2026-01-01T00:00:00Z",
-                    "benchmark_id": "core",
-                    "benchmark_profile": str(profile),
+                    "preset_id": "core",
+                    "preset_path": str(preset),
                     "candidates": [
                         {"candidate": "no-skill", "source_kind": "none"},
                         {"candidate": "current", "source_kind": "current_worktree"},
@@ -220,11 +220,11 @@ description: "Use for testing."
                 },
             )
 
-            report = build_benchmark_report(str(run_dir))
-            history = benchmark_history(str(profile))
-            markdown = render_benchmark_markdown(report)
+            report = build_preset_report(str(run_dir))
+            history = preset_history(str(preset))
+            markdown = render_preset_markdown(report)
 
-            self.assertEqual(report["benchmark"], "core")
+            self.assertEqual(report["preset"], "core")
             self.assertEqual(report["scorecard"]["behavior_pass_rate"], 0.6667)
             self.assertEqual(report["scorecard"]["unknown_rate"], 0.0)
             self.assertEqual(report["scorecard"]["trials"], 3)
@@ -240,7 +240,7 @@ description: "Use for testing."
             self.assertNotIn("reliability", report)
             self.assertEqual([row["run_id"] for row in history["runs"]], ["run-001"])
 
-    def test_benchmark_report_requires_profile_for_plain_eval_run(self):
+    def test_preset_report_requires_preset_for_plain_eval_run(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = Path(tmp) / ".demo" / "runs" / "run-plain"
             suite = Path(tmp) / ".demo" / "evals.json"
@@ -272,11 +272,11 @@ description: "Use for testing."
             )
 
             with self.assertRaises(CliError) as ctx:
-                build_benchmark_report(str(run_dir))
+                build_preset_report(str(run_dir))
 
-            self.assertIn("benchmark report requires a benchmark profile", ctx.exception.message)
+            self.assertIn("preset report requires a preset", ctx.exception.message)
 
-    def test_benchmark_lint_warns_on_policy_shape(self):
+    def test_preset_lint_warns_on_policy_shape(self):
         with tempfile.TemporaryDirectory() as tmp:
             workbench = Path(tmp) / ".demo"
             suite = workbench / "evals.json"
@@ -294,9 +294,9 @@ description: "Use for testing."
                     ],
                 },
             )
-            profile = workbench / "benchmarks" / "core.json"
+            preset = workbench / "presets" / "core.json"
             write_json(
-                profile,
+                preset,
                 {
                     "schema_version": 1,
                     "id": "core",
@@ -310,7 +310,7 @@ description: "Use for testing."
                 },
             )
 
-            result = benchmark_lint(str(profile))
+            result = preset_lint(str(preset))
             warning_kinds = {row["kind"] for row in result["warnings"]}
 
             self.assertIn("missing_gate_metric", warning_kinds)
@@ -320,12 +320,12 @@ description: "Use for testing."
             self.assertIn("unknown_integrity_key", warning_kinds)
             self.assertIn("unknown_report_key", warning_kinds)
 
-    def test_benchmark_repetition_precedence_prefers_type_over_profile_default(self):
+    def test_preset_repetition_precedence_prefers_type_over_preset_default(self):
         defaults = {"repetitions": 3}
         args = SimpleNamespace(
             repetitions=None,
             repetitions_by_type={"trigger": 5},
-            benchmark_default_repetitions=1,
+            preset_default_repetitions=1,
         )
 
         self.assertEqual(repetition_count({"type": "trigger"}, args, defaults), 5)
@@ -334,11 +334,161 @@ description: "Use for testing."
         args.repetitions = 2
         self.assertEqual(repetition_count({"type": "trigger", "repetitions": 7}, args, defaults), 2)
 
-    def test_cli_routes_benchmark_as_top_level_command(self):
+    def test_apply_preset_fills_selection_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            workbench = Path(tmp) / ".demo"
+            suite = workbench / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [
+                        {"candidate": "no-skill", "source": {"kind": "none"}},
+                        {"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}},
+                    ],
+                    "cases": [
+                        {"id": "case-a", "type": "capability", "task": {"prompt": "Task"}, "expectations": ["Pass."]},
+                    ],
+                },
+            )
+            preset = workbench / "presets" / "core.json"
+            write_json(
+                preset,
+                {
+                    "schema_version": 1,
+                    "id": "core",
+                    "suite": "../evals.json",
+                    "task_selection": {"case_ids": ["case-a"]},
+                    "candidates": {"baseline": "no-skill", "payloads": ["current"]},
+                    "metrics": ["behavior_pass_rate", "unknown_rate"],
+                    "repetitions": {"default": 2},
+                },
+            )
+
+            loaded = load_preset(str(preset))
+            args = SimpleNamespace(model=None, no_grade=False)
+            apply_preset(args, loaded)
+
+            self.assertEqual(args.case, ["case-a"])
+            self.assertEqual(args.candidates, "no-skill,current")
+            self.assertEqual(args.preset_default_repetitions, 2)
+            self.assertEqual(args.preset, {"id": "core", "path": str(preset.resolve())})
+
+    def test_apply_preset_rejects_unknown_selection(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            workbench = Path(tmp) / ".demo"
+            suite = workbench / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "no-skill", "source": {"kind": "none"}}],
+                    "cases": [{"id": "case-a", "type": "capability", "task": {"prompt": "Task"}, "expectations": ["Pass."]}],
+                },
+            )
+            preset = workbench / "presets" / "core.json"
+            write_json(
+                preset,
+                {
+                    "schema_version": 1,
+                    "id": "core",
+                    "suite": "../evals.json",
+                    "task_selection": {"case_ids": ["missing-case"]},
+                    "candidates": {"baseline": "no-skill"},
+                    "metrics": [],
+                },
+            )
+
+            loaded = load_preset(str(preset))
+            args = SimpleNamespace(model=None, no_grade=False)
+
+            with self.assertRaises(CliError) as ctx:
+                apply_preset(args, loaded)
+
+            self.assertIn("preset references unknown cases", ctx.exception.message)
+
+    def test_preset_history_filters_by_id_or_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            workbench = Path(tmp) / ".demo"
+            suite = workbench / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "no-skill", "source": {"kind": "none"}}],
+                    "cases": [{"id": "case-a", "type": "capability", "task": {"prompt": "Task"}}],
+                },
+            )
+            preset = workbench / "presets" / "core.json"
+            write_json(
+                preset,
+                {
+                    "schema_version": 1,
+                    "id": "core",
+                    "suite": "../evals.json",
+                    "task_selection": {"case_ids": ["case-a"]},
+                    "candidates": {"baseline": "no-skill"},
+                    "metrics": [],
+                },
+            )
+            matching_run = workbench / "runs" / "run-match"
+            other_run = workbench / "runs" / "run-other"
+            for run_dir, preset_fields in (
+                (matching_run, {"preset_id": "core", "preset_path": str(preset)}),
+                (other_run, {}),
+            ):
+                write_json(
+                    run_dir / "run.json",
+                    {
+                        "run_id": run_dir.name,
+                        "suite": str(suite),
+                        "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
+                        "created_at": "2026-01-01T00:00:00Z",
+                        "candidates": [],
+                        "trials": [],
+                        **preset_fields,
+                    },
+                )
+                write_json(
+                    run_dir / "summary.json",
+                    {
+                        "ok": True,
+                        "run_id": run_dir.name,
+                        "run_dir": str(run_dir),
+                        "total_trials": 0,
+                        "trials": [],
+                        "runtime_status_totals": {},
+                        "grade_status_totals": {},
+                        "final_verdict_totals": {},
+                    },
+                )
+
+            history = preset_history(str(preset))
+
+            self.assertEqual([row["run_id"] for row in history["runs"]], ["run-match"])
+
+    def test_cli_has_no_benchmark_group_and_exposes_preset_flags(self):
         parser = build_parser()
 
-        args = parser.parse_args(["benchmark", "lint", "--benchmark", "profile.json", "--json"])
-        self.assertEqual(args.func.__name__, "command_benchmark_lint")
+        with self.assertRaises(SystemExit):
+            parser.parse_args(["benchmark", "lint", "--json"])
+
+        run_args = parser.parse_args(["eval", "run", "--preset", "release", "--json"])
+        self.assertEqual(run_args.func.__name__, "command_eval_run")
+        self.assertEqual(run_args.preset, "release")
+
+        list_args = parser.parse_args(["eval", "list", "--preset", "release"])
+        self.assertEqual(list_args.preset, "release")
+
+        check_args = parser.parse_args(["eval", "run", "--preset", "release", "--check", "--json"])
+        self.assertEqual(check_args.preset, "release")
+        self.assertTrue(check_args.check)
+
+        report_args = parser.parse_args(["eval", "report", "--run", "run-001", "--preset", "presets/release.json"])
+        self.assertEqual(report_args.preset, "presets/release.json")
 
 
 if __name__ == "__main__":

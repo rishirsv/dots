@@ -16,8 +16,8 @@ Improve an existing agent skill through distinct lanes:
   edit only after explicit approval for a concrete source change.
 - **Verify** — check the changed skill after an approved edit.
 
-`skill-doctor` owns static design review, diagnosis, and fixes for one skill;
-`skill-evaluator` owns behavioral evidence across candidates.
+See the lane-ownership split in
+[meta-skill/SKILL.md](../meta-skill/SKILL.md#routing-and-skill-selection).
 
 For the central Meta Skill CLI surface, read
 [cli.md](../../references/cli.md). Do not invent doctor-specific command
@@ -172,7 +172,7 @@ no-skill baseline.
 ## Workbench
 
 When artifact writes are allowed, resolve the workbench path before writing:
-`<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir> --dry-run --json`,
+`<meta-skill-root>/scripts/metaskill init <skill-dir> --dry-run --json`,
 then use the resolved path as the source of truth. Use `judge-review.md` for the
 Judge scorecard. Do not create workbench folders elsewhere.
 

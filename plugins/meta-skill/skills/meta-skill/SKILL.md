@@ -86,7 +86,7 @@ Pick the smallest specialist route that satisfies the user's request.
   such as no-skill vs current-skill vs edited-skill comparisons, trial suites,
   scoring, trigger reliability, should-trigger/near-miss behavior, or outcome
   measurement.
-- Use `skill-benchmarker` when the user needs a recurring benchmark profile,
+- Use `skill-benchmarker` when the user needs a recurring eval preset,
   release-readiness scorecard, trigger-reliability history, regression
   benchmark, or benchmark report over an existing eval suite.
 - For a one-prompt trial of a draft or fix, stay with the owning specialist and
@@ -94,7 +94,7 @@ Pick the smallest specialist route that satisfies the user's request.
 
 Disambiguation: `skill-doctor` owns static design review, diagnosis, and fixes
 for one skill; `skill-evaluator` owns behavioral evidence across candidates;
-`skill-benchmarker` owns recurring decision profiles and scorecards over that
+`skill-benchmarker` owns recurring eval presets and scorecards over that
 evidence.
 
 Validation, packaging, and install checks use [cli.md](../../references/cli.md)
@@ -136,8 +136,8 @@ release-ready":
 | A benchmark report reveals a concrete skill defect | `skill-doctor` |
 
 For ambiguous release-readiness requests, ask one routing question only when the
-answer cannot be inferred: "Do you already have an eval suite or benchmark
-profile you want to track repeatedly?"
+answer cannot be inferred: "Do you already have an eval suite or eval preset
+you want to track repeatedly?"
 
 ## Multi-Step Flows
 
