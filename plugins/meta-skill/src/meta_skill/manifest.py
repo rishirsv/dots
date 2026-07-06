@@ -90,6 +90,8 @@ def load_manifest(path):
         sources = task_sources(case)
         if len(sources) != 1:
             raise CliError(f"case {case_id} must set exactly one task source: inline prompt or task path", 2)
+        if task.get("path") and task.get("path") != "task.md":
+            raise CliError(f"case {case_id} task.path must be task.md; file-backed tasks use cases/{case_id}/task.md", 2)
         if "expectations" in case:
             expectations = case.get("expectations")
             if not isinstance(expectations, list) or not all(isinstance(item, str) and item.strip() for item in expectations):
@@ -138,7 +140,7 @@ def case_task_info(case):
     task = case.get("task") or {}
     if task.get("prompt") is not None:
         return {"source": "prompt", "path": None, "prompt": task.get("prompt") or ""}
-    return {"source": "path", "path": task.get("path") or "task.md", "prompt": None}
+    return {"source": "path", "path": "task.md", "prompt": None}
 
 
 def select_cases(manifest, split):

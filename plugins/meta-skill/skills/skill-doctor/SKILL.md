@@ -16,8 +16,8 @@ Improve an existing agent skill through distinct lanes:
   edit only after explicit approval for a concrete source change.
 - **Verify** — check the changed skill after an approved edit.
 
-`skill-doctor` owns static design review, diagnosis, and fixes for one skill;
-`skill-evaluator` owns behavioral evidence across candidates.
+See the lane-ownership split in
+[meta-skill/SKILL.md](../meta-skill/SKILL.md#routing-and-skill-selection).
 
 For the central Meta Skill CLI surface, read
 [cli.md](../../references/cli.md). Do not invent doctor-specific command
@@ -58,13 +58,17 @@ reported failure → **Doctor**; otherwise → **Review**.
 
 ## Review (default)
 
-Produce a **scored Judge review** (`judge-review.md`) — see
-[references/rubric.md](references/rubric.md).
+Produce a **scored Judge review** (`judge-review.md`) using the shared house
+rubric at [judge-rubric.md](../../references/judge-rubric.md) as the authority
+for scoring, payload hygiene, and runtime vs maintainer placement.
+
+> **Boundary:** the doctor scores the three *static* phases below and
+> averages them. Averaging across *live eval scenarios* (running the skill
+> many times) is out of scope here — this is a static review.
 
 1. Score **Discovery** (4 dims) and **Implementation** (5 dims), each 0–3 — every
    dimension's reasoning must cite the skill's own text; see
-   [references/rubric.md](references/rubric.md) for calibration and the shared
-   root [judge-rubric.md](../../references/judge-rubric.md).
+   [judge-rubric.md](../../references/judge-rubric.md) for calibration.
 2. Run the shared **Payload Hygiene Sweep** and **Runtime vs Maintainer
    Placement Audit** from
    [payload-hygiene.md](../../references/payload-hygiene.md) across the full
@@ -72,9 +76,42 @@ Produce a **scored Judge review** (`judge-review.md`) — see
 3. Run **Validation**: `<meta-skill-root>/scripts/metaskill validate <skill-dir> --json`.
 4. **Overall Judge Review Score** = rounded average of Discovery %,
    Implementation %, and Validation %.
-5. If artifact writes are allowed, write `judge-review.md` with scores and
+5. Render Discovery and Implementation as short assessments followed by
+   tables with `Dimension`, `Reasoning`, and `Score`. Each reasoning cell
+   must cite the skill's own text, linked references, or visible payload
+   surface.
+6. If artifact writes are allowed, write `judge-review.md` with scores and
    prioritized findings, then **stop**. If artifact writes are not allowed,
    return the review in chat. Review proposes; it does not edit source.
+
+### Doctor-Specific Focus
+
+Use these lenses while applying the shared rubric:
+
+- **Activation** — trigger clarity, realistic phrasing, near misses, and
+  non-trigger boundary. Escalate trigger reliability evidence to
+  `skill-evaluator`.
+- **Runtime clarity** — default path, output contract, stop/ask points, and
+  final checks.
+- **Opening contract** — first runtime block states the job, default path,
+  and boundary plainly before deeper mechanics.
+- **Terminology consistency** — route names, output labels, examples, and
+  linked references use the same plain vocabulary.
+- **Shared failure-mode sweep** — apply the static sweep in
+  [judge-rubric.md](../../references/judge-rubric.md) before final
+  Implementation scoring.
+- **Resources** — linked references, scripts, assets, dependency clarity,
+  source leakage, and stale files.
+- **Runtime contamination** — copied prompt text, provider names, raw
+  research, author/source provenance, thread IDs, local paths,
+  source-specific artifact names, and source-note prohibitions living in
+  runtime instead of reusable behavior.
+- **Controls** — user files as data, user gates, external writes, and
+  package/publish gates.
+
+The completed chat review or saved `judge-review.md` is evidence, not a
+source edit request. Source edits require explicit approval for a concrete
+change; see [doctor.md](references/doctor.md#approval-gated-edits).
 
 ## Clean
 
@@ -95,8 +132,8 @@ safety, scripts, or external writes require it.
 If the user directly asked to implement the cleanup or approves a concrete
 cleanup proposal, edit only the source-owned skill payload and then verify. If
 the request is read-only, return the clean findings and proposed patch scope.
-Use [references/rubric.md](references/rubric.md) only when a scored Judge review
-is requested or would materially change the decision.
+Use the scored Judge review from the [Review](#review-default) section only
+when a scored review is requested or would materially change the decision.
 
 ## Doctor
 
@@ -135,7 +172,7 @@ no-skill baseline.
 ## Workbench
 
 When artifact writes are allowed, resolve the workbench path before writing:
-`<meta-skill-root>/scripts/metaskill workbench init --target <skill-dir> --dry-run --json`,
+`<meta-skill-root>/scripts/metaskill init <skill-dir> --dry-run --json`,
 then use the resolved path as the source of truth. Use `judge-review.md` for the
 Judge scorecard. Do not create workbench folders elsewhere.
 

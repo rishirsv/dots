@@ -42,7 +42,7 @@ class CandidateTests(unittest.TestCase):
             resolved = resolve_candidate(project, project / ".demo", "run-001", manifest, candidate)
             snapshotted = snapshot_candidate(run_dir, resolved)
 
-            self.assertEqual(snapshotted["payload_path"], str(run_dir / "candidates" / "local" / "snapshot"))
+            self.assertEqual(snapshotted["payload_path"], str(run_dir / "inputs" / "candidates" / "local"))
             self.assertIn("Candidate body.", Path(snapshotted["payload_path"], "SKILL.md").read_text())
             snapshot_json = json.loads((Path(snapshotted["snapshot_json_path"])).read_text())
             self.assertNotIn("payload_path", snapshot_json)

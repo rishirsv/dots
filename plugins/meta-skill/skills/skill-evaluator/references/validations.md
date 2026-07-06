@@ -90,11 +90,15 @@ global state:
 
 ```text
 validate.ts \
-  --output runs/<run-id>/candidates/<candidate>/<trial-id>/response.md \
-  --expected cases/<task-id>/expected.json \
-  --events runs/<run-id>/events/<trial-id>.jsonl \
+  --output runs/<run-id>/trials/<trial-id>/response.md \
+  --events runs/<run-id>/trials/<trial-id>/events.jsonl \
+  --expected runs/<run-id>/inputs/cases/<task-id>/expected.json \
   --json
 ```
+
+Validators run against the frozen `inputs/` copy of the case, not the
+authored `cases/<task-id>/` source, so grading always matches the suite
+version the trial actually ran against.
 
 It should print a compact JSON object:
 
@@ -112,9 +116,10 @@ It should print a compact JSON object:
 }
 ```
 
-The runner converts validator output into `grades.jsonl` rows with
-`grader.kind = "code"`. Explicit `graders[]` entries preserve their `id`,
-`metric`, and `gate` fields in the grade row.
+Declare each validator in `graders[]` with `grader.kind = "code"` and a
+`path` pointing at the `validate.*` file. The runner converts validator output
+into `grades.jsonl` rows and preserves the declared `id`, `metric`, and `gate`
+fields.
 
 Code graders should return named checks rather than one opaque pass/fail. Named
 checks make partial credit and failure diagnosis possible.

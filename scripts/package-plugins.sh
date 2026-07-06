@@ -54,12 +54,11 @@ def ignore_patterns(plugin_dir: Path) -> list[str]:
 
 def ignored(rel: str, patterns: list[str]) -> bool:
     rel = rel.strip("/")
-    rel_dir = rel + "/" if rel and not rel.endswith("/") else rel
+    parts = Path(rel).parts
     for pattern in patterns:
-        pattern = pattern.strip("/")
         if pattern.endswith("/"):
-            prefix = pattern
-            if rel_dir == prefix or rel_dir.startswith(prefix):
+            stripped = pattern.strip("/")
+            if stripped in parts:
                 return True
             continue
         if fnmatch.fnmatch(rel, pattern) or fnmatch.fnmatch(Path(rel).name, pattern):

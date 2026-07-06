@@ -3,11 +3,11 @@
 import zipfile
 from pathlib import Path
 
-from .candidates import DEFAULT_EXCLUDES, parse_frontmatter
+from .candidates import DEFAULT_EXCLUDES
 from .ids import utc_now
 from .io import write_json
 from .validation import validate_report
-from .workbench_paths import workbench_path
+from .workbench_paths import parse_frontmatter, workbench_path
 
 
 def package_skill(skill_dir, out_dir=None):

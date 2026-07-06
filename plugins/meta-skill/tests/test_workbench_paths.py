@@ -8,8 +8,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.candidates import payload_digest  # noqa: E402
-from meta_skill.staging import copy_payload  # noqa: E402
+from meta_skill.candidates import copy_candidate_payload, payload_digest  # noqa: E402
 from meta_skill.workbench import init_workbench  # noqa: E402
 from meta_skill.workbench_paths import workbench_path  # noqa: E402
 
@@ -43,7 +42,7 @@ class WorkbenchPathTests(unittest.TestCase):
             self.assertIn("private workbench for `unpack`", (expected / "AGENTS.md").read_text())
             self.assertFalse((expected / "cases").exists())
             self.assertFalse((expected / "runs").exists())
-            self.assertFalse((expected / "benchmarks").exists())
+            self.assertFalse((expected / "presets").exists())
             self.assertFalse((expected / "evals.json").exists())
 
     def test_project_mode_uses_skill_payload_name(self) -> None:
@@ -78,7 +77,7 @@ class WorkbenchPathTests(unittest.TestCase):
             (workbench_path(source) / "cases").mkdir(parents=True)
             (workbench_path(source) / "cases" / "private.txt").write_text("hidden\n")
 
-            copy_payload(source, dest)
+            copy_candidate_payload(source, dest, extra_excludes={"snapshot.json"})
 
             self.assertTrue((dest / "reference.md").exists())
             self.assertFalse((dest / ".demo").exists())

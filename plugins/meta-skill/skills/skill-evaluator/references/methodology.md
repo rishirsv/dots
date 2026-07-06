@@ -30,7 +30,8 @@ Use `candidate` in explanations, reports, manifests, run rows, and paths:
 - Run evidence records the candidate's branch/ref, commit, payload path, and
   `payload_digest`.
 
-Do not add `condition_id` or `attempt_id`.
+See [eval-vocabulary.md](../../../references/eval-vocabulary.md) for the
+schema field naming rules.
 
 A no-skill baseline is a `source.kind: "none"` candidate that runs the same task
 without staging the skill payload.

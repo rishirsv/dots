@@ -39,7 +39,6 @@ description: "Use for eval runner tests."
 def args_for(suite, **overrides):
     defaults = {
         "suite": str(suite),
-        "runner": "auto",
         "candidates": None,
         "split": None,
         "case": None,
@@ -48,8 +47,8 @@ def args_for(suite, **overrides):
         "model": None,
         "no_grade": False,
         "repetitions_by_type": {},
-        "benchmark_default_repetitions": None,
-        "benchmark": {},
+        "preset_default_repetitions": None,
+        "preset": {},
     }
     defaults.update(overrides)
     return SimpleNamespace(**defaults)
@@ -98,7 +97,7 @@ class EvalRunnerContractTests(unittest.TestCase):
 
             run_dir = Path(result["run_dir"])
             self.assertFalse((project / ".demo" / "cases" / "answer-well" / "task.md").exists())
-            self.assertEqual((run_dir / "eval-spec" / "cases" / "answer-well" / "task.md").read_text().strip(), "Answer with the word good.")
+            self.assertEqual((run_dir / "inputs" / "cases" / "answer-well" / "task.md").read_text().strip(), "Answer with the word good.")
             self.assertEqual(read_jsonl(run_dir / "results.jsonl")[0]["runtime_status"], "completed")
             self.assertEqual(result["summary"]["final_verdict_totals"], {"failed": 1})
             self.assertFalse(result["ok"])

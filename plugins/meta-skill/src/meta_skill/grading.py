@@ -138,7 +138,7 @@ def read_if_exists(path, limit=20000):
     return None
 
 
-def generated_expectation_judge_guidance(expectations):
+def generated_expectation_judge_guidance():
     return (
         "Grade the agent output against the listed expectations. "
         "Each expectation should pass only when specific evidence shows genuine task completion. "
@@ -146,7 +146,7 @@ def generated_expectation_judge_guidance(expectations):
     )
 
 
-def model_judge_grade(run_dir, run, result, root, generation_id, judge_path=None, model=None, grader=None, expectations=None, expected=None, case=None):
+def model_judge_grade(run_dir, run, result, root, generation_id, judge_path=None, model=None, grader=None, expectations=None, expected=None):
     grader = grader or {}
     expectations = expectations or []
     task_path = root / "task.md"
@@ -154,7 +154,7 @@ def model_judge_grade(run_dir, run, result, root, generation_id, judge_path=None
     output_text = Path(response_path).read_text() if response_path and Path(response_path).exists() else ""
     event_path = run_dir / "trials" / result["trial_id"] / f"judge-{generation_id}.jsonl"
     events_text = read_if_exists(result.get("events_path"), limit=12000)
-    judge_guidance = judge_path.read_text() if judge_path and judge_path.exists() else generated_expectation_judge_guidance(expectations)
+    judge_guidance = judge_path.read_text() if judge_path and judge_path.exists() else generated_expectation_judge_guidance()
     expected_text = read_if_exists(expected)
     detail = judge_output(
         judge_guidance=judge_guidance,
@@ -214,13 +214,8 @@ def normalize_graders(case, root):
             graders.append(item)
         return graders
 
-    judge = root / "judge.md"
-    if judge.exists():
-        graders.append({"kind": "model", "id": "judge", "metric": "judge", "path": "judge.md"})
-    elif case.get("expectations"):
+    if case.get("expectations"):
         graders.append({"kind": "model", "id": "expectations", "metric": "expectations"})
-    for validator in sorted(root.glob("validate.*")):
-        graders.append({"kind": "code", "id": validator.name, "metric": "validator", "path": validator.name})
     return graders
 
 
@@ -237,7 +232,7 @@ def grader_path(root, grader, label):
 def grade_run(raw_run, *, rebuild_summary=True):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
-    frozen_suite = read_json(run_dir / "eval-spec" / "suite.json")
+    frozen_suite = read_json(run_dir / "inputs" / "suite.json")
     cases_by_id = {case.get("id"): case for case in frozen_suite.get("cases", [])}
     rows = []
     all_existing_grades = read_jsonl(run_dir / "grades.jsonl")
@@ -266,7 +261,7 @@ def grade_run(raw_run, *, rebuild_summary=True):
                 )
             )
             continue
-        root = run_dir / "eval-spec" / "cases" / result["case_id"]
+        root = run_dir / "inputs" / "cases" / result["case_id"]
         case = cases_by_id.get(result["case_id"], {})
         graders = normalize_graders(case, root)
         expected = next(iter(sorted(root.glob("expected.*"))), None)
@@ -279,7 +274,7 @@ def grade_run(raw_run, *, rebuild_summary=True):
                 rows.append(code_validator_grade(run, result, validator, expected, root, generation_id, grader))
                 runnable = True
             elif grader.get("kind") == "model":
-                judge_path = grader_path(root, grader, "judge") if grader.get("path") else next((path for path in (root / "judge.md",) if path.exists()), None)
+                judge_path = grader_path(root, grader, "judge") if grader.get("path") else None
                 rows.append(
                     model_judge_grade(
                         run_dir,
@@ -291,7 +286,6 @@ def grade_run(raw_run, *, rebuild_summary=True):
                         grader=grader,
                         expectations=case.get("expectations") or [],
                         expected=expected,
-                        case=case,
                     )
                 )
                 runnable = True
@@ -329,7 +323,7 @@ def record_human_grade(raw_run, *, trial_id, grader_id, metric, label, score=Non
         raise CliError("human grade score must be between 0 and 1", 2)
     generation_id = f"grade-{run_id()}"
     declared = None
-    frozen_path = run_dir / "eval-spec" / "suite.json"
+    frozen_path = run_dir / "inputs" / "suite.json"
     if frozen_path.exists():
         frozen_suite = read_json(frozen_path)
         case = next((item for item in frozen_suite.get("cases", []) if item.get("id") == result.get("case_id")), {})

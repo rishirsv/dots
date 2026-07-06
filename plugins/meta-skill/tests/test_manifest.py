@@ -10,7 +10,6 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.manifest import case_task_info, load_manifest  # noqa: E402
-from meta_skill.workbench import materialize_cases  # noqa: E402
 from meta_skill.errors import CliError  # noqa: E402
 
 
@@ -66,29 +65,50 @@ class ManifestTests(unittest.TestCase):
 
             self.assertIn("task.seed is no longer supported", ctx.exception.message)
 
-    def test_case_task_info_has_no_seed_field(self):
-        case = {"id": "case-a", "task": {"path": "task.md"}}
+    def test_task_file_is_rejected(self):
+        case = {"id": "case-a", "task": {"file": "task.md"}}
 
-        self.assertEqual(case_task_info(case), {"source": "path", "path": "task.md", "prompt": None})
-
-    def test_materialize_cases_writes_default_path_task_stub(self):
         with tempfile.TemporaryDirectory() as tmp:
-            workbench = Path(tmp) / ".demo"
-            suite = workbench / "evals.json"
+            suite = Path(tmp) / ".demo" / "evals.json"
             write_json(
                 suite,
                 {
                     "schema_version": 1,
                     "target": {"type": "skill", "ref": "SKILL.md"},
                     "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
-                    "cases": [{"id": "case-a", "task": {"path": "task.md"}}],
+                    "cases": [case],
                 },
             )
 
-            materialize_cases(str(suite))
+            with self.assertRaises(CliError) as ctx:
+                load_manifest(suite)
 
-            self.assertEqual((workbench / "cases" / "case-a" / "task.md").read_text(), "TODO: author the visible task for this case.\n")
+            self.assertIn("task.file is no longer supported", ctx.exception.message)
 
+    def test_custom_task_path_is_rejected(self):
+        case = {"id": "case-a", "task": {"path": "tasks/foo.md"}}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            suite = Path(tmp) / ".demo" / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+                    "cases": [case],
+                },
+            )
+
+            with self.assertRaises(CliError) as ctx:
+                load_manifest(suite)
+
+            self.assertIn("task.path must be task.md", ctx.exception.message)
+
+    def test_case_task_info_has_no_seed_field(self):
+        case = {"id": "case-a", "task": {"path": "task.md"}}
+
+        self.assertEqual(case_task_info(case), {"source": "path", "path": "task.md", "prompt": None})
 
 if __name__ == "__main__":
     unittest.main()

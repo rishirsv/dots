@@ -8,7 +8,7 @@ from pathlib import Path
 from .errors import CliError
 from .ids import utc_now
 from .io import write_json
-from .workbench_paths import workbench_dir_name
+from .workbench_paths import parse_frontmatter, workbench_dir_name
 
 
 DEFAULT_EXCLUDES = {".DS_Store", ".git", "__pycache__", "dist"}
@@ -16,29 +16,6 @@ DEFAULT_EXCLUDES = {".DS_Store", ".git", "__pycache__", "dist"}
 
 def exclude_names_for_target(target):
     return DEFAULT_EXCLUDES | {workbench_dir_name(target)}
-
-
-def parse_frontmatter(skill_md):
-    text = skill_md.read_text()
-    if not text.startswith("---"):
-        return {}
-    parts = text.split("---", 2)
-    if len(parts) < 3:
-        return {}
-    raw = parts[1]
-    try:
-        import yaml
-
-        parsed = yaml.safe_load(raw)
-        return parsed if isinstance(parsed, dict) else {}
-    except Exception:
-        out = {}
-        for line in raw.splitlines():
-            if ":" not in line or line[:1].isspace():
-                continue
-            key, value = line.split(":", 1)
-            out[key.strip()] = value.strip().strip("\"'")
-        return out
 
 
 def resolve_skill_md(target):
@@ -244,7 +221,7 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
 
 def snapshot_candidate(run_dir, candidate_info):
     candidate_id = candidate_info["candidate"]
-    snapshot_root = run_dir / "candidates" / candidate_id / "snapshot"
+    snapshot_root = run_dir / "inputs" / "candidates" / candidate_id
     snapshot_json_path = snapshot_root / "snapshot.json"
     payload = candidate_info.get("payload_path")
     digest = copy_candidate_payload(Path(payload) if payload else None, snapshot_root)

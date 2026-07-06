@@ -17,10 +17,6 @@ def safe_case_file(case_root, rel_path, label):
     return path
 
 
-def copy_payload(src, dest):
-    return copy_candidate_payload(src, dest, extra_excludes={"snapshot.json"})
-
-
 def stage_workspace(run_dir, trial_id, frozen_case, candidate):
     case_root = Path(frozen_case["case_root"])
     workspace = run_dir / "trials" / trial_id / "workspace"

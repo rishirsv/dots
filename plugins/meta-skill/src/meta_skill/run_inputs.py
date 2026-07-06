@@ -1,4 +1,4 @@
-"""Freeze selected eval inputs into a run-local spec."""
+"""Freeze selected eval inputs into a run-local input snapshot."""
 
 import hashlib
 import json
@@ -80,12 +80,9 @@ def tree_digest(path):
     return h.hexdigest()
 
 
-def _implicit_support(case_root):
+def _expected_support(case_root):
     support = []
-    if (case_root / "judge.md").exists():
-        support.append("judge.md")
     support.extend(path.name for path in sorted(case_root.glob("expected.*")) if path.is_file())
-    support.extend(path.name for path in sorted(case_root.glob("validate.*")) if path.is_file())
     return support
 
 
@@ -109,9 +106,9 @@ def validate_grading_inputs(cases, *, grading_enabled):
         raise CliError(f"graded prompt evals require expectations or graders: {', '.join(missing)}", 2)
 
 
-def freeze_eval_spec(manifest, suite, workbench, run_dir, cases, candidates, *, grading_enabled=True):
+def freeze_run_inputs(manifest, suite, workbench, run_dir, cases, candidates, *, grading_enabled=True):
     validate_grading_inputs(cases, grading_enabled=grading_enabled)
-    spec_dir = run_dir / "eval-spec"
+    spec_dir = run_dir / "inputs"
     cases_dir = spec_dir / "cases"
     selected_case_ids = [case["id"] for case in cases]
     selected_candidate_ids = [candidate["candidate"] for candidate in candidates]
@@ -145,7 +142,7 @@ def freeze_eval_spec(manifest, suite, workbench, run_dir, cases, candidates, *, 
         expectations = list(case.get("expectations") or [])
         write_json(expectations_path, expectations)
         support_refs = []
-        for ref in [*(case.get("fixtures") or []), *_grader_support(case), *_implicit_support(source_case_root)]:
+        for ref in [*(case.get("fixtures") or []), *_grader_support(case), *_expected_support(source_case_root)]:
             if ref in support_refs:
                 continue
             support_refs.append(ref)
