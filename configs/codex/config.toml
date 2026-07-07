@@ -89,6 +89,15 @@ trust_level = "trusted"
 [projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T012222812619Z-648a2b43/trials/adhoc-1.current.t1/workspace"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-07-06/l"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/kpmg"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/files-mentioned-by-the-user-codex"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
 last_updated = "2026-07-07T01:05:05Z"
 source_type = "local"
