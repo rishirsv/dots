@@ -24,6 +24,21 @@ ALLOWED_GATE_LABELS = {"pass", "partial", "fail", "unknown"}
 ALLOWED_GATE_SCOPES = {"payloads", "baseline", "all"}
 ALLOWED_INTEGRITY_KEYS = {"run_null_candidate_when_possible", "hidden_files_must_not_be_staged"}
 ALLOWED_REPORT_KEYS = {"include_history"}
+ALLOWED_DECISIONS = {"release", "quality", "trigger", "regression", "efficiency", "history"}
+HARD_PRESET_POLICY_WARNINGS = {
+    "invalid_gates",
+    "invalid_gate",
+    "unknown_gate_key",
+    "missing_gate_metric",
+    "invalid_gate_label",
+    "invalid_gate_scope",
+    "unknown_gate_candidate",
+    "invalid_gate_candidates",
+    "invalid_integrity_policy",
+    "unknown_integrity_key",
+    "invalid_report_policy",
+    "unknown_report_key",
+}
 
 
 def preset_path(raw):
@@ -68,6 +83,8 @@ def load_preset(raw_preset):
     if data.get("schema_version") != 1:
         raise CliError("only preset schema_version 1 is supported", 2)
     preset_id = require_id("preset id", data.get("id"))
+    if "decision" in data and data.get("decision") not in ALLOWED_DECISIONS:
+        raise CliError(f"preset decision must be one of {', '.join(sorted(ALLOWED_DECISIONS))}", 2)
     selection = data.get("task_selection") or {}
     if not isinstance(selection, dict):
         raise CliError("preset task_selection must be an object", 2)
@@ -239,13 +256,13 @@ def preset_lint(raw_preset):
         if candidate_id not in manifest_candidate_ids:
             warnings.append({"kind": "unknown_candidate", "candidate": candidate_id, "detail": "Candidate is not present in the suite."})
     selected_cases = [case for case in manifest.get("cases", []) if case.get("id") in set(case_ids)]
-    if any((case.get("type") or "") in {"trigger", "implicit_trigger", "activation"} for case in selected_cases):
-        if not any((case.get("type") or "") in {"negative_control", "boundary", "should_not_trigger", "near_miss"} for case in selected_cases):
+    if any((case.get("type") or "") == "trigger" for case in selected_cases):
+        if not any((case.get("type") or "") == "near_miss" for case in selected_cases):
             warnings.append({"kind": "unbalanced_trigger_preset", "detail": "Trigger presets need should-trigger and should-not-trigger or near-miss tasks."})
     for case in selected_cases:
         if not case.get("expectations") and not case.get("graders"):
             warnings.append({"kind": "missing_grader", "case_id": case.get("id"), "detail": "Selected case has no declared grader or expectations."})
-    if "release" in loaded["id"] and not profile.get("gates"):
+    if profile.get("decision") == "release" and not profile.get("gates"):
         warnings.append({"kind": "release_without_gates", "detail": "Release presets should declare selection gates."})
     if "unknown_rate" not in (profile.get("metrics") or []):
         warnings.append({"kind": "missing_unknown_rate", "detail": "Preset reports should track unknown or ungraded evidence."})
@@ -280,6 +297,11 @@ def apply_preset(args, loaded):
         raise CliError("preset selected no cases", 2)
     if not candidate_ids:
         raise CliError("preset selected no candidates", 2)
+    hard_warnings = sorted(
+        {warning["kind"] for warning in _profile_policy_warnings(profile, candidate_ids) if warning["kind"] in HARD_PRESET_POLICY_WARNINGS}
+    )
+    if hard_warnings:
+        raise CliError(f"preset policy errors: {', '.join(hard_warnings)}", 2)
     args.suite = str(loaded["suite"])
     args.candidates = ",".join(candidate_ids)
     args.split = None

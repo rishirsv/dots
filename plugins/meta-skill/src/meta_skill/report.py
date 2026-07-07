@@ -124,6 +124,18 @@ def render_markdown(summary):
         f"- Created: {summary.get('created_at') or 'unknown'}",
         f"- Grading mode: `{summary.get('grading_mode') or 'unknown'}`",
         f"- Trials: {summary.get('total_trials', 0)}",
+    ]
+    token_usage = summary.get("token_usage") or {}
+    lines.append(
+        f"- Token usage: {token_usage.get('total_tokens', 0)} total "
+        f"({token_usage.get('trial_input_tokens', 0)} trial in / {token_usage.get('trial_output_tokens', 0)} trial out, "
+        f"{token_usage.get('judge_input_tokens', 0)} judge in / {token_usage.get('judge_output_tokens', 0)} judge out; "
+        f"{token_usage.get('trials_with_usage', 0)} trials with usage)"
+    )
+    grader_error_total = summary.get("grader_error_total") or 0
+    if grader_error_total > 0:
+        lines.append(f"- Grader errors: {grader_error_total} (judge infrastructure failures — not skill failures)")
+    lines += [
         "",
         "## Verdict Totals",
         "",

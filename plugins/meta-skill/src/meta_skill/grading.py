@@ -1,9 +1,11 @@
 """Eval grading helpers."""
 
+import concurrent.futures
 import json
 import os
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 from .app_server.judge import judge_output
@@ -229,7 +231,72 @@ def grader_path(root, grader, label):
     return path
 
 
-def grade_run(raw_run, *, rebuild_summary=True):
+def _grade_result_rows(run_dir, run, result, cases_by_id, existing_human_keys, generation_id, human_keys_lock=None):
+    rows = []
+    runtime_status = require_runtime_status(result)
+    if runtime_status != "completed":
+        rows.append(
+            _grade_row(
+                run,
+                result,
+                generation_id=generation_id,
+                grader={"kind": "runtime", "id": "runtime-status"},
+                metric="runtime",
+                grade_status="fail",
+                rationale=f"Runtime did not complete: {runtime_status}",
+                evidence_refs=[result.get("evidence_path")],
+            )
+        )
+        return rows
+    root = run_dir / "inputs" / "cases" / result["case_id"]
+    case = cases_by_id.get(result["case_id"], {})
+    graders = normalize_graders(case, root)
+    expected = next(iter(sorted(root.glob("expected.*"))), None)
+    runnable = False
+    for grader in graders:
+        if grader.get("kind") == "code":
+            validator = grader_path(root, grader, "validator")
+            if validator is None:
+                raise CliError(f"code grader {grader.get('id')} missing path for case {case.get('id')}", 2)
+            rows.append(code_validator_grade(run, result, validator, expected, root, generation_id, grader))
+            runnable = True
+        elif grader.get("kind") == "model":
+            judge_path = grader_path(root, grader, "judge") if grader.get("path") else None
+            rows.append(
+                model_judge_grade(
+                    run_dir,
+                    run,
+                    result,
+                    root,
+                    generation_id,
+                    judge_path,
+                    grader=grader,
+                    expectations=case.get("expectations") or [],
+                    expected=expected,
+                )
+            )
+            runnable = True
+        elif grader.get("kind") == "human":
+            key = declared_human_grade_key(result, grader)
+            if human_keys_lock is None:
+                should_add = key not in existing_human_keys
+                if should_add:
+                    existing_human_keys.add(key)
+            else:
+                with human_keys_lock:
+                    should_add = key not in existing_human_keys
+                    if should_add:
+                        existing_human_keys.add(key)
+            if should_add:
+                rows.append(pending_human_grade(run, result, generation_id, grader))
+            runnable = True
+            continue
+    if not runnable:
+        rows.append(ungraded_grade(run, result, generation_id, "No runnable code, model, or human grader exists."))
+    return rows
+
+
+def grade_run(raw_run, *, rebuild_summary=True, parallel=1):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
     frozen_suite = read_json(run_dir / "inputs" / "suite.json")
@@ -245,61 +312,34 @@ def grade_run(raw_run, *, rebuild_summary=True):
         if (row.get("grader") or {}).get("kind") == "human"
     }
     generation_id = f"grade-{run_id()}"
-    for result in read_jsonl(run_dir / "results.jsonl"):
-        runtime_status = require_runtime_status(result)
-        if runtime_status != "completed":
-            rows.append(
-                _grade_row(
+    grades_path = run_dir / "grades.jsonl"
+    results = read_jsonl(run_dir / "results.jsonl")
+    if parallel <= 1:
+        for result in results:
+            rows.extend(_grade_result_rows(run_dir, run, result, cases_by_id, existing_human_keys, generation_id))
+        append_jsonl_many(grades_path, rows)
+    else:
+        write_lock = threading.Lock()
+        human_keys_lock = threading.Lock()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
+            futures = [
+                executor.submit(
+                    _grade_result_rows,
+                    run_dir,
                     run,
                     result,
-                    generation_id=generation_id,
-                    grader={"kind": "runtime", "id": "runtime-status"},
-                    metric="runtime",
-                    grade_status="fail",
-                    rationale=f"Runtime did not complete: {runtime_status}",
-                    evidence_refs=[result.get("evidence_path")],
+                    cases_by_id,
+                    existing_human_keys,
+                    generation_id,
+                    human_keys_lock,
                 )
-            )
-            continue
-        root = run_dir / "inputs" / "cases" / result["case_id"]
-        case = cases_by_id.get(result["case_id"], {})
-        graders = normalize_graders(case, root)
-        expected = next(iter(sorted(root.glob("expected.*"))), None)
-        runnable = False
-        for grader in graders:
-            if grader.get("kind") == "code":
-                validator = grader_path(root, grader, "validator")
-                if validator is None:
-                    raise CliError(f"code grader {grader.get('id')} missing path for case {case.get('id')}", 2)
-                rows.append(code_validator_grade(run, result, validator, expected, root, generation_id, grader))
-                runnable = True
-            elif grader.get("kind") == "model":
-                judge_path = grader_path(root, grader, "judge") if grader.get("path") else None
-                rows.append(
-                    model_judge_grade(
-                        run_dir,
-                        run,
-                        result,
-                        root,
-                        generation_id,
-                        judge_path,
-                        grader=grader,
-                        expectations=case.get("expectations") or [],
-                        expected=expected,
-                    )
-                )
-                runnable = True
-            elif grader.get("kind") == "human":
-                key = declared_human_grade_key(result, grader)
-                if key not in existing_human_keys:
-                    rows.append(pending_human_grade(run, result, generation_id, grader))
-                    existing_human_keys.add(key)
-                runnable = True
-                continue
-        if not runnable:
-            rows.append(ungraded_grade(run, result, generation_id, "No runnable code, model, or human grader exists."))
-    grades_path = run_dir / "grades.jsonl"
-    append_jsonl_many(grades_path, rows)
+                for result in results
+            ]
+            for future in concurrent.futures.as_completed(futures):
+                result_rows = future.result()
+                with write_lock:
+                    append_jsonl_many(grades_path, result_rows)
+                    rows.extend(result_rows)
     summary = build_summary(str(run_dir)) if rebuild_summary else None
     ok = True if summary is None else summary_exit_code(summary) == 0
     return {"ok": ok, "run_id": run["run_id"], "grade_generation_id": generation_id, "grades": len(rows), "grades_path": str(grades_path), "summary_path": str(run_dir / "summary.json")}

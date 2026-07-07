@@ -7,7 +7,7 @@ description: "Use when a stable eval suite needs a recurring benchmark preset fo
 
 Create and operate **eval presets** over existing evaluation suites. A preset
 is a stable decision profile: it selects a task bank, candidates,
-repetitions, gates, metric views, and report policy for one recurring
+repetitions, release gates, metric views, and report policy for one recurring
 benchmark question.
 
 This skill owns recurring benchmark decisions. It relies on `skill-evaluator`
@@ -19,15 +19,15 @@ and full run reports. It relies on `skill-doctor` for target-skill fixes.
 Start from the recurring decision, keep the task slice stable, and separate
 scorecards from proof. A preset should help the user decide whether a
 release, trigger boundary, regression surface, or core capability meets the
-gates for the measured scope.
+release gates for the measured scope.
 
 Do not oversell a green report. Name what the preset measured, what it did
-not measure, which gates failed, and which transcripts or grades need human
-review.
+not measure, which release gates failed, and which transcripts or grades need
+human review.
 
 Keep the preset vocabulary behind the decision. The user should see the
 recurring question, measured scope, result, and coverage limits before preset
-fields, gates, or metric names.
+fields, release gates, or metric names.
 
 ## Route Boundaries
 
@@ -54,7 +54,7 @@ Read only what the task needs:
 
 | Need | Read |
 |---|---|
-| Design eval presets, choose task banks, set gates, and render scorecards | [references/benchmarking.md](references/benchmarking.md) |
+| Design eval presets, choose task banks, set release gates, and render scorecards | [references/benchmarking.md](references/benchmarking.md) |
 | Add release gates for static skill quality or payload hygiene | [judge-rubric.md](../../references/judge-rubric.md), [payload-hygiene.md](../../references/payload-hygiene.md) |
 | Use the central Meta Skill CLI for `--preset` commands and underlying eval commands | [cli.md](../../references/cli.md) |
 
@@ -70,7 +70,7 @@ Target suite: <existing .<skill-name>/evals.json or missing>
 Eval preset: <existing preset path or new preset to create>
 Baseline: <no-skill | current | other named candidate>
 Payload candidate: <current | candidate id>
-Required gates: <must-not-break checks>
+Required release gates: <must-not-break checks>
 Coverage limit: <what this preset cannot prove>
 ```
 
@@ -89,15 +89,18 @@ Keep the preset as a selector over `evals.json`; do not duplicate task text,
 judge guidance, expected outputs, or candidate source details in the preset.
 
 Use `references/benchmarking.md` for the schema, task-bank policy, repetition
-policy, gate policy, and integrity checks. Run:
+policy, release gate policy, and integrity checks. Release presets must set
+`decision: "release"`; substring matches in the preset id do not count. Run:
 
 ```sh
 <meta-skill-root>/scripts/metaskill eval run --check --preset .<skill-name>/presets/<preset-name>.json --json
 ```
 
 Fix unknown cases, unknown candidates, empty selections, one-sided trigger
-presets, selected tasks without graders, release presets without gates, and
-missing unknown-rate tracking before trusting the preset.
+presets, selected tasks without graders, release presets without release gates,
+and missing unknown-rate tracking before trusting the preset. Malformed release
+gates, integrity policy, or report policy fail when a preset is applied; do not
+leave those as known warnings.
 
 ### 3. Run And Grade
 
@@ -122,28 +125,29 @@ Render the decision-level report:
 <meta-skill-root>/scripts/metaskill eval list --preset .<skill-name>/presets/<preset-name>.json --json
 ```
 
-Report behavior pass rate, unknown rate, gate failures, preset gate failures,
-comparison counts, token usage when recorded, and coverage limits. Read failed,
-surprising, ungraded, and model/human-disagreed trials before release or
-selection.
+Report behavior pass rate, unknown rate, grader gate failures, release gate
+failures, comparison counts, token usage when recorded, and coverage limits.
+Read failed, surprising, ungraded, and model/human-disagreed trials before
+release or selection.
 
 For release-readiness decisions, treat the scorecard as evidence, not an
 automatic approval. Conservative release evidence needs: payload validation
-passed, shared payload hygiene or skill-quality gates reviewed when the release
-concerns portable skill payloads, suite lint and preset lint reviewed, all selected trials completed,
-all selected trials graded or intentionally human-reviewed, zero grader gate
-failures, zero preset gate failures or unknowns, no release-critical
-unknowns, no baseline-pass/candidate-fail state pairs on must-not-break tasks, and calibration
-artifacts when model-judge scores affect release or selection decisions.
+passed, shared payload hygiene or skill-quality release gates reviewed when the
+release concerns portable skill payloads, suite lint and preset lint reviewed,
+all selected trials completed, all selected trials graded or intentionally
+human-reviewed, zero grader gate failures, zero release gate failures or
+unknowns, no release-critical unknowns, no baseline-pass/candidate-fail state
+pairs on must-not-break tasks, and calibration artifacts when model-judge scores
+affect release or selection decisions.
 
 ### 5. Maintain History
 
 Treat the eval preset as a living measurement artifact. Keep it stable
-enough for history to matter, but maintain the preset when selectors, gates,
-metrics, or report policy become misleading. If tasks, graders, validators, or
-calibration need changes, route to `skill-evaluator`; if harness or runner
-behavior is unfair, record an implementation follow-up requiring explicit
-approval.
+enough for history to matter, but maintain the preset when selectors, release
+gates, metrics, or report policy become misleading. If tasks, graders,
+validators, or calibration need changes, route to `skill-evaluator`; if harness
+or runner behavior is unfair, record an implementation follow-up requiring
+explicit approval.
 
 Prefer explicit `case_ids` for presets that are meant to support
 history. Type or split selectors are useful while shaping a task bank, but they
@@ -159,7 +163,7 @@ Close with:
 - selected task and candidate slice
 - lint warnings or confirmation
 - run id and grade status when executed
-- headline scorecard and gate status
+- headline scorecard and release gate status
 - benchmark history trend when requested
 - coverage limits and next owner (`skill-evaluator` or `skill-doctor`) for
   anything outside the benchmarker scope
@@ -169,6 +173,6 @@ Close with:
 - Benchmark stable presets, not ad hoc runs.
 - Keep task and grader authority in `evals.json` and case folders.
 - Keep eval presets in `.<skill-name>/presets/`.
-- Report gates, unknowns, and coverage limits before release or selection.
+- Report release gates, unknowns, and coverage limits before release or selection.
 - Route suite authoring, grading design, human calibration, and target fixes to
   the owning specialist.

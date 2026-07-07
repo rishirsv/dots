@@ -112,4 +112,17 @@ def to_jsonable(value):
 
 
 def normalize_usage(usage):
-    return to_jsonable(usage) if usage is not None else None
+    if usage is None:
+        return None
+    raw = to_jsonable(usage)
+    if not isinstance(raw, dict):
+        return None
+    total = raw.get("total")
+    if not isinstance(total, dict):
+        return None
+    return {
+        "input_tokens": int(total.get("inputTokens") or 0),
+        "cached_input_tokens": int(total.get("cachedInputTokens") or 0),
+        "output_tokens": int(total.get("outputTokens") or 0),
+        "total_tokens": int(total.get("totalTokens") or 0),
+    }

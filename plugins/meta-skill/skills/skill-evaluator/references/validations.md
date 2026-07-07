@@ -22,7 +22,7 @@ Validations come in two tiers. Keep the terminology straight:
 | **Shared workbench tests** | One target suite | Authored tests reused across cases | `.<skill-name>/tests/` | Local eval content |
 
 General checks already exist and apply to any skill: skill body present, valid
-front matter, length bounds, and deprecated-surface avoidance. Do not re-author
+front matter, length bounds, and removed-surface avoidance. Do not re-author
 them per target.
 
 ## Deterministic First
@@ -42,8 +42,8 @@ trial outcome exists.
 
 Supported task-local validators are:
 
-- `validate.py` — run with the Meta-Skill Python interpreter
-- `validate.sh` — run with `sh`
+- `validate.py`: run with the Meta-Skill Python interpreter
+- `validate.sh`: run with `sh`
 - any executable `validate.*` file
 
 When a validator protects a must-not-break candidate, declare it as a gate in
@@ -63,7 +63,8 @@ When a validator protects a must-not-break candidate, declare it as a gate in
 Any non-advisory grader failure fails the trial; `gate` does not change that.
 It marks the check as must-not-break for report emphasis and names the checks
 preset-level release gates enforce. Set `advisory: true` on a validator whose
-failure should only cap the trial at `inconclusive` instead of failing it.
+failure should only cap the trial at `inconclusive` instead of failing it. A
+case whose explicit graders are all advisory can never pass and is linted.
 
 ## Agent Boundary
 

@@ -5,6 +5,10 @@ from collections import Counter
 from .manifest import load_manifest, suite_path
 
 
+FATAL_SUITE_WARNINGS = {"hidden_metadata_in_task"}
+"""Warning kinds that must block eval execution when surfaced on the run path."""
+
+
 def case_grader_kinds(case):
     kinds = Counter()
     for grader in case.get("graders") or []:
@@ -26,28 +30,30 @@ def lint_suite(raw_suite):
         "human_graders": 0,
         "transcript_aware_graders": 0,
     }
-    trigger_types = {"trigger", "implicit_trigger", "activation"}
-    negative_types = {"negative_control", "boundary", "should_not_trigger", "near_miss"}
     has_trigger = False
     has_negative = False
 
     for case in cases:
         case_id = case.get("id")
         case_type = case.get("type") or "unspecified"
-        if case_type in trigger_types:
+        if case_type == "trigger":
             has_trigger = True
-        if case_type in negative_types:
+        if case_type == "near_miss":
             has_negative = True
         if case_type == "unspecified":
-            warnings.append({"case_id": case_id, "kind": "missing_type", "detail": "Set type to capability, regression, trigger, negative_control, failure, or gate."})
+            warnings.append({"case_id": case_id, "kind": "missing_type", "detail": "Set type to capability, regression, trigger, near_miss, failure, or gate."})
         task = case.get("task") or {}
-        has_task = bool(task.get("prompt") is not None or task.get("path"))
-        if not has_task:
-            warnings.append({"case_id": case_id, "kind": "missing_task_source", "detail": "Add exactly one visible task source: inline prompt or task path."})
+        if task.get("path"):
+            task_file = suite.parent / "cases" / case_id / "task.md"
+            if task_file.is_file() and task_file.read_text().startswith("---"):
+                warnings.append({"case_id": case_id, "kind": "hidden_metadata_in_task", "detail": "task.md must contain only visible agent bytes; move metadata into evals.json."})
         if not case.get("expectations") and not case.get("graders"):
             warnings.append({"case_id": case_id, "kind": "missing_grader", "detail": "Add code, model, or human grading guidance."})
         if case_type in {"regression", "gate"} and not case.get("expectations"):
             warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression and gate tasks should have exact expectations."})
+        graders = case.get("graders") or []
+        if graders and all(grader.get("advisory") for grader in graders):
+            warnings.append({"case_id": case_id, "kind": "all_graders_advisory", "detail": "Case can never reach a passed verdict because every explicit grader is advisory."})
         kinds = case_grader_kinds(case)
         stats["grader_kinds"].update(kinds)
         for grader in case.get("graders") or []:

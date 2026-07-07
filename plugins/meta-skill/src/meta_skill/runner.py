@@ -1,8 +1,11 @@
-"""Sequential eval planning, execution, and progress snapshots."""
+"""Eval planning, execution, and progress snapshots."""
 
+import concurrent.futures
 import sys
+import threading
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 from .app_server.policy import APP_SERVER_APPROVAL_POLICY, APP_SERVER_SANDBOX
 from .app_server.trial import app_server_run
@@ -26,6 +29,7 @@ from .run_inputs import freeze_run_inputs, validate_grading_inputs
 from .staging import stage_workspace
 from .summary import build_summary, summary_exit_code
 from .verdicts import normalize_runtime_status
+from .workbench_paths import workbench_path
 
 
 def plan_trials(cases, candidates, repetitions):
@@ -170,18 +174,62 @@ def selected_type_args(args):
     return split_csv_or_repeat(getattr(args, "type", None))
 
 
-def run_eval(args):
+def adhoc_context(args):
+    """Synthesize an in-memory one-case manifest for a `--adhoc` run."""
+    task = getattr(args, "task", None)
+    if not task or not str(task).strip():
+        raise CliError("--adhoc requires --task with a non-empty prompt", 2)
+    skill_arg = getattr(args, "skill", None)
+    skill_dir = Path(skill_arg).expanduser().resolve() if skill_arg else Path.cwd()
+    if not (skill_dir / "SKILL.md").is_file():
+        raise CliError(f"adhoc run needs a SKILL.md in {skill_dir}", 2)
+    workbench = workbench_path(skill_dir)
+    workbench.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        "schema_version": 1,
+        "target": {"type": "skill", "ref": "SKILL.md"},
+        "candidates": [
+            {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}}
+        ],
+        "cases": [{"id": "adhoc-1", "type": "adhoc", "task": {"prompt": str(task)}}],
+    }
+    return {
+        "manifest": manifest,
+        "suite": workbench / "evals.json",
+        "workbench": workbench,
+        "project": skill_dir,
+        "adhoc": True,
+    }
+
+
+def eval_context(args):
+    """Resolve the manifest and roots for a run, from a suite file or an adhoc prompt."""
+    if getattr(args, "adhoc", False):
+        return adhoc_context(args)
     suite = suite_path(args.suite)
-    manifest = load_manifest(suite)
-    workbench = workbench_from_suite(suite)
-    project = project_from_suite(suite)
+    return {
+        "manifest": load_manifest(suite),
+        "suite": suite,
+        "workbench": workbench_from_suite(suite),
+        "project": project_from_suite(suite),
+        "adhoc": False,
+    }
+
+
+def run_eval(args, context=None):
+    context = context or eval_context(args)
+    manifest = context["manifest"]
+    suite = context["suite"]
+    workbench = context["workbench"]
+    project = context["project"]
+    adhoc = bool(context.get("adhoc"))
     defaults = manifest.get("defaults") or {}
     cases = select_cases(manifest, args.split)
     cases = filter_cases(cases, case_ids=selected_case_args(args), case_types=selected_type_args(args))
     if not cases:
         raise CliError("no cases selected", 2)
     selected_candidate_defs = select_candidates(manifest, args.candidates)
-    grading_enabled = not getattr(args, "no_grade", False)
+    grading_enabled = not getattr(args, "no_grade", False) and not adhoc
     validate_grading_inputs(cases, grading_enabled=grading_enabled)
     rid = run_id()
     run_dir = workbench / "runs" / rid
@@ -216,6 +264,7 @@ def run_eval(args):
     run_model = {
         "run_id": rid,
         "created_at": utc_now(),
+        "adhoc": adhoc,
         "suite": str(suite),
         "project": str(project),
         "runner_config": runner_config,
@@ -237,20 +286,35 @@ def run_eval(args):
     for row in plan:
         append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "queued"})
     total = len(plan)
-    for position, row in enumerate(plan, start=1):
+    parallel = max(1, int(getattr(args, "parallel", 1) or 1))
+    lock = threading.Lock()
+
+    def execute_trial(position, row):
         trial_id = row["trial_id"]
-        print(f"[{position}/{total}] {trial_id} running", file=sys.stderr)
-        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": "running"})
+        with lock:
+            print(f"[{position}/{total}] {trial_id} running", file=sys.stderr)
+            append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": "running"})
         result = run_trial(row, run_dir, frozen_cases, args.model)
-        append_jsonl(run_dir / "results.jsonl", result)
-        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": result["runtime_status"]})
-        duration_s = round((result.get("timing") or {}).get("duration_ms", 0) / 1000, 1)
-        print(f"[{position}/{total}] {trial_id} {result['runtime_status']} ({duration_s}s)", file=sys.stderr)
+        with lock:
+            append_jsonl(run_dir / "results.jsonl", result)
+            append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": result["runtime_status"]})
+            duration_s = round((result.get("timing") or {}).get("duration_ms", 0) / 1000, 1)
+            print(f"[{position}/{total}] {trial_id} {result['runtime_status']} ({duration_s}s)", file=sys.stderr)
+        return result
+
+    if parallel <= 1:
+        for position, row in enumerate(plan, start=1):
+            execute_trial(position, row)
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
+            futures = [executor.submit(execute_trial, position, row) for position, row in enumerate(plan, start=1)]
+            for future in concurrent.futures.as_completed(futures):
+                future.result()
     grade_result = None
     if grading_enabled:
         from .grading import grade_run
 
-        grade_result = grade_run(str(run_dir), rebuild_summary=False)
+        grade_result = grade_run(str(run_dir), rebuild_summary=False, parallel=parallel)
     summary = build_summary(str(run_dir))
     exit_code = summary_exit_code(summary, runtime_only=not grading_enabled)
     report_path = _write_run_report(run_dir, preset)
@@ -258,6 +322,7 @@ def run_eval(args):
         "ok": exit_code == 0,
         "run_id": rid,
         "run_dir": str(run_dir),
+        "adhoc": adhoc,
         "runner_config": runner_config,
         "model_config": model_config,
         "selected_cases": run_model["selected_cases"],

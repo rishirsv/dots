@@ -20,6 +20,50 @@ def _scoped_totals(rows):
     }
 
 
+def _grader_error_total(latest_grades):
+    total = 0
+    for row in latest_grades:
+        detail = row.get("detail")
+        if isinstance(detail, dict) and detail.get("grader_error"):
+            total += 1
+    return total
+
+
+def _usage_pair(usage):
+    if not isinstance(usage, dict):
+        return None
+    return int(usage.get("input_tokens") or 0), int(usage.get("output_tokens") or 0)
+
+
+def _token_usage(result_rows, latest_grades):
+    trial_input = trial_output = judge_input = judge_output = 0
+    trials_with_usage = 0
+    for row in result_rows:
+        pair = _usage_pair(row.get("usage"))
+        if pair is None:
+            continue
+        trials_with_usage += 1
+        trial_input += pair[0]
+        trial_output += pair[1]
+    for row in latest_grades:
+        detail = row.get("detail")
+        if not isinstance(detail, dict):
+            continue
+        pair = _usage_pair(detail.get("usage"))
+        if pair is None:
+            continue
+        judge_input += pair[0]
+        judge_output += pair[1]
+    return {
+        "trial_input_tokens": trial_input,
+        "trial_output_tokens": trial_output,
+        "judge_input_tokens": judge_input,
+        "judge_output_tokens": judge_output,
+        "total_tokens": trial_input + trial_output + judge_input + judge_output,
+        "trials_with_usage": trials_with_usage,
+    }
+
+
 def _planned_trials(run, results):
     planned = list(run.get("trials", []))
     planned_ids = {row.get("trial_id") for row in planned}
@@ -92,6 +136,8 @@ def build_summary(raw_run):
         "runtime_status_totals": _counts(trials, "runtime_status"),
         "grade_status_totals": _counts(grade_status_rows, "grade_status"),
         "final_verdict_totals": verdict_counts,
+        "grader_error_total": _grader_error_total(latest_grades),
+        "token_usage": _token_usage(result_rows, latest_grades),
         "trials": trials,
     }
     write_json(run_dir / "summary.json", summary)

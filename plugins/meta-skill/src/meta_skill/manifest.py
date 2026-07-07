@@ -23,6 +23,13 @@ DEFAULT_EVALS = {
     "candidates": DEFAULT_CANDIDATES,
     "cases": [],
 }
+REMOVED_TASK_TYPES = {
+    "implicit_trigger": "trigger",
+    "activation": "trigger",
+    "negative_control": "near_miss",
+    "boundary": "near_miss",
+    "should_not_trigger": "near_miss",
+}
 
 
 def suite_path(raw):
@@ -80,6 +87,9 @@ def load_manifest(path):
         if case_id in seen_case_ids:
             raise CliError(f"duplicate case id: {case_id}", 2)
         seen_case_ids.add(case_id)
+        case_type = case.get("type")
+        if case_type in REMOVED_TASK_TYPES:
+            raise CliError(f"case {case_id} type {case_type} is no longer supported; use {REMOVED_TASK_TYPES[case_type]}", 2)
         task = case.get("task") or {}
         if not isinstance(task, dict):
             raise CliError(f"case {case_id} task must be an object", 2)
@@ -110,6 +120,9 @@ def load_manifest(path):
                 raise CliError(f"case {case_id} human grader must not set path", 2)
             if "uses_transcript" in grader and not isinstance(grader.get("uses_transcript"), bool):
                 raise CliError(f"case {case_id} grader uses_transcript must be boolean", 2)
+            for flag in ("advisory", "gate", "required"):
+                if flag in grader and not isinstance(grader.get(flag), bool):
+                    raise CliError(f"case {case_id} grader {flag} must be boolean", 2)
     seen_candidate_ids = set()
     for candidate in data.get("candidates", []):
         if not isinstance(candidate, dict):

@@ -90,7 +90,9 @@ Pick the smallest specialist route that satisfies the user's request.
   release-readiness scorecard, trigger-reliability history, regression
   benchmark, or benchmark report over an existing eval suite.
 - For a one-prompt trial of a draft or fix, stay with the owning specialist and
-  use [skill-trial-runs.md](../../references/skill-trial-runs.md).
+  run `eval run --adhoc --task "<prompt>" [--skill <dir>]`; use
+  [skill-trial-runs.md](../../references/skill-trial-runs.md) for child-thread
+  reading, research, and repair guidance.
 
 Disambiguation: `skill-doctor` owns static design review, diagnosis, and fixes
 for one skill; `skill-evaluator` owns behavioral evidence across candidates;

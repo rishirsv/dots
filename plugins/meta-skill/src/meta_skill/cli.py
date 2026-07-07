@@ -17,7 +17,8 @@ from .docs_tools import docs_lint, emit_cli
 from .errors import CliError
 from .grading import grade_run, human_review_packet, record_human_grade
 from .io import emit, fail, read_json, resolve_run_dir
-from .linting import lint_suite
+from .linting import FATAL_SUITE_WARNINGS, lint_suite
+from .manifest import suite_path, workbench_from_suite
 from .packaging import package_skill
 from .presets import apply_preset, build_preset_report, load_preset, preset_lint, render_preset_markdown, resolve_preset_ref
 from .report import build_report, list_runs, render_markdown
@@ -167,7 +168,19 @@ def print_lint_warnings(lint_result):
             print(f"lint: {prefix} {warning.get('kind')}: {detail}", file=sys.stderr)
 
 
+def fatal_suite_lint_warnings(lint_result):
+    suite = lint_result.get("suite") or {}
+    return [warning for warning in suite.get("warnings", []) if warning.get("kind") in FATAL_SUITE_WARNINGS]
+
+
 def command_eval_run(args):
+    if getattr(args, "adhoc", False):
+        if not getattr(args, "task", None):
+            raise CliError("--adhoc requires --task", 2)
+        result = run_eval(args)
+        result["lint_warnings"] = {}
+        emit(result, args.json)
+        return 0 if result["ok"] else 1
     preset_ref = getattr(args, "preset", None)
     if getattr(args, "preset", None):
         resolved = resolve_preset_ref(preset_ref, args.suite)
@@ -175,10 +188,17 @@ def command_eval_run(args):
     lint_result = preflight_lint(args, preset_ref=preset_ref)
     if not args.json:
         print_lint_warnings(lint_result)
+    fatal = fatal_suite_lint_warnings(lint_result)
     if getattr(args, "check", False):
-        result = {"ok": True, "lint_warnings": lint_result}
+        result = {"ok": not fatal, "lint_warnings": lint_result}
+        if fatal:
+            result["fatal_lint_warnings"] = fatal
         emit(result, args.json)
-        return 0
+        return 0 if not fatal else 1
+    if fatal:
+        cases = ", ".join(sorted({warning.get("case_id") or "<suite>" for warning in fatal}))
+        kinds = ", ".join(sorted({warning.get("kind") for warning in fatal}))
+        raise CliError(f"suite lint blocks the run ({kinds}) in cases: {cases}", 2)
     result = run_eval(args)
     result["lint_warnings"] = lint_result
     emit(result, args.json)
@@ -202,9 +222,19 @@ def command_eval_progress(args):
 
 
 def command_eval_grade(args):
-    result = grade_run(args.run)
+    result = grade_run(args.run, parallel=args.parallel)
     emit(result, args.json)
     return 0 if result["ok"] else 1
+
+
+def command_eval_review(args):
+    workbench = workbench_from_suite(suite_path(args.suite))
+    try:
+        from .review.server import run_review_server
+    except ImportError as exc:
+        raise CliError(f"review server unavailable: {exc}", 2) from exc
+    run_review_server(workbench, run=args.run, port=args.port, open_browser=args.open)
+    return 0
 
 
 def command_eval_calibrate(args):
@@ -390,6 +420,10 @@ def build_parser():
     run.add_argument("--repetitions", type=int)
     run.add_argument("--preset", help="Run the task and candidate slice selected by this preset (name or path)")
     run.add_argument("--model")
+    run.add_argument("--parallel", type=int, default=1, help="Run this many trials concurrently")
+    run.add_argument("--adhoc", action="store_true", help="Run a one-off task against the current skill without evals.json")
+    run.add_argument("--task", help="Prompt for --adhoc")
+    run.add_argument("--skill", help="Skill directory for --adhoc; defaults to the current directory")
     run.add_argument("--no-grade", action="store_true", help="Run trials without grading; intended only for runtime debugging")
     run.add_argument("--check", action="store_true", help="Lint the suite (and preset) only; do not plan or run trials")
     run.add_argument("--json", action="store_true")
@@ -403,8 +437,16 @@ def build_parser():
 
     grade = eval_sub.add_parser("grade", help="Grade completed eval outputs")
     grade.add_argument("--run", required=True)
+    grade.add_argument("--parallel", type=int, default=1, help="Run this many graders concurrently")
     grade.add_argument("--json", action="store_true")
     grade.set_defaults(func=command_eval_grade)
+
+    review = eval_sub.add_parser("review", help="Serve the local human review workbench")
+    review.add_argument("--suite")
+    review.add_argument("--run")
+    review.add_argument("--port", type=int, default=7333)
+    review.add_argument("--open", action="store_true")
+    review.set_defaults(func=command_eval_review)
 
     calibrate = eval_sub.add_parser("calibrate", help="Compare model judge grades against human grades")
     calibrate.add_argument("--run", required=True)

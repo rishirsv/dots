@@ -110,5 +110,31 @@ class ManifestTests(unittest.TestCase):
 
         self.assertEqual(case_task_info(case), {"source": "path", "path": "task.md", "prompt": None})
 
+    def test_grader_policy_flags_must_be_boolean(self):
+        for flag in ("advisory", "gate", "required"):
+            with self.subTest(flag=flag):
+                case = {
+                    "id": "case-a",
+                    "task": {"prompt": "Task"},
+                    "graders": [{"kind": "model", "id": "judge", flag: "yes"}],
+                }
+
+                with tempfile.TemporaryDirectory() as tmp:
+                    suite = Path(tmp) / ".demo" / "evals.json"
+                    write_json(
+                        suite,
+                        {
+                            "schema_version": 1,
+                            "target": {"type": "skill", "ref": "SKILL.md"},
+                            "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+                            "cases": [case],
+                        },
+                    )
+
+                    with self.assertRaises(CliError) as ctx:
+                        load_manifest(suite)
+
+                    self.assertIn(f"grader {flag} must be boolean", ctx.exception.message)
+
 if __name__ == "__main__":
     unittest.main()

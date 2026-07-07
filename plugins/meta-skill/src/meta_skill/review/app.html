@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibration review</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #0d0d0d;
+  --accent: #1f5eff;
+  --accent-deep: #12379e;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #8c1d18;
+  --danger-line: rgba(200,60,50,0.35);
+  --danger-bg: rgba(220,70,60,0.05);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(13, 13, 13, 0.04);
+  --a8: rgba(13, 13, 13, 0.08);
+  --a12: rgba(13, 13, 13, 0.12);
+  --a20: rgba(13, 13, 13, 0.20);
+  --a40: rgba(13, 13, 13, 0.40);
+  --a55: rgba(13, 13, 13, 0.55);
+  --a70: rgba(13, 13, 13, 0.70);
+  --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+  --article: 720px;
+  --section: 48px;
+  --block: 16px;
+  --r-card: 6px;
+  --r-code: 6px;
+  --r-inline: 4px;
+  --r-pill: 6px;
+  --dur-fast: 150ms;
+  --dur-reveal: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--a55);
+  --chart-value: var(--a55);
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0e;
+  --foreground: #f5f5f4;
+  --accent: #6f94ff;
+  --accent-deep: #b7c9ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ff8a80;
+  --danger-line: rgba(255,120,110,0.35);
+  --danger-bg: rgba(255,120,110,0.07);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(245, 245, 244, 0.04);
+  --a8: rgba(245, 245, 244, 0.08);
+  --a12: rgba(245, 245, 244, 0.12);
+  --a20: rgba(245, 245, 244, 0.20);
+  --a40: rgba(245, 245, 244, 0.40);
+  --a55: rgba(245, 245, 244, 0.55);
+  --a70: rgba(245, 245, 244, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0f0f0e;
+    --foreground: #f5f5f4;
+    --accent: #6f94ff;
+    --accent-deep: #b7c9ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ff8a80;
+    --danger-line: rgba(255,120,110,0.35);
+    --danger-bg: rgba(255,120,110,0.07);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(245, 245, 244, 0.04);
+    --a8: rgba(245, 245, 244, 0.08);
+    --a12: rgba(245, 245, 244, 0.12);
+    --a20: rgba(245, 245, 244, 0.20);
+    --a40: rgba(245, 245, 244, 0.40);
+    --a55: rgba(245, 245, 244, 0.55);
+    --a70: rgba(245, 245, 244, 0.70);
+  }
+}
+
+/* ---------- base ---------- */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-inline);
+}
+
+::selection { background: var(--a12); }
+
+h1 {
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.96px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 var(--block); }
+p:last-child { margin-bottom: 0; }
+
+section { margin-bottom: var(--section); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--a4);
+  border-radius: var(--r-inline);
+  padding: 1px 5px;
+}
+
+pre code { background: none; padding: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 1px solid var(--a20);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--a12);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--a55);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- motion: choreographed moments only ---------- */
+/* One-time load stagger + one-time scroll reveals. Elements render complete
+ * and static by default; the page-shell script opts them in only when JS
+ * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .stagger > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: rise var(--dur-reveal) var(--ease) forwards;
+  }
+  html.js-motion .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  html.js-motion .stagger > *:nth-child(2) { animation-delay: var(--stagger); }
+  html.js-motion .stagger > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+  html.js-motion .stagger > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+  html.js-motion .stagger > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+
+  html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease), transform var(--dur-reveal) var(--ease);
+  }
+  html.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+  html.js-motion .reveal .bar-fill {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform calc(var(--dur-reveal) * 1.5) var(--ease) 120ms;
+  }
+  html.js-motion .reveal.is-in .bar-fill { transform: scaleX(1); }
+
+  a, summary, button { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- app ---------- */
+
+body { overflow: hidden; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--a12);
+}
+.topbar .title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+.topbar select {
+  font: inherit;
+  font-size: 13px;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--a20);
+  border-radius: var(--r-inline);
+  padding: 3px 8px;
+}
+.topbar .hint { margin-left: auto; font-size: 12px; color: var(--a55); }
+
+.workbench {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 340px;
+  height: calc(100vh - 45px);
+}
+
+.pane { overflow-y: auto; padding: 16px 20px; }
+#queue { border-right: 1px solid var(--a12); padding: 12px; }
+#grading { border-left: 1px solid var(--a12); }
+
+/* queue rail */
+.tier-head {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--a55);
+  margin: 14px 4px 4px;
+}
+.tier-head:first-child { margin-top: 0; }
+.q-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--foreground);
+  background: none;
+  border: none;
+  border-radius: var(--r-card);
+  padding: 7px 10px;
+  cursor: pointer;
+}
+.q-item:hover { background: var(--a4); }
+.q-item.active { background: var(--a8); color: var(--accent); }
+.q-item .q-main { display: flex; justify-content: space-between; gap: 8px; }
+.q-item .q-sub { font-size: 12px; color: var(--a55); }
+.q-item.active .q-sub { color: inherit; opacity: 0.75; }
+.q-done { font-size: 12px; color: var(--a55); white-space: nowrap; }
+
+/* evidence */
+#evidence { max-width: 860px; }
+.ev-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.ev-head h2 { margin: 0; font-size: 20px; letter-spacing: -0.5px; }
+.chip {
+  font-size: 12px;
+  border: 1px solid var(--a20);
+  border-radius: var(--r-pill);
+  padding: 1px 8px;
+  color: var(--a70);
+}
+.chip.failed { border-color: var(--danger-line); background: var(--danger-bg); color: var(--danger-ink); }
+.chip.inconclusive { border-color: var(--warning-line); background: var(--warning-bg); color: var(--warning-ink); }
+.ev-section { margin-bottom: 28px; }
+.ev-label { font-size: 13px; font-weight: 600; margin: 0 0 8px; }
+.prose { font-size: 14px; line-height: 1.65; }
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  font-size: 15px; line-height: 22px; letter-spacing: -0.2px; font-weight: 600; margin: 16px 0 6px;
+}
+.prose pre {
+  background: var(--code-surface);
+  color: var(--code-ink);
+  border-radius: var(--r-code);
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.prose ul { margin: 0 0 var(--block); padding-left: 22px; }
+.prose li { margin: 2px 0; }
+
+.disclosure { border: 1px solid var(--a12); border-radius: var(--r-card); margin-bottom: var(--block); }
+.disclosure summary { cursor: pointer; padding: 12px 16px; font-size: 13px; font-weight: 600; list-style: none; }
+.disclosure summary::-webkit-details-marker { display: none; }
+.disclosure summary:hover { background: var(--a4); }
+.disclosure[open] summary { border-bottom: 1px solid var(--a12); }
+.disclosure-content { padding: 14px 16px; font-size: 14px; line-height: 1.6; }
+.disclosure summary .quiet { font-weight: 400; color: var(--a55); }
+
+.transcript-item { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px solid var(--a8); }
+.transcript-item:last-child { border-bottom: none; }
+.transcript-item .method { font-family: var(--font-mono); font-size: 12px; color: var(--a55); white-space: nowrap; }
+.transcript-item .text { font-family: var(--font-mono); font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.callout { border: 1px solid var(--a12); border-radius: var(--r-card); padding: 14px 16px; font-size: 14px; line-height: 1.6; }
+.callout p { margin: 0; }
+.callout.warn { background: var(--warning-bg); border-color: var(--warning-line); color: var(--warning-ink); }
+.callout.danger { background: var(--danger-bg); border-color: var(--danger-line); color: var(--danger-ink); }
+
+.annotation-row { border: 1px solid var(--a12); border-radius: var(--r-card); padding: 10px 12px; margin-bottom: 8px; font-size: 13px; }
+.annotation-row .a-meta { color: var(--a55); font-size: 12px; }
+.annotation-row blockquote { margin: 4px 0; padding-left: 10px; border-left: 2px solid var(--a20); color: var(--a70); font-size: 13px; }
+
+/* grading rail */
+.g-block { margin-bottom: 22px; }
+.g-label { font-size: 13px; font-weight: 600; margin: 0 0 6px; }
+.label-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.label-btn {
+  font: inherit; font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--a20);
+  border-radius: var(--r-card);
+  background: none;
+  color: var(--foreground);
+  cursor: pointer;
+  text-align: center;
+}
+.label-btn:hover { background: var(--a4); }
+.label-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--a4); }
+.label-btn .key { color: var(--a40); font-size: 11px; margin-left: 4px; }
+.label-btn.selected .key { color: inherit; opacity: 0.6; }
+
+input[type="text"], input[type="number"], textarea, select.field {
+  width: 100%;
+  font: inherit;
+  font-size: 13px;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--a20);
+  border-radius: var(--r-inline);
+  padding: 6px 8px;
+}
+textarea { min-height: 88px; resize: vertical; line-height: 1.5; }
+
+.commit-btn {
+  width: 100%;
+  font: inherit; font-size: 14px; font-weight: 600;
+  padding: 9px 12px;
+  border: none;
+  border-radius: var(--r-card);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+.commit-btn:disabled { opacity: 0.45; cursor: default; }
+.small-btn {
+  font: inherit; font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--a20);
+  border-radius: var(--r-inline);
+  background: none;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.small-btn:hover { background: var(--a4); }
+.small-btn:disabled { opacity: 0.4; cursor: default; }
+
+.judge-card { border: 1px solid var(--a12); border-radius: var(--r-card); padding: 12px 14px; font-size: 13px; }
+.judge-card .verdict-line { font-weight: 600; margin-bottom: 6px; }
+.judge-card .disagree { color: var(--warning-ink); }
+.agreement { font-size: 13px; color: var(--a70); margin-top: 10px; }
+.agreement .band-low { color: var(--warning-ink); }
+.muted { color: var(--a55); font-size: 13px; }
+.form-note { font-size: 12px; color: var(--a55); margin-top: 6px; }
+.error-line { color: var(--danger-ink); font-size: 13px; margin-top: 8px; }
+
+#annotate-pop {
+  position: fixed;
+  z-index: 10;
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--a20);
+  border-radius: var(--r-card);
+  background: var(--background);
+  color: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--a12);
+}
+.ann-form { border: 1px solid var(--a12); border-radius: var(--r-card); padding: 12px 14px; margin-bottom: 16px; }
+.ann-form .row { margin-bottom: 8px; }
+.ann-actions { display: flex; gap: 8px; }
+
+@media (max-width: 980px) {
+  .workbench { grid-template-columns: 220px minmax(0,1fr); }
+  #grading { grid-column: 1 / -1; border-left: none; border-top: 1px solid var(--a12); }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <span class="title">Calibration review</span>
+  <select id="run-select" aria-label="Run"></select>
+  <span class="hint">j/k trial · 1–4 label · Enter commit</span>
+</header>
+
+<main class="workbench">
+  <nav id="queue" class="pane" aria-label="Review queue">
+    <p class="muted">Loading queue…</p>
+  </nav>
+
+  <section id="evidence" class="pane" aria-label="Evidence">
+    <noscript><p>This workbench requires JavaScript. Start the review server and open this page in a browser with JavaScript enabled.</p></noscript>
+    <p class="muted">Select a trial from the queue.</p>
+  </section>
+
+  <aside id="grading" class="pane" aria-label="Grading">
+    <p class="muted">No trial selected.</p>
+  </aside>
+</main>
+
+<button id="annotate-pop" hidden type="button">Annotate</button>
+
+<script>
+"use strict";
+
+const state = {
+  runs: [],
+  run: null,
+  queue: [],
+  index: -1,
+  packet: null,
+  committed: {},          // trial_id -> human grade row committed this session
+  label: null,
+  pendingSelection: null, // {artifact, quote, start, end}
+  annotating: false,
+  error: null,
+};
+
+const $ = (id) => document.getElementById(id);
+const TIERS = {1: "Failures", 2: "Inconclusive", 3: "Judge–human disagreement", 4: "Suspicious passes", 5: "Passes"};
+const LABELS = ["pass", "partial", "fail", "unknown"];
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* Minimal markdown: headings, paragraphs, fenced code, lists, inline code, bold. */
+function renderMarkdown(text) {
+  const lines = String(text || "").split("\n");
+  const out = [];
+  let i = 0;
+  const inline = (s) => esc(s)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  while (i < lines.length) {
+    const line = lines[i];
+    if (line.startsWith("```")) {
+      const buf = [];
+      i += 1;
+      while (i < lines.length && !lines[i].startsWith("```")) { buf.push(lines[i]); i += 1; }
+      i += 1;
+      out.push("<pre><code>" + esc(buf.join("\n")) + "</code></pre>");
+      continue;
+    }
+    const h = line.match(/^(#{1,6})\s+(.*)$/);
+    if (h) { out.push("<h" + h[1].length + ">" + inline(h[2]) + "</h" + h[1].length + ">"); i += 1; continue; }
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) { items.push("<li>" + inline(lines[i].replace(/^\s*[-*]\s+/, "")) + "</li>"); i += 1; }
+      out.push("<ul>" + items.join("") + "</ul>");
+      continue;
+    }
+    if (!line.trim()) { i += 1; continue; }
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !lines[i].startsWith("```") && !/^(#{1,6})\s/.test(lines[i]) && !/^\s*[-*]\s+/.test(lines[i])) { para.push(lines[i]); i += 1; }
+    out.push("<p>" + inline(para.join("\n")) + "</p>");
+  }
+  return out.join("\n");
+}
+
+async function api(path, options) {
+  let res;
+  try {
+    res = await fetch(path, options);
+  } catch (err) {
+    throw new Error("Server unreachable. Restart the review server and reload this page.");
+  }
+  let data = null;
+  try { data = await res.json(); } catch (err) { /* leave null */ }
+  if (!res.ok) throw new Error((data && data.error) || ("Request failed (" + res.status + ")"));
+  return data;
+}
+
+/* ---------- queue rail ---------- */
+
+function currentEntry() { return state.index >= 0 ? state.queue[state.index] : null; }
+
+function renderQueue() {
+  const el = $("queue");
+  if (!state.queue.length) { el.innerHTML = '<p class="muted">No trials in this run.</p>'; return; }
+  let html = "";
+  let lastTier = null;
+  state.queue.forEach((entry, i) => {
+    if (entry.tier !== lastTier) {
+      html += '<p class="tier-head">' + esc(TIERS[entry.tier] || ("Tier " + entry.tier)) + "</p>";
+      lastTier = entry.tier;
+    }
+    const done = entry.human_graded || state.committed[entry.trial_id];
+    html += '<button type="button" class="q-item' + (i === state.index ? " active" : "") + '" data-index="' + i + '">'
+      + '<span class="q-main"><span>' + esc(entry.case_id) + " · " + esc(entry.candidate) + "</span>"
+      + (done ? '<span class="q-done">graded</span>' : "") + "</span>"
+      + '<span class="q-sub">' + esc(entry.verdict) + " · r" + esc(entry.repetition) + "</span>"
+      + "</button>";
+  });
+  el.innerHTML = html;
+  el.querySelectorAll(".q-item").forEach((btn) => {
+    btn.addEventListener("click", () => selectTrial(Number(btn.dataset.index)));
+  });
+}
+
+/* ---------- evidence pane ---------- */
+
+function transcriptHtml(t) {
+  if (!t || !t.total) return '<p class="muted">No transcript captured.</p>';
+  const rows = t.items.map((item) =>
+    '<div class="transcript-item"><span class="method">' + esc(item.method) + '</span><span class="text">' + esc(item.text) + "</span></div>").join("");
+  const cap = t.shown < t.total ? '<p class="muted">Showing ' + t.shown + " of " + t.total + " events.</p>" : "";
+  return rows + cap;
+}
+
+function annotationsHtml(rows) {
+  if (!rows.length) return '<p class="muted">No annotations yet.</p>';
+  return rows.map((a) =>
+    '<div class="annotation-row"><span class="a-meta">' + esc(a.tag) + " · " + esc(a.artifact) + (a.reviewer ? " · " + esc(a.reviewer) : "") + "</span>"
+    + (a.span && a.span.quote ? "<blockquote>" + esc(a.span.quote) + "</blockquote>" : "")
+    + "<div>" + esc(a.note) + "</div></div>").join("");
+}
+
+function renderEvidence() {
+  const el = $("evidence");
+  const entry = currentEntry();
+  if (state.error) { el.innerHTML = '<div class="callout danger"><p><strong>Unavailable.</strong> ' + esc(state.error) + "</p></div>"; return; }
+  if (!entry || !state.packet) { el.innerHTML = '<p class="muted">Select a trial from the queue.</p>'; return; }
+  const p = state.packet;
+  const guidance = p.judge_guidance || {};
+  const guidanceBody = guidance.text != null
+    ? renderMarkdown(guidance.text)
+    : (guidance.expectations && guidance.expectations.length
+        ? "<ul>" + guidance.expectations.map((e) => "<li>" + esc(e) + "</li>").join("") + "</ul>"
+        : '<p class="muted">No judge guidance recorded for this case.</p>');
+  const expectedHtml = (p.expected || []).map((f) =>
+    '<p class="ev-label">' + esc(f.name) + "</p><pre><code>" + esc(f.content) + "</code></pre>").join("");
+  el.innerHTML =
+    '<div class="ev-head"><h2>' + esc(p.case_id) + " · " + esc(p.candidate) + "</h2>"
+    + '<span class="chip ' + esc(entry.verdict) + '">' + esc(entry.verdict) + "</span>"
+    + '<button type="button" class="small-btn" id="annotate-btn" disabled>Annotate selection</button></div>'
+    + '<div id="ann-slot"></div>'
+    + '<div class="ev-section"><p class="ev-label">Task</p><div class="prose" data-artifact="task">' + renderMarkdown(p.task || "") + "</div></div>"
+    + '<div class="ev-section"><p class="ev-label">Response</p><div class="prose" data-artifact="response">'
+    + (p.response != null ? renderMarkdown(p.response) : '<p class="muted">No response was recorded.</p>') + "</div></div>"
+    + '<details class="disclosure"><summary>Transcript <span class="quiet">(' + (p.transcript ? p.transcript.total : 0) + ' events)</span></summary>'
+    + '<div class="disclosure-content" data-artifact="transcript">' + transcriptHtml(p.transcript) + "</div></details>"
+    + '<details class="disclosure"><summary>Judge guidance <span class="quiet">(hidden from the agent under test)</span></summary>'
+    + '<div class="disclosure-content prose">' + guidanceBody + "</div></details>"
+    + (expectedHtml ? '<details class="disclosure"><summary>Expected output</summary><div class="disclosure-content prose">' + expectedHtml + "</div></details>" : "")
+    + '<div class="ev-section"><p class="ev-label">Annotations</p><div id="annotations">' + annotationsHtml(p.annotations || []) + "</div></div>";
+  $("annotate-btn").addEventListener("click", () => { if (state.pendingSelection) openAnnotationForm(); });
+}
+
+/* ---------- annotation ---------- */
+
+function artifactTextOf(name) {
+  const node = document.querySelector('[data-artifact="' + name + '"]');
+  return node ? node.textContent : "";
+}
+
+function captureSelection() {
+  const sel = window.getSelection();
+  const pop = $("annotate-pop");
+  const btn = $("annotate-btn");
+  if (!sel || sel.isCollapsed || !sel.toString().trim()) { pop.hidden = true; return; }
+  let node = sel.anchorNode;
+  while (node && node.nodeType !== 1) node = node.parentNode;
+  const host = node && node.closest ? node.closest("[data-artifact]") : null;
+  if (!host) { pop.hidden = true; return; }
+  const quote = sel.toString();
+  const full = host.textContent;
+  const start = Math.max(0, full.indexOf(quote));
+  state.pendingSelection = { artifact: host.dataset.artifact, quote: quote, start: start, end: start + quote.length };
+  if (btn) btn.disabled = false;
+  const rect = sel.getRangeAt(0).getBoundingClientRect();
+  pop.style.top = Math.max(6, rect.top - 32) + "px";
+  pop.style.left = Math.min(window.innerWidth - 90, rect.left) + "px";
+  pop.hidden = false;
+}
+
+function openAnnotationForm() {
+  const sel = state.pendingSelection;
+  if (!sel || state.annotating) return;
+  state.annotating = true;
+  $("annotate-pop").hidden = true;
+  const slot = $("ann-slot");
+  slot.innerHTML =
+    '<div class="ann-form"><p class="ev-label">Annotate ' + esc(sel.artifact) + "</p>"
+    + "<blockquote>" + esc(sel.quote.slice(0, 300)) + "</blockquote>"
+    + '<div class="row"><select class="field" id="ann-tag" aria-label="Tag">'
+    + ["taste-rule", "one-off", "task-defect", "grader-defect"].map((t) => '<option value="' + t + '">' + t + "</option>").join("")
+    + "</select></div>"
+    + '<div class="row"><textarea id="ann-note" placeholder="Note" aria-label="Note"></textarea></div>'
+    + '<div class="ann-actions"><button type="button" class="small-btn" id="ann-save">Save</button>'
+    + '<button type="button" class="small-btn" id="ann-cancel">Cancel</button></div>'
+    + '<div id="ann-error"></div></div>';
+  $("ann-note").focus();
+  $("ann-cancel").addEventListener("click", closeAnnotationForm);
+  $("ann-save").addEventListener("click", saveAnnotation);
+}
+
+function closeAnnotationForm() {
+  state.annotating = false;
+  const slot = $("ann-slot");
+  if (slot) slot.innerHTML = "";
+}
+
+async function saveAnnotation() {
+  const sel = state.pendingSelection;
+  const note = $("ann-note").value.trim();
+  if (!note) { $("ann-error").innerHTML = '<p class="error-line">A note is required.</p>'; return; }
+  try {
+    await api("/api/annotations", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        run: state.run,
+        trial_id: state.packet.trial_id,
+        artifact: sel.artifact,
+        span: {start: sel.start, end: sel.end, quote: sel.quote},
+        note: note,
+        tag: $("ann-tag").value,
+        reviewer: localStorage.getItem("review-reviewer") || undefined,
+      }),
+    });
+    closeAnnotationForm();
+    state.pendingSelection = null;
+    await loadTrial();
+  } catch (err) {
+    $("ann-error").innerHTML = '<p class="error-line">' + esc(err.message) + "</p>";
+  }
+}
+
+/* ---------- grading rail ---------- */
+
+function humanGradeOnRecord() {
+  if (!state.packet) return null;
+  if (state.committed[state.packet.trial_id]) return state.committed[state.packet.trial_id];
+  if (!state.packet.human_recorded) return null;
+  const rows = (state.packet.grades || []).filter((g) => (g.grader || {}).kind === "human"
+    && !(g.grade_status === "unknown" && String(g.rationale || "").indexOf("Human grader declared") === 0));
+  return rows.length ? rows[rows.length - 1] : null;
+}
+
+function defaultMetric() {
+  const judge = state.packet && state.packet.judge && state.packet.judge.grades;
+  if (judge && judge.length) return judge[judge.length - 1].metric || "expectations";
+  const pending = (state.packet && state.packet.grades || []).find((g) => (g.grader || {}).kind === "human");
+  return (pending && pending.metric) || "quality";
+}
+
+function judgeComparisonHtml(human) {
+  const judgeRows = (state.packet.judge && state.packet.judge.grades) || [];
+  if (!judgeRows.length) return '<div class="judge-card"><p class="muted">No model judge grade exists for this trial.</p></div>';
+  const judge = judgeRows[judgeRows.length - 1];
+  const agrees = judge.grade_status === human.grade_status;
+  const line = agrees
+    ? "Agrees with your grade."
+    : '<span class="disagree">Disagrees: judge said ' + esc(judge.grade_status) + ", you said " + esc(human.grade_status) + ".</span>";
+  return '<div class="judge-card">'
+    + '<div class="verdict-line">Judge: ' + esc(judge.grade_status)
+    + (judge.score != null ? " (" + esc(judge.score) + ")" : "") + "</div>"
+    + "<p>" + line + "</p>"
+    + '<p class="muted">' + esc(judge.rationale || "No rationale recorded.") + "</p>"
+    + "</div>"
+    + '<div class="agreement" id="agreement-line">Loading agreement…</div>';
+}
+
+async function loadAgreement(metric) {
+  const el = $("agreement-line");
+  if (!el) return;
+  try {
+    const data = await api("/api/calibration?run=" + encodeURIComponent(state.run) + (metric ? "&metric=" + encodeURIComponent(metric) : ""));
+    const s = data.summary;
+    const rate = s.exact_agreement_rate == null ? "n/a" : Math.round(s.exact_agreement_rate * 100) + "%";
+    const low = String(s.trust_band).indexOf("insufficient") === 0;
+    el.innerHTML = "Paired grades: " + s.paired + " · agreement " + rate
+      + ' · <span class="' + (low ? "band-low" : "") + '">' + esc(s.trust_band) + "</span>";
+  } catch (err) {
+    el.innerHTML = esc(err.message);
+  }
+}
+
+function renderGrading() {
+  const el = $("grading");
+  if (!state.packet) { el.innerHTML = '<p class="muted">No trial selected.</p>'; return; }
+  const human = humanGradeOnRecord();
+  if (human) {
+    el.innerHTML = '<div class="g-block"><p class="g-label">Your grade</p>'
+      + '<div class="judge-card"><div class="verdict-line">' + esc(human.grade_status)
+      + (human.score != null ? " (" + esc(human.score) + ")" : "") + "</div>"
+      + "<p>" + esc(human.rationale || "") + "</p>"
+      + (human.reviewer ? '<p class="muted">Reviewer: ' + esc(human.reviewer) + "</p>" : "") + "</div></div>"
+      + '<div class="g-block"><p class="g-label">Model judge</p>' + judgeComparisonHtml(human) + "</div>";
+    loadAgreement(human.metric || defaultMetric());
+    return;
+  }
+  const reviewer = localStorage.getItem("review-reviewer") || "";
+  el.innerHTML =
+    '<div class="g-block"><p class="g-label">Label</p><div class="label-row">'
+    + LABELS.map((l, i) => '<button type="button" class="label-btn' + (state.label === l ? " selected" : "") + '" data-label="' + l + '">' + l + '<span class="key">' + (i + 1) + "</span></button>").join("")
+    + "</div></div>"
+    + '<div class="g-block"><p class="g-label">Score <span class="quiet muted">(optional, 0 to 1)</span></p>'
+    + '<input type="number" id="g-score" min="0" max="1" step="0.05" aria-label="Score"></div>'
+    + '<div class="g-block"><p class="g-label">Rationale</p>'
+    + '<textarea id="g-rationale" placeholder="Why this label? Cite specific evidence." aria-label="Rationale"></textarea>'
+    + '<p class="form-note">Enter commits. Inside this box, use Ctrl+Enter.</p></div>'
+    + '<div class="g-block"><p class="g-label">Metric</p><input type="text" id="g-metric" value="' + esc(defaultMetric()) + '" aria-label="Metric"></div>'
+    + '<div class="g-block"><p class="g-label">Reviewer <span class="quiet muted">(optional)</span></p>'
+    + '<input type="text" id="g-reviewer" value="' + esc(reviewer) + '" aria-label="Reviewer"></div>'
+    + '<button type="button" class="commit-btn" id="g-commit">Commit grade</button>'
+    + '<p class="form-note">The model judge’s grade stays hidden until you commit.</p>'
+    + '<div id="g-error"></div>';
+  el.querySelectorAll(".label-btn").forEach((btn) => {
+    btn.addEventListener("click", () => setLabel(btn.dataset.label));
+  });
+  $("g-commit").addEventListener("click", commitGrade);
+}
+
+function setLabel(label) {
+  state.label = label;
+  document.querySelectorAll(".label-btn").forEach((btn) => {
+    btn.classList.toggle("selected", btn.dataset.label === label);
+  });
+}
+
+async function commitGrade() {
+  const errEl = $("g-error");
+  if (!errEl) return;
+  const rationale = ($("g-rationale") ? $("g-rationale").value : "").trim();
+  if (!state.label) { errEl.innerHTML = '<p class="error-line">Pick a label (keys 1–4).</p>'; return; }
+  if (!rationale) { errEl.innerHTML = '<p class="error-line">A rationale is required.</p>'; return; }
+  const reviewer = $("g-reviewer").value.trim();
+  if (reviewer) localStorage.setItem("review-reviewer", reviewer); else localStorage.removeItem("review-reviewer");
+  const scoreRaw = $("g-score").value;
+  const body = {
+    run: state.run,
+    trial_id: state.packet.trial_id,
+    grader_id: "human-review",
+    metric: $("g-metric").value.trim() || defaultMetric(),
+    label: state.label,
+    rationale: rationale,
+  };
+  if (scoreRaw !== "") body.score = Number(scoreRaw);
+  if (reviewer) body.reviewer = reviewer;
+  try {
+    const data = await api("/api/grades", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+    state.committed[state.packet.trial_id] = data.grade;
+    state.label = null;
+    await refreshQueue(true);
+    renderGrading();
+  } catch (err) {
+    errEl.innerHTML = '<p class="error-line">' + esc(err.message) + "</p>";
+  }
+}
+
+/* ---------- navigation and loading ---------- */
+
+async function selectTrial(index) {
+  if (index < 0 || index >= state.queue.length) return;
+  state.index = index;
+  state.label = null;
+  state.pendingSelection = null;
+  state.annotating = false;
+  renderQueue();
+  await loadTrial();
+}
+
+async function loadTrial() {
+  const entry = currentEntry();
+  if (!entry) return;
+  try {
+    state.packet = await api("/api/trials/" + encodeURIComponent(entry.trial_id) + "?run=" + encodeURIComponent(state.run));
+    state.error = null;
+  } catch (err) {
+    state.packet = null;
+    state.error = err.message;
+  }
+  renderEvidence();
+  renderGrading();
+}
+
+async function refreshQueue(keepSelection) {
+  const keepId = keepSelection && currentEntry() ? currentEntry().trial_id : null;
+  const data = await api("/api/runs/" + encodeURIComponent(state.run) + "/queue");
+  state.queue = data.queue;
+  state.index = keepId ? state.queue.findIndex((e) => e.trial_id === keepId) : -1;
+  renderQueue();
+}
+
+async function selectRun(runId) {
+  state.run = runId;
+  state.packet = null;
+  state.index = -1;
+  try {
+    await refreshQueue(false);
+    state.error = null;
+    if (state.queue.length) await selectTrial(0);
+    else { renderEvidence(); renderGrading(); }
+  } catch (err) {
+    state.error = err.message;
+    renderEvidence();
+  }
+}
+
+function onKeyDown(event) {
+  const tag = event.target.tagName;
+  const inField = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+  if (event.key === "Enter" && inField && tag === "TEXTAREA" && (event.ctrlKey || event.metaKey)) {
+    event.preventDefault();
+    commitGrade();
+    return;
+  }
+  if (inField) return;
+  if (event.key === "j") selectTrial(state.index + 1);
+  else if (event.key === "k") selectTrial(state.index - 1);
+  else if (event.key >= "1" && event.key <= "4") setLabel(LABELS[Number(event.key) - 1]);
+  else if (event.key === "Enter") { event.preventDefault(); commitGrade(); }
+}
+
+async function init() {
+  document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("mouseup", () => setTimeout(captureSelection, 0));
+  document.addEventListener("selectionchange", () => {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed) { $("annotate-pop").hidden = true; }
+  });
+  $("annotate-pop").addEventListener("click", openAnnotationForm);
+  try {
+    const data = await api("/api/runs");
+    state.runs = data.runs;
+    const select = $("run-select");
+    select.innerHTML = state.runs.map((r) => '<option value="' + esc(r.run_id) + '">' + esc(r.run_id) + "</option>").join("");
+    select.addEventListener("change", () => selectRun(select.value));
+    if (!state.runs.length) {
+      $("queue").innerHTML = '<p class="muted">No runs found in this workbench.</p>';
+      return;
+    }
+    const preferred = data.default_run && state.runs.some((r) => r.run_id === data.default_run)
+      ? data.default_run : state.runs[state.runs.length - 1].run_id;
+    select.value = preferred;
+    await selectRun(preferred);
+  } catch (err) {
+    $("queue").innerHTML = "";
+    $("evidence").innerHTML = '<div class="callout danger"><p><strong>Unavailable.</strong> ' + esc(err.message) + "</p></div>";
+  }
+}
+
+init();
+</script>
+</body>
+</html>

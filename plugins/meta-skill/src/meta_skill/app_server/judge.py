@@ -47,24 +47,38 @@ def _normalize_detail(parsed, raw):
     if not isinstance(parsed, dict):
         return {
             "score": None,
-            "label": "fail",
-            "rationale": f"model grader emitted invalid JSON: {raw[:500]}",
+            "label": "unknown",
+            "rationale": f"model grader returned no usable JSON: {raw[:500]}",
             "checks": [],
             "eval_feedback": [],
+            "grader_error": True,
         }
     label = parsed.get("label")
+    grader_error = False
     if label not in GRADE_LABELS:
         label = "unknown"
+        grader_error = True
     feedback = parsed.get("eval_feedback")
     if not isinstance(feedback, list):
         feedback = []
-    return {
+    detail = {
         "score": _number_or_none(parsed.get("score")),
         "label": label,
         "rationale": str(parsed.get("rationale") or ""),
         "checks": _normalize_checks(parsed.get("checks")),
         "eval_feedback": [str(item) for item in feedback if str(item).strip()],
     }
+    if grader_error:
+        detail["grader_error"] = True
+    return detail
+
+
+def _parse_json_object(raw):
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+    return parsed if isinstance(parsed, dict) else None
 
 
 def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, expectations=None, expected_text=None, events_text=None, model=None):
@@ -111,11 +125,28 @@ def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, exp
         )
         turn = thread.turn([openai_codex.TextInput(text=prompt)], cwd=str(cwd), sandbox=sandbox, model=model)
         folded = fold_events(turn, generated, event_path)
-    raw = folded["final_response"]
-    try:
-        parsed = json.loads(raw)
-    except json.JSONDecodeError:
-        parsed = None
+        raw = folded["final_response"]
+        parsed = _parse_json_object(raw)
+        if parsed is None:
+            first_events = event_path.read_text() if event_path.exists() else ""
+            first_event_count = folded["event_count"]
+            retry_turn = thread.turn(
+                [
+                    openai_codex.TextInput(
+                        text="Your previous reply was not valid JSON. Respond now with only the JSON object specified earlier. No prose or code fences."
+                    )
+                ],
+                cwd=str(cwd),
+                sandbox=sandbox,
+                model=model,
+            )
+            folded = fold_events(retry_turn, generated, event_path)
+            retry_events = event_path.read_text() if event_path.exists() else ""
+            event_path.write_text(first_events + retry_events)
+            folded["event_count"] = first_event_count + folded["event_count"]
+            raw = folded["final_response"]
+            parsed = _parse_json_object(raw)
+            turn = retry_turn
     detail = _normalize_detail(parsed, raw)
     return {
         **detail,

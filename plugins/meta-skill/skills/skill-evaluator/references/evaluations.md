@@ -2,7 +2,7 @@
 
 Read when authoring semantic evaluation tasks for a target.
 
-Evaluations need a judge — an LLM by default, a human when taste or domain
+Evaluations need a judge: an LLM by default, a human when taste or domain
 knowledge exceeds the model. They live in the hidden workbench at
 `<project>/.<skill-name>/`. Authored suite files can be tracked; generated runs,
 workspaces, and calibration artifacts are replaceable output.
@@ -128,7 +128,7 @@ Prefer real failures, traces, or common workflows as task sources. Synthetic
 fixtures are allowed for coverage, but label them as synthetic and do not make
 them blocking gates until a human has reviewed the expected behavior. Keep
 fixtures small and inspectable; preserve original real examples when
-possible — they are better regression seeds than polished invented tasks.
+possible; they are better regression seeds than polished invented tasks.
 
 ## Grader Declaration
 
@@ -166,7 +166,7 @@ Supported grader `kind` values: `code` (runs the named `validate.*` file),
 `model` (runs the named judge guidance or expectation judge; set
 `uses_transcript: true` only when grading process behavior or needing
 mid-conversation evidence), and `human` (creates a pending `unknown` row
-until a reviewer records the label with `eval human`) — see
+until a reviewer records the label with `eval human`); see
 [eval-types.md](eval-types.md#choose-the-grader-mix) for when to choose
 each.
 
@@ -174,12 +174,12 @@ Graders are load-bearing by default: any failing grader fails the trial. Set
 `advisory: true` on a grader whose failure should not fail the trial; an
 advisory `fail` caps the trial verdict at `inconclusive` instead. A trial can
 only reach `passed` through non-advisory graders, so a case whose explicit
-graders are all advisory can never pass — suite lint flags this as
+graders are all advisory can never pass. Suite lint flags this as
 `all_graders_advisory`.
 
 `required` or `gate` does not change trial verdicts. It marks the check as
-must-not-break for report emphasis and names the checks preset-level release
-gates enforce (by metric or grader id) — see
+must-not-break for report emphasis and names the hook preset-level release
+gates enforce by metric or grader id; see
 [skill-benchmarker/references/benchmarking.md](../../skill-benchmarker/references/benchmarking.md).
 
 `expectations[]` are hidden verifier statements, not copied into `task.md`;
@@ -207,7 +207,7 @@ no-skill, current-skill, and candidate-skill variants.
 
 ## Hidden Boundary
 
-Hidden means not staged into the workspace and not included in the prompt —
+Hidden means not staged into the workspace and not included in the prompt;
 see [run-layout.md](../../../references/run-layout.md#hidden-grader-boundary).
 The agent sees `task.md`, listed fixtures, and the candidate payload when the
 candidate supplies one; it never sees `judge.md`, `expected.*`, `validate.*`,
@@ -245,7 +245,7 @@ clarifies the candidate for the reviewer:
 Candidate source lives in git branches, worktrees, or `source.kind: "none"` for
 the no-skill baseline. Run evidence records the branch, commit, worktree path
 when active, and `payload_digest` (computed from the staged `skill/` payload
-tree, not the commit; null for no-skill candidates) — see
+tree, not the commit; null for no-skill candidates); see
 [run-layout.md](../../../references/run-layout.md) for where these land. Do
 not fake a no-skill baseline by staging a different skill payload; it runs
 the same task with no `skill/` payload staged.
@@ -258,6 +258,6 @@ evidence, not an instruction.
 ## Reference Solutions
 
 Add a reference solution or expected output when the task is deterministic,
-artifact-heavy, or intended to act as a gate — it proves the task is solvable
+artifact-heavy, or intended to act as a gate. It proves the task is solvable
 and that graders can pass a known-good result. Do not make the agent see it;
 keep it in `expected.*` or a hidden fixture used by validators and graders.

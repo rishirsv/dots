@@ -6,8 +6,8 @@ reliability, regression protection, efficiency smoke, or historical comparison
 across runs.
 
 A benchmark is not a new eval type. It is a named, stable preset over an eval
-suite that fixes the task slice, candidates, repetitions, gates, metric views,
-comparison baseline, and reporting standard for one recurring decision.
+suite that fixes the task slice, candidates, repetitions, release gates, metric
+views, comparison baseline, and reporting standard for one recurring decision.
 
 ## When To Use A Benchmark
 
@@ -38,11 +38,11 @@ that a quality loop, trigger tuning run, or formal suite run instead.
 
 | Term | Meaning |
 |---|---|
-| **eval preset** | A JSON file under `.<skill-name>/presets/` selecting tasks, candidates, repetitions, gates, metrics, and report policy. |
+| **eval preset** | A JSON file under `.<skill-name>/presets/` selecting tasks, candidates, repetitions, release gates, metrics, and report policy. |
 | **task bank** | The stable set of suite cases selected by the preset. |
 | **baseline** | The comparison candidate, usually `no-skill` for skill lift or `current` for release-readiness checks. |
 | **payload candidate** | The skill-bearing candidate being compared with the baseline. |
-| **gate** | A required grader result that rejects the candidate for the measured scope when it fails. |
+| **release gate** | A preset-level required grader result that rejects the candidate for the measured scope when it fails. |
 | **scorecard** | The preset-level summary derived from run artifacts. |
 | **history** | Prior runs associated with the same eval preset. |
 
@@ -73,11 +73,11 @@ Use this shape:
 {
   "schema_version": 1,
   "id": "core",
-  "decision": "Track skill lift and regressions on the stable core task bank.",
+  "decision": "release",
   "suite": "../evals.json",
   "task_selection": {
     "case_ids": ["natural-trigger", "quality-basic", "near-miss"],
-    "types": ["capability", "trigger", "negative_control"],
+    "types": ["capability", "trigger", "near_miss"],
     "split": "benchmark-core"
   },
   "candidates": {
@@ -122,7 +122,12 @@ The `metrics` list controls the decision-level report view. The implementation
 may compute additional structured fields for automation, but the Markdown
 scorecard should foreground only the metric families named by the preset.
 Custom grader names such as `activation` or `boundary` belong in task graders
-and preset gates; they are not preset metric names.
+and release gates; they are not preset metric names.
+
+`decision` is an enum: `release`, `quality`, `trigger`, `regression`,
+`efficiency`, or `history`. Release-readiness presets must declare
+`decision: "release"` to receive release-specific linting. Preset id text is
+not inspected.
 
 ## Task Bank Design
 
@@ -131,7 +136,7 @@ eval preset may include several task types, but the report must not turn
 them into one vague score.
 
 For trigger benchmarks, include should-trigger and should-not-trigger or
-near-miss tasks. For release benchmarks, include at least one gate. For
+near-miss tasks. For release benchmarks, include at least one release gate. For
 capability benchmarks, keep tasks hard enough that the current skill has room to
 improve. When a capability task saturates, graduate it into a regression or
 release-gate preset.
@@ -153,11 +158,11 @@ skill" into `task.md`; candidate setup supplies the skill payload.
 
 Choose the grader mix with
 [skill-evaluator/references/eval-types.md](../../skill-evaluator/references/eval-types.md#choose-the-grader-mix).
-Use gates for must-not-break checks; a gate failure records a failed state
-for the measured check even when average scores are high. Calibrate model
-judges against human labels before using judge scores for high-judgment
-release or selection decisions, and give judges an `unknown` escape when
-evidence is insufficient or contradictory.
+Use release gates for must-not-break checks. They reference grader metrics or
+ids and do not change the underlying trial verdict rules. Calibrate model
+judges against human labels before using judge scores for high-judgment release
+or selection decisions, and give judges an `unknown` escape when evidence is
+insufficient or contradictory.
 
 ## Repeated Trials
 
@@ -189,7 +194,7 @@ Include:
 
 - preset id, preset path, suite path, run id, and candidates
 - task count by type or split
-- behavior pass rate, unknown rate, and gate failures
+- behavior pass rate, unknown rate, and release gate failures
 - comparison counts: `baseline_fail_candidate_pass`,
   `baseline_pass_candidate_fail`, `both_fail`, `both_pass`, and
   `unknown_state_pairs`
@@ -208,11 +213,11 @@ Review eval presets when tasks saturate, repeated 0% pass rates appear,
 model and human grades disagree, validators reject valid solutions, or reports
 depend on missing usage or transcript evidence.
 
-Eval presets are living measurement artifacts. Keep them stable enough
-for history to matter, but maintain only the selector, gates, metrics, and
+Eval presets are living measurement artifacts. Keep them stable enough for
+history to matter, but maintain only the selector, release gates, metrics, and
 report policy. Route task, grader, validator, or calibration changes to
-`skill-evaluator`; record unfair harness or runner behavior as an implementation
-follow-up requiring explicit approval.
+`skill-evaluator`; record unfair harness or runner behavior as an
+implementation follow-up requiring explicit approval.
 
 ## Release Readiness
 
@@ -230,7 +235,10 @@ Watch for:
 - hidden assumptions in graders
 - public answers, git history, or verifier files leaking into trial workspaces
 - infrastructure differences larger than the candidate delta
-- scorecards that hide gate failures or unknown evidence
+- scorecards that hide release gate failures or unknown evidence
+
+Malformed release gates, integrity policy, or report policy fail when a preset
+is applied. Fix those before running the preset.
 
 ## CLI Flow
 

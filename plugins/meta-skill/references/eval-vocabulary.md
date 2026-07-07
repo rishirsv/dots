@@ -12,6 +12,12 @@ link here instead of restating this table.
 | **transcript** | `runs/<run-id>/trials/<trial-id>/events.jsonl` plus compact `runs/<run-id>/trials/<trial-id>/evidence.json` |
 | **outcome** | `runs/<run-id>/trials/<trial-id>/response.md` and produced artifacts |
 | **grader** | model, human, or code rows in `grades.jsonl` |
+| **advisory grader** | A grader with `advisory: true`; failure caps the trial at `inconclusive` instead of failing it. |
+| **release gate** | A preset-level gate for release decisions; distinct from a grader's `gate` marker. |
+| **judge alignment** | Critique shadowing, agreement checks, and spot review that align a model judge with human labels. |
+| **adhoc run** | A one-prompt `eval run --adhoc` check with frozen inputs and ungraded verdict. |
+| **review workbench** | The local `eval review` app for queue review, human labels, annotations, and live agreement. |
+| **annotation** | A span note in `annotations.jsonl`, tagged `taste-rule`, `one-off`, `task-defect`, or `grader-defect`. |
 
 When explaining evals to a user, prefer the product terms from this table:
 suite, task, candidate, trial, transcript, outcome, and grader.
@@ -24,20 +30,23 @@ task under one candidate, formatted `<case-id>.<candidate>.t<n>`.
 
 ## Recognized Task Types
 
+Canonical case `type` values are `trigger` and `near_miss` for activation
+coverage.
+
 Case `type` values recognized by suite linting and preset selection:
 
 | Type | Purpose |
 |---|---|
 | `capability` | Quality/capability task. |
 | `regression` | Protects known-good behavior. |
-| `trigger`, `implicit_trigger`, `activation` | Should-trigger activation tasks. |
-| `negative_control`, `boundary`, `should_not_trigger`, `near_miss` | Should-not-trigger tasks that balance activation checks. |
+| `trigger` | Should-trigger activation task. |
+| `near_miss` | Should-not-trigger task that balances activation checks. |
 | `failure` | Reproduces a known failure or regression. |
 | `gate` | Exercises a must-not-break requirement. |
 
-Presets that select any trigger-type task should also select a
-negative-control-type task so activation claims stay balanced; suite linting
-warns when a case has no recognized `type`.
+Presets that select any trigger-type task should also select a near-miss task
+so activation claims stay balanced; suite linting warns when a case has no
+recognized `type`.
 
 ## Grade Label Scale
 

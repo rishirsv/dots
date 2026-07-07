@@ -54,6 +54,7 @@ fi
 "$ROOT/scripts/package-plugins.sh"
 
 CODEX_MARKETPLACE="$ROOT/dist/codex"
+CLAUDE_MARKETPLACE="$ROOT/dist/claude"
 PLUGIN_NAMES=("${(@f)$(
   python3 - "$ROOT/plugins/catalog.json" <<'PY'
 import json
@@ -89,6 +90,32 @@ sync_codex_home() {
   fi
 }
 
+claude_plugin_installed() {
+  local plugin_id="$1"
+  local installed_json
+  installed_json="$(claude plugin list --json)"
+  python3 -c '
+import json
+import sys
+
+plugin_id = sys.argv[1]
+installed = json.load(sys.stdin)
+raise SystemExit(0 if any(plugin.get("id") == plugin_id for plugin in installed) else 1)
+' "$plugin_id" <<< "$installed_json"
+}
+
+sync_claude_plugins() {
+  claude plugin marketplace add "$CLAUDE_MARKETPLACE" --scope user
+  for plugin in "${PLUGIN_NAMES[@]}"; do
+    local plugin_id="$plugin@dots"
+    if claude_plugin_installed "$plugin_id"; then
+      claude plugin update "$plugin_id" --scope user
+    else
+      claude plugin install "$plugin_id" --scope user
+    fi
+  done
+}
+
 for target in "${TARGETS[@]}"; do
   case "$target" in
     codex)
@@ -96,9 +123,7 @@ for target in "${TARGETS[@]}"; do
       sync_codex_home "Codex personal" "$HOME/.codex-personal"
       ;;
     claude)
-      for plugin in "${PLUGIN_NAMES[@]}"; do
-        claude plugin install "$plugin@dots" --scope user
-      done
+      sync_claude_plugins
       ;;
     *)
       echo "Unknown target: $target" >&2

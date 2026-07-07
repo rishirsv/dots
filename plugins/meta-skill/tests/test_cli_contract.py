@@ -15,9 +15,11 @@ import textwrap
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 LAUNCHER = PLUGIN_ROOT / "scripts" / "metaskill"
+sys.path.insert(0, str(PLUGIN_ROOT / "src"))
 
 
 def base_env(extra=None):
@@ -225,9 +227,25 @@ class CliContractTests(unittest.TestCase):
         run_cli("benchmark", "--help", expect=(2,))
         run_cli("workbench", "--help", expect=(2,))
         eval_run_help = run_cli("eval", "run", "--help").stdout
-        for flag in ("--no-grade", "--case", "--type", "--candidates", "--split", "--preset", "--check"):
+        for flag in (
+            "--no-grade",
+            "--case",
+            "--type",
+            "--candidates",
+            "--split",
+            "--preset",
+            "--check",
+            "--parallel",
+            "--adhoc",
+            "--task",
+            "--skill",
+        ):
             self.assertIn(flag, eval_run_help)
         self.assertNotIn("--runner", eval_run_help)
+        self.assertIn("--parallel", run_cli("eval", "grade", "--help").stdout)
+        review_help = run_cli("eval", "review", "--help").stdout
+        for flag in ("--suite", "--run", "--port", "--open"):
+            self.assertIn(flag, review_help)
         self.assertIn("--preset", run_cli("eval", "list", "--help").stdout)
         self.assertIn("--preset", run_cli("eval", "report", "--help").stdout)
         run_cli("eval", "lint", "--help", expect=(2,))
@@ -329,6 +347,36 @@ class CliContractTests(unittest.TestCase):
             data, _ = run_json("eval", "run", "--suite", str(suite), "--check", "--json")
             self.assertTrue(data["ok"])
             self.assertEqual(data["lint_warnings"]["suite"]["stats"]["tasks"], 1)
+
+    def test_eval_run_fatal_lint_blocks_check_and_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "proj"
+            write_skill(project)
+            suite = write_suite(
+                project,
+                [
+                    {
+                        "id": "frontmatter-task",
+                        "type": "capability",
+                        "task": {"path": "task.md"},
+                        "expectations": ["Does the task."],
+                    }
+                ],
+            )
+            case_dir = suite.parent / "cases" / "frontmatter-task"
+            case_dir.mkdir(parents=True)
+            (case_dir / "task.md").write_text("---\ninternal: hidden\n---\nVisible task.\n")
+
+            check_data, check_proc = run_json("eval", "run", "--suite", str(suite), "--check", "--json", expect=(1,))
+            self.assertFalse(check_data["ok"])
+            self.assertEqual(check_proc.returncode, 1)
+            self.assertEqual(check_data["fatal_lint_warnings"][0]["kind"], "hidden_metadata_in_task")
+
+            run_data, run_proc = run_json("eval", "run", "--suite", str(suite), "--json", expect=(2,))
+            self.assertFalse(run_data["ok"])
+            self.assertEqual(run_proc.returncode, 2)
+            self.assertIn("suite lint blocks the run", run_data["error"])
+            self.assertFalse((suite.parent / "runs").exists())
 
     def test_eval_run_check_with_bare_preset_name(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -457,6 +505,45 @@ class CliContractTests(unittest.TestCase):
             self.assertEqual(grades[0]["score"], 1.0)
             summary = json.loads((run_dir / "summary.json").read_text())
             self.assertEqual(summary["final_verdict_totals"], {"passed": 1})
+
+    def test_eval_grade_parallel_flag_is_passed_to_grader(self):
+        from meta_skill.cli import build_parser
+
+        parser = build_parser()
+        args = parser.parse_args(["eval", "grade", "--run", "run-1", "--parallel", "4", "--json"])
+        with patch("meta_skill.cli.grade_run", return_value={"ok": True}) as mocked:
+            code = args.func(args)
+
+        self.assertEqual(code, 0)
+        mocked.assert_called_once_with("run-1", parallel=4)
+
+    def test_eval_review_parser_wires_lazy_server_call(self):
+        from meta_skill.cli import build_parser
+
+        with tempfile.TemporaryDirectory() as tmp:
+            suite = Path(tmp) / "proj" / ".demo" / "evals.json"
+            parser = build_parser()
+            args = parser.parse_args(
+                ["eval", "review", "--suite", str(suite), "--run", "run-1", "--port", "7444", "--open"]
+            )
+            with patch("meta_skill.review.server.run_review_server") as mocked:
+                code = args.func(args)
+
+            self.assertEqual(code, 0)
+            mocked.assert_called_once_with(suite.parent.resolve(), run="run-1", port=7444, open_browser=True)
+
+    def test_eval_review_reports_clean_error_when_server_import_fails(self):
+        from meta_skill.cli import build_parser
+        from meta_skill.errors import CliError
+
+        with tempfile.TemporaryDirectory() as tmp:
+            suite = Path(tmp) / "proj" / ".demo" / "evals.json"
+            args = build_parser().parse_args(["eval", "review", "--suite", str(suite)])
+            with patch.dict(sys.modules, {"meta_skill.review.server": None}):
+                with self.assertRaises(CliError) as ctx:
+                    args.func(args)
+
+            self.assertIn("review server unavailable", ctx.exception.message)
 
 
 if __name__ == "__main__":

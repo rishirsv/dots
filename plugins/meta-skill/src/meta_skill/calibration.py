@@ -3,7 +3,7 @@
 from .errors import CliError
 from .ids import slug, utc_now
 from .io import read_json, read_jsonl, resolve_run_dir, write_json
-from .verdicts import require_grade_status
+from .verdicts import latest_grade_rows, require_grade_status
 
 
 BINARY_LABELS = {"pass", "fail"}
@@ -54,11 +54,17 @@ def _example(pair):
     }
 
 
-def calibrate_run(raw_run, metric=None):
-    run_dir = resolve_run_dir(raw_run)
-    run = read_json(run_dir / "run.json")
-    model_rows = _grade_rows(run_dir, "model", metric)
-    human_rows = _grade_rows(run_dir, "human", metric)
+def _trust_band(paired, binary_paired):
+    if paired < 20:
+        return "insufficient labels: spot-check only", False
+    if binary_paired < 10:
+        return "directional: binary agreement under-sampled", True
+    return "calibrated for local decisions", False
+
+
+def agreement_summary(model_rows, human_rows, metric=None):
+    model_rows = latest_grade_rows(model_rows)
+    human_rows = latest_grade_rows(human_rows)
     pairs = _pair_by_trial_metric(model_rows, human_rows, metric)
     if not pairs:
         scope = f" for metric {metric!r}" if metric else ""
@@ -90,8 +96,11 @@ def calibrate_run(raw_run, metric=None):
         for pair in pairs
         if pair["model"].get("grade_status") not in BINARY_LABELS or pair["human"].get("grade_status") not in BINARY_LABELS
     ]
+    trust_band, binary_insufficient = _trust_band(len(pairs), len(binary_pairs))
     summary = {
         "paired": len(pairs),
+        "trust_band": trust_band,
+        "binary_insufficient": binary_insufficient,
         "exact_agreement": exact,
         "exact_agreement_rate": _safe_rate(exact, len(pairs)),
         "ordinal_paired": len(ordinal_pairs),
@@ -112,12 +121,7 @@ def calibrate_run(raw_run, metric=None):
         "human_unknown_rate": _safe_rate(len(human_escalations), len(pairs)),
         "non_binary": len(non_binary),
     }
-    artifact = {
-        "ok": True,
-        "run_id": run.get("run_id") or run_dir.name,
-        "run_dir": str(run_dir),
-        "metric": metric,
-        "created_at": utc_now(),
+    return {
         "summary": summary,
         "examples": {
             "false_pass": [_example(pair) for pair in false_pass[:5]],
@@ -125,6 +129,23 @@ def calibrate_run(raw_run, metric=None):
             "disagreements": [_example(pair) for pair in disagreements[:10]],
             "non_binary": [_example(pair) for pair in non_binary[:10]],
         },
+    }
+
+
+def calibrate_run(raw_run, metric=None):
+    run_dir = resolve_run_dir(raw_run)
+    run = read_json(run_dir / "run.json")
+    model_rows = _grade_rows(run_dir, "model", metric)
+    human_rows = _grade_rows(run_dir, "human", metric)
+    agreement = agreement_summary(model_rows, human_rows, metric)
+    artifact = {
+        "ok": True,
+        "run_id": run.get("run_id") or run_dir.name,
+        "run_dir": str(run_dir),
+        "metric": metric,
+        "created_at": utc_now(),
+        "summary": agreement["summary"],
+        "examples": agreement["examples"],
     }
     workbench = run_dir.parent.parent
     calibration_dir = workbench / "calibrations"

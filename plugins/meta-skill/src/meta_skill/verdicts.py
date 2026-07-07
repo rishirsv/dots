@@ -65,12 +65,16 @@ def verdict_for_trial(result, grades, *, grading_mode):
         return "ungraded"
     if not grades:
         return "inconclusive"
-    statuses = [require_grade_status(row) for row in grades]
-    if any(status == "fail" for status in statuses):
+    statuses = [(row, require_grade_status(row)) for row in grades]
+    required = [(row, status) for row, status in statuses if not (row.get("grader") or {}).get("advisory")]
+    advisory = [(row, status) for row, status in statuses if (row.get("grader") or {}).get("advisory")]
+    if any(status == "fail" for _row, status in required):
         return "failed"
-    if any(status in {"partial", "unknown", "ungraded"} for status in statuses):
+    if any(status == "fail" for _row, status in advisory):
         return "inconclusive"
-    if statuses and all(status == "pass" for status in statuses):
+    if any(status in {"partial", "unknown", "ungraded"} for _row, status in statuses):
+        return "inconclusive"
+    if required and all(status == "pass" for _row, status in statuses):
         return "passed"
     return "inconclusive"
 

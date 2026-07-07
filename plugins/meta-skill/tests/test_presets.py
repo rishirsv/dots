@@ -72,7 +72,7 @@ description: "Use for testing."
                         },
                         {
                             "id": "near-miss",
-                            "type": "negative_control",
+                            "type": "near_miss",
                             "task": {"prompt": "Do not use the skill."},
                             "expectations": ["Does not activate."],
                         },
@@ -85,9 +85,9 @@ description: "Use for testing."
                 {
                     "schema_version": 1,
                     "id": "core",
-                    "decision": "Track trigger boundary quality.",
+                    "decision": "trigger",
                     "suite": "../evals.json",
-                    "task_selection": {"types": ["trigger", "negative_control"]},
+                    "task_selection": {"types": ["trigger", "near_miss"]},
                     "candidates": {"baseline": "no-skill", "payloads": ["current"]},
                     "metrics": ["behavior_pass_rate", "unknown_rate"],
                     "integrity": {"run_null_candidate_when_possible": True, "hidden_files_must_not_be_staged": True},
@@ -127,7 +127,7 @@ description: "Use for testing."
                 {
                     "schema_version": 1,
                     "id": "core",
-                    "decision": "Track core quality.",
+                    "decision": "quality",
                     "suite": "../evals.json",
                     "task_selection": {"case_ids": ["case-a"]},
                     "candidates": {"baseline": "no-skill", "payloads": ["current"]},
@@ -256,7 +256,7 @@ description: "Use for testing."
                 },
             )
             write_jsonl(run_dir / "results.jsonl", [{"trial_id": "case.current.t1", "runtime_status": "completed", "events_path": str(run_dir / "trials" / "case.current.t1" / "events.jsonl")}])
-            write_jsonl(run_dir / "grades.jsonl", [{"trial_id": "case.current.t1", "metric": "quality", "grade_status": "pass"}])
+            write_jsonl(run_dir / "grades.jsonl", [{"trial_id": "case.current.t1", "grader": {"kind": "model", "id": "judge"}, "metric": "quality", "grade_status": "pass"}])
             write_json(
                 run_dir / "summary.json",
                 {
@@ -319,6 +319,125 @@ description: "Use for testing."
             self.assertIn("unknown_gate_key", warning_kinds)
             self.assertIn("unknown_integrity_key", warning_kinds)
             self.assertIn("unknown_report_key", warning_kinds)
+
+    def test_load_preset_rejects_unknown_decision(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            preset = Path(tmp) / "preset.json"
+            write_json(
+                preset,
+                {
+                    "schema_version": 1,
+                    "id": "core",
+                    "decision": "ship-it",
+                    "task_selection": {},
+                    "candidates": {},
+                    "metrics": [],
+                },
+            )
+
+            with self.assertRaises(CliError) as ctx:
+                load_preset(str(preset))
+
+            self.assertIn("preset decision must be one of", ctx.exception.message)
+
+    def test_release_without_gates_uses_decision_not_id_substring(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            workbench = Path(tmp) / ".demo"
+            suite = workbench / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+                    "cases": [{"id": "case-a", "type": "capability", "task": {"prompt": "Task"}, "expectations": ["Pass."]}],
+                },
+            )
+            preset = workbench / "presets" / "release-shaped-name.json"
+            write_json(
+                preset,
+                {
+                    "schema_version": 1,
+                    "id": "release-shaped-name",
+                    "suite": "../evals.json",
+                    "task_selection": {"case_ids": ["case-a"]},
+                    "candidates": {"payloads": ["current"]},
+                    "metrics": ["unknown_rate"],
+                    "integrity": {"run_null_candidate_when_possible": True},
+                },
+            )
+
+            result = preset_lint(str(preset))
+
+            self.assertNotIn("release_without_gates", {row["kind"] for row in result["warnings"]})
+
+    def test_release_decision_without_gates_warns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            workbench = Path(tmp) / ".demo"
+            suite = workbench / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+                    "cases": [{"id": "case-a", "type": "capability", "task": {"prompt": "Task"}, "expectations": ["Pass."]}],
+                },
+            )
+            preset = workbench / "presets" / "core.json"
+            write_json(
+                preset,
+                {
+                    "schema_version": 1,
+                    "id": "core",
+                    "decision": "release",
+                    "suite": "../evals.json",
+                    "task_selection": {"case_ids": ["case-a"]},
+                    "candidates": {"payloads": ["current"]},
+                    "metrics": ["unknown_rate"],
+                    "integrity": {"run_null_candidate_when_possible": True},
+                },
+            )
+
+            result = preset_lint(str(preset))
+
+            self.assertIn("release_without_gates", {row["kind"] for row in result["warnings"]})
+
+    def test_apply_preset_hard_errors_on_malformed_gate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            workbench = Path(tmp) / ".demo"
+            suite = workbench / "evals.json"
+            write_json(
+                suite,
+                {
+                    "schema_version": 1,
+                    "target": {"type": "skill", "ref": "SKILL.md"},
+                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+                    "cases": [{"id": "case-a", "type": "capability", "task": {"prompt": "Task"}, "expectations": ["Pass."]}],
+                },
+            )
+            preset = workbench / "presets" / "core.json"
+            write_json(
+                preset,
+                {
+                    "schema_version": 1,
+                    "id": "core",
+                    "suite": "../evals.json",
+                    "task_selection": {"case_ids": ["case-a"]},
+                    "candidates": {"payloads": ["current"]},
+                    "metrics": ["unknown_rate"],
+                    "gates": [{"required_label": "bad-label"}],
+                    "integrity": {"run_null_candidate_when_possible": True},
+                },
+            )
+
+            loaded = load_preset(str(preset))
+            args = SimpleNamespace(model=None, no_grade=False)
+
+            with self.assertRaises(CliError) as ctx:
+                apply_preset(args, loaded)
+
+            self.assertIn("preset policy errors: invalid_gate_label, missing_gate_metric", ctx.exception.message)
 
     def test_preset_repetition_precedence_prefers_type_over_preset_default(self):
         defaults = {"repetitions": 3}
