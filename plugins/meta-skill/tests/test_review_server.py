@@ -3,10 +3,10 @@
 import http.client
 import json
 import sys
+import tempfile
 import threading
+import unittest
 from pathlib import Path
-
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
@@ -54,8 +54,7 @@ def _model_grade(case_id, status, score=None, checks=None):
 CASES = ["case-fail", "case-unknown", "case-disagree", "case-suspect", "case-pass"]
 
 
-@pytest.fixture()
-def workbench(tmp_path):
+def _build_workbench(tmp_path):
     root = tmp_path / ".demo"
     run_dir = root / "runs" / RUN_ID
     trials = []
@@ -126,17 +125,6 @@ def workbench(tmp_path):
     return root
 
 
-@pytest.fixture()
-def server(workbench):
-    srv = create_server(workbench, run=RUN_ID, port=0)
-    thread = threading.Thread(target=srv.serve_forever, daemon=True)
-    thread.start()
-    yield srv.server_address[1]
-    srv.shutdown()
-    srv.server_close()
-    thread.join(timeout=5)
-
-
 def _request(port, method, path, body=None):
     conn = http.client.HTTPConnection("127.0.0.1", port, timeout=10)
     headers = {}
@@ -156,144 +144,151 @@ def _request_json(port, method, path, body=None):
     return status, json.loads(raw)
 
 
-# -- queue builder ----------------------------------------------------------
+class ReviewServerTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.workbench = _build_workbench(Path(self.tmp.name))
+        self.server = create_server(self.workbench, run=RUN_ID, port=0)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+        self.port = self.server.server_address[1]
+
+    def tearDown(self):
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join(timeout=5)
+        self.tmp.cleanup()
+
+    # -- queue builder ------------------------------------------------------
+
+    def test_queue_tiers_and_order(self):
+        entries = build_queue(self.workbench / "runs" / RUN_ID)
+        by_case = {entry["case_id"]: entry for entry in entries}
+        self.assertEqual(by_case["case-fail"]["tier"], 1)
+        self.assertEqual(by_case["case-unknown"]["tier"], 2)
+        self.assertEqual(by_case["case-disagree"]["tier"], 3)
+        self.assertEqual(by_case["case-suspect"]["tier"], 4)
+        self.assertEqual(by_case["case-pass"]["tier"], 5)
+        self.assertEqual([entry["case_id"] for entry in entries], ["case-fail", "case-unknown", "case-disagree", "case-suspect", "case-pass"])
+        self.assertTrue(by_case["case-disagree"]["human_graded"])
+        self.assertFalse(by_case["case-pass"]["human_graded"])
+        self.assertEqual(by_case["case-fail"]["verdict"], "failed")
+        self.assertTrue(all({"trial_id", "case_id", "candidate", "verdict", "grades", "tier", "human_graded"} <= set(entry) for entry in entries))
+
+    # -- HTTP surface -------------------------------------------------------
+
+    def test_serves_app_shell(self):
+        status, raw = _request(self.port, "GET", "/")
+        html = raw.decode("utf-8")
+        self.assertEqual(status, 200)
+        self.assertIn('id="queue"', html)
+        self.assertIn('id="evidence"', html)
+        self.assertIn('id="grading"', html)
+        self.assertIn("Calibration review", html)
+
+    def test_lists_runs(self):
+        status, data = _request_json(self.port, "GET", "/api/runs")
+        self.assertEqual(status, 200)
+        self.assertEqual(data["default_run"], RUN_ID)
+        (run,) = data["runs"]
+        self.assertEqual(run["run_id"], RUN_ID)
+        self.assertEqual(run["planned_trials"], 5)
+        self.assertEqual(run["results"], 5)
+        self.assertTrue(run["has_summary"])
+
+    def test_queue_endpoint_tiers(self):
+        status, data = _request_json(self.port, "GET", f"/api/runs/{RUN_ID}/queue")
+        self.assertEqual(status, 200)
+        self.assertEqual([entry["tier"] for entry in data["queue"]], [1, 2, 3, 4, 5])
+
+    def test_trial_packet_separates_judge_grade(self):
+        tid = _trial_id("case-disagree")
+        status, data = _request_json(self.port, "GET", f"/api/trials/{tid}?run={RUN_ID}")
+        self.assertEqual(status, 200)
+        self.assertTrue(data["task"].startswith("# Task case-disagree"))
+        self.assertIn("Output for case-disagree", data["response"])
+        self.assertEqual(data["transcript"]["total"], 2)
+        self.assertTrue(data["judge_guidance"]["hidden_from_agent"])
+        self.assertEqual(data["judge_guidance"]["expectations"], ["The response completes case-disagree."])
+        # Judge grades live only under the hidden "judge" key.
+        self.assertTrue(all((row.get("grader") or {}).get("kind") != "model" for row in data["grades"]))
+        self.assertEqual([row["grader"]["kind"] for row in data["judge"]["grades"]], ["model"])
+        self.assertTrue(data["human_recorded"])
+
+    def test_post_grade_roundtrip(self):
+        tid = _trial_id("case-unknown")
+        body = {
+            "run": RUN_ID,
+            "trial_id": tid,
+            "grader_id": "human-review",
+            "metric": "expectations",
+            "label": "pass",
+            "score": 0.8,
+            "rationale": "Verified the output manually.",
+            "reviewer": "rishi",
+        }
+        status, data = _request_json(self.port, "POST", "/api/grades", body)
+        self.assertEqual(status, 200)
+        self.assertEqual(data["grade"]["grader"], {"kind": "human", "id": "human-review"})
+        self.assertEqual(data["grade"]["grade_status"], "pass")
+        rows = read_jsonl(self.workbench / "runs" / RUN_ID / "grades.jsonl")
+        written = [row for row in rows if row["trial_id"] == tid and row["grader"]["kind"] == "human"]
+        self.assertEqual(len(written), 1)
+        self.assertEqual(written[0]["rationale"], "Verified the output manually.")
+        self.assertEqual(written[0]["reviewer"], "rishi")
+
+    def test_post_grade_rejects_bad_label(self):
+        body = {"run": RUN_ID, "trial_id": _trial_id("case-pass"), "grader_id": "human-review", "metric": "expectations", "label": "great", "rationale": "x"}
+        status, data = _request_json(self.port, "POST", "/api/grades", body)
+        self.assertEqual(status, 400)
+        self.assertIn("label", data["error"])
+
+    def test_post_annotation_appends_row(self):
+        tid = _trial_id("case-pass")
+        body = {
+            "run": RUN_ID,
+            "trial_id": tid,
+            "artifact": "response",
+            "span": {"start": 3, "end": 9, "quote": "Output"},
+            "note": "Good phrasing to require everywhere.",
+            "tag": "taste-rule",
+        }
+        status, data = _request_json(self.port, "POST", "/api/annotations", body)
+        self.assertEqual(status, 200)
+        self.assertEqual(data["annotation"]["tag"], "taste-rule")
+        rows = read_jsonl(self.workbench / "runs" / RUN_ID / "annotations.jsonl")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["trial_id"], tid)
+        self.assertEqual(rows[0]["span"]["quote"], "Output")
+        self.assertTrue(rows[0]["timestamp"])
+
+    def test_post_annotation_rejects_bad_tag(self):
+        body = {
+            "run": RUN_ID,
+            "trial_id": _trial_id("case-pass"),
+            "artifact": "response",
+            "span": {"start": 0, "end": 1, "quote": "O"},
+            "note": "x",
+            "tag": "vibes",
+        }
+        status, data = _request_json(self.port, "POST", "/api/annotations", body)
+        self.assertEqual(status, 400)
+        self.assertIn("tag", data["error"])
+
+    def test_trial_traversal_rejected(self):
+        status, data = _request_json(self.port, "GET", f"/api/trials/..%2F..%2Frun.json?run={RUN_ID}")
+        self.assertEqual(status, 400)
+        status, _ = _request(self.port, "GET", f"/api/trials/../../run.json?run={RUN_ID}")
+        self.assertIn(status, {400, 404})
+        status, data = _request_json(self.port, "GET", "/api/runs/..%2F..%2Fetc/queue")
+        self.assertEqual(status, 400)
+
+    def test_calibration_endpoint(self):
+        status, data = _request_json(self.port, "GET", f"/api/calibration?run={RUN_ID}&metric=expectations")
+        self.assertEqual(status, 200)
+        self.assertEqual(data["summary"]["paired"], 1)
+        self.assertTrue(data["summary"]["trust_band"].startswith("insufficient"))
 
 
-def test_queue_tiers_and_order(workbench):
-    entries = build_queue(workbench / "runs" / RUN_ID)
-    by_case = {entry["case_id"]: entry for entry in entries}
-    assert by_case["case-fail"]["tier"] == 1
-    assert by_case["case-unknown"]["tier"] == 2
-    assert by_case["case-disagree"]["tier"] == 3
-    assert by_case["case-suspect"]["tier"] == 4
-    assert by_case["case-pass"]["tier"] == 5
-    assert [entry["case_id"] for entry in entries] == ["case-fail", "case-unknown", "case-disagree", "case-suspect", "case-pass"]
-    assert by_case["case-disagree"]["human_graded"] is True
-    assert by_case["case-pass"]["human_graded"] is False
-    assert by_case["case-fail"]["verdict"] == "failed"
-    assert all({"trial_id", "case_id", "candidate", "verdict", "grades", "tier", "human_graded"} <= set(entry) for entry in entries)
-
-
-# -- HTTP surface -----------------------------------------------------------
-
-
-def test_serves_app_shell(server):
-    status, raw = _request(server, "GET", "/")
-    html = raw.decode("utf-8")
-    assert status == 200
-    assert 'id="queue"' in html
-    assert 'id="evidence"' in html
-    assert 'id="grading"' in html
-    assert "Calibration review" in html
-
-
-def test_lists_runs(server):
-    status, data = _request_json(server, "GET", "/api/runs")
-    assert status == 200
-    assert data["default_run"] == RUN_ID
-    (run,) = data["runs"]
-    assert run["run_id"] == RUN_ID
-    assert run["planned_trials"] == 5
-    assert run["results"] == 5
-    assert run["has_summary"] is True
-
-
-def test_queue_endpoint_tiers(server):
-    status, data = _request_json(server, "GET", f"/api/runs/{RUN_ID}/queue")
-    assert status == 200
-    assert [entry["tier"] for entry in data["queue"]] == [1, 2, 3, 4, 5]
-
-
-def test_trial_packet_separates_judge_grade(server):
-    tid = _trial_id("case-disagree")
-    status, data = _request_json(server, "GET", f"/api/trials/{tid}?run={RUN_ID}")
-    assert status == 200
-    assert data["task"].startswith("# Task case-disagree")
-    assert "Output for case-disagree" in data["response"]
-    assert data["transcript"]["total"] == 2
-    assert data["judge_guidance"]["hidden_from_agent"] is True
-    assert data["judge_guidance"]["expectations"] == ["The response completes case-disagree."]
-    # Judge grades live only under the hidden "judge" key.
-    assert all((row.get("grader") or {}).get("kind") != "model" for row in data["grades"])
-    assert [row["grader"]["kind"] for row in data["judge"]["grades"]] == ["model"]
-    assert data["human_recorded"] is True
-
-
-def test_post_grade_roundtrip(server, workbench):
-    tid = _trial_id("case-unknown")
-    body = {
-        "run": RUN_ID,
-        "trial_id": tid,
-        "grader_id": "human-review",
-        "metric": "expectations",
-        "label": "pass",
-        "score": 0.8,
-        "rationale": "Verified the output manually.",
-        "reviewer": "rishi",
-    }
-    status, data = _request_json(server, "POST", "/api/grades", body)
-    assert status == 200
-    assert data["grade"]["grader"] == {"kind": "human", "id": "human-review"}
-    assert data["grade"]["grade_status"] == "pass"
-    rows = read_jsonl(workbench / "runs" / RUN_ID / "grades.jsonl")
-    written = [row for row in rows if row["trial_id"] == tid and row["grader"]["kind"] == "human"]
-    assert len(written) == 1
-    assert written[0]["rationale"] == "Verified the output manually."
-    assert written[0]["reviewer"] == "rishi"
-
-
-def test_post_grade_rejects_bad_label(server):
-    body = {"run": RUN_ID, "trial_id": _trial_id("case-pass"), "grader_id": "human-review", "metric": "expectations", "label": "great", "rationale": "x"}
-    status, data = _request_json(server, "POST", "/api/grades", body)
-    assert status == 400
-    assert "label" in data["error"]
-
-
-def test_post_annotation_appends_row(server, workbench):
-    tid = _trial_id("case-pass")
-    body = {
-        "run": RUN_ID,
-        "trial_id": tid,
-        "artifact": "response",
-        "span": {"start": 3, "end": 9, "quote": "Output"},
-        "note": "Good phrasing to require everywhere.",
-        "tag": "taste-rule",
-    }
-    status, data = _request_json(server, "POST", "/api/annotations", body)
-    assert status == 200
-    assert data["annotation"]["tag"] == "taste-rule"
-    rows = read_jsonl(workbench / "runs" / RUN_ID / "annotations.jsonl")
-    assert len(rows) == 1
-    assert rows[0]["trial_id"] == tid
-    assert rows[0]["span"]["quote"] == "Output"
-    assert rows[0]["timestamp"]
-
-
-def test_post_annotation_rejects_bad_tag(server):
-    body = {
-        "run": RUN_ID,
-        "trial_id": _trial_id("case-pass"),
-        "artifact": "response",
-        "span": {"start": 0, "end": 1, "quote": "O"},
-        "note": "x",
-        "tag": "vibes",
-    }
-    status, data = _request_json(server, "POST", "/api/annotations", body)
-    assert status == 400
-    assert "tag" in data["error"]
-
-
-def test_trial_traversal_rejected(server):
-    status, data = _request_json(server, "GET", f"/api/trials/..%2F..%2Frun.json?run={RUN_ID}")
-    assert status == 400
-    status, _ = _request(server, "GET", f"/api/trials/../../run.json?run={RUN_ID}")
-    assert status in {400, 404}
-    status, data = _request_json(server, "GET", "/api/runs/..%2F..%2Fetc/queue")
-    assert status == 400
-
-
-def test_calibration_endpoint(server):
-    status, data = _request_json(server, "GET", f"/api/calibration?run={RUN_ID}&metric=expectations")
-    assert status == 200
-    assert data["summary"]["paired"] == 1
-    assert data["summary"]["trust_band"].startswith("insufficient")
+if __name__ == "__main__":
+    unittest.main()
