@@ -5,7 +5,7 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 service_tier = "default"
 model = "gpt-5.5"
-model_reasoning_effort = "low"
+model_reasoning_effort = "medium"
 
 notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
@@ -104,6 +104,15 @@ trust_level = "trusted"
 [projects."/Users/rishi/Code"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/ts-ai"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/01_Clients/Project_Frogmen"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
 last_updated = "2026-07-07T13:33:00Z"
 source_type = "local"
@@ -177,4 +186,4 @@ skill = "#ad7bf9"
 [hooks.state]
 
 [hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:b09e4381778bd6404d2b1d1e948cf723e726593a43395f8808a5845fa82d5bc6"
+trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"
