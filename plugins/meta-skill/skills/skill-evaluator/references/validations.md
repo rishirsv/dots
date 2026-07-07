@@ -60,8 +60,10 @@ When a validator protects a must-not-break candidate, declare it as a gate in
 }
 ```
 
-A gate failure records a failed state for the measured check even if model-judge
-guidance quality is high.
+Any non-advisory grader failure fails the trial; `gate` does not change that.
+It marks the check as must-not-break for report emphasis and names the checks
+preset-level release gates enforce. Set `advisory: true` on a validator whose
+failure should only cap the trial at `inconclusive` instead of failing it.
 
 ## Agent Boundary
 
@@ -173,8 +175,8 @@ print(json.dumps({
 }))
 ```
 
-Declare the validator as a gate in `evals.json` when the check must record a
-failed state for the candidate when it does not hold:
+Declare the validator as a gate in `evals.json` when the check is
+must-not-break and release gates should enforce it:
 
 ```json
 {

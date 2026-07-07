@@ -37,7 +37,8 @@ user-facing concept is an evaluation task.
 
 `task.md` contains only bytes the agent may see. Do not put YAML front matter,
 expected output, judge guidance, validator hints, grader notes, target metadata, or
-harness instructions in `task.md`.
+harness instructions in `task.md`. Front matter in `task.md` is a fatal lint
+(`hidden_metadata_in_task`) and blocks eval execution.
 
 Use [eval-vocabulary.md](../../../references/eval-vocabulary.md) for
 suite/task/candidate/trial/transcript/outcome/grader terms.
@@ -167,8 +168,19 @@ Supported grader `kind` values: `code` (runs the named `validate.*` file),
 mid-conversation evidence), and `human` (creates a pending `unknown` row
 until a reviewer records the label with `eval human`) — see
 [eval-types.md](eval-types.md#choose-the-grader-mix) for when to choose
-each. `required` or `gate` means the grader is blocking: a candidate may
-score well and still record a failed state for that check if a gate fails.
+each.
+
+Graders are load-bearing by default: any failing grader fails the trial. Set
+`advisory: true` on a grader whose failure should not fail the trial; an
+advisory `fail` caps the trial verdict at `inconclusive` instead. A trial can
+only reach `passed` through non-advisory graders, so a case whose explicit
+graders are all advisory can never pass — suite lint flags this as
+`all_graders_advisory`.
+
+`required` or `gate` does not change trial verdicts. It marks the check as
+must-not-break for report emphasis and names the checks preset-level release
+gates enforce (by metric or grader id) — see
+[skill-benchmarker/references/benchmarking.md](../../skill-benchmarker/references/benchmarking.md).
 
 `expectations[]` are hidden verifier statements, not copied into `task.md`;
 the model judge uses them to emit named checks with evidence. Exact

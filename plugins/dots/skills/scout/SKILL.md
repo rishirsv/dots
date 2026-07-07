@@ -16,7 +16,9 @@ Grill until the unknowns are found: understand the desire, refine
 the edges, explore alternatives and routes, then hunt what the user doesn't
 know they don't know and descend that branch of the tree. The conversation is
 the deliverable; do not start producing the final work during it, and do not
-produce artifacts for their own sake.
+produce artifacts for their own sake. The map is the thing the user keeps:
+settled facts, open questions, extracted taste, and blindspots should be
+visible by the end, not scattered through scrollback.
 
 ## Posture
 
@@ -98,6 +100,8 @@ now is cheap where finding it mid-build is not:
 
 Name the quadrant when a move fires ("this smells like an unknown known —
 let me show you options") so the user always knows why the mode shifted.
+Nothing closes off-screen: if repo grounding or research answers a question,
+show the question and the found answer before treating it as settled.
 
 Run the campaign as one flowing conversation, moving between these moves as
 the idea demands — grilling is the default; the others fire when their
@@ -216,6 +220,10 @@ close with a compact snapshot in chat:
 | Non-goal | <what this should not become> |
 | Next move | <stop, capture, plan, or build> |
 ```
+
+Anything still open lives in the snapshot or handoff with what would unblock
+it. Do not leave builder-critical facts or unresolved calls only in chat
+history.
 
 Write a handoff brief to `.agents/outputs/` only when the result must reach
 another session, person, or skill, or the user asks — the brief is the only

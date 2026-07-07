@@ -85,6 +85,11 @@ Classify files before extracting rules.
 | Weak or noisy material | Anti-patterns, negative examples, near misses, and likely failure modes. | Positive examples to imitate. |
 | Sensitive one-off material | Authoring-only evidence and privacy review. | Portable runtime payload. |
 
+When an example teaches a useful lesson, extract the recurring problem
+signature before extracting the fix. Runtime guidance may name the smell, the
+judgment move, and the output check; the one-time solution belongs in
+authoring notes unless it is itself the reusable mechanism.
+
 ## Pair Inputs To Outputs
 
 When past inputs and outputs are available, build a pairing matrix before

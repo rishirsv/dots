@@ -214,6 +214,16 @@ sub-agent when natural (not a hard dependency — a normal source review is
 enough for small questions); store the report under `.<skill-name>/docs/`
 and move only reusable operational rules into the portable payload.
 
+## Examples
+
+Use runtime examples to teach the agent to recognize a recurring problem, not
+to memorize one solution. A good example names the input smell, the failure
+mode, the judgment move, and the output shape it unlocks; it avoids baking in
+the exact fix, file path, tuned value, client fact, or thread-specific wording
+from the run that produced it. If an example mostly says "do what happened last
+time," keep it in the hidden workbench or turn it into an eval seed instead of
+shipping it as runtime guidance.
+
 ## Intake
 
 Mine the conversation and files for: user wording that should become trigger
