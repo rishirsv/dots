@@ -3,7 +3,7 @@
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-service_tier = "fast"
+service_tier = "priority"
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 
@@ -17,6 +17,7 @@ apps = true
 memories = true
 prevent_idle_sleep = true
 undo = true
+js_repl = false
 
 [apps._default]
 open_world_enabled = true
@@ -68,17 +69,15 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-15T23:11:04Z"
+last_updated = "2026-07-06T22:41:11Z"
 source_type = "local"
 source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-06-15T01:31:42Z"
 source_type = "local"
 source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.dots]
-last_updated = "2026-07-06T20:28:33Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots/dist/codex"
 
@@ -91,15 +90,18 @@ startup_timeout_sec = 120
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
 NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_SANDBOX_ALLOWED_UNIX_SOCKETS = "/tmp/codex-browser-use"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex,/Users/rishi/.codex-personal"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "98ab8dad29094c0d4ee0d14abd4799bab88c56ef203f4ab5aca0eaeeaf0273b6"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
+CODEX_HOME = "/Users/rishi/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "60e4902788f207f88fd09344dfeafe07769488bdb2924bbb12b322c3b9d2b999"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.41845"
-CODEX_CLI_PATH = "/opt/homebrew/bin/codex"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.101652"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+
+[desktop]
+followUpQueueMode = "queue"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
@@ -137,4 +139,4 @@ skill = "#ad7bf9"
 [hooks.state]
 
 [hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"
+trusted_hash = "sha256:b09e4381778bd6404d2b1d1e948cf723e726593a43395f8808a5845fa82d5bc6"

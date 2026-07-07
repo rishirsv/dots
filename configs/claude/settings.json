@@ -3,7 +3,8 @@
     "dots@dots": true,
     "drafts@dots": true,
     "meta-skill@dots": true,
-    "build-ios-apps@steady-app": true
+    "build-ios-apps@steady-app": true,
+    "codex@openai-codex": true
   },
   "extraKnownMarketplaces": {
     "dots": {

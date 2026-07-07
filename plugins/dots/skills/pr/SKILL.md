@@ -22,7 +22,22 @@ review-comment repair on an existing PR, read
 - Branch: `codex/{description}` when starting from `main`, `master`, or the
   remote default branch.
 - Commit: terse description of the scoped change.
-- PR title: `[codex] {description}`.
+- PR title: repo-native, concrete, and human. Do not add a generic agent prefix
+  such as `[codex]` unless the repo already uses one.
+- Choose the title dialect from nearby merged PRs before inventing one:
+  - Conventional: `fix(scope): handle missing tool call IDs`, `docs: update
+    release notes`, `release: 2.44.0`
+  - Area prefix: `agentHost: handle stale selections`, `proxy: log nodePort
+    changes`
+  - Bracketed subsystem: `[DevTools] Fix console formatting`, `[release/1.128]
+    Hide Tools Marketplace`
+  - Plain imperative: `Handle keepalive events in Responses streams`, `Remove
+    unused confirmation path`
+  - Editorial/content: `Add a data-flow diagram to the cookbook intro`,
+    `Technical polish: Parallel Search cookbook`
+- For stacked PRs, make order visible elegantly when it helps review. Prefer a
+  repo-specific series label such as `Record trust 2.1: Save logger entries
+  before HealthKit projection` over a noisy generic tag.
 
 ## Workflow
 
@@ -54,8 +69,13 @@ git push -u origin "$(git branch --show-current)"
      connector coverage is unavailable or ambiguous.
    - Write the PR body to a temp file when using CLI fallback so Markdown
      renders cleanly.
-8. Summarize the branch, commit, PR URL, validation, and anything still needing
-   user confirmation.
+8. Check the created PR.
+   - Re-query the PR after creation for merge state, checks, review decision,
+     and current review threads when available.
+   - For stacked PRs, verify the base branch/PR and summarize the stack order
+     naturally in the handoff.
+9. Summarize the branch, commit, PR URL, validation, PR health, and anything
+   still needing user confirmation.
 
 ## Write Safety
 
@@ -66,10 +86,32 @@ git push -u origin "$(git branch --show-current)"
 
 ## PR Body
 
-The PR description should use real Markdown prose and cover:
+The PR description should read like a compact explanation for a human reviewer:
+clear enough for a smart non-specialist teammate to understand, structured
+enough for a maintainer to scan quickly, and free of agent bookkeeping.
+
+Use Markdown structure when it helps review. Natural prose does not mean a flat
+paragraph blob. Good headings include:
+
+- `What changed`
+- `Why it matters`
+- `Review focus`
+- `Screenshots`
+- `Validation`
+
+Cover the useful story:
 
 - what changed
 - why it changed
 - user or developer impact
 - root cause when the PR is a fix
 - checks used to validate it
+
+Keep validation calm and evidentiary. Prefer `Passed: scripts/validate test
+(468 feature tests)` over a giant standalone `TEST SUCCEEDED` line.
+
+For UI, frontend, visual, or design-facing changes, include screenshots or short
+clips in the PR body. Place images near the explanation they support, with
+captions that tell the reviewer what to notice. If real captures are not
+available yet, keep the PR draft and say exactly what screenshots are still
+needed before it is ready for review.

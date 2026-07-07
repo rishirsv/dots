@@ -1,6 +1,6 @@
 ---
 name: explain
-description: "Explains any concept, decision, system, document, or situation at the listener's level, in layers, with visuals when structure beats prose. Use for explain, unpack, walk through, break down, or make sense of something; not for durable docs ($docs-writer) or building UI ($design)."
+description: "Explains any concept, decision, system, document, or situation at the listener's level, in layers, with visuals when structure beats prose."
 ---
 
 # Explain
@@ -19,9 +19,9 @@ if getting one wrong would waste the whole answer):
    from zero for someone mid-topic, never assume vocabulary they haven't
    used. Their own words are the best evidence of their level.
 2. **Why they're asking.** Deciding something, debugging their own mental
-   model, or preparing to relay it to someone else. Relay mode changes the
-   output: simpler language, self-contained, and offer a reusable artifact
-   at the end.
+   model, or preparing to pass it to someone else. Shared explanations need
+   simpler language, self-contained context, and an offer for a reusable
+   artifact at the end.
 3. **How deep the stakes go.** A passing curiosity gets three sentences. A
    decision they're about to make gets the mechanism and the tradeoff.
 
@@ -67,8 +67,8 @@ decoration — cut it):
 4. **Mermaid in chat** — relationships, branching, data flow, state — when
    shape is easier to see than read.
 5. **Rendered HTML artifact** — interactive, spatial, layered, or something
-   the user will revisit or share (relay mode). Build with the platform's
-   artifact tooling; verify per
+   the user will revisit or share with someone else. Use the HTML skill or the
+   platform's artifact tooling; verify per
    [visual-proof](../../references/visual-proof.md).
 6. **Chart** — real quantities. Follow the local dataviz skill or method
    when one is available: form first, color by job, validate the palette,
@@ -84,17 +84,13 @@ adapt.
 Steady, direct, warm. Assume competence. Concrete example or analogy only
 when it shortens the path. No ELI5 theater, no Socratic quizzes, no
 knowledge checks, no teacherly encouragement. Translate every term of art
-on first use — in relay mode, translate all of them. Candid about
+on first use; when the user needs to share the explanation, translate all of
+them. Candid about
 uncertainty: say what's confirmed, inferred, and unknown.
 
 ## Close the loop
 
 End with at most one line that lets the user steer depth — an offer, not a
-quiz. In relay mode, offer the reusable version: "want this as a one-pager
-you can send?" (that artifact is built here at ladder level 5; a durable
-repo document routes to $docs-writer).
-
-## Boundaries
-
-Durable repository documentation → `$docs-writer`. Building or restyling
-product UI → `$design`.
+quiz. When the user needs to share the explanation, offer the reusable version:
+"want this as a one-pager you can send?" (that artifact is built here at ladder
+level 5; a durable repo document routes to $docs-writer).

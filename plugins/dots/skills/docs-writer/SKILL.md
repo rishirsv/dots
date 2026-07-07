@@ -39,7 +39,10 @@ Markdown style guide.
 3. Choose the shape: follow repo-local guidance and existing doc conventions,
    else the closest recipe in [document-types.md](references/document-types.md).
    Prefer deletion and consolidation over new docs, indexes, or status
-   systems; a targeted update beats a new documentation system.
+   systems; a targeted update beats a new documentation system. Before copying
+   a roster, command matrix, file list, constant, or current implementation
+   detail, ask whether the reader can get it faster and more reliably from the
+   source; if yes, point to the owner and document the principle instead.
 4. Write from the reader's job: lead with what the reader can do or
    understand after reading, keep background short, make prerequisites
    explicit. Do not leave breadcrumbs: describe what the document is now, not
