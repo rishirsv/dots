@@ -93,17 +93,16 @@ Five nodes maximum; a map that needs more should become two explanations.
 Use for: conversion, attrition, process losses. Annotate the biggest drop,
 not every step.
 
-## Layered "How X Works" — relay-mode artifact skeleton
+## Layered "How X Works" — shareable artifact skeleton
 
-For a rendered HTML artifact (ladder level 5), structure the page as the
-same three layers the chat answer uses: the answer (one bold paragraph),
-the mechanism (one diagram from this file + 3-5 numbered steps), what to do
-with it (one short list). Self-contained, both themes, verified per
-visual-proof before sharing.
+For a rendered HTML artifact, structure the page as the same three layers the
+chat answer uses: the answer (one bold paragraph), the mechanism (one diagram
+from this file plus 3-5 numbered steps), and what to do with it (one short
+list). Self-contained, both themes, verified per visual-proof before sharing.
 
 ## Charts
 
 Quantities follow the local dataviz skill or method when one is available —
-form first, color by job, validate the palette, render and look. Reach for a chart only when the
-*magnitude or trend* is the point; if the point is a single number, a stat
-line in prose beats a chart.
+form first, color by job, validate the palette, render and look. Reach for a
+chart only when the *magnitude or trend* is the point; if the point is a single
+number, a stat line in prose beats a chart.

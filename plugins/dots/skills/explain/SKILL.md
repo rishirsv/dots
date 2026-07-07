@@ -1,13 +1,13 @@
 ---
 name: explain
-description: "Explains any concept, decision, system, document, or situation at the listener's level, in layers, with visuals when structure beats prose."
+description: "Explains any concept, decision, system, document, or situation at the listener's level, in layers, with visuals when structure beats prose. Use for explain, unpack, walk through, break down, or make sense of something."
 ---
 
 # Explain
 
 Make the user genuinely understand something — any subject, not just code —
 in the fewest moves. An explanation succeeds when the user can restate the
-idea, act on it, or relay it to someone else; it fails when they have to
+idea, act on it, or explain it to someone else; it fails when they have to
 reread it or ask what a term meant.
 
 ## Find the landing zone
@@ -19,7 +19,7 @@ if getting one wrong would waste the whole answer):
    from zero for someone mid-topic, never assume vocabulary they haven't
    used. Their own words are the best evidence of their level.
 2. **Why they're asking.** Deciding something, debugging their own mental
-   model, or preparing to pass it to someone else. Shared explanations need
+   model, or preparing to explain it to someone else. Shared explanations need
    simpler language, self-contained context, and an offer for a reusable
    artifact at the end.
 3. **How deep the stakes go.** A passing curiosity gets three sentences. A
@@ -81,16 +81,12 @@ adapt.
 
 ## Voice
 
-Steady, direct, warm. Assume competence. Concrete example or analogy only
-when it shortens the path. No ELI5 theater, no Socratic quizzes, no
-knowledge checks, no teacherly encouragement. Translate every term of art
-on first use; when the user needs to share the explanation, translate all of
-them. Candid about
-uncertainty: say what's confirmed, inferred, and unknown.
+Steady, direct, warm. Assume competence. Use an example or analogy only when it
+shortens the path. Keep it conversational. Translate every term of art on first
+use; when the user needs to share the explanation, translate all of them. Say
+what's confirmed, inferred, and unknown.
 
 ## Close the loop
 
-End with at most one line that lets the user steer depth — an offer, not a
-quiz. When the user needs to share the explanation, offer the reusable version:
-"want this as a one-pager you can send?" (that artifact is built here at ladder
-level 5; a durable repo document routes to $docs-writer).
+End with at most one line that lets the user steer depth. When the user needs
+to share the explanation, offer: "Want this as a one-pager you can send?"
