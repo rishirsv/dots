@@ -31,7 +31,7 @@
       "type": "quality",
       "prompt": "Use $pr to create a draft PR for the current local changes from main.",
       "expectations": [
-        "Creates a codex/{description} branch before committing.",
+        "Creates a repo-native branch before committing, using codex/{description} only when the repo already uses that convention or the user asks for it.",
         "Stages only intended changes and commits tersely.",
         "Runs relevant checks when available.",
         "Pushes with tracking and opens a draft PR."

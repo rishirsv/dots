@@ -1,6 +1,6 @@
 ---
 name: pr
-description: "Publishes local changes to GitHub by confirming scope, committing intentionally, pushing the branch, and opening a draft pull request. Also handles actionable PR review comments when the user asks."
+description: "Publishes local checkout changes as a GitHub PR by confirming scope, committing intentionally, pushing, and opening a draft PR by default. Use for existing PR review-thread repair only when explicitly invoked."
 ---
 
 # PR
@@ -8,7 +8,10 @@ description: "Publishes local changes to GitHub by confirming scope, committing 
 Use this skill when the user wants a GitHub pull request flow from the local
 checkout: branch setup if needed, staging, commit, push, and PR creation. For
 review-comment repair on an existing PR, read
-[addressing-comments.md](references/addressing-comments.md) first.
+[addressing-comments.md](references/addressing-comments.md) first and keep that
+repair on the PR's existing branch unless the user asks for a new branch.
+When a GitHub-specific PR or review-comment skill is explicitly requested, use
+that requested skill; `$pr` is the local Dots publish lane.
 
 ## Prerequisites
 
@@ -19,8 +22,12 @@ review-comment repair on an existing PR, read
 
 ## Naming
 
-- Branch: `codex/{description}` when starting from `main`, `master`, or the
-  remote default branch.
+- Branch: repo-native and human-readable. When starting from `main`, `master`,
+  or the remote default branch, create the smallest conventional branch name
+  that matches the change, such as `fix/missing-tool-call-ids`,
+  `docs/release-notes`, or `agentHost/stale-selections`. Use an agent/tool
+  namespace such as `codex/` only when the repo already uses that convention or
+  the user asks for it.
 - Commit: terse description of the scoped change.
 - PR title: repo-native, concrete, and human. Do not add a generic agent prefix
   such as `[codex]` unless the repo already uses one.
@@ -42,12 +49,16 @@ review-comment repair on an existing PR, read
 ## Workflow
 
 1. Confirm scope.
-   - Run `git status -sb` and inspect the diff before staging.
+   - Run `git status -sb`, `git diff --stat`, and `git diff --staged --stat`.
+   - If the intended diff is unclear, ask for scope before staging, committing,
+     or pushing.
    - If the worktree contains unrelated changes, ask which paths belong in the
      PR.
 2. Choose the branch strategy.
-   - Create `codex/{description}` from the default branch.
+   - If starting from the default branch, create a repo-native branch as
+     described in Naming.
    - Otherwise stay on the current branch unless the user asks for a new one.
+   - For review-comment repair, prefer the existing PR branch.
 3. Stage only intended changes.
    - Prefer explicit paths.
    - Use `git add -A` only when the whole worktree is in scope.
@@ -59,14 +70,17 @@ review-comment repair on an existing PR, read
 git push -u origin "$(git branch --show-current)"
 ```
 
-7. Open a draft PR.
+7. Open a PR.
    - Derive the repository from `git remote get-url origin` or
      `gh repo view --json nameWithOwner`.
    - Derive the current branch from `git branch --show-current`.
    - Use the requested base branch, or the remote default branch.
+   - Default to draft. If the user explicitly asks for ready-for-review, create
+     it ready; for CLI fallback, omit `--draft`.
    - Prefer any available GitHub connector/app for PR creation after push; use
-     `gh pr create --draft --fill --head "$(git branch --show-current)"` when
-     connector coverage is unavailable or ambiguous.
+     `gh pr create --fill --head "$(git branch --show-current)"`, adding
+     `--draft` only for draft PRs, when connector coverage is unavailable or
+     ambiguous.
    - Write the PR body to a temp file when using CLI fallback so Markdown
      renders cleanly.
 8. Check the created PR.
@@ -81,7 +95,7 @@ git push -u origin "$(git branch --show-current)"
 
 - Never stage unrelated changes silently.
 - Never push without confirming scope when the worktree is mixed.
-- Default to a draft PR unless the user explicitly asks for ready-for-review.
+- Do not publish a ready-for-review PR unless the user explicitly asks for one.
 - Stop if the repository is not connected to an accessible GitHub remote.
 
 ## PR Body
