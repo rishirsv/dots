@@ -1,0 +1,87 @@
+{
+  "cases": [
+    {
+      "expectations": [],
+      "expectations_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/runs/run-20260708T024626313233Z-c419e0a6/inputs/cases/pr-activation-required/expectations.json",
+      "fixtures": [],
+      "graders": [
+        {
+          "gate": true,
+          "id": "activation-evidence",
+          "kind": "code",
+          "metric": "activation",
+          "path": "validate.py",
+          "required": true,
+          "uses_transcript": true
+        }
+      ],
+      "id": "pr-activation-required",
+      "support_files": [
+        {
+          "digest": "86e8acccaa10c732624f5c16faaeb5e5c15c1f1242561c966fac74992f826290",
+          "path": "validate.py",
+          "source_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/cases/pr-activation-required/validate.py"
+        }
+      ],
+      "task_digest": "529b4f36ae94b815f08ef713fc4253f053197c56a6d518127a5352e94c794e7e",
+      "task_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/runs/run-20260708T024626313233Z-c419e0a6/inputs/cases/pr-activation-required/task.md",
+      "task_source": {
+        "kind": "inline_prompt"
+      },
+      "task_text": "A user asks: \"Create a draft pull request for the current local changes.\" This is a routing drill: do not run commands or inspect files. Answer with the exact local PR flow you would follow and the checks you would perform before publishing.\n",
+      "type": "trigger"
+    },
+    {
+      "expectations": [],
+      "expectations_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/runs/run-20260708T024626313233Z-c419e0a6/inputs/cases/visual-pr-images-required/expectations.json",
+      "fixtures": [],
+      "graders": [
+        {
+          "gate": true,
+          "id": "image-embed-gate",
+          "kind": "code",
+          "metric": "visual-pr-evidence",
+          "path": "validate.py",
+          "required": true
+        }
+      ],
+      "id": "visual-pr-images-required",
+      "support_files": [
+        {
+          "digest": "f3893c6fcc88b79b4adf654e64b75a3aa84fd3fe94773d3982010e4fd0cf75c7",
+          "path": "validate.py",
+          "source_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/cases/visual-pr-images-required/validate.py"
+        }
+      ],
+      "task_digest": "8d3dced1dd42df058af3427781d1999b7d99a64c178eeb82f49a58bc2bb6cb2c",
+      "task_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/runs/run-20260708T024626313233Z-c419e0a6/inputs/cases/visual-pr-images-required/task.md",
+      "task_source": {
+        "kind": "inline_prompt"
+      },
+      "task_text": "You are updating an existing draft PR for a visual/UI change. The PR already has a text-only list of screens in its body. Explain the exact PR-body update you would make before closing out.\n",
+      "type": "failure"
+    }
+  ],
+  "defaults": {
+    "repetitions": 1,
+    "runner": "codex_app_server"
+  },
+  "frozen_at": "2026-07-08T02:46:26+00:00",
+  "grader_config": {
+    "mode": "expectations_default"
+  },
+  "schema_version": 1,
+  "selected_candidate_ids": [
+    "current"
+  ],
+  "selected_case_ids": [
+    "pr-activation-required",
+    "visual-pr-images-required"
+  ],
+  "source_suite": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/evals.json",
+  "suite_digest": "ac275b76abe27413799e09996b37d13e8ed63138bf29f23edfc4e3ee9be93762",
+  "target": {
+    "ref": "SKILL.md",
+    "type": "skill"
+  }
+}

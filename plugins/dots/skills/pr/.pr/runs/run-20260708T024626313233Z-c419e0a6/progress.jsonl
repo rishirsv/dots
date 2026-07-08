@@ -1,0 +1,7 @@
+{"run_id": "run-20260708T024626313233Z-c419e0a6", "status": "created", "time": "2026-07-08T02:46:26+00:00"}
+{"status": "queued", "time": "2026-07-08T02:46:26+00:00", "trial_id": "pr-activation-required.current.t1"}
+{"status": "queued", "time": "2026-07-08T02:46:26+00:00", "trial_id": "visual-pr-images-required.current.t1"}
+{"status": "running", "time": "2026-07-08T02:46:26+00:00", "trial_id": "pr-activation-required.current.t1"}
+{"status": "running", "time": "2026-07-08T02:46:26+00:00", "trial_id": "visual-pr-images-required.current.t1"}
+{"status": "completed", "time": "2026-07-08T02:46:52+00:00", "trial_id": "pr-activation-required.current.t1"}
+{"status": "completed", "time": "2026-07-08T02:47:01+00:00", "trial_id": "visual-pr-images-required.current.t1"}

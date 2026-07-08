@@ -1,0 +1,55 @@
+{
+  "cases": [
+    {
+      "expectations": [],
+      "expectations_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/runs/run-20260708T024202586978Z-d9521c00/inputs/cases/visual-pr-images-required/expectations.json",
+      "fixtures": [],
+      "graders": [
+        {
+          "gate": true,
+          "id": "image-embed-gate",
+          "kind": "code",
+          "metric": "visual-pr-evidence",
+          "path": "validate.py",
+          "required": true
+        }
+      ],
+      "id": "visual-pr-images-required",
+      "support_files": [
+        {
+          "digest": "358ea893d249f022d283edef8bc64e92d2631e707402768702d56e4c77a1abc3",
+          "path": "validate.py",
+          "source_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/cases/visual-pr-images-required/validate.py"
+        }
+      ],
+      "task_digest": "8d3dced1dd42df058af3427781d1999b7d99a64c178eeb82f49a58bc2bb6cb2c",
+      "task_path": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/runs/run-20260708T024202586978Z-d9521c00/inputs/cases/visual-pr-images-required/task.md",
+      "task_source": {
+        "kind": "inline_prompt"
+      },
+      "task_text": "You are updating an existing draft PR for a visual/UI change. The PR already has a text-only list of screens in its body. Explain the exact PR-body update you would make before closing out.\n",
+      "type": "failure"
+    }
+  ],
+  "defaults": {
+    "repetitions": 1,
+    "runner": "codex_app_server"
+  },
+  "frozen_at": "2026-07-08T02:42:02+00:00",
+  "grader_config": {
+    "mode": "expectations_default"
+  },
+  "schema_version": 1,
+  "selected_candidate_ids": [
+    "current"
+  ],
+  "selected_case_ids": [
+    "visual-pr-images-required"
+  ],
+  "source_suite": "/Users/rishi/Code/dots/plugins/dots/skills/pr/.pr/evals.json",
+  "suite_digest": "f200f9056f7b50a15dc3cde5b7f57302078d65eac9817659d47b4b69f693d594",
+  "target": {
+    "ref": "SKILL.md",
+    "type": "skill"
+  }
+}

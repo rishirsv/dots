@@ -1,0 +1,19 @@
+{
+  "final_source": "turn_result",
+  "items_count": 255,
+  "response_text": "I would route this to `dots:pr`.\n\nExact local PR flow I would follow:\n\n1. Confirm the intended scope of the current local changes.\n2. Inspect the working tree and diff to separate intended changes from unrelated local edits.\n3. Run the repo-relevant validation checks before publishing.\n4. Stage only the intended files.\n5. Commit with a focused message describing the actual change.\n6. Push the current branch to the remote.\n7. Create a draft pull request, not a ready-for-review PR.\n8. Include a concise PR title, summary, and validation notes.\n9. Report the PR URL and the exact checks run.\n\nChecks before publishing:\n\n- Verify branch state and remote tracking.\n- Review `git diff` / staged diff for accidental files, secrets, generated artifacts, or unrelated edits.\n- Confirm the commit contains only the requested scope.\n- Run the repo\u2019s expected validation, here `scripts/verify.sh` unless a narrower task-specific check is clearly more appropriate.\n- If skill behavior changed, also run the relevant deterministic skill validation, such as `plugins/meta-skill/scripts/metaskill validate <skill-dir> --json` when applicable.\n- Confirm the PR is opened as a draft.",
+  "runtime_version": null,
+  "sdk_version": "0.1.0b3",
+  "status": "completed",
+  "thread_id": "019f3f9c-9cac-7b21-a134-45e9430f98f7",
+  "thread_persistence": "persistent",
+  "trial_id": "pr-activation-required.current.t1",
+  "turn_id": "019f3f9c-9e22-75d0-9b3f-140f9f6eb59d",
+  "usage": {
+    "cached_input_tokens": 10112,
+    "input_tokens": 21136,
+    "output_tokens": 472,
+    "total_tokens": 21608
+  },
+  "warnings": []
+}

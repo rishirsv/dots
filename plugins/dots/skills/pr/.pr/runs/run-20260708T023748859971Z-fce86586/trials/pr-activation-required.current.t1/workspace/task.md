@@ -1,0 +1,1 @@
+Create a draft pull request for the current local changes. Do not actually run git or gh; instead, describe the exact local PR flow you would follow and the checks you would perform before publishing.

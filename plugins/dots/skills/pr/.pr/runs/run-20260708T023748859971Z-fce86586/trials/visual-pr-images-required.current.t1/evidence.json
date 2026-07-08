@@ -1,0 +1,19 @@
+{
+  "final_source": "turn_result",
+  "items_count": 261,
+  "response_text": "I\u2019d update the PR body\u2019s `Screenshots` section so the screen list is no longer text-only. Each listed screen should have an embedded screenshot or short clip plus a caption explaining what the reviewer should notice.\n\nExample shape:\n\n```md\n## Screenshots\n\n### Settings screen\n![Settings screen after layout update](https://github.com/user-attachments/assets/...)\nCaption: Shows the updated spacing, control alignment, and final empty/error state behavior.\n\n### Detail screen\n![Detail screen updated visual treatment](https://github.com/user-attachments/assets/...)\nCaption: Shows the revised hierarchy and responsive layout at the changed breakpoint.\n```\n\nIf the real captures are not available yet, I would keep the PR as draft and update the body with an explicit blocker like: `Still needed before ready for review: screenshots for Settings screen, Detail screen, and mobile breakpoint.` I would not close out with only the text list.\n\n",
+  "runtime_version": null,
+  "sdk_version": "0.1.0b3",
+  "status": "completed",
+  "thread_id": "019f3f96-b6d8-7600-bac9-458006351649",
+  "thread_persistence": "persistent",
+  "trial_id": "visual-pr-images-required.current.t1",
+  "turn_id": "019f3f96-b7f4-7ee0-bff3-f71dc022f646",
+  "usage": {
+    "cached_input_tokens": 45184,
+    "input_tokens": 67294,
+    "output_tokens": 1438,
+    "total_tokens": 68732
+  },
+  "warnings": []
+}

@@ -1,5 +1,10 @@
 {
+  "schema_version": 1,
   "skill_name": "pr",
+  "target": {
+    "type": "skill",
+    "ref": "SKILL.md"
+  },
   "defaults": {
     "runner": "codex_app_server",
     "repetitions": 1
@@ -14,38 +19,40 @@
       }
     }
   ],
-  "evals": [
+  "cases": [
     {
-      "id": "publish-mixed-worktree",
-      "type": "gate",
-      "prompt": "Use $pr to publish this work. The worktree has unrelated local changes too.",
-      "expectations": [
-        "Inspects status and diff before staging.",
-        "Does not use git add -A without confirming the whole worktree is in scope.",
-        "Asks which paths belong in the PR.",
-        "Does not push before scope is clear."
+      "id": "pr-activation-required",
+      "type": "trigger",
+      "task": {
+        "prompt": "A user asks: \"Create a draft pull request for the current local changes.\" This is a routing drill: do not run commands or inspect files. Answer with the exact local PR flow you would follow and the checks you would perform before publishing."
+      },
+      "graders": [
+        {
+          "id": "activation-evidence",
+          "kind": "code",
+          "metric": "activation",
+          "path": "validate.py",
+          "uses_transcript": true,
+          "required": true,
+          "gate": true
+        }
       ]
     },
     {
-      "id": "publish-from-main",
-      "type": "quality",
-      "prompt": "Use $pr to create a draft PR for the current local changes from main.",
-      "expectations": [
-        "Creates a repo-native branch before committing, using codex/{description} only when the repo already uses that convention or the user asks for it.",
-        "Stages only intended changes and commits tersely.",
-        "Runs relevant checks when available.",
-        "Pushes with tracking and opens a draft PR."
-      ]
-    },
-    {
-      "id": "address-review-comments",
-      "type": "quality",
-      "prompt": "Use $pr to address the actionable comments on the current pull request.",
-      "expectations": [
-        "Reads the addressing-comments reference.",
-        "Resolves the PR and inspects review context before editing.",
-        "Clusters actionable feedback separately from outdated, resolved, informational, or judgment-heavy comments.",
-        "Implements only selected or clearly actionable fixes and reports remaining comments."
+      "id": "visual-pr-images-required",
+      "type": "failure",
+      "task": {
+        "prompt": "You are updating an existing draft PR for a visual/UI change. The PR already has a text-only list of screens in its body. Explain the exact PR-body update you would make before closing out."
+      },
+      "graders": [
+        {
+          "id": "image-embed-gate",
+          "kind": "code",
+          "metric": "visual-pr-evidence",
+          "path": "validate.py",
+          "required": true,
+          "gate": true
+        }
       ]
     }
   ]
