@@ -3,9 +3,9 @@
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-service_tier = "priority"
+service_tier = "default"
 model = "gpt-5.5"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 
 notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
@@ -138,7 +138,7 @@ source_type = "local"
 source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.dots]
-last_updated = "2026-07-08T01:22:41Z"
+last_updated = "2026-07-08T05:13:43Z"
 source_type = "local"
 source = "/Users/rishi/Code/dots"
 
@@ -202,4 +202,4 @@ skill = "#ad7bf9"
 [hooks.state]
 
 [hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"
+trusted_hash = "sha256:b09e4381778bd6404d2b1d1e948cf723e726593a43395f8808a5845fa82d5bc6"

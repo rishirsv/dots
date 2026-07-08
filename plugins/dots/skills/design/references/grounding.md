@@ -3,6 +3,9 @@
 Read before starting a new surface, vague feature, redesign, or substantial
 visual change.
 
+Use [briefing-calibration.md](briefing-calibration.md) when the task needs a
+new-surface brief or UI-generation prompt from sparse visual direction.
+
 ## Source Anchors
 
 Find the repo's design authority before reaching for generic taste:
@@ -45,13 +48,25 @@ ambiguous, multi-screen, or standalone planning requests:
 
 1. Feature Summary — what this is, who it's for, what it must accomplish.
 2. Primary User Action — the single most important thing the user should do.
-3. Design Direction — color strategy, scene sentence, 2-3 named anchors.
+3. Design Direction — scene sentence, tone constraints, references, and the
+   specific quality each anchor contributes.
 4. Scope — fidelity, breadth, interactivity, time intent.
-5. Layout Strategy — spatial approach, hierarchy, rhythm, information flow.
+5. Structure — layout skeleton, grid or spacing rhythm, first viewport
+   architecture, section rhythm, container model, hierarchy, and information
+   flow.
 6. Key States — default, empty, loading, error, success, edge cases.
 7. Interaction Model — click, hover, scroll, feedback, entry-to-completion.
 8. Content Requirements — copy, labels, microcopy, dynamic ranges, image/media
    roles and likely sources.
-9. Recommended References — this skill's references or the repo's own design
+9. Anti-patterns — visual tropes, component shapes, palette moves, effects, or
+   layout formulas to avoid.
+10. Client-Ready Checks — what makes the surface product-specific, what generic
+   pattern would fail it, and what the review gate should treat as unacceptable.
+11. Recommended References — this skill's references or the repo's own design
    docs that guide implementation.
-10. Open Questions — only genuine blockers; assert obvious defaults instead.
+12. Open Questions — only genuine blockers; assert obvious defaults instead.
+
+Spend brief detail first on layout skeleton, spacing rhythm or grid,
+typography direction, references, and negative constraints. Keep palette concise
+unless brand fidelity or accessibility requires exact values. Do not let long
+copy or broad vibe adjectives substitute for executable structure.

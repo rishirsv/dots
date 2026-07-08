@@ -13,6 +13,7 @@ single-surface critique.
 - Icons: all icons are accounted for and match stroke weight, size, style family, alignment, optical balance, state changes.
 - Shape and surfaces: rounded cards, borders, dividers, shadows, fills, and container treatments match the target rather than generic component defaults.
 - Responsiveness: elements do not overlap, collapse into adjacent sections, clip, wrap awkwardly, or break hierarchy across desktop, tablet, and mobile viewports.
+- Specificity and client-readiness: imagery, type, layout rhythm, component motifs, and copy are specific to the subject instead of reading as a swappable generic surface.
 - Implementation shortcuts: custom CSS art, inline SVG substitutes, placeholder avatars, decorative blobs, and fake product imagery are flagged when they drift from the target design.
 
 ## Required Fidelity Surfaces
@@ -55,6 +56,7 @@ report on these areas:
 - Copy and content: for any copy that is part of the app, not dynamic content, check that it is coherent, makes sense in the standalone context of the app, and is visually appealing.
 - Icons: zoom in and analyze all visible icons and icons hidden behind controls/interactions to ensure they are fully implemented, aligned, and visually consistent.
 - States and interactions: expand/collapse sidebars, tooltips, forms, hover, focus, active, selected, disabled, loading, success, error, empty states, and any interactive controls needed for a functional frontend.
+- Specificity and client-readiness: check whether imagery, type, layout rhythm, component motifs, and copy belong to the subject, or whether the surface could be swapped into another generic landing page or app with minimal changes. Cite visible template patterns, missing subject-specific imagery or material, repeated default components, mismatch with accepted references, or copy/type/layout that could belong anywhere.
 - AI shortcut artifacts: flag generic rounded cards, unnecessary borders, decorative CSS blobs, fake SVG illustrations, half-built avatars, mismatched hero art, and custom CSS/SVG replacements where the target called for real imagery, real icons, or a different surface treatment.
 
 ### Accessibility
@@ -74,6 +76,7 @@ A useful finding includes:
 - Concrete fix, ideally with file/component/token/CSS guidance.
 - Severity based on user impact, not personal taste.
 - The affected fidelity surface when relevant: fonts, spacing, colors, image quality, layout, behavior, accessibility, content, icons, or responsiveness.
+- The product-specificity surface when generic layout, imagery, type, component motifs, or copy weaken client readiness; keep confidence lower when no product subject, target, brand, reference, or accepted brief was inspected.
 - Crammed text, broken wrapping, mismatched font weights, bad line height, or awkward letter spacing when they affect readability or hierarchy.
 - Elements that overlap, clip, collapse into nearby sections, or break at alternate viewport sizes.
 - Rounded cards, borders, shadows, or container treatments that appear in the implementation but are not present in the target.
@@ -106,7 +109,7 @@ or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
 **Findings**
 - [P1] Short issue title
   Location: screen/component/selector/file if known.
-  Surface: typography|spacing/layout|colors/tokens|image/assets|copy/content|icons|states/interactions|responsiveness|accessibility|shortcut artifacts.
+  Surface: typography|spacing/layout|colors/tokens|image/assets|copy/content|icons|states/interactions|responsiveness|accessibility|specificity/product fit|shortcut artifacts.
   Evidence: design does X, implementation does Y.
   Impact: why this matters.
   Recommendation: concrete design correction.
@@ -147,6 +150,7 @@ or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
 - States and interactions:
 - Responsiveness:
 - Accessibility:
+- Specificity and client-readiness:
 - Shortcut artifacts:
 
 **Evidence Limits**

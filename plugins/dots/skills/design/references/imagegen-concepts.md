@@ -27,6 +27,11 @@ Before calling Image Gen, copy concrete details from the request, screenshots,
 existing app, repo docs, or brief. Do not reduce them to a generic category like
 "modern landing page" or "clean dashboard."
 
+For a standalone surface, first check that the prompt has concrete direction
+for type, spacing or grid, layout skeleton, references or anchor examples, and
+anti-patterns. Fill gaps from repo evidence when it is safe; otherwise return
+to the brief gate instead of generating from broad mood words.
+
 Include:
 
 - purpose, audience, and primary user action
@@ -78,7 +83,9 @@ repetitive.
 
 Reject concepts that are header-only for full-surface asks, cluttered, generic,
 repetitive, under-specified, unreadable, over-decorated, impractical to
-implement, or off-spec.
+implement, or off-spec. Reject clean concepts too when the layout, imagery,
+type, component motifs, or copy could be swapped into another product with
+minimal changes.
 
 ## Image Count And Clarity
 
@@ -101,6 +108,11 @@ If any concept screenshot is too small, blurry, cropped, crowded, or ambiguous,
 generate a fresh standalone section, state, or detail screenshot before coding.
 Do not crop, slice, zoom, or reuse part of an older full-page image as the main
 reference.
+
+When revising concepts, preserve the working structure and prompt targeted
+deltas: spacing rhythm, type weight, image variety, component shape, motion
+timing, or anti-pattern removal. Avoid broad resets like `make it better` when a
+specific correction would keep the useful design intact.
 
 For games, plan a concept pass and a production asset pass: sprites or sprite
 sheets, terrain/platform tiles, collectibles, hazards, goals, props, HUD

@@ -113,9 +113,12 @@ Side-effect gates:
 - `P0`: blocks core use or task completion, severe accessibility barrier,
   broken layout, destructive-mistake risk, or privacy/security trust break.
 - `P1`: major design mismatch, comprehension, hierarchy, feedback, or
-  wrong-action risk likely to affect users.
+  wrong-action risk likely to affect users; generic or template-like output
+  that makes the surface unsuitable for the product, brand, portfolio, or
+  client-ready handoff.
 - `P2`: moderate friction, visual drift, unclear state, inconsistent system,
-  responsive issue, or fixable polish gap that degrades confidence.
+  responsive issue, safe-but-plain default, insufficient subject specificity,
+  or fixable polish gap that degrades confidence.
 - `P3`: minor refinement that improves quality or fidelity but does not block
   use or acceptance.
 
@@ -132,7 +135,7 @@ Each substantive finding includes:
 - location: step, screenshot, screen, component, selector, or file if known
 - surface: the most specific affected dimension, such as typography,
   spacing/layout, colors/tokens, image/assets, copy/content, icons,
-  states/interactions, responsiveness, or accessibility
+  states/interactions, responsiveness, accessibility, or specificity/product fit
 - evidence: what the design or flow does vs what the implementation shows
 - impact: why it matters
 - recommendation: the concrete correction, kept with the finding rather than in

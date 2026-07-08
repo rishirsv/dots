@@ -12,6 +12,8 @@ this skill whenever front-end work changes what a user sees.
 
 - Read [grounding.md](references/grounding.md) before starting a new surface,
   vague feature, redesign, or substantial visual change.
+- Read [briefing-calibration.md](references/briefing-calibration.md) when
+  forming a new-surface brief or UI-generation prompt from sparse direction.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
 - Read [imagegen-concepts.md](references/imagegen-concepts.md) when concepting

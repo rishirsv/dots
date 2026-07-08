@@ -99,9 +99,13 @@ keep craft findings from being mislabeled as mere polish:
 - `P2`: hierarchy, density, type, color, spacing, image sizing, border clutter,
   or elevation materially slows scanning, weakens confidence, or makes the
   system feel inconsistent.
-- `P3`: safe-but-plain defaults, tonal palette issues, missed accents, minor
-  border/shadow polish, or component-expression opportunities that improve
-  quality without blocking use.
+- `P3`: tonal palette issues, missed accents, minor border/shadow polish, or
+  component-expression opportunities that improve quality without blocking use.
+
+Safe-but-plain defaults, repeated template patterns, and weak subject
+specificity are `P1` or `P2` when they undermine product fit, client readiness,
+or the user's core decision. Keep them `P3` only when the product still reads as
+specific and usable.
 
 ## Finding Shape
 
@@ -184,6 +188,10 @@ Apply these as inspectable rules, not extra report headings:
   for the user's decision, report the missing experience layer.
 - Keep design findings multi-dimensional; do not collapse them into one
   holistic taste score.
+- Separate checkable criteria, such as brief fidelity, text rendering, spatial
+  accuracy, and layout, from taste-heavy criteria, such as mood, color harmony,
+  and audience fit. State confidence by dimension when that distinction changes
+  the recommendation.
 - Treat broad model taste as weak evidence unless grounded by screenshots,
   references, or human/design review.
 
@@ -218,6 +226,11 @@ Check:
 - single product idea and visual unity
 - template-like output risk
 - hallucination severity: `none`, `minor`, or `major`
+
+Review generated or prompt-led work at the criterion level instead of giving
+one overall taste verdict. Distinguish checkable failures from lower-confidence
+preference calls, and treat template-like output as a product-fit risk when it
+weakens the intended subject or client-readiness bar.
 
 When comparing generated alternatives, use this prompt shape:
 

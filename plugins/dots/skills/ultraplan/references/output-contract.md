@@ -1,4 +1,4 @@
-# Ultra-Plan Output Contract
+# Plan Output Contract
 
 Read this before synthesis and before reviewing a created or upgraded plan.
 

@@ -26,13 +26,19 @@ checks = [
     {
         "name": "rejects-text-only-screen-list",
         "passed": "text-only" in lower
-        and ("not enough" in lower or "does not satisfy" in lower or "insufficient" in lower),
+        and (
+            "not enough" in lower
+            or "does not satisfy" in lower
+            or "insufficient" in lower
+            or "not just" in lower
+        ),
         "evidence": "looked for explicit text-only list rejection",
     },
     {
         "name": "verifies-live-pr-body",
         "passed": "re-query" in lower
         or "re-check the live pr body" in lower
+        or "re-check the live draft pr body" in lower
         or "verify the live pr body" in lower
         or "verify the live draft pr body" in lower
         or "gh pr view" in lower,

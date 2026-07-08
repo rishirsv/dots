@@ -3,14 +3,14 @@ name: ultraplan
 description: "Creates or upgrades an implementation plan through repo-grounded context gathering, optional subagent research, adversarial critique, verified revisions, and anti-overengineering pressure; always produces a plan and stops before implementation. Explicit-only skill invoked via ultraplan (also ultra-plan), or a request to deeply plan, stress-test, or pressure-test an approach before building. Not for pure explanation, research, or ideation."
 ---
 
-# Ultra-Plan
+# Plan
 
-Ultra-Plan turns a rough request into an implementation plan the next agent can
+This skill turns a rough request into an implementation plan the next agent can
 execute end to end with little help from the user. It grounds the plan in real
 source, challenges it, verifies what would change it, and strips overbuilding
 before handing off.
 
-Ultra-Plan is planning, not execution. Do not edit implementation source, apply
+This is planning, not execution. Do not edit implementation source, apply
 the plan, publish, or overwrite an original plan without explicit post-plan
 approval. If there is nothing to plan — pure explanation, research, or
 ideation — redirect to the right skill instead of inventing a plan.
@@ -41,8 +41,8 @@ Pick the lightest path that produces a plan you would trust, then stop adding.
   data owners; it depends on schema, sync, API, platform, or contract behavior;
   it changes visible UI that needs current screens or a chosen visual target;
   external framework behavior may have drifted; the draft carries risky
-  assumptions, new dependencies, or broad refactors; or the user asked to
-  ultraplan or stress-test.
+  assumptions, new dependencies, or broad refactors; or the user asked to deeply
+  plan or stress-test.
 
 When unsure, start inline and escalate the moment grounding or critique would
 change the plan. Do not run a deep pass just to look thorough.
@@ -55,8 +55,8 @@ Work through this order; do not narrate the machinery unless it helps the user.
    behavior, affected surface, and implementation boundary. Ask one concise
    question only when a missing decision would materially change the plan.
    Follow [clarify](../clarify/SKILL.md) for the question's shape and for
-   triaging which decisions are actually blocking; ultraplan still caps
-   itself at that one question.
+   triaging which decisions are actually blocking; this planning flow still
+   caps itself at that one question.
 2. **Ground.** Decide what the plan must know, then read it: named docs and
    source first, then nearby conventions, owners, tests, screens, schema,
    contracts, local skills, and external guidance as the task needs. Capture
@@ -137,6 +137,9 @@ Default to saving the plan with the repo's plans convention; in chat, give a
 concise summary, not the full plan. Follow
 [output-contract.md](references/output-contract.md) for the plan shape, optional
 sections, upgrade rules, structural checks, and changelog.
+
+Use ordinary planning language in generated artifacts, filenames, headings, chat
+summaries, and handoffs: `plan` or `implementation plan`.
 
 ## Final Check
 

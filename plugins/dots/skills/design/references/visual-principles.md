@@ -19,6 +19,10 @@ Distinctive choices should come from the subject's own world: materials,
 instruments, artifacts, physical environments, rituals, data shapes, and
 vernacular. Build with the brief's real content and subject matter throughout.
 
+Generic feel is a shipment risk for product, brand, portfolio, and
+client-ready surfaces. Treat subject-specific imagery, type, layout rhythm,
+component motifs, and copy as core design material, not optional polish.
+
 ## Hero And First Viewport
 
 For web designs, the hero is a thesis. Open with the most characteristic thing
@@ -62,6 +66,10 @@ when real visuals improve the page.
 Commit to the combination so the design feels intentional instead of generic.
 Adapt it to the product type rather than forcing every app into a
 marketing-site style.
+
+Translate mood adjectives into constraints the model and code can execute:
+type family or class, weight, case, layout skeleton, spacing rhythm, shape
+language, imagery rules, motion timing, and explicit anti-patterns.
 
 ## Typography
 
