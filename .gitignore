@@ -24,6 +24,7 @@ venv/
 # Local dependencies and build output
 node_modules/
 build/
+dist/
 
 # Local secrets and logs
 .env
