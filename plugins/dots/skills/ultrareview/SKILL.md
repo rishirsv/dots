@@ -1,15 +1,15 @@
 ---
 name: ultrareview
-description: "Reviews changed code or an implementation plan for correctness, reuse, simplification, efficiency, and maintainability. Invoked via ultrareview. Scales rigor from quick to max, applying same-scope cleanup fixes by default, or reporting findings on request. Not for plan authoring, architecture scans, security audits, or PR publication."
+description: "Reviews changed code, existing plans, or explicit repo/subsystem audit targets for correctness, reuse, simplification, efficiency, maintainability, and improvement opportunities. Invoked via ultrareview. Scales rigor from quick to max; applies same-scope cleanup fixes in diff review, and stays report-only by default in Audit Mode. Not for blank-slate planning, architecture-only scans, PR publication, or implementing broad audit findings without explicit selection."
 ---
 
 # Ultra-Review
 
-Review changed code after implementation, or an existing implementation plan,
-spec, or roadmap. Preserve behavior, delete unnecessary complexity, reuse
-canonical code, and fix same-scope quality issues when fixing is allowed.
-Scale review rigor when the task, risk, or user request calls for deeper bug
-hunting.
+Review changed code after implementation, an existing implementation plan,
+spec, roadmap, or an explicit repo/subsystem audit target. Preserve behavior,
+delete unnecessary complexity, reuse canonical code, and fix same-scope quality
+issues when fixing is allowed. Scale review rigor when the task, risk, or user
+request calls for deeper bug hunting.
 
 Correctness comes first. Report correctness findings with evidence and a
 concrete failure scenario before changing behavior.
@@ -19,6 +19,12 @@ same-scope, behavior-preserving cleanup fixes (reuse, simplification,
 efficiency, maintainability) rather than only reporting them. Fall back to
 report-only when the user asks for review-only, or when Phase 6's fix-vs-report
 rules say a finding must be surfaced instead of edited.
+
+Audit Mode is the broad-review case: review a repo, subsystem, package, branch,
+or category target beyond the current diff. Audit Mode is report-only by
+default. Do not silently widen a diff review into a repo audit, and do not edit
+source from a broad audit unless the user explicitly selects a finding for
+implementation.
 
 ## References
 
@@ -35,11 +41,22 @@ rules say a finding must be surfaced instead of edited.
   [../../references/subagent-lanes.md](../../references/subagent-lanes.md)
   for lane definitions and fan-out rules before launching the standard or
   max-tier agents.
+- Read [references/audit-mode.md](references/audit-mode.md) when the user asks
+  to audit, survey, inspect, health-check, find improvement opportunities, or
+  review a repo, subsystem, package, branch, or category beyond the current
+  diff.
 
 ## Phase 1: Identify Scope
 
 Read `AGENTS.md`, `REVIEW.md`, or other repo guidance named by the user or found
 near the changed files.
+
+If the user asks for an audit, survey, broad review, repo health check, security
+sweep, performance sweep, test coverage review, dependency review, DX review,
+or improvement opportunities across a repo/subsystem/package/category, enter
+Audit Mode. Use [references/audit-mode.md](references/audit-mode.md), require an
+explicit target, and declare coverage. Do not capture a diff as the whole scope
+unless the user asked for branch or changed-code audit.
 
 If the user supplies, pastes, or names an existing implementation plan, spec,
 or roadmap, review that text instead of a git diff: rewrite the file directly
@@ -187,6 +204,10 @@ types or contracts changed, lint when style/imports/dead code changed, build
 checks when packaging or entrypoints changed, and any commands named by repo
 guidance. Verify the final diff is minimal and scoped.
 
+In Audit Mode, run only read-only checks and cheap verification commands. Do not
+run formatters, installs that mutate the working tree, commits, broad generated
+builds, or other commands that change source or unignored artifacts.
+
 ## Approval Bar
 
 Do not treat review as clean when any of the "Final Pass: Big
@@ -233,6 +254,11 @@ For review-only output, lead with prioritized findings and end with validation
 status. If no material issues survive verification, state the reviewed scope and
 say the code meets the selected rigor.
 
+For Audit Mode output, follow [references/audit-mode.md](references/audit-mode.md):
+declare what was reviewed, what was skipped or sampled, then present verified
+findings ordered by leverage. Keep direction findings separate from bugs,
+security, performance, tests, architecture, dependency, DX, and docs findings.
+
 On request, explain the result in plain English for a smart non-engineer.
 
 ### Inline Comments
@@ -243,6 +269,6 @@ instead of, or in addition to, a report block: use PR review tooling for a
 GitHub PR, or a comment tool for an editor/IDE session. Prefer fewer,
 higher-signal comments over one summary comment per file.
 
-Do not rewrite unrelated code, silently edit during review-only work, or hand
-off to PR publication, CI repair, security-only audits, or existing
-review-comment workflows.
+Do not rewrite unrelated code, silently edit during review-only or audit work,
+or hand off to PR publication, CI repair, exploit-oriented security work, or
+existing review-comment workflows.
