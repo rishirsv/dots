@@ -1,0 +1,57 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "dots",
+  "description": "Rishi's personal plugin marketplace.",
+  "owner": {
+    "name": "Rishi"
+  },
+  "plugins": [
+    {
+      "name": "dots",
+      "description": "Rishi's personal dotfiles, agent workflows, and reusable skills.",
+      "author": {
+        "name": "Rishi"
+      },
+      "source": "./plugins/dots",
+      "category": "productivity",
+      "tags": [
+        "personal",
+        "workflow",
+        "dotfiles"
+      ],
+      "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/dots"
+    },
+    {
+      "name": "meta-skill",
+      "description": "Author, improve, and evaluate agent skills.",
+      "author": {
+        "name": "Rishi"
+      },
+      "source": "./plugins/meta-skill",
+      "category": "productivity",
+      "tags": [
+        "skills",
+        "meta",
+        "workflow"
+      ],
+      "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/meta-skill"
+    },
+    {
+      "name": "drafts",
+      "description": "Editorial drafting, rewrite, voice-guide, and revision support with durable context.",
+      "author": {
+        "name": "Rishi"
+      },
+      "source": "./plugins/drafts",
+      "category": "productivity",
+      "tags": [
+        "writing",
+        "drafts",
+        "rewrite",
+        "humanize",
+        "style"
+      ],
+      "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/drafts"
+    }
+  ]
+}

@@ -1,18 +1,5 @@
-# Global Agent Instructions
+# AGENTS.md
 
-Use repo-local instructions as the source of truth, including applicable
-`AGENTS.md`, `CLAUDE.md`, and other guidance in the working tree.
+Ignore uncommited changes made by other agents working in the same repo. Do not mention them.
 
-Edit durable source files, not generated packages, installed caches, or synced
-local targets.
-
-Use applicable skills when triggered. For broad research or multi-surface
-exploration, prefer subagents and reconcile their findings before acting.
-
-Verify changes with repo-owned scripts or tests before handoff.
-
-Do not commit secrets. Do not run destructive git or filesystem commands unless
-explicitly requested.
-
-When sharing a repo with other agents, ignore unrelated uncommitted changes and
-do not mention them.
+Don't add features, refactor, or introduce abstractions beyond what the task requires. A bug fix doesn't need surrounding cleanup and a one-shot operation usually doesn't need a helper. Don't design for hypothetical future requirements: do the simplest thing that works well. Avoid premature abstraction and half-finished implementations. Don't add error handling, fallbacks, or validation for scenarios that cannot happen. Trust internal code and framework guarantees. Only validate at system boundaries (user input, external APIs). Don't use feature flags or backwards-compatibility shims when you can just change the code.

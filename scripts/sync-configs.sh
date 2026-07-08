@@ -7,11 +7,11 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--zsh|--launchagents|--karabiner ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--starship|--zsh|--launchagents|--karabiner ...]
 
-Copies repo-owned config sources from configs/ to this machine.
+Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
-Global agent instructions are installed as symlinks back to configs/agents/.
+Codex and Claude configs are installed as symlinks back to this repo.
 
 This script does not manage secrets. Keep shell secrets in ~/.zshrc.local.
 EOF
@@ -20,7 +20,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux zsh launchagents karabiner)
+    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux starship zsh launchagents karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -57,6 +57,9 @@ while (( $# )); do
       ;;
     --cmux)
       add_target cmux
+      ;;
+    --starship)
+      add_target starship
       ;;
     --zsh)
       add_target zsh
@@ -226,8 +229,8 @@ sync_drafts_styles() {
 
 sync_claude() {
   sync_claude_agents
-  install_file "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
-  install_file "$ROOT/configs/claude/keybindings.json" "$HOME/.claude/keybindings.json"
+  install_symlink "$ROOT/configs/claude/settings.json" "$HOME/.claude/settings.json"
+  install_symlink "$ROOT/configs/claude/keybindings.json" "$HOME/.claude/keybindings.json"
 }
 
 sync_vscode() {
@@ -245,13 +248,17 @@ sync_cmux() {
   install_file "$ROOT/configs/cmux/cmux.json" "$HOME/.config/cmux/cmux.json"
 }
 
+sync_starship() {
+  install_file "$ROOT/configs/starship.toml" "$HOME/.config/starship.toml"
+}
+
 sync_zsh() {
   install_file "$ROOT/configs/zsh/.zprofile" "$HOME/.zprofile"
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
 }
 
 sync_launchagents() {
-  install_file "$ROOT/configs/launchagents/com.rishi.cmux.disable-session-restore.plist" "$HOME/Library/LaunchAgents/com.rishi.cmux.disable-session-restore.plist"
+  install_file "$ROOT/configs/cmux/launchagents/com.rishi.cmux.disable-session-restore.plist" "$HOME/Library/LaunchAgents/com.rishi.cmux.disable-session-restore.plist"
 }
 
 sync_karabiner() {
@@ -268,6 +275,7 @@ for target in "${TARGETS[@]}"; do
     vscode) sync_vscode ;;
     ghostty) sync_ghostty ;;
     cmux) sync_cmux ;;
+    starship) sync_starship ;;
     zsh) sync_zsh ;;
     launchagents) sync_launchagents ;;
     karabiner) sync_karabiner ;;

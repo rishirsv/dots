@@ -1,16 +1,16 @@
 {
   "enabledPlugins": {
-    "dots@dots": true,
-    "drafts@dots": true,
-    "meta-skill@dots": true,
     "build-ios-apps@steady-app": true,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "dots@dots": true,
+    "meta-skill@dots": true,
+    "drafts@dots": true
   },
   "extraKnownMarketplaces": {
     "dots": {
       "source": {
         "source": "directory",
-        "path": "/Users/rishi/Code/dots/dist/claude"
+        "path": "/Users/rishi/Code/dots"
       }
     },
     "steady-app": {

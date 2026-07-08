@@ -8,9 +8,9 @@ usage() {
   cat <<'EOF'
 Usage: scripts/sync-plugins.sh [--all|--codex|--claude]
 
-Packages repo-owned plugins and refreshes installed local plugin caches.
-The --codex target also refreshes ~/.codex-personal when that home exists.
-Defaults to --all.
+Registers the repo-root plugin marketplace and refreshes installed local
+plugins. The --codex target also refreshes ~/.codex-personal when that home
+exists. Defaults to --all.
 EOF
 }
 
@@ -51,12 +51,10 @@ if (( ${#TARGETS[@]} == 0 )); then
   add_target all
 fi
 
-"$ROOT/scripts/package-plugins.sh"
-
-CODEX_MARKETPLACE="$ROOT/dist/codex"
-CLAUDE_MARKETPLACE="$ROOT/dist/claude"
+CODEX_MARKETPLACE="$ROOT"
+CLAUDE_MARKETPLACE="$ROOT"
 PLUGIN_NAMES=("${(@f)$(
-  python3 - "$ROOT/plugins/catalog.json" <<'PY'
+  python3 - "$ROOT/.agents/plugins/marketplace.json" <<'PY'
 import json
 import sys
 from pathlib import Path

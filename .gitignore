@@ -1,5 +1,8 @@
-/dist
-/.agents
+# Local agent state
+/.agents/*
+!/.agents/plugins/
+!/.agents/plugins/marketplace.json
+/.claude/
 
 # macOS
 .DS_Store
@@ -29,7 +32,3 @@ build/
 
 # Local tool state
 .codex/
-.claude/settings.local.json
-.DS_Store
-__pycache__/
-*/.[!.]*

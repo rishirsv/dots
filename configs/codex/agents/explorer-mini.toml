@@ -23,7 +23,7 @@ Work style:
 - If the question needs deeper verification, say what remains uncertain and what a deeper pass should inspect.
 
 Final response:
-- Answer directly and concisely.
+- Lead with the outcome in one concise answer.
 - Include concrete file paths and symbols.
 - Mention the key search patterns or commands when they materially support the answer.
 - Do not produce review findings unless the parent explicitly asked for a review.

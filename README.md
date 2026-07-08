@@ -1,142 +1,42 @@
 # Dots
 
-Source repo for Rishi's personal plugins, agent workflows, and machine
-configuration.
+Source repo for Rishi's personal plugins, agent workflows, and machine config.
 
-## Source Map
+## Source
 
-Edit durable source here:
+- `plugins/`: maintained plugin source.
+- `.agents/plugins/marketplace.json`: Codex marketplace source.
+- `.claude-plugin/marketplace.json`: Claude marketplace source.
+- `configs/`: source copies for Codex, Claude, Drafts, Cmux, Ghostty, VS Code,
+  Starship, Zsh, and Karabiner.
+- `scripts/`: repo helpers.
+- `AGENTS.md`: repo-local agent instructions.
 
-- `plugins/`: source for each maintained plugin.
-- `configs/`: source copies of Codex, Drafts styles, Claude, VS Code, Ghostty,
-  Zsh, and Karabiner configs.
-- `AGENTS.md`: repo instructions for agents working in this checkout.
-- `scripts/`: small helper entrypoints that are still source-owned.
-
-Generated output lives under ignored `dist/`.
-
-## Plugin Source
-
-Each plugin lives under `plugins/<plugin-name>/`.
-
-```text
-plugins/
-├─ catalog.json
-├─ dots/
-│  ├─ plugin.json
-│  ├─ package.ignore
-│  ├─ assets/
-│  └─ skills/
-└─ meta-skill/
-   ├─ plugin.json
-   ├─ package.ignore
-   ├─ assets/
-   ├─ references/
-   ├─ skills/
-   ├─ src/
-   └─ tests/
-```
-
-`plugins/catalog.json` is the source catalog. Generate vendor packages with:
-
-```sh
-scripts/package-plugins.sh
-```
-
-The script rebuilds:
-
-```text
-dist/
-├─ codex/
-│  ├─ .agents/plugins/marketplace.json
-│  └─ plugins/<plugin>/.codex-plugin/plugin.json
-└─ claude/
-   ├─ .claude-plugin/marketplace.json
-   └─ plugins/<plugin>/.claude-plugin/plugin.json
-```
-
-Codex and Claude use different package conventions, so generated manifests and
-marketplaces should remain vendor-specific:
-
-- Codex plugin packages use `.codex-plugin/plugin.json`.
-- Claude plugin packages use `.claude-plugin/plugin.json`.
-- Codex repo marketplaces use `.agents/plugins/marketplace.json`.
-- Claude marketplaces use `.claude-plugin/marketplace.json`.
-
-Install or refresh repo-owned plugins from the generated `dots` marketplace with
-the sync helper:
+## Commands
 
 ```sh
 scripts/sync-plugins.sh
+scripts/sync-configs.sh --dry-run --all
+scripts/verify.sh
 ```
 
-The helper packages all plugins in `plugins/catalog.json`, refreshes the default
-Codex home, refreshes `~/.codex-personal` when that independent home exists, and
-refreshes Claude.
+`scripts/sync-plugins.sh` registers this checkout as the local `dots`
+marketplace for Codex and Claude, then refreshes installed repo-owned plugins.
 
-## Config Source
-
-Machine config source copies live under `configs/`.
-
-```text
-configs/
-├─ agents/
-├─ claude/
-├─ cmux/
-├─ codex/
-├─ drafts/
-├─ ghostty/
-├─ karabiner/
-├─ launchagents/
-├─ vscode/
-└─ zsh/
-```
-
-Sync selected config sources with:
+Sync configs with scoped targets:
 
 ```sh
-scripts/sync-configs.sh --dry-run --all
-scripts/sync-configs.sh --agent-instructions
 scripts/sync-configs.sh --codex
 scripts/sync-configs.sh --codex-personal
 scripts/sync-configs.sh --drafts-styles
 scripts/sync-configs.sh --claude
-```
-
-Review the dry-run before applying a scoped sync. The script backs up existing
-targets before replacing them.
-
-Global agent behavior lives in `configs/agents/AGENTS.md`. Keep it handwritten
-and short; `scripts/sync-configs.sh` links it into `~/.codex/AGENTS.md`,
-`~/.codex-personal/AGENTS.md`, and `~/.claude/CLAUDE.md`.
-
-`codex p` is a shell shortcut for launching Codex with
-`CODEX_HOME=$HOME/.codex-personal`; it uses the independent personal Codex home,
-not a `--profile personal` layer under `~/.codex`. `--codex` and
-`--codex-personal` symlink both homes to the same repo-owned Codex config,
-keybindings, global instructions, and agent definitions so they differ only by
-home/account state.
-
-`--drafts-styles` installs the repo-managed Drafts style library into both
-`~/.codex/skill-state/drafts/styles` and
-`~/.codex-personal/skill-state/drafts/styles`. Shell-launched Codex and Claude
-also get `DRAFTS_STYLE_HOME=$HOME/Code/dots/configs/drafts/styles` from the
-repo-managed Zsh config, so the repo copy is the normal source of truth.
-Generated style guides may reflect private writing patterns. Keep sync mode at
-`guides_only` and do not commit raw Outlook, iMessage, Slack, or client
-references.
-
-Keep source config portable. Stable project roots may live in
-`configs/codex/config.toml`; dated throwaway workspaces, caches, auth, session
-state, and machine-local shell secrets should stay out of Git. Zsh secrets and
-local shell overrides belong in `~/.zshrc.local`, not `configs/zsh/`.
-
-## Validation
-
-Before committing plugin or config changes:
-
-```sh
-scripts/verify.sh
+scripts/sync-configs.sh --vscode
+scripts/sync-configs.sh --ghostty
+scripts/sync-configs.sh --cmux
+scripts/sync-configs.sh --starship
+scripts/sync-configs.sh --zsh
+scripts/sync-configs.sh --launchagents
+scripts/sync-configs.sh --karabiner
 ```
 
 For Meta-Skill changes, also run:
@@ -144,3 +44,6 @@ For Meta-Skill changes, also run:
 ```sh
 plugins/meta-skill/scripts/metaskill validate <skill-dir> --json
 ```
+
+Keep secrets, auth state, sessions, caches, and machine-local shell overrides out
+of this repo. Use `~/.zshrc.local` for local shell overrides.

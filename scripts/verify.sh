@@ -14,12 +14,71 @@ META_EVAL_SUITE="plugins/meta-skill/.meta-skill/evals.json"
 
 cd "$ROOT"
 
-echo "==> Package plugins"
-scripts/package-plugins.sh
+echo "==> Plugin metadata consistency"
+python3 - <<'PY'
+import json
+from pathlib import Path
 
-echo "==> Generated Meta-Skill CLI smoke test"
-PYTHONDONTWRITEBYTECODE=1 META_SKILL_CACHE_DIR="$ROOT/dist/.meta-skill-cache" \
-  "$ROOT/dist/codex/plugins/meta-skill/scripts/metaskill" doctor --json >/dev/null
+root = Path(".")
+codex_marketplace = json.loads((root / ".agents/plugins/marketplace.json").read_text())
+claude_marketplace = json.loads((root / ".claude-plugin/marketplace.json").read_text())
+codex_names = [plugin["name"] for plugin in codex_marketplace.get("plugins", [])]
+claude_names = [plugin["name"] for plugin in claude_marketplace.get("plugins", [])]
+if codex_names != claude_names:
+    raise SystemExit(f"marketplace plugin order mismatch: codex={codex_names!r} claude={claude_names!r}")
+
+for name in codex_names:
+    plugin_root = root / "plugins" / name
+    source_meta = json.loads((plugin_root / "plugin.json").read_text())
+    codex_meta = json.loads((plugin_root / ".codex-plugin/plugin.json").read_text())
+    claude_meta = json.loads((plugin_root / ".claude-plugin/plugin.json").read_text())
+    for field in ("name", "version", "description", "author", "keywords"):
+        values = {
+            "plugin.json": source_meta.get(field),
+            ".codex-plugin/plugin.json": codex_meta.get(field),
+            ".claude-plugin/plugin.json": claude_meta.get(field),
+        }
+        if len({json.dumps(value, sort_keys=True) for value in values.values()}) != 1:
+            raise SystemExit(f"{name} metadata drift for {field}: {values!r}")
+
+    expected_path = f"./plugins/{name}"
+    codex_entry = next(plugin for plugin in codex_marketplace["plugins"] if plugin["name"] == name)
+    claude_entry = next(plugin for plugin in claude_marketplace["plugins"] if plugin["name"] == name)
+    if codex_entry.get("source", {}).get("path") != expected_path:
+        raise SystemExit(f"{name} Codex marketplace path must be {expected_path}")
+    if claude_entry.get("source") != expected_path:
+        raise SystemExit(f"{name} Claude marketplace source must be {expected_path}")
+PY
+
+echo "==> Claude marketplace validation"
+claude plugin validate . >/dev/null
+
+echo "==> Codex marketplace smoke test"
+CODEX_VERIFY_HOME="$(mktemp -d /tmp/dots-codex-verify.XXXXXX)"
+cleanup_codex_verify_home() {
+  rm -rf "$CODEX_VERIFY_HOME"
+}
+trap cleanup_codex_verify_home EXIT
+CODEX_HOME="$CODEX_VERIFY_HOME" codex plugin marketplace add "$ROOT" >/dev/null
+PLUGIN_NAMES=("${(@f)$(
+  python3 - "$ROOT/.agents/plugins/marketplace.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+catalog = json.loads(Path(sys.argv[1]).read_text())
+for plugin in catalog.get("plugins", []):
+    print(plugin["name"])
+PY
+)}")
+for plugin in "${PLUGIN_NAMES[@]}"; do
+  CODEX_HOME="$CODEX_VERIFY_HOME" codex plugin add "$plugin@dots" >/dev/null
+done
+
+echo "==> Meta-Skill CLI smoke test"
+mkdir -p "$ROOT/.agents/tmp"
+PYTHONDONTWRITEBYTECODE=1 META_SKILL_CACHE_DIR="$ROOT/.agents/tmp/meta-skill-cache" \
+  "$ROOT/plugins/meta-skill/scripts/metaskill" doctor --json >/dev/null
 
 echo "==> Meta-Skill validation"
 for skill in "${META_SKILLS[@]}"; do

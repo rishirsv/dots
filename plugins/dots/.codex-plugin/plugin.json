@@ -1,0 +1,31 @@
+{
+  "name": "dots",
+  "version": "0.2.4",
+  "description": "Rishi's personal dotfiles, agent workflows, and reusable skills.",
+  "author": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/dots",
+  "keywords": [
+    "personal",
+    "workflow",
+    "dotfiles"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Dots",
+    "shortDescription": "Rishi's personal dotfiles, agent workflows, and reusable skills.",
+    "longDescription": "Rishi's personal dotfiles, agent workflows, and reusable skills.",
+    "developerName": "Rishi",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use dots for this workflow.",
+    "brandColor": "#36C5A7",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "screenshots": []
+  }
+}

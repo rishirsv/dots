@@ -1,12 +1,15 @@
 # Running The Oracle Through a Provider CLI
 
-Use this when the user explicitly approves a CLI route and wants another model to
-produce the oracle answer locally. A CLI route does not need a saved
-`.agents/oracle/<task>` package: pass the prompt directly to the agent and give
-it the approved repo files or directories as context. Build a package first only
-when the user wants a sendable bundle, the context is too large or scattered to
-reference directly, the CLI requires package-like input, or a durable package is
-preferred for the specific task.
+Default: no package. A CLI advisor can read the same local filesystem, so pass
+a standalone prompt, name the approved repo root or subdirectory, and list the
+exact files or directories to inspect.
+
+Package first only when:
+
+- the user wants a sendable bundle
+- context is too large or scattered for direct references
+- the CLI requires package-like input
+- a durable package record matters
 
 Two baseline routes are documented here: **Claude** via the `claude` CLI and
 **Codex** via `codex exec`. Both are advisory: read-only, no external writes, and
@@ -15,23 +18,22 @@ adoption.
 
 ## Before You Run
 
-1. Author a standalone prompt in the working context. Include the decision,
-   expected answer shape, local verification boundary, and direct file
-   references the model should inspect.
-2. Confirm approval for the route — the user named the provider, and the prompt
-   plus file references contain nothing they did not approve for it.
-3. Run the CLI's local `--help` before relying on exact flags; CLI versions
-   drift and rename flags.
-4. Pass the prompt text directly. Give the model file context only when the
-   oracle needs it and the CLI supports it; point it at the approved repo root,
-   subdirectory, or explicit files.
-5. Save the answer only when the task needs a local record; otherwise report the
-   answer and verification boundary directly.
+1. **Prompt:** decision, expected answer shape, verification boundary, exact
+   file references, and first-pass read order.
+2. **Approval:** provider named; prompt and file references contain only
+   approved content.
+3. **Flags:** run local `--help`; CLI flags drift.
+4. **Context:** point at the approved repo root, subdirectory, package folder,
+   or explicit files.
+5. **Record:** save the answer only when a local record is useful.
 
-If you intentionally build a `.agents/oracle/<task>` package first, inspect
-`prompt.md`, the `context.zip` file list, and the token total before running the
-CLI. Then run the CLI against that package record and save the answer next to
-it.
+Implementation guide: request approach, file-by-file steps, risks,
+constraints, and validation. Do not ask the advisor to edit files or complete
+the implementation.
+
+Package record: when using `.agents/oracle/<task>`, inspect `prompt.md`,
+`context.zip`, and token total before running the CLI. Save the answer next to
+the package.
 
 ## Claude (`claude` CLI)
 
@@ -44,19 +46,17 @@ claude -p "$(cat <<'PROMPT'
 <standalone oracle prompt with direct file references>
 PROMPT
 )" \
-  --model opus \
+  --model <advisor-model> \
   --effort high \
   --add-dir /path/to/repo-or-approved-context \
   > /tmp/answer.claude.md
 ```
 
-**Model** — `--model` takes a stable alias (`opus`, `sonnet`, `haiku`, `fable`)
-that resolves to the latest model in that family; prefer an alias over a full
-model ID so the run does not depend on a version-pinned name. If a full ID is
-needed, confirm the exact current one at run time via the CLI's `--help` or
-model list rather than trusting any ID written here. Default to `opus` for
-advisory work; use `fable` only when the user asks for the most capable model,
-`sonnet`/`haiku` when they want a faster, cheaper opinion.
+**Model** — prefer stable aliases (`opus`, `sonnet`, `haiku`, `fable`) over
+version-pinned IDs. Confirm full IDs at run time via `--help` or model list.
+Default to the strongest approved advisor model for implementation planning,
+architecture, design, and hard correctness. Use a faster or cheaper model only
+when the user asks for that trade-off or the task is a lightweight sanity check.
 
 **Effort is dynamic — choose it per oracle run.** `--effort` accepts
 `low | medium | high | xhigh | max`. There is no fixed default for Oracle: pick
@@ -67,16 +67,14 @@ state which level you chose and why.
 |---|---|
 | Latency-sensitive or trivial sanity check | `low` |
 | Quick second opinion, low-stakes | `medium` |
-| Most plan, code, and architecture reviews | `high` |
+| Most plan, code, design, and architecture reviews | `high` |
 | Hard reasoning, adversarial critique, subtle correctness | `xhigh` |
 | Correctness-critical where cost does not matter | `max` |
 
-**Output** — `--output-format text` (the default) writes the answer as plain
-prose, which is what you want saved to `answer.claude.md`. Use `json` only when
-downstream tooling needs the structured result object — the file then holds a
-JSON envelope, not prose. `--add-dir` grants read access to the approved repo
-folder, subdirectory, or package folder when the model needs files; `--bare`
-skips hooks and plugins for a clean advisory run.
+**Output** — keep plain text for `answer.claude.md`. Use `json` only when
+downstream tooling needs the structured result object. `--add-dir` grants read
+access to the approved repo, subdirectory, or package folder. `--bare` skips
+hooks and plugins for a clean advisory run.
 
 ## Codex (`codex exec`)
 
@@ -107,22 +105,19 @@ sets extra-high (`xhigh`) reasoning. `model_reasoning_effort` accepts
 pair can live in a `--profile` config file if you prefer not to pass them each
 run.
 
-**Context and output** — `--sandbox read-only` blocks writes; `--ephemeral` skips
-persisting a session; `--skip-git-repo-check` allows running outside a repo. Set
-the working root with `-C <dir>` to give Codex the approved repo, subdirectory,
-or package folder as context. Avoid `--add-dir` for advisory runs: `codex exec`
-treats it as a *writable* directory alongside the workspace, not a read-only
-context flag, so `-C` is the right way to supply context (and `--sandbox
-read-only` still blocks writes either way). `--output-last-message <file>` saves
-the final answer when a local record is useful; `--json` emits the full event
-stream if you need it.
+**Context** — `-C <dir>` gives Codex the approved repo, subdirectory, or package
+folder. Avoid `--add-dir` for advisory runs because `codex exec` treats it as a
+writable directory alongside the workspace; use `-C` plus `--sandbox read-only`.
+
+**Output** — `--output-last-message <file>` saves the final answer when a local
+record is useful. `--json` emits the full event stream when needed.
 
 ## After The Run
 
-Treat the CLI answer exactly like any other oracle answer: save it as
-`answer.<provider>.md` when useful, then run the SKILL's *After The Oracle*
-verification — extract concrete claims, check them against the repo, and
-classify each as adopt / verify-first / reject / missing-context. The CLI
-produced counsel, not proof. Report the route and model used, the chosen effort,
-the file references provided, the answer path if saved, and the verification
-boundary.
+Treat the CLI answer as counsel, not proof:
+
+- **Save:** `answer.<provider>.md` only when useful.
+- **Verify:** extract claims, check repo evidence, and classify each as adopt,
+  verify-first, reject, or missing-context.
+- **Report:** route, model, effort, file references, answer path if saved, and
+  verification boundary.

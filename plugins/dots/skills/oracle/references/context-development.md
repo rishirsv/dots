@@ -58,8 +58,7 @@ that explain why it is shaped this way and the authoring standard it must meet.
 - `risk`: a sample of how the skill is invoked or routed, so trigger/description
   changes are checked against real selection.
 
-**Exclude:** generated plugin packages under `dist/**` — they are rebuilt from
-source and only duplicate tokens. Exclude unrelated sibling skills.
+**Exclude:** unrelated sibling skills and installed plugin/cache copies.
 
 **Worked context map:**
 
@@ -67,10 +66,9 @@ source and only duplicate tokens. Exclude unrelated sibling skills.
 - plugins/dots/skills/oracle/SKILL.md (target): the skill contract being improved.
 - plugins/dots/skills/oracle/references/*.md (source): runtime depth the SKILL links to; advice must stay consistent.
 - plugins/dots/skills/oracle/scripts/oracle_package.py (source): the deterministic helper the guidance describes.
-- plugins/dots/tests/test_oracle_package.py (validation): pins helper behavior; kept outside the skill folder so it is not shipped in the portable package.
 - .plans/<skill>-design.md (constraint): why the skill is shaped this way and its non-goals.
 - plugins/meta-skill/skills/skill-writer/SKILL.md (constraint): house authoring standard the skill must satisfy.
-- excluded: dist/** — generated packages, rebuilt from source.
+- excluded: installed plugin/cache copies — duplicated runtime output, not source.
 ```
 
 ### Plan Or Spec Improvement

@@ -27,7 +27,7 @@ that runs on every change, so quality is enforced, not remembered.
 
 | Stack | Typical verification gate |
 |---|---|
-| Python | `ruff`/lint, `mypy`/type-check, `pytest` |
+| Python | lint, type-check, unit tests |
 | Node | lint (eslint), type-check (tsc), unit tests, build |
 | Rust | `cargo fmt --check`, `cargo clippy`, `cargo test` |
 | Go | `go vet`, `golangci-lint`, `go test ./...` |

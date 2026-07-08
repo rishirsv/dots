@@ -80,6 +80,18 @@ missing decisions, safer simplification, verification checklist, or a concise
 go/no-go. Do not ask for proof; ask for advice grounded enough that the primary
 agent can verify it locally.
 
+Implementation-guide request:
+
+- **Approach:** recommendation and why it fits local constraints.
+- **Steps:** file-by-file implementation plan.
+- **Risks:** likely mistakes and what not to change.
+- **Missing context:** smallest context that would change the plan.
+- **Validation:** local checklist before adoption.
+- **Evidence Notes:** exact paths, symbols, and source URLs.
+
+Boundary: the oracle may describe code shape or provide illustrative snippets.
+It must not edit files, claim completion, or replace local verification.
+
 Keep the main prose readable: mention symbols, filenames, or short artifact
 names in the body, and put exact paths, line ranges, and source URLs in a final
 `Sources` or `Evidence Notes` section. Do not use inline `path:line` citations

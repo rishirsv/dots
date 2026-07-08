@@ -995,7 +995,6 @@ def _detect_stack(root: Path) -> dict[str, bool]:
         "ci_gitlab": has(".gitlab-ci.yml"),
         "ci_circle": (root / ".circleci").is_dir(),
         "tests_dir": (root / "tests").is_dir() or (root / "test").is_dir(),
-        "pytest": has("pytest.ini", "tox.ini") or glob_any("**/conftest.py"),
         "linter_ruff": has("ruff.toml", ".ruff.toml"),
         "linter_eslint": has(".eslintrc", ".eslintrc.json", ".eslintrc.js", "eslint.config.js"),
         "prettier": has(".prettierrc", ".prettierrc.json", "prettier.config.js"),
@@ -1025,7 +1024,7 @@ def cmd_scaffold(args: argparse.Namespace) -> None:
 
     ci = [name.split('_', 1)[1] for name in ("ci_github", "ci_gitlab", "ci_circle") if stack[name]]
     print(f"- CI/CD: {', '.join(ci) if ci else 'MISSING'}")
-    print(f"- Tests: {'present' if stack['tests_dir'] or stack['pytest'] else 'MISSING'}")
+    print(f"- Tests: {'present' if stack['tests_dir'] else 'MISSING'}")
     linters = [n.split('_', 1)[-1] for n in ("linter_ruff", "linter_eslint", "prettier", "precommit") if stack[n]]
     print(f"- Lint/format: {', '.join(linters) if linters else 'MISSING'}")
 
@@ -1034,7 +1033,7 @@ def cmd_scaffold(args: argparse.Namespace) -> None:
         gaps.append("No AGENTS.md — agents have no checked-in guidance. See references/agents-md.md.")
     if not (stack["ci_github"] or stack["ci_gitlab"] or stack["ci_circle"]):
         gaps.append("No CI/CD — no automated verification gate on changes.")
-    if not (stack["tests_dir"] or stack["pytest"]):
+    if not stack["tests_dir"]:
         gaps.append("No test directory detected — no automated correctness signal.")
     if not linters:
         gaps.append("No linter/formatter config — mechanical quality is unenforced.")

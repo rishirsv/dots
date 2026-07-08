@@ -23,6 +23,9 @@ js_repl = false
 open_world_enabled = true
 destructive_enabled = true
 
+[apps.asdk_app_6938a94a61d881918ef32cb999ff937c]
+enabled = false
+
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
@@ -47,6 +50,12 @@ enabled = true
 [plugins."chrome@openai-bundled"]
 enabled = true
 
+[plugins."sites@openai-bundled"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
 [plugins."dots@dots"]
 enabled = true
 
@@ -54,9 +63,6 @@ enabled = true
 enabled = true
 
 [plugins."drafts@dots"]
-enabled = true
-
-[plugins."sites@openai-bundled"]
 enabled = true
 
 [projects."/Users/rishi/Code/agent"]
@@ -113,8 +119,17 @@ trust_level = "trusted"
 [projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/01_Clients/Project_Frogmen"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-07-07/i-w"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/us"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/up"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
-last_updated = "2026-07-07T13:33:00Z"
+last_updated = "2026-07-07T23:47:18Z"
 source_type = "local"
 source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -123,9 +138,9 @@ source_type = "local"
 source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.dots]
-last_updated = "2026-07-07T13:35:25Z"
+last_updated = "2026-07-08T01:22:41Z"
 source_type = "local"
-source = "/Users/rishi/Code/dots/dist/codex"
+source = "/Users/rishi/Code/dots"
 
 [mcp_servers.node_repl]
 args = []
@@ -149,6 +164,7 @@ CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 [desktop]
 followUpQueueMode = "queue"
 microphoneInputDeviceId = "888efaab4053051a1ceb0e7a41cb03d93bdfdbe78a17aa725e3e58e35b91dfff"
+keepRemoteControlAwakeWhilePluggedIn = true
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"

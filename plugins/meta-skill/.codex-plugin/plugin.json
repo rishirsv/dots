@@ -1,0 +1,31 @@
+{
+  "name": "meta-skill",
+  "version": "0.1.2",
+  "description": "Author, improve, and evaluate agent skills.",
+  "author": {
+    "name": "Rishi"
+  },
+  "repository": "https://github.com/rishirsv/dots",
+  "keywords": [
+    "skills",
+    "meta",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Meta Skill",
+    "shortDescription": "Author, improve, and evaluate agent skills.",
+    "longDescription": "Author, improve, and evaluate agent skills.",
+    "developerName": "Rishi",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use meta-skill for this workflow.",
+    "brandColor": "#7C4DFF",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "screenshots": []
+  }
+}
