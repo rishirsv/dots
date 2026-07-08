@@ -1,4 +1,4 @@
-# Finder Checklists
+# Review Checklists
 
 Read this when running `standard` or `max` rigor. The `quick` tier does a
 single direct pass over the hunk instead and does not need these checklists.
@@ -6,7 +6,7 @@ single direct pass over the hunk instead and does not need these checklists.
 ## 1. Correctness Checklist
 
 This checklist is the correctness pass used by
-[../skills/ultrareview/SKILL.md](../skills/ultrareview/SKILL.md).
+[../skills/code-review/SKILL.md](../skills/code-review/SKILL.md).
 
 1. **Logic errors and edge cases**: off-by-one, inverted or wrong conditions,
    bad operator choice, and boundary or empty/null/zero/overflow inputs.

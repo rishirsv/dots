@@ -1,9 +1,9 @@
 ---
-name: ultrareview
-description: "Reviews changed code, existing plans, or explicit repo/subsystem audit targets for correctness, reuse, simplification, efficiency, maintainability, and improvement opportunities. Invoked via ultrareview. Scales rigor from quick to max; applies same-scope cleanup fixes in diff review, and stays report-only by default in Audit Mode. Not for blank-slate planning, architecture-only scans, PR publication, or implementing broad audit findings without explicit selection."
+name: code-review
+description: "Reviews changed code, existing plans, or explicit repo/subsystem audit targets for correctness, reuse, simplification, efficiency, maintainability, and improvement opportunities. Invoked via code-review. Scales rigor from quick to max; applies same-scope cleanup fixes in diff review, and stays report-only by default in Audit Mode. Not for blank-slate planning, architecture-only scans, PR publication, or implementing broad audit findings without explicit selection."
 ---
 
-# Ultra-Review
+# Code Review
 
 Review changed code after implementation, an existing implementation plan,
 spec, roadmap, or an explicit repo/subsystem audit target. Preserve behavior,
@@ -28,7 +28,7 @@ implementation.
 
 ## References
 
-- Read [../../references/finder-checklists.md](../../references/finder-checklists.md) when
+- Read [../../references/review-checklists.md](../../references/review-checklists.md) when
   running `standard` or `max` rigor. It holds the four standard-lens
   checklists, the reviewer prompt shape, and the max-tier extra angles.
   `quick` rigor does not need it.
@@ -136,12 +136,12 @@ message when a multi-agent tool is available (see
 lane roles and fan-out rules): Correctness, Reuse and Structural
 Simplification, Code Quality and AI Slop, and Efficiency and Atomicity. If
 subagents are unavailable, run the same four passes yourself. Read
-[../../references/finder-checklists.md](../../references/finder-checklists.md)
+[../../references/review-checklists.md](../../references/review-checklists.md)
 for the full numbered checklist and reviewer prompt shape for each lens.
 
 For `max`, launch the four standard lenses plus the four max-tier extra angles
 from
-[../../references/finder-checklists.md](../../references/finder-checklists.md)
+[../../references/review-checklists.md](../../references/review-checklists.md)
 as eight independent review-only agents, using the same fan-out rules. Do not
 let one angle suppress another.
 
@@ -170,7 +170,7 @@ recall-biased review, uncertainty is not a reason to drop a realistic bug):
 
 For `max`, run the final pass for big simplifications after verification,
 using the "Final Pass: Big Simplifications" criteria in
-[../../references/finder-checklists.md](../../references/finder-checklists.md).
+[../../references/review-checklists.md](../../references/review-checklists.md).
 Give the reviewer the verified list and ask only for structural wins not
 already listed. Verify swept candidates with the same verdict ladder.
 
@@ -181,8 +181,8 @@ user asked for fixes or after surfacing the finding, and only when the intended
 behavior is clear.
 
 Apply same-scope quality fixes directly when fixing is allowed: reuse,
-simplification, and hard-cut fixes per the finder-checklist categories in
-[../../references/finder-checklists.md](../../references/finder-checklists.md)
+simplification, and hard-cut fixes per the review-checklist categories in
+[../../references/review-checklists.md](../../references/review-checklists.md)
 (structural simplification, code quality/AI slop, and efficiency/atomicity).
 
 When schemas, contracts, persisted state, routing, configuration, feature flags,
@@ -212,7 +212,7 @@ builds, or other commands that change source or unignored artifacts.
 
 Do not treat review as clean when any of the "Final Pass: Big
 Simplifications" criteria in
-[../../references/finder-checklists.md](../../references/finder-checklists.md)
+[../../references/review-checklists.md](../../references/review-checklists.md)
 remain visible in the reviewed scope.
 
 Be direct and demanding about maintainability findings. Do not be rude, and do

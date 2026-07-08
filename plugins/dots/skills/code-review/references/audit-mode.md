@@ -6,7 +6,7 @@ understand the target, find the highest-value improvement opportunities, and
 return verified findings with enough evidence that the user can choose what to
 do next.
 
-Audit Mode reuses UltraReview's review engine: rigor levels, finder lanes,
+Audit Mode reuses Code Review's review engine: rigor levels, finder lanes,
 candidate verification, severity ordering, hard-cut simplification pressure, and
 the final big-simplification pass. Its safety model is different from diff
 review: broad audits are report-only by default.
