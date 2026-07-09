@@ -30,8 +30,8 @@ implementation.
 
 - Read [../../references/review-checklists.md](../../references/review-checklists.md) when
   running `standard` or `max` rigor. It holds the four standard-lens
-  checklists, the reviewer prompt shape, and the max-tier extra angles.
-  `quick` rigor does not need it.
+  checklists, the Code Quality smell baseline, the reviewer prompt shape, and
+  the max-tier extra angles. `quick` rigor does not need it.
 - Read
   [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
   for the canonical hard-cut policy when a fix touches schemas, contracts,

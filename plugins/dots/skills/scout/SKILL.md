@@ -1,6 +1,6 @@
 ---
 name: scout
-description: "Grills a fuzzy idea — a feature, design, architecture, workflow, or any piece of knowledge work — into build-ready context: refines the edges, settles ubiquitous vocabulary, explores the decision tree, and surfaces unknown unknowns through interviews, blindspot passes, brainstorms, prototypes, and references, with subagents doing all external work. Covers before, during, and after implementation. Explicit-only; not for already-specified work, final blocking questions, or a single-fork check."
+description: "Grills a fuzzy idea — feature, design, architecture, workflow, or knowledge work — into build-ready context: refines edges, settles vocabulary, explores the decision tree, and surfaces unknown unknowns by sending scouts: subagents for scouring, repo exploration, web research, reference reading, pressure tests, and image/prototype directions. Covers before, during, and after implementation. Explicit-only; not for already-specified work, final blocking questions, or a single-fork check."
 ---
 
 # Scout
@@ -151,18 +151,30 @@ rejected branches, riskiest assumptions. Draft the plan leading with the
 decisions most likely to change, or capture and hand off (below); the point
 is that whoever plans next inherits loaded context, not a cold start.
 
-## Subagent Workflow
+## Sending Scouts
 
-The main agent owns the conversation and protects its context window — it
+Sending scouts is the default move when better facts would improve the next
+turn. The main agent owns the conversation and protects its context window — it
 holds the planning, the brainstorm, and the decision tree, and the entire
-campaign should fit in one. Anything external is always subagent work,
-never done inline — repo reads, web research, reference reading, prototype
-building. Weave findings back as conversation, never pasted reports.
+campaign should fit in one. Scouts collect facts from the codebase, research,
+references, and external sources; the main agent synthesizes the recommendation;
+the user owns the decision.
 
-- **Grounding**: dispatch an explorer or researcher during the user's
-  think-time — fire it with the opening question, harvest it when they
-  answer. Fan out only genuinely independent questions, in one batch. Shape
-  every lane like this:
+If the next move would be guessing, repeating a question, giving a
+recommendation without evidence, or burning the main context on broad reading,
+send scouts first. Do not wait for the user to ask for research or exploration:
+when additional information would help answer their question, guide them, or
+make a recommendation, dispatch a bounded lane and tell them why in one line.
+Stay inline only for a truly short lookup that would cost less than delegation.
+
+Anything external is scout work, never done inline: repo reads, web research,
+reference reading, scouring, prototype building, and pressure tests. Weave
+findings back as conversation, never pasted reports. Separate what the scout
+proved, what you infer from it, and what you recommend next.
+
+- **Lane shape**: dispatch scouts during the user's think-time — fire them
+  with the opening question, harvest them when they answer. Fan out only
+  genuinely independent questions, in one batch. Shape every lane like this:
 
   ```text
   Question: <one bounded question>
@@ -172,11 +184,25 @@ building. Weave findings back as conversation, never pasted reports.
   Stop condition: enough evidence to answer the bounded question
   ```
 
-- **Prototyping**: worker subagents build the reactable artifacts — e.g.
+- **Scouring**: use when the unknown is "what should we know here?" rather
+  than a single answer. Sweep a bounded space — repo/docs, examples, prior art,
+  external references, or screenshots — and return the few findings that change
+  the conversation.
+- **Codebase exploration**: use explore agents to map files, symbols, flows,
+  ownership, and tests before asking the user about facts the repo can answer.
+- **Research**: use research scouts for web or mixed research when the answer
+  depends on current facts, external APIs, product behavior, standards, market
+  context, or unfamiliar domains.
+- **References**: when the user points at an artifact, product, doc, library,
+  or existing code, send a scout to extract the semantics worth reusing.
+- **Image/prototype scouting**: worker subagents build the reactable artifacts
+  — e.g.
   eight SwiftUI preview variations, four HTML sketches, three generated
   image directions, two outline drafts — each worker with a disjoint output
   path, launched in parallel. The main agent opens the batch for the user —
-  browser, artifact, or inline images — and grills the reaction.
+  browser, artifact, or inline images — and grills the reaction. A scout may
+  activate image-generation tools to create fast visual probes; treat those
+  images as scouting evidence, not production assets.
 - **Pressure-testing**: for a load-bearing claim or finding, an adversarial
   lane prompted to refute it — never the lane that produced it.
 

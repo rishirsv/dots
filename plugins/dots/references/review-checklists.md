@@ -53,6 +53,11 @@ For each change:
 
 ## 3. Code Quality and AI Slop Checklist
 
+Use these checks alongside repo guidance. Treat the smell baseline as
+judgment-call heuristics, not hard style rules: repo standards override them,
+tool-enforced issues can be skipped, and every reported smell needs concrete
+diff evidence plus a maintainability cost.
+
 1. **Redundant state**: state that duplicates existing state, cached values that
    could be derived, observers/effects that could be direct calls.
 2. **Parameter sprawl**: new parameters or booleans instead of clearer ownership
@@ -77,6 +82,46 @@ For each change:
     unnecessary optionality, or ad-hoc object shapes used to bypass clear types.
 11. **Inconsistent local style**: naming, error handling, imports, testing, or
     module shape that ignores the surrounding code.
+
+### Code Smell Baseline
+
+Scan the changed code for these smells when they are visible in the diff:
+
+1. **Mysterious Name**: a function, variable, type, file, or module name hides
+   what it represents. Rename it, or simplify the design until an honest name is
+   obvious.
+2. **Duplicated Code**: the same logic shape appears in multiple hunks, files,
+   branches, tests, or fixtures. Extract the shared behavior, reuse an existing
+   helper, or collapse the duplicated paths.
+3. **Feature Envy**: code spends more effort reading another object, module, or
+   data shape than its own state. Move behavior toward the owner of the data or
+   expose one clearer operation there.
+4. **Data Clumps**: the same group of fields, parameters, or options travels
+   together across the change. Give the group a named type or existing domain
+   object.
+5. **Primitive Obsession**: raw strings, booleans, numbers, maps, or loose
+   objects stand in for a domain concept. Use an existing typed concept or add
+   the smallest explicit one when the boundary warrants it.
+6. **Repeated Switches**: repeated `switch`, `if`, pattern-match, or dispatch
+   cascades branch on the same concept. Centralize the dispatch, use a table, or
+   move behavior behind the type that owns the variant.
+7. **Shotgun Surgery**: one logical change requires scattered edits across many
+   unrelated files. Pull the responsibility behind one owner, helper, policy, or
+   module.
+8. **Divergent Change**: one file or module changes for unrelated reasons in the
+   same diff. Split responsibilities only when it reduces real local complexity.
+9. **Speculative Generality**: new abstractions, hooks, parameters, interfaces,
+   or modes serve no current requirement. Delete or inline them until the real
+   need exists.
+10. **Message Chains**: callers walk through long object or module chains to get
+    work done. Hide the navigation behind one operation on the nearest
+    meaningful owner.
+11. **Middle Man**: a wrapper, helper, class, component, or service mostly
+    forwards calls without adding a stable responsibility. Remove it or move the
+    responsibility into it.
+12. **Refused Bequest**: an implementation, subclass, component, or adapter
+    ignores most of the contract it inherits. Prefer composition, a smaller
+    interface, or a direct owner.
 
 ## 4. Efficiency and Atomicity Checklist
 
