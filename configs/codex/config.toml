@@ -1,53 +1,43 @@
-# Repo-local Codex config for maximum local autonomy in this trusted repo.
-# Supplements ~/.codex/config.toml when this trusted repository is open.
+# Codex user config managed from the dots repo.
+# Symlinked into ~/.codex/config.toml and ~/.codex-personal/config.toml.
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-service_tier = "default"
-model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
 
-notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
-
-[tools]
-view_image = true
+[projects."/Users/rishi/Code/dots"]
+trust_level = "trusted"
 
 [features]
 apps = true
 memories = true
-prevent_idle_sleep = true
 undo = true
-js_repl = false
+
+[tools]
+view_image = true
 
 [apps._default]
-open_world_enabled = true
 destructive_enabled = true
+open_world_enabled = true
 
-[apps.asdk_app_6938a94a61d881918ef32cb999ff937c]
-enabled = false
-
-[plugins."computer-use@openai-bundled"]
+[plugins."browser@openai-bundled"]
 enabled = true
 
 [plugins."build-ios-apps@steady-app"]
 enabled = true
 
-[plugins."documents@openai-primary-runtime"]
-enabled = false
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = false
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = false
-
-[plugins."presentations@openai-primary-runtime"]
-enabled = false
-
-[plugins."browser@openai-bundled"]
+[plugins."chrome@openai-bundled"]
 enabled = true
 
-[plugins."chrome@openai-bundled"]
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."dots@dots"]
+enabled = true
+
+[plugins."drafts@dots"]
+enabled = true
+
+[plugins."meta-skill@dots"]
 enabled = true
 
 [plugins."sites@openai-bundled"]
@@ -55,92 +45,6 @@ enabled = true
 
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
-
-[plugins."dots@dots"]
-enabled = true
-
-[plugins."meta-skill@dots"]
-enabled = true
-
-[plugins."drafts@dots"]
-enabled = true
-
-[projects."/Users/rishi/Code/agent"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/steady-app"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/dots"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011632839818Z-f0bed97d/trials/adhoc-1.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.no-skill.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.no-skill.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T012222812619Z-648a2b43/trials/adhoc-1.current.t1/workspace"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-06/l"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/kpmg"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/files-mentioned-by-the-user-codex"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/ts-ai"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/01_Clients/Project_Frogmen"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/i-w"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/us"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-07/up"]
-trust_level = "trusted"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-07-07T23:47:18Z"
-source_type = "local"
-source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[marketplaces.openai-primary-runtime]
-source_type = "local"
-source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
-[marketplaces.dots]
-last_updated = "2026-07-08T05:13:43Z"
-source_type = "local"
-source = "/Users/rishi/Code/dots"
 
 [mcp_servers.node_repl]
 args = []
@@ -160,46 +64,3 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunct
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.623.101652"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
-
-[desktop]
-followUpQueueMode = "queue"
-microphoneInputDeviceId = "888efaab4053051a1ceb0e7a41cb03d93bdfdbe78a17aa725e3e58e35b91dfff"
-keepRemoteControlAwakeWhilePluggedIn = true
-
-[desktop.appearanceLightChromeTheme]
-accent = "#339cff"
-contrast = 45
-ink = "#1a1c1f"
-opaqueWindows = false
-surface = "#ffffff"
-
-[desktop.appearanceLightChromeTheme.fonts]
-code = "CommitMono"
-
-[desktop.appearanceLightChromeTheme.semanticColors]
-diffAdded = "#00a240"
-diffRemoved = "#ba2623"
-skill = "#924ff7"
-
-[desktop.appearanceDarkChromeTheme]
-accent = "#339cff"
-contrast = 60
-ink = "#ffffff"
-opaqueWindows = false
-surface = "#181818"
-
-[desktop.appearanceDarkChromeTheme.fonts]
-code = "CommitMono"
-
-[desktop.appearanceDarkChromeTheme.semanticColors]
-diffAdded = "#40c977"
-diffRemoved = "#fa423e"
-skill = "#ad7bf9"
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-
-[hooks.state]
-
-[hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:b09e4381778bd6404d2b1d1e948cf723e726593a43395f8808a5845fa82d5bc6"
