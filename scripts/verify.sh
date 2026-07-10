@@ -4,13 +4,10 @@ set -euo pipefail
 ROOT="${0:A:h:h}"
 METASKILL="plugins/meta-skill/scripts/metaskill"
 META_SKILLS=(
-  plugins/meta-skill/skills/meta-skill
-  plugins/meta-skill/skills/skill-writer
-  plugins/meta-skill/skills/skill-doctor
+  plugins/meta-skill/skills/skill-author
+  plugins/meta-skill/skills/skill-reviewer
   plugins/meta-skill/skills/skill-evaluator
-  plugins/meta-skill/skills/skill-benchmarker
 )
-META_EVAL_SUITE="plugins/meta-skill/.meta-skill/evals.json"
 
 cd "$ROOT"
 
@@ -95,22 +92,11 @@ done
 echo "==> Dots eval suite checks"
 while IFS= read -r suite; do
   "$METASKILL" eval run --check --suite "$suite" --json >/dev/null
-done < <(find plugins/dots/skills -path '*/.*/*evals.json' -print | sort)
+done < <(find plugins/dots/skills -path '*/evals/evals.json' -print | sort)
 
 echo "==> Dots HTML deterministic checks"
 node plugins/dots/skills/html/scripts/generate-theme.mjs --check
 node --test plugins/dots/skills/html/scripts/chart.test.mjs
-
-echo "==> Meta-Skill docs gates"
-"$METASKILL" docs emit-cli --check >/dev/null
-"$METASKILL" docs lint --json >/dev/null
-
-if [[ -f "$META_EVAL_SUITE" ]]; then
-  echo "==> Meta-Skill eval suite check"
-  "$METASKILL" eval run --check --suite "$META_EVAL_SUITE" --json >/dev/null
-else
-  echo "==> Meta-Skill eval suite check (skipped: $META_EVAL_SUITE not found)"
-fi
 
 echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --codex-personal --claude

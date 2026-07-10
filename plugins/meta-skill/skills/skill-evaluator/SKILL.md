@@ -1,238 +1,113 @@
 ---
 name: skill-evaluator
-description: "Use when creating or running an eval suite for a skill or other target. Builds tasks, graders, validations, and reports that compare baseline and candidate outcomes. Not for authoring new skills, one-off diagnosis or fixes, generating candidate changes, or recurring eval presets."
+description: "Use when the user asks to run, grade, browse, or report agent-skill evaluations: ad hoc evals, suites, candidate comparisons, recurring release or quality checks, run history, or the evaluation workbench. Owns evaluation artifacts and runs; not for source review, diagnosis from existing evidence, or edits."
 ---
 
 # Skill Evaluator
 
-Build evaluation suites for a target and run the parts the harness can
-execute. A suite runs the same tasks against one or more agent-harness
-candidates, such as no skill, the current skill, or a named candidate skill.
-The evaluator records what happened; it does not edit the target or generate
-candidate changes.
+Measure how an agent skill behaves on realistic tasks. Own ad hoc evals,
+evaluation suites, named run profiles, candidates, graders, run history,
+reports, and the evaluation workbench. Do not review or edit the target skill's
+source and do not generate candidate changes.
 
-Use two kinds of checks: **evaluations** (semantic, judge- or human-graded
-task outcomes) and **validations** (deterministic pass/fail checks). For
-other artifacts, first define the artifact entry mode: what artifact is
-supplied, what task runs, what outcome is graded, and what runner or manual
-path can produce that evidence.
+Use `skill-reviewer` for static diagnosis and `skill-author` for source
+mutation. Evaluation failures may produce a precise handoff to either skill,
+but they are not edit authority.
 
-Keep the lane narrow: measure behavior, explain what passed or failed, make
-unknown evidence and coverage limits visible, then route fixes to
-`skill-doctor`. User-facing answers should lead with the decision the
-evidence supports.
+## Start With The Decision
 
-## Evaluation Posture
+State the decision the evidence should support and the smallest fair path:
 
-Assume the user does not know what an eval is. Guide them through the
-decision: whether an eval is worth running, what evidence would be fair,
-which runner fits, where human judgment is needed, and what conclusion the
-evidence can and cannot support. Keep guidance outcome-first: desired
-decision, success criteria, available evidence, constraints, and final
-artifact. Avoid rigid step-by-step process unless order affects validity. Name a
-reasonable default when setup requires one. When the user is unsure, offer
-the smallest useful next step; when evidence is missing, say what is missing
-and how to get it. Treat `unknown`, calibration gaps, and coverage limits as
-useful signals, not failures to hide.
+- an **ad hoc eval** for an exploratory signal from one realistic task
+- an **evaluation suite** for durable evidence across tasks and candidates
+- a **named run profile** for repeating a stable suite configuration and
+  comparing like-for-like history
+- **no suite yet** when the target is still changing shape, a deterministic
+  validation fully answers the question, or maintenance cost exceeds the
+  decision's value
 
-For an agent skill, use the built-in defaults: output-quality dimensions,
-triggering tasks, and shipped general checks. For any other artifact, use
-[references/generalist.md](references/generalist.md).
+Start from real failures, representative workflows, prior outputs, manual
+review, or existing runs. Mark synthetic cases as hypotheses until reviewed.
+Ask only for missing choices that change the claim, task set, candidate set,
+grader, or human-review standard.
 
-## Workbench
+Read [suite-design.md](references/suite-design.md) when authoring or changing
+tasks and graders. Read [human-review.md](references/human-review.md) when a
+run needs human judgment. Use
+[eval-vocabulary.md](../../references/eval-vocabulary.md) for canonical terms,
+[run-layout.md](../../references/run-layout.md) for artifact authority, and
+[cli.md](../../references/cli.md) for exact commands.
 
-Artifacts live in the hidden workbench at the target skill's project root:
-`<project>/.<skill-name>/`, where `<skill-name>` comes from the target
-payload's `SKILL.md` frontmatter when available. The portable payload remains
-the target skill directory; the hidden workbench is development state. See
-[run-layout.md](../../references/run-layout.md) for the run-directory tree.
-Authority is split cleanly: `evals.json` owns all metadata (suite membership,
-defaults, runner plan, candidate guidance, repetition counts, materialization
-intent); task folders own authored content; `runs/<run-id>/` owns what
-actually ran.
+## Author Fair Evidence
 
-`task.md` contains only visible agent bytes. Never put front matter, hidden
-judge guidance, expected outputs, validator hints, grader notes, or harness
-metadata in `task.md`.
+Keep the visible task stable while candidates vary. Use the no-skill baseline
+by default so the report can show what the skill changed; omit it only when the
+comparison cannot answer the decision, and record why.
 
-## Reference Map
+`<skill>/evals/evals.json` schema version 2 owns the authored suite, candidates,
+and named run profiles. Keep simple tasks inline as top-level `evals[]` rows using `id`,
+`prompt`, `expected_output`, and `expectations`. Use `cases/<id>/` only when a
+task needs external fixtures, expected output, hidden judge guidance, or a
+deterministic validator. Follow the schema and placement rules in the shared
+references rather than inventing parallel metadata.
 
-Read only what the task needs:
+The agent may see the task, declared fixtures, and selected candidate payload.
+It must not see expectations, expected outputs, validators, model-judge
+guidance, or human labels. Keep the task's user-visible requirements honest:
+hidden graders may evaluate them, not secretly introduce them.
 
-| Need | Read |
-|---|---|
-| Smallest eval loop, comparing candidates, or skipping a suite | [references/methodology.md](references/methodology.md) |
-| Eval type, grader mix, example task shape | [references/eval-types.md](references/eval-types.md) |
-| Tune skill activation and `description` routing | [references/trigger-tuning.md](references/trigger-tuning.md) |
-| Author `evals.json` and materialize task folders | [references/evaluations.md](references/evaluations.md) |
-| Calibrate an LLM judge against human labels | [references/judge-calibration.md](references/judge-calibration.md) |
-| Run guided human review and collect labels | [references/human-grading.md](references/human-grading.md) |
-| Author deterministic `validate.*` checks | [references/validations.md](references/validations.md) |
-| Guided-user interaction patterns, intake shape, routing table | [references/examples.md](references/examples.md) |
-| Evaluate a non-skill artifact | [references/generalist.md](references/generalist.md) |
-| Turn a Codex thread into improvement input | [thread-skill-improvement.md](../../references/thread-skill-improvement.md) |
-| Static skill quality and payload hygiene | [judge-rubric.md](../../references/judge-rubric.md), [payload-hygiene.md](../../references/payload-hygiene.md) |
-| CLI for materialize, run, progress, grade, validate | [cli.md](../../references/cli.md) |
+The current runner supplies the selected candidate payload. It can compare
+behavior with and without that payload; it does not prove that a platform would
+naturally discover the skill. State this coverage limit whenever the requested
+claim concerns discovery or routing.
 
-## Vocabulary
+## Grade And Review
 
-See [eval-vocabulary.md](../../references/eval-vocabulary.md) for
-suite/task/candidate/trial/transcript/outcome/grader terms and schema field
-naming rules. This lane also uses **run**, **quality loop**, **trigger
-tuning**, **judge alignment**, **one-off check**, **eval suite**, **eval
-preset** (owned by `skill-benchmarker`), and **no suite yet**, defined in
-[references/examples.md](references/examples.md) and
-[references/methodology.md](references/methodology.md).
+Use the most exact fair grader:
 
-## Workflow
+- deterministic checks for files, schemas, exact state, tests, and observable
+  process constraints
+- model judgment for semantic quality with multiple valid outcomes
+- human judgment for taste, domain expertise, ambiguous evidence, and important
+  accept/reject decisions
 
-### 1. Guided Intake
+Prefer binary checks. Use `unknown` when evidence cannot support a fair label.
+Inspect failed, surprising, and disagreed trials before changing a task or
+grader. Keep grader failures separate from target-skill failures.
 
-Translate the user's request into a decision, identify the smallest useful
-path, and explain what that path can prove. Start from error analysis when
-possible: ask what real traces, user reports, manual review findings,
-previous failures, release checks, or common workflows already exist. If
-none exist, suggest a tiny exploratory review or quality loop before building
-infrastructure.
+The workbench is the primary human interface. Use `Evals` to inspect the suite
+and case coverage, `Experiments` to configure and compare immutable runs, and
+`Review` for candidate-blind pairwise annotations or absolute human grades.
+Start with one trial per case, then use selected-case reruns or repetitions when
+variance, disagreement, or a release criterion needs more evidence. Promote a
+useful ad hoc eval into the suite only after explicit approval.
 
-When the real trace is a Codex thread and the user wants an existing skill
-improved from it, read
-[thread-skill-improvement.md](../../references/thread-skill-improvement.md);
-use `sessions extract` for the handoff packet, then turn only realistic
-thread prompts into eval seeds when measured candidate evidence is needed. If
-the packet shows one concrete source defect instead, route to `skill-doctor`.
+Keep outcomes and produced artifacts primary during review. Open transcripts
+for failure diagnosis or grader audits. Show the selected baseline, model,
+runner, local storage path, and known external model boundary before launch;
+localhost does not mean trial inputs remain local. Use the CLI as the scripted
+interface for automation and escape hatches.
 
-Disambiguate static review from behavioral measurement consistently. See the
-lane-ownership split in
-[meta-skill/SKILL.md](../meta-skill/SKILL.md#routing-and-skill-selection).
-When authoring skill-quality eval tasks, use
-[judge-rubric.md](../../references/judge-rubric.md) and
-[payload-hygiene.md](../../references/payload-hygiene.md); keep those
-expectations hidden in `judge.md`, `expectations[]`, or validators, and never
-stage hidden grader guidance into `task.md`.
+## Run And Report
 
-Before authoring or running anything, use the intake shape and routing table
-in [references/examples.md](references/examples.md) to name the smallest
-evidence plan and confirm it with the user when a missing decision would
-change the eval path, runner, external writes, or human-review standard.
+Run only after the suite passes its preflight checks. Treat a run as frozen
+evidence: changing the suite, candidate source, or grader definition requires a
+new run; recording or revising a grade regenerates the derived report.
 
-### 2. Scope
+Lead the report with the evaluation objective, experiment configuration, and
+per-case baseline-versus-candidate change. For each failure, show the failed
+expectation or check and its evidence.
+Also report human/model disagreements, ungraded or unknown outcomes, run or
+grader errors, provenance, and coverage limits. Classify the first upstream
+cause before handing off a defect.
 
-Name the decision the suite should support, the target, and the target's job.
-Pick the route (skill defaults or generalist judge guidance builder), state
-whether triggering is in scope, and choose the eval type and grader mix with
-[references/eval-types.md](references/eval-types.md); for description or
-activation questions, read [references/trigger-tuning.md](references/trigger-tuning.md).
-Check "When Not To Evaluate" in
-[references/methodology.md](references/methodology.md) first. "Not worth a
-suite yet" is a successful outcome when it is the honest answer.
+A named run profile is a stable selection and execution policy inside the
+suite, not a second artifact system. Compare historical runs only when they use
+the same relevant profile inputs, and disclose any scope change. Keep pairwise
+review coverage separate from declared absolute human graders; a sampled A/B
+annotation does not silently become a trial grade.
 
-### 3. Author The Suite Manifest And Materialize Task Folders
-
-Write or update `.<skill-name>/evals.json`; see
-[references/evaluations.md](references/evaluations.md). Keep metadata minimal:
-target, defaults, tasks, repetition counts, runner intent, candidate
-selection, materialization intent, optional expectations, and optional
-grader declarations. Do not put hidden metadata in `task.md`, and do not
-create another metadata file in task folders.
-
-Create `.<skill-name>/cases/<task-id>/task.md` and optional fixtures,
-`judge.md`, expected output, and validator files. `task.md` is the prompt
-shown to the agent; hidden files stay outside the workspace. Make each task's
-success criteria clear enough that a domain reviewer could tell whether a
-good agent should pass.
-
-### 4. Author Graders
-
-Author deterministic checks; see [references/validations.md](references/validations.md).
-General checks already ship with the plugin. Add task-local `validate.*` files
-only when a task needs exact, deterministic checks. Choose the grader mix with
-[references/eval-types.md](references/eval-types.md#choose-the-grader-mix);
-prefer binary pass/fail checks first and use the label scale in
-[eval-vocabulary.md](../../references/eval-vocabulary.md).
-
-Declare task-local `judge.md` and `validate.*` files in `graders[]`; undeclared
-hidden grader files are ignored. Use explicit `graders[]` entries for named
-metrics, report fields, advisory checks, and checks release gates should enforce.
-Use `expectations[]` for hidden model-judge checks that are visible to the
-grader but not to the agent.
-
-Graders are load-bearing by default. Any non-advisory `fail` fails the trial.
-Set `advisory: true` when a grader should inform review without failing the
-trial; an advisory `fail` caps the verdict at `inconclusive`. A case with only
-advisory graders can never pass and is linted.
-
-Use `gate` or `required` for report emphasis and preset-level release gates. It
-does not change trial verdict folding.
-
-### 5. Calibrate
-
-Before trusting a judge at scale, align it against human grades; see
-[references/judge-calibration.md](references/judge-calibration.md). Use
-`eval review` as the primary loop for critique shadowing, agreement checks, and
-spot review. It opens the local review workbench, keeps the judge grade hidden
-until the reviewer commits, records human labels, and shows live agreement with
-the trust band.
-
-Use `eval human` and `eval calibrate --run <run-id-or-path>` as the headless
-path. `eval calibrate` writes a calibration artifact under
-`.<skill-name>/calibrations/`. Report paired labels, disagreements, trust band,
-and the scope where the judge matched human review. Do not broaden that claim
-beyond the checked slice.
-
-### 6. Run And Report
-
-Use App Server for eval suites: multiple tasks, repetitions, baseline
-comparison, grading, or any decision that needs repeatability. The CLI
-accepts only `codex_app_server` as a concrete eval runner; run through the
-plugin adapter, consuming run artifacts and progress files rather than
-calling raw App Server JSON-RPC directly. Run
-`<meta-skill-root>/scripts/metaskill doctor --json` before the first formal
-suite on a machine, or when runner readiness is uncertain.
-
-Run formal suites with `eval run --parallel N` when concurrent trial execution
-is useful. Use `eval grade --parallel N` when grading an existing run. Keep
-`N` conservative for expensive model judges or shared local resources.
-
-Use `eval run --adhoc --task "<prompt>" [--skill <dir>]` for one realistic
-one-off check. It uses the same staging and freezing pipeline, writes real run
-artifacts, flags the run as adhoc, and leaves the verdict `ungraded` because no
-graders exist. Promote a useful adhoc prompt into the suite by copying the case
-folder into `.<skill-name>/cases/` and adding the case to `evals.json`.
-
-Use child threads and subagents for reading, research, and repair work only;
-see [skill-trial-runs.md](../../references/skill-trial-runs.md). Do not use
-their output as behavioral eval evidence. Route doctor fixes and failure
-reproduction to `skill-doctor`.
-
-After grading, render the run with
-`<meta-skill-root>/scripts/metaskill eval report --run <run-id>` (see
-[cli.md](../../references/cli.md)) instead of hand-assembling a summary from
-run files. `eval run` always preflight-lints before running (use `eval run
---check` to lint only); use `eval review` for the local review workbench,
-`eval human` for headless review packets or labels, `eval calibrate` for
-judge/human agreement artifacts, and `eval list` to find earlier runs.
-
-Report per-task outcomes, grades, aggregate performance, failed tasks, and the
-baseline-vs-candidate result. When repeated checks exist, summarize them as
-counts, for example: `Repeated 5 times: Passed: 1. Failed: 4. Result:
-inconsistent; do not treat this as reliable.` Hand fixes to `skill-doctor`.
-
-## Output
-
-Close with: suite location; what was authored, run, and skipped; headline
-counts and comparison rows; calibration status and disagreements (or why
-skipped); grader errors as separate judge infrastructure failures, not skill
-failures; failure triage (skill/grader/harness failure, task ambiguity, model
-variance, environment failure, or intentional expected change); failed tasks
-handed to `skill-doctor`; and coverage limits. A green suite is not proof of
-full coverage.
-
-## Guardrails
-
-- Author and measure; route fixes to `skill-doctor`.
-- Keep all metadata in `evals.json`; keep `task.md` visible-only and hidden
-  files out of the workspace.
-- Use candidate/task/trial/outcome/grader in prose and manifest fields.
-- Calibrate a judge before trusting its scores at scale.
-- Report coverage limits, not just pass rates.
+Close with suite or run location, what ran and what was skipped, headline
+candidate changes, failed checks, disagreements, failure classification, and
+what the evidence cannot establish. A green run proves only the measured
+scope.

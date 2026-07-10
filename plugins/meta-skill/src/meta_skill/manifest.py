@@ -1,177 +1,252 @@
-"""Eval suite manifest loading and selection helpers."""
+"""Eval suite loading, validation, and selection helpers."""
 
 from pathlib import Path
 
 from .errors import CliError
 from .ids import require_id
 from .io import read_json
-from .workbench_paths import workbench_path
+from .workbench_paths import evals_path, repository_root, skill_id_for_target, state_root
 
 
 SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "local_path", "none"}
+CASE_TYPES = {"attached", "near_miss", "capability", "regression", "failure", "gate"}
 DEFAULT_CANDIDATES = [
     {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
     {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
 ]
 DEFAULT_EVALS = {
+    "schema_version": 2,
     "skill_name": "TODO",
     "target": {"type": "skill", "ref": "SKILL.md"},
-    "defaults": {
-        "runner": "codex_app_server",
-        "repetitions": 1,
-    },
+    "defaults": {"runner": "codex_app_server", "repetitions": 1, "timeout_seconds": 600},
     "candidates": DEFAULT_CANDIDATES,
-    "cases": [],
-}
-REMOVED_TASK_TYPES = {
-    "implicit_trigger": "trigger",
-    "activation": "trigger",
-    "negative_control": "near_miss",
-    "boundary": "near_miss",
-    "should_not_trigger": "near_miss",
+    "profiles": {},
+    "evals": [],
 }
 
 
 def suite_path(raw):
-    path = Path(raw).expanduser() if raw else workbench_path(Path.cwd()) / "evals.json"
+    path = Path(raw).expanduser() if raw else evals_path(Path.cwd())
     if path.is_dir():
-        path = workbench_path(path) / "evals.json"
+        path = path / "evals.json" if path.name == "evals" else evals_path(path)
     return path.resolve()
 
 
 def workbench_from_suite(path):
-    return path.parent
+    return state_root(project_from_suite(path))
 
 
 def project_from_suite(path):
-    if path.parent.name.startswith("."):
-        return path.parent.parent
-    return path.parent
+    path = Path(path)
+    return path.parent.parent if path.parent.name == "evals" else path.parent
 
 
-def case_dir(workbench, case_id):
-    return workbench / "cases" / require_id("case id", case_id)
+def repository_from_suite(path):
+    return repository_root(project_from_suite(path))
 
 
-def task_sources(case):
-    task = case.get("task") or {}
-    sources = []
-    if task.get("prompt") is not None:
-        sources.append("prompt")
-    if task.get("path"):
-        sources.append("path")
-    return sources
+def skill_id_from_suite(path):
+    return skill_id_for_target(project_from_suite(path), root=repository_from_suite(path))
 
 
-def is_prompt_case(case):
-    return task_sources(case) == ["prompt"]
+def runs_from_suite(path):
+    state = workbench_from_suite(path)
+    return state / "runs" / Path(skill_id_from_suite(path))
+
+
+def worktrees_from_suite(path):
+    state = workbench_from_suite(path)
+    return state / "worktrees" / Path(skill_id_from_suite(path))
+
+
+def case_dir(suite, case_id):
+    suite = Path(suite)
+    evals_root = suite.parent if suite.name == "evals.json" else suite
+    return evals_root / "cases" / require_id("case id", case_id)
+
+
+def _path_source(case, field, default_name):
+    value = case.get(field)
+    if isinstance(value, str):
+        if not value.strip():
+            raise CliError(f"case {case.get('id')} {field} must be a non-empty string", 2)
+        return {"source": "inline", "text": value, "path": None}
+    if isinstance(value, dict) and set(value) == {"path"}:
+        raw_path = value.get("path")
+        if not isinstance(raw_path, str) or not raw_path.strip():
+            raise CliError(f"case {case.get('id')} {field}.path must be a non-empty string", 2)
+        path = Path(raw_path)
+        if path.is_absolute() or ".." in path.parts or path.as_posix() != default_name:
+            raise CliError(f"case {case.get('id')} {field}.path must be {default_name}", 2)
+        return {"source": "path", "text": None, "path": default_name}
+    if value is None and field == "expected_output":
+        return None
+    raise CliError(
+        f"case {case.get('id')} {field} must be a string or {{\"path\": \"{default_name}\"}}",
+        2,
+    )
+
+
+def prompt_info(case):
+    return _path_source(case, "prompt", "task.md")
+
+
+def expected_output_info(case):
+    return _path_source(case, "expected_output", "expected.md")
+
+
+def is_inline_prompt(case):
+    return prompt_info(case)["source"] == "inline"
+
+
+def _validate_grader(case_id, grader):
+    if not isinstance(grader, dict):
+        raise CliError(f"case {case_id} graders must be objects", 2)
+    if grader.get("kind") not in {"code", "model", "human"}:
+        raise CliError(f"case {case_id} grader kind must be code, model, or human", 2)
+    if grader.get("kind") == "human" and grader.get("path"):
+        raise CliError(f"case {case_id} human grader must not set path", 2)
+    if "uses_transcript" in grader and not isinstance(grader.get("uses_transcript"), bool):
+        raise CliError(f"case {case_id} grader uses_transcript must be boolean", 2)
+    if "advisory" in grader and not isinstance(grader.get("advisory"), bool):
+        raise CliError(f"case {case_id} grader advisory must be boolean", 2)
+
+
+def _validate_candidate(candidate, seen):
+    if not isinstance(candidate, dict):
+        raise CliError("evals.json candidates must be objects", 2)
+    candidate_id = require_id("candidate", candidate.get("candidate"))
+    if candidate_id in seen:
+        raise CliError(f"duplicate candidate: {candidate_id}", 2)
+    seen.add(candidate_id)
+    source = candidate.get("source") or {}
+    kind = source.get("kind", "current_worktree")
+    ref = source.get("ref")
+    if kind not in SOURCE_KINDS:
+        raise CliError(f"candidate {candidate_id} source.kind must be one of {', '.join(sorted(SOURCE_KINDS))}", 2)
+    if candidate_id == "no-skill" and kind != "none":
+        raise CliError("candidate id no-skill is reserved for a source.kind none baseline", 2)
+    if kind == "none" and ref:
+        raise CliError(f"candidate {candidate_id} source.kind none must not set ref", 2)
+    if kind == "current_worktree" and ref not in (None, "."):
+        raise CliError(f"candidate {candidate_id} current_worktree ref must be . when present", 2)
+    if kind in {"branch", "git_ref"} and (not ref or ref == "."):
+        raise CliError(f"candidate {candidate_id} source.kind {kind} must set a git ref", 2)
+    if kind == "local_path" and not (source.get("path") or ref):
+        raise CliError(f"candidate {candidate_id} source.kind local_path must set path", 2)
+
+
+def _validate_profiles(data, case_ids, candidate_ids):
+    profiles = data.get("profiles", {})
+    if not isinstance(profiles, dict):
+        raise CliError("evals.json profiles must be an object", 2)
+    for profile_id, profile in profiles.items():
+        require_id("profile id", profile_id)
+        if not isinstance(profile, dict):
+            raise CliError(f"profile {profile_id} must be an object", 2)
+        if profile.get("case_ids") is not None and not isinstance(profile.get("case_ids"), list):
+            raise CliError(f"profile {profile_id} case_ids must be a list", 2)
+        if profile.get("candidates") is not None and not isinstance(profile.get("candidates"), list):
+            raise CliError(f"profile {profile_id} candidates must be a list", 2)
+        types = profile.get("types") or []
+        if not isinstance(types, list) or any(case_type not in CASE_TYPES for case_type in types):
+            raise CliError(f"profile {profile_id} types must use supported eval types", 2)
+        unknown_cases = sorted(set(profile.get("case_ids") or []) - case_ids)
+        if unknown_cases:
+            raise CliError(f"profile {profile_id} selects unknown cases: {', '.join(unknown_cases)}", 2)
+        selected = list(profile.get("candidates") or [])
+        unknown_candidates = sorted(set(selected) - candidate_ids)
+        if unknown_candidates:
+            raise CliError(f"profile {profile_id} selects unknown candidates: {', '.join(unknown_candidates)}", 2)
+        repetitions = profile.get("repetitions", {})
+        if repetitions and not isinstance(repetitions, dict):
+            raise CliError(f"profile {profile_id} repetitions must be an object", 2)
+        if isinstance(repetitions, dict) and any(not isinstance(value, int) or value < 1 for value in repetitions.values()):
+            raise CliError(f"profile {profile_id} repetitions must be positive integers", 2)
 
 
 def load_manifest(path):
-    data = read_json(path)
+    data = read_json(Path(path))
     if not isinstance(data, dict):
-        raise CliError("eval suite must be a JSON object", 2)
-    if "evals" in data:
-        raise CliError("evals.json must use cases[]; legacy evals[] manifests are no longer supported", 2)
-    if data.get("schema_version") != 1:
-        raise CliError("only evals.json schema_version 1 is supported", 2)
-    if not isinstance(data.get("cases", []), list):
-        raise CliError("evals.json cases must be a list", 2)
-    if not isinstance(data.get("candidates", []), list) or not data.get("candidates"):
-        raise CliError("evals.json candidates must be a non-empty list", 2)
+        raise CliError("evals.json must be a JSON object", 2)
+    if data.get("schema_version") != 2:
+        raise CliError("only evals.json schema_version 2 is supported; migrate legacy suites first", 2)
+    if "cases" in data:
+        raise CliError("legacy cases[] suites are no longer supported; migrate to schema_version 2 evals[]", 2)
+    cases = data.get("evals", [])
+    candidates = data.get("candidates")
+    if candidates is None:
+        candidates = [dict(candidate) for candidate in DEFAULT_CANDIDATES]
+        data = {**data, "candidates": candidates}
+    if not isinstance(cases, list):
+        raise CliError("evals.json evals must be a list", 2)
+    if not isinstance(candidates, list) or not candidates:
+        raise CliError("evals.json candidates must be a non-empty list when present", 2)
+    if data.get("objective") is not None and (
+        not isinstance(data.get("objective"), str) or not data.get("objective").strip()
+    ):
+        raise CliError("evals.json objective must be a non-empty string", 2)
+
     seen_case_ids = set()
-    for case in data.get("cases", []):
+    for case in cases:
         if not isinstance(case, dict):
-            raise CliError("evals.json cases must be objects", 2)
+            raise CliError("evals.json evals must be objects", 2)
         case_id = require_id("case id", case.get("id"))
         if case_id in seen_case_ids:
             raise CliError(f"duplicate case id: {case_id}", 2)
         seen_case_ids.add(case_id)
+        if "task" in case:
+            raise CliError(f"case {case_id} task is no longer supported; use prompt", 2)
+        prompt_info(case)
+        expected_output_info(case)
         case_type = case.get("type")
-        if case_type in REMOVED_TASK_TYPES:
-            raise CliError(f"case {case_id} type {case_type} is no longer supported; use {REMOVED_TASK_TYPES[case_type]}", 2)
-        task = case.get("task") or {}
-        if not isinstance(task, dict):
-            raise CliError(f"case {case_id} task must be an object", 2)
-        if "seed" in task:
-            raise CliError(f"case {case_id} task.seed is no longer supported; use task.prompt or cases/{case_id}/task.md", 2)
-        if "file" in task:
-            raise CliError(f"case {case_id} task.file is no longer supported; use task.path", 2)
-        sources = task_sources(case)
-        if len(sources) != 1:
-            raise CliError(f"case {case_id} must set exactly one task source: inline prompt or task path", 2)
-        if task.get("path") and task.get("path") != "task.md":
-            raise CliError(f"case {case_id} task.path must be task.md; file-backed tasks use cases/{case_id}/task.md", 2)
-        if "expectations" in case:
-            expectations = case.get("expectations")
-            if not isinstance(expectations, list) or not all(isinstance(item, str) and item.strip() for item in expectations):
-                raise CliError(f"case {case_id} expectations must be non-empty strings", 2)
-        if "fixtures" in case and (not isinstance(case.get("fixtures"), list) or not all(isinstance(item, str) and item.strip() for item in case.get("fixtures"))):
+        if case_type and case_type not in CASE_TYPES:
+            raise CliError(f"case {case_id} type must be one of {', '.join(sorted(CASE_TYPES))}", 2)
+        if case.get("priority") is not None and case.get("priority") not in {"high", "medium", "low"}:
+            raise CliError(f"case {case_id} priority must be high, medium, or low", 2)
+        expectations = case.get("expectations", [])
+        if not isinstance(expectations, list) or not all(isinstance(item, str) and item.strip() for item in expectations):
+            raise CliError(f"case {case_id} expectations must be non-empty strings", 2)
+        fixtures = case.get("fixtures", [])
+        if not isinstance(fixtures, list) or not all(isinstance(item, str) and item.strip() for item in fixtures):
             raise CliError(f"case {case_id} fixtures must be non-empty strings", 2)
+        annotations = case.get("annotations", [])
+        if not isinstance(annotations, list) or not all(
+            isinstance(item, dict)
+            and isinstance(item.get("tag"), str)
+            and item.get("tag").strip()
+            and isinstance(item.get("note"), str)
+            and item.get("note").strip()
+            for item in annotations
+        ):
+            raise CliError(f"case {case_id} annotations must contain tag and note strings", 2)
         graders = case.get("graders", [])
         if not isinstance(graders, list):
             raise CliError(f"case {case_id} graders must be a list", 2)
         for grader in graders:
-            if not isinstance(grader, dict):
-                raise CliError(f"case {case_id} graders must be objects", 2)
-            if grader.get("kind") not in {"code", "model", "human"}:
-                raise CliError(f"case {case_id} grader kind must be code, model, or human", 2)
-            if grader.get("kind") == "human" and grader.get("path"):
-                raise CliError(f"case {case_id} human grader must not set path", 2)
-            if "uses_transcript" in grader and not isinstance(grader.get("uses_transcript"), bool):
-                raise CliError(f"case {case_id} grader uses_transcript must be boolean", 2)
-            for flag in ("advisory", "gate", "required"):
-                if flag in grader and not isinstance(grader.get(flag), bool):
-                    raise CliError(f"case {case_id} grader {flag} must be boolean", 2)
+            _validate_grader(case_id, grader)
+
     seen_candidate_ids = set()
-    for candidate in data.get("candidates", []):
-        if not isinstance(candidate, dict):
-            raise CliError("evals.json candidates must be objects", 2)
-        candidate_id = require_id("candidate", candidate.get("candidate"))
-        if candidate_id in seen_candidate_ids:
-            raise CliError(f"duplicate candidate: {candidate_id}", 2)
-        seen_candidate_ids.add(candidate_id)
-        source = candidate.get("source") or {}
-        kind = source.get("kind", "current_worktree")
-        ref = source.get("ref")
-        if kind not in SOURCE_KINDS:
-            raise CliError(f"candidate {candidate_id} source.kind must be one of branch, current_worktree, git_ref, local_path, or none", 2)
-        if kind == "none" and ref:
-            raise CliError(f"candidate {candidate_id} source.kind none must not set ref", 2)
-        if kind == "current_worktree" and ref not in (None, "."):
-            raise CliError(f"candidate {candidate_id} source.kind current_worktree must not set a git ref", 2)
-        if kind in {"branch", "git_ref"} and not ref:
-            raise CliError(f"candidate {candidate_id} source.kind {kind} must set ref", 2)
-        if kind in {"branch", "git_ref"} and ref == ".":
-            raise CliError(f"candidate {candidate_id} source.kind {kind} must use a git ref, not .", 2)
-        if kind == "local_path" and not (source.get("path") or ref):
-            raise CliError(f"candidate {candidate_id} source.kind local_path must set path", 2)
+    for candidate in candidates:
+        _validate_candidate(candidate, seen_candidate_ids)
+    _validate_profiles(data, seen_case_ids, seen_candidate_ids)
     return data
 
 
-def case_task_info(case):
-    task = case.get("task") or {}
-    if task.get("prompt") is not None:
-        return {"source": "prompt", "path": None, "prompt": task.get("prompt") or ""}
-    return {"source": "path", "path": "task.md", "prompt": None}
-
-
-def select_cases(manifest, split):
-    cases = manifest.get("cases", [])
+def select_cases(manifest, split=None, *, case_ids=None, case_types=None):
+    cases = list(manifest.get("evals", []))
     if split:
         cases = [case for case in cases if case.get("split") == split]
+    if case_ids:
+        wanted = set(case_ids)
+        unknown = sorted(wanted - {case.get("id") for case in cases})
+        if unknown:
+            raise CliError(f"unknown evals selected: {', '.join(unknown)}", 2)
+        cases = [case for case in cases if case.get("id") in wanted]
+    if case_types:
+        wanted = set(case_types)
+        cases = [case for case in cases if case.get("type") in wanted]
     return cases
-
-
-def filter_cases(cases, *, case_ids=None, case_types=None):
-    selected = list(cases)
-    wanted_ids = set(case_ids or [])
-    wanted_types = set(case_types or [])
-    if wanted_ids:
-        selected = [case for case in selected if case.get("id") in wanted_ids]
-    if wanted_types:
-        selected = [case for case in selected if (case.get("type") or "unspecified") in wanted_types]
-    return selected
 
 
 def split_csv_or_repeat(values):
@@ -181,18 +256,33 @@ def split_csv_or_repeat(values):
     return out
 
 
-def select_candidates(manifest, raw):
-    candidates = manifest.get("candidates", [])
+def select_candidates(manifest, raw=None, *, include_baseline=True, baseline_id=None):
+    candidates = list(manifest.get("candidates", []))
+    requested = {item.strip() for item in str(raw or "").split(",") if item.strip()}
+    if baseline_id:
+        requested.add(str(baseline_id))
     if raw:
-        wanted = {item.strip() for item in raw.split(",") if item.strip()}
-        candidates = [candidate for candidate in candidates if candidate.get("candidate") in wanted]
+        candidates = [candidate for candidate in candidates if candidate.get("candidate") in requested]
+    elif baseline_id:
+        candidates = [candidate for candidate in candidates if candidate.get("candidate") in requested]
+    if requested:
+        unknown = sorted(requested - {candidate.get("candidate") for candidate in manifest.get("candidates", [])})
+        if unknown:
+            raise CliError(f"unknown candidates selected: {', '.join(unknown)}", 2)
+    if baseline_id:
+        include_baseline = False
+    if include_baseline and not any((candidate.get("source") or {}).get("kind") == "none" for candidate in candidates):
+        baseline = next(
+            (candidate for candidate in manifest.get("candidates", []) if (candidate.get("source") or {}).get("kind") == "none"),
+            DEFAULT_CANDIDATES[0],
+        )
+        candidates.insert(0, baseline)
+    if not include_baseline and not baseline_id:
+        candidates = [candidate for candidate in candidates if (candidate.get("source") or {}).get("kind") != "none"]
     if not candidates:
         raise CliError("no candidates selected", 2)
-    for candidate in candidates:
-        if not candidate.get("candidate"):
-            raise CliError("candidate missing candidate field", 2)
     return candidates
 
 
-def trial_prompt(task_text):
-    return task_text.strip() + "\n"
+def trial_prompt(text):
+    return text if text.endswith("\n") else text + "\n"

@@ -14,12 +14,9 @@ discovery contract.
   history is available.
 - Front-load the key use case: listings truncate, and routers weight early
   tokens. The first clause should carry the strongest trigger.
-- Boundaries are earned, not preemptive: add a "not for" clause
-  (`not for X — use $y`) only when a real mis-route has been observed or two
-  live descriptions genuinely collide on one request. Speculative boundary
-  clauses add reconciliation cost and can make routing worse. An
-  explicit-only skill needs no boundary against an auto skill — invocation
-  mode already separates them.
+- Use one compact contract: `Use when …; not for …`. Name the closest real
+  sibling or category in the boundary; omit speculative exclusions that do not
+  help a router choose between live skills.
 - Name: lowercase letters/numbers/hyphens, ≤64 chars, no reserved words
   ("anthropic", "claude"), no vague nouns (`helper`, `utils`, `tools`).
   Prefer short verbs or noun phrases users actually type.

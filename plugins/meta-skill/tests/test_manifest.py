@@ -1,4 +1,4 @@
-"""Tests for the current eval manifest authoring contract."""
+"""Schema-v2 manifest contract tests."""
 
 import json
 import sys
@@ -6,135 +6,99 @@ import tempfile
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.manifest import case_task_info, load_manifest  # noqa: E402
-from meta_skill.errors import CliError  # noqa: E402
+from meta_skill.errors import CliError
+from meta_skill.manifest import load_manifest, select_candidates, select_cases
 
 
-def write_json(path, data):
+def write(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+    path.write_text(json.dumps(data))
 
 
 class ManifestTests(unittest.TestCase):
-    def test_legacy_eval_rows_are_rejected(self):
+    def test_loads_anthropic_compatible_rows_and_injects_default_candidates(self):
         with tempfile.TemporaryDirectory() as tmp:
-            suite = Path(tmp) / ".demo" / "evals.json"
-            write_json(
-                suite,
+            path = Path(tmp) / "evals.json"
+            write(path, {"schema_version": 2, "evals": [{"id": "a", "type": "capability", "prompt": "Do A", "expected_output": "A", "expectations": ["A is done"]}]})
+            manifest = load_manifest(path)
+            self.assertEqual(manifest["evals"][0]["prompt"], "Do A")
+            self.assertEqual([row["candidate"] for row in manifest["candidates"]], ["no-skill", "current"])
+
+    def test_legacy_cases_fail_clearly(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evals.json"
+            write(path, {"schema_version": 2, "cases": [], "evals": []})
+            with self.assertRaises(CliError) as caught:
+                load_manifest(path)
+            self.assertIn("legacy cases[]", caught.exception.message)
+
+    def test_prompt_path_is_only_task_md(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evals.json"
+            write(path, {"schema_version": 2, "evals": [{"id": "a", "prompt": {"path": "other.md"}}]})
+            with self.assertRaises(CliError) as caught:
+                load_manifest(path)
+            self.assertIn("must be task.md", caught.exception.message)
+
+    def test_attached_replaces_trigger_and_grader_policy_is_typed(self):
+        for case in (
+            {"id": "a", "type": "trigger", "prompt": "A"},
+            {"id": "a", "type": "attached", "prompt": "A", "graders": [{"kind": "model", "advisory": "yes"}]},
+        ):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "evals.json"
+                write(path, {"schema_version": 2, "evals": [case]})
+                with self.assertRaises(CliError):
+                    load_manifest(path)
+
+    def test_baseline_is_default_and_opt_out_is_exact(self):
+        manifest = {"candidates": [{"candidate": "current", "source": {"kind": "current_worktree"}}]}
+        self.assertEqual([row["candidate"] for row in select_candidates(manifest)], ["no-skill", "current"])
+        self.assertEqual([row["candidate"] for row in select_candidates(manifest, include_baseline=False)], ["current"])
+
+    def test_priority_objective_and_explicit_baseline_are_validated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evals.json"
+            write(
+                path,
                 {
-                    "schema_version": 1,
-                    "target": {"type": "skill", "ref": "SKILL.md"},
-                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
-                    "evals": [
-                        {
-                            "id": "case-a",
-                            "type": "capability",
-                            "prompt": "Say done.",
-                            "fixtures": ["input.txt"],
-                            "expectations": ["The response says done."],
-                        }
+                    "schema_version": 2,
+                    "objective": "Compare revisions",
+                    "candidates": [
+                        {"candidate": "current", "source": {"kind": "current_worktree"}},
+                        {"candidate": "candidate", "source": {"kind": "local_path", "path": "../candidate"}},
                     ],
+                    "evals": [{"id": "a", "type": "regression", "priority": "high", "prompt": "A"}],
                 },
             )
-
-            with self.assertRaises(CliError) as ctx:
-                load_manifest(suite)
-
-            self.assertIn("legacy evals[]", ctx.exception.message)
-
-    def test_path_task_seed_is_rejected(self):
-        case = {"id": "case-a", "task": {"path": "task.md", "seed": "Seed text."}}
-
-        with tempfile.TemporaryDirectory() as tmp:
-            suite = Path(tmp) / ".demo" / "evals.json"
-            write_json(
-                suite,
-                {
-                    "schema_version": 1,
-                    "target": {"type": "skill", "ref": "SKILL.md"},
-                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
-                    "cases": [case],
-                },
+            manifest = load_manifest(path)
+            selected = select_candidates(
+                manifest, "candidate", baseline_id="current"
             )
+            self.assertEqual([row["candidate"] for row in selected], ["current", "candidate"])
+            with self.assertRaises(CliError):
+                select_cases(manifest, case_ids=["missing"])
+            with self.assertRaises(CliError):
+                select_candidates(manifest, "missing", include_baseline=False)
 
-            with self.assertRaises(CliError) as ctx:
-                load_manifest(suite)
+    def test_reserved_no_skill_id_and_invalid_priority_fail(self):
+        for data in (
+            {
+                "schema_version": 2,
+                "candidates": [{"candidate": "no-skill", "source": {"kind": "current_worktree"}}],
+                "evals": [{"id": "a", "prompt": "A"}],
+            },
+            {"schema_version": 2, "evals": [{"id": "a", "prompt": "A", "priority": "urgent"}]},
+        ):
+            with self.subTest(data=data), tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "evals.json"
+                write(path, data)
+                with self.assertRaises(CliError):
+                    load_manifest(path)
 
-            self.assertIn("task.seed is no longer supported", ctx.exception.message)
-
-    def test_task_file_is_rejected(self):
-        case = {"id": "case-a", "task": {"file": "task.md"}}
-
-        with tempfile.TemporaryDirectory() as tmp:
-            suite = Path(tmp) / ".demo" / "evals.json"
-            write_json(
-                suite,
-                {
-                    "schema_version": 1,
-                    "target": {"type": "skill", "ref": "SKILL.md"},
-                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
-                    "cases": [case],
-                },
-            )
-
-            with self.assertRaises(CliError) as ctx:
-                load_manifest(suite)
-
-            self.assertIn("task.file is no longer supported", ctx.exception.message)
-
-    def test_custom_task_path_is_rejected(self):
-        case = {"id": "case-a", "task": {"path": "tasks/foo.md"}}
-
-        with tempfile.TemporaryDirectory() as tmp:
-            suite = Path(tmp) / ".demo" / "evals.json"
-            write_json(
-                suite,
-                {
-                    "schema_version": 1,
-                    "target": {"type": "skill", "ref": "SKILL.md"},
-                    "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
-                    "cases": [case],
-                },
-            )
-
-            with self.assertRaises(CliError) as ctx:
-                load_manifest(suite)
-
-            self.assertIn("task.path must be task.md", ctx.exception.message)
-
-    def test_case_task_info_has_no_seed_field(self):
-        case = {"id": "case-a", "task": {"path": "task.md"}}
-
-        self.assertEqual(case_task_info(case), {"source": "path", "path": "task.md", "prompt": None})
-
-    def test_grader_policy_flags_must_be_boolean(self):
-        for flag in ("advisory", "gate", "required"):
-            with self.subTest(flag=flag):
-                case = {
-                    "id": "case-a",
-                    "task": {"prompt": "Task"},
-                    "graders": [{"kind": "model", "id": "judge", flag: "yes"}],
-                }
-
-                with tempfile.TemporaryDirectory() as tmp:
-                    suite = Path(tmp) / ".demo" / "evals.json"
-                    write_json(
-                        suite,
-                        {
-                            "schema_version": 1,
-                            "target": {"type": "skill", "ref": "SKILL.md"},
-                            "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
-                            "cases": [case],
-                        },
-                    )
-
-                    with self.assertRaises(CliError) as ctx:
-                        load_manifest(suite)
-
-                    self.assertIn(f"grader {flag} must be boolean", ctx.exception.message)
 
 if __name__ == "__main__":
     unittest.main()

@@ -13,7 +13,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.sessions import extract_thread_improvement, list_threads, render_thread_list, show_thread  # noqa: E402
+from meta_skill.sessions import list_threads, render_thread_list, show_thread  # noqa: E402
 
 
 class SessionEvidenceTests(unittest.TestCase):
@@ -150,29 +150,10 @@ class SessionEvidenceTests(unittest.TestCase):
 
         self.assertEqual(result["thread"]["id"], "thread-abc")
 
-    def test_extract_thread_improvement_builds_happy_path_handoff(self) -> None:
-        result = extract_thread_improvement("thread-abc", target=str(self.skill_dir), max_chars=500)
+    def test_extract_surface_is_deleted(self) -> None:
+        import meta_skill.sessions as sessions
 
-        self.assertTrue(result["ok"])
-        self.assertEqual(result["target"]["name"], "meta-skill")
-        self.assertEqual(Path(result["packet"]["target_skill"]["skill_md"]), (self.skill_dir / "SKILL.md").resolve())
-        self.assertEqual(result["packet"]["thread_facts"]["message_count"], 4)
-        handoff = result["packet"]["extracted_handoff"]
-        self.assertIn("Use MetaSkill to evaluate this thread", handoff["expected_behavior"])
-        self.assertIn("missing handoff", handoff["actual_behavior"])
-        self.assertIn("skill-doctor", handoff["suggested_route"])
-        self.assertIn("current-vs-candidate", handoff["suggested_route"])
-        self.assertIn("Failure or capability seed for meta-skill", handoff["task_seeds"][0])
-        self.assertIn("## Extracted Handoff", result["handoff_markdown"])
-        self.assertIn("Approval Boundary", result["handoff_markdown"])
-
-    def test_extract_thread_improvement_marks_missing_target_as_coverage_limit(self) -> None:
-        result = extract_thread_improvement("thread-abc", target=str(self.home / "missing-skill"), max_chars=500)
-
-        self.assertTrue(result["ok"])
-        self.assertFalse(result["target"]["found"])
-        self.assertIn("identify the target skill", result["packet"]["extracted_handoff"]["suggested_route"])
-        self.assertIn("No target skill was resolved", "\n".join(result["packet"]["coverage_limits"]))
+        self.assertFalse(hasattr(sessions, "extract_thread_improvement"))
 
 
 if __name__ == "__main__":

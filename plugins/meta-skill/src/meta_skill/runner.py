@@ -1,6 +1,7 @@
-"""Eval planning, execution, and progress snapshots."""
+"""Eval planning and execution with per-trial state."""
 
 import concurrent.futures
+import shutil
 import sys
 import threading
 import time
@@ -9,164 +10,179 @@ from pathlib import Path
 
 from .app_server.policy import APP_SERVER_APPROVAL_POLICY, APP_SERVER_SANDBOX
 from .app_server.trial import app_server_run
-from .artifacts import candidate_source, thread_evidence, trial_record
-from .candidates import resolve_candidate, snapshot_candidate
+from .candidates import candidate_source, cleanup_candidate_source, resolve_candidate, snapshot_candidate
 from .errors import CliError
 from .ids import run_id, utc_now
-from .io import append_jsonl, read_json, read_jsonl, resolve_run_dir, write_json
+from .io import read_json, resolve_run_dir, write_json
 from .manifest import (
-    filter_cases,
     load_manifest,
     project_from_suite,
+    runs_from_suite,
     select_candidates,
     select_cases,
+    skill_id_from_suite,
     split_csv_or_repeat,
     suite_path,
     trial_prompt,
     workbench_from_suite,
+    worktrees_from_suite,
 )
 from .run_inputs import freeze_run_inputs, validate_grading_inputs
-from .staging import stage_workspace
-from .summary import build_summary, summary_exit_code
-from .verdicts import normalize_runtime_status
-from .workbench_paths import workbench_path
+from .runtime import configure_codex_runtime, default_codex_model
+from .staging import capture_artifacts, cleanup_workspace, stage_workspace
+from .workbench_paths import evals_path, runs_path, skill_dir_for_target, skill_id_for_target, state_root, worktrees_path
+
+
+TERMINAL_STATUSES = {"completed", "failed", "timed_out", "skipped"}
 
 
 def plan_trials(cases, candidates, repetitions):
-    plan = []
-    for case in cases:
-        reps = repetitions(case)
-        for candidate in candidates:
-            for index in range(1, int(reps) + 1):
-                trial_id = f"{case['id']}.{candidate['candidate']}.t{index}"
-                plan.append({"case": case, "candidate": candidate, "index": index, "trial_id": trial_id})
-    return plan
+    return [
+        {
+            "eval": case,
+            "candidate": candidate,
+            "repetition": index,
+            "trial_id": f"{case['id']}.{candidate['candidate']}.t{index}",
+        }
+        for case in cases
+        for candidate in candidates
+        for index in range(1, int(repetitions(case)) + 1)
+    ]
 
 
 def repetition_count(case, args, defaults):
-    reps_by_type = getattr(args, "repetitions_by_type", None) or {}
-    preset_default = getattr(args, "preset_default_repetitions", None)
+    by_type = getattr(args, "repetitions_by_type", None) or {}
     return (
-        args.repetitions
-        or reps_by_type.get(case.get("type") or "unspecified")
+        getattr(args, "repetitions", None)
+        or by_type.get(case.get("type") or "unspecified")
         or case.get("repetitions")
-        or preset_default
+        or getattr(args, "profile_default_repetitions", None)
         or defaults.get("repetitions")
         or 1
     )
 
 
-def trial_paths(trial_id, run_dir):
-    trial_dir = run_dir / "trials" / trial_id
-    return {
-        "trial": trial_dir,
-        "workspace": trial_dir / "workspace",
-        "event": trial_dir / "events.jsonl",
-        "evidence": trial_dir / "evidence.json",
-        "response": trial_dir / "response.md",
-    }
+def trial_dir(run_dir, trial_id):
+    return Path(run_dir) / "trials" / trial_id
 
 
-def queued_record(row, run_dir):
-    trial_id = row["trial_id"]
-    paths = trial_paths(trial_id, run_dir)
+def state_path(run_dir, trial_id):
+    return trial_dir(run_dir, trial_id) / "state.json"
+
+
+def _state(row, run_dir, status, **extra):
+    root = trial_dir(run_dir, row["trial_id"])
     return {
-        "trial_id": trial_id,
-        "case_id": row["case"]["id"],
+        "run_id": Path(run_dir).name,
+        "trial_id": row["trial_id"],
+        "eval_id": row["eval"]["id"],
         "candidate": row["candidate"]["candidate"],
-        "repetition": row["index"],
-        "planned_status": "skipped" if row.get("skip") else "queued",
-        "cwd": str(paths["workspace"]),
-        "thread_persistence": "persistent",
-        "sandbox": APP_SERVER_SANDBOX,
-        "runtime_approval_policy": APP_SERVER_APPROVAL_POLICY,
-        "events_path": str(paths["event"]),
-        "evidence_path": str(paths["evidence"]),
-        "response_path": str(paths["response"]),
+        "repetition": row["repetition"],
+        "status": status,
+        "events_path": str(root / "events.jsonl"),
+        "response_path": str(root / "response.md"),
+        "artifacts_path": str(root / "artifacts"),
+        **extra,
     }
 
 
-def run_trial(row, run_dir, frozen_cases, model):
+def _run_with_deadline(row, prompt, candidate, event_path, response_path, model, timeout_seconds):
+    completed = threading.Event()
+    outcome = {}
+
+    def call_upstream():
+        try:
+            outcome["detail"] = app_server_run(row, prompt, candidate, event_path, response_path, model)
+        except Exception as exc:
+            outcome["error"] = str(exc)
+        finally:
+            completed.set()
+
+    # Upstream is synchronous and has no cancel primitive. A daemon thread lets
+    # the CLI honor its deadline; the timed-out trial discards any late return.
+    threading.Thread(target=call_upstream, daemon=True).start()
+    if not completed.wait(timeout_seconds):
+        return {}, f"trial exceeded {timeout_seconds}s deadline", True, completed
+    if outcome.get("error"):
+        return {}, outcome["error"], False, None
+    return outcome.get("detail") or {}, None, False, None
+
+
+def run_trial(row, run_dir, worktree_run_root, frozen_cases, model, timeout_seconds):
     trial_id = row["trial_id"]
-    case = row["case"]
-    candidate = row["candidate"]
-    frozen_case = dict(frozen_cases[case["id"]])
-    paths = trial_paths(trial_id, run_dir)
-    output_path = paths["response"]
-    event_path = paths["event"]
-    evidence_path = paths["evidence"]
+    root = trial_dir(run_dir, trial_id)
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "artifacts").mkdir(exist_ok=True)
+    (root / "events.jsonl").touch()
     started = time.time()
+    started_at = datetime.fromtimestamp(started, timezone.utc).isoformat()
+    write_json(state_path(run_dir, trial_id), _state(row, run_dir, "running", started_at=started_at))
+    frozen_case = dict(frozen_cases[row["eval"]["id"]])
+    workspace = None
     detail = {}
     error = None
+    timed_out = False
+    timed_out_completion = None
     try:
-        staged_candidate = stage_workspace(run_dir, trial_id, frozen_case, candidate)
-        prompt = trial_prompt(frozen_case["task_text"])
-        detail = app_server_run(row, prompt, staged_candidate, event_path, output_path, model)
-        detail["workspace"] = staged_candidate["workspace"]
-        detail["staged_payload_digest"] = staged_candidate["staged_payload_digest"]
-        runtime_status = normalize_runtime_status(detail.get("status"))
-        if runtime_status != "completed":
-            error = detail.get("status", "runner failed")
-    except TimeoutError as exc:
-        runtime_status = "timed_out"
-        error = str(exc)
+        staged = stage_workspace(worktree_run_root, trial_id, frozen_case, row["candidate"])
+        workspace = staged["workspace"]
+        upstream_events = Path(workspace) / ".metaskill-events.jsonl"
+        upstream_response = Path(workspace) / ".metaskill-response.md"
+        detail, error, timed_out, timed_out_completion = _run_with_deadline(
+            row,
+            trial_prompt((Path(frozen_case["case_root"]) / "task.md").read_text()),
+            staged,
+            upstream_events,
+            upstream_response,
+            model,
+            timeout_seconds,
+        )
+        if upstream_events.exists():
+            shutil.copy2(upstream_events, root / "events.jsonl")
+        if upstream_response.exists():
+            shutil.copy2(upstream_response, root / "response.md")
+        status = "timed_out" if timed_out else detail.get("status", "failed")
+        status = status if status in TERMINAL_STATUSES else ("completed" if status == "completed" else "failed")
+        if status != "completed" and not error:
+            error = detail.get("status") or "runner failed"
+        if timed_out:
+            produced = []
+        else:
+            produced = capture_artifacts(workspace, root)
     except Exception as exc:
-        runtime_status = "failed"
+        status = "failed"
         error = str(exc)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    if not output_path.exists():
-        output_path.write_text("")
+        produced = []
     completed = time.time()
-    final_response = output_path.read_text() if output_path.exists() else ""
-    persistence = detail.get("thread_persistence") or "persistent"
-    evidence = thread_evidence(
-        trial_id=trial_id,
+    response_path = root / "response.md"
+    if not response_path.exists():
+        response_path.write_text("")
+    final = _state(
+        row,
+        run_dir,
+        status,
+        started_at=started_at,
+        completed_at=datetime.fromtimestamp(completed, timezone.utc).isoformat(),
+        duration_ms=int((completed - started) * 1000),
         thread_id=detail.get("thread_id"),
         turn_id=detail.get("turn_id"),
-        thread_persistence=persistence,
-        response_text=final_response or None,
-        final_source="turn_result" if final_response else "none",
-        items_count=detail.get("events", 0) or 0,
         usage=detail.get("usage"),
-        status=runtime_status,
-        sdk_version=detail.get("sdk_version"),
-        runtime_version=detail.get("runtime_version"),
-    )
-    write_json(evidence_path, evidence)
-    record = trial_record(
-        trial_id=trial_id,
-        case_id=case["id"],
-        candidate=candidate["candidate"],
-        repetition=row["index"],
-        status=runtime_status,
-        thread_id=detail.get("thread_id"),
-        turn_id=detail.get("turn_id"),
-        thread_persistence=persistence,
-        cwd=detail.get("workspace") or str(paths["workspace"]),
-        sandbox=detail.get("sandbox") or APP_SERVER_SANDBOX,
-        runtime_approval_policy=detail.get("runtime_approval_policy") or APP_SERVER_APPROVAL_POLICY,
-        sdk_version=detail.get("sdk_version"),
-        runtime_version=detail.get("runtime_version"),
-        events_path=str(event_path),
-        evidence_path=str(evidence_path),
-        response_path=str(output_path),
-        usage=detail.get("usage"),
+        produced_artifacts=produced,
         error=error,
     )
-    started_at = datetime.fromtimestamp(started, timezone.utc).isoformat()
-    completed_at = datetime.fromtimestamp(completed, timezone.utc).isoformat()
-    return {
-        "run_id": run_dir.name,
-        **record,
-        "timing": {
-            "started_at": started_at,
-            "completed_at": completed_at,
-            "duration_ms": int((completed - started) * 1000),
-        },
-    }
+    write_json(state_path(run_dir, trial_id), final)
+    if workspace and timed_out_completion is not None:
+        def cleanup_after_upstream_return():
+            timed_out_completion.wait()
+            cleanup_workspace(workspace, worktree_run_root)
+
+        threading.Thread(target=cleanup_after_upstream_return, daemon=True).start()
+    elif workspace:
+        cleanup_workspace(workspace, worktree_run_root)
+    return final
 
 
-def selected_case_args(args):
+def selected_eval_args(args):
     return split_csv_or_repeat(getattr(args, "case", None))
 
 
@@ -175,35 +191,44 @@ def selected_type_args(args):
 
 
 def adhoc_context(args):
-    """Synthesize an in-memory one-case manifest for a `--adhoc` run."""
     task = getattr(args, "task", None)
     if not task or not str(task).strip():
         raise CliError("--adhoc requires --task with a non-empty prompt", 2)
-    skill_arg = getattr(args, "skill", None)
-    skill_dir = Path(skill_arg).expanduser().resolve() if skill_arg else Path.cwd()
+    skill_dir = skill_dir_for_target(getattr(args, "skill", None) or Path.cwd())
     if not (skill_dir / "SKILL.md").is_file():
         raise CliError(f"adhoc run needs a SKILL.md in {skill_dir}", 2)
-    workbench = workbench_path(skill_dir)
-    workbench.mkdir(parents=True, exist_ok=True)
-    manifest = {
-        "schema_version": 1,
-        "target": {"type": "skill", "ref": "SKILL.md"},
-        "candidates": [
-            {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}}
-        ],
-        "cases": [{"id": "adhoc-1", "type": "adhoc", "task": {"prompt": str(task)}}],
-    }
+    state = state_root(skill_dir)
+    state.mkdir(parents=True, exist_ok=True)
+    suite = evals_path(skill_dir)
     return {
-        "manifest": manifest,
-        "suite": workbench / "evals.json",
-        "workbench": workbench,
+        "manifest": {
+            "schema_version": 2,
+            "skill_name": skill_dir.name,
+            "target": {"type": "skill", "ref": "SKILL.md"},
+            "defaults": {"repetitions": 1, "timeout_seconds": 600},
+            "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
+            "profiles": {},
+            "evals": [{
+                "id": "adhoc-1",
+                "type": getattr(args, "adhoc_type", None) or "capability",
+                "priority": getattr(args, "priority", None),
+                "prompt": str(task),
+                "expected_output": getattr(args, "expected_output", None),
+                "expectations": list(getattr(args, "expectations", None) or []),
+                "graders": list(getattr(args, "graders", None) or []),
+            }],
+        },
+        "suite": suite,
+        "workbench": state,
         "project": skill_dir,
+        "skill_id": skill_id_for_target(skill_dir),
+        "runs_root": runs_path(skill_dir),
+        "worktrees_root": worktrees_path(skill_dir),
         "adhoc": True,
     }
 
 
 def eval_context(args):
-    """Resolve the manifest and roots for a run, from a suite file or an adhoc prompt."""
     if getattr(args, "adhoc", False):
         return adhoc_context(args)
     suite = suite_path(args.suite)
@@ -212,175 +237,187 @@ def eval_context(args):
         "suite": suite,
         "workbench": workbench_from_suite(suite),
         "project": project_from_suite(suite),
+        "skill_id": skill_id_from_suite(suite),
+        "runs_root": runs_from_suite(suite),
+        "worktrees_root": worktrees_from_suite(suite),
         "adhoc": False,
     }
 
 
-def run_eval(args, context=None):
+def run_eval(args, context=None, run_id_value=None):
+    codex_binary = configure_codex_runtime()
     context = context or eval_context(args)
     manifest = context["manifest"]
     suite = context["suite"]
     workbench = context["workbench"]
     project = context["project"]
+    skill_id = context.get("skill_id") or skill_id_for_target(project)
+    runs_root = Path(context.get("runs_root") or runs_path(project))
+    worktrees_root = Path(context.get("worktrees_root") or worktrees_path(project))
     adhoc = bool(context.get("adhoc"))
+    model = getattr(args, "model", None) or default_codex_model(project)
     defaults = manifest.get("defaults") or {}
-    cases = select_cases(manifest, args.split)
-    cases = filter_cases(cases, case_ids=selected_case_args(args), case_types=selected_type_args(args))
-    if not cases:
-        raise CliError("no cases selected", 2)
-    selected_candidate_defs = select_candidates(manifest, args.candidates)
-    grading_enabled = not getattr(args, "no_grade", False) and not adhoc
-    validate_grading_inputs(cases, grading_enabled=grading_enabled)
-    rid = run_id()
-    run_dir = workbench / "runs" / rid
-    run_dir.mkdir(parents=True, exist_ok=False)
-    candidate_infos = [
-        snapshot_candidate(run_dir, resolve_candidate(project, workbench, rid, manifest, candidate))
-        for candidate in selected_candidate_defs
-    ]
-    frozen_suite = freeze_run_inputs(
+    cases = select_cases(
         manifest,
-        suite,
-        workbench,
-        run_dir,
-        cases,
-        selected_candidate_defs,
-        grading_enabled=grading_enabled,
+        getattr(args, "split", None),
+        case_ids=selected_eval_args(args),
+        case_types=selected_type_args(args),
     )
-    frozen_cases = {}
-    for case in frozen_suite["cases"]:
-        frozen_case = dict(case)
-        frozen_case["case_root"] = str(run_dir / "inputs" / "cases" / case["id"])
-        frozen_cases[case["id"]] = frozen_case
-    plan = plan_trials(cases, candidate_infos, lambda case: repetition_count(case, args, defaults))
-    preset = getattr(args, "preset", None) or {}
-    runner_config = {
-        "runner": "codex_app_server",
-        "sandbox": APP_SERVER_SANDBOX,
-        "runtime_approval_policy": APP_SERVER_APPROVAL_POLICY,
-        "grading_mode": "expectations" if grading_enabled else "none",
-    }
-    model_config = {"model": args.model}
-    run_model = {
-        "run_id": rid,
-        "created_at": utc_now(),
-        "adhoc": adhoc,
-        "suite": str(suite),
-        "project": str(project),
-        "runner_config": runner_config,
-        "model_config": model_config,
-        "selected_cases": [case["id"] for case in cases],
-        "selected_candidates": [candidate["candidate"] for candidate in selected_candidate_defs],
-        "repetitions": {case["id"]: repetition_count(case, args, defaults) for case in cases},
-        "suite_digest": frozen_suite["suite_digest"],
-        "inputs_path": str(run_dir / "inputs" / "suite.json"),
-        "candidate_snapshot_paths": {
-            candidate["candidate"]: candidate.get("snapshot_json_path") for candidate in candidate_infos
-        },
-        **({"preset_id": preset.get("id"), "preset_path": preset.get("path")} if preset else {}),
-        "candidates": [candidate_source(candidate) for candidate in candidate_infos],
-        "trials": [queued_record(row, run_dir) for row in plan],
-    }
-    write_json(run_dir / "run.json", run_model)
-    append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "run_id": rid, "status": "created"})
-    for row in plan:
-        append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": row["trial_id"], "status": "queued"})
+    if not cases:
+        raise CliError("no evals selected", 2)
+    include_baseline = not bool(getattr(args, "no_baseline", False))
+    baseline_candidate = getattr(args, "baseline", None)
+    candidate_defs = select_candidates(
+        manifest,
+        getattr(args, "candidates", None),
+        include_baseline=include_baseline,
+        baseline_id=baseline_candidate,
+    )
+    grading_enabled = not bool(getattr(args, "no_grade", False)) and (
+        not adhoc or any(case.get("expectations") or case.get("graders") or case.get("expected_output") for case in cases)
+    )
+    validate_grading_inputs(cases, grading_enabled=grading_enabled)
+    rid = run_id_value or run_id()
+    run_dir = runs_root / rid
+    run_dir.mkdir(parents=True, exist_ok=False)
+    try:
+        candidates = []
+        for candidate in candidate_defs:
+            resolved = resolve_candidate(
+                project,
+                worktrees_root,
+                rid,
+                manifest,
+                candidate,
+                skill_id_value=skill_id,
+            )
+            try:
+                candidates.append(snapshot_candidate(run_dir, resolved))
+            finally:
+                cleanup_candidate_source(project, resolved)
+        frozen_suite = freeze_run_inputs(manifest, suite, run_dir, cases, candidate_defs, grading_enabled=grading_enabled)
+        frozen_cases = {
+            case["id"]: {**case, "case_root": str(run_dir / "inputs" / "cases" / case["id"])}
+            for case in frozen_suite["evals"]
+        }
+        plan = plan_trials(cases, candidates, lambda case: repetition_count(case, args, defaults))
+        timeout_seconds = int(getattr(args, "timeout", None) or defaults.get("timeout_seconds") or 600)
+        run_model = {
+            "schema_version": 2,
+            "run_id": rid,
+            "created_at": utc_now(),
+            "adhoc": adhoc,
+            "objective": getattr(args, "objective", None) or manifest.get("objective"),
+            "skill_id": skill_id,
+            "suite": str(suite),
+            "project": str(project),
+            "profile": getattr(args, "profile", None),
+            "runner": {
+                "kind": "codex_app_server",
+                "sandbox": APP_SERVER_SANDBOX,
+                "approval_policy": APP_SERVER_APPROVAL_POLICY,
+                "grading": grading_enabled,
+                "parallel": max(1, int(getattr(args, "parallel", 1) or 1)),
+                "timeout_seconds": timeout_seconds,
+                "codex_binary": codex_binary,
+            },
+            "model": model,
+            "baseline_candidate": baseline_candidate or next(
+                (
+                    candidate["candidate"]
+                    for candidate in candidate_defs
+                    if (candidate.get("source") or {}).get("kind") == "none"
+                ),
+                None,
+            ),
+            "source_run_id": getattr(args, "source_run_id", None),
+            "human_review_sample": getattr(args, "human_review_sample", None),
+            "suite_digest": frozen_suite["suite_digest"],
+            "eval_digests": [
+                {"eval_id": case["id"], "case_digest": case["case_digest"]}
+                for case in frozen_suite["evals"]
+            ],
+            "eval_ids": [case["id"] for case in cases],
+            "candidates": [candidate_source(candidate) for candidate in candidates],
+            "repetitions": {case["id"]: repetition_count(case, args, defaults) for case in cases},
+            "trials": [
+                {
+                    "trial_id": row["trial_id"],
+                    "eval_id": row["eval"]["id"],
+                    "candidate": row["candidate"]["candidate"],
+                    "repetition": row["repetition"],
+                }
+                for row in plan
+            ],
+        }
+        write_json(run_dir / "run.json", run_model)
+        for row in plan:
+            root = trial_dir(run_dir, row["trial_id"])
+            root.mkdir(parents=True, exist_ok=True)
+            write_json(state_path(run_dir, row["trial_id"]), _state(row, run_dir, "queued"))
+    except Exception as exc:
+        if not (run_dir / "run.json").exists():
+            write_json(
+                run_dir / "run.json",
+                {"schema_version": 2, "run_id": rid, "created_at": utc_now(), "suite": str(suite), "planning_error": str(exc), "trials": []},
+            )
+        raise
+
     total = len(plan)
-    parallel = max(1, int(getattr(args, "parallel", 1) or 1))
+    parallel = run_model["runner"]["parallel"]
     lock = threading.Lock()
 
-    def execute_trial(position, row):
-        trial_id = row["trial_id"]
+    def execute(position, row):
         with lock:
-            print(f"[{position}/{total}] {trial_id} running", file=sys.stderr)
-            append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": "running"})
-        result = run_trial(row, run_dir, frozen_cases, args.model)
+            print(f"[{position}/{total}] {row['trial_id']} running", file=sys.stderr)
+        result = run_trial(row, run_dir, worktrees_root / rid, frozen_cases, model, timeout_seconds)
         with lock:
-            append_jsonl(run_dir / "results.jsonl", result)
-            append_jsonl(run_dir / "progress.jsonl", {"time": utc_now(), "trial_id": trial_id, "status": result["runtime_status"]})
-            duration_s = round((result.get("timing") or {}).get("duration_ms", 0) / 1000, 1)
-            print(f"[{position}/{total}] {trial_id} {result['runtime_status']} ({duration_s}s)", file=sys.stderr)
+            seconds = round((result.get("duration_ms") or 0) / 1000, 1)
+            print(f"[{position}/{total}] {row['trial_id']} {result['status']} ({seconds}s)", file=sys.stderr)
         return result
 
-    if parallel <= 1:
-        for position, row in enumerate(plan, start=1):
-            execute_trial(position, row)
+    if parallel == 1:
+        for position, row in enumerate(plan, 1):
+            execute(position, row)
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
-            futures = [executor.submit(execute_trial, position, row) for position, row in enumerate(plan, start=1)]
+            futures = [executor.submit(execute, position, row) for position, row in enumerate(plan, 1)]
             for future in concurrent.futures.as_completed(futures):
                 future.result()
-    grade_result = None
+
     if grading_enabled:
         from .grading import grade_run
 
-        grade_result = grade_run(str(run_dir), rebuild_summary=False, parallel=parallel)
-    summary = build_summary(str(run_dir))
-    exit_code = summary_exit_code(summary, runtime_only=not grading_enabled)
-    report_path = _write_run_report(run_dir, preset)
+        grade_run(str(run_dir), rebuild_report=False, parallel=parallel, model=model)
+    from .report import build_report, write_report
+
+    report = build_report(str(run_dir))
+    report_path = write_report(report)
+    ok = not any(item.get("verdict") in {"failed", "inconclusive"} for item in report.get("trials", []))
     return {
-        "ok": exit_code == 0,
+        "ok": ok,
         "run_id": rid,
         "run_dir": str(run_dir),
         "adhoc": adhoc,
-        "runner_config": runner_config,
-        "model_config": model_config,
-        "selected_cases": run_model["selected_cases"],
-        "selected_candidates": run_model["selected_candidates"],
+        "profile": run_model.get("profile"),
         "trials": len(plan),
-        "grading": grade_result or {"ok": True, "mode": "none"},
-        "summary": summary,
-        "report_path": str(report_path) if report_path else None,
+        "totals": report.get("totals"),
+        "report_path": str(report_path),
     }
 
 
-def _write_run_report(run_dir, preset):
-    """Render and write the run's Markdown report, preferring the preset scorecard."""
-    report_path = run_dir / "report.md"
-    try:
-        if preset:
-            from .presets import build_preset_report, render_preset_markdown
-
-            report = build_preset_report(str(run_dir))
-            markdown = render_preset_markdown(report)
-        else:
-            from .report import build_report, render_markdown
-
-            report = build_report(str(run_dir))
-            markdown = render_markdown(report)
-        report_path.write_text(markdown)
-        return report_path
-    except Exception as exc:
-        print(f"warning: could not render run report: {exc}", file=sys.stderr)
-        return None
-
-
-def progress_snapshot(raw_run):
+def run_snapshot(raw_run):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
-    progress = read_jsonl(run_dir / "progress.jsonl")
-    results = read_jsonl(run_dir / "results.jsonl")
-    grades = read_jsonl(run_dir / "grades.jsonl")
-    latest = {}
-    for row in progress:
-        trial_id = row.get("trial_id")
-        if trial_id:
-            latest[trial_id] = row.get("status", "unknown")
+    states = [read_json(path) for path in sorted((run_dir / "trials").glob("*/state.json"))]
     counts = {}
-    for status in latest.values():
-        counts[status] = counts.get(status, 0) + 1
+    for state in states:
+        counts[state.get("status", "unknown")] = counts.get(state.get("status", "unknown"), 0) + 1
     return {
         "ok": True,
-        "run_id": run.get("run_id"),
+        "run_id": run.get("run_id") or run_dir.name,
         "run_dir": str(run_dir),
-        "progress": counts,
-        "results": len(results),
-        "grades": len(grades),
+        "statuses": counts,
         "trials": len(run.get("trials", [])),
-        "summary_path": str(run_dir / "summary.json") if (run_dir / "summary.json").exists() else None,
+        "terminal": sum(counts.get(status, 0) for status in TERMINAL_STATUSES),
     }
-
-
-def terminal_count(snapshot):
-    progress = snapshot["progress"]
-    return sum(progress.get(status, 0) for status in ("completed", "failed", "timed_out", "skipped"))

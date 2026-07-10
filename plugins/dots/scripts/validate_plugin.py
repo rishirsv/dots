@@ -66,22 +66,25 @@ def validate_eval(path: Path, errors: list[str]) -> None:
     except (OSError, json.JSONDecodeError) as exc:
         fail(errors, f"{path}: invalid JSON: {exc}")
         return
-    if "evals" in suite:
-        fail(errors, f"{path}: legacy 'evals' key; use schema_version/target/candidates/cases")
-    if suite.get("schema_version") != 1:
-        fail(errors, f"{path}: schema_version must be 1")
+    if "cases" in suite:
+        fail(errors, f"{path}: legacy 'cases' key; use schema_version 2 with evals")
+    if suite.get("schema_version") != 2:
+        fail(errors, f"{path}: schema_version must be 2")
     if suite.get("target") != {"type": "skill", "ref": "SKILL.md"}:
         fail(errors, f"{path}: target must reference SKILL.md")
-    candidate_names = {candidate.get("candidate") for candidate in suite.get("candidates", [])}
-    if not {"current", "no-skill"}.issubset(candidate_names):
-        fail(errors, f"{path}: candidates must include current and no-skill baselines")
-    cases = suite.get("cases")
-    if not isinstance(cases, list) or not cases:
-        fail(errors, f"{path}: cases must be a non-empty list")
+    evals = suite.get("evals")
+    if not isinstance(evals, list) or not evals:
+        fail(errors, f"{path}: evals must be a non-empty list")
         return
-    for index, case in enumerate(cases):
-        if not isinstance(case.get("task", {}).get("prompt"), str):
-            fail(errors, f"{path}: case {index} must define task.prompt")
+    for index, case in enumerate(evals):
+        for field in ("prompt", "expected_output"):
+            if not isinstance(case.get(field), str) or not case[field].strip():
+                fail(errors, f"{path}: eval {index} must define non-empty {field}")
+        expectations = case.get("expectations")
+        if not isinstance(expectations, list) or not expectations or not all(
+            isinstance(expectation, str) and expectation.strip() for expectation in expectations
+        ):
+            fail(errors, f"{path}: eval {index} must define non-empty expectations")
 
 
 def main() -> int:
@@ -96,12 +99,14 @@ def main() -> int:
     for path in sorted(SKILLS.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in runtime_suffixes:
             continue
+        if "evals" in path.relative_to(SKILLS).parts:
+            continue
         text = path.read_text(encoding="utf-8")
         for label, pattern in FORBIDDEN.items():
             if pattern.search(text):
                 fail(errors, f"{path}: {label}")
 
-    for path in sorted(SKILLS.glob("*/.*/evals.json")):
+    for path in sorted(SKILLS.glob("*/evals/evals.json")):
         validate_eval(path, errors)
 
     if errors:

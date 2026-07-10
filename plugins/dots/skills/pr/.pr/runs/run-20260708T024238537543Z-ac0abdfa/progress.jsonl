@@ -1,4 +1,0 @@
-{"run_id": "run-20260708T024238537543Z-ac0abdfa", "status": "created", "time": "2026-07-08T02:42:38+00:00"}
-{"status": "queued", "time": "2026-07-08T02:42:38+00:00", "trial_id": "pr-activation-required.current.t1"}
-{"status": "running", "time": "2026-07-08T02:42:38+00:00", "trial_id": "pr-activation-required.current.t1"}
-{"status": "completed", "time": "2026-07-08T02:42:57+00:00", "trial_id": "pr-activation-required.current.t1"}

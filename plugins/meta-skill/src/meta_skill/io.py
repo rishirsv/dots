@@ -9,21 +9,33 @@ import uuid
 from pathlib import Path
 
 from .errors import CliError
-from .workbench_paths import workbench_path
+from .workbench_paths import repository_root, state_root
 
 
 def resolve_run_dir(raw_run):
     run_dir = Path(raw_run).expanduser().resolve()
     if not (run_dir / "run.json").exists():
-        candidate = (workbench_path(Path.cwd()) / "runs" / raw_run).resolve()
-        if candidate.exists():
+        runs_root = state_root(Path.cwd(), root=repository_root(Path.cwd())) / "runs"
+        candidate = (runs_root / raw_run).resolve()
+        if candidate.is_relative_to(runs_root.resolve()) and (candidate / "run.json").is_file():
             return candidate
+        matches = [path.parent for path in runs_root.rglob("run.json") if path.parent.name == str(raw_run)]
+        if len(matches) == 1:
+            return matches[0].resolve()
+        if len(matches) > 1:
+            raise CliError(f"run id is ambiguous; pass a run path or <skill-id>/<run-id>: {raw_run}", 2)
     return run_dir
 
 
 def write_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
+    try:
+        tmp.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+        os.replace(tmp, path)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
 
 
 def append_jsonl(path, row):

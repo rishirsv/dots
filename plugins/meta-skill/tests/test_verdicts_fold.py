@@ -1,78 +1,34 @@
-"""Tests for trial verdict folding."""
+"""Verdict folding tests."""
 
 import sys
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.verdicts import verdict_for_trial  # noqa: E402
-
-
-def grade(status, *, advisory=False):
-    return {
-        "trial_id": "case.current.t1",
-        "metric": "quality",
-        "grader": {"kind": "model", "id": f"judge-{status}-{advisory}", "advisory": advisory},
-        "grade_status": status,
-    }
+from meta_skill.verdicts import latest_grade_rows, verdict_for_trial
 
 
-class VerdictFoldTests(unittest.TestCase):
-    def test_required_fail_fails_even_with_advisory_pass(self):
-        verdict = verdict_for_trial(
-            {"runtime_status": "completed"},
-            [grade("fail"), grade("pass", advisory=True)],
-            grading_mode="expectations",
-        )
+def grade(status, advisory=False, kind="model", grader_id="judge", metric="quality"):
+    return {"trial_id": "a.current.t1", "grade_status": status, "metric": metric, "grader": {"kind": kind, "id": grader_id, "advisory": advisory}}
 
-        self.assertEqual(verdict, "failed")
 
-    def test_advisory_fail_is_inconclusive_when_required_passes(self):
-        verdict = verdict_for_trial(
-            {"runtime_status": "completed"},
-            [grade("pass"), grade("fail", advisory=True)],
-            grading_mode="expectations",
-        )
+class VerdictTests(unittest.TestCase):
+    def test_runtime_and_no_grade_states(self):
+        self.assertEqual(verdict_for_trial({"status": "timed_out"}, [], grading_enabled=True), "failed")
+        self.assertEqual(verdict_for_trial({"status": "running"}, [], grading_enabled=True), "inconclusive")
+        self.assertEqual(verdict_for_trial({"status": "completed"}, [], grading_enabled=False), "ungraded")
 
-        self.assertEqual(verdict, "inconclusive")
+    def test_required_and_advisory_policy(self):
+        state = {"status": "completed"}
+        self.assertEqual(verdict_for_trial(state, [grade("pass"), grade("fail", True, grader_id="note", metric="note")]), "inconclusive")
+        self.assertEqual(verdict_for_trial(state, [grade("fail"), grade("pass", True, grader_id="note", metric="note")]), "failed")
+        self.assertEqual(verdict_for_trial(state, [grade("pass")]), "passed")
 
-    def test_advisory_only_pass_is_inconclusive(self):
-        verdict = verdict_for_trial(
-            {"runtime_status": "completed"},
-            [grade("pass", advisory=True)],
-            grading_mode="expectations",
-        )
-
-        self.assertEqual(verdict, "inconclusive")
-
-    def test_required_and_advisory_passes_pass(self):
-        verdict = verdict_for_trial(
-            {"runtime_status": "completed"},
-            [grade("pass"), grade("pass", advisory=True)],
-            grading_mode="expectations",
-        )
-
-        self.assertEqual(verdict, "passed")
-
-    def test_partial_in_any_tier_is_inconclusive(self):
-        verdict = verdict_for_trial(
-            {"runtime_status": "completed"},
-            [grade("pass"), grade("partial", advisory=True)],
-            grading_mode="expectations",
-        )
-
-        self.assertEqual(verdict, "inconclusive")
-
-    def test_missing_grader_is_required_by_default(self):
-        verdict = verdict_for_trial(
-            {"runtime_status": "completed"},
-            [{"trial_id": "case.current.t1", "metric": "quality", "grade_status": "pass"}],
-            grading_mode="expectations",
-        )
-
-        self.assertEqual(verdict, "passed")
+    def test_latest_grade_supersedes_by_identity(self):
+        rows = latest_grade_rows([grade("fail"), grade("pass")])
+        self.assertEqual([row["grade_status"] for row in rows], ["pass"])
 
 
 if __name__ == "__main__":

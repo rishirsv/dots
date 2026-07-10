@@ -1,7 +1,7 @@
 {
   "name": "meta-skill",
   "version": "0.1.2",
-  "description": "Author, improve, and evaluate agent skills.",
+  "description": "Create, revise, review, and evaluate agent skills.",
   "author": {
     "name": "Rishi"
   },
@@ -14,15 +14,15 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Meta Skill",
-    "shortDescription": "Author, improve, and evaluate agent skills.",
-    "longDescription": "Author, improve, and evaluate agent skills.",
+    "shortDescription": "Create, revise, review, and evaluate agent skills.",
+    "longDescription": "Three focused tools for creating or revising skill source, reviewing skills without edits, and evaluating skill behavior.",
     "developerName": "Rishi",
     "category": "Productivity",
     "capabilities": [
       "Read",
       "Write"
     ],
-    "defaultPrompt": "Use meta-skill for this workflow.",
+    "defaultPrompt": "Help me create, revise, review, or evaluate an agent skill.",
     "brandColor": "#7C4DFF",
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png",

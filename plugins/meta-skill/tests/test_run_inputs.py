@@ -1,4 +1,4 @@
-"""Tests for frozen run inputs and trial workspace staging."""
+"""Frozen-input and ephemeral-staging tests."""
 
 import json
 import sys
@@ -6,212 +6,62 @@ import tempfile
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.errors import CliError  # noqa: E402
-from meta_skill.run_inputs import freeze_run_inputs  # noqa: E402
-from meta_skill.staging import stage_workspace  # noqa: E402
-
-
-def write_json(path, data):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+from meta_skill.errors import CliError
+from meta_skill.run_inputs import freeze_run_inputs
+from meta_skill.staging import cleanup_workspace, stage_workspace
 
 
-class ResolvedSuiteTests(unittest.TestCase):
-    def test_hidden_grader_support_is_frozen_but_not_staged(self):
+class RunInputTests(unittest.TestCase):
+    def test_inline_and_file_inputs_freeze_hidden_material_but_stage_only_visible_files(self):
         with tempfile.TemporaryDirectory() as tmp:
-            project = Path(tmp)
-            workbench = project / ".demo"
-            case_root = workbench / "cases" / "case-a"
-            case_root.mkdir(parents=True)
-            (case_root / "task.md").write_text("Visible task.\n")
-            (case_root / "judge.md").write_text("Hidden judge guidance.\n")
-            (case_root / "expected.txt").write_text("Hidden expected output.\n")
-            (case_root / "input.txt").write_text("visible fixture\n")
-            suite = workbench / "evals.json"
-            write_json(suite, {"schema_version": 1})
-            run_dir = workbench / "runs" / "run-001"
-            case = {
-                "id": "case-a",
-                "type": "capability",
-                "task": {"path": "task.md"},
-                "fixtures": ["input.txt"],
-                "expectations": ["Do the task."],
-                "graders": [{"kind": "model", "id": "judge", "path": "judge.md"}],
-            }
-
-            frozen = freeze_run_inputs(
-                {"target": {"type": "skill", "ref": "SKILL.md"}},
-                suite,
-                workbench,
-                run_dir,
-                [case],
-                [{"candidate": "current"}],
-            )
-            frozen_case = dict(frozen["cases"][0])
-            frozen_case["case_root"] = str(run_dir / "inputs" / "cases" / "case-a")
-            staged = stage_workspace(run_dir, "case-a.current.t1", frozen_case, {"candidate": "current"})
+            skill = Path(tmp) / "demo"
+            authored = skill / "evals" / "cases" / "a"
+            authored.mkdir(parents=True)
+            (authored / "task.md").write_text("Visible task")
+            (authored / "expected.md").write_text("Hidden result")
+            (authored / "judge.md").write_text("Hidden judge")
+            (authored / "input.txt").write_text("fixture")
+            suite = skill / "evals" / "evals.json"
+            suite.write_text(json.dumps({"schema_version": 2}))
+            run_dir = Path(tmp) / ".metaskill" / "runs" / "demo" / "run-1"
+            worktree_root = Path(tmp) / ".metaskill" / "worktrees" / "demo" / "run-1"
+            case = {"id": "a", "type": "capability", "priority": "high", "prompt": {"path": "task.md"}, "expected_output": {"path": "expected.md"}, "expectations": ["Pass"], "fixtures": ["input.txt"], "graders": [{"kind": "model", "id": "judge", "path": "judge.md"}], "annotations": [{"tag": "task-defect", "note": "Review wording"}]}
+            frozen = freeze_run_inputs({"target": {"ref": "SKILL.md"}}, suite, run_dir, [case], [{"candidate": "current"}])
+            frozen_case = {**frozen["evals"][0], "case_root": str(run_dir / "inputs" / "cases" / "a")}
+            self.assertEqual(frozen_case["priority"], "high")
+            self.assertEqual(frozen_case["annotations"][0]["tag"], "task-defect")
+            staged = stage_workspace(worktree_root, "a.current.t1", frozen_case, {"candidate": "current", "payload_path": None})
             workspace = Path(staged["workspace"])
-
-            self.assertTrue((run_dir / "inputs" / "cases" / "case-a" / "judge.md").exists())
-            self.assertTrue((run_dir / "inputs" / "cases" / "case-a" / "expected.txt").exists())
-            self.assertTrue((workspace / "task.md").exists())
-            self.assertTrue((workspace / "fixtures" / "input.txt").exists())
+            self.assertTrue((run_dir / "inputs" / "cases" / "a" / "judge.md").is_file())
+            self.assertTrue((run_dir / "inputs" / "cases" / "a" / "expected.md").is_file())
+            self.assertTrue((workspace / "task.md").is_file())
+            self.assertTrue((workspace / "fixtures" / "input.txt").is_file())
             self.assertFalse((workspace / "judge.md").exists())
-            self.assertFalse((workspace / "expected.txt").exists())
+            cleanup_workspace(workspace, worktree_root)
+            self.assertFalse(worktree_root.exists())
 
-    def test_undeclared_judge_file_is_not_frozen(self):
+    def test_symlink_support_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
-            project = Path(tmp)
-            workbench = project / ".demo"
-            case_root = workbench / "cases" / "case-a"
-            case_root.mkdir(parents=True)
-            (case_root / "task.md").write_text("Visible task.\n")
-            (case_root / "judge.md").write_text("Hidden judge guidance.\n")
-            suite = workbench / "evals.json"
-            write_json(suite, {"schema_version": 1})
-            run_dir = workbench / "runs" / "run-001"
-            case = {
-                "id": "case-a",
-                "type": "capability",
-                "task": {"path": "task.md"},
-                "expectations": ["Do the task."],
-            }
+            skill = Path(tmp) / "demo"
+            authored = skill / "evals" / "cases" / "a"
+            authored.mkdir(parents=True)
+            (authored / "secret").write_text("hidden")
+            (authored / "fixture").symlink_to("secret")
+            case = {"id": "a", "prompt": "A", "fixtures": ["fixture"], "expectations": ["Pass"]}
+            with self.assertRaises(CliError) as caught:
+                freeze_run_inputs({}, skill / "evals" / "evals.json", Path(tmp) / ".metaskill" / "runs" / "demo" / "r", [case], [])
+            self.assertIn("must not contain symlinks", caught.exception.message)
 
-            freeze_run_inputs(
-                {"target": {"type": "skill", "ref": "SKILL.md"}},
-                suite,
-                workbench,
-                run_dir,
-                [case],
-                [{"candidate": "current"}],
-            )
-
-            self.assertFalse((run_dir / "inputs" / "cases" / "case-a" / "judge.md").exists())
-
-    def test_symlinked_fixture_is_rejected_before_freezing(self):
+    def test_missing_file_prompt_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
-            project = Path(tmp)
-            workbench = project / ".demo"
-            case_root = workbench / "cases" / "case-a"
-            case_root.mkdir(parents=True)
-            (case_root / "task.md").write_text("Visible task.\n")
-            (case_root / "judge.md").write_text("Hidden judge guidance.\n")
-            (case_root / "leak.txt").symlink_to("judge.md")
-            suite = workbench / "evals.json"
-            write_json(suite, {"schema_version": 1})
-
-            case = {
-                "id": "case-a",
-                "type": "capability",
-                "task": {"path": "task.md"},
-                "fixtures": ["leak.txt"],
-                "expectations": ["Do the task."],
-            }
-
-            with self.assertRaises(CliError) as ctx:
-                freeze_run_inputs(
-                    {"target": {"type": "skill", "ref": "SKILL.md"}},
-                    suite,
-                    workbench,
-                    workbench / "runs" / "run-001",
-                    [case],
-                    [{"candidate": "current"}],
-                )
-
-            self.assertIn("support file path must not be a symlink", ctx.exception.message)
-
-    def test_fixture_directory_symlink_is_rejected_before_freezing(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            project = Path(tmp)
-            workbench = project / ".demo"
-            case_root = workbench / "cases" / "case-a"
-            fixture_root = case_root / "fixtures"
-            fixture_root.mkdir(parents=True)
-            (case_root / "task.md").write_text("Visible task.\n")
-            (case_root / "judge.md").write_text("Hidden judge guidance.\n")
-            (fixture_root / "leak.txt").symlink_to("../judge.md")
-            suite = workbench / "evals.json"
-            write_json(suite, {"schema_version": 1})
-            case = {
-                "id": "case-a",
-                "type": "capability",
-                "task": {"path": "task.md"},
-                "fixtures": ["fixtures"],
-                "expectations": ["Do the task."],
-            }
-
-            with self.assertRaises(CliError) as ctx:
-                freeze_run_inputs(
-                    {"target": {"type": "skill", "ref": "SKILL.md"}},
-                    suite,
-                    workbench,
-                    workbench / "runs" / "run-001",
-                    [case],
-                    [{"candidate": "current"}],
-                )
-
-            self.assertIn("support file path must not contain symlinks", ctx.exception.message)
-
-    def test_symlinked_fixture_directory_path_is_rejected_before_freezing(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            project = Path(tmp)
-            workbench = project / ".demo"
-            case_root = workbench / "cases" / "case-a"
-            real_fixture_root = case_root / "visible-fixtures"
-            real_fixture_root.mkdir(parents=True)
-            (real_fixture_root / "input.txt").write_text("visible\n")
-            (case_root / "task.md").write_text("Visible task.\n")
-            (case_root / "fixture-link").symlink_to("visible-fixtures")
-            suite = workbench / "evals.json"
-            write_json(suite, {"schema_version": 1})
-            case = {
-                "id": "case-a",
-                "type": "capability",
-                "task": {"path": "task.md"},
-                "fixtures": ["fixture-link"],
-                "expectations": ["Do the task."],
-            }
-
-            with self.assertRaises(CliError) as ctx:
-                freeze_run_inputs(
-                    {"target": {"type": "skill", "ref": "SKILL.md"}},
-                    suite,
-                    workbench,
-                    workbench / "runs" / "run-001",
-                    [case],
-                    [{"candidate": "current"}],
-                )
-
-            self.assertIn("support file path must not be a symlink", ctx.exception.message)
-
-    def test_missing_path_task_errors_when_freezing(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            project = Path(tmp)
-            workbench = project / ".demo"
-            (workbench / "cases" / "case-a").mkdir(parents=True)
-            suite = workbench / "evals.json"
-            write_json(suite, {"schema_version": 1})
-            case = {
-                "id": "case-a",
-                "type": "capability",
-                "task": {"path": "task.md"},
-                "expectations": ["Do the task."],
-            }
-
-            with self.assertRaises(CliError) as ctx:
-                freeze_run_inputs(
-                    {"target": {"type": "skill", "ref": "SKILL.md"}},
-                    suite,
-                    workbench,
-                    workbench / "runs" / "run-001",
-                    [case],
-                    [{"candidate": "current"}],
-                )
-
-            self.assertIn("task file missing for case case-a", ctx.exception.message)
+            skill = Path(tmp) / "demo"
+            (skill / "evals" / "cases" / "a").mkdir(parents=True)
+            with self.assertRaises(CliError) as caught:
+                freeze_run_inputs({}, skill / "evals" / "evals.json", Path(tmp) / ".metaskill" / "runs" / "demo" / "r", [{"id": "a", "prompt": {"path": "task.md"}, "expectations": ["Pass"]}], [])
+            self.assertIn("prompt file missing", caught.exception.message)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,41 @@
+# Human Review
+
+Read this when a run needs taste, domain expertise, adjudication of ambiguous
+evidence, or a human check on an important model judgment.
+
+Use the evaluation workbench. Review high-priority, regressed, unknown,
+disagreed, and surprising cases before routine passes. Add a deterministic
+sample of apparent passes and report both reviewed and unreviewed coverage.
+
+Use candidate-blind pairwise review for comparative quality. Randomize A/B
+order, record `A`, `B`, `tie`, `neither`, or `unknown`, and select one primary
+reason such as correctness, completeness, clarity, evidence, instruction
+following, safety, or style. Reveal candidate identity only after the
+annotation is recorded. Pairwise annotations remain separate from absolute
+trial grades.
+
+Use absolute review when a declared human grader must decide whether one trial
+meets a requirement. Keep the model label hidden until the reviewer records an
+independent judgment; reveal it afterward as an agreement or disagreement, not
+as a score of the reviewer.
+
+For each selected absolute trial:
+
+1. Read the visible task and outcome.
+2. Read expected output, judge guidance, validator evidence, and transcript
+   excerpts only when they affect the decision.
+3. Record `pass`, `partial`, `fail`, or `unknown` against the suite's declared
+   human grader and metric.
+4. Give a short rationale tied to exact outcome or transcript evidence.
+5. Add an annotation when the judgment indicates a reusable taste rule, a
+   one-off preference, a task defect, or a grader defect.
+
+Human grades and pairwise annotations are revisable. Preserve their history and
+regenerate the derived report after revision. When a human and model disagree, inspect the task,
+criteria, allowed evidence, and judge guidance; do not hide the disagreement or
+invent a confidence label.
+
+Use a deterministic validator instead when exact checks can decide fairly. Use
+`unknown` when evidence is insufficient or contradictory. One reviewer is
+normally enough for a small local suite; do not turn routine evaluation into a
+multi-reviewer study unless the user's decision requires it.

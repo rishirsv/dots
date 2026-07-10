@@ -1,4 +1,4 @@
-"""Freeze selected eval inputs into a run-local input snapshot."""
+"""Freeze selected eval inputs into one run-local snapshot."""
 
 import hashlib
 import json
@@ -8,62 +8,16 @@ from pathlib import Path
 from .errors import CliError
 from .ids import utc_now
 from .io import write_json
-from .manifest import case_dir, case_task_info, is_prompt_case
+from .manifest import case_dir, expected_output_info, prompt_info
 from .staging import safe_case_file
 
 
 def file_digest(path):
-    h = hashlib.sha256()
-    h.update(Path(path).read_bytes())
-    return h.hexdigest()
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 def bytes_digest(data):
     return hashlib.sha256(data).hexdigest()
-
-
-def normalized_task_text(text):
-    return text if text.endswith("\n") else text + "\n"
-
-
-def suite_digest(manifest, cases, candidates):
-    h = hashlib.sha256()
-    for item in sorted(cases, key=lambda row: row.get("id") or ""):
-        h.update(json.dumps(item, sort_keys=True, separators=(",", ":")).encode("utf-8"))
-        h.update(b"\0")
-    for item in sorted(candidates, key=lambda row: row.get("candidate") or ""):
-        h.update(json.dumps(item, sort_keys=True, separators=(",", ":")).encode("utf-8"))
-        h.update(b"\0")
-    h.update(json.dumps(manifest.get("target") or {}, sort_keys=True, separators=(",", ":")).encode("utf-8"))
-    return h.hexdigest()
-
-
-def _copy_file(src, dest):
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, dest)
-    return {"path": dest.name, "digest": file_digest(dest), "source_path": str(src)}
-
-
-def _reject_support_symlinks(src, raw_path, label):
-    if src.is_symlink():
-        raise CliError(f"{label} path must not be a symlink: {raw_path}", 2)
-    if src.is_dir():
-        for item in src.rglob("*"):
-            if item.is_symlink():
-                rel = Path(raw_path) / item.relative_to(src)
-                raise CliError(f"{label} path must not contain symlinks: {rel.as_posix()}", 2)
-
-
-def _copy_support_file(case_root, frozen_case_root, raw_path, label):
-    src = safe_case_file(case_root, raw_path, label)
-    if not src.exists():
-        raise CliError(f"{label} missing: {src}", 2)
-    _reject_support_symlinks(src, raw_path, label)
-    dest = frozen_case_root / raw_path
-    if src.is_dir():
-        shutil.copytree(src, dest, dirs_exist_ok=True)
-        return {"path": raw_path, "digest": tree_digest(dest), "source_path": str(src)}
-    return _copy_file(src, dest) | {"path": raw_path}
 
 
 def tree_digest(path):
@@ -72,26 +26,28 @@ def tree_digest(path):
     for item in sorted(root.rglob("*")):
         if not item.is_file():
             continue
-        rel = item.relative_to(root).as_posix()
-        h.update(rel.encode("utf-8"))
+        h.update(item.relative_to(root).as_posix().encode("utf-8"))
         h.update(b"\0")
         h.update(item.read_bytes())
         h.update(b"\0")
     return h.hexdigest()
 
 
-def _expected_support(case_root):
-    support = []
-    support.extend(path.name for path in sorted(case_root.glob("expected.*")) if path.is_file())
-    return support
-
-
-def _grader_support(case):
-    refs = []
-    for grader in case.get("graders") or []:
-        if grader.get("path"):
-            refs.append(grader["path"])
-    return refs
+def _copy_support(case_root, frozen_root, raw_path, label):
+    src = safe_case_file(case_root, raw_path, label)
+    if not src.exists():
+        raise CliError(f"{label} missing: {src}", 2)
+    if src.is_symlink() or (src.is_dir() and any(item.is_symlink() for item in src.rglob("*"))):
+        raise CliError(f"{label} must not contain symlinks: {raw_path}", 2)
+    dest = frozen_root / raw_path
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if src.is_dir():
+        shutil.copytree(src, dest, dirs_exist_ok=True)
+        digest = tree_digest(dest)
+    else:
+        shutil.copy2(src, dest)
+        digest = file_digest(dest)
+    return {"path": raw_path, "digest": digest}
 
 
 def validate_grading_inputs(cases, *, grading_enabled):
@@ -100,82 +56,102 @@ def validate_grading_inputs(cases, *, grading_enabled):
     missing = [
         case.get("id")
         for case in cases
-        if is_prompt_case(case) and not case.get("expectations") and not case.get("graders")
+        if not case.get("expectations") and not case.get("graders") and case.get("expected_output") is None
     ]
     if missing:
-        raise CliError(f"graded prompt evals require expectations or graders: {', '.join(missing)}", 2)
+        raise CliError(f"graded evals require expected_output, expectations, or graders: {', '.join(missing)}", 2)
 
 
-def freeze_run_inputs(manifest, suite, workbench, run_dir, cases, candidates, *, grading_enabled=True):
+def _freeze_prompt(case, authored_root, frozen_root):
+    info = prompt_info(case)
+    if info["source"] == "inline":
+        text = info["text"]
+        source = {"kind": "inline"}
+    else:
+        src = safe_case_file(authored_root, info["path"], "prompt")
+        if not src.is_file():
+            raise CliError(f"prompt file missing for case {case['id']}: {src}", 2)
+        text = src.read_text()
+        source = {"kind": "path", "path": info["path"], "source_digest": file_digest(src)}
+    text = text if text.endswith("\n") else text + "\n"
+    dest = frozen_root / "task.md"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(text)
+    return {"path": "task.md", "digest": file_digest(dest), "source": source}
+
+
+def _freeze_expected(case, authored_root, frozen_root):
+    info = expected_output_info(case)
+    if info is None:
+        return None
+    if info["source"] == "inline":
+        text = info["text"]
+        source = {"kind": "inline"}
+    else:
+        src = safe_case_file(authored_root, info["path"], "expected output")
+        if not src.is_file():
+            raise CliError(f"expected output missing for case {case['id']}: {src}", 2)
+        text = src.read_text()
+        source = {"kind": "path", "path": info["path"], "source_digest": file_digest(src)}
+    text = text if text.endswith("\n") else text + "\n"
+    dest = frozen_root / "expected.md"
+    dest.write_text(text)
+    return {"path": "expected.md", "digest": file_digest(dest), "source": source}
+
+
+def freeze_run_inputs(manifest, suite, run_dir, cases, candidates, *, grading_enabled=True):
     validate_grading_inputs(cases, grading_enabled=grading_enabled)
-    spec_dir = run_dir / "inputs"
-    cases_dir = spec_dir / "cases"
-    selected_case_ids = [case["id"] for case in cases]
-    selected_candidate_ids = [candidate["candidate"] for candidate in candidates]
+    inputs_root = Path(run_dir) / "inputs"
     frozen_cases = []
     for case in cases:
         case_id = case["id"]
-        info = case_task_info(case)
-        frozen_case_root = cases_dir / case_id
-        frozen_case_root.mkdir(parents=True, exist_ok=True)
-        source_case_root = case_dir(workbench, case_id)
-        if info["source"] == "prompt":
-            task_text = normalized_task_text(info.get("prompt") or "")
-            task_bytes = task_text.encode("utf-8")
-            task_source = {"kind": "inline_prompt"}
-        else:
-            source_task = safe_case_file(source_case_root, info["path"], "task")
-            if not source_task.exists():
-                raise CliError(f"task file missing for case {case_id}: {source_task}", 2)
-            source_bytes = source_task.read_bytes()
-            task_text = normalized_task_text(source_bytes.decode("utf-8"))
-            task_bytes = task_text.encode("utf-8")
-            task_source = {
-                "kind": "task_file",
-                "path": info["path"],
-                "source_path": str(source_task),
-                "source_digest": bytes_digest(source_bytes),
-            }
-        task_path = frozen_case_root / "task.md"
-        task_path.write_bytes(task_bytes)
-        expectations_path = frozen_case_root / "expectations.json"
-        expectations = list(case.get("expectations") or [])
-        write_json(expectations_path, expectations)
+        authored_root = case_dir(suite, case_id)
+        frozen_root = inputs_root / "cases" / case_id
+        frozen_root.mkdir(parents=True, exist_ok=True)
+        prompt = _freeze_prompt(case, authored_root, frozen_root)
+        expected = _freeze_expected(case, authored_root, frozen_root)
         support_refs = []
-        for ref in [*(case.get("fixtures") or []), *_grader_support(case), *_expected_support(source_case_root)]:
-            if ref in support_refs:
-                continue
-            support_refs.append(ref)
-        copied_support = []
+        support_refs.extend(case.get("fixtures") or [])
+        support_refs.extend(
+            grader.get("path") for grader in case.get("graders") or [] if grader.get("path")
+        )
+        copied = []
         for ref in support_refs:
-            copied_support.append(_copy_support_file(source_case_root, frozen_case_root, ref, "support file"))
+            if ref not in {item["path"] for item in copied}:
+                copied.append(_copy_support(authored_root, frozen_root, ref, "support file"))
         frozen_case = {
             "id": case_id,
             "type": case.get("type"),
+            "priority": case.get("priority"),
             "split": case.get("split"),
             "repetitions": case.get("repetitions"),
-            "task_text": task_text,
-            "task_path": str(task_path),
-            "task_digest": bytes_digest(task_bytes),
-            "task_source": task_source,
-            "expectations": expectations,
-            "expectations_path": str(expectations_path),
-            "graders": case.get("graders") or [],
-            "fixtures": case.get("fixtures") or [],
-            "support_files": copied_support,
+            "prompt": prompt,
+            "expected_output": expected,
+            "expectations": list(case.get("expectations") or []),
+            "graders": list(case.get("graders") or []),
+            "fixtures": list(case.get("fixtures") or []),
+            "annotations": list(case.get("annotations") or []),
+            "support_files": copied,
         }
-        frozen_cases.append({key: value for key, value in frozen_case.items() if value is not None})
+        frozen_case["case_digest"] = bytes_digest(
+            json.dumps(frozen_case, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        )
+        frozen_cases.append(frozen_case)
     suite_model = {
-        "schema_version": 1,
+        "schema_version": 2,
         "source_suite": str(suite),
         "frozen_at": utc_now(),
-        "target": manifest.get("target") or {},
+        "target": manifest.get("target") or {"type": "skill", "ref": "SKILL.md"},
         "defaults": manifest.get("defaults") or {},
-        "selected_case_ids": selected_case_ids,
-        "selected_candidate_ids": selected_candidate_ids,
-        "cases": frozen_cases,
-        "grader_config": {"mode": "expectations_default"},
-        "suite_digest": suite_digest(manifest, cases, candidates),
+        "selected_eval_ids": [case["id"] for case in cases],
+        "selected_candidates": [candidate["candidate"] for candidate in candidates],
+        "evals": frozen_cases,
     }
-    write_json(spec_dir / "suite.json", suite_model)
+    digest_payload = json.dumps(
+        {key: value for key, value in suite_model.items() if key not in {"source_suite", "frozen_at"}},
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    suite_model["suite_digest"] = bytes_digest(digest_payload)
+    write_json(inputs_root / "suite.json", suite_model)
     return suite_model

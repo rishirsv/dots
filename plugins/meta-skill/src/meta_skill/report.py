@@ -1,164 +1,485 @@
-"""Summary-only run listing and report rendering."""
+"""Canonical filesystem read model and Markdown report export."""
 
+from collections import Counter, defaultdict
 from pathlib import Path
 
 from .errors import CliError
+from .grading import is_recorded_human_grade, normalize_graders
 from .io import read_json, read_jsonl, resolve_run_dir
-from .manifest import suite_path, workbench_from_suite
-from .summary import build_summary
+from .manifest import load_manifest, runs_from_suite, suite_path
+from .verdicts import latest_grade_rows, verdict_for_trial
 
 
-def list_runs(raw_suite):
-    runs_root = workbench_from_suite(suite_path(raw_suite)) / "runs"
-    rows = []
-    run_dirs = sorted(path for path in runs_root.iterdir() if (path / "run.json").exists()) if runs_root.is_dir() else []
-    for run_dir in run_dirs:
-        summary_path = run_dir / "summary.json"
-        if not summary_path.exists():
-            rows.append({"run_id": run_dir.name, "summary_status": "missing"})
-            continue
-        try:
-            summary = read_json(summary_path)
-        except CliError as exc:
-            rows.append({"run_id": run_dir.name, "error": exc.message})
-            continue
-        rows.append(
-            {
-                "run_id": summary.get("run_id") or run_dir.name,
-                "created_at": summary.get("created_at"),
-                "trials": summary.get("total_trials"),
-                "runtime_status_totals": summary.get("runtime_status_totals") or {},
-                "grade_status_totals": summary.get("grade_status_totals") or {},
-                "final_verdict_totals": summary.get("final_verdict_totals") or {},
-                "summary_path": str(summary_path),
-            }
-        )
-    return {"ok": True, "runs_dir": str(runs_root), "runs": rows}
+def _safe_json(path, default):
+    try:
+        return read_json(path) if Path(path).exists() else default
+    except CliError:
+        return default
 
 
-def build_report(raw_run):
-    run_dir = resolve_run_dir(raw_run)
-    summary = build_summary(str(run_dir))
-    run = read_json(run_dir / "run.json")
-    results_by_trial = {row.get("trial_id"): row for row in read_jsonl(run_dir / "results.jsonl")}
-    trials = summary.get("trials", [])
-    candidates = run.get("candidates", [])
-    return {
-        **summary,
-        "candidates": candidates,
-        "comparisons": build_comparisons(candidates, trials),
-        "needs_attention": [
-            {"trial_id": row.get("trial_id"), "kind": row.get("verdict"), "detail": row.get("error") or row.get("verdict")}
-            for row in trials
-            if row.get("verdict") in {"failed", "inconclusive", "ungraded"}
-        ],
-        "totals": {
-            "trials": summary.get("total_trials", 0),
-            "passed": (summary.get("final_verdict_totals") or {}).get("passed", 0),
-            "failed": (summary.get("final_verdict_totals") or {}).get("failed", 0),
-            "inconclusive": (summary.get("final_verdict_totals") or {}).get("inconclusive", 0),
-            "ungraded": (summary.get("final_verdict_totals") or {}).get("ungraded", 0),
+def _failed_checks(grades):
+    failed = []
+    for grade in grades:
+        for check in grade.get("checks") or []:
+            if isinstance(check, dict) and check.get("label") in {"fail", "unknown"}:
+                failed.append(
+                    {
+                        "grader": (grade.get("grader") or {}).get("id"),
+                        "metric": grade.get("metric"),
+                        "name": check.get("name"),
+                        "label": check.get("label"),
+                        "evidence": check.get("evidence") or check.get("note") or "",
+                    }
+                )
+    return failed
+
+
+def _trial_model(run_dir, planned, grading_enabled):
+    trial_id = planned["trial_id"]
+    root = run_dir / "trials" / trial_id
+    state = _safe_json(
+        root / "state.json",
+        {
+            "trial_id": trial_id,
+            "eval_id": planned.get("eval_id"),
+            "candidate": planned.get("candidate"),
+            "repetition": planned.get("repetition"),
+            "status": "no_result",
         },
-        "results_by_trial": results_by_trial,
+    )
+    grades = latest_grade_rows(read_jsonl(root / "grades.jsonl"))
+    review = _safe_json(root / "review.json", None)
+    verdict = verdict_for_trial(state, grades, grading_enabled=grading_enabled)
+    failed_checks = _failed_checks(grades)
+    model_by_metric = {
+        row.get("metric"): row for row in grades if (row.get("grader") or {}).get("kind") == "model"
+    }
+    disagreements = []
+    for human in [
+        row for row in grades if is_recorded_human_grade(row)
+    ]:
+        model = model_by_metric.get(human.get("metric"))
+        if model and model.get("grade_status") != human.get("grade_status"):
+            disagreements.append(
+                {
+                    "metric": human.get("metric"),
+                    "model": model.get("grade_status"),
+                    "human": human.get("grade_status"),
+                }
+            )
+    return {
+        "trial_id": trial_id,
+        "eval_id": state.get("eval_id") or planned.get("eval_id"),
+        "candidate": state.get("candidate") or planned.get("candidate"),
+        "repetition": state.get("repetition") or planned.get("repetition"),
+        "status": state.get("status", "no_result"),
+        "verdict": verdict,
+        "duration_ms": state.get("duration_ms"),
+        "usage": state.get("usage"),
+        "error": state.get("error"),
+        "produced_artifacts": list(state.get("produced_artifacts") or []),
+        "response_path": str(root / "response.md"),
+        "events_path": str(root / "events.jsonl"),
+        "artifacts_path": str(root / "artifacts"),
+        "state_path": str(root / "state.json"),
+        "grades_path": str(root / "grades.jsonl"),
+        "grades": grades,
+        "review": review,
+        "failed_checks": failed_checks,
+        "disagreements": disagreements,
     }
 
 
-def trial_behavior_state(trial):
-    verdict = trial.get("verdict")
-    if verdict == "passed":
+def _human_review_pending(case, grades):
+    declared = {
+        (grader["id"], grader["metric"])
+        for grader in normalize_graders(case)
+        if grader["kind"] == "human"
+    }
+    recorded = {
+        ((row.get("grader") or {}).get("id"), row.get("metric"))
+        for row in grades
+        if is_recorded_human_grade(row)
+    }
+    return bool(declared - recorded)
+
+
+def _blind_pending_trial(trial, case, grading_enabled):
+    if not _human_review_pending(case, trial.get("grades") or []):
+        return trial
+    visible_grades = [
+        row for row in trial.get("grades") or []
+        if (row.get("grader") or {}).get("kind") != "model"
+    ]
+    return {
+        **trial,
+        "verdict": verdict_for_trial(
+            {"status": trial.get("status")}, visible_grades, grading_enabled=grading_enabled
+        ),
+        "grades": visible_grades,
+        "failed_checks": _failed_checks(visible_grades),
+        "disagreements": [],
+    }
+
+
+def _behavior(trials):
+    verdicts = {trial.get("verdict") for trial in trials}
+    if verdicts == {"passed"}:
         return "pass"
-    if verdict == "failed":
+    if verdicts == {"failed"}:
         return "fail"
     return "unknown"
 
 
-def aggregate_case_candidate_state(trials):
-    states = [trial_behavior_state(trial) for trial in trials]
-    if not states or "unknown" in states or ("pass" in states and "fail" in states):
-        return "unknown"
-    return states[0]
-
-
-def build_comparisons(candidates, trials):
-    baseline_ids = {row.get("candidate") for row in candidates if row.get("source_kind") == "none"}
-    payload_ids = [row.get("candidate") for row in candidates if row.get("source_kind") != "none"]
-    if not baseline_ids or not payload_ids:
+def _comparisons(candidates, trials, baseline_candidate=None):
+    candidate_ids = [candidate.get("candidate") for candidate in candidates if candidate.get("candidate")]
+    baseline = baseline_candidate or next(
+        (candidate.get("candidate") for candidate in candidates if candidate.get("source_kind") == "none"),
+        None,
+    )
+    payload_ids = [candidate for candidate in candidate_ids if candidate != baseline]
+    if not baseline or not payload_ids:
         return []
-    baseline_id = sorted(baseline_ids)[0]
-    by_case_candidate = {}
+    by_pair = defaultdict(list)
     for trial in trials:
-        by_case_candidate.setdefault((trial["case_id"], trial["candidate"]), []).append(trial)
+        by_pair[(trial.get("eval_id"), trial.get("candidate"))].append(trial)
     rows = []
-    for case_id in sorted({trial["case_id"] for trial in trials}):
-        baseline_state = aggregate_case_candidate_state(by_case_candidate.get((case_id, baseline_id), []))
-        for candidate_id in sorted(payload_ids):
-            candidate_state = aggregate_case_candidate_state(by_case_candidate.get((case_id, candidate_id), []))
+    eval_ids = sorted({trial.get("eval_id") for trial in trials if trial.get("eval_id")})
+    for eval_id in eval_ids:
+        baseline_state = _behavior(by_pair[(eval_id, baseline)])
+        for candidate in payload_ids:
+            candidate_state = _behavior(by_pair[(eval_id, candidate)])
+            if baseline_state == "fail" and candidate_state == "pass":
+                delta = "improved"
+            elif baseline_state == "pass" and candidate_state == "fail":
+                delta = "regressed"
+            elif baseline_state == candidate_state and baseline_state in {"pass", "fail"}:
+                delta = "unchanged"
+            else:
+                delta = "unknown"
             rows.append(
                 {
-                    "case_id": case_id,
-                    "baseline": baseline_id,
-                    "candidate": candidate_id,
+                    "eval_id": eval_id,
+                    "baseline": baseline,
+                    "candidate": candidate,
                     "baseline_state": baseline_state,
                     "candidate_state": candidate_state,
+                    "delta": delta,
                 }
             )
     return rows
 
 
-def md_cell(value, limit=96):
+def _token_usage(trials):
+    totals = Counter()
+    trials_with_usage = 0
+    for trial in trials:
+        usage = trial.get("usage") or {}
+        if usage:
+            trials_with_usage += 1
+        for key in ("input_tokens", "cached_input_tokens", "output_tokens", "total_tokens"):
+            totals[key] += int(usage.get(key) or 0)
+        for grade in trial.get("grades") or []:
+            detail_usage = (grade.get("detail") or {}).get("usage") or {}
+            for key in ("input_tokens", "cached_input_tokens", "output_tokens", "total_tokens"):
+                totals[f"judge_{key}"] += int(detail_usage.get(key) or 0)
+    return {**totals, "trials_with_usage": trials_with_usage}
+
+
+def _pairwise_reviews(run_dir):
+    latest = {}
+    for row in read_jsonl(Path(run_dir) / "pairwise-reviews.jsonl"):
+        if row.get("comparison_id"):
+            latest[row["comparison_id"]] = row
+    return list(latest.values())
+
+
+def build_report(raw_run, *, blind_pending_human=False):
+    run_dir = resolve_run_dir(raw_run)
+    run = read_json(run_dir / "run.json")
+    if run.get("schema_version") != 2:
+        raise CliError("only run schema_version 2 is supported", 2)
+    grading_enabled = bool((run.get("runner") or {}).get("grading"))
+    suite = _safe_json(run_dir / "inputs" / "suite.json", {"evals": []})
+    cases = {case.get("id"): case for case in suite.get("evals") or []}
+    trials = []
+    for planned in run.get("trials", []):
+        trial = _trial_model(run_dir, planned, grading_enabled)
+        case = cases.get(trial.get("eval_id"), {})
+        trials.append({**trial, "eval_type": case.get("type"), "priority": case.get("priority") or "medium"})
+    if blind_pending_human:
+        trials = [
+            _blind_pending_trial(trial, cases.get(trial.get("eval_id"), {}), grading_enabled)
+            for trial in trials
+        ]
+    comparisons = _comparisons(
+        run.get("candidates") or [], trials, baseline_candidate=run.get("baseline_candidate")
+    )
+    runtime_totals = dict(Counter(trial["status"] for trial in trials))
+    verdict_totals = dict(Counter(trial["verdict"] for trial in trials))
+    delta_totals = dict(Counter(row["delta"] for row in comparisons))
+    reviewed = sum(
+        1
+        for trial in trials
+        if trial.get("review") or any(is_recorded_human_grade(row) for row in trial.get("grades") or [])
+    )
+    disagreement_count = sum(len(trial.get("disagreements") or []) for trial in trials)
+    pairwise_reviews = _pairwise_reviews(run_dir)
+    annotation_totals = Counter(
+        annotation.get("tag")
+        for trial in trials
+        for annotation in ((trial.get("review") or {}).get("annotations") or [])
+        if annotation.get("tag")
+    )
+    attention = [
+        {
+            "trial_id": trial["trial_id"],
+            "kind": trial["verdict"],
+            "detail": trial.get("error") or (trial.get("failed_checks") or [{}])[0].get("evidence") or trial["verdict"],
+        }
+        for trial in trials
+        if trial["verdict"] in {"failed", "inconclusive", "ungraded"}
+    ]
+    coverage_limits = []
+    if not run.get("baseline_candidate") and not any(
+        candidate.get("source_kind") == "none" for candidate in run.get("candidates") or []
+    ):
+        coverage_limits.append("No baseline candidate was run; candidate delta cannot be calculated.")
+    if not grading_enabled:
+        coverage_limits.append("Grading was disabled; completed trials remain ungraded.")
+    report = {
+        "schema_version": 2,
+        "run_id": run.get("run_id") or run_dir.name,
+        "run_dir": str(run_dir),
+        "created_at": run.get("created_at"),
+        "adhoc": bool(run.get("adhoc")),
+        "objective": run.get("objective"),
+        "skill_id": run.get("skill_id"),
+        "suite": run.get("suite"),
+        "project": run.get("project"),
+        "profile": run.get("profile"),
+        "model": run.get("model"),
+        "runner": run.get("runner") or {},
+        "baseline_candidate": run.get("baseline_candidate"),
+        "source_run_id": run.get("source_run_id"),
+        "human_review_sample": run.get("human_review_sample"),
+        "suite_digest": run.get("suite_digest"),
+        "eval_digests": run.get("eval_digests") or [],
+        "planning_error": run.get("planning_error"),
+        "candidates": run.get("candidates") or [],
+        "trials": trials,
+        "comparisons": comparisons,
+        "delta_totals": delta_totals,
+        "runtime_status_totals": runtime_totals,
+        "verdict_totals": verdict_totals,
+        "totals": {
+            "trials": len(trials),
+            **{key: verdict_totals.get(key, 0) for key in ("passed", "failed", "inconclusive", "ungraded", "skipped")},
+        },
+        "review": {"reviewed": reviewed, "total": len(trials), "disagreements": disagreement_count},
+        "pairwise_review": {
+            "reviewed": len(pairwise_reviews),
+            "reviews": pairwise_reviews,
+            "requested_sample": run.get("human_review_sample"),
+        },
+        "annotation_totals": dict(annotation_totals),
+        "token_usage": _token_usage(trials),
+        "duration_ms": sum(int(trial.get("duration_ms") or 0) for trial in trials),
+        "needs_attention": attention,
+        "coverage_limits": coverage_limits,
+        "terminal": all(trial["status"] in {"completed", "failed", "timed_out", "skipped"} for trial in trials),
+    }
+    report["ok"] = not report["planning_error"] and not any(
+        trial["verdict"] in {"failed", "inconclusive"} for trial in trials
+    )
+    return report
+
+
+def list_runs(raw_suite, *, blind_pending_human=False, runs_root=None):
+    runs_root = Path(runs_root) if runs_root is not None else runs_from_suite(suite_path(raw_suite))
+    rows = []
+    for run_dir in sorted(runs_root.glob("*"), reverse=True) if runs_root.is_dir() else []:
+        if not (run_dir / "run.json").exists():
+            continue
+        try:
+            report = build_report(str(run_dir), blind_pending_human=blind_pending_human)
+            rows.append(
+                {
+                    "run_id": report["run_id"],
+                    "created_at": report.get("created_at"),
+                    "objective": report.get("objective"),
+                    "profile": report.get("profile"),
+                    "baseline_candidate": report.get("baseline_candidate"),
+                    "model": report.get("model"),
+                    "candidates": [row.get("candidate") for row in report.get("candidates") or []],
+                    "totals": report["totals"],
+                    "runtime_status_totals": report["runtime_status_totals"],
+                    "verdict_totals": report["verdict_totals"],
+                    "delta_totals": report["delta_totals"],
+                    "review": report["review"],
+                    "pairwise_review": report["pairwise_review"],
+                    "duration_ms": report.get("duration_ms"),
+                    "terminal": report["terminal"],
+                    "run_dir": str(run_dir),
+                }
+            )
+        except CliError as exc:
+            rows.append({"run_id": run_dir.name, "error": exc.message, "run_dir": str(run_dir)})
+    return {"ok": True, "runs_dir": str(runs_root), "runs": rows}
+
+
+def build_suite_report(raw_suite, *, blind_pending_human=True, runs_root=None):
+    suite = suite_path(raw_suite)
+    manifest = load_manifest(suite)
+    runs = list_runs(
+        str(suite), blind_pending_human=blind_pending_human, runs_root=runs_root
+    )["runs"]
+    latest = None
+    if runs:
+        latest = build_report(runs[0]["run_dir"], blind_pending_human=blind_pending_human)
+    trials_by_eval = defaultdict(list)
+    annotations_by_eval = defaultdict(list)
+    for trial in (latest or {}).get("trials") or []:
+        trials_by_eval[trial.get("eval_id")].append(trial)
+        annotations_by_eval[trial.get("eval_id")].extend(
+            (trial.get("review") or {}).get("annotations") or []
+        )
+    cases = []
+    for case in manifest.get("evals") or []:
+        outcomes = {
+            trial.get("candidate"): trial.get("verdict")
+            for trial in trials_by_eval.get(case.get("id"), [])
+        }
+        prompt = case.get("prompt")
+        prompt_preview = prompt if isinstance(prompt, str) else "task.md"
+        cases.append(
+            {
+                "id": case.get("id"),
+                "type": case.get("type") or "unspecified",
+                "priority": case.get("priority") or "medium",
+                "prompt_preview": " ".join(str(prompt_preview).split())[:180],
+                "expectations": len(case.get("expectations") or []),
+                "graders": [
+                    {
+                        "id": grader.get("id"),
+                        "kind": grader.get("kind"),
+                        "metric": grader.get("metric") or grader.get("id"),
+                    }
+                    for grader in case.get("graders") or []
+                ],
+                "latest_outcomes": outcomes,
+                "annotations": annotations_by_eval.get(case.get("id"), []),
+            }
+        )
+    return {
+        "ok": True,
+        "suite": str(suite),
+        "objective": manifest.get("objective"),
+        "defaults": manifest.get("defaults") or {},
+        "candidates": manifest.get("candidates") or [],
+        "profiles": manifest.get("profiles") or {},
+        "cases": cases,
+        "latest_run": runs[0] if runs else None,
+    }
+
+
+def _cell(value, limit=120):
     text = " ".join(str(value if value is not None else "-").split()).replace("|", "\\|") or "-"
     return text if len(text) <= limit else text[: limit - 3] + "..."
 
 
-def md_table(headers, rows):
-    lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(" --- " for _ in headers) + "|"]
-    lines.extend("| " + " | ".join(row) + " |" for row in rows)
-    return lines
+def _table(headers, rows):
+    return [
+        "| " + " | ".join(headers) + " |",
+        "|" + "|".join(" --- " for _ in headers) + "|",
+        *("| " + " | ".join(_cell(value) for value in row) + " |" for row in rows),
+    ]
 
 
-def render_markdown(summary):
+def render_markdown(report):
+    delta = report.get("delta_totals") or {}
+    totals = report.get("totals") or {}
     lines = [
-        f"# Eval Summary: {summary['run_id']}",
+        f"# Evaluation run: {report['run_id']}",
         "",
-        f"- Run dir: `{summary['run_dir']}`",
-        f"- Created: {summary.get('created_at') or 'unknown'}",
-        f"- Grading mode: `{summary.get('grading_mode') or 'unknown'}`",
-        f"- Trials: {summary.get('total_trials', 0)}",
     ]
-    token_usage = summary.get("token_usage") or {}
-    lines.append(
-        f"- Token usage: {token_usage.get('total_tokens', 0)} total "
-        f"({token_usage.get('trial_input_tokens', 0)} trial in / {token_usage.get('trial_output_tokens', 0)} trial out, "
-        f"{token_usage.get('judge_input_tokens', 0)} judge in / {token_usage.get('judge_output_tokens', 0)} judge out; "
-        f"{token_usage.get('trials_with_usage', 0)} trials with usage)"
-    )
-    grader_error_total = summary.get("grader_error_total") or 0
-    if grader_error_total > 0:
-        lines.append(f"- Grader errors: {grader_error_total} (judge infrastructure failures — not skill failures)")
+    if report.get("objective"):
+        lines += [f"**Objective:** {report['objective']}", ""]
     lines += [
+        f"**Candidate delta:** {delta.get('improved', 0)} improved, {delta.get('regressed', 0)} regressed, "
+        f"{delta.get('unchanged', 0)} unchanged, {delta.get('unknown', 0)} unknown.",
         "",
-        "## Verdict Totals",
+        f"{totals.get('passed', 0)} passed · {totals.get('failed', 0)} failed · "
+        f"{totals.get('inconclusive', 0)} inconclusive · {totals.get('ungraded', 0)} ungraded",
+        "",
+        "## Experiment configuration",
+        "",
+        f"- Baseline: {report.get('baseline_candidate') or 'none'}",
+        f"- Candidates: {', '.join(row.get('candidate') or '' for row in report.get('candidates') or []) or 'none'}",
+        f"- Model: {report.get('model') or 'runtime default'}",
+        f"- Duration: {report.get('duration_ms') or 0} ms",
+        "",
+        "## Candidate comparison",
         "",
     ]
-    verdicts = summary.get("final_verdict_totals") or {}
-    lines += md_table(["Verdict", "Count"], [[md_cell(key), md_cell(value)] for key, value in sorted(verdicts.items())])
-    lines += ["", "## Runtime Status", ""]
-    lines += md_table(["Runtime status", "Count"], [[md_cell(key), md_cell(value)] for key, value in sorted((summary.get("runtime_status_totals") or {}).items())])
-    lines += ["", "## Grade Status", ""]
-    lines += md_table(["Grade status", "Count"], [[md_cell(key), md_cell(value)] for key, value in sorted((summary.get("grade_status_totals") or {}).items())])
-    lines += ["", "## Trials", ""]
-    lines += md_table(
-        ["Trial", "Case", "Candidate", "Runtime", "Grades", "Verdict"],
-        [
+    comparisons = report.get("comparisons") or []
+    if comparisons:
+        lines += _table(
+            ["Eval", "Candidate", "Baseline", "Candidate outcome", "Delta"],
             [
-                md_cell(row.get("trial_id")),
-                md_cell(row.get("case_id")),
-                md_cell(row.get("candidate")),
-                md_cell(row.get("runtime_status")),
-                md_cell(", ".join(row.get("grade_statuses") or []) or "-"),
-                md_cell(row.get("verdict")),
-            ]
-            for row in summary.get("trials", [])
+                [row["eval_id"], row["candidate"], row["baseline_state"], row["candidate_state"], row["delta"]]
+                for row in comparisons
+            ],
+        )
+    else:
+        lines.append("No candidate comparison is available.")
+    lines += ["", "## Trials", ""]
+    lines += _table(
+        ["Trial", "Runtime", "Verdict", "Duration"],
+        [
+            [trial["trial_id"], trial["status"], trial["verdict"], f"{trial.get('duration_ms') or 0} ms"]
+            for trial in report.get("trials") or []
         ],
     )
-    return "\n".join(lines) + "\n"
+    failures = [trial for trial in report.get("trials") or [] if trial["verdict"] in {"failed", "inconclusive"}]
+    if failures:
+        lines += ["", "## Why trials failed", ""]
+        for trial in failures:
+            lines.append(f"### {trial['trial_id']}")
+            lines.append("")
+            if trial.get("error"):
+                lines.append(f"Runtime: {trial['error']}")
+            checks = trial.get("failed_checks") or []
+            if checks:
+                lines += _table(
+                    ["Check", "Status", "Evidence"],
+                    [[check.get("name"), check.get("label"), check.get("evidence")] for check in checks],
+                )
+            elif not trial.get("error"):
+                lines.append("No failed check evidence was recorded; review the trial response and grades.")
+            lines.append("")
+    review = report.get("review") or {}
+    pairwise = report.get("pairwise_review") or {}
+    lines += [
+        "## Review",
+        "",
+        f"{review.get('reviewed', 0)}/{review.get('total', 0)} trials reviewed; "
+        f"{review.get('disagreements', 0)} model/human disagreements.",
+        "",
+        f"{pairwise.get('reviewed', 0)} pairwise comparisons reviewed.",
+    ]
+    if report.get("annotation_totals"):
+        lines += ["", "Annotations: " + ", ".join(
+            f"{key}={value}" for key, value in sorted(report["annotation_totals"].items())
+        ) + "."]
+    if report.get("coverage_limits"):
+        lines += ["", "## Coverage limits", ""]
+        lines.extend(f"- {item}" for item in report["coverage_limits"])
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_report(report, path=None):
+    output = Path(path) if path else Path(report["run_dir"]) / "report.md"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(render_markdown(report))
+    return output

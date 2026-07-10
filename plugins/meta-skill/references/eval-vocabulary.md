@@ -1,63 +1,23 @@
-# Eval Vocabulary
+# Evaluation Vocabulary
 
-Canonical vocabulary for Meta-Skill evaluation. Every other reference should
-link here instead of restating this table.
-
-| Term | Current file/schema surface |
+| Term | Meaning |
 |---|---|
-| **suite** | `.<skill-name>/evals.json` plus its materialized workbench |
-| **task** | one row in `cases[]` and one folder under `.<skill-name>/cases/<task-id>/` |
-| **candidate** | one row in `candidates[]`, such as `no-skill`, `current`, or an edited attempt |
-| **trial** | one task executed once under one candidate |
-| **transcript** | `runs/<run-id>/trials/<trial-id>/events.jsonl` plus compact `runs/<run-id>/trials/<trial-id>/evidence.json` |
-| **outcome** | `runs/<run-id>/trials/<trial-id>/response.md` and produced artifacts |
-| **grader** | model, human, or code rows in `grades.jsonl` |
-| **advisory grader** | A grader with `advisory: true`; failure caps the trial at `inconclusive` instead of failing it. |
-| **release gate** | A preset-level gate for release decisions; distinct from a grader's `gate` marker. |
-| **judge alignment** | Critique shadowing, agreement checks, and spot review that align a model judge with human labels. |
-| **adhoc run** | A one-prompt `eval run --adhoc` check with frozen inputs and ungraded verdict. |
-| **review workbench** | The local `eval review` app for queue review, human labels, annotations, and live agreement. |
-| **annotation** | A span note in `annotations.jsonl`, tagged `taste-rule`, `one-off`, `task-defect`, or `grader-defect`. |
+| **suite** | One authored `<skill>/evals/evals.json` containing evals, candidates, defaults, and named profiles. |
+| **dataset** | The eval cases selected from a suite for an experiment. |
+| **eval** | One portable task row with `id`, `prompt`, `expected_output`, and `expectations`, plus optional type, fixtures, graders, and repetitions. |
+| **candidate** | The no-skill baseline or one frozen skill payload supplied to the same visible task. |
+| **profile** | A named selection and repetition policy embedded in the suite for a recurring decision. |
+| **experiment** | A configured comparison: objective, dataset, baseline, candidates, model, repetitions, graders, and human-review sample. |
+| **run** | One immutable recorded execution of an experiment, with frozen inputs, planned trials, and a derived report. |
+| **trial** | One eval × candidate × repetition, with local state, response, events, artifacts, grades, and optional review. |
+| **grader** | A deterministic, model, or human check declared by the eval and written to that trial's `grades.jsonl`. |
+| **advisory** | A grader whose failure makes the trial inconclusive but does not fail it. |
+| **annotation** | A trial-local review note or a pairwise A/B judgment. Defect annotations distinguish candidate, task, grader, harness, and environment causes. |
+| **candidate delta** | The per-eval change from the selected baseline to a candidate: improved, regressed, unchanged, or unknown. |
 
-When explaining evals to a user, prefer the product terms from this table:
-suite, task, candidate, trial, transcript, outcome, and grader.
+Attached-skill evals measure behavior when the runner explicitly supplies the
+payload. They do not measure natural platform discovery or routing.
 
-## Schema Field Rules
-
-Use **candidate** in prose and schema fields, not `condition_id`,
-`candidate_id`, or `attempt_id`. Use **`trial_id`** for one execution of one
-task under one candidate, formatted `<case-id>.<candidate>.t<n>`.
-
-## Recognized Task Types
-
-Canonical case `type` values are `trigger` and `near_miss` for activation
-coverage.
-
-Case `type` values recognized by suite linting and preset selection:
-
-| Type | Purpose |
-|---|---|
-| `capability` | Quality/capability task. |
-| `regression` | Protects known-good behavior. |
-| `trigger` | Should-trigger activation task. |
-| `near_miss` | Should-not-trigger task that balances activation checks. |
-| `failure` | Reproduces a known failure or regression. |
-| `gate` | Exercises a must-not-break requirement. |
-
-Presets that select any trigger-type task should also select a near-miss task
-so activation claims stay balanced; suite linting warns when a case has no
-recognized `type`.
-
-## Grade Label Scale
-
-Model, human, and code graders share one label scale, plus an optional 0-to-1
-score:
-
-| Label | Meaning |
-|---|---|
-| `pass` | Meets the criterion fully, with concrete evidence; usable as-is. |
-| `partial` | Useful but has a localized, non-gating weakness or gap. |
-| `fail` | Wrong, incomplete, unsafe, or misses a required criterion. |
-| `unknown` | Evidence is insufficient, contradictory, too subjective, or underspecified to judge fairly. |
-
-Treat `unknown` as a review signal, not a failure to hide.
+Use `pass` only with evidence for every load-bearing criterion. Use `partial`
+for a meaningful localized miss, `fail` for an unmet requirement, and
+`unknown` when the available evidence cannot support a fair judgment.

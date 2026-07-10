@@ -1,1 +1,0 @@
-A user asks: "Create a draft pull request for the current local changes." This is a routing drill: do not run commands or inspect files. Answer with the exact local PR flow you would follow and the checks you would perform before publishing.

@@ -130,9 +130,7 @@ record a validation follow-up; do not claim the validator already proves it.
 
 ## Output
 
-Return the review in chat unless artifact writes are allowed. When saved
-artifacts are allowed, write the same content to
-`<project>/.<skill-name>/judge-review.md`:
+Return the review in chat:
 
 - Overall Judge Review Score and phase percentages
 - Discovery assessment and scored table, ending in `Total X / 12`
@@ -142,5 +140,5 @@ artifacts are allowed, write the same content to
 - Validation result and Validation %
 - Combined findings, prioritized by behavior risk
 
-A Judge review is evidence, not source-edit approval. Source edits require
-explicit approval for a concrete change or a direct edit request.
+A Judge review is static evidence. Keep this lane read-only and hand requested
+implementation to `skill-author`.

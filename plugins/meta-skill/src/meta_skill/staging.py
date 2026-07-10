@@ -1,55 +1,72 @@
-"""Workspace staging and hidden-boundary enforcement."""
+"""Ephemeral trial staging and outcome capture."""
 
 import shutil
+import tempfile
 from pathlib import Path
 
-from .candidates import copy_candidate_payload, reject_symlink_escapes
+from .candidates import reject_symlink_escapes
 from .errors import CliError
 
 
 def safe_case_file(case_root, rel_path, label):
     rel = Path(rel_path)
     if rel.is_absolute() or ".." in rel.parts:
-        raise CliError(f"{label} path must stay inside the case folder: {rel_path}", 2)
-    path = case_root / rel
-    if path.exists() and path.resolve().is_relative_to(case_root.resolve()) is False:
-        raise CliError(f"{label} path must stay inside the case folder: {rel_path}", 2)
+        raise CliError(f"{label} path must stay inside the eval folder: {rel_path}", 2)
+    path = Path(case_root) / rel
+    if path.exists() and not path.resolve().is_relative_to(Path(case_root).resolve()):
+        raise CliError(f"{label} path must stay inside the eval folder: {rel_path}", 2)
     return path
 
 
-def stage_workspace(run_dir, trial_id, frozen_case, candidate):
+def stage_workspace(worktree_run_root, trial_id, frozen_case, candidate):
     case_root = Path(frozen_case["case_root"])
-    workspace = run_dir / "trials" / trial_id / "workspace"
-    if workspace.exists():
-        shutil.rmtree(workspace)
-    workspace.mkdir(parents=True)
-
-    task_path = workspace / "task.md"
-    task_text = frozen_case.get("task_text") or ""
-    task_path.write_text(task_text if task_text.endswith("\n") else task_text + "\n")
+    temp_root = Path(worktree_run_root) / "trials"
+    temp_root.mkdir(parents=True, exist_ok=True)
+    workspace = Path(tempfile.mkdtemp(prefix=f"{trial_id}-", dir=temp_root))
+    shutil.copy2(case_root / "task.md", workspace / "task.md")
 
     fixtures_root = workspace / "fixtures"
     for fixture in frozen_case.get("fixtures", []):
         source = safe_case_file(case_root, fixture, "fixture")
         if not source.exists():
             raise CliError(f"fixture missing: {source}", 2)
-        reject_symlink_escapes(source.resolve() if source.is_dir() else source.parent.resolve())
-        target = fixtures_root / Path(fixture)
+        reject_symlink_escapes(source if source.is_dir() else source.parent)
+        target = fixtures_root / fixture
         target.parent.mkdir(parents=True, exist_ok=True)
         if source.is_dir():
             shutil.copytree(source, target, dirs_exist_ok=True)
         else:
             shutil.copy2(source, target)
 
-    staged_candidate = dict(candidate)
-    staged_candidate["workspace"] = str(workspace)
-    staged_candidate["cwd"] = str(workspace)
-    if candidate.get("payload_path"):
-        staged_payload = workspace / "skill"
-        copy_candidate_payload(candidate["payload_path"], staged_payload, extra_excludes={"snapshot.json"}, compute_digest=False)
-        staged_candidate["payload_path"] = str(staged_payload)
-        staged_candidate["staged_payload_digest"] = candidate.get("payload_digest")
-    else:
-        staged_candidate["payload_path"] = None
-        staged_candidate["staged_payload_digest"] = None
-    return staged_candidate
+    staged = dict(candidate)
+    staged["workspace"] = str(workspace)
+    staged["cwd"] = str(workspace)
+    return staged
+
+
+def capture_artifacts(workspace, trial_dir):
+    workspace = Path(workspace)
+    artifacts = Path(trial_dir) / "artifacts"
+    copied = []
+    for item in sorted(workspace.iterdir() if workspace.is_dir() else []):
+        if item.name in {"task.md", "fixtures", ".git", ".metaskill-events.jsonl", ".metaskill-response.md"}:
+            continue
+        target = artifacts / item.name
+        artifacts.mkdir(parents=True, exist_ok=True)
+        if item.is_dir():
+            shutil.copytree(item, target, dirs_exist_ok=True)
+        else:
+            shutil.copy2(item, target)
+        copied.append(item.name)
+    return copied
+
+
+def cleanup_workspace(workspace, worktree_run_root):
+    workspace = Path(workspace)
+    if workspace.exists():
+        shutil.rmtree(workspace)
+    for root in (Path(worktree_run_root) / "trials", Path(worktree_run_root)):
+        try:
+            root.rmdir()
+        except OSError:
+            pass

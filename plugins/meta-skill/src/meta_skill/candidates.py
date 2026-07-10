@@ -8,14 +8,31 @@ from pathlib import Path
 from .errors import CliError
 from .ids import utc_now
 from .io import write_json
-from .workbench_paths import parse_frontmatter, workbench_dir_name
+from .workbench_paths import parse_frontmatter
 
 
-DEFAULT_EXCLUDES = {".DS_Store", ".git", "__pycache__", "dist"}
+DEFAULT_EXCLUDES = {".DS_Store", ".git", ".metaskill", "__pycache__", "dist", "evals"}
+
+
+def candidate_source(candidate):
+    """Persist one compact, immutable candidate identity in run.json."""
+    return {
+        "candidate": candidate.get("candidate"),
+        "display": candidate.get("display"),
+        "source_kind": candidate.get("source_kind"),
+        "source_ref": candidate.get("source_ref"),
+        "resolved_source_path": candidate.get("resolved_source_path"),
+        "base_commit": candidate.get("base_commit") or candidate.get("commit"),
+        "head_commit": candidate.get("head_commit") or candidate.get("commit"),
+        "dirty": candidate.get("dirty"),
+        "diffstat": candidate.get("diffstat", ""),
+        "payload_digest": candidate.get("payload_digest"),
+        "validation_result": candidate.get("validation_result"),
+    }
 
 
 def exclude_names_for_target(target):
-    return DEFAULT_EXCLUDES | {workbench_dir_name(target)}
+    return DEFAULT_EXCLUDES
 
 
 def resolve_skill_md(target):
@@ -69,8 +86,8 @@ def payload_digest(path):
         for file_path in root.rglob("*"):
             if not file_path.is_file():
                 continue
-            parts = set(file_path.relative_to(root).parts)
-            if parts & exclude_names_for_target(root):
+            parts = file_path.relative_to(root).parts
+            if set(parts) & exclude_names_for_target(root) or any(part.startswith(".") for part in parts):
                 continue
             files.append(file_path)
     h = hashlib.sha256()
@@ -111,7 +128,7 @@ def copy_candidate_payload(src, dest, *, extra_excludes=None, compute_digest=Tru
 
     def ignore(_dir, names):
         excludes = exclude_names_for_target(src)
-        return [name for name in names if name in excludes or name in extra_excludes]
+        return [name for name in names if name in excludes or name in extra_excludes or name.startswith(".")]
 
     if src.is_file():
         dest.mkdir(parents=True, exist_ok=True)
@@ -140,16 +157,16 @@ def current_branch(project):
 
 
 def diffstat(project):
-    proc = git(project, ["diff", "--stat"])
+    proc = git(project, ["diff", "--stat", "--", "."])
     return proc.stdout.strip() if proc.returncode == 0 else ""
 
 
 def is_dirty(project):
-    proc = git(project, ["status", "--short"])
+    proc = git(project, ["status", "--short", "--", "."])
     return bool(proc.stdout.strip()) if proc.returncode == 0 else None
 
 
-def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
+def resolve_candidate(project, worktree_root, run_id_value, manifest, candidate, *, skill_id_value=None):
     source = candidate.get("source") or {}
     kind = source.get("kind", "current_worktree")
     ref = source.get("ref", ".")
@@ -191,14 +208,15 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
         base_commit = git_ref(project, ref)
         if not base_commit:
             raise CliError(f"candidate {candidate_id} ref not found: {ref}", 2)
-        worktree = workbench / "worktrees" / run_id_value / candidate_id
+        worktree = Path(worktree_root) / run_id_value / "candidates" / candidate_id
         worktree.parent.mkdir(parents=True, exist_ok=True)
         if not worktree.exists():
             git(project, ["worktree", "add", "--detach", str(worktree), base_commit], check=True)
         cwd = worktree
         head_commit = git_ref(cwd, "HEAD")
         branch = ref if kind == "branch" else None
-        payload = resolve_target_payload(manifest, cwd)
+        candidate_root = Path(cwd) / Path(skill_id_value) if skill_id_value else Path(cwd)
+        payload = resolve_target_payload(manifest, candidate_root)
     if payload:
         reject_symlink_escapes(payload)
     return {
@@ -210,8 +228,8 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
         "commit": head_commit,
         "base_commit": base_commit,
         "head_commit": head_commit,
-        "dirty": is_dirty(cwd),
-        "diffstat": diffstat(cwd),
+        "dirty": None if kind == "none" else is_dirty(cwd),
+        "diffstat": "" if kind == "none" else diffstat(cwd),
         "worktree": str(worktree) if worktree else None,
         "cwd": str(cwd),
         "payload_path": str(payload) if payload else None,
@@ -222,15 +240,32 @@ def resolve_candidate(project, workbench, run_id_value, manifest, candidate):
 def snapshot_candidate(run_dir, candidate_info):
     candidate_id = candidate_info["candidate"]
     snapshot_root = run_dir / "inputs" / "candidates" / candidate_id
+    payload_root = snapshot_root / "payload"
     snapshot_json_path = snapshot_root / "snapshot.json"
     payload = candidate_info.get("payload_path")
-    digest = copy_candidate_payload(Path(payload) if payload else None, snapshot_root)
+    frozen_payload = payload_root if payload else None
+    plugin_root = None
+    if payload:
+        source_payload = Path(payload)
+        if source_payload.parent.name == "skills" and (source_payload.parent.parent / "plugin.json").is_file():
+            plugin_root = source_payload.parent.parent
+            frozen_payload = payload_root / "skills" / source_payload.name
+            copy_candidate_payload(source_payload, frozen_payload)
+            for shared_name in ("references", "assets"):
+                shared = plugin_root / shared_name
+                if shared.is_dir():
+                    copy_candidate_payload(shared, payload_root / shared_name, compute_digest=False)
+            digest = payload_digest(payload_root)
+        else:
+            digest = copy_candidate_payload(source_payload, payload_root)
+    else:
+        digest = copy_candidate_payload(None, payload_root)
     validation = None
     if payload:
         try:
             from .validation import validate_report
 
-            validation = validate_report(str(snapshot_root))
+            validation = validate_report(str(frozen_payload))
         except Exception as exc:
             validation = {"ok": False, "error": str(exc)}
     snapshot = {
@@ -257,8 +292,19 @@ def snapshot_candidate(run_dir, candidate_info):
         **snapshot,
         "snapshot_path": str(snapshot_root),
         "snapshot_json_path": str(snapshot_json_path),
-        "payload_path": str(snapshot_root) if payload else None,
+        "payload_path": str(frozen_payload) if payload else None,
     }
+
+
+def cleanup_candidate_source(project, candidate_info):
+    """Remove a temporary git worktree after its payload has been frozen."""
+    raw = candidate_info.get("worktree")
+    if not raw:
+        return
+    worktree = Path(raw)
+    git(project, ["worktree", "remove", "--force", str(worktree)], check=True)
+    if worktree.parent.is_dir() and not any(worktree.parent.iterdir()):
+        worktree.parent.rmdir()
 
 
 def skill_input_name(payload):

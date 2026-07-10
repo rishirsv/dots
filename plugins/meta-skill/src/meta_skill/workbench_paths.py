@@ -1,10 +1,15 @@
-"""Workbench path helpers."""
+"""Authored-suite and repository-local MetaSkill path helpers."""
 
+import subprocess
 from pathlib import Path
 
 
+EVALS_DIR_NAME = "evals"
+STATE_DIR_NAME = ".metaskill"
+
+
 def parse_frontmatter(skill_md):
-    text = skill_md.read_text()
+    text = Path(skill_md).read_text()
     if not text.startswith("---"):
         return {}
     parts = text.split("---", 2)
@@ -33,25 +38,88 @@ def _skill_md_candidates(target):
     return [target / "SKILL.md", target / "skill" / "SKILL.md"]
 
 
-def skill_name_for_target(target):
-    target = Path(target).expanduser()
+def skill_md_for_target(target):
     for skill_md in _skill_md_candidates(target):
-        if not skill_md.exists():
-            continue
+        if skill_md.is_file():
+            return skill_md.resolve()
+    return None
+
+
+def skill_dir_for_target(target):
+    skill_md = skill_md_for_target(target)
+    if skill_md is not None:
+        return skill_md.parent
+    target = Path(target).expanduser().resolve()
+    return target.parent if target.is_file() else target
+
+
+def skill_name_for_target(target):
+    skill_md = skill_md_for_target(target)
+    if skill_md is not None:
         name = parse_frontmatter(skill_md).get("name")
         if isinstance(name, str) and name.strip():
             return name.strip()
         return skill_md.parent.name
+    target = Path(target).expanduser()
     return target.stem if target.is_file() else target.name
 
 
-def workbench_dir_name(target):
-    name = skill_name_for_target(target).strip().lstrip(".")
-    return f".{name or 'skill'}"
+def repository_root(target):
+    """Return the containing git root, or the resolved target root outside git."""
+    skill_dir = skill_dir_for_target(target)
+    proc = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=skill_dir,
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode == 0 and proc.stdout.strip():
+        return Path(proc.stdout.strip()).resolve()
+    raw = Path(target).expanduser().resolve()
+    if raw.is_dir() and not (raw / "SKILL.md").is_file() and (raw / "skill" / "SKILL.md").is_file():
+        return raw
+    return skill_dir
+
+
+def skill_id_for_target(target, root=None):
+    skill_dir = skill_dir_for_target(target)
+    root = Path(root).expanduser().resolve() if root is not None else repository_root(skill_dir)
+    try:
+        value = skill_dir.relative_to(root).as_posix()
+    except ValueError:
+        value = skill_dir.name
+    return skill_dir.name if value in {"", "."} else value
+
+
+def evals_path(target):
+    return skill_dir_for_target(target) / EVALS_DIR_NAME / "evals.json"
+
+
+def evals_dir(target):
+    return evals_path(target).parent
+
+
+def state_root(target, root=None):
+    base = Path(root).expanduser().resolve() if root is not None else repository_root(target)
+    return base / STATE_DIR_NAME
+
+
+def skill_state_path(target, kind, root=None):
+    return state_root(target, root=root) / kind / Path(skill_id_for_target(target, root=root))
+
+
+def runs_path(target, root=None):
+    return skill_state_path(target, "runs", root=root)
+
+
+def worktrees_path(target, root=None):
+    return skill_state_path(target, "worktrees", root=root)
+
+
+def packages_path(target, root=None):
+    return skill_state_path(target, "packages", root=root)
 
 
 def workbench_path(target):
-    target = Path(target).expanduser()
-    if target.is_file():
-        target = target.parent
-    return target / workbench_dir_name(target)
+    """Compatibility alias for the authored eval directory."""
+    return evals_dir(target)

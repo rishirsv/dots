@@ -1,4 +1,4 @@
-"""Tests for current run report ownership."""
+"""Canonical read-model and report tests."""
 
 import json
 import sys
@@ -6,247 +6,87 @@ import tempfile
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.report import build_report, list_runs, render_markdown  # noqa: E402
-from meta_skill.summary import build_summary  # noqa: E402
-from meta_skill.errors import CliError  # noqa: E402
+from meta_skill.errors import CliError
+from meta_skill.report import build_report, list_runs, render_markdown, write_report
 
 
-def write_json(path, data):
+def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+    path.write_text(json.dumps(value, indent=2) + "\n")
 
 
-def write_jsonl(path, rows):
+def jsonl(path, rows):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in rows))
+    path.write_text("".join(json.dumps(row) + "\n" for row in rows))
+
+
+def fixture(root):
+    skill = root / "demo"
+    skill.mkdir(parents=True, exist_ok=True)
+    (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Use for report tests."\n---\n')
+    run = skill / ".metaskill" / "runs" / "demo" / "run-1"
+    candidates = [{"candidate": "no-skill", "source_kind": "none"}, {"candidate": "current", "source_kind": "current_worktree"}]
+    trials = [{"trial_id": f"a.{candidate}.t1", "eval_id": "a", "candidate": candidate, "repetition": 1} for candidate in ("no-skill", "current")]
+    write(run / "run.json", {"schema_version": 2, "run_id": "run-1", "skill_id": "demo", "objective": "Compare current with baseline", "runner": {"grading": True}, "baseline_candidate": "no-skill", "candidates": candidates, "trials": trials})
+    write(run / "inputs" / "suite.json", {"schema_version": 2, "evals": [{"id": "a", "type": "capability", "priority": "high", "prompt": {"path": "task.md"}}]})
+    for candidate, label in (("no-skill", "fail"), ("current", "pass")):
+        trial = run / "trials" / f"a.{candidate}.t1"
+        write(trial / "state.json", {"trial_id": f"a.{candidate}.t1", "eval_id": "a", "candidate": candidate, "repetition": 1, "status": "completed", "usage": {"total_tokens": 3}})
+        (trial / "response.md").write_text(candidate)
+        (trial / "events.jsonl").write_text("")
+        checks = [{"name": "quality", "label": "fail", "evidence": "missing exact result"}] if label == "fail" else []
+        jsonl(trial / "grades.jsonl", [{"trial_id": f"a.{candidate}.t1", "metric": "quality", "grader": {"kind": "model", "id": "judge"}, "grade_status": label, "rationale": label, "checks": checks}])
+    return run
 
 
 class ReportTests(unittest.TestCase):
-    def test_build_report_rebuilds_summary_and_adds_run_model(self):
+    def test_delta_failed_evidence_and_markdown_share_one_model(self):
         with tempfile.TemporaryDirectory() as tmp:
-            run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            write_json(
-                run_dir / "run.json",
-                {
-                    "run_id": "run-001",
-                    "created_at": "2026-01-01T00:00:00Z",
-                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
-                    "model_config": {},
-                    "candidates": [
-                        {"candidate": "no-skill", "source_kind": "none"},
-                        {"candidate": "current", "source_kind": "current_worktree"},
-                    ],
-                    "trials": [
-                        {"trial_id": "case-a.no-skill.t1", "case_id": "case-a", "candidate": "no-skill", "repetition": 1},
-                        {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1},
-                    ],
-                },
-            )
-            write_jsonl(
-                run_dir / "results.jsonl",
-                [
-                    {"trial_id": "case-a.no-skill.t1", "case_id": "case-a", "candidate": "no-skill", "repetition": 1, "runtime_status": "completed"},
-                    {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1, "runtime_status": "completed"},
-                ],
-            )
-            write_jsonl(
-                run_dir / "grades.jsonl",
-                [
-                    {"trial_id": "case-a.no-skill.t1", "case_id": "case-a", "candidate": "no-skill", "metric": "quality", "grader": {"kind": "model", "id": "judge"}, "grade_status": "fail"},
-                    {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "metric": "quality", "grader": {"kind": "model", "id": "judge"}, "grade_status": "pass"},
-                ],
-            )
+            run = fixture(Path(tmp))
+            report = build_report(str(run))
+            self.assertEqual(report["delta_totals"], {"improved": 1})
+            self.assertEqual(report["comparisons"][0]["delta"], "improved")
+            self.assertEqual(report["trials"][0]["failed_checks"][0]["evidence"], "missing exact result")
+            markdown = render_markdown(report)
+            self.assertIn("**Candidate delta:** 1 improved", markdown)
+            self.assertIn("missing exact result", markdown)
+            path = write_report(report)
+            self.assertEqual(path.read_text(), markdown)
 
-            report = build_report(str(run_dir))
-
-            self.assertTrue((run_dir / "summary.json").exists())
-            self.assertEqual(report["final_verdict_totals"], {"failed": 1, "passed": 1})
-            self.assertEqual(report["totals"]["trials"], 2)
-            self.assertEqual(report["comparisons"][0]["baseline_state"], "fail")
-            self.assertEqual(report["comparisons"][0]["candidate_state"], "pass")
-
-    def test_summary_token_usage_and_grader_error_totals(self):
+    def test_model_human_disagreement_is_counted(self):
         with tempfile.TemporaryDirectory() as tmp:
-            run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            write_json(
-                run_dir / "run.json",
-                {
-                    "run_id": "run-001",
-                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
-                    "trials": [
-                        {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1},
-                        {"trial_id": "case-b.current.t1", "case_id": "case-b", "candidate": "current", "repetition": 1},
-                    ],
-                },
-            )
-            write_jsonl(
-                run_dir / "results.jsonl",
-                [
-                    {"trial_id": "case-a.current.t1", "runtime_status": "completed", "usage": {"input_tokens": 100, "output_tokens": 20}},
-                    {"trial_id": "case-b.current.t1", "runtime_status": "completed"},
-                ],
-            )
-            write_jsonl(
-                run_dir / "grades.jsonl",
-                [
-                    # stale grade error row, superseded by a clean re-grade -> not counted
-                    {"trial_id": "case-a.current.t1", "metric": "quality", "grader": {"kind": "model", "id": "judge"}, "grade_status": "unknown", "detail": {"grader_error": "timeout"}},
-                    {"trial_id": "case-a.current.t1", "metric": "quality", "grader": {"kind": "model", "id": "judge"}, "grade_status": "pass", "detail": {"usage": {"input_tokens": 50, "output_tokens": 10}}},
-                    # latest generation still errored -> counted once
-                    {"trial_id": "case-b.current.t1", "metric": "quality", "grader": {"kind": "model", "id": "judge"}, "grade_status": "unknown", "detail": {"grader_error": "rate_limit", "usage": {"input_tokens": 5, "output_tokens": 1}}},
-                ],
-            )
+            run = fixture(Path(tmp))
+            path = run / "trials" / "a.current.t1" / "grades.jsonl"
+            with path.open("a") as handle:
+                handle.write(json.dumps({"trial_id": "a.current.t1", "metric": "quality", "grader": {"kind": "human", "id": "human"}, "grade_status": "fail", "rationale": "evidence"}) + "\n")
+            self.assertEqual(build_report(str(run))["review"]["disagreements"], 1)
 
-            summary = build_summary(str(run_dir))
-
-            self.assertEqual(summary["grader_error_total"], 1)
-            usage = summary["token_usage"]
-            self.assertEqual(usage["trial_input_tokens"], 100)
-            self.assertEqual(usage["trial_output_tokens"], 20)
-            self.assertEqual(usage["judge_input_tokens"], 55)
-            self.assertEqual(usage["judge_output_tokens"], 11)
-            self.assertEqual(usage["total_tokens"], 186)
-            self.assertEqual(usage["trials_with_usage"], 1)
-
-    def test_render_markdown_emits_token_and_grader_error_lines(self):
-        summary = {
-            "run_id": "run-001",
-            "run_dir": "/tmp/run-001",
-            "created_at": "2026-01-01T00:00:00Z",
-            "grading_mode": "expectations",
-            "total_trials": 2,
-            "token_usage": {
-                "trial_input_tokens": 100,
-                "trial_output_tokens": 20,
-                "judge_input_tokens": 55,
-                "judge_output_tokens": 11,
-                "total_tokens": 186,
-                "trials_with_usage": 1,
-            },
-            "grader_error_total": 1,
-            "final_verdict_totals": {},
-            "runtime_status_totals": {},
-            "grade_status_totals": {},
-            "trials": [],
-        }
-        rendered = render_markdown(summary)
-        self.assertIn("Token usage: 186 total", rendered)
-        self.assertIn("Grader errors: 1 (judge infrastructure failures — not skill failures)", rendered)
-
-    def test_render_markdown_omits_grader_error_line_when_zero(self):
-        summary = {
-            "run_id": "run-001",
-            "run_dir": "/tmp/run-001",
-            "created_at": "2026-01-01T00:00:00Z",
-            "grading_mode": "expectations",
-            "total_trials": 0,
-            "token_usage": {"total_tokens": 0, "trial_input_tokens": 0, "trial_output_tokens": 0, "judge_input_tokens": 0, "judge_output_tokens": 0, "trials_with_usage": 0},
-            "grader_error_total": 0,
-            "final_verdict_totals": {},
-            "runtime_status_totals": {},
-            "grade_status_totals": {},
-            "trials": [],
-        }
-        rendered = render_markdown(summary)
-        self.assertNotIn("Grader errors:", rendered)
-
-    def test_list_runs_reports_invalid_summary_json(self):
+    def test_explicit_non_none_baseline_drives_candidate_comparison(self):
         with tempfile.TemporaryDirectory() as tmp:
-            workbench = Path(tmp) / ".demo"
-            suite = workbench / "evals.json"
-            write_json(suite, {"schema_version": 1})
-            run_dir = workbench / "runs" / "run-001"
-            write_json(run_dir / "run.json", {"run_id": "run-001"})
-            (run_dir / "summary.json").write_text("{bad json\n")
+            run = fixture(Path(tmp))
+            model = json.loads((run / "run.json").read_text())
+            model["baseline_candidate"] = "current"
+            write(run / "run.json", model)
+            report = build_report(str(run))
+            self.assertEqual(report["comparisons"][0]["baseline"], "current")
+            self.assertEqual(report["comparisons"][0]["candidate"], "no-skill")
+            self.assertEqual(report["comparisons"][0]["delta"], "regressed")
 
-            result = list_runs(str(suite))
-
-            self.assertEqual(result["runs"][0]["run_id"], "run-001")
-            self.assertIn("invalid JSON", result["runs"][0]["error"])
-
-    def test_planned_trial_without_result_is_inconclusive(self):
+    def test_list_runs_uses_live_artifacts_and_rejects_old_layout(self):
         with tempfile.TemporaryDirectory() as tmp:
-            run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            write_json(
-                run_dir / "run.json",
-                {
-                    "run_id": "run-001",
-                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
-                    "trials": [
-                        {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1}
-                    ],
-                },
-            )
-
-            summary = build_summary(str(run_dir))
-
-            self.assertEqual(summary["trials"][0]["runtime_status"], "no_result")
-            self.assertEqual(summary["trials"][0]["verdict"], "inconclusive")
-            self.assertEqual(summary["runtime_status_totals"], {"no_result": 1})
-
-    def test_result_row_without_runtime_status_is_rejected(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            write_json(
-                run_dir / "run.json",
-                {
-                    "run_id": "run-001",
-                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
-                    "trials": [
-                        {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1}
-                    ],
-                },
-            )
-            write_jsonl(run_dir / "results.jsonl", [{"trial_id": "case-a.current.t1", "case_id": "case-a"}])
-
-            with self.assertRaises(CliError) as ctx:
-                build_summary(str(run_dir))
-
-            self.assertIn("missing runtime_status", ctx.exception.message)
-
-    def test_result_row_with_no_result_status_is_rejected(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            write_json(
-                run_dir / "run.json",
-                {
-                    "run_id": "run-001",
-                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
-                    "trials": [
-                        {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1}
-                    ],
-                },
-            )
-            write_jsonl(run_dir / "results.jsonl", [{"trial_id": "case-a.current.t1", "runtime_status": "no_result"}])
-
-            with self.assertRaises(CliError) as ctx:
-                build_summary(str(run_dir))
-
-            self.assertIn("invalid runtime_status", ctx.exception.message)
-
-    def test_grade_row_without_grade_status_is_rejected(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            run_dir = Path(tmp) / ".demo" / "runs" / "run-001"
-            write_json(
-                run_dir / "run.json",
-                {
-                    "run_id": "run-001",
-                    "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
-                    "trials": [
-                        {"trial_id": "case-a.current.t1", "case_id": "case-a", "candidate": "current", "repetition": 1}
-                    ],
-                },
-            )
-            write_jsonl(run_dir / "results.jsonl", [{"trial_id": "case-a.current.t1", "runtime_status": "completed"}])
-            write_jsonl(run_dir / "grades.jsonl", [{"trial_id": "case-a.current.t1", "label": "pass"}])
-
-            with self.assertRaises(CliError) as ctx:
-                build_summary(str(run_dir))
-
-            self.assertIn("missing grade_status", ctx.exception.message)
+            root = Path(tmp)
+            run = fixture(root)
+            suite = root / "demo" / "evals" / "evals.json"
+            suite.parent.mkdir(parents=True, exist_ok=True)
+            suite.write_text('{"schema_version":2,"evals":[]}')
+            listed = list_runs(str(suite))["runs"]
+            self.assertEqual(listed[0]["delta_totals"], {"improved": 1})
+            write(run / "run.json", {"schema_version": 1, "run_id": "run-1"})
+            with self.assertRaises(CliError):
+                build_report(str(run))
 
 
 if __name__ == "__main__":

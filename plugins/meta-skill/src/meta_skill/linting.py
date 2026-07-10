@@ -21,7 +21,7 @@ def case_grader_kinds(case):
 def lint_suite(raw_suite):
     suite = suite_path(raw_suite)
     manifest = load_manifest(suite)
-    cases = manifest.get("cases", [])
+    cases = manifest.get("evals", [])
     warnings = []
     stats = {
         "tasks": len(cases),
@@ -30,24 +30,24 @@ def lint_suite(raw_suite):
         "human_graders": 0,
         "transcript_aware_graders": 0,
     }
-    has_trigger = False
+    has_attached = False
     has_negative = False
 
     for case in cases:
         case_id = case.get("id")
         case_type = case.get("type") or "unspecified"
-        if case_type == "trigger":
-            has_trigger = True
+        if case_type == "attached":
+            has_attached = True
         if case_type == "near_miss":
             has_negative = True
         if case_type == "unspecified":
-            warnings.append({"case_id": case_id, "kind": "missing_type", "detail": "Set type to capability, regression, trigger, near_miss, failure, or gate."})
-        task = case.get("task") or {}
-        if task.get("path"):
+            warnings.append({"case_id": case_id, "kind": "missing_type", "detail": "Set type to attached, near_miss, capability, regression, failure, or gate."})
+        prompt = case.get("prompt")
+        if isinstance(prompt, dict) and prompt.get("path"):
             task_file = suite.parent / "cases" / case_id / "task.md"
             if task_file.is_file() and task_file.read_text().startswith("---"):
                 warnings.append({"case_id": case_id, "kind": "hidden_metadata_in_task", "detail": "task.md must contain only visible agent bytes; move metadata into evals.json."})
-        if not case.get("expectations") and not case.get("graders"):
+        if not case.get("expectations") and not case.get("graders") and case.get("expected_output") is None:
             warnings.append({"case_id": case_id, "kind": "missing_grader", "detail": "Add code, model, or human grading guidance."})
         if case_type in {"regression", "gate"} and not case.get("expectations"):
             warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression and gate tasks should have exact expectations."})
@@ -66,13 +66,13 @@ def lint_suite(raw_suite):
             if grader.get("kind") == "human" and not grader.get("metric"):
                 warnings.append({"case_id": case_id, "kind": "human_metric_missing", "detail": f"Human grader {grader.get('id') or '<unnamed>'} should name the judgment metric."})
 
-    if has_trigger and not has_negative:
-        warnings.append({"kind": "unbalanced_trigger_suite", "detail": "Trigger suites need should-trigger and should-not-trigger or near-miss tasks."})
+    if has_attached and not has_negative:
+        warnings.append({"kind": "unbalanced_attached_suite", "detail": "Attached-skill behavior suites need matching near-miss tasks."})
 
     return {
         "ok": True,
         "suite": str(suite),
-        "shape": "cases",
+        "shape": "evals-v2",
         "stats": {
             "tasks": stats["tasks"],
             "task_types": dict(sorted(stats["task_types"].items())),

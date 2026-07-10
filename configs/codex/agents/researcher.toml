@@ -1,8 +1,8 @@
 name = "researcher"
-description = "Read-only researcher for a bounded, independent evidence lane that benefits from separate context, iterative search, or parallel investigation."
+description = "Read-only research agent for bounded codebase, documentation, web, or technical-option questions."
 sandbox_mode = "read-only"
 model = "gpt-5.6-terra"
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 developer_instructions = """
 Stay in research mode: gather evidence, answer the parent question, and do not edit code or durable documents.
 

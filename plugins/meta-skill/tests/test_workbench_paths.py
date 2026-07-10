@@ -1,5 +1,7 @@
-"""Tests for skill-named hidden workbench paths."""
+"""Tests for visible eval suites and repository-local generated state."""
 
+import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -9,8 +11,15 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.candidates import copy_candidate_payload, payload_digest  # noqa: E402
-from meta_skill.workbench import init_workbench  # noqa: E402
-from meta_skill.workbench_paths import workbench_path  # noqa: E402
+from meta_skill.workbench import init_target, init_workbench  # noqa: E402
+from meta_skill.workbench_paths import (  # noqa: E402
+    evals_path,
+    packages_path,
+    runs_path,
+    skill_id_for_target,
+    state_root,
+    worktrees_path,
+)
 
 
 def write_skill(path: Path, name: str) -> None:
@@ -29,68 +38,73 @@ Test skill.
 
 
 class WorkbenchPathTests(unittest.TestCase):
-    def test_init_uses_skill_name_for_hidden_workbench(self) -> None:
+    def test_init_creates_repository_state_without_per_skill_guidance(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             skill_dir = Path(tmp) / "unpack-skill"
             write_skill(skill_dir, "unpack")
 
             result = init_workbench(skill_dir)
 
-            expected = skill_dir / ".unpack"
-            self.assertEqual(Path(result["workbench"]), expected)
-            self.assertTrue((expected / "AGENTS.md").is_file())
-            self.assertIn("private workbench for `unpack`", (expected / "AGENTS.md").read_text())
-            self.assertFalse((expected / "cases").exists())
-            self.assertFalse((expected / "runs").exists())
-            self.assertFalse((expected / "presets").exists())
-            self.assertFalse((expected / "evals.json").exists())
+            expected = skill_dir.resolve() / ".metaskill"
+            self.assertEqual(Path(result["state"]), expected)
+            self.assertTrue(expected.is_dir())
+            self.assertFalse((expected / "AGENTS.md").exists())
+            self.assertFalse(evals_path(skill_dir).exists())
 
-    def test_project_mode_uses_skill_payload_name(self) -> None:
+    def test_project_mode_uses_project_state_and_nested_visible_suite(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "invoice-project"
             write_skill(project / "skill", "invoice-reader")
 
-            result = init_workbench(project)
+            result = init_target(project, with_evals=True)
 
-            expected = project / ".invoice-reader"
-            self.assertEqual(Path(result["workbench"]), expected)
-            self.assertTrue((expected / "AGENTS.md").is_file())
-            self.assertIn("private workbench for `invoice-reader`", (expected / "AGENTS.md").read_text())
+            self.assertEqual(Path(result["state"]), project.resolve() / ".metaskill")
+            self.assertEqual(Path(result["evals"]), project.resolve() / "skill" / "evals" / "evals.json")
+            data = json.loads(Path(result["evals"]).read_text())
+            self.assertEqual(data["target"]["ref"], "SKILL.md")
 
-    def test_file_target_uses_skill_name_for_guidance(self) -> None:
+    def test_repository_relative_skill_id_keys_generated_roots(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            skill_dir = Path(tmp) / "named-skill"
-            write_skill(skill_dir, "file-target")
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            skill_dir = repo / "plugins" / "dots" / "skills" / "demo"
+            write_skill(skill_dir, "demo")
 
-            result = init_workbench(skill_dir / "SKILL.md")
+            self.assertEqual(skill_id_for_target(skill_dir), "plugins/dots/skills/demo")
+            self.assertEqual(runs_path(skill_dir), repo.resolve() / ".metaskill" / "runs" / "plugins" / "dots" / "skills" / "demo")
+            self.assertEqual(worktrees_path(skill_dir), repo.resolve() / ".metaskill" / "worktrees" / "plugins" / "dots" / "skills" / "demo")
+            self.assertEqual(packages_path(skill_dir), repo.resolve() / ".metaskill" / "packages" / "plugins" / "dots" / "skills" / "demo")
 
-            expected = skill_dir / ".file-target"
-            self.assertEqual(Path(result["workbench"]), expected)
-            self.assertIn("private workbench for `file-target`", (expected / "AGENTS.md").read_text())
+    def test_eval_suite_is_opt_in(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            skill_dir = Path(tmp) / "skill"
+            write_skill(skill_dir, "demo")
+            plain = init_target(skill_dir)
+            self.assertIsNone(plain["evals"])
+            result = init_target(skill_dir, with_evals=True)
+            self.assertEqual(Path(result["evals"]), skill_dir.resolve() / "evals" / "evals.json")
 
-    def test_copy_payload_excludes_skill_named_workbench(self) -> None:
+    def test_copy_and_digest_exclude_authored_evals_and_generated_state(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             source = Path(tmp) / "source"
             dest = Path(tmp) / "dest"
             write_skill(source, "demo")
             (source / "reference.md").write_text("runtime\n")
-            (workbench_path(source) / "cases").mkdir(parents=True)
-            (workbench_path(source) / "cases" / "private.txt").write_text("hidden\n")
+            (source / "evals" / "cases").mkdir(parents=True)
+            (source / "evals" / "cases" / "private.txt").write_text("hidden\n")
+            (state_root(source) / "runs").mkdir(parents=True)
+            (state_root(source) / "runs" / "private.json").write_text("{}\n")
+            before = payload_digest(source)
 
-            copy_candidate_payload(source, dest, extra_excludes={"snapshot.json"})
+            copy_candidate_payload(source, dest)
 
             self.assertTrue((dest / "reference.md").exists())
-            self.assertFalse((dest / ".demo").exists())
-
-    def test_payload_digest_ignores_skill_named_workbench(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            skill_dir = Path(tmp) / "skill"
-            write_skill(skill_dir, "demo")
-            before = payload_digest(skill_dir)
-            (workbench_path(skill_dir) / "runs").mkdir(parents=True)
-            (workbench_path(skill_dir) / "runs" / "private.json").write_text("{}\n")
-
-            self.assertEqual(payload_digest(skill_dir), before)
+            self.assertFalse((dest / "evals").exists())
+            self.assertFalse((dest / ".metaskill").exists())
+            (source / "evals" / "cases" / "private.txt").write_text("changed\n")
+            (state_root(source) / "runs" / "private.json").write_text('{"changed":true}\n')
+            self.assertEqual(payload_digest(source), before)
 
 
 if __name__ == "__main__":

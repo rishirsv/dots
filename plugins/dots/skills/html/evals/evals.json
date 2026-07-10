@@ -1,0 +1,55 @@
+{
+  "schema_version": 2,
+  "skill_name": "html",
+  "target": {"type": "skill", "ref": "SKILL.md"},
+  "defaults": {"runner": "codex_app_server", "repetitions": 1},
+  "evals": [
+    {
+      "id": "formed-content-renders-directly",
+      "type": "capability",
+      "prompt": "Turn the implementation plan already written in this conversation into a self-contained HTML page. Preserve its decisions.",
+      "expected_output": "One verified self-contained HTML page that renders the formed plan faithfully without reopening or changing its decisions.",
+      "expectations": [
+        "Renders the formed plan without reopening or silently changing its decisions.",
+        "Produces one self-contained HTML artifact using the shared identity and only components the content needs.",
+        "Replaces all illustrative component copy with the plan's real content.",
+        "Verifies the resulting artifact before handoff."
+      ]
+    },
+    {
+      "id": "internal-provenance-stays-private",
+      "type": "failure",
+      "prompt": "Render this status brief as HTML. The source notes include local scratch paths, tool names, session IDs, and private generation notes that readers do not need.",
+      "expected_output": "A self-contained reader-facing HTML brief that preserves useful status content while excluding private provenance and generation metadata.",
+      "expectations": [
+        "Omits tool names, session IDs, prompts, private working paths, scratch files, and generation metadata from the artifact.",
+        "Includes only authoritative reader-facing source attribution when it helps the brief.",
+        "Does not copy fictional exemplar names, dates, metrics, incidents, or decisions into the result.",
+        "Preserves useful status content while respecting the provenance boundary."
+      ]
+    },
+    {
+      "id": "utilitarian-treatment",
+      "type": "capability",
+      "prompt": "Make a simple internal HTML memo from these three formed sections. It is a working artifact, not a presentation.",
+      "expected_output": "A simple responsive, self-contained HTML memo using only the page structure and components the formed content needs.",
+      "expectations": [
+        "Uses the utilitarian treatment: a clear page shell, sections, and only necessary components.",
+        "Does not add decorative charts, pull quotes, motion, or catalog components without decision value.",
+        "Keeps the page self-contained, readable at narrow and wide widths, and complete without JavaScript.",
+        "Uses a chart only if the content's comparison or shape is materially easier to see than read."
+      ]
+    },
+    {
+      "id": "explanation-only-near-miss",
+      "type": "near_miss",
+      "prompt": "Explain why this cache race happens. I only need the answer here in chat.",
+      "expected_output": "A chat explanation or handoff to the explain workflow, with no HTML artifact created.",
+      "expectations": [
+        "Does not create an HTML artifact when the user asks only for a chat explanation.",
+        "Routes to explain or answers in the appropriate chat workflow.",
+        "Does not treat every structured explanation as a rendering request."
+      ]
+    }
+  ]
+}

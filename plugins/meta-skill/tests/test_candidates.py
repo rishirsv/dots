@@ -35,14 +35,14 @@ class CandidateTests(unittest.TestCase):
             candidate_root = Path(tmp) / "candidate"
             write_skill(project)
             write_skill(candidate_root, body="Candidate body.")
-            run_dir = project / ".demo" / "runs" / "run-001"
+            run_dir = project / ".metaskill" / "runs" / "project" / "run-001"
             manifest = {"target": {"type": "skill", "ref": "SKILL.md"}}
             candidate = {"candidate": "local", "source": {"kind": "local_path", "path": str(candidate_root)}}
 
-            resolved = resolve_candidate(project, project / ".demo", "run-001", manifest, candidate)
+            resolved = resolve_candidate(project, project / ".metaskill" / "worktrees" / "project", "run-001", manifest, candidate)
             snapshotted = snapshot_candidate(run_dir, resolved)
 
-            self.assertEqual(snapshotted["payload_path"], str(run_dir / "inputs" / "candidates" / "local"))
+            self.assertEqual(snapshotted["payload_path"], str(run_dir / "inputs" / "candidates" / "local" / "payload"))
             self.assertIn("Candidate body.", Path(snapshotted["payload_path"], "SKILL.md").read_text())
             snapshot_json = json.loads((Path(snapshotted["snapshot_json_path"])).read_text())
             self.assertNotIn("payload_path", snapshot_json)
@@ -59,7 +59,7 @@ class CandidateTests(unittest.TestCase):
             candidate = {"candidate": "local", "source": {"kind": "local_path", "path": str(candidate_root)}}
 
             with self.assertRaises(CliError) as ctx:
-                resolve_candidate(project, project / ".demo", "run-001", manifest, candidate)
+                resolve_candidate(project, project / ".metaskill" / "worktrees" / "project", "run-001", manifest, candidate)
 
             self.assertIn("symlink escapes candidate root", ctx.exception.message)
 
@@ -77,9 +77,27 @@ class CandidateTests(unittest.TestCase):
             candidate = {"candidate": "local", "source": {"kind": "local_path", "path": str(candidate_root)}}
 
             with self.assertRaises(CliError) as ctx:
-                resolve_candidate(project, project / ".demo", "run-001", manifest, candidate)
+                resolve_candidate(project, project / ".metaskill" / "worktrees" / "project", "run-001", manifest, candidate)
 
             self.assertIn("target ref must not traverse a symlink", ctx.exception.message)
+
+    def test_plugin_snapshot_preserves_shared_reference_layout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plugin = Path(tmp) / "plugin"
+            write_skill(plugin / "skills" / "demo")
+            (plugin / "plugin.json").write_text('{"name":"demo-plugin"}\n')
+            (plugin / "references").mkdir()
+            (plugin / "references" / "shared.md").write_text("Shared contract.\n")
+            skill_md = plugin / "skills" / "demo" / "SKILL.md"
+            skill_md.write_text(skill_md.read_text() + "\n[Shared](../../references/shared.md)\n")
+            run_dir = plugin / ".metaskill" / "runs" / "skills" / "demo" / "run-1"
+            manifest = {"target": {"type": "skill", "ref": "skills/demo/SKILL.md"}}
+            resolved = resolve_candidate(plugin, plugin / ".metaskill" / "worktrees" / "skills" / "demo", "run-1", manifest, {"candidate": "current", "source": {"kind": "current_worktree"}})
+            snapshotted = snapshot_candidate(run_dir, resolved)
+            payload = Path(snapshotted["payload_path"])
+            self.assertEqual(payload, run_dir / "inputs" / "candidates" / "current" / "payload" / "skills" / "demo")
+            self.assertTrue((payload.parent.parent / "references" / "shared.md").is_file())
+            self.assertTrue(snapshotted["validation_result"]["ok"])
 
 
 if __name__ == "__main__":

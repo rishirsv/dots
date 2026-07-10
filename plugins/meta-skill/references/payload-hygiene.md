@@ -6,7 +6,7 @@ fixed, evaluated, packaged, or release-gated.
 The core rule is simple: source evidence shapes runtime behavior, but source
 evidence is not runtime behavior. Raw research, session text, rejected options,
 prompt-role language, thread ids, local paths, and design-history notes belong
-in a hidden workbench, review output, or durable project docs unless they are
+in `.agents/`, review output, or durable project docs unless they are
 direct runtime dependencies.
 
 ## When To Use This
@@ -24,14 +24,14 @@ For a scored static review, use this file with
 
 ## Placement Rule
 
-| Material | Portable runtime payload | Hidden workbench or docs |
+| Material | Portable runtime payload | Evaluation or development state |
 |---|---|---|
 | Reusable operating rule | Yes | Optional rationale |
 | Runtime reference, schema, script, asset, or template | Yes, linked directly from `SKILL.md` | Optional design notes |
 | Source-specific research, article, company, person, URL, email, or transcript | Only when the runtime task requires that source | Yes |
 | User prompt text, system/developer text, thread id, rollout id, local path, command transcript | Only when the skill's real job is to inspect that exact class of material | Yes |
 | Rejected names, design alternatives, migration notes, roadmap, maintainer plans | No | Yes |
-| Eval seeds, judge guidance, expected outputs, validation fixtures | No, unless explicitly approved as runtime examples | Yes, under `.<skill-name>/` |
+| Eval seeds, judge guidance, expected outputs, validation fixtures | No, unless explicitly approved as runtime examples | Yes, under `<skill>/evals/` |
 
 ## Payload Hygiene Sweep
 
@@ -91,7 +91,7 @@ adding new primitives or recipes, package hygiene, release or dist rules,
 validator internals, hidden workbench management, roadmap planning, developer
 maintenance, migration notes, and external-system implementation boundaries.
 
-Those sections belong in `.<skill-name>/docs/`, validators, package docs,
+Those sections belong in repository `.agents/` docs, validators, package docs,
 maintainer notes, or another non-runtime surface. They belong in the portable
 payload only when the target skill's actual runtime job is skill maintenance.
 
@@ -119,6 +119,7 @@ Validation to run:
 Residual risk:
 ```
 
-When edits are approved or directly requested, make the smallest source-owned
-cleanup. Do not patch generated packages, installed caches, or local synced
-copies directly.
+When the current lane owns mutation and the user directly requests edits, make
+the smallest source-owned cleanup. A read-only review reports the cleanup and
+hands implementation to `skill-author`. Never patch generated packages,
+installed caches, or local synced copies directly.

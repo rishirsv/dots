@@ -1,293 +1,358 @@
-"""Tests for the calibration review workbench server."""
+"""Repository workbench API tests."""
 
 import http.client
 import json
 import sys
 import tempfile
 import threading
+import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+from urllib.parse import quote
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.io import read_jsonl  # noqa: E402
-from meta_skill.review.queue import build_queue  # noqa: E402
-from meta_skill.review.server import create_server  # noqa: E402
-from meta_skill.summary import build_summary  # noqa: E402
-
-RUN_ID = "run-001"
-CANDIDATE = "current"
+from meta_skill.workbench_server.server import build_trial_packet, create_server, discover_skills
+from meta_skill.report import build_report
 
 
-def _write_json(path, data):
+def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+    path.write_text(json.dumps(value, indent=2) + "\n")
 
 
-def _write_jsonl(path, rows):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in rows))
+def fixture(root):
+    skill = root / "skill"
+    skill.mkdir()
+    (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Use when testing the workbench; not for production."\n---\n\n# Demo\n')
+    workbench = skill / "evals"
+    eval_row = {"id": "a", "type": "capability", "prompt": "Do A", "expectations": ["Good"], "graders": [{"kind": "model", "id": "judge", "metric": "quality"}, {"kind": "human", "id": "taste", "metric": "quality"}]}
+    write(workbench / "evals.json", {"schema_version": 2, "skill_name": "demo", "target": {"type": "skill", "ref": "SKILL.md"}, "evals": [eval_row]})
+    run = root / ".metaskill" / "runs" / "skill" / "run-1"
+    write(run / "run.json", {"schema_version": 2, "run_id": "run-1", "runner": {"grading": True}, "candidates": [{"candidate": "current", "source_kind": "current_worktree"}], "trials": [{"trial_id": "a.current.t1", "eval_id": "a", "candidate": "current", "repetition": 1}]})
+    frozen = {**eval_row, "prompt": {"path": "task.md"}, "expected_output": None}
+    write(run / "inputs" / "suite.json", {"schema_version": 2, "evals": [frozen]})
+    case = run / "inputs" / "cases" / "a"
+    case.mkdir(parents=True)
+    (case / "task.md").write_text("Do A")
+    trial = run / "trials" / "a.current.t1"
+    trial.mkdir(parents=True)
+    write(trial / "state.json", {"trial_id": "a.current.t1", "eval_id": "a", "candidate": "current", "repetition": 1, "status": "completed"})
+    (trial / "response.md").write_text("A response")
+    (trial / "events.jsonl").write_text('{"method":"item/completed","payload":{"text":"used tool"}}\n')
+    (trial / "grades.jsonl").write_text(json.dumps({
+        "trial_id": "a.current.t1",
+        "metric": "quality",
+        "grader": {"kind": "model", "id": "judge"},
+        "grade_status": "fail",
+        "score": 0,
+        "rationale": "model says fail",
+        "checks": [{"name": "quality", "label": "fail", "evidence": "model-only evidence"}],
+    }) + "\n")
+    return skill, run
 
 
-def _trial_id(case_id):
-    return f"{case_id}.{CANDIDATE}.t1"
-
-
-def _model_grade(case_id, status, score=None, checks=None):
-    return {
-        "run_id": RUN_ID,
-        "case_id": case_id,
-        "candidate": CANDIDATE,
-        "trial_id": _trial_id(case_id),
-        "grade_generation_id": "grade-g1",
-        "grader": {"kind": "model", "id": "expectations"},
-        "grade_status": status,
-        "metric": "expectations",
-        "score": score,
-        "rationale": f"judge rationale for {case_id}",
-        "checks": checks or [],
-        "timestamp": "2026-01-01T00:00:00Z",
-    }
-
-
-CASES = ["case-fail", "case-unknown", "case-disagree", "case-suspect", "case-pass"]
-
-
-def _build_workbench(tmp_path):
-    root = tmp_path / ".demo"
-    run_dir = root / "runs" / RUN_ID
-    trials = []
-    results = []
-    for case_id in CASES:
-        tid = _trial_id(case_id)
-        case_dir = run_dir / "inputs" / "cases" / case_id
-        case_dir.mkdir(parents=True)
-        (case_dir / "task.md").write_text(f"# Task {case_id}\n\nDo the thing.\n")
-        _write_json(case_dir / "expectations.json", [f"The response completes {case_id}."])
-        trial_dir = run_dir / "trials" / tid
-        trial_dir.mkdir(parents=True)
-        (trial_dir / "response.md").write_text(f"# Result\n\nOutput for {case_id}.\n\n```\ncode block\n```\n")
-        _write_jsonl(
-            trial_dir / "events.jsonl",
-            [
-                {"method": "item/completed", "payload": {"item": {"type": "command", "text": "ls -la"}}},
-                {"method": "item/completed", "payload": {"item": {"type": "agent_message", "text": f"Output for {case_id}."}}},
-            ],
-        )
-        trials.append({"trial_id": tid, "case_id": case_id, "candidate": CANDIDATE, "repetition": 1})
-        results.append(
-            {
-                "trial_id": tid,
-                "case_id": case_id,
-                "candidate": CANDIDATE,
-                "repetition": 1,
-                "runtime_status": "completed",
-                "response_path": str(trial_dir / "response.md"),
-                "events_path": str(trial_dir / "events.jsonl"),
-            }
-        )
-    (run_dir / "inputs" / "cases" / "case-fail" / "judge.md").write_text("Grade strictly.\n")
-    _write_json(
-        run_dir / "run.json",
-        {
-            "run_id": RUN_ID,
-            "created_at": "2026-01-01T00:00:00Z",
-            "runner_config": {"runner": "codex_app_server", "grading_mode": "expectations"},
-            "model_config": {},
-            "trials": trials,
-        },
-    )
-    _write_jsonl(run_dir / "results.jsonl", results)
-    grades = [
-        _model_grade("case-fail", "fail", score=0.1),
-        _model_grade("case-unknown", "unknown"),
-        _model_grade("case-disagree", "pass", score=0.9),
-        _model_grade("case-suspect", "pass", score=0.5),
-        _model_grade("case-pass", "pass", score=0.95),
-        {
-            "run_id": RUN_ID,
-            "case_id": "case-disagree",
-            "candidate": CANDIDATE,
-            "trial_id": _trial_id("case-disagree"),
-            "grade_generation_id": "grade-h1",
-            "grader": {"kind": "human", "id": "human-review"},
-            "grade_status": "fail",
-            "metric": "expectations",
-            "score": None,
-            "rationale": "Reviewed: the output misses the required step.",
-            "checks": [],
-            "timestamp": "2026-01-02T00:00:00Z",
-        },
-    ]
-    _write_jsonl(run_dir / "grades.jsonl", grades)
-    build_summary(str(run_dir))
-    return root
-
-
-def _request(port, method, path, body=None):
-    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=10)
-    headers = {}
-    payload = None
-    if body is not None:
-        payload = json.dumps(body)
-        headers["Content-Type"] = "application/json"
-    conn.request(method, path, body=payload, headers=headers)
-    response = conn.getresponse()
-    raw = response.read()
-    conn.close()
-    return response.status, raw
-
-
-def _request_json(port, method, path, body=None):
-    status, raw = _request(port, method, path, body)
-    return status, json.loads(raw)
-
-
-class ReviewServerTests(unittest.TestCase):
+class WorkbenchServerTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.workbench = _build_workbench(Path(self.tmp.name))
-        self.server = create_server(self.workbench, run=RUN_ID, port=0)
+        self.root = Path(self.tmp.name)
+        self.skill, self.run = fixture(self.root)
+        self.server = create_server(self.root, 0)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
-        self.port = self.server.server_address[1]
 
     def tearDown(self):
         self.server.shutdown()
         self.server.server_close()
-        self.thread.join(timeout=5)
+        self.thread.join()
         self.tmp.cleanup()
 
-    # -- queue builder ------------------------------------------------------
+    def request(self, method, path, body=None, headers=None):
+        connection = http.client.HTTPConnection("127.0.0.1", self.server.server_address[1])
+        payload = json.dumps(body).encode() if body is not None else None
+        request_headers = dict(headers or {})
+        if payload:
+            request_headers.setdefault("Content-Type", "application/json")
+        connection.request(method, path, payload, request_headers)
+        response = connection.getresponse()
+        data = json.loads(response.read()) if response.getheader("Content-Type", "").startswith("application/json") else None
+        connection.close()
+        return response.status, data
 
-    def test_queue_tiers_and_order(self):
-        entries = build_queue(self.workbench / "runs" / RUN_ID)
-        by_case = {entry["case_id"]: entry for entry in entries}
-        self.assertEqual(by_case["case-fail"]["tier"], 1)
-        self.assertEqual(by_case["case-unknown"]["tier"], 2)
-        self.assertEqual(by_case["case-disagree"]["tier"], 3)
-        self.assertEqual(by_case["case-suspect"]["tier"], 4)
-        self.assertEqual(by_case["case-pass"]["tier"], 5)
-        self.assertEqual([entry["case_id"] for entry in entries], ["case-fail", "case-unknown", "case-disagree", "case-suspect", "case-pass"])
-        self.assertTrue(by_case["case-disagree"]["human_graded"])
-        self.assertFalse(by_case["case-pass"]["human_graded"])
-        self.assertEqual(by_case["case-fail"]["verdict"], "failed")
-        self.assertTrue(all({"trial_id", "case_id", "candidate", "verdict", "grades", "tier", "human_graded"} <= set(entry) for entry in entries))
-
-    # -- HTTP surface -------------------------------------------------------
-
-    def test_serves_app_shell(self):
-        status, raw = _request(self.port, "GET", "/")
-        html = raw.decode("utf-8")
+    def test_skill_run_overview_and_queue_discovery(self):
+        status, skills = self.request("GET", "/api/skills")
         self.assertEqual(status, 200)
-        self.assertIn('id="queue"', html)
-        self.assertIn('id="evidence"', html)
-        self.assertIn('id="grading"', html)
-        self.assertIn("Calibration review", html)
-
-    def test_lists_runs(self):
-        status, data = _request_json(self.port, "GET", "/api/runs")
+        self.assertEqual(skills["skills"][0]["name"], "demo")
+        self.assertEqual(skills["skills"][0]["run_count"], 1)
+        status, runs = self.request("GET", "/api/skills/skill/runs")
+        self.assertEqual(runs["runs"][0]["run_id"], "run-1")
+        self.assertEqual(runs["runs"][0]["totals"]["failed"], 0)
+        self.assertEqual(runs["runs"][0]["totals"]["inconclusive"], 1)
+        self.assertEqual(build_report(str(self.run))["trials"][0]["verdict"], "failed")
+        status, overview = self.request("GET", "/api/runs/run-1?skill=skill")
+        self.assertEqual(overview["trials"][0]["verdict"], "inconclusive")
+        self.assertEqual(overview["trials"][0]["failed_checks"], [])
+        self.assertFalse(any((row.get("grader") or {}).get("kind") == "model" for row in overview["trials"][0]["grades"]))
+        status, queue = self.request("GET", "/api/runs/run-1/queue?skill=skill")
+        self.assertEqual(queue["queue"][0]["trial_id"], "a.current.t1")
+        self.assertEqual(queue["queue"][0]["verdict"], "inconclusive")
+        self.assertEqual(queue["queue"][0]["tier"], 2)
+        self.assertFalse(any((row.get("grader") or {}).get("kind") == "model" for row in queue["queue"][0]["grades"]))
+        status, suite = self.request("GET", "/api/skills/skill/suite")
         self.assertEqual(status, 200)
-        self.assertEqual(data["default_run"], RUN_ID)
-        (run,) = data["runs"]
-        self.assertEqual(run["run_id"], RUN_ID)
-        self.assertEqual(run["planned_trials"], 5)
-        self.assertEqual(run["results"], 5)
-        self.assertTrue(run["has_summary"])
+        self.assertEqual(suite["cases"][0]["id"], "a")
+        self.assertTrue(suite["data_boundary"]["external_model_boundary"])
+        self.assertIn(".metaskill", suite["data_boundary"]["storage_root"])
 
-    def test_queue_endpoint_tiers(self):
-        status, data = _request_json(self.port, "GET", f"/api/runs/{RUN_ID}/queue")
-        self.assertEqual(status, 200)
-        self.assertEqual([entry["tier"] for entry in data["queue"]], [1, 2, 3, 4, 5])
-
-    def test_trial_packet_separates_judge_grade(self):
-        tid = _trial_id("case-disagree")
-        status, data = _request_json(self.port, "GET", f"/api/trials/{tid}?run={RUN_ID}")
-        self.assertEqual(status, 200)
-        self.assertTrue(data["task"].startswith("# Task case-disagree"))
-        self.assertIn("Output for case-disagree", data["response"])
-        self.assertEqual(data["transcript"]["total"], 2)
-        self.assertTrue(data["judge_guidance"]["hidden_from_agent"])
-        self.assertEqual(data["judge_guidance"]["expectations"], ["The response completes case-disagree."])
-        # Judge grades live only under the hidden "judge" key.
-        self.assertTrue(all((row.get("grader") or {}).get("kind") != "model" for row in data["grades"]))
-        self.assertEqual([row["grader"]["kind"] for row in data["judge"]["grades"]], ["model"])
-        self.assertTrue(data["human_recorded"])
-
-    def test_post_grade_roundtrip(self):
-        tid = _trial_id("case-unknown")
-        body = {
-            "run": RUN_ID,
-            "trial_id": tid,
-            "grader_id": "human-review",
-            "metric": "expectations",
-            "label": "pass",
-            "score": 0.8,
-            "rationale": "Verified the output manually.",
-            "reviewer": "rishi",
-        }
-        status, data = _request_json(self.port, "POST", "/api/grades", body)
-        self.assertEqual(status, 200)
-        self.assertEqual(data["grade"]["grader"], {"kind": "human", "id": "human-review"})
-        self.assertEqual(data["grade"]["grade_status"], "pass")
-        rows = read_jsonl(self.workbench / "runs" / RUN_ID / "grades.jsonl")
-        written = [row for row in rows if row["trial_id"] == tid and row["grader"]["kind"] == "human"]
-        self.assertEqual(len(written), 1)
-        self.assertEqual(written[0]["rationale"], "Verified the output manually.")
-        self.assertEqual(written[0]["reviewer"], "rishi")
-
-    def test_post_grade_rejects_bad_label(self):
-        body = {"run": RUN_ID, "trial_id": _trial_id("case-pass"), "grader_id": "human-review", "metric": "expectations", "label": "great", "rationale": "x"}
-        status, data = _request_json(self.port, "POST", "/api/grades", body)
+    def test_blind_packet_grade_revision_and_reveal(self):
+        path = "/api/trials/a.current.t1?skill=skill&run=run-1"
+        status, packet = self.request("GET", path)
+        self.assertEqual(packet["human_grader"]["id"], "taste")
+        self.assertEqual(packet["trial"]["verdict"], "inconclusive")
+        self.assertEqual(packet["trial"]["failed_checks"], [])
+        self.assertFalse(any((row.get("grader") or {}).get("kind") == "model" for row in packet["grades"]))
+        status, error = self.request("GET", "/api/trials/a.current.t1/judge?skill=skill&run=run-1")
         self.assertEqual(status, 400)
-        self.assertIn("label", data["error"])
-
-    def test_post_annotation_appends_row(self):
-        tid = _trial_id("case-pass")
-        body = {
-            "run": RUN_ID,
-            "trial_id": tid,
-            "artifact": "response",
-            "span": {"start": 3, "end": 9, "quote": "Output"},
-            "note": "Good phrasing to require everywhere.",
-            "tag": "taste-rule",
-        }
-        status, data = _request_json(self.port, "POST", "/api/annotations", body)
+        body = {"skill": "skill", "run": "run-1", "trial_id": "a.current.t1", "label": "fail", "rationale": "Human evidence"}
+        self.assertEqual(self.request("POST", "/api/grades", body)[0], 200)
+        body["label"], body["rationale"] = "pass", "Revised evidence"
+        self.assertEqual(self.request("POST", "/api/grades", body)[0], 200)
+        status, reveal = self.request("GET", "/api/trials/a.current.t1/judge?skill=skill&run=run-1")
         self.assertEqual(status, 200)
-        self.assertEqual(data["annotation"]["tag"], "taste-rule")
-        rows = read_jsonl(self.workbench / "runs" / RUN_ID / "annotations.jsonl")
-        self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0]["trial_id"], tid)
-        self.assertEqual(rows[0]["span"]["quote"], "Output")
-        self.assertTrue(rows[0]["timestamp"])
+        self.assertEqual(reveal["grades"][0]["rationale"], "model says fail")
+        self.assertEqual(reveal["disagreements"][0]["human"], "pass")
+        status, overview = self.request("GET", "/api/runs/run-1?skill=skill")
+        self.assertEqual(overview["trials"][0]["verdict"], "failed")
+        self.assertEqual(overview["trials"][0]["failed_checks"][0]["evidence"], "model-only evidence")
 
-    def test_post_annotation_rejects_bad_tag(self):
-        body = {
-            "run": RUN_ID,
-            "trial_id": _trial_id("case-pass"),
-            "artifact": "response",
-            "span": {"start": 0, "end": 1, "quote": "O"},
-            "note": "x",
-            "tag": "vibes",
-        }
-        status, data = _request_json(self.port, "POST", "/api/annotations", body)
-        self.assertEqual(status, 400)
-        self.assertIn("tag", data["error"])
+    def test_annotation_is_trial_local_and_run_launch_endpoint_exists(self):
+        body = {"skill": "skill", "run": "run-1", "trial_id": "a.current.t1", "artifact": "response", "tag": "task-defect", "note": "Ambiguous wording"}
+        self.assertEqual(self.request("POST", "/api/annotations", body)[0], 200)
+        review = json.loads((self.run / "trials" / "a.current.t1" / "review.json").read_text())
+        self.assertEqual(review["annotations"][0]["note"], "Ambiguous wording")
+        called = threading.Event()
+        self.server.run_background = lambda *_args: called.set()
+        status, result = self.request("POST", "/api/runs", {"skill": "skill"})
+        self.assertEqual(status, 202)
+        self.assertTrue(result["run_id"].startswith("run-"))
+        self.assertTrue(called.wait(1))
 
-    def test_trial_traversal_rejected(self):
-        status, data = _request_json(self.port, "GET", f"/api/trials/..%2F..%2Frun.json?run={RUN_ID}")
-        self.assertEqual(status, 400)
-        status, _ = _request(self.port, "GET", f"/api/trials/../../run.json?run={RUN_ID}")
+    def test_experiment_setup_fields_reach_the_background_runner(self):
+        captured = {}
+        called = threading.Event()
+
+        def background(args, context, rid):
+            captured.update({"args": args, "context": context, "rid": rid})
+            called.set()
+
+        self.server.run_background = background
+        status, result = self.request(
+            "POST",
+            "/api/runs",
+            {
+                "skill": "skill",
+                "objective": "Compare the current candidate",
+                "case_ids": ["a"],
+                "candidates": ["current"],
+                "baseline": "current",
+                "repetitions": 2,
+                "human_review_sample": 3,
+                "parallel": 2,
+                "timeout": 30,
+            },
+        )
+        self.assertEqual(status, 202)
+        self.assertTrue(called.wait(1))
+        self.assertEqual(captured["args"].objective, "Compare the current candidate")
+        self.assertEqual(captured["args"].case, ["a"])
+        self.assertEqual(captured["args"].baseline, "current")
+        self.assertEqual(captured["args"].repetitions, 2)
+        self.assertEqual(captured["context"]["skill_id"], "skill")
+        self.assertEqual(result["run_id"], captured["rid"])
+
+    def test_pairwise_review_is_candidate_blind_until_recorded(self):
+        run_json = json.loads((self.run / "run.json").read_text())
+        run_json["baseline_candidate"] = "no-skill"
+        run_json["human_review_sample"] = 1
+        run_json["candidates"] = [
+            {"candidate": "no-skill", "source_kind": "none"},
+            {"candidate": "current", "source_kind": "current_worktree"},
+        ]
+        run_json["trials"].insert(
+            0,
+            {"trial_id": "a.no-skill.t1", "eval_id": "a", "candidate": "no-skill", "repetition": 1},
+        )
+        write(self.run / "run.json", run_json)
+        trial = self.run / "trials" / "a.no-skill.t1"
+        trial.mkdir(parents=True)
+        write(
+            trial / "state.json",
+            {"trial_id": "a.no-skill.t1", "eval_id": "a", "candidate": "no-skill", "repetition": 1, "status": "completed"},
+        )
+        (trial / "response.md").write_text("Baseline response")
+        (trial / "events.jsonl").write_text("")
+        (trial / "grades.jsonl").write_text("")
+
+        status, queue = self.request("GET", "/api/runs/run-1/pairs?skill=skill")
+        self.assertEqual(status, 200)
+        self.assertEqual(queue["coverage"]["eligible"], 1)
+        comparison_id = queue["queue"][0]["comparison_id"]
+        status, packet = self.request(
+            "GET", f"/api/comparisons/{comparison_id}?skill=skill&run=run-1"
+        )
+        self.assertEqual(status, 200)
+        self.assertNotIn("reveal", packet)
+        self.assertNotIn("candidate", json.dumps(packet))
+        self.assertNotIn("trial_id", json.dumps(packet))
+
+        status, _result = self.request(
+            "POST",
+            "/api/pairwise",
+            {
+                "skill": "skill",
+                "run": "run-1",
+                "comparison_id": comparison_id,
+                "preferred": "a",
+                "reason": "clarity",
+                "rationale": "More direct",
+            },
+        )
+        self.assertEqual(status, 200)
+        status, revealed = self.request(
+            "GET", f"/api/comparisons/{comparison_id}?skill=skill&run=run-1"
+        )
+        self.assertEqual(revealed["review"]["reason"], "clarity")
+        self.assertIn(revealed["reveal"]["a"]["candidate"], {"no-skill", "current"})
+
+    def test_artifacts_are_listed_served_safely_and_eval_promotion_requires_approval(self):
+        artifact = self.run / "trials" / "a.current.t1" / "artifacts" / "result.txt"
+        artifact.parent.mkdir()
+        artifact.write_text("artifact result")
+        packet = build_trial_packet(self.run, "a.current.t1")
+        self.assertEqual(packet["artifacts"][0]["path"], "result.txt")
+        status, _ = self.request(
+            "GET", "/api/artifacts/a.current.t1/result.txt?skill=skill&run=run-1"
+        )
+        self.assertEqual(status, 200)
+        status, error = self.request(
+            "GET", "/api/artifacts/a.current.t1/../state.json?skill=skill&run=run-1"
+        )
         self.assertIn(status, {400, 404})
-        status, data = _request_json(self.port, "GET", "/api/runs/..%2F..%2Fetc/queue")
-        self.assertEqual(status, 400)
 
-    def test_calibration_endpoint(self):
-        status, data = _request_json(self.port, "GET", f"/api/calibration?run={RUN_ID}&metric=expectations")
+        body = {
+            "skill": "skill",
+            "run": "run-1",
+            "trial_id": "a.current.t1",
+            "id": "promoted-a",
+            "type": "regression",
+            "priority": "high",
+            "expectations": ["Preserve the accepted behavior"],
+        }
+        self.assertEqual(self.request("POST", "/api/evals", body)[0], 400)
+        body["approved"] = True
+        self.assertEqual(self.request("POST", "/api/evals", body)[0], 201)
+        suite = json.loads((self.skill / "evals" / "evals.json").read_text())
+        self.assertEqual(suite["evals"][-1]["id"], "promoted-a")
+
+    def test_model_grade_is_visible_when_no_human_review_is_declared(self):
+        suite_path = self.run / "inputs" / "suite.json"
+        suite = json.loads(suite_path.read_text())
+        suite["evals"][0]["graders"] = [{"kind": "model", "id": "judge", "metric": "quality"}]
+        write(suite_path, suite)
+        packet = build_trial_packet(self.run, "a.current.t1")
+        self.assertIsNone(packet["human_grader"])
+        self.assertEqual(packet["grades"][0]["grader"]["kind"], "model")
+
+    def test_multiple_human_graders_keep_model_hidden_until_all_are_recorded(self):
+        suite_path = self.run / "inputs" / "suite.json"
+        suite = json.loads(suite_path.read_text())
+        suite["evals"][0]["graders"].append(
+            {"kind": "human", "id": "second", "metric": "second"}
+        )
+        write(suite_path, suite)
+        body = {
+            "skill": "skill",
+            "run": "run-1",
+            "trial_id": "a.current.t1",
+            "label": "pass",
+            "rationale": "First independent review",
+        }
+        self.assertEqual(self.request("POST", "/api/grades", body)[0], 200)
+        self.assertEqual(
+            self.request("GET", "/api/trials/a.current.t1/judge?skill=skill&run=run-1")[0],
+            400,
+        )
+        status, overview = self.request("GET", "/api/runs/run-1?skill=skill")
         self.assertEqual(status, 200)
-        self.assertEqual(data["summary"]["paired"], 1)
-        self.assertTrue(data["summary"]["trust_band"].startswith("insufficient"))
+        self.assertEqual(overview["trials"][0]["failed_checks"], [])
+        self.assertFalse(
+            any(
+                (row.get("grader") or {}).get("kind") == "model"
+                for row in overview["trials"][0]["grades"]
+            )
+        )
+
+        body["rationale"] = "Second independent review"
+        self.assertEqual(self.request("POST", "/api/grades", body)[0], 200)
+        self.assertEqual(
+            self.request("GET", "/api/trials/a.current.t1/judge?skill=skill&run=run-1")[0],
+            200,
+        )
+
+    def test_regrade_rejects_non_terminal_run(self):
+        state_path = self.run / "trials" / "a.current.t1" / "state.json"
+        state = json.loads(state_path.read_text())
+        state["status"] = "running"
+        write(state_path, state)
+        called = threading.Event()
+        self.server.regrade_background = lambda *_args: called.set()
+        status, error = self.request(
+            "POST", "/api/runs/run-1/regrade", {"skill": "skill"}
+        )
+        self.assertEqual(status, 400)
+        self.assertIn("wait for the run to finish", error["error"])
+        self.assertFalse(called.is_set())
+
+    def test_rejects_non_local_host_and_origin(self):
+        status, error = self.request("GET", "/api/skills", headers={"Host": "attacker.example"})
+        self.assertEqual(status, 403)
+        self.assertIn("local requests", error["error"])
+
+        called = threading.Event()
+        self.server.run_background = lambda *_args: called.set()
+        status, _error = self.request(
+            "POST",
+            "/api/runs",
+            {"skill": "skill"},
+            headers={"Origin": "https://attacker.example"},
+        )
+        self.assertEqual(status, 403)
+        self.assertFalse(called.is_set())
+
+        port = self.server.server_address[1]
+        status, result = self.request(
+            "POST",
+            "/api/runs",
+            {"skill": "skill"},
+            headers={"Origin": f"http://localhost:{port}"},
+        )
+        self.assertEqual(status, 202)
+        self.assertTrue(result["run_id"].startswith("run-"))
+        self.assertTrue(called.wait(1))
+
+    def test_background_setup_failure_is_persisted_as_an_experiment(self):
+        with patch("meta_skill.workbench_server.server.run_eval", side_effect=RuntimeError("runtime unavailable")):
+            status, result = self.request("POST", "/api/runs", {"skill": "skill"})
+            self.assertEqual(status, 202)
+            run_json = self.root / ".metaskill" / "runs" / "skill" / result["run_id"] / "run.json"
+            for _ in range(50):
+                if run_json.exists():
+                    break
+                time.sleep(.01)
+            self.assertTrue(run_json.is_file())
+            self.assertIn("runtime unavailable", json.loads(run_json.read_text())["planning_error"])
 
 
 if __name__ == "__main__":
