@@ -56,6 +56,10 @@ report on these areas:
 - Copy and content: for any copy that is part of the app, not dynamic content, check that it is coherent, makes sense in the standalone context of the app, and is visually appealing.
 - Icons: zoom in and analyze all visible icons and icons hidden behind controls/interactions to ensure they are fully implemented, aligned, and visually consistent.
 - States and interactions: expand/collapse sidebars, tooltips, forms, hover, focus, active, selected, disabled, loading, success, error, empty states, and any interactive controls needed for a functional frontend.
+- Motion and native feel, when present: inspect live or recorded behavior using
+  [motion-audit.md](motion-audit.md); evaluate purpose, frequency, origin,
+  physicality, interruption, timing, gesture response, reduced-motion behavior,
+  and cohesion. Still screenshots cannot pass this surface.
 - Specificity and client-readiness: check whether imagery, type, layout rhythm, component motifs, and copy belong to the subject, or whether the surface could be swapped into another generic landing page or app with minimal changes. Cite visible template patterns, missing subject-specific imagery or material, repeated default components, mismatch with accepted references, or copy/type/layout that could belong anywhere.
 - AI shortcut artifacts: flag generic rounded cards, unnecessary borders, decorative CSS blobs, fake SVG illustrations, half-built avatars, mismatched hero art, and custom CSS/SVG replacements where the target called for real imagery, real icons, or a different surface treatment.
 
@@ -106,6 +110,25 @@ final result: passed|blocked
 Briefly state what was compared, the overall fidelity read, and the main issue
 or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
 
+**Design Constitution**
+| Principle | Score (0-2 or N/E) | Evidence |
+| --- | ---: | --- |
+| Purpose |  |  |
+| Agency |  |  |
+| Responsibility |  |  |
+| Familiarity |  |  |
+| Flexibility |  |  |
+| Simplicity |  |  |
+| Craft |  |  |
+| Delight |  |  |
+
+Total: /available points (use /16 only when all eight principles are evidenced)
+
+**Motion Audit**
+Include only when motion, gesture behavior, or haptic feedback is in scope.
+State the dynamic evidence inspected, strongest motion findings, reduced-motion
+result, and whether the motion audit passed or was blocked.
+
 **Findings**
 - [P1] Short issue title
   Location: screen/component/selector/file if known.
@@ -152,6 +175,8 @@ or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
 - Accessibility:
 - Specificity and client-readiness:
 - Shortcut artifacts:
+- Design constitution score:
+- Motion and native feel, or not in scope:
 
 **Evidence Limits**
 - Any evidence gaps that prevented a complete source-vs-render comparison.

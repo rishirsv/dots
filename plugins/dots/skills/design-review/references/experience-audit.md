@@ -271,14 +271,15 @@ When writing a saved `audit.md`, use this order:
 1. Title
 2. One-line verdict
 3. Scope and core user task
-4. Top findings, grouped by severity
-5. Step health table or compact numbered step list
-6. Detailed findings
-7. Strong decisions to preserve
-8. Ship-now fixes
-9. Later polish
-10. Verification gaps
-11. Evidence appendix
+4. Design constitution score over the principles evidenced by this scope
+5. Top findings, grouped by severity
+6. Step health table or compact numbered step list
+7. Detailed findings
+8. Strong decisions to preserve
+9. Ship-now fixes
+10. Later polish
+11. Verification gaps
+12. Evidence appendix
 
 Each step in the step health table or numbered step list should have enough
 detail to stand on its own: 3-5 concise sentences, not just a health label or a
@@ -317,6 +318,10 @@ decisions to preserve` section when useful.
 ## User Goal
 - The task or outcome the experience should support.
 
+## Design Constitution
+- Score each evidenced principle using the constitution contract in
+  `SKILL.md`; mark the rest N/E and report the total over available points.
+
 ## Step List
 1. Step name - health: good / mixed / poor / blocked
 
@@ -352,6 +357,7 @@ decisions to preserve` section when useful.
 - Accessibility:
 - Product fit and system consistency:
 - Product idea, visual unity, and template-like output risk:
+- Motion and native feel, or not in scope:
 
 ## Strong Decisions To Preserve
 - Strong choices that should survive redesign or implementation work.
@@ -386,6 +392,10 @@ decisions to preserve` section when useful.
 
 ## Accessibility Target
 - The accessibility outcome, user group, standard, or critical path being checked.
+
+## Design Constitution
+- Score each evidenced principle using the constitution contract in
+  `SKILL.md`; mark the rest N/E and report the total over available points.
 
 ## Step List
 1. Step name - health: good / mixed / poor / blocked
@@ -425,6 +435,10 @@ decisions to preserve` section when useful.
 - User goal:
 - Accessibility target:
 
+## Design Constitution
+- Score each evidenced principle using the constitution contract in
+  `SKILL.md`; mark the rest N/E and report the total over available points.
+
 ## Step List
 1. Step name - health: good / mixed / poor / blocked
 
@@ -450,6 +464,7 @@ decisions to preserve` section when useful.
 - Accessibility:
 - Product fit and system consistency:
 - Product idea, visual unity, and template-like output risk:
+- Motion and native feel, or not in scope:
 
 ## Evidence Limits And Verification Gaps
 - Missing interaction, code, accessibility, analytics, or user-testing evidence.

@@ -16,6 +16,11 @@ this skill whenever front-end work changes what a user sees.
   forming a new-surface brief or UI-generation prompt from sparse direction.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
+- Read [animation-vocabulary.md](references/animation-vocabulary.md) on demand
+  when motion or interaction design needs precise terminology.
+- Read [ios-motion.md](references/ios-motion.md) for iOS/SwiftUI animation and,
+  on any platform, direct-manipulation gestures, springs, momentum,
+  rubber-banding, or synchronized haptics.
 - Read [imagegen-concepts.md](references/imagegen-concepts.md) when concepting
   with Image Gen or generating visual assets.
 - Read [image-to-code.md](references/image-to-code.md) when implementing a
@@ -123,6 +128,11 @@ should be explicit variants, not copied one-off styles.
 Follow the repo's framework, routing, component, styling, state, accessibility,
 and asset conventions. For a new complex app UI without an existing framework
 constraint, default to React + Vite.
+
+When motion or gesture behavior is part of the surface, load the applicable
+conditional motion references before implementing or revising it. Use the
+vocabulary to name the intended behavior; use the doctrine only for the
+platform and interaction mechanisms it covers.
 
 Build the real usable surface first, not a marketing wrapper around a future
 app. Design every reachable state, not just the happy path: default, empty,
