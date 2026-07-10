@@ -1,6 +1,6 @@
 ---
 name: ultraplan
-description: "Creates or upgrades an implementation plan through repo-grounded context gathering, optional subagent research, adversarial critique, verified revisions, and anti-overengineering pressure; always produces a plan and stops before implementation. Explicit-only skill invoked via ultraplan (also ultra-plan), or a request to deeply plan, stress-test, or pressure-test an approach before building. Not for pure explanation, research, or ideation."
+description: "Creates or upgrades a repo-grounded implementation plan, pressure-tests it once, verifies material findings, removes overengineering, and stops before implementation. Explicit-only; use for ultraplan, deep planning, or stress-testing an approach before building. Not for explanation, research, or ideation."
 ---
 
 # Plan
@@ -105,15 +105,12 @@ definitions and fan-out rules. Use
   strongest evidence-grounded, plan-changing findings. The parent owns
   verification and final synthesis.
 
-When the runtime offers orchestrated subagents, run the deep pass as a
-structured shape rather than ad-hoc calls: fan out independent research lanes,
-draft, critique by lens and verify each finding before adopting it, then
-synthesize — looping until critique returns nothing plan-changing. Adopt that
-shape with whatever orchestration exists; do not hardwire a specific tool, and
-when only sequential subagents or none are available, run the same shape in
-order and be honest about the reduced independence. Either way, prefer a few
-focused agents over many broad ones, and stop once the plan has enough truth and
-sequencing to implement.
+For a deep pass, fan out only independent research lanes, draft once, then run
+one adversarial critique pass. Verify findings before adopting them. Run a
+focused follow-up only when a material disputed claim remains and its answer
+would change the plan; do not loop until critics run out of comments. Prefer a
+few focused lanes and stop once the plan has enough truth and sequencing to
+implement.
 
 ## Feature And UI Planning
 

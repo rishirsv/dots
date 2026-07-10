@@ -61,12 +61,11 @@ Add a section only when it prevents a concrete implementation mistake:
 Put public API, interface, type, migration, compatibility, or rollout notes
 inside the relevant step unless they cut across the whole plan. Cite paths,
 symbols, and commands for load-bearing claims; prefer symbols over line numbers
-because lines drift. Do not cap length — write the detail the implementer needs,
-using tables, typed signatures, command blocks, contracts, and acceptance
-criteria where they make the plan easier to execute — but omit transcripts,
-chain-of-thought, and rejected alternatives. Do not leave unresolved open
-questions in the plan body; ask first, or record a recommended default only after
-the user accepts it.
+because lines drift. Include only detail that helps the implementer execute or
+verify the work; omit transcripts, chain-of-thought, and rejected alternatives.
+When a human decision remains unresolved, name it with the recommended default,
+decision owner, and implementation impact instead of silently settling it or
+blocking the rest of the plan.
 
 ## Upgrading An Existing Plan
 

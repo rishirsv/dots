@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: "Reviews existing or rendered product UI: critique of one artifact against an approved target or self/QA review, and experience audit of a multi-step journey covering UX, design, and accessibility. Use for design critique, UX audit, or product-design QA; not for code review, redesign, or implementation."
+description: "Independently reviews existing or rendered product UI: focused surface critique, target comparison, or multi-step UX/accessibility audit. Use for design critique, UX audit, acceptance QA, or a requested second opinion; not for code review, redesign, implementation, or routine build self-checks."
 ---
 
 # Design Review
@@ -12,13 +12,12 @@ an acceptance check for every substantive finding.
 
 ## Design Constitution
 
-Every review path evaluates the product against the eight principles below.
-Score each evidenced principle `0` (missing or contradicted), `1` (mixed), or
-`2` (strongly evidenced), and cite visible or interaction evidence rather than
-aesthetic preference. Mark a principle `not evidenced` when the reviewed scope
-does not exercise it; exclude that principle from the denominator rather than
-inventing evidence or treating absence as failure. Report the total out of 16
-only when all eight principles are evidenced.
+Use the eight principles below as judgment prompts. In a focused critique,
+mention only principles that explain a material finding or strength. In a full
+acceptance review or experience audit, score each evidenced principle `0`
+(missing or contradicted), `1` (mixed), or `2` (strongly evidenced); mark the
+rest `not evidenced` and exclude them from the denominator. Report `/16` only
+when all eight are evidenced.
 
 These principles are platform-general. Platform examples illustrate the rule;
 they do not impose that platform's conventions elsewhere. Use these as the
@@ -54,20 +53,20 @@ Use these native-feel questions as evidence prompts behind the score:
 Two paths share this skill's evidence rules, severity scale, finding anatomy,
 and reviewer protocol:
 
-- **Surface critique**: one rendered artifact, screen, component, or surface.
-  Agent self-review, pre-handoff QA, and focused design critique, compared
-  against an approved visual target when one exists. Ends in a pass/block gate
-  decision. Use this before every design build handoff.
+- **Surface critique**: one rendered artifact, screen, component, or surface,
+  compared against an approved visual target when one exists. A focused
+  critique returns the strongest findings; a full acceptance review ends in a
+  pass/block decision.
 - **Experience audit**: a multi-step journey, funnel, onboarding path, checkout path,
   settings path, workflow, or product area. Ends in a numbered step list with
   health labels plus UX, design, and accessibility findings.
 
 This skill evaluates; it does not implement fixes. Route build, redesign, or
-polish work to [design](../design/SKILL.md), which re-enters this
-skill's surface path as its blocking pre-handoff gate. This skill owns the
-comparison method, the fidelity surfaces, the severity scale, and the
-pass/block decision; build skills invoke it as a gate and do not restate the
-rubric.
+polish work to [design](../design/SKILL.md). Routine build self-checks stay in
+Design; use this independent review for target-driven, acceptance-critical,
+externally shipped, brand- or accessibility-sensitive work, or when the user
+asks for it. When invoked as a full gate, this skill owns the comparison method,
+severity, and pass/block decision.
 
 ## Choose The Path
 
@@ -77,7 +76,8 @@ rubric.
 - Supplied screenshots or artifacts that stand in for a broader experience →
   experience audit.
 - A single supplied screenshot judged on its own terms → surface critique.
-- A pre-handoff fidelity check against an accepted target → surface critique.
+- A full pre-handoff fidelity check against an accepted target → surface
+  critique with a pass/block decision.
 - Both requested (audit a flow and gate one screen) → run each path on its own
   scope and keep the outputs separate.
 
@@ -216,24 +216,18 @@ decide alone; require it to state which skill, rubric, target, and evidence it
 inspected.
 
 The parent agent owns the final review: verify reviewer findings against the
-captured evidence, merge only findings that hold up, and record the reviewer
-trigger and finding disposition in the saved report. If subagents are
+captured evidence and merge only findings that hold up. If subagents are
 unavailable, the task is too small to justify one, or the reviewer did not
 inspect the required evidence, proceed directly and note the omitted reason
 when that matters to confidence.
 
 ## Output Destinations
 
-- If the user names a destination or asks for saved output, use it.
-- Otherwise follow the repository or working directory's convention for agent
-  outputs when one is discoverable; if none is, save under `.agents/outputs/`
-  in the active repository or working directory, never the project root.
-- Surface critique saves `design-review.md`. Flow audits that captured new
-  screenshots save them with numbered names (`01-start.png`,
-  `02-form-filled.png`) plus `audit.md` in a `design-review/` audit folder.
-- For quick critiques or provided-artifact reviews where the user did not ask
-  for saved output, answer in chat and name the evidence limits instead of
-  creating files by default.
+Answer in chat by default. Save a report only when the user asks for one or an
+established workflow explicitly requires a durable artifact. When saving,
+follow the named destination or repository convention; otherwise use
+`.agents/outputs/`, never the project root. Save screenshots only when they are
+needed as durable evidence, using numbered names for flow steps.
 
 ## Surface Critique
 
@@ -242,9 +236,9 @@ screenshot, mockup, design board, or source capture) and a rendered
 implementation (local URL, deployed URL, app screen, component, or screenshot).
 Single-surface critique without a source target requires a rendered
 implementation plus any available brief, spec, prompt, or acceptance criteria.
-If required evidence cannot be opened, captured, or compared, write
-`design-review.md` with an evidence-limits section naming the missing evidence
-and report `blocked`; do not claim a complete comparison.
+If required evidence cannot be opened, captured, or compared, report `blocked`
+and name the missing evidence. Do not create a file unless saved output was
+requested, and do not claim a complete comparison.
 
 1. Identify the mode: target comparison or single-surface critique. For target
    comparison, match the same viewport, state, theme, device density, route,
@@ -275,13 +269,11 @@ and report `blocked`; do not claim a complete comparison.
    against the target, using image analysis or typeface lookup when needed.
    If the target itself has a gap (for example a missing null state), record it
    as a separate finding against the target.
-6. Write the report using the template in
-   [references/design-rubric.md](references/design-rubric.md): overview,
-   `final result` near the top, findings ordered by severity with the full
-   anatomy, open questions, an implementation checklist, follow-up polish,
-   review metadata, fidelity surface coverage, and evidence limits. Include
-   exact CSS/component/token suggestions when the implementation context is
-   available.
+6. Lead with the result, then findings ordered by severity, evidence limits,
+   and an implementation checklist when useful. Use the compact template in
+   [references/design-rubric.md](references/design-rubric.md) for a saved full
+   review. Include exact CSS/component/token suggestions when implementation
+   context is available.
 
 Pass / block:
 
@@ -339,11 +331,10 @@ For every live-flow step or artifact state:
 4. Observe behavior that matters when interaction evidence is available:
    navigation, focus, loading, validation, error handling, empty states,
    motion, and whether the next action is clear.
-5. Write step notes immediately: step health (`good`, `mixed`, `poor`, or
-   `blocked`), 3-5 concise sentences of judgment covering what the user sees,
-   why the state helps or hurts the core task, what to preserve, and the main
-   risk or next check, the primary action or decision, visible strengths, and
-   findings in the shared anatomy.
+5. Write a concise step note immediately: step health (`good`, `mixed`, `poor`,
+   or `blocked`), what the user sees, how the state affects the core task, what
+   to preserve, and the main risk or next check. Put substantive issues in the
+   shared finding anatomy.
 
 For accessibility or combined audits, or suspected `P0`/`P1` accessibility
 risks, attempt DOM/accessibility-tree inspection and keyboard probes when the
@@ -353,9 +344,10 @@ text zoom/reflow where feasible, and contrast by sampling or code. If a probe
 cannot run, downgrade the claim to `Likely` or `Needs testing` and name the
 missing probe.
 
-Saved `audit.md` reports are reader-facing. Open with the verdict, scope, and
-top findings — not grounding, provenance, tool logs, or screenshot inventories;
-those belong in an evidence appendix at the bottom. Use the report order and
+Saved audit reports are reader-facing. Open with the verdict, scope, and
+top findings — not grounding notes, provenance, tool logs, or exhaustive
+screenshot inventories. Include only evidence paths the reader needs to verify
+a claim. Use the report order and
 structures in [references/experience-audit.md](references/experience-audit.md),
 including the cross-step system-quality pass and the `Ship-now fixes` /
 `Later polish` split.
@@ -381,9 +373,9 @@ side-effect gate is unapproved.
 
 Lead with the outcome, then support it:
 
-- Surface critique: the `final result`, what was compared, the highest-impact
-  findings, the implementation checklist, evidence limits, and the saved report
-  path.
+- Surface critique: the result, what was compared, the highest-impact findings,
+  the implementation checklist when useful, evidence limits, and the report
+  path only when one was saved.
 - Flow audit: every step or artifact state with its number, short description,
   health, and strongest `P0`-`P2` theme when present; then the highest-impact
   findings, top ship-now fixes, the strongest system-quality themes, the most

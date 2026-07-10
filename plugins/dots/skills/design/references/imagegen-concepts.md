@@ -6,10 +6,11 @@ accepted Image Gen concept, switch to [image-to-code.md](image-to-code.md).
 
 ## When To Use Image Gen
 
-Use Image Gen for visual concepts unless the user explicitly opts out or the
-task is a small UI fix inside an existing design system. Follow the installed
-Image Generation skill for tool choice, save-path behavior, editing, asset
-generation, and transparency workflows.
+Use Image Gen when visual alternatives would materially improve a design
+decision or the surface needs raster assets that do not already exist. Skip it
+when an accepted target or repository design system already resolves the
+direction. Follow the installed Image Generation skill for tool choice,
+save-path behavior, editing, asset generation, and transparency workflows.
 
 External setup should not block Image Gen concepting, static UI work, or design
 review that does not exercise external behavior. When the app needs
@@ -135,8 +136,10 @@ Do not crop a full-page concept into production UI as a shortcut. Recreate or
 isolate needed assets with Image Gen. Supporting assets must match the accepted
 layout concept and must not introduce a new visual direction.
 
-SVG is fine for faithful icons and directional glyphs. Use Image Gen for logos,
-brand marks, and non-icon visual assets.
+For icons and directional glyphs, reuse the repository icon set first, choose a
+matching library second, and create a simple production-quality SVG only when
+neither provides the required metaphor. Use Image Gen for logos, brand marks,
+and non-icon visual assets when those assets are needed.
 
 ## Concept Acceptance Handoff
 

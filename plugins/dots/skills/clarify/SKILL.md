@@ -27,10 +27,12 @@ work). Stop clarifying once implementation is safe enough.
 
 The question budget scales with blast radius, not with how much is unknown:
 
-- **Must ask** — the action reaches beyond the working tree or is costly to
-  undo: destructive changes, external publishing (push, deploy, PRs, email),
-  credentials or access, anything irreversible or likely to surprise the
-  user. Never assume through these.
+- **Must ask unless already authorized** — the action reaches beyond the
+  working tree or is costly to undo: destructive changes, external publishing
+  (push, deploy, PRs, email), credentials or access, anything irreversible or
+  likely to surprise the user. A clear request for that exact action is
+  authorization; do not ask the user to repeat it. Never infer authorization
+  from an adjacent request.
 - **Ask only if the answer changes the work** — scope, user-facing behavior,
   domain meaning, and the validation standard (what counts as done).
 - **Never ask** — taste, naming, formatting, minor implementation style:
@@ -44,8 +46,9 @@ questions.
 Batch all blocking questions into one round — serial interrogation is the
 failure mode this skill exists to prevent; a second round is justified only
 by a new blocker the first answers created. Prefer one to three questions.
-Every question carries a recommended default, so `use defaults` is always a
-complete answer. Prefer the platform's structured-question tool; otherwise:
+Give a recommended default only when it is genuinely safe. Offer `use defaults`
+only when every question has such a default; otherwise ask the unsafe decision
+directly. Prefer the platform's structured-question tool; otherwise:
 
 ```md
 I found a couple of decisions that would change the implementation.

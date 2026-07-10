@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
 import sqlite3
 import sys
 from dataclasses import dataclass
@@ -14,12 +13,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+PLUGIN_SCRIPTS = Path(__file__).resolve().parents[3] / "scripts"
+sys.path.insert(0, str(PLUGIN_SCRIPTS))
 
-SENSITIVE_RE = re.compile(
-    r"(api[_-]?key|authorization|bearer\s+[a-z0-9._-]+|password|private[_-]?key|"
-    r"secret|access[_-]?token|refresh[_-]?token|id[_-]?token|gh[pousr]_[a-z0-9_]+)",
-    re.IGNORECASE,
-)
+from codex_sessions import iter_session_events, redact_sensitive  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -56,16 +53,6 @@ def one_line(text: str, limit: int) -> str:
     if len(text) <= limit:
         return text
     return text[: max(1, limit - 1)] + "..."
-
-
-def redact(text: str) -> str:
-    lines: list[str] = []
-    for line in text.splitlines():
-        if SENSITIVE_RE.search(line):
-            lines.append("[redacted sensitive line]")
-        else:
-            lines.append(line)
-    return "\n".join(lines)
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
@@ -126,20 +113,6 @@ def find_threads(args: argparse.Namespace) -> list[Thread]:
     return [row_to_thread(row) for row in rows]
 
 
-def text_from_content(content: Any) -> str:
-    if isinstance(content, str):
-        return content
-    if not isinstance(content, list):
-        return ""
-    chunks: list[str] = []
-    for item in content:
-        if not isinstance(item, dict):
-            continue
-        if item.get("type") in {"input_text", "output_text", "text"}:
-            chunks.append(str(item.get("text") or ""))
-    return "\n".join(chunk for chunk in chunks if chunk)
-
-
 def parse_function_call(payload: dict[str, Any], limit: int) -> str:
     name = payload.get("name") or "tool"
     arguments = payload.get("arguments") or ""
@@ -152,7 +125,7 @@ def parse_function_call(payload: dict[str, Any], limit: int) -> str:
                 arguments = json.dumps(parsed, ensure_ascii=False)
         except json.JSONDecodeError:
             pass
-    return one_line(f"{name}: {arguments}", limit)
+    return one_line(redact_sensitive(f"{name}: {arguments}"), limit)
 
 
 def interesting_tool_output(output: str) -> bool:
@@ -181,67 +154,43 @@ def parse_transcript(path: Path, *, max_events: int, char_limit: int) -> list[di
             }
         ]
 
-    with path.open(encoding="utf-8", errors="replace") as handle:
-        for line in handle:
-            try:
-                record = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-
-            timestamp = record.get("timestamp") or ""
-            kind = record.get("type") or ""
-            payload = record.get("payload") or {}
-            if not isinstance(payload, dict):
-                continue
-
-            event: dict[str, str] | None = None
-            if kind == "session_meta":
+    for normalized in iter_session_events(path):
+        timestamp = normalized.timestamp
+        payload = normalized.payload or {}
+        event: dict[str, str] | None = None
+        if normalized.kind == "session_meta":
+            event = {
+                "timestamp": timestamp,
+                "kind": "session",
+                "text": one_line(
+                    f"cwd={payload.get('cwd') or ''} model={payload.get('model') or ''}",
+                    char_limit,
+                ),
+            }
+        elif normalized.kind == "message":
+            if normalized.role in {"user", "assistant"} and normalized.text:
                 event = {
                     "timestamp": timestamp,
-                    "kind": "session",
-                    "text": one_line(
-                        f"cwd={payload.get('cwd') or ''} model={payload.get('model') or ''}",
-                        char_limit,
-                    ),
+                    "kind": normalized.role,
+                    "text": one_line(redact_sensitive(normalized.text), char_limit),
                 }
-            elif kind == "response_item":
-                payload_type = payload.get("type")
-                if payload_type == "message":
-                    role = payload.get("role") or "message"
-                    if role not in {"user", "assistant"}:
-                        continue
-                    text = text_from_content(payload.get("content"))
-                    if text:
-                        event = {
-                            "timestamp": timestamp,
-                            "kind": str(role),
-                            "text": one_line(redact(text), char_limit),
-                        }
-                elif payload_type == "function_call":
-                    event = {
-                        "timestamp": timestamp,
-                        "kind": "tool-call",
-                        "text": parse_function_call(payload, char_limit),
-                    }
-                elif payload_type == "function_call_output":
-                    output = str(payload.get("output") or "")
-                    if interesting_tool_output(output):
-                        event = {
-                            "timestamp": timestamp,
-                            "kind": "tool-output",
-                            "text": one_line(redact(output), char_limit),
-                        }
-            elif kind == "event_msg" and payload.get("type") == "agent_message":
-                text = str(payload.get("message") or "")
-                if text:
-                    event = {
-                        "timestamp": timestamp,
-                        "kind": "status",
-                        "text": one_line(redact(text), char_limit),
-                    }
+        elif normalized.kind == "function_call":
+            event = {
+                "timestamp": timestamp,
+                "kind": "tool-call",
+                "text": parse_function_call(payload, char_limit),
+            }
+        elif normalized.kind == "function_call_output":
+            output = str(payload.get("output") or "")
+            if interesting_tool_output(output):
+                event = {
+                    "timestamp": timestamp,
+                    "kind": "tool-output",
+                    "text": one_line(redact_sensitive(output), char_limit),
+                }
 
-            if event:
-                events.append(event)
+        if event:
+            events.append(event)
 
     if len(events) > max_events:
         head_count = max_events // 3
@@ -264,7 +213,7 @@ def render_markdown(thread: Thread, events: list[dict[str, str]]) -> str:
         "",
         "## Thread",
         f"- ID: `{thread.id}`",
-        f"- Title: {thread.title or 'untitled'}",
+        f"- Title: {one_line(redact_sensitive(thread.title), 240) or 'untitled'}",
         f"- CWD: `{thread.cwd or 'unknown'}`",
         f"- Branch: `{thread.git_branch or 'unknown'}`",
         f"- Created: {utc(thread.created_at)}",
@@ -272,16 +221,16 @@ def render_markdown(thread: Thread, events: list[dict[str, str]]) -> str:
         f"- Transcript: `{thread.rollout_path}`",
     ]
     if thread.first_user_message:
-        lines.append(f"- First user message: {one_line(thread.first_user_message, 240)}")
+        lines.append(f"- First user message: {one_line(redact_sensitive(thread.first_user_message), 240)}")
     if thread.preview:
-        lines.append(f"- Preview: {one_line(thread.preview, 240)}")
+        lines.append(f"- Preview: {one_line(redact_sensitive(thread.preview), 240)}")
 
     lines.extend(["", "## Reduced Events"])
     if not events:
         lines.append("- No transcript events found.")
     for event in events:
         stamp = f"{event['timestamp']} " if event.get("timestamp") else ""
-        lines.append(f"- {stamp}`{event['kind']}`: {event['text']}")
+        lines.append(f"- {stamp}`{event['kind']}`: {redact_sensitive(event['text'])}")
     return "\n".join(lines) + "\n"
 
 
@@ -289,16 +238,19 @@ def render_json(thread: Thread, events: list[dict[str, str]]) -> str:
     payload = {
         "thread": {
             "id": thread.id,
-            "title": thread.title,
+            "title": one_line(redact_sensitive(thread.title), 1000),
             "cwd": thread.cwd,
             "branch": thread.git_branch,
             "created_at": utc(thread.created_at),
             "updated_at": utc(thread.updated_at),
             "rollout_path": thread.rollout_path,
-            "first_user_message": one_line(redact(thread.first_user_message), 1000),
-            "preview": one_line(redact(thread.preview), 1000),
+            "first_user_message": one_line(redact_sensitive(thread.first_user_message), 1000),
+            "preview": one_line(redact_sensitive(thread.preview), 1000),
         },
-        "events": events,
+        "events": [
+            {**event, "text": redact_sensitive(event.get("text", ""))}
+            for event in events
+        ],
     }
     return json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
 

@@ -1,6 +1,6 @@
 ---
 name: docs-writer
-description: "Use when writing, revising, or reviewing durable repository documentation: READMEs, Markdown docs, concept docs, how-tos, tutorials, runbooks, design docs, ADRs, troubleshooting guides, changelogs, release notes, PRDs, or agent-readable knowledge bundles. Not for AGENTS.md/project instructions, code comments, one-off chat explanations, PR/publish workflows, or broad implementation."
+description: "Use when writing, revising, or reviewing durable repository documentation such as READMEs, how-tos, runbooks, design docs, ADRs, troubleshooting guides, changelogs, release notes, PRDs, and agent-readable knowledge. Not for project instructions, code comments, chat explanations, publishing, or broad implementation."
 ---
 
 # Docs writer
@@ -18,8 +18,6 @@ is part of this skill; do not route prose cleanup elsewhere.
   release notes, concept doc, troubleshooting).
 - [design-docs.md](references/design-docs.md) — for a design doc,
   architecture proposal, or "how to build it" plan.
-- [knowledge-bundles.md](references/knowledge-bundles.md) — when the doc is
-  agent-readable context, an OKF-style concept, or a Markdown corpus.
 - [validation.md](references/validation.md) — before finalizing or reporting
   completion.
 
@@ -70,10 +68,10 @@ should become reusable agent context, give it a structured header:
 ```markdown
 ---
 type: Runbook
-title: PR workflow
-description: How the agent publishes scoped work as a pull request.
-resource: plugins/dots/skills/pr/SKILL.md
-tags: [git, pr, workflow]
+title: <document title>
+description: <one-sentence reader contract>
+resource: <canonical-resource-path>
+tags: [<topic>, <workflow>]
 ---
 ```
 

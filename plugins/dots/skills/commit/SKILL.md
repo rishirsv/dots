@@ -42,8 +42,9 @@ Multi-line messages go through `git commit --file`. Afterward run
 unpublished; if it may have been pushed or reviewed, stop unless the user
 approves the history rewrite.
 
-**Push**: only on an explicit push request — a plain commit stays local, and
-bare "publish" means PR language. With an upstream, `git push`; with none,
+**Push**: only on an explicit push request — a plain commit stays local. When
+"publish" could mean either pushing the branch or opening a pull request, ask
+which outcome the user wants. With an upstream, `git push`; with none,
 `git push -u origin "$(git branch --show-current)"`. Ask first when the
 branch is detached or looks like default, the remote is unclear or
 non-`origin`, or the push isn't fast-forward. Never open a PR, merge, rebase

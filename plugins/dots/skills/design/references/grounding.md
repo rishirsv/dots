@@ -33,14 +33,16 @@ and constraints or anti-goals. Keep the question round short.
 
 ## Brief Gate
 
-After discovery, present a brief and stop for confirmation before implementation
-on new apps, prototypes, redesigns, or substantial UI builds.
+Use the gate for genuinely ambiguous new apps, prototypes, redesigns, or
+substantial UI builds. If the request, repository, existing surface, or
+authorized assumptions already establish a coherent direction, state a compact
+brief and proceed in the same turn. Stop for confirmation only when an
+unresolved decision would materially change the user goal, visual direction,
+scope, or build.
 
-No visual target, no build: for a new app, prototype, redesign, or
-substantial UI build request without a URL, screenshot, Figma frame, mockup,
-source image, accepted Image Gen concept, or existing code target, run this
-gate before writing any code. `Full working version`, `no refs`, `go for it`,
-or `make an assumption` don't waive it while a visual target is missing.
+A visual target is helpful but not mandatory. When none exists, ground the
+brief in repository evidence and explicit assumptions; generate concepts only
+when seeing alternatives would materially improve the decision.
 
 Use a compact brief for clear work: what is being built, visual lane, scope, and
 remaining question or confirmation. Use the full form only for genuinely

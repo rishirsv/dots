@@ -154,7 +154,8 @@ split the oracle run — see the SKILL's Package section for the budget and
 
 Packaging helpers may expand globs, preview selected and skipped files, estimate
 size and token totals, enforce the token budget, report sensitive-looking skips,
-show dirty-state facts, and validate that authored map entries mention included
-paths. They should not claim to discover semantic relevance, infer source
-authority, auto-prune by meaning, or decide that context is sufficient. Altitude
-and relevance are your judgment; the script only executes and measures it.
+and show dirty-state facts. The current helper accepts an authored context map
+but does not prove that the map is complete or semantically accurate. Helpers
+must not claim to discover relevance, infer source authority, auto-prune by
+meaning, or decide that context is sufficient. Altitude and relevance are your
+judgment; the script only executes and measures the selection.

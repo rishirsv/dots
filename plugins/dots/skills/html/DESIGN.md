@@ -112,9 +112,7 @@ primary-but-quiet at `--a70`.
 surfaces stay dark in both modes (`code-surface`/`code-ink`).
 
 The `x-dark` block redefines the same token names for dark mode; the
-generator emits both and a `data-theme` override. `x-*` keys are extensions
-beyond the design.md alpha schema, owned by our generator — see Components
-note below.
+generator emits both and a `data-theme` override.
 
 ## Typography
 
@@ -145,12 +143,9 @@ part of this identity. Borders are 1px hairlines from the alpha ladder.
 
 ## Components
 
-Component CSS lives in the catalog (`assets/registry/`), consuming only the
-tokens `theme.css` emits from this file. The generator (`scripts/
-generate-theme.mjs`) is the sole consumer of this front-matter; artifacts see
-only the generated CSS. The `x-dark`, `x-alpha-steps`, and `x-motion` keys
-are outside the design.md alpha spec — if the spec later adds dark or motion
-axes, migrate them and drop the prefix.
+Component CSS lives in the catalog (`assets/registry/`) and consumes only the
+tokens emitted in `theme.css`; artifacts use the generated CSS rather than
+front-matter directly.
 
 Charts (from `x-chart`): the chart tokens are indirection — their values are
 `var()` references into the base palette, so they follow light/dark

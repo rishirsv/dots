@@ -6,11 +6,10 @@ component, modal, or static artifact, use the surface critique path in
 [SKILL.md](../SKILL.md) instead. If a broader experience includes a bounded
 screen or interaction, keep that part of the audit scoped to the evidence.
 
-Record the scope fields from the skill workflow in working notes before judging
-the experience, including the evidence inspected and the evidence limits. In a
-reader-facing saved report, summarize only the useful scope near the top and
-move detailed grounding, provenance, evidence tiers, and source anchors to an
-`Evidence appendix` at the bottom.
+Record the scope, evidence inspected, and evidence limits before judging the
+experience. In a reader-facing saved report, include only the context and
+evidence paths needed to understand or verify the findings; omit internal
+provenance, tooling notes, and working metadata.
 
 Product type matters. A dense operations tool, AI workbench, dashboard,
 consumer landing page, game, portfolio, and checkout flow should not be judged
@@ -281,11 +280,9 @@ When writing a saved `audit.md`, use this order:
 11. Verification gaps
 12. Evidence appendix
 
-Each step in the step health table or numbered step list should have enough
-detail to stand on its own: 3-5 concise sentences, not just a health label or a
-single-line note. Lead with the visible user experience, then explain the task
-effect, the strongest preserve/fix point, and any evidence limit that changes
-confidence.
+Each step in the step health table or numbered list should stand on its own.
+Lead with the visible user experience, then explain the task effect, strongest
+preserve/fix point, and any evidence limit that changes confidence.
 
 After step notes, add a system-quality pass that summarizes cross-step
 patterns:
@@ -304,182 +301,54 @@ present. Do not invent speculative features unless they directly unblock the
 core user task. Preserve strong non-obvious interface decisions in a `Strong
 decisions to preserve` section when useful.
 
-## UX Audit Output Structure
+## Audit Output Structure
+
+Use one structure for UX, accessibility, and combined audits. Omit empty
+sections. For an accessibility audit, emphasize the accessibility target and
+verification gaps; for a combined audit, keep UX and accessibility findings
+separate where their evidence or remediation differs.
 
 ```markdown
-# UX Audit Report
+# Experience Audit
 
-## Audit Scope
-- Product or experience:
-- Flow, journey, or product area:
-- Evidence inspected:
-- Evidence limits:
-
-## User Goal
-- The task or outcome the experience should support.
+## Verdict And Scope
+- Mode: UX | accessibility | combined
+- User goal and, when relevant, accessibility target
+- Flow or product area
+- Evidence limits that affect the verdict
 
 ## Design Constitution
-- Score each evidenced principle using the constitution contract in
-  `SKILL.md`; mark the rest N/E and report the total over available points.
+- Score evidenced principles and report the available total.
 
-## Step List
-1. Step name - health: good / mixed / poor / blocked
+## Top Findings
+### [P1] Finding title
+- Step/screenshot:
+- Surface:
+- Evidence:
+- Impact:
+- Recommendation:
+- Acceptance check:
+- Verification needed:
+- Confidence:
 
-## Strengths
-- Strong choices worth preserving.
+## Step Health
+1. Step name — good | mixed | poor | blocked: concise evidence-grounded read.
 
-## Notable Risks
-- Highest-impact UX, design, or product-quality risks.
-
-## Findings
-- [P1] Finding title
-  Step/screenshot:
-  Surface:
-  Evidence:
-  Impact:
-  Recommendation:
-  Acceptance check:
-  Verification needed:
-  Confidence:
-
-## Opportunity Areas
-- Improvements that would make the experience clearer, easier, or more coherent.
-
-## Optional Comparison Context
-- Comparator products or references, only when they sharpen the audit.
-
-## System Quality Themes
-- Hierarchy and density:
-- Interaction and state feedback:
-- Typography and content:
-- Color, tokens, and materials:
-- Responsive and performance feel:
-- Accessibility:
-- Product fit and system consistency:
-- Product idea, visual unity, and template-like output risk:
-- Motion and native feel, or not in scope:
+## System Themes
+- Only cross-step patterns that materially affect the experience.
 
 ## Strong Decisions To Preserve
-- Strong choices that should survive redesign or implementation work.
-
-## Recommendations
-- Ordered fixes tied to the user goal or workflow.
+- Non-obvious strengths that should survive changes.
 
 ## Ship-Now Fixes
-- Ordered repairs that unblock the core task or remove major risk.
+- Ordered repairs tied to the core task or major risk.
 
-## Later Polish And Enhancements
-- Lower-risk refinements that improve quality after the core path is sound.
+## Later Polish
+- Non-blocking refinements, when present.
 
-## What Could Not Be Verified
-- Screenshot-only limits:
-- Interaction/code/testing limits:
-
-## Implementation-Ready Checklist
-- Ordered fixes derived from the findings.
-```
-
-## Accessibility Audit Output Structure
-
-```markdown
-# Accessibility Audit Report
-
-## Audit Scope
-- Product or experience:
-- Flow, journey, or product area:
-- Evidence inspected:
-- Evidence limits:
-
-## Accessibility Target
-- The accessibility outcome, user group, standard, or critical path being checked.
-
-## Design Constitution
-- Score each evidenced principle using the constitution contract in
-  `SKILL.md`; mark the rest N/E and report the total over available points.
-
-## Step List
-1. Step name - health: good / mixed / poor / blocked
-
-## Confirmed Strengths
-- Accessibility-supporting choices visible or verified in the evidence.
-
-## Likely Issues
-- Accessibility risks found in the evidence.
-
-## WCAG-Relevant Considerations
-- Relevant WCAG areas only when the evidence supports them.
-
-## Evidence Limits And Verification Gaps
-- Missing keyboard, focus, semantics, screen reader, motion, zoom, code, or
-  assistive-technology evidence.
-
-## Recommendations
-- Ordered fixes tied to the accessibility outcome.
-
-## Implementation-Ready Checklist
-- Ordered fixes derived from the likely issues and verification gaps.
-```
-
-## Combined Audit Output Structure
-
-```markdown
-# UX And Accessibility Audit Report
-
-## Audit Scope
-- Product or experience:
-- Flow, journey, or product area:
-- Evidence inspected:
-- Evidence limits:
-
-## User Goal And Accessibility Target
-- User goal:
-- Accessibility target:
-
-## Design Constitution
-- Score each evidenced principle using the constitution contract in
-  `SKILL.md`; mark the rest N/E and report the total over available points.
-
-## Step List
-1. Step name - health: good / mixed / poor / blocked
-
-## Strengths
-- Strong UX, design, and accessibility-supporting choices worth preserving.
-
-## UX Risks
-- Highest-impact UX, design, or product-quality risks.
-
-## Accessibility Risks
-- Accessibility risks, separated from broader UX findings.
-
-## Opportunity Areas
-- Improvements that would make the experience clearer, easier, more accessible,
-  or more coherent.
-
-## System Quality Themes
-- Hierarchy and density:
-- Interaction and state feedback:
-- Typography and content:
-- Color, tokens, and materials:
-- Responsive and performance feel:
-- Accessibility:
-- Product fit and system consistency:
-- Product idea, visual unity, and template-like output risk:
-- Motion and native feel, or not in scope:
-
-## Evidence Limits And Verification Gaps
-- Missing interaction, code, accessibility, analytics, or user-testing evidence.
-
-## Recommendations
-- Ordered fixes tied to the user goal, workflow, or accessibility outcome.
-
-## Ship-Now Fixes
-- Ordered repairs that unblock the core task or remove major risk.
-
-## Later Polish And Enhancements
-- Lower-risk refinements that improve quality after the core path is sound.
-
-## Implementation-Ready Checklist
-- Ordered fixes derived from the findings.
+## Verification Gaps
+- Missing interaction, keyboard, semantics, assistive-technology, code,
+  analytics, or user-testing evidence.
 ```
 
 ## Guardrails

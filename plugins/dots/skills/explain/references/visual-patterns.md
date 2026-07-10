@@ -66,8 +66,8 @@ a third level means the prose framing is wrong, not the tree.
 | The catch | … | … |
 
 Use for: 2-4 alternatives. Rows are the *reader's* decision criteria, not
-the options' feature lists. "The catch" row is mandatory — it's the row
-people actually reread.
+the options' feature lists. Include "The catch" when a meaningful tradeoff
+would otherwise be easy to miss.
 
 ## Concept Map — "how do these ideas relate?"
 
@@ -95,10 +95,9 @@ not every step.
 
 ## Layered "How X Works" — shareable artifact skeleton
 
-For a rendered HTML artifact, structure the page as the same three layers the
-chat answer uses: the answer (one bold paragraph), the mechanism (one diagram
-from this file plus 3-5 numbered steps), and what to do with it (one short
-list). Self-contained, both themes, verified per visual-proof before sharing.
+For a rendered HTML artifact, lead with the answer, then use the mechanism or
+implication sections that help the intended reader. Keep it self-contained and
+verify it per visual-proof before sharing.
 
 ## Charts
 

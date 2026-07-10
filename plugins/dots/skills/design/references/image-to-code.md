@@ -16,12 +16,13 @@ Do not inspect every saved reference. Inspect only what the current task needs.
 
 ## Workflow
 
-CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
+Use this checklist in proportion to the surface. A small change within an
+existing design system needs only the relevant extraction, build, and visual
+verification steps.
 
-0. Do not start unless [grounding.md](grounding.md) has played back and
-   confirmed the design brief for this exact request. If there is no clear
-   visual target or the current thread does not already contain a confirmed
-   brief, route to the brief gate in [grounding.md](grounding.md) first.
+0. Start from a brief grounded per [grounding.md](grounding.md). The brief may
+   be explicitly confirmed, established by repository evidence, or stated with
+   assumptions the user authorized.
 
 1. Do not start unless you have a selected image, screenshot, mockup, or Image
    Gen result to recreate. A written brief is not enough.
@@ -31,9 +32,9 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
 3. If the provided design is a mobile viewport, build a mobile app. If it's
    unclear, default to desktop.
 
-4. Review the reference design, catalog every image asset in the design, and use
-   the Image Gen tool to create individual images for each one. Zoom in so you
-   can catch every asset that needs to be generated.
+4. Review the reference design and catalog each image and icon asset. Reuse
+   repository assets when they match; generate or source missing raster assets
+   only when the target requires them. Zoom in so asset roles are not missed.
 
    Examples include:
 
@@ -48,11 +49,9 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
 
    Rules:
 
-   - CRITICAL RULE: Do not create custom div art, CSS art, inline SVGs,
-     handcrafted SVGs, HTML element drawings, div/span shapes, CSS drawings,
-     gradients, emoji, or text glyphs instead of real icons and image assets
-     ever. Use the built-in Image Gen tool for images and the closest matching
-     icon library for icons.
+   - Do not replace target imagery with placeholder div/CSS art, emoji, or text
+     glyphs. Use appropriate raster assets for imagery and vector icons for icon
+     roles.
    - If text is part of an image asset, keep it in the image asset. Examples
      include full bleed hero images, signs, posters, packaging, storefronts,
      article art, and illustrations where the type belongs to the visual
@@ -63,8 +62,8 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
      content.
    - Generated assets must share the same art direction, palette, rendering
      style, and design language as the reference mockup.
-   - The built-in Image Gen tool does not support transparent images;
-     post-process generated assets when transparency is required.
+   - When transparency is required, request or produce it through the installed
+     image-generation workflow and verify edge quality in the final surface.
 
 5. Define all sections of the page. For each section, record the visible layout,
    spacing, element sizes, and alignment relationships needed to recreate the
@@ -72,15 +71,14 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
 
 6. Find freely available fonts that match the target design.
 
-7. Find a freely available icon library that matches the target design. Do not
-   default to Lucide icons. Search for the best match.
+7. Reuse the repository's icon set when it matches. Otherwise choose a fitting
+   icon library rather than defaulting to one family.
 
    Rules:
 
-   - CRITICAL RULE: Do not create custom inline SVGs, handcrafted SVGs, HTML
-     element drawings, div/span shapes, CSS drawings, gradients, emoji, or text
-     glyphs. Use the built-in Image Gen tool to generate assets and use the
-     closest matching icon library for icons.
+   - If neither the repository nor a fitting library contains the required
+     metaphor, a simple production-quality SVG is acceptable. Keep its geometry,
+     stroke/fill, optical weight, and states consistent with the icon system.
 
 8. Build the app starting with the repo's local prototype preflight when one
    exists. Implement every visible control, state, and interaction shown or
@@ -96,9 +94,8 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
    - Newsletter forms, tags, filters, or navigation elements shown in the mockup
    Rules:
 
-   - Place every image asset you generated into its position before proceeding.
-     I repeat, replace all placeholders, including CSS/SVG placeholders, before
-     proceeding.
+   - Place every generated image asset in its intended position and replace all
+     placeholders, including CSS/SVG placeholders, before proceeding.
    - Do not leave visible controls as static chrome. Do not create new pages or
      routes unless the user asks for them.
 
@@ -108,25 +105,26 @@ CRITICAL: THIS IS NOT GUIDANCE. THIS IS A CHECKLIST TO COMPLETE.
     unavailable or unreliable, use another available browser and state the
     fallback reason.
 
-11. Run the surface critique path of
-    [design-review](../../design-review/SKILL.md) as the blocking build gate.
-    `design-review` owns the comparison method, the fidelity surfaces, and the
-    pass/block decision; this step is the build loop around it, not a second
-    rubric.
+11. Run a rendered visual check. For routine work, inspect the relevant
+    viewports and states directly and fix visible drift. Run the independent
+    surface critique in [design-review](../../design-review/SKILL.md) as a
+    blocking gate when the implementation is target-driven,
+    acceptance-critical, externally shipped, brand- or accessibility-sensitive,
+    or the user requests it.
 
     Steps:
 
     - Open the reference target and the latest prototype screenshot before the
       gate. Compare the same viewport and the same interaction state; if they do
       not match, capture the missing view first.
-    - Run `design-review` on the target and screenshot together.
-    - Fix P0/P1/P2 findings, capture the app again, and repeat until
-      `design-review.md` says `final result: passed`.
-    - Do not hand off when `design-review.md` says `final result: blocked`.
+    - For a full gate, run `design-review` on the target and screenshot together.
+    - Fix blocking findings, capture the app again, and repeat until the gate
+      passes or report the concrete blocker.
 
 12. Handoff the app or website.
 
-    - Only hand off after the design-review gate passes.
+    - When a full design-review gate was required, hand off only after it passes
+      or with the concrete blocker clearly reported.
     - Keep the prototype running locally when the task requires a live local
       preview.
     - Provide the clickable local URL.
@@ -180,9 +178,9 @@ color overlay or tint, do not add one. Use matching assets, transparent cutouts,
 edge fades, masks, or background gradients around the image instead of washing
 the image with an overlay.
 
-Do not substitute generic nearby icons for accepted icons. Use the repo's icon
-set or lucide only when it matches the concept. Otherwise create production
-quality SVG variants that preserve metaphor, fill/stroke style, optical weight,
+Do not substitute generic nearby icons for accepted icons. Use the repository's
+icon set first, a matching library second, and a simple production-quality SVG
+only when neither fits. Preserve metaphor, fill/stroke style, optical weight,
 size, color, alignment, and state behavior.
 
 For multi-section pages, implement and verify one section or contiguous viewport
@@ -246,10 +244,10 @@ supports them.
 
 ## Verification
 
-`design-review` owns fidelity verification — the surface-by-surface comparison
-(typography, spacing, color, image assets, icons, copy, states, responsiveness),
-the severity scale, the pass/block decision, and the written findings. Do not
-restate that rubric here; run the gate in step 11 and fix what it finds.
+For a full independent gate, `design-review` owns fidelity verification — the
+surface-by-surface comparison, severity, pass/block decision, and findings. For
+routine self-checks, use the same build inputs below without creating a formal
+report.
 
 This skill owns only the build-side inputs to that gate:
 

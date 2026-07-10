@@ -1,6 +1,6 @@
 ---
 name: scout
-description: "Grills a fuzzy idea — feature, design, architecture, workflow, or knowledge work — into build-ready context: refines edges, settles vocabulary, explores the decision tree, and surfaces unknown unknowns by sending scouts: subagents for scouring, repo exploration, web research, reference reading, pressure tests, and image/prototype directions. Covers before, during, and after implementation. Explicit-only; not for already-specified work, final blocking questions, or a single-fork check."
+description: "Turns a fuzzy feature, design, architecture, workflow, or knowledge-work idea into build-ready context through focused questions, repo or web grounding, option exploration, and explicit decisions. Explicit-only; not for implementation, already-specified work, or a single blocking question."
 ---
 
 # Scout
@@ -30,9 +30,10 @@ competitor, anchoring on the first idea, brainstorming what only research can
 answer. Match energy — explore an exciting idea with the user before poking
 holes in it. Never only validate.
 
-Ask one question per turn, always with your recommended answer — weaving a
-subagent lane's findings back and asking the next question counts as one
-turn.
+Prefer one decision at a time, always with your recommended answer. Batch a
+small set only when the decisions are independent and answering together saves
+real back-and-forth. A structured question tool is fine when it presents the
+same concise decision and recommendation clearly.
 
 - Never attach a rider ("and when you answer, also tell me…"): a second ask
   stapled behind the main question gets skipped, not answered.
@@ -42,8 +43,8 @@ turn.
 - When the question has 2-4 genuinely distinct plausible answers, offer
   them as options; when it is genuinely open, ask it open-ended with
   something concrete to anchor on.
-- Questions and forks live in chat as structured markdown — never a harness
-  question widget, even when one exists.
+- Questions and forks may use concise structured Markdown or an available
+  question tool; keep the reasoning visible either way.
 
 Reserve the spine below for a real fork — several viable directions for one
 decision; a low-stakes question gets one plain line and a recommendation,
@@ -127,9 +128,8 @@ signature appears:
   show. One vague answer to a taste-shaped question is the signature; show,
   don't re-ask.
   - Dispatch workers to produce several deliberately different concrete
-    variations — prototype building is always subagent work, never the
-    main context's. Variations are disposable reaction material, not the
-    final work, so dispatching them never violates the no-building rule.
+    variations when parallel production materially improves the comparison.
+    Variations are disposable reaction material, not the final work.
   - Put them in front of the user's own eyes before asking for the
     reaction: open the files in their browser, publish an artifact, or
     show the generated images. A screenshot you read renders only in your
@@ -153,24 +153,18 @@ is that whoever plans next inherits loaded context, not a cold start.
 
 ## Sending Scouts
 
-Sending scouts is the default move when better facts would improve the next
-turn. The main agent owns the conversation and protects its context window — it
-holds the planning, the brainstorm, and the decision tree, and the entire
-campaign should fit in one. Scouts collect facts from the codebase, research,
-references, and external sources; the main agent synthesizes the recommendation;
-the user owns the decision.
+Use scouts for broad, noisy, or genuinely independent evidence lanes that would
+otherwise crowd the main conversation. Stay direct for ordinary repo reads,
+short lookups, and sequential questions. The main agent owns synthesis and the
+user owns the decision.
 
-If the next move would be guessing, repeating a question, giving a
-recommendation without evidence, or burning the main context on broad reading,
-send scouts first. Do not wait for the user to ask for research or exploration:
-when additional information would help answer their question, guide them, or
-make a recommendation, dispatch a bounded lane and tell them why in one line.
-Stay inline only for a truly short lookup that would cost less than delegation.
+If the next move would require broad reading or independent pressure-testing,
+dispatch a bounded lane and say why. Do not delegate a lookup that is cheaper to
+do directly.
 
-Anything external is scout work, never done inline: repo reads, web research,
-reference reading, scouring, prototype building, and pressure tests. Weave
-findings back as conversation, never pasted reports. Separate what the scout
-proved, what you infer from it, and what you recommend next.
+Scouts may collect codebase, web, reference, prototype, or pressure-test
+evidence. Weave findings back as conversation rather than pasting reports, and
+separate what was proved, inferred, and recommended.
 
 - **Lane shape**: dispatch scouts during the user's think-time — fire them
   with the opening question, harvest them when they answer. Fan out only
@@ -206,28 +200,6 @@ proved, what you infer from it, and what you recommend next.
 - **Pressure-testing**: for a load-bearing claim or finding, an adversarial
   lane prompted to refute it — never the lane that produced it.
 
-## During Implementation
-
-When the user starts producing the final work — code, design, document,
-whatever the deliverable is — keep implementation notes: log every deviation
-the territory forces — the edge case, the pivot, what forced it — in the
-conversation, and append them to the handoff brief when one exists. Keep
-going; stop and surface a fork only when a deviation invalidates the
-direction — do not improvise past it.
-
-## After Implementation
-
-Close the loop before the work ships:
-
-- **Explainer** — offer a compact pitch of what was made and why: what
-  changed from the original idea, which assumptions held, what a reviewer
-  with the same starting unknowns needs to know.
-- **Learnings** — what you learn becomes the map for next time: recap the
-  campaign's durable lessons — vocabulary, potholes, revised assumptions —
-  in chat, append them to the handoff brief when one exists, and flag any
-  lesson that should outlive the effort as a candidate for the project's
-  instructions or memory.
-
 ## Capture And Handoffs
 
 Scale capture to how far the work travels. When converging or stopping,
@@ -258,27 +230,6 @@ for a prior brief before re-asking anything it already settles. When several
 people will work in parallel, slice the work into disjoint scopes inside the
 brief.
 
-Recommend the next mode when the conversation points at one — deep planning,
-UI design, durable docs, external research, building — and let the user
-route it; never silently enter another mode. Any skill or fresh session
-should be able to pick up from the capture.
-
-When the user asks to build, always lead with the scope block — then match
-the friction to the risk:
-
-```text
-Switching from scouting to building.
-- Build:
-- Do not build:
-- Evidence I will use:
-```
-
-- **Proceed straight into the build** when the ask is explicit and the
-  scope matches what the campaign converged on. The block is a statement,
-  not a question — the user reads it while you work and interrupts if it
-  is wrong.
-- **Stop and ask first** only when something is genuinely unsettled: the
-  ask is vague, it adds scope the campaign never covered, the campaign has
-  not converged, or the build would touch something destructive or hard to
-  reverse. Ask the one question that unblocks it — never demand a ritual
-  phrase.
+Recommend the next mode when the conversation points at one — planning, UI
+design, durable docs, external research, or implementation — and hand off the
+decision snapshot. Scout stops before implementation.

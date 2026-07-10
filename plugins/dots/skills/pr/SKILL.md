@@ -12,8 +12,9 @@ especially to add missing review evidence. For review-comment repair on an
 existing PR, read
 [addressing-comments.md](references/addressing-comments.md) first and keep that
 repair on the PR's existing branch unless the user asks for a new branch.
-When a GitHub-specific PR or review-comment skill is explicitly requested, use
-that requested skill; `$pr` is the local Dots publish lane.
+When an installed GitHub publish or review-comment skill covers the requested
+action, defer to it. `$pr` remains the portable local fallback and preserves
+the same scope, draft-default, and visual-evidence checks.
 
 ## Prerequisites
 

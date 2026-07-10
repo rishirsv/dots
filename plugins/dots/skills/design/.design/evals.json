@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "skill_name": "design",
+  "target": {"type": "skill", "ref": "SKILL.md"},
+  "defaults": {"runner": "codex_app_server", "repetitions": 1},
+  "candidates": [
+    {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
+    {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}}
+  ],
+  "cases": [
+    {
+      "id": "authorized-assumptions-proceed",
+      "type": "gate",
+      "task": {
+        "prompt": "Redesign this settings screen. Use the repository's design system, make reasonable assumptions, and proceed without waiting for me."
+      },
+      "expectations": [
+        "Inspects the current surface and repository design system, states material defaults, and proceeds.",
+        "Does not stop for a mandatory brief confirmation when the request authorizes assumptions.",
+        "Asks only if a genuinely blocking choice remains after inspection.",
+        "Builds and verifies the requested surface rather than returning a design brief alone."
+      ]
+    },
+    {
+      "id": "small-ui-fix-light-path",
+      "type": "capability",
+      "task": {
+        "prompt": "Fix the spacing and clipped label in this existing dialog, then verify it at narrow and wide sizes."
+      },
+      "expectations": [
+        "Uses the existing component and visual system rather than inventing a new direction.",
+        "Skips Image Gen and concept-generation ceremony for this focused UI fix.",
+        "Performs a focused visual check at the requested sizes.",
+        "Does not invoke a full independent design review unless concrete risk or the user request warrants it."
+      ]
+    },
+    {
+      "id": "target-driven-fidelity",
+      "type": "capability",
+      "task": {
+        "prompt": "Implement the attached approved mockup in the existing app. Preserve its composition and use repo-native components where they match."
+      },
+      "expectations": [
+        "Treats the approved mockup as the visual target while preserving source-owned product semantics.",
+        "Reuses repository assets and components before generating or drawing replacements.",
+        "Compares the final render with the target and fixes material mismatches.",
+        "Does not restart visual concepting or silently redesign the accepted composition."
+      ]
+    },
+    {
+      "id": "independent-audit-near-miss",
+      "type": "near_miss",
+      "task": {
+        "prompt": "Do an independent critique of this finished multi-step onboarding journey. Do not implement changes."
+      },
+      "expectations": [
+        "Recognizes the request as design-review or experience-audit work rather than an implementation task.",
+        "Does not edit the product surface.",
+        "Routes to the independent review workflow and returns critique in chat by default."
+      ]
+    }
+  ]
+}

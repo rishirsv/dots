@@ -8,16 +8,16 @@
   "plugins": [
     {
       "name": "dots",
-      "description": "Rishi's personal dotfiles, agent workflows, and reusable skills.",
+      "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
       "author": {
         "name": "Rishi"
       },
       "source": "./plugins/dots",
       "category": "productivity",
       "tags": [
-        "personal",
+        "development",
         "workflow",
-        "dotfiles"
+        "skills"
       ],
       "homepage": "https://github.com/rishirsv/dots/tree/main/plugins/dots"
     },

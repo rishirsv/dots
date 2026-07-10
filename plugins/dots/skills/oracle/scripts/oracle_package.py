@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import fnmatch
+import glob
 import os
 from pathlib import Path
 import re
@@ -127,8 +128,13 @@ def expand_patterns(patterns: list[str], root: Path) -> tuple[list[Path], list[s
     else:
         candidates = []
         for pattern in includes:
-            expanded = list(root.glob(pattern))
-            literal = root / pattern
+            pattern_path = Path(pattern).expanduser()
+            if pattern_path.is_absolute():
+                expanded = [Path(match) for match in glob.glob(str(pattern_path), recursive=True)]
+                literal = pattern_path
+            else:
+                expanded = list(root.glob(pattern))
+                literal = root / pattern
             if literal.exists() and literal not in expanded:
                 expanded.append(literal)
             for item in expanded:
@@ -146,7 +152,7 @@ def expand_patterns(patterns: list[str], root: Path) -> tuple[list[Path], list[s
         try:
             rel = resolved.relative_to(root).as_posix()
         except ValueError:
-            rel = resolved.name
+            raise SystemExit(f"Input resolves outside approved root {root}: {resolved}")
         if any(fnmatch.fnmatch(rel, pattern) for pattern in excludes):
             continue
         seen.add(resolved)
@@ -421,7 +427,7 @@ def main() -> int:
         try:
             rel = path.relative_to(root).as_posix()
         except ValueError:
-            rel = path.name
+            raise SystemExit(f"Input resolves outside approved root {root}: {path}")
         reason = ""
         size = path.stat().st_size
         if ignored_by_default(path, root):

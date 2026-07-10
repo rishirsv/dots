@@ -1,10 +1,22 @@
 {
+  "schema_version": 1,
   "skill_name": "commit",
+  "target": {
+    "type": "skill",
+    "ref": "SKILL.md"
+  },
   "defaults": {
     "runner": "codex_app_server",
     "repetitions": 1
   },
   "candidates": [
+    {
+      "candidate": "no-skill",
+      "display": "No skill baseline",
+      "source": {
+        "kind": "none"
+      }
+    },
     {
       "candidate": "current",
       "display": "Current skill",
@@ -14,11 +26,13 @@
       }
     }
   ],
-  "evals": [
+  "cases": [
     {
       "id": "staged-fast-path",
-      "type": "quality",
-      "prompt": "Use $commit to commit the staged formatter fix only. Do not push.",
+      "type": "capability",
+      "task": {
+        "prompt": "Commit the staged formatter fix only. Do not push."
+      },
       "expectations": [
         "Inspects the staged diff and runs staged whitespace validation before committing.",
         "Preserves unrelated unstaged or untracked work.",
@@ -29,7 +43,9 @@
     {
       "id": "mixed-worktree-scope",
       "type": "gate",
-      "prompt": "Use $commit to save only the docs edits. There are unrelated app changes in the worktree.",
+      "task": {
+        "prompt": "Commit only the documentation edits. There are unrelated app changes in the worktree."
+      },
       "expectations": [
         "Stages only intended docs paths or asks if hunk separation is unsafe.",
         "Does not use broad staging that would sweep unrelated app changes into the commit.",
@@ -39,8 +55,10 @@
     },
     {
       "id": "message-only",
-      "type": "quality",
-      "prompt": "Use $commit to write a commit message for the staged diff, but do not commit it.",
+      "type": "capability",
+      "task": {
+        "prompt": "Write a commit message for the staged diff, but do not create the commit."
+      },
       "expectations": [
         "Inspects the staged diff enough to understand scope.",
         "Returns a concise commit subject and optional body when useful.",
@@ -51,7 +69,9 @@
     {
       "id": "commit-and-push",
       "type": "gate",
-      "prompt": "Use $commit to commit the intended change and push the branch.",
+      "task": {
+        "prompt": "Commit the intended change and push the branch."
+      },
       "expectations": [
         "Creates the local commit first with focused scope.",
         "Checks branch, upstream, default branch, and remote state before pushing.",

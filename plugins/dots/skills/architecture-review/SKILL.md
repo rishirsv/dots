@@ -7,11 +7,12 @@ description: "Reviews a codebase or subsystem for structural refactor candidates
 
 Review a codebase or subsystem for structural refactor candidates and architecture improvement opportunities. Surface candidates first; do not start a broad refactor until the user chooses a candidate or explicitly asks for implementation.
 
-Default to hard-cut architecture: one canonical owner, one current path — hard-cut-policy.md defines the posture, exception rule, and cleanup checklist.
+Default to hard-cut architecture: one canonical owner and one current path,
+except where persisted data or an external contract requires compatibility.
 
 ## References
 
-- Read [architecture-language.md](references/architecture-language.md) before naming architecture problems. Use its vocabulary exactly.
+- Read [architecture-language.md](references/architecture-language.md) before naming architecture problems. Use its terms when they sharpen the finding, while preserving the repository's established vocabulary.
 - Read [architecture-ownership.md](references/architecture-ownership.md) when a finding involves code placement, runtime ownership, duplicate policy, or canonical long-term ownership.
 - Read [test-consolidation.md](references/test-consolidation.md) when a refactor changes test placement, duplicates tests, or creates a new test surface.
 - Read [hard-cut-policy.md](../../references/hard-cut-policy.md) for every architecture review or refactor. It defines the default hard-cut posture, exception rule, and cleanup checklist.
@@ -26,6 +27,11 @@ Read applicable `AGENTS.md` and other review guidance before recommending change
 Keep only repo guidance that changes the recommendation; higher-priority instructions still win.
 
 If docs are incomplete, infer the current layer model from the code and state the assumption.
+
+Architecture Review owns architecture-primary scans: structural candidates,
+ownership, seams, and interface shape. Code Review may report architecture
+evidence found while reviewing a diff or broad quality audit, but routes a
+primarily structural candidate search here.
 
 ## Exploration
 

@@ -18,8 +18,8 @@ For substantial research, deep research, or an explicit report request:
 
 1. Emit the preamble and research contract (below).
 2. Choose the mode: codebase, web, mixed, or deep research.
-3. Use subagents as the default for broad or multi-source work when the harness
-   provides them.
+3. Delegate bounded independent lanes only when breadth, noise, or source
+   separation makes parallel reads materially improve the answer.
 4. Gather evidence using the mode-specific workflow.
 5. Separate facts, inferences, recommendations, contradictions, and gaps.
 6. Deliver the requested output and route saved artifacts per repository
@@ -27,10 +27,9 @@ For substantial research, deep research, or an explicit report request:
 
 ## Subagents
 
-For broad, multi-source, or deep research, use subagents as the primary
-workflow when available. The parent owns the research contract, user context,
-iteration decisions, and final synthesis; subagents own bounded evidence
-gathering.
+For broad, multi-source, or deep research, use subagents when independent
+evidence lanes materially improve coverage or keep noisy reads out of the main
+context. The parent owns the research contract, iteration, and synthesis.
 
 Start with the smallest useful fan-out: one subagent per distinct source lane,
 claim, or open question. Give each lane the question, source boundary, evidence
@@ -203,7 +202,8 @@ For chat answers, prefer:
 - Evidence: source-backed bullets with file paths, commands, URLs, or dates.
 - Tradeoffs: options and consequences when a choice is involved.
 - Gaps: only uncertainties that could change the answer.
-- Sources: one final list when the answer relies on web or external sources.
+- Sources: cite claims inline; add a compact final list only when it improves
+  scanability or the user asked for one.
 
 For saved research reports (option comparison, codebase behavior, external/API
 research, or decision memo), see `references/report-standards.md` for

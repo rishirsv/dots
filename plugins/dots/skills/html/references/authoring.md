@@ -80,8 +80,9 @@ invert from page mode:
 - No shell script, no reveals: the host owns behavior. Ship static — if the
   component's markup has `class="reveal"`, drop it (or add `is-in`);
   nothing may depend on our JS.
-- No TOC, no footer. One quiet caption line inside the wrapper may carry
-  the source ("from `.plans/x.md` · 2026-07-06") when traceability matters.
+- No TOC and no general footer. One quiet caption line may name an
+  authoritative reader-facing source when attribution helps. Never expose
+  tool names, sessions, prompts, private paths, or scratch files.
 - Dark mode: pick the variant matching the destination, or ship the light
   ground — scoped tokens mean the host's theme can't flip ours.
 
@@ -113,7 +114,7 @@ passes, a real browser for keepers:
 - **Identity sweep**: one background; zero left accent stripes; ≤1 chip; no
   uppercase eyebrows; accent count ≤ links + active + one data point; digits
   aligned with tabular-nums.
-- **Honesty sweep**: every number traceable; sources footer present; gaps
-  marked, not smoothed.
+- **Honesty sweep**: every number traceable; helpful reader-facing sources
+  included; internal provenance omitted; gaps marked, not smoothed.
 
 Report what was verified with the artifact; if a check was skipped, say so.

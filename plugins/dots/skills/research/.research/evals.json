@@ -1,10 +1,22 @@
 {
+  "schema_version": 1,
   "skill_name": "research",
+  "target": {
+    "type": "skill",
+    "ref": "SKILL.md"
+  },
   "defaults": {
     "runner": "codex_app_server",
     "repetitions": 1
   },
   "candidates": [
+    {
+      "candidate": "no-skill",
+      "display": "No skill baseline",
+      "source": {
+        "kind": "none"
+      }
+    },
     {
       "candidate": "current",
       "display": "Current skill",
@@ -14,11 +26,13 @@
       }
     }
   ],
-  "evals": [
+  "cases": [
     {
       "id": "small-question-no-ceremony",
       "type": "gate",
-      "prompt": "Use $research: what does the retry() helper in our http client do?",
+      "task": {
+        "prompt": "What does the retry() helper in our HTTP client do?"
+      },
       "expectations": [
         "Answers immediately with evidence attached inline instead of opening with a preamble.",
         "Does not emit a research contract block for this small, direct question.",
@@ -28,8 +42,10 @@
     },
     {
       "id": "deep-research-contract-and-lanes",
-      "type": "quality",
-      "prompt": "Use $research for deep research comparing our current auth flow against how three competitor products handle passwordless login.",
+      "type": "capability",
+      "task": {
+        "prompt": "Run a deep research comparison of our current auth flow and how three competitor products handle passwordless login."
+      },
       "expectations": [
         "States a visible research contract naming question, scope, output, and done condition before gathering evidence.",
         "Uses delegated lanes with distinct source boundaries, such as local auth-flow research separate from external competitor research.",
@@ -39,8 +55,10 @@
     },
     {
       "id": "evidence-standard-claims-tied-to-sources",
-      "type": "quality",
-      "prompt": "Use $research to find out whether our rate limiter matches the vendor's documented API rate limits.",
+      "type": "capability",
+      "task": {
+        "prompt": "Research whether our rate limiter matches the vendor's currently documented API rate limits."
+      },
       "expectations": [
         "Does a local pass on the repo's rate limiter and a separate check of the vendor's current documentation.",
         "Compares local fact and external fact explicitly rather than blending them into one unsourced claim.",
@@ -51,7 +69,9 @@
     {
       "id": "artifact-routing-scratch-not-durable",
       "type": "gate",
-      "prompt": "Use $research to run a deep research pass on migrating our queue from Redis to SQS, and save the findings.",
+      "task": {
+        "prompt": "Run a deep research pass on migrating our queue from Redis to SQS, and save the findings."
+      },
       "expectations": [
         "Writes deep-research subreports and synthesis under .agents/outputs/research/<topic-slug>/ rather than into README, docs, or other durable project documentation.",
         "Does not promote scratch research notes into durable docs without a stated justification and matching repo convention.",
@@ -61,8 +81,10 @@
     },
     {
       "id": "mixed-research-comparison",
-      "type": "quality",
-      "prompt": "Use $research to check whether our current pagination implementation follows the cursor-based pattern recommended in the latest REST API guidelines.",
+      "type": "capability",
+      "task": {
+        "prompt": "Research whether our current pagination implementation follows the cursor-based pattern recommended in the latest REST API guidance."
+      },
       "expectations": [
         "Performs the local pass first, describing what the repo's pagination code actually does.",
         "Checks current external guidance and reports what it says with dates or source names when freshness matters.",
@@ -73,7 +95,9 @@
     {
       "id": "casual-lookup-not-explicit-invocation",
       "type": "gate",
-      "prompt": "Quick question, does our config loader support environment variable overrides? Not asking for a research report.",
+      "task": {
+        "prompt": "Quick question: does our config loader support environment variable overrides? I am not asking for a research report."
+      },
       "expectations": [
         "Treats this as an ordinary lookup rather than invoking the full research contract workflow, since the skill is explicit-only.",
         "Answers directly from a targeted code read without a visible research contract block.",

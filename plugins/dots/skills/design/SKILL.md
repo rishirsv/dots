@@ -70,22 +70,20 @@ Use relevant memory or prior context about the human's preferences, product, or
 past designs only as a hint. The subject's own world, materials, instruments,
 artifacts, and vernacular should drive distinctive choices.
 
-If the task is a new surface, vague feature, redesign, substantial visual
-change, or design-from-scratch request, run the discovery and brief gate in
-[grounding.md](references/grounding.md). Present the brief, then stop and wait
-for explicit user confirmation. Do not continue to code in the same response.
-
-No visual target, no build: without a URL, screenshot, Figma frame, mockup,
-source image, accepted Image Gen concept, or existing code target, this gate
-applies even to `full working version`, `no refs`, `go for it`, or `make an
-assumption` requests — those phrases waive polish, not grounding.
+If the task is a genuinely ambiguous new surface, redesign, or substantial
+visual change, use the discovery and brief gate in
+[grounding.md](references/grounding.md). When the repository, request, or
+authorized assumptions provide enough direction, state the compact brief and
+proceed. Stop for confirmation only when an unresolved choice would materially
+change the product, visual direction, or implementation scope.
 
 ### 2. Scout Before Coding
 
-For new full pages, apps, dashboards, games, product interfaces, and substantial
-redesigns, create Image Gen design concepts before coding unless the user
-explicitly opts out or the task is a small UI fix inside an existing design
-system.
+Use Image Gen concepts when visual ambiguity is high enough that seeing options
+would materially improve the decision, or when the surface needs raster assets
+that do not exist. Skip concept generation when the repository design system,
+an accepted target, or a sufficiently concrete brief already determines the
+direction.
 
 Design the complete requested surface. A header, hero, or cropped fragment is
 not enough for a full page, app screen, dashboard, game, or product interface.
@@ -94,8 +92,9 @@ one tall image that loses detail.
 
 Use [imagegen-concepts.md](references/imagegen-concepts.md) for Image Gen
 briefing, image count, asset planning, concept rejection, and approval rules.
-In Plan mode, generate the design first, then use the structured question tool
-for design approval when it exists. Otherwise ask directly in chat and stop.
+When concept selection would materially change implementation, ask the user to
+choose before coding. Otherwise use the strongest concept as stated direction
+and proceed within the user's authorization.
 
 Once the user accepts a concept, treat it as the production design spec. Do not
 reinterpret layout, visible copy, hierarchy, styling, imagery, density, sections,
@@ -178,24 +177,26 @@ the recurring capture failures, and the proof standard; for iOS additionally
 check platform conventions, safe areas, dynamic type, touch targets, and
 chrome.
 
-For concept-driven or target-driven work, run the surface critique path of
-[design-review](../design-review/SKILL.md) as the blocking gate. It owns the
-comparison method, the fidelity surfaces, the severity scale, and the pass/block
-decision — bring it the accepted target and the latest screenshot together
-(`view_image` for the concept-vs-render pass) and fix what it finds. Functional
-QA cannot replace this. Do not hand off until the design-review gate passes, or
-report the concrete blocker.
+Use a focused visual self-check for routine work: inspect the rendered surface
+at relevant viewports and states, compare it with the brief and local design
+system, and fix visible regressions. Run the full independent surface critique
+from [design-review](../design-review/SKILL.md) when the work is target-driven,
+acceptance-critical, externally shipped, brand- or accessibility-sensitive, or
+the user requests an independent review. A full gate owns the comparison method,
+severity, and pass/block decision; functional QA cannot replace it.
 
 Use [image-to-code.md](references/image-to-code.md) for the build-loop details:
 target recreation, design-system extraction, asset and state verification, and
 the build-side inputs to the gate.
 
-Remove temporary QA screenshots, reports, scratch notes, and unused generated
-assets before handoff unless the user or task explicitly asks to keep them.
+Remove only temporary QA screenshots, reports, scratch notes, and generated
+assets created by the current task and no longer needed. Never delete
+pre-existing user artifacts merely because they look temporary.
 
 ## Output
 
-For a brief gate, present only the brief and the confirmation prompt.
+When a brief contains a blocking decision, present the brief and that decision.
+Otherwise state the direction briefly and proceed with the implementation.
 
 For critique-only work, report the strongest design findings first, then give a
 specific repair plan.

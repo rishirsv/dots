@@ -85,6 +85,22 @@ for skill in "${META_SKILLS[@]}"; do
   "$METASKILL" validate "$skill" --json >/dev/null
 done
 
+echo "==> Dots skill validation"
+python3 plugins/dots/scripts/validate_plugin.py
+for skill in plugins/dots/skills/*(/); do
+  [[ -f "$skill/SKILL.md" ]] || continue
+  "$METASKILL" validate "$skill" --json >/dev/null
+done
+
+echo "==> Dots eval suite checks"
+while IFS= read -r suite; do
+  "$METASKILL" eval run --check --suite "$suite" --json >/dev/null
+done < <(find plugins/dots/skills -path '*/.*/*evals.json' -print | sort)
+
+echo "==> Dots HTML deterministic checks"
+node plugins/dots/skills/html/scripts/generate-theme.mjs --check
+node --test plugins/dots/skills/html/scripts/chart.test.mjs
+
 echo "==> Meta-Skill docs gates"
 "$METASKILL" docs emit-cli --check >/dev/null
 "$METASKILL" docs lint --json >/dev/null
@@ -128,7 +144,10 @@ VERIFY_PYTHON=$(find_verify_python) || {
   exit 2
 }
 
-"$VERIFY_PYTHON" -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
+PYTHONDONTWRITEBYTECODE=1 "$VERIFY_PYTHON" -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
+
+echo "==> Dots runtime safety tests"
+PYTHONDONTWRITEBYTECODE=1 "$VERIFY_PYTHON" -m unittest discover -s plugins/dots/tests -p 'test_*.py'
 
 echo "==> Dots plugin tests"
 "$VERIFY_PYTHON" -m unittest discover -s plugins/dots/tests -p 'test_*.py'

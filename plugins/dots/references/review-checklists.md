@@ -1,7 +1,6 @@
 # Review Checklists
 
-Read this when running `standard` or `max` rigor. The `quick` tier does a
-single direct pass over the hunk instead and does not need these checklists.
+Read this for a deep review or when a direct review needs one of these lenses.
 
 ## 1. Correctness Checklist
 
@@ -154,7 +153,7 @@ You are a review-only agent. Do not edit files.
 
 Scope:
 - Changed files: <paths>
-- Review rigor: <quick | standard | max>
+- Review depth: <direct | deep>
 - Repo guidance: <compact guidance summary>
 - Additional user focus: <focus or none>
 
@@ -175,9 +174,10 @@ evidence, summary, failure scenario or concrete maintainability cost, impact,
 and proposed fix. If clean, return "no findings".
 ```
 
-## Max-Tier Extra Angles
+## Extra Angles
 
-For `max`, run the four standard lenses above plus these four extra angles.
+Use the angles that match the risk in a deep review. Do not run all of them by
+default.
 
 A. **Line-by-line diff scan.** Read every hunk line by line, then read the
 enclosing function for each hunk. Ask what input, state, timing, or platform
@@ -198,7 +198,7 @@ SQL injection, or equivalent local hazards.
 
 ## Final Pass: Big Simplifications
 
-In `max`, add one final pass after the finder agents and before verification.
+In a deep simplification review, add this pass after the finder work and before verification.
 This pass hunts specifically for a simpler model or ownership boundary that
 would delete whole branches, modes, wrappers, or compatibility paths — not
 line-level cleanup. Treat these as presumptive findings when the evidence is
@@ -214,4 +214,3 @@ visible in the diff:
   optionality, or fallback behavior that obscures the real contract.
 - Feature-specific behavior leaks into shared infrastructure or bypasses a
   canonical helper, type, service, module, or package.
-</content>

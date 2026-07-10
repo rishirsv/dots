@@ -5,10 +5,10 @@ description: "Explains any concept, decision, system, document, or situation at 
 
 # Explain
 
-Make the user genuinely understand something — any subject, not just code —
-in the fewest moves. An explanation succeeds when the user can restate the
-idea, act on it, or explain it to someone else; it fails when they have to
-reread it or ask what a term meant.
+Make the user genuinely understand something — any subject, not just code.
+Lead with the conclusion, then include the mechanism, evidence, and implication
+the user's goal requires. An explanation succeeds when the user can restate the
+idea, act on it, or explain it to someone else.
 
 ## Find the landing zone
 
@@ -38,7 +38,7 @@ surfaces in parallel. Give each subagent a bounded question, paths or symbols to
 inspect, and the return shape needed to explain the concept; synthesize the
 answer yourself.
 
-Then deliver in layers, always in this order:
+Choose only the layers the user needs:
 
 1. **The answer** — 2-4 sentences a smart person with no context would
    understand. No setup, no "great question", no defining terms before
@@ -49,9 +49,9 @@ Then deliver in layers, always in this order:
 3. **What to do with it** — the implication, the decision it unblocks, or
    the thing to inspect next. Skip when there genuinely isn't one.
 
-Walk, don't dump: in conversation, give the layer they need now and offer
-the next one, instead of delivering everything at once. "Want the mechanism,
-or is that enough?" is one line; an unwanted 500-word mechanism is noise.
+Lead with the answer. Add the mechanism and implication when they materially
+help the user understand, decide, or act; do not force empty sections or defer
+essential reasoning to a follow-up.
 
 ## The visual ladder
 
@@ -88,5 +88,5 @@ what's confirmed, inferred, and unknown.
 
 ## Close the loop
 
-End with at most one line that lets the user steer depth. When the user needs
-to share the explanation, offer: "Want this as a one-pager you can send?"
+End when the explanation is complete. Offer deeper treatment or a reusable
+artifact only when the user's stated goal suggests it would be useful.

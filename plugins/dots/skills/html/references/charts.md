@@ -48,10 +48,10 @@ themes can re-point chart color without touching the script.
 | Absorb one headline number | Not a chart — `stat-tiles` |
 | Scan many attributes per item | Not a chart — `data-table` |
 
-Refuse the chart when the data can't support one: a single number, two or
-three values (write them), more than ~8 categories (table, or fold the tail
-into "other"), or numbers you'd have to invent. A missing chart is honest; a
-decorative one isn't.
+Use a chart when magnitude, direction, or shape is easier to see than read.
+Prefer prose or a table when visual encoding adds no decision value; dataset
+size alone is not the deciding rule. Refuse numbers you would have to invent.
+A missing chart is honest; a decorative one is not.
 
 ## Color by purpose, from tokens only
 

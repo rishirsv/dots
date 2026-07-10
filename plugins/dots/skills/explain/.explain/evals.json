@@ -1,10 +1,22 @@
 {
+  "schema_version": 1,
   "skill_name": "explain",
+  "target": {
+    "type": "skill",
+    "ref": "SKILL.md"
+  },
   "defaults": {
     "runner": "codex_app_server",
     "repetitions": 1
   },
   "candidates": [
+    {
+      "candidate": "no-skill",
+      "display": "No skill baseline",
+      "source": {
+        "kind": "none"
+      }
+    },
     {
       "candidate": "current",
       "display": "Current skill",
@@ -14,11 +26,13 @@
       }
     }
   ],
-  "evals": [
+  "cases": [
     {
       "id": "grounds-claims-in-actual-material",
-      "type": "quality",
-      "prompt": "Use $explain to explain what this error means and why it's happening: [stack trace from our payment service pointing at a null customer_id field].",
+      "type": "capability",
+      "task": {
+        "prompt": "Explain what this error means and why it is happening: [stack trace from our payment service pointing at a null customer_id field]."
+      },
       "expectations": [
         "Reads or references the actual stack trace and, where named, the local source it points to rather than giving a generic explanation of the error class.",
         "Ties the explanation to the specific field, function, or call site named in the material.",
@@ -28,8 +42,10 @@
     },
     {
       "id": "bridges-hidden-context",
-      "type": "quality",
-      "prompt": "Use $explain to explain why our team decided to use event sourcing instead of a plain CRUD model for the orders service.",
+      "type": "capability",
+      "task": {
+        "prompt": "Walk me through why our team decided to use event sourcing instead of a plain CRUD model for the orders service."
+      },
       "expectations": [
         "Answers the real question of why this decision was made rather than giving a textbook definition of event sourcing.",
         "Adds at least one missing bridge, such as background, a relationship, or a causal link that connects the decision to the orders service's actual needs.",
@@ -39,8 +55,10 @@
     },
     {
       "id": "smallest-clear-format-simple-question",
-      "type": "quality",
-      "prompt": "Use $explain: what does the --dry-run flag do on our deploy script?",
+      "type": "capability",
+      "task": {
+        "prompt": "What does the --dry-run flag do on our deploy script?"
+      },
       "expectations": [
         "Answers in prose for this single, simple concept rather than defaulting to headers, tables, or bulleted sections.",
         "Leads with the direct answer instead of a lengthy preamble.",
@@ -51,7 +69,9 @@
     {
       "id": "route-durable-doc-request",
       "type": "gate",
-      "prompt": "Use $explain to explain our authentication architecture, and then save that as a permanent doc in our docs folder.",
+      "task": {
+        "prompt": "Explain our authentication architecture, and then save that as a permanent document in our docs folder."
+      },
       "expectations": [
         "Answers the explanation request in chat directly.",
         "Recognizes the save-as-durable-doc request as outside this skill's scope and does not write or modify a file itself.",
@@ -61,8 +81,10 @@
     },
     {
       "id": "causal-why-question-bounded",
-      "type": "quality",
-      "prompt": "Use $explain: why did our checkout conversion rate drop after last week's deploy?",
+      "type": "capability",
+      "task": {
+        "prompt": "Help me make sense of why our checkout conversion rate dropped after last week's deploy."
+      },
       "expectations": [
         "Leads with a short answer rather than an extended investigation narrative.",
         "Separates confirmed facts from inferences and names any real gaps in the available evidence.",
@@ -73,7 +95,9 @@
     {
       "id": "no-eli5-or-teaching-scaffolds",
       "type": "gate",
-      "prompt": "Use $explain to explain what a race condition is, in the context of the bug we just found in our cache invalidation code.",
+      "task": {
+        "prompt": "Explain what a race condition is in the context of the bug we just found in our cache invalidation code."
+      },
       "expectations": [
         "Explains using the actual cache invalidation code as the anchor rather than a generic textbook definition detached from the code.",
         "Does not use ELI5 framing, Socratic questions, or knowledge-check quizzes.",

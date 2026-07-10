@@ -31,8 +31,9 @@ platform provides the tool.
 
 ## Codex
 
-For prior-session context in Codex, prefer the packaged helper over manual
-scraping of `~/.codex/state_5.sqlite` and `~/.codex/sessions`:
+For prior-session context in Codex, prefer available platform thread tools.
+Use the packaged helper only when those tools are unavailable; do not scrape
+`~/.codex/state_5.sqlite` or rollout files manually:
 
 ```sh
 python3 <handoff-skill-dir>/scripts/handoff_context.py --latest --cwd "$PWD"

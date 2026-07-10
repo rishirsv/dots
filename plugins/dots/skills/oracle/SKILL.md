@@ -1,11 +1,11 @@
 ---
 name: oracle
-description: "Prepares advisory requests for stronger or different models. Use for plan critique, review, or implementation guidance; not for routine local work or orchestration."
+description: "Prepares focused advisory requests for an external or differently specialized model. Use for critique, missing-proof checks, or implementation guidance; not routine local work or orchestration."
 ---
 
 # Oracle
 
-Get advice from a stronger, different, or specialized model. The oracle
+Get advice from an external or differently specialized model. The oracle
 advises; the primary agent applies, verifies, and owns the work.
 
 Use Oracle for plan critique, implementation guidance, architecture review,

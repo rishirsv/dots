@@ -96,91 +96,39 @@ Avoid:
 
 ## Report Template
 
-Use this structure for the surface critique report unless the user asks
-otherwise. When the critique is saved, this is the full content contract for
-`design-review.md`; there is no separate required-contents list.
+Use this compact structure for a saved full review. In chat, include only the
+sections needed to communicate the result.
 
 ```markdown
-# Surface Critique Report
+# Surface Critique
 
-**Final Result**
 final result: passed|blocked
 
-**Overview**
-Briefly state what was compared, the overall fidelity read, and the main issue
-or reason the implementation is ready for handoff. Keep this to 2-4 sentences.
+## Overview
+What was compared, the overall fidelity read, and the main reason for the result.
 
-**Design Constitution**
-| Principle | Score (0-2 or N/E) | Evidence |
-| --- | ---: | --- |
-| Purpose |  |  |
-| Agency |  |  |
-| Responsibility |  |  |
-| Familiarity |  |  |
-| Flexibility |  |  |
-| Simplicity |  |  |
-| Craft |  |  |
-| Delight |  |  |
+## Findings
+### [P1] Short issue title
+- Location:
+- Surface:
+- Evidence:
+- Impact:
+- Recommendation:
+- Acceptance check:
+- Verification needed, if any:
+- Confidence, when evidence-limited:
 
-Total: /available points (use /16 only when all eight principles are evidenced)
+## Design Constitution
+Include the scored table only for a full acceptance review; omit it for a
+focused critique. Score evidenced principles and report the available total.
 
-**Motion Audit**
-Include only when motion, gesture behavior, or haptic feedback is in scope.
-State the dynamic evidence inspected, strongest motion findings, reduced-motion
-result, and whether the motion audit passed or was blocked.
+## Implementation Checklist
+- Ordered repairs derived from findings.
 
-**Findings**
-- [P1] Short issue title
-  Location: screen/component/selector/file if known.
-  Surface: typography|spacing/layout|colors/tokens|image/assets|copy/content|icons|states/interactions|responsiveness|accessibility|specificity/product fit|shortcut artifacts.
-  Evidence: design does X, implementation does Y.
-  Impact: why this matters.
-  Recommendation: concrete design correction.
-  Implementation notes: optional component/token/CSS/file guidance when known.
-  Acceptance check: what must be true in the next render for this finding to be resolved.
-
-**Open Questions**
-- Any ambiguity about intentional deviations, unavailable states, or missing artifacts.
-
-**Implementation Checklist**
-- Ordered fixes derived from the findings that can be executed directly.
-
-**Follow-up Polish**
-- P3 refinements that can improve fidelity after handoff.
-
-**Review Metadata**
-- Mode: target comparison|single-surface critique
-- Adversarial reviewer: used|not used
-- Reviewer trigger or omitted reason:
-- Reviewer evidence checked:
-- Reviewer finding disposition:
-- Source visual truth path, or none:
-- Implementation screenshot path:
-- Viewport:
-- State:
-- Theme/device/density:
-- Full-view comparison evidence:
-- Focused region comparison evidence, or why it was not needed:
-- Patches made since the previous QA pass:
-
-**Fidelity Surface Coverage**
-- Fonts and typography:
-- Spacing and layout rhythm:
-- Colors and visual tokens:
-- Image quality and asset fidelity:
-- Copy and content:
-- Icons:
-- States and interactions:
-- Responsiveness:
-- Accessibility:
-- Specificity and client-readiness:
-- Shortcut artifacts:
-- Design constitution score:
-- Motion and native feel, or not in scope:
-
-**Evidence Limits**
-- Any evidence gaps that prevented a complete source-vs-render comparison.
+## Evidence Limits
+- Missing viewports, states, interaction evidence, or source targets.
 ```
 
-If there are no substantive mismatches, say that clearly and list any residual
-test gaps.
+Add motion results only when motion is in scope. Add non-blocking polish only
+when it helps handoff. If there are no substantive mismatches, say that clearly
+and list only material residual verification gaps.

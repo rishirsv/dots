@@ -1,6 +1,6 @@
 ---
 name: html
-description: "Use when rendering formed material as a self-contained HTML document, fragment, or static mock: explanations, plans, reviews, comparisons, reports, status briefs, charts, mockups, or shareable pages. Reads conversation context or a pointed-at source, then renders it. Not for product/app UI, interactive editors, durable repo docs, or forming the analysis."
+description: "Renders already-formed material as a self-contained HTML page, fragment, chart, report, or static mock. Not for product UI, durable repo docs, or forming the underlying analysis."
 ---
 
 # html
@@ -64,9 +64,11 @@ host page. See [references/authoring.md](references/authoring.md#fragment-delive
    [assets/atlas.html](assets/atlas.html) — every component rendered — and
    the finished pages in `assets/exemplars/`.
 4. **Write like it ships.** Real content everywhere — no lorem, no fake
-   numbers, no invented KPIs. Every figure traceable to the source; a
-   sources footer naming where the content came from; honest gaps marked
-   ("not verified") rather than smoothed over.
+   numbers, no invented KPIs. Every figure traceable to its source; honest
+   gaps marked ("not verified") rather than smoothed over. Include a
+   reader-facing sources footer only when attribution helps the artifact.
+   Never expose tool names, sessions, prompts, private working paths, scratch
+   files, or generation metadata.
 5. **Verify before handoff.** The checklist in
    [references/authoring.md](references/authoring.md#verification) — layout
    at three widths, dark mode, reduced motion, JS off, and the identity
@@ -97,15 +99,6 @@ the house style of bad generated pages:
   it behind `prefers-reduced-motion`, and the page is complete with JS off.
 - Self-contained always: no external requests, system font stacks, inline
   SVG. Wide content scrolls in its own container, never the page.
-
-## Changing the identity
-
-Tokens change in [DESIGN.md](DESIGN.md) front-matter only, then
-`node scripts/generate-theme.mjs` regenerates theme.css (`--check` verifies
-freshness). Never hand-edit theme.css. A new theme is a sibling DESIGN.md
-variant generating its own theme file — same token names, different values.
-Component CSS lives in the catalog and consumes tokens; if a change needs a
-new token, add it to DESIGN.md, regenerate, then use it.
 
 ## Boundaries
 

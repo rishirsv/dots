@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "skill_name": "design-review",
+  "target": {"type": "skill", "ref": "SKILL.md"},
+  "defaults": {"runner": "codex_app_server", "repetitions": 1},
+  "candidates": [
+    {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
+    {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}}
+  ],
+  "cases": [
+    {
+      "id": "chat-first-review",
+      "type": "gate",
+      "task": {
+        "prompt": "Review this finished dashboard and give me a quick independent critique."
+      },
+      "expectations": [
+        "Returns the critique in chat rather than creating a report or screenshot archive by default.",
+        "Uses a focused tier appropriate to a quick surface critique.",
+        "Leads with the verdict and ranked actionable findings.",
+        "Omits empty template sections and internal reviewer machinery."
+      ]
+    },
+    {
+      "id": "screenshot-accessibility-qualified",
+      "type": "failure",
+      "task": {
+        "prompt": "Audit accessibility from these screenshots only and tell me whether the page passes."
+      },
+      "expectations": [
+        "States that screenshots cannot prove semantic markup, keyboard behavior, focus order, or assistive-technology behavior.",
+        "Reports only visually supportable accessibility observations as findings.",
+        "Places unverified runtime concerns in evidence limits or needs-verification rather than calling them confirmed defects.",
+        "Does not issue a definitive accessibility pass based on screenshots alone."
+      ]
+    },
+    {
+      "id": "artifact-only-on-request",
+      "type": "capability",
+      "task": {
+        "prompt": "Create a retained design audit report with screenshots for this release candidate."
+      },
+      "expectations": [
+        "Recognizes that retained evidence is explicitly requested and uses the named or repository-private output location.",
+        "Captures only evidence needed to support the audit.",
+        "Keeps tool names, reviewer identities, prompts, and internal disposition metadata out of the reader-facing report.",
+        "Reports evidence limits and verification performed."
+      ]
+    }
+  ]
+}

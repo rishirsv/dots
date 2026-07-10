@@ -1,37 +1,31 @@
 ---
 name: code-review
-description: "Reviews changed code, existing plans, or explicit repo/subsystem audit targets for correctness, reuse, simplification, efficiency, maintainability, and improvement opportunities. Invoked via code-review. Scales rigor from quick to max; applies same-scope cleanup fixes in diff review, and stays report-only by default in Audit Mode. Not for blank-slate planning, architecture-only scans, PR publication, or implementing broad audit findings without explicit selection."
+description: "Reviews changed code, existing plans, or explicit repo/subsystem audit targets for correctness, reuse, simplification, efficiency, and maintainability. Report-only unless fixes are requested. Not for blank-slate planning, architecture-primary scans, PR publication, or unrequested implementation."
 ---
 
 # Code Review
 
 Review changed code after implementation, an existing implementation plan,
 spec, roadmap, or an explicit repo/subsystem audit target. Preserve behavior,
-delete unnecessary complexity, reuse canonical code, and fix same-scope quality
-issues when fixing is allowed. Scale review rigor when the task, risk, or user
-request calls for deeper bug hunting.
+find correctness problems, identify unnecessary complexity, and point to
+canonical code the change should reuse. Scale effort to the scope and risk.
 
-Correctness comes first. Report correctness findings with evidence and a
-concrete failure scenario before changing behavior.
-
-The normal case is review-after-implementation: default to applying
-same-scope, behavior-preserving cleanup fixes (reuse, simplification,
-efficiency, maintainability) rather than only reporting them. Fall back to
-report-only when the user asks for review-only, or when Phase 6's fix-vs-report
-rules say a finding must be surfaced instead of edited.
+Correctness comes first. Review is report-only by default. Edit source only
+when the user explicitly asks to fix findings or otherwise authorizes changes;
+then keep fixes within the approved scope and verify behavior.
 
 Audit Mode is the broad-review case: review a repo, subsystem, package, branch,
-or category target beyond the current diff. Audit Mode is report-only by
-default. Do not silently widen a diff review into a repo audit, and do not edit
-source from a broad audit unless the user explicitly selects a finding for
-implementation.
+or category target beyond the current diff. Do not silently widen a diff review
+into a repo audit. Architecture Review owns requests primarily about structural
+refactor candidates, canonical ownership, seams, or interface design; Code
+Review reports architecture evidence only when it arises inside its review
+scope.
 
 ## References
 
-- Read [../../references/review-checklists.md](../../references/review-checklists.md) when
-  running `standard` or `max` rigor. It holds the four standard-lens
-  checklists, the Code Quality smell baseline, the reviewer prompt shape, and
-  the max-tier extra angles. `quick` rigor does not need it.
+- Read [../../references/review-checklists.md](../../references/review-checklists.md)
+  for deep reviews or when a direct review needs a specific lens. It holds the
+  correctness, simplification, quality, efficiency, and extra-angle prompts.
 - Read
   [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
   for the canonical hard-cut policy when a fix touches schemas, contracts,
@@ -39,8 +33,7 @@ implementation.
   migrations, adapters, or compatibility paths, or when reviewing a plan.
 - Read
   [../../references/subagent-lanes.md](../../references/subagent-lanes.md)
-  for lane definitions and fan-out rules before launching the standard or
-  max-tier agents.
+  for lane definitions before delegating independent review work.
 - Read [references/audit-mode.md](references/audit-mode.md) when the user asks
   to audit, survey, inspect, health-check, find improvement opportunities, or
   review a repo, subsystem, package, branch, or category beyond the current
@@ -59,8 +52,8 @@ explicit target, and declare coverage. Do not capture a diff as the whole scope
 unless the user asked for branch or changed-code audit.
 
 If the user supplies, pastes, or names an existing implementation plan, spec,
-or roadmap, review that text instead of a git diff: rewrite the file directly
-when asked, or return the reviewed plan in chat when it was pasted. Default to
+or roadmap, review that text instead of a git diff. Rewrite a file only when
+the user asked for revision; otherwise return findings in chat. Default to
 hard-cut simplification for plans (see
 [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)):
 cut speculative future-proofing, redundant phases, and compatibility ladders
@@ -87,27 +80,22 @@ thread.
 Ask one concise scope question only when several unrelated changes are present
 and the intended review target is ambiguous.
 
-## Phase 2: Choose Rigor
+## Phase 2: Choose Depth
 
-Use the user's requested rigor when they name it. Otherwise choose the smallest
-rigor that fits the risk.
+Use the smallest review shape that can catch the likely failures:
 
-| Rigor | Use when | Fan-out | Verify | Sweep | Target | Stance |
-|---|---|---:|---|---|---:|---|
-| `quick` | tiny change, narrow ask, or user wants a fast pass | no subagents | none | no | ~4 | hunk-only, high confidence |
-| `standard` | normal after-implementation review (default) | 4 agents (the four standard lenses) | local verification | no | ~8 | precision, actionable findings |
-| `max` | user asks for ultra/max/exhaustive rigor, high-risk release, migrations, auth, billing, security-adjacent, persisted data, concurrency, cross-process boundaries, or repeated review misses | 8 finder agents (4 standard lenses + 4 max-tier extra angles) | 1 verifier per candidate | yes | ~12 | maximum recall |
+- **Direct**: one focused pass by the primary agent for small or ordinary
+  changes, narrow plan reviews, and scopes where the relevant behavior fits in
+  working context.
+- **Deep**: multiple independent lenses for broad diffs, high-risk behavior,
+  repeated review misses, or an explicit exhaustive request. Schemas,
+  persisted state, cross-process contracts, auth, billing, security,
+  concurrency, and migrations usually justify this path.
 
-Targets are aims, not hard caps: exceed a target only when each extra finding
-carries a named failure scenario or concrete maintainability cost.
-
-Default to `standard`. Escalate to `max` when the user asks for maximum rigor,
-or when changed code touches schemas, contracts, persisted state, routing,
-configuration, feature flags, enum/value sets, migrations, adapters,
-compatibility paths, concurrency, cross-process boundaries, auth, billing, or
-other cases where a missed bug would be expensive.
-
-In `max`, end with the final big-simplification pass (Phase 5).
+Depth controls evidence gathering, not a finding quota. A clean review may
+return no findings. Delegate only when independent lanes materially improve
+coverage; choose the lanes that match the risk rather than launching a fixed
+number of agents.
 
 ## Phase 3: Behavior Lock
 
@@ -125,25 +113,16 @@ refactoring.
 
 ## Phase 4: Find Candidates
 
-For `quick`, do one direct pass yourself. Skip test and fixture hunks unless the
-change is specifically about tests or fixtures. Flag only runtime correctness
-bugs visible from the hunk, obvious helper duplication, obvious dead code, and
-small same-scope cleanup.
+For a direct review, inspect the diff and enough surrounding code to establish
+the changed behavior. Include test and fixture hunks when they encode or fail to
+prove an affected invariant.
 
-For `standard`, launch four fresh review-only agents concurrently in one tool
-message when a multi-agent tool is available (see
-[../../references/subagent-lanes.md](../../references/subagent-lanes.md) for
-lane roles and fan-out rules): Correctness, Reuse and Structural
-Simplification, Code Quality and AI Slop, and Efficiency and Atomicity. If
-subagents are unavailable, run the same four passes yourself. Read
-[../../references/review-checklists.md](../../references/review-checklists.md)
-for the full numbered checklist and reviewer prompt shape for each lens.
-
-For `max`, launch the four standard lenses plus the four max-tier extra angles
-from
-[../../references/review-checklists.md](../../references/review-checklists.md)
-as eight independent review-only agents, using the same fan-out rules. Do not
-let one angle suppress another.
+For a deep review, choose independent lenses from
+[../../references/review-checklists.md](../../references/review-checklists.md):
+correctness, reuse and structural simplification, code quality, efficiency and
+atomicity, or an extra angle tied to the risk. Run useful lanes concurrently
+when a multi-agent tool is available; otherwise make the passes directly. Do
+not delegate a lane whose scope is already fully understood by the parent.
 
 Give every finder the same scope packet: captured diff, changed-file list,
 compact repo guidance, applicable paths, user focus, and changed-file contents
@@ -152,36 +131,27 @@ finding fields from the Output section, or "no findings" when clean.
 
 ## Phase 5: Verify Candidates
 
-For `standard`, verify every agent finding against the actual files yourself.
-Drop false positives and merge duplicates.
+Verify every candidate against the actual files. Merge duplicates and classify
+each one:
 
-For `max`, deduplicate candidates that point at the same line or mechanism,
-keeping the most concrete failure scenario. For each remaining candidate, run
-one verifier or verify directly when a subagent is unavailable. Use this
-verdict ladder, keeping CONFIRMED and PLAUSIBLE and dropping REFUTED (in
-recall-biased review, uncertainty is not a reason to drop a realistic bug):
+- **Confirmed**: the evidence establishes the reachable failure or concrete
+  maintainability cost. These are findings.
+- **Needs verification**: the mechanism is credible, but a missing runtime,
+  configuration, data-shape, or product fact prevents confirmation. Keep these
+  separate and state the exact check that would resolve them.
+- **Rejected**: the claim is false, impossible, already handled, or pure style
+  without observable cost. Do not report it as a finding.
 
-- **CONFIRMED**: the finding names the reachable input/state and wrong output,
-  crash, data loss, or maintainability cost. Quote the relevant line.
-- **PLAUSIBLE**: the mechanism is real but the trigger depends on realistic
-  timing, environment, configuration, or data shape. State what would confirm it.
-- **REFUTED**: the finding is factually wrong, provably impossible, already
-  handled in this diff, or pure style with no observable cost. Quote the proof.
-
-For `max`, run the final pass for big simplifications after verification,
-using the "Final Pass: Big Simplifications" criteria in
-[../../references/review-checklists.md](../../references/review-checklists.md).
-Give the reviewer the verified list and ask only for structural wins not
-already listed. Verify swept candidates with the same verdict ladder.
+For a deep simplification review, run the final big-simplification pass from
+[../../references/review-checklists.md](../../references/review-checklists.md)
+when the diff shows branching growth, compatibility machinery, or unclear
+ownership. Verify its candidates by the same classification.
 
 ## Phase 6: Fix Or Report
 
-Correctness findings are report-first. Apply a correctness fix only when the
-user asked for fixes or after surfacing the finding, and only when the intended
-behavior is clear.
-
-Apply same-scope quality fixes directly when fixing is allowed: reuse,
-simplification, and hard-cut fixes per the review-checklist categories in
+Report findings and stop unless the user asked for fixes. When fixes are
+authorized and intended behavior is clear, apply the smallest approved
+correctness, reuse, simplification, or hard-cut changes per
 [../../references/review-checklists.md](../../references/review-checklists.md)
 (structural simplification, code quality/AI slop, and efficiency/atomicity).
 
@@ -192,9 +162,9 @@ unless a named external boundary requires an exception. Read
 [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
 for the canonical policy, hard rules, and exception rule.
 
-Skip a fix and report it when it would change behavior, expand architecture,
-require product judgment, conflict with repo guidance, or take more scope than
-the current review should own.
+Skip a requested fix and report it when it would change unspecified behavior,
+expand architecture, require product judgment, conflict with repo guidance, or
+take more scope than the current review should own.
 
 ## Phase 7: Validate
 
@@ -210,24 +180,18 @@ builds, or other commands that change source or unignored artifacts.
 
 ## Approval Bar
 
-Do not treat review as clean when any of the "Final Pass: Big
-Simplifications" criteria in
-[../../references/review-checklists.md](../../references/review-checklists.md)
-remain visible in the reviewed scope.
-
-Be direct and demanding about maintainability findings. Do not be rude, and do
-not soften structural problems into cosmetic suggestions. If the code makes the
-surrounding system harder to reason about, say so plainly and name the smallest
-cleaner path.
+Be direct about maintainability findings. Do not soften structural problems
+into cosmetic suggestions. If the code makes the surrounding system harder to
+reason about, say so plainly and name the smallest cleaner path.
 
 ## Output
 
 Order findings by severity: P0 blocker, P1 high, P2 medium, P3 low. At equal
 severity, correctness outranks reuse, simplification, quality, efficiency, and
 conventions; within maintainability findings, order structural regressions
-first, then missed dramatic simplifications, branching growth, boundary and
+first, then missed dramatic simplifications, branching growth, ownership and
 type contract issues, file-size or decomposition issues, and legibility
-concerns. Keep the set high-signal and stay near the chosen target (Phase 2).
+concerns. Keep the set high-signal; do not add findings to fill a target.
 
 Each finding should include:
 
@@ -242,17 +206,18 @@ Each finding should include:
 }
 ```
 
-When fixes were made, report:
+When fixes were explicitly requested and made, report:
 
 - `Fixed`: material same-scope fixes applied
-- `Findings`: report-first correctness issues or deferred high-signal findings
+- `Findings`: remaining confirmed issues
 - `Skipped or deferred`: false positives, out-of-scope issues, or judgment calls
 - `Validation`: commands run and results
 - `Residual risk`: anything not proven
 
-For review-only output, lead with prioritized findings and end with validation
-status. If no material issues survive verification, state the reviewed scope and
-say the code meets the selected rigor.
+For review-only output, lead with confirmed findings, then list any
+needs-verification items separately, and end with validation status. If no
+material issues survive verification, state the reviewed scope and say no
+findings were confirmed.
 
 For Audit Mode output, follow [references/audit-mode.md](references/audit-mode.md):
 declare what was reviewed, what was skipped or sampled, then present verified
@@ -263,11 +228,10 @@ On request, explain the result in plain English for a smart non-engineer.
 
 ### Inline Comments
 
-When the user asks for inline comments, or the review targets an open pull
-request, post each finding as a comment anchored to its exact file and line
-instead of, or in addition to, a report block: use PR review tooling for a
-GitHub PR, or a comment tool for an editor/IDE session. Prefer fewer,
-higher-signal comments over one summary comment per file.
+Post inline or pull-request comments only when the user explicitly asks to
+submit comments. Anchor each submitted finding to its exact file and line and
+prefer fewer, higher-signal comments over one summary comment per file. An open
+pull request is review context, not authorization to write externally.
 
 Do not rewrite unrelated code, silently edit during review-only or audit work,
 or hand off to PR publication, CI repair, exploit-oriented security work, or

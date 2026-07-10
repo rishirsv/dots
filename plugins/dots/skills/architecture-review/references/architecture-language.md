@@ -1,16 +1,18 @@
 # Architecture Language
 
-Read this before naming architecture problems or recommendations. Use these terms exactly in every suggestion.
+Read this before naming architecture problems or recommendations. Use these
+terms when they make a finding more precise. Preserve repository-native words
+such as component, service, API, package, crate, or boundary when those are the
+names maintainers already use; explain the relationship to the terms below
+only when it matters.
 
 ## Terms
 
 **Module**
 Anything with an interface and an implementation. Deliberately scale-agnostic - applies equally to a function, class, package, or tier-spanning slice.
-Avoid: unit, component, service.
 
 **Interface**
 Everything a caller must know to use the module correctly. Includes the type signature, but also invariants, ordering constraints, error modes, required configuration, and performance characteristics.
-Avoid: API, signature.
 
 **Implementation**
 What's inside a module - its body of code. Distinct from **Adapter**: a thing can be a small adapter with a large implementation, or a large adapter with a small implementation. Reach for "adapter" when the seam is the topic; "implementation" otherwise.
@@ -20,7 +22,6 @@ Leverage at the interface - the amount of behaviour a caller or test can exercis
 
 **Seam**
 A place where you can alter behaviour without editing in that place. The location at which a module's interface lives. Choosing where to put the seam is its own design decision, distinct from what goes behind it.
-Avoid: boundary.
 
 **Adapter**
 A concrete thing that satisfies an interface at a seam. Describes role, not substance.
