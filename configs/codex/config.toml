@@ -1,23 +1,24 @@
-# Codex user config managed from the dots repo.
-# Symlinked into ~/.codex/config.toml and ~/.codex-personal/config.toml.
+# Repo-local Codex config for maximum local autonomy in this trusted repo.
+# Supplements ~/.codex/config.toml when this trusted repository is open.
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+service_tier = "default"
+model = "gpt-5.6-terra"
+model_reasoning_effort = "low"
 
-notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
-[projects."/Users/rishi/Code/dots"]
-trust_level = "trusted"
-
-[features]
-apps = true
-undo = true
-js_repl = false
+notify = ["/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000366/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [tools]
 view_image = true
+
+[features]
+apps = true
+memories = true
+prevent_idle_sleep = true
+undo = true
+js_repl = false
 
 [features.multi_agent_v2]
 hide_spawn_agent_metadata = false
@@ -28,64 +29,210 @@ max_threads = 6
 max_depth = 1
 
 [apps._default]
-destructive_enabled = true
 open_world_enabled = true
+destructive_enabled = true
 
-[plugins."browser@openai-bundled"]
+[apps.asdk_app_6938a94a61d881918ef32cb999ff937c]
+enabled = false
+
+[plugins."computer-use@openai-bundled"]
 enabled = true
 
 [plugins."build-ios-apps@steady-app"]
 enabled = true
 
+[plugins."documents@openai-primary-runtime"]
+enabled = false
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = false
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = false
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = false
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
 [plugins."chrome@openai-bundled"]
 enabled = true
 
-[plugins."computer-use@openai-bundled"]
+[plugins."sites@openai-bundled"]
+enabled = false
+
+[plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
 [plugins."dots@dots"]
 enabled = true
 
-[plugins."drafts@dots"]
-enabled = true
-
 [plugins."meta-skill@dots"]
 enabled = true
 
-[plugins."sites@openai-bundled"]
+[plugins."drafts@dots"]
 enabled = true
 
-[plugins."template-creator@openai-primary-runtime"]
+[plugins."visualize@openai-bundled"]
 enabled = true
+
+[projects."/Users/rishi/Code/agent"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/steady-app"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/dots"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011632839818Z-f0bed97d/trials/adhoc-1.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.no-skill.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.no-skill.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T012222812619Z-648a2b43/trials/adhoc-1.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-06/l"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/kpmg"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/files-mentioned-by-the-user-codex"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/ts-ai"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/01_Clients/Project_Frogmen"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/i-w"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/us"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-07/up"]
+trust_level = "trusted"
+
+[projects."/Users/rishi"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/kpmg-pptx"]
+trust_level = "trusted"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-07-10T14:16:42Z"
+source_type = "local"
+source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-07-10T13:11:06Z"
+source_type = "local"
+source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[marketplaces.dots]
+last_updated = "2026-07-10T18:44:45Z"
+source_type = "local"
+source = "/Users/rishi/Code/dots"
 
 [mcp_servers.node_repl]
 args = []
-command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
 startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
 CODEX_HOME = "/Users/rishi/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "97669f77b3ca7114a2df05d55646416ea34b28100c07213ef9f643803449ef2f"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,c8b7e809d7cf9e20a57123b2530d476ccec9a01a6230a7b2b924fea7d94d7f4a"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.623.141536"
-CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+BROWSER_USE_CODEX_APP_VERSION = "26.707.31428"
+SKY_CUA_SERVICE_PATH = "/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000366/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
-[marketplaces.dots]
-last_updated = "2026-07-09T01:39:16Z"
-source_type = "local"
-source = "/Users/rishi/Code/dots"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-07-09T03:09:17Z"
-source_type = "local"
-source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
 
 [desktop]
 followUpQueueMode = "queue"
+microphoneInputDeviceId = "888efaab4053051a1ceb0e7a41cb03d93bdfdbe78a17aa725e3e58e35b91dfff"
+keepRemoteControlAwakeWhilePluggedIn = true
+selected-avatar-id = "custom:patch"
+avatar-overlay-mascot-width-px = 138
+dock-icon-preference = "app-default"
+conversationDetailMode = "STEPS_COMMANDS"
+preventSleepWhileRunning = true
+defaultTerminalLocation = "right"
+
+[desktop.appearanceLightChromeTheme]
+accent = "#339cff"
+contrast = 45
+ink = "#1a1c1f"
+opaqueWindows = false
+surface = "#ffffff"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "CommitMono"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#ba2623"
+skill = "#924ff7"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#339cff"
+contrast = 60
+ink = "#ffffff"
+opaqueWindows = false
+surface = "#181818"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "CommitMono"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#40c977"
+diffRemoved = "#fa423e"
+skill = "#ad7bf9"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[hooks.state]
+
+[hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"
