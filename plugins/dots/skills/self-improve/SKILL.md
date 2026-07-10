@@ -1,232 +1,115 @@
 ---
 name: self-improve
-description: "Explicit-only skill that mines Codex sessions, memories, skill usage, and goal state to surface evidence-backed proposals — skill fixes, new skills, memory promotions, docs, scripts, validation checks — and to propose and, after approval, apply AGENTS.md/instruction-file changes. Not for one-off bug fixes or user-specified changes."
+description: "Explicit-only workflow for mining prior Codex or Claude Code sessions for durable corrections, preferences, and file-grounded improvement proposals. Invoke as $self-improve in Codex or /dots:self-improve in Claude Code. Not for implementing a known one-off change."
+disable-model-invocation: true
 ---
 
 # Self Improve
 
-Find durable ways to make future agent runs better. Mine prior Codex threads,
-memory summaries, skill usage, goal state, and instruction files; qualify the
-evidence; then propose specific changes. Do not patch anything until the user
-approves a concrete change — the one exception is AGENTS.md/instruction-file
-edits, which this skill applies itself once approved.
+Find evidence-backed changes that make future agent runs better. Inspect prior
+sessions and the files they touched, distinguish repeatable patterns from
+one-offs, and return a small proposal set. Do not edit anything until the user
+approves a concrete proposal.
 
-## The Loop
+After approval, this skill may update the closest-scope instruction file
+(`AGENTS.md` for Codex, `CLAUDE.md` for Claude Code). Route every other change
+to its owner: skill edits to `skill-doctor`; docs, scripts, checks, and harness
+changes to the workflow that owns them. Never edit generated memory stores;
+propose a memory note instead.
 
-Every mode feeds one pipeline with one approval gate, and the script and the
-agent do different jobs within it:
+## Workflow
 
-**intake** (surface candidates) → **judge** (verify evidence, score strength) →
-**human approves** → **apply or route**: AGENTS.md/instruction-file changes are
-applied by this skill; every other change routes to the owner that applies it.
+1. **Set scope.** Confirm the platform, time range, repositories, and whether
+   the user wants a broad review or a named thread/workflow investigated. Use
+   the current platform unless the user names another one.
+2. **Inventory and triage.** Confirm the session sources exist, then rank
+   threads by explicit corrections, preferences, repeated friction, failed
+   checks, and relevance to the current repo. Read only the highest-signal
+   threads deeply.
+3. **Read the evidence.** For each candidate, inspect the conversation, tool
+   calls, and referenced files. Establish the request, expected behavior,
+   actual behavior, correction, and the files or configuration that governed
+   the outcome.
+4. **Qualify the pattern.** Deduplicate related threads, separate direct facts
+   from inference, mark contradictions, and reject one-off implementation
+   requests. A script score or keyword match is a lead, never a verdict.
+5. **Propose the smallest durable change.** Name the target, exact behavior
+   change, supporting threads and files, strength, trade-off, owner, and proof
+   check. Stop for approval.
+6. **Apply or route after approval.** Apply approved instruction-file changes
+   directly. Route every other approved change to its owner, validate it, and
+   record the proposal decision so settled items do not resurface.
 
-- **The script surfaces candidates**: it scans sessions for preference and
-  correction sentences, scores evidence strength, ranks threads, detects skill
-  usage and friction, flags unconsolidated memory summaries, flags stale
-  durable goals, and inspects a repo for missing scaffolding.
-- **You (the agent) extract the real evidence**: read the cited threads, derive
-  expected vs actual behavior and the durable correction, and propose the
-  smallest change. The script's buckets and scores are hints, not verdicts.
+## Session Sources
 
-Self-Improve owns finding and packaging every proposal, plus one applying job:
-`Project AGENTS.md` and `Global AGENTS.md` changes. For those, propose the
-observable rule per [references/agents-md.md](references/agents-md.md), then,
-once approved, write it to the closest-scope file yourself. Everything else
-routes elsewhere to apply: skill source edits go to `skill-doctor`; memory
-promotions are proposed as new `Memory Notes` entries, never edited in place.
+Load only the references needed for the active platform:
 
-## Sources
+- [references/thread-evidence.md](references/thread-evidence.md) defines the
+  common evidence packet, file-reference rules, strength labels, privacy
+  boundary, and proposal shape.
+- [references/codex-sessions.md](references/codex-sessions.md) covers Codex
+  thread tools, `state_5.sqlite`, rollout JSONL, memories, and goals.
+- [references/claude-sessions.md](references/claude-sessions.md) covers Claude
+  Code JSONL, `history.jsonl`, subagent transcripts, auto-memory, retention,
+  and schema-drift limits.
+- [references/instructions.md](references/instructions.md) covers approved
+  `AGENTS.md` and `CLAUDE.md` proposals and edits.
 
-Use available sources in this order:
+Prefer live thread tools or platform export interfaces when they expose the
+requested session. Use local stores for historical or multi-session mining.
+Never treat a convenience index, generated summary, or built-in insights
+report as stronger evidence than the underlying transcript and files.
 
-1. Current user request and current conversation.
-2. Codex thread index: `~/.codex/state_5.sqlite`.
-3. Rollout transcripts from each thread row's `rollout_path`.
-4. Memory summaries: `~/.codex/memories/MEMORY.md`,
-   `~/.codex/memories/rollout_summaries/`, and `~/.codex/memories_1.sqlite`
-   (table `stage1_outputs`, one row per consolidated thread summary). A row
-   with `selected_for_phase2 = 0` never made it into `MEMORY.md` — `memory-audit`
-   surfaces these as memory-promotion candidates.
-5. Durable goals: `~/.codex/goals_1.sqlite` (table `thread_goals`) —
-   `goal-health` flags goals stuck `blocked`/`paused`/`usage_limited`/
-   `budget_limited` with no recent `updated_at_ms`.
-6. Current repo instructions, global `~/.codex/AGENTS.md`, and installed/source
-   skill files.
+## Helper
 
-Treat memories as supporting context. Verify proposed instruction or skill
-changes against thread evidence before patching. Treat
-`~/.codex/session_index.jsonl` as a convenience index only.
-
-## Modes
-
-| Mode | Command | Purpose |
-|---|---|---|
-| Inventory | `inventory` | list session, memory, instruction, skill, and decision sources |
-| Triage | `triage` | rank threads likely to hold improvement evidence |
-| Thread review | `show` | read one thread; extract expected/actual/correction |
-| Dream pass | `dream` | mine many sessions for proposals across all buckets |
-| Skill audit | `skill-audit` | restrict proposals to existing or new skills |
-| Skill usage | `skill-usage` | which skills ran, how often, where they hit friction |
-| Scaffold | `scaffold` | inspect a repo for missing scaffolding + research handoff |
-| Memory audit | `memory-audit` | list memory sources and flag unconsolidated summaries for promotion |
-| Goal health | `goal-health` | flag blocked/paused/stale durable goals for revive-or-close review |
-| Decide | `decide` | record accept/reject/apply so proposals stop resurfacing |
-| **Deep improvement** | `deep` | flagship pass: orchestrate all modes into one report |
-
-## Commands
-
-Run from the skill directory unless paths are adjusted:
+Run from this skill directory, or invoke the script by its absolute packaged
+path. Pass the platform explicitly when mining a different host:
 
 ```bash
-python3 scripts/self_improve.py inventory --memories 10
-python3 scripts/self_improve.py triage --limit 100 --days 30 --archived all
-python3 scripts/self_improve.py list --limit 25 --archived all
-python3 scripts/self_improve.py show <thread-id>        # or: show latest
-python3 scripts/self_improve.py dream --limit 250 --days 365 --min-support 2 --min-strength medium --emit-patch
-python3 scripts/self_improve.py skill-audit --limit 500 --days 365 --min-support 1 --min-strength weak
-python3 scripts/self_improve.py skill-usage --days 7 --limit 250
-python3 scripts/self_improve.py scaffold --path .
-python3 scripts/self_improve.py memory-audit --limit 20
-python3 scripts/self_improve.py goal-health --stale-days 7
-python3 scripts/self_improve.py deep --days 30 --min-strength medium --path .
-python3 scripts/self_improve.py decide accept <proposal-key> --note "approved"
-python3 scripts/self_improve.py decide status
+python3 scripts/self_improve.py --platform codex inventory
+python3 scripts/self_improve.py --platform codex triage --days 30 --top 20
+python3 scripts/self_improve.py --platform codex show <thread-id>
+python3 scripts/self_improve.py --platform claude files <session-id>
+python3 scripts/self_improve.py --platform claude review --days 30
+python3 scripts/self_improve.py --platform codex review --target skills --days 90
+python3 scripts/self_improve.py --platform codex decide accept <proposal-key>
 ```
 
-Use live Codex thread tools when they are available and the user points to a
-current app thread. Otherwise use the local state and rollout files above.
+The helper performs deterministic discovery, extraction, and ranking. The
+agent still owns interpretation: inspect cited sessions and files before
+recommending or applying a change.
 
-## Evidence Triage
+## Strength
 
-Before a broad pass, rank candidate threads (`triage`). Prefer threads with:
+- **Strong:** repeated explicit corrections or accepted behavior across
+  independent thread clusters.
+- **Medium:** a repeated accepted choice or one clear correction with narrow
+  scope.
+- **Weak:** one ambiguous thread or an unverified heuristic match.
+- **Contradicted:** credible evidence points in different directions; ask the
+  user to resolve it.
 
-- explicit corrections or preferences;
-- frustration cues (the script owns the list; see
-  [references/skill-analytics.md](references/skill-analytics.md));
-- skill, plugin, instruction, memory, validation, harness, commit, PR, review,
-  or tool-selection discussion;
-- failed validation, repeated retries, or a final successful workflow after
-  dead ends;
-- recent work in the current repository.
-
-Read only the highest-signal threads deeply. Do not expose local transcript
-paths, secrets, private content, or raw memory text in portable guidance unless
-it is required evidence for the user's review.
-
-## Extract Evidence
-
-For each useful thread, extract:
-
-- trigger: what the user asked for;
-- expected behavior: what should have happened;
-- actual behavior: what the agent did;
-- correction or signal: what makes this durable;
-- likely target: skill, instruction file, memory note, doc, script, harness,
-  validation check, or deletion;
-- evidence strength (see below);
-- evidence: thread id, update time, cwd, and rollout path.
-
-## Evidence Strength
-
-Score support, not probability. The script reports a qualitative label from
-deduped support, explicit directive language, cross-repo spread, and whether a
-correction (not just a preference) was seen:
-
-- **strong** — explicit preferences, repeated corrections, or accepted workflows
-  across multiple thread clusters.
-- **medium** — a repeated choice the user accepted, or a clear but narrow signal.
-- **weak** — one ambiguous thread.
-- **contradicted** — mark conflicting evidence instead of smoothing it over;
-  surface the conflict for the user to resolve.
-
-There is no numeric confidence score; do not invent one. Support is the deduped
-thread-cluster count.
-
-## Proposal Destinations
-
-Choose exactly one destination per proposal:
-
-- `Skills`
-- `New Skills`
-- `Project AGENTS.md`
-- `Global AGENTS.md`
-- `Memory Notes`
-- `Repo Docs`
-- `Scripts Or Harnesses`
-- `Validation Checks`
-- `Conflicts Or Deletions`
-
-Keep project-specific preferences out of global files. Keep memory facts out of
-skills unless they define runtime behavior. Use scripts, validators, or harnesses
-when repeated prose would be weaker than a check.
-
-## References
-
-Load the matching reference when a proposal or request enters its area:
-
-- **[references/agents-md.md](references/agents-md.md)** — how Codex loads
-  AGENTS.md, what belongs in it, observable-rule writing, structure, the
-  decision-authority order, and editing discipline. Use it for any
-  `Project AGENTS.md` or `Global AGENTS.md` proposal, when the user asks to
-  structure, write, or clean up an agent instruction file, and when applying an
-  approved AGENTS.md change.
-- **[references/skill-analytics.md](references/skill-analytics.md)** — how to read
-  `skill-usage` output and turn it into per-skill, workflow, and big-lever
-  improvement proposals.
-- **[references/scaffolding-and-automations.md](references/scaffolding-and-automations.md)**
-  — how to turn a `scaffold` scan into CI/CD verification steps, which-skills-fit
-  recommendations, and Codex automation suggestions.
-
-## Proposal Rules
-
-- Propose first. Do not edit skills, instructions, memories, docs, scripts,
-  validators, or harnesses without approval.
-- Cite concrete evidence. Separate transcript facts from inference.
-- Deduplicate support by thread cluster, not raw message count.
-- Filter one-off implementation requests; require a repeated pattern.
-- Inspect cited transcripts before applying any proposal.
-- Keep proposal buckets disjoint.
-- Prefer the smallest durable change that prevents recurrence.
-- Never edit memories directly; propose them as new `Memory Notes` entries.
-- After the user decides, record it with `decide accept|reject|apply <key>` so
-  the proposal does not resurface on the next pass.
-- Validate the touched skill, doc, script, or instruction file after any
-  approved source edit, or state the reason validation was skipped.
+Support is a count of deduplicated thread clusters, not a probability. Do not
+invent numeric confidence.
 
 ## Output
 
-Return a proposal report:
+Return at most three proposals, ordered by likely future impact:
 
 ```md
-## Self-Improve Review
-
-### Evidence Sources
-- Sessions: <available/missing, count or gap>
-- Memories: <available/missing, role used, unconsolidated summary count>
-- Goals: <available/missing, blocked/paused/stale count>
-- Instructions: <files inspected>
-- Skills: <roots inspected>
-
-### Recommended Now
-- Target: `<path or destination>`  (key `<proposal-key>`)
-  Change: <specific proposed change>
-  Destination: <one bucket>
-  Kind: <preference|correction>
-  Support: <deduped cluster count>
-  Strength: <strong|medium|weak|contradicted>
-  Evidence:
-  - `<thread-id>` updated <timestamp> at `<rollout-path>`
-  Approval needed: <yes/no and why>
-
-### Needs Human Judgment
-...
-
-### Watchlist
-...
+### <proposal title> (`<proposal-key>`)
+Target: <file or durable destination>
+Change: <exact behavior change>
+Owner: <this skill or routed workflow>
+Support: <thread-cluster count>; <strength>
+Evidence: <thread/session ids, dates, and relevant files>
+Why durable: <repeatable failure or preference>
+Trade-off: <cost or residual risk>
+Proof: <validation or behavior check>
+Approval needed: yes
 ```
 
-When patch drafts are emitted, treat them as proposals. Apply only the approved
-subset: write `Project AGENTS.md`/`Global AGENTS.md` changes yourself; route
-skill source edits through `skill-doctor`; propose (never directly edit)
-memory notes and goal actions. Validate the touched skill, doc, script, or
-instruction file after applying.
+Put conflicting evidence under `Needs judgment` and plausible but unsupported
+ideas under `Watchlist`. Do not expose transcript contents, secrets, private
+file contents, or raw memory text beyond what the user needs to judge the
+proposal.

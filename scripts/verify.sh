@@ -130,4 +130,7 @@ VERIFY_PYTHON=$(find_verify_python) || {
 
 "$VERIFY_PYTHON" -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
 
+echo "==> Dots plugin tests"
+"$VERIFY_PYTHON" -m unittest discover -s plugins/dots/tests -p 'test_*.py'
+
 echo "Verify passed"
