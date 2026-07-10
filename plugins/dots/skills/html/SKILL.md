@@ -1,16 +1,16 @@
 ---
 name: html
-description: "Use when the user wants an HTML artifact of something — an explanation, plan, review, report, comparison, or status brief rendered as a shareable page. Takes formed context from the conversation or a pointed-at source (plan file, doc, repo area) and renders it. Not for product/app UI (visual-design), durable repo docs (docs-writer), forming the analysis itself (explain, ultraplan), or chat-sized answers."
+description: "Use when rendering formed material as a self-contained HTML document, fragment, or static mock: explanations, plans, reviews, comparisons, reports, status briefs, charts, mockups, or shareable pages. Reads conversation context or a pointed-at source, then renders it. Not for product/app UI, interactive editors, durable repo docs, or forming the analysis."
 ---
 
 # html
 
 Create HTML artifacts for explanations, plans, reviews, reports, comparisons,
-and status briefs — one self-contained `.html` file a reader can open, skim,
-navigate, and share. This skill renders formed understanding; it never forms
-it. The thinking arrives loaded in the conversation (explain, ultraplan, a
-review) or in a pointed-at source the skill reads first. If the content isn't
-formed yet, route to the skill that forms it and come back.
+status briefs, and static mocks — one self-contained `.html` file a reader can
+open, skim, navigate, and share. This skill renders formed understanding; it
+never forms it. The thinking arrives loaded in the conversation (explain,
+ultraplan, a review) or in a pointed-at source the skill reads first. If the
+content isn't formed yet, route to the skill that forms it and come back.
 
 The system has three layers, and every artifact uses all three:
 
@@ -110,7 +110,7 @@ new token, add it to DESIGN.md, regenerate, then use it.
 ## Boundaries
 
 Product and app UI, interactive editors, and anything with real form state
-belong to visual-design. Durable repo documentation belongs to docs-writer.
-Slide decks are out of scope. The skill reads sources but does not run
-analyses, make plans, or review code — it renders the results of skills and
-people that do.
+belong to `design`; static artifact mocks without product state belong here.
+Durable repo documentation belongs to `docs-writer`. Slide decks are out of
+scope. The skill reads sources but does not run analyses, make plans, or review
+code — it renders the results of skills and people that do.

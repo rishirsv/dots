@@ -1,6 +1,6 @@
 ---
 name: design
-description: "Builds, redesigns, and implements visible UI — web, React, iOS/SwiftUI, prototypes. Invoked via design (also visual-design). Use for product design, UI/UX design, redesign, or front-end work changing what a user sees. Pairs with design-review for critique/audit; not for backend-only, CLI, docs-only, or invisible-UI bug fixes."
+description: "Use when building, redesigning, or polishing product UI: web/app screens, dashboards, tools, games, landing pages, React, or iOS/SwiftUI. Triggers: UI design, UX, redesign, frontend, make it look better. Not for HTML reports, briefs, or static mocks (html), docs, backend, CLI, or invisible bug fixes."
 ---
 
 # Visual Design
@@ -29,18 +29,21 @@ this skill whenever front-end work changes what a user sees.
 
 Use this skill for:
 
-- new web pages, app screens, dashboards, tools, games, landing pages, HTML
-  artifacts, iOS/SwiftUI views, and interactive prototypes
+- new web pages, app screens, dashboards, tools, games, landing pages,
+  iOS/SwiftUI views, and interactive prototypes
 - visual redesigns, style passes, critique, polish loops, responsive cleanup,
   and design-system alignment
 - implementation work where Image Gen concepts, screenshots, or accepted visual
   references need faithful translation into code
 
-Do not use it for backend-only changes, CLI tools, pure docs/prose work, or bug
-fixes with no visible UI surface. Chat-native throwaway diagrams or mockup
-sketches are outside this skill. For a small UI fix inside an existing design
-system, follow the repo's local conventions first and use only the relevant
-polish and validation parts of this skill.
+Do not use it for backend-only changes, CLI tools, pure docs/prose work, report
+or brief HTML artifacts, static artifact mocks, or bug fixes with no visible UI
+surface. Use `html` when the user wants formed content rendered as a shareable
+HTML document or static mock.
+Chat-native throwaway diagrams or mockup sketches are outside this skill. For a
+small UI fix inside an existing design system, follow the repo's local
+conventions first and use only the relevant polish and validation parts of this
+skill.
 
 ## Workflow
 
