@@ -64,7 +64,10 @@ class CliTests(unittest.TestCase):
 
     def test_professional_eval_vocabulary_is_exposed_without_branded_aliases(self):
         app = (ROOT / "plugins" / "meta-skill" / "src" / "meta_skill" / "workbench_server" / "app.html").read_text()
-        for term in ("Cases", "Runs", "Skill versions", "Rerun selected", "Feedback"):
+        for term in (
+            "Cases", "Runs", "Skill versions", "Rerun selected", "Feedback",
+            "Produced files", "Open preview", "Feedback about", "Judge results",
+        ):
             self.assertIn(term, app)
         for term in ("Explore", "Substantiate", "Improve", "Benchmark mode"):
             self.assertNotIn(term, app)

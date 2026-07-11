@@ -29,10 +29,15 @@ wasn't run. Never invent validation evidence or bypass hooks with
 `--no-verify` unless asked.
 
 Match the repo's recent style (`git log --oneline -5`); default to a plain
-imperative subject ≤50 chars naming the outcome, a body only when it helps
-review, and no tool-attribution trailers unless the repo requires them.
-Multi-line messages go through `git commit --file`. Afterward run
-`git show --stat --oneline HEAD` and report SHA, subject, and validation.
+imperative subject ≤50 chars naming the outcome. Add a body when the subject
+and diff would not preserve why the change exists: explain the prior problem or
+constraint, the essential implementation choice, and any important tradeoff.
+Write for a capable teammate outside the immediate code area; translate
+specialized terms briefly and do not repeat the file list or narrate obvious
+edits. Small, self-explanatory changes need only a subject. Do not add
+tool-attribution trailers unless the repo requires them. Multi-line messages go
+through `git commit --file`. Afterward run `git show --stat --oneline HEAD` and
+report SHA, subject, and validation.
 
 ## Special requests
 

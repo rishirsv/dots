@@ -44,6 +44,30 @@
         "Re-reads the live pull-request body to confirm the embeds are present before reporting completion.",
         "Keeps the pull request draft and names the evidence gap only when required captures are genuinely unavailable."
       ]
+    },
+    {
+      "id": "conceptual-pr-explanation",
+      "type": "capability",
+      "prompt": "Publish this multi-file checkout recovery change as a draft PR. Product and engineering will both review it.",
+      "expected_output": "A draft PR whose body explains the user-visible outcome, relevant prior behavior, core implementation idea, conceptual change groups, evidence, and review focus in language product and engineering readers can follow.",
+      "expectations": [
+        "Leads with user-visible outcome and why it matters rather than a file list or commit summary.",
+        "Explains only the prior context needed to understand the change and briefly translates specialized terms.",
+        "Groups implementation by responsibility, dependency, or user flow instead of alphabetical file order.",
+        "Ends with concrete validation evidence, remaining gaps, and useful review focus."
+      ]
+    },
+    {
+      "id": "visual-evidence-distinguishes-mocks-and-motion",
+      "type": "failure",
+      "prompt": "Update the draft PR for this animated navigation redesign. The workspace has a design mock, a still capture of the implementation, and a short recording of the transition.",
+      "expected_output": "A live PR body that clearly labels the mock, uses the real implementation capture as evidence, includes the clip for motion, and explains what each visual proves.",
+      "expectations": [
+        "Labels the mock as intended design rather than implemented behavior and places it near the implementation comparison.",
+        "Uses the real still capture to prove the implemented result and the short clip to demonstrate the transition.",
+        "Provides useful alt text and product-first captions that name the state and what reviewers should notice.",
+        "Verifies that the assets render in the live PR body and keeps the PR draft if required evidence is missing."
+      ]
     }
   ]
 }

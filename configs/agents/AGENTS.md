@@ -1,4 +1,5 @@
 # AGENTS.md
+Write user-facing explanations in clear, concise language without reducing technical precision. Prefer concrete wording over unexplained jargon. Use established domain terminology when it is the most precise choice, and briefly define it when the intended audience may not know it. 
 
 Ignore uncommited changes made by other agents working in the same repo. Do not mention them.
 
@@ -14,7 +15,7 @@ and verifies consequential claims.
 ### Model choice
 
 - Sol Medium: root synthesis, ambiguity, architecture, and demanding review.
-- Terra Medium: scoped implementation, debugging, and tests.
+- Luna XHigh: scoped implementation, debugging, and tests.
 - Luna High: exploration, research, extraction, and other bounded support work.
 
 Escalate a specific lane to Sol High for genuinely difficult work. Reserve Max

@@ -494,11 +494,16 @@ class Handler(BaseHTTPRequestHandler):
         trial_id = str(body.get("trial_id") or "")
         packet = build_trial_packet(run_dir, trial_id)
         artifact = body.get("artifact") or "response"
+        artifact_path = str(body.get("artifact_path") or "").strip()
         tag = body.get("tag") or "one-off"
         note = str(body.get("note") or "").strip()
         if artifact not in ANNOTATION_ARTIFACTS or tag not in ANNOTATION_TAGS or not note:
             raise CliError("annotation requires a valid artifact, tag, and note", 2)
+        if artifact == "artifact" and artifact_path not in {row["path"] for row in packet["artifacts"]}:
+            raise CliError("annotation requires a valid artifact path", 2)
         row = {"artifact": artifact, "tag": tag, "note": note, "timestamp": utc_now()}
+        if artifact == "artifact":
+            row["artifact_path"] = artifact_path
         trial_dir = Path(run_dir) / "trials" / packet["trial"]["trial_id"]
         review_path = trial_dir / "review.json"
         with self.server.write_lock:

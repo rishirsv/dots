@@ -95,10 +95,10 @@ git push -u origin "$(git branch --show-current)"
 8. Check the created PR.
    - Re-query the PR after creation for merge state, checks, review decision,
      and current review threads when available.
-   - For UI, frontend, visual, or design-facing changes, verify the live PR body
-     contains actual image or clip embeds, such as Markdown image syntax,
-     uploaded GitHub assets, raw links to committed screenshots, or short video
-     links. A text-only screen list is not enough.
+   - For UI, frontend, visual, design-facing, or mock changes, follow
+     [visual-evidence.md](references/visual-evidence.md), then verify the live PR
+     body contains the required image or clip embeds. A text-only screen list is
+     not enough.
    - If required visual evidence is missing, update the PR body before the final
      summary. Keep the PR draft and state what captures are still missing only
      when the captures are genuinely unavailable.
@@ -117,8 +117,11 @@ git push -u origin "$(git branch --show-current)"
 ## PR Body
 
 The PR description should read like a compact explanation for a human reviewer:
-clear enough for a smart non-specialist teammate to understand, structured
-enough for a maintainer to scan quickly, and free of agent bookkeeping.
+clear enough for a product partner or capable teammate outside the code area to
+understand, structured enough for a maintainer to scan quickly, and free of
+agent bookkeeping. Start with user-visible behavior and why it matters. Use
+technical terms when they are the clearest wording, but translate them briefly
+on first use.
 
 Use Markdown structure when it helps review. Natural prose does not mean a flat
 paragraph blob. Good headings include:
@@ -129,21 +132,28 @@ paragraph blob. Good headings include:
 - `Screenshots`
 - `Validation`
 
-Cover the useful story:
+For a substantial change, tell the useful story in conceptual rather than file
+or commit order:
 
-- what changed
-- why it changed
-- user or developer impact
-- root cause when the PR is a fix
-- checks used to validate it
+1. **Outcome and impact.** What is meaningfully different for users, product,
+   operators, or developers, and why it matters.
+2. **Relevant context.** The prior behavior, problem, or constraint needed to
+   understand the change; include the root cause when this is a fix.
+3. **Core idea.** The main implementation choice in plain language.
+4. **Implementation.** Group changes by responsibility, dependency, or user
+   flow. Name files only when they help a reviewer inspect the work.
+5. **Evidence and review focus.** Tests, visual proof, remaining gaps, and the
+   decisions or boundaries that deserve close attention.
+
+Scale this to the change. A small PR may need only a few paragraphs and
+validation; do not force empty headings. Synthesize the commits instead of
+concatenating their messages.
 
 Keep validation calm and evidentiary. Prefer `Passed: scripts/validate test
 (468 feature tests)` over a giant standalone `TEST SUCCEEDED` line.
 
-For UI, frontend, visual, or design-facing changes, include actual screenshots
-or short clips in the PR body. Place images near the explanation they support,
-with captions that tell the reviewer what to notice. Screen names or bullet
-lists do not satisfy this requirement. Before closing out, re-query or verify
-the live PR body and confirm the image or clip embeds are present. If real
-captures are not available yet, keep the PR draft and say exactly what
-screenshots are still needed before it is ready for review.
+For UI, frontend, visual, design-facing, or mock changes, read
+[visual-evidence.md](references/visual-evidence.md). Before closing out,
+re-query or verify the live PR body and confirm the required embeds are present.
+If real captures are not available yet, keep the PR draft and say exactly what
+evidence is still needed before it is ready for review.

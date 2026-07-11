@@ -57,6 +57,18 @@
         "Sets upstream tracking only for a clear feature or work branch.",
         "Does not open a PR, merge, or force-push without explicit approval."
       ]
+    },
+    {
+      "id": "explanatory-message-for-non-obvious-change",
+      "type": "capability",
+      "prompt": "Write and create a commit for this staged retry-policy redesign. The diff is correct, but the reason for replacing fixed delays with server-directed backoff is not obvious from the code.",
+      "expected_output": "A focused commit whose subject names the outcome and whose concise body preserves the prior problem, essential implementation choice, and relevant tradeoff in language a teammate outside the code area can understand.",
+      "expectations": [
+        "Uses a concise repository-style subject that names the outcome.",
+        "Adds a body because the reason and implementation choice are not recoverable from the subject and diff alone.",
+        "Explains the prior problem, core choice, and important tradeoff without listing files or narrating obvious edits.",
+        "Uses plain language and briefly translates any specialized term needed for precision."
+      ]
     }
   ]
 }

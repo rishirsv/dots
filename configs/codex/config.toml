@@ -7,8 +7,12 @@ sandbox_mode = "danger-full-access"
 service_tier = "default"
 model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
+reasoning_summary = "detailed"
+hide_agent_reasoning = false
+show_raw_agent_reasoning = true
 
-notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+notify = ["/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000366/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [agents]
 max_threads = 4
@@ -54,6 +58,12 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/rishi/Documents/Codex/2026-07-11/go-into-my-twitter-and-delete"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-11/in-the-latest-version-of-codex"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-11/curl-fssl-prose-ami-rip-style"]
 trust_level = "trusted"
 
 [features]

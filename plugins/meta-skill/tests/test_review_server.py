@@ -281,6 +281,19 @@ class WorkbenchServerTests(unittest.TestCase):
         artifact.write_text("artifact result")
         packet = build_trial_packet(self.run, "a.current.t1")
         self.assertEqual(packet["artifacts"][0]["path"], "result.txt")
+        body = {
+            "skill": "skill",
+            "run": "run-1",
+            "trial_id": "a.current.t1",
+            "artifact": "artifact",
+            "artifact_path": "result.txt",
+            "note": "The saved file needs another section",
+        }
+        status, result = self.request("POST", "/api/annotations", body)
+        self.assertEqual(status, 200)
+        self.assertEqual(result["annotation"]["artifact_path"], "result.txt")
+        body["artifact_path"] = "missing.txt"
+        self.assertEqual(self.request("POST", "/api/annotations", body)[0], 400)
         status, _ = self.request(
             "GET", "/api/artifacts/a.current.t1/result.txt?skill=skill&run=run-1"
         )
