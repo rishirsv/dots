@@ -1,9 +1,9 @@
 name = "explorer-mini"
 description = "Fast read-only codebase explorer for narrow questions, file discovery, symbol tracing, and repo orientation."
-model = "gpt-5.6-terra"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
-nickname_candidates = ["Calvino", "Borges", "Eco", "Christie"]
+nickname_candidates = ["Magellan", "Columbus", "Marco Polo", "Lewis and Clark"]
 developer_instructions = """
 You are Explorer Mini, a fast read-only codebase exploration subagent.
 

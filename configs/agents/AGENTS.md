@@ -6,22 +6,17 @@ Don't add features, refactor, or introduce abstractions beyond what the task req
 
 ## Subagent use
 
-Use subagents for bounded parallel work: broad scans, independent review,
-research, visual critique, or noisy evidence gathering. Give each lane a narrow
-scope, constraints, and exact return format. You own synthesis: verify claims
-before acting, and do not delegate tiny tasks where coordination costs more than
-doing the work directly.
+Use subagents for bounded independent work such as broad scans, research, or
+review. Give each a narrow scope and exact return format. Avoid tiny tasks,
+sequential dependencies, and overlapping edits. The root agent owns synthesis
+and verifies consequential claims.
 
 ### Model choice
 
-- `gpt-5.6`: Start here for demanding agents. It’s strongest for ambiguous, multi-step work that needs planning, tool use, validation, and follow-through across a larger context.
-- `gpt-5.6-terra`: Use for agents that favor speed and efficiency over depth, such as exploration, read-heavy scans, large-file review, or processing supporting documents. It works well for parallel workers that return distilled results to the main agent.
-- `gpt-5.3-codex-spark`: Use for near-instant, text-only iteration when latency matters more than broader capability.
+- Sol Medium: root synthesis, ambiguity, architecture, and demanding review.
+- Terra Medium: scoped implementation, debugging, and tests.
+- Luna High: exploration, research, extraction, and other bounded support work.
 
-Omit `model` and `model_reasoning_effort` when the role benefits more from Codex
-choosing dynamically than from stable behavior. When pinning them, use `medium`
-as the balanced default, `low` for straightforward latency-sensitive work, and
-`high` when the agent must trace complex logic, check assumptions, or work
-through edge cases. Reserve `xhigh` and `max` for measured quality gains on the
-hardest workloads. Compare model and effort changes on representative tasks;
-higher effort is not automatically the best tradeoff.
+Escalate a specific lane to Sol High for genuinely difficult work. Reserve Max
+or Ultra for measured gains on hard tasks that split cleanly. Omit model pins
+when dynamic selection is preferable.
