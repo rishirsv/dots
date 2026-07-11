@@ -6,7 +6,7 @@
   "evals": [
     {
       "id": "chat-first-review",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Review this finished dashboard and give me a quick independent critique.",
       "expected_output": "A concise chat-first critique led by a verdict and ranked actionable findings, with no unnecessary report artifact.",
       "expectations": [

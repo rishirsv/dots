@@ -8,6 +8,7 @@
   "plugins": [
     {
       "name": "dots",
+      "version": "0.2.15",
       "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
       "author": {
         "name": "Rishi"
@@ -23,6 +24,7 @@
     },
     {
       "name": "meta-skill",
+      "version": "0.1.3",
       "description": "Create, revise, review, and evaluate agent skills.",
       "author": {
         "name": "Rishi"
@@ -38,6 +40,7 @@
     },
     {
       "name": "drafts",
+      "version": "0.1.0",
       "description": "Editorial drafting, rewrite, voice-guide, and revision support with durable context.",
       "author": {
         "name": "Rishi"

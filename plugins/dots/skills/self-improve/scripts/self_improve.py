@@ -719,7 +719,7 @@ def print_proposals(proposals: list[dict[str, Any]], *, emit_patch: bool) -> Non
     if not proposals:
         print("No proposals met the support/strength thresholds.")
         return
-    print("## Self-Improve Proposals\n")
+    print("## Change Candidates\n")
     for bucket in PROPOSAL_BUCKETS:
         bucket_items = [item for item in proposals if item["bucket"] == bucket]
         if not bucket_items:
@@ -985,7 +985,7 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
         n_friction = len(per_skill_friction[skill])
         print(f"{uses:<5} {n_threads:<7} {n_friction:<8} {skill}")
 
-    print("\n## Where Skills May Have Gone Wrong (review candidates)\n")
+    print("\n## Recurring Friction To Understand\n")
     any_friction = False
     for skill in sorted(per_skill_friction, key=lambda s: -len(per_skill_friction[s])):
         threads_with_friction = per_skill_friction[skill]
@@ -999,8 +999,9 @@ def cmd_skill_usage(args: argparse.Namespace) -> None:
     if not any_friction:
         print("No co-occurring friction detected. Read the highest-use skills for quality review anyway.\n")
     print(
-        "Next: read the cited threads to confirm whether the skill underperformed, "
-        "then propose a skill-by-skill fix (route source edits through skill-doctor)."
+        "Next: read both representative successful threads and the cited friction "
+        "threads. Explain what this usage says about the user's workflow before "
+        "proposing any skill change."
     )
 
 
@@ -1113,15 +1114,17 @@ def cmd_skill_audit(args: argparse.Namespace) -> None:
 
 def cmd_deep(args: argparse.Namespace) -> None:
     """The flagship everything pass: orchestrates the other modes into one report."""
-    print("# Self-Improve: Deep Improvement Pass\n")
-    print("This is the orchestration spine. The script surfaces candidates across all")
-    print("modes; you (the agent) read the highest-signal threads, extract the real")
-    print("expected/actual/correction evidence, and propose the smallest durable change.\n")
+    print("# Your Codex Usage Review\n")
+    print("Start with how the user works: recurring skills, successful patterns, and")
+    print("friction worth understanding. Read representative threads, explain the")
+    print("user-level pattern, and only then propose a durable change when justified.\n")
 
     print("---\n")
-    cmd_inventory(argparse.Namespace(memories=args.memories))
+    cmd_skill_usage(argparse.Namespace(
+        limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=None,
+    ))
 
-    print("\n---\n## Top Threads To Read\n")
+    print("\n---\n## Representative Threads To Understand\n")
     rows = threads(limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=None)
     ranked = [item for item in (triage_thread(t) for t in rows) if item["score"] >= 2]
     ranked.sort(key=lambda item: (-item["score"], -item["thread"].updated_at))
@@ -1136,17 +1139,18 @@ def cmd_deep(args: argparse.Namespace) -> None:
         print("No high-signal threads in range.")
 
     print("\n---\n")
+    cmd_inventory(argparse.Namespace(memories=args.memories))
+
+    print("\n---\n")
     decided = load_decisions()
     proposals = collect(
         rows, args.min_support, args.min_strength,
         decided=decided, include_decided=args.include_decided,
     )
+    print("## Durable Change Candidates\n")
+    print("These are implementation candidates, not the usage analysis. Verify them")
+    print("against representative threads and connect each one to a user-level pattern.\n")
     print_proposals(proposals, emit_patch=args.emit_patch)
-
-    print("\n---\n")
-    cmd_skill_usage(argparse.Namespace(
-        limit=args.limit, archived=args.archived, days=args.days, query=args.query, cwd=None,
-    ))
 
     if args.path:
         print("\n---\n")

@@ -78,6 +78,13 @@ For charts of any kind, read [references/charts.md](references/charts.md)
 first — form follows the data's job, and some data should not be a chart.
 For page assembly details, treatment calibration, and motion choreography,
 read [references/authoring.md](references/authoring.md).
+For a reviewer-facing pull-request walkthrough, read
+[references/pr-walkthrough.md](references/pr-walkthrough.md). It is an
+orientation artifact, not a review verdict or a history of what changed.
+For a post-coding explanation already formed by `explain`, read
+[references/code-change-explainer.md](references/code-change-explainer.md).
+Preserve its reasoning and render the meaningful before/after story without
+turning it into commit chronology.
 
 ## Identity rules
 

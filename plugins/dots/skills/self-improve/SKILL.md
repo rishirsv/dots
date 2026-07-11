@@ -5,9 +5,11 @@ description: "Mines Codex sessions, memories, skill usage, goals, and instructio
 
 # Self Improve
 
-Find durable ways to make future agent runs better. Mine prior Codex threads,
-memory summaries, skill usage, goal state, and instruction files; qualify the
-evidence; then propose specific changes. Do not patch anything until the user
+Help the user understand how they use Codex, what works, where friction repeats,
+and which durable improvements would make future runs better. Mine prior Codex
+threads, memory summaries, skill usage, goal state, and instruction files;
+qualify the evidence; explain the usage patterns; then propose specific changes.
+Do not patch anything until the user
 approves a concrete change — the one exception is AGENTS.md/instruction-file
 edits, which this skill applies itself once approved.
 
@@ -68,7 +70,7 @@ changes against thread evidence before patching. Treat
 | Dream pass | `dream` | mine many sessions for proposals across all buckets |
 | Skill audit | `skill-audit` | restrict proposals to existing or new skills |
 | Skill usage | `skill-usage` | which skills ran, how often, where they hit friction |
-| Scaffold | `scaffold` | inspect a repo for missing scaffolding + research handoff |
+| Scaffold | `scaffold` | optional repo-health scan when requested or supported by session evidence |
 | Memory audit | `memory-audit` | list memory sources and flag unconsolidated summaries for promotion |
 | Goal health | `goal-health` | flag blocked/paused/stale durable goals for revive-or-close review |
 | Decide | `decide` | record accept/reject/apply so proposals stop resurfacing |
@@ -144,6 +146,19 @@ correction (not just a preference) was seen:
 There is no numeric confidence score; do not invent one. Support is the deduped
 thread-cluster count.
 
+## Result Types
+
+Keep analysis separate from implementation routing:
+
+- **Usage observation** — a descriptive pattern such as recurring task types,
+  heavily used skills, successful workflows, or changes over time. It does not
+  require a destination or approval.
+- **Behavioral insight** — an interpretation of what the pattern suggests about
+  the user's preferences, constraints, or agent collaboration. State uncertainty
+  and conflicting evidence; it does not require a source change.
+- **Durable change proposal** — a specific edit or action supported by the
+  evidence. Only this result type requires a destination and approval status.
+
 ## Proposal Destinations
 
 Choose exactly one destination per proposal:
@@ -173,11 +188,13 @@ Load the matching reference when a proposal or request enters its area:
   structure, write, or clean up an agent instruction file, and when applying an
   approved AGENTS.md change.
 - **[references/skill-analytics.md](references/skill-analytics.md)** — how to read
-  `skill-usage` output and turn it into per-skill, workflow, and big-lever
-  improvement proposals.
-- **[references/scaffolding-and-automations.md](references/scaffolding-and-automations.md)**
-  — how to turn a `scaffold` scan into CI/CD verification steps, which-skills-fit
-  recommendations, and Codex automation suggestions.
+  `skill-usage` output, explain adoption and outcomes, and derive per-skill,
+  workflow, and big-lever improvements.
+
+Treat `scaffold` as an optional repository-health addendum. Run it only when the
+user asks for repository scaffolding analysis or when verified session evidence
+ties repeated friction to missing project guidance or checks. Do not let generic
+CI/CD, test, lint, or automation suggestions displace the usage analysis.
 
 ## Proposal Rules
 
@@ -198,21 +215,37 @@ Load the matching reference when a proposal or request enters its area:
 
 ## Output
 
-Return a proposal report:
+Return a usage-first review. Lead with what the evidence says about the user;
+put source-change mechanics last. A useful review may contain observations and
+insights even when no durable source change is justified.
 
 ```md
-## Self-Improve Review
+## Your Codex Usage Review
 
-### Evidence Sources
-- Sessions: <available/missing, count or gap>
-- Memories: <available/missing, role used, unconsolidated summary count>
-- Goals: <available/missing, blocked/paused/stale count>
-- Instructions: <files inspected>
-- Skills: <roots inspected>
+### How You Use Codex
+- Recurring work: <task and workflow patterns>
+- Skill usage: <dominant and recurring skills, with counts and limits>
+- Collaboration style: <how the user directs, corrects, or accepts work>
+- Change over time: <only when supported>
 
-### Recommended Now
-- Target: `<path or destination>`  (key `<proposal-key>`)
-  Change: <specific proposed change>
+### What Is Working
+- Pattern: <successful or low-intervention workflow worth preserving>
+  Evidence: <deduped session support>
+
+### Where Friction Appears
+- Pattern: <recurring friction>
+  Expected: <what the user expected>
+  Actual: <what happened>
+  Impact: <why it matters>
+  Support: <deduped cluster count and strength>
+
+### What This Suggests
+- <behavioral insight, uncertainty, or contradiction>
+
+### Recommended Improvements
+- Change: <specific proposed change>
+  Why: <connection to the usage analysis>
+  Target: `<path or destination>`  (key `<proposal-key>`)
   Destination: <one bucket>
   Kind: <preference|correction>
   Support: <deduped cluster count>
@@ -221,11 +254,11 @@ Return a proposal report:
   - `<thread-id>` updated <timestamp> at `<rollout-path>`
   Approval needed: <yes/no and why>
 
-### Needs Human Judgment
-...
-
-### Watchlist
-...
+### Evidence Coverage
+- Sessions: <available/missing, count or gap>
+- Memories: <available/missing and role used>
+- Goals: <available/missing and relevant state>
+- Important limits: <detection gaps or unavailable evidence>
 ```
 
 When patch drafts are emitted, treat them as proposals. Apply only the approved

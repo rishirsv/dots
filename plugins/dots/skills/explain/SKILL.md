@@ -32,6 +32,11 @@ data, product state, or relevant codebase surface. Explaining from memory when
 the source is one read away is the skill's cardinal failure. Separate what the
 source says from what you're inferring.
 
+When explaining a completed code change or diff, follow
+[references/code-changes.md](references/code-changes.md). It owns the
+investigation and teaching order; use `html` afterward only when the user wants
+a persistent or shareable artifact.
+
 When the explanation depends on repo behavior that is not obvious from one or
 two files, use read-only subagents when available to explore the relevant
 surfaces in parallel. Give each subagent a bounded question, paths or symbols to

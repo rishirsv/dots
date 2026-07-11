@@ -1,4 +1,5 @@
 {
+  "model": "claude-fable-5[1m]",
   "enabledPlugins": {
     "build-ios-apps@steady-app": true,
     "codex@openai-codex": true,
@@ -20,7 +21,6 @@
       }
     }
   },
-  "effortLevel": "high",
-  "skipDangerousModePermissionPrompt": true,
-  "model": "claude-fable-5[1m]"
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true
 }

@@ -12,7 +12,7 @@
   "evals": [
     {
       "id": "small-question-no-ceremony",
-      "type": "gate",
+      "type": "regression",
       "prompt": "What does the retry() helper in our HTTP client do?",
       "expected_output": "A direct answer grounded in the retry() implementation, with inline file or symbol evidence and no research ceremony.",
       "expectations": [
@@ -48,7 +48,7 @@
     },
     {
       "id": "artifact-routing-scratch-not-durable",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Run a deep research pass on migrating our queue from Redis to SQS, and save the findings.",
       "expected_output": "A concise chat synthesis linked to scratch research artifacts under the repository's .agents/outputs convention, not durable docs.",
       "expectations": [
@@ -72,7 +72,7 @@
     },
     {
       "id": "casual-lookup-not-explicit-invocation",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Quick question: does our config loader support environment variable overrides? I am not asking for a research report.",
       "expected_output": "A concise answer from a targeted code read, with no research contract, delegation, or report artifact.",
       "expectations": [

@@ -1,7 +1,7 @@
 # Skill-Usage Analytics
 
-How to use `skill-usage` to answer: which skills ran recently, how often, where
-they hit friction, and what to improve — skill by skill.
+How to use `skill-usage` to explain which skills shape the user's workflow, how
+often they run, where outcomes appear smooth or difficult, and what may improve.
 
 ```bash
 python3 scripts/self_improve.py skill-usage --days 7 --limit 250
@@ -54,24 +54,30 @@ Uses  Threads Friction Skill
   carries a lot of your workflow.
 - One **Use** + one **Friction** → likely a one-off; weight it low.
 
-The "Where Skills May Have Gone Wrong" section lists the specific friction
+The "Recurring Friction To Understand" section lists the specific friction
 threads per skill. These are your read list.
 
-## From analytics to a per-skill proposal
+## From analytics to a usage interpretation
 
-1. **Read the cited friction threads.** Use `show <thread-id>`. Establish what
-   the user asked, what the skill did, and what the user had to correct.
-2. **Separate skill failure from trigger failure.** Did the skill run and behave
+1. **Describe adoption.** Identify the skills with the broadest thread coverage,
+   the most repeated use, and meaningful combinations with other skills.
+2. **Read successful and friction threads.** Establish what the user asked, what
+   the skill did, the outcome, and whether the user intervened or accepted it.
+   Do not analyze only failures.
+3. **Separate skill failure from trigger failure.** Did the skill run and behave
    badly, or did the wrong skill (or no skill) run? They need different fixes —
    guidance vs. the `description`/trigger. (See `references/agents-md.md` on
    testing the trigger separately from the guidance.)
-3. **Look for a pattern across threads**, not a single bad run. One screenshot is
+4. **Look for a pattern across threads**, not a single bad run. One screenshot is
    not a rule.
-4. **Write the smallest durable fix** as a proposal:
+5. **Explain the user-level meaning first.** State what the pattern says about
+   the user's normal workflow, preferences, or recurring intervention. Keep
+   correlation and uncertainty explicit.
+6. **Write the smallest durable fix** only when the evidence justifies one:
    - A wording or rule change inside the skill → bucket `Skills`.
    - A `description`/trigger change (affects discovery) → call it out explicitly.
    - A missing skill the workflow clearly needs → bucket `New Skills`.
-5. **Route the edit, don't make it here.** Skill source changes go through the
+7. **Route the edit, don't make it here.** Skill source changes go through the
    available Meta-Skill lifecycle (`skill-doctor` when exposed), which owns the
    edit-and-validate machinery. Self-Improve packages the evidence.
 
@@ -80,8 +86,7 @@ threads per skill. These are your read list.
 Skill analytics also feeds higher-altitude proposals:
 
 - **Workflow gaps** — a manual step the user repeats across many threads that no
-  skill covers (candidate for a new skill or an automation; see
-  `references/scaffolding-and-automations.md`).
+  skill covers. Describe the cost before proposing a new skill or automation.
 - **Skill overlap or misuse** — two skills fighting over the same trigger, or a
   skill being used for something it was not built for.
 - **The biggest single lever** — when one skill dominates Uses, a small quality
@@ -90,6 +95,6 @@ Skill analytics also feeds higher-altitude proposals:
 
 ## In the deep pass
 
-`deep` runs `skill-usage` automatically as one section, so a full improvement
-sweep already includes the per-skill review list alongside session proposals and
-the scaffolding scan.
+`deep` runs `skill-usage` near the start so the full review begins with how the
+user works. Repository scaffolding is a conditional addendum, not a default
+substitute for usage analysis.

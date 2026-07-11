@@ -50,6 +50,18 @@
         "Routes to explain or answers in the appropriate chat workflow.",
         "Does not treat every structured explanation as a rendering request."
       ]
+    },
+    {
+      "id": "renders-formed-code-change-explanation",
+      "type": "capability",
+      "prompt": "Turn the completed code-change explanation in this conversation into a shareable HTML page. Preserve its reasoning.",
+      "expected_output": "One verified HTML explainer that preserves the formed outcome, background, core idea, conceptual walkthrough, representative flow, and evidence without reopening the analysis.",
+      "expectations": [
+        "Preserves the explanation's claims and conceptual order rather than reorganizing it as commit chronology or an alphabetical file list.",
+        "Uses a before/after or flow component only where it makes the mechanism easier to understand than prose.",
+        "Does not invent rationale, alternatives, risks, or verification claims while rendering.",
+        "Produces one self-contained artifact and applies the general HTML verification before handoff."
+      ]
     }
   ]
 }

@@ -24,7 +24,7 @@
     },
     {
       "id": "mixed-worktree-scope",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Commit only the documentation edits. There are unrelated app changes in the worktree.",
       "expected_output": "A focused documentation commit that preserves unrelated app changes and asks only if safe staging cannot separate the intended scope.",
       "expectations": [
@@ -48,7 +48,7 @@
     },
     {
       "id": "commit-and-push",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Commit the intended change and push the branch.",
       "expected_output": "A focused local commit followed by a safe branch push after remote and upstream checks, without opening a PR or rewriting history.",
       "expectations": [

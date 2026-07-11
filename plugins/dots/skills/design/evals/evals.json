@@ -6,7 +6,7 @@
   "evals": [
     {
       "id": "authorized-assumptions-proceed",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Redesign this settings screen. Use the repository's design system, make reasonable assumptions, and proceed without waiting for me.",
       "expected_output": "An implemented and visually verified settings-screen redesign that follows the repository design system and proceeds on stated reasonable assumptions.",
       "expectations": [

@@ -48,7 +48,7 @@
     },
     {
       "id": "route-durable-doc-request",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Explain our authentication architecture, and then save that as a permanent document in our docs folder.",
       "expected_output": "A direct explanation in chat plus a clear handoff of the durable-document request without modifying project files.",
       "expectations": [
@@ -72,7 +72,7 @@
     },
     {
       "id": "no-eli5-or-teaching-scaffolds",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Explain what a race condition is in the context of the bug we just found in our cache invalidation code.",
       "expected_output": "A concise explanation anchored in the cache invalidation code that shows the race and its consequence without generic teaching scaffolds.",
       "expectations": [
@@ -80,6 +80,18 @@
         "Does not use ELI5 framing, Socratic questions, or knowledge-check quizzes.",
         "Uses an example or diagram only if it reduces comprehension effort, not as decorative scaffolding.",
         "Ends once the user can see what the race condition is and why it matters here."
+      ]
+    },
+    {
+      "id": "explains-completed-code-change",
+      "type": "capability",
+      "prompt": "Walk me through the changes we just made to the retry pipeline so I can understand the implementation.",
+      "expected_output": "A source-grounded teaching narrative that explains the outcome, necessary prior-system context, core idea, implementation groups, and verification evidence in conceptual order.",
+      "expectations": [
+        "Reads the diff, resulting files, nearby system context, and relevant tests rather than paraphrasing changed lines alone.",
+        "Leads with the outcome and core idea, then groups implementation details by responsibility or dependency instead of filename order.",
+        "Separates recorded rationale and verified behavior from inference or unverified paths.",
+        "Accounts for changed files while de-emphasizing mechanical changes and does not create an HTML artifact unless requested."
       ]
     }
   ]

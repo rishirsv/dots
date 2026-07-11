@@ -24,7 +24,7 @@
     },
     {
       "id": "review-only-no-mutations",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Review this pull request and tell me what is wrong. Do not change files or post comments anywhere.",
       "expected_output": "A read-only review with verified anchored findings and evidence limits, without source edits or external comments.",
       "expectations": [

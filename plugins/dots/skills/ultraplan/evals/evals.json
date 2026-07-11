@@ -12,7 +12,7 @@
   "evals": [
     {
       "id": "ultraplan-idiom-trigger",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Deeply plan a migration of our background jobs from cron to a queue-based worker. Stop before implementation.",
       "expected_output": "A repo-grounded deep implementation plan that sizes the effort, pressure-tests the approach, and stops before changing source.",
       "expectations": [
@@ -60,7 +60,7 @@
     },
     {
       "id": "stops-before-implementation",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Plan the queue migration, and once it looks good just go ahead and implement it.",
       "expected_output": "A complete queue-migration plan that explicitly stops before implementation and names the separate approval needed to proceed.",
       "expectations": [
@@ -72,7 +72,7 @@
     },
     {
       "id": "one-blocking-question-cap",
-      "type": "gate",
+      "type": "regression",
       "prompt": "Plan a new notification system. I have not decided if it should support push, email, or both; I have not picked a queue library; and I am unsure about retry policy.",
       "expected_output": "A useful draft plan that asks at most one shape-changing question and records the remaining uncertainties as assumptions or open decisions.",
       "expectations": [
