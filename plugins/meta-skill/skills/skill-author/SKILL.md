@@ -11,16 +11,25 @@ It does not own read-only audits or behavioral evaluation runs.
 
 An explicit request to create or change source authorizes the requested edits.
 Review feedback, diagnosis, and brainstorming alone do not. Route a read-only
-assessment to `skill-reviewer`; route trials, suites, named run profiles,
-grading, run history, and workbench operation to `skill-evaluator`.
+assessment to `skill-reviewer`; route trials, suites, grading, run history, and
+workbench operation to `skill-evaluator`.
 
 ## Read What The Change Needs
 
+- Read [skill-shape.md](references/skill-shape.md) when the request is still an
+  idea and it is unclear whether a skill is the right artifact.
+- Read [skill-design.md](references/skill-design.md) when designing a new skill
+  or substantially changing its trigger, workflow, resources, or completion
+  contract.
 - Read [source-distillation.md](references/source-distillation.md) when the
   skill must be derived from examples, transcripts, source packs, or user
   corrections.
+- Read [session-capture.md](references/session-capture.md) when the user wants
+  to turn the current or a named Codex task into reusable skill behavior.
 - Read [description-standard.md](../../references/description-standard.md)
   whenever adding or changing discoverable frontmatter.
+- Read [description-improvement.md](../../references/description-improvement.md)
+  when a description change should be informed by natural-discovery evidence.
 - Read [payload-hygiene.md](../../references/payload-hygiene.md) when source
   material, research, or maintainer notes could leak into runtime guidance.
 - Read [openai_yaml.md](references/openai_yaml.md) when creating or changing
@@ -41,6 +50,13 @@ For a new skill, settle these points before writing:
 - required inputs and the result the user should receive
 - non-obvious judgment, workflow, or resources the base agent lacks
 - completion checks and approval boundaries
+
+Infer these answers from the conversation and available evidence before asking
+questions. For a non-trivial skill, pressure-test the trigger with one request
+that should activate it, one that should not, and the closest near miss. Decide
+whether the work is primarily judgment guidance, a fixed-shape output, a
+script-backed transformation, or a strict sequence; that choice should shape
+the body and resources.
 
 Create a skill only when reusable runtime guidance will improve a recurring,
 specialized, and bounded job. Prefer a project instruction, durable document,
@@ -92,6 +108,11 @@ Structural validation proves payload integrity, not behavioral improvement. If
 the requested conclusion needs task evidence, hand the stable source to
 `skill-evaluator`; do not create an evaluation suite or claim measured uplift
 from this lane.
+
+For a description candidate produced by discovery evaluation, verify that it
+still matches the body and neighboring skill boundaries before applying it.
+Report the before and after description with the measured corpus and runtime;
+do not generalize the result beyond that evidence.
 
 Close with the source path, behavior changed, files changed, validation run,
 and any remaining uncertainty.

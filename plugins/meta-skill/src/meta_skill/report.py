@@ -104,6 +104,23 @@ def _human_review_pending(case, grades):
     return bool(declared - recorded)
 
 
+def _grading_complete(trials, cases, grading_enabled):
+    if not grading_enabled:
+        return True
+    for trial in trials:
+        if trial.get("status") == "completed":
+            required = sum(
+                grader["kind"] != "human"
+                for grader in normalize_graders(cases.get(trial.get("eval_id"), {}))
+            )
+            if required and len(trial.get("grades") or []) < required:
+                return False
+        elif trial.get("status") in {"failed", "timed_out", "skipped"}:
+            if not trial.get("grades"):
+                return False
+    return True
+
+
 def _blind_pending_trial(trial, case, grading_enabled):
     if not _human_review_pending(case, trial.get("grades") or []):
         return trial
@@ -170,6 +187,55 @@ def _comparisons(candidates, trials, baseline_candidate=None):
     return rows
 
 
+def _case_versions(cases, candidates, trials):
+    by_case_version = defaultdict(list)
+    for trial in trials:
+        by_case_version[(trial.get("eval_id"), trial.get("candidate"))].append(trial)
+    rows = []
+    eval_ids = list(cases)
+    eval_ids.extend(
+        sorted({trial.get("eval_id") for trial in trials if trial.get("eval_id") not in cases})
+    )
+    for eval_id in eval_ids:
+        case = cases.get(eval_id) or {}
+        versions = []
+        for candidate in candidates:
+            candidate_id = candidate.get("candidate")
+            cells = by_case_version[(eval_id, candidate_id)]
+            if not cells:
+                continue
+            versions.append(
+                {
+                    "candidate": candidate_id,
+                    "display": candidate.get("display") or candidate_id,
+                    "verdict": {
+                        "pass": "passed",
+                        "fail": "failed",
+                        "unknown": "inconclusive",
+                    }[_behavior(cells)],
+                    "trials": [
+                        {
+                            "trial_id": trial.get("trial_id"),
+                            "repetition": trial.get("repetition"),
+                            "verdict": trial.get("verdict"),
+                            "failed_checks": trial.get("failed_checks") or [],
+                            "annotations": ((trial.get("review") or {}).get("annotations") or []),
+                        }
+                        for trial in cells
+                    ],
+                }
+            )
+        rows.append(
+            {
+                "eval_id": eval_id,
+                "prompt": case.get("prompt"),
+                "expectations": case.get("expectations") or [],
+                "versions": versions,
+            }
+        )
+    return rows
+
+
 def _token_usage(trials):
     totals = Counter()
     trials_with_usage = 0
@@ -207,6 +273,11 @@ def build_report(raw_run, *, blind_pending_human=False):
         trial = _trial_model(run_dir, planned, grading_enabled)
         case = cases.get(trial.get("eval_id"), {})
         trials.append({**trial, "eval_type": case.get("type"), "priority": case.get("priority") or "medium"})
+    runtime_terminal = all(
+        trial["status"] in {"completed", "failed", "timed_out", "skipped"}
+        for trial in trials
+    )
+    grading_complete = _grading_complete(trials, cases, grading_enabled)
     if blind_pending_human:
         trials = [
             _blind_pending_trial(trial, cases.get(trial.get("eval_id"), {}), grading_enabled)
@@ -257,7 +328,6 @@ def build_report(raw_run, *, blind_pending_human=False):
         "skill_id": run.get("skill_id"),
         "suite": run.get("suite"),
         "project": run.get("project"),
-        "profile": run.get("profile"),
         "model": run.get("model"),
         "runner": run.get("runner") or {},
         "baseline_candidate": run.get("baseline_candidate"),
@@ -267,6 +337,7 @@ def build_report(raw_run, *, blind_pending_human=False):
         "eval_digests": run.get("eval_digests") or [],
         "planning_error": run.get("planning_error"),
         "candidates": run.get("candidates") or [],
+        "cases": _case_versions(cases, run.get("candidates") or [], trials),
         "trials": trials,
         "comparisons": comparisons,
         "delta_totals": delta_totals,
@@ -287,7 +358,9 @@ def build_report(raw_run, *, blind_pending_human=False):
         "duration_ms": sum(int(trial.get("duration_ms") or 0) for trial in trials),
         "needs_attention": attention,
         "coverage_limits": coverage_limits,
-        "terminal": all(trial["status"] in {"completed", "failed", "timed_out", "skipped"} for trial in trials),
+        "runtime_terminal": runtime_terminal,
+        "grading_complete": grading_complete,
+        "terminal": runtime_terminal and grading_complete,
     }
     report["ok"] = not report["planning_error"] and not any(
         trial["verdict"] in {"failed", "inconclusive"} for trial in trials
@@ -308,7 +381,6 @@ def list_runs(raw_suite, *, blind_pending_human=False, runs_root=None):
                     "run_id": report["run_id"],
                     "created_at": report.get("created_at"),
                     "objective": report.get("objective"),
-                    "profile": report.get("profile"),
                     "baseline_candidate": report.get("baseline_candidate"),
                     "model": report.get("model"),
                     "candidates": [row.get("candidate") for row in report.get("candidates") or []],
@@ -377,7 +449,6 @@ def build_suite_report(raw_suite, *, blind_pending_human=True, runs_root=None):
         "objective": manifest.get("objective"),
         "defaults": manifest.get("defaults") or {},
         "candidates": manifest.get("candidates") or [],
-        "profiles": manifest.get("profiles") or {},
         "cases": cases,
         "latest_run": runs[0] if runs else None,
     }
@@ -406,26 +477,26 @@ def render_markdown(report):
     if report.get("objective"):
         lines += [f"**Objective:** {report['objective']}", ""]
     lines += [
-        f"**Candidate delta:** {delta.get('improved', 0)} improved, {delta.get('regressed', 0)} regressed, "
+        f"**Version delta:** {delta.get('improved', 0)} improved, {delta.get('regressed', 0)} regressed, "
         f"{delta.get('unchanged', 0)} unchanged, {delta.get('unknown', 0)} unknown.",
         "",
         f"{totals.get('passed', 0)} passed · {totals.get('failed', 0)} failed · "
         f"{totals.get('inconclusive', 0)} inconclusive · {totals.get('ungraded', 0)} ungraded",
         "",
-        "## Experiment configuration",
+        "## Run configuration",
         "",
-        f"- Baseline: {report.get('baseline_candidate') or 'none'}",
-        f"- Candidates: {', '.join(row.get('candidate') or '' for row in report.get('candidates') or []) or 'none'}",
+        f"- Baseline version: {report.get('baseline_candidate') or 'none'}",
+        f"- Versions: {', '.join(row.get('candidate') or '' for row in report.get('candidates') or []) or 'none'}",
         f"- Model: {report.get('model') or 'runtime default'}",
         f"- Duration: {report.get('duration_ms') or 0} ms",
         "",
-        "## Candidate comparison",
+        "## Version comparison",
         "",
     ]
     comparisons = report.get("comparisons") or []
     if comparisons:
         lines += _table(
-            ["Eval", "Candidate", "Baseline", "Candidate outcome", "Delta"],
+            ["Case", "Version", "Baseline", "Version outcome", "Delta"],
             [
                 [row["eval_id"], row["candidate"], row["baseline_state"], row["candidate_state"], row["delta"]]
                 for row in comparisons
@@ -472,6 +543,9 @@ def render_markdown(report):
         lines += ["", "Annotations: " + ", ".join(
             f"{key}={value}" for key, value in sorted(report["annotation_totals"].items())
         ) + "."]
+        for trial in report.get("trials") or []:
+            for annotation in ((trial.get("review") or {}).get("annotations") or []):
+                lines.append(f"- `{trial['trial_id']}`: {annotation.get('note')}")
     if report.get("coverage_limits"):
         lines += ["", "## Coverage limits", ""]
         lines.extend(f"- {item}" for item in report["coverage_limits"])

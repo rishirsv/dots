@@ -50,11 +50,51 @@ class ReportTests(unittest.TestCase):
             self.assertEqual(report["delta_totals"], {"improved": 1})
             self.assertEqual(report["comparisons"][0]["delta"], "improved")
             self.assertEqual(report["trials"][0]["failed_checks"][0]["evidence"], "missing exact result")
+            self.assertEqual(report["cases"][0]["eval_id"], "a")
+            self.assertEqual(
+                [version["candidate"] for version in report["cases"][0]["versions"]],
+                ["no-skill", "current"],
+            )
+            self.assertEqual(report["cases"][0]["versions"][0]["verdict"], "failed")
+            self.assertEqual(report["cases"][0]["versions"][1]["verdict"], "passed")
             markdown = render_markdown(report)
-            self.assertIn("**Candidate delta:** 1 improved", markdown)
+            self.assertIn("**Version delta:** 1 improved", markdown)
             self.assertIn("missing exact result", markdown)
             path = write_report(report)
             self.assertEqual(path.read_text(), markdown)
+
+    def test_case_matrix_uses_inconclusive_and_markdown_includes_feedback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = fixture(Path(tmp))
+            suite_path = run / "inputs" / "suite.json"
+            suite = json.loads(suite_path.read_text())
+            suite["evals"][0]["expectations"] = ["Meet the requirement"]
+            suite["evals"][0]["graders"] = [
+                {"kind": "model", "id": "judge", "metric": "quality"}
+            ]
+            write(suite_path, suite)
+            grades = run / "trials" / "a.current.t1" / "grades.jsonl"
+            jsonl(
+                grades,
+                [{
+                    "trial_id": "a.current.t1",
+                    "metric": "quality",
+                    "grader": {"kind": "model", "id": "judge"},
+                    "grade_status": "partial",
+                    "rationale": "localized miss",
+                    "checks": [{"name": "quality", "label": "partial", "evidence": "one issue"}],
+                }],
+            )
+            write(
+                run / "trials" / "a.current.t1" / "review.json",
+                {"annotations": [{"artifact": "response", "tag": "one-off", "note": "Make this clearer"}]},
+            )
+            report = build_report(str(run))
+            current = next(row for row in report["cases"][0]["versions"] if row["candidate"] == "current")
+            self.assertEqual(current["verdict"], "inconclusive")
+            markdown = render_markdown(report)
+            self.assertIn("Make this clearer", markdown)
+            self.assertIn("a.current.t1", markdown)
 
     def test_model_human_disagreement_is_counted(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -63,6 +103,36 @@ class ReportTests(unittest.TestCase):
             with path.open("a") as handle:
                 handle.write(json.dumps({"trial_id": "a.current.t1", "metric": "quality", "grader": {"kind": "human", "id": "human"}, "grade_status": "fail", "rationale": "evidence"}) + "\n")
             self.assertEqual(build_report(str(run))["review"]["disagreements"], 1)
+
+    def test_run_is_not_terminal_until_automatic_grading_finishes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = fixture(Path(tmp))
+            suite_path = run / "inputs" / "suite.json"
+            suite = json.loads(suite_path.read_text())
+            suite["evals"][0]["expectations"] = ["Meet the requirement"]
+            suite["evals"][0]["graders"] = [
+                {"kind": "model", "id": "judge", "metric": "quality"}
+            ]
+            write(suite_path, suite)
+            grades = run / "trials" / "a.current.t1" / "grades.jsonl"
+            grades.write_text("")
+            pending = build_report(str(run))
+            self.assertTrue(pending["runtime_terminal"])
+            self.assertFalse(pending["grading_complete"])
+            self.assertFalse(pending["terminal"])
+            jsonl(
+                grades,
+                [{
+                    "trial_id": "a.current.t1",
+                    "metric": "quality",
+                    "grader": {"kind": "model", "id": "judge"},
+                    "grade_status": "pass",
+                    "rationale": "graded",
+                }],
+            )
+            complete = build_report(str(run))
+            self.assertTrue(complete["grading_complete"])
+            self.assertTrue(complete["terminal"])
 
     def test_explicit_non_none_baseline_drives_candidate_comparison(self):
         with tempfile.TemporaryDirectory() as tmp:

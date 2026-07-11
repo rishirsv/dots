@@ -20,7 +20,7 @@ Codex App Server SDK, Codex binary, and login status. `package` writes a zip to
 ## Evaluation
 
 ```text
-metaskill eval run [--suite PATH] [--profile ID] [--objective TEXT]
+metaskill eval run [--suite PATH] [--objective TEXT]
   [--baseline ID] [--candidates IDS] [--split NAME] [--case ID]... [--type TYPE]...
   [--repetitions N] [--model MODEL] [--parallel N] [--timeout SECONDS]
   [--human-review-sample N] [--source-run-id ID]
@@ -31,7 +31,7 @@ metaskill eval run --adhoc --task PROMPT [--skill DIR]
   [--eval-type TYPE] [--priority high|medium|low]
   [--model MODEL] [--parallel N] [--timeout SECONDS] [--json]
 
-metaskill eval list [--suite PATH] [--profile ID] [--json]
+metaskill eval list [--suite PATH] [--json]
 metaskill eval report --run RUN [--out PATH] [--json]
 metaskill eval grade --run RUN [--model MODEL] [--parallel N] [--json]
 metaskill eval record --run RUN --trial ID --label LABEL --rationale TEXT

@@ -43,7 +43,7 @@ immutable unique identifier for one recorded execution. Moving a skill creates
 a new skill ID; existing runs remain under the ID recorded when they ran.
 
 `run.json` is immutable experiment planning and provenance: objective,
-baseline, candidates, case digests, runner policy, model, profile, repetitions,
+baseline, candidates, case digests, runner policy, model, repetitions,
 human-review sample, and planned trials. `inputs/` is the immutable snapshot
 used for execution and later regrading. Candidate payloads are stored once per
 run, not copied into each trial.

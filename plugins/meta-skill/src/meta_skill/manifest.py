@@ -9,7 +9,7 @@ from .workbench_paths import evals_path, repository_root, skill_id_for_target, s
 
 
 SOURCE_KINDS = {"branch", "current_worktree", "git_ref", "local_path", "none"}
-CASE_TYPES = {"attached", "near_miss", "capability", "regression", "failure", "gate"}
+CASE_TYPES = {"attached", "near_miss", "capability", "regression", "failure"}
 DEFAULT_CANDIDATES = [
     {"candidate": "no-skill", "display": "No skill baseline", "source": {"kind": "none"}},
     {"candidate": "current", "display": "Current skill", "source": {"kind": "current_worktree", "ref": "."}},
@@ -20,7 +20,6 @@ DEFAULT_EVALS = {
     "target": {"type": "skill", "ref": "SKILL.md"},
     "defaults": {"runner": "codex_app_server", "repetitions": 1, "timeout_seconds": 600},
     "candidates": DEFAULT_CANDIDATES,
-    "profiles": {},
     "evals": [],
 }
 
@@ -136,35 +135,6 @@ def _validate_candidate(candidate, seen):
         raise CliError(f"candidate {candidate_id} source.kind local_path must set path", 2)
 
 
-def _validate_profiles(data, case_ids, candidate_ids):
-    profiles = data.get("profiles", {})
-    if not isinstance(profiles, dict):
-        raise CliError("evals.json profiles must be an object", 2)
-    for profile_id, profile in profiles.items():
-        require_id("profile id", profile_id)
-        if not isinstance(profile, dict):
-            raise CliError(f"profile {profile_id} must be an object", 2)
-        if profile.get("case_ids") is not None and not isinstance(profile.get("case_ids"), list):
-            raise CliError(f"profile {profile_id} case_ids must be a list", 2)
-        if profile.get("candidates") is not None and not isinstance(profile.get("candidates"), list):
-            raise CliError(f"profile {profile_id} candidates must be a list", 2)
-        types = profile.get("types") or []
-        if not isinstance(types, list) or any(case_type not in CASE_TYPES for case_type in types):
-            raise CliError(f"profile {profile_id} types must use supported eval types", 2)
-        unknown_cases = sorted(set(profile.get("case_ids") or []) - case_ids)
-        if unknown_cases:
-            raise CliError(f"profile {profile_id} selects unknown cases: {', '.join(unknown_cases)}", 2)
-        selected = list(profile.get("candidates") or [])
-        unknown_candidates = sorted(set(selected) - candidate_ids)
-        if unknown_candidates:
-            raise CliError(f"profile {profile_id} selects unknown candidates: {', '.join(unknown_candidates)}", 2)
-        repetitions = profile.get("repetitions", {})
-        if repetitions and not isinstance(repetitions, dict):
-            raise CliError(f"profile {profile_id} repetitions must be an object", 2)
-        if isinstance(repetitions, dict) and any(not isinstance(value, int) or value < 1 for value in repetitions.values()):
-            raise CliError(f"profile {profile_id} repetitions must be positive integers", 2)
-
-
 def load_manifest(path):
     data = read_json(Path(path))
     if not isinstance(data, dict):
@@ -173,6 +143,8 @@ def load_manifest(path):
         raise CliError("only evals.json schema_version 2 is supported; migrate legacy suites first", 2)
     if "cases" in data:
         raise CliError("legacy cases[] suites are no longer supported; migrate to schema_version 2 evals[]", 2)
+    if "profiles" in data:
+        raise CliError("eval run profiles are no longer supported", 2)
     cases = data.get("evals", [])
     candidates = data.get("candidates")
     if candidates is None:
@@ -229,7 +201,6 @@ def load_manifest(path):
     seen_candidate_ids = set()
     for candidate in candidates:
         _validate_candidate(candidate, seen_candidate_ids)
-    _validate_profiles(data, seen_case_ids, seen_candidate_ids)
     return data
 
 

@@ -35,6 +35,11 @@ discovery contract.
 - **Invocation-mode legibility**: explicit-only skills say so and name the
   invocation tokens; auto skills lead with "Use when…" conditions.
 
+When static review cannot settle a routing change, use
+[description-improvement.md](description-improvement.md) for a user-reviewed,
+rewrite-blinded discovery evaluation. Do not treat attached-skill outcome tests
+as evidence that the platform will naturally select the skill.
+
 ## Anti-patterns
 
 - Adjective padding ("thorough", "careful", "powerful") — no-op words.

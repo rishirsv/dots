@@ -55,18 +55,36 @@ System defects:
 
 ## Failure Reconstruction
 
-Capture the expected behavior, actual behavior, triggering request, files
-inspected, validation or run evidence, smallest likely source, plausible causes
-ruled out, confidence, and evidence that would falsify the diagnosis. Generalize
-the incident into a recurring failure class; keep names, paths, and thread IDs
-in evidence rather than proposed runtime text.
+Capture a compact diagnosis packet before proposing a fix:
 
-When usage history is available, query it read-only. Search current and former
-names plus common spelling variants. Separate organic use from development on
-the skill itself and treat counts as lower bounds. Do not scan unrelated user
-history. Use observed frequency with likely impact when prioritizing findings,
-and flag natural invocation idioms that the discoverable description does not
-carry.
+| Field | What to record |
+|---|---|
+| Expected behavior | What the skill should have caused |
+| Actual behavior | What happened, or what the text would likely cause |
+| Trigger input | The request, scenario, or trace that exposed the problem |
+| Files inspected | The shipped payload and surrounding contracts actually read |
+| Validation evidence | Relevant structural checks or existing run results |
+| Likely source | The smallest responsible description, section, reference, script, or missing boundary |
+| Alternatives ruled out | Plausible causes checked and rejected |
+| Confidence | High, medium, or low, tied to the available evidence |
+| Falsifier | Evidence that would prove the diagnosis wrong |
+
+Generalize the incident into a recurring failure class; keep names, paths, and
+thread IDs in evidence rather than proposed runtime text.
+
+When usage history is available, query it read-only through the supported
+`metaskill sessions list` and `sessions show` commands. Search current and
+former names plus common spelling variants. Separate organic use from
+development on the skill itself and treat counts as lower bounds. For a
+reported historical failure, inspect only the named or matching tasks; cite the
+task and timestamp in evidence, separate transcript facts from inference, and
+do not copy transient identifiers or raw prompts into proposed runtime text.
+Prioritize findings by observed frequency with likely impact, and flag natural
+invocation language that the current description does not carry.
+
+For contamination complaints, inspect the whole visible payload: headings,
+labels, examples, fixture text, screenshots-as-code, export or copy text, and
+other strings a future agent or user could see—not only Markdown prose.
 
 For a plugin audit, compare every discoverable description, link, and owner.
 Search for repeated policy and terminology rather than reviewing each skill in
@@ -81,8 +99,21 @@ types, and do not turn a peer's style into a universal rule.
 
 ## Proposal Quality
 
-A proposal names exact source scope, behavior change, benefit, residual risk,
-and verification. Preserve existing trigger behavior unless routing is the
-defect. Replace misleading text instead of stacking a prohibition on top of
-it. Recommend the smallest change that resolves the cause, not every nearby
-cleanup opportunity.
+Offer two or three concrete updates unless only one is safe. Each proposal
+names the exact source scope, intended behavior change, benefit, trade-off or
+residual risk, and verification. Recommend one and explain why the alternatives
+lost.
+
+Before recommending, check each proposal:
+
+- **Generalization:** turn the incident into a reusable failure class rather
+  than encoding its one-time names or wording.
+- **Trigger preservation:** keep the discovery contract unchanged unless
+  routing is the defect; call out any description change explicitly.
+- **Source hygiene:** remove provenance, stale references, private facts, and
+  negative-only rules from candidate runtime text.
+- **Positive steering:** for mechanical or prohibition-heavy prose, include a
+  natural positive rewrite and remove the machinery competing with it.
+- **Proportion:** solve the diagnosed cause without bundling nearby cleanup.
+
+Replace misleading text instead of stacking a prohibition on top of it.

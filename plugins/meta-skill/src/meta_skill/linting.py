@@ -41,7 +41,7 @@ def lint_suite(raw_suite):
         if case_type == "near_miss":
             has_negative = True
         if case_type == "unspecified":
-            warnings.append({"case_id": case_id, "kind": "missing_type", "detail": "Set type to attached, near_miss, capability, regression, failure, or gate."})
+            warnings.append({"case_id": case_id, "kind": "missing_type", "detail": "Set type to attached, near_miss, capability, regression, or failure."})
         prompt = case.get("prompt")
         if isinstance(prompt, dict) and prompt.get("path"):
             task_file = suite.parent / "cases" / case_id / "task.md"
@@ -49,8 +49,8 @@ def lint_suite(raw_suite):
                 warnings.append({"case_id": case_id, "kind": "hidden_metadata_in_task", "detail": "task.md must contain only visible agent bytes; move metadata into evals.json."})
         if not case.get("expectations") and not case.get("graders") and case.get("expected_output") is None:
             warnings.append({"case_id": case_id, "kind": "missing_grader", "detail": "Add code, model, or human grading guidance."})
-        if case_type in {"regression", "gate"} and not case.get("expectations"):
-            warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression and gate tasks should have exact expectations."})
+        if case_type == "regression" and not case.get("expectations"):
+            warnings.append({"case_id": case_id, "kind": "missing_reference", "detail": "Regression tasks should have exact expectations."})
         graders = case.get("graders") or []
         if graders and all(grader.get("advisory") for grader in graders):
             warnings.append({"case_id": case_id, "kind": "all_graders_advisory", "detail": "Case can never reach a passed verdict because every explicit grader is advisory."})

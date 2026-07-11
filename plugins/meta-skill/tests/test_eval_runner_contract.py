@@ -29,8 +29,8 @@ def suite(path, evals):
 
 def args(path, **values):
     defaults = dict(suite=str(path), candidates=None, split=None, case=None, type=None, repetitions=None,
-                    repetitions_by_type={}, profile_default_repetitions=None, model="test-model", parallel=1,
-                    timeout=5, no_baseline=False, no_grade=True, adhoc=False, task=None, skill=None, profile=None)
+                    repetitions_by_type={}, model="test-model", parallel=1, timeout=5,
+                    no_baseline=False, no_grade=True, adhoc=False, task=None, skill=None)
     defaults.update(values)
     return SimpleNamespace(**defaults)
 

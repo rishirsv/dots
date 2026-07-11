@@ -51,22 +51,22 @@ class CliTests(unittest.TestCase):
             self.assertTrue(status["suite"]["exists"])
             self.assertEqual(status["suite"]["eval_count"], 0)
 
-    def test_eval_check_accepts_schema_v2_and_profile(self):
+    def test_eval_check_accepts_schema_v2(self):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "skill"
             skill(target)
             suite = target / "evals" / "evals.json"
             suite.parent.mkdir()
-            suite.write_text(json.dumps({"schema_version": 2, "profiles": {"quick": {"case_ids": ["a"]}}, "evals": [{"id": "a", "type": "capability", "prompt": "A", "expected_output": "A"}]}))
-            code, result = self.json_main(["eval", "run", "--suite", str(suite), "--profile", "quick", "--check", "--json"])
+            suite.write_text(json.dumps({"schema_version": 2, "evals": [{"id": "a", "type": "capability", "prompt": "A", "expected_output": "A"}]}))
+            code, result = self.json_main(["eval", "run", "--suite", str(suite), "--check", "--json"])
             self.assertEqual(code, 0)
             self.assertEqual(result["lint"]["shape"], "evals-v2")
 
     def test_professional_eval_vocabulary_is_exposed_without_branded_aliases(self):
         app = (ROOT / "plugins" / "meta-skill" / "src" / "meta_skill" / "workbench_server" / "app.html").read_text()
-        for term in ("Evals", "Experiments", "Review", "Pairwise annotation queue", "Evaluation objective"):
+        for term in ("Cases", "Runs", "Skill versions", "Rerun selected", "Feedback"):
             self.assertIn(term, app)
-        for term in ("Decision Sprint", "Evidence Capsule", "Confidence Ladder"):
+        for term in ("Explore", "Substantiate", "Improve", "Benchmark mode"):
             self.assertNotIn(term, app)
         args = build_parser().parse_args([
             "eval", "run", "--objective", "Compare revisions", "--baseline", "current",

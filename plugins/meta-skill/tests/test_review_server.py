@@ -14,7 +14,7 @@ from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.workbench_server.server import build_trial_packet, create_server, discover_skills
+from meta_skill.workbench_server.server import build_case_packet, build_trial_packet, create_server, discover_skills
 from meta_skill.report import build_report
 
 
@@ -128,16 +128,30 @@ class WorkbenchServerTests(unittest.TestCase):
         self.assertEqual(overview["trials"][0]["failed_checks"][0]["evidence"], "model-only evidence")
 
     def test_annotation_is_trial_local_and_run_launch_endpoint_exists(self):
-        body = {"skill": "skill", "run": "run-1", "trial_id": "a.current.t1", "artifact": "response", "tag": "task-defect", "note": "Ambiguous wording"}
+        body = {"skill": "skill", "run": "run-1", "trial_id": "a.current.t1", "note": "Ambiguous wording"}
         self.assertEqual(self.request("POST", "/api/annotations", body)[0], 200)
         review = json.loads((self.run / "trials" / "a.current.t1" / "review.json").read_text())
         self.assertEqual(review["annotations"][0]["note"], "Ambiguous wording")
+        self.assertEqual(review["annotations"][0]["artifact"], "response")
+        self.assertEqual(review["annotations"][0]["tag"], "one-off")
         called = threading.Event()
         self.server.run_background = lambda *_args: called.set()
         status, result = self.request("POST", "/api/runs", {"skill": "skill"})
         self.assertEqual(status, 202)
         self.assertTrue(result["run_id"].startswith("run-"))
         self.assertTrue(called.wait(1))
+
+    def test_case_view_groups_versions_with_outputs_criteria_and_feedback(self):
+        body = {"skill": "skill", "run": "run-1", "trial_id": "a.current.t1", "note": "Make this clearer"}
+        self.assertEqual(self.request("POST", "/api/annotations", body)[0], 200)
+        packet = build_case_packet(self.run, "a")
+        self.assertEqual(packet["eval_id"], "a")
+        self.assertEqual(packet["expectations"], ["Good"])
+        self.assertEqual(packet["trials"][0]["response"], "A response")
+        self.assertEqual(packet["trials"][0]["annotations"][0]["note"], "Make this clearer")
+        status, response = self.request("GET", "/api/runs/run-1/cases/a?skill=skill")
+        self.assertEqual(status, 200)
+        self.assertEqual(response["trials"][0]["candidate_display"], "current")
 
     def test_experiment_setup_fields_reach_the_background_runner(self):
         captured = {}
@@ -170,6 +184,41 @@ class WorkbenchServerTests(unittest.TestCase):
         self.assertEqual(captured["args"].baseline, "current")
         self.assertEqual(captured["args"].repetitions, 2)
         self.assertEqual(captured["context"]["skill_id"], "skill")
+        self.assertEqual(result["run_id"], captured["rid"])
+
+    def test_selective_rerun_preserves_versions_baseline_and_model(self):
+        run_json = json.loads((self.run / "run.json").read_text())
+        run_json.update(
+            {
+                "model": "gpt-stable",
+                "baseline_candidate": "no-skill",
+                "candidates": [
+                    {"candidate": "no-skill", "source_kind": "none"},
+                    {"candidate": "current", "source_kind": "current_worktree"},
+                ],
+            }
+        )
+        write(self.run / "run.json", run_json)
+        captured = {}
+        called = threading.Event()
+
+        def background(args, context, rid):
+            captured.update({"args": args, "context": context, "rid": rid})
+            called.set()
+
+        self.server.run_background = background
+        status, result = self.request(
+            "POST",
+            "/api/runs/run-1/rerun",
+            {"skill": "skill", "case_ids": ["a"]},
+        )
+        self.assertEqual(status, 202)
+        self.assertTrue(called.wait(1))
+        self.assertEqual(captured["args"].candidates, "no-skill,current")
+        self.assertEqual(captured["args"].baseline, "no-skill")
+        self.assertFalse(captured["args"].no_baseline)
+        self.assertEqual(captured["args"].model, "gpt-stable")
+        self.assertEqual(captured["args"].source_run_id, "run-1")
         self.assertEqual(result["run_id"], captured["rid"])
 
     def test_pairwise_review_is_candidate_blind_until_recorded(self):
@@ -353,6 +402,18 @@ class WorkbenchServerTests(unittest.TestCase):
                 time.sleep(.01)
             self.assertTrue(run_json.is_file())
             self.assertIn("runtime unavailable", json.loads(run_json.read_text())["planning_error"])
+
+    def test_discovery_includes_agents_tmp_but_skips_metaskill(self):
+        private = self.root / ".agents" / "tmp" / "private"
+        private.mkdir(parents=True)
+        (private / "SKILL.md").write_text('---\nname: private\ndescription: "Private fixture."\n---\n')
+        write(private / "evals" / "evals.json", {"schema_version": 2, "evals": []})
+        hidden = self.root / ".metaskill" / "snapshot"
+        hidden.mkdir(parents=True)
+        (hidden / "SKILL.md").write_text('---\nname: hidden\ndescription: "Hidden snapshot."\n---\n')
+        names = {row["name"] for row in discover_skills(self.root)}
+        self.assertIn("private", names)
+        self.assertNotIn("hidden", names)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # Payload Hygiene
 
 Use this shared standard whenever a skill payload is created, cleaned, reviewed,
-fixed, evaluated, packaged, or release-gated.
+fixed, evaluated, or packaged.
 
 The core rule is simple: source evidence shapes runtime behavior, but source
 evidence is not runtime behavior. Raw research, session text, rejected options,
@@ -17,7 +17,7 @@ Read this before:
 - cleaning an existing skill for portability
 - diagnosing leaked source, prompt, system, or maintainer language
 - writing or grading a skill-quality eval task
-- packaging or release-gating a skill payload
+- packaging a skill payload
 
 For a scored static review, use this file with
 [judge-rubric.md](judge-rubric.md).

@@ -24,7 +24,6 @@ from .manifest import (
     worktrees_from_suite,
 )
 from .packaging import package_skill
-from .profiles import apply_profile
 from .report import build_report, list_runs, render_markdown, write_report
 from .runtime import default_codex_model
 from .runner import run_eval
@@ -82,7 +81,6 @@ def _status_text(status):
     ]
     if suite["exists"]:
         lines.append(f"evals: {suite.get('eval_count', 0)} {suite.get('eval_types', {})}")
-        lines.append(f"profiles: {', '.join(status['profiles']) if status['profiles'] else 'none'}")
     lines.append(f"runs: {status['runs']['count']}")
     latest = status["runs"].get("latest")
     if latest:
@@ -111,7 +109,6 @@ def command_sessions_show(args):
 def _run_context(args):
     suite = suite_path(args.suite)
     manifest = load_manifest(suite)
-    apply_profile(args, manifest, args.profile)
     return {
         "manifest": manifest,
         "suite": suite,
@@ -173,8 +170,6 @@ def command_eval_record(args):
 
 def command_eval_list(args):
     result = list_runs(args.suite)
-    if args.profile:
-        result["runs"] = [row for row in result["runs"] if row.get("profile") == args.profile]
     emit(result, args.json)
     return 0
 
@@ -250,7 +245,6 @@ def build_parser():
     eval_sub = evaluate.add_subparsers(dest="eval_command", required=True)
     run = eval_sub.add_parser("run", help="Run a suite or one-off task")
     run.add_argument("--suite")
-    run.add_argument("--profile")
     run.add_argument("--objective")
     run.add_argument("--baseline")
     run.add_argument("--candidates")
@@ -270,7 +264,7 @@ def build_parser():
     run.add_argument("--skill")
     run.add_argument("--expected-output")
     run.add_argument("--expectation", dest="expectations", action="append")
-    run.add_argument("--eval-type", dest="adhoc_type", choices=["capability", "regression", "failure", "gate"])
+    run.add_argument("--eval-type", dest="adhoc_type", choices=["capability", "regression", "failure"])
     run.add_argument("--priority", choices=["high", "medium", "low"])
     run.add_argument("--check", action="store_true")
     run.add_argument("--json", action="store_true")
@@ -296,7 +290,6 @@ def build_parser():
 
     run_list = eval_sub.add_parser("list", help="List suite runs")
     run_list.add_argument("--suite")
-    run_list.add_argument("--profile")
     run_list.add_argument("--json", action="store_true")
     run_list.set_defaults(func=command_eval_list)
     report = eval_sub.add_parser("report", help="Read or export one run report")

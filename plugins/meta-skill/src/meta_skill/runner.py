@@ -56,7 +56,6 @@ def repetition_count(case, args, defaults):
         getattr(args, "repetitions", None)
         or by_type.get(case.get("type") or "unspecified")
         or case.get("repetitions")
-        or getattr(args, "profile_default_repetitions", None)
         or defaults.get("repetitions")
         or 1
     )
@@ -207,7 +206,6 @@ def adhoc_context(args):
             "target": {"type": "skill", "ref": "SKILL.md"},
             "defaults": {"repetitions": 1, "timeout_seconds": 600},
             "candidates": [{"candidate": "current", "source": {"kind": "current_worktree", "ref": "."}}],
-            "profiles": {},
             "evals": [{
                 "id": "adhoc-1",
                 "type": getattr(args, "adhoc_type", None) or "capability",
@@ -311,7 +309,6 @@ def run_eval(args, context=None, run_id_value=None):
             "skill_id": skill_id,
             "suite": str(suite),
             "project": str(project),
-            "profile": getattr(args, "profile", None),
             "runner": {
                 "kind": "codex_app_server",
                 "sandbox": APP_SERVER_SANDBOX,
@@ -399,7 +396,6 @@ def run_eval(args, context=None, run_id_value=None):
         "run_id": rid,
         "run_dir": str(run_dir),
         "adhoc": adhoc,
-        "profile": run_model.get("profile"),
         "trials": len(plan),
         "totals": report.get("totals"),
         "report_path": str(report_path),

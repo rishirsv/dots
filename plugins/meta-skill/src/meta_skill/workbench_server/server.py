@@ -16,7 +16,6 @@ from ..io import read_json, write_json
 from ..manifest import DEFAULT_EVALS, load_manifest, project_from_suite, workbench_from_suite
 from ..linting import FATAL_SUITE_WARNINGS, lint_suite
 from ..manifest import select_candidates, select_cases, split_csv_or_repeat
-from ..profiles import apply_profile
 from ..report import build_report, build_suite_report, list_runs, write_report
 from .queue import (
     build_pairwise_packet,
@@ -119,7 +118,11 @@ def discover_skills(root):
         skill_files.append(root / "SKILL.md")
     for path in root.rglob("SKILL.md"):
         relative = path.relative_to(root)
-        if any(part.startswith(".") for part in relative.parts[:-1]) or any(
+        private_fixture = (
+            relative.parts[:2] == (".agents", "tmp")
+            and evals_path(path.parent).is_file()
+        )
+        if (not private_fixture and any(part.startswith(".") for part in relative.parts[:-1])) or any(
             part in {"node_modules", "__pycache__", "cache"} for part in relative.parts
         ):
             continue
@@ -159,7 +162,6 @@ def discover_skills(root):
                 "suite_ready": manifest is not None,
                 "suite_error": suite_error,
                 "eval_count": len((manifest or {}).get("evals") or []),
-                "profiles": sorted(((manifest or {}).get("profiles") or {}).keys()),
                 "run_count": len(runs),
                 "latest_run": latest,
                 "attention": (latest or {}).get("totals", {}).get("failed", 0)
@@ -221,6 +223,33 @@ def build_trial_packet(run_dir, trial_id):
     }
 
 
+def build_case_packet(run_dir, eval_id):
+    report = build_report(str(run_dir), blind_pending_human=True)
+    trials = [row for row in report["trials"] if row.get("eval_id") == eval_id]
+    if not trials:
+        raise CliError(f"case not found in run: {eval_id}", 2)
+    candidates = {
+        row.get("candidate"): row.get("display") or row.get("candidate")
+        for row in report.get("candidates") or []
+    }
+    packets = []
+    for trial in trials:
+        packet = build_trial_packet(run_dir, trial["trial_id"])
+        packet["candidate_display"] = candidates.get(
+            trial.get("candidate"), trial.get("candidate")
+        )
+        packets.append(packet)
+    first = packets[0]
+    return {
+        "ok": True,
+        "run_id": report["run_id"],
+        "eval_id": eval_id,
+        "task": first.get("task"),
+        "expectations": first.get("expectations") or [],
+        "trials": packets,
+    }
+
+
 def build_judge_reveal(run_dir, trial_id):
     packet = build_trial_packet(run_dir, trial_id)
     if not packet["human_recorded"]:
@@ -252,9 +281,9 @@ def _run_args(body):
     if isinstance(candidates, list):
         candidates = ",".join(str(value) for value in candidates)
     return argparse.Namespace(
-        suite=body.get("suite"), profile=body.get("profile"), candidates=candidates,
+        suite=body.get("suite"), candidates=candidates,
         split=body.get("split"), case=body.get("case") or body.get("case_ids"), type=body.get("type"),
-        repetitions=number("repetitions", None, 1), repetitions_by_type={}, profile_default_repetitions=None,
+        repetitions=number("repetitions", None, 1), repetitions_by_type={},
         model=body.get("model"), parallel=number("parallel", 1, 1), timeout=number("timeout", None, 1),
         no_baseline=bool(body.get("no_baseline")), no_grade=bool(body.get("no_grade")),
         baseline=body.get("baseline"), objective=body.get("objective"),
@@ -381,6 +410,9 @@ class Handler(BaseHTTPRequestHandler):
             if len(parts) == 4 and parts[:2] == ["api", "runs"] and parts[3] == "pairs":
                 run_dir = self._run_dir(self._query(query, "skill"), parts[2])
                 return self._json(build_pairwise_queue(run_dir))
+            if len(parts) == 5 and parts[:2] == ["api", "runs"] and parts[3] == "cases":
+                run_dir = self._run_dir(self._query(query, "skill"), parts[2])
+                return self._json(build_case_packet(run_dir, parts[4]))
             if len(parts) == 3 and parts[:2] == ["api", "trials"]:
                 run_dir = self._run_dir(self._query(query, "skill"), self._query(query, "run"))
                 return self._json(build_trial_packet(run_dir, parts[2]))
@@ -435,6 +467,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._post_eval(body)
             if parts == ["api", "runs"]:
                 return self._post_run(body)
+            if len(parts) == 4 and parts[:2] == ["api", "runs"] and parts[3] == "rerun":
+                return self._post_rerun(parts[2], body)
             if len(parts) == 4 and parts[:2] == ["api", "runs"] and parts[3] == "regrade":
                 return self._post_regrade(parts[2], body)
             return self._error("not found", 404)
@@ -459,8 +493,8 @@ class Handler(BaseHTTPRequestHandler):
         run_dir = self._run_dir(str(body.get("skill") or ""), str(body.get("run") or ""))
         trial_id = str(body.get("trial_id") or "")
         packet = build_trial_packet(run_dir, trial_id)
-        artifact = body.get("artifact")
-        tag = body.get("tag")
+        artifact = body.get("artifact") or "response"
+        tag = body.get("tag") or "one-off"
         note = str(body.get("note") or "").strip()
         if artifact not in ANNOTATION_ARTIFACTS or tag not in ANNOTATION_TAGS or not note:
             raise CliError("annotation requires a valid artifact, tag, and note", 2)
@@ -549,7 +583,6 @@ class Handler(BaseHTTPRequestHandler):
             raise CliError("skill has no valid eval suite", 2)
         args = _run_args({**body, "suite": skill["suite"]})
         manifest = load_manifest(Path(skill["suite"]))
-        apply_profile(args, manifest, args.profile)
         lint = lint_suite(skill["suite"])
         fatal = [row for row in lint["warnings"] if row.get("kind") in FATAL_SUITE_WARNINGS]
         if fatal:
@@ -577,6 +610,33 @@ class Handler(BaseHTTPRequestHandler):
         thread = threading.Thread(target=self.server.run_background, args=(args, context, rid), daemon=True)
         thread.start()
         return self._json({"ok": True, "run_id": rid}, 202)
+
+    def _post_rerun(self, run_id_value, body):
+        skill_id = str(body.get("skill") or "")
+        source = read_json(self._run_dir(skill_id, run_id_value) / "run.json")
+        case_ids = body.get("case_ids") or body.get("case")
+        if not case_ids:
+            raise CliError("rerun requires at least one case", 2)
+        candidate_ids = [
+            row.get("candidate") for row in source.get("candidates") or [] if row.get("candidate")
+        ]
+        if not candidate_ids:
+            raise CliError("source run has no versions to rerun", 2)
+        baseline = source.get("baseline_candidate")
+        return self._post_run(
+            {
+                "skill": skill_id,
+                "objective": source.get("objective"),
+                "case_ids": case_ids,
+                "candidates": candidate_ids,
+                "baseline": baseline,
+                "no_baseline": baseline is None,
+                "repetitions": int(body.get("repetitions") or 1),
+                "model": source.get("model"),
+                "parallel": int(body.get("parallel") or 1),
+                "source_run_id": source.get("run_id") or run_id_value,
+            }
+        )
 
     def _post_regrade(self, run_id_value, body):
         run_dir = self._run_dir(str(body.get("skill") or ""), run_id_value)

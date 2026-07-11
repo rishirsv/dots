@@ -35,6 +35,14 @@ class ManifestTests(unittest.TestCase):
                 load_manifest(path)
             self.assertIn("legacy cases[]", caught.exception.message)
 
+    def test_run_profiles_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evals.json"
+            write(path, {"schema_version": 2, "profiles": {}, "evals": []})
+            with self.assertRaises(CliError) as caught:
+                load_manifest(path)
+            self.assertIn("profiles are no longer supported", caught.exception.message)
+
     def test_prompt_path_is_only_task_md(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "evals.json"

@@ -61,7 +61,6 @@ def status_snapshot(target=None):
         "target": str(target),
         "state": {"path": str(state), "exists": state.exists()},
         "suite": {"path": str(suite), "exists": suite.exists()},
-        "profiles": [],
         "runs": {"count": 0, "latest": None},
     }
     if not suite.exists():
@@ -76,7 +75,6 @@ def status_snapshot(target=None):
             "lint_warning_count": len(lint_result["warnings"]),
         }
     )
-    result["profiles"] = sorted((manifest.get("profiles") or {}).keys())
     from .report import list_runs
 
     runs = list_runs(str(suite))["runs"]

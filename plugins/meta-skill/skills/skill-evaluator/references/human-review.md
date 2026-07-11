@@ -27,10 +27,9 @@ For each selected absolute trial:
 3. Record `pass`, `partial`, `fail`, or `unknown` against the suite's declared
    human grader and metric.
 4. Give a short rationale tied to exact outcome or transcript evidence.
-5. Add an annotation when the judgment indicates a reusable taste rule, a
-   one-off preference, a task defect, or a grader defect.
+5. Add a plain evidence note when the result needs explanation or follow-up.
 
-Human grades and pairwise annotations are revisable. Preserve their history and
+Human grades and pairwise judgments are revisable. Preserve their history and
 regenerate the derived report after revision. When a human and model disagree, inspect the task,
 criteria, allowed evidence, and judge guidance; do not hide the disagreement or
 invent a confidence label.
