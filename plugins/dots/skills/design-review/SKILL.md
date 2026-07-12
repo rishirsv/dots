@@ -1,14 +1,14 @@
 ---
 name: design-review
-description: "Independently reviews existing or rendered product UI: focused surface critique, target comparison, or multi-step UX/accessibility audit. Use for design critique, UX audit, acceptance QA, or a requested second opinion; not for code review, redesign, implementation, or routine build self-checks."
+description: "Independently reviews product UI, UX, accessibility, motion, and animation code. Use for design critique, experience audits, motion interaction review, animation diff review, or a codebase motion audit; not for general code review, redesign, implementation, or routine build self-checks."
 ---
 
 # Design Review
 
-Review existing or rendered product UI from evidence captured or inspected in
-the current run. The output is not a loose opinion: it is current evidence plus
-product-quality judgment, with severity, evidence, impact, recommendation, and
-an acceptance check for every substantive finding.
+Review existing or rendered product UI, user journeys, live or recorded motion,
+and animation code. The output is not a loose opinion: it is current evidence
+plus product-quality judgment, with severity, evidence, impact, recommendation,
+and an acceptance check for every substantive finding.
 
 ## Design Constitution
 
@@ -60,8 +60,18 @@ and reviewer protocol:
 - **Experience audit**: a multi-step journey, funnel, onboarding path, checkout path,
   settings path, workflow, or product area. Ends in a numbered step list with
   health labels plus UX, design, and accessibility findings.
+- **Motion interaction review**: live UI or a recording, judged for purpose,
+  timing, easing, physicality, interruption, continuity, gesture response,
+  performance, accessibility, and cohesion.
+- **Motion diff review**: changed animation and interaction code, judged against
+  the motion standards with `file:line` evidence and an explicit approve/block
+  verdict.
+- **Motion codebase audit**: a source-wide survey of animation and motion code,
+  prioritized by leverage, with implementation-ready plans when requested.
 
-This skill evaluates; it does not implement fixes. Route build, redesign, or
+This skill evaluates; it does not implement fixes. Animation and interaction
+code are the narrow exception to the general code-review exclusion. Route
+general code review elsewhere. Route build, redesign, or
 polish work to [design](../design/SKILL.md). Routine build self-checks stay in
 Design; use this independent review for target-driven, acceptance-critical,
 externally shipped, brand- or accessibility-sensitive work, or when the user
@@ -80,11 +90,19 @@ severity, and pass/block decision.
   critique with a pass/block decision.
 - Both requested (audit a flow and gate one screen) → run each path on its own
   scope and keep the outputs separate.
+- Live UI or a recording where timing, easing, gesture behavior, interruption,
+  or motion feel is the subject → motion interaction review.
+- A diff, pull request, or changed files where animation and interaction code is
+  the subject → motion diff review.
+- A repository or product area whose motion system should be surveyed and
+  prioritized → motion codebase audit.
 
-When motion, gesture behavior, or haptic feedback is in scope, read
-[references/motion-audit.md](references/motion-audit.md) and require dynamic
-interaction evidence. A still screenshot can support visual findings but
-cannot pass the motion audit.
+When motion, gesture behavior, haptic feedback, or animation code is in scope,
+read [references/motion-audit.md](references/motion-audit.md). Require dynamic
+interaction evidence for claims about timing, easing, interruption, velocity
+continuity, gesture response, haptic synchronization, dropped frames, or feel.
+A source-only review may identify implementation risks, but must label claims
+that require playback as `Needs testing`.
 
 ## Grounding
 
@@ -118,6 +136,10 @@ Capture evidence per the shared
 - Do not claim more than the evidence supports: no full accessibility
   compliance from screenshots alone, and no source-vs-render fidelity claims
   without a source visual target.
+- Source code can establish implementation facts such as `transition: all`, an
+  `ease-in` curve, missing reduced-motion handling, or keyframes on rapidly
+  triggered UI. It cannot establish how motion feels, whether frames drop in
+  practice, or whether a gesture remains continuous under interruption.
 
 ## Capture
 
@@ -369,6 +391,37 @@ a required step cannot be captured, the source changes mid-audit, output cannot
 be saved, the requested claim needs evidence screenshots cannot provide, or a
 side-effect gate is unapproved.
 
+## Motion Review
+
+Read [references/motion-audit.md](references/motion-audit.md) and choose one
+scope before reviewing:
+
+- `interaction`: inspect live UI or a recording
+- `diff`: inspect only changed animation and interaction code
+- `codebase`: survey the repository's motion system and highest-leverage fixes
+
+For an interaction review, capture the behavior dynamically and report findings
+through the shared finding anatomy. A still screenshot can support visual
+findings but cannot establish timing, easing, interruption, velocity continuity,
+gesture response, haptic synchronization, or dropped frames.
+
+For a diff review, re-read every cited change yourself. Return one findings
+table with `file:line`, current code or behavior, exact correction, why it
+matters, and the verification or feel check. Close with `Approve` when no
+feel-breaking regression or blocking implementation defect remains; otherwise
+close with `Block`.
+
+For a codebase audit, map the motion stack, conventions, and frequency before
+judging it. Present vetted findings ordered by leverage (impact divided by
+effort), then a short list of missed opportunities. When the user requests
+plans, make each one self-contained: exact paths and current excerpts, target
+values, repository conventions, ordered steps, scope boundaries, mechanical
+verification, and a concrete feel check. Do not modify product source in this
+review skill.
+
+When the motion is already right, say so plainly. A positive-null result is
+better than padded findings.
+
 ## Final Response
 
 Lead with the outcome, then support it:
@@ -381,6 +434,12 @@ Lead with the outcome, then support it:
   findings, top ship-now fixes, the strongest system-quality themes, the most
   important evidence limits, and where output was saved — or that the audit was
   chat-only because no saved output was requested.
+- Motion interaction review: verdict, strongest evidenced findings, concrete
+  corrections, and the dynamic states or devices still needing verification.
+- Motion diff review: findings table followed by an explicit `Approve` or
+  `Block` verdict.
+- Motion codebase audit: prioritized findings, missed opportunities, smallest
+  recommended change set, and implementation-ready plans only when requested.
 
 Keep the language direct. Do not use broad design jargon when a plain phrase
 works.

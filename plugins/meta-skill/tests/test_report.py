@@ -27,7 +27,7 @@ def fixture(root):
     skill = root / "demo"
     skill.mkdir(parents=True, exist_ok=True)
     (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Use for report tests."\n---\n')
-    run = skill / ".metaskill" / "runs" / "demo" / "run-1"
+    run = skill / ".skill" / "runs" / "run-1"
     candidates = [{"candidate": "no-skill", "source_kind": "none"}, {"candidate": "current", "source_kind": "current_worktree"}]
     trials = [{"trial_id": f"a.{candidate}.t1", "eval_id": "a", "candidate": candidate, "repetition": 1} for candidate in ("no-skill", "current")]
     write(run / "run.json", {"schema_version": 2, "run_id": "run-1", "skill_id": "demo", "objective": "Compare current with baseline", "runner": {"grading": True}, "baseline_candidate": "no-skill", "candidates": candidates, "trials": trials})

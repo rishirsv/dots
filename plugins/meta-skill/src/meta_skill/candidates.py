@@ -11,7 +11,7 @@ from .io import write_json
 from .workbench_paths import parse_frontmatter
 
 
-DEFAULT_EXCLUDES = {".DS_Store", ".git", ".metaskill", "__pycache__", "dist", "evals"}
+DEFAULT_EXCLUDES = {".DS_Store", ".git", ".skill", "__pycache__", "dist", "evals"}
 
 
 def candidate_source(candidate):

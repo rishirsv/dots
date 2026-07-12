@@ -12,10 +12,10 @@ metaskill package <skill-dir> [--out-dir DIR] [--json]
 metaskill workbench open [--root DIR] [--port PORT] [--open|--no-open]
 ```
 
-`init` creates the repository's ignored `.metaskill/` state root. Add
+`init` creates the target skill's ignored `<skill>/.skill/` state root. Add
 `--evals` to create `<skill>/evals/evals.json`. `doctor` checks the Python package,
 Codex App Server SDK, Codex binary, and login status. `package` writes a zip to
-`.metaskill/packages/<skill-id>/` unless `--out-dir` is supplied.
+`<skill>/.skill/packages/` unless `--out-dir` is supplied.
 
 ## Evaluation
 
@@ -23,7 +23,7 @@ Codex App Server SDK, Codex binary, and login status. `package` writes a zip to
 metaskill eval run [--suite PATH] [--objective TEXT]
   [--baseline ID] [--candidates IDS] [--split NAME] [--case ID]... [--type TYPE]...
   [--repetitions N] [--model MODEL] [--parallel N] [--timeout SECONDS]
-  [--human-review-sample N] [--source-run-id ID]
+  [--human-review-sample N] [--source-run-id ID] [--resume-run-id ID]
   [--no-baseline] [--no-grade] [--check] [--json]
 
 metaskill eval run --adhoc --task PROMPT [--skill DIR]
@@ -46,6 +46,9 @@ MetaSkill asks the authenticated Codex runtime for its supported default model
 and records the resolved model in `run.json`.
 
 Runs freeze the selected suite, grader definitions, and candidate payloads.
+`--resume-run-id` creates a new immutable run and reuses only completed trials
+whose model, case digest, candidate payload digest, and trial identity still
+match; missing, incomplete, or changed trials execute normally.
 `eval grade` reruns those frozen graders; changing authored grader source needs
 a new run. `eval record` appends a revision for one human grader already
 declared by the frozen suite. The report is regenerated after grade or review

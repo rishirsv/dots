@@ -1,4 +1,4 @@
-"""Packaging boundaries for visible evals and repository-generated state."""
+"""Packaging boundaries for visible evals and skill-local generated state."""
 
 import sys
 import tempfile
@@ -34,7 +34,7 @@ class PackagingTests(unittest.TestCase):
             artifact = Path(result["artifact"])
             self.assertEqual(
                 artifact,
-                skill.resolve() / ".metaskill" / "packages" / "demo" / "demo.zip",
+                skill.resolve() / ".skill" / "packages" / "demo.zip",
             )
             with zipfile.ZipFile(artifact) as archive:
                 names = set(archive.namelist())

@@ -18,6 +18,9 @@ this skill whenever front-end work changes what a user sees.
   the visual direction, typography, layout language, or polish pass.
 - Read [animation-vocabulary.md](references/animation-vocabulary.md) on demand
   when motion or interaction design needs precise terminology.
+- Read [web motion standards](../design-review/references/standards.md) when
+  implementing or polishing web animation: purpose and frequency, easing,
+  duration, origin, interruptibility, performance, accessibility, or gestures.
 - Read [ios-motion.md](references/ios-motion.md) for iOS/SwiftUI animation and,
   on any platform, direct-manipulation gestures, springs, momentum,
   rubber-banding, or synchronized haptics.
@@ -130,8 +133,9 @@ constraint, default to React + Vite.
 
 When motion or gesture behavior is part of the surface, load the applicable
 conditional motion references before implementing or revising it. Use the
-vocabulary to name the intended behavior; use the doctrine only for the
-platform and interaction mechanisms it covers.
+vocabulary to name the intended behavior, the web standards for browser motion,
+and the iOS doctrine for native motion and direct manipulation. Apply each
+platform clause only to the interaction mechanism it covers.
 
 Build the real usable surface first, not a marketing wrapper around a future
 app. Design every reachable state, not just the happy path: default, empty,

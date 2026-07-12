@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 EVALS_DIR_NAME = "evals"
-STATE_DIR_NAME = ".metaskill"
+STATE_DIR_NAME = ".skill"
 
 
 def parse_frontmatter(skill_md):
@@ -100,12 +100,16 @@ def evals_dir(target):
 
 
 def state_root(target, root=None):
-    base = Path(root).expanduser().resolve() if root is not None else repository_root(target)
-    return base / STATE_DIR_NAME
+    """Return generated state owned by the target skill.
+
+    ``root`` remains accepted because workbench discovery callers already pass
+    it, but generated state is intentionally never shared at that root.
+    """
+    return skill_dir_for_target(target) / STATE_DIR_NAME
 
 
 def skill_state_path(target, kind, root=None):
-    return state_root(target, root=root) / kind / Path(skill_id_for_target(target, root=root))
+    return state_root(target, root=root) / kind
 
 
 def runs_path(target, root=None):

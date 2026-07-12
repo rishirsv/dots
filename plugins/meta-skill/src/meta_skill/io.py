@@ -9,21 +9,22 @@ import uuid
 from pathlib import Path
 
 from .errors import CliError
-from .workbench_paths import repository_root, state_root
 
 
 def resolve_run_dir(raw_run):
     run_dir = Path(raw_run).expanduser().resolve()
     if not (run_dir / "run.json").exists():
-        runs_root = state_root(Path.cwd(), root=repository_root(Path.cwd())) / "runs"
-        candidate = (runs_root / raw_run).resolve()
-        if candidate.is_relative_to(runs_root.resolve()) and (candidate / "run.json").is_file():
-            return candidate
-        matches = [path.parent for path in runs_root.rglob("run.json") if path.parent.name == str(raw_run)]
+        matches = [
+            path.parent
+            for path in Path.cwd().rglob("run.json")
+            if path.parent.name == str(raw_run)
+            and path.parent.parent.name == "runs"
+            and path.parent.parent.parent.name == ".skill"
+        ]
         if len(matches) == 1:
             return matches[0].resolve()
         if len(matches) > 1:
-            raise CliError(f"run id is ambiguous; pass a run path or <skill-id>/<run-id>: {raw_run}", 2)
+            raise CliError(f"run id is ambiguous; pass the run path: {raw_run}", 2)
     return run_dir
 
 

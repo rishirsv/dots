@@ -31,6 +31,7 @@ def args(path, **values):
     defaults = dict(suite=str(path), candidates=None, split=None, case=None, type=None, repetitions=None,
                     repetitions_by_type={}, model="test-model", parallel=1, timeout=5,
                     no_baseline=False, no_grade=True, adhoc=False, task=None, skill=None)
+    defaults["resume_run_id"] = None
     defaults.update(values)
     return SimpleNamespace(**defaults)
 
@@ -43,14 +44,19 @@ class RunnerTests(unittest.TestCase):
             manifest = project / "evals" / "evals.json"
             suite(manifest, [{"id": "a", "type": "capability", "prompt": "Do A", "expected_output": "A"}])
 
-            def fake(row, prompt, candidate, events, response, model):
+            def fake(row, prompt, candidate, events, response, model, control):
                 self.assertEqual(prompt, "Do A\n")
                 Path(events).write_text('{"method":"done"}\n')
                 Path(response).write_text("A")
                 (Path(candidate["cwd"]) / "made.txt").write_text(row["trial_id"])
-                return {"status": "completed", "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2}}
+                return {
+                    "status": "completed",
+                    "thread_persistence": "ephemeral",
+                    "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2},
+                }
 
-            with patch("meta_skill.runner.app_server_run", side_effect=fake):
+            with patch("meta_skill.runner.app_server_readiness", return_value=(True, "ready", {"turn_interrupt": True, "ephemeral_threads": True})), \
+                 patch("meta_skill.runner.app_server_run", side_effect=fake):
                 result = run_eval(args(manifest))
             run = Path(result["run_dir"])
             self.assertEqual(result["trials"], 2)
@@ -61,6 +67,12 @@ class RunnerTests(unittest.TestCase):
             self.assertFalse((run / "results.jsonl").exists())
             self.assertFalse((run / "summary.json").exists())
             self.assertTrue((run / "trials" / "a.current.t1" / "artifacts" / "made.txt").is_file())
+            self.assertEqual(
+                json.loads((run / "trials" / "a.current.t1" / "state.json").read_text())["thread_persistence"],
+                "ephemeral",
+            )
+            run_model = json.loads((run / "run.json").read_text())
+            self.assertTrue(run_model["runner"]["capabilities"]["turn_interrupt"])
             self.assertTrue((run / "report.md").is_file())
 
     def test_no_baseline_opt_out_and_missing_grading_evidence(self):
@@ -79,7 +91,14 @@ class RunnerTests(unittest.TestCase):
             manifest = project / "evals" / "evals.json"
             suite(manifest, [{"id": "a", "type": "capability", "prompt": "Wait"}])
 
-            def slow(_row, _prompt, _candidate, _events, response, _model):
+            interrupted = []
+
+            class FakeTurn:
+                def interrupt(self):
+                    interrupted.append(True)
+
+            def slow(_row, _prompt, _candidate, _events, response, _model, control):
+                control.attach(FakeTurn())
                 time.sleep(.05)
                 try:
                     Path(response).write_text("late response")
@@ -87,15 +106,53 @@ class RunnerTests(unittest.TestCase):
                     pass
                 return {"status": "completed"}
 
-            with patch("meta_skill.runner.app_server_run", side_effect=slow):
+            with patch("meta_skill.runner.app_server_readiness", return_value=(True, "ready", {"turn_interrupt": True, "ephemeral_threads": True})), \
+                 patch("meta_skill.runner.app_server_run", side_effect=slow):
                 result = run_eval(args(manifest, no_baseline=True, timeout=.01))
             state = json.loads((Path(result["run_dir"]) / "trials" / "a.current.t1" / "state.json").read_text())
             self.assertEqual(state["status"], "timed_out")
             self.assertEqual(result["trials"], 1)
             self.assertFalse(result["ok"])
+            self.assertTrue(interrupted)
+            self.assertTrue(state["cancellation"]["interrupt_sent"])
             time.sleep(.08)
             self.assertFalse((worktrees_path(project) / result["run_id"]).exists())
             self.assertEqual((Path(result["run_dir"]) / "trials" / "a.current.t1" / "response.md").read_text(), "")
+
+    def test_resume_reuses_only_exact_completed_trials(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            skill(project)
+            manifest = project / "evals" / "evals.json"
+            suite(manifest, [
+                {"id": "a", "type": "capability", "prompt": "Do A"},
+                {"id": "b", "type": "capability", "prompt": "Do B"},
+            ])
+            calls = []
+
+            def fake(row, prompt, candidate, events, response, model, control):
+                calls.append(row["trial_id"])
+                Path(events).write_text('{"method":"done"}\n')
+                Path(response).write_text(prompt.strip())
+                return {"status": "completed"}
+
+            with patch("meta_skill.runner.app_server_readiness", return_value=(True, "ready", {"turn_interrupt": True, "ephemeral_threads": True})), \
+                 patch("meta_skill.runner.app_server_run", side_effect=fake):
+                first = run_eval(args(manifest, no_baseline=True))
+            first_dir = Path(first["run_dir"])
+            incomplete = first_dir / "trials" / "b.current.t1" / "state.json"
+            state = json.loads(incomplete.read_text())
+            state["status"] = "failed"
+            incomplete.write_text(json.dumps(state))
+            calls.clear()
+            with patch("meta_skill.runner.app_server_readiness", return_value=(True, "ready", {"turn_interrupt": True, "ephemeral_threads": True})), \
+                 patch("meta_skill.runner.app_server_run", side_effect=fake):
+                resumed = run_eval(args(manifest, no_baseline=True, resume_run_id=first["run_id"]))
+            resumed_dir = Path(resumed["run_dir"])
+            reused = json.loads((resumed_dir / "trials" / "a.current.t1" / "state.json").read_text())
+            self.assertEqual(resumed["reused_trials"], 1)
+            self.assertEqual(calls, ["b.current.t1"])
+            self.assertEqual(reused["reused_from"]["run_id"], first["run_id"])
 
 
 if __name__ == "__main__":

@@ -11,6 +11,18 @@
   },
   "evals": [
     {
+      "id": "default-review-fixes-with-independent-lenses",
+      "type": "capability",
+      "prompt": "Review and fix the current scope. Run independent bug, reuse and simplification, code quality, and efficiency reviewers; verify their findings, apply every safe same-scope fix, and validate the result.",
+      "expected_output": "A deep bug-hunting review that uses independent reviewer lenses, applies verified same-scope fixes directly, validates the edited result, and reports anything that could not safely be changed.",
+      "expectations": [
+        "Uses independent reviewer lenses for correctness, reuse and simplification, code quality, and efficiency when subagents are available.",
+        "Verifies reviewer candidates against the actual code before acting on them.",
+        "Applies confirmed safe same-scope fixes instead of stopping at a findings report.",
+        "Runs targeted validation after edits and reports fixed, remaining, skipped, and residual-risk items without padding."
+      ]
+    },
+    {
       "id": "clean-diff-zero-findings",
       "type": "capability",
       "prompt": "Review the current small diff. If it is correct, say so plainly; do not invent work to make the review look substantial.",

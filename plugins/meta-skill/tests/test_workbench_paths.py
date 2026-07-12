@@ -1,4 +1,4 @@
-"""Tests for visible eval suites and repository-local generated state."""
+"""Tests for visible eval suites and skill-local generated state."""
 
 import json
 import subprocess
@@ -45,7 +45,7 @@ class WorkbenchPathTests(unittest.TestCase):
 
             result = init_workbench(skill_dir)
 
-            expected = skill_dir.resolve() / ".metaskill"
+            expected = skill_dir.resolve() / ".skill"
             self.assertEqual(Path(result["state"]), expected)
             self.assertTrue(expected.is_dir())
             self.assertFalse((expected / "AGENTS.md").exists())
@@ -58,12 +58,12 @@ class WorkbenchPathTests(unittest.TestCase):
 
             result = init_target(project, with_evals=True)
 
-            self.assertEqual(Path(result["state"]), project.resolve() / ".metaskill")
+            self.assertEqual(Path(result["state"]), project.resolve() / "skill" / ".skill")
             self.assertEqual(Path(result["evals"]), project.resolve() / "skill" / "evals" / "evals.json")
             data = json.loads(Path(result["evals"]).read_text())
             self.assertEqual(data["target"]["ref"], "SKILL.md")
 
-    def test_repository_relative_skill_id_keys_generated_roots(self) -> None:
+    def test_generated_roots_are_nested_in_the_skill(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "repo"
             repo.mkdir()
@@ -72,9 +72,9 @@ class WorkbenchPathTests(unittest.TestCase):
             write_skill(skill_dir, "demo")
 
             self.assertEqual(skill_id_for_target(skill_dir), "plugins/dots/skills/demo")
-            self.assertEqual(runs_path(skill_dir), repo.resolve() / ".metaskill" / "runs" / "plugins" / "dots" / "skills" / "demo")
-            self.assertEqual(worktrees_path(skill_dir), repo.resolve() / ".metaskill" / "worktrees" / "plugins" / "dots" / "skills" / "demo")
-            self.assertEqual(packages_path(skill_dir), repo.resolve() / ".metaskill" / "packages" / "plugins" / "dots" / "skills" / "demo")
+            self.assertEqual(runs_path(skill_dir), skill_dir.resolve() / ".skill" / "runs")
+            self.assertEqual(worktrees_path(skill_dir), skill_dir.resolve() / ".skill" / "worktrees")
+            self.assertEqual(packages_path(skill_dir), skill_dir.resolve() / ".skill" / "packages")
 
     def test_eval_suite_is_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -101,7 +101,7 @@ class WorkbenchPathTests(unittest.TestCase):
 
             self.assertTrue((dest / "reference.md").exists())
             self.assertFalse((dest / "evals").exists())
-            self.assertFalse((dest / ".metaskill").exists())
+            self.assertFalse((dest / ".skill").exists())
             (source / "evals" / "cases" / "private.txt").write_text("changed\n")
             (state_root(source) / "runs" / "private.json").write_text('{"changed":true}\n')
             self.assertEqual(payload_digest(source), before)

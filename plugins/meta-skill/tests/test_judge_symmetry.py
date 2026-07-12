@@ -12,6 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.app_server.judge import _normalize_detail, judge_output  # noqa: E402
+from meta_skill.app_server.trial import app_server_run  # noqa: E402
 
 
 class JudgeSymmetryTests(unittest.TestCase):
@@ -79,17 +80,43 @@ class JudgeSymmetryTests(unittest.TestCase):
             self.assertEqual(detail["label"], "pass")
             self.assertEqual(detail["score"], 1.0)
             self.assertEqual(detail["rationale"], "retry ok")
-            self.assertEqual(detail["events"], 2)
+            self.assertEqual(detail["events"], 4)
             self.assertNotIn("grader_error", detail)
             self.assertEqual(state["thread_starts"], 1)
+            self.assertTrue(state["thread_options"][0]["ephemeral"])
+            self.assertEqual(detail["thread_persistence"], "ephemeral")
             self.assertEqual(len(state["turn_inputs"]), 2)
             self.assertEqual(
                 state["turn_inputs"][1],
                 "Your previous reply was not valid JSON. Respond now with only the JSON object specified earlier. No prose or code fences.",
             )
             events = [json.loads(line) for line in event_path.read_text().splitlines()]
-            self.assertEqual(len(events), 2)
-            self.assertEqual([event["method"] for event in events], ["thread.item_completed", "thread.item_completed"])
+            self.assertEqual(len(events), 4)
+            self.assertEqual(
+                [event["method"] for event in events],
+                ["thread.item_completed", "turn.completed", "thread.item_completed", "turn.completed"],
+            )
+
+    def test_trial_uses_ephemeral_thread(self):
+        state = {"turn_inputs": [], "thread_starts": 0, "thread_options": []}
+        openai_codex, generated = fake_sdk(state, ["done"])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            payload = root / "skill"
+            payload.mkdir()
+            (payload / "SKILL.md").write_text("# Demo\n")
+            with patch("meta_skill.app_server.trial.load_sdk", return_value=(openai_codex, generated)), patch(
+                "meta_skill.app_server.trial.sdk_version", return_value="fake"
+            ):
+                detail = app_server_run(
+                    {"trial_id": "a.current.t1"},
+                    "Do A",
+                    {"cwd": str(root), "payload_path": str(payload)},
+                    root / "events.jsonl",
+                    root / "response.md",
+                )
+        self.assertTrue(state["thread_options"][0]["ephemeral"])
+        self.assertEqual(detail["thread_persistence"], "ephemeral")
 
 
 def fake_sdk(state, responses):
@@ -119,24 +146,33 @@ def fake_sdk(state, responses):
         def __init__(self, turn_id, response):
             self.id = turn_id
             self.response = response
+            self.status = SimpleNamespace(value="completed")
+            self.error = None
+            self.duration_ms = 1
 
         def stream(self):
             yield Event(
                 "thread.item_completed",
                 ItemCompletedNotification(self.id, AgentMessageThreadItem(self.response, MessagePhase.final_answer)),
             )
+            yield Event("turn.completed", TurnCompletedNotification(self))
 
     class Thread:
         id = "thread-fake"
 
         def turn(self, inputs, **_kwargs):
-            state["turn_inputs"].append(inputs[0].text)
+            state["turn_inputs"].append(inputs[-1].text)
             index = len(state["turn_inputs"]) - 1
             return Turn(f"turn-{index + 1}", responses[index])
 
     class TextInput:
         def __init__(self, text):
             self.text = text
+
+    class SkillInput:
+        def __init__(self, name, path):
+            self.name = name
+            self.path = path
 
     class Codex:
         def __init__(self, config):
@@ -148,8 +184,9 @@ def fake_sdk(state, responses):
         def __exit__(self, exc_type, exc, tb):
             return False
 
-        def thread_start(self, **_kwargs):
+        def thread_start(self, **kwargs):
             state["thread_starts"] += 1
+            state.setdefault("thread_options", []).append(kwargs)
             return Thread()
 
     openai_codex = SimpleNamespace(
@@ -157,6 +194,7 @@ def fake_sdk(state, responses):
         ApprovalMode=SimpleNamespace(deny_all="deny_all"),
         CodexConfig=SimpleNamespace,
         Codex=Codex,
+        SkillInput=SkillInput,
         TextInput=TextInput,
     )
     generated = SimpleNamespace(

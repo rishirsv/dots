@@ -5,7 +5,7 @@
 /.claude/
 
 # MetaSkill generated state (authored <skill>/evals/ remains trackable)
-/.metaskill/
+.skill/
 
 # macOS
 .DS_Store

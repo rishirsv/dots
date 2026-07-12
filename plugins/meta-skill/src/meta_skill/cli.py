@@ -259,6 +259,7 @@ def build_parser():
     run.add_argument("--no-grade", action="store_true")
     run.add_argument("--human-review-sample", type=int)
     run.add_argument("--source-run-id")
+    run.add_argument("--resume-run-id", help="Reuse exact completed trials from an interrupted run")
     run.add_argument("--adhoc", action="store_true")
     run.add_argument("--task")
     run.add_argument("--skill")

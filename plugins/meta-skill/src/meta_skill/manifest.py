@@ -49,13 +49,11 @@ def skill_id_from_suite(path):
 
 
 def runs_from_suite(path):
-    state = workbench_from_suite(path)
-    return state / "runs" / Path(skill_id_from_suite(path))
+    return workbench_from_suite(path) / "runs"
 
 
 def worktrees_from_suite(path):
-    state = workbench_from_suite(path)
-    return state / "worktrees" / Path(skill_id_from_suite(path))
+    return workbench_from_suite(path) / "worktrees"
 
 
 def case_dir(suite, case_id):

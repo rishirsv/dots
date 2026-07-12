@@ -39,6 +39,41 @@
         "Keeps tool names, reviewer identities, prompts, and internal disposition metadata out of the reader-facing report.",
         "Reports evidence limits and verification performed."
       ]
+    },
+    {
+      "id": "motion-interaction-review",
+      "type": "capability",
+      "prompt": "Review this recording of the draggable drawer and tell me whether the motion is ready to ship.",
+      "expected_output": "An evidence-based motion interaction verdict covering physicality, timing, interruption, gesture response, accessibility, and any remaining verification limits.",
+      "expectations": [
+        "Chooses the motion interaction path and inspects dynamic evidence.",
+        "Does not infer timing, velocity continuity, or interruption from a still frame.",
+        "Returns concrete findings with acceptance checks and a pass or block result."
+      ]
+    },
+    {
+      "id": "motion-diff-review",
+      "type": "capability",
+      "prompt": "Review only the animation changes in this diff and give me a block or approve verdict.",
+      "expected_output": "A motion-specific code review with verified file-and-line findings, exact corrections, required feel checks, and an explicit verdict.",
+      "expectations": [
+        "Treats animation code as the narrow exception to the general code-review exclusion.",
+        "Verifies each finding against the changed code and repository conventions.",
+        "Labels claims that require playback as Needs testing rather than asserting feel from source alone.",
+        "Closes with Block or Approve."
+      ]
+    },
+    {
+      "id": "motion-codebase-audit",
+      "type": "capability",
+      "prompt": "Audit motion across this repository and give me a prioritized improvement roadmap. Do not implement anything.",
+      "expected_output": "A source-wide motion audit ordered by leverage, with vetted findings, missed opportunities, and self-contained plans when requested.",
+      "expectations": [
+        "Maps the motion stack, conventions, personality, and interaction frequency before judging it.",
+        "Audits purpose, timing, physicality, interruption, performance, accessibility, cohesion, and missed opportunities.",
+        "Re-reads every cited location before presenting it.",
+        "Does not modify product source or overclaim motion feel from code alone."
+      ]
     }
   ]
 }

@@ -9,7 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .app_server.policy import APP_SERVER_APPROVAL_POLICY, APP_SERVER_SANDBOX
-from .app_server.trial import app_server_run
+from .app_server.client import app_server_readiness
+from .app_server.trial import TurnControl, app_server_run
 from .candidates import candidate_source, cleanup_candidate_source, resolve_candidate, snapshot_candidate
 from .errors import CliError
 from .ids import run_id, utc_now
@@ -88,20 +89,20 @@ def _state(row, run_dir, status, **extra):
 def _run_with_deadline(row, prompt, candidate, event_path, response_path, model, timeout_seconds):
     completed = threading.Event()
     outcome = {}
+    control = TurnControl()
 
     def call_upstream():
         try:
-            outcome["detail"] = app_server_run(row, prompt, candidate, event_path, response_path, model)
+            outcome["detail"] = app_server_run(row, prompt, candidate, event_path, response_path, model, control)
         except Exception as exc:
             outcome["error"] = str(exc)
         finally:
             completed.set()
 
-    # Upstream is synchronous and has no cancel primitive. A daemon thread lets
-    # the CLI honor its deadline; the timed-out trial discards any late return.
     threading.Thread(target=call_upstream, daemon=True).start()
     if not completed.wait(timeout_seconds):
-        return {}, f"trial exceeded {timeout_seconds}s deadline", True, completed
+        control.interrupt()
+        return control.detail(), f"trial exceeded {timeout_seconds}s deadline", True, completed
     if outcome.get("error"):
         return {}, outcome["error"], False, None
     return outcome.get("detail") or {}, None, False, None
@@ -165,9 +166,13 @@ def run_trial(row, run_dir, worktree_run_root, frozen_cases, model, timeout_seco
         duration_ms=int((completed - started) * 1000),
         thread_id=detail.get("thread_id"),
         turn_id=detail.get("turn_id"),
+        thread_persistence=detail.get("thread_persistence"),
         usage=detail.get("usage"),
         produced_artifacts=produced,
         error=error,
+        cancellation={key: detail.get(key) for key in (
+            "interrupt_supported", "interrupt_requested", "interrupt_sent", "interrupt_error"
+        ) if key in detail},
     )
     write_json(state_path(run_dir, trial_id), final)
     if workspace and timed_out_completion is not None:
@@ -242,8 +247,52 @@ def eval_context(args):
     }
 
 
+def _reuse_completed_trials(run_dir, runs_root, resume_run_id, run_model, plan):
+    """Copy exact completed trial evidence from an interrupted earlier run."""
+    if not resume_run_id:
+        return set()
+    if Path(str(resume_run_id)).name != str(resume_run_id):
+        raise CliError("resume run id must be a run name, not a path", 2)
+    source_dir = Path(runs_root) / str(resume_run_id)
+    source_run_path = source_dir / "run.json"
+    if not source_run_path.is_file():
+        raise CliError(f"resume run not found: {resume_run_id}", 2)
+    source = read_json(source_run_path)
+    if source.get("model") != run_model.get("model"):
+        raise CliError("resume run model differs from the new run", 2)
+    source_cases = {row["eval_id"]: row.get("case_digest") for row in source.get("eval_digests") or []}
+    current_cases = {row["eval_id"]: row.get("case_digest") for row in run_model.get("eval_digests") or []}
+    source_candidates = {row["candidate"]: row.get("payload_digest") for row in source.get("candidates") or []}
+    current_candidates = {row["candidate"]: row.get("payload_digest") for row in run_model.get("candidates") or []}
+    reused = set()
+    for row in plan:
+        trial_id = row["trial_id"]
+        eval_id = row["eval"]["id"]
+        candidate_id = row["candidate"]["candidate"]
+        if source_cases.get(eval_id) != current_cases.get(eval_id):
+            continue
+        if source_candidates.get(candidate_id) != current_candidates.get(candidate_id):
+            continue
+        source_trial = source_dir / "trials" / trial_id
+        source_state_path = source_trial / "state.json"
+        if not source_state_path.is_file() or read_json(source_state_path).get("status") != "completed":
+            continue
+        destination = trial_dir(run_dir, trial_id)
+        shutil.rmtree(destination)
+        shutil.copytree(source_trial, destination)
+        state = read_json(destination / "state.json")
+        state["run_id"] = Path(run_dir).name
+        state["reused_from"] = {"run_id": str(resume_run_id), "trial_id": trial_id}
+        write_json(destination / "state.json", state)
+        reused.add(trial_id)
+    return reused
+
+
 def run_eval(args, context=None, run_id_value=None):
     codex_binary = configure_codex_runtime()
+    ready, readiness_message, runtime_capabilities = app_server_readiness()
+    if not ready:
+        raise CliError(readiness_message, 2)
     context = context or eval_context(args)
     manifest = context["manifest"]
     suite = context["suite"]
@@ -317,6 +366,7 @@ def run_eval(args, context=None, run_id_value=None):
                 "parallel": max(1, int(getattr(args, "parallel", 1) or 1)),
                 "timeout_seconds": timeout_seconds,
                 "codex_binary": codex_binary,
+                "capabilities": runtime_capabilities,
             },
             "model": model,
             "baseline_candidate": baseline_candidate or next(
@@ -328,6 +378,7 @@ def run_eval(args, context=None, run_id_value=None):
                 None,
             ),
             "source_run_id": getattr(args, "source_run_id", None),
+            "resume_run_id": getattr(args, "resume_run_id", None),
             "human_review_sample": getattr(args, "human_review_sample", None),
             "suite_digest": frozen_suite["suite_digest"],
             "eval_digests": [
@@ -352,6 +403,11 @@ def run_eval(args, context=None, run_id_value=None):
             root = trial_dir(run_dir, row["trial_id"])
             root.mkdir(parents=True, exist_ok=True)
             write_json(state_path(run_dir, row["trial_id"]), _state(row, run_dir, "queued"))
+        reused_trial_ids = _reuse_completed_trials(
+            run_dir, runs_root, getattr(args, "resume_run_id", None), run_model, plan
+        )
+        run_model["reused_trials"] = len(reused_trial_ids)
+        write_json(run_dir / "run.json", run_model)
     except Exception as exc:
         if not (run_dir / "run.json").exists():
             write_json(
@@ -374,11 +430,14 @@ def run_eval(args, context=None, run_id_value=None):
         return result
 
     if parallel == 1:
-        for position, row in enumerate(plan, 1):
+        for position, row in enumerate((row for row in plan if row["trial_id"] not in reused_trial_ids), 1):
             execute(position, row)
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
-            futures = [executor.submit(execute, position, row) for position, row in enumerate(plan, 1)]
+            futures = [
+                executor.submit(execute, position, row)
+                for position, row in enumerate((row for row in plan if row["trial_id"] not in reused_trial_ids), 1)
+            ]
             for future in concurrent.futures.as_completed(futures):
                 future.result()
 
@@ -397,6 +456,7 @@ def run_eval(args, context=None, run_id_value=None):
         "run_dir": str(run_dir),
         "adhoc": adhoc,
         "trials": len(plan),
+        "reused_trials": len(reused_trial_ids),
         "totals": report.get("totals"),
         "report_path": str(report_path),
     }

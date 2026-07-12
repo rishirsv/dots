@@ -120,7 +120,7 @@ def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, exp
             approval_mode=approval_mode,
             cwd=str(cwd),
             sandbox=sandbox,
-            ephemeral=False,
+            ephemeral=True,
             model=model,
         )
         turn = thread.turn([openai_codex.TextInput(text=prompt)], cwd=str(cwd), sandbox=sandbox, model=model)
@@ -152,7 +152,7 @@ def judge_output(*, judge_guidance, task_text, output_text, cwd, event_path, exp
         **detail,
         "thread_id": thread.id,
         "turn_id": turn.id,
-        "thread_persistence": "persistent",
+        "thread_persistence": "ephemeral",
         "usage": folded["usage"],
         "events": folded["event_count"],
         "sdk_version": sdk_version(),

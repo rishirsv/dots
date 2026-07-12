@@ -37,5 +37,10 @@ def app_server_readiness():
         return False, exc.message, exc.detail
     symbols = [getattr(openai_codex, name) for name in REQUIRED_TOP_LEVEL]
     symbols.extend(getattr(generated, name) for name in REQUIRED_GENERATED)
-    return all(symbols), "required App Server SDK symbols available", {"sdk_version": sdk_version()}
-
+    turn_handle = getattr(openai_codex, "TurnHandle", None)
+    interrupt_supported = bool(turn_handle and callable(getattr(turn_handle, "interrupt", None)))
+    return all(symbols), "required App Server SDK symbols available", {
+        "sdk_version": sdk_version(),
+        "turn_interrupt": interrupt_supported,
+        "ephemeral_threads": True,
+    }

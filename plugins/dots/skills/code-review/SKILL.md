@@ -14,6 +14,12 @@ Correctness comes first. Review is report-only by default. Edit source only
 when the user explicitly asks to fix findings or otherwise authorizes changes;
 then keep fixes within the approved scope and verify behavior.
 
+The skill's default UI prompt is the review-and-fix path: run a full bug-hunting
+review with independent reviewer lenses, verify their candidates, apply every
+safe same-scope fix, and validate the result. The prompt itself authorizes those
+edits. Keep an explicitly requested review read-only unless the user also asks
+for fixes.
+
 Audit Mode is the broad-review case: review a repo, subsystem, package, branch,
 or category target beyond the current diff. Do not silently widen a diff review
 into a repo audit. Architecture Review owns requests primarily about structural
@@ -93,9 +99,10 @@ Use the smallest review shape that can catch the likely failures:
   concurrency, and migrations usually justify this path.
 
 Depth controls evidence gathering, not a finding quota. A clean review may
-return no findings. Delegate only when independent lanes materially improve
-coverage; choose the lanes that match the risk rather than launching a fixed
-number of agents.
+return no findings. Use Deep when the request or default prompt asks for
+independent reviewers or subagents. Otherwise, delegate only when independent
+lanes materially improve coverage; choose the lanes that match the risk rather
+than launching a fixed number of agents.
 
 ## Phase 3: Behavior Lock
 

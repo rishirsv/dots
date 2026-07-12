@@ -31,7 +31,8 @@ from ..workbench_paths import evals_path, parse_frontmatter, runs_path, skill_id
 APP_PATH = Path(__file__).with_name("app.html")
 ANNOTATION_TAGS = {
     "taste-rule", "one-off", "task-defect", "grader-defect", "harness-error",
-    "environment-failure", "candidate-failure", "expected-change",
+    "environment-failure", "candidate-failure", "routing-failure", "model-variance",
+    "expected-change",
 }
 ANNOTATION_ARTIFACTS = {"response", "transcript", "task", "artifact"}
 FILE_LIMIT = 60000
@@ -146,7 +147,7 @@ def discover_skills(root):
             list_runs(
                 str(suite), blind_pending_human=True, runs_root=skill_runs_root
             )["runs"]
-            if suite.is_file() and suite_error is None
+            if suite_error is None
             else []
         )
         latest = runs[0] if runs else None
@@ -384,7 +385,7 @@ class Handler(BaseHTTPRequestHandler):
                 )
                 suite["data_boundary"] = {
                     "runner": "codex_app_server",
-                    "storage_root": str(Path(self.server.root) / ".metaskill"),
+                    "storage_root": str(Path(skill["path"]) / ".skill"),
                     "sandbox": "workspace_write",
                     "approval_policy": "deny_all",
                     "tools": "Codex runtime defaults; MetaSkill does not enumerate them",

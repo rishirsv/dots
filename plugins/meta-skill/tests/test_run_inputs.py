@@ -26,8 +26,8 @@ class RunInputTests(unittest.TestCase):
             (authored / "input.txt").write_text("fixture")
             suite = skill / "evals" / "evals.json"
             suite.write_text(json.dumps({"schema_version": 2}))
-            run_dir = Path(tmp) / ".metaskill" / "runs" / "demo" / "run-1"
-            worktree_root = Path(tmp) / ".metaskill" / "worktrees" / "demo" / "run-1"
+            run_dir = Path(tmp) / ".skill" / "runs" / "demo" / "run-1"
+            worktree_root = Path(tmp) / ".skill" / "worktrees" / "demo" / "run-1"
             case = {"id": "a", "type": "capability", "priority": "high", "prompt": {"path": "task.md"}, "expected_output": {"path": "expected.md"}, "expectations": ["Pass"], "fixtures": ["input.txt"], "graders": [{"kind": "model", "id": "judge", "path": "judge.md"}], "annotations": [{"tag": "task-defect", "note": "Review wording"}]}
             frozen = freeze_run_inputs({"target": {"ref": "SKILL.md"}}, suite, run_dir, [case], [{"candidate": "current"}])
             frozen_case = {**frozen["evals"][0], "case_root": str(run_dir / "inputs" / "cases" / "a")}
@@ -52,7 +52,7 @@ class RunInputTests(unittest.TestCase):
             (authored / "fixture").symlink_to("secret")
             case = {"id": "a", "prompt": "A", "fixtures": ["fixture"], "expectations": ["Pass"]}
             with self.assertRaises(CliError) as caught:
-                freeze_run_inputs({}, skill / "evals" / "evals.json", Path(tmp) / ".metaskill" / "runs" / "demo" / "r", [case], [])
+                freeze_run_inputs({}, skill / "evals" / "evals.json", Path(tmp) / ".skill" / "runs" / "demo" / "r", [case], [])
             self.assertIn("must not contain symlinks", caught.exception.message)
 
     def test_missing_file_prompt_fails(self):
@@ -60,7 +60,7 @@ class RunInputTests(unittest.TestCase):
             skill = Path(tmp) / "demo"
             (skill / "evals" / "cases" / "a").mkdir(parents=True)
             with self.assertRaises(CliError) as caught:
-                freeze_run_inputs({}, skill / "evals" / "evals.json", Path(tmp) / ".metaskill" / "runs" / "demo" / "r", [{"id": "a", "prompt": {"path": "task.md"}, "expectations": ["Pass"]}], [])
+                freeze_run_inputs({}, skill / "evals" / "evals.json", Path(tmp) / ".skill" / "runs" / "demo" / "r", [{"id": "a", "prompt": {"path": "task.md"}, "expectations": ["Pass"]}], [])
             self.assertIn("prompt file missing", caught.exception.message)
 
 

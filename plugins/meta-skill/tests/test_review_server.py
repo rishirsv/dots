@@ -2,6 +2,7 @@
 
 import http.client
 import json
+import subprocess
 import sys
 import tempfile
 import threading
@@ -14,7 +15,7 @@ from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
-from meta_skill.workbench_server.server import build_case_packet, build_trial_packet, create_server, discover_skills
+from meta_skill.workbench_server.server import APP_PATH, build_case_packet, build_trial_packet, create_server, discover_skills
 from meta_skill.report import build_report
 
 
@@ -30,7 +31,7 @@ def fixture(root):
     workbench = skill / "evals"
     eval_row = {"id": "a", "type": "capability", "prompt": "Do A", "expectations": ["Good"], "graders": [{"kind": "model", "id": "judge", "metric": "quality"}, {"kind": "human", "id": "taste", "metric": "quality"}]}
     write(workbench / "evals.json", {"schema_version": 2, "skill_name": "demo", "target": {"type": "skill", "ref": "SKILL.md"}, "evals": [eval_row]})
-    run = root / ".metaskill" / "runs" / "skill" / "run-1"
+    run = skill / ".skill" / "runs" / "run-1"
     write(run / "run.json", {"schema_version": 2, "run_id": "run-1", "runner": {"grading": True}, "candidates": [{"candidate": "current", "source_kind": "current_worktree"}], "trials": [{"trial_id": "a.current.t1", "eval_id": "a", "candidate": "current", "repetition": 1}]})
     frozen = {**eval_row, "prompt": {"path": "task.md"}, "expected_output": None}
     write(run / "inputs" / "suite.json", {"schema_version": 2, "evals": [frozen]})
@@ -104,7 +105,7 @@ class WorkbenchServerTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(suite["cases"][0]["id"], "a")
         self.assertTrue(suite["data_boundary"]["external_model_boundary"])
-        self.assertIn(".metaskill", suite["data_boundary"]["storage_root"])
+        self.assertIn(".skill", suite["data_boundary"]["storage_root"])
 
     def test_blind_packet_grade_revision_and_reveal(self):
         path = "/api/trials/a.current.t1?skill=skill&run=run-1"
@@ -128,12 +129,12 @@ class WorkbenchServerTests(unittest.TestCase):
         self.assertEqual(overview["trials"][0]["failed_checks"][0]["evidence"], "model-only evidence")
 
     def test_annotation_is_trial_local_and_run_launch_endpoint_exists(self):
-        body = {"skill": "skill", "run": "run-1", "trial_id": "a.current.t1", "note": "Ambiguous wording"}
+        body = {"skill": "skill", "run": "run-1", "trial_id": "a.current.t1", "note": "Ambiguous wording", "tag": "routing-failure"}
         self.assertEqual(self.request("POST", "/api/annotations", body)[0], 200)
         review = json.loads((self.run / "trials" / "a.current.t1" / "review.json").read_text())
         self.assertEqual(review["annotations"][0]["note"], "Ambiguous wording")
         self.assertEqual(review["annotations"][0]["artifact"], "response")
-        self.assertEqual(review["annotations"][0]["tag"], "one-off")
+        self.assertEqual(review["annotations"][0]["tag"], "routing-failure")
         called = threading.Event()
         self.server.run_background = lambda *_args: called.set()
         status, result = self.request("POST", "/api/runs", {"skill": "skill"})
@@ -318,6 +319,19 @@ class WorkbenchServerTests(unittest.TestCase):
         suite = json.loads((self.skill / "evals" / "evals.json").read_text())
         self.assertEqual(suite["evals"][-1]["id"], "promoted-a")
 
+    def test_workbench_ui_keeps_the_review_loop_and_valid_javascript(self):
+        html = APP_PATH.read_text()
+        script = html.split("<script>", 1)[1].split("</script>", 1)[0]
+        result = subprocess.run(
+            ["node", "--check", "-"], input=script, text=True, capture_output=True
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for contract in (
+            "syncUrl", "routing-failure", "model-variance", "Add regression case",
+            "Needs attention", "unstable", "Feedback about",
+        ):
+            self.assertIn(contract, html)
+
     def test_model_grade_is_visible_when_no_human_review_is_declared(self):
         suite_path = self.run / "inputs" / "suite.json"
         suite = json.loads(suite_path.read_text())
@@ -408,7 +422,7 @@ class WorkbenchServerTests(unittest.TestCase):
         with patch("meta_skill.workbench_server.server.run_eval", side_effect=RuntimeError("runtime unavailable")):
             status, result = self.request("POST", "/api/runs", {"skill": "skill"})
             self.assertEqual(status, 202)
-            run_json = self.root / ".metaskill" / "runs" / "skill" / result["run_id"] / "run.json"
+            run_json = self.skill / ".skill" / "runs" / result["run_id"] / "run.json"
             for _ in range(50):
                 if run_json.exists():
                     break
@@ -421,12 +435,34 @@ class WorkbenchServerTests(unittest.TestCase):
         private.mkdir(parents=True)
         (private / "SKILL.md").write_text('---\nname: private\ndescription: "Private fixture."\n---\n')
         write(private / "evals" / "evals.json", {"schema_version": 2, "evals": []})
-        hidden = self.root / ".metaskill" / "snapshot"
+        hidden = self.root / ".skill" / "snapshot"
         hidden.mkdir(parents=True)
         (hidden / "SKILL.md").write_text('---\nname: hidden\ndescription: "Hidden snapshot."\n---\n')
         names = {row["name"] for row in discover_skills(self.root)}
         self.assertIn("private", names)
         self.assertNotIn("hidden", names)
+
+    def test_discovery_lists_adhoc_runs_without_authored_suite(self):
+        skill = self.root / "adhoc-only"
+        skill.mkdir()
+        (skill / "SKILL.md").write_text(
+            '---\nname: adhoc-only\ndescription: "Use for ad hoc discovery tests."\n---\n'
+        )
+        run = skill / ".skill" / "runs" / "run-adhoc"
+        write(
+            run / "run.json",
+            {
+                "schema_version": 2,
+                "run_id": "run-adhoc",
+                "planning_error": "fixture stopped before execution",
+                "candidates": [],
+                "trials": [],
+            },
+        )
+
+        row = next(item for item in discover_skills(self.root) if item["name"] == "adhoc-only")
+        self.assertFalse(row["suite_ready"])
+        self.assertEqual(row["run_count"], 1)
 
 
 if __name__ == "__main__":

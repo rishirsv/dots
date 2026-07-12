@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "dots",
-      "version": "0.2.15",
+      "version": "0.2.19",
       "description": "Opinionated development workflows and reusable skills for planning, building, reviewing, documenting, and shipping software.",
       "author": {
         "name": "Rishi"

@@ -83,6 +83,12 @@ feedback side by side. Start with one trial per case, then rerun selected cases
 or add repetitions when variance, disagreement, or a consequential claim needs
 more evidence.
 
+Use the structured finding category to identify the first supported cause and
+link it to the exact response or artifact. After the user approves the expected
+behavior, promote a reviewed failure into a regression case from the same case
+view. Do not turn an observation into a durable requirement without that
+approval.
+
 Treat feedback as evidence for the next agent turn. Diagnose whether it points
 to the case, grader, harness, environment, or target skill; do not ask the user
 to classify the note. Hand source changes to `skill-author`, then rerun the
@@ -96,9 +102,30 @@ interface for automation and escape hatches.
 
 ## Run And Report
 
-Run only after the suite passes its preflight checks. Treat a run as frozen
+For an interactive request, keep the experience in the current Codex task.
+Preflight the suite, launch the existing CLI run, monitor it to a terminal
+state, inspect the report and produced artifacts, and summarize the evidence
+back in this task. Give a short progress update when execution is still running
+after a meaningful wait. Open the workbench in the Codex In-App Browser when
+the user asks to review results or when artifact inspection or human feedback
+is the next useful action.
+
+App Server trial and judge threads are ephemeral execution details; the
+filesystem run is the durable evidence. Do not create user-owned Codex tasks for
+individual trials. Use collaboration subagents only for bounded parallel
+analysis of completed evidence when that materially helps; they are not a
+second trial runner.
+
+Run only after the suite and App Server capability checks pass. Generated state
+belongs to the target skill under `<skill>/.skill/`; never create a shared
+repository-level run store. Treat a run as frozen
 evidence: changing the suite, candidate source, or grader definition requires a
 new run; recording or revising a grade regenerates the derived report.
+
+When an interrupted run contains exact completed trials, resume from it into a
+new immutable run instead of repeating valid work. A reused trial must match the
+model, case digest, candidate payload digest, and trial identity. Preserve its
+source-run provenance and execute every incomplete or mismatched trial normally.
 
 Lead the report with the run objective and cases-by-versions comparison. For each failure, show the failed
 expectation or check and its evidence.

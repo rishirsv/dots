@@ -1,8 +1,9 @@
 # Evaluation Storage Layout
 
 Authored evaluation inputs live with the skill and version with it. Generated
-state lives under one ignored repository root. The filesystem is authoritative;
-the workbench does not maintain a database or metadata index.
+state lives under the owning skill's ignored `.skill/` directory. The
+filesystem is authoritative; the workbench does not maintain a database or
+metadata index.
 
 ```text
 <skill>/
@@ -14,8 +15,8 @@ the workbench does not maintain a database or metadata index.
       expected.md               # when declared
       <fixtures and graders>    # when declared
 
-<repository>/.metaskill/
-  runs/<skill-id>/<run-id>/
+<skill>/.skill/
+  runs/<run-id>/
     run.json
     report.md
     pairwise-reviews.jsonl      # after pairwise human review
@@ -32,15 +33,14 @@ the workbench does not maintain a database or metadata index.
       artifacts/
       grades.jsonl
       review.json               # after an annotation
-  worktrees/<skill-id>/<run-id>/
+  worktrees/<run-id>/
     candidates/<candidate-id>/  # temporary git worktrees
     trials/<trial-workspace>/   # temporary execution workspaces
-  packages/<skill-id>/
+  packages/
 ```
 
-`skill-id` is the skill directory's repository-relative path. `run-id` is the
-immutable unique identifier for one recorded execution. Moving a skill creates
-a new skill ID; existing runs remain under the ID recorded when they ran.
+`run-id` is the immutable unique identifier for one recorded execution. Moving
+or copying a skill carries its generated evaluation state with it.
 
 `run.json` is immutable experiment planning and provenance: objective,
 baseline, candidates, case digests, runner policy, model, repetitions,

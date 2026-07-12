@@ -1,0 +1,1 @@
+I’m blocked: the Spreadsheets skill requires its workspace dependency loader for CSV authoring, but that loader isn’t available in this session. Per the skill, I can’t create the CSV or notes file using an alternate method.
