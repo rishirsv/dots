@@ -13,10 +13,22 @@
     {
       "id": "default-review-fixes-with-independent-lenses",
       "type": "capability",
-      "prompt": "Review and fix the current scope. Run independent bug, reuse and simplification, code quality, and efficiency reviewers; verify their findings, apply every safe same-scope fix, and validate the result.",
+      "prompt": "Review and fix the current changes. Ask independent reviewers to look for bugs, missed reuse and simplification, code quality issues, and inefficiencies. Verify their findings, make every safe fix within scope, and validate the result.",
       "expected_output": "A deep bug-hunting review that uses independent reviewer lenses, applies verified same-scope fixes directly, validates the edited result, and reports anything that could not safely be changed.",
       "expectations": [
         "Uses independent reviewer lenses for correctness, reuse and simplification, code quality, and efficiency when subagents are available.",
+        "Verifies reviewer candidates against the actual code before acting on them.",
+        "Applies confirmed safe same-scope fixes instead of stopping at a findings report.",
+        "Runs targeted validation after edits and reports fixed, remaining, skipped, and residual-risk items without padding."
+      ]
+    },
+    {
+      "id": "natural-review-and-fix-runs-full-workflow",
+      "type": "capability",
+      "prompt": "Review and fix my current changes.",
+      "expected_output": "A deep bug-hunting review that delegates independent finder lenses, verifies their candidates, applies safe same-scope fixes, and validates the edited result.",
+      "expectations": [
+        "Uses separate correctness, reuse and simplification, code quality, and efficiency reviewers when subagents are available.",
         "Verifies reviewer candidates against the actual code before acting on them.",
         "Applies confirmed safe same-scope fixes instead of stopping at a findings report.",
         "Runs targeted validation after edits and reports fixed, remaining, skipped, and residual-risk items without padding."

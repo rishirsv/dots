@@ -10,15 +10,10 @@ spec, roadmap, or an explicit repo/subsystem audit target. Preserve behavior,
 find correctness problems, identify unnecessary complexity, and point to
 canonical code the change should reuse. Scale effort to the scope and risk.
 
-Correctness comes first. Review is report-only by default. Edit source only
-when the user explicitly asks to fix findings or otherwise authorizes changes;
-then keep fixes within the approved scope and verify behavior.
-
-The skill's default UI prompt is the review-and-fix path: run a full bug-hunting
-review with independent reviewer lenses, verify their candidates, apply every
-safe same-scope fix, and validate the result. The prompt itself authorizes those
-edits. Keep an explicitly requested review read-only unless the user also asks
-for fixes.
+Correctness comes first. Review-only requests are report-only. When the user
+asks to review and fix the code, run the full bug-hunting review with independent
+reviewer lenses. Verify their findings, apply every safe fix within scope, and
+validate the result. The request to fix authorizes those edits.
 
 Audit Mode is the broad-review case: review a repo, subsystem, package, branch,
 or category target beyond the current diff. Do not silently widen a diff review
@@ -99,10 +94,11 @@ Use the smallest review shape that can catch the likely failures:
   concurrency, and migrations usually justify this path.
 
 Depth controls evidence gathering, not a finding quota. A clean review may
-return no findings. Use Deep when the request or default prompt asks for
-independent reviewers or subagents. Otherwise, delegate only when independent
-lanes materially improve coverage; choose the lanes that match the risk rather
-than launching a fixed number of agents.
+return no findings. When the user asks for independent reviewers or subagents,
+use Deep and assign each requested lens to a separate reviewer when multi-agent
+tools are available. Run independent reviewers concurrently. If multi-agent
+tools are unavailable, make the same passes directly. For other reviews,
+delegate only when independent lanes materially improve coverage.
 
 ## Phase 3: Behavior Lock
 
@@ -128,8 +124,7 @@ For a deep review, choose independent lenses from
 [../../references/review-checklists.md](../../references/review-checklists.md):
 correctness, reuse and structural simplification, code quality, efficiency and
 atomicity, or an extra angle tied to the risk. Run useful lanes concurrently
-when a multi-agent tool is available; otherwise make the passes directly. Do
-not delegate a lane whose scope is already fully understood by the parent.
+when a multi-agent tool is available; otherwise make the passes directly.
 
 Give every finder the same scope packet: captured diff, changed-file list,
 compact repo guidance, applicable paths, user focus, and changed-file contents

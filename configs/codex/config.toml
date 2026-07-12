@@ -72,6 +72,78 @@ trust_level = "trusted"
 [projects."/Users/rishi/Documents/Codex/2026-07-11/perge-and-clean-all-this-eval"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/route-selection-artifacts.current.t1-aqk_tfqx"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/route-selection-artifacts.no-skill.t1-v24z4gmj"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/clean-report-boundary.current.t1-qo5i0cx1"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/clean-report-boundary.no-skill.t1-9m_4bok2"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/provider-failure.no-skill.t1-equ22k_k"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/provider-failure.current.t1-xo8orxzx"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/evidence-grounding.no-skill.t1-qsgwrzw3"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/evidence-grounding.current.t1-x__sqyr8"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-12/goal-analyze-my-complete-six-year"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/reddit-texture.no-skill.t1-1pru8t3c"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/reddit-texture.current.t1-g_q4xwfx"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/x-chatter.no-skill.t1-m606164j"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/x-chatter.current.t1-m3ri3nfy"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/polymarket-proxy.no-skill.t1-nd9lsphq"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/polymarket-proxy.current.t1-bbvx4ytl"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/standard-deep-uplift.no-skill.t1-9s8l0ic3"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/standard-deep-uplift.current.t1-c16wa4nz"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/orchestration-lifecycle.no-skill.t1-cz0g4tae"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/orchestration-lifecycle.current.t1-3qkphq1k"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/safety-secret-leakage.no-skill.t1-8xzs4may"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/safety-secret-leakage.current.t1-jlrz_us2"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/live-readiness.no-skill.t1-bfo45hkt"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/live-readiness.current.t1-knpl0c6o"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/runs/pulse/run-20260712T203644129701Z-6166c717"]
+trust_level = "trusted"
+
 [features]
 apps = true
 undo = true
