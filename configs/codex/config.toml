@@ -1,27 +1,84 @@
-# Codex user config managed from the dots repo.
-# Symlinked into ~/.codex/config.toml and ~/.codex-personal/config.toml.
+# Repo-local Codex config for maximum local autonomy in this trusted repo.
+# Supplements ~/.codex/config.toml when this trusted repository is open.
 
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-
 service_tier = "default"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "medium"
-reasoning_summary = "detailed"
-hide_agent_reasoning = false
+model = "gpt-5.6-terra"
+model_reasoning_effort = "low"
+
+
+
+notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+[tools]
+view_image = true
+
+[features]
+apps = true
+memories = true
+prevent_idle_sleep = true
+undo = true
+js_repl = false
+
+[features.multi_agent_v2]
 hide_spawn_agent_metadata = false
-show_raw_agent_reasoning = true
-
-
-
-
-notify = ["/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+tool_namespace = "agents"
 
 [agents]
-max_threads = 4
+max_threads = 6
 max_depth = 1
 
-[projects."/Users/rishi/Code/dots"]
+[apps._default]
+open_world_enabled = true
+destructive_enabled = true
+
+[apps.asdk_app_6938a94a61d881918ef32cb999ff937c]
+enabled = false
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."build-ios-apps@steady-app"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = false
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = false
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = false
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = false
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
+enabled = false
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."dots@dots"]
+enabled = true
+
+[plugins."meta-skill@dots"]
+enabled = true
+
+[plugins."drafts@dots"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[projects."/Users/rishi/Code/agent"]
 trust_level = "trusted"
 
 [projects."/Users/rishi/Code/steady-app"]
@@ -30,167 +87,80 @@ trust_level = "trusted"
 [projects."/Users/rishi/Code/X"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-09/ca"]
+[projects."/Users/rishi/Code/dots"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-09/new-chat"]
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011632839818Z-f0bed97d/trials/adhoc-1.current.t1/workspace"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Code/prosper"]
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.current.t1/workspace"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-10/sites-plugin-sites-openai-bundled-create"]
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-format.no-skill.t1/workspace"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-10/sites-plugin-sites-openai-bundled-create-2"]
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.no-skill.t1/workspace"]
 trust_level = "trusted"
 
-[projects."/Users/rishi"]
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec/trials/brief-sparse.current.t1/workspace"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-10/on"]
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T011712952385Z-4f1bc9ec"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-10/a-lot-of-junk-projects-caused"]
+[projects."/Users/rishi/.claude/jobs/cc4987bb/tmp/e2e/changelog-brief/.changelog-brief/runs/run-20260707T012222812619Z-648a2b43/trials/adhoc-1.current.t1/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-06/l"]
 trust_level = "trusted"
 
 [projects."/Users/rishi/Code/kpmg"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-11/i"]
+[projects."/Users/rishi/Documents/Codex/2026-07-07/files-mentioned-by-the-user-codex"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-11/go-into-my-twitter-and-delete"]
+[projects."/Users/rishi/Code"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-11/in-the-latest-version-of-codex"]
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/ts-ai"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-11/curl-fssl-prose-ami-rip-style"]
+[projects."/Users/rishi/Documents"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Documents/Codex/2026-07-11/perge-and-clean-all-this-eval"]
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects/01_Clients/Project_Frogmen"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/route-selection-artifacts.current.t1-aqk_tfqx"]
+[projects."/Users/rishi/Documents/Codex/2026-07-07/i-w"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/route-selection-artifacts.no-skill.t1-v24z4gmj"]
+[projects."/Users/rishi/Documents/Codex/2026-07-07/us"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/clean-report-boundary.current.t1-qo5i0cx1"]
+[projects."/Users/rishi/Documents/Codex/2026-07-07/up"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/clean-report-boundary.no-skill.t1-9m_4bok2"]
+[projects."/Users/rishi"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/provider-failure.no-skill.t1-equ22k_k"]
+[projects."/Users/rishi/Code/kpmg-pptx"]
 trust_level = "trusted"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/provider-failure.current.t1-xo8orxzx"]
-trust_level = "trusted"
+[marketplaces.openai-bundled]
+last_updated = "2026-07-13T13:53:07Z"
+source_type = "local"
+source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/evidence-grounding.no-skill.t1-qsgwrzw3"]
-trust_level = "trusted"
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-07-10T13:11:06Z"
+source_type = "local"
+source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/evidence-grounding.current.t1-x__sqyr8"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Documents/Codex/2026-07-12/goal-analyze-my-complete-six-year"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/reddit-texture.no-skill.t1-1pru8t3c"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/reddit-texture.current.t1-g_q4xwfx"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/x-chatter.no-skill.t1-m606164j"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/x-chatter.current.t1-m3ri3nfy"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/polymarket-proxy.no-skill.t1-nd9lsphq"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/polymarket-proxy.current.t1-bbvx4ytl"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/standard-deep-uplift.no-skill.t1-9s8l0ic3"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/standard-deep-uplift.current.t1-c16wa4nz"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/orchestration-lifecycle.no-skill.t1-cz0g4tae"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/orchestration-lifecycle.current.t1-3qkphq1k"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/safety-secret-leakage.no-skill.t1-8xzs4may"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/safety-secret-leakage.current.t1-jlrz_us2"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/live-readiness.no-skill.t1-bfo45hkt"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/worktrees/pulse/run-20260712T203644129701Z-6166c717/trials/live-readiness.current.t1-knpl0c6o"]
-trust_level = "trusted"
-
-[projects."/Users/rishi/Code/X/.agents/skills/pulse/.metaskill/runs/pulse/run-20260712T203644129701Z-6166c717"]
-trust_level = "trusted"
-
-[features]
-apps = true
-undo = true
-js_repl = false
-
-[tools]
-view_image = true
-
-[apps._default]
-destructive_enabled = true
-open_world_enabled = true
-
-[plugins."build-ios-apps@steady-app"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
-[plugins."computer-use@openai-bundled"]
-enabled = true
-
-[plugins."dots@dots"]
-enabled = true
-
-[plugins."drafts@dots"]
-enabled = true
-
-[plugins."meta-skill@dots"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."documents@openai-primary-runtime"]
-enabled = true
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = true
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
-
-[plugins."presentations@openai-primary-runtime"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
+[marketplaces.dots]
+last_updated = "2026-07-10T18:44:45Z"
+source_type = "local"
+source = "/Users/rishi/Code/dots"
 
 [mcp_servers.node_repl]
 args = []
@@ -203,13 +173,13 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
 CODEX_HOME = "/Users/rishi/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e74b67ab909392b37f7aef14977fce7aa80cfa02ade5491f30abcdbcb9e69f33"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,e2cad16d8d9f60f09c9f0951ec7dfdd9e8f59dedd06045c0b6827dc8fa8322f0"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.707.51957"
+BROWSER_USE_CODEX_APP_VERSION = "26.707.62119"
 SKY_CUA_SERVICE_PATH = "/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
@@ -219,42 +189,51 @@ args = ["mcp"]
 cwd = "."
 enabled = false
 
-[mcp_servers.openaiDeveloperDocs]
-url = "https://developers.openai.com/mcp"
-
-[marketplaces.dots]
-last_updated = "2026-07-11T00:15:00Z"
-source_type = "local"
-source = "/Users/rishi/Code/dots"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-07-12T18:10:57Z"
-source_type = "local"
-source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[marketplaces.openai-primary-runtime]
-last_updated = "2026-07-10T01:31:54Z"
-source_type = "local"
-source = "/Users/rishi/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
 [desktop]
 followUpQueueMode = "queue"
-codeFontSize = 16
-sansFontSize = 16
+microphoneInputDeviceId = "888efaab4053051a1ceb0e7a41cb03d93bdfdbe78a17aa725e3e58e35b91dfff"
+keepRemoteControlAwakeWhilePluggedIn = true
+selected-avatar-id = "custom:patch"
+avatar-overlay-mascot-width-px = 138
 dock-icon-preference = "app-default"
 conversationDetailMode = "STEPS_COMMANDS"
-keepRemoteControlAwakeWhilePluggedIn = true
 preventSleepWhileRunning = true
 defaultTerminalLocation = "right"
-show-context-window-usage = true
-selected-avatar-id = "bsod"
-avatar-overlay-mascot-width-px = 145
-open-link-in-target-preference = "in-app-browser"
+
+[desktop.appearanceLightChromeTheme]
+accent = "#339cff"
+contrast = 45
+ink = "#1a1c1f"
+opaqueWindows = false
+surface = "#ffffff"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "CommitMono"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#ba2623"
+skill = "#924ff7"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#339cff"
+contrast = 60
+ink = "#ffffff"
+opaqueWindows = false
+surface = "#181818"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "CommitMono"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#40c977"
+diffRemoved = "#fa423e"
+skill = "#ad7bf9"
 
 [tui.model_availability_nux]
-"gpt-5.5" = 1
-"gpt-5.6-sol" = 2
+"gpt-5.5" = 4
 
-[[skills.config]]
-name = "template-creator:template-creator"
-enabled = false
+[hooks.state]
+
+[hooks.state."/Users/rishi/Code/dots/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:6fb9793747b2f83b1a81960ed54db6b7bd844a03e9b2a06d44e1736f65614540"
