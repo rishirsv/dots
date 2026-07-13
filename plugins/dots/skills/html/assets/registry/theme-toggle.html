@@ -4,12 +4,12 @@ type: ui
 when: The artifact is a keeper worth letting the reader flip between light
   and dark themselves — a report that will be revisited, not a one-off
   scroll. Optional: prefers-color-scheme already serves readers with no JS.
-deps: page-shell (its standard behavior script wires the click handler —
+deps: page-behavior (its script wires the click handler —
   reading data-theme, toggling it, and persisting the choice to
   localStorage; this file only provides the button markup and its CSS).
 variants: none — fixed top-right placement is the only supported position.
 gotchas: This is optional; add it only when flipping themes is genuinely
-  useful to the reader. The button itself does nothing without page-shell's
+  useful to the reader. The button itself does nothing without page-behavior's
   script — don't hand-roll a second click handler. Both icons are always in
   the DOM; CSS keyed on [data-theme] swaps which one is visible.
 -->

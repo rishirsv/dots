@@ -1,13 +1,14 @@
 {
-  "$comment": "Index of the dots html component catalog. Each item is a self-describing HTML fragment in this directory: a header comment (when to use, variants, gotchas), scoped <style>, and copy-paste markup whose root carries data-component=\"<name>\" for machine editing. All CSS consumes only theme.css tokens. Modeled on shadcn's registry: open code, composition via deps, no build step.",
+  "$comment": "Index of the dots html component catalog. Each item is a self-describing HTML asset in this directory with a header comment (when to use, variants, gotchas). Visual fragments include scoped CSS and copy-paste markup; optional behavior uses a data-component script. All CSS consumes only theme.css tokens.",
   "name": "dots-html",
   "items": [
-    { "name": "page-shell", "title": "Page shell", "type": "block", "file": "page-shell.html", "deps": [], "when": "Every artifact. Document skeleton: header, status chip, dek, footer, standard behavior script (motion, scroll-spy, theme)." },
-    { "name": "toc-rail", "title": "TOC rail", "type": "ui", "file": "toc-rail.html", "deps": ["page-shell"], "when": "4+ sections. Sticky margin rail with scroll-spy; inline list on narrow viewports." },
+    { "name": "page-shell", "title": "Page shell", "type": "block", "file": "page-shell.html", "deps": [], "when": "Every page. Static document skeleton: header, status chip, dek, article column, and footer." },
+    { "name": "page-behavior", "title": "Page behavior", "type": "behavior", "file": "page-behavior.html", "deps": ["page-shell"], "when": "A page uses motion, one-time reveals, TOC scroll-spy, or a theme toggle. Optional; omit for static pages." },
+    { "name": "toc-rail", "title": "TOC rail", "type": "ui", "file": "toc-rail.html", "deps": ["page-shell"], "when": "4+ sections. Sticky margin rail; inline list on narrow viewports. page-behavior optionally adds scroll-spy." },
     { "name": "stat-tiles", "title": "Stat tiles", "type": "ui", "file": "stat-tiles.html", "deps": [], "when": "2-5 headline numbers before any prose." },
     { "name": "callout", "title": "Callout", "type": "ui", "file": "callout.html", "deps": [], "when": "A fact the reader must not scroll past. Variants: note, warn, danger." },
     { "name": "data-table", "title": "Data table", "type": "ui", "file": "data-table.html", "deps": [], "when": "Structured rows: decisions, inventories, risk registers. Horizontal dividers only." },
-    { "name": "bar-chart", "title": "Bar chart", "type": "ui", "file": "bar-chart.html", "deps": ["page-shell"], "when": "Compare magnitudes across up to ~8 items. Horizontal bars, one emphasized, one-time grow reveal." },
+    { "name": "bar-chart", "title": "Bar chart", "type": "ui", "file": "bar-chart.html", "deps": [], "when": "Compare magnitudes across up to ~8 items. Horizontal bars, one emphasized; page-behavior optionally adds a one-time grow reveal." },
     { "name": "sparkline", "title": "Sparkline", "type": "ui", "file": "sparkline.html", "deps": [], "when": "A trend inline with text or inside a stat tile; no axes, one emphasized endpoint." },
     { "name": "recommendation", "title": "Recommendation", "type": "ui", "file": "recommendation.html", "deps": [], "when": "The document's committing conclusion. One per document, near the end." },
     { "name": "code-panel", "title": "Code panel", "type": "ui", "file": "code-panel.html", "deps": [], "when": "Multi-line code or config. Dark surface in both modes, filename header, horizontal scroll contained." },
@@ -17,6 +18,6 @@
     { "name": "timeline", "title": "Timeline", "type": "ui", "file": "timeline.html", "deps": [], "when": "Milestones, phases, or incident chronology in order; order must carry real information." },
     { "name": "flow-diagram", "title": "Flow diagram", "type": "ui", "file": "flow-diagram.html", "deps": [], "when": "A system or process with nodes and edges; inline SVG on tokens, with a text fallback." },
     { "name": "pull-quote", "title": "Pull quote", "type": "ui", "file": "pull-quote.html", "deps": [], "when": "One thesis line worth isolating per document. Typographic emphasis only — no accent bar." },
-    { "name": "theme-toggle", "title": "Theme toggle", "type": "ui", "file": "theme-toggle.html", "deps": ["page-shell"], "when": "Reader-facing light/dark switch; page-shell script wires it. Optional — prefers-color-scheme works without it." }
+    { "name": "theme-toggle", "title": "Theme toggle", "type": "ui", "file": "theme-toggle.html", "deps": ["page-behavior"], "when": "Reader-facing light/dark switch; page-behavior wires it. Optional — prefers-color-scheme works without it." }
   ]
 }

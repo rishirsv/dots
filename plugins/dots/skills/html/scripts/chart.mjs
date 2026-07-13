@@ -4,10 +4,11 @@
  *
  * Authoring-time only: run it while building an artifact, paste the output,
  * never ship the script. Colors come exclusively from --chart-* tokens
- * (see DESIGN.md x-chart); markup matches the registry anatomy so output is
- * indistinguishable from hand-authored catalog work and machine-editable.
+ * (see references/DESIGN.md x-chart); markup matches the registry anatomy so
+ * output is indistinguishable from hand-authored catalog work and
+ * machine-editable.
  *
- * CLI:  node scripts/chart.mjs <bar|diverging|slope|sparkline> --in spec.json
+ * CLI:  node scripts/chart.mjs <bar|sparkline> --in spec.json
  *       cat spec.json | node scripts/chart.mjs bar
  *       node scripts/chart.mjs bar --spec '{"title":"…","data":[["a",1]]}'
  *       node scripts/chart.mjs --from-fragment chart.html   (re-render from
@@ -15,15 +16,15 @@
  * API:  import { chart, parseSpec } from "./chart.mjs"
  *
  * Every fragment embeds its normalized spec as `<!-- chart-spec {...} -->`.
- * To edit a chart: read the spec, change it, re-run, replace the fragment.
+ * To edit a chart: change the embedded spec, then re-render the fragment file
+ * in place with `--from-fragment`.
  * Spec strings must not contain "--" (HTML comments forbid it).
  *
  * CSS dependencies (paste the registry fragment's CSS once per page):
  *   bar → bar-chart.html · sparkline → sparkline.html
- *   diverging/slope → bar-chart.html (.chart-card/.chart-title only)
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 // ---------- text safety ----------
 
@@ -48,7 +49,7 @@ export function linearScale([d0, d1], [r0, r1]) {
 
 // ---------- spec normalization ----------
 
-const TYPES = ["bar", "diverging", "slope", "sparkline"];
+const TYPES = ["bar", "sparkline"];
 
 function toRows(data, keys) {
   if (!Array.isArray(data) || data.length === 0) fail("spec.data must be a non-empty array");
@@ -83,13 +84,12 @@ export function normalizeSpec(type, spec) {
     return { ...norm, data: spec.data.slice(), value: spec.value };
   }
 
-  const keys = type === "slope" ? ["label", "from", "to"] : ["label", "value"];
+  const keys = ["label", "value"];
   let rows = toRows(spec.data, keys);
 
   const sort = spec.sort ?? (type === "bar" ? "desc" : "none");
   if (!["desc", "asc", "none"].includes(sort)) fail('spec.sort must be "desc", "asc", or "none"');
-  const sortKey = type === "slope" ? "to" : "value";
-  if (sort !== "none") rows = rows.slice().sort((a, b) => (sort === "desc" ? b[sortKey] - a[sortKey] : a[sortKey] - b[sortKey]));
+  if (sort !== "none") rows = rows.slice().sort((a, b) => (sort === "desc" ? b.value - a.value : a.value - b.value));
 
   if (spec.limit != null) {
     if (!Number.isInteger(spec.limit) || spec.limit < 1) fail("spec.limit must be a positive integer");
@@ -103,13 +103,6 @@ export function normalizeSpec(type, spec) {
 
   const out = { ...norm, data: rows.map((r) => keys.map((k) => r[k])), sort };
   if (spec.limit != null) out.limit = spec.limit;
-  if (type === "slope") {
-    out.fromLabel = spec.fromLabel ?? "before";
-    out.toLabel = spec.toLabel ?? "after";
-    for (const k of ["fromLabel", "toLabel"]) {
-      if (typeof out[k] !== "string" || out[k].includes("--")) fail(`spec.${k} must be a string without "--"`);
-    }
-  }
   return out;
 }
 
@@ -126,30 +119,6 @@ function chartCard(norm, body) {
     `</div>`,
   ].join("\n");
 }
-
-function dataDetails(headers, rows) {
-  const head = headers.map((h) => `<th>${escapeText(h)}</th>`).join("");
-  const body = rows
-    .map((r) => `<tr>${r.map((c, i) => `<td${i > 0 ? ' class="num"' : ""}>${escapeText(c)}</td>`).join("")}</tr>`)
-    .join("\n      ");
-  return [
-    `  <details class="chart-data">`,
-    `    <summary>Data</summary>`,
-    `    <table>`,
-    `      <thead><tr>${head}</tr></thead>`,
-    `      <tbody>${body}</tbody>`,
-    `    </table>`,
-    `  </details>`,
-  ].join("\n");
-}
-
-const LABEL_STYLE = 'style="font-family:var(--font-sans);font-size:12px;fill:var(--chart-label)"';
-const VALUE_STYLE = 'style="font-family:var(--font-sans);font-size:12px;fill:var(--chart-value);font-variant-numeric:tabular-nums"';
-const VALUE_EMPH_STYLE = 'style="font-family:var(--font-sans);font-size:12px;font-weight:600;fill:var(--chart-value-emphasis);font-variant-numeric:tabular-nums"';
-
-// generous label estimate; override with spec-free explicit design instead of
-// plot.mjs's tight 6.4px/char guess
-const labelWidth = (labels) => Math.min(220, Math.max(...labels.map((l) => l.length)) * 7.2 + 16);
 
 // ---------- presets ----------
 
@@ -173,96 +142,6 @@ function barFragment(norm) {
   return chartCard(norm, body);
 }
 
-function divergingFragment(norm) {
-  const rows = norm.data.map(([label, value]) => ({ label, value }));
-  const W = 640, ROW = 26, GAP = 8, VAL_PAD = 44;
-  const left = labelWidth(rows.map((r) => r.label));
-  const H = rows.length * (ROW + GAP) - GAP;
-  const maxPos = Math.max(0, ...rows.map((r) => r.value));
-  const maxNeg = Math.min(0, ...rows.map((r) => r.value));
-  if (maxPos === 0 && maxNeg === 0) fail("diverging chart needs a nonzero value");
-  const x = linearScale([Math.min(maxNeg, 0), Math.max(maxPos, 0)], [left + VAL_PAD, W - VAL_PAD]);
-  const zero = round(x(0));
-
-  const marks = [
-    `<line x1="${zero}" y1="0" x2="${zero}" y2="${H}" stroke="var(--chart-grid)" stroke-width="1"/>`,
-  ];
-  rows.forEach((r, i) => {
-    const y = i * (ROW + GAP);
-    const emph = r.label === norm.emphasis;
-    const fill = emph ? "var(--chart-emphasis)" : r.value >= 0 ? "var(--chart-pos)" : "var(--chart-neg)";
-    const bx = r.value >= 0 ? zero : round(x(r.value));
-    const bw = round(Math.abs(x(r.value) - zero));
-    marks.push(
-      `<text x="${left - 8}" y="${y + ROW / 2 + 4}" text-anchor="end" ${LABEL_STYLE}>${escapeText(r.label)}</text>`,
-      `<rect x="${bx}" y="${y + 4}" width="${bw}" height="${ROW - 8}" rx="4" fill="${fill}"/>`,
-      `<text x="${r.value >= 0 ? round(x(r.value)) + 6 : round(x(r.value)) - 6}" y="${y + ROW / 2 + 4}" text-anchor="${r.value >= 0 ? "start" : "end"}" ${emph ? VALUE_EMPH_STYLE : VALUE_STYLE}>${escapeText(r.value)}</text>`
-    );
-  });
-
-  const body = [
-    `  <div class="chart-scroll" style="overflow-x:auto">`,
-    `    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" style="width:100%;height:auto">`,
-    `      ${marks.join("\n      ")}`,
-    `    </svg>`,
-    `  </div>`,
-    dataDetails(["item", "value"], norm.data),
-  ].join("\n");
-  return chartCard(norm, body);
-}
-
-function slopeFragment(norm) {
-  const rows = norm.data.map(([label, from, to]) => ({ label, from, to }));
-  const W = 520, H = Math.max(200, rows.length * 44), PAD = 28;
-  const left = labelWidth(rows.map((r) => `${r.label} ${r.from}`));
-  const right = 64;
-  const all = rows.flatMap((r) => [r.from, r.to]);
-  const lo = Math.min(...all), hi = Math.max(...all);
-  const y = lo === hi ? () => H / 2 : linearScale([lo, hi], [H - PAD, PAD]);
-  const x0 = left, x1 = W - right;
-
-  // nudge overlapping labels apart (14px minimum)
-  function spread(items) {
-    const sorted = items.slice().sort((a, b) => a.y - b.y);
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i].y - sorted[i - 1].y < 14) sorted[i].y = sorted[i - 1].y + 14;
-    }
-    return items;
-  }
-  const leftLabels = spread(rows.map((r) => ({ r, y: y(r.from) })));
-  const rightLabels = spread(rows.map((r) => ({ r, y: y(r.to) })));
-
-  const marks = [
-    `<text x="${x0}" y="14" text-anchor="start" ${LABEL_STYLE}>${escapeText(norm.fromLabel)}</text>`,
-    `<text x="${x1}" y="14" text-anchor="end" ${LABEL_STYLE}>${escapeText(norm.toLabel)}</text>`,
-  ];
-  rows.forEach((r) => {
-    const emph = r.label === norm.emphasis;
-    const stroke = emph ? "var(--chart-emphasis)" : "var(--chart-mark)";
-    marks.push(
-      `<line x1="${x0}" y1="${round(y(r.from))}" x2="${x1}" y2="${round(y(r.to))}" stroke="${stroke}" stroke-width="2"/>`,
-      `<circle cx="${x0}" cy="${round(y(r.from))}" r="3.5" fill="${stroke}"/>`,
-      `<circle cx="${x1}" cy="${round(y(r.to))}" r="3.5" fill="${stroke}"/>`
-    );
-  });
-  leftLabels.forEach(({ r, y: ly }) =>
-    marks.push(`<text x="${x0 - 10}" y="${round(ly) + 4}" text-anchor="end" ${r.label === norm.emphasis ? VALUE_EMPH_STYLE : LABEL_STYLE}>${escapeText(`${r.label} ${r.from}`)}</text>`)
-  );
-  rightLabels.forEach(({ r, y: ry }) =>
-    marks.push(`<text x="${x1 + 10}" y="${round(ry) + 4}" text-anchor="start" ${r.label === norm.emphasis ? VALUE_EMPH_STYLE : VALUE_STYLE}>${escapeText(r.to)}</text>`)
-  );
-
-  const body = [
-    `  <div class="chart-scroll" style="overflow-x:auto">`,
-    `    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" style="width:100%;height:auto">`,
-    `      ${marks.join("\n      ")}`,
-    `    </svg>`,
-    `  </div>`,
-    dataDetails(["item", norm.fromLabel, norm.toLabel], norm.data),
-  ].join("\n");
-  return chartCard(norm, body);
-}
-
 function sparklineFragment(norm) {
   const d = norm.data;
   const W = 120, H = 28, PAD = 2;
@@ -283,7 +162,7 @@ function sparklineFragment(norm) {
   ].join("\n");
 }
 
-const PRESETS = { bar: barFragment, diverging: divergingFragment, slope: slopeFragment, sparkline: sparklineFragment };
+const PRESETS = { bar: barFragment, sparkline: sparklineFragment };
 
 // ---------- public API ----------
 
@@ -315,6 +194,8 @@ if (invokedDirectly) {
     if (fromFragment) {
       spec = parseSpec(readFileSync(fromFragment, "utf8"));
       type = spec.type;
+      writeFileSync(fromFragment, chart(type, spec) + "\n");
+      process.exit(0);
     } else {
       type = args[0];
       const inline = flag("--spec");

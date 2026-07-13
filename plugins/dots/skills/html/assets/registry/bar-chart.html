@@ -4,15 +4,16 @@ type: ui
 when: Compare magnitudes across up to ~8 items — throughput by service,
   spend by team, latency by region. Reach for this when the shape of the
   comparison matters more than the exact digits.
-deps: page-shell (theme.css + page-shell.js animate .reveal .bar-fill
-  scaleX growth on scroll)
+deps: theme.css. page-behavior is optional and animates `.reveal .bar-fill`
+  scaleX growth on scroll; without it, bars render at their final widths.
 variants: default (all bars quiet --a20 fill) | one bar with .bar-fill.emphasis
   using --accent for the single value the reader should land on.
 gotchas: Generate with scripts/chart.mjs (JSON spec in, this exact anatomy
   out, chart-spec comment embedded for later edits); hand-author only what
-  the script can't express. theme.css + page-shell already animate
+  the script can't express. theme.css + page-behavior animate
   `.reveal .bar-fill` growing from scaleX(0) once on scroll into view —
-  wrap the chart markup in class="reveal" and set each bar's width as an
+  when that optional behavior is present. Wrap the chart markup in
+  class="reveal" and set each bar's width as an
   inline style (style="width:62%"), never in a modifier class. When NOT a chart: one
   number alone belongs in stat-tiles, not a single bar; more than ~8
   categories belongs in a data-table instead of a wall of bars.

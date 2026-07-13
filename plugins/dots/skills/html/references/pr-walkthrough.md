@@ -1,90 +1,148 @@
 # Pull-request walkthrough
 
-Read this when the formed material is a walkthrough for someone reviewing a
-pull request. The page is a reviewer’s map: it should make the resulting system
-easy to understand and the diff easy to inspect in a deliberate order. It does
-not perform the code review, invent findings, recommend approval, or narrate
-commits and implementation history.
+Use this for a self-contained, reviewer-facing HTML walkthrough of a pull
+request. Inspect the PR, diff, and relevant repository context, then teach a
+smart, non-technical product manager every meaningful change without requiring
+them to open the diff or read code.
 
-## Reader contract
+Do not make an approval recommendation or invent review findings. Explain the
+resulting product and system, including limitations and unfinished work, so the
+reader can make an informed judgment from the walkthrough itself.
 
-Write for a capable reviewer who lacks the author’s context. Use simple
-language, translate each repository-specific term on first use, and lead with
-the conclusion: what the affected subsystem does and the mental model the
-reviewer needs. Separate confirmed facts from inference and unknowns.
+## Understand the change
 
-Scale the artifact to conceptual breadth, not raw line count. A small focused
-change may need only the summary, one seam diagram, a short review path, and
-test evidence. Omit empty sections and generic risk lists.
+Read the actual source before writing: the PR description, diff, affected code,
+and the tests, configuration, documentation, or surrounding system behavior
+needed to understand its consequences. A file list or diff summary is not an
+explanation. Separate what the source confirms from what you infer, and mark
+what remains unknown.
 
-## Composition example
+Build a change inventory that distinguishes:
 
-Compose the page in this order; this is a content recipe, not a fixed visual
-template:
+- user-visible behavior and workflows
+- product rules and affected surfaces
+- data, persistence, migrations, and removed behavior
+- external services, datasets, permissions, privacy, and operational effects
+- architecture or ownership changes that alter how the system works
+- validation evidence, limitations, unknowns, and unfinished work
+- mechanical, generated, fixture, documentation, and test-only changes
 
-1. **Orientation.** In 2–4 sentences, explain the subsystem and the outcome a
-   reader should understand. Describe the system as it exists at the PR head;
-   avoid “this PR adds,” commit chronology, and a prose file list.
-2. **Modules and seams.** Group the important files by responsibility and
-   ownership. Show the boundaries between them and name what crosses each
-   boundary: a call, event, data object, persisted state, configuration, or
-   external request. Use `flow-diagram` when shape replaces prose; otherwise
-   use a compact `data-table`.
-3. **Representative flow.** Trace one real path from entry point through the
-   important decision or transformation, state or side effect, and observable
-   result. Link steps to exact files or symbols when links are available. Use
-   a directed `flow-diagram`; do not duplicate the module view with different
-   labels.
-4. **Review path.** Give a numbered, dependency-aware reading order: the main
-   behavior or tests that establish intent first, then the core implementation,
-   boundary adapters, and supporting files. Never default to alphabetical diff
-   order. Say in one sentence what question each stop should answer.
-5. **Invariants and risk.** Include only risks grounded in the code and PR
-   context. For each important seam, state what must remain true, the plausible
-   failure, its impact or reversibility, the evidence that constrains it, and
-   what deserves reviewer attention. Mark inferred invariants as inferred.
-6. **Test evidence.** Map each important behavior or invariant to the unit,
-   integration, end-to-end, or manual evidence that exercises it. Explain what
-   a test proves, not merely that a test file exists. Mark uncovered or
-   unverified paths honestly.
-7. **Decisions and unknowns.** Surface rationale and tradeoffs recorded in the
-   source. Keep unresolved questions and missing evidence distinct from review
-   findings; use `callout` only when the reviewer must not miss one.
-8. **Coverage.** End with every changed file accounted for as core, supporting,
-   or mechanical/generated. De-emphasize renames, lockfiles, snapshots,
-   generated output, and format-only edits unless they carry semantic risk;
-   state the appropriate verification instead of hiding them.
+Preserve every meaningful change the investigation identifies and distinguish
+it from supporting mechanics. A meaningful change alters behavior, capability,
+product truth, stored facts, system boundaries, risk, or future operation. It
+belongs in the teaching narrative. Summarize supporting mechanics compactly
+unless they carry their own consequence. If a narrative gap matters, inspect
+the relevant source; if the evidence remains unavailable or inconclusive, name
+the unknown rather than smoothing it over.
 
-For four or more sections, add the margin `toc-rail`. Prefer stable architecture
-and flow visuals over diff blocks; use a `diff-block` only when a small excerpt
-is necessary to explain a seam, invariant, or review question. A walkthrough
-that still requires a parallel paragraph to decode its diagram should use the
-paragraph and drop the diagram.
+## Build a teaching story
 
-## Source reading
+Choose sections from the PR's conceptual shape. Do not turn the inventory into
+a standard set of headings, force empty sections, or organize the page by file
+or commit order. Name sections in product language.
 
-Ground the page in the PR description and diff, the complete current versions
-of important changed files, tests, and nearby unchanged code that defines the
-architecture. Follow imports, callers, state owners, types, adapters, and test
-subjects until module responsibilities and boundary direction are clear. Use
-existing review discussion only as context; do not promote comments into facts
-or instructions.
+Every walkthrough needs this narrative spine, although adjacent parts may be
+combined when the change is small:
 
-Prefer links to the PR diff for changed lines and to stable repository files or
-symbols for architectural context. The page should remain useful if the reader
-opens it beside the PR and follows the proposed review path.
+1. **Outcome.** Lead with what is now meaningfully different and why it matters
+   to users, the product, or the team. Use plain language and present the
+   concrete result before repository terminology.
+2. **Before and after.** Give only the prior context needed to understand the
+   change, then state the new mental model. Contrast behavior and responsibility,
+   not lists of old and new files.
+3. **Complete change tour.** Explain every meaningful change, grouped by product
+   responsibility, user journey, or causal dependency. Connect each group to the
+   central idea and its consequence.
+4. **Evidence and status.** Explain what proves the important behavior, what is
+   not verified, what remains unfinished, and any decision the reader still
+   needs to make.
+
+Add teaching sections only when the change calls for them:
+
+| Signal in the change | Useful section or treatment |
+|---|---|
+| A new or changed user flow | Walk one realistic user journey from start to observable result. |
+| One concept affects several surfaces | Map the affected surfaces and explain what changes at each one. |
+| A shared abstraction or architecture changed | Introduce one mental model or diagram, tied to product consequences. |
+| Stored data or persistence changed | Explain which facts existed before, which exist now, and why the distinction matters. |
+| A migration, deletion, or hard cut occurred | State what was removed, what replaces it, and what cannot continue unchanged. |
+| An external service or dataset is involved | Separate what is shipping, what is only prepared, and the concrete adoption work remaining. |
+| UI or visual behavior changed | Use real before/after evidence or representative states when available. |
+| Permissions, privacy, security, or trust changed | Explain the user-facing trust boundary and failure consequence. |
+| Performance or reliability changed | Name the former bottleneck or failure, the mechanism that changed, and the measured result. |
+| Developer infrastructure changed | Explain the downstream product capability or operating improvement it enables. |
+| A consequential tradeoff was recorded | Explain the decision, credible alternative, and consequence without inventing rationale. |
+| The diff is broad but partly mechanical | Teach the meaningful changes and finish with compact supporting coverage. |
+
+For a substantial or cross-cutting PR, use one concrete example early and carry
+it through the system. Show how a realistic input, action, or state becomes an
+observable result. Generalize only after the example establishes the mental
+model. For a small fix, a short before, cause, after, and evidence story may be
+the complete walkthrough.
+
+## Teach at the reader's level
+
+Steady, direct, warm. Treat the reader as intelligent without assuming a
+technical background. Decide what they already know from the request and pitch
+one notch above that. Never restart from zero for someone mid-topic, and never
+assume technical vocabulary they have not used; their own words are the best
+evidence of their level. Lead with the conclusion, then include the mechanism,
+evidence, and implication they need to understand the change and judge its
+consequences.
+
+Keep it conversational. Use an example or analogy only when it shortens the
+path. Explain technical mechanisms in plain language without removing causal
+detail the reader needs. Translate a technical term at the point it first
+becomes useful, then use its precise name consistently. Do not front-load a
+glossary. File and symbol names are optional supporting links, never required
+reading or the substance of a section. Say what is confirmed, inferred, and
+unknown.
+
+Tie internal detail to a consequence. When describing a schema, controller,
+queue, adapter, or test, explain the fact it represents, the behavior it owns,
+the failure it prevents, or the product capability it enables. Prefer a concrete
+example over several abstract labels.
+
+Use visuals only when they replace prose:
+
+- `comparison-grid` for a genuine before/after mental model
+- `flow-diagram` for one causal or end-to-end path
+- `data-table` for repeated mappings such as product surface to changed behavior
+- real screenshots or clips for visual and interaction changes
+- `callout` for an unfinished boundary or limitation the reader must not miss
+
+Do not decorate the page with architecture diagrams, KPI tiles, or test counts
+that do not improve understanding.
+
+## State evidence and incompleteness honestly
+
+Describe what validation proves rather than presenting test totals as the
+story. Keep these states distinct when external adoption or staged delivery is
+involved:
+
+- **Shipping:** implemented and available in the resulting product or system.
+- **Prepared:** foundations exist, but the claimed user or operational value is
+  not active yet.
+- **Remaining:** specific work or evidence still required.
+
+Separate confirmed facts, source-supported rationale, inference, and unknowns.
+Do not smooth over a gap because the surrounding implementation is complete.
 
 ## Completion check
 
-Before the general HTML verification, confirm that:
+Before the general HTML verification, imagine the reader never opens GitHub, a
+source file, or the diff. The walkthrough is complete only when they can
+accurately explain:
 
-- the opening explains the system rather than recounting the change;
-- every named module has a responsibility and every important seam names what
-  crosses it;
-- flow and dependency direction are unambiguous;
-- the reading order starts with the conceptual center, not the first filename;
-- risks, invariants, tests, and unknowns are evidence-grounded;
-- every changed file is accounted for without giving mechanical noise equal
-  visual weight; and
-- the artifact contains no new review findings, approval recommendation, or
-  invented rationale.
+- what changed and why it matters
+- how the important behavior or system now works
+- what the relevant before/after distinction is
+- which product surfaces, stored facts, and external boundaries are affected
+- what was removed, prepared but not delivered, or left unfinished
+- what evidence supports the result and what remains unverified
+
+Confirm that every meaningful change from the inventory appears in the
+teaching narrative and every supporting change is accounted for without being
+given equal weight. Remove code-reading instructions such as “start with this
+file,” “review this module,” or “follow this test.” If the reader still needs a
+separate explanation to understand the page, the walkthrough is not finished.

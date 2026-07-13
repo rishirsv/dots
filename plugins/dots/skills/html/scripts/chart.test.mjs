@@ -1,24 +1,17 @@
 // node --test scripts/chart.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import { chart, parseSpec, normalizeSpec, escapeText, escapeAttr, linearScale } from "./chart.mjs";
 
 const BAR = {
   title: "Spend by team, $k",
   data: [["platform", 412], ["growth", 255], ["ml", 104]],
   emphasis: "platform",
-};
-const DIV = {
-  title: "Latency delta by service, ms",
-  data: [["checkout", 41], ["search", -18], ["auth", 7]],
-  emphasis: "search",
-};
-const SLOPE = {
-  title: "p95 before/after, ms",
-  data: [["checkout", 410, 255], ["search", 220, 205]],
-  fromLabel: "wk 27",
-  toLabel: "wk 28",
-  emphasis: "checkout",
 };
 const SPARK = { data: [96, 120, 118, 180, 210, 260, 312], value: "312/wk" };
 
@@ -62,8 +55,6 @@ test("invalid specs fail loudly", () => {
 
 const CASES = [
   ["bar", BAR],
-  ["diverging", DIV],
-  ["slope", SLOPE],
   ["sparkline", SPARK],
 ];
 
@@ -99,25 +90,6 @@ test("bar: widths proportional to max; emphasis styled", () => {
   assert.deepEqual(names, ["platform", "growth", "ml"]); // desc default
 });
 
-test("diverging: zero rule present; pos/neg/emphasis colored by direction", () => {
-  const out = chart("diverging", DIV);
-  assert.match(out, /var\(--chart-grid\)/);
-  assert.match(out, /var\(--chart-pos\)/);
-  assert.match(out, /var\(--chart-emphasis\)/); // search is emphasized, so its neg bar uses emphasis
-  assert.match(out, /<details class="chart-data">/);
-  // auth (7, non-emphasis, positive) and checkout (41) both pos; search overridden
-  assert.equal([...out.matchAll(/var\(--chart-pos\)/g)].length, 2);
-  assert.equal([...out.matchAll(/var\(--chart-neg\)/g)].length, 0);
-});
-
-test("slope: endpoints map to value scale; labels include values", () => {
-  const out = chart("slope", SLOPE);
-  assert.match(out, /wk 27/);
-  assert.match(out, /checkout 410/);
-  assert.match(out, /text-anchor="start" style="[^"]*--chart-value-emphasis/);
-  assert.match(out, /<details class="chart-data">/);
-});
-
 test("sparkline: one point per datum, dot on the last point, visible value", () => {
   const out = chart("sparkline", SPARK);
   const points = out.match(/points="([^"]+)"/)[1].trim().split(/\s+/);
@@ -134,4 +106,22 @@ test("labels with markup characters are escaped everywhere except the inert spec
   assert.ok(!outsideComment.includes("a<b>&c"), "raw label leaked outside the spec comment");
   // and the comment still round-trips it faithfully
   assert.equal(parseSpec(out).data[0][0], "a<b>&c");
+});
+
+test("--from-fragment rewrites the fragment file in place", () => {
+  const dir = mkdtempSync(join(tmpdir(), "dots-chart-"));
+  const file = join(dir, "chart.html");
+  const original = chart("bar", BAR);
+  const edited = { ...parseSpec(original), data: [["platform", 500], ["growth", 255], ["ml", 104]] };
+  const withEditedSpec = original.replace(/<!-- chart-spec \{.*?\} -->/s, `<!-- chart-spec ${JSON.stringify(edited)} -->`);
+  writeFileSync(file, withEditedSpec);
+
+  try {
+    const script = fileURLToPath(new URL("./chart.mjs", import.meta.url));
+    const result = spawnSync(process.execPath, [script, "--from-fragment", file], { encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(readFileSync(file, "utf8"), chart("bar", edited) + "\n");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

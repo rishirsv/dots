@@ -95,7 +95,7 @@
 
 * { box-sizing: border-box; }
 
-html, body { margin: 0; padding: 0; overflow-x: hidden; }
+html, body { margin: 0; padding: 0; overflow-x: clip; }
 
 body {
   background: var(--background);
@@ -185,7 +185,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
 
 /* ---------- motion: choreographed moments only ---------- */
 /* One-time load stagger + one-time scroll reveals. Elements render complete
- * and static by default; the page-shell script opts them in only when JS
+ * and static by default; page-behavior opts them in only when JS
  * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -260,12 +260,14 @@ footer.sources a { color: var(--a55); }
 .toc-rail a:hover { color: var(--foreground); text-decoration: none; }
 .toc-rail a.active { color: var(--foreground); font-weight: 600; }
 
-@media (min-width: 1160px) {
+@media (min-width: 1264px) {
   .toc-rail {
     position: sticky;
     top: 64px;
     float: right;
     width: 200px;
+    max-height: calc(100vh - 128px);
+    overflow-y: auto;
     margin: 8px calc(-200px - 48px) 0 0;
   }
 }
@@ -802,7 +804,7 @@ footer.sources a { color: var(--a55); }
 
   <section id="page-shell">
     <h2>Page shell</h2>
-    <p>Every artifact starts here. It's the document skeleton — a context line, title, optional single status chip, and dek at the top; a footer slot for sources at the bottom; and the standard behavior script that wires motion, scroll-spy, and the theme toggle. This atlas page is itself built on this shell.</p>
+    <p>Every page starts here. It's the static document skeleton — a context line, title, optional single status chip, and dek at the top, plus a footer slot for sources at the bottom. This atlas page is itself built on this shell and adds page-behavior separately.</p>
     <div class="specimen">
       <div style="border:1px solid var(--a12); border-radius:var(--r-card); padding:24px; background:var(--a4);">
         <p class="context-line" style="margin-bottom:12px;">project / area</p>
@@ -818,7 +820,7 @@ footer.sources a { color: var(--a55); }
 
   <section id="toc-rail">
     <h2>TOC rail</h2>
-    <p>A sticky margin rail for documents with four or more sections a reader may want to jump between. It docks in the right margin at wide viewports and collapses to a plain inline list on narrow ones; the scroll-spy that highlights the active link comes from the page-shell script.</p>
+    <p>A sticky margin rail for documents with four or more sections a reader may want to jump between. It docks in the right margin at wide viewports and collapses to a plain inline list on narrow ones; page-behavior optionally adds the active-link scroll-spy.</p>
     <div class="specimen">
       <nav data-component="toc-rail" class="toc-rail" aria-label="On this page example" style="position:static; float:none; width:auto; margin:0;">
         <p class="toc-label">On this page</p>
@@ -1193,7 +1195,7 @@ footer.sources a { color: var(--a55); }
 
   <section id="theme-toggle">
     <h2>Theme toggle</h2>
-    <p>A reader-facing light/dark switch for artifacts worth revisiting, not one-off scrolls. It's fixed top-right in real use; the page-shell script wires the click handler, reading and persisting the theme choice, so this markup only supplies the button and its icon swap.</p>
+    <p>A reader-facing light/dark switch for artifacts worth revisiting, not one-off scrolls. It's fixed top-right in real use; page-behavior wires the click handler, reading and persisting the theme choice, so this markup only supplies the button and its icon swap.</p>
     <div class="specimen">
       <button data-component="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme example">
         <svg class="theme-toggle-icon theme-toggle-moon" viewBox="0 0 24 24" aria-hidden="true">
@@ -1213,9 +1215,9 @@ footer.sources a { color: var(--a55); }
   </footer>
 </div>
 
-<script>
-  /* Standard artifact behavior: motion opt-in, one-time reveals, TOC
-     scroll-spy, theme toggle. Everything works without this script. */
+<script data-component="page-behavior">
+  /* Optional page behavior: motion opt-in, one-time reveals, TOC scroll-spy,
+     and theme toggle. Everything works without this script. */
   (function () {
     var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reduced) document.documentElement.classList.add("js-motion");

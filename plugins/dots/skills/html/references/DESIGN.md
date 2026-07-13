@@ -99,24 +99,23 @@ rules, numbers that line up, motion that happens once and gets out of the way.
 
 ## Colors
 
-`background` and `foreground` are the only grounds. All grays are derived:
-the generator emits an alpha ladder (`--a4` … `--a70`) of `foreground` at
-the `x-alpha-steps` opacities, so every border, muted label, and track reads
-correctly on both grounds without a second palette. Borders sit at `--a12`
-(felt, not seen); strong rules at `--a20`; secondary text at `--a55`;
-primary-but-quiet at `--a70`.
+`background` and `foreground` are the only grounds. All grays use an alpha
+ladder (`--a4` … `--a70`) derived from `foreground` at the `x-alpha-steps`
+opacities, so every border, muted label, and track reads correctly on both
+grounds without a second palette. Borders sit at `--a12` (felt, not seen);
+strong rules at `--a20`; secondary text at `--a55`; primary-but-quiet at
+`--a70`.
 
 `accent` is for links, active states, and the one emphasized data point.
 `accent-deep` is its high-contrast partner for small emphasized text.
 `warning-*` and `danger-*` are semantic only — never decorative. Code
 surfaces stay dark in both modes (`code-surface`/`code-ink`).
 
-The `x-dark` block redefines the same token names for dark mode; the
-generator emits both and a `data-theme` override.
+The `x-dark` block redefines the same semantic roles for dark mode.
 
 ## Typography
 
-System grotesque stack; no webfonts (artifact CSP forbids them). Headings are
+Use the system grotesque stack; no webfonts. Headings are
 semibold with negative tracking that scales with size — the tracking values
 in the front-matter are per-size absolutes, not a ratio. Body is 15px/1.7 at
 a ~66ch measure inside a 720px article column. Mono (13px/20px, ligatures
@@ -134,24 +133,29 @@ collapsing to a plain inline list on narrow viewports. Wide content (tables,
 code, diagrams) scrolls inside its own container; the page never scrolls
 sideways.
 
+## Elevation & Depth
+
+The identity is flat. Hierarchy comes from spacing, type, ink contrast, and
+hairline rules rather than shadows or layered surfaces. A component may use a
+faint semantic tint when meaning requires it, but it never creates a second
+page ground or simulated elevation.
+
 ## Shapes
 
 `rounded.card` (6px) for cards, code panels, chips; `rounded.inline` (4px)
 for inline code and focus rings. Radius is quiet and uniform — nothing
-pill-shaped except the single status chip. No drop shadows; elevation is not
-part of this identity. Borders are 1px hairlines from the alpha ladder.
+pill-shaped except the single status chip. Borders are 1px hairlines from the
+alpha ladder.
 
 ## Components
 
-Component CSS lives in the catalog (`assets/registry/`) and consumes only the
-tokens emitted in `theme.css`; artifacts use the generated CSS rather than
-front-matter directly.
+Components consume the design tokens rather than introducing local palettes or
+shape systems. Their finished anatomy lives in the component catalog; this file
+defines the shared visual rules that apply across that catalog.
 
-Charts (from `x-chart`): the chart tokens are indirection — their values are
-`var()` references into the base palette, so they follow light/dark
-automatically and a theme can re-point chart color independently of links
-and callouts. `scripts/chart.mjs` colors marks exclusively through
-`--chart-*`; it never touches base tokens directly.
+Charts use the `x-chart` roles for structure, marks, labels, values, and the
+single emphasized point. Those roles follow light and dark modes automatically
+and keep chart emphasis independent from links and callouts.
 
 Motion (from `x-motion`): choreographed moments only. A one-time load stagger
 on header elements (≤400ms total), one-time reveals for figures entering the

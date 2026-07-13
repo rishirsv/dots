@@ -3,8 +3,9 @@
  * generate-theme.mjs — compile DESIGN.md front-matter into assets/theme.css.
  *
  * Usage:   node scripts/generate-theme.mjs [--check]
- * Inputs:  DESIGN.md (YAML front-matter; restricted subset — nested maps,
- *          scalars, and flat arrays only; no anchors, no multi-line strings).
+ * Inputs:  references/DESIGN.md (YAML front-matter; restricted subset —
+ *          nested maps, scalars, and flat arrays only; no anchors or
+ *          multi-line strings).
  * Output:  assets/theme.css (tokens + alpha ladder + base styles + motion).
  *          --check exits 1 if the committed theme.css is stale.
  *
@@ -18,7 +19,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const designPath = join(root, "DESIGN.md");
+const designPath = join(root, "references", "DESIGN.md");
 const outPath = join(root, "assets", "theme.css");
 
 // ---------- minimal YAML subset parser (indentation maps + inline arrays) ----------
@@ -140,7 +141,7 @@ ${alphaLadder(dark.foreground, steps).replace(/^ {2}/gm, "    ")}
 
 * { box-sizing: border-box; }
 
-html, body { margin: 0; padding: 0; overflow-x: hidden; }
+html, body { margin: 0; padding: 0; overflow-x: clip; }
 
 body {
   background: var(--background);
@@ -230,7 +231,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
 
 /* ---------- motion: choreographed moments only ---------- */
 /* One-time load stagger + one-time scroll reveals. Elements render complete
- * and static by default; the page-shell script opts them in only when JS
+ * and static by default; page-behavior opts them in only when JS
  * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
 
 @media (prefers-reduced-motion: no-preference) {

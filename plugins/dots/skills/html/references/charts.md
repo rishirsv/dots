@@ -2,15 +2,14 @@
 
 Read this before building any chart. Charts here are right by construction,
 not by taste: the data's job picks the form, tokens pick every color, and
-fixed mark specs pick every size. (Folded in from the dataviz skill; the
-methodology is design-system-agnostic — only tokens vary.)
+fixed mark specs pick every size.
 
-## Generate, don't hand-author
+## Generate supported forms, author others
 
-`scripts/chart.mjs` is the canonical way to produce a chart — it computes
-every coordinate and emits a finished catalog fragment (`data-component`,
-title, accessible data, `reveal`, `--chart-*` tokens) with the input spec
-embedded as a `<!-- chart-spec {...} -->` comment:
+Use `scripts/chart.mjs` for bar charts and sparklines. It computes every
+coordinate and emits a finished catalog fragment (`data-component`, title,
+accessible data, `reveal`, `--chart-*` tokens) with the input spec embedded as
+a `<!-- chart-spec {...} -->` comment:
 
 ```sh
 echo '{"title":"Spend by team, $k",
@@ -18,24 +17,25 @@ echo '{"title":"Spend by team, $k",
        "emphasis":"platform"}' | node scripts/chart.mjs bar
 ```
 
-Forms: `bar` (ranked magnitudes), `diverging` (above/below a baseline),
-`slope` (before/after), `sparkline` (inline trend; spec needs `data` numbers
-+ visible `value` text). Spec keys: `title`, `data` (rows as
-`[label, value]` or `[label, from, to]`), `emphasis` (label of the one
-accent-colored element), `sort` (`desc`/`asc`/`none`), `limit`. Labels and
-titles must not contain `--`.
+Forms: `bar` (ranked magnitudes) and `sparkline` (inline trend; spec needs
+`data` numbers plus visible `value` text). Bar spec keys: `title`, `data` (rows
+as `[label, value]`), `emphasis` (label of the one accent-colored element),
+`sort` (`desc`/`asc`/`none`), and `limit`. Labels, titles, and visible values
+must not contain `--`.
 
 To edit an existing chart, never touch coordinates: read its `chart-spec`
-comment, change the spec, re-run (`node scripts/chart.mjs --from-fragment
-<file>` re-renders in place from the embedded spec), and replace the
-fragment. Hand-author only what the script can't produce, conforming to the
-registry anatomy.
+comment, change the spec, then run `node scripts/chart.mjs --from-fragment
+<file>`. The command rewrites that fragment file in place.
 
-CSS: `bar` needs bar-chart.html's CSS on the page; `sparkline` needs
-sparkline.html's; `diverging`/`slope` need only `.chart-card`/`.chart-title`
-(from bar-chart.html). Colors flow through the `--chart-*` tokens
-(DESIGN.md `x-chart`) — emphasis is accent, everything else neutral, and
-themes can re-point chart color without touching the script.
+Author forms the script does not support when they make the data easier to
+understand. Follow the mark specs and accessibility contract below, use only
+the `x-chart` roles in [DESIGN.md](DESIGN.md), and preserve the closest registry
+component's anatomy where it applies.
+
+CSS: `bar` needs `bar-chart.html` on the page; `sparkline` needs
+`sparkline.html`. Colors flow through the `--chart-*` tokens — emphasis is
+accent, everything else neutral, and themes can re-point chart color without
+touching the script.
 
 ## Form follows the data's job
 

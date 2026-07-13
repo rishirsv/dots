@@ -1,0 +1,69 @@
+<!-- component: page-behavior
+title: Page behavior
+type: behavior
+when: A page uses motion, one-time reveals, TOC scroll-spy, or a theme toggle.
+  This is optional progressive enhancement; omit it for a static page.
+deps: page-shell
+variants: none
+gotchas: Everything must remain complete and navigable without this script.
+  Add reveal only to figures, never to text sections. Respect reduced motion.
+-->
+<script data-component="page-behavior">
+  /* Optional page behavior: motion opt-in, one-time reveals, TOC scroll-spy,
+     and theme toggle. Everything works without this script. */
+  (function () {
+    var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced) document.documentElement.classList.add("js-motion");
+
+    // One-time scroll reveals for .reveal figures
+    if (!reduced && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.25 });
+      document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+      // Fail-safe: never leave content hidden if the observer doesn't fire
+      // (headless capture, odd embedders). One-shot, complements reduced-motion.
+      setTimeout(function () {
+        document.querySelectorAll(".reveal:not(.is-in)").forEach(function (el) { el.classList.add("is-in"); });
+      }, 1500);
+    } else {
+      document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("is-in"); });
+    }
+
+    // TOC scroll-spy (no-op when no .toc-rail present)
+    var links = Array.prototype.slice.call(document.querySelectorAll(".toc-rail a[href^='#']"));
+    if (links.length) {
+      var targets = links
+        .map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); })
+        .filter(Boolean);
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            links.forEach(function (a) {
+              a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id);
+            });
+          }
+        });
+      }, { rootMargin: "-15% 0px -70% 0px" });
+      targets.forEach(function (t) { spy.observe(t); });
+    }
+
+    // Theme toggle (no-op when no .theme-toggle present)
+    var toggle = document.querySelector(".theme-toggle");
+    if (toggle) {
+      var root = document.documentElement;
+      var stored = null;
+      try { stored = localStorage.getItem("theme"); } catch (e) {}
+      if (stored) root.setAttribute("data-theme", stored);
+      toggle.addEventListener("click", function () {
+        var dark = root.getAttribute("data-theme") === "dark" ||
+          (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+        var next = dark ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+      });
+    }
+  })();
+</script>

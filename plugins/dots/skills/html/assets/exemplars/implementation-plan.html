@@ -95,7 +95,7 @@
 
 * { box-sizing: border-box; }
 
-html, body { margin: 0; padding: 0; overflow-x: hidden; }
+html, body { margin: 0; padding: 0; overflow-x: clip; }
 
 body {
   background: var(--background);
@@ -185,7 +185,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
 
 /* ---------- motion: choreographed moments only ---------- */
 /* One-time load stagger + one-time scroll reveals. Elements render complete
- * and static by default; the page-shell script opts them in only when JS
+ * and static by default; page-behavior opts them in only when JS
  * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -258,12 +258,14 @@ footer.sources a { color: var(--a55); }
 .toc-rail a:hover { color: var(--foreground); text-decoration: none; }
 .toc-rail a.active { color: var(--foreground); font-weight: 600; }
 
-@media (min-width: 1160px) {
+@media (min-width: 1264px) {
   .toc-rail {
     position: sticky;
     top: 64px;
     float: right;
     width: 200px;
+    max-height: calc(100vh - 128px);
+    overflow-y: auto;
     margin: 8px calc(-200px - 48px) 0 0;
   }
 }
@@ -813,7 +815,7 @@ footer.sources a { color: var(--a55); }
   </details>
 </div>
 
-<script>
+<script data-component="page-behavior">
   (function () {
     var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reduced) document.documentElement.classList.add("js-motion");

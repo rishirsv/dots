@@ -4,7 +4,7 @@ type: ui
 when: The document has 4+ sections a reader may want to jump between. Always a
   margin rail: sticky and docked beside the article column at wide viewports,
   a plain inline list above the first section on narrow ones.
-deps: page-shell (its script provides the scroll-spy)
+deps: page-shell. page-behavior is optional and adds the active-link scroll-spy.
 variants: right-docked (default) | left-docked (swap `right` for `left` in
   .toc-rail's positioning and margin direction).
 gotchas: Active state is weight + ink color only — never an accent bar or
@@ -24,12 +24,14 @@ gotchas: Active state is weight + ink color only — never an accent bar or
   .toc-rail a:hover { color: var(--foreground); text-decoration: none; }
   .toc-rail a.active { color: var(--foreground); font-weight: 600; }
 
-  @media (min-width: 1160px) {
+  @media (min-width: 1264px) {
     .toc-rail {
       position: sticky;
       top: 64px;
       float: right;
       width: 200px;
+      max-height: calc(100vh - 128px);
+      overflow-y: auto;
       margin: 8px calc(-200px - 48px) 0 0; /* dock in the right margin */
     }
   }
