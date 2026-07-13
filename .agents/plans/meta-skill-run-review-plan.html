@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MetaSkill Run & Review — Product Plan</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+:root{--background:#fbfbfa;--foreground:#0d0d0d;--accent:#1f5eff;--accent-deep:#12379e;--warning-ink:#6b4c00;--warning-line:rgba(180,130,0,.35);--warning-bg:rgba(255,178,0,.06);--danger-ink:#8c1d18;--danger-line:rgba(200,60,50,.35);--danger-bg:rgba(220,70,60,.05);--code-surface:#0d0d0d;--code-ink:#ededed;--a4:rgba(13,13,13,.04);--a8:rgba(13,13,13,.08);--a12:rgba(13,13,13,.12);--a20:rgba(13,13,13,.20);--a40:rgba(13,13,13,.40);--a55:rgba(13,13,13,.55);--a70:rgba(13,13,13,.70);--font-sans:-apple-system,Helvetica Neue,Arial,sans-serif;--font-mono:ui-monospace,SFMono-Regular,SF Mono,Menlo,monospace;--article:720px;--section:48px;--block:16px;--r-card:6px;--r-code:6px;--r-inline:4px;--r-pill:6px;--dur-fast:150ms;--dur-reveal:400ms;--ease:cubic-bezier(.2,0,0,1);--stagger:60ms;--chart-emphasis:var(--accent);--chart-value-emphasis:var(--accent-deep);--chart-pos:var(--a40);--chart-neg:var(--a20);--chart-mark:var(--a20);--chart-track:var(--a4);--chart-grid:var(--a12);--chart-label:var(--a55);--chart-value:var(--a55)}
+[data-theme="dark"]{--background:#0f0f0e;--foreground:#f5f5f4;--accent:#6f94ff;--accent-deep:#b7c9ff;--warning-ink:#f2c14e;--warning-line:rgba(255,193,77,.35);--warning-bg:rgba(255,193,77,.08);--danger-ink:#ff8a80;--danger-line:rgba(255,120,110,.35);--danger-bg:rgba(255,120,110,.07);--code-surface:#161615;--code-ink:#ededed;--a4:rgba(245,245,244,.04);--a8:rgba(245,245,244,.08);--a12:rgba(245,245,244,.12);--a20:rgba(245,245,244,.20);--a40:rgba(245,245,244,.40);--a55:rgba(245,245,244,.55);--a70:rgba(245,245,244,.70)}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){--background:#0f0f0e;--foreground:#f5f5f4;--accent:#6f94ff;--accent-deep:#b7c9ff;--warning-ink:#f2c14e;--warning-line:rgba(255,193,77,.35);--warning-bg:rgba(255,193,77,.08);--danger-ink:#ff8a80;--danger-line:rgba(255,120,110,.35);--danger-bg:rgba(255,120,110,.07);--code-surface:#161615;--code-ink:#ededed;--a4:rgba(245,245,244,.04);--a8:rgba(245,245,244,.08);--a12:rgba(245,245,244,.12);--a20:rgba(245,245,244,.20);--a40:rgba(245,245,244,.40);--a55:rgba(245,245,244,.55);--a70:rgba(245,245,244,.70)}}
+*{box-sizing:border-box}html,body{margin:0;padding:0;overflow-x:hidden}body{background:var(--background);color:var(--foreground);font-family:var(--font-sans);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-inline)}::selection{background:var(--a12)}h1{font-size:40px;line-height:48px;letter-spacing:-2.4px;font-weight:600;margin:0;text-wrap:balance}h2{font-size:24px;line-height:32px;letter-spacing:-.96px;font-weight:600;margin:0 0 16px;text-wrap:balance}h3{font-size:16px;line-height:24px;letter-spacing:-.32px;font-weight:600;margin:0 0 12px}p{margin:0 0 var(--block)}p:last-child{margin-bottom:0}section{margin-bottom:var(--section)}code{font-family:var(--font-mono);font-size:13px;background:var(--a4);border-radius:var(--r-inline);padding:1px 5px}table{width:100%;border-collapse:collapse;font-size:14px;border-top:1px solid var(--a20)}th,td{text-align:left;padding:12px 4px;border-bottom:1px solid var(--a12);vertical-align:top}thead th{font-size:12px;letter-spacing:.02em;color:var(--a55);font-weight:500}tbody tr:last-child td{border-bottom:1px solid var(--a20)}
+.page{max-width:var(--article);margin:0 auto;padding:64px 24px 96px}.context-line{font-size:13px;color:var(--a55);margin:0 0 20px}.title-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}.title-row h1{min-width:0}.status{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:var(--r-pill);background:var(--a4);color:var(--a70);font-size:11px;font-weight:600;letter-spacing:.02em;white-space:nowrap;border:1px solid var(--a12)}.dek{font-size:16px;color:var(--a55);margin:0 0 40px;max-width:62ch}footer.sources{margin-top:64px;padding-top:24px;border-top:1px solid var(--a12);font-size:12px;color:var(--a40);line-height:1.7}footer.sources a{color:var(--a55)}
+.toc-rail{font-size:13px;margin:0 0 48px}.toc-rail .toc-label{font-size:11px;letter-spacing:.02em;color:var(--a40);margin:0 0 8px}.toc-rail a{display:block;color:var(--a55);padding:3px 0}.toc-rail a:hover{color:var(--foreground);text-decoration:none}.toc-rail a.active{color:var(--foreground);font-weight:600}@media(min-width:1160px){.toc-rail{position:sticky;top:64px;float:right;width:200px;margin:8px calc(-200px - 48px) 0 0}}
+.callout{border:1px solid var(--a12);border-radius:var(--r-card);padding:14px 16px;font-size:14px;line-height:1.6;margin-bottom:24px}.callout p{margin:0}.callout strong{font-weight:700}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);align-items:center;gap:8px;margin:24px 0 12px;min-width:650px}.flow-wrap{overflow-x:auto}.flow-step{border:1px solid var(--a20);border-radius:var(--r-card);padding:12px 10px;text-align:center;font:12px/1.4 var(--font-mono);position:relative;background:var(--background)}.flow-step.em{border-color:var(--accent);color:var(--accent-deep)}.flow-arrow{text-align:center;color:var(--a40)}.flow-note{font-size:13px;color:var(--a55)}
+.comparison-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--a12);border:1px solid var(--a12);border-radius:var(--r-card);overflow:hidden;margin-bottom:var(--section)}.option-card{background:var(--background);padding:18px 20px}.option-card p{font-size:14px;line-height:1.6;margin:0 0 12px}.best-for{font-size:12px;color:var(--a55)}@media(max-width:680px){.comparison-grid{grid-template-columns:1fr}}
+.wire{border:1px solid var(--a20);border-radius:var(--r-card);overflow:hidden;margin:18px 0 12px;background:var(--background)}.wire-head{display:flex;justify-content:space-between;gap:16px;padding:12px 14px;border-bottom:1px solid var(--a12);font-size:12px;color:var(--a55)}.wire-grid{display:grid;grid-template-columns:180px minmax(260px,1fr) 190px;min-height:280px}.wire-pane{padding:14px;border-right:1px solid var(--a12)}.wire-pane:last-child{border-right:0}.file{padding:7px 0;border-bottom:1px solid var(--a8);font:12px var(--font-mono)}.preview{height:190px;border:1px solid var(--a12);display:grid;place-items:center;color:var(--a55);font-size:13px;background:var(--a4)}.note-box{border:1px solid var(--a20);border-radius:var(--r-inline);min-height:120px;padding:10px;font-size:12px;color:var(--a55)}@media(max-width:720px){.wire-grid{grid-template-columns:1fr}.wire-pane{border-right:0;border-bottom:1px solid var(--a12)}.wire-pane:last-child{border-bottom:0}}
+.table-scroll{overflow-x:auto;margin-bottom:var(--section)}.cell-label{font-weight:600;white-space:nowrap}.muted{color:var(--a55)}
+.timeline{list-style:none;margin:0 0 var(--section);padding:0}.milestone{position:relative;display:flex;gap:14px;padding-bottom:24px;padding-left:4px}.milestone::before{content:"";position:absolute;left:7px;top:18px;bottom:-6px;width:1px;background:var(--a20)}.milestone:last-child::before{display:none}.milestone-marker{flex:0 0 auto;width:8px;height:8px;border-radius:50%;margin-top:5px;background:var(--foreground)}.milestone.is-current .milestone-marker{background:var(--accent)}.milestone-body{flex:1 1 auto;min-width:0}.milestone-title{font-size:14px;font-weight:600}.milestone-detail{font-size:13px;color:var(--a55);line-height:1.6;margin-top:2px}
+.recommendation{border:1px solid var(--a12);border-radius:var(--r-card);padding:20px 22px;font-size:15px;line-height:1.7;margin-bottom:var(--section)}.recommendation p{margin:0}.recommendation p+p{margin-top:10px}.recommendation strong{font-weight:700}
+.disclosure{border:1px solid var(--a12);border-radius:var(--r-card);margin-bottom:var(--block)}.disclosure summary{cursor:pointer;padding:12px 16px;font-size:13px;font-weight:600;list-style:none}.disclosure summary::-webkit-details-marker{display:none}.disclosure[open] summary{border-bottom:1px solid var(--a12)}.disclosure-content{padding:14px 16px;font-size:14px;line-height:1.6}
+@media(prefers-reduced-motion:no-preference){html.js-motion .stagger>*{opacity:0;transform:translateY(6px);animation:rise var(--dur-reveal) var(--ease) forwards}html.js-motion .stagger>*:nth-child(2){animation-delay:var(--stagger)}html.js-motion .stagger>*:nth-child(3){animation-delay:calc(var(--stagger)*2)}a,summary{transition:color var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease)}}@keyframes rise{to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div data-component="page-shell" class="page">
+  <header class="stagger">
+    <p class="context-line">MetaSkill / product architecture</p>
+    <div class="title-row"><h1>Run & Review</h1><span class="status">proposed</span></div>
+    <p class="dek">A local, artifact-first evaluation experience: run one task, inspect what the skill made, leave notes, fix it with the agent, then graduate to a small judged batch.</p>
+  </header>
+
+  <nav data-component="toc-rail" class="toc-rail" aria-label="On this page">
+    <p class="toc-label">On this page</p>
+    <a href="#thesis">Product thesis</a>
+    <a href="#gears">Two gears</a>
+    <a href="#viewer">Viewer</a>
+    <a href="#artifacts">Artifacts</a>
+    <a href="#judge">Judge learning</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#delivery">Build order</a>
+  </nav>
+
+  <section id="thesis">
+    <h2>Product thesis</h2>
+    <div data-component="callout" class="callout"><p><strong>Codex runs the skill. The IAB lets the user inspect exactly what it made.</strong> The user leaves notes, discusses them with the agent, and only introduces formal cases and a judge after the skill is already useful.</p></div>
+    <div class="flow-wrap" data-component="flow-diagram"><div class="flow" style="grid-template-columns:1fr auto 1fr auto 1fr auto 1fr auto 1fr">
+      <div class="flow-step">run one task</div><div class="flow-arrow">→</div><div class="flow-step em">inspect artifact</div><div class="flow-arrow">→</div><div class="flow-step">leave notes</div><div class="flow-arrow">→</div><div class="flow-step">agent fixes skill</div><div class="flow-arrow">→</div><div class="flow-step">run again</div>
+    </div></div>
+    <p class="flow-note">When the skill is good enough, the same review experience expands from one output to a batch of 3–8 outputs with automated judgment.</p>
+  </section>
+
+  <section id="gears">
+    <h2>Two gears, one viewer</h2>
+    <div data-component="comparison-grid" class="comparison-grid">
+      <div class="option-card"><h3>Manual iteration</h3><p>One prompt, one skill version, the response and produced files. The user inspects the result and writes a note; the agent reads it and revises the skill.</p><div class="best-for">default for early skill development</div></div>
+      <div class="option-card"><h3>Small-batch evaluation</h3><p>Three to eight saved cases run together. A judge reviews each output using the current rubric; the user inspects concerns and annotates exceptions.</p><div class="best-for">confidence before recurring or automated use</div></div>
+    </div>
+    <p>There is no benchmark mode and no lifecycle dashboard. A single run opens directly into focused review; a batch opens into a compact matrix that drills into the same focused review.</p>
+  </section>
+
+  <section id="viewer">
+    <h2>The end-user viewer</h2>
+    <h3>Focused result</h3>
+    <div class="wire" aria-label="Focused result wireframe">
+      <div class="wire-head"><span>Run 4 · “Create a bakery landing page”</span><span>Completed</span></div>
+      <div class="wire-grid">
+        <div class="wire-pane"><strong>Output files</strong><div class="file">● index.html</div><div class="file">styles.css</div><div class="file">app.js</div><div class="file">hero.png</div><p class="muted">Open folder · Open original</p></div>
+        <div class="wire-pane"><strong>Preview</strong><div class="preview">Rendered website or Codex artifact preview</div><p class="muted">Full IAB tab · viewport controls · source</p></div>
+        <div class="wire-pane"><strong>Your notes</strong><div class="note-box">Mobile navigation wraps into the hero. The rest looks strong.</div><p class="muted">Saved against index.html</p></div>
+      </div>
+    </div>
+    <p>The priority is artifact → notes → previous result → response → transcript. Previous output and previous feedback remain available without dominating the screen.</p>
+
+    <h3>Batch matrix</h3>
+    <div data-component="data-table" class="table-scroll"><table><thead><tr><th>Case</th><th>Result</th><th>Judge</th><th>Human</th></tr></thead><tbody>
+      <tr><td class="cell-label">Quarterly workbook</td><td>Pass</td><td>Looks good</td><td>Reviewed</td></tr>
+      <tr><td class="cell-label">Landing page</td><td>Concern</td><td>Mobile navigation</td><td>Needs review</td></tr>
+      <tr><td class="cell-label">Investor presentation</td><td>Pass</td><td>Looks good</td><td>—</td></tr>
+      <tr><td class="cell-label">Product requirements</td><td>Running</td><td>—</td><td>—</td></tr>
+    </tbody></table></div>
+    <p>The matrix is a queue, not the review surface. Selecting a row opens the focused result above. Stable URLs preserve run, case, candidate and artifact.</p>
+  </section>
+
+  <section id="artifacts">
+    <h2>Artifact behavior</h2>
+    <div data-component="data-table" class="table-scroll"><table><thead><tr><th>Output</th><th>Default treatment</th><th>Always available</th></tr></thead><tbody>
+      <tr><td class="cell-label">XLSX, DOCX, PPTX, PDF</td><td>Open through Codex Artifact Preview</td><td>Original file and containing folder</td></tr>
+      <tr><td class="cell-label">Images, text, Markdown, JSON</td><td>Cheap inline preview</td><td>Open original</td></tr>
+      <tr><td class="cell-label">HTML website directory</td><td>Isolated live website preview</td><td>Full IAB tab, source and folder</td></tr>
+      <tr><td class="cell-label">Unknown binary</td><td>Metadata only</td><td>Open original</td></tr>
+    </tbody></table></div>
+    <div data-component="callout" class="callout"><p><strong>Generated HTML is a runnable artifact.</strong> Serve the frozen output directory from an isolated local origin or sandboxed iframe so relative CSS, JavaScript and images work. Never inject generated HTML into the workbench DOM.</p></div>
+  </section>
+
+  <section id="judge">
+    <h2>Annotations teach the judge explicitly</h2>
+    <div class="flow-wrap" data-component="flow-diagram"><div class="flow" style="grid-template-columns:1fr auto 1fr auto 1fr auto 1fr auto 1fr">
+      <div class="flow-step">human annotations</div><div class="flow-arrow">→</div><div class="flow-step">compare with judge</div><div class="flow-arrow">→</div><div class="flow-step em">propose rubric change</div><div class="flow-arrow">→</div><div class="flow-step">approve or edit</div><div class="flow-arrow">→</div><div class="flow-step">future automation</div>
+    </div></div>
+    <p>The judge does not silently rewrite itself. Annotations become calibration examples. After a batch, a calibration pass identifies disagreements and proposes reusable rubric changes, each linked to the supporting outputs.</p>
+    <div class="wire"><div class="wire-head"><span>Judge calibration</span><span>Rubric v2 → v3</span></div><div style="padding:16px"><p><strong>Proposed addition.</strong> Presentation artifacts should include visible source attribution when supplied material contains external claims.</p><p class="muted">Supported by: Investor presentation · Market analysis deck</p><p><strong>Decisions:</strong> Accept · Edit · Keep case-specific</p></div></div>
+    <p>Approved rubric versions are evaluated against prior labeled examples, including a small holdout, before they become the default for automated runs.</p>
+  </section>
+
+  <section id="architecture">
+    <h2>Minimum local control plane</h2>
+    <div data-component="data-table" class="table-scroll"><table><thead><tr><th>Component</th><th>Responsibility</th><th>Not responsible for</th></tr></thead><tbody>
+      <tr><td class="cell-label">Run store</td><td>Immutable local tasks, outputs, artifacts and provenance</td><td>Editing skill source</td></tr>
+      <tr><td class="cell-label">Artifact gateway</td><td>Browse folders, open originals, preview supported files and safely serve sites</td><td>Rebuilding Office applications</td></tr>
+      <tr><td class="cell-label">Review viewer</td><td>Live progress, focused review, batch matrix and annotations</td><td>Generating skill improvements</td></tr>
+      <tr><td class="cell-label">Judge</td><td>Review outputs with a frozen rubric and cite evidence</td><td>Silently changing the rubric</td></tr>
+      <tr><td class="cell-label">Calibrator</td><td>Compare judge decisions with human annotations and propose rubric revisions</td><td>Automatically accepting universal rules</td></tr>
+    </tbody></table></div>
+    <p>The filesystem remains authoritative. The IAB projects live and historical state from <code>.skill/runs/</code>; Codex remains responsible for discussing notes and editing the skill.</p>
+  </section>
+
+  <section id="delivery">
+    <h2>Build order</h2>
+    <ol data-component="timeline" class="timeline">
+      <li class="milestone is-current"><span class="milestone-marker"></span><div class="milestone-body"><div class="milestone-title">1. Complete the manual loop</div><p class="milestone-detail">One-run focused viewer, output-folder navigation, Codex preview handoff, safe live HTML, artifact-targeted notes, previous output and stable URLs.</p></div></li>
+      <li class="milestone"><span class="milestone-marker"></span><div class="milestone-body"><div class="milestone-title">2. Add the 3–8-case batch</div><p class="milestone-detail">Live matrix, focused drill-down, judge review, needs-review filtering and selective reruns.</p></div></li>
+      <li class="milestone"><span class="milestone-marker"></span><div class="milestone-body"><div class="milestone-title">3. Calibrate the judge</div><p class="milestone-detail">Human–judge disagreement review, proposed rubric amendments, explicit approval, versioning and alignment checks.</p></div></li>
+    </ol>
+    <div data-component="recommendation" class="recommendation"><p><strong>Build the focused artifact-review loop first.</strong> It is the daily product and the foundation for every later case, judge and calibration workflow.</p><p>Borrow Anthropic’s immediate output-to-feedback handoff and Tessl’s durable run identity and live batch progress. Differentiate with native Codex artifact inspection, runnable HTML websites and transparent judge calibration.</p></div>
+  </section>
+
+  <details data-component="disclosure" class="disclosure"><summary>Reference comparison</summary><div class="disclosure-content"><p><strong>Anthropic:</strong> one output at a time, files, formal grades, one feedback string and previous iteration context. HTML is shown as source; feedback does not automatically tune the grader.</p><p><strong>Tessl:</strong> strong durable run URLs, progress, history and aggregate-to-scenario drill-down. Public documentation does not describe ad hoc artifact review, annotations or judge learning.</p></div></details>
+
+  <footer class="sources">Sources: <a href="https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md">Anthropic Skill Creator</a> · <a href="https://github.com/anthropics/skills/blob/main/skills/skill-creator/eval-viewer/viewer.html">Anthropic eval viewer</a> · <a href="https://docs.tessl.io/evaluate/evaluate-skill-quality-using-scenarios">Tessl scenario evaluations</a> · <a href="https://docs.langchain.com/langsmith/improve-judge-evaluator-feedback">LangSmith judge alignment</a></footer>
+</div>
+<script>
+(function(){var reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;if(!reduced)document.documentElement.classList.add("js-motion");var links=[].slice.call(document.querySelectorAll(".toc-rail a[href^='#']"));if(links.length&&"IntersectionObserver" in window){var targets=links.map(function(a){return document.getElementById(a.getAttribute("href").slice(1))}).filter(Boolean);var spy=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)links.forEach(function(a){a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id)})})},{rootMargin:"-15% 0px -70% 0px"});targets.forEach(function(t){spy.observe(t)})}})();
+</script>
+</body>
+</html>
