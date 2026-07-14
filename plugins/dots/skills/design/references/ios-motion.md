@@ -6,6 +6,33 @@ haptic feedback. The behavioral principles apply across platforms. Web API and
 CSS examples below remain web mappings; implement native work through the
 platform APIs and conventions already used by the target repository.
 
+## SwiftUI implementation layer
+
+Before choosing an API, inspect the app's deployment target and nearby motion,
+gesture, and haptic code. Prefer native controls and transitions; add a custom
+gesture only when the interaction needs continuous tracking or physics that the
+control does not provide.
+
+- Drive transient drag state with `@GestureState` and persistent resting state
+  with `@State`. Track `DragGesture.Value.translation` 1:1, and use
+  `predictedEndTranslation` to choose the release target before springing there.
+- Scope implicit animation with `.animation(_:value:)`; use `withAnimation` for
+  a discrete state change. Do not attach a broad animation modifier high in the
+  view tree or stack implicit and explicit animations for the same state.
+- Use a spring for gesture releases and interruptible spatial changes. Use a
+  transition, `matchedGeometryEffect`, `contentTransition`, or `symbolEffect`
+  only when it preserves identity or communicates a real state change. Do not
+  add an idle loop merely to make a static surface feel animated.
+- Keep `Button` and other native control semantics for ordinary taps. Use a
+  `ButtonStyle` for press appearance; do not replace a button with a zero-distance
+  drag gesture solely to obtain scale or haptic feedback.
+- Use the project's haptic abstraction when one exists; otherwise prefer
+  `.sensoryFeedback` where the deployment target supports it. Trigger feedback
+  from the semantic state change, and gate threshold feedback so it fires once
+  per crossing and rearms after the gesture retreats.
+- Check API availability against the real deployment target. A current-SDK API
+  or effect is not evidence that the shipping app can use it.
+
 ## 1. Response — kill latency
 
 The moment lag appears, the feeling of directness "falls off a cliff." Response is the foundation everything else is built on.
@@ -169,6 +196,10 @@ Three rules for combining senses (from *Designing Audio-Haptic Experiences*):
 
 Reduced motion doesn't mean *no* feedback — it means a gentler, non-vestibular equivalent. Respond to three independent signals and bake them into your components:
 
+- **SwiftUI:** read `accessibilityReduceMotion`,
+  `accessibilityReduceTransparency`, and `accessibilityContrast` from the
+  environment. Branch the motion or material itself; do not merely shorten the
+  same vestibular animation.
 - **`prefers-reduced-motion: reduce`** — replace slides/springs/parallax with short opacity **cross-fades or static transitions**. Drop elastic/overshoot. Keep opacity/color changes that aid comprehension.
 - **`prefers-reduced-transparency: reduce`** — make translucent surfaces frostier/solid: raise background opacity, drop the blur.
 - **`prefers-contrast: more`** — near-solid backgrounds with a defined, contrasting border.
@@ -189,6 +220,10 @@ Also: avoid full-viewport moving backgrounds, slow looping oscillations (near 0.
 - **Prototype interactively — an interactive demo is worth "a million static designs."** You discover the interface by building and playing with it; a working prototype also sets a concrete bar that prevents a mediocre final implementation.
 - **Design interaction and visuals together.** "You shouldn't be able to tell where one ends and the other begins." Motion is not a layer added after the pixels.
 - **Test with real people in real context**, and review motion with fresh eyes — play it in slow motion / frame-by-frame to catch what's invisible at full speed.
+- **For SwiftUI, validate the transition rather than its final frame.** Build
+  against the app's deployment target, record the interaction, inspect an
+  intermediate frame, interrupt or reverse it while moving, and repeat with
+  Reduce Motion enabled.
 
 ## Quick Reference
 
