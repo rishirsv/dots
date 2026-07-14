@@ -84,13 +84,13 @@ def validate(skill_md):
     else:
         check(results, "description_length", PASS, f"description is {n} chars (<= {DESC_SOFT_LIMIT})")
 
-    # description_third_person
+    # description_neutral_voice
     found = sorted({w for w in PERSON_WORDS if re.search(rf"(?i)\b{re.escape(w)}\b", desc)})
     if found:
-        check(results, "description_third_person", WARN,
+        check(results, "description_neutral_voice", WARN,
               f"description uses first/second person: {', '.join(found)}")
     else:
-        check(results, "description_third_person", PASS, "description stays third person")
+        check(results, "description_neutral_voice", PASS, "description uses neutral active voice")
 
     # description_no_workflow_steps
     low = desc.lower()

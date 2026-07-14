@@ -1,6 +1,8 @@
 """Canonical filesystem read model and Markdown report export."""
 
 from collections import Counter, defaultdict
+import hashlib
+import json
 from pathlib import Path
 
 from .errors import CliError
@@ -15,6 +17,41 @@ def _safe_json(path, default):
         return read_json(path) if Path(path).exists() else default
     except CliError:
         return default
+
+
+def _normalized_annotation(annotation, trial_id, index):
+    row = dict(annotation)
+    if not row.get("annotation_id"):
+        payload = json.dumps(
+            {"trial_id": trial_id, "index": index, "annotation": row},
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        row["annotation_id"] = f"legacy-{hashlib.sha256(payload.encode()).hexdigest()[:24]}"
+    row["judge_use"] = row.get("judge_use") or "exclude"
+    return row
+
+
+def _normalized_review(review, trial_id):
+    if not isinstance(review, dict):
+        return review
+    return {
+        **review,
+        "annotations": [
+            _normalized_annotation(annotation, trial_id, index)
+            for index, annotation in enumerate(review.get("annotations") or [])
+            if isinstance(annotation, dict)
+        ],
+    }
+
+
+def _executor_model(run, key):
+    executor = run.get(key)
+    if key == "judge_executor" and executor is None:
+        return None
+    if not isinstance(executor, dict) or not executor.get("kind") or not executor.get("provenance"):
+        raise CliError(f"run is missing canonical {key} provenance", 2)
+    return dict(executor)
 
 
 def _failed_checks(grades):
@@ -48,7 +85,7 @@ def _trial_model(run_dir, planned, grading_enabled):
         },
     )
     grades = latest_grade_rows(read_jsonl(root / "grades.jsonl"))
-    review = _safe_json(root / "review.json", None)
+    review = _normalized_review(_safe_json(root / "review.json", None), trial_id)
     verdict = verdict_for_trial(state, grades, grading_enabled=grading_enabled)
     failed_checks = _failed_checks(grades)
     model_by_metric = {
@@ -329,6 +366,9 @@ def build_report(raw_run, *, blind_pending_human=False):
         "suite": run.get("suite"),
         "project": run.get("project"),
         "model": run.get("model"),
+        "reasoning_effort": run.get("reasoning_effort"),
+        "task_executor": _executor_model(run, "task_executor"),
+        "judge_executor": _executor_model(run, "judge_executor"),
         "runner": run.get("runner") or {},
         "baseline_candidate": run.get("baseline_candidate"),
         "source_run_id": run.get("source_run_id"),
@@ -383,6 +423,9 @@ def list_runs(raw_suite, *, blind_pending_human=False, runs_root=None):
                     "objective": report.get("objective"),
                     "baseline_candidate": report.get("baseline_candidate"),
                     "model": report.get("model"),
+                    "reasoning_effort": report.get("reasoning_effort"),
+                    "task_executor": report.get("task_executor"),
+                    "judge_executor": report.get("judge_executor"),
                     "candidates": [row.get("candidate") for row in report.get("candidates") or []],
                     "totals": report["totals"],
                     "runtime_status_totals": report["runtime_status_totals"],
@@ -398,6 +441,30 @@ def list_runs(raw_suite, *, blind_pending_human=False, runs_root=None):
         except CliError as exc:
             rows.append({"run_id": run_dir.name, "error": exc.message, "run_dir": str(run_dir)})
     return {"ok": True, "runs_dir": str(runs_root), "runs": rows}
+
+
+def judge_annotation_context(raw_run):
+    """Return only reviewer annotations explicitly approved for judge context."""
+    report = build_report(raw_run)
+    rows = []
+    for trial in report.get("trials") or []:
+        for annotation in ((trial.get("review") or {}).get("annotations") or []):
+            if annotation.get("judge_use") not in {"rubric", "evidence"}:
+                continue
+            rows.append(
+                {
+                    "annotation_id": annotation["annotation_id"],
+                    "judge_use": annotation["judge_use"],
+                    "trial_id": trial.get("trial_id"),
+                    "eval_id": trial.get("eval_id"),
+                    "candidate": trial.get("candidate"),
+                    "artifact": annotation.get("artifact"),
+                    "artifact_path": annotation.get("artifact_path"),
+                    "tag": annotation.get("tag"),
+                    "note": annotation.get("note"),
+                }
+            )
+    return rows
 
 
 def build_suite_report(raw_suite, *, blind_pending_human=True, runs_root=None):
@@ -467,6 +534,21 @@ def _table(headers, rows):
     ]
 
 
+def _executor_label(executor):
+    executor = executor or {}
+    model = executor.get("observed_model") or executor.get("requested_model")
+    return " · ".join(
+        str(value)
+        for value in (
+            executor.get("kind"),
+            model,
+            executor.get("requested_reasoning"),
+            executor.get("provenance"),
+        )
+        if value
+    ) or "unknown"
+
+
 def render_markdown(report):
     delta = report.get("delta_totals") or {}
     totals = report.get("totals") or {}
@@ -487,7 +569,8 @@ def render_markdown(report):
         "",
         f"- Baseline version: {report.get('baseline_candidate') or 'none'}",
         f"- Versions: {', '.join(row.get('candidate') or '' for row in report.get('candidates') or []) or 'none'}",
-        f"- Model: {report.get('model') or 'runtime default'}",
+        f"- Task executor: {_executor_label(report.get('task_executor'))}",
+        f"- Judge executor: {_executor_label(report.get('judge_executor'))}",
         f"- Duration: {report.get('duration_ms') or 0} ms",
         "",
         "## Version comparison",

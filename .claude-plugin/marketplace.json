@@ -24,7 +24,7 @@
     },
     {
       "name": "meta-skill",
-      "version": "0.1.3",
+      "version": "0.1.12",
       "description": "Create, revise, review, and evaluate agent skills.",
       "author": {
         "name": "Rishi"

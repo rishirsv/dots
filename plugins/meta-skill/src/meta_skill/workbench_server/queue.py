@@ -191,6 +191,11 @@ def _text(path):
     return Path(path).read_text(errors="replace") if Path(path).is_file() else None
 
 
+def _artifact_files(path):
+    root = Path(path)
+    return [item.relative_to(root).as_posix() for item in sorted(root.rglob("*")) if item.is_file()]
+
+
 def build_pairwise_packet(run_dir, comparison_id):
     report, pairs = _pair_models(run_dir)
     pair = next((row for row in pairs if row["comparison_id"] == comparison_id), None)
@@ -206,11 +211,11 @@ def build_pairwise_packet(run_dir, comparison_id):
         "expected": _text(case_root / "expected.md"),
         "a": {
             "response": _text(pair["a"]["response_path"]),
-            "artifacts": list(pair["a"].get("produced_artifacts") or []),
+            "artifacts": _artifact_files(pair["a"]["artifacts_path"]),
         },
         "b": {
             "response": _text(pair["b"]["response_path"]),
-            "artifacts": list(pair["b"].get("produced_artifacts") or []),
+            "artifacts": _artifact_files(pair["b"]["artifacts_path"]),
         },
         "reviewed": pair["review"] is not None,
         "review": pair["review"],

@@ -1,240 +1,233 @@
 ---
 name: code-review
-description: "Reviews changed code, existing plans, or explicit repo/subsystem audit targets for correctness, reuse, simplification, efficiency, and maintainability. Report-only unless fixes are requested. Not for blank-slate planning, architecture-primary scans, PR publication, or unrequested implementation."
+description: "Reviews and fixes changed code after coding tasks for correctness, reuse, quality, and efficiency; reviews plans and writes repo/subsystem audit documents without implementation. Use for code review or audit; not for blank-slate planning, architecture-primary scans, PR publication, or external review comments."
 ---
 
 # Code Review
 
-Review changed code after implementation, an existing implementation plan,
-spec, roadmap, or an explicit repo/subsystem audit target. Preserve behavior,
-find correctness problems, identify unnecessary complexity, and point to
-canonical code the change should reuse. Scale effort to the scope and risk.
+## Default Posture
 
-Correctness comes first. Review-only requests are report-only. When the user
-asks to review and fix the code, run the full bug-hunting review with independent
-reviewer lenses. Verify their findings, apply every safe fix within scope, and
-validate the result. The request to fix authorizes those edits.
+Choose one route from the user's target and the current task:
 
-Audit Mode is the broad-review case: review a repo, subsystem, package, branch,
-or category target beyond the current diff. Do not silently widen a diff review
-into a repo audit. Architecture Review owns requests primarily about structural
-refactor candidates, canonical ownership, seams, or interface design; Code
-Review reports architecture evidence only when it arises inside its review
-scope.
+- **Post-coding or current-diff review**: review all changed files, fix every
+  confirmed in-scope issue, simplify the implementation, validate the edits,
+  and return the completed result.
+- **Explicit report-only review or plan/spec review**: analyze and report.
+  Never modify source or silently rewrite the artifact.
+- **Audit**: inspect the explicit repo or subsystem target, always write the
+  audit document, and never action its findings.
 
-## References
+Changed-code review always combines **Correctness Review** with the three
+Simplify lanes:
+* **Agent 1: Code Reuse Review**
+* **Agent 2: Code Quality Review**
+* **Agent 3: Efficiency Review**
 
-- Read [../../references/review-checklists.md](../../references/review-checklists.md)
-  for deep reviews or when a direct review needs a specific lens. It holds the
-  correctness, simplification, quality, efficiency, and extra-angle prompts.
-- Read
-  [../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
-  for the canonical hard-cut policy when a fix touches schemas, contracts,
-  persisted state, routing, configuration, feature flags, enum/value sets,
-  migrations, adapters, or compatibility paths, or when reviewing a plan.
-- Read
-  [../../references/subagent-lanes.md](../../references/subagent-lanes.md)
-  for lane definitions before delegating independent review work.
-- Read [references/audit-mode.md](references/audit-mode.md) when the user asks
-  to audit, survey, inspect, health-check, find improvement opportunities, or
-  review a repo, subsystem, package, branch, or category beyond the current
-  diff.
+Always aim to simplify changed code while preserving intended behavior. Apply
+code judo: seek a more direct design that removes incidental complexity instead
+of rearranging it. Look for whole branches, helpers, modes, conditionals, or
+layers that can disappear. Keep the work bounded to the captured change;
+Architecture Review owns broad structural candidate discovery and new seam
+design.
 
-## Phase 1: Identify Scope
+## 1. Capture Scope
 
-Read `AGENTS.md`, `REVIEW.md`, or other repo guidance named by the user or found
-near the changed files.
+Read applicable repository instructions and review guidance before judging the
+change.
 
-If the user asks for an audit, survey, broad review, repo health check, security
-sweep, performance sweep, test coverage review, dependency review, DX review,
-or improvement opportunities across a repo/subsystem/package/category, enter
-Audit Mode. Use [references/audit-mode.md](references/audit-mode.md), require an
-explicit target, and declare coverage. Do not capture a diff as the whole scope
-unless the user asked for branch or changed-code audit.
+Use [Audit Mode](references/audit-mode.md) when the user asks to audit a repo,
+subsystem, package, branch, or category beyond a changed-code scope. Audit Mode
+is always document-only.
 
-If the user supplies, pastes, or names an existing implementation plan, spec,
-or roadmap, review that text instead of a git diff. Rewrite a file only when
-the user asked for revision; otherwise return findings in chat. Default to
-hard-cut simplification for plans (see
-[../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)):
-cut speculative future-proofing, redundant phases, and compatibility ladders
-unless the plan names a real external boundary. Planning a new approach
-belongs to planning work; reviewing an existing plan belongs here.
+When the user supplies an existing plan, spec, or roadmap, review that artifact
+instead of a git diff. Flag speculative future-proofing, redundant phases, and
+compatibility ladders without a named boundary. Read
+[hard-cut-policy.md](../../references/hard-cut-policy.md) when the artifact
+changes schemas, contracts, persisted state, routing, configuration, migrations,
+or compatibility paths. Blank-slate planning belongs to the planning workflow.
 
-Otherwise, start from the current repository state:
+For changed code, choose exactly one target:
 
-```sh
-git status --short
-git diff --stat
-git diff --staged --stat
-git diff --name-only
-git diff --staged --name-only
-```
+- **Named PR**: the PR's diff is the only review scope — local working-tree
+  changes are out of scope. Read PR metadata for intent and surrounding code
+  from the matching checkout or PR branch.
+- **Named branch, base, commit, range, or paths**: pin the fixed point first.
+  Confirm that the ref resolves, then review only the explicit scope. For a
+  branch, compare from its merge base with the named or configured base.
+- **Current local changes**: inspect `git status --short --untracked-files=all`,
+  the staged diff, and the unstaged diff. Include untracked source files.
 
-Capture one review diff before launching reviewers: a named PR, branch, commit
-range, or file path if given; otherwise `git diff HEAD` for staged changes,
-`git diff` for unstaged changes, or in order `git diff @{upstream}...HEAD`,
-`git diff main...HEAD`, `git diff HEAD~1` when the working tree is clean. With
-no git changes, review the mentioned files or files edited earlier in the
-thread.
+Naming paths only narrows the captured scope. Post-coding and current
+local-change reviews still use the review-and-fix default when paths are named.
+Standalone PR, branch, commit, range, or historical path reviews are report-only
+unless the user requests fixes and the writable scope is clear.
 
-Ask one concise scope question only when several unrelated changes are present
-and the intended review target is ambiguous.
+If a post-coding review has no git changes, review the most recently modified
+files that the user mentioned or that were edited earlier in the task. For any
+other empty scope, state that it is empty; do not silently substitute an
+upstream diff, `main`, or the latest commit.
 
-## Phase 2: Choose Depth
+Review every changed file. Read the entire file, not just diff hunks, when
+correctness, reuse, ownership, or structural quality depends on surrounding
+context. Read other repository code to establish behavior or find an existing
+owner, but do not turn unchanged code into a cleanup target unless a changed
+line requires the supporting edit.
 
-Use the smallest review shape that can catch the likely failures:
+## 2. Run Correctness Review And The Three Simplify Lanes
 
-- **Direct**: one focused pass by the primary agent for small or ordinary
-  changes, narrow plan reviews, and scopes where the relevant behavior fits in
-  working context.
-- **Deep**: multiple independent lenses for broad diffs, high-risk behavior,
-  repeated review misses, or an explicit exhaustive request. Schemas,
-  persisted state, cross-process contracts, auth, billing, security,
-  concurrency, and migrations usually justify this path.
+Read [review-checklists.md](references/review-checklists.md) for every
+changed-code review. It contains the full Correctness Review and three Simplify
+lane checklists. Run every lane; do not replace them with a generic cleanup
+pass.
 
-Depth controls evidence gathering, not a finding quota. A clean review may
-return no findings. When the user asks for independent reviewers or subagents,
-use Deep and assign each requested lens to a separate reviewer when multi-agent
-tools are available. Run independent reviewers concurrently. If multi-agent
-tools are unavailable, make the same passes directly. For other reviews,
-delegate only when independent lanes materially improve coverage.
+When subagents are available, launch all three Simplify lanes concurrently and
+pass each lane the complete diff, changed-file list, applicable repository
+guidance, allowed surrounding paths, and user focus. The parent performs
+Correctness Review while they run. If subagents are unavailable, the parent
+applies all three lane checklists directly; no lane may be skipped.
 
-## Phase 3: Behavior Lock
+Use review depth only to scale Correctness Review and candidate verification:
 
-Activate this phase before cleanup edits when the user asks to deslop, clean up
-AI output, apply fixes, pass a scoped file list, or perform behavior-adjacent
-refactoring.
+- **Direct**: the parent performs one focused Correctness Review for ordinary
+  diffs and narrow plan reviews.
+- **Deep**: add independent correctness or risk-specific finders plus fresh
+  verification for broad diffs, high-risk behavior, repeated misses, or an
+  explicit exhaustive request. Schemas, persisted state, cross-process
+  contracts, auth, billing, security, concurrency, and migrations usually
+  justify Deep.
 
-1. Identify the behavior that must not change in the target files.
-2. Check whether existing tests cover that behavior, and run the narrowest useful
-   tests when they exist.
-3. If critical behavior is untested and the planned cleanup is behavior-adjacent,
-   add the narrowest regression test first or report that the fix should wait.
-4. Skip this phase for review-only work and for tiny cleanups already covered by
-   targeted validation.
+When the user explicitly requests independent reviewers and multi-agent tools
+are unavailable, state that independence cannot be provided and offer a direct
+Deep pass instead. A clean review may return no findings; depth never creates a
+finding quota.
 
-## Phase 4: Find Candidates
+Use only the checklist's conditional angles that match the scope. If the user
+supplied a focus area, weight it heavily, but still report or fix any other
+material issue you can defend.
 
-For a direct review, inspect the diff and enough surrounding code to establish
-the changed behavior. Include test and fixture hunks when they encode or fail to
-prove an affected invariant.
+In a diff review, reject pre-existing issues, intentional behavior changes,
+nitpicks without concrete cost, and problems on unchanged code unless the diff
+introduced or exposed the failure. Treat deterministic lint, type, formatting,
+and build failures as validation results rather than review findings unless
+they reveal a deeper defect.
 
-For a deep review, choose independent lenses from
-[../../references/review-checklists.md](../../references/review-checklists.md):
-correctness, reuse and structural simplification, code quality, efficiency and
-atomicity, or an extra angle tied to the risk. Run useful lanes concurrently
-when a multi-agent tool is available; otherwise make the passes directly.
+### Finding Bar
 
-Give every finder the same scope packet: captured diff, changed-file list,
-compact repo guidance, applicable paths, user focus, and changed-file contents
-when the diff alone is insufficient. Require each finder to return the final
-finding fields from the Output section, or "no findings" when clean.
+Report only material findings. Prefer one strong finding over several weak
+ones.
 
-## Phase 5: Verify Candidates
+A correctness or adversarial candidate must answer:
 
-Verify every candidate against the actual files. Merge duplicates and classify
-each one:
+1. What can go wrong?
+2. Why is this code path vulnerable?
+3. What is the likely impact?
+4. What concrete change would reduce the risk?
 
-- **Confirmed**: the evidence establishes the reachable failure or concrete
-  maintainability cost. These are findings.
-- **Needs verification**: the mechanism is credible, but a missing runtime,
-  configuration, data-shape, or product fact prevents confirmation. Keep these
-  separate and state the exact check that would resolve them.
-- **Rejected**: the claim is false, impossible, already handled, or pure style
-  without observable cost. Do not report it as a finding.
+For plan review, substitute the cited decision, step, or contract for
+`code path`.
 
-For a deep simplification review, run the final big-simplification pass from
-[../../references/review-checklists.md](../../references/review-checklists.md)
-when the diff shows branching growth, compatibility machinery, or unclear
-ownership. Verify its candidates by the same classification.
+A cleanup candidate must identify the exact duplication, quality problem, or
+inefficiency; its concrete maintenance or runtime cost; and the smallest
+behavior-preserving correction.
 
-## Phase 6: Fix Or Report
+State material inference explicitly; reject unsupported concerns.
 
-Report findings and stop unless the user asked for fixes. When fixes are
-authorized and intended behavior is clear, apply the smallest approved
-correctness, reuse, simplification, or hard-cut changes per
-[../../references/review-checklists.md](../../references/review-checklists.md)
-(structural simplification, code quality/AI slop, and efficiency/atomicity).
+## 3. Verify Candidates
 
-When schemas, contracts, persisted state, routing, configuration, feature flags,
-enum/value sets, migrations, adapters, or compatibility paths are touched,
-default to a hard cut: keep one canonical shape and remove old-shape handling
-unless a named external boundary requires an exception. Read
-[../../references/hard-cut-policy.md](../../references/hard-cut-policy.md)
-for the canonical policy, hard rules, and exception rule.
+Finders return candidates only, never edits or file dumps, and return
+`no findings` when clean. Use a fresh verifier for every high-impact or
+uncertain candidate in Deep review. The verifier challenges the cited context
+and returns `supported`, `refuted`, or `unresolved`.
 
-Skip a requested fix and report it when it would change unspecified behavior,
-expand architecture, require product judgment, conflict with repo guidance, or
-take more scope than the current review should own.
+The parent checks the cited source, merges duplicates, and classifies every
+candidate:
 
-## Phase 7: Validate
+- **Confirmed**: evidence establishes a reachable failure or concrete
+  maintenance/runtime cost. In the post-coding route, this must be fixed.
+- **Needs verification**: a missing runtime, configuration, data-shape, or
+  product fact prevents confirmation. State the exact check that would resolve
+  it.
+- **Rejected**: pre-existing, intentional, impossible, already handled,
+  duplicated, tool-only, stylistic without observable cost, false positive, or
+  not worth addressing.
 
-Run the narrowest useful validation after edits or before closing a high-risk
-review: targeted tests for changed files or owning invariants, typecheck when
-types or contracts changed, lint when style/imports/dead code changed, build
-checks when packaging or entrypoints changed, and any commands named by repo
-guidance. Verify the final diff is minimal and scoped.
+Do not present Rejected candidates as findings. In the post-coding route, note
+skipped false positives or not-worth-addressing candidates briefly and move on.
 
-In Audit Mode, run only read-only checks and cheap verification commands. Do not
-run formatters, installs that mutate the working tree, commits, broad generated
-builds, or other commands that change source or unignored artifacts.
+## 4. Action The Route
 
-## Approval Bar
+### Post-Coding Or Current-Diff Review
 
-Be direct about maintainability findings. Do not soften structural problems
-into cosmetic suggestions. If the code makes the surrounding system harder to
-reason about, say so plainly and name the smallest cleaner path.
+Before behavior-adjacent fixes:
+
+1. Name the behavior that must remain true.
+2. Identify the narrowest tests or commands that prove it, and run a baseline
+   when the cleanup could alter behavior.
+3. Add the narrowest characterization test first when critical behavior is
+   untested, or move the candidate to `Needs verification`.
+
+Aggregate all lane results and fix every Confirmed issue directly. Apply the
+smallest change that resolves the mechanism and passes the checklist's cleanup
+acceptance bar. Keep edits in the parent unless isolated, disjoint write scopes
+are available.
+
+Use a hard cut only when the canonical contract is established and the old path
+is confirmed obsolete. Otherwise classify the compatibility path as
+`Needs verification`. Once eligible, follow
+[hard-cut-policy.md](../../references/hard-cut-policy.md).
+
+### Report-Only Or Plan Review
+
+Return Confirmed findings and `Needs verification`; do not edit. Do not turn a
+plan review into plan creation or implementation.
+
+### Audit
+
+Follow [Audit Mode](references/audit-mode.md). Write its document and stop.
+Audit findings are never implemented during the audit run.
+
+## 5. Validate
+
+After post-coding fixes, run the narrowest relevant tests, typecheck, lint, or
+build. Inspect the resulting diff for unintended changes and rerun the lane
+whose finding caused each material edit.
+
+For report-only work, run checks when they materially confirm a high-risk
+candidate or establish review status. Audit Mode allows only read-only,
+side-effect-free checks.
 
 ## Output
 
-Order findings by severity: P0 blocker, P1 high, P2 medium, P3 low. At equal
-severity, correctness outranks reuse, simplification, quality, efficiency, and
-conventions; within maintainability findings, order structural regressions
-first, then missed dramatic simplifications, branching growth, ownership and
-type contract issues, file-size or decomposition issues, and legibility
-concerns. Keep the set high-signal; do not add findings to fill a target.
+For post-coding review, report:
 
-Each finding should include:
+- `Fixed`: correctness issues and simplifications applied
+- `Skipped`: false positives or changes not worth making, with brief reasons
+- `Needs verification`: exact unresolved checks
+- `Validation`: commands and results
+- `Residual risk`: only what remains material
 
-```json
-{
-  "severity": "P1",
-  "file": "path/to/file.ext",
-  "line": 123,
-  "summary": "one-sentence statement of the issue",
-  "failure_scenario": "concrete input/state -> wrong output/crash, or concrete maintainability cost",
-  "proposed_fix": "smallest safe fix"
-}
+If no fixes were needed, confirm that Correctness Review and all three Simplify
+lanes were clean.
+
+For report-only diff or plan review, order Confirmed findings by severity: P0
+blocker, P1 high, P2 medium, P3 low. Use:
+
+```markdown
+### [P1] One-sentence issue — <location>
+
+- **Evidence and mechanism:** what the change does and why it fails or creates
+  concrete maintenance/runtime cost.
+- **Failure scenario or cost:** the reachable failure or observable cost.
+- **Smallest safe fix:** the direct correction.
 ```
 
-When fixes were explicitly requested and made, report:
+Use `path/file.ext:123` for repository artifacts. For a pasted plan, spec, or
+roadmap, use its section, step, or decision label. List `Needs verification`
+separately. If clean, state the reviewed scope and say
+`no findings confirmed`.
 
-- `Fixed`: material same-scope fixes applied
-- `Findings`: remaining confirmed issues
-- `Skipped or deferred`: false positives, out-of-scope issues, or judgment calls
-- `Validation`: commands run and results
-- `Residual risk`: anything not proven
+Audit Mode owns its document format and chat handoff.
 
-For review-only output, lead with confirmed findings, then list any
-needs-verification items separately, and end with validation status. If no
-material issues survive verification, state the reviewed scope and say no
-findings were confirmed.
-
-For Audit Mode output, follow [references/audit-mode.md](references/audit-mode.md):
-declare what was reviewed, what was skipped or sampled, then present verified
-findings ordered by leverage. Keep direction findings separate from bugs,
-security, performance, tests, architecture, dependency, DX, and docs findings.
-
-On request, explain the result in plain English for a smart non-engineer.
-
-### Inline Comments
-
-Post inline or pull-request comments only when the user explicitly asks to
-submit comments. Anchor each submitted finding to its exact file and line and
-prefer fewer, higher-signal comments over one summary comment per file. An open
-pull request is review context, not authorization to write externally.
-
-Do not rewrite unrelated code, silently edit during review-only or audit work,
-or hand off to PR publication, CI repair, exploit-oriented security work, or
-existing review-comment workflows.
+Post inline or pull-request comments only when the user explicitly asks. An open
+pull request is review context, not authorization to write externally. Do not
+hand off to PR publication, CI repair, or existing review-comment workflows.

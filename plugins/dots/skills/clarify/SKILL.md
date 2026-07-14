@@ -1,79 +1,77 @@
 ---
 name: clarify
-description: "Asks the minimum blocking questions needed to make an underspecified request safe to build, then proceeds or returns a compact decision set. Triggers: clarify this, before coding ask questions, this is underspecified."
+description: "Clarify requirements before implementing. Do not use automatically, only when invoked explicitly."
 ---
 
-# Clarify
+# Ask Questions If Underspecified
 
-Ask the minimum blocking questions needed to make implementation safe enough,
-then proceed or hand back a compact decision set.
+## Goal
 
-## Route
+Ask the minimum set of clarifying questions needed to avoid wrong work; do not start implementing until the must-have questions are answered (or the user explicitly approves proceeding with stated assumptions).
 
-Use for prompts like `clarify this`, `before coding, ask questions`, `this is
-underspecified` — or when an implementation request is ambiguous in a way that
-could change the work materially. Not for small missing details a reasonable,
-low-risk assumption covers.
+## Workflow
 
-## First Pass
+### 1) Decide whether the request is underspecified
 
-Inspect the repo, docs, tests, and prior messages before asking; if local
-context can answer a question, do not ask the user. Sort what's missing into
-three buckets: known from context (use it), safe assumption (proceed, mention
-it only if it matters), blocking decision (ask only if the answer changes the
-work). Stop clarifying once implementation is safe enough.
+Treat a request as underspecified if after exploring how to perform the work, some or all of the following are not clear:
+- Define the objective (what should change vs stay the same)
+- Define "done" (acceptance criteria, examples, edge cases)
+- Define scope (which files/components/users are in/out)
+- Define constraints (compatibility, performance, style, deps, time)
+- Identify environment (language/runtime versions, OS, build/test runner)
+- Clarify safety/reversibility (data migration, rollout/rollback, risk)
 
-## The Stakes Ladder
+If multiple plausible interpretations exist, assume it is underspecified.
 
-The question budget scales with blast radius, not with how much is unknown:
+### 2) Ask must-have questions first (keep it small)
 
-- **Must ask unless already authorized** — the action reaches beyond the
-  working tree or is costly to undo: destructive changes, external publishing
-  (push, deploy, PRs, email), credentials or access, anything irreversible or
-  likely to surprise the user. A clear request for that exact action is
-  authorization; do not ask the user to repeat it. Never infer authorization
-  from an adjacent request.
-- **Ask only if the answer changes the work** — scope, user-facing behavior,
-  domain meaning, and the validation standard (what counts as done).
-- **Never ask** — taste, naming, formatting, minor implementation style:
-  choose the best local convention and continue.
+Ask 1-5 questions in the first pass. Prefer questions that eliminate whole branches of work.
 
-A request with no top-rung decisions and clear middle-rung answers gets zero
-questions.
+Make questions easy to answer:
+- Optimize for scannability (short, numbered questions; avoid paragraphs)
+- Offer multiple-choice options when possible
+- Suggest reasonable defaults when appropriate (mark them clearly as the default/recommended choice; bold the recommended choice in the list, or if you present options in a code block, put a bold "Recommended" line immediately above the block and also tag defaults inside the block)
+- Include a fast-path response (e.g., reply `defaults` to accept all recommended/default choices)
+- Include a low-friction "not sure" option when helpful (e.g., "Not sure - use default")
+- Separate "Need to know" from "Nice to know" if that reduces friction
+- Structure options so the user can respond with compact decisions (e.g., `1b 2a 3c`); restate the chosen options in plain language to confirm
 
-## Question Shape
+### 3) Pause before acting
 
-Batch all blocking questions into one round — serial interrogation is the
-failure mode this skill exists to prevent; a second round is justified only
-by a new blocker the first answers created. Prefer one to three questions.
-Give a recommended default only when it is genuinely safe. Offer `use defaults`
-only when every question has such a default; otherwise ask the unsafe decision
-directly. Prefer the platform's structured-question tool; otherwise:
+Until must-have answers arrive:
+- Do not run commands, edit files, or produce a detailed plan that depends on unknowns
+- Do perform a clearly labeled, low-risk discovery step only if it does not commit you to a direction (e.g., inspect repo structure, read relevant config files)
 
-```md
-I found a couple of decisions that would change the implementation.
+If the user explicitly asks you to proceed without answers:
+- State your assumptions as a short numbered list
+- Ask for confirmation; proceed only after they confirm or correct them
 
-1. Should this change affect existing saved records?
-a) Migrate existing records too (recommended) - use this if backward compatibility matters.
-b) Only apply to new records - use this if old data can remain as-is.
-Default: a
+### 4) Confirm interpretation, then proceed
 
-Reply with `use defaults`, or answer like `1b`.
+Once you have answers, restate the requirements in 1-3 sentences (including key constraints and what success looks like), then start work.
+
+## Question templates
+
+- "Before I start, I need: (1) ..., (2) ..., (3) .... If you don't care about (2), I will assume ...."
+- "Which of these should it be? A) ... B) ... C) ... (pick one)"
+- "What would you consider 'done'? For example: ..."
+- "Any constraints I must follow (versions, performance, style, deps)? If none, I will target the existing project defaults."
+- Use numbered questions with lettered options and a clear reply format
+
+```text
+1) Scope?
+a) Minimal change (default)
+b) Refactor while touching the area
+c) Not sure - use default
+2) Compatibility target?
+a) Current project defaults (default)
+b) Also support older versions: <specify>
+c) Not sure - use default
+
+Reply with: defaults (or 1a 2a)
 ```
 
-When there is exactly one blocking question, ask it directly with its default
-in the same message.
+## Anti-patterns
 
-## Proceed
-
-After multiple answers or consequential defaults, restate the settled
-decision set in three to six bullets — decisions, defaults, meaningful
-assumptions — then state you will proceed on that basis and implement. Skip
-the recap for one small clarification, and do not ask for confirmation
-unless the next step needs approval.
-
-If a new blocker appears mid-work, pause and ask only that question,
-including what the code already told you. When an answer reveals a durable
-preference — a naming convention, deploy target, risk tolerance, validation
-bar — flag it in the final report as a candidate for the project's instruction
-file or memory; the same question should never survive into a future session.
+- Don't ask questions you can answer with a quick, low-risk discovery read (e.g., configs, existing patterns, docs).
+- Don't ask open-ended questions if a tight multiple-choice or yes/no would eliminate ambiguity faster.

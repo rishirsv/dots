@@ -1,21 +1,19 @@
 """Filesystem-backed local workbench server."""
 
-import argparse
 import json
 import mimetypes
 import threading
+import uuid
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 from ..errors import CliError
-from ..grading import grade_run, is_recorded_human_grade, record_human_grade
-from ..ids import require_id, run_id, utc_now
+from ..grading import is_recorded_human_grade, record_human_grade
+from ..ids import require_id, utc_now
 from ..io import read_json, write_json
-from ..manifest import DEFAULT_EVALS, load_manifest, project_from_suite, workbench_from_suite
-from ..linting import FATAL_SUITE_WARNINGS, lint_suite
-from ..manifest import select_candidates, select_cases, split_csv_or_repeat
+from ..manifest import DEFAULT_EVALS, load_manifest
 from ..report import build_report, build_suite_report, list_runs, write_report
 from .queue import (
     build_pairwise_packet,
@@ -24,9 +22,7 @@ from .queue import (
     pairwise_artifact_path,
     record_pairwise_review,
 )
-from ..runner import run_eval
-from ..run_inputs import validate_grading_inputs
-from ..workbench_paths import evals_path, parse_frontmatter, runs_path, skill_id_for_target, worktrees_path
+from ..workbench_paths import evals_path, parse_frontmatter, runs_path, skill_id_for_target
 
 APP_PATH = Path(__file__).with_name("app.html")
 ANNOTATION_TAGS = {
@@ -35,6 +31,7 @@ ANNOTATION_TAGS = {
     "expected-change",
 }
 ANNOTATION_ARTIFACTS = {"response", "transcript", "task", "artifact"}
+ANNOTATION_JUDGE_USES = {"rubric", "evidence", "exclude"}
 FILE_LIMIT = 60000
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
 
@@ -72,7 +69,15 @@ def artifact_entries(path):
         }
         if mime in {"text/html", "image/svg+xml"}:
             inline = False
-        rows.append({"path": rel, "mime": mime, "bytes": item.stat().st_size, "inline": inline})
+        rows.append(
+            {
+                "path": rel,
+                "local_path": str(item.resolve()),
+                "mime": mime,
+                "bytes": item.stat().st_size,
+                "inline": inline,
+            }
+        )
     return rows
 
 
@@ -265,36 +270,6 @@ def build_judge_reveal(run_dir, trial_id):
     }
 
 
-def _run_args(body):
-    def number(name, default=None, minimum=0):
-        value = body.get(name)
-        if value in (None, ""):
-            return default
-        try:
-            value = int(value)
-        except (TypeError, ValueError):
-            raise CliError(f"{name} must be an integer", 2)
-        if value < minimum:
-            raise CliError(f"{name} must be at least {minimum}", 2)
-        return value
-
-    candidates = body.get("candidates")
-    if isinstance(candidates, list):
-        candidates = ",".join(str(value) for value in candidates)
-    return argparse.Namespace(
-        suite=body.get("suite"), candidates=candidates,
-        split=body.get("split"), case=body.get("case") or body.get("case_ids"), type=body.get("type"),
-        repetitions=number("repetitions", None, 1), repetitions_by_type={},
-        model=body.get("model"), parallel=number("parallel", 1, 1), timeout=number("timeout", None, 1),
-        no_baseline=bool(body.get("no_baseline")), no_grade=bool(body.get("no_grade")),
-        baseline=body.get("baseline"), objective=body.get("objective"),
-        human_review_sample=number("human_review_sample", None, 0), source_run_id=body.get("source_run_id"),
-        adhoc=bool(body.get("adhoc")), task=body.get("task"), skill=body.get("skill_path"),
-        expected_output=body.get("expected_output"), expectations=body.get("expectations") or [],
-        graders=body.get("graders") or [], adhoc_type=body.get("eval_type"), priority=body.get("priority"),
-    )
-
-
 class Handler(BaseHTTPRequestHandler):
     server_version = "metaskill-workbench"
 
@@ -384,13 +359,9 @@ class Handler(BaseHTTPRequestHandler):
                     runs_root=runs_path(skill["path"], root=self.server.root),
                 )
                 suite["data_boundary"] = {
-                    "runner": "codex_app_server",
+                    "surface": "review_only",
                     "storage_root": str(Path(skill["path"]) / ".skill"),
-                    "sandbox": "workspace_write",
-                    "approval_policy": "deny_all",
-                    "tools": "Codex runtime defaults; MetaSkill does not enumerate them",
-                    "network": "Codex runtime default; MetaSkill does not constrain it",
-                    "external_model_boundary": True,
+                    "external_model_boundary": False,
                 }
                 return self._json(suite)
             if len(parts) == 4 and parts[:2] == ["api", "skills"] and parts[3] == "runs":
@@ -466,12 +437,6 @@ class Handler(BaseHTTPRequestHandler):
                 return self._post_pairwise(body)
             if parts == ["api", "evals"]:
                 return self._post_eval(body)
-            if parts == ["api", "runs"]:
-                return self._post_run(body)
-            if len(parts) == 4 and parts[:2] == ["api", "runs"] and parts[3] == "rerun":
-                return self._post_rerun(parts[2], body)
-            if len(parts) == 4 and parts[:2] == ["api", "runs"] and parts[3] == "regrade":
-                return self._post_regrade(parts[2], body)
             return self._error("not found", 404)
         except CliError as exc:
             return self._error(exc.message)
@@ -497,12 +462,22 @@ class Handler(BaseHTTPRequestHandler):
         artifact = body.get("artifact") or "response"
         artifact_path = str(body.get("artifact_path") or "").strip()
         tag = body.get("tag") or "one-off"
+        judge_use = body.get("judge_use") or "exclude"
         note = str(body.get("note") or "").strip()
         if artifact not in ANNOTATION_ARTIFACTS or tag not in ANNOTATION_TAGS or not note:
             raise CliError("annotation requires a valid artifact, tag, and note", 2)
+        if judge_use not in ANNOTATION_JUDGE_USES:
+            raise CliError("annotation judge_use must be rubric, evidence, or exclude", 2)
         if artifact == "artifact" and artifact_path not in {row["path"] for row in packet["artifacts"]}:
             raise CliError("annotation requires a valid artifact path", 2)
-        row = {"artifact": artifact, "tag": tag, "note": note, "timestamp": utc_now()}
+        row = {
+            "annotation_id": f"annotation-{uuid.uuid4().hex}",
+            "artifact": artifact,
+            "tag": tag,
+            "judge_use": judge_use,
+            "note": note,
+            "timestamp": utc_now(),
+        }
         if artifact == "artifact":
             row["artifact_path"] = artifact_path
         trial_dir = Path(run_dir) / "trials" / packet["trial"]["trial_id"]
@@ -531,15 +506,7 @@ class Handler(BaseHTTPRequestHandler):
             raise CliError("promoting an eval requires approved=true", 2)
         skill = self._skill(str(body.get("skill") or ""))
         suite_path_value = Path(skill["suite"])
-        if suite_path_value.is_file():
-            manifest = load_manifest(suite_path_value)
-        else:
-            manifest = json.loads(json.dumps(DEFAULT_EVALS))
-            manifest["skill_name"] = skill["name"]
-            manifest["target"] = {"type": "skill", "ref": "SKILL.md"}
         case_id = require_id("case id", body.get("id"))
-        if any(case.get("id") == case_id for case in manifest.get("evals") or []):
-            raise CliError(f"duplicate case id: {case_id}", 2)
         prompt = str(body.get("prompt") or "").strip()
         source_annotations = []
         if not prompt and body.get("run") and body.get("trial_id"):
@@ -562,10 +529,18 @@ class Handler(BaseHTTPRequestHandler):
             case["expected_output"] = str(body.get("expected_output"))
         if source_annotations:
             case["annotations"] = source_annotations
-        updated = {**manifest, "evals": [*(manifest.get("evals") or []), case]}
-        suite_path_value.parent.mkdir(parents=True, exist_ok=True)
-        temp = suite_path_value.with_name(".evals.json.tmp")
         with self.server.write_lock:
+            if suite_path_value.is_file():
+                manifest = load_manifest(suite_path_value)
+            else:
+                manifest = json.loads(json.dumps(DEFAULT_EVALS))
+                manifest["skill_name"] = skill["name"]
+                manifest["target"] = {"type": "skill", "ref": "SKILL.md"}
+            if any(item.get("id") == case_id for item in manifest.get("evals") or []):
+                raise CliError(f"duplicate case id: {case_id}", 2)
+            updated = {**manifest, "evals": [*(manifest.get("evals") or []), case]}
+            suite_path_value.parent.mkdir(parents=True, exist_ok=True)
+            temp = suite_path_value.with_name(".evals.json.tmp")
             write_json(temp, updated)
             try:
                 load_manifest(temp)
@@ -575,87 +550,6 @@ class Handler(BaseHTTPRequestHandler):
                     temp.unlink()
         return self._json({"ok": True, "suite": str(suite_path_value), "eval": case}, 201)
 
-    def _post_run(self, body):
-        skill = self._skill(str(body.get("skill") or ""))
-        if body.get("adhoc"):
-            args = _run_args({**body, "skill_path": skill["path"], "adhoc": True})
-            if not str(args.task or "").strip():
-                raise CliError("ad hoc eval requires a task", 2)
-            rid = run_id()
-            thread = threading.Thread(target=self.server.run_background, args=(args, None, rid), daemon=True)
-            thread.start()
-            return self._json({"ok": True, "run_id": rid}, 202)
-        if not skill["suite_ready"]:
-            raise CliError("skill has no valid eval suite", 2)
-        args = _run_args({**body, "suite": skill["suite"]})
-        manifest = load_manifest(Path(skill["suite"]))
-        lint = lint_suite(skill["suite"])
-        fatal = [row for row in lint["warnings"] if row.get("kind") in FATAL_SUITE_WARNINGS]
-        if fatal:
-            raise CliError(f"suite lint blocks the run: {fatal[0]['kind']}", 2)
-        selected = select_cases(
-            manifest, args.split, case_ids=split_csv_or_repeat(args.case), case_types=split_csv_or_repeat(args.type)
-        )
-        select_candidates(
-            manifest,
-            args.candidates,
-            include_baseline=not args.no_baseline,
-            baseline_id=args.baseline,
-        )
-        validate_grading_inputs(selected, grading_enabled=not args.no_grade)
-        context = {
-            "manifest": manifest, "suite": Path(skill["suite"]),
-            "workbench": workbench_from_suite(Path(skill["suite"])),
-            "project": project_from_suite(Path(skill["suite"])),
-            "skill_id": skill["id"],
-            "runs_root": runs_path(skill["path"], root=self.server.root),
-            "worktrees_root": worktrees_path(skill["path"], root=self.server.root),
-            "adhoc": False,
-        }
-        rid = run_id()
-        thread = threading.Thread(target=self.server.run_background, args=(args, context, rid), daemon=True)
-        thread.start()
-        return self._json({"ok": True, "run_id": rid}, 202)
-
-    def _post_rerun(self, run_id_value, body):
-        skill_id = str(body.get("skill") or "")
-        source = read_json(self._run_dir(skill_id, run_id_value) / "run.json")
-        case_ids = body.get("case_ids") or body.get("case")
-        if not case_ids:
-            raise CliError("rerun requires at least one case", 2)
-        candidate_ids = [
-            row.get("candidate") for row in source.get("candidates") or [] if row.get("candidate")
-        ]
-        if not candidate_ids:
-            raise CliError("source run has no versions to rerun", 2)
-        baseline = source.get("baseline_candidate")
-        return self._post_run(
-            {
-                "skill": skill_id,
-                "objective": source.get("objective"),
-                "case_ids": case_ids,
-                "candidates": candidate_ids,
-                "baseline": baseline,
-                "no_baseline": baseline is None,
-                "repetitions": int(body.get("repetitions") or 1),
-                "model": source.get("model"),
-                "parallel": int(body.get("parallel") or 1),
-                "source_run_id": source.get("run_id") or run_id_value,
-            }
-        )
-
-    def _post_regrade(self, run_id_value, body):
-        run_dir = self._run_dir(str(body.get("skill") or ""), run_id_value)
-        if not build_report(str(run_dir))["terminal"]:
-            raise CliError("wait for the run to finish before regrading", 2)
-        thread = threading.Thread(
-            target=self.server.regrade_background,
-            args=(run_dir, int(body.get("parallel") or 1), body.get("model")), daemon=True,
-        )
-        thread.start()
-        return self._json({"ok": True, "run_id": run_id_value}, 202)
-
-
 def create_server(root, port=7333):
     root = Path(root).resolve()
     if not root.is_dir():
@@ -664,45 +558,6 @@ def create_server(root, port=7333):
     server.root = root
     server.write_lock = threading.Lock()
 
-    def run_background(args, context, rid):
-        try:
-            run_eval(args, context=context, run_id_value=rid)
-        except Exception as exc:
-            runs_root = (
-                Path(context["runs_root"])
-                if context is not None
-                else runs_path(args.skill, root=server.root)
-            )
-            run_dir = runs_root / rid
-            if not (run_dir / "run.json").exists():
-                write_json(
-                    run_dir / "run.json",
-                    {
-                        "schema_version": 2,
-                        "run_id": rid,
-                        "created_at": utc_now(),
-                        "adhoc": bool(getattr(args, "adhoc", False)),
-                        "skill_id": skill_id_for_target(
-                            context["project"] if context is not None else args.skill,
-                            root=server.root,
-                        ),
-                        "suite": str(context["suite"]) if context is not None else str(evals_path(args.skill)),
-                        "planning_error": str(exc),
-                        "runner": {"grading": False},
-                        "candidates": [],
-                        "trials": [],
-                    },
-                )
-            return
-
-    def regrade_background(run_dir, parallel, model):
-        try:
-            grade_run(str(run_dir), parallel=parallel, model=model)
-        except Exception:
-            return
-
-    server.run_background = run_background
-    server.regrade_background = regrade_background
     return server
 
 

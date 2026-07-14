@@ -5,11 +5,11 @@ description: "Use when reviewing, auditing, critiquing, or diagnosing an agent s
 
 # Skill Reviewer
 
-Review agent skills and skill systems without changing them. Diagnose what the
-current text, resources, evidence, and surrounding contracts are likely to
-cause; return findings and concrete proposals. This lane is strictly read-only:
-do not edit source, create workbench state, save review artifacts, or apply a
-recommended change.
+Review agent skills and skill systems without changing them. Explain what the
+instructions, resources, evidence, and surrounding contracts are likely to
+cause, then return supported findings and concrete corrections. Keep the work
+read-only: do not edit source, create workbench state, save review artifacts,
+or apply a recommended change.
 
 Use `skill-author` when the user asks to implement a source change. Use
 `skill-evaluator` when the decision needs fresh task runs, candidate
@@ -17,9 +17,11 @@ comparisons, grading, or run history.
 
 ## Gather Evidence
 
-Read the complete shipped payload, not only `SKILL.md`. Include directly linked
-references, scripts, assets, metadata, documented contracts, and relevant
-tests. Read repository instructions before judging local conventions.
+Inventory the shipped payload, not only `SKILL.md`. For a broad review, read
+the complete instructions, linked references, scripts, assets, metadata,
+documented contracts, and relevant tests. For a narrow failure, read the
+affected contract and every surface that defines or depends on it. Read
+repository instructions before judging local conventions.
 
 Use available evidence in this order:
 
@@ -99,5 +101,6 @@ For each finding include:
 
 Include a positive-null result when no material issue is supported. Finish with
 the smallest recommended change set, evidence not available, and any decision
-that belongs to the user. Do not ask for edit approval from this lane; hand an
-implementation-ready proposal to `skill-author` when mutation is wanted.
+that belongs to the user. Do not ask for edit approval during a read-only
+review; hand an implementation-ready proposal to `skill-author` when mutation
+is wanted.

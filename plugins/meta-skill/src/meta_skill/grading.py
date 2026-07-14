@@ -1,18 +1,19 @@
 """Grade frozen run inputs and append rows to each trial."""
 
 import concurrent.futures
+import hashlib
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
 
-from .app_server.judge import judge_output
+from .codex_exec import judge_output
 from .errors import CliError
 from .ids import run_id, utc_now
 from .io import append_jsonl, read_json, read_jsonl, resolve_run_dir
 from .staging import safe_case_file
-from .runtime import configure_codex_runtime, default_codex_model
+from .runtime import DEFAULT_EVAL_MODEL, DEFAULT_EVAL_REASONING_EFFORT
 from .verdicts import GRADE_STATUSES, latest_grade_rows, normalize_grade_status
 
 GRADE_LABELS = {"pass", "partial", "fail", "unknown"}
@@ -44,8 +45,32 @@ def grader_descriptor(grader, *, kind, default_id):
     return descriptor
 
 
-def _grade_row(run, state, *, generation_id, grader, grade_status, score=None, checks=None, rationale="", evidence_refs=None, detail=None):
+def _grade_row(
+    run_dir,
+    run,
+    state,
+    *,
+    generation_id,
+    grader,
+    grade_status,
+    score=None,
+    checks=None,
+    rationale="",
+    evidence_refs=None,
+    detail=None,
+    judge_context=None,
+):
     descriptor = grader or {"kind": "none", "id": "meta-skill", "metric": "grade_status"}
+    root = Path(run_dir).resolve()
+    evidence = []
+    for item in evidence_refs or []:
+        if not item:
+            continue
+        path = Path(item)
+        try:
+            evidence.append(path.resolve().relative_to(root).as_posix())
+        except ValueError:
+            evidence.append(str(item))
     row = {
         "run_id": run["run_id"],
         "eval_id": state.get("eval_id"),
@@ -58,11 +83,13 @@ def _grade_row(run, state, *, generation_id, grader, grade_status, score=None, c
         "score": score,
         "rationale": rationale,
         "checks": checks or [],
-        "evidence_refs": [str(item) for item in (evidence_refs or []) if item],
+        "evidence_refs": evidence,
         "timestamp": utc_now(),
     }
     if detail is not None:
         row["detail"] = detail
+    if judge_context is not None:
+        row["judge_context"] = judge_context
     return row
 
 
@@ -113,6 +140,26 @@ def _read(path, limit=None):
     return text[:limit] if limit else text
 
 
+def _rubric_annotation(annotation, *, eval_id=None):
+    if not isinstance(annotation, dict) or annotation.get("judge_use") != "rubric":
+        return None
+    row = dict(annotation)
+    if eval_id and not row.get("eval_id"):
+        row["eval_id"] = eval_id
+    if not row.get("annotation_id"):
+        payload = json.dumps(row, sort_keys=True, separators=(",", ":"))
+        row["annotation_id"] = f"frozen-{hashlib.sha256(payload.encode()).hexdigest()[:24]}"
+    return row
+
+
+def _dedupe_annotations(rows):
+    deduped = {}
+    for row in rows:
+        if isinstance(row, dict) and row.get("annotation_id"):
+            deduped[row["annotation_id"]] = row
+    return list(deduped.values())
+
+
 def _code_grade(run, state, root, grader, generation_id):
     validator = grader_path(root, grader, "validator")
     if validator is None:
@@ -133,6 +180,7 @@ def _code_grade(run, state, root, grader, generation_id):
     label = "pass" if proc.returncode == 0 and total and passed == total else "fail"
     rationale = data.get("rationale") or (proc.stderr or proc.stdout or f"{passed}/{total} checks passed").strip()
     return _grade_row(
+        root.parent.parent.parent,
         run,
         state,
         generation_id=generation_id,
@@ -145,14 +193,51 @@ def _code_grade(run, state, root, grader, generation_id):
     )
 
 
-def _model_grade(run_dir, run, state, root, grader, generation_id, model):
+def _model_grade(
+    run_dir,
+    run,
+    state,
+    root,
+    grader,
+    generation_id,
+    model,
+    reasoning_effort,
+    annotations,
+):
     trial = trial_path(run_dir, state["trial_id"])
     response = trial / "response.md"
     events = trial / "events.jsonl"
     expected = root / "expected.md"
+    artifacts_dir = trial / "artifacts"
+    artifact_paths = (
+        sorted(path for path in artifacts_dir.rglob("*") if path.is_file())
+        if artifacts_dir.exists()
+        else []
+    )
     judge_path = grader_path(root, grader, "judge") if grader.get("path") else None
+    applicable = [
+        row
+        for row in annotations
+        if row.get("judge_use") == "rubric"
+        or (row.get("judge_use") == "evidence" and row.get("trial_id") == state["trial_id"])
+    ]
+    context_payload = json.dumps(applicable, sort_keys=True, separators=(",", ":"))
+    context_digest = hashlib.sha256(context_payload.encode()).hexdigest()
+    context_lines = []
+    for row in applicable:
+        scope = "rubric calibration" if row["judge_use"] == "rubric" else "evidence for this outcome"
+        target = row.get("artifact_path") or row.get("artifact") or "response"
+        context_lines.append(f"- [{row['annotation_id']}] {scope}; {target}: {row.get('note') or ''}")
+    guidance = judge_path.read_text() if judge_path else "Grade the output against every expectation."
+    if context_lines:
+        guidance += (
+            "\n\nHUMAN-APPROVED JUDGE CONTEXT\n"
+            "Use rubric annotations as calibration and evidence annotations only for this outcome. "
+            "Do not infer rules from any annotation not listed here.\n"
+            + "\n".join(context_lines)
+        )
     detail = judge_output(
-        judge_guidance=(judge_path.read_text() if judge_path else "Grade the output against every expectation."),
+        judge_guidance=guidance,
         task_text=(root / "task.md").read_text(),
         output_text=_read(response) or "",
         expectations=state.get("expectations") or [],
@@ -161,8 +246,11 @@ def _model_grade(run_dir, run, state, root, grader, generation_id, model):
         cwd=run_dir,
         event_path=trial / f"judge-{generation_id}.jsonl",
         model=model,
+        reasoning_effort=reasoning_effort,
+        artifact_paths=artifact_paths,
     )
     return _grade_row(
+        run_dir,
         run,
         state,
         generation_id=generation_id,
@@ -171,14 +259,19 @@ def _model_grade(run_dir, run, state, root, grader, generation_id, model):
         score=detail.get("score"),
         checks=detail.get("checks") or [],
         rationale=detail.get("rationale") or "",
-        evidence_refs=[response, judge_path, trial / f"judge-{generation_id}.jsonl"],
+        evidence_refs=[response, *artifact_paths, judge_path, trial / f"judge-{generation_id}.jsonl"],
         detail={key: value for key, value in detail.items() if key != "eval_feedback"},
+        judge_context={
+            "annotation_ids": [row["annotation_id"] for row in applicable],
+            "digest": context_digest,
+        },
     )
 
 
-def _pending_human(run, state, grader, generation_id):
-    trial = Path(state["response_path"]).parent
+def _pending_human(run_dir, run, state, grader, generation_id):
+    trial = trial_path(run_dir, state["trial_id"])
     return _grade_row(
+        run_dir,
         run,
         state,
         generation_id=generation_id,
@@ -189,7 +282,7 @@ def _pending_human(run, state, grader, generation_id):
     )
 
 
-def _grade_trial(run_dir, run, state, case, generation_id, model):
+def _grade_trial(run_dir, run, state, case, generation_id, model, reasoning_effort, annotations):
     trial = trial_path(run_dir, state["trial_id"])
     existing = latest_grade_rows(read_jsonl(trial / "grades.jsonl"))
     existing_keys = {grade_key(row) for row in existing}
@@ -199,6 +292,7 @@ def _grade_trial(run_dir, run, state, case, generation_id, model):
     if status != "completed":
         return [
             _grade_row(
+                run_dir,
                 run,
                 state,
                 generation_id=generation_id,
@@ -210,20 +304,39 @@ def _grade_trial(run_dir, run, state, case, generation_id, model):
         ]
     root = run_dir / "inputs" / "cases" / state["eval_id"]
     state = {**state, "expectations": case.get("expectations") or []}
+    case_rubrics = [
+        row
+        for annotation in case.get("annotations") or []
+        if (row := _rubric_annotation(annotation, eval_id=state.get("eval_id"))) is not None
+    ]
+    annotations = _dedupe_annotations([*annotations, *case_rubrics])
     rows = []
     for grader in normalize_graders(case):
         if grader["kind"] == "code":
             rows.append(_code_grade(run, state, root, grader, generation_id))
         elif grader["kind"] == "model":
-            rows.append(_model_grade(run_dir, run, state, root, grader, generation_id, model))
+            rows.append(
+                _model_grade(
+                    run_dir,
+                    run,
+                    state,
+                    root,
+                    grader,
+                    generation_id,
+                    model,
+                    reasoning_effort,
+                    annotations,
+                )
+            )
         else:
             descriptor = grader_descriptor(grader, kind="human", default_id="human-review")
             key = (state["trial_id"], descriptor["metric"], descriptor["kind"], descriptor["id"])
             if key not in existing_keys:
-                rows.append(_pending_human(run, state, grader, generation_id))
+                rows.append(_pending_human(run_dir, run, state, grader, generation_id))
     if not rows and not normalize_graders(case):
         rows.append(
             _grade_row(
+                run_dir,
                 run,
                 state,
                 generation_id=generation_id,
@@ -236,18 +349,50 @@ def _grade_trial(run_dir, run, state, case, generation_id, model):
     return rows
 
 
-def grade_run(raw_run, *, rebuild_report=True, parallel=1, model=None):
-    configure_codex_runtime()
+def grade_run(raw_run, *, rebuild_report=True, parallel=1, model=None, reasoning_effort=None):
     run_dir = resolve_run_dir(raw_run)
     run = read_json(run_dir / "run.json")
     suite = read_json(run_dir / "inputs" / "suite.json")
     cases = {case["id"]: case for case in suite.get("evals", [])}
     states = [read_json(path) for path in sorted((run_dir / "trials").glob("*/state.json"))]
     generation_id = f"grade-{run_id()}"
-    judge_model = model if model is not None else (run.get("model") or default_codex_model(run_dir))
+    judge_executor = run.get("judge_executor") or {}
+    judge_model = model or judge_executor.get("requested_model") or run.get("model") or DEFAULT_EVAL_MODEL
+    judge_reasoning_effort = (
+        reasoning_effort
+        or judge_executor.get("requested_reasoning")
+        or run.get("reasoning_effort")
+        or DEFAULT_EVAL_REASONING_EFFORT
+    )
+    from .report import judge_annotation_context
+
+    annotations = judge_annotation_context(str(run_dir))
+    source_run_id = run.get("source_run_id")
+    if (
+        isinstance(source_run_id, str)
+        and Path(source_run_id).name == source_run_id
+        and source_run_id != run_dir.name
+    ):
+        source_run = run_dir.parent / source_run_id
+        if (source_run / "run.json").is_file():
+            annotations.extend(
+                row
+                for row in judge_annotation_context(str(source_run))
+                if row.get("judge_use") == "rubric"
+            )
+    annotations = _dedupe_annotations(annotations)
 
     def grade(state):
-        rows = _grade_trial(run_dir, run, state, cases.get(state.get("eval_id"), {}), generation_id, judge_model)
+        rows = _grade_trial(
+            run_dir,
+            run,
+            state,
+            cases.get(state.get("eval_id"), {}),
+            generation_id,
+            judge_model,
+            judge_reasoning_effort,
+            annotations,
+        )
         for row in rows:
             append_jsonl(trial_path(run_dir, state["trial_id"]) / "grades.jsonl", row)
         return len(rows)
@@ -302,6 +447,7 @@ def record_human_grade(raw_run, *, trial_id, label, rationale, score=None, grade
     grader = _declared_human(case, grader_id, metric)
     generation_id = f"grade-{run_id()}"
     row = _grade_row(
+        run_dir,
         run,
         state,
         generation_id=generation_id,

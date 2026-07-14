@@ -18,7 +18,7 @@ DEFAULT_EVALS = {
     "schema_version": 2,
     "skill_name": "TODO",
     "target": {"type": "skill", "ref": "SKILL.md"},
-    "defaults": {"runner": "codex_app_server", "repetitions": 1, "timeout_seconds": 600},
+    "defaults": {"runner": "codex_exec", "repetitions": 1, "timeout_seconds": 600},
     "candidates": DEFAULT_CANDIDATES,
     "evals": [],
 }
@@ -187,9 +187,15 @@ def load_manifest(path):
             and item.get("tag").strip()
             and isinstance(item.get("note"), str)
             and item.get("note").strip()
+            and isinstance(item.get("judge_use", "exclude"), str)
+            and item.get("judge_use", "exclude") in {"rubric", "evidence", "exclude"}
             for item in annotations
         ):
-            raise CliError(f"case {case_id} annotations must contain tag and note strings", 2)
+            raise CliError(
+                f"case {case_id} annotations must contain tag and note strings; "
+                "judge_use must be rubric, evidence, or exclude when present",
+                2,
+            )
         graders = case.get("graders", [])
         if not isinstance(graders, list):
             raise CliError(f"case {case_id} graders must be a list", 2)

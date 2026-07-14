@@ -88,13 +88,12 @@ Look for the strongest plan-changing problems, ranked by implementation impact:
 - overengineering: abstractions, shims, or broad refactors with no current
   producer, consumer, and proof path
 
-## Subagents
+## Subagent Workflow
 
 Use subagents as planning tools, not ceremony — most useful when they keep broad
 exploration, logs, screenshots, or critique out of the main context and return a
-concise, sourced answer. Read
-[subagent-lanes.md](../../references/subagent-lanes.md) first; it owns lane
-definitions and fan-out rules. Use
+concise, sourced answer. Give each subagent a specific question, source
+boundary, evidence bar, output shape, and stop condition. Use
 [subagent-briefs.md](references/subagent-briefs.md) for the brief shapes.
 
 - **Research subagents** when the plan depends on broad or unfamiliar context:
@@ -110,7 +109,9 @@ one adversarial critique pass. Verify findings before adopting them. Run a
 focused follow-up only when a material disputed claim remains and its answer
 would change the plan; do not loop until critics run out of comments. Prefer a
 few focused lanes and stop once the plan has enough truth and sequencing to
-implement.
+implement. The parent owns synthesis and the final plan; subagent output is
+evidence, not the deliverable. Keep overlapping write scopes in the parent
+unless the harness provides real isolation.
 
 ## Feature And UI Planning
 

@@ -1,1 +1,0 @@
-Create `quarterly-summary.csv` with columns `quarter,revenue,margin`. Add these rows in order: Q1,120000,0.31; Q2,135000,0.34; Q3,128000,0.32; Q4,151000,0.37. Also create the accompanying notes file requested by the skill.

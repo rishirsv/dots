@@ -1,12 +1,13 @@
 ---
 name: design
-description: "Use when building, redesigning, or polishing product UI: web/app screens, dashboards, tools, games, landing pages, React, or iOS/SwiftUI. Triggers: UI design, UX, redesign, frontend, make it look better. Not for HTML reports, briefs, or static mocks (html), docs, backend, CLI, or invisible bug fixes."
+description: "Designs, builds, redesigns, and polishes visible product UI, and names vaguely described motion effects. Use for web/app screens, React, iOS/SwiftUI, UI design, UX, frontend, or ‘what is this animation called?’ Not for HTML reports, docs, backend, CLI, or invisible fixes."
 ---
 
 # Visual Design
 
-Create, critique, revise, and faithfully implement distinctive visible UI. Use
-this skill whenever front-end work changes what a user sees.
+Create, critique, revise, and faithfully implement distinctive visible UI, or
+name a vaguely described motion effect. Use this skill whenever front-end work
+changes what a user sees or the user needs precise interaction terminology.
 
 ## References
 
@@ -17,7 +18,8 @@ this skill whenever front-end work changes what a user sees.
 - Read [visual-principles.md](references/visual-principles.md) before choosing
   the visual direction, typography, layout language, or polish pass.
 - Read [animation-vocabulary.md](references/animation-vocabulary.md) on demand
-  when motion or interaction design needs precise terminology.
+  for terminology-only naming requests or when motion and interaction design
+  needs precise language.
 - Read [web motion standards](../design-review/references/standards.md) when
   implementing or polishing web animation: purpose and frequency, easing,
   duration, origin, interruptibility, performance, accessibility, or gestures.
@@ -43,6 +45,8 @@ Use this skill for:
   and design-system alignment
 - implementation work where Image Gen concepts, screenshots, or accepted visual
   references need faithful translation into code
+- terminology questions where the user describes an animation or interaction
+  but does not know its precise design term
 
 Do not use it for backend-only changes, CLI tools, pure docs/prose work, report
 or brief HTML artifacts, static artifact mocks, or bug fixes with no visible UI
@@ -52,6 +56,19 @@ Chat-native throwaway diagrams or mockup sketches are outside this skill. For a
 small UI fix inside an existing design system, follow the repo's local
 conventions first and use only the relevant polish and validation parts of this
 skill.
+
+## Motion Vocabulary Lookup
+
+When the user only wants the name of a vaguely described motion or interaction,
+read [animation-vocabulary.md](references/animation-vocabulary.md) and answer
+directly without entering the design workflow below.
+
+Lead with the strongest glossary term and its definition verbatim. If several
+terms fit, list the best match first, then one or two close alternatives with a
+brief contrast. When nothing matches exactly, name the closest term and
+identify it as an approximation or combine existing glossary terms. Do not
+invent terminology or expand a naming answer into design, review, or
+implementation advice unless the user asks.
 
 ## Workflow
 

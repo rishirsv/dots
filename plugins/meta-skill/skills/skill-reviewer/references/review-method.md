@@ -99,10 +99,10 @@ types, and do not turn a peer's style into a universal rule.
 
 ## Proposal Quality
 
-Offer two or three concrete updates unless only one is safe. Each proposal
+Offer the smallest supported correction. Include alternatives only when the
+evidence leaves a real trade-off or user decision unresolved. Each proposal
 names the exact source scope, intended behavior change, benefit, trade-off or
-residual risk, and verification. Recommend one and explain why the alternatives
-lost.
+residual risk, and verification.
 
 Before recommending, check each proposal:
 

@@ -1,177 +1,90 @@
 # Deep Research
 
-Read this when a research question is broad, ambiguous, high-impact,
-cross-cutting, or likely to benefit from multiple bounded investigations.
+Read this after selecting deep research for a broad, ambiguous, high-impact, or
+cross-cutting question. The base Research workflow already requires delegation;
+this reference governs multi-worker decomposition, iteration, verification, and
+synthesis.
 
-Deep research is a parent-led orchestration pattern. The parent scopes the
-question, dispatches bounded workers, collects evidence at barrier points,
-pressure-tests important claims, iterates on newly discovered questions, and
-writes the synthesis. Delegated workers gather and verify evidence; they do not
-own the final decision.
+## Decompose
 
-## When To Fan Out
+Split the research contract into two to six questions whose source boundaries
+do not overlap unnecessarily. Useful divisions include local architecture,
+official documentation, current external behavior, prior art, risks, and
+load-bearing claims that need independent verification.
 
-See SKILL.md's "Subagents" section for the default invocation and delegation
-framing. Use multiple workers when at least two are true:
+Give every worker a bounded question, source boundary, evidence bar, compact
+return shape, and stop condition. Dispatch independent workers concurrently.
+If a question is too broad for one worker, split it before dispatch rather than
+letting the worker wander.
 
-- The question spans multiple source classes, such as local code, official docs, ecosystem practice, issue trackers, and design tradeoffs.
-- Several hypotheses need independent checking.
-- The user needs a recommendation with evidence, not just a quick answer.
-- Current web facts or product behavior materially affect the result.
-- One worker's context would get crowded with raw evidence before synthesis.
+## Iterate At Barriers
 
-Stay with direct parent-agent research when the user asks for a quick/simple
-answer, forbids delegation, no delegation mechanism is available, the answer is
-already in a few local files, or delegation would mostly duplicate a two-minute
-lookup.
+Use barriers where one evidence set changes the next decision:
 
-Before dispatch, tell the user the planned source classes, approximate number
-of workers, and stop condition. In headless or non-interactive contexts, fan out
-only when the original request clearly asks for deep research or the Research
-workflow invocation itself supplies the research task.
+- collect source reports before comparing local and external behavior
+- collect competing evidence before resolving a contradiction
+- collect verification reports before promoting a contested claim
+- collect all conclusion-changing evidence before final synthesis
 
-## Decomposition
+At each barrier, group reports by claim and decide what is answered, what is
+contradicted, and what could still change the conclusion. Dispatch another
+bounded worker only for a consequential gap or a promising but incomplete
+line of evidence.
 
-Run deep research in four passes:
+While workers run, the parent may refine briefs, track coverage, prepare the
+synthesis structure, and update the user. It does not search or read underlying
+code, documents, or web sources.
 
-1. Plan: list 3-6 subquestions with source boundaries, budgets, and stop conditions.
-2. Retrieve: search each subquestion and follow 1-2 second-order leads when they could change the conclusion.
-3. Verify: identify load-bearing claims and adversarially check disputed,
-   surprising, current, high-impact, or weakly supported claims.
-4. Synthesize: group evidence by claim, resolve contradictions, and write the
-   durable report with one final `Sources` section.
+## Verify Claims
 
-Turn the research contract into subquestions with explicit source boundaries. Good splits include:
+Use an independent verification worker for claims that are stale, surprising,
+contested, high-impact, or weakly supported. Give it the claim, the compact
+reports and citations that support it, and a mandate to refute or downgrade it.
 
-- Codebase architecture: "Trace how this behavior works locally and record files."
-- Official documentation: "Verify current API behavior and record docs."
-- Prior art: "Find comparable approaches and tradeoffs."
-- Risk review: "Look for failure modes, security concerns, migration risks, and missing proof."
-- Decision synthesis: "Compare evidence from other workers and identify what remains unresolved."
+Verification returns one of: supported, refuted, downgraded, contradicted, or
+unresolved. Preserve disagreement when evidence does not justify resolution.
+The parent decides what enters the final synthesis but delegates any new source
+inspection.
 
-Avoid sending multiple workers the same broad prompt. If two workers have the
-same source class and question, tighten the split or use one worker.
+## Dispatch Shapes
 
-## Orchestration
-
-Use the active harness's delegation mechanism when one is available and
-explicitly authorized. See `../../../references/subagent-lanes.md` for lane
-roles and fan-out rules; pick the lane that fits each slice.
-
-Use barriers deliberately:
-
-- Collect all source-lane reports before deduping overlapping evidence.
-- Collect local and external facts before deciding whether they align.
-- Collect adversarial reviews before promoting a contested claim.
-- Collect implementation-worker results before final integration.
-
-After each barrier, decide what is done, what needs another pass, and which new
-questions matter. Send a worker back to dig deeper when its lane is promising
-but incomplete. Launch new workers when the first pass reveals a distinct open
-question, source class, contradiction, or risk that could change the synthesis.
-
-Do not block the main thread on a worker unless the next critical-path action
-needs that result. While workers run, continue non-overlapping local work such
-as reading repository instructions, preparing the synthesis outline, or checking
-source conventions.
-
-## Claim Verification
-
-Borrow the useful part of workflow-harness deep research: make important claims
-earn their place in the answer. This is not mandatory for every run; use it when
-the recommendation depends on claims that are likely to be stale, contested,
-surprising, high-impact, or thinly sourced.
-
-A verification pass should:
-
-- turn evidence into falsifiable or checkable claims;
-- ask one or more independent reviewers to refute or downgrade each claim;
-- default ambiguous evidence toward lower confidence;
-- preserve contradictions instead of smoothing them away;
-- promote only claims that survive with enough support for the user's decision.
-
-For expensive web-heavy research, a 3-reviewer majority rule is a good pattern:
-if at least two reviewers refute a claim, drop it or mark it unsupported. For
-ordinary codebase or mixed research, one focused adversarial reviewer is often
-enough.
-
-## Dispatch Patterns
-
-Use these as starting points and adapt them to the research contract:
-
-| Pattern | Use When | Source Boundary | Expected Output |
-|---|---|---|---|
-| Repo conventions | The answer depends on how this repository wants work done | Repository instructions, README, contribution docs, existing plans or decision docs | Conventions, required paths, workflow constraints, and conflicts |
-| Implementation patterns | The answer depends on existing local architecture or examples | Target modules, tests, call sites, nearby implementations | Existing pattern, files to follow, edge cases, and missing proof |
-| Official docs/current API | The answer depends on external APIs, SDKs, standards, or current behavior | Official docs, specs, release notes, package docs, changelogs | Current behavior, version constraints, deprecations, and source links |
-| Prior art/web landscape | The answer benefits from external examples or alternatives | Primary project docs, reputable engineering writeups, papers, market/product docs | Named approaches, tradeoffs, source authority, and relevance |
-| Risk review | The answer needs failure modes before a recommendation | Local code risks, security/performance constraints, issue trackers, postmortems | Risks, likelihood, mitigation options, and blocking unknowns |
-| Synthesis support | The parent needs a second pass over gathered evidence | Worker reports and source list only | Contradictions, convergence, unsupported claims, and confidence |
-
-## Worker Prompt Shape
-
-Give each worker a purpose-built brief. The prompt should make the research
-slice obvious without forcing every run into the same fields.
-
-Good prompts usually name:
-
-- the question, decision, or claim to investigate
-- the source boundary and any date/version constraint
-- the evidence standard and citation expectations
-- the output the parent needs for synthesis, with the answer and implications
-  before source inventory
-- no-edit constraints and any assigned report path
-- the budget or stop condition when the slice could sprawl
-
-Use concise shapes like these and adapt them:
+Adapt these concise briefs to the question:
 
 ```text
-Trace <behavior> through <repo area>. Identify the relevant files, symbols,
-tests, and missing proof. Return answer, what it means, supporting evidence
-grouped by claim, caveats, confidence, next checks, and a compact audit trail.
-Do not edit code.
+Trace <behavior> through <repo area>. Return the answer and implications,
+supporting files/symbols/tests grouped by claim, contradictions, confidence,
+gaps, and the next check that could change the answer. Do not edit files or
+return broad source dumps.
 ```
 
 ```text
-Verify current guidance for <external API/product/standard>. Prefer primary
-sources. Return supported claims, version/date constraints, source URLs,
-practical implications, conflicts, confidence, and a compact source audit trail.
+Verify current guidance for <API/product/standard>. Prefer primary sources.
+Return supported claims, date/version constraints, source URLs, conflicts,
+practical implications, confidence, and gaps. Do not return search logs or page
+dumps.
 ```
 
 ```text
-Compare these subreports for contradictions and unsupported claims. Use only the
-provided reports and source lists. Return convergence, disagreements, evidence
-gaps, and confidence.
+Challenge these claims using the supplied reports and, where needed, a bounded
+independent source check. Return each claim as supported, refuted, downgraded,
+contradicted, or unresolved, with concise evidence. Do not write the final
+synthesis.
 ```
 
-Do not hard-code local directory names into reusable prompt bodies. Put
-repo-specific paths only in the parent prompt for a specific run when the
-repository conventions or assigned report path require them.
+## Reports And Synthesis
 
-If a requested worker scope is too broad, split it before dispatch. If a worker
-receives an unbounded prompt anyway, it should return `Scope too broad`
-with a recommended split instead of wandering.
+For deep runs with saved worker evidence, assign each worker a disjoint path
+under the repository's scratch convention. Use descriptive numbered names such
+as `01-local-routing.md`, `02-current-api.md`, and `03-verification.md`.
 
-## Synthesis
+The parent owns the final answer or durable report:
 
-The parent agent owns synthesis and writes the durable deep research report.
-Delegated workers gather evidence; they do not make final product decisions or
-write the report.
+1. Group findings by claim rather than by worker.
+2. Prefer directly supported and independently verified claims.
+3. Preserve material contradictions and confidence limits.
+4. Separate facts, inferences, recommendations, and open questions.
+5. Return the best-supported partial answer when evidence cannot justify a
+   confident conclusion.
 
-Use `research.md` for the parent synthesis. Use numbered subreport names that
-describe the source class and question, such as
-`01-codebase-routing-patterns.md`, `02-official-docs-current-api.md`, or
-`03-risks-and-gaps.md`. Add `99-source-audit.md` only when the source inventory
-or command trail is large enough to distract from the subreports.
-
-After workers report:
-
-1. Group findings by claim, not by worker.
-2. Prefer primary and local evidence over secondary commentary.
-3. Mark contradictions and decide whether they block the answer.
-4. Preserve verification results for load-bearing claims: supported, refuted,
-   downgraded, contradicted, or unresolved.
-5. Run follow-up lanes for open questions that could change the answer.
-6. Write a durable deep research report in the repository-conventional location.
-
-If the evidence does not support a confident recommendation, return the best-supported partial answer and the specific research needed next.
+Create a durable report only when the user requests one or repository
+conventions make it the justified deliverable.

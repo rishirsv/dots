@@ -5,11 +5,10 @@ from __future__ import annotations
 
 import argparse
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 
-from .app_server.client import app_server_readiness
+from .codex_exec import codex_readiness
 from .errors import CliError
 from .grading import grade_run, record_human_grade
 from .io import emit, fail
@@ -25,11 +24,17 @@ from .manifest import (
 )
 from .packaging import package_skill
 from .report import build_report, list_runs, render_markdown, write_report
-from .runtime import default_codex_model
-from .runner import run_eval
+from .runner import finalize_eval, prepare_eval, retry_trial, run_eval, submit_trial, unresolved_trials
 from .sessions import list_threads, render_thread_list, show_thread
 from .validation import validate_report
 from .workbench import init_target, status_snapshot
+
+
+def positive_int(raw):
+    value = int(raw)
+    if value < 1:
+        raise argparse.ArgumentTypeError("must be at least 1")
+    return value
 
 
 def command_doctor(args):
@@ -40,28 +45,15 @@ def command_doctor(args):
 
     add("python_version", sys.version_info >= (3, 10), sys.version.split()[0])
     add("validators", all((Path(__file__).parent / name).exists() for name in ("validate_skill.py", "lint_authoring.py")), "bundled validators")
-    try:
-        import openai_codex
-
-        add("openai_codex_sdk", True, getattr(openai_codex, "__version__", "installed"))
-    except Exception as exc:
-        add("openai_codex_sdk", False, str(exc))
-    ready, message, detail = app_server_readiness()
-    add("codex_app_server_sdk", ready, message, detail)
     codex = shutil.which("codex")
     add("codex_binary", bool(codex), codex or "codex not found on PATH")
     if codex:
-        try:
-            proc = subprocess.run([codex, "login", "status"], capture_output=True, text=True, timeout=10)
-            auth_message = (proc.stdout or proc.stderr or "no login status output").strip()
-            add("codex_auth", proc.returncode == 0, auth_message)
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            add("codex_auth", False, str(exc))
-        default_model = default_codex_model(Path.cwd())
-        add("codex_default_model", bool(default_model), default_model or "no supported default model reported")
+        ready, message, detail = codex_readiness()
+        add("codex_auth", ready, (detail or {}).get("auth") or message)
+        add("codex_cli", ready, message, detail)
     else:
         add("codex_auth", False, "cannot check auth without the Codex binary")
-        add("codex_default_model", False, "cannot list models without the Codex binary")
+        add("codex_cli", False, "cannot check Codex without the binary")
     result = {"ok": all(check["ok"] for check in checks), "checks": checks}
     emit(result, args.json)
     return 0 if result["ok"] else 1
@@ -148,8 +140,60 @@ def command_eval_run(args):
     return 0 if result["ok"] else 1
 
 
+def command_eval_prepare(args):
+    if args.adhoc:
+        if not args.task:
+            raise CliError("--adhoc requires --task", 2)
+        result = prepare_eval(args, task_executor_kind="native_subagent")
+        emit(result, args.json)
+        return 0
+    context = _run_context(args)
+    lint = lint_suite(str(context["suite"]))
+    fatal = _fatal_lint(lint)
+    if fatal:
+        details = ", ".join(sorted({warning.get("kind", "lint") for warning in fatal}))
+        raise CliError(f"suite lint blocks the run: {details}", 2)
+    result = prepare_eval(args, context=context, task_executor_kind="native_subagent")
+    result["lint"] = lint
+    emit(result, args.json)
+    return 0
+
+
+def command_eval_submit(args):
+    result = submit_trial(args.run, args.trial, args.attempt, args.result)
+    emit({"ok": True, "state": result}, args.json)
+    return 0
+
+
+def command_eval_finalize(args):
+    result = finalize_eval(
+        args.run,
+        grade=args.grade,
+        parallel=args.parallel,
+        model=args.model,
+        reasoning_effort=args.reasoning_effort,
+    )
+    emit(result, args.json)
+    return 0 if result["ok"] else 1
+
+
+def command_eval_unresolved(args):
+    emit(unresolved_trials(args.run), args.json)
+    return 0
+
+
+def command_eval_retry(args):
+    emit(retry_trial(args.run, args.trial), args.json)
+    return 0
+
+
 def command_eval_grade(args):
-    result = grade_run(args.run, parallel=args.parallel, model=args.model)
+    result = grade_run(
+        args.run,
+        parallel=args.parallel,
+        model=args.model,
+        reasoning_effort=args.reasoning_effort,
+    )
     emit(result, args.json)
     return 0 if result["ok"] else 1
 
@@ -243,38 +287,80 @@ def build_parser():
 
     evaluate = sub.add_parser("eval", help="Run and inspect evaluations")
     eval_sub = evaluate.add_subparsers(dest="eval_command", required=True)
-    run = eval_sub.add_parser("run", help="Run a suite or one-off task")
-    run.add_argument("--suite")
-    run.add_argument("--objective")
-    run.add_argument("--baseline")
-    run.add_argument("--candidates")
-    run.add_argument("--split")
-    run.add_argument("--case", action="append")
-    run.add_argument("--type", action="append")
-    run.add_argument("--repetitions", type=int)
-    run.add_argument("--model")
-    run.add_argument("--parallel", type=int, default=1)
-    run.add_argument("--timeout", type=int)
-    run.add_argument("--no-baseline", action="store_true")
-    run.add_argument("--no-grade", action="store_true")
-    run.add_argument("--human-review-sample", type=int)
-    run.add_argument("--source-run-id")
-    run.add_argument("--resume-run-id", help="Reuse exact completed trials from an interrupted run")
-    run.add_argument("--adhoc", action="store_true")
-    run.add_argument("--task")
-    run.add_argument("--skill")
-    run.add_argument("--expected-output")
-    run.add_argument("--expectation", dest="expectations", action="append")
-    run.add_argument("--eval-type", dest="adhoc_type", choices=["capability", "regression", "failure"])
-    run.add_argument("--priority", choices=["high", "medium", "low"])
-    run.add_argument("--check", action="store_true")
-    run.add_argument("--json", action="store_true")
+
+    def add_run_arguments(command, *, check=False):
+        command.add_argument("--suite")
+        command.add_argument("--objective")
+        command.add_argument("--baseline")
+        command.add_argument("--candidates")
+        command.add_argument("--split")
+        command.add_argument("--case", action="append")
+        command.add_argument("--type", action="append")
+        command.add_argument("--repetitions", type=positive_int)
+        command.add_argument("--model")
+        command.add_argument("--reasoning-effort", choices=["none", "minimal", "low", "medium", "high", "xhigh"])
+        command.add_argument("--parallel", type=positive_int, default=1)
+        command.add_argument("--timeout", type=positive_int)
+        command.add_argument("--no-baseline", action="store_true")
+        command.add_argument("--no-grade", action="store_true")
+        command.add_argument("--human-review-sample", type=int)
+        command.add_argument("--source-run-id")
+        command.add_argument("--resume-run-id", help="Reuse exact completed trials from an interrupted run")
+        command.add_argument("--adhoc", action="store_true")
+        command.add_argument("--task")
+        command.add_argument("--skill")
+        command.add_argument("--expected-output")
+        command.add_argument("--expectation", dest="expectations", action="append")
+        command.add_argument("--eval-type", dest="adhoc_type", choices=["capability", "regression", "failure"])
+        command.add_argument("--priority", choices=["high", "medium", "low"])
+        if check:
+            command.add_argument("--check", action="store_true")
+        command.add_argument("--json", action="store_true")
+
+    run = eval_sub.add_parser("run", help="Run a suite unattended with ephemeral Codex Exec workers")
+    add_run_arguments(run, check=True)
     run.set_defaults(func=command_eval_run)
+
+    prepare = eval_sub.add_parser("prepare", help="Freeze a run and emit workspace-local worker packets")
+    add_run_arguments(prepare)
+    prepare.set_defaults(func=command_eval_prepare)
+
+    submit = eval_sub.add_parser("submit", help="Import one workspace-local worker result")
+    submit.add_argument("--run", required=True)
+    submit.add_argument("--trial", required=True)
+    submit.add_argument("--attempt", required=True)
+    submit.add_argument("--result", required=True)
+    submit.add_argument("--json", action="store_true")
+    submit.set_defaults(func=command_eval_submit)
+
+    finalize = eval_sub.add_parser("finalize", help="Grade and render a run after every trial resolves")
+    finalize.add_argument("--run", required=True)
+    finalize.add_argument("--grade", action=argparse.BooleanOptionalAction, default=None)
+    finalize.add_argument("--parallel", type=positive_int)
+    finalize.add_argument("--model")
+    finalize.add_argument("--reasoning-effort", choices=["none", "minimal", "low", "medium", "high", "xhigh"])
+    finalize.add_argument("--json", action="store_true")
+    finalize.set_defaults(func=command_eval_finalize)
+
+    unresolved = eval_sub.add_parser("unresolved", help="Show unresolved worker packets for an interrupted run")
+    unresolved.add_argument("--run", required=True)
+    unresolved.add_argument("--json", action="store_true")
+    unresolved.set_defaults(func=command_eval_unresolved)
+
+    retry = eval_sub.add_parser("retry", help="Issue a new attempt for one unresolved trial")
+    retry.add_argument("--run", required=True)
+    retry.add_argument("--trial", required=True)
+    retry.add_argument("--json", action="store_true")
+    retry.set_defaults(func=command_eval_retry)
 
     grade = eval_sub.add_parser("grade", help="Regrade frozen run inputs")
     grade.add_argument("--run", required=True)
     grade.add_argument("--model")
-    grade.add_argument("--parallel", type=int, default=1)
+    grade.add_argument(
+        "--reasoning-effort",
+        choices=["none", "minimal", "low", "medium", "high", "xhigh"],
+    )
+    grade.add_argument("--parallel", type=positive_int, default=1)
     grade.add_argument("--json", action="store_true")
     grade.set_defaults(func=command_eval_grade)
 

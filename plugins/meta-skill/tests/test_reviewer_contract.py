@@ -24,12 +24,12 @@ class ReviewerContractTests(unittest.TestCase):
             "effective installed payload",
         ):
             self.assertIn(contract, normalized)
-        self.assertIn("strictly read-only", normalized)
+        self.assertIn("keep the work read-only", normalized.lower())
         self.assertIn("Numeric scoring is optional", normalized)
         self.assertIn("mechanical evidence, not proof of behavior", normalized)
         self.assertIn("Use `skill-evaluator` when the decision needs fresh task runs", normalized)
         self.assertIn("do not edit source, create workbench state, save review artifacts", normalized)
-        self.assertIn("do not ask for edit approval from this lane", normalized.lower())
+        self.assertIn("do not ask for edit approval during a read-only review", normalized.lower())
 
     def test_reference_retains_causal_and_usage_diagnostics(self):
         text = (REVIEWER / "references" / "review-method.md").read_text()
@@ -45,7 +45,7 @@ class ReviewerContractTests(unittest.TestCase):
         rubric = (ROOT / "plugins" / "meta-skill" / "references" / "judge-rubric.md").read_text()
         hygiene = (ROOT / "plugins" / "meta-skill" / "references" / "payload-hygiene.md").read_text()
         self.assertNotIn("judge-review.md", rubric)
-        self.assertIn("Keep this lane read-only", rubric)
+        self.assertIn("Keep the review read-only", rubric)
         self.assertIn("hand requested\nimplementation to `skill-author`", rubric)
         self.assertIn("When the current lane owns mutation", hygiene)
         self.assertIn("A read-only review reports the cleanup", hygiene)

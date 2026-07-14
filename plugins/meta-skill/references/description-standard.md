@@ -7,8 +7,9 @@ discovery contract.
 
 ## Hard rules
 
-- Third person, always. "Reviews changed code…" — never "I can help…" or
-  "Use me to…".
+- Use neutral active voice without first or second person. Both `Reviews
+  changed code…` and `Use when reviewing changed code…` are valid; `I can
+  help…`, `Use me to…`, and `Use when you need…` are not.
 - State both what the skill does and when to use it. Include the words a
   user would actually type (trigger phrases), drawn from real usage when
   history is available.

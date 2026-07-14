@@ -10,7 +10,13 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
 from meta_skill.errors import CliError
-from meta_skill.report import build_report, list_runs, render_markdown, write_report
+from meta_skill.report import (
+    build_report,
+    judge_annotation_context,
+    list_runs,
+    render_markdown,
+    write_report,
+)
 
 
 def write(path, value):
@@ -30,7 +36,18 @@ def fixture(root):
     run = skill / ".skill" / "runs" / "run-1"
     candidates = [{"candidate": "no-skill", "source_kind": "none"}, {"candidate": "current", "source_kind": "current_worktree"}]
     trials = [{"trial_id": f"a.{candidate}.t1", "eval_id": "a", "candidate": candidate, "repetition": 1} for candidate in ("no-skill", "current")]
-    write(run / "run.json", {"schema_version": 2, "run_id": "run-1", "skill_id": "demo", "objective": "Compare current with baseline", "runner": {"grading": True}, "baseline_candidate": "no-skill", "candidates": candidates, "trials": trials})
+    write(run / "run.json", {
+        "schema_version": 2,
+        "run_id": "run-1",
+        "skill_id": "demo",
+        "objective": "Compare current with baseline",
+        "runner": {"grading": True},
+        "task_executor": {"kind": "native_subagent", "provenance": "inherited"},
+        "judge_executor": {"kind": "codex_exec", "provenance": "requested"},
+        "baseline_candidate": "no-skill",
+        "candidates": candidates,
+        "trials": trials,
+    })
     write(run / "inputs" / "suite.json", {"schema_version": 2, "evals": [{"id": "a", "type": "capability", "priority": "high", "prompt": {"path": "task.md"}}]})
     for candidate, label in (("no-skill", "fail"), ("current", "pass")):
         trial = run / "trials" / f"a.{candidate}.t1"
@@ -157,6 +174,54 @@ class ReportTests(unittest.TestCase):
             write(run / "run.json", {"schema_version": 1, "run_id": "run-1"})
             with self.assertRaises(CliError):
                 build_report(str(run))
+
+    def test_executor_provenance_requires_and_preserves_canonical_schema(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = fixture(Path(tmp))
+            model = json.loads((run / "run.json").read_text())
+            model.pop("task_executor")
+            write(run / "run.json", model)
+            with self.assertRaisesRegex(CliError, "canonical task_executor"):
+                build_report(str(run))
+            model["task_executor"] = {
+                "kind": "native_subagent",
+                "requested_model": "gpt-5.6-terra",
+                "requested_reasoning": "medium",
+                "observed_model": "gpt-5.6-terra",
+                "provenance": "observed",
+            }
+            write(run / "run.json", model)
+            current = build_report(str(run))
+            self.assertEqual(current["task_executor"]["kind"], "native_subagent")
+            self.assertEqual(current["task_executor"]["provenance"], "observed")
+
+    def test_judge_annotation_context_is_explicit_opt_in_with_stable_legacy_ids(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = fixture(Path(tmp))
+            review_path = run / "trials" / "a.current.t1" / "review.json"
+            write(
+                review_path,
+                {
+                    "annotations": [
+                        {"artifact": "response", "tag": "one-off", "note": "private note"},
+                        {
+                            "artifact": "response",
+                            "tag": "taste-rule",
+                            "note": "Prefer concise answers",
+                            "judge_use": "rubric",
+                        },
+                    ]
+                },
+            )
+            first = judge_annotation_context(str(run))
+            second = judge_annotation_context(str(run))
+            self.assertEqual(first, second)
+            self.assertEqual(len(first), 1)
+            self.assertEqual(first[0]["judge_use"], "rubric")
+            self.assertTrue(first[0]["annotation_id"].startswith("legacy-"))
+            report = build_report(str(run))
+            annotations = report["trials"][1]["review"]["annotations"]
+            self.assertEqual(annotations[0]["judge_use"], "exclude")
 
 
 if __name__ == "__main__":

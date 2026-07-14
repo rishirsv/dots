@@ -65,13 +65,8 @@ else
   if "$PYTHON" -m pip install --upgrade -r "$REQ" >&2; then
     printf '%s\n' "$REQ_SUM" > "$STAMP"
   else
-    if ! "$PYTHON" - <<'PY' >/dev/null 2>&1; then
-import openai_codex
-PY
-      echo "error: failed to install Meta Skill dependencies from $REQ." >&2
-      exit 2
-    fi
-    echo "warning: dependency update failed; using the already installed Meta Skill environment." >&2
+    echo "error: failed to install Meta Skill dependencies from $REQ." >&2
+    exit 2
   fi
 fi
 

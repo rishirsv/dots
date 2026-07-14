@@ -54,6 +54,11 @@ Hidden criteria may clarify how to judge a visible requirement but must not add
 a requirement the task never gave the agent. Keep expected outputs, judge
 guidance, validators, and human labels outside the agent workspace.
 
+Authored annotations may preserve reviewed context with the case. Leave
+`judge_use` absent or set it to `exclude` unless the note has been approved as
+rubric guidance or evidence for the model judge. The trial worker never sees
+annotations regardless of judge use.
+
 ## Read Failures Before Editing The Suite
 
 Classify the earliest cause:

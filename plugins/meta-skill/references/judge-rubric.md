@@ -140,5 +140,5 @@ Return the review in chat:
 - Validation result and Validation %
 - Combined findings, prioritized by behavior risk
 
-A Judge review is static evidence. Keep this lane read-only and hand requested
+A Judge review is static evidence. Keep the review read-only and hand requested
 implementation to `skill-author`.

@@ -34,6 +34,28 @@ regenerate the derived report after revision. When a human and model disagree, i
 criteria, allowed evidence, and judge guidance; do not hide the disagreement or
 invent a confidence label.
 
+## Control Annotation Use
+
+Each response or artifact annotation has one explicit `judge_use` value:
+
+- `exclude` keeps the note human-only and is the default, including when the
+  field is absent in an older run
+- `rubric` teaches the judge how to interpret a visible requirement across the
+  selected evidence without adding a hidden requirement
+- `evidence` points the judge to a relevant fact in this result without
+  changing the rubric
+
+Use `rubric` only for a reviewed interpretation that should guide later model
+judgment. Use `evidence` only when the note identifies observable support in
+the response or artifact. Keep one-off reactions, candidate identity,
+preferences, proposed skill edits, and unreviewed diagnoses excluded.
+
+Regrading may use only annotations explicitly marked `rubric` or `evidence`.
+The resulting model-grade row records their annotation IDs and a digest of the
+assembled judge context. Changing an annotation's judge use does not rewrite an
+old grade; run grading again to append a new judgment. Pairwise annotations
+remain separate and never enter this context automatically.
+
 Use a deterministic validator instead when exact checks can decide fairly. Use
 `unknown` when evidence is insufficient or contradictory. One reviewer is
 normally enough for a small local suite; do not turn routine evaluation into a

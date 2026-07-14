@@ -3,6 +3,17 @@
 Read this when designing a new skill or substantially changing how an existing
 skill is discovered, structured, or completed.
 
+## Contents
+
+- [Design for predictable behavior](#design-for-predictable-behavior)
+- [Pressure-test discovery](#pressure-test-discovery)
+- [Match the shape to the work](#match-the-shape-to-the-work)
+- [Set instruction strength](#set-instruction-strength)
+- [Design failure behavior](#design-failure-behavior)
+- [Build the information hierarchy](#build-the-information-hierarchy)
+- [Define completion](#define-completion)
+- [Prune before finalizing](#prune-before-finalizing)
+
 ## Design For Predictable Behavior
 
 A good skill makes the agent take a dependable approach, even when the right
@@ -16,11 +27,11 @@ house terminology unless the work itself depends on them. Reserve `must`,
 `always`, and `never` for safety, approval, irreversible actions, or a failure
 that truly requires a hard boundary.
 
-Prefer a small, stable vocabulary the model already understands. A strong
-leading word can anchor a whole behavior more clearly than repeating its
-definition in several places. Use the same terms in the description, body, and
-surrounding project language when they refer to the same idea; do not coin
-jargon merely to make the skill sound systematic.
+Prefer a small, stable vocabulary the model already understands. Begin
+instructions with concrete action verbs such as `Read`, `Compare`, `Write`,
+`Run`, or `Stop`, followed by the condition or result they govern. Use the same
+noun for the same concept in the description, body, and surrounding project
+language; do not coin jargon merely to make the skill sound systematic.
 
 ## Pressure-Test Discovery
 
@@ -75,9 +86,8 @@ runtime or repository contract.
 ## Build The Information Hierarchy
 
 Keep the opening contract and common judgment in `SKILL.md`. Move conditional
-detail to a directly linked reference whose link says when to read it. A vague
-pointer to necessary material is a behavior bug: sharpen the read condition
-instead of copying the whole reference into the body.
+detail to a directly linked reference whose link says when to read it. Sharpen
+a vague pointer instead of copying the reference into the body.
 
 Inline what every branch needs. Disclose what only some branches need. Keep a
 concept's definition, rules, and caveats together rather than scattering them
@@ -86,10 +96,10 @@ them, what they consume, what they produce, and what failure means.
 
 Treat the description as the always-visible discovery contract, the body as
 the common operating context, and linked resources as conditional context.
-Spend the description on distinct trigger branches rather than synonyms. Keep
-the body comfortably readable; when it approaches roughly 500 lines, move
-branch-specific reference material behind precise pointers instead of adding
-another layer of headings.
+Spend the description on distinct trigger branches rather than synonyms. Move
+branch-specific detail behind precise pointers when the body becomes hard to
+navigate. Use [payload-hygiene.md](../../../references/payload-hygiene.md) for
+the complete runtime-versus-development placement rules.
 
 For a large reference, include a short contents map or search guidance so the
 agent can reach the relevant section without loading or wandering through the

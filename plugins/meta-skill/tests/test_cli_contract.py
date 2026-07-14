@@ -36,6 +36,13 @@ class CliTests(unittest.TestCase):
             self.assertIn(kept, text)
         for removed in ("calibrate", "preset", "verify-run", "case", "docs"):
             self.assertNotIn(removed, text)
+        for command in ("prepare", "submit", "finalize", "unresolved", "retry"):
+            parsed = parser.parse_args(["eval", command, "--run", "r"] if command in {"finalize", "unresolved"} else (
+                ["eval", command, "--run", "r", "--trial", "t"] if command == "retry" else
+                ["eval", "submit", "--run", "r", "--trial", "t", "--attempt", "a", "--result", "result.json"] if command == "submit" else
+                ["eval", "prepare"]
+            ))
+            self.assertEqual(parsed.eval_command, command)
 
     def test_init_suite_is_opt_in_and_status_uses_new_shape(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -62,31 +69,40 @@ class CliTests(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertEqual(result["lint"]["shape"], "evals-v2")
 
+    def test_eval_rejects_nonpositive_execution_settings(self):
+        parser = build_parser()
+        for flag in ("--repetitions", "--parallel", "--timeout"):
+            with self.subTest(flag=flag), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+                parser.parse_args(["eval", "run", flag, "0"])
+
     def test_professional_eval_vocabulary_is_exposed_without_branded_aliases(self):
         app = (ROOT / "plugins" / "meta-skill" / "src" / "meta_skill" / "workbench_server" / "app.html").read_text()
         for term in (
-            "Cases", "Runs", "Skill versions", "Rerun selected", "Feedback",
-            "Produced files", "Open preview", "Feedback about", "Judge results",
+            "Cases", "Runs", "Versions", "Feedback", "Produced files",
+            "Open local file", "Feedback about", "Judge results",
         ):
             self.assertIn(term, app)
-        for term in ("Explore", "Substantiate", "Improve", "Benchmark mode"):
+        for term in ("Explore", "Substantiate", "Improve", "Rerun selected"):
             self.assertNotIn(term, app)
         args = build_parser().parse_args([
             "eval", "run", "--objective", "Compare revisions", "--baseline", "current",
             "--human-review-sample", "2", "--source-run-id", "run-1",
+            "--model", "gpt-5.6-terra", "--reasoning-effort", "medium",
         ])
         self.assertEqual(args.baseline, "current")
         self.assertEqual(args.human_review_sample, 2)
+        self.assertEqual(args.model, "gpt-5.6-terra")
+        self.assertEqual(args.reasoning_effort, "medium")
 
     def test_doctor_reports_binary_and_auth_checks(self):
         args = build_parser().parse_args(["doctor", "--json"])
         output = io.StringIO()
-        with patch("meta_skill.cli.shutil.which", return_value=None), patch("meta_skill.cli.app_server_readiness", return_value=(True, "ready", {})), contextlib.redirect_stdout(output):
+        with patch("meta_skill.cli.shutil.which", return_value=None), contextlib.redirect_stdout(output):
             command_doctor(args)
         names = [row["name"] for row in json.loads(output.getvalue())["checks"]]
         self.assertIn("codex_binary", names)
         self.assertIn("codex_auth", names)
-        self.assertIn("codex_default_model", names)
+        self.assertIn("codex_cli", names)
 
 
 if __name__ == "__main__":

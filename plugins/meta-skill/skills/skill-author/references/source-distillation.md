@@ -4,6 +4,16 @@ Read this when examples, transcripts, source packs, rubrics, or user
 corrections must become reusable skill behavior. The result is an operating
 model, not a summary of the sources.
 
+## Contents
+
+- [Start with each source's role](#start-with-each-sources-role)
+- [Choose the useful lenses](#choose-the-useful-lenses)
+- [Pair inputs with outputs](#pair-inputs-with-outputs)
+- [Extract the operating model](#extract-the-operating-model)
+- [Check for overfitting and leakage](#check-for-overfitting-and-leakage)
+- [Match the draft back to examples](#match-the-draft-back-to-examples)
+- [Hand off the distillation](#hand-off-the-distillation)
+
 ## Start With Each Source's Role
 
 Decide what each source is allowed to teach before extracting rules:
@@ -88,10 +98,10 @@ When sources conflict, follow an explicit authority rule when one exists.
 Otherwise preserve the real branch or ask the user which source should govern;
 do not average incompatible examples into a rule that none of them supports.
 
-Map the surviving material to the smallest runtime surface: default behavior in
-`SKILL.md`, conditional detail in `references/`, deterministic transformations
-in `scripts/`, and approved reusable templates or examples in runtime resource
-folders. Keep authoring evidence outside the portable payload.
+Map the surviving material to the smallest runtime surface and keep authoring
+evidence outside the portable payload. Use
+[payload-hygiene.md](../../../references/payload-hygiene.md) for the placement
+rules.
 
 ## Check For Overfitting And Leakage
 
