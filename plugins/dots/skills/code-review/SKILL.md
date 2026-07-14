@@ -139,6 +139,17 @@ Finders return candidates only, never edits or file dumps, and return
 uncertain candidate in Deep review. The verifier challenges the cited context
 and returns `supported`, `refuted`, or `unresolved`.
 
+Verify for recall, not just precision. Treat a candidate as `supported` or
+`unresolved` by default; reach `refuted` only when the code itself makes it
+constructible. A realistic runtime state is not grounds to refute: concurrency
+races, nil/undefined on a rare-but-reachable path (error handler, cold cache,
+missing optional field), falsy-zero treated as missing, an off-by-one on a
+boundary the code does not exclude, retries or partial failures, or a
+regex/allowlist that lost an anchor all stay in scope. Refute only when the
+code proves it wrong: factually inaccurate (quote the actual line), provably
+impossible (cite the type, constant, or invariant), already handled in this
+change (cite the guard), or pure style with no observable effect.
+
 The parent checks the cited source, merges duplicates, and classifies every
 candidate:
 
