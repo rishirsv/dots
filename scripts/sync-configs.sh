@@ -7,7 +7,7 @@ TARGETS=()
 
 usage() {
   cat <<'EOF'
-Usage: scripts/sync-configs.sh [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--starship|--zsh|--launchagents|--karabiner ...]
+Usage: scripts/sync-configs.sh [--dry-run] [--all|--agent-instructions|--codex|--codex-personal|--drafts-styles|--claude|--vscode|--ghostty|--cmux|--starship|--raycast|--zsh|--launchagents|--karabiner ...]
 
 Installs repo-owned config sources from configs/ to this machine.
 Existing targets are backed up before they are replaced.
@@ -20,7 +20,7 @@ EOF
 add_target() {
   local target="$1"
   if [[ "$target" == "all" ]]; then
-    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux starship zsh launchagents karabiner)
+    TARGETS=(codex codex-personal drafts-styles claude vscode ghostty cmux starship raycast zsh launchagents karabiner)
     return
   fi
   TARGETS+=("$target")
@@ -60,6 +60,9 @@ while (( $# )); do
       ;;
     --starship)
       add_target starship
+      ;;
+    --raycast)
+      add_target raycast
       ;;
     --zsh)
       add_target zsh
@@ -252,6 +255,10 @@ sync_starship() {
   install_file "$ROOT/configs/starship.toml" "$HOME/.config/starship.toml"
 }
 
+sync_raycast() {
+  install_file "$ROOT/configs/raycast/preferences.plist" "$HOME/Library/Preferences/com.raycast-x.macos.plist"
+}
+
 sync_zsh() {
   install_file "$ROOT/configs/zsh/.zprofile" "$HOME/.zprofile"
   install_file "$ROOT/configs/zsh/.zshrc" "$HOME/.zshrc"
@@ -276,6 +283,7 @@ for target in "${TARGETS[@]}"; do
     ghostty) sync_ghostty ;;
     cmux) sync_cmux ;;
     starship) sync_starship ;;
+    raycast) sync_raycast ;;
     zsh) sync_zsh ;;
     launchagents) sync_launchagents ;;
     karabiner) sync_karabiner ;;

@@ -8,7 +8,7 @@ Source repo for Rishi's personal plugins, agent workflows, and machine config.
 - `.agents/plugins/marketplace.json`: Codex marketplace source.
 - `.claude-plugin/marketplace.json`: Claude marketplace source.
 - `configs/`: source copies for Codex, Claude, Drafts, Cmux, Ghostty, VS Code,
-  Starship, Zsh, and Karabiner.
+  Starship, Raycast, Zsh, and Karabiner.
 - `scripts/`: repo helpers.
 - `AGENTS.md`: repo-local agent instructions.
 
@@ -34,6 +34,7 @@ scripts/sync-configs.sh --vscode
 scripts/sync-configs.sh --ghostty
 scripts/sync-configs.sh --cmux
 scripts/sync-configs.sh --starship
+scripts/sync-configs.sh --raycast
 scripts/sync-configs.sh --zsh
 scripts/sync-configs.sh --launchagents
 scripts/sync-configs.sh --karabiner
