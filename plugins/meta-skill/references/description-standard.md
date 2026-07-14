@@ -13,6 +13,10 @@ discovery contract.
 - State both what the skill does and when to use it. Include the words a
   user would actually type (trigger phrases), drawn from real usage when
   history is available.
+- Put the complete discovery boundary in the description. The body loads only
+  after selection, so it cannot rescue a missing trigger. Cover implicit user
+  intent as well as explicit skill names without turning the description into
+  a keyword list.
 - Front-load the key use case: listings truncate, and routers weight early
   tokens. The first clause should carry the strongest trigger.
 - Use one compact contract: `Use when …; not for …`. Name the closest real

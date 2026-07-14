@@ -17,7 +17,9 @@ metaskill workbench open [--root DIR] [--port PORT] [--open|--no-open]
 `--evals` to create `<skill>/evals/evals.json`. `doctor` checks Python, the
 bundled validators, the Codex binary, login status, and Codex Exec readiness.
 `package` writes a zip to `<skill>/.skill/packages/` unless `--out-dir` is
-supplied.
+supplied. It validates first and stops without an artifact on failure. The zip
+excludes `evals/`, hidden files, generated state, and other development-only
+content; success returns both the artifact path and its package-metadata path.
 
 ## Evaluation
 

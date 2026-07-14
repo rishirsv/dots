@@ -59,7 +59,23 @@ adding a routing procedure to the body.
 Do not force judgment-heavy work into form filling. Do not describe exact work
 in prose when a small script can perform and verify it reliably.
 
+For example: bundle a PDF rotation script when every request would recreate the
+same code; keep a stable warehouse schema in a reference when every query needs
+it; keep a branded document template in assets when the output must reuse it.
+
 ## Set Instruction Strength
+
+Match the degree of freedom to the task:
+
+| Task shape | Instruction form |
+|---|---|
+| Several approaches can succeed and context determines the best one | Principles and decision criteria |
+| A preferred pattern exists but inputs legitimately vary | Structured steps, pseudocode, or a parameterized script |
+| The operation is fragile, repetitive, or expensive to get wrong | A tested script with few choices or an exact sequence |
+
+Specificity should remove harmful uncertainty, not ordinary judgment. A rigid
+template can make variable work worse; loose prose can make a fragile operation
+unreliable.
 
 Use a hard rule when violating it would be unsafe, irreversible, externally
 visible, or contrary to an explicit user constraint. Use a default when one
@@ -100,6 +116,11 @@ Spend the description on distinct trigger branches rather than synonyms. Move
 branch-specific detail behind precise pointers when the body becomes hard to
 navigate. Use [payload-hygiene.md](../../../references/payload-hygiene.md) for
 the complete runtime-versus-development placement rules.
+
+When one skill supports several providers, frameworks, or domains, keep the
+shared workflow and selection rule in `SKILL.md` and place each variant's detail
+in its own directly linked reference. Do not make an agent load every variant
+to use one of them.
 
 For a large reference, include a short contents map or search guidance so the
 agent can reach the relevant section without loading or wandering through the
