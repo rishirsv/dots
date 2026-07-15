@@ -1,4 +1,4 @@
-"""Guard the high-signal static review checks retained from Skill Doctor."""
+"""Guard the high-signal static diagnostic contracts."""
 
 import sys
 import unittest
@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "plugins" / "meta-skill" / "src"))
 
 REVIEWER = ROOT / "plugins" / "meta-skill" / "skills" / "skill-reviewer"
+REVIEWER2 = ROOT / "plugins" / "meta-skill" / "skills" / "skill-reviewer2"
 
 
 class ReviewerContractTests(unittest.TestCase):
@@ -49,6 +50,15 @@ class ReviewerContractTests(unittest.TestCase):
         self.assertIn("hand requested\nimplementation to `skill-author`", rubric)
         self.assertIn("When the current lane owns mutation", hygiene)
         self.assertIn("A read-only review reports the cleanup", hygiene)
+
+    def test_reviewer2_is_explicit_only_and_adapts_to_the_callers_contract(self):
+        skill = (REVIEWER2 / "SKILL.md").read_text()
+        metadata = (REVIEWER2 / "agents" / "openai.yaml").read_text()
+
+        self.assertIn("$skill-reviewer2", skill.split("---", 2)[1])
+        self.assertIn("allow_implicit_invocation: false", metadata)
+        self.assertIn("Follow any severity scale, verdict vocabulary, and output contract", skill)
+        self.assertIn("A full diagnostic must cover discovery and purpose", skill)
 
 
 if __name__ == "__main__":
