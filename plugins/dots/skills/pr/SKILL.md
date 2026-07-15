@@ -97,8 +97,10 @@ git push -u origin "$(git branch --show-current)"
      and current review threads when available.
    - For UI, frontend, visual, design-facing, or mock changes, follow
      [visual-evidence.md](references/visual-evidence.md), then verify the live PR
-     body contains the required image or clip embeds. A text-only screen list is
-     not enough.
+     body renders the required image or clip embeds. For committed GitHub image
+     assets, use the full-commit-SHA raw URL form owned by that reference; a
+     normal `blob` page is not an image response. A text-only screen list or
+     unrendered Markdown link is not enough.
    - If required visual evidence is missing, update the PR body before the final
      summary. Keep the PR draft and state what captures are still missing only
      when the captures are genuinely unavailable.
