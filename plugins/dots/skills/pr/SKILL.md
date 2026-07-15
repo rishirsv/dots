@@ -113,7 +113,10 @@ git push -u origin "$(git branch --show-current)"
      repository-generated evidence index before publishing or handing off,
      upload every listed local asset through an authenticated GitHub attachment
      path, and embed it with its useful caption and alt text. A local path or a
-     text-only screen list is not durable PR evidence.
+     text-only screen list or unrendered Markdown link is not durable PR
+     evidence. For committed GitHub image assets, use the full-commit-SHA raw
+     URL form owned by that reference; a normal `blob` page is not an image
+     response.
    - Re-query or inspect the rendered live PR body after the update. Confirm
      every required image or clip is embedded, loads, and remains paired with
      the right claim. If any required listed asset is absent, keep the PR draft;

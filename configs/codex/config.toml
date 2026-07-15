@@ -81,6 +81,9 @@ enabled = true
 [plugins."browser@openai-bundled"]
 enabled = true
 
+[plugins."ts-document-parser@kpmg"]
+enabled = true
+
 [projects."/Users/rishi/Code/agent"]
 trust_level = "trusted"
 
@@ -157,6 +160,7 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/rishi/Code/prosper"]
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects"]
 trust_level = "trusted"
 
 [marketplaces.openai-bundled]

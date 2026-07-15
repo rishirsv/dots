@@ -66,8 +66,23 @@ personal data, notifications, unrelated browser chrome, and private workspace
 details. Do not use generated or placeholder imagery as proof of implemented
 behavior.
 
-Before handoff, inspect the rendered live PR body. Confirm that every required
-indexed asset is present and loads, comparisons are understandable, captions
+For an image committed to a GitHub repository, embed the immutable raw asset:
+
+```markdown
+![Useful alt text](https://github.com/OWNER/REPOSITORY/blob/FULL_COMMIT_SHA/path/to/capture.png?raw=1)
+```
+
+Use the full 40-character commit SHA, not a branch name, so later pushes cannot
+change the evidence. Keep `?raw=1`; without it, a GitHub `blob` URL returns the
+HTML file-view page and the Markdown image may not render. URL-encode spaces and
+other reserved path characters. A durable GitHub-uploaded attachment URL is
+also acceptable when the image should not live in the repository. Never embed
+a local filesystem path.
+
+Before handoff, re-query the live PR body and inspect its rendered form. Confirm
+that every required asset visibly loads as an image or playable clip—not merely
+as Markdown text or a link—and that comparisons are understandable, captions
 match the captures, and the evidence supports the claims made in the text. If a
-required asset is missing or cannot be uploaded, retain draft status and report
-the exact gap; do not hand off a ready-for-review PR.
+committed image does not render, first check for a missing `?raw=1`, a mutable
+branch reference, an incorrect or unencoded path, or a commit that does not
+contain the asset.
