@@ -4,8 +4,8 @@
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 service_tier = "default"
-model = "gpt-5.6-terra"
-model_reasoning_effort = "low"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "medium"
 
 
 
@@ -78,6 +78,9 @@ enabled = true
 [plugins."browser@openai-bundled"]
 enabled = true
 
+[plugins."ts-document-parser@kpmg"]
+enabled = true
+
 [projects."/Users/rishi/Code/agent"]
 trust_level = "trusted"
 
@@ -145,6 +148,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/rishi/Code/kpmg-pptx"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Library/CloudStorage/OneDrive-KPMG/Projects"]
 trust_level = "trusted"
 
 [marketplaces.openai-bundled]
@@ -232,6 +238,7 @@ skill = "#ad7bf9"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
+"gpt-5.6-sol" = 3
 
 [hooks.state]
 
