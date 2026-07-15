@@ -43,8 +43,9 @@ Keep the visible task stable while candidates vary. Use the no-skill baseline
 by default so the report can show what the skill changed; omit it only when the
 comparison cannot answer the decision, and record why.
 
-`<skill>/evals/evals.json` schema version 2 owns the authored suite and
-candidates. Keep simple tasks inline as top-level `evals[]` rows using `id`,
+The target skill's companion `.skill/` workspace owns the schema-version-2
+authored suite at `evals/evals.json` and its candidates. Keep simple tasks
+inline as top-level `evals[]` rows using `id`,
 `prompt`, `expected_output`, and `expectations`. Use `cases/<id>/` only when a
 task needs external fixtures, expected output, hidden judge guidance, or a
 deterministic validator. Follow the schema and placement rules in the shared

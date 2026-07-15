@@ -1,8 +1,7 @@
 # Description Improvement
 
 Use this method when the decision is whether a skill's `name` and `description`
-are discovered for the right user requests. It adapts Anthropic's description
-optimization loop to MetaSkill's ownership and evidence model.
+are discovered for the right user requests.
 
 Natural discovery is a different claim from attached-skill behavior. A valid
 discovery trial exposes only the skill name and candidate description through
@@ -56,8 +55,8 @@ Represent the reviewed corpus as:
 ```
 
 Keep this discovery corpus separate from task-outcome cases in
-`evals/evals.json` until MetaSkill has a platform adapter that can execute it
-faithfully.
+the skill companion's `evals/evals.json` until MetaSkill has a platform adapter
+that can execute it faithfully.
 
 ## Run Fair Discovery Trials
 
@@ -101,9 +100,9 @@ or changes stop improving the result. Re-evaluate both splits on every
 iteration and select the candidate with the strongest validation result, not
 the strongest rewriting result.
 
-Anthropic's method calls this a held-out test set, but it evaluates it every
-iteration and uses it for candidate selection. Describe it accurately as
-rewrite-blinded validation rather than a pristine final holdout.
+Because validation results influence candidate selection on every iteration,
+describe this split as rewrite-blinded validation rather than a pristine final
+holdout.
 
 ## Handoff And Apply
 

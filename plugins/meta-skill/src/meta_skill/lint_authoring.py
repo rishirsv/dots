@@ -19,6 +19,8 @@ import os
 import re
 import sys
 
+from .validate_skill import parse_frontmatter
+
 DESC_SOFT_LIMIT = 500
 DESC_HARD_LIMIT = 1024
 HARD_COMMAND_LIMIT = 3  # ALL-CAPS directive tokens before it reads as shouting
@@ -43,11 +45,6 @@ def split_frontmatter(text):
     return "", text
 
 
-def get_description(fm):
-    m = re.search(r"(?m)^description:\s*(.+)$", fm)
-    return m.group(1).strip().strip("'\"") if m else ""
-
-
 def find_local_links(md_text):
     links = []
     for m in re.finditer(r"\[[^\]]*\]\(([^)]+)\)", md_text):
@@ -70,54 +67,61 @@ def validate(skill_md):
     with open(skill_md, "r", encoding="utf-8") as fh:
         text = fh.read()
     fm, body = split_frontmatter(text)
-    desc = get_description(fm)
+    parsed_fm, syntax_valid = parse_frontmatter(fm) if fm else ({}, False)
+    raw_desc = parsed_fm.get("description") if syntax_valid else None
+    desc = raw_desc.strip() if isinstance(raw_desc, str) else ""
 
-    # description_length
-    n = len(desc)
-    if not desc:
-        check(results, "description_length", FAIL, "description missing")
-    elif n > DESC_HARD_LIMIT:
-        check(results, "description_length", FAIL, f"description is {n} chars (> {DESC_HARD_LIMIT})")
-    elif n > DESC_SOFT_LIMIT:
-        check(results, "description_length", WARN,
-              f"description is {n} chars (aim under {DESC_SOFT_LIMIT})")
-    else:
-        check(results, "description_length", PASS, f"description is {n} chars (<= {DESC_SOFT_LIMIT})")
+    if desc:
+        # description_length
+        n = len(desc)
+        if n > DESC_HARD_LIMIT:
+            check(results, "description_length", FAIL, f"description is {n} chars (> {DESC_HARD_LIMIT})")
+        elif n > DESC_SOFT_LIMIT:
+            check(results, "description_length", WARN,
+                  f"description is {n} chars (aim under {DESC_SOFT_LIMIT})")
+        else:
+            check(results, "description_length", PASS, f"description is {n} chars (<= {DESC_SOFT_LIMIT})")
 
-    # description_neutral_voice
-    found = sorted({w for w in PERSON_WORDS if re.search(rf"(?i)\b{re.escape(w)}\b", desc)})
-    if found:
-        check(results, "description_neutral_voice", WARN,
-              f"description uses first/second person: {', '.join(found)}")
-    else:
-        check(results, "description_neutral_voice", PASS, "description uses neutral active voice")
+        # description_neutral_voice
+        found = sorted({w for w in PERSON_WORDS if re.search(rf"(?i)\b{re.escape(w)}\b", desc)})
+        if found:
+            check(results, "description_neutral_voice", WARN,
+                  f"description uses first/second person: {', '.join(found)}")
+        else:
+            check(results, "description_neutral_voice", PASS, "description uses neutral active voice")
 
-    # description_no_workflow_steps
-    low = desc.lower()
-    stepy = (("first" in low and "then" in low)
-             or re.search(r"\bthen\b.*\bthen\b", low)
-             or re.search(r"(?m)^\s*\d+\.", desc)
-             or re.search(r":\s*(first\b|step 1|1\.)", low))
-    if stepy:
-        check(results, "description_no_workflow_steps", WARN,
-              "description reads like a workflow (first/then/numbered) — say when to use it, not the steps")
-    else:
-        check(results, "description_no_workflow_steps", PASS, "description is not a workflow list")
+        # description_no_workflow_steps
+        low = desc.lower()
+        stepy = (("first" in low and "then" in low)
+                 or re.search(r"\bthen\b.*\bthen\b", low)
+                 or re.search(r"(?m)^\s*\d+\.", desc)
+                 or re.search(r":\s*(first\b|step 1|1\.)", low))
+        if stepy:
+            check(results, "description_no_workflow_steps", WARN,
+                  "description reads like a workflow (first/then/numbered) — say when to use it, not the steps")
+        else:
+            check(results, "description_no_workflow_steps", PASS, "description is not a workflow list")
 
-    # hard_command_density
-    count = sum(len(re.findall(rf"\b{re.escape(tok)}\b", body)) for tok in HARD_TOKENS)
-    if count > HARD_COMMAND_LIMIT:
-        check(results, "hard_command_density", WARN,
-              f"{count} hard-command tokens (MUST/ALWAYS/NEVER…) — prefer reasons or decision rules")
-    else:
-        check(results, "hard_command_density", PASS,
-              f"{count} hard-command tokens (<= {HARD_COMMAND_LIMIT})")
+    if body.strip():
+        # hard_command_density
+        count = sum(len(re.findall(rf"\b{re.escape(tok)}\b", body)) for tok in HARD_TOKENS)
+        if count > HARD_COMMAND_LIMIT:
+            check(results, "hard_command_density", WARN,
+                  f"{count} hard-command tokens (MUST/ALWAYS/NEVER…) — prefer reasons or decision rules")
+        else:
+            check(results, "hard_command_density", PASS,
+                  f"{count} hard-command tokens (<= {HARD_COMMAND_LIMIT})")
 
     # dead_references
     md_files = [skill_md]
     refs_dir = os.path.join(skill_dir, "references")
     if os.path.isdir(refs_dir):
-        md_files += [os.path.join(refs_dir, f) for f in sorted(os.listdir(refs_dir)) if f.endswith(".md")]
+        md_files += [
+            os.path.join(root, name)
+            for root, _dirs, names in os.walk(refs_dir)
+            for name in sorted(names)
+            if name.endswith(".md")
+        ]
     missing = []
     for mf in md_files:
         try:
@@ -129,6 +133,16 @@ def validate(skill_md):
         for tgt in find_local_links(mt):
             if not os.path.exists(os.path.join(base, tgt)):
                 missing.append(f"{os.path.basename(mf)} → {tgt}")
+    openai_yaml = os.path.join(skill_dir, "agents", "openai.yaml")
+    if os.path.isfile(openai_yaml):
+        with open(openai_yaml, "r", encoding="utf-8") as fh:
+            metadata = fh.read()
+        for match in re.finditer(r"(?m)^\s*icon_(?:small|large):\s*['\"]?([^'\"\n]+)['\"]?\s*$", metadata):
+            target = match.group(1).strip()
+            if target.startswith(("http://", "https://", "data:")):
+                continue
+            if not os.path.exists(os.path.join(skill_dir, target)):
+                missing.append(f"agents/openai.yaml → {target}")
     if missing:
         shown = "; ".join(missing[:5]) + ("…" if len(missing) > 5 else "")
         check(results, "dead_references", FAIL, f"broken local links: {shown}")

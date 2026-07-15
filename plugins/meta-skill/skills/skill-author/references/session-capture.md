@@ -29,7 +29,7 @@ Extract:
 - decisions or transformations that required real judgment
 - essential tools, files, references, and ordering constraints
 - user corrections and the failure class each correction reveals
-- approval, privacy, or external-action boundaries
+- tool, data, and stop boundaries
 - validation or acceptance evidence
 
 Separate the final successful slice from exploratory detours. Preserve a failed
@@ -45,9 +45,9 @@ Rewrite session evidence as future-facing behavior:
 - keep exact commands only when they are stable runtime dependencies
 - preserve user-authored constraints that remain part of the recurring job
 
-Ask only the questions needed to settle ownership, output, or a consequential
-boundary. Infer everything else from the evidence and mark uncertainty in the
-handoff.
+Ask only the questions needed to settle ownership, output, or a boundary that
+changes the requested action. Infer everything else from the evidence and mark
+uncertainty in the handoff.
 
 Return to [source-distillation.md](source-distillation.md) when the session has
 paired inputs and outputs, multiple exemplars, or conflicting source roles.

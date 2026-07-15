@@ -1,9 +1,8 @@
 # Description Standard
 
-The checklist for skill `name` and `description` frontmatter, distilled from
-Anthropic's Agent Skills authoring guidance. Descriptions are the only text
-the router sees for every skill on every turn — they carry the whole
-discovery contract.
+Use this checklist for skill `name` and `description` frontmatter. Descriptions
+are the only text the router sees for every skill on every turn, so they carry
+the whole discovery contract.
 
 ## Hard rules
 

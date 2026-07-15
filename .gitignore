@@ -4,8 +4,11 @@
 !/.agents/plugins/marketplace.json
 /.claude/
 
-# MetaSkill generated state (authored <skill>/evals/ remains trackable)
-.skill/
+# Skill companion workspaces keep authored evals trackable and generated state ignored.
+**/.skill/**/runs/
+**/.skill/**/worktrees/
+**/.skill/**/tmp/
+**/.skill/**/packages/
 
 # macOS
 .DS_Store

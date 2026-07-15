@@ -99,14 +99,12 @@ def main() -> int:
     for path in sorted(SKILLS.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in runtime_suffixes:
             continue
-        if "evals" in path.relative_to(SKILLS).parts:
-            continue
         text = path.read_text(encoding="utf-8")
         for label, pattern in FORBIDDEN.items():
             if pattern.search(text):
                 fail(errors, f"{path}: {label}")
 
-    for path in sorted(SKILLS.glob("*/evals/evals.json")):
+    for path in sorted((ROOT / ".skill").rglob("evals/evals.json")):
         validate_eval(path, errors)
 
     if errors:

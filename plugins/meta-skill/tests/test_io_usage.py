@@ -1,8 +1,12 @@
-"""normalize_usage flattens the SDK token payload for downstream rollups."""
+"""I/O helpers normalize usage and resolve companion-workspace runs."""
 
+import os
+import tempfile
 import unittest
+from pathlib import Path
 
-from meta_skill.io import normalize_usage
+from meta_skill.errors import CliError
+from meta_skill.io import normalize_usage, resolve_run_dir
 
 
 class NormalizeUsageTests(unittest.TestCase):
@@ -32,6 +36,36 @@ class NormalizeUsageTests(unittest.TestCase):
         self.assertIsNone(normalize_usage(None))
         self.assertIsNone(normalize_usage("junk"))
         self.assertIsNone(normalize_usage({"last": {"inputTokens": 1}}))
+
+
+class ResolveRunDirTests(unittest.TestCase):
+    def test_resolves_nested_companion_run_by_id(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run = root / ".skill" / "engineering" / "demo" / "runs" / "run-1"
+            run.mkdir(parents=True)
+            (run / "run.json").write_text("{}\n")
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                self.assertEqual(resolve_run_dir("run-1"), run.resolve())
+            finally:
+                os.chdir(previous)
+
+    def test_rejects_duplicate_run_ids_across_skill_workspaces(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in ("a", "b"):
+                run = root / ".skill" / name / "runs" / "same-run"
+                run.mkdir(parents=True)
+                (run / "run.json").write_text("{}\n")
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                with self.assertRaises(CliError):
+                    resolve_run_dir("same-run")
+            finally:
+                os.chdir(previous)
 
 
 if __name__ == "__main__":

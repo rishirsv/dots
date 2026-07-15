@@ -27,10 +27,10 @@ def fixture(root):
     skill = root / "skill"
     skill.mkdir()
     (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Use when testing the workbench; not for production."\n---\n\n# Demo\n')
-    workbench = skill / "evals"
+    workbench = root / ".skill" / "evals"
     eval_row = {"id": "a", "type": "capability", "prompt": "Do A", "expectations": ["Good"], "graders": [{"kind": "model", "id": "judge", "metric": "quality"}, {"kind": "human", "id": "taste", "metric": "quality"}]}
     write(workbench / "evals.json", {"schema_version": 2, "skill_name": "demo", "target": {"type": "skill", "ref": "SKILL.md"}, "evals": [eval_row]})
-    run = skill / ".skill" / "runs" / "run-1"
+    run = root / ".skill" / "runs" / "run-1"
     write(run / "run.json", {
         "schema_version": 2,
         "run_id": "run-1",
@@ -271,7 +271,7 @@ class WorkbenchServerTests(unittest.TestCase):
         self.assertEqual(self.request("POST", "/api/evals", body)[0], 400)
         body["approved"] = True
         self.assertEqual(self.request("POST", "/api/evals", body)[0], 201)
-        suite = json.loads((self.skill / "evals" / "evals.json").read_text())
+        suite = json.loads((self.root / ".skill" / "evals" / "evals.json").read_text())
         self.assertEqual(suite["evals"][-1]["id"], "promoted-a")
 
     def test_workbench_ui_keeps_the_review_loop_and_valid_javascript(self):
@@ -330,7 +330,7 @@ class WorkbenchServerTests(unittest.TestCase):
                 worker.join()
 
         self.assertEqual(results, [201] * 4)
-        suite = json.loads((self.skill / "evals" / "evals.json").read_text())
+        suite = json.loads((self.root / ".skill" / "evals" / "evals.json").read_text())
         ids = {row["id"] for row in suite["evals"]}
         self.assertTrue({f"concurrent-{index}" for index in range(4)}.issubset(ids))
 
@@ -413,10 +413,10 @@ class WorkbenchServerTests(unittest.TestCase):
         self.assertEqual(result["annotation"]["note"], "local")
 
     def test_discovery_includes_agents_tmp_but_skips_metaskill(self):
-        private = self.root / ".agents" / "tmp" / "private"
+        private = self.root / ".agents" / "tmp" / "skill"
         private.mkdir(parents=True)
         (private / "SKILL.md").write_text('---\nname: private\ndescription: "Private fixture."\n---\n')
-        write(private / "evals" / "evals.json", {"schema_version": 2, "evals": []})
+        write(private.parent / ".skill" / "evals" / "evals.json", {"schema_version": 2, "evals": []})
         hidden = self.root / ".skill" / "snapshot"
         hidden.mkdir(parents=True)
         (hidden / "SKILL.md").write_text('---\nname: hidden\ndescription: "Hidden snapshot."\n---\n')
@@ -430,7 +430,7 @@ class WorkbenchServerTests(unittest.TestCase):
         (skill / "SKILL.md").write_text(
             '---\nname: adhoc-only\ndescription: "Use for ad hoc discovery tests."\n---\n'
         )
-        run = skill / ".skill" / "runs" / "run-adhoc"
+        run = self.root / ".skill" / "adhoc-only" / "runs" / "run-adhoc"
         write(
             run / "run.json",
             {

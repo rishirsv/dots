@@ -51,7 +51,7 @@ class CliTests(unittest.TestCase):
             code, plain = self.json_main(["init", str(target), "--json"])
             self.assertEqual(code, 0)
             self.assertIsNone(plain["evals"])
-            self.assertFalse((target / "evals" / "evals.json").exists())
+            self.assertFalse((Path(tmp) / ".skill" / "evals" / "evals.json").exists())
             code, with_evals = self.json_main(["init", str(target), "--evals", "--json"])
             self.assertTrue(Path(with_evals["evals"]).is_file())
             code, status = self.json_main(["status", str(target), "--json"])
@@ -62,8 +62,8 @@ class CliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "skill"
             skill(target)
-            suite = target / "evals" / "evals.json"
-            suite.parent.mkdir()
+            suite = Path(tmp) / ".skill" / "evals" / "evals.json"
+            suite.parent.mkdir(parents=True)
             suite.write_text(json.dumps({"schema_version": 2, "evals": [{"id": "a", "type": "capability", "prompt": "A", "expected_output": "A"}]}))
             code, result = self.json_main(["eval", "run", "--suite", str(suite), "--check", "--json"])
             self.assertEqual(code, 0)

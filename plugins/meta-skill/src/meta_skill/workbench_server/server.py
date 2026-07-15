@@ -22,7 +22,7 @@ from .queue import (
     pairwise_artifact_path,
     record_pairwise_review,
 )
-from ..workbench_paths import evals_path, parse_frontmatter, runs_path, skill_id_for_target
+from ..workbench_paths import evals_path, parse_frontmatter, runs_path, skill_id_for_target, state_root
 
 APP_PATH = Path(__file__).with_name("app.html")
 ANNOTATION_TAGS = {
@@ -360,7 +360,7 @@ class Handler(BaseHTTPRequestHandler):
                 )
                 suite["data_boundary"] = {
                     "surface": "review_only",
-                    "storage_root": str(Path(skill["path"]) / ".skill"),
+                    "storage_root": str(state_root(skill["path"])),
                     "external_model_boundary": False,
                 }
                 return self._json(suite)

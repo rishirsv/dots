@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 EVALS_DIR_NAME = "evals"
-STATE_DIR_NAME = ".skill"
+WORKSPACE_DIR_NAME = ".skill"
 
 
 def parse_frontmatter(skill_md):
@@ -64,6 +64,25 @@ def skill_name_for_target(target):
     return target.stem if target.is_file() else target.name
 
 
+def _skills_root(skill_dir):
+    skill_dir = Path(skill_dir).resolve()
+    for candidate in (skill_dir.parent, *skill_dir.parents):
+        if candidate.name == "skills":
+            return candidate
+    return None
+
+
+def workspace_root(target):
+    """Return the owner-level companion workspace for a target skill."""
+    skill_dir = skill_dir_for_target(target)
+    skills_root = _skills_root(skill_dir)
+    if skills_root is not None:
+        return skills_root.parent / WORKSPACE_DIR_NAME / skill_dir.relative_to(skills_root)
+    if skill_dir.name == "skill":
+        return skill_dir.parent / WORKSPACE_DIR_NAME
+    return skill_dir.parent / WORKSPACE_DIR_NAME / skill_dir.name
+
+
 def repository_root(target):
     """Return the containing git root, or the resolved target root outside git."""
     skill_dir = skill_dir_for_target(target)
@@ -92,7 +111,7 @@ def skill_id_for_target(target, root=None):
 
 
 def evals_path(target):
-    return skill_dir_for_target(target) / EVALS_DIR_NAME / "evals.json"
+    return workspace_root(target) / EVALS_DIR_NAME / "evals.json"
 
 
 def evals_dir(target):
@@ -100,12 +119,12 @@ def evals_dir(target):
 
 
 def state_root(target, root=None):
-    """Return generated state owned by the target skill.
+    """Return authored and generated state owned by the target skill.
 
     ``root`` remains accepted because workbench discovery callers already pass
-    it, but generated state is intentionally never shared at that root.
+    it, but skill state is intentionally owned by the companion workspace.
     """
-    return skill_dir_for_target(target) / STATE_DIR_NAME
+    return workspace_root(target)
 
 
 def skill_state_path(target, kind, root=None):

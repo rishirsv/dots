@@ -1,13 +1,16 @@
 # Evaluation Storage Layout
 
-Authored evaluation inputs live with the skill and version with it. Generated
-state lives under the owning skill's ignored `.skill/` directory. The
-filesystem is authoritative; the workbench does not maintain a database or
+Authored evaluation inputs version with the skill but live outside its portable
+runtime directory. The owning component holds one hidden `.skill/` companion
+workspace per skill. Generated state shares that companion and remains ignored.
+The filesystem is authoritative; the workbench does not maintain a database or
 metadata index.
 
 ```text
-<skill>/
+<owner>/skills/<relative-skill-path>/
   SKILL.md
+
+<owner>/.skill/<relative-skill-path>/
   evals/
     evals.json
     cases/<eval-id>/            # only for file-backed cases
@@ -15,7 +18,6 @@ metadata index.
       expected.md               # when declared
       <fixtures and graders>    # when declared
 
-<skill>/.skill/
   runs/<run-id>/
     run.json
     report.md
@@ -40,8 +42,12 @@ metadata index.
   packages/
 ```
 
-`run-id` is the immutable unique identifier for one recorded execution. Moving
-or copying a skill carries its generated evaluation state with it.
+A standalone project uses `<owner>/skill/SKILL.md` for its portable runtime and
+`<owner>/.skill/` directly for the same companion contents.
+
+`run-id` is the immutable unique identifier for one recorded execution. Move or
+copy the companion with the runtime when evaluation history must follow a skill;
+copying the portable directory alone intentionally excludes that history.
 
 The same contract covers one-off and batch evaluation; only the number of
 cases, candidates, and trials changes:

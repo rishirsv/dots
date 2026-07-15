@@ -8,7 +8,7 @@ skill is discovered, structured, or completed.
 - [Design for predictable behavior](#design-for-predictable-behavior)
 - [Pressure-test discovery](#pressure-test-discovery)
 - [Match the shape to the work](#match-the-shape-to-the-work)
-- [Set instruction strength](#set-instruction-strength)
+- [Choose only useful sections](#choose-only-useful-sections)
 - [Design failure behavior](#design-failure-behavior)
 - [Build the information hierarchy](#build-the-information-hierarchy)
 - [Define completion](#define-completion)
@@ -24,8 +24,8 @@ between plausible actions.
 
 Use ordinary job language. Avoid invented modes, stage names, schemas, and
 house terminology unless the work itself depends on them. Reserve `must`,
-`always`, and `never` for safety, approval, irreversible actions, or a failure
-that truly requires a hard boundary.
+`always`, and `never` for safety, irreversible actions, explicit user
+constraints, or a failure that truly requires a hard boundary.
 
 Prefer a small, stable vocabulary the model already understands. Begin
 instructions with concrete action verbs such as `Read`, `Compare`, `Write`,
@@ -51,10 +51,10 @@ adding a routing procedure to the body.
 
 | Work | Useful shape |
 |---|---|
-| Judgment, writing, planning, or review | Principles, decision points, and output expectations |
+| Judgment, writing, planning, or diagnosis | Principles, decision points, and output expectations |
 | Fixed artifact or schema | Required fields, examples, and deterministic validation |
 | Repeatable mechanical transformation | A script contract with inputs, outputs, and exit meaning |
-| Safety-sensitive ordered operation | A short sequence with approval and stop points |
+| Fragile ordered operation | A short sequence with explicit checks and stop points |
 
 Do not force judgment-heavy work into form filling. Do not describe exact work
 in prose when a small script can perform and verify it reliably.
@@ -63,27 +63,31 @@ For example: bundle a PDF rotation script when every request would recreate the
 same code; keep a stable warehouse schema in a reference when every query needs
 it; keep a branded document template in assets when the output must reuse it.
 
-## Set Instruction Strength
-
-Match the degree of freedom to the task:
-
-| Task shape | Instruction form |
-|---|---|
-| Several approaches can succeed and context determines the best one | Principles and decision criteria |
-| A preferred pattern exists but inputs legitimately vary | Structured steps, pseudocode, or a parameterized script |
-| The operation is fragile, repetitive, or expensive to get wrong | A tested script with few choices or an exact sequence |
-
-Specificity should remove harmful uncertainty, not ordinary judgment. A rigid
-template can make variable work worse; loose prose can make a fragile operation
-unreliable.
-
-Use a hard rule when violating it would be unsafe, irreversible, externally
-visible, or contrary to an explicit user constraint. Use a default when one
-path is usually best but context may justify another. Use examples when the
-agent needs help recognizing a pattern, not as templates to copy.
-
+Use a default when one path is usually best but context may justify another.
 Negative guidance earns its place when it prevents an observed or costly
-failure. Pair it with the desired behavior so attention lands on what to do.
+failure; pair it with the desired behavior.
+
+## Choose Only Useful Sections
+
+Only frontmatter and a useful body are universal. Select, rename, combine, or
+omit sections based on the skill. This palette is not a template:
+
+| Section type | Use when it helps |
+|---|---|
+| Purpose or scope | The owned job or nearest boundary is easy to misunderstand |
+| Quick start | A short common path gets most tasks moving |
+| Workflow | Order matters across several steps |
+| Decision points | Inputs or conditions change the path |
+| Inputs, files, or templates | Particular artifacts or preservation rules affect execution |
+| Tool usage | The agent needs exact tool inputs, outputs, or result handling |
+| Output pattern | A stable default improves usability; exact form is genuinely required only sometimes |
+| Validation | Checks have observable pass and fail states |
+| Failure and stop conditions | Common failures need a distinct response |
+| Examples | Boundaries or quality are easier to show than describe |
+| Conditional references | Detailed guidance applies only to some requests |
+
+Do not add a heading merely because it appears here. Do not repeat discovery
+guidance from the description in a body section.
 
 ## Design Failure Behavior
 
@@ -94,7 +98,7 @@ Name the conditions that change the normal path:
   unresolved conflict
 - partial success: preserve useful completed work and identify what remains
 - positive-null result: say clearly when no issue, match, or action is found
-- consequential action: stop at the approval boundary
+- action requiring user direction: stop when that direction is missing
 
 Do not add fallback machinery for states that cannot occur under the actual
 runtime or repository contract.
@@ -135,7 +139,7 @@ unresolved decision.
 
 Watch for premature completion: describing intended work is not performing it;
 creating a file is not validating it; structural validation is not behavioral
-evidence; drafting an external action is not approval to send it. Sharpen an
+evidence; reporting a planned action is not proof that it happened. Sharpen an
 unclear finish condition before adding more workflow.
 
 ## Prune Before Finalizing

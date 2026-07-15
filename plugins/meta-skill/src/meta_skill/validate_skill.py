@@ -3,8 +3,7 @@
 
 A deterministic structural task used by `<meta-skill-root>/scripts/metaskill validate`. These checks
 need no judge, so the LLM scores only Discovery and Implementation while
-structure is verified deterministically here. Pure stdlib — no third-party deps
-(PyYAML is used when present, with a line-based fallback otherwise).
+structure is verified deterministically here.
 
 This is a scorer, not a gate: exit code is 0 unless the file cannot be read.
 Read the printed report (or --json) for per-check results and the pass-rate.
@@ -16,6 +15,8 @@ import json
 import os
 import re
 import sys
+
+import yaml
 
 LINE_LIMIT = 500
 KNOWN_KEYS = {
@@ -48,24 +49,12 @@ def split_frontmatter(text: str):
 
 
 def parse_frontmatter(fm: str):
-    """Best-effort parse to a dict. Prefers PyYAML; falls back to a top-level
-    `key:` line scan good enough for skill frontmatter."""
+    """Parse frontmatter and return ``(mapping, syntax_valid)``."""
     try:
-        import yaml  # type: ignore
-
         data = yaml.safe_load(fm)
-        if isinstance(data, dict):
-            return data, True
-    except Exception:
-        pass
-    result = {}
-    for line in fm.splitlines():
-        if not line or line[0] in (" ", "\t") or line.lstrip().startswith("#"):
-            continue
-        if ":" in line:
-            key, _, val = line.partition(":")
-            result[key.strip()] = val.strip().strip("'\"")
-    return result, False
+    except yaml.YAMLError:
+        return {}, False
+    return (data, True) if isinstance(data, dict) else ({}, False)
 
 
 def check(results, name, status, message):
@@ -81,23 +70,24 @@ def validate(skill_md_path: str):
     fm_text, body = split_frontmatter(text)
 
     # frontmatter_valid
-    fm, _parsed = ({}, False)
+    fm, parsed = ({}, False)
     if fm_text is None:
         check(results, "frontmatter_valid", FAIL, "No `---` frontmatter block found")
     else:
-        fm, _parsed = parse_frontmatter(fm_text)
-        if fm:
-            check(results, "frontmatter_valid", PASS, "YAML frontmatter is valid")
+        fm, parsed = parse_frontmatter(fm_text)
+        if parsed and fm:
+            check(results, "frontmatter_valid", PASS, "Frontmatter syntax is valid")
         else:
             check(results, "frontmatter_valid", FAIL, "Frontmatter present but unparseable")
 
     # name_field
     name = fm.get("name")
     if isinstance(name, str) and name.strip():
-        ok = bool(re.fullmatch(r"[a-z0-9][a-z0-9-]*", name.strip()))
-        check(results, "name_field", PASS if ok else WARN,
+        value = name.strip()
+        ok = len(value) <= 64 and bool(re.fullmatch(r"[a-z0-9][a-z0-9-]*", value))
+        check(results, "name_field", PASS if ok else FAIL,
               f"'name' field is valid: '{name.strip()}'" if ok
-              else f"'name' present but not kebab-case: '{name.strip()}'")
+              else f"'name' must be kebab-case and at most 64 characters: '{value}'")
     else:
         check(results, "name_field", FAIL, "'name' field missing or empty")
 
@@ -118,27 +108,42 @@ def validate(skill_md_path: str):
     else:
         check(results, "frontmatter_unknown_keys", PASS, "No unknown frontmatter keys")
 
+    for field in ("compatibility", "license"):
+        if field not in fm:
+            continue
+        value = fm[field]
+        ok = isinstance(value, str) and bool(value.strip())
+        check(results, f"{field}_field", PASS if ok else FAIL,
+              f"'{field}' is a non-empty string" if ok
+              else f"'{field}' must be a non-empty string when present")
+
+    if "allowed-tools" in fm:
+        value = fm["allowed-tools"]
+        ok = ((isinstance(value, str) and bool(value.strip()))
+              or (isinstance(value, list) and bool(value)
+                  and all(isinstance(item, str) and item.strip() for item in value)))
+        check(results, "allowed_tools_field", PASS if ok else FAIL,
+              "'allowed-tools' contains tool names" if ok
+              else "'allowed-tools' must be a non-empty string or list of non-empty strings")
+
+    if "metadata" in fm:
+        ok = isinstance(fm["metadata"], dict)
+        check(results, "metadata_field", PASS if ok else FAIL,
+              "'metadata' is a mapping" if ok
+              else "'metadata' must be a mapping when present")
+
+    if "disable-model-invocation" in fm:
+        ok = isinstance(fm["disable-model-invocation"], bool)
+        check(results, "disable_model_invocation_field", PASS if ok else FAIL,
+              "'disable-model-invocation' is boolean" if ok
+              else "'disable-model-invocation' must be boolean when present")
+
     # skill_md_line_count
     check(results, "skill_md_line_count",
           PASS if line_count <= LINE_LIMIT else FAIL,
           f"SKILL.md line count is {line_count} (<= {LINE_LIMIT})"
           if line_count <= LINE_LIMIT
           else f"SKILL.md line count is {line_count} (> {LINE_LIMIT})")
-
-    # optional fields — present or absent both Pass
-    for field in ("compatibility", "allowed-tools", "license"):
-        present = field in fm
-        check(results, f"{field.replace('-', '_')}_field", PASS,
-              f"'{field}' field {'present' if present else 'not present (optional)'}")
-
-    # metadata_field + metadata_version (optional)
-    md_present = "metadata" in fm
-    check(results, "metadata_field", PASS,
-          f"'metadata' field {'present' if md_present else 'not present (optional)'}")
-    md = fm.get("metadata")
-    md_version = isinstance(md, dict) and "version" in md
-    check(results, "metadata_version", PASS,
-          "'metadata.version' present" if md_version else "'metadata.version' not present (optional)")
 
     # body_present
     check(results, "body_present",

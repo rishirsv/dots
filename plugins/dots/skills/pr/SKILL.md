@@ -19,9 +19,13 @@ the same scope, draft-default, and visual-evidence checks.
 ## Prerequisites
 
 - Require a local git repository and a clear intended scope.
-- Require GitHub CLI `gh`; run `gh --version`.
-- Require authenticated `gh`; run `gh auth status` and stop if the user needs to
-  authenticate.
+- Treat Git transport authentication and GitHub PR API authentication as
+  separate capabilities.
+- For PR reads and writes, prefer an available authenticated GitHub
+  connector/app. Do not probe `gh` when that integration covers the operation.
+- Use GitHub CLI only as a fallback. Before the first CLI-dependent operation,
+  run `gh --version` and `gh auth status`; a failure blocks that CLI operation,
+  not local work or connector-backed work.
 
 ## Naming
 
@@ -79,13 +83,22 @@ commands `git status -sb`, `git diff --stat`, `git diff --staged --stat`,
 git push -u origin "$(git branch --show-current)"
 ```
 
+   - Run the normal Git push without using `gh auth status` as a precondition.
+     A successful push is sufficient transport-authentication evidence. If it
+     fails for authentication, diagnose the configured remote credential path
+     from that Git error without exposing secrets; do not infer push failure
+     from unrelated GitHub CLI state.
+
 7. Open a PR.
    - Derive the repository from `git remote get-url origin` or
      `gh repo view --json nameWithOwner`.
    - Derive the current branch from `git branch --show-current`.
    - Use the requested base branch, or the remote default branch.
    - Default to draft. If the user explicitly asks for ready-for-review, create
-     it ready; for CLI fallback, omit `--draft`.
+     it ready; for CLI fallback, omit `--draft`. For UI, frontend, visual,
+     design-facing, or mock changes with required evidence, create a draft
+     first and mark it ready only after the live body has every required
+     uploaded asset.
    - Prefer any available GitHub connector/app for PR creation after push; use
      `gh pr create --fill --head "$(git branch --show-current)"`, adding
      `--draft` only for draft PRs, when connector coverage is unavailable or
@@ -96,12 +109,16 @@ git push -u origin "$(git branch --show-current)"
    - Re-query the PR after creation for merge state, checks, review decision,
      and current review threads when available.
    - For UI, frontend, visual, design-facing, or mock changes, follow
-     [visual-evidence.md](references/visual-evidence.md), then verify the live PR
-     body contains the required image or clip embeds. A text-only screen list is
-     not enough.
-   - If required visual evidence is missing, update the PR body before the final
-     summary. Keep the PR draft and state what captures are still missing only
-     when the captures are genuinely unavailable.
+     [visual-evidence.md](references/visual-evidence.md). Discover a
+     repository-generated evidence index before publishing or handing off,
+     upload every listed local asset through an authenticated GitHub attachment
+     path, and embed it with its useful caption and alt text. A local path or a
+     text-only screen list is not durable PR evidence.
+   - Re-query or inspect the rendered live PR body after the update. Confirm
+     every required image or clip is embedded, loads, and remains paired with
+     the right claim. If any required listed asset is absent, keep the PR draft;
+     do not finish it ready for review. State what evidence remains only when
+     the capture or upload is genuinely unavailable.
    - For stacked PRs, verify the base branch/PR and summarize the stack order
      naturally in the handoff.
 9. Summarize the branch, commit, PR URL, validation, PR health, and anything
@@ -154,6 +171,8 @@ Keep validation calm and evidentiary. Prefer `Passed: scripts/validate test
 
 For UI, frontend, visual, design-facing, or mock changes, read
 [visual-evidence.md](references/visual-evidence.md). Before closing out,
-re-query or verify the live PR body and confirm the required embeds are present.
-If real captures are not available yet, keep the PR draft and say exactly what
-evidence is still needed before it is ready for review.
+discover and transfer any repository-generated evidence index, then re-query or
+verify the live PR body and confirm the required embeds are present. Never
+describe local capture paths as PR evidence. If real captures or their uploads
+are not available yet, keep the PR draft and say exactly what evidence is still
+needed before it is ready for review.

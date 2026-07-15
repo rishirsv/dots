@@ -13,13 +13,18 @@ metaskill package <skill-dir> [--out-dir DIR] [--json]
 metaskill workbench open [--root DIR] [--port PORT] [--open|--no-open]
 ```
 
-`init` creates the target skill's ignored `<skill>/.skill/` state root. Add
-`--evals` to create `<skill>/evals/evals.json`. `doctor` checks Python, the
+`init` creates the target skill's owner-level `.skill/` companion. For
+`skills/<relative-skill-path>/`, the workspace is
+`.skill/<relative-skill-path>/`; a standalone `skill/SKILL.md` project uses
+`.skill/` directly. Add `--evals` to create its tracked `evals/evals.json`.
+`doctor` checks Python, the
 bundled validators, the Codex binary, login status, and Codex Exec readiness.
-`package` writes a zip to `<skill>/.skill/packages/` unless `--out-dir` is
+`package` writes a zip to the companion's `packages/` unless `--out-dir` is
 supplied. It validates first and stops without an artifact on failure. The zip
-excludes `evals/`, hidden files, generated state, and other development-only
-content; success returns both the artifact path and its package-metadata path.
+contains only the portable skill directory; legacy colocated `evals/`, hidden
+files, generated state, and other development-only content remain excluded as
+defense in depth. Success returns both the artifact path and its
+package-metadata path.
 
 ## Evaluation
 
@@ -73,7 +78,7 @@ one packet per unresolved trial. Each packet contains `trial_id`, `attempt_id`,
 worker writes its result inside that workspace. `submit` imports exactly that
 attempt into the durable run. After every trial is terminal, `finalize`
 optionally invokes the Codex Exec judge, writes the report, and removes
-`.skill/tmp/<run-id>/`.
+the companion's `tmp/<run-id>/`.
 
 After an interrupted interactive run, `eval unresolved --json` returns every
 non-terminal trial with its current state and worker packet. Dispatch a queued

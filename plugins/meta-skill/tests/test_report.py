@@ -30,10 +30,10 @@ def jsonl(path, rows):
 
 
 def fixture(root):
-    skill = root / "demo"
+    skill = root / "skill"
     skill.mkdir(parents=True, exist_ok=True)
     (skill / "SKILL.md").write_text('---\nname: demo\ndescription: "Use for report tests."\n---\n')
-    run = skill / ".skill" / "runs" / "run-1"
+    run = root / ".skill" / "runs" / "run-1"
     candidates = [{"candidate": "no-skill", "source_kind": "none"}, {"candidate": "current", "source_kind": "current_worktree"}]
     trials = [{"trial_id": f"a.{candidate}.t1", "eval_id": "a", "candidate": candidate, "repetition": 1} for candidate in ("no-skill", "current")]
     write(run / "run.json", {
@@ -166,7 +166,7 @@ class ReportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             run = fixture(root)
-            suite = root / "demo" / "evals" / "evals.json"
+            suite = root / ".skill" / "evals" / "evals.json"
             suite.parent.mkdir(parents=True, exist_ok=True)
             suite.write_text('{"schema_version":2,"evals":[]}')
             listed = list_runs(str(suite))["runs"]

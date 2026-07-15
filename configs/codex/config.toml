@@ -5,8 +5,11 @@ approval_policy = "never"
 sandbox_mode = "danger-full-access"
 service_tier = "default"
 model = "gpt-5.6-sol"
-model_reasoning_effort = "low"
+model_reasoning_effort = "medium"
 
+
+
+approvals_reviewer = "user"
 
 
 notify = ["/Users/rishi/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
@@ -147,8 +150,17 @@ trust_level = "trusted"
 [projects."/Users/rishi/Code/kpmg-pptx"]
 trust_level = "trusted"
 
+[projects."/Users/rishi/Documents/Codex/2026-07-14/fix"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Documents/Codex/2026-07-14/upd"]
+trust_level = "trusted"
+
+[projects."/Users/rishi/Code/prosper"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
-last_updated = "2026-07-14T04:01:06Z"
+last_updated = "2026-07-14T23:13:23Z"
 source_type = "local"
 source = "/Users/rishi/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -173,13 +185,13 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/rishi/.codex"
 CODEX_HOME = "/Users/rishi/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "57ee77a283eb230c6c6d47353af13a25cec4c331b511868c8fbf7ccd3dd1b2f6,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f,cf732b4a285497bfd7e75a2ac14879bce9ae644eb4e1babeb17bb6a840dfc9bd"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.707.71524"
+BROWSER_USE_CODEX_APP_VERSION = "26.707.72221"
 SKY_CUA_SERVICE_PATH = "/Users/rishi/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000387/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
@@ -199,6 +211,27 @@ dock-icon-preference = "app-default"
 conversationDetailMode = "STEPS_COMMANDS"
 preventSleepWhileRunning = true
 defaultTerminalLocation = "right"
+git-branch-prefix = ""
+git-create-pull-request-as-draft = false
+git-commit-instructions = """
+Run `git status --short` and `git diff --staged`. Stage only intended paths or hunks; preserve unrelated changes. Split independently reviewable work, or ask one scope question if partial staging is risky.
+
+Run `git diff --staged --check`. Reuse fresh validation; otherwise run obvious, cheap focused tests or linters. Never invent evidence or use `--no-verify` unless asked. Match `git log --oneline -5`; use an imperative subject of at most 50 characters. Add a body only to preserve the reason, constraint, or tradeoff, and omit tool-attribution trailers.
+
+After committing, run `git show --stat --oneline HEAD` and report the SHA, subject, and validation. Push only when explicitly requested: `git push` with an upstream, or `git push -u origin \"$(git branch --show-current)\"` without one. Ask first for detached/default branches, unclear remotes, or possible non-fast-forwards. Never open a PR, merge, rebase shared history, or force-push unless explicitly asked.
+"""
+git-pr-instructions = """
+Require a local Git repository, clear scope, `gh --version`, and authenticated `gh auth status`;
+
+Run `git status -sb`, `git diff --stat`, and `git diff --staged --stat`. If scope is mixed or unclear, ask which paths belong before staging, committing, or pushing. From the default branch, create the smallest repo-native, human-readable branch; otherwise keep the current branch unless asked. Repair review comments on the existing PR branch.
+
+Stage only intended paths, commit the confirmed description, run the most relevant checks, then `git push -u origin \"$(git branch --show-current)\"`. Create a draft PR by default and mark it ready only when explicitly requested. Match nearby PR title style. Write a concise reviewer-facing body covering outcome and impact, context or root cause, core implementation, review focus, and validation; use a temporary file for CLI Markdown when useful.
+
+Re-query the PR for merge state, checks, review decision, and review threads. UI or visual changes require real screenshot or clip embeds in the live body; keep the PR draft while required evidence is missing. Never stage unrelated changes or push without confirmed scope, and stop if no accessible GitHub remote exists. Summarize the branch, commit, PR URL, validation, PR health, and remaining confirmations.
+"""
+reviewDelivery = "detached"
+open-link-in-target-preference = "in-app-browser"
+show-context-window-usage = true
 
 [desktop.appearanceLightChromeTheme]
 accent = "#339cff"
@@ -232,7 +265,7 @@ skill = "#ad7bf9"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
-"gpt-5.6-sol" = 2
+"gpt-5.6-sol" = 4
 
 [hooks.state]
 

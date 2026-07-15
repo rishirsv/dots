@@ -92,7 +92,7 @@ done
 echo "==> Dots eval suite checks"
 while IFS= read -r suite; do
   "$METASKILL" eval run --check --suite "$suite" --json >/dev/null
-done < <(find plugins/dots/skills -path '*/evals/evals.json' -print | sort)
+done < <(find plugins/dots/.skill -path '*/evals/evals.json' -print 2>/dev/null | sort)
 
 echo "==> Dots HTML deterministic checks"
 node plugins/dots/skills/html/scripts/generate-theme.mjs --check
@@ -102,6 +102,11 @@ echo "==> Dry-run config sync"
 scripts/sync-configs.sh --dry-run --codex --codex-personal --claude
 
 echo "==> Meta-Skill tests"
+METASKILL_TEST_PYTHON="$ROOT/.agents/tmp/meta-skill-cache/venv/bin/python"
+[[ -x "$METASKILL_TEST_PYTHON" ]] || {
+  echo "error: Meta-Skill test environment was not created by the CLI smoke test." >&2
+  exit 2
+}
 find_verify_python() {
   if [[ -n "${META_SKILL_PYTHON:-}" ]]; then
     printf '%s\n' "$META_SKILL_PYTHON"
@@ -130,7 +135,7 @@ VERIFY_PYTHON=$(find_verify_python) || {
   exit 2
 }
 
-PYTHONDONTWRITEBYTECODE=1 "$VERIFY_PYTHON" -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
+PYTHONDONTWRITEBYTECODE=1 "$METASKILL_TEST_PYTHON" -m unittest discover -s plugins/meta-skill/tests -p 'test_*.py'
 
 echo "==> Dots runtime safety tests"
 PYTHONDONTWRITEBYTECODE=1 "$VERIFY_PYTHON" -m unittest discover -s plugins/dots/tests -p 'test_*.py'

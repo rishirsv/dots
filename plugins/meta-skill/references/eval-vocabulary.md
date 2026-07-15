@@ -2,7 +2,7 @@
 
 | Term | Meaning |
 |---|---|
-| **suite** | One authored `<skill>/evals/evals.json` containing evals, candidates, and defaults. |
+| **suite** | One authored `.skill/<skill>/evals/evals.json` containing evals, candidates, and defaults; a standalone `skill/SKILL.md` project uses `.skill/evals/evals.json`. |
 | **case** | One portable task with observable criteria; stored as an `evals[]` row with `id`, `prompt`, optional `expected_output`, and `expectations`. |
 | **version** | The no-skill baseline or one frozen skill payload supplied to the same visible task; stored as a candidate. |
 | **run** | One immutable comparison of selected cases and versions, with frozen inputs, planned trials, and a derived report. |
