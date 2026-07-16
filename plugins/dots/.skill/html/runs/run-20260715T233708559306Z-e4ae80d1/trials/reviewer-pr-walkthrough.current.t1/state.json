@@ -1,0 +1,25 @@
+{
+  "attempt_id": "03a635e8fe804bff848f3854d24d169e",
+  "candidate": "current",
+  "completed_at": "2026-07-15T23:41:21+00:00",
+  "duration_ms": 145000,
+  "error": null,
+  "eval_id": "reviewer-pr-walkthrough",
+  "produced_artifacts": [
+    "health-permissions-review.html"
+  ],
+  "repetition": 1,
+  "result_digest": "105c826efbea42279611c67bcd204d331e9558867fc6973c33589a4db4fa2c53",
+  "run_id": "run-20260715T233708559306Z-e4ae80d1",
+  "status": "completed",
+  "task_executor": {
+    "kind": "native_subagent",
+    "observed_model": null,
+    "provenance": "inherited",
+    "requested_model": "gpt-5.6-luna",
+    "requested_reasoning": "xhigh",
+    "runtime_version": null
+  },
+  "trial_id": "reviewer-pr-walkthrough.current.t1",
+  "usage": null
+}

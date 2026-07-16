@@ -1,0 +1,25 @@
+{
+  "attempt_id": "42e0866dd1eb48db8e0711ed098b698c",
+  "candidate": "current",
+  "completed_at": "2026-07-15T23:42:47+00:00",
+  "duration_ms": 260000,
+  "error": null,
+  "eval_id": "compact-release-brief",
+  "produced_artifacts": [
+    "csv-export-hardening-release-brief.html"
+  ],
+  "repetition": 1,
+  "result_digest": "ab8003c9e314d1bd741ce711f32d0333513f84820e45f17836842661b7c75c3e",
+  "run_id": "run-20260715T233708559306Z-e4ae80d1",
+  "status": "completed",
+  "task_executor": {
+    "kind": "native_subagent",
+    "observed_model": null,
+    "provenance": "inherited",
+    "requested_model": "gpt-5.6-luna",
+    "requested_reasoning": "xhigh",
+    "runtime_version": null
+  },
+  "trial_id": "compact-release-brief.current.t1",
+  "usage": null
+}

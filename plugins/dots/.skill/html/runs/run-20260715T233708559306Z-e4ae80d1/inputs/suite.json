@@ -1,0 +1,142 @@
+{
+  "defaults": {
+    "repetitions": 1,
+    "runner": "native_subagent",
+    "timeout_seconds": 600
+  },
+  "evals": [
+    {
+      "annotations": [],
+      "case_digest": "dca83059208ce21aeb5eb9eee8e4714d2e049c06dd4ae92499651bb63bbebf6e",
+      "expectations": [
+        "The artifact is a single self-contained HTML file with no external requests and uses the attached skill's design system.",
+        "The long title and ready-for-review status remain readable without overlap at desktop and narrow widths.",
+        "The five-step linear path uses a responsive sequence rather than a horizontally clipped branching SVG.",
+        "The risk information transforms into a readable narrow-screen treatment without page-level horizontal overflow.",
+        "The SQLite ownership invariant, supplied evidence, and unresolved denied-sleep simulator check are accurate and visibly distinct."
+      ],
+      "expected_output": {
+        "digest": "981d5b5c5698aad5b5f1414abdf59c70871c735ba4bfd249bf164508026813ef",
+        "path": "expected.md",
+        "source": {
+          "kind": "inline"
+        }
+      },
+      "fixtures": [],
+      "graders": [
+        {
+          "id": "artifact-quality",
+          "kind": "model",
+          "metric": "quality"
+        }
+      ],
+      "id": "reviewer-pr-walkthrough",
+      "priority": "high",
+      "prompt": {
+        "digest": "83920e447251f9aa6e365d55d3b92639030f83d2e90746455f1db1f3edec3aa4",
+        "path": "task.md",
+        "source": {
+          "kind": "inline"
+        }
+      },
+      "repetitions": null,
+      "split": null,
+      "support_files": [],
+      "type": "regression"
+    },
+    {
+      "annotations": [],
+      "case_digest": "e0ef2502594bc21528e46cfbb5406e934ddcfe58959e1940aa4503d2f40ed6ed",
+      "expectations": [
+        "The artifact is a single self-contained HTML file with no external requests and no invented research results.",
+        "The recommendation appears early and is tied to the supplied evidence and validate-preview-apply safety boundary.",
+        "The evidence treatment uses one readable focal figure and two supporting captioned views rather than a dense contact sheet.",
+        "The three onboarding options are compared accurately and the small sample plus absent production data remain visible limitations.",
+        "The six-or-more-section page provides useful desktop navigation and a compact collapsed mobile navigation treatment."
+      ],
+      "expected_output": {
+        "digest": "66adddcb8426c58532a98f9f5a67eabea9238a331564aba51c05a7a091f3c550",
+        "path": "expected.md",
+        "source": {
+          "kind": "inline"
+        }
+      },
+      "fixtures": [],
+      "graders": [
+        {
+          "id": "artifact-quality",
+          "kind": "model",
+          "metric": "quality"
+        }
+      ],
+      "id": "evidence-led-comparison",
+      "priority": "high",
+      "prompt": {
+        "digest": "380cd14faf0b1cbb1cd1ea4e302830797d98b5f242b51f831ec12ac987bd511e",
+        "path": "task.md",
+        "source": {
+          "kind": "inline"
+        }
+      },
+      "repetitions": null,
+      "split": null,
+      "support_files": [],
+      "type": "capability"
+    },
+    {
+      "annotations": [],
+      "case_digest": "6470e1e981719d03806a3522ccac8cbac69a2b747117780376a840613037c48f",
+      "expectations": [
+        "The artifact is a single self-contained HTML file with no external requests and no unsupported claims.",
+        "The page stays utilitarian with four or fewer main sections and omits TOC, theme toggle, and decorative evidence gallery.",
+        "The five-step rollout remains fully readable at a narrow viewport without horizontal clipping.",
+        "The exact EXPORT_FORMULA_ESCAPE=enabled line is preserved in a contained copyable code treatment.",
+        "The 1.8-second local benchmark is not presented as a production SLO and the ship-today decision is explicit."
+      ],
+      "expected_output": {
+        "digest": "670d6ba253223217606ba4b974fdb8cca4a0c46c582c96a017d0d8a78ac7b16b",
+        "path": "expected.md",
+        "source": {
+          "kind": "inline"
+        }
+      },
+      "fixtures": [],
+      "graders": [
+        {
+          "id": "artifact-quality",
+          "kind": "model",
+          "metric": "quality"
+        }
+      ],
+      "id": "compact-release-brief",
+      "priority": "medium",
+      "prompt": {
+        "digest": "db896f06040aff670cbfb1b248207f10e0b7b2b789bf1cd86042bfcd2af42e43",
+        "path": "task.md",
+        "source": {
+          "kind": "inline"
+        }
+      },
+      "repetitions": null,
+      "split": null,
+      "support_files": [],
+      "type": "regression"
+    }
+  ],
+  "frozen_at": "2026-07-15T23:37:08+00:00",
+  "schema_version": 2,
+  "selected_candidates": [
+    "current"
+  ],
+  "selected_eval_ids": [
+    "reviewer-pr-walkthrough",
+    "evidence-led-comparison",
+    "compact-release-brief"
+  ],
+  "source_suite": "/Users/rishi/Code/dots/plugins/dots/.skill/html/evals/evals.json",
+  "suite_digest": "ae9bed44b3ff3ba90c04cbba52f0706285f260210634418782888aaa168acd66",
+  "target": {
+    "ref": "SKILL.md",
+    "type": "skill"
+  }
+}

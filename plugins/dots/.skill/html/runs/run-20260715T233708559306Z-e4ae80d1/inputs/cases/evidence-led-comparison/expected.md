@@ -1,0 +1,1 @@
+One polished editorial HTML comparison brief with an early recommendation, a clear three-option comparison, a focal evidence figure and two supporting captioned views, compact mobile navigation, and explicit research limitations.

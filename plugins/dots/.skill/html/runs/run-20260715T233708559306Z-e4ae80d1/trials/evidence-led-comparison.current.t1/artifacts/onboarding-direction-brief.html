@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onboarding direction for a privacy-first budgeting product</title>
+<style>
+/* GENERATED from DESIGN.md by scripts/generate-theme.mjs — do not edit.
+ * Tokens + base document styles for dots HTML artifacts. Inline this file
+ * verbatim inside <style> in every artifact. */
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #0d0d0d;
+  --accent: #1f5eff;
+  --accent-deep: #12379e;
+  --warning-ink: #6b4c00;
+  --warning-line: rgba(180,130,0,0.35);
+  --warning-bg: rgba(255,178,0,0.06);
+  --danger-ink: #8c1d18;
+  --danger-line: rgba(200,60,50,0.35);
+  --danger-bg: rgba(220,70,60,0.05);
+  --code-surface: #0d0d0d;
+  --code-ink: #ededed;
+  --a4: rgba(13, 13, 13, 0.04);
+  --a8: rgba(13, 13, 13, 0.08);
+  --a12: rgba(13, 13, 13, 0.12);
+  --a20: rgba(13, 13, 13, 0.20);
+  --a40: rgba(13, 13, 13, 0.40);
+  --a55: rgba(13, 13, 13, 0.55);
+  --a70: rgba(13, 13, 13, 0.70);
+  --font-sans: -apple-system, Helvetica Neue, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+  --article: 720px;
+  --section: 48px;
+  --block: 16px;
+  --r-card: 6px;
+  --r-code: 6px;
+  --r-inline: 4px;
+  --r-pill: 6px;
+  --dur-fast: 150ms;
+  --dur-reveal: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --stagger: 60ms;
+  --chart-emphasis: var(--accent);
+  --chart-value-emphasis: var(--accent-deep);
+  --chart-pos: var(--a40);
+  --chart-neg: var(--a20);
+  --chart-mark: var(--a20);
+  --chart-track: var(--a4);
+  --chart-grid: var(--a12);
+  --chart-label: var(--a55);
+  --chart-value: var(--a55);
+}
+
+[data-theme="dark"] {
+  --background: #0f0f0e;
+  --foreground: #f5f5f4;
+  --accent: #6f94ff;
+  --accent-deep: #b7c9ff;
+  --warning-ink: #f2c14e;
+  --warning-line: rgba(255,193,77,0.35);
+  --warning-bg: rgba(255,193,77,0.08);
+  --danger-ink: #ff8a80;
+  --danger-line: rgba(255,120,110,0.35);
+  --danger-bg: rgba(255,120,110,0.07);
+  --code-surface: #161615;
+  --code-ink: #ededed;
+  --a4: rgba(245, 245, 244, 0.04);
+  --a8: rgba(245, 245, 244, 0.08);
+  --a12: rgba(245, 245, 244, 0.12);
+  --a20: rgba(245, 245, 244, 0.20);
+  --a40: rgba(245, 245, 244, 0.40);
+  --a55: rgba(245, 245, 244, 0.55);
+  --a70: rgba(245, 245, 244, 0.70);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0f0f0e;
+    --foreground: #f5f5f4;
+    --accent: #6f94ff;
+    --accent-deep: #b7c9ff;
+    --warning-ink: #f2c14e;
+    --warning-line: rgba(255,193,77,0.35);
+    --warning-bg: rgba(255,193,77,0.08);
+    --danger-ink: #ff8a80;
+    --danger-line: rgba(255,120,110,0.35);
+    --danger-bg: rgba(255,120,110,0.07);
+    --code-surface: #161615;
+    --code-ink: #ededed;
+    --a4: rgba(245, 245, 244, 0.04);
+    --a8: rgba(245, 245, 244, 0.08);
+    --a12: rgba(245, 245, 244, 0.12);
+    --a20: rgba(245, 245, 244, 0.20);
+    --a40: rgba(245, 245, 244, 0.40);
+    --a55: rgba(245, 245, 244, 0.55);
+    --a70: rgba(245, 245, 244, 0.70);
+  }
+}
+
+/* ---------- base ---------- */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; overflow-x: clip; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-inline);
+}
+
+::selection { background: var(--a12); }
+
+h1 {
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.96px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 var(--block); }
+p:last-child { margin-bottom: 0; }
+
+section { margin-bottom: var(--section); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--a4);
+  border-radius: var(--r-inline);
+  padding: 1px 5px;
+}
+
+pre code { background: none; padding: 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 1px solid var(--a20);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--a12);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--a55);
+  font-weight: 500;
+}
+
+tbody tr:last-child td { border-bottom: 1px solid var(--a20); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- motion: choreographed moments only ---------- */
+/* One-time load stagger + one-time scroll reveals. Elements render complete
+ * and static by default; page-behavior opts them in only when JS
+ * runs and reduced-motion is off. Nothing loops; nothing is ambient. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion .stagger > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: rise var(--dur-reveal) var(--ease) forwards;
+  }
+  html.js-motion .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  html.js-motion .stagger > *:nth-child(2) { animation-delay: var(--stagger); }
+  html.js-motion .stagger > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+  html.js-motion .stagger > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+  html.js-motion .stagger > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+
+  html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-reveal) var(--ease), transform var(--dur-reveal) var(--ease);
+  }
+  html.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+  html.js-motion .reveal .bar-fill {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform calc(var(--dur-reveal) * 1.5) var(--ease) 120ms;
+  }
+  html.js-motion .reveal.is-in .bar-fill { transform: scaleX(1); }
+
+  a, summary, button { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.page {
+    max-width: var(--article);
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .context-line { font-size: 13px; color: var(--a55); margin: 0 0 20px; }
+  .title-row {
+    display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .title-row h1 { flex: 1 1 480px; min-width: 0; }
+  .status {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+    border-radius: var(--r-pill); background: var(--a4); color: var(--a70);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap; border: 1px solid var(--a12);
+  }
+  .dek { font-size: 16px; color: var(--a55); margin: 0 0 40px; max-width: 62ch; }
+  footer.sources {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--a12);
+    font-size: 12px; color: var(--a40); line-height: 1.7;
+  }
+  footer.sources a { color: var(--a55); }
+  @media (max-width: 680px) {
+    .page { padding: 40px 24px 72px; }
+    .title-row { display: block; }
+    .title-row .status { margin-top: 10px; }
+  }
+
+.toc-rail {
+    font-size: 13px;
+    margin: 0 0 48px;
+  }
+  .toc-wide { display: none; }
+  .toc-rail summary,
+  .toc-label {
+    font-size: 11px; letter-spacing: 0.02em; color: var(--a40);
+  }
+  .toc-rail summary {
+    cursor: pointer;
+    padding: 6px 0;
+  }
+  .toc-label { margin: 0 0 6px; }
+  .toc-links { padding-top: 6px; }
+  .toc-rail a { display: block; color: var(--a55); padding: 3px 0; }
+  .toc-rail a:hover { color: var(--foreground); text-decoration: none; }
+  .toc-rail a.active { color: var(--foreground); font-weight: 600; }
+
+  @media (min-width: 1264px) {
+    .toc-rail {
+      position: sticky;
+      top: 64px;
+      float: right;
+      width: 200px;
+      max-height: calc(100vh - 128px);
+      overflow-y: auto;
+      margin: 8px calc(-200px - 48px) 0 0; /* dock in the right margin */
+    }
+    .toc-wide { display: block; }
+    .toc-compact { display: none; }
+  }
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--a12);
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  @media (max-width: 620px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-tile { padding: 18px 16px; background: var(--background); }
+  .kpi-value {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.6px;
+    font-variant-numeric: tabular-nums; margin-bottom: 4px;
+  }
+  .kpi-label { font-size: 12px; color: var(--a55); line-height: 1.5; }
+  .kpi-note { font-size: 11px; color: var(--a40); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.callout {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout p { margin: 0; }
+  .callout p + p { margin-top: 6px; }
+  .callout strong { font-weight: 700; }
+  .callout.warn {
+    background: var(--warning-bg);
+    border-color: var(--warning-line);
+    color: var(--warning-ink);
+  }
+  .callout.danger {
+    background: var(--danger-bg);
+    border-color: var(--danger-line);
+    color: var(--danger-ink);
+  }
+  .callout-stack { display: flex; flex-direction: column; gap: 10px; }
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--a12);
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    margin-bottom: var(--section);
+  }
+  @media (max-width: 680px) { .comparison-grid { grid-template-columns: 1fr; } }
+  .option-card {
+    background: var(--background);
+    padding: 18px 20px;
+  }
+  .option-card h3 { margin-bottom: 8px; }
+  .option-card p { font-size: 14px; line-height: 1.6; margin: 0 0 12px; }
+  .option-card .recommend-mark { font-weight: 700; color: var(--accent-deep); }
+  .best-for { font-size: 12px; color: var(--a55); text-transform: none; }
+
+.wide-figure {
+    width: min(1040px, calc(100vw - 48px));
+    margin: 0 50% var(--section);
+    transform: translateX(-50%);
+  }
+  .wide-figure.is-contained { width: 100%; margin-inline: 0; transform: none; }
+  .wide-figure img,
+  .wide-figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 720px;
+    object-fit: contain;
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    background: var(--a4);
+  }
+  .wide-figure figcaption {
+    max-width: 72ch;
+    margin-top: 10px;
+    color: var(--a55);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+.table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--section);
+  }
+  .cell-label {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
+  .col-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 680px) {
+    .table-stack { overflow: visible; }
+    .table-stack table,
+    .table-stack tbody,
+    .table-stack tr,
+    .table-stack td { display: block; width: 100%; }
+    .table-stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .table-stack tr {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--a20);
+    }
+    .table-stack tr:first-child { border-top: 1px solid var(--a20); }
+    .table-stack td {
+      display: grid;
+      grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+      gap: 12px;
+      padding: 5px 4px;
+      border: 0;
+      text-align: left;
+      white-space: normal;
+    }
+    .table-stack td::before {
+      content: attr(data-label);
+      color: var(--a55);
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+.evidence-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: var(--section);
+  }
+  .evidence-item { min-width: 0; margin: 0; }
+  .evidence-item.is-featured { grid-column: 1 / -1; }
+  .evidence-item img,
+  .evidence-item svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    background: var(--a4);
+  }
+  .evidence-item figcaption {
+    margin-top: 8px;
+    color: var(--a55);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  @media (max-width: 680px) {
+    .evidence-gallery { grid-template-columns: 1fr; gap: 18px; }
+    .evidence-item.is-featured { grid-column: auto; }
+  }
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 24px;
+    list-style: none;
+    margin: 0 0 var(--section);
+    padding: 0;
+  }
+  .process-step { position: relative; min-width: 0; }
+  .process-step:not(:last-child)::after {
+    content: "\2192";
+    position: absolute;
+    top: 3px;
+    right: -17px;
+    color: var(--a40);
+    font-size: 14px;
+  }
+  .process-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 10px;
+    border: 1px solid var(--a20);
+    border-radius: 50%;
+    color: var(--a55);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .process-step.is-current .process-marker {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+    font-weight: 700;
+  }
+  .process-title { font-size: 14px; font-weight: 600; line-height: 1.45; }
+  .process-detail { margin: 4px 0 0; color: var(--a55); font-size: 12px; line-height: 1.55; }
+  @media (max-width: 680px) {
+    .process-steps { grid-template-columns: 1fr; gap: 16px; }
+    .process-step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      column-gap: 12px;
+    }
+    .process-marker { grid-row: 1 / span 2; margin: 0; }
+    .process-step:not(:last-child)::after {
+      content: "";
+      top: 27px;
+      bottom: -17px;
+      left: 12px;
+      right: auto;
+      width: 1px;
+      background: var(--a20);
+    }
+  }
+
+.recommendation {
+    border: 1px solid var(--a12);
+    border-radius: var(--r-card);
+    padding: 20px 22px;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: var(--section);
+  }
+  .recommendation p { margin: 0; }
+  .recommendation p + p { margin-top: 10px; }
+  .recommendation strong { font-weight: 700; }
+</style>
+</head>
+<body>
+<div data-component="page-shell" class="page">
+  <header class="stagger">
+    <p class="context-line">product direction / onboarding</p>
+    <div class="title-row">
+      <h1>Onboarding direction for a privacy-first budgeting product</h1>
+      
+    </div>
+    <p class="dek">A decision brief for product and design leads: choose the first-run path that makes import consequences legible while preserving household control.</p>
+  </header>
+
+  <nav data-component="toc-rail" class="toc-rail" aria-label="On this page">
+    <div class="toc-wide">
+      <p class="toc-label">On this page</p>
+      <div class="toc-links">
+        <a href="#decision">Decision</a>
+        <a href="#criteria">Decision criteria</a>
+        <a href="#options">Options</a>
+        <a href="#evidence">Observed evidence</a>
+        <a href="#path">First-run path</a>
+        <a href="#limitations">Limitations</a>
+        <a href="#next">Next validation</a>
+      </div>
+    </div>
+    <details class="toc-compact">
+      <summary>On this page</summary>
+      <div class="toc-links">
+        <a href="#decision">Decision</a>
+        <a href="#criteria">Decision criteria</a>
+        <a href="#options">Options</a>
+        <a href="#evidence">Observed evidence</a>
+        <a href="#path">First-run path</a>
+        <a href="#limitations">Limitations</a>
+        <a href="#next">Next validation</a>
+      </div>
+    </details>
+  </nav>
+  
+  <section id="decision">
+    <h2>Choose statement-first import</h2>
+    <div data-component="callout" class="callout">
+      <p><strong>Decision.</strong> Start with statement-first import: validate the file, show a grouped preview, then require explicit apply. Offer a short, optional interview about household goals after the first successful import.</p>
+    </div>
+    <div data-component="stat-tiles" class="kpi-grid">
+      <div class="kpi-tile">
+        <div class="kpi-value">4 / 5</div>
+        <div class="kpi-label">asked what would change before importing</div>
+        <div class="kpi-note">moderated sessions</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-value">3 / 5</div>
+        <div class="kpi-label">abandoned guided interview at recurring transfers</div>
+        <div class="kpi-note">moderated sessions</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-value">5 / 5</div>
+        <div class="kpi-label">understood the grouped statement preview</div>
+        <div class="kpi-note">Added · Matched · Needs review</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-value">none</div>
+        <div class="kpi-label">production funnel data</div>
+        <div class="kpi-note">not available yet</div>
+      </div>
+    </div>
+    <p>The observed pattern favors a fast route to useful data that makes the privacy boundary legible before anything changes. The interview remains useful, but the first-run gate is too costly when it asks people to classify recurring transfers.</p>
+  </section>
+  
+  <section id="criteria">
+    <h2>What the onboarding choice must balance</h2>
+    <p>For a privacy-first household budgeting product, the first run needs to make the consequence of importing understandable, reach useful data quickly, and leave room for user control. These are the comparison lenses used below.</p>
+    <div data-component="callout" class="callout">
+      <p><strong>Boundary.</strong> The notes contain moderated-session evidence only. There is no production funnel data yet, so this is a directional product decision, not a measured conversion claim.</p>
+    </div>
+  </section>
+  
+  <section id="options">
+    <h2>Three viable onboarding directions</h2>
+    <div data-component="comparison-grid" class="comparison-grid">
+      <div class="option-card">
+        <h3>Guided interview</h3>
+        <p>Strongest explanation and trust, but a 6–8 minute path with the highest completion burden. Three of five moderated participants abandoned when asked to classify recurring transfers.</p>
+        <div class="best-for">best for: household goals and context after value is visible</div>
+      </div>
+      <div class="option-card recommended">
+        <h3>Statement-first import</h3>
+        <p><span class="recommend-mark">Recommended.</span> Fastest path to useful data at 2–3 minutes. It earns trust when the preview groups changed rows as Added, Matched, and Needs review before an explicit apply.</p>
+        <div class="best-for">best for: a privacy-first first run that shows consequences before commit</div>
+      </div>
+      <div class="option-card">
+        <h3>Empty workspace</h3>
+        <p>Maximum agency and no upfront commitment, but the lowest initial comprehension. People must discover both import and categories without a guided starting point.</p>
+        <div class="best-for">best for: users who already know how they want to set up the workspace</div>
+      </div>
+    </div>
+    <p>The key difference is not whether users can import; it is whether the first action explains what will change before the product asks for commitment.</p>
+  </section>
+  
+  <section id="evidence">
+    <h2>Observed evidence points to preview before apply</h2>
+    <p>The focal figure keeps the three observed signals together. All counts come from the same five moderated sessions; they are observations, not a production funnel.</p>
+  
+    <figure data-component="wide-figure" class="wide-figure is-contained reveal evidence-focal">
+      <svg viewBox="0 0 1040 500" role="img" aria-label="Three horizontal evidence bars from five moderated sessions: four asked what would change before importing, three abandoned the guided interview at recurring transfers, and all five understood the grouped preview">
+        <rect width="1040" height="500" fill="var(--a4)" />
+        <text x="72" y="72" fill="var(--foreground)" font-family="var(--font-sans)" font-size="22" font-weight="600">What the first run made clear</text>
+        <text x="72" y="101" fill="var(--a55)" font-family="var(--font-sans)" font-size="14">Observed in five moderated sessions · counts, not funnel rates</text>
+        <line x1="72" y1="142" x2="968" y2="142" stroke="var(--a20)" />
+  
+        <text x="72" y="190" fill="var(--foreground)" font-family="var(--font-sans)" font-size="16">Asked what would change before importing</text>
+        <rect x="72" y="210" width="680" height="20" rx="4" fill="var(--a40)" />
+        <rect x="752" y="210" width="216" height="20" rx="4" fill="var(--a20)" />
+        <text x="968" y="226" text-anchor="end" fill="var(--a70)" font-family="var(--font-mono)" font-size="14">4 / 5</text>
+  
+        <text x="72" y="280" fill="var(--foreground)" font-family="var(--font-sans)" font-size="16">Abandoned interview at recurring transfers</text>
+        <rect x="72" y="300" width="510" height="20" rx="4" fill="var(--a40)" />
+        <rect x="582" y="300" width="386" height="20" rx="4" fill="var(--a20)" />
+        <text x="968" y="316" text-anchor="end" fill="var(--a70)" font-family="var(--font-mono)" font-size="14">3 / 5</text>
+  
+        <text x="72" y="370" fill="var(--foreground)" font-family="var(--font-sans)" font-size="16">Understood grouped statement preview</text>
+        <rect x="72" y="390" width="850" height="20" rx="4" fill="var(--accent)" />
+        <rect x="922" y="390" width="46" height="20" rx="4" fill="var(--a20)" />
+        <text x="968" y="406" text-anchor="end" fill="var(--accent-deep)" font-family="var(--font-mono)" font-size="14">5 / 5</text>
+  
+        <text x="72" y="458" fill="var(--a55)" font-family="var(--font-sans)" font-size="13">Signal: make consequences legible, then let the household decide.</text>
+      </svg>
+      <figcaption><strong>Focal evidence.</strong> The preview was understood by all five participants, while the interview lost three participants at the recurring-transfer classification step. The pre-import questions from four participants are a trust signal: show what will change first.</figcaption>
+    </figure>
+  
+    <div data-component="data-table" class="table-scroll table-stack evidence-ledger">
+      <table>
+        <thead>
+          <tr><th>Observed signal</th><th>Count</th><th>What it means for onboarding</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-label" data-label="Observed signal">Asked what would change before importing</td>
+            <td class="col-num" data-label="Count">4 of 5</td>
+            <td data-label="What it means for onboarding">Make the consequence of import visible before commit.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Observed signal">Abandoned guided interview at recurring transfers</td>
+            <td class="col-num" data-label="Count">3 of 5</td>
+            <td data-label="What it means for onboarding">Move high-effort classification out of the first gate.</td>
+          </tr>
+          <tr>
+            <td class="cell-label" data-label="Observed signal">Understood Added / Matched / Needs review preview</td>
+            <td class="col-num" data-label="Count">5 of 5</td>
+            <td data-label="What it means for onboarding">Keep grouped preview as the trust and control checkpoint.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div data-component="evidence-gallery" class="evidence-gallery">
+      <figure class="evidence-item reveal">
+        <svg viewBox="0 0 640 360" role="img" aria-label="Five participant markers, four highlighted for asking what would change before importing a statement">
+          <rect width="640" height="360" fill="var(--a4)" />
+          <text x="48" y="64" fill="var(--foreground)" font-family="var(--font-sans)" font-size="20" font-weight="600">Before import</text>
+          <text x="48" y="94" fill="var(--a55)" font-family="var(--font-sans)" font-size="13">Asked what would change</text>
+          <g transform="translate(80 150)">
+            <circle cx="0" cy="0" r="26" fill="var(--accent)" /><circle cx="112" cy="0" r="26" fill="var(--accent)" /><circle cx="224" cy="0" r="26" fill="var(--accent)" /><circle cx="336" cy="0" r="26" fill="var(--accent)" /><circle cx="448" cy="0" r="26" fill="var(--a20)" />
+            <text x="0" y="5" text-anchor="middle" fill="var(--background)" font-family="var(--font-mono)" font-size="13">1</text><text x="112" y="5" text-anchor="middle" fill="var(--background)" font-family="var(--font-mono)" font-size="13">2</text><text x="224" y="5" text-anchor="middle" fill="var(--background)" font-family="var(--font-mono)" font-size="13">3</text><text x="336" y="5" text-anchor="middle" fill="var(--background)" font-family="var(--font-mono)" font-size="13">4</text><text x="448" y="5" text-anchor="middle" fill="var(--foreground)" font-family="var(--font-mono)" font-size="13">5</text>
+          </g>
+          <text x="48" y="256" fill="var(--accent-deep)" font-family="var(--font-mono)" font-size="16">4 / 5</text>
+          <text x="48" y="286" fill="var(--a55)" font-family="var(--font-sans)" font-size="13">A visible preview answers the first trust question.</text>
+        </svg>
+        <figcaption><strong>Supporting view 1 · trust.</strong> Four of five participants asked what would change before importing. This supports showing a consequence preview before the apply action.</figcaption>
+      </figure>
+      <figure class="evidence-item reveal">
+        <svg viewBox="0 0 640 360" role="img" aria-label="Statement preview grouped into Added, Matched, and Needs review, understood by all five participants">
+          <rect width="640" height="360" fill="var(--a4)" />
+          <text x="48" y="64" fill="var(--foreground)" font-family="var(--font-sans)" font-size="20" font-weight="600">Preview before apply</text>
+          <text x="48" y="94" fill="var(--a55)" font-family="var(--font-sans)" font-size="13">Changed rows grouped by decision</text>
+          <g transform="translate(48 126)">
+            <rect x="0" y="0" width="164" height="112" rx="6" fill="var(--background)" stroke="var(--a20)" /><rect x="188" y="0" width="164" height="112" rx="6" fill="var(--background)" stroke="var(--a20)" /><rect x="376" y="0" width="164" height="112" rx="6" fill="var(--background)" stroke="var(--a20)" />
+            <text x="82" y="34" text-anchor="middle" fill="var(--accent-deep)" font-family="var(--font-sans)" font-size="14" font-weight="600">Added</text><text x="270" y="34" text-anchor="middle" fill="var(--foreground)" font-family="var(--font-sans)" font-size="14" font-weight="600">Matched</text><text x="458" y="34" text-anchor="middle" fill="var(--foreground)" font-family="var(--font-sans)" font-size="14" font-weight="600">Needs review</text>
+            <line x1="24" y1="58" x2="140" y2="58" stroke="var(--a20)" /><line x1="212" y1="58" x2="328" y2="58" stroke="var(--a20)" /><line x1="400" y1="58" x2="516" y2="58" stroke="var(--a20)" />
+            <line x1="24" y1="78" x2="120" y2="78" stroke="var(--a12)" /><line x1="212" y1="78" x2="308" y2="78" stroke="var(--a12)" /><line x1="400" y1="78" x2="496" y2="78" stroke="var(--a12)" />
+          </g>
+          <text x="48" y="286" fill="var(--accent-deep)" font-family="var(--font-mono)" font-size="16">5 / 5 understood</text>
+          <text x="48" y="316" fill="var(--a55)" font-family="var(--font-sans)" font-size="13">Grouping makes the explicit apply decision legible.</text>
+        </svg>
+        <figcaption><strong>Supporting view 2 · comprehension.</strong> All five participants understood the statement preview when changed rows were grouped as Added, Matched, and Needs review.</figcaption>
+      </figure>
+    </div>
+  </section>
+  
+  <section id="path">
+    <h2>Proposed first-run path</h2>
+    <p>Keep the initial promise narrow: show the household what the import will do, then return agency before applying anything.</p>
+    <ol data-component="process-steps" class="process-steps">
+      <li class="process-step is-current">
+        <span class="process-marker">1</span>
+        <div class="process-title">Validate</div>
+        <p class="process-detail">Check the statement before presenting changes.</p>
+      </li>
+      <li class="process-step">
+        <span class="process-marker">2</span>
+        <div class="process-title">Preview</div>
+        <p class="process-detail">Group changed rows as Added, Matched, and Needs review.</p>
+      </li>
+      <li class="process-step">
+        <span class="process-marker">3</span>
+        <div class="process-title">Explicit apply</div>
+        <p class="process-detail">Let the household commit only after reviewing the preview.</p>
+      </li>
+      <li class="process-step">
+        <span class="process-marker">4</span>
+        <div class="process-title">Optional interview</div>
+        <p class="process-detail">Ask about household goals after the first successful import.</p>
+      </li>
+    </ol>
+    <p>This sequence preserves the interview's trust-building purpose without making recurring-transfer classification a prerequisite for first value.</p>
+  </section>
+  
+  <section id="limitations">
+    <h2>Confidence and limitations</h2>
+    <div data-component="callout" class="callout warn">
+      <p><strong>Small sample.</strong> The evidence is from five moderated sessions. It is useful for identifying comprehension and friction signals, but it cannot estimate completion or retention at scale.</p>
+    </div>
+    <div data-component="callout" class="callout">
+      <p><strong>Missing production data.</strong> No production funnel data exists yet. Instrument import start, preview reach, explicit apply, and optional-interview uptake before treating this direction as quantitatively validated.</p>
+    </div>
+  </section>
+  
+  <section id="next">
+    <h2>Next validation after launch</h2>
+    <p>Ship the contained first-run path, then use the production funnel to test whether the observed comprehension advantage translates into completed imports and sustained use.</p>
+    <div data-component="recommendation" class="recommendation">
+      <p><strong>Choose statement-first import.</strong> Make validation, grouped preview, and explicit apply the first-run contract. Keep the short interview optional and place it after the household has seen useful data.</p>
+      <p>Before calling the decision proven, measure the path from import start to preview, explicit apply, and optional interview uptake. The current notes support the direction; they do not supply production conversion rates.</p>
+    </div>
+  </section>
+</div>
+
+
+<script data-component="page-behavior">
+  /* Optional page behavior: motion opt-in, one-time reveals, TOC scroll-spy,
+     and theme toggle. Everything works without this script. */
+  (function () {
+    var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced) document.documentElement.classList.add("js-motion");
+
+    // One-time scroll reveals for .reveal figures
+    if (!reduced && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.25 });
+      document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+      // Fail-safe: never leave content hidden if the observer doesn't fire
+      // (headless capture, odd embedders). One-shot, complements reduced-motion.
+      setTimeout(function () {
+        document.querySelectorAll(".reveal:not(.is-in)").forEach(function (el) { el.classList.add("is-in"); });
+      }, 1500);
+    } else {
+      document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("is-in"); });
+    }
+
+    // TOC scroll-spy (no-op when no .toc-rail present)
+    var links = Array.prototype.slice.call(document.querySelectorAll(".toc-rail a[href^='#']"));
+    if (links.length) {
+      var targets = links
+        .map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); })
+        .filter(Boolean);
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            links.forEach(function (a) {
+              a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id);
+            });
+          }
+        });
+      }, { rootMargin: "-15% 0px -70% 0px" });
+      targets.forEach(function (t) { spy.observe(t); });
+    }
+
+    // Theme toggle (no-op when no .theme-toggle present)
+    var toggle = document.querySelector(".theme-toggle");
+    if (toggle) {
+      var root = document.documentElement;
+      var stored = null;
+      try { stored = localStorage.getItem("theme"); } catch (e) {}
+      if (stored) root.setAttribute("data-theme", stored);
+      toggle.addEventListener("click", function () {
+        var dark = root.getAttribute("data-theme") === "dark" ||
+          (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+        var next = dark ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+      });
+    }
+  })();
+</script>
+</body>
+</html>

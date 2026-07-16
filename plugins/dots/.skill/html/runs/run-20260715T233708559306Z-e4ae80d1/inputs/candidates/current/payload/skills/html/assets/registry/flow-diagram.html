@@ -1,0 +1,108 @@
+<!-- component: flow-diagram
+title: Flow diagram
+type: ui
+when: A branching system where nodes and edges carry meaning — a request path,
+  dependency map, or state machine. Use process-steps for a linear sequence.
+deps: theme.css
+variants: none — one horizontal node-edge layout; rearrange node positions
+  and count for the specific flow, keeping the same visual language.
+gotchas: Do not use this for an ordinary left-to-right sequence; process-steps
+  stays fully visible on narrow screens. Hand-author only simple branching
+  flows of up to about 8 nodes; beyond that,
+  restructure the content as a table or ordered list instead of fighting an
+  SVG layout. The SVG is aria-hidden="true" — the .flow-caption paragraph
+  next to it is the accessible description and must state the same flow in
+  a sentence. Exactly one node is emphasized with an --accent stroke; the
+  rest stay neutral --a40. Fills reference var(--background) so nodes work
+  in both themes without a second stylesheet.
+-->
+<style>
+  .flow-diagram-wrap {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+    margin-bottom: 12px;
+  }
+
+  .flow-diagram {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 560px;
+  }
+
+  .flow-node-rect {
+    fill: var(--background);
+    stroke: var(--a40);
+    stroke-width: 1.5;
+  }
+
+  .flow-node-rect.is-emphasized {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+
+  .flow-node-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    fill: var(--foreground);
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .flow-edge {
+    fill: none;
+    stroke: var(--a40);
+    stroke-width: 1.5;
+  }
+
+  .flow-edge-label {
+    font-size: 11px;
+    fill: var(--a55);
+    text-anchor: middle;
+  }
+
+  .flow-caption {
+    font-size: 13px;
+    color: var(--a55);
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>
+
+<div data-component="flow-diagram" class="flow-diagram-wrap">
+  <svg class="flow-diagram" viewBox="0 0 640 260" aria-hidden="true">
+    <defs>
+      <marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+        markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 Z" fill="var(--a40)" />
+      </marker>
+    </defs>
+
+    <rect class="flow-node-rect" x="12" y="110" width="112" height="44" rx="8" />
+    <text class="flow-node-label" x="68" y="132">commit</text>
+
+    <rect class="flow-node-rect" x="176" y="110" width="112" height="44" rx="8" />
+    <text class="flow-node-label" x="232" y="132">CI build</text>
+
+    <rect class="flow-node-rect is-emphasized" x="340" y="110" width="112" height="44" rx="8" />
+    <text class="flow-node-label" x="396" y="132">test suite</text>
+
+    <rect class="flow-node-rect" x="504" y="30" width="112" height="44" rx="8" />
+    <text class="flow-node-label" x="560" y="52">staging</text>
+
+    <rect class="flow-node-rect" x="504" y="186" width="112" height="44" rx="8" />
+    <text class="flow-node-label" x="560" y="208">rollback</text>
+
+    <path class="flow-edge" d="M124,132 L172,132" marker-end="url(#flow-arrow)" />
+    <path class="flow-edge" d="M288,132 L336,132" marker-end="url(#flow-arrow)" />
+    <path class="flow-edge" d="M420,110 C440,88 468,70 500,58" marker-end="url(#flow-arrow)" />
+    <text class="flow-edge-label" x="452" y="82">pass</text>
+    <path class="flow-edge" d="M420,154 C440,176 468,192 500,204" marker-end="url(#flow-arrow)" />
+    <text class="flow-edge-label" x="452" y="188">fail</text>
+  </svg>
+</div>
+<p class="flow-caption">
+  A commit triggers a CI build, which runs the test suite; a pass deploys to
+  staging, a fail triggers an automatic rollback.
+</p>

@@ -1,0 +1,1 @@
+Created and validated the compact release brief: [CSV export hardening release brief](artifacts/csv-export-hardening-release-brief.html)

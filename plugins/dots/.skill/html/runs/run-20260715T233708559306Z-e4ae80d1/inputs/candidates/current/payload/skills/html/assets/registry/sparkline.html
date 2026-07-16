@@ -1,0 +1,60 @@
+<!-- component: sparkline
+title: Sparkline
+type: ui
+when: A trend worth showing inline with a sentence or inside a stat tile —
+  the shape of change over time matters more than any single reading.
+deps: theme.css
+variants: inline (default, sits inside a paragraph next to its value) |
+  embedded in a .kpi-tile alongside a .kpi-value.
+gotchas: Generate with scripts/chart.mjs (spec: data numbers + visible
+  value text) rather than plotting points by hand. No axes, no grid, no
+  tick labels — it is a shape, not a chart.
+  Stroke is currentColor at --a40 so it inherits surrounding text color; only
+  the final point gets a dot in --accent, marking "where we are now." The SVG
+  is aria-hidden="true" — the accessible number always lives in adjacent
+  visible text, never only in the graphic.
+-->
+<style>
+  .sparkline-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sparkline {
+    width: 120px;
+    height: 28px;
+    overflow: visible;
+  }
+
+  .sparkline-line {
+    fill: none;
+    stroke: currentColor;
+    color: var(--a40);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .sparkline-dot { fill: var(--accent); }
+
+  .sparkline-value {
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--foreground);
+  }
+</style>
+
+<p>
+  Weekly signups have climbed steadily since the referral program launched:
+  <span data-component="sparkline" class="sparkline-row">
+    <svg class="sparkline" viewBox="0 0 120 28" aria-hidden="true">
+      <polyline class="sparkline-line"
+        points="0,22 20,20 40,21 60,14 80,11 100,6 120,4" />
+      <circle class="sparkline-dot" cx="120" cy="4" r="2.5" />
+    </svg>
+    <span class="sparkline-value">312/wk</span>
+  </span>
+  — up from 96/wk eight weeks ago.
+</p>
